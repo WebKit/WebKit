@@ -197,7 +197,7 @@ private:
                 // We don't need to do ref'ing on the children because we're stealing them from
                 // the original division.
                 Node* newDivision = m_insertionSet.insertNode(
-                    m_indexInBlock, DontRefChildren, RefNode, SpecDouble, *node);
+                    m_indexInBlock, SpecDouble, *node);
                 
                 node->setOp(DoubleAsInt32);
                 node->children.initialize(Edge(newDivision, KnownNumberUse), Edge(), Edge());
@@ -518,8 +518,6 @@ private:
                 if (ok) {
                     Edge newChildEdge = logicalNot->child1();
                     if (newChildEdge->hasBooleanResult()) {
-                        m_graph.ref(newChildEdge);
-                        m_graph.deref(logicalNot);
                         node->children.setChild1(newChildEdge);
                         
                         BlockIndex toBeTaken = node->notTakenBlockIndex();
@@ -556,8 +554,7 @@ private:
                     // would have already exited by now, but insert a forced exit just to
                     // be safe.
                     m_insertionSet.insertNode(
-                        m_indexInBlock, DontRefChildren, DontRefNode, SpecNone, ForceOSRExit,
-                        node->codeOrigin);
+                        m_indexInBlock, SpecNone, ForceOSRExit, node->codeOrigin);
                 }
                 break;
             case ALL_INT32_INDEXING_TYPES:
@@ -638,8 +635,8 @@ private:
                     node->child1()->prediction(), node->prediction());
                 if (arrayMode.supportsLength() && arrayProfile->hasDefiniteStructure()) {
                     m_insertionSet.insertNode(
-                        m_indexInBlock, RefChildren, DontRefNode, SpecNone, CheckStructure,
-                        node->codeOrigin, OpInfo(m_graph.addStructureSet(arrayProfile->expectedStructure())),
+                        m_indexInBlock, SpecNone, CheckStructure, node->codeOrigin,
+                        OpInfo(m_graph.addStructureSet(arrayProfile->expectedStructure())),
                         node->child1());
                 }
             } else
@@ -650,10 +647,9 @@ private:
             ASSERT(node->flags() & NodeMustGenerate);
             node->clearFlags(NodeMustGenerate | NodeClobbersWorld);
             setUseKindAndUnboxIfProfitable<KnownCellUse>(node->child1());
-            m_graph.deref(node);
             node->setArrayMode(arrayMode);
             
-            Node* storage = checkArray(arrayMode, node->codeOrigin, node->child1().node(), 0, lengthNeedsStorage, node->shouldGenerate());
+            Node* storage = checkArray(arrayMode, node->codeOrigin, node->child1().node(), 0, lengthNeedsStorage);
             if (!storage)
                 break;
             
@@ -730,6 +726,9 @@ private:
         case PhantomPutStructure:
         case GetIndexedPropertyStorage:
         case LastNodeType:
+        case MovHint:
+        case MovHintAndCheck:
+        case ZombieHint:
             RELEASE_ASSERT_NOT_REACHED();
             break;
         
@@ -837,7 +836,7 @@ private:
         m_insertionSet.execute(block);
     }
     
-    Node* checkArray(ArrayMode arrayMode, CodeOrigin codeOrigin, Node* array, Node* index, bool (*storageCheck)(const ArrayMode&) = canCSEStorage, bool shouldGenerate = true)
+    Node* checkArray(ArrayMode arrayMode, CodeOrigin codeOrigin, Node* array, Node* index, bool (*storageCheck)(const ArrayMode&) = canCSEStorage)
     {
         ASSERT(arrayMode.isSpecific());
         
@@ -858,21 +857,21 @@ private:
                 }
                 
                 m_insertionSet.insertNode(
-                    m_indexInBlock, RefChildren, DontRefNode, SpecNone, ArrayifyToStructure, codeOrigin,
+                    m_indexInBlock, SpecNone, ArrayifyToStructure, codeOrigin,
                     OpInfo(structure), OpInfo(arrayMode.asWord()), Edge(array, CellUse), indexEdge);
             } else {
                 m_insertionSet.insertNode(
-                    m_indexInBlock, RefChildren, DontRefNode, SpecNone, Arrayify, codeOrigin,
+                    m_indexInBlock, SpecNone, Arrayify, codeOrigin,
                     OpInfo(arrayMode.asWord()), Edge(array, CellUse), indexEdge);
             }
         } else {
             if (structure) {
                 m_insertionSet.insertNode(
-                    m_indexInBlock, RefChildren, DontRefNode, SpecNone, CheckStructure, codeOrigin,
+                    m_indexInBlock, SpecNone, CheckStructure, codeOrigin,
                     OpInfo(m_graph.addStructureSet(structure)), Edge(array, CellUse));
             } else {
                 m_insertionSet.insertNode(
-                    m_indexInBlock, RefChildren, DontRefNode, SpecNone, CheckArray, codeOrigin,
+                    m_indexInBlock, SpecNone, CheckArray, codeOrigin,
                     OpInfo(arrayMode.asWord()), Edge(array, CellUse));
             }
         }
@@ -882,17 +881,12 @@ private:
         
         if (arrayMode.usesButterfly()) {
             return m_insertionSet.insertNode(
-                m_indexInBlock,
-                shouldGenerate ? RefChildren : DontRefChildren,
-                shouldGenerate ? RefNode : DontRefNode,
-                SpecNone, GetButterfly, codeOrigin, Edge(array, KnownCellUse));
+                m_indexInBlock, SpecNone, GetButterfly, codeOrigin, Edge(array, KnownCellUse));
         }
         
         return m_insertionSet.insertNode(
-            m_indexInBlock,
-            shouldGenerate ? RefChildren : DontRefChildren,
-            shouldGenerate ? RefNode : DontRefNode,
-            SpecNone, GetIndexedPropertyStorage, codeOrigin, OpInfo(arrayMode.asWord()), Edge(array, KnownCellUse));
+            m_indexInBlock, SpecNone, GetIndexedPropertyStorage, codeOrigin,
+            OpInfo(arrayMode.asWord()), Edge(array, KnownCellUse));
     }
     
     void blessArrayOperation(Edge base, Edge index, Edge& storageChild)
@@ -902,8 +896,7 @@ private:
         switch (node->arrayMode().type()) {
         case Array::ForceExit: {
             m_insertionSet.insertNode(
-                m_indexInBlock, DontRefChildren, DontRefNode, SpecNone, ForceOSRExit,
-                node->codeOrigin);
+                m_indexInBlock, SpecNone, ForceOSRExit, node->codeOrigin);
             return;
         }
             
@@ -982,7 +975,6 @@ private:
             return;
         }
         
-        Edge oldEdge = edge;
         Edge newEdge = node->child1();
         
         if (newEdge.useKind() != Int32Use) {
@@ -992,8 +984,10 @@ private:
         
         ASSERT(newEdge->shouldSpeculateInteger());
         
-        m_graph.ref(newEdge);
-        m_graph.deref(oldEdge);
+        // Completely kill the ValueToInt32. We wouldn't have to do crazy things like this
+        // if it weren't for https://bugs.webkit.org/show_bug.cgi?id=111238.
+        node->setOpAndDefaultFlags(Nop);
+        node->child1() = Edge();
         
         edge = newEdge;
     }
@@ -1014,7 +1008,7 @@ private:
     void injectInt32ToDoubleNode(Edge& edge, UseKind useKind = NumberUse, SpeculationDirection direction = BackwardSpeculation)
     {
         Node* result = m_insertionSet.insertNode(
-            m_indexInBlock, DontRefChildren, RefNode, SpecDouble,
+            m_indexInBlock, SpecDouble, 
             direction == BackwardSpeculation ? Int32ToDouble : ForwardInt32ToDouble,
             m_currentNode->codeOrigin, Edge(edge.node(), NumberUse));
         
@@ -1039,9 +1033,8 @@ private:
         value = jsNumber(JSC::toInt32(value.asNumber()));
         ASSERT(value.isInt32());
         edge.setNode(m_insertionSet.insertNode(
-            m_indexInBlock, DontRefChildren, RefNode, SpecInt32, JSConstant,
-            m_currentNode->codeOrigin, OpInfo(codeBlock()->addOrFindConstant(value))));
-        m_graph.deref(oldNode);
+            m_indexInBlock, SpecInt32, JSConstant, m_currentNode->codeOrigin,
+            OpInfo(codeBlock()->addOrFindConstant(value))));
     }
     
     void truncateConstantsIfNecessary(Node* node, AddSpeculationMode mode)

@@ -102,7 +102,7 @@ struct BasicBlock : Vector<Node*, 8> {
     }
     
 #define DFG_DEFINE_APPEND_NODE(templatePre, templatePost, typeParams, valueParamsComma, valueParams, valueArgs) \
-    templatePre typeParams templatePost Node* appendNode(Graph&, RefChildrenMode, RefNodeMode, SpeculatedType valueParamsComma valueParams);
+    templatePre typeParams templatePost Node* appendNode(Graph&, SpeculatedType valueParamsComma valueParams);
     DFG_VARIADIC_TEMPLATE_FUNCTION(DFG_DEFINE_APPEND_NODE)
 #undef DFG_DEFINE_APPEND_NODE
     

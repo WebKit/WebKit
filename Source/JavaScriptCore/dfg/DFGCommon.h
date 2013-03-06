@@ -217,6 +217,15 @@ enum UnificationState {
     GloballyUnified
 };
 
+// Describes how reference counts in the graph behave.
+enum RefCountState {
+    // Everything has refCount() == 1.
+    EverythingIsLive,
+
+    // Set after DCE has run.
+    ExactRefCount
+};
+
 enum OperandSpeculationMode { AutomaticOperandSpeculation, ManualOperandSpeculation };
 
 enum SpeculationDirection { ForwardSpeculation, BackwardSpeculation };
@@ -250,6 +259,7 @@ namespace WTF {
 void printInternal(PrintStream&, JSC::DFG::OptimizationFixpointState);
 void printInternal(PrintStream&, JSC::DFG::GraphForm);
 void printInternal(PrintStream&, JSC::DFG::UnificationState);
+void printInternal(PrintStream&, JSC::DFG::RefCountState);
 void printInternal(PrintStream&, JSC::DFG::ProofStatus);
 
 } // namespace WTF

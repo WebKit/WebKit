@@ -88,7 +88,6 @@ private:
                         m_state.variables().operand(
                             m_graph.argumentsRegisterFor(node->codeOrigin)).m_type))
                     break;
-                ASSERT(node->refCount() == 1);
                 node->convertToPhantom();
                 eliminated = true;
                 break;
@@ -104,7 +103,6 @@ private:
                 else
                     set = node->structureSet();
                 if (value.m_currentKnownStructure.isSubsetOf(set)) {
-                    ASSERT(node->refCount() == 1);
                     m_state.execute(indexInBlock); // Catch the fact that we may filter on cell.
                     node->convertToPhantom();
                     eliminated = true;
@@ -126,7 +124,6 @@ private:
             case Arrayify: {
                 if (!node->arrayMode().alreadyChecked(m_graph, node, m_state.forNode(node->child1())))
                     break;
-                ASSERT(node->refCount() == 1);
                 node->convertToPhantom();
                 eliminated = true;
                 break;
@@ -186,25 +183,22 @@ private:
                 if (needsWatchpoint) {
                     ASSERT(m_state.forNode(child).m_futurePossibleStructure.isSubsetOf(StructureSet(structure)));
                     m_insertionSet.insertNode(
-                        indexInBlock, RefChildren, DontRefNode, SpecNone,
-                        StructureTransitionWatchpoint, codeOrigin, OpInfo(structure), childEdge);
+                        indexInBlock, SpecNone, StructureTransitionWatchpoint, codeOrigin,
+                        OpInfo(structure), childEdge);
                 } else if (m_state.forNode(child).m_type & ~SpecCell) {
                     m_insertionSet.insertNode(
-                        indexInBlock, RefChildren, DontRefNode, SpecNone,
-                        Phantom, codeOrigin, childEdge);
+                        indexInBlock, SpecNone, Phantom, codeOrigin, childEdge);
                 }
                 
                 childEdge.setUseKind(KnownCellUse);
                 
                 Edge propertyStorage;
                 
-                child->ref();
                 if (isInlineOffset(status.offset()))
                     propertyStorage = childEdge;
                 else {
                     propertyStorage = Edge(m_insertionSet.insertNode(
-                        indexInBlock, DontRefChildren, RefNode, SpecNone, GetButterfly, codeOrigin,
-                        childEdge));
+                        indexInBlock, SpecNone, GetButterfly, codeOrigin, childEdge));
                 }
                 
                 node->convertToGetByOffset(m_graph.m_storageAccessData.size(), propertyStorage);
@@ -252,12 +246,11 @@ private:
                 if (needsWatchpoint) {
                     ASSERT(m_state.forNode(child).m_futurePossibleStructure.isSubsetOf(StructureSet(structure)));
                     m_insertionSet.insertNode(
-                        indexInBlock, RefChildren, DontRefNode, SpecNone,
-                        StructureTransitionWatchpoint, codeOrigin, OpInfo(structure), childEdge);
+                        indexInBlock, SpecNone, StructureTransitionWatchpoint, codeOrigin,
+                        OpInfo(structure), childEdge);
                 } else if (m_state.forNode(child).m_type & ~SpecCell) {
                     m_insertionSet.insertNode(
-                        indexInBlock, RefChildren, DontRefNode, SpecNone,
-                        Phantom, codeOrigin, childEdge);
+                        indexInBlock, SpecNone, Phantom, codeOrigin, childEdge);
                 }
                 
                 childEdge.setUseKind(KnownCellUse);
@@ -287,17 +280,16 @@ private:
 
                 Edge propertyStorage;
                 
-                if (isInlineOffset(status.offset())) {
-                    child->ref(); // The child will be used as the property index, so ref it to reflect the double use.
+                if (isInlineOffset(status.offset()))
                     propertyStorage = childEdge;
-                } else if (status.isSimpleReplace() || structure->outOfLineCapacity() == status.newStructure()->outOfLineCapacity()) {
+                else if (status.isSimpleReplace() || structure->outOfLineCapacity() == status.newStructure()->outOfLineCapacity()) {
                     propertyStorage = Edge(m_insertionSet.insertNode(
-                        indexInBlock, RefChildren, RefNode, SpecNone, GetButterfly, codeOrigin, childEdge));
+                        indexInBlock, SpecNone, GetButterfly, codeOrigin, childEdge));
                 } else if (!structure->outOfLineCapacity()) {
                     ASSERT(status.newStructure()->outOfLineCapacity());
                     ASSERT(!isInlineOffset(status.offset()));
                     propertyStorage = Edge(m_insertionSet.insertNode(
-                        indexInBlock, RefChildren, RefNode, SpecNone, AllocatePropertyStorage,
+                        indexInBlock, SpecNone, AllocatePropertyStorage,
                         codeOrigin, OpInfo(transitionData), childEdge));
                 } else {
                     ASSERT(structure->outOfLineCapacity());
@@ -305,17 +297,15 @@ private:
                     ASSERT(!isInlineOffset(status.offset()));
                     
                     propertyStorage = Edge(m_insertionSet.insertNode(
-                        indexInBlock, RefChildren, RefNode, SpecNone, ReallocatePropertyStorage,
-                        codeOrigin, OpInfo(transitionData),
-                        childEdge,
+                        indexInBlock, SpecNone, ReallocatePropertyStorage, codeOrigin,
+                        OpInfo(transitionData), childEdge,
                         Edge(m_insertionSet.insertNode(
-                            indexInBlock, DontRefChildren, DontRefNode, SpecNone, GetButterfly,
-                            codeOrigin, childEdge))));
+                            indexInBlock, SpecNone, GetButterfly, codeOrigin, childEdge))));
                 }
                 
                 if (status.isSimpleTransition()) {
                     m_insertionSet.insertNode(
-                        indexInBlock, RefChildren, DontRefNode, SpecNone, PutStructure, codeOrigin,
+                        indexInBlock, SpecNone, PutStructure, codeOrigin, 
                         OpInfo(transitionData), childEdge);
                 }
                 
@@ -348,6 +338,11 @@ private:
             AdjacencyList children = node->children;
             
             if (node->op() == GetLocal) {
+                // GetLocals without a Phi child are guaranteed dead. We don't have to
+                // do anything about them.
+                if (!node->child1())
+                    continue;
+                
                 if (m_graph.m_form != LoadStore) {
                     VariableAccessData* variable = node->variableAccessData();
                     Node* phi = node->child1().node();
@@ -360,8 +355,8 @@ private:
                         
                         m_graph.convertToConstant(node, value);
                         Node* phantom = m_insertionSet.insertNode(
-                            indexInBlock, DontRefChildren, DontRefNode, SpecNone, PhantomLocal, 
-                            codeOrigin, OpInfo(variable), Edge(phi));
+                            indexInBlock, SpecNone, PhantomLocal,  codeOrigin,
+                            OpInfo(variable), Edge(phi));
                         block->variablesAtHead.operand(variable->local()) = phantom;
                         block->variablesAtTail.operand(variable->local()) = phantom;
                         
@@ -377,7 +372,7 @@ private:
             
             m_graph.convertToConstant(node, value);
             m_insertionSet.insertNode(
-                indexInBlock, DontRefChildren, DontRefNode, SpecNone, Phantom, codeOrigin, children);
+                indexInBlock, SpecNone, Phantom, codeOrigin, children);
             
             changed = true;
         }
@@ -406,18 +401,17 @@ private:
     void addStructureTransitionCheck(CodeOrigin codeOrigin, unsigned indexInBlock, JSCell* cell)
     {
         Node* weakConstant = m_insertionSet.insertNode(
-            indexInBlock, DontRefChildren, DontRefNode, speculationFromValue(cell),
-            WeakJSConstant, codeOrigin, OpInfo(cell));
+            indexInBlock, speculationFromValue(cell), WeakJSConstant, codeOrigin, OpInfo(cell));
         
         if (cell->structure()->transitionWatchpointSetIsStillValid()) {
             m_insertionSet.insertNode(
-                indexInBlock, RefChildren, DontRefNode, SpecNone, StructureTransitionWatchpoint,
-                codeOrigin, OpInfo(cell->structure()), Edge(weakConstant, CellUse));
+                indexInBlock, SpecNone, StructureTransitionWatchpoint, codeOrigin,
+                OpInfo(cell->structure()), Edge(weakConstant, CellUse));
             return;
         }
 
         m_insertionSet.insertNode(
-            indexInBlock, RefChildren, DontRefNode, SpecNone, CheckStructure, codeOrigin,
+            indexInBlock, SpecNone, CheckStructure, codeOrigin,
             OpInfo(m_graph.addStructureSet(cell->structure())), Edge(weakConstant, CellUse));
     }
     
@@ -454,8 +448,7 @@ private:
                 
             default:
                 m_insertionSet.insertNode(
-                    indexInBlock, DontRefChildren, DontRefNode, SpecNone, ForceOSRExit,
-                    node->codeOrigin);
+                    indexInBlock, SpecNone, ForceOSRExit, node->codeOrigin);
                 changed = true;
                 break;
             }

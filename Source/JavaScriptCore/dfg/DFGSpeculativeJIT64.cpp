@@ -1968,6 +1968,22 @@ void SpeculativeJIT::compile(Node* node)
         jsValueResult(result.gpr(), node);
         break;
     }
+        
+    case MovHintAndCheck: {
+        compileMovHintAndCheck(node);
+        break;
+    }
+        
+    case InlineStart: {
+        compileInlineStart(node);
+        break;
+    }
+
+    case MovHint:
+    case ZombieHint: {
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
 
     case SetLocal: {
         // SetLocal doubles as a hint as to where a node will be stored and
@@ -4788,7 +4804,6 @@ void SpeculativeJIT::compile(Node* node)
         noResult(node);
         break;
         
-    case InlineStart:
     case Nop:
         RELEASE_ASSERT_NOT_REACHED();
         break;

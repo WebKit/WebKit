@@ -140,8 +140,8 @@ public:
                             jettisonBlock(blockIndex, notTakenBlockIndex, boundaryCodeOrigin);
                         
                             block->appendNode(
-                                m_graph, DontRefChildren, DontRefNode, SpecNone, Jump,
-                                boundaryCodeOrigin, OpInfo(takenBlockIndex));
+                                m_graph, SpecNone, Jump, boundaryCodeOrigin,
+                                OpInfo(takenBlockIndex));
                         }
                         innerChanged = outerChanged = true;
                         break;
@@ -171,8 +171,8 @@ public:
                             ASSERT(branch->refCount() == 1);
                             
                             block->appendNode(
-                                m_graph, DontRefChildren, DontRefNode, SpecNone, Jump,
-                                branch->codeOrigin, OpInfo(targetBlockIndex));
+                                m_graph, SpecNone, Jump, branch->codeOrigin,
+                                OpInfo(targetBlockIndex));
                         }
                         innerChanged = outerChanged = true;
                         break;
@@ -272,7 +272,7 @@ private:
         if (!livenessNode->shouldGenerate())
             return;
         block->appendNode(
-            m_graph, DontRefChildren, DontRefNode, SpecNone, PhantomLocal, codeOrigin,
+            m_graph, SpecNone, PhantomLocal, codeOrigin, 
             OpInfo(livenessNode->variableAccessData()));
     }
     

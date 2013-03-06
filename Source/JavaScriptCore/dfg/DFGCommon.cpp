@@ -91,6 +91,21 @@ void printInternal(PrintStream& out, UnificationState state)
     }
 }
 
+void printInternal(PrintStream& out, RefCountState state)
+{
+    switch (state) {
+    case EverythingIsLive:
+        out.print("EverythingIsLive");
+        break;
+    case ExactRefCount:
+        out.print("ExactRefCount");
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
 void printInternal(PrintStream& out, ProofStatus status)
 {
     switch (status) {

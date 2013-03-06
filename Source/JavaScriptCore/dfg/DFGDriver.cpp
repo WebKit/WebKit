@@ -39,6 +39,7 @@
 #include "DFGCPSRethreadingPhase.h"
 #include "DFGCSEPhase.h"
 #include "DFGConstantFoldingPhase.h"
+#include "DFGDCEPhase.h"
 #include "DFGFixupPhase.h"
 #include "DFGJITCompiler.h"
 #include "DFGPredictionInjectionPhase.h"
@@ -147,11 +148,13 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
         performCPSRethreading(dfg);
     }
     
+    if (logCompilationChanges())
+        dataLogF("DFG optimization fixpoint converged in %u iterations.\n", cnt);
+
     dfg.m_fixpointState = FixpointConverged;
     performCSE(dfg);
     performCPSRethreading(dfg); // This should usually be a no-op since CSE rarely dethreads the graph.
-    if (logCompilationChanges())
-        dataLogF("DFG optimization fixpoint converged in %u iterations.\n", cnt);
+    performDCE(dfg);
     performVirtualRegisterAllocation(dfg);
 
     GraphDumpMode modeForFinalValidate = DumpGraph;

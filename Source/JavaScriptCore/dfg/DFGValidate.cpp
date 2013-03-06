@@ -114,9 +114,13 @@ public:
                     switch (node->op()) {
                     case Flush:
                     case GetLocal:
+                        VALIDATE((node, edge), edge->hasVariableAccessData());
+                        VALIDATE((node, edge), edge->variableAccessData() == node->variableAccessData());
+                        break;
                     case PhantomLocal:
                         VALIDATE((node, edge), edge->hasVariableAccessData());
                         VALIDATE((node, edge), edge->variableAccessData() == node->variableAccessData());
+                        VALIDATE((node, edge), edge->op() != SetLocal);
                         break;
                     case Phi:
                         VALIDATE((node, edge), edge->hasVariableAccessData());
@@ -125,8 +129,27 @@ public:
                         VALIDATE((node, edge), edge->variableAccessData() == node->variableAccessData());
                         break;
                     case Phantom:
-                        if (m_graph.m_form == LoadStore && !j)
+                        switch (m_graph.m_form) {
+                        case LoadStore:
+                            if (j) {
+                                VALIDATE((node, edge), edge->hasResult());
+                                break;
+                            }
+                            switch (edge->op()) {
+                            case Phi:
+                            case SetArgument:
+                            case SetLocal:
+                                break;
+                            default:
+                                VALIDATE((node, edge), edge->hasResult());
+                                break;
+                            }
                             break;
+                        case ThreadedCPS:
+                            VALIDATE((node, edge), edge->hasResult());
+                            break;
+                        }
+                        break;
                     default:
                         VALIDATE((node, edge), edge->hasResult());
                         break;
@@ -147,10 +170,10 @@ public:
                 nodesInThisBlock.add(node);
                 if (block->isPhiIndex(i))
                     phisInThisBlock.add(node);
-                if (m_graph.m_form == ThreadedCPS || !node->hasVariableAccessData())
+                if (m_graph.m_refCountState == ExactRefCount)
                     V_EQUAL((node), myRefCounts.get(node), node->adjustedRefCount());
                 else
-                    VALIDATE((node), myRefCounts.get(node) ? node->adjustedRefCount() : true);
+                    V_EQUAL((node), node->refCount(), 1);
                 for (unsigned j = 0; j < m_graph.numChildren(node); ++j) {
                     Edge edge = m_graph.child(node, j);
                     if (!edge)
@@ -178,7 +201,10 @@ public:
                         edge->op() == SetLocal
                         || edge->op() == SetArgument
                         || edge->op() == Flush
-                        || edge->op() == Phi);
+                        || edge->op() == Phi
+                        || edge->op() == ZombieHint
+                        || edge->op() == MovHint
+                        || edge->op() == MovHintAndCheck);
                     
                     if (phisInThisBlock.contains(edge.node()))
                         continue;
@@ -187,6 +213,9 @@ public:
                         VALIDATE(
                             (node, edge),
                             edge->op() == SetLocal
+                            || edge->op() == ZombieHint
+                            || edge->op() == MovHint
+                            || edge->op() == MovHintAndCheck
                             || edge->op() == SetArgument
                             || edge->op() == Flush);
                         
@@ -220,6 +249,9 @@ public:
                         VALIDATE(
                             (local, block->m_predecessors[k], prevNode),
                             prevNode->op() == SetLocal
+                            || prevNode->op() == MovHint
+                            || prevNode->op() == MovHintAndCheck
+                            || prevNode->op() == ZombieHint
                             || prevNode->op() == SetArgument
                             || prevNode->op() == Phi);
                         if (prevNode == edge.node()) {
@@ -286,6 +318,10 @@ public:
                 switch (node->op()) {
                 case GetLocal:
                     if (node->variableAccessData()->isCaptured())
+                        break;
+                    // Ignore GetLocal's that we know to be dead, but that the graph
+                    // doesn't yet know to be dead.
+                    if (!myRefCounts.get(node))
                         break;
                     if (m_graph.m_form == ThreadedCPS)
                         VALIDATE((node, blockIndex), getLocalPositions.operand(node->local()) == notSet);

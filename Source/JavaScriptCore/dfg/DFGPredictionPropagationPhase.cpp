@@ -206,7 +206,13 @@ private:
             if (prediction)
                 changed |= mergePrediction(prediction);
             
-            changed |= variableAccessData->mergeFlags(flags & ~NodeUsedAsIntLocally);
+            // Assume conservatively that a SetLocal implies that the value may flow through a loop,
+            // and so we would have overflow leading to the program "observing" numbers even if all
+            // users of the value are doing toInt32. It might be worthwhile to revisit this at some
+            // point and actually check if the data flow involves loops, but right now I don't think
+            // we have evidence that this would be beneficial for benchmarks.
+            
+            changed |= variableAccessData->mergeFlags((flags & ~NodeUsedAsIntLocally) | NodeUsedAsNumber);
             break;
         }
             
@@ -214,12 +220,7 @@ private:
             VariableAccessData* variableAccessData = node->variableAccessData();
             changed |= variableAccessData->predict(node->child1()->prediction());
 
-            // Assume conservatively that a SetLocal implies that the value may flow through a loop,
-            // and so we would have overflow leading to the program "observing" numbers even if all
-            // users of the value are doing toInt32. It might be worthwhile to revisit this at some
-            // point and actually check if the data flow involves loops, but right now I don't think
-            // we have evidence that this would be beneficial for benchmarks.
-            changed |= node->child1()->mergeFlags(variableAccessData->flags() | NodeUsedAsNumber);
+            changed |= node->child1()->mergeFlags(variableAccessData->flags());
             break;
         }
             
@@ -711,8 +712,6 @@ private:
         }
             
         case CreateArguments: {
-            // At this stage we don't try to predict whether the arguments are ours or
-            // someone else's. We could, but we don't, yet.
             changed |= setPrediction(SpecArguments);
             break;
         }
@@ -737,7 +736,10 @@ private:
         case CheckArray:
         case Arrayify:
         case ArrayifyToStructure:
-        case Identity: {
+        case Identity:
+        case MovHint:
+        case MovHintAndCheck:
+        case ZombieHint: {
             // This node should never be visible at this stage of compilation. It is
             // inserted by fixup(), which follows this phase.
             CRASH();

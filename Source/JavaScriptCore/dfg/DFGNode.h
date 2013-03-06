@@ -91,7 +91,7 @@ struct Node {
         : codeOrigin(codeOrigin)
         , children(children)
         , m_virtualRegister(InvalidVirtualRegister)
-        , m_refCount(0)
+        , m_refCount(1)
         , m_prediction(SpecNone)
     {
         setOpAndDefaultFlags(op);
@@ -102,7 +102,7 @@ struct Node {
         : codeOrigin(codeOrigin)
         , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(InvalidVirtualRegister)
-        , m_refCount(0)
+        , m_refCount(1)
         , m_prediction(SpecNone)
     {
         setOpAndDefaultFlags(op);
@@ -114,7 +114,7 @@ struct Node {
         : codeOrigin(codeOrigin)
         , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(InvalidVirtualRegister)
-        , m_refCount(0)
+        , m_refCount(1)
         , m_opInfo(imm.m_value)
         , m_prediction(SpecNone)
     {
@@ -127,7 +127,7 @@ struct Node {
         : codeOrigin(codeOrigin)
         , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(InvalidVirtualRegister)
-        , m_refCount(0)
+        , m_refCount(1)
         , m_opInfo(imm1.m_value)
         , m_opInfo2(safeCast<unsigned>(imm2.m_value))
         , m_prediction(SpecNone)
@@ -141,7 +141,7 @@ struct Node {
         : codeOrigin(codeOrigin)
         , children(AdjacencyList::Variable, firstChild, numChildren)
         , m_virtualRegister(InvalidVirtualRegister)
-        , m_refCount(0)
+        , m_refCount(1)
         , m_opInfo(imm1.m_value)
         , m_opInfo2(safeCast<unsigned>(imm2.m_value))
         , m_prediction(SpecNone)
@@ -272,8 +272,6 @@ struct Node {
     void convertToConstant(unsigned constantNumber)
     {
         m_op = JSConstant;
-        if (m_flags & NodeMustGenerate)
-            m_refCount--;
         m_flags &= ~(NodeMustGenerate | NodeMightClobber | NodeClobbersWorld);
         m_opInfo = constantNumber;
         children.reset();
@@ -282,8 +280,6 @@ struct Node {
     void convertToGetLocalUnlinked(VirtualRegister local)
     {
         m_op = GetLocalUnlinked;
-        if (m_flags & NodeMustGenerate)
-            m_refCount--;
         m_flags &= ~(NodeMustGenerate | NodeMightClobber | NodeClobbersWorld);
         m_opInfo = local;
         children.reset();
@@ -386,11 +382,27 @@ struct Node {
         return isConstant() && valueOfJSConstant(codeBlock).isBoolean();
     }
     
+    bool containsMovHint()
+    {
+        switch (op()) {
+        case SetLocal:
+        case MovHint:
+        case MovHintAndCheck:
+        case ZombieHint:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
     bool hasVariableAccessData()
     {
         switch (op()) {
         case GetLocal:
         case SetLocal:
+        case MovHint:
+        case MovHintAndCheck:
+        case ZombieHint:
         case Phi:
         case SetArgument:
         case Flush:
@@ -952,6 +964,9 @@ struct Node {
     {
         switch (op()) {
         case SetLocal:
+        case MovHint:
+        case ZombieHint:
+        case MovHintAndCheck:
         case Int32ToDouble:
         case ForwardInt32ToDouble:
         case ValueToInt32:
@@ -973,12 +988,6 @@ struct Node {
         return m_refCount;
     }
 
-    Node* ref()
-    {
-        m_refCount++;
-        return this;
-    }
-
     unsigned postfixRef()
     {
         return m_refCount++;
@@ -992,18 +1001,6 @@ struct Node {
     void setRefCount(unsigned refCount)
     {
         m_refCount = refCount;
-    }
-    
-    void deref()
-    {
-        ASSERT(m_refCount);
-        --m_refCount;
-    }
-    
-    unsigned postfixDeref()
-    {
-        ASSERT(m_refCount);
-        return m_refCount--;
     }
     
     Edge& child1()

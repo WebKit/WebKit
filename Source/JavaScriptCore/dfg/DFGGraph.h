@@ -92,83 +92,34 @@ public:
     Graph(JSGlobalData&, CodeBlock*, unsigned osrEntryBytecodeIndex, const Operands<JSValue>& mustHandleValues);
     ~Graph();
     
-    // Mark a node as being referenced.
-    Node* ref(Node* node)
+    void changeChild(Edge& edge, Node* newNode)
     {
-        // If the value (before incrementing) was at refCount zero then we need to ref its children.
-        if (!node->postfixRef())
-            refChildren(node);
-        return node;
-    }
-    Edge ref(Edge edge)
-    {
-        ref(edge.node());
-        return edge;
-    }
-    Edge ref(Node*, Edge edge)
-    {
-        return ref(edge);
-    }
-    
-    void deref(Node* node)
-    {
-#if !ASSERT_DISABLED
-        if (!node->refCount())
-            dump();
-#endif
-        if (node->postfixDeref() == 1)
-            derefChildren(node);
-    }
-    void deref(Edge edge)
-    {
-        deref(edge.node());
-    }
-    void deref(Node*, Edge edge)
-    {
-        deref(edge);
-    }
-    
-    // When a node's refCount goes from 0 to 1, it must (logically) recursively ref all of its children, and vice versa.
-    void refChildren(Node*);
-    void derefChildren(Node*);
-
-    void changeChild(Edge& edge, Node* newNode, bool changeRef = true)
-    {
-        if (changeRef) {
-            ref(newNode);
-            deref(edge.node());
-        }
         edge.setNode(newNode);
     }
     
-    void changeEdge(Edge& edge, Edge newEdge, bool changeRef = true)
+    void changeEdge(Edge& edge, Edge newEdge)
     {
-        if (changeRef) {
-            ref(newEdge);
-            deref(edge);
-        }
         edge = newEdge;
     }
     
-    void compareAndSwap(Edge& edge, Node* oldNode, Node* newNode, bool changeRef)
+    void compareAndSwap(Edge& edge, Node* oldNode, Node* newNode)
     {
         if (edge.node() != oldNode)
             return;
-        changeChild(edge, newNode, changeRef);
+        changeChild(edge, newNode);
     }
     
-    void compareAndSwap(Edge& edge, Edge oldEdge, Edge newEdge, bool changeRef)
+    void compareAndSwap(Edge& edge, Edge oldEdge, Edge newEdge)
     {
         if (edge != oldEdge)
             return;
-        changeEdge(edge, newEdge, changeRef);
+        changeEdge(edge, newEdge);
     }
     
     void clearAndDerefChild(Node* node, unsigned index)
     {
         if (!node->children.child(index))
             return;
-        deref(node->children.child(index));
         node->children.setChild(index, Edge());
     }
     void clearAndDerefChild1(Node* node) { clearAndDerefChild(node, 0); }
@@ -177,18 +128,17 @@ public:
     
     void performSubstitution(Node* node)
     {
-        bool shouldGenerate = node->shouldGenerate();
         if (node->flags() & NodeHasVarArgs) {
             for (unsigned childIdx = node->firstChild(); childIdx < node->firstChild() + node->numChildren(); childIdx++)
-                performSubstitutionForEdge(m_varArgChildren[childIdx], shouldGenerate);
+                performSubstitutionForEdge(m_varArgChildren[childIdx]);
         } else {
-            performSubstitutionForEdge(node->child1(), shouldGenerate);
-            performSubstitutionForEdge(node->child2(), shouldGenerate);
-            performSubstitutionForEdge(node->child3(), shouldGenerate);
+            performSubstitutionForEdge(node->child1());
+            performSubstitutionForEdge(node->child2());
+            performSubstitutionForEdge(node->child3());
         }
     }
     
-    void performSubstitutionForEdge(Edge& child, bool addRef)
+    void performSubstitutionForEdge(Edge& child)
     {
         // Check if this operand is actually unused.
         if (!child)
@@ -204,34 +154,19 @@ public:
         // There is definitely a replacement. Assert that the replacement does not
         // have a replacement.
         ASSERT(!child->replacement);
-        
-        if (addRef)
-            ref(child);
     }
     
 #define DFG_DEFINE_ADD_NODE(templatePre, templatePost, typeParams, valueParamsComma, valueParams, valueArgs) \
-    templatePre typeParams templatePost Node* addNode(RefChildrenMode refChildrenMode, RefNodeMode refNodeMode, SpeculatedType type valueParamsComma valueParams) \
+    templatePre typeParams templatePost Node* addNode(SpeculatedType type valueParamsComma valueParams) \
     { \
         Node* node = new (m_allocator) Node(valueArgs); \
         node->predict(type); \
-        if (node->flags() & NodeMustGenerate) \
-            node->ref(); \
-        if (refNodeMode == RefNode) \
-            node->ref(); \
-        if (refChildrenMode == RefChildren) \
-            refChildren(node); \
         return node; \
     }
     DFG_VARIADIC_TEMPLATE_FUNCTION(DFG_DEFINE_ADD_NODE)
 #undef DFG_DEFINE_ADD_NODE
 
     void dethread();
-    
-    // Call this if you've modified the reference counts of nodes that deal with
-    // local variables. This is necessary because local variable references can form
-    // cycles, and hence reference counting is not enough. This will reset the
-    // reference counts according to reachability.
-    void collectGarbage();
     
     void convertToConstant(Node* node, unsigned constantNumber)
     {
@@ -669,19 +604,19 @@ public:
             if (node->flags() & NodeHasVarArgs) {
                 for (unsigned childIdx = node->firstChild(); childIdx < node->firstChild() + node->numChildren(); ++childIdx) {
                     if (!!m_varArgChildren[childIdx])
-                        compareAndSwap(m_varArgChildren[childIdx], oldThing, newThing, node->shouldGenerate());
+                        compareAndSwap(m_varArgChildren[childIdx], oldThing, newThing);
                 }
                 continue;
             }
             if (!node->child1())
                 continue;
-            compareAndSwap(node->children.child1(), oldThing, newThing, node->shouldGenerate());
+            compareAndSwap(node->children.child1(), oldThing, newThing);
             if (!node->child2())
                 continue;
-            compareAndSwap(node->children.child2(), oldThing, newThing, node->shouldGenerate());
+            compareAndSwap(node->children.child2(), oldThing, newThing);
             if (!node->child3())
                 continue;
-            compareAndSwap(node->children.child3(), oldThing, newThing, node->shouldGenerate());
+            compareAndSwap(node->children.child3(), oldThing, newThing);
         }
     }
     
@@ -755,6 +690,7 @@ public:
     OptimizationFixpointState m_fixpointState;
     GraphForm m_form;
     UnificationState m_unificationState;
+    RefCountState m_refCountState;
 private:
     
     void handleSuccessor(Vector<BlockIndex, 16>& worklist, BlockIndex blockIndex, BlockIndex successorIndex);

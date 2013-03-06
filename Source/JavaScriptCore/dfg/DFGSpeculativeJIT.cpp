@@ -227,9 +227,9 @@ void SpeculativeJIT::convertLastOSRExitToForward(const ValueRecovery& valueRecov
     if (!valueRecovery) {
         // Check that either the current node is a SetLocal, or the preceding node was a
         // SetLocal with the same code origin.
-        if (m_currentNode->op() != SetLocal) {
+        if (!m_currentNode->containsMovHint()) {
             Node* setLocal = m_jit.graph().m_blocks[m_block]->at(m_indexInBlock - 1);
-            ASSERT_UNUSED(setLocal, setLocal->op() == SetLocal);
+            ASSERT_UNUSED(setLocal, setLocal->containsMovHint());
             ASSERT_UNUSED(setLocal, setLocal->codeOrigin == m_currentNode->codeOrigin);
         }
         
@@ -272,7 +272,7 @@ void SpeculativeJIT::convertLastOSRExitToForward(const ValueRecovery& valueRecov
         ASSERT(setLocal->child1()->child1() == m_currentNode);
     else
         ASSERT(setLocal->child1() == m_currentNode);
-    ASSERT(setLocal->op() == SetLocal);
+    ASSERT(setLocal->containsMovHint());
     ASSERT(setLocal->codeOrigin == m_currentNode->codeOrigin);
 
     Node* nextNode = m_jit.graph().m_blocks[m_block]->at(setLocalIndexInBlock + 1);
@@ -1567,7 +1567,7 @@ void SpeculativeJIT::noticeOSRBirth(Node* node)
 
 void SpeculativeJIT::compileMovHint(Node* node)
 {
-    ASSERT(node->op() == SetLocal);
+    ASSERT(node->containsMovHint() && node->op() != ZombieHint);
     
     m_lastSetOperand = node->local();
 
@@ -1578,6 +1578,54 @@ void SpeculativeJIT::compileMovHint(Node* node)
         noticeOSRBirth(child->child1().node());
     
     m_stream->appendAndLog(VariableEvent::movHint(MinifiedID(child), node->local()));
+}
+
+void SpeculativeJIT::compileMovHintAndCheck(Node* node)
+{
+    compileMovHint(node);
+    speculate(node, node->child1());
+    noResult(node);
+}
+
+void SpeculativeJIT::compileInlineStart(Node* node)
+{
+    InlineCallFrame* inlineCallFrame = node->codeOrigin.inlineCallFrame;
+    int argumentCountIncludingThis = inlineCallFrame->arguments.size();
+    unsigned argumentPositionStart = node->argumentPositionStart();
+    CodeBlock* codeBlock = baselineCodeBlockForInlineCallFrame(inlineCallFrame);
+    for (int i = 0; i < argumentCountIncludingThis; ++i) {
+        ValueRecovery recovery;
+        if (codeBlock->isCaptured(argumentToOperand(i)))
+            recovery = ValueRecovery::alreadyInJSStack();
+        else {
+            ArgumentPosition& argumentPosition =
+                m_jit.graph().m_argumentPositions[argumentPositionStart + i];
+            ValueSource valueSource;
+            if (!argumentPosition.shouldUnboxIfPossible())
+                valueSource = ValueSource(ValueInJSStack);
+            else if (argumentPosition.shouldUseDoubleFormat())
+                valueSource = ValueSource(DoubleInJSStack);
+            else if (isInt32Speculation(argumentPosition.prediction()))
+                valueSource = ValueSource(Int32InJSStack);
+            else if (isCellSpeculation(argumentPosition.prediction()))
+                valueSource = ValueSource(CellInJSStack);
+            else if (isBooleanSpeculation(argumentPosition.prediction()))
+                valueSource = ValueSource(BooleanInJSStack);
+            else
+                valueSource = ValueSource(ValueInJSStack);
+            recovery = computeValueRecoveryFor(valueSource);
+        }
+        // The recovery should refer either to something that has already been
+        // stored into the stack at the right place, or to a constant,
+        // since the Arguments code isn't smart enough to handle anything else.
+        // The exception is the this argument, which we don't really need to be
+        // able to recover.
+#if DFG_ENABLE(DEBUG_VERBOSE)
+        dataLogF("\nRecovery for argument %d: ", i);
+        recovery.dump(WTF::dataFile());
+#endif
+        inlineCallFrame->arguments[i] = recovery;
+    }
 }
 
 void SpeculativeJIT::compile(BasicBlock& block)
@@ -1678,50 +1726,19 @@ void SpeculativeJIT::compile(BasicBlock& block)
                 break;
                 
             case SetLocal:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+                
+            case MovHint:
                 compileMovHint(m_currentNode);
                 break;
-
-            case InlineStart: {
-                InlineCallFrame* inlineCallFrame = m_currentNode->codeOrigin.inlineCallFrame;
-                int argumentCountIncludingThis = inlineCallFrame->arguments.size();
-                unsigned argumentPositionStart = m_currentNode->argumentPositionStart();
-                CodeBlock* codeBlock = baselineCodeBlockForInlineCallFrame(inlineCallFrame);
-                for (int i = 0; i < argumentCountIncludingThis; ++i) {
-                    ValueRecovery recovery;
-                    if (codeBlock->isCaptured(argumentToOperand(i)))
-                        recovery = ValueRecovery::alreadyInJSStack();
-                    else {
-                        ArgumentPosition& argumentPosition =
-                            m_jit.graph().m_argumentPositions[argumentPositionStart + i];
-                        ValueSource valueSource;
-                        if (!argumentPosition.shouldUnboxIfPossible())
-                            valueSource = ValueSource(ValueInJSStack);
-                        else if (argumentPosition.shouldUseDoubleFormat())
-                            valueSource = ValueSource(DoubleInJSStack);
-                        else if (isInt32Speculation(argumentPosition.prediction()))
-                            valueSource = ValueSource(Int32InJSStack);
-                        else if (isCellSpeculation(argumentPosition.prediction()))
-                            valueSource = ValueSource(CellInJSStack);
-                        else if (isBooleanSpeculation(argumentPosition.prediction()))
-                            valueSource = ValueSource(BooleanInJSStack);
-                        else
-                            valueSource = ValueSource(ValueInJSStack);
-                        recovery = computeValueRecoveryFor(valueSource);
-                    }
-                    // The recovery should refer either to something that has already been
-                    // stored into the stack at the right place, or to a constant,
-                    // since the Arguments code isn't smart enough to handle anything else.
-                    // The exception is the this argument, which we don't really need to be
-                    // able to recover.
-#if DFG_ENABLE(DEBUG_VERBOSE)
-                    dataLogF("\nRecovery for argument %d: ", i);
-                    recovery.dump(WTF::dataFile());
-#endif
-                    inlineCallFrame->arguments[i] = recovery;
-                }
+                
+            case ZombieHint: {
+                m_lastSetOperand = m_currentNode->local();
+                m_stream->appendAndLog(VariableEvent::setLocal(m_currentNode->local(), DataFormatDead));
                 break;
             }
-                
+
             default:
                 if (belongsInMinifiedGraph(m_currentNode->op()))
                     m_minifiedGraph->append(MinifiedNode::fromNode(m_currentNode));

@@ -72,9 +72,9 @@ public:
     }
 
 #define DFG_DEFINE_INSERT_NODE(templatePre, templatePost, typeParams, valueParamsComma, valueParams, valueArgs) \
-    templatePre typeParams templatePost Node* insertNode(size_t index, RefChildrenMode refChildrenMode, RefNodeMode refNodeMode, SpeculatedType type valueParamsComma valueParams) \
+    templatePre typeParams templatePost Node* insertNode(size_t index, SpeculatedType type valueParamsComma valueParams) \
     { \
-        return insert(index, m_graph.addNode(refChildrenMode, refNodeMode, type valueParamsComma valueArgs)); \
+        return insert(index, m_graph.addNode(type valueParamsComma valueArgs)); \
     }
     DFG_VARIADIC_TEMPLATE_FUNCTION(DFG_DEFINE_INSERT_NODE)
 #undef DFG_DEFINE_INSERT_NODE

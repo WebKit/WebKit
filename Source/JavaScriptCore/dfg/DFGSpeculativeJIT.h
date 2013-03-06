@@ -307,7 +307,6 @@ public:
     
     void compile(Node*);
     void noticeOSRBirth(Node*);
-    void compileMovHint(Node*);
     void compile(BasicBlock&);
 
     void checkArgumentTypes();
@@ -682,6 +681,10 @@ public:
         return lastNode->op() == Branch && lastNode->child1() == m_currentNode ? block->size() - 1 : UINT_MAX;
     }
     
+    void compileMovHint(Node*);
+    void compileMovHintAndCheck(Node*);
+    void compileInlineStart(Node*);
+
     void nonSpeculativeUInt32ToNumber(Node*);
 
 #if USE(JSVALUE64)

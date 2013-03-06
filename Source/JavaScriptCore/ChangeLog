@@ -1,3 +1,162 @@
+2013-03-04  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG DCE might eliminate checks unsoundly
+        https://bugs.webkit.org/show_bug.cgi?id=109389
+
+        Reviewed by Oliver Hunt.
+        
+        This gets rid of all eager reference counting, and does all dead code elimination
+        in one phase - the DCEPhase. This phase also sets up the node reference counts,
+        which are then used not just for DCE but also register allocation and stack slot
+        allocation.
+        
+        Doing this required a number of surgical changes in places that previously relied
+        on always having liveness information. For example, the structure check hoisting
+        phase must now consult whether a VariableAccessData is profitable for unboxing to
+        make sure that it doesn't try to do hoisting on set SetLocals. The arguments
+        simplification phase employs its own light-weight liveness analysis. Both phases
+        previously just used reference counts.
+        
+        The largest change is that now, dead nodes get turned into Phantoms. Those
+        Phantoms will retain those child edges that are not proven. This ensures that any
+        type checks performed by a dead node remain even after the node is killed. On the
+        other hand, this Phantom conversion means that we need special handling for
+        SetLocal. I decided to make the four forms of SetLocal explicit:
+        
+        MovHint(@a, rK): Just indicates that node @a contains the value that would have
+             now been placed into virtual register rK. Does not actually cause @a to be
+             stored into rK. This would have previously been a dead SetLocal with @a
+             being live. MovHints are always dead.
+        
+        ZombieHint(rK): Indicates that at this point, register rK will contain a dead
+             value and OSR should put Undefined into it. This would have previously been
+             a dead SetLocal with @a being dead also. ZombieHints are always dead.
+        
+        MovHintAndCheck(@a, rK): Identical to MovHint except @a is also type checked,
+             according to whatever UseKind the edge to @a has. The type check is always a
+             forward exit. MovHintAndChecks are always live, since they are
+             NodeMustGenerate. Previously this would have been a dead SetLocal with a
+             live @a, and the check would have disappeared. This is one of the bugs that
+             this patch solves.
+        
+        SetLocal(@a, rK): This still does exactly what it does now, if the SetLocal is
+             live.
+        
+        Basically this patch makes it so that dead SetLocals eventually decay to MovHint,
+        ZombieHint, or MovHintAndCheck depending on the situation. If the child @a is
+        also dead, then you get a ZombieHint. If the child @a is live but the SetLocal
+        has a type check and @a's type hasn't been proven to have that type then you get
+        a MovHintAndCheck. Otherwise you get a MovHint.
+        
+        This is performance neutral.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::executeEffects):
+        (JSC::DFG::AbstractState::mergeStateAtTail):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        (ArgumentsSimplificationPhase):
+        (JSC::DFG::ArgumentsSimplificationPhase::removeArgumentsReferencingPhantomChild):
+        * dfg/DFGBasicBlock.h:
+        (BasicBlock):
+        * dfg/DFGBasicBlockInlines.h:
+        (DFG):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addToGraph):
+        (JSC::DFG::ByteCodeParser::insertPhiNode):
+        (JSC::DFG::ByteCodeParser::emitFunctionChecks):
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::run):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+        (JSC::DFG::CFGSimplificationPhase::keepOperandAlive):
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::run):
+        (JSC::DFG::CPSRethreadingPhase::addPhiSilently):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::eliminateIrrelevantPhantomChildren):
+        (JSC::DFG::CSEPhase::setReplacement):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGCommon.cpp:
+        (WTF::printInternal):
+        (WTF):
+        * dfg/DFGCommon.h:
+        (WTF):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::addStructureTransitionCheck):
+        (JSC::DFG::ConstantFoldingPhase::paintUnreachableCode):
+        * dfg/DFGDCEPhase.cpp: Added.
+        (DFG):
+        (DCEPhase):
+        (JSC::DFG::DCEPhase::DCEPhase):
+        (JSC::DFG::DCEPhase::run):
+        (JSC::DFG::DCEPhase::findTypeCheckRoot):
+        (JSC::DFG::DCEPhase::countEdge):
+        (JSC::DFG::DCEPhase::eliminateIrrelevantPhantomChildren):
+        (JSC::DFG::performDCE):
+        * dfg/DFGDCEPhase.h: Added.
+        (DFG):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::checkArray):
+        (JSC::DFG::FixupPhase::blessArrayOperation):
+        (JSC::DFG::FixupPhase::fixIntEdge):
+        (JSC::DFG::FixupPhase::injectInt32ToDoubleNode):
+        (JSC::DFG::FixupPhase::truncateConstantToInt32):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        (JSC::DFG::Graph::dump):
+        (DFG):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::changeChild):
+        (JSC::DFG::Graph::changeEdge):
+        (JSC::DFG::Graph::compareAndSwap):
+        (JSC::DFG::Graph::clearAndDerefChild):
+        (JSC::DFG::Graph::performSubstitution):
+        (JSC::DFG::Graph::performSubstitutionForEdge):
+        (Graph):
+        (JSC::DFG::Graph::substitute):
+        * dfg/DFGInsertionSet.h:
+        (InsertionSet):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::Node):
+        (JSC::DFG::Node::convertToConstant):
+        (JSC::DFG::Node::convertToGetLocalUnlinked):
+        (JSC::DFG::Node::containsMovHint):
+        (Node):
+        (JSC::DFG::Node::hasVariableAccessData):
+        (JSC::DFG::Node::willHaveCodeGenOrOSR):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::convertLastOSRExitToForward):
+        (JSC::DFG::SpeculativeJIT::compileMovHint):
+        (JSC::DFG::SpeculativeJIT::compileMovHintAndCheck):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::compileInlineStart):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStructureCheckHoistingPhase.cpp:
+        (JSC::DFG::StructureCheckHoistingPhase::run):
+        (JSC::DFG::StructureCheckHoistingPhase::shouldConsiderForHoisting):
+        (StructureCheckHoistingPhase):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+
 2013-03-05  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: JSValue should implement init and return nil in exceptional cases

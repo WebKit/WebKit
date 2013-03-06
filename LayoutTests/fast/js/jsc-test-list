@@ -78,6 +78,8 @@ fast/js/dfg-arguments-alias
 fast/js/dfg-arguments-cross-code-origin
 fast/js/dfg-arguments-mixed-alias
 fast/js/dfg-arguments-osr-exit
+fast/js/dfg-arguments-osr-exit-multiple-blocks
+fast/js/dfg-arguments-osr-exit-multiple-blocks-before-exit
 fast/js/dfg-arguments-out-of-bounds
 fast/js/dfg-arguments-unexpected-escape
 fast/js/dfg-arrayify-elimination

@@ -34,9 +34,9 @@
 namespace JSC { namespace DFG {
 
 #define DFG_DEFINE_APPEND_NODE(templatePre, templatePost, typeParams, valueParamsComma, valueParams, valueArgs) \
-    templatePre typeParams templatePost inline Node* BasicBlock::appendNode(Graph& graph, RefChildrenMode refChildrenMode, RefNodeMode refNodeMode, SpeculatedType type valueParamsComma valueParams) \
+    templatePre typeParams templatePost inline Node* BasicBlock::appendNode(Graph& graph, SpeculatedType type valueParamsComma valueParams) \
     { \
-        Node* result = graph.addNode(refChildrenMode, refNodeMode, type valueParamsComma valueArgs); \
+        Node* result = graph.addNode(type valueParamsComma valueArgs); \
         append(result); \
         return result; \
     }

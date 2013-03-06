@@ -698,77 +698,56 @@ private:
     Node* addToGraph(NodeType op, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
     {
         Node* result = m_graph.addNode(
-            DontRefChildren, DontRefNode, SpecNone,
-            op, currentCodeOrigin(), Edge(child1), Edge(child2), Edge(child3));
+            SpecNone, op, currentCodeOrigin(), Edge(child1), Edge(child2), Edge(child3));
         ASSERT(op != Phi);
         m_currentBlock->append(result);
-
-        if (defaultFlags(op) & NodeMustGenerate)
-            m_graph.refChildren(result);
         return result;
     }
     Node* addToGraph(NodeType op, Edge child1, Edge child2 = Edge(), Edge child3 = Edge())
     {
         Node* result = m_graph.addNode(
-            DontRefChildren, DontRefNode, SpecNone,
-            op, currentCodeOrigin(), child1, child2, child3);
+            SpecNone, op, currentCodeOrigin(), child1, child2, child3);
         ASSERT(op != Phi);
         m_currentBlock->append(result);
-
-        if (defaultFlags(op) & NodeMustGenerate)
-            m_graph.refChildren(result);
         return result;
     }
     Node* addToGraph(NodeType op, OpInfo info, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
     {
         Node* result = m_graph.addNode(
-            DontRefChildren, DontRefNode, SpecNone,
-            op, currentCodeOrigin(), info, Edge(child1), Edge(child2), Edge(child3));
+            SpecNone, op, currentCodeOrigin(), info, Edge(child1), Edge(child2), Edge(child3));
         if (op == Phi)
             m_currentBlock->phis.append(result);
         else
             m_currentBlock->append(result);
-
-        if (defaultFlags(op) & NodeMustGenerate)
-            m_graph.refChildren(result);
         return result;
     }
     Node* addToGraph(NodeType op, OpInfo info1, OpInfo info2, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
     {
         Node* result = m_graph.addNode(
-            DontRefChildren, DontRefNode, SpecNone,
-            op, currentCodeOrigin(), info1, info2, Edge(child1), Edge(child2), Edge(child3));
+            SpecNone, op, currentCodeOrigin(), info1, info2,
+            Edge(child1), Edge(child2), Edge(child3));
         ASSERT(op != Phi);
         m_currentBlock->append(result);
-
-        if (defaultFlags(op) & NodeMustGenerate)
-            m_graph.refChildren(result);
         return result;
     }
     
     Node* addToGraph(Node::VarArgTag, NodeType op, OpInfo info1, OpInfo info2)
     {
         Node* result = m_graph.addNode(
-            DontRefChildren, DontRefNode, SpecNone,
-            Node::VarArg, op, currentCodeOrigin(), info1, info2,
+            SpecNone, Node::VarArg, op, currentCodeOrigin(), info1, info2,
             m_graph.m_varArgChildren.size() - m_numPassedVarArgs, m_numPassedVarArgs);
         ASSERT(op != Phi);
         m_currentBlock->append(result);
         
         m_numPassedVarArgs = 0;
         
-        if (defaultFlags(op) & NodeMustGenerate)
-            m_graph.refChildren(result);
         return result;
     }
 
     Node* insertPhiNode(OpInfo info, BasicBlock* block)
     {
-        Node* result = m_graph.addNode(
-            DontRefChildren, DontRefNode, SpecNone,
-            Phi, currentCodeOrigin(), info);
+        Node* result = m_graph.addNode(SpecNone, Phi, currentCodeOrigin(), info);
         block->phis.append(result);
-
         return result;
     }
 
@@ -1256,17 +1235,19 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
 
 void ByteCodeParser::emitFunctionChecks(const CallLinkStatus& callLinkStatus, Node* callTarget, int registerOffset, CodeSpecializationKind kind)
 {
-    if (callLinkStatus.isProved())
-        return;
-    
-    ASSERT(callLinkStatus.canOptimize());
-    
     Node* thisArgument;
     if (kind == CodeForCall)
         thisArgument = get(registerOffset + argumentToOperand(0));
     else
         thisArgument = 0;
 
+    if (callLinkStatus.isProved()) {
+        addToGraph(Phantom, callTarget, thisArgument);
+        return;
+    }
+    
+    ASSERT(callLinkStatus.canOptimize());
+    
     if (JSFunction* function = callLinkStatus.function())
         addToGraph(CheckFunction, OpInfo(function), callTarget, thisArgument);
     else {

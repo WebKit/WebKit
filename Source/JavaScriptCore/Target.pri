@@ -121,6 +121,7 @@ SOURCES += \
     dfg/DFGCPSRethreadingPhase.cpp \
     dfg/DFGConstantFoldingPhase.cpp \
     dfg/DFGCSEPhase.cpp \
+    dfg/DFGDCEPhase.cpp \
     dfg/DFGDisassembler.cpp \
     dfg/DFGDominators.cpp \
     dfg/DFGDriver.cpp \

@@ -1008,7 +1008,6 @@ private:
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
             dataLog("   Eliminating edge @", m_currentNode->index(), " -> @", edge->index());
 #endif
-            m_graph.deref(edge);
             node->children.removeEdgeFromBag(i--);
             m_changed = true;
         }
@@ -1024,7 +1023,6 @@ private:
 #endif
         
         m_currentNode->convertToPhantom();
-        m_currentNode->setRefCount(1);
         eliminateIrrelevantPhantomChildren(m_currentNode);
         
         // At this point we will eliminate all references to this node.
@@ -1154,10 +1152,8 @@ private:
             
             // If we replace a GetLocal with a GetLocalUnlinked, then turn the GetLocalUnlinked
             // into a GetLocal.
-            if (relevantLocalOp->op() == GetLocalUnlinked) {
+            if (relevantLocalOp->op() == GetLocalUnlinked)
                 relevantLocalOp->convertToGetLocal(variableAccessData, phi);
-                m_graph.ref(phi);
-            }
 
             m_changed = true;
             break;
@@ -1210,7 +1206,6 @@ private:
             ASSERT(dataNode->hasResult());
             m_graph.clearAndDerefChild1(node);
             node->children.child1() = Edge(dataNode);
-            m_graph.ref(dataNode);
             m_graph.dethread();
             m_changed = true;
             break;

@@ -51,7 +51,6 @@ public:
         canonicalizeLocalsInBlocks();
         propagatePhis<LocalOperand>();
         propagatePhis<ArgumentOperand>();
-        m_graph.collectGarbage();
         
         m_graph.m_form = ThreadedCPS;
         return true;
@@ -124,7 +123,7 @@ private:
     
     ALWAYS_INLINE Node* addPhiSilently(BasicBlock* block, const CodeOrigin& codeOrigin, VariableAccessData* variable)
     {
-        Node* result = m_graph.addNode(DontRefChildren, DontRefNode, SpecNone, Phi, codeOrigin, OpInfo(variable));
+        Node* result = m_graph.addNode(SpecNone, Phi, codeOrigin, OpInfo(variable));
         block->phis.append(result);
         return result;
     }

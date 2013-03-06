@@ -56,6 +56,7 @@ Graph::Graph(JSGlobalData& globalData, CodeBlock* codeBlock, unsigned osrEntryBy
     , m_fixpointState(BeforeFixpoint)
     , m_form(LoadStore)
     , m_unificationState(LocallyUnified)
+    , m_refCountState(EverythingIsLive)
 {
     ASSERT(m_profiledBlock);
 }
@@ -312,7 +313,7 @@ void Graph::dumpBlockHeader(PrintStream& out, const char* prefix, BlockIndex blo
 void Graph::dump(PrintStream& out)
 {
     dataLog("DFG for ", CodeBlockWithJITType(m_codeBlock, JITCode::DFGJIT), ":\n");
-    dataLog("  Fixpoint state: ", m_fixpointState, "; Form: ", m_form, "; Unification state: ", m_unificationState, "\n");
+    dataLog("  Fixpoint state: ", m_fixpointState, "; Form: ", m_form, "; Unification state: ", m_unificationState, "; Ref count state: ", m_refCountState, "\n");
     
     Node* lastNode = 0;
     for (size_t b = 0; b < m_blocks.size(); ++b) {
@@ -344,16 +345,6 @@ void Graph::dump(PrintStream& out)
         dumpOperands(block->variablesAtTail, out);
         out.print("\n");
     }
-}
-
-void Graph::refChildren(Node* op)
-{
-    DFG_NODE_DO_TO_CHILDREN(*this, op, ref);
-}
-
-void Graph::derefChildren(Node* op)
-{
-    DFG_NODE_DO_TO_CHILDREN(*this, op, deref);
 }
 
 void Graph::dethread()
@@ -388,67 +379,6 @@ void Graph::handleSuccessor(Vector<BlockIndex, 16>& worklist, BlockIndex blockIn
     }
     
     successor->m_predecessors.append(blockIndex);
-}
-
-void Graph::collectGarbage()
-{
-    SamplingRegion samplingRegion("DFG Garbage Collection");
-    
-    // First reset the counts to 0 for all nodes.
-    for (BlockIndex blockIndex = 0; blockIndex < m_blocks.size(); ++blockIndex) {
-        BasicBlock* block = m_blocks[blockIndex].get();
-        if (!block)
-            continue;
-        for (unsigned indexInBlock = block->size(); indexInBlock--;)
-            block->at(indexInBlock)->setRefCount(0);
-        for (unsigned phiIndex = block->phis.size(); phiIndex--;)
-            block->phis[phiIndex]->setRefCount(0);
-    }
-    
-    // Now find the roots: the nodes that are must-generate. Set their ref counts to
-    // 1 and put them on the worklist.
-    Vector<Node*, 128> worklist;
-    for (BlockIndex blockIndex = 0; blockIndex < m_blocks.size(); ++blockIndex) {
-        BasicBlock* block = m_blocks[blockIndex].get();
-        if (!block)
-            continue;
-        for (unsigned indexInBlock = block->size(); indexInBlock--;) {
-            Node* node = block->at(indexInBlock);
-            if (!(node->flags() & NodeMustGenerate))
-                continue;
-            node->setRefCount(1);
-            worklist.append(node);
-        }
-    }
-    
-    while (!worklist.isEmpty()) {
-        Node* node = worklist.last();
-        worklist.removeLast();
-        ASSERT(node->shouldGenerate()); // It should not be on the worklist unless it's ref'ed.
-        if (node->flags() & NodeHasVarArgs) {
-            for (unsigned childIdx = node->firstChild();
-                childIdx < node->firstChild() + node->numChildren();
-                ++childIdx) {
-                if (!m_varArgChildren[childIdx])
-                    continue;
-                Node* childNode = m_varArgChildren[childIdx].node();
-                if (childNode->postfixRef())
-                    continue;
-                worklist.append(childNode);
-            }
-        } else if (node->child1()) {
-            if (!node->child1()->postfixRef())
-                worklist.append(node->child1().node());
-            if (node->child2()) {
-                if (!node->child2()->postfixRef())
-                    worklist.append(node->child2().node());
-                if (node->child3()) {
-                    if (!node->child3()->postfixRef())
-                        worklist.append(node->child3().node());
-                }
-            }
-        }
-    }
 }
 
 void Graph::determineReachability()

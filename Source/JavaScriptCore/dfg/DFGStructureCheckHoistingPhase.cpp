@@ -77,9 +77,7 @@ public:
                         break;
                     VariableAccessData* variable = child->variableAccessData();
                     variable->vote(VoteStructureCheck);
-                    if (variable->isCaptured() || variable->structureCheckHoistingFailed())
-                        break;
-                    if (!isCellSpeculation(variable->prediction()))
+                    if (!shouldConsiderForHoisting(variable))
                         break;
                     noticeStructureCheck(variable, node->structureSet());
                     break;
@@ -118,9 +116,7 @@ public:
                             break;
                         VariableAccessData* variable = child->variableAccessData();
                         variable->vote(VoteOther);
-                        if (variable->isCaptured() || variable->structureCheckHoistingFailed())
-                            break;
-                        if (!isCellSpeculation(variable->prediction()))
+                        if (!shouldConsiderForHoisting(variable))
                             break;
                         noticeStructureCheck(variable, 0);
                     }
@@ -132,9 +128,7 @@ public:
                     // we're not hoisting a check that would contravene checks that are
                     // already being performed.
                     VariableAccessData* variable = node->variableAccessData();
-                    if (variable->isCaptured() || variable->structureCheckHoistingFailed())
-                        break;
-                    if (!isCellSpeculation(variable->prediction()))
+                    if (!shouldConsiderForHoisting(variable))
                         break;
                     Node* source = node->child1().node();
                     for (unsigned subIndexInBlock = 0; subIndexInBlock < block->size(); ++subIndexInBlock) {
@@ -288,11 +282,11 @@ public:
                     CodeOrigin codeOrigin = node->codeOrigin;
                     
                     Node* getLocal = insertionSet.insertNode(
-                        indexInBlock + 1, DontRefChildren, DontRefNode, variable->prediction(),
-                        GetLocal, codeOrigin, OpInfo(variable), Edge(node));
+                        indexInBlock + 1, variable->prediction(), GetLocal, codeOrigin,
+                        OpInfo(variable), Edge(node));
                     insertionSet.insertNode(
-                        indexInBlock + 1, RefChildren, DontRefNode, SpecNone, CheckStructure,
-                        codeOrigin, OpInfo(m_graph.addStructureSet(iter->value.m_structure)),
+                        indexInBlock + 1, SpecNone, CheckStructure, codeOrigin,
+                        OpInfo(m_graph.addStructureSet(iter->value.m_structure)),
                         Edge(getLocal, CellUse));
 
                     if (block->variablesAtTail.operand(variable->local()) == node)
@@ -320,14 +314,14 @@ public:
                     Edge child1 = node->child1();
                     
                     insertionSet.insertNode(
-                        indexInBlock, DontRefChildren, DontRefNode, SpecNone, SetLocal, codeOrigin,
-                        OpInfo(variable), child1);
+                        indexInBlock, SpecNone, SetLocal, codeOrigin, OpInfo(variable), child1);
 
                     // Use a ForwardCheckStructure to indicate that we should exit to the
                     // next bytecode instruction rather than reexecuting the current one.
                     insertionSet.insertNode(
-                        indexInBlock, RefChildren, DontRefNode, SpecNone, ForwardCheckStructure,
-                        codeOrigin, OpInfo(m_graph.addStructureSet(iter->value.m_structure)), Edge(child1.node(), CellUse));
+                        indexInBlock, SpecNone, ForwardCheckStructure, codeOrigin,
+                        OpInfo(m_graph.addStructureSet(iter->value.m_structure)),
+                        Edge(child1.node(), CellUse));
                     changed = true;
                     break;
                 }
@@ -343,6 +337,17 @@ public:
     }
 
 private:
+    bool shouldConsiderForHoisting(VariableAccessData* variable)
+    {
+        if (!variable->shouldUnboxIfPossible())
+            return false;
+        if (variable->structureCheckHoistingFailed())
+            return false;
+        if (!isCellSpeculation(variable->prediction()))
+            return false;
+        return true;
+    }
+    
     void noticeStructureCheck(VariableAccessData* variable, Structure* structure)
     {
         HashMap<VariableAccessData*, CheckData>::AddResult result =
