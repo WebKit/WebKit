@@ -114,6 +114,7 @@
 #include "StyleGeneratedImage.h"
 #include "StylePendingImage.h"
 #include "StylePropertySet.h"
+#include "StylePropertyShorthand.h"
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
@@ -2531,14 +2532,6 @@ inline bool isValidVisitedLinkProperty(CSSPropertyID id)
     case CSSPropertyWebkitTextEmphasisColor:
     case CSSPropertyWebkitTextFillColor:
     case CSSPropertyWebkitTextStrokeColor:
-    // Also allow shorthands so that inherit/initial still work.
-    case CSSPropertyBackground:
-    case CSSPropertyBorderLeft:
-    case CSSPropertyBorderRight:
-    case CSSPropertyBorderTop:
-    case CSSPropertyBorderBottom:
-    case CSSPropertyOutline:
-    case CSSPropertyWebkitColumnRule:
 #if ENABLE(SVG)
     case CSSPropertyFill:
     case CSSPropertyStroke:
@@ -2772,6 +2765,9 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     }
 #endif
 
+    // CSS variables don't resolve shorthands at parsing time, so this should be *after* handling variables.
+    ASSERT_WITH_MESSAGE(!isExpandedShorthand(id), "Shorthand property id = %d wasn't expanded at parsing time", id);
+
     State& state = m_state;
     bool isInherit = state.parentNode() && value->isInheritedValue();
     bool isInitial = value->isInitialValue() || (!state.parentNode() && value->isInheritedValue());
@@ -2815,8 +2811,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     float zoomFactor = state.style()->effectiveZoom();
 
     // What follows is a list that maps the CSS properties into their corresponding front-end
-    // RenderStyle values. Shorthands (e.g. border, background) occur in this list as well and
-    // are only hit when mapping "inherit" or "initial" into front-end values.
+    // RenderStyle values.
     switch (id) {
     // lists
     case CSSPropertyContent:
@@ -3047,22 +3042,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         }
         return;
     }
-// shorthand properties
-    case CSSPropertyBackground:
-        if (isInitial) {
-            state.style()->clearBackgroundLayers();
-            state.style()->setBackgroundColor(Color());
-        } else if (isInherit) {
-            state.style()->inheritBackgroundLayers(*state.parentStyle()->backgroundLayers());
-            state.style()->setBackgroundColor(state.parentStyle()->backgroundColor());
-        }
-        return;
-    case CSSPropertyWebkitMask:
-        if (isInitial)
-            state.style()->clearMaskLayers();
-        else if (isInherit)
-            state.style()->inheritMaskLayers(*state.parentStyle()->maskLayers());
-        return;
+    // Shorthand properties.
     case CSSPropertyFont:
         if (isInherit) {
             FontDescription fontDescription = state.parentStyle()->fontDescription();
@@ -3116,6 +3096,50 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
             applyProperty(CSSPropertyFontFamily, font->family.get());
         }
         return;
+
+    case CSSPropertyBackground:
+    case CSSPropertyBackgroundPosition:
+    case CSSPropertyBackgroundRepeat:
+    case CSSPropertyBorder:
+    case CSSPropertyBorderBottom:
+    case CSSPropertyBorderColor:
+    case CSSPropertyBorderImage:
+    case CSSPropertyBorderLeft:
+    case CSSPropertyBorderRadius:
+    case CSSPropertyBorderRight:
+    case CSSPropertyBorderSpacing:
+    case CSSPropertyBorderStyle:
+    case CSSPropertyBorderTop:
+    case CSSPropertyBorderWidth:
+    case CSSPropertyListStyle:
+    case CSSPropertyMargin:
+    case CSSPropertyOutline:
+    case CSSPropertyOverflow:
+    case CSSPropertyPadding:
+    case CSSPropertyTransition:
+    case CSSPropertyWebkitAnimation:
+    case CSSPropertyWebkitBorderAfter:
+    case CSSPropertyWebkitBorderBefore:
+    case CSSPropertyWebkitBorderEnd:
+    case CSSPropertyWebkitBorderStart:
+    case CSSPropertyWebkitBorderRadius:
+    case CSSPropertyWebkitColumns:
+    case CSSPropertyWebkitColumnRule:
+    case CSSPropertyWebkitFlex:
+    case CSSPropertyWebkitFlexFlow:
+    case CSSPropertyWebkitMarginCollapse:
+    case CSSPropertyWebkitMarquee:
+    case CSSPropertyWebkitMask:
+    case CSSPropertyWebkitMaskPosition:
+    case CSSPropertyWebkitMaskRepeat:
+    case CSSPropertyWebkitTextEmphasis:
+    case CSSPropertyWebkitTextStroke:
+    case CSSPropertyWebkitTransition:
+    case CSSPropertyWebkitTransformOrigin:
+    case CSSPropertyWebkitWrap:
+        ASSERT(isExpandedShorthand(id));
+        ASSERT_NOT_REACHED();
+        break;
 
     // CSS3 Properties
     case CSSPropertyTextShadow:
@@ -3182,23 +3206,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertySrc: // Only used in @font-face rules.
         return;
     case CSSPropertyUnicodeRange: // Only used in @font-face rules.
-        return;
-    case CSSPropertyWebkitColumnRule:
-        if (isInherit) {
-            state.style()->setColumnRuleColor(state.parentStyle()->columnRuleColor().isValid() ? state.parentStyle()->columnRuleColor() : state.parentStyle()->color());
-            state.style()->setColumnRuleStyle(state.parentStyle()->columnRuleStyle());
-            state.style()->setColumnRuleWidth(state.parentStyle()->columnRuleWidth());
-        } else if (isInitial)
-            state.style()->resetColumnRule();
-        return;
-    case CSSPropertyWebkitMarquee:
-        if (!isInherit)
-            return;
-        state.style()->setMarqueeDirection(state.parentStyle()->marqueeDirection());
-        state.style()->setMarqueeIncrement(state.parentStyle()->marqueeIncrement());
-        state.style()->setMarqueeSpeed(state.parentStyle()->marqueeSpeed());
-        state.style()->setMarqueeLoopCount(state.parentStyle()->marqueeLoopCount());
-        state.style()->setMarqueeBehavior(state.parentStyle()->marqueeBehavior());
         return;
     case CSSPropertyWebkitMarqueeRepetition: {
         HANDLE_INHERIT_AND_INITIAL(marqueeLoopCount, MarqueeLoopCount)
@@ -3381,18 +3388,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
             state.style()->setPerspective(perspectiveValue);
         return;
     }
-    case CSSPropertyWebkitAnimation:
-        if (isInitial)
-            state.style()->clearAnimations();
-        else if (isInherit)
-            state.style()->inheritAnimations(state.parentStyle()->animations());
-        return;
-    case CSSPropertyWebkitTransition:
-        if (isInitial)
-            state.style()->clearTransitions();
-        else if (isInherit)
-            state.style()->inheritTransitions(state.parentStyle()->transitions());
-        return;
 #if ENABLE(TOUCH_EVENTS)
     case CSSPropertyWebkitTapHighlightColor: {
         HANDLE_INHERIT_AND_INITIAL(tapHighlightColor, TapHighlightColor);
@@ -3416,19 +3411,15 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyInvalid:
         return;
     // Directional properties are resolved by resolveDirectionAwareProperty() before the switch.
-    case CSSPropertyWebkitBorderEnd:
     case CSSPropertyWebkitBorderEndColor:
     case CSSPropertyWebkitBorderEndStyle:
     case CSSPropertyWebkitBorderEndWidth:
-    case CSSPropertyWebkitBorderStart:
     case CSSPropertyWebkitBorderStartColor:
     case CSSPropertyWebkitBorderStartStyle:
     case CSSPropertyWebkitBorderStartWidth:
-    case CSSPropertyWebkitBorderBefore:
     case CSSPropertyWebkitBorderBeforeColor:
     case CSSPropertyWebkitBorderBeforeStyle:
     case CSSPropertyWebkitBorderBeforeWidth:
-    case CSSPropertyWebkitBorderAfter:
     case CSSPropertyWebkitBorderAfterColor:
     case CSSPropertyWebkitBorderAfterStyle:
     case CSSPropertyWebkitBorderAfterWidth:
@@ -3436,7 +3427,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitMarginStart:
     case CSSPropertyWebkitMarginBefore:
     case CSSPropertyWebkitMarginAfter:
-    case CSSPropertyWebkitMarginCollapse:
     case CSSPropertyWebkitMarginBeforeCollapse:
     case CSSPropertyWebkitMarginTopCollapse:
     case CSSPropertyWebkitMarginAfterCollapse:
@@ -3475,8 +3465,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyTextUnderlineWidth:
     case CSSPropertyWebkitFontSizeDelta:
     case CSSPropertyWebkitTextDecorationsInEffect:
-    case CSSPropertyWebkitTextStroke:
-    case CSSPropertyWebkitTextEmphasis:
         return;
 
     // CSS Text Layout Module Level 3: Vertical writing support
@@ -3612,46 +3600,33 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyBackgroundColor:
     case CSSPropertyBackgroundImage:
     case CSSPropertyBackgroundOrigin:
-    case CSSPropertyBackgroundPosition:
     case CSSPropertyBackgroundPositionX:
     case CSSPropertyBackgroundPositionY:
-    case CSSPropertyBackgroundRepeat:
     case CSSPropertyBackgroundRepeatX:
     case CSSPropertyBackgroundRepeatY:
     case CSSPropertyBackgroundSize:
-    case CSSPropertyBorder:
-    case CSSPropertyBorderBottom:
     case CSSPropertyBorderBottomColor:
     case CSSPropertyBorderBottomLeftRadius:
     case CSSPropertyBorderBottomRightRadius:
     case CSSPropertyBorderBottomStyle:
     case CSSPropertyBorderBottomWidth:
     case CSSPropertyBorderCollapse:
-    case CSSPropertyBorderColor:
-    case CSSPropertyBorderImage:
     case CSSPropertyBorderImageOutset:
     case CSSPropertyBorderImageRepeat:
     case CSSPropertyBorderImageSlice:
     case CSSPropertyBorderImageSource:
     case CSSPropertyBorderImageWidth:
-    case CSSPropertyBorderLeft:
     case CSSPropertyBorderLeftColor:
     case CSSPropertyBorderLeftStyle:
     case CSSPropertyBorderLeftWidth:
-    case CSSPropertyBorderRadius:
-    case CSSPropertyBorderRight:
     case CSSPropertyBorderRightColor:
     case CSSPropertyBorderRightStyle:
     case CSSPropertyBorderRightWidth:
-    case CSSPropertyBorderSpacing:
-    case CSSPropertyBorderStyle:
-    case CSSPropertyBorderTop:
     case CSSPropertyBorderTopColor:
     case CSSPropertyBorderTopLeftRadius:
     case CSSPropertyBorderTopRightRadius:
     case CSSPropertyBorderTopStyle:
     case CSSPropertyBorderTopWidth:
-    case CSSPropertyBorderWidth:
     case CSSPropertyBottom:
     case CSSPropertyBoxSizing:
     case CSSPropertyCaptionSide:
@@ -3680,11 +3655,9 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyLeft:
     case CSSPropertyLetterSpacing:
     case CSSPropertyLineHeight:
-    case CSSPropertyListStyle:
     case CSSPropertyListStyleImage:
     case CSSPropertyListStylePosition:
     case CSSPropertyListStyleType:
-    case CSSPropertyMargin:
     case CSSPropertyMarginBottom:
     case CSSPropertyMarginLeft:
     case CSSPropertyMarginRight:
@@ -3695,16 +3668,13 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyMinWidth:
     case CSSPropertyOpacity:
     case CSSPropertyOrphans:
-    case CSSPropertyOutline:
     case CSSPropertyOutlineColor:
     case CSSPropertyOutlineOffset:
     case CSSPropertyOutlineStyle:
     case CSSPropertyOutlineWidth:
-    case CSSPropertyOverflow:
     case CSSPropertyOverflowWrap:
     case CSSPropertyOverflowX:
     case CSSPropertyOverflowY:
-    case CSSPropertyPadding:
     case CSSPropertyPaddingBottom:
     case CSSPropertyPaddingLeft:
     case CSSPropertyPaddingRight:
@@ -3751,7 +3721,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitBorderFit:
     case CSSPropertyWebkitBorderHorizontalSpacing:
     case CSSPropertyWebkitBorderImage:
-    case CSSPropertyWebkitBorderRadius:
     case CSSPropertyWebkitBorderVerticalSpacing:
     case CSSPropertyWebkitBoxAlign:
 #if ENABLE(CSS_BOX_DECORATION_BREAK)
@@ -3775,16 +3744,13 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitColumnRuleColor:
     case CSSPropertyWebkitColumnRuleStyle:
     case CSSPropertyWebkitColumnRuleWidth:
-    case CSSPropertyWebkitColumns:
     case CSSPropertyWebkitColumnSpan:
     case CSSPropertyWebkitColumnWidth:
     case CSSPropertyWebkitAlignContent:
     case CSSPropertyWebkitAlignItems:
     case CSSPropertyWebkitAlignSelf:
-    case CSSPropertyWebkitFlex:
     case CSSPropertyWebkitFlexBasis:
     case CSSPropertyWebkitFlexDirection:
-    case CSSPropertyWebkitFlexFlow:
     case CSSPropertyWebkitFlexGrow:
     case CSSPropertyWebkitFlexShrink:
     case CSSPropertyWebkitFlexWrap:
@@ -3820,10 +3786,8 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitMaskComposite:
     case CSSPropertyWebkitMaskImage:
     case CSSPropertyWebkitMaskOrigin:
-    case CSSPropertyWebkitMaskPosition:
     case CSSPropertyWebkitMaskPositionX:
     case CSSPropertyWebkitMaskPositionY:
-    case CSSPropertyWebkitMaskRepeat:
     case CSSPropertyWebkitMaskRepeatX:
     case CSSPropertyWebkitMaskRepeatY:
     case CSSPropertyWebkitMaskSize:
@@ -3852,7 +3816,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitTextFillColor:
     case CSSPropertyWebkitTextSecurity:
     case CSSPropertyWebkitTextStrokeColor:
-    case CSSPropertyWebkitTransformOrigin:
     case CSSPropertyWebkitTransformOriginX:
     case CSSPropertyWebkitTransformOriginY:
     case CSSPropertyWebkitTransformOriginZ:
@@ -3866,7 +3829,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitUserSelect:
     case CSSPropertyWebkitClipPath:
 #if ENABLE(CSS_EXCLUSIONS)
-    case CSSPropertyWebkitWrap:
     case CSSPropertyWebkitWrapFlow:
     case CSSPropertyWebkitShapeMargin:
     case CSSPropertyWebkitShapePadding:

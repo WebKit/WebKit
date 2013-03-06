@@ -26,6 +26,7 @@
 #define StyleBuilder_h
 
 #include "CSSPropertyNames.h"
+#include "StylePropertyShorthand.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -82,6 +83,7 @@ private:
     {
         ASSERT(valid(property));
         ASSERT(!propertyHandler(property).isValid());
+        ASSERT_WITH_MESSAGE(!isExpandedShorthand(property), "Shorthand property id = %d shouldn't be inserted into StyleBuilder. Shorthands should be expanded at parsing time.", property);
         m_propertyMap[index(property)] = handler;
     }
 
@@ -90,6 +92,8 @@ private:
         ASSERT(valid(newProperty));
         ASSERT(valid(equivalentProperty));
         ASSERT(!propertyHandler(newProperty).isValid());
+        ASSERT_WITH_MESSAGE(!isExpandedShorthand(newProperty), "Shorthand property id = %d shouldn't be inserted into StyleBuilder. Shorthands should be expanded at parsing time.", newProperty);
+        ASSERT_WITH_MESSAGE(!isExpandedShorthand(equivalentProperty), "Shorthand property id = %d shouldn't be inserted into StyleBuilder. Shorthands should be expanded at parsing time.", equivalentProperty);
         m_propertyMap[index(newProperty)] = m_propertyMap[index(equivalentProperty)];
     }
 
