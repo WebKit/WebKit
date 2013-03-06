@@ -1,3 +1,18 @@
+2013-03-06  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Illegal narrowing in tst_qwebhistory
+        https://bugs.webkit.org/show_bug.cgi?id=111562
+
+        Reviewed by Jocelyn Turcotte.
+
+        The bytearray in tst_QWebHistory::restoreIncompatibleVersion1 has integer
+        values higher than 127 assigned into an array of signed chars. This causes
+        compiler errors in C++11 since it assigns constants (>127) that does not
+        fit the destination (-128 to 127)
+
+        * tests/qwebhistory/tst_qwebhistory.cpp:
+        (tst_QWebHistory::restoreIncompatibleVersion1):
+
 2013-03-03  Adam Barth  <abarth@webkit.org>
 
         Unreviewed attempted build fix. Adds back some includes removed in
