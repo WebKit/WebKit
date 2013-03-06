@@ -85,6 +85,7 @@ public:
     // the font's file name so refers to a single face.
     // -------------------------------------------------------------------------
     SkFontID uniqueID() const;
+    SkTypeface* typeface() const { return m_typeface; }
 
     unsigned hash() const;
     float size() const { return m_textSize; }

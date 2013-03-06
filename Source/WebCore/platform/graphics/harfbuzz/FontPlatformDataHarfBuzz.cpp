@@ -35,7 +35,6 @@
 #include "HarfBuzzFace.h"
 #include "NotImplemented.h"
 #include "SkAdvancedTypefaceMetrics.h"
-#include "SkFontHost.h"
 #include "SkPaint.h"
 #include "SkTypeface.h"
 
@@ -171,7 +170,7 @@ int FontPlatformData::emSizeInFontUnits() const
 #if OS(ANDROID)
     // Android doesn't currently support Skia's getAdvancedTypefaceMetrics(),
     // but it has access to another method to replace this functionality.
-    m_emSizeInFontUnits = SkFontHost::GetUnitsPerEm(m_typeface->uniqueID());
+    m_emSizeInFontUnits = m_typeface->getUnitsPerEm();
 #else
     SkAdvancedTypefaceMetrics* metrics = m_typeface->getAdvancedTypefaceMetrics(SkAdvancedTypefaceMetrics::kNo_PerGlyphInfo);
     m_emSizeInFontUnits = metrics->fEmSize;
@@ -335,10 +334,10 @@ PassRefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
     RefPtr<SharedBuffer> buffer;
 
     SkFontTableTag tag = reverseByteOrder(table);
-    const size_t tableSize = SkFontHost::GetTableSize(uniqueID(), tag);
+    const size_t tableSize = m_typeface->getTableSize(tag);
     if (tableSize) {
         Vector<char> tableBuffer(tableSize);
-        SkFontHost::GetTableData(uniqueID(), tag, 0, tableSize, &tableBuffer[0]);
+        m_typeface->getTableData(tag, 0, tableSize, &tableBuffer[0]);
         buffer = SharedBuffer::adoptVector(tableBuffer);
     }
     return buffer.release();

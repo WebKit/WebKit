@@ -36,7 +36,6 @@
 #include "FontCache.h"
 #include "FontDescription.h"
 #include "Logging.h"
-#include "SkFontHost.h"
 #include "SkPaint.h"
 #include "SkTime.h"
 #include "SkTypeface.h"
@@ -64,18 +63,18 @@ void SimpleFontData::platformInit()
 
     m_platformData.setupPaint(&paint);
     paint.getFontMetrics(&metrics);
-    const SkFontID fontID = m_platformData.uniqueID();
+    SkTypeface* face = paint.getTypeface();
 
     static const uint32_t vdmxTag = SkSetFourByteTag('V', 'D', 'M', 'X');
     int pixelSize = m_platformData.size() + 0.5;
     int vdmxAscent, vdmxDescent;
     bool isVDMXValid = false;
 
-    size_t vdmxSize = SkFontHost::GetTableSize(fontID, vdmxTag);
+    size_t vdmxSize = face->getTableSize(vdmxTag);
     if (vdmxSize && vdmxSize < maxVDMXTableSize) {
         uint8_t* vdmxTable = (uint8_t*) fastMalloc(vdmxSize);
         if (vdmxTable
-            && SkFontHost::GetTableData(fontID, vdmxTag, 0, vdmxSize, vdmxTable) == vdmxSize
+            && face->getTableData(vdmxTag, 0, vdmxSize, vdmxTable) == vdmxSize
             && parseVDMX(&vdmxAscent, &vdmxDescent, vdmxTable, vdmxSize, pixelSize))
             isVDMXValid = true;
         fastFree(vdmxTable);
@@ -126,8 +125,8 @@ void SimpleFontData::platformInit()
     if (platformData().orientation() == Vertical && !isTextOrientationFallback()) {
         static const uint32_t vheaTag = SkSetFourByteTag('v', 'h', 'e', 'a');
         static const uint32_t vorgTag = SkSetFourByteTag('V', 'O', 'R', 'G');
-        size_t vheaSize = SkFontHost::GetTableSize(fontID, vheaTag);
-        size_t vorgSize = SkFontHost::GetTableSize(fontID, vorgTag);
+        size_t vheaSize = face->getTableSize(vheaTag);
+        size_t vorgSize = face->getTableSize(vorgTag);
         if ((vheaSize > 0) || (vorgSize > 0))
             m_hasVerticalGlyphs = true;
     }
@@ -161,7 +160,7 @@ void SimpleFontData::platformInit()
         }
     }
 
-    if (int unitsPerEm = paint.getTypeface()->getUnitsPerEm())
+    if (int unitsPerEm = face->getUnitsPerEm())
         m_fontMetrics.setUnitsPerEm(unitsPerEm);
 }
 

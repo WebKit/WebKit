@@ -35,11 +35,11 @@
 #include "GlyphBuffer.h"
 #include "HarfBuzzShaper.h"
 #include "SimpleFontData.h"
-#include "SkFontHost.h"
 #include "SkPaint.h"
 #include "SkPath.h"
 #include "SkPoint.h"
 #include "SkRect.h"
+#include "SkTypeface.h"
 #include "SkUtils.h"
 
 #include "hb.h"
@@ -144,16 +144,16 @@ static hb_font_funcs_t* harfBuzzSkiaGetFontFuncs()
 
 static hb_blob_t* harfBuzzSkiaGetTable(hb_face_t* face, hb_tag_t tag, void* userData)
 {
-    SkFontID uniqueID = static_cast<SkFontID>(reinterpret_cast<uint64_t>(userData));
+    SkTypeface* typeface = reinterpret_cast<SkTypeface*>(userData);
 
-    const size_t tableSize = SkFontHost::GetTableSize(uniqueID, tag);
+    const size_t tableSize = typeface->getTableSize(tag);
     if (!tableSize)
         return 0;
 
     char* buffer = reinterpret_cast<char*>(fastMalloc(tableSize));
     if (!buffer)
         return 0;
-    size_t actualSize = SkFontHost::GetTableData(uniqueID, tag, 0, tableSize, buffer);
+    size_t actualSize = typeface->getTableData(tag, 0, tableSize, buffer);
     if (tableSize != actualSize) {
         fastFree(buffer);
         return 0;
@@ -170,7 +170,7 @@ static void destroyHarfBuzzFontData(void* userData)
 
 hb_face_t* HarfBuzzFace::createFace()
 {
-    hb_face_t* face = hb_face_create_for_tables(harfBuzzSkiaGetTable, reinterpret_cast<void*>(m_platformData->uniqueID()), 0);
+    hb_face_t* face = hb_face_create_for_tables(harfBuzzSkiaGetTable, m_platformData->typeface(), 0);
     ASSERT(face);
     return face;
 }
