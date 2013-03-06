@@ -1,3 +1,13 @@
+2013-03-06  Paweł Forysiuk  <tuxator@o2.pl>
+
+        Typo in inline function in ByteOrder.h
+        https://bugs.webkit.org/show_bug.cgi?id=111473
+
+        Reviewed by Benjamin Poulain.
+
+        * wtf/ByteOrder.h:
+        (ntohs):
+
 2013-03-05  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Build break with latest EFL libraries
