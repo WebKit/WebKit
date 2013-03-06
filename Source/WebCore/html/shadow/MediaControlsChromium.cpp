@@ -74,63 +74,63 @@ bool MediaControlsChromium::initializeControls(Document* document)
 
     RefPtr<MediaControlPlayButtonElement> playButton = MediaControlPlayButtonElement::create(document);
     m_playButton = playButton.get();
-    panel->appendChild(playButton.release(), ec, true);
+    panel->appendChild(playButton.release(), ec, AttachLazily);
     if (ec)
         return false;
 
     RefPtr<MediaControlTimelineElement> timeline = MediaControlTimelineElement::create(document, this);
     m_timeline = timeline.get();
-    panel->appendChild(timeline.release(), ec, true);
+    panel->appendChild(timeline.release(), ec, AttachLazily);
     if (ec)
         return false;
 
     RefPtr<MediaControlCurrentTimeDisplayElement> currentTimeDisplay = MediaControlCurrentTimeDisplayElement::create(document);
     m_currentTimeDisplay = currentTimeDisplay.get();
     m_currentTimeDisplay->hide();
-    panel->appendChild(currentTimeDisplay.release(), ec, true);
+    panel->appendChild(currentTimeDisplay.release(), ec, AttachLazily);
     if (ec)
         return false;
 
     RefPtr<MediaControlTimeRemainingDisplayElement> durationDisplay = MediaControlTimeRemainingDisplayElement::create(document);
     m_durationDisplay = durationDisplay.get();
-    panel->appendChild(durationDisplay.release(), ec, true);
+    panel->appendChild(durationDisplay.release(), ec, AttachLazily);
     if (ec)
         return false;
 
     RefPtr<MediaControlPanelMuteButtonElement> panelMuteButton = MediaControlPanelMuteButtonElement::create(document, this);
     m_panelMuteButton = panelMuteButton.get();
-    panel->appendChild(panelMuteButton.release(), ec, true);
+    panel->appendChild(panelMuteButton.release(), ec, AttachLazily);
     if (ec)
         return false;
 
     RefPtr<MediaControlPanelVolumeSliderElement> slider = MediaControlPanelVolumeSliderElement::create(document);
     m_volumeSlider = slider.get();
     m_volumeSlider->setClearMutedOnUserInteraction(true);
-    panel->appendChild(slider.release(), ec, true);
+    panel->appendChild(slider.release(), ec, AttachLazily);
     if (ec)
         return false;
 
     if (document->page()->theme()->supportsClosedCaptioning()) {
         RefPtr<MediaControlToggleClosedCaptionsButtonElement> toggleClosedCaptionsButton = MediaControlToggleClosedCaptionsButtonElement::create(document, this);
         m_toggleClosedCaptionsButton = toggleClosedCaptionsButton.get();
-        panel->appendChild(toggleClosedCaptionsButton.release(), ec, true);
+        panel->appendChild(toggleClosedCaptionsButton.release(), ec, AttachLazily);
         if (ec)
             return false;
     }
 
     RefPtr<MediaControlFullscreenButtonElement> fullscreenButton = MediaControlFullscreenButtonElement::create(document);
     m_fullScreenButton = fullscreenButton.get();
-    panel->appendChild(fullscreenButton.release(), ec, true);
+    panel->appendChild(fullscreenButton.release(), ec, AttachLazily);
     if (ec)
         return false;
 
     m_panel = panel.get();
-    enclosure->appendChild(panel.release(), ec, true);
+    enclosure->appendChild(panel.release(), ec, AttachLazily);
     if (ec)
         return false;
 
     m_enclosure = enclosure.get();
-    appendChild(enclosure.release(), ec, true);
+    appendChild(enclosure.release(), ec, AttachLazily);
     if (ec)
         return false;
 
@@ -215,7 +215,7 @@ void MediaControlsChromium::createTextTrackDisplay()
 
     // Insert it before the first controller element so it always displays behind the controls.
     // In the Chromium case, that's the enclosure element.
-    insertBefore(textDisplayContainer, m_enclosure, ASSERT_NO_EXCEPTION, true);
+    insertBefore(textDisplayContainer, m_enclosure, ASSERT_NO_EXCEPTION, AttachLazily);
     textDisplayContainer->createSubtrees(document());
     textDisplayContainer.release();
 }

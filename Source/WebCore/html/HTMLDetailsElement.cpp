@@ -112,8 +112,8 @@ RenderObject* HTMLDetailsElement::createRenderer(RenderArena* arena, RenderStyle
 
 void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
-    root->appendChild(DetailsSummaryElement::create(document()), ASSERT_NO_EXCEPTION, true);
-    root->appendChild(DetailsContentElement::create(document()), ASSERT_NO_EXCEPTION, true);
+    root->appendChild(DetailsSummaryElement::create(document()), ASSERT_NO_EXCEPTION, AttachLazily);
+    root->appendChild(DetailsContentElement::create(document()), ASSERT_NO_EXCEPTION, AttachLazily);
 }
 
 Element* HTMLDetailsElement::findMainSummary() const

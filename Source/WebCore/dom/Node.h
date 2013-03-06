@@ -129,6 +129,11 @@ private:
     RenderObject* m_renderer;
 };
 
+enum AttachBehavior {
+    AttachNow,
+    AttachLazily,
+};
+
 class Node : public EventTarget, public ScriptWrappable, public TreeShared<Node> {
     friend class Document;
     friend class TreeScope;
@@ -197,10 +202,10 @@ public:
     // These should all actually return a node, but this is only important for language bindings,
     // which will already know and hold a ref on the right node to return. Returning bool allows
     // these methods to be more efficient since they don't need to return a ref
-    bool insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode&, bool shouldLazyAttach = false);
-    bool replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode&, bool shouldLazyAttach = false);
+    bool insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode&, AttachBehavior = AttachNow);
+    bool replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode&, AttachBehavior = AttachNow);
     bool removeChild(Node* child, ExceptionCode&);
-    bool appendChild(PassRefPtr<Node> newChild, ExceptionCode&, bool shouldLazyAttach = false);
+    bool appendChild(PassRefPtr<Node> newChild, ExceptionCode&, AttachBehavior = AttachNow);
 
     void remove(ExceptionCode&);
     bool hasChildNodes() const { return firstChild(); }

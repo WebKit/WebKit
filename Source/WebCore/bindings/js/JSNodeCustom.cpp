@@ -145,7 +145,7 @@ JSValue JSNode::insertBefore(ExecState* exec)
 {
     Node* imp = static_cast<Node*>(impl());
     ExceptionCode ec = 0;
-    bool ok = imp->insertBefore(toNode(exec->argument(0)), toNode(exec->argument(1)), ec, true);
+    bool ok = imp->insertBefore(toNode(exec->argument(0)), toNode(exec->argument(1)), ec, AttachLazily);
     setDOMException(exec, ec);
     if (ok)
         return exec->argument(0);
@@ -156,7 +156,7 @@ JSValue JSNode::replaceChild(ExecState* exec)
 {
     Node* imp = static_cast<Node*>(impl());
     ExceptionCode ec = 0;
-    bool ok = imp->replaceChild(toNode(exec->argument(0)), toNode(exec->argument(1)), ec, true);
+    bool ok = imp->replaceChild(toNode(exec->argument(0)), toNode(exec->argument(1)), ec, AttachLazily);
     setDOMException(exec, ec);
     if (ok)
         return exec->argument(1);
@@ -178,7 +178,7 @@ JSValue JSNode::appendChild(ExecState* exec)
 {
     Node* imp = static_cast<Node*>(impl());
     ExceptionCode ec = 0;
-    bool ok = imp->appendChild(toNode(exec->argument(0)), ec, true);
+    bool ok = imp->appendChild(toNode(exec->argument(0)), ec, AttachLazily);
     setDOMException(exec, ec);
     if (ok)
         return exec->argument(0);

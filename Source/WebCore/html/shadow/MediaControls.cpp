@@ -381,7 +381,7 @@ void MediaControls::createTextTrackDisplay()
         m_textDisplayContainer->setMediaController(m_mediaController);
 
     // Insert it before the first controller element so it always displays behind the controls.
-    insertBefore(textDisplayContainer, m_panel, IGNORE_EXCEPTION, true);
+    insertBefore(textDisplayContainer, m_panel, IGNORE_EXCEPTION, AttachLazily);
     textDisplayContainer->createSubtrees(document());
     textDisplayContainer.release();
 }

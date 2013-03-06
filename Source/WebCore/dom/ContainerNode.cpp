@@ -66,7 +66,7 @@ namespace WebCore {
 
 static void dispatchChildInsertionEvents(Node*);
 static void dispatchChildRemovalEvents(Node*);
-static void updateTreeAfterInsertion(ContainerNode*, Node*, bool shouldLazyAttach);
+static void updateTreeAfterInsertion(ContainerNode*, Node*, AttachBehavior);
 
 typedef pair<RefPtr<Node>, unsigned> CallbackParameters;
 typedef pair<NodeCallback, CallbackParameters> CallbackInfo;
@@ -242,7 +242,7 @@ static inline bool checkReplaceChild(ContainerNode* newParent, Node* newChild, N
     return true;
 }
 
-bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode& ec, bool shouldLazyAttach)
+bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode& ec, AttachBehavior attachBehavior)
 {
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
@@ -254,7 +254,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
 
     // insertBefore(node, 0) is equivalent to appendChild(node)
     if (!refChild)
-        return appendChild(newChild, ec, shouldLazyAttach);
+        return appendChild(newChild, ec, attachBehavior);
 
     // Make sure adding the new child is OK.
     if (!checkAddChild(this, newChild.get(), ec))
@@ -301,7 +301,7 @@ bool ContainerNode::insertBefore(PassRefPtr<Node> newChild, Node* refChild, Exce
 
         insertBeforeCommon(next.get(), child);
 
-        updateTreeAfterInsertion(this, child, shouldLazyAttach);
+        updateTreeAfterInsertion(this, child, attachBehavior);
     }
 
     dispatchSubtreeModifiedEvent();
@@ -360,7 +360,7 @@ void ContainerNode::parserInsertBefore(PassRefPtr<Node> newChild, Node* nextChil
     ChildNodeInsertionNotifier(this).notify(newChild.get());
 }
 
-bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode& ec, bool shouldLazyAttach)
+bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode& ec, AttachBehavior attachBehavior)
 {
     // Check that this node is not "floating".
     // If it is, it can be deleted as a side effect of sending mutation events.
@@ -440,7 +440,7 @@ bool ContainerNode::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, Exce
                 appendChildToContainer(child, this);
         }
 
-        updateTreeAfterInsertion(this, child, shouldLazyAttach);
+        updateTreeAfterInsertion(this, child, attachBehavior);
     }
 
     dispatchSubtreeModifiedEvent();
@@ -654,7 +654,7 @@ void ContainerNode::removeChildren()
     dispatchSubtreeModifiedEvent();
 }
 
-bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bool shouldLazyAttach)
+bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, AttachBehavior attachBehavior)
 {
     RefPtr<ContainerNode> protect(this);
 
@@ -704,7 +704,7 @@ bool ContainerNode::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bo
             appendChildToContainer(child, this);
         }
 
-        updateTreeAfterInsertion(this, child, shouldLazyAttach);
+        updateTreeAfterInsertion(this, child, attachBehavior);
     }
 
     dispatchSubtreeModifiedEvent();
@@ -1144,7 +1144,7 @@ static void dispatchChildRemovalEvents(Node* child)
     }
 }
 
-static void updateTreeAfterInsertion(ContainerNode* parent, Node* child, bool shouldLazyAttach)
+static void updateTreeAfterInsertion(ContainerNode* parent, Node* child, AttachBehavior attachBehavior)
 {
     ASSERT(parent->refCount());
     ASSERT(child->refCount());
@@ -1158,7 +1158,7 @@ static void updateTreeAfterInsertion(ContainerNode* parent, Node* child, bool sh
     // FIXME: Attachment should be the first operation in this function, but some code
     // (for example, HTMLFormControlElement's autofocus support) requires this ordering.
     if (parent->attached() && !child->attached() && child->parentNode() == parent) {
-        if (shouldLazyAttach)
+        if (attachBehavior == AttachLazily)
             child->lazyAttach();
         else
             child->attach();

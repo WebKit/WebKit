@@ -67,69 +67,69 @@ bool MediaControlsGtk::initializeControls(Document* document)
 
     RefPtr<MediaControlPlayButtonElement> playButton = MediaControlPlayButtonElement::create(document);
     m_playButton = playButton.get();
-    panel->appendChild(playButton.release(), exceptionCode, true);
+    panel->appendChild(playButton.release(), exceptionCode, AttachLazily);
     if (exceptionCode)
         return false;
 
     RefPtr<MediaControlTimelineElement> timeline = MediaControlTimelineElement::create(document, this);
     m_timeline = timeline.get();
-    panel->appendChild(timeline.release(), exceptionCode, true);
+    panel->appendChild(timeline.release(), exceptionCode, AttachLazily);
     if (exceptionCode)
         return false;
 
     RefPtr<MediaControlCurrentTimeDisplayElement> currentTimeDisplay = MediaControlCurrentTimeDisplayElement::create(document);
     m_currentTimeDisplay = currentTimeDisplay.get();
     m_currentTimeDisplay->hide();
-    panel->appendChild(currentTimeDisplay.release(), exceptionCode, true);
+    panel->appendChild(currentTimeDisplay.release(), exceptionCode, AttachLazily);
     if (exceptionCode)
         return false;
 
     RefPtr<MediaControlTimeRemainingDisplayElement> durationDisplay = MediaControlTimeRemainingDisplayElement::create(document);
     m_durationDisplay = durationDisplay.get();
-    panel->appendChild(durationDisplay.release(), exceptionCode, true);
+    panel->appendChild(durationDisplay.release(), exceptionCode, AttachLazily);
     if (exceptionCode)
         return false;
 
     if (document->page()->theme()->supportsClosedCaptioning()) {
         RefPtr<MediaControlToggleClosedCaptionsButtonElement> toggleClosedCaptionsButton = MediaControlToggleClosedCaptionsButtonElement::create(document, this);
         m_toggleClosedCaptionsButton = toggleClosedCaptionsButton.get();
-        panel->appendChild(toggleClosedCaptionsButton.release(), exceptionCode, true);
+        panel->appendChild(toggleClosedCaptionsButton.release(), exceptionCode, AttachLazily);
         if (exceptionCode)
             return false;
     }
 
     RefPtr<MediaControlFullscreenButtonElement> fullscreenButton = MediaControlFullscreenButtonElement::create(document);
     m_fullScreenButton = fullscreenButton.get();
-    panel->appendChild(fullscreenButton.release(), exceptionCode, true);
+    panel->appendChild(fullscreenButton.release(), exceptionCode, AttachLazily);
     if (exceptionCode)
         return false;
 
     RefPtr<MediaControlPanelMuteButtonElement> panelMuteButton = MediaControlPanelMuteButtonElement::create(document, this);
     m_panelMuteButton = panelMuteButton.get();
-    panel->appendChild(panelMuteButton.release(), exceptionCode, true);
+    panel->appendChild(panelMuteButton.release(), exceptionCode, AttachLazily);
     if (exceptionCode)
         return false;
 
     RefPtr<MediaControlVolumeSliderContainerElement> sliderContainer = MediaControlVolumeSliderContainerElement::create(document);
     m_volumeSliderContainer = sliderContainer.get();
-    panel->appendChild(sliderContainer.release(), exceptionCode, true);
+    panel->appendChild(sliderContainer.release(), exceptionCode, AttachLazily);
     if (exceptionCode)
         return false;
 
     RefPtr<MediaControlPanelVolumeSliderElement> slider = MediaControlPanelVolumeSliderElement::create(document);
     m_volumeSlider = slider.get();
     m_volumeSlider->setClearMutedOnUserInteraction(true);
-    m_volumeSliderContainer->appendChild(slider.release(), exceptionCode, true);
+    m_volumeSliderContainer->appendChild(slider.release(), exceptionCode, AttachLazily);
     if (exceptionCode)
         return false;
 
     m_panel = panel.get();
-    enclosure->appendChild(panel.release(), exceptionCode, true);
+    enclosure->appendChild(panel.release(), exceptionCode, AttachLazily);
     if (exceptionCode)
         return false;
 
     m_enclosure = enclosure.get();
-    appendChild(enclosure.release(), exceptionCode, true);
+    appendChild(enclosure.release(), exceptionCode, AttachLazily);
     if (exceptionCode)
         return false;
 
@@ -223,7 +223,7 @@ void MediaControlsGtk::createTextTrackDisplay()
         m_textDisplayContainer->setMediaController(m_mediaController);
 
     // Insert it before the first controller element so it always displays behind the controls.
-    insertBefore(textDisplayContainer, m_enclosure, ASSERT_NO_EXCEPTION, true);
+    insertBefore(textDisplayContainer, m_enclosure, ASSERT_NO_EXCEPTION, AttachLazily);
     textDisplayContainer->createSubtrees(document());
     textDisplayContainer.release();
 }

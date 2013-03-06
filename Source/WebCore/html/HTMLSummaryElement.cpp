@@ -78,8 +78,8 @@ bool HTMLSummaryElement::childShouldCreateRenderer(const NodeRenderingContext& c
 
 void HTMLSummaryElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
-    root->appendChild(DetailsMarkerControl::create(document()), ASSERT_NO_EXCEPTION, true);
-    root->appendChild(SummaryContentElement::create(document()), ASSERT_NO_EXCEPTION, true);
+    root->appendChild(DetailsMarkerControl::create(document()), ASSERT_NO_EXCEPTION, AttachLazily);
+    root->appendChild(SummaryContentElement::create(document()), ASSERT_NO_EXCEPTION, AttachLazily);
 }
 
 HTMLDetailsElement* HTMLSummaryElement::detailsElement() const

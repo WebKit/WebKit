@@ -31,7 +31,7 @@ WebDOMNode WebDOMNode::insertBefore(const WebDOMNode& newChild, const WebDOMNode
         return WebDOMNode();
 
     WebCore::ExceptionCode ec = 0;
-    if (impl()->insertBefore(toWebCore(newChild), toWebCore(refChild), ec, true))
+    if (impl()->insertBefore(toWebCore(newChild), toWebCore(refChild), ec, AttachLazily))
         return newChild;
 
     webDOMRaiseError(static_cast<WebDOMExceptionCode>(ec));
@@ -44,7 +44,7 @@ WebDOMNode WebDOMNode::replaceChild(const WebDOMNode& newChild, const WebDOMNode
         return WebDOMNode();
 
     WebCore::ExceptionCode ec = 0;
-    if (impl()->replaceChild(toWebCore(newChild), toWebCore(oldChild), ec, true))
+    if (impl()->replaceChild(toWebCore(newChild), toWebCore(oldChild), ec, AttachLazily))
         return oldChild;
 
     webDOMRaiseError(static_cast<WebDOMExceptionCode>(ec));
@@ -70,7 +70,7 @@ WebDOMNode WebDOMNode::appendChild(const WebDOMNode& newChild)
         return WebDOMNode();
 
     WebCore::ExceptionCode ec = 0;
-    if (impl()->appendChild(toWebCore(newChild), ec, true))
+    if (impl()->appendChild(toWebCore(newChild), ec, AttachLazily))
         return newChild;
 
     webDOMRaiseError(static_cast<WebDOMExceptionCode>(ec));

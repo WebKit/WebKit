@@ -54,12 +54,12 @@ PassRefPtr<MediaControlsChromiumAndroid> MediaControlsChromiumAndroid::createCon
     RefPtr<MediaControlOverlayEnclosureElement> overlayEnclosure = MediaControlOverlayEnclosureElement::create(document);
     RefPtr<MediaControlOverlayPlayButtonElement> overlayPlayButton = MediaControlOverlayPlayButtonElement::create(document);
     controls->m_overlayPlayButton = overlayPlayButton.get();
-    overlayEnclosure->appendChild(overlayPlayButton.release(), ec, true);
+    overlayEnclosure->appendChild(overlayPlayButton.release(), ec, AttachLazily);
     if (ec)
         return 0;
 
     controls->m_overlayEnclosure = overlayEnclosure.get();
-    controls->appendChild(overlayEnclosure.release(), ec, true);
+    controls->appendChild(overlayEnclosure.release(), ec, AttachLazily);
     if (ec)
         return 0;
 

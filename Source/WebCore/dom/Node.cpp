@@ -541,22 +541,22 @@ Node* Node::firstDescendant() const
     return n;
 }
 
-bool Node::insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode& ec, bool shouldLazyAttach)
+bool Node::insertBefore(PassRefPtr<Node> newChild, Node* refChild, ExceptionCode& ec, AttachBehavior attachBehavior)
 {
     if (!isContainerNode()) {
         ec = HIERARCHY_REQUEST_ERR;
         return false;
     }
-    return toContainerNode(this)->insertBefore(newChild, refChild, ec, shouldLazyAttach);
+    return toContainerNode(this)->insertBefore(newChild, refChild, ec, attachBehavior);
 }
 
-bool Node::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode& ec, bool shouldLazyAttach)
+bool Node::replaceChild(PassRefPtr<Node> newChild, Node* oldChild, ExceptionCode& ec, AttachBehavior attachBehavior)
 {
     if (!isContainerNode()) {
         ec = HIERARCHY_REQUEST_ERR;
         return false;
     }
-    return toContainerNode(this)->replaceChild(newChild, oldChild, ec, shouldLazyAttach);
+    return toContainerNode(this)->replaceChild(newChild, oldChild, ec, attachBehavior);
 }
 
 bool Node::removeChild(Node* oldChild, ExceptionCode& ec)
@@ -568,13 +568,13 @@ bool Node::removeChild(Node* oldChild, ExceptionCode& ec)
     return toContainerNode(this)->removeChild(oldChild, ec);
 }
 
-bool Node::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, bool shouldLazyAttach)
+bool Node::appendChild(PassRefPtr<Node> newChild, ExceptionCode& ec, AttachBehavior attachBehavior)
 {
     if (!isContainerNode()) {
         ec = HIERARCHY_REQUEST_ERR;
         return false;
     }
-    return toContainerNode(this)->appendChild(newChild, ec, shouldLazyAttach);
+    return toContainerNode(this)->appendChild(newChild, ec, attachBehavior);
 }
 
 void Node::remove(ExceptionCode& ec)

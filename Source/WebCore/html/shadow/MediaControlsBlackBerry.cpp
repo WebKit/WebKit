@@ -649,7 +649,7 @@ PassRefPtr<MediaControlsBlackBerry> MediaControlsBlackBerry::createControls(Docu
 
     RefPtr<MediaControlPlayButtonElement> playButton = MediaControlPlayButtonElement::create(document);
     controls->m_playButton = playButton.get();
-    embedPanel->appendChild(playButton.release(), ec, true);
+    embedPanel->appendChild(playButton.release(), ec, AttachLazily);
     if (ec)
         return 0;
 
@@ -657,7 +657,7 @@ PassRefPtr<MediaControlsBlackBerry> MediaControlsBlackBerry::createControls(Docu
 
     RefPtr<MediaControlTimelineElement> timeline = MediaControlTimelineElement::create(document, controls.get());
     controls->m_timeline = timeline.get();
-    timelineContainer->appendChild(timeline.release(), ec, true);
+    timelineContainer->appendChild(timeline.release(), ec, AttachLazily);
     if (ec)
         return 0;
 
@@ -665,29 +665,29 @@ PassRefPtr<MediaControlsBlackBerry> MediaControlsBlackBerry::createControls(Docu
 
     RefPtr<MediaControlCurrentTimeDisplayElement> currentTimeDisplay = MediaControlCurrentTimeDisplayElement::create(document);
     controls->m_currentTimeDisplay = currentTimeDisplay.get();
-    timeDisplayContainer->appendChild(currentTimeDisplay.release(), ec, true);
+    timeDisplayContainer->appendChild(currentTimeDisplay.release(), ec, AttachLazily);
     if (ec)
         return 0;
 
     RefPtr<MediaControlTimeRemainingDisplayElement> timeRemainingDisplay = MediaControlTimeRemainingDisplayElement::create(document);
     controls->m_timeRemainingDisplay = timeRemainingDisplay.get();
-    timeDisplayContainer->appendChild(timeRemainingDisplay.release(), ec, true);
+    timeDisplayContainer->appendChild(timeRemainingDisplay.release(), ec, AttachLazily);
     if (ec)
         return 0;
 
     controls->m_timeDisplayContainer = timeDisplayContainer.get();
-    timelineContainer->appendChild(timeDisplayContainer.release(), ec, true);
+    timelineContainer->appendChild(timeDisplayContainer.release(), ec, AttachLazily);
     if (ec)
         return 0;
 
     controls->m_timelineContainer = timelineContainer.get();
-    embedPanel->appendChild(timelineContainer.release(), ec, true);
+    embedPanel->appendChild(timelineContainer.release(), ec, AttachLazily);
     if (ec)
         return 0;
 
     RefPtr<MediaControlFullscreenButtonElement> fullScreenButton = MediaControlFullscreenButtonElement::create(document);
     controls->m_fullScreenButton = fullScreenButton.get();
-    embedPanel->appendChild(fullScreenButton.release(), ec, true);
+    embedPanel->appendChild(fullScreenButton.release(), ec, AttachLazily);
     if (ec)
         return 0;
 
@@ -699,21 +699,21 @@ PassRefPtr<MediaControlsBlackBerry> MediaControlsBlackBerry::createControls(Docu
 
         RefPtr<MediaControlPanelVolumeSliderElement> slider = MediaControlPanelVolumeSliderElement::create(document);
         controls->m_volumeSlider = slider.get();
-        volumeSliderContainer->appendChild(slider.release(), ec, true);
+        volumeSliderContainer->appendChild(slider.release(), ec, AttachLazily);
         if (ec)
             return 0;
 
         controls->m_volumeSliderContainer = volumeSliderContainer.get();
-        volumeControlContainer->appendChild(volumeSliderContainer.release(), ec, true);
+        volumeControlContainer->appendChild(volumeSliderContainer.release(), ec, AttachLazily);
         if (ec)
             return 0;
         RefPtr<MediaControlAudioMuteButtonElement> muteButton = MediaControlAudioMuteButtonElement::create(document, controls.get());
         controls->m_muteButton = muteButton.get();
-        volumeControlContainer->appendChild(muteButton.release(), ec, true);
+        volumeControlContainer->appendChild(muteButton.release(), ec, AttachLazily);
         if (ec)
             return 0;
 
-        embedPanel->appendChild(volumeControlContainer.release(), ec, true);
+        embedPanel->appendChild(volumeControlContainer.release(), ec, AttachLazily);
         if (ec)
             return 0;
     }
@@ -722,7 +722,7 @@ PassRefPtr<MediaControlsBlackBerry> MediaControlsBlackBerry::createControls(Docu
 
     RefPtr<MediaControlFullscreenTimelineElement> fullscreenTimeline = MediaControlFullscreenTimelineElement::create(document, controls.get());
     controls->m_fullscreenTimeline = fullscreenTimeline.get();
-    fullscreenTimelineContainer->appendChild(fullscreenTimeline.release(), ec, true);
+    fullscreenTimelineContainer->appendChild(fullscreenTimeline.release(), ec, AttachLazily);
     if (ec)
         return 0;
 
@@ -730,23 +730,23 @@ PassRefPtr<MediaControlsBlackBerry> MediaControlsBlackBerry::createControls(Docu
 
     RefPtr<MediaControlFullscreenCurrentTimeDisplayElement> fullscreenCurrentTimeDisplay = MediaControlFullscreenCurrentTimeDisplayElement::create(document);
     controls->m_fullscreenCurrentTimeDisplay = fullscreenCurrentTimeDisplay.get();
-    fullscreenTimeDisplayContainer->appendChild(fullscreenCurrentTimeDisplay.release(), ec, true);
+    fullscreenTimeDisplayContainer->appendChild(fullscreenCurrentTimeDisplay.release(), ec, AttachLazily);
     if (ec)
         return 0;
 
     RefPtr<MediaControlFullscreenTimeRemainingDisplayElement> fullscreenTimeRemainingDisplay = MediaControlFullscreenTimeRemainingDisplayElement::create(document);
     controls->m_fullscreenTimeRemainingDisplay = fullscreenTimeRemainingDisplay.get();
-    fullscreenTimeDisplayContainer->appendChild(fullscreenTimeRemainingDisplay.release(), ec, true);
+    fullscreenTimeDisplayContainer->appendChild(fullscreenTimeRemainingDisplay.release(), ec, AttachLazily);
     if (ec)
         return 0;
 
     controls->m_fullscreenTimeDisplayContainer = fullscreenTimeDisplayContainer.get();
-    fullscreenTimelineContainer->appendChild(fullscreenTimeDisplayContainer.release(), ec, true);
+    fullscreenTimelineContainer->appendChild(fullscreenTimeDisplayContainer.release(), ec, AttachLazily);
     if (ec)
         return 0;
 
     controls->m_fullscreenTimelineContainer = fullscreenTimelineContainer.get();
-    panel->appendChild(fullscreenTimelineContainer.release(), ec, true);
+    panel->appendChild(fullscreenTimelineContainer.release(), ec, AttachLazily);
     if (ec)
         return 0;
 
@@ -757,15 +757,15 @@ PassRefPtr<MediaControlsBlackBerry> MediaControlsBlackBerry::createControls(Docu
     controls->m_fullScreenButtonContainer = fullScreenButtonContainer.get();
     RefPtr<MediaControlFullscreenFullscreenButtonElement> fullscreenFullScreenButton = MediaControlFullscreenFullscreenButtonElement::create(document);
     controls->m_fullscreenFullScreenButton = fullscreenFullScreenButton.get();
-    fullScreenButtonContainer->appendChild(fullscreenFullScreenButton.release(), ec, true);
+    fullScreenButtonContainer->appendChild(fullscreenFullScreenButton.release(), ec, AttachLazily);
     if (ec)
         return 0;
     RefPtr<MediaControlFullscreenButtonDividerElement> fullScreenDivider = MediaControlFullscreenButtonDividerElement::create(document);
     controls->m_fullScreenDivider = fullScreenDivider.get();
-    fullScreenButtonContainer->appendChild(fullScreenDivider.release(), ec, true);
+    fullScreenButtonContainer->appendChild(fullScreenDivider.release(), ec, AttachLazily);
     if (ec)
         return 0;
-    buttonGroupContainer->appendChild(fullScreenButtonContainer.release(), ec, true);
+    buttonGroupContainer->appendChild(fullScreenButtonContainer.release(), ec, AttachLazily);
     if (ec)
         return 0;
 
@@ -773,39 +773,39 @@ PassRefPtr<MediaControlsBlackBerry> MediaControlsBlackBerry::createControls(Docu
     controls->m_playButtonContainer = playButtonContainer.get();
     RefPtr<MediaControlFullscreenPlayButtonElement> fullscreenPlayButton = MediaControlFullscreenPlayButtonElement::create(document);
     controls->m_fullscreenPlayButton = fullscreenPlayButton.get();
-    playButtonContainer->appendChild(fullscreenPlayButton.release(), ec, true);
+    playButtonContainer->appendChild(fullscreenPlayButton.release(), ec, AttachLazily);
     if (ec)
         return 0;
-    buttonGroupContainer->appendChild(playButtonContainer.release(), ec, true);
+    buttonGroupContainer->appendChild(playButtonContainer.release(), ec, AttachLazily);
     if (ec)
         return 0;
 
     RefPtr<MediaControlPlaceholderElement> placeholder = MediaControlPlaceholderElement::create(document);
     controls->m_placeholder = placeholder.get();
-    buttonGroupContainer->appendChild(placeholder.release(), ec, true);
+    buttonGroupContainer->appendChild(placeholder.release(), ec, AttachLazily);
     if (ec)
         return 0;
 
     controls->m_buttonContainer = buttonGroupContainer.get();
-    panel->appendChild(buttonGroupContainer.release(), ec, true);
+    panel->appendChild(buttonGroupContainer.release(), ec, AttachLazily);
     if (ec)
         return 0;
 
     if (document->page()->theme()->supportsClosedCaptioning()) {
         RefPtr<MediaControlToggleClosedCaptionsButtonElement> toggleClosedCaptionsButton = MediaControlToggleClosedCaptionsButtonElement::create(document, controls.get());
         controls->m_toggleClosedCaptionsButton = toggleClosedCaptionsButton.get();
-        panel->appendChild(toggleClosedCaptionsButton.release(), ec, true);
+        panel->appendChild(toggleClosedCaptionsButton.release(), ec, AttachLazily);
         if (ec)
             return 0;
     }
 
     controls->m_panel = panel.get();
-    controls->appendChild(panel.release(), ec, true);
+    controls->appendChild(panel.release(), ec, AttachLazily);
     if (ec)
         return 0;
 
     controls->m_embeddedPanel = embedPanel.get();
-    controls->appendChild(embedPanel.release(), ec, true);
+    controls->appendChild(embedPanel.release(), ec, AttachLazily);
     if (ec)
         return 0;
 

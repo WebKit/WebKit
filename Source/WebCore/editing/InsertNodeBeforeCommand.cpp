@@ -55,7 +55,7 @@ void InsertNodeBeforeCommand::doApply()
         return;
     ASSERT(parent->isContentEditable(Node::UserSelectAllIsAlwaysNonEditable));
 
-    parent->insertBefore(m_insertChild.get(), m_refChild.get(), IGNORE_EXCEPTION, true /* lazyAttach */);
+    parent->insertBefore(m_insertChild.get(), m_refChild.get(), IGNORE_EXCEPTION, AttachLazily);
 
     if (AXObjectCache::accessibilityEnabled())
         document()->axObjectCache()->nodeTextChangeNotification(m_insertChild.get(), AXObjectCache::AXTextInserted, 0, m_insertChild->nodeValue());
