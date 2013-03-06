@@ -740,7 +740,6 @@ static bool shouldRespectPriorityInCSSAttributeSetters()
         // of the initialization code which may depend on the strategies.
         WebPlatformStrategies::initialize();
 
-        [WebHistoryItem initWindowWatcherIfNecessary];
 #if ENABLE(SQL_DATABASE)
         WebKitInitializeDatabasesIfNecessary();
 #endif

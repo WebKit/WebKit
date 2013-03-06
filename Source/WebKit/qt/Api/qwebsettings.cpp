@@ -832,7 +832,6 @@ void QWebSettings::clearMemoryCaches()
     int pageCapacity = WebCore::pageCache()->capacity();
     // Setting size to 0, makes all pages be released.
     WebCore::pageCache()->setCapacity(0);
-    WebCore::pageCache()->releaseAutoreleasedPagesNow();
     WebCore::pageCache()->setCapacity(pageCapacity);
 
     // Invalidating the font cache and freeing all inactive font data.

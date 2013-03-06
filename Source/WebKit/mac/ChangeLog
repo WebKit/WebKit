@@ -1,3 +1,23 @@
+2013-03-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed some dead code in the page cache
+        https://bugs.webkit.org/show_bug.cgi?id=111525
+
+        Reviewed by Alexey Proskuryakov.
+
+        Page cache autorelease doesn't exist anymore, so there's no need to keep
+        around these olds hacks.
+
+        This fixes <rdar://problem/4886761> Fix bizarre WebWindowWatcher policy in WebHistoryItem.
+
+        * History/WebHistoryItem.mm:
+        (+[WebHistoryItem _releaseAllPendingPageCaches]):
+        * History/WebHistoryItemInternal.h:
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics autoreleasedPageCount]):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+
 2013-03-06  Dmitry Zvorygin  <zvorygin@chromium.org>
 
         Introduce new message sources for logging.

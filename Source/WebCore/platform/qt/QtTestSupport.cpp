@@ -52,7 +52,6 @@ void QtTestSupport::clearMemoryCaches()
 
     int pageCapacity = WebCore::pageCache()->capacity();
     WebCore::pageCache()->setCapacity(0);
-    WebCore::pageCache()->releaseAutoreleasedPagesNow();
     WebCore::pageCache()->setCapacity(pageCapacity);
 
     WebCore::fontCache()->invalidate();

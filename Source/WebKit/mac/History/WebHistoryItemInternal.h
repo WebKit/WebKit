@@ -42,7 +42,6 @@ extern void WKNotifyHistoryItemChanged(WebCore::HistoryItem*);
 @interface WebHistoryItem (WebInternal)
 
 + (WebHistoryItem *)entryWithURL:(NSURL *)URL;
-+ (void)initWindowWatcherIfNecessary;
 
 - (id)initWithURL:(NSURL *)URL target:(NSString *)target parent:(NSString *)parent title:(NSString *)title;
 - (id)initWithURLString:(NSString *)URLString title:(NSString *)title displayTitle:(NSString *)displayTitle lastVisitedTimeInterval:(NSTimeInterval)time;

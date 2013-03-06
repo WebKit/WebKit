@@ -241,10 +241,6 @@ void WKNotifyHistoryItemChanged(HistoryItem*)
 
 @end
 
-@interface WebWindowWatcher : NSObject
-@end
-
-
 @implementation WebHistoryItem (WebInternal)
 
 HistoryItem* core(WebHistoryItem *item)
@@ -272,17 +268,6 @@ WebHistoryItem *kit(HistoryItem* item)
 + (WebHistoryItem *)entryWithURL:(NSURL *)URL
 {
     return [[[self alloc] initWithURL:URL title:nil] autorelease];
-}
-
-static WebWindowWatcher *_windowWatcher = nil;
-
-+ (void)initWindowWatcherIfNecessary
-{
-    if (_windowWatcher)
-        return;
-    _windowWatcher = [[WebWindowWatcher alloc] init];
-    [[NSNotificationCenter defaultCenter] addObserver:_windowWatcher selector:@selector(windowWillClose:)
-        name:NSWindowWillCloseNotification object:nil];
 }
 
 - (id)initWithURL:(NSURL *)URL target:(NSString *)target parent:(NSString *)parent title:(NSString *)title
@@ -580,7 +565,6 @@ static WebWindowWatcher *_windowWatcher = nil;
 
 + (void)_releaseAllPendingPageCaches
 {
-    pageCache()->releaseAutoreleasedPagesNow();
 }
 
 - (id)_transientPropertyForKey:(NSString *)key
@@ -634,24 +618,6 @@ static WebWindowWatcher *_windowWatcher = nil;
     HistoryItem* coreItem = core(_private);
     *counts = coreItem->weeklyVisitCounts().data();
     return coreItem->weeklyVisitCounts().size();
-}
-
-@end
-
-
-// FIXME: <rdar://problem/4886761>.
-// This is a bizarre policy. We flush the page caches ANY time ANY window is closed?
-
-@implementation WebWindowWatcher
-
-- (void)windowWillClose:(NSNotification *)notification
-{
-    if (!pthread_main_np()) {
-        [self performSelectorOnMainThread:_cmd withObject:notification waitUntilDone:NO];
-        return;
-    }
-
-    pageCache()->releaseAutoreleasedPagesNow();
 }
 
 @end

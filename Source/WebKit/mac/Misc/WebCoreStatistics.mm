@@ -232,9 +232,10 @@ using namespace WebCore;
     return pageCache()->frameCount();
 }
 
+// Deprecated
 + (int)autoreleasedPageCount
 {
-    return pageCache()->autoreleasedPageCount();
+    return 0;
 }
 
 // Deprecated

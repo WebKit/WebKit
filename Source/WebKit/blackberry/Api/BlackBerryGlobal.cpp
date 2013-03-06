@@ -123,7 +123,6 @@ void clearMemoryCaches()
     int capacity = pageCache()->capacity();
     pageCache()->setCapacity(0);
     pageCache()->setCapacity(capacity);
-    pageCache()->releaseAutoreleasedPagesNow();
 
     CrossOriginPreflightResultCache::shared().empty();
 

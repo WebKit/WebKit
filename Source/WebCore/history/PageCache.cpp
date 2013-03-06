@@ -326,7 +326,6 @@ PageCache::PageCache()
     , m_size(0)
     , m_head(0)
     , m_tail(0)
-    , m_autoreleaseTimer(this, &PageCache::releaseAutoreleasedPagesNowDueToTimer)
 #if USE(ACCELERATED_COMPOSITING)
     , m_shouldClearBackingStores(false)
 #endif
@@ -418,11 +417,6 @@ int PageCache::frameCount() const
     }
     
     return frameCount;
-}
-
-int PageCache::autoreleasedPageCount() const
-{
-    return m_autoreleaseSet.size();
 }
 
 void PageCache::markPagesForVistedLinkStyleRecalc()
@@ -533,40 +527,6 @@ void PageCache::removeFromLRUList(HistoryItem* item)
         ASSERT(item != m_head);
         item->m_prev->m_next = item->m_next;
     }
-}
-
-void PageCache::releaseAutoreleasedPagesNowDueToTimer(Timer<PageCache>*)
-{
-    LOG(PageCache, "WebCorePageCache: Releasing page caches - %i objects pending release", m_autoreleaseSet.size());
-    releaseAutoreleasedPagesNow();
-}
-
-void PageCache::releaseAutoreleasedPagesNow()
-{
-    m_autoreleaseTimer.stop();
-
-    // Postpone dead pruning until all our resources have gone dead.
-    memoryCache()->setPruneEnabled(false);
-
-    CachedPageSet tmp;
-    tmp.swap(m_autoreleaseSet);
-
-    CachedPageSet::iterator end = tmp.end();
-    for (CachedPageSet::iterator it = tmp.begin(); it != end; ++it)
-        (*it)->destroy();
-
-    // Now do the prune.
-    memoryCache()->setPruneEnabled(true);
-    memoryCache()->prune();
-}
-
-void PageCache::autorelease(PassRefPtr<CachedPage> page)
-{
-    ASSERT(page);
-    ASSERT(!m_autoreleaseSet.contains(page.get()));
-    m_autoreleaseSet.add(page);
-    if (!m_autoreleaseTimer.isActive())
-        m_autoreleaseTimer.startOneShot(0);
 }
 
 } // namespace WebCore

@@ -3107,7 +3107,6 @@ void WebPage::destroy()
 
     // Close the backforward list and release the cached pages.
     d->m_page->backForward()->close();
-    pageCache()->releaseAutoreleasedPagesNow();
 
     FrameLoader* loader = d->m_mainFrame->loader();
 

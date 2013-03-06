@@ -469,7 +469,6 @@ void Settings::setUsesPageCache(bool usesPageCache)
         int last = m_page->backForward()->forwardCount();
         for (int i = first; i <= last; i++)
             pageCache()->remove(m_page->backForward()->itemAtIndex(i));
-        pageCache()->releaseAutoreleasedPagesNow();
     }
 }
 
