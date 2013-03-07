@@ -246,7 +246,7 @@ class SVN(SCM, SVNRepository):
     def svn_revision(self, path):
         return self.value_from_svn_info(path, 'Revision')
 
-    def timestamp_of_latest_commit(self, path, revision):
+    def timestamp_of_revision(self, path, revision):
         # We use --xml to get timestamps like 2013-02-08T08:18:04.964409Z
         repository_root = self.value_from_svn_info(self.checkout_root, 'Repository Root')
         info_output = Executive().run_command([self.executable_name, 'log', '-r', revision, '--xml', repository_root], cwd=path).rstrip()

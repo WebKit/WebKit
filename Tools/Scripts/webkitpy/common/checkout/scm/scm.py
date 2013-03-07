@@ -167,9 +167,10 @@ class SCM:
         return self.svn_revision(self.checkout_root)
 
     def svn_revision(self, path):
+        """Returns the latest svn revision found in the checkout."""
         self._subclass_must_implement()
 
-    def timestamp_of_latest_commit(self, path, revision):
+    def timestamp_of_revision(self, path, revision):
         self._subclass_must_implement()
 
     def create_patch(self, git_commit=None, changed_files=None):

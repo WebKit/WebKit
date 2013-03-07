@@ -29,7 +29,7 @@
 # Class for unittest support.  Used for capturing stderr/stdout.
 
 import logging
-import unittest2 as unittest
+import unittest  # Don't use unittest2 here as the autoinstaller may not have it yet.
 import sys
 from StringIO import StringIO
 

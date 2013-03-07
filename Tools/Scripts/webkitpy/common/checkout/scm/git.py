@@ -246,17 +246,20 @@ class Git(SCM, SVNRepository):
     def display_name(self):
         return "git"
 
+    def _most_recent_log_matching(self, grep_str, path):
+        # We use '--grep=' + foo rather than '--grep', foo because
+        # git 1.7.0.4 (and earlier) didn't support the separate arg.
+        return self._run_git(['log', '-1', '--grep=' + grep_str, '--date=iso', self.find_checkout_root(path)])
+
     def svn_revision(self, path):
-        _log.debug('Running git.head_svn_revision... (Temporary logging message)')
-        git_log = self._run_git(['log', '-25', self.find_checkout_root(path)])
+        git_log = self._most_recent_log_matching('git-svn-id:', path)
         match = re.search("^\s*git-svn-id:.*@(?P<svn_revision>\d+)\ ", git_log, re.MULTILINE)
         if not match:
             return ""
         return str(match.group('svn_revision'))
 
-    def timestamp_of_latest_commit(self, path, revision):
-        git_commit = self.git_commit_from_svn_revision(revision)
-        git_log = self._run_git(['log', '-1', '-r', git_commit, '--date=iso', self.find_checkout_root(path)])
+    def timestamp_of_revision(self, path, revision):
+        git_log = self._most_recent_log_matching('git-svn-id:.*@%s' % revision, path)
         match = re.search("^Date:\s*(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2}) ([+-])(\d{2})(\d{2})$", git_log, re.MULTILINE)
         if not match:
             return ""
@@ -307,6 +310,9 @@ class Git(SCM, SVNRepository):
 
     @memoized
     def git_commit_from_svn_revision(self, svn_revision):
+        # FIXME: https://bugs.webkit.org/show_bug.cgi?id=111668
+        # We should change this to run git log --grep 'git-svn-id' instead
+        # so that we don't require git+svn to be set up.
         git_commit = self._run_git_svn_find_rev('r%s' % svn_revision)
         if not git_commit:
             # FIXME: Alternatively we could offer to update the checkout? Or return None?

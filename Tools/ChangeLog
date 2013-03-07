@@ -1,3 +1,47 @@
+2013-03-07  Dirk Pranke  <dpranke@chromium.org>
+
+        run-perf-tests fails due to svn_revision not working on a pure git clone
+        https://bugs.webkit.org/show_bug.cgi?id=110839
+
+        Reviewed by Ryosuke Niwa.
+
+        Previously we would call git svn find-rev to look up the commit for
+        a given revision, and that'll hang in a pure git checkout.
+
+        This patch changes the way we look up svn revisions in a git
+        repository to use git log --grep 'git-svn-id', which is much faster
+        than grepping ourselves. It also renames timestamp_of_latest_commit()
+        to timestamp_of_revision() in order to accurately reflect what
+        the method is doing. Note that this patch only changes the logic
+        inside latest_revision() and svn_revision(). I'll file a separate
+        bug to change git_commit_from_svn_revision().
+
+        This patch also contains some fixes to unit tests that had bit-rotted
+        or were otherwise fragile, so that test-webkitpy --all would pass
+        cleanly, and a fix to outputcapture so that
+        test-webkitpy -p would work correctly again.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.svn_revision):
+        (Git.timestamp_of_revision):
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        (SCM.svn_revision):
+        (SCM.timestamp_of_revision):
+        * Scripts/webkitpy/common/checkout/scm/scm_mock.py:
+        (MockSCM.timestamp_of_revision):
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        (_shared_test_commit_with_message):
+        (test_commit_without_authorization):
+        (test_timestamp_of_revision):
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.timestamp_of_revision):
+        * Scripts/webkitpy/common/system/outputcapture.py:
+          Importing unittest2 directly may not be safe if this module is
+          imported before the autoinstaller gets a chance to set things up
+          properly. We don't actually need unittest2 here.
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._generate_results_dict):
+
 2013-03-07  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [EFL] Bump libsoup dependency to 2.40.3 to fix regressions

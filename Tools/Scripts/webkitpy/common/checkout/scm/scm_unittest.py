@@ -716,7 +716,12 @@ Q1dTBx0AAAB42itg4GlgYJjGwMDDyODMxMDw34GBgQEAJPQDJA==
         self._shared_test_commit_with_message("dbates@webkit.org")
 
     def test_commit_without_authorization(self):
-        self.scm.svn_server_realm = SVN.svn_server_realm
+        # FIXME: https://bugs.webkit.org/show_bug.cgi?id=111669
+        # This test ends up looking in the actal $HOME/.subversion for authorization,
+        # which makes it fragile. For now, set it to use a realm that won't be authorized,
+        # but we should really plumb through a fake_home_dir here like we do in
+        # test_has_authorization_for_realm.
+        self.scm.svn_server_realm = '<http://svn.example.com:80> Example'
         self.assertRaises(AuthenticationError, self._shared_test_commit_with_message)
 
     def test_has_authorization_for_realm_using_credentials_with_passtype(self):
@@ -1510,8 +1515,7 @@ class GitSVNTest(SCMTest):
 
     def test_to_object_name(self):
         relpath = 'test_file_commit1'
-        fullpath = os.path.join(self.git_checkout_path, relpath)
-        self._two_local_commits()
+        fullpath = os.path.realpath(os.path.join(self.git_checkout_path, relpath))
         self.assertEqual(relpath, self.scm.to_object_name(fullpath))
 
     def test_show_head(self):
@@ -1562,7 +1566,8 @@ class GitTestWithMock(unittest.TestCase):
         expected_stderr = """\
 MOCK run_command: ['git', 'merge-base', 'MOCKVALUE', 'HEAD'], cwd=%(checkout)s
 MOCK run_command: ['git', 'diff', '--binary', '--no-color', '--no-ext-diff', '--full-index', '--no-renames', '', 'MOCK output of child process', '--'], cwd=%(checkout)s
-MOCK run_command: ['git', 'log', '-25', './MOCK output of child process'], cwd=%(checkout)s
+MOCK run_command: ['git', 'rev-parse', '--show-toplevel'], cwd=%(checkout)s
+MOCK run_command: ['git', 'log', '-1', '--grep=git-svn-id:', '--date=iso', './MOCK output of child process/MOCK output of child process'], cwd=%(checkout)s
 """ % {'checkout': scm.checkout_root}
         OutputCapture().assert_outputs(self, scm.create_patch, expected_logs=expected_stderr)
 
@@ -1578,14 +1583,14 @@ MOCK run_command: ['git', 'log', '-25', './MOCK output of child process'], cwd=%
     def test_push_local_commits_to_server_without_username_and_with_password(self):
         self.assertRaises(AuthenticationError, self.make_scm().push_local_commits_to_server, {'password': 'blah'})
 
-    def test_timestamp_of_latest_commit(self):
+    def test_timestamp_of_revision(self):
         scm = self.make_scm()
         scm.find_checkout_root = lambda path: ''
         scm._run_git = lambda args: 'Date: 2013-02-08 08:05:49 +0000'
-        self.assertEqual(scm.timestamp_of_latest_commit('some-path', '12345'), '2013-02-08T08:05:49Z')
+        self.assertEqual(scm.timestamp_of_revision('some-path', '12345'), '2013-02-08T08:05:49Z')
 
         scm._run_git = lambda args: 'Date: 2013-02-08 01:02:03 +0130'
-        self.assertEqual(scm.timestamp_of_latest_commit('some-path', '12345'), '2013-02-07T23:32:03Z')
+        self.assertEqual(scm.timestamp_of_revision('some-path', '12345'), '2013-02-07T23:32:03Z')
 
         scm._run_git = lambda args: 'Date: 2013-02-08 01:55:21 -0800'
-        self.assertEqual(scm.timestamp_of_latest_commit('some-path', '12345'), '2013-02-08T09:55:21Z')
+        self.assertEqual(scm.timestamp_of_revision('some-path', '12345'), '2013-02-08T09:55:21Z')

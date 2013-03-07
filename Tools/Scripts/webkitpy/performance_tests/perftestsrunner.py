@@ -238,7 +238,7 @@ class PerfTestsRunner(object):
         for (name, path) in self._port.repository_paths():
             scm = SCMDetector(self._host.filesystem, self._host.executive).detect_scm_system(path) or self._host.scm()
             revision = scm.svn_revision(path)
-            revisions[name] = {'revision': str(revision), 'timestamp': scm.timestamp_of_latest_commit(path, revision)}
+            revisions[name] = {'revision': revision, 'timestamp': scm.timestamp_of_revision(path, revision)}
 
         meta_info = {
             'description': description,
