@@ -104,6 +104,8 @@ svg/custom/use-events-crash.svg
 # <https://bugs.webkit.org/show_bug.cgi?id=69946>
 editing/pasteboard/drag-drop-iframe-refresh-crash.html
 
+webkit.org/b/111439 fast/events/wheelevent-in-text-node.html [ Skip ]
+
 # WebKit2 needs layoutTestController.overridePreference
 # <https://bugs.webkit.org/show_bug.cgi?id=42197>
 # Get accelerated compositing working with webkit2

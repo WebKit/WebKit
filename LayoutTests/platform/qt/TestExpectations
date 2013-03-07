@@ -1904,6 +1904,8 @@ webkit.org/b/108508 fast/canvas/canvas-currentPath.html [ Skip ]
 
 webkit.org/b/111290 fast/regions/seamless-iframe-flowed-into-regions.html [ Skip ]
 
+webkit.org/b/111449 [ DEBUG ] fast/parser/document-write-fighting-eof.html [ Skip ]
+
 # ============================================================================= #
 # failing security tests
 # ============================================================================= #
@@ -2073,6 +2075,8 @@ platform/qt/http/tests/cookies/strict-third-party-cookie-blocking.html
 # [Qt] REGRESSION(63862): animations/play-state.html fails intermittently
 # https://bugs.webkit.org/show_bug.cgi?id=42821
 animations/play-state.html
+
+webkit.org/b/111612 animations/animation-delay-changed.html [ Skip ]
 
 # Still working out flakiness issues with the perf tests.
 # https://bugs.webkit.org/show_bug.cgi?id=44199
