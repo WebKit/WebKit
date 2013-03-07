@@ -1,3 +1,12 @@
+2013-03-07  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        Children method in LLINT AST Not class should return [@child]
+        https://bugs.webkit.org/show_bug.cgi?id=90740
+
+        Reviewed by Filip Pizlo.
+
+        * offlineasm/ast.rb: Fixed the return value of the children method in the Not AST class.
+
 2013-03-05  Oliver Hunt  <oliver@apple.com>
 
         Bring back eager resolution of function scoped variables

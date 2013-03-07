@@ -1139,7 +1139,7 @@ class Not < Node
     end
     
     def children
-        [@left, @right]
+        [@child]
     end
     
     def mapChildren
