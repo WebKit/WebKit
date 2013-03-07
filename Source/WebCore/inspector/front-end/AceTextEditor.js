@@ -55,6 +55,7 @@ WebInspector.AceTextEditor = function(url, delegate)
     this._aceEditor = window.ace.edit(this.element);
 
     this._aceEditor.setShowFoldWidgets(false);
+    this._aceEditor.session.setFixedGutterWidth(true);
     this._aceEditor.on("gutterclick", this._gutterClick.bind(this));
     this._aceEditor.on("change", this._onTextChange.bind(this));
     this._aceEditor.setHighlightActiveLine(false);
