@@ -941,7 +941,7 @@ inline size_t ElementData::getAttributeItemIndex(const AtomicString& name, bool 
     for (unsigned i = 0; i < len; ++i) {
         const Attribute* attribute = attributeItem(i);
         if (!attribute->name().hasPrefix()) {
-            if ((shouldIgnoreAttributeCase ? name.lower() : name) == attribute->localName())
+            if (name == attribute->localName())
                 return i;
         } else
             doSlowCheck = true;
