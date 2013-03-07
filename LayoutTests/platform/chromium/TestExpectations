@@ -4425,3 +4425,5 @@ webkit.org/b/111640 [ Mac Win ] fast/dom/Window/window-special-properties.html [
 webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Failure ]
 
 webkit.org/b/111649 [ Mac Win Linux ] platform/chromium/fast/events/intercept-postmessage.html [ Slow ]
+
+webkit.org/b/111667 [ Debug Win ] media/encrypted-media/encrypted-media-events.html [ Pass Timeout ]
