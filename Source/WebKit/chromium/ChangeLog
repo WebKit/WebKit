@@ -1,3 +1,16 @@
+2013-03-07  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove WebView's sharedGraphicsContext3D method.
+        https://bugs.webkit.org/show_bug.cgi?id=111499
+
+        Reviewed by James Robinson.
+
+        * public/WebView.h:
+        (WebView):
+        * src/WebViewImpl.cpp:
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2013-03-07  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Support a shortcut for reloading front-end in debug mode.

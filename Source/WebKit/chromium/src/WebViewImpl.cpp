@@ -4245,14 +4245,6 @@ void WebViewImpl::updateLayerTreeViewport()
     m_layerTreeView->setPageScaleFactorAndLimits(pageScaleFactor(), m_minimumPageScaleFactor, m_maximumPageScaleFactor);
 }
 
-WebGraphicsContext3D* WebViewImpl::sharedGraphicsContext3D()
-{
-    if (!m_page->settings()->acceleratedCompositingEnabled() || !allowsAcceleratedCompositing())
-        return 0;
-
-    return GraphicsContext3DPrivate::extractWebGraphicsContext3D(SharedGraphicsContext3D::get().get());
-}
-
 void WebViewImpl::selectAutofillSuggestionAtIndex(unsigned listIndex)
 {
     if (m_autofillPopupClient && listIndex < m_autofillPopupClient->getSuggestionsCount())

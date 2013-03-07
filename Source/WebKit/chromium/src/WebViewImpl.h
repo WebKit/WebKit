@@ -544,8 +544,6 @@ public:
     void scheduleAnimation();
 #endif
 
-    virtual WebGraphicsContext3D* sharedGraphicsContext3D();
-
     virtual void setVisibilityState(WebPageVisibilityState, bool);
 
     WebCore::PopupContainer* selectPopup() const { return m_selectPopup.get(); }
