@@ -1624,6 +1624,8 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
     
     statePusher.pop();
 
+    fitBorderToLinesIfNeeded();
+
     if (renderView->layoutState()->m_pageLogicalHeight)
         setPageLogicalOffset(renderView->layoutState()->pageLogicalOffset(this, logicalTop()));
 
@@ -1675,7 +1677,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
                 repaintRectangle(reflectedRect(repaintRect));
         }
     }
-    
+
     setNeedsLayout(false);
 }
 
@@ -6862,32 +6864,26 @@ void RenderBlock::adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutUnit&
     }
 }
 
-void RenderBlock::borderFitAdjust(LayoutRect& rect) const
+void RenderBlock::fitBorderToLinesIfNeeded()
 {
-    if (style()->borderFit() == BorderFitBorder)
+    if (style()->borderFit() == BorderFitBorder || hasOverrideWidth())
         return;
 
     // Walk any normal flow lines to snugly fit.
     LayoutUnit left = LayoutUnit::max();
     LayoutUnit right = LayoutUnit::min();
-    LayoutUnit oldWidth = rect.width();
+    LayoutUnit oldWidth = contentWidth();
     adjustForBorderFit(0, left, right);
-    if (left != LayoutUnit::max()) {
-        left = min(left, oldWidth - (borderRight() + paddingRight()));
-
-        left -= (borderLeft() + paddingLeft());
-        if (left > 0) {
-            rect.move(left, 0);
-            rect.expand(-left, 0);
-        }
-    }
-    if (right != LayoutUnit::min()) {
-        right = max(right, borderLeft() + paddingLeft());
-
-        right += (borderRight() + paddingRight());
-        if (right < oldWidth)
-            rect.expand(-(oldWidth - right), 0);
-    }
+    left = max(borderLeft() + paddingLeft(), left);
+    right = min(borderLeft() + paddingLeft() + contentWidth(), right);
+    
+    LayoutUnit newContentWidth = right - left;
+    if (newContentWidth == oldWidth)
+        return;
+    
+    setOverrideLogicalContentWidth(newContentWidth);
+    layoutBlock(false);
+    clearOverrideLogicalContentWidth();
 }
 
 void RenderBlock::clearTruncation()

@@ -606,8 +606,6 @@ private:
     void insertIntoTrackedRendererMaps(RenderBox* descendant, TrackedDescendantsMap*&, TrackedContainerMap*&);
     static void removeFromTrackedRendererMaps(RenderBox* descendant, TrackedDescendantsMap*&, TrackedContainerMap*&);
 
-    virtual void borderFitAdjust(LayoutRect&) const; // Shrink the box in which the border paints if border-fit is set.
-
     virtual RootInlineBox* createRootInlineBox(); // Subclassed by SVG and Ruby.
 
     // Called to lay out the legend for a fieldset or the ruby text of a ruby run.
@@ -927,6 +925,8 @@ private:
     virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0);
 
     void adjustPointToColumnContents(LayoutPoint&) const;
+    
+    void fitBorderToLinesIfNeeded(); // Shrink the box in which the border paints if border-fit is set.
     void adjustForBorderFit(LayoutUnit x, LayoutUnit& left, LayoutUnit& right) const; // Helper function for borderFitAdjust
 
     void markLinesDirtyInBlockRange(LayoutUnit logicalTop, LayoutUnit logicalBottom, RootInlineBox* highest = 0);

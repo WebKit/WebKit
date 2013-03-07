@@ -327,8 +327,6 @@ public:
     LayoutUnit adjustContentBoxLogicalWidthForBoxSizing(LayoutUnit width) const;
     LayoutUnit adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit height) const;
 
-    virtual void borderFitAdjust(LayoutRect&) const { } // Shrink the box in which the border paints if border-fit is set.
-
     struct ComputedMarginValues {
         ComputedMarginValues()
             : m_before(0)

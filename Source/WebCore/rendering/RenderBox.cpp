@@ -1077,10 +1077,6 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     LayoutRect paintRect = borderBoxRectInRegion(paintInfo.renderRegion);
     paintRect.moveBy(paintOffset);
 
-    // border-fit can adjust where we paint our border and background.  If set, we snugly fit our line box descendants.  (The iChat
-    // balloon layout is an example of this).
-    borderFitAdjust(paintRect);
-
     BackgroundBleedAvoidance bleedAvoidance = determineBackgroundBleedAvoidance(paintInfo.context);
 
     // FIXME: Should eventually give the theme control over whether the box shadow should paint, since controls could have
@@ -1194,11 +1190,6 @@ void RenderBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         return;
 
     LayoutRect paintRect = LayoutRect(paintOffset, size());
-
-    // border-fit can adjust where we paint our border and background.  If set, we snugly fit our line box descendants.  (The iChat
-    // balloon layout is an example of this).
-    borderFitAdjust(paintRect);
-
     paintMaskImages(paintInfo, paintRect);
 }
 
@@ -1983,7 +1974,7 @@ void RenderBox::computeLogicalWidthInRegion(LogicalExtentComputedValues& compute
     // width.  Use the width from the style context.
     // FIXME: Account for block-flow in flexible boxes.
     // https://bugs.webkit.org/show_bug.cgi?id=46418
-    if (hasOverrideWidth() && parent()->isFlexibleBoxIncludingDeprecated()) {
+    if (hasOverrideWidth() && (style()->borderFit() == BorderFitLines || parent()->isFlexibleBoxIncludingDeprecated())) {
         computedValues.m_extent = overrideLogicalContentWidth() + borderAndPaddingLogicalWidth();
         return;
     }
