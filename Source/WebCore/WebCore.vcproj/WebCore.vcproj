@@ -65246,6 +65246,14 @@
 				Name="shadow"
 				>
 				<File
+					RelativePath="..\html\shadow\ClearButtonElement.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\ClearButtonElement.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\shadow\ContentDistributor.cpp"
 					>
 				</File>

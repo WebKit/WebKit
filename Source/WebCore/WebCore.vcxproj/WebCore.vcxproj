@@ -6939,6 +6939,7 @@
     <ClCompile Include="..\html\parser\TextViewSourceParser.cpp" />
     <ClCompile Include="..\html\parser\XSSAuditor.cpp" />
     <ClCompile Include="..\html\parser\XSSAuditorDelegate.cpp" />
+    <ClCompile Include="..\html\shadow\ClearButtonElement.cpp" />
     <ClCompile Include="..\html\shadow\ContentDistributor.cpp" />
     <ClCompile Include="..\html\shadow\ContentSelectorQuery.cpp" />
     <ClCompile Include="..\html\shadow\DateTimeEditElement.cpp" />
@@ -10399,6 +10400,7 @@
     <ClInclude Include="..\html\parser\TextViewSourceParser.h" />
     <ClInclude Include="..\html\parser\XSSAuditor.h" />
     <ClInclude Include="..\html\parser\XSSAuditorDelegate.h" />
+    <ClInclude Include="..\html\shadow\ClearButtonElement.h" />
     <ClInclude Include="..\html\shadow\ContentDistributor.h" />
     <ClInclude Include="..\html\shadow\ContentSelectorQuery.h" />
     <ClInclude Include="..\html\shadow\DateTimeEditElement.h" />

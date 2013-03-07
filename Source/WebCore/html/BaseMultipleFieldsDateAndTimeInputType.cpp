@@ -86,6 +86,7 @@ void BaseMultipleFieldsDateAndTimeInputType::editControlValueChanged()
         input->dispatchFormControlChangeEvent();
     }
     input->notifyFormStateChanged();
+    input->updateClearButtonVisibility();
 }
 
 bool BaseMultipleFieldsDateAndTimeInputType::hasCustomFocusLogic() const
@@ -162,6 +163,7 @@ BaseMultipleFieldsDateAndTimeInputType::BaseMultipleFieldsDateAndTimeInputType(H
     : BaseDateAndTimeInputType(element)
     , m_dateTimeEditElement(0)
     , m_spinButtonElement(0)
+    , m_clearButton(0)
     , m_pickerIndicatorElement(0)
     , m_pickerIndicatorIsVisible(false)
     , m_pickerIndicatorIsAlwaysVisible(false)
@@ -172,6 +174,8 @@ BaseMultipleFieldsDateAndTimeInputType::~BaseMultipleFieldsDateAndTimeInputType(
 {
     if (m_spinButtonElement)
         m_spinButtonElement->removeSpinButtonOwner();
+    if (m_clearButton)
+        m_clearButton->removeClearButtonOwner();
     if (m_dateTimeEditElement)
         m_dateTimeEditElement->removeEditControlOwner();
     if (m_pickerIndicatorElement)
@@ -219,6 +223,10 @@ void BaseMultipleFieldsDateAndTimeInputType::createShadowSubtree()
     container->appendChild(m_dateTimeEditElement);
     updateInnerTextValue();
 
+    RefPtr<ClearButtonElement> clearButton = ClearButtonElement::create(document, *this);
+    m_clearButton = clearButton.get();
+    container->appendChild(clearButton);
+
     RefPtr<SpinButtonElement> spinButton = SpinButtonElement::create(document, *this);
     m_spinButtonElement = spinButton.get();
     container->appendChild(spinButton);
@@ -247,6 +255,10 @@ void BaseMultipleFieldsDateAndTimeInputType::destroyShadowSubtree()
     if (m_spinButtonElement) {
         m_spinButtonElement->removeSpinButtonOwner();
         m_spinButtonElement = 0;
+    }
+    if (m_clearButton) {
+        m_clearButton->removeClearButtonOwner();
+        m_clearButton = 0;
     }
     if (m_dateTimeEditElement) {
         m_dateTimeEditElement->removeEditControlOwner();
@@ -287,8 +299,15 @@ void BaseMultipleFieldsDateAndTimeInputType::forwardEvent(Event* event)
 void BaseMultipleFieldsDateAndTimeInputType::disabledAttributeChanged()
 {
     m_spinButtonElement->releaseCapture();
+    m_clearButton->releaseCapture();
     if (m_dateTimeEditElement)
         m_dateTimeEditElement->disabledStateChanged();
+}
+
+void BaseMultipleFieldsDateAndTimeInputType::requiredAttributeChanged()
+{
+    m_clearButton->releaseCapture();
+    updateClearButtonVisibility();
 }
 
 void BaseMultipleFieldsDateAndTimeInputType::handleKeydownEvent(KeyboardEvent* event)
@@ -332,6 +351,7 @@ void BaseMultipleFieldsDateAndTimeInputType::minOrMaxAttributeChanged()
 void BaseMultipleFieldsDateAndTimeInputType::readonlyAttributeChanged()
 {
     m_spinButtonElement->releaseCapture();
+    m_clearButton->releaseCapture();
     if (m_dateTimeEditElement)
         m_dateTimeEditElement->readOnlyStateChanged();
 }
@@ -394,6 +414,7 @@ void BaseMultipleFieldsDateAndTimeInputType::updateInnerTextValue()
         m_dateTimeEditElement->setValueAsDate(layoutParameters, date);
     else
         m_dateTimeEditElement->setEmptyValue(layoutParameters, date);
+    updateClearButtonVisibility();
 }
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -447,6 +468,34 @@ bool BaseMultipleFieldsDateAndTimeInputType::shouldHaveSecondField(const DateCom
     return date.second() || date.millisecond()
         || !stepRange.minimum().remainder(static_cast<int>(msPerMinute)).isZero()
         || !stepRange.step().remainder(static_cast<int>(msPerMinute)).isZero();
+}
+
+void BaseMultipleFieldsDateAndTimeInputType::focusAndSelectClearButtonOwner()
+{
+    element()->focus();
+}
+
+bool BaseMultipleFieldsDateAndTimeInputType::shouldClearButtonRespondToMouseEvents()
+{
+    return !element()->isDisabledOrReadOnly() && !element()->isRequired();
+}
+
+void BaseMultipleFieldsDateAndTimeInputType::clearValue()
+{
+    RefPtr<HTMLInputElement> input(element());
+    input->setValue("", DispatchInputAndChangeEvent);
+    input->updateClearButtonVisibility();
+}
+
+void BaseMultipleFieldsDateAndTimeInputType::updateClearButtonVisibility()
+{
+    if (!m_clearButton)
+        return;
+
+    if (element()->isRequired() || !m_dateTimeEditElement->anyEditableFieldsHaveValues())
+        m_clearButton->setInlineStyleProperty(CSSPropertyVisibility, CSSValueHidden);
+    else
+        m_clearButton->removeInlineStyleProperty(CSSPropertyVisibility);
 }
 
 } // namespace WebCore

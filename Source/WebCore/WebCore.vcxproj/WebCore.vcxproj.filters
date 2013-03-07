@@ -5700,6 +5700,9 @@
     <ClCompile Include="..\html\parser\XSSAuditorDelegate.cpp">
       <Filter>html\parser</Filter>
     </ClCompile>
+    <ClCompile Include="..\html\shadow\ClearButtonElement.cpp">
+      <Filter>html\shadow</Filter>
+    </ClCompile>
     <ClCompile Include="..\html\shadow\ContentDistributor.cpp">
       <Filter>html\shadow</Filter>
     </ClCompile>
@@ -12644,6 +12647,9 @@
     </ClInclude>
     <ClInclude Include="..\html\parser\XSSAuditorDelegate.h">
       <Filter>html\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\shadow\ClearButtonElement.h">
+      <Filter>html\shadow</Filter>
     </ClInclude>
     <ClInclude Include="..\html\shadow\ContentDistributor.h">
       <Filter>html\shadow</Filter>

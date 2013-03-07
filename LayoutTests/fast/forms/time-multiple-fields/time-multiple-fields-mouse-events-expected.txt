@@ -21,6 +21,11 @@ PASS input.value is "02:24"
 PASS input.value is "02:24"
 PASS input.value is "02:24"
 
+==> Click on clear button.
+PASS input.value is "02:24"
+PASS input.value is "02:24"
+PASS input.value is ""
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

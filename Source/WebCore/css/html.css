@@ -450,6 +450,14 @@ input[type="search"]::-webkit-textfield-decoration-container {
     direction: ltr;
 }
 
+input::-webkit-clear-button {
+    -webkit-appearance: searchfield-cancel-button;
+    display: inline-block;
+    -webkit-box-flex: 0;
+    -webkit-user-modify: read-only !important;
+    margin-left: 2px;
+}
+
 input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: searchfield-cancel-button;
     display: block;

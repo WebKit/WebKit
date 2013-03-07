@@ -751,6 +751,7 @@ SOURCES += \
     html/parser/TextViewSourceParser.cpp \
     html/parser/XSSAuditor.cpp \
     html/parser/XSSAuditorDelegate.cpp \
+    html/shadow/ClearButtonElement.cpp \
     html/shadow/ContentDistributor.cpp \
     html/shadow/ContentSelectorQuery.cpp \
     html/shadow/DateTimeEditElement.cpp \

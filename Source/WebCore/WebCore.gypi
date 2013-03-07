@@ -3547,6 +3547,8 @@
             'html/parser/XSSAuditorDelegate.h',
             'html/shadow/PickerIndicatorElement.cpp',
             'html/shadow/PickerIndicatorElement.h',
+            'html/shadow/ClearButtonElement.cpp',
+            'html/shadow/ClearButtonElement.h',
             'html/shadow/ContentDistributor.cpp',
             'html/shadow/ContentDistributor.h',
             'html/shadow/ContentSelectorQuery.cpp',

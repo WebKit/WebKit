@@ -275,11 +275,13 @@ public:
     virtual void multipleAttributeChanged();
     virtual void disabledAttributeChanged();
     virtual void readonlyAttributeChanged();
+    virtual void requiredAttributeChanged();
     virtual String defaultToolTip() const;
 #if ENABLE(DATALIST_ELEMENT)
     virtual void listAttributeTargetChanged();
     virtual Decimal findClosestTickMarkValue(const Decimal&);
 #endif
+    virtual void updateClearButtonVisibility();
 
     // Parses the specified string for the type, and return
     // the Decimal value for the parsing result if the parsing

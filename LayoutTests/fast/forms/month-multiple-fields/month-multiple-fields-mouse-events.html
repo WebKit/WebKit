@@ -38,6 +38,7 @@ function mouseClickOn(x, y)
 input.value = '2345-07';
 var center = input.offsetHeight / 2;
 var spinButtonOffset = 26;
+var clearButtonOffset = 41;
 
 debug('==> Focus on the month field.');
 mouseClickOn(16, center);
@@ -75,6 +76,19 @@ mouseClickOn(12, center);
 keyDown('upArrow');
 shouldBeEqualToString('input.value', '2346-08');
 input.readOnly = false;
+
+debug('');
+debug('==> Click on clear button.');
+input.readOnly = true;
+mouseClickOn(input.offsetWidth - clearButtonOffset, center);
+shouldBeEqualToString('input.value', '2346-08'); // Not changed.
+input.disabled = true;
+input.readOnly = false;
+mouseClickOn(input.offsetWidth - clearButtonOffset, center);
+shouldBeEqualToString('input.value', '2346-08'); // Not changed.
+input.disabled = false;
+mouseClickOn(input.offsetWidth - clearButtonOffset, center);
+shouldBeEqualToString('input.value', '');
 
 debug('');
 </script>

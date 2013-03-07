@@ -41,6 +41,9 @@ function mouseMoveTo(x, y)
     eventSender.mouseMoveTo(x + input.offsetLeft, y + input.offsetTop);
 }
 
+var center = input.offsetHeight / 2;
+var clearButtonOffset = 20;
+
 input.value = "01:23";
 input.blur();
 
@@ -79,6 +82,22 @@ mouseClick();
 keyDown('upArrow');
 shouldBeEqualToString('input.value', '02:24'); // Not changed.
 input.readOnly = false;
+
+debug('');
+debug('==> Click on clear button.');
+input.readOnly = true;
+mouseMoveTo(input.offsetWidth - clearButtonOffset, center);
+mouseClick();
+shouldBeEqualToString('input.value', '02:24'); // Not changed.
+input.disabled = true;
+input.readOnly = false;
+mouseMoveTo(input.offsetWidth - clearButtonOffset, center);
+mouseClick();
+shouldBeEqualToString('input.value', '02:24'); // Not changed.
+input.disabled = false;
+mouseMoveTo(input.offsetWidth - clearButtonOffset, center);
+mouseClick();
+shouldBeEqualToString('input.value', '');
 
 debug('');
 </script>

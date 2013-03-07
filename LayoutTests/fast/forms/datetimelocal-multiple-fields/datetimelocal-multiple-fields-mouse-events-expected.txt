@@ -45,6 +45,11 @@ PASS input.value is "2346-08-20T11:01"
 ==> Click on a read-only field.
 PASS input.value is "2346-08-20T11:01"
 
+==> Click on clear button.
+PASS input.value is "2346-08-20T11:01"
+PASS input.value is "2346-08-20T11:01"
+PASS input.value is ""
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

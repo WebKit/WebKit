@@ -38,6 +38,7 @@ function mouseClickOn(x, y)
 input.value = '2345-07-19';
 var center = input.offsetHeight / 2;
 var spinButtonOffset = 26;
+var clearButtonOffset = 41;
 
 debug('==> Focus on the month field.');
 mouseClickOn(12, center);
@@ -62,7 +63,7 @@ shouldBeZero('window.getSelection().rangeCount'); // No text selection.
 
 debug('');
 debug('==> Focus on the year field.');
-mouseClickOn(input.offsetWidth - 100, center);
+mouseClickOn(input.offsetWidth - 115, center);
 keyDown('upArrow');
 shouldBeEqualToString('input.value', '2346-08-20');
 mouseClickOn(input.offsetWidth - spinButtonOffset, center - 1);
@@ -86,6 +87,19 @@ mouseClickOn(12, center);
 keyDown('upArrow');
 shouldBeEqualToString('input.value', '2346-08-20');
 input.readOnly = false;
+
+debug('');
+debug('==> Click on clear button.');
+input.readOnly = true;
+mouseClickOn(input.offsetWidth - clearButtonOffset, center);
+shouldBeEqualToString('input.value', '2346-08-20');
+input.disabled = true;
+input.readOnly = false;
+mouseClickOn(input.offsetWidth - clearButtonOffset, center);
+shouldBeEqualToString('input.value', '2346-08-20');
+input.disabled = false;
+mouseClickOn(input.offsetWidth - clearButtonOffset, center);
+shouldBeEqualToString('input.value', '');
 
 debug('');
 </script>

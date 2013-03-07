@@ -912,6 +912,10 @@ void InputType::readonlyAttributeChanged()
 {
 }
 
+void InputType::requiredAttributeChanged()
+{
+}
+
 void InputType::subtreeHasChanged()
 {
     ASSERT_NOT_REACHED();
@@ -940,6 +944,10 @@ Decimal InputType::findClosestTickMarkValue(const Decimal&)
     return Decimal::nan();
 }
 #endif
+
+void InputType::updateClearButtonVisibility()
+{
+}
 
 bool InputType::supportsIndeterminateAppearance() const
 {
