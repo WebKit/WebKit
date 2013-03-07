@@ -756,7 +756,9 @@ bool RenderThemeEfl::supportsDataListUI(const AtomicString& type) const
 {
 #if ENABLE(DATALIST_ELEMENT)
     // FIXME: We need to support other types.
-    return type == InputTypeNames::range();
+    return type == InputTypeNames::range()
+        || type == InputTypeNames::email()
+        || type == InputTypeNames::url();
 #else
     UNUSED_PARAM(type);
     return false;

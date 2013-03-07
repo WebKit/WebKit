@@ -283,6 +283,7 @@ EwkView::EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, WKPage
 #if ENABLE(SPELLCHECK)
     WKPreferencesSetAsynchronousSpellCheckingEnabled(wkPreferences, true);
 #endif
+    WKPreferencesSetInteractiveFormValidationEnabled(wkPreferences, true);
 
     // Enable mouse events by default
     setMouseEventsEnabled(true);

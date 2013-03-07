@@ -481,17 +481,17 @@ String validationMessageTypeMismatchText()
 
 String validationMessageTypeMismatchForEmailText()
 {
-    return String::fromUTF8("type mismatch");
+    return ASCIILiteral("Please enter an email address");
 }
 
 String validationMessageTypeMismatchForMultipleEmailText()
 {
-    return String::fromUTF8("type mismatch");
+    return ASCIILiteral("Please enter an email address");
 }
 
 String validationMessageTypeMismatchForURLText()
 {
-    return String::fromUTF8("type mismatch");
+    return ASCIILiteral("Please enter a URL");
 }
 
 String validationMessageValueMissingText()

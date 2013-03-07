@@ -1,3 +1,15 @@
+2013-03-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL][WK2] Enable interactive form validation for email and url input type validation
+        https://bugs.webkit.org/show_bug.cgi?id=111026
+
+        Reviewed by Laszlo Gombos.
+
+        WebKit EFL can check if input value is valid by enabling this feature.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+
 2013-03-06  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Synthetic ResourceResponses cannot be sent over IPC without losing most information
