@@ -112,11 +112,6 @@
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
-		Name="ENABLE_CURSOR_VISIBILITY"
-		Value="ENABLE_CURSOR_VISIBILITY"
-		PerformEnvironmentSet="true"
-	/>
-  <UserMacro
 		Name="ENABLE_CUSTOM_SCHEME_HANDLER"
 		Value=""
 		PerformEnvironmentSet="true"

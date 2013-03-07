@@ -1,3 +1,10 @@
+2013-03-06  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed partial roll-out of r145003. Disable
+        ENABLE_CURSOR_VISIBILITY on win.
+
+        * WebKit.vcxproj/FeatureDefines.props:
+
 2013-03-04  Jer Noble  <jer.noble@apple.com>
 
         Default mouse cursor behavior should be auto-hide for full screen video with custom controls

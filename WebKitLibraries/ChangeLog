@@ -1,5 +1,11 @@
 2013-03-06  Jer Noble  <jer.noble@apple.com>
 
+        Unreviewed roll-out of r145011.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+
+2013-03-06  Jer Noble  <jer.noble@apple.com>
+
         Unreviewed build fix.  Add ENABLE_CURSOR_VISIBILITY to the list of FEATURE_DEFINES for
         (non-Cairo) Windows builds.
 

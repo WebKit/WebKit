@@ -2693,3 +2693,6 @@ media/W3C
 # Test fails because webkit-image-set is not implemented on Windows
 # The test unfortunately outputs system specific information on assertion failure
 cssom/cssvalue-comparison.html
+
+# CURSOR_VISIBILITY is not enabled on win
+webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Failure ]
