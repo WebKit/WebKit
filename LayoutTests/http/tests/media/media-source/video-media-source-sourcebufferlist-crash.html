@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <script src="/js-test-resources/js-test-pre.js"></script>
         <script src="/media-resources/video-test.js"></script>
         <script type="text/javascript">
             function onSourceOpen(e)
@@ -8,10 +9,8 @@
                 consoleWrite("Calling addSourceBuffer()");
                 e.target.addSourceBuffer('video/webm;codecs="vp8"');
 
-                if (window.GCController) {
-                    consoleWrite("Running garbage collector to cleanup the SourceBuffer reference returned by addSourceBuffer()");
-                    window.GCController.collect();
-                }
+                consoleWrite("Running garbage collector to cleanup the SourceBuffer reference returned by addSourceBuffer()");
+                gc();
 
                 document.querySelector('#v').src = "";
             }

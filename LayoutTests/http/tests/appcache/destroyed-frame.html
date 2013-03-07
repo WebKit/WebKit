@@ -3,17 +3,9 @@
 <p>PASS if didn't crash.</p>
 <iframe src="about:blank"></iframe>
 
+<script src="/js-test-resources/js-test-pre.js"></script>
+
 <script>
-
-function gc()
-{
-    if (window.GCController)
-        return GCController.collect();
-
-    for (var i = 0; i < 10000; i++) { // > force garbage collection (FF requires about 9K allocations before a collect)
-        var s = new String("");
-    }
-}
 
 if (window.testRunner) {
     testRunner.dumpAsText();

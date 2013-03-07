@@ -1,3 +1,4 @@
+<script src="/js-test-resources/js-test-pre.js"></script>
 <script>
 
 if (window.testRunner) {
@@ -32,13 +33,7 @@ function finished() {
 }
 
 function forceGC() {
-    if (this.GCController)
-        GCController.collect();
-    else {
-        for (var i = 0; i < 10000; ++i) // Allocate a sufficient number of objects to force a GC.
-            ({});
-	}
-
+	gc();
 	setTimeout("finished();", 0);
 }
 

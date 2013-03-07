@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script src="/js-test-resources/js-test-pre.js"></script>
 <script type="text/javascript">
 var str = "<script type='text/javascript' src='http://127.0.0.1:8000/misc/resources/hang-connection.php'><" + "/script>";
 
@@ -11,13 +12,7 @@ function loadFirst()
 
 function finish()
 {
-    if (window.GCController)
-        GCController.collect();
-    else {
-        // Allocate a sufficient number of objects to force a GC.
-        for (var i = 0; i < 10000; ++i)
-            new Object;
-    }
+    gc();
     if (window.testRunner)
         testRunner.notifyDone();    
 }

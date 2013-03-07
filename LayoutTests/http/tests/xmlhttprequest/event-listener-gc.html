@@ -1,5 +1,6 @@
 <html>
 <head>
+<script src="/js-test-resources/js-test-pre.js"></script>
 <script>
 function write(s)
 {
@@ -10,11 +11,7 @@ var didCollect = false;
 function collect()
 {
     didCollect = true;
-    if (window.GCController)
-        GCController.collect();
-    else
-        for (var i = 0; i < 10000; i++) // >
-            new String("");
+    gc();
 }
 
 function processStateChange(e)
