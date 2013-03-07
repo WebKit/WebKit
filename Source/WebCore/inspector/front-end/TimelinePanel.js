@@ -373,8 +373,9 @@ WebInspector.TimelinePanel.prototype = {
     _saveToFile: function()
     {
         if (this._operationInProgress)
-            return;
+            return false;
         this._model.saveToFile();
+        return true;
     },
 
     _loadFromFile: function()
@@ -564,17 +565,17 @@ WebInspector.TimelinePanel.prototype = {
     _toggleTimelineButtonClicked: function()
     {
         if (this._operationInProgress)
-            return;
+            return false;
         if (this.toggleTimelineButton.toggled) {
             this._model.stopRecord();
             this.toggleTimelineButton.title = WebInspector.UIString("Record");
-        }
-        else {
+        } else {
             this._model.startRecord();
             this.toggleTimelineButton.title = WebInspector.UIString("Stop");
             WebInspector.userMetrics.TimelineStarted.record();
         }
         this.toggleTimelineButton.toggled = !this.toggleTimelineButton.toggled;
+        return true;
     },
 
     _durationFilterChanged: function()

@@ -251,15 +251,13 @@ WebInspector.Panel.prototype = {
     {
         var shortcutKey = WebInspector.KeyboardShortcut.makeKeyFromEvent(event);
         var handler = this._shortcuts[shortcutKey];
-        if (handler) {
-            handler(event);
+        if (handler && handler(event))
             event.handled = true;
-        }
     },
 
     /**
      * @param {!Array.<!WebInspector.KeyboardShortcut.Descriptor>} keys
-     * @param {function(KeyboardEvent)} handler
+     * @param {function(KeyboardEvent):boolean} handler
      */
     registerShortcuts: function(keys, handler)
     {

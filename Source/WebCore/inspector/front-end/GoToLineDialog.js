@@ -54,25 +54,25 @@ WebInspector.GoToLineDialog = function(view)
 
 /**
  * @param {WebInspector.Panel} panel
+ * @param {function():?WebInspector.View} viewGetter
  */
 WebInspector.GoToLineDialog.install = function(panel, viewGetter)
 {
-    function showGoToLineDialog()
-    {
-         var view = viewGetter();
-         if (view)
-             WebInspector.GoToLineDialog._show(view);
-    }
-
     var goToLineShortcut = WebInspector.GoToLineDialog.createShortcut();
-    panel.registerShortcuts([goToLineShortcut], showGoToLineDialog);
+    panel.registerShortcuts([goToLineShortcut], WebInspector.GoToLineDialog._show.bind(null, viewGetter));
 }
 
-WebInspector.GoToLineDialog._show = function(sourceView)
+/**
+ * @param {function():?WebInspector.View} viewGetter
+ * @return {boolean}
+ */
+WebInspector.GoToLineDialog._show = function(viewGetter)
 {
+    var sourceView = viewGetter();
     if (!sourceView || !sourceView.canHighlightLine())
-        return;
+        return false;
     WebInspector.Dialog.show(sourceView.element, new WebInspector.GoToLineDialog(sourceView));
+    return true;
 }
 
 /**

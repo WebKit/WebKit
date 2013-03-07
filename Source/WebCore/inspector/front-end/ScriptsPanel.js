@@ -751,8 +751,10 @@ WebInspector.ScriptsPanel.prototype = {
     _evaluateSelectionInConsole: function()
     {
         var selection = window.getSelection();
-        if (selection.type === "Range" && !selection.isCollapsed)
-            WebInspector.evaluateInConsole(selection.toString());
+        if (selection.type !== "Range" || selection.isCollapsed)
+            return false;
+        WebInspector.evaluateInConsole(selection.toString());
+        return true;
     },
 
     _createDebugToolbar: function()
@@ -957,29 +959,32 @@ WebInspector.ScriptsPanel.prototype = {
     {
         var sourceFrame = this.visibleView;
         if (!sourceFrame)
-            return;
+            return false;
 
         if (sourceFrame instanceof WebInspector.JavaScriptSourceFrame) {
             var javaScriptSourceFrame = /** @type {WebInspector.JavaScriptSourceFrame} */ (sourceFrame);
             javaScriptSourceFrame.toggleBreakpointOnCurrentLine();
-        }            
+            return true;
+        }
+        return false;
     },
 
     _showOutlineDialog: function()
     {
         var uiSourceCode = this._editorContainer.currentFile();
         if (!uiSourceCode)
-            return;
+            return false;
 
         switch (uiSourceCode.contentType()) {
         case WebInspector.resourceTypes.Document:
         case WebInspector.resourceTypes.Script:
             WebInspector.JavaScriptOutlineDialog.show(this.visibleView, uiSourceCode);
-            break;
+            return true;
         case WebInspector.resourceTypes.Stylesheet:
             WebInspector.StyleSheetOutlineDialog.show(this.visibleView, uiSourceCode);
-            break;
+            return true;
         }
+        return false;
     },
 
     _installDebuggerSidebarController: function()
