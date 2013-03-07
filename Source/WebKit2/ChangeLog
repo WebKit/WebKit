@@ -1,3 +1,23 @@
+2013-03-06  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Synthetic ResourceResponses cannot be sent over IPC without losing most information
+        https://bugs.webkit.org/show_bug.cgi?id=111623
+
+        Reviewed by Brady Eidson.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebCoreArgumentCoders.h:
+        (CoreIPC::::encode): Made the decision on whether to serialize WebCore data in
+        ResourceResponse dynamic. If the platform data is out of date, we need both
+        (because some platforms use encodePlatformData() to pass additional information).
+        (CoreIPC::::decode): Decode platform data first, because this overwrites the ResourceResponse.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm: (CoreIPC::::encodePlatformData): Don't
+        encode NSURLResponse if it's out of date. We may have a bad NSURLResponse with 0
+        status code given to client, but it was almost certainly the same on sending side.
+        WebCore doesn't mutate real responses - it either keeps them as is, or builds
+        entirely synthetic ones.
+
 2013-03-04  Jer Noble  <jer.noble@apple.com>
 
         Default mouse cursor behavior should be auto-hide for full screen video with custom controls

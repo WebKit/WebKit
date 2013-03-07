@@ -162,12 +162,6 @@ template<> struct ArgumentCoder<WebCore::ResourceRequest> {
 };
 
 template<> struct ArgumentCoder<WebCore::ResourceResponse> {
-#if PLATFORM(MAC)
-    static const bool kShouldSerializeWebCoreData = false;
-#else
-    static const bool kShouldSerializeWebCoreData = true;
-#endif
-
     static void encode(ArgumentEncoder&, const WebCore::ResourceResponse&);
     static bool decode(ArgumentDecoder&, WebCore::ResourceResponse&);
     static void encodePlatformData(ArgumentEncoder&, const WebCore::ResourceResponse&);

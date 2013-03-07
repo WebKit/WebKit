@@ -51,6 +51,9 @@ CFURLResponseRef ResourceResponse::cfURLResponse() const
 {
     if (!m_cfResponse && !m_isNull) {
         RetainPtr<CFURLRef> url(AdoptCF, m_url.createCFURL());
+
+        // FIXME: This creates a very incomplete CFURLResponse, which does not even have a status code.
+
         m_cfResponse.adoptCF(CFURLResponseCreate(0, url.get(), m_mimeType.createCFString().get(), m_expectedContentLength, m_textEncodingName.createCFString().get(), kCFURLCacheStorageAllowed));
     }
 

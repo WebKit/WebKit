@@ -85,7 +85,7 @@ bool ArgumentCoder<ResourceRequest>::decodePlatformData(ArgumentDecoder& decoder
 
 void ArgumentCoder<ResourceResponse>::encodePlatformData(ArgumentEncoder& encoder, const ResourceResponse& resourceResponse)
 {
-    bool responseIsPresent = resourceResponse.nsURLResponse();
+    bool responseIsPresent = resourceResponse.platformResponseIsUpToDate() && resourceResponse.nsURLResponse();
     encoder << responseIsPresent;
 
     if (!responseIsPresent)

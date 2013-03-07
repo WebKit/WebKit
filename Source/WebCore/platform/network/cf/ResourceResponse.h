@@ -41,6 +41,7 @@ class ResourceResponse : public ResourceResponseBase {
 public:
     ResourceResponse()
         : m_initLevel(CommonAndUncommonFields)
+        , m_platformResponseIsUpToDate(true)
     {
     }
 
@@ -48,6 +49,7 @@ public:
     ResourceResponse(CFURLResponseRef cfResponse)
         : m_cfResponse(cfResponse)
         , m_initLevel(Uninitialized)
+        , m_platformResponseIsUpToDate(true)
     {
         m_isNull = !cfResponse;
     }
@@ -58,6 +60,7 @@ public:
     ResourceResponse(NSURLResponse *nsResponse)
         : m_nsResponse(nsResponse)
         , m_initLevel(Uninitialized)
+        , m_platformResponseIsUpToDate(true)
     {
         m_isNull = !nsResponse;
     }
@@ -66,6 +69,7 @@ public:
     ResourceResponse(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
         : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName, filename)
         , m_initLevel(CommonAndUncommonFields)
+        , m_platformResponseIsUpToDate(false)
     {
     }
 
@@ -93,6 +97,8 @@ public:
     RetainPtr<CFArrayRef> certificateChain() const;
 #endif
 
+    bool platformResponseIsUpToDate() const { return m_platformResponseIsUpToDate; }
+
 private:
     friend class ResourceResponseBase;
 
@@ -116,6 +122,7 @@ private:
     RetainPtr<CFArrayRef> m_externalCertificateChain;
 #endif
     InitLevel m_initLevel;
+    bool m_platformResponseIsUpToDate;
 };
 
 struct CrossThreadResourceResponseData : public CrossThreadResourceResponseDataBase {

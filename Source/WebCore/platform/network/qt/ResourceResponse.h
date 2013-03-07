@@ -41,6 +41,8 @@ public:
     {
     }
 
+    bool platformResponseIsUpToDate() const { return false; }
+
 private:
     friend class ResourceResponseBase;
 

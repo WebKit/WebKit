@@ -73,6 +73,8 @@ public:
     GTlsCertificateFlags soupMessageTLSErrors() const { return m_tlsErrors; }
     void setSoupMessageTLSErrors(GTlsCertificateFlags tlsErrors) { m_tlsErrors = tlsErrors; }
 
+    bool platformResponseIsUpToDate() const { return false; }
+
 private:
     friend class ResourceResponseBase;
 

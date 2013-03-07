@@ -156,7 +156,9 @@ void ResourceResponseBase::setURL(const KURL& url)
     lazyInit(CommonFieldsOnly);
     m_isNull = false;
 
-    m_url = url; 
+    m_url = url;
+
+    // FIXME: Should invalidate or update platform response if present.
 }
 
 const String& ResourceResponseBase::mimeType() const
@@ -171,7 +173,10 @@ void ResourceResponseBase::setMimeType(const String& mimeType)
     lazyInit(CommonFieldsOnly);
     m_isNull = false;
 
-    m_mimeType = mimeType; 
+    // FIXME: MIME type is determined by HTTP Content-Type header. We should update the header, so that it doesn't disagree with m_mimeType.
+    m_mimeType = mimeType;
+
+    // FIXME: Should invalidate or update platform response if present.
 }
 
 long long ResourceResponseBase::expectedContentLength() const 
@@ -186,7 +191,10 @@ void ResourceResponseBase::setExpectedContentLength(long long expectedContentLen
     lazyInit(CommonFieldsOnly);
     m_isNull = false;
 
+    // FIXME: Content length is determined by HTTP Content-Length header. We should update the header, so that it doesn't disagree with m_expectedContentLength.
     m_expectedContentLength = expectedContentLength; 
+
+    // FIXME: Should invalidate or update platform response if present.
 }
 
 const String& ResourceResponseBase::textEncodingName() const
@@ -201,7 +209,10 @@ void ResourceResponseBase::setTextEncodingName(const String& encodingName)
     lazyInit(CommonFieldsOnly);
     m_isNull = false;
 
-    m_textEncodingName = encodingName; 
+    // FIXME: Text encoding is determined by HTTP Content-Type header. We should update the header, so that it doesn't disagree with m_textEncodingName.
+    m_textEncodingName = encodingName;
+
+    // FIXME: Should invalidate or update platform response if present.
 }
 
 // FIXME should compute this on the fly
@@ -217,7 +228,10 @@ void ResourceResponseBase::setSuggestedFilename(const String& suggestedName)
     lazyInit(AllFields);
     m_isNull = false;
 
+    // FIXME: Suggested file name is calculated based on other headers. There should not be a setter for it.
     m_suggestedFilename = suggestedName; 
+
+    // FIXME: Should invalidate or update platform response if present.
 }
 
 int ResourceResponseBase::httpStatusCode() const
@@ -232,6 +246,8 @@ void ResourceResponseBase::setHTTPStatusCode(int statusCode)
     lazyInit(CommonFieldsOnly);
 
     m_httpStatusCode = statusCode;
+
+    // FIXME: Should invalidate or update platform response if present.
 }
 
 const String& ResourceResponseBase::httpStatusText() const 
@@ -246,6 +262,8 @@ void ResourceResponseBase::setHTTPStatusText(const String& statusText)
     lazyInit(CommonAndUncommonFields);
 
     m_httpStatusText = statusText; 
+
+    // FIXME: Should invalidate or update platform response if present.
 }
 
 String ResourceResponseBase::httpHeaderField(const AtomicString& name) const
@@ -304,6 +322,8 @@ void ResourceResponseBase::setHTTPHeaderField(const AtomicString& name, const St
     updateHeaderParsedState(name);
 
     m_httpHeaderFields.set(name, value);
+
+    // FIXME: Should invalidate or update platform response if present.
 }
 
 void ResourceResponseBase::addHTTPHeaderField(const AtomicString& name, const String& value)
@@ -504,6 +524,8 @@ void ResourceResponseBase::setLastModifiedDate(time_t lastModifiedDate)
     lazyInit(CommonAndUncommonFields);
 
     m_lastModifiedDate = lastModifiedDate;
+
+    // FIXME: Should invalidate or update platform response if present.
 }
 
 time_t ResourceResponseBase::lastModifiedDate() const

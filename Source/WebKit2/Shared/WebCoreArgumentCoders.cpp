@@ -433,7 +433,16 @@ bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder& decoder, ResourceRe
 
 void ArgumentCoder<ResourceResponse>::encode(ArgumentEncoder& encoder, const ResourceResponse& resourceResponse)
 {
-    if (kShouldSerializeWebCoreData) {
+#if PLATFORM(MAC)
+    bool shouldSerializeWebCoreData = !resourceResponse.platformResponseIsUpToDate();
+    encoder << shouldSerializeWebCoreData;
+#else
+    bool shouldSerializeWebCoreData = true;
+#endif
+
+    encodePlatformData(encoder, resourceResponse);
+
+    if (shouldSerializeWebCoreData) {
         bool responseIsNull = resourceResponse.isNull();
         encoder << responseIsNull;
         if (responseIsNull)
@@ -449,13 +458,24 @@ void ArgumentCoder<ResourceResponse>::encode(ArgumentEncoder& encoder, const Res
         encoder << resourceResponse.httpStatusText();
         encoder << resourceResponse.suggestedFilename();
     }
-
-    encodePlatformData(encoder, resourceResponse);
 }
 
 bool ArgumentCoder<ResourceResponse>::decode(ArgumentDecoder& decoder, ResourceResponse& resourceResponse)
 {
-    if (kShouldSerializeWebCoreData) {
+#if PLATFORM(MAC)
+    bool hasSerializedWebCoreData;
+    if (!decoder.decode(hasSerializedWebCoreData))
+        return false;
+#else
+    bool hasSerializedWebCoreData = true;
+#endif
+
+    ResourceResponse response;
+
+    if (!decodePlatformData(decoder, response))
+        return false;
+
+    if (hasSerializedWebCoreData) {
         bool responseIsNull;
         if (!decoder.decode(responseIsNull))
             return false;
@@ -463,8 +483,6 @@ bool ArgumentCoder<ResourceResponse>::decode(ArgumentDecoder& decoder, ResourceR
             resourceResponse = ResourceResponse();
             return true;
         }
-
-        ResourceResponse response;
 
         String url;
         if (!decoder.decode(url))
@@ -506,11 +524,11 @@ bool ArgumentCoder<ResourceResponse>::decode(ArgumentDecoder& decoder, ResourceR
         if (!decoder.decode(suggestedFilename))
             return false;
         response.setSuggestedFilename(suggestedFilename);
-
-        resourceResponse = response;
     }
 
-    return decodePlatformData(decoder, resourceResponse);
+    resourceResponse = response;
+
+    return true;
 }
 
 void ArgumentCoder<ResourceError>::encode(ArgumentEncoder& encoder, const ResourceError& resourceError)

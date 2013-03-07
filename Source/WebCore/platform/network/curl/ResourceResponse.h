@@ -51,6 +51,8 @@ public:
     // Needed for compatibility.
     CFURLResponseRef cfURLResponse() const { return 0; }
 
+    bool platformResponseIsUpToDate() const { return false; }
+
 private:
     friend class ResourceResponseBase;
 

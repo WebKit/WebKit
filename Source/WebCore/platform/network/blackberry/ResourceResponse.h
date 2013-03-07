@@ -42,6 +42,8 @@ public:
     void setIsMultipartPayload(bool value) { m_isMultipartPayload = value; }
     bool isMultipartPayload() const { return m_isMultipartPayload; }
 
+    bool platformResponseIsUpToDate() const { return false; }
+
 private:
     bool m_isMultipartPayload;
 };
