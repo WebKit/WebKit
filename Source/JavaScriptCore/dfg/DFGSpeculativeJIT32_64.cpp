@@ -3649,68 +3649,19 @@ void SpeculativeJIT::compile(Node* node)
     }
         
     case ConvertThis: {
-        switch (node->child1().useKind()) {
-        case OtherUse: {
-            JSValueOperand thisValue(this, node->child1(), ManualOperandSpeculation);
-            GPRTemporary scratch(this);
-            
-            GPRReg thisValueTagGPR = thisValue.tagGPR();
-            GPRReg scratchGPR = scratch.gpr();
-            
-            COMPILE_ASSERT((JSValue::UndefinedTag | 1) == JSValue::NullTag, UndefinedTag_OR_1_EQUALS_NullTag);
-            if (needsTypeCheck(node->child1(), SpecOther)) {
-                m_jit.move(thisValueTagGPR, scratchGPR);
-                m_jit.or32(TrustedImm32(1), scratchGPR);
-                // This is hard. It would be better to save the value, but we can't quite do it,
-                // since this operation does not otherwise get the payload.
-                typeCheck(
-                    JSValueRegs(), node->child1(), SpecOther,
-                    m_jit.branch32(
-                        MacroAssembler::NotEqual, scratchGPR, TrustedImm32(JSValue::NullTag)));
-            }
-            
-            m_jit.move(MacroAssembler::TrustedImmPtr(m_jit.globalThisObjectFor(node->codeOrigin)), scratchGPR);
-            cellResult(scratchGPR, node);
-            break;
-        }
+        ASSERT(node->child1().useKind() == UntypedUse);
+
+        JSValueOperand thisValue(this, node->child1());
+        GPRReg thisValueTagGPR = thisValue.tagGPR();
+        GPRReg thisValuePayloadGPR = thisValue.payloadGPR();
         
-        case ObjectUse: {
-            SpeculateCellOperand thisValue(this, node->child1());
-            GPRReg thisValueGPR = thisValue.gpr();
-            
-            DFG_TYPE_CHECK(
-                JSValueSource::unboxedCell(thisValueGPR), node->child1(), SpecObject,
-                m_jit.branchPtr(
-                    JITCompiler::Equal,
-                    JITCompiler::Address(thisValueGPR, JSCell::structureOffset()),
-                    JITCompiler::TrustedImmPtr(m_jit.globalData()->stringStructure.get())));
-            
-            GPRTemporary result(this, thisValue);
-            GPRReg resultGPR = result.gpr();
-            m_jit.move(thisValueGPR, resultGPR);
-            cellResult(resultGPR, node);
-            break;
-        }
+        flushRegisters();
         
-        case UntypedUse: {
-            JSValueOperand thisValue(this, node->child1());
-            GPRReg thisValueTagGPR = thisValue.tagGPR();
-            GPRReg thisValuePayloadGPR = thisValue.payloadGPR();
-            
-            flushRegisters();
-            
-            GPRResult2 resultTag(this);
-            GPRResult resultPayload(this);
-            callOperation(operationConvertThis, resultTag.gpr(), resultPayload.gpr(), thisValueTagGPR, thisValuePayloadGPR);
-            
-            cellResult(resultPayload.gpr(), node);
-            break;
-        }
-            
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
+        GPRResult2 resultTag(this);
+        GPRResult resultPayload(this);
+        callOperation(operationConvertThis, resultTag.gpr(), resultPayload.gpr(), thisValueTagGPR, thisValuePayloadGPR);
+        
+        cellResult(resultPayload.gpr(), node);
         break;
     }
 

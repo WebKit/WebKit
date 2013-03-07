@@ -207,6 +207,11 @@ struct Node {
     {
         setOpAndDefaultNonExitFlags(Phantom);
     }
+    
+    void convertToIdentity()
+    {
+        setOpAndDefaultNonExitFlags(Identity);
+    }
 
     bool mustGenerate()
     {
@@ -274,6 +279,14 @@ struct Node {
         m_op = JSConstant;
         m_flags &= ~(NodeMustGenerate | NodeMightClobber | NodeClobbersWorld);
         m_opInfo = constantNumber;
+        children.reset();
+    }
+    
+    void convertToWeakConstant(JSCell* cell)
+    {
+        m_op = WeakJSConstant;
+        m_flags &= ~(NodeMustGenerate | NodeMightClobber | NodeClobbersWorld);
+        m_opInfo = bitwise_cast<uintptr_t>(cell);
         children.reset();
     }
     

@@ -3565,64 +3565,16 @@ void SpeculativeJIT::compile(Node* node)
     }
         
     case ConvertThis: {
-        switch (node->child1().useKind()) {
-        case OtherUse: {
-            JSValueOperand thisValue(this, node->child1(), ManualOperandSpeculation);
-            GPRTemporary scratch(this);
-            GPRReg thisValueGPR = thisValue.gpr();
-            GPRReg scratchGPR = scratch.gpr();
-            
-            if (needsTypeCheck(node->child1(), SpecOther)) {
-                m_jit.move(thisValueGPR, scratchGPR);
-                m_jit.and64(MacroAssembler::TrustedImm32(~TagBitUndefined), scratchGPR);
-                typeCheck(
-                    JSValueRegs(thisValueGPR), node->child1(), SpecOther,
-                    m_jit.branch64(
-                        MacroAssembler::NotEqual, scratchGPR,
-                        MacroAssembler::TrustedImm64(ValueNull)));
-            }
-            
-            m_jit.move(MacroAssembler::TrustedImmPtr(m_jit.globalThisObjectFor(node->codeOrigin)), scratchGPR);
-            cellResult(scratchGPR, node);
-            break;
-        }
+        ASSERT(node->child1().useKind() == UntypedUse);
+        JSValueOperand thisValue(this, node->child1());
+        GPRReg thisValueGPR = thisValue.gpr();
         
-        case ObjectUse: {
-            SpeculateCellOperand thisValue(this, node->child1());
-            GPRTemporary result(this, thisValue);
-            GPRReg thisValueGPR = thisValue.gpr();
-            GPRReg resultGPR = result.gpr();
-            
-            DFG_TYPE_CHECK(
-                JSValueSource::unboxedCell(thisValueGPR), node->child1(), SpecObject,
-                m_jit.branchPtr(
-                    JITCompiler::Equal,
-                    JITCompiler::Address(thisValueGPR, JSCell::structureOffset()),
-                    JITCompiler::TrustedImmPtr(m_jit.globalData()->stringStructure.get())));
-            
-            m_jit.move(thisValueGPR, resultGPR);
-            
-            cellResult(resultGPR, node);
-            break;
-        }
-            
-        case UntypedUse: {
-            JSValueOperand thisValue(this, node->child1());
-            GPRReg thisValueGPR = thisValue.gpr();
-            
-            flushRegisters();
-            
-            GPRResult result(this);
-            callOperation(operationConvertThis, result.gpr(), thisValueGPR);
-            
-            cellResult(result.gpr(), node);
-            break;
-        }
-            
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
+        flushRegisters();
+        
+        GPRResult result(this);
+        callOperation(operationConvertThis, result.gpr(), thisValueGPR);
+        
+        cellResult(result.gpr(), node);
         break;
     }
 

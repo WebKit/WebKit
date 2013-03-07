@@ -576,12 +576,21 @@ private:
         }
             
         case ConvertThis: {
-            // FIXME: Use Phantom(type check) and Identity instead.
-            // https://bugs.webkit.org/show_bug.cgi?id=110395
-            if (isOtherSpeculation(node->child1()->prediction()))
-                setUseKindAndUnboxIfProfitable<OtherUse>(node->child1());
-            else if (isObjectSpeculation(node->child1()->prediction()))
+            if (isOtherSpeculation(node->child1()->prediction())) {
+                m_insertionSet.insertNode(
+                    m_indexInBlock, SpecNone, Phantom, node->codeOrigin,
+                    Edge(node->child1().node(), OtherUse));
+                observeUseKindOnNode<OtherUse>(node->child1().node());
+                node->convertToWeakConstant(m_graph.globalThisObjectFor(node->codeOrigin));
+                break;
+            }
+            
+            if (isObjectSpeculation(node->child1()->prediction())) {
                 setUseKindAndUnboxIfProfitable<ObjectUse>(node->child1());
+                node->convertToIdentity();
+                break;
+            }
+            
             break;
         }
             
@@ -922,41 +931,47 @@ private:
 #endif
     }
     
+    template<UseKind useKind>
+    void observeUseKindOnNode(Node* node)
+    {
+        if (node->op() != GetLocal)
+            return;
+        
+        VariableAccessData* variable = node->variableAccessData();
+        switch (useKind) {
+        case Int32Use:
+            if (alwaysUnboxSimplePrimitives()
+                || isInt32Speculation(variable->prediction()))
+                m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
+            break;
+        case NumberUse:
+        case RealNumberUse:
+            if (variable->doubleFormatState() == UsingDoubleFormat)
+                m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
+            break;
+        case BooleanUse:
+            if (alwaysUnboxSimplePrimitives()
+                || isBooleanSpeculation(variable->prediction()))
+                m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
+            break;
+        case CellUse:
+        case ObjectUse:
+        case StringUse:
+            if (alwaysUnboxSimplePrimitives()
+                || isCellSpeculation(variable->prediction()))
+                m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
+            break;
+        default:
+            break;
+        }
+    }
+    
     // Set the use kind of the edge. In the future (https://bugs.webkit.org/show_bug.cgi?id=110433),
     // this can be used to notify the GetLocal that the variable is profitable to unbox.
     template<UseKind useKind>
     void setUseKindAndUnboxIfProfitable(Edge& edge)
     {
-        if (edge->op() == GetLocal) {
-            VariableAccessData* variable = edge->variableAccessData();
-            switch (useKind) {
-            case Int32Use:
-                if (alwaysUnboxSimplePrimitives()
-                    || isInt32Speculation(variable->prediction()))
-                    m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
-                break;
-            case NumberUse:
-            case RealNumberUse:
-                if (variable->doubleFormatState() == UsingDoubleFormat)
-                    m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
-                break;
-            case BooleanUse:
-                if (alwaysUnboxSimplePrimitives()
-                    || isBooleanSpeculation(variable->prediction()))
-                    m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
-                break;
-            case CellUse:
-            case ObjectUse:
-            case StringUse:
-                if (alwaysUnboxSimplePrimitives()
-                    || isCellSpeculation(variable->prediction()))
-                    m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
-                break;
-            default:
-                break;
-            }
-        }
-        
+        observeUseKindOnNode<useKind>(edge.node());
         edge.setUseKind(useKind);
     }
     

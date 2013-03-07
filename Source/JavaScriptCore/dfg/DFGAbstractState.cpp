@@ -1100,31 +1100,8 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         AbstractValue& source = forNode(node->child1());
         AbstractValue& destination = forNode(node);
             
-        if (isObjectSpeculation(source.m_type)) {
-            // This is the simple case. We already know that the source is an
-            // object, so there's nothing to do. I don't think this case will
-            // be hit, but then again, you never know.
-            destination = source;
-            m_foundConstants = true; // Tell the constant folder to turn this into Identity.
-            break;
-        }
-        
-        node->setCanExit(true);
-        switch (node->child1().useKind()) {
-        case OtherUse:
-            destination.set(SpecObjectOther);
-            break;
-        case ObjectUse:
-            destination = source;
-            break;
-        case UntypedUse:
-            destination = source;
-            destination.merge(SpecObjectOther);
-            break;
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
+        destination = source;
+        destination.merge(SpecObjectOther);
         break;
     }
 

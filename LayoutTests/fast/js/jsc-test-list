@@ -104,6 +104,10 @@ fast/js/dfg-check-structure-elimination-for-non-cell
 fast/js/dfg-constant-fold-first-local-read-after-block-merge
 fast/js/dfg-constant-fold-uncaptured-variable-that-is-later-captured
 fast/js/dfg-convert-this-dom-window
+fast/js/dfg-convert-this-object-then-exit-on-other
+fast/js/dfg-convert-this-other-then-exit-on-object
+fast/js/dfg-convert-this-polymorphic-object-then-exit-on-other
+fast/js/dfg-convert-this-polymorphic-object-then-exit-on-string
 fast/js/dfg-create-inlined-arguments-in-closure-inline
 fast/js/dfg-cse-cfa-discrepancy
 fast/js/dfg-cse-dead-get-scoped-var

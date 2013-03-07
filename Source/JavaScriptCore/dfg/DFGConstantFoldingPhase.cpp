@@ -137,14 +137,6 @@ private:
                 break;
             }
                 
-            case ConvertThis: {
-                if (!isObjectSpeculation(m_state.forNode(node->child1()).m_type))
-                    break;
-                node->setOpAndDefaultFlags(Identity);
-                changed = true;
-                break;
-            }
-                
             case GetById:
             case GetByIdFlush: {
                 CodeOrigin codeOrigin = node->codeOrigin;

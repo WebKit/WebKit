@@ -319,12 +319,6 @@ public:
         return codeBlock()->globalObjectFor(codeOrigin);
     }
     
-    JSObject* globalThisObjectFor(CodeOrigin codeOrigin)
-    {
-        JSGlobalObject* object = globalObjectFor(codeOrigin);
-        return object->methodTable()->toThisObject(object, 0);
-    }
-    
     bool strictModeFor(CodeOrigin codeOrigin)
     {
         if (!codeOrigin.inlineCallFrame)

@@ -1,3 +1,42 @@
+2013-03-06  Filip Pizlo  <fpizlo@apple.com>
+
+        ConvertThis should be turned into Identity based on predictions in Fixup, rather than based on proofs in ConstantFolding
+        https://bugs.webkit.org/show_bug.cgi?id=111674
+
+        Reviewed by Oliver Hunt.
+        
+        This gets rid of the speculated forms of ConvertThis in the backend, and has Fixup
+        convert them to either Identity(Object:@child) if the child is predicted object, or
+        Phantom(Other:@child) ; WeakJSConstant(global this object) if it's predicted Other.
+        
+        The goal of this is to ensure that the optimization fixpoint doesn't create
+        Identity's, since doing so requires a rerun of CSE. So far this isn't a speed-up
+        but I'm hoping this will be a step towards reducing the need to rerun the fixpoint
+        so as to ultimately reduce compile times.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::executeEffects):
+        * dfg/DFGAssemblyHelpers.h:
+        (AssemblyHelpers):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (FixupPhase):
+        (JSC::DFG::FixupPhase::observeUseKindOnNode):
+        (JSC::DFG::FixupPhase::setUseKindAndUnboxIfProfitable):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::globalThisObjectFor):
+        (Graph):
+        * dfg/DFGNode.h:
+        (Node):
+        (JSC::DFG::Node::convertToIdentity):
+        (JSC::DFG::Node::convertToWeakConstant):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2013-03-07  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         Children method in LLINT AST Not class should return [@child]

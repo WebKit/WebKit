@@ -352,6 +352,12 @@ public:
         return m_codeBlock->globalObjectFor(codeOrigin);
     }
     
+    JSObject* globalThisObjectFor(CodeOrigin codeOrigin)
+    {
+        JSGlobalObject* object = globalObjectFor(codeOrigin);
+        return object->methodTable()->toThisObject(object, 0);
+    }
+    
     ExecutableBase* executableFor(InlineCallFrame* inlineCallFrame)
     {
         if (!inlineCallFrame)
