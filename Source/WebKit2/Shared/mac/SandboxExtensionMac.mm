@@ -214,7 +214,8 @@ void SandboxExtension::createHandle(const String& path, Type type, Handle& handl
 {
     ASSERT(!handle.m_sandboxExtension);
 
-    CString standardizedPath = resolveSymlinksInPath([[(NSString *)path stringByStandardizingPath] fileSystemRepresentation]);
+    // FIXME: Do we need both resolveSymlinksInPath() and -stringByStandardizingPath?
+    CString standardizedPath = resolveSymlinksInPath(fileSystemRepresentation([(NSString *)path stringByStandardizingPath]));
     handle.m_sandboxExtension = WKSandboxExtensionCreate(standardizedPath.data(), wkSandboxExtensionType(type));
     if (!handle.m_sandboxExtension)
         WTFLogAlways("Could not create a sandbox extension for '%s'", path.utf8().data());
