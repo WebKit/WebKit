@@ -45,7 +45,7 @@ WebInspector.AceTextEditor = function(url, delegate)
     WebInspector.View.call(this);
     this._delegate = delegate;
     this._url = url;
-    this.element.className = "ace-editor-container";
+    this.element.className = "ace-editor-container source-code";
 
     var prefix = window.flattenImports ? "" : "ace/";
     ace.config.setModuleUrl("ace/mode/javascript", prefix + "mode_javascript.js");
