@@ -360,6 +360,9 @@ webkit.org/b/85463 editing/inserting/typing-space-to-trigger-smart-link.html
 # gestureTwoFingerTap not implemented by this platform (introduced in r132406)
 touchadjustment/touch-links-two-finger-tap.html
 
+# CURSOR_VISIBILITY is not enabled in qt
+webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Failure ]
+
 # =========================================================================== #
 #       Feature not yet supported.                                            #
 # =========================================================================== #

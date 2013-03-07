@@ -94,6 +94,7 @@ InternalSettings::Backup::Backup(Settings* settings)
     , m_shouldDisplayCaptions(settings->shouldDisplayCaptions())
     , m_shouldDisplayTextDescriptions(settings->shouldDisplayTextDescriptions())
 #endif
+    , m_originalTimeWithoutMouseMovementBeforeHidingControls(settings->timeWithoutMouseMovementBeforeHidingControls())
 {
 }
 
@@ -129,6 +130,7 @@ void InternalSettings::Backup::restoreTo(Settings* settings)
     settings->setShouldDisplayCaptions(m_shouldDisplayCaptions);
     settings->setShouldDisplayTextDescriptions(m_shouldDisplayTextDescriptions);
 #endif
+    settings->setTimeWithoutMouseMovementBeforeHidingControls(m_originalTimeWithoutMouseMovementBeforeHidingControls);
 }
 
 // We can't use RefCountedSupplement because that would try to make InternalSettings RefCounted
@@ -485,6 +487,12 @@ void InternalSettings::setMinimumTimerInterval(double intervalInSeconds, Excepti
 {
     InternalSettingsGuardForSettings();
     settings()->setMinDOMTimerInterval(intervalInSeconds);
+}
+
+void InternalSettings::setTimeWithoutMouseMovementBeforeHidingControls(double time, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setTimeWithoutMouseMovementBeforeHidingControls(time);
 }
 
 }

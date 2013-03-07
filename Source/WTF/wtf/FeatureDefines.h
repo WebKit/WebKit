@@ -186,6 +186,10 @@
 #define ENABLE_WEB_AUDIO 1
 #endif
 
+#if !defined(ENABLE_CURSOR_VISIBILITY)
+#define ENABLE_CURSOR_VISIBILITY 1
+#endif
+
 #endif /* PLATFORM(MAC) && !PLATFORM(IOS) */
 
 /* --------- Apple Windows port --------- */

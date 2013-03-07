@@ -1,3 +1,14 @@
+2013-03-04  Jer Noble  <jer.noble@apple.com>
+
+        Default mouse cursor behavior should be auto-hide for full screen video with custom controls
+        https://bugs.webkit.org/show_bug.cgi?id=107601
+
+        Reviewed by Beth Dakin.
+
+        Enable the CURSOR_VISIBILITY feature.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-03-06  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [GTK][WK2] Implement WebInspector::localizedStringsURL() to return the file URL of localizedStrings.js

@@ -264,6 +264,9 @@ namespace WebCore {
         static bool shouldRespectPriorityInCSSAttributeSetters();
 #endif
 
+        void setTimeWithoutMouseMovementBeforeHidingControls(double time) { m_timeWithoutMouseMovementBeforeHidingControls = time; }
+        double timeWithoutMouseMovementBeforeHidingControls() const { return m_timeWithoutMouseMovementBeforeHidingControls; }
+
     private:
         explicit Settings(Page*);
 
@@ -319,6 +322,8 @@ namespace WebCore {
 #endif
         bool m_scrollingPerformanceLoggingEnabled : 1;
         bool m_aggressiveTileRetentionEnabled : 1;
+
+        double m_timeWithoutMouseMovementBeforeHidingControls;
 
         Timer<Settings> m_setImageLoadingSettingsTimer;
         void imageLoadingSettingsTimerFired(Timer<Settings>*);

@@ -1860,3 +1860,6 @@ webkit.org/b/111058 plugins/plugin-clip-subframe.html [ Failure ]
 webkit.org/b/111172 compositing/overlap-blending/children-opacity-huge.html [ ImageOnlyFailure ]
 webkit.org/b/111172 compositing/overlap-blending/children-opacity-no-overlap.html [ ImageOnlyFailure ]
 webkit.org/b/111172 compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure ]
+
+# CURSOR_VISIBILITY is not enabled in efl
+webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Failure ]

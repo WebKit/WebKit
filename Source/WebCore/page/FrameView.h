@@ -397,6 +397,8 @@ public:
     void setInitialViewportSize(const IntSize& size) { m_initialViewportSize = size; }
 #endif
 
+    virtual bool isActive() const OVERRIDE;
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
     virtual void scrollContentsSlowPath(const IntRect& updateRect);
@@ -446,7 +448,6 @@ private:
 
     // ScrollableArea interface
     virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&) OVERRIDE;
-    virtual bool isActive() const OVERRIDE;
     virtual void getTickmarks(Vector<IntRect>&) const OVERRIDE;
     virtual void scrollTo(const IntSize&) OVERRIDE;
     virtual void setVisibleScrollerThumbRect(const IntRect&) OVERRIDE;

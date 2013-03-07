@@ -30,6 +30,7 @@
 #include "MediaControls.h"
 
 #include "ExceptionCodePlaceholder.h"
+#include "Settings.h"
 
 namespace WebCore {
 
@@ -344,7 +345,7 @@ void MediaControls::startHideFullscreenControlsTimer()
     if (!page)
         return;
 
-    m_hideFullscreenControlsTimer.startOneShot(page->theme()->timeWithoutMouseMovementBeforeHidingControls());
+    m_hideFullscreenControlsTimer.startOneShot(page->settings()->timeWithoutMouseMovementBeforeHidingControls());
 }
 
 void MediaControls::stopHideFullscreenControlsTimer()

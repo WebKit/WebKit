@@ -1,0 +1,7 @@
+This tests that the cursor hides after hovering over a video element in full screen mode.
+
+EVENT(webkitfullscreenchange)
+EXPECTED (window.internals.getCurrentCursorInfo(document) == 'type=Pointer hotSpot=0,0') OK
+EXPECTED (window.internals.getCurrentCursorInfo(document) == 'type=None hotSpot=0,0') OK
+END OF TEST
+

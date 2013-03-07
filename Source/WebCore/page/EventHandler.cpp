@@ -349,12 +349,18 @@ EventHandler::EventHandler(Frame* frame)
     , m_baseEventType(PlatformEvent::NoType)
     , m_didStartDrag(false)
     , m_didLongPressInvokeContextMenu(false)
+#if ENABLE(CURSOR_VISIBILITY)
+    , m_autoHideCursorTimer(this, &EventHandler::autoHideCursorTimerFired)
+#endif
 {
 }
 
 EventHandler::~EventHandler()
 {
     ASSERT(!m_fakeMouseMoveEventTimer.isActive());
+#if ENABLE(CURSOR_VISIBILITY)
+    ASSERT(!m_autoHideCursorTimer.isActive());
+#endif
 }
     
 #if ENABLE(DRAG_SUPPORT)
@@ -369,6 +375,9 @@ void EventHandler::clear()
 {
     m_hoverTimer.stop();
     m_fakeMouseMoveEventTimer.stop();
+#if ENABLE(CURSOR_VISIBILITY)
+    cancelAutoHideCursorTimer();
+#endif
     m_resizeLayer = 0;
     m_nodeUnderMouse = 0;
     m_lastNodeUnderMouse = 0;
@@ -1233,6 +1242,14 @@ OptionalCursor EventHandler::selectCursor(const MouseEventWithHitTestResults& ev
     bool horizontalText = !style || style->isHorizontalWritingMode();
     const Cursor& iBeam = horizontalText ? iBeamCursor() : verticalTextCursor();
 
+#if ENABLE(CURSOR_VISIBILITY)
+    if (style && style->cursorVisibility() == CursorVisibilityAutoHide) {
+        FeatureObserver::observe(m_frame->document(), FeatureObserver::CursorVisibility);
+        startAutoHideCursorTimer();
+    } else
+        cancelAutoHideCursorTimer();
+#endif
+
     // During selection, use an I-beam no matter what we're over.
     // If a drag may be starting or we're capturing mouse events for a particular node, don't treat this as a selection.
     if (m_mousePressed && m_mouseDownMayStartSelect
@@ -1380,6 +1397,37 @@ OptionalCursor EventHandler::selectCursor(const MouseEventWithHitTestResults& ev
     }
     return pointerCursor();
 }
+
+#if ENABLE(CURSOR_VISIBILITY)
+void EventHandler::startAutoHideCursorTimer()
+{
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    m_autoHideCursorTimer.startOneShot(page->settings()->timeWithoutMouseMovementBeforeHidingControls());
+
+    // The fake mouse move event screws up the auto-hide feature (by resetting the auto-hide timer)
+    // so cancel any pending fake mouse moves.
+    if (m_fakeMouseMoveEventTimer.isActive())
+        m_fakeMouseMoveEventTimer.stop();
+}
+
+void EventHandler::cancelAutoHideCursorTimer()
+{
+    if (m_autoHideCursorTimer.isActive())
+        m_autoHideCursorTimer.stop();
+}
+
+void EventHandler::autoHideCursorTimerFired(Timer<EventHandler>* timer)
+{
+    ASSERT_UNUSED(timer, timer == &m_autoHideCursorTimer);
+    m_currentMouseCursor = noneCursor();
+    FrameView* view = m_frame->view();
+    if (view && view->isActive())
+        view->setCursor(m_currentMouseCursor);
+}
+#endif
 
 static LayoutPoint documentPointForWindowPoint(Frame* frame, const IntPoint& windowPoint)
 {

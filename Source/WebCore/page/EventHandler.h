@@ -388,6 +388,12 @@ private:
 
     void setLastKnownMousePosition(const PlatformMouseEvent&);
 
+#if ENABLE(CURSOR_VISIBILITY)
+    void startAutoHideCursorTimer();
+    void cancelAutoHideCursorTimer();
+    void autoHideCursorTimerFired(Timer<EventHandler>*);
+#endif
+
     Frame* m_frame;
 
     bool m_mousePressed;
@@ -483,6 +489,10 @@ private:
     PlatformEvent::Type m_baseEventType;
     bool m_didStartDrag;
     bool m_didLongPressInvokeContextMenu;
+
+#if ENABLE(CURSOR_VISIBILITY)
+    Timer<EventHandler> m_autoHideCursorTimer;
+#endif
 };
 
 } // namespace WebCore

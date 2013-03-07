@@ -418,6 +418,13 @@ enum ECursor {
     CURSOR_NONE
 };
 
+#if ENABLE(CURSOR_VISIBILITY)
+enum CursorVisibility {
+    CursorVisibilityAuto,
+    CursorVisibilityAutoHide,
+};
+#endif
+
 // The order of this enum must match the order of the display values in CSSValueKeywords.in.
 enum EDisplay {
     INLINE, BLOCK, LIST_ITEM, RUN_IN, COMPACT, INLINE_BLOCK,

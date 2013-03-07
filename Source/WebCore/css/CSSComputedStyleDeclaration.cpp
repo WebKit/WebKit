@@ -263,6 +263,9 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitColumnRuleWidth,
     CSSPropertyWebkitColumnSpan,
     CSSPropertyWebkitColumnWidth,
+#if ENABLE(CURSOR_VISIBILITY)
+    CSSPropertyWebkitCursorVisibility,
+#endif
 #if ENABLE(DASHBOARD_SUPPORT)
     CSSPropertyWebkitDashboardRegion,
 #endif
@@ -1847,6 +1850,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             }
             return value.release();
         }
+#if ENABLE(CURSOR_VISIBILITY)
+        case CSSPropertyWebkitCursorVisibility:
+            return cssValuePool().createValue(style->cursorVisibility());
+#endif
         case CSSPropertyDirection:
             return cssValuePool().createValue(style->direction());
         case CSSPropertyDisplay:

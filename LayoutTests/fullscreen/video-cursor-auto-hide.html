@@ -1,0 +1,31 @@
+<body>
+    <p>This tests that the cursor hides after hovering over a video element in full screen mode.</p>
+    <div id=wrapper>
+        <video id="video" width="300"></video>
+    </div>
+    <script src="full-screen-test.js"></script>
+    <script>
+        var wrapper = document.getElementById('wrapper');
+
+        function checkForHiddenMouse()
+        {
+            testExpected('window.internals.getCurrentCursorInfo(document)', 'type=None hotSpot=0,0');
+            endTest();
+        }
+
+        function fullscreenChanged(event)
+        {
+            if (window.internals) {
+                internals.settings.setTimeWithoutMouseMovementBeforeHidingControls(0);
+                wrapperBox = internals.boundingBox(wrapper);
+                eventSender.mouseMoveTo(wrapperBox.left + wrapperBox.width / 2, wrapperBox.top + wrapperBox.height / 2);
+                testExpected('window.internals.getCurrentCursorInfo(document)', 'type=Pointer hotSpot=0,0');
+                setTimeout(checkForHiddenMouse, 0);
+            }
+            else
+                logResult(false, "window.internals == undefined");
+        }
+        waitForEvent(document, 'webkitfullscreenchange', fullscreenChanged);
+        runWithKeyDown(function(){wrapper.webkitRequestFullScreen()});
+    </script>
+</body>

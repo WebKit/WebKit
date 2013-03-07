@@ -184,6 +184,7 @@ Settings::Settings(Page* page)
 #endif
     , m_scrollingPerformanceLoggingEnabled(false)
     , m_aggressiveTileRetentionEnabled(false)
+    , m_timeWithoutMouseMovementBeforeHidingControls(3)
     , m_setImageLoadingSettingsTimer(this, &Settings::imageLoadingSettingsTimerFired)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString

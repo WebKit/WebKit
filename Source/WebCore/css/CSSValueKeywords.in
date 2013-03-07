@@ -377,6 +377,10 @@ all-scroll
 -webkit-grabbing
 // none
 //
+// CSS_PROP_CURSOR_VISIBILITY:
+// auto
+auto-hide
+//
 // CSS_PROP_DIRECTION:
 //
 ltr
