@@ -1,5 +1,16 @@
 2013-03-07  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [Chromium] Update some #includes for WebFileInfo.h in WK/chromium/src/
+        https://bugs.webkit.org/show_bug.cgi?id=111741
+
+        Reviewed by James Robinson.
+
+        In preparation for removing WK/chromium/public/WebFileInfo.h.
+
+        * src/AssertMatchingEnums.cpp:
+
+2013-03-07  Mark Pilgrim  <pilgrim@chromium.org>
+
         [Chromium] Remove WK/chromium/public/WebWorkerRunLoop.h
         https://bugs.webkit.org/show_bug.cgi?id=111740
 

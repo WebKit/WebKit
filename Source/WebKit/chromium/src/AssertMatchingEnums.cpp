@@ -90,7 +90,6 @@
 #include "WebCursorInfo.h"
 #include "WebEditingAction.h"
 #include "WebFileError.h"
-#include "WebFileInfo.h"
 #include "WebFontDescription.h"
 #if ENABLE(REQUEST_AUTOCOMPLETE)
 #include "WebFormElement.h"
@@ -121,6 +120,7 @@
 #include "WebTextCheckingType.h"
 #include "WebView.h"
 #include <public/WebClipboard.h>
+#include <public/WebFileInfo.h>
 #include <public/WebFileSystem.h>
 #include <public/WebFilterOperation.h>
 #include <public/WebMediaStreamSource.h>
