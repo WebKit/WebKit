@@ -25,7 +25,7 @@ find_package(PNG REQUIRED)
 find_package(ZLIB REQUIRED)
 
 find_package(GLIB 2.33.2 REQUIRED COMPONENTS gio gobject gthread)
-find_package(LibSoup 2.39.4.1 REQUIRED)
+find_package(LibSoup 2.40.3 REQUIRED)
 
 set(WTF_USE_SOUP 1)
 

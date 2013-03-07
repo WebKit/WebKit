@@ -1,3 +1,14 @@
+2013-03-07  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL] Bump libsoup dependency to 2.40.3 to fix regressions
+        https://bugs.webkit.org/show_bug.cgi?id=111756
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update libsoup required version to v2.40.3 for EFL port.
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2013-03-07  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Limit the supported compilers to GCC >= 4.7 and Clang >= 3.0
