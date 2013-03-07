@@ -3385,6 +3385,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
     coreSettings->setSerifFontFamily(settingsPrivate->serifFontFamily.data());
     coreSettings->setLoadsImagesAutomatically(settingsPrivate->autoLoadImages);
     coreSettings->setShrinksStandaloneImagesToFit(settingsPrivate->autoShrinkImages);
+    coreSettings->setShouldRespectImageOrientation(settingsPrivate->respectImageOrientation);
     coreSettings->setShouldPrintBackgrounds(settingsPrivate->printBackgrounds);
     coreSettings->setScriptEnabled(settingsPrivate->enableScripts);
     coreSettings->setPluginsEnabled(settingsPrivate->enablePlugins);
@@ -3504,6 +3505,8 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
         settings->setLoadsImagesAutomatically(g_value_get_boolean(&value));
     else if (name == g_intern_string("auto-shrink-images"))
         settings->setShrinksStandaloneImagesToFit(g_value_get_boolean(&value));
+    else if (name == g_intern_string("respect-image-orientation"))
+        settings->setShouldRespectImageOrientation(g_value_get_boolean(&value));
     else if (name == g_intern_string("print-backgrounds"))
         settings->setShouldPrintBackgrounds(g_value_get_boolean(&value));
     else if (name == g_intern_string("enable-scripts"))

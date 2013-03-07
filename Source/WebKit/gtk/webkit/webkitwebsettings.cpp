@@ -79,6 +79,7 @@ enum {
     PROP_ENFORCE_96_DPI,
     PROP_AUTO_LOAD_IMAGES,
     PROP_AUTO_SHRINK_IMAGES,
+    PROP_RESPECT_IMAGE_ORIENTATION,
     PROP_PRINT_BACKGROUNDS,
     PROP_ENABLE_SCRIPTS,
     PROP_ENABLE_PLUGINS,
@@ -277,6 +278,15 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     _("Auto Shrink Images"),
                                     _("Automatically shrink standalone images to fit."),
                                     TRUE,
+                                    flags));
+
+    g_object_class_install_property(gobject_class,
+                                    PROP_RESPECT_IMAGE_ORIENTATION,
+                                    g_param_spec_boolean(
+                                    "respect-image-orientation",
+                                    _("Respect Image Orientation"),
+                                    _("Whether WebKit should respect image orientation."),
+                                    FALSE,
                                     flags));
 
     g_object_class_install_property(gobject_class,
@@ -1075,6 +1085,9 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
     case PROP_AUTO_SHRINK_IMAGES:
         priv->autoShrinkImages = g_value_get_boolean(value);
         break;
+    case PROP_RESPECT_IMAGE_ORIENTATION:
+        priv->respectImageOrientation = g_value_get_boolean(value);
+        break;
     case PROP_PRINT_BACKGROUNDS:
         priv->printBackgrounds = g_value_get_boolean(value);
         break;
@@ -1263,6 +1276,9 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
         break;
     case PROP_AUTO_SHRINK_IMAGES:
         g_value_set_boolean(value, priv->autoShrinkImages);
+        break;
+    case PROP_RESPECT_IMAGE_ORIENTATION:
+        g_value_set_boolean(value, priv->respectImageOrientation);
         break;
     case PROP_PRINT_BACKGROUNDS:
         g_value_set_boolean(value, priv->printBackgrounds);

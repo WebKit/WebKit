@@ -1,3 +1,23 @@
+2013-03-07  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] Expose "ShouldRespectImageOrientation" setting into WebKitWebSettings
+        https://bugs.webkit.org/show_bug.cgi?id=111414
+
+        Reviewed by Carlos Garcia Campos.
+
+        We should expose ShouldRespectImageOrientation setting into
+        WebKitWebSettings. When it is enabled, the images are shown with right
+        orientation regarding to images EXIF data.
+
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+        (webkit_web_settings_set_property):
+        (webkit_web_settings_get_property):
+        * webkit/webkitwebsettingsprivate.h:
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_update_settings):
+        (webkit_web_view_settings_notify):
+
 2013-03-06  Benjamin Poulain  <benjamin@webkit.org>
 
         WebKitTestRunner needs layoutTestController.elementDoesAutoCompleteForElementWithId
