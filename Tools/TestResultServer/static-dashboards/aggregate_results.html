@@ -54,6 +54,7 @@ img {
 <script src="loader.js"></script>
 <script src="string.js"></script>
 <script src="dashboard_base.js"></script>
+<script src="ui.js"></script>
 <script>
 // @fileoverview Creates a dashboard for tracking number of passes/failures per run.
 //
@@ -68,7 +69,7 @@ img {
 //////////////////////////////////////////////////////////////////////////////
 function generatePage()
 {
-    var html = htmlForTestTypeSwitcher(true) + '<br>';
+    var html = ui.html.testTypeSwitcher(true) + '<br>';
     for (var builder in currentBuilders())
         html += htmlForBuilder(builder);
     document.body.innerHTML = html;

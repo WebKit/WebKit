@@ -27,7 +27,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 test('hidePopupOnBlur', 2, function() {
-    showPopup(document.body, 'dummy content');
+    ui.popup.show(document.body, 'dummy content');
     ok(document.querySelector('#popup'));
 
     // Cause the window to be blurred.

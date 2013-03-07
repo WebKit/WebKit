@@ -100,6 +100,7 @@ body {
 <script src="loader.js"></script>
 <script src="string.js"></script>
 <script src="dashboard_base.js"></script>
+<script src="ui.js"></script>
 <script>
 var FAILING_TESTS_DATASET_NAME = 'Failing tests';
 
@@ -136,8 +137,8 @@ function generatePage()
 
     initCurrentBuilderTestResults();
 
-    $('test-type-switcher').innerHTML = htmlForTestTypeSwitcher( false,
-        checkboxHTML('ignoreFlakyTests', 'Ignore flaky tests', g_currentState.ignoreFlakyTests, 'g_currentBuildIndex = -1')
+    $('test-type-switcher').innerHTML = ui.html.testTypeSwitcher( false,
+        ui.html.checkbox('ignoreFlakyTests', 'Ignore flaky tests', g_currentState.ignoreFlakyTests, 'g_currentBuildIndex = -1')
     );
 
     updateTimelineForBuilder();
@@ -309,8 +310,8 @@ function updateBuildInspector(results, builder, dygraph, index)
 
     // Revision link(s)
     if (!shouldShowWebKitRevisionsOnly())
-        addRow('Chromium change:', chromiumRevisionLink(results, index));
-    addRow('WebKit change:', webKitRevisionLink(results, index));
+        addRow('Chromium change:', ui.html.chromiumRevisionLink(results, index));
+    addRow('WebKit change:', ui.html.webKitRevisionLink(results, index));
 
     // Test status/counts
     addRow('', '');

@@ -1,3 +1,34 @@
+2013-03-06  Julie Parent  <jparent@chromium.org>
+
+        Dashboard cleanup: Move all dashboard ui related code into ui.js.
+        https://bugs.webkit.org/show_bug.cgi?id=111621
+
+        Reviewed by Ojan Vafai.
+        
+        Creates ui.js, a package for the common UI code the various
+        dashboards use. HTML generation is now in the ui.html namespace
+        and popup handling is in ui.popup.
+        Also moves the event listening for popups to ui.popup.show and
+        removes it on ui.popup.hid rather than having listener always
+        around.
+
+        * TestResultServer/static-dashboards/aggregate_results.html:
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (showPopupForBuild):
+        (htmlForNavBar):
+        (generatePageForIndividualTests.if):
+        (generatePageForIndividualTests):
+        * TestResultServer/static-dashboards/flakiness_dashboard_embedded_unittests.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        * TestResultServer/static-dashboards/run-embedded-unittests.html:
+        * TestResultServer/static-dashboards/run-unittests.html:
+        * TestResultServer/static-dashboards/timeline_explorer.html:
+        * TestResultServer/static-dashboards/treemap.html:
+        * TestResultServer/static-dashboards/ui.js: Added.
+        (.):
+
 2013-03-06  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Missing implementation of AccessibilityControllerEfl and AccessibilityUIElementEfl files

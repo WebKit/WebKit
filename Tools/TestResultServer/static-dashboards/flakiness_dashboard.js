@@ -1153,7 +1153,7 @@ function linkHTMLToOpenWindow(url, text)
     return '<a href="' + url + '" target="_blank">' + text + '</a>';
 }
 
-// FIXME: replaced with chromiumRevisionLink/webKitRevisionLink
+// FIXME: replaced with ui.chromiumRevisionLink/ui.webKitRevisionLink
 function createBlameListHTML(revisions, index, urlBase, separator, repo)
 {
     var thisRevision = revisions[index];
@@ -1250,7 +1250,7 @@ function showPopupForBuild(e, builder, index, opt_testName)
         html += '<li>' + linkHTMLToOpenWindow(buildBasePath + pathToFailureLog(opt_testName), 'Failure log') + '</li>';
 
     html += '</ul>';
-    showPopup(e.target, html);
+    ui.popup.show(e.target, html);
 }
 
 function htmlForTestResults(test)
@@ -2395,7 +2395,7 @@ function htmlForIndividualTests(tests)
 function htmlForNavBar()
 {
     var extraHTML = '';
-    var html = htmlForTestTypeSwitcher(false, extraHTML, isCrossBuilderView());
+    var html = ui.html.testTypeSwitcher(false, extraHTML, isCrossBuilderView());
     html += '<div class=forms><form id=result-form ' +
         'onsubmit="setQueryParameter(\'result\', result.value);' +
         'return false;">Show all tests with result: ' +
@@ -2586,7 +2586,7 @@ function postHeightChangedMessage()
 }
 
 if (window != parent)
-    window.addEventListener('blur', hidePopup);
+    window.addEventListener('blur', ui.popup.hide);
 
 document.addEventListener('keydown', function(e) {
     if (e.keyIdentifier == 'U+003F' || e.keyIdentifier == 'U+00BF') {
@@ -2596,6 +2596,6 @@ document.addEventListener('keydown', function(e) {
     } else if (e.keyIdentifier == 'U+001B') {
         // escape key
         hideLegend();
-        hidePopup();
+        ui.popup.hide();
     }
 }, false);
