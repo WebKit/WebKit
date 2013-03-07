@@ -2066,11 +2066,6 @@ void WebPageProxy::mouseDidMoveOverElement(uint32_t opaqueModifiers, CoreIPC::Ar
 
 void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailabilityReason, const String& mimeType, const String& pluginURLString, const String& pluginspageAttributeURLString, const String& frameURLString, const String& pageURLString)
 {
-    MESSAGE_CHECK(pluginURLString);
-    MESSAGE_CHECK(pluginspageAttributeURLString);
-    MESSAGE_CHECK(frameURLString);
-    MESSAGE_CHECK(pageURLString);
-
     String pluginBundleIdentifier;
     String pluginBundleVersion;
     String newMimeType = mimeType;

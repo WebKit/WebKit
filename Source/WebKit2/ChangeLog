@@ -1,3 +1,17 @@
+2013-03-07  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/13368674> - Bogus MESSAGE_CHECK in WebPageProxy::unavailablePluginButtonClicked
+
+        Rubberstamped by Alexey Proskuryakov.
+
+        I also checked all of my recent merges to make sure I didn't include any other MESSAGE_CHECKs in
+        lieu of MESSAGE_CHECK_URL.
+
+        I didn't.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::unavailablePluginButtonClicked):
+
 2013-03-06  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/13360535> - Bogus MESSAGE_CHECK in WebPageProxy::getPluginPath
