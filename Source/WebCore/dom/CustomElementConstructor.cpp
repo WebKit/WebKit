@@ -59,7 +59,7 @@ CustomElementConstructor::~CustomElementConstructor()
 {
 }
 
-PassRefPtr<HTMLElement> CustomElementConstructor::createElement() const
+PassRefPtr<Element> CustomElementConstructor::createElement() const
 {
     if (!document())
         return 0;

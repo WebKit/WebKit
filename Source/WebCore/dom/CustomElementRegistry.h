@@ -48,7 +48,7 @@ namespace WebCore {
 class CustomElementConstructor;
 class Dictionary;
 class Document;
-class HTMLElement;
+class Element;
 class ScriptExecutionContext;
 class QualifiedName;
 
@@ -60,10 +60,10 @@ public:
 
     PassRefPtr<CustomElementConstructor> registerElement(WebCore::ScriptState*, const AtomicString& name, const Dictionary& options, ExceptionCode&);
     PassRefPtr<CustomElementConstructor> find(const QualifiedName&) const;
-    PassRefPtr<HTMLElement> createElement(const QualifiedName&) const;
+    PassRefPtr<Element> createElement(const QualifiedName&) const;
     Document* document() const;
 
-    static PassRefPtr<CustomElementConstructor> constructorOf(HTMLElement*);
+    static PassRefPtr<CustomElementConstructor> constructorOf(Element*);
     
 private:
     static bool isValidName(const AtomicString&);

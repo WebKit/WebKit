@@ -32,11 +32,11 @@
 
 #if ENABLE(CUSTOM_ELEMENTS)
 
-#include "V8HTMLCustomElement.h"
+#include "V8CustomElement.h"
 
 #include "CustomElementHelpers.h"
 #include "CustomElementRegistry.h"
-#include "HTMLElement.h"
+#include "Element.h"
 #include "V8CustomElementConstructor.h"
 #include "V8HTMLUnknownElement.h"
 
@@ -54,13 +54,13 @@ static WrapperTypeInfo* findWrapperTypeOf(v8::Handle<v8::Value> chain)
     return 0;
 }
 
-v8::Handle<v8::Object> V8HTMLCustomElement::createWrapper(PassRefPtr<HTMLElement> impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8CustomElement::createWrapper(PassRefPtr<Element> impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     ASSERT(impl);
 
     RefPtr<CustomElementConstructor> constructor = CustomElementRegistry::constructorOf(impl.get());
     if (!constructor) {
-        v8::Handle<v8::Value> wrapperValue = WebCore::toV8(toHTMLUnknownElement(impl.get()), creationContext, isolate);
+        v8::Handle<v8::Value> wrapperValue = WebCore::toV8(toHTMLUnknownElement(toHTMLElement(impl.get())), creationContext, isolate);
         if (!wrapperValue.IsEmpty() && wrapperValue->IsObject())
             return v8::Handle<v8::Object>::Cast(wrapperValue);
         return v8::Handle<v8::Object>();

@@ -44,7 +44,7 @@
 namespace WebCore {
 
 class Document;
-class HTMLElement;
+class Element;
 class ScriptState;
 class ScriptValue;
 
@@ -57,7 +57,7 @@ public:
     Document* document() const { return static_cast<Document*>(m_scriptExecutionContext); }
     const QualifiedName& name() const { return m_name; }
 
-    PassRefPtr<HTMLElement> createElement() const;
+    PassRefPtr<Element> createElement() const;
     
 private:
     CustomElementConstructor(Document*, const QualifiedName&);

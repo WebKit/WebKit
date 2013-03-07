@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef V8HTMLCustomElement_h
-#define V8HTMLCustomElement_h
+#ifndef V8CustomElement_h
+#define V8CustomElement_h
 
 #include "V8Binding.h"
 #include "V8DOMWrapper.h"
@@ -39,44 +39,44 @@
 
 namespace WebCore {
 
-class HTMLElement;
+class Element;
 
 #if ENABLE(CUSTOM_ELEMENTS)
 
-class V8HTMLCustomElement {
+class V8CustomElement {
 public:
-    static v8::Handle<v8::Value> toV8(HTMLElement*, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* = 0);
-    static v8::Handle<v8::Object> wrap(HTMLElement*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
+    static v8::Handle<v8::Value> toV8(Element*, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* = 0);
+    static v8::Handle<v8::Object> wrap(Element*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 
 private:
-    static v8::Handle<v8::Object> createWrapper(PassRefPtr<HTMLElement>, v8::Handle<v8::Object>, v8::Isolate*);
+    static v8::Handle<v8::Object> createWrapper(PassRefPtr<Element>, v8::Handle<v8::Object>, v8::Isolate*);
 };
 
-inline v8::Handle<v8::Value> V8HTMLCustomElement::toV8(HTMLElement* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+inline v8::Handle<v8::Value> V8CustomElement::toV8(Element* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     if (UNLIKELY(!impl))
         return v8NullWithCheck(isolate);
     v8::Handle<v8::Object> wrapper = DOMDataStore::getWrapper(impl, isolate);
     if (!wrapper.IsEmpty())
         return wrapper;
-    return V8HTMLCustomElement::wrap(impl, creationContext, isolate);
+    return V8CustomElement::wrap(impl, creationContext, isolate);
 }
 
-inline v8::Handle<v8::Object> V8HTMLCustomElement::wrap(HTMLElement* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+inline v8::Handle<v8::Object> V8CustomElement::wrap(Element* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     ASSERT(impl);
     ASSERT(DOMDataStore::getWrapper(impl, isolate).IsEmpty());
-    return V8HTMLCustomElement::createWrapper(impl, creationContext, isolate);
+    return V8CustomElement::createWrapper(impl, creationContext, isolate);
 }
 
 #else // ENABLE(CUSTOM_ELEMENTS)
 
-class V8HTMLCustomElement {
+class V8CustomElement {
 public:
-    static v8::Handle<v8::Object> wrap(HTMLElement*, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* = 0);
+    static v8::Handle<v8::Object> wrap(Element*, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* = 0);
 };
 
-inline v8::Handle<v8::Object> HTMLCustomElement::wrap(HTMLElement* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+inline v8::Handle<v8::Object> HTMLCustomElement::wrap(Element* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     return wrap(toHTMLUnknownElement(impl), creationContext, isolate);
 }
@@ -85,4 +85,4 @@ inline v8::Handle<v8::Object> HTMLCustomElement::wrap(HTMLElement* impl, v8::Han
 
 } // namespace WebCore
 
-#endif // V8HTMLCustomElement_h
+#endif // V8CustomElement_h

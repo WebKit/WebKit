@@ -38,7 +38,7 @@
 #include "CustomElementHelpers.h"
 #include "Dictionary.h"
 #include "Document.h"
-#include "HTMLElement.h"
+#include "Element.h"
 #include "HTMLNames.h"
 #include "RuntimeEnabledFeatures.h"
 #include <wtf/ASCIICType.h>
@@ -62,7 +62,7 @@ CustomElementRegistry::~CustomElementRegistry()
 {
 }
 
-PassRefPtr<CustomElementConstructor> CustomElementRegistry::constructorOf(HTMLElement* element)
+PassRefPtr<CustomElementConstructor> CustomElementRegistry::constructorOf(Element* element)
 {
     RefPtr<CustomElementRegistry> self = element->document()->registry();
     if (!self)
@@ -155,7 +155,7 @@ PassRefPtr<CustomElementConstructor> CustomElementRegistry::find(const Qualified
     return (found != m_constructors.end()) ? found->value : 0;
 }
 
-PassRefPtr<HTMLElement> CustomElementRegistry::createElement(const QualifiedName& name) const
+PassRefPtr<Element> CustomElementRegistry::createElement(const QualifiedName& name) const
 {
     if (RefPtr<CustomElementConstructor> found = find(name))
         return found->createElement();
