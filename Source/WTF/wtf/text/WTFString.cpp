@@ -665,6 +665,10 @@ bool String::isSafeToSendToAnotherThread() const
 {
     if (!impl())
         return true;
+    // AtomicStrings are not safe to send between threads as ~StringImpl()
+    // will try to remove them from the wrong AtomicStringTable.
+    if (impl()->isAtomic())
+        return false;
     if (impl()->hasOneRef())
         return true;
     if (isEmpty())
