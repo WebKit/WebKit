@@ -1,3 +1,24 @@
+2013-03-07  Anders Carlsson  <andersca@apple.com>
+
+        Add a didFocusTextField callback to the injected bundle form client
+        https://bugs.webkit.org/show_bug.cgi?id=111771
+
+        Reviewed by Andreas Kling.
+
+        Add a new client callback that's invoked whenever a text input field is focused.
+
+        * Shared/APIClientTraits.cpp:
+        (WebKit):
+        * Shared/APIClientTraits.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.cpp:
+        (WebKit::InjectedBundlePageFormClient::didFocusTextField):
+        (WebKit):
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.h:
+        (InjectedBundlePageFormClient):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::focusedNodeChanged):
+
 2013-03-07  Tim Horton  <timothy_horton@apple.com>
 
         Null-check the page overlay before trying to use it.

@@ -38,6 +38,15 @@ using namespace WebCore;
 
 namespace WebKit {
 
+void InjectedBundlePageFormClient::didFocusTextField(WebPage* page, HTMLInputElement* inputElement, WebFrame* frame)
+{
+    if (!m_client.didFocusTextField)
+        return;
+
+    RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(inputElement);
+    m_client.didFocusTextField(toAPI(page), toAPI(nodeHandle.get()), toAPI(frame), m_client.clientInfo);
+}
+
 void InjectedBundlePageFormClient::textFieldDidBeginEditing(WebPage* page, HTMLInputElement* inputElement, WebFrame* frame)
 {
     if (!m_client.textFieldDidBeginEditing)

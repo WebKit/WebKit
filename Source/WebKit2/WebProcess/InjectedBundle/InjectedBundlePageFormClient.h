@@ -47,6 +47,7 @@ class WebPage;
 
 class InjectedBundlePageFormClient : public APIClient<WKBundlePageFormClient, kWKBundlePageFormClientCurrentVersion> {
 public:
+    void didFocusTextField(WebPage*, WebCore::HTMLInputElement*, WebFrame*);
     void textFieldDidBeginEditing(WebPage*, WebCore::HTMLInputElement*, WebFrame*);
     void textFieldDidEndEditing(WebPage*, WebCore::HTMLInputElement*, WebFrame*);
     void textDidChangeInTextField(WebPage*, WebCore::HTMLInputElement*, WebFrame*);

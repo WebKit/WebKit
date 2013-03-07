@@ -74,6 +74,7 @@ const size_t APIClientTraits<WKPageUIClient>::interfaceSizesByVersion[] = {
     
 const size_t APIClientTraits<WKBundlePageFormClient>::interfaceSizesByVersion[] = {
     offsetof(WKBundlePageFormClient, willSendSubmitEvent),
+    offsetof(WKBundlePageFormClient, didFocusTextField),
     sizeof(WKBundlePageFormClient)
 };
 

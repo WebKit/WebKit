@@ -72,7 +72,7 @@ template<> struct APIClientTraits<WKPageUIClient> {
 };
 
 template<> struct APIClientTraits<WKBundlePageFormClient> {
-    static const size_t interfaceSizesByVersion[2];
+    static const size_t interfaceSizesByVersion[3];
 };
 
 template<> struct APIClientTraits<WKBundlePageEditorClient> {
