@@ -96,6 +96,7 @@ private:
         void push();
         void pop();
         void apply(GraphicsContext3D*);
+        void applyIfNeeded(GraphicsContext3D*);
         inline ClipState& current() { return clipState; }
         void reset(const IntRect&);
 
