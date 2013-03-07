@@ -110,7 +110,8 @@ void TiledCoreAnimationDrawingArea::setNeedsDisplayInRect(const IntRect& rect)
 
 void TiledCoreAnimationDrawingArea::scroll(const IntRect& scrollRect, const IntSize& scrollDelta)
 {
-    m_pageOverlayLayer->setNeedsDisplay();
+    if (m_pageOverlayLayer)
+        m_pageOverlayLayer->setNeedsDisplay();
 }
 
 void TiledCoreAnimationDrawingArea::setRootCompositingLayer(GraphicsLayer* graphicsLayer)

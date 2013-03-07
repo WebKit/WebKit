@@ -1,3 +1,12 @@
+2013-03-07  Tim Horton  <timothy_horton@apple.com>
+
+        Null-check the page overlay before trying to use it.
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::scroll):
+
 2013-03-07  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Limit the supported compilers to GCC >= 4.7 and Clang >= 3.0
