@@ -41,7 +41,7 @@ public:
     using PageBlock::size;
     using PageBlock::base;
 
-    static PageAllocationAligned allocate(size_t size, size_t alignment, OSAllocator::Usage usage = OSAllocator::UnknownUsage, bool writable = true, bool executable = false);
+    static PageAllocationAligned allocate(size_t size, size_t alignment, OSAllocator::Usage usage = OSAllocator::UnknownUsage, bool writable = true);
 
     void deallocate();
 
