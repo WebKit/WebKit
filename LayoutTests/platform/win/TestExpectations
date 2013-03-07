@@ -2696,3 +2696,6 @@ cssom/cssvalue-comparison.html
 
 # CURSOR_VISIBILITY is not enabled on win
 webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Failure ]
+
+# WEBVTT_REGIONS is not enabled on win
+media/track/regions-webvtt
