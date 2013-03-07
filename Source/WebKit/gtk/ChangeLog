@@ -1,3 +1,15 @@
+2013-03-06  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [GTK] Return m_inspectorFilesPath if it is not null
+        https://bugs.webkit.org/show_bug.cgi?id=111633
+
+        Reviewed by Martin Robinson.
+
+        Added missing return in InspectorClient::inspectorFilesPath().
+
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::InspectorClient::inspectorFilesPath):
+
 2013-03-06  Dominique Leuenberger  <dimstar@opensuse.org>
 
         Link the webkit_tests to XRENDER_LIBS.
