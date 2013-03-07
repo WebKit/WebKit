@@ -1,0 +1,120 @@
+Tests the constructor and mutation of TextTrackRegion.
+
+** Test the default indexs of a region. **
+EXPECTED (region.track == 'null') OK
+EXPECTED (region.scroll == '') OK
+EXPECTED (region.viewportAnchorX == '0') OK
+EXPECTED (region.viewportAnchorY == '100') OK
+EXPECTED (region.regionAnchorX == '0') OK
+EXPECTED (region.regionAnchorY == '100') OK
+EXPECTED (region.height == '3') OK
+EXPECTED (region.width == '100') OK
+
+** Test that incorrect mutation keeps previous valid values. **
+RUN(region.scroll = 'invalid-scroll-value')
+Error: SyntaxError: DOM Exception 12
+EXPECTED (region.scroll == '') OK
+
+Invalid percentage value: -1
+RUN(region.viewportAnchorX = invalidPercentageValues[index])
+Error: IndexSizeError: DOM Exception 1
+EXPECTED (region.viewportAnchorX == '0') OK
+RUN(region.viewportAnchorY = invalidPercentageValues[index])
+Error: IndexSizeError: DOM Exception 1
+EXPECTED (region.viewportAnchorY == '100') OK
+RUN(region.regionAnchorX = invalidPercentageValues[index])
+Error: IndexSizeError: DOM Exception 1
+EXPECTED (region.regionAnchorX == '0') OK
+RUN(region.regionAnchorY = invalidPercentageValues[index])
+Error: IndexSizeError: DOM Exception 1
+EXPECTED (region.regionAnchorY == '100') OK
+RUN(region.width = invalidPercentageValues[index])
+Error: IndexSizeError: DOM Exception 1
+EXPECTED (region.width == '100') OK
+
+Invalid percentage value: 101
+RUN(region.viewportAnchorX = invalidPercentageValues[index])
+Error: IndexSizeError: DOM Exception 1
+EXPECTED (region.viewportAnchorX == '0') OK
+RUN(region.viewportAnchorY = invalidPercentageValues[index])
+Error: IndexSizeError: DOM Exception 1
+EXPECTED (region.viewportAnchorY == '100') OK
+RUN(region.regionAnchorX = invalidPercentageValues[index])
+Error: IndexSizeError: DOM Exception 1
+EXPECTED (region.regionAnchorX == '0') OK
+RUN(region.regionAnchorY = invalidPercentageValues[index])
+Error: IndexSizeError: DOM Exception 1
+EXPECTED (region.regionAnchorY == '100') OK
+RUN(region.width = invalidPercentageValues[index])
+Error: IndexSizeError: DOM Exception 1
+EXPECTED (region.width == '100') OK
+
+Invalid percentage value: -Infinity
+RUN(region.viewportAnchorX = invalidPercentageValues[index])
+TypeError: Type error
+EXPECTED (region.viewportAnchorX == '0') OK
+RUN(region.viewportAnchorY = invalidPercentageValues[index])
+TypeError: Type error
+EXPECTED (region.viewportAnchorY == '100') OK
+RUN(region.regionAnchorX = invalidPercentageValues[index])
+TypeError: Type error
+EXPECTED (region.regionAnchorX == '0') OK
+RUN(region.regionAnchorY = invalidPercentageValues[index])
+TypeError: Type error
+EXPECTED (region.regionAnchorY == '100') OK
+RUN(region.width = invalidPercentageValues[index])
+TypeError: Type error
+EXPECTED (region.width == '100') OK
+
+Invalid percentage value: Infinity
+RUN(region.viewportAnchorX = invalidPercentageValues[index])
+TypeError: Type error
+EXPECTED (region.viewportAnchorX == '0') OK
+RUN(region.viewportAnchorY = invalidPercentageValues[index])
+TypeError: Type error
+EXPECTED (region.viewportAnchorY == '100') OK
+RUN(region.regionAnchorX = invalidPercentageValues[index])
+TypeError: Type error
+EXPECTED (region.regionAnchorX == '0') OK
+RUN(region.regionAnchorY = invalidPercentageValues[index])
+TypeError: Type error
+EXPECTED (region.regionAnchorY == '100') OK
+RUN(region.width = invalidPercentageValues[index])
+TypeError: Type error
+EXPECTED (region.width == '100') OK
+
+Invalid percentage value: NaN
+RUN(region.viewportAnchorX = invalidPercentageValues[index])
+TypeError: Type error
+EXPECTED (region.viewportAnchorX == '0') OK
+RUN(region.viewportAnchorY = invalidPercentageValues[index])
+TypeError: Type error
+EXPECTED (region.viewportAnchorY == '100') OK
+RUN(region.regionAnchorX = invalidPercentageValues[index])
+TypeError: Type error
+EXPECTED (region.regionAnchorX == '0') OK
+RUN(region.regionAnchorY = invalidPercentageValues[index])
+TypeError: Type error
+EXPECTED (region.regionAnchorY == '100') OK
+RUN(region.width = invalidPercentageValues[index])
+TypeError: Type error
+EXPECTED (region.width == '100') OK
+RUN(region.height = -1)
+Error: IndexSizeError: DOM Exception 1
+EXPECTED (region.height == '3') OK
+
+** Test that proper mutation keeps assigned value. **
+RUN(region.height = 130)
+EXPECTED (region.height == '130') OK
+RUN(region.viewportAnchorX = 64)
+EXPECTED (region.viewportAnchorX == '64') OK
+RUN(region.viewportAnchorY = 32)
+EXPECTED (region.viewportAnchorY == '32') OK
+RUN(region.regionAnchorX = 16)
+EXPECTED (region.regionAnchorX == '16') OK
+RUN(region.regionAnchorY = 8)
+EXPECTED (region.regionAnchorY == '8') OK
+RUN(region.width = 42)
+EXPECTED (region.width == '42') OK
+END OF TEST
+

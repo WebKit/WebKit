@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../../media-file.js></script>
+        <script src=../../video-test.js></script>
+        <script>
+            var region;
+            var invalidPercentageValues;
+
+            function startTest()
+            {
+                if (!window.TextTrackRegion) {
+                    failTest();
+                    return;
+                }
+
+                region = new TextTrackRegion();
+
+                consoleWrite("** Test the default indexs of a region. **");
+                testExpected("region.track", null);
+                testExpected("region.scroll", "");
+                testExpected("region.viewportAnchorX", 0);
+                testExpected("region.viewportAnchorY", 100);
+                testExpected("region.regionAnchorX", 0);
+                testExpected("region.regionAnchorY", 100);
+                testExpected("region.height", 3);
+                testExpected("region.width", 100);
+
+                consoleWrite("<br>** Test that incorrect mutation keeps previous valid values. **");
+                run("region.scroll = 'invalid-scroll-value'");
+                testExpected("region.scroll", "");
+
+                invalidPercentageValues = [-1, 101, -Infinity, Infinity, NaN];
+                for (index in invalidPercentageValues) {
+                  consoleWrite("<br>Invalid percentage value: " + invalidPercentageValues[index]);
+                  run("region.viewportAnchorX = invalidPercentageValues[index]");
+                  testExpected("region.viewportAnchorX", 0);
+                  run("region.viewportAnchorY = invalidPercentageValues[index]");
+                  testExpected("region.viewportAnchorY", 100);
+                  run("region.regionAnchorX = invalidPercentageValues[index]");
+                  testExpected("region.regionAnchorX", 0);
+                  run("region.regionAnchorY = invalidPercentageValues[index]");
+                  testExpected("region.regionAnchorY", 100);
+                  run("region.width = invalidPercentageValues[index]");
+                  testExpected("region.width", 100);
+                }
+
+                run("region.height = -1");
+                testExpected("region.height", 3);
+
+                consoleWrite("<br>** Test that proper mutation keeps assigned value. **");
+                run("region.height = 130");
+                testExpected("region.height", 130);
+
+                run("region.viewportAnchorX = 64");
+                testExpected("region.viewportAnchorX", 64);
+                run("region.viewportAnchorY = 32");
+                testExpected("region.viewportAnchorY", 32);
+                run("region.regionAnchorX = 16");
+                testExpected("region.regionAnchorX", 16);
+                run("region.regionAnchorY = 8");
+                testExpected("region.regionAnchorY", 8);
+
+                run("region.width = 42");
+                testExpected("region.width", 42);
+
+                endTest();
+            }
+
+        </script>
+    </head>
+    <body onload="startTest()">
+        <p>Tests the constructor and mutation of TextTrackRegion.</p>
+    </body>
+</html>

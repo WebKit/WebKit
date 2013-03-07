@@ -492,6 +492,7 @@
     [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] attribute TextTrackCueConstructor TextTrackCue; // Usable with the new operator
     [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] attribute TextTrackCueListConstructor TextTrackCueList;
     [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] attribute TextTrackListConstructor TextTrackList;
+    [Conditional=VIDEO_TRACK & WEBVTT_REGIONS, V8EnabledAtRuntime=webkitVideoTrack] attribute TextTrackRegionConstructor TextTrackRegion; // Usable with the new operator
     [Conditional=VIDEO_TRACK, V8EnabledAtRuntime=webkitVideoTrack] attribute TrackEventConstructor TrackEvent;
 
     [JSCustomGetter, Conditional=VIDEO, V8EnabledAtRuntime] attribute HTMLAudioElementConstructorConstructor Audio; // Usable with the new operator
