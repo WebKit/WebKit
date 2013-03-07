@@ -747,6 +747,12 @@
     <ClCompile Include="..\parser\SourceProvider.cpp">
       <Filter>parser</Filter>
     </ClCompile>
+    <ClCompile Include="..\runtime\PropertyTable.cpp">
+      <Filter>runtime</Filter>
+    </ClCompile>
+    <ClCompile Include="..\API\JSAPIWrapperObject.cpp">
+      <Filter>API</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICast.h">
@@ -1901,6 +1907,9 @@
     </ClInclude>
     <ClInclude Include="..\runtime\StructureRareDataInlines.h">
       <Filter>runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\API\JSAPIWrapperObject.h">
+      <Filter>API</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

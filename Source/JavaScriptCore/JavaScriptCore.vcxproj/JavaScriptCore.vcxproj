@@ -102,6 +102,7 @@
     <Link />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\API\JSAPIWrapperObject.cpp" />
     <ClCompile Include="..\API\JSBase.cpp" />
     <ClCompile Include="..\API\JSCallbackConstructor.cpp" />
     <ClCompile Include="..\API\JSCallbackFunction.cpp" />
@@ -358,6 +359,7 @@
     <ClInclude Include="..\API\APICast.h" />
     <ClInclude Include="..\API\JavaScript.h" />
     <ClInclude Include="..\API\JavaScriptCore.h" />
+    <ClInclude Include="..\API\JSAPIWrapperObject.h" />
     <ClInclude Include="..\API\JSBase.h" />
     <ClInclude Include="..\API\JSBasePrivate.h" />
     <ClInclude Include="..\API\JSCallbackConstructor.h" />

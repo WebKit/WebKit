@@ -1,3 +1,10 @@
+2013-03-07  Roger Fong  <roger_fong@apple.com>
+
+        Build fix for AppleWin VS2010.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+
 2013-03-05  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: Need a good way to reference event handlers without causing cycles
