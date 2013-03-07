@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(VIDEO_TRACK) && !PLATFORM(IOS)
+#if ENABLE(VIDEO_TRACK)
 
 #import "CaptionUserPreferencesMac.h"
 
@@ -44,6 +44,10 @@
 #import "UserStyleSheetTypes.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringBuilder.h>
+
+#if PLATFORM(IOS)
+#import "WebCoreThreadRun.h"
+#endif
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 #import "MediaAccessibility/MediaAccessibility.h"
@@ -80,7 +84,13 @@ namespace WebCore {
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 static void userCaptionPreferencesChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void *, CFDictionaryRef)
 {
+#if !PLATFORM(IOS)
     static_cast<CaptionUserPreferencesMac*>(observer)->captionPreferencesChanged();
+#else
+    WebThreadRun(^{
+        static_cast<CaptionUserPreferencesMac*>(observer)->captionPreferencesChanged();
+    });
+#endif
 }
 #endif
 
@@ -527,4 +537,4 @@ String CaptionUserPreferencesMac::displayNameForTrack(TextTrack* track) const
 
 }
 
-#endif // ENABLE(VIDEO_TRACK) && !PLATFORM(IOS)
+#endif // ENABLE(VIDEO_TRACK)
