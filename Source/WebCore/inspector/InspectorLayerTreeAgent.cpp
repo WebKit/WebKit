@@ -44,6 +44,7 @@
 #include "PseudoElement.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
+#include "RenderLayerCompositor.h"
 #include "RenderView.h"
 
 namespace WebCore {
@@ -219,6 +220,91 @@ PassRefPtr<TypeBuilder::LayerTree::IntRect> InspectorLayerTreeAgent::buildObject
         .setY(rect.y())
         .setWidth(rect.width())
         .setHeight(rect.height()).release();
+}
+
+void InspectorLayerTreeAgent::reasonsForCompositingLayer(ErrorString* errorString, const String& layerId, RefPtr<TypeBuilder::LayerTree::CompositingReasons>& compositingReasons)
+{
+    const RenderLayer* renderLayer = m_idToLayer.get(layerId);
+
+    if (!renderLayer) {
+        *errorString = "Could not find a bound layer for the provided id";
+        return;
+    }
+
+    CompositingReasons reasonsBitmask = renderLayer->compositor()->reasonsForCompositing(renderLayer);
+    compositingReasons = TypeBuilder::LayerTree::CompositingReasons::create();
+
+    if (reasonsBitmask & CompositingReason3DTransform)
+        compositingReasons->setTransform3D(true);
+
+    if (reasonsBitmask & CompositingReasonVideo)
+        compositingReasons->setVideo(true);
+
+    if (reasonsBitmask & CompositingReasonCanvas)
+        compositingReasons->setCanvas(true);
+
+    if (reasonsBitmask & CompositingReasonPlugin)
+        compositingReasons->setPlugin(true);
+
+    if (reasonsBitmask & CompositingReasonIFrame)
+        compositingReasons->setIFrame(true);
+    
+    if (reasonsBitmask & CompositingReasonBackfaceVisibilityHidden)
+        compositingReasons->setBackfaceVisibilityHidden(true);
+
+    if (reasonsBitmask & CompositingReasonClipsCompositingDescendants)
+        compositingReasons->setClipsCompositingDescendants(true);
+
+    if (reasonsBitmask & CompositingReasonAnimation)
+        compositingReasons->setAnimation(true);
+
+    if (reasonsBitmask & CompositingReasonFilters)
+        compositingReasons->setFilters(true);
+
+    if (reasonsBitmask & CompositingReasonPositionFixed)
+        compositingReasons->setPositionFixed(true);
+
+    if (reasonsBitmask & CompositingReasonPositionSticky)
+        compositingReasons->setPositionSticky(true);
+
+    if (reasonsBitmask & CompositingReasonOverflowScrollingTouch)
+        compositingReasons->setOverflowScrollingTouch(true);
+
+    if (reasonsBitmask & CompositingReasonStacking)
+        compositingReasons->setStacking(true);
+
+    if (reasonsBitmask & CompositingReasonOverlap)
+        compositingReasons->setOverlap(true);
+
+    if (reasonsBitmask & CompositingReasonNegativeZIndexChildren)
+        compositingReasons->setNegativeZIndexChildren(true);
+
+    if (reasonsBitmask & CompositingReasonTransformWithCompositedDescendants)
+        compositingReasons->setTransformWithCompositedDescendants(true);
+
+    if (reasonsBitmask & CompositingReasonOpacityWithCompositedDescendants)
+        compositingReasons->setOpacityWithCompositedDescendants(true);
+
+    if (reasonsBitmask & CompositingReasonMaskWithCompositedDescendants)
+        compositingReasons->setMaskWithCompositedDescendants(true);
+
+    if (reasonsBitmask & CompositingReasonReflectionWithCompositedDescendants)
+        compositingReasons->setReflectionWithCompositedDescendants(true);
+
+    if (reasonsBitmask & CompositingReasonFilterWithCompositedDescendants)
+        compositingReasons->setFilterWithCompositedDescendants(true);
+            
+    if (reasonsBitmask & CompositingReasonBlendingWithCompositedDescendants)
+        compositingReasons->setBlendingWithCompositedDescendants(true);
+
+    if (reasonsBitmask & CompositingReasonPerspective)
+        compositingReasons->setPerspective(true);
+
+    if (reasonsBitmask & CompositingReasonPreserve3D)
+        compositingReasons->setPreserve3D(true);
+
+    if (reasonsBitmask & CompositingReasonRoot)
+        compositingReasons->setRoot(true);
 }
 
 String InspectorLayerTreeAgent::bind(const RenderLayer* layer)

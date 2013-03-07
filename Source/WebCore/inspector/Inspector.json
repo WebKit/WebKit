@@ -3678,6 +3678,37 @@
                     { "name": "pseudoElementId", "$ref": "PseudoElementId", "optional": true, "description": "The id for the pseudo element associated with this layer." },
                     { "name": "pseudoClass", "type": "string", "optional": true, "description": "The name of the CSS pseudo-class that prompted the layer's content to be generated." }
                 ]
+            },
+            {
+                "id": "CompositingReasons",
+                "type": "object",
+                "description": "An object containg the reasons why the layer was composited as properties.",
+                "properties": [
+                    { "name": "transform3D", "type": "boolean", "optional": true, "description": "Composition due to association with an element with a CSS 3D transform." },
+                    { "name": "video", "type": "boolean", "optional": true, "description": "Composition due to association with a <video> element." },
+                    { "name": "canvas", "type": "boolean", "optional": true, "description": "Composition due to the element being a <canvas> element." },
+                    { "name": "plugin", "type": "boolean", "optional": true, "description": "Composition due to association with a plugin." },
+                    { "name": "iFrame", "type": "boolean", "optional": true, "description": "Composition due to association with an <iframe> element." },
+                    { "name": "backfaceVisibilityHidden", "type": "boolean", "optional": true, "description": "Composition due to association with an element with a \"backface-visibility: hidden\" style." },
+                    { "name": "clipsCompositingDescendants", "type": "boolean", "optional": true, "description": "Composition due to association with an element clippng compositing descendants." },
+                    { "name": "animation", "type": "boolean", "optional": true, "description": "Composition due to association with an animated element." },
+                    { "name": "filters", "type": "boolean", "optional": true, "description": "Composition due to association with an element with CSS filters applied." },
+                    { "name": "positionFixed", "type": "boolean", "optional": true, "description": "Composition due to association with an element with a \"position: fixed\" style." },
+                    { "name": "positionSticky", "type": "boolean", "optional": true, "description": "Composition due to association with an element with a \"position: sticky\" style." },
+                    { "name": "overflowScrollingTouch", "type": "boolean", "optional": true, "description": "Composition due to association with an element with a \"overflow-scrolling: touch\" style." },
+                    { "name": "stacking", "type": "boolean", "optional": true, "description": "Composition due to association with an element establishing a stacking context." },
+                    { "name": "overlap", "type": "boolean", "optional": true, "description": "Composition due to association with an element overlapping other composited elements." },
+                    { "name": "negativeZIndexChildren", "type": "boolean", "optional": true, "description": "Composition due to association with an element with descendants that have a negative z-index." },
+                    { "name": "transformWithCompositedDescendants", "type": "boolean", "optional": true, "description": "Composition due to association with an element with composited descendants." },
+                    { "name": "opacityWithCompositedDescendants", "type": "boolean", "optional": true, "description": "Composition due to association with an element with opacity applied and composited descendants." },
+                    { "name": "maskWithCompositedDescendants", "type": "boolean", "optional": true, "description": "Composition due to association with a masked element and composited descendants." },
+                    { "name": "reflectionWithCompositedDescendants", "type": "boolean", "optional": true, "description": "Composition due to association with an element with a reflection and composited descendants." },
+                    { "name": "filterWithCompositedDescendants", "type": "boolean", "optional": true, "description": "Composition due to association with an element with CSS filters applied and composited descendants." },
+                    { "name": "blendingWithCompositedDescendants", "type": "boolean", "optional": true, "description": "Composition due to association with an element with CSS blending applied and composited descendants." },
+                    { "name": "perspective", "type": "boolean", "optional": true, "description": "Composition due to association with an element with perspective applied." },
+                    { "name": "preserve3D", "type": "boolean", "optional": true, "description": "Composition due to association with an element with a \"transform-style: preserve-3d\" style." },
+                    { "name": "root", "type": "boolean", "optional": true, "description": "Composition due to association with the root element." }
+                ]
             }
         ],
         "commands": [
@@ -3696,6 +3727,16 @@
                 "description": "Returns the layer tree structure of the current page.",
                 "returns": [
                     { "name": "layers", "type": "array", "items": { "$ref": "Layer" }, "description": "Child layers." }
+                ]
+            },
+            {
+                "name": "reasonsForCompositingLayer",
+                "parameters": [
+                    { "name": "layerId", "$ref": "LayerId", "description": "The id of the layer for which we want to get the reasons it was composited." }
+                ],
+                "description": "Provides the reasons why the given layer was composited.",
+                "returns": [
+                    { "name": "compositingReasons", "$ref": "CompositingReasons", "description": "An object containing the reasons why the layer was composited as properties." }
                 ]
             }
         ],
