@@ -36,6 +36,7 @@
 #include "ScrollTypes.h"
 #include "SelectorChecker.h"
 #include "SelectorFilter.h"
+#include "SiblingTraversalStrategies.h"
 #include "StyleInheritedData.h"
 #include "StyleScopeResolver.h"
 #include "ViewportStyleResolver.h"
@@ -156,12 +157,10 @@ public:
     MatchRequest(RuleSet* ruleSet, bool includeEmptyRules = false, const ContainerNode* scope = 0, SelectorChecker::BehaviorAtBoundary behaviorAtBoundary = SelectorChecker::DoesNotCrossBoundary)
         : ruleSet(ruleSet)
         , includeEmptyRules(includeEmptyRules)
-        , scope(scope)
-        , behaviorAtBoundary(behaviorAtBoundary) { }
+        , scope(scope) { }
     const RuleSet* ruleSet;
     const bool includeEmptyRules;
     const ContainerNode* scope;
-    const SelectorChecker::BehaviorAtBoundary behaviorAtBoundary;
 };
 
 // This class selects a RenderStyle for a given element based on a collection of stylesheets.
@@ -207,6 +206,7 @@ public:
 
     DocumentRuleSets& ruleSets() { return m_ruleSets; }
     const DocumentRuleSets& ruleSets() const { return m_ruleSets; }
+    SelectorFilter& selectorFilter() { return m_selectorFilter; }
 
 #if ENABLE(STYLE_SCOPED) || ENABLE(SHADOW_DOM)
     StyleScopeResolver* ensureScopeResolver()
@@ -325,14 +325,6 @@ public:
 
     void loadPendingResources();
 
-private:
-    // This function fixes up the default font size if it detects that the current generic font family has changed. -dwh
-    void checkForGenericFamilyChange(RenderStyle*, RenderStyle* parentStyle);
-    void checkForZoomChange(RenderStyle*, RenderStyle* parentStyle);
-    void checkForTextSizeAdjust();
-
-    void adjustRenderStyle(RenderStyle* styleToAdjust, RenderStyle* parentStyle, Element*);
-
     struct RuleRange {
         RuleRange(int& firstRuleIndex, int& lastRuleIndex): firstRuleIndex(firstRuleIndex), lastRuleIndex(lastRuleIndex) { }
         int& firstRuleIndex;
@@ -374,30 +366,22 @@ private:
         Vector<StyleRule*, 64> matchedRules;
         MatchRanges ranges;
         bool isCacheable;
+
+        void addMatchedProperties(const StylePropertySet* properties, StyleRule* = 0, unsigned linkMatchType = SelectorChecker::MatchAll, PropertyWhitelistType = PropertyWhitelistNone);
     };
 
-    static void addMatchedProperties(MatchResult&, const StylePropertySet* properties, StyleRule* = 0, unsigned linkMatchType = SelectorChecker::MatchAll, PropertyWhitelistType = PropertyWhitelistNone);
-    void addElementStyleProperties(MatchResult&, const StylePropertySet*, bool isCacheable = true);
+private:
+    // This function fixes up the default font size if it detects that the current generic font family has changed. -dwh
+    void checkForGenericFamilyChange(RenderStyle*, RenderStyle* parentStyle);
+    void checkForZoomChange(RenderStyle*, RenderStyle* parentStyle);
+    void checkForTextSizeAdjust();
 
-    void matchAllRules(MatchResult&, bool includeSMILProperties);
-    void matchUARules(MatchResult&);
-    void matchUARules(MatchResult&, RuleSet*);
-    void matchAuthorRules(MatchResult&, bool includeEmptyRules);
-    void matchUserRules(MatchResult&, bool includeEmptyRules);
-    void matchScopedAuthorRules(MatchResult&, bool includeEmptyRules);
-    void matchHostRules(MatchResult&, bool includeEmptyRules);
-
-    void collectMatchingRules(const MatchRequest&, RuleRange&);
-    void collectMatchingRulesForRegion(const MatchRequest&, RuleRange&);
-    void collectMatchingRulesForList(const Vector<RuleData>*, const MatchRequest&, RuleRange&);
+    void adjustRenderStyle(RenderStyle* styleToAdjust, RenderStyle* parentStyle, Element*);
 
     bool fastRejectSelector(const RuleData&) const;
-    void sortMatchedRules();
-    void sortAndTransferMatchedRules(MatchResult&);
 
-    bool ruleMatches(const RuleData&, const ContainerNode* scope, PseudoId&, SelectorChecker::BehaviorAtBoundary = SelectorChecker::DoesNotCrossBoundary);
-    bool checkRegionSelector(const CSSSelector* regionSelector, Element* regionElement);
     void applyMatchedProperties(const MatchResult&, const Element*);
+
     enum StyleApplicationPass {
 #if ENABLE(CSS_VARIABLES)
         VariableDefinitions,
@@ -446,12 +430,9 @@ public:
         , m_parentStyle(0)
         , m_rootElementStyle(0)
         , m_regionForStyling(0)
-        , m_sameOriginOnly(false)
-        , m_pseudoStyleRequest(NOPSEUDO)
         , m_elementLinkState(NotInsideLink)
         , m_distributedToInsertionPoint(false)
         , m_elementAffectedByClassRules(false)
-        , m_mode(SelectorChecker::ResolvingStyle)
         , m_applyPropertyToRegularStyle(true)
         , m_applyPropertyToVisitedLinkStyle(false)
 #if ENABLE(CSS_SHADERS)
@@ -464,7 +445,7 @@ public:
 
     public:
         void initElement(Element*);
-        void initForStyleResolve(Document*, Element*, RenderStyle* parentStyle = 0, const PseudoStyleRequest& = PseudoStyleRequest(NOPSEUDO), RenderRegion* regionForStyling = 0);
+        void initForStyleResolve(Document*, Element*, RenderStyle* parentStyle = 0, RenderRegion* regionForStyling = 0);
         void clear();
 
         Document* document() const { return m_element->document(); }
@@ -474,25 +455,17 @@ public:
         RenderStyle* style() const { return m_style.get(); }
         PassRefPtr<RenderStyle> takeStyle() { return m_style.release(); }
 
-        StaticCSSRuleList* ensureRuleList();
-        PassRefPtr<CSSRuleList> takeRuleList() { return m_ruleList.release(); }
-
         const ContainerNode* parentNode() const { return m_parentNode; }
         void setParentStyle(RenderStyle* parentStyle) { m_parentStyle = parentStyle; }
         RenderStyle* parentStyle() const { return m_parentStyle; }
         RenderStyle* rootElementStyle() const { return m_rootElementStyle; }
 
         const RenderRegion* regionForStyling() const { return m_regionForStyling; }
-        void setSameOriginOnly(bool isSameOriginOnly) { m_sameOriginOnly = isSameOriginOnly; }
-        bool isSameOriginOnly() const { return m_sameOriginOnly; }
-        const PseudoStyleRequest& pseudoStyleRequest() const { return m_pseudoStyleRequest; }
         EInsideLink elementLinkState() const { return m_elementLinkState; }
         bool distributedToInsertionPoint() const { return m_distributedToInsertionPoint; }
         void setElementAffectedByClassRules(bool isAffected) { m_elementAffectedByClassRules = isAffected; }
         bool elementAffectedByClassRules() const { return m_elementAffectedByClassRules; }
-        void setMode(SelectorChecker::Mode mode) { m_mode = mode; }
-        SelectorChecker::Mode mode() const { return m_mode; }
-        
+
         void setApplyPropertyToRegularStyle(bool isApply) { m_applyPropertyToRegularStyle = isApply; }
         void setApplyPropertyToVisitedLinkStyle(bool isApply) { m_applyPropertyToVisitedLinkStyle = isApply; }
         bool applyPropertyToRegularStyle() const { return m_applyPropertyToRegularStyle; }
@@ -526,9 +499,8 @@ public:
         void setWritingMode(WritingMode writingMode) { m_fontDirty |= m_style->setWritingMode(writingMode); }
         void setTextOrientation(TextOrientation textOrientation) { m_fontDirty |= m_style->setTextOrientation(textOrientation); }
 
-        Vector<const RuleData*, 32>& matchedRules() { return m_matchedRules; }
-        void addMatchedRule(const RuleData* rule) { m_matchedRules.append(rule); }
-        
+        bool useSVGZoomRules() const { return m_element && m_element->isSVGElement(); }
+
     private:
         // FIXME(bug 108563): to make it easier to review, these member
         // variables are public. However we should add methods to access
@@ -539,23 +511,15 @@ public:
         ContainerNode* m_parentNode;
         RenderStyle* m_parentStyle;
         RenderStyle* m_rootElementStyle;
-        
-        RenderRegion* m_regionForStyling;
-        bool m_sameOriginOnly;
-        PseudoStyleRequest m_pseudoStyleRequest;
 
+        // Required to ASSERT in applyProperties.
+        RenderRegion* m_regionForStyling;
+        
         EInsideLink m_elementLinkState;
 
         bool m_distributedToInsertionPoint;
 
         bool m_elementAffectedByClassRules;
-
-        SelectorChecker::Mode m_mode;
-
-        // A buffer used to hold the set of matched rules for an element,
-        // and a temporary buffer used for merge sorting.
-        Vector<const RuleData*, 32> m_matchedRules;
-        RefPtr<StaticCSSRuleList> m_ruleList;
 
         bool m_applyPropertyToRegularStyle;
         bool m_applyPropertyToVisitedLinkStyle;
@@ -693,6 +657,21 @@ inline bool StyleResolver::hasSelectorForId(const AtomicString& idValue) const
 {
     ASSERT(!idValue.isEmpty());
     return m_ruleSets.features().idsInRules.contains(idValue.impl());
+}
+
+inline bool checkRegionSelector(const CSSSelector* regionSelector, Element* regionElement)
+{
+    if (!regionSelector || !regionElement)
+        return false;
+
+    SelectorChecker selectorChecker(regionElement->document(), SelectorChecker::QueryingRules);
+    for (const CSSSelector* s = regionSelector; s; s = CSSSelectorList::next(s)) {
+        SelectorChecker::SelectorCheckingContext selectorCheckingContext(s, regionElement, SelectorChecker::VisitedMatchDisabled);
+        PseudoId ignoreDynamicPseudo = NOPSEUDO;
+        if (selectorChecker.match(selectorCheckingContext, ignoreDynamicPseudo, DOMSiblingTraversalStrategy()) == SelectorChecker::SelectorMatches)
+            return true;
+    }
+    return false;
 }
 
 } // namespace WebCore
