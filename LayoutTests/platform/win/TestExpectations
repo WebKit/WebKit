@@ -2689,3 +2689,7 @@ ietestcenter
 jquery
 media/media-fragments
 media/W3C
+
+# Test fails because webkit-image-set is not implemented on Windows
+# The test unfortunately outputs system specific information on assertion failure
+cssom/cssvalue-comparison.html
