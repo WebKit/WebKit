@@ -129,6 +129,7 @@ public:
     static int numberOfPendingGeolocationPermissionRequests(const Evas_Object*);
 
 #if HAVE(ACCESSIBILITY)
+    static String accessibilityHelpText(const AtkObject* axObject);
     static AtkObject* focusedAccessibleElement(const Evas_Object*);
     static AtkObject* rootAccessibleElement(const Evas_Object*);
 #endif

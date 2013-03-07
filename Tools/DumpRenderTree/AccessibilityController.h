@@ -34,6 +34,9 @@
 #if PLATFORM(WIN)
 #include <windows.h>
 #endif
+#if HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
+#include <atk/atk.h>
+#endif
 
 class AccessibilityController {
 public:
@@ -63,6 +66,10 @@ public:
     // Helper methods so this class can add the listeners on behalf of AccessibilityUIElement.
     void winAddNotificationListener(PlatformUIElement, JSObjectRef functionCallback);
     void winNotificationReceived(PlatformUIElement, const std::string& eventName);
+#endif
+
+#if HAVE(ACCESSIBILITY) && (PLATFORM(GTK) || PLATFORM(EFL))
+    AtkObject* childElementById(AtkObject* parent, const char* id);
 #endif
 
 private:

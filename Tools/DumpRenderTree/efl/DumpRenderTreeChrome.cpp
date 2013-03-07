@@ -50,6 +50,10 @@
 #include <wtf/NotFound.h>
 #include <wtf/text/StringBuilder.h>
 
+#if HAVE(ACCESSIBILITY)
+#include "AccessibilityController.h"
+#endif
+
 using namespace WebCore;
 
 HashMap<unsigned long, CString> DumpRenderTreeChrome::m_dumpAssignedUrls;
@@ -70,6 +74,7 @@ DumpRenderTreeChrome::DumpRenderTreeChrome(Evas* evas)
     , m_mainFrame(0)
     , m_evas(evas)
     , m_gcController(adoptPtr(new GCController))
+    , m_axController(adoptPtr(new AccessibilityController))
 {
 }
 
@@ -297,6 +302,10 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
 
     ewk_security_policy_whitelist_origin_reset();
 
+#if HAVE(ACCESSIBILITY)
+    browser->accessibilityController()->resetToConsistentState();
+#endif
+
     DumpRenderTreeSupportEfl::clearFrameName(mainFrame());
     DumpRenderTreeSupportEfl::clearOpener(mainFrame());
     DumpRenderTreeSupportEfl::clearUserScripts(mainView());
@@ -429,6 +438,11 @@ void DumpRenderTreeChrome::onWindowObjectCleared(void* userData, Evas_Object*, v
     Ewk_Window_Object_Cleared_Event* objectClearedInfo = static_cast<Ewk_Window_Object_Cleared_Event*>(eventInfo);
     JSValueRef exception = 0;
     ASSERT(gTestRunner);
+
+#if HAVE(ACCESSIBILITY)
+    browser->accessibilityController()->makeWindowObject(objectClearedInfo->context, objectClearedInfo->windowObject, &exception);
+    ASSERT(!exception);
+#endif
 
     GCController* gcController = static_cast<GCController*>(userData);
     ASSERT(gcController);
@@ -849,4 +863,9 @@ void DumpRenderTreeChrome::onDownloadRequest(void*, Evas_Object*, void* eventInf
     ewk_view_uri_set(newView, download->url);
  
     browser->m_extraViews.append(newView);
+}
+
+AccessibilityController* DumpRenderTreeChrome::accessibilityController() const
+{
+    return m_axController.get();
 }

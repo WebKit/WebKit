@@ -88,4 +88,29 @@ void AccessibilityController::removeNotificationListener()
 {
 }
 
+AtkObject* AccessibilityController::childElementById(AtkObject* parent, const char* id)
+{
+    if (!ATK_IS_OBJECT(parent))
+        return 0;
+
+    AtkAttributeSet* attributeSet = atk_object_get_attributes(parent);
+    for (GSList* attributes = attributeSet; attributes; attributes = attributes->next) {
+        AtkAttribute* attribute = static_cast<AtkAttribute*>(attributes->data);
+        if (!strcmp(attribute->name, "html-id")) {
+            if (!strcmp(attribute->value, id))
+                return parent;
+            break;
+        }
+    }
+
+    int childCount = atk_object_get_n_accessible_children(parent);
+    for (int i = 0; i < childCount; i++) {
+        AtkObject* result = childElementById(atk_object_ref_accessible_child(parent, i), id);
+        if (ATK_IS_OBJECT(result))
+            return result;
+    }
+
+    return 0;
+}
+
 #endif

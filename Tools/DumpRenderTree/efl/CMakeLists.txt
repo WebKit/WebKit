@@ -1,12 +1,19 @@
 set(DumpRenderTree_SOURCES
-    ${TOOLS_DIR}/DumpRenderTree/atk/AccessibilityCallbacksAtk.cpp
+    ${TOOLS_DIR}/DumpRenderTree/AccessibilityController.cpp
+    ${TOOLS_DIR}/DumpRenderTree/AccessibilityTextMarker.cpp
+    ${TOOLS_DIR}/DumpRenderTree/AccessibilityUIElement.cpp
     ${TOOLS_DIR}/DumpRenderTree/DumpRenderTreeCommon.cpp
     ${TOOLS_DIR}/DumpRenderTree/CyclicRedundancyCheck.cpp
     ${TOOLS_DIR}/DumpRenderTree/GCController.cpp
     ${TOOLS_DIR}/DumpRenderTree/TestRunner.cpp
     ${TOOLS_DIR}/DumpRenderTree/PixelDumpSupport.cpp
     ${TOOLS_DIR}/DumpRenderTree/WorkQueue.cpp
+    ${TOOLS_DIR}/DumpRenderTree/atk/AccessibilityCallbacksAtk.cpp
+    ${TOOLS_DIR}/DumpRenderTree/atk/AccessibilityControllerAtk.cpp
+    ${TOOLS_DIR}/DumpRenderTree/atk/AccessibilityUIElementAtk.cpp
     ${TOOLS_DIR}/DumpRenderTree/cairo/PixelDumpSupportCairo.cpp
+    ${TOOLS_DIR}/DumpRenderTree/efl/AccessibilityControllerEfl.cpp
+    ${TOOLS_DIR}/DumpRenderTree/efl/AccessibilityUIElementEfl.cpp
     ${TOOLS_DIR}/DumpRenderTree/efl/DumpHistoryItem.cpp
     ${TOOLS_DIR}/DumpRenderTree/efl/DumpRenderTree.cpp
     ${TOOLS_DIR}/DumpRenderTree/efl/DumpRenderTreeChrome.cpp
@@ -115,6 +122,7 @@ set(DumpRenderTree_INCLUDE_DIRECTORIES
 
 if (ENABLE_ACCESSIBILITY)
     list(APPEND DumpRenderTree_INCLUDE_DIRECTORIES
+        ${TOOLS_DIR}/DumpRenderTree/atk
         ${ATK_INCLUDE_DIRS}
     )
     list(APPEND DumpRenderTree_LIBRARIES

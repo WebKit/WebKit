@@ -38,6 +38,10 @@
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 
+#if HAVE(ACCESSIBILITY)
+#include "AccessibilityController.h"
+#endif
+
 class DumpRenderTreeChrome {
 public:
     ~DumpRenderTreeChrome();
@@ -64,10 +68,12 @@ private:
 
     Evas_Object* createView() const;
     bool initialize();
+    AccessibilityController* accessibilityController() const;
 
     Evas_Object* m_mainFrame;
     Evas_Object* m_mainView;
     Evas* m_evas;
+    OwnPtr<AccessibilityController> m_axController;
     OwnPtr<GCController> m_gcController;
     Vector<Evas_Object*> m_extraViews;
     static HashMap<unsigned long, CString> m_dumpAssignedUrls;
