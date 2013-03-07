@@ -33,10 +33,10 @@
 
 #include "../../../Platform/chromium/public/WebCanvas.h"
 #include "../../../Platform/chromium/public/WebFileSystem.h"
+#include "../../../Platform/chromium/public/WebMessagePortChannel.h"
 #include "../../../Platform/chromium/public/WebReferrerPolicy.h"
 #include "../../../Platform/chromium/public/WebURL.h"
 #include "WebIconURL.h"
-#include "WebMessagePortChannel.h"
 #include "WebNode.h"
 #include "WebURLLoaderOptions.h"
 

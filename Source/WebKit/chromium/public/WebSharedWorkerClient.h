@@ -31,8 +31,8 @@
 #ifndef WebSharedWorkerClient_h
 #define WebSharedWorkerClient_h
 
+#include "../../../Platform/chromium/public/WebMessagePortChannel.h"
 #include "WebCommonWorkerClient.h"
-#include "WebMessagePortChannel.h"
 
 namespace WebKit {
 

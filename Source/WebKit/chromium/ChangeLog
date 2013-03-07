@@ -1,5 +1,20 @@
 2013-03-07  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [Chromium] Update some #includes for WebMessagePortChannel.h
+        https://bugs.webkit.org/show_bug.cgi?id=111752
+
+        Reviewed by James Robinson.
+
+        In anticipation of removing
+        WK/chromium/public/WebMessagePortChannel.h (once all downstream
+        references have been updated)
+
+        * public/WebDOMMessageEvent.h:
+        * public/WebFrame.h:
+        * public/WebSharedWorkerClient.h:
+
+2013-03-07  Mark Pilgrim  <pilgrim@chromium.org>
+
         [Chromium] Remove WK/chromium/public/WebStorageArea.h
         https://bugs.webkit.org/show_bug.cgi?id=111744
 
