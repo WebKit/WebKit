@@ -65,7 +65,7 @@ WebInspector.DatabaseQueryView.prototype = {
      * @param {Element} proxyElement
      * @param {Range} wordRange
      * @param {boolean} force
-     * @param {function(Array.<string>, number=)} completionsReadyCallback
+     * @param {function(!Array.<string>, number=)} completionsReadyCallback
      */
     completions: function(proxyElement, wordRange, force, completionsReadyCallback)
     {

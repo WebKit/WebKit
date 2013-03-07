@@ -169,7 +169,7 @@ WebInspector.RuntimeModel.prototype = {
      * @param {Element} proxyElement
      * @param {Range} wordRange
      * @param {boolean} force
-     * @param {function(Array.<string>, number=)} completionsReadyCallback
+     * @param {function(!Array.<string>, number=)} completionsReadyCallback
      */
     completionsForTextPrompt: function(proxyElement, wordRange, force, completionsReadyCallback)
     {
@@ -184,7 +184,7 @@ WebInspector.RuntimeModel.prototype = {
      * @param {string} expressionString
      * @param {string} prefix
      * @param {boolean} force
-     * @param {function(Array.<string>, number=)} completionsReadyCallback
+     * @param {function(!Array.<string>, number=)} completionsReadyCallback
      */
     _completionsForExpression: function(expressionString, prefix, force, completionsReadyCallback)
     {
@@ -276,7 +276,7 @@ WebInspector.RuntimeModel.prototype = {
     },
 
     /**
-     * @param {function(Array.<string>, number=)} completionsReadyCallback
+     * @param {function(!Array.<string>, number=)} completionsReadyCallback
      * @param {boolean} dotNotation
      * @param {boolean} bracketNotation
      * @param {string} expressionString

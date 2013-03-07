@@ -46,23 +46,18 @@ WebInspector.SuggestBoxDelegate.prototype = {
      * acceptSuggestion will be always called after call to applySuggestion with isIntermediateSuggestion being equal to false.
      */
     acceptSuggestion: function() { },
-
-    /**
-     * @return {string}
-     */
-    userEnteredText: function() { }
 }
 
 /**
  * @constructor
  * @param {WebInspector.SuggestBoxDelegate} suggestBoxDelegate
- * @param {Element} inputElement
- * @param {string} className
+ * @param {Element} anchorElement
+ * @param {string=} className
  */
-WebInspector.SuggestBox = function(suggestBoxDelegate, inputElement, className)
+WebInspector.SuggestBox = function(suggestBoxDelegate, anchorElement, className)
 {
     this._suggestBoxDelegate = suggestBoxDelegate;
-    this._inputElement = inputElement;
+    this._anchorElement = anchorElement;
     this._length = 0;
     this._selectedIndex = -1;
     this._selectedElement = null;
@@ -71,8 +66,8 @@ WebInspector.SuggestBox = function(suggestBoxDelegate, inputElement, className)
     window.addEventListener("scroll", this._boundOnScroll, true);
     window.addEventListener("resize", this._boundOnResize, true);
 
-    this._bodyElement = inputElement.ownerDocument.body;
-    this._element = inputElement.ownerDocument.createElement("div");
+    this._bodyElement = anchorElement.ownerDocument.body;
+    this._element = anchorElement.ownerDocument.createElement("div");
     this._element.className = "suggest-box " + (className || "");
     this._element.addEventListener("mousedown", this._onBoxMouseDown.bind(this), true);
     this.containerElement = this._element.createChild("div", "container");
@@ -96,11 +91,6 @@ WebInspector.SuggestBox.prototype = {
     {
         if (isScroll && this._element.isAncestor(event.target) || !this.visible())
             return;
-        this._updateBoxPositionWithExistingAnchor();
-    },
-
-    _updateBoxPositionWithExistingAnchor: function()
-    {
         this._updateBoxPosition(this._anchorBox);
     },
 
@@ -109,6 +99,8 @@ WebInspector.SuggestBox.prototype = {
      */
     _updateBoxPosition: function(anchorBox)
     {
+        this._anchorBox = anchorBox;
+
         // Measure the content element box.
         this.contentElement.style.display = "inline-block";
         document.body.appendChild(this.contentElement);
@@ -118,11 +110,10 @@ WebInspector.SuggestBox.prototype = {
         this.contentElement.style.display = "block";
         this.containerElement.appendChild(this.contentElement);
 
-        // Lay out the suggest-box relative to the anchorBox.
-        this._anchorBox = anchorBox;
         const spacer = 6;
-
         const suggestBoxPaddingX = 21;
+        const suggestBoxPaddingY = 2;
+
         var maxWidth = document.body.offsetWidth - anchorBox.x - spacer;
         var width = Math.min(contentWidth, maxWidth - suggestBoxPaddingX) + suggestBoxPaddingX;
         var paddedWidth = contentWidth + suggestBoxPaddingX;
@@ -134,7 +125,6 @@ WebInspector.SuggestBox.prototype = {
             boxX = document.body.offsetWidth - width;
         }
 
-        const suggestBoxPaddingY = 2;
         var boxY;
         var aboveHeight = anchorBox.y;
         var underHeight = document.body.offsetHeight - anchorBox.y - anchorBox.height;
@@ -268,15 +258,15 @@ WebInspector.SuggestBox.prototype = {
     },
 
     /**
-     * @param {Array.<string>=} items
-     * @param {number=} selectedIndex
+     * @param {!Array.<string>} items
+     * @param {number} selectedIndex
+     * @param {string} userEnteredText
      */
-    _updateItems: function(items, selectedIndex)
+    _updateItems: function(items, selectedIndex, userEnteredText)
     {
         this._length = items.length;
         this.contentElement.removeChildren();
 
-        var userEnteredText = this._suggestBoxDelegate.userEnteredText();
         for (var i = 0; i < items.length; ++i) {
             var item = items[i];
             var currentItemElement = this._createItemElement(userEnteredText, item);
@@ -304,10 +294,11 @@ WebInspector.SuggestBox.prototype = {
     },
 
     /**
-     * @param {Array.<string>=} completions
-     * @param {boolean=} canShowForSingleItem
+     * @param {!Array.<string>} completions
+     * @param {boolean} canShowForSingleItem
+     * @param {string} userEnteredText
      */
-    _canShowBox: function(completions, canShowForSingleItem)
+    _canShowBox: function(completions, canShowForSingleItem, userEnteredText)
     {
         if (!completions || !completions.length)
             return false;
@@ -316,7 +307,7 @@ WebInspector.SuggestBox.prototype = {
             return true;
 
         // Do not show a single suggestion if it is the same as user-entered prefix, even if allowed to show single-item suggest boxes.
-        return canShowForSingleItem && completions[0] !== this._suggestBoxDelegate.userEnteredText();
+        return canShowForSingleItem && completions[0] !== userEnteredText;
     },
 
     _rememberRowCountPerViewport: function()
@@ -329,14 +320,15 @@ WebInspector.SuggestBox.prototype = {
 
     /**
      * @param {AnchorBox} anchorBox
-     * @param {Array.<string>=} completions
-     * @param {number=} selectedIndex
-     * @param {boolean=} canShowForSingleItem
+     * @param {!Array.<string>} completions
+     * @param {number} selectedIndex
+     * @param {boolean} canShowForSingleItem
+     * @param {string} userEnteredText
      */
-    updateSuggestions: function(anchorBox, completions, selectedIndex, canShowForSingleItem)
+    updateSuggestions: function(anchorBox, completions, selectedIndex, canShowForSingleItem, userEnteredText)
     {
-        if (this._canShowBox(completions, canShowForSingleItem)) {
-            this._updateItems(completions, selectedIndex);
+        if (this._canShowBox(completions, canShowForSingleItem, userEnteredText)) {
+            this._updateItems(completions, selectedIndex, userEnteredText);
             this._updateBoxPosition(anchorBox);
             if (!this.visible())
                 this._bodyElement.appendChild(this._element);

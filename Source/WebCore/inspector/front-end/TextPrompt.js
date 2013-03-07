@@ -31,7 +31,7 @@
  * @constructor
  * @extends WebInspector.Object
  * @implements {WebInspector.SuggestBoxDelegate}
- * @param {function(Element, Range, boolean, function(Array.<string>, number=))} completions
+ * @param {function(Element, Range, boolean, function(!Array.<string>, number=))} completions
  * @param {string=} stopCharacters
  */
 WebInspector.TextPrompt = function(completions, stopCharacters)
@@ -52,11 +52,6 @@ WebInspector.TextPrompt.Events = {
 };
 
 WebInspector.TextPrompt.prototype = {
-    userEnteredText: function()
-    {
-        return this._userEnteredText;
-    },
-
     get proxyElement()
     {
         return this._proxyElement;
@@ -438,12 +433,12 @@ WebInspector.TextPrompt.prototype = {
      * @param {boolean} auto
      * @param {Range} originalWordPrefixRange
      * @param {boolean} reverse
-     * @param {Array.<string>=} completions
+     * @param {!Array.<string>} completions
      * @param {number=} selectedIndex
      */
     _completionsReady: function(selection, auto, originalWordPrefixRange, reverse, completions, selectedIndex)
     {
-        if (!this._waitingForCompletions || !completions || !completions.length) {
+        if (!this._waitingForCompletions || !completions.length) {
             this.hideSuggestBox();
             return;
         }
@@ -464,7 +459,7 @@ WebInspector.TextPrompt.prototype = {
         this._userEnteredText = fullWordRange.toString();
 
         if (this._suggestBox)
-            this._suggestBox.updateSuggestions(this._boxForAnchorAtStart(selection, fullWordRange), completions, selectedIndex, !this.isCaretAtEndOfPrompt());
+            this._suggestBox.updateSuggestions(this._boxForAnchorAtStart(selection, fullWordRange), completions, selectedIndex, !this.isCaretAtEndOfPrompt(), this._userEnteredText);
 
         var wordPrefixLength = originalWordPrefixRange.toString().length;
 
@@ -778,7 +773,7 @@ WebInspector.TextPrompt.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.TextPrompt}
- * @param {function(Element, Range, boolean, function(Array.<string>,number=))} completions
+ * @param {function(Element, Range, boolean, function(!Array.<string>, number=))} completions
  * @param {string=} stopCharacters
  */
 WebInspector.TextPromptWithHistory = function(completions, stopCharacters)
