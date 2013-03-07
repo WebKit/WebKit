@@ -30,6 +30,7 @@
 #include "FileSystem.h"
 #include "MIMETypeRegistry.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/DateMath.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -152,16 +153,15 @@ File::File(const KURL& fileSystemURL, const FileMetadata& metadata)
 double File::lastModifiedDate() const
 {
 #if ENABLE(FILE_SYSTEM)
-    if (hasValidSnapshotMetadata())
-        return m_snapshotModificationTime * 1000.0;
+    if (hasValidSnapshotMetadata() && isValidFileTime(m_snapshotModificationTime))
+        return m_snapshotModificationTime * msPerSecond;
 #endif
 
     time_t modificationTime;
-    if (!getFileModificationTime(m_path, modificationTime))
-        return invalidFileTime();
+    if (getFileModificationTime(m_path, modificationTime) && isValidFileTime(modificationTime))
+        return modificationTime * msPerSecond;
 
-    // Needs to return epoch time in milliseconds for Date.
-    return modificationTime * 1000.0;
+    return currentTime() * msPerSecond;
 }
 
 unsigned long long File::size() const

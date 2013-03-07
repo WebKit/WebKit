@@ -2,6 +2,7 @@ description("Test File.lastModifiedDate returns null if the information is not a
 
 var tempFileContent = "1234567890";
 var tempFileName = "file-last-modified-after-delete.tmp";
+var testStartTime = new Date();
 var lastModifiedDate;
 
 function onFileDrop(file)
@@ -11,7 +12,11 @@ function onFileDrop(file)
 
     // This synchronosly queries the file's lastModifiedDate (which should fail) until/unless we start capturing the file metadata at File construction time.
     lastModifiedDate = file.lastModifiedDate;
-    shouldBe('lastModifiedDate', 'null');
+
+    // The returned value should be equal to the current date/time since the file's modified date/time is not available.
+    shouldNotBe('lastModifiedDate', 'null');
+    shouldBeGreaterThanOrEqual('lastModifiedDate', 'testStartTime');
+    shouldBeGreaterThanOrEqual('(new Date()).getTime()', 'lastModifiedDate');
 }
 
 function runTest()
