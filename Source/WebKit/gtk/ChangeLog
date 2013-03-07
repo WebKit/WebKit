@@ -1,3 +1,9 @@
+2013-03-07  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and Versions.m4 for 1.11.91 release.
+
+        * NEWS: Added release notes for 1.11.91.
+
 2013-02-24  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] GTK+ 2 build broken since GTK_API_VERSION_2 moved to autoconfig.h

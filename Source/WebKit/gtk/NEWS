@@ -1,4 +1,21 @@
 ==================
+WebKitGTK+ 1.11.91
+==================
+
+What's new in WebKitGTK+ 1.11.91?
+
+  - Add WebKitWebPage::document-loaded signal to WebKit2 GTK+ web
+    extensions API.
+  - Add webkit_web_page_get_uri to WebKit2 GTK+ web extensions API.
+  - Add WebKitWebPage::send-request signal to WebKit2 GTK+ web
+    extensions API.
+  - Add WebKitWebViewGroup to WebKit2 GTK+ API.
+  - Fix Control+Shift+Up/Down selection that worked backwards.
+  - Fix "Too many redirects" error when loading certain web sites.
+  - Fix rendering of buttons containing floats.
+  - Fix the build when using GTK+ 2.
+
+==================
 WebKitGTK+ 1.11.90
 ==================
 
