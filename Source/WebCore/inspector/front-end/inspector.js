@@ -315,6 +315,24 @@ WebInspector.Events = {
     }
 })();}
 
+WebInspector.reload = function()
+{
+    var queryParams = window.location.search;
+    var url = window.location.href;
+    url = url.substring(0, url.length - queryParams.length);
+    var queryParamsObject = {};
+    for (var name in WebInspector.queryParamsObject)
+        queryParamsObject[name] = WebInspector.queryParamsObject[name];
+    if (this.dockController)
+        queryParamsObject["dockSide"] = this.dockController.dockSide();
+    var names = Object.keys(queryParamsObject);
+    for (var i = 0; i < names.length; ++i)
+        url += (i ? "&" : "?") + names[i] + "=" + queryParamsObject[names[i]];
+
+    InspectorBackend.disconnect();
+    document.location = url;
+}
+
 WebInspector.loaded = function()
 {
     InspectorBackend.loadFromJSONIfNeeded("../Inspector.json");
