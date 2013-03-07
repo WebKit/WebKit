@@ -327,7 +327,7 @@ TestSuite.prototype.testRendererProcessNativeMemorySize = function()
     function step1(error, memoryBlock)
     {
         test.assertTrue(!error, "An error has occurred: " + error);
-        test.assertTrue(memoryBlock.size > 1 * MB && memoryBlock.size < 1500 * MB, "Unfeasible process size.");
+        test.assertTrue(memoryBlock.size > 1 * MB && memoryBlock.size < 1500 * MB, "Unfeasible process size: " + memoryBlock.size + " bytes.");
 
         initialSize = memoryBlock.size;
 
