@@ -38,14 +38,14 @@ m4_include([Source/autotools/SetupAutomake.m4])
 # Processing of configuration files
 ######################################################################################
 
-AC_CONFIG_FILES([GNUmakefile])
+AC_CONFIG_FILES([GNUmakefile Source/WebCore/platform/gtk/po/POTFILES])
 AC_CONFIG_FILES(
     [Source/JavaScriptCore/javascriptcoregtk-${WEBKITGTK_API_VERSION}.pc:Source/JavaScriptCore/javascriptcoregtk.pc.in
         Source/WebKit/gtk/JSCore-${WEBKITGTK_API_VERSION}.gir:Source/WebKit/gtk/JSCore.gir.in],
     [WEBKITGTK_API_VERSION=$WEBKITGTK_API_VERSION,WEBKITGTK_PC_NAME=$WEBKITGTK_PC_NAME])
 
 if test "$enable_webkit1" = "yes"; then
-    AC_CONFIG_FILES([Source/WebKit/gtk/webkit/webkitversion.h Source/WebKit/gtk/po/POTFILES])
+    AC_CONFIG_FILES([Source/WebKit/gtk/webkit/webkitversion.h])
 
     AC_CONFIG_FILES([Source/WebKit/gtk/${WEBKITGTK_PC_NAME}-${WEBKITGTK_API_VERSION}.pc:Source/WebKit/gtk/webkit.pc.in],
         [WEBKITGTK_API_VERSION=$WEBKITGTK_API_VERSION,WEBKITGTK_PC_NAME=$WEBKITGTK_PC_NAME])

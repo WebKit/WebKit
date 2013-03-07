@@ -1,3 +1,14 @@
+2013-03-05  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Enable translations for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=111398
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: adjust path for i18n GNUmakefile.am.
+        * configure.ac: generate the i18n makefile unconditionally, the translations are
+        used by both WebKitGTK+ and WebKit2GTK+.
+
 2013-03-06  Adam Klein  <adamk@chromium.org>
 
         [V8] Use implicit references instead of object groups to keep registered MutationObservers alive

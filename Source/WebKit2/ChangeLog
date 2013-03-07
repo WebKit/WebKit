@@ -1,3 +1,22 @@
+2013-03-05  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Enable translations for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=111398
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: define PACKAGE_LOCALE_DIR when building WebProcess's main module.
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        (WebKit::WebProcessMainGtk): register the i18n domain name, and prefer UTF-8, since
+        we're GTK+; at the moment we're just using the same name as WebKitGTK+, pro: the
+        translation module can be reused, con: you can't have different versions of
+        WebKitGTK+ and WebKit2GTK+ installed, because the module would not be fit for reuse
+        in that case.
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::childSetupFunction): do not set LC_ALL environment variable explicitly,
+        the child process will already inherit the environment of the parent, which should
+        have all the variables set properly.
+
 2013-03-06  Alexey Proskuryakov  <ap@apple.com>
 
         SandboxExtension::createHandle raises an uncaught Objective-C exception if path is empty

@@ -1,0 +1,1833 @@
+# translation of webkit.webkit.HEAD.po to Basque
+# Basque translation for webkit.
+# Copyright (C) 2010 webkit's COPYRIGHT HOLDER
+# This file is distributed under the same license as the webkit package.
+#
+# Iñaki Larrañaga Murgoitio <dooteo@euskalgnu.org>, 2010.
+msgid ""
+msgstr ""
+"Project-Id-Version: webkit.webkit.HEAD\n"
+"Report-Msgid-Bugs-To: http://bugs.webkit.org/\n"
+"POT-Creation-Date: 2013-03-07 11:04-0300\n"
+"PO-Revision-Date: 2010-03-25 11:26+0100\n"
+"Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@euskalgnu.org>\n"
+"Language-Team: Basque <itzulpena@euskalgnu.org>\n"
+"Language: eu\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ErrorsGtk.cpp:37
+msgid "Load request cancelled"
+msgstr ""
+
+#: ErrorsGtk.cpp:43
+msgid "Not allowed to use restricted network port"
+msgstr ""
+
+#: ErrorsGtk.cpp:49
+msgid "URL cannot be shown"
+msgstr ""
+
+#: ErrorsGtk.cpp:55
+msgid "Frame load was interrupted"
+msgstr ""
+
+#: ErrorsGtk.cpp:61
+msgid "Content with the specified MIME type cannot be shown"
+msgstr ""
+
+#: ErrorsGtk.cpp:67
+msgid "File does not exist"
+msgstr ""
+
+#: ErrorsGtk.cpp:73
+msgid "Plugin will handle load"
+msgstr ""
+
+#: ErrorsGtk.cpp:85
+msgid "User cancelled the download"
+msgstr "Erabiltzaileak bertan behera utzi du deskarga"
+
+#: ErrorsGtk.cpp:105
+msgid "Printer not found"
+msgstr ""
+
+#: ErrorsGtk.cpp:112
+#, fuzzy
+msgid "Invalid page range"
+msgstr "Gaitu orrialdearen cache-a"
+
+#: GtkAuthenticationDialog.cpp:171
+#, c-format
+msgid "The site %s:%i requests a username and password"
+msgstr ""
+
+#: GtkAuthenticationDialog.cpp:175
+msgid "_Remember password"
+msgstr "_Gogoratu pasahitza"
+
+#: GtkAuthenticationDialog.cpp:201
+msgid "Server message:"
+msgstr "Zerbitzariaren mezua:"
+
+#: GtkAuthenticationDialog.cpp:202 GtkAuthenticationDialog.cpp:210
+msgid "Username:"
+msgstr "Erabiltzaile-izena:"
+
+#: GtkAuthenticationDialog.cpp:203 GtkAuthenticationDialog.cpp:211
+msgid "Password:"
+msgstr "Pasahitza:"
+
+#: LocalizedStringsGtk.cpp:56 LocalizedStringsGtk.cpp:61
+msgid "Submit"
+msgstr "Bidali"
+
+#: LocalizedStringsGtk.cpp:66
+msgid "Reset"
+msgstr "Berrezarri"
+
+#: LocalizedStringsGtk.cpp:71
+msgid "Details"
+msgstr ""
+
+#: LocalizedStringsGtk.cpp:76
+msgid "This is a searchable index. Enter search keywords: "
+msgstr "Indizean bilaketak egin daitezke. Sartu bilaketarako gako-hitzak:"
+
+#: LocalizedStringsGtk.cpp:81
+msgid "Choose File"
+msgstr "Aukeratu fitxategia"
+
+#: LocalizedStringsGtk.cpp:86
+#, fuzzy
+msgid "Choose Files"
+msgstr "Aukeratu fitxategia"
+
+#: LocalizedStringsGtk.cpp:91 LocalizedStringsGtk.cpp:96
+msgid "(None)"
+msgstr "(Bat ere ez)"
+
+#: LocalizedStringsGtk.cpp:101
+msgid "Open Link in New _Window"
+msgstr "Ireki esteka leiho _berrian"
+
+#: LocalizedStringsGtk.cpp:106
+msgid "_Download Linked File"
+msgstr "_Deskargatu estekatutako fitxategia"
+
+#: LocalizedStringsGtk.cpp:111
+msgid "Copy Link Loc_ation"
+msgstr "Kopiatu estekaren _helbidea"
+
+#: LocalizedStringsGtk.cpp:116
+msgid "Open _Image in New Window"
+msgstr "Ireki _irudia leiho berrian"
+
+#: LocalizedStringsGtk.cpp:121
+msgid "Sa_ve Image As"
+msgstr "_Gorde irudia honela"
+
+#: LocalizedStringsGtk.cpp:126
+msgid "Cop_y Image"
+msgstr "_Kopiatu irudia"
+
+#: LocalizedStringsGtk.cpp:131
+#, fuzzy
+msgid "Copy Image _Address"
+msgstr "_Kopiatu irudia"
+
+#: LocalizedStringsGtk.cpp:136
+#, fuzzy
+msgid "Open _Video in New Window"
+msgstr "Ireki _irudia leiho berrian"
+
+#: LocalizedStringsGtk.cpp:141
+#, fuzzy
+msgid "Open _Audio in New Window"
+msgstr "Ireki esteka leiho _berrian"
+
+#: LocalizedStringsGtk.cpp:146
+#, fuzzy
+msgid "Cop_y Video Link Location"
+msgstr "Kopiatu estekaren _helbidea"
+
+#: LocalizedStringsGtk.cpp:151
+#, fuzzy
+msgid "Cop_y Audio Link Location"
+msgstr "Kopiatu estekaren _helbidea"
+
+#: LocalizedStringsGtk.cpp:156
+msgid "_Toggle Media Controls"
+msgstr ""
+
+#: LocalizedStringsGtk.cpp:161
+msgid "Toggle Media _Loop Playback"
+msgstr ""
+
+#: LocalizedStringsGtk.cpp:166
+msgid "Switch Video to _Fullscreen"
+msgstr ""
+
+#: LocalizedStringsGtk.cpp:171
+msgid "_Play"
+msgstr ""
+
+#: LocalizedStringsGtk.cpp:176
+#, fuzzy
+msgid "_Pause"
+msgstr "pausatu"
+
+#: LocalizedStringsGtk.cpp:181
+msgid "_Mute"
+msgstr ""
+
+#: LocalizedStringsGtk.cpp:186
+msgid "Open _Frame in New Window"
+msgstr "Ireki _markoa leiho berrian"
+
+#: LocalizedStringsGtk.cpp:209
+msgid "_Insert Unicode Control Character"
+msgstr "_Txertatu Unicode-ren kontrol-karakterea"
+
+#: LocalizedStringsGtk.cpp:214
+msgid "Input _Methods"
+msgstr "Sarrerako _metodoak"
+
+#: LocalizedStringsGtk.cpp:237
+msgid "_Reload"
+msgstr "_Birkargatu"
+
+#: LocalizedStringsGtk.cpp:254
+msgid "No Guesses Found"
+msgstr "Ez da iragarpenik aurkitu"
+
+#: LocalizedStringsGtk.cpp:259
+msgid "_Ignore Spelling"
+msgstr "_Ezikusi ortografia"
+
+#: LocalizedStringsGtk.cpp:264
+msgid "_Learn Spelling"
+msgstr "_Ikasi ortografia"
+
+#: LocalizedStringsGtk.cpp:269
+msgid "_Search the Web"
+msgstr "_Bilatu web-ean"
+
+#: LocalizedStringsGtk.cpp:274
+msgid "_Look Up in Dictionary"
+msgstr "Bilatu _hiztegian"
+
+#: LocalizedStringsGtk.cpp:279
+msgid "_Open Link"
+msgstr "_Ireki esteka"
+
+#: LocalizedStringsGtk.cpp:284
+msgid "Ignore _Grammar"
+msgstr "Ezikusi _gramatika"
+
+#: LocalizedStringsGtk.cpp:289
+msgid "Spelling and _Grammar"
+msgstr "Ortografia eta _gramatika"
+
+#: LocalizedStringsGtk.cpp:294
+msgid "_Show Spelling and Grammar"
+msgstr "E_rakutsi ortografia eta gramatika"
+
+#: LocalizedStringsGtk.cpp:294
+msgid "_Hide Spelling and Grammar"
+msgstr "E_zkutatu ortografia eta gramatika"
+
+#: LocalizedStringsGtk.cpp:299
+msgid "_Check Document Now"
+msgstr "_Egiaztatu dokumentua orain"
+
+#: LocalizedStringsGtk.cpp:304
+msgid "Check Spelling While _Typing"
+msgstr "Egiaztatu ortografia _idaztean"
+
+#: LocalizedStringsGtk.cpp:309
+msgid "Check _Grammar With Spelling"
+msgstr "Egiaztatu _gramatika ortografiarekin"
+
+#: LocalizedStringsGtk.cpp:314
+msgid "_Font"
+msgstr "_Letra-tipoa"
+
+#: LocalizedStringsGtk.cpp:337
+msgid "_Outline"
+msgstr "_Eskema"
+
+#: LocalizedStringsGtk.cpp:342
+msgid "Inspect _Element"
+msgstr "Aztertu _elementua"
+
+#: LocalizedStringsGtk.cpp:347
+msgid "LRM _Left-to-right mark"
+msgstr "LRM E_zkerretik eskuinera marka"
+
+#: LocalizedStringsGtk.cpp:352
+msgid "RLM _Right-to-left mark"
+msgstr "RLM E_skuinetik ezkerrera marka"
+
+#: LocalizedStringsGtk.cpp:357
+msgid "LRE Left-to-right _embedding"
+msgstr "LRE Ezkerretik eskuinera _kapsulatzea"
+
+#: LocalizedStringsGtk.cpp:362
+msgid "RLE Right-to-left e_mbedding"
+msgstr "RLE Eskuinetik ezkerrera k_apsulatzea"
+
+#: LocalizedStringsGtk.cpp:367
+msgid "LRO Left-to-right _override"
+msgstr "LRO Ezkerretik eskuinera _gainidaztea"
+
+#: LocalizedStringsGtk.cpp:372
+msgid "RLO Right-to-left o_verride"
+msgstr "RLO Eskuinetik ezkerrera ga_inidaztea"
+
+#: LocalizedStringsGtk.cpp:377
+msgid "PDF _Pop directional formatting"
+msgstr "PDF _Norabideko formatuaren amaiera"
+
+#: LocalizedStringsGtk.cpp:382
+msgid "ZWS _Zero width space"
+msgstr "ZWS _Zero-zabalerako tartea"
+
+#: LocalizedStringsGtk.cpp:387
+msgid "ZWJ Zero width _joiner"
+msgstr "ZWJ Zero-zabalerako _bateratzailea"
+
+#: LocalizedStringsGtk.cpp:392
+msgid "ZWNJ Zero width _non-joiner"
+msgstr "ZWNJ Zero-zabalerako _ez-bateratzailea"
+
+#: LocalizedStringsGtk.cpp:397
+msgid "No recent searches"
+msgstr "Azken bilaketarik ez"
+
+#: LocalizedStringsGtk.cpp:402
+msgid "Recent searches"
+msgstr "Azken bilaketak"
+
+#: LocalizedStringsGtk.cpp:407
+msgid "_Clear recent searches"
+msgstr "_Garbitu azken bilaketak"
+
+#: LocalizedStringsGtk.cpp:412
+msgid "definition"
+msgstr "definizioa"
+
+#: LocalizedStringsGtk.cpp:417
+msgid "term"
+msgstr "terminoa"
+
+#: LocalizedStringsGtk.cpp:422
+#, fuzzy
+msgid "description"
+msgstr "definizioa"
+
+#: LocalizedStringsGtk.cpp:427
+msgid "footer"
+msgstr ""
+
+#: LocalizedStringsGtk.cpp:432
+msgid "press"
+msgstr "sakatu"
+
+#: LocalizedStringsGtk.cpp:437
+msgid "select"
+msgstr "hautatu"
+
+#: LocalizedStringsGtk.cpp:442
+msgid "activate"
+msgstr "aktibatu"
+
+#: LocalizedStringsGtk.cpp:447
+msgid "uncheck"
+msgstr "ez egiaztatu"
+
+#: LocalizedStringsGtk.cpp:452
+msgid "check"
+msgstr "egiaztatu"
+
+#: LocalizedStringsGtk.cpp:457
+msgid "jump"
+msgstr "jauzi"
+
+#: LocalizedStringsGtk.cpp:472
+msgid "Missing Plug-in"
+msgstr ""
+
+#: LocalizedStringsGtk.cpp:478
+msgid "Plug-in Failure"
+msgstr ""
+
+#: LocalizedStringsGtk.cpp:502
+msgid " files"
+msgstr " fitxategi"
+
+#: LocalizedStringsGtk.cpp:507
+msgid "Unknown"
+msgstr "Ezezaguna"
+
+#: LocalizedStringsGtk.cpp:524
+msgid "Loading..."
+msgstr "Kargatzen..."
+
+#: LocalizedStringsGtk.cpp:529
+msgid "Live Broadcast"
+msgstr "Zuzeneko igorpena"
+
+#: LocalizedStringsGtk.cpp:535
+msgid "audio element controller"
+msgstr "audio elementuaren kontrolatzailea"
+
+#: LocalizedStringsGtk.cpp:537
+msgid "video element controller"
+msgstr "bideo elementuaren kontrolatzailea"
+
+#: LocalizedStringsGtk.cpp:539
+msgid "mute"
+msgstr "mututu"
+
+#: LocalizedStringsGtk.cpp:541
+msgid "unmute"
+msgstr "ez mututu"
+
+#: LocalizedStringsGtk.cpp:543
+msgid "play"
+msgstr "erreproduzitu"
+
+#: LocalizedStringsGtk.cpp:545
+msgid "pause"
+msgstr "pausatu"
+
+#: LocalizedStringsGtk.cpp:547
+msgid "movie time"
+msgstr "filmaren denbora"
+
+#: LocalizedStringsGtk.cpp:549
+msgid "timeline slider thumb"
+msgstr "denbora-lerroaren graduatzaile txikia"
+
+#: LocalizedStringsGtk.cpp:551
+msgid "back 30 seconds"
+msgstr "30 segundo atzera"
+
+#: LocalizedStringsGtk.cpp:553
+msgid "return to realtime"
+msgstr "itzuli denbora errealera"
+
+#: LocalizedStringsGtk.cpp:555
+msgid "elapsed time"
+msgstr "igarotako denbora"
+
+#: LocalizedStringsGtk.cpp:557
+msgid "remaining time"
+msgstr "geratzen den denbora"
+
+#: LocalizedStringsGtk.cpp:559
+msgid "status"
+msgstr "egoera"
+
+#: LocalizedStringsGtk.cpp:561
+#, fuzzy
+msgid "enter fullscreen"
+msgstr "pantaila osoa"
+
+#: LocalizedStringsGtk.cpp:563
+#, fuzzy
+msgid "exit fullscreen"
+msgstr "pantaila osoa"
+
+#: LocalizedStringsGtk.cpp:565
+msgid "fast forward"
+msgstr "azkar aurrerantz"
+
+#: LocalizedStringsGtk.cpp:567
+msgid "fast reverse"
+msgstr "azkar alderantziz"
+
+#: LocalizedStringsGtk.cpp:569
+msgid "show closed captions"
+msgstr "erakutsi itxitako epigrafeak"
+
+#: LocalizedStringsGtk.cpp:571
+msgid "hide closed captions"
+msgstr "ezkutatu itxitako epigrafeak"
+
+#: LocalizedStringsGtk.cpp:573
+msgid "media controls"
+msgstr ""
+
+#: LocalizedStringsGtk.cpp:582
+msgid "audio element playback controls and status display"
+msgstr "audio elementuen erreprodukzio-kontrolak eta egoeraren bista"
+
+#: LocalizedStringsGtk.cpp:584
+msgid "video element playback controls and status display"
+msgstr "bideo elementuen erreprodukzio-kontrolak eta egoeraren bista"
+
+#: LocalizedStringsGtk.cpp:586
+msgid "mute audio tracks"
+msgstr "mututu audioko pistak"
+
+#: LocalizedStringsGtk.cpp:588
+msgid "unmute audio tracks"
+msgstr "ez mututu audioko pistak"
+
+#: LocalizedStringsGtk.cpp:590
+msgid "begin playback"
+msgstr "hasi erreproduzitzen"
+
+#: LocalizedStringsGtk.cpp:592
+msgid "pause playback"
+msgstr "pausatu erreprodukzioa"
+
+#: LocalizedStringsGtk.cpp:594
+msgid "movie time scrubber"
+msgstr "filmaren denboraren garbitzailea"
+
+#: LocalizedStringsGtk.cpp:596
+msgid "movie time scrubber thumb"
+msgstr "filmaren denboraren garbitzaile txikia"
+
+#: LocalizedStringsGtk.cpp:598
+msgid "seek movie back 30 seconds"
+msgstr "kokatu filmean 30 segundo atzera"
+
+#: LocalizedStringsGtk.cpp:600
+msgid "return streaming movie to real time"
+msgstr "itzuli filmaren korrontea denbora errealera"
+
+#: LocalizedStringsGtk.cpp:602
+msgid "current movie time in seconds"
+msgstr "uneko filmaren denbora segundotan"
+
+#: LocalizedStringsGtk.cpp:604
+msgid "number of seconds of movie remaining"
+msgstr "filmari gelditzen zaizkion segundo kopurua"
+
+#: LocalizedStringsGtk.cpp:606
+msgid "current movie status"
+msgstr "filmaren uneko egoera"
+
+#: LocalizedStringsGtk.cpp:608
+msgid "seek quickly back"
+msgstr "kokatu azkar atzera"
+
+#: LocalizedStringsGtk.cpp:610
+msgid "seek quickly forward"
+msgstr "kokatu azkar aurrera"
+
+#: LocalizedStringsGtk.cpp:612
+msgid "Play movie in fullscreen mode"
+msgstr "Erreproduzitu filma pantaila osoko moduan"
+
+#: LocalizedStringsGtk.cpp:614
+#, fuzzy
+msgid "Exit fullscreen mode"
+msgstr "Erreproduzitu filma pantaila osoko moduan"
+
+#: LocalizedStringsGtk.cpp:616
+msgid "start displaying closed captions"
+msgstr "hasi itxitako epigrafeak bistaratzen"
+
+#: LocalizedStringsGtk.cpp:618
+msgid "stop displaying closed captions"
+msgstr "gelditu itxitako epigrafeak bistaratzea"
+
+#: LocalizedStringsGtk.cpp:627
+msgid "indefinite time"
+msgstr "denbora definitu gabea"
+
+#: LocalizedStringsGtk.cpp:657
+msgid "value missing"
+msgstr "balioa falta da"
+
+#: LocalizedStringsGtk.cpp:693
+msgid "type mismatch"
+msgstr "mota ez dator bat"
+
+#: LocalizedStringsGtk.cpp:716
+msgid "pattern mismatch"
+msgstr "eredua ez dator bat"
+
+#: LocalizedStringsGtk.cpp:721
+msgid "too long"
+msgstr "handiegia"
+
+#: LocalizedStringsGtk.cpp:726
+msgid "range underflow"
+msgstr "barruti-gainezkatze negatiboa"
+
+#: LocalizedStringsGtk.cpp:731
+msgid "range overflow"
+msgstr "barrutia gainezkatua"
+
+#: LocalizedStringsGtk.cpp:736
+msgid "step mismatch"
+msgstr "urratsa ez dator bat"
+
+#: LocalizedStringsGtk.cpp:741
+msgid "Unacceptable TLS certificate"
+msgstr ""
+
+#: ../graphics/gtk/FullscreenVideoControllerGtk.cpp:328
+msgid "Play"
+msgstr ""
+
+#: ../graphics/gtk/FullscreenVideoControllerGtk.cpp:330
+#, fuzzy
+msgid "Pause"
+msgstr "pausatu"
+
+#: ../graphics/gtk/FullscreenVideoControllerGtk.cpp:410
+msgid "Play / Pause"
+msgstr ""
+
+#: ../graphics/gtk/FullscreenVideoControllerGtk.cpp:410
+msgid "Play or pause the media"
+msgstr ""
+
+#: ../graphics/gtk/FullscreenVideoControllerGtk.cpp:416
+msgid "Time:"
+msgstr ""
+
+#: ../graphics/gtk/FullscreenVideoControllerGtk.cpp:442
+#, fuzzy
+msgid "Exit Fullscreen"
+msgstr "pantaila osoa"
+
+#: ../graphics/gtk/FullscreenVideoControllerGtk.cpp:442
+#, fuzzy
+msgid "Exit from fullscreen mode"
+msgstr "Erreproduzitu filma pantaila osoko moduan"
+
+#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:276
+msgid "Network Request"
+msgstr "Sareko eskaera"
+
+#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:277
+msgid "The network request for the URI that should be downloaded"
+msgstr "Sareko eskaera deskargatu behar den URIarentzako"
+
+#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:291
+msgid "Network Response"
+msgstr "Sareko erantzuna"
+
+#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:292
+msgid "The network response for the URI that should be downloaded"
+msgstr "Sareko erantzuna deskargatu behar den URIarentzako"
+
+#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:306
+msgid "Destination URI"
+msgstr "Helburuaren URIa"
+
+#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:307
+msgid "The destination URI where to save the file"
+msgstr "Fitxategia gordeko den helburuaren URIa"
+
+#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:321
+msgid "Suggested Filename"
+msgstr "Iradokitutako fitxategi-izena"
+
+#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:322
+msgid "The filename suggested as default when saving"
+msgstr "Lehenetsi gisa iradokitutako fitxategi-izena gordetzean"
+
+#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:339
+msgid "Progress"
+msgstr "Aurrerapena"
+
+#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:340
+msgid "Determines the current progress of the download"
+msgstr "Deskargaren uneko aurrerapena zehazten du"
+
+#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:353
+msgid "Status"
+msgstr "Egoera"
+
+#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:354
+msgid "Determines the current status of the download"
+msgstr "Deskargaren uneko egoera zehazten du"
+
+#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:369
+msgid "Current Size"
+msgstr "Uneko tamaina"
+
+#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:370
+msgid "The length of the data already downloaded"
+msgstr "Jadanik deskargatutako datuen luzera"
+
+#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:384
+msgid "Total Size"
+msgstr "Tamaina osoa"
+
+#: ../../../WebKit/gtk/webkit/webkitdownload.cpp:385
+msgid "The total size of the file"
+msgstr "Fitxategiaren guztirako tamaina"
+
+#: ../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:144
+#: ../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:579
+msgid "Operation was cancelled"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:253
+#: ../../../WebKit/gtk/webkit/webkiticondatabase.cpp:148
+msgid "Path"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitfavicondatabase.cpp:254
+#: ../../../WebKit/gtk/webkit/webkiticondatabase.cpp:149
+#, fuzzy
+msgid "The absolute path of the icon database folder"
+msgstr "Jadanik deskargatutako datuen luzera"
+
+#: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:129
+msgid "MIME types filter"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:130
+msgid "The filter currently associated with the request"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:145
+msgid "MIME types"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:146
+msgid "The list of MIME types associated with the request"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:161
+msgid "Select multiple files"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:162
+msgid "Whether the file chooser should allow selecting multiple files"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:177
+#, fuzzy
+msgid "Selected files"
+msgstr " fitxategi"
+
+#: ../../../WebKit/gtk/webkit/webkitfilechooserrequest.cpp:178
+msgid "The list of selected files associated with the request"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:175
+msgid "Context"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:176
+msgid "Flags indicating the kind of target that received the event."
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:190
+#, fuzzy
+msgid "Link URI"
+msgstr "Ikonoaren URIa"
+
+#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:191
+msgid "The URI to which the target that received the event points, if any."
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:204
+msgid "Image URI"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:205
+msgid ""
+"The URI of the image that is part of the target that received the event, if "
+"any."
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:218
+msgid "Media URI"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:219
+msgid ""
+"The URI of the media that is part of the target that received the event, if "
+"any."
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:240
+msgid "Inner node"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:241
+msgid "The inner DOM node associated with the hit test result."
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:254
+msgid "X coordinate"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:255
+msgid "The x coordinate of the event relative to the view's window."
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:268
+msgid "Y coordinate"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkithittestresult.cpp:269
+msgid "The y coordinate of the event relative to the view's window."
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:134
+#: ../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:143
+#: ../../../WebKit/gtk/webkit/webkitwebframe.cpp:466
+#: ../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:176
+#: ../../../WebKit/gtk/webkit/webkitwebresource.cpp:209
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3114
+msgid "URI"
+msgstr "URIa"
+
+#: ../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:135
+msgid "The URI to which the request will be made."
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:148
+#: ../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:157
+msgid "Message"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitnetworkrequest.cpp:149
+msgid "The SoupMessage that backs the request."
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:144
+msgid "The URI to which the response will be made."
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:158
+msgid "The SoupMessage that backs the response."
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:171
+#, fuzzy
+msgid "Suggested filename"
+msgstr "Iradokitutako fitxategi-izena"
+
+#: ../../../WebKit/gtk/webkit/webkitnetworkresponse.cpp:172
+#, fuzzy
+msgid "The suggested filename for the response."
+msgstr "Nabigazioaren helburuko markoa"
+
+#: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:150
+msgid "Protocol"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:151
+msgid "The protocol of the security origin"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:164
+msgid "Host"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:165
+#, fuzzy
+msgid "The host of the security origin"
+msgstr "Historiako elementuaren titulua"
+
+#: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:178
+msgid "Port"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:179
+#, fuzzy
+msgid "The port of the security origin"
+msgstr "Historiako elementuaren titulua"
+
+#: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:192
+msgid "Web Database Usage"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:193
+msgid "The cumulative size of all web databases in the security origin"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:205
+msgid "Web Database Quota"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitsecurityorigin.cpp:206
+msgid "The web database quota of the security origin in bytes"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:139
+msgid "Device Width"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:140
+#, fuzzy
+msgid "The width of the screen."
+msgstr "Historiako elementuaren titulua"
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:161
+msgid "Device Height"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:162
+#, fuzzy
+msgid "The height of the screen."
+msgstr "Markoaren izena"
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:185
+msgid "Available Width"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:186
+#, fuzzy
+msgid "The width of the visible area."
+msgstr "Historiako elementuaren titulua"
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:209
+msgid "Available Height"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:210
+#, fuzzy
+msgid "The height of the visible area."
+msgstr "Historiako elementuaren titulua"
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:231
+msgid "Desktop Width"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:232
+msgid ""
+"The width of viewport that works well for most web pages designed for "
+"desktop."
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:254
+msgid "Device DPI"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:255
+msgid "The number of dots per inch of the screen."
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:273
+msgid "Width"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:274
+#, fuzzy
+msgid "The width of the viewport."
+msgstr "Historiako elementuaren titulua"
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:292
+msgid "Height"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:293
+#, fuzzy
+msgid "The height of the viewport."
+msgstr "Historiako elementuaren titulua"
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:311
+msgid "Initial Scale Factor"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:312
+#, fuzzy
+msgid "The initial scale of the viewport."
+msgstr "Fitxategiaren guztirako tamaina"
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:330
+#, fuzzy
+msgid "Minimum Scale Factor"
+msgstr "Logical-en gutxieneko letra-tamaina"
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:331
+#, fuzzy
+msgid "The minimum scale of the viewport."
+msgstr "Historiako elementuaren titulua"
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:349
+msgid "Maximum Scale Factor"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:350
+#, fuzzy
+msgid "The maximum scale of the viewport."
+msgstr "Historiako elementuaren titulua"
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:368
+msgid "Device Pixel Ratio"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:369
+msgid "The device pixel ratio of the viewport."
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:387
+msgid "user-scalable"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:388
+msgid "User Scalable"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:389
+msgid "Determines whether or not the user can zoom in and out."
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:406
+msgid "valid"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:407
+msgid "Valid"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitviewportattributes.cpp:408
+msgid "Determines whether or not the attributes are valid, and can be used."
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:176
+msgid "Security Origin"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:177
+#, fuzzy
+msgid "The security origin of the database"
+msgstr "Web ikuspegiaren kodeketa pertsonalizatua"
+
+#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:190
+#: ../../../WebKit/gtk/webkit/webkitwebframe.cpp:452
+msgid "Name"
+msgstr "Izena"
+
+#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:191
+#, fuzzy
+msgid "The name of the Web Database database"
+msgstr "Markoaren izena"
+
+#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:204
+msgid "Display Name"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:205
+msgid "The display name of the Web Storage database"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:218
+msgid "Expected Size"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:219
+msgid "The expected size of the Web Database database"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:231
+msgid "Size"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:232
+msgid "The current size of the Web Database database"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:244
+#, fuzzy
+msgid "Filename"
+msgstr "Iradokitutako fitxategi-izena"
+
+#: ../../../WebKit/gtk/webkit/webkitwebdatabase.cpp:245
+msgid "The absolute filename of the Web Storage database"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebframe.cpp:453
+msgid "The name of the frame"
+msgstr "Markoaren izena"
+
+#: ../../../WebKit/gtk/webkit/webkitwebframe.cpp:459
+#: ../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:144
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3100
+msgid "Title"
+msgstr "Izenburua"
+
+#: ../../../WebKit/gtk/webkit/webkitwebframe.cpp:460
+msgid "The document title of the frame"
+msgstr "Markoko dokumentuaren izenburua"
+
+#: ../../../WebKit/gtk/webkit/webkitwebframe.cpp:467
+msgid "The current URI of the contents displayed by the frame"
+msgstr "Markoak bistaratutako edukiaren uneko URIa"
+
+#: ../../../WebKit/gtk/webkit/webkitwebframe.cpp:498
+msgid "Horizontal Scrollbar Policy"
+msgstr "Korritze-barra horizontalaren politika"
+
+#: ../../../WebKit/gtk/webkit/webkitwebframe.cpp:499
+msgid ""
+"Determines the current policy for the horizontal scrollbar of the frame."
+msgstr "Markoaren korritze-barra horizontalaren uneko politika zehazten du"
+
+#: ../../../WebKit/gtk/webkit/webkitwebframe.cpp:516
+msgid "Vertical Scrollbar Policy"
+msgstr "Korritze-barra bertikalaren politika"
+
+#: ../../../WebKit/gtk/webkit/webkitwebframe.cpp:517
+msgid "Determines the current policy for the vertical scrollbar of the frame."
+msgstr "Markoaren korritze-barra bertikalaren uneko politika zehazten du"
+
+#: ../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:145
+msgid "The title of the history item"
+msgstr "Historiako elementuaren titulua"
+
+#: ../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:160
+msgid "Alternate Title"
+msgstr "Bestelako titulua"
+
+#: ../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:161
+msgid "The alternate title of the history item"
+msgstr "Historiako elementuaren bestelako titulua"
+
+#: ../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:177
+msgid "The URI of the history item"
+msgstr "Historiako elementuaren URIa"
+
+#: ../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:192
+#: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:163
+msgid "Original URI"
+msgstr "Jatorriko URIa"
+
+#: ../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:193
+msgid "The original URI of the history item"
+msgstr "Historiako elementuaren jatorriko URIa"
+
+#: ../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:208
+msgid "Last visited Time"
+msgstr "Azken bisitatutakoaren data"
+
+#: ../../../WebKit/gtk/webkit/webkitwebhistoryitem.cpp:209
+msgid "The time at which the history item was last visited"
+msgstr "Zein datatan bisitatu zen azken aldiz historiako elementua"
+
+#: ../../../WebKit/gtk/webkit/webkitwebinspector.cpp:273
+msgid "Web View"
+msgstr "Web-aren ikuspegia"
+
+#: ../../../WebKit/gtk/webkit/webkitwebinspector.cpp:274
+msgid "The Web View that renders the Web Inspector itself"
+msgstr "Web begiraleak errendatzen duen web-aren ikuspegia"
+
+#: ../../../WebKit/gtk/webkit/webkitwebinspector.cpp:287
+msgid "Inspected URI"
+msgstr "Aztertutako URIa"
+
+#: ../../../WebKit/gtk/webkit/webkitwebinspector.cpp:288
+msgid "The URI that is currently being inspected"
+msgstr "Unean aztertzen ari den URIa"
+
+#: ../../../WebKit/gtk/webkit/webkitwebinspector.cpp:304
+msgid "Enable JavaScript profiling"
+msgstr "Gaitu JavaScript-en profila"
+
+#: ../../../WebKit/gtk/webkit/webkitwebinspector.cpp:305
+msgid "Profile the executed JavaScript."
+msgstr "Sortu exekutatutako JavaScript-aren profila."
+
+#: ../../../WebKit/gtk/webkit/webkitwebinspector.cpp:320
+msgid "Enable Timeline profiling"
+msgstr "Gaitu denbora-lerroaren profila"
+
+#: ../../../WebKit/gtk/webkit/webkitwebinspector.cpp:321
+msgid "Profile the WebCore instrumentation."
+msgstr "WebCore tresneriaren profila."
+
+#: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:148
+msgid "Reason"
+msgstr "Zergatia"
+
+#: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:149
+msgid "The reason why this navigation is occurring"
+msgstr "Nabigazio hau zergatik gertatzen ari den"
+
+#: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:164
+msgid "The URI that was requested as the target for the navigation"
+msgstr "Nabigazioaren helburu gisa eskatutako URIa"
+
+#: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:178
+msgid "Button"
+msgstr "Botoia"
+
+#: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:179
+msgid "The button used to click"
+msgstr "Klik egiteko erabilitako botoia"
+
+#: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:194
+msgid "Modifier state"
+msgstr "Aldatzailearen egoera"
+
+#: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:195
+msgid "A bitmask representing the state of the modifier keys"
+msgstr "Tekla aldatzaileen egoera adierazten duen bit-maskara"
+
+#: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:210
+msgid "Target frame"
+msgstr "Helburuko markoa"
+
+#: ../../../WebKit/gtk/webkit/webkitwebnavigationaction.cpp:211
+msgid "The target frame for the navigation"
+msgstr "Nabigazioaren helburuko markoa"
+
+#: ../../../WebKit/gtk/webkit/webkitwebplugin.cpp:115
+#, fuzzy
+msgid "Enabled"
+msgstr "Editagarria"
+
+#: ../../../WebKit/gtk/webkit/webkitwebplugin.cpp:116
+#, fuzzy
+msgid "Whether the plugin is enabled"
+msgstr "Orrialdearen cache-a erabiliko den ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebresource.cpp:210
+#, fuzzy
+msgid "The URI of the resource"
+msgstr "Historiako elementuaren URIa"
+
+#: ../../../WebKit/gtk/webkit/webkitwebresource.cpp:224
+msgid "MIME Type"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebresource.cpp:225
+#, fuzzy
+msgid "The MIME type of the resource"
+msgstr "Historiako elementuaren titulua"
+
+#: ../../../WebKit/gtk/webkit/webkitwebresource.cpp:239
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3249
+msgid "Encoding"
+msgstr "Kodeketa"
+
+#: ../../../WebKit/gtk/webkit/webkitwebresource.cpp:240
+#, fuzzy
+msgid "The text encoding name of the resource"
+msgstr "Web ikuspegiaren kodeketa lehenetsia"
+
+#: ../../../WebKit/gtk/webkit/webkitwebresource.cpp:255
+msgid "Frame Name"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebresource.cpp:256
+#, fuzzy
+msgid "The frame name of the resource"
+msgstr "Markoaren izena"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:149
+msgid "Default Encoding"
+msgstr "Kodeketa lehenetsia"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:150
+msgid "The default encoding used to display text."
+msgstr "Testua bistaratzeko erabilitako kodeketa lehenetsia."
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:158
+msgid "Cursive Font Family"
+msgstr "Cursive letra-tipoaren familia"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:159
+msgid "The default Cursive font family used to display text."
+msgstr "Cursive letra-tipoaren familia lehenetsia testua bistaratzeko."
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:167
+msgid "Default Font Family"
+msgstr "Letra-tipoaren familia lehenetsia"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:168
+msgid "The default font family used to display text."
+msgstr "Letra-tipoaren familia lehenetsia testua bistaratzeko."
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:176
+msgid "Fantasy Font Family"
+msgstr "Fantasy letra-tipoaren familia"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:177
+msgid "The default Fantasy font family used to display text."
+msgstr "Fantasy letra-tipoaren familia lehenetsia testua bistaratzeko."
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:185
+msgid "Monospace Font Family"
+msgstr "Tarte bakarreko letra-tipoaren familia"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:186
+msgid "The default font family used to display monospace text."
+msgstr "Tarte bakarreko letra-tipoaren familia lehenetsia testua bistaratzeko."
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:194
+msgid "Sans Serif Font Family"
+msgstr "Sans Serif letra-tipoaren familia"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:195
+msgid "The default Sans Serif font family used to display text."
+msgstr "Sans Serif letra-tipoaren familia lehenetsia testua bistaratzeko."
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:203
+msgid "Serif Font Family"
+msgstr "Serif letra-tipoaren familia"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:204
+msgid "The default Serif font family used to display text."
+msgstr "Serif letra-tipoaren familia lehenetsia testua bistaratzeko."
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:212
+msgid "Default Font Size"
+msgstr "Letra-tamaina lehenetsia"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:213
+msgid "The default font size used to display text."
+msgstr "Letra-tamaina lehenetsia testua bistaratzeko."
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:221
+msgid "Default Monospace Font Size"
+msgstr "Tarte bakarreko letra-tamina lehenetsia"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:222
+msgid "The default font size used to display monospace text."
+msgstr "Tarte bakarreko letra-tamaina lehenetsia testua bistaratzeko."
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:230
+msgid "Minimum Font Size"
+msgstr "Gutxieneko letra-tamaina"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:231
+msgid "The minimum font size used to display text."
+msgstr "Gutxieneko letra-tamaina testua bistaratzeko."
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:239
+msgid "Minimum Logical Font Size"
+msgstr "Logical-en gutxieneko letra-tamaina"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:240
+msgid "The minimum logical font size used to display text."
+msgstr "Logical-en gutxieneko letra-tamaina testua bistaratzeko."
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:259
+msgid "Enforce 96 DPI"
+msgstr "Derrigortu 96 DPI"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:260
+msgid "Enforce a resolution of 96 DPI"
+msgstr "Derrigortu 96 DPI-ko bereizmena"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:268
+msgid "Auto Load Images"
+msgstr "Kargatu automatikoki irudiak"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:269
+msgid "Load images automatically."
+msgstr "Irudiak automatikoki kargatzen ditu."
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:277
+msgid "Auto Shrink Images"
+msgstr "Txikitu automatikoki irudiak"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:278
+msgid "Automatically shrink standalone images to fit."
+msgstr "Txikitu automatikoki banakako irudiak doitzeko."
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:286
+msgid "Print Backgrounds"
+msgstr "Inprimatu atzeko planoak"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:287
+msgid "Whether background images should be printed."
+msgstr "Atzeko planoko irudiak inprimatu egingo diren ala ez."
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:295
+msgid "Enable Scripts"
+msgstr "Gaitu script-ak"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:296
+msgid "Enable embedded scripting languages."
+msgstr "Gaitu kapsulatutako script-langoaiak."
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:304
+msgid "Enable Plugins"
+msgstr "Gaitu pluginak"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:305
+msgid "Enable embedded plugin objects."
+msgstr "Gaitu kapsulatutako plugin objektuak."
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:313
+msgid "Resizable Text Areas"
+msgstr "Testu areen tamaina aldagarriak"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:314
+msgid "Whether text areas are resizable."
+msgstr "Testuen areen tamainak aldagarriak diren ala ez."
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:321
+msgid "User Stylesheet URI"
+msgstr "Erabiltzailearen estilo-orriaren URIa"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:322
+msgid "The URI of a stylesheet that is applied to every page."
+msgstr "Orrialde bakoitzari aplikatzen zaion estilo-orriaren URIa."
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:337
+msgid "Zoom Stepping Value"
+msgstr "Zoom-aren urratsaren balioa"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:338
+msgid "The value by which the zoom level is changed when zooming in or out."
+msgstr "Zoomaren maila aldatuko den balioa zooma handitzean edo txikiagotzean."
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:356
+msgid "Enable Developer Extras"
+msgstr "Gaitu garatzaileen estrak"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:357
+msgid "Enables special extensions that help developers"
+msgstr "Gaitu hedapen bereziak garatzaileei laguntzeko"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:377
+msgid "Enable Private Browsing"
+msgstr "Gaitu arakatze pribatua"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:378
+msgid "Enables private browsing mode"
+msgstr "Arakatze pribatuaren modua gaitzen du"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:393
+msgid "Enable Spell Checking"
+msgstr "Gaitu zuzentzaile ortografikoa"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:394
+msgid "Enables spell checking while typing"
+msgstr "Idazten den bitartean ortografia zuzentzea gaitzen du"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:417
+msgid "Languages to use for spell checking"
+msgstr "Hizkuntzak ortografia zuzentzean erabiltzeko"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:418
+msgid "Comma separated list of languages to use for spell checking"
+msgstr ""
+"Komaz bereiztutako hizkuntzen zerrenda ortografia zuzentzean erabiltzeko"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:432
+msgid "Enable Caret Browsing"
+msgstr "Gaitu kurtsore-arakatzea"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:433
+#, fuzzy
+msgid "Whether to enable accessibility enhanced keyboard navigation"
+msgstr ""
+"Erabilerraztasunerako hobetutako teklatuaren nabigazioa gaituko den ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:448
+msgid "Enable HTML5 Database"
+msgstr "Gaitu HTML5en datu-basea"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:449
+msgid "Whether to enable HTML5 database support"
+msgstr "HTML5en datu-basearen euskarria gaituko den ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:464
+msgid "Enable HTML5 Local Storage"
+msgstr "Gaitu HTML5 biltegi lokala"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:465
+msgid "Whether to enable HTML5 Local Storage support"
+msgstr "HTML5 biltegi lokaleko euskarria gaituko den ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:480
+msgid "Local Storage Database Path"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:481
+#, fuzzy
+msgid "The path to where HTML5 Local Storage databases are stored."
+msgstr "HTML5 biltegi lokaleko euskarria gaituko den ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:495
+msgid "Enable XSS Auditor"
+msgstr "Gaitu XSS begiralea"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:496
+#, fuzzy
+msgid "Whether to enable the XSS auditor"
+msgstr "XSSaren begiralea gaituko den ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:514
+msgid "Enable Spatial Navigation"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:515
+#, fuzzy
+msgid "Whether to enable Spatial Navigation"
+msgstr "XSSaren begiralea gaituko den ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:533
+#, fuzzy
+msgid "Enable Frame Flattening"
+msgstr "Gaitu arakatze pribatua"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:534
+#, fuzzy
+msgid "Whether to enable Frame Flattening"
+msgstr "DOM itsastea gaituko den ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:551
+msgid "User Agent"
+msgstr "Erabiltzaile-agentea"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:552
+msgid "The User-Agent string used by WebKitGtk"
+msgstr "WebKitGtk-ak erabilitako erabiltzaile-agentearen katea"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:567
+msgid "JavaScript can open windows automatically"
+msgstr "JavaScript-ek leihoak automatikoki ireki ditzake"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:568
+msgid "Whether JavaScript can open windows automatically"
+msgstr "JavaScript-ek leihoak automatikoki ireki ditzakeen ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:582
+msgid "JavaScript can access Clipboard"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:583
+#, fuzzy
+msgid "Whether JavaScript can access Clipboard"
+msgstr "JavaScript-ek leihoak automatikoki ireki ditzakeen ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:599
+msgid "Enable offline web application cache"
+msgstr "Gaitu lineaz kanpoko web aplikazioaren cachea"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:600
+msgid "Whether to enable offline web application cache"
+msgstr "Lineaz kanpoko web aplikazioaren cachea gaituko den ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:625
+msgid "Editing behavior"
+msgstr "Edizioaren portaera"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:626
+msgid "The behavior mode to use in editing mode"
+msgstr "Edizio moduan erabiliko den portaera modua"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:642
+msgid "Enable universal access from file URIs"
+msgstr "Gaitu sarbide unibertsala fitxategien URIetatik"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:643
+msgid "Whether to allow universal access from file URIs"
+msgstr "Sarbide unibertsala fitxategien URIetatik gaituko den ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:658
+msgid "Enable DOM paste"
+msgstr "Gaitu DOM itsastea"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:659
+msgid "Whether to enable DOM paste"
+msgstr "DOM itsastea gaituko den ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:677
+msgid "Tab key cycles through elements"
+msgstr "Begiztatu elementuetan zehar tabuladorearekin"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:678
+msgid "Whether the tab key cycles through elements on the page."
+msgstr ""
+"Orrialdeko elementuetan zehar tabuladorea teklarekin begiztatuko den ala ez."
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:700
+msgid "Enable Default Context Menu"
+msgstr "Gaitu testuinguruko menu lehenetsia"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:701
+msgid ""
+"Enables the handling of right-clicks for the creation of the default context "
+"menu"
+msgstr ""
+"Saguaren eskuineko botoiarekin klik egitearen kudeaketa gaitzen du "
+"testuinguruko manu lehenetsia sortzeko"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:721
+msgid "Enable Site Specific Quirks"
+msgstr "Gaitu gunearekiko berezitasunak"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:722
+msgid "Enables the site-specific compatibility workarounds"
+msgstr "Gunearekiko bateragarritasunaren konponbideak gaitzen ditu"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:744
+msgid "Enable page cache"
+msgstr "Gaitu orrialdearen cache-a"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:745
+msgid "Whether the page cache should be used"
+msgstr "Orrialdearen cache-a erabiliko den ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:765
+msgid "Auto Resize Window"
+msgstr "Aldatu leihoaren tamaina automatikoki"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:766
+msgid "Automatically resize the toplevel window when a page requests it"
+msgstr ""
+"Aldatu goi-mailako leihoaren tamaina automatikoki orrialde batek horrela "
+"eskatzean"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:798
+msgid "Enable Java Applet"
+msgstr "Gaitu Java-ren miniaplikazioa"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:799
+msgid "Whether Java Applet support through <applet> should be enabled"
+msgstr "Java-ren miniaplikazioaren euskarria <applet> bidez gaituko den ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:813
+#, fuzzy
+msgid "Enable Hyperlink Auditing"
+msgstr "Gaitu denbora-lerroaren profila"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:814
+#, fuzzy
+msgid "Whether <a ping> should be able to send pings"
+msgstr "Orrialdearen cache-a erabiliko den ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:822
+#, fuzzy
+msgid "Enable Fullscreen"
+msgstr "pantaila osoa"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:823
+#, fuzzy
+msgid "Whether the Mozilla style API should be enabled."
+msgstr "Orrialdearen cache-a erabiliko den ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:838
+msgid "Enable WebGL"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:839
+#, fuzzy
+msgid "Whether WebGL content should be rendered"
+msgstr "Atzeko planoko irudiak inprimatu egingo diren ala ez."
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:855
+#, fuzzy
+msgid "Enable accelerated compositing"
+msgstr "Gaitu arakatze pribatua"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:856
+#, fuzzy
+msgid "Whether accelerated compositing should be enabled"
+msgstr "Java-ren miniaplikazioaren euskarria <applet> bidez gaituko den ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:874
+#, fuzzy
+msgid "Enable WebAudio"
+msgstr "Gaitu XSS begiralea"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:875
+#, fuzzy
+msgid "Whether WebAudio content should be handled"
+msgstr "Orrialdearen cache-a erabiliko den ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:891
+msgid "WebKit prefetches domain names"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:892
+msgid "Whether WebKit prefetches domain names"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:910
+#, fuzzy
+msgid "Enable Media Stream"
+msgstr "Gaitu DOM itsastea"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:911
+#, fuzzy
+msgid "Whether Media Stream should be enabled"
+msgstr "Orrialdearen cache-a erabiliko den ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:926
+#, fuzzy
+msgid "Enable smooth scrolling"
+msgstr "Gaitu kurtsore-arakatzea"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:927
+#, fuzzy
+msgid "Whether to enable smooth scrolling"
+msgstr "XSSaren begiralea gaituko den ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:945
+msgid "Media playback requires user gesture"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:946
+msgid "Whether media playback requires user gesture"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:962
+msgid "Media playback allows inline"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:963
+msgid "Whether media playback allows inline"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:981
+#, fuzzy
+msgid "Enable CSS shaders"
+msgstr "Gaitu XSS begiralea"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:982
+#, fuzzy
+msgid "Whether to enable css shaders"
+msgstr "DOM itsastea gaituko den ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:997
+msgid "Enable display of insecure content"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:998
+msgid "Whether non-HTTPS resources can display on HTTPS pages."
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1013
+msgid "Enable running of insecure content"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:1014
+msgid "Whether non-HTTPS resources can run on HTTPS pages."
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:1314
+msgid "Select Files"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:1314
+msgid "Select File"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3101
+msgid "Returns the @web_view's document title"
+msgstr "@web_view-ek dokumentuaren titulua itzultzen du"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3115
+msgid "Returns the current URI of the contents displayed by the @web_view"
+msgstr "@web_view-ek bistaratutako edukiaren uneko URIa itzultzen du"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3128
+msgid "Copy target list"
+msgstr "Kopiatu helburuen zerrenda"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3129
+msgid "The list of targets this web view supports for clipboard copying"
+msgstr ""
+"Web-aren ikuspegi honek onartzen dituen helburuen zerrenda arbelean "
+"kopiatzeko"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3142
+msgid "Paste target list"
+msgstr "Itsatsi helburuen zerrenda"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3143
+msgid "The list of targets this web view supports for clipboard pasting"
+msgstr ""
+"Web-aren ikuspegi honek onartzen dituen helburuen zerrenda arbeletik "
+"itsasteko"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3149
+msgid "Settings"
+msgstr "Ezarpenak"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3150
+msgid "An associated WebKitWebSettings instance"
+msgstr "Esleitutako WebKitWebSettings-en instantzia"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3163
+msgid "Web Inspector"
+msgstr "Web begiralea"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3164
+msgid "The associated WebKitWebInspector instance"
+msgstr "Esleitutako WebKitWebInspector-en instantzia"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3177
+msgid "Viewport Attributes"
+msgstr ""
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3178
+#, fuzzy
+msgid "The associated WebKitViewportAttributes instance"
+msgstr "Esleitutako WebKitWebInspector-en instantzia"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3198
+msgid "Editable"
+msgstr "Editagarria"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3199
+msgid "Whether content can be modified by the user"
+msgstr "Erabiltzaileak edukia alda dezakeen ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3205
+msgid "Transparent"
+msgstr "Gardena"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3206
+msgid "Whether content has a transparent background"
+msgstr "Edukiak atzeko plano gardena duen ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3219
+msgid "Zoom level"
+msgstr "Zoomaren maila"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3220
+msgid "The level of zoom of the content"
+msgstr "Edukiaren zoomaren maila"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3235
+msgid "Full content zoom"
+msgstr "Eduki osoaren zooma"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3236
+msgid "Whether the full content is scaled when zooming"
+msgstr "Eduki osoa eskalatuko den zooma egitean ala ez"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3250
+msgid "The default encoding of the web view"
+msgstr "Web ikuspegiaren kodeketa lehenetsia"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3263
+msgid "Custom Encoding"
+msgstr "Kodeketa pertsonalizatua"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3264
+msgid "The custom encoding of the web view"
+msgstr "Web ikuspegiaren kodeketa pertsonalizatua"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3316
+msgid "Icon URI"
+msgstr "Ikonoaren URIa"
+
+#: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3317
+msgid "The URI for the favicon for the #WebKitWebView."
+msgstr "Favicon-aren URIa #WebKitWebView-rentzako."
+
+#~ msgid "Upload File"
+#~ msgstr "Igo fitxategia"
+
+#~ msgid "A username and password are being requested by the site %s"
+#~ msgstr "Erabiltzaile-izena eta pasahitza eskatzen du %s guneak"
