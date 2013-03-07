@@ -392,10 +392,10 @@ static const V8DOMConfiguration::BatchedMethod V8TestInterfaceMethods[] = {
 
 static const V8DOMConfiguration::BatchedConstant V8TestInterfaceConsts[] = {
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    {"SUPPLEMENTALCONSTANT1", static_cast<signed int>(1)},
+    {"SUPPLEMENTALCONSTANT1", 1},
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    {"SUPPLEMENTALCONSTANT2", static_cast<signed int>(2)},
+    {"SUPPLEMENTALCONSTANT2", 2},
 #endif
 };
 

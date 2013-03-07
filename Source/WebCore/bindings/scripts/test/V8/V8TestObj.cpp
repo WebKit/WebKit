@@ -2988,20 +2988,20 @@ static const V8DOMConfiguration::BatchedMethod V8TestObjMethods[] = {
 
 static const V8DOMConfiguration::BatchedConstant V8TestObjConsts[] = {
 #if ENABLE(Condition1)
-    {"CONDITIONAL_CONST", static_cast<signed int>(0)},
+    {"CONDITIONAL_CONST", 0},
 #endif
-    {"CONST_VALUE_0", static_cast<signed int>(0)},
-    {"CONST_VALUE_1", static_cast<signed int>(1)},
-    {"CONST_VALUE_2", static_cast<signed int>(2)},
-    {"CONST_VALUE_4", static_cast<signed int>(4)},
-    {"CONST_VALUE_8", static_cast<signed int>(8)},
-    {"CONST_VALUE_9", static_cast<signed int>(-1)},
-    {"CONST_VALUE_10", static_cast<signed int>("my constant string")},
-    {"CONST_VALUE_11", static_cast<signed int>(0xffffffff)},
-    {"CONST_VALUE_12", static_cast<signed int>(0x01)},
-    {"CONST_VALUE_13", static_cast<signed int>(0X20)},
-    {"CONST_VALUE_14", static_cast<signed int>(0x1abc)},
-    {"CONST_JAVASCRIPT", static_cast<signed int>(15)},
+    {"CONST_VALUE_0", 0},
+    {"CONST_VALUE_1", 1},
+    {"CONST_VALUE_2", 2},
+    {"CONST_VALUE_4", 4},
+    {"CONST_VALUE_8", 8},
+    {"CONST_VALUE_9", -1},
+    {"CONST_VALUE_10", "my constant string"},
+    {"CONST_VALUE_11", -1},
+    {"CONST_VALUE_12", 1},
+    {"CONST_VALUE_13", 0X20},
+    {"CONST_VALUE_14", 6844},
+    {"CONST_JAVASCRIPT", 15},
 };
 
 
