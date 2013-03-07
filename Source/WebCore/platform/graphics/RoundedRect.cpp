@@ -166,10 +166,14 @@ void RoundedRect::adjustRadii()
 {
     int maxRadiusWidth = std::max(m_radii.topLeft().width() + m_radii.topRight().width(), m_radii.bottomLeft().width() + m_radii.bottomRight().width());
     int maxRadiusHeight = std::max(m_radii.topLeft().height() + m_radii.bottomLeft().height(), m_radii.topRight().height() + m_radii.bottomRight().height());
-    if (maxRadiusWidth > maxRadiusHeight)
-        m_radii.scale(static_cast<float>(m_rect.width()) / maxRadiusWidth);
-    else
-        m_radii.scale(static_cast<float>(m_rect.height()) / maxRadiusHeight);
+
+    if (maxRadiusWidth <= 0 || maxRadiusHeight <= 0) {
+        m_radii.scale(0.0f);
+        return;
+    }
+    float widthRatio = static_cast<float>(m_rect.width()) / maxRadiusWidth;
+    float heightRatio = static_cast<float>(m_rect.height()) / maxRadiusHeight;
+    m_radii.scale(widthRatio < heightRatio ? widthRatio : heightRatio);
 }
 
 } // namespace WebCore
