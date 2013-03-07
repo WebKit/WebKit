@@ -813,6 +813,13 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         m_scrollingContentsLayer->setSize(scrollSize);
         // FIXME: The paint offset and the scroll offset should really be separate concepts.
         m_scrollingContentsLayer->setOffsetFromRenderer(scrollingContentsOffset, GraphicsLayer::DontSetNeedsDisplay);
+
+        if (m_foregroundLayer) {
+            if (m_foregroundLayer->size() != m_scrollingContentsLayer->size())
+                m_foregroundLayer->setSize(m_scrollingContentsLayer->size());
+            m_foregroundLayer->setNeedsDisplay();
+            m_foregroundLayer->setOffsetFromRenderer(m_scrollingContentsLayer->offsetFromRenderer());
+        }
     }
 
     // If this layer was created just for clipping or to apply perspective, it doesn't need its own backing store.
@@ -1211,7 +1218,10 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
             // Inner layer which renders the content that scrolls.
             m_scrollingContentsLayer = createGraphicsLayer("Scrolled Contents");
             m_scrollingContentsLayer->setDrawsContent(true);
-            m_scrollingContentsLayer->setPaintingPhase(GraphicsLayerPaintForeground | GraphicsLayerPaintOverflowContents);
+            GraphicsLayerPaintingPhase paintPhase = GraphicsLayerPaintOverflowContents | GraphicsLayerPaintCompositedScroll;
+            if (!m_foregroundLayer)
+                paintPhase |= GraphicsLayerPaintForeground;
+            m_scrollingContentsLayer->setPaintingPhase(paintPhase);
             m_scrollingLayer->addChild(m_scrollingContentsLayer.get());
 
             layerChanged = true;
@@ -1281,8 +1291,10 @@ GraphicsLayerPaintingPhase RenderLayerBacking::paintingPhaseForPrimaryLayer() co
     if (!m_maskLayer)
         phase |= GraphicsLayerPaintMask;
 
-    if (m_scrollingContentsLayer)
+    if (m_scrollingContentsLayer) {
         phase &= ~GraphicsLayerPaintForeground;
+        phase |= GraphicsLayerPaintCompositedScroll;
+    }
 
     return static_cast<GraphicsLayerPaintingPhase>(phase);
 }
@@ -1813,6 +1825,8 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
         paintFlags |= RenderLayer::PaintLayerPaintingCompositingMaskPhase;
     if (paintingPhase & GraphicsLayerPaintOverflowContents)
         paintFlags |= RenderLayer::PaintLayerPaintingOverflowContents;
+    if (paintingPhase & GraphicsLayerPaintCompositedScroll)
+        paintFlags |= RenderLayer::PaintLayerPaintingCompositingScrollingPhase;
 
     if (graphicsLayer == m_backgroundLayer)
         paintFlags |= (RenderLayer::PaintLayerPaintingRootBackgroundOnly | RenderLayer::PaintLayerPaintingCompositingForegroundPhase); // Need PaintLayerPaintingCompositingForegroundPhase to walk child layers.

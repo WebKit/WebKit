@@ -292,6 +292,10 @@ webkit.org/b/105998 [ MountainLion Debug ] fast/css/sticky/sticky-both-sides.htm
 
 webkit.org/b/93552 inspector/device-orientation-success.html [ Failure ]
 
+webkit.org/b/107935 compositing/overflow/do-not-paint-outline-into-composited-scrolling-contents.html [ Missing ]
+webkit.org/b/107935 compositing/overflow/paint-neg-z-order-descendants-into-scrolling-contents-layer.html [ Missing ]
+webkit.org/b/107935 compositing/overflow/composited-scrolling-creates-a-stacking-container.html [ Failure ]
+
 webkit.org/b/106405 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html [ Failure ]
 webkit.org/b/106405 http/tests/loading/basic-auth-resend-wrong-credentials.html [ Failure ]
 webkit.org/b/106405 http/tests/loading/basic-credentials-sent-automatically.html [ Failure ]

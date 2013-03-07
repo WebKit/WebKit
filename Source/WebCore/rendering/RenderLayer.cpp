@@ -3652,8 +3652,19 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     bool haveTransparency = localPaintFlags & PaintLayerHaveTransparency;
     bool isSelfPaintingLayer = this->isSelfPaintingLayer();
     bool isPaintingOverlayScrollbars = paintFlags & PaintLayerPaintingOverlayScrollbars;
-    // Outline always needs to be painted even if we have no visible content.
-    bool shouldPaintOutline = isSelfPaintingLayer && !isPaintingOverlayScrollbars;
+    bool isPaintingScrollingContent = paintFlags & PaintLayerPaintingCompositingScrollingPhase;
+    bool isPaintingCompositedForeground = paintFlags & PaintLayerPaintingCompositingForegroundPhase;
+    bool isPaintingCompositedBackground = paintFlags & PaintLayerPaintingCompositingBackgroundPhase;
+    bool isPaintingOverflowContents = paintFlags & PaintLayerPaintingOverflowContents;
+    // Outline always needs to be painted even if we have no visible content. Also,
+    // the outline is painted in the background phase during composited scrolling.
+    // If it were painted in the foreground phase, it would move with the scrolled
+    // content. When not composited scrolling, the outline is painted in the
+    // foreground phase. Since scrolled contents are moved by repainting in this
+    // case, the outline won't get 'dragged along'.
+    bool shouldPaintOutline = isSelfPaintingLayer && !isPaintingOverlayScrollbars
+        && ((isPaintingScrollingContent && isPaintingCompositedBackground)
+        || (!isPaintingScrollingContent && isPaintingCompositedForeground));
     bool shouldPaintContent = m_hasVisibleContent && isSelfPaintingLayer && !isPaintingOverlayScrollbars;
 
     GraphicsContext* transparencyLayerContext = context;
@@ -3792,28 +3803,31 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
         // fragment should paint.
         collectFragments(layerFragments, localPaintingInfo.rootLayer, localPaintingInfo.region, localPaintingInfo.paintDirtyRect,
             (localPaintFlags & PaintLayerTemporaryClipRects) ? TemporaryClipRects : PaintingClipRects, IgnoreOverlayScrollbarSize,
-            (localPaintFlags & PaintLayerPaintingOverflowContents) ? IgnoreOverflowClip : RespectOverflowClip, &offsetFromRoot);
+            (isPaintingOverflowContents) ? IgnoreOverflowClip : RespectOverflowClip, &offsetFromRoot);
         updatePaintingInfoForFragments(layerFragments, localPaintingInfo, localPaintFlags, shouldPaintContent, &offsetFromRoot);
     }
     
-    if (localPaintFlags & PaintLayerPaintingCompositingBackgroundPhase) {
+    if (isPaintingCompositedBackground) {
         // Paint only the backgrounds for all of the fragments of the layer.
         if (shouldPaintContent && !selectionOnly)
             paintBackgroundForFragments(layerFragments, context, transparencyLayerContext, paintingInfo.paintDirtyRect, haveTransparency,
                 localPaintingInfo, paintBehavior, paintingRootForRenderer);
-
-        // Now walk the sorted list of children with negative z-indices.
-        paintList(negZOrderList(), context, localPaintingInfo, localPaintFlags);
     }
+
+    // Now walk the sorted list of children with negative z-indices.
+    if ((isPaintingScrollingContent && isPaintingOverflowContents) || (!isPaintingScrollingContent && isPaintingCompositedBackground))
+        paintList(negZOrderList(), context, localPaintingInfo, localPaintFlags);
     
-    if (localPaintFlags & PaintLayerPaintingCompositingForegroundPhase) {
+    if (isPaintingCompositedForeground) {
         if (shouldPaintContent)
             paintForegroundForFragments(layerFragments, context, transparencyLayerContext, paintingInfo.paintDirtyRect, haveTransparency,
                 localPaintingInfo, paintBehavior, paintingRootForRenderer, selectionOnly, forceBlackText);
-        
-        if (shouldPaintOutline)
-            paintOutlineForFragments(layerFragments, context, localPaintingInfo, paintBehavior, paintingRootForRenderer);
+    }
 
+    if (shouldPaintOutline)
+        paintOutlineForFragments(layerFragments, context, localPaintingInfo, paintBehavior, paintingRootForRenderer);
+
+    if (isPaintingCompositedForeground) {
         // Paint any child layers that have overflow.
         paintList(m_normalFlowList.get(), context, localPaintingInfo, localPaintFlags);
     

@@ -613,9 +613,10 @@ public:
         PaintLayerPaintingCompositingBackgroundPhase = 1 << 5,
         PaintLayerPaintingCompositingForegroundPhase = 1 << 6,
         PaintLayerPaintingCompositingMaskPhase = 1 << 7,
-        PaintLayerPaintingOverflowContents = 1 << 8,
-        PaintLayerPaintingRootBackgroundOnly = 1 << 9,
-        PaintLayerPaintingSkipRootBackground = 1 << 10,
+        PaintLayerPaintingCompositingScrollingPhase = 1 << 8,
+        PaintLayerPaintingOverflowContents = 1 << 9,
+        PaintLayerPaintingRootBackgroundOnly = 1 << 10,
+        PaintLayerPaintingSkipRootBackground = 1 << 11,
         PaintLayerPaintingCompositingAllPhases = (PaintLayerPaintingCompositingBackgroundPhase | PaintLayerPaintingCompositingForegroundPhase | PaintLayerPaintingCompositingMaskPhase)
     };
     

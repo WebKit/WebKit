@@ -753,6 +753,12 @@ fast/sub-pixel/zoomed-image-tiles.html [ ImageOnlyFailure ]
 # Needs rebaseline
 fast/sub-pixel/inline-block-with-padding.html [ Failure ]
 
+# Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=107618
+# https://bugs.webkit.org/show_bug.cgi?id=107952
+compositing/overflow/paint-neg-z-order-descendants-into-scrolling-contents-layer.html [ Missing ]
+compositing/overflow/composited-scrolling-creates-a-stacking-container.html [ Missing ]
+compositing/overflow/do-not-paint-outline-into-composited-scrolling-contents.html [ Failure ]
+
 # No CORS support for media elements is implemented yet.
 http/tests/security/video-cross-origin-readback.html
 

@@ -49,7 +49,8 @@ enum LayerTreeAsTextBehaviorFlags {
     LayerTreeAsTextDebug = 1 << 0, // Dump extra debugging info like layer addresses.
     LayerTreeAsTextIncludeVisibleRects = 1 << 1,
     LayerTreeAsTextIncludeTileCaches = 1 << 2,
-    LayerTreeAsTextIncludeRepaintRects = 1 << 3
+    LayerTreeAsTextIncludeRepaintRects = 1 << 3,
+    LayerTreeAsTextIncludePaintingPhases = 1 << 4
 };
 typedef unsigned LayerTreeAsTextBehavior;
 

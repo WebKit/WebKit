@@ -1281,6 +1281,8 @@ String RenderLayerCompositor::layerTreeAsText(LayerTreeFlags flags)
         layerTreeBehavior |= LayerTreeAsTextIncludeTileCaches;
     if (flags & LayerTreeFlagsIncludeRepaintRects)
         layerTreeBehavior |= LayerTreeAsTextIncludeRepaintRects;
+    if (flags & LayerTreeFlagsIncludePaintingPhases)
+        layerTreeBehavior |= LayerTreeAsTextIncludePaintingPhases;
 
     // We skip dumping the scroll and clip layers to keep layerTreeAsText output
     // similar between platforms.

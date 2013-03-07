@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>Composited scrolling paint phases</title>
+  <style type="text/css" media="screen">
+    .container {
+      width: 200px;
+      height: 200px;
+      overflow: scroll;
+      margin: 20px;
+      border: 1px solid black;
+    }
+
+    .composited {
+      width: 80px;
+      height: 10px;
+      position: relative;
+      top: 10px;
+      -webkit-transform: translateZ(0);
+      background-color: green;
+      z-index: -1;
+    }
+
+    .not-composited {
+      width: 80px;
+      height: 20px;
+      margin: 5px;
+      background-color: blue;
+    }
+  </style>
+  <script>
+    if (window.testRunner)
+      window.testRunner.dumpAsText(false);
+
+    if (window.internals)
+      window.internals.settings.setAcceleratedCompositingForOverflowScrollEnabled(true);
+
+    function write(str)
+    {
+      var pre = document.getElementById('console');
+      var text = document.createTextNode(str + '\n');
+      pre.appendChild(text);
+    }
+
+    function doTest()
+    {
+      write(window.internals.layerTreeAsText(document, window.internals.LAYER_TREE_INCLUDES_PAINTING_PHASES));
+      if (window.testRunner)
+        window.testRunner.notifyDone(); 
+    }
+
+    window.addEventListener('load', doTest, false);
+
+    if (window.testRunner)
+      window.testRunner.waitUntilDone();
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+    <div class="not-composited"></div>
+  </div>
+  <pre id="console"></pre>
+</body>
+</html>
+
