@@ -99,14 +99,6 @@ class RunTests(AbstractStep):
                 "--exit-after-n-failures=%s" % self.NON_INTERACTIVE_FAILURE_LIMIT_COUNT,
             ])
 
-            #try:
-            #    if self._options.build_style == "release":
-            #        args.append("--release")
-            #    elif self._options.build_style == "debug":
-            #        args.append("--debug")
-            #except:
-            #    pass
-
             # old-run-webkit-tests does not support --skip-failing-tests
             # Using --quiet one Windows fails when we try to use /dev/null, disabling for now until we find a fix
             if sys.platform != "cygwin":
@@ -114,7 +106,7 @@ class RunTests(AbstractStep):
                 args.append("--skip-failing-tests")
             else:
                 args.append("--no-build");
-                args.append("--debug");
+                args.append("--release");
 
         if self._options.quiet:
             args.append("--quiet")

@@ -1,3 +1,12 @@
+2013-03-07  Roger Fong  <roger_fong@apple.com>
+
+        Make EWS bots build and test in release.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (WinEWS):
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run):
+
 2013-03-07  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] don't track the top loading frame if no layout test is currently running
