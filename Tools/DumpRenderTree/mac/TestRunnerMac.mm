@@ -663,20 +663,6 @@ int TestRunner::windowCount()
     return CFArrayGetCount(openWindowsRef);
 }
 
-bool TestRunner::elementDoesAutoCompleteForElementWithId(JSStringRef jsString)
-{
-    RetainPtr<CFStringRef> idCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, jsString));
-    NSString *idNS = (NSString *)idCF.get();
-    
-    DOMElement *element = [[mainFrame DOMDocument] getElementById:idNS];
-    id rep = [[mainFrame dataSource] representation];
-    
-    if ([rep class] == [WebHTMLRepresentation class])
-        return [(WebHTMLRepresentation *)rep elementDoesAutoComplete:element];
-
-    return false;
-}
-
 void TestRunner::execCommand(JSStringRef name, JSStringRef value)
 {
     RetainPtr<CFStringRef> nameCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, name));

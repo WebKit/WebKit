@@ -122,7 +122,6 @@ public:
     static void clearFrameName(QWebFrameAdapter*);
     static void overwritePluginDirectories();
     static bool hasDocumentElement(QWebFrameAdapter*);
-    static bool elementDoesAutoCompleteForElementWithId(QWebFrameAdapter*, const QString& elementId);
     static void setWindowsBehaviorAsEditingBehavior(QWebPageAdapter*);
 
     static void clearAllApplicationCaches();

@@ -12,9 +12,9 @@ function log(message)
     document.getElementById("logger").appendChild(document.createElement('br'));
 }
 
-function logAutoCompleteAPIResult()
+function logAutoCompleteAPIResult(input)
 {
-    if (testRunner.elementDoesAutoCompleteForElementWithId("autoInput"))
+    if (internals.elementShouldAutoComplete(input))
         log("Element does autocomplete");
     else
         log("Element does *not* autocomplete");
@@ -31,41 +31,41 @@ function runTest()
     var input = document.getElementById("autoInput");
     
     // Test with no autocomplete attribute on the <form>
-    logAutoCompleteAPIResult();
+    logAutoCompleteAPIResult(input);
 
     input.setAttribute("autocomplete", "cheese");
-    logAutoCompleteAPIResult();
+    logAutoCompleteAPIResult(input);
 
     input.setAttribute("autocomplete", "off");
-    logAutoCompleteAPIResult();
+    logAutoCompleteAPIResult(input);
 
     input.setAttribute("autocomplete", "on");
-    logAutoCompleteAPIResult();
+    logAutoCompleteAPIResult(input);
 
     input.setAttribute("autocomplete", "cheese");
-    logAutoCompleteAPIResult();
+    logAutoCompleteAPIResult(input);
 
     input.removeAttribute("autocomplete");
-    logAutoCompleteAPIResult();
+    logAutoCompleteAPIResult(input);
     
     // Test with autocomplete="off" on the <form>
     form.setAttribute("autocomplete", "off");
-    logAutoCompleteAPIResult();
+    logAutoCompleteAPIResult(input);
     
     input.setAttribute("autocomplete", "cheese");
-    logAutoCompleteAPIResult();
+    logAutoCompleteAPIResult(input);
 
     input.setAttribute("autocomplete", "off");
-    logAutoCompleteAPIResult();
+    logAutoCompleteAPIResult(input);
 
     input.setAttribute("autocomplete", "on");
-    logAutoCompleteAPIResult();
+    logAutoCompleteAPIResult(input);
 
     input.setAttribute("autocomplete", "cheese");
-    logAutoCompleteAPIResult();
+    logAutoCompleteAPIResult(input);
 
     input.removeAttribute("autocomplete");
-    logAutoCompleteAPIResult();
+    logAutoCompleteAPIResult(input);
 }
 
 </script>

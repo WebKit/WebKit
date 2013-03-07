@@ -317,13 +317,6 @@ int TestRunner::windowCount()
     return 0;
 }
 
-bool TestRunner::elementDoesAutoCompleteForElementWithId(JSStringRef id)
-{
-    UNUSED_PARAM(id);
-    notImplemented();
-    return false;
-}
-
 void TestRunner::setWaitToDump(bool waitToDump)
 {
     // Change from 30s to 35s because some test cases in multipart need 30 seconds,

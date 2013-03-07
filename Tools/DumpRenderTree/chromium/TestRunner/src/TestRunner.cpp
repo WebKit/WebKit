@@ -182,7 +182,6 @@ TestRunner::TestRunner(TestInterfaces* interfaces)
     bindMethod("setTabKeyCyclesThroughElements", &TestRunner::setTabKeyCyclesThroughElements);
     bindMethod("execCommand", &TestRunner::execCommand);
     bindMethod("isCommandEnabled", &TestRunner::isCommandEnabled);
-    bindMethod("elementDoesAutoCompleteForElementWithId", &TestRunner::elementDoesAutoCompleteForElementWithId);
     bindMethod("callShouldCloseOnWebView", &TestRunner::callShouldCloseOnWebView);
     bindMethod("setDomainRelaxationForbiddenForURLScheme", &TestRunner::setDomainRelaxationForbiddenForURLScheme);
     bindMethod("evaluateScriptInIsolatedWorldAndReturnValue", &TestRunner::evaluateScriptInIsolatedWorldAndReturnValue);
@@ -1141,30 +1140,6 @@ void TestRunner::isCommandEnabled(const CppArgumentList& arguments, CppVariant* 
     std::string command = arguments[0].toString();
     bool rv = m_webView->focusedFrame()->isCommandEnabled(WebString::fromUTF8(command));
     result->set(rv);
-}
-
-bool TestRunner::elementDoesAutoCompleteForElementWithId(const WebString& elementId)
-{
-    WebFrame* webFrame = m_webView->mainFrame();
-    if (!webFrame)
-        return false;
-
-    WebElement element = webFrame->document().getElementById(elementId);
-    if (element.isNull() || !element.hasTagName("input"))
-        return false;
-
-    WebInputElement inputElement = element.to<WebInputElement>();
-    return inputElement.autoComplete();
-}
-
-void TestRunner::elementDoesAutoCompleteForElementWithId(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() != 1 || !arguments[0].isString()) {
-        result->set(false);
-        return;
-    }
-    WebString elementId = cppVariantToWebString(arguments[0]);
-    result->set(elementDoesAutoCompleteForElementWithId(elementId));
 }
 
 void TestRunner::callShouldCloseOnWebView(const CppArgumentList&, CppVariant* result)

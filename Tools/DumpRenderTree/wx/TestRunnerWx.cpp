@@ -209,12 +209,6 @@ void TestRunner::setPluginsEnabled(bool flag)
     // FIXME: Implement
 }
 
-bool TestRunner::elementDoesAutoCompleteForElementWithId(JSStringRef id) 
-{
-    // FIXME: implement
-    return false;
-}
-
 void TestRunner::execCommand(JSStringRef name, JSStringRef value)
 {
     // FIXME: implement

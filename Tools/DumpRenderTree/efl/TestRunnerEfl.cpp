@@ -436,13 +436,6 @@ void TestRunner::setPluginsEnabled(bool flag)
     ewk_view_setting_enable_plugins_set(browser->mainView(), flag);
 }
 
-bool TestRunner::elementDoesAutoCompleteForElementWithId(JSStringRef id)
-{
-    const String elementId(id->string());
-    const Evas_Object* mainFrame = browser->mainFrame();
-    return DumpRenderTreeSupportEfl::elementDoesAutoCompleteForElementWithId(mainFrame, elementId);
-}
-
 void TestRunner::execCommand(JSStringRef name, JSStringRef value)
 {
     DumpRenderTreeSupportEfl::executeCoreCommandByName(browser->mainView(), name->string().utf8().data(), value->string().utf8().data());

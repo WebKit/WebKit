@@ -1105,6 +1105,20 @@ bool Internals::wasLastChangeUserEdit(Element* textField, ExceptionCode& ec)
     return false;
 }
 
+bool Internals::elementShouldAutoComplete(Element* element, ExceptionCode& ec)
+{
+    if (!element) {
+        ec = INVALID_ACCESS_ERR;
+        return false;
+    }
+
+    if (HTMLInputElement* inputElement = element->toInputElement())
+        return inputElement->shouldAutocomplete();
+
+    ec = INVALID_NODE_TYPE_ERR;
+    return false;
+}
+
 String Internals::suggestedValue(Element* element, ExceptionCode& ec)
 {
     if (!element) {

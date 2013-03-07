@@ -509,11 +509,6 @@ void TestRunner::setPluginsEnabled(bool flag)
     g_object_set(G_OBJECT(settings), "enable-plugins", flag, NULL);
 }
 
-bool TestRunner::elementDoesAutoCompleteForElementWithId(JSStringRef id) 
-{
-    return DumpRenderTreeSupportGtk::elementDoesAutoCompleteForElementWithId(mainFrame, id);
-}
-
 void TestRunner::execCommand(JSStringRef name, JSStringRef value)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);

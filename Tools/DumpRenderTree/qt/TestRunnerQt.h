@@ -184,8 +184,6 @@ public Q_SLOTS:
     bool isCommandEnabled(const QString& name) const;
     bool findString(const QString&, const QStringList& optionArray);
 
-    bool elementDoesAutoCompleteForElementWithId(const QString& elementId);
-
     void addOriginAccessWhitelistEntry(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains);
     void removeOriginAccessWhitelistEntry(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains);
 

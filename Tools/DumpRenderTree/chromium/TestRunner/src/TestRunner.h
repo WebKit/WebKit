@@ -214,7 +214,6 @@ private:
     // Checks if an internal command is currently available.
     void isCommandEnabled(const CppArgumentList&, CppVariant*);
 
-    void elementDoesAutoCompleteForElementWithId(const CppArgumentList&, CppVariant*);
     void callShouldCloseOnWebView(const CppArgumentList&, CppVariant*);
     void setDomainRelaxationForbiddenForURLScheme(const CppArgumentList&, CppVariant*);
     void evaluateScriptInIsolatedWorldAndReturnValue(const CppArgumentList&, CppVariant*);
@@ -524,7 +523,6 @@ private:
     void didNotAcquirePointerLockInternal();
     void didLosePointerLockInternal();
 
-    bool elementDoesAutoCompleteForElementWithId(const WebKit::WebString&);
     bool cppVariantToBool(const CppVariant&);
     int32_t cppVariantToInt32(const CppVariant&);
     WebKit::WebString cppVariantToWebString(const CppVariant&);

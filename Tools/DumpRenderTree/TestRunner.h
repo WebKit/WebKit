@@ -135,8 +135,6 @@ public:
     void removeAllWebNotificationPermissions();
     void simulateWebNotificationClick(JSValueRef notification);
 
-    bool elementDoesAutoCompleteForElementWithId(JSStringRef id);
-
     bool dumpAsAudio() const { return m_dumpAsAudio; }
     void setDumpAsAudio(bool dumpAsAudio) { m_dumpAsAudio = dumpAsAudio; }
     

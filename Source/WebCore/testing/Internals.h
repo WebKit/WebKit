@@ -158,6 +158,7 @@ public:
     String configurationForViewport(Document*, float devicePixelRatio, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight, ExceptionCode&);
 
     bool wasLastChangeUserEdit(Element* textField, ExceptionCode&);
+    bool elementShouldAutoComplete(Element* inputElement, ExceptionCode&);
     String suggestedValue(Element* inputElement, ExceptionCode&);
     void setSuggestedValue(Element* inputElement, const String&, ExceptionCode&);
     void setEditingValue(Element* inputElement, const String&, ExceptionCode&);

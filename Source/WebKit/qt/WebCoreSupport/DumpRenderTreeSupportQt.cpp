@@ -416,24 +416,6 @@ QVariantList DumpRenderTreeSupportQt::firstRectForCharacterRange(QWebPageAdapter
     return rect;
 }
 
-bool DumpRenderTreeSupportQt::elementDoesAutoCompleteForElementWithId(QWebFrameAdapter *adapter, const QString& elementId)
-{
-    Frame* coreFrame = adapter->frame;
-    if (!coreFrame)
-        return false;
-
-    Document* doc = coreFrame->document();
-    Q_ASSERT(doc);
-
-    Node* coreNode = doc->getElementById(elementId);
-    if (!coreNode || !coreNode->renderer())
-        return false;
-
-    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(coreNode);
-
-    return inputElement->isTextField() && !inputElement->isPasswordField() && inputElement->shouldAutocomplete();
-}
-
 void DumpRenderTreeSupportQt::setWindowsBehaviorAsEditingBehavior(QWebPageAdapter* adapter)
 {
     Page* corePage = adapter->page;

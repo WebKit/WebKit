@@ -123,6 +123,7 @@
                                        in long availableHeight) raises(DOMException);
 
     boolean wasLastChangeUserEdit(in Element textField) raises (DOMException);
+    boolean elementShouldAutoComplete(in Element inputElement) raises (DOMException);
     DOMString suggestedValue(in Element inputElement) raises (DOMException);
     void setSuggestedValue(in Element inputElement, in DOMString value) raises (DOMException);
     void setEditingValue(in Element inputElement, in DOMString value) raises (DOMException);

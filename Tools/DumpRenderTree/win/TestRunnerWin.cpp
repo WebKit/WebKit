@@ -768,32 +768,6 @@ int TestRunner::windowCount()
     return openWindows().size();
 }
 
-bool TestRunner::elementDoesAutoCompleteForElementWithId(JSStringRef id)
-{
-    COMPtr<IDOMDocument> document;
-    if (FAILED(frame->DOMDocument(&document)))
-        return false;
-
-    wstring idWstring = jsStringRefToWString(id);
-    BSTR idBSTR = SysAllocStringLen((OLECHAR*)idWstring.c_str(), idWstring.length());
-    COMPtr<IDOMElement> element;
-    HRESULT result = document->getElementById(idBSTR, &element);
-    SysFreeString(idBSTR);
-
-    if (FAILED(result))
-        return false;
-
-    COMPtr<IWebFramePrivate> framePrivate(Query, frame);
-    if (!framePrivate)
-        return false;
-
-    BOOL autoCompletes;
-    if (FAILED(framePrivate->elementDoesAutoComplete(element.get(), &autoCompletes)))
-        return false;
-
-    return autoCompletes;
-}
-
 void TestRunner::execCommand(JSStringRef name, JSStringRef value)
 {
     wstring wName = jsStringRefToWString(name);

@@ -745,11 +745,6 @@ bool TestRunnerQt::findString(const QString& string, const QStringList& optionAr
     return DumpRenderTreeSupportQt::findString(m_drt->pageAdapter(), string, optionArray);
 }
 
-bool TestRunnerQt::elementDoesAutoCompleteForElementWithId(const QString& elementId)
-{
-    return DumpRenderTreeSupportQt::elementDoesAutoCompleteForElementWithId(m_drt->mainFrameAdapter(), elementId);
-}
-
 void TestRunnerQt::authenticateSession(const QString&, const QString&, const QString&)
 {
     // FIXME: If there is a concept per-session (per-process) credential storage, the credentials should be added to it for later use.

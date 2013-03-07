@@ -125,21 +125,6 @@ String DumpRenderTreeSupportEfl::layerTreeAsText(const Evas_Object* ewkFrame)
     return frame->layerTreeAsText();
 }
 
-bool DumpRenderTreeSupportEfl::elementDoesAutoCompleteForElementWithId(const Evas_Object* ewkFrame, const String& elementId)
-{
-    DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame, false);
-
-    WebCore::Document* document = frame->document();
-    ASSERT(document);
-
-    WebCore::HTMLInputElement* inputElement = static_cast<WebCore::HTMLInputElement*>(document->getElementById(elementId));
-
-    if (!inputElement)
-        return false;
-
-    return inputElement->isTextField() && !inputElement->isPasswordField() && inputElement->shouldAutocomplete();
-}
-
 Eina_List* DumpRenderTreeSupportEfl::frameChildren(const Evas_Object* ewkFrame)
 {
     DRT_SUPPORT_FRAME_GET_OR_RETURN(ewkFrame, frame, 0);
