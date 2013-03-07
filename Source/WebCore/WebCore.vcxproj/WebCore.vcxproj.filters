@@ -12054,13 +12054,13 @@
     <ClInclude Include="..\editing\UnlinkCommand.h">
       <Filter>editing</Filter>
     </ClInclude>
-    <ClInclude Include="..\editing\visible_units.h">
-      <Filter>editing</Filter>
-    </ClInclude>
     <ClInclude Include="..\editing\VisiblePosition.h">
       <Filter>editing</Filter>
     </ClInclude>
     <ClInclude Include="..\editing\VisibleSelection.h">
+      <Filter>editing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editing\VisibleUnits.h">
       <Filter>editing</Filter>
     </ClInclude>
     <ClInclude Include="..\editing\WrapContentsInDummySpanCommand.h">
