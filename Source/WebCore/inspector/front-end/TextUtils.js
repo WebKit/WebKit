@@ -102,3 +102,13 @@ WebInspector.TextUtils = {
 }
 
 WebInspector.TextUtils._SpaceCharRegex = /\s/;
+
+/**
+ * @enum {string}
+ */
+WebInspector.TextUtils.Indent = {
+    TwoSpaces: "  ",
+    FourSpaces: "    ",
+    EightSpaces: "        ",
+    TabCharacter: "\t"
+}

@@ -192,13 +192,6 @@ WebInspector.TextEditorModel = function()
     this._lineBreak = "\n";
 }
 
-WebInspector.TextEditorModel.Indent = {
-    TwoSpaces: "  ",
-    FourSpaces: "    ",
-    EightSpaces: "        ",
-    TabCharacter: "\t"
-}
-
 WebInspector.TextEditorModel.Events = {
     TextChanged: "TextChanged"
 }
@@ -651,7 +644,7 @@ WebInspector.TextEditorModel.prototype = {
         this._markUndoableState();
 
         var indent = WebInspector.settings.textEditorIndent.get();
-        var indentLength = indent === WebInspector.TextEditorModel.Indent.TabCharacter ? 4 : indent.length;
+        var indentLength = indent === WebInspector.TextUtils.Indent.TabCharacter ? 4 : indent.length;
         var lineIndentRegex = new RegExp("^ {1," + indentLength + "}");
         var newRange = range.clone();
 

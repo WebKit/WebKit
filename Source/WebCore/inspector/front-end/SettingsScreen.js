@@ -312,10 +312,10 @@ WebInspector.GenericSettingsTab = function()
     if (WebInspector.experimentsSettings.isEnabled("sass"))
         p.appendChild(this._createCSSAutoReloadControls());
     var indentationElement = this._createSelectSetting(WebInspector.UIString("Indentation"), [
-            [ WebInspector.UIString("2 spaces"), WebInspector.TextEditorModel.Indent.TwoSpaces ],
-            [ WebInspector.UIString("4 spaces"), WebInspector.TextEditorModel.Indent.FourSpaces ],
-            [ WebInspector.UIString("8 spaces"), WebInspector.TextEditorModel.Indent.EightSpaces ],
-            [ WebInspector.UIString("Tab character"), WebInspector.TextEditorModel.Indent.TabCharacter ]
+            [ WebInspector.UIString("2 spaces"), WebInspector.TextUtils.Indent.TwoSpaces ],
+            [ WebInspector.UIString("4 spaces"), WebInspector.TextUtils.Indent.FourSpaces ],
+            [ WebInspector.UIString("8 spaces"), WebInspector.TextUtils.Indent.EightSpaces ],
+            [ WebInspector.UIString("Tab character"), WebInspector.TextUtils.Indent.TabCharacter ]
         ], WebInspector.settings.textEditorIndent);
     indentationElement.firstChild.className = "toplevel";
     p.appendChild(indentationElement);
