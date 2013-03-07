@@ -96,6 +96,8 @@ webkit.org/b/107587 [ Win7 Debug ] platform/chromium/virtual/gpu/fast/hidpi/clip
 webkit.org/b/107587 [ Win7 Debug ] platform/chromium/virtual/gpu/fast/hidpi/device-scale-factor-paint.html [ Pass Slow ]
 webkit.org/b/107587 [ Win7 Debug ] platform/chromium/virtual/gpu/fast/hidpi/focus-rings.html [ Pass Slow ]
 webkit.org/b/109400 [ Win ] http/tests/css/css-image-loading.html [ Pass Slow ]
+webkit.org/b/109400 [ Mac Win ] http/tests/css/shared-stylesheet-mutation-preconstruct.html [ Pass Slow ]
+
 crbug.com/24182 [ Mac Debug ] fast/frames/remove-frame-with-scrollbars-crash.html [ Pass Slow ]
 crbug.com/24182 [ Mac Debug ] fast/forms/post-popup-no-multiple-windows.html [ Pass Slow ]
 
