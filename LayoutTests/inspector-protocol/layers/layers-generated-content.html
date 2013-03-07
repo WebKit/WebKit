@@ -1,0 +1,166 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script type="text/javascript">
+
+function test()
+{
+
+    var nodes;
+ 
+    InspectorTest.eventHandler["DOM.setChildNodes"] = setChildNodes;
+
+    enableLayerTreeAgent();
+    
+    function enableLayerTreeAgent(result)
+    {
+        step({
+            name: "Enable the LayerTree agent",
+            command: "LayerTree.enable",
+            parameters: {},
+            callback: getDocument
+        });
+    };
+
+    function getDocument()
+    {
+        // We must first get the document so that later on we may get sensible nodeIds.
+        step({
+            name: "Get the Document",
+            command: "DOM.getDocument",
+            parameters: {},
+            callback: getLayerTree
+        });
+    };
+
+    function getLayerTree(result)
+    {
+        step({
+            name: "Get the layer tree",
+            command: "LayerTree.layersForNode",
+            parameters: {"nodeId": result.root.nodeId},
+            callback: gotLayerTree
+        });
+    };
+
+    function gotLayerTree(result)
+    {
+        var beforeLayers = [];
+        var afterLayers = [];
+        result.layers.forEach(function (layer) {
+            if (!layer.isGeneratedContent)
+                return;
+
+            if (layer.pseudoClass === "before")
+                beforeLayers.push(layer);
+            if (layer.pseudoClass === "after")
+                afterLayers.push(layer);
+        });
+
+        logTestName("Check layers");
+
+        assert("Expected number of ::before layers", beforeLayers.length, 1);
+        assert("The sole ::before layer has a pseudo element", beforeLayers[0].pseudoElementId !== "", true);
+
+        assert("Expected number of ::after layers", afterLayers.length, 2);
+        assert("The first ::after layer has a pseudo element", afterLayers[0].pseudoElementId !== "", true);
+        assert("The second ::after layer has a pseudo element", afterLayers[1].pseudoElementId !== "", true);
+        assert("The second ::after layer is a reflection", afterLayers[1].isReflection, true);
+        assert("The two ::after layers have the same node id", afterLayers[0].nodeId, afterLayers[1].nodeId);
+        assert("The two ::after layers have the same pseudo element id", afterLayers[0].pseudoElementId, afterLayers[1].pseudoElementId);
+
+        assert("The non-reflection generated generated layers have the same node id", beforeLayers[0].nodeId, afterLayers[0].nodeId);
+        assert("The non-reflection generated layers have different pseudo element ids", beforeLayers[0].pseudoElementId !== afterLayers[0].pseudoElementId, true);
+
+        var node;
+        var nodeId = beforeLayers[0].nodeId;
+        for (var i = 0, count = nodes.length; i < count; ++i) {
+            if (nodes[i].nodeId === nodeId) {
+                node = nodes[i];
+                break;
+            }
+        }
+
+        logTestName("Check generating node");
+        
+        assert("Generating node was found", !!node, true);
+        assert("Generating node has expected localName", node.localName, "div");
+        assert("Generating node has id", node.attributes[0], "id");
+        assert("Generating node has expected id", node.attributes[1], "generator");
+        
+        InspectorTest.completeTest();
+    };
+
+    function setChildNodes (messageObject) {
+        nodes = messageObject.params.nodes;
+    };
+
+    function step(test)
+    {
+        if (test.callback)
+            logTestName(test.name);
+        runCommand(test);
+    };
+
+    function logTestName(name)
+    {
+        InspectorTest.log("\n=== " + name + " ===\n");
+    };
+
+    function runCommand(command)
+    {
+        InspectorTest.sendCommand(command.command, command.parameters, function(messageObject) {
+            if (messageObject.hasOwnProperty("error")) {
+                InspectorTest.log("FAIL: " + messageObject.error.message + " (" + messageObject.error.code + ")");
+                InspectorTest.completeTest();
+                return;
+            }
+
+            if (command.name)
+                InspectorTest.log("PASS");
+
+            if (command.callback)
+                command.callback(messageObject.result);
+        });
+    };
+
+    function assert(name, actual, expected)
+    {
+        if (expected === actual)
+            InspectorTest.log("PASS: " + name + ".");
+        else
+            InspectorTest.log("FAIL: " + name + ". Expected " + expected + " but got " + actual);
+    };
+
+};
+
+window.addEventListener("DOMContentLoaded", function()
+{
+    runTest();
+}, false);
+
+</script>
+<style type="text/css">
+      
+    #generator::before,
+    #generator::after {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background-color: black;
+        -webkit-transform: translateZ(0);
+        content: "";
+    }
+
+    #generator::after {
+        -webkit-box-reflect:below 1px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.5, transparent), to(white));
+    }
+
+</style>
+</head>
+<body>
+
+    <div id="generator"></div>
+
+</body>
+</html>

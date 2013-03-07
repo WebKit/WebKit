@@ -1367,6 +1367,12 @@ void InspectorInstrumentation::renderLayerDestroyedImpl(InstrumentingAgents* ins
     if (InspectorLayerTreeAgent* layerTreeAgent = instrumentingAgents->inspectorLayerTreeAgent())
         layerTreeAgent->renderLayerDestroyed(renderLayer);
 }
+
+void InspectorInstrumentation::pseudoElementDestroyedImpl(InstrumentingAgents* instrumentingAgents, PseudoElement* pseudoElement)
+{
+    if (InspectorLayerTreeAgent* layerTreeAgent = instrumentingAgents->inspectorLayerTreeAgent())
+        layerTreeAgent->pseudoElementDestroyed(pseudoElement);
+}
 #endif
 
 namespace InstrumentationEvents {

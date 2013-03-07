@@ -41,6 +41,7 @@
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
+#include "PseudoElement.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderView.h"
@@ -83,6 +84,8 @@ void InspectorLayerTreeAgent::reset()
 {
     m_documentLayerToIdMap.clear();
     m_idToLayer.clear();
+    m_pseudoElementToIdMap.clear();
+    m_idToPseudoElement.clear();
 }
 
 void InspectorLayerTreeAgent::enable(ErrorString*)
@@ -107,6 +110,11 @@ void InspectorLayerTreeAgent::layerTreeDidChange()
 void InspectorLayerTreeAgent::renderLayerDestroyed(const RenderLayer* renderLayer)
 {
     unbind(renderLayer);
+}
+
+void InspectorLayerTreeAgent::pseudoElementDestroyed(PseudoElement* pseudoElement)
+{
+    unbindPseudoElement(pseudoElement);
 }
 
 void InspectorLayerTreeAgent::layersForNode(ErrorString* errorString, int nodeId, RefPtr<TypeBuilder::Array<TypeBuilder::LayerTree::Layer> >& layers)
@@ -150,11 +158,19 @@ void InspectorLayerTreeAgent::gatherLayersUsingRenderLayerHierarchy(ErrorString*
 
 PassRefPtr<TypeBuilder::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectForLayer(ErrorString* errorString, RenderLayer* renderLayer)
 {
-    bool isReflection = renderLayer->isReflection();
-
     RenderObject* renderer = renderLayer->renderer();
     RenderLayerBacking* backing = renderLayer->backing();
-    Node* node = isReflection ? renderer->parent()->node() : renderer->node();
+    Node* node = renderer->node();
+
+    bool isReflection = renderLayer->isReflection();
+    bool isGenerated = (isReflection ? renderer->parent() : renderer)->isBeforeOrAfterContent();
+
+    if (isReflection && isGenerated)
+        node = renderer->parent()->generatingNode();
+    else if (isGenerated)
+        node = renderer->generatingNode();
+    else if (isReflection)
+        node = renderer->parent()->node();
 
     // Basic set of properties.
     RefPtr<TypeBuilder::LayerTree::Layer> layerObject = TypeBuilder::LayerTree::Layer::create()
@@ -170,6 +186,17 @@ PassRefPtr<TypeBuilder::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectFo
 
     if (isReflection)
         layerObject->setIsReflection(true);
+
+    if (isGenerated) {
+        if (isReflection)
+            renderer = renderer->parent();
+        layerObject->setIsGeneratedContent(true);
+        layerObject->setPseudoElementId(bindPseudoElement(static_cast<PseudoElement*>(renderer->node())));
+        if (renderer->isBeforeContent())
+            layerObject->setPseudoClass("before");
+        else if (renderer->isAfterContent())
+            layerObject->setPseudoClass("after");
+    }
 
     return layerObject;
 }
@@ -197,7 +224,7 @@ PassRefPtr<TypeBuilder::LayerTree::IntRect> InspectorLayerTreeAgent::buildObject
 String InspectorLayerTreeAgent::bind(const RenderLayer* layer)
 {
     if (!layer)
-        return "";
+        return emptyString();
     String identifier = m_documentLayerToIdMap.get(layer);
     if (identifier.isNull()) {
         identifier = IdentifiersFactory::createIdentifier();
@@ -209,12 +236,33 @@ String InspectorLayerTreeAgent::bind(const RenderLayer* layer)
 
 void InspectorLayerTreeAgent::unbind(const RenderLayer* layer)
 {
-    String identifier = m_documentLayerToIdMap.get(layer);
-    if (identifier.isNull())
+    HashMap<const RenderLayer*, String>::iterator iterator = m_documentLayerToIdMap.find(layer);
+    if (iterator == m_documentLayerToIdMap.end())
         return;
+    m_idToLayer.remove(iterator->value);
+    m_documentLayerToIdMap.remove(iterator);
+}
 
-    m_documentLayerToIdMap.remove(layer);
-    m_idToLayer.remove(identifier);
+String InspectorLayerTreeAgent::bindPseudoElement(PseudoElement* pseudoElement)
+{
+    if (!pseudoElement)
+        return emptyString();
+    String identifier = m_pseudoElementToIdMap.get(pseudoElement);
+    if (identifier.isNull()) {
+        identifier = IdentifiersFactory::createIdentifier();
+        m_pseudoElementToIdMap.set(pseudoElement, identifier);
+        m_idToPseudoElement.set(identifier, pseudoElement);
+    }
+    return identifier;
+}
+
+void InspectorLayerTreeAgent::unbindPseudoElement(PseudoElement* pseudoElement)
+{
+    HashMap<PseudoElement*, String>::iterator iterator = m_pseudoElementToIdMap.find(pseudoElement);
+    if (iterator == m_pseudoElementToIdMap.end())
+        return;
+    m_idToPseudoElement.remove(iterator->value);
+    m_pseudoElementToIdMap.remove(iterator);
 }
 
 } // namespace WebCore

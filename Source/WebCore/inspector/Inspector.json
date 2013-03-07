@@ -3646,6 +3646,11 @@
                 "description": "Unique RenderLayer identifier."
             },
             {
+                "id": "PseudoElementId",
+                "type": "string",
+                "description": "Unique PseudoElement identifier."
+            },
+            {
                 "id": "IntRect",
                 "type": "object",
                 "description": "A rectangle.",
@@ -3668,7 +3673,10 @@
                     { "name": "memory", "type": "integer", "description": "Estimated memory used by this layer." },
                     { "name": "compositedBounds", "$ref": "IntRect", "description": "The bounds of the composited layer." },
                     { "name": "isInShadowTree", "type": "boolean", "optional": true, "description": "Indicates whether this layer is associated with an element hosted in a shadow tree." },
-                    { "name": "isReflection", "type": "boolean", "optional": true, "description": "Indicates whether this layer was used to provide a reflection for the element." }
+                    { "name": "isReflection", "type": "boolean", "optional": true, "description": "Indicates whether this layer was used to provide a reflection for the element." },
+                    { "name": "isGeneratedContent", "type": "boolean", "optional": true, "description": "Indicates whether the layer is attached to a pseudo element that is CSS generated content." },
+                    { "name": "pseudoElementId", "$ref": "PseudoElementId", "optional": true, "description": "The id for the pseudo element associated with this layer." },
+                    { "name": "pseudoClass", "type": "string", "optional": true, "description": "The name of the CSS pseudo-class that prompted the layer's content to be generated." }
                 ]
             }
         ],

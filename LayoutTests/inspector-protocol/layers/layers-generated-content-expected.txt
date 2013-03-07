@@ -1,0 +1,33 @@
+
+=== Enable the LayerTree agent ===
+
+PASS
+
+=== Get the Document ===
+
+PASS
+
+=== Get the layer tree ===
+
+PASS
+
+=== Check layers ===
+
+PASS: Expected number of ::before layers.
+PASS: The sole ::before layer has a pseudo element.
+PASS: Expected number of ::after layers.
+PASS: The first ::after layer has a pseudo element.
+PASS: The second ::after layer has a pseudo element.
+PASS: The second ::after layer is a reflection.
+PASS: The two ::after layers have the same node id.
+PASS: The two ::after layers have the same pseudo element id.
+PASS: The non-reflection generated generated layers have the same node id.
+PASS: The non-reflection generated layers have different pseudo element ids.
+
+=== Check generating node ===
+
+PASS: Generating node was found.
+PASS: Generating node has expected localName.
+PASS: Generating node has id.
+PASS: Generating node has expected id.
+

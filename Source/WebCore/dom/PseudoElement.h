@@ -40,6 +40,7 @@ public:
     {
         return adoptRef(new PseudoElement(parent, pseudoId));
     }
+    ~PseudoElement();
 
     virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
     virtual void attach() OVERRIDE;

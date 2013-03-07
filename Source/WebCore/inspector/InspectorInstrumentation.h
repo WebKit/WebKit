@@ -70,6 +70,7 @@ class InspectorTimelineAgent;
 class InstrumentingAgents;
 class KURL;
 class Node;
+class PseudoElement;
 class RenderLayer;
 class RenderObject;
 class ResourceRequest;
@@ -310,6 +311,7 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     static void layerTreeDidChange(Page*);
     static void renderLayerDestroyed(Page*, const RenderLayer*);
+    static void pseudoElementDestroyed(Page*, PseudoElement*);
 #endif
 
 private:
@@ -496,6 +498,7 @@ private:
 #if USE(ACCELERATED_COMPOSITING)
     static void layerTreeDidChangeImpl(InstrumentingAgents*);
     static void renderLayerDestroyedImpl(InstrumentingAgents*, const RenderLayer*);
+    static void pseudoElementDestroyedImpl(InstrumentingAgents*, PseudoElement*);
 #endif
 
     static int s_frontendCounter;
@@ -2013,6 +2016,17 @@ inline void InspectorInstrumentation::renderLayerDestroyed(Page* page, const Ren
 #else
     UNUSED_PARAM(page);
     UNUSED_PARAM(renderLayer);
+#endif
+}
+
+inline void InspectorInstrumentation::pseudoElementDestroyed(Page* page, PseudoElement* pseudoElement)
+{
+#if ENABLE(INSPECTOR)
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        pseudoElementDestroyedImpl(instrumentingAgents, pseudoElement);
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(pseudoElement);
 #endif
 }
 #endif
