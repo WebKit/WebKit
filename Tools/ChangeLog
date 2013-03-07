@@ -1,3 +1,11 @@
+2013-03-06  Roger Fong  <roger_fong@apple.com>
+
+        Re-enable WinEWS test and decrease iterations before clean build back to 10.
+
+        * EWSTools/start-queue-win.sh:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (WinEWS):
+
 2013-03-06  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [WK2][GTK] Fix unit test WebKit2APITests/WebKitWebView/mouse-target
