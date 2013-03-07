@@ -316,11 +316,9 @@ LayoutUnit RenderTable::convertStyleLogicalWidthToComputedWidth(const Length& st
     // HTML tables' width styles already include borders and paddings, but CSS tables' width styles do not.
     LayoutUnit borders = 0;
     bool isCSSTable = !node() || !node()->hasTagName(tableTag);
-    if (isCSSTable && styleLogicalWidth.isSpecified() && styleLogicalWidth.isPositive()) {
-        recalcBordersInRowDirection();
-        if (style()->boxSizing() == CONTENT_BOX)
+    if (isCSSTable && styleLogicalWidth.isSpecified() && styleLogicalWidth.isPositive() && style()->boxSizing() == CONTENT_BOX)
             borders = borderStart() + borderEnd() + (collapseBorders() ? LayoutUnit() : paddingStart() + paddingEnd());
-    }
+
     return minimumValueForLength(styleLogicalWidth, availableWidth, view()) + borders;
 }
 
@@ -389,6 +387,9 @@ void RenderTable::layout()
         return;
 
     recalcSectionsIfNeeded();
+    // FIXME: We should do this recalc lazily in borderStart/borderEnd so that we don't have to make sure
+    // to call this before we call borderStart/borderEnd to avoid getting a stale value.
+    recalcBordersInRowDirection();
         
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
     LayoutStateMaintainer statePusher(view(), this, locationOffset(), style()->isFlippedBlocksWritingMode());
