@@ -103,7 +103,10 @@ private:
 
     KURL m_documentURL;
     bool m_isEnabled;
+
     ContentSecurityPolicy::ReflectedXSSDisposition m_xssProtection;
+    bool m_didSendValidCSPHeader;
+    bool m_didSendValidXSSProtectionHeader;
 
     String m_originalURL;
     String m_originalHTTPBody;

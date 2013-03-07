@@ -1,3 +1,2 @@
-CONSOLE MESSAGE: line 4: Refused to execute a JavaScript script. Source code of script found within request.
-
+CONSOLE MESSAGE: line 4: The XSS Auditor refused to execute a script in 'http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?q=%3Cscript%3Ealert('%8f%5f')%3C/script%3E&charset=shift_jis&notifyDone=1 ' because its source code was found within the request. The auditor was enabled as the server sent neither an 'X-XSS-Protection' nor 'Content-Security-Policy' header.
 

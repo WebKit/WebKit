@@ -1,6 +1,4 @@
-CONSOLE MESSAGE: line 4: Refused to execute a JavaScript script. Source code of script found within request.
-
-CONSOLE MESSAGE: Entire page will be blocked.
+CONSOLE MESSAGE: line 4: The XSS Auditor blocked access to 'http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl ' because the source code of a script was found within the request. The server sent an 'X-XSS-Protection' header requesting this behavior.
 
 
 --------
