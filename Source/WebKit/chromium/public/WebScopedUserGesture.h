@@ -39,17 +39,30 @@ class UserGestureIndicator;
 
 namespace WebKit {
 
+class WebUserGestureToken;
+
 // An instance of this class, while kept alive, will indicate that we are in
 // the context of a known user gesture. To use, create one, perform whatever
 // actions were done under color of a known user gesture, and then delete it.
 // Usually this will be done on the stack.
+//
+// SECURITY WARNING: Do not create several instances of this class for the same
+// user gesture. Doing so might enable malicious code to work around certain
+// restrictions such as opening multiple windows.
+// Instead, obtain the current WebUserGestureToken from the
+// WebUserGestureIndicator, and use this token to create a
+// WebScopedUserGesture. If the token was alrady consumed, the new
+// WebScopedUserGesture will not indicate that we are in the context of a user
+// gesture.
 class WebScopedUserGesture {
 public:
+    explicit WebScopedUserGesture(const WebUserGestureToken& token) { initializeWithToken(token); }
     WebScopedUserGesture() { initialize(); }
     ~WebScopedUserGesture() { reset(); }
 
 private:
     WEBKIT_EXPORT void initialize();
+    WEBKIT_EXPORT void initializeWithToken(const WebUserGestureToken&);
     WEBKIT_EXPORT void reset();
 
     WebPrivateOwnPtr<WebCore::UserGestureIndicator> m_indicator;

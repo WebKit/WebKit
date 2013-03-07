@@ -1,3 +1,52 @@
+2013-03-07  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] expose UserGestureToken via WebKit API so PPAPI plugins can correctly consume it
+        https://bugs.webkit.org/show_bug.cgi?id=104268
+
+        Reviewed by Darin Fisher.
+
+        Currently, the PPAPI creates a WebScopedUserGesture up to 10 seconds
+        after a call with an currently active user gesture was made. It should
+        use the newly added WebUserGestureToken to make sure this user gesture
+        is not consumed multiple times.
+
+        We can't require a WebUserGestureToken for a WebScopedUserGesture, since
+        e.g. the extension API needs to be able to create a WebScopedUserGesture
+        out of the blue.
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+        * public/WebScopedUserGesture.h:
+        (WebKit):
+        (WebKit::WebScopedUserGesture::WebScopedUserGesture):
+        (WebScopedUserGesture):
+        * public/WebUserGestureIndicator.h:
+        (WebKit):
+        (WebUserGestureIndicator):
+        * public/WebUserGestureToken.h: Copied from Source/WebKit/chromium/public/WebScopedUserGesture.h.
+        (WebCore):
+        (WebKit):
+        (WebUserGestureToken):
+        (WebKit::WebUserGestureToken::WebUserGestureToken):
+        (WebKit::WebUserGestureToken::operator=):
+        (WebKit::WebUserGestureToken::~WebUserGestureToken):
+        (WebKit::WebUserGestureToken::isNull):
+        * src/WebScopedUserGesture.cpp:
+        (WebKit::WebScopedUserGesture::initializeWithToken):
+        (WebKit):
+        * src/WebUserGestureIndicator.cpp:
+        (WebKit::WebUserGestureIndicator::currentUserGestureToken):
+        (WebKit):
+        * src/WebUserGestureToken.cpp: Copied from Source/WebKit/chromium/src/WebUserGestureIndicator.cpp.
+        (WebKit):
+        (WebKit::WebUserGestureToken::WebUserGestureToken):
+        (WebKit::WebUserGestureToken::operator WebCore::UserGestureToken*):
+        (WebKit::WebUserGestureToken::assign):
+        (WebKit::WebUserGestureToken::reset):
+        * tests/WebUserGestureTokenTest.cpp: Copied from Source/WebKit/chromium/src/WebUserGestureIndicator.cpp.
+        (WebCore):
+        (WebCore::TEST):
+
 2013-03-06  David Dorwin  <ddorwin@chromium.org>
 
         [chromium] Fix typo: destoryPage() => destroyPage()

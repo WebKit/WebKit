@@ -35,6 +35,8 @@
 
 namespace WebKit {
 
+class WebUserGestureToken;
+
 class WebUserGestureIndicator {
 public:
     // Returns true if a user gesture is currently being processed.
@@ -42,6 +44,11 @@ public:
 
     // Returns true if a consumable gesture exists and has been successfully consumed.
     WEBKIT_EXPORT static bool consumeUserGesture();
+
+    // Returns a token for the currently active user gesture. It can be used to
+    // continue processing the user gesture later on using a
+    // WebScopedUserGesture.
+    WEBKIT_EXPORT static WebUserGestureToken currentUserGestureToken();
 };
 
 }

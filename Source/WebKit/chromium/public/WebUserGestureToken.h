@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,28 +28,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebScopedUserGesture.h"
+#ifndef WebUserGestureToken_h
+#define WebUserGestureToken_h
 
-#include "UserGestureIndicator.h"
-#include "WebUserGestureToken.h"
+#include "../../../Platform/chromium/public/WebPrivatePtr.h"
+
+namespace WebCore {
+class UserGestureToken;
+}
 
 namespace WebKit {
 
-void WebScopedUserGesture::initialize()
-{
-    m_indicator.reset(new WebCore::UserGestureIndicator(WebCore::DefinitelyProcessingUserGesture));
-}
+// A WebUserGestureToken allows for storing the user gesture state of the
+// currently active context and reinstantiating it later on to continue
+// processing the user gesture in case it was not consumed meanwhile.
+class WebUserGestureToken {
+public:
+    WebUserGestureToken() { }
+    WebUserGestureToken(const WebUserGestureToken& other) { assign(other); }
+    WebUserGestureToken& operator=(const WebUserGestureToken& other)
+    {
+        assign(other);
+        return *this;
+    }
+    ~WebUserGestureToken() { reset(); }
 
-void WebScopedUserGesture::initializeWithToken(const WebUserGestureToken& token)
-{
-    if (!token.isNull())
-        m_indicator.reset(new WebCore::UserGestureIndicator(token));
-}
+    bool isNull() const { return m_token.isNull(); }
 
-void WebScopedUserGesture::reset()
-{
-    m_indicator.reset(0);
-}
+#if WEBKIT_IMPLEMENTATION
+    explicit WebUserGestureToken(PassRefPtr<WebCore::UserGestureToken>);
+    operator PassRefPtr<WebCore::UserGestureToken>() const;
+#endif
+
+private:
+    WEBKIT_EXPORT void assign(const WebUserGestureToken&);
+    WEBKIT_EXPORT void reset();
+
+    WebPrivatePtr<WebCore::UserGestureToken> m_token;
+};
 
 } // namespace WebKit
+
+#endif // WebUserGestureToken_h

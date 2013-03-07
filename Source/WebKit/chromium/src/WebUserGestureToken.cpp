@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,27 +29,30 @@
  */
 
 #include "config.h"
-#include "WebScopedUserGesture.h"
+#include "WebUserGestureToken.h"
 
 #include "UserGestureIndicator.h"
-#include "WebUserGestureToken.h"
 
 namespace WebKit {
 
-void WebScopedUserGesture::initialize()
+WebUserGestureToken::WebUserGestureToken(PassRefPtr<WebCore::UserGestureToken> token)
 {
-    m_indicator.reset(new WebCore::UserGestureIndicator(WebCore::DefinitelyProcessingUserGesture));
+    m_token = token;
 }
 
-void WebScopedUserGesture::initializeWithToken(const WebUserGestureToken& token)
+WebUserGestureToken::operator PassRefPtr<WebCore::UserGestureToken>() const
 {
-    if (!token.isNull())
-        m_indicator.reset(new WebCore::UserGestureIndicator(token));
+    return m_token.get();
 }
 
-void WebScopedUserGesture::reset()
+void WebUserGestureToken::assign(const WebUserGestureToken& other)
 {
-    m_indicator.reset(0);
+    m_token = other.m_token;
+}
+
+void WebUserGestureToken::reset()
+{
+    m_token.reset();
 }
 
 } // namespace WebKit

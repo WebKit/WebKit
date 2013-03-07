@@ -32,6 +32,7 @@
 #include "WebUserGestureIndicator.h"
 
 #include "UserGestureIndicator.h"
+#include "WebUserGestureToken.h"
 
 using namespace WebCore;
 
@@ -45,6 +46,11 @@ bool WebUserGestureIndicator::isProcessingUserGesture()
 bool WebUserGestureIndicator::consumeUserGesture()
 {
     return UserGestureIndicator::consumeUserGesture();
+}
+
+WebUserGestureToken WebUserGestureIndicator::currentUserGestureToken()
+{
+    return WebUserGestureToken(UserGestureIndicator::currentToken());
 }
 
 } // namespace WebKit

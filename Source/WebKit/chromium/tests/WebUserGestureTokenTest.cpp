@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,27 +29,47 @@
  */
 
 #include "config.h"
-#include "WebScopedUserGesture.h"
 
-#include "UserGestureIndicator.h"
 #include "WebUserGestureToken.h"
 
-namespace WebKit {
+#include "UserGestureIndicator.h"
+#include "WebScopedUserGesture.h"
+#include "WebUserGestureIndicator.h"
+#include <gtest/gtest.h>
 
-void WebScopedUserGesture::initialize()
+using namespace WebKit;
+using namespace WebCore;
+
+namespace {
+
+TEST(WebUserGestureTokenTest, Basic)
 {
-    m_indicator.reset(new WebCore::UserGestureIndicator(WebCore::DefinitelyProcessingUserGesture));
+    WebUserGestureToken token;
+
+    {
+        WebScopedUserGesture indicator(token);
+        EXPECT_FALSE(WebUserGestureIndicator::isProcessingUserGesture());
+    }
+
+    {
+        UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
+        EXPECT_TRUE(WebUserGestureIndicator::isProcessingUserGesture());
+        token = WebUserGestureIndicator::currentUserGestureToken();
+    }
+
+    EXPECT_FALSE(WebUserGestureIndicator::isProcessingUserGesture());
+
+    {
+        WebScopedUserGesture indicator(token);
+        EXPECT_TRUE(WebUserGestureIndicator::isProcessingUserGesture());
+        WebUserGestureIndicator::consumeUserGesture();
+        EXPECT_FALSE(WebUserGestureIndicator::isProcessingUserGesture());
+    }
+
+    {
+        WebScopedUserGesture indicator(token);
+        EXPECT_FALSE(WebUserGestureIndicator::isProcessingUserGesture());
+    }
 }
 
-void WebScopedUserGesture::initializeWithToken(const WebUserGestureToken& token)
-{
-    if (!token.isNull())
-        m_indicator.reset(new WebCore::UserGestureIndicator(token));
 }
-
-void WebScopedUserGesture::reset()
-{
-    m_indicator.reset(0);
-}
-
-} // namespace WebKit
