@@ -751,6 +751,10 @@ WebInspector.documentKeyDown = function(event)
                 PageAgent.reload(event.shiftKey);
                 event.consume(true);
             }
+            if (window.DEBUG && event.altKey) {
+                WebInspector.reload();
+                return;
+            }
             break;
         case "F5":
             if (!WebInspector.isMac()) {

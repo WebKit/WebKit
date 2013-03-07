@@ -60,3 +60,5 @@ WebInspector.clipboardAccessDeniedMessage = function()
 {
     return "You need to install a Chrome extension that grants clipboard access to Developer Tools.";
 }
+
+window.DEBUG = true;
