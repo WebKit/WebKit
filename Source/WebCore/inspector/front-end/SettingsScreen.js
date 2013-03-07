@@ -460,11 +460,23 @@ WebInspector.OverridesSettingsTab.prototype = {
 WebInspector.WorkspaceSettingsTab = function()
 {
     WebInspector.SettingsTab.call(this, WebInspector.UIString("Workspace"), "workspace-tab-content");
-    this._createFileSystemsEditor();
-    this._createFileMappingEditor();
+    this._reset();
 }
 
 WebInspector.WorkspaceSettingsTab.prototype = {
+    wasShown: function()
+    {
+        WebInspector.SettingsTab.prototype.wasShown.call(this);
+        this._reset();
+    },
+
+    _reset: function()
+    {
+        this.containerElement.removeChildren();
+        this._createFileSystemsEditor();
+        this._createFileMappingEditor();
+    },
+
     _createFileSystemsEditor: function()
     {
         var p = this._appendSection(WebInspector.UIString("File systems"));

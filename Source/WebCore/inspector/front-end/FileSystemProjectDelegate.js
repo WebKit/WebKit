@@ -266,6 +266,15 @@ WebInspector.FileSystemWorkspaceProvider.prototype = {
         var fileSystem = /** @type {WebInspector.IsolatedFileSystem} */ (event.data);
         if (fileSystem.id())
             this._workspace.removeProject(fileSystem.id());
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    fileSystemPath: function(uiSourceCode)
+    {
+        var fileSystemId = uiSourceCode.project().id();
+        return this._isolatedFileSystemManager.mapping().fileSystemPath(fileSystemId);
     }
 }
 

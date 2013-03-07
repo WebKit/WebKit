@@ -105,6 +105,15 @@ WebInspector.FileSystemMappingImpl.prototype = {
     },
 
     /**
+     * @param {string} fileSystemId
+     * @return {?string}
+     */
+    fileSystemPath: function(fileSystemId)
+    {
+        return this._fileSystemPaths[fileSystemId];
+    },
+
+    /**
      * @param {string} fileSystemPath
      * @return {string}
      */

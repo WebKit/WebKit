@@ -82,6 +82,8 @@ WebInspector.ViewportControl.prototype = {
             return;  // Do nothing for invisible controls.
 
         var itemCount = this._provider.itemCount();
+        if (!itemCount)
+            return;
 
         if (!this._rowHeight) {
             var firstElement = this._provider.itemElement(0);

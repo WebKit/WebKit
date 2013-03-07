@@ -1112,6 +1112,77 @@ WebInspector.ScriptsPanel.prototype = {
     },
 
     /** 
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    _mapFileSystemToNetwork: function(uiSourceCode)
+    {
+        WebInspector.SelectUISourceCodeForProjectTypeDialog.show(uiSourceCode.name(), WebInspector.projectTypes.Network, mapFileSystemToNetwork.bind(this), this.editorView.mainElement)                
+
+        /** 
+         * @param {WebInspector.UISourceCode} networkUISourceCode
+         */
+        function mapFileSystemToNetwork(networkUISourceCode)
+        {
+            this._workspace.addMapping(networkUISourceCode, uiSourceCode);
+        }
+    },
+
+    /** 
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    _removeNetworkMapping: function(uiSourceCode)
+    {
+        if (confirm(WebInspector.UIString("Are you sure you want to remove network mapping?")))
+            this._workspace.removeMapping(uiSourceCode);
+    },
+
+    /** 
+     * @param {WebInspector.UISourceCode} networkUISourceCode
+     */
+    _mapNetworkToFileSystem: function(networkUISourceCode)
+    {
+        WebInspector.SelectUISourceCodeForProjectTypeDialog.show(networkUISourceCode.name(), WebInspector.projectTypes.FileSystem, mapNetworkToFileSystem.bind(this), this.editorView.mainElement)                
+
+        /** 
+         * @param {WebInspector.UISourceCode} uiSourceCode
+         */
+        function mapNetworkToFileSystem(uiSourceCode)
+        {
+            this._workspace.addMapping(networkUISourceCode, uiSourceCode);
+        }
+    },
+
+    /** 
+     * @param {WebInspector.ContextMenu} contextMenu
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    _appendUISourceCodeMappingItems: function(contextMenu, uiSourceCode)
+    {
+        if (uiSourceCode.project().type() === WebInspector.projectTypes.FileSystem) {
+            var hasMappings = !!uiSourceCode.url;
+            if (!hasMappings)
+                contextMenu.appendItem(WebInspector.UIString("Map to network resource..."), this._mapFileSystemToNetwork.bind(this, uiSourceCode));
+            else
+                contextMenu.appendItem(WebInspector.UIString("Remove network mapping"), this._removeNetworkMapping.bind(this, uiSourceCode));
+        }
+
+        if (uiSourceCode.project().type() === WebInspector.projectTypes.Network) {
+            /** 
+             * @param {WebInspector.Project} project
+             */
+            function filterProject(project)
+            {
+                return project.type() === WebInspector.projectTypes.FileSystem;
+            }
+
+            if (!this._workspace.projects().filter(filterProject).length)
+                return;
+            if (this._workspace.uiSourceCodeForURL(uiSourceCode.url) === uiSourceCode)
+                contextMenu.appendItem(WebInspector.UIString("Map to file system resource..."), this._mapNetworkToFileSystem.bind(this, uiSourceCode));
+        }
+    },
+
+    /** 
      * @param {WebInspector.ContextMenu} contextMenu
      * @param {Object} target
      */
@@ -1122,6 +1193,10 @@ WebInspector.ScriptsPanel.prototype = {
 
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (target);
         contextMenu.appendItem(WebInspector.UIString("Local modifications..."), this._showLocalHistory.bind(this, uiSourceCode));
+
+        if (WebInspector.isolatedFileSystemManager.supportsFileSystems() && WebInspector.experimentsSettings.fileSystemProject.isEnabled())
+            this._appendUISourceCodeMappingItems(contextMenu, uiSourceCode);
+
         var resource = WebInspector.resourceForURL(uiSourceCode.url);
         if (resource && resource.request)
             contextMenu.appendApplicableItems(resource.request);

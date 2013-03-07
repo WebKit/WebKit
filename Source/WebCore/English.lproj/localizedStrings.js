@@ -875,3 +875,4 @@ localizedStrings["Destroy WebSocket"] = "Destroy WebSocket";
 localizedStrings["Split panels vertically when docked to right"] = "Split panels vertically when docked to right";
 localizedStrings["(no domain)"] = "(no domain)";
 localizedStrings["This file was changed externally. Would you like to reload it?"] = "This file was changed externally. Would you like to reload it?";
+localizedStrings["It is recommended to restart inspector after making these changes. Would you like to restart it?"] = "It is recommended to restart inspector after making these changes. Would you like to restart it?";

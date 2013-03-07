@@ -315,6 +315,12 @@ WebInspector.Events = {
     }
 })();}
 
+WebInspector.suggestReload = function()
+{
+    if (window.confirm(WebInspector.UIString("It is recommended to restart inspector after making these changes. Would you like to restart it?")))
+        this.reload();
+}
+
 WebInspector.reload = function()
 {
     var queryParams = window.location.search;
