@@ -136,9 +136,9 @@ function createIndexOnStoreWithData()
         evalAndLog("db = event.target.result");
         evalAndLog("trans = event.target.transaction");
         trans.onabort = unexpectedAbortCallback;
-        trans.oncomplete = function() { verifyIndexes('index-new', finishJSTest); };
 
         store = evalAndLog("store = trans.objectStore('store')");
         evalAndLog("store.createIndex('index-new', 'x', {multiEntry: true})");
     };
+    request.onsuccess = function() { verifyIndexes('index-new', finishJSTest); };
 }
