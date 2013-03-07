@@ -40,6 +40,7 @@
 #include "RenderFileUploadControl.h"
 #include "ScriptController.h"
 #include "ShadowRoot.h"
+#include "WebKitBlobBuilder.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -154,7 +155,7 @@ bool FileInputType::appendFormData(FormDataList& encoding, bool multipart) const
     // If no filename at all is entered, return successful but empty.
     // Null would be more logical, but Netscape posts an empty file. Argh.
     if (!numFiles) {
-        encoding.appendBlob(element()->name(), File::create(""));
+        encoding.appendBlob(element()->name(), BlobBuilder().getBlob(ASCIILiteral("application/octet-stream")), emptyString());
         return true;
     }
 
