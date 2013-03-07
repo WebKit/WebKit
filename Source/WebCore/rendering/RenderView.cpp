@@ -92,12 +92,7 @@ bool RenderView::hitTest(const HitTestRequest& request, HitTestResult& result)
 
 bool RenderView::hitTest(const HitTestRequest& request, const HitTestLocation& location, HitTestResult& result)
 {
-    bool inside = layer()->hitTest(request, location, result);
-
-    // Next set up the correct :hover/:active state along the new chain.
-    document()->updateHoverActiveState(request, result);
-
-    return inside;
+    return layer()->hitTest(request, location, result);
 }
 
 void RenderView::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit, LogicalExtentComputedValues& computedValues) const

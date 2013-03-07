@@ -689,7 +689,7 @@ public:
     void hoveredNodeDetached(Node*);
     void activeChainNodeDetached(Node*);
 
-    void updateHoverActiveState(const HitTestRequest&, HitTestResult&);
+    void updateHoverActiveState(const HitTestRequest&, Element*);
 
     // Updates for :target (CSS3 selector).
     void setCSSTarget(Element*);

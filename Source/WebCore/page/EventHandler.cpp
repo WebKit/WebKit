@@ -1039,6 +1039,8 @@ HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, HitTe
     // hitTestResultAtPoint is specifically used to hitTest into all frames, thus it always allows child frame content.
     HitTestRequest request(hitType | HitTestRequest::AllowChildFrameContent);
     m_frame->contentRenderer()->hitTest(request, result);
+    if (!request.readOnly())
+        m_frame->document()->updateHoverActiveState(request, result.innerElement());
 
     if (!request.allowsShadowContent())
         result.setToNonShadowAncestor();
@@ -2935,10 +2937,8 @@ bool EventHandler::sendContextMenuEventForKey()
     // Use the focused node as the target for hover and active.
     HitTestResult result(position);
     result.setInnerNode(targetNode);
-    HitTestRequest request(HitTestRequest::Active);
-    doc->updateHoverActiveState(request, result);
-    doc->updateStyleIfNeeded();
-   
+    doc->updateHoverActiveState(HitTestRequest::Active, result.innerElement());
+
     // The contextmenu event is a mouse event even when invoked using the keyboard.
     // This is required for web compatibility.
 
@@ -3074,7 +3074,7 @@ void EventHandler::hoverTimerFired(Timer<EventHandler>*)
             HitTestRequest request(HitTestRequest::Move);
             HitTestResult result(view->windowToContents(m_lastKnownMousePosition));
             renderer->hitTest(request, result);
-            m_frame->document()->updateStyleIfNeeded();
+            m_frame->document()->updateHoverActiveState(request, result.innerElement());
         }
     }
 }

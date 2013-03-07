@@ -2997,7 +2997,7 @@ MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& r
     renderView()->hitTest(request, result);
 
     if (!request.readOnly())
-        updateStyleIfNeeded();
+        updateHoverActiveState(request, result.innerElement());
 
     return MouseEventWithHitTestResults(event, result);
 }
@@ -5830,15 +5830,15 @@ static RenderObject* nearestCommonHoverAncestor(RenderObject* obj1, RenderObject
     return 0;
 }
 
-void Document::updateHoverActiveState(const HitTestRequest& request, HitTestResult& result)
+void Document::updateHoverActiveState(const HitTestRequest& request, Element* innerElement)
 {
-    // We don't update :hover/:active state when the result is marked as readOnly.
-    if (request.readOnly())
-        return;
+    ASSERT(!request.readOnly());
 
-    Element* innerElementInDocument = result.innerElement();
-    while (innerElementInDocument && innerElementInDocument->document() != this)
+    Element* innerElementInDocument = innerElement;
+    while (innerElementInDocument && innerElementInDocument->document() != this) {
+        innerElementInDocument->document()->updateHoverActiveState(request, innerElementInDocument);
         innerElementInDocument = innerElementInDocument->document()->ownerElement();
+    }
 
     Element* oldActiveElement = activeElement();
     if (oldActiveElement && !request.active()) {
@@ -5923,6 +5923,8 @@ void Document::updateHoverActiveState(const HitTestRequest& request, HitTestResu
             nodesToAddToChain[i]->setActive(true);
         nodesToAddToChain[i]->setHovered(true);
     }
+
+    updateStyleIfNeeded();
 }
 
 void Document::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
