@@ -59,9 +59,6 @@ static void childSetupFunction(gpointer userData)
 {
     int socket = GPOINTER_TO_INT(userData);
     close(socket);
-
-    // Make child process inherit parent's locale.
-    g_setenv("LC_ALL", setlocale(LC_ALL, 0), TRUE);
 }
 
 static void childFinishedFunction(GPid, gint status, gpointer userData)

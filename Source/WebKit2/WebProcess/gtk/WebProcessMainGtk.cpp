@@ -36,6 +36,7 @@
 #include <WebCore/RunLoop.h>
 #include <WebKit2/WebProcess.h>
 #include <gtk/gtk.h>
+#include <libintl.h>
 #include <libsoup/soup-cache.h>
 #include <runtime/InitializeThreading.h>
 #include <unistd.h>
@@ -57,6 +58,9 @@ WK_EXPORT int WebProcessMainGtk(int argc, char* argv[])
 #endif
 
     gtk_init(&argc, &argv);
+
+    bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
+    bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 
     JSC::initializeThreading();
     WTF::initializeMainThread();
