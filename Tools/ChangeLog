@@ -1,3 +1,16 @@
+2013-03-07  Julie Parent  <jparent@chromium.org>
+
+        showAllRuns checkbox no longer works on the stats dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=111673
+
+        Reviewed by Ojan Vafai.
+
+        Stats dashboard does not have any DB_SPECIFIC_INVALIDATING_PARAMETERS,
+        so we were trying to index into an undefined object.
+        
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (invalidateQueryParameters):
+
 2013-03-07  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Update #include for WebStorageNamespace.h

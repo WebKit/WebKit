@@ -503,7 +503,7 @@ function invalidateQueryParameters(queryParamsAsState) {
     for (var key in queryParamsAsState) {
         if (key in CROSS_DB_INVALIDATING_PARAMETERS)
             delete g_crossDashboardState[CROSS_DB_INVALIDATING_PARAMETERS[key]];
-        if (key in DB_SPECIFIC_INVALIDATING_PARAMETERS)
+        if (DB_SPECIFIC_INVALIDATING_PARAMETERS && key in DB_SPECIFIC_INVALIDATING_PARAMETERS)
             delete g_currentState[DB_SPECIFIC_INVALIDATING_PARAMETERS[key]];
     }
 }
