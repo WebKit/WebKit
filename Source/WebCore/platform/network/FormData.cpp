@@ -244,11 +244,11 @@ void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncod
                     }
 
                     // If a filename is passed in FormData.append(), use it instead of the file blob's name.
-                    if (!value.filename().isNull())
+                    if (!value.filename().isEmpty())
                         name = value.filename();
                 } else {
                     // For non-file blob, use the filename if it is passed in FormData.append().
-                    if (!value.filename().isNull())
+                    if (!value.filename().isEmpty())
                         name = value.filename();
                     else
                         name = "blob";
