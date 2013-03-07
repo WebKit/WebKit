@@ -39,9 +39,9 @@ class Document;
 
 class XSSInfo {
 public:
-    static PassOwnPtr<XSSInfo> create(const KURL& reportURL, const String& originalURL, const String& originalHTTPBody, bool didBlockEntirePage, bool didSendXSSProtectionHeader, bool didSendCSPHeader)
+    static PassOwnPtr<XSSInfo> create(const KURL& reportURL, const String& originalURL, const String& originalHTTPBody, bool didBlockEntirePage)
     {
-        return adoptPtr(new XSSInfo(reportURL, originalURL, originalHTTPBody, didBlockEntirePage, didSendXSSProtectionHeader, didSendCSPHeader));
+        return adoptPtr(new XSSInfo(reportURL, originalURL, originalHTTPBody, didBlockEntirePage));
     }
 
     bool isSafeToSendToAnotherThread() const;
@@ -50,18 +50,14 @@ public:
     String m_originalURL;
     String m_originalHTTPBody;
     bool m_didBlockEntirePage;
-    bool m_didSendXSSProtectionHeader;
-    bool m_didSendCSPHeader;
     TextPosition m_textPosition;
 
 private:
-    XSSInfo(const KURL& reportURL, const String& originalURL, const String& originalHTTPBody, bool didBlockEntirePage, bool didSendXSSProtectionHeader, bool didSendCSPHeader)
+    XSSInfo(const KURL& reportURL, const String& originalURL, const String& originalHTTPBody, bool didBlockEntirePage)
         : m_reportURL(reportURL)
         , m_originalURL(originalURL)
         , m_originalHTTPBody(originalHTTPBody)
         , m_didBlockEntirePage(didBlockEntirePage)
-        , m_didSendXSSProtectionHeader(didSendXSSProtectionHeader)
-        , m_didSendCSPHeader(didSendCSPHeader)
     { }
 };
 
