@@ -47,7 +47,6 @@ public:
     void addRule(StyleRule*, size_t selectorIndex, ContainerNode* scope, AddRuleFlags);
     void collectMatchRequests(bool includeEmptyRules, Vector<MatchRequest>&);
     void clear() { m_shadowDistributedRuleSetMap.clear(); }
-    bool isEmpty() const { return m_shadowDistributedRuleSetMap.isEmpty(); }
 private:
     typedef HashMap<const ContainerNode*, OwnPtr<RuleSet> > ShadowDistributedRuleSetMap;
     ShadowDistributedRuleSetMap m_shadowDistributedRuleSetMap;
