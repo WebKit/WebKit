@@ -1167,7 +1167,6 @@ crbug.com/20345 http/tests/security/cross-frame-access-getOwnPropertyDescriptor.
 webkit.org/b/42769 http/tests/security/401-logout/401-logout.php [ Timeout ]
 
 crbug.com/42044 [ Win ] http/tests/security/xss-DENIED-mime-type-execute-as-html.html [ Pass Timeout ]
-crbug.com/24182 [ Win Release ] http/tests/security/cross-origin-css.html [ Pass Timeout ]
 crbug.com/31342 [ Win Release ] security/block-test-no-port.html [ Failure Pass ]
 
 # -----------------------------------------------------------------
@@ -4471,3 +4470,6 @@ webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Failure ]
 webkit.org/b/111649 [ Mac Win Linux ] platform/chromium/fast/events/intercept-postmessage.html [ Slow ]
 
 webkit.org/b/111667 [ Debug Win ] media/encrypted-media/encrypted-media-events.html [ Pass Timeout ]
+
+webkit.org/b/111774 [ Win ] http/tests/security/cross-origin-css.html [ Pass Failure ]
+
