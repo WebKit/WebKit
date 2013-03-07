@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="group">
+
+<a href="#" id="link1">link1</a><br>
+<button id="button1">button</button>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the AXPressAction comes first for activatable items instead of the scroll to visible action. This is needed for screenreaders to operate correctly.");
+
+    if (window.accessibilityController) {
+
+          var button = accessibilityController.accessibleElementById("button1");
+          debug("Button supported actions: " + button.supportedActions);
+
+          var link = accessibilityController.accessibleElementById("link1");
+          debug("Link supported actions: " + link.supportedActions);
+
+          document.getElementById("group").style.visibility = "hidden";
+    }
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

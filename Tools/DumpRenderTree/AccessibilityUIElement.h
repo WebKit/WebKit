@@ -255,6 +255,11 @@ public:
     void assistiveTechnologySimulatedFocus();
 #endif // PLATFORM(IOS)
 
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+    // Returns an ordered list of supported actions for an element.
+    JSStringRef supportedActions();
+#endif
+    
 private:
     static JSClassRef getJSClass();
     PlatformUIElement m_element;

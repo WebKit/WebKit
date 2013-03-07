@@ -1,3 +1,18 @@
+2013-03-07  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Can't activate links with VoiceOver in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=111755
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (supportedActionsCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        (AccessibilityUIElement):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::supportedActions):
+
 2013-03-07  Roger Fong  <roger_fong@apple.com>
 
         Windows debug layout tests are crashing like crazy again.

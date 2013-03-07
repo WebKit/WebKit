@@ -927,7 +927,8 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
     static NSArray *defaultElementActions = [[NSArray alloc] initWithObjects:NSAccessibilityShowMenuAction, NSAccessibilityScrollToVisibleAction, nil];
 
     // Action elements allow Press.
-    static NSArray *actionElementActions = [[defaultElementActions arrayByAddingObject:NSAccessibilityPressAction] retain];
+    // The order is important to VoiceOver, which expects the 'default' action to be the first action. In this case the default action should be press.
+    static NSArray *actionElementActions = [[NSArray alloc] initWithObjects:NSAccessibilityPressAction, NSAccessibilityShowMenuAction, NSAccessibilityScrollToVisibleAction, nil];
 
     // Menu elements allow Press and Cancel.
     static NSArray *menuElementActions = [[actionElementActions arrayByAddingObject:NSAccessibilityCancelAction] retain];

@@ -1060,6 +1060,14 @@ static JSValueRef getIPhoneElementTextLengthCallback(JSContextRef context, JSObj
 
 #endif // PLATFORM(IOS)
 
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+static JSValueRef supportedActionsCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    JSRetainPtr<JSStringRef> valueString(Adopt, toAXElement(thisObject)->supportedActions());
+    return JSValueMakeString(context, valueString.get());
+}
+#endif
+
 // Implementation
 
 // Unsupported methods on various platforms.
@@ -1237,6 +1245,9 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "iphoneElementTextLength", getIPhoneElementTextLengthCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "stringForSelection", stringForSelectionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #endif // PLATFORM(IOS)
+#if PLATFORM(MAC) && !PLATFORM(IOS)
+        { "supportedActions", supportedActionsCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+#endif
         { 0, 0, 0, 0 }
     };
 

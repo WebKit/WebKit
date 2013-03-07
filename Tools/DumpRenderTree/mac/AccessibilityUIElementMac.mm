@@ -1437,6 +1437,16 @@ AccessibilityUIElement AccessibilityUIElement::accessibilityElementForTextMarker
 
 #endif // SUPPORTS_AX_TEXTMARKERS
 
+JSStringRef AccessibilityUIElement::supportedActions()
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSArray *names = [m_element accessibilityActionNames];
+    return [[names componentsJoinedByString:@","] createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+
+    return 0;
+}
+
 void AccessibilityUIElement::scrollToMakeVisible()
 {
     BEGIN_AX_OBJC_EXCEPTIONS
