@@ -210,6 +210,7 @@ void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&
         tiledBacking->setAggressivelyRetainsTiles(settings->aggressiveTileRetentionEnabled());
     
     if (m_pageOverlayLayer) {
+        m_pageOverlayLayer->setAcceleratesDrawing(settings->acceleratedDrawingEnabled());
         m_pageOverlayLayer->setShowDebugBorder(settings->showDebugBorders());
         m_pageOverlayLayer->setShowRepaintCounter(settings->showRepaintCounter());
     }
@@ -501,7 +502,7 @@ void TiledCoreAnimationDrawingArea::createPageOverlayLayer()
     m_pageOverlayLayer->setName("page overlay content");
 #endif
 
-    m_pageOverlayLayer->setAcceleratesDrawing(true);
+    m_pageOverlayLayer->setAcceleratesDrawing(m_webPage->corePage()->settings()->acceleratedDrawingEnabled());
     m_pageOverlayLayer->setDrawsContent(true);
     m_pageOverlayLayer->setSize(expandedIntSize(FloatSize(m_rootLayer.get().frame.size)));
     m_pageOverlayLayer->setShowDebugBorder(m_webPage->corePage()->settings()->showDebugBorders());
