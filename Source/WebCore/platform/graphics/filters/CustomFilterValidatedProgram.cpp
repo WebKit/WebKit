@@ -292,6 +292,7 @@ String CustomFilterValidatedProgram::blendFunctionString(BlendMode blendMode)
     const char* blendColorExpression = "vec3(css_BlendComponent(Cb.r, Cs.r), css_BlendComponent(Cb.g, Cs.g), css_BlendComponent(Cb.b, Cs.b))";
     const char* blendComponentExpression = "Co = 0.0;";
     bool needsLuminosityHelperFunctions = false;
+    bool needsSaturationHelperFunctions = false;
     String blendFunctionString;
     switch (blendMode) {
     case BlendModeNormal:
@@ -416,9 +417,17 @@ String CustomFilterValidatedProgram::blendFunctionString(BlendMode blendMode)
         blendColorExpression = "css_SetLum(Cb, css_Lum(Cs))";
         break;
     case BlendModeHue:
+        needsLuminosityHelperFunctions = true;
+        needsSaturationHelperFunctions = true;
+        blendColorExpression = "css_SetLum(css_SetSat(Cs, css_Sat(Cb)), css_Lum(Cb))";
+        break;
     case BlendModeSaturation:
-        notImplemented();
-        return String();
+        needsLuminosityHelperFunctions = true;
+        needsSaturationHelperFunctions = true;
+        blendColorExpression = "css_SetLum(css_SetSat(Cb, css_Sat(Cs)), css_Lum(Cb))";
+        break;
+    default:
+        ASSERT_NOT_REACHED();
     }
 
     if (needsLuminosityHelperFunctions) {
@@ -442,6 +451,49 @@ String CustomFilterValidatedProgram::blendFunctionString(BlendMode blendMode)
             {
                 C += l - css_Lum(C);
                 return css_ClipColor(C);
+            }
+        ));
+    }
+
+    if (needsSaturationHelperFunctions) {
+        blendFunctionString.append(SHADER(
+            mediump float css_Sat(mediump vec3 C)
+            {
+                mediump float cMin = min(min(C.r, C.g), C.b);
+                mediump float cMax = max(max(C.r, C.g), C.b);
+                return cMax - cMin;
+            }
+            void css_SetSatHelper(inout mediump float cMin, inout mediump float cMid, inout mediump float cMax, mediump float s)
+            {
+                if (cMax > cMin) {
+                    cMid = (((cMid - cMin) * s) / (cMax - cMin));
+                    cMax = s;
+                } else
+                    cMid = cMax = 0.0;
+                cMin = 0.0;
+            }
+            mediump vec3 css_SetSat(mediump vec3 C, mediump float s)
+            {
+                if (C.r <= C.g) {
+                    if (C.g <= C.b)
+                        css_SetSatHelper(C.r, C.g, C.b, s);
+                    else {
+                        if (C.r <= C.b)
+                            css_SetSatHelper(C.r, C.b, C.g, s);
+                        else
+                            css_SetSatHelper(C.b, C.r, C.g, s);
+                    }
+                } else {
+                    if (C.r <= C.b)
+                        css_SetSatHelper(C.g, C.r, C.b, s);
+                    else {
+                        if (C.g <= C.b)
+                            css_SetSatHelper(C.g, C.b, C.r, s);
+                        else
+                            css_SetSatHelper(C.b, C.g, C.r, s);
+                    }
+                }
+                return C;
             }
         ));
     }
