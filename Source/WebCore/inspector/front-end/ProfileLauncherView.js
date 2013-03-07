@@ -38,7 +38,6 @@ WebInspector.ProfileLauncherView = function(profilesPanel)
     WebInspector.View.call(this);
 
     this._panel = profilesPanel;
-    this._profileRunning = false;
 
     this.element.addStyleClass("profile-launcher-view");
     this.element.addStyleClass("panel-enabler-view");
@@ -61,6 +60,7 @@ WebInspector.ProfileLauncherView.prototype = {
         var decorationElement = profileType.decorationElement();
         if (decorationElement)
             this._innerContentElement.appendChild(decorationElement);
+        this._isInstantProfile = profileType.isInstantProfile();
     },
 
     _controlButtonClicked: function()
@@ -70,7 +70,10 @@ WebInspector.ProfileLauncherView.prototype = {
 
     _updateControls: function()
     {
-        if (this._isProfiling) {
+        if (this._isInstantProfile) {
+            this._controlButton.removeStyleClass("running");
+            this._controlButton.textContent = WebInspector.UIString("Take Snapshot");
+        } else if (this._isProfiling) {
             this._controlButton.addStyleClass("running");
             this._controlButton.textContent = WebInspector.UIString("Stop");
         } else {
@@ -150,13 +153,7 @@ WebInspector.MultiProfileLauncherView.prototype = {
 
     _updateControls: function()
     {
-        if (this._isProfiling) {
-            this._controlButton.addStyleClass("running");
-            this._controlButton.textContent = WebInspector.UIString("Stop");
-        } else {
-            this._controlButton.removeStyleClass("running");
-            this._controlButton.textContent = WebInspector.UIString("Start");
-        }
+        WebInspector.ProfileLauncherView.prototype._updateControls.call(this);
         var items = this._profileTypeSelectorForm.elements;
         for (var i = 0; i < items.length; ++i) {
             if (items[i].type === "radio")
@@ -170,6 +167,8 @@ WebInspector.MultiProfileLauncherView.prototype = {
     _profileTypeChanged: function(profileType, event)
     {
         this.dispatchEventToListeners(WebInspector.MultiProfileLauncherView.EventTypes.ProfileTypeSelected, profileType);
+        this._isInstantProfile = profileType.isInstantProfile();
+        this._updateControls();
     },
 
     profileStarted: function()

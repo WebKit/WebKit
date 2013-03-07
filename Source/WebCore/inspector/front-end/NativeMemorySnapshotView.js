@@ -256,6 +256,15 @@ WebInspector.NativeSnapshotProfileType.prototype = {
      * @override
      * @return {boolean}
      */
+    isInstantProfile: function()
+    {
+        return true;
+    },
+
+    /**
+     * @override
+     * @return {boolean}
+     */
     buttonClicked: function()
     {
         var profileHeader = new WebInspector.NativeSnapshotProfileHeader(this, WebInspector.UIString("Snapshot %d", this._nextProfileUid), this._nextProfileUid);
@@ -449,6 +458,15 @@ WebInspector.NativeMemoryProfileType.prototype = {
     get buttonTooltip()
     {
         return WebInspector.UIString("Capture native memory distribution.");
+    },
+
+    /**
+     * @override
+     * @return {boolean}
+     */
+    isInstantProfile: function()
+    {
+        return true;
     },
 
     /**

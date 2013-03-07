@@ -774,6 +774,15 @@ WebInspector.HeapSnapshotProfileType.prototype = {
      * @override
      * @return {boolean}
      */
+    isInstantProfile: function()
+    {
+        return true;
+    },
+
+    /**
+     * @override
+     * @return {boolean}
+     */
     buttonClicked: function()
     {
         this._takeHeapSnapshot();

@@ -423,6 +423,7 @@ localizedStrings["Stylesheet"] = "Stylesheet";
 localizedStrings["Stylesheets"] = "Stylesheets";
 localizedStrings["Swap dimensions"] = "Swap dimensions";
 localizedStrings["Subtree Modified"] = "Subtree Modified";
+localizedStrings["Take Snapshot"] = "Take Snapshot";
 localizedStrings["Take heap snapshot."] = "Take heap snapshot.";
 localizedStrings["Take Heap Snapshot"] = "Take Heap Snapshot";
 localizedStrings["The breakpoint on line %d will stop only if this expression is true:"] = "The breakpoint on line %d will stop only if this expression is true:";

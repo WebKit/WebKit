@@ -89,6 +89,14 @@ WebInspector.ProfileType.prototype = {
     },
 
     /**
+     * @return {boolean}
+     */
+    isInstantProfile: function()
+    {
+        return false;
+    },
+
+    /**
      * @return {!Array.<!WebInspector.ProfileHeader>}
      */
     getProfiles: function()
