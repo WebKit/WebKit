@@ -1,3 +1,25 @@
+2013-03-07  Dirk Pranke  <dpranke@chromium.org>
+
+        [nrwt] handle corrupt http server pid files cleanly
+        https://bugs.webkit.org/show_bug.cgi?id=111628
+
+        Reviewed by Eric Seidel.
+
+        If the pid file from a previous http server is corrupt for some
+        reason, NRWT will just raise errors and not clean it up or recover.
+        This patch fixes that to at least delete the pid file and
+        not throw; not that we may still have stale http servers left on
+        the system, since there's no way to know which pid to kill if
+        the file was corrupted.
+
+        * Scripts/webkitpy/layout_tests/servers/http_server_base.py:
+        (HttpServerBase.start):
+        (HttpServerBase.stop):
+        (HttpServerBase._remove_pid_file):
+        * Scripts/webkitpy/layout_tests/servers/http_server_base_unittest.py: Added.
+        (TestHttpServerBase):
+        (TestHttpServerBase.test_corrupt_pid_file):
+
 2013-03-07  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Can't activate links with VoiceOver in Safari
