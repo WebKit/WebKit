@@ -2930,15 +2930,17 @@ END
         if ($attrExt->{"V8EnabledAtRuntime"}) {
             push(@constantsEnabledAtRuntime, $constant);
         } else {
-            # FIXME: we need the static_cast here only because of one constant, NodeFilter.idl
-            # defines "const unsigned long SHOW_ALL = 0xFFFFFFFF".  It would be better if we
-            # handled this here, and converted it to a -1 constant in the c++ output.
             if ($conditional) {
                 my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
                 push(@implContent, "#if ${conditionalString}\n");
             }
+            # If the value we're dealing with is a hex number, preprocess it into a signed integer
+            # here, rather than running static_cast<signed int> in the generated code.
+            if (substr($value, 0, 2) eq "0x") {
+              $value = unpack('i', pack('I', hex($value)));
+            }
             push(@implContent, <<END);
-    {"${name}", static_cast<signed int>($value)},
+    {"${name}", $value},
 END
             push(@implContent, "#endif\n") if $conditional;
         }
