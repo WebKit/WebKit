@@ -27,15 +27,15 @@
 #define WebTileLayer_h
 
 namespace WebCore {
-    class TileCache;
+class TileController;
 }
 
 @interface WebTileLayer : CALayer {
-    WebCore::TileCache* _tileCache;
+    WebCore::TileController* _tileController;
     unsigned _paintCount;
 }
 
-- (void)setTileCache:(WebCore::TileCache*)tileCache;
+- (void)setTileController:(WebCore::TileController*)tileController;
 - (void)resetPaintCount;
 - (unsigned)incrementPaintCount;
 - (unsigned)paintCount;

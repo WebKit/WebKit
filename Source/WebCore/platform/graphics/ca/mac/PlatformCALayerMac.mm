@@ -38,7 +38,7 @@
 #import "TiledBacking.h"
 #import "WebLayer.h"
 #import "WebTiledLayer.h"
-#import "WebTileCacheLayer.h"
+#import "WebTiledBackingLayer.h"
 #import <objc/objc-auto.h>
 #import <objc/runtime.h>
 #import <QuartzCore/QuartzCore.h>
@@ -224,9 +224,9 @@ PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformLayer* layer, Plat
             case LayerTypeWebTiledLayer:
                 layerClass = [WebTiledLayer class];
                 break;
-            case LayerTypeTileCacheLayer:
-            case LayerTypePageTileCacheLayer:
-                layerClass = [WebTileCacheLayer class];
+            case LayerTypeTiledBackingLayer:
+            case LayerTypePageTiledBackingLayer:
+                layerClass = [WebTiledBackingLayer class];
                 break;
             case LayerTypeCustom:
                 break;
@@ -251,9 +251,9 @@ PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformLayer* layer, Plat
         [tiledLayer setContentsGravity:@"bottomLeft"];
     }
     
-    if (usesTileCacheLayer()) {
+    if (usesTiledBackingLayer()) {
         m_customSublayers = adoptPtr(new PlatformCALayerList(1));
-        CALayer* tileCacheTileContainerLayer = [static_cast<WebTileCacheLayer *>(m_layer.get()) tileContainerLayer];
+        CALayer* tileCacheTileContainerLayer = [static_cast<WebTiledBackingLayer *>(m_layer.get()) tileContainerLayer];
         (*m_customSublayers)[0] = PlatformCALayer::create(tileCacheTileContainerLayer, 0);
     }
     
@@ -271,8 +271,8 @@ PlatformCALayer::~PlatformCALayer()
     // Remove the owner pointer from the delegate in case there is a pending animationStarted event.
     [static_cast<WebAnimationDelegate*>(m_delegate.get()) setOwner:nil];
 
-    if (usesTileCacheLayer())
-        [static_cast<WebTileCacheLayer *>(m_layer.get()) invalidate];
+    if (usesTiledBackingLayer())
+        [static_cast<WebTiledBackingLayer *>(m_layer.get()) invalidate];
 }
 
 PlatformCALayer* PlatformCALayer::platformCALayer(void* platformLayer)
@@ -1096,11 +1096,11 @@ void PlatformCALayer::setContentsScale(float value)
 
 TiledBacking* PlatformCALayer::tiledBacking()
 {
-    if (!usesTileCacheLayer())
+    if (!usesTiledBackingLayer())
         return 0;
 
-    WebTileCacheLayer *tileCacheLayer = static_cast<WebTileCacheLayer *>(m_layer.get());
-    return [tileCacheLayer tiledBacking];
+    WebTiledBackingLayer *tiledBackingLayer = static_cast<WebTiledBackingLayer *>(m_layer.get());
+    return [tiledBackingLayer tiledBacking];
 }
 
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070

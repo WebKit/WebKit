@@ -275,13 +275,13 @@ GraphicsLayerCA::GraphicsLayerCA(GraphicsLayerClient* client)
     : GraphicsLayer(client)
     , m_contentsLayerPurpose(NoContentsLayer)
     , m_allowTiledLayer(true)
-    , m_isPageTileCacheLayer(false)
+    , m_isPageTiledBackingLayer(false)
     , m_uncommittedChanges(0)
 {
     PlatformCALayer::LayerType layerType = PlatformCALayer::LayerTypeWebLayer;
-    if (client && client->shouldUseTileCache(this)) {
-        layerType = PlatformCALayer::LayerTypePageTileCacheLayer;
-        m_isPageTileCacheLayer = true;
+    if (client && client->shouldUseTiledBacking(this)) {
+        layerType = PlatformCALayer::LayerTypePageTiledBackingLayer;
+        m_isPageTiledBackingLayer = true;
     }
 
     m_layer = PlatformCALayer::create(layerType, this);
@@ -1035,7 +1035,7 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
 
     commitLayerChangesAfterSublayers();
 
-    if (affectedByTransformAnimation && client() && m_layer->layerType() == PlatformCALayer::LayerTypeTileCacheLayer)
+    if (affectedByTransformAnimation && client() && m_layer->layerType() == PlatformCALayer::LayerTypeTiledBackingLayer)
         client()->notifyFlushBeforeDisplayRefresh(this);
 
     if (hadChanges && client())
@@ -1044,9 +1044,9 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
 
 bool GraphicsLayerCA::platformCALayerShowRepaintCounter(PlatformCALayer* platformLayer) const
 {
-    // The repaint counters are painted into the TileCache tiles (which have no corresponding platform layer),
-    // so we don't want to overpaint the repaint counter when called with the TileCache's own layer.
-    if (m_isPageTileCacheLayer && platformLayer)
+    // The repaint counters are painted into the TileController tiles (which have no corresponding platform layer),
+    // so we don't want to overpaint the repaint counter when called with the TileController's own layer.
+    if (m_isPageTiledBackingLayer && platformLayer)
         return false;
     
     return isShowingRepaintCounter();
@@ -1059,7 +1059,7 @@ void GraphicsLayerCA::platformCALayerPaintContents(GraphicsContext& context, con
 
 void GraphicsLayerCA::platformCALayerDidCreateTiles(const Vector<FloatRect>& dirtyRects)
 {
-    ASSERT(m_layer->usesTileCacheLayer());
+    ASSERT(m_layer->usesTiledBackingLayer());
 
     for (size_t i = 0; i < dirtyRects.size(); ++i)
         setNeedsDisplayInRect(dirtyRects[i]);
@@ -1614,11 +1614,11 @@ FloatRect GraphicsLayerCA::adjustTiledLayerVisibleRect(TiledBacking* tiledBackin
 
 void GraphicsLayerCA::updateVisibleRect(const FloatRect& oldVisibleRect)
 {
-    if (!m_layer->usesTileCacheLayer())
+    if (!m_layer->usesTiledBackingLayer())
         return;
 
     FloatRect tileArea = m_visibleRect;
-    if (m_layer->layerType() == PlatformCALayer::LayerTypeTileCacheLayer)
+    if (m_layer->layerType() == PlatformCALayer::LayerTypeTiledBackingLayer)
         tileArea = adjustTiledLayerVisibleRect(tiledBacking(), oldVisibleRect, m_sizeAtLastVisibleRectUpdate);
 
     tiledBacking()->setVisibleRect(tileArea);
@@ -2560,7 +2560,7 @@ void GraphicsLayerCA::setDebugBackgroundColor(const Color& color)
 
 void GraphicsLayerCA::getDebugBorderInfo(Color& color, float& width) const
 {
-    if (m_isPageTileCacheLayer) {
+    if (m_isPageTiledBackingLayer) {
         color = Color(0, 0, 128, 128); // tile cache layer: dark blue
         width = 0.5;
         return;
@@ -2633,7 +2633,7 @@ FloatSize GraphicsLayerCA::constrainedSize() const
 
 bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const
 {
-    if (!m_drawsContent || !m_allowTiledLayer || m_isPageTileCacheLayer)
+    if (!m_drawsContent || !m_allowTiledLayer || m_isPageTiledBackingLayer)
         return false;
 
     // FIXME: catch zero-size height or width here (or earlier)?
@@ -2642,11 +2642,11 @@ bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const
 
 void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
 {
-    ASSERT(m_layer->layerType() != PlatformCALayer::LayerTypePageTileCacheLayer);
+    ASSERT(m_layer->layerType() != PlatformCALayer::LayerTypePageTiledBackingLayer);
     ASSERT(useTiledLayer != m_usingTiledLayer);
     RefPtr<PlatformCALayer> oldLayer = m_layer;
     
-    m_layer = PlatformCALayer::create(useTiledLayer ? PlatformCALayer::LayerTypeTileCacheLayer : PlatformCALayer::LayerTypeWebLayer, this);
+    m_layer = PlatformCALayer::create(useTiledLayer ? PlatformCALayer::LayerTypeTiledBackingLayer : PlatformCALayer::LayerTypeWebLayer, this);
     m_usingTiledLayer = useTiledLayer;
     
     m_layer->adoptSublayers(oldLayer.get());

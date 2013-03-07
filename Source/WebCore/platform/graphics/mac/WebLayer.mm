@@ -133,7 +133,7 @@ void drawLayerContents(CGContextRef context, CALayer *layer, WebCore::PlatformCA
     // for the Web Inspector feeding this information through the LayerTreeAgent. 
     int repaintCount = layerContents->platformCALayerIncrementRepaintCount();
 
-    if (!platformLayer->usesTileCacheLayer() && layerContents && layerContents->platformCALayerShowRepaintCounter(platformLayer)) {
+    if (!platformLayer->usesTiledBackingLayer() && layerContents && layerContents->platformCALayerShowRepaintCounter(platformLayer)) {
         bool isTiledLayer = [layer isKindOfClass:[CATiledLayer class]];
 
         char text[16]; // that's a lot of repaints

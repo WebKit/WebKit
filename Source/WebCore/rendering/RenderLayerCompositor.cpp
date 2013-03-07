@@ -1236,13 +1236,13 @@ void RenderLayerCompositor::frameViewDidLayout()
 {
     RenderLayerBacking* renderViewBacking = m_renderView->layer()->backing();
     if (renderViewBacking)
-        renderViewBacking->adjustTileCacheCoverage();
+        renderViewBacking->adjustTiledBackingCoverage();
 }
 
 void RenderLayerCompositor::rootFixedBackgroundsChanged()
 {
     RenderLayerBacking* renderViewBacking = m_renderView->layer()->backing();
-    if (renderViewBacking && renderViewBacking->usingTileCache())
+    if (renderViewBacking && renderViewBacking->usingTiledBacking())
         setCompositingLayersNeedRebuild();
 }
 
@@ -2273,7 +2273,7 @@ void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, Gr
 bool RenderLayerCompositor::supportsFixedRootBackgroundCompositing() const
 {
     RenderLayerBacking* renderViewBacking = m_renderView->layer()->backing();
-    return renderViewBacking && renderViewBacking->usingTileCache();
+    return renderViewBacking && renderViewBacking->usingTiledBacking();
 }
 
 bool RenderLayerCompositor::needsFixedRootBackgroundLayer(const RenderLayer* layer) const

@@ -145,7 +145,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
                 tiledBacking->setUnparentsOffscreenTiles(true);
 
             tiledBacking->setScrollingPerformanceLoggingEnabled(frame->settings() && frame->settings()->scrollingPerformanceLoggingEnabled());
-            adjustTileCacheCoverage();
+            adjustTiledBackingCoverage();
         }
     }
 }
@@ -184,7 +184,7 @@ PassOwnPtr<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const String& 
     return graphicsLayer.release();
 }
 
-bool RenderLayerBacking::shouldUseTileCache(const GraphicsLayer*) const
+bool RenderLayerBacking::shouldUseTiledBacking(const GraphicsLayer*) const
 {
     return m_usingTiledCacheLayer && m_creatingPrimaryGraphicsLayer;
 }
@@ -194,7 +194,7 @@ TiledBacking* RenderLayerBacking::tiledBacking() const
     return m_graphicsLayer->tiledBacking();
 }
 
-void RenderLayerBacking::adjustTileCacheCoverage()
+void RenderLayerBacking::adjustTiledBackingCoverage()
 {
     if (!m_usingTiledCacheLayer)
         return;
@@ -274,7 +274,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
 #endif
     
     // The call to createGraphicsLayer ends calling back into here as
-    // a GraphicsLayerClient to ask if it shouldUseTileCache(). We only want
+    // a GraphicsLayerClient to ask if it shouldUseTiledBacking(). We only want
     // the tile cache on our main layer. This is pretty ugly, but saves us from
     // exposing the API to all clients.
 
@@ -283,7 +283,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     m_creatingPrimaryGraphicsLayer = false;
 
     if (m_usingTiledCacheLayer)
-        m_childContainmentLayer = createGraphicsLayer("TileCache Flattening Layer");
+        m_childContainmentLayer = createGraphicsLayer("TiledBacking Flattening Layer");
 
     if (m_isMainFrameRenderViewLayer) {
         m_graphicsLayer->setContentsOpaque(true);

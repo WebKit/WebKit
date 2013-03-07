@@ -34,7 +34,7 @@
 #include "ScrollingTree.h"
 #include "ScrollingStateTree.h"
 #include "Settings.h"
-#include "TileCache.h"
+#include "TileController.h"
 #include "WebTileLayer.h"
 
 #include <wtf/CurrentTime.h>
@@ -382,7 +382,7 @@ void ScrollingTreeScrollingNodeMac::logExposedUnfilledArea()
     }
 
     IntPoint scrollPosition = this->scrollPosition();
-    unsigned unfilledArea = TileCache::blankPixelCountForTiles(tiles, viewportRect(), IntPoint(-scrollPosition.x(), -scrollPosition.y()));
+    unsigned unfilledArea = TileController::blankPixelCountForTiles(tiles, viewportRect(), IntPoint(-scrollPosition.x(), -scrollPosition.y()));
 
     if (unfilledArea || m_lastScrollHadUnfilledPixels)
         WTFLogAlways("SCROLLING: Exposed tileless area. Time: %f Unfilled Pixels: %u\n", WTF::monotonicallyIncreasingTime(), unfilledArea);

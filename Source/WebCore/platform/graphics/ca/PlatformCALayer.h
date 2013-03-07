@@ -59,8 +59,8 @@ public:
         LayerTypeWebLayer,
         LayerTypeTransformLayer,
         LayerTypeWebTiledLayer,
-        LayerTypeTileCacheLayer,
-        LayerTypePageTileCacheLayer,
+        LayerTypeTiledBackingLayer,
+        LayerTypePageTiledBackingLayer,
         LayerTypeRootLayer,
         LayerTypeCustom
     };
@@ -81,9 +81,9 @@ public:
     PlatformLayer* platformLayer() const;
 
 #if PLATFORM(WIN)
-    bool usesTileCacheLayer() const { return false; }
+    bool usesTiledBackingLayer() const { return false; }
 #else
-    bool usesTileCacheLayer() const { return m_layerType == LayerTypePageTileCacheLayer || m_layerType == LayerTypeTileCacheLayer; }
+    bool usesTiledBackingLayer() const { return m_layerType == LayerTypePageTiledBackingLayer || m_layerType == LayerTypeTiledBackingLayer; }
 #endif
 
     PlatformCALayer* rootLayer() const;

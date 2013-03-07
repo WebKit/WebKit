@@ -425,7 +425,7 @@ private:
     
     ContentsLayerPurpose m_contentsLayerPurpose;
     bool m_allowTiledLayer : 1;
-    bool m_isPageTileCacheLayer : 1;
+    bool m_isPageTiledBackingLayer : 1;
     
     Color m_contentsSolidColor;
 

@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TileCache_h
-#define TileCache_h
+#ifndef TileController_h
+#define TileController_h
 
 #include "FloatRect.h"
 #include "IntPointHash.h"
@@ -38,7 +38,7 @@
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS CALayer;
-OBJC_CLASS WebTileCacheLayer;
+OBJC_CLASS WebTiledBackingLayer;
 OBJC_CLASS WebTileLayer;
 OBJC_CLASS WebTiledScrollingIndicatorLayer;
 
@@ -50,12 +50,12 @@ class IntRect;
 
 typedef Vector<RetainPtr<WebTileLayer> > WebTileLayerList;
 
-class TileCache : public TiledBacking {
-    WTF_MAKE_NONCOPYABLE(TileCache);
+class TileController : public TiledBacking {
+    WTF_MAKE_NONCOPYABLE(TileController);
 
 public:
-    static PassOwnPtr<TileCache> create(WebTileCacheLayer*);
-    ~TileCache();
+    static PassOwnPtr<TileController> create(WebTiledBackingLayer*);
+    ~TileController();
 
     void tileCacheLayerBoundsChanged();
 
@@ -103,7 +103,7 @@ public:
     };
 
 private:
-    TileCache(WebTileCacheLayer*);
+    TileController(WebTiledBackingLayer*);
 
     // TiledBacking member functions.
     virtual void setVisibleRect(const FloatRect&) OVERRIDE;
@@ -135,10 +135,10 @@ private:
     IntSize tileSizeForCoverageRect(const FloatRect&) const;
 
     void scheduleTileRevalidation(double interval);
-    void tileRevalidationTimerFired(Timer<TileCache>*);
+    void tileRevalidationTimerFired(Timer<TileController>*);
 
     void scheduleCohortRemoval();
-    void cohortRemovalTimerFired(Timer<TileCache>*);
+    void cohortRemovalTimerFired(Timer<TileController>*);
     
     typedef unsigned TileValidationPolicyFlags;
 
@@ -164,7 +164,7 @@ private:
     bool shouldShowRepaintCounters() const;
     void drawRepaintCounter(WebTileLayer *, CGContextRef);
 
-    WebTileCacheLayer* m_tileCacheLayer;
+    WebTiledBackingLayer* m_tileCacheLayer;
     RetainPtr<CALayer> m_tileContainerLayer;
     RetainPtr<WebTiledScrollingIndicatorLayer> m_tiledScrollingIndicatorLayer; // Used for coverage visualization.
 
@@ -175,8 +175,8 @@ private:
 
     typedef HashMap<TileIndex, TileInfo> TileMap;
     TileMap m_tiles;
-    Timer<TileCache> m_tileRevalidationTimer;
-    Timer<TileCache> m_cohortRemovalTimer;
+    Timer<TileController> m_tileRevalidationTimer;
+    Timer<TileController> m_cohortRemovalTimer;
 
     struct TileCohortInfo {
         TileCohort cohort;
@@ -210,4 +210,4 @@ private:
 
 } // namespace WebCore
 
-#endif // TileCache_h
+#endif // TileController_h

@@ -24,15 +24,15 @@
  */
 
 #import "config.h"
-#import "WebTileCacheLayer.h"
+#import "WebTiledBackingLayer.h"
 
 #import "IntRect.h"
-#import "TileCache.h"
+#import "TileController.h"
 #import <wtf/MainThread.h>
 
 using namespace WebCore;
 
-@implementation WebTileCacheLayer
+@implementation WebTiledBackingLayer
 
 - (id)init
 {
@@ -40,16 +40,16 @@ using namespace WebCore;
     if (!self)
         return nil;
 
-    _tileCache = TileCache::create(self);
+    _tileController = TileController::create(self);
 #ifndef NDEBUG
-    [self setName:@"WebTileCacheLayer"];
+    [self setName:@"WebTiledBackingLayer"];
 #endif
     return self;
 }
 
 - (void)dealloc
 {
-    ASSERT(!_tileCache);
+    ASSERT(!_tileController);
 
     [super dealloc];
 }
@@ -74,70 +74,70 @@ using namespace WebCore;
 {
     [super setBounds:bounds];
 
-    _tileCache->tileCacheLayerBoundsChanged();
+    _tileController->tileCacheLayerBoundsChanged();
 }
 
 - (void)setOpaque:(BOOL)opaque
 {
-    _tileCache->setTilesOpaque(opaque);
+    _tileController->setTilesOpaque(opaque);
 }
 
 - (BOOL)isOpaque
 {
-    return _tileCache->tilesAreOpaque();
+    return _tileController->tilesAreOpaque();
 }
 
 - (void)setNeedsDisplay
 {
-    _tileCache->setNeedsDisplay();
+    _tileController->setNeedsDisplay();
 }
 
 - (void)setNeedsDisplayInRect:(CGRect)rect
 {
-    _tileCache->setNeedsDisplayInRect(enclosingIntRect(rect));
+    _tileController->setNeedsDisplayInRect(enclosingIntRect(rect));
 }
 
 - (void)setAcceleratesDrawing:(BOOL)acceleratesDrawing
 {
-    _tileCache->setAcceleratesDrawing(acceleratesDrawing);
+    _tileController->setAcceleratesDrawing(acceleratesDrawing);
 }
 
 - (BOOL)acceleratesDrawing
 {
-    return _tileCache->acceleratesDrawing();
+    return _tileController->acceleratesDrawing();
 }
 
 - (void)setContentsScale:(CGFloat)contentsScale
 {
-    _tileCache->setScale(contentsScale);
+    _tileController->setScale(contentsScale);
 }
 
 - (CALayer *)tileContainerLayer
 {
-    return _tileCache->tileContainerLayer();
+    return _tileController->tileContainerLayer();
 }
 
 - (WebCore::TiledBacking*)tiledBacking
 {
-    return _tileCache.get();
+    return _tileController.get();
 }
 
 - (void)invalidate
 {
     ASSERT(isMainThread());
-    ASSERT(_tileCache);
-    _tileCache = nullptr;
+    ASSERT(_tileController);
+    _tileController = nullptr;
 }
 
 - (void)setBorderColor:(CGColorRef)borderColor
 {
-    _tileCache->setTileDebugBorderColor(borderColor);
+    _tileController->setTileDebugBorderColor(borderColor);
 }
 
 - (void)setBorderWidth:(CGFloat)borderWidth
 {
     // Tiles adjoin, so halve the border width.
-    _tileCache->setTileDebugBorderWidth(borderWidth / 2);
+    _tileController->setTileDebugBorderWidth(borderWidth / 2);
 }
 
 @end
