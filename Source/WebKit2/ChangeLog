@@ -1,5 +1,25 @@
 2013-03-06  Tim Horton  <timothy_horton@apple.com>
 
+        [wk2] Page overlays shouldn't dirty the entire layer when flushing if the main frame can't scroll
+        https://bugs.webkit.org/show_bug.cgi?id=111662
+        <rdar://problem/13355808>
+
+        Reviewed by Simon Fraser.
+
+        Instead of setNeedsDisplay()ing the whole page overlay layer every time through
+        TCADA::flushLayers, do it at scroll time instead. Repainting on scroll is
+        necessary to keep things painted in the right place when we scroll (the overlay
+        is fixed to the size of the view), but is quite wasteful in apps that don’t scroll.
+
+        This works with threaded scrolling because overlay installation forces us
+        into main-thread scrolling mode.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::scroll):
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+
+2013-03-06  Tim Horton  <timothy_horton@apple.com>
+
         [wk2] Page overlays should use the accelerated drawing setting instead of hardcoding it on
         https://bugs.webkit.org/show_bug.cgi?id=111654
         <rdar://problem/13364085>
