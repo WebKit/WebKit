@@ -78,10 +78,10 @@ public:
 
 private:
     StyleRule* m_rule;
-    unsigned m_selectorIndex : 12;
+    unsigned m_selectorIndex : 13;
     // This number was picked fairly arbitrarily. We can probably lower it if we need to.
     // Some simple testing showed <100,000 RuleData's on large sites.
-    unsigned m_position : 19;
+    unsigned m_position : 18;
     unsigned m_hasFastCheckableSelector : 1;
     unsigned m_specificity : 24;
     unsigned m_hasMultipartSelector : 1;
