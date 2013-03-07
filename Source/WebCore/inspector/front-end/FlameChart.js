@@ -43,13 +43,14 @@ WebInspector.FlameChart = function(cpuProfileView)
     this._cpuProfileView = cpuProfileView;
     this._xScaleFactor = 0.0;
     this._yScaleFactor = 10;
-    this._minWidth = 3;
+    this._minWidth = 0;
     this.element.onmousemove = this._onMouseMove.bind(this);
     this.element.onclick = this._onClick.bind(this);
     this._popoverHelper = new WebInspector.PopoverHelper(this.element, this._getPopoverAnchor.bind(this), this._showPopover.bind(this));
     this._anchorElement = this.element.createChild("span");
     this._anchorElement.className = "item-anchor";
     this._linkifier = new WebInspector.Linkifier();
+    this._colorIndexes = { };
 }
 
 WebInspector.FlameChart.Events = {
@@ -137,25 +138,10 @@ WebInspector.FlameChart.prototype = {
      */
     _rootNodes: function()
     {
-        if (this._rootNodesArray)
-            return this._rootNodesArray.slice();
-
-        var profileHead = this._cpuProfileView.profileHead;
-        if (!profileHead)
+        if (!this._cpuProfileView.profileHead)
             return null;
-        var totalTime = 0;
-        var nodes = [];
-        for (var i = 0; i < profileHead.children.length; ++i) {
-            var node = profileHead.children[i];
-            if (node.functionName === "(program)" || node.functionName === "(idle)")
-                continue;
-            totalTime += node.totalTime;
-            nodes.push(node);
-        }
-
-        this._rootNodesArray = nodes;
-        this._totalTime = totalTime;
-        return nodes.slice();
+        this._totalTime = this._cpuProfileView.profileHead.totalTime;
+        return this._cpuProfileView.profileHead.children.slice();
     },
 
     /**
@@ -167,9 +153,8 @@ WebInspector.FlameChart.prototype = {
         if (!this._rootNodes())
             return;
 
-        var margin = 0;
-        this._canvas.height = height - margin;
-        this._canvas.width = width - margin;
+        this._canvas.height = height;
+        this._canvas.width = width;
 
         this._xScaleFactor = width / this._totalTime;
         this._colorIndex = 0;
@@ -186,8 +171,15 @@ WebInspector.FlameChart.prototype = {
      */
     _drawNode: function(offset, level, node)
     {
-        ++this._colorIndex;
-        var hue = (this._colorIndex * 2 + 11 * (this._colorIndex % 2)) % 360;
+        var colorIndex = node.colorIndex;
+        if (!colorIndex) {
+            var functionUID = node.functionName + ":" + node.url + ":" + node.lineNumber;
+            colorIndex = this._colorIndexes[functionUID];
+            if (!colorIndex)
+                this._colorIndexes[functionUID] = colorIndex = ++this._colorIndex;
+            node.colorIndex = colorIndex;
+        }
+        var hue = (colorIndex * 5 + 11 * (colorIndex % 2)) % 360;
         var lightness = this._highlightedNode === node ? 33 : 67;
         var color = "hsl(" + hue + ", 100%, " + lightness + "%)";
         this._drawBar(this._context, offset, level, node, color);
@@ -229,7 +221,7 @@ WebInspector.FlameChart.prototype = {
      * @param {!ProfilerAgent.CPUProfileNode} node
      * @param {!string} hslColor
      */
-    _drawBar: function(context, offset, level, node, hslColor)
+    _drawBar: function(context, offset, level, node, color)
     {
         var width = node.totalTime * this._xScaleFactor;
         var height = this._yScaleFactor;
@@ -237,7 +229,7 @@ WebInspector.FlameChart.prototype = {
         var y = this._canvas.height - level * this._yScaleFactor - height;
         context.beginPath();
         context.rect(x, y, width - 1, height - 1);
-        context.fillStyle = hslColor;
+        context.fillStyle = color;
         context.fill();
     },
 
