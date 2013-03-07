@@ -156,6 +156,7 @@ public:
     bool parseAnimationShorthand(bool important);
 
     bool cssGridLayoutEnabled() const;
+    bool parseGridItemPositionShorthand(CSSPropertyID, bool important);
     bool parseGridTrackList(CSSPropertyID, bool important);
     bool parseGridTrackGroup(CSSValueList*);
     bool parseGridTrackMinMax(CSSValueList*);

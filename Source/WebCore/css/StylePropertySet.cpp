@@ -168,6 +168,10 @@ String StylePropertySet::getPropertyValue(CSSPropertyID propertyID) const
         return getShorthandValue(webkitFlexShorthand());
     case CSSPropertyWebkitFlexFlow:
         return getShorthandValue(webkitFlexFlowShorthand());
+    case CSSPropertyWebkitGridColumn:
+        return getShorthandValue(webkitGridColumnShorthand());
+    case CSSPropertyWebkitGridRow:
+        return getShorthandValue(webkitGridRowShorthand());
     case CSSPropertyFont:
         return fontValue();
     case CSSPropertyMargin:

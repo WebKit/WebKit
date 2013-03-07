@@ -91,6 +91,8 @@ const StylePropertyShorthand& webkitColumnsShorthand();
 const StylePropertyShorthand& webkitColumnRuleShorthand();
 const StylePropertyShorthand& webkitFlexFlowShorthand();
 const StylePropertyShorthand& webkitFlexShorthand();
+const StylePropertyShorthand& webkitGridColumnShorthand();
+const StylePropertyShorthand& webkitGridRowShorthand();
 const StylePropertyShorthand& webkitMarginCollapseShorthand();
 const StylePropertyShorthand& webkitMarqueeShorthand();
 const StylePropertyShorthand& webkitMaskShorthand();

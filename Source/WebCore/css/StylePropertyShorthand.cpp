@@ -365,6 +365,28 @@ const StylePropertyShorthand& webkitMarginCollapseShorthand()
     return webkitMarginCollapseLonghands;
 }
 
+const StylePropertyShorthand& webkitGridColumnShorthand()
+{
+    static const CSSPropertyID webkitGridColumnProperties[] = {
+        CSSPropertyWebkitGridStart,
+        CSSPropertyWebkitGridEnd
+    };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitGridColumnLonghands, (webkitGridColumnProperties, WTF_ARRAY_LENGTH(webkitGridColumnProperties)));
+    return webkitGridColumnLonghands;
+
+}
+
+const StylePropertyShorthand& webkitGridRowShorthand()
+{
+    static const CSSPropertyID webkitGridRowProperties[] = {
+        CSSPropertyWebkitGridBefore,
+        CSSPropertyWebkitGridAfter
+    };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, webkitGridRowLonghands, (webkitGridRowProperties, WTF_ARRAY_LENGTH(webkitGridRowProperties)));
+    return webkitGridRowLonghands;
+
+}
+
 const StylePropertyShorthand& webkitMarqueeShorthand()
 {
     static const CSSPropertyID marqueeProperties[] = {
@@ -527,6 +549,10 @@ const StylePropertyShorthand& shorthandForProperty(CSSPropertyID propertyID)
         return webkitFlexShorthand();
     case CSSPropertyWebkitFlexFlow:
         return webkitFlexFlowShorthand();
+    case CSSPropertyWebkitGridColumn:
+        return webkitGridColumnShorthand();
+    case CSSPropertyWebkitGridRow:
+        return webkitGridRowShorthand();
     case CSSPropertyWebkitMarginCollapse:
         return webkitMarginCollapseShorthand();
     case CSSPropertyWebkitMarquee:

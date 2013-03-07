@@ -3127,6 +3127,8 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitColumnRule:
     case CSSPropertyWebkitFlex:
     case CSSPropertyWebkitFlexFlow:
+    case CSSPropertyWebkitGridColumn:
+    case CSSPropertyWebkitGridRow:
     case CSSPropertyWebkitMarginCollapse:
     case CSSPropertyWebkitMarquee:
     case CSSPropertyWebkitMask:
@@ -3556,9 +3558,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
 
-    case CSSPropertyWebkitGridStart:
-    // FIXME: This is wrong as the property should be a shorthand.
-    case CSSPropertyWebkitGridColumn: {
+    case CSSPropertyWebkitGridStart: {
         GridPosition startPosition;
         if (!createGridPosition(value, startPosition))
             return;
@@ -3573,9 +3573,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
 
-    case CSSPropertyWebkitGridBefore:
-    // FIXME: This is wrong as the property should be a shorthand.
-    case CSSPropertyWebkitGridRow: {
+    case CSSPropertyWebkitGridBefore: {
         GridPosition beforePosition;
         if (!createGridPosition(value, beforePosition))
             return;
