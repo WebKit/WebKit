@@ -43,6 +43,8 @@ public:
     virtual bool needsPreferredWidthsRecalculation() const;
     virtual RenderBox* embeddedContentBox() const;
 
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
+
 protected:
 #if USE(ACCELERATED_COMPOSITING)
     virtual bool requiresLayer() const;

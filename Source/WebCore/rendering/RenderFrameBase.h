@@ -36,7 +36,6 @@ protected:
     explicit RenderFrameBase(Element*);
 
 public:
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
     void layoutWithFlattening(bool fixedWidth, bool fixedHeight);
 };
 

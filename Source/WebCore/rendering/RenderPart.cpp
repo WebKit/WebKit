@@ -28,7 +28,9 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLFrameElementBase.h"
+#include "HitTestResult.h"
 #include "PluginViewBase.h"
+#include "RenderLayer.h"
 #include "RenderSVGRoot.h"
 #include "RenderView.h"
 
@@ -106,6 +108,44 @@ RenderBox* RenderPart::embeddedContentBox() const
     if (!node() || !widget() || !widget()->isFrameView())
         return 0;
     return static_cast<FrameView*>(widget())->embeddedContentBox();
+}
+
+bool RenderPart::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
+{
+    if (!widget() || !widget()->isFrameView() || !request.allowsChildFrameContent())
+        return RenderWidget::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, action);
+
+    FrameView* childFrameView = static_cast<FrameView*>(widget());
+    RenderView* childRoot = childFrameView->renderView();
+
+    if (childRoot) {
+        LayoutPoint adjustedLocation = accumulatedOffset + location();
+        LayoutPoint contentOffset = LayoutPoint(borderLeft() + paddingLeft(), borderTop() + paddingTop()) - childFrameView->scrollOffset();
+        HitTestLocation newHitTestLocation(locationInContainer, -adjustedLocation - contentOffset);
+        HitTestRequest newHitTestRequest(request.type() | HitTestRequest::ChildFrameHitTest);
+        HitTestResult childFrameResult(newHitTestLocation);
+
+        bool isInsideChildFrame = childRoot->hitTest(newHitTestRequest, newHitTestLocation, childFrameResult);
+
+        if (newHitTestLocation.isRectBasedTest())
+            result.append(childFrameResult);
+        else if (isInsideChildFrame)
+            result = childFrameResult;
+
+        if (isInsideChildFrame)
+            return true;
+
+        if (request.allowsFrameScrollbars()) {
+            // ScrollView scrollbars are not the same as RenderLayer scrollbars tested by RenderLayer::hitTestOverflowControls,
+            // so we need to test ScrollView scrollbars separately here.
+            // FIXME: Consider if this test could be done unconditionally.
+            Scrollbar* frameScrollbar = childFrameView->scrollbarAtPoint(newHitTestLocation.roundedPoint());
+            if (frameScrollbar)
+                result.setScrollbar(frameScrollbar);
+        }
+    }
+
+    return RenderWidget::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, action);
 }
 
 }

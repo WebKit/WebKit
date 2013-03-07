@@ -94,6 +94,23 @@ function checkRect(left, top, width, height, expectedNodeString, doc)
     }
 }
 
+function checkPoint(left, top, expectedNodeString, doc)
+{
+    if (!window.internals)
+        return;
+
+    if (!doc)
+        doc = document;
+
+    var nodeString = nodesFromRectAsString(doc, left, top, 0, 0, 0, 0);
+
+    if (nodeString == expectedNodeString) {
+        testPassed("Correct node found for point");
+    } else {
+        testFailed("NodesFromRect should be [" + expectedNodeString + "] was [" + nodeString + "]");
+    }
+}
+
 function nodesFromRectAsString(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding)
 {
     var nodeString = "";
