@@ -60,12 +60,58 @@ WebInspector.AceTextEditor = function(url, delegate)
     this._aceEditor.setHighlightActiveLine(false);
     this._aceEditor.session.setUseWorker(false);
     this.registerRequiredCSS("ace/acedevtools.css");
+    this._attributes = [];
 }
 
 WebInspector.AceTextEditor.prototype = {
 
+    _updateBreakpoints: function()
+    {
+        this._aceEditor.session.clearBreakpoints();
+        for(var i in this._attributes) {
+            var breakpoint = this.getAttribute(i, "ace_breakpoint");
+            if (!breakpoint)
+                continue;
+            var className = breakpoint.conditional ? "webkit-breakpoint-conditional" : "webkit-breakpoint";
+            if (breakpoint.disabled) className += " webkit-breakpoint-disabled";
+            this._aceEditor.session.setBreakpoint(i, className);
+        }
+    },
+
+    _updateLineAttributes: function(delta) {
+        var range = delta.range;
+        var length, insertionIndex;
+
+        if (range.end.row === range.start.row)
+            return;
+
+        if (delta.action === "insertText") {
+            length = range.end.row - range.start.row;
+            insertionIndex = range.start.column === 0 ? range.start.row: range.start.row + 1;
+        } else if (delta.action === "insertLines") {
+            length = range.end.row - range.start.row;
+            insertionIndex = range.start.row;
+        } else if (delta.action === "removeText") {
+            length = range.start.row - range.end.row;
+            insertionIndex = range.start.row;
+        } else if (delta.action === "removeLines") {
+            length = range.start.row - range.end.row;
+            insertionIndex = range.start.row;
+        }
+
+        if (length > 0) {
+            var spliceArguments = new Array(length);
+            spliceArguments.unshift(insertionIndex, 0);
+            Array.prototype.splice.apply(this._attributes, spliceArguments);
+        } else if (length < 0) {
+            this._attributes.splice(insertionIndex, -length);
+        }
+        this._updateBreakpoints();
+    },
+
     _onTextChange: function(event)
     {
+        this._updateLineAttributes(event.data);
         this._delegate.onTextChanged(null, null);
     },
 
@@ -163,7 +209,11 @@ WebInspector.AceTextEditor.prototype = {
      */
     addBreakpoint: function(lineNumber, disabled, conditional)
     {
-        this._aceEditor.getSession().setBreakpoint(lineNumber, "webkit-breakpoint");
+        this.setAttribute(lineNumber, "ace_breakpoint", {
+            disabled: disabled,
+            conditional: conditional
+        });
+        this._updateBreakpoints();
     },
 
     /**
@@ -171,7 +221,8 @@ WebInspector.AceTextEditor.prototype = {
      */
     removeBreakpoint: function(lineNumber)
     {
-        this._aceEditor.getSession().clearBreakpoint(lineNumber);
+        this.removeAttribute(lineNumber, "ace_breakpoint");
+        this._updateBreakpoints();
     },
 
     /**
@@ -346,21 +397,27 @@ WebInspector.AceTextEditor.prototype = {
     /**
      * @param {number} line
      * @param {string} name
-     * @param {Object?} value
+     * @return {Object|null} value
      */
-    setAttribute: function(line, name, value)
+    getAttribute: function(line, name)
     {
-        console.log("aceEditor.setAttribute not implemented");
+        var attrs = this._attributes[line];
+        return attrs ? attrs[name] : null;
     },
 
     /**
      * @param {number} line
      * @param {string} name
-     * @return {Object|null} value
+     * @param {Object?} value
      */
-    getAttribute: function(line, name)
+    setAttribute: function(line, name, value)
     {
-        console.log("aceEditor.getAttribute not implemented");
+        var attrs = this._attributes[line];
+        if (!attrs) {
+            attrs = {};
+            this._attributes[line] = attrs;
+        }
+        attrs[name] = value;
     },
 
     /**
@@ -369,7 +426,9 @@ WebInspector.AceTextEditor.prototype = {
      */
     removeAttribute: function(line, name)
     {
-        console.log("aceEditor.removeAttribute not implemented");
+        var attrs = this._attributes[line];
+        if (attrs)
+            delete attrs[name];
     },
 
     wasShown: function() { },
