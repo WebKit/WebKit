@@ -53,7 +53,6 @@
 #include "WebRange.h"
 #include "WebScreenInfo.h"
 #include "WebSerializedScriptValue.h"
-#include "WebStorageNamespace.h"
 #include "WebUserGestureIndicator.h"
 #include "WebView.h"
 #include "WebWindowFeatures.h"
@@ -67,6 +66,7 @@
 #include <public/WebDragData.h>
 #include <public/WebRect.h>
 #include <public/WebSize.h>
+#include <public/WebStorageNamespace.h>
 #include <public/WebThread.h>
 #include <public/WebURLRequest.h>
 #include <public/WebURLResponse.h>

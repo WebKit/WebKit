@@ -1,3 +1,16 @@
+2013-03-07  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Update #include for WebStorageNamespace.h
+        https://bugs.webkit.org/show_bug.cgi?id=111748
+
+        Reviewed by Adam Barth.
+
+        In anticipation of removing
+        WK/chromium/public/WebStorageNamespace.h (once downstream
+        references have been updated)
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+
 2013-03-07  Dirk Pranke  <dpranke@chromium.org>
 
         run-perf-tests fails due to svn_revision not working on a pure git clone
