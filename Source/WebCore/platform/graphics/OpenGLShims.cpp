@@ -84,6 +84,8 @@ static void* lookupOpenGLFunctionAddress(const char* functionName, bool* success
     fullFunctionName = functionName;
     fullFunctionName.append("ANGLE");
     target = getProcAddress(fullFunctionName.utf8().data());
+    if (target)
+        return target;
 
     fullFunctionName = functionName;
     fullFunctionName.append("APPLE");
