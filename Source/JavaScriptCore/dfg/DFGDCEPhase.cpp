@@ -159,9 +159,8 @@ private:
             Edge edge = node->children.child(i);
             if (!edge)
                 continue;
-            if (edge.needsCheck())
-                continue;
-            node->children.removeEdgeFromBag(i--);
+            if (edge.isProved() || edge.useKind() == UntypedUse)
+                node->children.removeEdgeFromBag(i--);
         }
     }
     

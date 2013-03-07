@@ -1,5 +1,20 @@
 2013-03-07  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should not get corrupted IR in the case of code that is dead, unreachable, and contains a chain of nodes that use each other in an untyped way
+        https://bugs.webkit.org/show_bug.cgi?id=111783
+
+        Reviewed by Mark Hahnenberg.
+        
+        Unreachable code is not touched by CFA and so thinks that even untyped uses are checked.
+        But dead untyped uses don't need checks and hence don't need to be Phantom'd. The DCE knew
+        this in findTypeCheckRoot() but not in eliminateIrrelevantPhantomChildren(), leading to a
+        Phantom node that had another Phantom node as one of its kids.
+
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::eliminateIrrelevantPhantomChildren):
+
+2013-03-07  Filip Pizlo  <fpizlo@apple.com>
+
         The DFG fixpoint is not strictly profitable, and should be straight-lined
         https://bugs.webkit.org/show_bug.cgi?id=111764
 
