@@ -536,7 +536,7 @@
     -webkit-box-pack: center;
 }
 
-.sidebar-pane.composite .sidebar-pane-toolbar {
+.sidebar-pane.composite .metrics-and-computed .sidebar-pane-toolbar {
     margin-top: 4px;
     margin-bottom: -4px;
     position: relative;
