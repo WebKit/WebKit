@@ -1418,6 +1418,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\API\JSAPIWrapperObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\API\JSAPIWrapperObject.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\API\JSBase.cpp"
 				>
 			</File>

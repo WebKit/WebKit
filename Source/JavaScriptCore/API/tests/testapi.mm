@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "JavaScriptCore.h"
+#import <JavaScriptCore/JavaScriptCore.h>
+
+void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 
 extern "C" bool _Block_has_signature(id);
 extern "C" const char * _Block_signature(id);
@@ -101,6 +103,8 @@ bool testXYZTested = false;
 @protocol TextXYZ <JSExport>
 @property int x;
 @property (readonly) int y;
+@property JSValue *onclick;
+@property JSValue *weakOnclick;
 - (void)test:(NSString *)message;
 @end
 
@@ -108,15 +112,44 @@ bool testXYZTested = false;
 @property int x;
 @property int y;
 @property int z;
+- (void)click;
 @end
 
-@implementation TextXYZ
+@implementation TextXYZ {
+    JSManagedValue *m_weakOnclickHandler;
+    JSManagedValue *m_onclickHandler;
+}
 @synthesize x;
 @synthesize y;
 @synthesize z;
 - (void)test:(NSString *)message
 {
     testXYZTested = [message isEqual:@"test"] && x == 13 & y == 4 && z == 5;
+}
+- (void)setWeakOnclick:(JSValue *)value
+{
+    m_weakOnclickHandler = [JSManagedValue managedValueWithValue:value];
+}
+
+- (void)setOnclick:(JSValue *)value
+{
+    m_onclickHandler = [JSManagedValue managedValueWithValue:value owner:self];
+}
+- (JSValue *)weakOnclick
+{
+    return [m_weakOnclickHandler value];
+}
+- (JSValue *)onclick
+{
+    return [m_onclickHandler value];
+}
+- (void)click
+{
+    if (!m_onclickHandler)
+        return;
+
+    JSValue *function = [m_onclickHandler value];
+    [function callWithArguments:[NSArray array]];
 }
 @end
 
@@ -492,6 +525,60 @@ void testObjectiveCAPI()
         context1[@"passValueBetweenContexts"] = value;
         JSValue *result = [context1 evaluateScript:@"passValueBetweenContexts"];
         checkResult(@"[value isEqualToObject:result]", [value isEqualToObject:result]);
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        TextXYZ *testXYZ = [[TextXYZ alloc] init];
+
+        @autoreleasepool {
+            context[@"testXYZ"] = testXYZ;
+
+            [context evaluateScript:@" \
+                didClick = false; \
+                testXYZ.onclick = function() { \
+                    didClick = true; \
+                }; \
+                 \
+                testXYZ.weakOnclick = function() { \
+                    return 'foo'; \
+                }; \
+            "];
+        }
+
+        @autoreleasepool {
+            [testXYZ click];
+            JSValue *result = [context evaluateScript:@"didClick"];
+            checkResult(@"Event handler onclick", [result toBool]);
+        }
+
+        JSSynchronousGarbageCollectForDebugging([context globalContextRef]);
+
+        @autoreleasepool {
+            JSValue *result = [context evaluateScript:@"testXYZ.onclick"];
+            checkResult(@"onclick still around after GC", !([result isNull] || [result isUndefined]));
+        }
+
+
+        @autoreleasepool {
+            JSValue *result = [context evaluateScript:@"testXYZ.weakOnclick"];
+            checkResult(@"weakOnclick not around after GC", [result isNull] || [result isUndefined]);
+        }
+
+        @autoreleasepool {
+            [context evaluateScript:@" \
+                didClick = false; \
+                testXYZ = null; \
+            "];
+        }
+
+        JSSynchronousGarbageCollectForDebugging([context globalContextRef]);
+
+        @autoreleasepool {
+            [testXYZ click];
+            JSValue *result = [context evaluateScript:@"didClick"];
+            checkResult(@"Event handler onclick doesn't fire", ![result toBool]);
+        }
     }
 }
 

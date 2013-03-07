@@ -1,3 +1,105 @@
+2013-03-05  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: Need a good way to reference event handlers without causing cycles
+        https://bugs.webkit.org/show_bug.cgi?id=111088
+
+        Reviewed by Geoffrey Garen.
+
+        JSManagedValue is like a special kind of weak value. When you create a JSManagedValue, you can
+        supply an Objective-C object as its "owner". As long as the Objective-C owner object remains
+        alive and its wrapper remains accessible to the JSC garbage collector (e.g. by being marked by 
+        the global object), the reference to the JavaScript value is strong. As soon as the Objective-C
+        owner is deallocated or its wrapper becomes inaccessible to the garbage collector, the reference
+        becomes weak.
+
+        If you do not supply an owner or you use the weakValueWithValue: convenience class method, the
+        returned JSManagedValue behaves as a normal weak reference.
+
+        This new class allows clients to maintain references to JavaScript values in the Objective-C
+        heap without creating reference cycles/leaking memory.
+
+        * API/JSAPIWrapperObject.cpp: Added.
+        (JSC):
+        (JSC::::createStructure):
+        (JSC::JSAPIWrapperObject::JSAPIWrapperObject): This is a special JSObject for the Objective-C API that knows
+        for the purposes of garbage collection/marking that it wraps an opaque Objective-C object.
+        (JSC::JSAPIWrapperObject::visitChildren): We add the pointer to the wrapped Objective-C object to the set of
+        opaque roots so that the weak handle owner for JSManagedValues can find it later.
+        * API/JSAPIWrapperObject.h: Added.
+        (JSC):
+        (JSAPIWrapperObject):
+        (JSC::JSAPIWrapperObject::wrappedObject):
+        (JSC::JSAPIWrapperObject::setWrappedObject):
+        * API/JSBase.cpp:
+        (JSSynchronousGarbageCollect):
+        * API/JSBasePrivate.h:
+        * API/JSCallbackObject.cpp:
+        (JSC):
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObject::destroy): Moved this to the header so that we don't get link errors with JSAPIWrapperObject.
+        * API/JSContext.mm:
+        (-[JSContext initWithVirtualMachine:]): We weren't adding manually allocated/initialized JSVirtualMachine objects to 
+        the global cache of virtual machines. The init methods handle this now rather than contextWithGlobalContextRef, since 
+        not everyone is guaranteed to use the latter.
+        (-[JSContext initWithGlobalContextRef:]):
+        (+[JSContext contextWithGlobalContextRef:]):
+        * API/JSManagedValue.h: Added.
+        * API/JSManagedValue.mm: Added.
+        (JSManagedValueHandleOwner):
+        (managedValueHandleOwner):
+        (+[JSManagedValue weakValueWithValue:]):
+        (+[JSManagedValue managedValueWithValue:owner:]):
+        (-[JSManagedValue init]): We explicitly call the ARC entrypoints to initialize/get the weak owner field since we don't 
+        use ARC when building our framework.
+        (-[JSManagedValue initWithValue:]):
+        (-[JSManagedValue initWithValue:owner:]):
+        (-[JSManagedValue dealloc]):
+        (-[JSManagedValue value]):
+        (-[JSManagedValue weakOwner]):
+        (JSManagedValueHandleOwner::isReachableFromOpaqueRoots): If the Objective-C owner is still alive (i.e. loading the weak field
+        returns non-nil) and that value was added to the set of opaque roots by the wrapper for that Objective-C owner, then the the 
+        JSObject to which the JSManagedObject refers is still alive.
+        * API/JSObjectRef.cpp: We have to add explicit checks for the JSAPIWrapperObject, just like the other types of JSCallbackObjects.
+        (JSObjectGetPrivate):
+        (JSObjectSetPrivate):
+        (JSObjectGetPrivateProperty):
+        (JSObjectSetPrivateProperty):
+        (JSObjectDeletePrivateProperty):
+        * API/JSValue.mm:
+        (objectToValueWithoutCopy):
+        * API/JSValueRef.cpp:
+        (JSValueIsObjectOfClass):
+        * API/JSVirtualMachine.mm:
+        (-[JSVirtualMachine initWithContextGroupRef:]):
+        (+[JSVirtualMachine virtualMachineWithContextGroupRef:]):
+        * API/JSWrapperMap.mm:
+        (wrapperFinalize):
+        (makeWrapper): This is our own internal version of JSObjectMake which creates JSAPIWrapperObjects, the Obj-C API 
+        version of JSCallbackObjects.
+        (createObjectWithCustomBrand):
+        (-[JSObjCClassInfo wrapperForObject:]):
+        (tryUnwrapObjcObject):
+        * API/JavaScriptCore.h:
+        * API/tests/testapi.mm: Added new tests for the strong and weak uses of JSManagedValue in the context of an 
+        onclick handler for an Objective-C object inserted into a JSContext.
+        (-[TextXYZ setWeakOnclick:]):
+        (-[TextXYZ setOnclick:]):
+        (-[TextXYZ weakOnclick]):
+        (-[TextXYZ onclick]):
+        (-[TextXYZ click]):
+        * CMakeLists.txt: Various build system additions.
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSGlobalObject.cpp: Added the new canonical Structure for the JSAPIWrapperObject class.
+        (JSC::JSGlobalObject::reset):
+        (JSC):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+        (JSC::JSGlobalObject::objcWrapperObjectStructure):
+
 2013-03-06  Filip Pizlo  <fpizlo@apple.com>
 
         ConvertThis should be turned into Identity based on predictions in Fixup, rather than based on proofs in ConstantFolding

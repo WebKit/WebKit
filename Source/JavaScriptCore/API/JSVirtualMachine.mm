@@ -101,7 +101,9 @@ static NSMapTable *wrapperCache()
     NSPointerFunctionsOptions keyOptions = NSPointerFunctionsOpaqueMemory | NSPointerFunctionsOpaquePersonality;
     NSPointerFunctionsOptions valueOptions = NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPersonality;
     m_contextCache = [[NSMapTable alloc] initWithKeyOptions:keyOptions valueOptions:valueOptions capacity:0];
-    
+   
+    [JSVMWrapperCache addWrapper:self forJSContextGroupRef:group];
+ 
     return self;
 }
 
@@ -123,10 +125,8 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *virtualMachine)
 + (JSVirtualMachine *)virtualMachineWithContextGroupRef:(JSContextGroupRef)group
 {
     JSVirtualMachine *virtualMachine = [JSVMWrapperCache wrapperForJSContextGroupRef:group];
-    if (!virtualMachine) {
+    if (!virtualMachine)
         virtualMachine = [[[JSVirtualMachine alloc] initWithContextGroupRef:group] autorelease];
-        [JSVMWrapperCache addWrapper:virtualMachine forJSContextGroupRef:group];
-    }
     return virtualMachine;
 }
 

@@ -33,6 +33,7 @@
 
 #import "JSContext.h"
 #import "JSValue.h"
+#import "JSManagedValue.h"
 #import "JSVirtualMachine.h"
 #import "JSExport.h"
 

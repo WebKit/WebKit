@@ -136,7 +136,10 @@ public:
     static JSCallbackObject<Parent>* create(JSGlobalData&, JSClassRef, Structure*);
 
     static const bool needsDestruction;
-    static void destroy(JSCell*);
+    static void destroy(JSCell* cell)
+    {
+        static_cast<JSCallbackObject*>(cell)->JSCallbackObject::~JSCallbackObject();
+    }
 
     void setPrivate(void* data);
     void* getPrivate();

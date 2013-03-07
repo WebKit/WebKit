@@ -47,6 +47,7 @@
 #include "FunctionPrototype.h"
 #include "GetterSetter.h"
 #include "Interpreter.h"
+#include "JSAPIWrapperObject.h"
 #include "JSActivation.h"
 #include "JSBoundFunction.h"
 #include "JSCallbackConstructor.h"
@@ -229,6 +230,7 @@ void JSGlobalObject::reset(JSValue prototype)
     m_argumentsStructure.set(exec->globalData(), this, Arguments::createStructure(exec->globalData(), this, m_objectPrototype.get()));
     m_callbackConstructorStructure.set(exec->globalData(), this, JSCallbackConstructor::createStructure(exec->globalData(), this, m_objectPrototype.get()));
     m_callbackObjectStructure.set(exec->globalData(), this, JSCallbackObject<JSDestructibleObject>::createStructure(exec->globalData(), this, m_objectPrototype.get()));
+    m_objcWrapperObjectStructure.set(exec->globalData(), this, JSCallbackObject<JSAPIWrapperObject>::createStructure(exec->globalData(), this, m_objectPrototype.get()));
 
     m_arrayPrototype.set(exec->globalData(), this, ArrayPrototype::create(exec, this, ArrayPrototype::createStructure(exec->globalData(), this, m_objectPrototype.get())));
     
@@ -511,6 +513,7 @@ void JSGlobalObject::visitChildren(JSCell* cell, SlotVisitor& visitor)
     visitor.append(&thisObject->m_callbackConstructorStructure);
     visitor.append(&thisObject->m_callbackFunctionStructure);
     visitor.append(&thisObject->m_callbackObjectStructure);
+    visitor.append(&thisObject->m_objcWrapperObjectStructure);
     visitor.append(&thisObject->m_dateStructure);
     visitor.append(&thisObject->m_nullPrototypeObjectStructure);
     visitor.append(&thisObject->m_errorStructure);

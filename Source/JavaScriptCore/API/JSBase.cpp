@@ -110,3 +110,15 @@ void JSReportExtraMemoryCost(JSContextRef ctx, size_t size)
     APIEntryShim entryShim(exec);
     exec->globalData().heap.reportExtraMemoryCost(size);
 }
+
+JS_EXPORT void JSSynchronousGarbageCollectForDebugging(JSContextRef);
+
+void JSSynchronousGarbageCollectForDebugging(JSContextRef ctx)
+{
+    if (!ctx)
+        return;
+
+    ExecState* exec = toJS(ctx);
+    APIEntryShim entryShim(exec);
+    exec->globalData().heap.collectAllGarbage();
+}

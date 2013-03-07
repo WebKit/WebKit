@@ -61,12 +61,6 @@ Structure* JSCallbackObject<JSGlobalObject>::createStructure(JSGlobalData& globa
     return Structure::create(globalData, globalObject, proto, TypeInfo(GlobalObjectType, StructureFlags), &s_info); 
 }
 
-template <class Parent>
-void JSCallbackObject<Parent>::destroy(JSCell* cell)
-{
-    static_cast<JSCallbackObject*>(cell)->JSCallbackObject::~JSCallbackObject();
-}
-
 void JSCallbackObjectData::finalize(Handle<Unknown> handle, void* context)
 {
     JSClassRef jsClass = static_cast<JSClassRef>(context);
