@@ -185,8 +185,12 @@ bool EditorClientBlackBerry::shouldChangeSelectedRange(Range* fromRange, Range* 
 
     Frame* frame = m_webPagePrivate->focusedOrMainFrame();
     if (frame && frame->document()) {
-        if (frame->document()->focusedNode() && frame->document()->focusedNode()->hasTagName(HTMLNames::selectTag))
-            return false;
+        if (Node* focusedNode = frame->document()->focusedNode()) {
+            if (focusedNode->hasTagName(HTMLNames::selectTag))
+                return false;
+            if (focusedNode->isElementNode() && DOMSupport::isPopupInputField(static_cast<Element*>(focusedNode)))
+                return false;
+        }
 
         // Check if this change does not represent a focus change and input is active and if so ensure the keyboard is visible.
         if (m_webPagePrivate->m_inputHandler->isInputMode() && fromRange && toRange && (fromRange->startContainer() == toRange->startContainer()))
