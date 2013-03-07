@@ -513,7 +513,7 @@ WebInspector.ElementsTreeOutline.prototype = {
     {
         var treeElement = this._treeElementFromEvent(event);
         if (!treeElement)
-            return false;
+            return;
 
         var isTag = treeElement.representedObject.nodeType() === Node.ELEMENT_NODE;
         var textNode = event.target.enclosingNodeOrSelfWithClass("webkit-html-text-node");

@@ -338,7 +338,7 @@ WebInspector.ElementsPanel.prototype = {
         }
 
         var contextMenu = new WebInspector.ContextMenu(event);
-        var populated = this.treeOutline.populateContextMenu(contextMenu, event);
+        this.treeOutline.populateContextMenu(contextMenu, event);
 
         if (WebInspector.experimentsSettings.cssRegions.isEnabled()) {
             contextMenu.appendSeparator();
