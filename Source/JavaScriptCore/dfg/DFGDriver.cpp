@@ -126,34 +126,19 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     performFixup(dfg);
     performStructureCheckHoisting(dfg);
     
-    unsigned cnt = 1;
     dfg.m_fixpointState = FixpointNotConverged;
-    for (;; ++cnt) {
-        if (logCompilationChanges())
-            dataLogF("DFG beginning optimization fixpoint iteration #%u.\n", cnt);
-        bool changed = false;
-        
-        if (validationEnabled())
-            validate(dfg);
-        
-        performCFA(dfg);
-        changed |= performConstantFolding(dfg);
-        changed |= performArgumentsSimplification(dfg);
-        changed |= performCFGSimplification(dfg);
-        changed |= performCSE(dfg);
-        
-        if (!changed)
-            break;
-        
-        performCPSRethreading(dfg);
-    }
-    
-    if (logCompilationChanges())
-        dataLogF("DFG optimization fixpoint converged in %u iterations.\n", cnt);
+
+    performCSE(dfg);
+    performArgumentsSimplification(dfg);
+    performCPSRethreading(dfg); // This should usually be a no-op since CSE rarely dethreads, and arguments simplification rarely does anything.
+    performCFA(dfg);
+    performConstantFolding(dfg);
+    performCFGSimplification(dfg);
 
     dfg.m_fixpointState = FixpointConverged;
+
     performStoreElimination(dfg);
-    performCPSRethreading(dfg); // This should usually be a no-op since store elimination rarely dethreads the graph.
+    performCPSRethreading(dfg);
     performDCE(dfg);
     performVirtualRegisterAllocation(dfg);
 
