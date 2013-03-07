@@ -7408,7 +7408,6 @@
             'platform/chromium/support/WebScrollbarThemeGeometryNative.h',
             'platform/chromium/support/WebScrollbarImpl.cpp',
             'platform/chromium/support/WebScrollbarImpl.h',
-            'platform/chromium/support/WebSharedGraphicsContext3D.cpp',
             'platform/chromium/support/WebThreadSafeData.cpp',
             'platform/chromium/support/WebTransformKeyframe.cpp',
             'platform/chromium/support/WebTransformationMatrix.cpp',

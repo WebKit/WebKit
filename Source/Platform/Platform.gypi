@@ -122,7 +122,6 @@
             'chromium/public/WebScrollbarLayer.h',
             'chromium/public/WebScrollbarThemeGeometry.h',
             'chromium/public/WebScrollbarThemePainter.h',
-            'chromium/public/WebSharedGraphicsContext3D.h',
             'chromium/public/WebSize.h',
             'chromium/public/WebSocketStreamError.h',
             'chromium/public/WebSocketStreamHandle.h',
