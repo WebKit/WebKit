@@ -51,6 +51,7 @@ function test()
     addUISourceCode(rootURL + "foo/bar/contentScript2.js?a=1", true);
     addUISourceCode(rootURL + "foo/bar/contentScript.js?a=2", true);
     addUISourceCode(rootURL + "foo/bar/contentScript.js?a=1", true);
+    addUISourceCode("http://example.com/", false);
     addUISourceCode("http://example.com/?a=b", false);
     addUISourceCode("?a=b", false);
     addUISourceCode("very_looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong_url", false);

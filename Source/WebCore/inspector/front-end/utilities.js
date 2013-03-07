@@ -82,7 +82,7 @@ String.prototype.escapeCharacters = function(chars)
     }
 
     if (!foundChar)
-        return this;
+        return String(this);
 
     var result = "";
     for (var i = 0; i < this.length; ++i) {
@@ -117,7 +117,7 @@ String.prototype.collapseWhitespace = function()
 String.prototype.trimMiddle = function(maxLength)
 {
     if (this.length <= maxLength)
-        return this;
+        return String(this);
     var leftHalf = maxLength >> 1;
     var rightHalf = maxLength - leftHalf - 1;
     return this.substr(0, leftHalf) + "\u2026" + this.substr(this.length - rightHalf, rightHalf);
@@ -126,7 +126,7 @@ String.prototype.trimMiddle = function(maxLength)
 String.prototype.trimEnd = function(maxLength)
 {
     if (this.length <= maxLength)
-        return this;
+        return String(this);
     return this.substr(0, maxLength - 1) + "\u2026";
 }
 

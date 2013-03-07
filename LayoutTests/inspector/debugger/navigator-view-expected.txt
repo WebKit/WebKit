@@ -100,6 +100,7 @@ Revealing all resources:
       ?a=b
       very_looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo…
     example.com
+      (program)
       ?a=b
     localhost:8080
       LayoutTests/inspector
