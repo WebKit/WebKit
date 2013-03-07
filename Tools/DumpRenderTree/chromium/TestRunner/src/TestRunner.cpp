@@ -634,6 +634,8 @@ void TestRunner::setTopLoadingFrame(WebFrame* frame, bool clear)
 {
     if (frame->top()->view() != m_webView)
         return;
+    if (!m_testIsRunning)
+        return;
     if (clear) {
         m_topLoadingFrame = 0;
         locationChangeDone();
