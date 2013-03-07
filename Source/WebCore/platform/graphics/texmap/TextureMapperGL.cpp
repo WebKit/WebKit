@@ -182,6 +182,18 @@ void TextureMapperGL::ClipStack::reset(const IntRect& rect)
     clipStateDirty = true;
 }
 
+void TextureMapperGL::ClipStack::intersect(const IntRect& rect)
+{
+    clipState.scissorBox.intersect(rect);
+    clipStateDirty = true;
+}
+
+void TextureMapperGL::ClipStack::setStencilIndex(int stencilIndex)
+{
+    clipState.stencilIndex = stencilIndex;
+    clipStateDirty = true;
+}
+
 void TextureMapperGL::ClipStack::push()
 {
     clipStack.append(clipState);
@@ -319,7 +331,7 @@ void TextureMapperGL::endPainting()
 
 void TextureMapperGL::drawBorder(const Color& color, float width, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix)
 {
-    if (clipStack().current().scissorBox.isEmpty())
+    if (clipStack().isCurrentScissorBoxEmpty())
         return;
 
     RefPtr<TextureMapperShaderProgram> program = data().sharedGLData().getShaderProgram(TextureMapperShaderProgram::SolidColor);
@@ -411,7 +423,7 @@ void TextureMapperGL::drawTexture(const BitmapTexture& texture, const FloatRect&
     if (!texture.isValid())
         return;
 
-    if (clipStack().current().scissorBox.isEmpty())
+    if (clipStack().isCurrentScissorBoxEmpty())
         return;
 
     const BitmapTextureGL& textureGL = static_cast<const BitmapTextureGL&>(texture);
@@ -1128,7 +1140,7 @@ bool TextureMapperGL::beginScissorClip(const TransformationMatrix& modelViewMatr
     if (!quad.isRectilinear() || rect.isEmpty())
         return false;
 
-    clipStack().current().scissorBox.intersect(rect);
+    clipStack().intersect(rect);
     clipStack().applyIfNeeded(m_context3D.get());
     return true;
 }
@@ -1153,7 +1165,7 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
 
     static const TransformationMatrix fullProjectionMatrix = TransformationMatrix::rectToRect(FloatRect(0, 0, 1, 1), FloatRect(-1, -1, 2, 2));
 
-    int& stencilIndex = clipStack().current().stencilIndex;
+    int stencilIndex = clipStack().getStencilIndex();
 
     m_context3D->enable(GraphicsContext3D::STENCIL_TEST);
 
@@ -1180,7 +1192,7 @@ void TextureMapperGL::beginClip(const TransformationMatrix& modelViewMatrix, con
     m_context3D->stencilMask(0);
 
     // Increase stencilIndex and apply stencil testing.
-    stencilIndex *= 2;
+    clipStack().setStencilIndex(stencilIndex * 2);
     clipStack().applyIfNeeded(m_context3D.get());
 }
 
