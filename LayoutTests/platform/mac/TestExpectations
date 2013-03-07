@@ -1444,3 +1444,6 @@ webkit.org/b/110546 fast/parser/document-write-fighting-eof.html [ Crash ]
 webkit.org/b/111647 sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A1.1_T2.html [ Skip ]
 webkit.org/b/111647 sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression_Literals/S7.8.5_A2.1_T2.html [ Skip ]
 
+webkit.org/b/111650 http/tests/cookies/third-party-cookie-relaxing.html [ Failure Pass ]
+webkit.org/b/111650 http/tests/cookies/third-party-cookie-accept-policy.html [ Failure Pass ]
+
