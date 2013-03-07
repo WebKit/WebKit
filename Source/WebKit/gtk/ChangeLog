@@ -1,3 +1,13 @@
+2013-03-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Limit the supported compilers to GCC >= 4.7 and Clang >= 3.0
+        https://bugs.webkit.org/show_bug.cgi?id=109932
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Replace references to SYMBOL_VISIBILITY_INLINES and SYMBOL_VISIBILITY variables with the actual flags.
+        They are now available by default due to the limited set of supported compilers.
+
 2013-03-06  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Enable translations for WebKit2

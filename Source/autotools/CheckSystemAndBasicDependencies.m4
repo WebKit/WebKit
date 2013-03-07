@@ -85,9 +85,24 @@ AC_PROG_CXX
 AC_PROG_INSTALL
 AC_SYS_LARGEFILE
 
-# Check whether a C++ was found (AC_PROG_CXX sets $CXX to "g++" even when it doesn't exist).
+# Check that an appropriate C compiler is available.
+AC_LANG_PUSH([C])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
+#if !(defined(__GNUC__) && !defined(__clang__) && !defined(__INTEL_COMPILER) && __GNUC__ >= 4 && __GNUC_MINOR__ >= 7) \
+    && !(defined(__clang__) && __clang_major__ >= 3 && __clang_minor__ >= 0)
+#error Unsupported compiler
+#endif
+],[])],[],[AC_MSG_ERROR([Compiler GCC >= 4.7 or Clang >= 3.0 is required for C compilation])])
+AC_LANG_POP([C])
+
+# Check that an appropriate C++ compiler is available.
 AC_LANG_PUSH([C++])
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([],[])],[],[AC_MSG_ERROR([No C++ compiler found])])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([
+#if !(defined(__GNUG__) && defined(__GNUC__) && !defined(__clang__) && !defined(__INTEL_COMPILER) && __GNUC__ >= 4 && __GNUC_MINOR__ >= 7) \
+    && !(defined(__clang__) && __clang_major__ >= 3 && __clang_minor__ >= 0)
+#error Unsupported compiler
+#endif
+],[])],[],[AC_MSG_ERROR([Compiler GCC >= 4.7 or Clang >= 3.0 is required for C++ compilation])])
 AC_LANG_POP([C++])
 
 # C/C++ Language Features
@@ -98,33 +113,3 @@ AC_C_VOLATILE
 # C/C++ Headers
 AC_HEADER_STDC
 AC_HEADER_STDBOOL
-
-# Check for -fvisibility=hidden compiler support (GCC >= 4).
-saved_CFLAGS="$CFLAGS"
-CFLAGS="$CFLAGS -fvisibility=hidden -fvisibility-inlines-hidden"
-AC_MSG_CHECKING([if ${CXX} supports -fvisibility=hidden -fvisibility-inlines-hidden])
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([char foo;])], [AC_MSG_RESULT([yes])
-    SYMBOL_VISIBILITY="-fvisibility=hidden" SYMBOL_VISIBILITY_INLINES="-fvisibility-inlines-hidden"], [AC_MSG_RESULT([no])])
-CFLAGS="$saved_CFLAGS"
-AC_SUBST(SYMBOL_VISIBILITY)
-AC_SUBST(SYMBOL_VISIBILITY_INLINES)
-
-# Disable C++0x compat warnings for GCC >= 4.6.0 until we build cleanly with that.
-AC_LANG_PUSH(C++)
-TMPCXXFLAGS=$CXXFLAGS
-CXXFLAGS="-Wall -Werror"
-AC_MSG_CHECKING([if we have to disable C++0x compat warnings for GCC >= 4.6.0])
-AC_TRY_COMPILE([
-namespace std {
-    class nullptr_t { };
-}
-extern std::nullptr_t nullptr;
-], [return 0;], disable_cxx0x_compat=no, disable_cxx0x_compat=yes)
-AC_MSG_RESULT($disable_cxx0x_compat)
-if test "$disable_cxx0x_compat" = yes; then
-    CXXFLAGS="$TMPCXXFLAGS -Wno-c++0x-compat"
-else
-    CXXFLAGS="$TMPCXXFLAGS"
-fi
-AC_LANG_POP(C++)
-

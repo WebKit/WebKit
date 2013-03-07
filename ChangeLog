@@ -1,3 +1,14 @@
+2013-03-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Limit the supported compilers to GCC >= 4.7 and Clang >= 3.0
+        https://bugs.webkit.org/show_bug.cgi?id=109932
+
+        Reviewed by Martin Robinson.
+
+        * Source/autotools/CheckSystemAndBasicDependencies.m4: Strictly check for one of the two compilers.
+        * Source/autotools/SetupCompilerFlags.m4: Set up C++11-specific compiler flags. Force the C99 standard for the C code.
+        Use the -Qunused-arguments flag when using Clang, it reduces irrelevant errors when using ccache.
+
 2013-03-05  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Enable translations for WebKit2
