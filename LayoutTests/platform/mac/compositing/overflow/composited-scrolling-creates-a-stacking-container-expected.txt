@@ -19,7 +19,7 @@
                   (drawsContent 1)
                   (children 2
                     (GraphicsLayer
-                      (bounds 202.00 202.00)
+                      (bounds 200.00 300.00)
                       (drawsContent 1)
                     )
                     (GraphicsLayer
