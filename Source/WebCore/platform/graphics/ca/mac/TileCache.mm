@@ -819,6 +819,10 @@ void TileCache::updateTileCoverageMap()
 {
     FloatRect containerBounds = bounds();
     FloatRect visibleRect = this->visibleRect();
+
+    if (m_clipsToExposedRect)
+        visibleRect.intersect(m_exposedRect);
+
     visibleRect.contract(4, 4); // Layer is positioned 2px from top and left edges.
 
     float widthScale = 1;
@@ -834,6 +838,11 @@ void TileCache::updateTileCoverageMap()
     
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     
+    if (m_clipsToExposedRect)
+        [m_tiledScrollingIndicatorLayer.get() setPosition:m_exposedRect.location() + FloatPoint(2, 2)];
+    else
+        [m_tiledScrollingIndicatorLayer.get() setPosition:CGPointMake(2, 2)];
+
     [m_tiledScrollingIndicatorLayer.get() setBounds:mapBounds];
     [m_tiledScrollingIndicatorLayer.get() setNeedsDisplay];
 
