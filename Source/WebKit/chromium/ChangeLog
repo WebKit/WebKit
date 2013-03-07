@@ -1,3 +1,14 @@
+2013-03-07  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Update some #includes for WebVideoFrame.h
+        https://bugs.webkit.org/show_bug.cgi?id=111739
+
+        Reviewed by James Robinson.
+
+        In anticipation of removing WebVideoFrame.h from WK/chromium/public/.
+
+        * public/WebMediaPlayer.h:
+
 2013-03-07  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove WebView's sharedGraphicsContext3D method.
