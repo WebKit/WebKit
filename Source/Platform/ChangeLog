@@ -1,3 +1,14 @@
+2013-03-06  Kenneth Russell  <kbr@google.com>
+
+        [Chromium] Fix byte ordering bugs reading back WebGL canvases' content on Android
+        https://bugs.webkit.org/show_bug.cgi?id=111661
+
+        Reviewed by James Robinson.
+
+        * chromium/public/WebGraphicsContext3D.h:
+        (WebGraphicsContext3D):
+            Better documented contract of readBackFrameBuffer.
+
 2013-03-06  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove WebSharedGraphicsContext3D class

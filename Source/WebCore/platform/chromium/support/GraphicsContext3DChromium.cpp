@@ -36,6 +36,7 @@
 #include "GraphicsContext3DPrivate.h"
 #include "ImageBuffer.h"
 #include "ImageData.h"
+#include "SkTypes.h"
 #include <public/Platform.h>
 #include <public/WebGraphicsContext3D.h>
 #include <wtf/text/CString.h>
@@ -529,8 +530,11 @@ PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData(Drawin
 
     m_private->webContext()->readBackFramebuffer(pixels, bufferSize, framebufferId, width, height);
 
+#if (SK_R32_SHIFT == 16) && !SK_B32_SHIFT
+    // If the implementation swapped the red and blue channels, un-swap them.
     for (size_t i = 0; i < bufferSize; i += 4)
         std::swap(pixels[i], pixels[i + 2]);
+#endif
 
     return imageData.release();
 }
