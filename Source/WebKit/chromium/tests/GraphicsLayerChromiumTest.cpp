@@ -38,7 +38,6 @@
 #include <public/WebFloatAnimationCurve.h>
 #include <public/WebGraphicsContext3D.h>
 #include <public/WebLayerTreeView.h>
-#include <public/WebTransformationMatrix.h>
 #include <public/WebUnitTestSupport.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -76,11 +75,6 @@ public:
     }
 
 protected:
-    static void expectTranslateX(double translateX, const WebTransformationMatrix& matrix)
-    {
-        EXPECT_FLOAT_EQ(translateX, matrix.m41());
-    }
-
     WebLayer* m_platformLayer;
     OwnPtr<GraphicsLayerChromium> m_graphicsLayer;
 

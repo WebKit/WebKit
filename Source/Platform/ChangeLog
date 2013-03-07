@@ -1,3 +1,17 @@
+2013-03-06  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Stop using WebTransformationMatrix on WebLayer
+        https://bugs.webkit.org/show_bug.cgi?id=111635
+
+        Reviewed by Adrienne Walker.
+
+        WebLayer supports setting transforms by using either SkMatrix44 or WebTransformationMatrix,
+        both of which are wrappers around 16 doubles. There's no need to have both.
+
+        * chromium/public/WebLayer.h:
+        (WebKit):
+        (WebLayer):
+
 2013-03-06  Kenneth Russell  <kbr@google.com>
 
         [Chromium] Fix byte ordering bugs reading back WebGL canvases' content on Android

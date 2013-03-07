@@ -37,6 +37,7 @@
 #include "RenderLayerBacking.h"
 #include "RenderObject.h"
 #include "RenderView.h"
+#include "SkMatrix44.h"
 #include "WebFrameImpl.h"
 #include "WebKit.h"
 #include "WebViewImpl.h"
@@ -47,7 +48,6 @@
 #include <public/WebFloatPoint.h>
 #include <public/WebRect.h>
 #include <public/WebSize.h>
-#include <public/WebTransformationMatrix.h>
 #include <wtf/CurrentTime.h>
 
 using namespace WebCore;
@@ -128,9 +128,9 @@ RenderLayer* LinkHighlight::computeEnclosingCompositingLayer()
         return 0;
 
     GraphicsLayerChromium* newGraphicsLayer = static_cast<GraphicsLayerChromium*>(renderLayer->backing()->graphicsLayer());
-    m_clipLayer->setSublayerTransform(WebTransformationMatrix());
+    m_clipLayer->setSublayerTransform(SkMatrix44());
     if (!newGraphicsLayer->drawsContent()) {
-        m_clipLayer->setSublayerTransform(WebTransformationMatrix(newGraphicsLayer->transform()));
+        m_clipLayer->setSublayerTransform(newGraphicsLayer->platformLayer()->transform());
         newGraphicsLayer = static_cast<GraphicsLayerChromium*>(m_owningWebViewImpl->nonCompositedContentHost()->topLevelRootLayer());
     }
 

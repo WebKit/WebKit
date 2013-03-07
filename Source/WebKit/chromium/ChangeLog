@@ -1,3 +1,15 @@
+2013-03-06  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Stop using WebTransformationMatrix on WebLayer
+        https://bugs.webkit.org/show_bug.cgi?id=111635
+
+        Reviewed by Adrienne Walker.
+
+        * src/LinkHighlight.cpp:
+        (WebKit::LinkHighlight::computeEnclosingCompositingLayer):
+        * tests/GraphicsLayerChromiumTest.cpp:
+        (GraphicsLayerChromiumTest):
+
 2013-03-07  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Update some #includes for WebMessagePortChannel.h
