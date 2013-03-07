@@ -1,3 +1,7 @@
+.CodeMirror * {
+  -webkit-box-sizing: content-box;
+}
+
 .CodeMirror {
   line-height: 1.2em !important;
   height: 100% !important;
