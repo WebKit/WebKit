@@ -1,5 +1,17 @@
 2013-03-07  Mark Pilgrim  <pilgrim@chromium.org>
 
+        [Chromium] Remove WK/chromium/public/WebStorageArea.h
+        https://bugs.webkit.org/show_bug.cgi?id=111744
+
+        Reviewed by James Robinson.
+
+        File moved to new Platform/ directory. All references have already
+        been updated (including downstream).
+
+        * public/WebStorageArea.h: Removed.
+
+2013-03-07  Mark Pilgrim  <pilgrim@chromium.org>
+
         [Chromium] Update some #includes for WebFileInfo.h in WK/chromium/src/
         https://bugs.webkit.org/show_bug.cgi?id=111741
 
