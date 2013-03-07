@@ -1,3 +1,10 @@
+2013-03-07  Roger Fong  <roger_fong@apple.com>
+
+        Re-enable Win EWS tests.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (WinEWS):
+
 2013-03-07  Dirk Pranke  <dpranke@chromium.org>
 
         [nrwt] handle corrupt http server pid files cleanly
