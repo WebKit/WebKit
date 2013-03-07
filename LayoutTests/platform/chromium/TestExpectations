@@ -4423,3 +4423,5 @@ webkit.org/b/111640 [ Mac Win ] fast/dom/Window/window-special-properties.html [
 
 # CURSOR_VISIBILITY is not enabled in chromium
 webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Failure ]
+
+webkit.org/b/111649 [ Mac Win Linux ] platform/chromium/fast/events/intercept-postmessage.html [ Slow ]
