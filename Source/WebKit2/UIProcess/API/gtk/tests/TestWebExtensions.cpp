@@ -25,7 +25,7 @@
 
 static WebKitTestBus* bus;
 
-static void testWebExtensionGetTitle(WebViewTest* test, gconstpointer)
+static void testWebExtension(WebViewTest* test, gconstpointer)
 {
     test->loadHtml("<html><head><title>WebKitGTK+ Web Extensions Test</title></head><body></body></html>", 0);
     test->waitUntilLoadFinished();
@@ -72,32 +72,6 @@ static void testDocumentLoadedSignal(WebViewTest* test, gconstpointer)
     g_dbus_connection_signal_unsubscribe(connection, id);
 }
 
-static void webProcessCrashedCallback(WebKitWebContext* context, WebViewTest* test)
-{
-    test->quitMainLoop();
-}
-
-static void testWebKitWebContextProcessCrashed(WebViewTest* test, gconstpointer)
-{
-    test->loadHtml("<html></html>", 0);
-    test->waitUntilLoadFinished();
-
-    g_signal_connect(webkit_web_context_get_default(), "web-process-crashed",
-        G_CALLBACK(webProcessCrashedCallback), test);
-
-    GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy("org.webkit.gtk.WebExtensionTest",
-        "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", test->m_mainLoop));
-
-    GRefPtr<GVariant> result = adoptGRef(g_dbus_proxy_call_sync(
-        proxy.get(),
-        "AbortProcess",
-        0,
-        G_DBUS_CALL_FLAGS_NONE,
-        -1, 0, 0));
-    g_assert(!result);
-    g_main_loop_run(test->m_mainLoop);
-}
-
 void beforeAll()
 {
     webkit_web_context_set_web_extensions_directory(webkit_web_context_get_default(), WEBKIT_TEST_WEB_EXTENSIONS_DIR);
@@ -105,9 +79,8 @@ void beforeAll()
     if (!bus->run())
         return;
 
-    WebViewTest::add("WebKitWebExtension", "dom-document-title", testWebExtensionGetTitle);
+    WebViewTest::add("WebKitWebExtension", "dom-document-title", testWebExtension);
     WebViewTest::add("WebKitWebExtension", "document-loaded-signal", testDocumentLoadedSignal);
-    WebViewTest::add("WebKitWebContext", "web-process-crashed", testWebKitWebContextProcessCrashed);
 }
 
 void afterAll()
