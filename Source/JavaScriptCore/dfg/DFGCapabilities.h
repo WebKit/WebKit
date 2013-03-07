@@ -203,6 +203,10 @@ inline CapabilityLevel canCompileOpcode(OpcodeID opcodeID, CodeBlock*, Instructi
     case op_resolve_scoped_var_with_top_scope_check:
         return CanCompile;
 
+    case op_get_scoped_var:
+    case op_put_scoped_var:
+        return CanCompile;
+
     case op_resolve_base_to_global:
     case op_resolve_base_to_global_dynamic:
     case op_resolve_base_to_scope:
@@ -236,7 +240,11 @@ inline bool canInlineOpcode(OpcodeID opcodeID, CodeBlock* codeBlock, Instruction
     case op_resolve_with_base:
     case op_resolve_with_this:
         return canInlineResolveOperations(pc[4].u.resolveOperations);
-        
+
+    case op_get_scoped_var:
+    case op_put_scoped_var:
+        return !codeBlock->needsFullScopeChain();
+
     // Inlining doesn't correctly remap regular expression operands.
     case op_new_regexp:
         

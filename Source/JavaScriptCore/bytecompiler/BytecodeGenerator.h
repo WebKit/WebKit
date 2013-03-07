@@ -128,14 +128,22 @@ namespace JSC {
             DynamicFlag = 0x2,
             // The resolved binding is immutable.
             ReadOnlyFlag = 0x4,
+            // The property has a static location
+            StaticFlag = 0x8,
+            // Entry at scope distance "m_depth" and located at "m_index"
+            ScopedFlag = 0x10
         };
 
         enum Type {
             // The property is local, and stored in a register.
-            Register = RegisterFlag,
+            Register = RegisterFlag | StaticFlag,
             // A read-only local, created by "const".
-            ReadOnlyRegister = RegisterFlag | ReadOnlyFlag,
-            // Any form of non-local lookup
+            ReadOnlyRegister = RegisterFlag | ReadOnlyFlag | StaticFlag,
+            // Lexically fixed location in the scope chain
+            Lexical = ScopedFlag | StaticFlag,
+            // A read-only Lexical, created by "const".
+            ReadOnlyLexical = ScopedFlag | ReadOnlyFlag | StaticFlag,
+            // Any other form of lookup
             Dynamic = DynamicFlag,
         };
 
@@ -147,6 +155,12 @@ namespace JSC {
         {
             return ResolveResult(Dynamic, 0);
         }
+        static ResolveResult lexicalResolve(int index, size_t depth, unsigned flags)
+        {
+            if (flags & DynamicFlag)
+                return dynamicResolve();
+            return ResolveResult(Lexical | flags, index, depth);
+        }
         unsigned type() const { return m_type; }
 
         // Returns the register corresponding to a local variable, or 0 if no
@@ -155,13 +169,30 @@ namespace JSC {
         RegisterID* local() const { return m_local; }
 
         bool isRegister() const { return m_type & RegisterFlag; }
+        bool isStatic() const { return (m_type & StaticFlag) && !isDynamic(); }
         bool isDynamic() const { return m_type & DynamicFlag; }
         bool isReadOnly() const { return (m_type & ReadOnlyFlag) && !isDynamic(); }
+
+        unsigned depth() const { ASSERT(isStatic()); return m_depth; }
+        int32_t index() const { ASSERT(isStatic()); return m_index; }
 
     private:
         ResolveResult(unsigned type, RegisterID* local)
             : m_type(type)
             , m_local(local)
+            , m_index(0)
+            , m_depth(0)
+        {
+#ifndef NDEBUG
+            checkValidity();
+#endif
+        }
+
+        ResolveResult(unsigned type, int index, unsigned depth)
+            : m_type(type)
+            , m_local(0)
+            , m_index(index)
+            , m_depth(depth)
         {
 #ifndef NDEBUG
             checkValidity();
@@ -174,6 +205,8 @@ namespace JSC {
 
         unsigned m_type;
         RegisterID* m_local; // Local register, if RegisterFlag is set
+        int m_index;
+        unsigned m_depth;
     };
 
     struct NonlocalResolveInfo {
@@ -211,9 +244,9 @@ namespace JSC {
         typedef DeclarationStacks::VarStack VarStack;
         typedef DeclarationStacks::FunctionStack FunctionStack;
 
-        BytecodeGenerator(JSGlobalData&, ProgramNode*, UnlinkedProgramCodeBlock*, DebuggerMode, ProfilerMode);
-        BytecodeGenerator(JSGlobalData&, FunctionBodyNode*, UnlinkedFunctionCodeBlock*, DebuggerMode, ProfilerMode);
-        BytecodeGenerator(JSGlobalData&, EvalNode*, UnlinkedEvalCodeBlock*, DebuggerMode, ProfilerMode);
+        BytecodeGenerator(JSGlobalData&, JSScope*, ProgramNode*, UnlinkedProgramCodeBlock*, DebuggerMode, ProfilerMode);
+        BytecodeGenerator(JSGlobalData&, JSScope*, FunctionBodyNode*, UnlinkedFunctionCodeBlock*, DebuggerMode, ProfilerMode);
+        BytecodeGenerator(JSGlobalData&, JSScope*, EvalNode*, UnlinkedEvalCodeBlock*, DebuggerMode, ProfilerMode);
 
         ~BytecodeGenerator();
         
@@ -379,6 +412,7 @@ namespace JSC {
         RegisterID* emitLoad(RegisterID* dst, double);
         RegisterID* emitLoad(RegisterID* dst, const Identifier&);
         RegisterID* emitLoad(RegisterID* dst, JSValue);
+        RegisterID* emitLoadGlobalObject(RegisterID* dst);
 
         RegisterID* emitUnaryOp(OpcodeID, RegisterID* dst, RegisterID* src);
         RegisterID* emitBinaryOp(OpcodeID, RegisterID* dst, RegisterID* src1, RegisterID* src2, OperandTypes);
@@ -408,7 +442,8 @@ namespace JSC {
         RegisterID* emitTypeOf(RegisterID* dst, RegisterID* src) { return emitUnaryOp(op_typeof, dst, src); }
         RegisterID* emitIn(RegisterID* dst, RegisterID* property, RegisterID* base) { return emitBinaryOp(op_in, dst, property, base, OperandTypes()); }
 
-        RegisterID* emitGetLocalVar(RegisterID* dst, const ResolveResult&, const Identifier&);
+        RegisterID* emitGetStaticVar(RegisterID* dst, const ResolveResult&, const Identifier&);
+        RegisterID* emitPutStaticVar(const ResolveResult&, const Identifier&, RegisterID* value);
         RegisterID* emitInitGlobalConst(const Identifier&, RegisterID* value);
 
         RegisterID* emitResolve(RegisterID* dst, const ResolveResult&, const Identifier& property);
@@ -650,6 +685,7 @@ namespace JSC {
         SharedSymbolTable* m_symbolTable;
 
         ScopeNode* m_scopeNode;
+        Strong<JSScope> m_scope;
         Strong<UnlinkedCodeBlock> m_codeBlock;
 
         // Some of these objects keep pointers to one another. They are arranged
@@ -660,6 +696,7 @@ namespace JSC {
         RegisterID m_calleeRegister;
         RegisterID* m_activationRegister;
         RegisterID* m_emptyValueRegister;
+        RegisterID* m_globalObjectRegister;
         SegmentedVector<RegisterID, 32> m_constantPoolRegisters;
         SegmentedVector<RegisterID, 32> m_calleeRegisters;
         SegmentedVector<RegisterID, 32> m_parameters;

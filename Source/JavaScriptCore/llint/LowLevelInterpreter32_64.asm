@@ -1781,6 +1781,71 @@ _llint_op_catch:
     dispatch(2)
 
 
+# Gives you the scope in t0, while allowing you to optionally perform additional checks on the
+# scopes as they are traversed. scopeCheck() is called with two arguments: the register
+# holding the scope, and a register that can be used for scratch. Note that this does not
+# use t3, so you can hold stuff in t3 if need be.
+macro getDeBruijnScope(deBruijinIndexOperand, scopeCheck)
+    loadp ScopeChain + PayloadOffset[cfr], t0
+    loadi deBruijinIndexOperand, t2
+
+    btiz t2, .done
+
+    loadp CodeBlock[cfr], t1
+    bineq CodeBlock::m_codeType[t1], FunctionCode, .loop
+    btbz CodeBlock::m_needsActivation[t1], .loop
+
+    loadi CodeBlock::m_activationRegister[t1], t1
+
+    # Need to conditionally skip over one scope.
+    bieq TagOffset[cfr, t1, 8], EmptyValueTag, .noActivation
+    scopeCheck(t0, t1)
+    loadp JSScope::m_next[t0], t0
+.noActivation:
+    subi 1, t2
+
+    btiz t2, .done
+.loop:
+    scopeCheck(t0, t1)
+    loadp JSScope::m_next[t0], t0
+    subi 1, t2
+    btinz t2, .loop
+
+.done:
+
+end
+
+_llint_op_get_scoped_var:
+    traceExecution()
+    # Operands are as follows:
+    # 4[PC]   Destination for the load.
+    # 8[PC]   Index of register in the scope.
+    # 12[PC]  De Bruijin index.
+    getDeBruijnScope(12[PC], macro (scope, scratch) end)
+    loadi 4[PC], t1
+    loadi 8[PC], t2
+    loadp JSVariableObject::m_registers[t0], t0
+    loadi TagOffset[t0, t2, 8], t3
+    loadi PayloadOffset[t0, t2, 8], t0
+    storei t3, TagOffset[cfr, t1, 8]
+    storei t0, PayloadOffset[cfr, t1, 8]
+    loadi 16[PC], t1
+    valueProfile(t3, t0, t1)
+    dispatch(5)
+
+
+_llint_op_put_scoped_var:
+    traceExecution()
+    getDeBruijnScope(8[PC], macro (scope, scratch) end)
+    loadi 12[PC], t1
+    loadConstantOrVariable(t1, t3, t2)
+    loadi 4[PC], t1
+    writeBarrier(t3, t2)
+    loadp JSVariableObject::m_registers[t0], t0
+    storei t3, TagOffset[t0, t1, 8]
+    storei t2, PayloadOffset[t0, t1, 8]
+    dispatch(4)
+
 _llint_op_end:
     traceExecution()
     checkSwitchToJITForEpilogue()

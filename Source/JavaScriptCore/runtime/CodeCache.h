@@ -42,6 +42,7 @@ namespace JSC {
 class EvalExecutable;
 class FunctionBodyNode;
 class Identifier;
+class JSScope;
 class ProgramExecutable;
 class UnlinkedCodeBlock;
 class UnlinkedEvalCodeBlock;
@@ -220,7 +221,7 @@ public:
     static PassOwnPtr<CodeCache> create() { return adoptPtr(new CodeCache); }
 
     UnlinkedProgramCodeBlock* getProgramCodeBlock(JSGlobalData&, ProgramExecutable*, const SourceCode&, JSParserStrictness, DebuggerMode, ProfilerMode, ParserError&);
-    UnlinkedEvalCodeBlock* getEvalCodeBlock(JSGlobalData&, EvalExecutable*, const SourceCode&, JSParserStrictness, DebuggerMode, ProfilerMode, ParserError&);
+    UnlinkedEvalCodeBlock* getEvalCodeBlock(JSGlobalData&, JSScope*, EvalExecutable*, const SourceCode&, JSParserStrictness, DebuggerMode, ProfilerMode, ParserError&);
     UnlinkedFunctionExecutable* getFunctionExecutableFromGlobalCode(JSGlobalData&, const Identifier&, const SourceCode&, ParserError&);
     ~CodeCache();
 
@@ -233,7 +234,7 @@ private:
     CodeCache();
 
     template <class UnlinkedCodeBlockType, class ExecutableType> 
-    UnlinkedCodeBlockType* getCodeBlock(JSGlobalData&, ExecutableType*, const SourceCode&, JSParserStrictness, DebuggerMode, ProfilerMode, ParserError&);
+    UnlinkedCodeBlockType* getCodeBlock(JSGlobalData&, JSScope*, ExecutableType*, const SourceCode&, JSParserStrictness, DebuggerMode, ProfilerMode, ParserError&);
 
     CodeCacheMap m_sourceCode;
 };

@@ -47,7 +47,7 @@ const ClassInfo UnlinkedProgramCodeBlock::s_info = { "UnlinkedProgramCodeBlock",
 const ClassInfo UnlinkedEvalCodeBlock::s_info = { "UnlinkedEvalCodeBlock", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(UnlinkedEvalCodeBlock) };
 const ClassInfo UnlinkedFunctionCodeBlock::s_info = { "UnlinkedFunctionCodeBlock", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(UnlinkedFunctionCodeBlock) };
 
-static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(JSGlobalData& globalData, UnlinkedFunctionExecutable* executable, const SourceCode& source, CodeSpecializationKind kind, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
+static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(JSGlobalData& globalData, JSScope* scope, UnlinkedFunctionExecutable* executable, const SourceCode& source, CodeSpecializationKind kind, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
 {
     RefPtr<FunctionBodyNode> body = parse<FunctionBodyNode>(&globalData, source, executable->parameters(), executable->name(), executable->isInStrictContext() ? JSParseStrict : JSParseNormal, JSParseFunctionCode, error);
 
@@ -62,7 +62,7 @@ static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(JSGlobalData& global
     executable->recordParse(body->features(), body->hasCapturedVariables(), body->lineNo(), body->lastLine());
     
     UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(&globalData, FunctionCode, ExecutableInfo(body->needsActivation(), body->usesEval(), body->isStrictMode(), kind == CodeForConstruct));
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(globalData, body.get(), result, debuggerMode, profilerMode)));
+    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(globalData, scope, body.get(), result, debuggerMode, profilerMode)));
     error = generator->generate();
     body->destroyData();
     if (error.m_type != ParserError::ErrorNone)
@@ -139,7 +139,7 @@ UnlinkedFunctionExecutable* UnlinkedFunctionExecutable::fromGlobalCode(const Ide
     return executable;
 }
 
-UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::codeBlockFor(JSGlobalData& globalData, const SourceCode& source, CodeSpecializationKind specializationKind, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
+UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::codeBlockFor(JSGlobalData& globalData, JSScope* scope, const SourceCode& source, CodeSpecializationKind specializationKind, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
 {
     switch (specializationKind) {
     case CodeForCall:
@@ -152,7 +152,7 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::codeBlockFor(JSGlobalData
         break;
     }
 
-    UnlinkedFunctionCodeBlock* result = generateFunctionCodeBlock(globalData, this, source, specializationKind, debuggerMode, profilerMode, error);
+    UnlinkedFunctionCodeBlock* result = generateFunctionCodeBlock(globalData, scope, this, source, specializationKind, debuggerMode, profilerMode, error);
     
     if (error.m_type != ParserError::ErrorNone)
         return 0;
@@ -189,6 +189,7 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(JSGlobalData* globalData, Structure* struct
     , m_numParameters(0)
     , m_globalData(globalData)
     , m_argumentsRegister(-1)
+    , m_globalObjectRegister(-1)
     , m_needsFullScopeChain(info.m_needsActivation)
     , m_usesEval(info.m_usesEval)
     , m_isNumericCompareFunction(false)

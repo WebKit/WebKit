@@ -3064,6 +3064,32 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             addToGraph(Jump, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jneq_ptr)));
             LAST_OPCODE(op_jneq_ptr);
 
+        case op_get_scoped_var: {
+            SpeculatedType prediction = getPrediction();
+            int dst = currentInstruction[1].u.operand;
+            int slot = currentInstruction[2].u.operand;
+            int depth = currentInstruction[3].u.operand;
+            bool hasTopScope = m_codeBlock->codeType() == FunctionCode && m_inlineStackTop->m_codeBlock->needsFullScopeChain();
+            ASSERT(!hasTopScope || depth >= 1);
+            Node* scope = getScope(hasTopScope, depth - hasTopScope);
+            Node* getScopeRegisters = addToGraph(GetScopeRegisters, scope);
+            Node* getScopedVar = addToGraph(GetScopedVar, OpInfo(slot), OpInfo(prediction), getScopeRegisters);
+            set(dst, getScopedVar);
+            NEXT_OPCODE(op_get_scoped_var);
+        }
+
+        case op_put_scoped_var: {
+            int slot = currentInstruction[1].u.operand;
+            int depth = currentInstruction[2].u.operand;
+            int source = currentInstruction[3].u.operand;
+            bool hasTopScope = m_codeBlock->codeType() == FunctionCode && m_inlineStackTop->m_codeBlock->needsFullScopeChain();
+            ASSERT(!hasTopScope || depth >= 1);
+            Node* scope = getScope(hasTopScope, depth - hasTopScope);
+            Node* scopeRegisters = addToGraph(GetScopeRegisters, scope);
+            addToGraph(PutScopedVar, OpInfo(slot), scope, scopeRegisters, get(source));
+            NEXT_OPCODE(op_put_scoped_var);
+        }
+
         case op_resolve:
         case op_resolve_global_property:
         case op_resolve_global_var:

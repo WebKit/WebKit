@@ -390,6 +390,9 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_to_jsnumber)
         DEFINE_OP(op_to_primitive)
 
+        DEFINE_OP(op_get_scoped_var)
+        DEFINE_OP(op_put_scoped_var)
+
         case op_get_by_id_chain:
         case op_get_by_id_generic:
         case op_get_by_id_proto:

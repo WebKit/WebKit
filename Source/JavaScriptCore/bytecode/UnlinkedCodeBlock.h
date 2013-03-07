@@ -49,6 +49,7 @@ class Debugger;
 class FunctionBodyNode;
 class FunctionExecutable;
 class FunctionParameters;
+class JSScope;
 struct ParserError;
 class ScriptExecutable;
 class SourceCode;
@@ -107,7 +108,7 @@ public:
 
     String paramString() const;
 
-    UnlinkedFunctionCodeBlock* codeBlockFor(JSGlobalData&, const SourceCode&, CodeSpecializationKind, DebuggerMode, ProfilerMode, ParserError&);
+    UnlinkedFunctionCodeBlock* codeBlockFor(JSGlobalData&, JSScope*, const SourceCode&, CodeSpecializationKind, DebuggerMode, ProfilerMode, ParserError&);
 
     static UnlinkedFunctionExecutable* fromGlobalCode(const Identifier&, ExecState*, Debugger*, const SourceCode&, JSObject** exception);
 
@@ -267,6 +268,11 @@ public:
     void setArgumentsRegister(int argumentsRegister) { m_argumentsRegister = argumentsRegister; }
     bool usesArguments() const { return m_argumentsRegister != -1; }
     int argumentsRegister() const { return m_argumentsRegister; }
+
+
+    bool usesGlobalObject() const { return m_globalObjectRegister != -1; }
+    void setGlobalObjectRegister(int globalObjectRegister) { m_globalObjectRegister = globalObjectRegister; }
+    int globalObjectRegister() const { return m_globalObjectRegister; }
 
     // Parameter information
     void setNumParameters(int newValue) { m_numParameters = newValue; }
@@ -493,6 +499,7 @@ private:
     int m_thisRegister;
     int m_argumentsRegister;
     int m_activationRegister;
+    int m_globalObjectRegister;
 
     bool m_needsFullScopeChain : 1;
     bool m_usesEval : 1;

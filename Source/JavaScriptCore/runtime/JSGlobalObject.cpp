@@ -614,13 +614,13 @@ UnlinkedProgramCodeBlock* JSGlobalObject::createProgramCodeBlock(CallFrame* call
     return unlinkedCode;
 }
 
-UnlinkedEvalCodeBlock* JSGlobalObject::createEvalCodeBlock(CallFrame* callFrame, EvalExecutable* executable, JSObject** exception)
+UnlinkedEvalCodeBlock* JSGlobalObject::createEvalCodeBlock(CallFrame* callFrame, JSScope* scope, EvalExecutable* executable, JSObject** exception)
 {
     ParserError error;
     JSParserStrictness strictness = executable->isStrictMode() ? JSParseStrict : JSParseNormal;
     DebuggerMode debuggerMode = hasDebugger() ? DebuggerOn : DebuggerOff;
     ProfilerMode profilerMode = hasProfiler() ? ProfilerOn : ProfilerOff;
-    UnlinkedEvalCodeBlock* unlinkedCode = globalData().codeCache()->getEvalCodeBlock(globalData(), executable, executable->source(), strictness, debuggerMode, profilerMode, error);
+    UnlinkedEvalCodeBlock* unlinkedCode = globalData().codeCache()->getEvalCodeBlock(globalData(), scope, executable, executable->source(), strictness, debuggerMode, profilerMode, error);
 
     if (hasDebugger())
         debugger()->sourceParsed(callFrame, executable->source().provider(), error.m_line, error.m_message);

@@ -211,7 +211,7 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, JSScope* scope, JITCo
             return throwError(exec, createEvalError(exec, lexicalGlobalObject->evalDisabledErrorMessage()));
 
         JSObject* exception = 0;
-        UnlinkedEvalCodeBlock* unlinkedEvalCode = lexicalGlobalObject->createEvalCodeBlock(exec, this, &exception);
+        UnlinkedEvalCodeBlock* unlinkedEvalCode = lexicalGlobalObject->createEvalCodeBlock(exec, scope, this, &exception);
         if (!unlinkedEvalCode)
             return exception;
 
@@ -498,7 +498,7 @@ PassOwnPtr<FunctionCodeBlock> FunctionExecutable::produceCodeBlockFor(JSScope* s
     ParserError error;
     DebuggerMode debuggerMode = globalObject->hasDebugger() ? DebuggerOn : DebuggerOff;
     ProfilerMode profilerMode = globalObject->hasProfiler() ? ProfilerOn : ProfilerOff;
-    UnlinkedFunctionCodeBlock* unlinkedCodeBlock = m_unlinkedExecutable->codeBlockFor(*globalData, m_source, specializationKind, debuggerMode, profilerMode, error);
+    UnlinkedFunctionCodeBlock* unlinkedCodeBlock = m_unlinkedExecutable->codeBlockFor(*globalData, scope, m_source, specializationKind, debuggerMode, profilerMode, error);
     recordParse(m_unlinkedExecutable->features(), m_unlinkedExecutable->hasCapturedVariables(), lineNo(), lastLine());
 
     if (!unlinkedCodeBlock) {

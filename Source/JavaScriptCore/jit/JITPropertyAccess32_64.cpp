@@ -1244,6 +1244,59 @@ void JIT::emitSlow_op_get_by_pname(Instruction* currentInstruction, Vector<SlowC
     stubCall.call(dst);
 }
 
+void JIT::emit_op_get_scoped_var(Instruction* currentInstruction)
+{
+    int dst = currentInstruction[1].u.operand;
+    int index = currentInstruction[2].u.operand;
+    int skip = currentInstruction[3].u.operand;
+
+    emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT2);
+    bool checkTopLevel = m_codeBlock->codeType() == FunctionCode && m_codeBlock->needsFullScopeChain();
+    ASSERT(skip || !checkTopLevel);
+    if (checkTopLevel && skip--) {
+        Jump activationNotCreated;
+        if (checkTopLevel)
+            activationNotCreated = branch32(Equal, tagFor(m_codeBlock->activationRegister()), TrustedImm32(JSValue::EmptyValueTag));
+        loadPtr(Address(regT2, JSScope::offsetOfNext()), regT2);
+        activationNotCreated.link(this);
+    }
+    while (skip--)
+        loadPtr(Address(regT2, JSScope::offsetOfNext()), regT2);
+
+    loadPtr(Address(regT2, JSVariableObject::offsetOfRegisters()), regT2);
+
+    emitLoad(index, regT1, regT0, regT2);
+    emitValueProfilingSite();
+    emitStore(dst, regT1, regT0);
+    map(m_bytecodeOffset + OPCODE_LENGTH(op_get_scoped_var), dst, regT1, regT0);
+}
+
+void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
+{
+    int index = currentInstruction[1].u.operand;
+    int skip = currentInstruction[2].u.operand;
+    int value = currentInstruction[3].u.operand;
+
+    emitLoad(value, regT1, regT0);
+
+    emitGetFromCallFrameHeaderPtr(JSStack::ScopeChain, regT2);
+    bool checkTopLevel = m_codeBlock->codeType() == FunctionCode && m_codeBlock->needsFullScopeChain();
+    ASSERT(skip || !checkTopLevel);
+    if (checkTopLevel && skip--) {
+        Jump activationNotCreated;
+        if (checkTopLevel)
+            activationNotCreated = branch32(Equal, tagFor(m_codeBlock->activationRegister()), TrustedImm32(JSValue::EmptyValueTag));
+        loadPtr(Address(regT2, JSScope::offsetOfNext()), regT2);
+        activationNotCreated.link(this);
+    }
+    while (skip--)
+        loadPtr(Address(regT2, JSScope::offsetOfNext()), regT2);
+
+    loadPtr(Address(regT2, JSVariableObject::offsetOfRegisters()), regT3);
+    emitStore(index, regT1, regT0, regT3);
+    emitWriteBarrier(regT2, regT1, regT0, regT1, ShouldFilterImmediates, WriteBarrierForVariableAccess);
+}
+
 void JIT::emit_op_init_global_const(Instruction* currentInstruction)
 {
     WriteBarrier<Unknown>* registerPointer = currentInstruction[1].u.registerPointer;

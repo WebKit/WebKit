@@ -1,3 +1,104 @@
+2013-03-05  Oliver Hunt  <oliver@apple.com>
+
+        Bring back eager resolution of function scoped variables
+        https://bugs.webkit.org/show_bug.cgi?id=111497
+
+        Reviewed by Geoffrey Garen.
+
+        This reverts the get/put_scoped_var part of the great non-local
+        variable resolution refactoring.  This still leaves all the lazy
+        variable resolution logic as it's necessary for global property
+        resolution, and i don't want to make the patch bigger than it
+        already is.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName):
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::generateFunctionCodeBlock):
+        (JSC::UnlinkedFunctionExecutable::codeBlockFor):
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC):
+        (UnlinkedFunctionExecutable):
+        (UnlinkedCodeBlock):
+        (JSC::UnlinkedCodeBlock::usesGlobalObject):
+        (JSC::UnlinkedCodeBlock::setGlobalObjectRegister):
+        (JSC::UnlinkedCodeBlock::globalObjectRegister):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::ResolveResult::checkValidity):
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitLoadGlobalObject):
+        (JSC):
+        (JSC::BytecodeGenerator::resolve):
+        (JSC::BytecodeGenerator::resolveConstDecl):
+        (JSC::BytecodeGenerator::emitResolve):
+        (JSC::BytecodeGenerator::emitResolveBase):
+        (JSC::BytecodeGenerator::emitResolveBaseForPut):
+        (JSC::BytecodeGenerator::emitResolveWithBaseForPut):
+        (JSC::BytecodeGenerator::emitResolveWithThis):
+        (JSC::BytecodeGenerator::emitGetStaticVar):
+        (JSC::BytecodeGenerator::emitPutStaticVar):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::ResolveResult::lexicalResolve):
+        (JSC::ResolveResult::isStatic):
+        (JSC::ResolveResult::depth):
+        (JSC::ResolveResult::index):
+        (ResolveResult):
+        (JSC::ResolveResult::ResolveResult):
+        (BytecodeGenerator):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ResolveNode::isPure):
+        (JSC::FunctionCallResolveNode::emitBytecode):
+        (JSC::PostfixNode::emitResolve):
+        (JSC::TypeOfResolveNode::emitBytecode):
+        (JSC::PrefixNode::emitResolve):
+        (JSC::ReadModifyResolveNode::emitBytecode):
+        (JSC::AssignResolveNode::emitBytecode):
+        (JSC::ConstDeclNode::emitCodeSingle):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.cpp:
+        (JSC::DFG::debugFail):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        (JSC::DFG::canInlineOpcode):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        (JIT):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC):
+        (JSC::JIT::emit_op_put_scoped_var):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC):
+        (JSC::JIT::emit_op_put_scoped_var):
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getCodeBlock):
+        (JSC::CodeCache::getProgramCodeBlock):
+        (JSC::CodeCache::getEvalCodeBlock):
+        * runtime/CodeCache.h:
+        (JSC):
+        (CodeCache):
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+        (JSC::FunctionExecutable::produceCodeBlockFor):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::createEvalCodeBlock):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+        * runtime/Options.cpp:
+        (JSC::Options::initialize):
+
 2013-03-06  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, roll out http://trac.webkit.org/changeset/144989

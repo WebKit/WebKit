@@ -85,7 +85,6 @@ static inline void debugFail(CodeBlock* codeBlock, OpcodeID opcodeID, Capability
     if (result == CannotCompile)
         dataLogF("Cannot handle code block %p because of opcode %s.\n", codeBlock, opcodeNames[opcodeID]);
     else {
-        ASSERT(result == ShouldProfile);
         dataLogF("Cannot compile code block %p because of opcode %s, but inlining might be possible.\n", codeBlock, opcodeNames[opcodeID]);
     }
 #else

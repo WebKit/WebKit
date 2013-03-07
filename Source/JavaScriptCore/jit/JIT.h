@@ -756,6 +756,8 @@ namespace JSC {
         void emit_op_to_primitive(Instruction*);
         void emit_op_unexpected_load(Instruction*);
         void emit_op_urshift(Instruction*);
+        void emit_op_get_scoped_var(Instruction*);
+        void emit_op_put_scoped_var(Instruction*);
 
         void emitSlow_op_add(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_bitand(Instruction*, Vector<SlowCaseEntry>::iterator&);

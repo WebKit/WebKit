@@ -97,6 +97,9 @@ namespace JSC {
     macro(op_is_function, 3) \
     macro(op_in, 4) \
     \
+    macro(op_get_scoped_var, 5) /* has value profiling */ \
+    macro(op_put_scoped_var, 4) \
+    \
     macro(op_resolve, 5) /* has value profiling */  \
     macro(op_resolve_global_property, 5) /* has value profiling */  \
     macro(op_resolve_global_var, 5) /* has value profiling */  \

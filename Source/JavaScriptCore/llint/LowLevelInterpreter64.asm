@@ -1632,6 +1632,67 @@ _llint_throw_during_call_trampoline:
     loadp JSGlobalData::callFrameForThrow[t1], t0
     jmp JSGlobalData::targetMachinePCForThrow[t1]
 
+# Gives you the scope in t0, while allowing you to optionally perform additional checks on the
+# scopes as they are traversed. scopeCheck() is called with two arguments: the register
+# holding the scope, and a register that can be used for scratch. Note that this does not
+# use t3, so you can hold stuff in t3 if need be.
+macro getDeBruijnScope(deBruijinIndexOperand, scopeCheck)
+    loadp ScopeChain[cfr], t0
+    loadis deBruijinIndexOperand, t2
+
+    btiz t2, .done
+
+    loadp CodeBlock[cfr], t1
+    bineq CodeBlock::m_codeType[t1], FunctionCode, .loop
+    btbz CodeBlock::m_needsActivation[t1], .loop
+
+    loadis CodeBlock::m_activationRegister[t1], t1
+
+    # Need to conditionally skip over one scope.
+    btpz [cfr, t1, 8], .noActivation
+    scopeCheck(t0, t1)
+    loadp JSScope::m_next[t0], t0
+.noActivation:
+    subi 1, t2
+
+    btiz t2, .done
+.loop:
+    scopeCheck(t0, t1)
+    loadp JSScope::m_next[t0], t0
+    subi 1, t2
+    btinz t2, .loop
+
+.done:
+end
+
+_llint_op_get_scoped_var:
+    traceExecution()
+    # Operands are as follows:
+    # pc[1]: Destination for the load
+    # pc[2]: Index of register in the scope
+    # 24[PB, PC, 8]  De Bruijin index.
+    getDeBruijnScope(24[PB, PC, 8], macro (scope, scratch) end)
+    loadisFromInstruction(1, t1)
+    loadisFromInstruction(2, t2)
+
+    loadp JSVariableObject::m_registers[t0], t0
+    loadp [t0, t2, 8], t3
+    storep t3, [cfr, t1, 8]
+    loadp 32[PB, PC, 8], t1
+    valueProfile(t3, t1)
+    dispatch(5)
+
+
+_llint_op_put_scoped_var:
+    traceExecution()
+    getDeBruijnScope(16[PB, PC, 8], macro (scope, scratch) end)
+    loadis 24[PB, PC, 8], t1
+    loadConstantOrVariable(t1, t3)
+    loadis 8[PB, PC, 8], t1
+    writeBarrier(t3)
+    loadp JSVariableObject::m_registers[t0], t0
+    storep t3, [t0, t1, 8]
+    dispatch(4)
 
 macro nativeCallTrampoline(executableOffsetToFunction)
     storep 0, CodeBlock[cfr]
