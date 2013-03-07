@@ -6874,8 +6874,12 @@ void RenderBlock::fitBorderToLinesIfNeeded()
     LayoutUnit right = LayoutUnit::min();
     LayoutUnit oldWidth = contentWidth();
     adjustForBorderFit(0, left, right);
-    left = max(borderLeft() + paddingLeft(), left);
-    right = min(borderLeft() + paddingLeft() + contentWidth(), right);
+    
+    // Clamp to our existing edges. We can never grow. We only shrink.
+    LayoutUnit leftEdge = borderLeft() + paddingLeft();
+    LayoutUnit rightEdge = leftEdge + oldWidth;
+    left = min(rightEdge, max(leftEdge, left));
+    right = max(leftEdge, min(rightEdge, right));
     
     LayoutUnit newContentWidth = right - left;
     if (newContentWidth == oldWidth)
