@@ -1,3 +1,22 @@
+2013-03-06  David Dorwin  <ddorwin@chromium.org>
+
+        [chromium] Fix typo: destoryPage() => destroyPage()
+        https://bugs.webkit.org/show_bug.cgi?id=111664
+
+        Reviewed by Kentaro Hara.
+
+        * src/WebHelperPluginImpl.cpp:
+        (WebKit::WebHelperPluginImpl::closeHelperPlugin):
+        (WebKit::WebHelperPluginImpl::destroyPage):
+        * src/WebHelperPluginImpl.h:
+        (WebHelperPluginImpl):
+        * src/WebPagePopupImpl.cpp:
+        (WebKit::WebPagePopupImpl::destroyPage):
+        (WebKit::WebPagePopupImpl::close):
+        (WebKit::WebPagePopupImpl::closePopup):
+        * src/WebPagePopupImpl.h:
+        (WebPagePopupImpl):
+
 2013-03-06  Ankur Taly  <ataly@google.com>
 
         Modify log method in WebDOMActivityLogger so that the apiName and

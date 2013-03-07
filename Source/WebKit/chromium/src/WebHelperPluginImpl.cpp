@@ -134,7 +134,7 @@ void WebHelperPluginImpl::closeHelperPlugin()
     // We must destroy the page now in case the host page is being destroyed, in
     // which case some of the objects the page depends on may have been
     // destroyed by the time this->close() is called asynchronously.
-    destoryPage();
+    destroyPage();
 
     // m_widgetClient might be 0 because this widget might be already closed.
     if (m_widgetClient) {
@@ -204,7 +204,7 @@ bool WebHelperPluginImpl::initializePage(WebKit::WebViewImpl* webView, const Str
     return true;
 }
 
-void WebHelperPluginImpl::destoryPage()
+void WebHelperPluginImpl::destroyPage()
 {
     if (!m_page)
         return;

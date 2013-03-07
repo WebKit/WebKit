@@ -85,7 +85,7 @@ private:
 
     explicit WebPagePopupImpl(WebWidgetClient*);
     bool initializePage();
-    void destoryPage();
+    void destroyPage();
 
     WebWidgetClient* m_widgetClient;
     WebRect m_windowRectInScreen;

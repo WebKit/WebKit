@@ -225,7 +225,7 @@ bool WebPagePopupImpl::initializePage()
     return true;
 }
 
-void WebPagePopupImpl::destoryPage()
+void WebPagePopupImpl::destroyPage()
 {
     if (!m_page)
         return;
@@ -317,7 +317,7 @@ void WebPagePopupImpl::setFocus(bool enable)
 void WebPagePopupImpl::close()
 {
     m_closing = true;
-    destoryPage(); // In case closePopup() was not called.
+    destroyPage(); // In case closePopup() was not called.
     m_widgetClient = 0;
     deref();
 }
@@ -332,7 +332,7 @@ void WebPagePopupImpl::closePopup()
     }
     m_closing = true;
 
-    destoryPage();
+    destroyPage();
 
     // m_widgetClient might be 0 because this widget might be already closed.
     if (m_widgetClient) {
