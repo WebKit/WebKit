@@ -38,7 +38,7 @@ testPaste("div", "Hello", "Hello");
 testPaste("div", "<b><i>Hello</i></b>", "<b><i>Hello</i></b>");
 testPaste("div", "<div><b><i><span style=\"font-weight: normal\"><b><i>Hello</i></b></span></i></b></div>", "<b><i>Hello</i></b>");
 testPaste("div", "<div><div><div>Hello</div></div></div>", "Hello");
-testPaste("div", "<div><b><div><i>Hello</i></div></b></div>", "<b><i>Hello</i></b>");
+testPaste("div", "<div><b><div><i>Hello</i></div></b></div>", "<i style=\"font-weight: bold;\">Hello</i>");
 testPaste("div", "<div><div style=\"text-align: center;\"><b>Hello</b></div></div>", "<div style=\"text-align: center;\"><b>Hello</b></div>");
 testPaste("div", "<div><b><i><span style=\"font-weight: normal\"><b><i>hello</i></b></span></i></b></div><div><b><i><span style=\"font-weight: normal\"><b><i>world</i></b></span></i></b></div>", 
           "<div><b><i>hello</i></b></div><div><b><i>world</i></b></div>");
