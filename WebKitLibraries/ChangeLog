@@ -1,3 +1,10 @@
+2013-03-06  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix.  Add ENABLE_CURSOR_VISIBILITY to the list of FEATURE_DEFINES for
+        (non-Cairo) Windows builds.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+
 2013-03-05  Kiran Muppala  <cmuppala@apple.com>
 
         Remove deprecated process suppression assertion SPI from WebKitSystemInterface
