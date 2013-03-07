@@ -85,6 +85,10 @@ WebInspector.NavigatorView.prototype = {
         node.appendChild(uiSourceCodeNode);
     },
 
+    /**
+     * @param {WebInspector.Project} project
+     * @return {WebInspector.NavigatorTreeNode}
+     */
     _getProjectNode: function(project)
     {
         if (!project.displayName())
@@ -92,6 +96,10 @@ WebInspector.NavigatorView.prototype = {
         return this._rootNode.child(project.id());
     },
 
+    /**
+     * @param {WebInspector.Project} project
+     * @return {WebInspector.NavigatorFolderTreeNode}
+     */
     _createProjectNode: function(project)
     {
         var type = project.type() === WebInspector.projectTypes.FileSystem ? WebInspector.NavigatorTreeOutline.Types.FileSystem : WebInspector.NavigatorTreeOutline.Types.Domain;
@@ -100,16 +108,30 @@ WebInspector.NavigatorView.prototype = {
         return projectNode;
     },
 
+    /**
+     * @param {WebInspector.Project} project
+     * @return {WebInspector.NavigatorTreeNode}
+     */
     _getOrCreateProjectNode: function(project)
     {
         return this._getProjectNode(project) || this._createProjectNode(project);
     },
 
+    /**
+     * @param {WebInspector.NavigatorTreeNode} parentNode
+     * @param {string} name
+     * @return {WebInspector.NavigatorFolderTreeNode}
+     */
     _getFolderNode: function(parentNode, name)
     {
         return parentNode.child(name);
     },
 
+    /**
+     * @param {WebInspector.NavigatorTreeNode} parentNode
+     * @param {string} name
+     * @return {WebInspector.NavigatorFolderTreeNode}
+     */
     _createFolderNode: function(parentNode, name)
     {
         var folderNode = new WebInspector.NavigatorFolderTreeNode(this, name, WebInspector.NavigatorTreeOutline.Types.Folder, name);
@@ -117,11 +139,20 @@ WebInspector.NavigatorView.prototype = {
         return folderNode;
     },
 
+    /**
+     * @param {WebInspector.NavigatorTreeNode} parentNode
+     * @param {string} name
+     * @return {WebInspector.NavigatorFolderTreeNode}
+     */
     _getOrCreateFolderNode: function(parentNode, name)
     {
         return this._getFolderNode(parentNode, name) || this._createFolderNode(parentNode, name);
     },
 
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     * @return {WebInspector.NavigatorTreeNode}
+     */
     _getUISourceCodeParentNode: function(uiSourceCode)
     {
         var projectNode = this._getProjectNode(uiSourceCode.project());
@@ -137,6 +168,10 @@ WebInspector.NavigatorView.prototype = {
         return parentNode;
     },
 
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     * @return {WebInspector.NavigatorTreeNode}
+     */
     _getOrCreateUISourceCodeParentNode: function(uiSourceCode)
     {
         var projectNode = this._getOrCreateProjectNode(uiSourceCode.project());
