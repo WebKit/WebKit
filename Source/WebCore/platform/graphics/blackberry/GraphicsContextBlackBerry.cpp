@@ -395,15 +395,6 @@ IntRect GraphicsContext::clipBounds() const
     return IntRect(IntPoint(INT_MIN / 2, INT_MIN / 2), IntSize(INT_MAX, INT_MAX));
 }
 
-
-void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness)
-{
-    if (paintingDisabled())
-        return;
-
-    fprintf(stderr, "clip rounded rect %d,%d,%d,%d - %d\n", rect.x(), rect.y(), rect.width(), rect.height(), thickness);
-}
-
 void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
 {
 }
