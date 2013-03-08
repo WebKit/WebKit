@@ -1,3 +1,29 @@
+2013-03-07  Geoffrey Garen  <ggaren@apple.com>
+
+        REGRESSION (r143759): 40% JSBench regression, 20% Octane/closure regression, 40% Octane/jquery regression, 2% Octane regression
+        https://bugs.webkit.org/show_bug.cgi?id=111797
+
+        Reviewed by Oliver Hunt.
+
+        The bot's testing configuration stresses the cache's starting guess
+        of 1MB.
+
+        This patch removes any starting guess, and just uses wall clock time
+        to discover the initial working set size of an app, in code size.
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCacheMap::pruneSlowCase): Update our timer as we go.
+
+        Also fixed a bug where pruning from 0 to 0 would hang -- that case is
+        a possibility now that we start with a capacity of 0.
+
+        * runtime/CodeCache.h:
+        (CodeCacheMap):
+        (JSC::CodeCacheMap::CodeCacheMap):
+        (JSC::CodeCacheMap::add):
+        (JSC::CodeCacheMap::prune): Don't prune if we're in the middle of
+        discovering the working set size of an app, in code size.
+
 2013-03-07  Michael Saboff  <msaboff@apple.com>
 
         Crash when updating predictions below JSC::arrayProtoFuncForEach on tuaw.com article
