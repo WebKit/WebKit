@@ -43,6 +43,8 @@
 #include "PluginDatabase.h"
 #include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
+#include "StorageThread.h"
+#include "WorkerThread.h"
 #include <QDir>
 #include <QFileInfo>
 #include <QFont>
@@ -51,6 +53,7 @@
 #include <QSharedData>
 #include <QStandardPaths>
 #include <QUrl>
+#include <wtf/FastMalloc.h>
 #include <wtf/text/WTFString.h>
 
 
@@ -845,6 +848,13 @@ void QWebSettings::clearMemoryCaches()
     WebCore::gcController().discardAllCompiledCode();
     // Garbage Collect to release the references of CachedResource from dead objects.
     WebCore::gcController().garbageCollectNow();
+
+    // FastMalloc has lock-free thread specific caches that can only be cleared from the thread itself.
+    WebCore::StorageThread::releaseFastMallocFreeMemoryInAllThreads();
+#if ENABLE(WORKERS)
+    WebCore::WorkerThread::releaseFastMallocFreeMemoryInAllThreads();
+#endif
+    WTF::releaseFastMallocFreeMemory();        
 }
 
 /*!

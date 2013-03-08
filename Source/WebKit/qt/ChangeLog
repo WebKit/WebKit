@@ -1,3 +1,13 @@
+2013-03-08  Arunprasad Rajkumar  <arunprasadr@nds.com>
+
+        [Qt] QWebSettings::clearMemoryCaches should release FastMalloc's free pages to OS
+        https://bugs.webkit.org/show_bug.cgi?id=111605
+
+        Reviewed by Jocelyn Turcotte.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettings::clearMemoryCaches):
+
 2013-03-07  Arunprasad Rajkumar  <arunprasadr@nds.com>
 
         [Qt] QWebSettings::clearMemoryCaches should clear JS garbage
