@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<div>
+Move the mouse over the input element and scroll using the mouse
+wheel. If this does not crash, the test passed.
+</div>
+
+<style>
+input::-webkit-textfield-decoration-container {
+    display: none;
+}
+</style>
+<input type="search">
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+if (window.eventSender) {
+    var input = document.querySelector('input');
+    var x = input.offsetLeft + input.offsetWidth / 2;
+    var y = input.offsetTop + input.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseScrollBy(0, 10);
+    document.write('PASS');
+}
+</script>

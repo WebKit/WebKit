@@ -110,11 +110,11 @@ void RenderTextControlSingleLine::layout()
     // because of compability.
 
     RenderBox* innerTextRenderer = innerTextElement()->renderBox();
-    ASSERT(innerTextRenderer);
     RenderBox* innerBlockRenderer = innerBlockElement() ? innerBlockElement()->renderBox() : 0;
 
     // To ensure consistency between layouts, we need to reset any conditionally overriden height.
-    innerTextRenderer->style()->setHeight(Length(Auto));
+    if (innerTextRenderer)
+        innerTextRenderer->style()->setHeight(Length(Auto));
     if (innerBlockRenderer)
         innerBlockRenderer->style()->setHeight(Length(Auto));
 
@@ -125,15 +125,14 @@ void RenderTextControlSingleLine::layout()
 
     // Set the text block height
     LayoutUnit desiredHeight = textBlockHeight();
-    LayoutUnit currentHeight = innerTextRenderer->height();
-
     LayoutUnit heightLimit = computeHeightLimit();
-    if (currentHeight > heightLimit) {
-        if (desiredHeight != currentHeight)
+    if (innerTextRenderer && innerTextRenderer->height() > heightLimit) {
+        if (desiredHeight != innerTextRenderer->height())
             setNeedsLayout(true, MarkOnlyThis);
 
-        innerTextRenderer->style()->setHeight(Length(desiredHeight, Fixed));
         m_desiredInnerTextHeight = desiredHeight;
+        if (innerTextRenderer)
+            innerTextRenderer->style()->setHeight(Length(desiredHeight, Fixed));
         if (innerBlockRenderer)
             innerBlockRenderer->style()->setHeight(Length(desiredHeight, Fixed));
     }
@@ -156,9 +155,8 @@ void RenderTextControlSingleLine::layout()
         RenderBlock::layoutBlock(true);
 
     // Center the child block vertically
-    currentHeight = innerTextRenderer->height();
-    if (!container && currentHeight != contentHeight()) {
-        LayoutUnit heightDiff = currentHeight - contentHeight();
+    if (!container && innerTextRenderer && innerTextRenderer->height() != contentHeight()) {
+        LayoutUnit heightDiff = innerTextRenderer->height() - contentHeight();
         innerTextRenderer->setY(innerTextRenderer->y() - (heightDiff / 2 + layoutMod(heightDiff, 2)));
     } else
         centerContainerIfNeeded(containerRenderer);
@@ -175,6 +173,7 @@ void RenderTextControlSingleLine::layout()
 
     HTMLElement* placeholderElement = inputElement()->placeholderElement();
     if (RenderBox* placeholderBox = placeholderElement ? placeholderElement->renderBox() : 0) {
+        ASSERT(innerTextRenderer);
         placeholderBox->style()->setWidth(Length(innerTextRenderer->width() - placeholderBox->borderAndPaddingWidth(), Fixed));
         placeholderBox->style()->setHeight(Length(innerTextRenderer->height() - placeholderBox->borderAndPaddingHeight(), Fixed));
         bool neededLayout = placeholderBox->needsLayout();
@@ -277,7 +276,9 @@ bool RenderTextControlSingleLine::hasControlClip() const
 LayoutRect RenderTextControlSingleLine::controlClipRect(const LayoutPoint& additionalOffset) const
 {
     ASSERT(hasControlClip());
-    LayoutRect clipRect = unionRect(contentBoxRect(), containerElement()->renderBox()->frameRect());
+    LayoutRect clipRect = contentBoxRect();
+    if (containerElement()->renderBox())
+        clipRect = unionRect(clipRect, containerElement()->renderBox()->frameRect());
     clipRect.moveBy(additionalOffset);
     return clipRect;
 }
@@ -388,7 +389,10 @@ bool RenderTextControlSingleLine::textShouldBeTruncated() const
 
 void RenderTextControlSingleLine::autoscroll(const IntPoint& position)
 {
-    RenderLayer* layer = innerTextElement()->renderBox()->layer();
+    RenderBox* renderer = innerTextElement()->renderBox();
+    if (!renderer)
+        return;
+    RenderLayer* layer = renderer->layer();
     if (layer)
         layer->autoscroll(position);
 }
@@ -435,7 +439,10 @@ void RenderTextControlSingleLine::setScrollTop(int newTop)
 
 bool RenderTextControlSingleLine::scroll(ScrollDirection direction, ScrollGranularity granularity, float multiplier, Node** stopNode)
 {
-    RenderLayer* layer = innerTextElement()->renderBox()->layer();
+    RenderBox* renderer = innerTextElement()->renderBox();
+    if (!renderer)
+        return false;
+    RenderLayer* layer = renderer->layer();
     if (layer && layer->scroll(direction, granularity, multiplier))
         return true;
     return RenderBlock::scroll(direction, granularity, multiplier, stopNode);
