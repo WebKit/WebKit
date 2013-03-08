@@ -101,7 +101,7 @@ static void setViewClient(WKViewRef view, const void* clientInfo)
 TEST(WebKit2, WKViewClientWebProcessCallbacks)
 {
     WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
-    WKRetainPtr<WKURLRef> url = Util::createURLForResource("simple", "html");
+    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple", "html"));
 
     PlatformWebView view(context.get());
 
