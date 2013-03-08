@@ -13,7 +13,7 @@ layer at (0,0) size 785x1325
           text run at (410,32) width 242: " Table Testcase"
       RenderTable {TABLE} at (16,159) size 737x1134
         RenderTableSection {TBODY} at (0,0) size 737x1133
-          RenderTableRow {TR} at (0,2) size 737x381
+          RenderTableRow {TR} at (0,2) size 737x382
             RenderTableCell {TD} at (2,2) size 135x687 [bgcolor=#FFFFFF] [r=0 c=0 rs=2 cs=1]
               RenderBlock {H2} at (5,18) size 125x19
                 RenderText {#text} at (0,0) size 117x17
@@ -188,7 +188,7 @@ layer at (0,0) size 785x1325
                   text run at (0,30) width 108: "blah blah blah blah"
                   text run at (0,45) width 108: "blah blah blah blah"
                   text run at (0,60) width 52: "blah blah"
-          RenderTableRow {TR} at (0,385) size 737x746
+          RenderTableRow {TR} at (0,386) size 737x745
             RenderTableCell {TD} at (600,970) size 135x161 [bgcolor=#FFFFFF] [r=1 c=2 rs=1 cs=1]
               RenderBlock {H2} at (5,18) size 125x37
                 RenderText {#text} at (0,0) size 88x35

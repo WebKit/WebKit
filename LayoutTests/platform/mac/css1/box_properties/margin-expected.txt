@@ -1,8 +1,8 @@
-layer at (0,0) size 787x2630
+layer at (0,0) size 787x2631
   RenderView at (0,0) size 785x585
-layer at (0,0) size 785x2630
-  RenderBlock {HTML} at (0,0) size 785x2630
-    RenderBody {BODY} at (8,8) size 769x2614 [bgcolor=#CCCCCC]
+layer at (0,0) size 785x2631
+  RenderBlock {HTML} at (0,0) size 785x2631
+    RenderBody {BODY} at (8,8) size 769x2615 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 769x18
         RenderText {#text} at (0,0) size 355x18
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
@@ -87,15 +87,15 @@ layer at (0,0) size 785x2630
       RenderBlock {P} at (0,1352) size 769x19 [bgcolor=#C0C0C0]
         RenderText {#text} at (0,0) size 203x18
           text run at (0,0) width 203: "This element has a class of zero."
-      RenderTable {TABLE} at (0,1370) size 769x1244 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 767x1241
+      RenderTable {TABLE} at (0,1370) size 769x1245 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 767x1242
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x18
                 RenderText {#text} at (4,4) size 163x18
                   text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,26) size 767x1215
-            RenderTableCell {TD} at (0,620) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 767x1216
+            RenderTableCell {TD} at (0,621) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x18
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x1216 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
