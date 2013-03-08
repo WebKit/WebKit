@@ -4469,3 +4469,6 @@ webkit.org/b/111774 [ Win ] http/tests/security/cross-origin-css.html [ Pass Fai
 webkit.org/b/111816 fast/borders/border-fit-2.html [ Failure ]
 
 webkit.org/b/111872 fast/dom/title-directionality-removeChild.html [ Pass Failure ]
+
+# Test is a performance test, not useful in debug
+webkit.org/b/111808 [ Debug ] fast/js/regress/nested-function-parsing-random.html [ Pass Timeout ]
