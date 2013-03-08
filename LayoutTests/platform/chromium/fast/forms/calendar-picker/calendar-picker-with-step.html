@@ -18,7 +18,7 @@ openPicker(document.getElementById('date'), test1);
 
 function test1() {
     debug("Step without min.");
-    shouldBe('availableDatesInCurrentMonth().join(",")', '["2011-05-08", "2011-05-17", "2011-05-26"].join(",")');
+    shouldBeEqualToString('availableDayCells()', '2011-05-08,2011-05-17,2011-05-26,2011-06-04');
 
     // Close popup
     eventSender.keyDown('\x1B');
@@ -34,16 +34,9 @@ function test1AfterClose() {
 
 function test2() {
     debug("Step when min is set.");
-    shouldBe('availableDatesInCurrentMonth().join(",")', '["2011-05-01", "2011-05-10", "2011-05-19", "2011-05-28"].join(",")');
+    shouldBeEqualToString('availableDayCells()', '2011-05-01,2011-05-10,2011-05-19,2011-05-28');
     finishJSTest();
 }
-
-function availableDatesInCurrentMonth() {
-    return Array.prototype.map.call(popupWindow.document.querySelectorAll(".day.available:not(.not-this-month)"), function(element) {
-        return element.dataset.submitValue;
-    }).sort();
-}
-
 </script>
 <script src="../../../../../fast/js/resources/js-test-post.js"></script>
 </body>

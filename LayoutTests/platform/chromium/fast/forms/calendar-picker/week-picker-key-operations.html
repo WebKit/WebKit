@@ -20,107 +20,149 @@ openPicker(document.getElementById('week'), test1);
 function test1() {
     debug('Check that page popup exists.');
     shouldBe('popupWindow.pagePopupController.toString()', '"[object PagePopupController]"');
-
-    shouldBeEqualToString('selectedWeek()', '2000-W01');
+    
     shouldBeEqualToString('currentMonth()', '2000-01');
+    shouldBeEqualToString('selectedValue()', '2000-W01');
+    shouldBeEqualToString('selectedDayCells()', '2000-01-03,2000-01-04,2000-01-05,2000-01-06,2000-01-07,2000-01-08,2000-01-09');
+    shouldBeEqualToString('highlightedValue()', '2000-W01');
+    shouldBeEqualToString('highlightedDayCells()', '2000-01-03,2000-01-04,2000-01-05,2000-01-06,2000-01-07,2000-01-08,2000-01-09');
 
     debug('Check that arrow keys work properly.');
-
-    eventSender.keyDown('upArrow');
-    shouldBeEqualToString('selectedWeek()', '1999-W52');
-    shouldBeEqualToString('currentMonth()', '2000-01');
     
+    debug("press up");
     eventSender.keyDown('upArrow');
-    shouldBeEqualToString('selectedWeek()', '1999-W51');
-    shouldBeEqualToString('currentMonth()', '1999-12');
-
-    eventSender.keyDown('downArrow');
-    shouldBeEqualToString('selectedWeek()', '1999-W52');
-    shouldBeEqualToString('currentMonth()', '1999-12');
-
-    eventSender.keyDown('downArrow');
-    shouldBeEqualToString('selectedWeek()', '2000-W01');
     shouldBeEqualToString('currentMonth()', '2000-01');
+    shouldBeEqualToString('selectedValue()', '2000-W01');
+    shouldBeEqualToString('selectedDayCells()', '2000-01-03,2000-01-04,2000-01-05,2000-01-06,2000-01-07,2000-01-08,2000-01-09');
+    shouldBeEqualToString('highlightedValue()', '1999-W52');
+    shouldBeEqualToString('highlightedDayCells()', '1999-12-27,1999-12-28,1999-12-29,1999-12-30,1999-12-31,2000-01-01,2000-01-02');
     
+    debug("press up");
+    eventSender.keyDown('upArrow');
+    shouldBeEqualToString('currentMonth()', '1999-12');
+    shouldBeEqualToString('selectedValue()', '2000-W01');
+    shouldBeEqualToString('selectedDayCells()', '');
+    shouldBeEqualToString('highlightedValue()', '1999-W51');
+    shouldBeEqualToString('highlightedDayCells()', '1999-12-20,1999-12-21,1999-12-22,1999-12-23,1999-12-24,1999-12-25,1999-12-26');
+    
+    debug("press down");
     eventSender.keyDown('downArrow');
-    shouldBeEqualToString('selectedWeek()', '2000-W02');
+    shouldBeEqualToString('currentMonth()', '1999-12');
+    shouldBeEqualToString('selectedValue()', '2000-W01');
+    shouldBeEqualToString('selectedDayCells()', '');
+    shouldBeEqualToString('highlightedValue()', '1999-W52');
+    shouldBeEqualToString('highlightedDayCells()', '1999-12-27,1999-12-28,1999-12-29,1999-12-30,1999-12-31,2000-01-01');
+    
+    debug("press down");
+    eventSender.keyDown('downArrow');
     shouldBeEqualToString('currentMonth()', '2000-01');
+    shouldBeEqualToString('selectedValue()', '2000-W01');
+    shouldBeEqualToString('selectedDayCells()', '2000-01-03,2000-01-04,2000-01-05,2000-01-06,2000-01-07,2000-01-08,2000-01-09');
+    shouldBeEqualToString('highlightedValue()', '2000-W01');
+    shouldBeEqualToString('highlightedDayCells()', '2000-01-03,2000-01-04,2000-01-05,2000-01-06,2000-01-07,2000-01-08,2000-01-09');
 
+    debug("press down");
+    eventSender.keyDown('downArrow');
+    shouldBeEqualToString('currentMonth()', '2000-01');
+    shouldBeEqualToString('selectedValue()', '2000-W01');
+    shouldBeEqualToString('selectedDayCells()', '2000-01-03,2000-01-04,2000-01-05,2000-01-06,2000-01-07,2000-01-08,2000-01-09');
+    shouldBeEqualToString('highlightedValue()', '2000-W02');
+    shouldBeEqualToString('highlightedDayCells()', '2000-01-10,2000-01-11,2000-01-12,2000-01-13,2000-01-14,2000-01-15,2000-01-16');
+    
+    debug("press left");
     eventSender.keyDown('leftArrow');
-    shouldBeEqualToString('selectedWeek()', '2000-W01');
     shouldBeEqualToString('currentMonth()', '2000-01');
+    shouldBeEqualToString('selectedValue()', '2000-W01');
+    shouldBeEqualToString('selectedDayCells()', '2000-01-03,2000-01-04,2000-01-05,2000-01-06,2000-01-07,2000-01-08,2000-01-09');
+    shouldBeEqualToString('highlightedValue()', '2000-W01');
+    shouldBeEqualToString('highlightedDayCells()', '2000-01-03,2000-01-04,2000-01-05,2000-01-06,2000-01-07,2000-01-08,2000-01-09');
 
+    debug("press right");
     eventSender.keyDown('rightArrow');
-    shouldBeEqualToString('selectedWeek()', '2000-W02');
     shouldBeEqualToString('currentMonth()', '2000-01');
+    shouldBeEqualToString('selectedValue()', '2000-W01');
+    shouldBeEqualToString('selectedDayCells()', '2000-01-03,2000-01-04,2000-01-05,2000-01-06,2000-01-07,2000-01-08,2000-01-09');
+    shouldBeEqualToString('highlightedValue()', '2000-W02');
+    shouldBeEqualToString('highlightedDayCells()', '2000-01-10,2000-01-11,2000-01-12,2000-01-13,2000-01-14,2000-01-15,2000-01-16');
 
     debug("press m");
     eventSender.keyDown('m');
-    shouldBeEqualToString('selectedWeek()', '2000-W07');
     shouldBeEqualToString('currentMonth()', '2000-02');
+    shouldBeEqualToString('selectedValue()', '2000-W01');
+    shouldBeEqualToString('selectedDayCells()', '');
+    shouldBeEqualToString('highlightedValue()', '2000-W07');
+    shouldBeEqualToString('highlightedDayCells()', '2000-02-14,2000-02-15,2000-02-16,2000-02-17,2000-02-18,2000-02-19,2000-02-20');
 
     debug("press shift + m");
     eventSender.keyDown('M');
-    shouldBeEqualToString('selectedWeek()', '2000-W02');
     shouldBeEqualToString('currentMonth()', '2000-01');
+    shouldBeEqualToString('selectedValue()', '2000-W01');
+    shouldBeEqualToString('selectedDayCells()', '2000-01-03,2000-01-04,2000-01-05,2000-01-06,2000-01-07,2000-01-08,2000-01-09');
+    shouldBeEqualToString('highlightedValue()', '2000-W02');
+    shouldBeEqualToString('highlightedDayCells()', '2000-01-10,2000-01-11,2000-01-12,2000-01-13,2000-01-14,2000-01-15,2000-01-16');
 
     debug("press y");
     eventSender.keyDown('y');
-    shouldBeEqualToString('selectedWeek()', '2001-W03');
     shouldBeEqualToString('currentMonth()', '2001-01');
+    shouldBeEqualToString('selectedValue()', '2000-W01');
+    shouldBeEqualToString('selectedDayCells()', '');
+    shouldBeEqualToString('highlightedValue()', '2001-W03');
+    shouldBeEqualToString('highlightedDayCells()', '2001-01-15,2001-01-16,2001-01-17,2001-01-18,2001-01-19,2001-01-20,2001-01-21');
 
     debug("press shift + y");
     eventSender.keyDown('Y');
-    shouldBeEqualToString('selectedWeek()', '2000-W02');
     shouldBeEqualToString('currentMonth()', '2000-01');
+    shouldBeEqualToString('selectedValue()', '2000-W01');
+    shouldBeEqualToString('selectedDayCells()', '2000-01-03,2000-01-04,2000-01-05,2000-01-06,2000-01-07,2000-01-08,2000-01-09');
+    shouldBeEqualToString('highlightedValue()', '2000-W02');
+    shouldBeEqualToString('highlightedDayCells()', '2000-01-10,2000-01-11,2000-01-12,2000-01-13,2000-01-14,2000-01-15,2000-01-16');
 
     debug("press d");
     eventSender.keyDown('d');
-    shouldBeEqualToString('selectedWeek()', '2010-W02');
     shouldBeEqualToString('currentMonth()', '2010-01');
+    shouldBeEqualToString('selectedValue()', '2000-W01');
+    shouldBeEqualToString('selectedDayCells()', '');
+    shouldBeEqualToString('highlightedValue()', '2010-W02');
+    shouldBeEqualToString('highlightedDayCells()', '2010-01-11,2010-01-12,2010-01-13,2010-01-14,2010-01-15,2010-01-16,2010-01-17');
 
     debug("press shift + d");
     eventSender.keyDown('D');
-    shouldBeEqualToString('selectedWeek()', '2000-W02');
     shouldBeEqualToString('currentMonth()', '2000-01');
+    shouldBeEqualToString('selectedValue()', '2000-W01');
+    shouldBeEqualToString('selectedDayCells()', '2000-01-03,2000-01-04,2000-01-05,2000-01-06,2000-01-07,2000-01-08,2000-01-09');
+    shouldBeEqualToString('highlightedValue()', '2000-W02');
+    shouldBeEqualToString('highlightedDayCells()', '2000-01-10,2000-01-11,2000-01-12,2000-01-13,2000-01-14,2000-01-15,2000-01-16');
 
+    debug("press enter");
     eventSender.keyDown('\n');
-    waitUntilClosing(test1AfterClosing);
-}
-
-function test1AfterClosing() {
-    shouldBeNull('document.getElementById("mock-page-popup")');
+    shouldBeEqualToString('currentMonth()', '2000-01');
+    shouldBeEqualToString('selectedValue()', '2000-W02');
+    shouldBeEqualToString('selectedDayCells()', '2000-01-10,2000-01-11,2000-01-12,2000-01-13,2000-01-14,2000-01-15,2000-01-16');
+    shouldBeEqualToString('highlightedValue()', '2000-W02');
+    shouldBeEqualToString('highlightedDayCells()', '2000-01-10,2000-01-11,2000-01-12,2000-01-13,2000-01-14,2000-01-15,2000-01-16');
     shouldBe('document.getElementById("week").value', '"2000-W02"');
 
-    openPicker(document.getElementById('week'), test2);
-}
-
-function test2() {
     // Test twice in case midnight.
     shouldBeTrue('testToday() || testToday()');
 
     debug('Check if tabbing works.');
-    shouldBe('focusedElement()', '".days-area-container"');
-    eventSender.keyDown('\t');
-    shouldBe('focusedElement()', '".today-button[value=<<ThisWeekLabel>>]"');
-    eventSender.keyDown('\t');
-    shouldBe('focusedElement()', '".clear-button[value=<<CalendarClear>>]"');
-    eventSender.keyDown('\t');
-    shouldBe('focusedElement()', '".year-month-button"');
+    shouldBe('focusedElement()', '".list-view calendar-table-view"');
     eventSender.keyDown('\t', ['shiftKey']);
-    shouldBe('focusedElement()', '".clear-button[value=<<CalendarClear>>]"');
+    shouldBe('focusedElement()', '".calendar-navigation-button"');
+    eventSender.keyDown('\t', ['shiftKey']);
+    shouldBe('focusedElement()', '".calendar-navigation-button today-button"');
+    eventSender.keyDown('\t', ['shiftKey']);
+    shouldBe('focusedElement()', '".calendar-navigation-button"');
+    eventSender.keyDown('\t', ['shiftKey']);
+    shouldBe('focusedElement()', '".month-popup-button"');
 
+    debug("press esc");
     eventSender.keyDown('\x1B');
     waitUntilClosing(test2AfterClosing);
 }
 
 function test2AfterClosing() {
     shouldBeNull('document.getElementById("mock-page-popup")');
-    shouldBe('document.getElementById("week").value', '"2000-W02"');
-
-    sendKey(document.getElementById('week'), "F4");
-    if (document.getElementById('mock-page-popup'))
-        testPassed("F4 opened picker.");
 
     finishJSTest();
 }
@@ -129,7 +171,7 @@ function testToday() {
     eventSender.keyDown('t');
     var now = new Date();
     var expectedWeek = popupWindow.Week.createFromToday().toString();
-    return selectedWeek() === expectedWeek;
+    return selectedValue() === expectedWeek && highlightedValue() === expectedWeek;
 }
 
 function focusedElement() {

@@ -6,6 +6,12 @@
 <style>
 body {
     background-color: #eeffff;
+    line-height: 1.4em;
+    font-family: Helvetica, sans-serif;
+}
+label {
+    width: 160px;
+    display: inline-block;
 }
 iframe {
     z-index: 2147483647;
@@ -19,242 +25,255 @@ iframe {
 <body>
 
 <p>This is a testbed for a calendar picker.</p>
-<select onchange="selected(this)">
- <option>English</option>
- <option>Japanese</option>
- <option>Arabic</option>
- <option>with datalist</option>
- <option>with long datalist</option>
- <option>Arabic with datalist</option>
- <option>Arabic with long datalist</option>
- <option>Week</option>
- <option>Month</option>
-</select>
 
-<div><input type="text" id="date"></div>
+<h2>Preview</h2>
+
+<input type="text" id="date" style="margin: 0;"><br>
 <iframe></iframe>
 
-<ol id="console" style="font-family:monospace;">
-</ol>
+<h2>Console</h2>
+
+<ol id="console" style="font-family:monospace;"></ol>
+
+<h2>Config</h2>
+<form action="" method="GET">
+    <fieldset>
+        <legend>Locale</legend>
+        
+        <label for="locale">Locale</label>
+        <select name="locale" id="config_locale">
+            <!-- Populated from locale_data. -->
+        </select>
+        <br />
+        <label for="locale_rtl">Locale RTL</label>
+        <input type="checkbox" name="locale_rtl" id="config_locale_rtl" value="true">
+        <br />
+        <label for="week_start_day">Week start day</label>
+        <select name="week_start_day" id="config_week_start_day">
+            <option value="0">Sunday</option>
+            <option value="1">Monday</option>
+            <option value="2">Tuesday</option>
+            <option value="3">Wednesday</option>
+            <option value="4">Thursday</option>
+            <option value="5">Friday</option>
+            <option value="6">Saturday</option>
+        </select>
+    </fieldset>
+
+    <fieldset>
+        <legend>Attributes</legend>
+        
+        <label for="type">[type]</label>
+        <select name="type" id="config_type">
+            <option>date</option>
+            <option>week</option>
+            <option>month</option>
+        </select>
+        <br />
+        <label for="value">[value]</label>
+        <input type="text" name="value" id="config_value">
+        <br />
+        <label for="min">[min]</label>
+        <input type="text" name="min" id="config_min">
+        <br />
+        <label for="max">[max]</label>
+        <input type="text" name="max" id="config_max">
+        <br />
+        <label for="step">[step]</label>
+        <input type="number" name="step" id="config_step">
+    </fieldset>
+    <input type="submit" value="Submit">
+</form>
 
 <script>
-var englishArguments = {
-    locale: 'en-US',
-    dayLabels : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-    todayLabel : 'Today',
-    clearLabel : 'Clear',
-    cancelLabel : 'Cancel',
-    weekStartDay : 0,
-    step : "86400000",
-    stepBase: "0",
-    max : '2099-12-31',
-};
-var japaneseArguments = {
-    locale: 'ja-JP',
-    dayLabels : ['日', '月', '火', '水', '木', '金', '土'],
-    todayLabel : '今日',
-    clearLabel : 'クリア',
-    cancelLabel : '取り消し',
-    weekStartDay : 0,
-    step : "86400000",
-    stepBase: "0",
-    max : '2099-03-15',
-};
-var arabicArguments = {
-    locale: 'ar',
-    isRTL: false,
-    isCalendarRTL: true,
-    dayLabels : ['ح', 'ن', 'ث', 'ر', 'خ', 'ج', 'س'],
-    todayLabel : 'اليوم',
-    clearLabel : 'مسح',
-    weekStartDay : 5,
-    step : "86400000",
-    stepBase: "0",
-    max : '2020-05-15',
-};
-var datalistArguments = {
-    locale: 'en-US',
-    dayLabels : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-    todayLabel : 'Today',
-    clearLabel : 'Clear',
-    cancelLabel : 'Cancel',
-    weekStartDay : 0,
-    step : "86400000",
-    stepBase: "0",
-    max : '2099-12-31',
-    suggestionValues : ['2012-01-01', '2012-06-03', '2012-09-06', '2012-12-24'],
-    localizedSuggestionValues : ['1/1/12', '6/3/12', '9/6/12', '12/24/12'],
-    suggestionLabels : ['', 'Birthday', '', 'Christmas'],
-    showOtherDateEntry: true,
-    otherDateLabel: 'Other...',
-    inputWidth: 127,
-    suggestionHighlightColor: "#0000ff",
-    suggestionHighlightTextColor: "#ffffff"
-};
-var longDatalistArguments = {
-    locale: 'en-US',
-    dayLabels : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-    todayLabel : 'Today',
-    clearLabel : 'Clear',
-    cancelLabel : 'Cancel',
-    weekStartDay : 0,
-    step : "86400000",
-    stepBase: "0",
-    max : '2099-12-31',
-    suggestionValues: ["2012-01-01", "2012-01-02", "2012-01-03", "2012-01-04",
-        "2012-01-05", "2012-01-06", "2012-01-07", "2012-01-08", "2012-01-09",
-        "2012-01-10", "2012-01-11", "2012-01-12", "2012-01-13", "2012-01-14",
-        "2012-01-15", "2012-01-16", "2012-01-17", "2012-01-18", "2012-01-19",
-        "2012-01-20", "2012-01-21", "2012-01-22", "2012-01-23", "2012-01-24",
-        "2012-01-25", "2012-01-26", "2012-01-27", "2012-01-28", "2012-01-29",
-        "2012-01-30", "2012-01-31", "2012-02-01", "2012-02-02", "2012-02-03",
-        "2012-02-04", "2012-02-05", "2012-02-06", "2012-02-07", "2012-02-08",
-        "2012-02-09", "2012-02-10", "2012-02-11", "2012-02-12", "2012-02-13",
-        "2012-02-14", "2012-02-15", "2012-02-16", "2012-02-17", "2012-02-18",
-        "2012-02-19", "2012-02-20", "2012-02-21", "2012-02-22", "2012-02-23",
-        "2012-02-24", "2012-02-25", "2012-02-26", "2012-02-27", "2012-02-28",
-        "2012-02-29", "2012-03-01", "2012-03-02", "2012-03-03", "2012-03-04",
-        "2012-03-05", "2012-03-06", "2012-03-07", "2012-03-08", "2012-03-09",
-        "2012-03-10", "2012-03-11", "2012-03-12", "2012-03-13", "2012-03-14",
-        "2012-03-15", "2012-03-16", "2012-03-17", "2012-03-18", "2012-03-19",
-        "2012-03-20", "2012-03-21", "2012-03-22", "2012-03-23", "2012-03-24",
-        "2012-03-25", "2012-03-26", "2012-03-27", "2012-03-28", "2012-03-29",
-        "2012-03-30", "2012-03-31"],
-    localizedSuggestionValues: ["1/1/12", "1/2/12", "1/3/12", "1/4/12",
-        "1/5/12", "1/6/12", "1/7/12", "1/8/12", "1/9/12", "1/10/12", "1/11/12",
-        "1/12/12", "1/13/12", "1/14/12", "1/15/12", "1/16/12", "1/17/12",
-        "1/18/12", "1/19/12", "1/20/12", "1/21/12", "1/22/12", "1/23/12",
-        "1/24/12", "1/25/12", "1/26/12", "1/27/12", "1/28/12", "1/29/12",
-        "1/30/12", "1/31/12", "2/1/12", "2/2/12", "2/3/12", "2/4/12", "2/5/12",
-        "2/6/12", "2/7/12", "2/8/12", "2/9/12", "2/10/12", "2/11/12", "2/12/12",
-        "2/13/12", "2/14/12", "2/15/12", "2/16/12", "2/17/12", "2/18/12",
-        "2/19/12", "2/20/12", "2/21/12", "2/22/12", "2/23/12", "2/24/12",
-        "2/25/12", "2/26/12", "2/27/12", "2/28/12", "2/29/12", "3/1/12",
-        "3/2/12", "3/3/12", "3/4/12", "3/5/12", "3/6/12", "3/7/12", "3/8/12",
-        "3/9/12", "3/10/12", "3/11/12", "3/12/12", "3/13/12", "3/14/12", 
-        "3/15/12", "3/16/12", "3/17/12", "3/18/12", "3/19/12", "3/20/12",
-        "3/21/12", "3/22/12", "3/23/12", "3/24/12", "3/25/12", "3/26/12",
-        "3/27/12", "3/28/12", "3/29/12", "3/30/12", "3/31/12"],
-    suggestionLabels: ["Today", "Tomorrow", "", "", "", "", "", "", "", "", "",
-        "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-        "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-        "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-        "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-        "", "", "", "", "", "", "", ""],
-    showOtherDateEntry: true,
-    otherDateLabel: 'Other...',
-    inputWidth: 127,
-    suggestionHighlightColor: "#0000ff",
-    suggestionHighlightTextColor: "#ffffff"
+function getParam(key) {
+    key = key.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+    var pattern = "[\\?&]" + key + "=([^&#]*)";
+    var regex = new RegExp(pattern);
+    var results = regex.exec(window.location.search);
+    if (!results)
+        return "";
+    return decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+function setParam(key, value) {
+    key = escape(key);
+    value = escape(value);
+
+    var kvp = document.location.search.substr(1).split('&');
+
+    for (var i = kvp.length - 1; i >= 0; --i){
+        kvp[i]
+        var x = kvp[i].split('=');
+        if (x[0] === key) {
+            x[1] = value;
+            kvp[i] = x.join('=');
+            break;
+        }
+    }
+
+    if (i < 0)
+        kvp[kvp.length] = key + "=" + value;
+
+    document.location.search = kvp.join('&');
+}
+
+function $(id) {
+    return document.getElementById(id);
+}
+
+var config = {};
+function initializeConfig() {
+    for (locale in locale_data) {
+        var option = document.createElement("option");
+        option.setAttribute("label", locale_data[locale].displayName);
+        option.setAttribute("value", locale);
+        $("config_locale").appendChild(option);
+    }
+    
+    config.locale = getParam("locale") || "en_US";
+    config.isLocaleRTL = getParam("locale_rtl") === "true";
+    config.weekStartDay = parseInt(getParam("weekStartDay") || "0", 10);
+    config.type = getParam("type") || "date";
+    config.value = getParam("value") || "";
+    config.min = getParam("min") || "";
+    config.max = getParam("max") || "";
+    config.step = getParam("step") || "1";
+
+    $("config_locale").value = config.locale;
+    $("config_locale_rtl").checked = config.isLocaleRTL;
+    $("config_week_start_day").value = config.weekStartDay;
+    $("config_type").value = config.type;
+    $("config_value").value = config.value;
+    $("config_min").value = config.min;
+    $("config_max").value = config.max;
+    $("config_step").value = config.step;
 };
 
-var arabicDatalistArguments = {
-    locale: 'ar',
-    isRTL: true,
-    isCalendarRTL: true,
-    dayLabels : ['ح', 'ن', 'ث', 'ر', 'خ', 'ج', 'س'],
-    todayLabel : 'اليوم',
-    clearLabel : 'مسح',
-    weekStartDay : 5,
-    step : "86400000",
-    stepBase: "0",
-    max : '2020-05-15',
-    suggestionValues : ['2012-01-01', '2012-06-03', '2012-09-06', '2012-12-24'],
-    localizedSuggestionValues : ['1/1/12', '6/3/12', '9/6/12', '12/24/12'],
-    suggestionLabels : ['', 'Birthday', '', 'Christmas'],
-    showOtherDateEntry: true,
-    otherDateLabel: 'Other...',
-    inputWidth: 127,
-    suggestionHighlightColor: "#0000ff",
-    suggestionHighlightTextColor: "#ffffff"
+var locale_data = {
+    "en_US": {
+        "displayName": "English (United States)",
+        "shortMonthLabels": [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec"
+        ],
+        "dayLabels": [
+        "S",
+        "M",
+        "T",
+        "W",
+        "T",
+        "F",
+        "S"
+        ],
+    },
+    "ja": {
+        "displayName": "Japanese",
+        "shortMonthLabels": [
+        "1月",
+        "2月",
+        "3月",
+        "4月",
+        "5月",
+        "6月",
+        "7月",
+        "8月",
+        "9月",
+        "10月",
+        "11月",
+        "12月"
+        ],
+        "dayLabels": [
+        "日",
+        "月",
+        "火",
+        "水",
+        "木",
+        "金",
+        "土"
+        ],
+    },
+    "ar": {
+        "displayName": "Arabic",
+        "shortMonthLabels": [
+        "يناير",
+        "فبراير",
+        "مارس",
+        "أبريل",
+        "مايو",
+        "يونيو",
+        "يوليو",
+        "أغسطس",
+        "سبتمبر",
+        "أكتوبر",
+        "نوفمبر",
+        "ديسمبر"
+        ],
+        "dayLabels": [
+        "ح",
+        "ن",
+        "ث",
+        "ر",
+        "خ",
+        "ج",
+        "س"
+        ],
+    },
+    "vi": {
+        "displayName": "Vietnamese",
+        "shortMonthLabels": [
+        "thg 1",
+        "thg 2",
+        "thg 3",
+        "thg 4",
+        "thg 5",
+        "thg 6",
+        "thg 7",
+        "thg 8",
+        "thg 9",
+        "thg 10",
+        "thg 11",
+        "thg 12"
+        ],
+        "dayLabels": [
+        "CN",
+        "T2",
+        "T3",
+        "T4",
+        "T5",
+        "T6",
+        "T7"
+        ],
+    },
 };
 
-var arabicLongDatalistArguments = {
-    locale: 'ar',
-    isRTL: true,
-    isCalendarRTL: true,
-    dayLabels : ['ح', 'ن', 'ث', 'ر', 'خ', 'ج', 'س'],
-    todayLabel : 'اليوم',
-    clearLabel : 'مسح',
-    weekStartDay : 5,
-    step : "86400000",
-    stepBase: "0",
-    max : '2020-05-15',
-    suggestionValues: ["2012-01-01", "2012-01-02", "2012-01-03", "2012-01-04",
-        "2012-01-05", "2012-01-06", "2012-01-07", "2012-01-08", "2012-01-09",
-        "2012-01-10", "2012-01-11", "2012-01-12", "2012-01-13", "2012-01-14",
-        "2012-01-15", "2012-01-16", "2012-01-17", "2012-01-18", "2012-01-19",
-        "2012-01-20", "2012-01-21", "2012-01-22", "2012-01-23", "2012-01-24",
-        "2012-01-25", "2012-01-26", "2012-01-27", "2012-01-28", "2012-01-29",
-        "2012-01-30", "2012-01-31", "2012-02-01", "2012-02-02", "2012-02-03",
-        "2012-02-04", "2012-02-05", "2012-02-06", "2012-02-07", "2012-02-08",
-        "2012-02-09", "2012-02-10", "2012-02-11", "2012-02-12", "2012-02-13",
-        "2012-02-14", "2012-02-15", "2012-02-16", "2012-02-17", "2012-02-18",
-        "2012-02-19", "2012-02-20", "2012-02-21", "2012-02-22", "2012-02-23",
-        "2012-02-24", "2012-02-25", "2012-02-26", "2012-02-27", "2012-02-28",
-        "2012-02-29", "2012-03-01", "2012-03-02", "2012-03-03", "2012-03-04",
-        "2012-03-05", "2012-03-06", "2012-03-07", "2012-03-08", "2012-03-09",
-        "2012-03-10", "2012-03-11", "2012-03-12", "2012-03-13", "2012-03-14",
-        "2012-03-15", "2012-03-16", "2012-03-17", "2012-03-18", "2012-03-19",
-        "2012-03-20", "2012-03-21", "2012-03-22", "2012-03-23", "2012-03-24",
-        "2012-03-25", "2012-03-26", "2012-03-27", "2012-03-28", "2012-03-29",
-        "2012-03-30", "2012-03-31"],
-    localizedSuggestionValues: ["1/1/12", "1/2/12", "1/3/12", "1/4/12",
-        "1/5/12", "1/6/12", "1/7/12", "1/8/12", "1/9/12", "1/10/12", "1/11/12",
-        "1/12/12", "1/13/12", "1/14/12", "1/15/12", "1/16/12", "1/17/12",
-        "1/18/12", "1/19/12", "1/20/12", "1/21/12", "1/22/12", "1/23/12",
-        "1/24/12", "1/25/12", "1/26/12", "1/27/12", "1/28/12", "1/29/12",
-        "1/30/12", "1/31/12", "2/1/12", "2/2/12", "2/3/12", "2/4/12", "2/5/12",
-        "2/6/12", "2/7/12", "2/8/12", "2/9/12", "2/10/12", "2/11/12", "2/12/12",
-        "2/13/12", "2/14/12", "2/15/12", "2/16/12", "2/17/12", "2/18/12",
-        "2/19/12", "2/20/12", "2/21/12", "2/22/12", "2/23/12", "2/24/12",
-        "2/25/12", "2/26/12", "2/27/12", "2/28/12", "2/29/12", "3/1/12",
-        "3/2/12", "3/3/12", "3/4/12", "3/5/12", "3/6/12", "3/7/12", "3/8/12",
-        "3/9/12", "3/10/12", "3/11/12", "3/12/12", "3/13/12", "3/14/12", 
-        "3/15/12", "3/16/12", "3/17/12", "3/18/12", "3/19/12", "3/20/12",
-        "3/21/12", "3/22/12", "3/23/12", "3/24/12", "3/25/12", "3/26/12",
-        "3/27/12", "3/28/12", "3/29/12", "3/30/12", "3/31/12"],
-    suggestionLabels: ["Today", "Tomorrow", "", "", "", "", "", "", "", "", "",
-        "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-        "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-        "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-        "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-        "", "", "", "", "", "", "", ""],
-    showOtherDateEntry: true,
-    otherDateLabel: 'Other...',
-    inputWidth: 127,
-    suggestionHighlightColor: "#0000ff",
-    suggestionHighlightTextColor: "#ffffff"
-};
-var weekArguments = {
-    locale: 'en-US',
-    dayLabels : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-    todayLabel : 'This Week',
-    clearLabel : 'Clear',
-    cancelLabel : 'Cancel',
-    weekLabel: 'Week',
-    weekStartDay : 0,
-    step : "604800000",
-    stepBase: "-259200000",
-    currentValue : '2000-W01',
-    max : '2099-W03',
-    mode: "week"
-};
-var monthArguments = {
-    locale: 'en-US',
-    dayLabels : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-    todayLabel : 'This Month',
-    clearLabel : 'Clear',
-    cancelLabel : 'Cancel',
-    weekStartDay : 0,
-    step : "1",
-    stepBase: "0",
-    currentValue : '2000-01',
-    max : '2099-03',
-    mode: "month"
+function createParam() {
+    return {
+        mode: config.type,
+        locale: config.locale,
+        weekStartDay: config.weekStartDay,
+        isLocaleRTL: config.isLocaleRTL,
+        dayLabels: locale_data[config.locale].dayLabels,
+        shortMonthLabels: locale_data[config.locale].shortMonthLabels,
+        max: config.max,
+        min: config.min,
+        step: config.step * (config.type === "month" ? 1 : 86400000),
+        stepBase: "0",
+        currentValue: config.value
+    }
 };
 
-function openCalendar(args) {
+function openCalendar() {
     var frame = document.getElementsByTagName('iframe')[0];
     var doc = frame.contentDocument;
     doc.documentElement.innerHTML = '<head></head><body><div id=main>Loading...</div></body>';
@@ -294,11 +313,12 @@ function openCalendar(args) {
             if (numValue == 0)
                 window.document.getElementById('date').value = stringValue;
         },
-        setValue: function(value) {
-            window.log('value="' + value + '"');
-            window.document.getElementById('date').value = value;
+        setValue: function(stringValue) {
+            window.log('string="' + stringValue + '"');
+            window.document.getElementById('date').value = stringValue;
         },
         closePopup: function() {
+            window.log('closePopup');
         },
         localizeNumberString: function(numString) {
             if (typeof numString == "number")
@@ -310,48 +330,18 @@ function openCalendar(args) {
             var monthLabels = ['<January>', '<February>', '<March>', '<April>', '<May>', '<June>',
                                '<July>', '<August>', '<September>', '<October>', '<November>', '<December>'];
             return monthLabels[zeroBaseMonth] + " " + year;
+        },
+        formatShortMonth: function(year, zeroBaseMonth) {
+            var monthLabels = ['<Jan>', '<Feb>', '<Mar>', '<Apr>', '<May>', '<Jun>',
+                               '<Jul>', '<Aug>', '<Sept>', '<Oct>', '<Nov>', '<Dec>'];
+            return monthLabels[zeroBaseMonth] + " " + year;
         }
     }
 
     setTimeout(function() {
-        frame.contentWindow.postMessage(JSON.stringify(args), "*");
+        frame.contentWindow.postMessage(JSON.stringify(createParam()), "*");
         frame.contentWindow.pagePopupController = pagePopupController;
     }, 100);
-}
-
-function selected(select) {
-    var frame = document.getElementsByTagName('iframe')[0];
-    frame.style.width = '100px';
-    frame.style.height = '100px';
-    switch (select.selectedIndex) {
-    case 0:
-        openCalendar(englishArguments);
-        break;
-    case 1:
-        openCalendar(japaneseArguments);
-        break;
-    case 2:
-        openCalendar(arabicArguments);
-        break;
-    case 3:
-        openCalendar(datalistArguments);
-        break;
-    case 4:
-        openCalendar(longDatalistArguments);
-        break;
-    case 5:
-        openCalendar(arabicDatalistArguments);
-        break;
-    case 6:
-        openCalendar(arabicLongDatalistArguments);
-        break;
-    case 7:
-        openCalendar(weekArguments);
-        break;
-    case 8:
-        openCalendar(monthArguments);
-        break;
-    }
 }
 
 function log(str) {
@@ -360,7 +350,10 @@ function log(str) {
     document.getElementById('console').appendChild(entry);
 }
 
-openCalendar(englishArguments);
+window.onload = function() {
+    initializeConfig();
+    openCalendar();
+};
 </script>
 </body>
 </html>

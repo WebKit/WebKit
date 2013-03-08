@@ -18,8 +18,7 @@ openPicker(document.getElementById('month'), test1);
 
 function test1() {
     debug("Step without min.");
-    shouldBeEqualToString('availableDatesInCurrentMonth()[0]', '2011-04-01');
-    shouldBeEqualToString('availableDatesInCurrentMonth()[29]', '2011-04-30');
+    shouldBeEqualToString('availableDayCells()', '2011-04-01,2011-04-02,2011-04-03,2011-04-04,2011-04-05,2011-04-06,2011-04-07,2011-04-08,2011-04-09,2011-04-10,2011-04-11,2011-04-12,2011-04-13,2011-04-14,2011-04-15,2011-04-16,2011-04-17,2011-04-18,2011-04-19,2011-04-20,2011-04-21,2011-04-22,2011-04-23,2011-04-24,2011-04-25,2011-04-26,2011-04-27,2011-04-28,2011-04-29,2011-04-30');
 
     // Close popup
     eventSender.keyDown('\x1B');
@@ -37,17 +36,9 @@ function test1AfterClosing() {
 
 function test2() {
     debug("Step when min is set.");
-    shouldBeEqualToString('availableDatesInCurrentMonth()[0]', '2012-02-01');
-    shouldBeEqualToString('availableDatesInCurrentMonth()[28]', '2012-02-29');
+    shouldBeEqualToString('availableDayCells()', '2012-02-01,2012-02-02,2012-02-03,2012-02-04,2012-02-05,2012-02-06,2012-02-07,2012-02-08,2012-02-09,2012-02-10,2012-02-11,2012-02-12,2012-02-13,2012-02-14,2012-02-15,2012-02-16,2012-02-17,2012-02-18,2012-02-19,2012-02-20,2012-02-21,2012-02-22,2012-02-23,2012-02-24,2012-02-25,2012-02-26,2012-02-27,2012-02-28,2012-02-29');
     finishJSTest();
 }
-
-function availableDatesInCurrentMonth() {
-    return Array.prototype.map.call(popupWindow.document.querySelectorAll(".day.available:not(.not-this-month)"), function(element) {
-        return element.dataset.submitValue;
-    }).sort();
-}
-
 </script>
 <script src="../../../../../fast/js/resources/js-test-post.js"></script>
 </body>

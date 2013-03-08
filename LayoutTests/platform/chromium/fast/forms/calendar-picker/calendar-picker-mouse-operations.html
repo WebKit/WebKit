@@ -19,35 +19,44 @@ shouldBeNull('document.getElementById("mock-page-popup")');
 openPicker(document.getElementById('date'), test);
 
 function test() {
-    shouldBe('selectedDate()', '"2000-01-02"');
-    shouldBe('currentMonth()', '"2000-01"');
+    shouldBeEqualToString('currentMonth()', '2000-01');
+    shouldBeEqualToString('selectedValue()', '2000-01-02');
+    shouldBeEqualToString('selectedDayCells()', '2000-01-02');
+    shouldBeEqualToString('highlightedValue()', '2000-01-02');
+    shouldBeEqualToString('highlightedDayCells()', '2000-01-02');
 
     debug('Check that hovering over an entry highlights it.');
-    hoverOverElement(popupWindow.document.querySelectorAll(".day:not(.week-column)")[5]);
-    shouldBe('selectedDate()', '"1999-12-31"');
-    shouldBe('currentMonth()', '"2000-01"');
+    hoverOverDayCellAt(5, 0);
+    shouldBeEqualToString('currentMonth()', '2000-01');
+    shouldBeEqualToString('selectedValue()', '2000-01-02');
+    shouldBeEqualToString('selectedDayCells()', '2000-01-02');
+    shouldBeEqualToString('highlightedValue()', '1999-12-31');
+    shouldBeEqualToString('highlightedDayCells()', '1999-12-31');
 
-    hoverOverElement(popupWindow.document.querySelectorAll(".day:not(.week-column)")[9]);
-    shouldBe('selectedDate()', '"2000-01-04"');
-    shouldBe('currentMonth()', '"2000-01"');
+    hoverOverDayCellAt(2, 1);
+    shouldBeEqualToString('currentMonth()', '2000-01');
+    shouldBeEqualToString('selectedValue()', '2000-01-02');
+    shouldBeEqualToString('selectedDayCells()', '2000-01-02');
+    shouldBeEqualToString('highlightedValue()', '2000-01-04');
+    shouldBeEqualToString('highlightedDayCells()', '2000-01-04');
 
-    debug('Check that navigating between months maintains selection position.');
+    debug('Check that navigating between months maintains highlighted position.');
     eventSender.keyDown('m');
-    shouldBe('selectedDate()', '"2000-02-08"');
-    shouldBe('currentMonth()', '"2000-02"');
+    shouldBeEqualToString('currentMonth()', '2000-02');
+    shouldBeEqualToString('selectedValue()', '2000-01-02');
+    shouldBeEqualToString('selectedDayCells()', '');
+    shouldBeEqualToString('highlightedValue()', '2000-02-08');
+    shouldBeEqualToString('highlightedDayCells()', '2000-02-08');
 
-    debug('Check that moving the mouse outside the popup de-highlights entries.');
-    hoverOverElement(document.getElementById('description'));
-    shouldBeUndefined('selectedDate()');
+    debug('Check that mouse click sets the value.');
+    clickDayCellAt(6, 0);
+    shouldBeEqualToString('currentMonth()', '2000-02');
+    shouldBeEqualToString('selectedValue()', '2000-02-05');
+    shouldBeEqualToString('selectedDayCells()', '2000-02-05');
+    shouldBeEqualToString('highlightedValue()', '2000-02-05');
+    shouldBeEqualToString('highlightedDayCells()', '2000-02-05');
+    shouldBeEqualToString('document.getElementById("date").value', '2000-02-05');
 
-    debug('Check that mouse click closes the popup and sets the value.');
-    clickElement(popupWindow.document.querySelectorAll(".day:not(.week-column)")[6]);
-    waitUntilClosing(afterClosingCallback);
-}
-
-function afterClosingCallback() {
-    shouldBeNull('document.getElementById("mock-page-popup")');
-    shouldBe('document.getElementById("date").value', '"2000-02-05"');
     finishJSTest();
 }
 </script>

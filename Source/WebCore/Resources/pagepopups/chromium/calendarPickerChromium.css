@@ -29,10 +29,18 @@
     padding: 0;
 }
 
-.days-area-container:focus {
+.month-popup-button:focus,
+.year-list-view:focus,
+.calendar-table-view:focus {
     -webkit-transition: border-color 200ms;
     /* We use border color because it follows the border radius (unlike outline).
     * This is particularly noticeable on mac. */
-    border-color: rgb(77, 144, 254);
+    border-color: rgb(77, 144, 254) !important;
     outline: none;
+}
+
+.preparing button:focus,
+.preparing .year-list-view:focus,
+.preparing .calendar-table-view:focus {
+    -webkit-transition: none;
 }

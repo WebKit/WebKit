@@ -170,7 +170,7 @@ function test3() {
     shouldBeFalse('expectingDidHideEvent');
 
     debug('Confirm calendar picker did open.');
-    shouldBeTrue('popupWindow.document.getElementById("main").classList.contains("calendar-picker")');
+    shouldBeTrue('popupWindow.document.getElementById("main").firstChild.classList.contains("calendar-picker")');
 
     debug('Check that escape key closes the popup.');
     eventSender.keyDown('\x1B');

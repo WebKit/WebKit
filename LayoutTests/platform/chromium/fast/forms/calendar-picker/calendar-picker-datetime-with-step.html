@@ -18,7 +18,7 @@ openPicker(document.getElementById('datetime'), test1);
 
 function test1() {
     debug("Step without min or max.");
-    shouldBeEqualToString('availableDatesInCurrentMonth().join(",")', '2012-11-01,2012-11-04,2012-11-08,2012-11-11,2012-11-15,2012-11-18,2012-11-22,2012-11-25,2012-11-29');
+    shouldBeEqualToString('availableDayCells().join(",")', '2012-11-01,2012-11-04,2012-11-08,2012-11-11,2012-11-15,2012-11-18,2012-11-22,2012-11-25,2012-11-29');
 
     // Close popup
     eventSender.keyDown('\x1B');
@@ -34,7 +34,7 @@ function test1AfterClose() {
 
 function test2() {
     debug("Step when min is set.");
-    shouldBeEqualToString('availableDatesInCurrentMonth().join(",")', '2012-11-16,2012-11-20,2012-11-23,2012-11-27,2012-11-30');
+    shouldBeEqualToString('availableDayCells().join(",")', '2012-11-16,2012-11-20,2012-11-23,2012-11-27,2012-11-30');
 
     // Close popup
     eventSender.keyDown('\x1B');
@@ -50,7 +50,7 @@ function test2AfterClose() {
 
 function test3() {
     debug("Step when min and max are set.");
-    shouldBeEqualToString('availableDatesInCurrentMonth().join(",")', '2012-11-16,2012-11-20');
+    shouldBeEqualToString('availableDayCells().join(",")', '2012-11-16,2012-11-20');
     finishJSTest();
 }
 

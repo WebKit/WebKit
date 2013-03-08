@@ -17,10 +17,10 @@ openPicker(document.getElementById('date'), finishTest);
 
 function finishTest() {
     var daysContainer = popupWindow.document.getElementsByClassName("days-area")[0];
-    sendKey(daysContainer, 'Right');
-    sendKey(daysContainer, 'Enter');
-    shouldBe('document.getElementById("date").value', '"0002-02-03"');
-    waitUntilClosing(finishJSTest);
+    eventSender.keyDown('rightArrow');
+    eventSender.keyDown('\n');
+    shouldBeEqualToString('document.getElementById("date").value', '0002-02-03');
+    finishJSTest();
 }
 </script>
 <script src="../../../../../fast/js/resources/js-test-post.js"></script>

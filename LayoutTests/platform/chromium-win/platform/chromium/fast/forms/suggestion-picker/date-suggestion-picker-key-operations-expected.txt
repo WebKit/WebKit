@@ -33,7 +33,7 @@ Open calendar picker.
 PASS expectingDidHideEvent is true
 PASS expectingDidHideEvent is false
 Confirm calendar picker did open.
-PASS popupWindow.document.getElementById("main").classList.contains("calendar-picker") is true
+PASS popupWindow.document.getElementById("main").firstChild.classList.contains("calendar-picker") is true
 Check that escape key closes the popup.
 PASS document.getElementById("mock-page-popup") is null
 PASS document.getElementById("date").value is "2012-03-08"

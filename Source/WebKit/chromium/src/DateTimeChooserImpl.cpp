@@ -138,6 +138,7 @@ void DateTimeChooserImpl::writeDocument(WebCore::DocumentWriter& writer)
     addProperty("clearLabel", Platform::current()->queryLocalizedString(WebLocalizedString::CalendarClear), writer);
     addProperty("weekLabel", Platform::current()->queryLocalizedString(WebLocalizedString::WeekNumberLabel), writer);
     addProperty("weekStartDay", m_locale->firstDayOfWeek(), writer);
+    addProperty("shortMonthLabels", m_locale->shortMonthLabels(), writer);
     addProperty("dayLabels", m_locale->weekDayShortLabels(), writer);
     addProperty("isLocaleRTL", m_locale->isRTL(), writer);
     addProperty("isRTL", m_parameters.isAnchorElementRTL, writer);

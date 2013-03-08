@@ -16,4 +16,4 @@ PASS eventsCounter.change is undefined.
 PASS successfullyParsed is true
 
 TEST COMPLETE
-
+ 

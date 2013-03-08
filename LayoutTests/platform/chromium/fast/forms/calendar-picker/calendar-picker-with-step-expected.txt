@@ -4,9 +4,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Step without min.
-PASS availableDatesInCurrentMonth().join(",") is ["2011-05-08", "2011-05-17", "2011-05-26"].join(",")
+PASS availableDayCells() is "2011-05-08,2011-05-17,2011-05-26,2011-06-04"
 Step when min is set.
-PASS availableDatesInCurrentMonth().join(",") is ["2011-05-01", "2011-05-10", "2011-05-19", "2011-05-28"].join(",")
+PASS availableDayCells() is "2011-05-01,2011-05-10,2011-05-19,2011-05-28"
 PASS successfullyParsed is true
 
 TEST COMPLETE

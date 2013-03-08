@@ -18,17 +18,16 @@ shouldBeNull('document.getElementById("mock-page-popup")');
 openPicker(document.getElementById('datetime'), test);
 
 function test() {
-    shouldBeEqualToString('selectedDate()', '2011-12-31');
+    shouldBeEqualToString('highlightedValue()', '2011-12-31');
+    shouldBeEqualToString('selectedValue()', '2011-12-31');
 
     eventSender.keyDown('rightArrow');
-    shouldBeEqualToString('selectedDate()', '2012-01-01');
+    shouldBeEqualToString('highlightedValue()', '2012-01-01');
+    shouldBeEqualToString('selectedValue()', '2011-12-31');
 
     eventSender.keyDown('\n');
-    waitUntilClosing(testAfterClosing);
-}
-
-function testAfterClosing() {
-    shouldBeNull('document.getElementById("mock-page-popup")');
+    shouldBeEqualToString('highlightedValue()', '2012-01-01');
+    shouldBeEqualToString('selectedValue()', '2012-01-01');
     shouldBeEqualToString('document.getElementById("datetime").value', '2012-01-01T12:53:45Z');
 
     finishJSTest();

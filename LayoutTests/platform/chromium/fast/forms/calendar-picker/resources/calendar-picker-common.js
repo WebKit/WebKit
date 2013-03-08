@@ -1,39 +1,81 @@
 function currentMonth() {
-    var element = popupWindow.document.querySelector(".selected-month-year");
-    if (!element)
-        return null;
-    return element.dataset.value;
+    return popupWindow.global.picker.currentMonth().toString();
 }
 
-function availableDatesInCurrentMonth() {
-    return Array.prototype.map.call(popupWindow.document.querySelectorAll(".day.available:not(.not-this-month)"), function(element) {
-        return element.dataset.submitValue;
-    }).sort();
+function availableDayCells() {
+    skipAnimation();
+    return Array.prototype.map.call(popupWindow.document.querySelectorAll(".day-cell:not(.disabled):not(.hidden)"), function(element) {
+        return element.$view.day.toString();
+    }).sort().join();
 }
 
-function selectedDate() {
-    var selected = selectedDates();
-    if (selected.length > 1)
-        testFailed("selectedDate expects single selected date. Found " + selected.length);
-    return selected[0];
+function highlightedDayCells() {
+    skipAnimation();
+    return Array.prototype.map.call(popupWindow.document.querySelectorAll(".day-cell.highlighted:not(.hidden)"), function(element) {
+        return element.$view.day.toString();
+    }).sort().join();
 }
 
-function selectedDates() {
-    return Array.prototype.map.call(popupWindow.document.querySelectorAll(".day.day-selected"), function(element) {
-        return element.dataset.submitValue;
-    }).sort();
+function selectedDayCells() {
+    skipAnimation();
+    return Array.prototype.map.call(popupWindow.document.querySelectorAll(".day-cell.selected:not(.hidden)"), function(element) {
+        return element.$view.day.toString();
+    }).sort().join();
 }
 
-function selectedMonth() {
-    var selected = popupWindow.document.querySelectorAll(".day.day-selected");
-    if (selected.length === 0)
-        return null;
-    return selected[0].dataset.monthValue;
+function availableWeekNumberCells() {
+    skipAnimation();
+    return Array.prototype.map.call(popupWindow.document.querySelectorAll(".week-number-cell.highlighted:not(.hidden)"), function(element) {
+        return element.$view.day.toString();
+    }).sort().join();
 }
 
-function selectedWeek() {
-    var selected = popupWindow.document.querySelectorAll(".day.day-selected");
-    if (selected.length === 0)
-        return null;
-    return selected[0].dataset.weekValue;
+function highlightedWeekNumberCells() {
+    skipAnimation();
+    return Array.prototype.map.call(popupWindow.document.querySelectorAll(".week-number-cell.highlighted:not(.hidden)"), function(element) {
+        return element.$view.day.toString();
+    }).sort().join();
+}
+
+function selectedWeekNumberCells() {
+    skipAnimation();
+    return Array.prototype.map.call(popupWindow.document.querySelectorAll(".week-number-cell.selected:not(.hidden)"), function(element) {
+        return element.$view.day.toString();
+    }).sort().join();
+}
+
+function highlightedValue() {
+    var highlight = popupWindow.global.picker.highlight();
+    if (highlight)
+        return highlight.toString();
+    return null;
+}
+
+function selectedValue() {
+    var selection = popupWindow.global.picker.selection();
+    if (selection)
+        return selection.toString();
+    return null;
+}
+
+function skipAnimation() {
+    popupWindow.AnimationManager.shared._animationFrameCallback(Infinity);
+}
+
+function hoverOverDayCellAt(column, row) {
+    skipAnimation();
+    var offset = cumulativeOffset(popupWindow.global.picker.calendarTableView.element);
+    var x = offset[0];
+    var y = offset[1];
+    if (popupWindow.global.picker.calendarTableView.hasWeekNumberColumn)
+        x += popupWindow.WeekNumberCell.Width;
+    x += (column + 0.5) * popupWindow.DayCell.Width;
+    y += (row + 0.5) * popupWindow.DayCell.Height + popupWindow.CalendarTableHeaderView.Height;
+    eventSender.mouseMoveTo(x, y);
+};
+
+function clickDayCellAt(column, row) {
+    hoverOverDayCellAt(column, row);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
 }
