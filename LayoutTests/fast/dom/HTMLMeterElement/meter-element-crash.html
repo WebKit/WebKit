@@ -4,6 +4,14 @@
    -webkit-appearance: none;
  }  
 </style>
+<span id="test">
+    <script>
+    document.body.offsetTop;
+    </script>
+    <input type="text">
+    <meter>
+    </meter>
+</span>
 <script>
     if (window.testRunner) {
         testRunner.dumpAsText();
@@ -16,11 +24,3 @@
             testRunner.notifyDone();
     }, 0);
 </script>
-<span id="test">
-    <script>
-    document.body.offsetTop;
-    </script>
-    <input type="text">
-    <meter>
-    </meter>
-</span>
