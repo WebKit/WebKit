@@ -4473,3 +4473,4 @@ webkit.org/b/111667 [ Debug Win ] media/encrypted-media/encrypted-media-events.h
 
 webkit.org/b/111774 [ Win ] http/tests/security/cross-origin-css.html [ Pass Failure ]
 
+webkit.org/b/111816 fast/borders/border-fit-2.html [ Failure ]
