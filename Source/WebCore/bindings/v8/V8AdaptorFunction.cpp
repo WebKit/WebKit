@@ -76,7 +76,7 @@ v8::Handle<v8::Function> V8AdaptorFunction::wrap(v8::Handle<v8::Object> object, 
 {
     if (object.IsEmpty() || !object->IsObject())
         return v8::Handle<v8::Function>();
-    v8::Handle<v8::Function> adaptor = v8::Handle<v8::Function>::Cast(getTemplate(isolate, worldType(isolate))->GetFunction());
+    v8::Handle<v8::Function> adaptor = v8::Handle<v8::Function>::Cast(getTemplate(isolate, worldType(isolate))->GetFunction()->Clone());
     if (adaptor.IsEmpty())
         return v8::Handle<v8::Function>();
     adaptor->SetName(v8String(name.string(), isolate));

@@ -24,6 +24,7 @@ PASS createdFoo.lastChild is childDiv
 PASS parsedFoo.__proto__ is fooConstructor.prototype
 PASS parsedFoo.tagName is 'X-FOO'
 PASS parsedFoo.someProperty is container.firstChild.someProperty
+PASS barConstructor !== fooConstructor is true
 PASS createdBar.tagName is 'X-BAR'
 PASS createdBaz.tagName is 'X-BAZ'
 PASS createdBaz.thisIsPrototype is true
@@ -40,6 +41,9 @@ PASS (new (document.register('y-bar', createRegisterParamters()))()).tagName is 
 PASS (new (document.register('yz-bar', createRegisterParamters()))()).tagName is 'YZ-BAR'
 PASS (new (document.register('y-z-bar', createRegisterParamters()))()).tagName is 'Y-Z-BAR'
 PASS (new (document.register('y--bar', createRegisterParamters()))()).tagName is 'Y--BAR'
+PASS (new fooConstructor).tagName is 'X-FOO'
+PASS (new barConstructor).tagName is 'X-BAR'
+PASS (new bazConstructor).tagName is 'X-BAZ'
 PASS successfullyParsed is true
 
 TEST COMPLETE

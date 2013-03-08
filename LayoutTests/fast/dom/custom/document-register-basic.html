@@ -77,6 +77,7 @@ shouldBe("parsedFoo.someProperty", "container.firstChild.someProperty");
 
 // Having another constructor
 var barConstructor = document.register("x-bar", createRegisterParamters());
+shouldBeTrue("barConstructor !== fooConstructor");
 var createdBar = new barConstructor();
 shouldBe("createdBar.tagName", "'X-BAR'");
 
@@ -106,6 +107,11 @@ shouldBe("(new (document.register('y-bar', createRegisterParamters()))()).tagNam
 shouldBe("(new (document.register('yz-bar', createRegisterParamters()))()).tagName", "'YZ-BAR'");
 shouldBe("(new (document.register('y-z-bar', createRegisterParamters()))()).tagName", "'Y-Z-BAR'");
 shouldBe("(new (document.register('y--bar', createRegisterParamters()))()).tagName", "'Y--BAR'");
+
+// Constructor shouldn't interfere each otehr
+shouldBe("(new fooConstructor).tagName", "'X-FOO'");
+shouldBe("(new barConstructor).tagName", "'X-BAR'");
+shouldBe("(new bazConstructor).tagName", "'X-BAZ'");
 
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
