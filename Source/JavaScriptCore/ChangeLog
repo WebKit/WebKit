@@ -1,3 +1,22 @@
+2013-03-07  Michael Saboff  <msaboff@apple.com>
+
+        Crash when updating predictions below JSC::arrayProtoFuncForEach on tuaw.com article
+        https://bugs.webkit.org/show_bug.cgi?id=111777
+
+        Reviewed by Filip Pizlo.
+
+        Moved register allocations to be above any generated control flow so that any
+        resulting spill would be visible to all subsequently generated code.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::nonSpeculativeNonPeepholeCompareNull):
+        (JSC::DFG::SpeculativeJIT::nonSpeculativePeepholeBranchNull):
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2013-03-07  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should not get corrupted IR in the case of code that is dead, unreachable, and contains a chain of nodes that use each other in an untyped way
