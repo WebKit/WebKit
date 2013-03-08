@@ -51,11 +51,10 @@ namespace {
 
 class FakeWebViewClient : public WebViewClient {
 public:
-    virtual void initializeLayerTreeView(WebLayerTreeViewClient* client, const WebLayer& rootLayer, const WebLayerTreeView::Settings& settings)
+    virtual void initializeLayerTreeView()
     {
         m_layerTreeView = adoptPtr(Platform::current()->unitTestSupport()->createLayerTreeViewForTesting(WebUnitTestSupport::TestViewTypeUnitTest));
         ASSERT(m_layerTreeView);
-        m_layerTreeView->setRootLayer(rootLayer);
     }
 
     virtual WebLayerTreeView* layerTreeView()

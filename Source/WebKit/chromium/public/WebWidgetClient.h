@@ -66,10 +66,9 @@ public:
     virtual void didActivateCompositor(int inputHandlerIdentifier) { }
     virtual void didDeactivateCompositor() { }
 
-    // Attempt to initialize compositing for this widget using the given
-    // parameters. If this is successful, layerTreeView() will return a valid
-    // WebLayerTreeView. If not, nothing happens.
-    virtual void initializeLayerTreeView(WebLayerTreeViewClient*, const WebLayer& rootLayer, const WebLayerTreeView::Settings&) { }
+    // Attempt to initialize compositing for this widget. If this is successful,
+    // layerTreeView() will return a valid WebLayerTreeView.
+    virtual void initializeLayerTreeView() { }
 
     // Return a compositing view used for this widget. This is owned by the
     // WebWidgetClient.

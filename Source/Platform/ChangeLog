@@ -1,3 +1,21 @@
+2013-03-08  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove WebLayerTreeViewClient and WebLayerTreeView::Settings
+        https://bugs.webkit.org/show_bug.cgi?id=111632
+
+        Reviewed by Adrienne Walker.
+
+        Neither of these are used any more. All callbacks from the compositor are handled by
+        the embedder and plumbed (where appropriate) through the WebWidget/WebView APIs. All
+        settings are handled by the embedder.
+
+        * Platform.gypi:
+        * chromium/public/WebLayerTreeView.h:
+        (WebKit):
+        * chromium/public/WebLayerTreeViewClient.h: Removed.
+        * chromium/public/WebUnitTestSupport.h:
+        (WebKit):
+
 2013-03-06  James Robinson  <jamesr@chromium.org>
 
         [chromium] Stop using WebTransformationMatrix on WebLayer

@@ -36,50 +36,12 @@
 namespace WebKit {
 class WebGraphicsContext3D;
 class WebLayer;
-class WebLayerTreeViewClient;
 struct WebPoint;
 struct WebRect;
 struct WebRenderingStats;
 
 class WebLayerTreeView {
 public:
-    struct Settings {
-        Settings()
-            : acceleratePainting(false)
-            , showDebugBorders(false)
-            , showFPSCounter(false)
-            , showPlatformLayerTree(false)
-            , showPaintRects(false)
-            , renderVSyncEnabled(true)
-            , renderVSyncNotificationEnabled(false)
-            , perTilePaintingEnabled(false)
-            , partialSwapEnabled(false)
-            , acceleratedAnimationEnabled(true)
-            , pageScalePinchZoomEnabled(false)
-            , recordRenderingStats(false)
-            , refreshRate(0)
-            , defaultTileSize(WebSize(256, 256))
-            , maxUntiledLayerSize(WebSize(512, 512))
-        {
-        }
-
-        bool acceleratePainting;
-        bool showDebugBorders;
-        bool showFPSCounter;
-        bool showPlatformLayerTree;
-        bool showPaintRects;
-        bool renderVSyncEnabled;
-        bool renderVSyncNotificationEnabled;
-        bool perTilePaintingEnabled;
-        bool partialSwapEnabled;
-        bool acceleratedAnimationEnabled;
-        bool pageScalePinchZoomEnabled;
-        bool recordRenderingStats;
-        double refreshRate;
-        WebSize defaultTileSize;
-        WebSize maxUntiledLayerSize;
-    };
-
     virtual ~WebLayerTreeView() { }
 
     // Initialization and lifecycle --------------------------------------
@@ -182,6 +144,9 @@ public:
 
     // FIXME: Remove this.
     virtual void loseCompositorContext(int numTimes) { }
+
+    // DEPRECATED.
+    struct Settings { };
 };
 
 } // namespace WebKit

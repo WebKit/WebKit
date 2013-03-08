@@ -53,7 +53,6 @@
 #include <public/WebFloatQuad.h>
 #include <public/WebGestureCurveTarget.h>
 #include <public/WebLayer.h>
-#include <public/WebLayerTreeViewClient.h>
 #include <public/WebPoint.h>
 #include <public/WebRect.h>
 #include <public/WebSize.h>
@@ -120,7 +119,6 @@ class WebTouchEvent;
 class WebViewBenchmarkSupport;
 
 class WebViewImpl : public WebView
-    , public WebLayerTreeViewClient
     , public RefCounted<WebViewImpl>
     , public WebGestureCurveTarget
 #if ENABLE(PAGE_POPUP)
@@ -316,10 +314,6 @@ public:
     virtual void setShowDebugBorders(bool);
     virtual void setShowFPSCounter(bool);
     virtual void setContinuousPaintingEnabled(bool);
-
-    // WebLayerTreeViewClient
-    virtual void updateAnimations(double monotonicFrameBeginTime);
-    virtual void didRecreateOutputSurface(bool success);
 
     // WebViewImpl
 

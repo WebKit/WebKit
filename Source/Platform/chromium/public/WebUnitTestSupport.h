@@ -32,7 +32,6 @@
 namespace WebKit {
 
 class WebLayerTreeView;
-class WebLayerTreeViewClient;
 class WebURL;
 class WebURLResponse;
 struct WebURLError;

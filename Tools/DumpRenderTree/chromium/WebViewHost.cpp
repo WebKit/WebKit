@@ -276,7 +276,7 @@ private:
     WebViewHost* m_host;
 };
 
-void WebViewHost::initializeLayerTreeView(WebLayerTreeViewClient* client, const WebLayer& rootLayer, const WebLayerTreeView::Settings& settings)
+void WebViewHost::initializeLayerTreeView()
 {
     m_layerTreeViewClient = adoptPtr(new WebViewHostDRTLayerTreeViewClient(this));
     if (m_shell->softwareCompositingEnabled()) {
@@ -293,7 +293,6 @@ void WebViewHost::initializeLayerTreeView(WebLayerTreeViewClient* client, const 
 
     ASSERT(m_layerTreeView);
     updateViewportSize();
-    m_layerTreeView->setRootLayer(rootLayer);
     m_layerTreeView->setSurfaceReady();
 }
 
