@@ -478,9 +478,12 @@ static bool heightMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* f
     FrameView* view = frame->view();
 
     if (value) {
+        int height = view->layoutHeight();
+        if (RenderView* renderView = frame->document()->renderView())
+            height = adjustForAbsoluteZoom(height, renderView);
         RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
         int length;
-        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, length) && compareValue(view->layoutHeight(), length, op);
+        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, length) && compareValue(height, length, op);
     }
 
     return view->layoutHeight() != 0;
@@ -491,9 +494,12 @@ static bool widthMediaFeatureEval(CSSValue* value, RenderStyle* style, Frame* fr
     FrameView* view = frame->view();
 
     if (value) {
+        int width = view->layoutWidth();
+        if (RenderView* renderView = frame->document()->renderView())
+            width = adjustForAbsoluteZoom(width, renderView);
         RenderStyle* rootStyle = frame->document()->documentElement()->renderStyle();
         int length;
-        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, length) && compareValue(view->layoutWidth(), length, op);
+        return computeLength(value, !frame->document()->inQuirksMode(), style, rootStyle, length) && compareValue(width, length, op);
     }
 
     return view->layoutWidth() != 0;
