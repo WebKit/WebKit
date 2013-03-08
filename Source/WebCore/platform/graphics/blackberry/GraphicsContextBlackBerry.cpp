@@ -361,7 +361,7 @@ void GraphicsContext::clipConvexPolygon(size_t numPoints, const FloatPoint* poin
     platformContext()->clipConvexPolygon(numPoints, (const BlackBerry::Platform::FloatPoint*)points);
 }
 
-void GraphicsContext::addRoundedRectClip(const RoundedRect& rect)
+void GraphicsContext::clipRoundedRect(const RoundedRect& rect)
 {
     if (paintingDisabled())
         return;
