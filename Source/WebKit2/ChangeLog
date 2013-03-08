@@ -1,3 +1,40 @@
+2013-03-08  Alexey Proskuryakov  <ap@apple.com>
+
+        Make it possible to reuse sandbox extensions
+        https://bugs.webkit.org/show_bug.cgi?id=111883
+
+        Reviewed by Anders Carlsson.
+
+        Replaced invalidate() with revoke().
+
+        We now count how many times consume() was called, and keep the extension active
+        for as long as revoke() hasn't been called as many times. Also, we only permanently
+        destroy the extension in destructor.
+
+        This allows for properly keeping extensions in NetworkBlobRegistry for as long as
+        they are needed.
+
+        * NetworkProcess/SchedulableLoader.cpp:
+        (WebKit::SchedulableLoader::invalidateSandboxExtensions):
+        * Shared/Downloads/Download.cpp:
+        (WebKit::Download::didFinish):
+        (WebKit::Download::didFail):
+        (WebKit::Download::didCancel):
+        * Shared/SandboxExtension.h:
+        (SandboxExtension):
+        * Shared/WebMemorySampler.cpp:
+        (WebKit::WebMemorySampler::stop):
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::SandboxExtension):
+        (WebKit::SandboxExtension::revoke):
+        (WebKit::SandboxExtension::consume):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+        (WebKit::WebPage::SandboxExtensionTracker::invalidate):
+        (WebKit::WebPage::SandboxExtensionTracker::setPendingProvisionalSandboxExtension):
+        (WebKit::WebPage::SandboxExtensionTracker::didCommitProvisionalLoad):
+        (WebKit::WebPage::SandboxExtensionTracker::didFailProvisionalLoad):
+
 2013-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [WK2][GTK] Invalid request returned by webkit_download_get_request if called before download starts

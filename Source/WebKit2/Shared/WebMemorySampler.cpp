@@ -107,10 +107,7 @@ void WebMemorySampler::stop()
     if (m_stopTimer.isActive())
         m_stopTimer.stop();
     
-    if (m_sampleLogSandboxExtension) {
-        m_sampleLogSandboxExtension->invalidate();
-        m_sampleLogSandboxExtension = 0;
-    }    
+    m_sampleLogSandboxExtension = nullptr;
 }
 
 bool WebMemorySampler::isRunning() const

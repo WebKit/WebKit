@@ -95,10 +95,10 @@ public:
     static String createHandleForTemporaryFile(const String& prefix, Type type, Handle&);
     ~SandboxExtension();
 
-    bool invalidate();
     bool consume();
-    bool consumePermanently();
+    bool revoke();
 
+    bool consumePermanently();
     static bool consumePermanently(const Handle&);
 
 private:
@@ -106,6 +106,7 @@ private:
                      
 #if ENABLE(WEB_PROCESS_SANDBOX)
     mutable WKSandboxExtensionRef m_sandboxExtension;
+    size_t m_useCount;
 #endif
 };
 

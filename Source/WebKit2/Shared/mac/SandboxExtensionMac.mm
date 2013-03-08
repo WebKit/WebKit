@@ -261,6 +261,7 @@ String SandboxExtension::createHandleForTemporaryFile(const String& prefix, Type
 
 SandboxExtension::SandboxExtension(const Handle& handle)
     : m_sandboxExtension(handle.m_sandboxExtension)
+    , m_useCount(0)
 {
     handle.m_sandboxExtension = 0;
 }
@@ -274,13 +275,15 @@ SandboxExtension::~SandboxExtension()
     WKSandboxExtensionDestroy(m_sandboxExtension);
 }
 
-bool SandboxExtension::invalidate()
+bool SandboxExtension::revoke()
 {
     ASSERT(m_sandboxExtension);
+    ASSERT(m_useCount);
+    
+    if (--m_useCount)
+        return true;
 
     bool result = WKSandboxExtensionInvalidate(m_sandboxExtension);
-    WKSandboxExtensionDestroy(m_sandboxExtension);
-    m_sandboxExtension = 0;
 
     return result;
 }
@@ -288,6 +291,9 @@ bool SandboxExtension::invalidate()
 bool SandboxExtension::consume()
 {
     ASSERT(m_sandboxExtension);
+
+    if (m_useCount++)
+        return true;
 
     return WKSandboxExtensionConsume(m_sandboxExtension);
 }
