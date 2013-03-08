@@ -52,7 +52,6 @@ void PageViewportControllerClientEfl::setViewportPosition(const WebCore::FloatPo
 
     FloatPoint pos(contentsPoint);
     pos.scale(m_view->pageScaleFactor(), m_view->pageScaleFactor());
-    pos.scale(m_view->deviceScaleFactor(), m_view->deviceScaleFactor());
     m_view->setPagePosition(pos);
 
     m_controller->didChangeContentsVisibility(m_contentPosition, m_view->pageScaleFactor());
