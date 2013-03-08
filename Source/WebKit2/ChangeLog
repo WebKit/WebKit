@@ -1,3 +1,12 @@
+2013-03-08  Lucas Forschler  <lforschler@apple.com>
+
+        Windows build fix.
+        <rdar://problem/13380471> REGRESSION: Debussy Windows broken after merging http://trac.webkit.org/changeset/144831
+
+        Reviewed by Roger Fong.
+
+        * win/WebKit2.def:
+
 2013-03-05  Lucas Forschler  <lforschler@apple.com>
 
         Merge r144672

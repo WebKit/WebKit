@@ -199,6 +199,7 @@ EXPORTS
         ?numberOfScopedHTMLStyleChildren@Node@WebCore@@QBEIXZ
         ?page@Document@WebCore@@QBEPAVPage@2@XZ
         ?paintControlTints@FrameView@WebCore@@AAEXXZ
+        ?plugInInformationBecameAvailable@WebContextClient@WebKit@@QAEXPAVWebContext@2@PAVImmutableArray@2@@Z
         ?placeholderShouldBeVisible@HTMLTextFormControlElement@WebCore@@QBE_NXZ
         ?rangeFromLocationAndLength@TextIterator@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@PAVContainerNode@2@HH_N@Z
         ?removeAllShadowRoots@ShadowTree@WebCore@@QAEXXZ
