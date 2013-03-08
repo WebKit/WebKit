@@ -1,8 +1,8 @@
-layer at (0,0) size 785x1589
+layer at (0,0) size 785x1590
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1589
-  RenderBlock {HTML} at (0,0) size 785x1590
-    RenderBody {BODY} at (8,8) size 769x1574 [bgcolor=#CCCCCC]
+layer at (0,0) size 785x1590
+  RenderBlock {HTML} at (0,0) size 785x1591
+    RenderBody {BODY} at (8,8) size 769x1575 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 769x20
         RenderText {#text} at (0,0) size 337x19
           text run at (0,0) width 337: "The style declarations which apply to the text below are:"
@@ -53,15 +53,15 @@ layer at (0,0) size 785x1589
           text run at (0,0) width 557: "This element should have no bottom padding, since negative padding values are not allowed. "
           text run at (557,0) width 201: "Both the content background and"
           text run at (0,20) width 281: "the normal padding should be aqua (light blue)."
-      RenderTable {TABLE} at (0,860) size 769x714 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 767x711
+      RenderTable {TABLE} at (0,860) size 769x715 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 767x712
           RenderTableRow {TR} at (0,0) size 767x28
             RenderTableCell {TD} at (0,0) size 767x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 159x19
                 RenderText {#text} at (4,4) size 159x19
                   text run at (4,4) width 159: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,28) size 767x683
-            RenderTableCell {TD} at (0,355) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,28) size 767x684
+            RenderTableCell {TD} at (0,356) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x19
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,28) size 755x684 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]

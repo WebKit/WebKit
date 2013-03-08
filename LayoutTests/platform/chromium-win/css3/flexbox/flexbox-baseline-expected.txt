@@ -107,8 +107,8 @@ layer at (0,0) size 800x502
       RenderFlexibleBox {DIV} at (172,5) size 30x30 [bgcolor=#D3D3D3]
       RenderText {#text} at (202,20) size 116x19
         text run at (202,20) width 116: " of the grey flexbox"
-layer at (400,0) size 360x423
-  RenderBlock (positioned) {DIV} at (400,0) size 360x423
+layer at (400,0) size 360x424
+  RenderBlock (positioned) {DIV} at (400,0) size 360x424
     RenderBlock {DIV} at (0,0) size 360x55
       RenderText {#text} at (0,35) size 69x19
         text run at (0,35) width 69: "before text "
@@ -186,10 +186,10 @@ layer at (400,0) size 360x423
               RenderBlock {DIV} at (0,0) size 48x20
                 RenderText {#text} at (0,0) size 37x19
                   text run at (0,0) width 37: "above"
-    RenderTable {TABLE} at (0,271) size 280x82 [bgcolor=#D3D3D3]
-      RenderTableSection {TBODY} at (0,0) size 280x82
-        RenderTableRow {TR} at (0,2) size 280x78
-          RenderTableCell {TD} at (2,58) size 45x22 [r=0 c=0 rs=1 cs=1]
+    RenderTable {TABLE} at (0,271) size 280x83 [bgcolor=#D3D3D3]
+      RenderTableSection {TBODY} at (0,0) size 280x83
+        RenderTableRow {TR} at (0,2) size 280x79
+          RenderTableCell {TD} at (2,59) size 45x22 [r=0 c=0 rs=1 cs=1]
             RenderText {#text} at (1,1) size 43x19
               text run at (1,1) width 43: "bottom"
           RenderTableCell {TD} at (49,37) size 50x22 [r=0 c=1 rs=1 cs=1]
@@ -206,13 +206,13 @@ layer at (400,0) size 360x423
               RenderBlock {DIV} at (114,0) size 37x67
                 RenderText {#text} at (0,0) size 37x19
                   text run at (0,0) width 37: "above"
-    RenderBlock {DIV} at (0,353) size 360x70
+    RenderBlock {DIV} at (0,354) size 360x70
       RenderText {#text} at (0,20) size 69x19
         text run at (0,20) width 69: "before text "
       RenderFlexibleBox {DIV} at (69,5) size 167x65 [bgcolor=#D3D3D3]
       RenderText {#text} at (236,20) size 57x19
         text run at (236,20) width 57: " after text"
-layer at (469,358) size 167x65 clip at (469,358) size 152x65 scrollY 10 scrollHeight 75
+layer at (469,359) size 167x65 clip at (469,359) size 152x65 scrollY 10 scrollHeight 75
   RenderBlock {DIV} at (0,0) size 167x65
     RenderText {#text} at (0,15) size 147x19
       text run at (0,15) width 147: "The baseline is based on"

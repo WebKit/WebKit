@@ -6,14 +6,14 @@ layer at (0,0) size 800x600
       RenderBlock {CENTER} at (0,0) size 784x371
         RenderTable {TABLE} at (0,0) size 784x371
           RenderTableSection {TBODY} at (0,0) size 784x371
-            RenderTableRow {TR} at (0,0) size 784x69
+            RenderTableRow {TR} at (0,0) size 784x70
               RenderTableCell {TD} at (0,7) size 784x55 [r=0 c=0 rs=1 cs=1]
                 RenderBlock {H2} at (0,0) size 784x35
                   RenderInline {FONT} at (0,0) size 102x35
                     RenderText {#text} at (341,0) size 102x35
                       text run at (341,0) width 102: "EET 304"
-            RenderTableRow {TR} at (0,69) size 784x23
-              RenderTableCell {TD} at (0,71) size 784x18 [r=1 c=0 rs=1 cs=1]
+            RenderTableRow {TR} at (0,70) size 784x22
+              RenderTableCell {TD} at (0,72) size 784x18 [r=1 c=0 rs=1 cs=1]
                 RenderBlock {P} at (0,0) size 784x18
                   RenderInline {FONT} at (0,0) size 34x18
                     RenderInline {A} at (0,0) size 34x18 [color=#0000EE]

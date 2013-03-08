@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {DIV} at (0,0) size 305x61
-        RenderTableSection (anonymous) at (0,0) size 305x61
-          RenderTableRow (anonymous) at (0,0) size 305x61
+      RenderTable {DIV} at (0,0) size 305x62
+        RenderTableSection (anonymous) at (0,0) size 305x62
+          RenderTableRow (anonymous) at (0,0) size 305x62
             RenderTableCell (anonymous) at (0,0) size 305x62 [r=0 c=0 rs=1 cs=1]
               RenderBlock (anonymous) at (0,0) size 305x0
                 RenderInline {FORM} at (0,0) size 0x0

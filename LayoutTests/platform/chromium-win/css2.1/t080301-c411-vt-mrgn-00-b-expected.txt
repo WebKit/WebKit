@@ -1,14 +1,14 @@
-layer at (0,0) size 785x896
+layer at (0,0) size 785x897
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x896
-  RenderBlock {HTML} at (0,0) size 785x896
-    RenderBody {BODY} at (8,16) size 769x872
+layer at (0,0) size 785x897
+  RenderBlock {HTML} at (0,0) size 785x897
+    RenderBody {BODY} at (8,16) size 769x873
       RenderBlock {P} at (0,0) size 769x20
         RenderText {#text} at (0,0) size 263x19
           text run at (0,0) width 263: "The two columns below should be identical."
-      RenderTable {TABLE} at (0,36) size 178x836
-        RenderTableSection {TBODY} at (0,0) size 178x836
-          RenderTableRow {TR} at (0,2) size 178x832
+      RenderTable {TABLE} at (0,36) size 178x837
+        RenderTableSection {TBODY} at (0,0) size 178x837
+          RenderTableRow {TR} at (0,2) size 178x833
             RenderTableCell {TD} at (2,2) size 86x833 [bgcolor=#008080] [border: (3px solid #000000)] [r=0 c=0 rs=1 cs=1]
               RenderBlock {P} at (3,3) size 80x20 [bgcolor=#FFFF00]
                 RenderText {#text} at (0,0) size 6x19

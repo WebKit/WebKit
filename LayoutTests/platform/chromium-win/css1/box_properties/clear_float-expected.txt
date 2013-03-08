@@ -1,8 +1,8 @@
-layer at (0,0) size 785x825
+layer at (0,0) size 785x826
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x825
-  RenderBlock {HTML} at (0,0) size 785x825
-    RenderBody {BODY} at (8,8) size 769x809 [bgcolor=#CCCCCC]
+layer at (0,0) size 785x826
+  RenderBlock {HTML} at (0,0) size 785x826
+    RenderBody {BODY} at (8,8) size 769x810 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 769x20
         RenderText {#text} at (0,0) size 337x19
           text run at (0,0) width 337: "The style declarations which apply to the text below are:"
@@ -83,15 +83,15 @@ layer at (0,0) size 785x825
           RenderText {#text} at (0,0) size 497x39
             text run at (0,0) width 497: "The top of the yellow rectangle (to which this paragraph belongs) should be"
             text run at (0,20) width 311: "vertically aligned with the top of the green rectangle."
-      RenderTable {TABLE} at (192,435) size 577x374 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 575x371
+      RenderTable {TABLE} at (192,435) size 577x375 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 575x372
           RenderTableRow {TR} at (0,0) size 575x28
             RenderTableCell {TD} at (0,0) size 575x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 159x19
                 RenderText {#text} at (4,4) size 159x19
                   text run at (4,4) width 159: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,28) size 575x343
-            RenderTableCell {TD} at (0,185) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,28) size 575x344
+            RenderTableCell {TD} at (0,186) size 12x28 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x19
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,28) size 563x344 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
