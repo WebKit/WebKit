@@ -17,14 +17,12 @@
  */
 
 #include "config.h"
-
-#if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
 #include "CredentialBackingStore.h"
 
+#if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
 #include "CredentialStorage.h"
 #include "FileSystem.h"
 #include "KURL.h"
-#include "NotImplemented.h"
 #include "ProtectionSpaceHash.h"
 #include "SQLiteStatement.h"
 #include <BlackBerryPlatformEncryptor.h>
@@ -59,39 +57,11 @@ CredentialBackingStore& credentialBackingStore()
 }
 
 CredentialBackingStore::CredentialBackingStore()
-    : m_addLoginStatement(0)
-    , m_updateLoginStatement(0)
-    , m_hasLoginStatement(0)
-    , m_getLoginStatement(0)
-    , m_removeLoginStatement(0)
-    , m_addNeverRememberStatement(0)
-    , m_hasNeverRememberStatement(0)
-    , m_removeNeverRememberStatement(0)
-    , m_certMgrWrapper(0)
 {
 }
 
 CredentialBackingStore::~CredentialBackingStore()
 {
-    delete m_certMgrWrapper;
-    m_certMgrWrapper = 0;
-    delete m_addLoginStatement;
-    m_addLoginStatement = 0;
-    delete m_updateLoginStatement;
-    m_updateLoginStatement = 0;
-    delete m_hasLoginStatement;
-    m_hasLoginStatement = 0;
-    delete m_getLoginStatement;
-    m_getLoginStatement = 0;
-    delete m_removeLoginStatement;
-    m_removeLoginStatement = 0;
-    delete m_addNeverRememberStatement;
-    m_addNeverRememberStatement = 0;
-    delete m_hasNeverRememberStatement;
-    m_hasNeverRememberStatement = 0;
-    delete m_removeNeverRememberStatement;
-    m_removeNeverRememberStatement = 0;
-
     if (m_database.isOpen())
         m_database.close();
 }
@@ -122,35 +92,35 @@ bool CredentialBackingStore::open(const String& dbPath)
     }
 
     // Prepare the statements.
-    m_addLoginStatement = new SQLiteStatement(m_database, "INSERT OR REPLACE INTO logins (host, port, service_type, realm, auth_scheme, username, password) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    m_addLoginStatement = adoptPtr(new SQLiteStatement(m_database, "INSERT OR REPLACE INTO logins (host, port, service_type, realm, auth_scheme, username, password) VALUES (?, ?, ?, ?, ?, ?, ?)"));
     HANDLE_SQL_EXEC_FAILURE(m_addLoginStatement->prepare() != SQLResultOk,
         false, "Failed to prepare addLogin statement");
 
-    m_updateLoginStatement = new SQLiteStatement(m_database, "UPDATE logins SET username = ?, password = ? WHERE host = ? AND port = ? AND service_type = ? AND realm = ? AND auth_scheme = ?");
+    m_updateLoginStatement = adoptPtr(new SQLiteStatement(m_database, "UPDATE logins SET username = ?, password = ? WHERE host = ? AND port = ? AND service_type = ? AND realm = ? AND auth_scheme = ?"));
     HANDLE_SQL_EXEC_FAILURE(m_updateLoginStatement->prepare() != SQLResultOk,
         false, "Failed to prepare updateLogin statement");
 
-    m_hasLoginStatement = new SQLiteStatement(m_database, "SELECT COUNT(*) FROM logins WHERE host = ? AND port = ? AND service_type = ? AND realm = ? AND auth_scheme = ?");
+    m_hasLoginStatement = adoptPtr(new SQLiteStatement(m_database, "SELECT COUNT(*) FROM logins WHERE host = ? AND port = ? AND service_type = ? AND realm = ? AND auth_scheme = ?"));
     HANDLE_SQL_EXEC_FAILURE(m_hasLoginStatement->prepare() != SQLResultOk,
         false, "Failed to prepare hasLogin statement");
 
-    m_getLoginStatement = new SQLiteStatement(m_database, "SELECT username, password FROM logins WHERE host = ? AND port = ? AND service_type = ? AND realm = ? AND auth_scheme = ?");
+    m_getLoginStatement = adoptPtr(new SQLiteStatement(m_database, "SELECT username, password FROM logins WHERE host = ? AND port = ? AND service_type = ? AND realm = ? AND auth_scheme = ?"));
     HANDLE_SQL_EXEC_FAILURE(m_getLoginStatement->prepare() != SQLResultOk,
         false, "Failed to prepare getLogin statement");
 
-    m_removeLoginStatement = new SQLiteStatement(m_database, "DELETE FROM logins WHERE host = ? AND port = ? AND service_type = ? AND realm = ? AND auth_scheme = ?");
+    m_removeLoginStatement = adoptPtr(new SQLiteStatement(m_database, "DELETE FROM logins WHERE host = ? AND port = ? AND service_type = ? AND realm = ? AND auth_scheme = ?"));
     HANDLE_SQL_EXEC_FAILURE(m_removeLoginStatement->prepare() != SQLResultOk,
         false, "Failed to prepare removeLogin statement");
 
-    m_addNeverRememberStatement = new SQLiteStatement(m_database, "INSERT OR REPLACE INTO never_remember (host, port, service_type, realm, auth_scheme) VALUES (?, ?, ?, ?, ?)");
+    m_addNeverRememberStatement = adoptPtr(new SQLiteStatement(m_database, "INSERT OR REPLACE INTO never_remember (host, port, service_type, realm, auth_scheme) VALUES (?, ?, ?, ?, ?)"));
     HANDLE_SQL_EXEC_FAILURE(m_addNeverRememberStatement->prepare() != SQLResultOk,
         false, "Failed to prepare addNeverRemember statement");
 
-    m_hasNeverRememberStatement = new SQLiteStatement(m_database, "SELECT COUNT(*) FROM never_remember WHERE host = ? AND port = ? AND service_type = ? AND realm = ? AND auth_scheme = ?");
+    m_hasNeverRememberStatement = adoptPtr(new SQLiteStatement(m_database, "SELECT COUNT(*) FROM never_remember WHERE host = ? AND port = ? AND service_type = ? AND realm = ? AND auth_scheme = ?"));
     HANDLE_SQL_EXEC_FAILURE(m_hasNeverRememberStatement->prepare() != SQLResultOk,
         false, "Failed to prepare hasNeverRemember statement");
 
-    m_removeNeverRememberStatement = new SQLiteStatement(m_database, "DELETE FROM never_remember WHERE host = ? AND port = ? AND service_type = ? AND realm = ? AND auth_scheme = ?");
+    m_removeNeverRememberStatement = adoptPtr(new SQLiteStatement(m_database, "DELETE FROM never_remember WHERE host = ? AND port = ? AND service_type = ? AND realm = ? AND auth_scheme = ?"));
     HANDLE_SQL_EXEC_FAILURE(m_removeNeverRememberStatement->prepare() != SQLResultOk,
         false, "Failed to prepare removeNeverRemember statement");
 
@@ -430,9 +400,9 @@ String CredentialBackingStore::decryptedString(const String& cipherText) const
 BlackBerry::Platform::CertMgrWrapper* CredentialBackingStore::certMgrWrapper()
 {
     if (!m_certMgrWrapper)
-        m_certMgrWrapper = new BlackBerry::Platform::CertMgrWrapper();
+        m_certMgrWrapper = adoptPtr(new BlackBerry::Platform::CertMgrWrapper());
 
-    return m_certMgrWrapper;
+    return m_certMgrWrapper.get();
 }
 
 

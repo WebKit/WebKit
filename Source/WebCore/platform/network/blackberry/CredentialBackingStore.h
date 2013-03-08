@@ -25,6 +25,7 @@
 #include "SQLiteDatabase.h"
 
 #include <BlackBerryPlatformMisc.h>
+#include <wtf/OwnPtr.h>
 
 namespace BlackBerry {
 namespace Platform {
@@ -61,16 +62,16 @@ private:
     BlackBerry::Platform::CertMgrWrapper* certMgrWrapper();
 
     SQLiteDatabase m_database;
-    SQLiteStatement* m_addLoginStatement;
-    SQLiteStatement* m_updateLoginStatement;
-    SQLiteStatement* m_hasLoginStatement;
-    SQLiteStatement* m_getLoginStatement;
-    SQLiteStatement* m_removeLoginStatement;
-    SQLiteStatement* m_addNeverRememberStatement;
-    SQLiteStatement* m_hasNeverRememberStatement;
-    SQLiteStatement* m_removeNeverRememberStatement;
+    OwnPtr<SQLiteStatement> m_addLoginStatement;
+    OwnPtr<SQLiteStatement> m_updateLoginStatement;
+    OwnPtr<SQLiteStatement> m_hasLoginStatement;
+    OwnPtr<SQLiteStatement> m_getLoginStatement;
+    OwnPtr<SQLiteStatement> m_removeLoginStatement;
+    OwnPtr<SQLiteStatement> m_addNeverRememberStatement;
+    OwnPtr<SQLiteStatement> m_hasNeverRememberStatement;
+    OwnPtr<SQLiteStatement> m_removeNeverRememberStatement;
 
-    BlackBerry::Platform::CertMgrWrapper* m_certMgrWrapper;
+    OwnPtr<BlackBerry::Platform::CertMgrWrapper> m_certMgrWrapper;
 
     DISABLE_COPY(CredentialBackingStore)
 };
