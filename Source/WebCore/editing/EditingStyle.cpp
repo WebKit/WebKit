@@ -78,7 +78,6 @@ static const CSSPropertyID editingProperties[] = {
     CSSPropertyWordSpacing,
     CSSPropertyWebkitTextDecorationsInEffect,
     CSSPropertyWebkitTextFillColor,
-    CSSPropertyWebkitTextSizeAdjust,
     CSSPropertyWebkitTextStrokeColor,
     CSSPropertyWebkitTextStrokeWidth,
 };

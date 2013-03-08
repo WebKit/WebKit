@@ -2044,7 +2044,6 @@ void StyleResolver::updateFont()
     if (!m_state.fontDirty())
         return;
 
-    checkForTextSizeAdjust();
     RenderStyle* style = m_state.style();
     checkForGenericFamilyChange(style, m_state.parentStyle());
     checkForZoomChange(style, m_state.parentStyle());
@@ -2197,7 +2196,7 @@ void StyleResolver::applyProperties(const StylePropertySet* properties, StyleRul
 #endif
         case HighPriorityProperties:
             COMPILE_ASSERT(firstCSSProperty == CSSPropertyColor, CSS_color_is_first_property);
-            COMPILE_ASSERT(CSSPropertyZoom == CSSPropertyColor + 18, CSS_zoom_is_end_of_first_prop_range);
+            COMPILE_ASSERT(CSSPropertyZoom == CSSPropertyColor + 17, CSS_zoom_is_end_of_first_prop_range);
             COMPILE_ASSERT(CSSPropertyLineHeight == CSSPropertyZoom + 1, CSS_line_height_is_after_zoom);
 #if ENABLE(CSS_VARIABLES)
             if (property == CSSPropertyVariable)
@@ -3279,13 +3278,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         setFontDescription(fontDescription);
         return;
     }
-    case CSSPropertyWebkitTextSizeAdjust: {
-        HANDLE_INHERIT_AND_INITIAL(textSizeAdjust, TextSizeAdjust)
-        if (!primitiveValue || !primitiveValue->getIdent())
-            return;
-        setTextSizeAdjust(primitiveValue->getIdent() == CSSValueAuto);
-        return;
-    }
 #if ENABLE(DASHBOARD_SUPPORT)
     case CSSPropertyWebkitDashboardRegion:
     {
@@ -3919,18 +3911,6 @@ PassRefPtr<StyleImage> StyleResolver::cursorOrPendingFromValue(CSSPropertyID pro
     if (image && image->isPendingImage())
         m_state.pendingImageProperties().set(property, value);
     return image.release();
-}
-
-void StyleResolver::checkForTextSizeAdjust()
-{
-    RenderStyle* style = m_state.style();
-
-    if (style->textSizeAdjust())
-        return;
-
-    FontDescription newFontDescription(style->fontDescription());
-    newFontDescription.setComputedSize(newFontDescription.specifiedSize());
-    style->setFontDescription(newFontDescription);
 }
 
 void StyleResolver::checkForZoomChange(RenderStyle* style, RenderStyle* parentStyle)

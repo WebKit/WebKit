@@ -262,5 +262,4 @@ var hiddenComputedStyleProperties = [
     "overflow",
     "-webkit-mask-position-x",
     "-webkit-mask-position-y",
-    "-webkit-text-size-adjust",
 ];

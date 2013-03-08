@@ -925,7 +925,6 @@ public:
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
     bool useTouchOverflowScrolling() const { return rareInheritedData->useTouchOverflowScrolling; }
 #endif
-    bool textSizeAdjust() const { return rareInheritedData->textSizeAdjust; }
     ETextSecurity textSecurity() const { return static_cast<ETextSecurity>(rareInheritedData->textSecurity); }
 
     WritingMode writingMode() const { return static_cast<WritingMode>(inherited_flags.m_writingMode); }
@@ -1394,7 +1393,6 @@ public:
 #if ENABLE(ACCELERATED_OVERFLOW_SCROLLING)
     void setUseTouchOverflowScrolling(bool v) { SET_VAR(rareInheritedData, useTouchOverflowScrolling, v); }
 #endif
-    bool setTextSizeAdjust(bool);
     void setTextSecurity(ETextSecurity aTextSecurity) { SET_VAR(rareInheritedData, textSecurity, aTextSecurity); }
 
 #if ENABLE(SVG)
@@ -1704,7 +1702,6 @@ public:
 
     // Keep these at the end.
     static LineClampValue initialLineClamp() { return LineClampValue(); }
-    static bool initialTextSizeAdjust() { return true; }
     static ETextSecurity initialTextSecurity() { return TSNONE; }
 #if ENABLE(TOUCH_EVENTS)
     static Color initialTapHighlightColor();
@@ -1838,14 +1835,6 @@ inline bool RenderStyle::setEffectiveZoom(float f)
     if (compareEqual(rareInheritedData->m_effectiveZoom, f))
         return false;
     rareInheritedData.access()->m_effectiveZoom = f;
-    return true;
-}
-
-inline bool RenderStyle::setTextSizeAdjust(bool b)
-{
-    if (compareEqual(rareInheritedData->textSizeAdjust, b))
-        return false;
-    rareInheritedData.access()->textSizeAdjust = b;
     return true;
 }
 

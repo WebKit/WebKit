@@ -131,7 +131,6 @@ li.selected .base-storage-tree-element-subtitle {
     padding: 2px 0;
     overflow-y: overlay;
     overflow-x: hidden;
-    -webkit-text-size-adjust: auto;
 }
 
 .database-query-prompt {

@@ -91,7 +91,6 @@ public:
     unsigned overflowWrap : 1; // EOverflowWrap
     unsigned nbspMode : 1; // ENBSPMode
     unsigned lineBreak : 3; // LineBreak
-    unsigned textSizeAdjust : 1; // An Apple extension.
     unsigned resize : 2; // EResize
     unsigned userSelect : 2; // EUserSelect
     unsigned colorSpace : 1; // ColorSpace

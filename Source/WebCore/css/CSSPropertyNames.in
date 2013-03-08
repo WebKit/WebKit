@@ -27,7 +27,6 @@ text-rendering
 -webkit-locale
 -webkit-text-orientation
 -epub-text-orientation = -webkit-text-orientation
--webkit-text-size-adjust
 -webkit-writing-mode
 -epub-writing-mode = -webkit-writing-mode
 zoom

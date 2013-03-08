@@ -942,7 +942,6 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     overflow-y: overlay;
     word-wrap: break-word;
     -webkit-user-select: text;
-    -webkit-text-size-adjust: auto;
 }
 
 #console-prompt {

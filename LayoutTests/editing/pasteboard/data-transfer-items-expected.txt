@@ -21,5 +21,5 @@ DataTransferItem accessed outside event handler!
 copy: items[0] value: Hello World!
 copy: items[1] value: <b>Hello World!
 paste: items[0] value: This file tests the basic functionality and properties of DataTransferItems. This test requires DRT.
-paste: items[1] value: <span style="color: rgb(0, 0, 0); font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px; display: inline !important; float: none;">This file tests the basic functionality and properties of DataTransferItems. This test requires DRT.</span>
+paste: items[1] value: <span style="color: rgb(0, 0, 0); font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px; display: inline !important; float: none;">This file tests the basic functionality and properties of DataTransferItems. This test requires DRT.</span>
 

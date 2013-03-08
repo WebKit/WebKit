@@ -329,7 +329,6 @@ private:
     // This function fixes up the default font size if it detects that the current generic font family has changed. -dwh
     void checkForGenericFamilyChange(RenderStyle*, RenderStyle* parentStyle);
     void checkForZoomChange(RenderStyle*, RenderStyle* parentStyle);
-    void checkForTextSizeAdjust();
 
     void adjustRenderStyle(RenderStyle* styleToAdjust, RenderStyle* parentStyle, Element*);
 
@@ -522,7 +521,6 @@ public:
         void setFontDescription(const FontDescription& fontDescription) { m_fontDirty |= m_style->setFontDescription(fontDescription); }
         void setZoom(float f) { m_fontDirty |= m_style->setZoom(f); }
         void setEffectiveZoom(float f) { m_fontDirty |= m_style->setEffectiveZoom(f); }
-        void setTextSizeAdjust(bool b) { m_fontDirty |= m_style->setTextSizeAdjust(b); }
         void setWritingMode(WritingMode writingMode) { m_fontDirty |= m_style->setWritingMode(writingMode); }
         void setTextOrientation(TextOrientation textOrientation) { m_fontDirty |= m_style->setTextOrientation(textOrientation); }
 
@@ -599,7 +597,6 @@ public:
     void setFontDescription(const FontDescription& fontDescription) { m_state.setFontDescription(fontDescription); }
     void setZoom(float f) { m_state.setZoom(f); }
     void setEffectiveZoom(float f) { m_state.setEffectiveZoom(f); }
-    void setTextSizeAdjust(bool b) { m_state.setTextSizeAdjust(b); }
     void setWritingMode(WritingMode writingMode) { m_state.setWritingMode(writingMode); }
     void setTextOrientation(TextOrientation textOrientation) { m_state.setTextOrientation(textOrientation); }
     

@@ -253,7 +253,6 @@ border-spacing: 0px 0px
 overflow: visible
 -webkit-mask-position-x: 0%
 -webkit-mask-position-y: 0%
--webkit-text-size-adjust: auto
 
 After changing grandparent's 'color' and the parent's 'font-size' inherited properties:
 border-top-width: 18px

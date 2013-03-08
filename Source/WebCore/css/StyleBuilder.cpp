@@ -1163,10 +1163,8 @@ public:
             lineHeight = RenderStyle::initialLineHeight();
         else if (primitiveValue->isLength()) {
             double multiplier = styleResolver->style()->effectiveZoom();
-            if (styleResolver->style()->textSizeAdjust()) {
-                if (Frame* frame = styleResolver->document()->frame())
-                    multiplier *= frame->textZoomFactor();
-            }
+            if (Frame* frame = styleResolver->document()->frame())
+                multiplier *= frame->textZoomFactor();
             lineHeight = primitiveValue->computeLength<Length>(styleResolver->style(), styleResolver->rootElementStyle(), multiplier);
         } else if (primitiveValue->isPercentage()) {
             // FIXME: percentage should not be restricted to an integer here.

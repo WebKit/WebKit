@@ -580,8 +580,7 @@ double CSSPrimitiveValue::computeLengthDouble(RenderStyle* style, RenderStyle* r
 
     // We do not apply the zoom factor when we are computing the value of the font-size property. The zooming
     // for font sizes is much more complicated, since we have to worry about enforcing the minimum font size preference
-    // as well as enforcing the implicit "smart minimum." In addition the CSS property text-size-adjust is used to
-    // prevent text from zooming at all. Therefore we will not apply the zoom here if we are computing font-size.
+    // as well as enforcing the implicit "smart minimum."
     double result = getDoubleValue() * factor;
     if (computingFontSize || isFontRelativeLength())
         return result;
