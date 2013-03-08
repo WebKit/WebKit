@@ -11,7 +11,7 @@ install:
 	set ConfigurationBuildDir=$(OBJROOT)\$(BUILDSTYLE)
     set WebKit_Source=$(SRCROOT)\..\..
 	-mkdir 2>NUL "%ConfigurationBuildDir%\include\private"
-	xcopy "%WebKitLibrariesDir%\include\private\*" "%ConfigurationBuildDir%\include\private" /e/v/i/h/y
+	xcopy "%WebKit_Libraries%\include\private\*" "%ConfigurationBuildDir%\include\private" /e/v/i/h/y
 	devenv "WebCore.submit.sln" /rebuild $(BUILDSTYLE)
 	xcopy "%ConfigurationBuildDir%\include\*" "$(DSTROOT)\AppleInternal\include\" /e/v/i/h/y	
 	xcopy "%ConfigurationBuildDir%\lib\*" "$(DSTROOT)\AppleInternal\lib\" /e/v/i/h/y	

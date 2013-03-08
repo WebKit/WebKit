@@ -10,9 +10,9 @@ install:
 	set ConfigurationBuildDir=$(OBJROOT)\$(BUILDSTYLE)
     set WebKit_Source=$(SRCROOT)\..\..
     -mkdir "%ConfigurationBuildDir%\include\private"
-    xcopy "%WebKitLibrariesDir%\include\private\*" "%ConfigurationBuildDir%\include\private" /e/v/i/h/y
-    devenv "JavaScriptCoreSubmit.sln" /clean $(BUILDSTYLE)
-    devenv "JavaScriptCoreSubmit.sln" /build $(BUILDSTYLE)
+    xcopy "%WebKit_Libraries%\include\private\*" "%ConfigurationBuildDir%\include\private" /e/v/i/h/y
+    devenv "JavaScriptCore.submit.sln" /clean $(BUILDSTYLE)
+    devenv "JavaScriptCore.submit.sln" /build $(BUILDSTYLE)
     -xcopy "%ConfigurationBuildDir%\bin\JavaScriptCore.dll" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
     -xcopy "%ConfigurationBuildDir%\bin\JavaScriptCore_debug.dll" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
     -xcopy "%ConfigurationBuildDir%\bin\JavaScriptCore.pdb" "$(DSTROOT)\AppleInternal\bin\" /e/v/i/h/y
