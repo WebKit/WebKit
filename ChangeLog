@@ -1,3 +1,17 @@
+2013-03-08  Chandra Shekar Vallala  <brk376@motorola.com>
+
+        [chromium] Keydown event for 'shift+alt' returns win keycode instead of 'alt'
+        https://bugs.webkit.org/show_bug.cgi?id=111112
+
+        Reviewed by Tony Chang.
+
+        Return windows keycode of Alt incase of GDK_META_L, GDK_META_R.
+
+        Try press Shift then alt key. The test passes if the shiftKey, altKey values
+        of JSKeyEvent are true and keycode/which is 18.
+
+        * ManualTests/shift-alt-key-event.html: Added.
+
 2013-03-08  Zan Dobersek  <zdobersek@igalia.com>
 
         [Autotools] Remove definitions of unnecessary Automake conditionals
