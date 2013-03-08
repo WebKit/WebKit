@@ -150,8 +150,8 @@ bool getRawCookies(const NetworkStorageSession& session, const KURL& /*firstPart
     for (GSList* iter = cookies.get(); iter; iter = g_slist_next(iter)) {
         SoupCookie* cookie = static_cast<SoupCookie*>(iter->data);
         rawCookies.append(Cookie(String::fromUTF8(cookie->name), String::fromUTF8(cookie->value), String::fromUTF8(cookie->domain),
-                                 String::fromUTF8(cookie->path), static_cast<double>(soup_date_to_time_t(cookie->expires)) * 1000,
-                                 cookie->http_only, cookie->secure, soup_cookie_jar_is_persistent(jar)));
+            String::fromUTF8(cookie->path), cookie->expires ? static_cast<double>(soup_date_to_time_t(cookie->expires)) * 1000 : 0,
+            cookie->http_only, cookie->secure, !cookie->expires));
         soup_cookie_free(cookie);
     }
 
