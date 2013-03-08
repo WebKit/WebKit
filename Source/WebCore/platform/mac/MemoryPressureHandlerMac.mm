@@ -145,7 +145,7 @@ void MemoryPressureHandler::respondToMemoryPressure()
 void MemoryPressureHandler::releaseMemory(bool critical)
 {
     int savedPageCacheCapacity = pageCache()->capacity();
-    pageCache()->setCapacity(critical ? 0 : pageCache()->pageCount() / 2);
+    pageCache()->setCapacity(0);
     pageCache()->setCapacity(savedPageCacheCapacity);
 
     NSURLCache *nsurlCache = [NSURLCache sharedURLCache];

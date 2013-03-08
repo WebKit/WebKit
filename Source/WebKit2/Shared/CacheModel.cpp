@@ -108,17 +108,14 @@ void calculateCacheSizes(CacheModel cacheModel, uint64_t memorySize, uint64_t di
     }
     case CacheModelPrimaryWebBrowser: {
         // Page cache capacity (in pages)
-        // (Research indicates that value / page drops substantially after 3 pages.)
-        if (memorySize >= 2048)
-            pageCacheCapacity = 5;
-        else if (memorySize >= 1024)
-            pageCacheCapacity = 4;
-        else if (memorySize >= 512)
+        if (memorySize >= 1024)
             pageCacheCapacity = 3;
-        else if (memorySize >= 256)
+        else if (memorySize >= 512)
             pageCacheCapacity = 2;
-        else
+        else if (memorySize >= 256)
             pageCacheCapacity = 1;
+        else
+            pageCacheCapacity = 0;
 
         // Object cache capacities (in bytes)
         // (Testing indicates that value / MB depends heavily on content and

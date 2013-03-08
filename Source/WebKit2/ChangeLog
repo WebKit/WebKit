@@ -1,3 +1,17 @@
+2013-03-07  Gavin Barraclough  <barraclough@apple.com>
+
+        Reduce page cache size on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=111795
+
+        Rubber stamped by Geoff Garen
+
+        5 entries is unnecessarily large; research show 3 should suffice.
+        On a low memory warning we should clear this completely.
+
+        * Shared/CacheModel.cpp:
+        (WebKit::calculateCacheSizes):
+            - reduce maximum to 3.
+
 2013-03-07  Anders Carlsson  <andersca@apple.com>
 
         Add a didFocusTextField callback to the injected bundle form client
