@@ -2675,3 +2675,8 @@ webkit.org/b/110654 css3/flexbox/button.html [ Failure ]
 
 # Need support for ResourceHandle::didChangePriority and DRT support
 webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Failure ]
+
+# Border-fit should happen at layout time rather than paint time
+webkit.org/b/111606 fast/borders/border-fit-2.html [ Skip ]
+webkit.org/b/111606 fast/borders/border-fit.html [ Skip ]
+webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Skip ]
