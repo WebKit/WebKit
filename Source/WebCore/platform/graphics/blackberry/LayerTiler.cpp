@@ -256,7 +256,7 @@ void LayerTiler::updateTextureContentsIfNeeded(double scale)
 
             bool isOpaque = false;
             if (image->isBitmapImage())
-                isOpaque = !static_cast<BitmapImage*>(image)->currentFrameHasAlpha();
+                isOpaque = static_cast<BitmapImage*>(image)->currentFrameKnownToBeOpaque();
             addTextureJob(TextureJob::setContents(buffer, contentsRect, isOpaque));
         }
     } else if (m_layer->drawsContent()) {
