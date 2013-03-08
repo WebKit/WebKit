@@ -1,3 +1,19 @@
+2013-03-08  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Cache flush problem on ARMv7 JSC
+        https://bugs.webkit.org/show_bug.cgi?id=111441
+
+        Reviewed by Zoltan Herczeg.
+
+        Not proper cache flush causing random crashes on ARMv7 Linux with V8 tests.
+        The problem is similar to https://bugs.webkit.org/show_bug.cgi?id=77712.
+        Change the cache fulsh mechanism similar to ARM traditinal and revert the
+        temporary fix.
+
+        * wtf/OSAllocatorPosix.cpp:
+        (WTF::OSAllocator::reserveUncommitted):
+        (WTF::OSAllocator::decommit):
+
 2013-03-07  Andrew Bortz  <andrew@abortz.net>
 
         Replace Mersenne Twister random number generator with a simpler one.

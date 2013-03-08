@@ -1,3 +1,18 @@
+2013-03-08  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Cache flush problem on ARMv7 JSC
+        https://bugs.webkit.org/show_bug.cgi?id=111441
+
+        Reviewed by Zoltan Herczeg.
+
+        Not proper cache flush causing random crashes on ARMv7 Linux with V8 tests.
+        The problem is similar to https://bugs.webkit.org/show_bug.cgi?id=77712.
+        Change the cache fulsh mechanism similar to ARM traditinal and revert the
+        temporary fix.
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::cacheFlush):
+
 2013-03-07  Geoffrey Garen  <ggaren@apple.com>
 
         REGRESSION (r143759): 40% JSBench regression, 20% Octane/closure regression, 40% Octane/jquery regression, 2% Octane regression
