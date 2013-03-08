@@ -59,6 +59,7 @@ editing/selection/doubleclick-beside-cr-span.html
 editing/selection/doubleclick-whitespace-crash.html
 editing/selection/doubleclick-whitespace-img-crash.html
 editing/selection/doubleclick-whitespace.html
+editing/selection/drag-list-item.html
 editing/selection/drag-select-1.html
 editing/selection/drag-select-rapidly.html
 editing/selection/drag-start-event-client-x-y.html
