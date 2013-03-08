@@ -15,6 +15,31 @@ var stream;
 var newStream;
 var nAudio;
 var nVideo;
+var idArray = new Array();
+
+function checkIdAttribute(id) {
+    if (id.length != 36)
+        return false;
+    for (var i = 0; i < id.length; i++) {
+        charCode = id.charCodeAt(i);
+        if (charCode == 0x21
+            || (charCode >= 0x23 && charCode <= 0x27)
+            || (charCode >= 0x2A && charCode <= 0x2B)
+            || (charCode >= 0x2D && charCode <= 0x2E)
+            || (charCode >= 0x30 && charCode <= 0x39)
+            || (charCode >= 0x41 && charCode <= 0x5A)
+            || (charCode >= 0x5E && charCode <= 0x7E))
+            continue;
+        return false;
+    }
+    for (var i = 0; i < idArray.length; i++) {
+        if (id === idArray[i])
+            return false;
+    }
+    idArray.push(id);
+
+    return true;
+}
 
 function error() {
     testFailed('Stream generation failed.');
@@ -37,7 +62,7 @@ function gotStream(s) {
     shouldBe('localStream.getVideoTracks().length', '1');
 
     shouldBeTrue("typeof webkitMediaStream === 'function'");
-
+    shouldBeTrue('checkIdAttribute(localStream.id)');
     testConstructor(localStream);
 }
 
@@ -89,6 +114,8 @@ function verifyStream(s, numAudioTracks, numVideoTracks, ended) {
         shouldBeTrue('newStream.ended');
     else
         shouldBeFalse('newStream.ended');
+
+    shouldBeTrue('checkIdAttribute(newStream.id)');
 }
 
 getUserMedia({video:true, audio:true}, gotStream);
