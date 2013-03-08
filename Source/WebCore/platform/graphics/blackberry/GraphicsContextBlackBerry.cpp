@@ -439,12 +439,12 @@ void GraphicsContext::setPlatformFillColor(const Color& color, ColorSpace colorS
     platformContext()->setFillColor(color.rgb());
 }
 
-void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op)
+void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op, BlendMode blendMode)
 {
     if (paintingDisabled())
         return;
 
-    platformContext()->setCompositeOperation(static_cast<BlackBerry::Platform::Graphics::CompositeOperator>(op));
+    platformContext()->setCompositeOperation(static_cast<BlackBerry::Platform::Graphics::CompositeOperator>(op), blendMode);
 }
 
 void GraphicsContext::setPlatformShouldAntialias(bool enable)
