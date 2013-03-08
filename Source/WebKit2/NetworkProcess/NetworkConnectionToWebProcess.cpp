@@ -31,6 +31,7 @@
 #include "NetworkBlobRegistry.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcess.h"
+#include "NetworkResourceLoadParameters.h"
 #include "NetworkResourceLoader.h"
 #include "RemoteNetworkingContext.h"
 #include "SyncNetworkResourceLoader.h"

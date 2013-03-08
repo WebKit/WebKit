@@ -29,6 +29,8 @@
 #if ENABLE(NETWORK_PROCESS)
 
 #include "NetworkBlobRegistry.h"
+#include "NetworkConnectionToWebProcess.h"
+#include "NetworkResourceLoadParameters.h"
 #include <WebCore/FormData.h>
 
 using namespace WebCore;

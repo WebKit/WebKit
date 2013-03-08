@@ -26,19 +26,22 @@
 #ifndef NetworkResourceLoadScheduler_h
 #define NetworkResourceLoadScheduler_h
 
-#include "SchedulableLoader.h"
-#include <WebCore/ResourceLoaderOptions.h>
-#include <WebCore/ResourceRequest.h>
+#include <WebCore/ResourceLoadPriority.h>
 #include <WebCore/Timer.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/text/StringHash.h>
 
 #if ENABLE(NETWORK_PROCESS)
 
+namespace WebCore {
+class KURL;
+}
+
 namespace WebKit {
 
+class SchedulableLoader;
 class HostRecord;
-class NetworkResourceLoadParameters;
-class NetworkConnectionToWebProcess;
 
 class NetworkResourceLoadScheduler {
     WTF_MAKE_NONCOPYABLE(NetworkResourceLoadScheduler); WTF_MAKE_FAST_ALLOCATED;

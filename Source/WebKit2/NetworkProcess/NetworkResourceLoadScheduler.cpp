@@ -3,9 +3,7 @@
 
 #include "HostRecord.h"
 #include "Logging.h"
-#include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcess.h"
-#include "NetworkProcessConnectionMessages.h"
 #include "NetworkResourceLoadParameters.h"
 #include "NetworkResourceLoader.h"
 #include "SyncNetworkResourceLoader.h"

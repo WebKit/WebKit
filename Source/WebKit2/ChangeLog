@@ -1,3 +1,22 @@
+2013-03-07  Alexey Proskuryakov  <ap@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=111801
+        https://bugs.webkit.org/show_bug.cgi?id=111801
+
+        Reviewed by Geoff Garen.
+
+        Move unnecessary includes out of headers.
+
+        * NetworkProcess/HostRecord.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        * NetworkProcess/NetworkProcess.cpp:
+        * NetworkProcess/NetworkResourceLoadScheduler.cpp:
+        * NetworkProcess/NetworkResourceLoadScheduler.h:
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/SchedulableLoader.cpp:
+        * NetworkProcess/SchedulableLoader.h:
+        * NetworkProcess/SyncNetworkResourceLoader.cpp:
+
 2013-03-07  Andreas Kling  <akling@apple.com>
 
         Resizing Cappuccino is very laggy on WebKit since Safari 5.1

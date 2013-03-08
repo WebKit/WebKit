@@ -32,6 +32,7 @@
 #include "NetworkProcess.h"
 #include "RemoteNetworkingContext.h"
 #include <WebCore/ResourceError.h>
+#include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceResponse.h>
 #include <wtf/MainThread.h>
 

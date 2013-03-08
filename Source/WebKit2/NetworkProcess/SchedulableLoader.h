@@ -27,14 +27,18 @@
 #define SchedulableLoader_h
 
 #include "HostRecord.h"
-#include "NetworkConnectionToWebProcess.h"
-#include "NetworkResourceLoadParameters.h"
+#include <WebCore/ResourceLoaderOptions.h>
+#include <WebCore/ResourceRequest.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefCounted.h>
 
 #if ENABLE(NETWORK_PROCESS)
 
 namespace WebKit {
+
+class NetworkConnectionToWebProcess;
+class NetworkResourceLoadParameters;
+class SandboxExtension;
 
 class SchedulableLoader : public RefCounted<SchedulableLoader> {
 public:
