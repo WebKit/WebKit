@@ -123,6 +123,15 @@ static const CGFloat dockButtonMargin = 3;
     return WKInspectorViewTag;
 }
 
+- (BOOL)_shouldUseTiledDrawingArea
+{
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+    return YES;
+#else
+    return NO;
+#endif
+}
+
 @end
 
 @interface NSWindow (AppKitDetails)

@@ -1,3 +1,16 @@
+2013-03-08  Timothy Hatcher  <timothy@apple.com>
+
+        Make the WebKit2 Web Inspector use tiled drawing and accelerated drawing.
+
+        <rdar://problem/12676223>
+
+        Reviewed by David Kilzer.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::createInspectorPageGroup): Call setAcceleratedDrawingEnabled with true on 10.8+.
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorWKView _shouldUseTiledDrawingArea]): Added. Return YES on 10.8+.
+
 2013-03-08  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Handle scrolling correctly.

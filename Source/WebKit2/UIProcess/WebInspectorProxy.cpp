@@ -66,6 +66,10 @@ static PassRefPtr<WebPageGroup> createInspectorPageGroup()
     pageGroup->preferences()->setLogsPageMessagesToSystemConsoleEnabled(true);
 #endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+    pageGroup->preferences()->setAcceleratedDrawingEnabled(true);
+#endif
+
     pageGroup->preferences()->setApplicationChromeModeEnabled(true);
     pageGroup->preferences()->setSuppressesIncrementalRendering(true);
 
