@@ -34,13 +34,13 @@
 #include "LevelDBTransaction.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 class LevelDBComparator;
 class LevelDBDatabase;
 class LevelDBTransaction;
+class IDBFactoryBackendImpl;
 class IDBKey;
 class IDBKeyRange;
 class SecurityOrigin;
@@ -57,9 +57,8 @@ public:
     class Transaction;
 
     virtual ~IDBBackingStore();
-    static PassRefPtr<IDBBackingStore> open(SecurityOrigin*, const String& pathBase, const String& fileIdentifier);
-    static PassRefPtr<IDBBackingStore> open(SecurityOrigin*, const String& pathBase, const String& fileIdentifier, LevelDBFactory*);
-    WeakPtr<IDBBackingStore> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
+    static PassRefPtr<IDBBackingStore> open(SecurityOrigin*, const String& pathBase, const String& fileIdentifier, IDBFactoryBackendImpl*);
+    static PassRefPtr<IDBBackingStore> open(SecurityOrigin*, const String& pathBase, const String& fileIdentifier, IDBFactoryBackendImpl*, LevelDBFactory*);
 
     virtual Vector<String> getDatabaseNames();
     virtual bool getIDBDatabaseMetaData(const String& name, IDBDatabaseMetadata*, bool& success) WARN_UNUSED_RETURN;
@@ -171,7 +170,7 @@ public:
     };
 
 protected:
-    IDBBackingStore(const String& identifier, PassOwnPtr<LevelDBDatabase>);
+    IDBBackingStore(const String& identifier, IDBFactoryBackendImpl*, PassOwnPtr<LevelDBDatabase>);
 
     // Should only used for mocking.
     IDBBackingStore();
@@ -181,10 +180,10 @@ private:
     void getIndexes(int64_t databaseId, int64_t objectStoreId, IDBObjectStoreMetadata::IndexMap*);
 
     String m_identifier;
-
+    RefPtr<IDBFactoryBackendImpl> m_factory;
     OwnPtr<LevelDBDatabase> m_db;
     OwnPtr<LevelDBComparator> m_comparator;
-    WeakPtrFactory<IDBBackingStore> m_weakFactory;
+
 };
 
 } // namespace WebCore

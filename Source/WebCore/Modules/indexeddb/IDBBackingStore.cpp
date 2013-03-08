@@ -30,6 +30,7 @@
 
 #include "FileSystem.h"
 #include "HistogramSupport.h"
+#include "IDBFactoryBackendImpl.h"
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
@@ -43,6 +44,9 @@
 #include "LevelDBTransaction.h"
 #include "SecurityOrigin.h"
 #include "SharedBuffer.h"
+#if PLATFORM(CHROMIUM)
+#include <public/Platform.h>
+#endif
 #include <wtf/Assertions.h>
 
 namespace WebCore {
@@ -335,20 +339,28 @@ public:
     }
 };
 
-IDBBackingStore::IDBBackingStore(const String& identifier, PassOwnPtr<LevelDBDatabase> db)
+IDBBackingStore::IDBBackingStore(const String& identifier, IDBFactoryBackendImpl* factory, PassOwnPtr<LevelDBDatabase> db)
     : m_identifier(identifier)
+    , m_factory(factory)
     , m_db(db)
-    , m_weakFactory(this)
 {
+#if PLATFORM(CHROMIUM)
+    ASSERT(m_factory || WebKit::Platform::current()->unitTestSupport());
+#endif
+    if (m_factory)
+        m_factory->addIDBBackingStore(identifier, this);
 }
 
 IDBBackingStore::IDBBackingStore()
-    : m_weakFactory(this)
 {
 }
 
 IDBBackingStore::~IDBBackingStore()
 {
+    // Only null in tests.
+    if (m_factory)
+        m_factory->removeIDBBackingStore(m_identifier);
+
     // m_db's destructor uses m_comparator. The order of destruction is important.
     m_db.clear();
     m_comparator.clear();
@@ -368,13 +380,13 @@ enum IDBLevelDBBackingStoreOpenResult {
     IDBLevelDBBackingStoreOpenMax,
 };
 
-PassRefPtr<IDBBackingStore> IDBBackingStore::open(SecurityOrigin* securityOrigin, const String& pathBaseArg, const String& fileIdentifier)
+PassRefPtr<IDBBackingStore> IDBBackingStore::open(SecurityOrigin* securityOrigin, const String& pathBaseArg, const String& fileIdentifier, IDBFactoryBackendImpl* factory)
 {
     DefaultLevelDBFactory levelDBFactory;
-    return IDBBackingStore::open(securityOrigin, pathBaseArg, fileIdentifier, &levelDBFactory);
+    return IDBBackingStore::open(securityOrigin, pathBaseArg, fileIdentifier, factory, &levelDBFactory);
 }
 
-PassRefPtr<IDBBackingStore> IDBBackingStore::open(SecurityOrigin* securityOrigin, const String& pathBaseArg, const String& fileIdentifier, LevelDBFactory* levelDBFactory)
+PassRefPtr<IDBBackingStore> IDBBackingStore::open(SecurityOrigin* securityOrigin, const String& pathBaseArg, const String& fileIdentifier, IDBFactoryBackendImpl* factory, LevelDBFactory* levelDBFactory)
 {
     IDB_TRACE("IDBBackingStore::open");
     String pathBase = pathBaseArg;
@@ -444,7 +456,7 @@ PassRefPtr<IDBBackingStore> IDBBackingStore::open(SecurityOrigin* securityOrigin
 
     // FIXME: Handle comparator name changes.
 
-    RefPtr<IDBBackingStore> backingStore(adoptRef(new IDBBackingStore(fileIdentifier, db.release())));
+    RefPtr<IDBBackingStore> backingStore(adoptRef(new IDBBackingStore(fileIdentifier, factory, db.release())));
     backingStore->m_comparator = comparator.release();
 
     if (!setUpMetadata(backingStore->m_db.get(), fileIdentifier))
