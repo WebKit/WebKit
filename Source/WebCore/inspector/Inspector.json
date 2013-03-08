@@ -3682,7 +3682,7 @@
             {
                 "id": "CompositingReasons",
                 "type": "object",
-                "description": "An object containg the reasons why the layer was composited as properties.",
+                "description": "An object containing the reasons why the layer was composited as properties.",
                 "properties": [
                     { "name": "transform3D", "type": "boolean", "optional": true, "description": "Composition due to association with an element with a CSS 3D transform." },
                     { "name": "video", "type": "boolean", "optional": true, "description": "Composition due to association with a <video> element." },
@@ -3690,7 +3690,7 @@
                     { "name": "plugin", "type": "boolean", "optional": true, "description": "Composition due to association with a plugin." },
                     { "name": "iFrame", "type": "boolean", "optional": true, "description": "Composition due to association with an <iframe> element." },
                     { "name": "backfaceVisibilityHidden", "type": "boolean", "optional": true, "description": "Composition due to association with an element with a \"backface-visibility: hidden\" style." },
-                    { "name": "clipsCompositingDescendants", "type": "boolean", "optional": true, "description": "Composition due to association with an element clippng compositing descendants." },
+                    { "name": "clipsCompositingDescendants", "type": "boolean", "optional": true, "description": "Composition due to association with an element clipping compositing descendants." },
                     { "name": "animation", "type": "boolean", "optional": true, "description": "Composition due to association with an animated element." },
                     { "name": "filters", "type": "boolean", "optional": true, "description": "Composition due to association with an element with CSS filters applied." },
                     { "name": "positionFixed", "type": "boolean", "optional": true, "description": "Composition due to association with an element with a \"position: fixed\" style." },
