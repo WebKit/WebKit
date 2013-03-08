@@ -43,29 +43,17 @@
 
 namespace WebCore {
 
-static const double showLabelAfterMouseOverDelay = 1;
-static const double showLabelAutomaticallyDelay = 3;
-
 RenderSnapshottedPlugIn::RenderSnapshottedPlugIn(HTMLPlugInImageElement* element)
     : RenderBlock(element)
     , m_snapshotResource(RenderImageResource::create())
-    , m_shouldShowLabel(false)
-    , m_shouldShowLabelAutomatically(false)
-    , m_showedLabelOnce(false)
-    , m_showReason(UserMousedOver)
-    , m_showLabelDelayTimer(this, &RenderSnapshottedPlugIn::showLabelDelayTimerFired)
-    , m_snapshotResourceForLabel(RenderImageResource::create())
 {
     m_snapshotResource->initialize(this);
-    m_snapshotResourceForLabel->initialize(this);
 }
 
 RenderSnapshottedPlugIn::~RenderSnapshottedPlugIn()
 {
     ASSERT(m_snapshotResource);
     m_snapshotResource->shutdown();
-    ASSERT(m_snapshotResourceForLabel);
-    m_snapshotResourceForLabel->shutdown();
 }
 
 HTMLPlugInImageElement* RenderSnapshottedPlugIn::plugInImageElement() const
@@ -94,15 +82,8 @@ void RenderSnapshottedPlugIn::updateSnapshot(PassRefPtr<Image> image)
     if (!image)
         return;
 
-    // We may have stored a version of this snapshot to use when showing the
-    // label. Invalidate it now and it will be regenerated later.
-    if (m_snapshotResourceForLabel->hasImage())
-        m_snapshotResourceForLabel->setCachedImage(0);
-
     m_snapshotResource->setCachedImage(new CachedImage(image.get()));
     repaint();
-    if (m_shouldShowLabelAutomatically)
-        resetDelayTimer(ShouldShowAutomatically);
 }
 
 void RenderSnapshottedPlugIn::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -144,23 +125,6 @@ void RenderSnapshottedPlugIn::paintSnapshot(PaintInfo& paintInfo, const LayoutPo
     context->drawImage(image, style()->colorSpace(), alignedRect, CompositeSourceOver, shouldRespectImageOrientation(), useLowQualityScaling);
 }
 
-void RenderSnapshottedPlugIn::repaintLabel()
-{
-    // FIXME: This is unfortunate. We should just repaint the label.
-    repaint();
-}
-
-void RenderSnapshottedPlugIn::showLabelDelayTimerFired(Timer<RenderSnapshottedPlugIn>*)
-{
-    m_shouldShowLabel = true;
-    repaintLabel();
-}
-
-void RenderSnapshottedPlugIn::setShouldShowLabelAutomatically(bool show)
-{
-    m_shouldShowLabelAutomatically = show;
-}
-
 CursorDirective RenderSnapshottedPlugIn::getCursor(const LayoutPoint& point, Cursor& overrideCursor) const
 {
     if (plugInImageElement()->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick) {
@@ -188,32 +152,8 @@ void RenderSnapshottedPlugIn::handleEvent(Event* event)
         if (mouseEvent->button() != LeftButton)
             return;
 
-        if (m_showLabelDelayTimer.isActive())
-            m_showLabelDelayTimer.stop();
-
-        event->setDefaultHandled();
-    } else if (event->type() == eventNames().mouseoverEvent) {
-        if (!m_showedLabelOnce || m_showReason != ShouldShowAutomatically)
-            resetDelayTimer(UserMousedOver);
-        event->setDefaultHandled();
-    } else if (event->type() == eventNames().mouseoutEvent) {
-        if (m_showLabelDelayTimer.isActive())
-            m_showLabelDelayTimer.stop();
-        if (m_shouldShowLabel) {
-            if (m_showReason == UserMousedOver) {
-                m_shouldShowLabel = false;
-                repaintLabel();
-            }
-        } else if (m_shouldShowLabelAutomatically)
-            resetDelayTimer(ShouldShowAutomatically);
         event->setDefaultHandled();
     }
-}
-
-void RenderSnapshottedPlugIn::resetDelayTimer(ShowReason reason)
-{
-    m_showReason = reason;
-    m_showLabelDelayTimer.startOneShot(reason == UserMousedOver ? showLabelAfterMouseOverDelay : showLabelAutomaticallyDelay);
 }
 
 } // namespace WebCore

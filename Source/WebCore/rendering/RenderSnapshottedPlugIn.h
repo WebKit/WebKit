@@ -42,9 +42,6 @@ public:
     void updateSnapshot(PassRefPtr<Image>);
 
     void handleEvent(Event*);
-    void showLabelDelayTimerFired(Timer<RenderSnapshottedPlugIn>*);
-
-    void setShouldShowLabelAutomatically(bool = true);
 
 private:
     HTMLPlugInImageElement* plugInImageElement() const;
@@ -55,24 +52,10 @@ private:
     virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
 
     void paintSnapshot(PaintInfo&, const LayoutPoint&);
-    void repaintLabel();
 
     virtual void layout() OVERRIDE;
 
-    enum ShowReason {
-        UserMousedOver,
-        ShouldShowAutomatically
-    };
-
-    void resetDelayTimer(ShowReason);
-
     OwnPtr<RenderImageResource> m_snapshotResource;
-    bool m_shouldShowLabel;
-    bool m_shouldShowLabelAutomatically;
-    bool m_showedLabelOnce;
-    ShowReason m_showReason;
-    Timer<RenderSnapshottedPlugIn> m_showLabelDelayTimer;
-    OwnPtr<RenderImageResource> m_snapshotResourceForLabel;
 };
 
 inline RenderSnapshottedPlugIn* toRenderSnapshottedPlugIn(RenderObject* object)
