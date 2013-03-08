@@ -1448,16 +1448,17 @@ void ContentSecurityPolicy::didReceiveHeader(const String& header, HeaderType ty
 
         // header1,header2 OR header1
         //        ^                  ^
-        m_policies.append(CSPDirectiveList::create(this, String(begin, position - begin), type));
+        OwnPtr<CSPDirectiveList> policy = CSPDirectiveList::create(this, String(begin, position - begin), type);
+        if (!policy->isReportOnly() && !policy->allowEval(0, SuppressReport))
+            m_scriptExecutionContext->disableEval(policy->evalDisabledErrorMessage());
+
+        m_policies.append(policy.release());
 
         // Skip the comma, and begin the next header from the current position.
         ASSERT(position == end || *position == ',');
         skipExactly(position, end, ',');
         begin = position;
     }
-
-    if (!allowEval(0, SuppressReport))
-        m_scriptExecutionContext->disableEval(evalDisabledErrorMessage());
 }
 
 void ContentSecurityPolicy::setOverrideAllowInlineStyle(bool value)
