@@ -457,18 +457,31 @@ void HTMLDocumentParser::pumpPendingSpeculations()
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willWriteHTML(document(), lineNumber().zeroBasedInt());
 
     double startTime = currentTime();
+    HTMLInputCheckpoint lastCheckpointPassed = 0;
 
     while (!m_speculations.isEmpty()) {
-        processParsedChunkFromBackgroundParser(m_speculations.takeFirst());
+        OwnPtr<ParsedChunk> chunk = m_speculations.takeFirst();
+        lastCheckpointPassed = chunk->inputCheckpoint;
+        processParsedChunkFromBackgroundParser(chunk.release());
 
-        if (isWaitingForScripts() || isStopped())
+        // Processing a chunk can call document.write, causing us to invalidate any remaining speculations.
+        if (m_speculations.isEmpty() || isStopped()) {
+            // We're aborting these speculations, so don't tell the parser we've passed a checkpoint (its already cleared its checkpoints).
+            lastCheckpointPassed = 0;
+            break;
+        }
+
+        if (isWaitingForScripts())
             break;
 
-        if (currentTime() - startTime > parserTimeLimit && !m_speculations.isEmpty()) {
+        if (currentTime() - startTime > parserTimeLimit) {
             m_parserScheduler->scheduleForResume();
             break;
         }
     }
+
+    if (lastCheckpointPassed)
+        HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::passedCheckpoint, m_backgroundParser, lastCheckpointPassed));
 
     InspectorInstrumentation::didWriteHTML(cookie, lineNumber().zeroBasedInt());
 }
