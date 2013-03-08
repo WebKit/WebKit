@@ -1,8 +1,8 @@
-layer at (0,0) size 1026x1015
+layer at (0,0) size 1026x1016
   RenderView at (0,0) size 785x585
-layer at (0,0) size 785x1015
-  RenderBlock {HTML} at (0,0) size 785x1015
-    RenderBody {BODY} at (8,16) size 769x995
+layer at (0,0) size 785x1016
+  RenderBlock {HTML} at (0,0) size 785x1016
+    RenderBody {BODY} at (8,16) size 769x996
       RenderBlock {DIV} at (16,0) size 737x60
         RenderBlock {P} at (0,0) size 737x20
           RenderInline {A} at (0,0) size 90x18 [color=#0000EE]
@@ -34,26 +34,26 @@ layer at (0,0) size 785x1015
             RenderText {#text} at (408,1) size 176x18
               text run at (408,1) width 176: "\x{2192} script-handle-01-b"
           RenderText {#text} at (0,0) size 0x0
-      RenderTable {TABLE} at (0,64) size 1018x550
-        RenderTableSection {TBODY} at (0,0) size 1018x550
-          RenderTableRow {TR} at (0,0) size 1018x550
-            RenderTableCell {TD} at (0,0) size 1018x550 [r=0 c=0 rs=1 cs=3]
-              RenderTable {TABLE} at (10,10) size 998x530
-                RenderTableSection {TBODY} at (0,0) size 998x530
-                  RenderTableRow {TR} at (0,2) size 998x106
+      RenderTable {TABLE} at (0,64) size 1018x551
+        RenderTableSection {TBODY} at (0,0) size 1018x551
+          RenderTableRow {TR} at (0,0) size 1018x551
+            RenderTableCell {TD} at (0,0) size 1018x551 [r=0 c=0 rs=1 cs=3]
+              RenderTable {TABLE} at (10,10) size 998x531
+                RenderTableSection {TBODY} at (0,0) size 998x531
+                  RenderTableRow {TR} at (0,2) size 998x107
                     RenderTableCell {TD} at (2,2) size 994x107 [r=0 c=0 rs=1 cs=2]
                       RenderBlock {H1} at (8,29) size 978x49
                         RenderText {#text} at (314,5) size 350x38
                           text run at (314,5) width 350: "render-groups-01-b"
-                  RenderTableRow {TR} at (0,110) size 998x36 [color=#FFFFFF] [bgcolor=#000000]
-                    RenderTableCell {TD} at (2,110) size 496x36 [r=1 c=0 rs=1 cs=1]
+                  RenderTableRow {TR} at (0,111) size 998x36 [color=#FFFFFF] [bgcolor=#000000]
+                    RenderTableCell {TD} at (2,111) size 496x36 [r=1 c=0 rs=1 cs=1]
                       RenderText {#text} at (204,9) size 88x18
                         text run at (204,9) width 88: "SVG Image"
-                    RenderTableCell {TD} at (500,110) size 496x36 [r=1 c=1 rs=1 cs=1]
+                    RenderTableCell {TD} at (500,111) size 496x36 [r=1 c=1 rs=1 cs=1]
                       RenderText {#text} at (203,9) size 90x18
                         text run at (203,9) width 90: "PNG Image"
-                  RenderTableRow {TR} at (0,148) size 998x380
-                    RenderTableCell {TD} at (2,148) size 496x380 [r=2 c=0 rs=1 cs=1]
+                  RenderTableRow {TR} at (0,149) size 998x380
+                    RenderTableCell {TD} at (2,149) size 496x380 [r=2 c=0 rs=1 cs=1]
                       RenderEmbeddedObject {EMBED} at (8,8) size 480x360
                         layer at (0,0) size 480x360
                           RenderView at (0,0) size 480x360
@@ -84,10 +84,10 @@ layer at (0,0) size 785x1015
                                 chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 264.00: "$Revision: 1.6 $"
                             RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
                       RenderText {#text} at (0,0) size 0x0
-                    RenderTableCell {TD} at (500,148) size 496x380 [r=2 c=1 rs=1 cs=1]
+                    RenderTableCell {TD} at (500,149) size 496x380 [r=2 c=1 rs=1 cs=1]
                       RenderImage {IMG} at (8,8) size 480x360
                       RenderText {#text} at (0,0) size 0x0
-      RenderBlock {DIV} at (23,625) size 723x334
+      RenderBlock {DIV} at (23,626) size 723x334
         RenderBlock {P} at (0,0) size 723x40
           RenderText {#text} at (0,1) size 716x38
             text run at (0,1) width 716: "Verifies implicit rendering order (paragraph 3.3) and grouping mechanism (paragraphs 3.4)."
@@ -122,7 +122,7 @@ layer at (0,0) size 785x1015
         RenderBlock {P} at (0,313) size 723x21
           RenderText {#text} at (0,1) size 492x18
             text run at (0,1) width 492: "The rendered image should match the reference image exactly."
-      RenderBlock {DIV} at (16,974) size 737x21
+      RenderBlock {DIV} at (16,975) size 737x21
         RenderBlock {P} at (0,0) size 737x20
           RenderInline {A} at (0,0) size 202x18 [color=#0000EE]
             RenderText {#text} at (153,1) size 202x18
@@ -138,4 +138,4 @@ layer at (0,0) size 785x1015
             RenderText {#text} at (408,1) size 176x18
               text run at (408,1) width 176: "\x{2192} script-handle-01-b"
           RenderText {#text} at (0,0) size 0x0
-scrolled to 0,430
+scrolled to 0,431

@@ -1,8 +1,8 @@
-layer at (0,0) size 880x1194
+layer at (0,0) size 880x1195
   RenderView at (0,0) size 785x585
-layer at (0,0) size 785x1194
-  RenderBlock {HTML} at (0,0) size 785x1194
-    RenderBody {BODY} at (8,8) size 769x1178 [bgcolor=#CCCCCC]
+layer at (0,0) size 785x1195
+  RenderBlock {HTML} at (0,0) size 785x1195
+    RenderBody {BODY} at (8,8) size 769x1179 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 769x18
         RenderText {#text} at (0,0) size 355x18
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
@@ -89,15 +89,15 @@ layer at (0,0) size 785x1194
           text run at (72,0) width 671: " UAs may treat 'fixed' as 'scroll'. However, it is recommended they interpret 'fixed' correctly, at least on the"
           text run at (0,18) width 767: "HTML and BODY elements, since there is no way for an author to provide an image only for those browsers that support"
           text run at (0,36) width 42: "'fixed'."
-      RenderTable {TABLE} at (0,626) size 769x552 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 767x549
+      RenderTable {TABLE} at (0,626) size 769x553 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 767x550
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x18
                 RenderText {#text} at (4,4) size 163x18
                   text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,26) size 767x523
-            RenderTableCell {TD} at (0,274) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 767x524
+            RenderTableCell {TD} at (0,275) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x18
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x524 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
