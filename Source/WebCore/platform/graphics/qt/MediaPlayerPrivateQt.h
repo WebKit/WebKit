@@ -34,7 +34,7 @@ class QGraphicsScene;
 QT_END_NAMESPACE
 
 #if USE(ACCELERATED_COMPOSITING)
-#include "TextureMapper.h"
+#include "TextureMapperPlatformLayer.h"
 #endif
 
 namespace WebCore {
