@@ -2342,12 +2342,17 @@ PassRefPtr<WebGLContextAttributes> WebGLRenderingContext::getContextAttributes()
 
     // Also, we need to enforce requested values of "false" for depth
     // and stencil, regardless of the properties of the underlying
-    // GraphicsContext3D.
+    // GraphicsContext3D or DrawingBuffer.
     RefPtr<WebGLContextAttributes> attributes = WebGLContextAttributes::create(m_context->getContextAttributes());
     if (!m_attributes.depth)
         attributes->setDepth(false);
     if (!m_attributes.stencil)
         attributes->setStencil(false);
+    if (m_drawingBuffer) {
+        // The DrawingBuffer obtains its parameters from GraphicsContext3D::getContextAttributes(),
+        // but it makes its own determination of whether multisampling is supported.
+        attributes->setAntialias(m_drawingBuffer->multisample());
+    }
     return attributes.release();
 }
 
