@@ -3563,7 +3563,7 @@ webkit.org/b/88131 [ Debug ] fast/dom/HTMLMeterElement/meter-element-crash.html 
 
 webkit.org/b/88593 fast/table/multiple-captions-display.xhtml [ Failure ImageOnlyFailure Pass ]
 
-webkit.org/b/88939 [ Debug ] fast/events/before-unload-adopt-subframe-to-outside.html [ Failure Pass ]
+webkit.org/b/88939 fast/events/before-unload-adopt-subframe-to-outside.html [ Failure Pass ]
 
 # The test has its own notion of timeouts that manifest timeouts as FAIL.
 webkit.org/b/88833 [ Debug ] media/video-played-collapse.html [ Failure Pass ]
