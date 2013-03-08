@@ -2680,3 +2680,6 @@ webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Failu
 webkit.org/b/111606 fast/borders/border-fit-2.html [ Skip ]
 webkit.org/b/111606 fast/borders/border-fit.html [ Skip ]
 webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Skip ]
+
+# New test added in r145195 is failing
+webkit.org/b/111853 editing/selection/drag-list-item.html [ Skip ]
