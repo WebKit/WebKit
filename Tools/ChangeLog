@@ -1,3 +1,18 @@
+2013-03-08  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Enable Web Audio in development builds
+        https://bugs.webkit.org/show_bug.cgi?id=111831
+
+        Reviewed by Philippe Normand.
+
+        Web Audio is already quite well supported on the GTK port but still has a few issues
+        that must be addressed before it is enabled by default. Despite that it should be enabled
+        in development builds just so we are up-to-date with future feature infrastructure changes.
+        The Web Audio-related layout tests are not run yet due to missing support in DRT/WKTR, but
+        that's an obvious goal before enabling the feature in release builds.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2013-03-07  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] delay clearing the TestRunners until the main view was deleted
