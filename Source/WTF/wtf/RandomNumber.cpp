@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *           (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
+ * Copyright (C) 2013 Andrew Bortz. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,42 +36,42 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#if USE(MERSENNE_TWISTER_19937)
-extern "C" {
-#include "mt19937ar.c"
+namespace WTF {
+
+#if !USE(OS_RANDOMNESS)
+namespace Internal {
+
+static uint64_t state;
+
+void initializeRandomNumber(uint64_t seed)
+{
+    state = seed;
+}
+
+// This random number generator comes from: Klimov, A. and Shamir, A.,
+// "A New Class of Invertible Mappings", Cryptographic Hardware and Embedded
+// Systems 2002, http://dl.acm.org/citation.cfm?id=752741
+//
+// Very fast, very simple, and passes Diehard and other good statistical
+// tests as strongly as cryptographically-secure random number generators (but
+// is not itself cryptographically-secure).
+uint32_t randomNumber()
+{
+    state += (state * state) | 5;
+    return static_cast<uint32_t>(state >> 32);
+}
+
 }
 #endif
-
-namespace WTF {
 
 double randomNumber()
 {
 #if USE(OS_RANDOMNESS)
     uint32_t bits = cryptographicallyRandomNumber();
+#else
+    uint32_t bits = Internal::randomNumber();
+#endif
     return static_cast<double>(bits) / (static_cast<double>(std::numeric_limits<uint32_t>::max()) + 1.0);
-#else
-    // Without OS_RANDOMNESS, we fall back to other random number generators
-    // that might not be cryptographically secure. Ideally, most ports would
-    // define USE(OS_RANDOMNESS).
-
-#if USE(MERSENNE_TWISTER_19937)
-    return genrand_res53();
-#else
-    uint32_t part1 = rand() & (RAND_MAX - 1);
-    uint32_t part2 = rand() & (RAND_MAX - 1);
-    // rand only provides 31 bits, and the low order bits of that aren't very random
-    // so we take the high 26 bits of part 1, and the high 27 bits of part2.
-    part1 >>= 5; // drop the low 5 bits
-    part2 >>= 4; // drop the low 4 bits
-    uint64_t fullRandom = part1;
-    fullRandom <<= 27;
-    fullRandom |= part2;
-
-    // Mask off the low 53bits
-    fullRandom &= (1LL << 53) - 1;
-    return static_cast<double>(fullRandom)/static_cast<double>(1LL << 53);
-#endif
-#endif
 }
 
 }

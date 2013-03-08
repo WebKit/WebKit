@@ -26,6 +26,7 @@
 #ifndef WTF_RandomNumberSeed_h
 #define WTF_RandomNumberSeed_h
 
+#include "RandomNumber.h"
 #include <stdlib.h>
 #include <time.h>
 
@@ -38,13 +39,6 @@
 #include <unistd.h>
 #endif
 
-#if USE(MERSENNE_TWISTER_19937)
-extern "C" {
-void init_by_array(unsigned long init_key[],int key_length);
-}
-#endif
-
-// Internal JavaScriptCore usage only
 namespace WTF {
 
 inline void initializeRandomNumberGenerator()
@@ -65,14 +59,9 @@ inline void initializeRandomNumberGenerator()
     srand(static_cast<unsigned>(time(0)));
 #endif
 
-#if USE(MERSENNE_TWISTER_19937)
-    // use rand() to initialize the Mersenne Twister random number generator.
-    unsigned long initializationBuffer[4];
-    initializationBuffer[0] = (rand() << 16) | rand();
-    initializationBuffer[1] = (rand() << 16) | rand();
-    initializationBuffer[2] = (rand() << 16) | rand();
-    initializationBuffer[3] = (rand() << 16) | rand();
-    init_by_array(initializationBuffer, 4);
+#if !USE(OS_RANDOMNESS)
+    uint64_t seed = static_cast<uint64_t>(rand()) << 32 | static_cast<uint64_t>(rand());
+    Internal::initializeRandomNumber(seed);
 #endif
 }
 

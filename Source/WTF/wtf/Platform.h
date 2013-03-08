@@ -502,7 +502,6 @@
 #endif
 
 #if PLATFORM(BLACKBERRY)
-#define WTF_USE_MERSENNE_TWISTER_19937 1
 #define WTF_USE_SKIA 1
 #define WTF_USE_LOW_QUALITY_IMAGE_INTERPOLATION 1
 #define WTF_USE_LOW_QUALITY_IMAGE_NO_JPEG_DITHERING 1
@@ -512,11 +511,6 @@
 #if PLATFORM(GTK)
 #define WTF_USE_CAIRO 1
 #define ENABLE_GLOBAL_FASTMALLOC_NEW 0
-#endif
-
-
-#if OS(WINCE)
-#define WTF_USE_MERSENNE_TWISTER_19937 1
 #endif
 
 /* On Windows, use QueryPerformanceCounter by default */

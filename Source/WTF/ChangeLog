@@ -1,3 +1,26 @@
+2013-03-07  Andrew Bortz  <andrew@abortz.net>
+
+        Replace Mersenne Twister random number generator with a simpler one.
+        https://bugs.webkit.org/show_bug.cgi?id=111533
+
+        Reviewed by Adam Barth.
+
+        The new generator is only a single line long, but passes all the Diehard
+        statistical tests and runs ~3x faster than the Mersenne Twister, with a
+        guaranteed cycle length of 2^64 and only 8 bytes of state.
+        
+        * wtf/Platform.h: Mersenne Twister defines are no longer needed
+        * wtf/RandomNumber.cpp:
+        (WTF::Internal::initializeRandomNumber): State initialization
+        (WTF::Internal::randomNumber): Actual implementation
+        (WTF::randomNumber): We don't need to fall back on rand()-based generator anymore,
+        so this code is greatly simplified.
+        * wtf/RandomNumber.h:
+        * wtf/RandomNumberSeed.h:
+        (WTF::initializeRandomNumberGenerator): This code is no longer needed.
+        Additionally, the code had an error, since rand() returns 32-bits, so each
+        initializationBuffer's upper 16-bits has more bits set than random.
+
 2013-03-06  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         Build fix: PageAllocationAligned no longer has executable flag

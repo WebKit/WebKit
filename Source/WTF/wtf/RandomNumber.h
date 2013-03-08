@@ -28,9 +28,15 @@
 
 namespace WTF {
 
-    // Returns a pseudo-random number in the range [0, 1), attempts to be
-    // cryptographically secure if possible on the target platform
-    WTF_EXPORT_PRIVATE double randomNumber();
+#if !USE(OS_RANDOMNESS)
+namespace Internal {
+void initializeRandomNumber(uint64_t);
+}
+#endif
+
+// Returns a pseudo-random number in the range [0, 1), attempts to be
+// cryptographically secure if possible on the target platform
+WTF_EXPORT_PRIVATE double randomNumber();
 
 }
 
