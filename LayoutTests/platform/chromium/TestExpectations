@@ -4201,7 +4201,6 @@ webkit.org/b/102277 fast/events/overflow-scroll-fake-mouse-move.html [ Pass Fail
 
 # This test is consistently leaking state into the next test.
 webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
-webkit.org/b/102542 [ Linux Mac Win ] compositing/checkerboard.html [ ImageOnlyFailure ]
 
 webkit.org/b/102724 [ Linux ] svg/carto.net/colourpicker.svg [ ImageOnlyFailure Pass ]
 
@@ -4247,7 +4246,6 @@ webkit.org/b/103149 [ Mac ] fast/events/stopPropagation-submit.html [ Pass Failu
 webkit.org/b/103700 compositing/masks/simple-composited-mask.html [ ImageOnlyFailure ]
 
 # Some compositing tests doesn't work on multiple platforms.
-webkit.org/b/103721 [ Mac Win Linux ] compositing/geometry/vertical-scroll-composited.html [ ImageOnlyFailure ]
 webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/load-video-in-reflection.html [ ImageOnlyFailure ]
 webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/nested-reflection-anchor-point.html [ ImageOnlyFailure ]
 webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/nested-reflection-animated.html [ ImageOnlyFailure ]
