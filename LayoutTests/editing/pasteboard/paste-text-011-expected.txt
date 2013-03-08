@@ -5,7 +5,7 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > B > FONT 
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of P > BODY > HTML > #document to 0 of P > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of P > BODY > HTML > #document to 2 of P > BODY > HTML > #document toDOMRange:range from 5 of #text > B > FONT > P > P > BODY > HTML > #document to 5 of #text > B > FONT > P > P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of BODY > HTML > #document to 5 of BODY > HTML > #document toDOMRange:range from 5 of #text > B > FONT > P > BODY > HTML > #document to 5 of #text > B > FONT > P > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 There was a bug when pasting at the end of the block.
@@ -25,16 +25,15 @@ The content was inserted at the start of the block instead of the end. This test
 |     <b>
 |       "there"
 | <p>
-|   <p>
-|     <font>
-|       face="Monaco"
-|       <b>
-|         "hello"
-|   <p>
-|     <font>
-|       face="Monaco"
-|       <b>
-|         "there<#selection-caret>"
+|   <font>
+|     face="Monaco"
+|     <b>
+|       "hello"
+| <p>
+|   <font>
+|     face="Monaco"
+|     <b>
+|       "there<#selection-caret>"
 | "
 
 

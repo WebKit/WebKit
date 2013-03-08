@@ -6,14 +6,12 @@ It then inserts the paragraph and pastes the contents again.
 |   class="editing"
 |   id="test"
 |   <p>
-|     <p>
-|       "foo"
-|     <p>
-|       "bar"
-|     <p>
-|       <p>
-|         "foo"
-|       <p>
-|         "bar<#selection-caret>"
+|     "foo"
+|   <p>
+|     "bar"
+|   <p>
+|     "foo"
+|   <p>
+|     "bar<#selection-caret>"
 | "
 "

@@ -12,7 +12,7 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of P > CENTER > DIV 
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of P > CENTER > DIV > DIV > BODY > HTML > #document to 0 of P > CENTER > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of P > CENTER > DIV > DIV > BODY > HTML > #document to 2 of P > CENTER > DIV > DIV > BODY > HTML > #document toDOMRange:range from 85 of #text > P > P > CENTER > DIV > DIV > BODY > HTML > #document to 85 of #text > P > P > CENTER > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of CENTER > DIV > DIV > BODY > HTML > #document to 2 of CENTER > DIV > DIV > BODY > HTML > #document toDOMRange:range from 85 of #text > P > CENTER > DIV > DIV > BODY > HTML > #document to 85 of #text > P > CENTER > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
@@ -108,40 +108,39 @@ After paste (this should be identical to before cut):
 |     "
 "
 |     <p>
-|       <p>
-|         "This is an "
-|         <b>
-|           "interactive"
-|         " "
-|         "documentation site, so please help out by posting any useful information that you've had to search out."
-|         <br>
-|         "(Adding to this"
-|         " "
-|         <a>
-|           href="db.cgi?Wiki_Is_So_Easy"
-|           "wiki is so easy"
-|         ", you can't screw it up). See"
-|         " "
-|         <a>
-|           href="db.cgi?Wiki_Reference"
-|           "Wiki Reference"
-|         " "
-|         "for text formatting syntax."
-|         <br>
-|         "Info for setting up your own wiki is at"
-|         " "
-|         <a>
-|           href="db.cgi?About_Howto.Apple.Com"
-|           "about howto.apple.com"
-|         "."
-|         <br>
-|         "Check out a cool wiki editor application that helps in wiki generation:"
-|         " "
-|         <a>
-|           href="db.cgi?Wikinator"
-|           "Wikinator"
-|       <p>
-|         "Start browsing the topics below, or use the search field at the bottom of every page.<#selection-caret>"
+|       "This is an "
+|       <b>
+|         "interactive"
+|       " "
+|       "documentation site, so please help out by posting any useful information that you've had to search out."
+|       <br>
+|       "(Adding to this"
+|       " "
+|       <a>
+|         href="db.cgi?Wiki_Is_So_Easy"
+|         "wiki is so easy"
+|       ", you can't screw it up). See"
+|       " "
+|       <a>
+|         href="db.cgi?Wiki_Reference"
+|         "Wiki Reference"
+|       " "
+|       "for text formatting syntax."
+|       <br>
+|       "Info for setting up your own wiki is at"
+|       " "
+|       <a>
+|         href="db.cgi?About_Howto.Apple.Com"
+|         "about howto.apple.com"
+|       "."
+|       <br>
+|       "Check out a cool wiki editor application that helps in wiki generation:"
+|       " "
+|       <a>
+|         href="db.cgi?Wikinator"
+|         "Wikinator"
+|     <p>
+|       "Start browsing the topics below, or use the search field at the bottom of every page.<#selection-caret>"
 |   "
 "
 | "

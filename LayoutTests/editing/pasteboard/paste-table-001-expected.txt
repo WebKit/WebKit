@@ -39,7 +39,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 2 of P > DIV > BODY > HTML > #document to 2 of P > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of P > DIV > BODY > HTML > #document to 2 of P > DIV > BODY > HTML > #document toDOMRange:range from 32 of #text > TD > TR > TBODY > TABLE > P > DIV > BODY > HTML > #document to 32 of #text > TD > TR > TBODY > TABLE > P > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of P > DIV > BODY > HTML > #document to 2 of P > DIV > BODY > HTML > #document toDOMRange:range from 32 of #text > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document to 32 of #text > TD > TR > TBODY > TABLE > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
@@ -83,17 +83,17 @@ EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 "
 |       "
 "
-|   <table>
-|     border="2"
-|     <tbody>
-|       <tr>
-|         <td>
-|           "Left column"
-|         <td>
-|           "Right column"
-|       <tr>
-|         <td>
-|         <td>
-|           "I should be in the right column.<#selection-caret>"
 |   "
 "
+| <table>
+|   border="2"
+|   <tbody>
+|     <tr>
+|       <td>
+|         "Left column"
+|       <td>
+|         "Right column"
+|     <tr>
+|       <td>
+|       <td>
+|         "I should be in the right column.<#selection-caret>"

@@ -429,7 +429,7 @@ static bool isMailPasteAsQuotationNode(const Node* node)
     return node && node->hasTagName(blockquoteTag) && node->isElementNode() && static_cast<const Element*>(node)->getAttribute(classAttr) == ApplePasteAsQuotation;
 }
 
-static bool isHeaderElement(Node* a)
+static bool isHeaderElement(const Node* a)
 {
     if (!a)
         return false;
@@ -556,6 +556,107 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
                 element->style()->setPropertyInternal(CSSPropertyFloat, "none", false, IGNORE_EXCEPTION);
         }
     }
+}
+
+static bool isProhibitedParagraphChild(const AtomicString& name)
+{
+    // https://dvcs.w3.org/hg/editing/raw-file/57abe6d3cb60/editing.html#prohibited-paragraph-child
+    DEFINE_STATIC_LOCAL(HashSet<AtomicString>, elements, ());
+    if (elements.isEmpty()) {
+        elements.add(addressTag.localName());
+        elements.add(articleTag.localName());
+        elements.add(asideTag.localName());
+        elements.add(blockquoteTag.localName());
+        elements.add(captionTag.localName());
+        elements.add(centerTag.localName());
+        elements.add(colTag.localName());
+        elements.add(colgroupTag.localName());
+        elements.add(ddTag.localName());
+        elements.add(detailsTag.localName());
+        elements.add(dirTag.localName());
+        elements.add(divTag.localName());
+        elements.add(dlTag.localName());
+        elements.add(dtTag.localName());
+        elements.add(fieldsetTag.localName());
+        elements.add(figcaptionTag.localName());
+        elements.add(figureTag.localName());
+        elements.add(footerTag.localName());
+        elements.add(formTag.localName());
+        elements.add(h1Tag.localName());
+        elements.add(h2Tag.localName());
+        elements.add(h3Tag.localName());
+        elements.add(h4Tag.localName());
+        elements.add(h5Tag.localName());
+        elements.add(h6Tag.localName());
+        elements.add(headerTag.localName());
+        elements.add(hgroupTag.localName());
+        elements.add(hrTag.localName());
+        elements.add(liTag.localName());
+        elements.add(listingTag.localName());
+        elements.add(mainTag.localName()); // Missing in the specification.
+        elements.add(menuTag.localName());
+        elements.add(navTag.localName());
+        elements.add(olTag.localName());
+        elements.add(pTag.localName());
+        elements.add(plaintextTag.localName());
+        elements.add(preTag.localName());
+        elements.add(sectionTag.localName());
+        elements.add(summaryTag.localName());
+        elements.add(tableTag.localName());
+        elements.add(tbodyTag.localName());
+        elements.add(tdTag.localName());
+        elements.add(tfootTag.localName());
+        elements.add(thTag.localName());
+        elements.add(theadTag.localName());
+        elements.add(trTag.localName());
+        elements.add(ulTag.localName());
+        elements.add(xmpTag.localName());
+    }
+    return elements.contains(name);
+}
+
+void ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuilder(InsertedNodes& insertedNodes)
+{
+    RefPtr<Node> pastEndNode = insertedNodes.pastLastLeaf();
+    RefPtr<Node> next;
+    for (RefPtr<Node> node = insertedNodes.firstNodeInserted(); node && node != pastEndNode; node = next) {
+        next = NodeTraversal::next(node.get());
+
+        if (!node->isHTMLElement())
+            continue;
+
+        if (isProhibitedParagraphChild(static_cast<const HTMLElement*>(node.get())->localName())) {
+            if (HTMLElement* paragraphElement = static_cast<HTMLElement*>(enclosingNodeWithTag(positionInParentBeforeNode(node.get()), pTag)))
+                moveNodeOutOfAncestor(node, paragraphElement);
+        }
+
+        if (isHeaderElement(node.get())) {
+            if (HTMLElement* headerElement = static_cast<HTMLElement*>(highestEnclosingNodeOfType(positionInParentBeforeNode(node.get()), isHeaderElement)))
+                moveNodeOutOfAncestor(node, headerElement);
+        }
+    }
+}
+
+void ReplaceSelectionCommand::moveNodeOutOfAncestor(PassRefPtr<Node> prpNode, PassRefPtr<Node> prpAncestor)
+{
+    RefPtr<Node> node = prpNode;
+    RefPtr<Node> ancestor = prpAncestor;
+
+    VisiblePosition positionAtEndOfNode = lastPositionInOrAfterNode(node.get());
+    VisiblePosition lastPositionInParagraph = lastPositionInNode(ancestor.get());
+    if (positionAtEndOfNode == lastPositionInParagraph) {
+        removeNode(node);
+        if (ancestor->nextSibling())
+            insertNodeBefore(node, ancestor->nextSibling());
+        else
+            appendNode(node, ancestor->parentNode());
+    } else {
+        RefPtr<Node> nodeToSplitTo = splitTreeToNode(node.get(), ancestor.get(), true);
+        removeNode(node);
+        insertNodeBefore(node, nodeToSplitTo);
+    }
+    if (!ancestor->firstChild())
+        removeNode(ancestor.release());
 }
 
 static inline bool nodeHasVisibleRenderText(Text* text)
@@ -1028,6 +1129,8 @@ void ReplaceSelectionCommand::doApply()
             removeNode(nodeToRemove);
         }
     }
+    
+    makeInsertedContentRoundTrippableWithHTMLTreeBuilder(insertedNodes);
 
     removeRedundantStylesAndKeepStyleSpanInline(insertedNodes);
 
