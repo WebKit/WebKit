@@ -355,21 +355,23 @@ void CoordinatedGraphicsScene::setLayerState(CoordinatedLayerID id, const Coordi
         layer->setMasksToBounds(layerState.isRootLayer ? false : layerState.masksToBounds);
         layer->setPreserves3D(layerState.preserves3D);
 
+        bool fixedToViewportChanged = toGraphicsLayerTextureMapper(layer)->fixedToViewport() != layerState.fixedToViewport;
         toGraphicsLayerTextureMapper(layer)->setFixedToViewport(layerState.fixedToViewport);
+        if (fixedToViewportChanged) {
+            if (layerState.fixedToViewport)
+                m_fixedLayers.add(id, layer);
+            else
+                m_fixedLayers.remove(id);
+        }
+
         layer->setShowDebugBorder(layerState.showDebugBorders);
         layer->setShowRepaintCounter(layerState.showRepaintCounter);
-    }
 
-    if (layerState.isScrollableChanged)
         toGraphicsLayerTextureMapper(layer)->setIsScrollable(layerState.isScrollable);
+    }
 
     if (layerState.committedScrollOffsetChanged)
         toGraphicsLayerTextureMapper(layer)->didCommitScrollOffset(layerState.committedScrollOffset);
-
-    if (layerState.fixedToViewport)
-        m_fixedLayers.add(id, layer);
-    else
-        m_fixedLayers.remove(id);
 
     prepareContentBackingStore(layer);
 

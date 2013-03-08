@@ -524,7 +524,7 @@ void CoordinatedGraphicsLayer::setScrollableArea(ScrollableArea* scrollableArea)
         return;
 
     m_layerState.isScrollable = isScrollable();
-    m_layerState.isScrollableChanged = true;
+    m_layerState.flagsChanged = true;
     didChangeLayerState();
 }
 
@@ -644,6 +644,18 @@ void CoordinatedGraphicsLayer::syncLayerState()
     m_layerState.anchorPoint = m_adjustedAnchorPoint;
     m_layerState.pos = m_adjustedPosition;
     m_layerState.size = m_adjustedSize;
+
+    if (m_layerState.flagsChanged) {
+        m_layerState.drawsContent = drawsContent();
+        m_layerState.contentsVisible = contentsAreVisible();
+        m_layerState.backfaceVisible = backfaceVisibility();
+        m_layerState.masksToBounds = masksToBounds();
+        m_layerState.preserves3D = preserves3D();
+        m_layerState.fixedToViewport = fixedToViewport();
+        m_layerState.showDebugBorders = isShowingDebugBorder();
+        m_layerState.showRepaintCounter = isShowingRepaintCounter();
+        m_layerState.isScrollable = isScrollable();
+    }
 
     if (m_layerState.showDebugBorders)
         updateDebugIndicators();

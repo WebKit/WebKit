@@ -124,6 +124,7 @@ struct CoordinatedGraphicsLayerState {
         , fixedToViewport(false)
         , showDebugBorders(false)
         , showRepaintCounter(false)
+        , isScrollable(false)
         , opacity(0)
         , debugBorderWidth(0)
         , replica(InvalidCoordinatedLayerID)
