@@ -20,7 +20,7 @@ PASS String.prototype.substr.call(undefined, 1, 3) threw exception TypeError: St
 PASS String.prototype.substring.call(undefined, 1, 3) threw exception TypeError: String.prototype.subString called on null or undefined.
 PASS String.prototype.toLowerCase.call(undefined) threw exception TypeError: String.prototype.toLowerCase called on null or undefined.
 PASS String.prototype.toUpperCase.call(undefined) threw exception TypeError: String.prototype.toUpperCase called on null or undefined.
-FAIL String.prototype.localeCompare.call(undefined, '1224') should throw an exception. Was -1.
+PASS String.prototype.localeCompare.call(undefined, '1224') threw exception TypeError: Method invoked on undefined or null value..
 PASS String.prototype.toLocaleLowerCase.call(undefined) threw exception TypeError: String.prototype.toLocaleLowerCase called on null or undefined.
 PASS String.prototype.toLocaleUpperCase.call(undefined) threw exception TypeError: String.prototype.toLocaleUpperCase called on null or undefined.
 PASS String.prototype.trim.call(undefined) threw exception TypeError: String.prototype.trim called on null or undefined.
@@ -41,7 +41,7 @@ PASS String.prototype.substr.call(1224, 1, 3) is "224"
 PASS String.prototype.substring.call(1224, 1, 3) is "22"
 PASS String.prototype.toLowerCase.call(1224) is "1224"
 PASS String.prototype.toUpperCase.call(1224) is "1224"
-FAIL String.prototype.localeCompare.call(1224, '1224') should be 0. Threw exception SHOULD NOT BE REACHED
+PASS String.prototype.localeCompare.call(1224, '1224') is 0
 PASS String.prototype.toLocaleLowerCase.call(1224) is "1224"
 PASS String.prototype.toLocaleUpperCase.call(1224) is "1224"
 PASS String.prototype.trim.call(1224) is "1224"
