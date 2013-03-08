@@ -1,3 +1,18 @@
+2013-03-07  Alan Cutter  <alancutter@chromium.org>
+
+        Sheriffbot whois command can't search by full name
+        https://bugs.webkit.org/show_bug.cgi?id=111825
+
+        Reviewed by Eric Seidel.
+
+        Allowed multiple arguments to Sheriffbot's whois command.
+        Updated test expectations.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (Whois.execute):
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        (IRCCommandTest.test_whois):
+
 2013-03-07  Nils Barth  <nbarth@chromium.org>
 
         Add Nils Barth and Koji Hara to committers.py

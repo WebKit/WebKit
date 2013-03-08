@@ -306,9 +306,9 @@ class Whois(IRCCommand):
         return unicode(contributor)
 
     def execute(self, nick, args, tool, sheriff):
-        if len(args) != 1:
+        if not args:
             return self.usage(nick)
-        search_string = args[0]
+        search_string = " ".join(args)
         # FIXME: We should get the ContributorList off the tool somewhere.
         contributors = CommitterList().contributors_by_search_string(search_string)
         if not contributors:
