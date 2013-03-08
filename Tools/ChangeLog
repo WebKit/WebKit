@@ -1,3 +1,35 @@
+2013-03-07  Glenn Adams  <glenn@skynav.com>
+
+        run-perf-tests should have a --repeat option
+        https://bugs.webkit.org/show_bug.cgi?id=100030
+
+        Reviewed by Ryosuke Niwa.
+
+        Add --repeat option to run-perf-tests, with default value of 1. When greater
+        than 1, runs test set specified number of times. Note that multiple runs are
+        not aggregated for statistical purposes.
+
+        Incidentally fixed typo: s/suceeds/succeeds/.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args): Add repeat option.
+        (PerfTestsRunner.run): Add outer repeat loop.
+        (PerfTestsRunner._generate_results): Split from original _generate_and_show_results.
+        (PerfTestsRunner._upload_and_show_results): Split from original _generate_and_show_results.
+        * Scripts/webkitpy/performance_tests/perftestsrunner_integrationtest.py:
+        (MainTest._test_run_with_json_output): Add repeat optional argument for generating expected logs. Fix typo.
+        (MainTest._test_run_with_json_output.mock_upload_json): Fix typo.
+        (MainTest.test_run_with_json_output): Fix typo.
+        (MainTest.test_run_with_description): Fix typo.
+        (MainTest.test_run_respects_no_results): Fix typo.
+        (MainTest.test_run_with_slave_config_json): Fix typo.
+        (MainTest.test_run_with_multiple_repositories): Fix typo.
+        (MainTest.test_run_with_upload_json): Fix typo.
+        (MainTest.test_run_with_upload_json_should_generate_perf_webkit_json): Fix typo.
+        (MainTest.test_run_with_repeat): Added new test for repeat count semantics.
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (MainTest.test_parse_args): Add test for repeat option parsing.
+
 2013-03-07  Julie Parent  <jparent@chromium.org>
 
         showAllRuns checkbox no longer works on the stats dashboard

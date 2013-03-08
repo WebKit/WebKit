@@ -126,6 +126,8 @@ class PerfTestsRunner(object):
             optparse.make_option("--additional-drt-flag", action="append",
                 default=[], help="Additional command line flag to pass to DumpRenderTree "
                      "Specify multiple times to add multiple flags."),
+            optparse.make_option("--repeat", default=1, type="int",
+                help="Specify number of times to run test set (default: 1)."),
             ]
         return optparse.OptionParser(option_list=(perf_option_list)).parse_args(args)
 
@@ -177,24 +179,35 @@ class PerfTestsRunner(object):
             _log.error("Build not up to date for %s" % self._port._path_to_driver())
             return self.EXIT_CODE_BAD_BUILD
 
-        tests = self._collect_tests()
-        _log.info("Running %d tests" % len(tests))
+        run_count = 0
+        repeat = self._options.repeat
+        while (run_count < repeat):
+            run_count += 1
 
-        for test in tests:
-            if not test.prepare(self._options.time_out_ms):
-                return self.EXIT_CODE_BAD_PREPARATION
+            tests = self._collect_tests()
+            runs = ' (Run %d of %d)' % (run_count, repeat) if repeat > 1 else ''
+            _log.info("Running %d tests%s" % (len(tests), runs))
 
-        try:
-            if needs_http:
-                self._start_http_servers()
-            unexpected = self._run_tests_set(sorted(list(tests), key=lambda test: test.test_name()))
+            for test in tests:
+                if not test.prepare(self._options.time_out_ms):
+                    return self.EXIT_CODE_BAD_PREPARATION
 
-        finally:
-            if needs_http:
-                self._stop_http_servers()
+            try:
+                if needs_http:
+                    self._start_http_servers()
+                unexpected = self._run_tests_set(sorted(list(tests), key=lambda test: test.test_name()))
+
+            finally:
+                if needs_http:
+                    self._stop_http_servers()
+
+            if self._options.generate_results and not self._options.profile:
+                exit_code = self._generate_results()
+                if exit_code:
+                    return exit_code
 
         if self._options.generate_results and not self._options.profile:
-            exit_code = self._generate_and_show_results()
+            exit_code = self._upload_and_show_results()
             if exit_code:
                 return exit_code
 
@@ -206,7 +219,10 @@ class PerfTestsRunner(object):
             return output_json_path
         return self._host.filesystem.join(self._port.perf_results_directory(), self._DEFAULT_JSON_FILENAME)
 
-    def _generate_and_show_results(self):
+    def _results_page_path(self):
+        return self._host.filesystem.splitext(self._output_json_path())[0] + '.html'
+
+    def _generate_results(self):
         options = self._options
         output_json_path = self._output_json_path()
         output = self._generate_results_dict(self._timestamp, options.description, options.platform, options.builder_name, options.build_number)
@@ -220,18 +236,20 @@ class PerfTestsRunner(object):
         if not output:
             return self.EXIT_CODE_BAD_MERGE
 
-        results_page_path = self._host.filesystem.splitext(output_json_path)[0] + '.html'
-        self._generate_output_files(output_json_path, results_page_path, output)
+        self._generate_output_files(output_json_path, self._results_page_path(), output)
+
+    def _upload_and_show_results(self):
+        options = self._options
 
         if options.test_results_server:
             if options.test_results_server == 'webkit-perf.appspot.com':
                 options.test_results_server = 'perf.webkit.org'
 
-            if not self._upload_json(options.test_results_server, output_json_path):
+            if not self._upload_json(options.test_results_server, self._output_json_path()):
                 return self.EXIT_CODE_FAILED_UPLOADING
 
         if options.show_results:
-            self._port.show_results_html_file(results_page_path)
+            self._port.show_results_html_file(self._results_page_path())
 
     def _generate_results_dict(self, timestamp, description, platform, builder_name, build_number):
         revisions = {}
