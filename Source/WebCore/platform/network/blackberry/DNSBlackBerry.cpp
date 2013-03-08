@@ -20,12 +20,26 @@
 #define DNSPrefetchBlackBerry_H
 
 #include "config.h"
+#include "DNS.h"
 
+#include "DNSResolveQueue.h"
+#include "NotImplemented.h"
 #include <BlackBerryPlatformCommonFunctions.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+bool DNSResolveQueue::platformProxyIsEnabledInSystemPreferences()
+{
+    notImplemented();
+    return false;
+}
+
+void DNSResolveQueue::platformResolve(const String&)
+{
+    notImplemented();
+}
 
 void prefetchDNS(const String& host)
 {
