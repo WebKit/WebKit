@@ -862,6 +862,32 @@ GraphicsLayer* FrameView::layerForOverhangAreas() const
         return 0;
     return renderView->compositor()->layerForOverhangAreas();
 }
+
+GraphicsLayer* FrameView::setWantsLayerForTopOverHangArea(bool wantsLayer) const
+{
+    RenderView* renderView = this->renderView();
+    if (!renderView)
+        return 0;
+
+#if USE(ACCELERATED_COMPOSITING)
+    return renderView->compositor()->updateLayerForTopOverhangArea(wantsLayer);
+#else
+    return 0;
+#endif
+}
+
+GraphicsLayer* FrameView::setWantsLayerForBottomOverHangArea(bool wantsLayer) const
+{
+    RenderView* renderView = this->renderView();
+    if (!renderView)
+        return 0;
+
+#if USE(ACCELERATED_COMPOSITING)
+    return renderView->compositor()->updateLayerForBottomOverhangArea(wantsLayer);
+#else
+    return 0;
+#endif
+}
 #endif
 
 bool FrameView::flushCompositingStateForThisFrame(Frame* rootFrameForFlush)

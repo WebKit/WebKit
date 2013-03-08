@@ -1,3 +1,28 @@
+2013-03-07  Beth Dakin  <bdakin@apple.com>
+
+        Need API to draw custom overhang area
+        https://bugs.webkit.org/show_bug.cgi?id=111679
+        -and corresponding-
+        <rdar://problem/13291415>
+
+        Reviewed by Simon Fraser.
+
+        The new API is WKBundlePageSetTopOverhangImage() and 
+        WKBundlePageSetBottomOverhangImage(). When the API is called, WebPage will get 
+        GraphicsLayers for the appropriate area from FrameView, and then set the image as 
+        the contents of the layer.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageSetTopOverhangImage):
+        (WKBundlePageSetBottomOverhangImage):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::setTopOverhangImage):
+        (WebKit):
+        (WebKit::WebPage::setBottomOverhangImage):
+
 2013-03-07  Gavin Barraclough  <barraclough@apple.com>
 
         Reduce page cache size on Mac

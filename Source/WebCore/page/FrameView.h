@@ -399,6 +399,11 @@ public:
 
     virtual bool isActive() const OVERRIDE;
 
+#if ENABLE(RUBBER_BANDING)
+    GraphicsLayer* setWantsLayerForTopOverHangArea(bool) const;
+    GraphicsLayer* setWantsLayerForBottomOverHangArea(bool) const;
+#endif
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
     virtual void scrollContentsSlowPath(const IntRect& updateRect);

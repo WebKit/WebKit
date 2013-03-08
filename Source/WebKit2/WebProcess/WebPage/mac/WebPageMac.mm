@@ -37,6 +37,7 @@
 #import "WebEvent.h"
 #import "WebEventConversion.h"
 #import "WebFrame.h"
+#import "WebImage.h"
 #import "WebInspector.h"
 #import "WebPageProxyMessages.h"
 #import "WebPreferencesStore.h"
@@ -779,6 +780,39 @@ void WebPage::setLayerHostingMode(LayerHostingMode layerHostingMode)
 
     for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
         (*it)->setLayerHostingMode(layerHostingMode);
+}
+
+void WebPage::setTopOverhangImage(PassRefPtr<WebImage> image)
+{
+    FrameView* frameView = m_mainFrame->coreFrame()->view();
+    if (!frameView)
+        return;
+
+    GraphicsLayer* layer = frameView->setWantsLayerForTopOverHangArea(image.get());
+    if (!layer)
+        return;
+
+    layer->setSize(image->size());
+    layer->setPosition(FloatPoint(0, -image->size().height()));
+
+    RetainPtr<CGImageRef> cgImage = image->bitmap()->makeCGImageCopy();
+    layer->platformLayer().contents =(id)cgImage.get();
+}
+
+void WebPage::setBottomOverhangImage(PassRefPtr<WebImage> image)
+{
+    FrameView* frameView = m_mainFrame->coreFrame()->view();
+    if (!frameView)
+        return;
+
+    GraphicsLayer* layer = frameView->setWantsLayerForBottomOverHangArea(image.get());
+    if (!layer)
+        return;
+
+    layer->setSize(image->size());
+    
+    RetainPtr<CGImageRef> cgImage = image->bitmap()->makeCGImageCopy();
+    layer->platformLayer().contents =(id)cgImage.get();
 }
 
 void WebPage::computePagesForPrintingPDFDocument(uint64_t frameID, const PrintInfo& printInfo, Vector<IntRect>& resultPageRects)

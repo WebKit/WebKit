@@ -254,6 +254,9 @@ public:
     GraphicsLayer* layerForScrollCorner() const { return m_layerForScrollCorner.get(); }
 #if ENABLE(RUBBER_BANDING)
     GraphicsLayer* layerForOverhangAreas() const { return m_layerForOverhangAreas.get(); }
+
+    GraphicsLayer* updateLayerForTopOverhangArea(bool wantsLayer);
+    GraphicsLayer* updateLayerForBottomOverhangArea(bool wantsLayer);
 #endif
 
     void updateViewportConstraintStatus(RenderLayer*);
@@ -422,6 +425,8 @@ private:
 #if ENABLE(RUBBER_BANDING)
     OwnPtr<GraphicsLayer> m_layerForOverhangAreas;
     OwnPtr<GraphicsLayer> m_contentShadowLayer;
+    OwnPtr<GraphicsLayer> m_layerForTopOverhangArea;
+    OwnPtr<GraphicsLayer> m_layerForBottomOverhangArea;
 #endif
 
     OwnPtr<GraphicsLayerUpdater> m_layerUpdater; // Updates tiled layer visible area periodically while animations are running.

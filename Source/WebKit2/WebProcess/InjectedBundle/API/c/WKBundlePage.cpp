@@ -303,6 +303,26 @@ void WKBundlePageUninstallPageOverlayWithAnimation(WKBundlePageRef pageRef, WKBu
     toImpl(pageRef)->uninstallPageOverlay(toImpl(pageOverlayRef), true);
 }
 
+void WKBundlePageSetTopOverhangImage(WKBundlePageRef page, WKImageRef image)
+{
+#if PLATFORM(MAC)
+    toImpl(page)->setTopOverhangImage(toImpl(image));
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(image);
+#endif
+}
+
+void WKBundlePageSetBottomOverhangImage(WKBundlePageRef page, WKImageRef image)
+{
+#if PLATFORM(MAC)
+    toImpl(page)->setBottomOverhangImage(toImpl(image));
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(image);
+#endif
+}
+
 bool WKBundlePageHasLocalDataForURL(WKBundlePageRef pageRef, WKURLRef urlRef)
 {
     return toImpl(pageRef)->hasLocalDataForURL(WebCore::KURL(WebCore::KURL(), toWTFString(urlRef)));

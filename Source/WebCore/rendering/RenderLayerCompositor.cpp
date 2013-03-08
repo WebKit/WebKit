@@ -1583,6 +1583,9 @@ void RenderLayerCompositor::updateRootLayerPosition()
             ScrollbarTheme::theme()->setUpContentShadowLayer(m_contentShadowLayer.get());
         }
     }
+
+    updateLayerForTopOverhangArea(m_layerForTopOverhangArea);
+    updateLayerForBottomOverhangArea(m_layerForBottomOverhangArea);
 #endif
 }
 
@@ -2425,6 +2428,56 @@ bool RenderLayerCompositor::requiresContentShadowLayer() const
 
     return false;
 }
+
+GraphicsLayer* RenderLayerCompositor::updateLayerForTopOverhangArea(bool wantsLayer)
+{
+    if (m_renderView->document()->ownerElement())
+        return 0;
+
+    if (!wantsLayer) {
+        if (m_layerForTopOverhangArea) {
+            m_layerForTopOverhangArea->removeFromParent();
+            m_layerForTopOverhangArea = nullptr;
+        }
+        return 0;
+    }
+
+    if (!m_layerForTopOverhangArea) {
+        m_layerForTopOverhangArea = GraphicsLayer::create(graphicsLayerFactory(), this);
+#ifndef NDEBUG
+        m_layerForTopOverhangArea->setName("top overhang area");
+#endif
+        m_scrollLayer->addChildBelow(m_layerForTopOverhangArea.get(), m_rootContentLayer.get());
+    }
+
+    return m_layerForTopOverhangArea.get();
+}
+
+GraphicsLayer* RenderLayerCompositor::updateLayerForBottomOverhangArea(bool wantsLayer)
+{
+    if (m_renderView->document()->ownerElement())
+        return 0;
+
+    if (!wantsLayer) {
+        if (m_layerForBottomOverhangArea) {
+            m_layerForBottomOverhangArea->removeFromParent();
+            m_layerForBottomOverhangArea = nullptr;
+        }
+        return 0;
+    }
+
+    if (!m_layerForBottomOverhangArea) {
+        m_layerForBottomOverhangArea = GraphicsLayer::create(graphicsLayerFactory(), this);
+#ifndef NDEBUG
+        m_layerForBottomOverhangArea->setName("bottom overhang area");
+#endif
+        m_scrollLayer->addChildBelow(m_layerForBottomOverhangArea.get(), m_rootContentLayer.get());
+    }
+
+    m_layerForBottomOverhangArea->setPosition(FloatPoint(0, m_rootContentLayer->size().height()));
+    return m_layerForBottomOverhangArea.get();
+}
+
 #endif
 
 bool RenderLayerCompositor::viewHasTransparentBackground(Color* backgroundColor) const
@@ -3030,6 +3083,8 @@ void RenderLayerCompositor::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo
 #if ENABLE(RUBBER_BANDING)
     info.addMember(m_layerForOverhangAreas, "layerForOverhangAreas");
     info.addMember(m_contentShadowLayer, "contentShadowLayer");
+    info.addMember(m_layerForTopOverhangArea, "layerForTopOverhangArea");
+    info.addMember(m_layerForBottomOverhangArea, "layerForBottomOverhangArea");
 #endif
     info.addMember(m_layerUpdater, "layerUpdater");
 }

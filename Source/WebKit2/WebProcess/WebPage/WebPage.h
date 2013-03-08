@@ -354,6 +354,9 @@ public:
     void updatePluginsActiveAndFocusedState();
     const WebCore::IntRect& windowFrameInScreenCoordinates() const { return m_windowFrameInScreenCoordinates; }
     const WebCore::IntRect& viewFrameInWindowCoordinates() const { return m_viewFrameInWindowCoordinates; }
+
+    void setTopOverhangImage(PassRefPtr<WebImage>);
+    void setBottomOverhangImage(PassRefPtr<WebImage>);
 #endif
 
     bool windowIsFocused() const;
