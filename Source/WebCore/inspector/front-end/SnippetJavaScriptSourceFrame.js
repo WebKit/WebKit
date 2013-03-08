@@ -41,6 +41,10 @@ WebInspector.SnippetJavaScriptSourceFrame = function(scriptsPanel, uiSourceCode)
     this._uiSourceCode = uiSourceCode;
     this._runButton = new WebInspector.StatusBarButton(WebInspector.UIString("Run"), "evaluate-snippet-status-bar-item");
     this._runButton.addEventListener("click", this._runButtonClicked, this);
+    this.textEditor.element.addEventListener("keydown", this._onKeyDown.bind(this), true);
+    this._shortcuts = {};
+    var runSnippetShortcutDescriptor = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Enter, WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta)
+    this._shortcuts[runSnippetShortcutDescriptor.key] = this._runSnippet.bind(this);
 }
 
 WebInspector.SnippetJavaScriptSourceFrame.prototype = {
@@ -54,7 +58,25 @@ WebInspector.SnippetJavaScriptSourceFrame.prototype = {
 
     _runButtonClicked: function()
     {
+        this._runSnippet();
+    },
+
+    _runSnippet: function()
+    {
         WebInspector.scriptSnippetModel.evaluateScriptSnippet(this._uiSourceCode);
+    },
+
+    /**
+     * @param {KeyboardEvent} event
+     */
+    _onKeyDown: function(event)
+    {
+        var shortcutKey = WebInspector.KeyboardShortcut.makeKeyFromEvent(event);
+        var handler = this._shortcuts[shortcutKey];
+        if (handler) {
+            handler(event);
+            event.handled = true;
+        }
     },
 
     __proto__: WebInspector.JavaScriptSourceFrame.prototype
