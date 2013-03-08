@@ -1,0 +1,43 @@
+Test that spannig rows / columns inside percentage sized grid areas get properly sized.
+
+FAIL:
+Expected 400 for width, but got 160. 
+
+<div class="grid" data-expected-width="400" data-expected-height="300">
+    <div class="sizedToGridArea firstRowBothColumn" data-offset-x="0" data-offset-y="0" data-expected-width="400" data-expected-height="90"></div>
+</div>
+FAIL:
+Expected 400 for width, but got 160. 
+
+<div class="grid" data-expected-width="400" data-expected-height="300">
+    <div class="sizedToGridArea secondRowBothColumn" data-offset-x="0" data-offset-y="90" data-expected-width="400" data-expected-height="210"></div>
+</div>
+FAIL:
+Expected 300 for height, but got 90. 
+
+<div class="grid" data-expected-width="400" data-expected-height="300">
+    <div class="sizedToGridArea bothRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="160" data-expected-height="300"></div>
+</div>
+FAIL:
+Expected 300 for height, but got 90. 
+
+<div class="grid" data-expected-width="400" data-expected-height="300">
+    <div class="sizedToGridArea bothRowSecondColumn" data-offset-x="160" data-offset-y="0" data-expected-width="240" data-expected-height="300"></div>
+</div>
+FAIL:
+Expected 400 for width, but got 160. 
+Expected 300 for height, but got 90. 
+
+<div class="grid" data-expected-width="400" data-expected-height="300">
+    <div class="sizedToGridArea bothRowBothColumn" data-offset-x="0" data-offset-y="0" data-expected-width="400" data-expected-height="300"></div>
+</div>
+PASS
+PASS
+PASS
+FAIL:
+Expected 240 for width, but got 160. 
+Expected 160 for offsetLeft, but got 0. 
+
+<div class="grid" data-expected-width="400" data-expected-height="300">
+    <div class="sizedToGridArea autoSecondRowAutoFirstColumn" data-offset-x="160" data-offset-y="0" data-expected-width="240" data-expected-height="90"></div>
+</div>

@@ -32,6 +32,16 @@
     -webkit-grid-row: 2;
 }
 
+.firstAutoRowSecondAutoColumn {
+    -webkit-grid-row: 1 / auto;
+    -webkit-grid-column: 2 / auto;
+}
+
+.autoFirstRowAutoFirstColumn {
+    -webkit-grid-row: auto / 1;
+    -webkit-grid-column: auto / 1;
+}
+
 /* Auto column / row. */
 .autoRowAutoColumn {
     background-color: pink;

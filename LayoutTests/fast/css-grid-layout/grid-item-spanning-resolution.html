@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+.grid {
+    -webkit-grid-columns: 40% 60%;
+    -webkit-grid-rows: 30% 70%;
+    width: 400px;
+    height: 300px;
+}
+
+.firstRowBothColumn {
+    -webkit-grid-row: 1;
+    -webkit-grid-column: 1 / 1;
+}
+
+.secondRowBothColumn {
+    -webkit-grid-row: 2;
+    -webkit-grid-column: 1 / 1;
+}
+
+.bothRowFirstColumn {
+    -webkit-grid-row: 1 / 1;
+    -webkit-grid-column: 1;
+}
+
+.bothRowSecondColumn {
+    -webkit-grid-row: 1 / 1;
+    -webkit-grid-column: 2;
+}
+
+.bothRowBothColumn {
+    -webkit-grid-row: 1 / 1;
+    -webkit-grid-column: 1 / 1;
+}
+
+.overflowRowFirstColumn {
+    -webkit-grid-row: 1 / 5;
+    -webkit-grid-column: 1;
+}
+
+.firstRowOverflowColumn {
+    -webkit-grid-row: 1;
+    -webkit-grid-column: 1 / 5;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.grid');">
+
+<p>Test that spannig rows / columns inside percentage sized grid areas get properly sized.</p>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="400" data-expected-height="300">
+    <div class="sizedToGridArea firstRowBothColumn" data-offset-x="0" data-offset-y="0" data-expected-width="400" data-expected-height="90"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="400" data-expected-height="300">
+    <div class="sizedToGridArea secondRowBothColumn" data-offset-x="0" data-offset-y="90" data-expected-width="400" data-expected-height="210"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="400" data-expected-height="300">
+    <div class="sizedToGridArea bothRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="160" data-expected-height="300"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="400" data-expected-height="300">
+    <div class="sizedToGridArea bothRowSecondColumn" data-offset-x="160" data-offset-y="0" data-expected-width="240" data-expected-height="300"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="400" data-expected-height="300">
+    <div class="sizedToGridArea bothRowBothColumn" data-offset-x="0" data-offset-y="0" data-expected-width="400" data-expected-height="300"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="400" data-expected-height="300">
+    <div class="sizedToGridArea overflowRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="160" data-expected-height="90"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="400" data-expected-height="300">
+    <div class="sizedToGridArea firstRowOverflowColumn" data-offset-x="0" data-offset-y="0" data-expected-width="160" data-expected-height="90"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="400" data-expected-height="300">
+    <div class="sizedToGridArea firstAutoRowSecondAutoColumn" data-offset-x="160" data-offset-y="0" data-expected-width="240" data-expected-height="90"></div>
+</div>
+</div>
+
+<div style="position: relative">
+<div class="grid" data-expected-width="400" data-expected-height="300">
+    <div class="sizedToGridArea autoSecondRowAutoFirstColumn" data-offset-x="160" data-offset-y="0" data-expected-width="240" data-expected-height="90"></div>
+</div>
+</div>
+
+</body>
+</html>
