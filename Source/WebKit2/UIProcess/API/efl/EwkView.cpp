@@ -624,17 +624,6 @@ void EwkView::setWindowGeometry(const WKRect& rect)
     }
 }
 
-void EwkView::setImageData(void* imageData, const IntSize& size)
-{
-    Ewk_View_Smart_Data* sd = smartData();
-    if (!imageData || !sd->image)
-        return;
-
-    evas_object_resize(sd->image, size.width(), size.height());
-    evas_object_image_size_set(sd->image, size.width(), size.height());
-    evas_object_image_data_copy_set(sd->image, imageData);
-}
-
 bool EwkView::isFocused() const
 {
     return evas_object_focus_get(m_evasObject);

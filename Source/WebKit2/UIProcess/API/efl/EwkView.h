@@ -155,7 +155,6 @@ public:
 #endif
 
     void setCursor(const WebCore::Cursor& cursor);
-    void setImageData(void* imageData, const WebCore::IntSize& size);
 
     void scheduleUpdateDisplay();
 

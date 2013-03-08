@@ -1,3 +1,19 @@
+2013-03-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][EFL] Remove EwkView::setImageData()
+        https://bugs.webkit.org/show_bug.cgi?id=111849
+
+        Reviewed by Andreas Kling.
+
+        EwkView::setImageData() removed as it is not used at the moment 
+        (it used to be part of eliminated non coord graphics code path). 
+
+        * UIProcess/API/efl/EwkView.cpp:
+        * UIProcess/API/efl/EwkView.h:
+        (EwkView):
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        (WebKit::BackingStore::incorporateUpdate):
+
 2013-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Memory leak in webkit_web_view_load_request() in WebKit2 API
