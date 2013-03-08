@@ -229,6 +229,9 @@ public:
     bool isTextMarkerValid(AccessibilityTextMarker*);
     PassRefPtr<AccessibilityTextMarker> textMarkerForIndex(int);
 
+    // Returns an ordered list of supported actions for an element.
+    JSRetainPtr<JSStringRef> supportedActions() const;
+
     // Notifications
     // Function callback should take one argument, the name of the notification.
     bool addNotificationListener(JSValueRef functionCallback);

@@ -1445,6 +1445,15 @@ PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForIndex(i
     return 0;                                                                          
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::supportedActions() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSArray *names = [m_element accessibilityActionNames];
+    return [[names componentsJoinedByString:@","] createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
+}
 
 } // namespace WTR
 
