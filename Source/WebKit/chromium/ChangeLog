@@ -1,3 +1,20 @@
+2013-03-08  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Use WeakPtr for Factory-to-BackingStore reference
+        https://bugs.webkit.org/show_bug.cgi?id=111459
+
+        Reviewed by Adam Barth.
+
+        Add new test that verifies refcounts.
+
+        * WebKit.gyp: Don't include files depending on webkit_support.
+        * tests/IDBBackingStoreTest.cpp:
+        (WebCore::IDBBackingStoreTest::SetUp): No need for dummy factory.
+        (MockIDBFactoryBackend): Allow access to protected openBackingStore method.
+        (WebCore::TEST): Add new test that verifies refcounts.
+        * tests/IDBCleanupOnIOErrorTest.cpp:
+        (WebCore::TEST): No need for dummy factory.
+
 2013-03-07  Keishi Hattori  <keishi@webkit.org>
 
         Update calendar picker UI
