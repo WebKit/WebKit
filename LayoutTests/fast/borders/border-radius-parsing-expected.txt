@@ -1,5 +1,15 @@
 Testing border-radius: 10px;
 SUCCESS
+Testing border-radius: 10px 20px 30px 40px;
+SUCCESS
+Testing border-radius: 10px 20px 30px 40px 50px;
+SUCCESS
+Testing border-radius: 10px 20px;
+SUCCESS
+Testing border-radius: 10px 20px;
+SUCCESS
+Testing border-radius: 10px;
+SUCCESS
 Testing border-radius: 10px 20px;
 SUCCESS
 Testing -webkit-border-radius: 10px 20px;

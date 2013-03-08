@@ -125,10 +125,10 @@ const StylePropertyShorthand& borderLeftShorthand()
 const StylePropertyShorthand& borderRadiusShorthand()
 {
     static const CSSPropertyID borderRadiusProperties[] = {
-        CSSPropertyBorderTopRightRadius,
         CSSPropertyBorderTopLeftRadius,
-        CSSPropertyBorderBottomLeftRadius,
-        CSSPropertyBorderBottomRightRadius
+        CSSPropertyBorderTopRightRadius,
+        CSSPropertyBorderBottomRightRadius,
+        CSSPropertyBorderBottomLeftRadius
     };
     DEFINE_STATIC_LOCAL(StylePropertyShorthand, borderRadiusLonghands, (borderRadiusProperties, WTF_ARRAY_LENGTH(borderRadiusProperties)));
     return borderRadiusLonghands;

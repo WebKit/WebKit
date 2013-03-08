@@ -1,14 +1,34 @@
 <pre id="console"></pre>
 <script>
+
     function log(message)
     {
         document.getElementById("console").appendChild(document.createTextNode(message + "\n"));
     }
 
+    function testBorderRadiusStyleProperty(property, value, expected)
+    {
+        log ("Testing " + property + ": " + value + ";");
+        var element = document.createElement("div");
+        document.body.appendChild(element);
+        element.style.setProperty(property, value);
+        var failed = false;
+
+        if(element.style[property] !== expected) {
+            log("FAILED style: " + property + " was " + element.style[property] + " instead of " + expected);
+            failed = true;  
+        }
+
+
+        if (!failed)
+            log("SUCCESS");
+
+        document.body.removeChild(element);
+    }
+
     function testBorderRadiusValue(property, value, expectedRadii)
     {
         log ("Testing " + property + ": " + value + ";");
-
         var element = document.createElement("div");
         document.body.appendChild(element);
         element.style.setProperty(property, value);
@@ -22,7 +42,7 @@
                 continue;
 
             failed = true;
-            log("FAILED: " + properties[i] + " was " + actualRadius + " instead of " + expectedRadii[i])
+            log("FAILED: " + properties[i] + " was " + actualRadius + " instead of " + expectedRadii[i]);
         }
         if (!failed)
             log("SUCCESS");
@@ -32,6 +52,14 @@
     if (window.testRunner)
         testRunner.dumpAsText();
 
+
+
+    testBorderRadiusStyleProperty("border-radius", "10px", "10px", "10px", "10px", "10px");
+    testBorderRadiusStyleProperty("border-radius", "10px 20px 30px 40px", "10px 20px 30px 40px");
+    testBorderRadiusStyleProperty("border-radius", "10px 20px 30px 40px 50px", "");
+    testBorderRadiusStyleProperty("border-radius", "10px 20px", "10px 20px");
+    
+    testBorderRadiusValue("border-radius", "10px 20px", ["10px", "20px", "10px", "20px"]);
     testBorderRadiusValue("border-radius", "10px", ["10px", "10px", "10px", "10px"]);
     testBorderRadiusValue("border-radius", "10px 20px", ["10px", "20px", "10px", "20px"]);
     testBorderRadiusValue("-webkit-border-radius", "10px 20px", ["10px 20px", "10px 20px", "10px 20px", "10px 20px"]);
