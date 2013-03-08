@@ -108,15 +108,14 @@ WebInspector.ScriptsNavigator.prototype = {
 
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
+     * @param {boolean=} select
      */
-    revealUISourceCode: function(uiSourceCode)
+    revealUISourceCode: function(uiSourceCode, select)
     {
-        this._navigatorViewForUISourceCode(uiSourceCode).revealUISourceCode(uiSourceCode);
+        this._navigatorViewForUISourceCode(uiSourceCode).revealUISourceCode(uiSourceCode, select);
         if (uiSourceCode.isContentScript)
             this._tabbedPane.selectTab(WebInspector.ScriptsNavigator.ContentScriptsTab);
-        else if (uiSourceCode.project().type() === WebInspector.projectTypes.Snippets)
-            this._tabbedPane.selectTab(WebInspector.ScriptsNavigator.SnippetsTab);
-        else
+        else if (uiSourceCode.project().type() !== WebInspector.projectTypes.Snippets)
             this._tabbedPane.selectTab(WebInspector.ScriptsNavigator.ScriptsTab);
     },
 

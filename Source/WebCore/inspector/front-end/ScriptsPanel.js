@@ -433,7 +433,7 @@ WebInspector.ScriptsPanel.prototype = {
             return sourceFrame;
         this._currentUISourceCode = uiSourceCode;
         if (!uiSourceCode.project().isServiceProject())
-            this._navigator.revealUISourceCode(uiSourceCode);
+            this._navigator.revealUISourceCode(uiSourceCode, true);
         this._editorContainer.showFile(uiSourceCode);
         this._updateScriptViewStatusBarItems();
 

@@ -57,6 +57,8 @@ WebInspector.NavigatorView = function()
 
     this._rootNode = new WebInspector.NavigatorRootTreeNode(this);
     this._rootNode.populate();
+
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged, this._inspectedURLChanged, this);
 }
 
 WebInspector.NavigatorView.Events = {
@@ -83,6 +85,22 @@ WebInspector.NavigatorView.prototype = {
         var uiSourceCodeNode = new WebInspector.NavigatorUISourceCodeTreeNode(this, uiSourceCode);
         this._uiSourceCodeNodes[uiSourceCode.uri()] = uiSourceCodeNode;
         node.appendChild(uiSourceCodeNode);
+        if (uiSourceCode.url === WebInspector.inspectedPageURL)
+            this.revealUISourceCode(uiSourceCode);
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _inspectedURLChanged: function(event)
+    {
+        var nodes = Object.values(this._uiSourceCodeNodes);
+        for (var i = 0; i < nodes.length; ++i) {
+            var uiSourceCode = nodes[i].uiSourceCode();
+            if (uiSourceCode.url === WebInspector.inspectedPageURL)
+                this.revealUISourceCode(uiSourceCode);
+        }
+
     },
 
     /**
@@ -189,8 +207,9 @@ WebInspector.NavigatorView.prototype = {
 
     /**
      * @param {WebInspector.UISourceCode} uiSourceCode
+     * @param {boolean=} select
      */
-    revealUISourceCode: function(uiSourceCode)
+    revealUISourceCode: function(uiSourceCode, select)
     {
         var node = this._uiSourceCodeNodes[uiSourceCode.uri()];
         if (!node)
@@ -198,7 +217,7 @@ WebInspector.NavigatorView.prototype = {
         if (this._scriptsTree.selectedTreeElement)
             this._scriptsTree.selectedTreeElement.deselect();
         this._lastSelectedUISourceCode = uiSourceCode;
-        node.reveal();
+        node.reveal(select);
     },
 
     /**
@@ -223,6 +242,7 @@ WebInspector.NavigatorView.prototype = {
         var node = this._uiSourceCodeNodes[uiSourceCode.uri()];
         if (!node)
             return;
+        delete this._uiSourceCodeNodes[uiSourceCode.uri()]
         parentNode.removeChild(node);
         node = parentNode;
         while (node) {
@@ -473,10 +493,7 @@ WebInspector.NavigatorFolderTreeElement.prototype = {
     onattach: function()
     {
         WebInspector.BaseNavigatorTreeElement.prototype.onattach.call(this);
-        if (this.type() === WebInspector.NavigatorTreeOutline.Types.Domain && this.titleText === WebInspector.inspectedPageDomain)
-            this.expand();
-        else
-            this.collapse();
+        this.collapse();
     },
 
     __proto__: WebInspector.BaseNavigatorTreeElement.prototype
@@ -745,6 +762,14 @@ WebInspector.NavigatorUISourceCodeTreeNode = function(navigatorView, uiSourceCod
 
 WebInspector.NavigatorUISourceCodeTreeNode.prototype = {
     /**
+     * @return {WebInspector.UISourceCode}
+     */
+    uiSourceCode: function()
+    {
+        return this._uiSourceCode;
+    },
+
+    /**
      * @return {TreeElement}
      */
     treeElement: function()
@@ -817,11 +842,16 @@ WebInspector.NavigatorUISourceCodeTreeNode.prototype = {
         this.updateTitle();
     },
 
-    reveal: function()
+    /**
+     * @param {boolean=} select
+     */
+    reveal: function(select)
     {
         this.parent.populate();
         this.parent.treeElement().expand();
-        this._treeElement.revealAndSelect();
+        this._treeElement.reveal();
+        if (select)
+            this._treeElement.select();
     },
 
     /**

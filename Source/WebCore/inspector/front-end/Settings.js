@@ -357,7 +357,7 @@ WebInspector.VersionController = function()
 {
 }
 
-WebInspector.VersionController.currentVersion = 1;
+WebInspector.VersionController.currentVersion = 2;
 
 WebInspector.VersionController.prototype = {
     updateVersion: function()
@@ -386,6 +386,12 @@ WebInspector.VersionController.prototype = {
     _updateVersionFrom0To1: function()
     {
         this._clearBreakpointsWhenTooMany(WebInspector.settings.breakpoints, 500000);
+    },
+
+    _updateVersionFrom1To2: function()
+    {
+        var versionSetting = WebInspector.settings.createSetting("previouslyViewedFiles", []);
+        versionSetting.set([]);
     },
 
     /**
