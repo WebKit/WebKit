@@ -309,6 +309,10 @@ public:
         // Note that node->wrapper().IsEmpty() returns true for nodes that
         // do not have wrappers in the main world.
         if (!node->wrapper().IsEmpty()) {
+            WrapperTypeInfo* type = toWrapperTypeInfo(wrapper);
+            ActiveDOMObject* activeDOMObject = type->toActiveDOMObject(wrapper);
+            if (activeDOMObject && activeDOMObject->hasPendingActivity())
+                return;
             m_nodesInNewSpace.append(node);
             node->setV8CollectableDuringMinorGC(true);
         }
