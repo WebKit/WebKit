@@ -107,11 +107,16 @@ void WebChromeClient::chromeDestroyed()
 
 void WebChromeClient::setWindowRect(const FloatRect& windowFrame)
 {
-    m_page->send(Messages::WebPageProxy::SetWindowFrame(windowFrame));
+    m_page->sendSetWindowFrame(windowFrame);
 }
 
 FloatRect WebChromeClient::windowRect()
 {
+#if PLATFORM(MAC)
+    if (m_page->hasCachedWindowFrame())
+        return m_page->windowFrameInScreenCoordinates();
+#endif
+
     FloatRect newWindowFrame;
 
     if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::GetWindowFrame(), Messages::WebPageProxy::GetWindowFrame::Reply(newWindowFrame), m_page->pageID()))

@@ -1,3 +1,50 @@
+2013-03-07  Andreas Kling  <akling@apple.com>
+
+        Resizing Cappuccino is very laggy on WebKit since Safari 5.1
+        <http://webkit.org/b/71354>
+        <rdar://problem/10565998>
+
+        Reviewed by Anders Carlsson.
+
+        On Mac, we already cache the window rect through the WindowAndViewFramesChanged
+        message, so simply return that in WebChromeClient::windowRect() instead of
+        sending a synchronous query to the UIProcess.
+
+        If a programmatic resize is requested, we bypass the cache until we've received
+        a new WindowAndViewFramesChanged message. This compromise allows us to return
+        cached rects in the common case, and handles creating a new window and immediately
+        resizing it gracefully.
+
+        Changed WindowAndViewFramesChanged to pass FloatRect/FloatPoint rather than
+        IntRect/IntPoint to match the ChromeClient::windowRect() return type.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _updateWindowAndViewFrames]):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::windowAndViewFramesChanged):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::windowAndViewFramesChanged):
+        * WebProcess/Plugins/PluginView.h:
+        (PluginView):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::setWindowRect):
+        (WebKit::WebChromeClient::windowRect):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::sendSetWindowFrame):
+        (WebKit::WebPage::windowAndViewFramesChanged):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        (WebKit::WebPage::windowFrameInScreenCoordinates):
+        (WebKit::WebPage::viewFrameInWindowCoordinates):
+        (WebKit::WebPage::hasCachedWindowFrame):
+        (WebKit::WebPage::accessibilityPosition):
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/mac/WKAccessibilityWebPageObject.mm:
+        (-[WKAccessibilityWebPageObject accessibilityAttributeValue:]):
+
 2013-03-07  Alexey Proskuryakov  <ap@apple.com>
 
         Don't try to create a sandbox extension when path is empty

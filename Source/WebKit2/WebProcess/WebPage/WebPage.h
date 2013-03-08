@@ -299,6 +299,8 @@ public:
     void clearMainFrameName();
     void sendClose();
 
+    void sendSetWindowFrame(const WebCore::FloatRect&);
+
     double textZoomFactor() const;
     void setTextZoomFactor(double);
     double pageZoomFactor() const;
@@ -352,8 +354,10 @@ public:
 
     bool windowIsVisible() const { return m_windowIsVisible; }
     void updatePluginsActiveAndFocusedState();
-    const WebCore::IntRect& windowFrameInScreenCoordinates() const { return m_windowFrameInScreenCoordinates; }
-    const WebCore::IntRect& viewFrameInWindowCoordinates() const { return m_viewFrameInWindowCoordinates; }
+    const WebCore::FloatRect& windowFrameInScreenCoordinates() const { return m_windowFrameInScreenCoordinates; }
+    const WebCore::FloatRect& viewFrameInWindowCoordinates() const { return m_viewFrameInWindowCoordinates; }
+
+    bool hasCachedWindowFrame() const { return m_hasCachedWindowFrame; }
 
     void setTopOverhangImage(PassRefPtr<WebImage>);
     void setBottomOverhangImage(PassRefPtr<WebImage>);
@@ -441,7 +445,7 @@ public:
 #if PLATFORM(MAC)
     void registerUIProcessAccessibilityTokens(const CoreIPC::DataReference& elemenToken, const CoreIPC::DataReference& windowToken);
     WKAccessibilityWebPageObject* accessibilityRemoteObject();
-    WebCore::IntPoint accessibilityPosition() const { return m_accessibilityPosition; }    
+    const WebCore::FloatPoint& accessibilityPosition() const { return m_accessibilityPosition; }
     
     void sendComplexTextInputToPlugin(uint64_t pluginComplexTextInputIdentifier, const String& textInput);
 
@@ -732,7 +736,7 @@ private:
     void performDictionaryLookupForRange(DictionaryPopupInfo::Type, WebCore::Frame*, WebCore::Range*, NSDictionary *options);
 
     void setWindowIsVisible(bool windowIsVisible);
-    void windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInScreenCoordinates, const WebCore::IntRect& viewFrameInWindowCoordinates, const WebCore::IntPoint& accessibilityViewCoordinates);
+    void windowAndViewFramesChanged(const WebCore::FloatRect& windowFrameInScreenCoordinates, const WebCore::FloatRect& viewFrameInWindowCoordinates, const WebCore::FloatPoint& accessibilityViewCoordinates);
 
     RetainPtr<PDFDocument> pdfDocumentForPrintingFrame(WebCore::Frame*);
     void computePagesForPrintingPDFDocument(uint64_t frameID, const PrintInfo&, Vector<WebCore::IntRect>& resultPageRects);
@@ -841,17 +845,19 @@ private:
 #if PLATFORM(MAC)
     bool m_pdfPluginEnabled;
 
+    bool m_hasCachedWindowFrame;
+
     // Whether the containing window is visible or not.
     bool m_windowIsVisible;
 
     // The frame of the containing window in screen coordinates.
-    WebCore::IntRect m_windowFrameInScreenCoordinates;
+    WebCore::FloatRect m_windowFrameInScreenCoordinates;
 
     // The frame of the view in window coordinates.
-    WebCore::IntRect m_viewFrameInWindowCoordinates;
+    WebCore::FloatRect m_viewFrameInWindowCoordinates;
 
     // The accessibility position of the view.
-    WebCore::IntPoint m_accessibilityPosition;
+    WebCore::FloatPoint m_accessibilityPosition;
     
     // The layer hosting mode.
     LayerHostingMode m_layerHostingMode;
