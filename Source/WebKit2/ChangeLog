@@ -1,3 +1,10 @@
+2013-03-08  Joone Hur  <joone.hur@intel.com>
+
+        Unreviewed build fix for EFL, GTK and Qt after r145254.
+
+        * Shared/SandboxExtension.h:
+        (WebKit::SandboxExtension::revoke):
+
 2013-03-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         non-Mac ports build fix after r145235.

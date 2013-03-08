@@ -129,7 +129,7 @@ inline void SandboxExtension::createHandle(const String&, Type, Handle&) { }
 inline void SandboxExtension::createHandleForReadWriteDirectory(const String&, Handle&) { }
 inline String SandboxExtension::createHandleForTemporaryFile(const String& /*prefix*/, Type, Handle&) {return String();}
 inline SandboxExtension::~SandboxExtension() { }
-inline bool SandboxExtension::invalidate() { return true; }
+inline bool SandboxExtension::revoke() { return true; }
 inline bool SandboxExtension::consume() { return true; }
 inline bool SandboxExtension::consumePermanently() { return true; }
 inline bool SandboxExtension::consumePermanently(const Handle&) { return true; }
