@@ -1,3 +1,14 @@
+2013-03-07  Alexey Proskuryakov  <ap@apple.com>
+
+        Don't try to create a sandbox extension when path is empty
+        https://bugs.webkit.org/show_bug.cgi?id=111788
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/FileAPI/BlobRegistrationData.cpp:
+        (WebKit::BlobRegistrationData::BlobRegistrationData): Skip File objects with empty
+        paths to avoid logging an error to console.
+
 2013-03-07  Mark Lam  <mark.lam@apple.com>
 
         WebPageProxy::exceededDatabaseQuota() needs to be serialized.
