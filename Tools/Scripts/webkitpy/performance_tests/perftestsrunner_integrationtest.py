@@ -305,7 +305,7 @@ class MainTest(unittest.TestCase):
         self.assertEqual(parser_tests['memory-test']['metrics']['JSHeap'], MemoryTestData.js_heap_results)
         self.assertEqual(parser_tests['memory-test']['metrics']['Malloc'], MemoryTestData.malloc_results)
 
-    def _test_run_with_json_output(self, runner, filesystem, upload_succeeds=False, results_shown=True, expected_exit_code=0, repeat=1):
+    def _test_run_with_json_output(self, runner, filesystem, upload_succeeds=False, results_shown=True, expected_exit_code=0, repeat=1, compare_logs=True):
         filesystem.write_text_file(runner._base_path + '/inspector/pass.html', 'some content')
         filesystem.write_text_file(runner._base_path + '/Bindings/event-target-wrapper.html', 'some content')
 
@@ -329,7 +329,7 @@ class MainTest(unittest.TestCase):
         finally:
             stdout, stderr, logs = output_capture.restore_output()
 
-        if not expected_exit_code:
+        if not expected_exit_code and compare_logs:
             expected_logs = ''
             for i in xrange(repeat):
                 runs = ' (Run %d of %d)' % (i + 1, repeat) if repeat > 1 else ''
@@ -566,3 +566,17 @@ class MainTest(unittest.TestCase):
             {"buildTime": "2013-02-08T15:19:37.460000",
             "tests": self._event_target_wrapper_and_inspector_results,
             "revisions": {"WebKit": {"timestamp": "2013-02-01 08:48:05 +0000", "revision": "5678"}}}])
+
+    def test_run_with_test_runner_count(self):
+        runner, port = self.create_runner_and_setup_results_template(args=['--output-json-path=/mock-checkout/output.json',
+            '--test-runner-count=3'])
+        self._test_run_with_json_output(runner, port.host.filesystem, compare_logs=False)
+        generated_json = json.loads(port.host.filesystem.files['/mock-checkout/output.json'])
+        self.assertTrue(isinstance(generated_json, list))
+        self.assertEqual(len(generated_json), 1)
+
+        output = generated_json[0]['tests']['Bindings']['tests']['event-target-wrapper']['metrics']['Time']['current']
+        self.assertEqual(len(output), 3)
+        expectedMetrics = EventTargetWrapperTestData.results['metrics']['Time']['current'][0]
+        for metrics in output:
+            self.assertEqual(metrics, expectedMetrics)

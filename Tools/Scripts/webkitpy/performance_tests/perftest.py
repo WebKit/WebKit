@@ -48,6 +48,7 @@ from webkitpy.layout_tests.controllers.test_result_writer import TestResultWrite
 from webkitpy.layout_tests.port.driver import DriverInput
 from webkitpy.layout_tests.port.driver import DriverOutput
 
+DEFAULT_TEST_RUNNER_COUNT = 4
 
 _log = logging.getLogger(__name__)
 
@@ -89,14 +90,15 @@ class PerfTestMetric(object):
 
 
 class PerfTest(object):
-    def __init__(self, port, test_name, test_path, process_run_count=4):
+
+    def __init__(self, port, test_name, test_path, test_runner_count=DEFAULT_TEST_RUNNER_COUNT):
         self._port = port
         self._test_name = test_name
         self._test_path = test_path
         self._description = None
         self._metrics = {}
         self._ordered_metrics_name = []
-        self._process_run_count = process_run_count
+        self._test_runner_count = test_runner_count
 
     def test_name(self):
         return self._test_name
@@ -117,7 +119,7 @@ class PerfTest(object):
         return self._port.create_driver(worker_number=0, no_timeout=True)
 
     def run(self, time_out_ms):
-        for _ in xrange(self._process_run_count):
+        for _ in xrange(self._test_runner_count):
             driver = self._create_driver()
             try:
                 if not self._run_with_driver(driver, time_out_ms):
@@ -259,15 +261,15 @@ class PerfTest(object):
 
 
 class SingleProcessPerfTest(PerfTest):
-    def __init__(self, port, test_name, test_path):
-        super(SingleProcessPerfTest, self).__init__(port, test_name, test_path, process_run_count=1)
+    def __init__(self, port, test_name, test_path, test_runner_count=1):
+        super(SingleProcessPerfTest, self).__init__(port, test_name, test_path, test_runner_count)
 
 
 class ChromiumStylePerfTest(PerfTest):
     _chromium_style_result_regex = re.compile(r'^RESULT\s+(?P<name>[^=]+)\s*=\s+(?P<value>\d+(\.\d+)?)\s*(?P<unit>\w+)$')
 
-    def __init__(self, port, test_name, test_path):
-        super(ChromiumStylePerfTest, self).__init__(port, test_name, test_path)
+    def __init__(self, port, test_name, test_path, test_runner_count=DEFAULT_TEST_RUNNER_COUNT):
+        super(ChromiumStylePerfTest, self).__init__(port, test_name, test_path, test_runner_count)
 
     def run(self, time_out_ms):
         driver = self._create_driver()
@@ -335,8 +337,8 @@ class ReplayServer(object):
 class ReplayPerfTest(PerfTest):
     _FORCE_GC_FILE = 'resources/force-gc.html'
 
-    def __init__(self, port, test_name, test_path):
-        super(ReplayPerfTest, self).__init__(port, test_name, test_path)
+    def __init__(self, port, test_name, test_path, test_runner_count=DEFAULT_TEST_RUNNER_COUNT):
+        super(ReplayPerfTest, self).__init__(port, test_name, test_path, test_runner_count)
         self.force_gc_test = self._port.host.filesystem.join(self._port.perf_tests_dir(), self._FORCE_GC_FILE)
 
     def _start_replay_server(self, archive, record):
@@ -456,8 +458,8 @@ class PerfTestFactory(object):
     ]
 
     @classmethod
-    def create_perf_test(cls, port, test_name, path):
+    def create_perf_test(cls, port, test_name, path, test_runner_count=DEFAULT_TEST_RUNNER_COUNT):
         for (pattern, test_class) in cls._pattern_map:
             if pattern.match(test_name):
-                return test_class(port, test_name, path)
-        return PerfTest(port, test_name, path)
+                return test_class(port, test_name, path, test_runner_count)
+        return PerfTest(port, test_name, path, test_runner_count)

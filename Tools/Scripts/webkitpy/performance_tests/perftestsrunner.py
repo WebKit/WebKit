@@ -41,6 +41,7 @@ from webkitpy.common.config.urls import view_source_url
 from webkitpy.common.host import Host
 from webkitpy.common.net.file_uploader import FileUploader
 from webkitpy.performance_tests.perftest import PerfTestFactory
+from webkitpy.performance_tests.perftest import DEFAULT_TEST_RUNNER_COUNT
 
 
 _log = logging.getLogger(__name__)
@@ -128,6 +129,8 @@ class PerfTestsRunner(object):
                      "Specify multiple times to add multiple flags."),
             optparse.make_option("--repeat", default=1, type="int",
                 help="Specify number of times to run test set (default: 1)."),
+            optparse.make_option("--test-runner-count", default=DEFAULT_TEST_RUNNER_COUNT, type="int",
+                help="Specify number of times to invoke test runner for each performance test."),
             ]
         return optparse.OptionParser(option_list=(perf_option_list)).parse_args(args)
 
@@ -159,7 +162,7 @@ class PerfTestsRunner(object):
             relative_path = filesystem.relpath(path, self._base_path).replace('\\', '/')
             if self._options.use_skipped_list and self._port.skips_perf_test(relative_path) and filesystem.normpath(relative_path) not in paths:
                 continue
-            test = PerfTestFactory.create_perf_test(self._port, relative_path, path)
+            test = PerfTestFactory.create_perf_test(self._port, relative_path, path, test_runner_count=self._options.test_runner_count)
             tests.append(test)
 
         return tests
