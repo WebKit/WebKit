@@ -1,0 +1,50 @@
+From f9816e366e53004618abcee1741885b69e9466a8 Mon Sep 17 00:00:00 2001
+From: Martin Robinson <mrobinson@igalia.com>
+Date: Tue, 4 Dec 2012 17:48:45 -0800
+Subject: [PATCH] Better handle the failure of URI embedded credentials
+
+When using credentials embedded in the URI, clear them so that a failure
+will trigger the authentication signal and the use of previously
+remembered credentials.
+---
+ libsoup/soup-auth-manager.c |    7 ++++---
+ tests/auth-test.c           |    5 ++++-
+ 2 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/libsoup/soup-auth-manager.c b/libsoup/soup-auth-manager.c
+index b3ef9f6..2a2030c 100644
+--- a/libsoup/soup-auth-manager.c
++++ b/libsoup/soup-auth-manager.c
+@@ -411,9 +411,10 @@ authenticate_auth (SoupAuthManager *manager, SoupAuth *auth,
+ 	/* If a password is specified explicitly in the URI, use it
+ 	 * even if the auth had previously already been authenticated.
+ 	 */
+-	if (uri->password) {
+-		if (!prior_auth_failed)
+-			soup_auth_authenticate (auth, uri->user, uri->password);
++	if (uri->password && uri->user) {
++		soup_auth_authenticate (auth, uri->user, uri->password);
++		soup_uri_set_password (uri, NULL);
++		soup_uri_set_user (uri, NULL);
+ 	} else if (!soup_auth_is_authenticated (auth) && can_interact) {
+ 		soup_auth_manager_emit_authenticate (manager, msg, auth,
+ 						     prior_auth_failed);
+diff --git a/tests/auth-test.c b/tests/auth-test.c
+index 85c4d41..334033b 100644
+--- a/tests/auth-test.c
++++ b/tests/auth-test.c
+@@ -146,7 +146,10 @@ static SoupAuthTest main_tests[] = {
+ 	  "Digest/realm1/not/", "1", FALSE, /* should not be used */ "1", SOUP_STATUS_UNAUTHORIZED },
+ 
+ 	{ "Make sure we've forgotten it",
+-	  "Digest/realm1/", "", FALSE, "0", SOUP_STATUS_UNAUTHORIZED }
++	  "Digest/realm1/", "", FALSE, "0", SOUP_STATUS_UNAUTHORIZED },
++
++	{ "Fail with URI-embedded password, then use right password in the authenticate signal",
++	  "Basic/realm3/", "43", TRUE, "43", SOUP_STATUS_OK }
+ };
+ 
+ static const char *auths[] = {
+-- 
+1.7.10.4
+

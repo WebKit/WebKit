@@ -1,3 +1,16 @@
+2013-03-08  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL] [WK2] Some authentication tests fail in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=106407
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add patch from upstream for libsoup 2.40 to fix several authentication
+        test cases.
+
+        * efl/jhbuild.modules:
+        * efl/patches/libsoup-2.40-auth-fix.patch: Added.
+
 2013-03-08  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Enable Web Audio in development builds
