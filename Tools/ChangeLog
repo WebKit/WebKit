@@ -1,3 +1,14 @@
+2013-03-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Warning about the user not having edit rights on Bugzilla is confusing new contributors
+        https://bugs.webkit.org/show_bug.cgi?id=111798
+
+        Reviewed by Dirk Pranke.
+
+        Don't scare people by the warning. Instead, tell them to ignore it if they don't have EditBugs privileges.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+
 2013-03-08  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove WebLayerTreeViewClient and WebLayerTreeView::Settings

@@ -811,11 +811,7 @@ class Bugzilla(object):
 
         if not self._has_control(self.browser, "assigned_to"):
             _log.warning("""Failed to assign bug to you (can't find assigned_to) control.
-Do you have EditBugs privileges at bugs.webkit.org?
-https://bugs.webkit.org/userprefs.cgi?tab=permissions
-
-If not, you should email webkit-committers@lists.webkit.org or ask in #webkit
-for someone to add EditBugs to your bugs.webkit.org account.""")
+Ignore this message if you don't have EditBugs privileges (https://bugs.webkit.org/userprefs.cgi?tab=permissions)""")
             return
 
         if comment_text:
