@@ -1,3 +1,13 @@
+2013-03-08  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13338743> Fix sandbox profile preprocessor flags for compatibility with new clang.
+
+        Reviewed by Alexey Proskuryakov.
+        Patch by Bob Wilson.
+
+        * DerivedSources.make: Only use -traditional when we have to work around old
+        behavior of -std=c89.
+
 2013-03-08  Joone Hur  <joone.hur@intel.com>
 
         Unreviewed build fix for EFL, GTK and Qt after r145254.
