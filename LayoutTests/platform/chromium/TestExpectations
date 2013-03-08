@@ -3559,8 +3559,6 @@ webkit.org/b/87886 [ Linux Release ] perf/mouse-event.html [ Failure Pass ]
 
 webkit.org/b/88124 [ Debug ] fast/css/absolute-child-with-percent-height-inside-relative-parent.html [ Failure Pass ]
 
-webkit.org/b/88131 [ Debug ] fast/dom/HTMLMeterElement/meter-element-crash.html [ Failure Pass ]
-
 webkit.org/b/88593 fast/table/multiple-captions-display.xhtml [ Failure ImageOnlyFailure Pass ]
 
 webkit.org/b/88939 fast/events/before-unload-adopt-subframe-to-outside.html [ Failure Pass ]
@@ -4473,3 +4471,5 @@ webkit.org/b/111667 [ Debug Win ] media/encrypted-media/encrypted-media-events.h
 webkit.org/b/111774 [ Win ] http/tests/security/cross-origin-css.html [ Pass Failure ]
 
 webkit.org/b/111816 fast/borders/border-fit-2.html [ Failure ]
+
+webkit.org/b/111872 fast/dom/title-directionality-removeChild.html [ Pass Failure ]
