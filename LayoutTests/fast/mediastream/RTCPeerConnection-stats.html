@@ -47,14 +47,27 @@ function gotStream(s) {
 function statsHandler2(status)
 {
     testPassed("statsHandler2 was called");
+    // Status must be a global variable to be used in test statements.
+    status_g = status;
     result = status.result();
     shouldBeGreaterThanOrEqual('result.length', '2');
+    // The "local" interface is deprecated. Keep test until interface deleted.
     local = result[0].local;
     timestamp = local.timestamp;
     shouldBeGreaterThanOrEqual('timestamp', 'startTime');
     shouldBeGreaterThanOrEqual('local.names().length', '1');
     shouldBeGreaterThanOrEqual('local.names().indexOf("type")', '0');
     shouldBe('local.stat("type")', '"audio"');
+    // Newer interface.
+    res = result[0];
+    shouldBeGreaterThanOrEqual('res.timestamp', 'startTime');
+    shouldBeNonNull('res.id');
+    shouldBeGreaterThanOrEqual('res.names().length', '1');
+    shouldBeGreaterThanOrEqual('res.names().indexOf("type")', '0');
+    shouldBe('res.stat("type")', '"audio"');
+    // Named getter: Can access results by their ID values.
+    shouldBeNonNull('status_g.namedItem(res.id)');
+    shouldBeNonNull('status_g[res.id]');
     finishJSTest();
 }
 

@@ -39,10 +39,31 @@ RTCStatsResponse::RTCStatsResponse()
 {
 }
 
+PassRefPtr<RTCStatsReport> RTCStatsResponse::namedItem(const AtomicString& name)
+{
+    if (m_idmap.find(name) != m_idmap.end())
+        return m_result[m_idmap.get(name)];
+    return 0;
+}
+
+size_t RTCStatsResponse::addReport(String id, String type, double timestamp)
+{
+    m_result.append(RTCStatsReport::create(id, type, timestamp));
+    m_idmap.add(id, m_result.size() - 1);
+    return m_result.size() - 1;
+}
+
+void RTCStatsResponse::addStatistic(size_t report, String name, String value)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(report >= 0 && report < m_result.size());
+    m_result[report]->addStatistic(name, value);
+}
+
+// DEPRECATED
 size_t RTCStatsResponse::addReport()
 {
-    m_result.append(RTCStatsReport::create());
-    return m_result.size() - 1;
+    String fakeId = String::format("Fake ID %lu", (unsigned long) m_result.size());
+    return addReport(fakeId, "no type", 0);
 }
 
 void RTCStatsResponse::addElement(size_t report, bool isLocal, double timestamp)

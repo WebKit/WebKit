@@ -35,6 +35,7 @@
 #include "MediaStreamTrack.h"
 #include "RTCStatsReport.h"
 #include "RTCStatsResponseBase.h"
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
@@ -44,13 +45,21 @@ public:
 
     const Vector<RefPtr<RTCStatsReport> >& result() const { return m_result; };
 
+    PassRefPtr<RTCStatsReport> namedItem(const AtomicString& name);
+
+    virtual size_t addReport(String id, String type, double timestamp) OVERRIDE;
+    virtual void addStatistic(size_t report, String name, String value) OVERRIDE;
+    // DEPRECATED
     virtual size_t addReport() OVERRIDE;
+    // DEPRECATED
     virtual void addElement(size_t report, bool isLocal, double timestamp) OVERRIDE;
+    // DEPRECATED
     virtual void addStatistic(size_t report, bool isLocal, String name, String value) OVERRIDE;
 
 private:
     RTCStatsResponse();
     Vector<RefPtr<RTCStatsReport> > m_result;
+    HashMap<String, int> m_idmap;
 };
 
 } // namespace WebCore

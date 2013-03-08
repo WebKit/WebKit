@@ -1,3 +1,14 @@
+2013-03-08  Harald Alvestrand  <hta@chromium.org>
+
+        Implemented new API for RTCStatsReport object.
+        https://bugs.webkit.org/show_bug.cgi?id=110333
+
+        Reviewed by Adam Barth.
+
+        * chromium/public/WebRTCStatsResponse.h:
+        (WebKit::WebRTCStatsResponse::WebRTCStatsResponse):
+        (WebRTCStatsResponse):
+
 2013-03-08  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove WebLayerTreeViewClient and WebLayerTreeView::Settings

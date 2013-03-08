@@ -661,8 +661,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSRTCSessionDescriptionCallback.h \
 	DerivedSources/WebCore/JSRTCStatsCallback.cpp \
 	DerivedSources/WebCore/JSRTCStatsCallback.h \
-	DerivedSources/WebCore/JSRTCStatsElement.cpp \
-	DerivedSources/WebCore/JSRTCStatsElement.h \
 	DerivedSources/WebCore/JSRTCStatsReport.cpp \
 	DerivedSources/WebCore/JSRTCStatsReport.h \
 	DerivedSources/WebCore/JSRTCStatsResponse.cpp \
@@ -1267,7 +1265,6 @@ dom_binding_idls += \
 	$(WebCore)/Modules/mediastream/RTCSessionDescription.idl \
 	$(WebCore)/Modules/mediastream/RTCSessionDescriptionCallback.idl \
 	$(WebCore)/Modules/mediastream/RTCStatsCallback.idl \
-	$(WebCore)/Modules/mediastream/RTCStatsElement.idl \
 	$(WebCore)/Modules/mediastream/RTCStatsReport.idl \
 	$(WebCore)/Modules/mediastream/RTCStatsResponse.idl \
 	$(WebCore)/Modules/navigatorcontentutils/NavigatorContentUtils.idl \
@@ -1979,8 +1976,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/mediastream/RTCSessionDescriptionRequestImpl.cpp \
 	Source/WebCore/Modules/mediastream/RTCSessionDescriptionRequestImpl.h \
 	Source/WebCore/Modules/mediastream/RTCStatsCallback.h \
-	Source/WebCore/Modules/mediastream/RTCStatsElement.cpp \
-	Source/WebCore/Modules/mediastream/RTCStatsElement.h \
 	Source/WebCore/Modules/mediastream/RTCStatsReport.cpp \
 	Source/WebCore/Modules/mediastream/RTCStatsReport.h \
 	Source/WebCore/Modules/mediastream/RTCStatsRequestImpl.cpp \

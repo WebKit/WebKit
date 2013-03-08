@@ -26,6 +26,11 @@
     Conditional=MEDIA_STREAM,
     ImplementationLacksVTable
 ] interface RTCStatsReport {
-    readonly attribute RTCStatsElement local;
-    readonly attribute RTCStatsElement remote;
+    readonly attribute Date timestamp;
+    readonly attribute DOMString id;
+    DOMString stat(in DOMString name);
+    sequence<DOMString> names();
+    // DEPRECATED - fake for old RTCStatsElement object.
+    readonly attribute RTCStatsReport local;
+    readonly attribute RTCStatsReport remote;
 };

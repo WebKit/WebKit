@@ -28,37 +28,61 @@
 
 #include "RTCStatsReport.h"
 
+#include <wtf/text/StringHash.h>
+
 namespace WebCore {
 
 PassRefPtr<RTCStatsReport> RTCStatsReport::create()
 {
-    return adoptRef(new RTCStatsReport());
+    return adoptRef(new RTCStatsReport("inner fake ID", "inner fake type", 0));
 }
 
-RTCStatsReport::RTCStatsReport()
+PassRefPtr<RTCStatsReport> RTCStatsReport::create(const String& id, const String& type, double timestamp)
 {
+    return adoptRef(new RTCStatsReport(id, type, timestamp));
+}
+
+RTCStatsReport::RTCStatsReport(const String& id, const String& type, double timestamp)
+    : m_id(id)
+    , m_type(type)
+    , m_timestamp(timestamp)
+{
+}
+
+Vector<String> RTCStatsReport::names() const
+{
+    Vector<String> result;
+    for (HashMap<String, String>::const_iterator it = m_stats.begin(); it != m_stats.end(); ++it) {
+        result.append(it->key);
+    }
+    return result;
+}
+
+const PassRefPtr<RTCStatsReport> RTCStatsReport::local()
+{
+    return this;
+}
+
+const PassRefPtr<RTCStatsReport> RTCStatsReport::remote()
+{
+    return this;
+}
+
+void RTCStatsReport::addStatistic(const String& name, const String& value)
+{
+    m_stats.add(name, value);
 }
 
 void RTCStatsReport::addElement(bool isLocal, double timestamp)
 {
-    if (isLocal) {
-        ASSERT(!m_local);
-        m_local = RTCStatsElement::create(timestamp);
-        return;
-    }
-    ASSERT(!m_remote);
-    m_remote = RTCStatsElement::create(timestamp);
+    // We ignore isLocal.
+    m_timestamp = timestamp;
 }
 
-void RTCStatsReport::addStatistic(bool isLocal, String name, String value)
+void RTCStatsReport::addStatistic(bool isLocal, const String& name, const String& value)
 {
-    if (isLocal) {
-        ASSERT(m_local);
-        m_local->addStatistic(name, value);
-    } else {
-        ASSERT(m_remote);
-        m_remote->addStatistic(name, value);
-    }
+    // We ignore isLocal.
+    addStatistic(name, value);
 }
 
 } // namespace WebCore
