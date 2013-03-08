@@ -6,7 +6,7 @@ Tests workspace mappings
     url https://localhost/index.html is not mapped.
 
     url http://www.example.com/index.html is mapped to http://www.example.com/index.html
-    url http://localhost/index.html is mapped to 0@www/localhost/index.html
+    url http://localhost/index.html is mapped to filesystem:/var/www/localhost/index.html
     url http://localhost/foo/index.html is mapped to null
     url https://localhost/index.html is mapped to https://localhost/index.html
 

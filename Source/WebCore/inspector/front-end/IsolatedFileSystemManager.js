@@ -110,8 +110,8 @@ WebInspector.IsolatedFileSystemManager.prototype = {
     _innerAddFileSystem: function(fileSystem)
     {
         var fileSystemPath = fileSystem.fileSystemPath;
-        var fileSystemId = this._fileSystemMapping.addFileSystemMapping(fileSystemPath);
-        var isolatedFileSystem = new WebInspector.IsolatedFileSystem(this, fileSystemId, fileSystemPath, fileSystem.fileSystemName, fileSystem.rootURL);
+        this._fileSystemMapping.addFileSystemMapping(fileSystemPath);
+        var isolatedFileSystem = new WebInspector.IsolatedFileSystem(this, fileSystemPath, fileSystem.fileSystemName, fileSystem.rootURL);
         this._fileSystems[fileSystemPath] = isolatedFileSystem;
         this.dispatchEventToListeners(WebInspector.IsolatedFileSystemManager.Events.FileSystemAdded, isolatedFileSystem);
     },
@@ -159,7 +159,6 @@ WebInspector.IsolatedFileSystemManager.prototype = {
      */
     _fileSystemRemoved: function(fileSystemPath)
     {
-        var fileSystemId = this._fileSystemMapping.fileSystemId(fileSystemPath);
         this._fileSystemMapping.removeFileSystemMapping(fileSystemPath);
         var isolatedFileSystem = this._fileSystems[fileSystemPath];
         delete this._fileSystems[fileSystemPath];

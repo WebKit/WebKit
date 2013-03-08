@@ -27,10 +27,8 @@ function test()
         var fileSystemPaths = fileSystemMapping.fileSystemPaths();
         InspectorTest.addResult("Testing file system mapping.");
         InspectorTest.addResult("    file system paths:");
-        for (var i = 0; i < fileSystemPaths.length; ++i) {
-            var id = fileSystemMapping.fileSystemId(fileSystemPaths[i]);
-            InspectorTest.addResult("     - " + fileSystemPaths[i] + "(id = " + id + ")");
-        }
+        for (var i = 0; i < fileSystemPaths.length; ++i)
+            InspectorTest.addResult("     - " + fileSystemPaths[i]);
         InspectorTest.addResult("    fileSystemPathForPrefix:");
         // Call fileSystemPathForPrefix twice for each path prefix to check caching.
         for (var i = 0; i < 2; ++i) {

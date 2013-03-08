@@ -45,7 +45,9 @@ function test()
     fileMapping.setMappingEntries(mappingEntries);
 
     var fileSystemMapping = new WebInspector.FileSystemMappingImpl();
-    var projectId = fileSystemMapping.addFileSystemMapping("/var/www");
+    var fileSystemPath = "/var/www";
+    var projectId = WebInspector.FileSystemProjectDelegate.projectId(fileSystemPath);
+    fileSystemMapping.addFileSystemMapping("/var/www");
 
     var workspace = new WebInspector.Workspace(fileMapping, fileSystemMapping);
 

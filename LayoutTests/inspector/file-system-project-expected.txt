@@ -24,11 +24,11 @@ Mime type: text/javascript
 UISourceCode content: <baz content>
 
 UISourceCode uri to url mappings:
-    0@www/localhost/foo.js -> http://localhost/foo.js
-    1@bar/baz.js -> http://www.example.com/baz.js
+    filesystem:/var/www/localhost/foo.js -> http://localhost/foo.js
+    filesystem:/foo/bar/baz.js -> http://www.example.com/baz.js
 UISourceCode url to uri mappings:
-    http://localhost/foo.js -> 0@www/localhost/foo.js
-    http://www.example.com/baz.js -> 1@bar/baz.js
+    http://localhost/foo.js -> filesystem:/var/www/localhost/foo.js
+    http://www.example.com/baz.js -> filesystem:/foo/bar/baz.js
 Removing second file system.
     number of uiSourceCodes in workspace after removing second file system: 1
 Removing first file system.

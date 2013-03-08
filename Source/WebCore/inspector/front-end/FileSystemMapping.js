@@ -55,12 +55,8 @@ WebInspector.FileSystemMappingImpl = function()
 {
     WebInspector.Object.call(this);
     this._fileSystemMappingSetting = WebInspector.settings.createSetting("fileSystemMapping", {});
-    /** @type {!Object.<string, string>} */
+    /** @type {!Object.<string, boolean>} */
     this._fileSystemPaths = {};
-    /** @type {!Object.<string, string>} */
-    this._fileSystemIds = {};
-    /** @type {!Object.<string, string>} */
-    this._fileSystemNames = {};
     this._loadFromSettings();
 }
 
@@ -68,68 +64,28 @@ WebInspector.FileSystemMappingImpl.prototype = {
     _loadFromSettings: function()
     {
         var savedMapping = this._fileSystemMappingSetting.get();
-        this._nextUniqueId = savedMapping ? savedMapping._nextUniqueId || 0 : 0;
-        this._fileSystemPaths = savedMapping ? /** @type {!Object.<string, string>} */ (savedMapping.fileSystemPaths) || {} : {};
-        for (var id in this._fileSystemPaths) {
-            var fileSystemPath = this._fileSystemPaths[id];
-            var name = this._fileSystemName(fileSystemPath);
-            this._fileSystemIds[fileSystemPath] = id;
-            this._fileSystemNames[id] = name;
-        }
+        this._fileSystemPaths = savedMapping ? /** @type {!Object.<string, string>} */ (savedMapping.registeredFileSystemPaths) || {} : {};
     },
 
     _saveToSettings: function()
     {
         var savedMapping = {};
-        savedMapping.nextUniqueId = this._nextUniqueId;
-        savedMapping.fileSystemPaths = this._fileSystemPaths;
+        savedMapping.registeredFileSystemPaths = this._fileSystemPaths;
         this._fileSystemMappingSetting.set(savedMapping);
     },
 
-    /**
-     * @param {string} fileSystemPath
-     */
-    _fileSystemName: function(fileSystemPath)
-    {
-        var lastIndexOfSlash = fileSystemPath.lastIndexOf("/");
-        return fileSystemPath.substr(lastIndexOfSlash + 1);
-    },
 
     /**
      * @param {string} fileSystemPath
-     * @return {?string}
-     */
-    fileSystemId: function(fileSystemPath)
-    {
-        return this._fileSystemIds[fileSystemPath];
-    },
-
-    /**
-     * @param {string} fileSystemId
-     * @return {?string}
-     */
-    fileSystemPath: function(fileSystemId)
-    {
-        return this._fileSystemPaths[fileSystemId];
-    },
-
-    /**
-     * @param {string} fileSystemPath
-     * @return {string}
      */
     addFileSystemMapping: function(fileSystemPath)
     {
-        if (this._fileSystemIds[fileSystemPath])
-            return this._fileSystemIds[fileSystemPath];
+        if (this._fileSystemPaths[fileSystemPath])
+            return;
 
-        var name = this._fileSystemName(fileSystemPath);
-        var id = String(this._nextUniqueId++) + "@" + name;
-        this._fileSystemIds[fileSystemPath] = id;
-        this._fileSystemNames[id] = name;
-        this._fileSystemPaths[id] = fileSystemPath;
+        this._fileSystemPaths[fileSystemPath] = true;
         this._saveToSettings();
         delete this._cachedFileSystemPaths;
-        return id;
     },
 
     /**
@@ -137,12 +93,9 @@ WebInspector.FileSystemMappingImpl.prototype = {
      */
     removeFileSystemMapping: function(fileSystemPath)
     {
-        var id = this._fileSystemIds[fileSystemPath];
-        if (!id)
+        if (!this._fileSystemPaths[fileSystemPath])
             return;
-        delete this._fileSystemIds[fileSystemPath];
-        delete this._fileSystemNames[id];
-        delete this._fileSystemPaths[id];
+        delete this._fileSystemPaths[fileSystemPath];
         this._saveToSettings();
         delete this._cachedFileSystemPaths;
     },
@@ -152,7 +105,7 @@ WebInspector.FileSystemMappingImpl.prototype = {
      */
     fileSystemPaths: function()
     {
-        return Object.values(this._fileSystemPaths);
+        return Object.keys(this._fileSystemPaths);
     },
 
     /**
@@ -165,8 +118,7 @@ WebInspector.FileSystemMappingImpl.prototype = {
         if (this._cachedFileSystemPaths.hasOwnProperty(prefix))
             return this._cachedFileSystemPaths[prefix];
         var result = null;
-        for (var id in this._fileSystemPaths) {
-            var fileSystemPath = this._fileSystemPaths[id];
+        for (var fileSystemPath in this._fileSystemPaths) {
             if (prefix.startsWith(fileSystemPath + "/")) {
                 result = fileSystemPath;
                 break;

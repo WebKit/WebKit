@@ -459,7 +459,7 @@ WebInspector.Workspace.prototype = {
             return project ? project.uiSourceCode(path) : null;
         }
 
-        var projectId = this._fileSystemMapping.fileSystemId(fileSystemPath);
+        var projectId = WebInspector.FileSystemProjectDelegate.projectId(fileSystemPath);
         var pathPrefix = entry.pathPrefix.substr(fileSystemPath.length + 1);
         var path = pathPrefix + url.substr(entry.urlPrefix.length);
         var project = this.project(projectId);
