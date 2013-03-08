@@ -1,3 +1,14 @@
+2013-03-08  Dirk Pranke  <dpranke@chromium.org>
+
+        [chromium] use custom freetype on linux asan builds again
+        https://bugs.webkit.org/show_bug.cgi?id=111884
+
+        Reviewed by Tony Chang.
+
+        We no longer need the workaround after chromium r186540.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2013-03-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Warning about the user not having edit rights on Bugzilla is confusing new contributors
