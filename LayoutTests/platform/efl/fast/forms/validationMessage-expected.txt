@@ -1,0 +1,22 @@
+Test for validationMessage DOM property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+input patternMismatch: pattern mismatch
+input valueMissing: value missing
+textarea valueMissing: value missing
+select valueMissing: value missing
+input typeMismatch: Please enter an email address
+input badInput: type mismatch
+PASS but.validationMessage is ''
+PASS anoninput.validationMessage is ''
+PASS happyFieldset.validationMessage is ''
+PASS happySelect.validationMessage is ''
+PASS happyOutput.validationMessage is ''
+PASS happyObject.validationMessage is ''
+PASS happyKeygen.validationMessage is ''
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

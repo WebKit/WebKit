@@ -9,9 +9,9 @@ PASS input.list is null
 FAIL datalist.className should be former. Threw exception TypeError: 'null' is not an object (evaluating 'datalist.className')
 FAIL document.getElementById("text").list should be [object HTMLDataListElement]. Was null.
 FAIL document.getElementById("search").list should be [object HTMLDataListElement]. Was null.
-FAIL document.getElementById("url").list should be [object HTMLDataListElement]. Was null.
+PASS document.getElementById("url").list is document.getElementById("dl1")
 FAIL document.getElementById("telephone").list should be [object HTMLDataListElement]. Was null.
-FAIL document.getElementById("email").list should be [object HTMLDataListElement]. Was null.
+PASS document.getElementById("email").list is document.getElementById("dl1")
 FAIL document.getElementById("datetime").list should be [object HTMLDataListElement]. Was null.
 FAIL document.getElementById("date").list should be [object HTMLDataListElement]. Was null.
 FAIL document.getElementById("month").list should be [object HTMLDataListElement]. Was null.
