@@ -34,27 +34,9 @@
 
 namespace WebCore {
 
-class AtomicHTMLToken : public RefCounted<AtomicHTMLToken> {
+class AtomicHTMLToken {
     WTF_MAKE_NONCOPYABLE(AtomicHTMLToken);
 public:
-    static PassRefPtr<AtomicHTMLToken> create(HTMLToken& token)
-    {
-        return adoptRef(new AtomicHTMLToken(token));
-    }
-
-#if ENABLE(THREADED_HTML_PARSER)
-
-    static PassRefPtr<AtomicHTMLToken> create(const CompactHTMLToken& token)
-    {
-        return adoptRef(new AtomicHTMLToken(token));
-    }
-
-#endif
-
-    static PassRefPtr<AtomicHTMLToken> create(HTMLToken::Type type, const AtomicString& name, const Vector<Attribute>& attributes = Vector<Attribute>())
-    {
-        return adoptRef(new AtomicHTMLToken(type, name, attributes));
-    }
 
     bool forceQuirks() const
     {
@@ -137,14 +119,6 @@ public:
         return m_doctypeData->m_systemIdentifier;
     }
 
-    void clearExternalCharacters()
-    {
-        m_externalCharacters = 0;
-        m_externalCharactersLength = 0;
-        m_isAll8BitData = false;
-    }
-
-private:
     explicit AtomicHTMLToken(HTMLToken& token)
         : m_type(token.type())
     {
@@ -246,6 +220,7 @@ private:
         ASSERT(usesName());
     }
 
+private:
     HTMLToken::Type m_type;
 
     void initializeAttributes(const HTMLToken::AttributeList& attributes);

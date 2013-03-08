@@ -40,11 +40,6 @@ namespace WebCore {
 // Noah's Ark of Formatting Elements can fit three of each element.
 static const size_t kNoahsArkCapacity = 3;
 
-static inline size_t attributeCount(AtomicHTMLToken* token)
-{
-    return token->attributes().size();
-}
-
 HTMLFormattingElementList::HTMLFormattingElementList()
 {
 }
@@ -142,7 +137,7 @@ void HTMLFormattingElementList::tryToEnsureNoahsArkConditionQuickly(HTMLStackIte
     // of a quickly ensuring the condition.
     Vector<HTMLStackItem*, 10> candidates;
 
-    size_t newItemAttributeCount = attributeCount(newItem->token());
+    size_t newItemAttributeCount = newItem->attributes().size();
 
     for (size_t i = m_entries.size(); i; ) {
         --i;
@@ -154,7 +149,7 @@ void HTMLFormattingElementList::tryToEnsureNoahsArkConditionQuickly(HTMLStackIte
         HTMLStackItem* candidate = entry.stackItem().get();
         if (newItem->localName() != candidate->localName() || newItem->namespaceURI() != candidate->namespaceURI())
             continue;
-        if (attributeCount(candidate->token()) != newItemAttributeCount)
+        if (candidate->attributes().size() != newItemAttributeCount)
             continue;
 
         candidates.append(candidate);
@@ -178,7 +173,7 @@ void HTMLFormattingElementList::ensureNoahsArkCondition(HTMLStackItem* newItem)
     Vector<HTMLStackItem*> remainingCandidates;
     remainingCandidates.reserveInitialCapacity(candidates.size());
 
-    const Vector<Attribute>& attributes = newItem->token()->attributes();
+    const Vector<Attribute>& attributes = newItem->attributes();
     for (size_t i = 0; i < attributes.size(); ++i) {
         const Attribute& attribute = attributes[i];
 
@@ -186,10 +181,10 @@ void HTMLFormattingElementList::ensureNoahsArkCondition(HTMLStackItem* newItem)
             HTMLStackItem* candidate = candidates[j];
 
             // These properties should already have been checked by tryToEnsureNoahsArkConditionQuickly.
-            ASSERT(attributeCount(newItem->token()) == attributeCount(candidate->token()));
+            ASSERT(newItem->attributes().size() == candidate->attributes().size());
             ASSERT(newItem->localName() == candidate->localName() && newItem->namespaceURI() == candidate->namespaceURI());
 
-            Attribute* candidateAttribute = candidate->token()->getAttributeItem(attribute.name());
+            Attribute* candidateAttribute = candidate->getAttributeItem(attribute.name());
             if (candidateAttribute && candidateAttribute->value() == attribute.value())
                 remainingCandidates.append(candidate);
         }

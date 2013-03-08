@@ -54,7 +54,7 @@ public:
     }
 
     // Used by HTMLElementStack and HTMLFormattingElementList.
-    static PassRefPtr<HTMLStackItem> create(PassRefPtr<ContainerNode> node, PassRefPtr<AtomicHTMLToken> token, const AtomicString& namespaceURI = HTMLNames::xhtmlNamespaceURI)
+    static PassRefPtr<HTMLStackItem> create(PassRefPtr<ContainerNode> node, AtomicHTMLToken* token, const AtomicString& namespaceURI = HTMLNames::xhtmlNamespaceURI)
     {
         return adoptRef(new HTMLStackItem(node, token, namespaceURI));
     }
@@ -65,12 +65,18 @@ public:
     bool isDocumentFragmentNode() const { return m_isDocumentFragmentNode; }
     bool isElementNode() const { return !m_isDocumentFragmentNode; }
 
-    AtomicHTMLToken* token() { return m_token.get(); }
     const AtomicString& namespaceURI() const { return m_namespaceURI; }
-    const AtomicString& localName() const { return m_token->name(); }
+    const AtomicString& localName() const { return m_tokenLocalName; }
 
-    bool hasLocalName(const AtomicString& name) const { return m_token->name() == name; }
-    bool hasTagName(const QualifiedName& name) const { return m_token->name() == name.localName() && m_namespaceURI == name.namespaceURI(); }
+    const Vector<Attribute>& attributes() const { ASSERT(m_tokenLocalName); return m_tokenAttributes; }
+    Attribute* getAttributeItem(const QualifiedName& attributeName)
+    {
+        ASSERT(m_tokenLocalName);
+        return findAttributeInVector(m_tokenAttributes, attributeName);
+    }
+
+    bool hasLocalName(const AtomicString& name) const { return m_tokenLocalName == name; }
+    bool hasTagName(const QualifiedName& name) const { return m_tokenLocalName == name.localName() && m_namespaceURI == name.namespaceURI(); }
 
     bool causesFosterParenting()
     {
@@ -205,24 +211,20 @@ private:
     {
         switch (type) {
         case ItemForDocumentFragmentNode:
-            // Create a fake token for a document fragment node. This looks ugly but required for performance
-            // because we want to use m_token->name() in localName(), hasLocalName() and hasTagName() without
-            // checking m_isDocumentFragmentNode flag.
-            m_token = AtomicHTMLToken::create(HTMLToken::StartTag, nullAtom);
             m_isDocumentFragmentNode = true;
             break;
         case ItemForContextElement:
-            // Create a fake token for a context element for the same reason as above.
-            m_token = AtomicHTMLToken::create(HTMLToken::StartTag, m_node->localName());
+            m_tokenLocalName = m_node->localName();
             m_namespaceURI = m_node->namespaceURI();
             m_isDocumentFragmentNode = false;
             break;
         }
     }
 
-    HTMLStackItem(PassRefPtr<ContainerNode> node, PassRefPtr<AtomicHTMLToken> token, const AtomicString& namespaceURI = HTMLNames::xhtmlNamespaceURI)
+    HTMLStackItem(PassRefPtr<ContainerNode> node, AtomicHTMLToken* token, const AtomicString& namespaceURI = HTMLNames::xhtmlNamespaceURI)
         : m_node(node)
-        , m_token(token)
+        , m_tokenLocalName(token->name())
+        , m_tokenAttributes(token->attributes())
         , m_namespaceURI(namespaceURI)
         , m_isDocumentFragmentNode(false)
     {
@@ -230,7 +232,8 @@ private:
 
     RefPtr<ContainerNode> m_node;
 
-    RefPtr<AtomicHTMLToken> m_token;
+    AtomicString m_tokenLocalName;
+    Vector<Attribute> m_tokenAttributes;
     AtomicString m_namespaceURI;
     bool m_isDocumentFragmentNode;
 };

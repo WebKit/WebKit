@@ -290,7 +290,7 @@ bool HTMLElementStack::isHTMLIntegrationPoint(HTMLStackItem* item)
     if (!item->isElementNode())
         return false;
     if (item->hasTagName(MathMLNames::annotation_xmlTag)) {
-        Attribute* encodingAttr = item->token()->getAttributeItem(MathMLNames::encodingAttr);
+        Attribute* encodingAttr = item->getAttributeItem(MathMLNames::encodingAttr);
         if (encodingAttr) {
             const String& encoding = encodingAttr->value();
             return equalIgnoringCase(encoding, "text/html")

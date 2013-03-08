@@ -564,7 +564,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 
 void HTMLDocumentParser::constructTreeFromHTMLToken(HTMLToken& rawToken)
 {
-    RefPtr<AtomicHTMLToken> token = AtomicHTMLToken::create(rawToken);
+    AtomicHTMLToken token(rawToken);
 
     // We clear the rawToken in case constructTreeFromAtomicToken
     // synchronously re-enters the parser. We don't clear the token immedately
@@ -579,13 +579,7 @@ void HTMLDocumentParser::constructTreeFromHTMLToken(HTMLToken& rawToken)
     if (rawToken.type() != HTMLToken::Character)
         rawToken.clear();
 
-    m_treeBuilder->constructTree(token.get());
-
-    // AtomicHTMLToken keeps a pointer to the HTMLToken's buffer instead
-    // of copying the characters for performance.
-    // Clear the external characters pointer before the raw token is cleared
-    // to make sure that we won't have a dangling pointer.
-    token->clearExternalCharacters();
+    m_treeBuilder->constructTree(&token);
 
     if (!rawToken.isUninitialized()) {
         ASSERT(rawToken.type() == HTMLToken::Character);
@@ -597,9 +591,8 @@ void HTMLDocumentParser::constructTreeFromHTMLToken(HTMLToken& rawToken)
 
 void HTMLDocumentParser::constructTreeFromCompactHTMLToken(const CompactHTMLToken& compactToken)
 {
-    RefPtr<AtomicHTMLToken> token = AtomicHTMLToken::create(compactToken);
-    m_treeBuilder->constructTree(token.get());
-    token->clearExternalCharacters(); // The compact token could be destroyed any time after this method returns.
+    AtomicHTMLToken token(compactToken);
+    m_treeBuilder->constructTree(&token);
 }
 
 #endif
