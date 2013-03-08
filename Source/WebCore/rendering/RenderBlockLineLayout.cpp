@@ -2836,6 +2836,12 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             bool midWordBreak = false;
             bool breakAll = currentStyle->wordBreak() == BreakAllWordBreak && autoWrap;
             float hyphenWidth = 0;
+#if ENABLE(SVG)
+            if (isSVGText) {
+                breakWords = false;
+                breakAll = false;
+            }
+#endif
 
             if (t->isWordBreak()) {
                 width.commit();
