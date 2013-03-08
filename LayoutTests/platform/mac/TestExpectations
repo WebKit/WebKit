@@ -1456,3 +1456,7 @@ webkit.org/b/111650 http/tests/cookies/third-party-cookie-relaxing.html [ Failur
 webkit.org/b/111650 http/tests/cookies/third-party-cookie-accept-policy.html [ Failure Pass ]
 
 webkit.org/b/111754 inspector/debugger/debugger-expand-scope.html [ Crash Pass ]
+
+webkit.org/b/111606 fast/borders/border-fit-2.html [ Failure Pass ]
+webkit.org/b/111606 fast/borders/border-fit.html [ Failure Pass ]
+webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Failure Pass ]
