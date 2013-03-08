@@ -1,3 +1,9 @@
+2013-03-08  Roger Fong  <roger_fong@apple.com>
+
+        Build fix for AppleWin VS2010.
+
+        * WebKit.vcxproj/FeatureDefines.props:
+
 2013-03-06  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed partial roll-out of r145003. Disable
