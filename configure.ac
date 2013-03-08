@@ -26,6 +26,7 @@ m4_include([Source/autotools/ReadCommandLineArguments.m4])
 m4_include([Source/autotools/FindDependencies.m4])
 m4_include([Source/autotools/SetupCompilerFlags.m4])
 m4_include([Source/autotools/SetupAutoconfHeader.m4])
+m4_include([Source/autotools/SetupWebKitFeatures.m4])
 
 # We would put AM_INIT_AUTOMAKE into SetupAutomake.m4, but seems to cause autoconf errors.
 AM_INIT_AUTOMAKE([foreign subdir-objects dist-xz no-dist-gzip tar-ustar])
