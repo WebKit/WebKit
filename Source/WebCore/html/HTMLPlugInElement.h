@@ -111,6 +111,21 @@ private:
     DisplayState m_displayState;
 };
 
+inline HTMLPlugInElement* toHTMLPlugInElement(Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isPluginElement());
+    return static_cast<HTMLPlugInElement*>(node);
+}
+
+inline const HTMLPlugInElement* toHTMLPlugInElement(const Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isPluginElement());
+    return static_cast<const HTMLPlugInElement*>(node);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toHTMLPlugInElement(const HTMLPlugInElement*);
+
 } // namespace WebCore
 
 #endif // HTMLPlugInElement_h

@@ -55,8 +55,6 @@ private:
     virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
 
     void paintSnapshot(PaintInfo&, const LayoutPoint&);
-    void paintSnapshotWithLabel(PaintInfo&, const LayoutPoint&);
-    void paintSnapshotImage(Image*, PaintInfo&, const LayoutPoint&);
     void repaintLabel();
 
     virtual void layout() OVERRIDE;

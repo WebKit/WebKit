@@ -29,7 +29,6 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Cursor.h"
-#include "FEGaussianBlur.h"
 #include "Filter.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
@@ -41,62 +40,11 @@
 #include "PaintInfo.h"
 #include "Path.h"
 #include "RenderView.h"
-#include "SourceGraphic.h"
 
 namespace WebCore {
 
-static const int autoStartPlugInSizeThresholdWidth = 1;
-static const int autoStartPlugInSizeThresholdHeight = 1;
 static const double showLabelAfterMouseOverDelay = 1;
 static const double showLabelAutomaticallyDelay = 3;
-static const int snapshotLabelBlurRadius = 5;
-
-#if ENABLE(FILTERS)
-class RenderSnapshottedPlugInBlurFilter : public Filter {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    static PassRefPtr<RenderSnapshottedPlugInBlurFilter> create(int radius)
-    {
-        return adoptRef(new RenderSnapshottedPlugInBlurFilter(radius));
-    }
-
-    void setSourceImageRect(const FloatRect& r)
-    {
-        m_sourceImageRect = r;
-        m_filterRegion = r;
-        m_sourceGraphic->setMaxEffectRect(r);
-        m_blur->setMaxEffectRect(r);
-    }
-    virtual FloatRect sourceImageRect() const { return m_sourceImageRect; }
-    virtual FloatRect filterRegion() const { return m_filterRegion; }
-
-    void apply();
-    ImageBuffer* output() const { return m_blur->asImageBuffer(); }
-
-private:
-    RenderSnapshottedPlugInBlurFilter(int radius);
-
-    FloatRect m_sourceImageRect;
-    FloatRect m_filterRegion;
-    RefPtr<SourceGraphic> m_sourceGraphic;
-    RefPtr<FEGaussianBlur> m_blur;
-};
-
-RenderSnapshottedPlugInBlurFilter::RenderSnapshottedPlugInBlurFilter(int radius)
-{
-    setFilterResolution(FloatSize(1, 1));
-    m_sourceGraphic = SourceGraphic::create(this);
-    m_blur = FEGaussianBlur::create(this, radius, radius);
-    m_blur->inputEffects().append(m_sourceGraphic);
-}
-
-void RenderSnapshottedPlugInBlurFilter::apply()
-{
-    m_sourceGraphic->clearResult();
-    m_blur->clearResult();
-    m_blur->apply();
-}
-#endif
 
 RenderSnapshottedPlugIn::RenderSnapshottedPlugIn(HTMLPlugInImageElement* element)
     : RenderBlock(element)
@@ -160,17 +108,18 @@ void RenderSnapshottedPlugIn::updateSnapshot(PassRefPtr<Image> image)
 void RenderSnapshottedPlugIn::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (paintInfo.phase == PaintPhaseBlockBackground && plugInImageElement()->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick) {
-        if (m_shouldShowLabel)
-            paintSnapshotWithLabel(paintInfo, paintOffset);
-        else
-            paintSnapshot(paintInfo, paintOffset);
+        paintSnapshot(paintInfo, paintOffset);
     }
 
     RenderBlock::paint(paintInfo, paintOffset);
 }
 
-void RenderSnapshottedPlugIn::paintSnapshotImage(Image* image, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+void RenderSnapshottedPlugIn::paintSnapshot(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
+    Image* image = m_snapshotResource->image().get();
+    if (!image || image->isNull())
+        return;
+
     LayoutUnit cWidth = contentWidth();
     LayoutUnit cHeight = contentHeight();
     if (!cWidth || !cHeight)
@@ -193,65 +142,6 @@ void RenderSnapshottedPlugIn::paintSnapshotImage(Image* image, PaintInfo& paintI
 
     bool useLowQualityScaling = shouldPaintAtLowQuality(context, image, image, alignedRect.size());
     context->drawImage(image, style()->colorSpace(), alignedRect, CompositeSourceOver, shouldRespectImageOrientation(), useLowQualityScaling);
-}
-
-void RenderSnapshottedPlugIn::paintSnapshot(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    RefPtr<Image> image = m_snapshotResource->image();
-    if (!image || image->isNull())
-        return;
-
-    paintSnapshotImage(image.get(), paintInfo, paintOffset);
-}
-
-#if ENABLE(FILTERS)
-static PassRefPtr<Image> snapshottedPluginImageForLabelDisplay(PassRefPtr<Image> snapshot, const LayoutRect& blurRegion)
-{
-    OwnPtr<ImageBuffer> snapshotBuffer = ImageBuffer::create(snapshot->size());
-    snapshotBuffer->context()->drawImage(snapshot.get(), ColorSpaceDeviceRGB, IntPoint(0, 0));
-
-    OwnPtr<ImageBuffer> blurBuffer = ImageBuffer::create(roundedIntSize(blurRegion.size()));
-    blurBuffer->context()->drawImage(snapshot.get(), ColorSpaceDeviceRGB, IntPoint(-blurRegion.x(), -blurRegion.y()));
-
-    RefPtr<RenderSnapshottedPlugInBlurFilter> blurFilter = RenderSnapshottedPlugInBlurFilter::create(snapshotLabelBlurRadius);
-    blurFilter->setSourceImage(blurBuffer.release());
-    blurFilter->setSourceImageRect(FloatRect(FloatPoint(), blurRegion.size()));
-    blurFilter->apply();
-
-    snapshotBuffer->context()->drawImageBuffer(blurFilter->output(), ColorSpaceDeviceRGB, roundedIntPoint(blurRegion.location()));
-    return snapshotBuffer->copyImage();
-}
-#endif
-
-void RenderSnapshottedPlugIn::paintSnapshotWithLabel(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    if (contentBoxRect().isEmpty())
-        return;
-
-    if (!plugInImageElement()->hovered() && m_showReason == UserMousedOver)
-        return;
-
-    m_showedLabelOnce = true;
-    LayoutRect labelRect;
-
-    RefPtr<Image> snapshotImage = m_snapshotResource->image();
-    if (!snapshotImage || snapshotImage->isNull())
-        return;
-
-#if ENABLE(FILTERS)
-    // FIXME: Temporarily disabling the blur behind the label.
-    // https://bugs.webkit.org/show_bug.cgi?id=108368
-    if (!labelRect.isEmpty()) {
-        RefPtr<Image> blurredSnapshotImage = m_snapshotResourceForLabel->image();
-        if (!blurredSnapshotImage || blurredSnapshotImage->isNull()) {
-            blurredSnapshotImage = snapshottedPluginImageForLabelDisplay(snapshotImage, labelRect);
-            m_snapshotResourceForLabel->setCachedImage(new CachedImage(blurredSnapshotImage.get()));
-        }
-        snapshotImage = blurredSnapshotImage;
-    }
-#endif
-
-    paintSnapshotImage(snapshotImage.get(), paintInfo, paintOffset);
 }
 
 void RenderSnapshottedPlugIn::repaintLabel()

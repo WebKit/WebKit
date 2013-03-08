@@ -149,6 +149,8 @@ protected:
 
     virtual bool shouldShowPlaceholderWhenFocused() const;
 
+    virtual bool paintSnapshottedPluginOverlay(RenderObject*, const PaintInfo&, const IntRect&);
+
 private:
     virtual String fileListNameForWidth(const FileList*, const Font&, int width, bool multipleFilesAllowed) const OVERRIDE;
 

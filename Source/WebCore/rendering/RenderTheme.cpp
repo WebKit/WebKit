@@ -380,6 +380,8 @@ bool RenderTheme::paint(RenderObject* o, const PaintInfo& paintInfo, const IntRe
         return paintSearchFieldResultsDecoration(o, paintInfo, r);
     case SearchFieldResultsButtonPart:
         return paintSearchFieldResultsButton(o, paintInfo, r);
+    case SnapshottedPluginOverlayPart:
+        return paintSnapshottedPluginOverlay(o, paintInfo, r);
 #if ENABLE(INPUT_SPEECH)
     case InputSpeechButtonPart:
         return paintInputFieldSpeechButton(o, paintInfo, r);

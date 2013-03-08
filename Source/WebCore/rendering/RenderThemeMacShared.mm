@@ -32,12 +32,14 @@
 #import "HTMLInputElement.h"
 #import "HTMLMediaElement.h"
 #import "HTMLNames.h"
+#import "HTMLPlugInImageElement.h"
 #import "Image.h"
 #import "ImageBuffer.h"
 #import "LocalCurrentGraphicsContext.h"
 #import "LocalizedStrings.h"
 #import "MediaControlElements.h"
 #import "PaintInfo.h"
+#import "RenderLayer.h"
 #import "RenderMedia.h"
 #import "RenderMediaControls.h"
 #import "RenderSlider.h"
@@ -1699,6 +1701,83 @@ bool RenderThemeMacShared::paintSearchFieldResultsButton(RenderObject* o, const 
     [[search searchButtonCell] drawWithFrame:unzoomedRect inView:documentViewFor(o)];
     [[search searchButtonCell] setControlView:nil];
 
+    return false;
+}
+
+bool RenderThemeMacShared::paintSnapshottedPluginOverlay(RenderObject* o, const PaintInfo& paintInfo, const IntRect&)
+{
+    if (paintInfo.phase != PaintPhaseBlockBackground)
+        return true;
+
+    if (!o->isRenderBlock())
+        return true;
+
+    RenderBlock* renderBlock = toRenderBlock(o);
+
+    LayoutUnit contentWidth = renderBlock->contentWidth();
+    LayoutUnit contentHeight = renderBlock->contentHeight();
+    if (!contentWidth || !contentHeight)
+        return true;
+
+    GraphicsContext* context = paintInfo.context;
+
+    LayoutSize contentSize(contentWidth, contentHeight);
+    LayoutPoint contentLocation = renderBlock->location();
+    contentLocation.move(renderBlock->borderLeft() + renderBlock->paddingLeft(), renderBlock->borderTop() + renderBlock->paddingTop());
+
+    LayoutRect rect(contentLocation, contentSize);
+    IntRect alignedRect = pixelSnappedIntRect(rect);
+    if (alignedRect.width() <= 0 || alignedRect.height() <= 0)
+        return true;
+
+    // We need to get the snapshot image from the plugin element, which should be available
+    // from our node. Assuming this node is the plugin overlay element, we should get to the
+    // plugin itself by asking for the shadow root parent, and then its parent.
+
+    if (!renderBlock->node()->isHTMLElement())
+        return true;
+
+    HTMLElement* plugInOverlay = toHTMLElement(renderBlock->node());
+    Element* parent = plugInOverlay->parentOrShadowHostElement();
+    while (parent && !parent->isPluginElement())
+        parent = parent->parentOrShadowHostElement();
+
+    if (!parent)
+        return true;
+
+    HTMLPlugInElement* plugInElement = toHTMLPlugInElement(parent);
+    if (!plugInElement->isPlugInImageElement())
+        return true;
+
+    HTMLPlugInImageElement* plugInImageElement = toHTMLPlugInImageElement(plugInElement);
+
+    Image* snapshot = plugInImageElement->snapshotImage();
+    if (!snapshot)
+        return true;
+
+    RenderSnapshottedPlugIn* plugInRenderer = toRenderSnapshottedPlugIn(plugInImageElement->renderer());
+    FloatPoint snapshotAbsPos = plugInRenderer->localToAbsolute();
+    snapshotAbsPos.move(plugInRenderer->borderLeft() + plugInRenderer->paddingLeft(), plugInRenderer->borderTop() + plugInRenderer->paddingTop());
+
+    // We could draw the snapshot with that coordinates, but we need to make sure there
+    // isn't a composited layer between us and the plugInRenderer.
+    RenderBox* renderBox = toRenderBox(o);
+    while (renderBox != plugInRenderer) {
+        if (renderBox->hasLayer() && renderBox->layer() && renderBox->layer()->isComposited()) {
+            snapshotAbsPos = -renderBox->location();
+            break;
+        }
+        renderBox = renderBox->parentBox();
+    }
+
+    LayoutSize pluginSize(plugInRenderer->contentWidth(), plugInRenderer->contentHeight());
+    LayoutRect pluginRect(snapshotAbsPos, pluginSize);
+    IntRect alignedPluginRect = pixelSnappedIntRect(pluginRect);
+
+    if (alignedPluginRect.width() <= 0 || alignedPluginRect.height() <= 0)
+        return true;
+
+    context->drawImage(snapshot, plugInRenderer->style()->colorSpace(), alignedPluginRect, CompositeSourceOver);
     return false;
 }
 

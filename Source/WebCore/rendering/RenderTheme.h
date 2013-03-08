@@ -344,6 +344,8 @@ protected:
     virtual bool paintMediaFullScreenVolumeSliderTrack(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
     virtual bool paintMediaFullScreenVolumeSliderThumb(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
 
+    virtual bool paintSnapshottedPluginOverlay(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
+
 public:
     // Methods for state querying
     ControlStates controlStatesForRenderer(const RenderObject* o) const;
