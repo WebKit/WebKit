@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -307,7 +307,9 @@ public:
     void setPageZoomFactor(double);
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
     void windowScreenDidChange(uint64_t);
+#if ENABLE(VIEW_MODE_CSS_MEDIA)
     void setViewMode(WebCore::Page::ViewMode);
+#endif // ENABLE(VIEW_MODE_CSS_MEDIA)
 
     void scalePage(double scale, const WebCore::IntPoint& origin);
     double pageScaleFactor() const;

@@ -90,14 +90,15 @@ http/tests/plugins/plugin-document-has-focus.html
 # Requires testRunner.setMediaType() and implementation
 fast/media/print-restores-previous-mediatype.html
 
-# Requires testRunner.setViewModeMediaFeature()
-fast/media/view-mode-media-feature.html
-fast/media/media-query-list-02.html
-fast/media/media-query-list-03.html
-fast/media/media-query-list-04.html
-fast/media/media-query-list-05.html
-fast/media/media-query-list-06.html
-fast/media/media-query-list-07.html
+# VIEW_MODE_CSS_MEDIA is not enabled on Mac.
+# DumpRenderTree requires testRunner.setViewModeMediaFeature()
+fast/media/view-mode-media-feature.html [ ImageOnlyFailure ]
+fast/media/media-query-list-02.html [ Failure ]
+fast/media/media-query-list-03.html [ Failure ]
+fast/media/media-query-list-04.html [ Failure ]
+fast/media/media-query-list-05.html [ Failure ]
+fast/media/media-query-list-06.html [ Failure ]
+fast/media/media-query-list-07.html [ Failure ]
 
 # Needs layoutTestController.enableAutoResizeMode()
 fast/autoresize

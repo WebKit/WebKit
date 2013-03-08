@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -470,6 +470,7 @@ bool WKBundlePageCanShowMIMEType(WKBundlePageRef pageRef, WKStringRef mimeTypeRe
     return toImpl(pageRef)->canShowMIMEType(toWTFString(mimeTypeRef));
 }
 
+#if ENABLE(VIEW_MODE_CSS_MEDIA)
 void WKBundlePageSetViewMode(WKBundlePageRef pageRef, WKStringRef mode)
 {
     String modeWTF = toWTFString(mode);
@@ -486,3 +487,4 @@ void WKBundlePageSetViewMode(WKBundlePageRef pageRef, WKStringRef mode)
     else
         ASSERT_NOT_REACHED();
 }
+#endif // ENABLE(VIEW_MODE_CSS_MEDIA)

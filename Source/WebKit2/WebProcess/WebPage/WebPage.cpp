@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
@@ -1175,10 +1175,12 @@ void WebPage::windowScreenDidChange(uint64_t displayID)
     m_page->windowScreenDidChange(static_cast<PlatformDisplayID>(displayID));
 }
 
+#if ENABLE(VIEW_MODE_CSS_MEDIA)
 void WebPage::setViewMode(Page::ViewMode mode)
 {
     m_page->setViewMode(mode);
 }
+#endif // ENABLE(VIEW_MODE_CSS_MEDIA)
 
 void WebPage::scalePage(double scale, const IntPoint& origin)
 {

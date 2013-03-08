@@ -782,7 +782,6 @@ __ZN7WebCore4Page10findStringERKN3WTF6StringEj
 __ZN7WebCore4Page11PageClientsC1Ev
 __ZN7WebCore4Page11PageClientsD1Ev
 __ZN7WebCore4Page12setGroupNameERKN3WTF6StringE
-__ZN7WebCore4Page11setViewModeENS0_8ViewModeE
 __ZN7WebCore4Page13rangeOfStringERKN3WTF6StringEPNS_5RangeEj
 __ZN7WebCore4Page13setIsInWindowEb
 __ZN7WebCore4Page13setPaginationERKNS_10PaginationE
@@ -2786,6 +2785,10 @@ __ZNK7WebCore16HTMLMediaElement5endedEv
 __ZNK7WebCore16HTMLMediaElement6pausedEv
 .objc_class_name_WebVideoFullscreenController
 #endif
+
+#if ENABLE(VIEW_MODE_CSS_MEDIA)
+__ZN7WebCore4Page11setViewModeENS0_8ViewModeE
+#endif // ENABLE(VIEW_MODE_CSS_MEDIA)
 
 #if ENABLE(WORKERS)
 __ZN7WebCore12WorkerThread17workerThreadCountEv

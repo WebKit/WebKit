@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -782,8 +782,12 @@ void TestRunner::queueNonLoadingScript(JSStringRef script)
 
 void TestRunner::setViewModeMediaFeature(JSStringRef mode)
 {
+#if ENABLE(VIEW_MODE_CSS_MEDIA)
     WKRetainPtr<WKStringRef> modeWK = toWK(mode);
     WKBundlePageSetViewMode(InjectedBundle::shared().page()->page(), modeWK.get());
+#else
+    UNUSED_PARAM(mode);
+#endif // ENABLE(VIEW_MODE_CSS_MEDIA)
 }
 
 void TestRunner::setHandlesAuthenticationChallenges(bool handlesAuthenticationChallenges)

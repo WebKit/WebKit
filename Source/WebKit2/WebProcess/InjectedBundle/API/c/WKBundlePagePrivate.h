@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,7 +79,9 @@ WK_EXPORT void* WKAccessibilityFocusedObject(WKBundlePageRef);
 
 WK_EXPORT WKArrayRef WKBundlePageCopyContextMenuItemTitles(WKBundlePageRef);
 
+#if ENABLE(VIEW_MODE_CSS_MEDIA)
 WK_EXPORT void WKBundlePageSetViewMode(WKBundlePageRef pageRef, WKStringRef mode);
+#endif // ENABLE(VIEW_MODE_CSS_MEDIA)
 #ifdef __cplusplus
 }
 #endif

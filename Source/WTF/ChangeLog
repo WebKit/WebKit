@@ -1,3 +1,13 @@
+2013-03-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        [Mac] Add a feature flag for 'view-mode' Media Feature, disable it on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=111297
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * wtf/FeatureDefines.h: Add a new feature flag for the view-mode
+        CSS media: ENABLE_VIEW_MODE_CSS_MEDIA.
+
 2013-03-08  Roger Fong  <roger_fong@apple.com>
 
         Makefile fixes.

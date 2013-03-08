@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc. All Rights Reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -157,7 +157,9 @@ Page::Page(PageClients& pageClients)
     , m_customHTMLTokenizerTimeDelay(-1)
     , m_customHTMLTokenizerChunkSize(-1)
     , m_canStartMedia(true)
+#if ENABLE(VIEW_MODE_CSS_MEDIA)
     , m_viewMode(ViewModeWindowed)
+#endif // ENABLE(VIEW_MODE_CSS_MEDIA)
     , m_minimumTimerInterval(Settings::defaultMinDOMTimerInterval())
     , m_timerAlignmentInterval(Settings::defaultDOMTimerAlignmentInterval())
     , m_isEditable(false)
@@ -287,6 +289,7 @@ PassRefPtr<ClientRectList> Page::nonFastScrollableRects(const Frame* frame)
     return ClientRectList::create(quads);
 }
 
+#if ENABLE(VIEW_MODE_CSS_MEDIA)
 struct ViewModeInfo {
     const char* name;
     Page::ViewMode type;
@@ -325,6 +328,7 @@ void Page::setViewMode(ViewMode viewMode)
     if (m_mainFrame->document())
         m_mainFrame->document()->styleResolverChanged(RecalcStyleImmediately);
 }
+#endif // ENABLE(VIEW_MODE_CSS_MEDIA)
 
 void Page::setMainFrame(PassRefPtr<Frame> mainFrame)
 {

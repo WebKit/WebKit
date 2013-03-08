@@ -1,3 +1,13 @@
+2013-03-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        [Mac] Add a feature flag for 'view-mode' Media Feature, disable it on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=111297
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setViewModeMediaFeature):
+
 2013-03-08  Chris Fleizach  <cfleizach@apple.com>
 
         [Mac] [WK2] platform/mac/accessibility/press-action-is-first.html fails

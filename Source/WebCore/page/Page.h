@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * This library is free software; you can redistribute it and/or
@@ -207,6 +207,7 @@ public:
 
     FeatureObserver* featureObserver() { return &m_featureObserver; }
 
+#if ENABLE(VIEW_MODE_CSS_MEDIA)
     enum ViewMode {
         ViewModeInvalid,
         ViewModeWindowed,
@@ -219,6 +220,7 @@ public:
 
     ViewMode viewMode() const { return m_viewMode; }
     void setViewMode(ViewMode);
+#endif // ENABLE(VIEW_MODE_CSS_MEDIA)
 
     void setTabKeyCyclesThroughElements(bool b) { m_tabKeyCyclesThroughElements = b; }
     bool tabKeyCyclesThroughElements() const { return m_tabKeyCyclesThroughElements; }
@@ -468,7 +470,9 @@ private:
 
     RefPtr<StorageNamespace> m_sessionStorage;
 
+#if ENABLE(VIEW_MODE_CSS_MEDIA)
     ViewMode m_viewMode;
+#endif // ENABLE(VIEW_MODE_CSS_MEDIA)
 
     double m_minimumTimerInterval;
 
