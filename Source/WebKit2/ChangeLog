@@ -1,3 +1,37 @@
+2013-03-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [WK2][GTK] Invalid request returned by webkit_download_get_request if called before download starts
+        https://bugs.webkit.org/show_bug.cgi?id=111574
+
+        Reviewed by Alexey Proskuryakov.
+
+        webkit_download_get_request() creates the WebKitURIRequest object
+        on demand using the ResourceRequest from the DownloadProxy. The
+        ResourceRequest of the DownloadProxy is set in
+        DownloadProxy::didStart(), so if we call
+        webkit_download_get_request() before didStart we return an invalid
+        WebKitURIRequest created from a NULL ResourceRequest. This is not
+        a problem for downloads started in the web process, because we
+        create the WebKitDownload after DownloadProxy::didStart(). For
+        downloads started manually with webkit_web_context_download_uri()
+        we need to create download object with the ResourceRequest passed
+        to the DownloadProxy.
+
+        * UIProcess/API/gtk/WebKitDownload.cpp:
+        (webkitDownloadCreateForRequest): New helper function for
+        downloads started manually to created them with a given
+        ResourceRequest.
+        * UIProcess/API/gtk/WebKitDownloadPrivate.h:
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (webkitWebContextStartDownload): Use
+        webkitDownloadCreateForRequest().
+        * UIProcess/API/gtk/tests/TestDownloads.cpp:
+        (testDownloadLocalFile):
+        (testDownloadLocalFileError):
+        (testDownloadRemoteFile):
+        (testDownloadRemoteFileError):
+        (testPolicyResponseDownload):
+
 2013-03-07  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13363499> Blobs are not cleaned up when WebProcess terminates
