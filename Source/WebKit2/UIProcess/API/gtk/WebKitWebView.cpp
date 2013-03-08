@@ -1821,7 +1821,8 @@ void webkit_web_view_load_request(WebKitWebView* webView, WebKitURIRequest* requ
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(WEBKIT_IS_URI_REQUEST(request));
 
-    getPage(webView)->loadURLRequest(WebURLRequest::create(webkitURIRequestGetResourceRequest(request)).leakRef());
+    RefPtr<WebURLRequest> urlRequest = WebURLRequest::create(webkitURIRequestGetResourceRequest(request));
+    getPage(webView)->loadURLRequest(urlRequest.get());
 }
 
 /**
