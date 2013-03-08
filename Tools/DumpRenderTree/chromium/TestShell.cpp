@@ -162,13 +162,13 @@ void TestShell::createMainWindow()
 
 TestShell::~TestShell()
 {
+    if (m_webViewHost)
+        m_webViewHost->shutdown();
     m_testInterfaces->setDelegate(0);
     m_testInterfaces->setWebView(0, 0);
     m_devToolsTestInterfaces->setDelegate(0);
     m_devToolsTestInterfaces->setWebView(0, 0);
     m_drtDevToolsAgent->setWebView(0);
-    if (m_webViewHost)
-        m_webViewHost->shutdown();
 }
 
 void TestShell::createDRTDevToolsClient(DRTDevToolsAgent* agent)

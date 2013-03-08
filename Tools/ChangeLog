@@ -1,3 +1,17 @@
+2013-03-07  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] delay clearing the TestRunners until the main view was deleted
+        https://bugs.webkit.org/show_bug.cgi?id=111823
+
+        Reviewed by Eric Seidel.
+
+        During WebViewHost::shutdown, we navigate the WebView to about:blank.
+        This may call into the test runners which assume that the delegate is
+        always non-NULL.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::~TestShell):
+
 2013-03-07  Alan Cutter  <alancutter@chromium.org>
 
         Sheriffbot whois command can't search by full name
