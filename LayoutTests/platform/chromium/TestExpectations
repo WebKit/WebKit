@@ -4246,8 +4246,6 @@ webkit.org/b/103149 [ Mac ] fast/events/stopPropagation-submit.html [ Pass Failu
 webkit.org/b/103700 compositing/masks/simple-composited-mask.html [ ImageOnlyFailure ]
 
 # Some compositing tests doesn't work on multiple platforms.
-webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/load-video-in-reflection.html [ ImageOnlyFailure ]
-webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/nested-reflection-anchor-point.html [ ImageOnlyFailure ]
 webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/nested-reflection-animated.html [ ImageOnlyFailure ]
 
 # New tests added in r136492 that do not work in chromium
