@@ -486,7 +486,6 @@ WebInspector.ElementsPanel.prototype = {
             this._currentSearchResultIndex = (this._searchResults.length - 1);
 
         this._highlightCurrentSearchResult();
-        return true;
     },
 
     _highlightCurrentSearchResult: function()

@@ -892,7 +892,7 @@ WebInspector.ScriptsPanel.prototype = {
     jumpToPreviousSearchResult: function()
     {
         if (!this._searchView)
-            return false;
+            return;
 
         if (this._searchView !== this.visibleView) {
             this.performSearch(this._searchQuery);

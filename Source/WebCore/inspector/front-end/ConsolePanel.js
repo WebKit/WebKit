@@ -109,7 +109,6 @@ WebInspector.ConsolePanel.prototype = {
         if (index === -1)
             index = this._searchResults.length - 1;
         this._jumpToSearchResult(index);
-        return true;
     },
 
     _clearCurrentSearchResultHighlight: function()
