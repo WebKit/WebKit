@@ -6493,8 +6493,15 @@ RenderBlock* RenderBlock::firstLineBlock() const
         if (hasPseudo)
             break;
         RenderObject* parentBlock = firstLineBlock->parent();
-        if (firstLineBlock->isReplaced() || firstLineBlock->isFloating() || 
-            !parentBlock || parentBlock->firstChild() != firstLineBlock || !parentBlock->isBlockFlow() || parentBlock->isFlexibleBox())
+        // We include isRenderButton in this check because buttons are
+        // implemented using flex box but should still support first-line. The
+        // flex box spec requires that flex box does not support first-line,
+        // though.
+        // FIXME: Remove when buttons are implemented with align-items instead
+        // of flexbox.
+        if (firstLineBlock->isReplaced() || firstLineBlock->isFloating()
+            || !parentBlock || parentBlock->firstChild() != firstLineBlock || !parentBlock->isBlockFlow()
+            || (parentBlock->isFlexibleBox() && !parentBlock->isRenderButton()))
             break;
         ASSERT_WITH_SECURITY_IMPLICATION(parentBlock->isRenderBlock());
         firstLineBlock = toRenderBlock(parentBlock);
@@ -6538,14 +6545,21 @@ static inline RenderObject* findFirstLetterBlock(RenderBlock* start)
 {
     RenderObject* firstLetterBlock = start;
     while (true) {
+        // We include isRenderButton in these two checks because buttons are
+        // implemented using flex box but should still support first-letter.
+        // The flex box spec requires that flex box does not support
+        // first-letter, though.
+        // FIXME: Remove when buttons are implemented with align-items instead
+        // of flexbox.
         bool canHaveFirstLetterRenderer = firstLetterBlock->style()->hasPseudoStyle(FIRST_LETTER)
-            && firstLetterBlock->canHaveGeneratedChildren() && !firstLetterBlock->isFlexibleBox();
+            && firstLetterBlock->canHaveGeneratedChildren()
+            && (!firstLetterBlock->isFlexibleBox() || firstLetterBlock->isRenderButton());
         if (canHaveFirstLetterRenderer)
             return firstLetterBlock;
 
         RenderObject* parentBlock = firstLetterBlock->parent();
         if (firstLetterBlock->isReplaced() || !parentBlock || parentBlock->firstChild() != firstLetterBlock || 
-            !parentBlock->isBlockFlow() || parentBlock->isFlexibleBox())
+            !parentBlock->isBlockFlow() || (parentBlock->isFlexibleBox() && !parentBlock->isRenderButton()))
             return 0;
         firstLetterBlock = parentBlock;
     } 
