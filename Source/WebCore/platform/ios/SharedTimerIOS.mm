@@ -58,7 +58,6 @@ void setSharedTimerFiredFunction(SharedTimerFiredFunction function)
 
 static void timerFired(CFRunLoopTimerRef, void*)
 {
-    // FIXME: We can remove this global catch-all if we fix <rdar://problem/5299018>.
     @autoreleasepool {
         sharedTimerFiredFunction();
     }
