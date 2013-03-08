@@ -63,6 +63,7 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoadRequest.h>
 #import <WebCore/FrameView.h>
+#import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HTMLPlugInImageElement.h>
 #import <WebCore/HitTestResult.h>
@@ -195,8 +196,18 @@ void WebChromeClient::takeFocus(FocusDirection direction)
     }
 }
 
-void WebChromeClient::focusedNodeChanged(Node*)
+void WebChromeClient::focusedNodeChanged(Node* node)
 {
+    if (!node)
+        return;
+    if (!node->hasTagName(inputTag))
+        return;
+
+    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(node);
+    if (!inputElement->isText())
+        return;
+
+    CallFormDelegate(m_webView, @selector(didFocusTextField:inFrame:), kit(inputElement), kit(inputElement->document()->frame()));
 }
 
 void WebChromeClient::focusedFrameChanged(Frame*)

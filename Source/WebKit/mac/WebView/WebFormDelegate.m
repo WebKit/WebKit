@@ -60,6 +60,10 @@ static WebFormDelegate *sharedDelegate = nil;
 {
 }
 
+- (void)didFocusTextField:(DOMHTMLInputElement *)element inFrame:(WebFrame *)frame
+{
+}
+
 - (BOOL)textField:(DOMHTMLInputElement *)element doCommandBySelector:(SEL)commandSelector inFrame:(WebFrame *)frame
 {
     return NO;
