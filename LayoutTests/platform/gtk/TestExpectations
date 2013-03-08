@@ -292,6 +292,7 @@ webkit.org/b/71849 http/tests/security/webgl-remote-read-remote-image-allowed.ht
 webkit.org/b/71849 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html [ Skip ]
 webkit.org/b/71849 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Skip ]
 webkit.org/b/71849 inspector/profiler/webgl [ Skip ]
+webkit.org/b/71849 webkit.org/b/111477 inspector-protocol/layers [ Skip ]
 webkit.org/b/71849 transforms/3d [ Skip ]
 webkit.org/b/71849 webgl [ Skip ]
 
@@ -1403,11 +1404,12 @@ webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Failu
 
 webkit.org/b/111058 plugins/plugin-clip-subframe.html [ Failure ]
 
-webkit.org/b/111477 inspector-protocol/layers/layers-for-node.html [ Timeout ]
-webkit.org/b/111477 inspector-protocol/layers/layers-reflected-content.html [ Timeout ]
-
 # CURSOR_VISIBILITY is not enabled in gtk
 webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Failure ]
+
+webkit.org/b/111606 fast/borders/border-fit.html [ Failure ]
+webkit.org/b/111606 fast/borders/border-fit-2.html [ Failure ]
+webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
