@@ -1,3 +1,28 @@
+2013-03-07  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13363499> Blobs are not cleaned up when WebProcess terminates
+        https://bugs.webkit.org/show_bug.cgi?id=111803
+
+        Reviewed by Brady Eidson.
+
+        Track which blobs were created for each connection, and unregister them when
+        the connection closes.
+
+        Normally, this happens when a document is destroyed through PublicURLManager
+        in WebProcess. But we don't get there when the web process crashes, or is terminated
+        without waiting for document destruction.
+
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.cpp:
+        (WebKit::NetworkBlobRegistry::registerBlobURL):
+        (WebKit::NetworkBlobRegistry::unregisterBlobURL):
+        (WebKit::NetworkBlobRegistry::connectionToWebProcessDidClose):
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.h:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didClose):
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURL):
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURLFromURL):
+        (WebKit::NetworkConnectionToWebProcess::unregisterBlobURL):
+
 2013-03-08  Timothy Hatcher  <timothy@apple.com>
 
         Make the WebKit2 Web Inspector use tiled drawing and accelerated drawing.

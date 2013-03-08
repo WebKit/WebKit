@@ -28,16 +28,17 @@
 
 #if ENABLE(BLOB) && ENABLE(NETWORK_PROCESS)
 
+#include <WebCore/KURLHash.h>
 #include <wtf/HashMap.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 class BlobData;
-class KURL;
 }
 
 namespace WebKit {
 
+class NetworkConnectionToWebProcess;
 class SandboxExtension;
 
 class NetworkBlobRegistry {
@@ -46,9 +47,11 @@ public:
     NetworkBlobRegistry();
     static NetworkBlobRegistry& shared();
 
-    void registerBlobURL(const WebCore::KURL&, PassOwnPtr<WebCore::BlobData>, const Vector<RefPtr<SandboxExtension> >&);
-    void registerBlobURL(const WebCore::KURL&, const WebCore::KURL& srcURL);
-    void unregisterBlobURL(const WebCore::KURL&);
+    void registerBlobURL(NetworkConnectionToWebProcess*, const WebCore::KURL&, PassOwnPtr<WebCore::BlobData>, const Vector<RefPtr<SandboxExtension> >&);
+    void registerBlobURL(NetworkConnectionToWebProcess*, const WebCore::KURL&, const WebCore::KURL& srcURL);
+    void unregisterBlobURL(NetworkConnectionToWebProcess*, const WebCore::KURL&);
+
+    void connectionToWebProcessDidClose(NetworkConnectionToWebProcess*);
 
     const Vector<RefPtr<SandboxExtension> > sandboxExtensions(const WebCore::KURL&);
 
@@ -57,6 +60,9 @@ private:
 
     typedef HashMap<String, Vector<RefPtr<SandboxExtension> > > SandboxExtensionMap;
     SandboxExtensionMap m_sandboxExtensions;
+
+    typedef HashMap<NetworkConnectionToWebProcess*, HashSet<WebCore::KURL> > BlobForConnectionMap;
+    BlobForConnectionMap m_blobsForConnection;
 };
 
 }

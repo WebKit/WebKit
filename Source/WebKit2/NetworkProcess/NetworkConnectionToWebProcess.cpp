@@ -96,6 +96,8 @@ void NetworkConnectionToWebProcess::didClose(CoreIPC::Connection*)
     for (HashMap<ResourceLoadIdentifier, RefPtr<SyncNetworkResourceLoader> >::iterator i = m_syncNetworkResourceLoaders.begin(); i != syncEnd; ++i)
         i->value->connectionToWebProcessDidClose();
 
+    NetworkBlobRegistry::shared().connectionToWebProcessDidClose(this);
+
     m_networkResourceLoaders.clear();
 }
 
@@ -191,17 +193,17 @@ void NetworkConnectionToWebProcess::registerBlobURL(const KURL& url, const BlobR
             extensions.append(extension);
     }
 
-    NetworkBlobRegistry::shared().registerBlobURL(url, data.releaseData(), extensions);
+    NetworkBlobRegistry::shared().registerBlobURL(this, url, data.releaseData(), extensions);
 }
 
 void NetworkConnectionToWebProcess::registerBlobURLFromURL(const KURL& url, const KURL& srcURL)
 {
-    NetworkBlobRegistry::shared().registerBlobURL(url, srcURL);
+    NetworkBlobRegistry::shared().registerBlobURL(this, url, srcURL);
 }
 
 void NetworkConnectionToWebProcess::unregisterBlobURL(const KURL& url)
 {
-    NetworkBlobRegistry::shared().unregisterBlobURL(url);
+    NetworkBlobRegistry::shared().unregisterBlobURL(this, url);
 }
 
 } // namespace WebKit

@@ -47,11 +47,11 @@ NetworkBlobRegistry::NetworkBlobRegistry()
 {
 }
 
-void NetworkBlobRegistry::registerBlobURL(const KURL& url, PassOwnPtr<BlobData> data, const Vector<RefPtr<SandboxExtension> >& newSandboxExtensions)
+void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const KURL& url, PassOwnPtr<BlobData> data, const Vector<RefPtr<SandboxExtension> >& newSandboxExtensions)
 {
     ASSERT(!m_sandboxExtensions.contains(url.string()));
 
-    // Combine new extensions for File times and existing extensions for inner Blob items.
+    // Combine new extensions for File items and existing extensions for inner Blob items.
     Vector<RefPtr<SandboxExtension> > sandboxExtensions = newSandboxExtensions;
     const BlobDataItemList& items = data->items();
     for (size_t i = 0, count = items.size(); i < count; ++i) {
@@ -63,20 +63,49 @@ void NetworkBlobRegistry::registerBlobURL(const KURL& url, PassOwnPtr<BlobData> 
 
     if (!sandboxExtensions.isEmpty())
         m_sandboxExtensions.add(url.string(), sandboxExtensions);
+
+    ASSERT(!m_blobsForConnection.get(connection).contains(url));
+    BlobForConnectionMap::iterator mapIterator = m_blobsForConnection.find(connection);
+    if (mapIterator == m_blobsForConnection.end())
+        mapIterator = m_blobsForConnection.add(connection, HashSet<KURL>()).iterator;
+    mapIterator->value.add(url);
 }
 
-void NetworkBlobRegistry::registerBlobURL(const WebCore::KURL& url, const WebCore::KURL& srcURL)
+void NetworkBlobRegistry::registerBlobURL(NetworkConnectionToWebProcess* connection, const WebCore::KURL& url, const WebCore::KURL& srcURL)
 {
     blobRegistry().registerBlobURL(url, srcURL);
     SandboxExtensionMap::iterator iter = m_sandboxExtensions.find(srcURL.string());
-    if (iter != m_sandboxExtensions.end())
+    if (iter != m_sandboxExtensions.end()) {
         m_sandboxExtensions.add(url.string(), iter->value);
+
+        ASSERT(m_blobsForConnection.contains(connection));
+        ASSERT(m_blobsForConnection.find(connection)->value.contains(srcURL));
+        m_blobsForConnection.find(connection)->value.add(url);
+    }
 }
 
-void NetworkBlobRegistry::unregisterBlobURL(const WebCore::KURL& url)
+void NetworkBlobRegistry::unregisterBlobURL(NetworkConnectionToWebProcess* connection, const WebCore::KURL& url)
 {
     blobRegistry().unregisterBlobURL(url);
     m_sandboxExtensions.remove(url.string());
+
+    ASSERT(m_blobsForConnection.contains(connection));
+    ASSERT(m_blobsForConnection.find(connection)->value.contains(url));
+    m_blobsForConnection.find(connection)->value.remove(url);
+}
+
+void NetworkBlobRegistry::connectionToWebProcessDidClose(NetworkConnectionToWebProcess* connection)
+{
+    if (!m_blobsForConnection.contains(connection))
+        return;
+
+    HashSet<KURL>& blobsForConnection = m_blobsForConnection.find(connection)->value;
+    for (HashSet<KURL>::iterator iter = blobsForConnection.begin(), end = blobsForConnection.end(); iter != end; ++iter) {
+        blobRegistry().unregisterBlobURL(*iter);
+        m_sandboxExtensions.remove(*iter);
+    }
+
+    m_blobsForConnection.remove(connection);
 }
 
 const Vector<RefPtr<SandboxExtension> > NetworkBlobRegistry::sandboxExtensions(const WebCore::KURL& url)
