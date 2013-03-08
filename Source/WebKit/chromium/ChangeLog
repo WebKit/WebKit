@@ -1,3 +1,10 @@
+2013-03-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled Chromium DEPS to r187037.  Requested by
+        "James Robinson" <jamesr@chromium.org> via sheriffbot.
+
+        * DEPS:
+
 2013-03-08  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove WebLayerTreeViewClient and WebLayerTreeView::Settings
