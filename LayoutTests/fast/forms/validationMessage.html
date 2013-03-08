@@ -10,6 +10,7 @@
 description("Test for validationMessage DOM property.");
 
 var form = document.createElement("form");
+document.body.appendChild(form);
 
 // An input element with a pattern set and a mismatched value
 var patternInput = document.createElement("input");
@@ -17,28 +18,28 @@ patternInput.name = "patternInput";
 patternInput.pattern = "lorem ipsum";
 patternInput.value = "lorem";
 form.appendChild(patternInput);
-shouldBe("patternInput.validationMessage", "'pattern mismatch'");
+debug("input patternMismatch: " + patternInput.validationMessage);
 
 // A required input with an empty value
 var requiredInput = document.createElement("input");
 requiredInput.name = "requiredInput";
 requiredInput.required = true;
 form.appendChild(requiredInput);
-shouldBe("requiredInput.validationMessage", "'value missing'");
+debug("input valueMissing: " + requiredInput.validationMessage);
 
 // A required textarea with an empty value
 var requiredTextArea = document.createElement("textarea");
 requiredTextArea.name = "requiredTextArea";
 requiredTextArea.required = true;
 form.appendChild(requiredTextArea);
-shouldBe("requiredTextArea.validationMessage", "'value missing'");
+debug("textarea valueMissing: " + requiredTextArea.validationMessage);
 
 // A required select with an empty value
 var requiredSelect = document.createElement("select");
 requiredSelect.name = "requiredSelect";
 requiredSelect.required = true;
 form.appendChild(requiredSelect);
-shouldBe("requiredSelect.validationMessage", "'value missing'");
+debug("select valueMissing: " + requiredSelect.validationMessage);
 
 // A type=email input for the "type mismatch" flag
 var emailInput = document.createElement("input");
@@ -46,7 +47,14 @@ emailInput.name = "emailInput";
 emailInput.type = "email";
 emailInput.value = "incorrectValue";
 form.appendChild(emailInput);
-shouldBe("emailInput.validationMessage", "'type mismatch'");
+debug("input typeMismatch: " + emailInput.validationMessage);
+
+var numberInput = document.createElement("input");
+numberInput.type = "number";
+form.appendChild(numberInput);
+numberInput.focus();
+document.execCommand("InsertText", false, "abc");
+debug("input badInput: " + numberInput.validationMessage);
 
 // A button can't be valited and, thus, has a blank validationMessage
 var but = document.createElement("button");
@@ -88,6 +96,8 @@ var happyKeygen = document.createElement("keygen");
 happySelect.name = "keygen";
 form.appendChild(happyKeygen);
 shouldBe("happyKeygen.validationMessage", "''");
+
+form.remove();
 </script>
 <script src="../../fast/js/resources/js-test-post.js"></script>
 </body>
