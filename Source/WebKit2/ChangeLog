@@ -1,3 +1,40 @@
+2013-03-07  Mark Lam  <mark.lam@apple.com>
+
+        WebPageProxy::exceededDatabaseQuota() needs to be serialized.
+        https://bugs.webkit.org/show_bug.cgi?id=111631.
+
+        Reviewed by Geoffrey Garen.
+
+        Previously, WebPageProxy::exceededDatabaseQuota() is called synchronously
+        with script execution in the WebProcess. Hence, it is never called in a
+        recursive manner.
+
+        In webkit2, we can have multiple WebProcesses concurrently triggering a
+        call to this function. While the function is waiting on feedback from a
+        UI dialog, the wait loop may re-enter the function to service a second
+        request to call this function from another WebProcess. This results in
+        problems where some of the WebProcesses will not get a proper reply, and
+        therefore hangs perpetually waiting for a non-forthcoming reply.
+
+        This changeset changes the function to queue the requests and ensure
+        that we do not recursively callback to the UI client.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction):
+        * UIProcess/WebPageProxy.cpp:
+        (ExceededDatabaseQuotaRecords):
+        (Record):
+        (WebKit::ExceededDatabaseQuotaRecords::areBeingProcessed):
+        (WebKit::ExceededDatabaseQuotaRecords::ExceededDatabaseQuotaRecords):
+        (WebKit::ExceededDatabaseQuotaRecords::~ExceededDatabaseQuotaRecords):
+        (WebKit::ExceededDatabaseQuotaRecords::shared):
+        (WebKit::ExceededDatabaseQuotaRecords::createRecord):
+        (WebKit::ExceededDatabaseQuotaRecords::add):
+        (WebKit::ExceededDatabaseQuotaRecords::next):
+        (WebKit::WebPageProxy::exceededDatabaseQuota):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+
 2013-03-07  Jeffrey Pfau  <jpfau@apple.com>
 
         CFNetwork cache partitioning does not work properly on subdomains

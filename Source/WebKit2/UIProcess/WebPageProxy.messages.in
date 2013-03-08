@@ -212,7 +212,7 @@ messages -> WebPageProxy {
     DidReceiveAuthenticationChallenge(uint64_t frameID, WebCore::AuthenticationChallenge challenge, uint64_t challengeID)
 
     # Database messages
-    ExceededDatabaseQuota(uint64_t frameID, WTF::String originIdentifier, WTF::String databaseName, WTF::String databaseDisplayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage) -> (uint64_t newQuota)
+    ExceededDatabaseQuota(uint64_t frameID, WTF::String originIdentifier, WTF::String databaseName, WTF::String databaseDisplayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage) -> (uint64_t newQuota) Delayed
 
     # Geolocation messages
     RequestGeolocationPermissionForFrame(uint64_t geolocationID, uint64_t frameID, WTF::String originIdentifier)
