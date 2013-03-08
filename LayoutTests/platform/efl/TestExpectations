@@ -457,6 +457,7 @@ webkit.org/b/86623 http/tests/misc/drag-over-iframe-invalid-source-crash.html
 webkit.org/b/86623 http/tests/security/dataTransfer-set-data-file-url.html
 webkit.org/b/86623 http/tests/security/drag-drop-different-origin.html
 webkit.org/b/86623 http/tests/security/drag-over-remote-content-iframe.html
+webkit.org/b/86623 editing/selection/drag-list-item.html [ Failure ]
 
 # Missing drag'n'drop, needs baselines
 webkit.org/b/86623 editing/pasteboard/4947130.html [ Missing ]
@@ -467,6 +468,10 @@ webkit.org/b/86623 editing/pasteboard/drag-selected-image-to-contenteditable.htm
 webkit.org/b/86623 editing/pasteboard/drop-text-without-selection.html [ Missing ]
 webkit.org/b/86623 editing/pasteboard/smart-drag-drop.html [ Missing ]
 webkit.org/b/86623 editing/pasteboard/subframe-dragndrop-1.html [ Missing ]
+
+# WebKitTestRunner needs pasteboard implementation
+webkit.org/b/102486 editing/pasteboard/line-feed-between-br-and-b-should-not-reorder-pasted-content.html [ Failure ]
+webkit.org/b/102486 editing/pasteboard/paste-table-cells.html [ Failure ]
 
 # Needs baselines
 editing/deleting/smart-delete-003.html [ Missing ]
@@ -1736,6 +1741,9 @@ webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ]
 # Newly added test at r139002 is failing.
 webkit.org/b/106316 accessibility/render-counter-text.html [ Failure ]
 
+# Newly added test in r144727 failing.
+webkit.org/b/111850 accessibility/table-with-hidden-head-section.html [ Failure ]
+
 # Newly added test at r139111 is failing.
 webkit.org/b/106439 editing/pasteboard/paste-noplugin.html [ Failure ]
 
@@ -1852,3 +1860,11 @@ webkit.org/b/111172 compositing/overlap-blending/reflection-opacity-huge.html [ 
 
 # CURSOR_VISIBILITY is not enabled in efl
 webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Failure ]
+
+# Border-fit should happen at layout time rather than paint time
+webkit.org/b/111606 fast/borders/border-fit-2.html [ Failure ]
+webkit.org/b/111606 fast/borders/border-fit.html [ Failure ]
+webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Failure ]
+
+# Started failing on EFL afrer r145025.
+webkit.org/b/111860 fast/forms/number/number-validation-message.html [ Failure ]
