@@ -1,3 +1,10 @@
+2013-03-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        non-Mac ports build fix after r145235.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::createInspectorPageGroup):
+
 2013-03-08  Benjamin Poulain  <benjamin@webkit.org>
 
         [Mac] Add a feature flag for 'view-mode' Media Feature, disable it on Mac
