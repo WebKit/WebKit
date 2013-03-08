@@ -43,13 +43,13 @@ public:
     ~CookieParser();
 
     // Parses a sequence of "Cookie:" header and return the parsed cookies.
-    Vector<ParsedCookie*> parse(const String& cookies);
+    Vector<RefPtr<ParsedCookie> > parse(const String& cookies);
 
-    ParsedCookie* parseOneCookie(const String& cookie);
+    PassRefPtr<ParsedCookie> parseOneCookie(const String& cookie);
 
 private:
     // FIXME: curTime, start, end parameters should be removed. And this method can be public.
-    ParsedCookie* parseOneCookie(const String& cookie, unsigned start, unsigned end, double curTime);
+    PassRefPtr<ParsedCookie> parseOneCookie(const String& cookie, unsigned start, unsigned end, double curTime);
 
     KURL m_defaultCookieURL;
     String m_defaultCookieHost;

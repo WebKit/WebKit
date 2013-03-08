@@ -60,32 +60,32 @@ public:
     const String& getName() const { return m_name; }
 
     // Return false if the candidateCookie is rejected.
-    bool addOrReplaceCookie(ParsedCookie* candidateCookie, ParsedCookie** replacedCookie, CookieFilter = WithHttpOnlyCookies);
+    bool addOrReplaceCookie(PassRefPtr<ParsedCookie> prpCandidateCookie, RefPtr<ParsedCookie>& replacedCookie, CookieFilter = WithHttpOnlyCookies);
 
     // Need to return the reference to the removed cookie so manager can deal with it (garbage collect).
-    ParsedCookie* removeCookie(const ParsedCookie*, CookieFilter = WithHttpOnlyCookies);
+    PassRefPtr<ParsedCookie> removeCookie(const PassRefPtr<ParsedCookie>, CookieFilter = WithHttpOnlyCookies);
 
     // Returns a map with that given subdomain.
     CookieMap* getSubdomainMap(const String&);
     void addSubdomainMap(const String&, CookieMap*);
     void deleteAllCookiesAndDomains();
 
-    void getAllCookies(Vector<ParsedCookie*>*);
-    void getAllChildCookies(Vector<ParsedCookie*>* stackOfCookies);
-    ParsedCookie* removeOldestCookie();
+    void getAllCookies(Vector<RefPtr<ParsedCookie> >*);
+    void getAllChildCookies(Vector<RefPtr<ParsedCookie> >* stackOfCookies);
+    PassRefPtr<ParsedCookie> removeOldestCookie();
 
 private:
     void updateOldestCookie();
-    ParsedCookie* removeCookieAtIndex(int position, const ParsedCookie*);
+    PassRefPtr<ParsedCookie> removeCookieAtIndex(int position, const PassRefPtr<ParsedCookie>);
 
-    Vector<ParsedCookie*> m_cookieVector;
+    Vector<RefPtr<ParsedCookie> > m_cookieVector;
     // The key is a subsection of the domain.
     // ex: if inserting accounts.google.com & this cookiemap is "com", this subdomain map will contain "google"
     // the "google" cookiemap will contain "accounts" in its subdomain map.
     HashMap<String, CookieMap*> m_subdomains;
 
     // Store the oldest cookie to speed up LRU checks.
-    ParsedCookie* m_oldestCookie;
+    RefPtr<ParsedCookie> m_oldestCookie;
     const String m_name;
 
     // FIXME : should have a m_shouldUpdate flag to update the network layer only when the map has changed.

@@ -35,10 +35,9 @@
 
 namespace WebCore {
 
-#define LOG_AND_DELETE(format, ...) \
+#define LOG_ERROR_AND_RETURN(format, ...) \
     { \
         LOG_ERROR(format, ## __VA_ARGS__); \
-        delete res; \
         return 0; \
     }
 
@@ -69,11 +68,11 @@ CookieParser::~CookieParser()
 {
 }
 
-Vector<ParsedCookie*> CookieParser::parse(const String& cookies)
+Vector<RefPtr<ParsedCookie> > CookieParser::parse(const String& cookies)
 {
     unsigned cookieStart, cookieEnd = 0;
     double curTime = currentTime();
-    Vector<ParsedCookie*, 4> parsedCookies;
+    Vector<RefPtr<ParsedCookie>, 4> parsedCookies;
 
     unsigned cookiesLength = cookies.length();
     if (!cookiesLength) // Code below doesn't handle this case
@@ -96,26 +95,26 @@ Vector<ParsedCookie*> CookieParser::parse(const String& cookies)
         if (cookieEnd < cookiesLength && isCookieHeaderSeparator(cookies[cookieEnd]))
             ++cookieEnd;
 
-        ParsedCookie* cookie = parseOneCookie(cookies, cookieStart, cookieEnd - 1, curTime);
+        RefPtr<ParsedCookie> cookie = parseOneCookie(cookies, cookieStart, cookieEnd - 1, curTime);
         if (cookie)
             parsedCookies.append(cookie);
     }
     return parsedCookies;
 }
 
-ParsedCookie* CookieParser::parseOneCookie(const String& cookie)
+PassRefPtr<ParsedCookie> CookieParser::parseOneCookie(const String& cookie)
 {
     return parseOneCookie(cookie, 0, cookie.length() - 1, currentTime());
 }
 
 // The cookie String passed into this method will only contian the name value pairs as well as other related cookie
 // attributes such as max-age and domain. Set-Cookie should never be part of this string.
-ParsedCookie* CookieParser::parseOneCookie(const String& cookie, unsigned start, unsigned end, double curTime)
+PassRefPtr<ParsedCookie> CookieParser::parseOneCookie(const String& cookie, unsigned start, unsigned end, double curTime)
 {
-    ParsedCookie* res = new ParsedCookie(curTime);
+    RefPtr<ParsedCookie> res = ParsedCookie::create(curTime);
 
     if (!res)
-        LOG_AND_DELETE("Out of memory");
+        LOG_ERROR_AND_RETURN("Out of memory");
 
     res->setProtocol(m_defaultCookieURL.protocol());
 
@@ -160,7 +159,7 @@ ParsedCookie* CookieParser::parseOneCookie(const String& cookie, unsigned start,
             tokenStart++;
 
         if (nameEnd + 1 <= tokenStart)
-            LOG_AND_DELETE("Empty name. Rejecting the cookie");
+            LOG_ERROR_AND_RETURN("Empty name. Rejecting the cookie");
 
         String name = cookie.substring(tokenStart, nameEnd + 1 - start);
         res->setName(name);
@@ -189,10 +188,9 @@ ParsedCookie* CookieParser::parseOneCookie(const String& cookie, unsigned start,
 
     if (hasName)
         res->setValue(value);
-    else if (foundEqual) {
-        delete res;
+    else if (foundEqual)
         return 0;
-    } else
+    else
         res->setName(value); // No NAME=VALUE, only NAME
 
     while (pairEnd < end) {
@@ -250,7 +248,7 @@ ParsedCookie* CookieParser::parseOneCookie(const String& cookie, unsigned start,
 #if 0
                 // Check if path attribute is a prefix of the request URI.
                 if (!m_defaultCookieURL.path().startsWith(res->path()))
-                    LOG_AND_DELETE("Invalid cookie attribute %s (path): it does not math the URL", cookie.ascii().data());
+                    LOG_ERROR_AND_RETURN("Invalid cookie attribute %s (path): it does not math the URL", cookie.ascii().data());
 #endif
             } else
                 LOG_ERROR("Invalid cookie attribute %s (path)", cookie.ascii().data());
@@ -266,7 +264,7 @@ ParsedCookie* CookieParser::parseOneCookie(const String& cookie, unsigned start,
                 // Check if the domain contains an embedded dot.
                 size_t dotPosition = parsedValue.find(".", 1);
                 if (dotPosition == notFound || dotPosition == parsedValue.length())
-                    LOG_AND_DELETE("Invalid cookie attribute %s (domain): it does not contain an embedded dot", cookie.ascii().data());
+                    LOG_ERROR_AND_RETURN("Invalid cookie attribute %s (domain): it does not contain an embedded dot", cookie.ascii().data());
 
                 // If the domain does not start with a dot, add one for security checks,
                 // For example: ab.c.com dose not domain match b.c.com;
@@ -282,7 +280,7 @@ ParsedCookie* CookieParser::parseOneCookie(const String& cookie, unsigned start,
                 if (m_defaultDomainIsIPAddress) {
                     String realDomainCanonical = String(BlackBerry::Platform::getCanonicalIPFormat(realDomain.utf8().data()).c_str());
                     if (realDomainCanonical.isEmpty() || realDomainCanonical != m_defaultCookieHost)
-                        LOG_AND_DELETE("Invalid cookie attribute %s (domain): domain is IP but does not match host's IP", cookie.ascii().data());
+                        LOG_ERROR_AND_RETURN("Invalid cookie attribute %s (domain): domain is IP but does not match host's IP", cookie.ascii().data());
                     realDomain = realDomainCanonical;
                     isIPAddress = true;
                 } else {
@@ -294,14 +292,14 @@ ParsedCookie* CookieParser::parseOneCookie(const String& cookie, unsigned start,
                     // We also have to make a special case for IP addresses. If a website tries to set
                     // a cookie to 61.97, that domain is not an IP address and will end with the m_defaultCookieHost
                     if (!m_defaultCookieHost.endsWith(realDomain, false))
-                        LOG_AND_DELETE("Invalid cookie attribute %s (domain): it does not domain match the host", cookie.ascii().data());
+                        LOG_ERROR_AND_RETURN("Invalid cookie attribute %s (domain): it does not domain match the host", cookie.ascii().data());
                     // We should check for an embedded dot in the portion of string in the host not in the domain
                     // but to match firefox behaviour we do not.
 
                     // Check whether the domain is a top level domain, if it is throw it out
                     // http://publicsuffix.org/list/
                     if (BlackBerry::Platform::isTopLevelDomain(realDomain.utf8().data()))
-                        LOG_AND_DELETE("Invalid cookie attribute %s (domain): it did not pass the top level domain check", cookie.ascii().data());
+                        LOG_ERROR_AND_RETURN("Invalid cookie attribute %s (domain): it did not pass the top level domain check", cookie.ascii().data());
                 }
                 res->setDomain(realDomain, isIPAddress);
             } else
@@ -347,7 +345,7 @@ ParsedCookie* CookieParser::parseOneCookie(const String& cookie, unsigned start,
                     parsedValue = parsedValue.substring(1, parsedValue.length() - 2);
 
                 if (parsedValue.toInt() != 1)
-                    LOG_AND_DELETE("ParsedCookie version %d not supported (only support version=1)", parsedValue.toInt());
+                    LOG_ERROR_AND_RETURN("ParsedCookie version %d not supported (only support version=1)", parsedValue.toInt());
             } else
                 LOG_ERROR("Invalid cookie attribute %s (version)", cookie.ascii().data());
             break;
@@ -382,7 +380,7 @@ ParsedCookie* CookieParser::parseOneCookie(const String& cookie, unsigned start,
 
     // Check if the cookie is valid with respect to the size limit.
     if (!res->isUnderSizeLimit())
-        LOG_AND_DELETE("ParsedCookie %s is above the 4kb in length : REJECTED", cookie.ascii().data());
+        LOG_ERROR_AND_RETURN("ParsedCookie %s is above the 4kb in length : REJECTED", cookie.ascii().data());
 
     // If some pair was not provided, during parsing then apply some default value
     // the rest has been done in the constructor.

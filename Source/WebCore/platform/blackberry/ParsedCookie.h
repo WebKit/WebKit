@@ -28,7 +28,9 @@
 #define ParsedCookie_h
 
 #include "Cookie.h"
-#include <wtf/FastAllocBase.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WTF {
 class String;
@@ -40,18 +42,14 @@ class KURL;
 // This class represents a cookie internally
 // It can either be created by the CookieParser which will then fill it
 // or it can be created by the backing store filling it in the constructor.
-class ParsedCookie {
-WTF_MAKE_FAST_ALLOCATED;
+class ParsedCookie : public RefCounted<ParsedCookie> {
 public:
+
     // Default cookie : empty domain, non secure and session
-    ParsedCookie(double currentTime);
+    static PassRefPtr<ParsedCookie> create(double currentTime) { return adoptRef(new ParsedCookie(currentTime)); }
 
     // For backing store cookies (those cookies are never session cookies).
-    ParsedCookie(const String& name, const String& value, const String& domain, const String& protocol, const String& path, double expiry, double lastAccessed, double creationTime, bool isSecure, bool isHttpOnly);
-
-    ParsedCookie(const ParsedCookie*);
-
-    ~ParsedCookie();
+    static PassRefPtr<ParsedCookie> create(const String& name, const String& value, const String& domain, const String& protocol, const String& path, double expiry, double lastAccessed, double creationTime, bool isSecure, bool isHttpOnly)  { return adoptRef(new ParsedCookie(name, value, domain, protocol, path, expiry, lastAccessed, creationTime, isSecure, isHttpOnly)); };
 
     const String& name() const { return m_name; }
     void setName(const String& name) { m_name = name; }
@@ -97,6 +95,12 @@ public:
     void appendWebCoreCookie(Vector<Cookie>& cookieVector) const;
 
 private:
+    // Default cookie : empty domain, non secure and session
+    ParsedCookie(double currentTime);
+
+    // For backing store cookies (those cookies are never session cookies).
+    ParsedCookie(const String& name, const String& value, const String& domain, const String& protocol, const String& path, double expiry, double lastAccessed, double creationTime, bool isSecure, bool isHttpOnly);
+
     String m_name;
     String m_value;
     String m_domain;

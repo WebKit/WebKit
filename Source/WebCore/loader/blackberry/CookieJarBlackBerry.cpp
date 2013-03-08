@@ -60,7 +60,7 @@ bool cookiesEnabled(const Document* document)
 bool getRawCookies(const Document* document, const KURL& url, Vector<Cookie>& rawCookies)
 {
     // Note: this method is called by inspector only. No need to check if cookie is enabled.
-    Vector<ParsedCookie*> result;
+    Vector<RefPtr<ParsedCookie> > result;
     cookieManager().getRawCookies(result, url, WithHttpOnlyCookies);
     for (size_t i = 0; i < result.size(); i++)
         result[i]->appendWebCoreCookie(rawCookies);

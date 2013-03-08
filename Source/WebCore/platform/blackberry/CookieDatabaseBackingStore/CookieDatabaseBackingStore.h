@@ -50,14 +50,14 @@ public:
 
     void open(const String& cookieJar);
 
-    void insert(const ParsedCookie*);
-    void update(const ParsedCookie*);
-    void remove(const ParsedCookie*);
+    void insert(const PassRefPtr<ParsedCookie>);
+    void update(const PassRefPtr<ParsedCookie>);
+    void remove(const PassRefPtr<ParsedCookie>);
 
     void removeAll();
 
     // If a limit is not set, the method will return all cookies in the database
-    void getCookiesFromDatabase(Vector<ParsedCookie*>& stackOfCookies, unsigned int limit = 0);
+    void getCookiesFromDatabase(Vector<RefPtr<ParsedCookie> >& stackOfCookies, unsigned limit = 0);
 
     void openAndLoadDatabaseSynchronously(const String& cookieJar);
     void sendChangesToDatabaseSynchronously();
@@ -81,18 +81,18 @@ private:
     CookieDatabaseBackingStore();
     ~CookieDatabaseBackingStore();
 
-    void addToChangeQueue(const ParsedCookie* changedCookie, UpdateParameter actionParam);
+    void addToChangeQueue(const PassRefPtr<ParsedCookie> changedCookie, UpdateParameter actionParam);
     void sendChangesToDatabase(int interval);
     void sendChangesToDatabaseTimerFired();
 
     void invokeOpen(const String& cookieJar);
     void invokeRemoveAll();
-    Vector<ParsedCookie*>* invokeGetCookiesWithLimit(unsigned int limit);
+    Vector<RefPtr<ParsedCookie> >* invokeGetCookiesWithLimit(unsigned limit);
     void invokeSendChangesToDatabase();
 
     void close();
 
-    typedef pair<const ParsedCookie, UpdateParameter> CookieAction;
+    typedef pair<const PassRefPtr<ParsedCookie>, UpdateParameter> CookieAction;
     Vector<CookieAction> m_changedCookies;
     Mutex m_mutex;
 

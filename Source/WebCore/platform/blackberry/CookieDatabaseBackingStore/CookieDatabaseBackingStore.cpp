@@ -197,19 +197,19 @@ void CookieDatabaseBackingStore::close()
         m_db.close();
 }
 
-void CookieDatabaseBackingStore::insert(const ParsedCookie* cookie)
+void CookieDatabaseBackingStore::insert(const PassRefPtr<ParsedCookie> cookie)
 {
     CookieLog("CookieBackingStore - adding inserting cookie %s to queue.", cookie->toString().utf8().data());
     addToChangeQueue(cookie, Insert);
 }
 
-void CookieDatabaseBackingStore::update(const ParsedCookie* cookie)
+void CookieDatabaseBackingStore::update(const PassRefPtr<ParsedCookie> cookie)
 {
     CookieLog("CookieBackingStore - adding updating cookie %s to queue.", cookie->toString().utf8().data());
     addToChangeQueue(cookie, Update);
 }
 
-void CookieDatabaseBackingStore::remove(const ParsedCookie* cookie)
+void CookieDatabaseBackingStore::remove(const PassRefPtr<ParsedCookie> cookie)
 {
     CookieLog("CookieBackingStore - adding deleting cookie %s to queue.", cookie->toString().utf8().data());
     addToChangeQueue(cookie, Delete);
@@ -252,18 +252,18 @@ void CookieDatabaseBackingStore::invokeRemoveAll()
     }
 }
 
-void CookieDatabaseBackingStore::getCookiesFromDatabase(Vector<ParsedCookie*>& stackOfCookies, unsigned int limit)
+void CookieDatabaseBackingStore::getCookiesFromDatabase(Vector<RefPtr<ParsedCookie> >& stackOfCookies, unsigned limit)
 {
     // It is not a huge performance hit to wait on the reply here because this is only done once during setup and when turning off private mode.
-    TypedReplyBuffer< Vector<ParsedCookie*>* > replyBuffer(0);
+    TypedReplyBuffer< Vector<RefPtr<ParsedCookie> >* > replyBuffer(0);
     dispatchMessage(createMethodCallMessageWithReturn(&CookieDatabaseBackingStore::invokeGetCookiesWithLimit, &replyBuffer, this, limit));
-    Vector<ParsedCookie*>* cookies = replyBuffer.pointer();
+    Vector<RefPtr<ParsedCookie> >* cookies = replyBuffer.pointer();
     if (cookies)
         stackOfCookies.swap(*cookies);
     delete cookies;
 }
 
-Vector<ParsedCookie*>* CookieDatabaseBackingStore::invokeGetCookiesWithLimit(unsigned int limit)
+Vector<RefPtr<ParsedCookie> >* CookieDatabaseBackingStore::invokeGetCookiesWithLimit(unsigned limit)
 {
     ASSERT(isCurrentThread());
 
@@ -290,7 +290,7 @@ Vector<ParsedCookie*>* CookieDatabaseBackingStore::invokeGetCookiesWithLimit(uns
         return 0;
     }
 
-    Vector<ParsedCookie*>* cookies = new Vector<ParsedCookie*>;
+    Vector<RefPtr<ParsedCookie> >* cookies = new Vector<RefPtr<ParsedCookie> >;
     while (selectStatement.step() == SQLResultRow) {
         // There is a row to fetch
 
@@ -305,7 +305,7 @@ Vector<ParsedCookie*>* CookieDatabaseBackingStore::invokeGetCookiesWithLimit(uns
         double creationTime = selectStatement.getColumnDouble(8);
         String protocol = selectStatement.getColumnText(9);
 
-        cookies->append(new ParsedCookie(name, value, domain, protocol, path, expiry, lastAccessed, creationTime, isSecure, isHttpOnly));
+        cookies->append(ParsedCookie::create(name, value, domain, protocol, path, expiry, lastAccessed, creationTime, isSecure, isHttpOnly));
     }
 
     return cookies;
@@ -389,7 +389,7 @@ void CookieDatabaseBackingStore::invokeSendChangesToDatabase()
     size_t sizeOfChange = changedCookies.size();
     for (size_t i = 0; i < sizeOfChange; i++) {
         SQLiteStatement* m_statement;
-        const ParsedCookie cookie = changedCookies[i].first;
+        const RefPtr<ParsedCookie> cookie = changedCookies[i].first;
         UpdateParameter action = changedCookies[i].second;
 
         if (action == Delete) {
@@ -397,8 +397,8 @@ void CookieDatabaseBackingStore::invokeSendChangesToDatabase()
             CookieLog("CookieBackingStore - deleting cookie %s.", cookie.toString().utf8().data());
 
             // Binds all the values
-            if (m_statement->bindText(1, cookie.name()) || m_statement->bindText(2, cookie.domain())
-                || m_statement->bindText(3, cookie.path()) || m_statement->bindText(4, cookie.protocol())) {
+            if (m_statement->bindText(1, cookie->name()) || m_statement->bindText(2, cookie->domain())
+                || m_statement->bindText(3, cookie->path()) || m_statement->bindText(4, cookie->protocol())) {
                 LOG_ERROR("Cannot bind cookie data to delete");
                 LOG_ERROR("SQLite Error Message: %s", m_db.lastErrorMsg());
                 ASSERT_NOT_REACHED();
@@ -406,19 +406,19 @@ void CookieDatabaseBackingStore::invokeSendChangesToDatabase()
             }
         } else {
             if (action == Update) {
-                CookieLog("CookieBackingStore - updating cookie %s.", cookie.toString().utf8().data());
+                CookieLog("CookieBackingStore - updating cookie %s.", cookie->toString().utf8().data());
                 m_statement = m_updateStatement;
             } else {
-                CookieLog("CookieBackingStore - inserting cookie %s.", cookie.toString().utf8().data());
+                CookieLog("CookieBackingStore - inserting cookie %s.", cookie->toString().utf8().data());
                 m_statement = m_insertStatement;
             }
 
             // Binds all the values
-            if (m_statement->bindText(1, cookie.name()) || m_statement->bindText(2, cookie.value())
-                || m_statement->bindText(3, cookie.domain()) || m_statement->bindText(4, cookie.path())
-                || m_statement->bindDouble(5, cookie.expiry()) || m_statement->bindDouble(6, cookie.lastAccessed())
-                || m_statement->bindInt64(7, cookie.isSecure()) || m_statement->bindInt64(8, cookie.isHttpOnly())
-                || m_statement->bindDouble(9, cookie.creationTime()) || m_statement->bindText(10, cookie.protocol())) {
+            if (m_statement->bindText(1, cookie->name()) || m_statement->bindText(2, cookie->value())
+                || m_statement->bindText(3, cookie->domain()) || m_statement->bindText(4, cookie->path())
+                || m_statement->bindDouble(5, cookie->expiry()) || m_statement->bindDouble(6, cookie->lastAccessed())
+                || m_statement->bindInt64(7, cookie->isSecure()) || m_statement->bindInt64(8, cookie->isHttpOnly())
+                || m_statement->bindDouble(9, cookie->creationTime()) || m_statement->bindText(10, cookie->protocol())) {
                 LOG_ERROR("Cannot bind cookie data to save");
                 LOG_ERROR("SQLite Error Message: %s", m_db.lastErrorMsg());
                 ASSERT_NOT_REACHED();
@@ -439,11 +439,10 @@ void CookieDatabaseBackingStore::invokeSendChangesToDatabase()
     CookieLog("CookieBackingStore - transaction complete");
 }
 
-void CookieDatabaseBackingStore::addToChangeQueue(const ParsedCookie* changedCookie, UpdateParameter actionParam)
+void CookieDatabaseBackingStore::addToChangeQueue(const PassRefPtr<ParsedCookie> changedCookie, UpdateParameter actionParam)
 {
     ASSERT(!changedCookie->isSession());
-    ParsedCookie cookieCopy(changedCookie);
-    CookieAction action(cookieCopy, actionParam);
+    CookieAction action(changedCookie, actionParam);
     {
         MutexLocker lock(m_mutex);
         m_changedCookies.append(action);

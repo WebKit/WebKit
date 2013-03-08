@@ -66,27 +66,6 @@ ParsedCookie::ParsedCookie(const String& name, const String& value, const String
 {
 }
 
-ParsedCookie::ParsedCookie(const ParsedCookie* cookie)
-    : m_name(String(cookie->m_name))
-    , m_value(String(cookie->m_value))
-    , m_domain(String(cookie->m_domain))
-    , m_protocol(String(cookie->m_protocol))
-    , m_path(String(cookie->m_path))
-    , m_expiry(cookie->m_expiry)
-    , m_creationTime(cookie->m_creationTime)
-    , m_lastAccessed(cookie->m_lastAccessed)
-    , m_isSecure(cookie->m_isSecure)
-    , m_isHttpOnly(cookie->m_isHttpOnly)
-    , m_isSession(cookie->m_isSession)
-    , m_isForceExpired(cookie->m_isForceExpired)
-    , m_domainIsIPAddress(cookie->m_domainIsIPAddress)
-{
-}
-
-ParsedCookie::~ParsedCookie()
-{
-}
-
 void ParsedCookie::setExpiry(const String& expiry)
 {
     // If a cookie has both the Max-Age and the Expires attribute,

@@ -37,7 +37,7 @@ std::vector<BlackBerry::Platform::String> WebCookieJar::cookies(const BlackBerry
 {
     KURL kurl = KURL(KURL(), url);
 
-    Vector<ParsedCookie*> rawCookies;
+    Vector<RefPtr<ParsedCookie> > rawCookies;
     cookieManager().getRawCookies(rawCookies, kurl, WithHttpOnlyCookies);
 
     std::vector<BlackBerry::Platform::String> result;

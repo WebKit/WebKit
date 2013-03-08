@@ -1,3 +1,15 @@
+2013-03-07  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] RefCounting ParsedCookie to avoid SegFaults
+        https://bugs.webkit.org/show_bug.cgi?id=111761
+
+        Reviewed by Rob Buis.
+
+        Making necessary changes to ref-count the ParsedCookie object.
+
+        * Api/WebCookieJar.cpp:
+        (BlackBerry::WebKit::WebCookieJar::cookies):
+
 2013-03-07  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Prevent text selection inside Colour and Date/Time input fields

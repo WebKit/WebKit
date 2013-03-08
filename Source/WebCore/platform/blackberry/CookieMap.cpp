@@ -54,8 +54,9 @@ CookieMap::~CookieMap()
     deleteAllCookiesAndDomains();
 }
 
-bool CookieMap::addOrReplaceCookie(ParsedCookie* candidateCookie, ParsedCookie** replacedCookie, CookieFilter filter)
+bool CookieMap::addOrReplaceCookie(PassRefPtr<ParsedCookie> prpCandidateCookie, RefPtr<ParsedCookie>& replacedCookie, CookieFilter filter)
 {
+    RefPtr<ParsedCookie> candidateCookie = prpCandidateCookie;
     CookieLog("CookieMap - Attempting to add cookie - %s", cookie->name().utf8().data());
 
     size_t cookieCount = m_cookieVector.size();
@@ -65,9 +66,9 @@ bool CookieMap::addOrReplaceCookie(ParsedCookie* candidateCookie, ParsedCookie**
             if (filter == NoHttpOnlyCookie && m_cookieVector[i]->isHttpOnly())
                 return false;
 
-            *replacedCookie = m_cookieVector[i];
+            replacedCookie = m_cookieVector[i];
             m_cookieVector[i] = candidateCookie;
-            if (*replacedCookie == m_oldestCookie)
+            if (replacedCookie == m_oldestCookie)
                 updateOldestCookie();
             return true;
         }
@@ -81,10 +82,10 @@ bool CookieMap::addOrReplaceCookie(ParsedCookie* candidateCookie, ParsedCookie**
     return true;
 }
 
-ParsedCookie* CookieMap::removeCookieAtIndex(int position, const ParsedCookie* cookie)
+PassRefPtr<ParsedCookie> CookieMap::removeCookieAtIndex(int position, const PassRefPtr<ParsedCookie> cookie)
 {
     ASSERT(0 <= position && static_cast<unsigned>(position) < m_cookieVector.size());
-    ParsedCookie* prevCookie = m_cookieVector[position];
+    RefPtr<ParsedCookie> prevCookie = m_cookieVector[position];
     m_cookieVector.remove(position);
 
     if (prevCookie == m_oldestCookie)
@@ -94,7 +95,6 @@ ParsedCookie* CookieMap::removeCookieAtIndex(int position, const ParsedCookie* c
         // to the cookie in memory too.
         if (cookie->isForceExpired())
             prevCookie->forceExpire();
-        delete cookie;
     }
 
     if (!prevCookie->isSession())
@@ -102,7 +102,7 @@ ParsedCookie* CookieMap::removeCookieAtIndex(int position, const ParsedCookie* c
     return prevCookie;
 }
 
-ParsedCookie* CookieMap::removeCookie(const ParsedCookie* cookie, CookieFilter filter)
+PassRefPtr<ParsedCookie> CookieMap::removeCookie(const PassRefPtr<ParsedCookie> cookie, CookieFilter filter)
 {
     size_t cookieCount = m_cookieVector.size();
     for (size_t position = 0; position < cookieCount; ++position) {
@@ -130,7 +130,7 @@ void CookieMap::addSubdomainMap(const String& subdomain, CookieMap* newDomain)
     m_subdomains.add(subdomain, newDomain);
 }
 
-void CookieMap::getAllCookies(Vector<ParsedCookie*>* stackOfCookies)
+void CookieMap::getAllCookies(Vector<RefPtr<ParsedCookie> >* stackOfCookies)
 {
     CookieLog("CookieMap - Attempting to copy Map:%s cookies with %d cookies into vectors", m_name.utf8().data(), m_cookieVector.size());
 
@@ -138,12 +138,11 @@ void CookieMap::getAllCookies(Vector<ParsedCookie*>* stackOfCookies)
 
     size_t position = 0;
     while (position < m_cookieVector.size()) {
-        ParsedCookie* newCookie = m_cookieVector[position];
+        RefPtr<ParsedCookie> newCookie = m_cookieVector[position];
         if (newCookie->hasExpired()) {
             // Notice that we don't delete from backingstore. These expired cookies will be
             // deleted when manager loads the backingstore again.
-            ParsedCookie* expired = removeCookieAtIndex(position, newCookie);
-            delete expired;
+            removeCookieAtIndex(position, newCookie);
         } else {
             stackOfCookies->append(newCookie);
             position++;
@@ -153,10 +152,10 @@ void CookieMap::getAllCookies(Vector<ParsedCookie*>* stackOfCookies)
     CookieLog("CookieMap - stack of cookies now have %d cookies in it", (*stackOfCookies).size());
 }
 
-ParsedCookie* CookieMap::removeOldestCookie()
+PassRefPtr<ParsedCookie> CookieMap::removeOldestCookie()
 {
     // FIXME: Make sure it finds the GLOBAL oldest cookie, not the first oldestcookie it finds.
-    ParsedCookie* oldestCookie = m_oldestCookie;
+    RefPtr<ParsedCookie> oldestCookie = m_oldestCookie;
 
     // If this map has an oldestCookie, remove it. If not, do a DFS to search for a child that does
     if (!oldestCookie) {
@@ -203,13 +202,12 @@ void CookieMap::deleteAllCookiesAndDomains()
 {
     deleteAllValues(m_subdomains);
     m_subdomains.clear();
-    deleteAllValues(m_cookieVector);
     m_cookieVector.clear();
 
     m_oldestCookie = 0;
 }
 
-void CookieMap::getAllChildCookies(Vector<ParsedCookie*>* stackOfCookies)
+void CookieMap::getAllChildCookies(Vector<RefPtr<ParsedCookie> >* stackOfCookies)
 {
     CookieLog("CookieMap - getAllChildCookies in Map - %s", getName().utf8().data());
     getAllCookies(stackOfCookies);
