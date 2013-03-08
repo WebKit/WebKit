@@ -721,6 +721,9 @@ webkit.org/b/101491 compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
 webkit.org/b/102678 compositing/overflow/updating-scrolling-content.html
 webkit.org/b/102678 compositing/overflow/scrolling-without-painting.html
 
+webkit.org/b/108257 compositing/overflow/composited-scrolling-creates-a-stacking-container.html [ Skip ]
+webkit.org/b/108257 compositing/overflow/automatically-opt-into-composited-scrolling.html [ Skip ]
+
 # [Qt][WK2] New fast/events/mouse-cursor.html fails
 webkit.org/b/103122 fast/events/mouse-cursor.html
 
