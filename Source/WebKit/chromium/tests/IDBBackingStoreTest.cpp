@@ -27,9 +27,11 @@
 
 #include "IDBBackingStore.h"
 
+#include "IDBFactoryBackendImpl.h"
 #include "SharedBuffer.h"
 
 #include <gtest/gtest.h>
+#include <webkit/support/webkit_support.h>
 
 #if ENABLE(INDEXED_DATABASE)
 
@@ -43,11 +45,10 @@ public:
     void SetUp()
     {
         SecurityOrigin* securityOrigin = 0;
-        m_factory = 0;
         // Empty pathBase means an in-memory database.
         String pathBase;
         String fileIdentifier;
-        m_backingStore = IDBBackingStore::open(securityOrigin, pathBase, fileIdentifier, m_factory);
+        m_backingStore = IDBBackingStore::open(securityOrigin, pathBase, fileIdentifier);
 
         // useful keys and values during tests
         const char rawValue1[] = "value1";
@@ -59,7 +60,6 @@ public:
     }
 
 protected:
-    IDBFactoryBackendImpl* m_factory;
     RefPtr<IDBBackingStore> m_backingStore;
 
     // Sample keys and values that are consistent.
@@ -181,6 +181,42 @@ TEST_F(IDBBackingStoreTest, CreateDatabase)
         EXPECT_EQ(unique, index.unique);
         EXPECT_EQ(multiEntry, index.multiEntry);
     }
+}
+
+class MockIDBFactoryBackend : public IDBFactoryBackendImpl {
+public:
+    static PassRefPtr<MockIDBFactoryBackend> create()
+    {
+        return adoptRef(new MockIDBFactoryBackend());
+    }
+
+    PassRefPtr<IDBBackingStore> testOpenBackingStore(PassRefPtr<SecurityOrigin> origin, const String& dataDirectory)
+    {
+        return openBackingStore(origin, dataDirectory);
+    }
+};
+
+TEST(IDBFactoryBackendTest, BackingStoreLifetime)
+{
+    RefPtr<SecurityOrigin> origin1 = SecurityOrigin::create("http", "localhost", 81);
+    RefPtr<SecurityOrigin> origin2 = SecurityOrigin::create("http", "localhost", 82);
+
+    RefPtr<MockIDBFactoryBackend> factory = MockIDBFactoryBackend::create();
+
+    OwnPtr<webkit_support::ScopedTempDirectory> tempDirectory = adoptPtr(webkit_support::CreateScopedTempDirectory());
+    tempDirectory->CreateUniqueTempDir();
+    const String path = String::fromUTF8(tempDirectory->path().c_str());
+
+    RefPtr<IDBBackingStore> diskStore1 = factory->testOpenBackingStore(origin1, path);
+    EXPECT_TRUE(diskStore1->hasOneRef());
+
+    RefPtr<IDBBackingStore> diskStore2 = factory->testOpenBackingStore(origin1, path);
+    EXPECT_EQ(diskStore2.get(), diskStore1.get());
+    EXPECT_EQ(diskStore2->refCount(), 2);
+
+    RefPtr<IDBBackingStore> diskStore3 = factory->testOpenBackingStore(origin2, path);
+    EXPECT_TRUE(diskStore3->hasOneRef());
+    EXPECT_EQ(diskStore1->refCount(), 2);
 }
 
 } // namespace

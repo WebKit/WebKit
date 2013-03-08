@@ -41,6 +41,20 @@
 
 namespace WebCore {
 
+template<typename K, typename M>
+static void cleanWeakMap(HashMap<K, WeakPtr<M> >& map)
+{
+    HashMap<K, WeakPtr<M> > other;
+    other.swap(map);
+
+    typename HashMap<K, WeakPtr<M> >::const_iterator iter = other.begin();
+    while (iter != other.end()) {
+        if (iter->value.get())
+            map.set(iter->key, iter->value);
+        ++iter;
+    }
+}
+
 static String computeFileIdentifier(SecurityOrigin* securityOrigin)
 {
     static const char levelDBFileSuffix[] = "@1";
@@ -64,18 +78,6 @@ void IDBFactoryBackendImpl::removeIDBDatabaseBackend(const String& uniqueIdentif
 {
     ASSERT(m_databaseBackendMap.contains(uniqueIdentifier));
     m_databaseBackendMap.remove(uniqueIdentifier);
-}
-
-void IDBFactoryBackendImpl::addIDBBackingStore(const String& fileIdentifier, IDBBackingStore* backingStore)
-{
-    ASSERT(!m_backingStoreMap.contains(fileIdentifier));
-    m_backingStoreMap.set(fileIdentifier, backingStore);
-}
-
-void IDBFactoryBackendImpl::removeIDBBackingStore(const String& fileIdentifier)
-{
-    ASSERT(m_backingStoreMap.contains(fileIdentifier));
-    m_backingStoreMap.remove(fileIdentifier);
 }
 
 void IDBFactoryBackendImpl::getDatabaseNames(PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, ScriptExecutionContext*, const String& dataDirectory)
@@ -127,16 +129,18 @@ PassRefPtr<IDBBackingStore> IDBFactoryBackendImpl::openBackingStore(PassRefPtr<S
 {
     const String fileIdentifier = computeFileIdentifier(securityOrigin.get());
 
-    RefPtr<IDBBackingStore> backingStore;
     IDBBackingStoreMap::iterator it2 = m_backingStoreMap.find(fileIdentifier);
-    if (it2 != m_backingStoreMap.end())
-        backingStore = it2->value;
-    else {
-        backingStore = IDBBackingStore::open(securityOrigin.get(), dataDirectory, fileIdentifier, this);
+    if (it2 != m_backingStoreMap.end()) {
+        if (it2->value.get())
+            return it2->value.get();
     }
 
-    if (backingStore)
+    RefPtr<IDBBackingStore> backingStore = IDBBackingStore::open(securityOrigin.get(), dataDirectory, fileIdentifier);
+    if (backingStore) {
+        cleanWeakMap(m_backingStoreMap);
+        m_backingStoreMap.set(fileIdentifier, backingStore->createWeakPtr());
         return backingStore.release();
+    }
 
     return 0;
 }

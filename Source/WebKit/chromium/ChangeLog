@@ -1,3 +1,18 @@
+2013-03-07  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Use WeakPtr for Factory-to-BackingStore reference
+        https://bugs.webkit.org/show_bug.cgi?id=111459
+
+        Reviewed by Adam Barth.
+
+        Added tests to verify refcounts on backing stores, update method signatures.
+
+        * tests/IDBBackingStoreTest.cpp:
+        (WebCore::IDBBackingStoreTest::SetUp): No dummy factory needed.
+        (MockIDBFactoryBackend): Expose protected method to tests.
+        (WebCore::TEST): Added BackingStoreLifetime test.
+        * tests/IDBCleanupOnIOErrorTest.cpp: No dummy factory needed.
+
 2013-03-06  James Robinson  <jamesr@chromium.org>
 
         [chromium] Stop using WebTransformationMatrix on WebLayer
