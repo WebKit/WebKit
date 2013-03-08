@@ -57,22 +57,6 @@ static const double cMinDelayBeforeLiveDecodedPrune = 1; // Seconds.
 static const float cTargetPrunePercentage = .95f; // Percentage of capacity toward which we prune, to avoid immediately pruning again.
 static const double cDefaultDecodedDataDeletionInterval = 0;
 
-#if ENABLE(CACHE_PARTITIONING)
-static String partitionName(String domain)
-{
-    if (domain.isNull())
-        return emptyString();
-#if ENABLE(PUBLIC_SUFFIX_LIST)
-    String highLevel = topPrivatelyControlledDomain(domain);
-    if (highLevel.isNull())
-        return emptyString();
-    return highLevel;
-#else
-    return domain;
-#endif
-}
-#endif
-
 MemoryCache* memoryCache()
 {
     static MemoryCache* staticCache = new MemoryCache;
@@ -121,7 +105,7 @@ bool MemoryCache::add(CachedResource* resource)
         originMap = new CachedResourceItem;
         m_resources.set(resource->url(), adoptPtr(originMap));
     }
-    originMap->set(partitionName(resource->cachePartition()), resource);
+    originMap->set(resource->cachePartition(), resource);
 #else
     m_resources.set(resource->url(), resource);
 #endif
@@ -149,13 +133,13 @@ void MemoryCache::revalidationSucceeded(CachedResource* revalidatingResource, co
     evict(revalidatingResource);
 
 #if ENABLE(CACHE_PARTITIONING)
-    ASSERT(!m_resources.get(resource->url()) || !m_resources.get(resource->url())->get(partitionName(resource->cachePartition())));
+    ASSERT(!m_resources.get(resource->url()) || !m_resources.get(resource->url())->get(resource->cachePartition()));
     CachedResourceItem* originMap = m_resources.get(resource->url());
     if (!originMap) {
         originMap = new CachedResourceItem;
         m_resources.set(resource->url(), adoptPtr(originMap));
     }
-    originMap->set(partitionName(resource->cachePartition()), resource);
+    originMap->set(resource->cachePartition(), resource);
 #else
     ASSERT(!m_resources.get(resource->url()));
     m_resources.set(resource->url(), resource);
@@ -196,7 +180,7 @@ CachedResource* MemoryCache::resourceForRequest(const ResourceRequest& request)
     CachedResourceItem* item = m_resources.get(url);
     CachedResource* resource = 0;
     if (item)
-        resource = item->get(partitionName(request.cachePartition()));
+        resource = item->get(request.cachePartition());
 #else
     CachedResource* resource = m_resources.get(url);
 #endif
@@ -441,7 +425,7 @@ void MemoryCache::evict(CachedResource* resource)
 #if ENABLE(CACHE_PARTITIONING)
         CachedResourceItem* item = m_resources.get(resource->url());
         if (item) {
-            item->remove(partitionName(resource->cachePartition()));
+            item->remove(resource->cachePartition());
             if (!item->size())
                 m_resources.remove(resource->url());
         }
@@ -461,7 +445,7 @@ void MemoryCache::evict(CachedResource* resource)
             adjustSize(resource->hasClients(), -static_cast<int>(resource->size()));
     } else
 #if ENABLE(CACHE_PARTITIONING)
-        ASSERT(!m_resources.get(resource->url()) || m_resources.get(resource->url())->get(partitionName(resource->cachePartition())) != resource);
+        ASSERT(!m_resources.get(resource->url()) || m_resources.get(resource->url())->get(resource->cachePartition()) != resource);
 #else
         ASSERT(m_resources.get(resource->url()) != resource);
 #endif
@@ -585,7 +569,7 @@ void MemoryCache::removeResourcesWithOrigin(SecurityOrigin* origin)
 
     CachedResourceMap::iterator e = m_resources.end();
 #if ENABLE(CACHE_PARTITIONING)
-    String originPartition = partitionName(origin->host());
+    String originPartition = ResourceRequest::partitionName(origin->host());
 #endif
 
     for (CachedResourceMap::iterator it = m_resources.begin(); it != e; ++it) {

@@ -29,6 +29,10 @@
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
 
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+#include "PublicSuffix.h"
+#endif
+
 #if USE(CFNETWORK)
 #include "FormDataStreamCFNet.h"
 #include <CFNetwork/CFURLRequestPriv.h>
@@ -304,6 +308,22 @@ void ResourceRequest::setHTTPPipeliningEnabled(bool flag)
 {
     s_httpPipeliningEnabled = flag;
 }
+
+#if ENABLE(CACHE_PARTITIONING)
+String ResourceRequest::partitionName(const String& domain)
+{
+    if (domain.isNull())
+        return emptyString();
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    String highLevel = topPrivatelyControlledDomain(domain);
+    if (highLevel.isNull())
+        return emptyString();
+    return highLevel;
+#else
+    return domain;
+#endif
+}
+#endif
 
 PassOwnPtr<CrossThreadResourceRequestData> ResourceRequest::doPlatformCopyData(PassOwnPtr<CrossThreadResourceRequestData> data) const
 {

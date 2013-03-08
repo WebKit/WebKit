@@ -1,3 +1,15 @@
+2013-03-07  Jeffrey Pfau  <jpfau@apple.com>
+
+        CFNetwork cache partitioning does not work properly on subdomains
+        https://bugs.webkit.org/show_bug.cgi?id=111772
+
+        Reviewed by David Kilzer.
+
+        Ensure that the CFString is UTF-8 so that WKCFURLCacheCopyAllHostNamesInPersistentStoreForPartition will always work.
+
+        * WebProcess/ResourceCache/cf/WebResourceCacheManagerCFNet.cpp:
+        (WebKit::partitionName): Create a UTF-8 CFString explicitly
+
 2013-03-07  Beth Dakin  <bdakin@apple.com>
 
         Need API to draw custom overhang area

@@ -97,8 +97,9 @@ namespace WebCore {
 #endif
 
 #if ENABLE(CACHE_PARTITIONING)
-        const String& cachePartition() const { return m_cachePartition; }
-        void setCachePartition(const String& cachePartition) { m_cachePartition = cachePartition; }
+        static String partitionName(const String& domain);
+        const String& cachePartition() const { return m_cachePartition.isNull() ? emptyString() : m_cachePartition; }
+        void setCachePartition(const String& cachePartition) { m_cachePartition = partitionName(cachePartition); }
 #endif
 
 #if PLATFORM(MAC) || USE(CFNETWORK)

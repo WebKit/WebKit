@@ -30,6 +30,7 @@
 
 #if ENABLE(CACHE_PARTITIONING)
 #include <WebCore/PublicSuffix.h>
+#include <wtf/text/CString.h>
 #endif
 
 #if PLATFORM(MAC)
@@ -46,7 +47,8 @@ static RetainPtr<CFStringRef> partitionName(CFStringRef domain)
     String highLevel = WebCore::topPrivatelyControlledDomain(domain);
     if (highLevel.isNull())
         return 0;
-    return highLevel.createCFString();
+    CString utf8String = highLevel.utf8();
+    return adoptCF(CFStringCreateWithBytes(0, reinterpret_cast<const UInt8*>(utf8String.data()), utf8String.length(), kCFStringEncodingUTF8, false));
 #else
     return domain;
 #endif
