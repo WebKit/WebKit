@@ -79,3 +79,7 @@ function clickDayCellAt(column, row) {
     eventSender.mouseDown();
     eventSender.mouseUp();
 }
+
+function isCalendarTableScrollingWithAnimation() {
+    return popupWindow.global.picker.calendarTableView.scrollView.scrollAnimator().isRunning();
+}

@@ -7,6 +7,7 @@ Check that page popup doesn't exist at first.
 PASS document.getElementById("mock-page-popup") is null
 Check that page popup exists.
 PASS popupWindow.pagePopupController.toString() is "[object PagePopupController]"
+PASS isCalendarTableScrollingWithAnimation() is false
 PASS currentMonth() is "2000-01"
 PASS selectedValue() is "2000-01-02"
 PASS selectedDayCells() is "2000-01-02"
@@ -20,6 +21,7 @@ PASS selectedDayCells() is "2000-01-02"
 PASS highlightedValue() is "1999-12-26"
 PASS highlightedDayCells() is "1999-12-26"
 press up
+PASS isCalendarTableScrollingWithAnimation() is true
 PASS currentMonth() is "1999-12"
 PASS selectedValue() is "2000-01-02"
 PASS selectedDayCells() is ""
@@ -32,6 +34,7 @@ PASS selectedDayCells() is ""
 PASS highlightedValue() is "1999-12-26"
 PASS highlightedDayCells() is "1999-12-26"
 press down
+PASS isCalendarTableScrollingWithAnimation() is true
 PASS currentMonth() is "2000-01"
 PASS selectedValue() is "2000-01-02"
 PASS selectedDayCells() is "2000-01-02"
@@ -44,6 +47,7 @@ PASS selectedDayCells() is "2000-01-02"
 PASS highlightedValue() is "1999-12-26"
 PASS highlightedDayCells() is "1999-12-26"
 press left
+PASS isCalendarTableScrollingWithAnimation() is true
 PASS currentMonth() is "1999-12"
 PASS selectedValue() is "2000-01-02"
 PASS selectedDayCells() is ""
@@ -56,36 +60,42 @@ PASS selectedDayCells() is ""
 PASS highlightedValue() is "1999-12-26"
 PASS highlightedDayCells() is "1999-12-26"
 press m
+PASS isCalendarTableScrollingWithAnimation() is true
 PASS currentMonth() is "2000-01"
 PASS selectedValue() is "2000-01-02"
 PASS selectedDayCells() is "2000-01-02"
 PASS highlightedValue() is "2000-01-23"
 PASS highlightedDayCells() is "2000-01-23"
 press shift + m
+PASS isCalendarTableScrollingWithAnimation() is true
 PASS currentMonth() is "1999-12"
 PASS selectedValue() is "2000-01-02"
 PASS selectedDayCells() is ""
 PASS highlightedValue() is "1999-12-26"
 PASS highlightedDayCells() is "1999-12-26"
 press y
+PASS isCalendarTableScrollingWithAnimation() is true
 PASS currentMonth() is "2000-12"
 PASS selectedValue() is "2000-01-02"
 PASS selectedDayCells() is ""
 PASS highlightedValue() is "2000-12-24"
 PASS highlightedDayCells() is "2000-12-24"
 press shift + y
+PASS isCalendarTableScrollingWithAnimation() is true
 PASS currentMonth() is "1999-12"
 PASS selectedValue() is "2000-01-02"
 PASS selectedDayCells() is ""
 PASS highlightedValue() is "1999-12-26"
 PASS highlightedDayCells() is "1999-12-26"
 press d
+PASS isCalendarTableScrollingWithAnimation() is true
 PASS currentMonth() is "2009-12"
 PASS selectedValue() is "2000-01-02"
 PASS selectedDayCells() is ""
 PASS highlightedValue() is "2009-12-27"
 PASS highlightedDayCells() is "2009-12-27"
 press shift + d
+PASS isCalendarTableScrollingWithAnimation() is true
 PASS currentMonth() is "1999-12"
 PASS selectedValue() is "2000-01-02"
 PASS selectedDayCells() is ""
@@ -98,6 +108,7 @@ PASS selectedDayCells() is "1999-12-26"
 PASS highlightedValue() is "1999-12-26"
 PASS highlightedDayCells() is "1999-12-26"
 PASS document.getElementById("date").value is "1999-12-26"
+PASS isCalendarTableScrollingWithAnimation() is true
 PASS testToday() || testToday() is true
 Check if tabbing works.
 PASS focusedElement() is ".list-view calendar-table-view"

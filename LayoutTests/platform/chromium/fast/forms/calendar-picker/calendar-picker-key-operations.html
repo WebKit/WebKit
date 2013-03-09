@@ -20,7 +20,8 @@ openPicker(document.getElementById('date'), test1);
 function test1() {
     debug('Check that page popup exists.');
     shouldBe('popupWindow.pagePopupController.toString()', '"[object PagePopupController]"');
-
+    
+    shouldBeFalse('isCalendarTableScrollingWithAnimation()');
     shouldBeEqualToString('currentMonth()', '2000-01');
     shouldBeEqualToString('selectedValue()', '2000-01-02');
     shouldBeEqualToString('selectedDayCells()', '2000-01-02');
@@ -39,6 +40,7 @@ function test1() {
 
     debug('press up');
     eventSender.keyDown('upArrow');
+    shouldBeTrue('isCalendarTableScrollingWithAnimation()');
     shouldBeEqualToString('currentMonth()', '1999-12');
     shouldBeEqualToString('selectedValue()', '2000-01-02');
     shouldBeEqualToString('selectedDayCells()', '');
@@ -55,6 +57,7 @@ function test1() {
 
     debug('press down');
     eventSender.keyDown('downArrow');
+    shouldBeTrue('isCalendarTableScrollingWithAnimation()');
     shouldBeEqualToString('currentMonth()', '2000-01');
     shouldBeEqualToString('selectedValue()', '2000-01-02');
     shouldBeEqualToString('selectedDayCells()', '2000-01-02');
@@ -72,6 +75,7 @@ function test1() {
     // Move from top left of January 2000 to bottom right of December 1999.
     debug('press left');
     eventSender.keyDown('leftArrow');
+    shouldBeTrue('isCalendarTableScrollingWithAnimation()');
     shouldBeEqualToString('currentMonth()', '1999-12');
     shouldBeEqualToString('selectedValue()', '2000-01-02');
     shouldBeEqualToString('selectedDayCells()', '');
@@ -88,6 +92,7 @@ function test1() {
 
     debug("press m");
     eventSender.keyDown('m');
+    shouldBeTrue('isCalendarTableScrollingWithAnimation()');
     shouldBeEqualToString('currentMonth()', '2000-01');
     shouldBeEqualToString('selectedValue()', '2000-01-02');
     shouldBeEqualToString('selectedDayCells()', '2000-01-02');
@@ -96,6 +101,7 @@ function test1() {
 
     debug("press shift + m");
     eventSender.keyDown('M');
+    shouldBeTrue('isCalendarTableScrollingWithAnimation()');
     shouldBeEqualToString('currentMonth()', '1999-12');
     shouldBeEqualToString('selectedValue()', '2000-01-02');
     shouldBeEqualToString('selectedDayCells()', '');
@@ -104,6 +110,7 @@ function test1() {
 
     debug("press y");
     eventSender.keyDown('y');
+    shouldBeTrue('isCalendarTableScrollingWithAnimation()');
     shouldBeEqualToString('currentMonth()', '2000-12');
     shouldBeEqualToString('selectedValue()', '2000-01-02');
     shouldBeEqualToString('selectedDayCells()', '');
@@ -112,6 +119,7 @@ function test1() {
 
     debug("press shift + y");
     eventSender.keyDown('Y');
+    shouldBeTrue('isCalendarTableScrollingWithAnimation()');
     shouldBeEqualToString('currentMonth()', '1999-12');
     shouldBeEqualToString('selectedValue()', '2000-01-02');
     shouldBeEqualToString('selectedDayCells()', '');
@@ -120,6 +128,7 @@ function test1() {
 
     debug("press d");
     eventSender.keyDown('d');
+    shouldBeTrue('isCalendarTableScrollingWithAnimation()');
     shouldBeEqualToString('currentMonth()', '2009-12');
     shouldBeEqualToString('selectedValue()', '2000-01-02');
     shouldBeEqualToString('selectedDayCells()', '');
@@ -128,6 +137,7 @@ function test1() {
 
     debug("press shift + d");
     eventSender.keyDown('D');
+    shouldBeTrue('isCalendarTableScrollingWithAnimation()');
     shouldBeEqualToString('currentMonth()', '1999-12');
     shouldBeEqualToString('selectedValue()', '2000-01-02');
     shouldBeEqualToString('selectedDayCells()', '');
@@ -170,6 +180,7 @@ function test2AfterClosing() {
 
 function testToday() {
     eventSender.keyDown('t');
+    shouldBeTrue('isCalendarTableScrollingWithAnimation()', true /* quiet */);
     var now = new Date();
     var expectedDate = serializeDate(now.getFullYear(), now.getMonth(), now.getDate());
     var expectedMonth = (new popupWindow.Month(now.getFullYear(), now.getMonth())).toString();

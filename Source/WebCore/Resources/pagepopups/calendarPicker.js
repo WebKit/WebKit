@@ -996,14 +996,51 @@ AnimationManager.shared = new AnimationManager();
 function Animator() {
     EventEmitter.call(this);
 
+    /**
+     * @type {!number}
+     * @const
+     */
     this.id = Animator._lastId++;
+    /**
+     * @type {!number}
+     * @protected
+     */
     this._from = 0;
+    /**
+     * @type {!number}
+     * @protected
+     */
     this._to = 0;
+    /**
+     * @type {!number}
+     * @protected
+     */
     this._delta = 0;
+    /**
+     * @type {!number}
+     */
     this.duration = 100;
+    /**
+     * @type {?function}
+     */
     this.step = null;
-    this._lastStepTime = null;
+    /**
+     * @type {!number}
+     * @protected
+     */
+    this._lastStepTime = 0;
+    /**
+     * @type {!number}
+     */
     this.progress = 0.0;
+    /**
+     * @type {!number}
+     * @protected
+     */
+    this._isRunning = false;
+    /**
+     * @type {!function}
+     */
     this.timingFunction = AnimationTimingFunction.Linear;
 }
 
@@ -1012,6 +1049,13 @@ Animator.prototype = Object.create(EventEmitter.prototype);
 Animator._lastId = 0;
 
 Animator.EventTypeDidAnimationStop = "didAnimationStop";
+
+/**
+ * @return {!boolean}
+ */
+Animator.prototype.isRunning = function() {
+    return this._isRunning;
+};
 
 /**
  * @param {!number} value
@@ -1189,6 +1233,13 @@ ScrollView.prototype = Object.create(View.prototype);
 ScrollView.PartitionHeight = 100000;
 ScrollView.ClassNameScrollView = "scroll-view";
 ScrollView.ClassNameScrollViewContent = "scroll-view-content";
+
+/**
+ * @return {!Animator}
+ */
+ScrollView.prototype.scrollAnimator = function() {
+    return this._scrollAnimator;
+};
 
 /**
  * @param {!number} width
@@ -3304,10 +3355,10 @@ function CalendarPicker(type, config) {
 
     var initialSelection = parseDateString(config.currentValue);
     if (initialSelection) {
-        this.setCurrentMonth(Month.createFromDay(initialSelection.middleDay()), false);
+        this.setCurrentMonth(Month.createFromDay(initialSelection.middleDay()), CalendarPicker.NavigationBehavior.None);
         this.setSelection(initialSelection);
     } else
-        this.setCurrentMonth(Month.createFromToday(), false);
+        this.setCurrentMonth(Month.createFromToday(), CalendarPicker.NavigationBehavior.None);
 }
 
 CalendarPicker.prototype = Object.create(View.prototype);
@@ -3340,7 +3391,7 @@ CalendarPicker.prototype.onYearListViewDidHide = function(sender) {
  * @param {!Month} month
  */
 CalendarPicker.prototype.onYearListViewDidSelectMonth = function(sender, month) {
-    this.setCurrentMonth(month, false);
+    this.setCurrentMonth(month, CalendarPicker.NavigationBehavior.None);
 };
 
 /**
@@ -3491,7 +3542,7 @@ CalendarPicker.prototype.setSelection = function(dayOrWeekOrMonth) {
             var lastVisibleRow = this.calendarTableView.columnAndRowForDay(candidateCurrentMonth.lastDay()).row;
             var lastVisibleDay = this.calendarTableView.dayAtColumnAndRow(DaysPerWeek - 1, lastVisibleRow);
             if (firstDayInSelection >= firstVisibleDay && lastDayInSelection <= lastVisibleDay)
-                this.setCurrentMonth(candidateCurrentMonth, true);
+                this.setCurrentMonth(candidateCurrentMonth, CalendarPicker.NavigationBehavior.WithAnimation);
         }
     }
     this._setHighlight(dayOrWeekOrMonth);
@@ -3559,7 +3610,7 @@ CalendarPicker.prototype._moveHighlight = function(dateRange) {
     if (this._outOfRange(dateRange.valueOf()))
         return false;
     if (this.firstVisibleDay() > dateRange.middleDay() || this.lastVisibleDay() < dateRange.middleDay())
-        this.setCurrentMonth(Month.createFromDay(dateRange.middleDay()), true);
+        this.setCurrentMonth(Month.createFromDay(dateRange.middleDay()), CalendarPicker.NavigationBehavior.WithAnimation);
     this._setHighlight(dateRange);
     return true;
 };
@@ -3576,13 +3627,13 @@ CalendarPicker.prototype.onCalendarTableKeyDown = function(event) {
     } else if (key == "PageUp") {
         var previousMonth = this.currentMonth().previous();
         if (previousMonth && previousMonth >= this.config.minimumValue) {
-            this.setCurrentMonth(previousMonth, true);
+            this.setCurrentMonth(previousMonth, CalendarPicker.NavigationBehavior.WithAnimation);
             eventHandled = true;
         }
     } else if (key == "PageDown") {
         var nextMonth = this.currentMonth().next();
         if (nextMonth && nextMonth >= this.config.minimumValue) {
-            this.setCurrentMonth(nextMonth, true);
+            this.setCurrentMonth(nextMonth, CalendarPicker.NavigationBehavior.WithAnimation);
             eventHandled = true;
         }
     } else if (this._highlight) {
@@ -3653,7 +3704,7 @@ CalendarPicker.prototype.onBodyKeyDown = function(event) {
     case "U+0044": // 'd' key.
         offset = offset || MonthsPerYear * 10;
         var oldFirstVisibleRow = this.calendarTableView.columnAndRowForDay(this.currentMonth().firstDay()).row;
-        this.setCurrentMonth(event.shiftKey ? this.currentMonth().previous(offset) : this.currentMonth().next(offset), true);
+        this.setCurrentMonth(event.shiftKey ? this.currentMonth().previous(offset) : this.currentMonth().next(offset), CalendarPicker.NavigationBehavior.WithAnimation);
         var newFirstVisibleRow = this.calendarTableView.columnAndRowForDay(this.currentMonth().firstDay()).row;
         if (this._highlight) {
             var highlightMiddleDay = this._highlight.middleDay();
