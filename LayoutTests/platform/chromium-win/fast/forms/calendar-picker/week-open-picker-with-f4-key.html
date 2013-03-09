@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/calendar-picker-common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<input type=week id=test>
+<script>
+if (window.internals)
+    internals.setEnableMockPagePopup(true);
+
+description("Tests if pressing F4 opens the calendar picker.");
+
+debug('Check that page popup doesn\'t exist at first.');
+shouldBeNull('document.getElementById("mock-page-popup")');
+
+debug('Press F4 key.');
+sendKey(document.getElementById('test'), 'F4');
+shouldBeNonNull('document.getElementById("mock-page-popup")');
+
+function sendKey(input, keyName, ctrlKey, altKey) {
+    var event = document.createEvent('KeyboardEvent');
+    event.initKeyboardEvent('keydown', true, true, document.defaultView, keyName, 0, ctrlKey, altKey);
+    input.dispatchEvent(event);
+}
+</script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
