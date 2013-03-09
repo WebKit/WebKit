@@ -320,6 +320,8 @@ webkit.org/b/109890 [ Debug ] platform/mac-wk2/plugins/destroy-during-async-npp-
 
 webkit.org/b/111815 http/tests/security/cross-frame-access-put.html [ Failure ]
 
+webkit.org/b/111901 fast/dom/Window/redirect-with-timer.html [ Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
