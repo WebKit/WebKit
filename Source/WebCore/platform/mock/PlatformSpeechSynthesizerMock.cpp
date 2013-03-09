@@ -50,6 +50,7 @@ PlatformSpeechSynthesizerMock::~PlatformSpeechSynthesizerMock()
 
 void PlatformSpeechSynthesizerMock::speakingFinished(Timer<PlatformSpeechSynthesizerMock>*)
 {
+    ASSERT(m_utterance);
     client()->didFinishSpeaking(m_utterance);
     m_utterance = 0;
 }
@@ -64,6 +65,7 @@ void PlatformSpeechSynthesizerMock::initializeVoiceList()
 
 void PlatformSpeechSynthesizerMock::speak(const PlatformSpeechSynthesisUtterance& utterance)
 {
+    ASSERT(!m_utterance);
     m_utterance = &utterance;
     client()->didStartSpeaking(m_utterance);
     
@@ -77,6 +79,9 @@ void PlatformSpeechSynthesizerMock::speak(const PlatformSpeechSynthesisUtterance
     
 void PlatformSpeechSynthesizerMock::cancel()
 {
+    if (!m_utterance)
+        return;
+    
     m_speakingFinishedTimer.stop();
     client()->speakingErrorOccurred(m_utterance);
     m_utterance = 0;
