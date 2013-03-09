@@ -118,6 +118,8 @@ struct SameSizeAsRenderObject {
 
 COMPILE_ASSERT(sizeof(RenderObject) == sizeof(SameSizeAsRenderObject), RenderObject_should_stay_small);
 
+bool RenderObject::s_affectsParentBlock = false;
+
 RenderObjectAncestorLineboxDirtySet* RenderObject::s_ancestorLineboxDirtySet = 0;
 
 void* RenderObject::operator new(size_t sz, RenderArena* renderArena)
@@ -1683,6 +1685,25 @@ void RenderObject::selectionStartEnd(int& spos, int& epos) const
     view()->selectionStartEnd(spos, epos);
 }
 
+void RenderObject::handleDynamicFloatPositionChange()
+{
+    // We have gone from not affecting the inline status of the parent flow to suddenly
+    // having an impact.  See if there is a mismatch between the parent flow's
+    // childrenInline() state and our state.
+    setInline(style()->isDisplayInlineType());
+    if (isInline() != parent()->childrenInline()) {
+        if (!isInline())
+            toRenderBoxModelObject(parent())->childBecameNonInline(this);
+        else {
+            // An anonymous block must be made to wrap this inline.
+            RenderBlock* block = toRenderBlock(parent())->createAnonymousBlock();
+            RenderObjectChildList* childlist = parent()->virtualChildren();
+            childlist->insertChildNode(parent(), block, this);
+            block->children()->appendChildNode(block, childlist->removeChildNode(parent(), this));
+        }
+    }
+}
+
 void RenderObject::setAnimatableStyle(PassRefPtr<RenderStyle> style)
 {
     if (!isText() && style)
@@ -1880,6 +1901,10 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
             // from the positioned objects list.
             toRenderBox(this)->removeFloatingOrPositionedChildFromBlockLists();
 
+        s_affectsParentBlock = isFloatingOrOutOfFlowPositioned()
+            && (!newStyle->isFloating() && !newStyle->hasOutOfFlowPosition())
+            && parent() && (parent()->isBlockFlow() || parent()->isRenderInline());
+
         // reset style flags
         if (diff == StyleDifferenceLayout || diff == StyleDifferenceLayoutPositionedMovementOnly) {
             setFloating(false);
@@ -1890,7 +1915,8 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
         setHasOverflowClip(false);
         setHasTransform(false);
         setHasReflection(false);
-    }
+    } else
+        s_affectsParentBlock = false;
 
     if (view()->frameView()) {
         bool shouldBlitOnFixedBackgroundImage = false;
@@ -1942,6 +1968,8 @@ static inline bool areCursorsEqual(const RenderStyle* a, const RenderStyle* b)
 
 void RenderObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
+    if (s_affectsParentBlock)
+        handleDynamicFloatPositionChange();
 
 #if ENABLE(SVG)
     SVGRenderSupport::styleChanged(this);

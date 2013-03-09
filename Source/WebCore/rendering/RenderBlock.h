@@ -896,6 +896,7 @@ private:
     
     virtual RenderObject* hoverAncestor() const;
     virtual void updateDragState(bool dragOn);
+    virtual void childBecameNonInline(RenderObject* child);
 
     virtual LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool /*clipToVisibleContent*/) OVERRIDE
     {
