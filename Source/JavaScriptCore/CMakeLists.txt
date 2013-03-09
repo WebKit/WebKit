@@ -78,6 +78,7 @@ set(JavaScriptCore_SOURCES
     dfg/DFGArgumentsSimplificationPhase.cpp
     dfg/DFGArrayMode.cpp
     dfg/DFGAssemblyHelpers.cpp
+    dfg/DFGBackwardsPropagationPhase.cpp
     dfg/DFGByteCodeParser.cpp
     dfg/DFGCapabilities.cpp
     dfg/DFGCommon.cpp

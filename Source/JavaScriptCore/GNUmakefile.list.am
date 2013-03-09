@@ -184,6 +184,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGArrayifySlowPathGenerator.h \
 	Source/JavaScriptCore/dfg/DFGAssemblyHelpers.cpp \
 	Source/JavaScriptCore/dfg/DFGAssemblyHelpers.h \
+	Source/JavaScriptCore/dfg/DFGBackwardsPropagationPhase.cpp \
+	Source/JavaScriptCore/dfg/DFGBackwardsPropagationPhase.h \
 	Source/JavaScriptCore/dfg/DFGBasicBlock.h \
 	Source/JavaScriptCore/dfg/DFGBasicBlockInlines.h \
 	Source/JavaScriptCore/dfg/DFGBranchDirection.h \
