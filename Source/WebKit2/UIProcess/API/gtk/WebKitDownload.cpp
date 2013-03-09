@@ -276,6 +276,13 @@ WebKitDownload* webkitDownloadCreate(DownloadProxy* downloadProxy)
     return download;
 }
 
+WebKitDownload* webkitDownloadCreateForRequest(DownloadProxy* downloadProxy, const ResourceRequest& request)
+{
+    WebKitDownload* download = webkitDownloadCreate(downloadProxy);
+    download->priv->request = adoptGRef(webkitURIRequestCreateForResourceRequest(request));
+    return download;
+}
+
 void webkitDownloadSetResponse(WebKitDownload* download, WebKitURIResponse* response)
 {
     download->priv->response = response;
