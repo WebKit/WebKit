@@ -89,13 +89,6 @@ AC_ARG_ENABLE(video,
     [enable_video="yes"])
 AC_MSG_RESULT([$enable_video])
 
-AC_MSG_CHECKING([whether to enable media stream support])
-AC_ARG_ENABLE(media_stream, 
-    AC_HELP_STRING([--enable-media-stream], [enable media stream support (incomplete) [default=no]]),
-    [],
-    [enable_media_stream="no"])
-AC_MSG_RESULT([$enable_media_stream])
-
 AC_MSG_CHECKING([whether to enable XSLT support])
 AC_ARG_ENABLE(xslt, 
     AC_HELP_STRING([--enable-xslt], [enable support for XSLT [default=yes]]),
