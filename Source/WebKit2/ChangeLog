@@ -1,3 +1,13 @@
+2013-03-09  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK][WK2] Fix compilation warning missing-field-initializers in webkit-2.0 stable branch
+        https://bugs.webkit.org/show_bug.cgi?id=111863
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        (attachUIClientToView): Include missing initializer for pluginLoadPolicy.
+
 2013-03-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r145254, r145264, and r145288.
