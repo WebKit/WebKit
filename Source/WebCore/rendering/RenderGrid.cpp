@@ -335,14 +335,16 @@ size_t RenderGrid::maximumIndexInDirection(TrackSizingDirection direction) const
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         // This function bypasses the cache (cachedGridCoordinate()) as it is used to build it.
-        OwnPtr<GridSpan> positions = resolveGridPositionsFromStyle(child, direction);
+        // Also we can't call resolveGridPositionsFromStyle here as it assumes that the grid is build and we are in
+        // the middle of building it. However we should be able to share more code with the previous logic (FIXME).
+        const GridPosition& initialPosition = (direction == ForColumns) ? child->style()->gridItemStart() : child->style()->gridItemBefore();
+        const GridPosition& finalPosition = (direction == ForColumns) ? child->style()->gridItemEnd() : child->style()->gridItemAfter();
 
-        // No |positions| means that the item's position will need to be resolved by the auto placement algorithm
-        // thus we don't need to account for it here.
-        if (!positions)
-            continue;
+        size_t resolvedInitialPosition = initialPosition.isAuto() ? 1 : initialPosition.integerPosition();
+        size_t resolvedFinalPosition = finalPosition.isAuto() ? 1 : finalPosition.integerPosition();
 
-        maximumIndex = std::max(maximumIndex, positions->finalPositionIndex + 1);
+        maximumIndex = std::max(maximumIndex, resolvedInitialPosition);
+        maximumIndex = std::max(maximumIndex, resolvedFinalPosition);
     }
 
     return maximumIndex;
@@ -527,6 +529,8 @@ void RenderGrid::placeItemsOnGrid()
     Vector<RenderBox*> specifiedMajorAxisAutoGridItems;
     GridAutoFlow autoFlow = style()->gridAutoFlow();
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        // FIXME: We never re-resolve positions if the grid is grown during auto-placement which may lead auto / <integer>
+        // positions to not match the author's intent. The specification is unclear on what should be done in this case.
         OwnPtr<GridSpan> rowPositions = resolveGridPositionsFromStyle(child, ForRows);
         OwnPtr<GridSpan> columnPositions = resolveGridPositionsFromStyle(child, ForColumns);
         if (!rowPositions || !columnPositions) {
@@ -682,8 +686,12 @@ RenderGrid::GridCoordinate RenderGrid::cachedGridCoordinate(const RenderBox* gri
 
 PassOwnPtr<RenderGrid::GridSpan> RenderGrid::resolveGridPositionsFromStyle(const RenderBox* gridItem, TrackSizingDirection direction) const
 {
+    ASSERT(gridWasPopulated());
+
     const GridPosition& initialPosition = (direction == ForColumns) ? gridItem->style()->gridItemStart() : gridItem->style()->gridItemBefore();
+    const GridPositionSide initialPositionSide = (direction == ForColumns) ? StartSide : BeforeSide;
     const GridPosition& finalPosition = (direction == ForColumns) ? gridItem->style()->gridItemEnd() : gridItem->style()->gridItemAfter();
+    const GridPositionSide finalPositionSide = (direction == ForColumns) ? EndSide : AfterSide;
 
     if (initialPosition.isAuto() && finalPosition.isAuto()) {
         if (style()->gridAutoFlow() == AutoFlowNone)
@@ -695,29 +703,36 @@ PassOwnPtr<RenderGrid::GridSpan> RenderGrid::resolveGridPositionsFromStyle(const
 
     if (initialPosition.isAuto()) {
         // Infer the position from the final position ('auto / 1' case).
-        const size_t finalResolvedPosition = resolveGridPositionFromStyle(finalPosition);
+        const size_t finalResolvedPosition = resolveGridPositionFromStyle(finalPosition, finalPositionSide);
         return adoptPtr(new GridSpan(finalResolvedPosition, finalResolvedPosition));
     }
 
     if (finalPosition.isAuto()) {
         // Infer our position from the initial position ('1 / auto' case).
-        const size_t initialResolvedPosition = resolveGridPositionFromStyle(initialPosition);
+        const size_t initialResolvedPosition = resolveGridPositionFromStyle(initialPosition, initialPositionSide);
         return adoptPtr(new GridSpan(initialResolvedPosition, initialResolvedPosition));
     }
 
-    return adoptPtr(new GridSpan(resolveGridPositionFromStyle(initialPosition), resolveGridPositionFromStyle(finalPosition)));
+    return adoptPtr(new GridSpan(resolveGridPositionFromStyle(initialPosition, initialPositionSide), resolveGridPositionFromStyle(finalPosition, finalPositionSide)));
 }
 
-size_t RenderGrid::resolveGridPositionFromStyle(const GridPosition& position) const
+size_t RenderGrid::resolveGridPositionFromStyle(const GridPosition& position, GridPositionSide side) const
 {
+    ASSERT(gridWasPopulated());
+
     // FIXME: Handle other values for grid-{row,column} like ranges or line names.
     switch (position.type()) {
-    case IntegerPosition:
+    case IntegerPosition: {
         // FIXME: What does a non-positive integer mean for a column/row?
-        if (!position.isPositive())
-            return 0;
+        size_t resolvedPosition = position.isPositive() ? position.integerPosition() - 1 : 0;
 
-        return position.integerPosition() - 1;
+        if (side == StartSide || side == BeforeSide)
+            return resolvedPosition;
+
+        const size_t endOfTrack = (side == EndSide) ? gridColumnCount() - 1 : gridRowCount() - 1;
+        ASSERT(endOfTrack >= resolvedPosition);
+        return endOfTrack - resolvedPosition;
+    }
     case AutoPosition:
         // 'auto' depends on the opposite position for resolution (e.g. grid-row: auto / 1).
         ASSERT_NOT_REACHED();

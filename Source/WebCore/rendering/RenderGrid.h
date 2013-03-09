@@ -117,7 +117,13 @@ private:
     GridCoordinate cachedGridCoordinate(const RenderBox*) const;
 
     PassOwnPtr<GridSpan> resolveGridPositionsFromStyle(const RenderBox*, TrackSizingDirection) const;
-    size_t resolveGridPositionFromStyle(const GridPosition&) const;
+    enum GridPositionSide {
+        StartSide,
+        EndSide,
+        BeforeSide,
+        AfterSide
+    };
+    size_t resolveGridPositionFromStyle(const GridPosition&, GridPositionSide) const;
 
 #ifndef NDEBUG
     bool tracksAreWiderThanMinTrackBreadth(TrackSizingDirection, const Vector<GridTrack>&);
