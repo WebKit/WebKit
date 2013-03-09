@@ -59,6 +59,10 @@
 #include "TextTrackList.h"
 #endif
 
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+#include "RenderPart.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -1314,9 +1318,15 @@ void MediaControlTextTrackContainerElement::updateSizes(bool forceUpdate)
     if (m_textTrackRepresentation)
         videoBox = m_textTrackRepresentation->bounds();
     else {
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+        if (!mediaElement->renderer() || !mediaElement->renderer()->isRenderPart())
+            return;
+        videoBox = pixelSnappedIntRect(toRenderPart(mediaElement->renderer())->contentBoxRect());
+#else
         if (!mediaElement->renderer() || !mediaElement->renderer()->isVideo())
             return;
         videoBox = toRenderVideo(mediaElement->renderer())->videoBox();
+#endif
     }
 
     if (!forceUpdate && m_videoDisplaySize == videoBox)
