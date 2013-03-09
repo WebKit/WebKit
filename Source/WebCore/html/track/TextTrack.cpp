@@ -397,6 +397,38 @@ bool TextTrack::hasCue(TextTrackCue* cue)
     return false;
 }
 
+#if USE(PLATFORM_TEXT_TRACK_MENU)
+PassRefPtr<PlatformTextTrack> TextTrack::platformTextTrack()
+{
+    if (m_platformTextTrack)
+        return m_platformTextTrack;
+
+    PlatformTextTrack::TrackKind kind = PlatformTextTrack::Caption;
+    if (m_kind == subtitlesKeyword())
+        kind = PlatformTextTrack::Subtitle;
+    else if (m_kind == captionsKeyword())
+        kind = PlatformTextTrack::Caption;
+    else if (m_kind == descriptionsKeyword())
+        kind = PlatformTextTrack::Description;
+    else if (m_kind == chaptersKeyword())
+        kind = PlatformTextTrack::Chapter;
+    else if (m_kind == metadataKeyword())
+        kind = PlatformTextTrack::MetaData;
+
+    PlatformTextTrack::TrackType type = PlatformTextTrack::OutOfBand;
+    if (m_trackType == TrackElement)
+        type = PlatformTextTrack::OutOfBand;
+    else if (m_trackType == AddTrack)
+        type = PlatformTextTrack::Script;
+    else if (m_trackType == InBand)
+        type = PlatformTextTrack::InBand;
+
+    m_platformTextTrack = PlatformTextTrack::create(this, m_label, m_language, kind, type);
+
+    return m_platformTextTrack;
+}
+#endif
+
 } // namespace WebCore
 
 #endif

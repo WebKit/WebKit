@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@ namespace WebCore {
 
 class IntRect;
 class IntSize;
+class PlatformTextTrack;
 
 class MediaPlayerPrivateInterface {
     WTF_MAKE_NONCOPYABLE(MediaPlayerPrivateInterface); WTF_MAKE_FAST_ALLOCATED;
@@ -180,6 +181,12 @@ public:
     virtual bool requiresTextTrackRepresentation() const { return false; }
     virtual void setTextTrackRepresentation(TextTrackRepresentation*) { }
 #endif
+
+#if USE(PLATFORM_TEXT_TRACK_MENU)
+    virtual bool implementsTextTrackControls() const { return false; }
+    virtual PassRefPtr<PlatformTextTrackMenuInterface> textTrackMenu() { return 0; }
+#endif
+
 };
 
 }

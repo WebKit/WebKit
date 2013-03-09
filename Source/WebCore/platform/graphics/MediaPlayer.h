@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,6 +46,10 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "PlatformLayer.h"
+#endif
+
+#if USE(PLATFORM_TEXT_TRACK_MENU)
+#include "PlatformTextTrackMenu.h"
 #endif
 
 OBJC_CLASS AVPlayer;
@@ -436,6 +440,11 @@ public:
 #endif
 
     static void resetMediaEngines();
+
+#if USE(PLATFORM_TEXT_TRACK_MENU)
+    bool implementsTextTrackControls() const;
+    PassRefPtr<PlatformTextTrackMenuInterface> textTrackMenu();
+#endif
 
 private:
     MediaPlayer(MediaPlayerClient*);

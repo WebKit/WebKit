@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -127,6 +127,10 @@
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 #include "MediaKeyNeededEvent.h"
 #include "MediaKeys.h"
+#endif
+
+#if USE(PLATFORM_TEXT_TRACK_MENU)
+#include "PlatformTextTrack.h"
 #endif
 
 using namespace std;
@@ -261,7 +265,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_minimumWallClockTimeToCacheMediaTime(0)
     , m_fragmentStartTime(MediaPlayer::invalidTime())
     , m_fragmentEndTime(MediaPlayer::invalidTime())
-    , m_pendingLoadFlags(0)
+    , m_pendingActionFlags(0)
     , m_playing(false)
     , m_isWaitingUntilMediaCanStart(false)
     , m_shouldDelayLoadEvent(false)
@@ -399,8 +403,8 @@ void HTMLMediaElement::parseAttribute(const QualifiedName& name, const AtomicStr
     if (name == srcAttr) {
         // Trigger a reload, as long as the 'src' attribute is present.
         if (!value.isNull()) {
-            clearMediaPlayer(MediaResource);
-            scheduleLoad(MediaResource);
+            clearMediaPlayer(LoadMediaResource);
+            scheduleDelayedAction(LoadMediaResource);
         }
     } else if (name == controlsAttr)
         configureMediaControls();
@@ -495,7 +499,7 @@ void HTMLMediaElement::finishParsingChildren()
     
     for (Node* node = firstChild(); node; node = node->nextSibling()) {
         if (node->hasTagName(trackTag)) {
-            scheduleLoad(TextTrackResource);
+            scheduleDelayedAction(LoadTextTrackResource);
             break;
         }
     }
@@ -550,7 +554,7 @@ Node::InsertionNotificationRequest HTMLMediaElement::insertedInto(ContainerNode*
     LOG(Media, "HTMLMediaElement::insertedInto");
     HTMLElement::insertedInto(insertionPoint);
     if (insertionPoint->inDocument() && !getAttribute(srcAttr).isEmpty() && m_networkState == NETWORK_EMPTY)
-        scheduleLoad(MediaResource);
+        scheduleDelayedAction(LoadMediaResource);
     configureMediaControls();
     return InsertionDone;
 }
@@ -609,22 +613,27 @@ void HTMLMediaElement::didRecalcStyle(StyleChange)
         renderer()->updateFromElement();
 }
 
-void HTMLMediaElement::scheduleLoad(LoadType loadType)
+void HTMLMediaElement::scheduleDelayedAction(DelayedActionType actionType)
 {
     LOG(Media, "HTMLMediaElement::scheduleLoad");
 
-    if ((loadType & MediaResource) && !(m_pendingLoadFlags & MediaResource)) {
+    if ((actionType & LoadMediaResource) && !(m_pendingActionFlags & LoadMediaResource)) {
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
         createMediaPlayerProxy();
 #endif
         
         prepareForLoad();
-        m_pendingLoadFlags |= MediaResource;
+        m_pendingActionFlags |= LoadMediaResource;
     }
 
 #if ENABLE(VIDEO_TRACK)
-    if (RuntimeEnabledFeatures::webkitVideoTrackEnabled() && (loadType & TextTrackResource))
-        m_pendingLoadFlags |= TextTrackResource;
+    if (RuntimeEnabledFeatures::webkitVideoTrackEnabled() && (actionType & LoadTextTrackResource))
+        m_pendingActionFlags |= LoadTextTrackResource;
+#endif
+
+#if USE(PLATFORM_TEXT_TRACK_MENU)
+    if (actionType & TextTrackChangesNotification)
+        m_pendingActionFlags |= TextTrackChangesNotification;
 #endif
 
     if (!m_loadTimer.isActive())
@@ -634,7 +643,7 @@ void HTMLMediaElement::scheduleLoad(LoadType loadType)
 void HTMLMediaElement::scheduleNextSourceChild()
 {
     // Schedule the timer to try the next <source> element WITHOUT resetting state ala prepareForLoad.
-    m_pendingLoadFlags |= MediaResource;
+    m_pendingActionFlags |= LoadMediaResource;
     m_loadTimer.startOneShot(0);
 }
 
@@ -654,18 +663,23 @@ void HTMLMediaElement::loadTimerFired(Timer<HTMLMediaElement>*)
     RefPtr<HTMLMediaElement> protect(this); // loadNextSourceChild may fire 'beforeload', which can make arbitrary DOM mutations.
 
 #if ENABLE(VIDEO_TRACK)
-    if (RuntimeEnabledFeatures::webkitVideoTrackEnabled() && (m_pendingLoadFlags & TextTrackResource))
+    if (RuntimeEnabledFeatures::webkitVideoTrackEnabled() && (m_pendingActionFlags & LoadTextTrackResource))
         configureTextTracks();
 #endif
 
-    if (m_pendingLoadFlags & MediaResource) {
+    if (m_pendingActionFlags & LoadMediaResource) {
         if (m_loadState == LoadingFromSourceElement)
             loadNextSourceChild();
         else
             loadInternal();
     }
 
-    m_pendingLoadFlags = 0;
+#if USE(PLATFORM_TEXT_TRACK_MENU)
+    if (RuntimeEnabledFeatures::webkitVideoTrackEnabled() && (m_pendingActionFlags & TextTrackChangesNotification))
+        notifyMediaPlayerOfTextTrackChanges();
+#endif
+
+    m_pendingActionFlags = 0;
 }
 
 PassRefPtr<MediaError> HTMLMediaElement::error() const 
@@ -1385,6 +1399,11 @@ void HTMLMediaElement::textTrackModeChanged(TextTrack* track)
         }
     }
 
+#if USE(PLATFORM_TEXT_TRACK_MENU)
+    if (platformTextTrackMenu())
+        platformTextTrackMenu()->trackWasSelected(track->platformTextTrack());
+#endif
+    
     configureTextTrackDisplay();
     updateActiveTextTrackCues(currentTime());
 }
@@ -2422,7 +2441,7 @@ void HTMLMediaElement::playInternal()
 
     // 4.8.10.9. Playing the media resource
     if (!m_player || m_networkState == NETWORK_EMPTY)
-        scheduleLoad(MediaResource);
+        scheduleDelayedAction(LoadMediaResource);
 
     if (endedPlayback())
         seek(0, IGNORE_EXCEPTION);
@@ -2463,7 +2482,7 @@ void HTMLMediaElement::pauseInternal()
 
     // 4.8.10.9. Playing the media resource
     if (!m_player || m_networkState == NETWORK_EMPTY)
-        scheduleLoad(MediaResource);
+        scheduleDelayedAction(LoadMediaResource);
 
     m_autoplaying = false;
 
@@ -2819,13 +2838,13 @@ void HTMLMediaElement::mediaPlayerDidAddTrack(PassRefPtr<InbandTextTrackPrivate>
     // 7. Set the new text track's mode to the mode consistent with the user's preferences and the requirements of
     // the relevant specification for the data.
     //  - This will happen in configureTextTracks()
-    scheduleLoad(TextTrackResource);
+    scheduleDelayedAction(LoadTextTrackResource);
     
     // 8. Add the new text track to the media element's list of text tracks.
     // 9. Fire an event with the name addtrack, that does not bubble and is not cancelable, and that uses the TrackEvent
     // interface, with the track attribute initialized to the text track's TextTrack object, at the media element's
     // textTracks attribute's TextTrackList object.
-    textTracks()->append(textTrack);
+    addTrack(textTrack.get());
 }
 
 void HTMLMediaElement::mediaPlayerDidRemoveTrack(PassRefPtr<InbandTextTrackPrivate> prpTrack)
@@ -2845,6 +2864,89 @@ void HTMLMediaElement::mediaPlayerDidRemoveTrack(PassRefPtr<InbandTextTrackPriva
     removeTrack(textTrack.get());
 }
 
+#if USE(PLATFORM_TEXT_TRACK_MENU)
+void HTMLMediaElement::setSelectedTextTrack(PassRefPtr<PlatformTextTrack> platformTrack)
+{
+    if (!m_textTracks)
+        return;
+
+    TrackDisplayUpdateScope scope(this);
+
+    if (!platformTrack) {
+        toggleTrackAtIndex(textTracksOffIndex(), true);
+        return;
+    }
+
+    TextTrack* textTrack;
+    size_t i;
+    for (i = 0; i < m_textTracks->length(); ++i) {
+        textTrack = m_textTracks->item(i);
+        
+        if (textTrack->platformTextTrack() == platformTrack)
+            break;
+    }
+
+    if (i == m_textTracks->length())
+        return;
+    toggleTrackAtIndex(i, true);
+}
+
+Vector<RefPtr<PlatformTextTrack> > HTMLMediaElement::platformTextTracks()
+{
+    if (!m_textTracks || !m_textTracks->length())
+        return Vector<RefPtr<PlatformTextTrack> >();
+    
+    Vector<RefPtr<PlatformTextTrack> > platformTracks;
+    for (size_t i = 0; i < m_textTracks->length(); ++i)
+        platformTracks.append(m_textTracks->item(i)->platformTextTrack());
+    
+    return platformTracks;
+}
+
+void HTMLMediaElement::notifyMediaPlayerOfTextTrackChanges()
+{
+    if (!m_textTracks || !m_textTracks->length() || !platformTextTrackMenu())
+        return;
+    
+    m_platformMenu->tracksDidChange();
+}
+
+PlatformTextTrackMenuInterface* HTMLMediaElement::platformTextTrackMenu()
+{
+    if (m_platformMenu)
+        return m_platformMenu.get();
+
+    if (!m_player->implementsTextTrackControls())
+        return 0;
+
+    m_platformMenu = m_player->textTrackMenu();
+    if (!m_platformMenu)
+        return 0;
+
+    m_platformMenu->setClient(this);
+
+    return m_platformMenu.get();
+}
+#endif // #if USE(PLATFORM_TEXT_TRACK_MENU)
+    
+void HTMLMediaElement::closeCaptionTracksChanged()
+{
+    if (hasMediaControls())
+        mediaControls()->closedCaptionTracksChanged();
+
+#if USE(PLATFORM_TEXT_TRACK_MENU)
+    if (m_player->implementsTextTrackControls())
+        scheduleDelayedAction(TextTrackChangesNotification);
+#endif
+}
+
+void HTMLMediaElement::addTrack(TextTrack* track)
+{
+    textTracks()->append(track);
+    
+    closeCaptionTracksChanged();
+}
+
 void HTMLMediaElement::removeTrack(TextTrack* track)
 {
     TrackDisplayUpdateScope scope(this);
@@ -2852,6 +2954,8 @@ void HTMLMediaElement::removeTrack(TextTrack* track)
     if (cues)
         textTrackRemoveCues(track, cues);
     m_textTracks->remove(track);
+
+    closeCaptionTracksChanged();
 }
 
 void HTMLMediaElement::removeAllInbandTracks()
@@ -2894,16 +2998,13 @@ PassRefPtr<TextTrack> HTMLMediaElement::addTextTrack(const String& kind, const S
     // first append the track to the text track list.
 
     // 6. Add the new text track to the media element's list of text tracks.
-    textTracks()->append(textTrack);
+    addTrack(textTrack.get());
 
     // ... its text track readiness state to the text track loaded state ...
     textTrack->setReadinessState(TextTrack::Loaded);
 
     // ... its text track mode to the text track hidden mode, and its text track list of cues to an empty list ...
     textTrack->setMode(TextTrack::hiddenKeyword());
-
-    if (hasMediaControls())
-        mediaControls()->closedCaptionTracksChanged();
 
     return textTrack.release();
 }
@@ -2934,12 +3035,12 @@ void HTMLMediaElement::didAddTrack(HTMLTrackElement* trackElement)
     if (!textTrack)
         return;
     
-    textTracks()->append(textTrack);
+    addTrack(textTrack.get());
     
     // Do not schedule the track loading until parsing finishes so we don't start before all tracks
     // in the markup have been added.
     if (!m_parsingInProgress)
-        scheduleLoad(TextTrackResource);
+        scheduleDelayedAction(LoadTextTrackResource);
 
     if (hasMediaControls())
         mediaControls()->closedCaptionTracksChanged();
@@ -2973,9 +3074,6 @@ void HTMLMediaElement::didRemoveTrack(HTMLTrackElement* trackElement)
     // then the user agent must remove the track element's corresponding text track from the 
     // media element's list of text tracks.
     removeTrack(textTrack.get());
-
-    if (hasMediaControls())
-        mediaControls()->closedCaptionTracksChanged();
 
     size_t index = m_textTracksWhenResourceSelectionBegan.find(textTrack.get());
     if (index != notFound)
@@ -3326,7 +3424,7 @@ void HTMLMediaElement::sourceWasAdded(HTMLSourceElement* source)
     // attribute and whose networkState has the value NETWORK_EMPTY, the user agent must invoke 
     // the media element's resource selection algorithm.
     if (networkState() == HTMLMediaElement::NETWORK_EMPTY) {
-        scheduleLoad(MediaResource);
+        scheduleDelayedAction(LoadMediaResource);
         m_nextChildNodeToConsider = source;
         return;
     }
@@ -3869,6 +3967,13 @@ void HTMLMediaElement::userCancelledLoad()
 
 void HTMLMediaElement::clearMediaPlayer(int flags)
 {
+#if USE(PLATFORM_TEXT_TRACK_MENU)
+    if (platformTextTrackMenu()) {
+        m_platformMenu->setClient(0);
+        m_platformMenu = 0;
+    }
+#endif
+
 #if ENABLE(VIDEO_TRACK)
     removeAllInbandTracks();
 #endif
@@ -3884,7 +3989,7 @@ void HTMLMediaElement::clearMediaPlayer(int flags)
     stopPeriodicTimers();
     m_loadTimer.stop();
 
-    m_pendingLoadFlags &= ~flags;
+    m_pendingActionFlags &= ~flags;
     m_loadState = WaitingForSource;
 
 #if ENABLE(VIDEO_TRACK)
@@ -3948,7 +4053,7 @@ void HTMLMediaElement::resume()
         //  MEDIA_ERR_ABORTED while the abortEvent is being sent, but cleared immediately afterwards).
         // This behavior is not specified but it seems like a sensible thing to do.
         // As it is not safe to immedately start loading now, let's schedule a load.
-        scheduleLoad(MediaResource);
+        scheduleDelayedAction(LoadMediaResource);
     }
 
     if (renderer())

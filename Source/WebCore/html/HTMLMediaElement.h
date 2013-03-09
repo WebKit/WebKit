@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010, 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -86,6 +86,9 @@ class HTMLMediaElement : public HTMLElement, public MediaPlayerClient, public Me
 #if ENABLE(VIDEO_TRACK)
     , private TextTrackClient, private CaptionPreferencesChangedListener
 #endif
+#if USE(PLATFORM_TEXT_TRACK_MENU)
+    , public PlatformTextTrackMenuClient
+#endif
 {
 public:
     MediaPlayer* player() const { return m_player.get(); }
@@ -108,11 +111,12 @@ public:
     PlatformLayer* platformLayer() const;
 #endif
 
-    enum LoadType {
-        MediaResource = 1 << 0,
-        TextTrackResource = 1 << 1
+    enum DelayedActionType {
+        LoadMediaResource = 1 << 0,
+        LoadTextTrackResource = 1 << 1,
+        TextTrackChangesNotification = 1 << 2
     };
-    void scheduleLoad(LoadType);
+    void scheduleDelayedAction(DelayedActionType);
     
     MediaPlayer::MovieLoadType movieLoadType() const;
     
@@ -224,14 +228,23 @@ public:
     TextTrackList* textTracks();
     CueList currentlyActiveCues() const { return m_currentlyActiveCues; }
 
+    void addTrack(TextTrack*);
     void removeTrack(TextTrack*);
     void removeAllInbandTracks();
+    void closeCaptionTracksChanged();
+    void notifyMediaPlayerOfTextTrackChanges();
 
     virtual void didAddTrack(HTMLTrackElement*);
     virtual void didRemoveTrack(HTMLTrackElement*);
 
     virtual void mediaPlayerDidAddTrack(PassRefPtr<InbandTextTrackPrivate>) OVERRIDE;
     virtual void mediaPlayerDidRemoveTrack(PassRefPtr<InbandTextTrackPrivate>) OVERRIDE;
+
+#if USE(PLATFORM_TEXT_TRACK_MENU)
+    virtual void setSelectedTextTrack(PassRefPtr<PlatformTextTrack>) OVERRIDE;
+    virtual Vector<RefPtr<PlatformTextTrack> > platformTextTracks() OVERRIDE;
+    PlatformTextTrackMenuInterface* platformTextTrackMenu();
+#endif
 
     struct TrackGroup {
         enum GroupKind { CaptionsAndSubtitles, Description, Chapter, Metadata, Other };
@@ -644,8 +657,8 @@ private:
     double m_fragmentStartTime;
     double m_fragmentEndTime;
 
-    typedef unsigned PendingLoadFlags;
-    PendingLoadFlags m_pendingLoadFlags;
+    typedef unsigned PendingActionFlags;
+    PendingActionFlags m_pendingActionFlags;
 
     bool m_playing : 1;
     bool m_isWaitingUntilMediaCanStart : 1;
@@ -717,6 +730,10 @@ private:
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     RefPtr<MediaKeys> m_mediaKeys;
+#endif
+
+#if USE(PLATFORM_TEXT_TRACK_MENU)
+    RefPtr<PlatformTextTrackMenuInterface> m_platformMenu;
 #endif
 };
 
