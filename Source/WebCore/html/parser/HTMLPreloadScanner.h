@@ -86,7 +86,7 @@ private:
     inline void scanCommon(const Token&, PreloadRequestStream& requests);
 
     static TagId tagIdFor(const HTMLToken::DataVector&);
-    static TagId tagIdFor(const String&);
+    static TagId tagIdFor(const HTMLIdentifier&);
 
     static String initiatorFor(TagId);
 

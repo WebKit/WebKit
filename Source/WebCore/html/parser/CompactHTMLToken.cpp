@@ -38,7 +38,7 @@ namespace WebCore {
 
 struct SameSizeAsCompactHTMLToken  {
     unsigned bitfields;
-    String name;
+    HTMLIdentifier data;
     Vector<Attribute> vector;
     TextPosition textPosition;
 };
@@ -56,10 +56,10 @@ CompactHTMLToken::CompactHTMLToken(const HTMLToken* token, const TextPosition& t
         ASSERT_NOT_REACHED();
         break;
     case HTMLToken::DOCTYPE: {
-        m_data = String(token->name());
+        m_data = HTMLIdentifier(token->name(), Likely8Bit);
         // There is only 1 DOCTYPE token per document, so to avoid increasing the
         // size of CompactHTMLToken, we just use the m_attributes vector.
-        m_attributes.append(Attribute(String(token->publicIdentifier()), String(token->systemIdentifier())));
+        m_attributes.append(Attribute(HTMLIdentifier(token->publicIdentifier(), Likely8Bit), String(token->systemIdentifier())));
         m_doctypeForcesQuirks = token->forceQuirks();
         break;
     }
@@ -68,19 +68,17 @@ CompactHTMLToken::CompactHTMLToken(const HTMLToken* token, const TextPosition& t
     case HTMLToken::StartTag:
         m_attributes.reserveInitialCapacity(token->attributes().size());
         for (Vector<HTMLToken::Attribute>::const_iterator it = token->attributes().begin(); it != token->attributes().end(); ++it)
-            m_attributes.append(Attribute(StringImpl::create8BitIfPossible(it->name), StringImpl::create8BitIfPossible(it->value)));
+            m_attributes.append(Attribute(HTMLIdentifier(it->name, Likely8Bit), StringImpl::create8BitIfPossible(it->value)));
         // Fall through!
     case HTMLToken::EndTag:
         m_selfClosing = token->selfClosing();
         // Fall through!
     case HTMLToken::Comment:
-    case HTMLToken::Character:
-        if (token->isAll8BitData()) {
-            m_data = String::make8BitFrom16BitSource(token->data());
-            m_isAll8BitData = true;
-        } else
-            m_data = String(token->data());
+    case HTMLToken::Character: {
+        m_isAll8BitData = token->isAll8BitData();
+        m_data = HTMLIdentifier(token->data(), token->isAll8BitData() ? Force8Bit : Force16Bit);
         break;
+    }
     default:
         ASSERT_NOT_REACHED();
         break;

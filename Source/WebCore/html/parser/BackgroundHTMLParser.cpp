@@ -69,65 +69,68 @@ static void checkThatXSSInfosAreSafeToSendToAnotherThread(const XSSInfoStream& x
 
 static bool tokenExitsForeignContent(const CompactHTMLToken& token)
 {
-    // FIXME: This is copied from HTMLTreeBuilder::processTokenInForeignContent and changed to use threadSafeMatch.
-    const String& tagName = token.data();
-    return threadSafeMatch(tagName, bTag)
-        || threadSafeMatch(tagName, bigTag)
-        || threadSafeMatch(tagName, blockquoteTag)
-        || threadSafeMatch(tagName, bodyTag)
-        || threadSafeMatch(tagName, brTag)
-        || threadSafeMatch(tagName, centerTag)
-        || threadSafeMatch(tagName, codeTag)
-        || threadSafeMatch(tagName, ddTag)
-        || threadSafeMatch(tagName, divTag)
-        || threadSafeMatch(tagName, dlTag)
-        || threadSafeMatch(tagName, dtTag)
-        || threadSafeMatch(tagName, emTag)
-        || threadSafeMatch(tagName, embedTag)
-        || threadSafeMatch(tagName, h1Tag)
-        || threadSafeMatch(tagName, h2Tag)
-        || threadSafeMatch(tagName, h3Tag)
-        || threadSafeMatch(tagName, h4Tag)
-        || threadSafeMatch(tagName, h5Tag)
-        || threadSafeMatch(tagName, h6Tag)
-        || threadSafeMatch(tagName, headTag)
-        || threadSafeMatch(tagName, hrTag)
-        || threadSafeMatch(tagName, iTag)
-        || threadSafeMatch(tagName, imgTag)
-        || threadSafeMatch(tagName, liTag)
-        || threadSafeMatch(tagName, listingTag)
-        || threadSafeMatch(tagName, menuTag)
-        || threadSafeMatch(tagName, metaTag)
-        || threadSafeMatch(tagName, nobrTag)
-        || threadSafeMatch(tagName, olTag)
-        || threadSafeMatch(tagName, pTag)
-        || threadSafeMatch(tagName, preTag)
-        || threadSafeMatch(tagName, rubyTag)
-        || threadSafeMatch(tagName, sTag)
-        || threadSafeMatch(tagName, smallTag)
-        || threadSafeMatch(tagName, spanTag)
-        || threadSafeMatch(tagName, strongTag)
-        || threadSafeMatch(tagName, strikeTag)
-        || threadSafeMatch(tagName, subTag)
-        || threadSafeMatch(tagName, supTag)
-        || threadSafeMatch(tagName, tableTag)
-        || threadSafeMatch(tagName, ttTag)
-        || threadSafeMatch(tagName, uTag)
-        || threadSafeMatch(tagName, ulTag)
-        || threadSafeMatch(tagName, varTag)
-        || (threadSafeMatch(tagName, fontTag) && (token.getAttributeItem(colorAttr) || token.getAttributeItem(faceAttr) || token.getAttributeItem(sizeAttr)));
+    // FIXME: This is copied from HTMLTreeBuilder::processTokenInForeignContent and changed to use threadSafeHTMLNamesMatch.
+    const HTMLIdentifier& tagName = token.data();
+    return threadSafeHTMLNamesMatch(tagName, bTag)
+        || threadSafeHTMLNamesMatch(tagName, bigTag)
+        || threadSafeHTMLNamesMatch(tagName, blockquoteTag)
+        || threadSafeHTMLNamesMatch(tagName, bodyTag)
+        || threadSafeHTMLNamesMatch(tagName, brTag)
+        || threadSafeHTMLNamesMatch(tagName, centerTag)
+        || threadSafeHTMLNamesMatch(tagName, codeTag)
+        || threadSafeHTMLNamesMatch(tagName, ddTag)
+        || threadSafeHTMLNamesMatch(tagName, divTag)
+        || threadSafeHTMLNamesMatch(tagName, dlTag)
+        || threadSafeHTMLNamesMatch(tagName, dtTag)
+        || threadSafeHTMLNamesMatch(tagName, emTag)
+        || threadSafeHTMLNamesMatch(tagName, embedTag)
+        || threadSafeHTMLNamesMatch(tagName, h1Tag)
+        || threadSafeHTMLNamesMatch(tagName, h2Tag)
+        || threadSafeHTMLNamesMatch(tagName, h3Tag)
+        || threadSafeHTMLNamesMatch(tagName, h4Tag)
+        || threadSafeHTMLNamesMatch(tagName, h5Tag)
+        || threadSafeHTMLNamesMatch(tagName, h6Tag)
+        || threadSafeHTMLNamesMatch(tagName, headTag)
+        || threadSafeHTMLNamesMatch(tagName, hrTag)
+        || threadSafeHTMLNamesMatch(tagName, iTag)
+        || threadSafeHTMLNamesMatch(tagName, imgTag)
+        || threadSafeHTMLNamesMatch(tagName, liTag)
+        || threadSafeHTMLNamesMatch(tagName, listingTag)
+        || threadSafeHTMLNamesMatch(tagName, menuTag)
+        || threadSafeHTMLNamesMatch(tagName, metaTag)
+        || threadSafeHTMLNamesMatch(tagName, nobrTag)
+        || threadSafeHTMLNamesMatch(tagName, olTag)
+        || threadSafeHTMLNamesMatch(tagName, pTag)
+        || threadSafeHTMLNamesMatch(tagName, preTag)
+        || threadSafeHTMLNamesMatch(tagName, rubyTag)
+        || threadSafeHTMLNamesMatch(tagName, sTag)
+        || threadSafeHTMLNamesMatch(tagName, smallTag)
+        || threadSafeHTMLNamesMatch(tagName, spanTag)
+        || threadSafeHTMLNamesMatch(tagName, strongTag)
+        || threadSafeHTMLNamesMatch(tagName, strikeTag)
+        || threadSafeHTMLNamesMatch(tagName, subTag)
+        || threadSafeHTMLNamesMatch(tagName, supTag)
+        || threadSafeHTMLNamesMatch(tagName, tableTag)
+        || threadSafeHTMLNamesMatch(tagName, ttTag)
+        || threadSafeHTMLNamesMatch(tagName, uTag)
+        || threadSafeHTMLNamesMatch(tagName, ulTag)
+        || threadSafeHTMLNamesMatch(tagName, varTag)
+        || (threadSafeHTMLNamesMatch(tagName, fontTag) && (token.getAttributeItem(colorAttr) || token.getAttributeItem(faceAttr) || token.getAttributeItem(sizeAttr)));
 }
 
 static bool tokenExitsSVG(const CompactHTMLToken& token)
 {
-    const String& tagName = token.data();
-    return equalIgnoringCase(tagName, SVGNames::foreignObjectTag.localName());
+    // FIXME: It's very fragile that we special case foreignObject here to be case-insensitive.
+    // FIXME: Using CaseFoldingHash::equal instead of equalIgnoringCase, as equalIgnoringCase
+    // wants non-const StringImpl* (even though it never modifies them).
+    // https://bugs.webkit.org/show_bug.cgi?id=111892 is for fixing equalIgnoringCase.
+    return CaseFoldingHash::equal(token.data().asStringImpl(), SVGNames::foreignObjectTag.localName().impl());
 }
 
 static bool tokenExitsMath(const CompactHTMLToken& token)
 {
     // FIXME: This is copied from HTMLElementStack::isMathMLTextIntegrationPoint and changed to use threadSafeMatch.
-    const String& tagName = token.data();
+    const HTMLIdentifier& tagName = token.data();
     return threadSafeMatch(tagName, MathMLNames::miTag)
         || threadSafeMatch(tagName, MathMLNames::moTag)
         || threadSafeMatch(tagName, MathMLNames::mnTag)
@@ -203,7 +206,7 @@ void BackgroundHTMLParser::markEndOfFile()
 bool BackgroundHTMLParser::simulateTreeBuilder(const CompactHTMLToken& token)
 {
     if (token.type() == HTMLToken::StartTag) {
-        const String& tagName = token.data();
+        const HTMLIdentifier& tagName = token.data();
         if (threadSafeMatch(tagName, SVGNames::svgTag))
             m_namespaceStack.append(SVG);
         if (threadSafeMatch(tagName, MathMLNames::mathTag))
@@ -215,30 +218,30 @@ bool BackgroundHTMLParser::simulateTreeBuilder(const CompactHTMLToken& token)
             m_namespaceStack.append(HTML);
         if (!inForeignContent()) {
             // FIXME: This is just a copy of Tokenizer::updateStateFor which uses threadSafeMatches.
-            if (threadSafeMatch(tagName, textareaTag) || threadSafeMatch(tagName, titleTag))
+            if (threadSafeHTMLNamesMatch(tagName, textareaTag) || threadSafeHTMLNamesMatch(tagName, titleTag))
                 m_tokenizer->setState(HTMLTokenizer::RCDATAState);
-            else if (threadSafeMatch(tagName, plaintextTag))
+            else if (threadSafeHTMLNamesMatch(tagName, plaintextTag))
                 m_tokenizer->setState(HTMLTokenizer::PLAINTEXTState);
-            else if (threadSafeMatch(tagName, scriptTag))
+            else if (threadSafeHTMLNamesMatch(tagName, scriptTag))
                 m_tokenizer->setState(HTMLTokenizer::ScriptDataState);
-            else if (threadSafeMatch(tagName, styleTag)
-                || threadSafeMatch(tagName, iframeTag)
-                || threadSafeMatch(tagName, xmpTag)
-                || (threadSafeMatch(tagName, noembedTag) && m_options.pluginsEnabled)
-                || threadSafeMatch(tagName, noframesTag)
-                || (threadSafeMatch(tagName, noscriptTag) && m_options.scriptEnabled))
+            else if (threadSafeHTMLNamesMatch(tagName, styleTag)
+                || threadSafeHTMLNamesMatch(tagName, iframeTag)
+                || threadSafeHTMLNamesMatch(tagName, xmpTag)
+                || (threadSafeHTMLNamesMatch(tagName, noembedTag) && m_options.pluginsEnabled)
+                || threadSafeHTMLNamesMatch(tagName, noframesTag)
+                || (threadSafeHTMLNamesMatch(tagName, noscriptTag) && m_options.scriptEnabled))
                 m_tokenizer->setState(HTMLTokenizer::RAWTEXTState);
         }
     }
 
     if (token.type() == HTMLToken::EndTag) {
-        const String& tagName = token.data();
+        const HTMLIdentifier& tagName = token.data();
         if ((m_namespaceStack.last() == SVG && threadSafeMatch(tagName, SVGNames::svgTag))
             || (m_namespaceStack.last() == MathML && threadSafeMatch(tagName, MathMLNames::mathTag))
             || (m_namespaceStack.contains(SVG) && m_namespaceStack.last() == HTML && tokenExitsSVG(token))
             || (m_namespaceStack.contains(MathML) && m_namespaceStack.last() == HTML && tokenExitsMath(token)))
             m_namespaceStack.removeLast();
-        if (threadSafeMatch(tagName, scriptTag)) {
+        if (threadSafeHTMLNamesMatch(tagName, scriptTag)) {
             if (!inForeignContent())
                 m_tokenizer->setState(HTMLTokenizer::DataState);
             return false;

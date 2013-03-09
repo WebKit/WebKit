@@ -29,6 +29,7 @@
 #include "CSSPreloadScanner.h"
 
 #include "CachedResourceRequestInitiators.h"
+#include "HTMLIdentifier.h"
 #include "HTMLParserIdioms.h"
 
 namespace WebCore {
@@ -64,16 +65,19 @@ void CSSPreloadScanner::scan(const HTMLToken::DataVector& data, PreloadRequestSt
     scanCommon(data.data(), data.data() + data.size(), requests);
 }
 
-void CSSPreloadScanner::scan(const String& data, PreloadRequestStream& requests)
+#if ENABLE(THREADED_HTML_PARSER)
+void CSSPreloadScanner::scan(const HTMLIdentifier& identifier, PreloadRequestStream& requests)
 {
-    if (data.is8Bit()) {
-        const LChar* begin = data.characters8();
-        scanCommon(begin, begin + data.length(), requests);
+    const StringImpl* data = identifier.asStringImpl();
+    if (data->is8Bit()) {
+        const LChar* begin = data->characters8();
+        scanCommon(begin, begin + data->length(), requests);
         return;
     }
-    const UChar* begin = data.characters16();
-    scanCommon(begin, begin + data.length(), requests);
+    const UChar* begin = data->characters16();
+    scanCommon(begin, begin + data->length(), requests);
 }
+#endif
 
 inline void CSSPreloadScanner::tokenize(UChar c)
 {

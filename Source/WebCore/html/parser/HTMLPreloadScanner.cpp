@@ -63,24 +63,26 @@ TokenPreloadScanner::TagId TokenPreloadScanner::tagIdFor(const HTMLToken::DataVe
     return UnknownTagId;
 }
 
-TokenPreloadScanner::TagId TokenPreloadScanner::tagIdFor(const String& tagName)
+#if ENABLE(THREADED_HTML_PARSER)
+TokenPreloadScanner::TagId TokenPreloadScanner::tagIdFor(const HTMLIdentifier& tagName)
 {
-    if (threadSafeMatch(tagName, imgTag))
+    if (threadSafeHTMLNamesMatch(tagName, imgTag))
         return ImgTagId;
-    if (threadSafeMatch(tagName, inputTag))
+    if (threadSafeHTMLNamesMatch(tagName, inputTag))
         return InputTagId;
-    if (threadSafeMatch(tagName, linkTag))
+    if (threadSafeHTMLNamesMatch(tagName, linkTag))
         return LinkTagId;
-    if (threadSafeMatch(tagName, scriptTag))
+    if (threadSafeHTMLNamesMatch(tagName, scriptTag))
         return ScriptTagId;
-    if (threadSafeMatch(tagName, styleTag))
+    if (threadSafeHTMLNamesMatch(tagName, styleTag))
         return StyleTagId;
-    if (threadSafeMatch(tagName, baseTag))
+    if (threadSafeHTMLNamesMatch(tagName, baseTag))
         return BaseTagId;
-    if (threadSafeMatch(tagName, templateTag))
+    if (threadSafeHTMLNamesMatch(tagName, templateTag))
         return TemplateTagId;
     return UnknownTagId;
 }
+#endif
 
 String TokenPreloadScanner::initiatorFor(TagId tagId)
 {
@@ -147,28 +149,42 @@ public:
         return request.release();
     }
 
+static bool match(const AtomicString& name, const QualifiedName& qName)
+{
+    ASSERT(isMainThread());
+    return qName.localName() == name;
+}
+
+#if ENABLE(THREADED_HTML_PARSER)
+static bool match(const HTMLIdentifier& name, const QualifiedName& qName)
+{
+    return threadSafeHTMLNamesMatch(name, qName);
+}
+#endif
+
 private:
-    void processAttribute(const String& attributeName, const String& attributeValue)
+    template<typename NameType>
+    void processAttribute(const NameType& attributeName, const String& attributeValue)
     {
-        if (threadSafeMatch(attributeName, charsetAttr))
+        if (match(attributeName, charsetAttr))
             m_charset = attributeValue;
 
         if (m_tagId == ScriptTagId || m_tagId == ImgTagId) {
-            if (threadSafeMatch(attributeName, srcAttr))
+            if (match(attributeName, srcAttr))
                 setUrlToLoad(attributeValue);
-            else if (threadSafeMatch(attributeName, crossoriginAttr) && !attributeValue.isNull())
+            else if (match(attributeName, crossoriginAttr) && !attributeValue.isNull())
                 m_crossOriginMode = stripLeadingAndTrailingHTMLSpaces(attributeValue);
         } else if (m_tagId == LinkTagId) {
-            if (threadSafeMatch(attributeName, hrefAttr))
+            if (match(attributeName, hrefAttr))
                 setUrlToLoad(attributeValue);
-            else if (threadSafeMatch(attributeName, relAttr))
+            else if (match(attributeName, relAttr))
                 m_linkIsStyleSheet = relAttributeIsStyleSheet(attributeValue);
-            else if (threadSafeMatch(attributeName, mediaAttr))
+            else if (match(attributeName, mediaAttr))
                 m_linkMediaAttributeIsScreen = linkMediaAttributeIsScreen(attributeValue);
         } else if (m_tagId == InputTagId) {
-            if (threadSafeMatch(attributeName, srcAttr))
+            if (match(attributeName, srcAttr))
                 setUrlToLoad(attributeValue);
-            else if (threadSafeMatch(attributeName, typeAttr))
+            else if (match(attributeName, typeAttr))
                 m_inputIsImage = equalIgnoringCase(attributeValue, InputTypeNames::image());
         }
     }

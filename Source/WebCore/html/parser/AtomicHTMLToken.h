@@ -163,10 +163,10 @@ public:
             ASSERT_NOT_REACHED();
             break;
         case HTMLToken::DOCTYPE:
-            m_name = token.data();
+            m_name = token.data().asString();
             m_doctypeData = adoptPtr(new DoctypeData());
             m_doctypeData->m_hasPublicIdentifier = true;
-            append(m_doctypeData->m_publicIdentifier, token.publicIdentifier());
+            append(m_doctypeData->m_publicIdentifier, token.publicIdentifier().asString());
             m_doctypeData->m_hasSystemIdentifier = true;
             append(m_doctypeData->m_systemIdentifier, token.systemIdentifier());
             m_doctypeData->m_forceQuirks = token.doctypeForcesQuirks();
@@ -176,7 +176,7 @@ public:
         case HTMLToken::StartTag:
             m_attributes.reserveInitialCapacity(token.attributes().size());
             for (Vector<CompactHTMLToken::Attribute>::const_iterator it = token.attributes().begin(); it != token.attributes().end(); ++it) {
-                QualifiedName name(nullAtom, it->name, nullAtom);
+                QualifiedName name(nullAtom, it->name.asString(), nullAtom);
                 // FIXME: This is N^2 for the number of attributes.
                 if (!findAttributeInVector(m_attributes, name))
                     m_attributes.append(Attribute(name, it->value));
@@ -184,16 +184,23 @@ public:
             // Fall through!
         case HTMLToken::EndTag:
             m_selfClosing = token.selfClosing();
-            m_name = token.data();
+            m_name = token.data().asString();
             break;
         case HTMLToken::Comment:
-            m_data = token.data();
+            m_data = token.data().asString();
             break;
-        case HTMLToken::Character:
-            m_externalCharacters = token.data().characters();
-            m_externalCharactersLength = token.data().length();
+        case HTMLToken::Character: {
+            const String& string = token.data().asString();
+            m_externalCharacters = string.characters();
+            m_externalCharactersLength = string.length();
             m_isAll8BitData = token.isAll8BitData();
+            // FIXME: We would like a stronger ASSERT here:
+            // ASSERT(string.is8Bit() == token.isAll8BitData());
+            // but currently that fires, likely due to bugs in HTMLTokenizer
+            // not setting isAll8BitData in all the times it could.
+            ASSERT(!token.isAll8BitData() || string.is8Bit());
             break;
+        }
         }
     }
 

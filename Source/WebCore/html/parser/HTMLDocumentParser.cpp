@@ -34,6 +34,7 @@
 #include "DocumentLoader.h"
 #include "Element.h"
 #include "Frame.h"
+#include "HTMLIdentifier.h"
 #include "HTMLNames.h"
 #include "HTMLParserScheduler.h"
 #include "HTMLParserThread.h"
@@ -662,6 +663,8 @@ void HTMLDocumentParser::startBackgroundParser()
     ASSERT(shouldUseThreading());
     ASSERT(!m_haveBackgroundParser);
     m_haveBackgroundParser = true;
+
+    HTMLIdentifier::init();
 
     RefPtr<WeakReference<BackgroundHTMLParser> > reference = WeakReference<BackgroundHTMLParser>::createUnbound();
     m_backgroundParser = WeakPtr<BackgroundHTMLParser>(reference);

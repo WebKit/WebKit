@@ -26,6 +26,7 @@
 #include "HTMLParserIdioms.h"
 
 #include "Decimal.h"
+#include "HTMLIdentifier.h"
 #include "QualifiedName.h"
 #include <limits>
 #include <wtf/MathExtras.h>
@@ -277,8 +278,10 @@ bool parseHTMLNonNegativeInteger(const String& input, unsigned& value)
     return parseHTMLNonNegativeIntegerInternal(start, start + length, value);
 }
 
-static bool threadSafeEqual(StringImpl* a, StringImpl* b)
+static bool threadSafeEqual(const StringImpl* a, const StringImpl* b)
 {
+    if (a == b)
+        return true;
     if (a->hash() != b->hash())
         return false;
     return StringHash::equal(a, b);
@@ -289,9 +292,11 @@ bool threadSafeMatch(const QualifiedName& a, const QualifiedName& b)
     return threadSafeEqual(a.localName().impl(), b.localName().impl());
 }
 
-bool threadSafeMatch(const String& localName, const QualifiedName& qName)
+#if ENABLE(THREADED_HTML_PARSER)
+bool threadSafeMatch(const HTMLIdentifier& localName, const QualifiedName& qName)
 {
-    return threadSafeEqual(localName.impl(), qName.localName().impl());
+    return threadSafeEqual(localName.asStringImpl(), qName.localName().impl());
 }
+#endif
 
 }

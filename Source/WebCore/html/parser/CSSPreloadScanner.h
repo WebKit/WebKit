@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+class HTMLIdentifier;
+
 class CSSPreloadScanner {
     WTF_MAKE_NONCOPYABLE(CSSPreloadScanner);
 public:
@@ -42,7 +44,7 @@ public:
     void reset();
 
     void scan(const HTMLToken::DataVector&, PreloadRequestStream&);
-    void scan(const String&, PreloadRequestStream&);
+    void scan(const HTMLIdentifier&, PreloadRequestStream&);
 
 private:
     enum State {

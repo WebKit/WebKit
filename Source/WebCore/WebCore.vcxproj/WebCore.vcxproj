@@ -6923,6 +6923,7 @@
     <ClCompile Include="..\html\parser\HTMLEntityParser.cpp" />
     <ClCompile Include="..\html\parser\HTMLEntitySearch.cpp" />
     <ClCompile Include="..\html\parser\HTMLFormattingElementList.cpp" />
+    <ClCompile Include="..\html\parser\HTMLIdenitifier.cpp" />
     <ClCompile Include="..\html\parser\HTMLMetaCharsetParser.cpp" />
     <ClCompile Include="..\html\parser\HTMLParserIdioms.cpp" />
     <ClCompile Include="..\html\parser\HTMLParserOptions.cpp" />
@@ -10378,6 +10379,7 @@
     <ClInclude Include="..\html\parser\HTMLEntityParser.h" />
     <ClInclude Include="..\html\parser\HTMLEntitySearch.h" />
     <ClInclude Include="..\html\parser\HTMLFormattingElementList.h" />
+    <ClInclude Include="..\html\parser\HTMLIdentifier.h" />
     <ClInclude Include="..\html\parser\HTMLInputStream.h" />
     <ClInclude Include="..\html\parser\HTMLMetaCharsetParser.h" />
     <ClInclude Include="..\html\parser\HTMLParserIdioms.h" />

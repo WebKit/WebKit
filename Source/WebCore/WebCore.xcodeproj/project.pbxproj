@@ -4380,6 +4380,8 @@
 		A88AD52F09524B92001DD196 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A85D7A2F0879EBA9006A9172 /* QuartzCore.framework */; };
 		A88DD4870B4629A300C02990 /* PathTraversalState.h in Headers */ = {isa = PBXBuildFile; fileRef = A88DD4860B4629A300C02990 /* PathTraversalState.h */; };
 		A88DD4890B4629B000C02990 /* PathTraversalState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A88DD4880B4629B000C02990 /* PathTraversalState.cpp */; };
+		A895709F16E9BD5900184E55 /* HTMLIdentifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A895709D16E9BD5900184E55 /* HTMLIdentifier.cpp */; };
+		A89570A016E9BD5900184E55 /* HTMLIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = A895709E16E9BD5900184E55 /* HTMLIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A89943280B42338800D7C802 /* BitmapImage.h in Headers */ = {isa = PBXBuildFile; fileRef = A89943260B42338700D7C802 /* BitmapImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A89943290B42338800D7C802 /* BitmapImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A89943270B42338700D7C802 /* BitmapImage.cpp */; };
 		A89CCC520F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A89CCC500F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.cpp */; };
@@ -11792,6 +11794,8 @@
 		A886CDC214FBBAA300D279F4 /* WorkerContextWebSocket.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = WorkerContextWebSocket.idl; path = Modules/websockets/WorkerContextWebSocket.idl; sourceTree = "<group>"; };
 		A88DD4860B4629A300C02990 /* PathTraversalState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PathTraversalState.h; sourceTree = "<group>"; };
 		A88DD4880B4629B000C02990 /* PathTraversalState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PathTraversalState.cpp; sourceTree = "<group>"; };
+		A895709D16E9BD5900184E55 /* HTMLIdentifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLIdentifier.cpp; path = parser/HTMLIdentifier.cpp; sourceTree = "<group>"; };
+		A895709E16E9BD5900184E55 /* HTMLIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLIdentifier.h; path = parser/HTMLIdentifier.h; sourceTree = "<group>"; };
 		A89943260B42338700D7C802 /* BitmapImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitmapImage.h; sourceTree = "<group>"; };
 		A89943270B42338700D7C802 /* BitmapImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitmapImage.cpp; sourceTree = "<group>"; };
 		A89CCC500F44E98100B5DA10 /* ReplaceNodeWithSpanCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReplaceNodeWithSpanCommand.cpp; sourceTree = "<group>"; };
@@ -18825,6 +18829,7 @@
 		97C1F5511228558800EDE616 /* parser */ = {
 			isa = PBXGroup;
 			children = (
+				97C1F552122855CB00EDE617 /* AtomicHTMLToken.h */,
 				97DC69E916B9F50E008CFD6F /* BackgroundHTMLInputStream.cpp */,
 				97DC69EA16B9F50E008CFD6F /* BackgroundHTMLInputStream.h */,
 				979DC03116A7992100807794 /* BackgroundHTMLParser.cpp */,
@@ -18847,6 +18852,8 @@
 				977B3854122883E900B81FF8 /* HTMLEntityTable.h */,
 				977B3855122883E900B81FF8 /* HTMLFormattingElementList.cpp */,
 				977B3856122883E900B81FF8 /* HTMLFormattingElementList.h */,
+				A895709D16E9BD5900184E55 /* HTMLIdentifier.cpp */,
+				A895709E16E9BD5900184E55 /* HTMLIdentifier.h */,
 				97BC849A12370A4B000C6161 /* HTMLInputStream.h */,
 				2BE8E2C812A58A0100FAD550 /* HTMLMetaCharsetParser.cpp */,
 				2BE8E2C612A589EC00FAD550 /* HTMLMetaCharsetParser.h */,
@@ -18871,7 +18878,6 @@
 				97C1F552122855CB00EDE616 /* HTMLToken.h */,
 				977B385E122883E900B81FF8 /* HTMLTokenizer.cpp */,
 				977B385F122883E900B81FF8 /* HTMLTokenizer.h */,
-				97C1F552122855CB00EDE617 /* AtomicHTMLToken.h */,
 				977B37211228721700B81FF8 /* HTMLTreeBuilder.cpp */,
 				977B37221228721700B81FF8 /* HTMLTreeBuilder.h */,
 				977B3860122883E900B81FF8 /* HTMLViewSourceParser.cpp */,
@@ -26692,6 +26698,7 @@
 				7E66E23416D6EB6C00F7E7FF /* WebGLCompressedTextureATC.h in Headers */,
 				7EA30F6A16DFFE7500257D0B /* JSWebGLCompressedTextureATC.h in Headers */,
 				2D8287F716E4A0380086BD00 /* HitTestLocation.h in Headers */,
+				A89570A016E9BD5900184E55 /* HTMLIdentifier.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -29895,6 +29902,7 @@
 				7E66E23316D6EB6C00F7E7FF /* WebGLCompressedTextureATC.cpp in Sources */,
 				7EA30F6916DFFE7500257D0B /* JSWebGLCompressedTextureATC.cpp in Sources */,
 				2D8287F616E4A0380086BD00 /* HitTestLocation.cpp in Sources */,
+				A895709F16E9BD5900184E55 /* HTMLIdentifier.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -3616,6 +3616,8 @@ webcore_sources += \
 	Source/WebCore/html/parser/HTMLEntityTable.h \
 	Source/WebCore/html/parser/HTMLFormattingElementList.cpp \
 	Source/WebCore/html/parser/HTMLFormattingElementList.h \
+	Source/WebCore/html/parser/HTMLIdentifier.cpp \
+	Source/WebCore/html/parser/HTMLIdentifier.h \
 	Source/WebCore/html/parser/HTMLInputStream.h \
 	Source/WebCore/html/parser/HTMLMetaCharsetParser.cpp \
 	Source/WebCore/html/parser/HTMLMetaCharsetParser.h \

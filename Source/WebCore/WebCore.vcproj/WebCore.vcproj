@@ -65090,6 +65090,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\html\parser\HTMLIdentifier.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLIdentifier.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\parser\HTMLInputStream.h"
 					>
 				</File>
