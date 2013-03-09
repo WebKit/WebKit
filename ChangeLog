@@ -1,3 +1,14 @@
+2013-03-08  Dean Jackson  <dino@apple.com>
+
+        Don't snapshot Java plugins
+        https://bugs.webkit.org/show_bug.cgi?id=111899
+
+        Reviewed by Tim Horton.
+
+        Export MIMETypeRegistry::isJavaAppletMIMEType symbol.
+
+        * Source/autotools/symbols.filter:
+
 2013-03-08  Chandra Shekar Vallala  <brk376@motorola.com>
 
         [chromium] Keydown event for 'shift+alt' returns win keycode instead of 'alt'

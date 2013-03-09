@@ -50,6 +50,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/HostWindow.h>
+#include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/NetscapePlugInStreamLoader.h>
 #include <WebCore/NetworkingContext.h>
 #include <WebCore/Page.h>
@@ -1636,6 +1637,10 @@ bool PluginView::shouldAlwaysAutoStart() const
 {
     if (!m_plugin)
         return PluginViewBase::shouldAlwaysAutoStart();
+
+    if (MIMETypeRegistry::isJavaAppletMIMEType(m_parameters.mimeType))
+        return true;
+
     return m_plugin->shouldAlwaysAutoStart();
 }
 
