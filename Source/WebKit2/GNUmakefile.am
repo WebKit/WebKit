@@ -452,11 +452,11 @@ libWebCoreGtk2_la_SOURCES = \
 	$(webcoregtk_sources)
 
 libWebCoreGtk2_la_CXXFLAGS = \
-	$(SYMBOL_VISIBILITY_INLINES) \
+	-fvisibility-inlines-hidden \
 	$(global_cxxflags)
 
 libWebCoreGtk2_la_CFLAGS = \
-	$(SYMBOL_VISIBILITY) \
+	-fvisibility=hidden \
 	$(global_cflags)
 
 libWebCoreGtk2_la_CPPFLAGS = \
@@ -553,7 +553,7 @@ Programs_WebKitPluginProcess_CPPFLAGS = \
 	$(UNICODE_CFLAGS)
 
 Programs_WebKitPluginProcess_CFLAGS = \
-	$(SYMBOL_VISIBILITY) \
+	-fvisibility-inlines-hidden \
 	$(global_cflags) \
 	$(CAIRO_CFLAGS) \
 	$(GLIB_CFLAGS) \
@@ -614,7 +614,7 @@ Programs_WebKitPluginProcess_LDFLAGS = \
 	-Wl,--unresolved-symbols=ignore-in-object-files
 
 Programs_WebKitPluginProcess_CXXFLAGS = \
-	$(SYMBOL_VISIBILITY_INLINES) \
+	-fvisibility-inlines-hidden \
 	$(global_cxxflags)
 
 EXTRA_DIST += \

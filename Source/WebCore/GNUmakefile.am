@@ -161,11 +161,11 @@ libWebCoreSVG_la_SOURCES = \
 	$(webcore_svg_sources)
 
 libWebCoreSVG_la_CXXFLAGS = \
-	$(SYMBOL_VISIBILITY_INLINES) \
+	-fvisibility-inlines-hidden \
 	$(global_cxxflags)
 
 libWebCoreSVG_la_CFLAGS = \
-	$(SYMBOL_VISIBILITY) \
+	-fvisibility=hidden \
 	$(global_cflags)
 
 libWebCoreSVG_la_CPPFLAGS = \
@@ -463,11 +463,11 @@ libWebCore_la_SOURCES = \
 	$(webcore_sources)
 
 libWebCore_la_CXXFLAGS = \
-	$(SYMBOL_VISIBILITY_INLINES) \
+	-fvisibility-inlines-hidden \
 	$(global_cxxflags)
 
 libWebCore_la_CFLAGS = \
-	$(SYMBOL_VISIBILITY) \
+	-fvisibility=hidden \
 	$(global_cflags)
 
 libWebCore_la_CPPFLAGS = \
@@ -529,10 +529,10 @@ endif
 libWebCorePlatform_la_SOURCES = \
 	$(webcore_platform_sources)
 libWebCorePlatform_la_CXXFLAGS = \
-	$(SYMBOL_VISIBILITY_INLINES) \
+	-fvisibility-inlines-hidden \
 	$(global_cxxflags)
 libWebCorePlatform_la_CFLAGS = \
-	$(SYMBOL_VISIBILITY) \
+	-fvisibility=hidden \
 	$(global_cflags)
 libWebCorePlatform_la_CPPFLAGS = \
 	-DBUILDING_WEBKIT \
@@ -572,11 +572,11 @@ libWebCoreGtk_la_SOURCES = \
 	$(webcoregtk_sources)
 
 libWebCoreGtk_la_CXXFLAGS = \
-	$(SYMBOL_VISIBILITY_INLINES) \
+	-fvisibility-inlines-hidden \
 	$(global_cxxflags)
 
 libWebCoreGtk_la_CFLAGS = \
-	$(SYMBOL_VISIBILITY) \
+	-fvisibility=hidden \
 	$(global_cflags)
 
 libWebCoreGtk_la_CPPFLAGS = \
