@@ -1,3 +1,17 @@
+2013-03-08  Julie Parent  <jparent@chromium.org>
+
+        Cleanup: Remove dead code.
+        https://bugs.webkit.org/show_bug.cgi?id=111900
+
+        Reviewed by Dirk Pranke.
+        
+        Treemap overrides a global function that used to be in 
+        dashboard_base, but was removed months ago in
+        https://bugs.webkit.org/show_bug.cgi?id=99246, so this code has
+        no caller. 
+
+        * TestResultServer/static-dashboards/treemap.html:
+
 2013-03-08  Harald Alvestrand  <hta@chromium.org>
 
         Implemented new API for RTCStatsReport object.

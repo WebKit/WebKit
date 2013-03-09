@@ -314,14 +314,6 @@ function handleQueryParameterChange(params)
     return false;
 }
 
-// Overrides handleResourceLoadError in dashboard_base.js.
-function handleResourceLoadError(builderName, e)
-{
-    $('map').innerHTML = '<span class=error>Could not load data for ' + builderName + '. ' +
-        'Either there was a server-side error or ' + builderName + ' does not run ' +
-        g_crossDashboardState.testType + '.</span>';
-}
-
 function extractName(node)
 {
     return node.name.split(' ')[0];
