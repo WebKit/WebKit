@@ -1,3 +1,12 @@
+2013-03-09  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        [chromium] Remove deprecated flingStart.sourceDevice from WebGestureEvent
+        https://bugs.webkit.org/show_bug.cgi?id=111866
+
+        Reviewed by James Robinson.
+
+        * public/WebInputEvent.h:
+
 2013-03-09  David Dorwin  <ddorwin@chromium.org>
 
         [chromium] Set the Helper Plugin's URL to that of the host document.
