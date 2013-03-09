@@ -1191,3 +1191,42 @@
 |             <style>
 |               "var i"
 |   <body>
+
+#data
+<template><table></template><body><span>Foo
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       content
+|         <table>
+|   <body>
+|     <span>
+|       "Foo"
+
+#data
+<template><td></template><body><span>Foo
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       content
+|         <td>
+|   <body>
+|     <span>
+|       "Foo"
+
+#data
+<template><object></template><body><span>Foo
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       content
+|         <object>
+|   <body>
+|     <span>
+|       "Foo"

@@ -958,7 +958,8 @@ void HTMLTreeBuilder::processTemplateStartTag(AtomicHTMLToken* token)
 
 void HTMLTreeBuilder::processTemplateEndTag(AtomicHTMLToken* token)
 {
-    if (!m_tree.openElements()->inScope(token->name())) {
+    if (!m_tree.openElements()->hasTemplateInHTMLScope()) {
+        ASSERT(m_templateInsertionModes.isEmpty());
         parseError(token);
         return;
     }
