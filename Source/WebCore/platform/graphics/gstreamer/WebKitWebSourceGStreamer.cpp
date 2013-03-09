@@ -464,6 +464,7 @@ static bool webKitWebSrcStart(WebKitWebSrc* src)
         val.set(g_strdup_printf("bytes=%" G_GUINT64_FORMAT "-", priv->requestedOffset));
         request.setHTTPHeaderField("Range", val.get());
     }
+    priv->offset = priv->requestedOffset;
 
     if (priv->iradioMode)
         request.setHTTPHeaderField("icy-metadata", "1");
@@ -746,7 +747,7 @@ static gboolean webKitWebSrcSeekDataCb(GstAppSrc*, guint64 offset, gpointer user
     WebKitWebSrcPrivate* priv = src->priv;
 
     GST_DEBUG_OBJECT(src, "Seeking to offset: %" G_GUINT64_FORMAT, offset);
-    if (offset == priv->offset)
+    if (offset == priv->offset && priv->requestedOffset == priv->offset)
         return TRUE;
 
     if (!priv->seekable)
@@ -909,6 +910,8 @@ void StreamingClient::didReceiveData(ResourceHandle* handle, const char* data, i
         setGstBufferSize(priv->buffer.get(), length);
 
     GST_BUFFER_OFFSET(priv->buffer.get()) = priv->offset;
+    if (priv->requestedOffset == priv->offset)
+        priv->requestedOffset += length;
     priv->offset += length;
     GST_BUFFER_OFFSET_END(priv->buffer.get()) = priv->offset;
 
