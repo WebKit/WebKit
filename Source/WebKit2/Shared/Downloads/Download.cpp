@@ -135,7 +135,8 @@ void Download::didFinish()
 
     send(Messages::DownloadProxy::DidFinish());
 
-    m_sandboxExtension = nullptr;
+    if (m_sandboxExtension)
+        m_sandboxExtension->invalidate();
 
     m_downloadManager.downloadFinished(this);
 }
@@ -144,7 +145,8 @@ void Download::didFail(const ResourceError& error, const CoreIPC::DataReference&
 {
     send(Messages::DownloadProxy::DidFail(error, resumeData));
 
-    m_sandboxExtension = nullptr;
+    if (m_sandboxExtension)
+        m_sandboxExtension->invalidate();
     m_downloadManager.downloadFinished(this);
 }
 
@@ -152,7 +154,8 @@ void Download::didCancel(const CoreIPC::DataReference& resumeData)
 {
     send(Messages::DownloadProxy::DidCancel(resumeData));
 
-    m_sandboxExtension = nullptr;
+    if (m_sandboxExtension)
+        m_sandboxExtension->invalidate();
     m_downloadManager.downloadFinished(this);
 }
 

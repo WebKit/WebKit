@@ -1,3 +1,36 @@
+2013-03-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r145254, r145264, and r145288.
+        http://trac.webkit.org/changeset/145254
+        http://trac.webkit.org/changeset/145264
+        http://trac.webkit.org/changeset/145288
+        https://bugs.webkit.org/show_bug.cgi?id=111917
+
+        Test breakage hints at conceptual unsoundness (Requested by ap
+        on #webkit).
+
+        * NetworkProcess/SchedulableLoader.cpp:
+        (WebKit::SchedulableLoader::invalidateSandboxExtensions):
+        * Shared/Downloads/Download.cpp:
+        (WebKit::Download::didFinish):
+        (WebKit::Download::didFail):
+        (WebKit::Download::didCancel):
+        * Shared/SandboxExtension.h:
+        (SandboxExtension):
+        (WebKit::SandboxExtension::invalidate):
+        * Shared/WebMemorySampler.cpp:
+        (WebKit::WebMemorySampler::stop):
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::SandboxExtension):
+        (WebKit::SandboxExtension::invalidate):
+        (WebKit::SandboxExtension::consume):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction):
+        (WebKit::WebPage::SandboxExtensionTracker::invalidate):
+        (WebKit::WebPage::SandboxExtensionTracker::setPendingProvisionalSandboxExtension):
+        (WebKit::WebPage::SandboxExtensionTracker::didCommitProvisionalLoad):
+        (WebKit::WebPage::SandboxExtensionTracker::didFailProvisionalLoad):
+
 2013-03-08  Dean Jackson  <dino@apple.com>
 
         Don't snapshot Java plugins
