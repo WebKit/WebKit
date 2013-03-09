@@ -1,3 +1,15 @@
+2013-03-08  David Kilzer  <ddkilzer@apple.com>
+
+        (CVE-2013-0785) [SECURITY] XSS in show_bug.cgi when using an invalid page format
+        <https://bugzilla.mozilla.org/show_bug.cgi?id=842038>
+        <exp2://Ticket/14465628>
+
+        Applied "patch for 3.6 and 4.0, v1" to bugs.webkit.org.
+
+        * Bugzilla/Template.pm:
+        (get_format):
+        * show_bug.cgi:
+
 2013-02-01  Nathan de Vries  <ndevries@apple.com>
 
         Allow prettify.rb to be run from any directory, and don't hard-code the system ruby path
