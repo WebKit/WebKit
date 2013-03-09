@@ -1006,7 +1006,10 @@ elsif ($fulltext) {
 # Query Execution
 ################################################################################
 
-if ($cgi->param('debug')) {
+if ($cgi->param('debug')
+    && Bugzilla->params->{debug_group}
+    && Bugzilla->user->in_group(Bugzilla->params->{debug_group})
+) {
     $vars->{'debug'} = 1;
     $vars->{'query'} = $query;
     $vars->{'debugdata'} = $search->getDebugData();

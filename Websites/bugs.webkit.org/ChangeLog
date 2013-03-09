@@ -1,5 +1,19 @@
 2013-03-08  David Kilzer  <ddkilzer@apple.com>
 
+        (CVE-2013-0786) [SECURITY] build_subselect() leaks the existence of products and components you cannot access
+        <https://bugzilla.mozilla.org/show_bug.cgi?id=824399>
+        <exp2://Ticket/14465628>
+
+        Applied "v5 patch, 3.6" to bugs.webkit.org.
+
+        * Bugzilla/Config/GroupSecurity.pm:
+        (get_param_list):
+        * buglist.cgi:
+        * report.cgi:
+        * template/en/default/admin/params/groupsecurity.html.tmpl:
+
+2013-03-08  David Kilzer  <ddkilzer@apple.com>
+
         (CVE-2013-0785) [SECURITY] XSS in show_bug.cgi when using an invalid page format
         <https://bugzilla.mozilla.org/show_bug.cgi?id=842038>
         <exp2://Ticket/14465628>

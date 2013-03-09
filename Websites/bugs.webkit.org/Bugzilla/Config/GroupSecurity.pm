@@ -87,6 +87,14 @@ sub get_param_list {
   },
   
   {
+   name => 'debug_group',
+   type => 's',
+   choices => \&_get_all_group_names,
+   default => 'admin',
+   checker => \&check_group
+  },
+  
+  {
    name => 'usevisibilitygroups',
    type => 'b',
    default => 0
