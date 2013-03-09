@@ -125,6 +125,11 @@ public:
     void paintBackgroundsBehindCell(PaintInfo&, const LayoutPoint&, RenderObject* backgroundObject);
 
     LayoutUnit cellBaselinePosition() const;
+    bool isBaselineAligned() const 
+    { 
+        EVerticalAlign va = style()->verticalAlign();
+        return va == BASELINE || va == TEXT_BOTTOM || va == TEXT_TOP || va == SUPER || va == SUB || va == LENGTH; 
+    }
 
     void computeIntrinsicPadding(int rowHeight);
     void clearIntrinsicPadding() { setIntrinsicPadding(0, 0); }
