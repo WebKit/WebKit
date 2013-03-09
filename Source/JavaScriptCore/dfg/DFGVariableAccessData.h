@@ -51,7 +51,6 @@ public:
         , m_isArgumentsAlias(false)
         , m_structureCheckHoistingFailed(false)
         , m_isProfitableToUnbox(false)
-        , m_isLoadedFrom(false)
         , m_doubleFormatState(EmptyDoubleFormatState)
     {
         clearVotes();
@@ -148,21 +147,6 @@ public:
     bool isArgumentsAlias()
     {
         return m_isArgumentsAlias;
-    }
-    
-    bool mergeIsLoadedFrom(bool isLoadedFrom)
-    {
-        return checkAndSet(m_isLoadedFrom, m_isLoadedFrom | isLoadedFrom);
-    }
-    
-    void setIsLoadedFrom(bool isLoadedFrom)
-    {
-        m_isLoadedFrom = isLoadedFrom;
-    }
-    
-    bool isLoadedFrom()
-    {
-        return m_isLoadedFrom;
     }
     
     bool predict(SpeculatedType prediction)
@@ -322,7 +306,6 @@ private:
     bool m_isArgumentsAlias;
     bool m_structureCheckHoistingFailed;
     bool m_isProfitableToUnbox;
-    bool m_isLoadedFrom;
 
     float m_votes[2]; // Used primarily for double voting but may be reused for other purposes.
     DoubleFormatState m_doubleFormatState;

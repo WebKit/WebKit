@@ -30,7 +30,6 @@
 
 #if ENABLE(DFG_JIT)
 
-#include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
 
 namespace JSC { namespace DFG {
@@ -60,14 +59,15 @@ namespace JSC { namespace DFG {
 #define NodeUsedAsOther          0x0800 // The result of this computation may be used in a context that distinguishes between NaN and other things (like undefined).
 #define NodeUsedAsValue          (NodeUsedAsNumber | NodeNeedsNegZero | NodeUsedAsOther)
 #define NodeUsedAsInt            0x1000 // The result of this computation is known to be used in a context that prefers, but does not require, integer values.
+#define NodeUsedAsIntLocally     0x2000 // Same as NodeUsedAsInt, but within the same basic block.
 
 #define NodeArithFlagsMask       (NodeBehaviorMask | NodeBackPropMask)
 
-#define NodeDoesNotExit          0x2000 // This flag is negated to make it natural for the default to be that a node does exit.
+#define NodeDoesNotExit          0x4000 // This flag is negated to make it natural for the default to be that a node does exit.
 
-#define NodeRelevantToOSR        0x4000
+#define NodeRelevantToOSR        0x8000
 
-#define NodeExitsForward         0x8000
+#define NodeExitsForward        0x10000
 
 typedef uint32_t NodeFlags;
 
@@ -102,8 +102,7 @@ static inline bool nodeCanSpeculateInteger(NodeFlags flags)
     return true;
 }
 
-void dumpNodeFlags(PrintStream&, NodeFlags);
-MAKE_PRINT_ADAPTOR(NodeFlagsDump, NodeFlags, dumpNodeFlags);
+const char* nodeFlagsAsString(NodeFlags);
 
 } } // namespace JSC::DFG
 
