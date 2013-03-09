@@ -2907,6 +2907,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\UIProcess\WebContextClient.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\UIProcess\WebContextClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\UIProcess\WebContext.messages.in"
 				>
 			</File>
