@@ -42,6 +42,8 @@ class Page;
 namespace WebKit {
 
 class HelperPluginChromeClient;
+class WebDocument;
+class WebFrame;
 class WebViewImpl;
 class WebWidgetClient;
 
@@ -54,7 +56,7 @@ class WebHelperPluginImpl : public WebHelperPlugin,
 
 public:
     virtual ~WebHelperPluginImpl();
-    bool initialize(WebViewImpl*, const String& pluginType);
+    bool initialize(const String& pluginType, const WebDocument& hostDocument, WebViewImpl*);
     void closeHelperPlugin();
 
     // WebHelperPlugin methods:
@@ -63,7 +65,7 @@ public:
 
 private:
     explicit WebHelperPluginImpl(WebWidgetClient*);
-    bool initializePage(WebKit::WebViewImpl*, const String& pluginType);
+    bool initializePage(const String& pluginType, const WebDocument& hostDocument);
     void destroyPage();
 
     // WebWidget methods:

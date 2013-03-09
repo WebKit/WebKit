@@ -104,6 +104,7 @@ class WebActiveGestureAnimation;
 class WebCompositorImpl;
 class WebDevToolsAgentClient;
 class WebDevToolsAgentPrivate;
+class WebDocument;
 class WebFrameImpl;
 class WebGestureEvent;
 class WebHelperPluginImpl;
@@ -513,7 +514,8 @@ public:
 
     void hideAutofillPopup();
 
-    WebHelperPluginImpl* createHelperPlugin(const String& pluginType);
+    // Creates a Helper Plugin of |pluginType| for |hostDocument|.
+    WebHelperPluginImpl* createHelperPlugin(const String& pluginType, const WebDocument& hostDocument);
 
     // Returns the input event we're currently processing. This is used in some
     // cases where the WebCore DOM event doesn't have the information we need.

@@ -1,3 +1,27 @@
+2013-03-09  David Dorwin  <ddorwin@chromium.org>
+
+        [chromium] Set the Helper Plugin's URL to that of the host document.
+        https://bugs.webkit.org/show_bug.cgi?id=111913
+
+        This allows content settings, etc. to be based on the document hosting
+        the element that requested the Helper Plugin.
+
+        Reviewed by Adam Barth.
+
+        * src/WebHelperPluginImpl.cpp:
+        (WebKit::writeDocument):
+        (WebKit::WebHelperPluginImpl::initialize):
+        (WebKit::WebHelperPluginImpl::initializePage):
+        * src/WebHelperPluginImpl.h:
+        (WebKit):
+        (WebHelperPluginImpl):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::createHelperPlugin):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::createHelperPlugin):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+
 2013-03-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled Chromium DEPS to r187037.  Requested by

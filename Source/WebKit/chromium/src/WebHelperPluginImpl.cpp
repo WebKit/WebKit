@@ -40,6 +40,7 @@
 #include "Page.h"
 #include "PageWidgetDelegate.h"
 #include "Settings.h"
+#include "WebDocument.h"
 #include "WebFrameImpl.h"
 #include "WebPlugin.h"
 #include "WebPluginContainerImpl.h"
@@ -59,11 +60,15 @@ static inline void addString(const String& str, DocumentWriter& writer)
     writer.addData(str8.data(), str8.length());
 }
 
-void writeDocument(WebCore::DocumentWriter& writer, const String& pluginType)
+void writeDocument(const String& pluginType, const WebDocument& hostDocument, WebCore::DocumentWriter& writer)
 {
+    // Give the new document the same URL as the hose document so that content
+    // settings and other decisions can be made based on the correct origin.
+    const WebURL& url = hostDocument.url();
+
     writer.setMIMEType("text/html");
     writer.setEncoding("UTF-8", false);
-    writer.begin();
+    writer.begin(url);
 
     addLiteral("<!DOCTYPE html><head><meta charset='UTF-8'></head><body>\n", writer);
     String objectTag = "<object type=\"" + pluginType + "\"></object>";
@@ -115,12 +120,12 @@ WebHelperPluginImpl::~WebHelperPluginImpl()
     ASSERT(!m_page);
 }
 
-bool WebHelperPluginImpl::initialize(WebViewImpl* webView, const String& pluginType)
+bool WebHelperPluginImpl::initialize(const String& pluginType, const WebDocument& hostDocument, WebViewImpl* webView)
 {
     ASSERT(webView);
     m_webView = webView;
 
-    return initializePage(webView, pluginType);
+    return initializePage(pluginType, hostDocument);
 }
 
 void WebHelperPluginImpl::closeHelperPlugin()
@@ -175,7 +180,7 @@ WebPlugin* WebHelperPluginImpl::getPlugin()
     return plugin;
 }
 
-bool WebHelperPluginImpl::initializePage(WebKit::WebViewImpl* webView, const String& pluginType)
+bool WebHelperPluginImpl::initializePage(const String& pluginType, const WebDocument& hostDocument)
 {
     Page::PageClients pageClients;
     fillWithEmptyClients(pageClients);
@@ -190,7 +195,7 @@ bool WebHelperPluginImpl::initializePage(WebKit::WebViewImpl* webView, const Str
     unsigned layoutMilestones = DidFirstLayout | DidFirstVisuallyNonEmptyLayout;
     m_page->addLayoutMilestones(static_cast<LayoutMilestones>(layoutMilestones));
 
-    webView->client()->initializeHelperPluginWebFrame(this);
+    m_webView->client()->initializeHelperPluginWebFrame(this);
 
     // The page's main frame was set in initializeFrame() as a result of the above call.
     Frame* frame = m_page->mainFrame();
@@ -199,7 +204,7 @@ bool WebHelperPluginImpl::initializePage(WebKit::WebViewImpl* webView, const Str
     // No need to set a size or make it not transparent.
 
     DocumentWriter* writer = frame->loader()->activeDocumentLoader()->writer();
-    writeDocument(*writer, pluginType);
+    writeDocument(pluginType, hostDocument, *writer);
 
     return true;
 }

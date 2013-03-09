@@ -23,6 +23,7 @@
 #include "TimeRanges.h"
 #include "UUID.h"
 #include "WebAudioSourceProvider.h"
+#include "WebDocument.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
 #include "WebHelperPluginImpl.h"
@@ -406,8 +407,9 @@ void WebMediaPlayerClientImpl::keyNeeded(const WebString& keySystem, const WebSt
 WebPlugin* WebMediaPlayerClientImpl::createHelperPlugin(const WebString& pluginType, WebFrame* frame)
 {
     ASSERT(!m_helperPlugin);
+
     WebViewImpl* webView = static_cast<WebViewImpl*>(frame->view());
-    m_helperPlugin = webView->createHelperPlugin(pluginType);
+    m_helperPlugin = webView->createHelperPlugin(pluginType, frame->document());
     if (!m_helperPlugin)
         return 0;
 
