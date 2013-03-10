@@ -110,8 +110,6 @@ void TiledCoreAnimationDrawingArea::setNeedsDisplayInRect(const IntRect& rect)
 
 void TiledCoreAnimationDrawingArea::scroll(const IntRect& scrollRect, const IntSize& scrollDelta)
 {
-    if (m_pageOverlayLayer)
-        m_pageOverlayLayer->setNeedsDisplay();
 }
 
 void TiledCoreAnimationDrawingArea::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
@@ -309,6 +307,7 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
     }
 
     if (m_pageOverlayLayer) {
+        m_pageOverlayLayer->setNeedsDisplay();
         if (TiledBacking* overlayTiledBacking = m_pageOverlayLayer->tiledBacking())
             overlayTiledBacking->setVisibleRect(enclosingIntRect(m_rootLayer.get().frame));
         m_pageOverlayLayer->flushCompositingStateForThisLayerOnly();

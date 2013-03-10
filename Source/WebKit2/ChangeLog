@@ -1,3 +1,17 @@
+2013-03-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r145039 and r145096.
+        http://trac.webkit.org/changeset/145039
+        http://trac.webkit.org/changeset/145096
+        https://bugs.webkit.org/show_bug.cgi?id=111945
+
+        broke find indicator updates with scrolling subframes
+        (Requested by thorton on #webkit).
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::scroll):
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+
 2013-03-10  Andreas Kling  <akling@apple.com>
 
         WebPluginSiteDataManager should use OwnPtr.
