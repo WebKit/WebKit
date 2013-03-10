@@ -50,8 +50,6 @@ SVGDocumentExtensions::SVGDocumentExtensions(Document* document)
 
 SVGDocumentExtensions::~SVGDocumentExtensions()
 {
-    deleteAllValues(m_pendingResources);
-    deleteAllValues(m_pendingResourcesForRemoval);
 }
 
 void SVGDocumentExtensions::addTimeContainer(SVGSVGElement* element)
@@ -155,14 +153,10 @@ void SVGDocumentExtensions::addPendingResource(const AtomicString& id, Element* 
     if (id.isEmpty())
         return;
 
-    // The HashMap add function leaves the map alone and returns a pointer to the element in the
-    // map if the element already exists. So we add with a value of 0, and it either finds the
-    // existing element or adds a new one in a single operation. The ".iterator->value" idiom gets
-    // us to the iterator from add's result, and then to the value inside the hash table.
-    SVGPendingElements*& set = m_pendingResources.add(id, 0).iterator->value;
-    if (!set)
-        set = new SVGPendingElements;
-    set->add(element);
+    HashMap<AtomicString, OwnPtr<SVGPendingElements> >::AddResult result = m_pendingResources.add(id, nullptr);
+    if (result.isNewEntry)
+        result.iterator->value = adoptPtr(new SVGPendingElements);
+    result.iterator->value->add(element);
 
     element->setHasPendingResources();
 }
@@ -182,9 +176,9 @@ bool SVGDocumentExtensions::isElementPendingResources(Element* element) const
 
     ASSERT(element);
 
-    HashMap<AtomicString, SVGPendingElements*>::const_iterator end = m_pendingResources.end();
-    for (HashMap<AtomicString, SVGPendingElements*>::const_iterator it = m_pendingResources.begin(); it != end; ++it) {
-        SVGPendingElements* elements = it->value;
+    HashMap<AtomicString, OwnPtr<SVGPendingElements> >::const_iterator end = m_pendingResources.end();
+    for (HashMap<AtomicString, OwnPtr<SVGPendingElements> >::const_iterator it = m_pendingResources.begin(); it != end; ++it) {
+        SVGPendingElements* elements = it->value.get();
         ASSERT(elements);
 
         if (elements->contains(element))
@@ -216,9 +210,9 @@ void SVGDocumentExtensions::removeElementFromPendingResources(Element* element)
     // Remove the element from pending resources.
     if (!m_pendingResources.isEmpty() && element->hasPendingResources()) {
         Vector<AtomicString> toBeRemoved;
-        HashMap<AtomicString, SVGPendingElements*>::iterator end = m_pendingResources.end();
-        for (HashMap<AtomicString, SVGPendingElements*>::iterator it = m_pendingResources.begin(); it != end; ++it) {
-            SVGPendingElements* elements = it->value;
+        HashMap<AtomicString, OwnPtr<SVGPendingElements> >::iterator end = m_pendingResources.end();
+        for (HashMap<AtomicString, OwnPtr<SVGPendingElements> >::iterator it = m_pendingResources.begin(); it != end; ++it) {
+            SVGPendingElements* elements = it->value.get();
             ASSERT(elements);
             ASSERT(!elements->isEmpty());
 
@@ -238,9 +232,9 @@ void SVGDocumentExtensions::removeElementFromPendingResources(Element* element)
     // Remove the element from pending resources that were scheduled for removal.
     if (!m_pendingResourcesForRemoval.isEmpty()) {
         Vector<AtomicString> toBeRemoved;
-        HashMap<AtomicString, SVGPendingElements*>::iterator end = m_pendingResourcesForRemoval.end();
-        for (HashMap<AtomicString, SVGPendingElements*>::iterator it = m_pendingResourcesForRemoval.begin(); it != end; ++it) {
-            SVGPendingElements* elements = it->value;
+        HashMap<AtomicString, OwnPtr<SVGPendingElements> >::iterator end = m_pendingResourcesForRemoval.end();
+        for (HashMap<AtomicString, OwnPtr<SVGPendingElements> >::iterator it = m_pendingResourcesForRemoval.begin(); it != end; ++it) {
+            SVGPendingElements* elements = it->value.get();
             ASSERT(elements);
             ASSERT(!elements->isEmpty());
 
@@ -259,13 +253,13 @@ void SVGDocumentExtensions::removeElementFromPendingResources(Element* element)
 PassOwnPtr<SVGDocumentExtensions::SVGPendingElements> SVGDocumentExtensions::removePendingResource(const AtomicString& id)
 {
     ASSERT(m_pendingResources.contains(id));
-    return adoptPtr(m_pendingResources.take(id));
+    return m_pendingResources.take(id);
 }
 
 PassOwnPtr<SVGDocumentExtensions::SVGPendingElements> SVGDocumentExtensions::removePendingResourceForRemoval(const AtomicString& id)
 {
     ASSERT(m_pendingResourcesForRemoval.contains(id));
-    return adoptPtr(m_pendingResourcesForRemoval.take(id));
+    return m_pendingResourcesForRemoval.take(id);
 }
 
 void SVGDocumentExtensions::markPendingResourcesForRemoval(const AtomicString& id)
@@ -275,9 +269,9 @@ void SVGDocumentExtensions::markPendingResourcesForRemoval(const AtomicString& i
 
     ASSERT(!m_pendingResourcesForRemoval.contains(id));
 
-    SVGPendingElements* existing = m_pendingResources.take(id);
+    OwnPtr<SVGPendingElements> existing = m_pendingResources.take(id);
     if (existing && !existing->isEmpty())
-        m_pendingResourcesForRemoval.add(id, existing);
+        m_pendingResourcesForRemoval.add(id, existing.release());
 }
 
 Element* SVGDocumentExtensions::removeElementFromPendingResourcesForRemoval(const AtomicString& id)
