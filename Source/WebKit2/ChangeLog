@@ -1,3 +1,19 @@
+2013-03-10  Andreas Kling  <akling@apple.com>
+
+        WebPluginSiteDataManager should use OwnPtr.
+        <http://webkit.org/b/111940>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/Plugins/WebPluginSiteDataManager.cpp:
+        (WebKit::WebPluginSiteDataManager::invalidate):
+        (WebKit::WebPluginSiteDataManager::getSitesWithData):
+        (WebKit::WebPluginSiteDataManager::clearSiteData):
+        (WebKit::WebPluginSiteDataManager::didGetSitesWithDataForAllPlugins):
+        (WebKit::WebPluginSiteDataManager::didClearSiteDataForAllPlugins):
+        * UIProcess/Plugins/WebPluginSiteDataManager.h:
+        (WebPluginSiteDataManager):
+
 2013-03-09  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK][WK2] Fix compilation warning missing-field-initializers in webkit-2.0 stable branch
