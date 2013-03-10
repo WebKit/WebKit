@@ -1111,6 +1111,10 @@ void WebGLRenderingContext::bufferData(GC3Denum target, long long size, GC3Denum
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferData", "size < 0");
         return;
     }
+    if (!size) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferData", "size == 0");
+        return;
+    }
     if (!isErrorGeneratedOnOutOfBoundsAccesses()) {
         if (!buffer->associateBufferData(static_cast<GC3Dsizeiptr>(size))) {
             synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "bufferData", "invalid buffer");
