@@ -2110,7 +2110,6 @@ void WebPage::getRenderTreeExternalRepresentation(uint64_t callbackID)
     send(Messages::WebPageProxy::StringCallback(resultString, callbackID));
 }
 
-#if PLATFORM(MAC)
 static Frame* frameWithSelection(Page* page)
 {
     for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
@@ -2120,7 +2119,6 @@ static Frame* frameWithSelection(Page* page)
 
     return 0;
 }
-#endif
 
 void WebPage::getSelectionAsWebArchiveData(uint64_t callbackID)
 {
@@ -3972,5 +3970,14 @@ void WebPage::resetPrimarySnapshottedPlugIn()
     m_didFindPrimarySnapshottedPlugin = false;
 }
 #endif // ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
+
+PassRefPtr<Range> WebPage::currentSelectionAsRange()
+{
+    Frame* frame = frameWithSelection(m_page.get());
+    if (!frame)
+        return 0;
+
+    return frame->selection()->toNormalizedRange();
+}
 
 } // namespace WebKit

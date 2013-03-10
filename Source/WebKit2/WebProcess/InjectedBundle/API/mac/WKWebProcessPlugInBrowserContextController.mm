@@ -72,6 +72,15 @@
     return WebKit::toWKDOMDocument(webCoreMainFrame->document());
 }
 
+- (WKDOMRange *)selectedRange
+{
+    RefPtr<WebCore::Range> range = WebKit::toImpl(self._bundlePageRef)->currentSelectionAsRange();
+    if (!range)
+        return nil;
+
+    return WebKit::toWKDOMRange(range.get());
+}
+
 @end
 
 @implementation WKWebProcessPlugInBrowserContextController (Private)

@@ -29,11 +29,14 @@
 #import <WebKit2/WKBase.h>
 
 @class WKDOMDocument;
+@class WKDOMRange;
 
 WK_EXPORT
 @interface WKWebProcessPlugInBrowserContextController : NSObject
 
 @property(readonly) WKDOMDocument *mainFrameDocument;
+
+@property(readonly) WKDOMRange *selectedRange;
 
 @end
 

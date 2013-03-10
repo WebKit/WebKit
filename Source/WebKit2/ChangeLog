@@ -1,3 +1,22 @@
+2013-03-10  Sam Weinig  <sam@webkit.org>
+
+        Add bundle API to get the current selection as a WKDOMRange
+        https://bugs.webkit.org/show_bug.cgi?id=111947
+        <rdar://problem/13205460>
+
+        Reviewed by Gavin Barraclough.
+
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.h:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInBrowserContextController.mm:
+        (-[WKWebProcessPlugInBrowserContextController selectedRange]):
+        Add new selectedRange property.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::frameWithSelection):
+        (WebKit::WebPage::currentSelectionAsRange):
+        * WebProcess/WebPage/WebPage.h:
+        Get the range by finding the frame that has a selection, and then normalizing it.
+
 2013-03-10  Tim Horton  <timothy_horton@apple.com>
 
         Add a heuristic to determine the “primary” snapshotted plugin
