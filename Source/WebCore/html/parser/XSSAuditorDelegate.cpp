@@ -43,7 +43,6 @@ namespace WebCore {
 bool XSSInfo::isSafeToSendToAnotherThread() const
 {
     return m_reportURL.isSafeToSendToAnotherThread()
-        && m_originalURL.isSafeToSendToAnotherThread()
         && m_originalHTTPBody.isSafeToSendToAnotherThread();
 }
 
@@ -73,7 +72,7 @@ void XSSAuditorDelegate::didBlockScript(const XSSInfo& xssInfo)
 
     if (!xssInfo.m_reportURL.isEmpty()) {
         RefPtr<InspectorObject> reportDetails = InspectorObject::create();
-        reportDetails->setString("request-url", xssInfo.m_originalURL);
+        reportDetails->setString("request-url", m_document->url().string());
         reportDetails->setString("request-body", xssInfo.m_originalHTTPBody);
 
         RefPtr<InspectorObject> reportObject = InspectorObject::create();

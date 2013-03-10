@@ -312,11 +312,8 @@ void XSSAuditor::init(Document* document)
         return;
     }
 
-    if (!m_reportURL.isEmpty()) {
-        // May need these for reporting later on.
-        m_originalURL = m_documentURL.string().isolatedCopy();
+    if (!m_reportURL.isEmpty())
         m_originalHTTPBody = httpBodyAsString;
-    }
 }
 
 PassOwnPtr<XSSInfo> XSSAuditor::filterToken(const FilterTokenRequest& request)
@@ -337,10 +334,9 @@ PassOwnPtr<XSSInfo> XSSAuditor::filterToken(const FilterTokenRequest& request)
 
     if (didBlockScript) {
         bool didBlockEntirePage = (m_xssProtection == ContentSecurityPolicy::BlockReflectedXSS);
-        OwnPtr<XSSInfo> xssInfo = XSSInfo::create(m_reportURL, m_originalURL, m_originalHTTPBody, didBlockEntirePage);
+        OwnPtr<XSSInfo> xssInfo = XSSInfo::create(m_reportURL, m_originalHTTPBody, didBlockEntirePage);
         if (!m_reportURL.isEmpty()) {
             m_reportURL = KURL();
-            m_originalURL = String();
             m_originalHTTPBody = String();
         }
         return xssInfo.release();
@@ -731,7 +727,6 @@ bool XSSAuditor::isLikelySafeResource(const String& url)
 bool XSSAuditor::isSafeToSendToAnotherThread() const
 {
     return m_documentURL.isSafeToSendToAnotherThread()
-        && m_originalURL.isSafeToSendToAnotherThread()
         && m_originalHTTPBody.isSafeToSendToAnotherThread()
         && m_decodedURL.isSafeToSendToAnotherThread()
         && m_decodedHTTPBody.isSafeToSendToAnotherThread()

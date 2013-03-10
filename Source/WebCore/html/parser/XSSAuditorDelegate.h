@@ -39,23 +39,21 @@ class Document;
 
 class XSSInfo {
 public:
-    static PassOwnPtr<XSSInfo> create(const KURL& reportURL, const String& originalURL, const String& originalHTTPBody, bool didBlockEntirePage)
+    static PassOwnPtr<XSSInfo> create(const KURL& reportURL, const String& originalHTTPBody, bool didBlockEntirePage)
     {
-        return adoptPtr(new XSSInfo(reportURL, originalURL, originalHTTPBody, didBlockEntirePage));
+        return adoptPtr(new XSSInfo(reportURL, originalHTTPBody, didBlockEntirePage));
     }
 
     bool isSafeToSendToAnotherThread() const;
 
     KURL m_reportURL;
-    String m_originalURL;
     String m_originalHTTPBody;
     bool m_didBlockEntirePage;
     TextPosition m_textPosition;
 
 private:
-    XSSInfo(const KURL& reportURL, const String& originalURL, const String& originalHTTPBody, bool didBlockEntirePage)
+    XSSInfo(const KURL& reportURL, const String& originalHTTPBody, bool didBlockEntirePage)
         : m_reportURL(reportURL)
-        , m_originalURL(originalURL)
         , m_originalHTTPBody(originalHTTPBody)
         , m_didBlockEntirePage(didBlockEntirePage)
     { }

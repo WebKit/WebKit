@@ -105,7 +105,6 @@ private:
     bool m_isEnabled;
     ContentSecurityPolicy::ReflectedXSSDisposition m_xssProtection;
 
-    String m_originalURL;
     String m_originalHTTPBody;
     String m_decodedURL;
     String m_decodedHTTPBody;
