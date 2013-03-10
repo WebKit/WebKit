@@ -71,6 +71,7 @@ HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Doc
     , m_needsWidgetUpdate(!createdByParser)
     , m_shouldPreferPlugInsForImages(preferPlugInsForImagesOption == ShouldPreferPlugInsForImages)
     , m_needsDocumentActivationCallbacks(false)
+    , m_isPrimarySnapshottedPlugIn(false)
     , m_simulatedMouseClickTimer(this, &HTMLPlugInImageElement::simulatedMouseClickTimerFired, simulatedMouseClickTimerDelay)
     , m_swapRendererTimer(this, &HTMLPlugInImageElement::swapRendererTimerFired)
 {
@@ -295,12 +296,13 @@ void HTMLPlugInImageElement::updateSnapshot(PassRefPtr<Image> image)
         renderer()->repaint();
 }
 
-static AtomicString classNameForShadowRoot(const Node* node)
+static AtomicString classNameForShadowRoot(const Node* node, bool isPrimary)
 {
     DEFINE_STATIC_LOCAL(const AtomicString, plugInTinySizeClassName, ("tiny", AtomicString::ConstructFromLiteral));
     DEFINE_STATIC_LOCAL(const AtomicString, plugInSmallSizeClassName, ("small", AtomicString::ConstructFromLiteral));
     DEFINE_STATIC_LOCAL(const AtomicString, plugInMediumSizeClassName, ("medium", AtomicString::ConstructFromLiteral));
     DEFINE_STATIC_LOCAL(const AtomicString, plugInLargeSizeClassName, ("large", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, plugInLargeSizePrimaryClassName, ("large primary", AtomicString::ConstructFromLiteral));
 
     RenderBox* renderBox = static_cast<RenderBox*>(node->renderer());
     LayoutUnit width = renderBox->contentWidth();
@@ -315,7 +317,14 @@ static AtomicString classNameForShadowRoot(const Node* node)
     if (width < sizingMediumWidthThreshold || height < sizingMediumHeightThreshold)
         return plugInMediumSizeClassName;
 
-    return plugInLargeSizeClassName;
+    return isPrimary ? plugInLargeSizePrimaryClassName : plugInLargeSizeClassName;
+}
+    
+void HTMLPlugInImageElement::setIsPrimarySnapshottedPlugIn(bool isPrimarySnapshottedPlugIn)
+{
+    m_isPrimarySnapshottedPlugIn = isPrimarySnapshottedPlugIn;
+    
+    updateSnapshotInfo();
 }
 
 void HTMLPlugInImageElement::updateSnapshotInfo()
@@ -325,7 +334,7 @@ void HTMLPlugInImageElement::updateSnapshotInfo()
         return;
 
     Element* shadowContainer = static_cast<Element*>(root->firstChild());
-    shadowContainer->setAttribute(classAttr, classNameForShadowRoot(this));
+    shadowContainer->setAttribute(classAttr, classNameForShadowRoot(this, m_isPrimarySnapshottedPlugIn));
 }
 
 void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)

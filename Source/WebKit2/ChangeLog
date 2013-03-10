@@ -1,3 +1,32 @@
+2013-03-10  Tim Horton  <timothy_horton@apple.com>
+
+        Add a heuristic to determine the “primary” snapshotted plugin
+        https://bugs.webkit.org/show_bug.cgi?id=111932
+        <rdar://problem/13270208>
+
+        Reviewed by Dean Jackson.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidCommitLoad):
+        Forward didCommitLoad to WebPage. Move existing code that manipulated WebPage
+        itself during didCommitLoad into WebPage, where it belongs.
+        (WebKit::WebFrameLoaderClient::dispatchDidFinishLoad): Forward didFinishLoad to WebPage.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Initialize m_didFindPrimarySnapshottedPlugin to false.
+        (WebKit::WebPage::didCommitLoad): Move code from WebPageFrameLoaderClient.
+        Reset the flag that says we've already found a snapshotted plugin.
+        (WebKit::WebPage::didFinishLoad):
+        Call determinePrimarySnapshottedPlugIn when any frame finishes loading. We call this for subframes,
+        not just the main frame, in case the main frame loads with no "primary" plugins, but a subframe later loads with one.
+        (WebKit::WebPage::determinePrimarySnapshottedPlugIn):
+        Attempt to find the primary snapshotted plugin on the page, by hit-testing a grid of points spaced 200px apart.
+        A plugin is considered if it is snapshotted and > 450x300. We scan vertically and left-to-right, only discarding
+        a previous candidate if another candidate is at least 110% the size of the previous candidate.
+        This tends to select plugins near the top left of the page, unless there is a significantly larger plugin elsewhere.
+        (WebKit::WebPage::resetPrimarySnapshottedPlugIn):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+
 2013-03-10  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r145039 and r145096.

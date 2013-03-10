@@ -98,6 +98,8 @@
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSObject;
 OBJC_CLASS WKAccessibilityWebPageObject;
+
+#define WTF_ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC 1
 #endif
 
 namespace CoreIPC {
@@ -217,6 +219,8 @@ public:
 
     void didStartPageTransition();
     void didCompletePageTransition();
+    void didCommitLoad(WebFrame*);
+    void didFinishLoad(WebFrame*);
     void show();
     String userAgent() const { return m_userAgent; }
     WebCore::IntRect windowResizerRect() const;
@@ -630,6 +634,11 @@ public:
     void didFinishCheckingText(uint64_t requestID, const Vector<WebCore::TextCheckingResult>&);
     void didCancelCheckingText(uint64_t requestID);
 
+#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
+    void determinePrimarySnapshottedPlugIn();
+    void resetPrimarySnapshottedPlugIn();
+#endif
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -843,6 +852,10 @@ private:
     bool m_scrollingPerformanceLoggingEnabled;
 
     bool m_mainFrameIsScrollable;
+
+#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
+    bool m_didFindPrimarySnapshottedPlugin;
+#endif
 
 #if PLATFORM(MAC)
     bool m_pdfPluginEnabled;

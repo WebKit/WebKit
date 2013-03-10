@@ -444,12 +444,7 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
 
     webPage->send(Messages::WebPageProxy::DidCommitLoadForFrame(m_frame->frameID(), response.mimeType(), m_frameHasCustomRepresentation, m_frame->coreFrame()->loader()->loadType(), PlatformCertificateInfo(response), InjectedBundleUserMessageEncoder(userData.get())));
 
-    // Only restore the scale factor for standard frame loads (of the main frame).
-    if (m_frame->isMainFrame() && m_frame->coreFrame()->loader()->loadType() == FrameLoadTypeStandard) {
-        Page* page = m_frame->coreFrame()->page();
-        if (page && page->pageScaleFactor() != 1)
-            webPage->scalePage(1, IntPoint());
-    }
+    webPage->didCommitLoad(m_frame);
 }
 
 void WebFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceError& error)
@@ -524,6 +519,8 @@ void WebFrameLoaderClient::dispatchDidFinishLoad()
     // If we have a load listener, notify it.
     if (WebFrame::LoadListener* loadListener = m_frame->loadListener())
         loadListener->didFinishLoad(m_frame);
+
+    webPage->didFinishLoad(m_frame);
 }
 
 void WebFrameLoaderClient::dispatchDidLayout(LayoutMilestones milestones)

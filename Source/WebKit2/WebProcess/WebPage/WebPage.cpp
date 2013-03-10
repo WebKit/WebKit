@@ -101,6 +101,7 @@
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLPlugInElement.h>
+#include <WebCore/HTMLPlugInImageElement.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/MIMETypeRegistry.h>
@@ -235,6 +236,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_artificialPluginInitializationDelayEnabled(false)
     , m_scrollingPerformanceLoggingEnabled(false)
     , m_mainFrameIsScrollable(true)
+#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
+    , m_didFindPrimarySnapshottedPlugin(false)
+#endif
 #if PLATFORM(MAC)
     , m_pdfPluginEnabled(false)
     , m_hasCachedWindowFrame(false)
@@ -3863,5 +3867,110 @@ void WebPage::didCancelCheckingText(uint64_t requestID)
     request->didCancel();
     m_pendingTextCheckingRequestMap.remove(requestID);
 }
+
+void WebPage::didCommitLoad(WebFrame* frame)
+{
+    // Only restore the scale factor for standard frame loads (of the main frame).
+    if (frame->isMainFrame() && frame->coreFrame()->loader()->loadType() == FrameLoadTypeStandard) {
+        Page* page = frame->coreFrame()->page();
+        if (page && page->pageScaleFactor() != 1)
+            scalePage(1, IntPoint());
+    }
+
+#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
+    if (frame->isMainFrame())
+        resetPrimarySnapshottedPlugIn();
+#endif
+}
+
+void WebPage::didFinishLoad(WebFrame* frame)
+{
+#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
+    determinePrimarySnapshottedPlugIn();
+#endif
+}
+
+#if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
+static int primarySnapshottedPlugInSearchLimit = 3000;
+static int primarySnapshottedPlugInSearchGap = 200;
+static float primarySnapshottedPlugInSearchBucketSize = 1.1;
+static int primarySnapshottedPlugInMinimumWidth = 450;
+static int primarySnapshottedPlugInMinimumHeight = 300;
+
+void WebPage::determinePrimarySnapshottedPlugIn()
+{
+    if (!corePage()->hasSeenAnyPlugin())
+        return;
+
+    if (m_didFindPrimarySnapshottedPlugin)
+        return;
+
+    RenderView* renderView = corePage()->mainFrame()->view()->renderView();
+
+    IntRect searchRect = IntRect(IntPoint(), corePage()->mainFrame()->view()->contentsSize());
+    searchRect.intersect(IntRect(IntPoint(), IntSize(primarySnapshottedPlugInSearchLimit, primarySnapshottedPlugInSearchLimit)));
+
+    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AllowChildFrameContent | HitTestRequest::IgnoreClipping);
+
+    HashSet<RenderObject*> seenRenderers;
+    HTMLPlugInImageElement* candidatePlugIn = 0;
+    unsigned candidatePlugInArea = 0;
+
+    for (int x = searchRect.x(); x <= searchRect.width(); x += primarySnapshottedPlugInSearchGap) {
+        for (int y = searchRect.y(); y <= searchRect.height(); y += primarySnapshottedPlugInSearchGap) {
+            HitTestResult hitTestResult = HitTestResult(LayoutPoint(x, y));
+            renderView->hitTest(request, hitTestResult);
+
+            Element* element = hitTestResult.innerElement();
+            if (!element)
+                continue;
+
+            RenderObject* renderer = element->renderer();
+            if (!renderer || !renderer->isBox())
+                continue;
+
+            RenderBox* renderBox = toRenderBox(renderer);
+
+            if (seenRenderers.contains(renderer))
+                continue;
+            seenRenderers.add(renderer);
+
+            if (!element->isPluginElement())
+                continue;
+
+            HTMLPlugInElement* plugInElement = toHTMLPlugInElement(element);
+            if (!plugInElement->isPlugInImageElement())
+                continue;
+
+            HTMLPlugInImageElement* plugInImageElement = toHTMLPlugInImageElement(plugInElement);
+
+            if (plugInElement->displayState() == HTMLPlugInElement::Playing)
+                continue;
+
+            if (renderBox->contentWidth() < primarySnapshottedPlugInMinimumWidth || renderBox->contentHeight() < primarySnapshottedPlugInMinimumHeight)
+                continue;
+
+            LayoutUnit contentArea = renderBox->contentWidth() * renderBox->contentHeight();
+
+            if (contentArea > candidatePlugInArea * primarySnapshottedPlugInSearchBucketSize) {
+                candidatePlugIn = plugInImageElement;
+                candidatePlugInArea = contentArea;
+            }
+        }
+    }
+
+    if (!candidatePlugIn)
+        return;
+
+    m_didFindPrimarySnapshottedPlugin = true;
+
+    candidatePlugIn->setIsPrimarySnapshottedPlugIn(true);
+}
+
+void WebPage::resetPrimarySnapshottedPlugIn()
+{
+    m_didFindPrimarySnapshottedPlugin = false;
+}
+#endif // ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
 
 } // namespace WebKit
