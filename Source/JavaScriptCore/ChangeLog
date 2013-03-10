@@ -1,3 +1,19 @@
+2013-03-10  Andreas Kling  <akling@apple.com>
+
+        SpeculativeJIT should use OwnPtr<SlowPathGenerator>.
+        <http://webkit.org/b/111942>
+
+        Reviewed by Anders Carlsson.
+
+        There's no need to include DFGSlowPathGenerator.h from the header as long as the destructor is out-of-line,
+        so let's use OwnPtr instead of raw pointers + deleteAllValues().
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::~SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::addSlowPathGenerator):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+
 2013-03-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r145299.

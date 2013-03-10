@@ -2298,7 +2298,7 @@ public:
     
     bool m_isCheckingArgumentTypes;
     
-    Vector<SlowPathGenerator*, 8> m_slowPathGenerators; // doesn't use OwnPtr<> because I don't want to include DFGSlowPathGenerator.h
+    Vector<OwnPtr<SlowPathGenerator>, 8> m_slowPathGenerators;
     Vector<SilentRegisterSavePlan> m_plans;
     
     ValueRecovery computeValueRecoveryFor(const ValueSource&);

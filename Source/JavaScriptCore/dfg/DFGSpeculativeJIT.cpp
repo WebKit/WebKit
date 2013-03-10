@@ -56,7 +56,6 @@ SpeculativeJIT::SpeculativeJIT(JITCompiler& jit)
 
 SpeculativeJIT::~SpeculativeJIT()
 {
-    WTF::deleteAllValues(m_slowPathGenerators);
 }
 
 void SpeculativeJIT::emitAllocateJSArray(GPRReg resultGPR, Structure* structure, GPRReg storageGPR, unsigned numElements)
@@ -344,7 +343,7 @@ void SpeculativeJIT::forwardTypeCheck(JSValueSource source, Edge edge, Speculate
 
 void SpeculativeJIT::addSlowPathGenerator(PassOwnPtr<SlowPathGenerator> slowPathGenerator)
 {
-    m_slowPathGenerators.append(slowPathGenerator.leakPtr());
+    m_slowPathGenerators.append(slowPathGenerator);
 }
 
 void SpeculativeJIT::runSlowPathGenerators()
