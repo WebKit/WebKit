@@ -26,7 +26,7 @@
 #ifndef InbandTextTrackPrivateAVF_h
 #define InbandTextTrackPrivateAVF_h
 
-#if ENABLE(VIDEO) && USE(AVFOUNDATION) && HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+#if ENABLE(VIDEO) && ((USE(AVFOUNDATION) && HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)) || PLATFORM(IOS))
 
 #include "InbandTextTrackPrivate.h"
 #include <wtf/text/StringBuilder.h>
@@ -78,6 +78,6 @@ protected:
 
 } // namespace WebCore
 
-#endif // ENABLE(VIDEO) && USE(AVFOUNDATION) && HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+#endif //  ENABLE(VIDEO) && ((USE(AVFOUNDATION) && HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)) || PLATFORM(IOS))
 
 #endif // InbandTextTrackPrivateAVF_h

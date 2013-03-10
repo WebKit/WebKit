@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(VIDEO) && USE(AVFOUNDATION) && HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+#if ENABLE(VIDEO) && ((USE(AVFOUNDATION) && HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)) || PLATFORM(IOS))
 
 #include "InbandTextTrackPrivateAVF.h"
 
@@ -365,6 +365,9 @@ void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, double 
         resetCueValues();
     }
 
+    if (!attributedStrings)
+        return;
+
     CFIndex count = CFArrayGetCount(attributedStrings);
     if (!count)
         return;
@@ -415,4 +418,4 @@ void InbandTextTrackPrivateAVF::setMode(InbandTextTrackPrivate::Mode newMode)
 
 } // namespace WebCore
 
-#endif // ENABLE(VIDEO) && USE(AVFOUNDATION) && HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+#endif // ENABLE(VIDEO) && ((USE(AVFOUNDATION) && HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)) || PLATFORM(IOS))
