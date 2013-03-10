@@ -303,6 +303,7 @@ check-local:
 
 EXTRA_DIST += \
 	Tools/gtk/common.py \
+	Tools/gtk/generate-feature-defines-files \
 	Tools/gtk/generate-gtkdoc \
 	Tools/gtk/gtkdoc.py \
 	Tools/jhbuild/jhbuildutils.py \

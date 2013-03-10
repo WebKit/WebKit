@@ -171,7 +171,6 @@ endif
 
 EXTRA_DIST += \
 	$(srcdir)/Source/autotools/symbols.filter \
-	$(srcdir)/Tools/generate-feature-defines-files \
 	$(srcdir)/Source/WebKit/LICENSE
 
 # Include module makefiles
