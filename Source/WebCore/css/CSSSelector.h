@@ -357,6 +357,7 @@ inline bool CSSSelector::isShadowDistributed() const
 inline void CSSSelector::setValue(const AtomicString& value)
 {
     ASSERT(m_match != Tag);
+    ASSERT(m_pseudoType == PseudoNotParsed);
     // Need to do ref counting manually for the union.
     if (m_hasRareData) {
         if (m_data.m_rareData->m_value)
