@@ -327,7 +327,7 @@ static bool paintMediaFullscreenButton(RenderObject* object, const PaintInfo& pa
     return paintMediaButton(paintInfo.context, rect, mediaFullscreenButton);
 }
 
-static bool paintMediaClosedCaptionsButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
+static bool paintMediaToggleClosedCaptionsButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
     HTMLMediaElement* mediaElement = toParentMediaElement(object);
     if (!mediaElement)
@@ -353,7 +353,7 @@ bool RenderMediaControlsChromium::paintMediaControlsPart(MediaControlElementType
     case MediaPlayButton:
         return paintMediaPlayButton(object, paintInfo, rect);
     case MediaShowClosedCaptionsButton:
-        return paintMediaClosedCaptionsButton(object, paintInfo, rect);
+        return paintMediaToggleClosedCaptionsButton(object, paintInfo, rect);
     case MediaSlider:
         return paintMediaSlider(object, paintInfo, rect);
     case MediaSliderThumb:
