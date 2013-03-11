@@ -108,6 +108,7 @@ private:
     // TiledBacking member functions.
     virtual void setVisibleRect(const FloatRect&) OVERRIDE;
     virtual void setExposedRect(const FloatRect&) OVERRIDE;
+    virtual bool clipsToExposedRect() OVERRIDE { return m_clipsToExposedRect; }
     virtual void setClipsToExposedRect(bool) OVERRIDE;
     virtual void prepopulateRect(const FloatRect&) OVERRIDE;
     virtual void setIsInWindow(bool) OVERRIDE;

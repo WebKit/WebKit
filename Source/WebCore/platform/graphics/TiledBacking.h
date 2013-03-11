@@ -49,6 +49,7 @@ public:
 
     virtual void setExposedRect(const FloatRect&) = 0;
     virtual void setClipsToExposedRect(bool) = 0;
+    virtual bool clipsToExposedRect() = 0;
 
     virtual void prepopulateRect(const FloatRect&) = 0;
 
