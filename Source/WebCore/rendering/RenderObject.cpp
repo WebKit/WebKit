@@ -783,7 +783,7 @@ RenderBlock* RenderObject::containingBlock() const
             // list in all RenderInlines and lets us return a strongly-typed RenderBlock* result
             // from this method.  The container() method can actually be used to obtain the
             // inline directly.
-            if (!o->style()->position() == StaticPosition && !(o->isInline() && !o->isReplaced()))
+            if (o->style()->position() != StaticPosition && (!o->isInline() || o->isReplaced()))
                 break;
             if (o->isRenderView())
                 break;
