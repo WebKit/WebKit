@@ -55,6 +55,15 @@ WebInspector.CodeMirrorTextEditor = function(url, delegate)
         gutters: ["CodeMirror-linenumbers", "breakpoints"]
     });
 
+    var indent = WebInspector.settings.textEditorIndent.get();
+    if (indent === WebInspector.TextUtils.Indent.TabCharacter) {
+        this._codeMirror.setOption("indentWithTabs", true);
+        this._codeMirror.setOption("indentUnit", 4);
+    } else {
+        this._codeMirror.setOption("indentWithTabs", false);
+        this._codeMirror.setOption("indentUnit", indent.length);
+    }
+
     this._codeMirror.on("change", this._change.bind(this));
     this._codeMirror.on("gutterClick", this._gutterClick.bind(this));
     this.element.addEventListener("contextmenu", this._contextMenu.bind(this));
