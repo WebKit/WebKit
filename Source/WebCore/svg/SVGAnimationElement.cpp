@@ -653,7 +653,7 @@ void SVGAnimationElement::adjustForInheritance(SVGElement* targetElement, const 
     if (!parent || !parent->isSVGElement())
         return;
 
-    SVGElement* svgParent = static_cast<SVGElement*>(parent);
+    SVGElement* svgParent = toSVGElement(parent);
     if (!svgParent->isStyled())
         return;
     computeCSSPropertyValue(svgParent, cssPropertyID(attributeName.localName()), value);

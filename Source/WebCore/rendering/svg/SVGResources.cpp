@@ -192,7 +192,7 @@ bool SVGResources::buildCachedResources(const RenderObject* object, const SVGRen
     ASSERT(node);
     ASSERT_WITH_SECURITY_IMPLICATION(node->isSVGElement());
 
-    SVGElement* element = static_cast<SVGElement*>(node);
+    SVGElement* element = toSVGElement(node);
     if (!element)
         return false;
 

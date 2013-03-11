@@ -168,7 +168,7 @@ void SVGSMILElement::buildPendingResource()
         target = parentNode() && parentNode()->isElementNode() ? static_cast<Element*>(parentNode()) : 0;
     else
         target = SVGURIReference::targetElementFromIRIString(href, document(), &id);
-    SVGElement* svgTarget = target && target->isSVGElement() ? static_cast<SVGElement*>(target) : 0;
+    SVGElement* svgTarget = target && target->isSVGElement() ? toSVGElement(target) : 0;
 
     if (svgTarget && !svgTarget->inDocument())
         svgTarget = 0;

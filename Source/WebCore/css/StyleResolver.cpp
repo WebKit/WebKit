@@ -775,7 +775,7 @@ void StyleResolver::matchAllRules(MatchResult& result, bool includeSMILPropertie
 #if ENABLE(SVG)
     // Now check SMIL animation override style.
     if (includeSMILProperties && m_matchAuthorAndUserStyles && m_state.styledElement() && m_state.styledElement()->isSVGElement())
-        addElementStyleProperties(result, static_cast<SVGElement*>(m_state.styledElement())->animatedSMILStyleProperties(), false /* isCacheable */);
+        addElementStyleProperties(result, toSVGElement(m_state.styledElement())->animatedSMILStyleProperties(), false /* isCacheable */);
 #else
     UNUSED_PARAM(includeSMILProperties);
 #endif
@@ -858,7 +858,7 @@ Node* StyleResolver::locateCousinList(Element* parent, unsigned& visitedNodeCoun
     if (p->inlineStyle())
         return 0;
 #if ENABLE(SVG)
-    if (p->isSVGElement() && static_cast<SVGElement*>(p)->animatedSMILStyleProperties())
+    if (p->isSVGElement() && toSVGElement(p)->animatedSMILStyleProperties())
         return 0;
 #endif
     if (p->hasID() && m_ruleSets.features().idsInRules.contains(p->idForStyleResolution().impl()))
@@ -1029,7 +1029,7 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
     if (element->needsStyleRecalc())
         return false;
 #if ENABLE(SVG)
-    if (element->isSVGElement() && static_cast<SVGElement*>(element)->animatedSMILStyleProperties())
+    if (element->isSVGElement() && toSVGElement(element)->animatedSMILStyleProperties())
         return false;
 #endif
     if (element->isLink() != state.element()->isLink())
@@ -1128,7 +1128,7 @@ RenderStyle* StyleResolver::locateSharedStyle()
     if (state.styledElement()->inlineStyle())
         return 0;
 #if ENABLE(SVG)
-    if (state.styledElement()->isSVGElement() && static_cast<SVGElement*>(state.styledElement())->animatedSMILStyleProperties())
+    if (state.styledElement()->isSVGElement() && toSVGElement(state.styledElement())->animatedSMILStyleProperties())
         return 0;
 #endif
     // Ids stop style sharing if they show up in the stylesheets.

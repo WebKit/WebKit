@@ -142,7 +142,7 @@ Vector<Gradient::ColorStop> SVGGradientElement::buildStops()
 
     float previousOffset = 0.0f;
     for (Node* n = firstChild(); n; n = n->nextSibling()) {
-        SVGElement* element = n->isSVGElement() ? static_cast<SVGElement*>(n) : 0;
+        SVGElement* element = n->isSVGElement() ? toSVGElement(n) : 0;
         if (!element || !element->isGradientStop())
             continue;
 

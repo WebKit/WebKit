@@ -58,7 +58,7 @@ bool SVGSwitchElement::childShouldCreateRenderer(const NodeRenderingContext& chi
         if (!node->isSVGElement())
             continue;
 
-        SVGElement* element = static_cast<SVGElement*>(node);
+        SVGElement* element = toSVGElement(node);
         if (!element || !element->isValid())
             continue;
 

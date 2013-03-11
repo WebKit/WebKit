@@ -455,7 +455,7 @@ void SVGStyledElement::updateRelativeLengthsInformation(bool hasRelativeLengths,
         if (!node->isSVGElement())
             break;
 
-        SVGElement* element = static_cast<SVGElement*>(node);
+        SVGElement* element = toSVGElement(node);
         if (!element->isStyled()) {
             node = node->parentNode();
             continue;

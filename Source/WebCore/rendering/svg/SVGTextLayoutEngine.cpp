@@ -428,7 +428,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox* textBox, Rend
     if (m_inPathLayout && m_textPath.isEmpty())
         return;
 
-    SVGElement* lengthContext = static_cast<SVGElement*>(text->parent()->node());
+    SVGElement* lengthContext = toSVGElement(text->parent()->node());
     
     RenderObject* textParent = text->parent();
     bool definesTextLength = textParent ? parentDefinesTextLength(textParent) : false;

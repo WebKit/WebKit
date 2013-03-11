@@ -108,7 +108,7 @@ PassRefPtr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFilter*
         if (!node->isSVGElement())
             continue;
 
-        SVGElement* element = static_cast<SVGElement*>(node);
+        SVGElement* element = toSVGElement(node);
         if (!element->isFilterEffect())
             continue;
 

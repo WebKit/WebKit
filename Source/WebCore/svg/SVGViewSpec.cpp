@@ -145,7 +145,7 @@ SVGElement* SVGViewSpec::viewTarget() const
     Element* element = m_contextElement->treeScope()->getElementById(m_viewTargetString);
     if (!element || !element->isSVGElement())
         return 0;
-    return static_cast<SVGElement*>(element);
+    return toSVGElement(element);
 }
 
 SVGTransformListPropertyTearOff* SVGViewSpec::transform()

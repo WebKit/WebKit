@@ -205,7 +205,7 @@ SVGElement* SVGElement::viewportElement() const
     ContainerNode* n = parentOrShadowHostNode();
     while (n) {
         if (n->hasTagName(SVGNames::svgTag) || n->hasTagName(SVGNames::imageTag) || n->hasTagName(SVGNames::symbolTag))
-            return static_cast<SVGElement*>(n);
+            return toSVGElement(n);
 
         n = n->parentOrShadowHostNode();
     }
@@ -344,7 +344,7 @@ bool SVGElement::haveLoadedRequiredResources()
 {
     Node* child = firstChild();
     while (child) {
-        if (child->isSVGElement() && !static_cast<SVGElement*>(child)->haveLoadedRequiredResources())
+        if (child->isSVGElement() && !toSVGElement(child)->haveLoadedRequiredResources())
             return false;
         child = child->nextSibling();
     }
@@ -462,7 +462,7 @@ void SVGElement::sendSVGLoadEventIfPossible(bool sendParentLoadEvents)
         if (hasLoadListener(currentTarget.get()))
             currentTarget->dispatchEvent(Event::create(eventNames().loadEvent, false, false));
         currentTarget = (parent && parent->isSVGElement()) ? static_pointer_cast<SVGElement>(parent) : RefPtr<SVGElement>();
-        SVGElement* element = static_cast<SVGElement*>(currentTarget.get());
+        SVGElement* element = toSVGElement(currentTarget.get());
         if (!element || !element->isOutermostSVGSVGElement())
             continue;
 
@@ -521,10 +521,11 @@ bool SVGElement::childShouldCreateRenderer(const NodeRenderingContext& childCont
         invalidTextContent.add(SVGNames::tspanTag);
     }
     if (childContext.node()->isSVGElement()) {
-        if (invalidTextContent.contains(static_cast<SVGElement*>(childContext.node())->tagQName()))
+        SVGElement* svgChild = toSVGElement(childContext.node());
+        if (invalidTextContent.contains(svgChild->tagQName()))
             return false;
 
-        return static_cast<SVGElement*>(childContext.node())->isValid();
+        return svgChild->isValid();
     }
     return false;
 }

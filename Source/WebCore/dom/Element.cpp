@@ -348,7 +348,7 @@ void Element::synchronizeAllAttributes() const
 #if ENABLE(SVG)
     if (elementData()->m_animatedSVGAttributesAreDirty) {
         ASSERT(isSVGElement());
-        static_cast<const SVGElement*>(this)->synchronizeAnimatedSVGAttribute(anyQName());
+        toSVGElement(this)->synchronizeAnimatedSVGAttribute(anyQName());
     }
 #endif
 }
@@ -365,7 +365,7 @@ inline void Element::synchronizeAttribute(const QualifiedName& name) const
 #if ENABLE(SVG)
     if (UNLIKELY(elementData()->m_animatedSVGAttributesAreDirty)) {
         ASSERT(isSVGElement());
-        static_cast<const SVGElement*>(this)->synchronizeAnimatedSVGAttribute(name);
+        toSVGElement(this)->synchronizeAnimatedSVGAttribute(name);
     }
 #endif
 }

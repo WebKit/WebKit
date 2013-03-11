@@ -198,7 +198,7 @@ bool SVGFilterElement::childShouldCreateRenderer(const NodeRenderingContext& chi
     if (!childContext.node()->isSVGElement())
         return false;
 
-    Element* element = static_cast<Element*>(childContext.node());
+    SVGElement* svgElement = toSVGElement(childContext.node());
 
     DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, allowedChildElementTags, ());
     if (allowedChildElementTags.isEmpty()) {
@@ -229,7 +229,7 @@ bool SVGFilterElement::childShouldCreateRenderer(const NodeRenderingContext& chi
         allowedChildElementTags.add(SVGNames::feTurbulenceTag);
     }
 
-    return allowedChildElementTags.contains<QualifiedName, SVGAttributeHashTranslator>(element->tagQName());
+    return allowedChildElementTags.contains<QualifiedName, SVGAttributeHashTranslator>(svgElement->tagQName());
 }
 
 bool SVGFilterElement::selfHasRelativeLengths() const

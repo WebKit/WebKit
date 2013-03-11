@@ -117,7 +117,7 @@ bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext* context, const 
         // Only shapes or paths are supported for direct clipping. We need to fallback to masking for texts.
         if (renderer->isSVGText())
             return false;
-        if (!childNode->isSVGElement() || !static_cast<SVGElement*>(childNode)->isStyledTransformable())
+        if (!childNode->isSVGElement() || !toSVGElement(childNode)->isStyledTransformable())
             continue;
         SVGStyledTransformableElement* styled = static_cast<SVGStyledTransformableElement*>(childNode);
         RenderStyle* style = renderer->style();
@@ -234,7 +234,7 @@ bool RenderSVGResourceClipper::drawContentIntoMaskImage(ClipperData* clipperData
     // Draw all clipPath children into a global mask.
     for (Node* childNode = node()->firstChild(); childNode; childNode = childNode->nextSibling()) {
         RenderObject* renderer = childNode->renderer();
-        if (!childNode->isSVGElement() || !static_cast<SVGElement*>(childNode)->isStyled() || !renderer)
+        if (!childNode->isSVGElement() || !toSVGElement(childNode)->isStyled() || !renderer)
             continue;
         if (renderer->needsLayout()) {
             frame()->view()->setPaintBehavior(oldBehavior);
@@ -276,7 +276,7 @@ void RenderSVGResourceClipper::calculateClipContentRepaintRect()
     // This is a rough heuristic to appraise the clip size and doesn't consider clip on clip.
     for (Node* childNode = node()->firstChild(); childNode; childNode = childNode->nextSibling()) {
         RenderObject* renderer = childNode->renderer();
-        if (!childNode->isSVGElement() || !static_cast<SVGElement*>(childNode)->isStyled() || !renderer)
+        if (!childNode->isSVGElement() || !toSVGElement(childNode)->isStyled() || !renderer)
             continue;
         if (!renderer->isSVGShape() && !renderer->isSVGText() && !childNode->hasTagName(SVGNames::useTag))
             continue;
@@ -306,7 +306,7 @@ bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundin
 
     for (Node* childNode = node()->firstChild(); childNode; childNode = childNode->nextSibling()) {
         RenderObject* renderer = childNode->renderer();
-        if (!childNode->isSVGElement() || !static_cast<SVGElement*>(childNode)->isStyled() || !renderer)
+        if (!childNode->isSVGElement() || !toSVGElement(childNode)->isStyled() || !renderer)
             continue;
         if (!renderer->isSVGShape() && !renderer->isSVGText() && !childNode->hasTagName(SVGNames::useTag))
             continue;

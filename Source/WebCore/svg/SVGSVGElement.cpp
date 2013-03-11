@@ -349,11 +349,12 @@ PassRefPtr<NodeList> SVGSVGElement::collectIntersectionOrEnclosureList(const Flo
     Element* element = ElementTraversal::next(referenceElement ? referenceElement : this);
     while (element) {
         if (element->isSVGElement()) { 
+            SVGElement* svgElement = toSVGElement(element);
             if (collect == CollectIntersectionList) {
-                if (checkIntersection(static_cast<SVGElement*>(element), rect))
+                if (checkIntersection(svgElement, rect))
                     nodes.append(element);
             } else {
-                if (checkEnclosure(static_cast<SVGElement*>(element), rect))
+                if (checkEnclosure(svgElement, rect))
                     nodes.append(element);
             }
         }

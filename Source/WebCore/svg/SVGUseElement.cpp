@@ -432,7 +432,7 @@ void SVGUseElement::buildPendingResource()
     }
 
     if (target->isSVGElement()) {
-        buildShadowAndInstanceTree(static_cast<SVGElement*>(target));
+        buildShadowAndInstanceTree(toSVGElement(target));
         invalidateDependentShadowTrees();
     }
 
@@ -562,7 +562,7 @@ void SVGUseElement::toClipPath(Path& path)
     if (!n)
         return;
 
-    if (n->isSVGElement() && static_cast<SVGElement*>(n)->isStyledTransformable()) {
+    if (n->isSVGElement() && toSVGElement(n)->isStyledTransformable()) {
         if (!isDirectReference(n))
             // Spec: Indirect references are an error (14.3.5)
             document()->accessSVGExtensions()->reportError("Not allowed to use indirect reference in <clip-path>");
@@ -583,7 +583,7 @@ RenderObject* SVGUseElement::rendererClipChild() const
         return 0;
 
     if (n->isSVGElement() && isDirectReference(n))
-        return static_cast<SVGElement*>(n)->renderer();
+        return toSVGElement(n)->renderer();
 
     return 0;
 }
@@ -624,7 +624,7 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
     for (Node* node = target->firstChild(); node; node = node->nextSibling()) {
         SVGElement* element = 0;
         if (node->isSVGElement())
-            element = static_cast<SVGElement*>(node);
+            element = toSVGElement(node);
 
         // Skip any non-svg nodes or any disallowed element.
         if (!element || isDisallowedElement(element))
@@ -655,7 +655,7 @@ bool SVGUseElement::hasCycleUseReferencing(SVGUseElement* use, SVGElementInstanc
     Element* targetElement = SVGURIReference::targetElementFromIRIString(use->href(), referencedDocument());
     newTarget = 0;
     if (targetElement && targetElement->isSVGElement())
-        newTarget = static_cast<SVGElement*>(targetElement);
+        newTarget = toSVGElement(targetElement);
 
     if (!newTarget)
         return false;
@@ -727,7 +727,7 @@ void SVGUseElement::expandUseElementsInShadowTree(Node* element)
         Element* targetElement = SVGURIReference::targetElementFromIRIString(use->href(), referencedDocument());
         SVGElement* target = 0;
         if (targetElement && targetElement->isSVGElement())
-            target = static_cast<SVGElement*>(targetElement);
+            target = toSVGElement(targetElement);
 
         // Don't ASSERT(target) here, it may be "pending", too.
         // Setup sub-shadow tree root node
@@ -848,7 +848,7 @@ void SVGUseElement::associateInstancesWithShadowTreeElements(Node* target, SVGEl
 
     SVGElement* element = 0;
     if (target->isSVGElement())
-        element = static_cast<SVGElement*>(target);
+        element = toSVGElement(target);
 
     ASSERT(!targetInstance->shadowTreeElement());
     targetInstance->setShadowTreeElement(element);

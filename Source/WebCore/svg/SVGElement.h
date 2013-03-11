@@ -168,10 +168,16 @@ struct SVGAttributeHashTranslator {
     static bool equal(const QualifiedName& a, const QualifiedName& b) { return a.matches(b); }
 };
 
-inline SVGElement* toSVGElement(Element* element)
+inline SVGElement* toSVGElement(Node* node)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!element || element->isSVGElement());
-    return static_cast<SVGElement*>(element);
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isSVGElement());
+    return static_cast<SVGElement*>(node);
+}
+
+inline const SVGElement* toSVGElement(const Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isSVGElement());
+    return static_cast<const SVGElement*>(node);
 }
 
 }

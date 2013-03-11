@@ -415,7 +415,7 @@ void RenderSVGShape::updateRepaintBoundingBox()
 
 float RenderSVGShape::strokeWidth() const
 {
-    SVGElement* svgElement = static_cast<SVGElement*>(node());
+    SVGElement* svgElement = toSVGElement(node());
     SVGLengthContext lengthContext(svgElement);
     return style()->svgStyle()->strokeWidth().value(lengthContext);
 }

@@ -262,7 +262,7 @@ static void writeSVGPaintingResource(TextStream& ts, RenderSVGResource* resource
     else if (resource->resourceType() == RadialGradientResourceType)
         ts << "[type=RADIAL-GRADIENT]";
 
-    ts << " [id=\"" << static_cast<SVGElement*>(node)->getIdAttribute() << "\"]";
+    ts << " [id=\"" << toSVGElement(node)->getIdAttribute() << "\"]";
 }
 
 static void writeStyle(TextStream& ts, const RenderObject& object)
@@ -285,7 +285,7 @@ static void writeStyle(TextStream& ts, const RenderObject& object)
             ts << " [stroke={" << s;
             writeSVGPaintingResource(ts, strokePaintingResource);
 
-            SVGLengthContext lengthContext(static_cast<SVGElement*>(shape.node()));
+            SVGLengthContext lengthContext(toSVGElement(shape.node()));
             double dashOffset = svgStyle->strokeDashOffset().value(lengthContext);
             double strokeWidth = svgStyle->strokeWidth().value(lengthContext);
             const Vector<SVGLength>& dashes = svgStyle->strokeDashArray();
@@ -336,7 +336,7 @@ static TextStream& operator<<(TextStream& ts, const RenderSVGShape& shape)
     writePositionAndStyle(ts, shape);
 
     ASSERT(shape.node()->isSVGElement());
-    SVGElement* svgElement = static_cast<SVGElement*>(shape.node());
+    SVGElement* svgElement = toSVGElement(shape.node());
     SVGLengthContext lengthContext(svgElement);
 
     if (svgElement->hasTagName(SVGNames::rectTag)) {

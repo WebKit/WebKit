@@ -513,7 +513,7 @@ FloatRect RenderSVGText::strokeBoundingBox() const
 
     ASSERT(node());
     ASSERT(node()->isSVGElement());
-    SVGLengthContext lengthContext(static_cast<SVGElement*>(node()));
+    SVGLengthContext lengthContext(toSVGElement(node()));
     strokeBoundaries.inflate(svgStyle->strokeWidth().value(lengthContext));
     return strokeBoundaries;
 }

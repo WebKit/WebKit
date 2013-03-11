@@ -107,7 +107,7 @@ void SVGFEImageElement::buildPendingResource()
     } else if (target->isSVGElement()) {
         // Register us with the target in the dependencies map. Any change of hrefElement
         // that leads to relayout/repainting now informs us, so we can react to it.
-        document()->accessSVGExtensions()->addElementReferencingTarget(this, static_cast<SVGElement*>(target));
+        document()->accessSVGExtensions()->addElementReferencingTarget(this, toSVGElement(target));
     }
 
     invalidate();
