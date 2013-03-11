@@ -64,7 +64,9 @@ void IDBObjectStoreBackendImpl::IndexWriter::writeIndexKeys(const IDBBackingStor
 {
     int64_t indexId = m_indexMetadata.id;
     for (size_t i = 0; i < m_indexKeys.size(); ++i) {
-        backingStore.putIndexDataForRecord(transaction, databaseId, objectStoreId, indexId, *(m_indexKeys)[i].get(), recordIdentifier);
+        bool ok = backingStore.putIndexDataForRecord(transaction, databaseId, objectStoreId, indexId, *(m_indexKeys)[i].get(), recordIdentifier);
+        // This should have already been verified as a valid write during verifyIndexKeys.
+        ASSERT_UNUSED(ok, ok);
     }
 }
 
