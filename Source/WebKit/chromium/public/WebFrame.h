@@ -402,12 +402,6 @@ public:
     // Returns the number of registered unload listeners.
     virtual unsigned unloadListenerCount() const = 0;
 
-    // Returns true if a user gesture is currently being processed. Deprecated.
-    virtual bool isProcessingUserGesture() const = 0;
-
-    // Returns true if a consumable gesture exists and has been successfully consumed. Deprecated.
-    virtual bool consumeUserGesture() const = 0;
-
     // Returns true if this frame is in the process of opening a new frame
     // with a suppressed opener.
     virtual bool willSuppressOpenerInNewFrame() const = 0;

@@ -59,6 +59,7 @@
 #include "WebTestDelegate.h"
 #include "WebTestInterfaces.h"
 #include "WebTestRunner.h"
+#include "WebUserGestureIndicator.h"
 #include "WebUserMediaClientMock.h"
 #include "WebView.h"
 // FIXME: Including platform_canvas.h here is a layering violation.
@@ -156,7 +157,7 @@ void printFrameDescription(WebTestDelegate* delegate, WebFrame* frame)
 
 void printFrameUserGestureStatus(WebTestDelegate* delegate, WebFrame* frame, const char* msg)
 {
-    bool isUserGesture = frame->isProcessingUserGesture();
+    bool isUserGesture = WebUserGestureIndicator::isProcessingUserGesture();
     delegate->printMessage(string("Frame with user gesture \"") + (isUserGesture ? "true" : "false") + "\"" + msg);
 }
 

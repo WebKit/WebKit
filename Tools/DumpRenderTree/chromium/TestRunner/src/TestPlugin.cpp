@@ -33,6 +33,7 @@
 #include "WebPluginParams.h"
 #include "WebTestDelegate.h"
 #include "WebTouchPoint.h"
+#include "WebUserGestureIndicator.h"
 #include <public/Platform.h>
 #include <public/WebCompositorSupport.h>
 #include <public/WebGraphicsContext3D.h>
@@ -515,7 +516,7 @@ bool TestPlugin::handleInputEvent(const WebInputEvent& event, WebCursorInfo& inf
     if (m_printEventDetails)
         printEventDetails(m_delegate, event);
     if (m_printUserGestureStatus)
-        m_delegate->printMessage(std::string("* ") + (m_frame->isProcessingUserGesture() ? "" : "not ") + "handling user gesture\n");
+        m_delegate->printMessage(std::string("* ") + (WebUserGestureIndicator::isProcessingUserGesture() ? "" : "not ") + "handling user gesture\n");
     return false;
 }
 
