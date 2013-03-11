@@ -49,13 +49,6 @@ namespace JSC {
             , m_continueTarget(continueTarget)
         {
         }
-
-        void ref() { ++m_refCount; }
-        void deref()
-        {
-            --m_refCount;
-            ASSERT(m_refCount >= 0);
-        }
         int refCount() const { return m_refCount; }
 
         Label* breakTarget() const { return m_breakTarget.get(); }
@@ -66,12 +59,72 @@ namespace JSC {
         int scopeDepth() const { return m_scopeDepth; }
 
     private:
+        friend class LabelScopePtr;
+
+        void ref() { ++m_refCount; }
+        void deref()
+        {
+            --m_refCount;
+            ASSERT(m_refCount >= 0);
+        }
+
         int m_refCount;
         Type m_type;
         const Identifier* m_name;
         int m_scopeDepth;
         RefPtr<Label> m_breakTarget;
         RefPtr<Label> m_continueTarget;
+    };
+
+    typedef Vector<LabelScope, 8> LabelScopeStore;
+
+    class LabelScopePtr {
+    public:
+        LabelScopePtr()
+            : m_owner(0)
+            , m_index(0)
+        {
+        }
+        LabelScopePtr(LabelScopeStore* owner, size_t index)
+            : m_owner(owner)
+            , m_index(index)
+        {
+            m_owner->at(index).ref();
+        }
+
+        LabelScopePtr(const LabelScopePtr& other)
+            : m_owner(other.m_owner)
+            , m_index(other.m_index)
+        {
+            if (m_owner)
+                m_owner->at(m_index).ref();
+        }
+
+        const LabelScopePtr& operator=(const LabelScopePtr& other)
+        {
+            if (other.m_owner)
+                other.m_owner->at(other.m_index).ref();
+            if (m_owner)
+                m_owner->at(m_index).deref();
+            m_owner = other.m_owner;
+            m_index = other.m_index;
+            return *this;
+        }
+
+        ~LabelScopePtr()
+        {
+            if (m_owner)
+                m_owner->at(m_index).deref();
+        }
+
+        LabelScope& operator*() { ASSERT(m_owner); return m_owner->at(m_index); }
+        LabelScope* operator->() { ASSERT(m_owner); return &m_owner->at(m_index); }
+        const LabelScope& operator*() const { ASSERT(m_owner); return m_owner->at(m_index); }
+        const LabelScope* operator->() const { ASSERT(m_owner); return &m_owner->at(m_index); }
+
+    private:
+        LabelScopeStore* m_owner;
+        size_t m_index;
     };
 
 } // namespace JSC

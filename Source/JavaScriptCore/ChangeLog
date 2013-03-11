@@ -1,3 +1,36 @@
+2013-03-11  Oliver Hunt  <oliver@apple.com>
+
+        Make SegmentedVector Noncopyable
+        https://bugs.webkit.org/show_bug.cgi?id=112059
+
+        Reviewed by Geoffrey Garen.
+
+        Copying a SegmentedVector is very expensive, and really shouldn't
+        be necessary.  So I've taken the one place where we currently copy
+        and replaced it with a regular Vector, and replaced the address
+        dependent logic with a indexing ref instead.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::newLabelScope):
+        (JSC::BytecodeGenerator::emitComplexJumpScopes):
+        * bytecompiler/BytecodeGenerator.h:
+        (BytecodeGenerator):
+        * bytecompiler/LabelScope.h:
+        (JSC):
+        (JSC::LabelScopePtr::LabelScopePtr):
+        (LabelScopePtr):
+        (JSC::LabelScopePtr::operator=):
+        (JSC::LabelScopePtr::~LabelScopePtr):
+        (JSC::LabelScopePtr::operator*):
+        (JSC::LabelScopePtr::operator->):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::DoWhileNode::emitBytecode):
+        (JSC::WhileNode::emitBytecode):
+        (JSC::ForNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        (JSC::SwitchNode::emitBytecode):
+        (JSC::LabelNode::emitBytecode):
+
 2013-03-10  Andreas Kling  <akling@apple.com>
 
         SpeculativeJIT should use OwnPtr<SlowPathGenerator>.

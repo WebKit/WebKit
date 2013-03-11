@@ -331,7 +331,7 @@ namespace JSC {
             return dst == ignoredResult() ? 0 : (dst && dst != src) ? emitMove(dst, src) : src;
         }
 
-        PassRefPtr<LabelScope> newLabelScope(LabelScope::Type, const Identifier* = 0);
+        LabelScopePtr newLabelScope(LabelScope::Type, const Identifier* = 0);
         PassRefPtr<Label> newLabel();
 
         // The emitNode functions are just syntactic sugar for calling
@@ -701,7 +701,7 @@ namespace JSC {
         SegmentedVector<RegisterID, 32> m_calleeRegisters;
         SegmentedVector<RegisterID, 32> m_parameters;
         SegmentedVector<Label, 32> m_labels;
-        SegmentedVector<LabelScope, 8> m_labelScopes;
+        LabelScopeStore m_labelScopes;
         RefPtr<RegisterID> m_lastVar;
         int m_finallyDepth;
         int m_dynamicScopeDepth;

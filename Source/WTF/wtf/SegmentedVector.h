@@ -29,6 +29,7 @@
 #ifndef SegmentedVector_h
 #define SegmentedVector_h
 
+#include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
 namespace WTF {
@@ -104,6 +105,8 @@ namespace WTF {
     template <typename T, size_t SegmentSize, size_t InlineCapacity>
     class SegmentedVector {
         friend class SegmentedVectorIterator<T, SegmentSize, InlineCapacity>;
+        WTF_MAKE_NONCOPYABLE(SegmentedVector);
+
     public:
         typedef SegmentedVectorIterator<T, SegmentSize, InlineCapacity> Iterator;
 

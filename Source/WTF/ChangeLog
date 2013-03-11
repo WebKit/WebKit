@@ -1,3 +1,17 @@
+2013-03-11  Oliver Hunt  <oliver@apple.com>
+
+        Make SegmentedVector Noncopyable
+        https://bugs.webkit.org/show_bug.cgi?id=112059
+
+        Reviewed by Geoffrey Garen.
+
+        Copying a SegmentedVector can be extraordinarily expensive, so we beat
+        it with the Noncopyable stick - that way we can ensure that if anyone
+        wants an actual copy they know what they're doing.
+
+        * wtf/SegmentedVector.h:
+        (SegmentedVector):
+
 2013-03-08  Benjamin Poulain  <benjamin@webkit.org>
 
         [Mac] Add a feature flag for 'view-mode' Media Feature, disable it on Mac

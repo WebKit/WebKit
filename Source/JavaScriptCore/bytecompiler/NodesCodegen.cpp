@@ -1594,7 +1594,7 @@ RegisterID* IfElseNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 
 RegisterID* DoWhileNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<LabelScope> scope = generator.newLabelScope(LabelScope::Loop);
+    LabelScopePtr scope = generator.newLabelScope(LabelScope::Loop);
 
     RefPtr<Label> topOfLoop = generator.newLabel();
     generator.emitLabel(topOfLoop.get());
@@ -1620,7 +1620,7 @@ RegisterID* DoWhileNode::emitBytecode(BytecodeGenerator& generator, RegisterID* 
 
 RegisterID* WhileNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<LabelScope> scope = generator.newLabelScope(LabelScope::Loop);
+    LabelScopePtr scope = generator.newLabelScope(LabelScope::Loop);
     RefPtr<Label> topOfLoop = generator.newLabel();
 
     generator.emitDebugHook(WillExecuteStatement, m_expr->lineNo(), m_expr->lineNo(), m_expr->columnNo());
@@ -1656,7 +1656,7 @@ RegisterID* WhileNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
 
 RegisterID* ForNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<LabelScope> scope = generator.newLabelScope(LabelScope::Loop);
+    LabelScopePtr scope = generator.newLabelScope(LabelScope::Loop);
 
     generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine(), column());
 
@@ -1701,7 +1701,7 @@ RegisterID* ForNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 
 RegisterID* ForInNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<LabelScope> scope = generator.newLabelScope(LabelScope::Loop);
+    LabelScopePtr scope = generator.newLabelScope(LabelScope::Loop);
 
     if (!m_lexpr->isLocation())
         return emitThrowReferenceError(generator, "Left side of for-in statement is not a reference.");
@@ -2010,7 +2010,7 @@ RegisterID* SwitchNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 {
     generator.emitDebugHook(WillExecuteStatement, firstLine(), lastLine(), column());
     
-    RefPtr<LabelScope> scope = generator.newLabelScope(LabelScope::Switch);
+    LabelScopePtr scope = generator.newLabelScope(LabelScope::Switch);
 
     RefPtr<RegisterID> r0 = generator.emitNode(m_expr);
     RegisterID* r1 = m_block->emitBytecodeForBlock(generator, r0.get(), dst);
@@ -2027,7 +2027,7 @@ RegisterID* LabelNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
 
     ASSERT(!generator.breakTarget(m_name));
 
-    RefPtr<LabelScope> scope = generator.newLabelScope(LabelScope::NamedLabel, &m_name);
+    LabelScopePtr scope = generator.newLabelScope(LabelScope::NamedLabel, &m_name);
     RegisterID* r0 = generator.emitNode(dst, m_statement);
 
     generator.emitLabel(scope->breakTarget());
