@@ -1,3 +1,15 @@
+2013-03-11  Tobias Mueller  <tobiasmue@gnome.org>
+
+        [Autotools] Set ENABLE_GTK_DOC to false if gtk-doc is not installed
+        https://bugs.webkit.org/show_bug.cgi?id=111980
+        
+        Reviewed by Martin Robinson.
+
+        WebKit did not configure if gtk-doc-am was not installed with the error:
+        Tools/GNUmakefile.am:419: ENABLE_GTK_DOC does not appear in AM_CONDITIONAL
+
+        * Source/autotools/FindDependencies.m4:
+
 2013-03-11  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Bump version
