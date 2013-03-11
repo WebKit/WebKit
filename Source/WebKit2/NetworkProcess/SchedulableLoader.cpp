@@ -81,9 +81,7 @@ SchedulableLoader::~SchedulableLoader()
 
 void SchedulableLoader::connectionToWebProcessDidClose()
 {
-    m_connection = 0;
-
-    // FIXME (NetworkProcess): Cancel the load. The request may be long-living, so we don't want it to linger around after all clients are gone.
+    // FIXME (NetworkProcess): <rdar://problem/12890500>: Cancel the load. The request may be long-living, so we don't want it to linger around after all clients are gone.
 }
 
 void SchedulableLoader::consumeSandboxExtensions()
