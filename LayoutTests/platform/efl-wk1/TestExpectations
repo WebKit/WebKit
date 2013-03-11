@@ -360,6 +360,17 @@ webkit.org/b/77219 fast/canvas/webgl/oes-vertex-array-object.html [ Skip ]
 # needs further investigation.
 http/tests/multipart/multipart-wait-before-boundary.html [ Timeout ]
 
+# Remaining websocket failures.
+Bug(EFL) http/tests/websocket/tests/hybi/close-on-unload-and-force-gc.html [ Timeout Pass ]
+Bug(EFL) http/tests/websocket/tests/hybi/close.html [ Failure Pass ]
+Bug(EFL) http/tests/websocket/tests/hybi/compressed-control-frame.html [ Timeout ]
+Bug(EFL) http/tests/websocket/tests/hybi/multiple-subprotocols.html [ Timeout Pass ]
+Bug(EFL) http/tests/websocket/tests/hybi/reload-crash.html [ Timeout ]
+Bug(EFL) http/tests/websocket/tests/hybi/zero-length-text.html [ Failure Pass ]
+Bug(EFL) http/tests/websocket/tests/hybi/workers/close-code-and-reason.html [ Failure ]
+Bug(EFL) http/tests/websocket/tests/hybi/workers/close-in-onmessage-crash.html [ Timeout ]
+Bug(EFL) http/tests/websocket/tests/hybi/workers/multiple-subprotocols.html [ Timeout Pass ]
+
 # DRT does not implement setAudioData
 webkit.org/b/105881 webaudio/audiobuffersource-loop-points.html [ Skip ]
 webkit.org/b/105881 webaudio/audiobuffersource-multi-channels.html [ Skip ]

@@ -471,6 +471,19 @@ webkit.org/b/109435 webgl/conformance/textures/tex-image-and-sub-image-2d-with-v
 webkit.org/b/109435 webgl/conformance/textures/texture-mips.html [ Failure ]
 webkit.org/b/109435 webgl/conformance/textures/texture-size-limit.html [ Failure ]
 
+# Remaining websocket failures.
+webkit.org/b/111976 http/tests/websocket/tests/hybi/broken-utf8.html [ Crash Pass ]
+webkit.org/b/111976 http/tests/websocket/tests/hybi/close.html [ Crash ]
+webkit.org/b/111976 http/tests/websocket/tests/hybi/close-on-unload-and-force-gc.html [ Crash ]
+webkit.org/b/111976 http/tests/websocket/tests/hybi/extensions.html [ Crash ]
+webkit.org/b/111976 http/tests/websocket/tests/hybi/handshake-challenge-randomness.html [ Crash ]
+webkit.org/b/111976 http/tests/websocket/tests/hybi/multiple-subprotocols.html [ Crash ]
+webkit.org/b/111976 http/tests/websocket/tests/hybi/simple.html [ Crash ]
+webkit.org/b/111976 http/tests/websocket/tests/hybi/url-with-credential.html [ Crash Pass ]
+webkit.org/b/111976 http/tests/websocket/tests/hybi/url-no-trailing-slash.html [ Crash Pass ]
+webkit.org/b/111976 http/tests/websocket/tests/hybi/workers/multiple-subprotocols.html [ Crash ]
+webkit.org/b/111976 http/tests/websocket/tests/hybi/zero-length-text.html [ Crash ]
+
 # Most probably failures are result of delay in scrolling caused by 'delegated scrolling' usage.
 webkit.org/b/107286 fast/css/sticky/sticky-margins.html [ ImageOnlyFailure ]
 webkit.org/b/107286 fast/css/sticky/sticky-writing-mode-vertical-lr.html [ ImageOnlyFailure ]

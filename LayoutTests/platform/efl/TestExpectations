@@ -221,9 +221,6 @@ fast/canvas/canvas-quadratic-same-endpoint.html
 # Tests for features under development
 # ------------------------------------
 
-# Skipped until new WebSocket protocol is implemented. http://webkit.org/b/50099
-http/tests/websocket/tests/hybi/
-
 # Unclassified failures
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html
 fast/events/platform-wheelevent-paging-x-in-non-scrolling-page.html
@@ -721,6 +718,13 @@ webkit.org/b/103439 fast/loader/submit-form-while-parsing-2.html [ Failure Pass 
 webkit.org/b/103443 fast/parser/parser-yield-timing.html [ Failure Pass ]
 webkit.org/b/103444 http/tests/css/shared-stylesheet-mutation.html [ Failure Pass ]
 webkit.org/b/103445 http/tests/css/shared-stylesheet-mutation-preconstruct.html [ Failure Pass ]
+
+# Flaky on all platforms.
+webkit.org/b/89153 http/tests/websocket/tests/hybi/workers/close.html [ Failure Crash Pass ]
+
+# Flaky websocket tests.
+Bug(EFL) http/tests/websocket/tests/hybi/invalid-subprotocol-characters.html [ Failure Pass ]
+Bug(EFL) http/tests/websocket/tests/hybi/close-on-navigate-new-location.html [ Failure Pass ]
 
 # Flaky inspector tests
 webkit.org/b/78869 http/tests/inspector/inspect-element.html [ Failure Pass ]
@@ -1362,6 +1366,8 @@ webkit.org/b/68591 http/tests/filesystem
 webkit.org/b/68591 http/tests/security/filesystem-iframe-from-remote.html
 webkit.org/b/68591 http/tests/security/mixedContent/filesystem-url-in-iframe.html
 webkit.org/b/68591 http/tests/inspector/filesystem
+webkit.org/b/68591 http/tests/websocket/tests/hybi/send-file-blob-fail.html
+webkit.org/b/68591 http/tests/websocket/tests/hybi/send-file-blob.html
 
 # EFL's TestRunner should support for the Geolocation API
 webkit.org/b/82140 fast/dom/Geolocation [ Skip ]
