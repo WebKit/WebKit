@@ -696,9 +696,9 @@ void ShadowBlur::drawInsetShadowWithTiling(GraphicsContext* graphicsContext, con
 
     {
         GraphicsContextStateSaver fillStateSaver(*graphicsContext);
-        graphicsContext->clearShadow();
         graphicsContext->setFillRule(RULE_EVENODD);
         graphicsContext->setFillColor(m_color, m_colorSpace);
+        graphicsContext->clearShadow();
         graphicsContext->fillPath(exteriorPath);
     }
     
@@ -772,8 +772,8 @@ void ShadowBlur::drawLayerPieces(GraphicsContext* graphicsContext, const FloatRe
     }
 
     GraphicsContextStateSaver stateSaver(*graphicsContext);
-    graphicsContext->clearShadow();
     graphicsContext->setFillColor(m_color, m_colorSpace);
+    graphicsContext->clearShadow();
 
     // Note that drawing the ImageBuffer is faster than creating a Image and drawing that,
     // because ImageBuffer::draw() knows that it doesn't have to copy the image bits.
