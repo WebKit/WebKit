@@ -3532,6 +3532,8 @@
             'html/parser/HTMLTokenizer.h',
             'html/parser/HTMLTreeBuilder.cpp',
             'html/parser/HTMLTreeBuilder.h',
+            'html/parser/HTMLTreeBuilderSimulator.cpp',
+            'html/parser/HTMLTreeBuilderSimulator.h',
             'html/parser/HTMLViewSourceParser.cpp',
             'html/parser/HTMLViewSourceParser.h',
             'html/parser/InputStreamPreprocessor.h',

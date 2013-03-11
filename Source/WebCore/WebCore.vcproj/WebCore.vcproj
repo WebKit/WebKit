@@ -65202,6 +65202,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\html\parser\HTMLTreeBuilderSimulator.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLTreeBuilderSimulator.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\parser\HTMLViewSourceParser.cpp"
 					>
 				</File>
