@@ -202,7 +202,7 @@ PassRefPtr<ResourceHandle> ResourceHandle::create(NetworkingContext* context,
     return 0;
 }
 
-ResourceRequest& ResourceHandle::firstRequest() const
+ResourceRequest& ResourceHandle::firstRequest()
 {
     return d->request();
 }
