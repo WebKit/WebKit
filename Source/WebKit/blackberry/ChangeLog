@@ -1,5 +1,34 @@
 2013-03-11  Genevieve Mak  <gmak@rim.com>
 
+        [BlackBerry] Add a method to find the ScrollView for a text selection.
+        https://bugs.webkit.org/show_bug.cgi?id=112061
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Mike Fenton and Jakob Petsovits.
+        PR #278490
+
+        Refactor the code in InRegionScroller so that we can add a method to find
+        the InRegionScrollableArea for a text selection.
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::clipToRect):
+            - Pull out recursive clipping code into its own function.
+        (WebKit):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::calculateInRegionScrollableAreasForPoint):
+        (BlackBerry::WebKit::InRegionScrollerPrivate::firstScrollableInRegionForNode):
+            - This new method allows us to get just the first scrollable region instead of looking
+              for more nested ones. We may want to refactor in the future because some of the code is
+              very similar to calculateInRegionScrollableAreasForPoint.
+        (BlackBerry::WebKit::InRegionScrollerPrivate::clipAndCreateInRegionScrollableArea):
+            - Add a convenience method for the previous function
+        * Api/InRegionScroller.h:
+        (WebKit):
+        * Api/InRegionScroller_p.h:
+        (InRegionScrollerPrivate):
+
+2013-03-11  Genevieve Mak  <gmak@rim.com>
+
         [BlackBerry] Set the documentViewportRect and viewport size.
         https://bugs.webkit.org/show_bug.cgi?id=112056
 
