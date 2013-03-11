@@ -1,3 +1,18 @@
+2013-01-30  Jer Noble  <jer.noble@apple.com>
+
+        Mac: Cmd-w should close full screen window.
+        https://bugs.webkit.org/show_bug.cgi?id=108406
+
+        Reviewed by Darin Adler.
+
+        Allow the user to close the full screen window with Cmd-w by making the full screen window
+        closable, and by intercepting performClose:.
+
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController init]): Create a closable full screen window.
+        (-[WebFullScreenController performClose:]): When we receive a close request in full screen mode,
+            animate out of full screen.
+
 2013-03-07  Anders Carlsson  <andersca@apple.com>
 
         Add didFocusTextField:inFrame to WebFormDelegate

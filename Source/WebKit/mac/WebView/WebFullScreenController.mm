@@ -96,7 +96,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 - (id)init
 {
     // Do not defer window creation, to make sure -windowNumber is created (needed by WebWindowScaleAnimation).
-    NSWindow *window = [[WebCoreFullScreenWindow alloc] initWithContentRect:NSZeroRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO];
+    NSWindow *window = [[WebCoreFullScreenWindow alloc] initWithContentRect:NSZeroRect styleMask:NSClosableWindowMask backing:NSBackingStoreBuffered defer:NO];
     self = [super initWithWindow:window];
     [window release];
     if (!self)
@@ -384,6 +384,12 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     [[_webView window] makeKeyAndOrderFront:self];
 
     NSEnableScreenUpdates();
+}
+
+- (void)performClose:(id)sender
+{
+    if (_isFullScreen) {
+        [self cancelOperation:sender];
 }
 
 - (void)close

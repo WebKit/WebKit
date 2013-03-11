@@ -1,3 +1,18 @@
+2013-01-30  Jer Noble  <jer.noble@apple.com>
+
+        Full screen mode should not exit when application resigns active state.
+        https://bugs.webkit.org/show_bug.cgi?id=106129
+
+        Reviewed by Darin Adler.
+
+        Allow the user to close the full screen window with Cmd-w by making the full screen window
+        closable, and by intercepting performClose:.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController init]): Create a closable full screen window.
+        (-[WKFullScreenWindowController performClose:]): When we receive a close request in full screen mode,
+            animate out of full screen.
+
 2013-03-11  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] WebKit2-only build fails

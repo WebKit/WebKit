@@ -67,6 +67,11 @@
 {
     [[self windowController] cancelOperation:sender];
 }
+
+- (void)performClose:(id)sender
+{
+    [[self windowController] performClose:sender];
+}
 @end
 
 #endif // ENABLE(FULLSCREEN_API)

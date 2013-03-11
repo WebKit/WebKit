@@ -83,7 +83,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 #pragma mark Initialization
 - (id)init
 {
-    RetainPtr<NSWindow> window = adoptNS([[WebCoreFullScreenWindow alloc] initWithContentRect:NSZeroRect styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
+    RetainPtr<NSWindow> window = adoptNS([[WebCoreFullScreenWindow alloc] initWithContentRect:NSZeroRect styleMask:NSClosableWindowMask backing:NSBackingStoreBuffered defer:NO]);
     self = [super initWithWindow:window.get()];
     if (!self)
         return nil;
@@ -391,6 +391,12 @@ static void completeFinishExitFullScreenAnimationAfterRepaint(WKErrorRef, void*)
 static void completeFinishExitFullScreenAnimationAfterRepaint(WKErrorRef, void* _self)
 {
     [(WKFullScreenWindowController*)_self completeFinishExitFullScreenAnimationAfterRepaint];
+}
+
+- (void)performClose:(id)sender
+{
+    if (_isFullScreen)
+        [self cancelOperation:sender];
 }
 
 - (void)close
