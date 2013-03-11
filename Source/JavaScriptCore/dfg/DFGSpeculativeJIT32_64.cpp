@@ -3745,6 +3745,7 @@ void SpeculativeJIT::compile(Node* node)
     case SetCallee: {
         SpeculateCellOperand callee(this, node->child1());
         m_jit.storePtr(callee.gpr(), JITCompiler::payloadFor(static_cast<VirtualRegister>(node->codeOrigin.stackOffset() + static_cast<int>(JSStack::Callee))));
+        m_jit.store32(MacroAssembler::TrustedImm32(JSValue::CellTag), JITCompiler::tagFor(static_cast<VirtualRegister>(node->codeOrigin.stackOffset() + static_cast<int>(JSStack::Callee))));
         noResult(node);
         break;
     }

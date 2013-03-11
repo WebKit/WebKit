@@ -1,3 +1,15 @@
+2013-03-11  Michael Saboff  <msaboff@apple.com>
+
+        Crash beneath operationCreateInlinedArguments running fast/js/dfg-create-inlined-arguments-in-closure-inline.html (32-bit only)
+        https://bugs.webkit.org/show_bug.cgi?id=112067
+
+        Reviewed by Geoffrey Garen.
+
+        We weren't setting the tag in SetCallee.  Therefore set it to CellTag.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2013-03-11  Oliver Hunt  <oliver@apple.com>
 
         Make SegmentedVector Noncopyable
