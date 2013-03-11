@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#inert-div {
+    height: 100px;
+    width: 100px;
+    background: green;
+}
+
+#dialog-div {
+    height: 100px;
+    width: 100px;
+    background: red;
+}
+</style>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+if (window.internals)
+    internals.settings.setDialogElementEnabled(true);
+</script>
+</head>
+<body>
+<div id="inert-div"></div>
+<dialog id="dialog">
+    <div id="dialog-div"></div>
+</dialog>
+<script>
+description('Test for bug 110952. Ensure that mouse events are not dispatched to an inert node. To test manually, move the mouse to the green box, click, and then move the mouse outside. Then repeat for the red box. The test succeeds if green box remains green and the red box turns green.');
+
+function clickOn(element)
+{
+    if (!window.eventSender)
+        return;
+
+    var absoluteTop = 0;
+    var absoluteLeft = 0;
+    for (var parentNode = element; parentNode; parentNode = parentNode.offsetParent) {
+      absoluteLeft += parentNode.offsetLeft;
+      absoluteTop += parentNode.offsetTop;
+    }
+
+    var x = absoluteLeft + element.offsetWidth / 2;
+    var y = absoluteTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+    eventSender.mouseMoveTo(0, 0);
+}
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+dialog.showModal();
+
+inertDiv = document.getElementById('inert-div');
+dialogDiv = document.getElementById('dialog-div');
+inertDiv.firedOn = false;
+eventFiredOnInertNode = function(event) {
+    inertDiv.firedOn = true;
+    inertDiv.style.backgroundColor = 'red';
+}
+
+events =  ['mousedown', 'mouseup', 'click', 'mousemove', 'mouseover', 'mouseout'];
+dialogDiv.firedOnEvents = {};
+eventFiredOnDialog = function(event) {
+    dialogDiv.firedOnEvents[event.type] = true;
+    if (Object.keys(dialogDiv.firedOnEvents).length == events.length)
+        dialogDiv.style.backgroundColor = 'green';
+}
+
+for (var i = 0; i < events.length; ++i) {
+    inertDiv.addEventListener(events[i], eventFiredOnInertNode);
+    dialogDiv.addEventListener(events[i], eventFiredOnDialog);
+}
+
+clickOn(inertDiv);
+clickOn(dialogDiv);
+
+shouldBeFalse('inertDiv.firedOn');
+shouldBe('Object.keys(dialogDiv.firedOnEvents).length', 'events.length');
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

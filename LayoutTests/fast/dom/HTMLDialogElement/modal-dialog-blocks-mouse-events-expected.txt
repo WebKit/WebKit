@@ -1,0 +1,11 @@
+Test for bug 110952. Ensure that mouse events are not dispatched to an inert node. To test manually, move the mouse to the green box, click, and then move the mouse outside. Then repeat for the red box. The test succeeds if green box remains green and the red box turns green.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS inertDiv.firedOn is false
+PASS Object.keys(dialogDiv.firedOnEvents).length is events.length
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

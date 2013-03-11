@@ -414,6 +414,10 @@ public:
     virtual bool isMouseFocusable() const;
     virtual Node* focusDelegate();
 
+#if ENABLE(DIALOG_ELEMENT)
+    bool isInert() const;
+#endif
+
     enum UserSelectAllTreatment {
         UserSelectAllDoesNotAffectEditability,
         UserSelectAllIsAlwaysNonEditable

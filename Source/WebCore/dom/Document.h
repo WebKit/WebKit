@@ -1179,6 +1179,7 @@ public:
     void addToTopLayer(Element*);
     void removeFromTopLayer(Element*);
     const Vector<RefPtr<Element> >& topLayerElements() const { return m_topLayerElements; }
+    Element* activeModalDialog() const { return !m_topLayerElements.isEmpty() ? m_topLayerElements.last().get() : 0; }
 #endif
 
 #if ENABLE(TEMPLATE_ELEMENT)

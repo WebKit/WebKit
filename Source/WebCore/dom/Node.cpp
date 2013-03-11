@@ -902,6 +902,14 @@ Node* Node::focusDelegate()
     return this;
 }
 
+#if ENABLE(DIALOG_ELEMENT)
+bool Node::isInert() const
+{
+    Element* dialog = document()->activeModalDialog();
+    return dialog && !containsIncludingShadowDOM(dialog) && !dialog->containsIncludingShadowDOM(this);
+}
+#endif
+
 unsigned Node::nodeIndex() const
 {
     Node *_tempNode = previousSibling();
@@ -2446,6 +2454,10 @@ void Node::dispatchInputEvent()
 
 bool Node::disabled() const
 {
+#if ENABLE(DIALOG_ELEMENT)
+    if (isInert())
+        return true;
+#endif
     return false;
 }
 
