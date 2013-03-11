@@ -133,6 +133,7 @@ public:
 
     template<typename U> void sendToAllProcesses(const U& message);
     template<typename U> void sendToAllProcessesRelaunchingThemIfNecessary(const U& message);
+    template<typename U> void sendToOneProcess(const U& message);
 
     // Sends the message to WebProcess or NetworkProcess as approporiate for current process model.
     template<typename U> void sendToNetworkingProcess(const U& message);
@@ -534,6 +535,30 @@ template<typename U> void WebContext::sendToAllProcessesRelaunchingThemIfNecessa
     if (m_processModel == ProcessModelSharedSecondaryProcess)
         ensureSharedWebProcess();
     sendToAllProcesses(message);
+}
+
+template<typename U> inline void WebContext::sendToOneProcess(const U& message)
+{
+    if (m_processModel == ProcessModelSharedSecondaryProcess)
+        ensureSharedWebProcess();
+
+    bool messageSent = false;
+    size_t processCount = m_processes.size();
+    for (size_t i = 0; i < processCount; ++i) {
+        WebProcessProxy* process = m_processes[i].get();
+        if (process->canSendMessage()) {
+            process->send(message, 0);
+            messageSent = true;
+            break;
+        }
+    }
+
+    if (!messageSent && m_processModel == ProcessModelMultipleSecondaryProcesses) {
+        warmInitialProcess();
+        RefPtr<WebProcessProxy> process = m_processes.last();
+        if (process->canSendMessage())
+            process->send(message, 0);
+    }
 }
 
 } // namespace WebKit

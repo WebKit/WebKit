@@ -1,3 +1,36 @@
+2013-03-11  Mark Lam  <mark.lam@apple.com>
+
+        Fix some WebDatabaseManagerProxy methods to only send to one WebProcsess
+        instead of broadcasting to all WebProcesses.
+        https://bugs.webkit.org/show_bug.cgi?id=112074.
+
+        Reviewed by Alexey Proskuryakov.
+
+        The reason for this is because the intent of these messages is to act on
+        the tracker database that is shared between all WebProcesses. It is
+        redundant and inefficient for multiple WebProcesses to service the same
+        request/message. And because of multi-process contention on accessing
+        the tracker database, the results returned to the UIProcess may also be
+        erroneous.
+
+        For example, if getDatabaseOrigins() is broadcasted to all WebProcesses,
+        they will contend to open the tracker database at the same time. If one
+        of these processes fails because the database is already in use, then
+        it may return with an empty list when it should not be empty.
+
+        With this fix, only one WebProcess gets the message and will perform the
+        requested query/action on behalf of all WebProcesses.
+
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::sendToOneProcess):
+        * UIProcess/WebDatabaseManagerProxy.cpp:
+        (WebKit::WebDatabaseManagerProxy::getDatabasesByOrigin):
+        (WebKit::WebDatabaseManagerProxy::getDatabaseOrigins):
+        (WebKit::WebDatabaseManagerProxy::deleteDatabaseWithNameForOrigin):
+        (WebKit::WebDatabaseManagerProxy::deleteDatabasesForOrigin):
+        (WebKit::WebDatabaseManagerProxy::deleteAllDatabases):
+        (WebKit::WebDatabaseManagerProxy::setQuotaForOrigin):
+
 2013-03-11  Jeffrey Pfau  <jpfau@apple.com>
 
         List cache partitions as units instead of as their contents
