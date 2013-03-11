@@ -379,7 +379,7 @@ String CaptionUserPreferencesMac::captionsStyleSheetOverride() const
     String background = captionsBackgroundCSS();
     if (!background.isEmpty()) {
         captionsOverrideStyleSheet.append(" video::");
-        captionsOverrideStyleSheet.append(TextTrackCue::allNodesShadowPseudoId());
+        captionsOverrideStyleSheet.append(TextTrackCue::cueShadowPseudoId());
         captionsOverrideStyleSheet.append('{');
         captionsOverrideStyleSheet.append(background);
         captionsOverrideStyleSheet.append('}');

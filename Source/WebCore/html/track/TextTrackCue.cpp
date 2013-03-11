@@ -185,12 +185,6 @@ RenderObject* TextTrackCueBox::createRenderer(RenderArena* arena, RenderStyle*)
 
 // ----------------------------
 
-const AtomicString& TextTrackCue::allNodesShadowPseudoId()
-{
-    DEFINE_STATIC_LOCAL(const AtomicString, subtitles, ("-webkit-media-text-track-all-nodes", AtomicString::ConstructFromLiteral));
-    return subtitles;
-}
-
 TextTrackCue::TextTrackCue(ScriptExecutionContext* context, double start, double end, const String& content)
     : m_startTime(start)
     , m_endTime(end)
@@ -208,7 +202,7 @@ TextTrackCue::TextTrackCue(ScriptExecutionContext* context, double start, double
     , m_isActive(false)
     , m_pauseOnExit(false)
     , m_snapToLines(true)
-    , m_allDocumentNodes(HTMLDivElement::create(static_cast<Document*>(context)))
+    , m_cueBackgroundBox(HTMLDivElement::create(static_cast<Document*>(context)))
     , m_displayTreeShouldChange(true)
 {
     ASSERT(m_scriptExecutionContext->isDocument());
@@ -719,12 +713,12 @@ void TextTrackCue::updateDisplayTree(float movieTime)
       return;
 
     // Clear the contents of the set.
-    m_allDocumentNodes->removeChildren();
+    m_cueBackgroundBox->removeChildren();
 
     // Update the two sets containing past and future WebVTT objects.
     RefPtr<DocumentFragment> referenceTree = createCueRenderingTree();
     markFutureAndPastNodes(referenceTree.get(), startTime(), movieTime);
-    m_allDocumentNodes->appendChild(referenceTree);
+    m_cueBackgroundBox->appendChild(referenceTree);
 }
 
 PassRefPtr<TextTrackCueBox> TextTrackCue::getDisplayTree(const IntSize& videoSize)
@@ -747,9 +741,9 @@ PassRefPtr<TextTrackCueBox> TextTrackCue::getDisplayTree(const IntSize& videoSiz
     // 'display' property has the value 'inline'. This is the WebVTT cue
     // background box.
 
-    // Note: This is contained by default in m_allDocumentNodes.
-    m_allDocumentNodes->setPseudo(allNodesShadowPseudoId());
-    displayTree->appendChild(m_allDocumentNodes, ASSERT_NO_EXCEPTION, AttachLazily);
+    // Note: This is contained by default in m_cueBackgroundBox.
+    m_cueBackgroundBox->setPseudo(cueShadowPseudoId());
+    displayTree->appendChild(m_cueBackgroundBox, ASSERT_NO_EXCEPTION, true);
 
     // FIXME(BUG 79916): Runs of children of WebVTT Ruby Objects that are not
     // WebVTT Ruby Text Objects must be wrapped in anonymous boxes whose

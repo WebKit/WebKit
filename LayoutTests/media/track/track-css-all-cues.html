@@ -9,7 +9,7 @@
 
         <style>
 
-        video::cue { color:red }
+        video::cue { color: purple; background-color: lime; }
 
         </style>
 
@@ -17,7 +17,8 @@
 
         function seeked()
         {
-            testExpected("getComputedStyle(textTrackDisplayElement(video).firstChild).color", "rgb(255, 0, 0)");
+            testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).color", "rgb(128, 0, 128)");
+            testExpected("getComputedStyle(textTrackDisplayElement(video, 'cue')).backgroundColor", "rgb(0, 255, 0)");
             endTest();
         }
 

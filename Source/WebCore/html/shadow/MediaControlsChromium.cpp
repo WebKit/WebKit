@@ -215,9 +215,7 @@ void MediaControlsChromium::createTextTrackDisplay()
 
     // Insert it before the first controller element so it always displays behind the controls.
     // In the Chromium case, that's the enclosure element.
-    insertBefore(textDisplayContainer, m_enclosure, ASSERT_NO_EXCEPTION, AttachLazily);
-    textDisplayContainer->createSubtrees(document());
-    textDisplayContainer.release();
+    insertBefore(textDisplayContainer.release(), m_enclosure, ASSERT_NO_EXCEPTION, true);
 }
 #endif
 

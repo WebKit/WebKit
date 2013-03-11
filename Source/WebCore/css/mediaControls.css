@@ -237,7 +237,7 @@ video::-webkit-media-text-track-container {
     -webkit-flex: 1 1;
 }
 
-video::-webkit-media-text-track-all-nodes {
+video::cue {
     display: inline;
 
     background-color: rgba(0, 0, 0, 0.8);

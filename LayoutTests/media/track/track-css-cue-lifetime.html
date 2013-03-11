@@ -34,7 +34,7 @@
             if (testEnded)
                 return;
 
-            cueNode = skipNonElements(textTrackDisplayElement(video, 'all-nodes').firstChild);
+            cueNode = skipNonElements(textTrackDisplayElement(video, 'cue').firstChild);
             skipNonElements(cueNode);
             testExpected("getComputedStyle(cueNode).color", "rgb(255, 0, 0)");
             cueNode = skipNonElements(cueNode.nextSibling);

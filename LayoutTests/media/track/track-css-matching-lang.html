@@ -26,7 +26,7 @@
             if (testEnded)
                 return;
 
-            cueNode = textTrackDisplayElement(video, 'all-nodes').firstElementChild.firstElementChild;
+            cueNode = textTrackDisplayElement(video, 'cue').firstElementChild.firstElementChild;
             testExpected("getComputedStyle(cueNode).color", info[seekedCount][0]);
             cueNode = cueNode.firstElementChild.firstElementChild;
             testExpected("getComputedStyle(cueNode).color", info[seekedCount][1]);

@@ -439,7 +439,6 @@ public:
 
     void updateDisplay();
     void updateSizes(bool forceUpdate = false);
-    void createSubtrees(Document*);
     static const AtomicString& textTrackContainerElementShadowPseudoId();
 
 private:
@@ -454,7 +453,6 @@ private:
 
     IntRect m_videoDisplaySize;
     float m_fontSize;
-    RefPtr<HTMLElement> m_cueContainer;
 };
 
 #endif

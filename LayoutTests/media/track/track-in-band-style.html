@@ -16,7 +16,7 @@
                     cueDisplayElement = textTrackDisplayElement(video, 'display', 0);
                     testExpected("getComputedStyle(cueDisplayElement).color", "rgb(255, 255, 255)");
 
-                    cueNode = textTrackDisplayElement(video, 'all-nodes');
+                    cueNode = textTrackDisplayElement(video, 'cue');
                     testExpected("getComputedStyle(cueNode).backgroundColor", "rgb(0, 0, 0)");
 
                     endTest();

@@ -16,7 +16,7 @@
             if (testEnded)
                 return;
 
-            cueNode = textTrackDisplayElement(video, 'all-nodes').firstElementChild;
+            cueNode = textTrackDisplayElement(video, 'cue').firstElementChild;
             testExpected("getComputedStyle(cueNode).fontWeight", "bold");
             cueNode = cueNode.nextElementSibling;
             testExpected("getComputedStyle(cueNode).fontStyle", "italic");

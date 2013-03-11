@@ -537,7 +537,7 @@ void StyleResolver::sortAndTransferMatchedRules(MatchResult& result)
     for (unsigned i = 0; i < matchedRules.size(); i++) {
         if (state.style() && matchedRules[i]->containsUncommonAttributeSelector())
             state.style()->setUnique();
-        addMatchedProperties(result, matchedRules[i]->rule()->properties(), matchedRules[i]->rule(), matchedRules[i]->linkMatchType(), matchedRules[i]->propertyWhitelistType());
+        addMatchedProperties(result, matchedRules[i]->rule()->properties(), matchedRules[i]->rule(), matchedRules[i]->linkMatchType(), matchedRules[i]->propertyWhitelistType(MatchingUARulesScope::isMatchingUARules()));
     }
 }
 

@@ -58,7 +58,7 @@
                 consoleWrite(description[seekedCount]);
             }
 
-            cueNode = skipNonElements(textTrackDisplayElement(video, 'all-nodes').firstChild);
+            cueNode = skipNonElements(textTrackDisplayElement(video, 'cue').firstChild);
             skipNonElements(cueNode);
             testExpected("getComputedStyle(cueNode).color", info[seekedCount][0]);
             cueNode = skipNonElements(cueNode.nextSibling);

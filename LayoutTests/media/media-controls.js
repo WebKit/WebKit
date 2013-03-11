@@ -54,7 +54,10 @@ function textTrackDisplayElement(parentElement, id, cueNumber)
     if (!id)
         return containerElement;
 
-    var controlID = "-webkit-media-text-track-" + arguments[1];
+    if (arguments[1] != 'cue')
+        var controlID = "-webkit-media-text-track-" + arguments[1];
+    else
+        var controlID = arguments[1];
 
     var displayElement = mediaControlsElement(containerElement.firstChild, controlID);
     if (!displayElement)
