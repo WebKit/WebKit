@@ -332,7 +332,7 @@ my @features = (
       define => "ENABLE_LINK_PRERENDER", default => 0, value => \$linkPrerenderSupport },
 
     { option => "mathml", desc => "Toggle MathML support",
-      define => "ENABLE_MATHML", default => 1, value => \$mathmlSupport },
+      define => "ENABLE_MATHML", default => !isBlackBerry(), value => \$mathmlSupport },
 
     { option => "media-capture", desc => "Toggle Media Capture support",
       define => "ENABLE_MEDIA_CAPTURE", default => isEfl(), value => \$mediaCaptureSupport },

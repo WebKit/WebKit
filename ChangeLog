@@ -1,3 +1,12 @@
+2013-03-11  Jeff Rogers  <jrogers@rim.com>
+
+        [BlackBerry] Disable MathML support
+        https://bugs.webkit.org/show_bug.cgi?id=111929
+
+        Reviewed by Rob Buis.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+
 2013-03-09  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Versions.m4 is missing some key dependencies version definitions
