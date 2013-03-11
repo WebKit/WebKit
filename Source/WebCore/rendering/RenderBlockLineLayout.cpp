@@ -1606,6 +1606,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
 #endif
         WordMeasurements wordMeasurements;
         end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
+        renderTextInfo.m_lineBreakIterator.resetLastTwoCharacters();
         if (resolver.position().atEnd()) {
             // FIXME: We shouldn't be creating any runs in nextLineBreak to begin with!
             // Once BidiRunList is separated from BidiResolver this will not be needed.
@@ -2721,6 +2722,8 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             } else
                 m_positionedObjects.append(box);
             width.addUncommittedWidth(inlineLogicalWidth(current.m_obj));
+            // Reset prior line break context characters.
+            renderTextInfo.m_lineBreakIterator.resetLastTwoCharacters();
         } else if (current.m_obj->isFloating()) {
             RenderBox* floatBox = toRenderBox(current.m_obj);
             FloatingObject* f = m_block->insertFloatingObject(floatBox);
@@ -2736,6 +2739,8 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                 }
             } else
                 floatsFitOnLine = false;
+            // Update prior line break context characters, using U+FFFD (OBJECT REPLACEMENT CHARACTER) for floating element.
+            renderTextInfo.m_lineBreakIterator.updateLastTwoCharacters(replacementCharacter);
         } else if (current.m_obj->isRenderInline()) {
             // Right now, we should only encounter empty inlines here.
             ASSERT(isEmptyInline(current.m_obj));
@@ -2804,6 +2809,8 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                 width.addUncommittedWidth(replacedLogicalWidth);
             if (current.m_obj->isRubyRun())
                 width.applyOverhang(toRenderRubyRun(current.m_obj), last, next);
+            // Update prior line break context characters, using U+FFFD (OBJECT REPLACEMENT CHARACTER) for replaced element.
+            renderTextInfo.m_lineBreakIterator.updateLastTwoCharacters(replacementCharacter);
         } else if (current.m_obj->isText()) {
             if (!current.m_pos)
                 appliedStartWidth = false;
@@ -2866,6 +2873,8 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             // words with their trailing space, then subtract its width.
             float wordTrailingSpaceWidth = (f.typesettingFeatures() & Kerning) && !textLayout ? f.width(constructTextRun(t, f, &space, 1, style)) + wordSpacing : 0;
 
+            UChar lastCharacterInNode = renderTextInfo.m_lineBreakIterator.lastCharacter();
+            UChar secondToLastCharacterInNode = renderTextInfo.m_lineBreakIterator.secondToLastCharacter();
             for (; current.m_pos < t->textLength(); current.fastIncrementInTextNode()) {
                 bool previousCharacterIsSpace = currentCharacterIsSpace;
                 bool previousCharacterIsWS = currentCharacterIsWS;
@@ -2908,7 +2917,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                             stoppedIgnoringSpaces = true;
                         } else {
                             // Just keep ignoring these spaces.
-                            continue;
+                            goto nextCharacter;
                         }
                     }
 
@@ -3069,7 +3078,12 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                     trailingObjects.clear();
 
                 atStart = false;
+            nextCharacter:
+                secondToLastCharacterInNode = lastCharacterInNode;
+                lastCharacterInNode = c;
             }
+
+            renderTextInfo.m_lineBreakIterator.setLastTwoCharacters(lastCharacterInNode, secondToLastCharacterInNode);
 
             wordMeasurements.grow(wordMeasurements.size() + 1);
             WordMeasurement& wordMeasurement = wordMeasurements.last();

@@ -153,8 +153,8 @@ static inline int nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator
     int len = static_cast<int>(length);
     int nextBreak = -1;
 
-    CharacterType lastLastCh = pos > 1 ? str[pos - 2] : 0;
-    CharacterType lastCh = pos > 0 ? str[pos - 1] : 0;
+    CharacterType lastLastCh = pos > 1 ? str[pos - 2] : static_cast<CharacterType>(lazyBreakIterator.secondToLastCharacter());
+    CharacterType lastCh = pos > 0 ? str[pos - 1] : static_cast<CharacterType>(lazyBreakIterator.lastCharacter());
     for (int i = pos; i < len; i++) {
         CharacterType ch = str[i];
 

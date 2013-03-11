@@ -59,6 +59,8 @@ class LazyLineBreakIterator {
 public:
     LazyLineBreakIterator()
         : m_iterator(0)
+        , m_lastCharacter(0)
+        , m_secondToLastCharacter(0)
     {
     }
 
@@ -66,6 +68,8 @@ public:
         : m_string(string)
         , m_locale(locale)
         , m_iterator(0)
+        , m_lastCharacter(0)
+        , m_secondToLastCharacter(0)
     {
     }
 
@@ -76,6 +80,24 @@ public:
     }
 
     String string() const { return m_string; }
+
+    UChar lastCharacter() const { return m_lastCharacter; }
+    UChar secondToLastCharacter() const { return m_secondToLastCharacter; }
+    void setLastTwoCharacters(UChar last, UChar secondToLast)
+    {
+        m_lastCharacter = last;
+        m_secondToLastCharacter = secondToLast;
+    }
+    void updateLastTwoCharacters(UChar last)
+    {
+        m_secondToLastCharacter = m_lastCharacter;
+        m_lastCharacter = last;
+    }
+    void resetLastTwoCharacters()
+    {
+        m_lastCharacter = 0;
+        m_secondToLastCharacter = 0;
+    }
 
     TextBreakIterator* get()
     {
@@ -102,6 +124,8 @@ private:
     String m_string;
     AtomicString m_locale;
     TextBreakIterator* m_iterator;
+    UChar m_lastCharacter;
+    UChar m_secondToLastCharacter;
 };
 
 // Iterates over "extended grapheme clusters", as defined in UAX #29.
