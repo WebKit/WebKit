@@ -35,6 +35,7 @@ class CheckedRadioButtons;
 class DragData;
 class FileList;
 class HTMLDataListElement;
+class HTMLImageLoader;
 class HTMLOptionElement;
 class Icon;
 class InputType;
@@ -294,6 +295,9 @@ public:
     virtual void setRangeText(const String& replacement, ExceptionCode&) OVERRIDE;
     virtual void setRangeText(const String& replacement, unsigned start, unsigned end, const String& selectionMode, ExceptionCode&) OVERRIDE;
 
+    bool hasImageLoader() const { return m_imageLoader; }
+    HTMLImageLoader* imageLoader();
+
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     bool setupDateTimeChooserParameters(DateTimeChooserParameters&);
 #endif
@@ -430,6 +434,10 @@ private:
     bool m_hasTouchEventHandler : 1;
 #endif
     OwnPtr<InputType> m_inputType;
+    // The ImageLoader must be owned by this element because the loader code assumes
+    // that it lives as long as its owning element lives. If we move the loader into
+    // the ImageInput object we may delete the loader while this element lives on.
+    OwnPtr<HTMLImageLoader> m_imageLoader;
 #if ENABLE(DATALIST_ELEMENT)
     OwnPtr<ListAttributeTargetObserver> m_listAttributeTargetObserver;
 #endif

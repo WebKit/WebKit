@@ -245,7 +245,6 @@ public:
     virtual void stepAttributeChanged();
     virtual void altAttributeChanged();
     virtual void srcAttributeChanged();
-    virtual void willMoveToNewOwnerDocument();
     virtual bool shouldRespectAlignAttribute();
     virtual FileList* files();
     virtual void setFiles(PassRefPtr<FileList>);

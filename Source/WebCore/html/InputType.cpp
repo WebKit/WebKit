@@ -596,10 +596,6 @@ void InputType::srcAttributeChanged()
 {
 }
 
-void InputType::willMoveToNewOwnerDocument()
-{
-}
-
 bool InputType::shouldRespectAlignAttribute()
 {
     return false;

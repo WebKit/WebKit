@@ -47,6 +47,7 @@
 #include "HTMLCollection.h"
 #include "HTMLDataListElement.h"
 #include "HTMLFormElement.h"
+#include "HTMLImageLoader.h"
 #include "HTMLNames.h"
 #include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
@@ -145,6 +146,13 @@ PassRefPtr<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagNa
     RefPtr<HTMLInputElement> inputElement = adoptRef(new HTMLInputElement(tagName, document, form, createdByParser));
     inputElement->ensureUserAgentShadowRoot();
     return inputElement.release();
+}
+
+HTMLImageLoader* HTMLInputElement::imageLoader()
+{
+    if (!m_imageLoader)
+        m_imageLoader = adoptPtr(new HTMLImageLoader(this));
+    return m_imageLoader.get();
 }
 
 void HTMLInputElement::didAddUserAgentShadowRoot(ShadowRoot*)
@@ -1513,7 +1521,9 @@ void HTMLInputElement::removedFrom(ContainerNode* insertionPoint)
 
 void HTMLInputElement::didMoveToNewDocument(Document* oldDocument)
 {
-    m_inputType->willMoveToNewOwnerDocument();
+    if (hasImageLoader())
+        imageLoader()->elementDidMoveToNewDocument();
+
     bool needsSuspensionCallback = this->needsSuspensionCallback();
     if (oldDocument) {
         // Always unregister for cache callbacks when leaving a document, even if we would otherwise like to be registered
