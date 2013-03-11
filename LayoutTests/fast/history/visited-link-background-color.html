@@ -9,9 +9,27 @@ a:visited {
 }
 </style>
 <script>
-if (window.testRunner)
-    window.testRunner.keepWebHistory();
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.keepWebHistory();
+}
+function waitForStyleChange(failureTime)
+{
+    var aElement = document.getElementsByTagName('a')[0];
+    if (internals.computedStyleIncludingVisitedInfo(aElement).color === 'rgb(255, 255, 255)')
+        testRunner.notifyDone();
+    else if (Date.now() > failureTime)
+        testRunner.notifyDone();
+    else
+        setTimeout(waitForStyleChange, 5, failureTime);
+}
+function doTest()
+{
+    if (window.testRunner)
+        waitForStyleChange(Date.now() + 500);
+}
 </script>
-<body>
+<body onload="doTest()">
 <iframe src="resources/dummy.html" style="display:none"></iframe>
 <a href="resources/dummy.html">This text should be white on an olive background.</a>
+</body>
