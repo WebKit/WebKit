@@ -79,7 +79,7 @@ protected:
     virtual bool selfHasRelativeLengths() const { return false; }
 
 private:
-    virtual bool isStyled() const { return true; }
+    virtual bool isSVGStyledElement() const OVERRIDE { return true; }
 
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;

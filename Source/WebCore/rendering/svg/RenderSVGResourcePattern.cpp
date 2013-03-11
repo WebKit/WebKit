@@ -269,7 +269,7 @@ PassOwnPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(const PatternA
 
     // Draw the content into the ImageBuffer.
     for (Node* node = attributes.patternContentElement()->firstChild(); node; node = node->nextSibling()) {
-        if (!node->isSVGElement() || !toSVGElement(node)->isStyled() || !node->renderer())
+        if (!node->isSVGElement() || !toSVGElement(node)->isSVGStyledElement() || !node->renderer())
             continue;
         if (node->renderer()->needsLayout())
             return nullptr;

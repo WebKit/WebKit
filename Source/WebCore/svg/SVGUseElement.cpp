@@ -947,10 +947,10 @@ bool SVGUseElement::selfHasRelativeLengths() const
         return false;
 
     SVGElement* element = m_targetElementInstance->correspondingElement();
-    if (!element || !element->isStyled())
+    if (!element || !element->isSVGStyledElement())
         return false;
 
-    return static_cast<SVGStyledElement*>(element)->hasRelativeLengths();
+    return toSVGStyledElement(element)->hasRelativeLengths();
 }
 
 void SVGUseElement::notifyFinished(CachedResource* resource)

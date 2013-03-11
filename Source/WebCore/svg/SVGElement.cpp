@@ -357,10 +357,10 @@ static inline void collectInstancesForSVGElement(SVGElement* element, HashSet<SV
     if (element->containingShadowRoot())
         return;
 
-    if (!element->isStyled())
+    if (!element->isSVGStyledElement())
         return;
 
-    SVGStyledElement* styledElement = static_cast<SVGStyledElement*>(element);
+    SVGStyledElement* styledElement = toSVGStyledElement(element);
     ASSERT(!styledElement->instanceUpdatesBlocked());
 
     instances = styledElement->instancesForElement();
@@ -728,7 +728,7 @@ bool SVGElement::isAnimatableAttribute(const QualifiedName& name) const
     }
 
     if (name == classAttr)
-        return isStyled();
+        return isSVGStyledElement();
 
     return animatableAttributes.contains(name);
 }

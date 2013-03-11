@@ -126,7 +126,7 @@ void FEImage::platformApplySoftware()
         resultImage->context()->concatCTM(absoluteTransform);
 
         SVGElement* contextNode = toSVGElement(renderer->node());
-        if (contextNode->isStyled() && static_cast<SVGStyledElement*>(contextNode)->hasRelativeLengths()) {
+        if (contextNode->isSVGStyledElement() && toSVGStyledElement(contextNode)->hasRelativeLengths()) {
             SVGLengthContext lengthContext(contextNode);
             float width = 0;
             float height = 0;

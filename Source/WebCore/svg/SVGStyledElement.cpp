@@ -456,13 +456,13 @@ void SVGStyledElement::updateRelativeLengthsInformation(bool hasRelativeLengths,
             break;
 
         SVGElement* element = toSVGElement(node);
-        if (!element->isStyled()) {
+        if (!element->isSVGStyledElement()) {
             node = node->parentNode();
             continue;
         }
 
         // Register us in the parent element map.
-        static_cast<SVGStyledElement*>(element)->updateRelativeLengthsInformation(hasRelativeLengths, this);
+        toSVGStyledElement(element)->updateRelativeLengthsInformation(hasRelativeLengths, this);
         break;
     }
 }

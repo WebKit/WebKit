@@ -132,7 +132,7 @@ static void getElementCTM(SVGElement* element, AffineTransform& transform)
 
     while (current && current->isSVGElement()) {
         SVGElement* currentElement = toSVGElement(current);
-        if (currentElement->isStyled()) {
+        if (currentElement->isSVGStyledElement()) {
             localTransform = currentElement->renderer()->localToParentTransform();
             transform = localTransform.multiply(transform);
         }
