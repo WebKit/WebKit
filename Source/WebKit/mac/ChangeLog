@@ -1,3 +1,10 @@
+2013-03-11  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix.  Remove stray brace which crept into r145409.
+
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController performClose:]):
+
 2013-01-30  Jer Noble  <jer.noble@apple.com>
 
         Mac: Cmd-w should close full screen window.

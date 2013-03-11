@@ -388,7 +388,7 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 
 - (void)performClose:(id)sender
 {
-    if (_isFullScreen) {
+    if (_isFullScreen)
         [self cancelOperation:sender];
 }
 
