@@ -1,3 +1,13 @@
+2013-03-11  Chris Hopman  <cjhopman@chromium.org>
+
+        [chromium] Android apk targets should depend directly on Java library targets
+        https://bugs.webkit.org/show_bug.cgi?id=111746
+
+        Reviewed by Eric Seidel.
+
+        * WebKitUnitTests.gyp:
+        Make webkit_unit_tests_apk depend directly on base_java and net_java.
+
 2013-03-11  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] remove obsolete user gesture methods from WebFrame

@@ -106,7 +106,7 @@
                 'target_name': 'TestWebKitAPI_apk',
                 'type': 'none',
                 'dependencies': [
-                    '<(chromium_src_dir)/base/base.gyp:base',
+                    '<(chromium_src_dir)/base/base.gyp:base_java',
                     'TestWebKitAPI',
                 ],
                 'variables': {

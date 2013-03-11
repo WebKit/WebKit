@@ -150,8 +150,8 @@
                 'target_name': 'webkit_unit_tests_apk',
                 'type': 'none',
                 'dependencies': [
-                    '<(chromium_src_dir)/base/base.gyp:base',
-                    '<(chromium_src_dir)/net/net.gyp:net',
+                    '<(chromium_src_dir)/base/base.gyp:base_java',
+                    '<(chromium_src_dir)/net/net.gyp:net_java',
                     'webkit_unit_tests',
                 ],
                 'variables': {
