@@ -37,7 +37,7 @@ static const unsigned singleNullCharacterHash = 0x3D3ABF44U;
 
 static const LChar testALChars[6] = { 0x41, 0x95, 0xFF, 0x50, 0x01, 0 };
 static const UChar testAUChars[6] = { 0x41, 0x95, 0xFF, 0x50, 0x01, 0 };
-static const UChar testBUChars[5] = { 0x41, 0x95, 0xFFFF, 0x1080, 0x01 };
+static const UChar testBUChars[6] = { 0x41, 0x95, 0xFFFF, 0x1080, 0x01, 0 };
 
 static const unsigned testAHash1 = 0xEA32B004;
 static const unsigned testAHash2 = 0x93F0F71E;
@@ -107,14 +107,7 @@ TEST(WTF, StringHasher_addCharacter)
     ASSERT_EQ(testBHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 }
 
-#if OS(ANDROID)
-// Failing on Android. http://webkit.org/b/111284
-# define MAYBE_StringHasher_addCharacters DISABLED_StringHasher_addCharacters
-#else
-# define MAYBE_StringHasher_addCharacters StringHasher_addCharacters
-#endif
-
-TEST(WTF, MAYBE_StringHasher_addCharacters)
+TEST(WTF, StringHasher_addCharacters)
 {
     StringHasher hasher;
 
@@ -273,14 +266,7 @@ TEST(WTF, MAYBE_StringHasher_addCharacters)
     ASSERT_EQ(testBHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 }
 
-#if OS(ANDROID)
-// Failing on Android. http://webkit.org/b/111284
-# define MAYBE_StringHasher_addCharactersAssumingAligned DISABLED_StringHasher_addCharactersAssumingAligned
-#else
-# define MAYBE_StringHasher_addCharactersAssumingAligned StringHasher_addCharactersAssumingAligned
-#endif
-
-TEST(WTF, MAYBE_StringHasher_addCharactersAssumingAligned)
+TEST(WTF, StringHasher_addCharactersAssumingAligned)
 {
     StringHasher hasher;
 
