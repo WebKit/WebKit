@@ -120,6 +120,8 @@ bool InjectedScriptManager::canAccessInspectedWindow(ScriptState* scriptState)
         return false;
     v8::Handle<v8::Object> holder = global->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate(), MainWorld));
     if (holder.IsEmpty())
+        holder = global->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate(), IsolatedWorld));
+    if (holder.IsEmpty())
         return false;
     Frame* frame = V8DOMWindow::toNative(holder)->frame();
 
