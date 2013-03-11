@@ -1,5 +1,19 @@
 2013-03-10  Tim Horton  <timothy_horton@apple.com>
 
+        WebPage::scaledSnapshotWithOptions returns a corrupt snapshot if you request a rect larger than the FrameView’s size
+        https://bugs.webkit.org/show_bug.cgi?id=111820
+        <rdar://problem/13375785>
+
+        Reviewed by Simon Fraser.
+
+        We have to clear the image - there could be area that won’t be painted by the FrameView,
+        or the FrameView could have a transparent background.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::scaledSnapshotWithOptions):
+
+2013-03-10  Tim Horton  <timothy_horton@apple.com>
+
         Fix a typo in http://trac.webkit.org/changeset/145332.
 
         Unreviewed.
