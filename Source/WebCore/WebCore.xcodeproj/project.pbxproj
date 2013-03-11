@@ -6552,10 +6552,6 @@
 		FBD6AF8B15EF25E5008B7110 /* CSSBasicShapes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FBD6AF8615EF21D4008B7110 /* CSSBasicShapes.cpp */; };
 		FBD6AF8C15EF2604008B7110 /* BasicShapes.h in Headers */ = {isa = PBXBuildFile; fileRef = FBD6AF8315EF21A3008B7110 /* BasicShapes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FBD6AF8D15EF260A008B7110 /* BasicShapes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FBD6AF8215EF21A3008B7110 /* BasicShapes.cpp */; };
-		FBDB619B16D6032A00BB3394 /* ElementRuleCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FBDB619A16D6032A00BB3394 /* ElementRuleCollector.cpp */; };
-		FBDB619D16D6034600BB3394 /* PageRuleCollector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FBDB619C16D6034600BB3394 /* PageRuleCollector.cpp */; };
-		FBDB619F16D6036500BB3394 /* ElementRuleCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = FBDB619E16D6036500BB3394 /* ElementRuleCollector.h */; };
-		FBDB61A116D6037E00BB3394 /* PageRuleCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = FBDB61A016D6037E00BB3394 /* PageRuleCollector.h */; };
 		FBF89045169E9F1F0052D86E /* CSSGroupingRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FBF89044169E9F1F0052D86E /* CSSGroupingRule.cpp */; };
 		FC54D05716A7673100575E4D /* CSSSupportsRule.h in Headers */ = {isa = PBXBuildFile; fileRef = FC63BDB1167AABAC00F9380F /* CSSSupportsRule.h */; };
 		FC54D05816A7676E00575E4D /* JSCSSSupportsRule.h in Headers */ = {isa = PBXBuildFile; fileRef = FC84802E167AB444008CD100 /* JSCSSSupportsRule.h */; };
@@ -14310,10 +14306,6 @@
 		FBD6AF8515EF21D4008B7110 /* BasicShapeFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BasicShapeFunctions.h; sourceTree = "<group>"; };
 		FBD6AF8615EF21D4008B7110 /* CSSBasicShapes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSBasicShapes.cpp; sourceTree = "<group>"; };
 		FBD6AF8715EF21D4008B7110 /* CSSBasicShapes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSBasicShapes.h; sourceTree = "<group>"; };
-		FBDB619A16D6032A00BB3394 /* ElementRuleCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ElementRuleCollector.cpp; sourceTree = "<group>"; };
-		FBDB619C16D6034600BB3394 /* PageRuleCollector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageRuleCollector.cpp; sourceTree = "<group>"; };
-		FBDB619E16D6036500BB3394 /* ElementRuleCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ElementRuleCollector.h; sourceTree = "<group>"; };
-		FBDB61A016D6037E00BB3394 /* PageRuleCollector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageRuleCollector.h; sourceTree = "<group>"; };
 		FBF89044169E9F1F0052D86E /* CSSGroupingRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSGroupingRule.cpp; sourceTree = "<group>"; };
 		FC63BDB0167AABAC00F9380F /* CSSSupportsRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSSupportsRule.cpp; sourceTree = "<group>"; };
 		FC63BDB1167AABAC00F9380F /* CSSSupportsRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSSupportsRule.h; sourceTree = "<group>"; };
@@ -22144,8 +22136,6 @@
 				FC9A0F71164094CF003D6B8D /* DOMWindowCSS.cpp */,
 				FC9A0F72164094CF003D6B8D /* DOMWindowCSS.h */,
 				FC9A0F73164094CF003D6B8D /* DOMWindowCSS.idl */,
-				FBDB619E16D6036500BB3394 /* ElementRuleCollector.h */,
-				FBDB619A16D6032A00BB3394 /* ElementRuleCollector.cpp */,
 				4A6E9FC213C17D1D0046A7F8 /* FontFeatureValue.h */,
 				A80E6CC70A1989CA007FB8C5 /* FontValue.cpp */,
 				A80E6CC30A1989CA007FB8C5 /* FontValue.h */,
@@ -22181,8 +22171,6 @@
 				D3A94A35122DABAC00A37BBC /* MediaQueryListListener.idl */,
 				D3AA10F1123A98AA0092152B /* MediaQueryMatcher.cpp */,
 				D3AA10F2123A98AA0092152B /* MediaQueryMatcher.h */,
-				FBDB61A016D6037E00BB3394 /* PageRuleCollector.h */,
-				FBDB619C16D6034600BB3394 /* PageRuleCollector.cpp */,
 				A80E6CD10A1989CA007FB8C5 /* Pair.h */,
 				3189E6DB16B2103500386EA3 /* plugIns.css */,
 				E4BBED0C14F4025D003F0B98 /* PropertySetCSSStyleDeclaration.cpp */,
@@ -26714,8 +26702,6 @@
 				7E66E23416D6EB6C00F7E7FF /* WebGLCompressedTextureATC.h in Headers */,
 				7EA30F6A16DFFE7500257D0B /* JSWebGLCompressedTextureATC.h in Headers */,
 				2D8287F716E4A0380086BD00 /* HitTestLocation.h in Headers */,
-				FBDB619F16D6036500BB3394 /* ElementRuleCollector.h in Headers */,
-				FBDB61A116D6037E00BB3394 /* PageRuleCollector.h in Headers */,
 				A89570A016E9BD5900184E55 /* HTMLIdentifier.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -29920,8 +29906,6 @@
 				7E66E23316D6EB6C00F7E7FF /* WebGLCompressedTextureATC.cpp in Sources */,
 				7EA30F6916DFFE7500257D0B /* JSWebGLCompressedTextureATC.cpp in Sources */,
 				2D8287F616E4A0380086BD00 /* HitTestLocation.cpp in Sources */,
-				FBDB619B16D6032A00BB3394 /* ElementRuleCollector.cpp in Sources */,
-				FBDB619D16D6034600BB3394 /* PageRuleCollector.cpp in Sources */,
 				A895709F16E9BD5900184E55 /* HTMLIdentifier.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

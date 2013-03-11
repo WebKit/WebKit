@@ -1068,7 +1068,6 @@ set(WebCore_SOURCES
     css/CSSValuePool.cpp
     css/DOMWindowCSS.cpp
     css/DocumentRuleSets.cpp
-    css/ElementRuleCollector.cpp
     css/FontFeatureValue.cpp
     css/FontValue.cpp
     css/InspectorCSSOMWrappers.cpp
@@ -1081,7 +1080,6 @@ set(WebCore_SOURCES
     css/MediaQueryList.cpp
     css/MediaQueryListListener.cpp
     css/MediaQueryMatcher.cpp
-    css/PageRuleCollector.cpp
     css/PropertySetCSSStyleDeclaration.cpp
     css/RGBColor.cpp
     css/RuleFeature.h

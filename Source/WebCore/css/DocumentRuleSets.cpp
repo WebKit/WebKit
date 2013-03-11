@@ -53,7 +53,7 @@ void ShadowDistributedRules::addRule(StyleRule* rule, size_t selectorIndex, Cont
 void ShadowDistributedRules::collectMatchRequests(bool includeEmptyRules, Vector<MatchRequest>& matchRequests)
 {
     for (ShadowDistributedRuleSetMap::iterator it = m_shadowDistributedRuleSetMap.begin(); it != m_shadowDistributedRuleSetMap.end(); ++it)
-        matchRequests.append(MatchRequest(it->value.get(), includeEmptyRules, it->key));
+        matchRequests.append(MatchRequest(it->value.get(), includeEmptyRules, it->key, SelectorChecker::CrossesBoundary));
 }
 #endif
 
