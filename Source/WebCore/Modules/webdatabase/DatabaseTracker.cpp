@@ -139,6 +139,7 @@ void DatabaseTracker::openTrackerDatabase(TrackerCreationAction createAction)
 
 bool DatabaseTracker::hasAdequateQuotaForOrigin(SecurityOrigin* origin, unsigned long estimatedSize, DatabaseError& err)
 {
+    ASSERT(!m_databaseGuard.tryLock());
     unsigned long long usage = usageForOrigin(origin);
 
     // If the database will fit, allow its creation.
@@ -239,9 +240,19 @@ bool DatabaseTracker::retryCanEstablishDatabase(DatabaseBackendContext* context,
 bool DatabaseTracker::hasEntryForOriginNoLock(SecurityOrigin* origin)
 {
     ASSERT(!m_databaseGuard.tryLock());
-    populateOriginsIfNeeded();
-    ASSERT(m_quotaMap);
-    return m_quotaMap->contains(origin);
+    openTrackerDatabase(DontCreateIfDoesNotExist);
+    if (!m_database.isOpen())
+        return false;
+
+    SQLiteStatement statement(m_database, "SELECT origin FROM Origins where origin=?;");
+    if (statement.prepare() != SQLResultOk) {
+        LOG_ERROR("Failed to prepare statement.");
+        return false;
+    }
+
+    statement.bindText(1, origin->databaseIdentifier());
+
+    return statement.step() == SQLResultRow;
 }
 
 bool DatabaseTracker::hasEntryForOrigin(SecurityOrigin* origin)
@@ -382,20 +393,15 @@ String DatabaseTracker::fullPathForDatabase(SecurityOrigin* origin, const String
     return fullPathForDatabaseNoLock(origin, name, createIfNotExists).isolatedCopy();
 }
 
-void DatabaseTracker::populateOriginsIfNeeded()
+void DatabaseTracker::origins(Vector<RefPtr<SecurityOrigin> >& originsResult)
 {
-    ASSERT(!m_databaseGuard.tryLock());
-    if (m_quotaMap)
-        return;
-
-    m_quotaMap = adoptPtr(new QuotaMap);
+    MutexLocker lockDatabase(m_databaseGuard);
 
     openTrackerDatabase(DontCreateIfDoesNotExist);
     if (!m_database.isOpen())
         return;
 
-    SQLiteStatement statement(m_database, "SELECT origin, quota FROM Origins");
-
+    SQLiteStatement statement(m_database, "SELECT origin FROM Origins");
     if (statement.prepare() != SQLResultOk) {
         LOG_ERROR("Failed to prepare statement.");
         return;
@@ -404,19 +410,12 @@ void DatabaseTracker::populateOriginsIfNeeded()
     int result;
     while ((result = statement.step()) == SQLResultRow) {
         RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromDatabaseIdentifier(statement.getColumnText(0));
-        m_quotaMap->set(origin.get()->isolatedCopy(), statement.getColumnInt64(1));
+        originsResult.append(origin->isolatedCopy());
     }
+    originsResult.shrinkToFit();
 
     if (result != SQLResultDone)
         LOG_ERROR("Failed to read in all origins from the database.");
-}
-
-void DatabaseTracker::origins(Vector<RefPtr<SecurityOrigin> >& result)
-{
-    MutexLocker lockDatabase(m_databaseGuard);
-    populateOriginsIfNeeded();
-    ASSERT(m_quotaMap);
-    copyKeysToVector(*m_quotaMap, result);
 }
 
 bool DatabaseTracker::databaseNamesForOriginNoLock(SecurityOrigin* origin, Vector<String>& resultVector)
@@ -717,9 +716,23 @@ unsigned long long DatabaseTracker::usageForOrigin(SecurityOrigin* origin)
 unsigned long long DatabaseTracker::quotaForOriginNoLock(SecurityOrigin* origin)
 {
     ASSERT(!m_databaseGuard.tryLock());
-    populateOriginsIfNeeded();
-    ASSERT(m_quotaMap);
-    return m_quotaMap->get(origin);
+    unsigned long long quota = 0;
+
+    openTrackerDatabase(DontCreateIfDoesNotExist);
+    if (!m_database.isOpen())
+        return quota;
+
+    SQLiteStatement statement(m_database, "SELECT quota FROM Origins where origin=?;");
+    if (statement.prepare() != SQLResultOk) {
+        LOG_ERROR("Failed to prepare statement.");
+        return quota;
+    }
+    statement.bindText(1, origin->databaseIdentifier());
+
+    if (statement.step() == SQLResultRow)
+        quota = statement.getColumnInt64(0);
+
+    return quota;
 }
 
 unsigned long long DatabaseTracker::quotaForOrigin(SecurityOrigin* origin)
@@ -739,7 +752,8 @@ void DatabaseTracker::setQuota(SecurityOrigin* origin, unsigned long long quota)
     if (!m_database.isOpen())
         return;
 
-    if (!m_quotaMap->contains(origin)) {
+    bool originEntryExists = hasEntryForOriginNoLock(origin);
+    if (!originEntryExists) {
         SQLiteStatement statement(m_database, "INSERT INTO Origins VALUES (?, ?)");
         if (statement.prepare() != SQLResultOk) {
             LOG_ERROR("Unable to establish origin %s in the tracker", origin->databaseIdentifier().ascii().data());
@@ -768,9 +782,6 @@ void DatabaseTracker::setQuota(SecurityOrigin* origin, unsigned long long quota)
 #endif
     }
 
-    // FIXME: Is it really OK to update the quota in memory if we failed to update it on disk?
-    m_quotaMap->set(origin->isolatedCopy(), quota);
-
     if (m_client)
         m_client->dispatchDidModifyOrigin(origin);
 }
@@ -781,8 +792,6 @@ bool DatabaseTracker::addDatabase(SecurityOrigin* origin, const String& name, co
     openTrackerDatabase(CreateIfDoesNotExist);
     if (!m_database.isOpen())
         return false;
-    populateOriginsIfNeeded();
-    ASSERT(m_quotaMap);
 
     // New database should never be added until the origin has been established
     ASSERT(hasEntryForOriginNoLock(origin));
@@ -880,12 +889,20 @@ bool DatabaseTracker::deleteOrigin(SecurityOrigin* origin)
 
         SQLiteFileSystem::deleteEmptyDatabaseDirectory(originPath(origin));
 
-        populateOriginsIfNeeded();
         RefPtr<SecurityOrigin> originPossiblyLastReference = origin;
-        m_quotaMap->remove(origin);
+        bool isEmpty = true;
+
+        openTrackerDatabase(DontCreateIfDoesNotExist);
+        if (m_database.isOpen()) {
+            SQLiteStatement statement(m_database, "SELECT origin FROM Origins");
+            if (statement.prepare() != SQLResultOk)
+                LOG_ERROR("Failed to prepare statement.");
+            else if (statement.step() == SQLResultRow)
+                isEmpty = false;
+        }
 
         // If we removed the last origin, do some additional deletion.
-        if (m_quotaMap->isEmpty()) {
+        if (isEmpty) {
             if (m_database.isOpen())
                 m_database.close();
            SQLiteFileSystem::deleteDatabaseFile(trackerDatabasePath());
