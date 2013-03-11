@@ -2655,6 +2655,8 @@ webcore_sources += \
 	Source/WebCore/css/DashboardRegion.h \
 	Source/WebCore/css/DocumentRuleSets.cpp \
 	Source/WebCore/css/DocumentRuleSets.h \
+	Source/WebCore/css/ElementRuleCollector.cpp \
+	Source/WebCore/css/ElementRuleCollector.h \
 	Source/WebCore/css/FontFeatureValue.cpp \
 	Source/WebCore/css/FontFeatureValue.h \
 	Source/WebCore/css/FontValue.cpp \
@@ -2679,6 +2681,8 @@ webcore_sources += \
 	Source/WebCore/css/MediaQueryListListener.h \
 	Source/WebCore/css/MediaQueryMatcher.cpp \
 	Source/WebCore/css/MediaQueryMatcher.h \
+	Source/WebCore/css/PageRuleCollector.cpp \
+	Source/WebCore/css/PageRuleCollector.h \
 	Source/WebCore/css/Pair.h \
 	Source/WebCore/css/PropertySetCSSStyleDeclaration.cpp \
 	Source/WebCore/css/PropertySetCSSStyleDeclaration.h \

@@ -47,7 +47,9 @@ class CSSStyleDeclaration;
 class CSSStyleRule;
 class CSSStyleSheet;
 class Document;
+class DocumentStyleSheetCollection;
 class Element;
+class InspectorCSSOMWrappers;
 class InspectorFrontend;
 class InstrumentingAgents;
 class NameNodeMap;
@@ -125,7 +127,7 @@ public:
     virtual void stopSelectorProfiler(ErrorString*, RefPtr<TypeBuilder::CSS::SelectorProfile>&);
 
     PassRefPtr<TypeBuilder::CSS::SelectorProfile> stopSelectorProfilerImpl(ErrorString*, bool needProfile);
-    void willMatchRule(StyleRule*, StyleResolver*);
+    void willMatchRule(StyleRule*, InspectorCSSOMWrappers&, DocumentStyleSheetCollection*);
     void didMatchRule(bool);
     void willProcessRule(StyleRule*, StyleResolver*);
     void didProcessRule();
