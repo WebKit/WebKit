@@ -79,6 +79,7 @@ public:
     void openWithNativeApplication();
     void writeItemsToPasteboard(NSArray *items, NSArray *types);
     void showDefinitionForAttributedString(NSAttributedString *, CGPoint);
+    void performWebSearch(NSString *);
 
     void focusNextAnnotation();
     void focusPreviousAnnotation();

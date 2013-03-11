@@ -271,6 +271,8 @@ messages -> WebPageProxy {
 
     # Spotlight
     SearchWithSpotlight(WTF::String string)
+
+    SearchTheWeb(WTF::String string)
 #endif
 
 #if PLATFORM(MAC)

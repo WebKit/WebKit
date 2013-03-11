@@ -160,7 +160,7 @@ static const char* annotationStyle =
 
 - (void)performWebSearch:(NSString *)string
 {
-    // FIXME: Implement.
+    _pdfPlugin->performWebSearch(string);
 }
 
 - (void)openWithNativeApplication
@@ -973,6 +973,11 @@ void PDFPlugin::notifySelectionChanged(PDFSelection *)
 String PDFPlugin::getSelectionString() const
 {
     return [[m_pdfLayerController.get() currentSelection] string];
+}
+
+void PDFPlugin::performWebSearch(NSString *string)
+{
+    webFrame()->page()->send(Messages::WebPageProxy::SearchTheWeb(string));
 }
 
 } // namespace WebKit

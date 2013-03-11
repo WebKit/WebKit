@@ -117,6 +117,15 @@ void WebPageProxy::searchWithSpotlight(const String& string)
     [[NSWorkspace sharedWorkspace] showSearchResultsForQueryString:nsStringFromWebCoreString(string)];
 }
     
+void WebPageProxy::searchTheWeb(const String& string)
+{
+    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithUniqueName];
+    [pasteboard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:nil];
+    [pasteboard setString:string forType:NSStringPboardType];
+    
+    NSPerformService(@"Search With %WebSearchProvider@", pasteboard);
+}
+    
 CGContextRef WebPageProxy::containingWindowGraphicsContext()
 {
     return m_pageClient->containingWindowGraphicsContext();

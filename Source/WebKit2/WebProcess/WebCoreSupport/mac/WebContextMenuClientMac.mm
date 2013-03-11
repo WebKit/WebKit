@@ -61,6 +61,14 @@ void WebContextMenuClient::stopSpeaking()
     m_page->stopSpeaking();
 }
 
+void WebContextMenuClient::searchWithGoogle(const Frame* frame)
+{
+    String searchString = frame->editor()->selectedText();
+    searchString.stripWhiteSpace();
+    
+    m_page->send(Messages::WebPageProxy::SearchTheWeb(searchString));
+}
+
 void WebContextMenuClient::searchWithSpotlight()
 {
     // FIXME: Why do we need to search all the frames like this?
