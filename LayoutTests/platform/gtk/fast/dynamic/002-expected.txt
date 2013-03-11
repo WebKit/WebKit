@@ -7,9 +7,10 @@ layer at (0,0) size 800x600
         RenderBlock (floating) {DIV} at (522,0) size 262x104 [border: (2px solid #FF0000)]
           RenderText {#text} at (2,2) size 258x19
             text run at (2,2) width 258: "I should become a right-floating element."
-        RenderText {#text} at (0,0) size 393x19
-          text run at (0,0) width 195: "This text should be on the left. "
-          text run at (195,0) width 198: "The float should be to the right."
+        RenderBlock (anonymous) at (0,0) size 784x18
+          RenderText {#text} at (0,0) size 393x19
+            text run at (0,0) width 195: "This text should be on the left. "
+            text run at (195,0) width 198: "The float should be to the right."
       RenderBlock {DIV} at (0,18) size 784x30
       RenderBlock {DIV} at (0,48) size 784x36
         RenderBlock (floating) {SPAN} at (0,0) size 253x104 [border: (2px solid #FF0000)]
