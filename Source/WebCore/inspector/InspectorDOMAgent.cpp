@@ -1672,6 +1672,22 @@ void InspectorDOMAgent::willPopShadowRoot(Element* host, ShadowRoot* root)
         m_frontend->shadowRootPopped(hostId, rootId);
 }
 
+void InspectorDOMAgent::frameDocumentUpdated(Frame* frame)
+{
+    Document* document = frame->document();
+    if (!document)
+        return;
+
+    Page* page = frame->page();
+    ASSERT(page);
+    if (frame != page->mainFrame())
+        return;
+
+    // Only update the main frame document, nested frame document updates are not required
+    // (will be handled by loadEventFired()).
+    setDocument(document);
+}
+
 Node* InspectorDOMAgent::nodeForPath(const String& path)
 {
     // The path is of form "1,HTML,2,BODY,1,DIV"

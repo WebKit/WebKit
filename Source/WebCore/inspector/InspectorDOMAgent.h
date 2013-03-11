@@ -171,6 +171,7 @@ public:
     void didInvalidateStyleAttr(Node*);
     void didPushShadowRoot(Element* host, ShadowRoot*);
     void willPopShadowRoot(Element* host, ShadowRoot*);
+    void frameDocumentUpdated(Frame*);
 
     int pushNodeToFrontend(ErrorString*, int documentNodeId, Node*);
     Node* nodeForId(int nodeId);

@@ -937,6 +937,16 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents* instrument
         pageAgent->frameNavigated(loader);
 }
 
+void InspectorInstrumentation::frameDocumentUpdatedImpl(InstrumentingAgents* instrumentingAgents, Frame* frame)
+{
+    InspectorAgent* inspectorAgent = instrumentingAgents->inspectorAgent();
+    if (!inspectorAgent || !inspectorAgent->developerExtrasEnabled())
+        return;
+
+    if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())
+        domAgent->frameDocumentUpdated(frame);
+}
+
 void InspectorInstrumentation::loaderDetachedFromFrameImpl(InstrumentingAgents* instrumentingAgents, DocumentLoader* loader)
 {
     if (InspectorPageAgent* inspectorPageAgent = instrumentingAgents->inspectorPageAgent())

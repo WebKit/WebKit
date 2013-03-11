@@ -213,6 +213,7 @@ public:
     static void loadEventFired(Frame*);
     static void frameDetachedFromParent(Frame*);
     static void didCommitLoad(Frame*, DocumentLoader*);
+    static void frameDocumentUpdated(Frame*);
     static void loaderDetachedFromFrame(Frame*, DocumentLoader*);
     static void frameStartedLoading(Frame*);
     static void frameStoppedLoading(Frame*);
@@ -415,6 +416,7 @@ private:
     static void loadEventFiredImpl(InstrumentingAgents*, Frame*);
     static void frameDetachedFromParentImpl(InstrumentingAgents*, Frame*);
     static void didCommitLoadImpl(InstrumentingAgents*, Page*, DocumentLoader*);
+    static void frameDocumentUpdatedImpl(InstrumentingAgents*, Frame*);
     static void loaderDetachedFromFrameImpl(InstrumentingAgents*, DocumentLoader*);
     static void frameStartedLoadingImpl(InstrumentingAgents*, Frame*);
     static void frameStoppedLoadingImpl(InstrumentingAgents*, Frame*);
@@ -1641,16 +1643,22 @@ inline void InspectorInstrumentation::frameDetachedFromParent(Frame* frame)
 inline void InspectorInstrumentation::didCommitLoad(Frame* frame, DocumentLoader* loader)
 {
 #if ENABLE(INSPECTOR)
-    if (!frame)
-        return;
-    Page* page = frame->page();
-    if (!page)
-        return;
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        didCommitLoadImpl(instrumentingAgents, page, loader);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        didCommitLoadImpl(instrumentingAgents, frame->page(), loader);
 #else
     UNUSED_PARAM(frame);
     UNUSED_PARAM(loader);
+#endif
+}
+
+inline void InspectorInstrumentation::frameDocumentUpdated(Frame* frame)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        frameDocumentUpdatedImpl(instrumentingAgents, frame);
+#else
+    UNUSED_PARAM(frame);
 #endif
 }
 

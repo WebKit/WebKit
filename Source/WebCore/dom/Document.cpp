@@ -4241,7 +4241,9 @@ void Document::applyXSLTransform(ProcessingInstruction* pi)
     if (!processor->transformToString(this, resultMIMEType, newSource, resultEncoding))
         return;
     // FIXME: If the transform failed we should probably report an error (like Mozilla does).
-    processor->createDocumentFromSource(newSource, resultEncoding, resultMIMEType, this, frame());
+    Frame* ownerFrame = frame();
+    processor->createDocumentFromSource(newSource, resultEncoding, resultMIMEType, this, ownerFrame);
+    InspectorInstrumentation::frameDocumentUpdated(ownerFrame);
 }
 
 void Document::setTransformSource(PassOwnPtr<TransformSource> source)
