@@ -77,13 +77,13 @@ private:
     
 inline AccessibilitySpinButton* toAccessibilitySpinButton(AccessibilityObject* object)
 {
-    ASSERT(!object || object->isSpinButton());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSpinButton());
     return static_cast<AccessibilitySpinButton*>(object);
 }
     
 inline AccessibilitySpinButtonPart* toAccessibilitySpinButtonPart(AccessibilityObject* object)
 {
-    ASSERT(!object || object->isSpinButtonPart());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSpinButtonPart());
     return static_cast<AccessibilitySpinButtonPart*>(object);
 }
     

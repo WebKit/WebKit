@@ -765,7 +765,7 @@ inline bool isMediaElement(Node* node)
 
 inline HTMLMediaElement* toMediaElement(Node* node)
 {
-    ASSERT(!node || isMediaElement(node));
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || isMediaElement(node));
     return static_cast<HTMLMediaElement*>(node);
 }
 

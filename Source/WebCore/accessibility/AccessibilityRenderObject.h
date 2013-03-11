@@ -328,13 +328,13 @@ private:
 
 inline AccessibilityRenderObject* toAccessibilityRenderObject(AccessibilityObject* object)
 {
-    ASSERT(!object || object->isAccessibilityRenderObject());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isAccessibilityRenderObject());
     return static_cast<AccessibilityRenderObject*>(object);
 }
 
 inline const AccessibilityRenderObject* toAccessibilityRenderObject(const AccessibilityObject* object)
 {
-    ASSERT(!object || object->isAccessibilityRenderObject());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isAccessibilityRenderObject());
     return static_cast<const AccessibilityRenderObject*>(object);
 }
 

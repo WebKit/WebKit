@@ -106,7 +106,7 @@ inline bool isHTMLContentElement(const Node* node)
 
 inline HTMLContentElement* toHTMLContentElement(Node* node)
 {
-    ASSERT(!node || isHTMLContentElement(node));
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLContentElement(node));
     return static_cast<HTMLContentElement*>(node);
 }
 

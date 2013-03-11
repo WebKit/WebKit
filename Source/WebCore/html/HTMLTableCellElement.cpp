@@ -186,13 +186,13 @@ HTMLTableCellElement* HTMLTableCellElement::cellAbove() const
 
 HTMLTableCellElement* toHTMLTableCellElement(Node* node)
 {
-    ASSERT(!node || node->hasTagName(HTMLNames::tdTag) || node->hasTagName(HTMLNames::thTag));
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->hasTagName(HTMLNames::tdTag) || node->hasTagName(HTMLNames::thTag));
     return static_cast<HTMLTableCellElement*>(node);
 }
 
 const HTMLTableCellElement* toHTMLTableCellElement(const Node* node)
 {
-    ASSERT(!node || node->hasTagName(HTMLNames::tdTag) || node->hasTagName(HTMLNames::thTag));
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->hasTagName(HTMLNames::tdTag) || node->hasTagName(HTMLNames::thTag));
     return static_cast<const HTMLTableCellElement*>(node);
 }
 

@@ -209,13 +209,13 @@ inline bool isHTMLSelectElement(const Node* node)
 
 inline HTMLSelectElement* toHTMLSelectElement(Node* node)
 {
-    ASSERT(!node || isHTMLSelectElement(node));
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLSelectElement(node));
     return static_cast<HTMLSelectElement*>(node);
 }
 
 inline const HTMLSelectElement* toHTMLSelectElement(const Node* node)
 {
-    ASSERT(!node || isHTMLSelectElement(node));
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLSelectElement(node));
     return static_cast<const HTMLSelectElement*>(node);
 }
 

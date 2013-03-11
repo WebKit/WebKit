@@ -64,7 +64,7 @@ const AtomicString& DetailsMarkerControl::shadowPseudoId() const
 HTMLSummaryElement* DetailsMarkerControl::summaryElement()
 {
     Element* element = shadowHost();
-    ASSERT(!element || element->hasTagName(summaryTag));
+    ASSERT_WITH_SECURITY_IMPLICATION(!element || element->hasTagName(summaryTag));
     return static_cast<HTMLSummaryElement*>(element);
 }
 

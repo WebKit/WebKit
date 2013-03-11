@@ -89,7 +89,7 @@ private:
 
 inline RenderScrollbar* toRenderScrollbar(ScrollbarThemeClient* scrollbar)
 {
-    ASSERT(!scrollbar || scrollbar->isCustomScrollbar());
+    ASSERT_WITH_SECURITY_IMPLICATION(!scrollbar || scrollbar->isCustomScrollbar());
     return static_cast<RenderScrollbar*>(scrollbar);
 }
 

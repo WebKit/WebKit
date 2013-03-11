@@ -49,7 +49,7 @@ private:
 
 inline RenderHTMLCanvas* toRenderHTMLCanvas(RenderObject* object)
 {
-    ASSERT(!object || !strcmp(object->renderName(), "RenderHTMLCanvas"));
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isCanvas());
     return static_cast<RenderHTMLCanvas*>(object);
 }
 

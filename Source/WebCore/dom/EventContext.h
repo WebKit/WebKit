@@ -102,7 +102,7 @@ private:
 
 inline TouchEventContext* toTouchEventContext(EventContext* eventContext)
 {
-    ASSERT(!eventContext || eventContext->isTouchEventContext());
+    ASSERT_WITH_SECURITY_IMPLICATION(!eventContext || eventContext->isTouchEventContext());
     return static_cast<TouchEventContext*>(eventContext);
 }
 #endif // ENABLE(TOUCH_EVENTS)

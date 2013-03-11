@@ -136,13 +136,13 @@ private:
 
 inline File* toFile(Blob* blob)
 {
-    ASSERT(!blob || blob->isFile());
+    ASSERT_WITH_SECURITY_IMPLICATION(!blob || blob->isFile());
     return static_cast<File*>(blob);
 }
 
 inline const File* toFile(const Blob* blob)
 {
-    ASSERT(!blob || blob->isFile());
+    ASSERT_WITH_SECURITY_IMPLICATION(!blob || blob->isFile());
     return static_cast<const File*>(blob);
 }
 

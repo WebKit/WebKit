@@ -201,13 +201,13 @@ private:
 
 inline InlineTextBox* toInlineTextBox(InlineBox* inlineBox)
 {
-    ASSERT(!inlineBox || inlineBox->isInlineTextBox());
+    ASSERT_WITH_SECURITY_IMPLICATION(!inlineBox || inlineBox->isInlineTextBox());
     return static_cast<InlineTextBox*>(inlineBox);
 }
 
 inline const InlineTextBox* toInlineTextBox(const InlineBox* inlineBox)
 {
-    ASSERT(!inlineBox || inlineBox->isInlineTextBox());
+    ASSERT_WITH_SECURITY_IMPLICATION(!inlineBox || inlineBox->isInlineTextBox());
     return static_cast<const InlineTextBox*>(inlineBox);
 }
 

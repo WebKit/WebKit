@@ -80,7 +80,7 @@ inline bool isHTMLProgressElement(Node* node)
 
 inline HTMLProgressElement* toHTMLProgressElement(Node* node)
 {
-    ASSERT(!node || isHTMLProgressElement(node));
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLProgressElement(node));
     return static_cast<HTMLProgressElement*>(node);
 }
 

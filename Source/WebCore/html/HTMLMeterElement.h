@@ -91,7 +91,7 @@ inline bool isHTMLMeterElement(Node* node)
 
 inline HTMLMeterElement* toHTMLMeterElement(Node* node)
 {
-    ASSERT(!node || isHTMLMeterElement(node));
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLMeterElement(node));
     return static_cast<HTMLMeterElement*>(node);
 }
 

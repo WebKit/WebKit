@@ -311,21 +311,21 @@ private:
 
 inline const StyleRuleMedia* toStyleRuleMedia(const StyleRuleGroup* rule)
 {
-    ASSERT(!rule || rule->isMediaRule());
+    ASSERT_WITH_SECURITY_IMPLICATION(!rule || rule->isMediaRule());
     return static_cast<const StyleRuleMedia*>(rule);
 }
 
 #if ENABLE(CSS3_CONDITIONAL_RULES)
 inline const StyleRuleSupports* toStyleRuleSupports(const StyleRuleGroup* rule)
 {
-    ASSERT(!rule || rule->isSupportsRule());
+    ASSERT_WITH_SECURITY_IMPLICATION(!rule || rule->isSupportsRule());
     return static_cast<const StyleRuleSupports*>(rule);
 }
 #endif
 
 inline const StyleRuleRegion* toStyleRuleRegion(const StyleRuleGroup* rule)
 {
-    ASSERT(!rule || rule->isRegionRule());
+    ASSERT_WITH_SECURITY_IMPLICATION(!rule || rule->isRegionRule());
     return static_cast<const StyleRuleRegion*>(rule);
 }
 

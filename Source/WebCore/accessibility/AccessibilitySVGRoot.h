@@ -52,7 +52,7 @@ private:
 
 inline AccessibilitySVGRoot* toAccessibilitySVGRoot(AccessibilityObject* object)
 {
-    ASSERT(!object || object->isAccessibilitySVGRoot());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isAccessibilitySVGRoot());
     return static_cast<AccessibilitySVGRoot*>(object);
 }
     

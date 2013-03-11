@@ -253,7 +253,7 @@ Geolocation::~Geolocation()
 
 Document* Geolocation::document() const
 {
-    ASSERT(!scriptExecutionContext() || scriptExecutionContext()->isDocument());
+    ASSERT_WITH_SECURITY_IMPLICATION(!scriptExecutionContext() || scriptExecutionContext()->isDocument());
     return static_cast<Document*>(scriptExecutionContext());
 }
 

@@ -1323,7 +1323,7 @@ DOMWindow* DOMWindow::top() const
 Document* DOMWindow::document() const
 {
     ScriptExecutionContext* context = ContextDestructionObserver::scriptExecutionContext();
-    ASSERT(!context || context->isDocument());
+    ASSERT_WITH_SECURITY_IMPLICATION(!context || context->isDocument());
     return static_cast<Document*>(context);
 }
 

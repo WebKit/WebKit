@@ -90,7 +90,7 @@ protected:
     
 inline AccessibilityTable* toAccessibilityTable(AccessibilityObject* object)
 {
-    ASSERT(!object || object->isAccessibilityTable());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isAccessibilityTable());
     return static_cast<AccessibilityTable*>(object);
 }
     

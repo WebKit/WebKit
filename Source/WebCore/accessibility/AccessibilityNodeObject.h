@@ -202,13 +202,13 @@ private:
 
 inline AccessibilityNodeObject* toAccessibilityNodeObject(AccessibilityObject* object)
 {
-    ASSERT(!object || object->isAccessibilityNodeObject());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isAccessibilityNodeObject());
     return static_cast<AccessibilityNodeObject*>(object);
 }
 
 inline const AccessibilityNodeObject* toAccessibilityNodeObject(const AccessibilityObject* object)
 {
-    ASSERT(!object || object->isAccessibilityNodeObject());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isAccessibilityNodeObject());
     return static_cast<const AccessibilityNodeObject*>(object);
 }
 

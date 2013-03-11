@@ -60,13 +60,13 @@ inline bool isHTMLShadowElement(const Node* node)
 
 inline HTMLShadowElement* toHTMLShadowElement(Node* node)
 {
-    ASSERT(!node || isHTMLShadowElement(node));
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLShadowElement(node));
     return static_cast<HTMLShadowElement*>(node);
 }
 
 inline const HTMLShadowElement* toHTMLShadowElement(const Node* node)
 {
-    ASSERT(!node || isHTMLShadowElement(node));
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || isHTMLShadowElement(node));
     return static_cast<const HTMLShadowElement*>(node);
 }
 

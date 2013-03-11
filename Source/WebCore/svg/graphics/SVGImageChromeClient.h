@@ -64,7 +64,7 @@ private:
 
 inline SVGImageChromeClient* toSVGImageChromeClient(ChromeClient* client)
 {
-    ASSERT(!client || client->isSVGImageChromeClient());
+    ASSERT_WITH_SECURITY_IMPLICATION(!client || client->isSVGImageChromeClient());
     return static_cast<SVGImageChromeClient*>(client);
 }
     

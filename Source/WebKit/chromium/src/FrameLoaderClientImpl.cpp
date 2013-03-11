@@ -1528,7 +1528,7 @@ PassRefPtr<Widget> FrameLoaderClientImpl::createPlugin(
 // (e.g., acrobat reader).
 void FrameLoaderClientImpl::redirectDataToPlugin(Widget* pluginWidget)
 {
-    ASSERT(!pluginWidget || pluginWidget->isPluginContainer());
+    ASSERT_WITH_SECURITY_IMPLICATION(!pluginWidget || pluginWidget->isPluginContainer());
     m_pluginWidget = static_cast<WebPluginContainerImpl*>(pluginWidget);
 }
 

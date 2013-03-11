@@ -58,7 +58,7 @@ private:
 
 inline AccessibilityMenuList* toAccessibilityMenuList(AccessibilityObject* object)
 {
-    ASSERT(!object || object->isMenuList());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isMenuList());
     return static_cast<AccessibilityMenuList*>(object);
 }
 

@@ -562,7 +562,7 @@ Element* HTMLElement::insertAdjacentElement(const String& where, Element* newChi
     }
 
     Node* returnValue = insertAdjacent(where, newChild, ec);
-    ASSERT(!returnValue || returnValue->isElementNode());
+    ASSERT_WITH_SECURITY_IMPLICATION(!returnValue || returnValue->isElementNode());
     return static_cast<Element*>(returnValue); 
 }
 
@@ -575,7 +575,7 @@ static Element* contextElementForInsertion(const String& where, Element* element
             ec = NO_MODIFICATION_ALLOWED_ERR;
             return 0;
         }
-        ASSERT(!parent || parent->isElementNode());
+        ASSERT_WITH_SECURITY_IMPLICATION(!parent || parent->isElementNode());
         return static_cast<Element*>(parent);
     }
     if (equalIgnoringCase(where, "afterBegin") || equalIgnoringCase(where, "beforeEnd"))

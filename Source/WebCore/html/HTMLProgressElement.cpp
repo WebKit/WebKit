@@ -78,7 +78,7 @@ RenderProgress* HTMLProgressElement::renderProgress() const
         return static_cast<RenderProgress*>(renderer());
 
     RenderObject* renderObject = userAgentShadowRoot()->firstChild()->renderer();
-    ASSERT(!renderObject || renderObject->isProgress());
+    ASSERT_WITH_SECURITY_IMPLICATION(!renderObject || renderObject->isProgress());
     return static_cast<RenderProgress*>(renderObject);
 }
 

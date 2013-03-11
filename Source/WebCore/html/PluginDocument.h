@@ -64,13 +64,13 @@ private:
 
 inline PluginDocument* toPluginDocument(Document* document)
 {
-    ASSERT(!document || document->isPluginDocument());
+    ASSERT_WITH_SECURITY_IMPLICATION(!document || document->isPluginDocument());
     return static_cast<PluginDocument*>(document);
 }
 
 inline const PluginDocument* toPluginDocument(const Document* document)
 {
-    ASSERT(!document || document->isPluginDocument());
+    ASSERT_WITH_SECURITY_IMPLICATION(!document || document->isPluginDocument());
     return static_cast<const PluginDocument*>(document);
 }
 
