@@ -8,7 +8,6 @@
         (GraphicsLayer
           (position 818.00 145.00)
           (bounds 100.00 100.00)
-          (contentsOpaque 1)
         )
       )
     )

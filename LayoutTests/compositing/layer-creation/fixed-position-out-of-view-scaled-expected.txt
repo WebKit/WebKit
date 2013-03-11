@@ -9,11 +9,9 @@ Not scaled:
         (GraphicsLayer
           (position 600.00 0.00)
           (bounds 10.00 10.00)
-          (contentsOpaque 1)
         )
         (GraphicsLayer
           (bounds 10.00 10.00)
-          (contentsOpaque 1)
         )
       )
     )
@@ -32,11 +30,9 @@ Scale=0.5:
         (GraphicsLayer
           (position 600.00 0.00)
           (bounds 10.00 10.00)
-          (contentsOpaque 1)
         )
         (GraphicsLayer
           (bounds 10.00 10.00)
-          (contentsOpaque 1)
         )
       )
     )
@@ -55,11 +51,9 @@ Scale=1.5:
         (GraphicsLayer
           (position 600.00 0.00)
           (bounds 10.00 10.00)
-          (contentsOpaque 1)
         )
         (GraphicsLayer
           (bounds 10.00 10.00)
-          (contentsOpaque 1)
         )
       )
     )

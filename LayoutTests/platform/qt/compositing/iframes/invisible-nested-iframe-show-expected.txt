@@ -48,7 +48,6 @@
                                                         (GraphicsLayer
                                                           (position 18.00 10.00)
                                                           (bounds 210.00 210.00)
-                                                          (contentsOpaque 1)
                                                           (drawsContent 1)
                                                         )
                                                       )
@@ -78,7 +77,6 @@
         (GraphicsLayer
           (position 18.00 202.00)
           (bounds 210.00 210.00)
-          (contentsOpaque 1)
           (drawsContent 1)
           (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
         )

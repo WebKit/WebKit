@@ -18,7 +18,6 @@ This layer should have backing store.
                 (GraphicsLayer
                   (position 30.00 48.00)
                   (bounds 100.00 100.00)
-                  (contentsOpaque 1)
                 )
               )
             )
@@ -36,7 +35,6 @@ This layer should have backing store.
                 (GraphicsLayer
                   (position 30.00 48.00)
                   (bounds 100.00 100.00)
-                  (contentsOpaque 1)
                 )
               )
             )
