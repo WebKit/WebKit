@@ -1,3 +1,11 @@
+2013-03-11  Dima Gorbik  <dgorbik@apple.com>
+
+        Adding myself to the committers list.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-03-11  Jeff Rogers  <jrogers@rim.com>
 
         [BlackBerry] Disable MathML support
