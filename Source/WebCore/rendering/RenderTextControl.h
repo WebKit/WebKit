@@ -50,15 +50,15 @@ protected:
 
     void hitInnerTextElement(HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset);
 
-    int textBlockWidth() const;
-    int textBlockHeight() const;
+    int textBlockLogicalWidth() const;
+    int textBlockLogicalHeight() const;
 
     float scaleEmToUnits(int x) const;
 
     static bool hasValidAvgCharWidth(AtomicString family);
     virtual float getAvgCharWidth(AtomicString family);
-    virtual LayoutUnit preferredContentWidth(float charWidth) const = 0;
-    virtual LayoutUnit computeControlHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const = 0;
+    virtual LayoutUnit preferredContentLogicalWidth(float charWidth) const = 0;
+    virtual LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const = 0;
     virtual RenderStyle* textBaseStyle() const = 0;
 
     virtual void updateFromElement();

@@ -42,7 +42,7 @@ public:
 
 protected:
     virtual void centerContainerIfNeeded(RenderBox*) const { }
-    virtual LayoutUnit computeHeightLimit() const;
+    virtual LayoutUnit computeLogicalHeightLimit() const;
     HTMLElement* containerElement() const;
     HTMLElement* innerBlockElement() const;
     HTMLInputElement* inputElement() const;
@@ -72,8 +72,8 @@ private:
 
     int textBlockWidth() const;
     virtual float getAvgCharWidth(AtomicString family);
-    virtual LayoutUnit preferredContentWidth(float charWidth) const;
-    virtual LayoutUnit computeControlHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const OVERRIDE;
+    virtual LayoutUnit preferredContentLogicalWidth(float charWidth) const;
+    virtual LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const OVERRIDE;
     
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
@@ -84,7 +84,7 @@ private:
     HTMLElement* innerSpinButtonElement() const;
 
     bool m_shouldDrawCapsLockIndicator;
-    LayoutUnit m_desiredInnerTextHeight;
+    LayoutUnit m_desiredInnerTextLogicalHeight;
 };
 
 inline HTMLElement* RenderTextControlSingleLine::containerElement() const

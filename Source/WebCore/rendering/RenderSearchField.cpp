@@ -147,19 +147,19 @@ void RenderSearchField::hidePopup()
         m_searchPopup->popupMenu()->hide();
 }
 
-LayoutUnit RenderSearchField::computeControlHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const
+LayoutUnit RenderSearchField::computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const
 {
     HTMLElement* resultsButton = resultsButtonElement();
     if (RenderBox* resultsRenderer = resultsButton ? resultsButton->renderBox() : 0) {
         resultsRenderer->updateLogicalHeight();
-        nonContentHeight = max(nonContentHeight, resultsRenderer->borderAndPaddingHeight() + resultsRenderer->marginHeight());
-        lineHeight = max(lineHeight, resultsRenderer->height());
+        nonContentHeight = max(nonContentHeight, resultsRenderer->borderAndPaddingLogicalHeight() + resultsRenderer->marginLogicalHeight());
+        lineHeight = max(lineHeight, resultsRenderer->logicalHeight());
     }
     HTMLElement* cancelButton = cancelButtonElement();
     if (RenderBox* cancelRenderer = cancelButton ? cancelButton->renderBox() : 0) {
         cancelRenderer->updateLogicalHeight();
-        nonContentHeight = max(nonContentHeight, cancelRenderer->borderAndPaddingHeight() + cancelRenderer->marginHeight());
-        lineHeight = max(lineHeight, cancelRenderer->height());
+        nonContentHeight = max(nonContentHeight, cancelRenderer->borderAndPaddingLogicalHeight() + cancelRenderer->marginLogicalHeight());
+        lineHeight = max(lineHeight, cancelRenderer->logicalHeight());
     }
 
     return lineHeight + nonContentHeight;
@@ -363,9 +363,9 @@ PassRefPtr<Scrollbar> RenderSearchField::createScrollbar(ScrollableArea* scrolla
     return widget.release();
 }
 
-LayoutUnit RenderSearchField::computeHeightLimit() const
+LayoutUnit RenderSearchField::computeLogicalHeightLimit() const
 {
-    return height();
+    return logicalHeight();
 }
 
 void RenderSearchField::centerContainerIfNeeded(RenderBox* containerRenderer) const
@@ -373,13 +373,13 @@ void RenderSearchField::centerContainerIfNeeded(RenderBox* containerRenderer) co
     if (!containerRenderer)
         return;
 
-    if (containerRenderer->height() <= contentHeight())
+    if (containerRenderer->logicalHeight() <= contentLogicalHeight())
         return;
 
     // A quirk for find-in-page box on Safari Windows.
     // http://webkit.org/b/63157
-    LayoutUnit heightDiff = containerRenderer->height() - contentHeight();
-    containerRenderer->setY(containerRenderer->y() - (heightDiff / 2 + layoutMod(heightDiff, 2)));
+    LayoutUnit logicalHeightDiff = containerRenderer->logicalHeight() - contentLogicalHeight();
+    containerRenderer->setLogicalTop(containerRenderer->logicalTop() - (logicalHeightDiff / 2 + layoutMod(logicalHeightDiff, 2)));
 }
 
 }

@@ -983,6 +983,24 @@ public:
     void setWidth(Length v) { SET_VAR(m_box, m_width, v); }
     void setHeight(Length v) { SET_VAR(m_box, m_height, v); }
 
+    void setLogicalWidth(Length v)
+    {
+        if (isHorizontalWritingMode()) {
+            SET_VAR(m_box, m_width, v);
+        } else {
+            SET_VAR(m_box, m_height, v);
+        }
+    }
+
+    void setLogicalHeight(Length v)
+    {
+        if (isHorizontalWritingMode()) {
+            SET_VAR(m_box, m_height, v);
+        } else {
+            SET_VAR(m_box, m_width, v);
+        }
+    }
+
     void setMinWidth(Length v) { SET_VAR(m_box, m_minWidth, v); }
     void setMaxWidth(Length v) { SET_VAR(m_box, m_maxWidth, v); }
     void setMinHeight(Length v) { SET_VAR(m_box, m_minHeight, v); }
