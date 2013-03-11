@@ -42,118 +42,19 @@ enum EdgeIntersectionType {
 };
 
 struct EdgeIntersection {
-    const ExclusionPolygonEdge* edge;
+    const FloatPolygonEdge* edge;
     FloatPoint point;
     EdgeIntersectionType type;
 };
 
-static inline float determinant(const FloatSize& a, const FloatSize& b)
+static inline float leftSide(const FloatPoint& vertex1, const FloatPoint& vertex2, const FloatPoint& point)
 {
-    return a.width() * b.height() - a.height() * b.width();
+    return ((point.x() - vertex1.x()) * (vertex2.y() - vertex1.y())) - ((vertex2.x() - vertex1.x()) * (point.y() - vertex1.y()));
 }
 
-static inline bool areCollinearPoints(const FloatPoint& p0, const FloatPoint& p1, const FloatPoint& p2)
+static bool computeXIntersection(const FloatPolygonEdge* edgePointer, float y, EdgeIntersection& result)
 {
-    return !determinant(p1 - p0, p2 - p0);
-}
-
-static inline bool areCoincidentPoints(const FloatPoint& p0, const FloatPoint& p1)
-{
-    return p0.x() == p1.x() && p0.y() == p1.y();
-}
-
-static inline bool isPointOnLineSegment(const FloatPoint& vertex1, const FloatPoint& vertex2, const FloatPoint& point)
-{
-    return point.x() >= std::min(vertex1.x(), vertex2.x())
-        && point.x() <= std::max(vertex1.x(), vertex2.x())
-        && areCollinearPoints(vertex1, vertex2, point);
-}
-
-static inline unsigned nextVertexIndex(unsigned vertexIndex, unsigned nVertices, bool clockwise)
-{
-    return ((clockwise) ? vertexIndex + 1 : vertexIndex - 1 + nVertices) % nVertices;
-}
-
-unsigned ExclusionPolygon::findNextEdgeVertexIndex(unsigned vertexIndex1, bool clockwise) const
-{
-    unsigned nVertices = numberOfVertices();
-    unsigned vertexIndex2 = nextVertexIndex(vertexIndex1, nVertices, clockwise);
-
-    while (vertexIndex2 && areCoincidentPoints(vertexAt(vertexIndex1), vertexAt(vertexIndex2)))
-        vertexIndex2 = nextVertexIndex(vertexIndex2, nVertices, clockwise);
-
-    while (vertexIndex2) {
-        unsigned vertexIndex3 = nextVertexIndex(vertexIndex2, nVertices, clockwise);
-        if (!areCollinearPoints(vertexAt(vertexIndex1), vertexAt(vertexIndex2), vertexAt(vertexIndex3)))
-            break;
-        vertexIndex2 = vertexIndex3;
-    }
-
-    return vertexIndex2;
-}
-
-ExclusionPolygon::ExclusionPolygon(PassOwnPtr<Vector<FloatPoint> > vertices, WindRule fillRule)
-    : ExclusionShape()
-    , m_vertices(vertices)
-    , m_fillRule(fillRule)
-{
-    unsigned nVertices = numberOfVertices();
-    m_edges.resize(nVertices);
-    m_empty = nVertices < 3;
-
-    if (nVertices)
-        m_boundingBox.setLocation(vertexAt(0));
-
-    if (m_empty)
-        return;
-
-    unsigned minVertexIndex = 0;
-    for (unsigned i = 1; i < nVertices; ++i) {
-        const FloatPoint& vertex = vertexAt(i);
-        if (vertex.y() < vertexAt(minVertexIndex).y() || (vertex.y() == vertexAt(minVertexIndex).y() && vertex.x() < vertexAt(minVertexIndex).x()))
-            minVertexIndex = i;
-    }
-    FloatPoint nextVertex = vertexAt((minVertexIndex + 1) % nVertices);
-    FloatPoint prevVertex = vertexAt((minVertexIndex + nVertices - 1) % nVertices);
-    bool clockwise = determinant(vertexAt(minVertexIndex) - prevVertex, nextVertex - prevVertex) > 0;
-
-    unsigned edgeIndex = 0;
-    unsigned vertexIndex1 = 0;
-    do {
-        m_boundingBox.extend(vertexAt(vertexIndex1));
-        unsigned vertexIndex2 = findNextEdgeVertexIndex(vertexIndex1, clockwise);
-        m_edges[edgeIndex].m_polygon = this;
-        m_edges[edgeIndex].m_vertexIndex1 = vertexIndex1;
-        m_edges[edgeIndex].m_vertexIndex2 = vertexIndex2;
-        m_edges[edgeIndex].m_edgeIndex = edgeIndex;
-        ++edgeIndex;
-        vertexIndex1 = vertexIndex2;
-    } while (vertexIndex1);
-
-    if (edgeIndex > 3) {
-        const ExclusionPolygonEdge& firstEdge = m_edges[0];
-        const ExclusionPolygonEdge& lastEdge = m_edges[edgeIndex - 1];
-        if (areCollinearPoints(lastEdge.vertex1(), lastEdge.vertex2(), firstEdge.vertex2())) {
-            m_edges[0].m_vertexIndex1 = lastEdge.m_vertexIndex1;
-            edgeIndex--;
-        }
-    }
-
-    m_edges.resize(edgeIndex);
-    m_empty = m_edges.size() < 3;
-
-    if (m_empty)
-        return;
-
-    for (unsigned i = 0; i < m_edges.size(); ++i) {
-        ExclusionPolygonEdge* edge = &m_edges[i];
-        m_edgeTree.add(EdgeInterval(edge->minY(), edge->maxY(), edge));
-    }
-}
-
-static bool computeXIntersection(const ExclusionPolygonEdge* edgePointer, float y, EdgeIntersection& result)
-{
-    const ExclusionPolygonEdge& edge = *edgePointer;
+    const FloatPolygonEdge& edge = *edgePointer;
 
     if (edge.minY() > y || edge.maxY() < y)
         return false;
@@ -192,8 +93,8 @@ static inline bool getVertexIntersectionVertices(const EdgeIntersection& interse
         return false;
 
     ASSERT(intersection.edge && intersection.edge->polygon());
-    const ExclusionPolygon& polygon = *(intersection.edge->polygon());
-    const ExclusionPolygonEdge& thisEdge = *(intersection.edge);
+    const FloatPolygon& polygon = *(intersection.edge->polygon());
+    const FloatPolygonEdge& thisEdge = *(intersection.edge);
 
     if ((intersection.type == VertexMinY && (thisEdge.vertex1().y() < thisEdge.vertex2().y()))
         || (intersection.type == VertexMaxY && (thisEdge.vertex1().y() > thisEdge.vertex2().y()))) {
@@ -226,18 +127,19 @@ static bool compareEdgeIntersectionX(const EdgeIntersection& intersection1, cons
     return (x1 == x2) ? intersection1.type < intersection2.type : x1 < x2;
 }
 
-void ExclusionPolygon::computeXIntersections(float y, bool isMinY, Vector<ExclusionInterval>& result) const
+static void computeXIntersections(const FloatPolygon& polygon, float y, bool isMinY, Vector<ExclusionInterval>& result)
 {
-    Vector<ExclusionPolygon::EdgeInterval> overlappingEdges;
-    m_edgeTree.allOverlaps(ExclusionPolygon::EdgeInterval(y, y, 0), overlappingEdges);
+    Vector<const FloatPolygonEdge*> edges;
+    if (!polygon.overlappingEdges(y, y, edges))
+        return;
 
     Vector<EdgeIntersection> intersections;
     EdgeIntersection intersection;
-    for (unsigned i = 0; i < overlappingEdges.size(); ++i) {
-        ExclusionPolygonEdge* edge = static_cast<ExclusionPolygonEdge*>(overlappingEdges[i].data());
-        if (computeXIntersection(edge, y, intersection) && intersection.type != VertexYBoth)
+    for (unsigned i = 0; i < edges.size(); ++i) {
+        if (computeXIntersection(edges[i], y, intersection) && intersection.type != VertexYBoth)
             intersections.append(intersection);
     }
+
     if (intersections.size() < 2)
         return;
 
@@ -263,10 +165,10 @@ void ExclusionPolygon::computeXIntersections(float y, bool isMinY, Vector<Exclus
             }
         }
 
-        const ExclusionPolygonEdge& thisEdge = *thisIntersection.edge;
+        const FloatPolygonEdge& thisEdge = *thisIntersection.edge;
         bool evenOddCrossing = !windCount;
 
-        if (fillRule() == RULE_EVENODD) {
+        if (polygon.fillRule() == RULE_EVENODD) {
             windCount += (thisEdge.vertex2().y() > thisEdge.vertex1().y()) ? 1 : -1;
             evenOddCrossing = evenOddCrossing || !windCount;
         }
@@ -295,15 +197,15 @@ void ExclusionPolygon::computeXIntersections(float y, bool isMinY, Vector<Exclus
     }
 }
 
-// Return the X projections of the edges that overlap y1,y2.
-void ExclusionPolygon::computeEdgeIntersections(float y1, float y2, Vector<ExclusionInterval>& result) const
+static void computeOverlappingEdgeXProjections(const FloatPolygon& polygon, float y1, float y2, Vector<ExclusionInterval>& result)
 {
-    Vector<ExclusionPolygon::EdgeInterval> overlappingEdges;
-    m_edgeTree.allOverlaps(ExclusionPolygon::EdgeInterval(y1, y2, 0), overlappingEdges);
+    Vector<const FloatPolygonEdge*> edges;
+    if (!polygon.overlappingEdges(y1, y2, edges))
+        return;
 
     EdgeIntersection intersection;
-    for (unsigned i = 0; i < overlappingEdges.size(); ++i) {
-        const ExclusionPolygonEdge *edge = static_cast<ExclusionPolygonEdge*>(overlappingEdges[i].data());
+    for (unsigned i = 0; i < edges.size(); ++i) {
+        const FloatPolygonEdge *edge = edges[i];
         float x1;
         float x2;
 
@@ -338,14 +240,14 @@ void ExclusionPolygon::getExcludedIntervals(float logicalTop, float logicalHeigh
     float y2 = y1 + logicalHeight;
 
     Vector<ExclusionInterval> y1XIntervals, y2XIntervals;
-    computeXIntersections(y1, true, y1XIntervals);
-    computeXIntersections(y2, false, y2XIntervals);
+    computeXIntersections(m_polygon, y1, true, y1XIntervals);
+    computeXIntersections(m_polygon, y2, false, y2XIntervals);
 
     Vector<ExclusionInterval> mergedIntervals;
     mergeExclusionIntervals(y1XIntervals, y2XIntervals, mergedIntervals);
 
     Vector<ExclusionInterval> edgeIntervals;
-    computeEdgeIntersections(y1, y2, edgeIntervals);
+    computeOverlappingEdgeXProjections(m_polygon, y1, y2, edgeIntervals);
 
     Vector<ExclusionInterval> excludedIntervals;
     mergeExclusionIntervals(mergedIntervals, edgeIntervals, excludedIntervals);
@@ -365,14 +267,14 @@ void ExclusionPolygon::getIncludedIntervals(float logicalTop, float logicalHeigh
     float y2 = y1 + logicalHeight;
 
     Vector<ExclusionInterval> y1XIntervals, y2XIntervals;
-    computeXIntersections(y1, true, y1XIntervals);
-    computeXIntersections(y2, false, y2XIntervals);
+    computeXIntersections(m_polygon, y1, true, y1XIntervals);
+    computeXIntersections(m_polygon, y2, false, y2XIntervals);
 
     Vector<ExclusionInterval> commonIntervals;
     intersectExclusionIntervals(y1XIntervals, y2XIntervals, commonIntervals);
 
     Vector<ExclusionInterval> edgeIntervals;
-    computeEdgeIntersections(y1, y2, edgeIntervals);
+    computeOverlappingEdgeXProjections(m_polygon, y1, y2, edgeIntervals);
 
     Vector<ExclusionInterval> includedIntervals;
     subtractExclusionIntervals(commonIntervals, edgeIntervals, includedIntervals);
@@ -383,98 +285,19 @@ void ExclusionPolygon::getIncludedIntervals(float logicalTop, float logicalHeigh
     }
 }
 
-static inline float leftSide(const FloatPoint& vertex1, const FloatPoint& vertex2, const FloatPoint& point)
-{
-    return ((point.x() - vertex1.x()) * (vertex2.y() - vertex1.y())) - ((vertex2.x() - vertex1.x()) * (point.y() - vertex1.y()));
-}
-
-bool ExclusionPolygon::contains(const FloatPoint& point) const
-{
-    if (!m_boundingBox.contains(point))
-        return false;
-
-    int windingNumber = 0;
-    for (unsigned i = 0; i < numberOfEdges(); ++i) {
-        const FloatPoint& vertex1 = edgeAt(i).vertex1();
-        const FloatPoint& vertex2 = edgeAt(i).vertex2();
-        if (isPointOnLineSegment(vertex1, vertex2, point))
-            return true;
-        if (vertex2.y() < point.y()) {
-            if ((vertex1.y() > point.y()) && (leftSide(vertex1, vertex2, point) > 0))
-                ++windingNumber;
-        } else if (vertex2.y() > point.y()) {
-            if ((vertex1.y() <= point.y()) && (leftSide(vertex1, vertex2, point) < 0))
-                --windingNumber;
-        }
-    }
-
-    return windingNumber;
-}
-
-bool VertexPair::overlapsRect(const FloatRect& rect) const
-{
-    bool boundsOverlap = (minX() < rect.maxX()) && (maxX() > rect.x()) && (minY() < rect.maxY()) && (maxY() > rect.y());
-    if (!boundsOverlap)
-        return false;
-
-    float leftSideValues[4] = {
-        leftSide(vertex1(), vertex2(), rect.minXMinYCorner()),
-        leftSide(vertex1(), vertex2(), rect.maxXMinYCorner()),
-        leftSide(vertex1(), vertex2(), rect.minXMaxYCorner()),
-        leftSide(vertex1(), vertex2(), rect.maxXMaxYCorner())
-    };
-
-    int currentLeftSideSign = 0;
-    for (unsigned i = 0; i < 4; ++i) {
-        if (!leftSideValues[i])
-            continue;
-        int leftSideSign = leftSideValues[i] > 0 ? 1 : -1;
-        if (!currentLeftSideSign)
-            currentLeftSideSign = leftSideSign;
-        else if (currentLeftSideSign != leftSideSign)
-            return true;
-    }
-
-    return false;
-}
-
 static inline bool isReflexVertex(const FloatPoint& prevVertex, const FloatPoint& vertex, const FloatPoint& nextVertex)
 {
     return leftSide(prevVertex, nextVertex, vertex) < 0;
 }
 
-bool VertexPair::intersection(const VertexPair& other, FloatPoint& point) const
+static inline bool firstFitRectInPolygon(const FloatPolygon& polygon, const FloatRect& rect, unsigned offsetEdgeIndex1, unsigned offsetEdgeIndex2)
 {
-    // See: http://paulbourke.net/geometry/pointlineplane/, "Intersection point of two lines in 2 dimensions"
+    Vector<const FloatPolygonEdge*> edges;
+    if (!polygon.overlappingEdges(rect.y(), rect.maxY(), edges))
+        return true;
 
-    const FloatSize& thisDelta = vertex2() - vertex1();
-    const FloatSize& otherDelta = other.vertex2() - other.vertex1();
-    float denominator = determinant(thisDelta, otherDelta);
-    if (!denominator)
-        return false;
-
-    // The two line segments: "this" vertex1,vertex2 and "other" vertex1,vertex2, have been defined
-    // in parametric form. Each point on the line segment is: vertex1 + u * (vertex2 - vertex1),
-    // when 0 <= u <= 1. We're computing the values of u for each line at their intersection point.
-
-    const FloatSize& vertex1Delta = vertex1() - other.vertex1();
-    float uThisLine = determinant(otherDelta, vertex1Delta) / denominator;
-    float uOtherLine = determinant(thisDelta, vertex1Delta) / denominator;
-
-    if (uThisLine < 0 || uOtherLine < 0 || uThisLine > 1 || uOtherLine > 1)
-        return false;
-
-    point = vertex1() + uThisLine * thisDelta;
-    return true;
-}
-
-bool ExclusionPolygon::firstFitRectInPolygon(const FloatRect& rect, unsigned offsetEdgeIndex1, unsigned offsetEdgeIndex2) const
-{
-    Vector<ExclusionPolygon::EdgeInterval> overlappingEdges;
-    m_edgeTree.allOverlaps(ExclusionPolygon::EdgeInterval(rect.y(), rect.maxY(), 0), overlappingEdges);
-
-    for (unsigned i = 0; i < overlappingEdges.size(); ++i) {
-        const ExclusionPolygonEdge* edge = static_cast<ExclusionPolygonEdge*>(overlappingEdges[i].data());
+    for (unsigned i = 0; i < edges.size(); ++i) {
+        const FloatPolygonEdge* edge = edges[i];
         if (edge->edgeIndex() != offsetEdgeIndex1 && edge->edgeIndex() != offsetEdgeIndex2 && edge->overlapsRect(rect))
             return false;
     }
@@ -493,24 +316,25 @@ static inline bool aboveOrToTheLeft(const FloatRect& r1, const FloatRect& r2)
 
 bool ExclusionPolygon::firstIncludedIntervalLogicalTop(float minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, float& result) const
 {
-    if (minLogicalIntervalSize.width() > m_boundingBox.width())
+    const FloatRect boundingBox = m_polygon.boundingBox();
+    if (minLogicalIntervalSize.width() > boundingBox.width())
         return false;
 
-    float minY = std::max(m_boundingBox.y(), minLogicalIntervalTop);
+    float minY = std::max(boundingBox.y(), minLogicalIntervalTop);
     float maxY = minY + minLogicalIntervalSize.height();
 
-    if (maxY > m_boundingBox.maxY())
+    if (maxY > boundingBox.maxY())
         return false;
 
-    Vector<ExclusionPolygon::EdgeInterval> overlappingEdges;
-    m_edgeTree.allOverlaps(ExclusionPolygon::EdgeInterval(minLogicalIntervalTop, m_boundingBox.maxY(), 0), overlappingEdges);
+    Vector<const FloatPolygonEdge*> edges;
+    m_polygon.overlappingEdges(minLogicalIntervalTop, boundingBox.maxY(), edges);
 
     float dx = minLogicalIntervalSize.width() / 2;
     float dy = minLogicalIntervalSize.height() / 2;
     Vector<OffsetPolygonEdge> offsetEdges;
 
-    for (unsigned i = 0; i < overlappingEdges.size(); ++i) {
-        const ExclusionPolygonEdge& edge = *static_cast<ExclusionPolygonEdge*>(overlappingEdges[i].data());
+    for (unsigned i = 0; i < edges.size(); ++i) {
+        const FloatPolygonEdge& edge = *(edges[i]);
         const FloatPoint& vertex0 = edge.previousEdge().vertex1();
         const FloatPoint& vertex1 = edge.vertex1();
         const FloatPoint& vertex2 = edge.vertex2();
@@ -540,7 +364,7 @@ bool ExclusionPolygon::firstIncludedIntervalLogicalTop(float minLogicalIntervalT
                 offsetEdges.append(offsetEdgeBuffer[j]);
     }
 
-    offsetEdges.append(OffsetPolygonEdge(*this, minLogicalIntervalTop, FloatSize(0, dy)));
+    offsetEdges.append(OffsetPolygonEdge(m_polygon, minLogicalIntervalTop, FloatSize(0, dy)));
 
     FloatPoint offsetEdgesIntersection;
     FloatRect firstFitRect;
@@ -553,8 +377,8 @@ bool ExclusionPolygon::firstIncludedIntervalLogicalTop(float minLogicalIntervalT
                 FloatRect potentialFirstFitRect(potentialFirstFitLocation, minLogicalIntervalSize);
                 if ((potentialFirstFitLocation.y() >= minLogicalIntervalTop)
                     && (!firstFitFound || aboveOrToTheLeft(potentialFirstFitRect, firstFitRect))
-                    && contains(offsetEdgesIntersection)
-                    && firstFitRectInPolygon(potentialFirstFitRect, offsetEdges[i].edgeIndex(), offsetEdges[j].edgeIndex())) {
+                    && m_polygon.contains(offsetEdgesIntersection)
+                    && firstFitRectInPolygon(m_polygon, potentialFirstFitRect, offsetEdges[i].edgeIndex(), offsetEdges[j].edgeIndex())) {
                     firstFitFound = true;
                     firstFitRect = potentialFirstFitRect;
                 }

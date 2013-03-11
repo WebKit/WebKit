@@ -5590,6 +5590,8 @@ webcore_platform_sources += \
 	Source/WebCore/platform/graphics/FloatPoint3D.h \
 	Source/WebCore/platform/graphics/FloatPoint.cpp \
 	Source/WebCore/platform/graphics/FloatPoint.h \
+	Source/WebCore/platform/graphics/FloatPolygon.cpp \
+	Source/WebCore/platform/graphics/FloatPolygon.h \
 	Source/WebCore/platform/graphics/FloatQuad.cpp \
 	Source/WebCore/platform/graphics/FloatQuad.h \
 	Source/WebCore/platform/graphics/FloatRect.cpp \

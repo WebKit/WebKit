@@ -1007,6 +1007,7 @@ SOURCES += \
     platform/graphics/CrossfadeGeneratedImage.cpp \
     platform/graphics/FloatPoint3D.cpp \
     platform/graphics/FloatPoint.cpp \
+    platform/graphics/FloatPolygon.cpp \
     platform/graphics/FloatQuad.cpp \
     platform/graphics/FloatRect.cpp \
     platform/graphics/FloatSize.cpp \
@@ -2233,6 +2234,7 @@ HEADERS += \
     platform/graphics/filters/SourceGraphic.h \
     platform/graphics/FloatPoint3D.h \
     platform/graphics/FloatPoint.h \
+    platform/graphics/FloatPolygon.h \
     platform/graphics/FloatQuad.h \
     platform/graphics/FloatRect.h \
     platform/graphics/FloatSize.h \

@@ -4814,6 +4814,7 @@
         ],
         'webcore_platform_geometry_files': [
             'platform/graphics/FloatPoint.cpp',
+            'platform/graphics/FloatPolygon.cpp',
             'platform/graphics/FloatPoint3D.cpp',
             'platform/graphics/FloatQuad.cpp',
             'platform/graphics/FloatRect.cpp',

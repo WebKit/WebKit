@@ -29798,6 +29798,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\FloatPolygon.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\FloatPolygon.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\FloatQuad.cpp"
 					>
 				</File>

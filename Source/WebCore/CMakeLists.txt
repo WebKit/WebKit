@@ -1920,6 +1920,7 @@ set(WebCore_SOURCES
     platform/graphics/CrossfadeGeneratedImage.cpp
     platform/graphics/FloatPoint.cpp
     platform/graphics/FloatPoint3D.cpp
+    platform/graphics/FloatPolygon.cpp
     platform/graphics/FloatQuad.cpp
     platform/graphics/FloatRect.cpp
     platform/graphics/FloatSize.cpp

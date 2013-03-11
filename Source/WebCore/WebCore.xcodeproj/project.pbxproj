@@ -1923,6 +1923,8 @@
 		6EBF0E7612A9868800DB170A /* JSEXTDrawBuffers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EBF0E7412A9868800DB170A /* JSEXTDrawBuffers.cpp */; };
 		6EBF0E7712A9868800DB1709 /* JSOESTextureFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBF0E7512A9868800DB1709 /* JSOESTextureFloat.h */; };
 		6EBF0E7712A9868800DB170A /* JSEXTDrawBuffers.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBF0E7512A9868800DB170A /* JSEXTDrawBuffers.h */; };
+		6EC480A116EA638A00A48DCB /* FloatPolygon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EC4809F16EA638A00A48DCB /* FloatPolygon.cpp */; };
+		6EC480A216EA638A00A48DCB /* FloatPolygon.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EC480A016EA638A00A48DCB /* FloatPolygon.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6ED878C4147493F4004C3597 /* RenderTableCaption.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6ED878C2147493F4004C3597 /* RenderTableCaption.cpp */; };
 		6ED878C5147493F4004C3597 /* RenderTableCaption.h in Headers */ = {isa = PBXBuildFile; fileRef = 6ED878C3147493F4004C3597 /* RenderTableCaption.h */; };
 		6EE8A77210F803F3005A4A24 /* JSWebGLContextAttributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EE8A77010F803F3005A4A24 /* JSWebGLContextAttributes.cpp */; };
@@ -9412,6 +9414,8 @@
 		6EBF0E7412A9868800DB170A /* JSEXTDrawBuffers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEXTDrawBuffers.cpp; sourceTree = "<group>"; };
 		6EBF0E7512A9868800DB1709 /* JSOESTextureFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESTextureFloat.h; sourceTree = "<group>"; };
 		6EBF0E7512A9868800DB170A /* JSEXTDrawBuffers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEXTDrawBuffers.h; sourceTree = "<group>"; };
+		6EC4809F16EA638A00A48DCB /* FloatPolygon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloatPolygon.cpp; sourceTree = "<group>"; };
+		6EC480A016EA638A00A48DCB /* FloatPolygon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FloatPolygon.h; sourceTree = "<group>"; };
 		6ED878C2147493F4004C3597 /* RenderTableCaption.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTableCaption.cpp; sourceTree = "<group>"; };
 		6ED878C3147493F4004C3597 /* RenderTableCaption.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTableCaption.h; sourceTree = "<group>"; };
 		6EE8A77010F803F3005A4A24 /* JSWebGLContextAttributes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLContextAttributes.cpp; sourceTree = "<group>"; };
@@ -20699,6 +20703,8 @@
 				6E67D2A81280E8BD008758F7 /* Extensions3D.h */,
 				B275353A0B053814002CE64F /* FloatPoint.cpp */,
 				B275353B0B053814002CE64F /* FloatPoint.h */,
+				6EC4809F16EA638A00A48DCB /* FloatPolygon.cpp */,
+				6EC480A016EA638A00A48DCB /* FloatPolygon.h */,
 				B2E27C9D0B0F2B0900F17C7B /* FloatPoint3D.cpp */,
 				B2E27C9E0B0F2B0900F17C7B /* FloatPoint3D.h */,
 				0FD723810EC8BD9300CA5DD7 /* FloatQuad.cpp */,
@@ -23274,6 +23280,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6EC480A216EA638A00A48DCB /* FloatPolygon.h in Headers */,
 				FE115FAB167988CD00249134 /* AbstractDatabaseServer.h in Headers */,
 				FE9E89FC16E2DC0500A908F8 /* OriginLock.h in Headers */,
 				FE4AADEE16D2C37400026FFC /* AbstractSQLStatement.h in Headers */,
@@ -29906,7 +29913,9 @@
 				7E66E23316D6EB6C00F7E7FF /* WebGLCompressedTextureATC.cpp in Sources */,
 				7EA30F6916DFFE7500257D0B /* JSWebGLCompressedTextureATC.cpp in Sources */,
 				2D8287F616E4A0380086BD00 /* HitTestLocation.cpp in Sources */,
+				6EC480A116EA638A00A48DCB /* FloatPolygon.cpp in Sources */,
 				A895709F16E9BD5900184E55 /* HTMLIdentifier.cpp in Sources */,
+
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
