@@ -1,3 +1,12 @@
+2013-03-11  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Bump version
+        https://bugs.webkit.org/show_bug.cgi?id=112055
+
+        Reviewed by Martin Robinson.
+
+        * Source/autotools/Versions.m4: Bump to 2.1.0
+
 2013-03-11  Jeff Rogers  <jrogers@rim.com>
 
         [BlackBerry] Disable MathML support
