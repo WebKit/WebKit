@@ -1,3 +1,16 @@
+2013-03-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] WebKit2-only build fails
+        https://bugs.webkit.org/show_bug.cgi?id=112033
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Split the list of files the docs-build.stamp target depends on into the
+        generic part, WebKit1-specific part and WebKit2-specific part.
+        * TestWebKitAPI/GNUmakefile.am: The TestGtk executable should not link agains libwebkitgtk
+        as it is not WebKit1-specific, but should rather link to libWebCore.la and libWebCoreGtk.la
+        directly.
+
 2013-03-11  Dima Gorbik  <dgorbik@apple.com>
 
         Adding myself to the committers list.

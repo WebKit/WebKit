@@ -1,3 +1,14 @@
+2013-03-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] WebKit2-only build fails
+        https://bugs.webkit.org/show_bug.cgi?id=112033
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Introduce the artifical dependency of libwebkit2gtk on libwebkitgtk only
+        if building WebKit1 as well. Similarly with the WebKitPluginProcess, depend on libwebkitgtk
+        only if building WebKit1, the dependency is otherwise not necessary.
+
 2013-03-11  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] Search With [your search provider here] should use NSPerformService in WebKit2/Mac
