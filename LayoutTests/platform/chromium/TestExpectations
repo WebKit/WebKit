@@ -4337,6 +4337,12 @@ webkit.org/b/107341 [ Debug ] inspector/profiler/memory-instrumentation-cached-i
 
 webkit.org/b/108163 [ Debug ] platform/chromium/virtual/deferred/fast/images/icon-0colors.html [ Crash ]
 
+# Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=70634
+webkit.org/b/109507 compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
+webkit.org/b/109507 compositing/layer-creation/fixed-position-out-of-view-scaled.html [ Failure ]
+webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
+webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/layer-creation/fixed-position-out-of-view-scaled.html [ Failure ]
+
 # Flaky on most platforms
 webkit.org/b/110873 fast/sub-pixel/transformed-iframe-copy-on-scroll.html [ ImageOnlyFailure Pass ]
 

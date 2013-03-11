@@ -10,6 +10,7 @@
           (bounds 100.00 100.00)
           (opacity 0.50)
           (contentsOpaque 1)
+          (drawsContent 1)
         )
       )
     )
