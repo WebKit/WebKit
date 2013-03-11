@@ -194,7 +194,7 @@ public:
 
     void didChangePriority(ResourceLoadPriority);
 
-    ResourceRequest& firstRequest() const;
+    ResourceRequest& firstRequest();
     const String& lastHTTPMethod() const;
 
     void fireFailure(Timer<ResourceHandle>*);
