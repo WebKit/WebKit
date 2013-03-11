@@ -25,7 +25,6 @@ layer at (8,8) size 320x240
     RenderBlock {DIV} at (0,205) size 320x35
 layer at (8,8) size 320x205
   RenderBlock (relative positioned) {DIV} at (0,0) size 320x205 [color=#FFFFFF]
-    RenderInline {SPAN} at (0,0) size 0x0
 layer at (8,8) size 18x205
   RenderBlock (positioned) {DIV} at (0,0) size 18x205
     RenderInline {DIV} at (0,0) size 18x115 [bgcolor=#000000CC]
