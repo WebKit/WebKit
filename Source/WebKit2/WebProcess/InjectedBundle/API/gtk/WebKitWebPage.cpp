@@ -106,8 +106,11 @@ static void didSameDocumentNavigationForFrame(WKBundlePageRef page, WKBundleFram
     webkitWebPageSetURI(WEBKIT_WEB_PAGE(clientInfo), toImpl(frame)->coreFrame()->document()->url().string().utf8());
 }
 
-static void didFinishDocumentLoadForFrame(WKBundlePageRef, WKBundleFrameRef, WKTypeRef*, const void *clientInfo)
+static void didFinishDocumentLoadForFrame(WKBundlePageRef, WKBundleFrameRef frame, WKTypeRef*, const void *clientInfo)
 {
+    if (!WKBundleFrameIsMainFrame(frame))
+        return;
+
     g_signal_emit(WEBKIT_WEB_PAGE(clientInfo), signals[DOCUMENT_LOADED], 0);
 }
 

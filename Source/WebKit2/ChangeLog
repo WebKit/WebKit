@@ -1,3 +1,17 @@
+2013-03-11  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        WebKitWebPage::document-loaded signal emitted multiple times
+
+        Reviewed by Carlos Garcia Campos.
+
+        This happens in websites with multiple frames, because the signal
+        is emitted for every frame.
+
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (didFinishDocumentLoadForFrame): Add an early return to make sure
+        the WebKitWebPage::document-loaded signal is only emitted for the
+        main frame.
+
 2013-03-10  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK][WK2] Add API to retrieve a snapshot from a webview
