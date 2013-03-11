@@ -1101,6 +1101,9 @@ public:
     void didAddWheelEventHandler();
     void didRemoveWheelEventHandler();
 
+    double lastHandledUserGestureTimestamp() const { return m_lastHandledUserGestureTimestamp; }
+    void resetLastHandledUserGestureTimestamp();
+
 #if ENABLE(TOUCH_EVENTS)
     bool hasTouchEventHandlers() const { return (m_touchEventTargets.get()) ? m_touchEventTargets->size() : false; }
 #else
@@ -1512,6 +1515,8 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     OwnPtr<TouchEventTargetSet> m_touchEventTargets;
 #endif
+
+    double m_lastHandledUserGestureTimestamp;
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     RefPtr<ScriptedAnimationController> m_scriptedAnimationController;

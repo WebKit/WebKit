@@ -58,6 +58,7 @@ static const int sizingSmallWidthThreshold = 250;
 static const int sizingMediumWidthThreshold = 450;
 static const int sizingMediumHeightThreshold = 300;
 static const float sizingFullPageAreaRatioThreshold = 0.96;
+static const float autostartSoonAfterUserGestureThreshold = 5.0;
 
 // This delay should not exceed the snapshot delay in PluginView.cpp
 static const double simulatedMouseClickTimerDelay = .75;
@@ -74,6 +75,7 @@ HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Doc
     , m_isPrimarySnapshottedPlugIn(false)
     , m_simulatedMouseClickTimer(this, &HTMLPlugInImageElement::simulatedMouseClickTimerFired, simulatedMouseClickTimerDelay)
     , m_swapRendererTimer(this, &HTMLPlugInImageElement::swapRendererTimerFired)
+    , m_createdDuringUserGesture(ScriptController::processingUserGesture())
 {
     setHasCustomStyleCallbacks();
 }
@@ -441,6 +443,19 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
 
     if (ScriptController::processingUserGesture()) {
         LOG(Plugins, "%p Script is processing user gesture, set to play", this);
+        return;
+    }
+
+    if (m_createdDuringUserGesture) {
+        LOG(Plugins, "%p Plug-in was created when processing user gesture, set to play", this);
+        return;
+    }
+
+    double lastKnownUserGestureTimestamp = document()->lastHandledUserGestureTimestamp();
+    if (!inMainFrame && document()->page()->mainFrame() && document()->page()->mainFrame()->document())
+        lastKnownUserGestureTimestamp = std::max(lastKnownUserGestureTimestamp, document()->page()->mainFrame()->document()->lastHandledUserGestureTimestamp());
+    if (currentTime() - lastKnownUserGestureTimestamp < autostartSoonAfterUserGestureThreshold) {
+        LOG(Plugins, "%p Plug-in was created shortly after a user gesture, set to play", this);
         return;
     }
 

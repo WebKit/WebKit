@@ -476,6 +476,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_writeRecursionIsTooDeep(false)
     , m_writeRecursionDepth(0)
     , m_wheelEventHandlerCount(0)
+    , m_lastHandledUserGestureTimestamp(0)
     , m_pendingTasksTimer(this, &Document::pendingTasksTimerFired)
     , m_scheduledTasksAreSuspended(false)
     , m_visualUpdatesAllowed(true)
@@ -5676,6 +5677,11 @@ void Document::didRemoveEventTargetNode(Node* handler)
     }
 }
 #endif
+
+void Document::resetLastHandledUserGestureTimestamp()
+{
+    m_lastHandledUserGestureTimestamp = currentTime();
+}
 
 HTMLIFrameElement* Document::seamlessParentIFrame() const
 {

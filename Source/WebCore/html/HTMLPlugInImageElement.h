@@ -125,6 +125,7 @@ private:
     DeferrableOneShotTimer<HTMLPlugInImageElement> m_simulatedMouseClickTimer;
     Timer<HTMLPlugInImageElement> m_swapRendererTimer;
     RefPtr<Image> m_snapshotImage;
+    bool m_createdDuringUserGesture;
 };
 
 inline HTMLPlugInImageElement* toHTMLPlugInImageElement(Node* node)
