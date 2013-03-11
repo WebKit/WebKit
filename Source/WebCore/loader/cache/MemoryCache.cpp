@@ -600,13 +600,20 @@ void MemoryCache::removeResourcesWithOrigin(SecurityOrigin* origin)
 
 void MemoryCache::getOriginsWithCache(SecurityOriginSet& origins)
 {
-    CachedResourceMap::iterator e = m_resources.end();
-    for (CachedResourceMap::iterator it = m_resources.begin(); it != e; ++it)
 #if ENABLE(CACHE_PARTITIONING)
-        origins.add(SecurityOrigin::createFromString(it->value->begin()->value->url()));
+    DEFINE_STATIC_LOCAL(String, httpString, ("http"));
+#endif
+    CachedResourceMap::iterator e = m_resources.end();
+    for (CachedResourceMap::iterator it = m_resources.begin(); it != e; ++it) {
+#if ENABLE(CACHE_PARTITIONING)
+        if (it->value->begin()->key == emptyString())
+            origins.add(SecurityOrigin::createFromString(it->value->begin()->value->url()));
+        else
+            origins.add(SecurityOrigin::create(httpString, it->value->begin()->key, 0));
 #else
         origins.add(SecurityOrigin::createFromString(it->value->url()));
 #endif
+    }
 }
 
 void MemoryCache::removeFromLiveDecodedResourcesList(CachedResource* resource)

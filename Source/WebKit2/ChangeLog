@@ -1,3 +1,13 @@
+2013-03-11  Jeffrey Pfau  <jpfau@apple.com>
+
+        List cache partitions as units instead of as their contents
+        https://bugs.webkit.org/show_bug.cgi?id=111909
+
+        Reviewed by Maciej Stachowiak.
+
+        * WebProcess/ResourceCache/cf/WebResourceCacheManagerCFNet.cpp:
+        (WebKit::WebResourceCacheManager::cfURLCacheHostNames): Attempt to enumerate cache partitions based on information we have
+
 2013-01-30  Jer Noble  <jer.noble@apple.com>
 
         Full screen mode should not exit when application resigns active state.
