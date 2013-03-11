@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-NetworkStorageSession::NetworkStorageSession(CFURLStorageSessionRef platformSession)
+NetworkStorageSession::NetworkStorageSession(RetainPtr<CFURLStorageSessionRef> platformSession)
     : m_platformSession(platformSession)
     , m_isPrivate(false)
 {
@@ -55,9 +55,9 @@ void NetworkStorageSession::switchToNewTestingSession()
     // Set a private session for testing to avoid interfering with global cookies. This should be different from private browsing session.
     // FIXME: It looks like creating a new session with the same identifier may be just creating a reference to the same storage. See <rdar://problem/11571450> and <rdar://problem/12384380>.
 #if PLATFORM(MAC)
-    defaultNetworkStorageSession() = adoptPtr(new NetworkStorageSession(wkCreatePrivateStorageSession(CFSTR("Private WebKit Session"))));
+    defaultNetworkStorageSession() = adoptPtr(new NetworkStorageSession(adoptCF(wkCreatePrivateStorageSession(CFSTR("Private WebKit Session")))));
 #else
-    defaultNetworkStorageSession() = adoptPtr(new NetworkStorageSession(wkCreatePrivateStorageSession(CFSTR("Private WebKit Session"), defaultNetworkStorageSession()->platformSession())));
+    defaultNetworkStorageSession() = adoptPtr(new NetworkStorageSession(adoptCF(wkCreatePrivateStorageSession(CFSTR("Private WebKit Session"), defaultNetworkStorageSession()->platformSession()))));
 #endif
 }
 
@@ -93,9 +93,9 @@ PassOwnPtr<NetworkStorageSession> NetworkStorageSession::createPrivateBrowsingSe
     RetainPtr<CFStringRef> cfIdentifier = String(identifierBase + ".PrivateBrowsing").createCFString();
 
 #if PLATFORM(MAC)
-    OwnPtr<NetworkStorageSession> session = adoptPtr(new NetworkStorageSession(wkCreatePrivateStorageSession(cfIdentifier.get())));
+    OwnPtr<NetworkStorageSession> session = adoptPtr(new NetworkStorageSession(adoptCF(wkCreatePrivateStorageSession(cfIdentifier.get()))));
 #else
-    OwnPtr<NetworkStorageSession> session = adoptPtr(new NetworkStorageSession(wkCreatePrivateStorageSession(cfIdentifier.get(), defaultNetworkStorageSession()->platformSession())));
+    OwnPtr<NetworkStorageSession> session = adoptPtr(new NetworkStorageSession(adoptCF(wkCreatePrivateStorageSession(cfIdentifier.get(), defaultNetworkStorageSession()->platformSession()))));
 #endif
     session->m_isPrivate = true;
 
@@ -110,7 +110,7 @@ RetainPtr<CFHTTPCookieStorageRef> NetworkStorageSession::cookieStorage() const
 #endif
 
     if (m_platformSession)
-        return RetainPtr<CFHTTPCookieStorageRef>(AdoptCF, wkCopyHTTPCookieStorage(m_platformSession.get()));
+        return adoptCF(wkCopyHTTPCookieStorage(m_platformSession.get()));
 
 #if USE(CFNETWORK)
     return wkGetDefaultHTTPCookieStorage();

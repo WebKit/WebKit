@@ -66,7 +66,7 @@ public:
 
 private:
 #if PLATFORM(MAC) || USE(CFNETWORK)
-    NetworkStorageSession(CFURLStorageSessionRef platformSession);
+    NetworkStorageSession(RetainPtr<CFURLStorageSessionRef>);
     NetworkStorageSession();
     RetainPtr<CFURLStorageSessionRef> m_platformSession;
     bool m_isPrivate;
