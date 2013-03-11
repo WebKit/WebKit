@@ -1,3 +1,9 @@
+2013-03-10  Silvia Pfeiffer  <silviapf@chromium.org>
+
+        Unreviewed, add myself to commiters.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-03-08  Julie Parent  <jparent@chromium.org>
 
         Cleanup: Remove dead code.
