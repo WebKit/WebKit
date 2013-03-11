@@ -63,13 +63,13 @@ private:
   
 inline RenderSVGViewportContainer* toRenderSVGViewportContainer(RenderObject* object)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || !object->isSVGViewportContainer());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGViewportContainer());
     return static_cast<RenderSVGViewportContainer*>(object);
 }
 
 inline const RenderSVGViewportContainer* toRenderSVGViewportContainer(const RenderObject* object)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(!object || !object->isSVGViewportContainer());
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGViewportContainer());
     return static_cast<const RenderSVGViewportContainer*>(object);
 }
 
