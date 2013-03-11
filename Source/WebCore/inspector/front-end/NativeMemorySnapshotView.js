@@ -61,7 +61,7 @@ WebInspector.NativeSnapshotDataGrid = function(profile)
     };
     WebInspector.DataGrid.call(this, columns);
     this._profile = profile;
-    this._totalNode = new WebInspector.NativeSnapshotNode(profile._memoryBlock, profile._memoryBlock);
+    this._totalNode = new WebInspector.NativeSnapshotNode(profile._memoryBlock, profile);
     if (WebInspector.settings.showNativeSnapshotUninstrumentedSize.get()) {
         this.setRootNode(new WebInspector.DataGridNode(null, true));
         this.rootNode().appendChild(this._totalNode)
@@ -107,15 +107,14 @@ WebInspector.NativeSnapshotDataGrid.prototype = {
  * @constructor
  * @extends {WebInspector.DataGridNode}
  * @param {MemoryAgent.MemoryBlock} nodeData
- * @param {MemoryAgent.MemoryBlock} rootMemoryBlock
  */
-WebInspector.NativeSnapshotNode = function(nodeData, rootMemoryBlock)
+WebInspector.NativeSnapshotNode = function(nodeData, profile)
 {
     this._nodeData = nodeData;
-    this._rootMemoryBlock = rootMemoryBlock;
+    this._profile = profile;
     var viewProperties = WebInspector.MemoryBlockViewProperties._forMemoryBlock(nodeData);
     var data = { name: viewProperties._description, size: this._nodeData.size };
-    var hasChildren = !!nodeData.children && nodeData.children.length !== 0;
+    var hasChildren = this._addChildrenFromGraph();
     WebInspector.DataGridNode.call(this, data, hasChildren);
     this.addEventListener("populate", this._populate, this);
 }
@@ -185,7 +184,7 @@ WebInspector.NativeSnapshotNode.prototype = {
         }
 
         var sizeKB = this._nodeData.size / 1024;
-        var totalSize = this._rootMemoryBlock.size;
+        var totalSize = this._profile._memoryBlock.size;
         var percentage = this._nodeData.size / totalSize  * 100;
 
         var cell = document.createElement("td");
@@ -220,13 +219,50 @@ WebInspector.NativeSnapshotNode.prototype = {
 
     _populate: function() {
         this.removeEventListener("populate", this._populate, this);
+        if (this._nodeData.children)
+            this._addChildren();
+    },
+
+    _addChildren: function()
+    {
         this._nodeData.children.sort(this.dataGrid._sortingFunction.bind(this.dataGrid));
 
         for (var node in this._nodeData.children) {
             var nodeData = this._nodeData.children[node];
             if (WebInspector.settings.showNativeSnapshotUninstrumentedSize.get() || nodeData.name !== "Other")
-                this.appendChild(new WebInspector.NativeSnapshotNode(nodeData, this._rootMemoryBlock));
+                this.appendChild(new WebInspector.NativeSnapshotNode(nodeData, this._profile));
         }
+    },
+
+    _addChildrenFromGraph: function()
+    {
+        var memoryBlock = this._nodeData;
+        if (memoryBlock.children)
+             return memoryBlock.children.length > 0;
+        if (memoryBlock.name === "Image") {
+            this._addImageDetails();
+            return true;
+        }
+        return false;
+    },
+
+    _addImageDetails: function()
+    {
+        /**
+         * @param {WebInspector.NativeHeapSnapshotProxy} proxy
+         */
+        function didLoad(proxy)
+        {
+            function didReceiveImages(result)
+            {
+                this._nodeData.children = result;
+                if (this.expanded)
+                    this._addChildren();
+            }
+            proxy.images(didReceiveImages.bind(this));
+
+        }
+        this._profile.load(didLoad.bind(this));
     },
 
     __proto__: WebInspector.DataGridNode.prototype
@@ -426,6 +462,11 @@ WebInspector.NativeSnapshotProfileHeader.prototype = {
     snapshotConstructorName: function()
     {
         return "NativeHeapSnapshot";
+    },
+
+    snapshotProxyConstructor: function()
+    {
+        return WebInspector.NativeHeapSnapshotProxy;
     },
 
     addNativeSnapshotChunk: function(chunk)

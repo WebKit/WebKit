@@ -69,6 +69,24 @@ WebInspector.NativeHeapSnapshot.prototype = {
         return null;
     },
 
+    images: function()
+    {
+        var aggregatesByClassName = this.aggregates(false, "allObjects");
+        var images = aggregatesByClassName["WebCore::CachedImage"];
+        var result = [];
+        if (!images)
+            return result;
+        var node = this.rootNode();
+        for (var i = 0; i < images.idxs.length; i++) {
+            node.nodeIndex = images.idxs[i];
+            result.push({
+                name: node.name(),
+                size: node.retainedSize(),
+            });
+        }
+        return result;
+    },
+
     __proto__: WebInspector.HeapSnapshot.prototype
 };
 
