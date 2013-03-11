@@ -115,7 +115,7 @@ private:
 
     virtual bool hasLineIfEmpty() const { return true; }
 
-    Color itemBackgroundColor(unsigned listIndex) const;
+    void getItemBackgroundColor(unsigned listIndex, Color&, bool& itemHasCustomBackgroundColor) const;
 
     void createInnerBlock();
     void adjustInnerStyle();

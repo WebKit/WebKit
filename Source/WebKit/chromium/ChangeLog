@@ -1,3 +1,15 @@
+2013-03-11  Xiyuan Xia  <xiyuan@chromium.org>
+
+        [Chromium] chromium/linux breaks expectation of select popup background due to bad UA css rules
+        https://bugs.webkit.org/show_bug.cgi?id=111873
+
+        Reviewed by Tony Chang.
+
+        Update PopupMenuStyle constructor call sites.
+
+        * src/AutofillPopupMenuClient.cpp:
+        (WebKit::AutofillPopupMenuClient::initialize):
+
 2013-03-11  Abhishek Arya  <inferno@chromium.org>
 
         Add ASSERT_WITH_SECURITY_IMPLICATION to catch bad casts.

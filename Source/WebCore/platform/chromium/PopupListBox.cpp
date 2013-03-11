@@ -30,6 +30,7 @@
 #include "config.h"
 #include "PopupListBox.h"
 
+#include "CSSValueKeywords.h"
 #include "Font.h"
 #include "FontSelector.h"
 #include "FramelessScrollViewClient.h"
@@ -401,6 +402,16 @@ void PopupListBox::paintRow(GraphicsContext* gc, const IntRect& rect, int rowInd
     } else {
         backColor = style.backgroundColor();
         textColor = style.foregroundColor();
+
+#if OS(LINUX)
+        // On other platforms, the <option> background color is the same as the
+        // <select> background color. On Linux, that makes the <option>
+        // background color very dark, so by default, try to use a lighter
+        // background color for <option>s.
+        if (style.backgroundColorType() == PopupMenuStyle::DefaultBackgroundColor && RenderTheme::defaultTheme()->systemColor(CSSValueButtonface) == backColor)
+            backColor = RenderTheme::defaultTheme()->systemColor(CSSValueMenu);
+#endif
+
         // FIXME: for now the label color is hard-coded. It should be added to
         // the PopupMenuStyle.
         labelColor = Color(115, 115, 115);

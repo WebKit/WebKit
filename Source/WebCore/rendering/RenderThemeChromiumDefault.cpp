@@ -91,9 +91,12 @@ RenderThemeChromiumDefault::~RenderThemeChromiumDefault()
 Color RenderThemeChromiumDefault::systemColor(int cssValueId) const
 {
     static const Color defaultButtonGrayColor(0xffdddddd);
+    static const Color defaultMenuColor(0xfff7f7f7);
 
     if (cssValueId == CSSValueButtonface)
         return defaultButtonGrayColor;
+    if (cssValueId == CSSValueMenu)
+        return defaultMenuColor;
     return RenderTheme::systemColor(cssValueId);
 }
 
