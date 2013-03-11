@@ -4468,3 +4468,6 @@ webkit.org/b/111872 fast/dom/title-directionality-removeChild.html [ Pass Failur
 
 # Test is a performance test, not useful in debug
 webkit.org/b/111808 [ Debug ] fast/js/regress/nested-function-parsing-random.html [ Pass Timeout ]
+
+# Subtle pixel difference in debug only.
+webkit.org/b/112058 [ Debug SnowLeopard ] svg/custom/foreign-object-skew.svg [ Failure ]
