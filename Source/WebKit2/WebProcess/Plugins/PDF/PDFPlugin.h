@@ -114,6 +114,8 @@ private:
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) OVERRIDE;
     virtual String getSelectionString() const OVERRIDE;
 
+    virtual bool handleWheelEvent(const WebWheelEvent& event) OVERRIDE;
+
     // ScrollableArea functions.
     virtual void setScrollOffset(const WebCore::IntPoint&) OVERRIDE;
     virtual void invalidateScrollbarRect(WebCore::Scrollbar*, const WebCore::IntRect&) OVERRIDE;

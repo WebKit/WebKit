@@ -1,3 +1,26 @@
+2013-03-11  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin: Make scrolling between pages in non-continuous modes work
+        https://bugs.webkit.org/show_bug.cgi?id=111415
+        <rdar://problem/12555320>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/Plugins/PDF/PDFLayerControllerDetails.h:
+        Add some more PDFLayerController SPI.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        (PDFPlugin): Override handleWheelEvent.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::handleWheelEvent):
+        If PDFLayerController is in non-continuous mode, allow scrolling between
+        pages by intercepting scroll events, and checking whether we're at the
+        top or bottom of a page. If we are, and a single event exceeds the threshold
+        of 20px (0px for legacy scroll wheels), we jump to the next or previous
+        page and scroll to the right place. Do not allow momentum scrolling to
+        switch pages.
+
 2013-03-11  Mark Lam  <mark.lam@apple.com>
 
         Fix some WebDatabaseManagerProxy methods to only send to one WebProcsess

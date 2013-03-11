@@ -53,7 +53,8 @@
 
 - (void)setFrameSize:(CGSize)size;
 
-- (void)setDisplayMode:(int)mode;
+- (PDFDisplayMode)displayMode;
+- (void)setDisplayMode:(PDFDisplayMode)mode;
 - (void)setDisplaysPageBreaks:(BOOL)pageBreaks;
 
 - (CGFloat)contentScaleFactor;
@@ -91,6 +92,11 @@
 - (void)setSearchSelection:(PDFSelection *)selection;
 - (void)gotoSelection:(PDFSelection *)selection;
 - (PDFSelection *)getSelectionForWordAtPoint:(CGPoint)point;
+
+- (NSUInteger)lastPageIndex;
+- (NSUInteger)currentPageIndex;
+- (void)gotoNextPage;
+- (void)gotoPreviousPage;
 
 - (void)copySelection;
 - (void)selectAll;

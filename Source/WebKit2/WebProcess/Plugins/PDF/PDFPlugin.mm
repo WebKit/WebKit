@@ -85,6 +85,10 @@ static const char* annotationStyle =
 "    resize: none; "
 "}";
 
+// In non-continuous modes, a single scroll event with a magnitude of >= 20px
+// will jump to the next or previous page, to match PDFKit behavior.
+static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
+
 @interface WKPDFPluginScrollbarLayer : CALayer
 {
     WebKit::PDFPlugin* _pdfPlugin;
@@ -303,7 +307,7 @@ void PDFPlugin::pdfDocumentDidLoad()
     m_pdfLayerController.get().document = document.get();
 
     updatePageAndDeviceScaleFactors();
-    
+
     if (handlesPageScaleFactor())
         pluginView()->setPageScaleFactor([m_pdfLayerController.get() contentScaleFactor], IntPoint());
 
@@ -978,6 +982,45 @@ String PDFPlugin::getSelectionString() const
 void PDFPlugin::performWebSearch(NSString *string)
 {
     webFrame()->page()->send(Messages::WebPageProxy::SearchTheWeb(string));
+}
+
+bool PDFPlugin::handleWheelEvent(const WebWheelEvent& event)
+{
+    PDFDisplayMode displayMode = [m_pdfLayerController.get() displayMode];
+
+    if (displayMode == kPDFDisplaySinglePageContinuous || displayMode == kPDFDisplayTwoUpContinuous)
+        return SimplePDFPlugin::handleWheelEvent(event);
+
+    NSUInteger currentPageIndex = [m_pdfLayerController.get() currentPageIndex];
+    bool inFirstPage = currentPageIndex == 0;
+    bool inLastPage = [m_pdfLayerController.get() lastPageIndex] == currentPageIndex;
+
+    bool atScrollTop = scrollPosition().y() == 0;
+    bool atScrollBottom = scrollPosition().y() == maximumScrollPosition().y();
+
+    bool inMomentumScroll = event.momentumPhase() != WebWheelEvent::PhaseNone;
+
+    int scrollMagnitudeThresholdForPageFlip = defaultScrollMagnitudeThresholdForPageFlip;
+
+    // Imprecise input devices should have a lower threshold so that "clicky" scroll wheels can flip pages.
+    if (!event.hasPreciseScrollingDeltas())
+        scrollMagnitudeThresholdForPageFlip = 0;
+
+    if (atScrollBottom && !inLastPage && event.delta().height() < 0) {
+        if (event.delta().height() <= -scrollMagnitudeThresholdForPageFlip && !inMomentumScroll)
+            [m_pdfLayerController.get() gotoNextPage];
+        return true;
+    } else if (atScrollTop && !inFirstPage && event.delta().height() > 0) {
+        if (event.delta().height() >= scrollMagnitudeThresholdForPageFlip && !inMomentumScroll) {
+            [CATransaction begin];
+            [m_pdfLayerController.get() gotoPreviousPage];
+            scrollToOffsetWithoutAnimation(maximumScrollPosition());
+            [CATransaction commit];
+        }
+        return true;
+    }
+
+    return SimplePDFPlugin::handleWheelEvent(event);
 }
 
 } // namespace WebKit
