@@ -1,3 +1,16 @@
+2013-03-11  Alberto Garcia  <agarcia@igalia.com>
+
+        [BlackBerry] SelectionHandler: bring back m_lastSelection attribute
+        https://bugs.webkit.org/show_bug.cgi?id=111972
+
+        Reviewed by Rob Buis.
+
+        This was removed in r144515 but is still needed by
+        SelectionHandler::selectionPositionChanged().
+
+        * WebKitSupport/SelectionHandler.h:
+        (SelectionHandler):
+
 2013-03-07  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] RefCounting ParsedCookie to avoid SegFaults

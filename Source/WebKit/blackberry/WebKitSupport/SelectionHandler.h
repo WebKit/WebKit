@@ -122,6 +122,7 @@ private:
     BlackBerry::Platform::StopWatch m_timer;
 
     WebCore::IntSize m_scrollMargin;
+    WebCore::VisibleSelection m_lastSelection;
 };
 
 }
