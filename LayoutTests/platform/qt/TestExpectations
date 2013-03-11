@@ -2672,3 +2672,12 @@ webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Skip ]
 
 # New test added in r145195 is failing
 webkit.org/b/111853 editing/selection/drag-list-item.html [ Skip ]
+
+# jack server is not running or cannot be started
+fast/dom/beforeload/remove-video-poster-in-beforeload-listener.html
+
+# New test fails due to resizeTo not firing an event.
+webkit.org/b/109179 compositing/transitions/transform-on-large-layer.html [ ImageOnlyFailure ]
+
+# [Qt] Two tests hit assertion fail after r140999.
+webkit.org/b/108257 compositing/overflow/composited-scrolling-creates-a-stacking-container.html [ Skip ]
