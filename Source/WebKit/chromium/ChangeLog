@@ -1,3 +1,17 @@
+2013-03-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r145375.
+        http://trac.webkit.org/changeset/145375
+        https://bugs.webkit.org/show_bug.cgi?id=112050
+
+        Does not compile (Requested by jamesr on #webkit).
+
+        * tests/IDBBackingStoreTest.cpp:
+        (WebCore::IDBBackingStoreTest::SetUp):
+        (IDBBackingStoreTest):
+        (WebCore::TEST_F):
+        * tests/IDBFakeBackingStore.h:
+
 2013-03-11  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Protect against key prefix overflows

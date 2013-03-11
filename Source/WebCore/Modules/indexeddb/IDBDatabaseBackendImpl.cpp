@@ -179,22 +179,22 @@ private:
 
 class DeleteIndexOperation : public IDBTransactionBackendImpl::Operation {
 public:
-    static PassOwnPtr<IDBTransactionBackendImpl::Operation> create(PassRefPtr<IDBBackingStore> backingStore, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
+    static PassOwnPtr<IDBTransactionBackendImpl::Operation> create(PassRefPtr<IDBBackingStore> backingStore, int64_t objectStoreId, int64_t indexId)
     {
-        return adoptPtr(new DeleteIndexOperation(backingStore, objectStoreId, indexMetadata));
+        return adoptPtr(new DeleteIndexOperation(backingStore, objectStoreId, indexId));
     }
     virtual void perform(IDBTransactionBackendImpl*);
 private:
-    DeleteIndexOperation(PassRefPtr<IDBBackingStore> backingStore, int64_t objectStoreId, const IDBIndexMetadata& indexMetadata)
+    DeleteIndexOperation(PassRefPtr<IDBBackingStore> backingStore, int64_t objectStoreId, int64_t indexId)
         : m_backingStore(backingStore)
         , m_objectStoreId(objectStoreId)
-        , m_indexMetadata(indexMetadata)
+        , m_indexId(indexId)
     {
     }
 
     const RefPtr<IDBBackingStore> m_backingStore;
     const int64_t m_objectStoreId;
-    const IDBIndexMetadata m_indexMetadata;
+    const int64_t m_indexId;
 };
 
 class CreateIndexAbortOperation : public IDBTransactionBackendImpl::Operation {
@@ -534,9 +534,10 @@ bool IDBDatabaseBackendImpl::openInternal()
     ASSERT_WITH_MESSAGE(success == (m_metadata.id != InvalidId), "success = %s, m_id = %lld", success ? "true" : "false", static_cast<long long>(m_metadata.id));
     if (!ok)
         return false;
-    if (success)
-        return m_backingStore->getObjectStores(m_metadata.id, &m_metadata.objectStores);
-
+    if (success) {
+        m_backingStore->getObjectStores(m_metadata.id, &m_metadata.objectStores);
+        return true;
+    }
     return m_backingStore->createIDBDatabaseMetaData(m_metadata.name, m_metadata.version, m_metadata.intVersion, m_metadata.id);
 }
 
@@ -639,7 +640,7 @@ void IDBDatabaseBackendImpl::deleteIndex(int64_t transactionId, int64_t objectSt
     ASSERT(objectStore.indexes.contains(indexId));
     const IDBIndexMetadata& indexMetadata = objectStore.indexes.get(indexId);
 
-    transaction->scheduleTask(DeleteIndexOperation::create(m_backingStore, objectStoreId, indexMetadata), DeleteIndexAbortOperation::create(this, objectStoreId, indexMetadata));
+    transaction->scheduleTask(DeleteIndexOperation::create(m_backingStore, objectStoreId, indexId), DeleteIndexAbortOperation::create(this, objectStoreId, indexMetadata));
 
     removeIndex(objectStoreId, indexId);
 }
@@ -647,11 +648,7 @@ void IDBDatabaseBackendImpl::deleteIndex(int64_t transactionId, int64_t objectSt
 void DeleteIndexOperation::perform(IDBTransactionBackendImpl* transaction)
 {
     IDB_TRACE("DeleteIndexOperation");
-    bool ok = m_backingStore->deleteIndex(transaction->backingStoreTransaction(), transaction->database()->id(), m_objectStoreId, m_indexMetadata.id);
-    if (!ok) {
-        RefPtr<IDBDatabaseError> error = IDBDatabaseError::create(IDBDatabaseException::UnknownError, String::format("Internal error deleting index '%s'.", m_indexMetadata.name.utf8().data()));
-        transaction->abort(error);
-    }
+    m_backingStore->deleteIndex(transaction->backingStoreTransaction(), transaction->database()->id(), m_objectStoreId, m_indexId);
 }
 
 void DeleteIndexAbortOperation::perform(IDBTransactionBackendImpl* transaction)
@@ -1026,10 +1023,7 @@ void DeleteRangeOperation::perform(IDBTransactionBackendImpl* transaction)
     RefPtr<IDBBackingStore::Cursor> backingStoreCursor = m_backingStore->openObjectStoreCursor(transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId, m_keyRange.get(), IndexedDB::CursorNext);
     if (backingStoreCursor) {
         do {
-            if (!m_backingStore->deleteRecord(transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId, backingStoreCursor->recordIdentifier())) {
-                m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Error deleting data in range"));
-                return;
-            }
+            m_backingStore->deleteRecord(transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId, backingStoreCursor->recordIdentifier());
         } while (backingStoreCursor->continueFunction(0));
     }
 
@@ -1050,10 +1044,7 @@ void IDBDatabaseBackendImpl::clear(int64_t transactionId, int64_t objectStoreId,
 void ClearOperation::perform(IDBTransactionBackendImpl* transaction)
 {
     IDB_TRACE("ObjectStoreClearOperation");
-    if (!m_backingStore->clearObjectStore(transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId)) {
-        m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Error clearing object store"));
-        return;
-    }
+    m_backingStore->clearObjectStore(transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId);
     m_callbacks->onSuccess();
 }
 

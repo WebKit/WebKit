@@ -54,11 +54,6 @@ Vector<char> minIDBKey();
 Vector<char> encodeBool(bool);
 bool decodeBool(const char* begin, const char* end);
 Vector<char> encodeInt(int64_t);
-inline Vector<char> encodeIntSafely(int64_t nParam, size_t max)
-{
-    ASSERT(static_cast<size_t>(nParam) <= max);
-    return encodeInt(nParam);
-}
 int64_t decodeInt(const char* begin, const char* end);
 Vector<char> encodeVarInt(int64_t);
 const char* decodeVarInt(const char* p, const char* limit, int64_t& foundInt);
@@ -82,14 +77,10 @@ int compare(const LevelDBSlice&, const LevelDBSlice&, bool indexKeys = false);
 class KeyPrefix {
 public:
     KeyPrefix();
-    explicit KeyPrefix(int64_t databaseId);
-    KeyPrefix(int64_t databaseId, int64_t objectStoreId);
     KeyPrefix(int64_t databaseId, int64_t objectStoreId, int64_t indexId);
-    static KeyPrefix createWithSpecialIndex(int64_t databaseId, int64_t objectStoreId, int64_t indexId);
 
     static const char* decode(const char* start, const char* limit, KeyPrefix* result);
     Vector<char> encode() const;
-    static Vector<char> encodeEmpty();
     int compare(const KeyPrefix& other) const;
 
     enum Type {
@@ -101,34 +92,6 @@ public:
         InvalidType
     };
 
-    static const size_t kMaxDatabaseIdSizeBits = 3;
-    static const size_t kMaxObjectStoreIdSizeBits = 3;
-    static const size_t kMaxIndexIdSizeBits = 2;
-
-    static const size_t kMaxDatabaseIdSizeBytes = 1UL << kMaxDatabaseIdSizeBits; // 8
-    static const size_t kMaxObjectStoreIdSizeBytes = 1UL << kMaxObjectStoreIdSizeBits; // 8
-    static const size_t kMaxIndexIdSizeBytes = 1UL << kMaxIndexIdSizeBits; // 4
-
-    static const size_t kMaxDatabaseIdBits = kMaxDatabaseIdSizeBytes * 8 - 1; // 63
-    static const size_t kMaxObjectStoreIdBits = kMaxObjectStoreIdSizeBytes * 8 - 1; // 63
-    static const size_t kMaxIndexIdBits = kMaxIndexIdSizeBytes * 8 - 1; // 31
-
-    static const int64_t kMaxDatabaseId = (1UL << kMaxDatabaseIdBits) - 1; // max signed int64_t
-    static const int64_t kMaxObjectStoreId = (1UL << kMaxObjectStoreIdBits) - 1; // max signed int64_t
-    static const int64_t kMaxIndexId = (1UL << kMaxIndexIdBits) - 1; // max signed int32_t
-
-    static bool isValidDatabaseId(int64_t databaseId);
-    static bool isValidObjectStoreId(int64_t indexId);
-    static bool isValidIndexId(int64_t indexId);
-    static bool validIds(int64_t databaseId, int64_t objectStoreId, int64_t indexId)
-    {
-        return isValidDatabaseId(databaseId) && isValidObjectStoreId(objectStoreId) && isValidIndexId(indexId);
-    }
-    static bool validIds(int64_t databaseId, int64_t objectStoreId)
-    {
-        return isValidDatabaseId(databaseId) && isValidObjectStoreId(objectStoreId);
-    }
-
     Type type() const;
 
     int64_t m_databaseId;
@@ -136,11 +99,6 @@ public:
     int64_t m_indexId;
 
     static const int64_t InvalidId = -1;
-
-private:
-    static Vector<char> encodeInternal(int64_t databaseId, int64_t objectStoreId, int64_t indexId);
-    // Special constructor for createWithSpecialIndex()
-    KeyPrefix(Type, int64_t databaseId, int64_t objectStoreId, int64_t indexId);
 };
 
 class SchemaVersionKey {
