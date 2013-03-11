@@ -125,6 +125,8 @@ private:
     };
     size_t resolveGridPositionFromStyle(const GridPosition&, GridPositionSide) const;
 
+    LayoutUnit gridAreaBreadthForChild(const RenderBox* child, TrackSizingDirection, const Vector<GridTrack>&) const;
+
 #ifndef NDEBUG
     bool tracksAreWiderThanMinTrackBreadth(TrackSizingDirection, const Vector<GridTrack>&);
     bool gridWasPopulated() const { return !m_grid.isEmpty() && !m_grid[0].isEmpty(); }
