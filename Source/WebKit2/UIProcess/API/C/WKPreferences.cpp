@@ -418,6 +418,16 @@ bool WKPreferencesGetAcceleratedCompositingEnabled(WKPreferencesRef preferencesR
     return toImpl(preferencesRef)->acceleratedCompositingEnabled();
 }
 
+void WKPreferencesSetAcceleratedCompositingForOverflowScrollEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setAcceleratedCompositingForOverflowScrollEnabled(flag);
+}
+
+bool WKPreferencesGetAcceleratedCompositingForOverflowScrollEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->acceleratedCompositingForOverflowScrollEnabled();
+}
+
 void WKPreferencesSetCompositingBordersVisible(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setCompositingBordersVisible(flag);

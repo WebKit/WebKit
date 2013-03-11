@@ -1,3 +1,15 @@
+2013-03-11  Helder Correia  <helder.correia@nokia.com>
+
+        [WK2] Add C API preference: accelerated compositing for overflow scroll
+        https://bugs.webkit.org/show_bug.cgi?id=111916
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetAcceleratedCompositingForOverflowScrollEnabled):
+        (WKPreferencesGetAcceleratedCompositingForOverflowScrollEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+
 2013-03-11  Brady Eidson  <beidson@apple.com>
 
         CoreIPC crash in NetworkProcess after WebProcess crash.

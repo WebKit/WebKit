@@ -76,6 +76,10 @@ WK_EXPORT void WKPreferencesSetAcceleratedCompositingEnabled(WKPreferencesRef, b
 WK_EXPORT bool WKPreferencesGetAcceleratedCompositingEnabled(WKPreferencesRef);
 
 // Defaults to false.
+WK_EXPORT void WKPreferencesSetAcceleratedCompositingForOverflowScrollEnabled(WKPreferencesRef, bool);
+WK_EXPORT bool WKPreferencesGetAcceleratedCompositingForOverflowScrollEnabled(WKPreferencesRef);
+
+// Defaults to false.
 WK_EXPORT void WKPreferencesSetCompositingBordersVisible(WKPreferencesRef, bool);
 WK_EXPORT bool WKPreferencesGetCompositingBordersVisible(WKPreferencesRef);
 
