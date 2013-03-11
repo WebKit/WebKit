@@ -39,6 +39,12 @@
     outline: 1px solid rgb(64, 115, 244);
 }
 
+.cm-token-highlight {
+    border: 1px solid gray;
+    border-radius: 3px;
+    margin: -1px;
+}
+
 .cm-s-web-inspector-js span.cm-keyword {color: rgb(170, 13, 145);}
 .cm-s-web-inspector-js span.cm-number {color: rgb(28, 0, 207);}
 .cm-s-web-inspector-js span.cm-comment {color: rgb(0, 116, 0);}
