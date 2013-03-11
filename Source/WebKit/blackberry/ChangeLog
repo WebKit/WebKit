@@ -1,3 +1,16 @@
+2013-03-11  Genevieve Mak  <gmak@rim.com>
+
+        [BlackBerry] Set the documentViewportRect and viewport size.
+        https://bugs.webkit.org/show_bug.cgi?id=112056
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Mike Fenton and Jakob Petsovits.
+        PR #278490
+
+        * WebKitSupport/InRegionScrollableArea.cpp:
+        (BlackBerry::WebKit::InRegionScrollableArea::InRegionScrollableArea):
+
 2013-03-11  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] SelectionHandler: bring back m_lastSelection attribute
