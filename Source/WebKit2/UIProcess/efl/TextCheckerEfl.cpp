@@ -125,7 +125,7 @@ void TextChecker::closeSpellDocumentWithTag(int64_t tag)
 #endif
 }
 
-#if USE(UNIFIED_TEXT_CHECKING)
+#if ENABLE(SPELLCHECK)
 static int nextWordOffset(const UChar* text, int length, int currentOffset)
 {
     // FIXME: avoid creating textIterator object here, it could be passed as a parameter.
@@ -151,7 +151,9 @@ static int nextWordOffset(const UChar* text, int length, int currentOffset)
 
     return wordOffset;
 }
+#endif // ENABLE(SPELLCHECK)
 
+#if USE(UNIFIED_TEXT_CHECKING)
 Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocumentTag, const UChar* text, int length, uint64_t checkingTypes)
 {
     Vector<TextCheckingResult> paragraphCheckingResult;

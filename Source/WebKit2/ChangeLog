@@ -1,3 +1,12 @@
+2013-03-11  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Build fix after r143192 when SPELLCHECK is off
+
+        Unreviewed build fix when SPELLCHECK macro is off.
+
+        * UIProcess/efl/TextCheckerEfl.cpp:
+        (WebKit):
+
 2013-03-10  Tim Horton  <timothy_horton@apple.com>
 
         WebPage::scaledSnapshotWithOptions returns a corrupt snapshot if you request a rect larger than the FrameView’s size
