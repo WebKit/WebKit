@@ -1,3 +1,7 @@
+2013-03-11  Michael Saboff  <msaboff@apple.com>
+
+        Unreviewed build fix.  Rolling out inadvertent setting of DATA_LOG_TO_FILE.
+
 2013-03-11  Oliver Hunt  <oliver@apple.com>
 
         Make SegmentedVector Noncopyable
