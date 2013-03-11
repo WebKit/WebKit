@@ -1,3 +1,18 @@
+2013-03-11  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL][GTK][WKTR] Regression(r145231): Undefined symbol in libTestRunnerInjectedBundle.so
+        https://bugs.webkit.org/show_bug.cgi?id=111970
+
+        Reviewed by Chris Fleizach.
+
+        Provide dummy implementation for AccessibilityUIElement::supportedActions() in ATK
+        or libTestRunnerInjectedBundle.so cannot be loaded in EFL / GTK otherwise, due to
+        undefined symbol.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::supportedActions):
+        (WTR):
+
 2013-03-11  Chris Hopman  <cjhopman@chromium.org>
 
         [chromium] Android apk targets should depend directly on Java library targets

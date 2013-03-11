@@ -1134,6 +1134,12 @@ void AccessibilityUIElement::scrollToMakeVisible()
     // FIXME: implement
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::supportedActions() const
+{
+    // FIXME: implement
+    return 0;
+}
+
 } // namespace WTR
 
 #endif
