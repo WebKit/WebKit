@@ -95,10 +95,10 @@ public:
     static String createHandleForTemporaryFile(const String& prefix, Type type, Handle&);
     ~SandboxExtension();
 
-    bool invalidate();
     bool consume();
-    bool consumePermanently();
+    bool revoke();
 
+    bool consumePermanently();
     static bool consumePermanently(const Handle&);
 
 private:
@@ -106,9 +106,9 @@ private:
                      
 #if ENABLE(WEB_PROCESS_SANDBOX)
     mutable WKSandboxExtensionRef m_sandboxExtension;
+    size_t m_useCount;
 #endif
 };
-
 
 #if !ENABLE(WEB_PROCESS_SANDBOX)
 inline SandboxExtension::Handle::Handle() { }
@@ -128,7 +128,7 @@ inline void SandboxExtension::createHandle(const String&, Type, Handle&) { }
 inline void SandboxExtension::createHandleForReadWriteDirectory(const String&, Handle&) { }
 inline String SandboxExtension::createHandleForTemporaryFile(const String& /*prefix*/, Type, Handle&) {return String();}
 inline SandboxExtension::~SandboxExtension() { }
-inline bool SandboxExtension::invalidate() { return true; }
+inline bool SandboxExtension::revoke() { return true; }
 inline bool SandboxExtension::consume() { return true; }
 inline bool SandboxExtension::consumePermanently() { return true; }
 inline bool SandboxExtension::consumePermanently(const Handle&) { return true; }

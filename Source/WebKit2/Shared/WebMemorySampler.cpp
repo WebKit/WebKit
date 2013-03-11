@@ -108,8 +108,8 @@ void WebMemorySampler::stop()
         m_stopTimer.stop();
     
     if (m_sampleLogSandboxExtension) {
-        m_sampleLogSandboxExtension->invalidate();
-        m_sampleLogSandboxExtension = 0;
+        m_sampleLogSandboxExtension->revoke();
+        m_sampleLogSandboxExtension = nullptr;
     }    
 }
 

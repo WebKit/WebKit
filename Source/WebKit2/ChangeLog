@@ -1,3 +1,58 @@
+2013-03-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Make it possible to reuse sandbox extensions
+        https://bugs.webkit.org/show_bug.cgi?id=111883
+
+        Reviewed by Anders Carlsson.
+
+        This allows for properly keeping extensions in NetworkBlobRegistry for as long as
+        they are needed.
+
+        The patch also fixes a bug where extensions would leak when navigating between
+        file:// pages.
+
+        * NetworkProcess/SchedulableLoader.cpp:
+        Revoke the extensions, but don't invalidate - we may need them later.
+
+        * Shared/Downloads/Download.cpp:
+        (WebKit::Download::didFinish):
+        (WebKit::Download::didFail):
+        (WebKit::Download::didCancel):
+        Replaced invalidate() with revoke() and clearing out. SandboxExtension destructor
+        now requires revocations wto be balanced, as otherwise understanding dual reference
+        counting in SandboxExtension would be too difficult.
+
+        * Shared/SandboxExtension.h: We now keep track of how many times the extension
+        was consumed. Eventually, we should refactor the class to not have such duplicate
+        reference counting.
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::SandboxExtension): Initialize use count.
+        (WebKit::SandboxExtension::~SandboxExtension): We now require consume/revoke calls
+        to be balanced. This is not hard to do in existing usage, and makes the design much
+        more reliable.
+        (WebKit::SandboxExtension::revoke): Don't permanently destroy the extension when
+        invalidatid, we may need it in the future.
+        (WebKit::SandboxExtension::consume): Added use counting.
+
+        * Shared/WebMemorySampler.cpp: (WebKit::WebMemorySampler::stop): This extension
+        is not going to be reused.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::performDragControllerAction): Pending extensions are not consumed,
+        so there is no need to revoke.
+        (WebKit::WebPage::SandboxExtensionTracker::invalidate): Pending extension is not
+        consumed, and the other two always are.
+        (WebKit::WebPage::SandboxExtensionTracker::setPendingProvisionalSandboxExtension):
+        Pending extension is never consumed in place, no need to revoke.
+        (WebKit::WebPage::SandboxExtensionTracker::didStartProvisionalLoad): Do not unset
+        reused committed extension yet - we may need it later if provisional load fails.
+        Thanks to use counting, we can now consume the same extension as both committed
+        and provisional.
+        (WebKit::WebPage::SandboxExtensionTracker::didCommitProvisionalLoad): Now the
+        committed extension can be revoked and replaced.
+        (WebKit::WebPage::SandboxExtensionTracker::didFailProvisionalLoad): Just revoke
+        provisional extension, committed one is still in place.
+
 2013-03-11  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] Build fix after r143192 when SPELLCHECK is off
