@@ -204,7 +204,7 @@ void MutationObserver::deliver()
     Vector<RefPtr<MutationRecord> > records;
     records.swap(m_records);
 
-    m_callback->handleEvent(&records, this);
+    m_callback->call(records, this);
 }
 
 void MutationObserver::deliverAllMutations()

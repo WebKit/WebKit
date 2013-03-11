@@ -40,13 +40,11 @@ namespace WebCore {
 class MutationRecord;
 class MutationObserver;
 
-typedef Vector<RefPtr<MutationRecord> > MutationRecordArray;
-
 class MutationCallback : public RefCounted<MutationCallback> {
 public:
     virtual ~MutationCallback() { }
 
-    virtual bool handleEvent(MutationRecordArray*, MutationObserver*) = 0;
+    virtual void call(const Vector<RefPtr<MutationRecord> >&, MutationObserver*) = 0;
     virtual ScriptExecutionContext* scriptExecutionContext() const = 0;
 };
 

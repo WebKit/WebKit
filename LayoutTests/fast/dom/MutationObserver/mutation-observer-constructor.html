@@ -1,28 +1,20 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<script src="../../js/resources/js-test-pre.js"></script>
-<title></title>
-</head>
 <body>
-<p id=description></p>
-<div id="console"></div>
+<script src="../../js/resources/js-test-pre.js"></script>
 <script>
-
-function runTest() {
-    shouldBeNonNull('window.WebKitMutationObserver');
-    shouldBeEqualToString('typeof WebKitMutationObserver.prototype.observe', 'function');
-    shouldBeEqualToString('typeof WebKitMutationObserver.prototype.disconnect', 'function');
-    window.observer = new MutationObserver(function(mutations) { });
-    shouldBeEqualToString('typeof observer.observe', 'function');
-    shouldBeEqualToString('typeof observer.disconnect', 'function');
-}
-
 description('Test the constructor of WebKitMutationObserver');
 
-runTest();
+shouldBeNonNull('window.WebKitMutationObserver');
+shouldBeEqualToString('typeof WebKitMutationObserver.prototype.observe', 'function');
+shouldBeEqualToString('typeof WebKitMutationObserver.prototype.disconnect', 'function');
+window.observer = new MutationObserver(function(mutations) { });
+shouldBeEqualToString('typeof observer.observe', 'function');
+shouldBeEqualToString('typeof observer.disconnect', 'function');
+
+shouldThrow('new MutationObserver({ handleEvent: function() {} })');
+shouldThrow('new MutationObserver({})');
+shouldThrow('new MutationObserver(42)');
+shouldThrow('new MutationObserver("foo")');
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>
-</html>

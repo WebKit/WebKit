@@ -27,11 +27,15 @@
 #define JSMutationCallback_h
 
 #include "ActiveDOMCallback.h"
-#include "JSCallbackData.h"
+#include "DOMWrapperWorld.h"
 #include "MutationCallback.h"
+#include <heap/Weak.h>
+#include <runtime/JSObject.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
+
+class JSDOMGlobalObject;
 
 class JSMutationCallback : public MutationCallback, public ActiveDOMCallback {
 public:
@@ -42,7 +46,7 @@ public:
 
     virtual ~JSMutationCallback();
 
-    virtual bool handleEvent(MutationRecordArray* mutations, MutationObserver*) OVERRIDE;
+    virtual void call(const Vector<RefPtr<MutationRecord> >&, MutationObserver*) OVERRIDE;
 
     virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE { return ContextDestructionObserver::scriptExecutionContext(); }
 
