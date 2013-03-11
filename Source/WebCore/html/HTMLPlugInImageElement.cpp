@@ -48,6 +48,7 @@
 #include "ShadowRoot.h"
 #include "StyleResolver.h"
 #include "Text.h"
+#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
