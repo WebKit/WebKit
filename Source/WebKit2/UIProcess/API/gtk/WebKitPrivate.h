@@ -120,4 +120,9 @@ GType type_name##_get_type(void) \
 unsigned wkEventModifiersToGdkModifiers(WKEventModifiers);
 unsigned wkEventMouseButtonToWebKitMouseButton(WKEventMouseButton);
 
+enum SnapshotRegion {
+    SnapshotRegionVisible,
+    SnapshotRegionFullDocument
+};
+
 #endif // WebKitPrivate_h

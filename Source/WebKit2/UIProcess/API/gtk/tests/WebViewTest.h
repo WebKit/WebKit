@@ -48,6 +48,7 @@ public:
     void waitUntilTitleChanged();
     void showInWindowAndWaitUntilMapped(GtkWindowType = GTK_WINDOW_POPUP);
     void resizeView(int width, int height);
+    void selectAll();
     const char* mainResourceData(size_t& mainResourceDataSize);
 
     void mouseMoveTo(int x, int y, unsigned int mouseModifiers = 0);

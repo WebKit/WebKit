@@ -35,6 +35,7 @@ G_BEGIN_DECLS
 #define WEBKIT_DOWNLOAD_ERROR   webkit_download_error_quark ()
 #define WEBKIT_PRINT_ERROR      webkit_print_error_quark ()
 #define WEBKIT_JAVASCRIPT_ERROR webkit_print_error_quark ()
+#define WEBKIT_SNAPSHOT_ERROR   webkit_snapshot_error_quark ()
 
 /**
  * WebKitNetworkError:
@@ -130,6 +131,16 @@ typedef enum {
     WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED = 699
 } WebKitJavascriptError;
 
+/**
+ * WebKitSnapshotError:
+ * @WEBKIT_SNAPSHOT_ERROR_FAILED_TO_CREATE: An error occurred when creating a webpage snapshot.
+ *
+ * Enum values used to denote errors happending when creating snapshots of #WebKitWebView
+ */
+typedef enum {
+    WEBKIT_SNAPSHOT_ERROR_FAILED_TO_CREATE = 799
+} WebKitSnapshotError;
+
 WEBKIT_API GQuark
 webkit_network_error_quark    (void);
 
@@ -147,6 +158,9 @@ webkit_print_error_quark      (void);
 
 WEBKIT_API GQuark
 webkit_javascript_error_quark (void);
+
+WEBKIT_API GQuark
+webkit_snapshot_error_quark   (void);
 
 G_END_DECLS
 
