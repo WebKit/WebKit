@@ -29,6 +29,7 @@
 #include "Console.h"
 #include "DOMWindow.h"
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "FormData.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -42,8 +43,7 @@ namespace WebCore {
 
 bool XSSInfo::isSafeToSendToAnotherThread() const
 {
-    return m_reportURL.isSafeToSendToAnotherThread()
-        && m_originalHTTPBody.isSafeToSendToAnotherThread();
+    return m_reportURL.isSafeToSendToAnotherThread();
 }
 
 XSSAuditorDelegate::XSSAuditorDelegate(Document* document)
@@ -62,18 +62,26 @@ void XSSAuditorDelegate::didBlockScript(const XSSInfo& xssInfo)
     DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to execute a JavaScript script. Source code of script found within request.\n")));
     m_document->addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, consoleMessage);
 
+    FrameLoader* frameLoader = m_document->frame()->loader();
+
     if (xssInfo.m_didBlockEntirePage)
-        m_document->frame()->loader()->stopAllLoaders();
+        frameLoader->stopAllLoaders();
 
     if (!m_didNotifyClient) {
-        m_document->frame()->loader()->client()->didDetectXSS(m_document->url(), xssInfo.m_didBlockEntirePage);
+        frameLoader->client()->didDetectXSS(m_document->url(), xssInfo.m_didBlockEntirePage);
         m_didNotifyClient = true;
     }
 
     if (!xssInfo.m_reportURL.isEmpty()) {
         RefPtr<InspectorObject> reportDetails = InspectorObject::create();
         reportDetails->setString("request-url", m_document->url().string());
-        reportDetails->setString("request-body", xssInfo.m_originalHTTPBody);
+
+        String httpBody;
+        if (frameLoader->documentLoader()) {
+            if (FormData* formData = frameLoader->documentLoader()->originalRequest().httpBody())
+                httpBody = formData->flattenToString();
+        }
+        reportDetails->setString("request-body", httpBody);
 
         RefPtr<InspectorObject> reportObject = InspectorObject::create();
         reportObject->setObject("xss-report", reportDetails.release());

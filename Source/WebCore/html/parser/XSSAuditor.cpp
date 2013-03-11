@@ -311,9 +311,6 @@ void XSSAuditor::init(Document* document)
         m_isEnabled = false;
         return;
     }
-
-    if (!m_reportURL.isEmpty())
-        m_originalHTTPBody = httpBodyAsString;
 }
 
 PassOwnPtr<XSSInfo> XSSAuditor::filterToken(const FilterTokenRequest& request)
@@ -334,11 +331,8 @@ PassOwnPtr<XSSInfo> XSSAuditor::filterToken(const FilterTokenRequest& request)
 
     if (didBlockScript) {
         bool didBlockEntirePage = (m_xssProtection == ContentSecurityPolicy::BlockReflectedXSS);
-        OwnPtr<XSSInfo> xssInfo = XSSInfo::create(m_reportURL, m_originalHTTPBody, didBlockEntirePage);
-        if (!m_reportURL.isEmpty()) {
-            m_reportURL = KURL();
-            m_originalHTTPBody = String();
-        }
+        OwnPtr<XSSInfo> xssInfo = XSSInfo::create(m_reportURL, didBlockEntirePage);
+        m_reportURL = KURL();
         return xssInfo.release();
     }
     return nullptr;
@@ -727,7 +721,6 @@ bool XSSAuditor::isLikelySafeResource(const String& url)
 bool XSSAuditor::isSafeToSendToAnotherThread() const
 {
     return m_documentURL.isSafeToSendToAnotherThread()
-        && m_originalHTTPBody.isSafeToSendToAnotherThread()
         && m_decodedURL.isSafeToSendToAnotherThread()
         && m_decodedHTTPBody.isSafeToSendToAnotherThread()
         && m_cachedDecodedSnippet.isSafeToSendToAnotherThread()
