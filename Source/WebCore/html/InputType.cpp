@@ -374,15 +374,15 @@ String InputType::validationMessage() const
     const String value = element()->value();
 
     // The order of the following checks is meaningful. e.g. We'd like to show the
-    // valueMissing message even if the control has other validation errors.
+    // badInput message even if the control has other validation errors.
+    if (hasBadInput())
+        return badInputText();
+
     if (valueMissing(value))
         return valueMissingText();
 
     if (typeMismatch())
         return typeMismatchText();
-
-    if (hasBadInput())
-        return badInputText();
 
     if (patternMismatch(value))
         return validationMessagePatternMismatchText();

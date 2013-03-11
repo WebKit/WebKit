@@ -55,6 +55,11 @@ form.appendChild(numberInput);
 numberInput.focus();
 document.execCommand("InsertText", false, "abc");
 debug("input badInput: " + numberInput.validationMessage);
+var nonRequiredBadInputMessage = numberInput.validationMessage;
+
+debug("badInput and valueMissing:");
+numberInput.required = true;
+shouldBe("numberInput.validationMessage", "nonRequiredBadInputMessage");
 
 // A button can't be valited and, thus, has a blank validationMessage
 var but = document.createElement("button");
