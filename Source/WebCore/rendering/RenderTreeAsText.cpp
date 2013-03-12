@@ -168,7 +168,7 @@ static bool isEmptyOrUnstyledAppleStyleSpan(const Node* node)
     if (!node || !node->isHTMLElement() || !node->hasTagName(spanTag))
         return false;
 
-    const HTMLElement* elem = static_cast<const HTMLElement*>(node);
+    const HTMLElement* elem = toHTMLElement(node);
     if (elem->getAttribute(classAttr) != "Apple-style-span")
         return false;
 
@@ -430,7 +430,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
     if (behavior & RenderAsTextShowIDAndClass) {
         if (Node* node = o.node()) {
             if (node->hasID())
-                ts << " id=\"" + static_cast<Element*>(node)->getIdAttribute() + "\"";
+                ts << " id=\"" + toElement(node)->getIdAttribute() + "\"";
 
             if (node->hasClass()) {
                 ts << " class=\"";
@@ -669,7 +669,7 @@ static void writeRenderRegionList(const RenderRegionList& flowThreadRegionList, 
             if (!tagName.isEmpty())
                 ts << " {" << tagName << "}";
             if (renderRegion->generatingNode()->isElementNode() && renderRegion->generatingNode()->hasID()) {
-                Element* element = static_cast<Element*>(renderRegion->generatingNode());
+                Element* element = toElement(renderRegion->generatingNode());
                 ts << " #" << element->idForStyleResolution();
             }
             if (renderRegion->hasCustomRegionStyle())

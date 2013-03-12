@@ -1111,7 +1111,7 @@ void RenderObject::addPDFURLRect(GraphicsContext* context, const LayoutRect& rec
     Node* n = node();
     if (!n || !n->isLink() || !n->isElementNode())
         return;
-    const AtomicString& href = static_cast<Element*>(n)->getAttribute(hrefAttr);
+    const AtomicString& href = toElement(n)->getAttribute(hrefAttr);
     if (href.isNull())
         return;
     context->setURLForRect(n->document()->completeURL(href), pixelSnappedIntRect(rect));

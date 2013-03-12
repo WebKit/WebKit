@@ -901,7 +901,7 @@ bool RenderThemeQtMobile::paintSliderThumb(RenderObject* o, const PaintInfo& pi,
 
 bool RenderThemeQtMobile::checkMultiple(RenderObject* o) const
 {
-    HTMLSelectElement* select = o ? static_cast<HTMLSelectElement*>(o->node()) : 0;
+    HTMLSelectElement* select = o ? toHTMLSelectElement(o->node()) : 0;
     return select ? select->multiple() : false;
 }
 

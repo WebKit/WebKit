@@ -189,7 +189,7 @@ void RenderRegion::checkRegionStyle()
 
     // FIXME: Region styling doesn't work for pseudo elements.
     if (node()) {
-        Element* regionElement = static_cast<Element*>(node());
+        Element* regionElement = toElement(node());
         customRegionStyle = view()->document()->styleResolver()->checkRegionStyle(regionElement);
     }
     setHasCustomRegionStyle(customRegionStyle);

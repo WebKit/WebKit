@@ -2447,7 +2447,7 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const LayoutSize& oldOff
         return;
 
     ASSERT(renderer()->node()->isElementNode());
-    Element* element = static_cast<Element*>(renderer()->node());
+    Element* element = toElement(renderer()->node());
     RenderBox* renderer = toRenderBox(element->renderer());
 
     Document* document = element->document();
@@ -4333,7 +4333,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
     // Now determine if the result is inside an anchor - if the urlElement isn't already set.
     Node* node = result.innerNode();
     if (node && !result.URLElement())
-        result.setURLElement(static_cast<Element*>(node->enclosingLinkEventParentOrSelf()));
+        result.setURLElement(toElement(node->enclosingLinkEventParentOrSelf()));
 
     // Now return whether we were inside this layer (this will always be true for the root
     // layer).

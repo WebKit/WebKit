@@ -788,7 +788,7 @@ bool RenderTheme::isEnabled(const RenderObject* o) const
     Node* node = o->node();
     if (!node || !node->isElementNode())
         return true;
-    return static_cast<Element*>(node)->isEnabledFormControl();
+    return toElement(node)->isEnabledFormControl();
 }
 
 bool RenderTheme::isFocused(const RenderObject* o) const
@@ -814,7 +814,7 @@ bool RenderTheme::isSpinUpButtonPartPressed(const RenderObject* o) const
 {
     Node* node = o->node();
     if (!node || !node->active() || !node->isElementNode()
-        || !static_cast<Element*>(node)->isSpinButtonElement())
+        || !toElement(node)->isSpinButtonElement())
         return false;
     SpinButtonElement* element = static_cast<SpinButtonElement*>(node);
     return element->upDownState() == SpinButtonElement::Up;
@@ -833,7 +833,7 @@ bool RenderTheme::isHovered(const RenderObject* o) const
     Node* node = o->node();
     if (!node)
         return false;
-    if (!node->isElementNode() || !static_cast<Element*>(node)->isSpinButtonElement())
+    if (!node->isElementNode() || !toElement(node)->isSpinButtonElement())
         return node->hovered();
     SpinButtonElement* element = static_cast<SpinButtonElement*>(node);
     return element->hovered() && element->upDownState() != SpinButtonElement::Indeterminate;
@@ -842,7 +842,7 @@ bool RenderTheme::isHovered(const RenderObject* o) const
 bool RenderTheme::isSpinUpButtonPartHovered(const RenderObject* o) const
 {
     Node* node = o->node();
-    if (!node || !node->isElementNode() || !static_cast<Element*>(node)->isSpinButtonElement())
+    if (!node || !node->isElementNode() || !toElement(node)->isSpinButtonElement())
         return false;
     SpinButtonElement* element = static_cast<SpinButtonElement*>(node);
     return element->upDownState() == SpinButtonElement::Up;
@@ -1032,7 +1032,7 @@ void RenderTheme::paintSliderTicks(RenderObject* o, const PaintInfo& paintInfo, 
     paintInfo.context->setFillColor(o->style()->visitedDependentColor(CSSPropertyColor), ColorSpaceDeviceRGB);
     for (unsigned i = 0; Node* node = options->item(i); i++) {
         ASSERT(node->hasTagName(optionTag));
-        HTMLOptionElement* optionElement = static_cast<HTMLOptionElement*>(node);
+        HTMLOptionElement* optionElement = toHTMLOptionElement(node);
         String value = optionElement->value();
         if (!input->isValidValue(value))
             continue;

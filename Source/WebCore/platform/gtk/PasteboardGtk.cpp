@@ -100,13 +100,13 @@ static KURL getURLForImageNode(Node* node)
     // FIXME: Later this code should be shared with Chromium somehow. Chances are all platforms want it.
     AtomicString urlString;
     if (node->hasTagName(HTMLNames::imgTag) || node->hasTagName(HTMLNames::inputTag))
-        urlString = static_cast<Element*>(node)->getAttribute(HTMLNames::srcAttr);
+        urlString = toElement(node)->getAttribute(HTMLNames::srcAttr);
 #if ENABLE(SVG)
     else if (node->hasTagName(SVGNames::imageTag))
-        urlString = static_cast<Element*>(node)->getAttribute(XLinkNames::hrefAttr);
+        urlString = toElement(node)->getAttribute(XLinkNames::hrefAttr);
 #endif
     else if (node->hasTagName(HTMLNames::embedTag) || node->hasTagName(HTMLNames::objectTag)) {
-        Element* element = static_cast<Element*>(node);
+        Element* element = toElement(node);
         urlString = element->getAttribute(element->imageSourceAttributeName());
     }
     return urlString.isEmpty() ? KURL() : node->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
@@ -134,7 +134,7 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String& title)
     if (!url.isEmpty()) {
         dataObject->setURL(url, title);
 
-        dataObject->setMarkup(createMarkup(static_cast<Element*>(node), IncludeNode, 0, ResolveAllURLs));
+        dataObject->setMarkup(createMarkup(toElement(node), IncludeNode, 0, ResolveAllURLs));
     }
 
     GRefPtr<GdkPixbuf> pixbuf = adoptGRef(image->getGdkPixbuf());

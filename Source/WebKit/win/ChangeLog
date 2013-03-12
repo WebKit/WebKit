@@ -1,3 +1,18 @@
+2013-03-12  Abhishek Arya  <inferno@chromium.org>
+
+        Replace static_casts with to* helper functions.
+        https://bugs.webkit.org/show_bug.cgi?id=112164
+
+        Reviewed by Philip Rogers.
+
+        to* helper functions are preferred over static_cast calls since they
+        help to catch bad casts easily on the testing infrastructure.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLElement::idName):
+        (DOMHTMLElement::innerText):
+        (DOMHTMLElement::setInnerText):
+
 2013-03-11  Jochen Eisinger  <jochen@chromium.org>
 
         Rename DefinitelyProcessingUserGesture to DefinitelyProcessingNewUserGesture

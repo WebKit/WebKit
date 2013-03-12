@@ -493,7 +493,7 @@ void writeSVGResourceContainer(TextStream& ts, const RenderObject& object, int i
 {
     writeStandardPrefix(ts, object, indent);
 
-    Element* element = static_cast<Element*>(object.node());
+    Element* element = toElement(object.node());
     const AtomicString& id = element->getIdAttribute();
     writeNameAndQuotedValue(ts, "id", id);    
 
