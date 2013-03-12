@@ -216,6 +216,8 @@ static bool semicolonSeparatedValueContainsJavaScriptURL(const String& value)
 XSSAuditor::XSSAuditor()
     : m_isEnabled(false)
     , m_xssProtection(ContentSecurityPolicy::FilterReflectedXSS)
+    , m_didSendValidCSPHeader(false)
+    , m_didSendValidXSSProtectionHeader(false)
     , m_state(Uninitialized)
     , m_scriptTagNestingLevel(0)
     , m_encoding(UTF8Encoding())
@@ -280,6 +282,7 @@ void XSSAuditor::init(Document* document)
 
         // Process the X-XSS-Protection header, then mix in the CSP header's value.
         ContentSecurityPolicy::ReflectedXSSDisposition xssProtectionHeader = parseXSSProtectionHeader(headerValue, errorDetails, errorPosition, reportURL);
+        m_didSendValidXSSProtectionHeader = xssProtectionHeader != ContentSecurityPolicy::ReflectedXSSUnset && xssProtectionHeader != ContentSecurityPolicy::ReflectedXSSInvalid;
         if ((xssProtectionHeader == ContentSecurityPolicy::FilterReflectedXSS || xssProtectionHeader == ContentSecurityPolicy::BlockReflectedXSS) && !reportURL.isEmpty()) {
             xssProtectionReportURL = document->completeURL(reportURL);
             if (MixedContentChecker::isMixedContent(document->securityOrigin(), xssProtectionReportURL)) {
@@ -291,9 +294,11 @@ void XSSAuditor::init(Document* document)
         if (xssProtectionHeader == ContentSecurityPolicy::ReflectedXSSInvalid)
             document->addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, "Error parsing header X-XSS-Protection: " + headerValue + ": "  + errorDetails + " at character position " + String::format("%u", errorPosition) + ". The default protections will be applied.");
 
-        m_xssProtection = combineXSSProtectionHeaderAndCSP(xssProtectionHeader, document->contentSecurityPolicy()->reflectedXSSDisposition());
-        m_reportURL = xssProtectionReportURL; // FIXME: Combine the two report URLs in some reasonable way.
+        ContentSecurityPolicy::ReflectedXSSDisposition cspHeader = document->contentSecurityPolicy()->reflectedXSSDisposition();
+        m_didSendValidCSPHeader = cspHeader != ContentSecurityPolicy::ReflectedXSSUnset && cspHeader != ContentSecurityPolicy::ReflectedXSSInvalid;
 
+        m_xssProtection = combineXSSProtectionHeaderAndCSP(xssProtectionHeader, cspHeader);
+        m_reportURL = xssProtectionReportURL; // FIXME: Combine the two report URLs in some reasonable way.
         FormData* httpBody = documentLoader->originalRequest().httpBody();
         if (httpBody && !httpBody->isEmpty()) {
             httpBodyAsString = httpBody->flattenToString();
@@ -331,7 +336,7 @@ PassOwnPtr<XSSInfo> XSSAuditor::filterToken(const FilterTokenRequest& request)
 
     if (didBlockScript) {
         bool didBlockEntirePage = (m_xssProtection == ContentSecurityPolicy::BlockReflectedXSS);
-        OwnPtr<XSSInfo> xssInfo = XSSInfo::create(m_reportURL, didBlockEntirePage);
+        OwnPtr<XSSInfo> xssInfo = XSSInfo::create(m_reportURL, didBlockEntirePage, m_didSendValidXSSProtectionHeader, m_didSendValidCSPHeader);
         m_reportURL = KURL();
         return xssInfo.release();
     }

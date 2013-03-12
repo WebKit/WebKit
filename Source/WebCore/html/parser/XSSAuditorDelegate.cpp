@@ -54,13 +54,32 @@ XSSAuditorDelegate::XSSAuditorDelegate(Document* document)
     ASSERT(m_document);
 }
 
+static inline String buildConsoleError(const XSSInfo& xssInfo, const String& url)
+{
+    StringBuilder message;
+    message.append("The XSS Auditor ");
+    message.append(xssInfo.m_didBlockEntirePage ? "blocked access to" : "refused to execute a script in");
+    message.append(" '");
+    message.append(url);
+    message.append("' because ");
+    message.append(xssInfo.m_didBlockEntirePage ? "the source code of a script" : "its source code");
+    message.append(" was found within the request.");
+
+    if (xssInfo.m_didSendCSPHeader)
+        message.append(" The server sent a 'Content-Security-Policy' header requesting this behavior.");
+    else if (xssInfo.m_didSendXSSProtectionHeader)
+        message.append(" The server sent an 'X-XSS-Protection' header requesting this behavior.");
+    else
+        message.append(" The auditor was enabled as the server sent neither an 'X-XSS-Protection' nor 'Content-Security-Policy' header.");
+
+    return message.toString();
+}
+
 void XSSAuditorDelegate::didBlockScript(const XSSInfo& xssInfo)
 {
     ASSERT(isMainThread());
 
-    // FIXME: Consider using a more helpful console message.
-    DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to execute a JavaScript script. Source code of script found within request.\n")));
-    m_document->addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, consoleMessage);
+    m_document->addConsoleMessage(JSMessageSource, ErrorMessageLevel, buildConsoleError(xssInfo, m_document->url().string()));
 
     FrameLoader* frameLoader = m_document->frame()->loader();
 
@@ -90,10 +109,8 @@ void XSSAuditorDelegate::didBlockScript(const XSSInfo& xssInfo)
         PingLoader::sendViolationReport(m_document->frame(), xssInfo.m_reportURL, report);
     }
 
-    if (xssInfo.m_didBlockEntirePage) {
-        m_document->addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, String("Entire page will be blocked."));
+    if (xssInfo.m_didBlockEntirePage)
         m_document->frame()->navigationScheduler()->scheduleLocationChange(m_document->securityOrigin(), String("data:text/html,<p></p>"), blankURL());
-    }
 }
 
 } // namespace WebCore

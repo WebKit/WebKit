@@ -1,6 +1,5 @@
 CONSOLE MESSAGE: line 1: Error parsing header X-XSS-Protection: 1; report= ;: invalid report directive at character position 11. The default protections will be applied.
-CONSOLE MESSAGE: line 4: Refused to execute a JavaScript script. Source code of script found within request.
-
+CONSOLE MESSAGE: line 4: The XSS Auditor refused to execute a script in 'http://127.0.0.1:8000/security/xssAuditor/resources/echo-intertag.pl?notifyDone=1&malformed-header=6&q=%3Cscript%3Ealert(String.fromCharCode(0x58,0x53,0x53))%3C/script%3E%3Cp%3EIf%20you%20see%20this%20message%20and%20no%20JavaScript%20alert()%20then%20the%20test%20PASSED.%3C/p%3E' because its source code was found within the request. The auditor was enabled as the server sent neither an 'X-XSS-Protection' nor 'Content-Security-Policy' header.
 This tests that the X-XSS-Protection header is not ignored when there is an incomplete report directive, and we issue an error
 
 
