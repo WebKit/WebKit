@@ -64,6 +64,15 @@ void InlineTextBox::destroy(RenderArena* arena)
     InlineBox::destroy(arena);
 }
 
+void InlineTextBox::markDirty(bool dirty)
+{
+    if (dirty) {
+        m_len = 0;
+        m_start = 0;
+    }
+    InlineBox::markDirty(dirty);
+}
+
 LayoutRect InlineTextBox::logicalOverflowRect() const
 {
     if (knownToHaveNoOverflow() || !gTextBoxesWithOverflow)
