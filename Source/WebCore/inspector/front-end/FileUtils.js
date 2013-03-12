@@ -301,6 +301,7 @@ WebInspector.ChunkedXHRReader.prototype = {
 WebInspector.createFileSelectorElement = function(callback) {
     var fileSelectorElement = document.createElement("input");
     fileSelectorElement.type = "file";
+    fileSelectorElement.setAttribute("tabindex", -1);
     fileSelectorElement.style.zIndex = -1;
     fileSelectorElement.style.position = "absolute";
     fileSelectorElement.onchange = function(event) {

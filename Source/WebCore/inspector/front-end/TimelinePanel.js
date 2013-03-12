@@ -352,13 +352,8 @@ WebInspector.TimelinePanel.prototype = {
         if (this._fileSelectorElement)
             this.element.removeChild(this._fileSelectorElement);
 
-        var fileSelectorElement = document.createElement("input");
-        fileSelectorElement.type = "file";
-        fileSelectorElement.style.zIndex = -1;
-        fileSelectorElement.style.position = "absolute";
-        fileSelectorElement.onchange = this._loadFromFile.bind(this);
-        this.element.appendChild(fileSelectorElement);
-        this._fileSelectorElement = fileSelectorElement;
+        this._fileSelectorElement = WebInspector.createFileSelectorElement(this._loadFromFile.bind(this));
+        this.element.appendChild(this._fileSelectorElement);
     },
 
     _contextMenu: function(event)
@@ -378,12 +373,15 @@ WebInspector.TimelinePanel.prototype = {
         return true;
     },
 
-    _loadFromFile: function()
+    /**
+     * @param {string} fileName
+     */
+    _loadFromFile: function(fileName)
     {
         var progressIndicator = this._prepareToLoadTimeline();
         if (!progressIndicator)
             return;
-        this._model.loadFromFile(this._fileSelectorElement.files[0], progressIndicator);
+        this._model.loadFromFile(fileName, progressIndicator);
         this._createFileSelector();
     },
 
