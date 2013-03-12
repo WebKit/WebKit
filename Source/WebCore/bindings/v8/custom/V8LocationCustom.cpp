@@ -139,8 +139,12 @@ void V8Location::searchAttrSetterCustom(v8::Local<v8::String> name, v8::Local<v8
 v8::Handle<v8::Value> V8Location::reloadAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     v8::Isolate* isolate = info.GetIsolate();
-    static v8::Persistent<v8::FunctionTemplate> privateTemplate = v8::Persistent<v8::FunctionTemplate>::New(isolate, v8::FunctionTemplate::New(V8Location::reloadMethodCustom, v8Undefined(), v8::Signature::New(V8Location::GetRawTemplate(isolate))));
-    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8Location::GetTemplate(isolate, worldType(isolate)));
+    // This is only for getting a unique pointer which we can pass to privateTemplate.
+    static String privateTemplateUniqueKey = "reloadPrivateTemplate";
+    WrapperWorldType currentWorldType = worldType(isolate);
+    v8::Persistent<v8::FunctionTemplate> privateTemplate = V8PerIsolateData::from(isolate)->privateTemplate(currentWorldType, &privateTemplateUniqueKey, V8Location::reloadMethodCustom, v8Undefined(), v8::Signature::New(V8Location::GetRawTemplate(isolate)));
+
+    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8Location::GetTemplate(isolate, currentWorldType));
     if (holder.IsEmpty()) {
         // can only reach here by 'object.__proto__.func', and it should passed
         // domain security check already
@@ -148,7 +152,8 @@ v8::Handle<v8::Value> V8Location::reloadAttrGetterCustom(v8::Local<v8::String> n
     }
     Location* imp = V8Location::toNative(holder);
     if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError)) {
-        static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New(isolate, v8::FunctionTemplate::New(V8Location::reloadMethodCustom, v8Undefined(), v8::Signature::New(V8Location::GetRawTemplate(isolate))));
+        static String sharedTemplateUniqueKey = "reloadSharedTemplate";
+        v8::Persistent<v8::FunctionTemplate> sharedTemplate = V8PerIsolateData::from(info.GetIsolate())->privateTemplate(currentWorldType, &sharedTemplateUniqueKey, V8Location::reloadMethodCustom, v8Undefined(), v8::Signature::New(V8Location::GetRawTemplate(isolate)));
         return sharedTemplate->GetFunction();
     }
     return privateTemplate->GetFunction();
@@ -157,8 +162,12 @@ v8::Handle<v8::Value> V8Location::reloadAttrGetterCustom(v8::Local<v8::String> n
 v8::Handle<v8::Value> V8Location::replaceAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     v8::Isolate* isolate = info.GetIsolate();
-    static v8::Persistent<v8::FunctionTemplate> privateTemplate = v8::Persistent<v8::FunctionTemplate>::New(isolate, v8::FunctionTemplate::New(V8Location::replaceMethodCustom, v8Undefined(), v8::Signature::New(V8Location::GetRawTemplate(isolate))));
-    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8Location::GetTemplate(isolate, worldType(isolate)));
+    // This is only for getting a unique pointer which we can pass to privateTemplateMap.
+    static String privateTemplateUniqueKey = "replacePrivateTemplate";
+    WrapperWorldType currentWorldType = worldType(info.GetIsolate());
+    v8::Persistent<v8::FunctionTemplate> privateTemplate = V8PerIsolateData::from(isolate)->privateTemplate(currentWorldType, &privateTemplateUniqueKey, V8Location::replaceMethodCustom, v8Undefined(), v8::Signature::New(V8Location::GetRawTemplate(isolate)));
+
+    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8Location::GetTemplate(isolate, currentWorldType));
     if (holder.IsEmpty()) {
         // can only reach here by 'object.__proto__.func', and it should passed
         // domain security check already
@@ -166,7 +175,8 @@ v8::Handle<v8::Value> V8Location::replaceAttrGetterCustom(v8::Local<v8::String> 
     }
     Location* imp = V8Location::toNative(holder);
     if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError)) {
-        static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New(isolate, v8::FunctionTemplate::New(V8Location::replaceMethodCustom, v8Undefined(), v8::Signature::New(V8Location::GetRawTemplate(isolate))));
+        static String sharedTemplateUniqueKey = "replaceSharedTemplate";
+        v8::Persistent<v8::FunctionTemplate> sharedTemplate = V8PerIsolateData::from(info.GetIsolate())->privateTemplate(currentWorldType, &sharedTemplateUniqueKey, V8Location::replaceMethodCustom, v8Undefined(), v8::Signature::New(V8Location::GetRawTemplate(isolate)));
         return sharedTemplate->GetFunction();
     }
     return privateTemplate->GetFunction();
@@ -175,9 +185,12 @@ v8::Handle<v8::Value> V8Location::replaceAttrGetterCustom(v8::Local<v8::String> 
 v8::Handle<v8::Value> V8Location::assignAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     v8::Isolate* isolate = info.GetIsolate();
-    static v8::Persistent<v8::FunctionTemplate> privateTemplate =
-        v8::Persistent<v8::FunctionTemplate>::New(isolate, v8::FunctionTemplate::New(V8Location::assignMethodCustom, v8Undefined(), v8::Signature::New(V8Location::GetRawTemplate(isolate))));
-    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8Location::GetTemplate(isolate, worldType(isolate)));
+    // This is only for getting a unique pointer which we can pass to privateTemplateMap.
+    static String privateTemplateUniqueKey = "assignPrivateTemplate";
+    WrapperWorldType currentWorldType = worldType(info.GetIsolate());
+    v8::Persistent<v8::FunctionTemplate> privateTemplate = V8PerIsolateData::from(isolate)->privateTemplate(currentWorldType, &privateTemplateUniqueKey, V8Location::assignMethodCustom, v8Undefined(), v8::Signature::New(V8Location::GetRawTemplate(isolate)));
+
+    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8Location::GetTemplate(isolate, currentWorldType));
     if (holder.IsEmpty()) {
         // can only reach here by 'object.__proto__.func', and it should passed
         // domain security check already
@@ -185,7 +198,8 @@ v8::Handle<v8::Value> V8Location::assignAttrGetterCustom(v8::Local<v8::String> n
     }
     Location* imp = V8Location::toNative(holder);
     if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError)) {
-        static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New(isolate, v8::FunctionTemplate::New(V8Location::assignMethodCustom, v8Undefined(), v8::Signature::New(V8Location::GetRawTemplate(isolate))));
+        static String sharedTemplateUniqueKey = "assignSharedTemplate";
+        v8::Persistent<v8::FunctionTemplate> sharedTemplate = V8PerIsolateData::from(info.GetIsolate())->privateTemplate(currentWorldType, &sharedTemplateUniqueKey, V8Location::assignMethodCustom, v8Undefined(), v8::Signature::New(V8Location::GetRawTemplate(isolate)));
         return sharedTemplate->GetFunction();
     }
     return privateTemplate->GetFunction();

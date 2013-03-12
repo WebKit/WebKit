@@ -44,7 +44,8 @@ template<> struct SequenceMemoryInstrumentationTraits<WebCore::WrapperTypeInfo*>
 namespace WebCore {
 
 V8PerIsolateData::V8PerIsolateData(v8::Isolate* isolate)
-    : m_stringCache(adoptPtr(new StringCache()))
+    : m_isolate(isolate)
+    , m_stringCache(adoptPtr(new StringCache()))
     , m_integerCache(adoptPtr(new IntegerCache()))
     , m_domDataStore(0)
     , m_hiddenPropertyName(adoptPtr(new V8HiddenPropertyName()))
@@ -119,6 +120,17 @@ void V8PerIsolateData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
     info.ignoreMember(m_v8Null);
     info.ignoreMember(m_liveRoot);
     info.ignoreMember(m_auxiliaryContext);
+}
+
+v8::Persistent<v8::FunctionTemplate> V8PerIsolateData::privateTemplate(WrapperWorldType, void* privatePointer, v8::InvocationCallback callback, v8::Handle<v8::Value> data, v8::Handle<v8::Signature> signature, int length)
+{
+    v8::Persistent<v8::FunctionTemplate> privateTemplate;
+    V8PerIsolateData::TemplateMap::iterator result = m_templates.find(privatePointer);
+    if (result != m_templates.end())
+        return result->value;
+    v8::Persistent<v8::FunctionTemplate> newPrivateTemplate = v8::Persistent<v8::FunctionTemplate>::New(m_isolate, v8::FunctionTemplate::New(callback, data, signature, length));
+    m_templates.add(privatePointer, newPrivateTemplate);
+    return newPrivateTemplate;
 }
 
 #if ENABLE(INSPECTOR)

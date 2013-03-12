@@ -27,6 +27,7 @@
 #define V8PerIsolateData_h
 
 #include "ScopedPersistent.h"
+#include "WrapperTypeInfo.h"
 #include <v8.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
@@ -64,7 +65,7 @@ public:
     }
     static void dispose(v8::Isolate*);
 
-    typedef HashMap<WrapperTypeInfo*, v8::Persistent<v8::FunctionTemplate> > TemplateMap;
+    typedef HashMap<void*, v8::Persistent<v8::FunctionTemplate> > TemplateMap;
 
     TemplateMap& rawTemplateMap() { return m_rawTemplates; }
     TemplateMap& templateMap() { return m_templates; }
@@ -127,11 +128,14 @@ public:
     void clearShouldCollectGarbageSoon() { m_shouldCollectGarbageSoon = false; }
     bool shouldCollectGarbageSoon() const { return m_shouldCollectGarbageSoon; }
 
+    v8::Persistent<v8::FunctionTemplate> privateTemplate(WrapperWorldType, void* privatePointer, v8::InvocationCallback, v8::Handle<v8::Value> data, v8::Handle<v8::Signature>, int length = 0);
+
 private:
     explicit V8PerIsolateData(v8::Isolate*);
     ~V8PerIsolateData();
     static v8::Handle<v8::Value> constructorOfToString(const v8::Arguments&);
 
+    v8::Isolate* m_isolate;
     TemplateMap m_rawTemplates;
     TemplateMap m_templates;
     ScopedPersistent<v8::FunctionTemplate> m_toStringTemplate;
