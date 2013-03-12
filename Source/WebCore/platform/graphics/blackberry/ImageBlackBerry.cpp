@@ -119,7 +119,7 @@ void BitmapImage::invalidatePlatformData()
 {
 }
 
-void BitmapImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator op)
+void BitmapImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator op, BlendMode blendMode)
 {
     startAnimation();
 
@@ -146,7 +146,7 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dstRect, const
         observer->didDraw(this);
 }
 
-void Image::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransformation, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& dstRect)
+void Image::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransformation, const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& dstRect, BlendMode blendMode)
 {
     NativeImagePtr image = nativeImageForCurrentFrame();
     if (!image)
