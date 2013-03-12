@@ -117,6 +117,17 @@ static double Ints2Double(uint32_t lo, uint32_t hi)
     u.ival64 = (static_cast<uint64_t>(hi) << 32) | lo;
     return u.dval;
 }
+
+static void Double2Ints(double val, uint32_t& lo, uint32_t& hi)
+{
+    union {
+        double dval;
+        uint64_t ival64;
+    } u;
+    u.dval = val;
+    hi = static_cast<uint32_t>(u.ival64 >> 32);
+    lo = static_cast<uint32_t>(u.ival64);
+}
 #endif // USE(JSVALUE32_64)
 
 } // namespace LLint

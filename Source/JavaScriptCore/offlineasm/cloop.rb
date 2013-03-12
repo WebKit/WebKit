@@ -1025,7 +1025,7 @@ class Instruction
         # 32-bit instruction: f2dii dblOp int32LoOp int32HiOp (based on ARMv7)
         # Encode a 64-bit double into 2 32-bit ints (low and high).
         when "fd2ii"
-            $asm.putc "Double2Ints(#{operands[0].clValue(:double)}, #{operands[1].clValue}, #{operands[2].clValue});"
+            $asm.putc "Double2Ints(#{operands[0].clValue(:double)}, #{operands[1].clValue(:uint32)}, #{operands[2].clValue(:uint32)});"
 
         # 64-bit instruction: fq2d int64Op dblOp (based on X64)
         # Copy a bit-encoded double in a 64-bit int register to a double register.

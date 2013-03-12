@@ -1,5 +1,19 @@
 2013-03-12  Gabor Rapcsanyi  <rgabor@webkit.org>
 
+        https://bugs.webkit.org/show_bug.cgi?id=112141
+        LLInt CLoop backend misses Double2Ints() on 32bit architectures
+
+        Reviewed by Filip Pizlo.
+
+        Implement Double2Ints() in CLoop backend of LLInt on 32bit architectures.
+
+        * llint/LowLevelInterpreter.cpp:
+        (LLInt):
+        (JSC::LLInt::Double2Ints):
+        * offlineasm/cloop.rb:
+
+2013-03-12  Gabor Rapcsanyi  <rgabor@webkit.org>
+
         Making more sophisticated cache flush on ARM Linux platform
         https://bugs.webkit.org/show_bug.cgi?id=111854
 
