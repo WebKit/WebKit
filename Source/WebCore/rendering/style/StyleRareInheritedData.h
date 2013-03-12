@@ -117,6 +117,7 @@ public:
 #endif
 #if ENABLE(CSS3_TEXT)
     unsigned m_textAlignLast : 3; // TextAlignLast
+    unsigned m_textUnderlinePosition : 3; // TextUnderlinePosition
 #endif // CSS3_TEXT
     unsigned m_rubyPosition : 1; // RubyPosition
 

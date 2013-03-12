@@ -1,0 +1,71 @@
+Test to make sure -webkit-text-underline-position property returns values properly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Initial value:
+PASS e.style.getPropertyCSSValue('-webkit-text-underline-position') is null
+PASS computedStyle.webkitTextUnderlinePosition is 'auto'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').cssText is 'auto'
+
+Value '':
+PASS e.style.getPropertyCSSValue('-webkit-text-underline-position') is null
+PASS computedStyle.webkitTextUnderlinePosition is 'auto'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').cssText is 'auto'
+
+Initial value (explicit):
+PASS e.style.webkitTextUnderlinePosition is 'initial'
+PASS e.style.getPropertyCSSValue('-webkit-text-underline-position').toString() is '[object CSSValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-underline-position').cssText is 'initial'
+PASS computedStyle.webkitTextUnderlinePosition is 'auto'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').cssText is 'auto'
+
+Value 'auto':
+PASS e.style.webkitTextUnderlinePosition is 'auto'
+PASS e.style.getPropertyCSSValue('-webkit-text-underline-position').toString() is '[object CSSPrimitiveValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-underline-position').cssText is 'auto'
+PASS computedStyle.webkitTextUnderlinePosition is 'auto'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').cssText is 'auto'
+
+Value 'alphabetic':
+PASS e.style.webkitTextUnderlinePosition is 'alphabetic'
+PASS e.style.getPropertyCSSValue('-webkit-text-underline-position').toString() is '[object CSSPrimitiveValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-underline-position').cssText is 'alphabetic'
+PASS computedStyle.webkitTextUnderlinePosition is 'alphabetic'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').cssText is 'alphabetic'
+
+Value 'under':
+PASS e.style.webkitTextUnderlinePosition is 'under'
+PASS e.style.getPropertyCSSValue('-webkit-text-underline-position').toString() is '[object CSSPrimitiveValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-underline-position').cssText is 'under'
+PASS computedStyle.webkitTextUnderlinePosition is 'under'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').cssText is 'under'
+
+Ancestor inherits values from parent:
+PASS e.style.getPropertyCSSValue('-webkit-text-underline-position') is null
+PASS computedStyle.webkitTextUnderlinePosition is 'under'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-underline-position').cssText is 'under'
+
+Value 'auto alphabetic':
+PASS e.style.getPropertyCSSValue('-webkit-text-underline-position') is null
+
+Value 'auto under':
+PASS e.style.getPropertyCSSValue('-webkit-text-underline-position') is null
+
+Value 'under under':
+PASS e.style.getPropertyCSSValue('-webkit-text-underline-position') is null
+
+Value 'under under under':
+PASS e.style.getPropertyCSSValue('-webkit-text-underline-position') is null
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

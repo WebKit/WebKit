@@ -2296,6 +2296,10 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         if (id == CSSValueSolid || id == CSSValueDouble || id == CSSValueDotted || id == CSSValueDashed || id == CSSValueWavy)
             validPrimitive = true;
         break;
+
+    case CSSPropertyWebkitTextUnderlinePosition:
+        // auto | alphabetic | under
+        return parseTextUnderlinePosition(important);
 #endif // CSS3_TEXT
 
     case CSSPropertyZoom:          // normal | reset | document | <number> | <percentage> | inherit
@@ -9140,6 +9144,27 @@ bool CSSParser::parseTextDecoration(CSSPropertyID propId, bool important)
 
     return false;
 }
+
+#if ENABLE(CSS3_TEXT)
+bool CSSParser::parseTextUnderlinePosition(bool important)
+{
+    // The text-underline-position property has sintax "auto | alphabetic | [ under || [ left | right ] ]".
+    // However, values 'left' and 'right' are not implemented yet, so we will parse sintax
+    // "auto | alphabetic | under" for now.
+    CSSParserValue* value = m_valueList->current();
+    switch (value->id) {
+    case CSSValueAuto:
+    case CSSValueAlphabetic:
+    case CSSValueUnder:
+        if (m_valueList->next())
+            return false;
+
+        addProperty(CSSPropertyWebkitTextUnderlinePosition, cssValuePool().createIdentifierValue(value->id), important);
+        return true;
+    }
+    return false;
+}
+#endif // CSS3_TEXT
 
 bool CSSParser::parseTextEmphasisStyle(bool important)
 {

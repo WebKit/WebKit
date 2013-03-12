@@ -2397,6 +2397,42 @@ template<> inline CSSPrimitiveValue::operator TextDecorationStyle() const
     ASSERT_NOT_REACHED();
     return TextDecorationStyleSolid;
 }
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextUnderlinePosition e)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_IDENT;
+    switch (e) {
+    case TextUnderlinePositionAuto:
+        m_value.ident = CSSValueAuto;
+        break;
+    case TextUnderlinePositionAlphabetic:
+        m_value.ident = CSSValueAlphabetic;
+        break;
+    case TextUnderlinePositionUnder:
+        m_value.ident = CSSValueUnder;
+        break;
+    }
+
+    // FIXME: Implement support for 'under left' and 'under right' values.
+}
+
+template<> inline CSSPrimitiveValue::operator TextUnderlinePosition() const
+{
+    switch (m_value.ident) {
+    case CSSValueAuto:
+        return TextUnderlinePositionAuto;
+    case CSSValueAlphabetic:
+        return TextUnderlinePositionAlphabetic;
+    case CSSValueUnder:
+        return TextUnderlinePositionUnder;
+    }
+
+    // FIXME: Implement support for 'under left' and 'under right' values.
+
+    ASSERT_NOT_REACHED();
+    return TextUnderlinePositionAuto;
+}
 #endif // CSS3_TEXT
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETextSecurity e)

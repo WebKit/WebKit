@@ -1149,6 +1149,35 @@ public:
     }
 };
 
+#if ENABLE(CSS3_TEXT)
+class ApplyPropertyTextUnderlinePosition {
+public:
+    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
+    {
+        // This is true if value is 'auto' or 'alphabetic'.
+        if (value->isPrimitiveValue()) {
+            TextUnderlinePosition t = *static_cast<CSSPrimitiveValue*>(value);
+            styleResolver->style()->setTextUnderlinePosition(t);
+            return;
+        }
+
+        unsigned t = 0;
+        for (CSSValueListIterator i(value); i.hasMore(); i.advance()) {
+            CSSValue* item = i.value();
+            ASSERT(item->isPrimitiveValue());
+            TextUnderlinePosition t2 = *static_cast<CSSPrimitiveValue*>(item);
+            t |= t2;
+        }
+        styleResolver->style()->setTextUnderlinePosition(static_cast<TextUnderlinePosition>(t));
+    }
+    static PropertyHandler createHandler()
+    {
+        PropertyHandler handler = ApplyPropertyDefaultBase<TextUnderlinePosition, &RenderStyle::textUnderlinePosition, TextUnderlinePosition, &RenderStyle::setTextUnderlinePosition, TextUnderlinePosition, &RenderStyle::initialTextUnderlinePosition>::createHandler();
+        return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
+    }
+};
+#endif // CSS3_TEXT
+
 class ApplyPropertyLineHeight {
 public:
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
@@ -1903,6 +1932,7 @@ StyleBuilder::StyleBuilder()
     setPropertyHandler(CSSPropertyWebkitTextDecorationLine, ApplyPropertyTextDecoration::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextDecorationStyle, ApplyPropertyDefault<TextDecorationStyle, &RenderStyle::textDecorationStyle, TextDecorationStyle, &RenderStyle::setTextDecorationStyle, TextDecorationStyle, &RenderStyle::initialTextDecorationStyle>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextAlignLast, ApplyPropertyDefault<TextAlignLast, &RenderStyle::textAlignLast, TextAlignLast, &RenderStyle::setTextAlignLast, TextAlignLast, &RenderStyle::initialTextAlignLast>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitTextUnderlinePosition, ApplyPropertyTextUnderlinePosition::createHandler());
 #endif // CSS3_TEXT
     setPropertyHandler(CSSPropertyTextIndent, ApplyPropertyLength<&RenderStyle::textIndent, &RenderStyle::setTextIndent, &RenderStyle::initialTextIndent>::createHandler());
     setPropertyHandler(CSSPropertyTextOverflow, ApplyPropertyDefault<TextOverflow, &RenderStyle::textOverflow, TextOverflow, &RenderStyle::setTextOverflow, TextOverflow, &RenderStyle::initialTextOverflow>::createHandler());

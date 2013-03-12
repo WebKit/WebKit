@@ -575,6 +575,7 @@ public:
 #if ENABLE(CSS3_TEXT)
     TextDecorationStyle textDecorationStyle() const { return static_cast<TextDecorationStyle>(rareNonInheritedData->m_textDecorationStyle); }
     TextAlignLast textAlignLast() const { return static_cast<TextAlignLast>(rareInheritedData->m_textAlignLast); }
+    TextUnderlinePosition textUnderlinePosition() const { return static_cast<TextUnderlinePosition>(rareInheritedData->m_textUnderlinePosition); }
 #else
     TextDecorationStyle textDecorationStyle() const { return TextDecorationStyleSolid; }
 #endif // CSS3_TEXT
@@ -1137,6 +1138,7 @@ public:
 #if ENABLE(CSS3_TEXT)
     void setTextDecorationStyle(TextDecorationStyle v) { SET_VAR(rareNonInheritedData, m_textDecorationStyle, v); }
     void setTextAlignLast(TextAlignLast v) { SET_VAR(rareInheritedData, m_textAlignLast, v); }
+    void setTextUnderlinePosition(TextUnderlinePosition v) { SET_VAR(rareInheritedData, m_textUnderlinePosition, v); }
 #endif // CSS3_TEXT
     void setDirection(TextDirection v) { inherited_flags._direction = v; }
     void setLineHeight(Length specifiedLineHeight);
@@ -1611,6 +1613,7 @@ public:
 #if ENABLE(CSS3_TEXT)
     static TextDecorationStyle initialTextDecorationStyle() { return TextDecorationStyleSolid; }
     static TextAlignLast initialTextAlignLast() { return TextAlignLastAuto; }
+    static TextUnderlinePosition initialTextUnderlinePosition() { return TextUnderlinePositionAuto; }
 #endif // CSS3_TEXT
     static float initialZoom() { return 1.0f; }
     static int initialOutlineOffset() { return 0; }

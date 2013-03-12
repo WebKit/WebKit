@@ -3804,6 +3804,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitTextDecorationLine:
     case CSSPropertyWebkitTextDecorationStyle:
     case CSSPropertyWebkitTextAlignLast:
+    case CSSPropertyWebkitTextUnderlinePosition:
 #endif // CSS3_TEXT
     case CSSPropertyWebkitTextEmphasisColor:
     case CSSPropertyWebkitTextEmphasisPosition:
