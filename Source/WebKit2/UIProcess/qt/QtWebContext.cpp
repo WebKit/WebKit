@@ -23,10 +23,9 @@
 
 #include "QtDownloadManager.h"
 #include "QtWebIconDatabaseClient.h"
-#include "WKAPICast.h"
-#include "WebContext.h"
 #include "WebInspectorServer.h"
 #include "qquickwebview_p_p.h"
+#include <WKAPICast.h>
 #include <WKArray.h>
 #include <WKPage.h>
 #include <WKString.h>
@@ -102,19 +101,19 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messag
     QQuickWebViewPrivate::get(page)->didReceiveMessageFromNavigatorQtObject(str);
 }
 
-static void initializeContextInjectedBundleClient(WebContext* context)
+static void initializeContextInjectedBundleClient(WKContextRef context)
 {
     WKContextInjectedBundleClient injectedBundleClient;
     memset(&injectedBundleClient, 0, sizeof(WKContextInjectedBundleClient));
     injectedBundleClient.version = kWKContextInjectedBundleClientCurrentVersion;
     injectedBundleClient.didReceiveMessageFromInjectedBundle = didReceiveMessageFromInjectedBundle;
-    WKContextSetInjectedBundleClient(toAPI(context), &injectedBundleClient);
+    WKContextSetInjectedBundleClient(context, &injectedBundleClient);
 }
 
-QtWebContext::QtWebContext(PassRefPtr<WebContext> context)
+QtWebContext::QtWebContext(WKContextRef context)
     : m_context(context)
-    , m_downloadManager(new QtDownloadManager(m_context.get()))
-    , m_iconDatabase(new QtWebIconDatabaseClient(m_context.get()))
+    , m_downloadManager(new QtDownloadManager(toImpl(context)))
+    , m_iconDatabase(new QtWebIconDatabaseClient(toImpl(context)))
 {
 }
 
@@ -123,7 +122,7 @@ QtWebContext::~QtWebContext()
 }
 
 // Used directly only by WebKitTestRunner.
-QtWebContext* QtWebContext::create(PassRefPtr<WebContext> context)
+QtWebContext* QtWebContext::create(WKContextRef context)
 {
     globalInitialization();
     return new QtWebContext(context);
@@ -132,22 +131,17 @@ QtWebContext* QtWebContext::create(PassRefPtr<WebContext> context)
 QtWebContext* QtWebContext::defaultContext()
 {
     if (!s_defaultQtWebContext) {
-        RefPtr<WebContext> webContext = WebContext::create(String());
+        WKRetainPtr<WKContextRef> wkContext = adoptWK(WKContextCreate());
         // Make sure for WebKitTestRunner that the injected bundle client isn't initialized
         // and that the page cache isn't enabled (defaultContext() isn't used there).
-        initializeContextInjectedBundleClient(webContext.get());
+        initializeContextInjectedBundleClient(wkContext.get());
         // A good all-around default.
-        webContext->setCacheModel(CacheModelDocumentBrowser);
+        WKContextSetCacheModel(wkContext.get(), kWKCacheModelDocumentBrowser);
 
-        s_defaultQtWebContext = QtWebContext::create(webContext.release());
+        s_defaultQtWebContext = QtWebContext::create(wkContext.get());
     }
 
     return s_defaultQtWebContext;
-}
-
-PassRefPtr<WebPageProxy> QtWebContext::createWebPage(PageClient* client, WebPageGroup* pageGroup)
-{
-    return m_context->createWebPage(client, pageGroup);
 }
 
 } // namespace WebKit

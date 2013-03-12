@@ -1,5 +1,25 @@
 2013-02-14  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt] Properly layer QtWebContext on top of the C API
+        https://bugs.webkit.org/show_bug.cgi?id=108475
+
+        Reviewed by Simon Hausmann.
+        Signed off for WebKit2 by Benjamin Poulain.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initialize):
+        * UIProcess/qt/QtWebContext.cpp:
+        (WebKit::initializeContextInjectedBundleClient):
+        (WebKit::QtWebContext::QtWebContext):
+        (WebKit::QtWebContext::create):
+        (WebKit::QtWebContext::defaultContext):
+        * UIProcess/qt/QtWebContext.h:
+        (WebKit):
+        (QtWebContext):
+        (WebKit::QtWebContext::context):
+
+2013-02-14  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt][WK2] Allow QtWebContext to call directly to QQuickWebView with a WKPageRef
         https://bugs.webkit.org/show_bug.cgi?id=109829
 

@@ -34,6 +34,7 @@
 #include "QtWebPageEventHandler.h"
 #include "QtWebPagePolicyClient.h"
 #include "WebBackForwardList.h"
+#include "WebContext.h"
 #include "WebFindOptions.h"
 #if ENABLE(INSPECTOR_SERVER)
 #include "WebInspectorProxy.h"
@@ -321,8 +322,8 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
     if (!pageGroup)
         pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(0));
 
-    context = contextRef ? QtWebContext::create(toImpl(contextRef)) : QtWebContext::defaultContext();
-    webPageProxy = context->createWebPage(&pageClient, toImpl(pageGroup.get()));
+    context = contextRef ? QtWebContext::create(contextRef) : QtWebContext::defaultContext();
+    webPageProxy = toImpl(context->context())->createWebPage(&pageClient, toImpl(pageGroup.get()));
     webPage = toAPI(webPageProxy.get());
     pageToView()->insert(webPage.get(), this);
 

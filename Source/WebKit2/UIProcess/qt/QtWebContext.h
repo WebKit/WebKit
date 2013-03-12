@@ -24,38 +24,29 @@
 #include <QScopedPointer>
 #include <QtGlobal>
 #include <WKContext.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include <WKRetainPtr.h>
 
 namespace WebKit {
 
-class PageClient;
 class QtDownloadManager;
 class QtWebIconDatabaseClient;
-class WebContext;
-class WebPageGroup;
-class WebPageProxy;
 
 class QtWebContext {
 public:
     ~QtWebContext();
 
-    static QtWebContext* create(PassRefPtr<WebContext>);
+    static QtWebContext* create(WKContextRef);
     static QtWebContext* defaultContext();
 
-    PassRefPtr<WebPageProxy> createWebPage(PageClient*, WebPageGroup*);
-
-    WebContext* context() { return m_context.get(); }
+    WKContextRef context() { return m_context.get(); }
 
     QtDownloadManager* downloadManager() { return m_downloadManager.data(); }
     QtWebIconDatabaseClient* iconDatabase() { return m_iconDatabase.data(); }
 
 private:
-    explicit QtWebContext(PassRefPtr<WebContext>);
+    explicit QtWebContext(WKContextRef);
 
-    RefPtr<WebContext> m_context;
+    WKRetainPtr<WKContextRef> m_context;
     QScopedPointer<QtDownloadManager> m_downloadManager;
     QScopedPointer<QtWebIconDatabaseClient> m_iconDatabase;
 };
