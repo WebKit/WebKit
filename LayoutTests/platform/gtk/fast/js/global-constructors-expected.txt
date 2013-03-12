@@ -6,7 +6,6 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS ArrayBufferView.toString() is '[object ArrayBufferViewConstructor]'
 PASS Attr.toString() is '[object AttrConstructor]'
 PASS Audio.toString() is '[object AudioConstructor]'
-PASS AudioProcessingEvent.toString() is '[object AudioProcessingEventConstructor]'
 PASS BeforeLoadEvent.toString() is '[object BeforeLoadEventConstructor]'
 PASS Blob.toString() is '[object BlobConstructor]'
 PASS CDATASection.toString() is '[object CDATASectionConstructor]'
@@ -163,7 +162,6 @@ PASS Node.toString() is '[object NodeConstructor]'
 PASS NodeFilter.toString() is '[object NodeFilterConstructor]'
 PASS NodeList.toString() is '[object NodeListConstructor]'
 PASS Notation.toString() is '[object NotationConstructor]'
-PASS OfflineAudioCompletionEvent.toString() is '[object OfflineAudioCompletionEventConstructor]'
 PASS Option.toString() is '[object OptionConstructor]'
 PASS OverflowEvent.toString() is '[object OverflowEventConstructor]'
 PASS PageTransitionEvent.toString() is '[object PageTransitionEventConstructor]'
@@ -364,7 +362,6 @@ PASS XPathEvaluator.toString() is '[object XPathEvaluatorConstructor]'
 PASS XPathException.toString() is '[object XPathExceptionConstructor]'
 PASS XPathResult.toString() is '[object XPathResultConstructor]'
 PASS XSLTProcessor.toString() is '[object XSLTProcessorConstructor]'
-FAIL webkitAudioPannerNode.toString() should be [object webkitAudioPannerNodeConstructor]. Was [object PannerNodeConstructor].
 FAIL webkitIDBCursor.toString() should be [object webkitIDBCursorConstructor]. Was [object IDBCursorConstructor].
 FAIL webkitIDBDatabase.toString() should be [object webkitIDBDatabaseConstructor]. Was [object IDBDatabaseConstructor].
 FAIL webkitIDBFactory.toString() should be [object webkitIDBFactoryConstructor]. Was [object IDBFactoryConstructor].
@@ -373,7 +370,6 @@ FAIL webkitIDBKeyRange.toString() should be [object webkitIDBKeyRangeConstructor
 FAIL webkitIDBObjectStore.toString() should be [object webkitIDBObjectStoreConstructor]. Was [object IDBObjectStoreConstructor].
 FAIL webkitIDBRequest.toString() should be [object webkitIDBRequestConstructor]. Was [object IDBRequestConstructor].
 FAIL webkitIDBTransaction.toString() should be [object webkitIDBTransactionConstructor]. Was [object IDBTransactionConstructor].
-FAIL webkitOfflineAudioContext.toString() should be [object webkitOfflineAudioContextConstructor]. Was [object OfflineAudioContextConstructor].
 FAIL webkitURL.toString() should be [object webkitURLConstructor]. Was [object URLConstructor].
 PASS successfullyParsed is true
 
