@@ -2213,28 +2213,45 @@ public:
 
     unsigned debugOffset() { return m_formatter.debugOffset(); }
 
+#if OS(LINUX)
+    static inline void linuxPageFlush(uintptr_t begin, uintptr_t end)
+    {
+        asm volatile(
+            "push    {r7}\n"
+            "mov     r0, %0\n"
+            "mov     r1, %1\n"
+            "movw    r7, #0x2\n"
+            "movt    r7, #0xf\n"
+            "movs    r2, #0x0\n"
+            "svc     0x0\n"
+            "pop     {r7}\n"
+            :
+            : "r" (begin), "r" (end)
+            : "r0", "r1", "r2");
+    }
+#endif
+
     static void cacheFlush(void* code, size_t size)
     {
 #if OS(IOS)
         sys_cache_control(kCacheFunctionPrepareForExecution, code, size);
 #elif OS(LINUX)
-        uintptr_t currentPage = reinterpret_cast<uintptr_t>(code) & ~(pageSize() - 1);
-        uintptr_t lastPage = (reinterpret_cast<uintptr_t>(code) + size) & ~(pageSize() - 1);
-        do {
-            asm volatile(
-                "push    {r7}\n"
-                "mov     r0, %0\n"
-                "mov     r1, %1\n"
-                "movw    r7, #0x2\n"
-                "movt    r7, #0xf\n"
-                "movs    r2, #0x0\n"
-                "svc     0x0\n"
-                "pop     {r7}\n"
-                :
-                : "r" (currentPage), "r" (currentPage + pageSize())
-                : "r0", "r1", "r2");
-            currentPage += pageSize();
-        } while (lastPage >= currentPage);
+        size_t page = pageSize();
+        uintptr_t current = reinterpret_cast<uintptr_t>(code);
+        uintptr_t end = current + size;
+        uintptr_t firstPageEnd = (current & ~(page - 1)) + page;
+
+        if (end <= firstPageEnd) {
+            linuxPageFlush(current, end);
+            return;
+        }
+
+        linuxPageFlush(current, firstPageEnd);
+
+        for (current = firstPageEnd; current + page < end; current += page)
+            linuxPageFlush(current, current + page);
+
+        linuxPageFlush(current, end);
 #elif OS(WINCE)
         CacheRangeFlush(code, size, CACHE_SYNC_ALL);
 #elif OS(QNX)

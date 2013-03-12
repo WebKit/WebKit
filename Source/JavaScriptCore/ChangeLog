@@ -1,5 +1,24 @@
 2013-03-12  Gabor Rapcsanyi  <rgabor@webkit.org>
 
+        Making more sophisticated cache flush on ARM Linux platform
+        https://bugs.webkit.org/show_bug.cgi?id=111854
+
+        Reviewed by Zoltan Herczeg.
+
+        The cache flush on ARM Linux invalidates whole pages
+        instead of just the required area.
+
+        * assembler/ARMAssembler.h:
+        (ARMAssembler):
+        (JSC::ARMAssembler::linuxPageFlush):
+        (JSC::ARMAssembler::cacheFlush):
+        * assembler/ARMv7Assembler.h:
+        (ARMv7Assembler):
+        (JSC::ARMv7Assembler::linuxPageFlush):
+        (JSC::ARMv7Assembler::cacheFlush):
+
+2013-03-12  Gabor Rapcsanyi  <rgabor@webkit.org>
+
         Renaming the armv7.rb LLINT backend to arm.rb
         https://bugs.webkit.org/show_bug.cgi?id=110565
 
