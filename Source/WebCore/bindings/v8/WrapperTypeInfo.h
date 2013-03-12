@@ -52,9 +52,7 @@ namespace WebCore {
     enum WrapperWorldType {
         MainWorld,
         IsolatedWorld,
-        WorkerWorld,
-        // Whatever world type the current context has. FIXME: remove this.
-        GetFromContext
+        WorkerWorld
     };
 
     typedef v8::Persistent<v8::FunctionTemplate> (*GetTemplateFunction)(v8::Isolate*, WrapperWorldType);

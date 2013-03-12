@@ -35,7 +35,7 @@ class Dictionary;
 class V8TestEventConstructor {
 public:
     static const bool hasDependentLifetime = false;
-    static bool HasInstance(v8::Handle<v8::Value>, v8::Isolate*, WrapperWorldType = GetFromContext);
+    static bool HasInstance(v8::Handle<v8::Value>, v8::Isolate*);
     static v8::Persistent<v8::FunctionTemplate> GetTemplate(v8::Isolate*, WrapperWorldType);
     static TestEventConstructor* toNative(v8::Handle<v8::Object> object)
     {
