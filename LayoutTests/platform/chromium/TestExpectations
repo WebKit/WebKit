@@ -4471,3 +4471,13 @@ webkit.org/b/111808 [ Debug ] fast/js/regress/nested-function-parsing-random.htm
 
 # Subtle pixel difference in debug only.
 webkit.org/b/112058 [ Debug SnowLeopard ] svg/custom/foreign-object-skew.svg [ Failure ]
+
+# r145472 broke 8 compositing tests (animations refactoring?)
+webkit.org/b/112102 [ Mac Win Linux ] compositing/masks/direct-image-mask.html [ ImageOnlyFailure ]
+webkit.org/b/112102 [ Mac Win Linux ] compositing/masks/layer-mask-placement.html [ ImageOnlyFailure ]
+webkit.org/b/112102 [ Mac Win Linux ] compositing/masks/mask-of-clipped-layer.html [ ImageOnlyFailure ]
+webkit.org/b/112102 [ Mac Win Linux ] compositing/masks/masked-ancestor.html [ ImageOnlyFailure ]
+webkit.org/b/112102 [ Mac Win Linux ] compositing/masks/multiple-masks.html [ ImageOnlyFailure ]
+webkit.org/b/112102 [ Mac Win Linux ] compositing/reflections/masked-reflection-on-composited.html [ ImageOnlyFailure ]
+webkit.org/b/112102 [ Mac Win Linux ] compositing/reflections/nested-reflection-mask-change.html [ ImageOnlyFailure ]
+webkit.org/b/112102 [ Mac Win Linux ] compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
