@@ -1,3 +1,20 @@
+2013-03-11  Oliver Hunt  <oliver@apple.com>
+
+        Harden JSStringJoiner
+        https://bugs.webkit.org/show_bug.cgi?id=112093
+
+        Reviewed by Filip Pizlo.
+
+        Harden JSStringJoiner, make it use our CheckedArithmetic
+        class to simplify everything.
+
+        * runtime/JSStringJoiner.cpp:
+        (JSC::JSStringJoiner::build):
+        * runtime/JSStringJoiner.h:
+        (JSStringJoiner):
+        (JSC::JSStringJoiner::JSStringJoiner):
+        (JSC::JSStringJoiner::append):
+
 2013-03-12  Filip Pizlo  <fpizlo@apple.com>
 
         DFG generic array access cases should not be guarded by CheckStructure even of the profiling tells us that it could be
