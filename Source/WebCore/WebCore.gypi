@@ -5593,6 +5593,7 @@
             'inspector/front-end/cm/codemirror.js',
             'inspector/front-end/cm/css.js',
             'inspector/front-end/cm/htmlmixed.js',
+            'inspector/front-end/cm/matchbrackets.js',
             'inspector/front-end/cm/javascript.js',
             'inspector/front-end/cm/xml.js',
         ],

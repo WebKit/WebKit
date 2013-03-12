@@ -33,6 +33,7 @@ importScript("cm/css.js");
 importScript("cm/javascript.js");
 importScript("cm/xml.js");
 importScript("cm/htmlmixed.js");
+importScript("cm/matchbrackets.js");
 
 /**
  * @constructor
@@ -52,7 +53,8 @@ WebInspector.CodeMirrorTextEditor = function(url, delegate)
 
     this._codeMirror = window.CodeMirror(this.element, {
         lineNumbers: true,
-        gutters: ["CodeMirror-linenumbers", "breakpoints"]
+        gutters: ["CodeMirror-linenumbers", "breakpoints"],
+        matchBrackets: true
     });
 
     var indent = WebInspector.settings.textEditorIndent.get();

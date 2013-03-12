@@ -10980,6 +10980,7 @@
     <None Include="..\inspector\front-end\helpScreen.css" />
     <None Include="..\inspector\front-end\HelpScreen.js" />
     <None Include="..\inspector\front-end\cm\htmlmixed.js" />
+    <None Include="..\inspector\front-end\cm\matchbrackets.js" />
     <None Include="..\inspector\front-end\ImageView.js" />
     <None Include="..\inspector\front-end\IndexedDBModel.js" />
     <None Include="..\inspector\front-end\indexedDBViews.css" />

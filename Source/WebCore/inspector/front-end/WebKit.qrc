@@ -41,6 +41,7 @@
     <file>cm/codemirror.js</file>
     <file>cm/css.js</file>
     <file>cm/htmlmixed.js</file>
+    <file>cm/matchbrackets.js</file>
     <file>cm/javascript.js</file>
     <file>cm/xml.js</file>
     <file>Database.js</file>

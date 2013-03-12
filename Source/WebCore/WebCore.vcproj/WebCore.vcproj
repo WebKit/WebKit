@@ -77398,6 +77398,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\cm\matchbrackets.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ImageView.js"
 					>
 				</File>

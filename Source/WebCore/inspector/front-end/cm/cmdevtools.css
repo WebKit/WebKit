@@ -31,9 +31,20 @@
 .cm-breakpoint-disabled {
   opacity: 0.5;
 }
+
+.CodeMirror-matchingbracket {
+  border-bottom: 1px solid black;
+  color: black !important;
+}
+
+.CodeMirror-nonmatchingbracket {
+  color: black !important;
+}
+
 .cm-breakpoint-conditional {
   -webkit-border-image: url(Images/breakpointConditionalBorder.png) 1 14 1 2;
 }
+
 .cm-execution-line {
     background-color: rgb(171, 191, 254) !important;
     outline: 1px solid rgb(64, 115, 244);
