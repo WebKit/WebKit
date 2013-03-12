@@ -30,7 +30,7 @@
 #import "PlatformCAAnimation.h"
 
 #import "FloatConversion.h"
-#import "LengthFunctions.h"
+#import "PlatformCAFilters.h"
 #import "TimingFunction.h"
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/UnusedParam.h>
@@ -392,126 +392,9 @@ void PlatformCAAnimation::setFromValue(const WebCore::Color& value)
 }
 
 #if ENABLE(CSS_FILTERS)
-static double sepiaFullConstants[3][3] = {
-    { 0.393, 0.769, 0.189 },
-    { 0.349, 0.686, 0.168 },
-    { 0.272, 0.534, 0.131 }
-};
-
-static double sepiaNoneConstants[3][3] = {
-    { 1, 0, 0 },
-    { 0, 1, 0 },
-    { 0, 0, 1 }
-};
-
-static double invertConstants[3][3] = {
-    { 1, 0, 0 },
-    { 0, 1, 0 },
-    { 0, 0, 1 }
-};
-
-static RetainPtr<id> filterValueForOperation(const FilterOperation* operation, int internalFilterPropertyIndex)
-{
-    FilterOperation::OperationType type = operation->getOperationType();
-    RetainPtr<id> value;
-    
-    switch(type) {
-    case FilterOperation::GRAYSCALE:
-    case FilterOperation::SATURATE:
-    case FilterOperation::HUE_ROTATE: {
-        double amount = 0;
-        
-        if (!operation->isDefault()) {
-            const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(operation);
-            amount = op->amount();
-        }
-        
-        if (type == FilterOperation::HUE_ROTATE)
-            amount = deg2rad(amount);
-
-        value.adoptNS([[NSNumber numberWithDouble:amount] retain]);
-        break;
-    }
-    case FilterOperation::SEPIA: {
-        double amount = 0;
-
-        if (!operation->isDefault()) {
-            const BasicColorMatrixFilterOperation* op = static_cast<const BasicColorMatrixFilterOperation*>(operation);
-            amount = op->amount();
-        }
-        
-        value.adoptNS([[NSArray arrayWithObjects:
-            [NSNumber numberWithDouble:WebCore::blend(sepiaNoneConstants[internalFilterPropertyIndex][0], sepiaFullConstants[0][internalFilterPropertyIndex], amount)],
-            [NSNumber numberWithDouble:WebCore::blend(sepiaNoneConstants[internalFilterPropertyIndex][1], sepiaFullConstants[1][internalFilterPropertyIndex], amount)],
-            [NSNumber numberWithDouble:WebCore::blend(sepiaNoneConstants[internalFilterPropertyIndex][2], sepiaFullConstants[2][internalFilterPropertyIndex], amount)],
-            [NSNumber numberWithDouble:0],
-            nil] retain]);
-        break;
-    }
-    case FilterOperation::INVERT: {
-        double amount = 0;
-
-        if (!operation->isDefault()) {
-            const BasicComponentTransferFilterOperation* op = static_cast<const BasicComponentTransferFilterOperation*>(operation);
-            amount = op->amount();
-        }
-        
-        // The color matrix animation for invert does a scale of each color component by a value that goes from 
-        // 1 (when amount is 0) to -1 (when amount is 1). Then the color values are offset by amount. This has the
-        // effect of performing the operation: c' = c * -1 + 1, which inverts the color.
-        if (internalFilterPropertyIndex < 3) {
-            // the first 3 properties are the red, green and blue multipliers
-            double multiplier = 1 - amount * 2;
-            value.adoptNS([[NSArray arrayWithObjects:
-                [NSNumber numberWithDouble:invertConstants[internalFilterPropertyIndex][0] * multiplier],
-                [NSNumber numberWithDouble:invertConstants[internalFilterPropertyIndex][1] * multiplier],
-                [NSNumber numberWithDouble:invertConstants[internalFilterPropertyIndex][2] * multiplier],
-                [NSNumber numberWithDouble:0],
-                nil] retain]);
-        } else {
-            // the last property is the color offset
-            value.adoptNS([[NSArray arrayWithObjects:
-                [NSNumber numberWithDouble:amount],
-                [NSNumber numberWithDouble:amount],
-                [NSNumber numberWithDouble:amount],
-                [NSNumber numberWithDouble:0],
-                nil] retain]);
-        }
-        break;
-    }
-    case FilterOperation::OPACITY:
-    case FilterOperation::CONTRAST:
-    case FilterOperation::BRIGHTNESS: {
-        double amount = 0;
-
-        if (!operation->isDefault()) {
-            const BasicComponentTransferFilterOperation* op = static_cast<const BasicComponentTransferFilterOperation*>(operation);
-            amount = op->amount();
-        }
-        
-        value.adoptNS([[NSNumber numberWithDouble:amount] retain]);
-        break;
-    }
-    case FilterOperation::BLUR: {
-        double amount = 0;
-
-        if (!operation->isDefault()) {
-            const BlurFilterOperation* op = static_cast<const BlurFilterOperation*>(operation);
-            amount = floatValueForLength(op->stdDeviation(), 0);
-        }
-        
-        value.adoptNS([[NSNumber numberWithDouble:amount] retain]);
-        break;
-    }
-    default: break;
-    }
-    
-    return value;
-}
-
 void PlatformCAAnimation::setFromValue(const FilterOperation* operation, int internalFilterPropertyIndex)
 {
-    RetainPtr<id> value = filterValueForOperation(operation, internalFilterPropertyIndex);
+    RetainPtr<id> value = PlatformCAFilters::filterValueForOperation(operation, internalFilterPropertyIndex);
     [static_cast<CABasicAnimation*>(m_animation.get()) setFromValue:value.get()];
 }
 #endif
@@ -570,7 +453,7 @@ void PlatformCAAnimation::setToValue(const WebCore::Color& value)
 #if ENABLE(CSS_FILTERS)
 void PlatformCAAnimation::setToValue(const FilterOperation* operation, int internalFilterPropertyIndex)
 {
-    RetainPtr<id> value = filterValueForOperation(operation, internalFilterPropertyIndex);
+    RetainPtr<id> value = PlatformCAFilters::filterValueForOperation(operation, internalFilterPropertyIndex);
     [static_cast<CABasicAnimation*>(m_animation.get()) setToValue:value.get()];
 }
 #endif
@@ -656,7 +539,7 @@ void PlatformCAAnimation::setValues(const Vector<RefPtr<FilterOperation> >& valu
     NSMutableArray* array = [NSMutableArray array];
 
     for (size_t i = 0; i < values.size(); ++i) {
-        RetainPtr<id> value = filterValueForOperation(values[i].get(), internalFilterPropertyIndex);
+        RetainPtr<id> value = PlatformCAFilters::filterValueForOperation(values[i].get(), internalFilterPropertyIndex);
         [array addObject:value.get()];
     }
     [static_cast<CAKeyframeAnimation*>(m_animation.get()) setValues:array];
@@ -703,52 +586,5 @@ void PlatformCAAnimation::copyTimingFunctionsFrom(const PlatformCAAnimation* val
     CAKeyframeAnimation* other = static_cast<CAKeyframeAnimation*>(value->m_animation.get());
     [static_cast<CAKeyframeAnimation*>(m_animation.get()) setTimingFunctions:[other timingFunctions]];
 }
-
-#if ENABLE(CSS_FILTERS)
-int PlatformCAAnimation::numAnimatedFilterProperties(FilterOperation::OperationType type)
-{
-    switch(type) {
-    case FilterOperation::GRAYSCALE: return 1;
-    case FilterOperation::SEPIA: return 3;
-    case FilterOperation::SATURATE: return 1;
-    case FilterOperation::HUE_ROTATE: return 1;
-    case FilterOperation::INVERT: return 4;
-    case FilterOperation::OPACITY: return 1;
-    case FilterOperation::BLUR: return 1;
-    case FilterOperation::CONTRAST: return 1;
-    case FilterOperation::BRIGHTNESS: return 1;
-    default: return 0;
-    }
-}
-
-const char* PlatformCAAnimation::animatedFilterPropertyName(FilterOperation::OperationType type, int internalFilterPropertyIndex)
-{
-    switch(type) {
-    case FilterOperation::GRAYSCALE: return "inputIntensity";
-    case FilterOperation::SEPIA:
-        switch(internalFilterPropertyIndex) {
-        case 0: return "inputRVector";
-        case 1: return "inputGVector";
-        case 2: return "inputBVector";
-        default: return "";
-        }
-    case FilterOperation::SATURATE: return "inputSaturation";
-    case FilterOperation::HUE_ROTATE: return "inputAngle";
-    case FilterOperation::INVERT:
-        switch(internalFilterPropertyIndex) {
-        case 0: return "inputRVector";
-        case 1: return "inputGVector";
-        case 2: return "inputBVector";
-        case 3: return "inputBiasVector";
-        default: return "";
-        }
-    case FilterOperation::OPACITY: return "inputAVector";
-    case FilterOperation::BLUR: return "inputRadius";
-    case FilterOperation::CONTRAST: return "inputContrast";
-    case FilterOperation::BRIGHTNESS: return "inputBrightness";
-    default: return "";
-    }
-}
-#endif
 
 #endif // USE(ACCELERATED_COMPOSITING)

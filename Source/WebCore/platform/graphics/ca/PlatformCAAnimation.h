@@ -139,11 +139,6 @@ public:
 
     void setTimingFunctions(const Vector<const TimingFunction*>&, bool reverse = false);
     void copyTimingFunctionsFrom(const PlatformCAAnimation*);
-    
-#if ENABLE(CSS_FILTERS)
-    static int numAnimatedFilterProperties(FilterOperation::OperationType);
-    static const char* animatedFilterPropertyName(FilterOperation::OperationType, int internalFilterPropertyIndex);
-#endif
 
 protected:
     PlatformCAAnimation(AnimationType, const String& keyPath);

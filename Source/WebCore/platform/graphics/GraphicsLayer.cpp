@@ -332,7 +332,7 @@ String GraphicsLayer::animationNameForTransition(AnimatedPropertyID property)
     // | is not a valid identifier character in CSS, so this can never conflict with a keyframe identifier.
     StringBuilder id;
     id.appendLiteral("-|transition");
-    id.append(static_cast<char>(property));
+    id.appendNumber(static_cast<int>(property));
     id.append('-');
     return id.toString();
 }

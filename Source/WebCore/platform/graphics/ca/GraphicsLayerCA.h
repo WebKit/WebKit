@@ -349,9 +349,9 @@ private:
     void ensureStructuralLayer(StructuralLayerPurpose);
     StructuralLayerPurpose structuralLayerPurpose() const;
 
-    void setAnimationOnLayer(PlatformCAAnimation*, AnimatedPropertyID, const String& animationName, int index, double timeOffset);
-    bool removeCAAnimationFromLayer(AnimatedPropertyID, const String& animationName, int index);
-    void pauseCAAnimationOnLayer(AnimatedPropertyID, const String& animationName, int index, double timeOffset);
+    void setAnimationOnLayer(PlatformCAAnimation*, AnimatedPropertyID, const String& animationName, int index, int subIndex, double timeOffset);
+    bool removeCAAnimationFromLayer(AnimatedPropertyID, const String& animationName, int index, int subINdex);
+    void pauseCAAnimationOnLayer(AnimatedPropertyID, const String& animationName, int index, int subIndex, double timeOffset);
 
     enum MoveOrCopy { Move, Copy };
     static void moveOrCopyLayerAnimation(MoveOrCopy, const String& animationIdentifier, PlatformCALayer *fromLayer, PlatformCALayer *toLayer);
@@ -435,11 +435,12 @@ private:
     // This represents the animation of a single property. There may be multiple transform animations for
     // a single transition or keyframe animation, so index is used to distinguish these.
     struct LayerPropertyAnimation {
-        LayerPropertyAnimation(PassRefPtr<PlatformCAAnimation> caAnimation, const String& animationName, AnimatedPropertyID property, int index, double timeOffset)
+        LayerPropertyAnimation(PassRefPtr<PlatformCAAnimation> caAnimation, const String& animationName, AnimatedPropertyID property, int index, int subIndex, double timeOffset)
         : m_animation(caAnimation)
         , m_name(animationName)
         , m_property(property)
         , m_index(index)
+        , m_subIndex(subIndex)
         , m_timeOffset(timeOffset)
         { }
 
@@ -447,6 +448,7 @@ private:
         String m_name;
         AnimatedPropertyID m_property;
         int m_index;
+        int m_subIndex;
         double m_timeOffset;
     };
     
