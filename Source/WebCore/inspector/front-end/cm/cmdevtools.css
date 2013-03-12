@@ -56,6 +56,11 @@
     margin: -1px;
 }
 
+.cm-line-with-selection .cm-column-with-selection {
+    border: 0px;
+    margin: 0px;
+}
+
 .cm-s-web-inspector-js span.cm-keyword {color: rgb(170, 13, 145);}
 .cm-s-web-inspector-js span.cm-number {color: rgb(28, 0, 207);}
 .cm-s-web-inspector-js span.cm-comment {color: rgb(0, 116, 0);}

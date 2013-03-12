@@ -441,7 +441,7 @@ WebInspector.CodeMirrorTextEditor.TokenHighlighter.prototype = {
 
         var selectedText = this._codeMirror.getSelection();
         if (this._isWord(selectedText, selectionStart.line, selectionStart.ch, selectionEnd.ch))
-            this._codeMirror.operation(this._addHighlight.bind(this, selectedText));
+            this._codeMirror.operation(this._addHighlight.bind(this, selectedText, selectionStart));
     },
 
     _isWord: function(selectedText, lineNumber, startColumn, endColumn)
@@ -454,27 +454,35 @@ WebInspector.CodeMirrorTextEditor.TokenHighlighter.prototype = {
 
     _removeHighlight: function()
     {
-        if (this._overlayMode) {
-            this._codeMirror.removeOverlay(this._overlayMode);
-            delete this._overlayMode;
+        if (this._highlightDescriptor) {
+            this._codeMirror.removeOverlay(this._highlightDescriptor.overlay);
+            this._codeMirror.removeLineClass(this._highlightDescriptor.selectionStart.line, "wrap", "cm-line-with-selection");
+            delete this._highlightDescriptor;
         }
     },
 
-    _addHighlight: function(token)
+    _addHighlight: function(token, selectionStart)
     {
         const tokenFirstChar = token.charAt(0);
         function nextToken(stream)
         {
-            if (stream.match(token))
-                return "token-highlight";
-            stream.next();
-            if (!stream.skipTo(tokenFirstChar))
-                stream.skipToEnd();
+            if (stream.match(token) && (stream.eol() || !WebInspector.TextUtils.isWordChar(stream.peek())))
+                return stream.column() === selectionStart.ch ? "token-highlight column-with-selection" : "token-highlight";
+
+            var eatenChar;
+            do {
+                eatenChar = stream.next();
+            } while (eatenChar && (WebInspector.TextUtils.isWordChar(eatenChar) || stream.peek() !== tokenFirstChar));
         }
 
-        this._overlayMode = {
+        var overlayMode = {
             token: nextToken
         };
-        this._codeMirror.addOverlay(this._overlayMode);
+        this._codeMirror.addOverlay(overlayMode);
+        this._codeMirror.addLineClass(selectionStart.line, "wrap", "cm-line-with-selection")
+        this._highlightDescriptor = {
+            overlay: overlayMode,
+            selectionStart: selectionStart
+        };
     }
 }
