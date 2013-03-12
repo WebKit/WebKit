@@ -28,6 +28,8 @@
 	<true/>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>CFBundleAllowMixedLocalizations</key>
+	<true/>
 	<key>WebKitEntryPoint</key>
 	<string>WebContentProcessMain</string>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>

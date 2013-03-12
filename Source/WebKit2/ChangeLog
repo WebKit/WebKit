@@ -1,3 +1,18 @@
+2013-03-11  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] WebProcess and WebContentService don't respect system localization
+        https://bugs.webkit.org/show_bug.cgi?id=112091
+        <rdar://problem/13233590>
+
+        Reviewed by Dan Bernstein.
+
+        Allow CFBundle to use localizations that don't exist in the main bundle,
+        so that, for example, injected bundles can load and use strings from localized frameworks.
+
+        * WebProcess/EntryPoint/mac/LegacyProcess/Info.plist:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/Info.plist:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info.plist:
+
 2013-03-11  Jochen Eisinger  <jochen@chromium.org>
 
         Rename DefinitelyProcessingUserGesture to DefinitelyProcessingNewUserGesture

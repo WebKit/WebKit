@@ -28,6 +28,8 @@
 	<string>NSApplication</string>
 	<key>WebKitEntryPoint</key>
 	<string>WebContentServiceInitializer</string>
+	<key>CFBundleAllowMixedLocalizations</key>
+	<true/>
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
