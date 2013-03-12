@@ -2573,17 +2573,6 @@ String plainText(const Range* r, TextIteratorBehavior defaultBehavior, bool isDi
     return result;
 }
 
-static inline bool isAllCollapsibleWhitespace(const String& string)
-{
-    const UChar* characters = string.characters();
-    unsigned length = string.length();
-    for (unsigned i = 0; i < length; ++i) {
-        if (!isCollapsibleWhitespace(characters[i]))
-            return false;
-    }
-    return true;
-}
-
 static PassRefPtr<Range> collapsedToBoundary(const Range* range, bool forward)
 {
     RefPtr<Range> result = range->cloneRange(ASSERT_NO_EXCEPTION);
