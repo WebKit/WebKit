@@ -79,7 +79,7 @@ void EventDispatcher::dispatchScopedEvent(Node* node, PassRefPtr<EventDispatchMe
 
 void EventDispatcher::dispatchSimulatedClick(Node* node, Event* underlyingEvent, SimulatedClickMouseEventOptions mouseEventOptions, SimulatedClickVisualOptions visualOptions)
 {
-    if (node->disabled())
+    if (node->isElementNode() && toElement(node)->disabled())
         return;
 
     if (!gNodesDispatchingSimulatedClicks)
