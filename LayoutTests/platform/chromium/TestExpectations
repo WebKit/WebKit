@@ -3730,9 +3730,6 @@ webkit.org/b/94002 [ Win7 Debug ] inspector/debugger/event-listener-breakpoints.
 webkit.org/b/110963 [ Win7 Debug ] inspector/debugger/debugger-scripts-reload.html [ Pass Timeout Crash ]
 webkit.org/b/110963 [ Win7 Debug ] inspector/debugger/debugger-autocontinue-on-syntax-error.html [ Pass Timeout Crash ]
 
-# Flaky
-webkit.org/b/99389 [ Win ] inspector/debugger/xhr-breakpoints.html [ Pass Failure ]
-
 # Added by bug 89826
 webkit.org/b/94003 [ Win ] fast/css/word-spacing-characters-complex-text.html [ ImageOnlyFailure ]
 
