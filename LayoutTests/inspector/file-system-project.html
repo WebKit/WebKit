@@ -3,75 +3,10 @@
 <script src="../http/tests/inspector/inspector-test.js"></script>
 <script src="../http/tests/inspector/debugger-test.js"></script>
 <script src="../http/tests/inspector/workspace-test.js"></script>
+<script src="../http/tests/inspector/isolated-filesystem-test.js"></script>
 <script>
 function test()
 {
-    var MockIsolatedFileSystem = function(id, path, files)
-    {
-        this._id = id;
-        this._path = path;
-        this._files = files;
-    };
-    MockIsolatedFileSystem.prototype = {
-        id: function()
-        {
-            return this._id;
-        },
-
-        path: function()
-        {
-            return this._path;
-        },
-
-        requestFileContent: function(path, callback)
-        {
-            callback(this._files[path]);
-        },
-
-        setFileContent: function(path, newContent, callback)
-        {
-            this._files[path] = newContent;
-            callback();
-        },
-
-        requestFilesRecursive: function(path, callback)
-        {
-            var files = Object.keys(this._files);
-            for (var i = 0; i < files.length; ++i)
-                callback(files[i]);
-        },
-    }
-
-    var MockIsolatedFileSystemManager = function() {};
-    MockIsolatedFileSystemManager.prototype = {
-        addMockFileSystem: function(path, files)
-        {
-            var id = InspectorTest.testFileSystemMapping.addFileSystemMapping(path);
-            var fileSystem = new MockIsolatedFileSystem(id, path, files);
-            this._fileSystems = this._fileSystems || {};
-            this._fileSystems[path] = fileSystem;
-            this.dispatchEventToListeners(WebInspector.IsolatedFileSystemManager.Events.FileSystemAdded, fileSystem);
-        },
-
-        removeMockFileSystem: function(path)
-        {
-            var fileSystem = this._fileSystems[path];
-            delete this._fileSystems[path];
-            InspectorTest.testFileSystemMapping.removeFileSystemMapping(path);
-            this.dispatchEventToListeners(WebInspector.IsolatedFileSystemManager.Events.FileSystemRemoved, fileSystem);
-        },
-
-        __proto__: WebInspector.Object.prototype
-    }
-
-    function createIsolatedFileSystemManager()
-    {
-        InspectorTest.createWorkspace();
-        var manager = new MockIsolatedFileSystemManager();
-        manager.fileSystemWorkspaceProvider = new WebInspector.FileSystemWorkspaceProvider(manager, InspectorTest.testWorkspace);
-        return manager;
-    }
-
     function dumpUISourceCodes(uiSourceCodes, next)
     {
         innerDumpUISourceCodes(uiSourceCodes, 0, next);
@@ -90,8 +25,9 @@ function test()
     InspectorTest.runTestSuite([
         function testFileSystems(next)
         {
+            InspectorTest.createWorkspace();
+            var manager = InspectorTest.createIsolatedFileSystemManager(InspectorTest.testWorkspace, InspectorTest.testFileSystemMapping);
             var uiSourceCodes = [];
-            var manager = createIsolatedFileSystemManager();
             var entry1 = new WebInspector.FileMapping.Entry("http://localhost/", "/var/www/localhost/");
             var entry2 = new WebInspector.FileMapping.Entry("http://www.example.com/", "/foo/bar/");
             InspectorTest.testFileMapping.setMappingEntries([entry1, entry2]);

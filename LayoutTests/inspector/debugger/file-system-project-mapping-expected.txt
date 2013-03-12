@@ -1,0 +1,20 @@
+Tests file system project.
+
+
+Running: testAutomaticMapping
+Adding file system.
+Adding network resource.
+UISourceCode uri to url mappings:
+    filesystem:/var/www/html/foo.js -> 
+    filesystem:/var/www/bar.js -> 
+Adding mapping between network and file system resources.
+Emulate reloading inspector.
+UISourceCode uri to url mappings:
+    filesystem:/var/www/html/foo.js -> http://localhost/html/foo.js
+    filesystem:/var/www/bar.js -> http://localhost/bar.js
+Removing mapping between network and file system resources.
+Emulate reloading inspector.
+UISourceCode uri to url mappings:
+    filesystem:/var/www/html/foo.js -> 
+    filesystem:/var/www/bar.js -> 
+

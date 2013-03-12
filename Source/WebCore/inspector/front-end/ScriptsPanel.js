@@ -1123,7 +1123,7 @@ WebInspector.ScriptsPanel.prototype = {
          */
         function mapFileSystemToNetwork(networkUISourceCode)
         {
-            this._workspace.addMapping(networkUISourceCode, uiSourceCode);
+            this._workspace.addMapping(networkUISourceCode, uiSourceCode, WebInspector.fileSystemWorkspaceProvider);
         }
     },
 
@@ -1148,7 +1148,7 @@ WebInspector.ScriptsPanel.prototype = {
          */
         function mapNetworkToFileSystem(uiSourceCode)
         {
-            this._workspace.addMapping(networkUISourceCode, uiSourceCode);
+            this._workspace.addMapping(networkUISourceCode, uiSourceCode, WebInspector.fileSystemWorkspaceProvider);
         }
     },
 

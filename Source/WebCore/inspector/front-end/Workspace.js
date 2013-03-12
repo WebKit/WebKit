@@ -186,6 +186,7 @@ WebInspector.Project.prototype = {
             // FIXME: Implement
             return;
         }
+
         uiSourceCode = new WebInspector.UISourceCode(this, fileDescriptor.path, fileDescriptor.originURL, fileDescriptor.url, fileDescriptor.contentType, fileDescriptor.isEditable); 
         uiSourceCode.isContentScript = fileDescriptor.isContentScript;
         this._uiSourceCodes[uiSourceCode.path().join("/")] = uiSourceCode;
@@ -481,8 +482,9 @@ WebInspector.Workspace.prototype = {
     /**
      * @param {WebInspector.UISourceCode} networkUISourceCode
      * @param {WebInspector.UISourceCode} uiSourceCode
+     * @param {WebInspector.FileSystemWorkspaceProvider} fileSystemWorkspaceProvider
      */
-    addMapping: function(networkUISourceCode, uiSourceCode)
+    addMapping: function(networkUISourceCode, uiSourceCode, fileSystemWorkspaceProvider)
     {
         var url = networkUISourceCode.url;
         var path = uiSourceCode.path();
@@ -493,7 +495,7 @@ WebInspector.Workspace.prototype = {
                 break;
             suffix = nextSuffix;
         }
-        var fileSystemPath = WebInspector.fileSystemWorkspaceProvider.fileSystemPath(uiSourceCode);
+        var fileSystemPath = fileSystemWorkspaceProvider.fileSystemPath(uiSourceCode);
         var filePath = "/" + path.join("/");
         var pathPrefix = fileSystemPath + filePath.substr(0, filePath.length - suffix.length) + "/";
         var urlPrefix = url.substr(0, url.length - suffix.length) + "/";
