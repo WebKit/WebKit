@@ -1,3 +1,22 @@
+2013-03-12  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Prevent text selection inside Colour and Date/Time input fields
+        https://bugs.webkit.org/show_bug.cgi?id=111733
+
+        Reviewed by Rob Buis.
+
+        PR 305194.
+
+        Skip rendering of selection if it is in a popup driven
+        input field.  This covers situations where EditorClientBlackBerry::shouldChangeSelectedRange
+        is either not called or focus is not complete when called.
+
+        Informally reviewed by Gen Mak.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::selectionPositionChanged):
+        (WebKit):
+
 2013-03-12  Genevieve Mak  <gmak@rim.com>
 
         [BlackBerry] Notify client if the selection is in a subframe when started.
