@@ -4720,6 +4720,7 @@ webcore_sources += \
 	Source/WebCore/workers/SharedWorkerContext.h \
 	Source/WebCore/workers/SharedWorker.cpp \
 	Source/WebCore/workers/SharedWorker.h \
+	Source/WebCore/workers/SharedWorkerRepository.cpp \
 	Source/WebCore/workers/SharedWorkerRepository.h \
 	Source/WebCore/workers/SharedWorkerStrategy.h \
 	Source/WebCore/workers/SharedWorkerThread.cpp \

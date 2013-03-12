@@ -56703,6 +56703,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\workers\SharedWorkerRepository.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\workers\SharedWorkerRepository.h"
 				>
 			</File>

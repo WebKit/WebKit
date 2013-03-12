@@ -3267,6 +3267,7 @@ enable?(SHARED_WORKERS) {
         workers/DefaultSharedWorkerRepository.cpp \
         workers/SharedWorker.cpp \
         workers/SharedWorkerContext.cpp \
+        workers/SharedWorkerRepository.cpp \
         workers/SharedWorkerThread.cpp
 }
 

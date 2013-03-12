@@ -2131,6 +2131,7 @@
         ['exclude', 'storage/StorageThread\\.(cpp|h)$'],
         ['exclude', 'storage/StorageTracker\\.(cpp|h)$'],
         ['exclude', 'storage/StorageTrackerClient\\.h$'],
+        ['exclude', 'workers/SharedWorkerRepository\\.cpp$'],
         ['exclude', 'workers/DefaultSharedWorkerRepository\\.(cpp|h)$'],
 
         ['include', 'loader/appcache/ApplicationCacheHost\.h$'],

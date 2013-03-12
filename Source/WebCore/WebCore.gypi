@@ -2741,6 +2741,7 @@
             'workers/SharedWorker.h',
             'workers/SharedWorkerContext.cpp',
             'workers/SharedWorkerContext.h',
+            'workers/SharedWorkerRepository.cpp',
             'workers/SharedWorkerRepository.h',
             'workers/SharedWorkerThread.cpp',
             'workers/SharedWorkerThread.h',

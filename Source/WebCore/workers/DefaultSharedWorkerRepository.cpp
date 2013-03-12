@@ -315,7 +315,7 @@ void SharedWorkerScriptLoader::load(const KURL& url)
 
     // Mark this object as active for the duration of the load.
     m_scriptLoader = WorkerScriptLoader::create();
-#if PLATFORM(CHROMIUM) || PLATFORM(BLACKBERRY)
+#if PLATFORM(BLACKBERRY)
     m_scriptLoader->setTargetType(ResourceRequest::TargetIsSharedWorker);
 #endif
     m_scriptLoader->loadAsynchronously(m_worker->scriptExecutionContext(), url, DenyCrossOriginRequests, this);
@@ -366,27 +366,6 @@ void DefaultSharedWorkerRepository::workerScriptLoaded(SharedWorkerProxy& proxy,
     proxy.thread()->runLoop().postTask(SharedWorkerConnectTask::create(port));
 }
 
-bool SharedWorkerRepository::isAvailable()
-{
-    // SharedWorkers are enabled on the default WebKit platform.
-    return true;
-}
-
-void SharedWorkerRepository::connect(PassRefPtr<SharedWorker> worker, PassOwnPtr<MessagePortChannel> port, const KURL& url, const String& name, ExceptionCode& ec)
-{
-    DefaultSharedWorkerRepository::instance().connectToWorker(worker, port, url, name, ec);
-}
-
-void SharedWorkerRepository::documentDetached(Document* document)
-{
-    DefaultSharedWorkerRepository::instance().documentDetached(document);
-}
-
-bool SharedWorkerRepository::hasSharedWorkers(Document* document)
-{
-    return DefaultSharedWorkerRepository::instance().hasSharedWorkers(document);
-}
-
 bool DefaultSharedWorkerRepository::hasSharedWorkers(Document* document)
 {
     MutexLocker lock(m_lock);
@@ -421,7 +400,10 @@ void DefaultSharedWorkerRepository::connectToWorker(PassRefPtr<SharedWorker> wor
     ASSERT(worker->scriptExecutionContext()->securityOrigin()->canAccess(SecurityOrigin::create(url).get()));
     // Fetch a proxy corresponding to this SharedWorker.
     RefPtr<SharedWorkerProxy> proxy = getProxy(name, url);
+
+    // FIXME: Why is this done even if we are raising an exception below?
     proxy->addToWorkerDocuments(worker->scriptExecutionContext());
+
     if (proxy->url() != url) {
         // Proxy already existed under alternate URL - return an error.
         ec = URL_MISMATCH_ERR;

@@ -2523,6 +2523,7 @@ set(WebCore_SOURCES
     workers/DefaultSharedWorkerRepository.cpp
     workers/SharedWorker.cpp
     workers/SharedWorkerContext.cpp
+    workers/SharedWorkerRepository.cpp
     workers/SharedWorkerThread.cpp
     workers/Worker.cpp
     workers/WorkerContext.cpp
