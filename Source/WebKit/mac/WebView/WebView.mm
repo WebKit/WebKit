@@ -6466,7 +6466,7 @@ bool LayerFlushController::flushLayers()
 - (void)_enterFullscreenForNode:(WebCore::Node*)node
 {
     ASSERT(node->hasTagName(WebCore::HTMLNames::videoTag));
-    HTMLMediaElement* videoElement = static_cast<HTMLMediaElement*>(node);
+    HTMLMediaElement* videoElement = toMediaElement(node);
 
     if (_private->fullscreenController) {
         if ([_private->fullscreenController mediaElement] == videoElement) {

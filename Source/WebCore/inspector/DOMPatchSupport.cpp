@@ -170,8 +170,8 @@ bool DOMPatchSupport::innerPatchNode(Digest* oldDigest, Digest* newDigest, Excep
         return true;
 
     // Patch attributes
-    Element* oldElement = static_cast<Element*>(oldNode);
-    Element* newElement = static_cast<Element*>(newNode);
+    Element* oldElement = toElement(oldNode);
+    Element* newElement = toElement(newNode);
     if (oldDigest->m_attrsSHA1 != newDigest->m_attrsSHA1) {
         // FIXME: Create a function in Element for removing all properties. Take in account whether did/willModifyAttribute are important.
         if (oldElement->hasAttributesWithoutUpdate()) {

@@ -67,7 +67,7 @@ bool isLegacyAppleStyleSpan(const Node *node)
     if (!node || !node->isHTMLElement())
         return false;
 
-    const HTMLElement* elem = static_cast<const HTMLElement*>(node);
+    const HTMLElement* elem = toHTMLElement(node);
     return elem->hasLocalName(spanAttr) && elem->getAttribute(classAttr) == styleSpanClassString();
 }
 
@@ -106,7 +106,7 @@ bool isEmptyFontTag(const Element* element, ShouldStyleAttributeBeEmpty shouldSt
     if (!element || !element->hasTagName(fontTag))
         return false;
 
-    return hasNoAttributeOrOnlyStyleAttribute(static_cast<const HTMLElement*>(element), shouldStyleAttributeBeEmpty);
+    return hasNoAttributeOrOnlyStyleAttribute(toHTMLElement(element), shouldStyleAttributeBeEmpty);
 }
 
 static PassRefPtr<Element> createFontElement(Document* document)
@@ -290,8 +290,8 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle *style)
         nextParagraphStart = endOfParagraph(paragraphStart).next();
     }
     
-    startRange = TextIterator::rangeFromLocationAndLength(static_cast<Element*>(scope), startIndex, 0, true);
-    endRange = TextIterator::rangeFromLocationAndLength(static_cast<Element*>(scope), endIndex, 0, true);
+    startRange = TextIterator::rangeFromLocationAndLength(toElement(scope), startIndex, 0, true);
+    endRange = TextIterator::rangeFromLocationAndLength(toElement(scope), endIndex, 0, true);
     if (startRange && endRange)
         updateStartEnd(startRange->startPosition(), endRange->startPosition());
 }

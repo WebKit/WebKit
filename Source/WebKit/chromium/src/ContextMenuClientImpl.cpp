@@ -226,7 +226,7 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
         // We know that if absoluteMediaURL() is not empty, then this
         // is a media element.
         HTMLMediaElement* mediaElement =
-            static_cast<HTMLMediaElement*>(r.innerNonSharedNode());
+            toMediaElement(r.innerNonSharedNode());
         if (mediaElement->hasTagName(HTMLNames::videoTag))
             data.mediaType = WebContextMenuData::MediaTypeVideo;
         else if (mediaElement->hasTagName(HTMLNames::audioTag))
@@ -266,7 +266,7 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
                 if (plugin->plugin()->supportsPaginatedPrint())
                     data.mediaFlags |= WebContextMenuData::MediaCanPrint;
 
-                HTMLPlugInImageElement* pluginElement = static_cast<HTMLPlugInImageElement*>(r.innerNonSharedNode());
+                HTMLPlugInImageElement* pluginElement = toHTMLPlugInImageElement(r.innerNonSharedNode());
                 data.srcURL = pluginElement->document()->completeURL(pluginElement->url());
                 data.mediaFlags |= WebContextMenuData::MediaCanSave;
 
