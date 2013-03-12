@@ -35,6 +35,7 @@
 #include <wtf/ListHashSet.h>
 
 #if ENABLE(CSS_EXCLUSIONS)
+#include "ExclusionShapeInsideInfo.h"
 #include "ExclusionShapeValue.h"
 #endif
 
@@ -54,7 +55,6 @@ class LineInfo;
 class RenderRubyRun;
 #if ENABLE(CSS_EXCLUSIONS)
 class BasicShape;
-class ExclusionShapeInsideInfo;
 #endif
 class TextLayout;
 class WordMeasurement;
@@ -446,7 +446,22 @@ public:
 #endif
 
 #if ENABLE(CSS_EXCLUSIONS)
-    ExclusionShapeInsideInfo* exclusionShapeInsideInfo() const;
+    ExclusionShapeInsideInfo* ensureExclusionShapeInsideInfo()
+    {
+        if (!m_rareData || !m_rareData->m_shapeInsideInfo)
+            setExclusionShapeInsideInfo(ExclusionShapeInsideInfo::createInfo(this));
+        return m_rareData->m_shapeInsideInfo.get();
+    }
+    ExclusionShapeInsideInfo* exclusionShapeInsideInfo() const
+    {
+        return m_rareData && m_rareData->m_shapeInsideInfo && ExclusionShapeInsideInfo::isEnabledFor(this) ? m_rareData->m_shapeInsideInfo.get() : 0;
+    }
+    void setExclusionShapeInsideInfo(PassOwnPtr<ExclusionShapeInsideInfo> value)
+    {
+        if (!m_rareData)
+            m_rareData = adoptPtr(new RenderBlockRareData(this));
+        m_rareData->m_shapeInsideInfo = value;
+    }
     ExclusionShapeInsideInfo* layoutExclusionShapeInsideInfo() const;
     bool allowsExclusionShapeInsideInfoSharing() const { return !isInline() && !isFloating(); }
 #endif
@@ -1214,10 +1229,6 @@ public:
         friend void RenderBlock::createFloatingObjects();
     };
 
-protected:
-
-    OwnPtr<FloatingObjects> m_floatingObjects;
-
     // Allocated only when some of these fields have non-default values
     struct RenderBlockRareData {
         WTF_MAKE_NONCOPYABLE(RenderBlockRareData); WTF_MAKE_FAST_ALLOCATED;
@@ -1258,11 +1269,17 @@ protected:
         RootInlineBox* m_lineGridBox;
 
         RootInlineBox* m_lineBreakToAvoidWidow;
+#if ENABLE(CSS_EXCLUSIONS)
+        OwnPtr<ExclusionShapeInsideInfo> m_shapeInsideInfo;
+#endif
         bool m_shouldBreakAtLineToAvoidWidow : 1;
         bool m_discardMarginBefore : 1;
         bool m_discardMarginAfter : 1;
      };
 
+protected:
+
+    OwnPtr<FloatingObjects> m_floatingObjects;
     OwnPtr<RenderBlockRareData> m_rareData;
 
     RenderObjectChildList m_children;
