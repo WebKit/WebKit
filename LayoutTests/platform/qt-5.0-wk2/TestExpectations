@@ -1,3 +1,4 @@
+
 # Copied from mac-wk2/Skipped and removed Mac specific tests.
 #
 # Copyright (C) 2010 Apple Inc. All rights reserved.
@@ -381,6 +382,10 @@ webkit.org/b/109291 compositing/layer-creation/fixed-position-in-view-dynamic.ht
 # https://bugs.webkit.org/show_bug.cgi?id=92543
 fullscreen/video-controls-timeline.html
 fullscreen/full-screen-iframe-legacy.html
+
+webkit.org/b/112146 fullscreen/video-controls-drag.html [ Skip ]
+
+webkit.org/b/112128 fullscreen/full-screen-table-section.html [ Skip ]
 
 # [Qt][WK2] http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml crashes
 # https://bugs.webkit.org/show_bug.cgi?id=80209
