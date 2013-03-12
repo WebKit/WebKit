@@ -838,7 +838,26 @@ private:
         m_insertionSet.execute(block);
     }
     
-    Node* checkArray(ArrayMode arrayMode, CodeOrigin codeOrigin, Node* array, Node* index, bool (*storageCheck)(const ArrayMode&) = canCSEStorage)
+    void findAndRemoveUnnecessaryStructureCheck(Node* array, const CodeOrigin& codeOrigin)
+    {
+        for (unsigned index = m_indexInBlock; index--;) {
+            Node* previousNode = m_block->at(index);
+            if (previousNode->codeOrigin != codeOrigin)
+                return;
+            
+            if (previousNode->op() != CheckStructure)
+                continue;
+            
+            if (previousNode->child1() != array)
+                continue;
+            
+            previousNode->child1() = Edge();
+            previousNode->convertToPhantom();
+            return; // Assume we were smart enough to only insert one CheckStructure on the array.
+        }
+    }
+    
+    Node* checkArray(ArrayMode arrayMode, const CodeOrigin& codeOrigin, Node* array, Node* index, bool (*storageCheck)(const ArrayMode&) = canCSEStorage)
     {
         ASSERT(arrayMode.isSpecific());
         
@@ -850,12 +869,9 @@ private:
             if (structure) {
                 if (m_indexInBlock > 0) {
                     // If the previous node was a CheckStructure inserted because of stuff
-                    // that the array profile told us, then remove it.
-                    Node* previousNode = m_block->at(m_indexInBlock - 1);
-                    if (previousNode->op() == CheckStructure
-                        && previousNode->child1() == array
-                        && previousNode->codeOrigin == codeOrigin)
-                        previousNode->convertToPhantom();
+                    // that the array profile told us, then remove it, since we're going to be
+                    // doing arrayification instead.
+                    findAndRemoveUnnecessaryStructureCheck(array, codeOrigin);
                 }
                 
                 m_insertionSet.insertNode(
@@ -908,6 +924,7 @@ private:
             return;
             
         case Array::Generic:
+            findAndRemoveUnnecessaryStructureCheck(base.node(), node->codeOrigin);
             return;
             
         default: {

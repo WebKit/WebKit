@@ -1,3 +1,18 @@
+2013-03-12  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG generic array access cases should not be guarded by CheckStructure even of the profiling tells us that it could be
+        https://bugs.webkit.org/show_bug.cgi?id=112183
+
+        Reviewed by Oliver Hunt.
+        
+        Slight speed-up on string-unpack-code.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::findAndRemoveUnnecessaryStructureCheck):
+        (FixupPhase):
+        (JSC::DFG::FixupPhase::checkArray):
+        (JSC::DFG::FixupPhase::blessArrayOperation):
+
 2013-03-12  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=112141
