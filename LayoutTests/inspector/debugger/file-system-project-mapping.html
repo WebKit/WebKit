@@ -86,12 +86,77 @@ function test()
 
             InspectorTest.testFileMapping.setMappingEntries([]);
             next();
+        },
+
+        function testScriptFileOnReloadWithDirtyFile(next)
+        {
+            function uiSourceCodeAdded(uiSourceCode) { }
+
+            function reload()
+            {
+                resourceScriptMapping._debuggerReset();
+                defaultScriptMapping._debuggerReset();
+                script = InspectorTest.createScriptMock("http://localhost/html/foo.js", 0, 0, false, "<foo content>");
+                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(uiSourceCodeAdded, 1);
+                defaultScriptMapping.addScript(script);
+                resourceScriptMapping.addScript(script);
+            }
+
+            var fileSystemPath = "/var/www";
+            var fileSystemProjectId = WebInspector.FileSystemProjectDelegate.projectId(fileSystemPath);
+            var files = {"/html/foo.js": "<foo content>", "/bar.js": "<bar content>"};
+            createObjects();
+            var entry1 = new WebInspector.FileMapping.Entry("http://localhost/", "/var/www/");
+            InspectorTest.testFileMapping.setMappingEntries([entry1]);
+            InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(uiSourceCodeAdded, 2);
+            InspectorTest.addResult("Adding file system.");
+            manager.addMockFileSystem(fileSystemPath, files);
+
+            reload();
+
+            var uiSourceCode = InspectorTest.testWorkspace.uiSourceCode(fileSystemProjectId, ["html", "foo.js"]);
+            InspectorTest.addResult(" - hasDivergedFromVM: " + !!uiSourceCode.scriptFile().hasDivergedFromVM());
+            InspectorTest.addResult("Editing uiSourceCode:");
+            uiSourceCode.setWorkingCopy("<foo content edited>");
+            InspectorTest.addResult(" - hasDivergedFromVM: " + !!uiSourceCode.scriptFile().hasDivergedFromVM());
+
+            function setScriptSourceOverrideFailure(scriptId, newContent, callback)
+            {
+                callback("error");
+            }
+            InspectorTest.override(WebInspector.debuggerModel, "setScriptSource", setScriptSourceOverrideFailure);
+            InspectorTest.addResult("Committing uiSourceCode with live edit failure:");
+            uiSourceCode.commitWorkingCopy(function() { });
+            InspectorTest.addResult(" - hasDivergedFromVM: " + !!uiSourceCode.scriptFile().hasDivergedFromVM());
+
+            InspectorTest.addResult("Editing uiSourceCode again:");
+            uiSourceCode.setWorkingCopy("<foo content edited again>");
+            InspectorTest.addResult(" - hasDivergedFromVM: " + !!uiSourceCode.scriptFile().hasDivergedFromVM());
+
+            function setScriptSourceOverrideSuccess(scriptId, newContent, callback)
+            {
+                callback();
+            }
+            InspectorTest.override(WebInspector.debuggerModel, "setScriptSource", setScriptSourceOverrideSuccess);
+            InspectorTest.addResult("Committing uiSourceCode again (with live edit success now):");
+            uiSourceCode.commitWorkingCopy(function() { });
+            InspectorTest.addResult(" - hasDivergedFromVM: " + !!uiSourceCode.scriptFile().hasDivergedFromVM());
+
+            InspectorTest.addResult("Reloading page:");
+            reload();
+            InspectorTest.addResult(" - hasDivergedFromVM: " + !!uiSourceCode.scriptFile().hasDivergedFromVM());
+
+            InspectorTest.addResult("Editing uiSourceCode again and reloading while it is dirty:");
+            uiSourceCode.setWorkingCopy("<foo content edited and dirty>");
+            reload();
+            InspectorTest.addResult(" - hasDivergedFromVM: " + !!uiSourceCode.scriptFile().hasDivergedFromVM());
+            next();
         }
     ]);
 };
 </script>
 </head>
 <body onload="runTest()">
-<p>Tests file system project.</p>
+<p>Tests file system project mappings.</p>
 </body>
 </html>
