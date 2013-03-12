@@ -69,6 +69,8 @@ public:
     static void dispatchPendingLoadEvents();
     static void dispatchPendingErrorEvents();
 
+    virtual void reportMemoryUsage(MemoryObjectInfo*) const;
+
 protected:
     virtual void notifyFinished(CachedResource*);
 

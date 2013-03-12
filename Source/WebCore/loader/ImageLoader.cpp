@@ -37,6 +37,7 @@
 #include "RenderImage.h"
 #include "ScriptCallStack.h"
 #include "SecurityOrigin.h"
+#include "WebCoreMemoryInstrumentation.h"
 
 #if ENABLE(SVG)
 #include "RenderSVGImage.h"
@@ -476,6 +477,15 @@ void ImageLoader::elementDidMoveToNewDocument()
 inline void ImageLoader::clearFailedLoadURL()
 {
     m_failedLoadURL = AtomicString();
+}
+
+void ImageLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Image);
+    info.addMember(m_element, "element");
+    info.addMember(m_image.get(), "image", WTF::RetainingPointer);
+    info.addMember(m_derefElementTimer, "derefElementTimer");
+    info.addMember(m_failedLoadURL, "failedLoadURL");
 }
 
 }
