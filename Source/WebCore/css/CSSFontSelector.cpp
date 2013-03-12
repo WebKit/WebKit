@@ -578,6 +578,9 @@ void CSSFontSelector::beginLoadTimerFired(Timer<WebCore::CSSFontSelector>*)
     Vector<CachedResourceHandle<CachedFont> > fontsToBeginLoading;
     fontsToBeginLoading.swap(m_fontsToBeginLoading);
 
+    // CSSFontSelector could get deleted via beginLoadIfNeeded() or loadDone() unless protected.
+    RefPtr<CSSFontSelector> protect(this);
+
     CachedResourceLoader* cachedResourceLoader = m_document->cachedResourceLoader();
     for (size_t i = 0; i < fontsToBeginLoading.size(); ++i) {
         fontsToBeginLoading[i]->beginLoadIfNeeded(cachedResourceLoader);
