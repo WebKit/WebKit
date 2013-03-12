@@ -156,5 +156,10 @@ WebInspector.UISourceCodeFrame.prototype = {
         contextMenu.appendSeparator();
     },
 
+    dispose: function()
+    {
+        this.detach();
+    },
+
     __proto__: WebInspector.SourceFrame.prototype
 }

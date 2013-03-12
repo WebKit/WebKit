@@ -110,19 +110,18 @@ WebInspector.TabbedEditorContainer.prototype = {
 
     _addScrollAndSelectionListeners: function()
     {
-        console.assert(this._currentFile);
-        var sourceFrame = this._delegate.viewForFile(this._currentFile);
-        sourceFrame.addEventListener(WebInspector.SourceFrame.Events.ScrollChanged, this._scrollChanged, this);
-        sourceFrame.addEventListener(WebInspector.SourceFrame.Events.SelectionChanged, this._selectionChanged, this);
+        if (!this._currentView)
+            return;
+        this._currentView.addEventListener(WebInspector.SourceFrame.Events.ScrollChanged, this._scrollChanged, this);
+        this._currentView.addEventListener(WebInspector.SourceFrame.Events.SelectionChanged, this._selectionChanged, this);
     },
 
     _removeScrollAndSelectionListeners: function()
     {
-        if (!this._currentFile)
+        if (!this._currentView)
             return;
-        var sourceFrame = this._delegate.viewForFile(this._currentFile);
-        sourceFrame.removeEventListener(WebInspector.SourceFrame.Events.ScrollChanged, this._scrollChanged, this);
-        sourceFrame.removeEventListener(WebInspector.SourceFrame.Events.SelectionChanged, this._selectionChanged, this);
+        this._currentView.removeEventListener(WebInspector.SourceFrame.Events.ScrollChanged, this._scrollChanged, this);
+        this._currentView.removeEventListener(WebInspector.SourceFrame.Events.SelectionChanged, this._selectionChanged, this);
     },
 
     _scrollChanged: function(event)
@@ -156,6 +155,7 @@ WebInspector.TabbedEditorContainer.prototype = {
         if (userGesture)
             this._editorSelectedByUserAction();
         
+        this._currentView = this.visibleView;
         this._addScrollAndSelectionListeners();
         
         this.dispatchEventToListeners(WebInspector.TabbedEditorContainer.Events.EditorSelected, this._currentFile);
@@ -308,6 +308,7 @@ WebInspector.TabbedEditorContainer.prototype = {
         var uiSourceCode = this._files[tabId];
         if (this._currentFile === uiSourceCode) {
             this._removeScrollAndSelectionListeners();
+            delete this._currentView;
             delete this._currentFile;
         }
         this._tabIds.remove(uiSourceCode);

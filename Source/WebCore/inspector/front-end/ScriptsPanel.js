@@ -493,7 +493,7 @@ WebInspector.ScriptsPanel.prototype = {
         if (!sourceFrame)
             return;
         this._sourceFramesByUISourceCode.remove(uiSourceCode);
-        sourceFrame.detach();
+        sourceFrame.dispose();
     },
 
     _clearCurrentExecutionLine: function()

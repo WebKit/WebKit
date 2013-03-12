@@ -586,5 +586,12 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         WebInspector.debuggerModel.continueToLocation(rawLocation);
     },
 
+    dispose: function()
+    {
+        this._breakpointManager.removeEventListener(WebInspector.BreakpointManager.Events.BreakpointAdded, this._breakpointAdded, this);
+        this._breakpointManager.removeEventListener(WebInspector.BreakpointManager.Events.BreakpointRemoved, this._breakpointRemoved, this);
+        WebInspector.UISourceCodeFrame.prototype.dispose.call(this);
+    },
+
     __proto__: WebInspector.UISourceCodeFrame.prototype
 }
