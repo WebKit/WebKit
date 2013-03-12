@@ -555,18 +555,4 @@ void PlatformCAAnimation::copyTimingFunctionsFrom(const PlatformCAAnimation* val
     CACFAnimationSetTimingFunctions(m_animation.get(), CACFAnimationGetTimingFunctions(value->platformAnimation()));
 }
 
-#if ENABLE(CSS_FILTERS)
-int PlatformCAAnimation::numAnimatedFilterProperties(FilterOperation::OperationType)
-{
-    // FIXME: Hardware filter animation not implemented on Windows
-    return 0;
-}
-
-const char* PlatformCAAnimation::animatedFilterPropertyName(FilterOperation::OperationType, int)
-{
-    // FIXME: Hardware filter animation not implemented on Windows
-    return "";
-}
-#endif
-
 #endif // USE(ACCELERATED_COMPOSITING)
