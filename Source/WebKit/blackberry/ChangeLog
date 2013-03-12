@@ -1,3 +1,28 @@
+2013-03-12  Genevieve Mak  <gmak@rim.com>
+
+        [BlackBerry] Notify client if the selection is in a subframe when started.
+        https://bugs.webkit.org/show_bug.cgi?id=112065
+
+        Reviewed by Rob Buis.
+
+        PR #278490
+        Internally Reviewed by Mike Fenton.
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::updateSelectionScrollView):
+        (WebKit):
+        * Api/InRegionScroller_p.h:
+        (InRegionScrollerPrivate):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::updateSelectionScrollView):
+        (WebKit):
+        * Api/WebPageClient.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::cancelSelection):
+        (BlackBerry::WebKit::SelectionHandler::setSelection):
+
 2013-03-12  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] SelectionHandler: fix truncated line

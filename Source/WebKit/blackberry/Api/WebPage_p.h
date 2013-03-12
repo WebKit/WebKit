@@ -322,6 +322,7 @@ public:
 
     void selectionChanged(WebCore::Frame*);
     void setOverlayExpansionPixelHeight(int);
+    void updateSelectionScrollView(const WebCore::Node*);
 
     void updateDelegatedOverlays(bool dispatched = false);
 

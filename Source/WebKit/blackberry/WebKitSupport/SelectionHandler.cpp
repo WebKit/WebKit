@@ -91,6 +91,8 @@ void SelectionHandler::cancelSelection()
     // rendering happened prior to processing on webkit thread
     m_webPage->m_client->notifySelectionDetailsChanged(SelectionDetails());
 
+    m_webPage->updateSelectionScrollView(0);
+
     SelectionLog(Platform::LogLevelInfo, "SelectionHandler::cancelSelection");
 
     if (m_webPage->m_inputHandler->isInputMode())
@@ -536,6 +538,9 @@ void SelectionHandler::setSelection(const WebCore::IntPoint& start, const WebCor
         }
     }
 
+    if (!controller->selection().isRange())
+        m_webPage->updateSelectionScrollView(newSelection.visibleEnd().deepEquivalent().anchorNode());
+
     newSelection.setIsDirectional(true);
 
     if (m_webPage->m_inputHandler->isInputMode()) {
@@ -848,6 +853,9 @@ bool SelectionHandler::expandSelectionToGranularity(Frame* frame, VisibleSelecti
     if (granularity == ParagraphGranularity)
         findNextAnimationOverlayRegion();
 
+    if (granularity == WordGranularity)
+        m_webPage->updateSelectionScrollView(selection.visibleEnd().deepEquivalent().anchorNode());
+
     return true;
 }
 
@@ -915,6 +923,7 @@ void SelectionHandler::selectObject(Node* node)
     VisibleSelection selection = VisibleSelection::selectionFromContentsOfNode(node);
     drawAnimationOverlay(regionForSelectionQuads(selection), false /* isExpandingOverlayAtConstantRate */, true /* isStartOfSelection */);
     focusedFrame->selection()->setSelection(selection);
+    m_webPage->updateSelectionScrollView(node);
 }
 
 static TextDirection directionOfEnclosingBlock(FrameSelection* selection)

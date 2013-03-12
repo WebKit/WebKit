@@ -159,6 +159,7 @@ public:
     virtual void cancelSelectionVisuals() = 0;
     virtual void notifySelectionHandlesReversed() = 0;
     virtual void notifyCaretChanged(const Platform::IntRect& documentCaretRect, bool userTouchTriggered, bool isSingleLineInput = false, const Platform::IntRect& singleLineDocumentBoundingBox = Platform::IntRect(), bool textFieldIsEmpty = false) = 0;
+    virtual void notifySelectionScrollView(Platform::ScrollViewBase*) = 0;
 
     virtual void cursorChanged(Platform::CursorType, const char* url, const Platform::IntPoint& hotSpotInImage) = 0;
 

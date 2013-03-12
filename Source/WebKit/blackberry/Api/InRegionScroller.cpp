@@ -295,6 +295,13 @@ void InRegionScrollerPrivate::calculateInRegionScrollableAreasForPoint(const Web
     }
 }
 
+void InRegionScrollerPrivate::updateSelectionScrollView(const Node* node)
+{
+    // TODO: don't notify the client if the node didn't change.
+    // Deleting the scrollview is handled by the client.
+    m_webPage->m_client->notifySelectionScrollView(firstScrollableInRegionForNode(node));
+}
+
 Platform::ScrollViewBase* InRegionScrollerPrivate::firstScrollableInRegionForNode(const Node* node)
 {
     if (!node || !node->renderer())

@@ -3311,6 +3311,11 @@ void WebPagePrivate::selectionChanged(Frame* frame)
     m_page->focusController()->setFocusedFrame(frame);
 }
 
+void WebPagePrivate::updateSelectionScrollView(const Node* node)
+{
+    m_inRegionScroller->d->updateSelectionScrollView(node);
+}
+
 void WebPagePrivate::updateDelegatedOverlays(bool dispatched)
 {
     // Track a dispatched message, we don't want to flood the webkit thread.

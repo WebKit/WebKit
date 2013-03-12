@@ -53,7 +53,7 @@ public:
 
     void calculateInRegionScrollableAreasForPoint(const WebCore::IntPoint&);
     const std::vector<Platform::ScrollViewBase*>& activeInRegionScrollableAreas() const;
-    Platform::ScrollViewBase* firstScrollableInRegionForNode(const WebCore::Node*);
+    void updateSelectionScrollView(const WebCore::Node*);
 
     void clearDocumentData(const WebCore::Document*);
 
@@ -63,6 +63,7 @@ public:
     bool m_needsActiveScrollableAreaCalculation;
 
 private:
+    Platform::ScrollViewBase* firstScrollableInRegionForNode(const WebCore::Node*);
     bool setLayerScrollPosition(WebCore::RenderLayer*, const WebCore::IntPoint& scrollPosition);
 
     void calculateActiveAndShrinkCachedScrollableAreas(WebCore::RenderLayer*);
