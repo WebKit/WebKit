@@ -1,5 +1,15 @@
 2013-03-12  Tim Horton  <timothy_horton@apple.com>
 
+        Unreviewed, disabling tests for Win EWS.
+
+        win-ews obviously cannot keep up with running tests, it's >300 behind.
+        Probably doesn't help that its (likely) running tests serially.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (WinEWS):
+
+2013-03-12  Tim Horton  <timothy_horton@apple.com>
+
         Add a --build-directory argument to delete-stale-build-files
         https://bugs.webkit.org/show_bug.cgi?id=112198
 
