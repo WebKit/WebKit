@@ -104,6 +104,7 @@ audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-
     -webkit-flex: 1 1;
     -webkit-user-select: none;
     height: 16px;
+    min-width: 0;
 }
 
 audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display {
@@ -124,6 +125,7 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     border: initial;
     color: inherit;
     margin: initial;
+    min-width: 0;
 }
 
 audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider {

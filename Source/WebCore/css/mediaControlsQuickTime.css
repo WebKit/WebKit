@@ -65,7 +65,7 @@ audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-
     -webkit-appearance: none;
     -webkit-flex-direction: row;
     -webkit-align-items: center;
-    -webkit-justify-content: center;
+    -webkit-justify-content: flex-start;
     -webkit-flex: 1 1;
     text-align: right;
     height: auto;
@@ -82,6 +82,7 @@ audio::-webkit-media-controls-current-time-display, video::-webkit-media-control
     font-size: 9px;
     overflow: hidden;
     width: 45px;
+    min-width: 0; /* needed due to flexbox */
     color: white;
     text-shadow: black 0px 1px 1px;
 
@@ -104,6 +105,7 @@ audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-contr
     font-size: 9px;
     overflow: hidden;
     width: 45px;
+    min-width: 0; /* needed due to flexbox */
     color: white;
     text-shadow: black 0px 1px 1px;
 
