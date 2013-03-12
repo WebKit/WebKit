@@ -142,7 +142,7 @@ private:
     SVGSVGElement(const QualifiedName&, Document*);
     virtual ~SVGSVGElement();
 
-    virtual bool isSVG() const { return true; }
+    virtual bool isSVGSVGElement() const OVERRIDE { return true; }
     
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
 
@@ -191,6 +191,13 @@ private:
     FloatPoint m_translation;
     RefPtr<SVGViewSpec> m_viewSpec;
 };
+
+inline SVGSVGElement* toSVGSVGElement(Node* node)
+{
+    SVGElement* element = node && node->isSVGElement() ? toSVGElement(node) : 0;
+    ASSERT_WITH_SECURITY_IMPLICATION(!element || element->isSVGSVGElement());
+    return static_cast<SVGSVGElement*>(element);
+}
 
 } // namespace WebCore
 

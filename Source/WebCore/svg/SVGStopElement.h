@@ -40,7 +40,7 @@ private:
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual void svgAttributeChanged(const QualifiedName&);
 
-    virtual bool isGradientStop() const { return true; }
+    virtual bool isGradientStop() const OVERRIDE { return true; }
 
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool rendererIsNeeded(const NodeRenderingContext&) OVERRIDE;
@@ -49,6 +49,12 @@ private:
         DECLARE_ANIMATED_NUMBER(Offset, offset)
     END_DECLARE_ANIMATED_PROPERTIES
 };
+
+inline SVGStopElement* toSVGStopElement(SVGElement* element)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!element || element->isGradientStop());
+    return static_cast<SVGStopElement*>(element);
+}
 
 } // namespace WebCore
 

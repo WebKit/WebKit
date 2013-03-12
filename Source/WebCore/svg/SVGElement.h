@@ -60,7 +60,7 @@ public:
     virtual bool isSVGStyledElement() const { return false; }
     virtual bool isStyledTransformable() const { return false; }
     virtual bool isStyledLocatable() const { return false; }
-    virtual bool isSVG() const { return false; }
+    virtual bool isSVGSVGElement() const { return false; }
     virtual bool isFilterEffect() const { return false; }
     virtual bool isGradientStop() const { return false; }
     virtual bool isTextContent() const { return false; }

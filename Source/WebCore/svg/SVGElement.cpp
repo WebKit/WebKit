@@ -190,7 +190,7 @@ SVGSVGElement* SVGElement::ownerSVGElement() const
     ContainerNode* n = parentOrShadowHostNode();
     while (n) {
         if (n->hasTagName(SVGNames::svgTag))
-            return static_cast<SVGSVGElement*>(n);
+            return toSVGSVGElement(n);
 
         n = n->parentOrShadowHostNode();
     }
