@@ -32641,10 +32641,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\ca\PlatformCAFilters.cpp"
-						>
-					</File>
-					<File
 						RelativePath="..\platform\graphics\ca\PlatformCALayer.h"
 						>
 					</File>
@@ -32759,6 +32755,10 @@
 							RelativePath="..\platform\graphics\ca\win\PlatformCAAnimationWin.cpp"
 							>
 						</File>
+    					<File
+    						RelativePath="..\platform\graphics\ca\win\PlatformCAFiltersWin.cpp"
+    						>
+    					</File>
 						<File
 							RelativePath="..\platform\graphics\ca\win\PlatformCALayerWin.cpp"
 							>
