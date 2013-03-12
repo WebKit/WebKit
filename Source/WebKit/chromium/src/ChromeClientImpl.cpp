@@ -231,7 +231,7 @@ void ChromeClientImpl::focusedNodeChanged(Node* node)
         // WebCore::Node.
         HitTestResult hitTest(IntPoint(0, 0));
         // This cast must be valid because of the isLink() check.
-        hitTest.setURLElement(static_cast<Element*>(node));
+        hitTest.setURLElement(toElement(node));
         if (hitTest.isLiveLink())
             focusURL = hitTest.absoluteLinkURL();
     }

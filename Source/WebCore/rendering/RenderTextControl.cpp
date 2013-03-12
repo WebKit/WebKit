@@ -48,7 +48,7 @@ RenderTextControl::~RenderTextControl()
 
 HTMLTextFormControlElement* RenderTextControl::textFormControlElement() const
 {
-    return static_cast<HTMLTextFormControlElement*>(node());
+    return toHTMLTextFormControlElement(node());
 }
 
 HTMLElement* RenderTextControl::innerTextElement() const
@@ -80,9 +80,9 @@ static inline bool updateUserModifyProperty(Node* node, RenderStyle* style)
     bool isReadOnlyControl = false;
 
     if (node->isElementNode()) {
-        Element* element = static_cast<Element*>(node);
+        Element* element = toElement(node);
         isEnabled = element->isEnabledFormControl();
-        isReadOnlyControl = element->isTextFormControl() && static_cast<HTMLTextFormControlElement*>(element)->readOnly();
+        isReadOnlyControl = element->isTextFormControl() && toHTMLTextFormControlElement(element)->readOnly();
     }
 
     style->setUserModify((isReadOnlyControl || !isEnabled) ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);

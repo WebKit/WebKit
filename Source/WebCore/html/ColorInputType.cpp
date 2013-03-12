@@ -233,7 +233,7 @@ Vector<Color> ColorInputType::suggestions() const
     HTMLDataListElement* dataList = element()->dataList();
     if (dataList) {
         RefPtr<HTMLCollection> options = dataList->options();
-        for (unsigned i = 0; HTMLOptionElement* option = static_cast<HTMLOptionElement*>(options->item(i)); i++) {
+        for (unsigned i = 0; HTMLOptionElement* option = toHTMLOptionElement(options->item(i)); i++) {
             if (!element()->isValidValue(option->value()))
                 continue;
             Color color(option->value());

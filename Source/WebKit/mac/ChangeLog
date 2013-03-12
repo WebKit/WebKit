@@ -1,3 +1,16 @@
+2013-03-12  Abhishek Arya  <inferno@chromium.org>
+
+        Replace static_casts with to* functions.
+        https://bugs.webkit.org/show_bug.cgi?id=112072
+
+        Reviewed by Philip Rogers.
+
+        to* functions are preferred over static_cast calls since they
+        help to catch bad casts easily on the testing infrastructure.
+
+        * WebView/WebView.mm:
+        (-[WebView _enterFullscreenForNode:WebCore::]):
+
 2013-03-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r145462.

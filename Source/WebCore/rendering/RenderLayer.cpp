@@ -276,11 +276,11 @@ String RenderLayer::name() const
     if (Node* node = renderer()->node()) {
         if (node->isElementNode()) {
             name.append(' ');
-            name.append(static_cast<Element*>(node)->tagName());
+            name.append(toElement(node)->tagName());
         }
         if (node->hasID()) {
             name.appendLiteral(" id=\'");
-            name.append(static_cast<Element*>(node)->getIdAttribute());
+            name.append(toElement(node)->getIdAttribute());
             name.append('\'');
         }
 

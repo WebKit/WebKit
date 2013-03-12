@@ -55,7 +55,7 @@ RenderMathMLFenced::RenderMathMLFenced(Element* element)
 
 void RenderMathMLFenced::updateFromElement()
 {
-    Element* fenced = static_cast<Element*>(node());
+    Element* fenced = toElement(node());
  
     // FIXME: Handle open/close values with more than one character (they should be treated like text).
     AtomicString openValue = fenced->getAttribute(MathMLNames::openAttr);

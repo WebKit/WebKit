@@ -42,7 +42,7 @@ static Node* enclosingBlockToSplitTreeTo(Node* startNode);
 static bool isElementForFormatBlock(const QualifiedName& tagName);
 static inline bool isElementForFormatBlock(Node* node)
 {
-    return node->isElementNode() && isElementForFormatBlock(static_cast<Element*>(node)->tagQName());
+    return node->isElementNode() && isElementForFormatBlock(toElement(node)->tagQName());
 }
 
 FormatBlockCommand::FormatBlockCommand(Document* document, const QualifiedName& tagName) 

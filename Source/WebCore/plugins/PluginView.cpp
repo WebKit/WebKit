@@ -1374,7 +1374,7 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
         NPObject* pluginScriptObject = 0;
 
         if (m_element->hasTagName(appletTag) || m_element->hasTagName(embedTag) || m_element->hasTagName(objectTag))
-            pluginScriptObject = static_cast<HTMLPlugInElement*>(m_element)->getNPObject();
+            pluginScriptObject = m_element->getNPObject();
 
         // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugin/npruntime.html>
         if (pluginScriptObject)
