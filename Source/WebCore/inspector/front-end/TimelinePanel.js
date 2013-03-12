@@ -374,14 +374,14 @@ WebInspector.TimelinePanel.prototype = {
     },
 
     /**
-     * @param {string} fileName
+     * @param {!File} file
      */
-    _loadFromFile: function(fileName)
+    _loadFromFile: function(file)
     {
         var progressIndicator = this._prepareToLoadTimeline();
         if (!progressIndicator)
             return;
-        this._model.loadFromFile(fileName, progressIndicator);
+        this._model.loadFromFile(file, progressIndicator);
         this._createFileSelector();
     },
 
