@@ -73,13 +73,10 @@ public:
         do {
             m_changed = false;
             doRoundOfDoubleVoting();
-            propagateForward();
             if (!m_changed)
                 break;
-            
             m_changed = false;
-            doRoundOfDoubleVoting();
-            propagateBackward();
+            propagateForward();
         } while (m_changed);
         
         return true;

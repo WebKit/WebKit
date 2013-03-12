@@ -1,3 +1,21 @@
+2013-03-12  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG prediction propagation phase should not rerun forward propagation if double voting has already converged
+        https://bugs.webkit.org/show_bug.cgi?id=111920
+
+        Reviewed by Oliver Hunt.
+        
+        I don't know why we weren't exiting early after double voting if !m_changed.
+        
+        This change also removes backwards propagation from the voting fixpoint, since at that
+        point short-circuiting loops is probably not particularly profitable. Profiling shows
+        that this reduces the time spent in prediction propagation even further.
+        
+        This change appears to be a 1% SunSpider speed-up.
+
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::run):
+
 2013-03-11  Filip Pizlo  <fpizlo@apple.com>
 
         DFG overflow check elimination is too smart for its own good
