@@ -144,20 +144,38 @@ public:
         return addSlowCase(run, entry);
     }
 
+    void clear()
+    {
+        m_singleCharMap.clear();
+        m_map.clear();
+    }
+
+private:
     float* addSlowCase(const TextRun& run, float entry)
     {
-        SmallStringKey smallStringKey;
-        if (run.is8Bit())
-            smallStringKey = SmallStringKey(run.characters8(), run.length());
-        else
-            smallStringKey = SmallStringKey(run.characters16(), run.length());
+        int length = run.length();
+        bool isNewEntry;
+        float *value;
+        if (length == 1) {
+            SingleCharMap::AddResult addResult = m_singleCharMap.add(run[0], entry);
+            isNewEntry = addResult.isNewEntry;
+            value = &addResult.iterator->value;
+        } else {
+            SmallStringKey smallStringKey;
+            if (run.is8Bit())
+                smallStringKey = SmallStringKey(run.characters8(), length);
+            else
+                smallStringKey = SmallStringKey(run.characters16(), length);
 
-        Map::AddResult addResult = m_map.add(smallStringKey, entry);
+            Map::AddResult addResult = m_map.add(smallStringKey, entry);
+            isNewEntry = addResult.isNewEntry;
+            value = &addResult.iterator->value;
+        }
 
         // Cache hit: ramp up by sampling the next few words.
-        if (!addResult.isNewEntry) {
+        if (!isNewEntry) {
             m_interval = s_minInterval;
-            return &addResult.iterator->value;
+            return value;
         }
 
         // Cache miss: ramp down by increasing our sampling interval.
@@ -165,23 +183,24 @@ public:
             ++m_interval;
         m_countdown = m_interval;
 
-        if (m_map.size() < s_maxSize)
-            return &addResult.iterator->value;
+        if ((m_singleCharMap.size() + m_map.size()) < s_maxSize)
+            return value;
 
-        m_map.clear(); // No need to be fancy: we're just trying to avoid pathological growth.
+        // No need to be fancy: we're just trying to avoid pathological growth.
+        m_singleCharMap.clear();
+        m_map.clear();
         return 0;
     }
 
-    void clear() { m_map.clear(); }
-
-private:
     typedef HashMap<SmallStringKey, float, SmallStringKeyHash, SmallStringKeyHashTraits> Map;
+    typedef HashMap<UChar, float> SingleCharMap;
     static const int s_minInterval = -3; // A cache hit pays for about 3 cache misses.
     static const int s_maxInterval = 20; // Sampling at this interval has almost no overhead.
     static const int s_maxSize = 500000; // Just enough to guard against pathological growth.
 
     int m_interval;
     int m_countdown;
+    SingleCharMap m_singleCharMap;
     Map m_map;
 };
 
