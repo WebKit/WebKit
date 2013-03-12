@@ -1,3 +1,10 @@
+2013-03-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled Chromium DEPS to r187660.  Requested by
+        "Adam Barth" <abarth@webkit.org> via sheriffbot.
+
+        * DEPS:
+
 2013-03-12  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Remove WEBKIT_USING_V8 from the WebKit API
