@@ -32637,6 +32637,14 @@
 						>
 					</File>
 					<File
+						RelativePath="..\platform\graphics\ca\PlatformCAFilters.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\ca\PlatformCAFilters.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\platform\graphics\ca\PlatformCALayer.h"
 						>
 					</File>

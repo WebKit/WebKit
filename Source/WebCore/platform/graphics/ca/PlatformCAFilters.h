@@ -49,7 +49,9 @@ public:
     static int numAnimatedFilterProperties(FilterOperation::OperationType);
     static const char* animatedFilterPropertyName(FilterOperation::OperationType, int internalFilterPropertyIndex);
 
+#if PLATFORM(MAC)
     static RetainPtr<NSValue> filterValueForOperation(const FilterOperation*, int internalFilterPropertyIndex);
+#endif
 
 #ifdef USE_CA_FILTERS
     static RetainPtr<NSValue> colorMatrixValueForFilter(const FilterOperation&);
