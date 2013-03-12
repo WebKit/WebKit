@@ -251,14 +251,27 @@ static inline bool isComposited(RenderObject* object)
     return object->hasLayer() && toRenderBoxModelObject(object)->layer()->isComposited();
 }
 
-static inline bool rendererObscuresBackground(RenderObject* object)
+static inline bool rendererObscuresBackground(RenderObject* rootObject)
 {
-    return object && object->style()->visibility() == VISIBLE
-        && object->style()->opacity() == 1
-        && !object->style()->hasTransform()
-        && !isComposited(object);
-}
+    if (!rootObject)
+        return false;
     
+    RenderStyle* style = rootObject->style();
+    if (style->visibility() != VISIBLE
+        || style->opacity() != 1
+        || style->hasTransform())
+        return false;
+    
+    if (isComposited(rootObject))
+        return false;
+
+    const RenderObject* rootRenderer = rootObject->rendererForRootBackground();
+    if (rootRenderer->style()->backgroundClip() == TextFillBox)
+        return false;
+
+    return true;
+}
+
 void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
 {
     // Check to see if we are enclosed by a layer that requires complex painting rules.  If so, we cannot blit
@@ -288,18 +301,20 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
         return;
 
     bool rootFillsViewport = false;
+    bool rootObscuresBackground = false;
     Node* documentElement = document()->documentElement();
     if (RenderObject* rootRenderer = documentElement ? documentElement->renderer() : 0) {
         // The document element's renderer is currently forced to be a block, but may not always be.
         RenderBox* rootBox = rootRenderer->isBox() ? toRenderBox(rootRenderer) : 0;
         rootFillsViewport = rootBox && !rootBox->x() && !rootBox->y() && rootBox->width() >= width() && rootBox->height() >= height();
+        rootObscuresBackground = rendererObscuresBackground(rootRenderer);
     }
     
     Page* page = document()->page();
     float pageScaleFactor = page ? page->pageScaleFactor() : 1;
 
     // If painting will entirely fill the view, no need to fill the background.
-    if (rootFillsViewport && rendererObscuresBackground(firstChild()) && pageScaleFactor >= 1)
+    if (rootFillsViewport && rootObscuresBackground && pageScaleFactor >= 1)
         return;
 
     // This code typically only executes if the root element's visibility has been set to hidden,
