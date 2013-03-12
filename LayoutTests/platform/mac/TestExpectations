@@ -1471,3 +1471,9 @@ webkit.org/b/112176 canvas/philip/tests/2d.path.stroke.skew.html [ Failure Pass 
 webkit.org/b/112176 compositing/overflow/composited-scrolling-paint-phases.html [ Failure Pass ]
 webkit.org/b/112176 fast/canvas/canvas-composite-alpha.html [ Failure Pass ]
 webkit.org/b/112176 fast/canvas/webgl/read-pixels-test.html [ Failure Pass ]
+
+# The following ref-test appears to fail on EWS bots as well.
+webkit.org/b/112176 fast/css/sticky/inline-sticky-abspos-child.html [ ImageOnlyFailure Pass ]
+# Once the bug 112176 is fixed, potentially restore the following test expectations.
+# webkit.org/b/105998 [ Lion Release ] fast/css/sticky/inline-sticky-abspos-child.html [ ImageOnlyFailure ]
+# webkit.org/b/105998 [ MountainLion Debug ] fast/css/sticky/inline-sticky-abspos-child.html [ ImageOnlyFailure Pass ]
