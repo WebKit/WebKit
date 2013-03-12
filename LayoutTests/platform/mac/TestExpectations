@@ -1461,3 +1461,13 @@ webkit.org/b/111754 inspector/debugger/debugger-expand-scope.html [ Crash Pass ]
 webkit.org/b/111606 fast/borders/border-fit-2.html [ Failure Pass ]
 webkit.org/b/111606 fast/borders/border-fit.html [ Failure Pass ]
 webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Failure Pass ]
+
+# The following tests only fail on Mac EWS bots. Unfortunately, we haven't been able to figure out the cause of these failures.
+webkit.org/b/112176 canvas/philip/tests/2d.path.arc.scale.2.html [ Failure Pass ]
+webkit.org/b/112176 canvas/philip/tests/2d.path.arcTo.scale.html [ Failure Pass ]
+webkit.org/b/112176 canvas/philip/tests/2d.path.arcTo.transformation.html [ Failure Pass ]
+webkit.org/b/112176 canvas/philip/tests/2d.path.stroke.scale1.html [ Failure Pass ]
+webkit.org/b/112176 canvas/philip/tests/2d.path.stroke.skew.html [ Failure Pass ]
+webkit.org/b/112176 compositing/overflow/composited-scrolling-paint-phases.html [ Failure Pass ]
+webkit.org/b/112176 fast/canvas/canvas-composite-alpha.html [ Failure Pass ]
+webkit.org/b/112176 fast/canvas/webgl/read-pixels-test.html [ Failure Pass ]
