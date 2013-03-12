@@ -43,6 +43,7 @@ struct _WebKitWebSettingsPrivate {
     gboolean enforce96DPI;
     gboolean autoLoadImages;
     gboolean autoShrinkImages;
+    gboolean respectImageOrientation;
     gboolean printBackgrounds;
     gboolean enableScripts;
     gboolean enablePlugins;
