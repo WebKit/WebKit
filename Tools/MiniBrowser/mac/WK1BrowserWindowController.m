@@ -253,4 +253,16 @@
     [[self window] setTitle:[title stringByAppendingString:@" [WK1]"]];
 }
 
+- (void)webView:(WebView *)sender runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WebFrame *)frame
+{
+    NSAlert *alert = [[NSAlert alloc] init];
+    [alert addButtonWithTitle:@"OK"];
+
+    alert.messageText = [NSString stringWithFormat:@"JavaScript alert dialog from %@.", frame.dataSource.request.URL.absoluteString];
+    alert.informativeText = message;
+
+    [alert runModal];
+    [alert release];
+}
+
 @end
