@@ -32,8 +32,6 @@
 namespace WebCore {
 
 BackgroundHTMLInputStream::BackgroundHTMLInputStream()
-    : m_firstValidCheckpointIndex(0)
-    , m_firstValidSegmentIndex(0)
 {
 }
 
@@ -55,35 +53,17 @@ HTMLInputCheckpoint BackgroundHTMLInputStream::createCheckpoint()
     return checkpoint;
 }
 
-void BackgroundHTMLInputStream::invalidateCheckpointsUpThrough(HTMLInputCheckpoint checkpointIndex)
-{
-    ASSERT(checkpointIndex < m_checkpoints.size());
-    ASSERT(checkpointIndex >= m_firstValidCheckpointIndex);
-    const Checkpoint& checkpoint = m_checkpoints[checkpointIndex];
-    ASSERT(m_firstValidSegmentIndex <= checkpoint.numberOfSegmentsAlreadyAppended);
-    for (size_t i = m_firstValidSegmentIndex; i < checkpoint.numberOfSegmentsAlreadyAppended; ++i)
-        m_segments[i] = String();
-    m_firstValidSegmentIndex = checkpoint.numberOfSegmentsAlreadyAppended;
-
-    for (size_t i = m_firstValidCheckpointIndex; i <= checkpointIndex; ++i)
-        m_checkpoints[i].clear();
-    m_firstValidCheckpointIndex = checkpointIndex + 1;
-}
-
 void BackgroundHTMLInputStream::rewindTo(HTMLInputCheckpoint checkpointIndex, const String& unparsedInput)
 {
     ASSERT(checkpointIndex < m_checkpoints.size()); // If this ASSERT fires, checkpointIndex is invalid.
     const Checkpoint& checkpoint = m_checkpoints[checkpointIndex];
-    ASSERT(!checkpoint.isNull());
 
     bool isClosed = m_current.isClosed();
 
     m_current = checkpoint.input;
 
-    for (size_t i = checkpoint.numberOfSegmentsAlreadyAppended; i < m_segments.size(); ++i) {
-        ASSERT(!m_segments[i].isNull());
+    for (size_t i = checkpoint.numberOfSegmentsAlreadyAppended; i < m_segments.size(); ++i)
         m_current.append(SegmentedString(m_segments[i]));
-    }
 
     if (!unparsedInput.isEmpty())
         m_current.prepend(SegmentedString(unparsedInput));
@@ -95,8 +75,6 @@ void BackgroundHTMLInputStream::rewindTo(HTMLInputCheckpoint checkpointIndex, co
 
     m_segments.clear();
     m_checkpoints.clear();
-    m_firstValidCheckpointIndex = 0;
-    m_firstValidSegmentIndex = 0;
 }
 
 }

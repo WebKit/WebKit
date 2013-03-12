@@ -50,7 +50,6 @@ public:
     // point all outstanding checkpoints are invalidated.
     HTMLInputCheckpoint createCheckpoint();
     void rewindTo(HTMLInputCheckpoint, const String& unparsedInput);
-    void invalidateCheckpointsUpThrough(HTMLInputCheckpoint);
 
 private:
     struct Checkpoint {
@@ -58,20 +57,11 @@ private:
 
         SegmentedString input;
         size_t numberOfSegmentsAlreadyAppended;
-
-#ifndef NDEBUG
-        bool isNull() const { return input.isEmpty() && !numberOfSegmentsAlreadyAppended; }
-#endif
-        void clear() { input.clear(); numberOfSegmentsAlreadyAppended = 0; }
     };
 
     SegmentedString m_current;
     Vector<String> m_segments;
     Vector<Checkpoint> m_checkpoints;
-
-    // Note: These indicies may === vector.size(), in which case there are no valid checkpoints/segments at this time.
-    size_t m_firstValidCheckpointIndex;
-    size_t m_firstValidSegmentIndex;
 };
 
 }

@@ -94,13 +94,6 @@ void BackgroundHTMLParser::resumeFrom(PassOwnPtr<Checkpoint> checkpoint)
     pumpTokenizer();
 }
 
-void BackgroundHTMLParser::passedCheckpoint(HTMLInputCheckpoint inputCheckpoint)
-{
-    // Note, we should not have to worry about the index being invalid
-    // as messages from the main thread will be processed in FIFO order.
-    m_input.invalidateCheckpointsUpThrough(inputCheckpoint);
-}
-
 void BackgroundHTMLParser::finish()
 {
     markEndOfFile();
