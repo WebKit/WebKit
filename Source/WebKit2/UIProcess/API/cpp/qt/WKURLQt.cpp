@@ -22,6 +22,7 @@
 #include "WKURLQt.h"
 
 #include "WKAPICast.h"
+#include "WKRetainPtr.h"
 #include <QString>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -51,3 +52,15 @@ QUrl WKURLCopyQUrl(WKURLRef urlRef)
         return QUrl();
     return QUrl(WKURLCopyQString(urlRef));
 }
+
+namespace WebKit {
+QString adoptToQString(WKURLRef urlRef)
+{
+    return WKURLCopyQString(adoptWK(urlRef).get());
+}
+
+QUrl adoptToQUrl(WKURLRef urlRef)
+{
+    return WKURLCopyQUrl(adoptWK(urlRef).get());
+}
+} /* namespace WebKit */

@@ -31,4 +31,12 @@ WK_EXPORT QString WKURLCopyQString(WKURLRef url);
 WK_EXPORT WKURLRef WKURLCreateWithQUrl(const QUrl& url);
 WK_EXPORT QUrl WKURLCopyQUrl(WKURLRef url);
 
+namespace WebKit {
+QString adoptToQString(WKURLRef);
+QUrl adoptToQUrl(WKURLRef);
+} /* namespace WebKit */
+
+using WebKit::adoptToQString;
+using WebKit::adoptToQUrl;
+
 #endif /* WKURLCF_h */

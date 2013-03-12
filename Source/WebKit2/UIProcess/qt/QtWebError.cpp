@@ -57,12 +57,12 @@ int QtWebError::errorCode() const
 
 QString QtWebError::url() const
 {
-    return WKStringCopyQString(WKURLCopyString(WKErrorCopyFailingURL(error.get())));
+    return adoptToQString(WKErrorCopyFailingURL(error.get()));
 }
 
 QString QtWebError::description() const
 {
-    return WKStringCopyQString(WKErrorCopyLocalizedDescription(error.get()));
+    return adoptToQString(WKErrorCopyLocalizedDescription(error.get()));
 }
 
 bool QtWebError::isCancellation() const

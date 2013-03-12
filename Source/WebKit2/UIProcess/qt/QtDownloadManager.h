@@ -26,31 +26,19 @@
 
 class QWebDownloadItem;
 
-namespace WebCore {
-class ResourceResponse;
-}
-
 namespace WebKit {
 
 class DownloadProxy;
 class QtWebError;
-class WebContext;
 
 class QtDownloadManager {
 public:
-    QtDownloadManager(WebContext*);
+    QtDownloadManager(WKContextRef);
     ~QtDownloadManager();
 
-    void addDownload(DownloadProxy*, QWebDownloadItem*);
+    void addDownload(WKDownloadRef, QWebDownloadItem*);
 
 private:
-    void downloadReceivedResponse(DownloadProxy*, const WebCore::ResourceResponse&);
-    void downloadCreatedDestination(DownloadProxy*, const QString& path);
-    void downloadFinished(DownloadProxy*);
-    void downloadFailed(DownloadProxy*, const QtWebError&);
-    void downloadDataReceived(DownloadProxy*, uint64_t length);
-
-    // WKContextDownloadClient callbacks.
     static void didReceiveResponse(WKContextRef, WKDownloadRef, WKURLResponseRef, const void* clientInfo);
     static void didCreateDestination(WKContextRef, WKDownloadRef, WKStringRef path, const void* clientInfo);
     static void didFinishDownload(WKContextRef, WKDownloadRef, const void* clientInfo);

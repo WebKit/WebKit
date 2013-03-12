@@ -1,5 +1,40 @@
 2013-03-11  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt][WK2] Layer QtDownloadManager on the C API
+        https://bugs.webkit.org/show_bug.cgi?id=109562
+
+        Reviewed by Simon Hausmann.
+        Signed off for WebKit2 by Benjamin Poulain.
+
+        * UIProcess/API/cpp/qt/WKURLQt.cpp:
+        (WebKit::adoptToQString):
+        (WebKit):
+        (WebKit::adoptToQUrl):
+        * UIProcess/API/cpp/qt/WKURLQt.h:
+        (WebKit):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::handleDownloadRequest):
+        * UIProcess/qt/QtDownloadManager.cpp:
+        (WebKit::toQtDownloadManager):
+        (WebKit):
+        (WebKit::QtDownloadManager::QtDownloadManager):
+        (WebKit::QtDownloadManager::addDownload):
+        (WebKit::QtDownloadManager::didReceiveResponse):
+        (WebKit::QtDownloadManager::didCreateDestination):
+        (WebKit::QtDownloadManager::didFinishDownload):
+        (WebKit::QtDownloadManager::didFailDownload):
+        (WebKit::QtDownloadManager::didReceiveDataForDownload):
+        * UIProcess/qt/QtDownloadManager.h:
+        (WebKit):
+        (QtDownloadManager):
+        * UIProcess/qt/QtWebContext.cpp:
+        (WebKit::QtWebContext::QtWebContext):
+        * UIProcess/qt/QtWebError.cpp:
+        (WebKit::QtWebError::url):
+        (WebKit::QtWebError::description):
+
+2013-03-11  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt][WK2] Layer QtWebIconDatabaseClient on the C API
         https://bugs.webkit.org/show_bug.cgi?id=109564
 
