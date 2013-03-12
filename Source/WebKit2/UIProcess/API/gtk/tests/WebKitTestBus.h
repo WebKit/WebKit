@@ -31,9 +31,10 @@ public:
 
     bool run();
     GDBusProxy* createProxy(const char* serviceName, const char* objectPath, const char* interfaceName, GMainLoop*);
+    GDBusConnection* connection() const { return m_connection.get(); }
 
 private:
-    GDBusConnection* connection();
+    GDBusConnection* getOrCreateConnection();
 
     pid_t m_pid;
     CString m_address;

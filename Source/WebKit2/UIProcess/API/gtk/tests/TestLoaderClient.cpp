@@ -303,7 +303,7 @@ public:
     {
         GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy("org.webkit.gtk.WebExtensionTest",
             "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", m_mainLoop));
-        guint id = g_dbus_connection_signal_subscribe(
+        m_uriChangedSignalID = g_dbus_connection_signal_subscribe(
             g_dbus_proxy_get_connection(proxy.get()),
             0,
             "org.webkit.gtk.WebExtensionTest",
@@ -314,14 +314,20 @@ public:
             reinterpret_cast<GDBusSignalCallback>(webPageURIChangedCallback),
             this,
             0);
-        g_assert(id);
+        g_assert(m_uriChangedSignalID);
 
         g_signal_connect(m_webView, "notify::uri", G_CALLBACK(webViewURIChanged), this);
     }
 
+    ~WebPageURITest()
+    {
+        g_signal_handlers_disconnect_matched(m_webView, G_SIGNAL_MATCH_DATA, 0, 0, 0, 0, this);
+        g_dbus_connection_signal_unsubscribe(bus->connection(), m_uriChangedSignalID);
+    }
+
+    unsigned m_uriChangedSignalID;
     Vector<CString> m_webPageURIs;
     Vector<CString> m_webViewURIs;
-
 };
 
 static void testWebPageURI(WebPageURITest* test, gconstpointer)

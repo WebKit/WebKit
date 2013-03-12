@@ -1,3 +1,17 @@
+2013-03-12  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Clean up WebPageURITest
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/tests/TestLoaderClient.cpp:
+        * UIProcess/API/gtk/tests/WebKitTestBus.cpp:
+        (WebKitTestBus::getOrCreateConnection):
+        (WebKitTestBus::createProxy):
+        * UIProcess/API/gtk/tests/WebKitTestBus.h:
+        (WebKitTestBus::connection):
+        (WebKitTestBus):
+
 2013-03-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add webkit_web_context_set_disk_cache_directory to WebKit2 GTK+ API
