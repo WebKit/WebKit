@@ -25,10 +25,15 @@
 #include "QtWebIconDatabaseClient.h"
 #include "WebInspectorServer.h"
 #include "qquickwebview_p_p.h"
+#include <QDir>
+#include <QStandardPaths>
+#include <QStringBuilder>
 #include <WKAPICast.h>
 #include <WKArray.h>
+#include <WKContextPrivate.h>
 #include <WKPage.h>
 #include <WKString.h>
+#include <WKStringQt.h>
 #include <WKType.h>
 
 namespace WebKit {
@@ -138,10 +143,55 @@ QtWebContext* QtWebContext::defaultContext()
         // A good all-around default.
         WKContextSetCacheModel(wkContext.get(), kWKCacheModelDocumentBrowser);
 
+        // Those paths have to be set before the first web process is spawned.
+        WKContextSetDatabaseDirectory(wkContext.get(), adoptWK(WKStringCreateWithQString(preparedStoragePath(DatabaseStorage))).get());
+        WKContextSetLocalStorageDirectory(wkContext.get(), adoptWK(WKStringCreateWithQString(preparedStoragePath(LocalStorage))).get());
+        WKContextSetCookieStorageDirectory(wkContext.get(), adoptWK(WKStringCreateWithQString(preparedStoragePath(CookieStorage))).get());
+        WKContextSetDiskCacheDirectory(wkContext.get(), adoptWK(WKStringCreateWithQString(preparedStoragePath(DiskCacheStorage))).get());
+
         s_defaultQtWebContext = QtWebContext::create(wkContext.get());
     }
 
     return s_defaultQtWebContext;
+}
+
+static QString defaultLocation(QStandardPaths::StandardLocation type)
+{
+    QString path = QStandardPaths::writableLocation(type);
+    Q_ASSERT(!path.isEmpty());
+    return path % QDir::separator() % QStringLiteral(".QtWebKit") % QDir::separator();
+}
+
+QString QtWebContext::preparedStoragePath(StorageType type)
+{
+    QString path;
+    switch (type) {
+    case DatabaseStorage:
+        path = defaultLocation(QStandardPaths::DataLocation) % QStringLiteral("Databases");
+        QDir::root().mkpath(path);
+        break;
+    case LocalStorage:
+        path = defaultLocation(QStandardPaths::DataLocation) % QStringLiteral("LocalStorage");
+        QDir::root().mkpath(path);
+        break;
+    case CookieStorage:
+        path = defaultLocation(QStandardPaths::DataLocation);
+        QDir::root().mkpath(path);
+        break;
+    case DiskCacheStorage:
+        path = defaultLocation(QStandardPaths::CacheLocation) % QStringLiteral("DiskCache");
+        QDir::root().mkpath(path);
+        break;
+    case IconDatabaseStorage:
+        path = defaultLocation(QStandardPaths::DataLocation);
+        QDir::root().mkpath(path);
+        path += QStringLiteral("WebpageIcons.db");
+        break;
+    default:
+        Q_ASSERT(false);
+    }
+
+    return path;
 }
 
 } // namespace WebKit

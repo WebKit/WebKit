@@ -1,3 +1,49 @@
+2013-03-11  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt][WK2] Specify storage paths through the C API
+        https://bugs.webkit.org/show_bug.cgi?id=111435
+
+        Reviewed by Simon Hausmann.
+        Signed off for WebKit2 by Benjamin Poulain.
+
+        The WKIconDatabase should be opened through a call to
+        WKContextSetIconDatabasePath. To avoid having some paths
+        returned through WebContext::platformDefault* and some others
+        through the C API, make sure that all those paths are set
+        through the C API.
+
+        * Shared/qt/QtDefaultDataLocation.cpp: Removed.
+        * Shared/qt/QtDefaultDataLocation.h: Removed.
+        * Target.pri:
+        * UIProcess/Plugins/qt/PluginProcessProxyQt.cpp:
+        (WebKit::cacheFile):
+          - This part is left alone behind the C API.
+            Since PluginProcessProxy have no knowledge of the WebContext
+            it is rather difficult to fetch a configured directory that
+            could be used for this purpose (like the disk cache storage).
+            Hard-code a compatible logic to keep the current behavior.
+        (WebKit::removeCacheFile):
+        (WebKit):
+        (WebKit::readMetaDataFromCacheFile):
+        (WebKit::writeToCacheFile):
+        (WebKit::tryReadPluginMetaDataFromCacheFile):
+          - Update the code to better handle an empty cache file path.
+        * UIProcess/qt/QtWebContext.cpp:
+        (WebKit::QtWebContext::defaultContext):
+        (WebKit::defaultLocation):
+        (WebKit):
+        (WebKit::QtWebContext::preparedStoragePath):
+        * UIProcess/qt/QtWebContext.h:
+        * UIProcess/qt/QtWebIconDatabaseClient.cpp:
+        (WebKit::QtWebIconDatabaseClient::QtWebIconDatabaseClient):
+        * UIProcess/qt/WebContextQt.cpp:
+        (WebKit::WebContext::applicationCacheDirectory):
+        (WebKit::WebContext::platformDefaultDatabaseDirectory):
+        (WebKit::WebContext::platformDefaultIconDatabasePath):
+        (WebKit::WebContext::platformDefaultLocalStorageDirectory):
+        (WebKit::WebContext::platformDefaultDiskCacheDirectory):
+        (WebKit::WebContext::platformDefaultCookieStorageDirectory):
+
 2013-02-14  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Properly layer QtWebContext on top of the C API

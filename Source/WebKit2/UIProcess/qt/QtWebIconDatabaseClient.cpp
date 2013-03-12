@@ -22,6 +22,7 @@
 
 #include "Image.h"
 #include "KURL.h"
+#include "QtWebContext.h"
 #include "SharedBuffer.h"
 #include "WKURLQt.h"
 #include "WebContext.h"
@@ -30,6 +31,9 @@
 #include <QtCore/QObject>
 #include <QtCore/QUrl>
 #include <QtGui/QImage>
+#include <WKContextPrivate.h>
+#include <WKRetainPtr.h>
+#include <WKStringQt.h>
 
 namespace WebKit {
 
@@ -41,9 +45,6 @@ static inline QtWebIconDatabaseClient* toQtWebIconDatabaseClient(const void* cli
 
 QtWebIconDatabaseClient::QtWebIconDatabaseClient(WebContext *context)
 {
-    // The setter calls the getter here as it triggers the startup of the icon database.
-    if (!context->iconDatabase()->isOpen())
-        context->setIconDatabasePath(context->iconDatabasePath());
     m_iconDatabase = context->iconDatabase();
 
     WKIconDatabaseClient iconDatabaseClient;
@@ -52,6 +53,9 @@ QtWebIconDatabaseClient::QtWebIconDatabaseClient(WebContext *context)
     iconDatabaseClient.clientInfo = this;
     iconDatabaseClient.didChangeIconForPageURL = didChangeIconForPageURL;
     WKIconDatabaseSetIconDatabaseClient(toAPI(m_iconDatabase.get()), &iconDatabaseClient);
+    // Triggers the startup of the icon database.
+    WKRetainPtr<WKStringRef> path = adoptWK(WKStringCreateWithQString(QtWebContext::preparedStoragePath(QtWebContext::IconDatabaseStorage)));
+    WKContextSetIconDatabasePath(toAPI(context), path.get());
 }
 
 QtWebIconDatabaseClient::~QtWebIconDatabaseClient()

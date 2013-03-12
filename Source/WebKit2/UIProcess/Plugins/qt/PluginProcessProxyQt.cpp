@@ -29,7 +29,6 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 #include "ProcessExecutablePath.h"
-#include "QtDefaultDataLocation.h"
 #include <QByteArray>
 #include <QCoreApplication>
 #include <QDateTime>
@@ -41,6 +40,7 @@
 #include <QJsonObject>
 #include <QMap>
 #include <QProcess>
+#include <QStandardPaths>
 #include <QStringBuilder>
 #include <QVariant>
 #include <WebCore/FileSystem.h>
@@ -62,8 +62,22 @@ void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationPa
 
 static PassOwnPtr<QFile> cacheFile()
 {
-    static QString cacheFilePath = defaultDataLocation() % QStringLiteral("plugin_meta_data.json");
+    QString cachePath = QStandardPaths::writableLocation(QStandardPaths::CacheLocation);
+    if (cachePath.isEmpty())
+        return PassOwnPtr<QFile>();
+
+    // This should match the path set through WKContextSetDiskCacheDirectory.
+    cachePath.append(QDir::separator()).append(QStringLiteral(".QtWebKit")).append(QDir::separator());
+    QString cacheFilePath = cachePath % QStringLiteral("plugin_meta_data.json");
+
+    QDir::root().mkpath(cachePath);
     return adoptPtr(new QFile(cacheFilePath));
+}
+
+static void removeCacheFile()
+{
+    if (OwnPtr<QFile> file = cacheFile())
+        file->remove();
 }
 
 struct ReadResult {
@@ -77,7 +91,7 @@ struct ReadResult {
 static ReadResult::Tag readMetaDataFromCacheFile(QJsonDocument& result)
 {
     OwnPtr<QFile> file = cacheFile();
-    if (!file->open(QFile::ReadOnly))
+    if (!file || !file->open(QFile::ReadOnly))
         return ReadResult::Empty;
     QByteArray data = file->readAll();
     if (data.isEmpty())
@@ -97,14 +111,9 @@ static ReadResult::Tag readMetaDataFromCacheFile(QJsonDocument& result)
 static void writeToCacheFile(const QJsonArray& array)
 {
     OwnPtr<QFile> file = cacheFile();
-    if (!file->open(QFile::WriteOnly | QFile::Truncate)) {
-        // It should never but let's be pessimistic, it is the file system after all.
-        qWarning("Cannot write into plugin meta data cache file: %s\n", qPrintable(file->fileName()));
-        return;
-    }
-
-    // Don't care about write error here. We will detect it later.
-    file->write(QJsonDocument(array).toJson());
+    if (file && file->open(QFile::WriteOnly | QFile::Truncate))
+        // Don't care about write error here. We will detect it later.
+        file->write(QJsonDocument(array).toJson());
 }
 
 static void appendToCacheFile(const QJsonObject& object)
@@ -140,7 +149,7 @@ static MetaDataResult::Tag tryReadPluginMetaDataFromCacheFile(const QString& can
     for (QJsonArray::const_iterator i = array.constBegin(); i != array.constEnd(); ++i) {
         QJsonValue item = *i;
         if (!item.isObject()) {
-            cacheFile()->remove();
+            removeCacheFile();
             return MetaDataResult::NotAvailable;
         }
 
@@ -148,7 +157,7 @@ static MetaDataResult::Tag tryReadPluginMetaDataFromCacheFile(const QString& can
         if (object.value(QStringLiteral("path")).toString() == canonicalPluginPath) {
             QString timestampString = object.value(QStringLiteral("timestamp")).toString();
             if (timestampString.isEmpty()) {
-                cacheFile()->remove();
+                removeCacheFile();
                 return MetaDataResult::NotAvailable;
             }
             QDateTime timestamp = QDateTime::fromString(timestampString);
@@ -169,7 +178,7 @@ static MetaDataResult::Tag tryReadPluginMetaDataFromCacheFile(const QString& can
             if (result.mimeDescription.isEmpty()) {
                 // Only the mime description is mandatory.
                 // Don't trust in the cache file if it is empty.
-                cacheFile()->remove();
+                removeCacheFile();
                 return MetaDataResult::NotAvailable;
             }
 

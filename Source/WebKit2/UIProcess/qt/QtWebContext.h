@@ -35,8 +35,18 @@ class QtWebContext {
 public:
     ~QtWebContext();
 
+    enum StorageType {
+        DatabaseStorage,
+        LocalStorage,
+        CookieStorage,
+        DiskCacheStorage,
+        IconDatabaseStorage
+    };
+
     static QtWebContext* create(WKContextRef);
     static QtWebContext* defaultContext();
+
+    static QString preparedStoragePath(StorageType);
 
     WKContextRef context() { return m_context.get(); }
 

@@ -28,13 +28,8 @@
 #include "WebContext.h"
 
 #include "ApplicationCacheStorage.h"
-#include "FileSystem.h"
-#include "QtDefaultDataLocation.h"
-#include "QtWebContext.h"
 #include "WKSharedAPICast.h"
 #include "WebProcessCreationParameters.h"
-#include <QCoreApplication>
-#include <QDir>
 #include <QProcess>
 
 #if ENABLE(GEOLOCATION)
@@ -44,28 +39,12 @@
 
 namespace WebKit {
 
-static QString s_defaultDatabaseDirectory;
-static QString s_defaultLocalStorageDirectory;
-static QString s_defaultCookieStorageDirectory;
-
-String WebContext::platformDefaultDiskCacheDirectory() const
-{
-    static String s_defaultDiskCacheDirectory;
-
-    if (!s_defaultDiskCacheDirectory.isEmpty())
-        return s_defaultDiskCacheDirectory;
-
-    s_defaultDiskCacheDirectory = WebCore::pathByAppendingComponent(defaultDataLocation(), "cache/");
-    WebCore::makeAllDirectories(s_defaultDiskCacheDirectory);
-    return s_defaultDiskCacheDirectory;
-}
-
 String WebContext::applicationCacheDirectory()
 {
     const String cacheDirectory = WebCore::cacheStorage().cacheDirectory();
 
     if (cacheDirectory.isEmpty())
-        return platformDefaultDiskCacheDirectory();
+        return diskCacheDirectory();
 
     return cacheDirectory;
 }
@@ -85,36 +64,27 @@ void WebContext::platformInvalidateContext()
 
 String WebContext::platformDefaultDatabaseDirectory() const
 {
-    if (!s_defaultDatabaseDirectory.isEmpty())
-        return s_defaultDatabaseDirectory;
-
-    s_defaultDatabaseDirectory = defaultDataLocation() + QLatin1String("Databases");
-    QDir().mkpath(s_defaultDatabaseDirectory);
-    return s_defaultDatabaseDirectory;
+    return String();
 }
 
 String WebContext::platformDefaultIconDatabasePath() const
 {
-    return defaultDataLocation() + QLatin1String("WebpageIcons.db");
+    return String();
 }
 
 String WebContext::platformDefaultLocalStorageDirectory() const
 {
-    if (!s_defaultLocalStorageDirectory.isEmpty())
-        return s_defaultLocalStorageDirectory;
+    return String();
+}
 
-    s_defaultLocalStorageDirectory = defaultDataLocation() + QLatin1String("LocalStorage");
-    QDir().mkpath(s_defaultLocalStorageDirectory);
-    return s_defaultLocalStorageDirectory;
+String WebContext::platformDefaultDiskCacheDirectory() const
+{
+    return String();
 }
 
 String WebContext::platformDefaultCookieStorageDirectory() const
 {
-    if (!s_defaultCookieStorageDirectory.isEmpty())
-        return s_defaultCookieStorageDirectory;
-
-    s_defaultCookieStorageDirectory = defaultDataLocation();
-    return s_defaultCookieStorageDirectory;
+    return String();
 }
 
 } // namespace WebKit
