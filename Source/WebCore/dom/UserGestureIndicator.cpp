@@ -59,7 +59,7 @@ private:
 
 static bool isDefinite(ProcessingUserGestureState state)
 {
-    return state == DefinitelyProcessingNewUserGesture || state == DefinitelyNotProcessingUserGesture;
+    return state == DefinitelyProcessingNewUserGesture || state == DefinitelyProcessingUserGesture || state == DefinitelyNotProcessingUserGesture;
 }
 
 ProcessingUserGestureState UserGestureIndicator::s_state = DefinitelyNotProcessingUserGesture;
@@ -80,6 +80,8 @@ UserGestureIndicator::UserGestureIndicator(ProcessingUserGestureState state)
 
     if (state == DefinitelyProcessingNewUserGesture)
         static_cast<GestureToken*>(m_token.get())->addGesture();
+    else if (state == DefinitelyProcessingUserGesture && s_topmostIndicator == this)
+        static_cast<GestureToken*>(m_token.get())->addGesture();
     ASSERT(isDefinite(s_state));
 }
 
@@ -95,7 +97,7 @@ UserGestureIndicator::UserGestureIndicator(PassRefPtr<UserGestureToken> token)
             static_cast<GestureToken*>(m_token.get())->addGesture();
             static_cast<GestureToken*>(token.get())->consumeGesture();
         }
-        s_state = DefinitelyProcessingNewUserGesture;
+        s_state = DefinitelyProcessingUserGesture;
     }
 
     ASSERT(isDefinite(s_state));
@@ -111,7 +113,7 @@ UserGestureIndicator::~UserGestureIndicator()
 
 bool UserGestureIndicator::processingUserGesture()
 {
-    return s_topmostIndicator && static_cast<GestureToken*>(s_topmostIndicator->currentToken())->hasGestures() && s_state == DefinitelyProcessingNewUserGesture;
+    return s_topmostIndicator && static_cast<GestureToken*>(s_topmostIndicator->currentToken())->hasGestures() && (s_state == DefinitelyProcessingNewUserGesture || s_state == DefinitelyProcessingUserGesture);
 }
 
 bool UserGestureIndicator::consumeUserGesture()

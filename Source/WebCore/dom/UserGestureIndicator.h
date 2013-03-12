@@ -34,6 +34,7 @@ namespace WebCore {
 
 enum ProcessingUserGestureState {
     DefinitelyProcessingNewUserGesture,
+    DefinitelyProcessingUserGesture,
     PossiblyProcessingUserGesture,
     DefinitelyNotProcessingUserGesture
 };

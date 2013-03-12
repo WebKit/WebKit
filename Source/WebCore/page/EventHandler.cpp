@@ -1454,7 +1454,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
         return true;
 #endif
 
-    UserGestureIndicator gestureIndicator(DefinitelyProcessingNewUserGesture);
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
     m_lastMouseDownUserGestureToken = gestureIndicator.currentToken();
 
     // FIXME (bug 68185): this call should be made at another abstraction layer
@@ -1588,7 +1588,7 @@ bool EventHandler::handleMouseDoubleClickEvent(const PlatformMouseEvent& mouseEv
 
     m_frame->selection()->setCaretBlinkingSuspended(false);
 
-    UserGestureIndicator gestureIndicator(DefinitelyProcessingNewUserGesture);
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
 
     // We get this instead of a second mouse-up 
     m_mousePressed = false;
@@ -1831,7 +1831,7 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
     if (m_lastMouseDownUserGestureToken)
         gestureIndicator = adoptPtr(new UserGestureIndicator(m_lastMouseDownUserGestureToken.release()));
     else
-        gestureIndicator = adoptPtr(new UserGestureIndicator(DefinitelyProcessingNewUserGesture));
+        gestureIndicator = adoptPtr(new UserGestureIndicator(DefinitelyProcessingUserGesture));
 
 #if ENABLE(PAN_SCROLLING)
     m_autoscrollController->handleMouseReleaseEvent(mouseEvent);
@@ -3156,7 +3156,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     if (!node)
         return false;
 
-    UserGestureIndicator gestureIndicator(DefinitelyProcessingNewUserGesture);
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
     UserTypingGestureIndicator typingGestureIndicator(m_frame);
 
     if (FrameView* view = m_frame->view())
@@ -3853,7 +3853,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 
     const Vector<PlatformTouchPoint>& points = event.touchPoints();
 
-    UserGestureIndicator gestureIndicator(DefinitelyProcessingNewUserGesture);
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
 
     unsigned i;
     bool freshTouchEvents = true;
