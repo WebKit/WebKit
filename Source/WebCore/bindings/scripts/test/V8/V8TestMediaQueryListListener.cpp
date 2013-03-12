@@ -112,19 +112,6 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestMediaQueryListListene
     return desc;
 }
 
-v8::Persistent<v8::FunctionTemplate> V8TestMediaQueryListListener::GetRawTemplate(v8::Isolate* isolate)
-{
-    V8PerIsolateData* data = V8PerIsolateData::from(isolate);
-    V8PerIsolateData::TemplateMap::iterator result = data->rawTemplateMap().find(&info);
-    if (result != data->rawTemplateMap().end())
-        return result->value;
-
-    v8::HandleScope handleScope;
-    v8::Persistent<v8::FunctionTemplate> templ = createRawTemplate(isolate);
-    data->rawTemplateMap().add(&info, templ);
-    return templ;
-}
-
 v8::Persistent<v8::FunctionTemplate> V8TestMediaQueryListListener::GetTemplate(v8::Isolate* isolate, WrapperWorldType worldType)
 {
     V8PerIsolateData* data = V8PerIsolateData::from(isolate);
@@ -134,14 +121,14 @@ v8::Persistent<v8::FunctionTemplate> V8TestMediaQueryListListener::GetTemplate(v
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        ConfigureV8TestMediaQueryListListenerTemplate(GetRawTemplate(isolate), isolate, worldType);
+        ConfigureV8TestMediaQueryListListenerTemplate(data->rawTemplate(&info), isolate, worldType);
     data->templateMap().add(&info, templ);
     return templ;
 }
 
 bool V8TestMediaQueryListListener::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate)
 {
-    return GetRawTemplate(isolate)->HasInstance(value);
+    return V8PerIsolateData::from(isolate)->hasInstance(&info, value);
 }
 
 

@@ -153,26 +153,13 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8Float64ArrayTemplate(v8::
 
     // Custom Signature 'foo'
     const int fooArgc = 1;
-    v8::Handle<v8::FunctionTemplate> fooArgv[fooArgc] = { V8Float32Array::GetRawTemplate(isolate) };
+    v8::Handle<v8::FunctionTemplate> fooArgv[fooArgc] = { V8PerIsolateData::from(isolate)->rawTemplate(&V8Float32Array::info) };
     v8::Handle<v8::Signature> fooSignature = v8::Signature::New(desc, fooArgc, fooArgv);
     proto->Set(v8::String::NewSymbol("foo"), v8::FunctionTemplate::New(Float64ArrayV8Internal::fooMethodCallback, v8Undefined(), fooSignature));
 
     // Custom toString template
     desc->Set(v8::String::NewSymbol("toString"), V8PerIsolateData::current()->toStringTemplate());
     return desc;
-}
-
-v8::Persistent<v8::FunctionTemplate> V8Float64Array::GetRawTemplate(v8::Isolate* isolate)
-{
-    V8PerIsolateData* data = V8PerIsolateData::from(isolate);
-    V8PerIsolateData::TemplateMap::iterator result = data->rawTemplateMap().find(&info);
-    if (result != data->rawTemplateMap().end())
-        return result->value;
-
-    v8::HandleScope handleScope;
-    v8::Persistent<v8::FunctionTemplate> templ = createRawTemplate(isolate);
-    data->rawTemplateMap().add(&info, templ);
-    return templ;
 }
 
 v8::Persistent<v8::FunctionTemplate> V8Float64Array::GetTemplate(v8::Isolate* isolate, WrapperWorldType worldType)
@@ -184,14 +171,14 @@ v8::Persistent<v8::FunctionTemplate> V8Float64Array::GetTemplate(v8::Isolate* is
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        ConfigureV8Float64ArrayTemplate(GetRawTemplate(isolate), isolate, worldType);
+        ConfigureV8Float64ArrayTemplate(data->rawTemplate(&info), isolate, worldType);
     data->templateMap().add(&info, templ);
     return templ;
 }
 
 bool V8Float64Array::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate)
 {
-    return GetRawTemplate(isolate)->HasInstance(value);
+    return V8PerIsolateData::from(isolate)->hasInstance(&info, value);
 }
 
 

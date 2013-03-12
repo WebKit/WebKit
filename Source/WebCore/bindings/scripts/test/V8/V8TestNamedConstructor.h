@@ -41,7 +41,6 @@ class V8TestNamedConstructor {
 public:
     static const bool hasDependentLifetime = true;
     static bool HasInstance(v8::Handle<v8::Value>, v8::Isolate*);
-    static v8::Persistent<v8::FunctionTemplate> GetRawTemplate(v8::Isolate*);
     static v8::Persistent<v8::FunctionTemplate> GetTemplate(v8::Isolate*, WrapperWorldType);
     static TestNamedConstructor* toNative(v8::Handle<v8::Object> object)
     {

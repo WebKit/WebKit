@@ -130,6 +130,10 @@ public:
 
     v8::Persistent<v8::FunctionTemplate> privateTemplate(WrapperWorldType, void* privatePointer, v8::InvocationCallback, v8::Handle<v8::Value> data, v8::Handle<v8::Signature>, int length = 0);
 
+    v8::Persistent<v8::FunctionTemplate> rawTemplate(WrapperTypeInfo*);
+
+    bool hasInstance(WrapperTypeInfo*, v8::Handle<v8::Value>);
+
 private:
     explicit V8PerIsolateData(v8::Isolate*);
     ~V8PerIsolateData();

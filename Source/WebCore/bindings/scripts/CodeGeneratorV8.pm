@@ -361,7 +361,6 @@ END
 
     push(@headerContent, <<END);
     static bool HasInstance(v8::Handle<v8::Value>, v8::Isolate*);
-    static v8::Persistent<v8::FunctionTemplate> GetRawTemplate(v8::Isolate*);
     static v8::Persistent<v8::FunctionTemplate> GetTemplate(v8::Isolate*, WrapperWorldType);
     static ${nativeType}* toNative(v8::Handle<v8::Object> object)
     {
@@ -781,7 +780,7 @@ sub GenerateDomainSafeFunctionGetter
     my $v8InterfaceName = "V8" . $interfaceName;
     my $funcName = $function->signature->name;
 
-    my $signature = "v8::Signature::New(" . $v8InterfaceName . "::GetRawTemplate(info.GetIsolate()))";
+    my $signature = "v8::Signature::New(V8PerIsolateData::from(info.GetIsolate())->rawTemplate(&" . $v8InterfaceName . "::info))";
     if ($function->signature->extendedAttributes->{"V8DoNotCheckSignature"}) {
         $signature = "v8::Local<v8::Signature>()";
     }
@@ -795,7 +794,8 @@ static v8::Handle<v8::Value> ${funcName}AttrGetter(v8::Local<v8::String> name, c
     // This is only for getting a unique pointer which we can pass to privateTemplate.
     static const char* privateTemplateUniqueKey = "${funcName}PrivateTemplate";
     WrapperWorldType currentWorldType = worldType(info.GetIsolate());
-    v8::Persistent<v8::FunctionTemplate> privateTemplate = V8PerIsolateData::from(info.GetIsolate())->privateTemplate(currentWorldType, &privateTemplateUniqueKey, $newTemplateParams);
+    V8PerIsolateData* data = V8PerIsolateData::from(info.GetIsolate());
+    v8::Persistent<v8::FunctionTemplate> privateTemplate = data->privateTemplate(currentWorldType, &privateTemplateUniqueKey, $newTemplateParams);
 
     v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(${v8InterfaceName}::GetTemplate(info.GetIsolate(), currentWorldType));
     if (holder.IsEmpty()) {
@@ -806,7 +806,7 @@ static v8::Handle<v8::Value> ${funcName}AttrGetter(v8::Local<v8::String> name, c
     ${interfaceName}* imp = ${v8InterfaceName}::toNative(holder);
     if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError)) {
         static const char* sharedTemplateUniqueKey = "${funcName}SharedTemplate";
-        v8::Persistent<v8::FunctionTemplate> sharedTemplate = V8PerIsolateData::from(info.GetIsolate())->privateTemplate(currentWorldType, &sharedTemplateUniqueKey, $newTemplateParams);
+        v8::Persistent<v8::FunctionTemplate> sharedTemplate = data->privateTemplate(currentWorldType, &sharedTemplateUniqueKey, $newTemplateParams);
         return sharedTemplate->GetFunction();
     }
 
@@ -3152,19 +3152,6 @@ END
     return desc;
 }
 
-v8::Persistent<v8::FunctionTemplate> ${v8InterfaceName}::GetRawTemplate(v8::Isolate* isolate)
-{
-    V8PerIsolateData* data = V8PerIsolateData::from(isolate);
-    V8PerIsolateData::TemplateMap::iterator result = data->rawTemplateMap().find(&info);
-    if (result != data->rawTemplateMap().end())
-        return result->value;
-
-    v8::HandleScope handleScope;
-    v8::Persistent<v8::FunctionTemplate> templ = createRawTemplate(isolate);
-    data->rawTemplateMap().add(&info, templ);
-    return templ;
-}
-
 v8::Persistent<v8::FunctionTemplate> ${v8InterfaceName}::GetTemplate(v8::Isolate* isolate, WrapperWorldType worldType)
 {
     V8PerIsolateData* data = V8PerIsolateData::from(isolate);
@@ -3174,14 +3161,14 @@ v8::Persistent<v8::FunctionTemplate> ${v8InterfaceName}::GetTemplate(v8::Isolate
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        Configure${v8InterfaceName}Template(GetRawTemplate(isolate), isolate, worldType);
+        Configure${v8InterfaceName}Template(data->rawTemplate(&info), isolate, worldType);
     data->templateMap().add(&info, templ);
     return templ;
 }
 
 bool ${v8InterfaceName}::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate)
 {
-    return GetRawTemplate(isolate)->HasInstance(value);
+    return V8PerIsolateData::from(isolate)->hasInstance(&info, value);
 }
 
 END
@@ -4102,7 +4089,7 @@ sub CreateCustomSignature
                 } else {
                     AddToImplIncludes(GetV8HeaderName($type));
                 }
-                $result .= "V8${type}::GetRawTemplate(isolate)";
+                $result .= "V8PerIsolateData::from(isolate)->rawTemplate(&V8${type}::info)";
             }
         } else {
             $result .= "v8::Handle<v8::FunctionTemplate>()";

@@ -133,6 +133,23 @@ v8::Persistent<v8::FunctionTemplate> V8PerIsolateData::privateTemplate(WrapperWo
     return newPrivateTemplate;
 }
 
+v8::Persistent<v8::FunctionTemplate> V8PerIsolateData::rawTemplate(WrapperTypeInfo* info)
+{
+    TemplateMap::iterator result = m_rawTemplates.find(info);
+    if (result != m_rawTemplates.end())
+        return result->value;
+
+    v8::HandleScope handleScope;
+    v8::Persistent<v8::FunctionTemplate> templ = createRawTemplate(m_isolate);
+    m_rawTemplates.add(info, templ);
+    return templ;
+}
+
+bool V8PerIsolateData::hasInstance(WrapperTypeInfo* info, v8::Handle<v8::Value> value)
+{
+    return rawTemplate(info)->HasInstance(value);
+}
+
 #if ENABLE(INSPECTOR)
 void V8PerIsolateData::visitExternalStrings(ExternalStringVisitor* visitor)
 {
