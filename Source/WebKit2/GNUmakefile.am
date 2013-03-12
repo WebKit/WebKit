@@ -586,6 +586,7 @@ Programs_WebKitPluginProcess_LDADD += \
 endif
 
 Programs_WebKitPluginProcess_LDADD += \
+	libWebCoreModules.la \
 	libWebCorePlatform.la \
 	libWebCoreGtk2.la \
 	$(CAIRO_LIBS) \
