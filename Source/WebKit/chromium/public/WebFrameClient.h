@@ -42,10 +42,7 @@
 #include "WebSecurityOrigin.h"
 #include "WebStorageQuotaType.h"
 #include "WebTextDirection.h"
-
-#if WEBKIT_USING_V8
 #include <v8.h>
-#endif
 
 namespace WebKit {
 
@@ -309,7 +306,6 @@ public:
     // Script in the page tried to allocate too much memory.
     virtual void didExhaustMemoryAvailableForScript(WebFrame*) { }
 
-#if WEBKIT_USING_V8
     // Notifies that a new script context has been created for this frame.
     // This is similar to didClearWindowObject but only called once per
     // frame context.
@@ -317,7 +313,6 @@ public:
 
     // WebKit is about to release its reference to a v8 context for a frame.
     virtual void willReleaseScriptContext(WebFrame*, v8::Handle<v8::Context>, int worldId) { }
-#endif
 
     // Geometry notifications ----------------------------------------------
 

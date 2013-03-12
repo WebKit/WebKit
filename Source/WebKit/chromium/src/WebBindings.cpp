@@ -386,7 +386,6 @@ void WebBindings::popExceptionHandler()
     WebCore::popExceptionHandler();
 }
 
-#if WEBKIT_USING_V8
 void WebBindings::toNPVariant(v8::Local<v8::Value> object, NPObject* root, NPVariant* result)
 {
     WebCore::convertV8ObjectToNPVariant(object, root, result);
@@ -406,6 +405,5 @@ v8::Handle<v8::Value> WebBindings::toV8Value(const NPVariant* variant)
     // argument is a primitive v8 type.
     return convertNPVariantToV8Object(variant, 0, isolate);
 }
-#endif
 
 } // namespace WebKit

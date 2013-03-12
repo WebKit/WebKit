@@ -116,7 +116,6 @@ public:
     virtual void addMessageToConsole(const WebConsoleMessage&);
     virtual void collectGarbage();
     virtual bool checkIfRunInsecureContent(const WebURL&) const;
-#if WEBKIT_USING_V8
     virtual v8::Handle<v8::Value> executeScriptAndReturnValue(
         const WebScriptSource&);
     virtual void executeScriptInIsolatedWorld(
@@ -139,7 +138,6 @@ public:
                                                   const WebString& fileSystemPath,
                                                   const WebString& filePath,
                                                   bool isDirectory);
-#endif
     virtual void reload(bool ignoreCache);
     virtual void reloadWithOverrideURL(const WebURL& overrideUrl, bool ignoreCache);
     virtual void loadRequest(const WebURLRequest&);

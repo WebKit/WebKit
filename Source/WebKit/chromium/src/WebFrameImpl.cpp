@@ -542,12 +542,10 @@ WebFrame* WebFrame::frameForCurrentContext()
     return frameForContext(context);
 }
 
-#if WEBKIT_USING_V8
 WebFrame* WebFrame::frameForContext(v8::Handle<v8::Context> context)
 { 
    return WebFrameImpl::fromFrame(toFrameIfNotDetached(context));
 }
-#endif
 
 WebFrame* WebFrame::fromFrameOwnerElement(const WebElement& element)
 {

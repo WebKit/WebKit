@@ -1,3 +1,43 @@
+2013-03-12  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Remove WEBKIT_USING_V8 from the WebKit API
+        https://bugs.webkit.org/show_bug.cgi?id=112120
+
+        Reviewed by Tony Chang.
+
+        Chromium always uses V8. This macro has outlived it's usefulness. It's
+        now just noise.
+
+        * README:
+        * public/WebArrayBuffer.h:
+        (WebArrayBuffer):
+        * public/WebArrayBufferView.h:
+        (WebArrayBufferView):
+        * public/WebBindings.h:
+        (WebBindings):
+        * public/WebBlob.h:
+        (WebBlob):
+        * public/WebFrame.h:
+        (WebFrame):
+        * public/WebFrameClient.h:
+        * public/WebSerializedScriptValue.h:
+        (WebSerializedScriptValue):
+        * src/WebArrayBuffer.cpp:
+        (WebKit::WebArrayBuffer::createFromV8Value):
+        * src/WebArrayBufferView.cpp:
+        (WebKit::WebArrayBufferView::createFromV8Value):
+        * src/WebBindings.cpp:
+        (WebKit::WebBindings::toV8Value):
+        * src/WebBlob.cpp:
+        (WebKit::WebBlob::toV8Value):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrame::frameForContext):
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+        * src/WebSerializedScriptValue.cpp:
+        (WebKit::WebSerializedScriptValue::serialize):
+        (WebKit::WebSerializedScriptValue::deserialize):
+
 2013-03-12  Abhishek Arya  <inferno@chromium.org>
 
         Replace static_casts with to* functions.

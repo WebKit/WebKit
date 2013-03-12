@@ -58,14 +58,12 @@ void WebBlob::assign(const WebBlob& other)
     m_private = other.m_private;
 }
 
-#if WEBKIT_USING_V8
 v8::Handle<v8::Value>  WebBlob::toV8Value()
 {
     if (!m_private.get())
         return v8::Handle<v8::Value>();
     return toV8(m_private.get(), v8::Handle<v8::Object>(), v8::Isolate::GetCurrent());
 }
-#endif
 
 WebBlob::WebBlob(const WTF::PassRefPtr<WebCore::Blob>& blob)
     : m_private(blob)

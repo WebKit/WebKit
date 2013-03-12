@@ -42,7 +42,6 @@
 
 struct NPObject;
 
-#if WEBKIT_USING_V8
 namespace v8 {
 class Context;
 class Function;
@@ -51,7 +50,6 @@ class Value;
 template <class T> class Handle;
 template <class T> class Local;
 }
-#endif
 
 namespace WebKit {
 
@@ -101,12 +99,10 @@ public:
     // is not currently being displayed in a Frame.
     WEBKIT_EXPORT static WebFrame* frameForCurrentContext();
 
-#if WEBKIT_USING_V8
     // Returns the frame corresponding to the given context. This can return 0
     // if the context is detached from the frame, or if the context doesn't
     // correspond to a frame (e.g., workers).
     WEBKIT_EXPORT static WebFrame* frameForContext(v8::Handle<v8::Context>);
-#endif
 
     // Returns the frame inside a given frame or iframe element. Returns 0 if
     // the given element is not a frame, iframe or if the frame is empty.
@@ -270,7 +266,6 @@ public:
     // to this frame.
     virtual bool checkIfRunInsecureContent(const WebURL&) const = 0;
 
-#if WEBKIT_USING_V8
     // Executes script in the context of the current page and returns the value
     // that the script evaluated to.
     virtual v8::Handle<v8::Value> executeScriptAndReturnValue(
@@ -311,7 +306,6 @@ public:
                                                   const WebString& fileSystemRootURL,
                                                   const WebString& filePath,
                                                   bool isDirectory) = 0;
-#endif
 
 
     // Navigation ----------------------------------------------------------

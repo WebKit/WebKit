@@ -61,7 +61,6 @@ unsigned WebArrayBufferView::byteLength() const
     return m_private->byteLength();
 }
 
-#if WEBKIT_USING_V8
 WebArrayBufferView* WebArrayBufferView::createFromV8Value(v8::Handle<v8::Value> value)
 {
     if (!WebCore::V8ArrayBufferView::HasInstance(value, v8::Isolate::GetCurrent()))
@@ -69,7 +68,6 @@ WebArrayBufferView* WebArrayBufferView::createFromV8Value(v8::Handle<v8::Value> 
     ArrayBufferView* view = WebCore::V8ArrayBufferView::toNative(value->ToObject());
     return new WebArrayBufferView(view);
 }
-#endif
 
 WebArrayBufferView::WebArrayBufferView(const PassRefPtr<ArrayBufferView>& value)
     : m_private(value)

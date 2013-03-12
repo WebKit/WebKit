@@ -43,7 +43,6 @@ WebSerializedScriptValue WebSerializedScriptValue::fromString(const WebString& s
     return SerializedScriptValue::createFromWire(s);
 }
 
-#if WEBKIT_USING_V8
 WebSerializedScriptValue WebSerializedScriptValue::serialize(v8::Handle<v8::Value> value)
 {
     bool didThrow;
@@ -52,7 +51,6 @@ WebSerializedScriptValue WebSerializedScriptValue::serialize(v8::Handle<v8::Valu
         return createInvalid();
     return serializedValue;
 }
-#endif
 
 WebSerializedScriptValue WebSerializedScriptValue::createInvalid()
 {
@@ -74,12 +72,10 @@ WebString WebSerializedScriptValue::toString() const
     return m_private->toWireString();
 }
 
-#if WEBKIT_USING_V8
 v8::Handle<v8::Value> WebSerializedScriptValue::deserialize()
 {
     return m_private->deserialize();
 }
-#endif
 
 WebSerializedScriptValue::WebSerializedScriptValue(const PassRefPtr<SerializedScriptValue>& value)
     : m_private(value)

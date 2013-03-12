@@ -69,7 +69,6 @@ unsigned WebArrayBuffer::byteLength() const
     return 0;
 }
 
-#if WEBKIT_USING_V8
 v8::Handle<v8::Value> WebArrayBuffer::toV8Value()
 {
     if (!m_private.get())
@@ -84,7 +83,6 @@ WebArrayBuffer* WebArrayBuffer::createFromV8Value(v8::Handle<v8::Value> value)
     WTF::ArrayBuffer* buffer = V8ArrayBuffer::toNative(value->ToObject());
     return new WebArrayBuffer(buffer);
 }
-#endif
 
 WebArrayBuffer::WebArrayBuffer(const WTF::PassRefPtr<WTF::ArrayBuffer>& blob)
     : m_private(blob)

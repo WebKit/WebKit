@@ -34,12 +34,10 @@
 #include "../../../Platform/chromium/public/WebCommon.h"
 #include "../../../Platform/chromium/public/WebPrivatePtr.h"
 
-#if WEBKIT_USING_V8
 namespace v8 {
 class Value;
 template <class T> class Handle;
 }
-#endif
 
 namespace WTF { class ArrayBuffer; }
 
@@ -66,10 +64,8 @@ public:
     WEBKIT_EXPORT void* data() const;
     WEBKIT_EXPORT unsigned byteLength() const;
 
-#if WEBKIT_USING_V8
     WEBKIT_EXPORT v8::Handle<v8::Value> toV8Value();
     WEBKIT_EXPORT static WebArrayBuffer* createFromV8Value(v8::Handle<v8::Value>);
-#endif
 
 #if WEBKIT_IMPLEMENTATION
     WebArrayBuffer(const WTF::PassRefPtr<WTF::ArrayBuffer>&);

@@ -36,13 +36,11 @@
 #include "../../../Platform/chromium/public/WebVector.h"
 #include <bindings/npruntime.h>
 
-#if WEBKIT_USING_V8
 namespace v8 {
 class Value;
 template <class T> class Handle;
 template <class T> class Local;
 }
-#endif
 
 namespace WebKit {
 
@@ -172,11 +170,9 @@ public:
     WEBKIT_EXPORT static void pushExceptionHandler(ExceptionHandler, void* data);
     WEBKIT_EXPORT static void popExceptionHandler();
 
-#if WEBKIT_USING_V8
     // Conversion utilities to/from V8 native objects and NPVariant wrappers.
     WEBKIT_EXPORT static void toNPVariant(v8::Local<v8::Value>, NPObject* root, NPVariant* result);
     WEBKIT_EXPORT static v8::Handle<v8::Value> toV8Value(const NPVariant*);
-#endif
 };
 
 } // namespace WebKit
