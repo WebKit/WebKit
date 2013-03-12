@@ -1,3 +1,18 @@
+2013-03-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Set up the libPlatformGtk.la library
+        https://bugs.webkit.org/show_bug.cgi?id=111738
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Added. Set up the rules for building the new libPlatformGtk.la. For now it will be built in
+        the same way as libWebCoreGtk.la and in parallel with it while the sources are moved from Source/WebCore/platform
+        to Source/Platform/gtk and each migrated source file moves to be built in libPlatformGtk.la instead of libWebCoreGtk.la.
+        * GNUmakefile.list.am: Added. Lists the build targets for the libPlatformGtk.la.
+        * gtk/GtkVersioning.c: Renamed from Source/WebCore/platform/gtk/GtkVersioning.c. This file is independent of WebCore and can be moved
+        and changed to be built into libPlatformGtk.la right away.
+        * gtk/GtkVersioning.h: Renamed from Source/WebCore/platform/gtk/GtkVersioning.h. Ditto.
+
 2013-03-11  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move WebFileSystemCallbacks to Platform/

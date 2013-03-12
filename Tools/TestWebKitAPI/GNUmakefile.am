@@ -72,6 +72,7 @@ noinst_PROGRAMS += \
 
 Programs_TestWebKitAPI_TestGtk_CPPFLAGS = \
 	$(Programs_TestWebKitAPI_TestWTF_CPPFLAGS) \
+	$(platformgtk_cppflags) \
 	$(webcore_cppflags) \
 	$(webcoregtk_cppflags) \
 	$(FREETYPE_CFLAGS) \
@@ -83,6 +84,7 @@ Programs_TestWebKitAPI_TestGtk_LDADD = \
 	Libraries/libTestWebKitAPIMain.la \
 	Libraries/libgtest.la \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	libPlatformGtk.la \
 	libWebCore.la \
 	libWebCoreGtk.la \
 	$(FREETYPE_LIBS) \

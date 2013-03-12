@@ -1,3 +1,13 @@
+2013-03-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Set up the libPlatformGtk.la library
+        https://bugs.webkit.org/show_bug.cgi?id=111738
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Define the two variables that will hold sources list and cppflags as required for the new library.
+        Include the new GNUmakefile.am that's now available under Source/Platform.
+
 2013-03-11  Tobias Mueller  <tobiasmue@gnome.org>
 
         [Autotools] Set ENABLE_GTK_DOC to false if gtk-doc is not installed

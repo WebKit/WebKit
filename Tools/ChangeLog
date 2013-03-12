@@ -1,5 +1,16 @@
 2013-03-12  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GTK] Set up the libPlatformGtk.la library
+        https://bugs.webkit.org/show_bug.cgi?id=111738
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Reference platformgtk_cppflags variable along with webcoregtk_cppflags variable.
+        Adjust the path to GtkVersioning.c, the file has moved under Source/Platform.
+        * TestWebKitAPI/GNUmakefile.am: Reference platformgtk_cppflags variable along with webcoregtk_cppflags variable.
+
+2013-03-12  Zan Dobersek  <zdobersek@igalia.com>
+
         [GTK] Enable Web Audio in development builds
         https://bugs.webkit.org/show_bug.cgi?id=111831
 

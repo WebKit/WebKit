@@ -115,6 +115,7 @@ Programs_DumpRenderTree_CPPFLAGS = \
 	-I$(top_builddir)/DerivedSources \
 	-I$(top_builddir)/Source/WebKit/gtk \
 	$(javascriptcore_cppflags) \
+	$(platformgtk_cppflags) \
 	$(webcore_cppflags)
 
 if TARGET_X11
@@ -168,7 +169,7 @@ Programs_DumpRenderTree_SOURCES = \
 	Tools/DumpRenderTree/gtk/TextInputController.h \
 	Tools/DumpRenderTree/gtk/TextInputController.cpp \
 	Tools/DumpRenderTree/gtk/WorkQueueItemGtk.cpp \
-	Source/WebCore/platform/gtk/GtkVersioning.c
+	Source/Platform/gtk/GtkVersioning.c
 
 Programs_DumpRenderTree_CXXFLAGS = \
 	$(global_cxxflags) \

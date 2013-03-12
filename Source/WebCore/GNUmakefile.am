@@ -172,6 +172,7 @@ libWebCoreSVG_la_CPPFLAGS = \
 	-DBUILDING_WebCore \
 	-DBUILDING_WEBKIT \
 	$(global_cppflags) \
+	$(platformgtk_cppflags) \
 	$(webcore_cppflags) \
 	$(webcoregtk_cppflags) \
 	$(javascriptcore_cppflags) \
@@ -422,7 +423,7 @@ DerivedSources/WebCore/JSInternalSettingsGenerated.h: DerivedSources/WebCore/Int
 # IDL generation takes a long time. The pipe represents an order-only dependency,
 # which means that GNUmake will only try to build the dependencies first, but
 # not rebuild all the targets if the dependencies change.
-$(webkitgtk_sources) $(webkit2_sources) $(webkit2_plugin_process_sources) $(webcore_sources) $(webcoregtk_sources) : | $(supplemental_dependency_file) $(webcore_built_sources)
+$(webkitgtk_sources) $(webkit2_sources) $(webkit2_plugin_process_sources) $(webcore_sources) $(webcoregtk_sources) $(platformgtk_sources) : | $(supplemental_dependency_file) $(webcore_built_sources)
 
 noinst_LTLIBRARIES += \
 	libWebCorePlatform.la \
@@ -474,6 +475,7 @@ libWebCore_la_CPPFLAGS = \
 	-DBUILDING_WebCore \
 	-DBUILDING_WEBKIT \
 	$(global_cppflags) \
+	$(platformgtk_cppflags) \
 	$(webcore_cppflags) \
 	$(webcoregtk_cppflags) \
 	$(javascriptcore_cppflags) \
@@ -537,6 +539,7 @@ libWebCorePlatform_la_CFLAGS = \
 libWebCorePlatform_la_CPPFLAGS = \
 	-DBUILDING_WEBKIT \
 	$(global_cppflags) \
+	$(platformgtk_cppflags) \
 	$(webcore_cppflags) \
 	$(webcoregtk_cppflags) \
 	$(javascriptcore_cppflags) \
@@ -583,6 +586,7 @@ libWebCoreGtk_la_CPPFLAGS = \
 	-DBUILDING_WebCore \
 	-DBUILDING_WEBKIT \
 	$(global_cppflags) \
+	$(platformgtk_cppflags) \
 	$(webcore_cppflags) \
 	$(webcoregtk_cppflags) \
 	$(javascriptcore_cppflags) \

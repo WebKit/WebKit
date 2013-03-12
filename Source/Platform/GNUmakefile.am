@@ -1,0 +1,33 @@
+# The platform layer code is built into two separate static libraries - libPlatformGtk.la
+# is built from files that require GTK+ and libPlatform.la is built from all the other files.
+# This makes it possible to build two separate libPlatformGtk.la libraries, one using GTK3
+# and the other (named libPlatformGtk2.la) using GTK2. The latter is required by the
+# WebKitPluginProcess in WebKit2 as some plugins (such as Flash) still use GTK2.
+# For now we only build the libPlatformGtk library as there are no source files in place yet
+# that could be built into libPlatform.
+
+platformgtk_cppflags += \
+	-DWEBKITGTK_API_VERSION_STRING=\"@WEBKITGTK_API_VERSION@\" \
+	-I$(srcdir)/Source/Platform/gtk
+
+noinst_LTLIBRARIES += \
+	libPlatformGtk.la
+
+libPlatformGtk_la_SOURCES = \
+	$(platformgtk_sources)
+
+libPlatformGtk_la_CXXFLAGS = \
+	-fvisibility-inlines-hidder \
+	$(global_cxxflags)
+
+libPlatformGtk_la_CFLAGS = \
+	-fvisibility=hidden \
+	$(global_cflags)
+
+libPlatformGtk_la_CPPFLAGS = \
+	-DBUILDING_WEBKIT \
+	$(global_cppflags) \
+	$(platformgtk_cppflags) \
+	$(javascriptcore_cppflags) \
+	-fno-strict-aliasing \
+	$(GTK_CFLAGS)

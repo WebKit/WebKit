@@ -532,6 +532,7 @@ libWebCoreDOM_la_CPPFLAGS = \
 	-I$(WebCore)/bindings/gobject \
 	-I$(GENSOURCES_WEBKITDOM) \
 	$(global_cppflags) \
+	$(platformgtk_cppflags) \
 	$(webcore_cppflags) \
 	$(webcoregtk_cppflags) \
 	$(javascriptcore_cppflags) \

@@ -70,6 +70,8 @@ javascriptcore_built_sources :=
 javascriptcore_built_nosources :=
 llint_nosources :=
 offlineasm_nosources :=
+platformgtk_cppflags :=
+platformgtk_sources :=
 webcore_platform_sources :=
 webcore_modules_sources :=
 webcore_svg_built_sources :=
@@ -176,6 +178,7 @@ EXTRA_DIST += \
 # Include module makefiles
 include Source/WTF/GNUmakefile.am
 include Source/JavaScriptCore/GNUmakefile.am
+include Source/Platform/GNUmakefile.am
 include Source/WebCore/GNUmakefile.am
 include Source/WebCore/bindings/gobject/GNUmakefile.am
 include Source/WebCore/platform/gtk/po/GNUmakefile.am

@@ -47,6 +47,7 @@ libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPPF
 	-I$(GENSOURCES_WEBKITDOM) \
 	-ISource/WebKit/gtk/webkit \
 	$(global_cppflags) \
+	$(platformgtk_cppflags) \
 	$(webcore_cppflags) \
 	$(webcoregtk_cppflags) \
 	$(javascriptcore_cppflags) \
@@ -79,6 +80,7 @@ libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LDFL
 
 libwebkitgtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIBADD := \
 	-lpthread \
+	libPlatformGtk.la \
 	libWebCore.la \
 	libWebCorePlatform.la \
 	libWebCoreModules.la \
@@ -622,7 +624,7 @@ Programs_unittests_testkeyevents_LDADD = $(webkit_tests_ldadd)
 Programs_unittests_testkeyevents_LDFLAGS = $(webkit_tests_ldflags)
 
 Programs_unittests_testcopyandpaste_SOURCES = Source/WebKit/gtk/tests/testcopyandpaste.c \
-	Source/WebCore/platform/gtk/GtkVersioning.c
+	Source/Platform/gtk/GtkVersioning.c
 Programs_unittests_testcopyandpaste_CFLAGS = $(webkit_tests_cflags) \
 	-I$(srcdir)/Source/WebCore/platform/gtk \
 	-I$(srcdir)/Source/WebCore

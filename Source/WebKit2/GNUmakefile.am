@@ -8,6 +8,7 @@ lib_LTLIBRARIES += \
 # We need to make sure plugin process is always built with gtk2, because plugins like flash
 # still use gtk2. Since webcore was built with gtk3, we need to build webcoregtk sources again with gtk2
 noinst_LTLIBRARIES += \
+	libPlatformGtk2.la \
 	libWebCoreGtk2.la
 
 libexec_PROGRAMS += \
@@ -125,6 +126,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	-DBUILDING_WEBKIT \
 	-DWEBKIT2_COMPILATION \
 	-DENABLE_PLUGIN_PROCESS=1 \
+	$(platformgtk_cppflags) \
 	$(webcore_cppflags) \
 	$(webcoregtk_cppflags) \
 	$(javascriptcore_cppflags) \
@@ -182,6 +184,7 @@ endif
 
 libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LIBADD += \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	libPlatformGtk.la \
 	libWebCoreDOM.la \
 	libWebCoreGtk.la \
 	$(CAIRO_LIBS) \
@@ -465,6 +468,7 @@ libWebCoreGtk2_la_CPPFLAGS = \
 	-DBUILDING_WEBKIT \
 	-DGTK_API_VERSION_2=1 \
 	$(global_cppflags) \
+	$(platformgtk_cppflags) \
 	$(webcore_cppflags) \
 	$(webcoregtk_cppflags) \
 	$(javascriptcore_cppflags) \
@@ -482,6 +486,48 @@ libWebCoreGtk2_la_CPPFLAGS = \
 	$(LIBXSLT_CFLAGS) \
 	$(SQLITE3_CFLAGS) \
 	$(UNICODE_CFLAGS) \
+	$(XRENDER_CFLAGS) \
+	$(XT_CFLAGS)
+
+libPlatformGtk2_la_SOURCES = \
+	$(platformgtk_sources)
+
+libPlatformGtk2_la_CXXFLAGS = \
+	-fvisibility-inlines-hidden \
+	$(global_cxxflags)
+
+libPlatformGtk2_la_CFLAGS = \
+	-fvisibility=hidden \
+	$(global_cflags)
+
+libPlatformGtk2_la_CPPFLAGS = \
+	-DBUILDING_WEBKIT \
+	-DGTK_API_VERSION_2=1 \
+	$(global_cppflags) \
+	$(platformgtk_cppflags) \
+	$(javascriptcore_cppflags) \
+	-fno-strict-aliasing \
+	$(HILDON_CPPFLAGS) \
+	$(CAIRO_CFLAGS) \
+	$(CLUTTER_CFLAGS) \
+	$(COVERAGE_CFLAGS) \
+	$(ENCHANT_CFLAGS) \
+	$(FREETYPE_CFLAGS) \
+	$(GAIL_CFLAGS) \
+	$(GAMEPAD_CFLAGS) \
+	$(GEOCLUE_CFLAGS) \
+	$(GLIB_CFLAGS) \
+	$(GSTREAMER_CFLAGS) \
+	$(GTK_CFLAGS) \
+	$(HILDON_CFLAGS) \
+	$(LIBSECRET_CFLAGS) \
+	$(LIBSOUP_CFLAGS) \
+	$(LIBXML_CFLAGS) \
+	$(LIBXSLT_CFLAGS) \
+	$(SQLITE3_CFLAGS) \
+	$(UNICODE_CFLAGS) \
+	$(XCOMPOSITE_CFLAGS) \
+	$(XDAMAGE_CFLAGS) \
 	$(XRENDER_CFLAGS) \
 	$(XT_CFLAGS)
 
@@ -547,6 +593,7 @@ Programs_WebKitPluginProcess_CPPFLAGS = \
 	-DENABLE_PLUGIN_PROCESS=1 \
 	-DLIBEXECDIR=\""$(libexecdir)"\" \
 	$(global_cppflags) \
+	$(platformgtk_cppflags) \
 	$(webcore_cppflags) \
 	$(webcoregtk_cppflags) \
 	$(javascriptcore_cppflags) \
@@ -586,9 +633,10 @@ Programs_WebKitPluginProcess_LDADD += \
 endif
 
 Programs_WebKitPluginProcess_LDADD += \
+	libPlatformGtk2.la \
 	libWebCoreModules.la \
-	libWebCorePlatform.la \
 	libWebCoreGtk2.la \
+	libWebCorePlatform.la \
 	$(CAIRO_LIBS) \
 	$(COVERAGE_LDFLAGS) \
 	$(GEOCLUE_LIBS) \

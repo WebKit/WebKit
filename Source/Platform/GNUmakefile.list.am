@@ -1,0 +1,3 @@
+platformgtk_sources += \
+	Source/Platform/gtk/GtkVersioning.c \
+	Source/Platform/gtk/GtkVersioning.h
