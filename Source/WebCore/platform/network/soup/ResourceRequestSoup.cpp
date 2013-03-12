@@ -38,6 +38,9 @@ void ResourceRequest::updateSoupMessage(SoupMessage* soupMessage) const
 {
     g_object_set(soupMessage, SOUP_MESSAGE_METHOD, httpMethod().utf8().data(), NULL);
 
+    GOwnPtr<SoupURI> uri(soupURI());
+    soup_message_set_uri(soupMessage, uri.get());
+
     const HTTPHeaderMap& headers = httpHeaderFields();
     SoupMessageHeaders* soupHeaders = soupMessage->request_headers;
     if (!headers.isEmpty()) {
