@@ -35,8 +35,11 @@ static void replaceNonBreakingSpaceWithSpace(String& str)
 
 String DataObjectGtk::text() const
 {
-    if (m_range)
-        return m_range->text();
+    if (m_range) {
+        String text = m_range->text();
+        replaceNonBreakingSpaceWithSpace(text);
+        return text;
+    }
     return m_text;
 }
 
