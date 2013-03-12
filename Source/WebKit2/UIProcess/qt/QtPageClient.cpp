@@ -245,11 +245,6 @@ void QtPageClient::didFindZoomableArea(const IntPoint& target, const IntRect& ar
     m_eventHandler->didFindZoomableArea(target, area);
 }
 
-void QtPageClient::didReceiveMessageFromNavigatorQtObject(const String& message)
-{
-    QQuickWebViewPrivate::get(m_webView)->didReceiveMessageFromNavigatorQtObject(message);
-}
-
 void QtPageClient::updateTextInputState()
 {
     ASSERT(m_eventHandler);

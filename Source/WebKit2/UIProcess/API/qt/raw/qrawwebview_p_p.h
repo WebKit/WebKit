@@ -46,7 +46,6 @@ public:
     virtual void countStringMatchesInCustomRepresentation(const String&, WebKit::FindOptions, unsigned maxMatchCount) { }
     virtual void clearAllEditCommands() { }
 
-    virtual void didReceiveMessageFromNavigatorQtObject(const String& message);
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes& attr);
     virtual void handleDownloadRequest(WebKit::DownloadProxy* download);
 

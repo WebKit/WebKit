@@ -65,6 +65,7 @@ class QQuickWebViewPrivate {
 
 public:
     static QQuickWebViewPrivate* get(QQuickWebView* q) { return q->d_ptr.data(); }
+    static QQuickWebViewPrivate* get(WKPageRef);
 
     virtual ~QQuickWebViewPrivate();
 
@@ -124,12 +125,13 @@ public:
 
     // PageClient.
     WebCore::IntSize viewSize() const;
-    void didReceiveMessageFromNavigatorQtObject(const String& message);
     virtual void pageDidRequestScroll(const QPoint& pos) { }
     void processDidCrash();
     void didRelaunchProcess();
     PassOwnPtr<WebKit::DrawingAreaProxy> createDrawingAreaProxy();
     void handleDownloadRequest(WebKit::DownloadProxy*);
+
+    void didReceiveMessageFromNavigatorQtObject(WKStringRef message);
 
 protected:
     class FlickableAxisLocker {

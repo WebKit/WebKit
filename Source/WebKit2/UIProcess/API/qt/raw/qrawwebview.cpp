@@ -37,11 +37,6 @@
 #include <WebCore/CoordinatedGraphicsScene.h>
 #include <WebKit2/qrawwebview_p.h>
 
-void QRawWebViewPrivate::didReceiveMessageFromNavigatorQtObject(const String& message)
-{
-    notImplemented();
-}
-
 void QRawWebViewPrivate::didChangeViewportProperties(const WebCore::ViewportAttributes& attr)
 {
     notImplemented();

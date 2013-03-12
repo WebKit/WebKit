@@ -44,6 +44,7 @@
 #endif
 #include "WebPageGroup.h"
 #include "WebPreferences.h"
+#include "qglobal.h"
 #include "qquicknetworkreply_p.h"
 #include "qquicknetworkrequest_p.h"
 #include "qquickwebpage_p_p.h"
@@ -60,6 +61,7 @@
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <QDateTime>
+#include <QMap>
 #include <QtCore/QFile>
 #include <QtQml/QJSValue>
 #include <QtQuick/QQuickView>
@@ -85,6 +87,9 @@ static bool s_flickableViewportEnabled = true;
 static const int kAxisLockSampleCount = 5;
 static const qreal kAxisLockVelocityThreshold = 300;
 static const qreal kAxisLockVelocityDirectionThreshold = 50;
+
+typedef QMap<WKPageRef, QQuickWebViewPrivate*> PageToViewMap;
+Q_GLOBAL_STATIC(PageToViewMap, pageToView)
 
 static inline QQuickWebViewPrivate* toQQuickWebViewPrivate(const void* clientInfo)
 {
@@ -198,6 +203,11 @@ static QQuickWebViewPrivate* createPrivateObject(QQuickWebView* publicObject)
     return new QQuickWebViewLegacyPrivate(publicObject);
 }
 
+QQuickWebViewPrivate* QQuickWebViewPrivate::get(WKPageRef page)
+{
+    return pageToView()->value(page);
+}
+
 QQuickWebViewPrivate::FlickableAxisLocker::FlickableAxisLocker()
     : m_allowedDirection(QQuickFlickable::AutoFlickDirection)
     , m_time(0), m_sampleCount(0)
@@ -301,6 +311,7 @@ QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
 QQuickWebViewPrivate::~QQuickWebViewPrivate()
 {
     webPageProxy->close();
+    pageToView()->remove(webPage.get());
 }
 
 // Note: we delay this initialization to make sure that QQuickWebView has its d-ptr in-place.
@@ -313,6 +324,8 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
     context = contextRef ? QtWebContext::create(toImpl(contextRef)) : QtWebContext::defaultContext();
     webPageProxy = context->createWebPage(&pageClient, toImpl(pageGroup.get()));
     webPage = toAPI(webPageProxy.get());
+    pageToView()->insert(webPage.get(), this);
+
     webPageProxy->setUseFixedLayout(s_flickableViewportEnabled);
 #if ENABLE(FULLSCREEN_API)
     webPageProxy->fullScreenManager()->setWebView(q_ptr);
@@ -913,10 +926,10 @@ WebCore::IntSize QQuickWebViewPrivate::viewSize() const
 
     \sa postMessage
 */
-void QQuickWebViewPrivate::didReceiveMessageFromNavigatorQtObject(const String& message)
+void QQuickWebViewPrivate::didReceiveMessageFromNavigatorQtObject(WKStringRef message)
 {
     QVariantMap variantMap;
-    variantMap.insert(QLatin1String("data"), QString(message));
+    variantMap.insert(QLatin1String("data"), WKStringCopyQString(message));
     variantMap.insert(QLatin1String("origin"), q_ptr->url());
     emit q_ptr->experimental()->messageReceived(variantMap);
 }

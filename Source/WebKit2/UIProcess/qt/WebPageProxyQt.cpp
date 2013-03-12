@@ -99,11 +99,6 @@ void WebPageProxy::findZoomableAreaForPoint(const IntPoint& point, const IntSize
     m_process->send(Messages::WebPage::FindZoomableAreaForPoint(point, area), m_pageID);
 }
 
-void WebPageProxy::didReceiveMessageFromNavigatorQtObject(const String& contents)
-{
-    m_pageClient->didReceiveMessageFromNavigatorQtObject(contents);
-}
-
 void WebPageProxy::authenticationRequiredRequest(const String& hostname, const String& realm, const String& prefilledUsername, String& username, String& password)
 {
     m_pageClient->handleAuthenticationRequiredRequest(hostname, realm, prefilledUsername, username, password);

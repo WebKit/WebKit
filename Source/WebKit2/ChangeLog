@@ -1,5 +1,37 @@
 2013-02-14  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt][WK2] Allow QtWebContext to call directly to QQuickWebView with a WKPageRef
+        https://bugs.webkit.org/show_bug.cgi?id=109829
+
+        Reviewed by Allan Sandfeld Jensen.
+        Signed off for WebKit2 by Benjamin Poulain.
+
+        Instead of going through WebPageProxy and PageClient to forward
+        injected bundle messages received by the context, maintain a static map
+        of WKPageRef to QQuickWebViewPrivate.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::get):
+        (QQuickWebViewPrivate::~QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::initialize):
+        (QQuickWebViewPrivate::didReceiveMessageFromNavigatorQtObject):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        * UIProcess/API/qt/raw/qrawwebview.cpp:
+        * UIProcess/API/qt/raw/qrawwebview_p_p.h:
+        * UIProcess/PageClient.h:
+        (PageClient):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/qt/QtPageClient.cpp:
+        * UIProcess/qt/QtPageClient.h:
+        (QtPageClient):
+        * UIProcess/qt/QtWebContext.cpp:
+        (WebKit::didReceiveMessageFromInjectedBundle):
+        * UIProcess/qt/WebPageProxyQt.cpp:
+
+2013-02-14  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt][WK2] Keep the WebContext alive during the whole application's lifetime
         https://bugs.webkit.org/show_bug.cgi?id=109827
 

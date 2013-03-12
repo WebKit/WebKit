@@ -47,7 +47,6 @@ public:
     virtual WebCore::IntSize viewSize();
     virtual bool isViewFocused();
     virtual bool isViewVisible();
-    virtual void didReceiveMessageFromNavigatorQtObject(const String&);
     virtual void pageDidRequestScroll(const WebCore::IntPoint&);
     virtual void didChangeContentsSize(const WebCore::IntSize&);
     virtual void didChangeViewportProperties(const WebCore::ViewportAttributes&);

@@ -26,7 +26,7 @@
 #include "WKAPICast.h"
 #include "WebContext.h"
 #include "WebInspectorServer.h"
-#include "WebPageProxy.h"
+#include "qquickwebview_p_p.h"
 #include <WKArray.h>
 #include <WKPage.h>
 #include <WKString.h>
@@ -99,7 +99,7 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messag
     WKPageRef page = static_cast<WKPageRef>(WKArrayGetItemAtIndex(body, 0));
     WKStringRef str = static_cast<WKStringRef>(WKArrayGetItemAtIndex(body, 1));
 
-    toImpl(page)->didReceiveMessageFromNavigatorQtObject(toImpl(str)->string());
+    QQuickWebViewPrivate::get(page)->didReceiveMessageFromNavigatorQtObject(str);
 }
 
 static void initializeContextInjectedBundleClient(WebContext* context)
