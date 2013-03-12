@@ -67,8 +67,19 @@ public:
 
     typedef HashMap<void*, v8::Persistent<v8::FunctionTemplate> > TemplateMap;
 
-    TemplateMap& rawTemplateMap() { return m_rawTemplates; }
-    TemplateMap& templateMap() { return m_templates; }
+    TemplateMap& rawTemplateMap(WrapperWorldType worldType)
+    {
+        if (worldType == MainWorld)
+            return m_rawTemplatesForMainWorld;
+        return m_rawTemplatesForNonMainWorld;
+    }
+
+    TemplateMap& templateMap(WrapperWorldType worldType)
+    {
+        if (worldType == MainWorld)
+            return m_templatesForMainWorld;
+        return m_templatesForNonMainWorld;
+    }
 
     v8::Handle<v8::FunctionTemplate> toStringTemplate();
     v8::Persistent<v8::FunctionTemplate>& lazyEventListenerToStringTemplate()
@@ -130,9 +141,9 @@ public:
 
     v8::Persistent<v8::FunctionTemplate> privateTemplate(WrapperWorldType, void* privatePointer, v8::InvocationCallback, v8::Handle<v8::Value> data, v8::Handle<v8::Signature>, int length = 0);
 
-    v8::Persistent<v8::FunctionTemplate> rawTemplate(WrapperTypeInfo*);
+    v8::Persistent<v8::FunctionTemplate> rawTemplate(WrapperTypeInfo*, WrapperWorldType);
 
-    bool hasInstance(WrapperTypeInfo*, v8::Handle<v8::Value>);
+    bool hasInstance(WrapperTypeInfo*, v8::Handle<v8::Value>, WrapperWorldType);
 
 private:
     explicit V8PerIsolateData(v8::Isolate*);
@@ -140,8 +151,10 @@ private:
     static v8::Handle<v8::Value> constructorOfToString(const v8::Arguments&);
 
     v8::Isolate* m_isolate;
-    TemplateMap m_rawTemplates;
-    TemplateMap m_templates;
+    TemplateMap m_rawTemplatesForMainWorld;
+    TemplateMap m_rawTemplatesForNonMainWorld;
+    TemplateMap m_templatesForMainWorld;
+    TemplateMap m_templatesForNonMainWorld;
     ScopedPersistent<v8::FunctionTemplate> m_toStringTemplate;
     v8::Persistent<v8::FunctionTemplate> m_lazyEventListenerToStringTemplate;
     OwnPtr<StringCache> m_stringCache;

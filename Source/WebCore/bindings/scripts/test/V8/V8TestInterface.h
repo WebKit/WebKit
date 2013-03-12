@@ -35,7 +35,7 @@ namespace WebCore {
 class V8TestInterface {
 public:
     static const bool hasDependentLifetime = true;
-    static bool HasInstance(v8::Handle<v8::Value>, v8::Isolate*);
+    static bool HasInstance(v8::Handle<v8::Value>, v8::Isolate*, WrapperWorldType = GetFromContext);
     static v8::Persistent<v8::FunctionTemplate> GetTemplate(v8::Isolate*, WrapperWorldType);
     static TestInterface* toNative(v8::Handle<v8::Object> object)
     {

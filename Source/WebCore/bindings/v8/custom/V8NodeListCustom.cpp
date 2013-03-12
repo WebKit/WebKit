@@ -61,7 +61,7 @@ v8::Handle<v8::Value> V8NodeList::namedPropertyGetter(v8::Local<v8::String> name
 
 void* V8NodeList::opaqueRootForGC(void* object, v8::Persistent<v8::Object> wrapper, v8::Isolate* isolate)
 {
-    ASSERT(V8NodeList::HasInstance(wrapper, isolate));
+    ASSERT(V8NodeList::HasInstance(wrapper, isolate, MainWorld) || V8NodeList::HasInstance(wrapper, isolate, IsolatedWorld));
     NodeList* impl = static_cast<NodeList*>(object);
     if (!impl->isLiveNodeList())
         return object;

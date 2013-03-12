@@ -104,8 +104,10 @@ v8::Handle<v8::FunctionTemplate> V8PerIsolateData::toStringTemplate()
 void V8PerIsolateData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
-    info.addMember(m_rawTemplates, "rawTemplates");
-    info.addMember(m_templates, "templates");
+    info.addMember(m_rawTemplatesForMainWorld, "rawTemplatesForMainWorld");
+    info.addMember(m_rawTemplatesForNonMainWorld, "rawTemplatesForNonMainWorld");
+    info.addMember(m_templatesForMainWorld, "templatesForMainWorld");
+    info.addMember(m_templatesForNonMainWorld, "templatesForNonMainWorld");
     info.addMember(m_stringCache, "stringCache");
     info.addMember(m_integerCache, "integerCache");
     info.addMember(m_domDataList, "domDataList");
@@ -122,32 +124,42 @@ void V8PerIsolateData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
     info.ignoreMember(m_auxiliaryContext);
 }
 
-v8::Persistent<v8::FunctionTemplate> V8PerIsolateData::privateTemplate(WrapperWorldType, void* privatePointer, v8::InvocationCallback callback, v8::Handle<v8::Value> data, v8::Handle<v8::Signature> signature, int length)
+v8::Persistent<v8::FunctionTemplate> V8PerIsolateData::privateTemplate(WrapperWorldType currentWorldType, void* privatePointer, v8::InvocationCallback callback, v8::Handle<v8::Value> data, v8::Handle<v8::Signature> signature, int length)
 {
+    ASSERT(currentWorldType != GetFromContext);
     v8::Persistent<v8::FunctionTemplate> privateTemplate;
-    V8PerIsolateData::TemplateMap::iterator result = m_templates.find(privatePointer);
-    if (result != m_templates.end())
+    TemplateMap& templates = templateMap(currentWorldType);
+    TemplateMap::iterator result = templates.find(privatePointer);
+    if (result != templates.end())
         return result->value;
     v8::Persistent<v8::FunctionTemplate> newPrivateTemplate = v8::Persistent<v8::FunctionTemplate>::New(m_isolate, v8::FunctionTemplate::New(callback, data, signature, length));
-    m_templates.add(privatePointer, newPrivateTemplate);
+    templates.add(privatePointer, newPrivateTemplate);
     return newPrivateTemplate;
 }
 
-v8::Persistent<v8::FunctionTemplate> V8PerIsolateData::rawTemplate(WrapperTypeInfo* info)
+v8::Persistent<v8::FunctionTemplate> V8PerIsolateData::rawTemplate(WrapperTypeInfo* info, WrapperWorldType currentWorldType)
 {
-    TemplateMap::iterator result = m_rawTemplates.find(info);
-    if (result != m_rawTemplates.end())
+    ASSERT(currentWorldType != GetFromContext);
+    TemplateMap& templates = rawTemplateMap(currentWorldType);
+    TemplateMap::iterator result = templates.find(info);
+    if (result != templates.end())
         return result->value;
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ = createRawTemplate(m_isolate);
-    m_rawTemplates.add(info, templ);
+    templates.add(info, templ);
     return templ;
 }
 
-bool V8PerIsolateData::hasInstance(WrapperTypeInfo* info, v8::Handle<v8::Value> value)
+bool V8PerIsolateData::hasInstance(WrapperTypeInfo* info, v8::Handle<v8::Value> value, WrapperWorldType currentWorldType)
 {
-    return rawTemplate(info)->HasInstance(value);
+    if (currentWorldType == GetFromContext)
+        currentWorldType = worldType(m_isolate);
+    TemplateMap& templates = rawTemplateMap(currentWorldType);
+    TemplateMap::iterator result = templates.find(info);
+    if (result == templates.end())
+        return false;
+    return result->value->HasInstance(value);
 }
 
 #if ENABLE(INSPECTOR)
