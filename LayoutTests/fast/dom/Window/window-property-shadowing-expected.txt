@@ -28,7 +28,6 @@ PASS: screenTop successfully shadowed
 PASS: scrollX successfully shadowed
 PASS: scrollY successfully shadowed
 PASS: self successfully shadowed
-PASS: top successfully shadowed
 PASS: history successfully shadowed
 PASS: getSelection successfully shadowed
 PASS: getComputedStyle successfully shadowed

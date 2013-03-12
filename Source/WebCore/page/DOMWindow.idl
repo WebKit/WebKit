@@ -135,7 +135,7 @@ module window {
 
         attribute [Replaceable, DoNotCheckSecurityOnGetter, V8CustomSetter] DOMWindow opener;
         attribute [Replaceable, DoNotCheckSecurityOnGetter] DOMWindow parent;
-        attribute [Replaceable, DoNotCheckSecurityOnGetter, V8Unforgeable, V8ReadOnly] DOMWindow top;
+        readonly attribute [DoNotCheckSecurityOnGetter, V8Unforgeable] DOMWindow top;
 
         // DOM Level 2 AbstractView Interface
         readonly attribute Document document;

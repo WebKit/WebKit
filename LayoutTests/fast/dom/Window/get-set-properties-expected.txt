@@ -263,8 +263,6 @@ PASS: canGet('statusbar') should be 'true' and is.
 PASS: canSet('statusbar') should be 'true' and is.
 PASS: canGet('toolbar') should be 'true' and is.
 PASS: canSet('toolbar') should be 'true' and is.
-PASS: canGet('top') should be 'true' and is.
-PASS: canSet('top') should be 'true' and is.
 
 ----- tests for getting/setting readonly properties -----
 
@@ -278,6 +276,8 @@ PASS: canGet('pageYOffset') should be 'true' and is.
 PASS: canSet('pageYOffset') should be 'false' and is.
 PASS: canGet('window') should be 'true' and is.
 PASS: canSet('window') should be 'false' and is.
+PASS: canGet('top') should be 'true' and is.
+PASS: canSet('top') should be 'false' and is.
 
 ----- tests for getting/setting string properties -----
 
