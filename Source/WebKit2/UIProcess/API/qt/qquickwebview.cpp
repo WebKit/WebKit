@@ -627,7 +627,7 @@ void QQuickWebViewPrivate::_q_onUrlChanged()
 
 void QQuickWebViewPrivate::_q_onIconChangedForPageURL(const QString& pageUrl)
 {
-    if (pageUrl != QString(m_currentUrl))
+    if (pageUrl != m_currentUrl)
         return;
 
     updateIcon();
@@ -647,7 +647,7 @@ void QQuickWebViewPrivate::updateIcon()
     if (!provider)
         return;
 
-    WTF::String iconUrl = provider->iconURLForPageURLInContext(m_currentUrl, context.get());
+    QUrl iconUrl = provider->iconURLForPageURLInContext(m_currentUrl, context.get());
 
     if (iconUrl == m_iconUrl)
         return;
@@ -1700,7 +1700,7 @@ void QQuickWebView::emitUrlChangeIfNeeded()
 {
     Q_D(QQuickWebView);
 
-    WTF::String activeUrl = d->webPageProxy->activeURL();
+    QString activeUrl = d->webPageProxy->activeURL();
     if (activeUrl != d->m_currentUrl) {
         d->m_currentUrl = activeUrl;
         emit urlChanged();
@@ -1728,7 +1728,7 @@ void QQuickWebView::emitUrlChangeIfNeeded()
 QUrl QQuickWebView::icon() const
 {
     Q_D(const QQuickWebView);
-    return QUrl(d->m_iconUrl);
+    return d->m_iconUrl;
 }
 
 /*!

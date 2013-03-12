@@ -38,29 +38,29 @@ QWebIconImageProvider::~QWebIconImageProvider()
 {
 }
 
-WTF::String QWebIconImageProvider::iconURLForPageURLInContext(const WTF::String &pageURL, QtWebContext* context)
+QUrl QWebIconImageProvider::iconURLForPageURLInContext(const QString &pageURL, QtWebContext* context)
 {
     QtWebIconDatabaseClient* iconDatabase = context->iconDatabase();
-    WTF::String iconURL = iconDatabase->iconForPageURL(pageURL);
+    QUrl iconURL = iconDatabase->iconForPageURL(pageURL);
 
     if (iconURL.isEmpty())
-        return String();
+        return QUrl();
 
     QUrl url;
     url.setScheme(QStringLiteral("image"));
     url.setHost(QWebIconImageProvider::identifier());
     // Make sure that QML doesn't show cached versions of the previous icon if the icon location changed.
-    url.setPath(QLatin1Char('/') + QString::number(WTF::StringHash::hash(iconURL)));
+    url.setPath(QLatin1Char('/') + QString::number(WTF::StringHash::hash(iconURL.toString())));
 
     // FIXME: Use QUrl::DecodedMode when landed in Qt
-    url.setFragment(QString::fromLatin1(QByteArray(QString(pageURL).toUtf8()).toBase64()));
+    url.setFragment(QString::fromLatin1(pageURL.toUtf8().toBase64()));
 
     // FIXME: We can't know when the icon url is no longer in use,
     // so we never release these icons. At some point we might want
     // to introduce expiry of icons to elevate this issue.
     iconDatabase->retainIconForPageURL(pageURL);
 
-    return url.toString(QUrl::FullyEncoded);
+    return url;
 }
 
 QImage QWebIconImageProvider::requestImage(const QString& id, QSize* size, const QSize& requestedSize)

@@ -33,10 +33,6 @@ class QImage;
 class QUrl;
 QT_END_NAMESPACE
 
-namespace WTF {
-class String;
-}
-
 namespace WebKit {
 
 class WebContext;
@@ -49,11 +45,11 @@ public:
     QtWebIconDatabaseClient(WebContext*);
     ~QtWebIconDatabaseClient();
 
-    WTF::String iconForPageURL(const WTF::String& pageURL);
-    QImage iconImageForPageURL(const WTF::String& pageURL, const QSize& iconSize = QSize(32, 32));
+    QUrl iconForPageURL(const QString& pageURL);
+    QImage iconImageForPageURL(const QString& pageURL, const QSize& iconSize = QSize(32, 32));
 
-    void retainIconForPageURL(const WTF::String&);
-    void releaseIconForPageURL(const WTF::String&);
+    void retainIconForPageURL(const QString&);
+    void releaseIconForPageURL(const QString&);
 
 public:
     Q_SIGNAL void iconChangedForPageURL(const QString& pageURL);

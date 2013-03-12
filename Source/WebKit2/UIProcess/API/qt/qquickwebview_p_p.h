@@ -202,9 +202,9 @@ protected:
     bool m_navigatorQtObjectEnabled;
     bool m_renderToOffscreenBuffer;
     bool m_allowAnyHTTPSCertificateForLocalHost;
-    WTF::String m_iconUrl;
+    QUrl m_iconUrl;
     int m_loadProgress;
-    WTF::String m_currentUrl;
+    QString m_currentUrl;
 };
 
 class QQuickWebViewLegacyPrivate : public QQuickWebViewPrivate {

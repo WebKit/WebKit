@@ -65,24 +65,24 @@ void QtWebIconDatabaseClient::didChangeIconForPageURL(WKIconDatabaseRef, WKURLRe
     emit toQtWebIconDatabaseClient(clientInfo)->iconChangedForPageURL(toImpl(pageURL)->string());
 }
 
-WTF::String QtWebIconDatabaseClient::iconForPageURL(const WTF::String& pageURL)
+QUrl QtWebIconDatabaseClient::iconForPageURL(const QString& pageURL)
 {
     String iconURL;
     m_iconDatabase->synchronousIconURLForPageURL(pageURL, iconURL);
 
     if (iconURL.isEmpty())
-        return String();
+        return QUrl();
 
     // Verify that the image data is actually available before reporting back
     // a url, since clients assume that the url can be used directly.
     WebCore::Image* iconImage = m_iconDatabase->imageForPageURL(pageURL);
     if (!iconImage || iconImage->isNull())
-        return String();
+        return QUrl();
 
-    return iconURL;
+    return QUrl(iconURL);
 }
 
-QImage QtWebIconDatabaseClient::iconImageForPageURL(const WTF::String& pageURL, const QSize& iconSize)
+QImage QtWebIconDatabaseClient::iconImageForPageURL(const QString& pageURL, const QSize& iconSize)
 {
     MutexLocker locker(m_imageLock);
 
@@ -95,12 +95,12 @@ QImage QtWebIconDatabaseClient::iconImageForPageURL(const WTF::String& pageURL, 
     return nativeImage->toImage();
 }
 
-void QtWebIconDatabaseClient::retainIconForPageURL(const String& pageURL)
+void QtWebIconDatabaseClient::retainIconForPageURL(const QString& pageURL)
 {
     m_iconDatabase->retainIconForPageURL(pageURL);
 }
 
-void QtWebIconDatabaseClient::releaseIconForPageURL(const String& pageURL)
+void QtWebIconDatabaseClient::releaseIconForPageURL(const QString& pageURL)
 {
     m_iconDatabase->releaseIconForPageURL(pageURL);
 }

@@ -1,3 +1,36 @@
+2013-02-14  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt][WK2] Favor QUrl and QString over WTF::String in the Qt API layer
+        https://bugs.webkit.org/show_bug.cgi?id=109468
+
+        Reviewed by Allan Sandfeld Jensen.
+        Signed off for WebKit2 by Benjamin Poulain.
+
+        In preparation for patches using the C API types in some areas, remove the
+        usage of WTF::String on the affected line.
+
+        Use a QUrl for icon URL to avoid unnecessary conversion.
+        Use a QString for the page URL to keep it compatible with WebPageProxy and
+        WebIconDatabase and avoid QUrl parsing.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::_q_onIconChangedForPageURL):
+        (QQuickWebViewPrivate::updateIcon):
+        (QQuickWebView::emitUrlChangeIfNeeded):
+        (QQuickWebView::icon):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        * UIProcess/API/qt/qwebiconimageprovider.cpp:
+        (QWebIconImageProvider::iconURLForPageURLInContext):
+        * UIProcess/API/qt/qwebiconimageprovider_p.h:
+        * UIProcess/qt/QtWebIconDatabaseClient.cpp:
+        (WebKit::QtWebIconDatabaseClient::iconForPageURL):
+        (WebKit::QtWebIconDatabaseClient::iconImageForPageURL):
+        (WebKit::QtWebIconDatabaseClient::retainIconForPageURL):
+        (WebKit::QtWebIconDatabaseClient::releaseIconForPageURL):
+        * UIProcess/qt/QtWebIconDatabaseClient.h:
+        (QtWebIconDatabaseClient):
+
 2013-03-12  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK][WK2] REGRESSION(r145081): Unit tests not working if locale is not English
