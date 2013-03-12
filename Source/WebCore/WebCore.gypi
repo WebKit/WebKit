@@ -4391,7 +4391,6 @@
             'platform/gtk/GRefPtrGtk.h',
             'platform/gtk/GtkPluginWidget.cpp',
             'platform/gtk/GtkPluginWidget.h',
-            'platform/gtk/GtkVersioning.h',
             'platform/gtk/KURLGtk.cpp',
             'platform/gtk/LanguageGtk.cpp',
             'platform/gtk/LocalizedStringsGtk.cpp',
