@@ -135,7 +135,7 @@ void WebNotification::dispatchCloseEvent(bool /* byUser */)
 
 void WebNotification::dispatchClickEvent()
 {
-    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingNewUserGesture);
     WindowFocusAllowedIndicator windowFocusAllowed;
     dispatchEvent(eventNames().clickEvent);
 }

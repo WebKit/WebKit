@@ -187,7 +187,7 @@ void InspectorFrontendClientLocal::changeAttachedWindowHeight(unsigned height)
 
 void InspectorFrontendClientLocal::openInNewTab(const String& url)
 {
-    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
+    UserGestureIndicator indicator(DefinitelyProcessingNewUserGesture);
     Page* page = m_inspectorController->inspectedPage();
     Frame* mainFrame = page->mainFrame();
     FrameLoadRequest request(mainFrame->document()->securityOrigin(), ResourceRequest(), "_blank");

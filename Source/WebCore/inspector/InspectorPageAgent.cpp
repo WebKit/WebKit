@@ -464,7 +464,7 @@ void InspectorPageAgent::reload(ErrorString*, const bool* const optionalIgnoreCa
 
 void InspectorPageAgent::navigate(ErrorString*, const String& url)
 {
-    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
+    UserGestureIndicator indicator(DefinitelyProcessingNewUserGesture);
     Frame* frame = m_page->mainFrame();
     frame->loader()->changeLocation(frame->document()->securityOrigin(), frame->document()->completeURL(url), "", false, false);
 }

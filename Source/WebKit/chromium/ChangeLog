@@ -1,3 +1,22 @@
+2013-03-11  Jochen Eisinger  <jochen@chromium.org>
+
+        Rename DefinitelyProcessingUserGesture to DefinitelyProcessingNewUserGesture
+        https://bugs.webkit.org/show_bug.cgi?id=111959
+
+        Reviewed by Alexey Proskuryakov.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::executeScriptAndReturnValue):
+        * src/WebNotification.cpp:
+        (WebKit::WebNotification::dispatchClickEvent):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::handleEvent):
+        (WebKit::WebPluginContainerImpl::loadFrameRequest):
+        * src/WebScopedUserGesture.cpp:
+        (WebKit::WebScopedUserGesture::initialize):
+        * tests/WebUserGestureTokenTest.cpp:
+        (WebCore::TEST):
+
 2013-03-11  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move WebFileSystemCallbacks to Platform/

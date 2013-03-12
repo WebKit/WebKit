@@ -95,7 +95,7 @@ private:
     virtual void contextMenuItemSelected(ContextMenuItem* item)
     {
         if (m_frontendHost) {
-            UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
+            UserGestureIndicator gestureIndicator(DefinitelyProcessingNewUserGesture);
             int itemNumber = item->action() - ContextMenuItemBaseCustomTag;
 
             ScriptFunctionCall function(m_frontendApiObject, "contextMenuItemSelected");

@@ -180,7 +180,7 @@ void NotificationManager::notificationClicked(const String& notificationID)
         return;
 
     // Indicate that this event is being dispatched in reaction to a user's interaction with a platform notification.
-    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
+    UserGestureIndicator indicator(DefinitelyProcessingNewUserGesture);
     notification->dispatchClickEvent();
 }
 

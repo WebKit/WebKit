@@ -333,7 +333,7 @@ bool _NPN_EvaluateHelper(NPP npp, bool popupsAllowed, NPObject* npObject, NPStri
 
     String script = String::fromUTF8(npScript->UTF8Characters, npScript->UTF8Length);
 
-    UserGestureIndicator gestureIndicator(popupsAllowed ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
+    UserGestureIndicator gestureIndicator(popupsAllowed ? DefinitelyProcessingNewUserGesture : PossiblyProcessingUserGesture);
     v8::Local<v8::Value> v8result = frame->script()->compileAndRunScript(ScriptSourceCode(script, KURL(ParsedURLString, filename)));
 
     if (v8result.IsEmpty())

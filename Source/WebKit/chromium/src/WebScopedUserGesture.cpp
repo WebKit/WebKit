@@ -38,7 +38,7 @@ namespace WebKit {
 
 void WebScopedUserGesture::initialize()
 {
-    m_indicator.reset(new WebCore::UserGestureIndicator(WebCore::DefinitelyProcessingUserGesture));
+    m_indicator.reset(new WebCore::UserGestureIndicator(WebCore::DefinitelyProcessingNewUserGesture));
 }
 
 void WebScopedUserGesture::initializeWithToken(const WebUserGestureToken& token)

@@ -120,7 +120,7 @@ void WebContextMenuClient::searchWithGoogle(const Frame* frame)
     url.append("&ie=UTF-8&oe=UTF-8");
 
     if (Page* page = frame->page()) {
-        UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
+        UserGestureIndicator indicator(DefinitelyProcessingNewUserGesture);
         page->mainFrame()->loader()->urlSelected(KURL(ParsedURLString, url), String(), 0, false, false, MaybeSendReferrer);
     }
 }

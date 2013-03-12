@@ -186,7 +186,7 @@ void WebPluginContainerImpl::handleEvent(Event* event)
         return;
 
     const WebInputEvent* currentInputEvent = WebViewImpl::currentInputEvent();
-    UserGestureIndicator gestureIndicator(currentInputEvent && WebInputEvent::isUserGestureEventType(currentInputEvent->type) ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
+    UserGestureIndicator gestureIndicator(currentInputEvent && WebInputEvent::isUserGestureEventType(currentInputEvent->type) ? DefinitelyProcessingNewUserGesture : PossiblyProcessingUserGesture);
 
     RefPtr<WebPluginContainerImpl> protector(this);
     // The events we pass are defined at:
@@ -445,7 +445,7 @@ void WebPluginContainerImpl::loadFrameRequest(const WebURLRequest& request, cons
     }
 
     FrameLoadRequest frameRequest(frame->document()->securityOrigin(), request.toResourceRequest(), target);
-    UserGestureIndicator gestureIndicator(request.hasUserGesture() ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
+    UserGestureIndicator gestureIndicator(request.hasUserGesture() ? DefinitelyProcessingNewUserGesture : PossiblyProcessingUserGesture);
     frame->loader()->loadFrameRequest(frameRequest, false, false, 0, 0, MaybeSendReferrer);
 }
 

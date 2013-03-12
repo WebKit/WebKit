@@ -255,7 +255,7 @@ void NotificationPresenterClientQt::notificationClicked(NotificationWrapper* wra
     Notification* notification =  notificationForWrapper(wrapper);
     if (notification) {
         // Make sure clicks on notifications are treated as user gestures.
-        UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
+        UserGestureIndicator gestureIndicator(DefinitelyProcessingNewUserGesture);
         sendEvent(notification, eventNames().clickEvent);
     }
 }
