@@ -596,6 +596,7 @@ RetainPtr<NSValue> PlatformCAFilters::colorMatrixValueForFilter(const FilterOper
     }
     default:
         ASSERT_NOT_REACHED();
+        return 0;
     }
 }
 #endif
