@@ -39,7 +39,6 @@
 #include "FileSystemCallback.h"
 #include "FileSystemCallbacks.h"
 #include "FileSystemType.h"
-#include "WebFileError.h"
 #include "WebFileSystemCallbacksImpl.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
@@ -49,6 +48,7 @@
 #include "WorkerContext.h"
 #include "WorkerFileSystemCallbacksBridge.h"
 #include "WorkerThread.h"
+#include <public/WebFileError.h>
 #include <public/WebFileSystem.h>
 #include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>

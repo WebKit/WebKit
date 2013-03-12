@@ -27,48 +27,27 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-#ifndef WebFileSystemCallbacksImpl_h
-#define WebFileSystemCallbacksImpl_h
-
-#include "FileSystemType.h"
-#include <public/WebFileSystem.h>
-#include <public/WebFileSystemCallbacks.h>
-#include <public/WebVector.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
-
-namespace WebCore {
-class AsyncFileSystemCallbacks;
-class ScriptExecutionContext;
-}
+#ifndef   WebFileError_h
+#define   WebFileError_h
 
 namespace WebKit {
 
-struct WebFileInfo;
-struct WebFileSystemEntry;
-class WebString;
-class WebURL;
-
-class WebFileSystemCallbacksImpl : public WebFileSystemCallbacks {
-public:
-    WebFileSystemCallbacksImpl(PassOwnPtr<WebCore::AsyncFileSystemCallbacks>, WebCore::ScriptExecutionContext* = 0, WebCore::FileSystemSynchronousType = WebCore::AsynchronousFileSystem);
-    virtual ~WebFileSystemCallbacksImpl();
-
-    virtual void didSucceed();
-    virtual void didReadMetadata(const WebFileInfo& info);
-    virtual void didReadDirectory(const WebVector<WebFileSystemEntry>& entries, bool hasMore);
-    virtual void didOpenFileSystem(const WebString& name, const WebURL& rootURL);
-    virtual void didFail(WebFileError error);
-
-private:
-    OwnPtr<WebCore::AsyncFileSystemCallbacks> m_callbacks;
-
-    // Used for worker's openFileSystem callbacks.
-    WebCore::ScriptExecutionContext* m_context;
-    WebCore::FileSystemSynchronousType m_synchronousType;
+// File-related error code defined in HTML5 File API.
+enum WebFileError {
+    WebFileErrorNotFound = 1,
+    WebFileErrorSecurity = 2,
+    WebFileErrorAbort = 3,
+    WebFileErrorNotReadable = 4,
+    WebFileErrorEncoding = 5,
+    WebFileErrorNoModificationAllowed = 6,
+    WebFileErrorInvalidState = 7,
+    WebFileErrorSyntax = 8,
+    WebFileErrorInvalidModification = 9,
+    WebFileErrorQuotaExceeded = 10,
+    WebFileErrorTypeMismatch = 11,
+    WebFileErrorPathExists = 12,
 };
 
 } // namespace WebKit
 
-#endif // WebFileSystemCallbacksImpl_h
+#endif

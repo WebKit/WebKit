@@ -28,23 +28,4 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFileSystemEntry_h
-#define WebFileSystemEntry_h
-
-#include "../../../Platform/chromium/public/WebString.h"
-
-namespace WebKit {
-
-struct WebFileSystemEntry {
-    WebFileSystemEntry() : isDirectory(false) { }
-
-    // The name of the entry.
-    WebString name;
-
-    // This flag indicates if the entry is directory or not.
-    bool isDirectory;
-};
-
-} // namespace WebKit
-
-#endif // WebFileSystemEntry_h
+#include "../../../Platform/chromium/public/WebFileSystemEntry.h"

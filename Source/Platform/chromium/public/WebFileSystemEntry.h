@@ -28,47 +28,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFileSystemCallbacksImpl_h
-#define WebFileSystemCallbacksImpl_h
+#ifndef WebFileSystemEntry_h
+#define WebFileSystemEntry_h
 
-#include "FileSystemType.h"
-#include <public/WebFileSystem.h>
-#include <public/WebFileSystemCallbacks.h>
-#include <public/WebVector.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
-
-namespace WebCore {
-class AsyncFileSystemCallbacks;
-class ScriptExecutionContext;
-}
+#include "WebString.h"
 
 namespace WebKit {
 
-struct WebFileInfo;
-struct WebFileSystemEntry;
-class WebString;
-class WebURL;
+struct WebFileSystemEntry {
+    WebFileSystemEntry() : isDirectory(false) { }
 
-class WebFileSystemCallbacksImpl : public WebFileSystemCallbacks {
-public:
-    WebFileSystemCallbacksImpl(PassOwnPtr<WebCore::AsyncFileSystemCallbacks>, WebCore::ScriptExecutionContext* = 0, WebCore::FileSystemSynchronousType = WebCore::AsynchronousFileSystem);
-    virtual ~WebFileSystemCallbacksImpl();
+    // The name of the entry.
+    WebString name;
 
-    virtual void didSucceed();
-    virtual void didReadMetadata(const WebFileInfo& info);
-    virtual void didReadDirectory(const WebVector<WebFileSystemEntry>& entries, bool hasMore);
-    virtual void didOpenFileSystem(const WebString& name, const WebURL& rootURL);
-    virtual void didFail(WebFileError error);
-
-private:
-    OwnPtr<WebCore::AsyncFileSystemCallbacks> m_callbacks;
-
-    // Used for worker's openFileSystem callbacks.
-    WebCore::ScriptExecutionContext* m_context;
-    WebCore::FileSystemSynchronousType m_synchronousType;
+    // This flag indicates if the entry is directory or not.
+    bool isDirectory;
 };
 
 } // namespace WebKit
 
-#endif // WebFileSystemCallbacksImpl_h
+#endif // WebFileSystemEntry_h

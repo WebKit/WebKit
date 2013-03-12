@@ -34,8 +34,8 @@
 #if ENABLE(FILE_SYSTEM)
 
 #include "AsyncFileWriter.h"
-#include "WebFileError.h"
 #include "WebFileWriterClient.h"
+#include <public/WebFileError.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebKit {

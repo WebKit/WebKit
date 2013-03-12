@@ -34,7 +34,7 @@
 #if ENABLE(FILE_SYSTEM) && ENABLE(WORKERS)
 
 #include "ScriptExecutionContext.h"
-#include "WebFileError.h"
+#include <public/WebFileError.h>
 #include <public/WebFileSystem.h>
 #include <public/WebVector.h>
 #include <wtf/PassOwnPtr.h>

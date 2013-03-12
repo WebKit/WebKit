@@ -1,3 +1,26 @@
+2013-03-11  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Move WebFileSystemCallbacks to Platform/
+        https://bugs.webkit.org/show_bug.cgi?id=112049
+
+        Reviewed by Adam Barth.
+
+        In preparation for moving filesystem-related methods from
+        WebFrameClient to Platform.
+
+        * Platform.gypi:
+        * chromium/public/WebFileError.h: Copied from Source/WebKit/chromium/public/WebFileError.h.
+        (WebKit):
+        * chromium/public/WebFileSystemCallbacks.h: Copied from Source/WebKit/chromium/public/WebFileSystemCallbacks.h.
+        (WebKit):
+        (WebFileSystemCallbacks):
+        (WebKit::WebFileSystemCallbacks::didCreateSnapshotFile):
+        (WebKit::WebFileSystemCallbacks::~WebFileSystemCallbacks):
+        * chromium/public/WebFileSystemEntry.h: Copied from Source/WebKit/chromium/public/WebFileSystemEntry.h.
+        (WebKit):
+        (WebKit::WebFileSystemEntry::WebFileSystemEntry):
+        (WebFileSystemEntry):
+
 2013-03-11  James Robinson  <jamesr@chromium.org>
 
         [chromium] Use SkMatrix44 instead of WebTransformationMatrix in animation APIs

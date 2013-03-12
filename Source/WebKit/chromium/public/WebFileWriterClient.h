@@ -32,7 +32,7 @@
 #define WebFileWriterClient_h
 
 #include "../../../Platform/chromium/public/WebCommon.h"
-#include "WebFileError.h"
+#include "../../../Platform/chromium/public/WebFileError.h"
 
 namespace WebKit {
 

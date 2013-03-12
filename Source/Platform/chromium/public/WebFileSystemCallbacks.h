@@ -28,47 +28,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebFileSystemCallbacksImpl_h
-#define WebFileSystemCallbacksImpl_h
+#ifndef WebFileSystemCallbacks_h
+#define WebFileSystemCallbacks_h
 
-#include "FileSystemType.h"
-#include <public/WebFileSystem.h>
-#include <public/WebFileSystemCallbacks.h>
-#include <public/WebVector.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
-
-namespace WebCore {
-class AsyncFileSystemCallbacks;
-class ScriptExecutionContext;
-}
+#include "WebFileError.h"
+#include "WebFileSystemEntry.h"
+#include "WebVector.h"
 
 namespace WebKit {
 
-struct WebFileInfo;
-struct WebFileSystemEntry;
 class WebString;
 class WebURL;
+struct WebFileInfo;
 
-class WebFileSystemCallbacksImpl : public WebFileSystemCallbacks {
+class WebFileSystemCallbacks {
 public:
-    WebFileSystemCallbacksImpl(PassOwnPtr<WebCore::AsyncFileSystemCallbacks>, WebCore::ScriptExecutionContext* = 0, WebCore::FileSystemSynchronousType = WebCore::AsynchronousFileSystem);
-    virtual ~WebFileSystemCallbacksImpl();
+    // Callback for WebFileSystem's various operations that don't require
+    // return values.
+    virtual void didSucceed() = 0;
 
-    virtual void didSucceed();
-    virtual void didReadMetadata(const WebFileInfo& info);
-    virtual void didReadDirectory(const WebVector<WebFileSystemEntry>& entries, bool hasMore);
-    virtual void didOpenFileSystem(const WebString& name, const WebURL& rootURL);
-    virtual void didFail(WebFileError error);
+    // Callback for WebFileSystem::readMetadata. Called with the file metadata
+    // for the requested path.
+    virtual void didReadMetadata(const WebFileInfo&) = 0;
 
-private:
-    OwnPtr<WebCore::AsyncFileSystemCallbacks> m_callbacks;
+    // Callback for WebFileSystem::createSnapshot. The metadata also includes the
+    // platform file path.
+    virtual void didCreateSnapshotFile(const WebFileInfo&) { WEBKIT_ASSERT_NOT_REACHED(); }
 
-    // Used for worker's openFileSystem callbacks.
-    WebCore::ScriptExecutionContext* m_context;
-    WebCore::FileSystemSynchronousType m_synchronousType;
+    // Callback for WebFileSystem::readDirectory. Called with a vector of
+    // file entries in the requested directory. This callback might be called
+    // multiple times if the directory has many entries. |hasMore| must be
+    // true when there are more entries.
+    virtual void didReadDirectory(const WebVector<WebFileSystemEntry>&, bool hasMore) = 0;
+
+    // Callback for WebFrameClient::openFileSystem. Called with a name and
+    // root URL for the FileSystem when the request is accepted.
+    virtual void didOpenFileSystem(const WebString& name, const WebURL& rootURL) = 0;
+
+    // Called with an error code when a requested operation hasn't been
+    // completed.
+    virtual void didFail(WebFileError) = 0;
+
+protected:
+    virtual ~WebFileSystemCallbacks() { }
 };
 
 } // namespace WebKit
 
-#endif // WebFileSystemCallbacksImpl_h
+#endif

@@ -27,27 +27,5 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef   WebFileError_h
-#define   WebFileError_h
 
-namespace WebKit {
-
-// File-related error code defined in HTML5 File API.
-enum WebFileError {
-    WebFileErrorNotFound = 1,
-    WebFileErrorSecurity = 2,
-    WebFileErrorAbort = 3,
-    WebFileErrorNotReadable = 4,
-    WebFileErrorEncoding = 5,
-    WebFileErrorNoModificationAllowed = 6,
-    WebFileErrorInvalidState = 7,
-    WebFileErrorSyntax = 8,
-    WebFileErrorInvalidModification = 9,
-    WebFileErrorQuotaExceeded = 10,
-    WebFileErrorTypeMismatch = 11,
-    WebFileErrorPathExists = 12,
-};
-
-} // namespace WebKit
-
-#endif
+#include "../../../Platform/chromium/public/WebFileError.h"

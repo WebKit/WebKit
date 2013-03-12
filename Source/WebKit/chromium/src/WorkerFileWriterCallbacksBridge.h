@@ -34,9 +34,9 @@
 #if ENABLE(FILE_SYSTEM) && ENABLE(WORKERS)
 
 #include "KURL.h"
-#include "WebFileError.h"
 #include "WebFileWriterClient.h"
 #include "WorkerContext.h"
+#include <public/WebFileError.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>

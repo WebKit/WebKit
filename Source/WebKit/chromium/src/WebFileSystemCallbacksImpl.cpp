@@ -36,10 +36,10 @@
 #include "AsyncFileSystemChromium.h"
 #include "FileMetadata.h"
 #include "ScriptExecutionContext.h"
-#include "WebFileSystemEntry.h"
 #include "WorkerAsyncFileSystemChromium.h"
 #include <public/WebFileInfo.h>
 #include <public/WebFileSystem.h>
+#include <public/WebFileSystemEntry.h>
 #include <public/WebString.h>
 #include <wtf/Vector.h>
 

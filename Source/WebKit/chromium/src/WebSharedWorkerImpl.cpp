@@ -48,7 +48,6 @@
 #include "SharedWorkerContext.h"
 #include "SharedWorkerThread.h"
 #include "WebDataSourceImpl.h"
-#include "WebFileError.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
 #include "WebRuntimeFeatures.h"
@@ -60,6 +59,7 @@
 #include "WorkerInspectorController.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
+#include <public/WebFileError.h>
 #include <public/WebMessagePortChannel.h>
 #include <public/WebString.h>
 #include <public/WebURL.h>
