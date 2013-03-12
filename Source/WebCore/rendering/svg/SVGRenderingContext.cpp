@@ -30,6 +30,7 @@
 #include "BasicShapes.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "RenderLayer.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
@@ -188,21 +189,34 @@ float SVGRenderingContext::calculateScreenFontSizeScalingFactor(const RenderObje
     ASSERT(renderer);
 
     AffineTransform ctm;
-    calculateTransformationToOutermostSVGCoordinateSystem(renderer, ctm);
+    calculateTransformationToOutermostCoordinateSystem(renderer, ctm);
     return narrowPrecisionToFloat(sqrt((pow(ctm.xScale(), 2) + pow(ctm.yScale(), 2)) / 2));
 }
 
-void SVGRenderingContext::calculateTransformationToOutermostSVGCoordinateSystem(const RenderObject* renderer, AffineTransform& absoluteTransform)
+void SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(const RenderObject* renderer, AffineTransform& absoluteTransform)
 {
-    const RenderObject* current = renderer;
-    ASSERT(current);
-
+    ASSERT(renderer);
     absoluteTransform = currentContentTransformation();
-    while (current) {
-        absoluteTransform = current->localToParentTransform() * absoluteTransform;
-        if (current->isSVGRoot())
+
+    // Walk up the render tree, accumulating SVG transforms.
+    while (renderer) {
+        absoluteTransform = renderer->localToParentTransform() * absoluteTransform;
+        if (renderer->isSVGRoot())
             break;
-        current = current->parent();
+        renderer = renderer->parent();
+    }
+
+    // Continue walking up the layer tree, accumulating CSS transforms.
+    RenderLayer* layer = renderer ? renderer->enclosingLayer() : 0;
+    while (layer) {
+        if (TransformationMatrix* layerTransform = layer->transform())
+            absoluteTransform = layerTransform->toAffineTransform() * absoluteTransform;
+
+        // We can stop at compositing layers, to match the backing resolution.
+        if (layer->isComposited())
+            break;
+
+        layer = layer->parent();
     }
 }
 
