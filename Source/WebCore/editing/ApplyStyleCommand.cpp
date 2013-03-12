@@ -538,8 +538,8 @@ static Node* highestEmbeddingAncestor(Node* startNode, Node* enclosingNode)
 
 void ApplyStyleCommand::applyInlineStyle(EditingStyle* style)
 {
-    Node* startDummySpanAncestor = 0;
-    Node* endDummySpanAncestor = 0;
+    RefPtr<Node> startDummySpanAncestor = 0;
+    RefPtr<Node> endDummySpanAncestor = 0;
 
     // update document layout once before removing styles
     // so that we avoid the expense of updating before each and every call
@@ -664,9 +664,9 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle* style)
     fixRangeAndApplyInlineStyle(styleToApply.get(), start, end);
 
     // Remove dummy style spans created by splitting text elements.
-    cleanupUnstyledAppleStyleSpans(startDummySpanAncestor);
+    cleanupUnstyledAppleStyleSpans(startDummySpanAncestor.get());
     if (endDummySpanAncestor != startDummySpanAncestor)
-        cleanupUnstyledAppleStyleSpans(endDummySpanAncestor);
+        cleanupUnstyledAppleStyleSpans(endDummySpanAncestor.get());
 }
 
 void ApplyStyleCommand::fixRangeAndApplyInlineStyle(EditingStyle* style, const Position& start, const Position& end)
