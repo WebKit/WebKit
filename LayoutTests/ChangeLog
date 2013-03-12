@@ -1,5 +1,21 @@
 2013-03-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r131315
+
+    2012-10-15  Jay Civelli  <jcivelli@chromium.org>
+
+            Calling WebCore::SharedBuffer::append(data, 0) on a shared buffer when
+            its current position is at a segment boundary (4096) ends up adding an
+            unitialized segment (with uninitialized memory) to the SharedBuffer.
+            https://bugs.webkit.org/show_bug.cgi?id=99000
+
+            Reviewed by Adam Barth.
+
+            * mhtml/shared_buffer_bug-expected.txt: Added.
+            * mhtml/shared_buffer_bug.mht: Added.
+
+2013-03-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r128524
 
     2012-09-13  Tom Sepez  <tsepez@chromium.org>

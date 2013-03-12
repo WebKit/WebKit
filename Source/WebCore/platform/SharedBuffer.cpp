@@ -144,6 +144,8 @@ void SharedBuffer::append(SharedBuffer* data)
 void SharedBuffer::append(const char* data, unsigned length)
 {
     ASSERT(!m_purgeableBuffer);
+    if (!length)
+        return;
 
     maybeTransferPlatformData();
     
