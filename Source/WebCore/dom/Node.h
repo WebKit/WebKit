@@ -414,6 +414,10 @@ public:
     virtual bool isMouseFocusable() const;
     virtual Node* focusDelegate();
 
+#if ENABLE(DIALOG_ELEMENT)
+    bool isInert() const;
+#endif
+
     enum UserSelectAllTreatment {
         UserSelectAllDoesNotAffectEditability,
         UserSelectAllIsAlwaysNonEditable
@@ -658,6 +662,10 @@ public:
 
     // Perform the default action for an event.
     virtual void defaultEventHandler(Event*);
+
+    // Used for disabled form elements; if true, prevents mouse events from being dispatched
+    // to event listeners, and prevents DOMActivate events from being sent at all.
+    virtual bool disabled() const;
 
     using TreeShared<Node>::ref;
     using TreeShared<Node>::deref;
