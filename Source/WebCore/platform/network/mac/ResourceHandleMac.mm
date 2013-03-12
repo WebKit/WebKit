@@ -454,7 +454,6 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     // we make sure that is actually present
     ASSERT(challenge.nsURLAuthenticationChallenge());
 
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     // Proxy authentication is handled by CFNetwork internally. We can get here if the user cancels
     // CFNetwork authentication dialog, and we shouldn't ask the client to display another one in that case.
     if (challenge.protectionSpace().isProxy()) {
@@ -462,7 +461,6 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
         [challenge.sender() continueWithoutCredentialForAuthenticationChallenge:challenge.nsURLAuthenticationChallenge()];
         return;
     }
-#endif
 
     if (!d->m_user.isNull() && !d->m_pass.isNull()) {
         NSURLCredential *credential = [[NSURLCredential alloc] initWithUser:d->m_user
@@ -533,6 +531,8 @@ bool ResourceHandle::canAuthenticateAgainstProtectionSpace(const ProtectionSpace
 
 void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge, const Credential& credential)
 {
+    LOG(Network, "Handle %p receivedCredential", this);
+
     ASSERT(!challenge.isNull());
     if (challenge != d->m_currentWebChallenge)
         return;
@@ -561,6 +561,8 @@ void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge
 
 void ResourceHandle::receivedRequestToContinueWithoutCredential(const AuthenticationChallenge& challenge)
 {
+    LOG(Network, "Handle %p receivedRequestToContinueWithoutCredential", this);
+
     ASSERT(!challenge.isNull());
     if (challenge != d->m_currentWebChallenge)
         return;
@@ -572,6 +574,8 @@ void ResourceHandle::receivedRequestToContinueWithoutCredential(const Authentica
 
 void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challenge)
 {
+    LOG(Network, "Handle %p receivedCancellation", this);
+
     if (challenge != d->m_currentWebChallenge)
         return;
 
@@ -674,6 +678,8 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 
 - (void)connection:(NSURLConnection *)connection didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
 {
+    // FIXME: We probably don't need to implement this (see <rdar://problem/8960124>).
+
     UNUSED_PARAM(connection);
 
     LOG(Network, "Handle %p delegate connection:%p didCancelAuthenticationChallenge:%p", m_handle, connection, challenge);
@@ -686,11 +692,9 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 - (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace
 {
-#if LOG_DISABLED
     UNUSED_PARAM(connection);
-#endif
 
-    LOG(Network, "Handle %p delegate connection:%p canAuthenticateAgainstProtectionSpace:%p", m_handle, connection, protectionSpace);
+    LOG(Network, "Handle %p delegate connection:%p canAuthenticateAgainstProtectionSpace:%@://%@:%u realm:%@ method:%@ %@%@", m_handle, connection, [protectionSpace protocol], [protectionSpace host], [protectionSpace port], [protectionSpace realm], [protectionSpace authenticationMethod], [protectionSpace isProxy] ? @"proxy:" : @"", [protectionSpace isProxy] ? [protectionSpace proxyType] : @"");
 
     if (!m_handle)
         return NO;

@@ -30,9 +30,8 @@
 #import "WebCoreURLResponse.h"
 #import "WebCoreSystemInterface.h"
 #import <Foundation/Foundation.h>
-#import <wtf/StdLibExtras.h>
 #import <limits>
-#include <wtf/text/CString.h>
+#import <wtf/StdLibExtras.h>
 
 using namespace std;
 
