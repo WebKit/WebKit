@@ -162,6 +162,14 @@ RenderLayerBacking::~RenderLayerBacking()
     destroyGraphicsLayers();
 }
 
+void RenderLayerBacking::willDestroyLayer(const GraphicsLayer* layer)
+{
+    if (layer && layer->usingTiledBacking()) {
+        if (RenderLayerCompositor* compositor = this->compositor())
+            compositor->layerTiledBackingUsageChanged(layer, false);
+    }
+}
+
 PassOwnPtr<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const String& name)
 {
     GraphicsLayerFactory* graphicsLayerFactory = 0;
@@ -187,6 +195,11 @@ PassOwnPtr<GraphicsLayer> RenderLayerBacking::createGraphicsLayer(const String& 
 bool RenderLayerBacking::shouldUseTiledBacking(const GraphicsLayer*) const
 {
     return m_usingTiledCacheLayer && m_creatingPrimaryGraphicsLayer;
+}
+
+void RenderLayerBacking::tiledBackingUsageChanged(const GraphicsLayer* layer, bool usingTiledBacking)
+{
+    compositor()->layerTiledBackingUsageChanged(layer, usingTiledBacking);
 }
 
 TiledBacking* RenderLayerBacking::tiledBacking() const
@@ -311,8 +324,10 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
 
 void RenderLayerBacking::destroyGraphicsLayers()
 {
-    if (m_graphicsLayer)
+    if (m_graphicsLayer) {
+        willDestroyLayer(m_graphicsLayer.get());
         m_graphicsLayer->removeFromParent();
+    }
 
     m_ancestorClippingLayer = nullptr;
     m_contentsContainmentLayer = nullptr;
@@ -959,6 +974,7 @@ bool RenderLayerBacking::updateClippingLayers(bool needsAncestorClip, bool needs
             layersChanged = true;
         }
     } else if (m_ancestorClippingLayer) {
+        willDestroyLayer(m_ancestorClippingLayer.get());
         m_ancestorClippingLayer->removeFromParent();
         m_ancestorClippingLayer = nullptr;
         layersChanged = true;
@@ -971,6 +987,7 @@ bool RenderLayerBacking::updateClippingLayers(bool needsAncestorClip, bool needs
             layersChanged = true;
         }
     } else if (hasClippingLayer()) {
+        willDestroyLayer(m_childContainmentLayer.get());
         m_childContainmentLayer->removeFromParent();
         m_childContainmentLayer = nullptr;
         layersChanged = true;
@@ -1020,7 +1037,8 @@ bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScroll
             horizontalScrollbarLayerChanged = true;
         }
     } else if (m_layerForHorizontalScrollbar) {
-        m_layerForHorizontalScrollbar.clear();
+        willDestroyLayer(m_layerForHorizontalScrollbar.get());
+        m_layerForHorizontalScrollbar = nullptr;
         horizontalScrollbarLayerChanged = true;
     }
 
@@ -1031,7 +1049,8 @@ bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScroll
             verticalScrollbarLayerChanged = true;
         }
     } else if (m_layerForVerticalScrollbar) {
-        m_layerForVerticalScrollbar.clear();
+        willDestroyLayer(m_layerForVerticalScrollbar.get());
+        m_layerForVerticalScrollbar = nullptr;
         verticalScrollbarLayerChanged = true;
     }
 
@@ -1042,7 +1061,8 @@ bool RenderLayerBacking::updateOverflowControlsLayers(bool needsHorizontalScroll
             scrollCornerLayerChanged = true;
         }
     } else if (m_layerForScrollCorner) {
-        m_layerForScrollCorner.clear();
+        willDestroyLayer(m_layerForScrollCorner.get());
+        m_layerForScrollCorner = nullptr;
         scrollCornerLayerChanged = true;
     }
 
@@ -1121,6 +1141,7 @@ bool RenderLayerBacking::updateForegroundLayer(bool needsForegroundLayer)
             layerChanged = true;
         }
     } else if (m_foregroundLayer) {
+        willDestroyLayer(m_foregroundLayer.get());
         m_foregroundLayer->removeFromParent();
         m_foregroundLayer = nullptr;
         layerChanged = true;
@@ -1160,11 +1181,13 @@ bool RenderLayerBacking::updateBackgroundLayer(bool needsBackgroundLayer)
         }
     } else {
         if (m_backgroundLayer) {
+            willDestroyLayer(m_backgroundLayer.get());
             m_backgroundLayer->removeFromParent();
             m_backgroundLayer = nullptr;
             layerChanged = true;
         }
         if (m_contentsContainmentLayer) {
+            willDestroyLayer(m_contentsContainmentLayer.get());
             m_contentsContainmentLayer->removeFromParent();
             m_contentsContainmentLayer = nullptr;
             layerChanged = true;
@@ -1192,6 +1215,7 @@ bool RenderLayerBacking::updateMaskLayer(bool needsMaskLayer)
             layerChanged = true;
         }
     } else if (m_maskLayer) {
+        willDestroyLayer(m_maskLayer.get());
         m_maskLayer = nullptr;
         layerChanged = true;
     }
@@ -1228,6 +1252,8 @@ bool RenderLayerBacking::updateScrollingLayers(bool needsScrollingLayers)
                 scrollingCoordinator->scrollableAreaScrollLayerDidChange(m_owningLayer);
         }
     } else if (m_scrollingLayer) {
+        willDestroyLayer(m_scrollingLayer.get());
+        willDestroyLayer(m_scrollingContentsLayer.get());
         m_scrollingLayer = nullptr;
         m_scrollingContentsLayer = nullptr;
         layerChanged = true;
@@ -2187,7 +2213,7 @@ CompositingLayerType RenderLayerBacking::compositingLayerType() const
         return MediaCompositingLayer;
 
     if (m_graphicsLayer->drawsContent())
-        return m_graphicsLayer->usingTiledLayer() ? TiledCompositingLayer : NormalCompositingLayer;
+        return m_graphicsLayer->usingTiledBacking() ? TiledCompositingLayer : NormalCompositingLayer;
     
     return ContainerCompositingLayer;
 }

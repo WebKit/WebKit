@@ -60,6 +60,7 @@ public:
     virtual ~GraphicsLayerClient() {}
 
     virtual bool shouldUseTiledBacking(const GraphicsLayer*) const { return false; }
+    virtual void tiledBackingUsageChanged(const GraphicsLayer*, bool /*usingTiledBacking*/) { }
     
     // Callback for when hardware-accelerated animation started.
     virtual void notifyAnimationStarted(const GraphicsLayer*, double time) = 0;

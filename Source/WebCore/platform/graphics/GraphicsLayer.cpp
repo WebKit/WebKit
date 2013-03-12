@@ -83,7 +83,7 @@ GraphicsLayer::GraphicsLayer(GraphicsLayerClient* client)
     , m_contentsOpaque(false)
     , m_preserves3D(false)
     , m_backfaceVisibility(true)
-    , m_usingTiledLayer(false)
+    , m_usingTiledBacking(false)
     , m_masksToBounds(false)
     , m_drawsContent(false)
     , m_contentsVisible(true)
@@ -348,7 +348,7 @@ void GraphicsLayer::resumeAnimations()
 void GraphicsLayer::getDebugBorderInfo(Color& color, float& width) const
 {
     if (drawsContent()) {
-        if (m_usingTiledLayer) {
+        if (m_usingTiledBacking) {
             color = Color(255, 128, 0, 128); // tiled layer: orange
             width = 2;
             return;
@@ -605,9 +605,9 @@ void GraphicsLayer::dumpProperties(TextStream& ts, int indent, LayerTreeAsTextBe
         ts << "(opacity " << m_opacity << ")\n";
     }
     
-    if (m_usingTiledLayer) {
+    if (m_usingTiledBacking) {
         writeIndent(ts, indent + 1);
-        ts << "(usingTiledLayer " << m_usingTiledLayer << ")\n";
+        ts << "(usingTiledLayer " << m_usingTiledBacking << ")\n";
     }
 
     if (m_contentsOpaque) {

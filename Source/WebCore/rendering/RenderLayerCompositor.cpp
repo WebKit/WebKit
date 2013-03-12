@@ -209,6 +209,7 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView* renderView)
     , m_forceCompositingMode(false)
     , m_inPostLayoutUpdate(false)
     , m_isTrackingRepaints(false)
+    , m_layersWithTiledBackingCount(0)
     , m_rootLayerAttachment(RootLayerUnattached)
 #if !LOG_DISABLED
     , m_rootLayerUpdateCount(0)
@@ -388,6 +389,16 @@ void RenderLayerCompositor::notifyFlushBeforeDisplayRefresh(const GraphicsLayer*
 void RenderLayerCompositor::flushLayers(GraphicsLayerUpdater*)
 {
     flushPendingLayerChanges(true); // FIXME: deal with iframes
+}
+
+void RenderLayerCompositor::layerTiledBackingUsageChanged(const GraphicsLayer*, bool usingTiledBacking)
+{
+    if (usingTiledBacking)
+        ++m_layersWithTiledBackingCount;
+    else {
+        ASSERT(m_layersWithTiledBackingCount > 0);
+        --m_layersWithTiledBackingCount;
+    }
 }
 
 RenderLayerCompositor* RenderLayerCompositor::enclosingCompositorFlushingLayers() const

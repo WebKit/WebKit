@@ -978,7 +978,7 @@ void GraphicsLayerCA::recursiveCommitChanges(const CommitState& commitState, con
 #ifdef VISIBLE_TILE_WASH
     // Use having a transform as a key to making the tile wash layer. If every layer gets a wash,
     // they start to obscure useful information.
-    if ((!m_transform.isIdentity() || m_usingTiledLayer) && !m_visibleTileWashLayer) {
+    if ((!m_transform.isIdentity() || m_usingTiledBacking) && !m_visibleTileWashLayer) {
         static Color washFillColor(255, 0, 0, 50);
         static Color washBorderColor(255, 0, 0, 100);
         
@@ -1253,10 +1253,10 @@ void GraphicsLayerCA::updateGeometry(float pageScaleFactor, const FloatPoint& po
     computePixelAlignment(pageScaleFactor, positionRelativeToBase, scaledPosition, scaledSize, scaledAnchorPoint, pixelAlignmentOffset);
 
     bool needTiledLayer = requiresTiledLayer(pageScaleFactor);
-    if (needTiledLayer != m_usingTiledLayer)
+    if (needTiledLayer != m_usingTiledBacking)
         swapFromOrToTiledLayer(needTiledLayer);
 
-    FloatSize usedSize = m_usingTiledLayer ? constrainedSize() : scaledSize;
+    FloatSize usedSize = m_usingTiledBacking ? constrainedSize() : scaledSize;
     FloatRect adjustedBounds(m_boundsOrigin - pixelAlignmentOffset, usedSize);
 
     // Update position.
@@ -1525,7 +1525,7 @@ GraphicsLayerCA::StructuralLayerPurpose GraphicsLayerCA::structuralLayerPurpose(
 void GraphicsLayerCA::updateLayerDrawsContent(float pageScaleFactor)
 {
     bool needTiledLayer = requiresTiledLayer(pageScaleFactor);
-    if (needTiledLayer != m_usingTiledLayer)
+    if (needTiledLayer != m_usingTiledBacking)
         swapFromOrToTiledLayer(needTiledLayer);
 
     if (m_drawsContent)
@@ -2523,7 +2523,7 @@ static float clampedContentsScaleForScale(float scale)
 void GraphicsLayerCA::updateContentsScale(float pageScaleFactor)
 {
     bool needTiledLayer = requiresTiledLayer(pageScaleFactor);
-    if (needTiledLayer != m_usingTiledLayer)
+    if (needTiledLayer != m_usingTiledBacking)
         swapFromOrToTiledLayer(needTiledLayer);
 
     float contentsScale = clampedContentsScaleForScale(pageScaleFactor * deviceScaleFactor());
@@ -2644,11 +2644,11 @@ bool GraphicsLayerCA::requiresTiledLayer(float pageScaleFactor) const
 void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
 {
     ASSERT(m_layer->layerType() != PlatformCALayer::LayerTypePageTiledBackingLayer);
-    ASSERT(useTiledLayer != m_usingTiledLayer);
+    ASSERT(useTiledLayer != m_usingTiledBacking);
     RefPtr<PlatformCALayer> oldLayer = m_layer;
     
     m_layer = PlatformCALayer::create(useTiledLayer ? PlatformCALayer::LayerTypeTiledBackingLayer : PlatformCALayer::LayerTypeWebLayer, this);
-    m_usingTiledLayer = useTiledLayer;
+    m_usingTiledBacking = useTiledLayer;
     
     m_layer->adoptSublayers(oldLayer.get());
 
@@ -2677,7 +2677,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
         | OpacityChanged
         | DebugIndicatorsChanged;
     
-    if (m_usingTiledLayer)
+    if (m_usingTiledBacking)
         m_uncommittedChanges |= VisibleRectChanged;
 
 #ifndef NDEBUG
@@ -2690,6 +2690,9 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer)
     
     // need to tell new layer to draw itself
     setNeedsDisplay();
+    
+    if (client())
+        client()->tiledBackingUsageChanged(this, m_usingTiledBacking);
 }
 
 GraphicsLayer::CompositingCoordinatesOrientation GraphicsLayerCA::defaultContentsOrientation() const

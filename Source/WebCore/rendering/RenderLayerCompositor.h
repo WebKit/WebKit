@@ -241,6 +241,8 @@ public:
     virtual float pageScaleFactor() const OVERRIDE;
     virtual void didCommitChangesForLayer(const GraphicsLayer*) const OVERRIDE;
     virtual void notifyFlushBeforeDisplayRefresh(const GraphicsLayer*) OVERRIDE;
+
+    void layerTiledBackingUsageChanged(const GraphicsLayer*, bool /*usingTiledBacking*/);
     
     bool keepLayersPixelAligned() const;
     bool acceleratedDrawingEnabled() const { return m_acceleratedDrawingEnabled; }
@@ -340,6 +342,8 @@ private:
     
     Page* page() const;
     TiledBacking* pageTiledBacking() const;
+    
+    bool haveNonMainLayersWithTiledBacking() const { return m_layersWithTiledBackingCount; }
 
     GraphicsLayerFactory* graphicsLayerFactory() const;
     ScrollingCoordinator* scrollingCoordinator() const;
@@ -405,6 +409,8 @@ private:
     bool m_inPostLayoutUpdate; // true when it's OK to trust layout information (e.g. layer sizes and positions)
 
     bool m_isTrackingRepaints; // Used for testing.
+    
+    unsigned m_layersWithTiledBackingCount;
 
     RootLayerAttachment m_rootLayerAttachment;
 

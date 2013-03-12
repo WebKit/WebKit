@@ -155,6 +155,7 @@ public:
 
     // GraphicsLayerClient interface
     virtual bool shouldUseTiledBacking(const GraphicsLayer*) const OVERRIDE;
+    virtual void tiledBackingUsageChanged(const GraphicsLayer*, bool /*usingTiledBacking*/) OVERRIDE;
     virtual void notifyAnimationStarted(const GraphicsLayer*, double startTime) OVERRIDE;
     virtual void notifyFlushRequired(const GraphicsLayer*) OVERRIDE;
     virtual void notifyFlushBeforeDisplayRefresh(const GraphicsLayer*) OVERRIDE;
@@ -197,6 +198,8 @@ public:
 private:
     void createPrimaryGraphicsLayer();
     void destroyGraphicsLayers();
+    
+    void willDestroyLayer(const GraphicsLayer*);
     
     PassOwnPtr<GraphicsLayer> createGraphicsLayer(const String&);
 
