@@ -567,7 +567,7 @@ void SVGUseElement::toClipPath(Path& path)
             // Spec: Indirect references are an error (14.3.5)
             document()->accessSVGExtensions()->reportError("Not allowed to use indirect reference in <clip-path>");
         else {
-            static_cast<SVGStyledTransformableElement*>(n)->toClipPath(path);
+            toSVGStyledTransformableElement(n)->toClipPath(path);
             // FIXME: Avoid manual resolution of x/y here. Its potentially harmful.
             SVGLengthContext lengthContext(this);
             path.translate(FloatSize(x().value(lengthContext), y().value(lengthContext)));

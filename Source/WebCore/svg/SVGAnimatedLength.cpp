@@ -113,8 +113,7 @@ float SVGAnimatedLengthAnimator::calculateDistance(const String& fromString, con
 {
     ASSERT(m_animationElement);
     ASSERT(m_contextElement);
-    SVGAnimateElement* animationElement = static_cast<SVGAnimateElement*>(m_animationElement);    
-    SVGLengthMode lengthMode = SVGLength::lengthModeForAnimatedLengthAttribute(animationElement->attributeName());
+    SVGLengthMode lengthMode = SVGLength::lengthModeForAnimatedLengthAttribute(m_animationElement->attributeName());
     SVGLength from = SVGLength(lengthMode, fromString);
     SVGLength to = SVGLength(lengthMode, toString);
     SVGLengthContext lengthContext(m_contextElement);

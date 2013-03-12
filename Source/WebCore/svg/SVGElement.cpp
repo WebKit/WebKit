@@ -253,7 +253,7 @@ const HashSet<SVGElementInstance*>& SVGElement::instancesForElement() const
 bool SVGElement::getBoundingBox(FloatRect& rect, SVGLocatable::StyleUpdateStrategy styleUpdateStrategy)
 {
     if (isStyledLocatable()) {
-        rect = static_cast<SVGStyledLocatableElement*>(this)->getBBox(styleUpdateStrategy);
+        rect = toSVGStyledLocatableElement(this)->getBBox(styleUpdateStrategy);
         return true;
     }
     if (hasTagName(SVGNames::textTag)) {

@@ -45,8 +45,14 @@ protected:
     SVGStyledLocatableElement(const QualifiedName&, Document*, ConstructionType = CreateSVGElement);
 
 private:
-    virtual bool isStyledLocatable() const { return true; }
+    virtual bool isStyledLocatable() const OVERRIDE { return true; }
 };
+
+inline SVGStyledLocatableElement* toSVGStyledLocatableElement(SVGElement* element)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!element || element->isStyledLocatable());
+    return static_cast<SVGStyledLocatableElement*>(element);
+}
 
 } // namespace WebCore
 

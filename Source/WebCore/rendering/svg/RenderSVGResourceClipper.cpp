@@ -119,7 +119,7 @@ bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext* context, const 
             return false;
         if (!childNode->isSVGElement() || !toSVGElement(childNode)->isStyledTransformable())
             continue;
-        SVGStyledTransformableElement* styled = static_cast<SVGStyledTransformableElement*>(childNode);
+        SVGStyledTransformableElement* styled = toSVGStyledTransformableElement(childNode);
         RenderStyle* style = renderer->style();
         if (!style || style->display() == NONE || style->visibility() != VISIBLE)
              continue;

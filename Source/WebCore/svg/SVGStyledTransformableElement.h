@@ -63,11 +63,18 @@ protected:
     END_DECLARE_ANIMATED_PROPERTIES
 
 private:
-    virtual bool isStyledTransformable() const { return true; }
+    virtual bool isStyledTransformable() const OVERRIDE { return true; }
 
     // Used by <animateMotion>
     OwnPtr<AffineTransform> m_supplementalTransform;
 };
+
+inline SVGStyledTransformableElement* toSVGStyledTransformableElement(Node* node)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || node->isSVGElement());
+    ASSERT_WITH_SECURITY_IMPLICATION(!node || toSVGElement(node)->isStyledTransformable());
+    return static_cast<SVGStyledTransformableElement*>(node);
+}
 
 } // namespace WebCore
 
