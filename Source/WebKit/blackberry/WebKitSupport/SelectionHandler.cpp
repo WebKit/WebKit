@@ -648,7 +648,7 @@ void SelectionHandler::selectAtPoint(const WebCore::IntPoint& location, Selectio
     FatFingersResult fatFingersResult = m_webPage->m_touchEventHandler->lastFatFingersResult();
     if (selectNodeIfFatFingersResultIsLink(fatFingersResult))
         return;
-    if (!fatFingersResult.resultMatches(location, FatFingers::Text) || !fatFingersResult.positionWasAdjusted() || !fatFingersResult.nodeAsElem
+    if (!fatFingersResult.resultMatches(location, FatFingers::Text) || !fatFingersResult.positionWasAdjusted() || !fatFingersResult.nodeAsElementIfApplicable())
         fatFingersResult = FatFingers(m_webPage, location, FatFingers::Text).findBestPoint();
 
     if (!fatFingersResult.positionWasAdjusted()) {

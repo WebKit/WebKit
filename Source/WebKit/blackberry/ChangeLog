@@ -1,5 +1,19 @@
 2013-03-12  Alberto Garcia  <agarcia@igalia.com>
 
+        [BlackBerry] SelectionHandler: fix truncated line
+        https://bugs.webkit.org/show_bug.cgi?id=112133
+
+        Reviewed by Carlos Garcia Campos.
+
+        One of the calls to fatFingersResult.nodeAsElementIfApplicable()
+        was somehow truncated when the selection start animation was
+        upstreamed in r144640.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::selectAtPoint):
+
+2013-03-12  Alberto Garcia  <agarcia@igalia.com>
+
         [BlackBerry] Fix visible_units.h includes
         https://bugs.webkit.org/show_bug.cgi?id=112131
 
