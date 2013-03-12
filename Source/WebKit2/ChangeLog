@@ -1,3 +1,21 @@
+2013-03-12  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add webkit_web_page_get_id() to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=111938
+
+        Reviewed by Xan Lopez.
+
+        Add API to the web extensions API to get the identifier of a web
+        page.
+
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbol.
+        * UIProcess/API/gtk/tests/WebExtensionTest.cpp:
+        (methodCallCallback): Check the page ID matches the one returned
+        by webkit_web_page_get_id().
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (webkit_web_page_get_id):
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.h:
+
 2013-03-12  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK][WK2] REGRESSION(r145081): Unit tests not working if locale is not English
