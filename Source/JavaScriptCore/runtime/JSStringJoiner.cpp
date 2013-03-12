@@ -102,24 +102,20 @@ JSValue JSStringJoiner::build(ExecState* exec)
     if (!m_strings.size())
         return jsEmptyString(exec);
 
-    Checked<size_t, RecordOverflow> separatorLength = m_separator.length();
+    size_t separatorLength = m_separator.length();
     // FIXME: add special cases of joinStrings() for (separatorLength == 0) and (separatorLength == 1).
     ASSERT(m_strings.size() > 0);
-    Checked<size_t, RecordOverflow> totalSeparactorsLength = separatorLength * (m_strings.size() - 1);
-    Checked<size_t, RecordOverflow> outputStringSize = totalSeparactorsLength + m_accumulatedStringsLength;
+    size_t totalSeparactorsLength = separatorLength * (m_strings.size() - 1);
+    size_t outputStringSize = totalSeparactorsLength + m_cumulatedStringsLength;
 
-    size_t finalSize;
-    if (outputStringSize.safeGet(finalSize))
-        return throwOutOfMemoryError(exec);
-        
     if (!outputStringSize)
         return jsEmptyString(exec);
 
     RefPtr<StringImpl> outputStringImpl;
     if (m_is8Bits)
-        outputStringImpl = joinStrings<LChar>(m_strings, m_separator, finalSize);
+        outputStringImpl = joinStrings<LChar>(m_strings, m_separator, outputStringSize);
     else
-        outputStringImpl = joinStrings<UChar>(m_strings, m_separator, finalSize);
+        outputStringImpl = joinStrings<UChar>(m_strings, m_separator, outputStringSize);
 
     if (!outputStringImpl)
         return throwOutOfMemoryError(exec);

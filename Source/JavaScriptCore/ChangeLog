@@ -1,3 +1,19 @@
+2013-03-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION(r145482): It broke 33 jsc tests and zillion layout tests on all platform
+        https://bugs.webkit.org/show_bug.cgi?id=112112
+
+        Reviewed by Oliver Hunt.
+
+        Rolling out https://trac.webkit.org/changeset/145482 to unbreak the bots.
+
+        * runtime/JSStringJoiner.cpp:
+        (JSC::JSStringJoiner::build):
+        * runtime/JSStringJoiner.h:
+        (JSStringJoiner):
+        (JSC::JSStringJoiner::JSStringJoiner):
+        (JSC::JSStringJoiner::append):
+
 2013-03-12  Filip Pizlo  <fpizlo@apple.com>
 
         DFG prediction propagation phase should not rerun forward propagation if double voting has already converged
