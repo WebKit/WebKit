@@ -117,8 +117,7 @@ String WebContext::platformDefaultLocalStorageDirectory() const
 
 String WebContext::platformDefaultDiskCacheDirectory() const
 {
-    notImplemented();
-    return String();
+    return String::fromUTF8(efreet_cache_home_get()) + "/WebKitEfl";
 }
 
 String WebContext::platformDefaultCookieStorageDirectory() const
