@@ -41,7 +41,6 @@ class WebExternalTextureLayer;
 class WebExternalTextureLayerClient;
 class WebFloatAnimationCurve;
 class WebGraphicsContext3D;
-class WebIOSurfaceLayer;
 class WebImageLayer;
 class WebLayer;
 class WebScrollbar;
@@ -79,8 +78,6 @@ public:
     virtual WebContentLayer* createContentLayer(WebContentLayerClient*) { return 0; }
 
     virtual WebExternalTextureLayer* createExternalTextureLayer(WebExternalTextureLayerClient* = 0) { return 0; }
-
-    virtual WebIOSurfaceLayer* createIOSurfaceLayer() { return 0; }
 
     virtual WebImageLayer* createImageLayer() { return 0; }
 

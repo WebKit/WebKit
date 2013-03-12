@@ -81,7 +81,6 @@
             'chromium/public/WebHyphenator.h',
             'chromium/public/WebImage.h',
             'chromium/public/WebImageLayer.h',
-            'chromium/public/WebIOSurfaceLayer.h',
             'chromium/public/WebLayer.h',
             'chromium/public/WebLayerScrollClient.h',
             'chromium/public/WebLayerTreeView.h',

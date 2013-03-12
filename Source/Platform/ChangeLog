@@ -1,3 +1,17 @@
+2013-03-12  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove unused WebIOSurfaceLayer type
+        https://bugs.webkit.org/show_bug.cgi?id=111796
+
+        Reviewed by Adrienne Walker.
+
+        This has been dead code since http://trac.webkit.org/changeset/138223
+
+        * Platform.gypi:
+        * chromium/public/WebCompositorSupport.h:
+        (WebKit):
+        * chromium/public/WebIOSurfaceLayer.h: Removed.
+
 2013-03-12  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Set up the libPlatformGtk.la library
