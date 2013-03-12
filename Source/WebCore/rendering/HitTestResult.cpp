@@ -115,11 +115,11 @@ void HitTestResult::setToNonShadowAncestor()
 {
     Node* node = innerNode();
     if (node)
-        node = node->deprecatedShadowAncestorNode();
+        node = node->document()->ancestorInThisScope(node);
     setInnerNode(node);
     node = innerNonSharedNode();
     if (node)
-        node = node->deprecatedShadowAncestorNode();
+        node = node->document()->ancestorInThisScope(node);
     setInnerNonSharedNode(node);
 }
 
@@ -557,7 +557,7 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const HitTestReques
         return true;
 
     if (!request.allowsShadowContent())
-        node = node->deprecatedShadowAncestorNode();
+        node = node->document()->ancestorInThisScope(node);
 
     mutableRectBasedTestResult().add(node);
 
@@ -577,7 +577,7 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const HitTestReques
         return true;
 
     if (!request.allowsShadowContent())
-        node = node->deprecatedShadowAncestorNode();
+        node = node->document()->ancestorInThisScope(node);
 
     mutableRectBasedTestResult().add(node);
 
