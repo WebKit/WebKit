@@ -28,7 +28,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 #if ENABLE(CSS_FILTERS)
 
-#import "PlatformCAFilters.h"
+#include "PlatformCAFilters.h"
 
 using namespace WebCore;
 
