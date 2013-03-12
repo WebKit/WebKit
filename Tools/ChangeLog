@@ -1,3 +1,25 @@
+2013-03-12  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL][WK2] Add popup menu support to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=108934
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement popup menu support in MiniBrowser by handling popup_menu_show
+        and popup_menu_hide smart functions on the view and using the Ewk popup
+        menu API.
+
+        * MiniBrowser/efl/main.c:
+        (_Browser_Window):
+        (on_popup_menu_discarded):
+        (on_popup_menu_item_clicked):
+        (popup_menu_populate):
+        (on_popup_menu_show):
+        (on_popup_menu_hide):
+        (window_create): Use calloc() instead of malloc() to allocate memory for
+        Browser_Window. This makes sure all the structs members are initialized
+        to 0 (such as the new elm_popup_menu pointer).
+
 2013-03-12  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Set up the libPlatformGtk.la library

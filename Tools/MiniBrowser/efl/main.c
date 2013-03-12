@@ -91,6 +91,10 @@ typedef struct _Browser_Window {
     Evas_Object *url_bar;
     Evas_Object *back_button;
     Evas_Object *forward_button;
+    struct {
+        Evas_Object *elm_menu;
+        Ewk_Popup_Menu *ewk_menu;
+    } popup;
     int current_zoom_level; 
     Tooltip_Information tooltip;
 } Browser_Window;
@@ -781,6 +785,93 @@ on_javascript_prompt(Ewk_View_Smart_Data *smartData, const char *message, const 
     return prompt_text;
 }
 
+static void
+on_popup_menu_discarded(void *user_data, Evas_Object *obj, void *event_info)
+{
+    // The user clicked outside the menu to discard it.
+    info("Popup menu was discarded.\n");
+    Browser_Window *window = (Browser_Window *)user_data;
+    ewk_popup_menu_close(window->popup.ewk_menu);
+}
+
+static void
+on_popup_menu_item_clicked(void *user_data, Evas_Object *obj, void *event_info)
+{
+    Browser_Window *window = (Browser_Window *)user_data;
+    Elm_Object_Item *item = (Elm_Object_Item *)event_info;
+
+    info("Selected popup menu index: %u\n", elm_menu_item_index_get(item));
+    ewk_popup_menu_selected_index_set(window->popup.ewk_menu, elm_menu_item_index_get(item));
+
+    // Close popup menu.
+    ewk_popup_menu_close(window->popup.ewk_menu);
+}
+
+static void
+popup_menu_populate(Evas_Object *elm_menu, Ewk_Popup_Menu *ewk_menu, void *user_data)
+{
+    const Eina_List* ewk_items = ewk_popup_menu_items_get(ewk_menu);
+
+    void *data;
+    const Eina_List *l;
+    EINA_LIST_FOREACH(ewk_items, l, data) {
+        Ewk_Popup_Menu_Item *ewk_item = (Ewk_Popup_Menu_Item *)data;
+        switch (ewk_popup_menu_item_type_get(ewk_item)) {
+        case EWK_POPUP_MENU_SEPARATOR:
+            elm_menu_item_separator_add(elm_menu, NULL);
+            break;
+        case EWK_POPUP_MENU_ITEM:
+            if (ewk_popup_menu_item_is_label_get(ewk_item)) {
+                Elm_Object_Item *item = elm_menu_item_add(elm_menu, NULL, NULL, ewk_popup_menu_item_text_get(ewk_item), NULL, NULL);
+                elm_object_item_disabled_set(item, EINA_TRUE);
+            } else {
+                Elm_Object_Item *item = elm_menu_item_add(elm_menu, NULL, NULL, ewk_popup_menu_item_text_get(ewk_item), on_popup_menu_item_clicked, user_data);
+                elm_object_item_tooltip_text_set(item, ewk_popup_menu_item_tooltip_get(ewk_item));
+                elm_object_item_disabled_set(item, !ewk_popup_menu_item_enabled_get(ewk_item));
+                elm_menu_item_selected_set(item, ewk_popup_menu_item_selected_get(ewk_item));
+            }
+            break;
+        default:
+            info("Unrecognized popup menu item type!\n");
+            break;
+        }
+    }
+}
+
+static Eina_Bool
+on_popup_menu_show(Ewk_View_Smart_Data *smartData, Eina_Rectangle rect, Ewk_Text_Direction text_direction, double page_scale_factor, Ewk_Popup_Menu *ewk_menu)
+{
+    Browser_Window *window = window_find_with_ewk_view(smartData->self);
+
+    if (window->popup.elm_menu)
+        evas_object_del(window->popup.elm_menu);
+
+    window->popup.elm_menu = elm_menu_add(window->elm_window);
+    window->popup.ewk_menu = ewk_menu;
+    evas_object_smart_callback_add(window->popup.elm_menu, "clicked", on_popup_menu_discarded, window);
+
+    popup_menu_populate(window->popup.elm_menu, ewk_menu, window);
+
+    info("Showing popup menu at (%d, %d)\n", rect.x, rect.y);
+    elm_menu_move(window->popup.elm_menu, rect.x, rect.y);
+    evas_object_show(window->popup.elm_menu);
+
+    return EINA_TRUE;
+}
+
+static Eina_Bool
+on_popup_menu_hide(Ewk_View_Smart_Data *smartData)
+{
+    Browser_Window *window = window_find_with_ewk_view(smartData->self);
+
+    if (!window->popup.elm_menu)
+        return EINA_FALSE;
+
+    elm_menu_close(window->popup.elm_menu);
+
+    return EINA_TRUE;
+}
+
 static Eina_Bool on_window_geometry_get(Ewk_View_Smart_Data *sd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *width, Evas_Coord *height)
 {
     Browser_Window *window = window_find_with_ewk_view(sd->self);
@@ -1082,7 +1173,7 @@ create_toolbar_button(Evas_Object *elm_window, const char *icon_name)
 
 static Browser_Window *window_create(Evas_Object *opener, const char *url, int width, int height, Eina_Bool view_mode)
 {
-    Browser_Window *window = malloc(sizeof(Browser_Window));
+    Browser_Window *window = calloc(1, sizeof(Browser_Window));
     if (!window) {
         info("ERROR: could not create browser window.\n");
         return NULL;
@@ -1180,6 +1271,8 @@ static Browser_Window *window_create(Evas_Object *opener, const char *url, int w
     ewkViewClass->fullscreen_exit = on_fullscreen_exit;
     ewkViewClass->window_create = on_window_create;
     ewkViewClass->window_close = on_window_close;
+    ewkViewClass->popup_menu_show = on_popup_menu_show;
+    ewkViewClass->popup_menu_hide = on_popup_menu_hide;
 
     Evas *evas = evas_object_evas_get(window->elm_window);
     if (legacy_behavior_enabled) {
