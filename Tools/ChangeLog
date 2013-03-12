@@ -1,3 +1,13 @@
+2013-03-12  Tim Horton  <timothy_horton@apple.com>
+
+        Add a --build-directory argument to delete-stale-build-files
+        https://bugs.webkit.org/show_bug.cgi?id=112198
+
+        Reviewed by Ryosuke Niwa.
+
+        * BuildSlaveSupport/delete-stale-build-files:
+        (main): Add --build-directory argument.
+
 2013-03-12  Oliver Hunt  <oliver@apple.com>
 
         Appease MSVC

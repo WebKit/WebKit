@@ -31,7 +31,8 @@ import sys
 
 def main():
     parser = optparse.OptionParser("usage: %prog [options]")
-    parser.add_option("--platform", dest="platform")
+    parser.add_option("--platform")
+    parser.add_option("--build-directory")
     parser.add_option("--debug", action="store_const", const="debug", dest="configuration")
     parser.add_option("--release", action="store_const", const="release", dest="configuration")
 
@@ -48,10 +49,14 @@ def main():
         print 'Exited without removing any files.'
         return 0
 
-    directory = webkitBuildDirectory(genericPlatform, options.configuration)
+    if options.build_directory:
+        buildDirectory = options.build_directory
+    else:
+        buildDirectory = webkitBuildDirectory(genericPlatform, options.configuration)
+
     exit_code = 0
 
-    for root, _, files in os.walk(directory):
+    for root, _, files in os.walk(buildDirectory):
         for name in files:
             full_path = os.path.join(root, name)
             ext = os.path.splitext(full_path)[1]
