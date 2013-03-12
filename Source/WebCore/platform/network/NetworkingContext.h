@@ -25,7 +25,7 @@
 #include <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
-#include "SchedulePair.h"
+#include <wtf/SchedulePair.h>
 #endif
 
 #if PLATFORM(CHROMIUM)

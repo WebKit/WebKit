@@ -43,7 +43,7 @@
 #endif
 
 #if PLATFORM(MAC)
-#include "SchedulePair.h"
+#include <wtf/SchedulePair.h>
 #endif
 
 namespace JSC {

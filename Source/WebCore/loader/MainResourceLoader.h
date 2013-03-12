@@ -37,7 +37,7 @@
 #include <wtf/Forward.h>
 
 #if HAVE(RUNLOOP_TIMER)
-#include "RunLoopTimer.h"
+#include <wtf/RunLoopTimer.h>
 #else
 #include "Timer.h"
 #endif

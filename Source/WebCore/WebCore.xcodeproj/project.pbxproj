@@ -662,8 +662,6 @@
 		1C5FAED10DCFD90100D58F78 /* JSJavaScriptCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5FAECF0DCFD90100D58F78 /* JSJavaScriptCallFrame.cpp */; };
 		1C5FAED20DCFD90100D58F78 /* JSJavaScriptCallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5FAED00DCFD90100D58F78 /* JSJavaScriptCallFrame.h */; };
 		1C5FAEE70DCFDA6800D58F78 /* JSJavaScriptCallFrameCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C5FAEE60DCFDA6800D58F78 /* JSJavaScriptCallFrameCustom.cpp */; };
-		1C63A2480F71646600C09D5A /* RunLoopTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C63A2460F71646600C09D5A /* RunLoopTimer.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1C63A2490F71646600C09D5A /* RunLoopTimerCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C63A2470F71646600C09D5A /* RunLoopTimerCF.cpp */; };
 		1C81B95A0E97330800266E07 /* InspectorController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C81B9560E97330800266E07 /* InspectorController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C81B95B0E97330800266E07 /* InspectorController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C81B9570E97330800266E07 /* InspectorController.cpp */; };
 		1C81B95C0E97330800266E07 /* InspectorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C81B9580E97330800266E07 /* InspectorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -680,11 +678,8 @@
 		1CB4214D0AF2B2CA0085AD91 /* DOMRangeInternal.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 8538F05A0AD722F1006A81D1 /* DOMRangeInternal.h */; };
 		1CCA732210ADD44A00FD440D /* DOMHTMLInputElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CCA732110ADD43E00FD440D /* DOMHTMLInputElementPrivate.h */; };
 		1CDC14050DD3934C006EACD3 /* localizedStrings.js in Resources */ = {isa = PBXBuildFile; fileRef = BCC64F5F0DCFB84E0081EF3B /* localizedStrings.js */; };
-		1CE24F970D7CAF0E007E04C2 /* SchedulePairMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CE24F960D7CAF0E007E04C2 /* SchedulePairMac.mm */; };
 		1CE83AC30ADAFFD7009354F6 /* DeleteButtonController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C4C8EFF0AD85D87009475CE /* DeleteButtonController.cpp */; };
 		1CE83AC40ADAFFD8009354F6 /* DeleteButton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C4C8F630AD8655D009475CE /* DeleteButton.cpp */; };
-		1CEFC9B90D78DC8C007D2579 /* SchedulePair.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CEFC9B70D78DC8C007D2579 /* SchedulePair.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		1CEFC9BA0D78DC8C007D2579 /* SchedulePair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CEFC9B80D78DC8C007D2579 /* SchedulePair.cpp */; };
 		1CF6BDFA0E9BB26A0025E1CD /* ObjCEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CF6BDF80E9BB26A0025E1CD /* ObjCEventListener.h */; };
 		1CF6BDFB0E9BB26A0025E1CD /* ObjCEventListener.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF6BDF90E9BB26A0025E1CD /* ObjCEventListener.mm */; };
 		1CF6BE140E9BB4670025E1CD /* ObjCNodeFilterCondition.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1CF6BE120E9BB4670025E1CD /* ObjCNodeFilterCondition.mm */; };
@@ -1668,8 +1663,6 @@
 		51E0BAEB0DA55D4A00A9E417 /* JSStorageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E0BAE90DA55D4A00A9E417 /* JSStorageEvent.h */; };
 		51E0BB380DA5ACB600A9E417 /* StorageMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E0BB360DA5ACB600A9E417 /* StorageMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51E0BB390DA5ACB600A9E417 /* StorageMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E0BB370DA5ACB600A9E417 /* StorageMap.cpp */; };
-		51E1ECAF0C91C54600DC255B /* AutodrainedPool.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E1ECAD0C91C54600DC255B /* AutodrainedPool.mm */; };
-		51E1ECB30C91C55600DC255B /* AutodrainedPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E1ECB10C91C55600DC255B /* AutodrainedPool.h */; };
 		51E1ECBE0C91C90400DC255B /* IconDatabaseClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E1ECB80C91C90400DC255B /* IconDatabaseClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51E1ECC00C91C90400DC255B /* IconRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51E1ECBA0C91C90400DC255B /* IconRecord.cpp */; };
 		51E1ECC10C91C90400DC255B /* IconRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E1ECBB0C91C90400DC255B /* IconRecord.h */; };
@@ -8037,8 +8030,6 @@
 		1C5FAECF0DCFD90100D58F78 /* JSJavaScriptCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSJavaScriptCallFrame.cpp; sourceTree = "<group>"; };
 		1C5FAED00DCFD90100D58F78 /* JSJavaScriptCallFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSJavaScriptCallFrame.h; sourceTree = "<group>"; };
 		1C5FAEE60DCFDA6800D58F78 /* JSJavaScriptCallFrameCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSJavaScriptCallFrameCustom.cpp; sourceTree = "<group>"; };
-		1C63A2460F71646600C09D5A /* RunLoopTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoopTimer.h; sourceTree = "<group>"; };
-		1C63A2470F71646600C09D5A /* RunLoopTimerCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoopTimerCF.cpp; sourceTree = "<group>"; };
 		1C81B9560E97330800266E07 /* InspectorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorController.h; sourceTree = "<group>"; };
 		1C81B9570E97330800266E07 /* InspectorController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorController.cpp; sourceTree = "<group>"; };
 		1C81B9580E97330800266E07 /* InspectorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorClient.h; sourceTree = "<group>"; };
@@ -8057,9 +8048,6 @@
 		1CDD45E40BA9C84600F90147 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebCore.xcconfig; sourceTree = "<group>"; };
 		1CDD45E60BA9C84600F90147 /* Base.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
-		1CE24F960D7CAF0E007E04C2 /* SchedulePairMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SchedulePairMac.mm; sourceTree = "<group>"; };
-		1CEFC9B70D78DC8C007D2579 /* SchedulePair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchedulePair.h; sourceTree = "<group>"; };
-		1CEFC9B80D78DC8C007D2579 /* SchedulePair.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SchedulePair.cpp; sourceTree = "<group>"; };
 		1CF6BDF80E9BB26A0025E1CD /* ObjCEventListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjCEventListener.h; sourceTree = "<group>"; };
 		1CF6BDF90E9BB26A0025E1CD /* ObjCEventListener.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjCEventListener.mm; sourceTree = "<group>"; };
 		1CF6BE120E9BB4670025E1CD /* ObjCNodeFilterCondition.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjCNodeFilterCondition.mm; sourceTree = "<group>"; };
@@ -9149,8 +9137,6 @@
 		51E0BAE90DA55D4A00A9E417 /* JSStorageEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStorageEvent.h; sourceTree = "<group>"; };
 		51E0BB360DA5ACB600A9E417 /* StorageMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageMap.h; sourceTree = "<group>"; };
 		51E0BB370DA5ACB600A9E417 /* StorageMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageMap.cpp; sourceTree = "<group>"; };
-		51E1ECAD0C91C54600DC255B /* AutodrainedPool.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AutodrainedPool.mm; sourceTree = "<group>"; };
-		51E1ECB10C91C55600DC255B /* AutodrainedPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutodrainedPool.h; sourceTree = "<group>"; };
 		51E1ECB80C91C90400DC255B /* IconDatabaseClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconDatabaseClient.h; sourceTree = "<group>"; };
 		51E1ECBA0C91C90400DC255B /* IconRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IconRecord.cpp; sourceTree = "<group>"; };
 		51E1ECBB0C91C90400DC255B /* IconRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconRecord.h; sourceTree = "<group>"; };
@@ -15145,9 +15131,6 @@
 				5160306B0CC4362300C8AC25 /* FileSystemCF.cpp */,
 				1A98956A0AA78F80005EF5EF /* KURLCFNet.cpp */,
 				29A309AB1561C99B00BBD8E5 /* RunLoopCF.cpp */,
-				1C63A2470F71646600C09D5A /* RunLoopTimerCF.cpp */,
-				1CEFC9B80D78DC8C007D2579 /* SchedulePair.cpp */,
-				1CEFC9B70D78DC8C007D2579 /* SchedulePair.h */,
 				512DD8E20D91E2B4000F89EE /* SharedBufferCF.cpp */,
 			);
 			path = cf;
@@ -16326,7 +16309,6 @@
 		6582A14809999D6C00BEEB6D /* mac */ = {
 			isa = PBXGroup;
 			children = (
-				51E1ECAD0C91C54600DC255B /* AutodrainedPool.mm */,
 				65A640F00533BB1F0085E777 /* BlockExceptions.h */,
 				65F80697054D9F86008BF776 /* BlockExceptions.mm */,
 				2D90660B0665D937006B6F1A /* ClipboardMac.h */,
@@ -16372,7 +16354,6 @@
 				0081FEFE16B0A2B6008AAA7A /* PublicSuffixMac.mm */,
 				E4D687760ED7AE3D006EA978 /* PurgeableBufferMac.cpp */,
 				BC0B358214C4F9540055E22A /* RunLoopMac.mm */,
-				1CE24F960D7CAF0E007E04C2 /* SchedulePairMac.mm */,
 				BCAE1FA512939DB7004CB026 /* ScrollAnimatorMac.h */,
 				BC51156D12B1749C00C96754 /* ScrollAnimatorMac.mm */,
 				BC8B853C0E7C7F1100AB6984 /* ScrollbarThemeMac.h */,
@@ -21629,7 +21610,6 @@
 				89D08D9C12228451001241DF /* AsyncFileSystem.cpp */,
 				89D08D9D12228451001241DF /* AsyncFileSystem.h */,
 				89D08D9E12228451001241DF /* AsyncFileSystemCallbacks.h */,
-				51E1ECB10C91C55600DC255B /* AutodrainedPool.h */,
 				49AE2D94134EE5F90072920A /* CalculationValue.cpp */,
 				49AE2D95134EE5F90072920A /* CalculationValue.h */,
 				CDEA76331460B462008B31F1 /* Clock.cpp */,
@@ -21752,7 +21732,6 @@
 				9831AE49154225A200FE2644 /* ReferrerPolicy.h */,
 				BC0B358514C4F9830055E22A /* RunLoop.cpp */,
 				BC0B358614C4F9830055E22A /* RunLoop.h */,
-				1C63A2460F71646600C09D5A /* RunLoopTimer.h */,
 				293EAE201356B32E0067ACF9 /* RuntimeApplicationChecks.cpp */,
 				293EAE1E1356B2FE0067ACF9 /* RuntimeApplicationChecks.h */,
 				5162C7F211F77EFA00612EFE /* SchemeRegistry.cpp */,
@@ -23411,7 +23390,6 @@
 				934F713A0D5A6F1000018D69 /* AuthenticationChallengeBase.h in Headers */,
 				E124748410AA161D00B79493 /* AuthenticationClient.h in Headers */,
 				514C764C0CE9234E007EF3CD /* AuthenticationMac.h in Headers */,
-				51E1ECB30C91C55600DC255B /* AutodrainedPool.h in Headers */,
 				45830D4E1679B4F800ACF8C3 /* AutoscrollController.h in Headers */,
 				A8CFF04E0A154F09000A4234 /* AutoTableLayout.h in Headers */,
 				29A812380FBB9C1D00510293 /* AXObjectCache.h in Headers */,
@@ -25960,7 +25938,6 @@
 				A79BADA2161E7F3F00C2E652 /* RuleFeature.h in Headers */,
 				A79BADA4161E7F3F00C2E652 /* RuleSet.h in Headers */,
 				BC0B358814C4F9830055E22A /* RunLoop.h in Headers */,
-				1C63A2480F71646600C09D5A /* RunLoopTimer.h in Headers */,
 				1A569D1F0D7E2B82007C3983 /* runtime_array.h in Headers */,
 				1A569D210D7E2B82007C3983 /* runtime_method.h in Headers */,
 				1A569D230D7E2B82007C3983 /* runtime_object.h in Headers */,
@@ -25969,7 +25946,6 @@
 				8C6EA61A11EF7E0400FD8EE3 /* RuntimeEnabledFeatures.h in Headers */,
 				49E911CB0EF86D47009D0CAF /* ScaleTransformOperation.h in Headers */,
 				5DFE8F570D16477C0076E937 /* ScheduledAction.h in Headers */,
-				1CEFC9B90D78DC8C007D2579 /* SchedulePair.h in Headers */,
 				5162C7F511F77EFB00612EFE /* SchemeRegistry.h in Headers */,
 				9BD0BF9312A42BF50072FD43 /* ScopedEventQueue.h in Headers */,
 				BCEC01BE0C274DAC009F4EC9 /* Screen.h in Headers */,
@@ -27141,7 +27117,6 @@
 				7EE6845F12D26E3800E79415 /* AuthenticationCF.cpp in Sources */,
 				934F71380D5A6EFF00018D69 /* AuthenticationChallengeBase.cpp in Sources */,
 				514C764D0CE9234E007EF3CD /* AuthenticationMac.mm in Sources */,
-				51E1ECAF0C91C54600DC255B /* AutodrainedPool.mm in Sources */,
 				45830D4D1679B4F800ACF8C3 /* AutoscrollController.cpp in Sources */,
 				A8CFF0500A154F09000A4234 /* AutoTableLayout.cpp in Sources */,
 				AAA728F916D1D8BC00D3BBC6 /* AXObjectCacheIOS.mm in Sources */,
@@ -29292,7 +29267,6 @@
 				BC0B358714C4F9830055E22A /* RunLoop.cpp in Sources */,
 				29A309AC1561C99B00BBD8E5 /* RunLoopCF.cpp in Sources */,
 				BC0B358314C4F9540055E22A /* RunLoopMac.mm in Sources */,
-				1C63A2490F71646600C09D5A /* RunLoopTimerCF.cpp in Sources */,
 				1A569D1E0D7E2B82007C3983 /* runtime_array.cpp in Sources */,
 				1A569D200D7E2B82007C3983 /* runtime_method.cpp in Sources */,
 				1A569D220D7E2B82007C3983 /* runtime_object.cpp in Sources */,
@@ -29301,8 +29275,6 @@
 				8C6EA61911EF7E0400FD8EE3 /* RuntimeEnabledFeatures.cpp in Sources */,
 				49E911CA0EF86D47009D0CAF /* ScaleTransformOperation.cpp in Sources */,
 				5DFE8F560D16477B0076E937 /* ScheduledAction.cpp in Sources */,
-				1CEFC9BA0D78DC8C007D2579 /* SchedulePair.cpp in Sources */,
-				1CE24F970D7CAF0E007E04C2 /* SchedulePairMac.mm in Sources */,
 				5162C7F411F77EFB00612EFE /* SchemeRegistry.cpp in Sources */,
 				9BD0BF9412A42BF50072FD43 /* ScopedEventQueue.cpp in Sources */,
 				BCEC01BD0C274DAC009F4EC9 /* Screen.cpp in Sources */,

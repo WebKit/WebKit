@@ -32,6 +32,13 @@
 		0FDDBFA81666DFA300C55FEF /* StringPrintStream.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FDDBFA61666DFA300C55FEF /* StringPrintStream.h */; };
 		143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143F611D1565F0F900DB514A /* RAMSize.cpp */; };
 		143F61201565F0F900DB514A /* RAMSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 143F611E1565F0F900DB514A /* RAMSize.h */; settings = {ATTRIBUTES = (); }; };
+		1469419216EAAF6D0024E146 /* RunLoopTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1469419016EAAF6D0024E146 /* RunLoopTimer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1469419316EAAF6D0024E146 /* RunLoopTimerCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1469419116EAAF6D0024E146 /* RunLoopTimerCF.cpp */; };
+		1469419616EAAFF80024E146 /* SchedulePair.h in Headers */ = {isa = PBXBuildFile; fileRef = 1469419416EAAFF80024E146 /* SchedulePair.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1469419716EAAFF80024E146 /* SchedulePairMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1469419516EAAFF80024E146 /* SchedulePairMac.mm */; };
+		1469419916EAB0410024E146 /* SchedulePair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1469419816EAB0410024E146 /* SchedulePair.cpp */; };
+		1469419C16EAB10A0024E146 /* AutodrainedPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 1469419A16EAB10A0024E146 /* AutodrainedPool.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1469419D16EAB10A0024E146 /* AutodrainedPoolMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1469419B16EAB10A0024E146 /* AutodrainedPoolMac.mm */; };
 		149EF16316BBFE0D000A4331 /* TriState.h in Headers */ = {isa = PBXBuildFile; fileRef = 149EF16216BBFE0D000A4331 /* TriState.h */; settings = {ATTRIBUTES = (); }; };
 		14F3B0F715E45E4600210069 /* SaturatedArithmetic.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F3B0F615E45E4600210069 /* SaturatedArithmetic.h */; settings = {ATTRIBUTES = (); }; };
 		1A6BB769162F300500DD16DB /* StreamBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A6BB768162F300500DD16DB /* StreamBuffer.h */; };
@@ -335,6 +342,13 @@
 		0FDDBFA61666DFA300C55FEF /* StringPrintStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringPrintStream.h; sourceTree = "<group>"; };
 		143F611D1565F0F900DB514A /* RAMSize.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RAMSize.cpp; sourceTree = "<group>"; };
 		143F611E1565F0F900DB514A /* RAMSize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RAMSize.h; sourceTree = "<group>"; };
+		1469419016EAAF6D0024E146 /* RunLoopTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoopTimer.h; sourceTree = "<group>"; };
+		1469419116EAAF6D0024E146 /* RunLoopTimerCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoopTimerCF.cpp; sourceTree = "<group>"; };
+		1469419416EAAFF80024E146 /* SchedulePair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchedulePair.h; sourceTree = "<group>"; };
+		1469419516EAAFF80024E146 /* SchedulePairMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SchedulePairMac.mm; sourceTree = "<group>"; };
+		1469419816EAB0410024E146 /* SchedulePair.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SchedulePair.cpp; sourceTree = "<group>"; };
+		1469419A16EAB10A0024E146 /* AutodrainedPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutodrainedPool.h; sourceTree = "<group>"; };
+		1469419B16EAB10A0024E146 /* AutodrainedPoolMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AutodrainedPoolMac.mm; sourceTree = "<group>"; };
 		149EF16216BBFE0D000A4331 /* TriState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TriState.h; sourceTree = "<group>"; };
 		14F3B0F615E45E4600210069 /* SaturatedArithmetic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SaturatedArithmetic.h; sourceTree = "<group>"; };
 		1A6BB768162F300500DD16DB /* StreamBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamBuffer.h; sourceTree = "<group>"; };
@@ -693,6 +707,8 @@
 				A8A4725B151A825A004123FF /* Assertions.cpp */,
 				A8A4725C151A825A004123FF /* Assertions.h */,
 				A8A4725D151A825A004123FF /* Atomics.h */,
+				1469419A16EAB10A0024E146 /* AutodrainedPool.h */,
+				1469419B16EAB10A0024E146 /* AutodrainedPoolMac.mm */,
 				A8A4725E151A825A004123FF /* AVLTree.h */,
 				4F0321BB156AA8D1006EBAF6 /* BitArray.h */,
 				A8A4725F151A825A004123FF /* Bitmap.h */,
@@ -831,7 +847,12 @@
 				A8A47303151A825B004123FF /* RefPtr.h */,
 				A8A47304151A825B004123FF /* RefPtrHashMap.h */,
 				A8A47305151A825B004123FF /* RetainPtr.h */,
+				1469419016EAAF6D0024E146 /* RunLoopTimer.h */,
+				1469419116EAAF6D0024E146 /* RunLoopTimerCF.cpp */,
 				14F3B0F615E45E4600210069 /* SaturatedArithmetic.h */,
+				1469419416EAAFF80024E146 /* SchedulePair.h */,
+				1469419816EAB0410024E146 /* SchedulePair.cpp */,
+				1469419516EAAFF80024E146 /* SchedulePairMac.mm */,
 				A8A47306151A825B004123FF /* SegmentedVector.h */,
 				A8A47307151A825B004123FF /* SentinelLinkedList.h */,
 				A8A47308151A825B004123FF /* SHA1.cpp */,
@@ -1067,6 +1088,7 @@
 				8134013915B092FD001FF0B8 /* Base64.h in Headers */,
 				A8A473A9151A825B004123FF /* bignum-dtoa.h in Headers */,
 				A8A473AB151A825B004123FF /* bignum.h in Headers */,
+				1469419616EAAFF80024E146 /* SchedulePair.h in Headers */,
 				A8A47452151A825B004123FF /* BinarySemaphore.h in Headers */,
 				4F0321BC156AA8D1006EBAF6 /* BitArray.h in Headers */,
 				A8A4738A151A825B004123FF /* Bitmap.h in Headers */,
@@ -1178,6 +1200,7 @@
 				A876DBD8151816E500DADB95 /* Platform.h in Headers */,
 				A8A4740E151A825B004123FF /* Platform.h in Headers */,
 				A8A4740F151A825B004123FF /* PossiblyNull.h in Headers */,
+				1469419216EAAF6D0024E146 /* RunLoopTimer.h in Headers */,
 				0F9D3363165DBA73005AD387 /* PrintStream.h in Headers */,
 				143F61201565F0F900DB514A /* RAMSize.h in Headers */,
 				A8A47415151A825B004123FF /* RandomNumber.h in Headers */,
@@ -1227,6 +1250,7 @@
 				A8A47450151A825B004123FF /* ThreadRestrictionVerifier.h in Headers */,
 				A8A47454151A825B004123FF /* ThreadSafeRefCounted.h in Headers */,
 				A8A47455151A825B004123FF /* ThreadSpecific.h in Headers */,
+				1469419C16EAB10A0024E146 /* AutodrainedPool.h in Headers */,
 				149EF16316BBFE0D000A4331 /* TriState.h in Headers */,
 				A8A47457151A825B004123FF /* TypedArrayBase.h in Headers */,
 				A8A47459151A825B004123FF /* TypeTraits.h in Headers */,
@@ -1361,8 +1385,11 @@
 				A8A473B5151A825B004123FF /* fixed-dtoa.cc in Sources */,
 				2CCD892A15C0390200285083 /* GregorianDateTime.cpp in Sources */,
 				A8A473D8151A825B004123FF /* HashTable.cpp in Sources */,
+				1469419D16EAB10A0024E146 /* AutodrainedPoolMac.mm in Sources */,
 				A8A473E5151A825B004123FF /* MainThread.cpp in Sources */,
+				1469419716EAAFF80024E146 /* SchedulePairMac.mm in Sources */,
 				A8A473E4151A825B004123FF /* MainThreadMac.mm in Sources */,
+				1469419316EAAF6D0024E146 /* RunLoopTimerCF.cpp in Sources */,
 				A8A473E9151A825B004123FF /* MD5.cpp in Sources */,
 				CD5497AC15857D0300B5BC30 /* MediaTime.cpp in Sources */,
 				F322CCDF165699FF004852DD /* MemoryInstrumentation.cpp in Sources */,
@@ -1385,6 +1412,7 @@
 				A8A4743C151A825B004123FF /* StringBuilder.cpp in Sources */,
 				A8A47440151A825B004123FF /* StringImpl.cpp in Sources */,
 				0FDDBFA71666DFA300C55FEF /* StringPrintStream.cpp in Sources */,
+				1469419916EAB0410024E146 /* SchedulePair.cpp in Sources */,
 				A8A47443151A825B004123FF /* StringStatics.cpp in Sources */,
 				A8A473B7151A825B004123FF /* strtod.cc in Sources */,
 				A8A47431151A825B004123FF /* TCSystemAlloc.cpp in Sources */,

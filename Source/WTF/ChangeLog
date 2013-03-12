@@ -1,3 +1,24 @@
+2013-03-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Moved RunLoopTimer and SchedulePair to WTF
+        https://bugs.webkit.org/show_bug.cgi?id=112171
+
+        Reviewed by Oliver Hunt.
+
+        This will allow us to use timers in lower level primitives without
+        duplicating all the code.
+
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/AutodrainedPool.h: Copied from Source/WebCore/platform/AutodrainedPool.h.
+        (AutodrainedPool):
+        * wtf/AutodrainedPoolMac.mm: Copied from Source/WebCore/platform/mac/AutodrainedPool.mm.
+        * wtf/RunLoopTimer.h: Copied from Source/WebCore/platform/RunLoopTimer.h.
+        * wtf/RunLoopTimerCF.cpp: Copied from Source/WebCore/platform/cf/RunLoopTimerCF.cpp.
+        * wtf/SchedulePair.cpp: Copied from Source/WebCore/platform/cf/SchedulePair.cpp.
+        * wtf/SchedulePair.h: Copied from Source/WebCore/platform/cf/SchedulePair.h.
+        (SchedulePair):
+        * wtf/SchedulePairMac.mm: Copied from Source/WebCore/platform/mac/SchedulePairMac.mm.
+
 2013-03-12  Oliver Hunt  <oliver@apple.com>
 
         Add more Checked<> tests

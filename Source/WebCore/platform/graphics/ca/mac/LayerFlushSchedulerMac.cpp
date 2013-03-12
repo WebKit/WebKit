@@ -29,7 +29,7 @@
 
 #include "LayerFlushScheduler.h"
 
-#include "AutodrainedPool.h"
+#include <wtf/AutodrainedPool.h>
 
 namespace WebCore {
 

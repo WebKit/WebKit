@@ -29,8 +29,8 @@
 #ifndef RunLoopTimer_h
 #define RunLoopTimer_h
 
-#include "SchedulePair.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/SchedulePair.h>
 
 namespace WebCore {
 

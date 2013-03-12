@@ -34,8 +34,8 @@
 
 #include "FileThread.h"
 
-#include "AutodrainedPool.h"
 #include "Logging.h"
+#include <wtf/AutodrainedPool.h>
 
 namespace WebCore {
 

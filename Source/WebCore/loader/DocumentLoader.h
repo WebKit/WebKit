@@ -44,8 +44,11 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
-namespace WebCore {
+namespace WTF {
+class SchedulePair;
+}
 
+namespace WebCore {
     class ApplicationCacheHost;
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     class Archive;
@@ -59,7 +62,6 @@ namespace WebCore {
     class Page;
     class ResourceBuffer;
     class ResourceLoader;
-    class SchedulePair;
     class SharedBuffer;
     class SubstituteResource;
 
@@ -132,8 +134,8 @@ namespace WebCore {
         const String& overrideEncoding() const { return m_overrideEncoding; }
 
 #if PLATFORM(MAC)
-        void schedule(SchedulePair*);
-        void unschedule(SchedulePair*);
+        void schedule(WTF::SchedulePair*);
+        void unschedule(WTF::SchedulePair*);
 #endif
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)

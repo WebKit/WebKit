@@ -31,12 +31,12 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "AutodrainedPool.h"
 #include "Database.h"
 #include "DatabaseTask.h"
 #include "Logging.h"
 #include "SQLTransactionClient.h"
 #include "SQLTransactionCoordinator.h"
+#include <wtf/AutodrainedPool.h>
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {

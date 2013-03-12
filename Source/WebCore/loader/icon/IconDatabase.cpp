@@ -29,7 +29,6 @@
 
 #if ENABLE(ICONDATABASE)
 
-#include "AutodrainedPool.h"
 #include "DocumentLoader.h"
 #include "FileSystem.h"
 #include "IconDatabaseClient.h"
@@ -40,6 +39,7 @@
 #include "SQLiteStatement.h"
 #include "SQLiteTransaction.h"
 #include "SuddenTermination.h"
+#include <wtf/AutodrainedPool.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
