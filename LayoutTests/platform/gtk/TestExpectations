@@ -489,6 +489,9 @@ webkit.org/b/110695 http/tests/security/cross-origin-plugin-private-browsing-tog
 
 webkit.org/b/111449 [ Debug ] fast/parser/document-write-fighting-eof.html [ Crash ]
 
+webkit.org/b/112152 [ Debug ] accessibility/aria-hidden-with-elements.html [ Crash ]
+webkit.org/b/112152 [ Debug ] accessibility/table-with-hidden-head-section.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -610,6 +613,8 @@ webkit.org/b/107194 storage/indexeddb/key-generator.html [ Failure Pass ]
 webkit.org/b/107194 storage/indexeddb/lazy-index-population.html [ Failure Pass ]
 
 webkit.org/b/110864 svg/custom/animation-currentColor.svg [ Failure Pass ]
+
+webkit.org/b/111612 animations/animation-delay-changed.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
