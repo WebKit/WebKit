@@ -152,7 +152,8 @@ test('addBuilderLoadErrors', 1, function() {
     var resourceLoader = new loader.Loader();
     resourceLoader._buildersThatFailedToLoad = ['builder1', 'builder2'];
     resourceLoader._staleBuilders = ['staleBuilder1'];
-    equal(resourceLoader._getLoadingErrorMessages(), 'ERROR: Failed to get data from builder1,builder2.<br>ERROR: Data from staleBuilder1 is more than 1 day stale.<br>');
+    resourceLoader._addErrors();
+    equal(resourceLoader._errors._messages, 'ERROR: Failed to get data from builder1,builder2.<br>ERROR: Data from staleBuilder1 is more than 1 day stale.<br>');
 });
 
 test('Loaded state set', 2, function() {

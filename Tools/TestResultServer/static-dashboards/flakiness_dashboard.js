@@ -143,7 +143,7 @@ function generatePage()
         return;
 
     document.body.innerHTML = '<div id="loading-ui">LOADING...</div>';
-    showErrors();
+    g_resourceLoader.showErrors();
 
     // tests expands to all tests that match the CSV list.
     // result expands to all tests that ever have the given result
@@ -1153,7 +1153,7 @@ function linkHTMLToOpenWindow(url, text)
     return '<a href="' + url + '" target="_blank">' + text + '</a>';
 }
 
-// FIXME: replaced with ui.chromiumRevisionLink/ui.webKitRevisionLink
+// FIXME: replaced with ui.html.chromiumRevisionLink/ui.html.webKitRevisionLink
 function createBlameListHTML(revisions, index, urlBase, separator, repo)
 {
     var thisRevision = revisions[index];

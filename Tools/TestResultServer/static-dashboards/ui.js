@@ -196,4 +196,30 @@ ui.html.webKitRevisionLink = function(results, index)
         'http://trac.webkit.org/log/trunk/?rev=<rev1>&stop_rev=<rev2>&limit=100&verbose=on');
 }
 
+
+ui.Errors = function() {
+    this._messages = '';
+    // Element to display the errors within.
+    this._containerElement = null;
+}
+
+ui.Errors.prototype = {
+    show: function()
+    {
+        if (!this._containerElement) {
+            this._containerElement = document.createElement('H2');
+            this._containerElement.style.color = 'red';
+            this._containerElement.id = 'errors';
+            document.body.appendChild(this._containerElement);
+        }
+
+        this._containerElement.innerHTML = this._messages;
+    },
+    // Record a new error message.
+    addError: function(message)
+    {
+        this._messages += message + '<br>';
+    }
+}
+
 })();

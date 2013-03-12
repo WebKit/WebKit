@@ -440,43 +440,8 @@ function isFlakinessDashboard()
     return string.endsWith(window.location.pathname, 'flakiness_dashboard.html');
 }
 
-// String of error messages to display to the user.
-var g_errorMessages = '';
-
-// Record a new error message.
-// @param {string} errorMsg The message to show to the user.
-function addError(errorMsg)
+function resourceLoadingComplete()
 {
-    g_errorMessages += errorMsg + '<br>';
-}
-
-
-// If there are errors, show big and red UI for errors so as to be noticed.
-function showErrors()
-{
-    var errors = $('errors');
-
-    if (!g_errorMessages) {
-        if (errors)
-            errors.parentNode.removeChild(errors);
-        return;
-    }
-
-    if (!errors) {
-        errors = document.createElement('H2');
-        errors.style.color = 'red';
-        errors.id = 'errors';
-        document.body.appendChild(errors);
-    }
-
-    errors.innerHTML = g_errorMessages;
-}
-
-function resourceLoadingComplete(errorMsgs)
-{
-    if (errorMsgs)
-        addError(errorMsgs)
-
     handleLocationChange();
 }
 
