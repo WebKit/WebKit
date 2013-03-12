@@ -72,19 +72,35 @@ WebInspector.NativeHeapSnapshot.prototype = {
     images: function()
     {
         var aggregatesByClassName = this.aggregates(false, "allObjects");
-        var images = aggregatesByClassName["WebCore::CachedImage"];
         var result = [];
-        if (!images)
-            return result;
+        var cachedImages = aggregatesByClassName["WebCore::CachedImage"];
+        function getImageName(node)
+        {
+            return node.name();
+        }
+        this._addNodes(cachedImages, getImageName, result);
+
+        var canvases = aggregatesByClassName["WebCore::HTMLCanvasElement"];
+        function getCanvasName(node)
+        {
+            return "HTMLCanvasElement";
+        }
+        this._addNodes(canvases, getCanvasName, result);
+        return result;
+    },
+
+    _addNodes: function(classData, nameResolver, result)
+    {
+        if (!classData)
+            return;
         var node = this.rootNode();
-        for (var i = 0; i < images.idxs.length; i++) {
-            node.nodeIndex = images.idxs[i];
+        for (var i = 0; i < classData.idxs.length; i++) {
+            node.nodeIndex = classData.idxs[i];
             result.push({
-                name: node.name(),
+                name: nameResolver(node),
                 size: node.retainedSize(),
             });
         }
-        return result;
     },
 
     __proto__: WebInspector.HeapSnapshot.prototype
