@@ -34,7 +34,7 @@ LLINT_DEPENDENCY = \
     $$PWD/llint/LowLevelInterpreter.asm \
     $$PWD/llint/LowLevelInterpreter32_64.asm \
     $$PWD/llint/LowLevelInterpreter64.asm \
-    $$PWD/offlineasm/armv7.rb \
+    $$PWD/offlineasm/arm.rb \
     $$PWD/offlineasm/ast.rb \
     $$PWD/offlineasm/backends.rb \
     $$PWD/offlineasm/generate_offset_extractor.rb \

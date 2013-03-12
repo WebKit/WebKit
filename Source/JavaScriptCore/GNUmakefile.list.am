@@ -812,7 +812,7 @@ llint_nosources += \
 	Source/JavaScriptCore/llint/LowLevelInterpreter.asm
 
 offlineasm_nosources += \
-	Source/JavaScriptCore/offlineasm/armv7.rb \
+	Source/JavaScriptCore/offlineasm/arm.rb \
 	Source/JavaScriptCore/offlineasm/asm.rb \
 	Source/JavaScriptCore/offlineasm/ast.rb \
 	Source/JavaScriptCore/offlineasm/backends.rb \

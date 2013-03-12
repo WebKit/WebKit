@@ -22,7 +22,7 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 require "config"
-require "armv7"
+require "arm"
 require "ast"
 require "x86"
 require "mips"

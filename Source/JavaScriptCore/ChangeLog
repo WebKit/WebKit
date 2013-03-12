@@ -1,3 +1,22 @@
+2013-03-12  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Renaming the armv7.rb LLINT backend to arm.rb
+        https://bugs.webkit.org/show_bug.cgi?id=110565
+
+        Reviewed by Zoltan Herczeg.
+
+        This is the first step of a unified ARM backend for
+        all ARM 32 bit architectures in LLInt.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * LLIntOffsetsExtractor.pro:
+        * offlineasm/arm.rb: Copied from Source/JavaScriptCore/offlineasm/armv7.rb.
+        * offlineasm/armv7.rb: Removed.
+        * offlineasm/backends.rb:
+        * offlineasm/risc.rb:
+
 2013-03-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r145482): It broke 33 jsc tests and zillion layout tests on all platform

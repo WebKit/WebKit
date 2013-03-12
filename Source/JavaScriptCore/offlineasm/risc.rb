@@ -172,7 +172,7 @@ end
 #     end
 # }
 #
-# See armv7.rb for a different example, in which we lower all BaseIndex addresses
+# See arm.rb for a different example, in which we lower all BaseIndex addresses
 # that have non-zero offset, all Address addresses that have large offsets, and
 # all other addresses (like AbsoluteAddress).
 #

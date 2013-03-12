@@ -859,7 +859,7 @@
           'llint/LowLevelInterpreter32_64.asm',
           'llint/LowLevelInterpreter64.asm',
           'llint/LowLevelInterpreter.asm',
-          'offlineasm/armv7.rb',
+          'offlineasm/arm.rb',
           'offlineasm/asm.rb',
           'offlineasm/ast.rb',
           'offlineasm/backends.rb',

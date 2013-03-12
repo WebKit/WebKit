@@ -356,7 +356,7 @@ if (ENABLE_LLINT)
     )
 
     set(OFFLINE_ASM
-        offlineasm/armv7.rb
+        offlineasm/arm.rb
         offlineasm/ast.rb
         offlineasm/backends.rb
         offlineasm/cloop.rb
