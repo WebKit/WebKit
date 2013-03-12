@@ -524,7 +524,7 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString
         Node* node = nodes[i];
         Frame* childFrame;
         if ((node->hasTagName(HTMLNames::frameTag) || node->hasTagName(HTMLNames::iframeTag) || node->hasTagName(HTMLNames::objectTag)) &&
-             (childFrame = static_cast<HTMLFrameOwnerElement*>(node)->contentFrame())) {
+            (childFrame = toFrameOwnerElement(node)->contentFrame())) {
             if (frameFilter && !frameFilter->shouldIncludeSubframe(childFrame))
                 continue;
                 

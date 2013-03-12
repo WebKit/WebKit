@@ -539,7 +539,7 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
     }
 #if ENABLE(VIDEO)
     else if (renderer->isVideo()) {
-        HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(renderer->node());
+        HTMLMediaElement* mediaElement = toMediaElement(renderer->node());
         m_graphicsLayer->setContentsToMedia(mediaElement->platformLayer());
     }
 #endif

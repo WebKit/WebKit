@@ -1684,8 +1684,8 @@ static NSInteger _colCompare(id block1, id block2, void *)
         if (startContainer == endContainer && (startOffset == endOffset - 1)) {
             Node* node = startContainer->childNode(startOffset);
             if (node && node->hasTagName(imgTag)) {
-                NSFileWrapper *fileWrapper = fileWrapperForElement(static_cast<Element*>(node));
-                NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
+                NSFileWrapper* fileWrapper = fileWrapperForElement(toElement(node));
+                NSTextAttachment* attachment = [[NSTextAttachment alloc] initWithFileWrapper:fileWrapper];
                 [string appendAttributedString:[NSAttributedString attributedStringWithAttachment:attachment]];
                 [attachment release];
             }

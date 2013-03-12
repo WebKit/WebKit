@@ -1028,7 +1028,7 @@ bool WebViewImpl::autocompleteHandleKeyEvent(const WebKeyboardEvent& event)
             ASSERT_NOT_REACHED();
             return false;
         }
-        Element* element = static_cast<Element*>(node);
+        Element* element = toElement(node);
         if (!element->hasLocalName(HTMLNames::inputTag)) {
             ASSERT_NOT_REACHED();
             return false;
@@ -1039,7 +1039,7 @@ bool WebViewImpl::autocompleteHandleKeyEvent(const WebKeyboardEvent& event)
         if (!m_autofillPopupClient->canRemoveSuggestionAtIndex(selectedIndex))
             return false;
 
-        WebString name = WebInputElement(static_cast<HTMLInputElement*>(element)).nameForAutofill();
+        WebString name = WebInputElement(toHTMLInputElement(element)).nameForAutofill();
         WebString value = m_autofillPopupClient->itemText(selectedIndex);
         m_autofillClient->removeAutocompleteSuggestion(name, value);
         // Update the entries in the currently showing popup to reflect the
@@ -1974,7 +1974,7 @@ void WebViewImpl::enterFullScreenForElement(WebCore::Element* element)
 
 #if USE(NATIVE_FULLSCREEN_VIDEO)
     if (element && element->isMediaElement()) {
-        HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(element);
+        HTMLMediaElement* mediaElement = toMediaElement(element);
         if (mediaElement->player() && mediaElement->player()->canEnterFullscreen()) {
             mediaElement->player()->enterFullscreen();
             m_provisionalFullScreenElement = element;

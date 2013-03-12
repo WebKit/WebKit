@@ -383,7 +383,7 @@ void WebPageSerializerImpl::endTagToString(Element* element,
         if (param->isHTMLDocument) {
             result.append('>');
             // FIXME: This code is horribly wrong.  WebPageSerializerImpl must die.
-            if (!static_cast<const HTMLElement*>(element)->ieForbidsInsertHTML()) {
+            if (!toHTMLElement(element)->ieForbidsInsertHTML()) {
                 // We need to write end tag when it is required.
                 result.appendLiteral("</");
                 result.append(element->nodeName().lower());
@@ -406,12 +406,12 @@ void WebPageSerializerImpl::buildContentForNode(Node* node,
     switch (node->nodeType()) {
     case Node::ELEMENT_NODE:
         // Process open tag of element.
-        openTagToString(static_cast<Element*>(node), param);
+        openTagToString(toElement(node), param);
         // Walk through the children nodes and process it.
         for (Node *child = node->firstChild(); child; child = child->nextSibling())
             buildContentForNode(child, param);
         // Process end tag of element.
-        endTagToString(static_cast<Element*>(node), param);
+        endTagToString(toElement(node), param);
         break;
     case Node::TEXT_NODE:
         saveHTMLContentToBuffer(createMarkup(node), param);
@@ -483,7 +483,7 @@ void WebPageSerializerImpl::collectTargetFrames()
         for (unsigned i = 0; Node* node = all->item(i); i++) {
             if (!node->isHTMLElement())
                 continue;
-            Element* element = static_cast<Element*>(node);
+            Element* element = toElement(node);
             WebFrameImpl* webFrame =
                 WebFrameImpl::fromFrameOwnerElement(element);
             if (webFrame)

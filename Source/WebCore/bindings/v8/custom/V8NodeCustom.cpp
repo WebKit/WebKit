@@ -133,7 +133,7 @@ v8::Handle<v8::Object> wrap(Node* impl, v8::Handle<v8::Object> creationContext, 
         if (impl->isSVGElement())
             return wrap(static_cast<SVGElement*>(impl), creationContext, isolate);
 #endif
-        return V8Element::createWrapper(static_cast<Element*>(impl), creationContext, isolate);
+        return V8Element::createWrapper(toElement(impl), creationContext, isolate);
     case Node::ATTRIBUTE_NODE:
         return wrap(static_cast<Attr*>(impl), creationContext, isolate);
     case Node::TEXT_NODE:

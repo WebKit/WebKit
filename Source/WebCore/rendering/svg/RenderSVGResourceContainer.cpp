@@ -86,7 +86,7 @@ void RenderSVGResourceContainer::idChanged()
     // Remove old id, that is guaranteed to be present in cache.
     SVGDocumentExtensions* extensions = svgExtensionsFromNode(node());
     extensions->removeResource(m_id);
-    m_id = static_cast<Element*>(node())->getIdAttribute();
+    m_id = toElement(node())->getIdAttribute();
 
     registerResource();
 }

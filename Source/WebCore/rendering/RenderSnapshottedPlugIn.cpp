@@ -58,7 +58,7 @@ RenderSnapshottedPlugIn::~RenderSnapshottedPlugIn()
 
 HTMLPlugInImageElement* RenderSnapshottedPlugIn::plugInImageElement() const
 {
-    return static_cast<HTMLPlugInImageElement*>(node());
+    return toHTMLPlugInImageElement(node());
 }
 
 void RenderSnapshottedPlugIn::layout()

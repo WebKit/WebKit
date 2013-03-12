@@ -46,7 +46,7 @@ Node* V8NamedNodesCollection::namedItem(const AtomicString& id) const
 {
     for (unsigned i = 0; i < m_nodes.size(); ++i) {
         Node* node = m_nodes[i].get();
-        if (node->hasID() && static_cast<Element*>(node)->getIdAttribute() == id)
+        if (node->hasID() && toElement(node)->getIdAttribute() == id)
             return node;
     }
     return 0;

@@ -364,7 +364,7 @@ void CompositeEditCommand::insertNodeAt(PassRefPtr<Node> insertChild, const Posi
         if (child)
             insertNodeBefore(insertChild, child);
         else
-            appendNode(insertChild, static_cast<Element*>(refChild));
+            appendNode(insertChild, toElement(refChild));
     } else if (caretMinOffset(refChild) >= offset)
         insertNodeBefore(insertChild, refChild);
     else if (refChild->isTextNode() && caretMaxOffset(refChild) > offset) {
@@ -979,7 +979,7 @@ void CompositeEditCommand::pushAnchorElementDown(Node* anchorNode)
     ASSERT(anchorNode->isLink());
     
     setEndingSelection(VisibleSelection::selectionFromContentsOfNode(anchorNode));
-    applyStyledElement(static_cast<Element*>(anchorNode));
+    applyStyledElement(toElement(anchorNode));
     // Clones of anchorNode have been pushed down, now remove it.
     if (anchorNode->inDocument())
         removeNodePreservingChildren(anchorNode);
@@ -1293,7 +1293,7 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
                 // e.g. <ul><li>hello <ul><li><br></li></ul> </li></ul> should become <ul><li>hello</li> <ul><li><br></li></ul> </ul> after this section
                 // If listNode does NOT appear at the end, then we should consider it as a regular paragraph.
                 // e.g. <ul><li> <ul><li><br></li></ul> hello</li></ul> should become <ul><li> <div><br></div> hello</li></ul> at the end
-                splitElement(static_cast<Element*>(blockEnclosingList), listNode);
+                splitElement(toElement(blockEnclosingList), listNode);
                 removeNodePreservingChildren(listNode->parentNode());
                 newBlock = createListItemElement(document());
             }
@@ -1309,7 +1309,7 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
     if (isListItem(nextListNode.get()) || isListElement(nextListNode.get())) {
         // If emptyListItem follows another list item or nested list, split the list node.
         if (isListItem(previousListNode.get()) || isListElement(previousListNode.get()))
-            splitElement(static_cast<Element*>(listNode.get()), emptyListItem);
+            splitElement(toElement(listNode.get()), emptyListItem);
 
         // If emptyListItem is followed by other list item or nested list, then insert newBlock before the list node.
         // Because we have splitted the element, emptyListItem is the first element in the list node.
@@ -1468,7 +1468,7 @@ PassRefPtr<Node> CompositeEditCommand::splitTreeToNode(Node* start, Node* end, b
         VisiblePosition positionInParent = firstPositionInNode(node->parentNode());
         VisiblePosition positionInNode = firstPositionInOrBeforeNode(node.get());
         if (positionInParent != positionInNode)
-            splitElement(static_cast<Element*>(node->parentNode()), node);
+            splitElement(toElement(node->parentNode()), node);
     }
 
     return node.release();

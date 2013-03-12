@@ -1304,7 +1304,7 @@ RenderLayerCompositor* RenderLayerCompositor::frameContentsCompositor(RenderPart
     if (!renderer->node()->isFrameOwnerElement())
         return 0;
         
-    HTMLFrameOwnerElement* element = static_cast<HTMLFrameOwnerElement*>(renderer->node());
+    HTMLFrameOwnerElement* element = toFrameOwnerElement(renderer->node());
     if (Document* contentDocument = element->contentDocument()) {
         if (RenderView* view = contentDocument->renderView())
             return view->compositor();
@@ -1993,7 +1993,7 @@ bool RenderLayerCompositor::requiresCompositingForVideo(RenderObject* renderer) 
         if (!node || (!node->hasTagName(HTMLNames::videoTag) && !node->hasTagName(HTMLNames::audioTag)))
             return false;
 
-        HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(node);
+        HTMLMediaElement* mediaElement = toMediaElement(node);
         return mediaElement->player() ? mediaElement->player()->supportsAcceleratedRendering() : false;
     }
 #endif // ENABLE(PLUGIN_PROXY_FOR_VIDEO)

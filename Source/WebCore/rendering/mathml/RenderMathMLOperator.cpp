@@ -152,7 +152,7 @@ void RenderMathMLOperator::updateFromElement()
     
     // We may need the element later if we can't stretch.
     if (node()->isElementNode()) {
-        if (Element* mo = static_cast<Element*>(node())) {
+        if (Element* mo = toElement(node())) {
             AtomicString stretchyAttr = mo->getAttribute(MathMLNames::stretchyAttr);
             stretchDisabled = equalIgnoringCase(stretchyAttr, "false");
             
@@ -233,7 +233,7 @@ void RenderMathMLOperator::updateFromElement()
         if (m_operator) 
             text = new (renderArena()) RenderText(node(), StringImpl::create(&m_operator, 1));
         else if (node()->isElementNode())
-            if (Element* mo = static_cast<Element*>(node()))
+            if (Element* mo = toElement(node()))
                 text = new (renderArena()) RenderText(node(), mo->textContent().replace(hyphenMinus, minusSign).impl());
         // If we can't figure out the text, leave it blank.
         if (text) {

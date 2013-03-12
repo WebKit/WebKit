@@ -1,3 +1,13 @@
+2013-03-11  Abhishek Arya  <inferno@chromium.org>
+
+        Replace static_cast with to* helper functions.
+        https://bugs.webkit.org/show_bug.cgi?id=112045
+
+        Reviewed by Eric Seidel.
+
+        * WebView/WebRenderLayer.mm:
+        (+[WebRenderLayer nameForLayer:]):
+
 2013-03-11  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix.  Remove stray brace which crept into r145409.

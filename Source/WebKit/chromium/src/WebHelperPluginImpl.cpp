@@ -166,7 +166,7 @@ WebPlugin* WebHelperPluginImpl::getPlugin()
         return 0;
     Node* node = objectElements->item(0);
     ASSERT(node->hasTagName(WebCore::HTMLNames::objectTag));
-    WebCore::Widget* widget = static_cast<HTMLPlugInElement*>(node)->pluginWidget();
+    WebCore::Widget* widget = toHTMLPlugInElement(node)->pluginWidget();
     if (!widget)
         return 0;
     WebPlugin* plugin = static_cast<WebPluginContainerImpl*>(widget)->plugin();
