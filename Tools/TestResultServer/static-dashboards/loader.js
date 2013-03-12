@@ -57,7 +57,7 @@ loader.request = function(url, success, error, opt_isBinaryData)
     xhr.send();
 }
 
-loader.Loader = function()
+loader.Loader = function(opt_onLoadingComplete)
 {
     this._loadingSteps = [
         this._loadBuildersList,
@@ -69,7 +69,7 @@ loader.Loader = function()
     this._staleBuilders = [];
     this._loadingComplete = false;
     this._errors = new ui.Errors();
-
+    this._onLoadingComplete = opt_onLoadingComplete || function() {};
 }
 
 loader.Loader.prototype = {
@@ -91,10 +91,7 @@ loader.Loader.prototype = {
         if (!loadingStep) {
             this._loadingComplete = true;
             this._addErrors();
-            // FIXME(jparent): Loader should not know about global
-            // functions, should use a callback or dispatch load
-            // event instead.
-            resourceLoadingComplete();
+            this._onLoadingComplete();
             return;
         }
         loadingStep.apply(this);

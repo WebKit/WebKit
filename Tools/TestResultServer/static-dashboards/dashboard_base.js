@@ -440,11 +440,6 @@ function isFlakinessDashboard()
     return string.endsWith(window.location.pathname, 'flakiness_dashboard.html');
 }
 
-function resourceLoadingComplete()
-{
-    handleLocationChange();
-}
-
 function handleLocationChange()
 {
     if (!g_resourceLoader.isLoadingComplete())
@@ -645,6 +640,6 @@ function decompressResults(builderResults)
 }
 
 window.addEventListener('load', function() {
-    g_resourceLoader = new loader.Loader();
+    g_resourceLoader = new loader.Loader(handleLocationChange);
     g_resourceLoader.load();
 }, false);

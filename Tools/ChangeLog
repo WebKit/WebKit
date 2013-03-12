@@ -1,3 +1,19 @@
+2013-03-12  Julie Parent  <jparent@chromium.org>
+
+        Cleanup: Move loading complete function into callback, rather than global.
+        https://bugs.webkit.org/show_bug.cgi?id=112167
+
+        Reviewed by Dirk Pranke.
+        
+        Stop calling global functions, pass in proper handler to Loader
+        constructor. Note that the callback is optional, as tests, and
+        some potential dashboards, do not need one.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        * TestResultServer/static-dashboards/loader.js:
+        (.):
+        * TestResultServer/static-dashboards/loader_unittests.js:
+
 2013-03-12  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [EFL][WK2] Add popup menu support to MiniBrowser

@@ -31,7 +31,11 @@ module('loader');
 test('loading steps', 1, function() {
     resetGlobals();
     var loadedSteps = [];
-    var resourceLoader = new loader.Loader();
+    var loadingCompleteCallback = handleLocationChange;
+    handleLocationChange = function() {
+        deepEqual(loadedSteps, ['step 1', 'step 2']);
+    }
+    var resourceLoader = new loader.Loader(handleLocationChange);
     function loadingStep1() {
         loadedSteps.push('step 1');
         resourceLoader.load();
@@ -41,16 +45,11 @@ test('loading steps', 1, function() {
         resourceLoader.load();
     }
 
-    var loadingCompleteCallback = resourceLoadingComplete;
-    resourceLoadingComplete = function() {
-        deepEqual(loadedSteps, ['step 1', 'step 2']);
-    }
-
     try {
         resourceLoader._loadingSteps = [loadingStep1, loadingStep2];
         resourceLoader.load();
     } finally {
-        resourceLoadingComplete = loadingCompleteCallback;
+        handleLocationChange = loadingCompleteCallback;
     }
 });
 
