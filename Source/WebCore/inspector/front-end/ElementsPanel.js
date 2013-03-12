@@ -1011,18 +1011,26 @@ WebInspector.ElementsPanel.prototype = {
 
     handleShortcut: function(event)
     {
-        if (WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && !event.shiftKey && event.keyIdentifier === "U+005A") { // Z key
-            WebInspector.domAgent.undo(this._updateSidebars.bind(this));
-            event.handled = true;
-            return;
+        function handleUndoRedo()
+        {
+            if (WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && !event.shiftKey && event.keyIdentifier === "U+005A") { // Z key
+                WebInspector.domAgent.undo(this._updateSidebars.bind(this));
+                event.handled = true;
+                return;
+            }
+
+            var isRedoKey = WebInspector.isMac() ? event.metaKey && event.shiftKey && event.keyIdentifier === "U+005A" : // Z key
+                                                   event.ctrlKey && event.keyIdentifier === "U+0059"; // Y key
+            if (isRedoKey) {
+                DOMAgent.redo(this._updateSidebars.bind(this));
+                event.handled = true;
+            }
         }
 
-        var isRedoKey = WebInspector.isMac() ? event.metaKey && event.shiftKey && event.keyIdentifier === "U+005A" : // Z key
-                                               event.ctrlKey && event.keyIdentifier === "U+0059"; // Y key
-        if (isRedoKey) {
-            DOMAgent.redo(this._updateSidebars.bind(this));
-            event.handled = true;
-            return;
+        if (!this.treeOutline.editing()) {
+            handleUndoRedo.call(this);
+            if (event.handled)
+                return;
         }
 
         this.treeOutline.handleShortcut(event);

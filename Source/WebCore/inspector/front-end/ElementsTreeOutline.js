@@ -166,6 +166,20 @@ WebInspector.ElementsTreeOutline.prototype = {
             this._selectedNodeChanged();
     },
 
+    /**
+     * @return {boolean}
+     */
+    editing: function()
+    {
+        var node = this.selectedDOMNode();
+        if (!node)
+            return false;
+        var treeElement = this.findTreeElement(node);
+        if (!treeElement)
+            return false;
+        return treeElement._editing || false;
+    },
+
     update: function()
     {
         var selectedNode = this.selectedTreeElement ? this.selectedTreeElement.representedObject : null;
