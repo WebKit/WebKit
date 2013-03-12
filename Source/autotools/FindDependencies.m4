@@ -509,4 +509,8 @@ if test "$enable_webkit2" = "yes"; then
    AC_SUBST([ATSPI2_LIBS])
 fi
 
+m4_ifdef([GTK_DOC_CHECK], [
 GTK_DOC_CHECK([1.10])
+],[
+AM_CONDITIONAL([ENABLE_GTK_DOC], false)
+])
