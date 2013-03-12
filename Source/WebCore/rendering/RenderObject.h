@@ -231,6 +231,16 @@ public:
     bool hasAXObject() const { return m_hasAXObject; }
     bool isSetNeedsLayoutForbidden() const { return m_setNeedsLayoutForbidden; }
     void setNeedsLayoutIsForbidden(bool flag) { m_setNeedsLayoutForbidden = flag; }
+
+    // Helper class forbidding calls to setNeedsLayout() during its lifetime.
+    class SetLayoutNeededForbiddenScope {
+    public:
+        explicit SetLayoutNeededForbiddenScope(RenderObject*);
+        ~SetLayoutNeededForbiddenScope();
+    private:
+        RenderObject* m_renderObject;
+        bool m_preexistingForbidden;
+    };
 #endif
 
     // Obtains the nearest enclosing block (including this block) that contributes a first-line style to our inline
