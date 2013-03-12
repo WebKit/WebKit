@@ -786,14 +786,18 @@ sub GenerateDomainSafeFunctionGetter
         $signature = "v8::Local<v8::Signature>()";
     }
 
-    my $newTemplateString = "v8::FunctionTemplate::New(${interfaceName}V8Internal::${funcName}MethodCallback, v8Undefined(), $signature)";
+    my $newTemplateParams = "${interfaceName}V8Internal::${funcName}MethodCallback, v8Undefined(), $signature";
 
     AddToImplIncludes("Frame.h");
     push(@implContentInternals, <<END);
 static v8::Handle<v8::Value> ${funcName}AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    static v8::Persistent<v8::FunctionTemplate> privateTemplate = v8::Persistent<v8::FunctionTemplate>::New(info.GetIsolate(), $newTemplateString);
-    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(${v8InterfaceName}::GetTemplate(info.GetIsolate(), worldType(info.GetIsolate())));
+    // This is only for getting a unique pointer which we can pass to privateTemplate.
+    static const char* privateTemplateUniqueKey = "${funcName}PrivateTemplate";
+    WrapperWorldType currentWorldType = worldType(info.GetIsolate());
+    v8::Persistent<v8::FunctionTemplate> privateTemplate = V8PerIsolateData::from(info.GetIsolate())->privateTemplate(currentWorldType, &privateTemplateUniqueKey, $newTemplateParams);
+
+    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(${v8InterfaceName}::GetTemplate(info.GetIsolate(), currentWorldType));
     if (holder.IsEmpty()) {
         // can only reach here by 'object.__proto__.func', and it should passed
         // domain security check already
@@ -801,7 +805,8 @@ static v8::Handle<v8::Value> ${funcName}AttrGetter(v8::Local<v8::String> name, c
     }
     ${interfaceName}* imp = ${v8InterfaceName}::toNative(holder);
     if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError)) {
-        static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New(info.GetIsolate(), $newTemplateString);
+        static const char* sharedTemplateUniqueKey = "${funcName}SharedTemplate";
+        v8::Persistent<v8::FunctionTemplate> sharedTemplate = V8PerIsolateData::from(info.GetIsolate())->privateTemplate(currentWorldType, &sharedTemplateUniqueKey, $newTemplateParams);
         return sharedTemplate->GetFunction();
     }
 
