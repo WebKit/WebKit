@@ -591,7 +591,6 @@ libWebCoreGtk_la_CPPFLAGS = \
 	$(webcoregtk_cppflags) \
 	$(javascriptcore_cppflags) \
 	-fno-strict-aliasing \
-	$(HILDON_CPPFLAGS) \
 	$(CAIRO_CFLAGS) \
 	$(CLUTTER_CFLAGS) \
 	$(COVERAGE_CFLAGS) \
@@ -603,7 +602,6 @@ libWebCoreGtk_la_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(GTK_CFLAGS) \
-	$(HILDON_CFLAGS) \
 	$(LIBSECRET_CFLAGS) \
 	$(LIBSOUP_CFLAGS) \
 	$(LIBXML_CFLAGS) \
