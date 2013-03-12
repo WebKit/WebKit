@@ -30,7 +30,7 @@ using namespace WebKit;
 
 static inline WKViewRef createWKView(Evas* canvas, WKContextRef contextRef, WKPageGroupRef pageGroupRef, EwkView::ViewBehavior behavior)
 {
-    RefPtr<EwkContext> context = contextRef ? EwkContext::create(contextRef) : EwkContext::defaultContext();
+    RefPtr<EwkContext> context = contextRef ? EwkContext::findOrCreateWrapper(contextRef) : EwkContext::defaultContext();
     Evas_Object* evasObject = EwkView::createEvasObject(canvas, context, pageGroupRef, behavior);
     if (!evasObject)
         return 0;

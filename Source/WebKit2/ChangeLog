@@ -1,3 +1,30 @@
+2013-03-12  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][EFL] Fix EwkContext class API
+        https://bugs.webkit.org/show_bug.cgi?id=111706
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/API/C/efl/WKView.cpp:
+        (createWKView):
+        * UIProcess/API/efl/ewk_context.cpp:
+        (EwkContext::findOrCreateWrapper):
+
+            Renamed from create() as it returns the same instance of EwkContext
+            for the given WKContextRef if present.
+
+        (EwkContext::create):
+        (EwkContext::defaultContext):
+
+            Returns raw pointer rather than PassRefPtr<EwkContext> as ownership
+            is not transferred.
+
+        (ewk_context_default_get):
+        * UIProcess/API/efl/ewk_context_private.h:
+        (EwkContext):
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+
 2013-03-12  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Enable Web Audio in development builds

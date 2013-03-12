@@ -102,17 +102,17 @@ EwkContext::~EwkContext()
     contextMap().remove(m_context.get());
 }
 
-PassRefPtr<EwkContext> EwkContext::create(WKContextRef context)
+PassRefPtr<EwkContext> EwkContext::findOrCreateWrapper(WKContextRef context)
 {
     if (contextMap().contains(context))
-        return contextMap().get(context); // Will be ref-ed automatically.
+        return contextMap().get(context);
 
     return adoptRef(new EwkContext(context));
 }
 
 PassRefPtr<EwkContext> EwkContext::create()
 {
-    return create(adoptWK(WKContextCreate()).get());
+    return adoptRef(new EwkContext(adoptWK(WKContextCreate()).get()));
 }
 
 PassRefPtr<EwkContext> EwkContext::create(const String& injectedBundlePath)
@@ -122,12 +122,12 @@ PassRefPtr<EwkContext> EwkContext::create(const String& injectedBundlePath)
 
     WKRetainPtr<WKStringRef> path = adoptWK(toCopiedAPI(injectedBundlePath));
 
-    return create(adoptWK(WKContextCreateWithInjectedBundlePath(path.get())).get());
+    return adoptRef(new EwkContext(adoptWK(WKContextCreateWithInjectedBundlePath(path.get())).get()));
 }
 
-PassRefPtr<EwkContext> EwkContext::defaultContext()
+EwkContext* EwkContext::defaultContext()
 {
-    static RefPtr<EwkContext> defaultInstance = create();
+    static EwkContext* defaultInstance = create().leakRef();
 
     return defaultInstance;
 }
@@ -264,7 +264,7 @@ ContextHistoryClientEfl* EwkContext::historyClient()
 
 Ewk_Context* ewk_context_default_get()
 {
-    return EwkContext::defaultContext().get();
+    return EwkContext::defaultContext();
 }
 
 Ewk_Context* ewk_context_new()

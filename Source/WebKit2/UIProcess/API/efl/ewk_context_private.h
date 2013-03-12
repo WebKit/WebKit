@@ -49,11 +49,11 @@ class EwkContext : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkContext)
 
-    static PassRefPtr<EwkContext> create(WKContextRef context);
+    static PassRefPtr<EwkContext> findOrCreateWrapper(WKContextRef context);
     static PassRefPtr<EwkContext> create();
     static PassRefPtr<EwkContext> create(const String& injectedBundlePath);
 
-    static PassRefPtr<EwkContext> defaultContext();
+    static EwkContext* defaultContext();
 
     ~EwkContext();
 
