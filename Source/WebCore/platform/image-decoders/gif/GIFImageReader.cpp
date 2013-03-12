@@ -478,35 +478,28 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
             size_t bytesInBlock = currentComponent[1];
             GIFState es = GIFSkipBlock;
 
-            // The GIF spec mandates lengths for three of the extensions below.
-            // However, it's possible for GIFs in the wild to deviate. For example,
-            // some GIFs that embed ICC color profiles using GIFApplicationExtension
-            // violate the spec and treat this extension block like a sort of
-            // "extension + data" block, giving a size greater than 11 and filling the
-            // remaining bytes with data (then following with more data blocks as
-            // needed), instead of placing a true data block just after the 11 byte
-            // extension block.
-            //
-            // Accordingly, if the specified length is larger than the required value,
-            // we use it. If it's smaller, then we enforce the spec value, because the
-            // parsers for these extensions expect to have the specified number of
-            // bytes available, and if we don't ensure that, they could read off the
-            // end of the heap buffer. (In this case, it's likely the GIF is corrupt
-            // and we'll soon fail to decode anyway.)
             switch (*currentComponent) {
             case 0xf9:
                 es = GIFControlExtension;
+                // The GIF spec mandates that the GIFControlExtension header block length is 4 bytes,
+                // and the parser for this block reads 4 bytes, so we must enforce that the buffer
+                // contains at least this many bytes. If the GIF specifies a different length, we
+                // allow that, so long as it's larger; the additional data will simply be ignored.
                 bytesInBlock = std::max(bytesInBlock, static_cast<size_t>(4));
                 break;
 
+            // The GIF spec also specifies the lengths of the following two extensions' headers
+            // (as 12 and 11 bytes, respectively). Because we ignore the plain text extension entirely
+            // and sanity-check the actual length of the application extension header before reading it,
+            // we allow GIFs to deviate from these values in either direction. This is important for
+            // real-world compatibility, as GIFs in the wild exist with application extension headers
+            // that are both shorter and longer than 11 bytes.
             case 0x01:
                 // ignoring plain text extension
-                bytesInBlock = std::max(bytesInBlock, static_cast<size_t>(12));
                 break;
 
             case 0xff:
                 es = GIFApplicationExtension;
-                bytesInBlock = std::max(bytesInBlock, static_cast<size_t>(11));
                 break;
 
             case 0xfe:
@@ -578,7 +571,8 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
 
         case GIFApplicationExtension: {
             // Check for netscape application extension.
-            if (!strncmp((char*)currentComponent, "NETSCAPE2.0", 11) || !strncmp((char*)currentComponent, "ANIMEXTS1.0", 11))
+            if (m_bytesToConsume == 11 
+                && (!strncmp((char*)currentComponent, "NETSCAPE2.0", 11) || !strncmp((char*)currentComponent, "ANIMEXTS1.0", 11)))
                 GETN(1, GIFNetscapeExtensionBlock);
             else
                 GETN(1, GIFConsumeBlock);
