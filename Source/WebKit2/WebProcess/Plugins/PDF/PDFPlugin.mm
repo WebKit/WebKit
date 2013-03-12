@@ -299,7 +299,7 @@ void PDFPlugin::pdfDocumentDidLoad()
 {
     addArchiveResource();
     
-    RetainPtr<PDFDocument> document(AdoptNS, [[pdfDocumentClass() alloc] initWithData:(NSData *)data().get()]);
+    RetainPtr<PDFDocument> document(AdoptNS, [[pdfDocumentClass() alloc] initWithData:rawData()]);
 
     setPDFDocument(document);
 
@@ -779,8 +779,8 @@ void PDFPlugin::saveToPDF()
     if (!pdfDocument())
         return;
 
-    RetainPtr<CFMutableDataRef> cfData = data();
-    webFrame()->page()->savePDFToFileInDownloadsFolder(suggestedFilename(), webFrame()->url(), CFDataGetBytePtr(cfData.get()), CFDataGetLength(cfData.get()));
+    NSData *data = liveData();
+    webFrame()->page()->savePDFToFileInDownloadsFolder(suggestedFilename(), webFrame()->url(), static_cast<const unsigned char *>([data bytes]), [data length]);
 }
 
 void PDFPlugin::openWithNativeApplication()
@@ -791,12 +791,12 @@ void PDFPlugin::openWithNativeApplication()
         if (!pdfDocument())
             return;
 
-        RetainPtr<CFMutableDataRef> cfData = data();
+        NSData *data = liveData();
 
         m_temporaryPDFUUID = WebCore::createCanonicalUUIDString();
         ASSERT(m_temporaryPDFUUID);
 
-        webFrame()->page()->savePDFToTemporaryFolderAndOpenWithNativeApplication(suggestedFilename(), webFrame()->url(), CFDataGetBytePtr(cfData.get()), CFDataGetLength(cfData.get()), m_temporaryPDFUUID);
+        webFrame()->page()->savePDFToTemporaryFolderAndOpenWithNativeApplication(suggestedFilename(), webFrame()->url(), static_cast<const unsigned char *>([data bytes]), [data length], m_temporaryPDFUUID);
         return;
     }
 

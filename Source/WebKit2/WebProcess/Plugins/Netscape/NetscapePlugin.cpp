@@ -37,6 +37,7 @@
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/KURL.h>
+#include <WebCore/SharedBuffer.h>
 #include <runtime/JSObject.h>
 #include <utility>
 #include <wtf/text/CString.h>
@@ -1048,6 +1049,11 @@ bool NetscapePlugin::supportsSnapshotting() const
     return m_pluginModule && m_pluginModule->pluginQuirks().contains(PluginQuirks::SupportsSnapshotting);
 #endif
     return false;
+}
+
+PassRefPtr<WebCore::SharedBuffer> NetscapePlugin::liveResourceData() const
+{
+    return 0;
 }
 
 IntPoint NetscapePlugin::convertToRootView(const IntPoint& pointInPluginCoordinates) const

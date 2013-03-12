@@ -127,6 +127,8 @@ void PDFPluginTextAnnotation::commit()
         textAnnotation.stringValue = static_cast<HTMLTextAreaElement*>(element())->value();
     else
         textAnnotation.stringValue = static_cast<HTMLInputElement*>(element())->value();
+
+    PDFPluginAnnotation::commit();
 }
 
 void PDFPluginTextAnnotation::PDFPluginTextAnnotationEventListener::handleEvent(ScriptExecutionContext*, Event* event)

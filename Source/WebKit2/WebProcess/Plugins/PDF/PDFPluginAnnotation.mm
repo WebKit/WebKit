@@ -80,6 +80,11 @@ void PDFPluginAnnotation::attach(Element* parent)
     m_element->focus();
 }
 
+void PDFPluginAnnotation::commit()
+{
+    m_plugin->didMutatePDFDocument();
+}
+
 PDFPluginAnnotation::~PDFPluginAnnotation()
 {
     m_element->removeEventListener(eventNames().changeEvent, m_eventListener.get(), false);

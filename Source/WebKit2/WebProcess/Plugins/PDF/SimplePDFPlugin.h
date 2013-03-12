@@ -53,6 +53,8 @@ public:
     // In-process PDFViews don't support asynchronous initialization.
     virtual bool isBeingAsynchronouslyInitialized() const { return false; }
 
+    void didMutatePDFDocument() { m_pdfDocumentWasMutated = true; }
+
 protected:
     explicit SimplePDFPlugin(WebFrame*);
 
@@ -69,7 +71,10 @@ protected:
 
     const String& suggestedFilename() { return m_suggestedFilename; }
     
-    RetainPtr<CFMutableDataRef> data() const { return m_data; }
+    NSData *liveData() const;
+    NSData *rawData() const { return (NSData *)m_data.get(); }
+
+    bool pdfDocumentWasMutated() const { return m_pdfDocumentWasMutated; }
 
     // Regular plug-ins don't need access to view, but we add scrollbars to embedding FrameView for proper event handling.
     PluginView* pluginView();
@@ -177,7 +182,7 @@ protected:
     virtual unsigned countFindMatches(const String&, WebCore::FindOptions, unsigned) OVERRIDE { return 0; }
     virtual bool findString(const String&, WebCore::FindOptions, unsigned) OVERRIDE { return false; }
 
-    virtual bool getResourceData(const unsigned char*& bytes, unsigned& length) const OVERRIDE;
+    virtual PassRefPtr<WebCore::SharedBuffer> liveResourceData() const OVERRIDE;
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) OVERRIDE { return false; }
 
     virtual String getSelectionString() const OVERRIDE { return String(); }
@@ -210,6 +215,7 @@ private:
     WebFrame* m_frame;
 
     bool m_isPostScript;
+    bool m_pdfDocumentWasMutated;
 };
 
 } // namespace WebKit

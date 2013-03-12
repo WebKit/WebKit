@@ -101,7 +101,7 @@ public:
 
     bool shouldAllowScripting();
 
-    bool getResourceData(const unsigned char*& bytes, unsigned& length) const;
+    PassRefPtr<WebCore::SharedBuffer> liveResourceData() const;
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&);
 
 private:

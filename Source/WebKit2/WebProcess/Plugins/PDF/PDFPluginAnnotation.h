@@ -54,7 +54,7 @@ public:
     PDFPlugin* plugin() const { return m_plugin; }
 
     virtual void updateGeometry();
-    virtual void commit() = 0;
+    virtual void commit();
 
     void attach(WebCore::Element*);
 

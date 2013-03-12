@@ -2164,13 +2164,11 @@ void WebPage::getMainResourceDataOfFrame(uint64_t frameID, uint64_t callbackID)
     CoreIPC::DataReference dataReference;
 
     RefPtr<ResourceBuffer> buffer;
+    RefPtr<SharedBuffer> pdfResource;
     if (WebFrame* frame = WebProcess::shared().webFrame(frameID)) {
         if (PluginView* pluginView = pluginViewForFrame(frame->coreFrame())) {
-            const unsigned char* bytes;
-            unsigned length;
-
-            if (pluginView->getResourceData(bytes, length))
-                dataReference = CoreIPC::DataReference(bytes, length);
+            if ((pdfResource = pluginView->liveResourceData()))
+                dataReference = CoreIPC::DataReference(reinterpret_cast<const uint8_t*>(pdfResource->data()), pdfResource->size());
         }
 
         if (dataReference.isEmpty()) {

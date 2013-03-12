@@ -44,6 +44,7 @@
 #include "WebProcessConnectionMessages.h"
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/SharedBuffer.h>
 
 using namespace WebCore;
 
@@ -669,6 +670,11 @@ void PluginProxy::update(const IntRect& paintedRect)
 IntPoint PluginProxy::convertToRootView(const IntPoint& point) const
 {
     return m_pluginToRootViewTransform.mapPoint(point);
+}
+
+PassRefPtr<WebCore::SharedBuffer> PluginProxy::liveResourceData() const
+{
+    return 0;
 }
 
 } // namespace WebKit

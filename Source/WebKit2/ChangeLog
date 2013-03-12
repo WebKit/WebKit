@@ -1,5 +1,50 @@
 2013-03-11  Tim Horton  <timothy_horton@apple.com>
 
+        PDFPlugin: Return PDFKit's data instead of the original resource data for save/etc.
+        https://bugs.webkit.org/show_bug.cgi?id=111956
+        <rdar://problem/13352282>
+
+        Reviewed by Alexey Proskuryakov.
+
+        If we return the original resource data, we lose changes made to annotations.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::pdfDocumentDidLoad): Adopt the renamed rawData().
+        (WebKit::PDFPlugin::saveToPDF): Use liveData so that "Save to PDF" persists changes to annotations.
+        (WebKit::PDFPlugin::openWithNativeApplication): Use liveData so that "Open With [native application]" persists changes to annotations.
+
+        * WebProcess/Plugins/PDF/PDFPluginAnnotation.h:
+        * WebProcess/Plugins/PDF/PDFPluginAnnotation.mm:
+        (WebKit::PDFPluginAnnotation::commit): Added, inform PDFPlugin that we're mutating the document.
+        * WebProcess/Plugins/PDF/PDFPluginChoiceAnnotation.mm:
+        (WebKit::PDFPluginChoiceAnnotation::commit): Let PDFPluginAnnotation do what it needs to inform PDFPlugin that we're going to mutate the document.
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm:
+        (WebKit::PDFPluginTextAnnotation::commit): Let PDFPluginAnnotation do what it needs to inform PDFPlugin that we're going to mutate the document.
+
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.h:
+        (WebKit::SimplePDFPlugin::didMutatePDFDocument): Added.
+        (WebKit::SimplePDFPlugin::liveData): Added.
+        (WebKit::SimplePDFPlugin::rawData): Renamed from data(). Return NSData for consistency.
+        (WebKit::SimplePDFPlugin::pdfDocumentWasMutated): Added.
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.mm:
+        (WebKit::SimplePDFPlugin::liveData): Return PDFKit's data if the user has mutated the
+        document, otherwise the raw data. This way, PDFs that PDFKit can't process will still
+        be downloadable as long as the user doesn't interact with annotations.
+        (WebKit::SimplePDFPlugin::liveResourceData): Return a SharedData wrapping the PDFDocument's data.
+        
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.h:
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::getMainResourceDataOfFrame):
+        Use a SharedData instead of raw data for getResourceData, and rename it liveResourceData().
+
+2013-03-11  Tim Horton  <timothy_horton@apple.com>
+
         [wk2] WebProcess and WebContentService don't respect system localization
         https://bugs.webkit.org/show_bug.cgi?id=112091
         <rdar://problem/13233590>

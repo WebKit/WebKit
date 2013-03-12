@@ -166,6 +166,7 @@ PassRefPtr<SimplePDFPlugin> SimplePDFPlugin::create(WebFrame* frame)
 SimplePDFPlugin::SimplePDFPlugin(WebFrame* frame)
     : m_frame(frame)
     , m_isPostScript(false)
+    , m_pdfDocumentWasMutated(false)
 {
 }
 
@@ -672,16 +673,24 @@ void SimplePDFPlugin::manualStreamDidFinishLoading()
     pdfDocumentDidLoad();
 }
 
-bool SimplePDFPlugin::getResourceData(const unsigned char*& bytes, unsigned& length) const
+NSData *SimplePDFPlugin::liveData() const
 {
-    if (m_data && m_pdfDocument) {
-        bytes = CFDataGetBytePtr(m_data.get());
-        length = CFDataGetLength(m_data.get());
+    // Save data straight from the resource instead of PDFKit if the document is
+    // untouched by the user, so that PDFs which PDFKit can't display will still be downloadable.
+    if (pdfDocumentWasMutated())
+        return [m_pdfDocument.get() dataRepresentation];
+    else
+        return rawData();
+}
 
-        return length;
-    }
+PassRefPtr<SharedBuffer> SimplePDFPlugin::liveResourceData() const
+{
+    NSData *pdfData = liveData();
 
-    return false;
+    if (!pdfData)
+        return 0;
+
+    return SharedBuffer::wrapNSData(pdfData);
 }
 
 void SimplePDFPlugin::manualStreamDidFail(bool)

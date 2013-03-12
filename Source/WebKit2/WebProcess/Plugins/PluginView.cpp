@@ -903,12 +903,12 @@ bool PluginView::shouldAllowNavigationFromDrags() const
     return m_plugin->shouldAllowNavigationFromDrags();
 }
 
-bool PluginView::getResourceData(const unsigned char*& bytes, unsigned& length) const
+PassRefPtr<SharedBuffer> PluginView::liveResourceData() const
 {
     if (!m_isInitialized || !m_plugin)
-        return false;
+        return 0;
 
-    return m_plugin->getResourceData(bytes, length);
+    return m_plugin->liveResourceData();
 }
 
 bool PluginView::performDictionaryLookupAtLocation(const WebCore::FloatPoint& point)
