@@ -28,16 +28,26 @@
 
 using namespace WebKit;
 
-WKURLRef WKURLCreateWithQUrl(const QUrl& qURL)
+WKURLRef WKURLCreateWithQString(const QString& url)
 {
-    WTF::String urlString(qURL.toString());
-    return toCopiedURLAPI(urlString);
+    return toCopiedURLAPI(url);
+}
+
+QString WKURLCopyQString(WKURLRef urlRef)
+{
+    if (!urlRef)
+        return QString();
+    return toImpl(urlRef)->string();
+}
+
+WKURLRef WKURLCreateWithQUrl(const QUrl& url)
+{
+    return WKURLCreateWithQString(url.toString(QUrl::FullyEncoded));
 }
 
 QUrl WKURLCopyQUrl(WKURLRef urlRef)
 {
     if (!urlRef)
         return QUrl();
-    const WTF::String& string = toImpl(urlRef)->string();
-    return QUrl(QString(reinterpret_cast<const QChar*>(string.characters()), string.length()));
+    return QUrl(WKURLCopyQString(urlRef));
 }

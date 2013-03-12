@@ -118,7 +118,7 @@ static void initializeContextInjectedBundleClient(WKContextRef context)
 QtWebContext::QtWebContext(WKContextRef context)
     : m_context(context)
     , m_downloadManager(new QtDownloadManager(toImpl(context)))
-    , m_iconDatabase(new QtWebIconDatabaseClient(toImpl(context)))
+    , m_iconDatabase(new QtWebIconDatabaseClient(context))
 {
 }
 

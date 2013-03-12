@@ -23,7 +23,6 @@
 #include "qwebkitglobal.h"
 #include <QString>
 #include <QtQuick/QQuickImageProvider>
-#include <wtf/text/WTFString.h>
 
 namespace WebKit {
     class QtWebContext;

@@ -194,6 +194,7 @@ HEADERS += \
     UIProcess/API/C/WKVibration.h \
     UIProcess/API/C/WebKit2_C.h \
     UIProcess/API/C/qt/WKNativeEvent.h \
+    UIProcess/API/C/qt/WKIconDatabaseQt.h \
     UIProcess/API/cpp/WKRetainPtr.h \
     UIProcess/API/cpp/qt/WKStringQt.h \
     UIProcess/API/cpp/qt/WKURLQt.h \
@@ -544,6 +545,7 @@ SOURCES += \
     UIProcess/API/C/WKResourceCacheManager.cpp \
     UIProcess/API/C/WKTextChecker.cpp \
     UIProcess/API/C/WKVibration.cpp \
+    UIProcess/API/C/qt/WKIconDatabaseQt.cpp \
     UIProcess/API/cpp/qt/WKStringQt.cpp \
     UIProcess/API/cpp/qt/WKURLQt.cpp \
     UIProcess/API/qt/raw/qrawwebview.cpp \

@@ -1,5 +1,61 @@
 2013-03-11  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt][WK2] Layer QtWebIconDatabaseClient on the C API
+        https://bugs.webkit.org/show_bug.cgi?id=109564
+
+        Reviewed by Simon Hausmann.
+        Signed off for WebKit2 by Benjamin Poulain.
+
+        * Target.pri:
+        * UIProcess/API/C/qt/WKIconDatabaseQt.cpp: Added.
+        (WKIconDatabaseTryGetQImageForURL):
+          - New API added to get a QImage from the IconDatabase.
+            Based on WKIconDatabaseCG.h/cpp
+        * UIProcess/API/C/qt/WKIconDatabaseQt.h: Added.
+        * UIProcess/API/cpp/qt/WKURLQt.cpp:
+        (WKURLCreateWithQString):
+        (WKURLCopyQString):
+        (WKURLCreateWithQUrl):
+        (WKURLCopyQUrl):
+          - The WKUrlRef behind the scene is a WTF::String and encoding it back and forth to
+            a QUrl can slightly change its string representation. Allow converting a WKUrlRef
+            to and from a QString to ensure this.
+        * UIProcess/API/cpp/qt/WKURLQt.h:
+        * UIProcess/API/qt/qwebiconimageprovider.cpp:
+        (QWebIconImageProvider::iconURLForPageURLInContext):
+          - The icon URL isn't accessible form the C API and shouldn't need to be.
+            Use an ID incremented on each update to trigger an update of the QML Image component.
+        (QWebIconImageProvider::requestImage):
+          - The IconDatabase was previously assumed to resize the image to the requested size,
+            but this parameter is ignored, as stated in a comment in WebIconDatabase::imageForPageURL.
+            Explicitely do the resize after fetching the original icon to also be able to report
+            the original size properly to QtQuick.
+        * UIProcess/API/qt/qwebiconimageprovider_p.h:
+        * UIProcess/API/qt/tests/qmltests/WebView/tst_favIconLoad.qml:
+          - Set the image to load asynchronously to further test the possibility of threading issues
+            in QtWebIconDatabaseClient::iconImageForPageURL
+          - Add a few barriers to fix some issues where the load succeeded signal would be wrongly
+            catched by init() before the next test.
+        * UIProcess/qt/QtWebContext.cpp:
+        (WebKit::QtWebContext::QtWebContext):
+        * UIProcess/qt/QtWebIconDatabaseClient.cpp:
+        (WebKit):
+        (WebKit::QtWebIconDatabaseClient::QtWebIconDatabaseClient):
+        (WebKit::QtWebIconDatabaseClient::~QtWebIconDatabaseClient):
+        (WebKit::QtWebIconDatabaseClient::updateID):
+        (WebKit::QtWebIconDatabaseClient::didChangeIconForPageURL):
+        (WebKit::QtWebIconDatabaseClient::iconImageForPageURL):
+          - Remove the Mutex. This mutex was useless given that it would only
+            be locked from a single thread. Since the IconDatabase runs in its own thread,
+            it already is thread-safe to access.
+        (WebKit::QtWebIconDatabaseClient::retainIconForPageURL):
+        (WebKit::QtWebIconDatabaseClient::releaseIconForPageURL):
+        * UIProcess/qt/QtWebIconDatabaseClient.h:
+        (QtWebIconDatabaseClient):
+        * WebKit2.pri:
+
+2013-03-11  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt][WK2] Specify storage paths through the C API
         https://bugs.webkit.org/show_bug.cgi?id=111435
 
