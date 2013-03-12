@@ -1,49 +1,44 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <script>
-      function write(str) {
-        pre = document.getElementById('console');
-        text = document.createTextNode(str + '\n');
-        pre.appendChild(text);
-      }
+  <body><pre id="console"></pre></body>
+  <script>
+    function write(str) {
+      pre = document.getElementById('console');
+      text = document.createTextNode(str + '\n');
+      pre.appendChild(text);
+    }
 
-      function recvMsg1(e) {
-        write("RECV1");
-        window.removeEventListener("message", recvMsg1, false);
+    function recvMsg1(e) {
+      write("RECV1");
+      window.removeEventListener("message", recvMsg1, false);
 
-        if (window.testRunner)
-          testRunner.interceptPostMessage = true;
+      if (window.testRunner)
+        testRunner.interceptPostMessage = true;
 
-        window.addEventListener("message", recvMsg2, false);
-        window.postMessage("Message 2", "*");
-      
-        // Ensure that we're intercepting postMessages before the origin check
-        window.postMessage("Message 3", "http://example.org"); 
+      window.addEventListener("message", recvMsg2, false);
+      window.postMessage("Message 2", "*");
 
-        // We need to call setTimeout here because we intercept the next event.
-        // If this test becomes flaky, you may need to increase this timeout.
-        window.setTimeout("done()", 50);
-      }
-
-      function recvMsg2(e) {
-        write("RECV2");
-      }
-
-      function done() {
-        if (window.testRunner)
-          window.testRunner.notifyDone();
-      }
-
-      window.addEventListener("message", recvMsg1, false);
+      // Ensure that we're intercepting postMessages before the origin check
+      window.postMessage("Message 3", "http://example.org");
 
       if (window.testRunner) {
-        window.testRunner.dumpAsText();
-        window.testRunner.waitUntilDone();
+        // We need to call setTimeout here because we intercept the next event.
+        window.setTimeout(function() { testRunner.notifyDone(); });
       }
+    }
 
-      window.postMessage("Message 1", "*");
-    </script>
-  </head>
-  <body><pre id="console"></pre></body>
+    function recvMsg2(e) {
+      write("RECV2");
+    }
+
+    window.addEventListener("message", recvMsg1, false);
+
+    if (window.testRunner) {
+      window.testRunner.dumpAsText();
+      window.testRunner.waitUntilDone();
+    }
+
+    window.postMessage("Message 1", "*");
+  </script>
 </html>
 
