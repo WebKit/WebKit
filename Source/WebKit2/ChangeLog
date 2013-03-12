@@ -1,3 +1,22 @@
+2013-03-12  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK][WK2] REGRESSION(r145081): Unit tests not working if locale is not English
+        https://bugs.webkit.org/show_bug.cgi?id=111973
+
+        Reviewed by Carlos Garcia Campos.
+
+        The problem is that the UIProcess locale is reseted to C in
+        gtk_test_init, however the WebProcess does not inherit the locale set in
+        the UIProcess and it uses the system one (that could be different to
+        English). So, there were problems in some tests that are comparing
+        strings from both processes like WebKit2APITests/TestPrinting and
+        WebKit2APITests/TestWebKitWebContext. The solution is to set the locale
+        environment variable LC_ALL to C in order to reset WebProcess locale
+        too.
+
+        * UIProcess/API/gtk/tests/TestMain.cpp:
+        (main): Set environment variable LC_ALL to C.
+
 2013-03-11  Brady Eidson  <beidson@apple.com>
 
         Loads are never canceled in the NetworkProcess
