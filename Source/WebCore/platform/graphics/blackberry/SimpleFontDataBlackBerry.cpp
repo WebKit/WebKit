@@ -107,10 +107,10 @@ void SimpleFontData::platformDestroy()
 {
 }
 
-PassOwnPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescription& fontDescription, float scaleFactor) const
+PassRefPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescription& fontDescription, float scaleFactor) const
 {
     const float scaledSize = lroundf(fontDescription.computedSize() * scaleFactor);
-    return adoptPtr(new SimpleFontData(
+    return adoptRef(new SimpleFontData(
         FontPlatformData(m_platformData.font()->cur_lfnt->name,
             scaledSize,
             m_platformData.syntheticBold(),
