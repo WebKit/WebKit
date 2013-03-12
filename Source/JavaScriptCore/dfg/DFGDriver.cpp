@@ -33,6 +33,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGArgumentsSimplificationPhase.h"
+#include "DFGBackwardsPropagationPhase.h"
 #include "DFGByteCodeParser.h"
 #include "DFGCFAPhase.h"
 #include "DFGCFGSimplificationPhase.h"
@@ -122,6 +123,7 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
     if (validationEnabled())
         validate(dfg);
     
+    performBackwardsPropagation(dfg);
     performPredictionPropagation(dfg);
     performFixup(dfg);
     performStructureCheckHoisting(dfg);

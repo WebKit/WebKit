@@ -179,8 +179,8 @@ void Graph::dump(PrintStream& out, const char* prefix, Node* node)
             out.print(comma, node->child3());
     }
 
-    if (strlen(nodeFlagsAsString(node->flags())))
-        out.print(comma, nodeFlagsAsString(node->flags()));
+    if (toCString(NodeFlagsDump(node->flags())) != "<empty>")
+        out.print(comma, NodeFlagsDump(node->flags()));
     if (node->hasArrayMode())
         out.print(comma, node->arrayMode());
     if (node->hasVarNumber())

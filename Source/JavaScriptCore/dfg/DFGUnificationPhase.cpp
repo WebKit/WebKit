@@ -73,6 +73,7 @@ public:
             data->find()->mergeIsCaptured(data->isCaptured());
             data->find()->mergeStructureCheckHoistingFailed(data->structureCheckHoistingFailed());
             data->find()->mergeShouldNeverUnbox(data->shouldNeverUnbox());
+            data->find()->mergeIsLoadedFrom(data->isLoadedFrom());
         }
         
         m_graph.m_unificationState = GloballyUnified;

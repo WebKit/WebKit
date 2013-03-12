@@ -1,3 +1,84 @@
+2013-03-11  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG overflow check elimination is too smart for its own good
+        https://bugs.webkit.org/show_bug.cgi?id=111832
+
+        Reviewed by Oliver Hunt and Gavin Barraclough.
+        
+        Rolling this back in after fixing accidental misuse of JSValue. The code was doing value < someInt
+        rather than value.asInt32() < someInt. This "worked" when isWithinPowerOfTwo wasn't templatized.
+        It worked by always being false and always disabling the relvant optimization.
+        
+        This improves overflow check elimination in three ways:
+        
+        1) It reduces the amount of time the compiler will spend doing it.
+        
+        2) It fixes bugs where overflow check elimination was overzealous. Precisely, for a binary operation
+           over @a and @b where both @a and @b will type check that their inputs (@a->children, @b->children)
+           are int32's and then perform a possibly-overflowing operation, we must be careful not to assume
+           that @a's non-int32 parts don't matter if at the point that @a runs we have as yet not proved that
+           @b->children are int32's and that hence @b might produce a large enough result that doubles would
+           start chopping low bits. The specific implication of this is that for a binary operation to not
+           propagate that it cares about non-int32 parts (NodeUsedAsNumber), we must prove that at least one
+           of the inputs is guaranteed to produce a result within 2^32 and that there won't be a tower of such
+           operations large enough to ultimately produce a double greater than 2^52 (roughly). We achieve the
+           latter by disabling this optimization for very large basic blocks. It's noteworthy that blocks that
+           large won't even make it into the DFG currently.
+        
+        3) It makes the overflow check elimination more precise for cases where the inputs to an Add or Sub
+           are the outputs of a bit-op. For example in (@a + (@b | 0)) | 0, we don't need to propagate
+           NodeUsedAsNumber to either @a or @b.
+        
+        This is neutral on V8v7 and a slight speed-up on compile time benchmarks.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * dfg/DFGArrayMode.cpp:
+        (JSC::DFG::ArrayMode::refine):
+        * dfg/DFGBackwardsPropagationPhase.cpp: Added.
+        (DFG):
+        (BackwardsPropagationPhase):
+        (JSC::DFG::BackwardsPropagationPhase::BackwardsPropagationPhase):
+        (JSC::DFG::BackwardsPropagationPhase::run):
+        (JSC::DFG::BackwardsPropagationPhase::isNotNegZero):
+        (JSC::DFG::BackwardsPropagationPhase::isNotZero):
+        (JSC::DFG::BackwardsPropagationPhase::isWithinPowerOfTwoForConstant):
+        (JSC::DFG::BackwardsPropagationPhase::isWithinPowerOfTwoNonRecursive):
+        (JSC::DFG::BackwardsPropagationPhase::isWithinPowerOfTwo):
+        (JSC::DFG::BackwardsPropagationPhase::mergeDefaultFlags):
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        (JSC::DFG::performBackwardsPropagation):
+        * dfg/DFGBackwardsPropagationPhase.h: Added.
+        (DFG):
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::run):
+        (JSC::DFG::CPSRethreadingPhase::clearIsLoadedFrom):
+        (CPSRethreadingPhase):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeGetLocalFor):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeFlushOrPhantomLocalFor):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::dumpNodeFlags):
+        (DFG):
+        * dfg/DFGNodeFlags.h:
+        (DFG):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (PredictionPropagationPhase):
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGUnificationPhase.cpp:
+        (JSC::DFG::UnificationPhase::run):
+        * dfg/DFGVariableAccessData.h:
+        (JSC::DFG::VariableAccessData::VariableAccessData):
+        (JSC::DFG::VariableAccessData::mergeIsLoadedFrom):
+        (VariableAccessData):
+        (JSC::DFG::VariableAccessData::setIsLoadedFrom):
+        (JSC::DFG::VariableAccessData::isLoadedFrom):
+
 2013-03-11  Oliver Hunt  <oliver@apple.com>
 
         Harden JSStringJoiner

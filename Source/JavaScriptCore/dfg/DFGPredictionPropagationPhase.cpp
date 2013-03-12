@@ -106,65 +106,6 @@ private:
         return m_currentNode->predict(prediction);
     }
     
-    bool isNotNegZero(Node* node)
-    {
-        if (!m_graph.isNumberConstant(node))
-            return false;
-        double value = m_graph.valueOfNumberConstant(node);
-        return !value && 1.0 / value < 0.0;
-    }
-    
-    bool isNotZero(Node* node)
-    {
-        if (!m_graph.isNumberConstant(node))
-            return false;
-        return !!m_graph.valueOfNumberConstant(node);
-    }
-    
-    bool isWithinPowerOfTwoForConstant(Node* node, int power)
-    {
-        JSValue immediateValue = node->valueOfJSConstant(codeBlock());
-        if (!immediateValue.isInt32())
-            return false;
-        int32_t intImmediate = immediateValue.asInt32();
-        return intImmediate > -(1 << power) && intImmediate < (1 << power);
-    }
-    
-    bool isWithinPowerOfTwoNonRecursive(Node* node, int power)
-    {
-        if (node->op() != JSConstant)
-            return false;
-        return isWithinPowerOfTwoForConstant(node, power);
-    }
-    
-    bool isWithinPowerOfTwo(Node* node, int power)
-    {
-        switch (node->op()) {
-        case JSConstant: {
-            return isWithinPowerOfTwoForConstant(node, power);
-        }
-            
-        case BitAnd: {
-            return isWithinPowerOfTwoNonRecursive(node->child1().node(), power)
-                || isWithinPowerOfTwoNonRecursive(node->child2().node(), power);
-        }
-            
-        case BitRShift:
-        case BitURShift: {
-            Node* shiftAmount = node->child2().node();
-            if (shiftAmount->op() != JSConstant)
-                return false;
-            JSValue immediateValue = shiftAmount->valueOfJSConstant(codeBlock());
-            if (!immediateValue.isInt32())
-                return false;
-            return immediateValue > 32 - power;
-        }
-            
-        default:
-            return false;
-        }
-    }
-
     SpeculatedType speculatedDoubleTypeForPrediction(SpeculatedType value)
     {
         if (!isNumberSpeculation(value))
@@ -182,10 +123,9 @@ private:
     void propagate(Node* node)
     {
         NodeType op = node->op();
-        NodeFlags flags = node->flags() & NodeBackPropMask;
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLog("   ", Graph::opName(op), " ", m_currentNode, ": ", nodeFlagsAsString(flags), " ");
+        dataLog("   ", Graph::opName(op), " ", m_currentNode, ": ", NodeFlagsDump(node->flags()), " ");
 #endif
         
         bool changed = false;
@@ -202,29 +142,12 @@ private:
             SpeculatedType prediction = variableAccessData->prediction();
             if (prediction)
                 changed |= mergePrediction(prediction);
-            
-            // Assume conservatively that a SetLocal implies that the value may flow through a loop,
-            // and so we would have overflow leading to the program "observing" numbers even if all
-            // users of the value are doing toInt32. It might be worthwhile to revisit this at some
-            // point and actually check if the data flow involves loops, but right now I don't think
-            // we have evidence that this would be beneficial for benchmarks.
-            
-            changed |= variableAccessData->mergeFlags((flags & ~NodeUsedAsIntLocally) | NodeUsedAsNumber);
             break;
         }
             
         case SetLocal: {
             VariableAccessData* variableAccessData = node->variableAccessData();
             changed |= variableAccessData->predict(node->child1()->prediction());
-
-            changed |= node->child1()->mergeFlags(variableAccessData->flags());
-            break;
-        }
-            
-        case Flush: {
-            // Make sure that the analysis knows that flushed locals escape.
-            VariableAccessData* variableAccessData = node->variableAccessData();
-            changed |= variableAccessData->mergeFlags(NodeUsedAsValue);
             break;
         }
             
@@ -235,45 +158,36 @@ private:
         case BitLShift:
         case BitURShift: {
             changed |= setPrediction(SpecInt32);
-            flags |= NodeUsedAsInt | NodeUsedAsIntLocally;
-            flags &= ~(NodeUsedAsNumber | NodeNeedsNegZero | NodeUsedAsOther);
-            changed |= node->child1()->mergeFlags(flags);
-            changed |= node->child2()->mergeFlags(flags);
             break;
         }
             
         case ValueToInt32: {
             changed |= setPrediction(SpecInt32);
-            flags |= NodeUsedAsInt | NodeUsedAsIntLocally;
-            flags &= ~(NodeUsedAsNumber | NodeNeedsNegZero | NodeUsedAsOther);
-            changed |= node->child1()->mergeFlags(flags);
             break;
         }
             
-        case ArrayPop: {
-            changed |= mergePrediction(node->getHeapPrediction());
-            changed |= mergeDefaultFlags(node);
-            break;
-        }
-
-        case ArrayPush: {
-            changed |= mergePrediction(node->getHeapPrediction());
-            changed |= node->child1()->mergeFlags(NodeUsedAsValue);
-            changed |= node->child2()->mergeFlags(NodeUsedAsValue);
-            break;
-        }
-
+        case ArrayPop:
+        case ArrayPush:
         case RegExpExec:
-        case RegExpTest: {
-            changed |= mergePrediction(node->getHeapPrediction());
-            changed |= mergeDefaultFlags(node);
+        case RegExpTest:
+        case GetById:
+        case GetByIdFlush:
+        case GetMyArgumentByValSafe:
+        case GetByOffset:
+        case Call:
+        case Construct:
+        case GetGlobalVar:
+        case GetScopedVar:
+        case Resolve:
+        case ResolveBase:
+        case ResolveBaseStrictPut:
+        case ResolveGlobal: {
+            changed |= setPrediction(node->getHeapPrediction());
             break;
         }
 
         case StringCharCodeAt: {
-            changed |= mergePrediction(SpecInt32);
-            changed |= node->child1()->mergeFlags(NodeUsedAsValue);
-            changed |= node->child2()->mergeFlags(NodeUsedAsNumber | NodeUsedAsOther | NodeUsedAsInt | NodeUsedAsIntLocally);
+            changed |= setPrediction(SpecInt32);
             break;
         }
 
@@ -282,8 +196,6 @@ private:
                 changed |= mergePrediction(SpecInt32);
             else
                 changed |= mergePrediction(SpecNumber);
-            
-            changed |= node->child1()->mergeFlags(flags);
             break;
         }
 
@@ -291,11 +203,9 @@ private:
             SpeculatedType left = node->child1()->prediction();
             SpeculatedType right = node->child2()->prediction();
             
-            AddSpeculationMode mode = DontSpeculateInteger;
-            
             if (left && right) {
                 if (isNumberSpeculationExpectingDefined(left) && isNumberSpeculationExpectingDefined(right)) {
-                    if ((mode = m_graph.addSpeculationMode(node)) != DontSpeculateInteger)
+                    if (m_graph.addSpeculationMode(node) != DontSpeculateInteger)
                         changed |= mergePrediction(SpecInt32);
                     else
                         changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
@@ -305,17 +215,6 @@ private:
                 } else
                     changed |= mergePrediction(SpecString | SpecInt32 | SpecDouble);
             }
-            
-            if (isNotNegZero(node->child1().node()) || isNotNegZero(node->child2().node()))
-                flags &= ~NodeNeedsNegZero;
-            if (node->child1()->hasNumberResult() || node->child2()->hasNumberResult())
-                flags &= ~NodeUsedAsOther;
-            
-            if (mode != SpeculateInteger)
-                flags |= NodeUsedAsNumber;
-            
-            changed |= node->child1()->mergeFlags(flags);
-            changed |= node->child2()->mergeFlags(flags);
             break;
         }
             
@@ -323,24 +222,12 @@ private:
             SpeculatedType left = node->child1()->prediction();
             SpeculatedType right = node->child2()->prediction();
             
-            AddSpeculationMode mode = DontSpeculateInteger;
-            
             if (left && right) {
-                if ((mode = m_graph.addSpeculationMode(node)) != DontSpeculateInteger)
+                if (m_graph.addSpeculationMode(node) != DontSpeculateInteger)
                     changed |= mergePrediction(SpecInt32);
                 else
                     changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
             }
-            
-            if (isNotNegZero(node->child1().node()) || isNotNegZero(node->child2().node()))
-                flags &= ~NodeNeedsNegZero;
-            flags &= ~NodeUsedAsOther;
-            
-            if (mode != SpeculateInteger)
-                flags |= NodeUsedAsNumber;
-            
-            changed |= node->child1()->mergeFlags(flags);
-            changed |= node->child2()->mergeFlags(flags);
             break;
         }
             
@@ -348,24 +235,12 @@ private:
             SpeculatedType left = node->child1()->prediction();
             SpeculatedType right = node->child2()->prediction();
             
-            AddSpeculationMode mode = DontSpeculateInteger;
-            
             if (left && right) {
-                if ((mode = m_graph.addSpeculationMode(node)) != DontSpeculateInteger)
+                if (m_graph.addSpeculationMode(node) != DontSpeculateInteger)
                     changed |= mergePrediction(SpecInt32);
                 else
                     changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
             }
-
-            if (isNotZero(node->child1().node()) || isNotZero(node->child2().node()))
-                flags &= ~NodeNeedsNegZero;
-            flags &= ~NodeUsedAsOther;
-            
-            if (mode != SpeculateInteger)
-                flags |= NodeUsedAsNumber;
-            
-            changed |= node->child1()->mergeFlags(flags);
-            changed |= node->child2()->mergeFlags(flags);
             break;
         }
             
@@ -376,10 +251,6 @@ private:
                 else
                     changed |= mergePrediction(speculatedDoubleTypeForPrediction(node->child1()->prediction()));
             }
-
-            flags &= ~NodeUsedAsOther;
-
-            changed |= node->child1()->mergeFlags(flags);
             break;
             
         case ArithMin:
@@ -394,12 +265,6 @@ private:
                 else
                     changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
             }
-
-            flags |= NodeUsedAsNumber;
-            flags &= ~NodeUsedAsOther;
-
-            changed |= node->child1()->mergeFlags(flags);
-            changed |= node->child2()->mergeFlags(flags);
             break;
         }
 
@@ -413,25 +278,6 @@ private:
                 else
                     changed |= mergePrediction(speculatedDoubleTypeForPredictions(left, right));
             }
-
-            // As soon as a multiply happens, we can easily end up in the part
-            // of the double domain where the point at which you do truncation
-            // can change the outcome. So, ArithMul always forces its inputs to
-            // check for overflow. Additionally, it will have to check for overflow
-            // itself unless we can prove that there is no way for the values
-            // produced to cause double rounding.
-            
-            if (!isWithinPowerOfTwo(node->child1().node(), 22)
-                && !isWithinPowerOfTwo(node->child2().node(), 22))
-                flags |= NodeUsedAsNumber;
-            
-            changed |= node->mergeFlags(flags);
-            
-            flags |= NodeUsedAsNumber | NodeNeedsNegZero;
-            flags &= ~NodeUsedAsOther;
-
-            changed |= node->child1()->mergeFlags(flags);
-            changed |= node->child2()->mergeFlags(flags);
             break;
         }
             
@@ -446,17 +292,6 @@ private:
                 else
                     changed |= mergePrediction(SpecDouble);
             }
-
-            // As soon as a multiply happens, we can easily end up in the part
-            // of the double domain where the point at which you do truncation
-            // can change the outcome. So, ArithDiv always checks for overflow
-            // no matter what, and always forces its inputs to check as well.
-            
-            flags |= NodeUsedAsNumber | NodeNeedsNegZero;
-            flags &= ~NodeUsedAsOther;
-
-            changed |= node->child1()->mergeFlags(flags);
-            changed |= node->child2()->mergeFlags(flags);
             break;
         }
             
@@ -471,20 +306,11 @@ private:
                 else
                     changed |= mergePrediction(SpecDouble);
             }
-            
-            flags |= NodeUsedAsNumber | NodeNeedsNegZero;
-            flags &= ~NodeUsedAsOther;
-
-            changed |= node->child1()->mergeFlags(flags);
-            changed |= node->child2()->mergeFlags(flags);
             break;
         }
             
         case ArithSqrt: {
             changed |= setPrediction(SpecDouble);
-            flags |= NodeUsedAsNumber | NodeNeedsNegZero;
-            flags &= ~NodeUsedAsOther;
-            changed |= node->child1()->mergeFlags(flags);
             break;
         }
             
@@ -495,8 +321,6 @@ private:
                 changed |= mergePrediction(SpecInt32);
             else
                 changed |= mergePrediction(speculatedDoubleTypeForPrediction(child));
-
-            changed |= node->child1()->mergeFlags(flags);
             break;
         }
             
@@ -517,42 +341,20 @@ private:
         case IsObject:
         case IsFunction: {
             changed |= setPrediction(SpecBoolean);
-            changed |= mergeDefaultFlags(node);
             break;
         }
 
         case TypeOf: {
             changed |= setPrediction(SpecString);
-            changed |= mergeDefaultFlags(node);
             break;
         }
 
-        case GetById: {
-            changed |= mergePrediction(node->getHeapPrediction());
-            changed |= mergeDefaultFlags(node);
-            break;
-        }
-            
-        case GetByIdFlush:
-            changed |= mergePrediction(node->getHeapPrediction());
-            changed |= mergeDefaultFlags(node);
-            break;
-            
         case GetByVal: {
             if (node->child1()->shouldSpeculateFloat32Array()
                 || node->child1()->shouldSpeculateFloat64Array())
                 changed |= mergePrediction(SpecDouble);
             else
                 changed |= mergePrediction(node->getHeapPrediction());
-
-            changed |= node->child1()->mergeFlags(NodeUsedAsValue);
-            changed |= node->child2()->mergeFlags(NodeUsedAsNumber | NodeUsedAsOther | NodeUsedAsInt | NodeUsedAsIntLocally);
-            break;
-        }
-            
-        case GetMyArgumentByValSafe: {
-            changed |= mergePrediction(node->getHeapPrediction());
-            changed |= node->child1()->mergeFlags(NodeUsedAsNumber | NodeUsedAsOther | NodeUsedAsInt | NodeUsedAsIntLocally);
             break;
         }
             
@@ -567,26 +369,9 @@ private:
         case AllocatePropertyStorage:
         case ReallocatePropertyStorage: {
             changed |= setPrediction(SpecOther);
-            changed |= mergeDefaultFlags(node);
             break;
         }
 
-        case GetByOffset: {
-            changed |= mergePrediction(node->getHeapPrediction());
-            changed |= mergeDefaultFlags(node);
-            break;
-        }
-            
-        case Call:
-        case Construct: {
-            changed |= mergePrediction(node->getHeapPrediction());
-            for (unsigned childIdx = node->firstChild();
-                childIdx < node->firstChild() + node->numChildren();
-                ++childIdx)
-                changed |= m_graph.m_varArgChildren[childIdx]->mergeFlags(NodeUsedAsValue);
-            break;
-        }
-            
         case ConvertThis: {
             SpeculatedType prediction = node->child1()->prediction();
             if (prediction) {
@@ -596,28 +381,6 @@ private:
                 }
                 changed |= mergePrediction(prediction);
             }
-            changed |= mergeDefaultFlags(node);
-            break;
-        }
-            
-        case GetGlobalVar: {
-            changed |= mergePrediction(node->getHeapPrediction());
-            break;
-        }
-            
-        case PutGlobalVar:
-        case PutGlobalVarCheck: {
-            changed |= node->child1()->mergeFlags(NodeUsedAsValue);
-            break;
-        }
-            
-        case GetScopedVar:
-        case Resolve:
-        case ResolveBase:
-        case ResolveBaseStrictPut:
-        case ResolveGlobal: {
-            SpeculatedType prediction = node->getHeapPrediction();
-            changed |= mergePrediction(prediction);
             break;
         }
             
@@ -636,48 +399,25 @@ private:
         case CreateThis:
         case NewObject: {
             changed |= setPrediction(SpecFinalObject);
-            changed |= mergeDefaultFlags(node);
             break;
         }
             
-        case NewArray: {
-            changed |= setPrediction(SpecArray);
-            for (unsigned childIdx = node->firstChild();
-                childIdx < node->firstChild() + node->numChildren();
-                ++childIdx)
-                changed |= m_graph.m_varArgChildren[childIdx]->mergeFlags(NodeUsedAsValue);
-            break;
-        }
-            
-        case NewArrayWithSize: {
-            changed |= setPrediction(SpecArray);
-            changed |= node->child1()->mergeFlags(NodeUsedAsValue | NodeUsedAsInt | NodeUsedAsIntLocally);
-            break;
-        }
-            
+        case NewArray:
+        case NewArrayWithSize:
         case NewArrayBuffer: {
             changed |= setPrediction(SpecArray);
             break;
         }
             
-        case NewRegexp: {
+        case NewRegexp:
+        case CreateActivation: {
             changed |= setPrediction(SpecObjectOther);
             break;
         }
         
-        case StringCharAt: {
-            changed |= setPrediction(SpecString);
-            changed |= node->child1()->mergeFlags(NodeUsedAsValue);
-            changed |= node->child2()->mergeFlags(NodeUsedAsNumber | NodeUsedAsOther | NodeUsedAsInt | NodeUsedAsIntLocally);
-            break;
-        }
-            
+        case StringCharAt:
         case StrCat: {
             changed |= setPrediction(SpecString);
-            for (unsigned childIdx = node->firstChild();
-                childIdx < node->firstChild() + node->numChildren();
-                ++childIdx)
-                changed |= m_graph.m_varArgChildren[childIdx]->mergeFlags(NodeUsedAsNumber | NodeUsedAsOther);
             break;
         }
             
@@ -699,12 +439,6 @@ private:
                 } else
                     changed |= mergePrediction(child);
             }
-            changed |= node->child1()->mergeFlags(flags);
-            break;
-        }
-            
-        case CreateActivation: {
-            changed |= setPrediction(SpecObjectOther);
             break;
         }
             
@@ -743,51 +477,27 @@ private:
             break;
         }
         
-        case PutByVal:
-            changed |= m_graph.varArgChild(node, 0)->mergeFlags(NodeUsedAsValue);
-            changed |= m_graph.varArgChild(node, 1)->mergeFlags(NodeUsedAsNumber | NodeUsedAsOther | NodeUsedAsInt | NodeUsedAsIntLocally);
-            changed |= m_graph.varArgChild(node, 2)->mergeFlags(NodeUsedAsValue);
-            break;
-
-        case PutScopedVar:
-            changed |= node->child1()->mergeFlags(NodeUsedAsValue);
-            changed |= node->child3()->mergeFlags(NodeUsedAsValue);
-            break;
-            
-        case Return:
-        case Throw:
-            changed |= node->child1()->mergeFlags(NodeUsedAsValue);
-            break;
-
-        case PutById:
-        case PutByIdDirect:
-            changed |= node->child1()->mergeFlags(NodeUsedAsValue);
-            changed |= node->child2()->mergeFlags(NodeUsedAsValue);
-            break;
-
-        case PutByOffset:
-            changed |= node->child1()->mergeFlags(NodeUsedAsValue);
-            changed |= node->child3()->mergeFlags(NodeUsedAsValue);
-            break;
-            
         case Phi:
             // Phis should not be visible here since we're iterating the all-but-Phi's
             // part of basic blocks.
             CRASH();
             break;
 
-        case SetCallee:
-        case SetMyScope:
-            changed |= node->child1()->mergeFlags(NodeUsedAsValue);
-            break;
-            
         case GetScope:
-            changed |= node->child1()->mergeFlags(NodeUsedAsValue);
             changed |= setPrediction(SpecCellOther);
             break;
 
 #ifndef NDEBUG
         // These get ignored because they don't return anything.
+        case PutByVal:
+        case PutScopedVar:
+        case Return:
+        case Throw:
+        case PutById:
+        case PutByIdDirect:
+        case PutByOffset:
+        case SetCallee:
+        case SetMyScope:
         case DFG::Jump:
         case Branch:
         case Breakpoint:
@@ -809,7 +519,8 @@ private:
         case GarbageValue:
         case AllocationProfileWatchpoint:
         case Phantom:
-            changed |= mergeDefaultFlags(node);
+        case PutGlobalVar:
+        case PutGlobalVarCheck:
             break;
             
         // These gets ignored because it doesn't do anything.
@@ -817,6 +528,7 @@ private:
         case Nop:
         case CountExecution:
         case PhantomLocal:
+        case Flush:
             break;
             
         case LastNodeType:
@@ -824,7 +536,6 @@ private:
             break;
 #else
         default:
-            changed |= mergeDefaultFlags(node);
             break;
 #endif
         }
@@ -836,30 +547,6 @@ private:
         m_changed |= changed;
     }
         
-    bool mergeDefaultFlags(Node* node)
-    {
-        bool changed = false;
-        if (node->flags() & NodeHasVarArgs) {
-            for (unsigned childIdx = node->firstChild();
-                childIdx < node->firstChild() + node->numChildren();
-                childIdx++) {
-                if (!!m_graph.m_varArgChildren[childIdx])
-                    changed |= m_graph.m_varArgChildren[childIdx]->mergeFlags(NodeUsedAsValue);
-            }
-        } else {
-            if (!node->child1())
-                return changed;
-            changed |= node->child1()->mergeFlags(NodeUsedAsValue);
-            if (!node->child2())
-                return changed;
-            changed |= node->child2()->mergeFlags(NodeUsedAsValue);
-            if (!node->child3())
-                return changed;
-            changed |= node->child3()->mergeFlags(NodeUsedAsValue);
-        }
-        return changed;
-    }
-    
     void propagateForward()
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
