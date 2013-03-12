@@ -177,7 +177,7 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
 
     HTMLFormElement* formElement = 0;
     if (m_node && m_node->isHTMLElement())
-        formElement = toHTMLElement(m_node)->form();
+        formElement = static_cast<HTMLElement*>(m_node)->form();
 
     v8::Handle<v8::Object> nodeWrapper = toObjectWrapper<Node>(m_node, isolate);
     v8::Handle<v8::Object> formWrapper = toObjectWrapper<HTMLFormElement>(formElement, isolate);

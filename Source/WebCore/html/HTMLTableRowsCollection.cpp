@@ -39,17 +39,17 @@ using namespace HTMLNames;
 
 static bool isInHead(Element* row)
 {
-    return row->parentNode() && toElement(row->parentNode())->hasLocalName(theadTag);
+    return row->parentNode() && static_cast<Element*>(row->parentNode())->hasLocalName(theadTag);
 }
 
 static bool isInBody(Element* row)
 {
-    return row->parentNode() && toElement(row->parentNode())->hasLocalName(tbodyTag);
+    return row->parentNode() && static_cast<Element*>(row->parentNode())->hasLocalName(tbodyTag);
 }
 
 static bool isInFoot(Element* row)
 {
-    return row->parentNode() && toElement(row->parentNode())->hasLocalName(tfootTag);
+    return row->parentNode() && static_cast<Element*>(row->parentNode())->hasLocalName(tfootTag);
 }
 
 HTMLTableRowElement* HTMLTableRowsCollection::rowAfter(HTMLTableElement* table, HTMLTableRowElement* previous)

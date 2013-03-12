@@ -106,7 +106,7 @@ bool IsSelectInDefaultState(HTMLSelectElement* select)
         for (Vector<HTMLElement*>::const_iterator i(listItems.begin()); i != listItems.end(); ++i) {
             if (!(*i)->hasLocalName(HTMLNames::optionTag))
                 continue;
-            HTMLOptionElement* optionElement = toHTMLOptionElement(*i);
+            HTMLOptionElement* optionElement = static_cast<HTMLOptionElement*>(*i);
             if (optionElement->selected() != optionElement->hasAttribute(selectedAttr))
                 return false;
         }
@@ -119,7 +119,7 @@ bool IsSelectInDefaultState(HTMLSelectElement* select)
     for (Vector<HTMLElement*>::const_iterator i(listItems.begin()); i != listItems.end(); ++i) {
         if (!(*i)->hasLocalName(HTMLNames::optionTag))
             continue;
-        HTMLOptionElement* optionElement = toHTMLOptionElement(*i);
+        HTMLOptionElement* optionElement = static_cast<HTMLOptionElement*>(*i);
         if (optionElement->hasAttribute(selectedAttr)) {
             // The page specified the option to select.
             initialSelected = optionElement;

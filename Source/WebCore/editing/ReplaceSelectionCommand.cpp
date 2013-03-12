@@ -426,7 +426,7 @@ bool ReplaceSelectionCommand::shouldMergeEnd(bool selectionEndWasEndOfParagraph)
 
 static bool isMailPasteAsQuotationNode(const Node* node)
 {
-    return node && node->hasTagName(blockquoteTag) && node->isElementNode() && toElement(node)->getAttribute(classAttr) == ApplePasteAsQuotation;
+    return node && node->hasTagName(blockquoteTag) && node->isElementNode() && static_cast<const Element*>(node)->getAttribute(classAttr) == ApplePasteAsQuotation;
 }
 
 static bool isHeaderElement(const Node* a)
@@ -444,7 +444,7 @@ static bool isHeaderElement(const Node* a)
 
 static bool haveSameTagName(Node* a, Node* b)
 {
-    return a && b && a->isElementNode() && b->isElementNode() && toElement(a)->tagName() == static_cast<Element*>(b)->tagName();
+    return a && b && a->isElementNode() && b->isElementNode() && static_cast<Element*>(a)->tagName() == static_cast<Element*>(b)->tagName();
 }
 
 bool ReplaceSelectionCommand::shouldMerge(const VisiblePosition& source, const VisiblePosition& destination)
@@ -486,7 +486,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
         if (inlineStyle) {
             if (element->isHTMLElement()) {
                 Vector<QualifiedName> attributes;
-                HTMLElement* htmlElement = toHTMLElement(element);
+                HTMLElement* htmlElement = static_cast<HTMLElement*>(element);
 
                 if (newInlineStyle->conflictsWithImplicitStyleOfElement(htmlElement)) {
                     // e.g. <b style="font-weight: normal;"> is converted to <span style="font-weight: normal;">
@@ -625,8 +625,8 @@ void ReplaceSelectionCommand::makeInsertedContentRoundTrippableWithHTMLTreeBuild
         if (!node->isHTMLElement())
             continue;
 
-        if (isProhibitedParagraphChild(toHTMLElement(node.get())->localName())) {
-            if (HTMLElement* paragraphElement = toHTMLElement(enclosingNodeWithTag(positionInParentBeforeNode(node.get()), pTag)))
+        if (isProhibitedParagraphChild(static_cast<const HTMLElement*>(node.get())->localName())) {
+            if (HTMLElement* paragraphElement = static_cast<HTMLElement*>(enclosingNodeWithTag(positionInParentBeforeNode(node.get()), pTag)))
                 moveNodeOutOfAncestor(node, paragraphElement);
         }
 

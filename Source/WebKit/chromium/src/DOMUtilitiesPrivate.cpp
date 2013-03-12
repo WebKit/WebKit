@@ -47,7 +47,7 @@ template <class HTMLNodeType>
 HTMLNodeType* toHTMLElement(Node* node, const QualifiedName& name)
 {
     if (node->isHTMLElement()
-        && toHTMLElement(node)->hasTagName(name)) {
+        && static_cast<HTMLElement*>(node)->hasTagName(name)) {
         return static_cast<HTMLNodeType*>(node);
     }
     return 0;

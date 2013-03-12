@@ -171,11 +171,11 @@ void RenderEmbeddedObject::paintSnapshotImage(PaintInfo& paintInfo, const Layout
 
 void RenderEmbeddedObject::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    Element* element = toElement(node());
+    Element* element = static_cast<Element*>(node());
     if (!element || !element->isPluginElement())
         return;
 
-    HTMLPlugInElement* plugInElement = toHTMLPlugInElement(element);
+    HTMLPlugInElement* plugInElement = static_cast<HTMLPlugInElement*>(element);
     if (plugInElement->displayState() > HTMLPlugInElement::DisplayingSnapshot) {
         RenderPart::paintContents(paintInfo, paintOffset);
         return;
@@ -184,7 +184,7 @@ void RenderEmbeddedObject::paintContents(PaintInfo& paintInfo, const LayoutPoint
     if (!plugInElement->isPlugInImageElement())
         return;
 
-    Image* snapshot = toHTMLPlugInImageElement(plugInElement)->snapshotImage();
+    Image* snapshot = static_cast<HTMLPlugInImageElement*>(plugInElement)->snapshotImage();
     if (snapshot)
         paintSnapshotImage(paintInfo, paintOffset, snapshot);
 }
@@ -417,7 +417,7 @@ void RenderEmbeddedObject::handleUnavailablePluginIndicatorEvent(Event* event)
         return;
     
     MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
-    HTMLPlugInElement* element = toHTMLPlugInElement(node());
+    HTMLPlugInElement* element = static_cast<HTMLPlugInElement*>(node());
     if (event->type() == eventNames().mousedownEvent && static_cast<MouseEvent*>(event)->button() == LeftButton) {
         m_mouseDownWasInUnavailablePluginIndicator = isInUnavailablePluginIndicator(mouseEvent);
         if (m_mouseDownWasInUnavailablePluginIndicator) {

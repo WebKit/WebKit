@@ -63,7 +63,7 @@ void RenderMathMLFraction::updateFromElement()
     if (isEmpty()) 
         return;
     
-    Element* fraction = toElement(node());
+    Element* fraction = static_cast<Element*>(node());
     
     RenderObject* numeratorWrapper = firstChild();
     RenderObject* denominatorWrapper = numeratorWrapper->nextSibling();

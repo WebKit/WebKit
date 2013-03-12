@@ -83,7 +83,7 @@ void CachedPage::restore(Page* page)
     Document* focusedDocument = page->focusController()->focusedOrMainFrame()->document();
     if (Node* node = focusedDocument->focusedNode()) {
         if (node->isElementNode())
-            toElement(node)->updateFocusAppearance(true);
+            static_cast<Element*>(node)->updateFocusAppearance(true);
     }
 
     if (m_needStyleRecalcForVisitedLinks) {

@@ -150,7 +150,7 @@ void SerializerMarkupAccumulator::appendCustomAttributes(StringBuilder& out, Ele
     if (!element->isFrameOwnerElement())
         return;
 
-    HTMLFrameOwnerElement* frameOwner = toFrameOwnerElement(element);
+    HTMLFrameOwnerElement* frameOwner = static_cast<HTMLFrameOwnerElement*>(element);
     Frame* frame = frameOwner->contentFrame();
     if (!frame)
         return;

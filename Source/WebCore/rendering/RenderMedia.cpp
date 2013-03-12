@@ -53,7 +53,7 @@ RenderMedia::~RenderMedia()
 
 HTMLMediaElement* RenderMedia::mediaElement() const
 { 
-    return toMediaElement(node()); 
+    return static_cast<HTMLMediaElement*>(node()); 
 }
 
 void RenderMedia::layout()
