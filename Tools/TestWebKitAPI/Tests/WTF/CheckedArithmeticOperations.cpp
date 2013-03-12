@@ -70,7 +70,7 @@ namespace TestWebKitAPI {
         EXPECT_EQ(true, (value += coerceLiteral(1)).hasOverflowed()); \
         EXPECT_EQ(true, value.hasOverflowed()); \
         value = 10; \
-        type _value; \
+        type _value = 0; \
         EXPECT_EQ(true, CheckedState::DidNotOverflow == (value * Checked<type, RecordOverflow>(0)).safeGet(_value)); \
         EXPECT_EQ(true, 10 == _value); \
         _value = 0; \

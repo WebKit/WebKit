@@ -1,5 +1,12 @@
 2013-03-12  Oliver Hunt  <oliver@apple.com>
 
+        Appease MSVC
+
+        * TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp:
+        (TestWebKitAPI):
+
+2013-03-12  Oliver Hunt  <oliver@apple.com>
+
         Add more Checked<> tests
         https://bugs.webkit.org/show_bug.cgi?id=112190
 
