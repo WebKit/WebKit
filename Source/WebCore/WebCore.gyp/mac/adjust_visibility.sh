@@ -55,7 +55,7 @@ mkdir -p "${WORK_DIR}"
 
 # ar doesn't operate on fat files.  Figure out what architectures are
 # involved.
-ARCHS=$(file "${INPUT}" | sed -Ene 's/^.*\(for architecture (.+)\):.*$/\1/p')
+ARCHS=$(lipo -info "${INPUT}" | sed -Ene 's/^.* are: (.+)/\1/p')
 if [ -z "${ARCHS}" ] ; then
   ARCHS=self
 fi
