@@ -1,3 +1,45 @@
+2013-03-11  Brady Eidson  <beidson@apple.com>
+
+        Loads are never canceled in the NetworkProcess
+        <rdar://problem/12890500> and https://bugs.webkit.org/show_bug.cgi?id=112103
+
+        Reviewed by Alexey Proskuryakov.
+
+        If a connection to a WebProcess is closed (gracefully or by crashing) then:
+        - All scheduled loads for that connection should be forgotten.
+        - All in-progress loads for that connection should be aborted asap.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::requestsToCleanupMutex): The "request to stop" mechanism is now called "request to cleanup"
+        (WebKit::requestsToCleanup):
+        (WebKit::NetworkResourceLoader::scheduleCleanupOnMainThread):
+        (WebKit::NetworkResourceLoader::performCleanups):
+        (WebKit::NetworkResourceLoader::cleanup):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        (WebKit::NetworkResourceLoader::didFail):
+
+        (WebKit::NetworkResourceLoader::connectionToWebProcessDidClose): If there is a resource handle, let
+          the loading thread notice the connection is invalid. Otherwise request to cleanup the loader.
+        (WebKit::NetworkResourceLoader::sendAbortingOnFailure):
+        (WebKit::NetworkResourceLoader::sendSyncAbortingOnFailure):
+        (WebKit::NetworkResourceLoader::abortInProgressLoad): Cancel the resource handle and schedule main thread cleanup.
+        (WebKit::NetworkResourceLoader::didReceiveResponse): Use sendAbortingOnFailure instead of send.
+        (WebKit::NetworkResourceLoader::didReceiveData): Ditto.
+
+        (WebKit::NetworkResourceLoader::willSendRequest): Call abortInProgressLoad if the sync message failed.
+        (WebKit::NetworkResourceLoader::canAuthenticateAgainstProtectionSpace): Ditto.
+        * NetworkProcess/NetworkResourceLoader.h:
+
+        Make connectionToWebProcessDidClose() pure virtual, moving its implementation to the subclasses:
+        * NetworkProcess/SchedulableLoader.cpp:
+        * NetworkProcess/SchedulableLoader.h:
+
+        * NetworkProcess/SyncNetworkResourceLoader.cpp:
+        (WebKit::SyncNetworkResourceLoader::start): Call cleanup().
+        (WebKit::SyncNetworkResourceLoader::connectionToWebProcessDidClose): Call cleanup().
+        (WebKit::SyncNetworkResourceLoader::cleanup): Factor out the sync loader cleanup code.
+        * NetworkProcess/SyncNetworkResourceLoader.h:
+
 2013-03-11  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin: Return PDFKit's data instead of the original resource data for save/etc.

@@ -54,7 +54,7 @@ public:
     bool inPrivateBrowsingMode() const { return m_inPrivateBrowsingMode; }
 
     NetworkConnectionToWebProcess* connectionToWebProcess() const { return m_connection.get(); }
-    void connectionToWebProcessDidClose();
+    virtual void connectionToWebProcessDidClose() = 0;
 
     virtual void start() = 0;
     

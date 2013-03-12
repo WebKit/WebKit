@@ -66,11 +66,22 @@ void SyncNetworkResourceLoader::start()
 
     ResourceHandle::loadResourceSynchronously(networkingContext.get(), request(), allowStoredCredentials(), error, response, data);
 
-    invalidateSandboxExtensions();
+    cleanup();
 
     m_delayedReply->send(error, response, CoreIPC::DataReference((uint8_t*)data.data(), data.size()));
+}
+
+void SyncNetworkResourceLoader::connectionToWebProcessDidClose()
+{
+    ASSERT(isMainThread());
     
-    NetworkProcess::shared().networkResourceLoadScheduler().removeLoader(this);
+    cleanup();
+}
+
+void SyncNetworkResourceLoader::cleanup()
+{
+    invalidateSandboxExtensions();
+    NetworkProcess::shared().networkResourceLoadScheduler().scheduleRemoveLoader(this);
 }
 
 } // namespace WebKit

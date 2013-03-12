@@ -86,62 +86,109 @@ void NetworkResourceLoader::start()
     m_handle = ResourceHandle::create(m_networkingContext.get(), request(), this, false /* defersLoading */, contentSniffingPolicy() == SniffContent);
 }
 
-static bool stopRequestsCalled = false;
+static bool performCleanupsCalled = false;
 
-static Mutex& requestsToStopMutex()
+static Mutex& requestsToCleanupMutex()
 {
     DEFINE_STATIC_LOCAL(Mutex, mutex, ());
     return mutex;
 }
 
-static HashSet<NetworkResourceLoader*>& requestsToStop()
+static HashSet<NetworkResourceLoader*>& requestsToCleanup()
 {
     DEFINE_STATIC_LOCAL(HashSet<NetworkResourceLoader*>, requests, ());
     return requests;
 }
 
-void NetworkResourceLoader::scheduleStopOnMainThread()
+void NetworkResourceLoader::scheduleCleanupOnMainThread()
 {
-    MutexLocker locker(requestsToStopMutex());
+    MutexLocker locker(requestsToCleanupMutex());
 
-    requestsToStop().add(this);
-    if (!stopRequestsCalled) {
-        stopRequestsCalled = true;
-        callOnMainThread(NetworkResourceLoader::performStops, 0);
+    requestsToCleanup().add(this);
+    if (!performCleanupsCalled) {
+        performCleanupsCalled = true;
+        callOnMainThread(NetworkResourceLoader::performCleanups, 0);
     }
 }
 
-void NetworkResourceLoader::performStops(void*)
+void NetworkResourceLoader::performCleanups(void*)
 {
-    ASSERT(stopRequestsCalled);
+    ASSERT(performCleanupsCalled);
 
     Vector<NetworkResourceLoader*> requests;
     {
-        MutexLocker locker(requestsToStopMutex());
-        copyToVector(requestsToStop(), requests);
-        requestsToStop().clear();
-        stopRequestsCalled = false;
+        MutexLocker locker(requestsToCleanupMutex());
+        copyToVector(requestsToCleanup(), requests);
+        requestsToCleanup().clear();
+        performCleanupsCalled = false;
     }
     
     for (size_t i = 0; i < requests.size(); ++i)
-        requests[i]->resourceHandleStopped();
+        requests[i]->cleanup();
 }
 
-void NetworkResourceLoader::resourceHandleStopped()
+void NetworkResourceLoader::cleanup()
 {
     ASSERT(isMainThread());
 
     if (FormData* formData = request().httpBody())
         formData->removeGeneratedFilesIfNeeded();
 
-    m_handle = 0;
-
     // Tell the scheduler about this finished loader soon so it can start more network requests.
     NetworkProcess::shared().networkResourceLoadScheduler().scheduleRemoveLoader(this);
 
-    // Explicit deref() balanced by a ref() in NetworkResourceLoader::start()
-    // This might cause the NetworkResourceLoader to be destroyed and therefore we do it last.
-    deref();
+    if (m_handle) {
+        // Explicit deref() balanced by a ref() in NetworkResourceLoader::start()
+        // This might cause the NetworkResourceLoader to be destroyed and therefore we do it last.
+        m_handle = 0;
+        deref();
+    }
+}
+
+void NetworkResourceLoader::connectionToWebProcessDidClose()
+{
+    ASSERT(isMainThread());
+
+    // If this loader already has a resource handle then it is already in progress on a background thread.
+    // On that thread it will notice that its connection to its WebProcess has been invalidated and it will "gracefully" abort.
+    if (m_handle)
+        return;
+
+#if !ASSERT_DISABLED
+    // Since there's no handle, this loader should never have been started, and therefore it should never be in the
+    // set of loaders to cleanup on the main thread.
+    // Let's make sure that's true.
+    {
+        MutexLocker locker(requestsToCleanupMutex());
+        ASSERT(!requestsToCleanup().contains(this));
+    }
+#endif
+
+    cleanup();
+}
+
+template<typename U> void NetworkResourceLoader::sendAbortingOnFailure(const U& message)
+{
+    if (!send(message))
+        abortInProgressLoad();
+}
+
+template<typename U> bool NetworkResourceLoader::sendSyncAbortingOnFailure(const U& message, const typename U::Reply& reply)
+{
+    bool result = sendSync(message, reply);
+    if (!result)
+        abortInProgressLoad();
+    return result;
+}
+
+void NetworkResourceLoader::abortInProgressLoad()
+{
+    ASSERT(m_handle);
+    ASSERT(!isMainThread());
+ 
+    m_handle->cancel();
+
+    scheduleCleanupOnMainThread();
 }
 
 void NetworkResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
@@ -149,7 +196,7 @@ void NetworkResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceRe
     // FIXME (NetworkProcess): Cache the response.
     if (FormData* formData = request().httpBody())
         formData->removeGeneratedFilesIfNeeded();
-    send(Messages::WebResourceLoader::DidReceiveResponseWithCertificateInfo(response, PlatformCertificateInfo(response)));
+    sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponseWithCertificateInfo(response, PlatformCertificateInfo(response)));
 }
 
 void NetworkResourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int encodedDataLength)
@@ -158,7 +205,7 @@ void NetworkResourceLoader::didReceiveData(ResourceHandle*, const char* data, in
     // Such buffering will need to be thread safe, as this callback is happening on a background thread.
     
     CoreIPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(data), length);
-    send(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedDataLength, false));
+    sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedDataLength, false));
 }
 
 void NetworkResourceLoader::didFinishLoading(ResourceHandle*, double finishTime)
@@ -167,7 +214,7 @@ void NetworkResourceLoader::didFinishLoading(ResourceHandle*, double finishTime)
     // Such bookkeeping will need to be thread safe, as this callback is happening on a background thread.
     invalidateSandboxExtensions();
     send(Messages::WebResourceLoader::DidFinishResourceLoad(finishTime));
-    scheduleStopOnMainThread();
+    scheduleCleanupOnMainThread();
 }
 
 void NetworkResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
@@ -176,7 +223,7 @@ void NetworkResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
     // Such bookkeeping will need to be thread safe, as this callback is happening on a background thread.
     invalidateSandboxExtensions();
     send(Messages::WebResourceLoader::DidFailResourceLoad(error));
-    scheduleStopOnMainThread();
+    scheduleCleanupOnMainThread();
 }
 
 void NetworkResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
@@ -190,10 +237,10 @@ void NetworkResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& re
     // to complete while the WebProcess is waiting for a 7th to complete.
     // If we ever change this message to be asynchronous we have to include safeguards to make sure the new design interacts well with sync XHR.
     ResourceRequest returnedRequest;
-    if (sendSync(Messages::WebResourceLoader::WillSendRequest(request, redirectResponse), Messages::WebResourceLoader::WillSendRequest::Reply(returnedRequest)))
-        request.updateFromDelegatePreservingOldHTTPBody(returnedRequest.nsURLRequest(DoNotUpdateHTTPBody));
-    else
-        request = ResourceRequest();
+    if (!sendSyncAbortingOnFailure(Messages::WebResourceLoader::WillSendRequest(request, redirectResponse), Messages::WebResourceLoader::WillSendRequest::Reply(returnedRequest)))
+        return;
+    
+    request.updateFromDelegatePreservingOldHTTPBody(returnedRequest.nsURLRequest(DoNotUpdateHTTPBody));
 
     RunLoop::main()->dispatch(bind(&NetworkResourceLoadScheduler::receivedRedirect, &NetworkProcess::shared().networkResourceLoadScheduler(), this, request.url()));
 }
@@ -249,7 +296,7 @@ bool NetworkResourceLoader::canAuthenticateAgainstProtectionSpace(ResourceHandle
     // to complete while the WebProcess is waiting for a 7th to complete.
     // If we ever change this message to be asynchronous we have to include safeguards to make sure the new design interacts well with sync XHR.
     bool result;
-    if (!sendSync(Messages::WebResourceLoader::CanAuthenticateAgainstProtectionSpace(protectionSpace), Messages::WebResourceLoader::CanAuthenticateAgainstProtectionSpace::Reply(result)))
+    if (!sendSyncAbortingOnFailure(Messages::WebResourceLoader::CanAuthenticateAgainstProtectionSpace(protectionSpace), Messages::WebResourceLoader::CanAuthenticateAgainstProtectionSpace::Reply(result)))
         return false;
 
     return result;

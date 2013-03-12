@@ -41,12 +41,15 @@ public:
         return adoptRef(new SyncNetworkResourceLoader(parameters, connection, reply));
     }
 
-    virtual void start();
+    virtual void start() OVERRIDE;
+    virtual void connectionToWebProcessDidClose() OVERRIDE;
     
-    virtual bool isSynchronous() { return true; }
+    virtual bool isSynchronous() OVERRIDE { return true; }
 
 private:
     SyncNetworkResourceLoader(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess*, PassRefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply>);
+    
+    void cleanup();
     
     RefPtr<Messages::NetworkConnectionToWebProcess::PerformSynchronousLoad::DelayedReply> m_delayedReply;
 };
