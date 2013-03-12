@@ -29,19 +29,17 @@
 #if ENABLE(THREADED_HTML_PARSER)
 
 #include "HTMLParserOptions.h"
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class CompactHTMLToken;
 class HTMLTokenizer;
+class HTMLTreeBuilder;
 
 class HTMLTreeBuilderSimulator {
     WTF_MAKE_FAST_ALLOCATED;
-public:
-    explicit HTMLTreeBuilderSimulator(const HTMLParserOptions&);
-    bool simulate(const CompactHTMLToken&, HTMLTokenizer*);
-
 private:
     enum Namespace {
         HTML,
@@ -49,10 +47,25 @@ private:
         MathML
     };
 
+public:
+    typedef Vector<Namespace, 1> State;
+
+    explicit HTMLTreeBuilderSimulator(const HTMLParserOptions&);
+
+    static State stateFor(HTMLTreeBuilder*);
+
+    const State& state() const { return m_namespaceStack; }
+    void setState(const State& state) { m_namespaceStack = state; }
+
+    bool simulate(const CompactHTMLToken&, HTMLTokenizer*);
+
+private:
+    explicit HTMLTreeBuilderSimulator(HTMLTreeBuilder*);
+
     bool inForeignContent() const { return m_namespaceStack.last() != HTML; }
 
     HTMLParserOptions m_options;
-    Vector<Namespace, 1> m_namespaceStack;
+    State m_namespaceStack;
 };
 
 }

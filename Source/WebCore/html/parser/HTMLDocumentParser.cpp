@@ -354,7 +354,8 @@ void HTMLDocumentParser::validateSpeculations()
     // sophisticated with the HTMLToken.
     if (m_currentChunk->tokenizerState == HTMLTokenizer::DataState
         && tokenizer->state() == HTMLTokenizer::DataState
-        && m_input.current().isEmpty()) {
+        && m_input.current().isEmpty()
+        && m_currentChunk->treeBuilderState == HTMLTreeBuilderSimulator::stateFor(m_treeBuilder.get())) {
         ASSERT(token->isUninitialized());
         return;
     }
@@ -371,6 +372,7 @@ void HTMLDocumentParser::didFailSpeculation(PassOwnPtr<HTMLToken> token, PassOwn
     checkpoint->parser = m_weakFactory.createWeakPtr();
     checkpoint->token = token;
     checkpoint->tokenizer = tokenizer;
+    checkpoint->treeBuilderState = HTMLTreeBuilderSimulator::stateFor(m_treeBuilder.get());
     checkpoint->inputCheckpoint = m_currentChunk->inputCheckpoint;
     checkpoint->preloadScannerCheckpoint = m_currentChunk->preloadScannerCheckpoint;
     checkpoint->unparsedInput = m_input.current().toString().isolatedCopy();

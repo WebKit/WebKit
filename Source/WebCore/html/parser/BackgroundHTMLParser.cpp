@@ -65,9 +65,9 @@ static const size_t pendingTokenLimit = 1000;
 
 BackgroundHTMLParser::BackgroundHTMLParser(PassRefPtr<WeakReference<BackgroundHTMLParser> > reference, PassOwnPtr<Configuration> config)
     : m_weakFactory(reference, this)
-    , m_treeBuilderSimulator(config->options)
     , m_token(adoptPtr(new HTMLToken))
     , m_tokenizer(HTMLTokenizer::create(config->options))
+    , m_treeBuilderSimulator(config->options)
     , m_options(config->options)
     , m_parser(config->parser)
     , m_pendingTokens(adoptPtr(new CompactHTMLTokenStream))
@@ -88,6 +88,7 @@ void BackgroundHTMLParser::resumeFrom(PassOwnPtr<Checkpoint> checkpoint)
     m_parser = checkpoint->parser;
     m_token = checkpoint->token.release();
     m_tokenizer = checkpoint->tokenizer.release();
+    m_treeBuilderSimulator.setState(checkpoint->treeBuilderState);
     m_input.rewindTo(checkpoint->inputCheckpoint, checkpoint->unparsedInput);
     m_preloadScanner->rewindTo(checkpoint->preloadScannerCheckpoint);
     pumpTokenizer();
@@ -174,6 +175,7 @@ void BackgroundHTMLParser::sendTokensToMainThread()
     chunk->preloads.swap(m_pendingPreloads);
     chunk->xssInfos.swap(m_pendingXSSInfos);
     chunk->tokenizerState = m_tokenizer->state();
+    chunk->treeBuilderState = m_treeBuilderSimulator.state();
     chunk->inputCheckpoint = m_input.createCheckpoint();
     chunk->preloadScannerCheckpoint = m_preloadScanner->createCheckpoint();
     callOnMainThread(bind(&HTMLDocumentParser::didReceiveParsedChunkFromBackgroundParser, m_parser, chunk.release()));

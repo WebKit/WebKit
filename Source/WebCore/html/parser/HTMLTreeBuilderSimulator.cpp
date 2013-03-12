@@ -33,6 +33,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLTokenizer.h"
+#include "HTMLTreeBuilder.h"
 #include "MathMLNames.h"
 #include "SVGNames.h"
 
@@ -115,6 +116,24 @@ HTMLTreeBuilderSimulator::HTMLTreeBuilderSimulator(const HTMLParserOptions& opti
     : m_options(options)
 {
     m_namespaceStack.append(HTML);
+}
+
+HTMLTreeBuilderSimulator::State HTMLTreeBuilderSimulator::stateFor(HTMLTreeBuilder* treeBuilder)
+{
+    ASSERT(isMainThread());
+    State namespaceStack;
+    for (HTMLElementStack::ElementRecord* record = treeBuilder->openElements()->topRecord(); record; record = record->next()) {
+        Namespace currentNamespace = HTML;
+        if (record->namespaceURI() == SVGNames::svgNamespaceURI)
+            currentNamespace = SVG;
+        else if (record->namespaceURI() == MathMLNames::mathmlNamespaceURI)
+            currentNamespace = MathML;
+
+        if (namespaceStack.isEmpty() || namespaceStack.last() != currentNamespace)
+            namespaceStack.append(currentNamespace);
+    }
+    namespaceStack.reverse();
+    return namespaceStack;
 }
 
 bool HTMLTreeBuilderSimulator::simulate(const CompactHTMLToken& token, HTMLTokenizer* tokenizer)

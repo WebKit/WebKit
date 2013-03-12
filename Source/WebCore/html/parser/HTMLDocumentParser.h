@@ -37,6 +37,7 @@
 #include "HTMLSourceTracker.h"
 #include "HTMLToken.h"
 #include "HTMLTokenizer.h"
+#include "HTMLTreeBuilderSimulator.h"
 #include "ScriptableDocumentParser.h"
 #include "SegmentedString.h"
 #include "Timer.h"
@@ -91,6 +92,7 @@ public:
         PreloadRequestStream preloads;
         XSSInfoStream xssInfos;
         HTMLTokenizer::State tokenizerState;
+        HTMLTreeBuilderSimulator::State treeBuilderState;
         HTMLInputCheckpoint inputCheckpoint;
         TokenPreloadScannerCheckpoint preloadScannerCheckpoint;
     };

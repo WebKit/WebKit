@@ -67,6 +67,7 @@ public:
         WeakPtr<HTMLDocumentParser> parser;
         OwnPtr<HTMLToken> token;
         OwnPtr<HTMLTokenizer> tokenizer;
+        HTMLTreeBuilderSimulator::State treeBuilderState;
         HTMLInputCheckpoint inputCheckpoint;
         TokenPreloadScannerCheckpoint preloadScannerCheckpoint;
         String unparsedInput;
@@ -90,9 +91,9 @@ private:
     WeakPtrFactory<BackgroundHTMLParser> m_weakFactory;
     BackgroundHTMLInputStream m_input;
     HTMLSourceTracker m_sourceTracker;
-    HTMLTreeBuilderSimulator m_treeBuilderSimulator;
     OwnPtr<HTMLToken> m_token;
     OwnPtr<HTMLTokenizer> m_tokenizer;
+    HTMLTreeBuilderSimulator m_treeBuilderSimulator;
     HTMLParserOptions m_options;
     WeakPtr<HTMLDocumentParser> m_parser;
 

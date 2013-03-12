@@ -57,6 +57,7 @@ public:
     
         Element* element() const { return m_item->element(); }
         ContainerNode* node() const { return m_item->node(); }
+        const AtomicString& namespaceURI() const { return m_item->namespaceURI(); }
         PassRefPtr<HTMLStackItem> stackItem() const { return m_item; }
         void replaceElement(PassRefPtr<HTMLStackItem>);
 

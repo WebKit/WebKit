@@ -68,6 +68,8 @@ public:
     }
     ~HTMLTreeBuilder();
 
+    const HTMLElementStack* openElements() const { return m_tree.openElements(); }
+
     bool isParsingFragment() const { return !!m_fragmentContext.fragment(); }
 #if ENABLE(TEMPLATE_ELEMENT)
     bool isParsingTemplateContents() const { return m_tree.openElements()->hasTemplateInHTMLScope(); }
