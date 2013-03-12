@@ -36,8 +36,10 @@
 #include "PerspectiveTransformOperation.h"
 #include "RotateTransformOperation.h"
 #include "ScaleTransformOperation.h"
+#include "SkMatrix44.h"
 #include "SkewTransformOperation.h"
 #include "TransformOperations.h"
+#include "TransformSkMatrix44Conversions.h"
 #include "TranslateTransformOperation.h"
 
 #include <public/Platform.h>
@@ -47,7 +49,6 @@
 #include <public/WebFloatAnimationCurve.h>
 #include <public/WebTransformAnimationCurve.h>
 #include <public/WebTransformOperations.h>
-#include <public/WebTransformationMatrix.h>
 
 #include <wtf/OwnPtr.h>
 #include <wtf/text/CString.h>
@@ -102,13 +103,13 @@ PassOwnPtr<WebTransformOperations> toWebTransformOperations(const TransformOpera
         case TransformOperation::MATRIX: {
             MatrixTransformOperation* transform = static_cast<MatrixTransformOperation*>(transformOperations.operations()[j].get());
             TransformationMatrix m = transform->matrix();
-            webTransformOperations->appendMatrix(WebTransformationMatrix(m));
+            webTransformOperations->appendMatrix(TransformSkMatrix44Conversions::convert(m));
             break;
         }
         case TransformOperation::MATRIX_3D: {
             Matrix3DTransformOperation* transform = static_cast<Matrix3DTransformOperation*>(transformOperations.operations()[j].get());
             TransformationMatrix m = transform->matrix();
-            webTransformOperations->appendMatrix(WebTransformationMatrix(m));
+            webTransformOperations->appendMatrix(TransformSkMatrix44Conversions::convert(m));
             break;
         }
         case TransformOperation::PERSPECTIVE: {

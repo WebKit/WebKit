@@ -47,47 +47,10 @@ namespace WebKit {
 class WebTransformationMatrix {
 public:
     WEBKIT_EXPORT WebTransformationMatrix();
-    WEBKIT_EXPORT WebTransformationMatrix(double a, double b, double c, double d, double e, double f);
-    WEBKIT_EXPORT WebTransformationMatrix(double m11, double m12, double m13, double m14,
-                                          double m21, double m22, double m23, double m24,
-                                          double m31, double m32, double m33, double m34,
-                                          double m41, double m42, double m43, double m44);
     WEBKIT_EXPORT WebTransformationMatrix(const WebTransformationMatrix&);
     ~WebTransformationMatrix() { reset(); }
 
     WEBKIT_EXPORT void reset();
-
-    // Operations that return a separate matrix and do not modify this one.
-    WEBKIT_EXPORT WebTransformationMatrix inverse() const;
-    WEBKIT_EXPORT WebTransformationMatrix to2dTransform() const;
-
-    WEBKIT_EXPORT WebTransformationMatrix& operator=(const WebTransformationMatrix&);
-    WEBKIT_EXPORT bool operator==(const WebTransformationMatrix&) const;
-    WEBKIT_EXPORT WebTransformationMatrix operator*(const WebTransformationMatrix&) const;
-
-    // Operations that modify this matrix
-    WEBKIT_EXPORT void multiply(const WebTransformationMatrix&);
-    WEBKIT_EXPORT void makeIdentity();
-    WEBKIT_EXPORT void translate(double tx, double ty);
-    WEBKIT_EXPORT void translate3d(double tx, double ty, double tz);
-    WEBKIT_EXPORT void translateRight3d(double tx, double ty, double tz);
-    WEBKIT_EXPORT void scale(double s);
-    WEBKIT_EXPORT void scaleNonUniform(double sx, double sy);
-    WEBKIT_EXPORT void scale3d(double sx, double sy, double sz);
-    WEBKIT_EXPORT void rotate(double angle);
-    WEBKIT_EXPORT void rotate3d(double rx, double ry, double rz);
-    WEBKIT_EXPORT void rotate3d(double x, double y, double z, double angle);
-    WEBKIT_EXPORT void skewX(double angle);
-    WEBKIT_EXPORT void skewY(double angle);
-    WEBKIT_EXPORT void applyPerspective(double p);
-    WEBKIT_EXPORT bool blend(const WebTransformationMatrix& from, double progress);
-
-    WEBKIT_EXPORT bool hasPerspective() const;
-    WEBKIT_EXPORT bool isInvertible() const;
-    WEBKIT_EXPORT bool isBackFaceVisible() const;
-    WEBKIT_EXPORT bool isIdentity() const;
-    WEBKIT_EXPORT bool isIdentityOrTranslation() const;
-    WEBKIT_EXPORT bool isIntegerTranslation() const;
 
     // Accessors
     WEBKIT_EXPORT double m11() const;

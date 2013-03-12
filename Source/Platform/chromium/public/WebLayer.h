@@ -42,7 +42,6 @@ namespace WebKit {
 class WebAnimationDelegate;
 class WebFilterOperations;
 class WebLayerScrollClient;
-class WebTransformationMatrix;
 struct WebFloatPoint;
 struct WebFloatRect;
 struct WebSize;
@@ -94,11 +93,9 @@ public:
     virtual WebFloatPoint position() const = 0;
 
     virtual void setSublayerTransform(const SkMatrix44&) = 0;
-    virtual void setSublayerTransform(const WebTransformationMatrix&) = 0;
     virtual SkMatrix44 sublayerTransform() const = 0;
 
     virtual void setTransform(const SkMatrix44&) = 0;
-    virtual void setTransform(const WebTransformationMatrix&) = 0;
     virtual SkMatrix44 transform() const = 0;
 
     // Sets whether the layer draws its content when compositing.

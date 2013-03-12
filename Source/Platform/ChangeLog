@@ -1,3 +1,25 @@
+2013-03-11  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Use SkMatrix44 instead of WebTransformationMatrix in animation APIs
+        https://bugs.webkit.org/show_bug.cgi?id=111791
+
+        Reviewed by Adrienne Walker.
+
+        This adds SkMatrix44 overrides for animation APIs that deal with matrices and slims the interface
+        down for WebTransformationMatrix to the minimum needed to compile. With this patch, there are no
+        live codepaths that use WebTransformationMatrix but some downstream code still needs a type and a
+        few functions to compile. After the downstream code is patched this type can go away completely.
+
+        * chromium/public/WebLayer.h:
+        (WebKit):
+        (WebLayer):
+        * chromium/public/WebTransformAnimationCurve.h:
+        (WebTransformAnimationCurve):
+        * chromium/public/WebTransformOperations.h:
+        (WebTransformOperations):
+        * chromium/public/WebTransformationMatrix.h:
+        (WebTransformationMatrix):
+
 2013-03-08  Harald Alvestrand  <hta@chromium.org>
 
         Implemented new API for RTCStatsReport object.

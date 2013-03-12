@@ -25,7 +25,7 @@
 #ifndef WebTransformOperations_h
 #define WebTransformOperations_h
 
-#include "WebTransformationMatrix.h"
+class SkMatrix44;
 
 #define WEB_TRANSFORM_OPERATIONS_IS_VIRTUAL 1
 
@@ -45,7 +45,7 @@ public:
     virtual void appendScale(double x, double y, double z) = 0;
     virtual void appendSkew(double x, double y) = 0;
     virtual void appendPerspective(double depth) = 0;
-    virtual void appendMatrix(const WebTransformationMatrix&) = 0;
+    virtual void appendMatrix(const SkMatrix44&) = 0;
     virtual void appendIdentity() = 0;
 
     virtual bool isIdentity() const = 0;

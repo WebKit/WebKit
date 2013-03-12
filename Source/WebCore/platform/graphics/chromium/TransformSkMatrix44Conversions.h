@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,29 +22,15 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebTransformAnimationCurve_h
-#define WebTransformAnimationCurve_h
+#include "SkMatrix44.h"
 
-#include "WebAnimationCurve.h"
+namespace WebCore {
 
-#include "WebCommon.h"
-#include "WebTransformKeyframe.h"
+class TransformationMatrix;
 
-namespace WebKit {
-
-// A keyframed transform animation curve.
-class WebTransformAnimationCurve : public WebAnimationCurve {
+class TransformSkMatrix44Conversions {
 public:
-    virtual ~WebTransformAnimationCurve() { }
-
-    // Adds the keyframe with the default timing function (ease).
-    virtual void add(const WebTransformKeyframe&) = 0;
-    virtual void add(const WebTransformKeyframe&, TimingFunctionType) = 0;
-    // Adds the keyframe with a custom, bezier timing function. Note, it is
-    // assumed that x0 = y0 = 0, and x3 = y3 = 1.
-    virtual void add(const WebTransformKeyframe&, double x1, double y1, double x2, double y2) = 0;
+    static SkMatrix44 convert(const TransformationMatrix&);
 };
 
-} // namespace WebKit
-
-#endif // WebTransformAnimationCurve_h
+} // namespace WebCore

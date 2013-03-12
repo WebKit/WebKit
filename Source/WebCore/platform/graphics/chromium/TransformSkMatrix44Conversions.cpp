@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,29 +22,34 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebTransformAnimationCurve_h
-#define WebTransformAnimationCurve_h
+#include "config.h"
 
-#include "WebAnimationCurve.h"
+#include "TransformSkMatrix44Conversions.h"
 
-#include "WebCommon.h"
-#include "WebTransformKeyframe.h"
+#include "TransformationMatrix.h"
 
-namespace WebKit {
+namespace WebCore {
 
-// A keyframed transform animation curve.
-class WebTransformAnimationCurve : public WebAnimationCurve {
-public:
-    virtual ~WebTransformAnimationCurve() { }
+SkMatrix44 TransformSkMatrix44Conversions::convert(const TransformationMatrix& matrix)
+{
+    SkMatrix44 ret(SkMatrix44::kUninitialized_Constructor);
+    ret.setDouble(0, 0, matrix.m11());
+    ret.setDouble(0, 1, matrix.m21());
+    ret.setDouble(0, 2, matrix.m31());
+    ret.setDouble(0, 3, matrix.m41());
+    ret.setDouble(1, 0, matrix.m12());
+    ret.setDouble(1, 1, matrix.m22());
+    ret.setDouble(1, 2, matrix.m32());
+    ret.setDouble(1, 3, matrix.m42());
+    ret.setDouble(2, 0, matrix.m13());
+    ret.setDouble(2, 1, matrix.m23());
+    ret.setDouble(2, 2, matrix.m33());
+    ret.setDouble(2, 3, matrix.m43());
+    ret.setDouble(3, 0, matrix.m14());
+    ret.setDouble(3, 1, matrix.m24());
+    ret.setDouble(3, 2, matrix.m34());
+    ret.setDouble(3, 3, matrix.m44());
+    return ret;
+}
 
-    // Adds the keyframe with the default timing function (ease).
-    virtual void add(const WebTransformKeyframe&) = 0;
-    virtual void add(const WebTransformKeyframe&, TimingFunctionType) = 0;
-    // Adds the keyframe with a custom, bezier timing function. Note, it is
-    // assumed that x0 = y0 = 0, and x3 = y3 = 1.
-    virtual void add(const WebTransformKeyframe&, double x1, double y1, double x2, double y2) = 0;
-};
-
-} // namespace WebKit
-
-#endif // WebTransformAnimationCurve_h
+} // namespace WebCore

@@ -59,6 +59,7 @@
 #include "SkMatrix44.h"
 #include "SkiaImageFilterBuilder.h"
 #include "SystemTime.h"
+#include "TransformSkMatrix44Conversions.h"
 #include <public/Platform.h>
 #include <public/WebAnimation.h>
 #include <public/WebCompositorSupport.h>
@@ -701,36 +702,14 @@ void GraphicsLayerChromium::updateAnchorPoint()
     platformLayer()->setAnchorPointZ(m_anchorPoint.z());
 }
 
-static SkMatrix44 transformToSkMatrix44(const TransformationMatrix& matrix)
-{
-    SkMatrix44 ret(SkMatrix44::kUninitialized_Constructor);
-    ret.setDouble(0, 0, matrix.m11());
-    ret.setDouble(0, 1, matrix.m21());
-    ret.setDouble(0, 2, matrix.m31());
-    ret.setDouble(0, 3, matrix.m41());
-    ret.setDouble(1, 0, matrix.m12());
-    ret.setDouble(1, 1, matrix.m22());
-    ret.setDouble(1, 2, matrix.m32());
-    ret.setDouble(1, 3, matrix.m42());
-    ret.setDouble(2, 0, matrix.m13());
-    ret.setDouble(2, 1, matrix.m23());
-    ret.setDouble(2, 2, matrix.m33());
-    ret.setDouble(2, 3, matrix.m43());
-    ret.setDouble(3, 0, matrix.m14());
-    ret.setDouble(3, 1, matrix.m24());
-    ret.setDouble(3, 2, matrix.m34());
-    ret.setDouble(3, 3, matrix.m44());
-    return ret;
-}
-
 void GraphicsLayerChromium::updateTransform()
 {
-    platformLayer()->setTransform(transformToSkMatrix44(m_transform));
+    platformLayer()->setTransform(TransformSkMatrix44Conversions::convert(m_transform));
 }
 
 void GraphicsLayerChromium::updateChildrenTransform()
 {
-    platformLayer()->setSublayerTransform(transformToSkMatrix44(m_childrenTransform));
+    platformLayer()->setSublayerTransform(TransformSkMatrix44Conversions::convert(m_childrenTransform));
 }
 
 void GraphicsLayerChromium::updateMasksToBounds()

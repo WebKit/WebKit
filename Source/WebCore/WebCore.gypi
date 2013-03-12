@@ -4054,6 +4054,8 @@
             'platform/graphics/chromium/SimpleFontDataChromiumWin.cpp',
             'platform/graphics/chromium/ThreadSafeDataTransport.cpp',
             'platform/graphics/chromium/ThreadSafeDataTransport.h',
+            'platform/graphics/chromium/TransformSkMatrix44Conversions.cpp',
+            'platform/graphics/chromium/TransformSkMatrix44Conversions.h',
             'platform/graphics/chromium/TransparencyWin.cpp',
             'platform/graphics/chromium/TransparencyWin.h',
             'platform/graphics/chromium/UniscribeHelper.cpp',
