@@ -193,7 +193,11 @@ void SVGImage::drawSVGToImageBuffer(ImageBuffer* buffer, const IntSize& size, fl
     if (zoom != 1)
         frame->setPageZoomFactor(1);
 
-    renderer->setContainerSize(IntSize());
+    // Renderer may have been recreated by frame->setPageZoomFactor(zoom). So fetch it again.
+    renderer = toRenderSVGRoot(rootElement->renderer());
+    if (renderer)
+        renderer->setContainerSize(IntSize());
+
     frame->view()->resize(this->size());
     if (frame->view()->needsLayout())
         frame->view()->layout();
