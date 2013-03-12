@@ -28,7 +28,6 @@
 #include "IDBBackingStore.h"
 
 #include "IDBFactoryBackendImpl.h"
-#include "IDBLevelDBCoding.h"
 #include "SharedBuffer.h"
 
 #include <gtest/gtest.h>
@@ -37,7 +36,6 @@
 #if ENABLE(INDEXED_DATABASE)
 
 using namespace WebCore;
-using IDBLevelDBCoding::KeyPrefix;
 
 namespace {
 
@@ -55,13 +53,10 @@ public:
         // useful keys and values during tests
         const char rawValue1[] = "value1";
         const char rawValue2[] = "value2";
-        const char rawValue3[] = "value3";
         m_value1.append(rawValue1, sizeof(rawValue1));
         m_value2.append(rawValue2, sizeof(rawValue2));
-        m_value3.append(rawValue3, sizeof(rawValue3));
         m_key1 = IDBKey::createNumber(99);
         m_key2 = IDBKey::createString("key2");
-        m_key3 = IDBKey::createString("key3");
     }
 
 protected:
@@ -70,10 +65,8 @@ protected:
     // Sample keys and values that are consistent.
     RefPtr<IDBKey> m_key1;
     RefPtr<IDBKey> m_key2;
-    RefPtr<IDBKey> m_key3;
     Vector<char> m_value1;
     Vector<char> m_value2;
-    Vector<char> m_value3;
 };
 
 TEST_F(IDBBackingStoreTest, PutGetConsistency)
@@ -103,26 +96,12 @@ TEST_F(IDBBackingStoreTest, HighIds)
 {
     const int64_t highDatabaseId = 1ULL << 35;
     const int64_t highObjectStoreId = 1ULL << 39;
-    // indexIds are capped at 32 bits for storage purposes.
-    const int64_t highIndexId = 1ULL << 29;
-
-    const int64_t invalidHighIndexId = 1ULL << 37;
-
-    const RefPtr<IDBKey> indexKey = m_key2;
-    Vector<char> indexKeyRaw = IDBLevelDBCoding::encodeIDBKey(*indexKey);
     {
         IDBBackingStore::Transaction transaction1(m_backingStore.get());
         transaction1.begin();
         IDBBackingStore::RecordIdentifier record;
         bool ok = m_backingStore->putRecord(&transaction1, highDatabaseId, highObjectStoreId, *m_key1.get(), SharedBuffer::create(m_value1.data(), m_value1.size()), &record);
         EXPECT_TRUE(ok);
-
-        ok = m_backingStore->putIndexDataForRecord(&transaction1, highDatabaseId, highObjectStoreId, invalidHighIndexId, *indexKey, record);
-        EXPECT_FALSE(ok);
-
-        ok = m_backingStore->putIndexDataForRecord(&transaction1, highDatabaseId, highObjectStoreId, highIndexId, *indexKey, record);
-        EXPECT_TRUE(ok);
-
         ok = transaction1.commit();
         EXPECT_TRUE(ok);
     }
@@ -133,67 +112,10 @@ TEST_F(IDBBackingStoreTest, HighIds)
         Vector<char> resultValue;
         bool ok = m_backingStore->getRecord(&transaction2, highDatabaseId, highObjectStoreId, *m_key1.get(), resultValue);
         EXPECT_TRUE(ok);
-        EXPECT_EQ(m_value1, resultValue);
-
-        RefPtr<IDBKey> newPrimaryKey;
-        ok = m_backingStore->getPrimaryKeyViaIndex(&transaction2, highDatabaseId, highObjectStoreId, invalidHighIndexId, *indexKey, newPrimaryKey);
-        EXPECT_FALSE(ok);
-
-        ok = m_backingStore->getPrimaryKeyViaIndex(&transaction2, highDatabaseId, highObjectStoreId, highIndexId, *indexKey, newPrimaryKey);
-        EXPECT_TRUE(ok);
-        EXPECT_TRUE(newPrimaryKey->isEqual(m_key1.get()));
-
         ok = transaction2.commit();
         EXPECT_TRUE(ok);
+        EXPECT_EQ(m_value1, resultValue);
     }
-}
-
-// Make sure that other invalid ids do not crash.
-TEST_F(IDBBackingStoreTest, InvalidIds)
-{
-    // valid ids for use when testing invalid ids
-    const int64_t databaseId = 1;
-    const int64_t objectStoreId = 1;
-    const int64_t indexId = IDBLevelDBCoding::MinimumIndexId;
-    const int64_t invalidLowIndexId = 19; // indexIds must be > IDBLevelDBCoding::MinimumIndexId
-
-    const RefPtr<SharedBuffer> value = SharedBuffer::create(m_value1.data(), m_value1.size());
-    Vector<char> resultValue;
-
-    IDBBackingStore::Transaction transaction1(m_backingStore.get());
-    transaction1.begin();
-
-    IDBBackingStore::RecordIdentifier record;
-    bool ok = m_backingStore->putRecord(&transaction1, databaseId, KeyPrefix::InvalidId, *m_key1.get(), value, &record);
-    EXPECT_FALSE(ok);
-    ok = m_backingStore->putRecord(&transaction1, databaseId, 0, *m_key1.get(), value, &record);
-    EXPECT_FALSE(ok);
-    ok = m_backingStore->putRecord(&transaction1, KeyPrefix::InvalidId, objectStoreId, *m_key1.get(), value, &record);
-    EXPECT_FALSE(ok);
-    ok = m_backingStore->putRecord(&transaction1, 0, objectStoreId, *m_key1.get(), value, &record);
-    EXPECT_FALSE(ok);
-
-    ok = m_backingStore->getRecord(&transaction1, databaseId, KeyPrefix::InvalidId, *m_key1.get(), resultValue);
-    EXPECT_FALSE(ok);
-    ok = m_backingStore->getRecord(&transaction1, databaseId, 0, *m_key1.get(), resultValue);
-    EXPECT_FALSE(ok);
-    ok = m_backingStore->getRecord(&transaction1, KeyPrefix::InvalidId, objectStoreId, *m_key1.get(), resultValue);
-    EXPECT_FALSE(ok);
-    ok = m_backingStore->getRecord(&transaction1, 0, objectStoreId, *m_key1.get(), resultValue);
-    EXPECT_FALSE(ok);
-
-    RefPtr<IDBKey> newPrimaryKey;
-    ok = m_backingStore->getPrimaryKeyViaIndex(&transaction1, databaseId, objectStoreId, KeyPrefix::InvalidId, *m_key1, newPrimaryKey);
-    EXPECT_FALSE(ok);
-    ok = m_backingStore->getPrimaryKeyViaIndex(&transaction1, databaseId, objectStoreId, invalidLowIndexId, *m_key1, newPrimaryKey);
-    EXPECT_FALSE(ok);
-    ok = m_backingStore->getPrimaryKeyViaIndex(&transaction1, databaseId, objectStoreId, 0, *m_key1, newPrimaryKey);
-    EXPECT_FALSE(ok);
-
-    ok = m_backingStore->getPrimaryKeyViaIndex(&transaction1, KeyPrefix::InvalidId, objectStoreId, indexId, *m_key1, newPrimaryKey);
-    EXPECT_FALSE(ok);
-    ok = m_backingStore->getPrimaryKeyViaIndex(&transaction1, databaseId, KeyPrefix::InvalidId, indexId, *m_key1, newPrimaryKey);
-    EXPECT_FALSE(ok);
 }
 
 TEST_F(IDBBackingStoreTest, CreateDatabase)
@@ -244,8 +166,7 @@ TEST_F(IDBBackingStoreTest, CreateDatabase)
         EXPECT_EQ(intVersion, database.intVersion);
         EXPECT_EQ(databaseId, database.id);
 
-        ok = m_backingStore->getObjectStores(database.id, &database.objectStores);
-        EXPECT_TRUE(ok);
+        m_backingStore->getObjectStores(database.id, &database.objectStores);
 
         EXPECT_EQ(1, database.objectStores.size());
         IDBObjectStoreMetadata objectStore = database.objectStores.get(objectStoreId);

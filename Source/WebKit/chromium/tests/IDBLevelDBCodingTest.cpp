@@ -101,7 +101,7 @@ TEST(IDBLevelDBCodingTest, DecodeByte)
         EXPECT_EQ(v.data() + v.size(), p);
     }
 }
-
+   
 TEST(IDBLevelDBCodingTest, EncodeBool)
 {
     {
@@ -711,7 +711,7 @@ TEST(IDBLevelDBCodingTest, ComparisonTest)
     keys.append(IndexDataKey::encode(1, 1, 30, maxIDBKey(), maxIDBKey(), 1));
     keys.append(IndexDataKey::encode(1, 1, 31, minIDBKey(), minIDBKey(), 0));
     keys.append(IndexDataKey::encode(1, 2, 30, minIDBKey(), minIDBKey(), 0));
-    keys.append(IndexDataKey::encodeMaxKey(1, 2, INT32_MAX - 1));
+    keys.append(IndexDataKey::encodeMaxKey(1, 2, INT32_MAX));
 
     for (size_t i = 0; i < keys.size(); ++i) {
         const LevelDBSlice keyA(keys[i]);
