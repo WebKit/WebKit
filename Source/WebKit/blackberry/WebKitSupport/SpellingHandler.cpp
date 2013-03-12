@@ -9,7 +9,7 @@
 #include "InputHandler.h"
 #include "Range.h"
 #include "SpellChecker.h"
-#include "visible_units.h"
+#include "VisibleUnits.h"
 
 #include <BlackBerryPlatformIMF.h>
 #include <BlackBerryPlatformLog.h>

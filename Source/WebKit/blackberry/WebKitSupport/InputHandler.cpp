@@ -61,11 +61,11 @@
 #include "TextCheckerClient.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
+#include "VisibleUnits.h"
 #include "WebPageClient.h"
 #include "WebPage_p.h"
 #include "WebSettings.h"
 #include "htmlediting.h"
-#include "visible_units.h"
 
 #include <BlackBerryPlatformDeviceInfo.h>
 #include <BlackBerryPlatformIMF.h>

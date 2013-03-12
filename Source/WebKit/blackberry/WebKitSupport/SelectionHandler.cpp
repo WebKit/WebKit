@@ -32,11 +32,11 @@
 #include "RenderLayer.h"
 #include "SelectionOverlay.h"
 #include "TouchEventHandler.h"
+#include "VisibleUnits.h"
 #include "WebPageClient.h"
 #include "WebPage_p.h"
 
 #include "htmlediting.h"
-#include "visible_units.h"
 
 #include <BlackBerryPlatformKeyboardEvent.h>
 #include <BlackBerryPlatformLog.h>

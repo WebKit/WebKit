@@ -35,9 +35,9 @@
 #include "TextIterator.h"
 #include "VisiblePosition.h"
 #include "VisibleSelection.h"
+#include "VisibleUnits.h"
 
 #include "htmlediting.h"
-#include "visible_units.h"
 
 #include <limits>
 

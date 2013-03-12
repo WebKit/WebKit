@@ -1,3 +1,17 @@
+2013-03-12  Alberto Garcia  <agarcia@igalia.com>
+
+        [BlackBerry] Fix visible_units.h includes
+        https://bugs.webkit.org/show_bug.cgi?id=112131
+
+        Reviewed by Carlos Garcia Campos.
+
+        This file was renamed to VisibleUnits.h in r144911.
+
+        * WebKitSupport/DOMSupport.cpp:
+        * WebKitSupport/InputHandler.cpp:
+        * WebKitSupport/SelectionHandler.cpp:
+        * WebKitSupport/SpellingHandler.cpp:
+
 2013-03-11  Jochen Eisinger  <jochen@chromium.org>
 
         Rename DefinitelyProcessingUserGesture to DefinitelyProcessingNewUserGesture
