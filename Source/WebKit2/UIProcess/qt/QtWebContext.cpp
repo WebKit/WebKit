@@ -34,10 +34,12 @@
 
 namespace WebKit {
 
-static WebContext* s_defaultWebContext = 0;
+// Prevent the destruction of the WKContext for two reasons:
+// - An internal reference is kept to the WebContext waiting until the web process shut down, which
+// does so 60 seconds after the last page closed. We want to reuse that web process if possible and
+// avoid creating a second parallel WKContext + web process.
+// - The IconDatabase wasn't designed to have more than one instance, or to be quickly opened/closed.
 static QtWebContext* s_defaultQtWebContext = 0;
-static OwnPtr<QtDownloadManager> s_downloadManager;
-static OwnPtr<QtWebIconDatabaseClient> s_iconDatabase;
 
 static void initInspectorServer()
 {
@@ -109,85 +111,43 @@ static void initializeContextInjectedBundleClient(WebContext* context)
     WKContextSetInjectedBundleClient(toAPI(context), &injectedBundleClient);
 }
 
-QtWebContext::QtWebContext(WebContext* context)
+QtWebContext::QtWebContext(PassRefPtr<WebContext> context)
     : m_context(context)
+    , m_downloadManager(new QtDownloadManager(m_context.get()))
+    , m_iconDatabase(new QtWebIconDatabaseClient(m_context.get()))
 {
 }
 
 QtWebContext::~QtWebContext()
 {
-    ASSERT(!s_defaultQtWebContext || s_defaultQtWebContext == this);
-    s_defaultQtWebContext = 0;
 }
 
 // Used directly only by WebKitTestRunner.
-PassRefPtr<QtWebContext> QtWebContext::create(WebContext* context)
+QtWebContext* QtWebContext::create(PassRefPtr<WebContext> context)
 {
     globalInitialization();
-    // The lifetime of WebContext is a bit special, it is bound to the reference held
-    // by QtWebContext at first and then enters a circular dependency with WebProcessProxy
-    // once the first page is created until the web process exits. Because of this we can't
-    // assume that destroying the last QtWebContext will destroy the WebContext and we
-    // have to make sure that WebContext's clients follow its lifetime and aren't attached
-    // to QtWebContext. QtWebContext itself is only attached to QQuickWebView.
-    // Since we only support one WebContext at a time, initialize those clients globally
-    // here. They have to be available to views spawned by WebKitTestRunner as well.
-    if (!s_downloadManager)
-        s_downloadManager = adoptPtr(new QtDownloadManager(context));
-    if (!s_iconDatabase)
-        s_iconDatabase = adoptPtr(new QtWebIconDatabaseClient(context));
-    return adoptRef(new QtWebContext(context));
+    return new QtWebContext(context);
 }
 
-PassRefPtr<QtWebContext> QtWebContext::defaultContext()
+QtWebContext* QtWebContext::defaultContext()
 {
-    // Keep local references until we can return a ref to QtWebContext holding the WebContext.
-    RefPtr<WebContext> webContext(s_defaultWebContext);
-    RefPtr<QtWebContext> qtWebContext(s_defaultQtWebContext);
-
-    if (!webContext) {
-        webContext = WebContext::create(String());
-        s_defaultWebContext = webContext.get();
+    if (!s_defaultQtWebContext) {
+        RefPtr<WebContext> webContext = WebContext::create(String());
         // Make sure for WebKitTestRunner that the injected bundle client isn't initialized
-        // and that the page cache isn't enabled (defaultContext isn't used there).
+        // and that the page cache isn't enabled (defaultContext() isn't used there).
         initializeContextInjectedBundleClient(webContext.get());
         // A good all-around default.
         webContext->setCacheModel(CacheModelDocumentBrowser);
+
+        s_defaultQtWebContext = QtWebContext::create(webContext.release());
     }
 
-    if (!qtWebContext) {
-        qtWebContext = QtWebContext::create(webContext.get());
-        s_defaultQtWebContext = qtWebContext.get();
-    }
-
-    return qtWebContext.release();
+    return s_defaultQtWebContext;
 }
 
 PassRefPtr<WebPageProxy> QtWebContext::createWebPage(PageClient* client, WebPageGroup* pageGroup)
 {
     return m_context->createWebPage(client, pageGroup);
-}
-
-QtDownloadManager* QtWebContext::downloadManager()
-{
-    ASSERT(s_downloadManager);
-    return s_downloadManager.get();
-}
-
-QtWebIconDatabaseClient* QtWebContext::iconDatabase()
-{
-    ASSERT(s_iconDatabase);
-    return s_iconDatabase.get();
-}
-
-void QtWebContext::invalidateContext(WebContext* context)
-{
-    UNUSED_PARAM(context);
-    ASSERT(!s_defaultQtWebContext);
-    ASSERT(!s_defaultWebContext || s_defaultWebContext == context);
-    s_downloadManager.clear();
-    s_iconDatabase.clear();
-    s_defaultWebContext = 0;
 }
 
 } // namespace WebKit

@@ -273,6 +273,7 @@ QPointF QQuickWebViewPrivate::FlickableAxisLocker::adjust(const QPointF& positio
 QQuickWebViewPrivate::QQuickWebViewPrivate(QQuickWebView* viewport)
     : q_ptr(viewport)
     , experimental(new QQuickWebViewExperimental(viewport, this))
+    , context(0)
     , alertDialog(0)
     , confirmDialog(0)
     , promptDialog(0)
@@ -612,7 +613,7 @@ void QQuickWebViewPrivate::handleDownloadRequest(DownloadProxy* download)
     downloadItem->d->downloadProxy = download;
 
     q->connect(downloadItem->d, SIGNAL(receivedResponse(QWebDownloadItem*)), q, SLOT(_q_onReceivedResponseFromDownload(QWebDownloadItem*)));
-    QtWebContext::downloadManager()->addDownload(download, downloadItem);
+    QtWebContext::defaultContext()->downloadManager()->addDownload(download, downloadItem);
 }
 
 void QQuickWebViewPrivate::_q_onVisibleChanged()
@@ -647,7 +648,7 @@ void QQuickWebViewPrivate::updateIcon()
     if (!provider)
         return;
 
-    QUrl iconUrl = provider->iconURLForPageURLInContext(m_currentUrl, context.get());
+    QUrl iconUrl = provider->iconURLForPageURLInContext(m_currentUrl, context);
 
     if (iconUrl == m_iconUrl)
         return;

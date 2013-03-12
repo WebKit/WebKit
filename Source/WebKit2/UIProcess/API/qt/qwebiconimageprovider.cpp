@@ -67,7 +67,7 @@ QImage QWebIconImageProvider::requestImage(const QString& id, QSize* size, const
 {
     QString pageURL = QString::fromUtf8(QByteArray::fromBase64(id.midRef(id.indexOf('#') + 1).toLatin1()));
 
-    QtWebIconDatabaseClient* iconDatabase = QtWebContext::iconDatabase();
+    QtWebIconDatabaseClient* iconDatabase = QtWebContext::defaultContext()->iconDatabase();
     if (!iconDatabase)
         return QImage();
 

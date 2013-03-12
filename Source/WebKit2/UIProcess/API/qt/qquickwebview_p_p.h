@@ -165,7 +165,6 @@ protected:
     static void didChangeBackForwardList(WKPageRef, WKBackForwardListItemRef, WKArrayRef, const void *clientInfo);
 
     QQuickWebViewPrivate(QQuickWebView* viewport);
-    RefPtr<WebKit::QtWebContext> context;
     RefPtr<WebKit::WebPageProxy> webPageProxy;
     WKRetainPtr<WKPageRef> webPage;
     WKRetainPtr<WKPageGroupRef> pageGroup;
@@ -181,6 +180,7 @@ protected:
     QScopedPointer<QQuickWebPage> pageView;
     QQuickWebView* q_ptr;
     QQuickWebViewExperimental* experimental;
+    WebKit::QtWebContext* context;
 
     FlickableAxisLocker axisLocker;
 

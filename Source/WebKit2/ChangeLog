@@ -1,5 +1,44 @@
 2013-02-14  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
+        [Qt][WK2] Keep the WebContext alive during the whole application's lifetime
+        https://bugs.webkit.org/show_bug.cgi?id=109827
+
+        Reviewed by Simon Hausmann.
+        Signed off for WebKit2 by Benjamin Poulain.
+
+        The lifetime of the WebContext is difficult to manage because of a circular
+        reference kept with the WebProcessProxy until it shuts itself down, 60
+        seconds after the last page is closed. There was some notification
+        in place to handle this in the upper layer, but having to go through the
+        C API (done in a following patch) makes this quite awkward.
+
+        Keeping the WebContext alive also includes the icon database which is
+        quite heavy, in the future we should only enable it once the
+        QQuickWebView::icon property is read.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::QQuickWebViewPrivate):
+        (QQuickWebViewPrivate::handleDownloadRequest):
+        (QQuickWebViewPrivate::updateIcon):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        * UIProcess/API/qt/qwebiconimageprovider.cpp:
+        (QWebIconImageProvider::requestImage):
+        * UIProcess/qt/QtWebContext.cpp:
+        (WebKit):
+        (WebKit::QtWebContext::QtWebContext):
+        (WebKit::QtWebContext::~QtWebContext):
+        (WebKit::QtWebContext::create):
+        (WebKit::QtWebContext::defaultContext):
+        * UIProcess/qt/QtWebContext.h:
+        (QtWebContext):
+        (WebKit::QtWebContext::downloadManager):
+        (WebKit::QtWebContext::iconDatabase):
+        * UIProcess/qt/WebContextQt.cpp:
+        (WebKit::WebContext::platformInvalidateContext):
+
+2013-02-14  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
         [Qt][WK2] Favor QUrl and QString over WTF::String in the Qt API layer
         https://bugs.webkit.org/show_bug.cgi?id=109468
 

@@ -81,9 +81,6 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 void WebContext::platformInvalidateContext()
 {
-#if HAVE(QTQUICK)
-    QtWebContext::invalidateContext(this);
-#endif
 }
 
 String WebContext::platformDefaultDatabaseDirectory() const
