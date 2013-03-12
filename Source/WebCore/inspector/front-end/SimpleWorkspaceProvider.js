@@ -98,13 +98,11 @@ WebInspector.SimpleProjectDelegate.prototype = {
     },
 
     /**
-     * @param {Array.<string>} path
-     * @param {string} currentContent
-     * @param {function(?string)} callback
+     * @return {boolean}
      */
-    requestUpdatedFileContent: function(path, currentContent, callback)
+    canSetFileContent: function()
     {
-        callback(null);
+        return false;
     },
 
     /**

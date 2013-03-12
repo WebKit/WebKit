@@ -101,11 +101,9 @@ WebInspector.ProjectDelegate.prototype = {
     requestFileContent: function(path, callback) { },
 
     /**
-     * @param {Array.<string>} path
-     * @param {string} currentContent
-     * @param {function(?string)} callback
+     * @return {boolean}
      */
-    requestUpdatedFileContent: function(path, currentContent, callback) { },
+    canSetFileContent: function() { },
 
     /**
      * @param {Array.<string>} path
@@ -250,12 +248,11 @@ WebInspector.Project.prototype = {
     },
 
     /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {function(?string)} callback
+     * @return {boolean}
      */
-    requestUpdatedFileContent: function(uiSourceCode, callback)
+    canSetFileContent: function()
     {
-        this._projectDelegate.requestUpdatedFileContent(uiSourceCode.path(), uiSourceCode.workingCopy(), callback);
+        return this._projectDelegate.canSetFileContent();
     },
 
     /**

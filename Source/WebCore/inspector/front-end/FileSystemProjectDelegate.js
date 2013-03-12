@@ -104,43 +104,17 @@ WebInspector.FileSystemProjectDelegate.prototype = {
          */
         function innerCallback(content)
         {
-            this._contentRequestFinished(path, content);
             var contentType = this._contentTypeForPath(path);
             callback(content, false, contentType.canonicalMimeType());
         }
     },
 
     /**
-     * @param {Array.<string>} path
-     * @param {string} content
+     * @return {boolean}
      */
-    _contentRequestFinished: function(path, content)
+    canSetFileContent: function()
     {
-        this._lastContentRequestPath = path;
-        this._lastContentRequestContent = content;
-    },
-
-    /**
-     * @param {Array.<string>} path
-     * @param {string} currentContent
-     * @param {function(?string)} callback
-     */
-    requestUpdatedFileContent: function(path, currentContent, callback)
-    {
-        var filePath = this._filePathForPath(path);
-        this._fileSystem.requestFileContent(filePath, innerCallback.bind(this));
-
-        /**
-         * @param {?string} content
-         */
-        function innerCallback(content)
-        {
-            var previousContent = this._lastContentRequestPath === path ? this._lastContentRequestContent : null;
-            if (typeof previousContent !== "string")
-                previousContent = currentContent;
-            this._contentRequestFinished(path, content);
-            callback(content !== previousContent ? content : null);
-        }
+        return true;
     },
 
     /**
@@ -269,7 +243,7 @@ WebInspector.FileSystemWorkspaceProvider.prototype = {
         var projectId = WebInspector.FileSystemProjectDelegate.projectId(fileSystem.path());
         var projectDelegate = new WebInspector.FileSystemProjectDelegate(fileSystem, this._workspace)
         this._simpleProjectDelegates[projectDelegate.id()] = projectDelegate;
-        console.assert(!projectDelegate.id());
+        console.assert(!this._workspace.project(projectDelegate.id()));
         this._workspace.addProject(projectDelegate);
         projectDelegate.populate();
     },
