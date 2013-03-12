@@ -1,3 +1,21 @@
+2013-03-12  Oliver Hunt  <oliver@apple.com>
+
+        Make CheckedArithmetic slightly more sane
+        https://bugs.webkit.org/show_bug.cgi?id=112178
+
+        Reviewed by Geoffrey Garen.
+
+        Add an enum type for safeGet rather than using a bool,
+        and correctly handle unsigned * unsigned, when one value
+        is 0.
+
+        * wtf/CheckedArithmetic.h:
+        (WTF::ENUM_CLASS):
+        (WTF):
+        (WTF::operator+):
+        (WTF::operator-):
+        (WTF::operator*):
+
 2013-03-11  Michael Saboff  <msaboff@apple.com>
 
         Unreviewed build fix.  Rolling out inadvertent setting of DATA_LOG_TO_FILE.

@@ -27,6 +27,7 @@
 #define CheckedArithmetic_h
 
 #include <wtf/Assertions.h>
+#include <wtf/EnumClass.h>
 #include <wtf/TypeTraits.h>
 
 #include <limits>
@@ -66,6 +67,12 @@
 
 namespace WTF {
 
+ENUM_CLASS(CheckedState)
+{
+    DidOverflow,
+    DidNotOverflow
+} ENUM_CLASS_END(CheckedState);
+    
 class CrashOnOverflow {
 protected:
     NO_RETURN_DUE_TO_CRASH void overflowed()
@@ -316,7 +323,7 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
     {
         ResultType temp = lhs * rhs;
         if (temp < lhs)
-            return false;
+            return !rhs;
         result = temp;
         return true;
     }
@@ -534,10 +541,12 @@ public:
         return m_value;
     }
     
-    bool safeGet(T& value) const WARN_UNUSED_RETURN
+    inline CheckedState safeGet(T& value) const WARN_UNUSED_RETURN
     {
         value = m_value;
-        return this->hasOverflowed();
+        if (this->hasOverflowed())
+            return CheckedState::DidOverflow;
+        return CheckedState::DidNotOverflow;
     }
 
     // Mutating assignment
@@ -638,7 +647,7 @@ template <typename U, typename V, typename OverflowHandler> static inline Checke
 {
     U x = 0;
     V y = 0;
-    bool overflowed = lhs.safeGet(x) || rhs.safeGet(y);
+    bool overflowed = lhs.safeGet(x) == CheckedState::DidOverflow || rhs.safeGet(y) == CheckedState::DidOverflow;
     typename Result<U, V>::ResultType result = 0;
     overflowed |= !safeAdd(x, y, result);
     if (overflowed)
@@ -650,7 +659,7 @@ template <typename U, typename V, typename OverflowHandler> static inline Checke
 {
     U x = 0;
     V y = 0;
-    bool overflowed = lhs.safeGet(x) || rhs.safeGet(y);
+    bool overflowed = lhs.safeGet(x) == CheckedState::DidOverflow || rhs.safeGet(y) == CheckedState::DidOverflow;
     typename Result<U, V>::ResultType result = 0;
     overflowed |= !safeSub(x, y, result);
     if (overflowed)
@@ -662,7 +671,7 @@ template <typename U, typename V, typename OverflowHandler> static inline Checke
 {
     U x = 0;
     V y = 0;
-    bool overflowed = lhs.safeGet(x) || rhs.safeGet(y);
+    bool overflowed = lhs.safeGet(x) == CheckedState::DidOverflow || rhs.safeGet(y) == CheckedState::DidOverflow;
     typename Result<U, V>::ResultType result = 0;
     overflowed |= !safeMultiply(x, y, result);
     if (overflowed)
