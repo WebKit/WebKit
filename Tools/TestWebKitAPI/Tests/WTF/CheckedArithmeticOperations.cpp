@@ -70,6 +70,13 @@ namespace TestWebKitAPI {
         EXPECT_EQ(true, (value += coerceLiteral(1)).hasOverflowed()); \
         EXPECT_EQ(true, value.hasOverflowed()); \
         value = 10; \
+        type _value; \
+        EXPECT_EQ(true, CheckedState::DidNotOverflow == (value * Checked<type, RecordOverflow>(0)).safeGet(_value)); \
+        EXPECT_EQ(true, 10 == _value); \
+        _value = 0; \
+        EXPECT_EQ(true, CheckedState::DidNotOverflow == (Checked<type, RecordOverflow>(0) * value).safeGet(_value)); \
+        EXPECT_EQ(true, 10 == _value); \
+        EXPECT_EQ(true, CheckedState::DidOverflow != (value * Checked<type, RecordOverflow>(std::numeric_limits<type>::max())).safeGet(_value)); \
         MixedSignednessTest(EXPECT_EQ(coerceLiteral(0), (value + -10).unsafeGet())); \
         MixedSignednessTest(EXPECT_EQ(0U, (value - 10U).unsafeGet())); \
         MixedSignednessTest(EXPECT_EQ(coerceLiteral(0), (-10 + value).unsafeGet())); \

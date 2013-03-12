@@ -712,6 +712,7 @@ template <typename U, typename V, typename OverflowHandler> static inline Checke
 }
 
 using WTF::Checked;
+using WTF::CheckedState;
 using WTF::RecordOverflow;
 
 #endif

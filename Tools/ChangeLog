@@ -1,3 +1,15 @@
+2013-03-12  Oliver Hunt  <oliver@apple.com>
+
+        Add more Checked<> tests
+        https://bugs.webkit.org/show_bug.cgi?id=112190
+
+        Reviewed by Geoffrey Garen.
+
+        Tests!
+
+        * TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp:
+        (TestWebKitAPI):
+
 2013-03-12  Julie Parent  <jparent@chromium.org>
 
         Cleanup: Move loading complete function into callback, rather than global.
