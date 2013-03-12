@@ -64,9 +64,10 @@ WebInspector.GoToLineDialog.install = function(panel, viewGetter)
 
 /**
  * @param {function():?WebInspector.View} viewGetter
+ * @param {Event=} event
  * @return {boolean}
  */
-WebInspector.GoToLineDialog._show = function(viewGetter)
+WebInspector.GoToLineDialog._show = function(viewGetter, event)
 {
     var sourceView = viewGetter();
     if (!sourceView || !sourceView.canHighlightLine())

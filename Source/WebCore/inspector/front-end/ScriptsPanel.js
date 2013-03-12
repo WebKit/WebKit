@@ -674,7 +674,11 @@ WebInspector.ScriptsPanel.prototype = {
         WebInspector.settings.pauseOnExceptionStateString.set(nextStateMap[this._pauseOnExceptionButton.state]);
     },
 
-    _togglePause: function()
+    /**
+     * @param {Event=} event
+     * @return {boolean}
+     */
+    _togglePause: function(event)
     {
         if (this._paused) {
             this._paused = false;
@@ -687,12 +691,17 @@ WebInspector.ScriptsPanel.prototype = {
         }
 
         this._clearInterface();
+        return true;
     },
 
-    _stepOverClicked: function()
+    /**
+     * @param {Event=} event
+     * @return {boolean}
+     */
+    _stepOverClicked: function(event)
     {
         if (!this._paused)
-            return;
+            return true;
 
         this._paused = false;
         this._stepping = true;
@@ -700,12 +709,17 @@ WebInspector.ScriptsPanel.prototype = {
         this._clearInterface();
 
         DebuggerAgent.stepOver();
+        return true;
     },
 
-    _stepIntoClicked: function()
+    /**
+     * @param {Event=} event
+     * @return {boolean}
+     */
+    _stepIntoClicked: function(event)
     {
         if (!this._paused)
-            return;
+            return true;
 
         this._paused = false;
         this._stepping = true;
@@ -713,12 +727,17 @@ WebInspector.ScriptsPanel.prototype = {
         this._clearInterface();
 
         DebuggerAgent.stepInto();
+        return true;
     },
 
-    _stepOutClicked: function()
+    /**
+     * @param {Event=} event
+     * @return {boolean}
+     */
+    _stepOutClicked: function(event)
     {
         if (!this._paused)
-            return;
+            return true;
 
         this._paused = false;
         this._stepping = true;
@@ -726,6 +745,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._clearInterface();
 
         DebuggerAgent.stepOut();
+        return true;
     },
 
     _toggleBreakpointsClicked: function(event)
@@ -748,7 +768,11 @@ WebInspector.ScriptsPanel.prototype = {
         }
     },
 
-    _evaluateSelectionInConsole: function()
+    /**
+     * @param {Event=} event
+     * @return {boolean}
+     */
+    _evaluateSelectionInConsole: function(event)
     {
         var selection = window.getSelection();
         if (selection.type !== "Range" || selection.isCollapsed)
@@ -814,7 +838,7 @@ WebInspector.ScriptsPanel.prototype = {
     /**
      * @param {string} buttonId
      * @param {string} buttonTitle
-     * @param {function(Event)} handler
+     * @param {function(Event=):boolean} handler
      * @param {!Array.<!WebInspector.KeyboardShortcut.Descriptor>} shortcuts
      */
     _createButtonAndRegisterShortcuts: function(buttonId, buttonTitle, handler, shortcuts)
@@ -955,6 +979,9 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.watchExpressions.addExpression(expression);
     },
 
+    /**
+     * @return {boolean}
+     */
     _toggleBreakpoint: function()
     {
         var sourceFrame = this.visibleView;
@@ -969,7 +996,11 @@ WebInspector.ScriptsPanel.prototype = {
         return false;
     },
 
-    _showOutlineDialog: function()
+    /**
+     * @param {Event=} event
+     * @return {boolean}
+     */
+    _showOutlineDialog: function(event)
     {
         var uiSourceCode = this._editorContainer.currentFile();
         if (!uiSourceCode)
