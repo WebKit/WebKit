@@ -127,6 +127,8 @@ class PerfTestsRunner(object):
             optparse.make_option("--additional-drt-flag", action="append",
                 default=[], help="Additional command line flag to pass to DumpRenderTree "
                      "Specify multiple times to add multiple flags."),
+            optparse.make_option("--driver-name", type="string",
+                help="Alternative DumpRenderTree binary to use"),
             optparse.make_option("--repeat", default=1, type="int",
                 help="Specify number of times to run test set (default: 1)."),
             optparse.make_option("--test-runner-count", default=DEFAULT_TEST_RUNNER_COUNT, type="int",

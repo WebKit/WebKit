@@ -234,6 +234,9 @@ class PerfTest(object):
         re.compile(r'^Unknown option:'),
         re.compile(r'^\[WARNING:proxy_service.cc'),
         re.compile(r'^\[INFO:'),
+        # These stderr messages come from content_shell on chromium-linux.
+        re.compile(r'INFO:SkFontHost_fontconfig.cpp'),
+        re.compile(r'Running without the SUID sandbox'),
     ]
 
     _lines_to_ignore_in_parser_result = [

@@ -1,3 +1,13 @@
+2013-03-13  Adam Barth  <abarth@webkit.org>
+
+        run-perf-tests should support content_shell
+        https://bugs.webkit.org/show_bug.cgi?id=112291
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._parse_args):
+
 2013-03-13  Oliver Hunt  <oliver@apple.com>
 
         Simplify Checked<> multiplication
