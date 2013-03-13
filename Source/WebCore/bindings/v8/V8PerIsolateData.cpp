@@ -122,6 +122,11 @@ void V8PerIsolateData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
     info.ignoreMember(m_auxiliaryContext);
 }
 
+bool V8PerIsolateData::hasPrivateTemplate(WrapperWorldType, void* privatePointer)
+{
+    return m_templates.find(privatePointer) != m_templates.end();
+}
+
 v8::Persistent<v8::FunctionTemplate> V8PerIsolateData::privateTemplate(WrapperWorldType, void* privatePointer, v8::InvocationCallback callback, v8::Handle<v8::Value> data, v8::Handle<v8::Signature> signature, int length)
 {
     v8::Persistent<v8::FunctionTemplate> privateTemplate;

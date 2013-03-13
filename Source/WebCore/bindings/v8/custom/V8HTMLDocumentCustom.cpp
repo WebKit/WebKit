@@ -54,16 +54,20 @@ namespace WebCore {
 
 v8::Local<v8::Object> V8HTMLDocument::wrapInShadowObject(v8::Local<v8::Object> wrapper, Node* impl, v8::Isolate* isolate)
 {
-    DEFINE_STATIC_LOCAL(v8::Persistent<v8::FunctionTemplate>, shadowTemplate, ());
-    if (shadowTemplate.IsEmpty()) {
+    // This is only for getting a unique pointer which we can pass to privateTemplate.
+    static const char* shadowTemplateUniqueKey = "wrapInShadowObjectShadowTemplate";
+    WrapperWorldType currentWorldType = worldType(isolate);
+    v8::Persistent<v8::FunctionTemplate> shadowTemplate;
+    if (!V8PerIsolateData::from(isolate)->hasPrivateTemplate(currentWorldType, &shadowTemplateUniqueKey)) {
         shadowTemplate = v8::Persistent<v8::FunctionTemplate>::New(isolate, v8::FunctionTemplate::New());
         if (shadowTemplate.IsEmpty())
             return v8::Local<v8::Object>();
         shadowTemplate->SetClassName(v8::String::NewSymbol("HTMLDocument"));
-        shadowTemplate->Inherit(V8HTMLDocument::GetTemplate(isolate, worldTypeInMainThread(isolate)));
+        shadowTemplate->Inherit(V8HTMLDocument::GetTemplate(isolate, currentWorldType));
         shadowTemplate->InstanceTemplate()->SetInternalFieldCount(V8HTMLDocument::internalFieldCount);
+    } else {
+        shadowTemplate = V8PerIsolateData::from(isolate)->privateTemplate(currentWorldType, &shadowTemplateUniqueKey, 0, v8::Handle<v8::Value>(), v8::Handle<v8::Signature>());
     }
-
     v8::Local<v8::Function> shadowConstructor = shadowTemplate->GetFunction();
     if (shadowConstructor.IsEmpty())
         return v8::Local<v8::Object>();
