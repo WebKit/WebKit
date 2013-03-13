@@ -189,25 +189,6 @@ void DrawingBuffer::clearFramebuffers(GC3Dbitfield clearMask)
     }
 }
 
-// Only way to ensure that we're not getting a bad framebuffer on some AMD/OSX devices.
-// FIXME: This can be removed once renderbufferStorageMultisample starts reporting GL_OUT_OF_MEMORY properly.
-bool DrawingBuffer::checkBufferIntegrity()
-{
-    if (!m_multisampleFBO)
-        return true;
-
-    m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
-    m_context->clearColor(1.0f, 0.0f, 1.0f, 1.0f);
-    m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
-
-    commit(0, 0, 1, 1);
-
-    unsigned char pixel[4] = {0, 0, 0, 0};
-    m_context->readPixels(0, 0, 1, 1, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, &pixel);
-
-    return (pixel[0] == 0xFF && pixel[1] == 0x00 && pixel[2] == 0xFF && pixel[3] == 0xFF);
-}
-
 bool DrawingBuffer::reset(const IntSize& newSize)
 {
     if (!m_context)
@@ -257,6 +238,7 @@ bool DrawingBuffer::reset(const IntSize& newSize)
             internalRenderbufferFormat = Extensions3D::RGB8_OES;
         }
 
+
         do {
             m_size = adjustedSize;
             // resize multisample FBO
@@ -270,12 +252,6 @@ bool DrawingBuffer::reset(const IntSize& newSize)
 
                 m_context->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_multisampleColorBuffer);
                 m_context->getExtensions()->renderbufferStorageMultisample(GraphicsContext3D::RENDERBUFFER, sampleCount, internalRenderbufferFormat, m_size.width(), m_size.height());
-
-                if (m_context->getError() == GraphicsContext3D::OUT_OF_MEMORY) {
-                    adjustedSize.scale(s_resourceAdjustedRatio);
-                    continue;
-                }
-
                 m_context->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::RENDERBUFFER, m_multisampleColorBuffer);
                 resizeDepthStencil(sampleCount);
                 if (m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
@@ -302,20 +278,9 @@ bool DrawingBuffer::reset(const IntSize& newSize)
 
             if (!multisample())
                 resizeDepthStencil(0);
-            if (m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
-                adjustedSize.scale(s_resourceAdjustedRatio);
-                continue;
-            }
-
-#if OS(DARWIN)
-            // FIXME: This can be removed once renderbufferStorageMultisample starts reporting GL_OUT_OF_MEMORY properly on OSX.
-            if (!checkBufferIntegrity()) {
-                adjustedSize.scale(s_resourceAdjustedRatio);
-                continue;
-            }
-#endif
-
-            break;
+            if (m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) == GraphicsContext3D::FRAMEBUFFER_COMPLETE)
+                break;
+            adjustedSize.scale(s_resourceAdjustedRatio);
 
         } while (!adjustedSize.isEmpty());
 
