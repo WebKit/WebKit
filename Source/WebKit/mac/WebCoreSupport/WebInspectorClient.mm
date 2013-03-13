@@ -236,14 +236,6 @@ String WebInspectorFrontendClient::localizedStringsURL()
     return String();
 }
 
-String WebInspectorFrontendClient::hiddenPanels()
-{
-    NSString *hiddenPanels = [[NSUserDefaults standardUserDefaults] stringForKey:@"WebKitInspectorHiddenPanels"];
-    if (hiddenPanels)
-        return hiddenPanels;
-    return String();
-}
-
 void WebInspectorFrontendClient::bringToFront()
 {
     updateWindowTitle();

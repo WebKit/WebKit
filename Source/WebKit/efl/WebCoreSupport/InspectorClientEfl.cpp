@@ -167,12 +167,6 @@ String InspectorFrontendClientEfl::localizedStringsURL()
     return m_inspectorClient->inspectorFilesPath() + "/localizedStrings.js";
 }
 
-String InspectorFrontendClientEfl::hiddenPanels()
-{
-    notImplemented();
-    return String();
-}
-
 void InspectorFrontendClientEfl::bringToFront()
 {
     evas_object_focus_set(m_inspectorView, true);

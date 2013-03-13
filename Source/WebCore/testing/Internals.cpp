@@ -161,7 +161,6 @@ public:
     virtual void detachWindow() OVERRIDE { }
 
     virtual String localizedStringsURL() OVERRIDE { return String(); }
-    virtual String hiddenPanels() OVERRIDE { return String(); }
 
     virtual void bringToFront() OVERRIDE { }
     virtual void closeWindow() OVERRIDE { }

@@ -57,12 +57,6 @@ String WebInspectorFrontendClient::localizedStringsURL()
     return m_page->inspector()->localizedStringsURL();
 }
 
-String WebInspectorFrontendClient::hiddenPanels()
-{
-    notImplemented();
-    return String();
-}
-
 void WebInspectorFrontendClient::bringToFront()
 {
     m_page->inspector()->bringToFront();

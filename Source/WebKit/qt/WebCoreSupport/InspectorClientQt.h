@@ -88,8 +88,6 @@ public:
 
     virtual String localizedStringsURL();
 
-    virtual String hiddenPanels();
-
     virtual void bringToFront();
     virtual void closeWindow();
 

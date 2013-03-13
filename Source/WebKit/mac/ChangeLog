@@ -1,3 +1,15 @@
+2013-03-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: get rid of hiddenPanels filter
+        https://bugs.webkit.org/show_bug.cgi?id=112252
+
+        Reviewed by Vsevolod Vlasov.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        (WebInspectorFrontendClient):
+        * WebCoreSupport/WebInspectorClient.mm:
+        * WebKit.order:
+
 2013-03-12  Geoffrey Garen  <ggaren@apple.com>
 
         Moved RunLoopTimer and SchedulePair to WTF

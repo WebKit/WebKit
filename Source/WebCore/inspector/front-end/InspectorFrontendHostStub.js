@@ -95,11 +95,6 @@ WebInspector.InspectorFrontendHostStub.prototype = {
         return undefined;
     },
 
-    hiddenPanels: function()
-    {
-        return WebInspector.queryParamsObject["hiddenPanels"] || "";
-    },
-
     inspectedURLChanged: function(url)
     {
         document.title = WebInspector.UIString(Preferences.applicationTitle, url);

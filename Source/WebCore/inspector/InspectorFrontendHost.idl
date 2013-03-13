@@ -46,7 +46,6 @@
     void setInjectedScriptForOrigin(in DOMString origin, in DOMString script);
 
     DOMString localizedStringsURL();
-    DOMString hiddenPanels();
 
     void copyText(in DOMString text);
     void openInNewTab(in DOMString url);

@@ -69,7 +69,6 @@ public:
     void setInjectedScriptForOrigin(const String& origin, const String& script);
 
     String localizedStringsURL();
-    String hiddenPanels();
 
     void copyText(const String& text);
     void openInNewTab(const String& url);

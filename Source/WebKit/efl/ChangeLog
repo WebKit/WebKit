@@ -1,3 +1,14 @@
+2013-03-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: get rid of hiddenPanels filter
+        https://bugs.webkit.org/show_bug.cgi?id=112252
+
+        Reviewed by Vsevolod Vlasov.
+
+        * WebCoreSupport/InspectorClientEfl.cpp:
+        * WebCoreSupport/InspectorClientEfl.h:
+        (InspectorFrontendClientEfl):
+
 2013-03-06  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] Missing implementation of AccessibilityControllerEfl and AccessibilityUIElementEfl files

@@ -71,11 +71,8 @@ var WebInspector = {
             panelDescriptors.push(console);
             return panelDescriptors;
         }
-        var hiddenPanels = InspectorFrontendHost.hiddenPanels();
-        for (var i = 0; i < allDescriptors.length; ++i) {
-            if (hiddenPanels.indexOf(allDescriptors[i].name()) === -1)
-                panelDescriptors.push(allDescriptors[i]);
-        }
+        for (var i = 0; i < allDescriptors.length; ++i)
+            panelDescriptors.push(allDescriptors[i]);
         return panelDescriptors;
     },
 

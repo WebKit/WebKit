@@ -1,3 +1,14 @@
+2013-03-13  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: get rid of hiddenPanels filter
+        https://bugs.webkit.org/show_bug.cgi?id=112252
+
+        Reviewed by Vsevolod Vlasov.
+
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        * WebCoreSupport/InspectorClientGtk.h:
+        (InspectorFrontendClient):
+
 2013-03-12  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Set up the libPlatformGtk.la library

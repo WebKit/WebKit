@@ -211,11 +211,6 @@ String InspectorFrontendHost::localizedStringsURL()
     return m_client ? m_client->localizedStringsURL() : "";
 }
 
-String InspectorFrontendHost::hiddenPanels()
-{
-    return m_client ? m_client->hiddenPanels() : "";
-}
-
 void InspectorFrontendHost::copyText(const String& text)
 {
     Pasteboard::generalPasteboard()->writePlainText(text, Pasteboard::CannotSmartReplace);

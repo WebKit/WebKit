@@ -88,11 +88,6 @@ String InspectorFrontendClientImpl::localizedStringsURL()
     return "";
 }
 
-String InspectorFrontendClientImpl::hiddenPanels()
-{
-    return "";
-}
-
 void InspectorFrontendClientImpl::bringToFront()
 {
     m_client->activateWindow();

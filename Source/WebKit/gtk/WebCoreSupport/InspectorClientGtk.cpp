@@ -227,12 +227,6 @@ String InspectorFrontendClient::localizedStringsURL()
     return String::fromUTF8(stringsURI.get());
 }
 
-String InspectorFrontendClient::hiddenPanels()
-{
-    notImplemented();
-    return String();
-}
-
 void InspectorFrontendClient::bringToFront()
 {
     if (!m_inspectorWebView)

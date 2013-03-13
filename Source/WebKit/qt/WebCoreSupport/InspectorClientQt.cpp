@@ -306,12 +306,6 @@ String InspectorFrontendClientQt::localizedStringsURL()
     return String();
 }
 
-String InspectorFrontendClientQt::hiddenPanels()
-{
-    notImplemented();
-    return String();
-}
-
 void InspectorFrontendClientQt::bringToFront()
 {
     updateWindowTitle();

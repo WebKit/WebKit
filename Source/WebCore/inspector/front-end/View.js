@@ -59,6 +59,14 @@ WebInspector.View.prototype = {
         this._isRoot = true;
     },
 
+    /**
+     * @return {?WebInspector.View}
+     */
+    parentView: function()
+    {
+        return this._parentView;
+    },
+
     isShowing: function()
     {
         return this._isShowing;

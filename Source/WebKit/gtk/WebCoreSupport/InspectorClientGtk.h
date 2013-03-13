@@ -85,8 +85,6 @@ public:
 
     virtual WTF::String localizedStringsURL();
 
-    virtual WTF::String hiddenPanels();
-
     virtual void bringToFront();
     virtual void closeWindow();
 

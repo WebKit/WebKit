@@ -268,12 +268,6 @@ String WebInspectorFrontendClient::localizedStringsURL()
     return CFURLGetString(url.get());
 }
 
-String WebInspectorFrontendClient::hiddenPanels()
-{
-    // FIXME: implement this
-    return String();
-}
-
 void WebInspectorFrontendClient::bringToFront()
 {
     showWindowWithoutNotifications();
