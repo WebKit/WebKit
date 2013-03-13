@@ -1,3 +1,11 @@
+2013-03-12  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed attempted Windows build fix after http://trac.webkit.org/changeset/145592.
+
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+
 2013-03-12  James Robinson  <jamesr@chromium.org>
 
         Build fix for r145592 - update gyp files to refer to new file locations.

@@ -81,6 +81,7 @@
     <ClCompile Include="..\wtf\win\MainThreadWin.cpp" />
     <ClCompile Include="..\wtf\win\OwnPtrWin.cpp" />
     <ClCompile Include="..\wtf\WTFThreadData.cpp" />
+    <ClCompile Include="..\wtf\SchedulePair.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\WTF\config.h" />
@@ -91,6 +92,7 @@
     <ClInclude Include="..\wtf\ASCIICType.h" />
     <ClInclude Include="..\wtf\Assertions.h" />
     <ClInclude Include="..\wtf\Atomics.h" />
+    <ClInclude Include="..\wtf\AutodrainedPool.h" />
     <ClInclude Include="..\wtf\AVLTree.h" />
     <ClInclude Include="..\wtf\BitArray.h" />
     <ClInclude Include="..\wtf\Bitmap.h" />
@@ -204,6 +206,7 @@
     <ClInclude Include="..\wtf\RefPtrHashMap.h" />
     <ClInclude Include="..\wtf\RetainPtr.h" />
     <ClInclude Include="..\wtf\SaturatedArithmetic.h" />
+    <ClInclude Include="..\wtf\SchedulePair.h" />
     <ClInclude Include="..\wtf\SegmentedVector.h" />
     <ClInclude Include="..\wtf\SentinelLinkedList.h" />
     <ClInclude Include="..\wtf\SHA1.h" />

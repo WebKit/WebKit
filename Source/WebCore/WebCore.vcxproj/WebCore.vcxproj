@@ -3246,7 +3246,6 @@
     <ClCompile Include="..\platform\cf\BinaryPropertyList.cpp" />
     <ClCompile Include="..\platform\cf\FileSystemCF.cpp" />
     <ClCompile Include="..\platform\cf\KURLCFNet.cpp" />
-    <ClCompile Include="..\platform\cf\SchedulePair.cpp" />
     <ClCompile Include="..\platform\cf\SharedBufferCF.cpp" />
     <ClCompile Include="..\platform\cf\win\CertificateCFWin.cpp" />
     <ClCompile Include="..\platform\graphics\BitmapImage.cpp" />
@@ -9081,7 +9080,6 @@
     <ClInclude Include="..\platform\Arena.h" />
     <ClInclude Include="..\platform\AsyncFileSystem.h" />
     <ClInclude Include="..\platform\AsyncFileSystemCallbacks.h" />
-    <ClInclude Include="..\platform\AutodrainedPool.h" />
     <ClInclude Include="..\platform\CalculationValue.h" />
     <ClInclude Include="..\platform\Clock.h" />
     <ClInclude Include="..\platform\ClockGeneric.h" />
@@ -9205,7 +9203,6 @@
     <ClInclude Include="..\platform\win\WindowMessageListener.h" />
     <ClInclude Include="..\platform\win\WindowsTouch.h" />
     <ClInclude Include="..\platform\cf\BinaryPropertyList.h" />
-    <ClInclude Include="..\platform\cf\SchedulePair.h" />
     <ClInclude Include="..\platform\cf\win\CertificateCFWin.h" />
     <ClInclude Include="..\platform\graphics\BitmapImage.h" />
     <ClInclude Include="..\platform\graphics\Color.h" />

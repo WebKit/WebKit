@@ -28643,10 +28643,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\AutodrainedPool.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\CalculationValue.cpp"
 				>
 			</File>
@@ -29723,14 +29719,6 @@
 				</File>
 				<File
 					RelativePath="..\platform\cf\RetainPtr.h"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\cf\SchedulePair.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\cf\SchedulePair.h"
 					>
 				</File>
 				<File

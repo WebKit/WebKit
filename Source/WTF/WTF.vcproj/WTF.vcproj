@@ -613,6 +613,18 @@
 			>
 		</File>
 		<File
+			RelativePath="..\wtf\AutodrainedPool.h"
+			>
+		</File>
+		<File
+			RelativePath="..\wtf\SchedulePair.h">
+			>
+		</File>
+		<File
+			RelativePath="..\wtf\SchedulePair.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\wtf\Bitmap.h"
 			>
 		</File>

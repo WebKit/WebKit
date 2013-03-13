@@ -6627,9 +6627,6 @@
     <ClCompile Include="..\platform\cf\KURLCFNet.cpp">
       <Filter>platform\cf</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\cf\SchedulePair.cpp">
-      <Filter>platform\cf</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\cf\win\CertificateCFWin.cpp">
       <Filter>platform\cf\win</Filter>
     </ClCompile>
@@ -9220,9 +9217,6 @@
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\AsyncFileSystemCallbacks.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\AutodrainedPool.h">
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\CalculationValue.h">
@@ -14165,9 +14159,6 @@
       <Filter>rendering\svg</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\cf\BinaryPropertyList.h">
-      <Filter>platform\cf</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\cf\SchedulePair.h">
       <Filter>platform\cf</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\cf\win\CertificateCFWin.h">
