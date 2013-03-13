@@ -137,6 +137,7 @@ my (
     $templateElementSupport,
     $textAutosizingSupport,
     $tiledBackingStoreSupport,
+    $threadedHTMLParserSupport,
     $touchEventsSupport,
     $touchSliderSupport,
     $touchIconLoadingSupport,
@@ -438,6 +439,9 @@ my @features = (
 
     { option => "tiled-backing-store", desc => "Toggle Tiled Backing Store support",
       define => "WTF_USE_TILED_BACKING_STORE", default => (isQt() || isEfl()), value => \$tiledBackingStoreSupport },
+
+    { option => "threaded-html-parser", desc => "Toggle threaded HTML parser support",
+      define => "ENABLE_THREADED_HTML_PARSER", default => isChromium(), value => \$threadedHTMLParserSupport },
 
     { option => "touch-events", desc => "Toggle Touch Events support",
       define => "ENABLE_TOUCH_EVENTS", default => (isQt() || isBlackBerry() || isEfl()), value => \$touchEventsSupport },

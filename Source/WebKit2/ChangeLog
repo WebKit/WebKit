@@ -1,3 +1,12 @@
+2013-03-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Threaded HTML Parser is missing feature define flags in all but Chromium port's build files
+        https://bugs.webkit.org/show_bug.cgi?id=112277
+
+        Reviewed by Adam Barth.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-03-13  Brady Eidson  <beidson@apple.com>
 
         Small ResourceLoader cleanups.

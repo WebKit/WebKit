@@ -372,7 +372,7 @@
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
-		Name="ENABLE_UNDO_MANAGER"
+		Name="ENABLE_THREADED_HTML_PARSER"
 		Value=""
 		PerformEnvironmentSet="true"
 	/>
