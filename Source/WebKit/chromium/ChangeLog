@@ -1,3 +1,16 @@
+2013-03-13  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Rename android_build_type to android_webview_build in .gyp files.
+        https://bugs.webkit.org/show_bug.cgi?id=112129
+
+        Reviewed by Adam Barth.
+
+        Following Chromium
+        http://src.chromium.org/viewvc/chrome?view=rev&revision=187556
+        this is being renamed to better explain what it does.
+
+        * WebKitUnitTests.gyp:
+
 2013-03-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: convert workers inspection into capability

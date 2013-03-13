@@ -69,12 +69,12 @@
                 '<(tools_dir)/DumpRenderTree/chromium/ImageDiff.cpp',
             ],
             'conditions': [
-                ['OS=="android" and android_build_type==0', {
+                ['OS=="android" and android_webview_build==0', {
                     # The Chromium Android port will compare images on host rather
                     # than target (a device or emulator) for performance reasons.
                     'toolsets': ['host'],
                 }],
-                ['OS=="android" and android_build_type!=0', {
+                ['OS=="android" and android_webview_build==1', {
                     'type': 'none',
                 }],
             ],
@@ -219,7 +219,7 @@
                         ]
                     }],
                 }],
-                ['OS=="android" and android_build_type==0', {
+                ['OS=="android" and android_webview_build==0', {
                     'dependencies': [
                         'ImageDiff#host',
                     ],
