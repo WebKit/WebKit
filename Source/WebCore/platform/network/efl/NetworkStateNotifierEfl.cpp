@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -100,23 +101,41 @@ void NetworkStateNotifier::networkInterfaceChanged()
         m_networkStateChangedFunction();
 }
 
-static Eina_Bool readSocketCallback(void* userData, Ecore_Fd_Handler* handler)
+Eina_Bool NetworkStateNotifier::readSocketCallback(void* userData, Ecore_Fd_Handler* handler)
 {
+    NetworkStateNotifier* notifier = static_cast<NetworkStateNotifier*>(userData);
+
     int sock = ecore_main_fd_handler_fd_get(handler);
     char buffer[bufferSize];
-    ssize_t len;
+
     nlmsghdr* nlh = reinterpret_cast<nlmsghdr*>(buffer);
-    while ((len = recv(sock, nlh, bufferSize, MSG_DONTWAIT)) > 0) {
-        while ((NLMSG_OK(nlh, static_cast<unsigned>(len))) && (nlh->nlmsg_type != NLMSG_DONE)) {
+    while (true) {
+        ssize_t length = recv(sock, nlh, bufferSize, MSG_DONTWAIT);
+        if (!length) {
+            LOG_ERROR("NETLINK socket was closed unexpectedly.");
+            notifier->m_fdHandler = 0;
+            return ECORE_CALLBACK_CANCEL;
+        }
+        if (length == -1) {
+            if (errno == EINTR)
+                continue;
+            if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
+                break;
+            LOG_ERROR("recv on NETLINK socket failed.");
+            notifier->m_fdHandler = 0;
+            return ECORE_CALLBACK_CANCEL;
+        }
+        while ((NLMSG_OK(nlh, static_cast<unsigned>(length))) && (nlh->nlmsg_type != NLMSG_DONE)) {
             if (nlh->nlmsg_type == NLMSG_ERROR) {
-                LOG_ERROR("Error while reading socket, stop monitoring onLine state.");
+                LOG_ERROR("Unexpected NETLINK error %d.", reinterpret_cast<struct nlmsgerr*>(NLMSG_DATA(nlh))->error);
+                notifier->m_fdHandler = 0;
                 return ECORE_CALLBACK_CANCEL;
             }
             if (nlh->nlmsg_type == RTM_NEWADDR || nlh->nlmsg_type == RTM_DELADDR) {
                 // We detected an IP address change, recheck onLine state.
-                static_cast<NetworkStateNotifier*>(userData)->networkInterfaceChanged();
+                notifier->networkInterfaceChanged();
             }
-            nlh = NLMSG_NEXT(nlh, len);
+            nlh = NLMSG_NEXT(nlh, length);
         }
     }
 
@@ -125,10 +144,13 @@ static Eina_Bool readSocketCallback(void* userData, Ecore_Fd_Handler* handler)
 
 NetworkStateNotifier::~NetworkStateNotifier()
 {
-    if (m_fdHandler) {
-        int sock = ecore_main_fd_handler_fd_get(m_fdHandler);
+    if (m_fdHandler)
         ecore_main_fd_handler_del(m_fdHandler);
-        close(sock);
+    if (m_netlinkSocket != -1) {
+        int rv = 0;
+        do {
+            rv = close(m_netlinkSocket);
+        } while (rv == -1 && errno == EINTR);
     }
     eeze_shutdown();
 }
@@ -136,6 +158,7 @@ NetworkStateNotifier::~NetworkStateNotifier()
 NetworkStateNotifier::NetworkStateNotifier()
     : m_isOnLine(false)
     , m_networkStateChangedFunction(0)
+    , m_netlinkSocket(-1)
     , m_fdHandler(0)
 {
     if (eeze_init() < 0) {
@@ -146,9 +169,9 @@ NetworkStateNotifier::NetworkStateNotifier()
     updateState();
 
     // Watch for network address changes to keep online state up-to-date.
-    int sock;
-    if ((sock = socket(PF_NETLINK, SOCK_RAW, NETLINK_ROUTE)) == -1) {
-        LOG_ERROR("Couldn't open NETLINK_ROUTE socket.");
+    m_netlinkSocket = socket(PF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
+    if (m_netlinkSocket == -1) {
+        LOG_ERROR("Couldn't create NETLINK socket.");
         return;
     }
 
@@ -157,12 +180,12 @@ NetworkStateNotifier::NetworkStateNotifier()
     addr.nl_family = AF_NETLINK;
     addr.nl_groups = RTMGRP_IPV4_IFADDR | RTMGRP_IPV6_IFADDR;
 
-    if (bind(sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) == -1) {
-        LOG_ERROR("Couldn't bind to NETLINK_ROUTE socket.");
+    if (bind(m_netlinkSocket, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) == -1) {
+        LOG_ERROR("Couldn't bind to NETLINK socket.");
         return;
     }
 
-    m_fdHandler = ecore_main_fd_handler_add(sock, ECORE_FD_READ, readSocketCallback, this, 0, 0);
+    m_fdHandler = ecore_main_fd_handler_add(m_netlinkSocket, ECORE_FD_READ, readSocketCallback, this, 0, 0);
 }
 
 } // namespace WebCore

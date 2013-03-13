@@ -48,6 +48,7 @@ typedef const struct __SCDynamicStore * SCDynamicStoreRef;
 #elif PLATFORM(EFL)
 
 typedef struct _Ecore_Fd_Handler Ecore_Fd_Handler;
+typedef unsigned char Eina_Bool;
 
 #endif
 
@@ -72,8 +73,6 @@ public:
     void setNetworkAccessAllowed(bool);
 #elif PLATFORM(CHROMIUM)
     void setOnLine(bool);
-#elif PLATFORM(EFL)
-    void networkInterfaceChanged();
 #endif
 
 #if PLATFORM(BLACKBERRY)
@@ -104,6 +103,10 @@ private:
     OVERLAPPED m_overlapped;
 
 #elif PLATFORM(EFL)
+    void networkInterfaceChanged();
+    static Eina_Bool readSocketCallback(void* userData, Ecore_Fd_Handler*);
+
+    int m_netlinkSocket;
     Ecore_Fd_Handler* m_fdHandler;
 
 #elif (PLATFORM(QT) && !defined(QT_NO_BEARERMANAGEMENT))
