@@ -3207,7 +3207,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         // printing), this function should return nil.
         RetainPtr<WKPrintingView> printingView(AdoptNS, [[WKPrintingView alloc] initWithFrameProxy:toImpl(frameRef) view:self]);
         // NSPrintOperation takes ownership of the view.
-        NSPrintOperation *printOperation = [NSPrintOperation printOperationWithView:printingView.get()];
+        NSPrintOperation *printOperation = [NSPrintOperation printOperationWithView:printingView.get() printInfo:printInfo];
         [printOperation setCanSpawnSeparateThread:YES];
         [printOperation setJobTitle:toImpl(frameRef)->title()];
         printingView->_printOperation = printOperation;
