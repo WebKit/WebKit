@@ -1,3 +1,21 @@
+2013-03-12  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL][WK2] ewk_popup_menu_close() does not work as intended
+        https://bugs.webkit.org/show_bug.cgi?id=110209
+
+        Reviewed by Laszlo Gombos.
+
+        ewk_popup_menu_close() is called by the browser to notify WebKit that
+        the popup menu was closed. However, the implementation was calling
+        EwkView::closePopupMenu() which was asking the browser to close the
+        popup menu via an Evas smart function. This patch fixes the behavior
+        and ewk_popup_menu_close() now calls WKPopupMenuListenerSetSelection()
+        C API so that the WebProcess is notified that the popup menu was
+        hidden.
+
+        * UIProcess/API/efl/ewk_popup_menu.cpp:
+        (EwkPopupMenu::close):
+
 2013-03-12  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Remove CoordinatedGraphicsLayer::setRootLayer().

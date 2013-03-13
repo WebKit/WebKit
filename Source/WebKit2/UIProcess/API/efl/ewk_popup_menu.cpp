@@ -56,7 +56,8 @@ EwkPopupMenu::~EwkPopupMenu()
 
 void EwkPopupMenu::close()
 {
-    m_view->closePopupMenu();
+    // Setting selected item will cause the popup menu to close.
+    WKPopupMenuListenerSetSelection(m_popupMenuListener.get(), m_selectedIndex);
 }
 
 const Eina_List* EwkPopupMenu::items() const
