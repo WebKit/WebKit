@@ -1,5 +1,21 @@
 2013-03-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r142539
+
+    2013-02-11  Emil A Eklund  <eae@chromium.org>
+
+            Change RenderFrameSet::paint to use m-rows/m_cols directly.
+            https://bugs.webkit.org/show_bug.cgi?id=108503
+
+            Reviewed by Eric Seidel.
+
+            Test: fast/frames/invalid-frameset.html
+
+            * rendering/RenderFrameSet.cpp:
+            (WebCore::RenderFrameSet::paint):
+
+2013-03-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r142365
 
     2013-02-09  Philip Rogers  <pdr@google.com>

@@ -131,14 +131,14 @@ void RenderFrameSet::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
     LayoutPoint adjustedPaintOffset = paintOffset + location();
 
-    int rows = frameSet()->totalRows();
-    int cols = frameSet()->totalCols();
+    size_t rows = m_rows.m_sizes.size();
+    size_t cols = m_cols.m_sizes.size();
     LayoutUnit borderThickness = frameSet()->border();
     
     LayoutUnit yPos = 0;
-    for (int r = 0; r < rows; r++) {
+    for (size_t r = 0; r < rows; r++) {
         LayoutUnit xPos = 0;
-        for (int c = 0; c < cols; c++) {
+        for (size_t c = 0; c < cols; c++) {
             child->paint(paintInfo, adjustedPaintOffset);
             xPos += m_cols.m_sizes[c];
             if (borderThickness && m_cols.m_allowBorder[c + 1]) {
