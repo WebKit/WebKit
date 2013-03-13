@@ -393,7 +393,11 @@ class WebGLRenderingContextErrorMessageCallback : public GraphicsContext3D::Erro
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit WebGLRenderingContextErrorMessageCallback(WebGLRenderingContext* cb) : m_context(cb) { }
-    virtual void onErrorMessage(const String& message, GC3Dint) { m_context->printGLErrorToConsole(message); }
+    virtual void onErrorMessage(const String& message, GC3Dint)
+    {
+        if (m_context->m_synthesizedErrorsToConsole)
+            m_context->printGLErrorToConsole(message);
+    }
     virtual ~WebGLRenderingContextErrorMessageCallback() { }
 private:
     WebGLRenderingContext* m_context;
