@@ -64,10 +64,6 @@
 #include "PluginDatabase.h"
 #endif
 
-#if USE(CONTENT_FILTERING)
-#include "ContentFilter.h"
-#endif
-
 namespace WebCore {
 
 MainResourceLoader::MainResourceLoader(DocumentLoader* documentLoader)
@@ -75,7 +71,6 @@ MainResourceLoader::MainResourceLoader(DocumentLoader* documentLoader)
     , m_documentLoader(documentLoader)
     , m_loadingMultipartContent(false)
     , m_waitingForContentPolicy(false)
-    , m_timeOfLastDataReceived(0.0)
     , m_identifierForLoadWithoutResourceLoader(0)
 {
 }
@@ -438,7 +433,7 @@ void MainResourceLoader::responseReceived(CachedResource* resource, const Resour
     // reference to this object; one example of this is 3266216.
     RefPtr<MainResourceLoader> protect(this);
 
-    m_documentLoader->setResponse(r);
+    m_documentLoader->responseReceived(r);
 
     m_response = r;
 
@@ -464,116 +459,21 @@ void MainResourceLoader::responseReceived(CachedResource* resource, const Resour
     }
 #endif
 
-#if USE(CONTENT_FILTERING)
-    if (r.url().protocolIs("https") && ContentFilter::isEnabled())
-        m_contentFilter = ContentFilter::create(r);
-#endif
-
     frameLoader()->policyChecker()->checkContentPolicy(m_response, callContinueAfterContentPolicy, this);
 }
 
 void MainResourceLoader::dataReceived(CachedResource* resource, const char* data, int length)
 {
-    ASSERT(data);
-    ASSERT(length != 0);
     ASSERT_UNUSED(resource, resource == m_resource);
-    ASSERT(!m_response.isNull());
-
-#if USE(CFNETWORK) || PLATFORM(MAC)
-    // Workaround for <rdar://problem/6060782>
-    if (m_response.isNull()) {
-        m_response = ResourceResponse(KURL(), "text/html", 0, String(), String());
-        if (DocumentLoader* documentLoader = m_documentLoader.get())
-            documentLoader->setResponse(m_response);
-    }
-#endif
-
-    // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
-    // See <rdar://problem/6304600> for more details.
-#if !USE(CF)
-    ASSERT(!defersLoading());
-#endif
-
-#if USE(CONTENT_FILTERING)
-    bool loadWasBlockedBeforeFinishing = false;
-    if (m_contentFilter && m_contentFilter->needsMoreData()) {
-        m_contentFilter->addData(data, length);
-
-        if (m_contentFilter->needsMoreData()) {
-            // Since the filter still needs more data to make a decision,
-            // transition back to the committed state so that we don't partially
-            // load content that might later be blocked.
-            documentLoader()->receivedData(0, 0);
-            return;
-        }
-
-        data = m_contentFilter->getReplacementData(length);
-        loadWasBlockedBeforeFinishing = m_contentFilter->didBlockData();
-    }
-#endif
-
-    if (m_identifierForLoadWithoutResourceLoader)
-        frameLoader()->notifier()->dispatchDidReceiveData(documentLoader(), identifier(), data, length, -1);
-
-    documentLoader()->applicationCacheHost()->mainResourceDataReceived(data, length, -1, false);
-
-    // The additional processing can do anything including possibly removing the last
-    // reference to this object; one example of this is 3266216.
-    RefPtr<MainResourceLoader> protect(this);
-
-    m_timeOfLastDataReceived = monotonicallyIncreasingTime();
-
     documentLoader()->receivedData(data, length);
-
-#if USE(CONTENT_FILTERING)
-    if (loadWasBlockedBeforeFinishing)
-        cancel();
-#endif
 }
 
 void MainResourceLoader::didFinishLoading(double finishTime)
 {
-    // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
-    // See <rdar://problem/6304600> for more details.
-#if !USE(CF)
-    ASSERT(!defersLoading() || InspectorInstrumentation::isDebuggerPaused(m_documentLoader->frame()));
-#endif
-
     // The additional processing can do anything including possibly removing the last
     // reference to this object.
     RefPtr<MainResourceLoader> protect(this);
-    RefPtr<DocumentLoader> dl = documentLoader();
-
-    if (m_identifierForLoadWithoutResourceLoader) {
-        frameLoader()->notifier()->dispatchDidFinishLoading(documentLoader(), identifier(), finishTime);
-        m_identifierForLoadWithoutResourceLoader = 0;
-    }
-
-#if USE(CONTENT_FILTERING)
-    if (m_contentFilter && m_contentFilter->needsMoreData()) {
-        m_contentFilter->finishedAddingData();
-
-        int length;
-        const char* data = m_contentFilter->getReplacementData(length);
-        if (data)
-            dataReceived(m_resource.get(), data, length);
-    }
-#endif
-
-    if (m_loadingMultipartContent)
-        dl->maybeFinishLoadingMultipartContent();
-
-    documentLoader()->timing()->setResponseEnd(finishTime ? finishTime : (m_timeOfLastDataReceived ? m_timeOfLastDataReceived : monotonicallyIncreasingTime()));
-    documentLoader()->finishedLoading();
-
-    // If the document specified an application cache manifest, it violates the author's intent if we store it in the memory cache
-    // and deny the appcache the chance to intercept it in the future, so remove from the memory cache.
-    if (Frame* frame = documentLoader()->frame()) {
-        if (m_resource && frame->document()->hasManifest())
-            memoryCache()->remove(m_resource.get());
-    }
-
-    dl->applicationCacheHost()->finishedLoadingMainResource();
+    documentLoader()->finishedLoading(finishTime);
 }
 
 void MainResourceLoader::notifyFinished(CachedResource* resource)

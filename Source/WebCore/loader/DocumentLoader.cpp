@@ -47,6 +47,7 @@
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "MainResourceLoader.h"
+#include "MemoryCache.h"
 #include "Page.h"
 #include "ResourceBuffer.h"
 #include "SchemeRegistry.h"
@@ -63,6 +64,10 @@
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
 #include "ArchiveFactory.h"
+#endif
+
+#if USE(CONTENT_FILTERING)
+#include "ContentFilter.h"
 #endif
 
 namespace WebCore {
@@ -103,6 +108,7 @@ DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData&
     , m_stopRecordingResponses(false)
     , m_substituteResourceDeliveryTimer(this, &DocumentLoader::substituteResourceDeliveryTimerFired)
     , m_didCreateGlobalHistoryEntry(false)
+    , m_timeOfLastDataReceived(0.0)
     , m_applicationCacheHost(adoptPtr(new ApplicationCacheHost(this)))
 {
 }
@@ -297,8 +303,38 @@ bool DocumentLoader::isLoading() const
     return isLoadingMainResource() || !m_subresourceLoaders.isEmpty() || !m_plugInStreamLoaders.isEmpty();
 }
 
-void DocumentLoader::finishedLoading()
+void DocumentLoader::finishedLoading(double finishTime)
 {
+    // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
+    // See <rdar://problem/6304600> for more details.
+#if !USE(CF)
+    ASSERT(!m_frame->page()->defersLoading() || InspectorInstrumentation::isDebuggerPaused(m_frame));
+#endif
+
+    if (mainResourceLoader() && mainResourceLoader()->identifierForLoadWithoutResourceLoader()) {
+        frameLoader()->notifier()->dispatchDidFinishLoading(this, mainResourceLoader()->identifier(), finishTime);
+        mainResourceLoader()->clearIdentifierForLoadWithoutResourceLoader();
+    }
+
+#if USE(CONTENT_FILTERING)
+    if (m_contentFilter && m_contentFilter->needsMoreData()) {
+        m_contentFilter->finishedAddingData();
+        int length;
+        const char* data = m_contentFilter->getReplacementData(length);
+        if (data)
+            receivedData(data, length);
+    }
+#endif
+
+    maybeFinishLoadingMultipartContent();
+
+    double responseEndTime = finishTime;
+    if (!responseEndTime)
+        responseEndTime = m_timeOfLastDataReceived;
+    if (!responseEndTime)
+        responseEndTime = monotonicallyIncreasingTime();
+    timing()->setResponseEnd(responseEndTime);
+
     commitIfReady();
     if (!frameLoader())
         return;
@@ -317,6 +353,25 @@ void DocumentLoader::finishedLoading()
     clearMainResourceLoader();
     if (!frameLoader()->stateMachine()->creatingInitialEmptyDocument())
         frameLoader()->checkLoadComplete();
+
+    // If the document specified an application cache manifest, it violates the author's intent if we store it in the memory cache
+    // and deny the appcache the chance to intercept it in the future, so remove from the memory cache.
+    if (frame() && mainResourceLoader()) {
+        if (mainResourceLoader()->cachedMainResource() && frame()->document()->hasManifest())
+            memoryCache()->remove(mainResourceLoader()->cachedMainResource());
+    }
+    m_applicationCacheHost->finishedLoadingMainResource();
+}
+
+void DocumentLoader::responseReceived(const ResourceResponse& response)
+{
+    setResponse(response);
+
+#if USE(CONTENT_FILTERING)
+    if (response.url().protocolIs("https") && ContentFilter::isEnabled())
+        m_contentFilter = ContentFilter::create(response);
+#endif
+
 }
 
 void DocumentLoader::commitLoad(const char* data, int length)
@@ -412,8 +467,53 @@ void DocumentLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 
 void DocumentLoader::receivedData(const char* data, int length)
 {
+    ASSERT(data);
+    ASSERT(length);
+    ASSERT(!m_response.isNull());
+
+#if USE(CFNETWORK) || PLATFORM(MAC)
+    // Workaround for <rdar://problem/6060782>
+    if (m_response.isNull())
+        setResponse(ResourceResponse(KURL(), "text/html", 0, String(), String()));
+#endif
+
+    // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
+    // See <rdar://problem/6304600> for more details.
+#if !USE(CF)
+    ASSERT(!m_frame->page()->defersLoading());
+#endif
+
+#if USE(CONTENT_FILTERING)
+    bool loadWasBlockedBeforeFinishing = false;
+    if (m_contentFilter && m_contentFilter->needsMoreData()) {
+        m_contentFilter->addData(data, length);
+
+        if (m_contentFilter->needsMoreData()) {
+            // Since the filter still needs more data to make a decision,
+            // transition back to the committed state so that we don't partially
+            // load content that might later be blocked.
+            commitLoad(0, 0);
+            return;
+        }
+
+        data = m_contentFilter->getReplacementData(length);
+        loadWasBlockedBeforeFinishing = m_contentFilter->didBlockData();
+    }
+#endif
+
+    if (mainResourceLoader()->identifierForLoadWithoutResourceLoader())
+        frameLoader()->notifier()->dispatchDidReceiveData(this, mainResourceLoader()->identifier(), data, length, -1);
+
+    m_applicationCacheHost->mainResourceDataReceived(data, length, -1, false);
+    m_timeOfLastDataReceived = monotonicallyIncreasingTime();
+
     if (!isMultipartReplacingLoad())
         commitLoad(data, length);
+
+#if USE(CONTENT_FILTERING)
+    if (loadWasBlockedBeforeFinishing)
+        cancelMainResourceLoad(ResourceError());
+#endif
 }
 
 void DocumentLoader::setupForReplace()
@@ -899,7 +999,7 @@ bool DocumentLoader::maybeLoadEmpty()
         m_request.setURL(blankURL());
     String mimeType = shouldLoadEmpty ? "text/html" : frameLoader()->client()->generatedMIMETypeForURLScheme(m_request.url().protocol());
     setResponse(ResourceResponse(m_request.url(), mimeType, 0, String(), String()));
-    finishedLoading();
+    finishedLoading(monotonicallyIncreasingTime());
     return true;
 }
 
