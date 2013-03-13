@@ -107,9 +107,10 @@ public:
     WEBKIT_EXPORT bool isFocusable() const;
     WEBKIT_EXPORT bool isContentEditable() const;
     WEBKIT_EXPORT bool isElementNode() const;
+    // hasEventListeners only works with a small set of eventTypes.
     WEBKIT_EXPORT bool hasEventListeners(const WebString& eventType) const;
+    // addEventListener only works with a small set of eventTypes.
     WEBKIT_EXPORT void addEventListener(const WebString& eventType, WebDOMEventListener* listener, bool useCapture);
-    WEBKIT_EXPORT void removeEventListener(const WebString& eventType, WebDOMEventListener* listener, bool useCapture);
     WEBKIT_EXPORT bool dispatchEvent(const WebDOMEvent&);
     WEBKIT_EXPORT void simulateClick();
     WEBKIT_EXPORT WebNodeList getElementsByTagName(const WebString&) const;

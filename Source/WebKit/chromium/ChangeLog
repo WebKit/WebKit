@@ -1,3 +1,27 @@
+2013-03-13  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Restrict WebNode::addEventListener and friends to a whitelist of event types
+        https://bugs.webkit.org/show_bug.cgi?id=112195
+
+        Reviewed by Eric Seidel.
+
+        Chromium only uses these APIs in extremely narrow ways. In order to
+        discourage Chromium from using these APIs in broader ways, this patch
+        restricts the APIs to a small whitelist of event types.
+
+        We might want to add some sort of flag to let CEF use expose these APIs
+        more broadly.
+
+        * WebKit.gypi:
+        * public/WebNode.h:
+        * src/WebNode.cpp:
+        (WebKit::WebNode::hasEventListeners):
+        (WebKit::WebNode::addEventListener):
+        * tests/EventListenerTest.cpp: Removed.
+            - These tests of DOM mutation events are no longer needed because we
+              don't support listening for DOM mutation events via the API
+              anymore.
+
 2013-03-13  Stephen Chenney  <schenney@chromium.org>
 
         Add new Skia code suppression flags

@@ -64,7 +64,6 @@
             'tests/DecimalTest.cpp',
             'tests/DeferredImageDecoderTest.cpp',
             'tests/DragImageTest.cpp',
-            'tests/EventListenerTest.cpp',
             'tests/FakeWebPlugin.cpp',
             'tests/FakeWebPlugin.h',
             'tests/FakeWebGraphicsContext3D.h',

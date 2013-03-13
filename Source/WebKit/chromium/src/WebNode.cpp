@@ -180,25 +180,26 @@ bool WebNode::isElementNode() const
 
 bool WebNode::hasEventListeners(const WebString& eventType) const
 {
+    // FIXME: "permissionrequest" seems like an implementation detail of the
+    //        the browser plug-in. Perhaps the browser plug-in should have
+    //        a more special-purpose mechanism?
+    //        See http://code.google.com/p/chromium/issues/detail?id=189561
+
+    // Please do not add more eventTypes to this list without an API review.
+    RELEASE_ASSERT(eventType == "permissionrequest");
     return m_private->hasEventListeners(eventType);
 }
 
 void WebNode::addEventListener(const WebString& eventType, WebDOMEventListener* listener, bool useCapture)
 {
-    EventListenerWrapper* listenerWrapper =
-        listener->createEventListenerWrapper(eventType, useCapture, m_private.get());
+    // Please do not add more eventTypes to this list without an API review.
+    RELEASE_ASSERT(eventType == "mousedown");
+
+    EventListenerWrapper* listenerWrapper = listener->createEventListenerWrapper(eventType, useCapture, m_private.get());
     // The listenerWrapper is only referenced by the actual Node.  Once it goes
     // away, the wrapper notifies the WebEventListener so it can clear its
     // pointer to it.
     m_private->addEventListener(eventType, adoptRef(listenerWrapper), useCapture);
-}
-
-void WebNode::removeEventListener(const WebString& eventType, WebDOMEventListener* listener, bool useCapture)
-{
-    EventListenerWrapper* listenerWrapper =
-        listener->getEventListenerWrapper(eventType, useCapture, m_private.get());
-    m_private->removeEventListener(eventType, listenerWrapper, useCapture);
-    // listenerWrapper is now deleted.
 }
 
 bool WebNode::dispatchEvent(const WebDOMEvent& event)
