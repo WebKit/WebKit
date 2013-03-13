@@ -1,3 +1,10 @@
+2013-03-12  Tim Horton  <timothy_horton@apple.com>
+
+        WTF uses macros for exports. Try to fix the Windows build. Unreviewed.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+
 2013-03-12  Filip Pizlo  <fpizlo@apple.com>
 
         Array.prototype.sort should at least try to be PTIME even when the array is in some bizarre mode
