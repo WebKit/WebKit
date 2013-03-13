@@ -34,7 +34,6 @@
 #include "../../../Platform/chromium/public/WebCanvas.h"
 #include "../../../Platform/chromium/public/WebString.h"
 #include "../../../Platform/chromium/public/WebVideoFrame.h"
-#include "WebMediaSource.h"
 #include "WebTimeRange.h"
 
 namespace WebKit {
@@ -42,6 +41,7 @@ namespace WebKit {
 class WebAudioSourceProvider;
 class WebAudioSourceProviderClient;
 class WebMediaPlayerClient;
+class WebMediaSource;
 class WebStreamTextureClient;
 class WebString;
 class WebURL;
@@ -82,18 +82,6 @@ public:
         PreloadAuto,
     };
 
-    enum AddIdStatus {
-        AddIdStatusOk,
-        AddIdStatusNotSupported,
-        AddIdStatusReachedIdLimit
-    };
-
-    enum EndOfStreamStatus {
-        EndOfStreamStatusNoError,
-        EndOfStreamStatusNetworkError,
-        EndOfStreamStatusDecodeError,
-    };
-
     // Represents synchronous exceptions that can be thrown from the Encrypted
     // Media methods. This is different from the asynchronous MediaKeyError.
     enum MediaKeyException {
@@ -111,9 +99,7 @@ public:
     virtual ~WebMediaPlayer() {}
 
     virtual void load(const WebURL&, CORSMode) = 0;
-    // FIXME: Remove the default implementation once the Chromium code implements this method.
-    // https://bugs.webkit.org/show_bug.cgi?id=110371
-    virtual void load(const WebURL& url, WebMediaSource* mediaSource, CORSMode corsMode) { delete mediaSource; load(url, corsMode); };
+    virtual void load(const WebURL&, WebMediaSource*, CORSMode) = 0;
     virtual void cancelLoad() = 0;
 
     // Playback controls.
@@ -187,16 +173,6 @@ public:
     virtual void setStreamTextureClient(WebStreamTextureClient*) { }
 
     virtual WebAudioSourceProvider* audioSourceProvider() { return 0; }
-
-    virtual AddIdStatus sourceAddId(const WebString& id, const WebString& type,
-                                    const WebVector<WebString>& codecs) { return AddIdStatusNotSupported; }
-    virtual bool sourceRemoveId(const WebString& id) { return false; }
-    virtual WebTimeRanges sourceBuffered(const WebString& id) { return WebTimeRanges(); };
-    virtual bool sourceAppend(const WebString& id, const unsigned char* data, unsigned length) { return false; }
-    virtual bool sourceAbort(const WebString& id) { return false; }
-    virtual void sourceSetDuration(double) { }
-    virtual void sourceEndOfStream(EndOfStreamStatus)  { }
-    virtual bool sourceSetTimestampOffset(const WebString& id, double offset) { return false; }
 
     // Returns whether keySystem is supported. If true, the result will be
     // reported by an event.

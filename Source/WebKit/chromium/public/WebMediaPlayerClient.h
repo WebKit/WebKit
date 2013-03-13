@@ -72,8 +72,6 @@ public:
     virtual float volume() const = 0;
     virtual void playbackStateChanged() = 0;
     virtual WebMediaPlayer::Preload preload() const = 0;
-    virtual void sourceOpened() = 0;
-    virtual WebKit::WebURL sourceURL() const = 0;
     virtual void keyAdded(const WebString& keySystem, const WebString& sessionId) = 0;
     virtual void keyError(const WebString& keySystem, const WebString& sessionId, MediaKeyErrorCode, unsigned short systemCode) = 0;
     virtual void keyMessage(const WebString& keySystem, const WebString& sessionId, const unsigned char* message, unsigned messageLength, const WebURL& defaultURL) = 0;

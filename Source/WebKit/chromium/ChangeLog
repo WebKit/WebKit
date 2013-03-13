@@ -1,3 +1,19 @@
+2013-03-13  Aaron Colwell  <acolwell@chromium.org>
+
+        Cleanup dead MediaSource code now that the Chromium-side refactor is complete.
+        https://bugs.webkit.org/show_bug.cgi?id=110371
+
+        Reviewed by Adam Barth.
+
+        * public/WebMediaPlayer.h:
+        (WebKit):
+        (WebMediaPlayer): Remove old MediaSource methods and default MediaSource load() implementation.
+        * public/WebMediaPlayerClient.h: Remove old MediaSource methods.
+        * src/WebMediaPlayerClientImpl.cpp: Remove WebMediaSourceClientImpl & WebSourceBufferImpl classes that
+                                            are no longer needed.
+        * src/WebMediaPlayerClientImpl.h: Remove old MediaSource methods.
+        (WebMediaPlayerClientImpl):
+
 2013-03-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: get rid of hiddenPanels filter
