@@ -41,13 +41,15 @@ Gamepad::Gamepad()
 void Gamepad::axes(unsigned count, float* data)
 {
     m_axes.resize(count);
-    std::copy(data, data + count, m_axes.begin());
+    if (count)
+        std::copy(data, data + count, m_axes.begin());
 }
 
 void Gamepad::buttons(unsigned count, float* data)
 {
     m_buttons.resize(count);
-    std::copy(data, data + count, m_buttons.begin());
+    if (count)
+        std::copy(data, data + count, m_buttons.begin());
 }
 
 Gamepad::~Gamepad()
