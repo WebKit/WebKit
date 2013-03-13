@@ -1,3 +1,24 @@
+2013-03-13  Genevieve Mak  <gmak@rim.com>
+
+        [BlackBerry] Add Proximity Detector.
+        https://bugs.webkit.org/show_bug.cgi?id=112278
+
+        Reviewed by Rob Buis.
+
+        Internally Reviewed by Mike Lattanzio.
+        PR #243385
+
+        * WebKitSupport/ProximityDetector.cpp: Added.
+        (WebKit):
+        (BlackBerry::WebKit::getPriorityLevel):
+        (BlackBerry::WebKit::ProximityDetector::ProximityDetector):
+        (BlackBerry::WebKit::ProximityDetector::~ProximityDetector):
+        (BlackBerry::WebKit::ProximityDetector::findBestPoint):
+        * WebKitSupport/ProximityDetector.h: Added.
+        (WebCore):
+        (WebKit):
+        (ProximityDetector):
+
 2013-03-13  Iris Wu  <shuwu@blackberry.com>
 
         [BlackBerry] Touch Hold selection does not scroll text area or other subframe until selection reaches bottom of the page.
