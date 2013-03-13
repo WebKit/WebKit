@@ -1,3 +1,29 @@
+2013-03-13  Iris Wu  <shuwu@blackberry.com>
+
+        [BlackBerry] Touch Hold selection does not scroll text area or other subframe until selection reaches bottom of the page.
+        https://bugs.webkit.org/show_bug.cgi?id=112259
+
+        Reviewed by Rob Buis.
+
+        PR 267394
+
+        While selecting in a subframe, check that the selection reaches
+        the bottom of the current subframe instead of the page.
+
+        Internally Reviewed by Genevieve Mak.
+
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::updateSelectionScrollView):
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::selectAtPoint):
+        (BlackBerry::WebKit::SelectionHandler::ensureSelectedTextVisible):
+        (BlackBerry::WebKit::SelectionHandler::selectionViewportRect):
+        (WebKit):
+        (BlackBerry::WebKit::SelectionHandler::expandSelectionToGranularity):
+        * WebKitSupport/SelectionHandler.h:
+        (BlackBerry::WebKit::SelectionHandler::setSelectionViewportRect):
+        (SelectionHandler):
+
 2013-03-12  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Prevent text selection inside Colour and Date/Time input fields

@@ -80,6 +80,8 @@ public:
     void expandSelection(bool isScrollStarted);
     void setOverlayExpansionHeight(int dy) { m_overlayExpansionHeight = dy; }
     void setParagraphExpansionScrollMargin(const WebCore::IntSize&);
+    void setSelectionViewportRect(const WebCore::IntRect& selectionViewportRect) { m_selectionViewportRect = selectionViewportRect; }
+    WebCore::IntRect selectionViewportRect() const;
 
 private:
     void notifyCaretPositionChangedIfNeeded(bool userTouchTriggered = true);
@@ -122,6 +124,7 @@ private:
     BlackBerry::Platform::StopWatch m_timer;
 
     WebCore::IntSize m_scrollMargin;
+    WebCore::IntRect m_selectionViewportRect;
     WebCore::VisibleSelection m_lastSelection;
 };
 

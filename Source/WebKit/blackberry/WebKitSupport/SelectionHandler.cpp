@@ -640,6 +640,7 @@ void SelectionHandler::selectAtPoint(const WebCore::IntPoint& location, Selectio
         m_animationOverlayEndPos = VisiblePosition();
         m_currentAnimationOverlayRegion = IntRectRegion();
         m_nextAnimationOverlayRegion = IntRectRegion();
+        m_selectionViewportRect = WebCore::IntRect();
     }
 
     // If point is invalid trigger selection based expansion.
@@ -779,12 +780,9 @@ void SelectionHandler::expandSelection(bool isScrollStarted)
 
 bool SelectionHandler::ensureSelectedTextVisible(const WebCore::IntPoint& point, bool scrollIfNeeded)
 {
-    WebCore::IntPoint scrollPosition = m_webPage->scrollPosition();
-    WebCore::IntSize actualVisibleSize = m_webPage->client()->userInterfaceViewportAccessor()->documentViewportRect().size(); // viewport size for both Cascades and browser
-    WebCore::IntRect actualScreenRect = WebCore::IntRect(scrollPosition, actualVisibleSize);
-
+    WebCore::IntRect viewportRect = selectionViewportRect();
     if (!scrollIfNeeded)
-        return actualScreenRect.maxY() >= point.y() + m_scrollMargin.height();
+        return viewportRect.maxY() >= point.y() + m_scrollMargin.height();
 
     WebCore::IntRect endLocation = m_animationOverlayEndPos.absoluteCaretBounds();
 
@@ -805,13 +803,25 @@ bool SelectionHandler::ensureSelectedTextVisible(const WebCore::IntPoint& point,
     endLocation.inflateX(m_scrollMargin.width());
     endLocation.inflateY(m_scrollMargin.height());
 
-    WebCore::IntRect revealRect(layer->getRectToExpose(actualScreenRect, endLocation, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded));
+    // FIXME: The scroll position adjustment here is based on main frame.
+    // If selecting in a subframe, don't do animation.
+    WebCore::IntRect revealRect(layer->getRectToExpose(viewportRect, endLocation, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded));
     revealRect.setX(std::min(std::max(revealRect.x(), 0), m_webPage->maximumScrollPosition().x()));
     revealRect.setY(std::min(std::max(revealRect.y(), 0), m_webPage->maximumScrollPosition().y()));
 
     // Animate scroll position to revealRect.
     m_webPage->animateToScaleAndDocumentScrollPosition(m_webPage->currentScale() /* Don't zoom */, WebCore::FloatPoint(revealRect.x(), revealRect.y()));
     return true;
+}
+
+WebCore::IntRect SelectionHandler::selectionViewportRect() const
+{
+    if (m_selectionViewportRect.isEmpty()) {
+        WebCore::IntPoint scrollPosition = m_webPage->scrollPosition();
+        WebCore::IntSize actualVisibleSize = m_webPage->client()->userInterfaceViewportAccessor()->documentViewportRect().size(); // viewport size for both Cascades and browser
+        return WebCore::IntRect(scrollPosition, actualVisibleSize);
+    }
+    return m_selectionViewportRect;
 }
 
 void SelectionHandler::setParagraphExpansionScrollMargin(const WebCore::IntSize& scrollMargin)
@@ -841,6 +851,8 @@ bool SelectionHandler::expandSelectionToGranularity(Frame* frame, VisibleSelecti
     m_animationOverlayEndPos = selection.visibleEnd();
 
     if (granularity == WordGranularity) {
+        m_webPage->updateSelectionScrollView(selection.visibleEnd().deepEquivalent().anchorNode());
+
         Element* element = m_animationOverlayStartPos.deepEquivalent().element();
         if (!element)
             return false;
@@ -852,10 +864,6 @@ bool SelectionHandler::expandSelectionToGranularity(Frame* frame, VisibleSelecti
     frame->selection()->setSelection(selection);
     if (granularity == ParagraphGranularity)
         findNextAnimationOverlayRegion();
-
-    if (granularity == WordGranularity)
-        m_webPage->updateSelectionScrollView(selection.visibleEnd().deepEquivalent().anchorNode());
-
     return true;
 }
 
