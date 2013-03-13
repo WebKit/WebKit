@@ -158,6 +158,15 @@ void InspectorWorkerAgent::disable(ErrorString*)
     destroyWorkerFrontendChannels();
 }
 
+void InspectorWorkerAgent::canInspectWorkers(ErrorString*, bool* result)
+{
+#if ENABLE(WORKERS)
+    *result = true;
+#else
+    *result = false;
+#endif
+}
+
 void InspectorWorkerAgent::connectToWorker(ErrorString* error, int workerId)
 {
     WorkerFrontendChannel* channel = m_idToChannel.get(workerId);

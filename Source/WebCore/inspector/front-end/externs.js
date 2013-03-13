@@ -192,7 +192,6 @@ InspectorFrontendHostAPI.prototype.addFileSystem = function() {}
 InspectorFrontendHostAPI.prototype.removeFileSystem = function(fileSystemPath) {}
 InspectorFrontendHostAPI.prototype.isolatedFileSystem = function(fileSystemId, registeredName) {}
 InspectorFrontendHostAPI.prototype.setZoomFactor = function(zoom) {}
-InspectorFrontendHostAPI.prototype.canInspectWorkers = function() {}
 /** @type {InspectorFrontendHostAPI} */
 var InspectorFrontendHost;
 

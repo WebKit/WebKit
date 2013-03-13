@@ -3378,6 +3378,13 @@
                 ]
             },
             {
+                "name": "canInspectWorkers",
+                "description": "Tells whether browser supports workers inspection.",
+                "returns": [
+                    { "name": "result", "type": "boolean", "description": "True if browser has workers support." }
+                ]
+            },
+            {
                 "name": "connectToWorker",
                 "parameters": [
                     { "name": "workerId", "type": "integer" }

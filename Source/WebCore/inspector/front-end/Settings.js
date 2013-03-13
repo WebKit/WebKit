@@ -62,7 +62,8 @@ var Capabilities = {
     canOverrideDeviceOrientation: false,
     canShowDebugBorders: false,
     canShowFPSCounter: false,
-    canContinuouslyPaint: false
+    canContinuouslyPaint: false,
+    canInspectWorkers: false
 }
 
 /**

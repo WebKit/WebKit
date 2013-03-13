@@ -64,6 +64,7 @@ public:
     // Called from InspectorBackendDispatcher
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
+    virtual void canInspectWorkers(ErrorString*, bool*);
     virtual void connectToWorker(ErrorString*, int workerId);
     virtual void disconnectFromWorker(ErrorString*, int workerId);
     virtual void sendMessageToWorker(ErrorString*, int workerId, const RefPtr<InspectorObject>& message);

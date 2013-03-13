@@ -55,8 +55,6 @@
     void append(in DOMString url, in DOMString content);
     void close(in DOMString url);
 
-    boolean canInspectWorkers();
-
     [Custom] DOMString platform();
     [Custom] DOMString port();
     [Custom] void showContextMenu(in MouseEvent event, in any items);
@@ -65,7 +63,7 @@
     [Custom] void recordActionTaken(in unsigned long actionCode);
     [Custom] void recordPanelShown(in unsigned long panelCode);
     [Custom] void recordSettingChanged(in unsigned long settingChanged);
-    
+
     DOMString loadResourceSynchronously(in DOMString url);
 
     boolean supportsFileSystems();

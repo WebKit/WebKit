@@ -69,7 +69,6 @@ public:
     virtual bool canSave() { return false; }
     virtual void save(const String&, const String&, bool) { }
     virtual void append(const String&, const String&) { }
-    virtual bool canInspectWorkers() { return false; }
 
     virtual void attachWindow() = 0;
     virtual void detachWindow() = 0;

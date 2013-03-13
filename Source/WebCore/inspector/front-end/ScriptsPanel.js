@@ -115,7 +115,7 @@ WebInspector.ScriptsPanel = function(workspaceForTest)
     this.sidebarPanes.xhrBreakpoints = new WebInspector.XHRBreakpointsSidebarPane();
     this.sidebarPanes.eventListenerBreakpoints = new WebInspector.EventListenerBreakpointsSidebarPane();
 
-    if (InspectorFrontendHost.canInspectWorkers() && !WebInspector.WorkerManager.isWorkerFrontend()) {
+    if (Capabilities.canInspectWorkers && !WebInspector.WorkerManager.isWorkerFrontend()) {
         WorkerAgent.enable();
         this.sidebarPanes.workerList = new WebInspector.WorkersSidebarPane(WebInspector.workerManager);
     }
@@ -1313,6 +1313,7 @@ WebInspector.ScriptsPanel.prototype = {
             group2.addPane(this.sidebarPanes.domBreakpoints);
             group2.addPane(this.sidebarPanes.xhrBreakpoints);
             group2.addPane(this.sidebarPanes.eventListenerBreakpoints);
+            group2.addPane(this.sidebarPanes.workerList);
 
             this.sidebarPaneView.firstElement().appendChild(this.debugToolbar);
         }

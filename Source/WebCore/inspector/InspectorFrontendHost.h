@@ -78,8 +78,6 @@ public:
     void append(const String& url, const String& content);
     void close(const String& url);
 
-    bool canInspectWorkers();
-
     // Called from [Custom] implementations.
     void showContextMenu(Event*, const Vector<ContextMenuItem>& items);
     void sendMessageToBackend(const String& message);
