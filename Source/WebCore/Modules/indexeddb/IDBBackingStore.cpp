@@ -365,6 +365,7 @@ enum IDBLevelDBBackingStoreOpenResult {
     IDBLevelDBBackingStoreOpenFailedIOErrCheckingSchema,
     IDBLevelDBBackingStoreOpenFailedUnknownErr,
     IDBLevelDBBackingStoreOpenMemoryFailed,
+    IDBLevelDBBackingStoreOpenAttemptNonASCII,
     IDBLevelDBBackingStoreOpenMax,
 };
 
@@ -391,6 +392,8 @@ PassRefPtr<IDBBackingStore> IDBBackingStore::open(SecurityOrigin* securityOrigin
         }
         HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenMemorySuccess, IDBLevelDBBackingStoreOpenMax);
     } else {
+        if (!pathBase.containsOnlyASCII())
+            HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenAttemptNonASCII, IDBLevelDBBackingStoreOpenMax);
         if (!makeAllDirectories(pathBase)) {
             LOG_ERROR("Unable to create IndexedDB database path %s", pathBase.utf8().data());
             HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenFailedDirectory, IDBLevelDBBackingStoreOpenMax);
