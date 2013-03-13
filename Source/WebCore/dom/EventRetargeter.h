@@ -72,7 +72,7 @@ private:
     static void buildRelatedNodeMap(const Node*, RelatedNodeMap&);
     static Node* findRelatedNode(TreeScope*, RelatedNodeMap&);
 #if ENABLE(TOUCH_EVENTS)
-    static void adjustTouchList(const Node*, const TouchList&, const EventPath&, EventPathTouchLists&);
+    static void adjustTouchList(const Node*, const TouchList*, const EventPath&, EventPathTouchLists&);
 #endif
 };
 

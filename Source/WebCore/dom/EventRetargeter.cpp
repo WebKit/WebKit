@@ -138,17 +138,19 @@ void EventRetargeter::adjustForTouchEvent(Node* node, const TouchEvent& touchEve
         eventPathChangedTouches[i] = touchEventContext->changedTouches();
     }
 
-    adjustTouchList(node, *touchEvent.touches(), eventPath, eventPathTouches);
-    adjustTouchList(node, *touchEvent.targetTouches(), eventPath, eventPathTargetTouches);
-    adjustTouchList(node, *touchEvent.changedTouches(), eventPath, eventPathChangedTouches);
+    adjustTouchList(node, touchEvent.touches(), eventPath, eventPathTouches);
+    adjustTouchList(node, touchEvent.targetTouches(), eventPath, eventPathTargetTouches);
+    adjustTouchList(node, touchEvent.changedTouches(), eventPath, eventPathChangedTouches);
 }
 
-void EventRetargeter::adjustTouchList(const Node* node, const TouchList& touchList, const EventPath& eventPath, EventPathTouchLists& eventPathTouchLists)
+void EventRetargeter::adjustTouchList(const Node* node, const TouchList* touchList, const EventPath& eventPath, EventPathTouchLists& eventPathTouchLists)
 {
+    if (!touchList)
+        return;
     size_t eventPathSize = eventPath.size();
     ASSERT(eventPathTouchLists.size() == eventPathSize);
-    for (size_t i = 0; i < touchList.length(); ++i) {
-        const Touch& touch = *touchList.item(i);
+    for (size_t i = 0; i < touchList->length(); ++i) {
+        const Touch& touch = *touchList->item(i);
         AdjustedNodes adjustedNodes;
         calculateAdjustedNodes(node, touch.target()->toNode(), DoesNotStopAtBoundary, const_cast<EventPath&>(eventPath), adjustedNodes);
         ASSERT(adjustedNodes.size() == eventPathSize);
