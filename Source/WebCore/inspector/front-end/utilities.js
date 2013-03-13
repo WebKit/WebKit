@@ -970,10 +970,13 @@ var _importedScripts = {};
 /**
  * This function behavior depends on the "debug_devtools" flag value.
  * - In debug mode it loads scripts synchronously via xhr request.
- * - In release mode every occurrence of "importScript" gets replaced with
- * the script source code on the compilation phase.
+ * - In release mode every occurrence of "importScript" in the js files
+ *   that have been white listed in the build system gets replaced with
+ *   the script source code on the compilation phase.
+ *   The build system will throw an exception if it found importScript call
+ *   in other files.
  *
- * To load scripts lazily in release mode call "loasScript" function.
+ * To load scripts lazily in release mode call "loadScript" function.
  * @param {string} scriptName
  */
 function importScript(scriptName)
@@ -986,6 +989,8 @@ function importScript(scriptName)
         scriptName = scriptName.split("/").reverse()[0];
     xhr.open("GET", scriptName, false);
     xhr.send(null);
+    if (!xhr.responseText)
+        throw "empty response arrived for script '" + scriptName + "'";
     var sourceURL = WebInspector.ParsedURL.completeURL(window.location.href, scriptName); 
     window.eval(xhr.responseText + "\n//@ sourceURL=" + sourceURL);
 }
