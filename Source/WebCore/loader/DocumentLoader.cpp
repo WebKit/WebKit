@@ -1047,7 +1047,7 @@ void DocumentLoader::subresourceLoaderFinishedLoadingOnePart(ResourceLoader* loa
 
 void DocumentLoader::maybeFinishLoadingMultipartContent()
 {
-    if (!frameLoader()->isReplacing())
+    if (!isMultipartReplacingLoad())
         return;
 
     frameLoader()->setupForReplace();
