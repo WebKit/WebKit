@@ -200,12 +200,12 @@ void ResourceLoader::setDataBufferingPolicy(DataBufferingPolicy dataBufferingPol
 }
     
 
-void ResourceLoader::addData(const char* data, int length, bool allAtOnce)
+void ResourceLoader::addData(const char* data, int length, DataPayloadType dataPayloadType)
 {
     if (m_options.dataBufferingPolicy == DoNotBufferData)
         return;
 
-    if (allAtOnce) {
+    if (dataPayloadType == DataPayloadWholeResource) {
         m_resourceData = ResourceBuffer::create(data, length);
         return;
     }
@@ -287,7 +287,7 @@ void ResourceLoader::didReceiveResponse(const ResourceResponse& r)
         frameLoader()->notifier()->didReceiveResponse(this, m_response);
 }
 
-void ResourceLoader::didReceiveData(const char* data, int length, long long encodedDataLength, bool allAtOnce)
+void ResourceLoader::didReceiveData(const char* data, int length, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
     // The following assertions are not quite valid here, since a subclass
     // might override didReceiveData in a way that invalidates them. This
@@ -299,7 +299,7 @@ void ResourceLoader::didReceiveData(const char* data, int length, long long enco
     // anything including possibly derefing this; one example of this is Radar 3266216.
     RefPtr<ResourceLoader> protector(this);
 
-    addData(data, length, allAtOnce);
+    addData(data, length, dataPayloadType);
     // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
     // However, with today's computers and networking speeds, this won't happen in practice.
     // Could be an issue with a giant local file.
@@ -465,7 +465,7 @@ void ResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse&
 void ResourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int encodedDataLength)
 {
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceData(m_frame.get(), identifier(), encodedDataLength);
-    didReceiveData(data, length, encodedDataLength, false);
+    didReceiveData(data, length, encodedDataLength, DataPayloadBytes);
     InspectorInstrumentation::didReceiveResourceData(cookie);
 }
 

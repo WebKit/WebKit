@@ -2087,6 +2087,7 @@ HEADERS += \
     loader/ProgressTracker.h \
     loader/ResourceBuffer.h \
     loader/ResourceLoader.h \
+    loader/ResourceLoaderTypes.h \
     loader/SubresourceLoader.h \
     loader/SubstituteData.h \
     loader/TextResourceDecoder.h \

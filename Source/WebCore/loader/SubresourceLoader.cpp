@@ -213,7 +213,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response)
     checkForHTTPStatusCodeError();
 }
 
-void SubresourceLoader::didReceiveData(const char* data, int length, long long encodedDataLength, bool allAtOnce)
+void SubresourceLoader::didReceiveData(const char* data, int length, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
     if (m_resource->response().httpStatusCode() >= 400 && !m_resource->shouldIgnoreHTTPStatusCodeErrors())
         return;
@@ -223,7 +223,7 @@ void SubresourceLoader::didReceiveData(const char* data, int length, long long e
     // Reference the object in this method since the additional processing can do
     // anything including removing the last reference to this object; one example of this is 3266216.
     RefPtr<SubresourceLoader> protect(this);
-    addData(data, length, allAtOnce);
+    addData(data, length, dataPayloadType);
     if (!m_loadingMultipartContent)
         sendDataToResource(data, length);
     if (shouldSendResourceLoadCallbacks() && m_frame)

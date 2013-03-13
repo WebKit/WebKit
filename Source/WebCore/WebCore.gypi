@@ -2093,6 +2093,7 @@
             'loader/ResourceLoadScheduler.cpp',
             'loader/ResourceLoader.cpp',
             'loader/ResourceLoaderOptions.h',
+            'loader/ResourceLoaderTypes.h',
             'loader/SinkDocument.cpp',
             'loader/SinkDocument.h',
             'loader/SubframeLoader.cpp',

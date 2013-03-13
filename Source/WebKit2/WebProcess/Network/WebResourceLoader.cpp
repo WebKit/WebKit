@@ -87,10 +87,10 @@ void WebResourceLoader::didReceiveResponseWithCertificateInfo(const ResourceResp
     m_coreLoader->didReceiveResponse(responseCopy);
 }
 
-void WebResourceLoader::didReceiveData(const CoreIPC::DataReference& data, int64_t encodedDataLength, bool allAtOnce)
+void WebResourceLoader::didReceiveData(const CoreIPC::DataReference& data, int64_t encodedDataLength)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveData of size %i for '%s'", (int)data.size(), m_coreLoader->url().string().utf8().data());
-    m_coreLoader->didReceiveData(reinterpret_cast<const char*>(data.data()), data.size(), encodedDataLength, allAtOnce);
+    m_coreLoader->didReceiveData(reinterpret_cast<const char*>(data.data()), data.size(), encodedDataLength, DataPayloadBytes);
 }
 
 void WebResourceLoader::didFinishResourceLoad(double finishTime)
@@ -117,7 +117,7 @@ void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& hand
         // FIXME (NetworkProcess): Give ResourceLoader the ability to take ResourceBuffer arguments.
         // That will allow us to pass it along to CachedResources and allow them to hang on to the shared memory behind the scenes.
         // FIXME (NetworkProcess): Pass along the correct value for encodedDataLength.
-        m_coreLoader->didReceiveData(reinterpret_cast<const char*>(resource->data()), resource->size(), -1 /* encodedDataLength */ , true);
+        m_coreLoader->didReceiveData(reinterpret_cast<const char*>(resource->data()), resource->size(), -1 /* encodedDataLength */ , DataPayloadWholeResource);
     }
 
     m_coreLoader->didFinishLoading(finishTime);

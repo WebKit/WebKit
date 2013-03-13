@@ -28083,6 +28083,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\ResourceLoaderTypes.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\ResourceLoadNotifier.cpp"
 				>
 			</File>

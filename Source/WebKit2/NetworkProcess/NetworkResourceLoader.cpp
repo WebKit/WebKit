@@ -205,7 +205,7 @@ void NetworkResourceLoader::didReceiveData(ResourceHandle*, const char* data, in
     // Such buffering will need to be thread safe, as this callback is happening on a background thread.
     
     CoreIPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(data), length);
-    sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedDataLength, false));
+    sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedDataLength));
 }
 
 void NetworkResourceLoader::didFinishLoading(ResourceHandle*, double finishTime)

@@ -56,17 +56,17 @@ public:
     bool isDone() const;
 
 private:
-    virtual void didReceiveResponse(const ResourceResponse&);
-    virtual void didReceiveData(const char*, int, long long encodedDataLength, bool allAtOnce);
-    virtual void didFinishLoading(double finishTime);
-    virtual void didFail(const ResourceError&);
+    virtual void didReceiveResponse(const ResourceResponse&) OVERRIDE;
+    virtual void didReceiveData(const char*, int, long long encodedDataLength, DataPayloadType) OVERRIDE;
+    virtual void didFinishLoading(double finishTime) OVERRIDE;
+    virtual void didFail(const ResourceError&) OVERRIDE;
 
-    virtual void releaseResources();
+    virtual void releaseResources() OVERRIDE;
 
     NetscapePlugInStreamLoader(Frame*, NetscapePlugInStreamLoaderClient*);
 
-    virtual void willCancel(const ResourceError&);
-    virtual void didCancel(const ResourceError&);
+    virtual void willCancel(const ResourceError&) OVERRIDE;
+    virtual void didCancel(const ResourceError&) OVERRIDE;
 
     NetscapePlugInStreamLoaderClient* m_client;
 };

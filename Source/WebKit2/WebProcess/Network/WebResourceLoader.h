@@ -75,7 +75,7 @@ private:
 
     void willSendRequest(const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::ResourceRequest& newRequest);
     void didReceiveResponseWithCertificateInfo(const WebCore::ResourceResponse&, const PlatformCertificateInfo&);
-    void didReceiveData(const CoreIPC::DataReference&, int64_t encodedDataLength, bool allAtOnce);
+    void didReceiveData(const CoreIPC::DataReference&, int64_t encodedDataLength);
     void didFinishResourceLoad(double finishTime);
     void didFailResourceLoad(const WebCore::ResourceError&);
     void didReceiveResource(const ShareableResource::Handle&, double finishTime);

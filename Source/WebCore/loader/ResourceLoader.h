@@ -31,6 +31,7 @@
 
 #include "ResourceHandleClient.h"
 #include "ResourceLoaderOptions.h"
+#include "ResourceLoaderTypes.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 
@@ -72,7 +73,7 @@ public:
     virtual void releaseResources();
     const ResourceResponse& response() const;
 
-    virtual void addData(const char*, int, bool allAtOnce);
+    virtual void addData(const char*, int, DataPayloadType);
     virtual PassRefPtr<ResourceBuffer> resourceData();
     void clearResourceData();
     virtual bool isSubresourceLoader();
@@ -80,7 +81,7 @@ public:
     virtual void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse);
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
     virtual void didReceiveResponse(const ResourceResponse&);
-    virtual void didReceiveData(const char*, int, long long encodedDataLength, bool allAtOnce);
+    virtual void didReceiveData(const char*, int, long long encodedDataLength, DataPayloadType);
     virtual void didReceiveCachedMetadata(const char*, int) { }
     void willStopBufferingData(const char*, int);
     virtual void didFinishLoading(double finishTime);

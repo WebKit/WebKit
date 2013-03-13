@@ -93,13 +93,13 @@ void NetscapePlugInStreamLoader::didReceiveResponse(const ResourceResponse& resp
         cancel(frameLoader()->client()->fileDoesNotExistError(response));
 }
 
-void NetscapePlugInStreamLoader::didReceiveData(const char* data, int length, long long encodedDataLength, bool allAtOnce)
+void NetscapePlugInStreamLoader::didReceiveData(const char* data, int length, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
     RefPtr<NetscapePlugInStreamLoader> protect(this);
 
     m_client->didReceiveData(this, data, length);
     
-    ResourceLoader::didReceiveData(data, length, encodedDataLength, allAtOnce);
+    ResourceLoader::didReceiveData(data, length, encodedDataLength, dataPayloadType);
 }
 
 void NetscapePlugInStreamLoader::didFinishLoading(double finishTime)

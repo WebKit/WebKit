@@ -55,26 +55,26 @@ private:
     SubresourceLoader(Frame*, CachedResource*, const ResourceLoaderOptions&);
     virtual ~SubresourceLoader();
 
-    virtual bool init(const ResourceRequest&);
+    virtual bool init(const ResourceRequest&) OVERRIDE;
 
-    virtual void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse);
-    virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
-    virtual void didReceiveResponse(const ResourceResponse&);
-    virtual void didReceiveData(const char*, int, long long encodedDataLength, bool allAtOnce);
-    virtual void didReceiveCachedMetadata(const char*, int);
-    virtual void didFinishLoading(double finishTime);
-    virtual void didFail(const ResourceError&);
-    virtual void willCancel(const ResourceError&);
-    virtual void didCancel(const ResourceError&) { }
+    virtual void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse) OVERRIDE;
+    virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) OVERRIDE;
+    virtual void didReceiveResponse(const ResourceResponse&) OVERRIDE;
+    virtual void didReceiveData(const char*, int, long long encodedDataLength, DataPayloadType) OVERRIDE;
+    virtual void didReceiveCachedMetadata(const char*, int) OVERRIDE;
+    virtual void didFinishLoading(double finishTime) OVERRIDE;
+    virtual void didFail(const ResourceError&) OVERRIDE;
+    virtual void willCancel(const ResourceError&) OVERRIDE;
+    virtual void didCancel(const ResourceError&) OVERRIDE { }
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
-    virtual bool supportsDataArray() { return true; }
-    virtual void didReceiveDataArray(CFArrayRef);
+    virtual bool supportsDataArray() OVERRIDE { return true; }
+    virtual void didReceiveDataArray(CFArrayRef) OVERRIDE;
 #endif
 #if PLATFORM(CHROMIUM)
-    virtual void didDownloadData(int);
+    virtual void didDownloadData(int) OVERRIDE;
 #endif
-    virtual void releaseResources();
+    virtual void releaseResources() OVERRIDE;
 
     bool checkForHTTPStatusCodeError();
     void sendDataToResource(const char*, int);
