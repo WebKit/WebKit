@@ -718,10 +718,6 @@ fast/dom/shadow/wheel-event-on-input-in-shadow-dom.html
 webkit.org/b/100769 animations/negative-delay.html [ Failure Pass ]
 webkit.org/b/100769 transitions/negative-delay.html [ Failure Pass ]
 
-# [Qt] Text on scaled layer is blurry
-webkit.org/b/101491 compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
-webkit.org/b/101491 compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
-
 # [Qt][WK2] New compositing/overflow/* tests fails, because ENABLE_ACCELERATED_OVERFLOW_SCROLLING is disabled
 webkit.org/b/102678 compositing/overflow/updating-scrolling-content.html
 webkit.org/b/102678 compositing/overflow/scrolling-without-painting.html

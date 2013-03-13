@@ -1,3 +1,4 @@
+
 # Tests failing on WK1 only (working on WK2)
 
 # Failing compositing tests - need more investigation
@@ -18,12 +19,6 @@ compositing/tiling/huge-layer-with-layer-children-resize.html
 compositing/tiling/huge-layer-with-layer-children.html
 compositing/tiling/tile-cache-zoomed.html
 compositing/video-page-visibility.html
-
-# Failing compositing tests (image failures) - need more investigation
-compositing/background-color/background-color-change-to-text.html
-compositing/background-color/background-color-text-change.html
-compositing/text-on-scaled-layer.html
-compositing/text-on-scaled-surface.html
 
 # Failing compositing tests (missing results) - need more investigation
 compositing/geometry/horizontal-scroll-composited.html
