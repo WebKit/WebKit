@@ -1291,7 +1291,9 @@ static void externalSubsetHandler(void* closure, const xmlChar*, const xmlChar* 
         || (extId == "-//W3C//DTD XHTML Basic 1.0//EN")
         || (extId == "-//W3C//DTD XHTML 1.1 plus MathML 2.0//EN")
         || (extId == "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN")
-        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.0//EN"))
+        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.0//EN")
+        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.1//EN")
+        || (extId == "-//WAPFORUM//DTD XHTML Mobile 1.2//EN"))
         getParser(closure)->setIsXHTMLDocument(true); // controls if we replace entities or not.
 }
 
