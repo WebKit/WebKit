@@ -4868,7 +4868,7 @@ void StyleResolver::checkForGenericFamilyChange(RenderStyle* style, RenderStyle*
         size = fontSizeForKeyword(m_checker.document(), CSSValueXxSmall + childFont.keywordSize() - 1, childFont.useFixedDefaultSize());
     else {
         Settings* settings = m_checker.document()->settings();
-        float fixedScaleFactor = settings
+        float fixedScaleFactor = (settings && settings->defaultFixedFontSize() && settings->defaultFontSize())
             ? static_cast<float>(settings->defaultFixedFontSize()) / settings->defaultFontSize()
             : 1;
         size = parentFont.useFixedDefaultSize() ?

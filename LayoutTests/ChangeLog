@@ -1,5 +1,19 @@
 2013-03-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r136074
+
+    2012-11-28  Kenichi Ishibashi  <bashi@chromium.org>
+
+            StyleResolver should not set NaN to font size
+            https://bugs.webkit.org/show_bug.cgi?id=99506
+
+            Reviewed by Abhishek Arya.
+
+            * fast/css/font-size-nan-expected.txt: Added.
+            * fast/css/font-size-nan.svg: Added.
+
+2013-03-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r136061
 
     2012-11-28  Tom Sepez  <tsepez@chromium.org>
