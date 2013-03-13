@@ -30,10 +30,6 @@
 
 namespace WebCore {
 
-// Smallcaps versions of fonts are 70% the size of the normal font.
-static const float smallCapsFraction = 0.7f;
-static const float emphasisMarkFraction = .5;
-
 static inline float FSFixedToFloat(FS_FIXED n) { return n / 65536.0; }
 
 #define openTypeTag(a, b, c, d) (FS_ULONG)((a << 24) | (b << 16) | (c << 8) | d)
@@ -118,26 +114,6 @@ PassRefPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescri
             m_platformData.orientation(),
             m_platformData.widthVariant()),
         isCustomFont(), false));
-}
-
-SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
-{
-    if (!m_derivedFontData)
-        m_derivedFontData = DerivedFontData::create(isCustomFont());
-    if (!m_derivedFontData->smallCaps)
-        m_derivedFontData->smallCaps = createScaledFontData(fontDescription, smallCapsFraction);
-
-    return m_derivedFontData->smallCaps.get();
-}
-
-SimpleFontData* SimpleFontData::emphasisMarkFontData(const FontDescription& fontDescription) const
-{
-    if (!m_derivedFontData)
-        m_derivedFontData = DerivedFontData::create(isCustomFont());
-    if (!m_derivedFontData->emphasisMark)
-        m_derivedFontData->emphasisMark = createScaledFontData(fontDescription, emphasisMarkFraction);
-
-    return m_derivedFontData->emphasisMark.get();
 }
 
 bool SimpleFontData::containsCharacters(const UChar* characters, int length) const
