@@ -906,7 +906,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     // no progressive loading of the background image
     if (shouldPaintBackgroundImage) {
         BackgroundImageGeometry geometry;
-        calculateBackgroundImageGeometry(bgLayer, scrolledPaintRect, geometry);
+        calculateBackgroundImageGeometry(bgLayer, scrolledPaintRect, geometry, backgroundObject);
         geometry.clip(paintInfo.rect);
         if (!geometry.destRect().isEmpty()) {
             CompositeOperator compositeOp = op == CompositeSourceOver ? bgLayer->composite() : op;
@@ -1145,7 +1145,7 @@ bool RenderBoxModelObject::fixedBackgroundPaintsInLocalCoordinates() const
 }
 
 void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fillLayer, const LayoutRect& paintRect,
-                                                            BackgroundImageGeometry& geometry)
+    BackgroundImageGeometry& geometry, RenderObject* backgroundObject)
 {
     LayoutUnit left = 0;
     LayoutUnit top = 0;
@@ -1205,8 +1205,9 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
         positioningAreaSize = geometry.destRect().size();
     }
 
+    RenderObject* clientForBackgroundImage = backgroundObject ? backgroundObject : this;
     IntSize fillTileSize = calculateFillTileSize(fillLayer, positioningAreaSize);
-    fillLayer->image()->setContainerSizeForRenderer(this, fillTileSize, style()->effectiveZoom());
+    fillLayer->image()->setContainerSizeForRenderer(clientForBackgroundImage, fillTileSize, style()->effectiveZoom());
     geometry.setTileSize(fillTileSize);
 
     EFillRepeat backgroundRepeatX = fillLayer->repeatX();
