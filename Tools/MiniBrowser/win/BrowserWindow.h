@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,39 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PlatformUtilities.h"
-#include "PlatformWebView.h"
+#ifndef BrowserWindow_h
+#define BrowserWindow_h
 
-namespace TestWebKitAPI {
-    
-static bool loaded;
+#include "BrowserView.h"
+#include <string>
 
-static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
-{
-    loaded = true;
-}
+class BrowserWindow {
+public:
+    static BrowserWindow* create()
+    {
+        return new BrowserWindow;
+    }
 
-// Test for https://webkit.org/b/115607
-// This tests that we don't crash when calling WKPageClose and WKPageTerminate.
+    void createWindow(int x, int y, int width, int height);
+    void showWindow();
 
-TEST(WebKit2, CloseThenTerminate)
-{
-    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
-    PlatformWebView webView(context.get());
+    void goToURL(const std::wstring& url);
 
-    WKPageLoaderClient loaderClient;
-    memset(&loaderClient, 0 , sizeof(loaderClient));
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient);
+    bool handleMessage(const MSG*);
 
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple", "html"));
-    WKPageLoadURL(webView.page(), url.get());
+    const BrowserView& view() const { return m_browserView; }
+    HWND window() const { return m_window; }
 
-    Util::run(&loaded);
+private:
+    BrowserWindow();
 
-    WKPageClose(webView.page());
-    WKPageTerminate(webView.page());
-}
+    static LRESULT CALLBACK BrowserWindowWndProc(HWND, UINT, WPARAM, LPARAM);
 
-} // namespace TestWebKitAPI
+    // Message handlers.
+    LRESULT wndProc(HWND, UINT, WPARAM, LPARAM);
+    void onCreate(LPCREATESTRUCT);
+    void onDestroy();
+    void onNCDestroy();
+
+    void onSize(int width, int height);
+    LRESULT onCommand(int commandID, bool& handled);
+
+    HWND m_window;
+
+    HWND m_rebarWindow;
+    HWND m_comboBoxWindow;
+    BrowserView m_browserView;
+};
+
+#endif // BrowserWindow_h

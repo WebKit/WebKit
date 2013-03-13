@@ -67,7 +67,6 @@ set(test_webkit2_api_BINARIES
     InjectedBundleInitializationUserDataCallbackWins
     LoadAlternateHTMLStringWithNonDirectoryURL
     LoadCanceledNoServerRedirectCallback
-    LoadPageOnCrash
     MouseMoveAfterCrash
     ReloadPageAfterCrash
     ResizeWindowAfterCrash

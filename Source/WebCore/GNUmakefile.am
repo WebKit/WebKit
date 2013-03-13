@@ -352,6 +352,14 @@ audio_DATA = $(WebCore)/platform/audio/resources/Composite.wav
 dist_audio_DATA = $(audio_DATA)
 endif  # END ENABLE_WEB_AUDIO
 
+# ANGLE tokenizer & parser
+DerivedSources/ANGLE/glslang.cpp: Source/ThirdParty/ANGLE/src/compiler/glslang.l
+	$(AM_V_GEN)$(FLEX) --noline --nounistd --outfile="$@" "$<"
+
+DerivedSources/ANGLE/glslang_tab.cpp: Source/ThirdParty/ANGLE/src/compiler/glslang.y
+	$(AM_V_GEN)$(BISON) --no-lines --defines="DerivedSources/ANGLE/glslang_tab.h" --skeleton=yacc.c --output="$@" $<
+DerivedSources/ANGLE/glslang_tab.h: DerivedSources/ANGLE/glslang_tab.cpp
+
 IDL_PATH := \
     $(WebCore)/Modules/filesystem \
     $(WebCore)/Modules/gamepad \
@@ -579,6 +587,7 @@ libWebCoreGtk_la_CPPFLAGS = \
 	$(webcoregtk_cppflags) \
 	$(javascriptcore_cppflags) \
 	-fno-strict-aliasing \
+	$(HILDON_CPPFLAGS) \
 	$(CAIRO_CFLAGS) \
 	$(CLUTTER_CFLAGS) \
 	$(COVERAGE_CFLAGS) \
@@ -590,6 +599,7 @@ libWebCoreGtk_la_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \
 	$(GTK_CFLAGS) \
+	$(HILDON_CFLAGS) \
 	$(LIBSECRET_CFLAGS) \
 	$(LIBSOUP_CFLAGS) \
 	$(LIBXML_CFLAGS) \
@@ -625,6 +635,7 @@ EXTRA_DIST += \
 	$(wildcard $(srcdir)/Source/WebCore/inspector/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/loader/appcache/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/page/*.idl) \
+	$(wildcard $(srcdir)/Source/WebCore/platform/gtk/po/*) \
 	$(wildcard $(srcdir)/Source/WebCore/plugins/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/storage/*.idl) \
 	$(wildcard $(srcdir)/Source/WebCore/svg/*.idl) \
@@ -726,7 +737,7 @@ dist_webinspectorimages_DATA = \
 
 # It seems that $(shell) does not expand when it is a rule dependency, so
 # we must redefine this list of copied files with traditional dependency wildcards.
-noinst_DATA += ${GENSOURCES_INSPECTOR}/inspector.html
+noinst_DATA = ${GENSOURCES_INSPECTOR}/inspector.html
 ${GENSOURCES_INSPECTOR}/inspector.html: $(WebCore)/inspector/front-end/*.html \
 		$(WebCore)/inspector/front-end/*.js \
 		$(WebCore)/inspector/front-end/UglifyJS/*.js \

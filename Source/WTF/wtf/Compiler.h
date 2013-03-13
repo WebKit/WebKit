@@ -60,7 +60,6 @@
 #define WTF_COMPILER_SUPPORTS_CXX_EXPLICIT_CONVERSIONS __has_feature(cxx_explicit_conversions)
 #define WTF_COMPILER_SUPPORTS_BLOCKS __has_feature(blocks)
 #define WTF_COMPILER_SUPPORTS_C_STATIC_ASSERT __has_extension(c_static_assert)
-#define WTF_COMPILER_SUPPORTS_CXX_STATIC_ASSERT __has_extension(cxx_static_assert)
 #define WTF_COMPILER_SUPPORTS_CXX_OVERRIDE_CONTROL __has_extension(cxx_override_control)
 #define WTF_COMPILER_SUPPORTS_HAS_TRIVIAL_DESTRUCTOR __has_extension(has_trivial_destructor)
 #define WTF_COMPILER_SUPPORTS_CXX_STRONG_ENUMS __has_extension(cxx_strong_enums)
@@ -123,36 +122,17 @@
 
 /* Specific compiler features */
 #if COMPILER(GCC) && !COMPILER(CLANG)
-#if GCC_VERSION_AT_LEAST(4, 8, 0)
-#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
-#endif
-#if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
-/* C11 support */
-#define WTF_COMPILER_SUPPORTS_C_STATIC_ASSERT 1
-#endif
-#if defined(__GXX_EXPERIMENTAL_CXX0X__) || (defined(__cplusplus) && __cplusplus >= 201103L)
-/* C++11 support */
-#if GCC_VERSION_AT_LEAST(4, 3, 0)
+#if GCC_VERSION_AT_LEAST(4, 7, 0) && defined(__cplusplus) && __cplusplus >= 201103L
 #define WTF_COMPILER_SUPPORTS_CXX_RVALUE_REFERENCES 1
-#define WTF_COMPILER_SUPPORTS_CXX_STATIC_ASSERT 1
-#define WTF_COMPILER_SUPPORTS_CXX_VARIADIC_TEMPLATES 1
-#endif
-#if GCC_VERSION_AT_LEAST(4, 4, 0)
 #define WTF_COMPILER_SUPPORTS_CXX_DELETED_FUNCTIONS 1
-#endif
-#if GCC_VERSION_AT_LEAST(4, 5, 0)
-#define WTF_COMPILER_SUPPORTS_CXX_EXPLICIT_CONVERSIONS 1
-#endif
-#if GCC_VERSION_AT_LEAST(4, 6, 0)
 #define WTF_COMPILER_SUPPORTS_CXX_NULLPTR 1
-/* Strong enums should work from gcc 4.4, but doesn't seem to support some operators */
-#define WTF_COMPILER_SUPPORTS_CXX_STRONG_ENUMS 1
-#endif
-#if GCC_VERSION_AT_LEAST(4, 7, 0)
 #define WTF_COMPILER_SUPPORTS_CXX_OVERRIDE_CONTROL 1
+
+#elif GCC_VERSION_AT_LEAST(4, 6, 0) && defined(__GXX_EXPERIMENTAL_CXX0X__)
+#define WTF_COMPILER_SUPPORTS_CXX_NULLPTR 1 
 #endif
-#endif /* defined(__GXX_EXPERIMENTAL_CXX0X__) || (defined(__cplusplus) && __cplusplus >= 201103L) */
-#endif /* COMPILER(GCC) */
+
+#endif
 
 /* COMPILER(MINGW) - MinGW GCC */
 /* COMPILER(MINGW64) - mingw-w64 GCC - only used as additional check to exclude mingw.org specific functions */

@@ -19,7 +19,6 @@ SOURCES += \
     InjectedBundleInitializationUserDataCallbackWins.cpp \
     LoadAlternateHTMLStringWithNonDirectoryURL.cpp \
     LoadCanceledNoServerRedirectCallback.cpp \
-    LoadPageOnCrash.cpp \
     MouseMoveAfterCrash.cpp \
     PageLoadBasic.cpp \
     PageLoadDidChangeLocationWithinPageForFrame.cpp \
@@ -30,7 +29,6 @@ SOURCES += \
     ReloadPageAfterCrash.cpp \
     ResizeWindowAfterCrash.cpp \
     ResponsivenessTimerDoesntFireEarly.cpp \
-    TerminateTwice.cpp \
     UserMessage.cpp \
     WillSendSubmitEvent.cpp \
     WKConnection.cpp \

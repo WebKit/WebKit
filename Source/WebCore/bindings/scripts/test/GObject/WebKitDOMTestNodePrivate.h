@@ -26,8 +26,8 @@
 
 namespace WebKit {
 WebKitDOMTestNode* wrapTestNode(WebCore::TestNode*);
-WebKitDOMTestNode* kit(WebCore::TestNode*);
-WebCore::TestNode* core(WebKitDOMTestNode*);
+WebCore::TestNode* core(WebKitDOMTestNode* request);
+WebKitDOMTestNode* kit(WebCore::TestNode* node);
 } // namespace WebKit
 
 #endif /* WebKitDOMTestNodePrivate_h */

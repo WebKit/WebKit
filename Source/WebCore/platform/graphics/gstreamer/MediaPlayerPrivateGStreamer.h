@@ -88,10 +88,6 @@ public:
     void sourceChanged();
     GstElement* audioSink() const;
 
-    void setAudioStreamProperties(GObject*);
-
-    void simulateAudioInterruption();
-
 private:
     MediaPlayerPrivateGStreamer(MediaPlayer*);
 
@@ -155,9 +151,8 @@ private:
     GRefPtr<GstElement> m_webkitAudioSink;
     mutable long m_totalBytes;
     KURL m_url;
+    bool m_originalPreloadWasAutoAndWasOverridden;
     bool m_preservesPitch;
-    GstState m_requestedState;
-    GRefPtr<GstElement> m_autoAudioSink;
 };
 }
 

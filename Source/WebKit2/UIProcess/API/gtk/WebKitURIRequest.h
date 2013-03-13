@@ -25,7 +25,6 @@
 #define WebKitURIRequest_h
 
 #include <glib-object.h>
-#include <libsoup/soup.h>
 #include <webkit2/WebKitDefines.h>
 
 G_BEGIN_DECLS
@@ -51,27 +50,20 @@ struct _WebKitURIRequest {
 struct _WebKitURIRequestClass {
     GObjectClass parent_class;
 
-    void (*_webkit_reserved0) (void);
-    void (*_webkit_reserved1) (void);
-    void (*_webkit_reserved2) (void);
-    void (*_webkit_reserved3) (void);
 };
 
 WEBKIT_API GType
-webkit_uri_request_get_type         (void);
+webkit_uri_request_get_type (void);
 
 WEBKIT_API WebKitURIRequest *
-webkit_uri_request_new              (const gchar      *uri);
+webkit_uri_request_new      (const gchar      *uri);
 
 WEBKIT_API const gchar *
-webkit_uri_request_get_uri          (WebKitURIRequest *request);
+webkit_uri_request_get_uri  (WebKitURIRequest *request);
 
 WEBKIT_API void
-webkit_uri_request_set_uri          (WebKitURIRequest *request,
-                                     const gchar      *uri);
-
-WEBKIT_API SoupMessageHeaders *
-webkit_uri_request_get_http_headers (WebKitURIRequest *request);
+webkit_uri_request_set_uri  (WebKitURIRequest *request,
+                             const gchar      *uri);
 
 G_END_DECLS
 

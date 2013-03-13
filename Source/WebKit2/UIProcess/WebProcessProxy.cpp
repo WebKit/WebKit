@@ -193,13 +193,6 @@ void WebProcessProxy::removeWebPage(uint64_t pageID)
     m_processSuppressiblePages.remove(pageID);
     updateProcessSuppressionState();
 #endif
-
-#if ENABLE(NETWORK_PROCESS)
-    // Terminate the web process immediately if we have enough information to confidently do so.
-    // This only works if we're using a network process. Otherwise we have to wait for the web process to clean up.
-    if (canTerminateChildProcess() && m_context->usesNetworkProcess())
-        requestTermination();
-#endif
 }
 
 Vector<WebPageProxy*> WebProcessProxy::pages() const
@@ -505,27 +498,17 @@ size_t WebProcessProxy::frameCountInPage(WebPageProxy* page) const
     return result;
 }
 
-bool WebProcessProxy::canTerminateChildProcess()
-{
-    if (!m_pageMap.isEmpty())
-        return false;
-
-    if (m_downloadProxyMap && !m_downloadProxyMap->isEmpty())
-        return false;
-
-    if (!m_context->shouldTerminate(this))
-        return false;
-
-    return true;
-}
-
 void WebProcessProxy::shouldTerminate(bool& shouldTerminate)
 {
-    shouldTerminate = canTerminateChildProcess();
-    if (shouldTerminate) {
-        // We know that the web process is going to terminate so disconnect it from the context.
-        disconnect();
+    if (!m_pageMap.isEmpty() || (m_downloadProxyMap && !m_downloadProxyMap->isEmpty()) || !m_context->shouldTerminate(this)) {
+        shouldTerminate = false;
+        return;
     }
+
+    shouldTerminate = true;
+
+    // We know that the web process is going to terminate so disconnect it from the context.
+    disconnect();
 }
 
 void WebProcessProxy::updateTextCheckerState()
@@ -633,19 +616,6 @@ void WebProcessProxy::pagePreferencesChanged(WebKit::WebPageProxy *page)
 #else
     UNUSED_PARAM(page);
 #endif
-}
-
-void WebProcessProxy::requestTermination()
-{
-    if (!isValid())
-        return;
-
-    ChildProcessProxy::terminate();
-
-    if (webConnection())
-        webConnection()->didClose();
-
-    disconnect();
 }
 
 } // namespace WebKit

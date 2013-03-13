@@ -34,7 +34,6 @@
 #include <webkit2/WebKitFileChooserRequest.h>
 #include <webkit2/WebKitFindController.h>
 #include <webkit2/WebKitFormSubmissionRequest.h>
-#include <webkit2/WebKitForwardDeclarations.h>
 #include <webkit2/WebKitHitTestResult.h>
 #include <webkit2/WebKitJavascriptResult.h>
 #include <webkit2/WebKitPermissionRequest.h>
@@ -242,6 +241,7 @@ struct _WebKitWebViewClass {
                                               WebKitInsecureContentEvent   event);
     gboolean   (* web_process_crashed)       (WebKitWebView               *web_view);
 
+    /* Padding for future expansion */
     void (*_webkit_reserved0) (void);
     void (*_webkit_reserved1) (void);
     void (*_webkit_reserved2) (void);

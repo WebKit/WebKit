@@ -316,26 +316,26 @@ docs: docs-build.stamp
 .PHONY : docs
 DISTCLEANFILES += docs-build.stamp
 
-docs_build_stamp_list = \
-	Source/WebKit/gtk/docs/webkitenvironment.xml
-
-if ENABLE_WEBKIT1
-docs_build_stamp_list += \
-	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
-	Source/WebKit/gtk/docs/webkitgtk-docs.sgml \
-	Source/WebKit/gtk/docs/webkitgtk-sections.txt
-endif
-
 if ENABLE_WEBKIT2
-docs_build_stamp_list += \
+docs-build.stamp: \
+	Source/WebKit/gtk/docs/webkitenvironment.xml \
+	Source/WebKit/gtk/docs/webkitgtk-docs.sgml \
+	Source/WebKit/gtk/docs/webkitgtk-sections.txt \
+	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-docs.sgml \
 	Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-sections.txt
-endif
-
-docs-build.stamp: $(docs_build_stamp_list)
 	CC=$(CC) $(srcdir)/Tools/gtk/generate-gtkdoc
 	@touch docs-build.stamp
+else
+docs-build.stamp: \
+	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	Source/WebKit/gtk/docs/webkitenvironment.xml \
+	Source/WebKit/gtk/docs/webkitgtk-docs.sgml \
+	Source/WebKit/gtk/docs/webkitgtk-sections.txt
+	CC=$(CC) $(srcdir)/Tools/gtk/generate-gtkdoc
+	@touch docs-build.stamp
+endif
 
 clean-local: doc-clean-local
 doc-clean-local:
@@ -394,7 +394,7 @@ if ENABLE_WEBKIT2
 	  fi; \
 	fi
 endif
-	@$(AM_V_GEN) PKG_CONFIG=$(PKG_CONFIG) $(PYTHON) $(srcdir)/Tools/gtk/generate-gtkdoc --rebase --virtual-root=$${DESTDIR}
+	@$(AM_V_GEN)$(PYTHON) $(srcdir)/Tools/gtk/generate-gtkdoc --rebase --virtual-root=$${DESTDIR}
 
 uninstall-local:
 if ENABLE_WEBKIT1
@@ -417,6 +417,6 @@ if ENABLE_WEBKIT2
 endif
 
 if ENABLE_GTK_DOC
-noinst_DATA += docs-build.stamp
+all: docs-build.stamp
 endif
 

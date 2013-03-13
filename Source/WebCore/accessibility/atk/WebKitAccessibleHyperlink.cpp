@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2010, 2011, 2012 Igalia S.L.
- * Copyright (C) 2013 Samsung Electronics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -42,10 +41,6 @@ using namespace WebCore;
 
 struct _WebKitAccessibleHyperlinkPrivate {
     WebKitAccessible* hyperlinkImpl;
-
-    // We cache these values so we can return them as const values.
-    CString actionName;
-    CString actionKeyBinding;
 };
 
 #define WEBKIT_ACCESSIBLE_HYPERLINK_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_ACCESSIBLE_HYPERLINK, WebKitAccessibleHyperlinkPrivate))
@@ -129,39 +124,33 @@ static const gchar* webkitAccessibleHyperlinkActionGetDescription(AtkAction* act
 static const gchar* webkitAccessibleHyperlinkActionGetKeybinding(AtkAction* action, gint index)
 {
     g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE_HYPERLINK(action), 0);
+    g_return_val_if_fail(WEBKIT_ACCESSIBLE_HYPERLINK(action)->priv->hyperlinkImpl, 0);
     g_return_val_if_fail(!index, 0);
 
-    WebKitAccessibleHyperlinkPrivate* priv = WEBKIT_ACCESSIBLE_HYPERLINK(action)->priv;
-    g_return_val_if_fail(priv->hyperlinkImpl, 0);
-
-    if (!ATK_IS_ACTION(priv->hyperlinkImpl))
+    if (!ATK_IS_ACTION(WEBKIT_ACCESSIBLE_HYPERLINK(action)->priv->hyperlinkImpl))
         return 0;
 
     AccessibilityObject* coreObject = core(action);
     if (!coreObject)
         return 0;
 
-    priv->actionKeyBinding = coreObject->accessKey().string().utf8();
-    return priv->actionKeyBinding.data();
+    return returnString(coreObject->accessKey().string());
 }
 
 static const gchar* webkitAccessibleHyperlinkActionGetName(AtkAction* action, gint index)
 {
     g_return_val_if_fail(WEBKIT_IS_ACCESSIBLE_HYPERLINK(action), 0);
+    g_return_val_if_fail(WEBKIT_ACCESSIBLE_HYPERLINK(action)->priv->hyperlinkImpl, 0);
     g_return_val_if_fail(!index, 0);
 
-    WebKitAccessibleHyperlinkPrivate* priv = WEBKIT_ACCESSIBLE_HYPERLINK(action)->priv;
-    g_return_val_if_fail(priv->hyperlinkImpl, 0);
-
-    if (!ATK_IS_ACTION(priv->hyperlinkImpl))
+    if (!ATK_IS_ACTION(WEBKIT_ACCESSIBLE_HYPERLINK(action)->priv->hyperlinkImpl))
         return 0;
 
     AccessibilityObject* coreObject = core(action);
     if (!coreObject)
         return 0;
 
-    priv->actionName = coreObject->actionVerb().utf8();
-    return priv->actionName.data();
+    return returnString(coreObject->actionVerb());
 }
 
 static void atkActionInterfaceInit(AtkActionIface* iface)
@@ -184,7 +173,7 @@ static gchar* webkitAccessibleHyperlinkGetURI(AtkHyperlink* link, gint index)
     if (!coreObject || coreObject->url().isNull())
         return 0;
 
-    return g_strdup(coreObject->url().string().utf8().data());
+    return g_strdup(returnString(coreObject->url().string()));
 }
 
 static AtkObject* webkitAccessibleHyperlinkGetObject(AtkHyperlink* link, gint index)

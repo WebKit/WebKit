@@ -47,7 +47,7 @@
 #endif
 #endif
 
-#elif PLATFORM(WIN)
+#elif defined(WIN32) || defined(_WIN32)
 
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -66,7 +66,7 @@
 #undef WTF_USE_CURL
 #endif
 
-#endif // PLATFORM(WIN)
+#endif
 
 #include <stdint.h>
 

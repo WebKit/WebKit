@@ -21,7 +21,6 @@
 #include "WebKitPrivate.h"
 
 #include <gdk/gdk.h>
-#include <libintl.h>
 
 unsigned wkEventModifiersToGdkModifiers(WKEventModifiers wkModifiers)
 {
@@ -51,10 +50,4 @@ unsigned wkEventMouseButtonToWebKitMouseButton(WKEventMouseButton wkButton)
     }
     ASSERT_NOT_REACHED();
     return 0;
-}
-
-static __attribute__((constructor)) void wkInitialize()
-{
-    bindtextdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
-    bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 }

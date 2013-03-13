@@ -27,8 +27,8 @@
 
 namespace WebKit {
 WebKitDOMTestSerializedScriptValueInterface* wrapTestSerializedScriptValueInterface(WebCore::TestSerializedScriptValueInterface*);
-WebKitDOMTestSerializedScriptValueInterface* kit(WebCore::TestSerializedScriptValueInterface*);
-WebCore::TestSerializedScriptValueInterface* core(WebKitDOMTestSerializedScriptValueInterface*);
+WebCore::TestSerializedScriptValueInterface* core(WebKitDOMTestSerializedScriptValueInterface* request);
+WebKitDOMTestSerializedScriptValueInterface* kit(WebCore::TestSerializedScriptValueInterface* node);
 } // namespace WebKit
 
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */

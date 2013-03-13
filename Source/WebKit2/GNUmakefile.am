@@ -36,7 +36,6 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPPFLAGS = \
 	-fno-strict-aliasing \
 	-DPACKAGE_LOCALE_DIR=\"$(localedir)\" \
-	-std=c++11 \
 	$(global_cppflags) \
 	-include $(srcdir)/Source/WebKit2/WebKit2Prefix.h \
 	-I$(srcdir)/Source/WebKit/gtk \
@@ -152,10 +151,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CFL
 # Artificial dependency to make sure libwebkit2gtk and libwebkitgtk are not linked at the same time
 # The variable creation is to avoid having automake override the entire rule instead of adding the
 # dependency.
-if ENABLE_WEBKIT1
 webkit2gtk_lib_for_dep = libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
 $(webkit2gtk_lib_for_dep): libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
-endif
 
 libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_ladir = \
 	$(libwebkit2gtkincludedir)/WebKit2
@@ -426,7 +423,6 @@ Programs_WebKitWebProcess_CPPFLAGS = \
 	-I$(top_builddir)/DerivedSources/WebKit2 \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
 	-I$(top_builddir)/DerivedSources/WebKit2/include/WebCore \
-	-std=c++11 \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags)
 
@@ -511,43 +507,13 @@ libwebkit2gtkinjectedbundle_la_CPPFLAGS = \
 	-I$(srcdir)/Source/WebKit2/WebProcess/InjectedBundle/API/c \
 	-I$(top_builddir)/DerivedSources/InjectedBundle \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
-	-std=c++11 \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags) \
 	$(GLIB_CFLAGS)
 
 # Serialize linking of the plugin process with both webkit libraries.
 plugin_process_for_dep = Programs/WebKitPluginProcess
-plugin_process_for_dep_list = libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
-if ENABLE_WEBKIT1
-plugin_process_for_dep_list += \
-	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
-endif
-$(plugin_process_for_dep): $(plugin_process_for_dep_list)
-
-webcore_layer_gtk2_deps = \
-	libWebCorePlatform.la \
-	libWebCoreGtk2.la \
-	libWebCore.la \
-	libWebCoreModules.la
-if ENABLE_SVG
-webcore_layer_gtk2_deps += \
-	libWebCoreSVG.la
-endif
-if ENABLE_INDEXED_DATABASE
-webcore_layer_gtk2_deps += \
-	libLevelDB.la
-endif
-
-webcore_layer_gtk2_archives = $(foreach lib, $(webcore_layer_gtk2_deps), $(shell echo $(lib) | sed "s/\(.*\)\.la/.libs\/\1.a/"))
-
-WebCoreLayerGtk2.a: $(webcore_layer_gtk2_deps)
-	$(AM_V_GEN)
-	$(AM_V_at)$(shell rm -f $@)
-	$(AM_V_at)$(foreach archive, $(webcore_layer_gtk2_archives), $(shell ar t $(archive) | xargs -n50 ar cruT $@))
-
-DISTCLEANFILES += \
-	$(top_builddir)/WebCoreLayerGtk2.a
+$(plugin_process_for_dep): libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la
 
 Programs_WebKitPluginProcess_CPPFLAGS = \
 	-include $(srcdir)/Source/WebKit2/WebKit2Prefix.h \
@@ -573,7 +539,6 @@ Programs_WebKitPluginProcess_CPPFLAGS = \
 	-DGTK_API_VERSION_2=1 \
 	-DENABLE_PLUGIN_PROCESS=1 \
 	-DLIBEXECDIR=\""$(libexecdir)"\" \
-	-std=c++11 \
 	$(global_cppflags) \
 	$(webcore_cppflags) \
 	$(webcoregtk_cppflags) \
@@ -606,13 +571,20 @@ Programs_WebKitPluginProcess_SOURCES = \
 Programs_WebKitPluginProcess_LDADD = \
 	-lpthread \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
-	WebCoreLayerGtk2.a \
+	libWebCore.la
+
+#if ENABLE_SVG
+Programs_WebKitPluginProcess_LDADD += \
+	libWebCoreSVG.la
+#endif
+
+Programs_WebKitPluginProcess_LDADD += \
+	libWebCorePlatform.la \
+	libWebCoreGtk2.la \
 	$(CAIRO_LIBS) \
 	$(COVERAGE_LDFLAGS) \
-	$(FREETYPE_LIBS) \
 	$(GEOCLUE_LIBS) \
 	$(GLIB_LIBS) \
-	$(GAMEPAD_LIBS) \
 	$(GSTREAMER_LIBS) \
 	$(GTK2_LIBS) \
 	$(JPEG_LIBS) \
@@ -633,6 +605,13 @@ Programs_WebKitPluginProcess_LDADD = \
 	$(XT_LIBS) \
 	$(WINMM_LIBS) \
 	$(ZLIB_LIBS)
+
+# libWebCore and libWebCoreModules have circular dependencies that only seem to
+# be a problem when linking the plugin process; we don't really care about
+# modules for the plugin process, though, so to work around that we ignore
+# internal unresolved symbols
+Programs_WebKitPluginProcess_LDFLAGS = \
+	-Wl,--unresolved-symbols=ignore-in-object-files
 
 Programs_WebKitPluginProcess_CXXFLAGS = \
 	-fvisibility-inlines-hidden \

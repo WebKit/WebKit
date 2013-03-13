@@ -107,7 +107,6 @@ webkit2gtk_h_api += \
 	$(WebKit2)/UIProcess/API/gtk/WebKitFileChooserRequest.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitFindController.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitFormSubmissionRequest.h \
-	$(WebKit2)/UIProcess/API/gtk/WebKitForwardDeclarations.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitGeolocationPermissionRequest.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitHitTestResult.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitJavascriptResult.h \
@@ -135,6 +134,7 @@ webkit2gtk_h_api += \
 
 webkit2_web_extension_h_api += \
 	$(WebKit2)/WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.h \
+	$(WebKit2)/WebProcess/InjectedBundle/API/gtk/WebKitWebExtensionDefines.h \
 	$(WebKit2)/WebProcess/InjectedBundle/API/gtk/WebKitWebPage.h \
 	$(WebKit2)/WebProcess/InjectedBundle/API/gtk/webkit-web-extension.h
 
@@ -685,7 +685,6 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitFormSubmissionRequestPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitFormClient.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitFormClient.h \
-	Source/WebKit2/UIProcess/API/gtk/WebKitForwardDeclarations.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitFullscreenClient.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitFullscreenClient.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitGeolocationPermissionRequest.cpp \
@@ -1037,6 +1036,7 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebExtensionPrivate.h \
+	Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebExtensionDefines.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp \
 	Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebPage.h \
 	Source/WebKit2/WebProcess/InjectedBundle/API/gtk/WebKitWebPagePrivate.h \
@@ -1268,13 +1268,11 @@ webkit2_plugin_process_sources += \
 	Source/WebKit2/Platform/CoreIPC/StringReference.h \
 	Source/WebKit2/Platform/CoreIPC/unix/AttachmentUnix.cpp \
 	Source/WebKit2/Platform/CoreIPC/unix/ConnectionUnix.cpp \
-	Source/WebKit2/Platform/Logging.cpp \
 	Source/WebKit2/Platform/Module.cpp \
 	Source/WebKit2/Platform/Module.h \
 	Source/WebKit2/Platform/WorkQueue.cpp \
 	Source/WebKit2/Platform/WorkQueue.h \
 	Source/WebKit2/Platform/SharedMemory.h \
-	Source/WebKit2/Platform/gtk/LoggingGtk.cpp \
 	Source/WebKit2/Platform/gtk/ModuleGtk.cpp \
 	Source/WebKit2/Platform/gtk/WorkQueueGtk.cpp \
 	Source/WebKit2/Platform/unix/SharedMemoryUnix.cpp \
@@ -1328,12 +1326,7 @@ webkit2_plugin_process_sources += \
 	Source/WebKit2/Shared/gtk/ProcessExecutablePathGtk.cpp \
 	Source/WebKit2/Shared/gtk/WebEventFactory.cpp \
 	Source/WebKit2/Shared/cairo/ShareableBitmapCairo.cpp \
-	Source/WebKit2/Shared/soup/PlatformCertificateInfo.cpp \
-	Source/WebKit2/Shared/soup/PlatformCertificateInfo.h \
 	Source/WebKit2/Shared/soup/WebCoreArgumentCodersSoup.cpp \
-	Source/WebKit2/UIProcess/Launcher/ProcessLauncher.cpp \
-	Source/WebKit2/UIProcess/Launcher/ProcessLauncher.h \
-	Source/WebKit2/UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp \
 	Source/WebKit2/UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp \
 	Source/WebKit2/WebProcess/Plugins/Plugin.cpp \
 	Source/WebKit2/WebProcess/Plugins/Plugin.h \

@@ -758,8 +758,6 @@ private:
 
     virtual Type type() const { return APIType; }
 
-    void resetStateAfterProcessExited();
-
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
     virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&) OVERRIDE;
@@ -1027,7 +1025,7 @@ private:
     void sendWheelEvent(const WebWheelEvent&);
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    void findPlugin(const String& mimeType, const String& urlString, const String& documentURLString, String& pluginPath, String& newMIMEType, uint32_t& pluginLoadPolicy);
+    void getPluginPath(const String& mimeType, const String& urlString, const String& documentURLString, String& pluginPath, uint32_t& pluginLoadPolicy);
 #endif
 
     PageClient* m_pageClient;

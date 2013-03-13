@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "PlatformUtilities.h"
-#include "PlatformWebView.h"
+#define STRICT
+#define WIN32_LEAN_AND_MEAN
 
-namespace TestWebKitAPI {
+#include <tchar.h>
+#include <windows.h>
 
-static bool loaded;
 
-static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
-{
-    loaded = true;
-}
-
-TEST(WebKit2, TerminateTwice)
-{
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
-    PlatformWebView webView(context.get());
-
-    WKPageLoaderClient loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
-
-    loaderClient.version = 0;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-    WKPageSetPageLoaderClient(webView.page(), &loaderClient);
-
-    WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple", "html"));
-    WKPageLoadURL(webView.page(), url.get());
-
-    Util::run(&loaded);
-    WKPageTerminate(webView.page());
-
-    // Reloading will start relaunching the process.
-    WKPageReload(webView.page());
-
-    // And now we terminate the page before the process launch is complete.
-    WKPageTerminate(webView.page());
-}
-
-} // namespace TestWebKitAPI
 

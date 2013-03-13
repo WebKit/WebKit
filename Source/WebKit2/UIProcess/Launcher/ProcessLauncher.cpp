@@ -53,18 +53,7 @@ void ProcessLauncher::didFinishLaunchingProcess(PlatformProcessIdentifier proces
     m_isLaunching = false;
     
     if (!m_client) {
-        // FIXME: Make Identifier a move-only object and release port rights/connections in the destructor.
-#if PLATFORM(MAC)
-        if (identifier.port)
-            mach_port_mod_refs(mach_task_self(), identifier.port, MACH_PORT_RIGHT_RECEIVE, -1);
-
-#if HAVE(XPC)
-        if (identifier.xpcConnection) {
-            xpc_release(identifier.xpcConnection);
-            identifier.xpcConnection = 0;
-        }
-#endif
-#endif
+        // FIXME: Dispose of the connection identifier.
         return;
     }
     

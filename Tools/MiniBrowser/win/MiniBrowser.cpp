@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Igalia S.L.
+ * Copyright (C) 2010 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,62 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if !defined(__WEBKIT2_H_INSIDE__) && !defined(WEBKIT2_COMPILATION)
-#error "Only <webkit2/webkit2.h> can be included directly."
-#endif
+#include "stdafx.h"
 
-#ifndef WebKitForward_h
-#define WebKitForward_h
+#include "BrowserWindow.h"
+#include "MiniBrowser.h"
+#include <assert.h>
 
-typedef struct _WebKitPrintOperation  WebKitPrintOperation;
-typedef struct _WebKitFindController  WebKitFindController;
-typedef struct _WebKitWebView         WebKitWebView;
-typedef struct _WebKitContextMenu     WebKitContextMenu;
-typedef struct _WebKitContextMenuItem WebKitContextMenuItem;
+MiniBrowser::MiniBrowser()
+    : m_instance(0)
+{
+}
 
-#endif // WebKitForward_h
+MiniBrowser& MiniBrowser::shared()
+{
+    static MiniBrowser miniBrowser;
+
+    return miniBrowser;
+}
+
+void MiniBrowser::initialize(HINSTANCE instance)
+{
+    assert(!m_instance);
+
+    m_instance = instance;
+}
+
+void MiniBrowser::createNewWindow()
+{
+    static const wchar_t* kDefaultURLString = L"http://webkit.org/";
+
+    BrowserWindow* browserWindow = BrowserWindow::create();
+    browserWindow->createWindow(0, 0, 800, 600);
+    browserWindow->showWindow();
+    browserWindow->goToURL(kDefaultURLString);
+}
+
+void MiniBrowser::registerWindow(BrowserWindow* window)
+{
+    m_browserWindows.insert(window);
+}
+
+void MiniBrowser::unregisterWindow(BrowserWindow* window)
+{
+    m_browserWindows.erase(window);
+
+    if (m_browserWindows.empty())
+        ::PostQuitMessage(0);
+}
+
+bool MiniBrowser::handleMessage(const MSG* message)
+{
+    for (std::set<BrowserWindow*>::const_iterator it = m_browserWindows.begin(), end = m_browserWindows.end(); it != end; ++it) {
+        BrowserWindow* browserWindow = *it;
+
+        if (browserWindow->handleMessage(message))
+            return true;
+    }
+
+    return false;
+}

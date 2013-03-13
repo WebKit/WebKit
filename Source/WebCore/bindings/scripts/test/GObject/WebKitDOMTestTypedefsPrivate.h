@@ -26,8 +26,8 @@
 
 namespace WebKit {
 WebKitDOMTestTypedefs* wrapTestTypedefs(WebCore::TestTypedefs*);
-WebKitDOMTestTypedefs* kit(WebCore::TestTypedefs*);
-WebCore::TestTypedefs* core(WebKitDOMTestTypedefs*);
+WebCore::TestTypedefs* core(WebKitDOMTestTypedefs* request);
+WebKitDOMTestTypedefs* kit(WebCore::TestTypedefs* node);
 } // namespace WebKit
 
 #endif /* WebKitDOMTestTypedefsPrivate_h */

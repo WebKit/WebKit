@@ -540,18 +540,12 @@ void WebPageProxy::close()
     m_activePopupMenu = 0;
 
     m_estimatedProgress = 0.0;
-
+    
     m_loaderClient.initialize(0);
     m_policyClient.initialize(0);
-    m_formClient.initialize(0);
     m_uiClient.initialize(0);
 #if PLATFORM(EFL)
     m_uiPopupMenuClient.initialize(0);
-#endif
-    m_findClient.initialize(0);
-    m_findMatchesClient.initialize(0);
-#if ENABLE(CONTEXT_MENUS)
-    m_contextMenuClient.initialize(0);
 #endif
 
     m_drawingArea = nullptr;
@@ -1247,11 +1241,11 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-void WebPageProxy::findPlugin(const String& mimeType, const String& urlString, const String& documentURLString, String& pluginPath, String& newMimeType, uint32_t& pluginLoadPolicy)
+void WebPageProxy::getPluginPath(const String& mimeType, const String& urlString, const String& documentURLString, String& pluginPath, uint32_t& pluginLoadPolicy)
 {
     MESSAGE_CHECK_URL(urlString);
 
-    newMimeType = mimeType.lower();
+    String newMimeType = mimeType.lower();
 
     pluginLoadPolicy = PluginModuleLoadNormally;
     PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, KURL(KURL(), urlString));
@@ -1483,8 +1477,7 @@ void WebPageProxy::terminateProcess()
     if (!m_isValid)
         return;
 
-    m_process->requestTermination();
-    resetStateAfterProcessExited();
+    m_process->terminate();
 }
 
 #if !USE(CF) || defined(BUILDING_QT__)
@@ -3612,20 +3605,8 @@ void WebPageProxy::processDidBecomeResponsive()
 
 void WebPageProxy::processDidCrash()
 {
-    ASSERT(m_isValid);
-
-    resetStateAfterProcessExited();
-
-    m_pageClient->processDidCrash();
-    m_loaderClient.processDidCrash(this);
-}
-
-void WebPageProxy::resetStateAfterProcessExited()
-{
-    if (!isValid())
-        return;
-
     ASSERT(m_pageClient);
+
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
 
     m_isValid = false;
@@ -3712,11 +3693,16 @@ void WebPageProxy::resetStateAfterProcessExited()
 
     m_pendingLearnOrIgnoreWordMessageCount = 0;
 
-    // If the call out to the loader client didn't cause the web process to be relaunched,
-    // we'll call setNeedsDisplay on the view so that we won't have the old contents showing.
-    // If the call did cause the web process to be relaunched, we'll keep the old page contents showing
-    // until the new web process has painted its contents.
-    setViewNeedsDisplay(IntRect(IntPoint(), viewSize()));
+    m_pageClient->processDidCrash();
+    m_loaderClient.processDidCrash(this);
+
+    if (!m_isValid) {
+        // If the call out to the loader client didn't cause the web process to be relaunched, 
+        // we'll call setNeedsDisplay on the view so that we won't have the old contents showing.
+        // If the call did cause the web process to be relaunched, we'll keep the old page contents showing
+        // until the new web process has painted its contents.
+        setViewNeedsDisplay(IntRect(IntPoint(), viewSize()));
+    }
 
     // Can't expect DidReceiveEvent notifications from a crashed web process.
     m_keyEventQueue.clear();

@@ -635,16 +635,6 @@ String KURL::baseAsString() const
     return m_string.left(m_pathAfterLastSlash);
 }
 
-#if !PLATFORM(QT) && !USE(CF)
-String KURL::fileSystemPath() const
-{
-    if (!isValid() || !isLocalFile())
-        return String();
-
-    return decodeURLEscapeSequences(path());
-}
-#endif
-
 #ifdef NDEBUG
 
 static inline void assertProtocolIsGood(const char*)

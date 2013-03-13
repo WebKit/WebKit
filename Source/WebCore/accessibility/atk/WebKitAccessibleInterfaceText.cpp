@@ -92,10 +92,9 @@ static gchar* textForRenderer(RenderObject* renderer)
             // current object is not a text object but some of its
             // children are, in order not to miss those portions of
             // text by not properly handling those situations
-            if (object->firstChild()) {
-                GOwnPtr<char> objectText(textForRenderer(object));
-                g_string_append(resultText, objectText.get());
-            }
+            if (object->firstChild())
+                g_string_append(resultText, textForRenderer(object));
+
             continue;
         }
 
@@ -166,8 +165,7 @@ static gchar* webkitAccessibleTextGetText(AtkText*, gint startOffset, gint endOf
 static GailTextUtil* getGailTextUtilForAtk(AtkText* textObject)
 {
     GailTextUtil* gailTextUtil = gail_text_util_new();
-    GOwnPtr<char> text(webkitAccessibleTextGetText(textObject, 0, -1));
-    gail_text_util_text_setup(gailTextUtil, text.get());
+    gail_text_util_text_setup(gailTextUtil, webkitAccessibleTextGetText(textObject, 0, -1));
     return gailTextUtil;
 }
 
@@ -187,8 +185,7 @@ static PangoLayout* getPangoLayoutForAtk(AtkText* textObject)
         return 0;
 
     // Create a string with the layout as it appears on the screen
-    GOwnPtr<char> objectText(textForObject(coreObject));
-    PangoLayout* layout = gtk_widget_create_pango_layout(static_cast<GtkWidget*>(webView), objectText.get());
+    PangoLayout* layout = gtk_widget_create_pango_layout(static_cast<GtkWidget*>(webView), textForObject(coreObject));
     return layout;
 }
 #endif
@@ -448,8 +445,8 @@ static AtkAttributeSet* getRunAttributesFromAccesibilityObject(const Accessibili
 
 static IntRect textExtents(AtkText* text, gint startOffset, gint length, AtkCoordType coords)
 {
-    GOwnPtr<char> textContent(webkitAccessibleTextGetText(text, startOffset, -1));
-    gint textLength = g_utf8_strlen(textContent.get(), -1);
+    gchar* textContent = webkitAccessibleTextGetText(text, startOffset, -1);
+    gint textLength = g_utf8_strlen(textContent, -1);
 
     // The first case (endOffset of -1) should work, but seems broken for all Gtk+ apps.
     gint rangeLength = length;
@@ -550,8 +547,7 @@ static gchar* webkitAccessibleTextGetText(AtkText* text, gint startOffset, gint 
         // This can happen at least with anonymous RenderBlocks (e.g. body text amongst paragraphs)
         // In such instances, there may also be embedded objects. The object replacement character
         // is something ATs want included and we have to account for the fact that it is multibyte.
-        GOwnPtr<char> objectText(textForObject(coreObject));
-        ret = String::fromUTF8(objectText.get());
+        ret = String::fromUTF8(textForObject(coreObject));
         if (!end)
             end = ret.length();
     }

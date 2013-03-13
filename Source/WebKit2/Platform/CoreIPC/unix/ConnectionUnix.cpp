@@ -133,17 +133,14 @@ void Connection::platformInitialize(Identifier identifier)
 
 void Connection::platformInvalidate()
 {
-    // In GTK+ platform the socket is closed by the work queue.
-#if !PLATFORM(GTK)
     if (m_socketDescriptor != -1)
         while (close(m_socketDescriptor) == -1 && errno == EINTR) { }
-#endif
 
     if (!m_isConnected)
         return;
 
 #if PLATFORM(GTK)
-    m_connectionQueue->unregisterSocketEventHandler(m_socketDescriptor);
+    m_connectionQueue->unregisterEventSourceHandler(m_socketDescriptor);
 #endif
 
 #if PLATFORM(QT)
@@ -427,7 +424,8 @@ bool Connection::open()
 #if PLATFORM(QT)
     m_socketNotifier = m_connectionQueue->registerSocketEventHandler(m_socketDescriptor, QSocketNotifier::Read, WTF::bind(&Connection::readyReadHandler, this));
 #elif PLATFORM(GTK)
-    m_connectionQueue->registerSocketEventHandler(m_socketDescriptor, G_IO_IN, WTF::bind(&Connection::readyReadHandler, this), WTF::bind(&Connection::connectionDidClose, this));
+    m_connectionQueue->registerEventSourceHandler(m_socketDescriptor, (G_IO_HUP | G_IO_ERR), WTF::bind(&Connection::connectionDidClose, this));
+    m_connectionQueue->registerEventSourceHandler(m_socketDescriptor, G_IO_IN, WTF::bind(&Connection::readyReadHandler, this));
 #elif PLATFORM(EFL)
     m_connectionQueue->registerSocketEventHandler(m_socketDescriptor, WTF::bind(&Connection::readyReadHandler, this));
 #endif

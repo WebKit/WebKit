@@ -26,8 +26,8 @@
 
 namespace WebKit {
 WebKitDOMTestException* wrapTestException(WebCore::TestException*);
-WebKitDOMTestException* kit(WebCore::TestException*);
-WebCore::TestException* core(WebKitDOMTestException*);
+WebCore::TestException* core(WebKitDOMTestException* request);
+WebKitDOMTestException* kit(WebCore::TestException* node);
 } // namespace WebKit
 
 #endif /* WebKitDOMTestExceptionPrivate_h */

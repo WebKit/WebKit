@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013 Igalia S.L.
+ * Copyright (C) 2012 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,6 @@
 #include "config.h"
 #include "CredentialBackingStore.h"
 
-#if ENABLE(CREDENTIAL_STORAGE)
 #define SECRET_WITH_UNSTABLE 1
 #define SECRET_API_SUBJECT_TO_CHANGE 1
 #include "AuthenticationChallenge.h"
@@ -36,7 +35,6 @@
 #include <libsoup/soup.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
-#endif
 
 namespace WebCore {
 
@@ -46,7 +44,6 @@ CredentialBackingStore& credentialBackingStore()
     return backingStore;
 }
 
-#if ENABLE(CREDENTIAL_STORAGE)
 static GRefPtr<GHashTable> createAttributeHashTableFromChallenge(const AuthenticationChallenge& challenge, const Credential& credential = Credential())
 {
     SoupURI* uri = soup_message_get_uri(challenge.soupMessage());
@@ -98,11 +95,9 @@ static void credentialForChallengeAsyncReadyCallback(SecretService* service, GAs
 
     callback(Credential(user, password, CredentialPersistencePermanent), data);
 }
-#endif // ENABLE(CREDENTIAL_STORAGE)
 
 void CredentialBackingStore::credentialForChallenge(const AuthenticationChallenge& challenge, CredentialForChallengeCallback callback, void* data)
 {
-#if ENABLE(CREDENTIAL_STORAGE)
     // The default flag only returns the most recent item, not all of them.
     SecretSearchFlags searchFlags = static_cast<SecretSearchFlags>(SECRET_SEARCH_UNLOCK | SECRET_SEARCH_LOAD_SECRETS);
     CredentialForChallengeAsyncReadyCallbackData* callbackData = new CredentialForChallengeAsyncReadyCallbackData;
@@ -117,14 +112,10 @@ void CredentialBackingStore::credentialForChallenge(const AuthenticationChalleng
         0, // cancellable
         reinterpret_cast<GAsyncReadyCallback>(credentialForChallengeAsyncReadyCallback),
         callbackData);
-#else
-    callback(Credential(), data);
-#endif // ENABLE(CREDENTIAL_STORAGE)
 }
 
 void CredentialBackingStore::storeCredentialsForChallenge(const AuthenticationChallenge& challenge, const Credential& credential)
 {
-#if ENABLE(CREDENTIAL_STORAGE)
     CString utf8Password = credential.password().utf8();
     GRefPtr<SecretValue> newSecretValue = adoptGRef(secret_value_new(utf8Password.data(), utf8Password.length(), "text/plain"));
 
@@ -138,7 +129,6 @@ void CredentialBackingStore::storeCredentialsForChallenge(const AuthenticationCh
         0, // cancellable
         0, // callback
         0); // data
-#endif // ENABLE(CREDENTIAL_STORAGE)
 }
 
 } // namespace WebCore

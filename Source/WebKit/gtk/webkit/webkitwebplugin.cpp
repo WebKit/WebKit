@@ -63,6 +63,8 @@ static void webkit_web_plugin_finalize(GObject* object)
     WebKitWebPlugin* plugin = WEBKIT_WEB_PLUGIN(object);
     WebKitWebPluginPrivate* priv = plugin->priv;
 
+    g_free(priv->path);
+
     g_slist_foreach(priv->mimeTypes, (GFunc)freeMIMEType, 0);
     g_slist_free(priv->mimeTypes);
 
@@ -189,19 +191,22 @@ const char* webkit_web_plugin_get_path(WebKitWebPlugin* plugin)
     WebKitWebPluginPrivate* priv = plugin->priv;
 
     if (priv->path)
-        return priv->path.get();
+        return priv->path;
 
-    GOwnPtr<GError> error;
-    priv->path.set(g_filename_from_utf8(priv->corePlugin->path().utf8().data(), -1, 0, 0, &error.outPtr()));
+    GError* error = 0;
+    priv->path = g_filename_from_utf8(priv->corePlugin->path().utf8().data(), -1, 0, 0, &error);
 
     if (!error)
-        return priv->path.get();
+        return priv->path;
 
     // In the unlikely case the convertion fails, report the error and make sure we free
     // any partial convertion that ended up in the variable.
-    priv->path.clear();
+    g_free(priv->path);
+    priv->path = 0;
 
     g_warning("Failed to convert '%s' to system filename encoding: %s", priv->corePlugin->path().utf8().data(), error->message);
+
+    g_clear_error(&error);
 
     return 0;
 }

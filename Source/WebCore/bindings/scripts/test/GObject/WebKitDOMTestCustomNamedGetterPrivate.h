@@ -26,8 +26,8 @@
 
 namespace WebKit {
 WebKitDOMTestCustomNamedGetter* wrapTestCustomNamedGetter(WebCore::TestCustomNamedGetter*);
-WebKitDOMTestCustomNamedGetter* kit(WebCore::TestCustomNamedGetter*);
-WebCore::TestCustomNamedGetter* core(WebKitDOMTestCustomNamedGetter*);
+WebCore::TestCustomNamedGetter* core(WebKitDOMTestCustomNamedGetter* request);
+WebKitDOMTestCustomNamedGetter* kit(WebCore::TestCustomNamedGetter* node);
 } // namespace WebKit
 
 #endif /* WebKitDOMTestCustomNamedGetterPrivate_h */

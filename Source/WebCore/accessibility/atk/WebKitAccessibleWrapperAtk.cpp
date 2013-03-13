@@ -2,7 +2,6 @@
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2009 Jan Alonzo
  * Copyright (C) 2009, 2010, 2011, 2012 Igalia S.L.
- * Copyright (C) 2013 Samsung Electronics
  *
  * Portions from Mozilla a11y, copyright as follows:
  *
@@ -67,27 +66,6 @@
 
 using namespace WebCore;
 
-struct _WebKitAccessiblePrivate {
-    // Cached data for AtkObject.
-    CString accessibleName;
-    CString accessibleDescription;
-
-    // Cached data for AtkAction.
-    CString actionName;
-    CString actionKeyBinding;
-
-    // Cached data for AtkDocument.
-    CString documentLocale;
-    CString documentType;
-    CString documentEncoding;
-    CString documentURI;
-
-    // Cached data for AtkImage.
-    CString imageDescription;
-};
-
-#define WEBKIT_ACCESSIBLE_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_ACCESSIBLE, WebKitAccessiblePrivate))
-
 static AccessibilityObject* fallbackObject()
 {
     // FIXME: An AXObjectCache with a Document is meaningless.
@@ -122,7 +100,7 @@ static const gchar* webkitAccessibleGetName(AtkObject* object)
 {
     AccessibilityObject* coreObject = core(object);
     if (!coreObject->isAccessibilityRenderObject())
-        return cacheAndReturnAtkProperty(object, AtkCachedAccessibleName, coreObject->stringValue());
+        return returnString(coreObject->stringValue());
 
     if (coreObject->isFieldset()) {
         AccessibilityObject* label = coreObject->titleUIElement();
@@ -144,7 +122,7 @@ static const gchar* webkitAccessibleGetName(AtkObject* object)
         // Try text under the node.
         String textUnder = coreObject->textUnderElement();
         if (textUnder.length())
-            return cacheAndReturnAtkProperty(object, AtkCachedAccessibleName, textUnder);
+            return returnString(textUnder);
     }
 
     if (coreObject->isImage() || coreObject->isInputImage()) {
@@ -153,7 +131,7 @@ static const gchar* webkitAccessibleGetName(AtkObject* object)
             // Get the attribute rather than altText String so as not to fall back on title.
             String alt = toHTMLElement(node)->getAttribute(HTMLNames::altAttr);
             if (!alt.isEmpty())
-                return cacheAndReturnAtkProperty(object, AtkCachedAccessibleName, alt);
+                return returnString(alt);
         }
     }
 
@@ -161,16 +139,16 @@ static const gchar* webkitAccessibleGetName(AtkObject* object)
     if (coreObject->isWebArea()) {
         Document* document = coreObject->document();
         if (document)
-            return cacheAndReturnAtkProperty(object, AtkCachedAccessibleName, document->title());
+            return returnString(document->title());
     }
 
     // Nothing worked so far, try with the AccessibilityObject's
     // title() before going ahead with stringValue().
     String axTitle = accessibilityTitle(coreObject);
     if (!axTitle.isEmpty())
-        return cacheAndReturnAtkProperty(object, AtkCachedAccessibleName, axTitle);
+        return returnString(axTitle);
 
-    return cacheAndReturnAtkProperty(object, AtkCachedAccessibleName, coreObject->stringValue());
+    return returnString(coreObject->stringValue());
 }
 
 static const gchar* webkitAccessibleGetDescription(AtkObject* object)
@@ -180,22 +158,22 @@ static const gchar* webkitAccessibleGetDescription(AtkObject* object)
     if (coreObject->isAccessibilityRenderObject())
         node = coreObject->node();
     if (!node || !node->isHTMLElement() || coreObject->ariaRoleAttribute() != UnknownRole)
-        return cacheAndReturnAtkProperty(object, AtkCachedAccessibleDescription, accessibilityDescription(coreObject));
+        return returnString(accessibilityDescription(coreObject));
 
     // atk_table_get_summary returns an AtkObject. We have no summary object, so expose summary here.
     if (coreObject->roleValue() == TableRole) {
         String summary = static_cast<HTMLTableElement*>(node)->summary();
         if (!summary.isEmpty())
-            return cacheAndReturnAtkProperty(object, AtkCachedAccessibleDescription, summary);
+            return returnString(summary);
     }
 
     // The title attribute should be reliably available as the object's descripton.
     // We do not want to fall back on other attributes in its absence. See bug 25524.
     String title = toHTMLElement(node)->title();
     if (!title.isEmpty())
-        return cacheAndReturnAtkProperty(object, AtkCachedAccessibleDescription, title);
+        return returnString(title);
 
-    return cacheAndReturnAtkProperty(object, AtkCachedAccessibleDescription, accessibilityDescription(coreObject));
+    return returnString(accessibilityDescription(coreObject));
 }
 
 static void setAtkRelationSetFromCoreObject(AccessibilityObject* coreObject, AtkRelationSet* relationSet)
@@ -785,13 +763,14 @@ static void webkitAccessibleInit(AtkObject* object, gpointer data)
     if (ATK_OBJECT_CLASS(webkitAccessibleParentClass)->initialize)
         ATK_OBJECT_CLASS(webkitAccessibleParentClass)->initialize(object, data);
 
-    WebKitAccessible* accessible = WEBKIT_ACCESSIBLE(object);
-    accessible->m_object = reinterpret_cast<AccessibilityObject*>(data);
-    accessible->priv = WEBKIT_ACCESSIBLE_GET_PRIVATE(accessible);
+    WEBKIT_ACCESSIBLE(object)->m_object = reinterpret_cast<AccessibilityObject*>(data);
 }
 
 static void webkitAccessibleFinalize(GObject* object)
 {
+    // This is a good time to clear the return buffer.
+    returnString(String());
+
     G_OBJECT_CLASS(webkitAccessibleParentClass)->finalize(object);
 }
 
@@ -814,8 +793,6 @@ static void webkitAccessibleClassInit(AtkObjectClass* klass)
     klass->get_index_in_parent = webkitAccessibleGetIndexInParent;
     klass->get_attributes = webkitAccessibleGetAttributes;
     klass->ref_relation_set = webkitAccessibleRefRelationSet;
-
-    g_type_class_add_private(klass, sizeof(WebKitAccessiblePrivate));
 }
 
 GType
@@ -1142,60 +1119,6 @@ AccessibilityObject* objectFocusedAndCaretOffsetUnignored(AccessibilityObject* r
     }
 
     return firstUnignoredParent;
-}
-
-const char* cacheAndReturnAtkProperty(AtkObject* object, AtkCachedProperty property, String value)
-{
-    WebKitAccessiblePrivate* priv = WEBKIT_ACCESSIBLE(object)->priv;
-    CString* propertyPtr = 0;
-
-    switch (property) {
-    case AtkCachedAccessibleName:
-        propertyPtr = &priv->accessibleName;
-        break;
-
-    case AtkCachedAccessibleDescription:
-        propertyPtr = &priv->accessibleDescription;
-        break;
-
-    case AtkCachedActionName:
-        propertyPtr = &priv->actionName;
-        break;
-
-    case AtkCachedActionKeyBinding:
-        propertyPtr = &priv->actionKeyBinding;
-        break;
-
-    case AtkCachedDocumentLocale:
-        propertyPtr = &priv->documentLocale;
-        break;
-
-    case AtkCachedDocumentType:
-        propertyPtr = &priv->documentType;
-        break;
-
-    case AtkCachedDocumentEncoding:
-        propertyPtr = &priv->documentEncoding;
-        break;
-
-    case AtkCachedDocumentURI:
-        propertyPtr = &priv->documentURI;
-        break;
-
-    case AtkCachedImageDescription:
-        propertyPtr = &priv->imageDescription;
-        break;
-
-    default:
-        ASSERT_NOT_REACHED();
-    }
-
-    // Don't invalidate old memory if not stricly needed, since other
-    // callers might be still holding on to it.
-    if (*propertyPtr != value.utf8())
-        *propertyPtr = value.utf8();
-
-    return (*propertyPtr).data();
 }
 
 #endif // HAVE(ACCESSIBILITY)

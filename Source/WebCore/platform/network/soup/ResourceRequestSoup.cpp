@@ -34,27 +34,6 @@ using namespace std;
 
 namespace WebCore {
 
-void ResourceRequest::updateSoupMessageHeaders(SoupMessageHeaders* soupHeaders) const
-{
-    const HTTPHeaderMap& headers = httpHeaderFields();
-    if (!headers.isEmpty()) {
-        HTTPHeaderMap::const_iterator end = headers.end();
-        for (HTTPHeaderMap::const_iterator it = headers.begin(); it != end; ++it)
-            soup_message_headers_append(soupHeaders, it->key.string().utf8().data(), it->value.utf8().data());
-    }
-}
-
-void ResourceRequest::updateFromSoupMessageHeaders(SoupMessageHeaders* soupHeaders)
-{
-    m_httpHeaderFields.clear();
-    SoupMessageHeadersIter headersIter;
-    soup_message_headers_iter_init(&headersIter, soupHeaders);
-    const char* headerName;
-    const char* headerValue;
-    while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue))
-        m_httpHeaderFields.set(String::fromUTF8(headerName), String::fromUTF8(headerValue));
-}
-
 void ResourceRequest::updateSoupMessage(SoupMessage* soupMessage) const
 {
     g_object_set(soupMessage, SOUP_MESSAGE_METHOD, httpMethod().utf8().data(), NULL);
@@ -62,7 +41,13 @@ void ResourceRequest::updateSoupMessage(SoupMessage* soupMessage) const
     GOwnPtr<SoupURI> uri(soupURI());
     soup_message_set_uri(soupMessage, uri.get());
 
-    updateSoupMessageHeaders(soupMessage->request_headers);
+    const HTTPHeaderMap& headers = httpHeaderFields();
+    SoupMessageHeaders* soupHeaders = soupMessage->request_headers;
+    if (!headers.isEmpty()) {
+        HTTPHeaderMap::const_iterator end = headers.end();
+        for (HTTPHeaderMap::const_iterator it = headers.begin(); it != end; ++it)
+            soup_message_headers_append(soupHeaders, it->key.string().utf8().data(), it->value.utf8().data());
+    }
 
     String firstPartyString = firstPartyForCookies().string();
     if (!firstPartyString.isEmpty()) {
@@ -79,7 +64,13 @@ SoupMessage* ResourceRequest::toSoupMessage() const
     if (!soupMessage)
         return 0;
 
-    updateSoupMessageHeaders(soupMessage->request_headers);
+    const HTTPHeaderMap& headers = httpHeaderFields();
+    SoupMessageHeaders* soupHeaders = soupMessage->request_headers;
+    if (!headers.isEmpty()) {
+        HTTPHeaderMap::const_iterator end = headers.end();
+        for (HTTPHeaderMap::const_iterator it = headers.begin(); it != end; ++it)
+            soup_message_headers_append(soupHeaders, it->key.string().utf8().data(), it->value.utf8().data());
+    }
 
     String firstPartyString = firstPartyForCookies().string();
     if (!firstPartyString.isEmpty()) {
@@ -107,7 +98,13 @@ void ResourceRequest::updateFromSoupMessage(SoupMessage* soupMessage)
 
     m_httpMethod = String::fromUTF8(soupMessage->method);
 
-    updateFromSoupMessageHeaders(soupMessage->request_headers);
+    m_httpHeaderFields.clear();
+    SoupMessageHeadersIter headersIter;
+    const char* headerName;
+    const char* headerValue;
+    soup_message_headers_iter_init(&headersIter, soupMessage->request_headers);
+    while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue))
+        m_httpHeaderFields.set(String::fromUTF8(headerName), String::fromUTF8(headerValue));
 
     if (soupMessage->request_body->data)
         m_httpBody = FormData::create(soupMessage->request_body->data, soupMessage->request_body->length);

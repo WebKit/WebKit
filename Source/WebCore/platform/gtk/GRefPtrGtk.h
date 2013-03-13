@@ -30,10 +30,8 @@ namespace WTF {
 template <> GtkTargetList* refGPtr(GtkTargetList* ptr);
 template <> void derefGPtr(GtkTargetList* ptr);
 
-#if ENABLE(CREDENTIAL_STORAGE)
 template <> SecretValue* refGPtr(SecretValue* ptr);
 template <> void derefGPtr(SecretValue* ptr);
-#endif
 
 #ifdef GTK_API_VERSION_2
 template <> GdkCursor* refGPtr(GdkCursor* ptr);

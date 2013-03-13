@@ -133,7 +133,7 @@ serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHash
     soup_message_body_complete(message->response_body);
 }
 
-static void testNotInitialized(FaviconDatabaseTest* test)
+static void testNotInitialized(FaviconDatabaseTest* test, gconstpointer)
 {
     // Try to retrieve a valid favicon from a not initialized database.
     test->getFaviconForPageURIAndWaitUntilReady(kServer->getURIForPath("/foo").data());
@@ -142,13 +142,13 @@ static void testNotInitialized(FaviconDatabaseTest* test)
     g_assert_cmpint(test->m_error->code, ==, WEBKIT_FAVICON_DATABASE_ERROR_NOT_INITIALIZED);
 }
 
-static void testSetDirectory(FaviconDatabaseTest* test)
+static void testSetDirectory(FaviconDatabaseTest* test, gconstpointer)
 {
     webkit_web_context_set_favicon_database_directory(test->m_webContext, kTempDirectory);
     g_assert_cmpstr(kTempDirectory, ==, webkit_web_context_get_favicon_database_directory(test->m_webContext));
 }
 
-static void testClearDatabase(FaviconDatabaseTest* test)
+static void testClearDatabase(FaviconDatabaseTest* test, gconstpointer)
 {
     WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(test->m_webContext);
     webkit_favicon_database_clear(database);
@@ -157,7 +157,7 @@ static void testClearDatabase(FaviconDatabaseTest* test)
     g_assert(!iconURI);
 }
 
-static void testGetFavicon(FaviconDatabaseTest* test)
+static void testGetFavicon(FaviconDatabaseTest* test, gconstpointer)
 {
     // We need to load the page first to ensure the icon data will be
     // in the database in case there's an associated favicon.
@@ -198,7 +198,7 @@ static void testGetFavicon(FaviconDatabaseTest* test)
     g_assert(test->m_error);
 }
 
-static void testGetFaviconURI(FaviconDatabaseTest* test)
+static void testGetFaviconURI(FaviconDatabaseTest* test, gconstpointer)
 {
     WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(test->m_webContext);
 
@@ -207,10 +207,8 @@ static void testGetFaviconURI(FaviconDatabaseTest* test)
     ASSERT_CMP_CSTRING(iconURI.get(), ==, kServer->getURIForPath("/icon/favicon.ico"));
 }
 
-static void testWebViewFavicon(FaviconDatabaseTest* test)
+static void testWebViewFavicon(FaviconDatabaseTest* test, gconstpointer)
 {
-    test->m_faviconURI = CString();
-
     cairo_surface_t* iconFromWebView = webkit_web_view_get_favicon(test->m_webView);
     g_assert(!iconFromWebView);
 
@@ -227,18 +225,6 @@ static void testWebViewFavicon(FaviconDatabaseTest* test)
     g_assert_cmpuint(cairo_image_surface_get_height(iconFromWebView), ==, 16);
 }
 
-static void testFaviconDatabase(FaviconDatabaseTest* test, gconstpointer)
-{
-    // These tests depend on this order to run properly so we declare them in a single one.
-    // See https://bugs.webkit.org/show_bug.cgi?id=111434.
-    testNotInitialized(test);
-    testSetDirectory(test);
-    testGetFavicon(test);
-    testGetFaviconURI(test);
-    testWebViewFavicon(test);
-    testClearDatabase(test);
-}
-
 void beforeAll()
 {
     // Start a soup server for testing.
@@ -249,7 +235,12 @@ void beforeAll()
     g_assert(kTempDirectory);
 
     // Add tests to the suite.
-    FaviconDatabaseTest::add("WebKitFaviconDatabase", "favicon-database-test", testFaviconDatabase);
+    FaviconDatabaseTest::add("WebKitFaviconDatabase", "not-initialized", testNotInitialized);
+    FaviconDatabaseTest::add("WebKitFaviconDatabase", "set-directory", testSetDirectory);
+    FaviconDatabaseTest::add("WebKitFaviconDatabase", "get-favicon", testGetFavicon);
+    FaviconDatabaseTest::add("WebKitFaviconDatabase", "get-favicon-uri", testGetFaviconURI);
+    FaviconDatabaseTest::add("WebKitWebView", "favicon", testWebViewFavicon);
+    FaviconDatabaseTest::add("WebKitFaviconDatabase", "clear-database", testClearDatabase);
 }
 
 static void webkitFaviconDatabaseFinalizedCallback(gpointer, GObject*)

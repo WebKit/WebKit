@@ -49,7 +49,6 @@ libwebkitgtkincludedir := $(prefix)/include/webkitgtk-@WEBKITGTK_API_VERSION@
 bin_PROGRAMS :=
 noinst_PROGRAMS :=
 libexec_PROGRAMS :=
-noinst_DATA :=
 noinst_HEADERS :=
 noinst_LTLIBRARIES :=
 lib_LTLIBRARIES :=
@@ -208,9 +207,7 @@ BUILT_SOURCES += \
 DISTCLEANFILES += \
 	$(CLEANFILES) \
 	$(builddir)/doltcompile \
-	$(builddir)/doltlibtool \
-	$(builddir)/WebKitFeatures.h \
-	$(builddir)/WebKitFeatures.txt
+	$(builddir)/doltlibtool
 
 MAINTAINERCLEANFILES += \
 	$(CLEANFILES) \

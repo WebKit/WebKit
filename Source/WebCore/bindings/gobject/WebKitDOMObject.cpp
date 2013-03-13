@@ -8,6 +8,8 @@
 #include "config.h"
 #include "WebKitDOMObject.h"
 
+#include "WebKitDOMBinding.h"
+
 enum {
     PROP_0,
     PROP_CORE_OBJECT

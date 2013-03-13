@@ -82,8 +82,7 @@ Programs_TestWebKitAPI_TestGtk_LDADD = \
 	Libraries/libTestWebKitAPIMain.la \
 	Libraries/libgtest.la \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
-	libWebCore.la \
-	libWebCoreGtk.la \
+	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	$(FREETYPE_LIBS) \
 	$(GLIB_LIBS) \
 	$(GTK_LIBS) \
@@ -152,7 +151,6 @@ Programs_TestWebKitAPI_TestWebKit2_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WebKit2/InjectedBundleInitializationUserDataCallbackWins.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/LoadAlternateHTMLStringWithNonDirectoryURL.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/LoadCanceledNoServerRedirectCallback.cpp \
-	Tools/TestWebKitAPI/Tests/WebKit2/LoadPageOnCrash.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/MouseMoveAfterCrash.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/ReloadPageAfterCrash.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/ResizeWindowAfterCrash.cpp \
@@ -169,7 +167,6 @@ Programs_TestWebKitAPI_TestWebKit2_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WebKit2/RestoreSessionStateContainingFormData.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/ShouldGoToBackForwardListItem.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/SpacebarScrolling.cpp \
-	Tools/TestWebKitAPI/Tests/WebKit2/TerminateTwice.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/UserMessage.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/WillSendSubmitEvent.cpp \
 	Tools/TestWebKitAPI/Tests/WebKit2/WKConnection.cpp \

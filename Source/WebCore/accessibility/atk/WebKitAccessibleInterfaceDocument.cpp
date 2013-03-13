@@ -2,7 +2,6 @@
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2009 Jan Alonzo
  * Copyright (C) 2012 Igalia S.L.
- * Copyright (C) 2013 Samsung Electronics
  *
  * Portions from Mozilla a11y, copyright as follows:
  *
@@ -57,21 +56,15 @@ static const gchar* documentAttributeValue(AtkDocument* document, const gchar* a
         return 0;
 
     String value = String();
-    AtkCachedProperty atkCachedProperty;
-
-    if (!g_ascii_strcasecmp(attribute, "DocType") && coreDocument->doctype()) {
+    if (!g_ascii_strcasecmp(attribute, "DocType") && coreDocument->doctype())
         value = coreDocument->doctype()->name();
-        atkCachedProperty = AtkCachedDocumentType;
-    } else if (!g_ascii_strcasecmp(attribute, "Encoding")) {
+    else if (!g_ascii_strcasecmp(attribute, "Encoding"))
         value = coreDocument->charset();
-        atkCachedProperty = AtkCachedDocumentEncoding;
-    } else if (!g_ascii_strcasecmp(attribute, "URI")) {
+    else if (!g_ascii_strcasecmp(attribute, "URI"))
         value = coreDocument->documentURI();
-        atkCachedProperty = AtkCachedDocumentURI;
-    }
 
     if (!value.isEmpty())
-        return cacheAndReturnAtkProperty(ATK_OBJECT(document), atkCachedProperty, value);
+        return returnString(value);
 
     return 0;
 }
@@ -100,7 +93,7 @@ static const gchar* webkitAccessibleDocumentGetLocale(AtkDocument* document)
     // TODO: Should we fall back on lang xml:lang when the following comes up empty?
     String language = core(document)->language();
     if (!language.isEmpty())
-        return cacheAndReturnAtkProperty(ATK_OBJECT(document), AtkCachedDocumentLocale, language);
+        return returnString(language);
 
     return 0;
 }

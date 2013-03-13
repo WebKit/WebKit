@@ -26,8 +26,8 @@
 
 namespace WebKit {
 WebKitDOMTestMediaQueryListListener* wrapTestMediaQueryListListener(WebCore::TestMediaQueryListListener*);
-WebKitDOMTestMediaQueryListListener* kit(WebCore::TestMediaQueryListListener*);
-WebCore::TestMediaQueryListListener* core(WebKitDOMTestMediaQueryListListener*);
+WebCore::TestMediaQueryListListener* core(WebKitDOMTestMediaQueryListListener* request);
+WebKitDOMTestMediaQueryListListener* kit(WebCore::TestMediaQueryListListener* node);
 } // namespace WebKit
 
 #endif /* WebKitDOMTestMediaQueryListListenerPrivate_h */

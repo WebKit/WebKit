@@ -21,7 +21,6 @@
 
 #include "webkitwebplugin.h"
 #include <glib-object.h>
-#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -39,7 +38,7 @@ struct _WebKitWebPluginPrivate {
     RefPtr<WebCore::PluginPackage> corePlugin;
     CString name;
     CString description;
-    GOwnPtr<char> path;
+    char* path;
     GSList* mimeTypes;
 };
 

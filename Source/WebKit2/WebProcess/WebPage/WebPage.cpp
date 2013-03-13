@@ -497,13 +497,13 @@ void WebPage::initializeInjectedBundleDiagnosticLoggingClient(WKBundlePageDiagno
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* pluginElement, const Plugin::Parameters& parameters, String& newMIMEType)
+PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* pluginElement, const Plugin::Parameters& parameters)
 {
     String pluginPath;
     uint32_t pluginLoadPolicy;
 
     String documentURLString = pluginElement->document()->url().string();
-    if (!sendSync(Messages::WebPageProxy::FindPlugin(parameters.mimeType, parameters.url.string(), documentURLString), Messages::WebPageProxy::FindPlugin::Reply(pluginPath, newMIMEType, pluginLoadPolicy))) {
+    if (!sendSync(Messages::WebPageProxy::GetPluginPath(parameters.mimeType, parameters.url.string(), documentURLString), Messages::WebPageProxy::GetPluginPath::Reply(pluginPath, pluginLoadPolicy))) {
         return 0;
     }
 
@@ -793,20 +793,6 @@ void WebPage::close()
 #endif
 
     m_sandboxExtensionTracker.invalidate();
-
-#if ENABLE(CONTEXT_MENUS)
-    m_contextMenuClient.initialize(0);
-#endif
-    m_editorClient.initialize(0);
-    m_formClient.initialize(0);
-    m_loaderClient.initialize(0);
-    m_policyClient.initialize(0);
-    m_resourceLoadClient.initialize(0);
-    m_uiClient.initialize(0);
-#if ENABLE(FULLSCREEN_API)
-    m_fullScreenClient.initialize(0);
-#endif
-    m_logDiagnosticMessageClient.initialize(0);
 
     m_underlayPage = nullptr;
     m_printContext = nullptr;
@@ -3670,10 +3656,9 @@ bool WebPage::canPluginHandleResponse(const ResourceResponse& response)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     String pluginPath;
-    String newMIMEType;
     uint32_t pluginLoadPolicy;
     
-    if (!sendSync(Messages::WebPageProxy::FindPlugin(response.mimeType(), response.url().string(), response.url().string()), Messages::WebPageProxy::FindPlugin::Reply(pluginPath, newMIMEType, pluginLoadPolicy)))
+    if (!sendSync(Messages::WebPageProxy::GetPluginPath(response.mimeType(), response.url().string(), response.url().string()), Messages::WebPageProxy::GetPluginPath::Reply(pluginPath, pluginLoadPolicy)))
         return false;
 
     return pluginLoadPolicy != PluginModuleBlocked && !pluginPath.isEmpty();
