@@ -856,6 +856,7 @@ private:
     bool m_mainFrameIsScrollable;
 
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
+    bool m_readyToFindPrimarySnapshottedPlugin;
     bool m_didFindPrimarySnapshottedPlugin;
 #endif
 

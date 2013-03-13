@@ -1,3 +1,24 @@
+2013-03-12  Dean Jackson  <dino@apple.com>
+
+        Primary plugin hit detection needs to run after plugin creation
+        https://bugs.webkit.org/show_bug.cgi?id=112206
+
+        Reviewed by Tim Horton.
+
+        On some pages, the plugins are created after the page has loaded, and
+        thus our heuristic to determine the primary plugin fails. Run this
+        heuristic more often: after each PluginView is created. It already exits
+        early if it has found a primary. But we also need to make sure that it
+        doesn't run before load.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::addPluginView): Run detection when view is added.
+        (WebKit::WebPage::didFinishLoad): Remember that we have loaded.
+        (WebKit::WebPage::determinePrimarySnapshottedPlugIn): Look at the PluginViews to see if we have a plugin.
+        (WebKit::WebPage::resetPrimarySnapshottedPlugIn): Reset both flags.
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage): New member variable, m_readyToFindPrimarySnapshottedPlugin.
+
 2013-03-12  Beth Dakin  <bdakin@apple.com>
 
         WKView -printOperationWithPrintInfo:forFrame: doesn’t use the print info that is 
