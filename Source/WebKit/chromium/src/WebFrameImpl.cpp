@@ -1848,26 +1848,6 @@ void WebFrameImpl::sendOrientationChangeEvent(int orientation)
 #endif
 }
 
-void WebFrameImpl::addEventListener(const WebString& eventType, WebDOMEventListener* listener, bool useCapture)
-{
-    DOMWindow* window = frame()->document()->domWindow();
-    EventListenerWrapper* listenerWrapper = listener->createEventListenerWrapper(eventType, useCapture, window);
-    window->addEventListener(eventType, adoptRef(listenerWrapper), useCapture);
-}
-
-void WebFrameImpl::removeEventListener(const WebString& eventType, WebDOMEventListener* listener, bool useCapture)
-{
-    DOMWindow* window = frame()->document()->domWindow();
-    EventListenerWrapper* listenerWrapper = listener->getEventListenerWrapper(eventType, useCapture, window);
-    window->removeEventListener(eventType, listenerWrapper, useCapture);
-}
-
-bool WebFrameImpl::dispatchEvent(const WebDOMEvent& event)
-{
-    ASSERT(!event.isNull());
-    return frame()->document()->domWindow()->dispatchEvent(event);
-}
-
 void WebFrameImpl::dispatchMessageEventWithOriginCheck(const WebSecurityOrigin& intendedTargetOrigin, const WebDOMEvent& event)
 {
     ASSERT(!event.isNull());

@@ -219,11 +219,6 @@ public:
 
     virtual void sendOrientationChangeEvent(int orientation);
 
-    virtual void addEventListener(const WebString& eventType,
-                                  WebDOMEventListener*, bool useCapture);
-    virtual void removeEventListener(const WebString& eventType,
-                                     WebDOMEventListener*, bool useCapture);
-    virtual bool dispatchEvent(const WebDOMEvent&);
     virtual void dispatchMessageEventWithOriginCheck(
         const WebSecurityOrigin& intendedTargetOrigin,
         const WebDOMEvent&);

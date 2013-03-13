@@ -1,3 +1,20 @@
+2013-03-12  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] WebFrame event listener APIs are unused and can be removed
+        https://bugs.webkit.org/show_bug.cgi?id=112189
+
+        Reviewed by Darin Fisher.
+
+        As far as I can tell, there are no callers for these APIs. They appear
+        to have been added for out-of-process postMessages, but those are now
+        implemented using a different mechanism.
+
+        * public/WebFrame.h:
+        (WebFrame):
+        * src/WebFrameImpl.cpp:
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+
 2013-03-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled Chromium DEPS to r187660.  Requested by
