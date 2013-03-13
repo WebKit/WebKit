@@ -36,10 +36,12 @@
 #include "Frame.h"
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "Page.h"
 #include "RenderImage.h"
 #include "RenderVideo.h"
 #include "ScriptController.h"
+#include "Settings.h"
 
 namespace WebCore {
 
@@ -49,6 +51,8 @@ inline HTMLVideoElement::HTMLVideoElement(const QualifiedName& tagName, Document
     : HTMLMediaElement(tagName, document, createdByParser)
 {
     ASSERT(hasTagName(videoTag));
+    if (document->settings())
+        m_defaultPosterURL = document->settings()->defaultVideoPosterURL();
 }
 
 PassRefPtr<HTMLVideoElement> HTMLVideoElement::create(const QualifiedName& tagName, Document* document, bool createdByParser)
@@ -178,15 +182,18 @@ bool HTMLVideoElement::isURLAttribute(const Attribute& attribute) const
     return attribute.name() == posterAttr || HTMLMediaElement::isURLAttribute(attribute);
 }
 
-const QualifiedName& HTMLVideoElement::imageSourceAttributeName() const
+const AtomicString& HTMLVideoElement::imageSourceURL() const
 {
-    return posterAttr;
+    const AtomicString& url = getAttribute(posterAttr);
+    if (!stripLeadingAndTrailingHTMLSpaces(url).isEmpty())
+        return url;
+    return m_defaultPosterURL;
 }
 
 void HTMLVideoElement::setDisplayMode(DisplayMode mode)
 {
     DisplayMode oldMode = displayMode();
-    KURL poster = getNonEmptyURLAttribute(posterAttr);
+    KURL poster = posterImageURL();
 
     if (!poster.isEmpty()) {
         // We have a poster path, but only show it until the user triggers display by playing or seeking and the
@@ -221,7 +228,7 @@ void HTMLVideoElement::setDisplayMode(DisplayMode mode)
 
 void HTMLVideoElement::updateDisplayState()
 {
-    if (getNonEmptyURLAttribute(posterAttr).isEmpty())
+    if (posterImageURL().isEmpty())
         setDisplayMode(Video);
     else if (displayMode() < Poster)
         setDisplayMode(Poster);
@@ -307,6 +314,14 @@ unsigned HTMLVideoElement::webkitDroppedFrameCount() const
     return player()->droppedFrameCount();
 }
 #endif
+
+KURL HTMLVideoElement::posterImageURL() const
+{
+    const AtomicString& url = stripLeadingAndTrailingHTMLSpaces(imageSourceURL());
+    if (url.isEmpty())
+        return KURL();
+    return document()->completeURL(url);
+}
 
 }
 

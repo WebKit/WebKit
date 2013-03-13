@@ -4140,7 +4140,8 @@ void HTMLMediaElement::getPluginProxyParams(KURL& url, Vector<String>& names, Ve
     Frame* frame = document()->frame();
 
     if (isVideo()) {
-        KURL posterURL = getNonEmptyURLAttribute(posterAttr);
+        HTMLVideoElement* video = static_cast<HTMLVideoElement*>(this);
+        KURL posterURL = video->posterImageURL();
         if (!posterURL.isEmpty() && frame && frame->loader()->willLoadMediaElementURL(posterURL)) {
             names.append(ASCIILiteral("_media_element_poster_"));
             values.append(posterURL.string());

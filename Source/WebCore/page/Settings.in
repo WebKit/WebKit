@@ -195,4 +195,7 @@ unifiedTextCheckerEnabled initial=defaultUnifiedTextCheckerEnabled
 
 logsPageMessagesToSystemConsoleEnabled initial=false
 
+# Some apps could have a default video poster if it is not set.
+defaultVideoPosterURL type=String
+
 smartInsertDeleteEnabled initial=true

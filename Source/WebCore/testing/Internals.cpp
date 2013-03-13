@@ -2062,4 +2062,13 @@ String Internals::markerTextForListItem(Element* element, ExceptionCode& ec)
     return WebCore::markerTextForListItem(element);
 }
 
+String Internals::getImageSourceURL(Element* element, ExceptionCode& ec)
+{
+    if (!element) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+    return element->imageSourceURL();
+}
+
 }

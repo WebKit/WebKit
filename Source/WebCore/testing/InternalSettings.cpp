@@ -94,6 +94,7 @@ InternalSettings::Backup::Backup(Settings* settings)
     , m_shouldDisplayCaptions(settings->shouldDisplayCaptions())
     , m_shouldDisplayTextDescriptions(settings->shouldDisplayTextDescriptions())
 #endif
+    , m_defaultVideoPosterURL(settings->defaultVideoPosterURL())
     , m_originalTimeWithoutMouseMovementBeforeHidingControls(settings->timeWithoutMouseMovementBeforeHidingControls())
 {
 }
@@ -130,6 +131,7 @@ void InternalSettings::Backup::restoreTo(Settings* settings)
     settings->setShouldDisplayCaptions(m_shouldDisplayCaptions);
     settings->setShouldDisplayTextDescriptions(m_shouldDisplayTextDescriptions);
 #endif
+    settings->setDefaultVideoPosterURL(m_defaultVideoPosterURL);
     settings->setTimeWithoutMouseMovementBeforeHidingControls(m_originalTimeWithoutMouseMovementBeforeHidingControls);
 }
 
@@ -487,6 +489,12 @@ void InternalSettings::setMinimumTimerInterval(double intervalInSeconds, Excepti
 {
     InternalSettingsGuardForSettings();
     settings()->setMinDOMTimerInterval(intervalInSeconds);
+}
+
+void InternalSettings::setDefaultVideoPosterURL(const String& url, ExceptionCode& ec)
+{
+    InternalSettingsGuardForSettings();
+    settings()->setDefaultVideoPosterURL(url);
 }
 
 void InternalSettings::setTimeWithoutMouseMovementBeforeHidingControls(double time, ExceptionCode& ec)

@@ -222,9 +222,9 @@ Node::InsertionNotificationRequest SVGImageElement::insertedInto(ContainerNode* 
     return InsertionDone;
 }
 
-const QualifiedName& SVGImageElement::imageSourceAttributeName() const
+const AtomicString& SVGImageElement::imageSourceURL() const
 {
-    return XLinkNames::hrefAttr;
+    return getAttribute(XLinkNames::hrefAttr);
 }
 
 void SVGImageElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const

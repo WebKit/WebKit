@@ -1121,9 +1121,9 @@ KURL Element::baseURI() const
     return KURL(parentBase, baseAttribute);
 }
 
-const QualifiedName& Element::imageSourceAttributeName() const
+const AtomicString& Element::imageSourceURL() const
 {
-    return srcAttr;
+    return getAttribute(srcAttr);
 }
 
 bool Element::rendererIsNeeded(const NodeRenderingContext& context)

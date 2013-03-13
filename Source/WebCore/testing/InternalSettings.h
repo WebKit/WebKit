@@ -82,6 +82,7 @@ public:
         bool m_shouldDisplayCaptions;
         bool m_shouldDisplayTextDescriptions;
 #endif
+        String m_defaultVideoPosterURL;
         bool m_originalTimeWithoutMouseMovementBeforeHidingControls;
     };
 
@@ -127,6 +128,7 @@ public:
     void setLangAttributeAwareFormControlUIEnabled(bool);
     void setImagesEnabled(bool enabled, ExceptionCode&);
     void setMinimumTimerInterval(double intervalInSeconds, ExceptionCode&);
+    void setDefaultVideoPosterURL(const String& url, ExceptionCode&);
     void setTimeWithoutMouseMovementBeforeHidingControls(double time, ExceptionCode&);
 
 private:

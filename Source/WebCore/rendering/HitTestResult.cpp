@@ -320,7 +320,7 @@ KURL HitTestResult::absoluteImageURL() const
 #endif
        ) {
         Element* element = toElement(m_innerNonSharedNode.get());
-        urlString = element->getAttribute(element->imageSourceAttributeName());
+        urlString = element->imageSourceURL();
     } else
         return KURL();
 

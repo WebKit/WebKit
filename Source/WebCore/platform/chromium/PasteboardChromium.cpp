@@ -153,7 +153,7 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String& title)
 #endif
     else if (node->hasTagName(HTMLNames::embedTag) || node->hasTagName(HTMLNames::objectTag)) {
         Element* element = toElement(node);
-        urlString = element->getAttribute(element->imageSourceAttributeName());
+        urlString = element->imageSourceURL();
     }
     KURL url = urlString.isEmpty() ? KURL() : node->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
     WebKit::WebImage webImage = bitmap->bitmap();

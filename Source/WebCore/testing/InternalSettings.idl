@@ -59,5 +59,6 @@
     void setStorageBlockingPolicy(in DOMString policy) raises(DOMException);
     void setImagesEnabled(in boolean enabled) raises(DOMException);
     void setMinimumTimerInterval(in double intervalInSeconds) raises(DOMException);
+    void setDefaultVideoPosterURL(in DOMString poster) raises(DOMException);
     void setTimeWithoutMouseMovementBeforeHidingControls(in double time) raises(DOMException);
 };

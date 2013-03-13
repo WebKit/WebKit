@@ -297,6 +297,8 @@ public:
 #if ENABLE(SPEECH_SYNTHESIS)
     void enableMockSpeechSynthesizer();
 #endif
+
+    String getImageSourceURL(Element*, ExceptionCode&);
                     
 private:
     explicit Internals(Document*);

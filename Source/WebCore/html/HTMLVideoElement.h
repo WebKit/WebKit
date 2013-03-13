@@ -69,6 +69,8 @@ public:
 
     bool shouldDisplayPosterImage() const { return displayMode() == Poster || displayMode() == PosterWaitingForVideo; }
 
+    KURL posterImageURL() const;
+
 private:
     HTMLVideoElement(const QualifiedName&, Document*, bool);
 
@@ -84,7 +86,7 @@ private:
     virtual bool hasVideo() const { return player() && player()->hasVideo(); }
     virtual bool supportsFullscreen() const;
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
-    virtual const QualifiedName& imageSourceAttributeName() const;
+    virtual const AtomicString& imageSourceURL() const OVERRIDE;
 
     virtual bool hasAvailableVideoFrame() const;
     virtual void updateDisplayState();
@@ -93,6 +95,7 @@ private:
 
     OwnPtr<HTMLImageLoader> m_imageLoader;
 
+    AtomicString m_defaultPosterURL;
 };
 
 } //namespace

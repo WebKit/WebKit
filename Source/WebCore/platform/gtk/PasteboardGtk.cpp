@@ -107,7 +107,7 @@ static KURL getURLForImageNode(Node* node)
 #endif
     else if (node->hasTagName(HTMLNames::embedTag) || node->hasTagName(HTMLNames::objectTag)) {
         Element* element = toElement(node);
-        urlString = element->getAttribute(element->imageSourceAttributeName());
+        urlString = element->imageSourceURL();
     }
     return urlString.isEmpty() ? KURL() : node->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
 }
