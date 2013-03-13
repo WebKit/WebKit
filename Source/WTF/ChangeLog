@@ -1,5 +1,11 @@
 2013-03-12  Tim Horton  <timothy_horton@apple.com>
 
+        Typo in earlier Windows build fix. Unreviewed.
+
+        * WTF.vcproj/WTF.vcproj:
+
+2013-03-12  Tim Horton  <timothy_horton@apple.com>
+
         Unreviewed attempted Windows build fix after http://trac.webkit.org/changeset/145592.
 
         * WTF.vcproj/WTF.vcproj:
