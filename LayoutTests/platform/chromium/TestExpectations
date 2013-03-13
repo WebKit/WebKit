@@ -4426,7 +4426,6 @@ webkit.org/b/111199 [ Debug Win Mac ] platform/chromium/virtual/softwarecomposit
 # The html5lib tests are all too slow to run in Debug, largely due to v8 per-document boot-up.
 # V8 bug: https://code.google.com/p/v8/issues/detail?id=2567
 webkit.org/b/110876 [ Debug ] html5lib/generated/ [ Skip ]
-webkit.org/b/ [ Linux Win ] html5lib/generated/run-tests16-data.html [ Slow ]
 
 # HALF_FLOAT_OES is not yet working in chromium.
 crbug.com/179503 fast/canvas/webgl/oes-texture-half-float.html [ Failure ]
@@ -4467,3 +4466,7 @@ webkit.org/b/111808 [ Debug ] fast/js/regress/nested-function-parsing-random.htm
 webkit.org/b/112058 [ Debug SnowLeopard ] svg/custom/foreign-object-skew.svg [ Failure ]
 
 webkit.org/b/112193 fast/dom/Window/window-postmessage-clone.html [ Failure Pass ]
+
+webkit.org/b/112219 fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ ImageOnlyFailure Pass ]
+webkit.org/b/112219 fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ ImageOnlyFailure Pass ]
+webkit.org/b/112219 fast/layers/no-clipping-overflow-hidden-added-after-transition.html [ ImageOnlyFailure Pass ]
