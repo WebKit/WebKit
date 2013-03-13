@@ -1,5 +1,40 @@
 2013-03-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r138850
+
+    2013-01-04  Abhishek Arya  <inferno@chromium.org>
+
+            Crash in WebCore::RenderBlock::willBeDestroyed
+            https://bugs.webkit.org/show_bug.cgi?id=103455
+
+            Reviewed by Eric Seidel.
+
+            It is not required to set beforeChild to :after child since DOM is
+            now pseudo element aware. See trac.webkit.org/changeset/137336. We
+            were incorrectly placing the inline continuation before the :after
+            content.       
+
+            Test: fast/multicol/continuation-crash.html
+
+            * rendering/RenderBlock.cpp:
+            (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks): remove beforeChild
+            setting to afterPseudoElementRenderer.
+            * rendering/RenderRuby.cpp:
+            (WebCore::RenderRubyAsInline::addChild): add missing beforeChild argument.
+            setting to afterPseudoElementRenderer.
+            (WebCore::RenderRubyAsBlock::addChild): add missing beforeChild argument.
+            * rendering/RenderTable.cpp:
+            (WebCore::RenderTable::addChild): remove beforeChild
+            setting to afterPseudoElementRenderer.
+            * rendering/RenderTableRow.cpp:
+            (WebCore::RenderTableRow::addChild): remove beforeChild
+            setting to afterPseudoElementRenderer.
+            * rendering/RenderTableSection.cpp:
+            (WebCore::RenderTableSection::addChild): remove beforeChild
+            setting to afterPseudoElementRenderer.
+
+2013-03-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r138812
 
     2013-01-04  John Mellor  <johnme@chromium.org>
