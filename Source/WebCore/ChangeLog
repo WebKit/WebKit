@@ -1,5 +1,30 @@
 2013-03-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r139457
+
+    2013-01-11  Florin Malita  <fmalita@chromium.org>
+
+            [SVG] Suppress resource rebuilding for unattached and shadow elements
+            https://bugs.webkit.org/show_bug.cgi?id=106664
+
+            Reviewed by Dirk Schulze.
+
+            SVGStyledElement::buildPendingResourcesIfNeeded() can be called while cloning a subtree
+            (as nodes are inserted into the clone, while still detached) or when elements are inserted
+            into the shadow tree. Both of these cases are problematic for SVGUseElement and can trigger
+            indirect recursion in SVGUseElement::buildPendingResource.
+
+            Since shadow and !inDocument() nodes are of no interest to ID dependents (they cannot be
+            found by ID in the document), the patch short-circuits buildPendingResource() for these
+            cases.
+
+            Test: svg/custom/use-rebuild-resources-crash.svg
+
+            * svg/SVGStyledElement.cpp:
+            (WebCore::SVGStyledElement::buildPendingResourcesIfNeeded):
+
+2013-03-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r138994
 
     2013-01-07  Justin Novosad  <junov@google.com>

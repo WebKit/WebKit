@@ -368,7 +368,7 @@ Node::InsertionNotificationRequest SVGStyledElement::insertedInto(Node* rootPare
 void SVGStyledElement::buildPendingResourcesIfNeeded()
 {
     Document* document = this->document();
-    if (!needsPendingResourceHandling() || !document)
+    if (!needsPendingResourceHandling() || !document || !inDocument() || isInShadowTree())
         return;
 
     SVGDocumentExtensions* extensions = document->accessSVGExtensions();
