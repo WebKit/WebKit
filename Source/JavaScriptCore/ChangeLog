@@ -1,3 +1,13 @@
+2013-03-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        LLINT C loop warning fix for GCC
+        https://bugs.webkit.org/show_bug.cgi?id=112145
+
+        Reviewed by Filip Pizlo.
+
+        * llint/LowLevelInterpreter.cpp:
+        (JSC::CLoop::execute):
+
 2013-02-13  Simon Hausmann  <simon.hausmann@digia.com>
 
         Add support for convenient conversion from JSStringRef to QString

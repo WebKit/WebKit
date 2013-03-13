@@ -308,12 +308,10 @@ JSValue CLoop::execute(CallFrame* callFrame, OpcodeID bootstrapOpcodeId,
     CLoopRegister rRetVPC;
     CLoopDoubleRegister d0, d1;
 
-#if COMPILER(MSVC)
     // Keep the compiler happy. We don't really need this, but the compiler
     // will complain. This makes the warning go away.
     t0.i = 0;
     t1.i = 0;
-#endif
 
     // Instantiate the pseudo JIT stack frame used by the LLINT C Loop backend:
     JITStackFrame jitStackFrame;
