@@ -38,14 +38,6 @@
     #define WEBKIT_IMPLEMENTATION 0
 #endif
 
-#if !defined(WEBKIT_USING_V8)
-    #define WEBKIT_USING_V8 1
-#endif
-
-#if !defined(WEBKIT_USING_JSC)
-    #define WEBKIT_USING_JSC 0
-#endif
-
 // -----------------------------------------------------------------------------
 // Exported symbols need to be annotated with WEBKIT_EXPORT
 
