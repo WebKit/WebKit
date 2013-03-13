@@ -223,8 +223,9 @@ class Parser
     
     def parsePredicateAtom
         if @tokens[@idx] == "not"
+            codeOrigin = @tokens[@idx].codeOrigin
             @idx += 1
-            parsePredicateAtom
+            Not.new(codeOrigin, parsePredicateAtom)
         elsif @tokens[@idx] == "("
             @idx += 1
             skipNewLine

@@ -1,3 +1,12 @@
+2013-03-13  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        Token 'not' is ignored in the offlineasm.
+        https://bugs.webkit.org/show_bug.cgi?id=111568
+
+        Reviewed by Filip Pizlo.
+
+        * offlineasm/parser.rb: Build the Not AST node if the 'not' token is found.
+
 2013-03-12  Tim Horton  <timothy_horton@apple.com>
 
         WTF uses macros for exports. Try to fix the Windows build. Unreviewed.
