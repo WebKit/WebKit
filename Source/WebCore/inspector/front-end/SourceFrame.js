@@ -511,14 +511,6 @@ WebInspector.SourceFrame.prototype = {
         if (lineNumber < 0)
             lineNumber = 0;
 
-        var messageBubbleElement = this._messageBubbles[lineNumber];
-        if (!messageBubbleElement || messageBubbleElement.nodeType !== Node.ELEMENT_NODE || !messageBubbleElement.hasStyleClass("webkit-html-message-bubble")) {
-            messageBubbleElement = document.createElement("div");
-            messageBubbleElement.className = "webkit-html-message-bubble";
-            this._messageBubbles[lineNumber] = messageBubbleElement;
-            this._textEditor.addDecoration(lineNumber, messageBubbleElement);
-        }
-
         var rowMessages = this._rowMessages[lineNumber];
         if (!rowMessages) {
             rowMessages = [];
@@ -535,6 +527,15 @@ WebInspector.SourceFrame.prototype = {
 
         var rowMessage = { consoleMessage: msg };
         rowMessages.push(rowMessage);
+
+        this._textEditor.beginUpdates();
+        var messageBubbleElement = this._messageBubbles[lineNumber];
+        if (!messageBubbleElement) {
+            messageBubbleElement = document.createElement("div");
+            messageBubbleElement.className = "webkit-html-message-bubble";
+            this._messageBubbles[lineNumber] = messageBubbleElement;
+            this._textEditor.addDecoration(lineNumber, messageBubbleElement);
+        }
 
         var imageURL;
         switch (msg.level) {
@@ -562,6 +563,7 @@ WebInspector.SourceFrame.prototype = {
         rowMessage.element = messageLineElement;
         rowMessage.repeatCount = msg.totalRepeatCount;
         this._updateMessageRepeatCount(rowMessage);
+        this._textEditor.endUpdates();
     },
 
     _updateMessageRepeatCount: function(rowMessage)

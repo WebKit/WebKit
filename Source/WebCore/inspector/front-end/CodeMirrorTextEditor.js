@@ -77,6 +77,7 @@ WebInspector.CodeMirrorTextEditor = function(url, delegate)
     this.element.firstChild.addStyleClass("source-code");
     this.element.firstChild.addStyleClass("fill");
     this._elementToWidget = new Map();
+    this._nestedUpdatesCounter = 0;
 }
 
 WebInspector.CodeMirrorTextEditor.prototype = {
@@ -122,9 +123,16 @@ WebInspector.CodeMirrorTextEditor.prototype = {
         this._codeMirror.focus();
     },
 
-    beginUpdates: function() { },
+    beginUpdates: function()
+    {
+        ++this._nestedUpdatesCounter;
+    },
 
-    endUpdates: function() { },
+    endUpdates: function()
+    {
+        if (!--this._nestedUpdatesCounter);
+            this._codeMirror.refresh();
+    },
 
     /**
      * @param {number} lineNumber
