@@ -29,8 +29,8 @@
 namespace WebCore {
 
 // DataPayloadType describes the nature of an invocation of the ResourceLoader::didReceiveData callback.
-//  - DataPayloadWholeResource is expected when the buffer points to a whole resource. There will only be one such didReceiveData callback for the load.
-//  - DataPayloadBytes is expected when the buffer points to a range of bytes, which may or may not be a whole resource.
+//  - DataPayloadWholeResource indicates that the buffer points to a whole resource. There will only be one such didReceiveData callback for the load.
+//  - DataPayloadBytes indicates that the buffer points to a range of bytes, which may or may not be a whole resource.
 //    There may have been previous didReceieveData callbacks, and there may be future didReceieveData callbacks.
 
 enum DataPayloadType {
