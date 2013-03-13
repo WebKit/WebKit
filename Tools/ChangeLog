@@ -1,3 +1,16 @@
+2013-03-13  Oliver Hunt  <oliver@apple.com>
+
+        Simplify Checked<> multiplication
+        https://bugs.webkit.org/show_bug.cgi?id=112286
+
+        Reviewed by James Robinson.
+
+        Add tests for multiplication by zero and max to ensure we don't
+        mess them up should we ever make changes to Checked<> in future.
+
+        * TestWebKitAPI/Tests/WTF/CheckedArithmeticOperations.cpp:
+        (TestWebKitAPI):
+
 2013-03-13  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Unreviewed prospective Windows build fix

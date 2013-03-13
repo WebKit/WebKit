@@ -321,10 +321,13 @@ template <typename LHS, typename RHS, typename ResultType> struct ArithmeticOper
 
     static inline bool multiply(LHS lhs, RHS rhs, ResultType& result) WARN_UNUSED_RETURN
     {
-        ResultType temp = lhs * rhs;
-        if (temp < lhs)
-            return !rhs;
-        result = temp;
+        if (!lhs || !rhs) {
+            result = 0;
+            return true;
+        }
+        if (std::numeric_limits<ResultType>::max() / lhs < rhs)
+            return false;
+        result = lhs * rhs;
         return true;
     }
 
