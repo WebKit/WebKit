@@ -71,9 +71,6 @@ void SVGTextMetricsBuilder::advanceSimpleText()
         return;
     }
 
-    if (currentCharacterStartsSurrogatePair())
-        ASSERT(metricsLength == 2);
-
     float currentWidth = m_simpleWidthIterator->runWidthSoFar() - m_totalWidth;
     m_totalWidth = m_simpleWidthIterator->runWidthSoFar();
 

@@ -181,6 +181,16 @@ bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& gly
         size_t glyphsSize = glyphs.size();
         for (size_t i = 0; i < glyphsSize; ++i)
             glyphs[i].unicodeStringLength = run.length();
+
+        // Do not check alt glyphs for compatibility. Just return the first one.
+        // Later code will fail if we do not do this and the glyph is incompatible.
+        if (glyphsSize) {
+            SVGGlyph& svgGlyph = glyphs[0];
+            iterator.setLastGlyphName(svgGlyph.glyphName);
+            glyphData.glyph = svgGlyph.tableEntry;
+            advanceLength = svgGlyph.unicodeStringLength;
+            return true;
+        }
     } else
         associatedFontElement->collectGlyphsForString(remainingTextInRun, glyphs);
 

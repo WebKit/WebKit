@@ -578,20 +578,9 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox* textBox, Rend
             y += m_dy;
         }
 
-        // Determine wheter we have to start a new fragment.
-        bool shouldStartNewFragment = false;
-
-        if (m_dx || m_dy)
-            shouldStartNewFragment = true;
-
-        if (!shouldStartNewFragment && (m_isVerticalText || m_inPathLayout))
-            shouldStartNewFragment = true;
-
-        if (!shouldStartNewFragment && (angle || angle != lastAngle || orientationAngle))
-            shouldStartNewFragment = true;
-
-        if (!shouldStartNewFragment && (kerning || applySpacingToNextCharacter || definesTextLength))
-            shouldStartNewFragment = true;
+        // Determine whether we have to start a new fragment.
+        bool shouldStartNewFragment = m_dx || m_dy || m_isVerticalText || m_inPathLayout || angle || angle != lastAngle
+            || orientationAngle || kerning || applySpacingToNextCharacter || definesTextLength;
 
         // If we already started a fragment, close it now.
         if (didStartTextFragment && shouldStartNewFragment) {
