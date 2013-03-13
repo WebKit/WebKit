@@ -21,6 +21,7 @@ fast/js/array-reduce
 fast/js/array-reduceRight
 fast/js/array-reset-large-index
 fast/js/array-slow-put
+fast/js/array-sort-small-sparse-array-with-large-length
 fast/js/array-sort-numericCompare
 fast/js/array-sort-reentrance
 fast/js/array-splice

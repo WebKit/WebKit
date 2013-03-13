@@ -1,3 +1,22 @@
+2013-03-12  Filip Pizlo  <fpizlo@apple.com>
+
+        Array.prototype.sort should at least try to be PTIME even when the array is in some bizarre mode
+        https://bugs.webkit.org/show_bug.cgi?id=112187
+        <rdar://problem/13393550>
+
+        Reviewed by Michael Saboff and Gavin Barraclough.
+        
+        If we have an array-like object in crazy mode passed into Array.prototype.sort, and its length is large,
+        then first copy all elements into a separate, compact, un-holy array and sort that. Then copy back.
+        This means that sorting will be at worst O(n^2) in the actual number of things in the array, rather than
+        O(n^2) in the array's length.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::attemptFastSort):
+        (JSC::performSlowSort):
+        (JSC):
+        (JSC::arrayProtoFuncSort):
+
 2013-03-12  Tim Horton  <timothy_horton@apple.com>
 
         Try to fix the Windows build.
