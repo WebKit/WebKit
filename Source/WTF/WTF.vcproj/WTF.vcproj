@@ -621,7 +621,7 @@
 			>
 		</File>
 		<File
-			RelativePath="..\wtf\SchedulePair.cpp"
+			RelativePath="..\wtf\SchedulePairCF.cpp"
 			>
 		</File>
 		<File

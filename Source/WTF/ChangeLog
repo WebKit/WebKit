@@ -1,3 +1,11 @@
+2013-03-13  Dean Jackson  <dino@apple.com>
+
+        Unreviewed attempted build fix for Windows. SchedulePair.cpp -> SchedulePairCF.cpp
+
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTF.vcxproj.filters:
+
 2013-03-13  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS] Add optimized version of StringImpl's equal(LChar*,LChar*) for Apple CPUs
