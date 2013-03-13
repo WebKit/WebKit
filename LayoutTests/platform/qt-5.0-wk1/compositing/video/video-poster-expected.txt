@@ -1,0 +1,13 @@
+A <video> should not have a layer until playback begins.
+This test can not be run manually, it requires testRunner.layerTreeAsText.
+
+No src, no poster 
+  PASS: wants layers = false, has layers = false
+
+Displaying poster 
+  PASS: wants layers = false, has layers = false
+
+Displaying movie 
+  FAIL: wants layers = true, has layers = false
+
+
