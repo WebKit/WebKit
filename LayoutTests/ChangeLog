@@ -1,5 +1,19 @@
 2013-03-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r142365
+
+    2013-02-09  Philip Rogers  <pdr@google.com>
+
+            Sanitize m_keyTimes for paced value animations
+            https://bugs.webkit.org/show_bug.cgi?id=108828
+
+            Reviewed by Dirk Schulze.
+
+            * svg/animations/animate-keytimes-crash-expected.html: Added.
+            * svg/animations/animate-keytimes-crash.html: Added.
+
+2013-03-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r142358
 
     2013-02-09  Kent Tamura  <tkent@chromium.org>
