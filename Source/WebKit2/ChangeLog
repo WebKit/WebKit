@@ -1,3 +1,14 @@
+2013-03-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] WebKit2-only build fails
+        https://bugs.webkit.org/show_bug.cgi?id=112033
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Introduce the artifical dependency of libwebkit2gtk on libwebkitgtk only
+        if building WebKit1 as well. Similarly with the WebKitPluginProcess, depend on libwebkitgtk
+        only if building WebKit1, the dependency is otherwise not necessary.
+
 2013-03-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Split GtkAuthenticationDialog in two widgets
