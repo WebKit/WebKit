@@ -316,26 +316,26 @@ docs: docs-build.stamp
 .PHONY : docs
 DISTCLEANFILES += docs-build.stamp
 
-if ENABLE_WEBKIT2
-docs-build.stamp: \
-	Source/WebKit/gtk/docs/webkitenvironment.xml \
-	Source/WebKit/gtk/docs/webkitgtk-docs.sgml \
-	Source/WebKit/gtk/docs/webkitgtk-sections.txt \
+docs_build_stamp_list = \
+	Source/WebKit/gtk/docs/webkitenvironment.xml
+
+if ENABLE_WEBKIT1
+docs_build_stamp_list += \
 	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	Source/WebKit/gtk/docs/webkitgtk-docs.sgml \
+	Source/WebKit/gtk/docs/webkitgtk-sections.txt
+endif
+
+if ENABLE_WEBKIT2
+docs_build_stamp_list += \
 	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-docs.sgml \
 	Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-sections.txt
-	CC=$(CC) $(srcdir)/Tools/gtk/generate-gtkdoc
-	@touch docs-build.stamp
-else
-docs-build.stamp: \
-	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
-	Source/WebKit/gtk/docs/webkitenvironment.xml \
-	Source/WebKit/gtk/docs/webkitgtk-docs.sgml \
-	Source/WebKit/gtk/docs/webkitgtk-sections.txt
-	CC=$(CC) $(srcdir)/Tools/gtk/generate-gtkdoc
-	@touch docs-build.stamp
 endif
+
+docs-build.stamp: $(doc_build_stamp_list)
+	CC=$(CC) $(srcdir)/Tools/gtk/generate-gtkdoc
+	@touch docs-build.stamp
 
 clean-local: doc-clean-local
 doc-clean-local:
