@@ -1,5 +1,19 @@
 2013-03-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r140520
+
+    2013-01-23  Hajime Morrita  <morrita@google.com>
+
+            Invalidated SVG shadow tree should be always detached.
+            https://bugs.webkit.org/show_bug.cgi?id=107634
+
+            Reviewed by Ryosuke Niwa.
+
+            * svg/custom/use-invalidate-click-crash-expected.txt: Added.
+            * svg/custom/use-invalidate-click-crash.xhtml: Added.
+
+2013-03-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r140101
 
     2013-01-17  Rafael Weinstein  <rafaelw@chromium.org>
