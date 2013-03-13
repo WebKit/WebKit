@@ -51,14 +51,22 @@
 }
 
 .cm-token-highlight {
-    border: 1px solid gray;
-    border-radius: 3px;
-    margin: -1px;
+    position: relative;
 }
 
-.cm-line-with-selection .cm-column-with-selection {
+.cm-token-highlight:before {
+    position: absolute;
+    border: 1px solid gray;
+    border-radius: 3px;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    content: "";
+}
+
+.cm-line-with-selection .cm-column-with-selection:before {
     border: 0px;
-    margin: 0px;
 }
 
 .cm-s-web-inspector-js span.cm-keyword {color: rgb(170, 13, 145);}
