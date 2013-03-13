@@ -72,6 +72,26 @@ loader.Loader = function(opt_onLoadingComplete)
     this._onLoadingComplete = opt_onLoadingComplete || function() {};
 }
 
+// TODO(aboxhall): figure out whether this is a performance bottleneck and
+// change calling code to understand the trie structure instead if necessary.
+loader.Loader._flattenTrie = function(trie, prefix)
+{
+    var result = {};
+    for (var name in trie) {
+        var fullName = prefix ? prefix + "/" + name : name;
+        var data = trie[name];
+        if ("results" in data)
+            result[fullName] = data;
+        else {
+            var partialResult = loader.Loader._flattenTrie(data, fullName);
+            for (var key in partialResult) {
+                result[key] = partialResult[key];
+            }
+        }
+    }
+    return result;
+}
+
 loader.Loader.prototype = {
     load: function()
     {
@@ -169,7 +189,7 @@ loader.Loader.prototype = {
                 this._staleBuilders.push(builderName);
 
             if (json_version >= 4)
-                builds[builderName][TESTS_KEY] = flattenTrie(builds[builderName][TESTS_KEY]);
+                builds[builderName][TESTS_KEY] = loader.Loader._flattenTrie(builds[builderName][TESTS_KEY]);
             g_resultsByBuilder[builderName] = builds[builderName];
         }
     },

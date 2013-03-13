@@ -1,3 +1,20 @@
+2013-03-12  Julie Parent  <jparent@chromium.org>
+
+        Cleanup: Move flatten-trie to loader.
+        https://bugs.webkit.org/show_bug.cgi?id=112196
+
+        Reviewed by Dirk Pranke.
+
+        flatten-trie is used only by the loader, so move it there and make it
+        private, rather than global in dashbaord_base. Moved the corresponding
+        unit test from flakiness_dashboard_unittests to loader_unittests.
+        
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        * TestResultServer/static-dashboards/loader.js:
+        (.):
+        * TestResultServer/static-dashboards/loader_unittests.js:
+
 2013-03-12  Oliver Hunt  <oliver@apple.com>
 
         Unbreak api tests

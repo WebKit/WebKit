@@ -410,26 +410,6 @@ function isTipOfTreeWebKitBuilder()
 var g_resultsByBuilder = {};
 var g_expectationsByPlatform = {};
 
-// TODO(aboxhall): figure out whether this is a performance bottleneck and
-// change calling code to understand the trie structure instead if necessary.
-function flattenTrie(trie, prefix)
-{
-    var result = {};
-    for (var name in trie) {
-        var fullName = prefix ? prefix + "/" + name : name;
-        var data = trie[name];
-        if ("results" in data)
-            result[fullName] = data;
-        else {
-            var partialResult = flattenTrie(data, fullName);
-            for (var key in partialResult) {
-                result[key] = partialResult[key];
-            }
-        }
-    }
-    return result;
-}
-
 function isTreeMap()
 {
     return string.endsWith(window.location.pathname, 'treemap.html');

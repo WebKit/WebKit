@@ -83,23 +83,6 @@ function runExpectationsTest(builder, test, expectations, modifiers)
     equal(resultsForTest.modifiers, modifiers, message);
 }
 
-test('flattenTrie', 1, function() {
-    resetGlobals();
-    var tests = {
-        'bar.html': {'results': [[100, 'F']], 'times': [[100, 0]]},
-        'foo': {
-            'bar': {
-                'baz.html': {'results': [[100, 'F']], 'times': [[100, 0]]},
-            }
-        }
-    };
-    var expectedFlattenedTests = {
-        'bar.html': {'results': [[100, 'F']], 'times': [[100, 0]]},
-        'foo/bar/baz.html': {'results': [[100, 'F']], 'times': [[100, 0]]},
-    };
-    equal(JSON.stringify(flattenTrie(tests)), JSON.stringify(expectedFlattenedTests))
-});
-
 test('releaseFail', 2, function() {
     resetGlobals();
     loadBuildersList('@ToT - chromium.org', 'layout-tests');

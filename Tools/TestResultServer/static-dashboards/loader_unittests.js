@@ -164,3 +164,20 @@ test('Loaded state set', 2, function() {
     resourceLoader.load();
     equal(true, resourceLoader.isLoadingComplete(), 'After loading, loading is complete');
 });
+
+test('flattenTrie', 1, function() {
+    resetGlobals();
+    var tests = {
+        'bar.html': {'results': [[100, 'F']], 'times': [[100, 0]]},
+        'foo': {
+            'bar': {
+                'baz.html': {'results': [[100, 'F']], 'times': [[100, 0]]},
+            }
+        }
+    };
+    var expectedFlattenedTests = {
+        'bar.html': {'results': [[100, 'F']], 'times': [[100, 0]]},
+        'foo/bar/baz.html': {'results': [[100, 'F']], 'times': [[100, 0]]},
+    };
+    equal(JSON.stringify(loader.Loader._flattenTrie(tests)), JSON.stringify(expectedFlattenedTests))
+});
