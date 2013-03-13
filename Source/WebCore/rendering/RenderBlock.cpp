@@ -673,6 +673,7 @@ void RenderBlock::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox,
         // We can reuse this block and make it the preBlock of the next continuation.
         pre = block;
         pre->removePositionedObjects(0);
+        pre->removeFloatingObjects();
         block = toRenderBlock(block->parent());
     } else {
         // No anonymous block available for use.  Make one.
@@ -3601,6 +3602,15 @@ void RenderBlock::removePositionedObjects(RenderBlock* o)
     
     for (unsigned i = 0; i < deadObjects.size(); i++)
         removePositionedObject(deadObjects.at(i));
+}
+
+void RenderBlock::removeFloatingObjects()
+{
+    if (!m_floatingObjects)
+        return;
+
+    deleteAllValues(m_floatingObjects->set());
+    m_floatingObjects->clear();
 }
 
 RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)

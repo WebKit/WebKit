@@ -105,6 +105,8 @@ public:
     static void removePositionedObject(RenderBox*);
     void removePositionedObjects(RenderBlock*);
 
+    void removeFloatingObjects();
+
     TrackedRendererListHashSet* positionedObjects() const;
     bool hasPositionedObjects() const
     {

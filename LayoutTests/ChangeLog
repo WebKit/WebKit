@@ -1,5 +1,19 @@
 2013-03-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r136060
+
+    2012-11-28  Abhishek Arya  <inferno@chromium.org>
+
+            Heap-use-after-free in WebCore::RenderLayerModelObject::hasSelfPaintingLayer
+            https://bugs.webkit.org/show_bug.cgi?id=101970
+
+            Reviewed by David Hyatt.
+
+            * fast/block/float/float-not-removed-from-pre-block-expected.txt: Added.
+            * fast/block/float/float-not-removed-from-pre-block.html: Added.
+
+2013-03-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r135794
 
     2012-11-26  Daniel Bates  <dbates@webkit.org>
