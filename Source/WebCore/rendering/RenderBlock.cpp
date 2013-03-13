@@ -7320,7 +7320,7 @@ LayoutUnit RenderBlock::applyAfterBreak(RenderBox* child, LayoutUnit logicalOffs
         if (checkRegionBreaks) {
             LayoutUnit offsetBreakAdjustment = 0;
             if (flowThread->addForcedRegionBreak(offsetFromLogicalTopOfFirstPage() + logicalOffset + marginOffset, child, false, &offsetBreakAdjustment))
-                return logicalOffset + offsetBreakAdjustment;
+                return logicalOffset + marginOffset + offsetBreakAdjustment;
         }
         return nextPageLogicalTop(logicalOffset, IncludePageBoundary);
     }
