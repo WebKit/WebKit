@@ -246,6 +246,7 @@ EXPORTS
         ?paintControlTints@FrameView@WebCore@@AAEXXZ
         ?placeholderShouldBeVisible@HTMLTextFormControlElement@WebCore@@QBE_NXZ
         ?rangeFromLocationAndLength@TextIterator@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@PAVContainerNode@2@HH_N@Z
+        ?reload@FrameLoader@WebCore@@QAEX_N@Z
         ?remove@String@WTF@@QAEXIH@Z
         ?removedLastRef@Node@WebCore@@AAEXXZ
         ?reverseFind@StringImpl@WTF@@QAEI_WI@Z

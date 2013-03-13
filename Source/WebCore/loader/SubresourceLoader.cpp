@@ -132,7 +132,7 @@ void SubresourceLoader::willSendRequest(ResourceRequest& newRequest, const Resou
     RefPtr<SubresourceLoader> protect(this);
 
     ASSERT(!newRequest.isNull());
-    if (!previousURL.isNull() && previousURL != newRequest.url()) {
+    if (!redirectResponse.isNull()) {
         if (!m_documentLoader->cachedResourceLoader()->canRequest(m_resource->type(), newRequest.url())) {
             cancel();
             return;

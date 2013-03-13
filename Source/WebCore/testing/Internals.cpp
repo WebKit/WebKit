@@ -47,6 +47,7 @@
 #include "ExceptionCode.h"
 #include "FormController.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "FrameView.h"
 #include "HTMLContentElement.h"
 #include "HTMLInputElement.h"
@@ -2038,6 +2039,11 @@ PassRefPtr<SerializedScriptValue> Internals::deserializeBuffer(PassRefPtr<ArrayB
 void Internals::setUsesOverlayScrollbars(bool enabled)
 {
     WebCore::Settings::setUsesOverlayScrollbars(enabled);
+}
+
+void Internals::forceReload(bool endToEnd)
+{
+    frame()->loader()->reload(endToEnd);
 }
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)

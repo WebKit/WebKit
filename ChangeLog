@@ -1,3 +1,12 @@
+2013-03-13  Nate Chapin  <japhet@chromium.org>
+
+        Expose symbols for internals
+        https://bugs.webkit.org/show_bug.cgi?id=112194
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Source/autotools/symbols.filter:
+
 2013-03-12  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] 'unrecognized command line option "-Wno-c++11-extensions"' warning reported when using gcc

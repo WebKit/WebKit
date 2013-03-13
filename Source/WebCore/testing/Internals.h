@@ -288,6 +288,8 @@ public:
 
     String markerTextForListItem(Element*, ExceptionCode&);
 
+    void forceReload(bool endToEnd);
+
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     void initializeMockCDM();
 #endif
