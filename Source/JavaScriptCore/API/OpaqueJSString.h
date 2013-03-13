@@ -58,6 +58,9 @@ struct OpaqueJSString : public ThreadSafeRefCounted<OpaqueJSString> {
 
     JS_EXPORT_PRIVATE String string() const;
     JSC::Identifier identifier(JSC::JSGlobalData*) const;
+#if PLATFORM(QT)
+    QString qString() const { return m_string; }
+#endif
 
 private:
     friend class WTF::ThreadSafeRefCounted<OpaqueJSString>;

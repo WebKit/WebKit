@@ -43,6 +43,7 @@ SOURCES += \
     API/JSObjectRef.cpp \
     API/JSScriptRef.cpp \
     API/JSStringRef.cpp \
+    API/JSStringRefQt.cpp \
     API/JSValueRef.cpp \
     API/JSWeakObjectMapRefPrivate.cpp \
     API/OpaqueJSString.cpp \
