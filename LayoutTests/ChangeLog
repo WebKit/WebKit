@@ -1,5 +1,19 @@
 2013-03-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r142358
+
+    2013-02-09  Kent Tamura  <tkent@chromium.org>
+
+            Fix crash by img[ismap] with content property
+            https://bugs.webkit.org/show_bug.cgi?id=108702
+
+            Reviewed by Adam Barth.
+
+            * fast/dom/HTMLAnchorElement/anchor-ismap-crash-expected.txt: Added.
+            * fast/dom/HTMLAnchorElement/anchor-ismap-crash.html: Added.
+
+2013-03-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r141858
 
     2013-02-04  Kent Tamura  <tkent@chromium.org>

@@ -132,9 +132,9 @@ static void appendServerMapMousePosition(String& url, Event* event)
     if (!imageElement || !imageElement->isServerMap())
         return;
 
-    RenderImage* renderer = toRenderImage(imageElement->renderer());
-    if (!renderer)
+    if (!imageElement->renderer() || !imageElement->renderer()->isRenderImage())
         return;
+    RenderImage* renderer = toRenderImage(imageElement->renderer());
 
     // FIXME: This should probably pass true for useTransforms.
     FloatPoint absolutePosition = renderer->absoluteToLocal(FloatPoint(static_cast<MouseEvent*>(event)->pageX(), static_cast<MouseEvent*>(event)->pageY()));
