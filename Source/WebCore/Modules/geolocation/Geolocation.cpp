@@ -50,8 +50,6 @@ static const char permissionDeniedErrorMessage[] = "User denied Geolocation";
 static const char failedToStartServiceErrorMessage[] = "Failed to start Geolocation service";
 static const char framelessDocumentErrorMessage[] = "Geolocation cannot be used in frameless documents";
 
-static const int firstAvailableWatchId = 1;
-
 static PassRefPtr<Geoposition> createGeoposition(GeolocationPosition* position)
 {
     if (!position)
@@ -311,12 +309,9 @@ int Geolocation::watchPosition(PassRefPtr<PositionCallback> successCallback, Pas
     RefPtr<GeoNotifier> notifier = startRequest(successCallback, errorCallback, options);
     ASSERT(notifier);
 
-    static int nextAvailableWatchId = firstAvailableWatchId;
-    // In case of overflow, make sure the ID remains positive, but reuse the ID values.
-    if (nextAvailableWatchId < 1)
-        nextAvailableWatchId = 1;
-    m_watchers.set(nextAvailableWatchId, notifier.release());
-    return nextAvailableWatchId++;
+    int watchID = m_scriptExecutionContext->newUniqueID();
+    m_watchers.set(watchID, notifier.release());
+    return watchID;
 }
 
 PassRefPtr<Geolocation::GeoNotifier> Geolocation::startRequest(PassRefPtr<PositionCallback> successCallback, PassRefPtr<PositionErrorCallback> errorCallback, PassRefPtr<PositionOptions> options)
@@ -423,14 +418,14 @@ bool Geolocation::haveSuitableCachedPosition(PositionOptions* options)
     return m_cachedPosition->timestamp() > currentTimeMillis - options->maximumAge();
 }
 
-void Geolocation::clearWatch(int watchId)
+void Geolocation::clearWatch(int watchID)
 {
-    if (watchId < firstAvailableWatchId)
+    if (watchID <= 0)
         return;
 
-    if (GeoNotifier* notifier = m_watchers.find(watchId))
+    if (GeoNotifier* notifier = m_watchers.find(watchID))
         m_pendingForPermissionNotifiers.remove(notifier);
-    m_watchers.remove(watchId);
+    m_watchers.remove(watchID);
     
     if (!hasListeners())
         stopUpdating();

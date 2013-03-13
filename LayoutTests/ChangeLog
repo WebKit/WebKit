@@ -1,5 +1,25 @@
 2013-03-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r135478
+
+    2012-11-21  Cosmin Truta  <ctruta@rim.com>
+
+            Numeric identifiers of events should not be globally sequential
+            https://bugs.webkit.org/show_bug.cgi?id=102244
+
+            Reviewed by Alexey Proskuryakov.
+
+            Ensured that the results of setTimeout(), setInterval() and
+            navigator.geolocation.watchPosition() are strictly positive
+            and unique within their script execution context.
+
+            * fast/dom/Geolocation/watchPosition-unique-expected.txt: Added.
+            * fast/dom/Geolocation/watchPosition-unique.html: Added.
+            * fast/dom/Window/setTimeout-setInterval-unique-expected.txt: Added.
+            * fast/dom/Window/setTimeout-setInterval-unique.html: Added.
+
+2013-03-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r135454
 
     2012-11-21  Daniel Bates  <dbates@webkit.org>

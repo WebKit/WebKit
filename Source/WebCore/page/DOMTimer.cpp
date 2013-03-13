@@ -45,16 +45,6 @@ double DOMTimer::s_minDefaultTimerInterval = 0.010; // 10 milliseconds
 
 static int timerNestingLevel = 0;
     
-static int timeoutId()
-{
-    static int lastUsedTimeoutId = 0;
-    ++lastUsedTimeoutId;
-    // Avoid wraparound going negative on us.
-    if (lastUsedTimeoutId <= 0)
-        lastUsedTimeoutId = 1;
-    return lastUsedTimeoutId;
-}
-    
 static inline bool shouldForwardUserGesture(int interval, int nestingLevel)
 {
     return UserGestureIndicator::processingUserGesture()
@@ -64,13 +54,14 @@ static inline bool shouldForwardUserGesture(int interval, int nestingLevel)
 
 DOMTimer::DOMTimer(ScriptExecutionContext* context, PassOwnPtr<ScheduledAction> action, int interval, bool singleShot)
     : SuspendableTimer(context)
-    , m_timeoutId(timeoutId())
+    , m_timeoutId(context->newUniqueID())
     , m_nestingLevel(timerNestingLevel + 1)
     , m_action(action)
     , m_originalInterval(interval)
     , m_shouldForwardUserGesture(shouldForwardUserGesture(interval, m_nestingLevel))
 {
-    scriptExecutionContext()->addTimeout(m_timeoutId, this);
+
+    context->addTimeout(m_timeoutId, this);
 
     double intervalMilliseconds = intervalClampedToMinimum(interval, context->minimumTimerInterval());
     if (singleShot)

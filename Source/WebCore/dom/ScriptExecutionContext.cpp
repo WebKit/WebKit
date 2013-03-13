@@ -90,6 +90,7 @@ void ScriptExecutionContext::AddConsoleMessageTask::performTask(ScriptExecutionC
 ScriptExecutionContext::ScriptExecutionContext()
     : m_iteratingActiveDOMObjects(false)
     , m_inDestructor(false)
+    , m_sequentialID(0)
     , m_inDispatchErrorEvent(false)
     , m_activeDOMObjectsAreSuspended(false)
     , m_reasonForSuspendingActiveDOMObjects(static_cast<ActiveDOMObject::ReasonForSuspension>(-1))
@@ -341,20 +342,14 @@ bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int 
     return errorEvent->defaultPrevented();
 }
 
-void ScriptExecutionContext::addTimeout(int timeoutId, DOMTimer* timer)
+int ScriptExecutionContext::newUniqueID()
 {
-    ASSERT(!m_timeouts.contains(timeoutId));
-    m_timeouts.set(timeoutId, timer);
-}
-
-void ScriptExecutionContext::removeTimeout(int timeoutId)
-{
-    m_timeouts.remove(timeoutId);
-}
-
-DOMTimer* ScriptExecutionContext::findTimeout(int timeoutId)
-{
-    return m_timeouts.get(timeoutId);
+    ++m_sequentialID;
+    // FIXME: We prevent wraparound from becoming negative with a simple solution which
+    // ensures the result has a correct range, but without fully guaranteeing uniqueness.
+    if (m_sequentialID <= 0)
+        m_sequentialID = 1;
+    return m_sequentialID;
 }
 
 #if ENABLE(BLOB)

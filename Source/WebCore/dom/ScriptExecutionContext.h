@@ -139,9 +139,12 @@ public:
 
     virtual void postTask(PassOwnPtr<Task>) = 0; // Executes the task on context's thread asynchronously.
 
-    void addTimeout(int timeoutId, DOMTimer*);
-    void removeTimeout(int timeoutId);
-    DOMTimer* findTimeout(int timeoutId);
+    // Creates a unique id for setTimeout, setInterval or navigator.geolocation.watchPosition.
+    int newUniqueID();
+
+    void addTimeout(int timeoutId, DOMTimer* timer) { ASSERT(!m_timeouts.contains(timeoutId)); m_timeouts.set(timeoutId, timer); }
+    void removeTimeout(int timeoutId) { m_timeouts.remove(timeoutId); }
+    DOMTimer* findTimeout(int timeoutId) { return m_timeouts.get(timeoutId); }
 
 #if USE(JSC)
     JSC::JSGlobalData* globalData();
@@ -191,30 +194,29 @@ private:
 
     void closeMessagePorts();
 
+    virtual void refScriptExecutionContext() = 0;
+    virtual void derefScriptExecutionContext() = 0;
+
     HashSet<MessagePort*> m_messagePorts;
     HashSet<ContextDestructionObserver*> m_destructionObservers;
     HashMap<ActiveDOMObject*, void*> m_activeDOMObjects;
     bool m_iteratingActiveDOMObjects;
     bool m_inDestructor;
 
+    int m_sequentialID;
     typedef HashMap<int, DOMTimer*> TimeoutMap;
     TimeoutMap m_timeouts;
-
-    virtual void refScriptExecutionContext() = 0;
-    virtual void derefScriptExecutionContext() = 0;
 
     bool m_inDispatchErrorEvent;
     class PendingException;
     OwnPtr<Vector<OwnPtr<PendingException> > > m_pendingExceptions;
-#if ENABLE(BLOB)
-    OwnPtr<PublicURLManager> m_publicURLManager;
-#endif
 
     bool m_activeDOMObjectsAreSuspended;
     ActiveDOMObject::ReasonForSuspension m_reasonForSuspendingActiveDOMObjects;
     bool m_activeDOMObjectsAreStopped;
 
 #if ENABLE(BLOB)
+    OwnPtr<PublicURLManager> m_publicURLManager;
     RefPtr<FileThread> m_fileThread;
 #endif
 };

@@ -59,7 +59,7 @@ public:
 
     void getCurrentPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
     int watchPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
-    void clearWatch(int watchId);
+    void clearWatch(int watchID);
 
     void setIsAllowed(bool);
     bool isAllowed() const { return m_allowGeolocation == Yes; }
