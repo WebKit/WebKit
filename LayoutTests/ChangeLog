@@ -1,5 +1,19 @@
 2013-03-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r141858
+
+    2013-02-04  Kent Tamura  <tkent@chromium.org>
+
+            Fix crash by <select> type change on focus
+            https://bugs.webkit.org/show_bug.cgi?id=108830
+
+            Reviewed by Abhishek Arya.
+
+            * fast/forms/select/select-change-type-on-focus-expected.txt: Added.
+            * fast/forms/select/select-change-type-on-focus.html: Added.
+
+2013-03-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r140520
 
     2013-01-23  Hajime Morrita  <morrita@google.com>
