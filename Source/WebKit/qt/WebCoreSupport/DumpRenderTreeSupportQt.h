@@ -93,7 +93,6 @@ public:
 
     static void executeCoreCommandByName(QWebPageAdapter*, const QString& name, const QString& value);
     static bool isCommandEnabled(QWebPageAdapter*, const QString& name);
-    static bool findString(QWebPageAdapter*, const QString&, const QStringList& optionArray);
     static void setSmartInsertDeleteEnabled(QWebPageAdapter*, bool enabled);
     static void setSelectTrailingWhitespaceEnabled(QWebPageAdapter*, bool enabled);
     static QVariantList selectedRange(QWebPageAdapter*);

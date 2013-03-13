@@ -314,16 +314,32 @@ void QWebPageAdapter::setContentEditable(bool editable)
 
 bool QWebPageAdapter::findText(const QString& subString, FindFlag options)
 {
-    ::TextCaseSensitivity caseSensitivity = ::TextCaseInsensitive;
-    if (options & FindCaseSensitively)
-        caseSensitivity = ::TextCaseSensitive;
+    ::WebCore::FindOptions webCoreFindOptions = 0;
+
+    if (!(options & FindCaseSensitively))
+        webCoreFindOptions |= WebCore::CaseInsensitive;
+
+    if (options & FindBackward)
+        webCoreFindOptions |= WebCore::Backwards;
+
+    if (options & FindWrapsAroundDocument)
+        webCoreFindOptions |= WebCore::WrapAround;
+
+    if (options & FindAtWordBeginningsOnly)
+        webCoreFindOptions |= WebCore::AtWordStarts;
+
+    if (options & TreatMedialCapitalAsWordBeginning)
+        webCoreFindOptions |= WebCore::TreatMedialCapitalAsWordStart;
+
+    if (options & FindBeginsInSelection)
+        webCoreFindOptions |= WebCore::StartInSelection;
 
     if (options & HighlightAllOccurrences) {
         if (subString.isEmpty()) {
             page->unmarkAllTextMatches();
             return true;
         }
-        return page->markAllMatchesForText(subString, caseSensitivity, true, 0);
+        return page->markAllMatchesForText(subString, webCoreFindOptions, /*shouldHighlight*/ true, /*limit*/ 0);
     }
 
     if (subString.isEmpty()) {
@@ -334,13 +350,8 @@ bool QWebPageAdapter::findText(const QString& subString, FindFlag options)
             frame = frame->tree()->traverseNextWithWrap(false);
         }
     }
-    ::FindDirection direction = ::FindDirectionForward;
-    if (options & FindBackward)
-        direction = ::FindDirectionBackward;
 
-    const bool shouldWrap = options & FindWrapsAroundDocument;
-
-    return page->findString(subString, caseSensitivity, direction, shouldWrap);
+    return page->findString(subString, webCoreFindOptions);
 }
 
 void QWebPageAdapter::adjustPointForClicking(QMouseEvent* ev)

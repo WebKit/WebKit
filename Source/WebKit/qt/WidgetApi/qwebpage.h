@@ -187,7 +187,10 @@ public:
         FindBackward = 1,
         FindCaseSensitively = 2,
         FindWrapsAroundDocument = 4,
-        HighlightAllOccurrences = 8
+        HighlightAllOccurrences = 8,
+        FindAtWordBeginningsOnly = 16,
+        TreatMedialCapitalAsWordBeginning = 32,
+        FindBeginsInSelection = 64
     };
     Q_DECLARE_FLAGS(FindFlags, FindFlag)
 

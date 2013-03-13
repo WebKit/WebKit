@@ -64,8 +64,6 @@ class EventSender;
 class TextInputController;
 class GCController;
 
-namespace WebCore {
-
 class WebPage;
 class NetworkAccessManager;
 
@@ -75,6 +73,8 @@ Q_OBJECT
 public:
     DumpRenderTree();
     virtual ~DumpRenderTree();
+
+    static DumpRenderTree* instance();
 
     // Initialize in single-file mode.
     void open(const QUrl& url);
@@ -237,7 +237,5 @@ public:
 private:
     QGraphicsWebView* m_item;
 };
-
-}
 
 #endif

@@ -34,12 +34,13 @@
 #include "NotificationPresenterClientQt.h"
 #include "WorkQueue.h"
 #include "WorkQueueItemQt.h"
+#include <JSStringRefQt.h>
 #include <QCoreApplication>
 #include <QDir>
 #include <QLocale>
 #include <qwebsettings.h>
 
-TestRunnerQt::TestRunnerQt(WebCore::DumpRenderTree* drt)
+TestRunnerQt::TestRunnerQt(DumpRenderTree* drt)
     : QObject()
     , m_drt(drt)
     , m_shouldTimeout(true)
@@ -744,9 +745,38 @@ bool TestRunnerQt::isCommandEnabled(const QString& name) const
     return DumpRenderTreeSupportQt::isCommandEnabled(m_drt->pageAdapter(), name);
 }
 
-bool TestRunnerQt::findString(const QString& string, const QStringList& optionArray)
+bool TestRunner::findString(JSContextRef context, JSStringRef string, JSObjectRef optionsArray)
 {
-    return DumpRenderTreeSupportQt::findString(m_drt->pageAdapter(), string, optionArray);
+    JSRetainPtr<JSStringRef> lengthPropertyName(Adopt, JSStringCreateWithUTF8CString("length"));
+    JSValueRef lengthValue = JSObjectGetProperty(context, optionsArray, lengthPropertyName.get(), 0);
+    if (!JSValueIsNumber(context, lengthValue))
+        return false;
+
+    QWebPage::FindFlags findFlags = QWebPage::FindCaseSensitively;
+
+    int length = static_cast<int>(JSValueToNumber(context, lengthValue, 0));
+    for (int i = 0; i < length; ++i) {
+        JSValueRef value = JSObjectGetPropertyAtIndex(context, optionsArray, i, 0);
+        if (!JSValueIsString(context, value))
+            continue;
+
+        JSRetainPtr<JSStringRef> optionName(Adopt, JSValueToStringCopy(context, value, 0));
+        if (JSStringIsEqualToUTF8CString(optionName.get(), "CaseInsensitive"))
+            findFlags &= ~QWebPage::FindCaseSensitively;
+        else if (JSStringIsEqualToUTF8CString(optionName.get(), "AtWordStarts"))
+            findFlags |= QWebPage::FindAtWordBeginningsOnly;
+        else if (JSStringIsEqualToUTF8CString(optionName.get(), "TreatMedialCapitalAsWordStart"))
+            findFlags |=  QWebPage::TreatMedialCapitalAsWordBeginning;
+        else if (JSStringIsEqualToUTF8CString(optionName.get(), "Backwards"))
+            findFlags |=  QWebPage::FindBackward;
+        else if (JSStringIsEqualToUTF8CString(optionName.get(), "WrapAround"))
+            findFlags |=  QWebPage::FindWrapsAroundDocument;
+        else if (JSStringIsEqualToUTF8CString(optionName.get(), "StartInSelection"))
+            findFlags |=  QWebPage::FindBeginsInSelection;
+    }
+
+    DumpRenderTree* drt = DumpRenderTree::instance();
+    return drt->webPage()->findText(JSStringCopyQString(string), findFlags);
 }
 
 void TestRunnerQt::authenticateSession(const QString&, const QString&, const QString&)
@@ -764,24 +794,24 @@ void TestRunnerQt::setIconDatabaseEnabled(bool enable)
 
 void TestRunnerQt::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
 {
-    QList<WebCore::WebPage*> pages = m_drt->getAllPages();
-    foreach (WebCore::WebPage* page, pages)
+    QList<WebPage*> pages = m_drt->getAllPages();
+    foreach (WebPage* page, pages)
         DumpRenderTreeSupportQt::setMockDeviceOrientation(page->handle(), canProvideAlpha, alpha, canProvideBeta, beta, canProvideGamma, gamma);
 }
 
 void TestRunnerQt::setGeolocationPermission(bool allow)
 {
     setGeolocationPermissionCommon(allow);
-    QList<WebCore::WebPage*> pages = m_drt->getAllPages();
-    foreach (WebCore::WebPage* page, pages)
+    QList<WebPage*> pages = m_drt->getAllPages();
+    foreach (WebPage* page, pages)
         DumpRenderTreeSupportQt::setMockGeolocationPermission(page->handle(), allow);
 }
 
 int TestRunnerQt::numberOfPendingGeolocationPermissionRequests()
 {
     int pendingPermissionCount = 0;
-    QList<WebCore::WebPage*> pages = m_drt->getAllPages();
-    foreach (WebCore::WebPage* page, pages)
+    QList<WebPage*> pages = m_drt->getAllPages();
+    foreach (WebPage* page, pages)
         pendingPermissionCount += DumpRenderTreeSupportQt::numberOfPendingGeolocationPermissionRequests(page->handle());
 
     return pendingPermissionCount;
@@ -795,15 +825,15 @@ void TestRunnerQt::setGeolocationPermissionCommon(bool allow)
 
 void TestRunnerQt::setMockGeolocationPositionUnavailableError(const QString& message)
 {
-    QList<WebCore::WebPage*> pages = m_drt->getAllPages();
-    foreach (WebCore::WebPage* page, pages)
+    QList<WebPage*> pages = m_drt->getAllPages();
+    foreach (WebPage* page, pages)
         DumpRenderTreeSupportQt::setMockGeolocationPositionUnavailableError(page->handle(), message);
 }
 
 void TestRunnerQt::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
 {
-    QList<WebCore::WebPage*> pages = m_drt->getAllPages();
-    foreach (WebCore::WebPage* page, pages)
+    QList<WebPage*> pages = m_drt->getAllPages();
+    foreach (WebPage* page, pages)
         DumpRenderTreeSupportQt::setMockGeolocationPosition(page->handle(), latitude, longitude, accuracy);
 }
 
@@ -1338,11 +1368,6 @@ JSStringRef TestRunner::copyEncodedHostName(JSStringRef name)
 
 void TestRunner::addUserStyleSheet(JSStringRef source, bool allFrames)
 {
-}
-
-bool TestRunner::findString(JSContextRef, JSStringRef, JSObjectRef optionsArray)
-{
-    return false;
 }
 
 void TestRunner::execCommand(JSStringRef name, JSStringRef value)

@@ -74,7 +74,7 @@
 #include <unistd.h>
 #endif
 
-namespace WebCore {
+using namespace WebCore;
 
 const int databaseDefaultQuota = 5 * 1024 * 1024;
 
@@ -385,6 +385,8 @@ WebViewGraphicsBased::WebViewGraphicsBased(QWidget* parent)
     scene()->addItem(m_item);
 }
 
+static DumpRenderTree *s_instance = 0;
+
 DumpRenderTree::DumpRenderTree()
     : m_dumpPixelsForAllTests(false)
     , m_stdin(0)
@@ -393,6 +395,9 @@ DumpRenderTree::DumpRenderTree()
     , m_graphicsBased(false)
     , m_persistentStoragePath(QString(getenv("DUMPRENDERTREE_TEMP")))
 {
+    ASSERT(!s_instance);
+    s_instance = this;
+
     QByteArray viewMode = getenv("QT_DRT_WEBVIEW_MODE");
     if (viewMode == "graphics")
         setGraphicsBased(true);
@@ -485,6 +490,12 @@ DumpRenderTree::~DumpRenderTree()
         fclose(stderr);
     delete m_mainView;
     delete m_stdin;
+    s_instance = 0;
+}
+
+DumpRenderTree* DumpRenderTree::instance()
+{
+    return s_instance;
 }
 
 static void clearHistory(QWebPage* page)
@@ -1216,6 +1227,4 @@ void DumpRenderTree::setTimeout(int timeout)
 void DumpRenderTree::setShouldTimeout(bool flag)
 {
     m_controller->setShouldTimeout(flag);
-}
-
 }

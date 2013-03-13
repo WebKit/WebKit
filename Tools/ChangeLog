@@ -1,3 +1,39 @@
+2013-03-13  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Port TestRunner::findString to shared interface
+        https://bugs.webkit.org/show_bug.cgi?id=112147
+
+        Reviewed by Jocelyn Turcotte.
+
+        This patch also removes DumpRenderTree and some other helper classes from
+        the WebCore namespace, to which they do not really belong.
+
+        * DumpRenderTree/qt/DumpRenderTreeMain.cpp:
+        (main):
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (DumpRenderTree::DumpRenderTree):
+        (DumpRenderTree::~DumpRenderTree):
+        (DumpRenderTree::instance):
+        (DumpRenderTree::setShouldTimeout):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        (DumpRenderTree):
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (EventSender::contextClick):
+        (EventSender::sendEvent):
+        (EventSender::postEvent):
+        * DumpRenderTree/qt/EventSenderQt.h:
+        (EventSender::isGraphicsBased):
+        * DumpRenderTree/qt/TestRunnerQt.cpp:
+        (TestRunnerQt::TestRunnerQt):
+        (TestRunner::findString):
+        (TestRunnerQt::setMockDeviceOrientation):
+        (TestRunnerQt::setGeolocationPermission):
+        (TestRunnerQt::numberOfPendingGeolocationPermissionRequests):
+        (TestRunnerQt::setMockGeolocationPositionUnavailableError):
+        (TestRunnerQt::setMockGeolocationPosition):
+        * DumpRenderTree/qt/TestRunnerQt.h:
+        (TestRunnerQt):
+
 2013-03-13  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Rename android_build_type to android_webview_build in .gyp files.

@@ -348,32 +348,6 @@ bool DumpRenderTreeSupportQt::isCommandEnabled(QWebPageAdapter *adapter, const Q
     return adapter->page->focusController()->focusedOrMainFrame()->editor()->command(name).isEnabled();
 }
 
-bool DumpRenderTreeSupportQt::findString(QWebPageAdapter *adapter, const QString& string, const QStringList& optionArray)
-{
-    // 1. Parse the options from the array
-    WebCore::FindOptions options = 0;
-    const int optionCount = optionArray.size();
-    for (int i = 0; i < optionCount; ++i) {
-        const QString& option = optionArray.at(i);
-        if (option == QLatin1String("CaseInsensitive"))
-            options |= WebCore::CaseInsensitive;
-        else if (option == QLatin1String("AtWordStarts"))
-            options |= WebCore::AtWordStarts;
-        else if (option == QLatin1String("TreatMedialCapitalAsWordStart"))
-            options |= WebCore::TreatMedialCapitalAsWordStart;
-        else if (option == QLatin1String("Backwards"))
-            options |= WebCore::Backwards;
-        else if (option == QLatin1String("WrapAround"))
-            options |= WebCore::WrapAround;
-        else if (option == QLatin1String("StartInSelection"))
-            options |= WebCore::StartInSelection;
-    }
-
-    // 2. find the string
-    WebCore::Frame* frame = adapter->page->focusController()->focusedOrMainFrame();
-    return frame && frame->editor()->findString(string, options);
-}
-
 QVariantList DumpRenderTreeSupportQt::selectedRange(QWebPageAdapter *adapter)
 {
     WebCore::Frame* frame = adapter->page->focusController()->focusedOrMainFrame();

@@ -1,3 +1,20 @@
+2013-03-13  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Port TestRunner::findString to shared interface
+        https://bugs.webkit.org/show_bug.cgi?id=112147
+
+        Reviewed by Jocelyn Turcotte.
+
+        Add new find options used by the DRT.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        * WebCoreSupport/QWebPageAdapter.cpp:
+        (QWebPageAdapter::findText):
+        * WebCoreSupport/QWebPageAdapter.h:
+        * WidgetApi/qwebpage.cpp:
+        * WidgetApi/qwebpage.h:
+
 2013-03-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: get rid of hiddenPanels filter

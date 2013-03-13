@@ -49,16 +49,14 @@
 
 class QWebFrame;
 class DumpRenderTreeSupportQt;
-namespace WebCore {
 class DumpRenderTree;
-}
 
 class TestRunnerQt : public QObject {
     Q_OBJECT
     Q_PROPERTY(int webHistoryItemCount READ webHistoryItemCount)
     Q_PROPERTY(bool globalFlag READ globalFlag WRITE setGlobalFlag)
 public:
-    TestRunnerQt(WebCore::DumpRenderTree*);
+    TestRunnerQt(DumpRenderTree*);
 
     bool shouldDisallowIncreaseForApplicationCacheQuota() const { return m_disallowIncreaseForApplicationCacheQuota; }
     bool shouldDumpAsText() const { return m_textDump; }
@@ -182,7 +180,6 @@ public Q_SLOTS:
     void setSelectTrailingWhitespaceEnabled(bool);
     void execCommand(const QString& name, const QString& value = QString());
     bool isCommandEnabled(const QString& name) const;
-    bool findString(const QString&, const QStringList& optionArray);
 
     void addOriginAccessWhitelistEntry(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains);
     void removeOriginAccessWhitelistEntry(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains);
@@ -299,7 +296,7 @@ private:
     QUrl m_userStyleSheetLocation;
     QBasicTimer m_timeoutTimer;
     QWebFrame* m_topLoadingFrame;
-    WebCore::DumpRenderTree* m_drt;
+    DumpRenderTree* m_drt;
     QWebHistory* m_webHistory;
     bool m_ignoreDesktopNotification;
 

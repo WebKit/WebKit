@@ -96,7 +96,7 @@ protected:
     void timerEvent(QTimerEvent*);
 
 private:
-    bool isGraphicsBased() const { return qobject_cast<WebCore::WebViewGraphicsBased*>(m_page->view()); }
+    bool isGraphicsBased() const { return qobject_cast<WebViewGraphicsBased*>(m_page->view()); }
     QGraphicsSceneMouseEvent* createGraphicsSceneMouseEvent(QEvent::Type, const QPoint& pos, const QPoint& screenPos, Qt::MouseButton, Qt::MouseButtons, Qt::KeyboardModifiers);
     QGraphicsSceneWheelEvent* createGraphicsSceneWheelEvent(QEvent::Type, const QPoint& pos, const QPoint& screenPos, int delta, Qt::KeyboardModifiers, Qt::Orientation);
     void sendEvent(QObject* receiver, QEvent* event);
