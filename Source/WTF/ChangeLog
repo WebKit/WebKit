@@ -1,3 +1,11 @@
+2013-03-13  Jessie Berlin  <jberlin@apple.com>
+
+        Remove svn:executable from a file that isn't supposed to be executable.
+
+        Rubber-stamped by Geoff Garen.
+
+        * wtf/MediaTime.h:
+
 2013-03-13  Oliver Hunt  <oliver@apple.com>
 
         Simplify Checked<> multiplication
