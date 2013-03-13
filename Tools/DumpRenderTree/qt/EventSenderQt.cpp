@@ -761,3 +761,5 @@ void EventSender::postEvent(QObject* receiver, QEvent* event)
     } else
         QApplication::postEvent(receiver, event); // event deleted by the system
 }
+
+#include "moc_EventSenderQt.cpp"
