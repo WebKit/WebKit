@@ -1,3 +1,12 @@
+2013-03-13  Stephen Chenney  <schenney@chromium.org>
+
+        Add new Skia code suppression flags
+
+        Unreviewed build update.
+
+        * skia_webkit.gyp: Add 'SK_DISABLE_BLUR_ROUNDING', 'SK_IGNORE_SUBPIXEL_AXIS_ALIGN_FIX',
+            'SK_IGNORE_PICTURE_RECORD_SAVE_LAYER_OPT', 'SK_IGNORE_FAST_RECT_BLUR', 'SK_IGNORE_CUBIC_STROKE_FIX'
+
 2013-03-13  Aaron Colwell  <acolwell@chromium.org>
 
         Cleanup dead MediaSource code now that the Chromium-side refactor is complete.
