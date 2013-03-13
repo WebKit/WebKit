@@ -1,8 +1,8 @@
-layer at (0,0) size 785x1638
+layer at (0,0) size 785x1639
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x1638
-  RenderBlock {HTML} at (0,0) size 785x1639
-    RenderBody {BODY} at (8,8) size 769x1623 [bgcolor=#CCCCCC]
+layer at (0,0) size 785x1639
+  RenderBlock {HTML} at (0,0) size 785x1640
+    RenderBody {BODY} at (8,8) size 769x1624 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 769x18
         RenderText {#text} at (0,0) size 355x17
           text run at (0,0) width 355: "The style declarations which apply to the text below are:"
@@ -74,15 +74,15 @@ layer at (0,0) size 785x1638
           text run at (0,18) width 488: "No other styles have been applied to it besides a light blue background color. "
           text run at (488,18) width 267: "In all other respects, the element should be"
           text run at (0,36) width 48: "normal."
-      RenderTable {TABLE} at (0,883) size 769x740 [border: (1px outset #808080)]
-        RenderTableSection {TBODY} at (1,1) size 767x737
+      RenderTable {TABLE} at (0,883) size 769x741 [border: (1px outset #808080)]
+        RenderTableSection {TBODY} at (1,1) size 767x738
           RenderTableRow {TR} at (0,0) size 767x26
             RenderTableCell {TD} at (0,0) size 767x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderInline {STRONG} at (0,0) size 163x17
                 RenderText {#text} at (4,4) size 163x17
                   text run at (4,4) width 163: "TABLE Testing Section"
-          RenderTableRow {TR} at (0,26) size 767x711
-            RenderTableCell {TD} at (0,368) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+          RenderTableRow {TR} at (0,26) size 767x712
+            RenderTableCell {TD} at (0,369) size 12x26 [bgcolor=#C0C0C0] [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (4,4) size 4x17
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 755x712 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
