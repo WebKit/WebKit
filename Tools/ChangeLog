@@ -1,3 +1,9 @@
+2013-03-13  Elliott Sprehn  <esprehn@chromium.org>
+
+        Unreviewed. Now I'm a reviewer :)
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-03-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Threaded HTML Parser is missing feature define flags in all but Chromium port's build files
