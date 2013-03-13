@@ -507,27 +507,7 @@ libPlatformGtk2_la_CPPFLAGS = \
 	$(platformgtk_cppflags) \
 	$(javascriptcore_cppflags) \
 	-fno-strict-aliasing \
-	$(CAIRO_CFLAGS) \
-	$(CLUTTER_CFLAGS) \
-	$(COVERAGE_CFLAGS) \
-	$(ENCHANT_CFLAGS) \
-	$(FREETYPE_CFLAGS) \
-	$(GAIL_CFLAGS) \
-	$(GAMEPAD_CFLAGS) \
-	$(GEOCLUE_CFLAGS) \
-	$(GLIB_CFLAGS) \
-	$(GSTREAMER_CFLAGS) \
-	$(GTK_CFLAGS) \
-	$(LIBSECRET_CFLAGS) \
-	$(LIBSOUP_CFLAGS) \
-	$(LIBXML_CFLAGS) \
-	$(LIBXSLT_CFLAGS) \
-	$(SQLITE3_CFLAGS) \
-	$(UNICODE_CFLAGS) \
-	$(XCOMPOSITE_CFLAGS) \
-	$(XDAMAGE_CFLAGS) \
-	$(XRENDER_CFLAGS) \
-	$(XT_CFLAGS)
+	$(GTK2_CFLAGS)
 
 # Injected Bundle
 injectedbundledir = $(libdir)/webkit2gtk-3.0/injected-bundle

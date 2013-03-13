@@ -1,3 +1,13 @@
+2013-03-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Build fixes after 145552
+        https://bugs.webkit.org/show_bug.cgi?id=112267
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: Include the same-level GNUmakefile.list.am.
+        Fix a typo in the inline visibility compiler flag.
+
 2013-03-12  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Remove last vestigates of WEBKIT_USING_V8
