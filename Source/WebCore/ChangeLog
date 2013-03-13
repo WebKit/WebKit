@@ -1,5 +1,27 @@
 2013-03-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r140069
+
+    2013-01-17  Abhishek Arya  <inferno@chromium.org>
+
+            Heap-use-after-free in WebCore::RenderBlock::checkFloatsInCleanLine
+            https://bugs.webkit.org/show_bug.cgi?id=90802
+
+            Reviewed by Julien Chaffraix.
+
+            Test: fast/multicol/float-not-removed-crash.html
+
+            * rendering/RenderBoxModelObject.cpp:
+            (WebCore::RenderBoxModelObject::moveChildrenTo):
+            1. When fullRemoveInsert is True, make sure to clear the
+            floating objects from our list (similar to positioned objects).
+            Our children are getting moved to another block and we won't
+            get notified when they are going away.
+            2. Remove the redundant hasPositionedObjects check since it
+            is already done inside removePositionedObjects.
+
+2013-03-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r139788
 
     2013-01-15  Elliott Sprehn  <esprehn@chromium.org>
