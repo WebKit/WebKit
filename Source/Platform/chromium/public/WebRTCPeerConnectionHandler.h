@@ -62,10 +62,9 @@ public:
     virtual bool addICECandidate(const WebRTCICECandidate&) = 0;
     virtual bool addStream(const WebMediaStream&, const WebMediaConstraints&) = 0;
     virtual void removeStream(const WebMediaStream&) = 0;
-    // FIXME: Remove default implementation when clients have changed.
-    virtual void getStats(const WebRTCStatsRequest&) { }
-    virtual WebRTCDataChannelHandler* createDataChannel(const WebString& label, bool reliable) { return 0; }
-    virtual WebRTCDTMFSenderHandler* createDTMFSender(const WebMediaStreamTrack& track) { return 0; }
+    virtual void getStats(const WebRTCStatsRequest&) = 0;
+    virtual WebRTCDataChannelHandler* createDataChannel(const WebString& label, bool reliable) = 0;
+    virtual WebRTCDTMFSenderHandler* createDTMFSender(const WebMediaStreamTrack&) = 0;
     virtual void stop() = 0;
 };
 

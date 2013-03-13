@@ -67,44 +67,12 @@ public:
 
     virtual void negotiationNeeded() = 0;
     virtual void didGenerateICECandidate(const WebRTCICECandidate&) = 0;
-    virtual void didChangeSignalingState(SignalingState) { }
-    virtual void didChangeICEGatheringState(ICEGatheringState) { }
-    virtual void didChangeICEConnectionState(ICEConnectionState) { }
+    virtual void didChangeSignalingState(SignalingState) = 0;
+    virtual void didChangeICEGatheringState(ICEGatheringState) = 0;
+    virtual void didChangeICEConnectionState(ICEConnectionState) = 0;
     virtual void didAddRemoteStream(const WebMediaStream&) = 0;
     virtual void didRemoveRemoteStream(const WebMediaStream&) = 0;
-    virtual void didAddRemoteDataChannel(WebRTCDataChannelHandler*) { }
-
-    // DEPRECATED
-    enum ReadyState {
-        ReadyStateStable = 1,
-        ReadyStateHaveLocalOffer = 2,
-        ReadyStateHaveRemoteOffer = 3,
-        ReadyStateHaveLocalPrAnswer = 4,
-        ReadyStateHaveRemotePrAnswer = 5,
-        ReadyStateClosed = 6,
-        ReadyStateNew = 7,
-        ReadyStateActive = 8,
-        ReadyStateClosing = 9,
-        ReadyStateOpening = 10
-    };
-
-    // DEPRECATED
-    enum ICEState {
-        ICEStateStarting = 1,
-        ICEStateChecking = 2,
-        ICEStateConnected = 3,
-        ICEStateCompleted = 4,
-        ICEStateFailed = 5,
-        ICEStateDisconnected = 6,
-        ICEStateClosed = 7,
-        ICEStateNew = 8,
-        ICEStateGathering = 9,
-        ICEStateWaiting = 10
-    };
-
-    // DEPRECATED
-    virtual void didChangeReadyState(ReadyState) { }
-    virtual void didChangeICEState(ICEState) { }
+    virtual void didAddRemoteDataChannel(WebRTCDataChannelHandler*) = 0;
 };
 
 } // namespace WebKit

@@ -1,3 +1,15 @@
+2013-03-13  Tommy Widenflycht  <tommyw@google.com>
+
+        [chromium] MediaStream API: Cleaning away deprecated and unused states
+        https://bugs.webkit.org/show_bug.cgi?id=112258
+
+        Reviewed by Adam Barth.
+
+        * chromium/public/WebRTCPeerConnectionHandler.h:
+        (WebRTCPeerConnectionHandler):
+        * chromium/public/WebRTCPeerConnectionHandlerClient.h:
+        (WebRTCPeerConnectionHandlerClient):
+
 2013-03-13  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Build fixes after 145552
