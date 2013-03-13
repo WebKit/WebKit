@@ -1,3 +1,14 @@
+2013-03-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] 'unrecognized command line option "-Wno-c++11-extensions"' warning reported when using gcc
+        https://bugs.webkit.org/show_bug.cgi?id=111936
+
+        Reviewed by Martin Robinson.
+
+        * Source/autotools/SetupCompilerFlags.m4: Only use the -Wno-c++11-extensions warning when building
+        with Clang as GCC does not support the warning just yet. Also enhance the comment about using libstdc++
+        as the standard C++ library when compiling with Clang.
+
 2013-03-11  Tobias Mueller  <tobiasmue@gnome.org>
 
         [Autotools] Set ENABLE_GTK_DOC to false if gtk-doc is not installed
