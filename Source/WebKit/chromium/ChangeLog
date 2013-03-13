@@ -1,3 +1,17 @@
+2013-03-12  Jun Jiang  <jun.a.jiang@intel.com>
+
+        Enable GPU-GPU texture copy in texImage2D() for HTMLVideoElement if hardware accelerated video decode is in use
+        https://bugs.webkit.org/show_bug.cgi?id=111126
+
+        Reviewed by Kenneth Russell.
+
+        * public/WebMediaPlayer.h:
+        (WebKit::WebMediaPlayer::copyVideoTextureToPlatformTexture):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::copyVideoTextureToPlatformTexture): do a GPU-GPU textures copy if possible.
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl):
+
 2013-03-12  Adam Barth  <abarth@webkit.org>
 
         [Chromium] WebFrame event listener APIs are unused and can be removed

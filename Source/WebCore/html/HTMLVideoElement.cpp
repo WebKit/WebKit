@@ -237,6 +237,13 @@ void HTMLVideoElement::paintCurrentFrameInContext(GraphicsContext* context, cons
     player->paintCurrentFrameInContext(context, destRect);
 }
 
+bool HTMLVideoElement::copyVideoTextureToPlatformTexture(GraphicsContext3D* context, Platform3DObject texture, GC3Dint level, GC3Denum type, GC3Denum internalFormat, bool premultiplyAlpha, bool flipY)
+{
+    if (!player())
+        return false;
+    return player()->copyVideoTextureToPlatformTexture(context, texture, level, type, internalFormat, premultiplyAlpha, flipY);
+}
+
 bool HTMLVideoElement::hasAvailableVideoFrame() const
 {
     if (!player())

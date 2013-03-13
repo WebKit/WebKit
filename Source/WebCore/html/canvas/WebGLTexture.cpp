@@ -207,6 +207,14 @@ GC3Dsizei WebGLTexture::getHeight(GC3Denum target, GC3Dint level) const
     return info->height;
 }
 
+bool WebGLTexture::isValid(GC3Denum target, GC3Dint level) const
+{
+    const LevelInfo* info = getLevelInfo(target, level);
+    if (!info)
+        return 0;
+    return info->valid;
+}
+
 bool WebGLTexture::isNPOT(GC3Dsizei width, GC3Dsizei height)
 {
     ASSERT(width >= 0 && height >= 0);

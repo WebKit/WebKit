@@ -47,6 +47,7 @@ class WebString;
 class WebURL;
 struct WebRect;
 struct WebSize;
+class WebGraphicsContext3D;
 
 class WebMediaPlayer {
 public:
@@ -179,6 +180,9 @@ public:
     // It should always be called after getCurrentFrame(). Frame passed to this
     // method should no longer be referenced after the call is made.
     virtual void putCurrentFrame(WebVideoFrame*) { }
+
+    // Do a GPU-GPU textures copy if possible.
+    virtual bool copyVideoTextureToPlatformTexture(WebGraphicsContext3D*, unsigned texture, unsigned level, unsigned internalFormat, bool premultiplyAlpha, bool flipY) { return false; }
 
     virtual void setStreamTextureClient(WebStreamTextureClient*) { }
 

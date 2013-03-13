@@ -27,7 +27,7 @@
 #define MediaPlayer_h
 
 #if ENABLE(VIDEO)
-
+#include "GraphicsTypes3D.h"
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 #include "MediaPlayerProxy.h"
 #endif
@@ -105,6 +105,7 @@ class CachedResourceLoader;
 class ContentType;
 class FrameView;
 class GraphicsContext;
+class GraphicsContext3D;
 class IntRect;
 class IntSize;
 class MediaPlayer;
@@ -332,6 +333,21 @@ public:
 
     void paint(GraphicsContext*, const IntRect&);
     void paintCurrentFrameInContext(GraphicsContext*, const IntRect&);
+
+    // copyVideoTextureToPlatformTexture() is used to do the GPU-GPU textures copy without a readback to system memory.
+    // The first five parameters denote the corresponding GraphicsContext, destination texture, requested level, requested type and the required internalFormat for destination texture.
+    // The last two parameters premultiplyAlpha and flipY denote whether addtional premultiplyAlpha and flip operation are required during the copy.
+    // It returns true on success and false on failure.
+
+    // In the GPU-GPU textures copy, the source texture(Video texture) should have valid target, internalFormat and size, etc.
+    // The destination texture may need to be resized to to the dimensions of the source texture or re-defined to the required internalFormat.
+    // The current restrictions require that format shoud be RGB or RGBA, type should be UNSIGNED_BYTE and level should be 0. It may be lifted in the future.
+
+    // Each platform port can have its own implementation on this function. The default implementation for it is a single "return false" in MediaPlayerPrivate.h.
+    // In chromium, the implementation is based on GL_CHROMIUM_copy_texture extension which is documented at
+    // http://src.chromium.org/viewvc/chrome/trunk/src/gpu/GLES2/extensions/CHROMIUM/CHROMIUM_copy_texture.txt and implemented at
+    // http://src.chromium.org/viewvc/chrome/trunk/src/gpu/command_buffer/service/gles2_cmd_copy_texture_chromium.cc via shaders.
+    bool copyVideoTextureToPlatformTexture(GraphicsContext3D*, Platform3DObject texture, GC3Dint level, GC3Denum type, GC3Denum internalFormat, bool premultiplyAlpha, bool flipY);
 
     enum NetworkState { Empty, Idle, Loading, Loaded, FormatError, NetworkError, DecodeError };
     NetworkState networkState();

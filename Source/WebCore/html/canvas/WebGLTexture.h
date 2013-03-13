@@ -58,6 +58,7 @@ public:
     GC3Denum getType(GC3Denum target, GC3Dint level) const;
     GC3Dsizei getWidth(GC3Denum target, GC3Dint level) const;
     GC3Dsizei getHeight(GC3Denum target, GC3Dint level) const;
+    bool isValid(GC3Denum target, GC3Dint level) const;
 
     // Whether width/height is NotPowerOfTwo.
     static bool isNPOT(GC3Dsizei, GC3Dsizei);
