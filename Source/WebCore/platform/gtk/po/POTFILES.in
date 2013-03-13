@@ -1,6 +1,5 @@
 # List of source files which contain translatable strings.
 ErrorsGtk.cpp
-GtkAuthenticationDialog.cpp
 LocalizedStringsGtk.cpp
 ../graphics/gtk/FullscreenVideoControllerGtk.cpp
 ../../../WebKit/gtk/WebCoreSupport/ChromeClientGtk.cpp
