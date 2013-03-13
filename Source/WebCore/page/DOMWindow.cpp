@@ -1836,7 +1836,7 @@ String DOMWindow::crossDomainAccessErrorMessage(DOMWindow* activeWindow)
         return message + " The frame being accessed set 'document.domain' to '" + targetOrigin->domain() + "', but the frame requesting access did not. Both must set 'document.domain' to the same value to allow access.\n";
 
     // Default.
-    return message + " Domains, protocols and ports must match.\n";
+    return "Blocked a frame with origin \"" + activeOrigin->toString() + "\" from accessing a frame with origin \"" + targetOrigin->toString() + "\". Protocols, domains, and ports must match.";
 }
 
 bool DOMWindow::isInsecureScriptAccess(DOMWindow* activeWindow, const String& urlString)
