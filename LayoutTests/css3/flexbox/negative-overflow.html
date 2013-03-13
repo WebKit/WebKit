@@ -8,6 +8,7 @@
     height: 50px;
     width: 50px;
     background-color: red;
+    position: relative;
 }
 
 .vertical-padding {
@@ -38,6 +39,11 @@ window.onload = function() {
 
 <div class="flexbox align-items-flex-end" data-expected-scroll-height="50">
     <div></div>
+</div>
+
+<div class="flexbox align-items-flex-end" data-expected-scroll-height="150">
+    <div></div>
+    <div style="position: absolute; left: 0; top: 50px;"></div>
 </div>
 
 <div class="flexbox align-items-center" data-expected-scroll-height="75">
