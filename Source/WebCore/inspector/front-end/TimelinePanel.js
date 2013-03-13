@@ -1078,6 +1078,8 @@ WebInspector.TimelinePanel.prototype = {
 
     _highlightRect: function(record)
     {
+        if (record.coalesced)
+            return;
         if (this._highlightedRect === record.data)
             return;
         this._highlightedRect = record.data;
@@ -1293,7 +1295,7 @@ WebInspector.TimelineCalculator.prototype = {
         var start = (record.startTime - this._minimumBoundary) / this.boundarySpan() * 100;
         var end = (record.startTime + record.selfTime - this._minimumBoundary) / this.boundarySpan() * 100;
         var endWithChildren = (record.lastChildEndTime - this._minimumBoundary) / this.boundarySpan() * 100;
-        var cpuWidth = record.cpuTime / this.boundarySpan() * 100;
+        var cpuWidth = record.coalesced ? endWithChildren - start : record.cpuTime / this.boundarySpan() * 100;
         return {start: start, end: end, endWithChildren: endWithChildren, cpuWidth: cpuWidth};
     },
 

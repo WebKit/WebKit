@@ -36,6 +36,7 @@ localizedStrings["%d warnings"] = "%d warnings";
 localizedStrings["%d \xd7 %d pixels (Natural: %d \xd7 %d pixels)"] = "%d \xd7 %d pixels (Natural: %d \xd7 %d pixels)";
 localizedStrings["%d \xd7 %d pixels"] = "%d \xd7 %d pixels";
 localizedStrings["%d × %d"] = "%d × %d";
+localizedStrings["× %d"] = "× %d";
 localizedStrings["%s (%s)"] = "%s (%s)";
 localizedStrings["%s (at %s)"] = "%s (at %s)";
 localizedStrings["%s (from cache)"] = "%s (from cache)";
