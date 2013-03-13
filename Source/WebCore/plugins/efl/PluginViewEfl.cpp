@@ -283,7 +283,7 @@ bool PluginView::platformGetValue(NPNVariable variable, void* value, NPError* re
     }
 
     case NPNVnetscapeWindow: {
-        Evas* evas = m_parentFrame->view()->evas();
+        Evas* evas = evas_object_evas_get(m_parentFrame->view()->evasObject());
         if (!evas)
             return false;
 

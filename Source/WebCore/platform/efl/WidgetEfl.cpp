@@ -47,24 +47,13 @@
 
 namespace WebCore {
 
-class WidgetPrivate {
-public:
-    Evas* m_evas;
-    Evas_Object* m_evasObject;
-
-    WidgetPrivate()
-        : m_evas(0)
-        , m_evasObject(0)
-    { }
-};
-
 Widget::Widget(PlatformWidget widget)
     : m_parent(0)
     , m_widget(0)
     , m_selfVisible(false)
     , m_parentVisible(false)
     , m_frame(0, 0, 0, 0)
-    , m_data(new WidgetPrivate)
+    , m_evasObject(0)
 {
     init(widget);
 }
@@ -72,8 +61,6 @@ Widget::Widget(PlatformWidget widget)
 Widget::~Widget()
 {
     ASSERT(!parent());
-
-    delete m_data;
 }
 
 IntRect Widget::frameRect() const
@@ -89,21 +76,7 @@ void Widget::setFrameRect(const IntRect& rect)
 
 void Widget::frameRectsChanged()
 {
-    Evas_Object* object = evasObject();
-    Evas_Coord x, y;
-
-    if (!parent() || !object)
-        return;
-
-    IntRect rect = frameRect();
-    if (parent()->isScrollViewScrollbar(this))
-        rect.setLocation(parent()->convertToContainingWindow(rect.location()));
-    else
-        rect.setLocation(parent()->contentsToWindow(rect.location()));
-
-    evas_object_geometry_get(root()->evasObject(), &x, &y, 0, 0);
-    evas_object_move(object, x + rect.x(), y + rect.y());
-    evas_object_resize(object, rect.width(), rect.height());
+    notImplemented();
 }
 
 void Widget::setFocus(bool)
@@ -120,18 +93,12 @@ void Widget::setCursor(const Cursor& cursor)
 
 void Widget::show()
 {
-    if (!platformWidget())
-         return;
-
-    evas_object_show(platformWidget());
+    notImplemented();
 }
 
 void Widget::hide()
 {
-    if (!platformWidget())
-         return;
-
-    evas_object_hide(platformWidget());
+    notImplemented();
 }
 
 void Widget::paint(GraphicsContext*, const IntRect&)
@@ -144,31 +111,9 @@ void Widget::setIsSelected(bool)
     notImplemented();
 }
 
-Evas* Widget::evas() const
+void Widget::setEvasObject(Evas_Object* object)
 {
-    return m_data->m_evas;
-}
-
-void Widget::setEvasObject(Evas_Object *object)
-{
-    // FIXME: study platformWidget() and use it
-    // FIXME: right now platformWidget() requires implementing too much
-    if (m_data->m_evasObject == object)
-        return;
-    m_data->m_evasObject = object;
-    if (!object) {
-        m_data->m_evas = 0;
-        return;
-    }
-
-    m_data->m_evas = evas_object_evas_get(object);
-
-    Widget::frameRectsChanged();
-}
-
-Evas_Object* Widget::evasObject() const
-{
-    return m_data->m_evasObject;
+    m_evasObject = object;
 }
 
 }
