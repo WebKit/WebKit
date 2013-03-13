@@ -51,6 +51,7 @@
 #include "TextEncoding.h"
 #include "TextResourceDecoder.h"
 #include "XLinkNames.h"
+#include "XSSAuditorDelegate.h"
 
 #if ENABLE(SVG)
 #include "SVGNames.h"
@@ -226,7 +227,7 @@ XSSAuditor::XSSAuditor()
     // we want to reference might not all have been constructed yet.
 }
 
-void XSSAuditor::init(Document* document)
+void XSSAuditor::init(Document* document, XSSAuditorDelegate* auditorDelegate)
 {
     const size_t miniumLengthForSuffixTree = 512; // FIXME: Tune this parameter.
     const int suffixTreeDepth = 5;
@@ -298,7 +299,9 @@ void XSSAuditor::init(Document* document)
         m_didSendValidCSPHeader = cspHeader != ContentSecurityPolicy::ReflectedXSSUnset && cspHeader != ContentSecurityPolicy::ReflectedXSSInvalid;
 
         m_xssProtection = combineXSSProtectionHeaderAndCSP(xssProtectionHeader, cspHeader);
-        m_reportURL = xssProtectionReportURL; // FIXME: Combine the two report URLs in some reasonable way.
+        // FIXME: Combine the two report URLs in some reasonable way.
+        if (auditorDelegate)
+            auditorDelegate->setReportURL(xssProtectionReportURL.copy());
         FormData* httpBody = documentLoader->originalRequest().httpBody();
         if (httpBody && !httpBody->isEmpty()) {
             httpBodyAsString = httpBody->flattenToString();
@@ -336,8 +339,7 @@ PassOwnPtr<XSSInfo> XSSAuditor::filterToken(const FilterTokenRequest& request)
 
     if (didBlockScript) {
         bool didBlockEntirePage = (m_xssProtection == ContentSecurityPolicy::BlockReflectedXSS);
-        OwnPtr<XSSInfo> xssInfo = XSSInfo::create(m_reportURL, didBlockEntirePage, m_didSendValidXSSProtectionHeader, m_didSendValidCSPHeader);
-        m_reportURL = KURL();
+        OwnPtr<XSSInfo> xssInfo = XSSInfo::create(didBlockEntirePage, m_didSendValidXSSProtectionHeader, m_didSendValidCSPHeader);
         return xssInfo.release();
     }
     return nullptr;
@@ -728,8 +730,7 @@ bool XSSAuditor::isSafeToSendToAnotherThread() const
     return m_documentURL.isSafeToSendToAnotherThread()
         && m_decodedURL.isSafeToSendToAnotherThread()
         && m_decodedHTTPBody.isSafeToSendToAnotherThread()
-        && m_cachedDecodedSnippet.isSafeToSendToAnotherThread()
-        && m_reportURL.isSafeToSendToAnotherThread();
+        && m_cachedDecodedSnippet.isSafeToSendToAnotherThread();
 }
 
 } // namespace WebCore

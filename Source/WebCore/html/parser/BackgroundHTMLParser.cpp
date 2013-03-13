@@ -53,12 +53,6 @@ static void checkThatPreloadsAreSafeToSendToAnotherThread(const PreloadRequestSt
         ASSERT(preloads[i]->isSafeToSendToAnotherThread());
 }
 
-static void checkThatXSSInfosAreSafeToSendToAnotherThread(const XSSInfoStream& xssInfos)
-{
-    for (size_t i = 0; i < xssInfos.size(); ++i)
-        ASSERT(xssInfos[i]->isSafeToSendToAnotherThread());
-}
-
 #endif
 
 static const size_t pendingTokenLimit = 1000;
@@ -160,7 +154,6 @@ void BackgroundHTMLParser::sendTokensToMainThread()
 #ifndef NDEBUG
     checkThatTokensAreSafeToSendToAnotherThread(m_pendingTokens.get());
     checkThatPreloadsAreSafeToSendToAnotherThread(m_pendingPreloads);
-    checkThatXSSInfosAreSafeToSendToAnotherThread(m_pendingXSSInfos);
 #endif
 
     OwnPtr<HTMLDocumentParser::ParsedChunk> chunk = adoptPtr(new HTMLDocumentParser::ParsedChunk);

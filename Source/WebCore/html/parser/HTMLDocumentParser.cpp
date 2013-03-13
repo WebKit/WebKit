@@ -521,7 +521,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     // much we parsed as part of didWriteHTML instead of willWriteHTML.
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willWriteHTML(document(), m_input.current().currentLine().zeroBasedInt());
 
-    m_xssAuditor.init(document());
+    m_xssAuditor.init(document(), &m_xssAuditorDelegate);
 
     while (canTakeNextToken(mode, session) && !session.needsYield) {
         if (!isParsingFragment())
@@ -662,7 +662,7 @@ void HTMLDocumentParser::startBackgroundParser()
     config->options = m_options;
     config->parser = m_weakFactory.createWeakPtr();
     config->xssAuditor = adoptPtr(new XSSAuditor);
-    config->xssAuditor->init(document());
+    config->xssAuditor->init(document(), &m_xssAuditorDelegate);
     config->preloadScanner = adoptPtr(new TokenPreloadScanner(document()->url().copy()));
 
     ASSERT(config->xssAuditor->isSafeToSendToAnotherThread());

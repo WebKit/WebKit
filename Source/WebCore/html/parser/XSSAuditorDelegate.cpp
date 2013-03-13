@@ -41,11 +41,6 @@
 
 namespace WebCore {
 
-bool XSSInfo::isSafeToSendToAnotherThread() const
-{
-    return m_reportURL.isSafeToSendToAnotherThread();
-}
-
 XSSAuditorDelegate::XSSAuditorDelegate(Document* document)
     : m_document(document)
     , m_didNotifyClient(false)
@@ -91,7 +86,7 @@ void XSSAuditorDelegate::didBlockScript(const XSSInfo& xssInfo)
         m_didNotifyClient = true;
     }
 
-    if (!xssInfo.m_reportURL.isEmpty()) {
+    if (!m_reportURL.isEmpty()) {
         RefPtr<InspectorObject> reportDetails = InspectorObject::create();
         reportDetails->setString("request-url", m_document->url().string());
 
@@ -106,7 +101,7 @@ void XSSAuditorDelegate::didBlockScript(const XSSInfo& xssInfo)
         reportObject->setObject("xss-report", reportDetails.release());
 
         RefPtr<FormData> report = FormData::create(reportObject->toJSONString().utf8().data());
-        PingLoader::sendViolationReport(m_document->frame(), xssInfo.m_reportURL, report);
+        PingLoader::sendViolationReport(m_document->frame(), m_reportURL, report);
     }
 
     if (xssInfo.m_didBlockEntirePage)
