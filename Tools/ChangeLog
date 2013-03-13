@@ -1,3 +1,10 @@
+2013-03-13  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Unreviewed trivial typo fix
+
+        * DumpRenderTree/qt/DumpRenderTree.pro: It's TestRunner.h, not
+        TextRunner.h. Thanks Zeno :)
+
 2013-03-12  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Prepare DRT for transition to shared TestRunner interface

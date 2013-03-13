@@ -27,7 +27,7 @@ HEADERS += \
     $$PWD/../WorkQueue.h \
     $$PWD/../DumpRenderTree.h \
     $$PWD/../GCController.h \
-    $$PWD/../TextRunner.h \
+    $$PWD/../TestRunner.h \
     DumpRenderTreeQt.h \
     EventSenderQt.h \
     TextInputControllerQt.h \
