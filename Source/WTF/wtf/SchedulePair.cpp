@@ -31,13 +31,6 @@
 
 namespace WTF {
 
-SchedulePair::SchedulePair(CFRunLoopRef runLoop, CFStringRef mode)
-    : m_runLoop(runLoop)
-{
-    if (mode)
-        m_mode.adoptCF(CFStringCreateCopy(0, mode));
-}
-
 bool SchedulePair::operator==(const SchedulePair& other) const
 {
     if (runLoop() != other.runLoop())

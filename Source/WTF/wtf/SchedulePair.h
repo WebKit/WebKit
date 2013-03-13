@@ -56,7 +56,12 @@ public:
     WTF_EXPORT_PRIVATE bool operator==(const SchedulePair& other) const;
 
 private:
-    WTF_EXPORT_PRIVATE SchedulePair(CFRunLoopRef, CFStringRef);
+    SchedulePair(CFRunLoopRef runLoop, CFStringRef mode)
+        : m_runLoop(runLoop)
+    {
+        if (mode)
+            m_mode.adoptCF(CFStringCreateCopy(0, mode));
+    }
 
 #if PLATFORM(MAC) && !USE(CFNETWORK)
     WTF_EXPORT_PRIVATE SchedulePair(NSRunLoop*, CFStringRef);

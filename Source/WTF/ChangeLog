@@ -1,3 +1,12 @@
+2013-03-12  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed attempted Windows build fix after http://trac.webkit.org/changeset/145592.
+
+        * wtf/SchedulePair.cpp:
+        * wtf/SchedulePair.h:
+        (WTF::SchedulePair::SchedulePair): Since linking is failing,
+        try inlining this function.
+
 2013-03-12  Tim Horton  <timothy_horton@apple.com>
 
         Typo in earlier Windows build fix. Unreviewed.
