@@ -1132,6 +1132,84 @@ void RenderBox::paintBackground(const PaintInfo& paintInfo, const LayoutRect& pa
     }
 }
 
+bool RenderBox::backgroundIsOpaqueInRect(const LayoutRect& localRect) const
+{
+    Color backgroundColor = style()->visitedDependentColor(CSSPropertyBackgroundColor);
+    if (!backgroundColor.isValid() || backgroundColor.hasAlpha())
+        return false;
+
+    // FIXME: Check the opaqueness of background images.
+
+    // FIXME: Use rounded rect if border radius is present.
+    if (style()->hasBorderRadius())
+        return false;
+    // FIXME: The background color clip is defined by the last layer.
+    if (style()->backgroundLayers()->next())
+        return false;
+    LayoutRect backgroundRect;
+    switch (style()->backgroundClip()) {
+    case BorderFillBox:
+        backgroundRect = borderBoxRect();
+        break;
+    case PaddingFillBox:
+        backgroundRect = paddingBoxRect();
+        break;
+    case ContentFillBox:
+        backgroundRect = contentBoxRect();
+        break;
+    default:
+        break;
+    }
+    return backgroundRect.contains(localRect);
+}
+
+bool RenderBox::backgroundIsObscured() const
+{
+    ASSERT(!isRoot());
+    // Test to see if the children trivially obscure the background.
+    // FIXME: This test can be done once per layout and it can be much more comprehensive.
+    if (!hasBackground())
+        return false;
+    // Table background painting is special.
+    if (isTable())
+        return false;
+    // This could take background position, clip, etc. into account.
+    LayoutRect backgroundRect = borderBoxRect();
+    // If we don't find a covering child fast there probably isn't one.
+    static const unsigned maximumChildrenCountToTest = 4;
+    unsigned count = 0;
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        if (++count > maximumChildrenCountToTest)
+            break;
+        if (!child->isBox())
+            continue;
+        RenderBox* childBox = toRenderBox(child);
+        RenderStyle* childStyle = child->style();
+        if (childStyle->visibility() != VISIBLE || childStyle->shapeOutside())
+            continue;
+        if (childStyle->position() != StaticPosition && childBox->containingBlock() != this)
+            continue;
+        LayoutPoint childLocation = childBox->location();
+        if (childBox->isRelPositioned())
+            childLocation.move(childBox->relativePositionOffset());
+        LayoutRect childLocalBackgroundRect = backgroundRect;
+        childLocalBackgroundRect.moveBy(-childLocation);
+        if (RenderLayer* childLayer = childBox->layer()) {
+#if USE(ACCELERATED_COMPOSITING)
+            if (childLayer->isComposited())
+                continue;
+#endif
+            if (childLayer->zIndex() < 0)
+                continue;
+            if (childLayer->hasTransform() || childLayer->isTransparent())
+                continue;
+        }
+        if (childBox->backgroundIsOpaqueInRect(childLocalBackgroundRect))
+            return true;
+    }
+    return false;
+}
+
 bool RenderBox::backgroundHasOpaqueTopLayer() const
 {
     const FillLayer* fillLayer = style()->backgroundLayers();

@@ -1,0 +1,56 @@
+<html>
+<head>
+<script>jsTestIsAsync = true;</script>
+<script src="../js/resources/js-test-pre.js"></script>
+<style type="text/css">
+    div {
+        height: 100px;
+        width: 100px;
+    }
+
+    .parent {
+        background-image: url(resources/animated.gif)
+    }
+
+    .child {
+        background-color: green;
+    }
+</style>
+<script>
+    description("Test that obscured animated gif does not trigger repaints. This test requires DRT.");
+    function startTrackingRepaints()
+    {
+        document.body.offsetTop;
+        window.internals.startTrackingRepaints(document);
+        testRunner.display();
+        setTimeout(logRepaints, 200);
+    }
+
+    function logRepaints()
+    {
+        repaintRects = window.internals.repaintRectsAsText(document);
+        window.internals.stopTrackingRepaints(document);
+
+        shouldBeEqualToString("repaintRects", "");
+
+        finishJSTest();
+    }
+
+    function start() {
+        if (!window.testRunner || !window.internals)
+            return;
+
+        var img = new Image();
+        img.onload = startTrackingRepaints;
+        img.src = "resources/animated.gif";
+    }
+</script>
+</head>
+<body onload="start()">
+    <div class="parent">
+        <div class="child">
+        </div>
+    </div>
+</body>
+<script src="../js/resources/js-test-post.js"></script>
+</html>
