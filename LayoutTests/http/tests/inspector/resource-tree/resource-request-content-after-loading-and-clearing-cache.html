@@ -14,7 +14,6 @@ function createScriptTag()
 
 function test()
 {
-  setTimeout(InspectorTest.completeTest.bind(InspectorTest), 1000);
     InspectorTest.addResult("Adding dynamic script: ");
     InspectorTest.evaluateInPage("createScriptTag()", step2);
 
