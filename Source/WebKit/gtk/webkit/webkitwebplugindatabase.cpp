@@ -65,8 +65,8 @@ static void webkit_web_plugin_database_init(WebKitWebPluginDatabase* database)
 }
 
 /**
- * webkit_web_plugin_database_list_free:
- * @list: a #WebKitWebPluginDatabasePluginList
+ * webkit_web_plugin_database_plugins_list_free:
+ * @list: (element-type WebKitWebPlugin): a #GSList of #WebKitWebPlugin
  *
  * Frees @list.
  *

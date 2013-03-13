@@ -262,7 +262,7 @@ static void webkitExit()
 /**
  * webkit_get_text_checker:
  *
- * Returns: the #WebKitSpellChecker used by WebKit, or %NULL if spell
+ * Returns: (transfer none): the #WebKitSpellChecker used by WebKit, or %NULL if spell
  * checking is not enabled
  *
  * Since: 1.5.1

@@ -109,15 +109,14 @@ static void webkit_soup_auth_dialog_class_init(WebKitSoupAuthDialogClass* klass)
      *
      * Since: 1.1.1
      */
-    signals[CURRENT_TOPLEVEL] =
-      g_signal_new("current-toplevel",
-                   G_OBJECT_CLASS_TYPE(objectClass),
-                   G_SIGNAL_RUN_LAST,
-                   G_STRUCT_OFFSET(WebKitSoupAuthDialogClass, current_toplevel),
-                   0, 0,
-                   webkit_marshal_OBJECT__OBJECT,
-                   GTK_TYPE_WIDGET, 1,
-                   SOUP_TYPE_MESSAGE);
+    signals[CURRENT_TOPLEVEL] = g_signal_new("current-toplevel",
+        G_OBJECT_CLASS_TYPE(objectClass),
+        G_SIGNAL_RUN_LAST,
+        G_STRUCT_OFFSET(WebKitSoupAuthDialogClass, current_toplevel),
+        0, 0,
+        webkit_marshal_OBJECT__OBJECT,
+        GTK_TYPE_WIDGET, 1,
+        SOUP_TYPE_MESSAGE);
 }
 
 static void webkit_soup_auth_dialog_init(WebKitSoupAuthDialog*)

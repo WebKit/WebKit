@@ -67,7 +67,7 @@ WebKitGeolocationPolicyDecision* webkit_geolocation_policy_decision_new(WebKitWe
 #endif
 
 /**
- * webkit_geolocation_policy_allow
+ * webkit_geolocation_policy_allow:
  * @decision: a #WebKitGeolocationPolicyDecision
  *
  * Will send the allow decision to the policy implementer.
@@ -87,7 +87,7 @@ void webkit_geolocation_policy_allow(WebKitGeolocationPolicyDecision* decision)
 }
 
 /**
- * webkit_geolocation_policy_deny
+ * webkit_geolocation_policy_deny:
  * @decision: a #WebKitGeolocationPolicyDecision
  *
  * Will send the deny decision to the policy implementer.

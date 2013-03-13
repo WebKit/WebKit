@@ -250,21 +250,21 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
      * Since: 1.1.2
      */
     webkit_download_signals[ERROR] = g_signal_new("error",
-            G_TYPE_FROM_CLASS(downloadClass),
-            (GSignalFlags)G_SIGNAL_RUN_LAST,
-            0,
-            g_signal_accumulator_true_handled,
-            NULL,
-            webkit_marshal_BOOLEAN__INT_INT_STRING,
-            G_TYPE_BOOLEAN, 3,
-            G_TYPE_INT,
-            G_TYPE_INT,
-            G_TYPE_STRING);
+        G_TYPE_FROM_CLASS(downloadClass),
+        (GSignalFlags)G_SIGNAL_RUN_LAST,
+        0,
+        g_signal_accumulator_true_handled,
+        NULL,
+        webkit_marshal_BOOLEAN__INT_INT_STRING,
+        G_TYPE_BOOLEAN, 3,
+        G_TYPE_INT,
+        G_TYPE_INT,
+        G_TYPE_STRING);
 
     // Properties.
 
     /**
-     * WebKitDownload:network-request
+     * WebKitDownload:network-request:
      *
      * The #WebKitNetworkRequest instance associated with the download.
      *
@@ -279,7 +279,7 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
                                                         (GParamFlags)(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
     /**
-     * WebKitDownload:network-response
+     * WebKitDownload:network-response:
      *
      * The #WebKitNetworkResponse instance associated with the download.
      *
@@ -294,7 +294,7 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
                                                         (GParamFlags)(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
     /**
-     * WebKitDownload:destination-uri
+     * WebKitDownload:destination-uri:
      *
      * The URI of the save location for this download.
      *
@@ -309,7 +309,7 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
                                                         WEBKIT_PARAM_READWRITE));
 
     /**
-     * WebKitDownload:suggested-filename
+     * WebKitDownload:suggested-filename:
      *
      * The file name suggested as default when saving
      *
@@ -357,7 +357,7 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
                                                       WEBKIT_PARAM_READABLE));
 
     /**
-     * WebKitDownload:current-size
+     * WebKitDownload:current-size:
      *
      * The length of the data already downloaded
      *
@@ -372,7 +372,7 @@ static void webkit_download_class_init(WebKitDownloadClass* downloadClass)
                                                         WEBKIT_PARAM_READABLE));
 
     /**
-     * WebKitDownload:total-size
+     * WebKitDownload:total-size:
      *
      * The total size of the file
      *

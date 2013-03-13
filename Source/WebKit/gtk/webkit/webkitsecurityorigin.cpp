@@ -35,7 +35,7 @@
  * by web sites. An origin consists of a host name, a protocol, and a port
  * number. Web sites with the same security origin can access each other's
  * resources for client-side scripting or database access.
- * 
+ *
  * Use #webkit_web_frame_get_security_origin to get the security origin of a
  * #WebKitWebFrame.
  *
@@ -288,7 +288,7 @@ guint webkit_security_origin_get_port(WebKitSecurityOrigin* securityOrigin)
  * Returns the cumulative size of all Web Database database's in the origin
  * in bytes.
  *
- * Returns: the cumulative size of all databases 
+ * Returns: the cumulative size of all databases
  *
  * Since: 1.1.14
  **/

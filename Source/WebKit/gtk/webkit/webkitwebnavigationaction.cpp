@@ -186,7 +186,7 @@ static void webkit_web_navigation_action_class_init(WebKitWebNavigationActionCla
      * WebKitWebNavigationAction:modifier-state:
      *
      * The state of the modifier keys when the action was requested.
-     * 
+     *
      * Since: 1.0.3
      */
     g_object_class_install_property(objectClass, PROP_MODIFIER_STATE,

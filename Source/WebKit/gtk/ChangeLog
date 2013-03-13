@@ -1,3 +1,51 @@
+2013-03-13  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK][Introspection] Fix of gtk doc annotation warnings
+        https://bugs.webkit.org/show_bug.cgi?id=109182
+
+        Reviewed by Martin Robinson.
+
+        Fixed some gtk doc annotation warnings that appears during
+        compiling. Also some white characters were removed and some restyling
+        was done - all the g_signal_new in webkit directory have now the same
+        style. 
+
+
+        * webkit/webkitdownload.cpp:
+        (webkit_download_class_init):
+        * webkit/webkitfavicondatabase.cpp:
+        (webkit_favicon_database_class_init):
+        * webkit/webkitgeolocationpolicydecision.cpp:
+        * webkit/webkitglobals.cpp:
+        * webkit/webkithittestresult.h:
+        * webkit/webkiticondatabase.cpp:
+        (webkit_icon_database_class_init):
+        * webkit/webkitsecurityorigin.cpp:
+        * webkit/webkitsecurityorigin.h:
+        * webkit/webkitsoupauthdialog.cpp:
+        * webkit/webkitspellchecker.cpp:
+        * webkit/webkitviewportattributes.cpp:
+        (webkit_viewport_attributes_class_init):
+        * webkit/webkitwebdatabase.cpp:
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_class_init):
+        * webkit/webkitwebframe.h:
+        * webkit/webkitwebinspector.cpp:
+        (webkit_web_inspector_class_init):
+        * webkit/webkitwebnavigationaction.cpp:
+        (webkit_web_navigation_action_class_init):
+        * webkit/webkitwebplugindatabase.cpp:
+        * webkit/webkitwebpolicydecision.cpp:
+        * webkit/webkitwebresource.cpp:
+        (webkit_web_resource_class_init):
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_class_init):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_class_init):
+        (webkit_web_view_apply_zoom_level):
+        * webkit/webkitwebwindowfeatures.cpp:
+        (webkit_web_window_features_equal):
+
 2013-03-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: get rid of hiddenPanels filter

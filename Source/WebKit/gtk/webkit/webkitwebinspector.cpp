@@ -145,14 +145,14 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      * Since: 1.0.3
      */
     webkit_web_inspector_signals[INSPECT_WEB_VIEW] = g_signal_new("inspect-web-view",
-            G_TYPE_FROM_CLASS(klass),
-            (GSignalFlags)G_SIGNAL_RUN_LAST,
-            0,
-            webkit_inspect_web_view_request_handled,
-            NULL,
-            webkit_marshal_OBJECT__OBJECT,
-            WEBKIT_TYPE_WEB_VIEW , 1,
-            WEBKIT_TYPE_WEB_VIEW);
+        G_TYPE_FROM_CLASS(klass),
+        (GSignalFlags)G_SIGNAL_RUN_LAST,
+        0,
+        webkit_inspect_web_view_request_handled,
+        NULL,
+        webkit_marshal_OBJECT__OBJECT,
+        WEBKIT_TYPE_WEB_VIEW , 1,
+        WEBKIT_TYPE_WEB_VIEW);
 
     /**
      * WebKitWebInspector::show-window:
@@ -166,13 +166,13 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      * Since: 1.0.3
      */
     webkit_web_inspector_signals[SHOW_WINDOW] = g_signal_new("show-window",
-            G_TYPE_FROM_CLASS(klass),
-            (GSignalFlags)G_SIGNAL_RUN_LAST,
-            0,
-            g_signal_accumulator_true_handled,
-            NULL,
-            webkit_marshal_BOOLEAN__VOID,
-            G_TYPE_BOOLEAN , 0);
+        G_TYPE_FROM_CLASS(klass),
+        (GSignalFlags)G_SIGNAL_RUN_LAST,
+        0,
+        g_signal_accumulator_true_handled,
+        NULL,
+        webkit_marshal_BOOLEAN__VOID,
+        G_TYPE_BOOLEAN , 0);
 
     /**
      * WebKitWebInspector::attach-window:
@@ -185,13 +185,13 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      * Since: 1.0.3
      */
     webkit_web_inspector_signals[ATTACH_WINDOW] = g_signal_new("attach-window",
-            G_TYPE_FROM_CLASS(klass),
-            (GSignalFlags)G_SIGNAL_RUN_LAST,
-            0,
-            g_signal_accumulator_true_handled,
-            NULL,
-            webkit_marshal_BOOLEAN__VOID,
-            G_TYPE_BOOLEAN , 0);
+        G_TYPE_FROM_CLASS(klass),
+        (GSignalFlags)G_SIGNAL_RUN_LAST,
+        0,
+        g_signal_accumulator_true_handled,
+        NULL,
+        webkit_marshal_BOOLEAN__VOID,
+        G_TYPE_BOOLEAN , 0);
 
     /**
      * WebKitWebInspector::detach-window:
@@ -203,13 +203,13 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      * Since: 1.0.3
      */
     webkit_web_inspector_signals[DETACH_WINDOW] = g_signal_new("detach-window",
-            G_TYPE_FROM_CLASS(klass),
-            (GSignalFlags)G_SIGNAL_RUN_LAST,
-            0,
-            g_signal_accumulator_true_handled,
-            NULL,
-            webkit_marshal_BOOLEAN__VOID,
-            G_TYPE_BOOLEAN , 0);
+        G_TYPE_FROM_CLASS(klass),
+        (GSignalFlags)G_SIGNAL_RUN_LAST,
+        0,
+        g_signal_accumulator_true_handled,
+        NULL,
+        webkit_marshal_BOOLEAN__VOID,
+        G_TYPE_BOOLEAN , 0);
 
     /**
      * WebKitWebInspector::close-window:
@@ -230,13 +230,13 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      * Since: 1.0.3
      */
     webkit_web_inspector_signals[CLOSE_WINDOW] = g_signal_new("close-window",
-            G_TYPE_FROM_CLASS(klass),
-            (GSignalFlags)G_SIGNAL_RUN_LAST,
-            0,
-            g_signal_accumulator_true_handled,
-            NULL,
-            webkit_marshal_BOOLEAN__VOID,
-            G_TYPE_BOOLEAN , 0);
+        G_TYPE_FROM_CLASS(klass),
+        (GSignalFlags)G_SIGNAL_RUN_LAST,
+        0,
+        g_signal_accumulator_true_handled,
+        NULL,
+        webkit_marshal_BOOLEAN__VOID,
+        G_TYPE_BOOLEAN , 0);
 
     /**
      * WebKitWebInspector::finished:
@@ -249,13 +249,13 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
      * Since: 1.0.3
      */
     webkit_web_inspector_signals[FINISHED] = g_signal_new("finished",
-            G_TYPE_FROM_CLASS(klass),
-            (GSignalFlags)G_SIGNAL_RUN_LAST,
-            0,
-            NULL,
-            NULL,
-            g_cclosure_marshal_VOID__VOID,
-            G_TYPE_NONE , 0);
+        G_TYPE_FROM_CLASS(klass),
+        (GSignalFlags)G_SIGNAL_RUN_LAST,
+        0,
+        NULL,
+        NULL,
+        g_cclosure_marshal_VOID__VOID,
+        G_TYPE_NONE , 0);
 
     /*
      * properties
@@ -290,7 +290,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
                                                         WEBKIT_PARAM_READABLE));
 
     /**
-    * WebKitWebInspector:javascript-profiling-enabled
+    * WebKitWebInspector:javascript-profiling-enabled:
     *
     * This is enabling JavaScript profiling in the Inspector. This means
     * that Console.profiles will return the profiles.
@@ -307,7 +307,7 @@ static void webkit_web_inspector_class_init(WebKitWebInspectorClass* klass)
                                         WEBKIT_PARAM_READWRITE));
 
     /**
-    * WebKitWebInspector:timeline-profiling-enabled
+    * WebKitWebInspector:timeline-profiling-enabled:
     *
     * This is enabling Timeline profiling in the Inspector.
     *

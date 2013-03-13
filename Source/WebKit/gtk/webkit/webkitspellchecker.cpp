@@ -68,7 +68,7 @@ void webkit_spell_checker_check_spelling_of_string(WebKitSpellChecker* checker, 
  * Returns a %NULL-terminated array of guesses for corrections of the
  * misspelled word @word.
  *
- * Returns: (transfer full) a newly allocated %NULL-terminated array
+ * Returns: (transfer full): a newly allocated %NULL-terminated array
  * of suggested corrections for a misspelled word @word. Free it with
  * %g_strfreev when done with it.
  *

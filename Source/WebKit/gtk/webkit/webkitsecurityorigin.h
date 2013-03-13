@@ -68,7 +68,7 @@ webkit_security_origin_get_web_database_usage (WebKitSecurityOrigin* securityOri
 WEBKIT_API guint64
 webkit_security_origin_get_web_database_quota (WebKitSecurityOrigin* securityOrigin);
 
-WEBKIT_API void 
+WEBKIT_API void
 webkit_security_origin_set_web_database_quota (WebKitSecurityOrigin* securityOrigin, guint64 quota);
 
 WEBKIT_API GList *

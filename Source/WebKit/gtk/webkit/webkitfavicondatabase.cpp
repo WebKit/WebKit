@@ -241,14 +241,14 @@ static void webkit_favicon_database_class_init(WebKitFaviconDatabaseClass* klass
     gobjectClass->set_property = webkit_favicon_database_set_property;
     gobjectClass->get_property = webkit_favicon_database_get_property;
 
-     /**
-      * WebKitFaviconDatabase:path:
-      *
-      * The absolute path of the icon database folder.
-      *
-      * Since: 1.8
-      */
-     g_object_class_install_property(gobjectClass, PROP_PATH,
+    /**
+     * WebKitFaviconDatabase:path:
+     *
+     * The absolute path of the icon database folder.
+     *
+     * Since: 1.8
+     */
+    g_object_class_install_property(gobjectClass, PROP_PATH,
                                      g_param_spec_string("path",
                                                          _("Path"),
                                                          _("The absolute path of the icon database folder"),
@@ -256,29 +256,29 @@ static void webkit_favicon_database_class_init(WebKitFaviconDatabaseClass* klass
                                                          WEBKIT_PARAM_READWRITE));
 
 
-     /**
-      * WebKitFaviconDatabase::icon-loaded:
-      * @database: the object on which the signal is emitted
-      * @frame_uri: the URI of the main frame of a Web page containing
-      * the icon
-      *
-      * This signal is fired if an icon is loaded on any
-      * #WebKitWebView. If you are only interested in a particular
-      * #WebKitWebView see #WebKitWebView::icon-loaded.
-      *
-      * Note that this signal carries the URI of the frame that loads
-      * the icon, while #WebKitWebView::icon-loaded provides the URI
-      * of the favicon.
-      *
-      * Since: 1.8
-      */
-     webkit_favicon_database_signals[ICON_LOADED] = g_signal_new("icon-loaded",
-                                                              G_TYPE_FROM_CLASS(klass),
-                                                              (GSignalFlags)G_SIGNAL_RUN_LAST,
-                                                              0, 0, 0,
-                                                              webkit_marshal_VOID__STRING,
-                                                              G_TYPE_NONE, 1,
-                                                              G_TYPE_STRING);
+    /**
+     * WebKitFaviconDatabase::icon-loaded:
+     * @database: the object on which the signal is emitted
+     * @frame_uri: the URI of the main frame of a Web page containing
+     * the icon
+     *
+     * This signal is fired if an icon is loaded on any
+     * #WebKitWebView. If you are only interested in a particular
+     * #WebKitWebView see #WebKitWebView::icon-loaded.
+     *
+     * Note that this signal carries the URI of the frame that loads
+     * the icon, while #WebKitWebView::icon-loaded provides the URI
+     * of the favicon.
+     *
+     * Since: 1.8
+     */
+    webkit_favicon_database_signals[ICON_LOADED] = g_signal_new("icon-loaded",
+        G_TYPE_FROM_CLASS(klass),
+        (GSignalFlags)G_SIGNAL_RUN_LAST,
+        0, 0, 0,
+        webkit_marshal_VOID__STRING,
+        G_TYPE_NONE, 1,
+        G_TYPE_STRING);
 
     g_type_class_add_private(klass, sizeof(WebKitFaviconDatabasePrivate));
 }

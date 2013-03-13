@@ -33,7 +33,7 @@
 #include <wtf/text/CString.h>
 
 /**
- * SECTION:webkitwebdatabase
+ * SECTION:webkiticondatabase
  * @short_description: A WebKit web application database
  *
  * #WebKitIconDatabase provides access to website icons, as shown
@@ -166,15 +166,15 @@ static void webkit_icon_database_class_init(WebKitIconDatabaseClass* klass)
      * Deprecated: 1.8: Use WebKitFaviconDatabase::icon-loaded instead.
      */
     webkit_icon_database_signals[ICON_LOADED] = g_signal_new("icon-loaded",
-            G_TYPE_FROM_CLASS(klass),
-            (GSignalFlags)G_SIGNAL_RUN_LAST,
-            0,
-            NULL,
-            NULL,
-            webkit_marshal_VOID__OBJECT_STRING,
-            G_TYPE_NONE, 2,
-            WEBKIT_TYPE_WEB_FRAME,
-            G_TYPE_STRING);
+        G_TYPE_FROM_CLASS(klass),
+        (GSignalFlags)G_SIGNAL_RUN_LAST,
+        0,
+        NULL,
+        NULL,
+        webkit_marshal_VOID__OBJECT_STRING,
+        G_TYPE_NONE, 2,
+        WEBKIT_TYPE_WEB_FRAME,
+        G_TYPE_STRING);
 
     g_type_class_add_private(klass, sizeof(WebKitIconDatabasePrivate));
 }

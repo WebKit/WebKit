@@ -397,8 +397,8 @@ gboolean webkit_web_window_features_equal(WebKitWebWindowFeatures* features1, We
     if (features1 == features2)
         return TRUE;
     if (!features1 || !features2)
-        return FALSE; 
-    
+        return FALSE;
+
     WebKitWebWindowFeaturesPrivate* priv1 = features1->priv;
     WebKitWebWindowFeaturesPrivate* priv2 = features2->priv;
 

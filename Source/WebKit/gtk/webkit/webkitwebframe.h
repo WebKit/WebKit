@@ -60,7 +60,7 @@ struct _WebKitWebFrameClass {
 };
 
 /**
- * WebKitLoadStatus
+ * WebKitLoadStatus:
  * @WEBKIT_LOAD_PROVISIONAL: No data has been received yet, empty
  * structures have been allocated to perform the load; the load may
  * still fail for transport issues such as not being able to resolve a

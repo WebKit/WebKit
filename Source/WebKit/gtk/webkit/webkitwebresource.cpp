@@ -132,13 +132,13 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* webResourceCl
      * Since: 1.7.5
      */
     webkit_web_resource_signals[RESPONSE_RECEIVED] = g_signal_new("response-received",
-            G_TYPE_FROM_CLASS(webResourceClass),
-            G_SIGNAL_RUN_LAST,
-            0,
-            0, 0,
-            g_cclosure_marshal_VOID__OBJECT,
-            G_TYPE_NONE, 1,
-            WEBKIT_TYPE_NETWORK_RESPONSE);
+        G_TYPE_FROM_CLASS(webResourceClass),
+        G_SIGNAL_RUN_LAST,
+        0,
+        0, 0,
+        g_cclosure_marshal_VOID__OBJECT,
+        G_TYPE_NONE, 1,
+        WEBKIT_TYPE_NETWORK_RESPONSE);
 
     /**
      * WebKitWebResource::load-failed:
@@ -150,13 +150,13 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* webResourceCl
      * Since: 1.7.5
      */
     webkit_web_resource_signals[LOAD_FAILED] = g_signal_new("load-failed",
-            G_TYPE_FROM_CLASS(webResourceClass),
-            G_SIGNAL_RUN_LAST,
-            0,
-            0, 0,
-            g_cclosure_marshal_VOID__POINTER,
-            G_TYPE_NONE, 1,
-            G_TYPE_POINTER);
+        G_TYPE_FROM_CLASS(webResourceClass),
+        G_SIGNAL_RUN_LAST,
+        0,
+        0, 0,
+        g_cclosure_marshal_VOID__POINTER,
+        G_TYPE_NONE, 1,
+        G_TYPE_POINTER);
 
     /**
      * WebKitWebResource::load-finished:
@@ -167,12 +167,12 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* webResourceCl
      * Since: 1.7.5
      */
     webkit_web_resource_signals[LOAD_FINISHED] = g_signal_new("load-finished",
-            G_TYPE_FROM_CLASS(webResourceClass),
-            G_SIGNAL_RUN_LAST,
-            0,
-            0, 0,
-            g_cclosure_marshal_VOID__VOID,
-            G_TYPE_NONE, 0);
+        G_TYPE_FROM_CLASS(webResourceClass),
+        G_SIGNAL_RUN_LAST,
+        0,
+        0, 0,
+        g_cclosure_marshal_VOID__VOID,
+        G_TYPE_NONE, 0);
 
     /**
      * WebKitWebResource::content-length-received:
@@ -187,13 +187,13 @@ static void webkit_web_resource_class_init(WebKitWebResourceClass* webResourceCl
      * Since: 1.7.5
      */
     webkit_web_resource_signals[CONTENT_LENGTH_RECEIVED] = g_signal_new("content-length-received",
-            G_TYPE_FROM_CLASS(webResourceClass),
-            G_SIGNAL_RUN_LAST,
-            0,
-            0, 0,
-            g_cclosure_marshal_VOID__INT,
-            G_TYPE_NONE, 1,
-            G_TYPE_INT);
+        G_TYPE_FROM_CLASS(webResourceClass),
+        G_SIGNAL_RUN_LAST,
+        0,
+        0, 0,
+        g_cclosure_marshal_VOID__INT,
+        G_TYPE_NONE, 1,
+        G_TYPE_INT);
 
     /**
      * WebKitWebResource:uri:

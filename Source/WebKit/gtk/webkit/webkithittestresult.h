@@ -54,7 +54,7 @@ struct _WebKitHitTestResultClass {
 };
 
 /**
- * WebKitHitTestResultContext
+ * WebKitHitTestResultContext:
  * @WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT: anywhere in the document.
  * @WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK: a hyperlink element.
  * @WEBKIT_HIT_TEST_RESULT_CONTEXT_IMAGE: an image element.

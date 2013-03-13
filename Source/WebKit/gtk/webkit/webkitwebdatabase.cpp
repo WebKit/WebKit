@@ -41,16 +41,16 @@
  * To get access to all databases defined by a security origin, use
  * #webkit_security_origin_get_databases. Each database has a canonical
  * name, as well as a user-friendly display name.
- * 
+ *
  * WebKit uses SQLite to create and access the local SQL databases. The location
  * of a #WebKitWebDatabase can be accessed wth #webkit_web_database_get_filename.
  * You can configure the location of all databases with
  * #webkit_set_database_directory_path.
- * 
+ *
  * For each database the web site can define an estimated size which can be
  * accessed with #webkit_web_database_get_expected_size. The current size of the
  * database in bytes is returned by #webkit_web_database_get_size.
- * 
+ *
  * For more information refer to the Web Database specification proposal at
  * http://dev.w3.org/html5/webdatabase
  */
@@ -459,7 +459,7 @@ void webkit_remove_all_web_databases()
 /**
  * webkit_get_web_database_directory_path:
  *
- * Returns the current path to the directory WebKit will write Web 
+ * Returns the current path to the directory WebKit will write Web
  * Database and Indexed Database databases. By default this path will
  * be in the user data directory.
  *
@@ -476,8 +476,8 @@ const gchar* webkit_get_web_database_directory_path()
  * webkit_set_web_database_directory_path:
  * @path: the new database directory path in the filesystem encoding
  *
- * Sets the current path to the directory WebKit will write Web 
- * Database and Indexed Database databases. 
+ * Sets the current path to the directory WebKit will write Web
+ * Database and Indexed Database databases.
  *
  * Since: 1.1.14
  **/
@@ -501,7 +501,7 @@ void webkit_set_web_database_directory_path(const gchar* path)
  *
  * Returns the default quota for Web Database databases. By default
  * this value is 5MB.
- 
+ *
  * Returns: the current default database quota in bytes
  *
  * Since: 1.1.14

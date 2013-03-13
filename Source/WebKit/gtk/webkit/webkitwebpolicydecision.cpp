@@ -71,7 +71,7 @@ WebKitWebPolicyDecision* webkit_web_policy_decision_new(WebKitWebFrame* frame, W
 }
 
 /**
- * webkit_web_policy_decision_use
+ * webkit_web_policy_decision_use:
  * @decision: a #WebKitWebPolicyDecision
  *
  * Will send the USE decision to the policy implementer.
@@ -89,7 +89,7 @@ void webkit_web_policy_decision_use(WebKitWebPolicyDecision* decision)
 }
 
 /**
- * webkit_web_policy_decision_ignore
+ * webkit_web_policy_decision_ignore:
  * @decision: a #WebKitWebPolicyDecision
  *
  * Will send the IGNORE decision to the policy implementer.
@@ -107,7 +107,7 @@ void webkit_web_policy_decision_ignore(WebKitWebPolicyDecision* decision)
 }
 
 /**
- * webkit_web_policy_decision_download
+ * webkit_web_policy_decision_download:
  * @decision: a #WebKitWebPolicyDecision
  *
  * Will send the DOWNLOAD decision to the policy implementer.
