@@ -799,13 +799,6 @@ void CoordinatedGraphicsLayer::tiledBackingStorePaintBegin()
 {
 }
 
-void CoordinatedGraphicsLayer::setRootLayer(bool isRoot)
-{
-    m_layerState.isRootLayer = isRoot;
-    m_layerState.flagsChanged = true;
-    didChangeLayerState();
-}
-
 void CoordinatedGraphicsLayer::setVisibleContentRectTrajectoryVector(const FloatPoint& trajectoryVector)
 {
     if (!m_mainBackingStore)

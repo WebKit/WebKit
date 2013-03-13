@@ -352,7 +352,7 @@ void CoordinatedGraphicsScene::setLayerState(CoordinatedLayerID id, const Coordi
         layer->setBackfaceVisibility(layerState.backfaceVisible);
 
         // Never clip the root layer.
-        layer->setMasksToBounds(layerState.isRootLayer ? false : layerState.masksToBounds);
+        layer->setMasksToBounds(id == m_rootLayerID ? false : layerState.masksToBounds);
         layer->setPreserves3D(layerState.preserves3D);
 
         bool fixedToViewportChanged = toGraphicsLayerTextureMapper(layer)->fixedToViewport() != layerState.fixedToViewport;

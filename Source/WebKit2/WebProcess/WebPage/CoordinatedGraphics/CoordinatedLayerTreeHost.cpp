@@ -99,7 +99,6 @@ CoordinatedLayerTreeHost::CoordinatedLayerTreeHost(WebPage* webPage)
     // Create a root layer.
     m_rootLayer = GraphicsLayer::create(this, this);
     CoordinatedGraphicsLayer* coordinatedRootLayer = toCoordinatedGraphicsLayer(m_rootLayer.get());
-    coordinatedRootLayer->setRootLayer(true);
 #ifndef NDEBUG
     m_rootLayer->setName("CoordinatedLayerTreeHost root layer");
 #endif

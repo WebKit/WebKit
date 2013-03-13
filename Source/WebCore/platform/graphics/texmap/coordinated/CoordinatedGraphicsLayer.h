@@ -114,8 +114,6 @@ public:
 
     void setVisibleContentRectTrajectoryVector(const FloatPoint&);
 
-    void setRootLayer(bool);
-
     void setScrollableArea(ScrollableArea*);
     bool isScrollable() const { return !!m_scrollableArea; }
     void commitScrollOffset(const IntSize&);

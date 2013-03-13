@@ -103,7 +103,6 @@ struct CoordinatedGraphicsLayerState {
             bool backfaceVisible : 1;
             bool masksToBounds : 1;
             bool preserves3D : 1;
-            bool isRootLayer: 1;
             bool fixedToViewport : 1;
             bool showDebugBorders : 1;
             bool showRepaintCounter : 1;
@@ -120,7 +119,6 @@ struct CoordinatedGraphicsLayerState {
         , backfaceVisible(true)
         , masksToBounds(false)
         , preserves3D(false)
-        , isRootLayer(false)
         , fixedToViewport(false)
         , showDebugBorders(false)
         , showRepaintCounter(false)
