@@ -21,7 +21,6 @@
 #include "config.h"
 #include "WebKitLoaderClient.h"
 
-#include "WebKit2GtkAuthenticationDialog.h"
 #include "WebKitBackForwardListPrivate.h"
 #include "WebKitURIResponsePrivate.h"
 #include "WebKitWebViewBasePrivate.h"

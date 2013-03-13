@@ -15,7 +15,7 @@ m4_define([libwebkitgtk_version], [18:3:18])
 m4_define([libjavascriptcoregtk_version], [13:10:13])
 m4_define([libwebkit2gtk_version], [23:0:1])
 
-m4_define([gtk2_required_version], [2.10])
+m4_define([gtk2_required_version], [2.16])
 m4_define([gail2_required_version], [1.8])
 m4_define([gtk3_required_version], [3.4.0])
 m4_define([gail3_required_version], [3.0])

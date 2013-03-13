@@ -6182,8 +6182,6 @@ webcoregtk_sources += \
 	Source/WebCore/platform/gtk/GOwnPtrGtk.h \
 	Source/WebCore/platform/gtk/GRefPtrGtk.cpp \
 	Source/WebCore/platform/gtk/GRefPtrGtk.h \
-	Source/WebCore/platform/gtk/GtkAuthenticationDialog.cpp \
-	Source/WebCore/platform/gtk/GtkAuthenticationDialog.h \
 	Source/WebCore/platform/gtk/GtkPluginWidget.cpp \
 	Source/WebCore/platform/gtk/GtkPluginWidget.h \
 	Source/WebCore/platform/gtk/GtkPopupMenu.cpp \
@@ -6218,6 +6216,8 @@ webcoregtk_sources += \
 	Source/WebCore/platform/gtk/SearchPopupMenuGtk.h \
 	Source/WebCore/platform/gtk/SharedTimerGtk.cpp \
 	Source/WebCore/platform/gtk/SoundGtk.cpp \
+	Source/WebCore/platform/gtk/WebKitAuthenticationWidget.cpp \
+	Source/WebCore/platform/gtk/WebKitAuthenticationWidget.h \
 	Source/WebCore/platform/gtk/WidgetGtk.cpp \
 	Source/WebCore/platform/gtk/WidgetRenderingContext.cpp \
 	Source/WebCore/platform/gtk/WidgetRenderingContext.h

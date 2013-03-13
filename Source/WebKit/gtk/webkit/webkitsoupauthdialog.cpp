@@ -21,9 +21,10 @@
 #include "webkitsoupauthdialog.h"
 
 #include "AuthenticationClient.h"
-#include "GtkAuthenticationDialog.h"
 #include "ResourceHandle.h"
+#include "webkitauthenticationdialog.h"
 #include "webkitmarshal.h"
+#include <wtf/text/CString.h>
 
 using namespace WebCore;
 
@@ -143,8 +144,8 @@ static void sessionAuthenticate(SoupSession* session, SoupMessage* message, Soup
     // impossible with gcc, due to WebKitSoupAuthDialogAuthenticationClient's two superclasses.
     client->derefWebKitSoupAuthDialogAuthenticationClient();
 
-    GtkAuthenticationDialog* authDialog = new GtkAuthenticationDialog(toplevel, challenge, GtkAuthenticationDialog::DisallowPersistentStorage);
-    authDialog->show();
+    GtkWidget* authDialog = createAuthenticationDialog(toplevel, challenge, DisallowPersistentStorage);
+    gtk_widget_show(authDialog);
 }
 
 static void attach(SoupSessionFeature* manager, SoupSession* session)
