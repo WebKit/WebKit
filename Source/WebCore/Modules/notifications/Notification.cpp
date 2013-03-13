@@ -109,8 +109,7 @@ Notification::Notification(ScriptExecutionContext* context, const String& title)
     , m_state(Idle)
     , m_taskTimer(adoptPtr(new Timer<Notification>(this, &Notification::taskTimerFired)))
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(context->isDocument());
-    m_notificationCenter = DOMWindowNotifications::webkitNotifications(static_cast<Document*>(context)->domWindow());
+    m_notificationCenter = DOMWindowNotifications::webkitNotifications(toDocument(context)->domWindow());
     
     ASSERT(m_notificationCenter->client());
     m_taskTimer->startOneShot(0);
@@ -171,9 +170,9 @@ void Notification::show()
     // prevent double-showing
     if (m_state == Idle && m_notificationCenter->client()) {
 #if ENABLE(NOTIFICATIONS)
-        if (!static_cast<Document*>(scriptExecutionContext())->page())
+        if (!toDocument(scriptExecutionContext())->page())
             return;
-        if (NotificationController::from(static_cast<Document*>(scriptExecutionContext())->page())->client()->checkPermission(scriptExecutionContext()) != NotificationClient::PermissionAllowed) {
+        if (NotificationController::from(toDocument(scriptExecutionContext())->page())->client()->checkPermission(scriptExecutionContext()) != NotificationClient::PermissionAllowed) {
             dispatchErrorEvent();
             return;
         }
@@ -259,9 +258,8 @@ void Notification::taskTimerFired(Timer<Notification>* timer)
 #if ENABLE(NOTIFICATIONS)
 const String& Notification::permission(ScriptExecutionContext* context)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(context->isDocument());
-    ASSERT(static_cast<Document*>(context)->page());
-    return permissionString(NotificationController::from(static_cast<Document*>(context)->page())->client()->checkPermission(context));
+    ASSERT(toDocument(context)->page());
+    return permissionString(NotificationController::from(toDocument(context)->page())->client()->checkPermission(context));
 }
 
 const String& Notification::permissionString(NotificationClient::Permission permission)
@@ -285,9 +283,8 @@ const String& Notification::permissionString(NotificationClient::Permission perm
 
 void Notification::requestPermission(ScriptExecutionContext* context, PassRefPtr<NotificationPermissionCallback> callback)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(context->isDocument());
-    ASSERT(static_cast<Document*>(context)->page());
-    NotificationController::from(static_cast<Document*>(context)->page())->client()->requestPermission(context, callback);
+    ASSERT(toDocument(context)->page());
+    NotificationController::from(toDocument(context)->page())->client()->requestPermission(context, callback);
 }
 #endif
 

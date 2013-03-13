@@ -203,7 +203,7 @@ static inline ExceptionCode checkAcceptChild(ContainerNode* newParent, Node* new
         return HIERARCHY_REQUEST_ERR;
 
     if (oldChild && newParent->isDocumentNode()) {
-        if (!static_cast<Document*>(newParent)->canReplaceChild(newChild, oldChild))
+        if (!toDocument(newParent)->canReplaceChild(newChild, oldChild))
             return HIERARCHY_REQUEST_ERR;
     } else if (!isChildTypeAllowed(newParent, newChild))
         return HIERARCHY_REQUEST_ERR;

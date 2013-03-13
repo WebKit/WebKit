@@ -171,8 +171,7 @@ SpeechRecognition::SpeechRecognition(ScriptExecutionContext* context)
     , m_stoppedByActiveDOMObject(false)
     , m_started(false)
 {
-    ASSERT(scriptExecutionContext()->isDocument());
-    Document* document = static_cast<Document*>(scriptExecutionContext());
+    Document* document = toDocument(scriptExecutionContext());
 
     Page* page = document->page();
     ASSERT(page);

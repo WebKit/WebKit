@@ -113,7 +113,7 @@ JSDOMGlobalObject* toJSDOMGlobalObject(Document* document, JSC::ExecState* exec)
 JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext* scriptExecutionContext, JSC::ExecState* exec)
 {
     if (scriptExecutionContext->isDocument())
-        return toJSDOMGlobalObject(static_cast<Document*>(scriptExecutionContext), exec);
+        return toJSDOMGlobalObject(toDocument(scriptExecutionContext), exec);
 
 #if ENABLE(WORKERS)
     if (scriptExecutionContext->isWorkerContext())
@@ -132,7 +132,7 @@ JSDOMGlobalObject* toJSDOMGlobalObject(Document* document, DOMWrapperWorld* worl
 JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext* scriptExecutionContext, DOMWrapperWorld* world)
 {
     if (scriptExecutionContext->isDocument())
-        return toJSDOMGlobalObject(static_cast<Document*>(scriptExecutionContext), world);
+        return toJSDOMGlobalObject(toDocument(scriptExecutionContext), world);
 
 #if ENABLE(WORKERS)
     if (scriptExecutionContext->isWorkerContext())

@@ -154,7 +154,7 @@ RenderText::RenderText(Node* node, PassRefPtr<StringImpl> str)
     // FIXME: Some clients of RenderText (and subclasses) pass Document as node to create anonymous renderer.
     // They should be switched to passing null and using setDocumentForAnonymous.
     if (node && node->isDocumentNode())
-        setDocumentForAnonymous(static_cast<Document*>(node));
+        setDocumentForAnonymous(toDocument(node));
 
     m_isAllASCII = m_text.containsOnlyASCII();
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();

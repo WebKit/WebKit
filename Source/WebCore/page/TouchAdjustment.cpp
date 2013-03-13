@@ -227,7 +227,7 @@ static inline Node* parentShadowHostOrOwner(const Node* node)
     if (Node* ancestor = node->parentOrShadowHostNode())
         return ancestor;
     if (node->isDocumentNode())
-        return static_cast<const Document*>(node)->ownerElement();
+        return toDocument(node)->ownerElement();
     return 0;
 }
 

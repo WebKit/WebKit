@@ -78,7 +78,7 @@ ScheduledAction::~ScheduledAction()
 void ScheduledAction::execute(ScriptExecutionContext* context)
 {
     if (context->isDocument()) {
-        Frame* frame = static_cast<Document*>(context)->frame();
+        Frame* frame = toDocument(context)->frame();
         if (!frame)
             return;
         if (!frame->script()->canExecuteScripts(AboutToExecuteScript))

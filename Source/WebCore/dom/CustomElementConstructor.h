@@ -54,7 +54,7 @@ public:
 
     virtual ~CustomElementConstructor();
 
-    Document* document() const { return static_cast<Document*>(m_scriptExecutionContext); }
+    Document* document() const { return toDocument(m_scriptExecutionContext); }
     const QualifiedName& name() const { return m_name; }
 
     PassRefPtr<Element> createElement() const;

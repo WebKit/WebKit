@@ -118,8 +118,7 @@ MediaConstraints* UserMediaRequest::videoConstraints() const
 Document* UserMediaRequest::ownerDocument()
 {
     if (m_scriptExecutionContext) {
-        ASSERT(m_scriptExecutionContext->isDocument());
-        return static_cast<Document*>(m_scriptExecutionContext);
+        return toDocument(m_scriptExecutionContext);
     }
 
     return 0;

@@ -34,12 +34,6 @@
 #import <WebCore/HTMLElement.h>
 #import <WebCore/Text.h>
 
-static inline WebCore::Document* toDocument(WebCore::Node* node)
-{
-    ASSERT(!node || node->isDocumentNode());
-    return static_cast<WebCore::Document*>(node);
-}
-
 @implementation WKDOMDocument
 
 - (WKDOMElement *)createElement:(NSString *)tagName

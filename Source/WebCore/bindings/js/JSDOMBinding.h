@@ -82,7 +82,7 @@ class DOMStringList;
     public:
         Document* document() const
         {
-            return static_cast<Document*>(scriptExecutionContext());
+            return toDocument(scriptExecutionContext());
         }
 
     protected:

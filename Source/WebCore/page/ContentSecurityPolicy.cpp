@@ -1432,7 +1432,7 @@ void ContentSecurityPolicy::copyStateFrom(const ContentSecurityPolicy* other)
 void ContentSecurityPolicy::didReceiveHeader(const String& header, HeaderType type)
 {
     if (m_scriptExecutionContext->isDocument()) {
-        Document* document = static_cast<Document*>(m_scriptExecutionContext);
+        Document* document = toDocument(m_scriptExecutionContext);
         if (document->domWindow())
             FeatureObserver::observe(document->domWindow(), getFeatureObserverType(type));
     }
@@ -1676,7 +1676,7 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
     if (!m_scriptExecutionContext->isDocument())
         return;
 
-    Document* document = static_cast<Document*>(m_scriptExecutionContext);
+    Document* document = toDocument(m_scriptExecutionContext);
     Frame* frame = document->frame();
     if (!frame)
         return;

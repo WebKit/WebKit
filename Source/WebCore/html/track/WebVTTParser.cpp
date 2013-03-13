@@ -244,7 +244,7 @@ PassRefPtr<DocumentFragment>  WebVTTParser::createDocumentFragmentFromCueText(co
         return 0;
 
     ASSERT(m_scriptExecutionContext->isDocument());
-    Document* document = static_cast<Document*>(m_scriptExecutionContext);
+    Document* document = toDocument(m_scriptExecutionContext);
     
     RefPtr<DocumentFragment> fragment = DocumentFragment::create(document);
     m_currentNode = fragment;

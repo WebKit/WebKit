@@ -371,7 +371,7 @@ bool scrollInDirection(Node* container, FocusDirection direction)
 {
     ASSERT(container);
     if (container->isDocumentNode())
-        return scrollInDirection(static_cast<Document*>(container)->frame(), direction);
+        return scrollInDirection(toDocument(container)->frame(), direction);
 
     if (!container->renderBox())
         return false;
@@ -440,7 +440,7 @@ Node* scrollableEnclosingBoxOrParentFrameForNodeInDirection(FocusDirection direc
     Node* parent = node;
     do {
         if (parent->isDocumentNode())
-            parent = static_cast<Document*>(parent)->document()->frame()->ownerElement();
+            parent = toDocument(parent)->document()->frame()->ownerElement();
         else
             parent = parent->parentNode();
     } while (parent && !canScrollInDirection(parent, direction) && !parent->isDocumentNode());
@@ -452,7 +452,7 @@ bool canScrollInDirection(const Node* container, FocusDirection direction)
 {
     ASSERT(container);
     if (container->isDocumentNode())
-        return canScrollInDirection(static_cast<const Document*>(container)->frame(), direction);
+        return canScrollInDirection(toDocument(container)->frame(), direction);
 
     if (!isScrollableNode(container))
         return false;
@@ -521,7 +521,7 @@ LayoutRect nodeRectInAbsoluteCoordinates(Node* node, bool ignoreBorder)
     ASSERT(node && node->renderer() && !node->document()->view()->needsLayout());
 
     if (node->isDocumentNode())
-        return frameRectInAbsoluteCoordinates(static_cast<Document*>(node)->frame());
+        return frameRectInAbsoluteCoordinates(toDocument(node)->frame());
     LayoutRect rect = rectToAbsoluteCoordinates(node->document()->frame(), node->boundingBox());
 
     // For authors that use border instead of outline in their CSS, we compensate by ignoring the border when calculating

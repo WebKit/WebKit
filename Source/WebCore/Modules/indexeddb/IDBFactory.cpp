@@ -70,7 +70,7 @@ static bool isContextValid(ScriptExecutionContext* context)
 {
     ASSERT(context->isDocument() || context->isWorkerContext());
     if (context->isDocument()) {
-        Document* document = static_cast<Document*>(context);
+        Document* document = toDocument(context);
         return document->frame() && document->page();
     }
 #if !ENABLE(WORKERS)
@@ -84,7 +84,7 @@ static String getIndexedDBDatabasePath(ScriptExecutionContext* context)
 {
     ASSERT(isContextValid(context));
     if (context->isDocument()) {
-        Document* document = static_cast<Document*>(context);
+        Document* document = toDocument(context);
         return document->page()->group().groupSettings()->indexedDBDatabasePath();
     }
 #if ENABLE(WORKERS)

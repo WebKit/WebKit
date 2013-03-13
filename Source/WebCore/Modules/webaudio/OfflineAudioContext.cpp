@@ -43,7 +43,7 @@ PassRefPtr<OfflineAudioContext> OfflineAudioContext::create(ScriptExecutionConte
         return 0;
     }
 
-    Document* document = static_cast<Document*>(context);
+    Document* document = toDocument(context);
 
     // FIXME: offline contexts have limitations on supported sample-rates.
     // Currently all AudioContexts must have the same sample-rate.

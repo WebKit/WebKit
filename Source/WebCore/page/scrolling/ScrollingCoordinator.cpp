@@ -210,7 +210,7 @@ static void accumulateDocumentEventTargetRects(Vector<IntRect>& rects, const Doc
         }
 
         if (touchTarget->isDocumentNode() && touchTarget != document) {
-            accumulateDocumentEventTargetRects(rects, static_cast<const Document*>(touchTarget));
+            accumulateDocumentEventTargetRects(rects, toDocument(touchTarget));
             continue;
         }
 

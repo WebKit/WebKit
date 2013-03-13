@@ -46,7 +46,7 @@ WindowEventContext::WindowEventContext(Event* event, PassRefPtr<Node> node, cons
     if (!topLevelContainer->isDocumentNode())
         return;
 
-    m_window = static_cast<Document*>(topLevelContainer)->domWindow();
+    m_window = toDocument(topLevelContainer)->domWindow();
     m_target = topEventContext ? topEventContext->target() : node.get();
 }
 

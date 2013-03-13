@@ -103,8 +103,7 @@ void NamedFlowCollection::discardNamedFlow(WebKitNamedFlow* namedFlow)
 Document* NamedFlowCollection::document() const
 {
     ScriptExecutionContext* context = ContextDestructionObserver::scriptExecutionContext();
-    ASSERT(!context || context->isDocument());
-    return static_cast<Document*>(context);
+    return toDocument(context);
 }
 
 PassRefPtr<DOMNamedFlowCollection> NamedFlowCollection::createCSSOMSnapshot()

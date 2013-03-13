@@ -250,7 +250,7 @@ HRESULT STDMETHODCALLTYPE DOMHTMLDocument::URL(
     if (!result)
         return E_POINTER;
 
-    *result = BString(static_cast<HTMLDocument*>(m_document)->url()).release();
+    *result = BString(toHTMLDocument(m_document)->url()).release();
     return S_OK;
 }
     
@@ -261,7 +261,7 @@ HRESULT STDMETHODCALLTYPE DOMHTMLDocument::body(
     if (!m_document || !m_document->isHTMLDocument())
         return E_FAIL;
 
-    HTMLDocument* htmlDoc = static_cast<HTMLDocument*>(m_document);
+    HTMLDocument* htmlDoc = toHTMLDocument(m_document);
     COMPtr<IDOMElement> domElement;
     domElement.adoptRef(DOMHTMLElement::createInstance(htmlDoc->body()));
     if (domElement)
@@ -304,7 +304,7 @@ HRESULT STDMETHODCALLTYPE DOMHTMLDocument::forms(
     if (!m_document || !m_document->isHTMLDocument())
         return E_FAIL;
 
-    HTMLDocument* htmlDoc = static_cast<HTMLDocument*>(m_document);
+    HTMLDocument* htmlDoc = toHTMLDocument(m_document);
     RefPtr<HTMLCollection> forms = htmlDoc->forms();
     *collection = DOMHTMLCollection::createInstance(forms.get());
     return S_OK;

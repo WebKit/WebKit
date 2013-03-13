@@ -2199,7 +2199,7 @@ AtomicString Element::computeInheritedLanguage() const
             }
         } else if (n->isDocumentNode()) {
             // checking the MIME content-language
-            value = static_cast<const Document*>(n)->contentLanguage();
+            value = toDocument(n)->contentLanguage();
         }
 
         n = n->parentNode();
@@ -2682,10 +2682,10 @@ void Element::updateNamedItemRegistration(const AtomicString& oldName, const Ato
         return;
 
     if (!oldName.isEmpty())
-        static_cast<HTMLDocument*>(document())->removeNamedItem(oldName);
+        toHTMLDocument(document())->removeNamedItem(oldName);
 
     if (!newName.isEmpty())
-        static_cast<HTMLDocument*>(document())->addNamedItem(newName);
+        toHTMLDocument(document())->addNamedItem(newName);
 }
 
 void Element::updateExtraNamedItemRegistration(const AtomicString& oldId, const AtomicString& newId)
@@ -2694,10 +2694,10 @@ void Element::updateExtraNamedItemRegistration(const AtomicString& oldId, const 
         return;
 
     if (!oldId.isEmpty())
-        static_cast<HTMLDocument*>(document())->removeExtraNamedItem(oldId);
+        toHTMLDocument(document())->removeExtraNamedItem(oldId);
 
     if (!newId.isEmpty())
-        static_cast<HTMLDocument*>(document())->addExtraNamedItem(newId);
+        toHTMLDocument(document())->addExtraNamedItem(newId);
 }
 
 PassRefPtr<HTMLCollection> Element::ensureCachedHTMLCollection(CollectionType type)

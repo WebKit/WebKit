@@ -202,7 +202,7 @@ TextTrackCue::TextTrackCue(ScriptExecutionContext* context, double start, double
     , m_isActive(false)
     , m_pauseOnExit(false)
     , m_snapToLines(true)
-    , m_cueBackgroundBox(HTMLDivElement::create(static_cast<Document*>(context)))
+    , m_cueBackgroundBox(HTMLDivElement::create(toDocument(context)))
     , m_displayTreeShouldChange(true)
 {
     ASSERT(m_scriptExecutionContext->isDocument());

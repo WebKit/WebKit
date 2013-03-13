@@ -3624,7 +3624,7 @@ void HTMLMediaElement::mediaPlayerSawUnsupportedTracks(MediaPlayer*)
     // This is normally acceptable except when we are in a standalone
     // MediaDocument. If so, tell the document what has happened.
     if (ownerDocument()->isMediaDocument()) {
-        MediaDocument* mediaDocument = static_cast<MediaDocument*>(ownerDocument());
+        MediaDocument* mediaDocument = toMediaDocument(ownerDocument());
         mediaDocument->mediaElementSawUnsupportedTracks();
     }
 }

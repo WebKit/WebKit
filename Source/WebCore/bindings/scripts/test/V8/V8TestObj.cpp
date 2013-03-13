@@ -3195,10 +3195,10 @@ void V8TestObj::installPerContextPrototypeProperties(v8::Handle<v8::Object> prot
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
 
     ScriptExecutionContext* context = toScriptExecutionContext(proto->CreationContext());
-    if (context && context->isDocument() && ContextFeatures::enabledPerContextMethod1Enabled(static_cast<Document*>(context))) {
+    if (context && context->isDocument() && ContextFeatures::enabledPerContextMethod1Enabled(toDocument(context))) {
         proto->Set(v8::String::NewSymbol("enabledPerContextMethod1"), v8::FunctionTemplate::New(TestObjV8Internal::enabledPerContextMethod1MethodCallback, v8Undefined(), defaultSignature)->GetFunction());
     }
-    if (context && context->isDocument() && ContextFeatures::featureNameEnabled(static_cast<Document*>(context))) {
+    if (context && context->isDocument() && ContextFeatures::featureNameEnabled(toDocument(context))) {
         proto->Set(v8::String::NewSymbol("enabledPerContextMethod2"), v8::FunctionTemplate::New(TestObjV8Internal::enabledPerContextMethod2MethodCallback, v8Undefined(), defaultSignature)->GetFunction());
     }
 }

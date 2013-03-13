@@ -3220,7 +3220,7 @@ END
             my $enableFunction = GetContextEnableFunction($runtimeFunc->signature);
             my $conditionalString = $codeGenerator->GenerateConditionalString($runtimeFunc->signature);
             push(@implContent, "\n#if ${conditionalString}\n") if $conditionalString;
-            push(@implContent, "    if (context && context->isDocument() && ${enableFunction}(static_cast<Document*>(context))) {\n");
+            push(@implContent, "    if (context && context->isDocument() && ${enableFunction}(toDocument(context))) {\n");
             my $name = $runtimeFunc->signature->name;
             push(@implContent, <<END);
         proto->Set(v8::String::NewSymbol("${name}"), v8::FunctionTemplate::New(${interfaceName}V8Internal::${name}MethodCallback, v8Undefined(), defaultSignature)->GetFunction());

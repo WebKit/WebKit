@@ -81,7 +81,7 @@ void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomicSt
 {
     if (name == nameAttr) {
         if (inDocument() && document()->isHTMLDocument() && !isInShadowTree()) {
-            HTMLDocument* document = static_cast<HTMLDocument*>(this->document());
+            HTMLDocument* document = toHTMLDocument(this->document());
             document->removeExtraNamedItem(m_name);
             document->addExtraNamedItem(value);
         }
@@ -113,7 +113,7 @@ Node::InsertionNotificationRequest HTMLIFrameElement::insertedInto(ContainerNode
 {
     InsertionNotificationRequest result = HTMLFrameElementBase::insertedInto(insertionPoint);
     if (insertionPoint->inDocument() && document()->isHTMLDocument() && !insertionPoint->isInShadowTree())
-        static_cast<HTMLDocument*>(document())->addExtraNamedItem(m_name);
+        toHTMLDocument(document())->addExtraNamedItem(m_name);
     return result;
 }
 
@@ -121,7 +121,7 @@ void HTMLIFrameElement::removedFrom(ContainerNode* insertionPoint)
 {
     HTMLFrameElementBase::removedFrom(insertionPoint);
     if (insertionPoint->inDocument() && document()->isHTMLDocument() && !insertionPoint->isInShadowTree())
-        static_cast<HTMLDocument*>(document())->removeExtraNamedItem(m_name);
+        toHTMLDocument(document())->removeExtraNamedItem(m_name);
 }
 
 bool HTMLIFrameElement::shouldDisplaySeamlessly() const

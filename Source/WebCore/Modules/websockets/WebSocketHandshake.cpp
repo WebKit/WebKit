@@ -199,7 +199,7 @@ CString WebSocketHandshake::clientHandshakeMessage() const
 
     KURL url = httpURLForAuthenticationAndCookies();
     if (m_context->isDocument()) {
-        Document* document = static_cast<Document*>(m_context);
+        Document* document = toDocument(m_context);
         String cookie = cookieRequestHeaderFieldValue(document, url);
         if (!cookie.isEmpty())
             fields.append("Cookie: " + cookie);
@@ -251,7 +251,7 @@ PassRefPtr<WebSocketHandshakeRequest> WebSocketHandshake::clientHandshakeRequest
 
     KURL url = httpURLForAuthenticationAndCookies();
     if (m_context->isDocument()) {
-        Document* document = static_cast<Document*>(m_context);
+        Document* document = toDocument(m_context);
         String cookie = cookieRequestHeaderFieldValue(document, url);
         if (!cookie.isEmpty())
             request->addHeaderField("Cookie", cookie);

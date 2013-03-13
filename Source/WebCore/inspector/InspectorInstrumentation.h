@@ -2056,7 +2056,7 @@ inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForCont
     if (!context)
         return 0;
     if (context->isDocument())
-        return instrumentingAgentsForPage(static_cast<Document*>(context)->page());
+        return instrumentingAgentsForPage(toDocument(context)->page());
 #if ENABLE(WORKERS)
     return instrumentingAgentsForNonDocumentContext(context);
 #else

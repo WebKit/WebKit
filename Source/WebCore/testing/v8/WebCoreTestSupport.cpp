@@ -46,7 +46,7 @@ void injectInternalsObject(v8::Local<v8::Context> context)
 
     ScriptExecutionContext* scriptContext = getScriptExecutionContext();
     if (scriptContext->isDocument())
-        context->Global()->Set(v8::String::New(Internals::internalsId), toV8(Internals::create(static_cast<Document*>(scriptContext)), v8::Handle<v8::Object>(), context->GetIsolate()));
+        context->Global()->Set(v8::String::New(Internals::internalsId), toV8(Internals::create(toDocument(scriptContext)), v8::Handle<v8::Object>(), context->GetIsolate()));
 }
 
 void resetInternalsObject(v8::Local<v8::Context> context)
@@ -59,8 +59,7 @@ void resetInternalsObject(v8::Local<v8::Context> context)
     v8::HandleScope scope;
 
     ScriptExecutionContext* scriptContext = getScriptExecutionContext();
-    ASSERT_WITH_SECURITY_IMPLICATION(scriptContext->isDocument());
-    Page* page = static_cast<Document*>(scriptContext)->frame()->page();
+    Page* page = toDocument(scriptContext)->frame()->page();
     Internals::resetToConsistentState(page);
     InternalSettings::from(page)->resetToConsistentState();
 }

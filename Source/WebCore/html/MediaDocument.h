@@ -54,7 +54,22 @@ private:
 
     Timer<MediaDocument> m_replaceMediaElementTimer;
 };
-    
+
+inline MediaDocument* toMediaDocument(Document* document)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!document || document->isMediaDocument());
+    return static_cast<MediaDocument*>(document);
+}
+
+inline const MediaDocument* toMediaDocument(const Document* document)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!document || document->isMediaDocument());
+    return static_cast<const MediaDocument*>(document);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toMediaDocument(const MediaDocument*);
+
 }
 
 #endif

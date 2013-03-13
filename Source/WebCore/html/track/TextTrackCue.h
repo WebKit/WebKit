@@ -193,7 +193,7 @@ protected:
 
     TextTrackCue(ScriptExecutionContext*, double start, double end, const String& content);
 
-    Document* ownerDocument() { return static_cast<Document*>(m_scriptExecutionContext); }
+    Document* ownerDocument() { return toDocument(m_scriptExecutionContext); }
 
     virtual PassRefPtr<TextTrackCueBox> createDisplayTree();
     PassRefPtr<TextTrackCueBox> displayTreeInternal();

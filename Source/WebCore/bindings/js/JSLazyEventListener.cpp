@@ -82,7 +82,7 @@ JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext* exec
     if (m_code.isNull() || m_eventParameterName.isNull())
         return 0;
 
-    Document* document = static_cast<Document*>(executionContext);
+    Document* document = toDocument(executionContext);
 
     if (!document->frame())
         return 0;

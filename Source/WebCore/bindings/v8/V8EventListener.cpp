@@ -85,7 +85,7 @@ v8::Local<v8::Value> V8EventListener::callListenerFunction(ScriptExecutionContex
     if (!context->isDocument())
         return v8::Local<v8::Value>();
 
-    Frame* frame = static_cast<Document*>(context)->frame();
+    Frame* frame = toDocument(context)->frame();
     if (!frame)
         return v8::Local<v8::Value>();
 

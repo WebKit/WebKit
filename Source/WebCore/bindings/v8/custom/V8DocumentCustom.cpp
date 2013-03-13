@@ -93,10 +93,10 @@ v8::Handle<v8::Object> wrap(Document* impl, v8::Handle<v8::Object> creationConte
 {
     ASSERT(impl);
     if (impl->isHTMLDocument())
-        return wrap(static_cast<HTMLDocument*>(impl), creationContext, isolate);
+        return wrap(toHTMLDocument(impl), creationContext, isolate);
 #if ENABLE(SVG)
     if (impl->isSVGDocument())
-        return wrap(static_cast<SVGDocument*>(impl), creationContext, isolate);
+        return wrap(toSVGDocument(impl), creationContext, isolate);
 #endif
     v8::Handle<v8::Object> wrapper = V8Document::createWrapper(impl, creationContext, isolate);
     if (wrapper.IsEmpty())

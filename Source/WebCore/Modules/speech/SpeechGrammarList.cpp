@@ -48,8 +48,7 @@ SpeechGrammar* SpeechGrammarList::item(unsigned long index) const
 
 void SpeechGrammarList::addFromUri(ScriptExecutionContext* scriptExecutionContext, const String& src, double weight)
 {
-    ASSERT_WITH_SECURITY_IMPLICATION(scriptExecutionContext->isDocument());
-    Document* document = static_cast<Document*>(scriptExecutionContext);
+    Document* document = toDocument(scriptExecutionContext);
     m_grammars.append(SpeechGrammar::create(document->completeURL(src), weight));
 }
 

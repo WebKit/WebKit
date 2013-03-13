@@ -824,7 +824,7 @@ static void writeSelection(TextStream& ts, const RenderObject* o)
     if (!n || !n->isDocumentNode())
         return;
 
-    Document* doc = static_cast<Document*>(n);
+    Document* doc = toDocument(n);
     Frame* frame = doc->frame();
     if (!frame)
         return;

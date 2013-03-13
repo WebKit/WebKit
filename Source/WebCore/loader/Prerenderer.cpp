@@ -130,7 +130,7 @@ void Prerenderer::resume()
 Document* Prerenderer::document()
 {
     ASSERT(scriptExecutionContext()->isDocument());
-    return static_cast<Document*>(scriptExecutionContext());
+    return toDocument(scriptExecutionContext());
 }
 
 PrerendererClient* Prerenderer::client()

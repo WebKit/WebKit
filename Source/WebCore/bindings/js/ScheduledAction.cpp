@@ -77,7 +77,7 @@ ScheduledAction::ScheduledAction(ExecState* exec, JSValue function, DOMWrapperWo
 void ScheduledAction::execute(ScriptExecutionContext* context)
 {
     if (context->isDocument())
-        execute(static_cast<Document*>(context));
+        execute(toDocument(context));
 #if ENABLE(WORKERS)
     else {
         ASSERT(context->isWorkerContext());

@@ -65,7 +65,7 @@ Node::InsertionNotificationRequest DocumentType::insertedInto(ContainerNode* ins
     // Our document node can be null if we were created by a DOMImplementation.  We use the parent() instead.
     ASSERT(parentNode() && parentNode()->isDocumentNode());
     if (parentNode() && parentNode()->isDocumentNode()) {
-        Document* doc = static_cast<Document*>(parentNode());
+        Document* doc = toDocument(parentNode());
         if (!doc->doctype())
             doc->setDocType(this);
     }

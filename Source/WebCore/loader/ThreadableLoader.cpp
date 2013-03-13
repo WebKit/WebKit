@@ -50,8 +50,7 @@ PassRefPtr<ThreadableLoader> ThreadableLoader::create(ScriptExecutionContext* co
         return WorkerThreadableLoader::create(static_cast<WorkerContext*>(context), client, WorkerRunLoop::defaultMode(), request, options);
 #endif // ENABLE(WORKERS)
 
-    ASSERT_WITH_SECURITY_IMPLICATION(context->isDocument());
-    return DocumentThreadableLoader::create(static_cast<Document*>(context), client, request, options);
+    return DocumentThreadableLoader::create(toDocument(context), client, request, options);
 }
 
 void ThreadableLoader::loadResourceSynchronously(ScriptExecutionContext* context, const ResourceRequest& request, ThreadableLoaderClient& client, const ThreadableLoaderOptions& options)
@@ -65,8 +64,7 @@ void ThreadableLoader::loadResourceSynchronously(ScriptExecutionContext* context
     }
 #endif // ENABLE(WORKERS)
 
-    ASSERT_WITH_SECURITY_IMPLICATION(context->isDocument());
-    DocumentThreadableLoader::loadResourceSynchronously(static_cast<Document*>(context), request, client, options);
+    DocumentThreadableLoader::loadResourceSynchronously(toDocument(context), request, client, options);
 }
 
 } // namespace WebCore

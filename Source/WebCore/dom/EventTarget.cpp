@@ -207,7 +207,7 @@ bool EventTarget::fireEventListeners(Event* event)
     if (!prefixedTypeName.isEmpty()) {
         ScriptExecutionContext* context = scriptExecutionContext();
         if (context && context->isDocument()) {
-            Document* document = static_cast<Document*>(context);
+            Document* document = toDocument(context);
             if (document->domWindow()) {
                 if (listenerPrefixedVector)
                     if (listenerUnprefixedVector)
@@ -263,7 +263,7 @@ void EventTarget::fireEventListeners(Event* event, EventTargetData* d, EventList
     if (userEventWasHandled) {
         ScriptExecutionContext* context = scriptExecutionContext();
         if (context && context->isDocument()) {
-            Document* document = static_cast<Document*>(context);
+            Document* document = toDocument(context);
             document->resetLastHandledUserGestureTimestamp();
         }
     }

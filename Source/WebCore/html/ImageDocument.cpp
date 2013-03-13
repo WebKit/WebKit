@@ -84,7 +84,7 @@ public:
 
     ImageDocument* document() const
     {
-        return static_cast<ImageDocument*>(RawDataDocumentParser::document());
+        return toImageDocument(RawDataDocumentParser::document());
     }
     
 private:

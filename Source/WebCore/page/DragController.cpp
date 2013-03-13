@@ -414,7 +414,7 @@ DragOperation DragController::operationForLoad(DragData* dragData)
     bool pluginDocumentAcceptsDrags = false;
 
     if (doc && doc->isPluginDocument()) {
-        const Widget* widget = static_cast<PluginDocument*>(doc)->pluginWidget();
+        const Widget* widget = toPluginDocument(doc)->pluginWidget();
         const PluginViewBase* pluginView = (widget && widget->isPluginViewBase()) ? static_cast<const PluginViewBase*>(widget) : 0;
 
         if (pluginView)

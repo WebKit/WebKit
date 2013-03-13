@@ -60,7 +60,7 @@ bool JSHTMLDocument::canGetItemsForName(ExecState*, HTMLDocument* document, Prop
 JSValue JSHTMLDocument::nameGetter(ExecState* exec, JSValue slotBase, PropertyName propertyName)
 {
     JSHTMLDocument* thisObj = jsCast<JSHTMLDocument*>(asObject(slotBase));
-    HTMLDocument* document = static_cast<HTMLDocument*>(thisObj->impl());
+    HTMLDocument* document = toHTMLDocument(thisObj->impl());
 
     RefPtr<HTMLCollection> collection = document->documentNamedItems(propertyNameToAtomicString(propertyName));
 
@@ -89,7 +89,7 @@ JSValue JSHTMLDocument::all(ExecState* exec) const
     if (v)
         return v;
 
-    return toJS(exec, globalObject(), static_cast<HTMLDocument*>(impl())->all());
+    return toJS(exec, globalObject(), toHTMLDocument(impl())->all());
 }
 
 void JSHTMLDocument::setAll(ExecState* exec, JSValue value)
@@ -104,7 +104,7 @@ JSValue JSHTMLDocument::open(ExecState* exec)
 {
     // For compatibility with other browsers, pass open calls with more than 2 parameters to the window.
     if (exec->argumentCount() > 2) {
-        Frame* frame = static_cast<HTMLDocument*>(impl())->frame();
+        Frame* frame = toHTMLDocument(impl())->frame();
         if (frame) {
             JSDOMWindowShell* wrapper = toJSDOMWindowShell(frame, currentWorld(exec));
             if (wrapper) {
@@ -124,7 +124,7 @@ JSValue JSHTMLDocument::open(ExecState* exec)
     Document* activeDocument = asJSDOMWindow(exec->lexicalGlobalObject())->impl()->document();
 
     // In the case of two parameters or fewer, do a normal document open.
-    static_cast<HTMLDocument*>(impl())->open(activeDocument);
+    toHTMLDocument(impl())->open(activeDocument);
     return this;
 }
 
@@ -157,13 +157,13 @@ static inline void documentWrite(ExecState* exec, HTMLDocument* document, Newlin
 
 JSValue JSHTMLDocument::write(ExecState* exec)
 {
-    documentWrite(exec, static_cast<HTMLDocument*>(impl()), DoNotAddNewline);
+    documentWrite(exec, toHTMLDocument(impl()), DoNotAddNewline);
     return jsUndefined();
 }
 
 JSValue JSHTMLDocument::writeln(ExecState* exec)
 {
-    documentWrite(exec, static_cast<HTMLDocument*>(impl()), DoAddNewline);
+    documentWrite(exec, toHTMLDocument(impl()), DoAddNewline);
     return jsUndefined();
 }
 

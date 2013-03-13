@@ -48,7 +48,7 @@ public:
         , m_exec(0)
     {
         if (m_scriptExecutionContext->isDocument()) {
-            Document* document = static_cast<Document*>(m_scriptExecutionContext);
+            Document* document = toDocument(m_scriptExecutionContext);
             m_exec = scriptStateFromPage(mainThreadNormalWorld(), document->page());
         } else {
 #if ENABLE(WORKERS)

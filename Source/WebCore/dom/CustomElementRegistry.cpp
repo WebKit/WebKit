@@ -164,7 +164,7 @@ PassRefPtr<Element> CustomElementRegistry::createElement(const QualifiedName& na
 
 inline Document* CustomElementRegistry::document() const
 {
-    return static_cast<Document*>(m_scriptExecutionContext);
+    return toDocument(m_scriptExecutionContext);
 }
 
 }

@@ -64,7 +64,7 @@ EncodedJSValue JSC_HOST_CALL JSAudioContextConstructor::constructJSAudioContext(
     if (!scriptExecutionContext->isDocument())
         return throwVMError(exec, createReferenceError(exec, "AudioContext constructor called in a script execution context which is not a document"));
 
-    Document* document = static_cast<Document*>(scriptExecutionContext);
+    Document* document = toDocument(scriptExecutionContext);
 
     RefPtr<AudioContext> audioContext;
     

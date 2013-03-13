@@ -261,7 +261,7 @@ Frame* toFrameIfNotDetached(v8::Handle<v8::Context> context)
 v8::Local<v8::Context> toV8Context(ScriptExecutionContext* context, const WorldContextHandle& worldContext)
 {
     if (context->isDocument()) {
-        if (Frame* frame = static_cast<Document*>(context)->frame())
+        if (Frame* frame = toDocument(context)->frame())
             return worldContext.adjustedContext(frame->script());
 #if ENABLE(WORKERS)
     } else if (context->isWorkerContext()) {
@@ -275,7 +275,7 @@ v8::Local<v8::Context> toV8Context(ScriptExecutionContext* context, const WorldC
 v8::Local<v8::Context> toV8Context(ScriptExecutionContext* context, DOMWrapperWorld* world)
 {
     if (context->isDocument()) {
-        if (Frame* frame = static_cast<Document*>(context)->frame()) {
+        if (Frame* frame = toDocument(context)->frame()) {
             // FIXME: Store the DOMWrapperWorld for the main world in the v8::Context so callers
             // that are looking up their world with DOMWrapperWorld::isolatedWorld(v8::Context::GetCurrent())
             // won't end up passing null here when later trying to get their v8::Context back.
