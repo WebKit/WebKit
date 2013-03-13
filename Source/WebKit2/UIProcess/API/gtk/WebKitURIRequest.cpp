@@ -22,6 +22,7 @@
 
 #include "WebKitPrivate.h"
 #include "WebKitURIRequestPrivate.h"
+#include <WebCore/GOwnPtrSoup.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/text/CString.h>
 
@@ -47,6 +48,7 @@ using namespace WebCore;
 struct _WebKitURIRequestPrivate {
     WebCore::ResourceRequest resourceRequest;
     CString uri;
+    GOwnPtr<SoupMessageHeaders> httpHeaders;
 };
 
 WEBKIT_DEFINE_TYPE(WebKitURIRequest, webkit_uri_request, G_TYPE_OBJECT)
@@ -145,14 +147,40 @@ void webkit_uri_request_set_uri(WebKitURIRequest* request, const char* uri)
     g_object_notify(G_OBJECT(request), "uri");
 }
 
-WebKitURIRequest* webkitURIRequestCreateForResourceRequest(const WebCore::ResourceRequest& resourceRequest)
+/**
+ * webkit_uri_request_get_http_headers:
+ * @request: a #WebKitURIRequest
+ *
+ * Get the HTTP headers of a #WebKitURIRequest as a #SoupMessageHeaders.
+ *
+ * Returns: (transfer none): a #SoupMessageHeaders with the HTTP headers of @request
+ *    or %NULL if @request is not an HTTP request.
+ */
+SoupMessageHeaders* webkit_uri_request_get_http_headers(WebKitURIRequest* request)
+{
+    g_return_val_if_fail(WEBKIT_IS_URI_REQUEST(request), 0);
+
+    if (request->priv->httpHeaders)
+        return request->priv->httpHeaders.get();
+
+    if (!request->priv->resourceRequest.url().protocolIsInHTTPFamily())
+        return 0;
+
+    request->priv->httpHeaders.set(soup_message_headers_new(SOUP_MESSAGE_HEADERS_REQUEST));
+    request->priv->resourceRequest.updateSoupMessageHeaders(request->priv->httpHeaders.get());
+    return request->priv->httpHeaders.get();
+}
+
+WebKitURIRequest* webkitURIRequestCreateForResourceRequest(const ResourceRequest& resourceRequest)
 {
     WebKitURIRequest* uriRequest = WEBKIT_URI_REQUEST(g_object_new(WEBKIT_TYPE_URI_REQUEST, NULL));
     uriRequest->priv->resourceRequest = resourceRequest;
     return uriRequest;
 }
 
-const WebCore::ResourceRequest& webkitURIRequestGetResourceRequest(WebKitURIRequest* uriRequest)
+void webkitURIRequestGetResourceRequest(WebKitURIRequest* request, ResourceRequest& resourceRequest)
 {
-    return uriRequest->priv->resourceRequest;
+    resourceRequest = request->priv->resourceRequest;
+    if (request->priv->httpHeaders)
+        resourceRequest.updateFromSoupMessageHeaders(request->priv->httpHeaders.get());
 }
