@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Refused to execute a JavaScript script. Source code of script found within request.
+
+
+Test that the XSSAuditor's tolerance for the IIS webserver's comma concatenation doesn't open holes when the reflected argument contains an actual comma. The test passes if the XSSAuditor logs console messages and no alerts fire.
