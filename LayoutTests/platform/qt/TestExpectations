@@ -1414,6 +1414,8 @@ webkit.org/b/106957 svg/dom/SVGViewSpec-invalid-ref-crash.html [ Failure ]
 # New test, needs platform results
 webkit.org/b/106221 svg/filters/filter-hidden-content.svg [ Failure Pass ]
 
+webkit.org/b/112228 svg/custom/resources-css-scaled.html [ ImageOnlyFailure ]
+
 # ============================================================================= #
 # Failing CSS Tests
 # ============================================================================= #
