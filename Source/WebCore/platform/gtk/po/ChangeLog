@@ -3,6 +3,16 @@
         [GTK] POTFILES.in references a removed file
         https://bugs.webkit.org/show_bug.cgi?id=112248
 
+        Unreviewed, follow-up build fix after r145713.
+
+        * POTFILES.in: WebKitAuthenticationWidget.cpp contains
+        translatable strings to be processed by gettext.
+
+2013-03-13  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] POTFILES.in references a removed file
+        https://bugs.webkit.org/show_bug.cgi?id=112248
+
         Unreviewed, build fix.
 
         * POTFILES.in: Remove reference to non-existant file.
