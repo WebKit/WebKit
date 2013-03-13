@@ -28,11 +28,10 @@
 
 namespace WebCore {
 
-FontPlatformData::FontPlatformData(FILECHAR* name, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, TextOrientation textOrientation, FontWidthVariant widthVariant)
+FontPlatformData::FontPlatformData(FILECHAR* name, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant)
     : m_syntheticBold(syntheticBold)
     , m_syntheticOblique(syntheticOblique)
     , m_orientation(orientation)
-    , m_textOrientation(textOrientation)
     , m_size(size)
     , m_widthVariant(widthVariant)
     , m_font(0)
@@ -101,7 +100,7 @@ bool FontPlatformData::applyState(FS_STATE* font, float scale) const
         return false;
 
     if (m_orientation == Vertical) {
-        if (FS_set_flags(font, (m_textOrientation == TextOrientationVerticalRight) ? FLAGS_VERTICAL_ROTATE_LEFT_ON : FLAGS_VERTICAL_ON) != SUCCESS)
+        if (FS_set_flags(font, FLAGS_VERTICAL_ON) != SUCCESS)
             return false;
     }
     return true;

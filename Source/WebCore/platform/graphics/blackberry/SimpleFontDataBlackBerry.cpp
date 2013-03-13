@@ -116,7 +116,6 @@ PassRefPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescri
             m_platformData.syntheticBold(),
             m_platformData.syntheticOblique(),
             m_platformData.orientation(),
-            m_platformData.textOrientation(),
             m_platformData.widthVariant()),
         isCustomFont(), false));
 }

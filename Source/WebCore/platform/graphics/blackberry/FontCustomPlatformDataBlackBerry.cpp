@@ -42,9 +42,9 @@ FontCustomPlatformData::~FontCustomPlatformData()
     free(m_fontName);
 }
 
-FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool syntheticBold, bool syntheticItalic, FontOrientation orientation, TextOrientation textOrientation, FontWidthVariant widthVariant, FontRenderingMode)
+FontPlatformData FontCustomPlatformData::fontPlatformData(int size, bool syntheticBold, bool syntheticItalic, FontOrientation orientation, FontWidthVariant widthVariant, FontRenderingMode)
 {
-    return FontPlatformData(m_fontName, size, syntheticBold, syntheticItalic, orientation, textOrientation, widthVariant);
+    return FontPlatformData(m_fontName, size, syntheticBold, syntheticItalic, orientation, widthVariant);
 }
 
 bool FontCustomPlatformData::supportsFormat(const String& format)

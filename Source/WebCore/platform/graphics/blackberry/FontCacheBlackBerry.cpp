@@ -247,7 +247,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
         return 0;
     // fprintf(stderr, " %s\n", name);
 
-    return new FontPlatformData(name, fontDescription.computedSize(), shouldFakeBold, shouldFakeItalic, fontDescription.orientation(), fontDescription.textOrientation());
+    return new FontPlatformData(name, fontDescription.computedSize(), shouldFakeBold, shouldFakeItalic, fontDescription.orientation());
 }
 
 } // namespace WebCore
