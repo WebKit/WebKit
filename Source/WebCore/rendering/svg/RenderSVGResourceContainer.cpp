@@ -141,6 +141,7 @@ void RenderSVGResourceContainer::addClient(RenderObject* client)
 void RenderSVGResourceContainer::removeClient(RenderObject* client)
 {
     ASSERT(client);
+    removeClientFromCache(client, false);
     m_clients.remove(client);
 }
 

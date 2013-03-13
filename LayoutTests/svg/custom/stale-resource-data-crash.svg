@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <defs id="defs">
+    <filter id="f1">
+      <feDiffuseLighting>
+        <feDistantLight azimuth="45" id="light"/>
+      </feDiffuseLighting>
+    </filter>
+    <filter id="f2"/>
+  </defs>
+  <image id="img" filter="url(#f1)" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAIAAAACUFjqAAAADUlEQVQY02NgGAWkAwABNgABGtWNFwAAAABJRU5ErkJggg=="/>
+
+  <text>PASS: did not crash.</text>
+
+  <script>
+    f2 = document.getElementById('f2');
+    docElement = document.getElementById('svg');
+    light =  document.getElementById('light');
+    newDefs = document.getElementById('defs').cloneNode(true);
+
+    if (window.testRunner) {
+      testRunner.dumpAsText();
+      // Force a paint at this point to generate cached filter results.
+      testRunner.display();
+    }
+
+    docElement.appendChild(newDefs);
+    docElement.appendChild(f2);
+    docElement.offsetTop;
+    light.removeAttribute('azimuth');
+  </script>
+</svg>
