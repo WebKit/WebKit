@@ -355,7 +355,6 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     appendChildFrameRects(oldChildRects);
     layoutFlexItems(relayoutChildren, lineContexts);
 
-    LayoutUnit oldClientAfterEdge = clientLogicalBottom();
     updateLogicalHeight();
     repositionLogicalHeightDependentFlexItems(lineContexts);
 
@@ -370,7 +369,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     repaintChildrenDuringLayoutIfMoved(oldChildRects);
     // FIXME: css3/flexbox/repaint-rtl-column.html seems to repaint more overflow than it needs to.
-    computeOverflow(oldClientAfterEdge);
+    computeOverflow(clientLogicalBottomAfterRepositioning());
     statePusher.pop();
 
     updateLayerTransform();
@@ -433,6 +432,18 @@ void RenderFlexibleBox::repositionLogicalHeightDependentFlexItems(Vector<LineCon
 
     // direction:rtl + flex-direction:column means the cross-axis direction is flipped.
     flipForRightToLeftColumn();
+}
+
+LayoutUnit RenderFlexibleBox::clientLogicalBottomAfterRepositioning()
+{
+    LayoutUnit maxChildLogicalBottom = 0;
+    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        if (child->isOutOfFlowPositioned())
+            continue;
+        LayoutUnit childLogicalBottom = logicalTopForChild(child) + logicalHeightForChild(child) + marginAfterForChild(child);
+        maxChildLogicalBottom = std::max(maxChildLogicalBottom, childLogicalBottom);
+    }
+    return std::max(clientLogicalBottom(), maxChildLogicalBottom);
 }
 
 bool RenderFlexibleBox::hasOrthogonalFlow(RenderBox* child) const

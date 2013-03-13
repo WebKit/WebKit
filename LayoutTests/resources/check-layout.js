@@ -62,6 +62,18 @@ function checkExpectedValues(node, failures)
             failures.push("Expected " + expectedHeight + " for clientHeight, but got " + node.clientHeight + ". ");
     }
 
+    var expectedWidth = node.getAttribute && node.getAttribute("data-expected-scroll-width");
+    if (expectedWidth) {
+        if (node.scrollWidth != parseInt(expectedWidth))
+            failures.push("Expected " + expectedWidth + " for scrollWidth, but got " + node.scrollWidth + ". ");
+    }
+
+    var expectedHeight = node.getAttribute && node.getAttribute("data-expected-scroll-height");
+    if (expectedHeight) {
+        if (node.scrollHeight != parseInt(expectedHeight))
+            failures.push("Expected " + expectedHeight + " for scrollHeight, but got " + node.scrollHeight + ". ");
+    }
+
     var expectedOffset = node.getAttribute && node.getAttribute("data-total-x");
     if (expectedOffset) {
         var totalLeft = node.clientLeft + node.offsetLeft;

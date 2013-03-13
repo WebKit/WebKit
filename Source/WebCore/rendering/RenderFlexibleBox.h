@@ -146,6 +146,7 @@ private:
     bool hasAutoMarginsInCrossAxis(RenderBox* child) const;
     bool updateAutoMarginsInCrossAxis(RenderBox* child, LayoutUnit availableAlignmentSpace);
     void repositionLogicalHeightDependentFlexItems(Vector<LineContext>&);
+    LayoutUnit clientLogicalBottomAfterRepositioning();
     void appendChildFrameRects(ChildFrameRects&);
     void repaintChildrenDuringLayoutIfMoved(const ChildFrameRects&);
 
