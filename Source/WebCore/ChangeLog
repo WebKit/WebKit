@@ -1,5 +1,26 @@
 2013-03-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r139551
+
+    2013-01-12  Gavin Peters  <gavinp@chromium.org>
+
+            Regression(r119759): Heap-use-after-free in webkit_glue::WebURLLoaderImpl::Context::OnReceivedResponse
+            https://bugs.webkit.org/show_bug.cgi?id=103563
+
+            A subresource could receive a body on a 404 if its call to CachedResource::error() resulted in a nested message loop.
+            That caused a crash when data was received, as the Subresource was in the Finished state already. Now when receiving
+            data we ignore these bodies, avoiding the crash.
+
+            Reviewed by Nate Chapin.
+
+            No new tests in WebKit, since it required a nested message loop which isn't present in chromium DumpRender tree.
+            There's a Chrome side browser test, see https://codereview.chromium.org/11778083/
+
+            * loader/SubresourceLoader.cpp:
+            (WebCore::SubresourceLoader::checkForHTTPStatusCodeError):
+
+2013-03-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r139457
 
     2013-01-11  Florin Malita  <fmalita@chromium.org>
