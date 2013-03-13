@@ -2677,6 +2677,7 @@ webkit.org/b/111853 editing/selection/drag-list-item.html [ Skip ]
 
 # jack server is not running or cannot be started
 fast/dom/beforeload/remove-video-poster-in-beforeload-listener.html
+fast/dom/beforeload/remove-video-in-beforeload-listener.html
 
 # New test fails due to resizeTo not firing an event.
 webkit.org/b/109179 compositing/transitions/transform-on-large-layer.html [ ImageOnlyFailure ]
