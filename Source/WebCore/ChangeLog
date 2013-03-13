@@ -1,5 +1,31 @@
 2013-03-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r138863
+
+    2013-01-04  Abhishek Arya  <inferno@chromium.org>
+
+            Heap-use-after-free in WebCore::XMLDocumentParser::doEnd
+            https://bugs.webkit.org/show_bug.cgi?id=100152
+
+            Reviewed by Adam Barth.
+
+            XMLDocumentParser can be blown away inside document()->styleResolverChanged()
+            call. Protect it with a local RefPtr in Document::explitClose.    
+
+            No new tests. The site specific dependencies are hard to minimize.
+
+            * dom/Document.cpp:
+            (WebCore::Document::explicitClose): RefPtr m_parser into a local, since
+            it can be detached and nulled out in DocumentWriter::end().
+            * xml/parser/XMLDocumentParser.cpp:
+            (WebCore::XMLDocumentParser::end): Bail out when we are detached.
+            * xml/parser/XMLDocumentParserLibxml2.cpp:
+            (WebCore::XMLDocumentParser::doEnd): Bail out when we are detached.
+            * xml/parser/XMLDocumentParserQt.cpp:
+            (WebCore::XMLDocumentParser::doEnd): Bail out when we are detached.
+
+2013-03-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r138850
 
     2013-01-04  Abhishek Arya  <inferno@chromium.org>

@@ -196,6 +196,11 @@ void XMLDocumentParser::end()
 
     doEnd();
 
+    // doEnd() call above can detach the parser and null out its document.
+    // In that case, we just bail out.
+    if (isDetached())
+        return;
+
     // doEnd() could process a script tag, thus pausing parsing.
     if (m_parserPaused)
         return;
