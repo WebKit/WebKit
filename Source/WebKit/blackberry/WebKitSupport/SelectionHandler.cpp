@@ -784,6 +784,10 @@ bool SelectionHandler::ensureSelectedTextVisible(const WebCore::IntPoint& point,
     if (!scrollIfNeeded)
         return viewportRect.maxY() >= point.y() + m_scrollMargin.height();
 
+    // Scroll position adjustment here is based on main frame. If selecting in a subframe, don't do animation.
+    if (!m_selectionViewportRect.isEmpty())
+        return false;
+
     WebCore::IntRect endLocation = m_animationOverlayEndPos.absoluteCaretBounds();
 
     Frame* focusedFrame = m_webPage->focusedOrMainFrame();
@@ -803,8 +807,6 @@ bool SelectionHandler::ensureSelectedTextVisible(const WebCore::IntPoint& point,
     endLocation.inflateX(m_scrollMargin.width());
     endLocation.inflateY(m_scrollMargin.height());
 
-    // FIXME: The scroll position adjustment here is based on main frame.
-    // If selecting in a subframe, don't do animation.
     WebCore::IntRect revealRect(layer->getRectToExpose(viewportRect, endLocation, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded));
     revealRect.setX(std::min(std::max(revealRect.x(), 0), m_webPage->maximumScrollPosition().x()));
     revealRect.setY(std::min(std::max(revealRect.y(), 0), m_webPage->maximumScrollPosition().y()));

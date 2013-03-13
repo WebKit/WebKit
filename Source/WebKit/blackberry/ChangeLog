@@ -1,3 +1,21 @@
+2013-03-13  Iris Wu  <shuwu@blackberry.com>
+
+        [BlackBerry] Do not do scroll position adjustment if selecting in a subframe
+        https://bugs.webkit.org/show_bug.cgi?id=112290
+
+        Reviewed by Rob Buis.
+
+        PR 267394
+
+        In SelectionHandler::ensureSelectedTextVisible(), scroll position
+        animation is based on main frame. If selecting in a subframe, don't
+        do animation.
+
+        Internally Reviewed By Genevieve Mak.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::ensureSelectedTextVisible):
+
 2013-03-13  Genevieve Mak  <gmak@rim.com>
 
         [BlackBerry] Add Proximity Detector.
