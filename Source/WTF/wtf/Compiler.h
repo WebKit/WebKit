@@ -122,17 +122,27 @@
 
 /* Specific compiler features */
 #if COMPILER(GCC) && !COMPILER(CLANG)
-#if GCC_VERSION_AT_LEAST(4, 7, 0) && defined(__cplusplus) && __cplusplus >= 201103L
+#if defined(__GXX_EXPERIMENTAL_CXX0X__) || (defined(__cplusplus) && __cplusplus >= 201103L)
+#if GCC_VERSION_AT_LEAST(4, 3, 0)
 #define WTF_COMPILER_SUPPORTS_CXX_RVALUE_REFERENCES 1
+#define WTF_COMPILER_SUPPORTS_CXX_VARIADIC_TEMPLATES 1
+#endif
+#if GCC_VERSION_AT_LEAST(4, 4, 0)
 #define WTF_COMPILER_SUPPORTS_CXX_DELETED_FUNCTIONS 1
+#endif
+#if GCC_VERSION_AT_LEAST(4, 5, 0)
+#define WTF_COMPILER_SUPPORTS_CXX_EXPLICIT_CONVERSIONS 1
+#endif
+#if GCC_VERSION_AT_LEAST(4, 6, 0)
 #define WTF_COMPILER_SUPPORTS_CXX_NULLPTR 1
+/* Strong enums should work from gcc 4.4, but doesn't seem to support some operators */
+#define WTF_COMPILER_SUPPORTS_CXX_STRONG_ENUMS 1
+#endif
+#if GCC_VERSION_AT_LEAST(4, 7, 0)
 #define WTF_COMPILER_SUPPORTS_CXX_OVERRIDE_CONTROL 1
-
-#elif GCC_VERSION_AT_LEAST(4, 6, 0) && defined(__GXX_EXPERIMENTAL_CXX0X__)
-#define WTF_COMPILER_SUPPORTS_CXX_NULLPTR 1 
 #endif
-
-#endif
+#endif /* defined(__GXX_EXPERIMENTAL_CXX0X__) || (defined(__cplusplus) && __cplusplus >= 201103L) */
+#endif /* COMPILER(GCC) */
 
 /* COMPILER(MINGW) - MinGW GCC */
 /* COMPILER(MINGW64) - mingw-w64 GCC - only used as additional check to exclude mingw.org specific functions */
