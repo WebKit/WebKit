@@ -90,15 +90,13 @@ static uint64_t physicalMemorySizeInBytes()
 
 void WebProcess::platformSetCacheModel(CacheModel cacheModel)
 {
-    QNetworkDiskCache* diskCache = qobject_cast<QNetworkDiskCache*>(m_networkAccessManager->cache());
-    ASSERT(diskCache);
-
     uint64_t physicalMemorySizeInMegabytes = physicalMemorySizeInBytes() / 1024 / 1024;
 
     // The Mac port of WebKit2 uses a fudge factor of 1000 here to account for misalignment, however,
     // that tends to overestimate the memory quite a bit (1 byte misalignment ~ 48 MiB misestimation).
     // We use 1024 * 1023 for now to keep the estimation error down to +/- ~1 MiB.
-    uint64_t freeVolumeSpace = WebCore::getVolumeFreeSizeForPath(diskCache->cacheDirectory().toLocal8Bit().constData()) / 1024 / 1023;
+    QNetworkDiskCache* diskCache = qobject_cast<QNetworkDiskCache*>(m_networkAccessManager->cache());
+    uint64_t freeVolumeSpace = !diskCache ? 0 : WebCore::getVolumeFreeSizeForPath(diskCache->cacheDirectory().toLocal8Bit().constData()) / 1024 / 1023;
 
     // The following variables are initialised to 0 because WebProcess::calculateCacheSizes might not
     // set them in some rare cases.
@@ -114,7 +112,8 @@ void WebProcess::platformSetCacheModel(CacheModel cacheModel)
                         cacheTotalCapacity, cacheMinDeadCapacity, cacheMaxDeadCapacity, deadDecodedDataDeletionInterval,
                         pageCacheCapacity, urlCacheMemoryCapacity, urlCacheDiskCapacity);
 
-    diskCache->setMaximumCacheSize(urlCacheDiskCapacity);
+    if (diskCache)
+        diskCache->setMaximumCacheSize(urlCacheDiskCapacity);
 
     memoryCache()->setCapacities(cacheMinDeadCapacity, cacheMaxDeadCapacity, cacheTotalCapacity);
     memoryCache()->setDeadDecodedDataDeletionInterval(deadDecodedDataDeletionInterval);
@@ -138,17 +137,20 @@ static void parentProcessDiedCallback(void*)
 void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::MessageDecoder&)
 {
     m_networkAccessManager = new QtNetworkAccessManager(this);
-    ASSERT(!parameters.cookieStorageDirectory.isEmpty() && !parameters.cookieStorageDirectory.isNull());
-    WebCore::SharedCookieJarQt* jar = WebCore::SharedCookieJarQt::create(parameters.cookieStorageDirectory);
-    m_networkAccessManager->setCookieJar(jar);
-    // Do not let QNetworkAccessManager delete the jar.
-    jar->setParent(0);
 
-    ASSERT(!parameters.diskCacheDirectory.isEmpty() && !parameters.diskCacheDirectory.isNull());
-    QNetworkDiskCache* diskCache = new QNetworkDiskCache();
-    diskCache->setCacheDirectory(parameters.diskCacheDirectory);
-    // The m_networkAccessManager takes ownership of the diskCache object upon the following call.
-    m_networkAccessManager->setCache(diskCache);
+    if (!parameters.cookieStorageDirectory.isEmpty()) {
+        WebCore::SharedCookieJarQt* jar = WebCore::SharedCookieJarQt::create(parameters.cookieStorageDirectory);
+        m_networkAccessManager->setCookieJar(jar);
+        // Do not let QNetworkAccessManager delete the jar.
+        jar->setParent(0);
+    }
+
+    if (!parameters.diskCacheDirectory.isEmpty()) {
+        QNetworkDiskCache* diskCache = new QNetworkDiskCache();
+        diskCache->setCacheDirectory(parameters.diskCacheDirectory);
+        // The m_networkAccessManager takes ownership of the diskCache object upon the following call.
+        m_networkAccessManager->setCache(diskCache);
+    }
 
 #if defined(Q_OS_MACX)
     pid_t ppid = getppid();

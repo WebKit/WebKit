@@ -1,3 +1,18 @@
+2013-03-13  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [WK2][Qt] Regression(145517) WebProcess asserts in debug build on WebKitTestRunner start
+        https://bugs.webkit.org/show_bug.cgi?id=112223
+
+        Reviewed by Simon Hausmann.
+
+        We need to only enable the cookie jar and the disk cache conditionally
+        in the web process since we removed default paths and WKTR doesn't provide
+        them.
+
+        * WebProcess/qt/WebProcessQt.cpp:
+        (WebKit::WebProcess::platformSetCacheModel):
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2013-03-12  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [EFL][WK2] ewk_popup_menu_close() does not work as intended
