@@ -1,5 +1,28 @@
 2013-03-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r139788
+
+    2013-01-15  Elliott Sprehn  <esprehn@chromium.org>
+
+            Heap-use-after-free in WebCore::RenderObject::willBeRemovedFromTree
+            https://bugs.webkit.org/show_bug.cgi?id=106384
+
+            Reviewed by Abhishek Arya.
+
+            Always walk up from beforeChild until the parent() is the owner of the
+            child list, otherwise we can end up in situations where
+            newChild->parent() == owner but newChild->nextSibling()->parent() != owner
+            which is a recipe for security bugs. Previously we only walked up through
+            anonymous blocks, but missed anonymous inline blocks like those generated
+            by <ruby>.
+
+            Test: fast/css-generated-content/bug-106384.html
+
+            * rendering/RenderObjectChildList.cpp:
+            (WebCore::RenderObjectChildList::insertChildNode):
+
+2013-03-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r139551
 
     2013-01-12  Gavin Peters  <gavinp@chromium.org>

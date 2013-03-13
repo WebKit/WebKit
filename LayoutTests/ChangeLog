@@ -1,5 +1,22 @@
 2013-03-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r139788
+
+    2013-01-15  Elliott Sprehn  <esprehn@chromium.org>
+
+            Heap-use-after-free in WebCore::RenderObject::willBeRemovedFromTree
+            https://bugs.webkit.org/show_bug.cgi?id=106384
+
+            Reviewed by Abhishek Arya.
+
+            Add a test for <ruby> and generated content causing asserts and
+            crashes.
+
+            * fast/css-generated-content/bug-106384-expected.txt: Added.
+            * fast/css-generated-content/bug-106384.html: Added.
+
+2013-03-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r139457
 
     2013-01-11  Florin Malita  <fmalita@chromium.org>

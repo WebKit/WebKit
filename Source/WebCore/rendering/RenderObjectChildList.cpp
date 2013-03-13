@@ -156,9 +156,16 @@ void RenderObjectChildList::insertChildNode(RenderObject* owner, RenderObject* c
     }
 
     ASSERT(!child->parent());
-    while (beforeChild->parent() != owner && beforeChild->parent()->isAnonymousBlock())
+    while (beforeChild->parent() && beforeChild->parent() != owner)
         beforeChild = beforeChild->parent();
-    ASSERT(beforeChild->parent() == owner);
+
+    // This should never happen, but if it does prevent render tree corruption
+    // where child->parent() ends up being owner but child->nextSibling()->parent()
+    // is not owner.
+    if (beforeChild->parent() != owner) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
     ASSERT(!owner->isBlockFlow() || (!child->isTableSection() && !child->isTableRow() && !child->isTableCell()));
 
