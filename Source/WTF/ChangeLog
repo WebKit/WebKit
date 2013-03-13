@@ -1,3 +1,21 @@
+2013-03-13  James Robinson  <jamesr@chromium.org>
+
+        SchedulePair.cpp is CF-specific
+        https://bugs.webkit.org/show_bug.cgi?id=112204
+
+        Reviewed by Oliver Hunt.
+
+        This renames SchedulePair.cpp SchedulePairCF.cpp, since it depends on CF, and excludes it from chromium's gyp
+        files.
+
+        * WTF.gyp/WTF.gyp:
+          Add CF to the exclusion filter for the Chromium port.
+        * WTF.gypi:
+          Add SchedulePairCF.cpp
+        * WTF.xcodeproj/project.pbxproj:
+          Update project file to point to new .cpp location
+        * wtf/SchedulePairCF.cpp: Renamed from Source/WTF/wtf/SchedulePair.cpp.
+
 2013-03-13  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Support C++11 features in GCC <4.6

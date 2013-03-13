@@ -35,8 +35,8 @@
 		1469419216EAAF6D0024E146 /* RunLoopTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1469419016EAAF6D0024E146 /* RunLoopTimer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1469419316EAAF6D0024E146 /* RunLoopTimerCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1469419116EAAF6D0024E146 /* RunLoopTimerCF.cpp */; };
 		1469419616EAAFF80024E146 /* SchedulePair.h in Headers */ = {isa = PBXBuildFile; fileRef = 1469419416EAAFF80024E146 /* SchedulePair.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1469419916EAB0410024E146 /* SchedulePairCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1469419816EAB0410024E146 /* SchedulePairCF.cpp */; };
 		1469419716EAAFF80024E146 /* SchedulePairMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1469419516EAAFF80024E146 /* SchedulePairMac.mm */; };
-		1469419916EAB0410024E146 /* SchedulePair.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1469419816EAB0410024E146 /* SchedulePair.cpp */; };
 		1469419C16EAB10A0024E146 /* AutodrainedPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 1469419A16EAB10A0024E146 /* AutodrainedPool.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1469419D16EAB10A0024E146 /* AutodrainedPoolMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1469419B16EAB10A0024E146 /* AutodrainedPoolMac.mm */; };
 		149EF16316BBFE0D000A4331 /* TriState.h in Headers */ = {isa = PBXBuildFile; fileRef = 149EF16216BBFE0D000A4331 /* TriState.h */; settings = {ATTRIBUTES = (); }; };
@@ -345,8 +345,8 @@
 		1469419016EAAF6D0024E146 /* RunLoopTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RunLoopTimer.h; sourceTree = "<group>"; };
 		1469419116EAAF6D0024E146 /* RunLoopTimerCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RunLoopTimerCF.cpp; sourceTree = "<group>"; };
 		1469419416EAAFF80024E146 /* SchedulePair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchedulePair.h; sourceTree = "<group>"; };
+		1469419816EAB0410024E146 /* SchedulePairCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SchedulePairCF.cpp; sourceTree = "<group>"; };
 		1469419516EAAFF80024E146 /* SchedulePairMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SchedulePairMac.mm; sourceTree = "<group>"; };
-		1469419816EAB0410024E146 /* SchedulePair.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SchedulePair.cpp; sourceTree = "<group>"; };
 		1469419A16EAB10A0024E146 /* AutodrainedPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutodrainedPool.h; sourceTree = "<group>"; };
 		1469419B16EAB10A0024E146 /* AutodrainedPoolMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AutodrainedPoolMac.mm; sourceTree = "<group>"; };
 		149EF16216BBFE0D000A4331 /* TriState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TriState.h; sourceTree = "<group>"; };
@@ -851,7 +851,7 @@
 				1469419116EAAF6D0024E146 /* RunLoopTimerCF.cpp */,
 				14F3B0F615E45E4600210069 /* SaturatedArithmetic.h */,
 				1469419416EAAFF80024E146 /* SchedulePair.h */,
-				1469419816EAB0410024E146 /* SchedulePair.cpp */,
+				1469419816EAB0410024E146 /* SchedulePairCF.cpp */,
 				1469419516EAAFF80024E146 /* SchedulePairMac.mm */,
 				A8A47306151A825B004123FF /* SegmentedVector.h */,
 				A8A47307151A825B004123FF /* SentinelLinkedList.h */,
@@ -1412,7 +1412,7 @@
 				A8A4743C151A825B004123FF /* StringBuilder.cpp in Sources */,
 				A8A47440151A825B004123FF /* StringImpl.cpp in Sources */,
 				0FDDBFA71666DFA300C55FEF /* StringPrintStream.cpp in Sources */,
-				1469419916EAB0410024E146 /* SchedulePair.cpp in Sources */,
+				1469419916EAB0410024E146 /* SchedulePairCF.cpp in Sources */,
 				A8A47443151A825B004123FF /* StringStatics.cpp in Sources */,
 				A8A473B7151A825B004123FF /* strtod.cc in Sources */,
 				A8A47431151A825B004123FF /* TCSystemAlloc.cpp in Sources */,

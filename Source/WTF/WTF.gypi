@@ -204,6 +204,7 @@
             'wtf/RunLoopTimerCF.cpp',
             'wtf/SHA1.cpp',
             'wtf/SHA1.h',
+            'wtf/SchedulePairCF.cpp',
             'wtf/SchedulePairMac.mm',
             'wtf/SegmentedVector.h',
             'wtf/SizeLimits.cpp',

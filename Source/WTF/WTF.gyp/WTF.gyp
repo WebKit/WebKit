@@ -116,7 +116,7 @@
         ['exclude', '../wtf/unicode/qt4'],
         ['exclude', '../wtf/unicode/wchar'],
         ['exclude', '/(gtk|gobject)/.*\\.(cpp|h)$'],
-        ['exclude', '(Default|Gtk|Mac|None|Qt|Win|Wx|Efl)\\.(cpp|mm)$'],
+        ['exclude', '(Default|CF|Gtk|Mac|None|Qt|Win|Wx|Efl)\\.(cpp|mm)$'],
         ['exclude', 'wtf/OSRandomSource\\.cpp$'],
         ['exclude', 'wtf/MainThread.cpp$'],
         ['exclude', 'wtf/MetaAllocator\\.(cpp|h)$'],
