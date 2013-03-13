@@ -215,6 +215,7 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
     case PseudoLang:
     case PseudoNot:
     case PseudoRoot:
+    case PseudoScope:
     case PseudoScrollbarBack:
     case PseudoScrollbarForward:
     case PseudoWindowInactive:
@@ -341,6 +342,7 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
 #endif
     DEFINE_STATIC_LOCAL(AtomicString, inRange, ("in-range", AtomicString::ConstructFromLiteral));
     DEFINE_STATIC_LOCAL(AtomicString, outOfRange, ("out-of-range", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(AtomicString, scope, ("scope", AtomicString::ConstructFromLiteral));
 
     static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoType = 0;
     if (!nameToPseudoType) {
@@ -395,6 +397,7 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
         nameToPseudoType->set(optional.impl(), CSSSelector::PseudoOptional);
         nameToPseudoType->set(required.impl(), CSSSelector::PseudoRequired);
         nameToPseudoType->set(resizer.impl(), CSSSelector::PseudoResizer);
+        nameToPseudoType->set(scope.impl(), CSSSelector::PseudoScope);
         nameToPseudoType->set(scrollbar.impl(), CSSSelector::PseudoScrollbar);
         nameToPseudoType->set(scrollbarButton.impl(), CSSSelector::PseudoScrollbarButton);
         nameToPseudoType->set(scrollbarCorner.impl(), CSSSelector::PseudoScrollbarCorner);
@@ -520,6 +523,7 @@ void CSSSelector::extractPseudoType() const
     case PseudoRequired:
     case PseudoReadOnly:
     case PseudoReadWrite:
+    case PseudoScope:
     case PseudoValid:
     case PseudoInvalid:
     case PseudoIndeterminate:

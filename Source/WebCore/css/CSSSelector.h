@@ -127,6 +127,7 @@ namespace WebCore {
             PseudoNot,
             PseudoResizer,
             PseudoRoot,
+            PseudoScope,
             PseudoScrollbar,
             PseudoScrollbarBack,
             PseudoScrollbarButton,

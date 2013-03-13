@@ -50,7 +50,7 @@ void SelectorDataList::initialize(const CSSSelectorList& selectorList)
         m_selectors.uncheckedAppend(SelectorData(selector, SelectorCheckerFastPath::canUse(selector)));
 }
 
-inline bool SelectorDataList::selectorMatches(const SelectorData& selectorData, Element* element) const
+inline bool SelectorDataList::selectorMatches(const SelectorData& selectorData, Element* element, const Node* rootNode) const
 {
     if (selectorData.isFastCheckable && !element->isSVGElement()) {
         SelectorCheckerFastPath selectorCheckerFastPath(selectorData.selector, element);
@@ -61,6 +61,8 @@ inline bool SelectorDataList::selectorMatches(const SelectorData& selectorData, 
 
     SelectorChecker selectorChecker(element->document(), SelectorChecker::QueryingRules);
     SelectorChecker::SelectorCheckingContext selectorCheckingContext(selectorData.selector, element, SelectorChecker::VisitedMatchDisabled);
+    selectorCheckingContext.behaviorAtBoundary = SelectorChecker::StaysWithinTreeScope;
+    selectorCheckingContext.scope = !rootNode->isDocumentNode() && rootNode->isContainerNode() ? toContainerNode(rootNode) : 0;
     PseudoId ignoreDynamicPseudo = NOPSEUDO;
     return selectorChecker.match(selectorCheckingContext, ignoreDynamicPseudo, DOMSiblingTraversalStrategy()) == SelectorChecker::SelectorMatches;
 }
@@ -71,7 +73,7 @@ bool SelectorDataList::matches(Element* targetElement) const
 
     unsigned selectorCount = m_selectors.size();
     for (unsigned i = 0; i < selectorCount; ++i) {
-        if (selectorMatches(m_selectors[i], targetElement))
+        if (selectorMatches(m_selectors[i], targetElement, targetElement))
             return true;
     }
 
@@ -128,7 +130,7 @@ void SelectorDataList::execute(Node* rootNode, Vector<RefPtr<Node> >& matchedEle
         Element* element = rootNode->treeScope()->getElementById(selector->value());
         if (!element || !(isTreeScopeRoot(rootNode) || element->isDescendantOf(rootNode)))
             return;
-        if (selectorMatches(m_selectors[0], element))
+        if (selectorMatches(m_selectors[0], element, rootNode))
             matchedElements.append(element);
         return;
     }
@@ -140,7 +142,7 @@ void SelectorDataList::execute(Node* rootNode, Vector<RefPtr<Node> >& matchedEle
         if (n->isElementNode()) {
             Element* element = static_cast<Element*>(n);
             for (unsigned i = 0; i < selectorCount; ++i) {
-                if (selectorMatches(m_selectors[i], element)) {
+                if (selectorMatches(m_selectors[i], element, rootNode)) {
                     matchedElements.append(element);
                     if (firstMatchOnly)
                         return;

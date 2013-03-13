@@ -126,7 +126,7 @@ SelectorChecker::Match SelectorChecker::match(const SelectorCheckingContext& con
     PseudoId ignoreDynamicPseudo = NOPSEUDO;
     if (relation != CSSSelector::SubSelector) {
         // Abort if the next selector would exceed the scope.
-        if (context.element == context.scope)
+        if (context.element == context.scope && context.behaviorAtBoundary != StaysWithinTreeScope)
             return SelectorFailsCompletely;
 
         // Bail-out if this selector is irrelevant for the pseudoId
@@ -149,7 +149,7 @@ SelectorChecker::Match SelectorChecker::match(const SelectorCheckingContext& con
             Match match = this->match(nextContext, ignoreDynamicPseudo, siblingTraversalStrategy);
             if (match == SelectorMatches || match == SelectorFailsCompletely)
                 return match;
-            if (nextContext.element == nextContext.scope)
+            if (nextContext.element == nextContext.scope && nextContext.behaviorAtBoundary != StaysWithinTreeScope)
                 return SelectorFailsCompletely;
         }
         return SelectorFailsCompletely;
@@ -205,7 +205,7 @@ SelectorChecker::Match SelectorChecker::match(const SelectorCheckingContext& con
     case CSSSelector::ShadowDescendant:
         {
             // If we're in the same tree-scope as the scoping element, then following a shadow descendant combinator would escape that and thus the scope.
-            if (context.scope && context.scope->treeScope() == context.element->treeScope())
+            if (context.scope && context.scope->treeScope() == context.element->treeScope() && context.behaviorAtBoundary != StaysWithinTreeScope)
                 return SelectorFailsCompletely;
             Element* shadowHostNode = context.element->shadowHost();
             if (!shadowHostNode)
@@ -733,6 +733,14 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context, const Sib
         case CSSSelector::PseudoPastCue:
             return (element->isWebVTTElement() && toWebVTTElement(element)->isPastNode());
 #endif
+
+        case CSSSelector::PseudoScope:
+            {
+                const Node* contextualReferenceNode = !context.scope || context.behaviorAtBoundary == CrossesBoundary ? element->document()->documentElement() : context.scope;
+                if (element == contextualReferenceNode)
+                    return true;
+                break;
+            }
 
         case CSSSelector::PseudoHorizontal:
         case CSSSelector::PseudoVertical:
