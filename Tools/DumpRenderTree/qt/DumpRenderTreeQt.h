@@ -41,12 +41,14 @@
 #endif
 
 #include "DumpRenderTreeSupportQt.h"
+#include "TestRunner.h"
 #include <qgraphicsview.h>
 #include <qgraphicswebview.h>
 #include <qwebframe.h>
 #include <qwebinspector.h>
 #include <qwebpage.h>
 #include <qwebview.h>
+#include <wtf/RefPtr.h>
 
 QT_BEGIN_NAMESPACE
 class QUrl;
@@ -144,6 +146,7 @@ private:
     QString dumpBackForwardList(QWebPage* page);
     QString dumpFrameScrollPosition(QWebFrame* frame);
     TestRunnerQt *m_controller;
+    RefPtr<TestRunner> m_jscController;
 
     bool m_dumpPixelsForCurrentTest;
     bool m_dumpPixelsForAllTests;

@@ -48,6 +48,10 @@ TestRunnerQt::TestRunnerQt(WebCore::DumpRenderTree* drt)
     reset();
 }
 
+TestRunner::~TestRunner()
+{
+}
+
 void TestRunnerQt::reset()
 {
     m_hasDumped = false;
@@ -926,3 +930,427 @@ void TestRunnerQt::setAudioData(const QByteArray& audioData)
 
 const unsigned TestRunnerQt::maxViewWidth = 800;
 const unsigned TestRunnerQt::maxViewHeight = 600;
+
+// --- JSC C API stubs
+
+void TestRunner::addDisallowedURL(JSStringRef url)
+{
+}
+
+void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
+{
+}
+
+void TestRunner::removeAllVisitedLinks()
+{
+}
+
+void TestRunner::setAcceptsEditing(bool)
+{
+}
+
+void TestRunner::simulateLegacyWebNotificationClick(JSStringRef title)
+{
+}
+
+void TestRunner::setWindowIsKey(bool)
+{
+}
+
+void TestRunner::setAlwaysAcceptCookies(bool)
+{
+}
+
+void TestRunner::addOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
+{
+}
+
+void TestRunner::setWebViewEditable(bool)
+{
+}
+
+void TestRunner::clearAllApplicationCaches()
+{
+}
+
+void TestRunner::setTextDirection(JSStringRef)
+{
+}
+
+void TestRunner::notifyDone()
+{
+}
+
+int TestRunner::numberOfPendingGeolocationPermissionRequests()
+{
+    return 0;
+}
+
+void TestRunner::overridePreference(JSStringRef key, JSStringRef value)
+{
+}
+
+JSStringRef TestRunner::pathToLocalResource(JSContextRef, JSStringRef url)
+{
+    return JSStringCreateWithUTF8CString(0); // ### Take impl from WTR
+}
+
+void TestRunner::removeAllWebNotificationPermissions()
+{
+}
+
+void TestRunner::simulateWebNotificationClick(JSValueRef notification)
+{
+}
+
+void TestRunner::closeIdleLocalStorageDatabases()
+{
+}
+
+void TestRunner::focusWebView()
+{
+}
+
+void TestRunner::setBackingScaleFactor(double)
+{
+}
+
+void TestRunner::removeChromeInputField()
+{
+}
+
+void TestRunner::addChromeInputField()
+{
+}
+
+JSValueRef TestRunner::originsWithLocalStorage(JSContextRef context)
+{
+    return JSValueMakeNull(context);
+}
+
+void TestRunner::deleteAllLocalStorage()
+{
+}
+
+void TestRunner::deleteLocalStorageForOrigin(JSStringRef originIdentifier)
+{
+}
+
+void TestRunner::observeStorageTrackerNotifications(unsigned number)
+{
+}
+
+void TestRunner::syncLocalStorage()
+{
+}
+
+int TestRunner::windowCount()
+{
+    return 0;
+}
+
+void TestRunner::setWaitToDump(bool)
+{
+}
+
+void TestRunner::waitForPolicyDelegate()
+{
+}
+
+size_t TestRunner::webHistoryItemCount()
+{
+    return 0;
+}
+
+void TestRunner::showWebInspector()
+{
+}
+
+void TestRunner::closeWebInspector()
+{
+}
+
+void TestRunner::evaluateInWebInspector(long callId, JSStringRef script)
+{
+}
+
+void TestRunner::setSerializeHTTPLoads(bool)
+{
+}
+
+void TestRunner::apiTestNewWindowDataLoadBaseURL(JSStringRef utf8Data, JSStringRef baseURL)
+{
+}
+
+void TestRunner::setCustomPolicyDelegate(bool setDelegate, bool permissive)
+{
+}
+
+void TestRunner::setDatabaseQuota(unsigned long long quota)
+{
+}
+
+void TestRunner::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme)
+{
+}
+
+void TestRunner::resetPageVisibility()
+{
+}
+
+void TestRunner::keepWebHistory()
+{
+}
+
+void TestRunner::goBack()
+{
+}
+
+JSValueRef TestRunner::originsWithApplicationCache(JSContextRef context)
+{
+    return JSValueMakeNull(context);
+}
+
+long long TestRunner::applicationCacheDiskUsageForOrigin(JSStringRef name)
+{
+    return 0;
+}
+
+void TestRunner::display()
+{
+}
+
+void TestRunner::dispatchPendingLoadRequests()
+{
+}
+
+void TestRunner::clearPersistentUserStyleSheet()
+{
+}
+
+bool TestRunner::callShouldCloseOnWebView()
+{
+    return false;
+}
+
+JSStringRef TestRunner::copyDecodedHostName(JSStringRef name)
+{
+    return JSStringCreateWithUTF8CString(0);
+}
+
+void TestRunner::clearBackForwardList()
+{
+}
+
+void TestRunner::clearAllDatabases()
+{
+}
+
+void TestRunner::clearApplicationCacheForOrigin(JSStringRef name)
+{
+}
+
+void TestRunner::apiTestGoToCurrentBackForwardItem()
+{
+}
+
+void TestRunner::authenticateSession(JSStringRef url, JSStringRef username, JSStringRef password)
+{
+}
+
+void TestRunner::abortModal()
+{
+}
+
+void TestRunner::setStorageDatabaseIdleInterval(double)
+{
+}
+
+void TestRunner::setAsynchronousSpellCheckingEnabled(bool)
+{
+}
+
+void TestRunner::setXSSAuditorEnabled(bool flag)
+{
+}
+
+void TestRunner::setSpatialNavigationEnabled(bool)
+{
+}
+
+void TestRunner::setScrollbarPolicy(JSStringRef orientation, JSStringRef policy)
+{
+}
+
+void TestRunner::setJavaScriptCanAccessClipboard(bool flag)
+{
+}
+
+void TestRunner::setAutomaticLinkDetectionEnabled(bool flag)
+{
+}
+
+void TestRunner::setUserStyleSheetEnabled(bool flag)
+{
+}
+
+void TestRunner::setUserStyleSheetLocation(JSStringRef path)
+{
+}
+
+void TestRunner::setUseDashboardCompatibilityMode(bool flag)
+{
+}
+
+void TestRunner::setTabKeyCyclesThroughElements(bool)
+{
+}
+
+void TestRunner::setSmartInsertDeleteEnabled(bool)
+{
+}
+
+void TestRunner::setSelectTrailingWhitespaceEnabled(bool)
+{
+}
+
+void TestRunner::setPrivateBrowsingEnabled(bool)
+{
+}
+
+void TestRunner::setPluginsEnabled(bool)
+{
+}
+
+void TestRunner::setPopupBlockingEnabled(bool)
+{
+}
+
+void TestRunner::setMockSpeechInputDumpRect(bool flag)
+{
+}
+
+void TestRunner::setPersistentUserStyleSheetLocation(JSStringRef path)
+{
+}
+
+void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed)
+{
+}
+
+void TestRunner::setMockGeolocationPositionUnavailableError(JSStringRef message)
+{
+}
+
+void TestRunner::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
+{
+}
+
+void TestRunner::setMainFrameIsFirstResponder(bool flag)
+{
+}
+
+void TestRunner::setIconDatabaseEnabled(bool)
+{
+}
+
+void TestRunner::setGeolocationPermission(bool allow)
+{
+}
+
+void TestRunner::setDefersLoading(bool)
+{
+}
+
+void TestRunner::setCacheModel(int)
+{
+}
+
+void TestRunner::setAuthorAndUserStylesEnabled(bool)
+{
+}
+
+void TestRunner::setAllowFileAccessFromFileURLs(bool)
+{
+}
+
+void TestRunner::setAppCacheMaximumSize(unsigned long long quota)
+{
+}
+
+void TestRunner::setAllowUniversalAccessFromFileURLs(bool)
+{
+}
+
+void TestRunner::setApplicationCacheOriginQuota(unsigned long long)
+{
+}
+
+void TestRunner::denyWebNotificationPermission(JSStringRef origin)
+{
+}
+
+void TestRunner::grantWebNotificationPermission(JSStringRef origin)
+{
+}
+
+void TestRunner::setValueForUser(JSContextRef, JSValueRef nodeObject, JSStringRef value)
+{
+}
+
+void TestRunner::setViewModeMediaFeature(JSStringRef)
+{
+}
+
+void TestRunner::setPageVisibility(const char *)
+{
+}
+
+void TestRunner::addMockSpeechInputResult(JSStringRef result, double confidence, JSStringRef language)
+{
+}
+
+void TestRunner::removeOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains)
+{
+}
+
+void TestRunner::addUserScript(JSStringRef source, bool runAtStart, bool allFrames)
+{
+}
+
+bool TestRunner::isCommandEnabled(JSStringRef name)
+{
+    return false;
+}
+
+void TestRunner::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
+{
+}
+
+void TestRunner::evaluateScriptInIsolatedWorldAndReturnValue(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
+{
+}
+
+JSStringRef TestRunner::copyEncodedHostName(JSStringRef name)
+{
+    return JSStringCreateWithUTF8CString(0);
+}
+
+void TestRunner::addUserStyleSheet(JSStringRef source, bool allFrames)
+{
+}
+
+bool TestRunner::findString(JSContextRef, JSStringRef, JSObjectRef optionsArray)
+{
+    return false;
+}
+
+void TestRunner::execCommand(JSStringRef name, JSStringRef value)
+{
+}
+
+long long TestRunner::localStorageDiskUsageForOrigin(JSStringRef originIdentifier)
+{
+    return 0;
+}
+

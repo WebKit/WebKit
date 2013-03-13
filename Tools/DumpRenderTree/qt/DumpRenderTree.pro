@@ -27,6 +27,7 @@ HEADERS += \
     $$PWD/../WorkQueue.h \
     $$PWD/../DumpRenderTree.h \
     $$PWD/../GCController.h \
+    $$PWD/../TextRunner.h \
     DumpRenderTreeQt.h \
     EventSenderQt.h \
     TextInputControllerQt.h \
@@ -38,6 +39,7 @@ SOURCES += \
     $$PWD/../WorkQueue.cpp \
     $$PWD/../DumpRenderTreeCommon.cpp \
     $$PWD/../GCController.cpp \
+    $$PWD/../TestRunner.cpp \
     DumpRenderTreeQt.cpp \
     EventSenderQt.cpp \
     TextInputControllerQt.cpp \

@@ -38,7 +38,9 @@
 #include "GCController.h"
 #include "InitWebCoreQt.h"
 #include "InitWebKitQt.h"
+#include "JSStringRefQt.h"
 #include "QtTestSupport.h"
+#include "TestRunner.h"
 #include "TestRunnerQt.h"
 #include "TextInputControllerQt.h"
 #include "testplugin.h"
@@ -524,6 +526,8 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting(const QUrl& url)
     // of the DRT.
     m_controller->reset();
 
+    m_jscController = TestRunner::create(url.toString().toStdString(), m_expectedHash.toStdString());
+
     // reset mouse clicks counter
     m_eventSender->resetClickCount();
 
@@ -745,6 +749,40 @@ void DumpRenderTree::initJSObjects()
     frame->addToJavaScriptWindowObject(QLatin1String("eventSender"), m_eventSender);
     frame->addToJavaScriptWindowObject(QLatin1String("textInputController"), m_textInputController);
     m_gcController->makeWindowObject(context, window, 0);
+
+    if (m_jscController) {
+        JSObjectRef dummyWindow = JSObjectMake(context, 0, 0);
+        m_jscController->makeWindowObject(context, dummyWindow, 0);
+        JSRetainPtr<JSStringRef> testRunnerName(Adopt, JSStringCreateWithUTF8CString("testRunner"));
+        JSValueRef wrappedTestRunner = JSObjectGetProperty(context, dummyWindow, testRunnerName.get(), 0);
+        JSRetainPtr<JSStringRef> helperScript(Adopt, JSStringCreateWithUTF8CString("(function() {\n"
+                                                                                   "    function bind(fun, thisArg) {\n"
+                                                                                   "        return function() {\n"
+                                                                                   "            return fun.apply(thisArg, Array.prototype.slice.call(arguments));\n"
+                                                                                   "        }\n"
+                                                                                   "    }\n"
+                                                                                   "for (var prop in this.jscBasedTestRunner) {\n"
+                                                                                   "    var pd = Object.getOwnPropertyDescriptor(this.qtBasedTestRunner, prop);\n"
+                                                                                   "    if (pd !== undefined) continue;\n"
+                                                                                   "    pd = Object.getOwnPropertyDescriptor(this.jscBasedTestRunner, prop);\n"
+                                                                                   "    this.qtBasedTestRunner[prop] = bind(this.jscBasedTestRunner[prop], this.jscBasedTestRunner);\n"
+                                                                                   "}\n"
+                                                                                   "}).apply(this)\n"));
+
+        JSRetainPtr<JSStringRef> qtBasedTestRunnerName(Adopt, JSStringCreateWithUTF8CString("qtBasedTestRunner"));
+        JSRetainPtr<JSStringRef> jscBasedTestRunnerName(Adopt, JSStringCreateWithUTF8CString("jscBasedTestRunner"));
+
+        JSObjectRef args = JSObjectMake(context, 0, 0);
+        JSObjectSetProperty(context, args, qtBasedTestRunnerName.get(), JSObjectGetProperty(context, window, testRunnerName.get(), 0), 0, 0);
+        JSObjectSetProperty(context, args, jscBasedTestRunnerName.get(), wrappedTestRunner, 0, 0);
+
+        JSValueRef ex = 0;
+        JSEvaluateScript(context, helperScript.get(), args, 0, 0, &ex);
+        if (ex) {
+            JSRetainPtr<JSStringRef> msg(Adopt, JSValueToStringCopy(context, ex, 0));
+            fprintf(stderr, "Error evaluating TestRunner setup-script: %s\n", qPrintable(JSStringCopyQString(msg.get())));
+        }
+    }
 
     DumpRenderTreeSupportQt::injectInternalsObject(frame->handle());
 }

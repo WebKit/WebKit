@@ -1,3 +1,139 @@
+2013-03-12  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Prepare DRT for transition to shared TestRunner interface
+        https://bugs.webkit.org/show_bug.cgi?id=112144
+
+        Reviewed by Benjamin Poulain.
+
+        Prepare Qt's DRT for a transition from the QObject based TestRunner to
+        the JSC C API based one.
+
+        This is impplemented by instantiating the QObject based testRunner in
+        the global object, then instantiating the JSC C based TestRunner
+        separately and placing it "behind" the QObject based testRunner through
+        injection of the individual functions through proxies. (prototype
+        chaining doesn't work due to the this object and Function.prototype.bind
+        doesn't work due to the native function)
+
+        This allows for porting over method by method by removing the method
+        from the QObject TestRunnerQt and implementing it in the JSC C based
+        TestRunner.
+
+        In order for this to link and run dummy implementations of all the
+        necessary TestRunner functions are provided.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/DumpRenderTreeMain.cpp:
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::resetToConsistentStateBeforeTesting):
+        (WebCore::DumpRenderTree::initJSObjects):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        (DumpRenderTree):
+        * DumpRenderTree/qt/TestRunnerQt.cpp:
+        (TestRunner::~TestRunner):
+        (TestRunner::addDisallowedURL):
+        (TestRunner::queueLoad):
+        (TestRunner::removeAllVisitedLinks):
+        (TestRunner::setAcceptsEditing):
+        (TestRunner::simulateLegacyWebNotificationClick):
+        (TestRunner::setWindowIsKey):
+        (TestRunner::setAlwaysAcceptCookies):
+        (TestRunner::addOriginAccessWhitelistEntry):
+        (TestRunner::setWebViewEditable):
+        (TestRunner::clearAllApplicationCaches):
+        (TestRunner::setTextDirection):
+        (TestRunner::notifyDone):
+        (TestRunner::numberOfPendingGeolocationPermissionRequests):
+        (TestRunner::overridePreference):
+        (TestRunner::pathToLocalResource):
+        (TestRunner::removeAllWebNotificationPermissions):
+        (TestRunner::simulateWebNotificationClick):
+        (TestRunner::closeIdleLocalStorageDatabases):
+        (TestRunner::focusWebView):
+        (TestRunner::setBackingScaleFactor):
+        (TestRunner::removeChromeInputField):
+        (TestRunner::addChromeInputField):
+        (TestRunner::originsWithLocalStorage):
+        (TestRunner::deleteAllLocalStorage):
+        (TestRunner::deleteLocalStorageForOrigin):
+        (TestRunner::observeStorageTrackerNotifications):
+        (TestRunner::syncLocalStorage):
+        (TestRunner::windowCount):
+        (TestRunner::setWaitToDump):
+        (TestRunner::waitForPolicyDelegate):
+        (TestRunner::webHistoryItemCount):
+        (TestRunner::showWebInspector):
+        (TestRunner::closeWebInspector):
+        (TestRunner::evaluateInWebInspector):
+        (TestRunner::setSerializeHTTPLoads):
+        (TestRunner::apiTestNewWindowDataLoadBaseURL):
+        (TestRunner::setCustomPolicyDelegate):
+        (TestRunner::setDatabaseQuota):
+        (TestRunner::setDomainRelaxationForbiddenForURLScheme):
+        (TestRunner::resetPageVisibility):
+        (TestRunner::keepWebHistory):
+        (TestRunner::goBack):
+        (TestRunner::originsWithApplicationCache):
+        (TestRunner::applicationCacheDiskUsageForOrigin):
+        (TestRunner::display):
+        (TestRunner::dispatchPendingLoadRequests):
+        (TestRunner::clearPersistentUserStyleSheet):
+        (TestRunner::callShouldCloseOnWebView):
+        (TestRunner::copyDecodedHostName):
+        (TestRunner::clearBackForwardList):
+        (TestRunner::clearAllDatabases):
+        (TestRunner::clearApplicationCacheForOrigin):
+        (TestRunner::apiTestGoToCurrentBackForwardItem):
+        (TestRunner::authenticateSession):
+        (TestRunner::abortModal):
+        (TestRunner::setStorageDatabaseIdleInterval):
+        (TestRunner::setAsynchronousSpellCheckingEnabled):
+        (TestRunner::setXSSAuditorEnabled):
+        (TestRunner::setSpatialNavigationEnabled):
+        (TestRunner::setScrollbarPolicy):
+        (TestRunner::setJavaScriptCanAccessClipboard):
+        (TestRunner::setAutomaticLinkDetectionEnabled):
+        (TestRunner::setUserStyleSheetEnabled):
+        (TestRunner::setUserStyleSheetLocation):
+        (TestRunner::setUseDashboardCompatibilityMode):
+        (TestRunner::setTabKeyCyclesThroughElements):
+        (TestRunner::setSmartInsertDeleteEnabled):
+        (TestRunner::setSelectTrailingWhitespaceEnabled):
+        (TestRunner::setPrivateBrowsingEnabled):
+        (TestRunner::setPluginsEnabled):
+        (TestRunner::setPopupBlockingEnabled):
+        (TestRunner::setMockSpeechInputDumpRect):
+        (TestRunner::setPersistentUserStyleSheetLocation):
+        (TestRunner::setMockGeolocationPosition):
+        (TestRunner::setMockGeolocationPositionUnavailableError):
+        (TestRunner::setMockDeviceOrientation):
+        (TestRunner::setMainFrameIsFirstResponder):
+        (TestRunner::setIconDatabaseEnabled):
+        (TestRunner::setGeolocationPermission):
+        (TestRunner::setDefersLoading):
+        (TestRunner::setCacheModel):
+        (TestRunner::setAuthorAndUserStylesEnabled):
+        (TestRunner::setAllowFileAccessFromFileURLs):
+        (TestRunner::setAppCacheMaximumSize):
+        (TestRunner::setAllowUniversalAccessFromFileURLs):
+        (TestRunner::setApplicationCacheOriginQuota):
+        (TestRunner::denyWebNotificationPermission):
+        (TestRunner::grantWebNotificationPermission):
+        (TestRunner::setValueForUser):
+        (TestRunner::setViewModeMediaFeature):
+        (TestRunner::setPageVisibility):
+        (TestRunner::addMockSpeechInputResult):
+        (TestRunner::removeOriginAccessWhitelistEntry):
+        (TestRunner::addUserScript):
+        (TestRunner::isCommandEnabled):
+        (TestRunner::evaluateScriptInIsolatedWorld):
+        (TestRunner::evaluateScriptInIsolatedWorldAndReturnValue):
+        (TestRunner::copyEncodedHostName):
+        (TestRunner::addUserStyleSheet):
+        (TestRunner::findString):
+        (TestRunner::execCommand):
+        (TestRunner::localStorageDiskUsageForOrigin):
+
 2013-03-12  Julie Parent  <jparent@chromium.org>
 
         Cleanup: Move flatten-trie to loader.
