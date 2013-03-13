@@ -1,5 +1,19 @@
 2013-03-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r142657
+
+    2013-02-12  Levi Weintraub  <leviw@chromium.org>
+
+            ASSERTION FAILED: !object || object->isBox(), UNKNOWN in WebCore::RenderListItem::positionListMarker
+            https://bugs.webkit.org/show_bug.cgi?id=108699
+
+            Reviewed by Abhishek Arya.
+
+            * fast/multicol/span/list-multi-column-crash-expected.txt: Added.
+            * fast/multicol/span/list-multi-column-crash.html: Added.
+
+2013-03-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r142539
 
     2013-02-11  Emil A Eklund  <eae@chromium.org>

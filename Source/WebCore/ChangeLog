@@ -1,5 +1,25 @@
 2013-03-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r142657
+
+    2013-02-12  Levi Weintraub  <leviw@chromium.org>
+
+            ASSERTION FAILED: !object || object->isBox(), UNKNOWN in WebCore::RenderListItem::positionListMarker
+            https://bugs.webkit.org/show_bug.cgi?id=108699
+
+            Reviewed by Abhishek Arya.
+
+            RenderListItems performs special management of its children to maintain list markers. Splitting a flow
+            through a list item results in assumptions made inside RenderListItem failing, so for now, avoid splitting
+            flows when inside one.
+
+            Test: fast/multicol/span/list-multi-column-crash.html
+
+            * rendering/RenderBlock.cpp:
+            (WebCore::RenderBlock::containingColumnsBlock):
+
+2013-03-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r140558
 
     2013-01-17  Roger Fong  <roger_fong@apple.com>
