@@ -1,3 +1,24 @@
+2013-03-13  Antoine Quint  <graouts@apple.com>
+
+        Calling WebInspectorClient::highlight() during a fade-out animation of the PageOverlay won't stop its animation
+        https://bugs.webkit.org/show_bug.cgi?id=112271
+
+        Reviewed by Tim Horton.
+
+        Add a new stopFadeOutAnimation() on PageOverlay that we call when
+        WebInspectorClient::highlight() is called and a page overlay
+        is already available. This ensures that any fade-out animation
+        is cleared before proceeding with showing the page overlay
+        for the new highlight.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::highlight):
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::stopFadeOutAnimation):
+        (WebKit):
+        * WebProcess/WebPage/PageOverlay.h:
+        (PageOverlay):
+
 2013-03-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: get rid of hiddenPanels filter

@@ -68,6 +68,7 @@ public:
 
     void startFadeInAnimation();
     void startFadeOutAnimation();
+    void stopFadeOutAnimation();
 
     float fractionFadedIn() const { return m_fractionFadedIn; }
 

@@ -145,6 +145,12 @@ void PageOverlay::startFadeOutAnimation()
     startFadeAnimation();
 }
 
+void PageOverlay::stopFadeOutAnimation()
+{
+    m_fractionFadedIn = 1.0;
+    m_fadeAnimationTimer.stop();
+}
+
 void PageOverlay::startFadeAnimation()
 {
     m_fadeAnimationStartTime = currentTime();
