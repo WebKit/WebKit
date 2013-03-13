@@ -47,6 +47,8 @@ CSSImageSetValue::CSSImageSetValue()
 
 CSSImageSetValue::~CSSImageSetValue()
 {
+    if (m_imageSet && m_imageSet->isCachedImageSet())
+        static_cast<StyleCachedImageSet*>(m_imageSet.get())->clearImageSetValue();
 }
 
 void CSSImageSetValue::fillImageSet()

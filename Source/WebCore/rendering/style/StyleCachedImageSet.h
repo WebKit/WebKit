@@ -57,6 +57,8 @@ public:
 
     CachedImage* cachedImage() const { return m_bestFitImage.get(); }
 
+    void clearImageSetValue() { m_imageSetValue = 0; }
+
     virtual bool canRender(const RenderObject*, float multiplier) const;
     virtual bool isLoaded() const;
     virtual bool errorOccurred() const;
