@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2010, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -916,6 +916,61 @@ ALWAYS_INLINE bool equal(const UChar* a, const UChar* b, unsigned length)
         return false;
     
     return true;
+}
+#elif CPU(APPLE_ARMV7S)
+ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length)
+{
+    bool isEqual = false;
+    asm("lsr    r3, %[length], #2\n"
+
+        "0:\n" // Tag 0 = Start of loop over 32 bits.
+        "cbz    r3, 2f\n"
+        "ldr    r9, [%[a]], #4\n"
+        "sub    r3, #1\n"
+        "ldr    r12, [%[b]], #4\n"
+        "cmp    r9, r12\n"
+        "beq    0b\n"
+        "b      66f\n"
+
+        "2:\n" // Tag 2 = End of loop over 32 bits, check for pair of characters.
+        "tst    %[length], #2\n"
+        "beq    1f\n"
+        "ldrh   r9, [%[a]], #2\n"
+        "ldrh   r12, [%[b]], #2\n"
+        "cmp    r9, r12\n"
+        "bne    66f\n"
+
+        "1:\n" // Tag 1 = Check for a single character left.
+        "tst    %[length], #1\n"
+        "beq    42f\n"
+        "ldrb   r9, [%[a]]\n"
+        "ldrb   r12, [%[b]]\n"
+        "cmp    r9, r12\n"
+        "bne    66f\n"
+
+        "42:\n" // Tag 42 = Success.
+        "mov    %[isEqual], #1\n"
+        "66:\n" // Tag 66 = End without changing isEqual to 1.
+        : [isEqual]"+r"(isEqual), [a]"+r"(a), [b]"+r"(b)
+        : [length]"r"(length)
+        : "r3", "r9", "r12"
+        );
+    return isEqual;
+}
+
+ALWAYS_INLINE bool equal(const UChar* a, const UChar* b, unsigned length)
+{
+    return !memcmp(a, b, length);
+}
+#elif PLATFORM(IOS) && WTF_ARM_ARCH_AT_LEAST(7)
+ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length)
+{
+    return !memcmp(a, b, length);
+}
+
+ALWAYS_INLINE bool equal(const UChar* a, const UChar* b, unsigned length)
+{
+    return !memcmp(a, b, length);
 }
 #else
 ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length)

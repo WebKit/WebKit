@@ -1,3 +1,17 @@
+2013-03-13  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS] Add optimized version of StringImpl's equal(LChar*,LChar*) for Apple CPUs
+        https://bugs.webkit.org/show_bug.cgi?id=112202
+
+        Reviewed by Gavin Barraclough.
+
+        * Source/WTF/wtf/Platform.h:
+        Make the macro WTF_ARM_ARCH_VERSION valid on any architecture.
+        * wtf/text/StringImpl.h:
+        (WTF::equal):
+        On ARMv7S, the new version is about 11% percent faster than the simple loop.
+        On ARMv7 classic, memcmp is a little faster than the simple loop on Apple A5.
+
 2013-03-13  James Robinson  <jamesr@chromium.org>
 
         SchedulePair.cpp is CF-specific
