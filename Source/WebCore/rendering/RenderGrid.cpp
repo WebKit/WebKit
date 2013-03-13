@@ -78,6 +78,8 @@ public:
         , m_columnIndex((direction == ForColumns) ? fixedTrackIndex : 0)
         , m_childIndex(0)
     {
+        ASSERT(m_rowIndex < m_grid.size());
+        ASSERT(m_columnIndex < m_grid[0].size());
     }
 
     RenderBox* nextGridItem()
@@ -190,10 +192,13 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
 {
     const_cast<RenderGrid*>(this)->placeItemsOnGrid();
 
-    const Vector<GridTrackSize>& trackStyles = style()->gridColumns();
-    for (size_t i = 0; i < trackStyles.size(); ++i) {
-        LayoutUnit minTrackBreadth = computePreferredTrackWidth(trackStyles[i].minTrackBreadth(), i);
-        LayoutUnit maxTrackBreadth = computePreferredTrackWidth(trackStyles[i].maxTrackBreadth(), i);
+    // FIXME: This is an inefficient way to fill our sizes as it will try every grid areas, when we would
+    // only want to account for fixed grid tracks and grid items. Also this will be incorrect if we have spanning
+    // grid items.
+    for (size_t i = 0; i < gridColumnCount(); ++i) {
+        const GridTrackSize& trackSize = gridTrackSize(ForColumns, i);
+        LayoutUnit minTrackBreadth = computePreferredTrackWidth(trackSize.minTrackBreadth(), i);
+        LayoutUnit maxTrackBreadth = computePreferredTrackWidth(trackSize.maxTrackBreadth(), i);
         maxTrackBreadth = std::max(maxTrackBreadth, minTrackBreadth);
 
         minLogicalWidth += minTrackBreadth;
@@ -212,9 +217,10 @@ void RenderGrid::computePreferredLogicalWidths()
     m_minPreferredLogicalWidth = 0;
     m_maxPreferredLogicalWidth = 0;
 
-    // FIXME: We don't take our own logical width into account.
+    // FIXME: We don't take our own logical width into account. Once we do, we need to make sure
+    // we apply (and test the interaction with) min-width / max-width.
+
     computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
-    // FIXME: We should account for min / max logical width.
 
     LayoutUnit borderAndPaddingInInlineDirection = borderAndPaddingLogicalWidth();
     m_minPreferredLogicalWidth += borderAndPaddingInInlineDirection;
@@ -316,7 +322,7 @@ LayoutUnit RenderGrid::computeUsedBreadthOfSpecifiedLength(TrackSizingDirection 
     return valueForLength(trackLength, direction == ForColumns ? logicalWidth() : computeContentLogicalHeight(MainOrPreferredSize, style()->logicalHeight()), view());
 }
 
-const GridTrackSize& RenderGrid::gridTrackSize(TrackSizingDirection direction, size_t i)
+const GridTrackSize& RenderGrid::gridTrackSize(TrackSizingDirection direction, size_t i) const
 {
     const Vector<GridTrackSize>& trackStyles = (direction == ForColumns) ? style()->gridColumns() : style()->gridRows();
     if (i >= trackStyles.size()) {
