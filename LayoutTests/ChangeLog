@@ -1,5 +1,19 @@
 2013-03-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r135303
+
+    2012-11-20  Abhishek Arya  <inferno@chromium.org>
+
+            Crash in FrameLoader::stopLoading.
+            https://bugs.webkit.org/show_bug.cgi?id=99504
+
+            Reviewed by Nate Chapin.
+
+            * fast/frames/frame-unload-crash2-expected.txt: Added.
+            * fast/frames/frame-unload-crash2.html: Added.
+
+2013-03-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r135299
 
     2012-11-20  Tom Sepez  <tsepez@chromium.org>
