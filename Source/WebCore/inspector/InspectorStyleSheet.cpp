@@ -836,7 +836,7 @@ bool InspectorStyleSheet::deleteRule(const InspectorCSSId& id, ExceptionCode& ec
 
     String sheetText = m_parsedStyleSheet->text();
     sheetText.remove(sourceData->selectorListRange.start, sourceData->styleSourceData->styleBodyRange.end - sourceData->selectorListRange.start + 1);
-    m_parsedStyleSheet->setText(sheetText);
+    setText(sheetText);
     fireStyleSheetChanged();
     return true;
 }
