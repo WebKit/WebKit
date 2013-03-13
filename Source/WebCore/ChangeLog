@@ -1,5 +1,27 @@
 2013-03-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r141851
+
+    2013-02-04  Wei James  <james.wei@intel.com>
+
+            Heap-buffer-overflow in WebCore::AudioBufferSourceNode::process
+            https://bugs.webkit.org/show_bug.cgi?id=108515
+
+            After calling setBuffer() with a buffer having a different number of
+            channels, there can in rare cases be a slight delay before the output
+            bus is updated to the new number of channels because of use of
+            tryLocks() in the context's updating system.
+            In this case, if the the buffer has just been changed and we're
+            not quite ready yet then just output silence.
+
+            Reviewed by Chris Rogers.
+
+            * Modules/webaudio/AudioBufferSourceNode.cpp:
+            (WebCore::AudioBufferSourceNode::process):
+            (WebCore::AudioBufferSourceNode::renderFromBuffer):
+
+2013-03-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r140879
 
     2013-01-25  Raymond Toy  <rtoy@google.com>

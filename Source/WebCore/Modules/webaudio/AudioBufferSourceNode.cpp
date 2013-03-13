@@ -101,6 +101,14 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
             return;
         }
 
+        // After calling setBuffer() with a buffer having a different number of channels, there can in rare cases be a slight delay
+        // before the output bus is updated to the new number of channels because of use of tryLocks() in the context's updating system.
+        // In this case, if the the buffer has just been changed and we're not quite ready yet, then just output silence.
+        if (numberOfChannels() != buffer()->numberOfChannels()) {
+            outputBus->zero();
+            return;
+        }
+
         size_t quantumFrameOffset;
         size_t bufferFramesToProcess;
 
@@ -152,7 +160,7 @@ bool AudioBufferSourceNode::renderSilenceAndFinishIfNotLooping(AudioBus*, unsign
 void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destinationFrameOffset, size_t numberOfFrames)
 {
     ASSERT(context()->isAudioThread());
-    
+
     // Basic sanity checking
     ASSERT(bus);
     ASSERT(buffer());
