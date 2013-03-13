@@ -878,7 +878,6 @@ platform/mac/fast/forms/listbox-scrollbar-hit-test.html
 # <rdar://problem/11224894> Several Japanese vertical text tests failing on Mountain Lion
 fast/dynamic/text-combine.html
 fast/repaint/japanese-rl-selection-clear.html
-fast/repaint/japanese-rl-selection-repaint-in-regions.html
 fast/repaint/japanese-rl-selection-repaint.html
 fast/repaint/repaint-across-writing-mode-boundary.html
 fast/ruby/base-shorter-than-text.html

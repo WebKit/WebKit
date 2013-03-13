@@ -11,10 +11,9 @@
 function repaintTest()
 {
     if (eventSender) {
-        eventSender.mouseMoveTo(660, 300);
+        eventSender.mouseMoveTo(600, 300);
         eventSender.mouseDown();
-        eventSender.mouseMoveTo(660, 300);
-        eventSender.mouseMoveTo(300, 300);
+        eventSender.mouseMoveTo(400, 300);
         eventSender.mouseUp();
     }
 }
@@ -22,8 +21,7 @@ function repaintTest()
 
 <style>
 body {
-    font-family: "HiraMinPro-W3";
-    font-size: 16pt;
+    font: 20px/1.25 "HiraMinPro-W3";
 }
 </style>
 </head>
