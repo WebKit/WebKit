@@ -1,5 +1,23 @@
 2013-03-12  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r140101
+
+    2013-01-17  Rafael Weinstein  <rafaelw@chromium.org>
+
+            Ensure the parser adopts foster-parented children into the document of their parent.
+            https://bugs.webkit.org/show_bug.cgi?id=107023
+
+            Reviewed by Adam Barth.
+
+            Tests: fast/parser/foster-parent-adopted.html
+                   fast/parser/foster-parent-adopted2.html
+
+            * html/parser/HTMLConstructionSite.cpp:
+            (WebCore::HTMLConstructionSite::insertTextNode):
+            (WebCore::HTMLConstructionSite::fosterParent):
+
+2013-03-12  Lucas Forschler  <lforschler@apple.com>
+
         Merge r140069
 
     2013-01-17  Abhishek Arya  <inferno@chromium.org>
