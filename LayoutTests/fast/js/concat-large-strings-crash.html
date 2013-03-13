@@ -1,0 +1,21 @@
+<html>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+    <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=102963">bug 102963</a>. This test passed if you see the word PASS below.</p>
+    <script>
+        function createStringWithRepeatedChar(c, multiplicity){
+            while (c.length < multiplicity)
+                c += c;
+            return c;
+        }
+        var x = "1";
+        var y = "2";
+        x = createStringWithRepeatedChar(x, 1 << 30);
+        y = createStringWithRepeatedChar(y, 1 << 16);
+        x = x.concat(x, x, x, y);
+        x = x.blink(); // Flatten string
+    </script>
+    <p>PASS: Didn't crash.</p>
+</html>
