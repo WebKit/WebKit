@@ -814,6 +814,7 @@ private:
     bool canHandleUserEvents() const;
 
     void setMainFrameInViewSourceMode(bool);
+    void setOverridePrivateBrowsingEnabled(bool);
 
     static bool platformCanHandleRequest(const WebCore::ResourceRequest&);
 
@@ -974,7 +975,8 @@ private:
 #endif
     
     bool m_willGoToBackForwardItemCallbackEnabled;
-
+    bool m_overridePrivateBrowsingEnabled;
+    
 #if PLATFORM(QT)
     HashMap<String, QtNetworkReply*> m_applicationSchemeReplies;
 #endif

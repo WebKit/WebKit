@@ -863,3 +863,13 @@ WKStringRef WKPageGetPluginInformationPluginURLKey()
     static WebString* key = WebString::create(WebPageProxy::pluginInformationPluginURLKey()).leakRef();
     return toAPI(key);
 }
+
+void WKPageSetOverridePrivateBrowsingEnabled(WKPageRef pageRef, bool enabled)
+{
+    toImpl(pageRef)->setOverridePrivateBrowsingEnabled(enabled);
+}
+
+bool WKPageGetOverridePrivateBrowsingEnabled(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->overridePrivateBrowsingEnabled();
+}

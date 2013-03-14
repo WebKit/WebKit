@@ -1,3 +1,35 @@
+2013-03-14  Sam Weinig  <sam@webkit.org>
+
+        Support private browsing on a per-page basis
+        <rdar://problem/11969491>
+
+        Reviewed by Timothy Horton.
+
+        Adds WKPageSetOverridePrivateBrowsingEnabled and WKPageGetOverridePrivateBrowsingEnabled.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode):
+        * Shared/WebPageCreationParameters.h:
+        (WebPageCreationParameters):
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetOverridePrivateBrowsingEnabled):
+        (WKPageGetOverridePrivateBrowsingEnabled):
+        * UIProcess/API/C/WKPagePrivate.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::creationParameters):
+        (WebKit::WebPageProxy::setOverridePrivateBrowsingEnabled):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::overridePrivateBrowsingEnabled):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage):
+        (WebKit::WebPage::updatePreferences):
+        (WebKit::WebPage::setOverridePrivateBrowsingEnabled):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        Pipe through.
+
 2013-03-14  Abhishek Arya  <inferno@chromium.org>
 
         Replace static_casts with to* helper functions.

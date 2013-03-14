@@ -754,6 +754,9 @@ public:
     bool mainFrameInViewSourceMode() const { return m_mainFrameInViewSourceMode; }
     void setMainFrameInViewSourceMode(bool);
 
+    bool overridePrivateBrowsingEnabled() const { return m_overridePrivateBrowsingEnabled; }
+    void setOverridePrivateBrowsingEnabled(bool);
+
     void didReceiveAuthenticationChallengeProxy(uint64_t frameID, PassRefPtr<AuthenticationChallengeProxy>);
 
     int64_t spellDocumentTag();
@@ -1241,7 +1244,8 @@ private:
     bool m_rubberBandsAtTop;
 
     bool m_mainFrameInViewSourceMode;
-
+    bool m_overridePrivateBrowsingEnabled;
+        
     unsigned m_pageCount;
 
     WebCore::IntRect m_visibleScrollerThumbRect;

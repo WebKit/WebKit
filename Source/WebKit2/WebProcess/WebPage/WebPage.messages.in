@@ -308,4 +308,5 @@ messages -> WebPage LegacyReceiver {
 #endif
 
     SetMainFrameInViewSourceMode(bool inViewSourceMode)
+    SetOverridePrivateBrowsingEnabled(bool overridePrivateBrowsingEnabled)
 }
