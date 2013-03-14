@@ -1,3 +1,49 @@
+2013-03-11  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: Objective-C functions exposed to JavaScript have the wrong type (object instead of function)
+        https://bugs.webkit.org/show_bug.cgi?id=105892
+
+        Reviewed by Geoffrey Garen.
+
+        Changed ObjCCallbackFunction to subclass JSCallbackFunction which already has all of the machinery to call
+        functions using the C API. Since ObjCCallbackFunction is now a JSCell, we changed the old implementation of
+        ObjCCallbackFunction to be the internal implementation and keep track of all the proper data so that we 
+        don't have to put all of that in the header, which will now be included from C++ files (e.g. JSGlobalObject.cpp).
+
+        * API/JSCallbackFunction.cpp: Change JSCallbackFunction to allow subclassing. Originally it was internally
+        passing its own Structure up the chain of constructors, but we now want to be able to pass other Structures as well.
+        (JSC::JSCallbackFunction::JSCallbackFunction):
+        (JSC::JSCallbackFunction::create):
+        * API/JSCallbackFunction.h:
+        (JSCallbackFunction):
+        * API/JSWrapperMap.mm: Changed interface to tryUnwrapBlock.
+        (tryUnwrapObjcObject):
+        * API/ObjCCallbackFunction.h:
+        (ObjCCallbackFunction): Moved into the JSC namespace, just like JSCallbackFunction.
+        (JSC::ObjCCallbackFunction::createStructure): Overridden so that the correct ClassInfo gets used since we have 
+        a destructor.
+        (JSC::ObjCCallbackFunction::impl): Getter for the internal impl.
+        * API/ObjCCallbackFunction.mm:
+        (JSC::ObjCCallbackFunctionImpl::ObjCCallbackFunctionImpl): What used to be ObjCCallbackFunction is now 
+        ObjCCallbackFunctionImpl. It handles the Objective-C specific parts of managing callback functions.
+        (JSC::ObjCCallbackFunctionImpl::~ObjCCallbackFunctionImpl):
+        (JSC::objCCallbackFunctionCallAsFunction): Same as the old one, but now it casts to ObjCCallbackFunction and grabs the impl 
+        rather than using JSObjectGetPrivate.
+        (JSC::ObjCCallbackFunction::ObjCCallbackFunction): New bits to allow being part of the JSCell hierarchy.
+        (JSC::ObjCCallbackFunction::create):
+        (JSC::ObjCCallbackFunction::destroy):
+        (JSC::ObjCCallbackFunctionImpl::call): Handles the actual invocation, just like it used to.
+        (objCCallbackFunctionForInvocation):
+        (tryUnwrapBlock): Changed to check the ClassInfo for inheritance directly, rather than going through the C API call.
+        * API/tests/testapi.mm: Added new test to make sure that doing Function.prototype.toString.call(f) won't result in 
+        an error when f is an Objective-C method or block underneath the covers.
+        * runtime/JSGlobalObject.cpp: Added new Structure for ObjCCallbackFunction.
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::visitChildren):
+        * runtime/JSGlobalObject.h:
+        (JSGlobalObject):
+        (JSC::JSGlobalObject::objcCallbackFunctionStructure):
+
 2013-03-14  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: Nested dictionaries are not converted properly in the Objective-C binding

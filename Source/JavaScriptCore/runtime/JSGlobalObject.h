@@ -33,6 +33,7 @@
 #include "StructureChain.h"
 #include "StructureRareDataInlines.h"
 #include "Watchpoint.h"
+#include <JavaScriptCore/JSBase.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RandomNumber.h>
@@ -141,6 +142,9 @@ protected:
     WriteBarrier<Structure> m_callbackConstructorStructure;
     WriteBarrier<Structure> m_callbackFunctionStructure;
     WriteBarrier<Structure> m_callbackObjectStructure;
+#if JSC_OBJC_API_ENABLED
+    WriteBarrier<Structure> m_objcCallbackFunctionStructure;
+#endif
     WriteBarrier<Structure> m_objcWrapperObjectStructure;
     WriteBarrier<Structure> m_dateStructure;
     WriteBarrier<Structure> m_nullPrototypeObjectStructure;
@@ -301,6 +305,9 @@ public:
     Structure* callbackConstructorStructure() const { return m_callbackConstructorStructure.get(); }
     Structure* callbackFunctionStructure() const { return m_callbackFunctionStructure.get(); }
     Structure* callbackObjectStructure() const { return m_callbackObjectStructure.get(); }
+#if JSC_OBJC_API_ENABLED
+    Structure* objcCallbackFunctionStructure() const { return m_objcCallbackFunctionStructure.get(); }
+#endif
     Structure* objcWrapperObjectStructure() const { return m_objcWrapperObjectStructure.get(); }
     Structure* dateStructure() const { return m_dateStructure.get(); }
     Structure* nullPrototypeObjectStructure() const { return m_nullPrototypeObjectStructure.get(); }

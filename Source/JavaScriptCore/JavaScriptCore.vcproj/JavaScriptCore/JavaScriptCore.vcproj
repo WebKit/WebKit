@@ -1550,6 +1550,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\API\ObjCCallbackFunction.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\API\OpaqueJSString.cpp"
 				>
 			</File>

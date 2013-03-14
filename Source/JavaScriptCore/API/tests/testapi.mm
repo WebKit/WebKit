@@ -519,6 +519,15 @@ void testObjectiveCAPI()
     }
 
     @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
+        TestObject *testObject = [TestObject testObject];
+        context[@"testObject"] = testObject;
+        JSValue *result = [context evaluateScript:@"Function.prototype.toString.call(testObject.callback)"];
+        NSLog(@"toString = %@", [result toString]);
+        checkResult(@"Function.prototype.toString", !context.exception && ![result isUndefined]);
+    }
+
+    @autoreleasepool {
         JSContext *context1 = [[JSContext alloc] init];
         JSContext *context2 = [[JSContext alloc] initWithVirtualMachine:context1.virtualMachine];
         JSValue *value = [JSValue valueWithDouble:42 inContext:context2];

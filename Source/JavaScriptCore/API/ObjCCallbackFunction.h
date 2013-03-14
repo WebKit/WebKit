@@ -22,14 +22,52 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#ifndef ObjCCallbackFunction_h
+#define ObjCCallbackFunction_h 
 
-#import <JavaScriptCore/JavaScriptCore.h>
+#include <JavaScriptCore/JSBase.h>
 
 #if JSC_OBJC_API_ENABLED
 
+#import <JavaScriptCore/JSCallbackFunction.h>
+
+#if defined(__OBJC__)
 JSObjectRef objCCallbackFunctionForMethod(JSContext *, Class, Protocol *, BOOL isInstanceMethod, SEL, const char* types);
 JSObjectRef objCCallbackFunctionForBlock(JSContext *, id);
 
-id tryUnwrapBlock(JSGlobalContextRef, JSObjectRef);
+id tryUnwrapBlock(JSObjectRef);
+#endif
+
+namespace JSC {
+
+class ObjCCallbackFunctionImpl;
+
+class ObjCCallbackFunction : public JSCallbackFunction {
+public:
+    typedef JSCallbackFunction Base;
+
+    static ObjCCallbackFunction* create(ExecState*, JSGlobalObject*, const String& name, PassOwnPtr<ObjCCallbackFunctionImpl>);
+    static void destroy(JSCell*);
+
+    static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype)
+    {
+        ASSERT(globalObject);
+        return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+    }
+
+    static JS_EXPORTDATA const ClassInfo s_info;
+
+    ObjCCallbackFunctionImpl* impl() { return m_impl.get(); }
+
+protected:
+    ObjCCallbackFunction(JSGlobalObject*, JSObjectCallAsFunctionCallback, PassOwnPtr<ObjCCallbackFunctionImpl>);
+
+private:
+    OwnPtr<ObjCCallbackFunctionImpl> m_impl;
+};
+
+} // namespace JSC
 
 #endif
+
+#endif // ObjCCallbackFunction_h 

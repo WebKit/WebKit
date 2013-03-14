@@ -389,9 +389,11 @@ enum CallbackType {
     CallbackBlock
 };
 
-class ObjCCallbackFunction {
+namespace JSC {
+
+class ObjCCallbackFunctionImpl {
 public:
-    ObjCCallbackFunction(JSContext *context, NSInvocation *invocation, CallbackType type, Class instanceClass, PassOwnPtr<CallbackArgument> arguments, PassOwnPtr<CallbackResult> result)
+    ObjCCallbackFunctionImpl(JSContext *context, NSInvocation *invocation, CallbackType type, Class instanceClass, PassOwnPtr<CallbackArgument> arguments, PassOwnPtr<CallbackResult> result)
         : m_context(context)
         , m_type(type)
         , m_instanceClass([instanceClass retain])
@@ -402,7 +404,7 @@ public:
         ASSERT(type != CallbackInstanceMethod || instanceClass);
     }
 
-    ~ObjCCallbackFunction()
+    ~ObjCCallbackFunctionImpl()
     {
         if (m_type != CallbackInstanceMethod)
             [[m_invocation.get() target] release];
@@ -436,11 +438,6 @@ private:
     OwnPtr<CallbackResult> m_result;
 };
 
-static void objCCallbackFunctionFinalize(JSObjectRef object)
-{
-    delete static_cast<ObjCCallbackFunction*>(JSObjectGetPrivate(object));
-}
-
 static JSValueRef objCCallbackFunctionCallAsFunction(JSContextRef callerContext, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     // Retake the API lock - we need this for a few reasons:
@@ -449,18 +446,19 @@ static JSValueRef objCCallbackFunctionCallAsFunction(JSContextRef callerContext,
     // (3) We need to be locked (per context would be fine) against conflicting usage of the ObjCCallbackFunction's NSInvocation.
     JSC::APIEntryShim entryShim(toJS(callerContext));
 
-    ObjCCallbackFunction* callback = static_cast<ObjCCallbackFunction*>(JSObjectGetPrivate(function));
-    JSContext *context = callback->context();
+    ObjCCallbackFunction* callback = static_cast<ObjCCallbackFunction*>(toJS(function));
+    ObjCCallbackFunctionImpl* impl = callback->impl();
+    JSContext *context = impl->context();
     if (!context) {
         context = [JSContext contextWithGlobalContextRef:toGlobalRef(toJS(callerContext)->lexicalGlobalObject()->globalExec())];
-        callback->setContext(context);
+        impl->setContext(context);
     }
 
     CallbackData callbackData;
     JSValueRef result;
     @autoreleasepool {
         [context beginCallbackWithData:&callbackData thisValue:thisObject argumentCount:argumentCount arguments:arguments];
-        result = callback->call(context, thisObject, argumentCount, arguments, exception);
+        result = impl->call(context, thisObject, argumentCount, arguments, exception);
         if (context.exception)
             *exception = valueInternalValue(context.exception);
         [context endCallbackWithData:&callbackData];
@@ -468,26 +466,27 @@ static JSValueRef objCCallbackFunctionCallAsFunction(JSContextRef callerContext,
     return result;
 }
 
-static JSClassRef createObjCCallbackFunctionClass()
+const JSC::ClassInfo ObjCCallbackFunction::s_info = { "CallbackFunction", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(ObjCCallbackFunction) };
+
+ObjCCallbackFunction::ObjCCallbackFunction(JSC::JSGlobalObject* globalObject, JSObjectCallAsFunctionCallback callback, PassOwnPtr<ObjCCallbackFunctionImpl> impl)
+    : Base(globalObject, globalObject->objcCallbackFunctionStructure(), callback)
+    , m_impl(impl)
 {
-    JSClassDefinition definition;
-    definition = kJSClassDefinitionEmpty;
-    definition.className = "Function";
-    definition.finalize = objCCallbackFunctionFinalize;
-    definition.callAsFunction = objCCallbackFunctionCallAsFunction;
-    return JSClassCreate(&definition);
 }
 
-static JSClassRef objCCallbackFunctionClass()
+ObjCCallbackFunction* ObjCCallbackFunction::create(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject, const String& name, PassOwnPtr<ObjCCallbackFunctionImpl> impl)
 {
-    static SpinLock initLock = SPINLOCK_INITIALIZER;
-    SpinLockHolder lockHolder(&initLock);
-
-    static JSClassRef classRef = createObjCCallbackFunctionClass();
-    return classRef;
+    ObjCCallbackFunction* function = new (NotNull, allocateCell<ObjCCallbackFunction>(*exec->heap())) ObjCCallbackFunction(globalObject, objCCallbackFunctionCallAsFunction, impl);
+    function->finishCreation(exec->globalData(), name);
+    return function;
 }
 
-JSValueRef ObjCCallbackFunction::call(JSContext *context, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+void ObjCCallbackFunction::destroy(JSCell* cell)
+{
+    static_cast<ObjCCallbackFunction*>(cell)->ObjCCallbackFunction::~ObjCCallbackFunction();
+}
+
+JSValueRef ObjCCallbackFunctionImpl::call(JSContext *context, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     JSGlobalContextRef contextRef = [context globalContextRef];
 
@@ -522,6 +521,8 @@ JSValueRef ObjCCallbackFunction::call(JSContext *context, JSObjectRef thisObject
 
     return m_result->get(m_invocation.get(), context, exception);
 }
+
+} // namespace JSC
 
 static bool blockSignatureContainsClass()
 {
@@ -578,20 +579,11 @@ static JSObjectRef objCCallbackFunctionForInvocation(JSContext *context, NSInvoc
         ++argumentCount;
     }
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=105892
-    // The result should be a regular host function, rather than a callable C API object.
-    // Patch in the right length & [Prototype] values for now, but should fix this.
-    // Function.prototype.toString currently fails, since this is not yet a subclass of functon, but call & apply do work.
-    JSObjectRef functionObject = JSObjectMake([context globalContextRef], objCCallbackFunctionClass(), new ObjCCallbackFunction(context, invocation, type, instanceClass, arguments.release(), result.release()));
-    JSValue *value = [JSValue valueWithValue:functionObject inContext:context];
-    value[@"length"] = @(argumentCount);
-    JSObjectSetPrototype([context globalContextRef], functionObject, valueInternalValue(context[@"Function"][@"prototype"]));
-    value[@"toString"] = [context evaluateScript:@"(function(){ return '"
-        "function <Objective-C>() {" "\\n"
-        "    [native code]"          "\\n"
-        "}"                          "\\n"
-    "'})"];
-    return functionObject;
+    JSC::ExecState* exec = toJS([context globalContextRef]);
+    JSC::APIEntryShim shim(exec);
+    OwnPtr<JSC::ObjCCallbackFunctionImpl> impl = adoptPtr(new JSC::ObjCCallbackFunctionImpl(context, invocation, type, instanceClass, arguments.release(), result.release()));
+    // FIXME: Maybe we could support having the selector as the name of the function to make it a bit more user-friendly from the JS side?
+    return toRef(JSC::ObjCCallbackFunction::create(exec, exec->lexicalGlobalObject(), "", impl.release()));
 }
 
 JSObjectRef objCCallbackFunctionForMethod(JSContext *context, Class cls, Protocol *protocol, BOOL isInstanceMethod, SEL sel, const char* types)
@@ -613,11 +605,11 @@ JSObjectRef objCCallbackFunctionForBlock(JSContext *context, id target)
     return objCCallbackFunctionForInvocation(context, invocation, CallbackBlock, nil, signature);
 }
 
-id tryUnwrapBlock(JSGlobalContextRef context, JSObjectRef object)
+id tryUnwrapBlock(JSObjectRef object)
 {
-    if (!JSValueIsObjectOfClass(context, object, objCCallbackFunctionClass()))
+    if (!toJS(object)->inherits(&JSC::ObjCCallbackFunction::s_info))
         return nil;
-    return (static_cast<ObjCCallbackFunction*>(JSObjectGetPrivate(object)))->wrappedBlock();
+    return static_cast<JSC::ObjCCallbackFunction*>(toJS(object))->impl()->wrappedBlock();
 }
 
 #endif

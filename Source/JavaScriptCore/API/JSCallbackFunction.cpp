@@ -44,8 +44,8 @@ ASSERT_HAS_TRIVIAL_DESTRUCTOR(JSCallbackFunction);
 
 const ClassInfo JSCallbackFunction::s_info = { "CallbackFunction", &InternalFunction::s_info, 0, 0, CREATE_METHOD_TABLE(JSCallbackFunction) };
 
-JSCallbackFunction::JSCallbackFunction(JSGlobalObject* globalObject, JSObjectCallAsFunctionCallback callback)
-    : InternalFunction(globalObject, globalObject->callbackFunctionStructure())
+JSCallbackFunction::JSCallbackFunction(JSGlobalObject* globalObject, Structure* structure, JSObjectCallAsFunctionCallback callback)
+    : InternalFunction(globalObject, structure)
     , m_callback(callback)
 {
 }
@@ -54,6 +54,13 @@ void JSCallbackFunction::finishCreation(JSGlobalData& globalData, const String& 
 {
     Base::finishCreation(globalData, name);
     ASSERT(inherits(&s_info));
+}
+
+JSCallbackFunction* JSCallbackFunction::create(ExecState* exec, JSGlobalObject* globalObject, JSObjectCallAsFunctionCallback callback, const String& name)
+{
+    JSCallbackFunction* function = new (NotNull, allocateCell<JSCallbackFunction>(*exec->heap())) JSCallbackFunction(globalObject, globalObject->callbackFunctionStructure(), callback);
+    function->finishCreation(exec->globalData(), name);
+    return function;
 }
 
 EncodedJSValue JSCallbackFunction::call(ExecState* exec)

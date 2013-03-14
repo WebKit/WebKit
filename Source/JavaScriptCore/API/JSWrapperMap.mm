@@ -530,7 +530,7 @@ id tryUnwrapObjcObject(JSGlobalContextRef context, JSValueRef value)
     ASSERT(!exception);
     if (JSValueIsObjectOfClass(context, object, wrapperClass()))
         return (id)JSC::jsCast<JSC::JSAPIWrapperObject*>(toJS(object))->wrappedObject();
-    if (id target = tryUnwrapBlock(context, object))
+    if (id target = tryUnwrapBlock(object))
         return target;
     return nil;
 }
