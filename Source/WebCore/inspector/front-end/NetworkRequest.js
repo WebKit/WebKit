@@ -773,7 +773,7 @@ WebInspector.NetworkRequest.prototype = {
             return;
         }
         if (typeof this._content !== "undefined") {
-            callback(this.content || null, this._contentEncoded, this._mimeType);
+            callback(this.content || null, this._contentEncoded, this.type.canonicalMimeType());
             return;
         }
         this._pendingContentCallbacks.push(callback);
