@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class Document;
+class FormData;
 
 class XSSInfo {
 public:
@@ -66,8 +67,10 @@ public:
     void setReportURL(const KURL& url) { m_reportURL = url; }
 
 private:
+    PassRefPtr<FormData> generateViolationReport();
+
     Document* m_document;
-    bool m_didNotifyClient;
+    bool m_didSendNotifications;
     KURL m_reportURL;
 };
 

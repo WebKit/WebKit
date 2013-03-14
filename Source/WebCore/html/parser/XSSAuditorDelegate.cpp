@@ -43,7 +43,7 @@ namespace WebCore {
 
 XSSAuditorDelegate::XSSAuditorDelegate(Document* document)
     : m_document(document)
-    , m_didNotifyClient(false)
+    , m_didSendNotifications(false)
 {
     ASSERT(isMainThread());
     ASSERT(m_document);
@@ -70,6 +70,27 @@ static inline String buildConsoleError(const XSSInfo& xssInfo, const String& url
     return message.toString();
 }
 
+PassRefPtr<FormData> XSSAuditorDelegate::generateViolationReport()
+{
+    ASSERT(isMainThread());
+
+    FrameLoader* frameLoader = m_document->frame()->loader();
+    String httpBody;
+    if (frameLoader->documentLoader()) {
+        if (FormData* formData = frameLoader->documentLoader()->originalRequest().httpBody())
+            httpBody = formData->flattenToString();
+    }
+
+    RefPtr<InspectorObject> reportDetails = InspectorObject::create();
+    reportDetails->setString("request-url", m_document->url().string());
+    reportDetails->setString("request-body", httpBody);
+
+    RefPtr<InspectorObject> reportObject = InspectorObject::create();
+    reportObject->setObject("xss-report", reportDetails.release());
+
+    return FormData::create(reportObject->toJSONString().utf8().data());
+}
+
 void XSSAuditorDelegate::didBlockScript(const XSSInfo& xssInfo)
 {
     ASSERT(isMainThread());
@@ -77,31 +98,16 @@ void XSSAuditorDelegate::didBlockScript(const XSSInfo& xssInfo)
     m_document->addConsoleMessage(JSMessageSource, ErrorMessageLevel, buildConsoleError(xssInfo, m_document->url().string()));
 
     FrameLoader* frameLoader = m_document->frame()->loader();
-
     if (xssInfo.m_didBlockEntirePage)
         frameLoader->stopAllLoaders();
 
-    if (!m_didNotifyClient) {
+    if (!m_didSendNotifications) {
+        m_didSendNotifications = true;
+
         frameLoader->client()->didDetectXSS(m_document->url(), xssInfo.m_didBlockEntirePage);
-        m_didNotifyClient = true;
-    }
 
-    if (!m_reportURL.isEmpty()) {
-        RefPtr<InspectorObject> reportDetails = InspectorObject::create();
-        reportDetails->setString("request-url", m_document->url().string());
-
-        String httpBody;
-        if (frameLoader->documentLoader()) {
-            if (FormData* formData = frameLoader->documentLoader()->originalRequest().httpBody())
-                httpBody = formData->flattenToString();
-        }
-        reportDetails->setString("request-body", httpBody);
-
-        RefPtr<InspectorObject> reportObject = InspectorObject::create();
-        reportObject->setObject("xss-report", reportDetails.release());
-
-        RefPtr<FormData> report = FormData::create(reportObject->toJSONString().utf8().data());
-        PingLoader::sendViolationReport(m_document->frame(), m_reportURL, report);
+        if (!m_reportURL.isEmpty())
+            PingLoader::sendViolationReport(m_document->frame(), m_reportURL, generateViolationReport());
     }
 
     if (xssInfo.m_didBlockEntirePage)
