@@ -679,12 +679,17 @@ void ShadowBlur::drawInsetShadowWithTiling(GraphicsContext* graphicsContext, con
 
         blurAndColorShadowBuffer(templateSize);
     }
+    FloatSize offset = m_offset;
+    if (shadowsIgnoreTransforms()) {
+        AffineTransform transform = graphicsContext->getCTM();
+        offset.scale(1 / transform.xScale(), 1 / transform.yScale());
+    }
 
     FloatRect boundingRect = rect;
-    boundingRect.move(m_offset);
+    boundingRect.move(offset);
 
     FloatRect destHoleRect = holeRect;
-    destHoleRect.move(m_offset);
+    destHoleRect.move(offset);
     FloatRect destHoleBounds = destHoleRect;
     destHoleBounds.inflateX(edgeSize.width());
     destHoleBounds.inflateY(edgeSize.height());
@@ -736,9 +741,14 @@ void ShadowBlur::drawRectShadowWithTiling(GraphicsContext* graphicsContext, cons
 
         blurAndColorShadowBuffer(templateSize);
     }
+    FloatSize offset = m_offset;
+    if (shadowsIgnoreTransforms()) {
+        AffineTransform transform = graphicsContext->getCTM();
+        offset.scale(1 / transform.xScale(), 1 / transform.yScale());
+    }
 
     FloatRect shadowBounds = shadowedRect;
-    shadowBounds.move(m_offset.width(), m_offset.height());
+    shadowBounds.move(offset);
     shadowBounds.inflateX(edgeSize.width());
     shadowBounds.inflateY(edgeSize.height());
 

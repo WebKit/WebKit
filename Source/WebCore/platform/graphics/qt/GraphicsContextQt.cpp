@@ -802,12 +802,17 @@ void GraphicsContext::fillRect(const FloatRect& rect)
     } else {
         if (hasShadow()) {
             if (shadow->mustUseShadowBlur(this)) {
-                GraphicsContext* shadowContext = shadow->beginShadowLayer(this, normalizedRect);
-                if (shadowContext) {
-                    QPainter* shadowPainter = shadowContext->platformContext();
-                    shadowPainter->fillRect(normalizedRect, p->brush());
-                    shadow->endShadowLayer(this);
-                }
+                // drawRectShadowWithTiling does not work with rotations, and the fallback of
+                // drawing though clipToImageBuffer() produces scaling artifacts for us.
+                if (!getCTM().preservesAxisAlignment()) {
+                    GraphicsContext* shadowContext = shadow->beginShadowLayer(this, normalizedRect);
+                    if (shadowContext) {
+                        QPainter* shadowPainter = shadowContext->platformContext();
+                        shadowPainter->fillRect(normalizedRect, p->brush());
+                        shadow->endShadowLayer(this);
+                    }
+                } else
+                    shadow->drawRectShadow(this, rect, RoundedRect::Radii());
             } else {
                 // Solid rectangle fill with no blur shadow or transformations applied can be done
                 // faster without using the shadow layer at all.
