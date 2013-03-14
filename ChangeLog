@@ -1,3 +1,10 @@
+2013-03-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Pre-release version bump.
+
+        * Source/autotools/Versions.m4: Bump version to 1.11.92 for people
+        already using the webkit-2.0 branch.
+
 2013-03-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Split GtkAuthenticationDialog in two widgets
