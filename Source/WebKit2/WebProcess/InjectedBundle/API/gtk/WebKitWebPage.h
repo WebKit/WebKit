@@ -25,7 +25,7 @@
 #define WebKitWebPage_h
 
 #include <glib-object.h>
-#include <webkit2/WebKitWebExtensionDefines.h>
+#include <webkit2/WebKitDefines.h>
 #include <webkitdom/webkitdom.h>
 
 G_BEGIN_DECLS
