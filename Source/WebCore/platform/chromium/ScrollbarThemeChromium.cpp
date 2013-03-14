@@ -77,17 +77,15 @@ IntRect ScrollbarThemeChromium::forwardButtonRect(ScrollbarThemeClient* scrollba
 IntRect ScrollbarThemeChromium::trackRect(ScrollbarThemeClient* scrollbar, bool)
 {
     IntSize bs = buttonSize(scrollbar);
-    // The buttons at the top and bottom of the scrollbar are square, so the
-    // thickness of the scrollbar is also their height.
     int thickness = scrollbarThickness(scrollbar->controlSize());
     if (scrollbar->orientation() == HorizontalScrollbar) {
         // Once the scrollbar becomes smaller than the natural size of the
         // two buttons, the track disappears.
-        if (scrollbar->width() < 2 * thickness)
+        if (scrollbar->width() < 2 * bs.width())
             return IntRect();
         return IntRect(scrollbar->x() + bs.width(), scrollbar->y(), scrollbar->width() - 2 * bs.width(), thickness);
     }
-    if (scrollbar->height() < 2 * thickness)
+    if (scrollbar->height() < 2 * bs.height())
         return IntRect();
     return IntRect(scrollbar->x(), scrollbar->y() + bs.height(), thickness, scrollbar->height() - 2 * bs.height());
 }
