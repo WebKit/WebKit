@@ -1,3 +1,13 @@
+2013-03-14  Jonathan Liu  <net147@gmail.com>
+
+        Fix detection of Intel Mac OS X platform on Intel Mac 64-bit
+        https://bugs.webkit.org/show_bug.cgi?id=112312
+
+        Reviewed by Simon Hausmann.
+
+        * ewk/ewk_settings.cpp:
+        (_ewk_settings_webkit_os_version_get):
+
 2013-03-13  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: get rid of hiddenPanels filter

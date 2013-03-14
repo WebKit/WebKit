@@ -60,7 +60,7 @@ static String platformVersionForUAString()
 #if OS(WINDOWS)
     uaOSVersion = windowsVersionForUAString();
 #elif OS(DARWIN)
-#if CPU(X86)
+#if CPU(X86) || CPU(X86_64)
     uaOSVersion = "Intel Mac OS X";
 #else
     uaOSVersion = "PPC Mac OS X";

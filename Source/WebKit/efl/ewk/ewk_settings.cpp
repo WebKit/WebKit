@@ -79,7 +79,7 @@ static WTF::String _ewk_settings_webkit_os_version_get()
 {
     WTF::String uaOsVersion;
 #if OS(DARWIN)
-#if CPU(X86)
+#if CPU(X86) || CPU(X86_64)
     uaOsVersion = "Intel Mac OS X";
 #else
     uaOsVersion = "PPC Mac OS X";
