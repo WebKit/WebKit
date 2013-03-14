@@ -98,6 +98,11 @@ public:
         return m_type == other.m_type && m_minTrackBreadth == other.m_minTrackBreadth && m_maxTrackBreadth == m_maxTrackBreadth;
     }
 
+    bool hasMinOrMaxContentMinTrackBreadth() const { return minTrackBreadth().isMinContent() || minTrackBreadth().isMaxContent(); }
+    bool hasMaxContentMinTrackBreadth() const { return minTrackBreadth().isMaxContent(); }
+    bool hasMinOrMaxContentMaxTrackBreadth() const { return maxTrackBreadth().isMinContent() || maxTrackBreadth().isMaxContent(); }
+    bool hasMaxContentMaxTrackBreadth() const { return maxTrackBreadth().isMaxContent(); }
+
 private:
     GridTrackSizeType m_type;
     Length m_minTrackBreadth;

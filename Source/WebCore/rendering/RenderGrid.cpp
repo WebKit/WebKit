@@ -275,8 +275,6 @@ void RenderGrid::computedUsedBreadthOfGridTracks(TrackSizingDirection direction,
         track.m_maxBreadth = computeUsedBreadthOfMaxLength(direction, maxTrackBreadth);
 
         track.m_maxBreadth = std::max(track.m_maxBreadth, track.m_usedBreadth);
-
-        availableLogicalSpace -= track.m_usedBreadth;
     }
 
     // FIXME: We shouldn't call resolveContentBasedTrackSizingFunctions if we have no min-content / max-content tracks.
@@ -405,50 +403,43 @@ LayoutUnit RenderGrid::maxContentForChild(RenderBox* child, TrackSizingDirection
 
 void RenderGrid::resolveContentBasedTrackSizingFunctions(TrackSizingDirection direction, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks, LayoutUnit& availableLogicalSpace)
 {
-    // FIXME: Split the grid tracks once we support spanning or fractions (step 1 and 2 of the algorithm).
+    // FIXME: Split the grid tracks once we support fractions (step 1 of the algorithm).
 
     Vector<GridTrack>& tracks = (direction == ForColumns) ? columnTracks : rowTracks;
 
+    // FIXME: Per step 2 of the specification, we should order the grid items by increasing span.
+    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        resolveContentBasedTrackSizingFunctionsForItems(direction, columnTracks, rowTracks, child, &GridTrackSize::hasMinOrMaxContentMinTrackBreadth, &RenderGrid::minContentForChild, &GridTrack::usedBreadth, &GridTrack::growUsedBreadth);
+        resolveContentBasedTrackSizingFunctionsForItems(direction, columnTracks, rowTracks, child, &GridTrackSize::hasMaxContentMinTrackBreadth, &RenderGrid::maxContentForChild, &GridTrack::usedBreadth, &GridTrack::growUsedBreadth);
+        resolveContentBasedTrackSizingFunctionsForItems(direction, columnTracks, rowTracks, child, &GridTrackSize::hasMinOrMaxContentMaxTrackBreadth, &RenderGrid::minContentForChild, &GridTrack::maxBreadthIfNotInfinite, &GridTrack::growMaxBreadth);
+        resolveContentBasedTrackSizingFunctionsForItems(direction, columnTracks, rowTracks, child, &GridTrackSize::hasMaxContentMaxTrackBreadth, &RenderGrid::maxContentForChild, &GridTrack::maxBreadthIfNotInfinite, &GridTrack::growMaxBreadth);
+    }
+
     for (size_t i = 0; i < tracks.size(); ++i) {
-        const GridTrackSize& trackSize = gridTrackSize(direction, i);
         GridTrack& track = tracks[i];
-        const Length& minTrackBreadth = trackSize.minTrackBreadth();
-        if (minTrackBreadth.isMinContent() || minTrackBreadth.isMaxContent()) {
-            LayoutUnit oldUsedBreadth = track.m_usedBreadth;
-            resolveContentBasedTrackSizingFunctionsForItems(direction, columnTracks, rowTracks, i, &RenderGrid::minContentForChild, &GridTrack::usedBreadth, &GridTrack::growUsedBreadth);
-            availableLogicalSpace -= (track.m_usedBreadth - oldUsedBreadth);
-        }
-
-        if (minTrackBreadth.isMaxContent()) {
-            LayoutUnit oldUsedBreadth = track.m_usedBreadth;
-            resolveContentBasedTrackSizingFunctionsForItems(direction, columnTracks, rowTracks, i, &RenderGrid::maxContentForChild, &GridTrack::usedBreadth, &GridTrack::growUsedBreadth);
-            availableLogicalSpace -= (track.m_usedBreadth - oldUsedBreadth);
-        }
-
-        const Length& maxTrackBreadth = trackSize.maxTrackBreadth();
-        if (maxTrackBreadth.isMinContent() || maxTrackBreadth.isMaxContent())
-            resolveContentBasedTrackSizingFunctionsForItems(direction, columnTracks, rowTracks, i, &RenderGrid::minContentForChild, &GridTrack::maxBreadthIfNotInfinite, &GridTrack::growMaxBreadth);
-
-        if (maxTrackBreadth.isMaxContent())
-            resolveContentBasedTrackSizingFunctionsForItems(direction, columnTracks, rowTracks, i, &RenderGrid::maxContentForChild, &GridTrack::maxBreadthIfNotInfinite, &GridTrack::growMaxBreadth);
-
         if (track.m_maxBreadth == infinity)
             track.m_maxBreadth = track.m_usedBreadth;
+
+        availableLogicalSpace -= track.m_usedBreadth;
     }
 }
 
-void RenderGrid::resolveContentBasedTrackSizingFunctionsForItems(TrackSizingDirection direction, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks, size_t trackIndex, SizingFunction sizingFunction, AccumulatorGetter trackGetter, AccumulatorGrowFunction trackGrowthFunction)
+void RenderGrid::resolveContentBasedTrackSizingFunctionsForItems(TrackSizingDirection direction, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks, RenderBox* gridItem, FilterFunction filterFunction, SizingFunction sizingFunction, AccumulatorGetter trackGetter, AccumulatorGrowFunction trackGrowthFunction)
 {
+    const GridCoordinate coordinate = cachedGridCoordinate(gridItem);
+    // FIXME: If the grid item spans several grid tracks, we should handle all of them, not just the first one.
+    const size_t trackIndex = (direction == ForColumns) ? coordinate.columns.initialPositionIndex : coordinate.rows.initialPositionIndex;
+    const GridTrackSize& trackSize = gridTrackSize(direction, trackIndex);
+    if (!(trackSize.*filterFunction)())
+        return;
+
     GridTrack& track = (direction == ForColumns) ? columnTracks[trackIndex] : rowTracks[trackIndex];
-    GridIterator iterator(m_grid, direction, trackIndex);
-    while (RenderBox* gridItem = iterator.nextGridItem()) {
-        LayoutUnit contentSize = (this->*sizingFunction)(gridItem, direction, columnTracks);
-        LayoutUnit additionalBreadthSpace = contentSize - (track.*trackGetter)();
-        Vector<GridTrack*> tracks;
-        tracks.append(&track);
-        // FIXME: We should pass different values for |tracksForGrowthAboveMaxBreadth|.
-        distributeSpaceToTracks(tracks, &tracks, trackGetter, trackGrowthFunction, additionalBreadthSpace);
-    }
+    LayoutUnit contentSize = (this->*sizingFunction)(gridItem, direction, columnTracks);
+    LayoutUnit additionalBreadthSpace = contentSize - (track.*trackGetter)();
+    Vector<GridTrack*> tracks;
+    tracks.append(&track);
+    // FIXME: We should pass different values for |tracksForGrowthAboveMaxBreadth|.
+    distributeSpaceToTracks(tracks, &tracks, trackGetter, trackGrowthFunction, additionalBreadthSpace);
 }
 
 static bool sortByGridTrackGrowthPotential(const GridTrack* track1, const GridTrack* track2)
