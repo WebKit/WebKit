@@ -1,3 +1,15 @@
+2013-03-14  Alberto Garcia  <agarcia@igalia.com>
+
+        [BlackBerry] InRegionScrollableArea: fix call to visibleContentRect()
+        https://bugs.webkit.org/show_bug.cgi?id=112244
+
+        Reviewed by Rob Buis.
+
+        Since r143295 visibleContentRect() receives an enum, not a boolean.
+
+        * WebKitSupport/InRegionScrollableArea.cpp:
+        (BlackBerry::WebKit::InRegionScrollableArea::InRegionScrollableArea):
+
 2013-03-13  Iris Wu  <shuwu@blackberry.com>
 
         [BlackBerry] Do not do scroll position adjustment if selecting in a subframe
