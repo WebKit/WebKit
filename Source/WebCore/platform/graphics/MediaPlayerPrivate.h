@@ -188,6 +188,9 @@ public:
     virtual PassRefPtr<PlatformTextTrackMenuInterface> textTrackMenu() { return 0; }
 #endif
 
+#if USE(GSTREAMER)
+    virtual void simulateAudioInterruption() { }
+#endif
 };
 
 }

@@ -1480,3 +1480,6 @@ webkit.org/b/112176 fast/css/sticky/inline-sticky-abspos-child.html [ ImageOnlyF
 # Once the bug 112176 is fixed, potentially restore the following test expectations.
 # webkit.org/b/105998 [ Lion Release ] fast/css/sticky/inline-sticky-abspos-child.html [ ImageOnlyFailure ]
 # webkit.org/b/105998 [ MountainLion Debug ] fast/css/sticky/inline-sticky-abspos-child.html [ ImageOnlyFailure Pass ]
+
+# Feature not implemented
+webkit.org/b/91611 media/media-higher-prio-audio-stream.html [ Skip ]

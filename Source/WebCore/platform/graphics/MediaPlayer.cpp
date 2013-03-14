@@ -1144,6 +1144,16 @@ void MediaPlayer::resetMediaEngines()
     installedMediaEngines(ResetEngines);
 }
 
+#if USE(GSTREAMER)
+void MediaPlayer::simulateAudioInterruption()
+{
+    if (!m_private)
+        return;
+
+    m_private->simulateAudioInterruption();
+}
+#endif
+
 }
 
 #endif

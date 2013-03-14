@@ -462,6 +462,10 @@ public:
     PassRefPtr<PlatformTextTrackMenuInterface> textTrackMenu();
 #endif
 
+#if USE(GSTREAMER)
+    virtual void simulateAudioInterruption();
+#endif
+
 private:
     MediaPlayer(MediaPlayerClient*);
     void loadWithNextMediaEngine(MediaPlayerFactory*);

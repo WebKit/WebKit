@@ -300,6 +300,8 @@ public:
 
     String getImageSourceURL(Element*, ExceptionCode&);
                     
+    void simulateAudioInterruption(Node*);
+
 private:
     explicit Internals(Document*);
     Document* contextDocument() const;
