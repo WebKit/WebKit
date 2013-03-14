@@ -984,7 +984,7 @@ void DumpRenderTree::dump()
         fprintf(stdout, "Content-Type: %s\n", resultContentType.toUtf8().constData());
         fprintf(stdout, "%s", resultString.toUtf8().constData());
 
-        if (m_controller->shouldDumpBackForwardList()) {
+        if (m_jscController->dumpBackForwardList()) {
             fprintf(stdout, "%s", dumpBackForwardList(webPage()).toUtf8().constData());
             foreach (QObject* widget, windows) {
                 QWebPage* page = qobject_cast<QWebPage*>(widget->findChild<QWebPage*>());
@@ -1125,7 +1125,7 @@ void DumpRenderTree::dumpApplicationCacheQuota(QWebSecurityOrigin* origin, quint
                );
     }
 
-    if (m_controller->shouldDisallowIncreaseForApplicationCacheQuota())
+    if (m_jscController->disallowIncreaseForApplicationCacheQuota())
         return;
 
     origin->setApplicationCacheQuota(defaultOriginQuota);
