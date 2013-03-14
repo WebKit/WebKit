@@ -63,7 +63,7 @@ PassOwnPtr<ContextMenu> WebContextMenuClient::customizeMenu(PassOwnPtr<ContextMe
 
     ASSERT(uiDelegate);
 
-    HMENU nativeMenu = menu->nativeMenu();
+    HMENU nativeMenu = menu->platformContextMenu();
     COMPtr<WebElementPropertyBag> propertyBag;
     propertyBag.adoptRef(WebElementPropertyBag::createInstance(m_webView->page()->contextMenuController()->hitTestResult()));
     // FIXME: We need to decide whether to do the default before calling this delegate method
@@ -96,9 +96,9 @@ void WebContextMenuClient::contextMenuItemSelected(ContextMenuItem* item, const 
     ASSERT(item->type() != SubmenuType);
     ASSERT(item->type() != SeparatorType);
 
-    // ContextMenuItem::nativeMenuItem doesn't set the dwTypeData of the MENUITEMINFO, but no WebKit clients
+    // ContextMenuItem::platformContextMenuItem doesn't set the dwTypeData of the MENUITEMINFO, but no WebKit clients
     // use the title in IWebUIDelegate::contextMenuItemSelected, so we don't need to populate it here.
-    MENUITEMINFO selectedItem = item->nativeMenuItem();
+    MENUITEMINFO selectedItem = item->platformContextMenuItem();
 
     uiDelegate->contextMenuItemSelected(m_webView, &selectedItem, propertyBag.get());
 }

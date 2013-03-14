@@ -39,7 +39,7 @@
 namespace WebCore {
 
 #if USE(CROSS_PLATFORM_CONTEXT_MENUS)
-void* ContextMenuItem::nativeMenuItem() const
+void* ContextMenuItem::platformContextMenuItem() const
 {
     notImplemented();
     return 0;

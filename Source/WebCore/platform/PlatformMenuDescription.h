@@ -56,6 +56,16 @@ namespace WebCore {
 #else
     typedef void* PlatformMenuDescription;
 #endif
+#else
+// FIXME: When more platforms switch over, and PlatformMenuDescription
+// is not used anymore, we should rename this header to PlatformContextMenu.
+#if PLATFORM(WIN)
+    typedef HMENU PlatformContextMenu;
+    typedef MENUITEMINFO PlatformContextMenuItem;
+#else
+    typedef void* PlatformContextMenu;
+    typedef void* PlatformContextMenuItem;
+#endif
 #endif // !USE(CROSS_PLATFORM_CONTEXT_MENUS)
 
 } // namespace

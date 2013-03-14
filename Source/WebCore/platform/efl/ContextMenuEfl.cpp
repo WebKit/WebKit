@@ -41,15 +41,15 @@ void ContextMenu::getContextMenuItems(void* menu, Vector<ContextMenuItem>& items
     notImplemented();
 }
 
-void* ContextMenu::createNativeMenuFromItems(const Vector<ContextMenuItem>& items)
+void* ContextMenu::createPlatformContextMenuFromItems(const Vector<ContextMenuItem>& items)
 {
     notImplemented();
     return 0;
 }
 
-void* ContextMenu::nativeMenu() const
+void* ContextMenu::platformContextMenu() const
 {
-    return createNativeMenuFromItems(m_items);
+    return createPlatformContextMenuFromItems(m_items);
 }
 #else
 ContextMenu::ContextMenu()

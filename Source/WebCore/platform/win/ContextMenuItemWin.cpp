@@ -71,11 +71,11 @@ ContextMenuItem::ContextMenuItem(const MENUITEMINFO& info)
     }
 }
 
-// ContextMenuItem::nativeMenuItem doesn't set the info.dwTypeData. This is
+// ContextMenuItem::platformContextMenuItem doesn't set the info.dwTypeData. This is
 // done to make the lifetime handling of the returned MENUITEMINFO easier on
 // callers. Callers can set dwTypeData themselves (and make their own decisions
 // about its lifetime) if they need it.
-MENUITEMINFO ContextMenuItem::nativeMenuItem() const
+MENUITEMINFO ContextMenuItem::platformContextMenuItem() const
 {
     MENUITEMINFO info = {0};
     info.cbSize = sizeof(MENUITEMINFO);
@@ -93,7 +93,7 @@ MENUITEMINFO ContextMenuItem::nativeMenuItem() const
 
     if (m_type == SubmenuType) {
         info.fMask |= MIIM_SUBMENU;
-        info.hSubMenu = ContextMenu::createNativeMenuFromItems(m_subMenuItems);
+        info.hSubMenu = ContextMenu::createPlatformContextMenuFromItems(m_subMenuItems);
     }
 
     info.fState |= m_enabled ? MFS_ENABLED : MFS_DISABLED;
