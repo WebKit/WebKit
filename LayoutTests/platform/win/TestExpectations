@@ -693,7 +693,6 @@ editing/inserting/typing-space-to-trigger-smart-link.html
 
 # Failed as of 41995
 fast/canvas/canvas-gradient-addStop-error.html
-fast/css/ignore-text-zoom.html
 fast/dom/navigator-detached-no-crash.html
 fast/dom/HTMLDocument/hasFocus.html
 fast/events/key-events-in-input-button.html
@@ -2579,7 +2578,6 @@ fast/text/capitalize-empty-generated-string.html
 fast/text/international/float-as-only-child-of-isolate-crash.html
 fast/text/whitespace/006.html
 fast/text/whitespace/007.html
-inspector-protocol/layer-tree.html
 svg/W3C-SVG-1.1-SE/painting-control-04-f.svg
 svg/W3C-SVG-1.1-SE/text-intro-02-b.svg
 svg/W3C-SVG-1.1-SE/text-intro-09-b.svg
