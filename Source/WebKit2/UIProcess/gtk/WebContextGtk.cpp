@@ -92,6 +92,7 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     supplement<WebCookieManagerProxy>()->getCookiePersistentStorage(parameters.cookiePersistentStoragePath, parameters.cookiePersistentStorageType);
     parameters.cookieAcceptPolicy = m_initialHTTPCookieAcceptPolicy;
     parameters.ignoreTLSErrors = m_ignoreTLSErrors;
+    parameters.shouldTrackVisitedLinks = true;
 }
 
 void WebContext::platformInvalidateContext()
