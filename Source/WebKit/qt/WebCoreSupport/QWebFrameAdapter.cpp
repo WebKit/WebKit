@@ -918,7 +918,7 @@ QWebElement QWebHitTestResultPrivate::elementForInnerNode() const
 {
     if (!innerNonSharedNode || !innerNonSharedNode->isElementNode())
         return QWebElement();
-    return QWebElement(static_cast<Element*>(innerNonSharedNode));
+    return QWebElement(toElement(innerNonSharedNode));
 }
 
 // ======================================================

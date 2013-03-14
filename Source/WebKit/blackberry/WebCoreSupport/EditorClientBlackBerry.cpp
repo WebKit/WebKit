@@ -104,7 +104,7 @@ bool EditorClientBlackBerry::shouldSpellCheckFocusedField()
 
     // If the field does not support autocomplete, do not do spellchecking.
     if (node->isElementNode()) {
-        const Element* element = static_cast<const Element*>(node);
+        const Element* element = toElement(node);
         if (element->hasTagName(HTMLNames::inputTag) && !DOMSupport::elementSupportsAutocomplete(element))
             return false;
     }
@@ -188,7 +188,7 @@ bool EditorClientBlackBerry::shouldChangeSelectedRange(Range* fromRange, Range* 
         if (Node* focusedNode = frame->document()->focusedNode()) {
             if (focusedNode->hasTagName(HTMLNames::selectTag))
                 return false;
-            if (focusedNode->isElementNode() && DOMSupport::isPopupInputField(static_cast<Element*>(focusedNode)))
+            if (focusedNode->isElementNode() && DOMSupport::isPopupInputField(toElement(focusedNode)))
                 return false;
         }
 

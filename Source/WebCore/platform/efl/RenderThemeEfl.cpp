@@ -1093,7 +1093,7 @@ bool RenderThemeEfl::paintMediaFullscreenButton(RenderObject* object, const Pain
     Node* mediaNode = object->node() ? object->node()->shadowHost() : 0;
     if (!mediaNode)
         mediaNode = object->node();
-    if (!mediaNode || !mediaNode->isElementNode() || !static_cast<Element*>(mediaNode)->isMediaElement())
+    if (!mediaNode || !mediaNode->isElementNode() || !toElement(mediaNode)->isMediaElement())
         return false;
 
     HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);
@@ -1108,7 +1108,7 @@ bool RenderThemeEfl::paintMediaMuteButton(RenderObject* object, const PaintInfo&
     Node* mediaNode = object->node() ? object->node()->shadowHost() : 0;
     if (!mediaNode)
         mediaNode = object->node();
-    if (!mediaNode || !mediaNode->isElementNode() || !static_cast<Element*>(mediaNode)->isMediaElement())
+    if (!mediaNode || !mediaNode->isElementNode() || !toElement(mediaNode)->isMediaElement())
         return false;
 
     HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);

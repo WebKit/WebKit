@@ -1603,7 +1603,7 @@ static gboolean webkit_web_view_query_tooltip(GtkWidget *widget, gint x, gint y,
 
         for (Node* titleNode = node; titleNode; titleNode = titleNode->parentNode()) {
             if (titleNode->isElementNode()) {
-                String title = static_cast<Element*>(titleNode)->title();
+                String title = toElement(titleNode)->title();
                 if (!title.isEmpty()) {
                     if (FrameView* view = coreFrame->view()) {
                         GdkRectangle area = view->contentsToWindow(node->pixelSnappedBoundingBox());

@@ -408,10 +408,10 @@ void TextIterator::advance()
                     m_handledNode = handleTextNode();
                 else if (renderer && (renderer->isImage() || renderer->isWidget() ||
                          (renderer->node() && renderer->node()->isElementNode() &&
-                          (static_cast<Element*>(renderer->node())->isFormControlElement()
-                          || static_cast<Element*>(renderer->node())->hasTagName(legendTag)
-                          || static_cast<Element*>(renderer->node())->hasTagName(meterTag)
-                          || static_cast<Element*>(renderer->node())->hasTagName(progressTag)))))
+                          (toElement(renderer->node())->isFormControlElement()
+                          || toElement(renderer->node())->hasTagName(legendTag)
+                          || toElement(renderer->node())->hasTagName(meterTag)
+                          || toElement(renderer->node())->hasTagName(progressTag)))))
                     m_handledNode = handleReplacedElement();
                 else
                     m_handledNode = handleNonTextNode();

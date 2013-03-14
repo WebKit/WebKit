@@ -140,7 +140,7 @@ void ShadowRoot::recalcStyle(StyleChange change)
 
     for (Node* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isElementNode())
-            static_cast<Element*>(child)->recalcStyle(change);
+            toElement(child)->recalcStyle(change);
         else if (child->isTextNode())
             toText(child)->recalcTextStyle(change);
     }

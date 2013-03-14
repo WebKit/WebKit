@@ -110,7 +110,7 @@ IntRect InjectedBundleNodeHandle::elementBounds() const
     if (!m_node->isElementNode())
         return IntRect();
 
-    return static_cast<Element*>(m_node.get())->boundsInRootViewSpace();
+    return toElement(m_node.get())->boundsInRootViewSpace();
 }
     
 IntRect InjectedBundleNodeHandle::renderRect(bool* isReplaced) const

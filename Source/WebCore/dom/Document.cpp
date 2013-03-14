@@ -942,7 +942,7 @@ PassRefPtr<Node> Document::importNode(Node* importedNode, bool deep, ExceptionCo
     case COMMENT_NODE:
         return createComment(importedNode->nodeValue());
     case ELEMENT_NODE: {
-        Element* oldElement = static_cast<Element*>(importedNode);
+        Element* oldElement = toElement(importedNode);
         // FIXME: The following check might be unnecessary. Is it possible that
         // oldElement has mismatched prefix/namespace?
         if (!hasValidNamespaceForElements(oldElement->tagQName())) {
@@ -1831,7 +1831,7 @@ void Document::recalcStyle(StyleChange change)
         for (Node* n = firstChild(); n; n = n->nextSibling()) {
             if (!n->isElementNode())
                 continue;
-            Element* element = static_cast<Element*>(n);
+            Element* element = toElement(n);
             if (change >= Inherit || element->childNeedsStyleRecalc() || element->needsStyleRecalc())
                 element->recalcStyle(change);
         }
@@ -3336,7 +3336,7 @@ bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode, FocusDirection
 
         // Dispatch a change event for text fields or textareas that have been edited
         if (oldFocusedNode->isElementNode()) {
-            Element* element = static_cast<Element*>(oldFocusedNode.get());
+            Element* element = toElement(oldFocusedNode.get());
             if (element->wasChangedSinceLastFormControlChangeEvent())
                 element->dispatchFormControlChangeEvent();
         }
@@ -4721,7 +4721,7 @@ void Document::updateFocusAppearanceTimerFired(Timer<Document>*)
 
     updateLayout();
 
-    Element* element = static_cast<Element*>(node);
+    Element* element = toElement(node);
     if (element->isFocusable())
         element->updateFocusAppearance(m_updateFocusAppearanceRestoresSelection);
 }

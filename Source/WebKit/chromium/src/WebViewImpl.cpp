@@ -2090,7 +2090,7 @@ void WebViewImpl::setFocus(bool enable)
                 // If the selection was cleared while the WebView was not
                 // focused, then the focus element shows with a focus ring but
                 // no caret and does respond to keyboard inputs.
-                Element* element = static_cast<Element*>(focusedNode);
+                Element* element = toElement(focusedNode);
                 if (element->isTextFormControl())
                     element->updateFocusAppearance(true);
                 else if (focusedNode->isContentEditable()) {
@@ -2744,7 +2744,7 @@ void WebViewImpl::clearFocusedNode()
     // keystrokes get eaten as a result.
     if (oldFocusedNode->isContentEditable()
         || (oldFocusedNode->isElementNode()
-            && static_cast<Element*>(oldFocusedNode.get())->isTextFormControl())) {
+            && toElement(oldFocusedNode.get())->isTextFormControl())) {
         frame->selection()->clear();
     }
 }
@@ -2753,7 +2753,7 @@ void WebViewImpl::scrollFocusedNodeIntoView()
 {
     Node* focusedNode = focusedWebCoreNode();
     if (focusedNode && focusedNode->isElementNode()) {
-        Element* elementNode = static_cast<Element*>(focusedNode);
+        Element* elementNode = toElement(focusedNode);
         elementNode->scrollIntoViewIfNeeded(true);
     }
 }
@@ -2766,7 +2766,7 @@ void WebViewImpl::scrollFocusedNodeIntoRect(const WebRect& rect)
         return;
 
     if (!m_webSettings->autoZoomFocusedNodeToLegibleScale()) {
-        Element* elementNode = static_cast<Element*>(focusedNode);
+        Element* elementNode = toElement(focusedNode);
         frame->view()->scrollElementToRect(elementNode, IntRect(rect.x, rect.y, rect.width, rect.height));
         return;
     }

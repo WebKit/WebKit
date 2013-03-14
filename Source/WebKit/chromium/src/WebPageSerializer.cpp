@@ -170,7 +170,7 @@ void retrieveResourcesForFrame(Frame* frame,
         // We are only interested in HTML resources.
         if (!node->isElementNode())
             continue;
-        retrieveResourcesForElement(static_cast<Element*>(node),
+        retrieveResourcesForElement(toElement(node),
                                     visitedFrames, framesToVisit,
                                     frameURLs, resourceURLs);
     }

@@ -430,7 +430,7 @@ void HTMLObjectElement::updateDocNamedItem()
     Node* child = firstChild();
     while (child && isNamedItem) {
         if (child->isElementNode()) {
-            Element* element = static_cast<Element*>(child);
+            Element* element = toElement(child);
             // FIXME: Use of isRecognizedTagName is almost certainly wrong here.
             if (isRecognizedTagName(element->tagQName()) && !element->hasTagName(paramTag))
                 isNamedItem = false;

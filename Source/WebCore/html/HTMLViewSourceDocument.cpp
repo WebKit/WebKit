@@ -278,7 +278,7 @@ int HTMLViewSourceDocument::addRange(const String& source, int start, int end, c
     }
     addText(text, className);
     if (!className.isEmpty() && m_current != m_tbody)
-        m_current = static_cast<Element*>(m_current->parentNode());
+        m_current = toElement(m_current->parentNode());
     return end;
 }
 

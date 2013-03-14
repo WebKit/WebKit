@@ -59,7 +59,7 @@ static gpointer createWrapper(Node* node)
         if (node->isHTMLElement())
             wrappedNode = createHTMLElementWrapper(toHTMLElement(node));
         else
-            wrappedNode = wrapElement(static_cast<Element*>(node));
+            wrappedNode = wrapElement(toElement(node));
         break;
     default:
         wrappedNode = wrapNode(node);

@@ -95,7 +95,7 @@ PassRefPtr<Element> SelectorDataList::queryFirst(Node* rootNode) const
         return 0;
     ASSERT(result.size() == 1);
     ASSERT(result.first()->isElementNode());
-    return static_cast<Element*>(result.first().get());
+    return toElement(result.first().get());
 }
 
 bool SelectorDataList::canUseIdLookup(Node* rootNode) const
@@ -140,7 +140,7 @@ void SelectorDataList::execute(Node* rootNode, Vector<RefPtr<Node> >& matchedEle
     Node* n = rootNode->firstChild();
     while (n) {
         if (n->isElementNode()) {
-            Element* element = static_cast<Element*>(n);
+            Element* element = toElement(n);
             for (unsigned i = 0; i < selectorCount; ++i) {
                 if (selectorMatches(m_selectors[i], element, rootNode)) {
                     matchedElements.append(element);

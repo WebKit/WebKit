@@ -178,7 +178,7 @@ void IncreaseSelectionListLevelCommand::doApply()
     Node* previousItem = startListChild->renderer()->previousSibling()->node();
     if (isListElement(previousItem)) {
         // move nodes up into preceding list
-        appendSiblingNodeRange(startListChild, endListChild, static_cast<Element*>(previousItem));
+        appendSiblingNodeRange(startListChild, endListChild, toElement(previousItem));
         m_listElement = previousItem;
     } else {
         // create a sublist for the preceding element and move nodes there

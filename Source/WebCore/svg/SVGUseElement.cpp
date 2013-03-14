@@ -349,7 +349,7 @@ static bool isDisallowedElement(Node* node)
     if (!node->isSVGElement())
         return true;
 
-    Element* element = static_cast<Element*>(node);
+    Element* element = toElement(node);
 
     DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, allowedElementTags, ());
     if (allowedElementTags.isEmpty()) {

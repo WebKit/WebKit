@@ -484,7 +484,7 @@ void FatFingers::getRelevantInfoFromCachedHitTest(Element*& elementUnderPoint, E
     while (node && !node->isElementNode())
         node = node->parentNode();
 
-    elementUnderPoint = static_cast<Element*>(node);
+    elementUnderPoint = toElement(node);
     clickableElementUnderPoint = result.URLElement();
 }
 
@@ -498,7 +498,7 @@ void FatFingers::setSuccessfulFatFingersResult(FatFingersResult& result, Node* b
     bool isTextInputElement = false;
     if (m_targetType == ClickableElement) {
         ASSERT_WITH_SECURITY_IMPLICATION(bestNode->isElementNode());
-        Element* bestElement = static_cast<Element*>(bestNode);
+        Element* bestElement = toElement(bestNode);
         isTextInputElement = DOMSupport::isTextInputElement(bestElement);
     }
     result.m_isTextInput = isTextInputElement;

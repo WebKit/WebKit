@@ -1328,7 +1328,7 @@ PassRefPtr<TypeBuilder::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* n
     }
 
     if (node->isElementNode()) {
-        Element* element = static_cast<Element*>(node);
+        Element* element = toElement(node);
         value->setAttributes(buildArrayForElementAttributes(element));
         if (node->isFrameOwnerElement()) {
             HTMLFrameOwnerElement* frameOwner = static_cast<HTMLFrameOwnerElement*>(node);
@@ -1654,7 +1654,7 @@ void InspectorDOMAgent::didInvalidateStyleAttr(Node* node)
 
     if (!m_revalidateStyleAttrTask)
         m_revalidateStyleAttrTask = adoptPtr(new RevalidateStyleAttributeTask(this));
-    m_revalidateStyleAttrTask->scheduleFor(static_cast<Element*>(node));
+    m_revalidateStyleAttrTask->scheduleFor(toElement(node));
 }
 
 void InspectorDOMAgent::didPushShadowRoot(Element* host, ShadowRoot* root)

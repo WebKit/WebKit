@@ -203,7 +203,7 @@ static Element* elementForTapHighlight(Element* elementUnderFatFinger)
 
     // FatFingers class selector ensure only anchor with valid href attr value get here.
     // It includes empty hrefs.
-    Element* highlightCandidateElement = static_cast<Element*>(linkNode);
+    Element* highlightCandidateElement = toElement(linkNode);
 
     if (!isArea)
         return highlightCandidateElement;

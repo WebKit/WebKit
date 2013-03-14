@@ -162,7 +162,7 @@ PassRefPtr<FilterEffect> FilterEffectRenderer::buildReferenceFilter(RenderObject
         if (!node->isSVGElement())
             continue;
 
-        SVGElement* element = static_cast<SVGElement*>(node);
+        SVGElement* element = toSVGElement(node);
         if (!element->isFilterEffect())
             continue;
 

@@ -48,9 +48,9 @@ v8::Handle<v8::Object> wrap(Element* impl, v8::Handle<v8::Object> creationContex
         return wrap(toHTMLElement(impl), creationContext, isolate);
 #if ENABLE(SVG)
     if (impl->isSVGElement())
-        return wrap(static_cast<SVGElement*>(impl), creationContext, isolate);
+        return wrap(toSVGElement(impl), creationContext, isolate);
 #endif
-    return V8Element::createWrapper(static_cast<Element*>(impl), creationContext, isolate);
+    return V8Element::createWrapper(impl, creationContext, isolate);
 }
 
 }

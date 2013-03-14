@@ -1370,7 +1370,7 @@ bool InspectorStyleSheet::inlineStyleSheetText(String* result) const
     Node* ownerNode = m_pageStyleSheet->ownerNode();
     if (!ownerNode || ownerNode->nodeType() != Node::ELEMENT_NODE)
         return false;
-    Element* ownerElement = static_cast<Element*>(ownerNode);
+    Element* ownerElement = toElement(ownerNode);
 
     if (!ownerElement->hasTagName(HTMLNames::styleTag)
 #if ENABLE(SVG)

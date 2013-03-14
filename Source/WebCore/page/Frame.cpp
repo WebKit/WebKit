@@ -422,7 +422,7 @@ String Frame::searchForLabelsBeforeElement(const Vector<String>& labels, Element
     Node* n;
     for (n = NodeTraversal::previous(element); n && lengthSearched < charsSearchedThreshold; n = NodeTraversal::previous(n)) {
         if (n->hasTagName(formTag)
-            || (n->isHTMLElement() && static_cast<Element*>(n)->isFormControlElement()))
+            || (n->isHTMLElement() && toElement(n)->isFormControlElement()))
         {
             // We hit another form element or the start of the form - bail out
             break;

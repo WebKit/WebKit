@@ -298,7 +298,7 @@ void DocumentStyleSheetCollection::collectActiveStyleSheets(Vector<RefPtr<StyleS
                    ||  (n->isSVGElement() && n->hasTagName(SVGNames::styleTag))
 #endif
                    ) {
-            Element* e = static_cast<Element*>(n);
+            Element* e = toElement(n);
             AtomicString title = e->getAttribute(titleAttr);
             bool enabledViaScript = false;
             if (e->hasLocalName(linkTag)) {

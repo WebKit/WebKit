@@ -2519,7 +2519,7 @@ void FrameView::scrollToAnchor()
 void FrameView::updateWidget(RenderObject* object)
 {
     ASSERT(!object->node() || object->node()->isElementNode());
-    Element* ownerElement = static_cast<Element*>(object->node());
+    Element* ownerElement = toElement(object->node());
     // The object may have already been destroyed (thus node cleared),
     // but FrameView holds a manual ref, so it won't have been deleted.
     ASSERT(m_widgetUpdateSet->contains(object));

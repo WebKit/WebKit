@@ -354,7 +354,7 @@ static bool removingNodeRemovesPosition(Node* node, const Position& position)
     if (!node->isElementNode())
         return false;
 
-    Element* element = static_cast<Element*>(node);
+    Element* element = toElement(node);
     return element->containsIncludingShadowDOM(position.anchorNode());
 }
 

@@ -103,7 +103,7 @@ JSValue JSClipboard::setDragImage(ExecState* exec)
     if (!node->isElementNode())
         return throwError(exec, createSyntaxError(exec, "setDragImageFromElement: Invalid first argument"));
 
-    if (static_cast<Element*>(node)->hasLocalName(imgTag) && !node->inDocument())
+    if (toElement(node)->hasLocalName(imgTag) && !node->inDocument())
         clipboard->setDragImage(static_cast<HTMLImageElement*>(node)->cachedImage(), IntPoint(x, y));
     else
         clipboard->setDragImageElement(node, IntPoint(x, y));

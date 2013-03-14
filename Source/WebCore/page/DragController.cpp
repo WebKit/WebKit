@@ -307,7 +307,7 @@ static Element* elementUnderMouse(Document* documentUnderMouse, const IntPoint& 
     if (n)
         n = n->deprecatedShadowAncestorNode();
 
-    return static_cast<Element*>(n);
+    return toElement(n);
 }
 
 bool DragController::tryDocumentDrag(DragData* dragData, DragDestinationAction actionMask, DragSession& dragSession)
@@ -785,7 +785,7 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
 
     Node* node = state.m_dragSrc.get();
 
-    Image* image = getImage(static_cast<Element*>(node));
+    Image* image = node->isElementNode() ? getImage(toElement(node)) : 0;
     if (state.m_dragType == DragSourceActionSelection) {
         if (!clipboard->hasData()) {
             if (enclosingTextFormControl(src->selection()->start()))
@@ -809,7 +809,7 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
         // We shouldn't be starting a drag for an image that can't provide an extension.
         // This is an early detection for problems encountered later upon drop.
         ASSERT(!image->filenameExtension().isEmpty());
-        Element* element = static_cast<Element*>(node);
+        Element* element = toElement(node);
         if (!clipboard->hasData()) {
             m_draggingImageURL = imageURL;
             prepareClipboardForImageDrag(src, clipboard, element, linkURL, imageURL, hitTestResult.altDisplayString());

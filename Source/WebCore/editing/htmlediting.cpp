@@ -199,7 +199,7 @@ Element* unsplittableElementForPosition(const Position& p)
 {
     // Since enclosingNodeOfType won't search beyond the highest root editable node,
     // this code works even if the closest table cell was outside of the root editable node.
-    Element* enclosingCell = static_cast<Element*>(enclosingNodeOfType(p, &isTableCell));
+    Element* enclosingCell = toElement(enclosingNodeOfType(p, &isTableCell));
     if (enclosingCell)
         return enclosingCell;
 
@@ -671,7 +671,7 @@ Node* highestNodeToRemoveInPruning(Node* node)
 
 Node* enclosingTableCell(const Position& p)
 {
-    return static_cast<Element*>(enclosingNodeOfType(p, isTableCell));
+    return toElement(enclosingNodeOfType(p, isTableCell));
 }
 
 Node* enclosingAnchorElement(const Position& p)

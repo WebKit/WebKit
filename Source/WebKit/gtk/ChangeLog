@@ -1,3 +1,16 @@
+2013-03-14  Abhishek Arya  <inferno@chromium.org>
+
+        Replace static_casts with to* helper functions.
+        https://bugs.webkit.org/show_bug.cgi?id=112296
+
+        Reviewed by Kentaro Hara.
+
+        to* helper functions are preferred over static_cast calls since they
+        help to catch bad casts easily on the testing infrastructure.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_query_tooltip):
+
 2013-03-13  Tomas Popela  <tpopela@redhat.com>
 
         [GTK][Introspection] Fix of gtk doc annotation warnings

@@ -443,7 +443,7 @@ static NSString* searchForLabelsBeforeElement(Frame* frame, NSArray* labels, Ele
          n = NodeTraversal::previous(n))
     {
         if (n->hasTagName(formTag)
-            || (n->isHTMLElement() && static_cast<Element*>(n)->isFormControlElement()))
+            || (n->isHTMLElement() && toElement(n)->isFormControlElement()))
         {
             // We hit another form element or the start of the form - bail out
             break;

@@ -2721,7 +2721,7 @@ void Editor::applyEditingStyleToBodyElement() const
     RefPtr<NodeList> list = m_frame->document()->getElementsByTagName("body");
     unsigned len = list->length();
     for (unsigned i = 0; i < len; i++)
-        applyEditingStyleToElement(static_cast<Element*>(list->item(i)));
+        applyEditingStyleToElement(toElement(list->item(i)));
 }
 
 void Editor::applyEditingStyleToElement(Element* element) const

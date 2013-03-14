@@ -353,7 +353,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
             frame->selection()->setSelection(newSelection);
     }
 
-    static_cast<Element*>(node.get())->focus(false, direction);
+    toElement(node.get())->focus(false, direction);
     return true;
 }
 

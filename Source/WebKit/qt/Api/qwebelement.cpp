@@ -616,7 +616,7 @@ QWebElement QWebElement::firstChild() const
     for (Node* child = m_element->firstChild(); child; child = child->nextSibling()) {
         if (!child->isElementNode())
             continue;
-        Element* e = static_cast<Element*>(child);
+        Element* e = toElement(child);
         return QWebElement(e);
     }
     return QWebElement();
@@ -634,7 +634,7 @@ QWebElement QWebElement::lastChild() const
     for (Node* child = m_element->lastChild(); child; child = child->previousSibling()) {
         if (!child->isElementNode())
             continue;
-        Element* e = static_cast<Element*>(child);
+        Element* e = toElement(child);
         return QWebElement(e);
     }
     return QWebElement();
@@ -652,7 +652,7 @@ QWebElement QWebElement::nextSibling() const
     for (Node* sib = m_element->nextSibling(); sib; sib = sib->nextSibling()) {
         if (!sib->isElementNode())
             continue;
-        Element* e = static_cast<Element*>(sib);
+        Element* e = toElement(sib);
         return QWebElement(e);
     }
     return QWebElement();
@@ -670,7 +670,7 @@ QWebElement QWebElement::previousSibling() const
     for (Node* sib = m_element->previousSibling(); sib; sib = sib->previousSibling()) {
         if (!sib->isElementNode())
             continue;
-        Element* e = static_cast<Element*>(sib);
+        Element* e = toElement(sib);
         return QWebElement(e);
     }
     return QWebElement();
@@ -1648,7 +1648,7 @@ QWebElement QWebElementCollection::at(int i) const
     if (!d)
         return QWebElement();
     Node* n = d->m_result->item(i);
-    return QWebElement(static_cast<Element*>(n));
+    return QWebElement(toElement(n));
 }
 
 /*!
@@ -1683,7 +1683,7 @@ QList<QWebElement> QWebElementCollection::toList() const
     Node* n = d->m_result->item(i);
     while (n) {
         if (n->isElementNode())
-            elements.append(QWebElement(static_cast<Element*>(n)));
+            elements.append(QWebElement(toElement(n)));
         n = d->m_result->item(++i);
     }
     return elements;

@@ -201,7 +201,7 @@ void Node::dumpStatistics()
                 ++elementNodes;
 
                 // Tag stats
-                Element* element = static_cast<Element*>(node);
+                Element* element = toElement(node);
                 HashMap<String, size_t>::AddResult result = perTagCount.add(element->tagName(), 1);
                 if (!result.isNewEntry)
                     result.iterator->value++;
@@ -589,7 +589,7 @@ void Node::normalize()
     while (node) {
         NodeType type = node->nodeType();
         if (type == ELEMENT_NODE)
-            static_cast<Element*>(node.get())->normalizeAttributes();
+            toElement(node.get())->normalizeAttributes();
 
         if (node == this)
             break;
@@ -1318,7 +1318,7 @@ Element* Node::rootEditableElement() const
     Element* result = 0;
     for (Node* n = const_cast<Node*>(this); n && n->rendererIsEditable(); n = n->parentNode()) {
         if (n->isElementNode())
-            result = static_cast<Element*>(n);
+            result = toElement(n);
         if (n->hasTagName(bodyTag))
             break;
     }
@@ -1472,7 +1472,7 @@ bool Node::isDefaultNamespace(const AtomicString& namespaceURIMaybeEmpty) const
 
     switch (nodeType()) {
         case ELEMENT_NODE: {
-            const Element* elem = static_cast<const Element*>(this);
+            const Element* elem = toElement(this);
             
             if (elem->prefix().isNull())
                 return elem->namespaceURI() == namespaceURI;
@@ -1717,7 +1717,7 @@ Element* Node::ancestorElement() const
     // In theory, there can be EntityReference nodes between elements, but this is currently not supported.
     for (ContainerNode* n = parentNode(); n; n = n->parentNode()) {
         if (n->isElementNode())
-            return static_cast<Element*>(n);
+            return toElement(n);
     }
     return 0;
 }
@@ -1868,7 +1868,7 @@ static void appendAttributeDesc(const Node* node, StringBuilder& stringBuilder, 
     if (!node->isElementNode())
         return;
 
-    String attr = static_cast<const Element*>(node)->getAttribute(name);
+    String attr = toElement(node)->getAttribute(name);
     if (attr.isEmpty())
         return;
 

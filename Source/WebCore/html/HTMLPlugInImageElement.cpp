@@ -336,7 +336,7 @@ void HTMLPlugInImageElement::updateSnapshotInfo()
     if (!root)
         return;
 
-    Element* shadowContainer = static_cast<Element*>(root->firstChild());
+    Element* shadowContainer = toElement(root->firstChild());
     shadowContainer->setAttribute(classAttr, classNameForShadowRoot(this, m_isPrimarySnapshottedPlugIn));
 }
 

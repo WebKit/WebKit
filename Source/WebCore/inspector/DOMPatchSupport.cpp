@@ -417,7 +417,7 @@ PassOwnPtr<DOMPatchSupport::Digest> DOMPatchSupport::createDigest(Node* node, Un
             child = child->nextSibling();
             digest->m_children.append(childInfo.release());
         }
-        Element* element = static_cast<Element*>(node);
+        Element* element = toElement(node);
 
         if (element->hasAttributesWithoutUpdate()) {
             size_t numAttrs = element->attributeCount();

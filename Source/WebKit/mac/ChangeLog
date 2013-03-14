@@ -1,3 +1,18 @@
+2013-03-14  Abhishek Arya  <inferno@chromium.org>
+
+        Replace static_casts with to* helper functions.
+        https://bugs.webkit.org/show_bug.cgi?id=112296
+
+        Reviewed by Kentaro Hara.
+
+        to* helper functions are preferred over static_cast calls since they
+        help to catch bad casts easily on the testing infrastructure.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (applyAppleDictionaryApplicationQuirkNonInlinePart):
+        * WebView/WebHTMLRepresentation.mm:
+        (searchForLabelsBeforeElement):
+
 2013-03-14  Alice Liu  <alice.liu@apple.com>
 
         Add to HistoryItem a way to know if its underlying CachedPage has expired.

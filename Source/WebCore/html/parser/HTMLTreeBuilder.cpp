@@ -142,7 +142,7 @@ static HTMLFormElement* closestFormAncestor(Element* element)
         ContainerNode* parent = element->parentNode();
         if (!parent || !parent->isElementNode())
             return 0;
-        element = static_cast<Element*>(parent);
+        element = toElement(parent);
     }
     return 0;
 }

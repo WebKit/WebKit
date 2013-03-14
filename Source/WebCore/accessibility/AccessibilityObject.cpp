@@ -1320,7 +1320,7 @@ bool AccessibilityObject::hasAttribute(const QualifiedName& attribute) const
     if (!elementNode->isElementNode())
         return false;
     
-    Element* element = static_cast<Element*>(elementNode);
+    Element* element = toElement(elementNode);
     return element->fastHasAttribute(attribute);
 }
     
@@ -1333,7 +1333,7 @@ const AtomicString& AccessibilityObject::getAttribute(const QualifiedName& attri
     if (!elementNode->isElementNode())
         return nullAtom;
     
-    Element* element = static_cast<Element*>(elementNode);
+    Element* element = toElement(elementNode);
     return element->fastGetAttribute(attribute);
 }
     

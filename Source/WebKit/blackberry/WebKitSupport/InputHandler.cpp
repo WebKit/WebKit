@@ -431,7 +431,7 @@ void InputHandler::focusedNodeChanged()
     }
 
     if (node && node->isElementNode()) {
-        Element* element = static_cast<Element*>(node);
+        Element* element = toElement(node);
         if (DOMSupport::isElementTypePlugin(element)) {
             setPluginFocused(element);
             return;
@@ -1861,7 +1861,7 @@ bool InputHandler::willOpenPopupForNode(Node* node)
     }
 
     if (node->isElementNode()) {
-        Element* element = static_cast<Element*>(node);
+        Element* element = toElement(node);
         if (DOMSupport::isPopupInputField(element))
             return true;
     }

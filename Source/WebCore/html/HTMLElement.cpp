@@ -563,7 +563,7 @@ Element* HTMLElement::insertAdjacentElement(const String& where, Element* newChi
 
     Node* returnValue = insertAdjacent(where, newChild, ec);
     ASSERT_WITH_SECURITY_IMPLICATION(!returnValue || returnValue->isElementNode());
-    return static_cast<Element*>(returnValue); 
+    return toElement(returnValue); 
 }
 
 // Step 3 of http://www.whatwg.org/specs/web-apps/current-work/multipage/apis-in-html-documents.html#insertadjacenthtml()
@@ -576,7 +576,7 @@ static Element* contextElementForInsertion(const String& where, Element* element
             return 0;
         }
         ASSERT_WITH_SECURITY_IMPLICATION(!parent || parent->isElementNode());
-        return static_cast<Element*>(parent);
+        return toElement(parent);
     }
     if (equalIgnoringCase(where, "afterBegin") || equalIgnoringCase(where, "beforeEnd"))
         return element;

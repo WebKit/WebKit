@@ -58,7 +58,7 @@ void RenderSVGViewportContainer::applyViewportClip(PaintInfo& paintInfo)
 
 void RenderSVGViewportContainer::calcViewport()
 {
-    SVGElement* element = static_cast<SVGElement*>(node());
+    SVGElement* element = toSVGElement(node());
     if (!element->hasTagName(SVGNames::svgTag))
         return;
     SVGSVGElement* svg = toSVGSVGElement(element);

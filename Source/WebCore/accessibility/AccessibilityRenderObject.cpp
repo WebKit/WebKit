@@ -573,7 +573,7 @@ Element* AccessibilityRenderObject::anchorElement() const
     Node* node = currRenderer->node();
     for ( ; node; node = node->parentNode()) {
         if (node->hasTagName(aTag) || (node->renderer() && cache->getOrCreate(node->renderer())->isAnchor()))
-            return static_cast<Element*>(node);
+            return toElement(node);
     }
     
     return 0;
@@ -595,12 +595,12 @@ String AccessibilityRenderObject::helpText() const
     String description = accessibilityDescription();
     for (RenderObject* curr = m_renderer; curr; curr = curr->parent()) {
         if (curr->node() && curr->node()->isHTMLElement()) {
-            const AtomicString& summary = static_cast<Element*>(curr->node())->getAttribute(summaryAttr);
+            const AtomicString& summary = toElement(curr->node())->getAttribute(summaryAttr);
             if (!summary.isEmpty())
                 return summary;
             
             // The title attribute should be used as help text unless it is already being used as descriptive text.
-            const AtomicString& title = static_cast<Element*>(curr->node())->getAttribute(titleAttr);
+            const AtomicString& title = toElement(curr->node())->getAttribute(titleAttr);
             if (!title.isEmpty() && description != title)
                 return title;
         }
@@ -817,7 +817,7 @@ LayoutRect AccessibilityRenderObject::checkboxOrRadioRect() const
     if (!m_renderer)
         return LayoutRect();
     
-    HTMLLabelElement* label = labelForElement(static_cast<Element*>(m_renderer->node()));
+    HTMLLabelElement* label = labelForElement(toElement(m_renderer->node()));
     if (!label || !label->renderer())
         return boundingBoxRect();
     
@@ -1041,10 +1041,10 @@ AccessibilityObject* AccessibilityRenderObject::titleUIElement() const
     if (isFieldset())
         return axObjectCache()->getOrCreate(toRenderFieldset(m_renderer)->findLegend(RenderFieldset::IncludeFloatingOrOutOfFlow));
     
-    Node* element = m_renderer->node();
-    if (!element)
+    Node* node = m_renderer->node();
+    if (!node || !node->isElementNode())
         return 0;
-    HTMLLabelElement* label = labelForElement(static_cast<Element*>(element));
+    HTMLLabelElement* label = labelForElement(toElement(node));
     if (label && label->renderer())
         return axObjectCache()->getOrCreate(label);
 
@@ -1248,7 +1248,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
             return false;
         
         if (node && node->isElementNode()) {
-            Element* elt = static_cast<Element*>(node);
+            Element* elt = toElement(node);
             const AtomicString& alt = elt->getAttribute(altAttr);
             // don't ignore an image that has an alt tag
             if (!alt.string().containsOnlyWhitespace())
@@ -1405,7 +1405,7 @@ const AtomicString& AccessibilityRenderObject::accessKey() const
         return nullAtom;
     if (!node->isElementNode())
         return nullAtom;
-    return static_cast<Element*>(node)->getAttribute(accesskeyAttr);
+    return toElement(node)->getAttribute(accesskeyAttr);
 }
 
 VisibleSelection AccessibilityRenderObject::selection() const
@@ -1491,7 +1491,7 @@ void AccessibilityRenderObject::setElementAttributeValue(const QualifiedName& at
     if (!node || !node->isElementNode())
         return;
     
-    Element* element = static_cast<Element*>(node);
+    Element* element = toElement(node);
     element->setAttribute(attributeName, (value) ? "true" : "false");        
 }
     
@@ -1627,7 +1627,7 @@ void AccessibilityRenderObject::setValue(const String& string)
 {
     if (!m_renderer || !m_renderer->node() || !m_renderer->node()->isElementNode())
         return;
-    Element* element = static_cast<Element*>(m_renderer->node());
+    Element* element = toElement(m_renderer->node());
 
     if (!m_renderer->isBoxModelObject())
         return;
@@ -2268,7 +2268,7 @@ AccessibilityObject* AccessibilityRenderObject::activeDescendant() const
     
     if (m_renderer->node() && !m_renderer->node()->isElementNode())
         return 0;
-    Element* element = static_cast<Element*>(m_renderer->node());
+    Element* element = toElement(m_renderer->node());
         
     const AtomicString& activeDescendantAttrStr = element->getAttribute(aria_activedescendantAttr);
     if (activeDescendantAttrStr.isNull() || activeDescendantAttrStr.isEmpty())
@@ -2321,7 +2321,7 @@ void AccessibilityRenderObject::handleAriaExpandedChanged()
 
 void AccessibilityRenderObject::handleActiveDescendantChanged()
 {
-    Element* element = static_cast<Element*>(renderer()->node());
+    Element* element = toElement(renderer()->node());
     if (!element)
         return;
     Document* doc = renderer()->document();
@@ -2362,7 +2362,7 @@ AccessibilityObject* AccessibilityRenderObject::correspondingLabelForControlElem
 
     Node* node = m_renderer->node();
     if (node && node->isHTMLElement()) {
-        HTMLLabelElement* label = labelForElement(static_cast<Element*>(node));
+        HTMLLabelElement* label = labelForElement(toElement(node));
         if (label)
             return axObjectCache()->getOrCreate(label);
     }
@@ -2632,7 +2632,7 @@ bool AccessibilityRenderObject::inheritsPresentationalRole() const
         
         // If native tag of the parent element matches an acceptable name, then return
         // based on its presentational status.
-        if (possibleParentTagNames->contains(static_cast<Element*>(elementNode)->tagQName()))
+        if (possibleParentTagNames->contains(toElement(elementNode)->tagQName()))
             return parent->roleValue() == PresentationalRole;
     }
     
@@ -3158,7 +3158,7 @@ void AccessibilityRenderObject::setAccessibleName(const AtomicString& name)
         domNode = m_renderer->node();
 
     if (domNode && domNode->isElementNode())
-        static_cast<Element*>(domNode)->setAttribute(aria_labelAttr, name);
+        toElement(domNode)->setAttribute(aria_labelAttr, name);
 }
     
 static bool isLinkable(const AccessibilityRenderObject& object)
@@ -3281,7 +3281,7 @@ String AccessibilityRenderObject::stringRoleForMSAA() const
     if (!node || !node->isElementNode())
         return String();
 
-    Element* element = static_cast<Element*>(node);
+    Element* element = toElement(node);
     if (!shouldReturnTagNameAsRoleForMSAA(*element))
         return String();
 

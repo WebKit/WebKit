@@ -444,7 +444,7 @@ static bool isHeaderElement(const Node* a)
 
 static bool haveSameTagName(Node* a, Node* b)
 {
-    return a && b && a->isElementNode() && b->isElementNode() && toElement(a)->tagName() == static_cast<Element*>(b)->tagName();
+    return a && b && a->isElementNode() && b->isElementNode() && toElement(a)->tagName() == toElement(b)->tagName();
 }
 
 bool ReplaceSelectionCommand::shouldMerge(const VisiblePosition& source, const VisiblePosition& destination)
@@ -736,7 +736,7 @@ static bool handleStyleSpansBeforeInsertion(ReplacementFragment& fragment, const
 
     // FIXME: This string comparison is a naive way of comparing two styles.
     // We should be taking the diff and check that the diff is empty.
-    if (styleText != static_cast<Element*>(wrappingStyleSpan)->getAttribute(styleAttr))
+    if (styleText != toElement(wrappingStyleSpan)->getAttribute(styleAttr))
         return false;
 
     fragment.removeNodePreservingChildren(wrappingStyleSpan);
@@ -1211,7 +1211,7 @@ void ReplaceSelectionCommand::doApply()
         mergeEndIfNeeded();
 
     if (Node* mailBlockquote = enclosingNodeOfType(positionAtStartOfInsertedContent().deepEquivalent(), isMailPasteAsQuotationNode))
-        removeNodeAttribute(static_cast<Element*>(mailBlockquote), classAttr);
+        removeNodeAttribute(toElement(mailBlockquote), classAttr);
 
     if (shouldPerformSmartReplace())
         addSpacesForSmartReplace();

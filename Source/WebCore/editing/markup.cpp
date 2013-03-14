@@ -171,7 +171,7 @@ void StyledMarkupAccumulator::wrapWithNode(Node* node, bool convertBlocksToInlin
 {
     StringBuilder markup;
     if (node->isElementNode())
-        appendElement(markup, static_cast<Element*>(node), convertBlocksToInlines && isBlock(const_cast<Node*>(node)), rangeFullySelectsNode);
+        appendElement(markup, toElement(node), convertBlocksToInlines && isBlock(const_cast<Node*>(node)), rangeFullySelectsNode);
     else
         appendStartMarkup(markup, node, 0);
     m_reversedPrecedingMarkup.append(markup.toString());
@@ -604,8 +604,8 @@ static String createMarkupInternal(Document* document, const Range* range, const
                 // Bring the background attribute over, but not as an attribute because a background attribute on a div
                 // appears to have no effect.
                 if ((!fullySelectedRootStyle || !fullySelectedRootStyle->style() || !fullySelectedRootStyle->style()->getPropertyCSSValue(CSSPropertyBackgroundImage))
-                    && static_cast<Element*>(fullySelectedRoot)->hasAttribute(backgroundAttr))
-                    fullySelectedRootStyle->style()->setProperty(CSSPropertyBackgroundImage, "url('" + static_cast<Element*>(fullySelectedRoot)->getAttribute(backgroundAttr) + "')");
+                    && toElement(fullySelectedRoot)->hasAttribute(backgroundAttr))
+                    fullySelectedRootStyle->style()->setProperty(CSSPropertyBackgroundImage, "url('" + toElement(fullySelectedRoot)->getAttribute(backgroundAttr) + "')");
 
                 if (fullySelectedRootStyle->style()) {
                     // Reset the CSS properties to avoid an assertion error in addStyleMarkup().
@@ -760,7 +760,7 @@ PassRefPtr<DocumentFragment> createFragmentFromMarkupWithContext(Document* docum
     if (specialCommonAncestor)
         fragment->appendChild(specialCommonAncestor, ASSERT_NO_EXCEPTION);
     else
-        fragment->takeAllChildrenFrom(static_cast<ContainerNode*>(commonAncestor));
+        fragment->takeAllChildrenFrom(toContainerNode(commonAncestor));
 
     trimFragment(fragment.get(), nodeBeforeContext.get(), nodeAfterContext.get());
 
@@ -826,7 +826,7 @@ static void fillContainerFromString(ContainerNode* paragraph, const String& stri
 
 bool isPlainTextMarkup(Node *node)
 {
-    if (!node->isElementNode() || !node->hasTagName(divTag) || static_cast<Element*>(node)->hasAttributes())
+    if (!node->isElementNode() || !node->hasTagName(divTag) || toElement(node)->hasAttributes())
         return false;
     
     if (node->childNodeCount() == 1 && (node->firstChild()->isTextNode() || (node->firstChild()->firstChild())))
@@ -876,7 +876,7 @@ PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String
 
     // Break string into paragraphs. Extra line breaks turn into empty paragraphs.
     Node* blockNode = enclosingBlock(context->firstNode());
-    Element* block = static_cast<Element*>(blockNode);
+    Element* block = toElement(blockNode);
     bool useClonesOfEnclosingBlock = blockNode
         && blockNode->isElementNode()
         && !block->hasTagName(bodyTag)

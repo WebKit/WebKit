@@ -80,7 +80,7 @@ IntRect BackingStoreClient::absoluteRect() const
     // FIXME: Speed it up!
     Frame* frame = m_frame;
     while (frame) {
-        if (Element* element = static_cast<Element*>(frame->ownerElement())) {
+        if (Element* element = toElement(frame->ownerElement())) {
             do {
                 rect.move(element->offsetLeft(), element->offsetTop());
             } while ((element = element->offsetParent()));

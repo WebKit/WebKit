@@ -571,7 +571,7 @@ bool WebFrame::containsAnyFormElements() const
     for (Node* node = document->documentElement(); node; node = NodeTraversal::next(node)) {
         if (!node->isElementNode())
             continue;
-        if (static_cast<Element*>(node)->hasTagName(HTMLNames::formTag))
+        if (toElement(node)->hasTagName(HTMLNames::formTag))
             return true;
     }
     return false;

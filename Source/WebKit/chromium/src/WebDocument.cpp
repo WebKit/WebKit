@@ -154,7 +154,7 @@ void WebDocument::images(WebVector<WebElement>& results)
     for (size_t i = 0; i < sourceLength; ++i) {
         Node* node = images->item(i);
         if (node && node->isHTMLElement())
-            temp.append(WebElement(static_cast<Element*>(node)));
+            temp.append(WebElement(toElement(node)));
     }
     results.assign(temp);
 }

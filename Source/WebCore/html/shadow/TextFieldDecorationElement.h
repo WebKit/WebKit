@@ -96,7 +96,7 @@ inline TextFieldDecorationElement* toTextFieldDecorationElement(Node* node)
 {
     ASSERT(node);
     ASSERT_WITH_SECURITY_IMPLICATION(node->isElementNode());
-    ASSERT_WITH_SECURITY_IMPLICATION(static_cast<Element*>(node)->isTextFieldDecoration());
+    ASSERT_WITH_SECURITY_IMPLICATION(toElement(node)->isTextFieldDecoration());
     return static_cast<TextFieldDecorationElement*>(node);
 }
 

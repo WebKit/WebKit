@@ -52,7 +52,7 @@ KeyframeAnimation::KeyframeAnimation(const Animation* animation, RenderObject* r
 {
     // Get the keyframe RenderStyles
     if (m_object && m_object->node() && m_object->node()->isElementNode())
-        m_object->document()->styleResolver()->keyframeStylesForAnimation(static_cast<Element*>(m_object->node()), unanimatedStyle, m_keyframes);
+        m_object->document()->styleResolver()->keyframeStylesForAnimation(toElement(m_object->node()), unanimatedStyle, m_keyframes);
 
     // Update the m_transformFunctionListValid flag based on whether the function lists in the keyframes match.
     validateTransformFunctionList();
@@ -312,7 +312,7 @@ bool KeyframeAnimation::sendAnimationEvent(const AtomicString& eventType, double
         // Dispatch the event
         RefPtr<Element> element;
         if (m_object->node() && m_object->node()->isElementNode())
-            element = static_cast<Element*>(m_object->node());
+            element = toElement(m_object->node());
 
         ASSERT(!element || (element->document() && !element->document()->inPageCache()));
         if (!element)

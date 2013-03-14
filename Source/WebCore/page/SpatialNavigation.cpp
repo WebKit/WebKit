@@ -506,7 +506,7 @@ static LayoutRect rectToAbsoluteCoordinates(Frame* initialFrame, const LayoutRec
 {
     LayoutRect rect = initialRect;
     for (Frame* frame = initialFrame; frame; frame = frame->tree()->parent()) {
-        if (Element* element = static_cast<Element*>(frame->ownerElement())) {
+        if (Element* element = frame->ownerElement()) {
             do {
                 rect.move(element->offsetLeft(), element->offsetTop());
             } while ((element = element->offsetParent()));

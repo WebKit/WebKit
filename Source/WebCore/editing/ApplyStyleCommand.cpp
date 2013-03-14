@@ -484,7 +484,7 @@ HTMLElement* ApplyStyleCommand::splitAncestorsWithUnicodeBidi(Node* node, bool b
     // Split every ancestor through highest ancestor with embedding.
     Node* n = node;
     while (true) {
-        Element* parent = static_cast<Element*>(n->parentNode());
+        Element* parent = toElement(n->parentNode());
         if (before ? n->previousSibling() : n->nextSibling())
             splitElement(parent, before ? n : n->nextSibling());
         if (parent == highestAncestorWithUnicodeBidi)
@@ -1032,7 +1032,7 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node*
         NodeVector currentChildren;
         getChildNodes(current.get(), currentChildren);
         RefPtr<StyledElement> styledElement;
-        if (current->isStyledElement() && isStyledInlineElementToRemove(static_cast<Element*>(current.get()))) {
+        if (current->isStyledElement() && isStyledInlineElementToRemove(toElement(current.get()))) {
             styledElement = static_cast<StyledElement*>(current.get());
             elementsToPushDown.append(styledElement);
         }
@@ -1269,8 +1269,8 @@ bool ApplyStyleCommand::mergeStartWithPreviousIfIdentical(const Position& start,
     Node* previousSibling = startNode->previousSibling();
 
     if (previousSibling && areIdenticalElements(startNode, previousSibling)) {
-        Element* previousElement = static_cast<Element*>(previousSibling);
-        Element* element = static_cast<Element*>(startNode);
+        Element* previousElement = toElement(previousSibling);
+        Element* element = toElement(startNode);
         Node* startChild = element->firstChild();
         ASSERT(startChild);
         mergeIdenticalElements(previousElement, element);
@@ -1348,14 +1348,14 @@ void ApplyStyleCommand::surroundNodeRangeWithElement(PassRefPtr<Node> passedStar
     RefPtr<Node> nextSibling = element->nextSibling();
     RefPtr<Node> previousSibling = element->previousSibling();
     if (nextSibling && nextSibling->isElementNode() && nextSibling->rendererIsEditable()
-        && areIdenticalElements(element.get(), static_cast<Element*>(nextSibling.get())))
-        mergeIdenticalElements(element.get(), static_cast<Element*>(nextSibling.get()));
+        && areIdenticalElements(element.get(), toElement(nextSibling.get())))
+        mergeIdenticalElements(element.get(), toElement(nextSibling.get()));
 
     if (previousSibling && previousSibling->isElementNode() && previousSibling->rendererIsEditable()) {
         Node* mergedElement = previousSibling->nextSibling();
         if (mergedElement->isElementNode() && mergedElement->rendererIsEditable()
-            && areIdenticalElements(static_cast<Element*>(previousSibling.get()), static_cast<Element*>(mergedElement)))
-            mergeIdenticalElements(static_cast<Element*>(previousSibling.get()), static_cast<Element*>(mergedElement));
+            && areIdenticalElements(toElement(previousSibling.get()), toElement(mergedElement)))
+            mergeIdenticalElements(toElement(previousSibling.get()), toElement(mergedElement));
     }
 
     // FIXME: We should probably call updateStartEnd if the start or end was in the node

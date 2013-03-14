@@ -208,7 +208,7 @@ static inline HTMLFormControlElement* submitElementFromEvent(const Event* event)
     Node* targetNode = event->target()->toNode();
     if (!targetNode || !targetNode->isElementNode())
         return 0;
-    Element* targetElement = static_cast<Element*>(targetNode);
+    Element* targetElement = toElement(targetNode);
     if (!targetElement->isFormControlElement())
         return 0;
     return static_cast<HTMLFormControlElement*>(targetElement);

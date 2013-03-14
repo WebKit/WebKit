@@ -158,7 +158,7 @@ void IndentOutdentCommand::outdentParagraph()
                 if (splitPointParent->hasTagName(blockquoteTag)
                     && !splitPoint->hasTagName(blockquoteTag)
                     && splitPointParent->parentNode()->rendererIsEditable()) // We can't outdent if there is no place to go!
-                    splitElement(static_cast<Element*>(splitPointParent), splitPoint);
+                    splitElement(toElement(splitPointParent), splitPoint);
             }
         }
 
@@ -179,7 +179,7 @@ void IndentOutdentCommand::outdentParagraph()
     else {
         // We split the blockquote at where we start outdenting.
         Node* highestInlineNode = highestEnclosingNodeOfType(visibleStartOfParagraph.deepEquivalent(), isInline, CannotCrossEditingBoundary, enclosingBlockFlow);
-        splitElement(static_cast<Element*>(enclosingNode), (highestInlineNode) ? highestInlineNode : visibleStartOfParagraph.deepEquivalent().deprecatedNode());
+        splitElement(toElement(enclosingNode), (highestInlineNode) ? highestInlineNode : visibleStartOfParagraph.deepEquivalent().deprecatedNode());
     }
     RefPtr<Node> placeholder = createBreakElement(document());
     insertNodeBefore(placeholder, splitBlockquoteNode);

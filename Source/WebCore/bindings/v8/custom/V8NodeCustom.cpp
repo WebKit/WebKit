@@ -131,7 +131,7 @@ v8::Handle<v8::Object> wrap(Node* impl, v8::Handle<v8::Object> creationContext, 
             return wrap(toHTMLElement(impl), creationContext, isolate);
 #if ENABLE(SVG)
         if (impl->isSVGElement())
-            return wrap(static_cast<SVGElement*>(impl), creationContext, isolate);
+            return wrap(toSVGElement(impl), creationContext, isolate);
 #endif
         return V8Element::createWrapper(toElement(impl), creationContext, isolate);
     case Node::ATTRIBUTE_NODE:

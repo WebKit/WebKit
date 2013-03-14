@@ -541,7 +541,7 @@ Element* Element::offsetParent()
     document()->updateLayoutIgnorePendingStylesheets();
     if (RenderObject* rend = renderer())
         if (RenderObject* offsetParent = rend->offsetParent())
-            return static_cast<Element*>(offsetParent->node());
+            return toElement(offsetParent->node());
     return 0;
 }
 
@@ -670,7 +670,7 @@ IntRect Element::boundsInRootViewSpace()
 #if ENABLE(SVG)
     if (isSVGElement() && renderer()) {
         // Get the bounding rectangle from the SVG model.
-        SVGElement* svgElement = static_cast<SVGElement*>(this);
+        SVGElement* svgElement = toSVGElement(this);
         FloatRect localRect;
         if (svgElement->getBoundingBox(localRect))
             quads.append(renderer()->localToAbsoluteQuad(localRect));
@@ -718,7 +718,7 @@ PassRefPtr<ClientRect> Element::getBoundingClientRect()
 #if ENABLE(SVG)
     if (isSVGElement() && renderer() && !renderer()->isSVGRoot()) {
         // Get the bounding rectangle from the SVG model.
-        SVGElement* svgElement = static_cast<SVGElement*>(this);
+        SVGElement* svgElement = toSVGElement(this);
         FloatRect localRect;
         if (svgElement->getBoundingBox(localRect))
             quads.append(renderer()->localToAbsoluteQuad(localRect));
@@ -1439,7 +1439,7 @@ void Element::recalcStyle(StyleChange change)
         } 
         if (!n->isElementNode()) 
             continue;
-        Element* element = static_cast<Element*>(n);
+        Element* element = toElement(n);
         bool childRulesChanged = element->needsStyleRecalc() && element->styleChangeType() == FullStyleChange;
         if ((forceCheckOfNextElementSibling || forceCheckOfAnyElementSibling))
             element->setNeedsStyleRecalc();
@@ -2190,7 +2190,7 @@ AtomicString Element::computeInheritedLanguage() const
     // The language property is inherited, so we iterate over the parents to find the first language.
     do {
         if (n->isElementNode()) {
-            if (const ElementData* elementData = static_cast<const Element*>(n)->elementData()) {
+            if (const ElementData* elementData = toElement(n)->elementData()) {
                 // Spec: xml:lang takes precedence -- http://www.w3.org/TR/xhtml1/#C_7
                 if (const Attribute* attribute = elementData->getAttributeItem(XMLNames::langAttr))
                     value = attribute->value();
@@ -2302,7 +2302,7 @@ Element* Element::lastElementChild() const
     Node* n = lastChild();
     while (n && !n->isElementNode())
         n = n->previousSibling();
-    return static_cast<Element*>(n);
+    return toElement(n);
 }
 
 unsigned Element::childElementCount() const

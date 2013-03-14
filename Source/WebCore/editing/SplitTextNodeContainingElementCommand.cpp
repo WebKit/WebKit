@@ -57,7 +57,7 @@ void SplitTextNodeContainingElementCommand::doApply()
         Node* firstChild = parent->firstChild();
         if (!firstChild || !firstChild->isElementNode())
             return;
-        parent = static_cast<Element*>(firstChild);
+        parent = toElement(firstChild);
     }
 
     splitElement(parent, m_text);

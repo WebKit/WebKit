@@ -195,12 +195,12 @@ static inline bool nodeMatchesBasicTest(Node* node, Step::Axis axis, const Step:
             if (node->document()->isHTMLDocument()) {
                 if (node->isHTMLElement()) {
                     // Paths without namespaces should match HTML elements in HTML documents despite those having an XHTML namespace. Names are compared case-insensitively.
-                    return equalIgnoringCase(static_cast<Element*>(node)->localName(), name) && (namespaceURI.isNull() || namespaceURI == node->namespaceURI());
+                    return equalIgnoringCase(toElement(node)->localName(), name) && (namespaceURI.isNull() || namespaceURI == node->namespaceURI());
                 }
                 // An expression without any prefix shouldn't match no-namespace nodes (because HTML5 says so).
-                return static_cast<Element*>(node)->hasLocalName(name) && namespaceURI == node->namespaceURI() && !namespaceURI.isNull();
+                return toElement(node)->hasLocalName(name) && namespaceURI == node->namespaceURI() && !namespaceURI.isNull();
             }
-            return static_cast<Element*>(node)->hasLocalName(name) && namespaceURI == node->namespaceURI();
+            return toElement(node)->hasLocalName(name) && namespaceURI == node->namespaceURI();
         }
     }
     ASSERT_NOT_REACHED();

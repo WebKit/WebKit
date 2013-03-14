@@ -2279,7 +2279,7 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
     if (Node* linkNode = node->enclosingLinkEventParentOrSelf()) {
         KURL href;
         if (linkNode->isLink() && linkNode->hasAttributes()) {
-            if (const Attribute* attribute = static_cast<Element*>(linkNode)->getAttributeItem(HTMLNames::hrefAttr))
+            if (const Attribute* attribute = toElement(linkNode)->getAttributeItem(HTMLNames::hrefAttr))
                 href = linkNode->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(attribute->value()));
         }
 
@@ -2343,7 +2343,7 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
     bool canStartSelection = node->canStartSelection();
 
     if (node->isElementNode()) {
-        Element* element = static_cast<Element*>(node->deprecatedShadowAncestorNode());
+        Element* element = toElement(node->deprecatedShadowAncestorNode());
 
         if (DOMSupport::isTextBasedContentEditableElement(element)) {
             if (!canStartSelection) {
@@ -2378,7 +2378,7 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
     // Walk up the node tree looking for our custom webworks context attribute.
     while (node) {
         if (node->isElementNode()) {
-            Element* element = static_cast<Element*>(node->deprecatedShadowAncestorNode());
+            Element* element = toElement(node->deprecatedShadowAncestorNode());
             String webWorksContext(DOMSupport::webWorksContext(element));
             if (!webWorksContext.stripWhiteSpace().isEmpty()) {
                 context.setFlag(Platform::WebContext::IsWebWorksContext);
@@ -4028,7 +4028,7 @@ bool WebPagePrivate::handleMouseEvent(PlatformMouseEvent& mouseEvent)
             // element painted in its focus state on repaint.
             ASSERT_WITH_SECURITY_IMPLICATION(node->isElementNode());
             if (node->isElementNode()) {
-                Element* element = static_cast<Element*>(node);
+                Element* element = toElement(node);
                 element->focus();
             }
         } else
@@ -5041,7 +5041,7 @@ bool WebPage::setNodeFocus(const WebDOMNode& node, bool on)
             if (on) {
                 page->focusController()->setFocusedNode(nodeImpl, doc->frame());
                 if (nodeImpl->isElementNode())
-                    static_cast<Element*>(nodeImpl)->updateFocusAppearance(true);
+                    toElement(nodeImpl)->updateFocusAppearance(true);
                 d->m_inputHandler->didNodeOpenPopup(nodeImpl);
             } else if (doc->focusedNode() == nodeImpl) // && !on
                 page->focusController()->setFocusedNode(0, doc->frame());
@@ -5901,7 +5901,7 @@ void WebPagePrivate::adjustFullScreenElementDimensionsIfNeeded()
         return;
 
     ASSERT(m_fullscreenNode->isElementNode());
-    ASSERT(static_cast<Element*>(m_fullscreenNode.get())->isMediaElement());
+    ASSERT(toElement(m_fullscreenNode.get())->isMediaElement());
 
     Document* document = m_fullscreenNode->document();
     RenderStyle* fullScreenStyle = document->fullScreenRenderer()->style();

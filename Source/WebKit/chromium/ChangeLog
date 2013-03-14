@@ -1,3 +1,25 @@
+2013-03-14  Abhishek Arya  <inferno@chromium.org>
+
+        Replace static_casts with to* helper functions.
+        https://bugs.webkit.org/show_bug.cgi?id=112296
+
+        Reviewed by Kentaro Hara.
+
+        to* helper functions are preferred over static_cast calls since they
+        help to catch bad casts easily on the testing infrastructure.
+
+        * src/WebDocument.cpp:
+        (WebKit::WebDocument::images):
+        * src/WebElement.cpp:
+        (WebKit::WebElement::operator PassRefPtr<Element>):
+        * src/WebPageSerializer.cpp:
+        (WebCore::retrieveResourcesForFrame):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setFocus):
+        (WebKit::WebViewImpl::clearFocusedNode):
+        (WebKit::WebViewImpl::scrollFocusedNodeIntoView):
+        (WebKit::WebViewImpl::scrollFocusedNodeIntoRect):
+
 2013-03-14  Marja Hölttä  <marja@chromium.org>
 
         [V8] Store main world and non-main world templates separately.

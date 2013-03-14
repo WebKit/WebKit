@@ -165,7 +165,7 @@ WebElement& WebElement::operator=(const PassRefPtr<Element>& elem)
 
 WebElement::operator PassRefPtr<Element>() const
 {
-    return static_cast<Element*>(m_private.get());
+    return toElement(m_private.get());
 }
 
 } // namespace WebKit

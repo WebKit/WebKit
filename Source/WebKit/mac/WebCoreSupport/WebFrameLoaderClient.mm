@@ -184,7 +184,7 @@ static void applyAppleDictionaryApplicationQuirkNonInlinePart(WebFrameLoaderClie
     if (!head)
         return;
     for (Node* c = head->firstChild(); c; c = c->nextSibling()) {
-        if (c->hasTagName(scriptTag) && static_cast<Element*>(c)->getAttribute(srcAttr) == "MainPageJavaScript.js") {
+        if (c->hasTagName(scriptTag) && toElement(c)->getAttribute(srcAttr) == "MainPageJavaScript.js") {
             document->setFrameElementsShouldIgnoreScrolling(true);
             return;
         }

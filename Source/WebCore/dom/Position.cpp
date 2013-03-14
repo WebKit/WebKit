@@ -300,7 +300,7 @@ Element* Position::element() const
     Node* n = anchorNode();
     while (n && !n->isElementNode())
         n = n->parentNode();
-    return static_cast<Element*>(n);
+    return toElement(n);
 }
 
 PassRefPtr<CSSComputedStyleDeclaration> Position::computedStyle() const

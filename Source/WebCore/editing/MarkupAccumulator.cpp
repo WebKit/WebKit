@@ -315,7 +315,7 @@ EntityMask MarkupAccumulator::entityMaskForText(Text* text) const
 {
     const QualifiedName* parentName = 0;
     if (text->parentElement())
-        parentName = &static_cast<Element*>(text->parentElement())->tagQName();
+        parentName = &(text->parentElement())->tagQName();
 
     if (parentName && (*parentName == scriptTag || *parentName == styleTag || *parentName == xmpTag))
         return EntityMaskInCDATA;
@@ -512,7 +512,7 @@ void MarkupAccumulator::appendStartMarkup(StringBuilder& result, const Node* nod
         appendProcessingInstruction(result, static_cast<const ProcessingInstruction*>(node)->target(), static_cast<const ProcessingInstruction*>(node)->data());
         break;
     case Node::ELEMENT_NODE:
-        appendElement(result, static_cast<Element*>(const_cast<Node*>(node)), namespaces);
+        appendElement(result, toElement(const_cast<Node*>(node)), namespaces);
         break;
     case Node::CDATA_SECTION_NODE:
         appendCDATASection(result, static_cast<const CDATASection*>(node)->data());
@@ -562,7 +562,7 @@ void MarkupAccumulator::appendEndMarkup(StringBuilder& result, const Node* node)
 
     result.append('<');
     result.append('/');
-    result.append(static_cast<const Element*>(node)->nodeNamePreservingCase());
+    result.append(toElement(node)->nodeNamePreservingCase());
     result.append('>');
 }
 
