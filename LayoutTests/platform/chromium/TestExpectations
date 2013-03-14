@@ -4411,6 +4411,8 @@ webkit.org/b/111199 [ Debug Win Mac ] platform/chromium/virtual/softwarecomposit
 # The html5lib tests are all too slow to run in Debug, largely due to v8 per-document boot-up.
 # V8 bug: https://code.google.com/p/v8/issues/detail?id=2567
 webkit.org/b/110876 [ Debug ] html5lib/generated/ [ Skip ]
+# Some of these tests are slow on the webkit.org Linux Release bot as well.
+webkit.org/b/112381 [ Linux Release ] html5lib/generated/run-tests16-data.html [ Slow ]
 
 # HALF_FLOAT_OES is not yet working in chromium.
 crbug.com/179503 fast/canvas/webgl/oes-texture-half-float.html [ Failure ]
@@ -4452,10 +4454,16 @@ webkit.org/b/112193 fast/dom/Window/window-postmessage-clone.html [ Failure Pass
 
 webkit.org/b/112219 fast/layers/no-clipping-overflow-hidden-added-after-transform.html [ ImageOnlyFailure Pass ]
 webkit.org/b/112219 fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ ImageOnlyFailure Pass ]
-webkit.org/b/112219 fast/layers/no-clipping-overflow-hidden-added-after-transition.html [ ImageOnlyFailure Pass ]
+webkit.org/b/112219 [ Win Mac Linux ] fast/layers/no-clipping-overflow-hidden-added-after-transition.html [ ImageOnlyFailure Pass ]
 
 # Feature not implemented
 webkit.org/b/91611 media/media-higher-prio-audio-stream.html [ Skip ]
 
 # Flaky assertion failures on debug bots
-webkit.org/b/112369 [ Debug ] inspector/debugger/pause-in-inline-script.html [ Pass Crash ]
+webkit.org/b/112369 [ Debug ] inspector/debugger/pause-in-inline-script.html [ Pass Crash Timeout ]
+
+webkit.org/b/112384 [ Win ] fast/forms/basic-textareas-quirks.html [ ImageOnlyFailure Pass ]
+webkit.org/b/112384 [ Win ] fast/forms/basic-textareas.html [ ImageOnlyFailure Pass ]
+webkit.org/b/112384 [ Win ] fast/overflow/overflow-x-y.html [ ImageOnlyFailure Pass ]
+webkit.org/b/112384 [ Win ] fast/parser/open-comment-in-textarea.html [ ImageOnlyFailure Pass ]
+webkit.org/b/112384 [ Win ] fast/replaced/width100percent-textarea.html [ ImageOnlyFailure Pass ]
