@@ -535,6 +535,7 @@ webkit.org/b/78344 fast/text/international/inline-plaintext-relayout-with-leadin
 
 webkit.org/b/86971 svg/custom/non-scaling-stroke-markers.svg [ Failure Pass ]
 
+webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-03-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-05-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-06-t.svg [ Failure Pass ]
 webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-07-t.svg [ Failure Pass ]
@@ -595,6 +596,7 @@ webkit.org/b/104809 media/encrypted-media/encrypted-media-not-loaded.html [ Cras
 webkit.org/b/104809 media/encrypted-media/encrypted-media-syntax.html [ Crash Failure Timeout ]
 webkit.org/b/104809 media/event-queue-crash.html [ Crash Pass ]
 webkit.org/b/104809 media/track/track-cues-pause-on-exit.html [ Timeout Pass ]
+webkit.org/b/104809 media/video-load-preload-none.html [ Crash Timeout Pass ]
 webkit.org/b/104809 media/video-source-type-params.html [ Crash Timeout Pass ]
 webkit.org/b/104809 media/video-src-set.html [ Crash Timeout Pass ]
 webkit.org/b/104809 media/W3C/video/events/event_loadstart_manual.html [ Crash Pass ]
@@ -625,8 +627,7 @@ webkit.org/b/111612 animations/animation-delay-changed.html [ Failure Pass ]
 webkit.org/b/107018 svg/animations/animate-linear-discrete-additive.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-b.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-c.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/107018 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure Pass ]
-
+webkit.org/b/107018 svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg [ ImageOnlyFailure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -1427,6 +1428,8 @@ webkit.org/b/112109 fast/box-shadow/box-shadow-with-zero-radius.html [ ImageOnly
 webkit.org/b/112110 media/track/track-cue-container-rendering-position.html [ Failure ]
 
 webkit.org/b/112228 svg/custom/resources-css-scaled.html [ ImageOnlyFailure ]
+
+webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
