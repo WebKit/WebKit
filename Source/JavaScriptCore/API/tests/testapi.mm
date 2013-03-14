@@ -529,6 +529,30 @@ void testObjectiveCAPI()
 
     @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
+        context[@"handleTheDictionary"] = ^(NSDictionary *dict) {
+            NSDictionary *expectedDict = @{
+                @"foo" : [NSNumber numberWithInt:1],
+                @"bar" : @{
+                    @"baz": [NSNumber numberWithInt:2]
+                }
+            };
+            checkResult(@"recursively convert nested dictionaries", [dict isEqualToDictionary:expectedDict]);
+        };
+        [context evaluateScript:@"var myDict = { \
+            'foo': 1, \
+            'bar': {'baz': 2} \
+        }; \
+        handleTheDictionary(myDict);"];
+
+        context[@"handleTheArray"] = ^(NSArray *array) {
+            NSArray *expectedArray = @[@"foo", @"bar", @[@"baz"]];
+            checkResult(@"recursively convert nested arrays", [array isEqualToArray:expectedArray]);
+        };
+        [context evaluateScript:@"var myArray = ['foo', 'bar', ['baz']]; handleTheArray(myArray);"];
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
         TextXYZ *testXYZ = [[TextXYZ alloc] init];
 
         @autoreleasepool {

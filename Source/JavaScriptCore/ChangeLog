@@ -1,3 +1,17 @@
+2013-03-14  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: Nested dictionaries are not converted properly in the Objective-C binding
+        https://bugs.webkit.org/show_bug.cgi?id=112377
+
+        Reviewed by Oliver Hunt.
+
+        Accidental reassignment of the root task in the container conversion logic was causing the last 
+        array or dictionary processed to be returned in the case of nested containers.
+
+        * API/JSValue.mm:
+        (containerValueToObject):
+        * API/tests/testapi.mm:
+
 2013-03-13  Filip Pizlo  <fpizlo@apple.com>
 
         JSObject fast by-string access optimizations should work even on the prototype chain, and even when the result is undefined

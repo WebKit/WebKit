@@ -671,7 +671,7 @@ static id containerValueToObject(JSGlobalContextRef context, JSContainerConverto
     ASSERT(!convertor.isWorkListEmpty());
     
     do {
-        JSContainerConvertor::Task current = task = convertor.take();
+        JSContainerConvertor::Task current = convertor.take();
         ASSERT(JSValueIsObject(context, current.js));
         JSObjectRef js = JSValueToObject(context, current.js, 0);
 
