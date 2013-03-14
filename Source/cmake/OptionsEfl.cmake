@@ -33,6 +33,7 @@ add_definitions(-DWTF_USE_GLIB=1)
 add_definitions(-DWTF_USE_SOUP=1)
 add_definitions(-DWTF_USE_ICU_UNICODE=1)
 add_definitions(-DWTF_USE_CAIRO=1)
+add_definitions(-DWTF_USE_CROSS_PLATFORM_CONTEXT_MENUS=1)
 
 set(JSC_EXECUTABLE_NAME jsc)
 

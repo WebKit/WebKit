@@ -1,3 +1,12 @@
+2013-03-14  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [EFL] Use CROSS_PLATFORM_CONTEXT_MENU
+        https://bugs.webkit.org/show_bug.cgi?id=111877
+
+        Reviewed by Caio Marcelo de Oliveira Filho.
+
+        * Source/cmake/OptionsEfl.cmake: add -DWTF_USE_CROSS_PLATFORM_CONTEXT_MENUS=1
+
 2013-03-14  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Improve the handling of mock geolocation, device orientation and motion clients

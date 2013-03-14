@@ -242,8 +242,8 @@ Ewk_Context_Menu* ewk_context_menu_new(Evas_Object* view, WebCore::ContextMenuCo
     menu->items = 0;
     evas_object_smart_callback_call(menu->view, "contextmenu,new", menu);
 
-    const Vector<WebCore::ContextMenuItem>* itemsList = coreMenu->platformDescription();
-    for (Vector<WebCore::ContextMenuItem>::const_iterator iter = itemsList->begin(); iter != itemsList->end(); ++iter)
+    const Vector<WebCore::ContextMenuItem>& itemsList = coreMenu->items();
+    for (Vector<WebCore::ContextMenuItem>::const_iterator iter = itemsList.begin(); iter != itemsList.end(); ++iter)
         ewk_context_menu_item_append(menu, *iter);
 
     return menu;

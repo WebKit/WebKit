@@ -1,3 +1,21 @@
+2013-03-14  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [EFL] Use CROSS_PLATFORM_CONTEXT_MENU
+        https://bugs.webkit.org/show_bug.cgi?id=111877
+
+        Reviewed by Caio Marcelo de Oliveira Filho.
+
+        Adjust ContextMenuClient to use the CROSS_PLATFORM_CONTEXT_MENUS USE flag
+        by implementing customizeMenu() instead of getCustomMenuFromDefaultItems()
+        and by calling coreMenu->items() instead of coreMenu->platformDescription().
+
+        * WebCoreSupport/ContextMenuClientEfl.cpp:
+        (WebCore::ContextMenuClientEfl::customizeMenu):
+        * WebCoreSupport/ContextMenuClientEfl.h:
+        (ContextMenuClientEfl):
+        * ewk/ewk_contextmenu.cpp:
+        (ewk_context_menu_new):
+
 2013-03-14  Jonathan Liu  <net147@gmail.com>
 
         Fix detection of Intel Mac OS X platform on Intel Mac 64-bit

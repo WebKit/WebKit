@@ -44,10 +44,10 @@ void ContextMenuClientEfl::contextMenuDestroyed()
     delete this;
 }
 
-PlatformMenuDescription ContextMenuClientEfl::getCustomMenuFromDefaultItems(ContextMenu* menu)
+PassOwnPtr<ContextMenu> ContextMenuClientEfl::customizeMenu(PassOwnPtr<ContextMenu> menu)
 {
-    // warning: this transfers the ownership to the caller
-    return menu->releasePlatformDescription();
+    // We ignore this client callback and do context menu customization when we are told to show the menu.
+    return menu;
 }
 
 void ContextMenuClientEfl::contextMenuItemSelected(ContextMenuItem*, const ContextMenu*)

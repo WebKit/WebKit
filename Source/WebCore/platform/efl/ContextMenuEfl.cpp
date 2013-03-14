@@ -30,78 +30,26 @@
 
 namespace WebCore {
 
-#if USE(CROSS_PLATFORM_CONTEXT_MENUS)
-ContextMenu::ContextMenu(void* menu)
+ContextMenu::ContextMenu(PlatformContextMenu menu)
 {
     getContextMenuItems(menu, m_items);
 }
 
-void ContextMenu::getContextMenuItems(void* menu, Vector<ContextMenuItem>& items)
+void ContextMenu::getContextMenuItems(PlatformContextMenu, Vector<ContextMenuItem>&)
 {
     notImplemented();
 }
 
-void* ContextMenu::createPlatformContextMenuFromItems(const Vector<ContextMenuItem>& items)
+PlatformContextMenu ContextMenu::createPlatformContextMenuFromItems(const Vector<ContextMenuItem>&)
 {
     notImplemented();
     return 0;
 }
 
-void* ContextMenu::platformContextMenu() const
+PlatformContextMenu ContextMenu::platformContextMenu() const
 {
     return createPlatformContextMenuFromItems(m_items);
 }
-#else
-ContextMenu::ContextMenu()
-{
-    notImplemented();
-}
-
-ContextMenu::~ContextMenu()
-{
-}
-
-void ContextMenu::appendItem(ContextMenuItem& item)
-{
-    m_items.append(item);
-}
-
-void ContextMenu::insertItem(unsigned position, ContextMenuItem& item)
-{
-    m_items.insert(position, item);
-}
-
-unsigned ContextMenu::itemCount() const
-{
-    return m_items.size();
-}
-
-void ContextMenu::setPlatformDescription(PlatformMenuDescription)
-{
-    notImplemented();
-}
-
-PlatformMenuDescription ContextMenu::platformDescription() const
-{
-    return const_cast<PlatformMenuDescription>(&m_items);
-}
-
-PlatformMenuDescription ContextMenu::releasePlatformDescription()
-{
-    return PlatformMenuDescription();
-}
-
-PlatformMenuDescription platformMenuDescription(Vector<ContextMenuItem>&)
-{
-    notImplemented();
-    return 0;
-}
-
-Vector<ContextMenuItem> contextMenuItemVector(const Vector<ContextMenuItem>* items)
-{
-    return *items;
-}
-#endif
 
 }
 #endif // ENABLE(CONTEXT_MENUS)
