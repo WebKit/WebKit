@@ -1978,6 +1978,9 @@ inline bool isValidVisitedLinkProperty(CSSPropertyID id)
     case CSSPropertyColor:
     case CSSPropertyOutlineColor:
     case CSSPropertyWebkitColumnRuleColor:
+#if ENABLE(CSS3_TEXT)
+    case CSSPropertyWebkitTextDecorationColor:
+#endif // CSS3_TEXT
     case CSSPropertyWebkitTextEmphasisColor:
     case CSSPropertyWebkitTextFillColor:
     case CSSPropertyWebkitTextStrokeColor:
@@ -3253,6 +3256,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
 #if ENABLE(CSS3_TEXT)
     case CSSPropertyWebkitTextDecorationLine:
     case CSSPropertyWebkitTextDecorationStyle:
+    case CSSPropertyWebkitTextDecorationColor:
     case CSSPropertyWebkitTextAlignLast:
     case CSSPropertyWebkitTextUnderlinePosition:
 #endif // CSS3_TEXT

@@ -145,6 +145,10 @@ public:
 
     RefPtr<ClipPathOperation> m_clipPath;
 
+#if ENABLE(CSS3_TEXT)
+    Color m_textDecorationColor;
+    Color m_visitedLinkTextDecorationColor;
+#endif // CSS3_TEXT
     Color m_visitedLinkBackgroundColor;
     Color m_visitedLinkOutlineColor;
     Color m_visitedLinkBorderLeftColor;

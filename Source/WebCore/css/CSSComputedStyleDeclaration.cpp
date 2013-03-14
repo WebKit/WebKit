@@ -190,6 +190,7 @@ static const CSSPropertyID computedProperties[] = {
 #if ENABLE(CSS3_TEXT)
     CSSPropertyWebkitTextDecorationLine,
     CSSPropertyWebkitTextDecorationStyle,
+    CSSPropertyWebkitTextDecorationColor,
     CSSPropertyWebkitTextAlignLast,
     CSSPropertyWebkitTextUnderlinePosition,
 #endif // CSS3_TEXT
@@ -2154,6 +2155,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             return renderTextDecorationFlagsToCSSValue(style->textDecoration());
         case CSSPropertyWebkitTextDecorationStyle:
             return renderTextDecorationStyleFlagsToCSSValue(style->textDecorationStyle());
+        case CSSPropertyWebkitTextDecorationColor:
+            return currentColorOrValidColor(style.get(), style->textDecorationColor());
         case CSSPropertyWebkitTextAlignLast:
             return cssValuePool().createValue(style->textAlignLast());
         case CSSPropertyWebkitTextUnderlinePosition:

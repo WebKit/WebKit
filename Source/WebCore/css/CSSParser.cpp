@@ -515,6 +515,9 @@ static inline bool isColorPropertyID(CSSPropertyID propertyId)
     case CSSPropertyWebkitBorderEndColor:
     case CSSPropertyWebkitBorderStartColor:
     case CSSPropertyWebkitColumnRuleColor:
+#if ENABLE(CSS3_TEXT)
+    case CSSPropertyWebkitTextDecorationColor:
+#endif // CSS3_TEXT
     case CSSPropertyWebkitTextEmphasisColor:
     case CSSPropertyWebkitTextFillColor:
     case CSSPropertyWebkitTextStrokeColor:
@@ -1979,6 +1982,9 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyTextUnderlineColor:
     case CSSPropertyTextOverlineColor:
     case CSSPropertyWebkitColumnRuleColor:
+#if ENABLE(CSS3_TEXT)
+    case CSSPropertyWebkitTextDecorationColor:
+#endif // CSS3_TEXT
     case CSSPropertyWebkitTextEmphasisColor:
     case CSSPropertyWebkitTextFillColor:
     case CSSPropertyWebkitTextStrokeColor:

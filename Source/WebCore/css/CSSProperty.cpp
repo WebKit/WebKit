@@ -642,6 +642,7 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
     case CSSPropertyWebkitPerspectiveOriginY:
 #if ENABLE(CSS3_TEXT)
     case CSSPropertyWebkitTextDecorationStyle:
+    case CSSPropertyWebkitTextDecorationColor:
 #endif // CSS3_TEXT
     case CSSPropertyWebkitTransform:
     case CSSPropertyWebkitTransformOrigin:

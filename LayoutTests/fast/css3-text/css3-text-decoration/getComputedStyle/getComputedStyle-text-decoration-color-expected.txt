@@ -1,0 +1,102 @@
+Test to make sure -webkit-text-decoration-color property returns CSSPrimitiveValue properly.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Ancestor should not inherit 'green' value from parent (fallback to initial value):
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color') is null
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgb(0, 0, 0)'
+PASS computedStyle.webkitTextDecorationColor is 'rgb(0, 0, 0)'
+
+Parent should contain 'green':
+PASS e.style.webkitTextDecorationColor is 'green'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'green'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgb(0, 128, 0)'
+PASS computedStyle.webkitTextDecorationColor is 'rgb(0, 128, 0)'
+
+JavaScript setter tests for valid, initial, invalid and blank values:
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color') is null
+
+Valid value 'blue':
+PASS e.style.webkitTextDecorationColor is 'blue'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'blue'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgb(0, 0, 255)'
+PASS computedStyle.webkitTextDecorationColor is 'rgb(0, 0, 255)'
+
+Valid value '#FFFFFF':
+PASS e.style.webkitTextDecorationColor is 'rgb(255, 255, 255)'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgb(255, 255, 255)'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgb(255, 255, 255)'
+PASS computedStyle.webkitTextDecorationColor is 'rgb(255, 255, 255)'
+
+Valid value 'rgb(0, 255, 0)':
+PASS e.style.webkitTextDecorationColor is 'rgb(0, 255, 0)'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgb(0, 255, 0)'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgb(0, 255, 0)'
+PASS computedStyle.webkitTextDecorationColor is 'rgb(0, 255, 0)'
+
+Valid value 'rgba(100, 100, 100, 0.5)':
+PASS e.style.webkitTextDecorationColor is 'rgba(100, 100, 100, 0.498039)'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgba(100, 100, 100, 0.498039)'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgba(100, 100, 100, 0.498039)'
+PASS computedStyle.webkitTextDecorationColor is 'rgba(100, 100, 100, 0.498039)'
+
+Valid value 'hsl(240, 100%, 50%)':
+PASS e.style.webkitTextDecorationColor is 'rgb(0, 0, 255)'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgb(0, 0, 255)'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgb(0, 0, 255)'
+PASS computedStyle.webkitTextDecorationColor is 'rgb(0, 0, 255)'
+
+Valid value 'hsla(240, 100%, 50%, 0.5)':
+PASS e.style.webkitTextDecorationColor is 'rgba(0, 0, 255, 0.498039)'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgba(0, 0, 255, 0.498039)'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgba(0, 0, 255, 0.498039)'
+PASS computedStyle.webkitTextDecorationColor is 'rgba(0, 0, 255, 0.498039)'
+
+Initial value:
+PASS e.style.webkitTextDecorationColor is 'initial'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'initial'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgb(0, 0, 0)'
+PASS computedStyle.webkitTextDecorationColor is 'rgb(0, 0, 0)'
+
+Invalid value (ie. 'unknown'):
+PASS e.style.webkitTextDecorationColor is 'initial'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSValue]'
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'initial'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgb(0, 0, 0)'
+PASS computedStyle.webkitTextDecorationColor is 'rgb(0, 0, 0)'
+
+Empty value (resets the property):
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color') is null
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgb(0, 0, 0)'
+PASS computedStyle.webkitTextDecorationColor is 'rgb(0, 0, 0)'
+
+Empty value with different 'currentColor' initial value (green):
+PASS e.style.getPropertyCSSValue('-webkit-text-decoration-color') is null
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').toString() is '[object CSSPrimitiveValue]'
+PASS computedStyle.getPropertyCSSValue('-webkit-text-decoration-color').cssText is 'rgb(0, 128, 0)'
+PASS computedStyle.webkitTextDecorationColor is 'rgb(0, 128, 0)'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
