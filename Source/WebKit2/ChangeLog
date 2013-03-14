@@ -1,3 +1,39 @@
+2013-03-14  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][WK2] Add an API for adding and removing user style sheets from a page group
+        https://bugs.webkit.org/show_bug.cgi?id=110728
+
+        Reviewed by Gyuyoung Kim.
+
+        This patch implements EwkPageGroup API to provide the interface of WKPageGroup. Using the EwkPageGroup,
+        applications may create the views with a page group for the specific identifier. Also, this patch
+        encapsulates the APIs WKPageGroupAddUserStyleSheet and WKPageGroupRemoveAllUserStyleSheets behind
+        the EwkPageGroup class for adding and removing user style sheets from a page group. WKArrayCreateWithEinaList()
+        is added as a generic WKArray creation API from Eina_List.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/C/efl/WKView.cpp:
+        (createWKView):
+        * UIProcess/API/efl/EWebKit2.h:
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        (EwkView::createEvasObject):
+        * UIProcess/API/efl/EwkView.h:
+        (EwkView::ewkPageGroup):
+        (EwkView):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_smart_add):
+        (ewk_view_page_group_get):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.cpp:
+        (EWK2UnitTest::EWK2UnitTestBase::SetUp):
+        * UIProcess/API/efl/tests/UnitTestUtils/EWK2UnitTestBase.h:
+        (EWK2UnitTest::EWK2UnitTestBase::setWebView):
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (TEST_F):
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+
 2013-03-14  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Improve the handling of mock geolocation, device orientation and motion clients

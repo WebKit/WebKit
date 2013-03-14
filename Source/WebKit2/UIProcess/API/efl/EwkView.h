@@ -87,6 +87,7 @@ class EwkContext;
 class EwkBackForwardList;
 class EwkColorPicker;
 class EwkContextMenu;
+class EwkPageGroup;
 class EwkPopupMenu;
 class EwkSettings;
 class EwkWindowFeatures;
@@ -106,8 +107,8 @@ public:
         DefaultBehavior
     };
 
-    static Evas_Object* createEvasObject(Evas* canvas, Evas_Smart* smart, PassRefPtr<EwkContext> context,  WKPageGroupRef pageGroupRef = 0, ViewBehavior behavior = EwkView::DefaultBehavior);
-    static Evas_Object* createEvasObject(Evas* canvas, PassRefPtr<EwkContext> context, WKPageGroupRef pageGroupRef = 0, ViewBehavior behavior = EwkView::DefaultBehavior);
+    static Evas_Object* createEvasObject(Evas* canvas, Evas_Smart* smart, PassRefPtr<EwkContext> context,  PassRefPtr<EwkPageGroup> pageGroup = 0, ViewBehavior behavior = EwkView::DefaultBehavior);
+    static Evas_Object* createEvasObject(Evas* canvas, PassRefPtr<EwkContext> context, PassRefPtr<EwkPageGroup> pageGroup = 0, ViewBehavior behavior = EwkView::DefaultBehavior);
 
     static bool initSmartClassInterface(Ewk_View_Smart_Class&);
 
@@ -120,6 +121,7 @@ public:
 
     WebKit::WebPageProxy* page() { return m_webView->page(); }
     EwkContext* ewkContext() { return m_context.get(); }
+    EwkPageGroup* ewkPageGroup() { return m_pageGroup.get(); }
     EwkSettings* settings() { return m_settings.get(); }
     EwkBackForwardList* backForwardList() { return m_backForwardList.get(); }
     EwkWindowFeatures* windowFeatures();
@@ -212,7 +214,7 @@ public:
     PassRefPtr<cairo_surface_t> takeSnapshot();
 
 private:
-    EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, WKPageGroupRef pageGroup, ViewBehavior);
+    EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, PassRefPtr<EwkPageGroup> pageGroup, ViewBehavior);
     ~EwkView();
 
     void setDeviceSize(const WebCore::IntSize&);
@@ -252,6 +254,7 @@ private:
     // Note, initialization order matters.
     Evas_Object* m_evasObject;
     RefPtr<EwkContext> m_context;
+    RefPtr<EwkPageGroup> m_pageGroup;
     OwnPtr<Evas_GL> m_evasGL;
     OwnPtr<WebKit::EvasGLContext> m_evasGLContext;
     OwnPtr<WebKit::EvasGLSurface> m_evasGLSurface;

@@ -24,6 +24,7 @@
 #include "EwkView.h"
 #include "WKAPICast.h"
 #include "ewk_context_private.h"
+#include "ewk_page_group_private.h"
 #include <WebKit2/WKImageCairo.h>
 
 using namespace WebKit;
@@ -31,7 +32,8 @@ using namespace WebKit;
 static inline WKViewRef createWKView(Evas* canvas, WKContextRef contextRef, WKPageGroupRef pageGroupRef, EwkView::ViewBehavior behavior)
 {
     RefPtr<EwkContext> context = contextRef ? EwkContext::findOrCreateWrapper(contextRef) : EwkContext::defaultContext();
-    Evas_Object* evasObject = EwkView::createEvasObject(canvas, context, pageGroupRef, behavior);
+    RefPtr<EwkPageGroup> pageGroup = EwkPageGroup::create(pageGroupRef);
+    Evas_Object* evasObject = EwkView::createEvasObject(canvas, context, pageGroup, behavior);
     if (!evasObject)
         return 0;
 

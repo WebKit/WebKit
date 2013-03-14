@@ -53,6 +53,7 @@
 #include "ewk_context_menu_private.h"
 #include "ewk_context_private.h"
 #include "ewk_favicon_database_private.h"
+#include "ewk_page_group_private.h"
 #include "ewk_popup_menu_item_private.h"
 #include "ewk_popup_menu_private.h"
 #include "ewk_private.h"
@@ -228,11 +229,12 @@ void EwkViewEventHandler<EVAS_CALLBACK_HIDE>::handleEvent(void* data, Evas*, Eva
 
 // EwkView implementation.
 
-EwkView::EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, WKPageGroupRef pageGroup, ViewBehavior behavior)
+EwkView::EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, PassRefPtr<EwkPageGroup> pageGroup, ViewBehavior behavior)
     : m_evasObject(evasObject)
     , m_context(context)
+    , m_pageGroup(pageGroup)
     , m_pendingSurfaceResize(false)
-    , m_webView(adoptRef(new WebView(toImpl(m_context->wkContext()), toImpl(pageGroup), this)))
+    , m_webView(adoptRef(new WebView(toImpl(m_context->wkContext()), toImpl(m_pageGroup->wkPageGroup()), this)))
     , m_pageLoadClient(PageLoadClientEfl::create(this))
     , m_pagePolicyClient(PagePolicyClientEfl::create(this))
     , m_pageUIClient(PageUIClientEfl::create(this))
@@ -304,7 +306,7 @@ EwkView::~EwkView()
     iconDatabase->unwatchChanges(EwkView::handleFaviconChanged);
 }
 
-Evas_Object* EwkView::createEvasObject(Evas* canvas, Evas_Smart* smart, PassRefPtr<EwkContext> context, WKPageGroupRef pageGroupRef, ViewBehavior behavior)
+Evas_Object* EwkView::createEvasObject(Evas* canvas, Evas_Smart* smart, PassRefPtr<EwkContext> context, PassRefPtr<EwkPageGroup> pageGroup, ViewBehavior behavior)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(canvas, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smart, 0);
@@ -321,15 +323,14 @@ Evas_Object* EwkView::createEvasObject(Evas* canvas, Evas_Smart* smart, PassRefP
 
     ASSERT(!smartData->priv);
 
-    // Default WebPageGroup is created in WebContext constructor if the pageGroupRef is 0,
-    // so we do not need to create it here.
-    smartData->priv = new EwkView(evasObject, context, pageGroupRef, behavior);
+    smartData->priv = new EwkView(evasObject, context, (pageGroup ? pageGroup : EwkPageGroup::create()), behavior);
+
     return evasObject;
 }
 
-Evas_Object* EwkView::createEvasObject(Evas* canvas, PassRefPtr<EwkContext> context, WKPageGroupRef pageGroupRef, ViewBehavior behavior)
+Evas_Object* EwkView::createEvasObject(Evas* canvas, PassRefPtr<EwkContext> context, PassRefPtr<EwkPageGroup> pageGroup, ViewBehavior behavior)
 {
-    return createEvasObject(canvas, defaultSmartClassInstance(), context, pageGroupRef, behavior);
+    return createEvasObject(canvas, defaultSmartClassInstance(), context, pageGroup, behavior);
 }
 
 bool EwkView::initSmartClassInterface(Ewk_View_Smart_Class& api)

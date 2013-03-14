@@ -557,6 +557,13 @@ TEST_F(EWK2UnitTestBase, ewk_view_context_get)
     ASSERT_EQ(context, ewk_view_context_get(webView()));
 }
 
+TEST_F(EWK2UnitTestBase, ewk_view_page_group_get)
+{
+    Ewk_Page_Group* pageGroup = ewk_view_page_group_get(webView());
+    ASSERT_TRUE(pageGroup);
+    ASSERT_EQ(pageGroup, ewk_view_page_group_get(webView()));
+}
+
 TEST_F(EWK2UnitTestBase, ewk_view_feed_touch_event)
 {
     Eina_List* points = 0;

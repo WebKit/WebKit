@@ -31,6 +31,7 @@
 #include "EwkView.h"
 #include "WebProcessProxy.h"
 #include "ewk_context_private.h"
+#include "ewk_page_group_private.h"
 #include "ewk_settings.h"
 #include "ewk_view.h"
 #include <WebCore/EflInspectorUtilities.h>
@@ -100,7 +101,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 
     // FIXME: Refactor to use WKViewRef.
     WKContextRef contextRef = toAPI(page()->process()->context());
-    m_inspectorView = EwkView::createEvasObject(ecore_evas_get(m_inspectorWindow), EwkContext::findOrCreateWrapper(contextRef), toAPI(inspectorPageGroup()), EwkView::LegacyBehavior);
+    m_inspectorView = EwkView::createEvasObject(ecore_evas_get(m_inspectorWindow), EwkContext::findOrCreateWrapper(contextRef), EwkPageGroup::create(toAPI(inspectorPageGroup())), EwkView::LegacyBehavior);
     if (!m_inspectorView)
         return 0;
 

@@ -80,6 +80,7 @@
 #include "ewk_context_menu.h"
 #include "ewk_download_job.h"
 #include "ewk_error.h"
+#include "ewk_page_group.h"
 #include "ewk_popup_menu.h"
 #include "ewk_security_origin.h"
 #include "ewk_settings.h"
@@ -316,10 +317,11 @@ EAPI Eina_Bool ewk_view_smart_class_set(Ewk_View_Smart_Class *api);
  * @param e canvas object where to create the view object
  * @param smart Evas_Smart object. Its type should be EWK_VIEW_TYPE_STR
  * @param context Ewk_Context object which is used for initializing
+ * @param pageGroup Ewk_Page_Group object which is used for initializing
  *
  * @return view object on success or @c NULL on failure
  */
-EAPI Evas_Object *ewk_view_smart_add(Evas *e, Evas_Smart *smart, Ewk_Context *context);
+EAPI Evas_Object *ewk_view_smart_add(Evas *e, Evas_Smart *smart, Ewk_Context *context, Ewk_Page_Group *pageGroup);
 
 /**
  * Creates a new EFL WebKit view object.
@@ -348,6 +350,15 @@ EAPI Evas_Object *ewk_view_add_with_context(Evas *e, Ewk_Context *context);
  * @return the Ewk_Context of this view or @c NULL on failure
  */
 EAPI Ewk_Context *ewk_view_context_get(const Evas_Object *o);
+
+/**
+ * Gets the Ewk_Page_Group of this view.
+ *
+ * @param o the view object to get the Ewk_Page_Group
+ *
+ * @return the Ewk_Page_Group of this view or @c NULL on failure
+ */
+EAPI Ewk_Page_Group *ewk_view_page_group_get(const Evas_Object *o);
 
 /**
  * Asks the object to load the given URL.

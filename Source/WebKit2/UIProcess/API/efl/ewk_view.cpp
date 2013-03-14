@@ -34,6 +34,8 @@
 #include "ewk_context.h"
 #include "ewk_context_private.h"
 #include "ewk_favicon_database_private.h"
+#include "ewk_page_group.h"
+#include "ewk_page_group_private.h"
 #include "ewk_private.h"
 #include "ewk_settings_private.h"
 #include <Ecore_Evas.h>
@@ -86,9 +88,9 @@ Eina_Bool ewk_view_smart_class_set(Ewk_View_Smart_Class* api)
     return EwkView::initSmartClassInterface(*api);
 }
 
-Evas_Object* ewk_view_smart_add(Evas* canvas, Evas_Smart* smart, Ewk_Context* context)
+Evas_Object* ewk_view_smart_add(Evas* canvas, Evas_Smart* smart, Ewk_Context* context, Ewk_Page_Group* pageGroup)
 {
-    return EwkView::createEvasObject(canvas, smart, ewk_object_cast<EwkContext*>(context));
+    return EwkView::createEvasObject(canvas, smart, ewk_object_cast<EwkContext*>(context), ewk_object_cast<EwkPageGroup*>(pageGroup));
 }
 
 Evas_Object* ewk_view_add_with_context(Evas* canvas, Ewk_Context* context)
@@ -106,6 +108,13 @@ Ewk_Context* ewk_view_context_get(const Evas_Object* ewkView)
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, 0);
 
     return impl->ewkContext();
+}
+
+Ewk_Page_Group* ewk_view_page_group_get(const Evas_Object* ewkView)
+{
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, 0);
+
+    return impl->ewkPageGroup();
 }
 
 Eina_Bool ewk_view_url_set(Evas_Object* ewkView, const char* url)

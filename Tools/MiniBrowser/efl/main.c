@@ -1280,8 +1280,9 @@ static Browser_Window *window_create(Evas_Object *opener, const char *url, int w
         window->ewk_view = (Evas_Object*)WKViewCreate(evas, 0, 0);
     } else {
         Evas_Smart *smart = evas_smart_class_new(&ewkViewClass->sc);
-        Ewk_Context* context = opener ? ewk_view_context_get(opener) : ewk_context_default_get();
-        window->ewk_view = ewk_view_smart_add(evas, smart, context);
+        Ewk_Context *context = opener ? ewk_view_context_get(opener) : ewk_context_default_get();
+        Ewk_Page_Group *pageGroup = opener ? ewk_view_page_group_get(opener) : ewk_page_group_create("");
+        window->ewk_view = ewk_view_smart_add(evas, smart, context, pageGroup);
     }
     ewk_view_theme_set(window->ewk_view, THEME_DIR "/default.edj");
     if (device_pixel_ratio)

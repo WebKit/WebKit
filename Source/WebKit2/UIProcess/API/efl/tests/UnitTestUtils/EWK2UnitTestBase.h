@@ -35,6 +35,7 @@ public:
     Ecore_Evas* backingStore() { return m_ecoreEvas; }
     Evas* canvas() { return ecore_evas_get(m_ecoreEvas); }
     Evas_Object* webView() { return m_webView; }
+    void setWebView(Evas_Object* webView) { m_webView = webView; }
     Ewk_View_Smart_Class* ewkViewClass() { return &m_ewkViewClass; }
 
 protected:
