@@ -200,20 +200,24 @@ void ResourceLoader::setDataBufferingPolicy(DataBufferingPolicy dataBufferingPol
 }
     
 
-void ResourceLoader::addData(const char* data, int length, DataPayloadType dataPayloadType)
+void ResourceLoader::addDataOrBuffer(const char* data, int length, SharedBuffer* buffer, DataPayloadType dataPayloadType)
 {
     if (m_options.dataBufferingPolicy == DoNotBufferData)
         return;
 
     if (dataPayloadType == DataPayloadWholeResource) {
-        m_resourceData = ResourceBuffer::create(data, length);
+        m_resourceData = buffer ? ResourceBuffer::adoptSharedBuffer(buffer) : ResourceBuffer::create(data, length);
         return;
     }
         
     if (!m_resourceData)
-        m_resourceData = ResourceBuffer::create(data, length);
-    else
-        m_resourceData->append(data, length);
+        m_resourceData = buffer ? ResourceBuffer::adoptSharedBuffer(buffer) : ResourceBuffer::create(data, length);
+    else {
+        if (buffer)
+            m_resourceData->append(buffer);
+        else
+            m_resourceData->append(data, length);
+    }
 }
 
 void ResourceLoader::clearResourceData()
@@ -295,16 +299,31 @@ void ResourceLoader::didReceiveData(const char* data, int length, long long enco
     // ASSERT(con == connection);
     // ASSERT(!m_reachedTerminalState);
 
+    didReceiveDataOrBuffer(data, length, 0, encodedDataLength, dataPayloadType);
+}
+
+void ResourceLoader::didReceiveBuffer(PassRefPtr<SharedBuffer> buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
+{
+    didReceiveDataOrBuffer(0, 0, buffer, encodedDataLength, dataPayloadType);
+}
+
+void ResourceLoader::didReceiveDataOrBuffer(const char* data, int length, PassRefPtr<SharedBuffer> prpBuffer, long long encodedDataLength, DataPayloadType dataPayloadType)
+{
+    // This method should only get data+length *OR* a SharedBuffer.
+    ASSERT(!prpBuffer || (!data && !length));
+
     // Protect this in this delegate method since the additional processing can do
     // anything including possibly derefing this; one example of this is Radar 3266216.
     RefPtr<ResourceLoader> protector(this);
+    RefPtr<SharedBuffer> buffer = prpBuffer;
 
-    addData(data, length, dataPayloadType);
+    addDataOrBuffer(data, length, buffer.get(), dataPayloadType);
+    
     // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
     // However, with today's computers and networking speeds, this won't happen in practice.
     // Could be an issue with a giant local file.
     if (m_options.sendLoadCallbacks == SendCallbacks && m_frame)
-        frameLoader()->notifier()->didReceiveData(this, data, length, static_cast<int>(encodedDataLength));
+        frameLoader()->notifier()->didReceiveData(this, buffer ? buffer->data() : data, buffer ? buffer->size() : length, static_cast<int>(encodedDataLength));
 }
 
 void ResourceLoader::willStopBufferingData(const char* data, int length)
@@ -466,6 +485,13 @@ void ResourceLoader::didReceiveData(ResourceHandle*, const char* data, int lengt
 {
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceData(m_frame.get(), identifier(), encodedDataLength);
     didReceiveData(data, length, encodedDataLength, DataPayloadBytes);
+    InspectorInstrumentation::didReceiveResourceData(cookie);
+}
+
+void ResourceLoader::didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer> buffer, int encodedDataLength)
+{
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willReceiveResourceData(m_frame.get(), identifier(), encodedDataLength);
+    didReceiveBuffer(buffer, encodedDataLength, DataPayloadBytes);
     InspectorInstrumentation::didReceiveResourceData(cookie);
 }
 

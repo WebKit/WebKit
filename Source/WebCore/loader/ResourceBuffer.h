@@ -55,6 +55,7 @@ public:
     virtual bool isEmpty() const;
 
     void append(const char*, unsigned);
+    void append(SharedBuffer*);
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
     void append(CFDataRef);
 #endif

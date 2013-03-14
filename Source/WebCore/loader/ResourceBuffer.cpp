@@ -71,6 +71,11 @@ void ResourceBuffer::append(const char* data, unsigned size)
     m_sharedBuffer->append(data, size);
 }
 
+void ResourceBuffer::append(SharedBuffer* buffer)
+{
+    m_sharedBuffer->append(buffer);
+}
+
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
 void ResourceBuffer::append(CFDataRef data)
 {

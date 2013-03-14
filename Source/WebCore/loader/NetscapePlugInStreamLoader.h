@@ -58,6 +58,7 @@ public:
 private:
     virtual void didReceiveResponse(const ResourceResponse&) OVERRIDE;
     virtual void didReceiveData(const char*, int, long long encodedDataLength, DataPayloadType) OVERRIDE;
+    virtual void didReceiveBuffer(PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType) OVERRIDE;
     virtual void didFinishLoading(double finishTime) OVERRIDE;
     virtual void didFail(const ResourceError&) OVERRIDE;
 
@@ -67,6 +68,8 @@ private:
 
     virtual void willCancel(const ResourceError&) OVERRIDE;
     virtual void didCancel(const ResourceError&) OVERRIDE;
+
+    void didReceiveDataOrBuffer(const char*, int, PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType);
 
     NetscapePlugInStreamLoaderClient* m_client;
 };

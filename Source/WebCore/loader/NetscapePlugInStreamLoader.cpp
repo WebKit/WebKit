@@ -95,11 +95,21 @@ void NetscapePlugInStreamLoader::didReceiveResponse(const ResourceResponse& resp
 
 void NetscapePlugInStreamLoader::didReceiveData(const char* data, int length, long long encodedDataLength, DataPayloadType dataPayloadType)
 {
-    RefPtr<NetscapePlugInStreamLoader> protect(this);
+    didReceiveDataOrBuffer(data, length, 0, encodedDataLength, dataPayloadType);
+}
 
-    m_client->didReceiveData(this, data, length);
+void NetscapePlugInStreamLoader::didReceiveBuffer(PassRefPtr<SharedBuffer> buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
+{
+    didReceiveDataOrBuffer(0, 0, buffer, encodedDataLength, dataPayloadType);
+}
+
+void NetscapePlugInStreamLoader::didReceiveDataOrBuffer(const char* data, int length, PassRefPtr<SharedBuffer> buffer, long long encodedDataLength, DataPayloadType dataPayloadType)
+{
+    RefPtr<NetscapePlugInStreamLoader> protect(this);
     
-    ResourceLoader::didReceiveData(data, length, encodedDataLength, dataPayloadType);
+    m_client->didReceiveData(this, buffer ? buffer->data() : data, buffer ? buffer->size() : length);
+
+    ResourceLoader::didReceiveDataOrBuffer(data, length, buffer, encodedDataLength, dataPayloadType);
 }
 
 void NetscapePlugInStreamLoader::didFinishLoading(double finishTime)

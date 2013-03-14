@@ -756,7 +756,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=19793
     // -1 means we do not provide any data about transfer size to inspector so it would use
     // Content-Length headers or content size to show transfer size.
-    m_handle->client()->didReceiveData(m_handle, (const char*)[data bytes], [data length], -1);
+    m_handle->client()->didReceiveBuffer(m_handle, SharedBuffer::wrapNSData(data), -1);
 }
 
 - (void)connection:(NSURLConnection *)connection willStopBufferingData:(NSData *)data
