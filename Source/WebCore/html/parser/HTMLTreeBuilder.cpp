@@ -956,12 +956,13 @@ void HTMLTreeBuilder::processTemplateStartTag(AtomicHTMLToken* token)
     setInsertionMode(TemplateContentsMode);
 }
 
-void HTMLTreeBuilder::processTemplateEndTag(AtomicHTMLToken* token)
+bool HTMLTreeBuilder::processTemplateEndTag(AtomicHTMLToken* token)
 {
+    ASSERT(token->name() == templateTag.localName());
     if (!m_tree.openElements()->hasTemplateInHTMLScope()) {
-        ASSERT(m_templateInsertionModes.isEmpty());
+        ASSERT(m_templateInsertionModes.isEmpty() || (m_templateInsertionModes.size() == 1 && m_fragmentContext.contextElement()->hasTagName(templateTag)));
         parseError(token);
-        return;
+        return false;
     }
     m_tree.generateImpliedEndTags();
     if (!m_tree.currentStackItem()->hasLocalName(token->name()))
@@ -970,22 +971,16 @@ void HTMLTreeBuilder::processTemplateEndTag(AtomicHTMLToken* token)
     m_tree.activeFormattingElements()->clearToLastMarker();
     m_templateInsertionModes.removeLast();
     resetInsertionModeAppropriately();
+    return true;
 }
 
-bool HTMLTreeBuilder::popAllTemplatesForEndOfFile()
+bool HTMLTreeBuilder::processEndOfFileForInTemplateContents(AtomicHTMLToken* token)
 {
-    if (m_templateInsertionModes.isEmpty())
+    AtomicHTMLToken endTemplate(HTMLToken::EndTag, templateTag.localName());
+    if (!processTemplateEndTag(&endTemplate))
         return false;
 
-    while (!m_templateInsertionModes.isEmpty()) {
-        if (m_tree.currentIsRootNode())
-            return false;
-        if (m_tree.currentNode()->hasTagName(templateTag))
-            m_templateInsertionModes.removeLast();
-        m_tree.openElements()->pop();
-    }
-
-    resetInsertionModeAppropriately();
+    processEndOfFile(token);
     return true;
 }
 #endif
@@ -2558,10 +2553,9 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken* token)
 #endif
         notImplemented(); // Emit parse error based on what elements are still open.
 #if ENABLE(TEMPLATE_ELEMENT)
-        if (popAllTemplatesForEndOfFile()) {
-            processEndOfFile(token);
-            return;
-        }
+        if (!m_templateInsertionModes.isEmpty())
+            if (processEndOfFileForInTemplateContents(token))
+                return;
 #endif
         break;
     case AfterBodyMode:
@@ -2599,10 +2593,9 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken* token)
             parseError(token);
 
 #if ENABLE(TEMPLATE_ELEMENT)
-        if (popAllTemplatesForEndOfFile()) {
-            processEndOfFile(token);
-            return;
-        }
+        if (!m_templateInsertionModes.isEmpty())
+            if (processEndOfFileForInTemplateContents(token))
+                return;
 #endif
         break;
     case InTableTextMode:
@@ -2620,11 +2613,8 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken* token)
         return;
     case TemplateContentsMode:
 #if ENABLE(TEMPLATE_ELEMENT)
-        parseError(token);
-        if (popAllTemplatesForEndOfFile()) {
-            processEndOfFile(token);
+        if (processEndOfFileForInTemplateContents(token))
             return;
-        }
         break;
 #else
         ASSERT_NOT_REACHED();
