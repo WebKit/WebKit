@@ -80,7 +80,7 @@ WebInspector.SidebarPane.prototype = {
     /**
      * @param {function()} callback
      */
-    _setExpandCallback: function(callback)
+    setExpandCallback: function(callback)
     {
         this._expandCallback = callback;
         if (this._expandPending) {
@@ -114,7 +114,7 @@ WebInspector.SidebarPaneTitle = function(container, pane)
     this.element.addEventListener("keydown", this._onTitleKeyDown.bind(this), false);
     this.element.appendChild(this._pane.titleElement);
 
-    this._pane._setExpandCallback(this._expand.bind(this));
+    this._pane.setExpandCallback(this._expand.bind(this));
 }
 
 WebInspector.SidebarPaneTitle.prototype = {
@@ -193,7 +193,7 @@ WebInspector.SidebarTabbedPane.prototype = {
         var title = pane.title();
         this.appendTab(title, title, pane);
         pane.element.appendChild(pane.titleElement);
-        pane._setExpandCallback(this.selectTab.bind(this, title));
+        pane.setExpandCallback(this.selectTab.bind(this, title));
 
     },
 
