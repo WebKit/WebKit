@@ -1,5 +1,73 @@
 2013-03-13  Filip Pizlo  <fpizlo@apple.com>
 
+        JSObject fast by-string access optimizations should work even on the prototype chain, and even when the result is undefined
+        https://bugs.webkit.org/show_bug.cgi?id=112233
+
+        Reviewed by Oliver Hunt.
+        
+        Extended the existing fast access path for String keys to work over the entire prototype chain,
+        not just the self access case. This will fail as soon as it sees an object that intercepts
+        getOwnPropertySlot, so this patch also ensures that ObjectPrototype does not fall into that
+        category. This is accomplished by making ObjectPrototype eagerly reify all of its properties.
+        This is safe for ObjectPrototype because it's so common and we expect all of its properties to
+        be reified for any interesting programs anyway. A new idiom for adding native functions to
+        prototypes is introduced, which ought to work well for any other prototypes that we wish to do
+        this conversion for.
+        
+        This is a >60% speed-up in the case that you frequently do by-string lookups that "miss", i.e.
+        they don't turn up anything.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * dfg/DFGOperations.cpp:
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::objectConstructorTable):
+        * jit/JITStubs.cpp:
+        (JSC::getByVal):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::getByVal):
+        * runtime/CommonIdentifiers.h:
+        * runtime/JSCell.cpp:
+        (JSC::JSCell::getByStringSlow):
+        (JSC):
+        * runtime/JSCell.h:
+        (JSCell):
+        * runtime/JSCellInlines.h:
+        (JSC):
+        (JSC::JSCell::getByStringAndKey):
+        (JSC::JSCell::getByString):
+        * runtime/JSGlobalData.cpp:
+        (JSC):
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::~JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::putDirectNativeFunction):
+        (JSC):
+        * runtime/JSObject.h:
+        (JSObject):
+        (JSC):
+        * runtime/Lookup.cpp:
+        (JSC::setUpStaticFunctionSlot):
+        * runtime/ObjectPrototype.cpp:
+        (JSC):
+        (JSC::ObjectPrototype::finishCreation):
+        (JSC::ObjectPrototype::create):
+        * runtime/ObjectPrototype.h:
+        (ObjectPrototype):
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::findWithString):
+        * runtime/Structure.h:
+        (Structure):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::get):
+        (JSC):
+
+2013-03-13  Filip Pizlo  <fpizlo@apple.com>
+
         DFG bytecode parser is too aggressive about getting rid of GetLocals on captured variables
         https://bugs.webkit.org/show_bug.cgi?id=112287
         <rdar://problem/13342340>

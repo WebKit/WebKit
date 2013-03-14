@@ -311,7 +311,7 @@ inline PropertyTable::find_iterator PropertyTable::find(const KeyType& key)
 inline PropertyTable::find_iterator PropertyTable::findWithString(const KeyType& key)
 {
     ASSERT(key);
-    ASSERT(!key->isIdentifier() && !key->hasHash());
+    ASSERT(!key->isIdentifier());
     unsigned hash = key->hash();
     unsigned step = 0;
 

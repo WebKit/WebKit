@@ -99,7 +99,11 @@
     macro(valueOf) \
     macro(writable) \
     macro(displayName) \
-    macro(join)
+    macro(join) \
+    macro(__defineGetter__) \
+    macro(__defineSetter__) \
+    macro(__lookupGetter__) \
+    macro(__lookupSetter__)
 
 #define JSC_COMMON_IDENTIFIERS_EACH_KEYWORD(macro) \
     macro(null) \
