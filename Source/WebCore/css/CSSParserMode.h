@@ -67,6 +67,7 @@ public:
     bool isCSSCustomFilterEnabled;
     bool isCSSStickyPositionEnabled;
     bool isCSSRegionsEnabled;
+    bool isCSSCompositingEnabled;
     bool isCSSGridLayoutEnabled;
 #if ENABLE(CSS_VARIABLES)
     bool isCSSVariablesEnabled;

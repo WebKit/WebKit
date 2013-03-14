@@ -87,6 +87,14 @@ public:
     static bool cssRegionsEnabled() { return false; }
 #endif
 
+#if ENABLE(CSS_COMPOSITING)
+    static void setCSSCompositingEnabled(bool isEnabled) { isCSSCompositingEnabled = isEnabled; }
+    static bool cssCompositingEnabled() { return isCSSCompositingEnabled; }
+#else
+    static void setCSSCompositingEnabled(bool) { }
+    static bool cssCompositingEnabled() { return false; }
+#endif
+
 #if ENABLE(FONT_LOAD_EVENTS)
     static void setFontLoadEventsEnabled(bool isEnabled) { isFontLoadEventsEnabled = isEnabled; }
     static bool fontLoadEventsEnabled() { return isFontLoadEventsEnabled; }
@@ -309,6 +317,7 @@ private:
     static bool isCanvasPathEnabled;
     static bool isCSSExclusionsEnabled;
     static bool isCSSRegionsEnabled;
+    static bool isCSSCompositingEnabled;
     WEBCORE_TESTING static bool isLangAttributeAwareFormControlUIEnabled;
 #if ENABLE(SCRIPTED_SPEECH)
     static bool isScriptedSpeechEnabled;

@@ -57,6 +57,7 @@ bool RuntimeEnabledFeatures::isSpeechInputEnabled = true;
 bool RuntimeEnabledFeatures::isCanvasPathEnabled = false;
 bool RuntimeEnabledFeatures::isCSSExclusionsEnabled = false;
 bool RuntimeEnabledFeatures::isCSSRegionsEnabled = false;
+bool RuntimeEnabledFeatures::isCSSCompositingEnabled = false;
 bool RuntimeEnabledFeatures::isLangAttributeAwareFormControlUIEnabled = false;
 
 #if ENABLE(SCRIPTED_SPEECH)

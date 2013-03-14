@@ -97,6 +97,7 @@
 #define WebKitAcceleratedCompositingEnabledPreferenceKey @"WebKitAcceleratedCompositingEnabled"
 #define WebKitCSSCustomFilterEnabledPreferenceKey @"WebKitCSSCustomFilterEnabled"
 #define WebKitCSSRegionsEnabledPreferenceKey @"WebKitCSSRegionsEnabled"
+#define WebKitCSSCompositingEnabledPreferenceKey @"WebKitCSSCompositingEnabled"
 #define WebKitCSSGridLayoutEnabledPreferenceKey @"WebKitCSSGridLayoutEnabled"
 #define WebKitShowDebugBordersPreferenceKey @"WebKitShowDebugBorders"
 #define WebKitShowRepaintCounterPreferenceKey @"WebKitShowRepaintCounter"

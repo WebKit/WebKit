@@ -1126,6 +1126,11 @@ bool Document::cssRegionsEnabled() const
     return RuntimeEnabledFeatures::cssRegionsEnabled(); 
 }
 
+bool Document::cssCompositingEnabled() const
+{
+    return RuntimeEnabledFeatures::cssCompositingEnabled();
+}
+
 bool Document::cssGridLayoutEnabled() const
 {
     return settings() && settings()->cssGridLayoutEnabled();

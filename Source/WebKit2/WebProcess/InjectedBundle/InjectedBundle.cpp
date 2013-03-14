@@ -73,7 +73,7 @@
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
 
-#if ENABLE(SHADOW_DOM) || ENABLE(CSS_REGIONS) || ENABLE(IFRAME_SEAMLESS)
+#if ENABLE(SHADOW_DOM) || ENABLE(CSS_REGIONS) || ENABLE(IFRAME_SEAMLESS) || ENABLE(CSS_COMPOSITING)
 #include <WebCore/RuntimeEnabledFeatures.h>
 #endif
 
@@ -195,6 +195,11 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
 #if ENABLE(CSS_REGIONS)
     if (preference == "WebKitCSSRegionsEnabled")
         RuntimeEnabledFeatures::setCSSRegionsEnabled(enabled);
+#endif
+
+#if ENABLE(CSS_COMPOSITING)
+    if (preference == "WebKitCSSCompositingEnabled")
+        RuntimeEnabledFeatures::setCSSCompositingEnabled(enabled);
 #endif
 
     // Map the names used in LayoutTests with the names used in WebCore::Settings and WebPreferencesStore.
@@ -658,6 +663,15 @@ void InjectedBundle::setCSSRegionsEnabled(bool enabled)
 {
 #if ENABLE(CSS_REGIONS)
     RuntimeEnabledFeatures::setCSSRegionsEnabled(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
+void InjectedBundle::setCSSCompositingEnabled(bool enabled)
+{
+#if ENABLE(CSS_COMPOSITING)
+    RuntimeEnabledFeatures::setCSSCompositingEnabled(enabled);
 #else
     UNUSED_PARAM(enabled);
 #endif

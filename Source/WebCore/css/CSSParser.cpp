@@ -257,6 +257,7 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const KURL& baseURL)
     , isCSSCustomFilterEnabled(false)
     , isCSSStickyPositionEnabled(false)
     , isCSSRegionsEnabled(false)
+    , isCSSCompositingEnabled(false)
     , isCSSGridLayoutEnabled(false)
 #if ENABLE(CSS_VARIABLES)
     , isCSSVariablesEnabled(false)
@@ -274,6 +275,7 @@ CSSParserContext::CSSParserContext(Document* document, const KURL& baseURL, cons
     , isCSSCustomFilterEnabled(document->settings() ? document->settings()->isCSSCustomFilterEnabled() : false)
     , isCSSStickyPositionEnabled(document->cssStickyPositionEnabled())
     , isCSSRegionsEnabled(document->cssRegionsEnabled())
+    , isCSSCompositingEnabled(document->cssCompositingEnabled())
     , isCSSGridLayoutEnabled(document->cssGridLayoutEnabled())
 #if ENABLE(CSS_VARIABLES)
     , isCSSVariablesEnabled(document->settings() ? document->settings()->cssVariablesEnabled() : false)
@@ -292,6 +294,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.isCSSCustomFilterEnabled == b.isCSSCustomFilterEnabled
         && a.isCSSStickyPositionEnabled == b.isCSSStickyPositionEnabled
         && a.isCSSRegionsEnabled == b.isCSSRegionsEnabled
+        && a.isCSSCompositingEnabled == b.isCSSCompositingEnabled
         && a.isCSSGridLayoutEnabled == b.isCSSGridLayoutEnabled
 #if ENABLE(CSS_VARIABLES)
         && a.isCSSVariablesEnabled == b.isCSSVariablesEnabled
@@ -820,10 +823,11 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         break;
 #if ENABLE(CSS_COMPOSITING)
     case CSSPropertyWebkitBlendMode:
-        if (valueID == CSSValueNormal || valueID == CSSValueMultiply || valueID == CSSValueScreen || valueID == CSSValueOverlay 
-            || valueID == CSSValueDarken || valueID == CSSValueLighten ||  valueID == CSSValueColorDodge || valueID == CSSValueColorBurn 
-            || valueID == CSSValueHardLight || valueID == CSSValueSoftLight || valueID == CSSValueDifference || valueID == CSSValueExclusion 
-            || valueID == CSSValueHue || valueID == CSSValueSaturation || valueID == CSSValueColor || valueID == CSSValueLuminosity)
+        if (parserContext.isCSSCompositingEnabled && (valueID == CSSValueNormal || valueID == CSSValueMultiply || valueID == CSSValueScreen
+            || valueID == CSSValueOverlay || valueID == CSSValueDarken || valueID == CSSValueLighten ||  valueID == CSSValueColorDodge
+            || valueID == CSSValueColorBurn || valueID == CSSValueHardLight || valueID == CSSValueSoftLight || valueID == CSSValueDifference
+            || valueID == CSSValueExclusion || valueID == CSSValueHue || valueID == CSSValueSaturation || valueID == CSSValueColor
+            || valueID == CSSValueLuminosity))
             return true;
         break;
 #endif
@@ -2453,6 +2457,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 #endif
 #if ENABLE(CSS_COMPOSITING)
     case CSSPropertyWebkitBlendMode:
+        if (cssCompositingEnabled())
             validPrimitive = true;
         break;
 #endif
@@ -4318,11 +4323,12 @@ bool CSSParser::parseFillProperty(CSSPropertyID propId, CSSPropertyID& propId1, 
                     break;
 #if ENABLE(CSS_COMPOSITING)
                 case CSSPropertyWebkitBackgroundBlendMode:
-                    if (val->id == CSSValueNormal || val->id == CSSValueMultiply || val->id == CSSValueScreen || val->id == CSSValueOverlay 
-                        || val->id == CSSValueDarken || val->id == CSSValueLighten ||  val->id == CSSValueColorDodge
-                        || val->id == CSSValueColorBurn || val->id == CSSValueHardLight || val->id == CSSValueSoftLight
-                        || val->id == CSSValueDifference || val->id == CSSValueExclusion || val->id == CSSValueHue
-                        || val->id == CSSValueSaturation || val->id == CSSValueColor || val->id == CSSValueLuminosity) {
+                    if (cssCompositingEnabled() && (val->id == CSSValueNormal || val->id == CSSValueMultiply
+                        || val->id == CSSValueScreen || val->id == CSSValueOverlay || val->id == CSSValueDarken
+                        || val->id == CSSValueLighten ||  val->id == CSSValueColorDodge || val->id == CSSValueColorBurn
+                        || val->id == CSSValueHardLight || val->id == CSSValueSoftLight || val->id == CSSValueDifference
+                        || val->id == CSSValueExclusion || val->id == CSSValueHue || val->id == CSSValueSaturation
+                        || val->id == CSSValueColor || val->id == CSSValueLuminosity)) {
                         currValue = cssValuePool().createIdentifierValue(val->id);
                         m_valueList->next();
                     }
@@ -8928,6 +8934,11 @@ static bool validFlowName(const String& flowName)
 bool CSSParser::cssRegionsEnabled() const
 {
     return m_context.isCSSRegionsEnabled;
+}
+
+bool CSSParser::cssCompositingEnabled() const
+{
+    return m_context.isCSSCompositingEnabled;
 }
 
 bool CSSParser::cssGridLayoutEnabled() const

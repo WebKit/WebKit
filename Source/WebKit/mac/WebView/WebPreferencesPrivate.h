@@ -193,6 +193,9 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)cssRegionsEnabled;
 - (void)setCSSRegionsEnabled:(BOOL)enabled;
 
+- (BOOL)cssCompositingEnabled;
+- (void)setCSSCompositingEnabled:(BOOL)enabled;
+
 - (BOOL)cssGridLayoutEnabled;
 - (void)setCSSGridLayoutEnabled:(BOOL)enabled;
 

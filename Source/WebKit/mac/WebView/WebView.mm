@@ -1533,6 +1533,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setCSSCustomFilterEnabled([preferences cssCustomFilterEnabled]);
 #endif
     RuntimeEnabledFeatures::setCSSRegionsEnabled([preferences cssRegionsEnabled]);
+    RuntimeEnabledFeatures::setCSSCompositingEnabled([preferences cssCompositingEnabled]);
 #if ENABLE(IFRAME_SEAMLESS)
     RuntimeEnabledFeatures::setSeamlessIFramesEnabled([preferences seamlessIFramesEnabled]);
 #endif

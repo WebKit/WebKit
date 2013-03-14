@@ -340,6 +340,7 @@ public:
 
     bool cssStickyPositionEnabled() const;
     bool cssRegionsEnabled() const;
+    bool cssCompositingEnabled() const;
 #if ENABLE(CSS_REGIONS)
     PassRefPtr<DOMNamedFlowCollection> webkitGetNamedFlows();
 #endif

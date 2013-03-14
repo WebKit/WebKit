@@ -2832,6 +2832,10 @@ __ZN7WebCore18HTMLContentElement6createEPNS_8DocumentE
 __ZN7WebCore22RuntimeEnabledFeatures19isCSSRegionsEnabledE
 #endif
 
+#if ENABLE(CSS_COMPOSITING)
+__ZN7WebCore22RuntimeEnabledFeatures23isCSSCompositingEnabledE
+#endif
+
 #if ENABLE(IFRAME_SEAMLESS)
 __ZN7WebCore22RuntimeEnabledFeatures25areSeamlessIFramesEnabledE
 #endif

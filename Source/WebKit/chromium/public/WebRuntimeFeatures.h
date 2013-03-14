@@ -163,6 +163,9 @@ public:
 
     WEBKIT_EXPORT static void enableCSSRegions(bool);
     WEBKIT_EXPORT static bool isCSSRegionsEnabled();
+    
+    WEBKIT_EXPORT static void enableCSSCompositing(bool);
+    WEBKIT_EXPORT static bool isCSSCompositingEnabled();
 
     WEBKIT_EXPORT static void enableFontLoadEvents(bool);
     WEBKIT_EXPORT static bool isFontLoadEventsEnabled();

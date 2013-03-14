@@ -378,6 +378,7 @@ public:
         // CSS Shaders also need WebGL enabled (which is disabled by default), so we can keep it enabled for now.
         [NSNumber numberWithBool:YES], WebKitCSSCustomFilterEnabledPreferenceKey,
         [NSNumber numberWithBool:YES], WebKitCSSRegionsEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES], WebKitCSSCompositingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitCSSGridLayoutEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitAcceleratedDrawingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],  WebKitCanvasUsesAcceleratedDrawingPreferenceKey,
@@ -1392,6 +1393,16 @@ static NSString *classIBCreatorID = nil;
 - (void)setCSSRegionsEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitCSSRegionsEnabledPreferenceKey];
+}
+
+- (BOOL)cssCompositingEnabled
+{
+    return [self _boolValueForKey:WebKitCSSCompositingEnabledPreferenceKey];
+}
+
+- (void)setCSSCompositingEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitCSSCompositingEnabledPreferenceKey];
 }
 
 - (BOOL)cssGridLayoutEnabled

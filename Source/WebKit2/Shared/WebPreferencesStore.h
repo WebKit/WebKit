@@ -84,6 +84,7 @@ namespace WebKit {
     macro(WebGLEnabled, webGLEnabled, Bool, bool, false) \
     macro(Accelerated2dCanvasEnabled, accelerated2dCanvasEnabled, Bool, bool, false) \
     macro(CSSRegionsEnabled, cssRegionsEnabled, Bool, bool, true) \
+    macro(CSSCompositingEnabled, cssCompositingEnabled, Bool, bool, true) \
     macro(CSSGridLayoutEnabled, cssGridLayoutEnabled, Bool, bool, false) \
     macro(RegionBasedColumnsEnabled, regionBasedColumnsEnabled, Bool, bool, false) \
     macro(ForceFTPDirectoryListings, forceFTPDirectoryListings, Bool, bool, false) \
