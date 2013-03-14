@@ -165,6 +165,11 @@ struct CoordinatedGraphicsLayerState {
 #endif
 
     IntSize committedScrollOffset;
+
+    bool hasPendingChanges() const
+    {
+        return changeMask || tilesToUpdate.size() || tilesToRemove.size() || tilesToCreate.size();
+    }
 };
 
 struct CoordinatedGraphicsState {

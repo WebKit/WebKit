@@ -760,8 +760,10 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
     syncCanvas();
 #endif
 
-    m_coordinator->syncLayerState(m_id, m_layerState);
-    resetLayerState();
+    if (m_layerState.hasPendingChanges()) {
+        m_coordinator->syncLayerState(m_id, m_layerState);
+        resetLayerState();
+    }
 
     // Only unset m_movingVisibleRect after we have updated the visible rect after the animation stopped.
     if (!hasActiveTransformAnimation)
