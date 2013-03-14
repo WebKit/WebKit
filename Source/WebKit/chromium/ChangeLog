@@ -1,3 +1,14 @@
+2013-03-14  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Make zoom filter independent of the layer size.
+        https://bugs.webkit.org/show_bug.cgi?id=112221
+
+        Reviewed by Stephen White.
+
+        * tests/FilterOperationsTest.cpp:
+        (WebKit):
+        (WebKit::TEST):
+
 2013-03-14  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Add selectTrailingWhitespaceEnabled setting to WebCore::Page

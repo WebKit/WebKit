@@ -1,3 +1,19 @@
+2013-03-14  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Make zoom filter independent of the layer size.
+        https://bugs.webkit.org/show_bug.cgi?id=112221
+
+        Reviewed by Stephen White.
+
+        Make the zoom filter hold a zoom amount and an inset.
+
+        * chromium/public/WebFilterOperation.h:
+        (WebKit::WebFilterOperation::zoomInset):
+        (WebFilterOperation):
+        (WebKit::WebFilterOperation::createZoomFilter):
+        (WebKit::WebFilterOperation::setZoomInset):
+        (WebKit::WebFilterOperation::WebFilterOperation):
+
 2013-03-13  Tommy Widenflycht  <tommyw@google.com>
 
         [chromium] MediaStream API: Cleaning away deprecated and unused states

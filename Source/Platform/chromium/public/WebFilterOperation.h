@@ -30,7 +30,6 @@
 #include "WebCommon.h"
 #include "WebColor.h"
 #include "WebPoint.h"
-#include "WebRect.h"
 
 namespace WebKit {
 
@@ -86,11 +85,14 @@ public:
         return m_matrix;
     }
 
-    WebRect zoomRect() const
+    int zoomInset() const
     {
         WEBKIT_ASSERT(m_type == FilterTypeZoom);
-        return m_zoomRect;
+        return m_zoomInset;
     }
+
+    // FIXME: Remove this and the check for it in chromium.
+#define NEW_ZOOM_FILTER
 
     static WebFilterOperation createGrayscaleFilter(float amount) { return WebFilterOperation(FilterTypeGrayscale, amount); }
     static WebFilterOperation createSepiaFilter(float amount) { return WebFilterOperation(FilterTypeSepia, amount); }
@@ -103,7 +105,7 @@ public:
     static WebFilterOperation createBlurFilter(float amount) { return WebFilterOperation(FilterTypeBlur, amount); }
     static WebFilterOperation createDropShadowFilter(WebPoint offset, float stdDeviation, WebColor color) { return WebFilterOperation(FilterTypeDropShadow, offset, stdDeviation, color); }
     static WebFilterOperation createColorMatrixFilter(SkScalar matrix[20]) { return WebFilterOperation(FilterTypeColorMatrix, matrix); }
-    static WebFilterOperation createZoomFilter(WebRect rect, int inset) { return WebFilterOperation(FilterTypeZoom, rect, inset); }
+    static WebFilterOperation createZoomFilter(float amount, int inset) { return WebFilterOperation(FilterTypeZoom, amount, inset); }
     static WebFilterOperation createSaturatingBrightnessFilter(float amount) { return WebFilterOperation(FilterTypeSaturatingBrightness, amount); }
 
     bool equals(const WebFilterOperation& other) const;
@@ -143,10 +145,10 @@ public:
         for (unsigned i = 0; i < 20; ++i)
             m_matrix[i] = matrix[i];
     }
-    void setZoomRect(WebRect rect)
+    void setZoomInset(int inset)
     {
         WEBKIT_ASSERT(m_type == FilterTypeZoom);
-        m_zoomRect = rect;
+        m_zoomInset = inset;
     }
 
 private:
@@ -156,7 +158,7 @@ private:
     WebPoint m_dropShadowOffset;
     WebColor m_dropShadowColor;
     SkScalar m_matrix[20];
-    WebRect m_zoomRect;
+    int m_zoomInset;
 
     WebFilterOperation(FilterType type, float amount)
     {
@@ -177,12 +179,12 @@ private:
 
     WEBKIT_EXPORT WebFilterOperation(FilterType, SkScalar matrix[20]);
 
-    WebFilterOperation(FilterType type, WebRect rect, float inset)
+    WebFilterOperation(FilterType type, float amount, int inset)
     {
         WEBKIT_ASSERT(type == FilterTypeZoom);
         m_type = type;
-        m_amount = inset;
-        m_zoomRect = rect;
+        m_amount = amount;
+        m_zoomInset = inset;
     }
 };
 
