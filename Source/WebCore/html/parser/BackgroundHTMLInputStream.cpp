@@ -32,6 +32,8 @@
 namespace WebCore {
 
 BackgroundHTMLInputStream::BackgroundHTMLInputStream()
+    : m_firstValidCheckpointIndex(0)
+    , m_firstValidSegmentIndex(0)
 {
 }
 
@@ -53,17 +55,40 @@ HTMLInputCheckpoint BackgroundHTMLInputStream::createCheckpoint()
     return checkpoint;
 }
 
+void BackgroundHTMLInputStream::invalidateCheckpointsBefore(HTMLInputCheckpoint newFirstValidCheckpointIndex)
+{
+    ASSERT(newFirstValidCheckpointIndex < m_checkpoints.size());
+    // There is nothing to do for the first valid checkpoint.
+    if (m_firstValidCheckpointIndex == newFirstValidCheckpointIndex)
+        return;
+
+    ASSERT(newFirstValidCheckpointIndex > m_firstValidCheckpointIndex);
+    const Checkpoint& lastInvalidCheckpoint = m_checkpoints[newFirstValidCheckpointIndex - 1];
+
+    ASSERT(m_firstValidSegmentIndex <= lastInvalidCheckpoint.numberOfSegmentsAlreadyAppended);
+    for (size_t i = m_firstValidSegmentIndex; i < lastInvalidCheckpoint.numberOfSegmentsAlreadyAppended; ++i)
+        m_segments[i] = String();
+    m_firstValidSegmentIndex = lastInvalidCheckpoint.numberOfSegmentsAlreadyAppended;
+
+    for (size_t i = m_firstValidCheckpointIndex; i < newFirstValidCheckpointIndex; ++i)
+        m_checkpoints[i].clear();
+    m_firstValidCheckpointIndex = newFirstValidCheckpointIndex;
+}
+
 void BackgroundHTMLInputStream::rewindTo(HTMLInputCheckpoint checkpointIndex, const String& unparsedInput)
 {
     ASSERT(checkpointIndex < m_checkpoints.size()); // If this ASSERT fires, checkpointIndex is invalid.
     const Checkpoint& checkpoint = m_checkpoints[checkpointIndex];
+    ASSERT(!checkpoint.isNull());
 
     bool isClosed = m_current.isClosed();
 
     m_current = checkpoint.input;
 
-    for (size_t i = checkpoint.numberOfSegmentsAlreadyAppended; i < m_segments.size(); ++i)
+    for (size_t i = checkpoint.numberOfSegmentsAlreadyAppended; i < m_segments.size(); ++i) {
+        ASSERT(!m_segments[i].isNull());
         m_current.append(SegmentedString(m_segments[i]));
+    }
 
     if (!unparsedInput.isEmpty())
         m_current.prepend(SegmentedString(unparsedInput));
@@ -75,6 +100,8 @@ void BackgroundHTMLInputStream::rewindTo(HTMLInputCheckpoint checkpointIndex, co
 
     m_segments.clear();
     m_checkpoints.clear();
+    m_firstValidCheckpointIndex = 0;
+    m_firstValidSegmentIndex = 0;
 }
 
 }

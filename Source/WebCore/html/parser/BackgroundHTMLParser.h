@@ -75,6 +75,7 @@ public:
 
     void append(const String&);
     void resumeFrom(PassOwnPtr<Checkpoint>);
+    void startedChunkWithCheckpoint(HTMLInputCheckpoint);
     void finish();
     void stop();
 

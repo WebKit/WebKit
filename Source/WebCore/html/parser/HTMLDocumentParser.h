@@ -143,8 +143,8 @@ private:
 #if ENABLE(THREADED_HTML_PARSER)
     void startBackgroundParser();
     void stopBackgroundParser();
-    void validateSpeculations();
-    void didFailSpeculation(PassOwnPtr<HTMLToken>, PassOwnPtr<HTMLTokenizer>);
+    void validateSpeculations(PassOwnPtr<ParsedChunk> lastChunk);
+    void discardSpeculationsAndResumeFrom(PassOwnPtr<ParsedChunk> lastChunk, PassOwnPtr<HTMLToken>, PassOwnPtr<HTMLTokenizer>);
     void processParsedChunkFromBackgroundParser(PassOwnPtr<ParsedChunk>);
     void pumpPendingSpeculations();
 #endif
@@ -196,7 +196,9 @@ private:
     XSSAuditorDelegate m_xssAuditorDelegate;
 
 #if ENABLE(THREADED_HTML_PARSER)
-    OwnPtr<ParsedChunk> m_currentChunk;
+    // FIXME: m_lastChunkBeforeScript, m_tokenizer, m_token, and m_input should be combined into a single state object
+    // so they can be set and cleared together and passed between threads together.
+    OwnPtr<ParsedChunk> m_lastChunkBeforeScript;
     Deque<OwnPtr<ParsedChunk> > m_speculations;
     WeakPtrFactory<HTMLDocumentParser> m_weakFactory;
     WeakPtr<BackgroundHTMLParser> m_backgroundParser;

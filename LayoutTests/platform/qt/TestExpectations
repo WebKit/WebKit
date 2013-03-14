@@ -1904,7 +1904,8 @@ webkit.org/b/108508 fast/canvas/canvas-currentPath.html [ Skip ]
 
 webkit.org/b/111290 fast/regions/seamless-iframe-flowed-into-regions.html [ Skip ]
 
-webkit.org/b/111449 [ DEBUG ] fast/parser/document-write-fighting-eof.html [ Skip ]
+webkit.org/b/110546 [ DEBUG ] fast/parser/document-write-fighting-eof.html [ Skip ]
+webkit.org/b/110546 [ DEBUG ] fast/parser/document-write-partial-entity-before-load.html [ Skip ]
 
 # ============================================================================= #
 # failing security tests
