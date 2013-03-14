@@ -181,9 +181,6 @@ public:
     virtual bool shouldDeleteRange(const WebRange&) { return true; }
     virtual bool shouldApplyStyle(const WebString& style, const WebRange&) { return true; }
 
-    virtual bool isSmartInsertDeleteEnabled() { return true; }
-    virtual bool isSelectTrailingWhitespaceEnabled() { return true; }
-
     virtual void didBeginEditing() { }
     virtual void didCancelCompositionOnSelectionChange() { }
     virtual void didChangeSelection(bool isSelectionEmpty) { }

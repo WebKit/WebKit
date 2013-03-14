@@ -59,8 +59,10 @@
 #import <WebCore/HTMLTextAreaElement.h>
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/LegacyWebArchive.h>
+#import <WebCore/Page.h>
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/RunLoop.h>
+#import <WebCore/Settings.h>
 #import <WebCore/SpellChecker.h>
 #import <WebCore/StylePropertySet.h>
 #import <WebCore/UndoStep.h>
@@ -233,12 +235,18 @@ bool WebEditorClient::shouldShowDeleteInterface(HTMLElement* element)
 
 bool WebEditorClient::smartInsertDeleteEnabled()
 {
-    return [m_webView smartInsertDeleteEnabled];
+    Page* page = [m_webView page];
+    if (!page)
+        return false;
+    return page->settings()->smartInsertDeleteEnabled();
 }
 
 bool WebEditorClient::isSelectTrailingWhitespaceEnabled()
 {
-    return [m_webView isSelectTrailingWhitespaceEnabled];
+    Page* page = [m_webView page];
+    if (!page)
+        return false;
+    return page->settings()->selectTrailingWhitespaceEnabled();
 }
 
 bool WebEditorClient::shouldApplyStyle(StylePropertySet* style, Range* range)

@@ -40,8 +40,10 @@
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/LocalizedStrings.h>
 #include <WebCore/NotImplemented.h>
+#include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/Range.h>
+#include <WebCore/Settings.h>
 #include <WebCore/UndoStep.h>
 #include <WebCore/UserTypingGestureIndicator.h>
 #include <WebCore/VisibleSelection.h>
@@ -302,17 +304,19 @@ void WebEditorClient::webViewDidChangeSelection(WebNotification* /*notification*
 {  notImplemented(); }
 
 bool WebEditorClient::smartInsertDeleteEnabled(void)
-{ 
-    BOOL enabled = FALSE; 
-    m_webView->smartInsertDeleteEnabled(&enabled);
-    return !!enabled;
+{
+    Page* page = m_webView->page();
+    if (!page)
+        return false;
+    return page->settings()->smartInsertDeleteEnabled();
 }
 
 bool WebEditorClient::isSelectTrailingWhitespaceEnabled(void)
 {
-    BOOL enabled = FALSE;
-    m_webView->isSelectTrailingWhitespaceEnabled(&enabled);
-    return !!enabled;
+    Page* page = m_webView->page();
+    if (!page)
+        return false;
+    return page->settings()->selectTrailingWhitespaceEnabled();
 }
 
 bool WebEditorClient::shouldChangeSelectedRange(WebCore::Range*, WebCore::Range*, WebCore::EAffinity, bool)

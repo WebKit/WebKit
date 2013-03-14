@@ -80,8 +80,6 @@ public:
     static bool isCommandEnabled(const Evas_Object* ewkView, const char* name);
     static void setCSSGridLayoutEnabled(const Evas_Object* ewkView, bool enabled);
     static void setCSSRegionsEnabled(const Evas_Object* ewkView, bool enabled);
-    static void setSmartInsertDeleteEnabled(Evas_Object* ewkView, bool enabled);
-    static void setSelectTrailingWhitespaceEnabled(Evas_Object* ewkView, bool enabled);
     static void setSeamlessIFramesEnabled(bool);
 
     static void forceLayout(Evas_Object* ewkFrame);

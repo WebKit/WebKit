@@ -899,10 +899,6 @@ static void resetWebViewToConsistentStateBeforeTesting()
         WebCoreTestSupport::resetInternalsObject(context);
     }
 
-    COMPtr<IWebViewEditing> viewEditing;
-    if (SUCCEEDED(webView->QueryInterface(&viewEditing)))
-        viewEditing->setSmartInsertDeleteEnabled(TRUE);
-
     COMPtr<IWebViewPrivate> webViewPrivate(Query, webView);
     if (!webViewPrivate)
         return;

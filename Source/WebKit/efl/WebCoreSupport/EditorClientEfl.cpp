@@ -243,28 +243,20 @@ void EditorClientEfl::pageDestroyed()
     delete this;
 }
 
-void EditorClientEfl::setSmartInsertDeleteEnabled(bool enabled)
-{
-    m_smartInsertDeleteEnabled = enabled;
-    if (enabled)
-        setSelectTrailingWhitespaceEnabled(false);
-}
-
 bool EditorClientEfl::smartInsertDeleteEnabled()
 {
-    return m_smartInsertDeleteEnabled;
-}
-
-void EditorClientEfl::setSelectTrailingWhitespaceEnabled(bool enabled)
-{
-    m_selectTrailingWhitespaceEnabled = enabled;
-    if (enabled)
-        setSmartInsertDeleteEnabled(false);
+    WebCore::Page* corePage = EWKPrivate::corePage(m_view);
+    if (!corePage)
+        return false;
+    return corePage->settings()->smartInsertDeleteEnabled();
 }
 
 bool EditorClientEfl::isSelectTrailingWhitespaceEnabled()
 {
-    return m_selectTrailingWhitespaceEnabled;
+    WebCore::Page* corePage = EWKPrivate::corePage(m_view);
+    if (!corePage)
+        return false;
+    return corePage->settings()->selectTrailingWhitespaceEnabled();
 }
 
 void EditorClientEfl::toggleContinuousSpellChecking()
@@ -371,8 +363,6 @@ void EditorClientEfl::handleInputMethodKeydown(KeyboardEvent*)
 EditorClientEfl::EditorClientEfl(Evas_Object* view)
     : m_isInRedo(false)
     , m_view(view)
-    , m_selectTrailingWhitespaceEnabled(false)
-    , m_smartInsertDeleteEnabled(false)
 {
     notImplemented();
 }

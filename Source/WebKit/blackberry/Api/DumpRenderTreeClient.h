@@ -83,7 +83,6 @@ public:
     virtual bool shouldChangeSelectedDOMRangeToDOMRangeAffinityStillSelecting(WebCore::Range* fromRange, WebCore::Range* toRange, int affinity, bool stillSelecting) = 0;
     virtual bool shouldInsertNode(WebCore::Node*, WebCore::Range*, int insertAction) = 0;
     virtual bool shouldInsertText(const String&, WebCore::Range*, int insertAction) = 0;
-    virtual bool isSelectTrailingWhitespaceEnabled() const = 0;
     virtual bool didReceiveAuthenticationChallenge(WebCore::Credential&) = 0;
 
 };

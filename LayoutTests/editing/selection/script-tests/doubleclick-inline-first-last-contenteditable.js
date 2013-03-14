@@ -78,7 +78,8 @@ function testWithClickAndModify(targetInnerHTML, expectedText)
     shouldBe("window.selectedByModify", toLiteral(expectedText));
 }
 
-testRunner.setSelectTrailingWhitespaceEnabled(false);
+internals.settings.setSmartInsertDeleteEnabled(true);
+internals.settings.setSelectTrailingWhitespaceEnabled(false);
 
 var shouldSelecteFirstWordInline = "<span id='target' contentEditable>selectme1</span> and not select us";
 testWithDoublleClick(shouldSelecteFirstWordInline, "selectme1");

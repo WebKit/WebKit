@@ -140,6 +140,7 @@ public:
     virtual void setRenderVSyncEnabled(bool);
     virtual void setRenderVSyncNotificationEnabled(bool);
     virtual void setSansSerifFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON);
+    virtual void setSelectTrailingWhitespaceEnabled(bool);
     virtual void setSerifFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON);
     virtual void setShouldDisplayCaptions(bool);
     virtual void setShouldDisplaySubtitles(bool);
@@ -151,6 +152,7 @@ public:
     virtual void setShowPaintRects(bool);
     virtual void setShowPlatformLayerTree(bool);
     virtual void setShrinksStandaloneImagesToFit(bool);
+    virtual void setSmartInsertDeleteEnabled(bool);
     virtual void setStandardFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON);
     virtual void setSupportsMultipleWindows(bool);
     virtual void setSyncXHRInDocumentsEnabled(bool);

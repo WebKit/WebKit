@@ -783,6 +783,9 @@ static bool shouldRespectPriorityInCSSAttributeSetters()
         [self _injectOutlookQuirksScript];
     }
 
+    if ([[NSUserDefaults standardUserDefaults] objectForKey:WebSmartInsertDeleteEnabled])
+        [self setSmartInsertDeleteEnabled:[[NSUserDefaults standardUserDefaults] boolForKey:WebSmartInsertDeleteEnabled]];
+
     [WebFrame _createMainFrameWithPage:_private->page frameName:frameName frameView:frameView];
 
     NSRunLoop *runLoop = [NSRunLoop mainRunLoop];
@@ -2472,14 +2475,15 @@ static inline IMP getMethod(id o, SEL s)
 
 - (void)setSelectTrailingWhitespaceEnabled:(BOOL)flag
 {
-    _private->selectTrailingWhitespaceEnabled = flag;
-    if (flag)
-        [self setSmartInsertDeleteEnabled:false];
+    if (_private->page->settings()->selectTrailingWhitespaceEnabled() != flag) {
+        _private->page->settings()->setSelectTrailingWhitespaceEnabled(flag);
+        [self setSmartInsertDeleteEnabled:!flag];
+    }
 }
 
 - (BOOL)isSelectTrailingWhitespaceEnabled
 {
-    return _private->selectTrailingWhitespaceEnabled;
+    return _private->page->settings()->selectTrailingWhitespaceEnabled();
 }
 
 - (void)setMemoryCacheDelegateCallsEnabled:(BOOL)enabled
@@ -5431,17 +5435,16 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue j
 
 - (void)setSmartInsertDeleteEnabled:(BOOL)flag
 {
-    if (_private->smartInsertDeleteEnabled != flag) {
-        _private->smartInsertDeleteEnabled = flag;
-        [[NSUserDefaults standardUserDefaults] setBool:_private->smartInsertDeleteEnabled forKey:WebSmartInsertDeleteEnabled];
+    if (_private->page->settings()->smartInsertDeleteEnabled() != flag) {
+        _private->page->settings()->setSmartInsertDeleteEnabled(flag);
+        [[NSUserDefaults standardUserDefaults] setBool:_private->page->settings()->smartInsertDeleteEnabled() forKey:WebSmartInsertDeleteEnabled];
+        [self setSelectTrailingWhitespaceEnabled:!flag];
     }
-    if (flag)
-        [self setSelectTrailingWhitespaceEnabled:false];
 }
 
 - (BOOL)smartInsertDeleteEnabled
 {
-    return _private->smartInsertDeleteEnabled;
+    return _private->page->settings()->smartInsertDeleteEnabled();
 }
 
 - (void)setContinuousSpellCheckingEnabled:(BOOL)flag

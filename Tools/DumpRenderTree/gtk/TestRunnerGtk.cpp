@@ -323,11 +323,6 @@ void TestRunner::setWindowIsKey(bool windowIsKey)
     // FIXME: implement
 }
 
-void TestRunner::setSmartInsertDeleteEnabled(bool flag)
-{
-    DumpRenderTreeSupportGtk::setSmartInsertDeleteEnabled(webkit_web_frame_get_web_view(mainFrame), flag);
-}
-
 static gboolean waitToDumpWatchdogFired(void*)
 {
     setWaitToDumpWatchdog(0);
@@ -483,11 +478,6 @@ void TestRunner::setIconDatabaseEnabled(bool enabled)
         webkit_icon_database_set_path(database, iconDatabasePath.get());
     } else
         webkit_icon_database_set_path(database, 0);
-}
-
-void TestRunner::setSelectTrailingWhitespaceEnabled(bool flag)
-{
-    DumpRenderTreeSupportGtk::setSelectTrailingWhitespaceEnabled(flag);
 }
 
 void TestRunner::setPopupBlockingEnabled(bool flag)

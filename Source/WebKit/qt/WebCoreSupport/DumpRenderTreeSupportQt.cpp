@@ -326,18 +326,6 @@ void DumpRenderTreeSupportQt::setAuthorAndUserStylesEnabled(QWebPageAdapter* ada
     adapter->page->settings()->setAuthorAndUserStylesEnabled(value);
 }
 
-void DumpRenderTreeSupportQt::setSmartInsertDeleteEnabled(QWebPageAdapter *adapter, bool enabled)
-{
-    static_cast<EditorClientQt*>(adapter->page->editorClient())->setSmartInsertDeleteEnabled(enabled);
-}
-
-
-void DumpRenderTreeSupportQt::setSelectTrailingWhitespaceEnabled(QWebPageAdapter *adapter, bool enabled)
-{
-    static_cast<EditorClientQt*>(adapter->page->editorClient())->setSelectTrailingWhitespaceEnabled(enabled);
-}
-
-
 void DumpRenderTreeSupportQt::executeCoreCommandByName(QWebPageAdapter* adapter, const QString& name, const QString& value)
 {
     adapter->page->focusController()->focusedOrMainFrame()->editor()->command(name).execute(value);

@@ -1278,8 +1278,6 @@ static void resetWebViewToConsistentStateBeforeTesting()
         gTestRunner->removeChromeInputField();
     }
 
-    [[mainFrame webView] setSmartInsertDeleteEnabled:YES];
-
     [WebView _setUsesTestModeFocusRingColor:YES];
     [WebView _resetOriginAccessWhitelists];
     [WebView _setAllowsRoundingHacks:NO];

@@ -33,6 +33,7 @@
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
 #include "SelectionHandler.h"
+#include "Settings.h"
 #include "WebPage_p.h"
 #include "WindowsKeyboardCodes.h"
 
@@ -69,15 +70,18 @@ bool EditorClientBlackBerry::shouldDeleteRange(Range* range)
 
 bool EditorClientBlackBerry::smartInsertDeleteEnabled()
 {
-    notImplemented();
-    return false;
+    Page* page = WebPagePrivate::core(m_webPage);
+    if (!page)
+        return false;
+    return page->settings()->smartInsertDeleteEnabled();
 }
 
 bool EditorClientBlackBerry::isSelectTrailingWhitespaceEnabled()
 {
-    if (m_webPagePrivate->m_dumpRenderTree)
-        return m_webPagePrivate->m_dumpRenderTree->isSelectTrailingWhitespaceEnabled();
-    return false;
+    Page* page = WebPagePrivate::core(m_webPage);
+    if (!page)
+        return false;
+    return page->settings()->selectTrailingWhitespaceEnabled();
 }
 
 void EditorClientBlackBerry::enableSpellChecking(bool enable)

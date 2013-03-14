@@ -168,8 +168,6 @@ public Q_SLOTS:
     void setCaretBrowsingEnabled(bool);
     void setAuthorAndUserStylesEnabled(bool);
     void setViewModeMediaFeature(const QString& mode);
-    void setSmartInsertDeleteEnabled(bool);
-    void setSelectTrailingWhitespaceEnabled(bool);
     void execCommand(const QString& name, const QString& value = QString());
     bool isCommandEnabled(const QString& name) const;
 

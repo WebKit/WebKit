@@ -194,8 +194,6 @@ void WebPage::resetSettings()
 
     m_drt->testRunner()->setCaretBrowsingEnabled(false);
     m_drt->testRunner()->setAuthorAndUserStylesEnabled(true);
-    m_drt->testRunner()->setSmartInsertDeleteEnabled(true);
-    m_drt->testRunner()->setSelectTrailingWhitespaceEnabled(false);
     m_drt->testRunner()->setDefersLoading(false);
 
     // globalSettings must be reset explicitly.

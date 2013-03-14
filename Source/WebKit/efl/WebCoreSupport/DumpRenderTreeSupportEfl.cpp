@@ -323,28 +323,6 @@ bool DumpRenderTreeSupportEfl::isCommandEnabled(const Evas_Object* ewkView, cons
     return page->focusController()->focusedOrMainFrame()->editor()->command(name).isEnabled();
 }
 
-void DumpRenderTreeSupportEfl::setSmartInsertDeleteEnabled(Evas_Object* ewkView, bool enabled)
-{
-    DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
-
-    WebCore::EditorClientEfl* editorClient = static_cast<WebCore::EditorClientEfl*>(page->editorClient());
-    if (!editorClient)
-        return;
-
-    editorClient->setSmartInsertDeleteEnabled(enabled);
-}
-
-void DumpRenderTreeSupportEfl::setSelectTrailingWhitespaceEnabled(Evas_Object* ewkView, bool enabled)
-{
-    DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
-
-    WebCore::EditorClientEfl* editorClient = static_cast<WebCore::EditorClientEfl*>(page->editorClient());
-    if (!editorClient)
-        return;
-
-    editorClient->setSelectTrailingWhitespaceEnabled(enabled);
-}
-
 void DumpRenderTreeSupportEfl::forceLayout(Evas_Object* ewkFrame)
 {
     ewk_frame_force_layout(ewkFrame);

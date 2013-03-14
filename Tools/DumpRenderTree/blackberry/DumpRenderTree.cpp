@@ -151,7 +151,6 @@ namespace BlackBerry {
 namespace WebKit {
 
 DumpRenderTree* DumpRenderTree::s_currentInstance = 0;
-bool DumpRenderTree::s_selectTrailingWhitespaceEnabled = false;
 
 static void createFile(const String& fileName)
 {
@@ -295,7 +294,6 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting(const String& url, cons
 
     topLoadingFrame = 0;
     m_loadFinished = false;
-    s_selectTrailingWhitespaceEnabled = false;
     m_policyDelegateEnabled = false;
     waitForPolicy = false;
     testDone = false;

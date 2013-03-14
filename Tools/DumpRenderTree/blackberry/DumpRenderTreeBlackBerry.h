@@ -102,8 +102,6 @@ public:
     bool shouldInsertNode(WebCore::Node*, WebCore::Range*, int insertAction);
     bool shouldInsertText(const String&, WebCore::Range*, int insertAction);
 
-    bool isSelectTrailingWhitespaceEnabled() const { return s_selectTrailingWhitespaceEnabled; }
-    void setSelectTrailingWhitespaceEnabled(bool enabled) { s_selectTrailingWhitespaceEnabled = enabled; }
     bool didReceiveAuthenticationChallenge(WebCore::Credential&);
 
     // BlackBerry::Platform::BlackBerryPlatformLayoutTestClient method
@@ -148,7 +146,6 @@ private:
 
     bool m_acceptsEditing;
     bool m_loadFinished;
-    static bool s_selectTrailingWhitespaceEnabled;
     bool m_policyDelegateEnabled;
 };
 }

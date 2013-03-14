@@ -103,8 +103,6 @@ public:
     void setPluginsEnabled(bool);
     void setPopupBlockingEnabled(bool);
     void setPrivateBrowsingEnabled(bool);
-    void setSelectTrailingWhitespaceEnabled(bool);
-    void setSmartInsertDeleteEnabled(bool);
     void setTabKeyCyclesThroughElements(bool);
     void setUseDashboardCompatibilityMode(bool flag);
     void setUserStyleSheetEnabled(bool flag);

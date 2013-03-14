@@ -715,16 +715,6 @@ void TestRunnerQt::setScrollbarPolicy(const QString& orientation, const QString&
     m_drt->webPage()->mainFrame()->setScrollBarPolicy(o, p);
 }
 
-void TestRunnerQt::setSmartInsertDeleteEnabled(bool enable)
-{
-    DumpRenderTreeSupportQt::setSmartInsertDeleteEnabled(m_drt->pageAdapter(), enable);
-}
-
-void TestRunnerQt::setSelectTrailingWhitespaceEnabled(bool enable)
-{
-    DumpRenderTreeSupportQt::setSelectTrailingWhitespaceEnabled(m_drt->pageAdapter(), enable);
-}
-
 void TestRunnerQt::execCommand(const QString& name, const QString& value)
 {
     DumpRenderTreeSupportQt::executeCoreCommandByName(m_drt->pageAdapter(), name, value);
@@ -1223,14 +1213,6 @@ void TestRunner::setUseDashboardCompatibilityMode(bool flag)
 }
 
 void TestRunner::setTabKeyCyclesThroughElements(bool)
-{
-}
-
-void TestRunner::setSmartInsertDeleteEnabled(bool)
-{
-}
-
-void TestRunner::setSelectTrailingWhitespaceEnabled(bool)
 {
 }
 

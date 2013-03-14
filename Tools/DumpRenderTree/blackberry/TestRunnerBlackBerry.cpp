@@ -260,17 +260,6 @@ void TestRunner::setXSSAuditorEnabled(bool flag)
     BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->settings()->setXSSAuditorEnabled(flag);
 }
 
-void TestRunner::setSelectTrailingWhitespaceEnabled(bool flag)
-{
-    BlackBerry::WebKit::DumpRenderTree::currentInstance()->setSelectTrailingWhitespaceEnabled(flag);
-}
-
-void TestRunner::setSmartInsertDeleteEnabled(bool flag)
-{
-    UNUSED_PARAM(flag);
-    notImplemented();
-}
-
 void TestRunner::setTabKeyCyclesThroughElements(bool cycles)
 {
     if (!mainFrame)

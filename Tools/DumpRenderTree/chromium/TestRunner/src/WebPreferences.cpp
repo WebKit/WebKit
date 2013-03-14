@@ -221,6 +221,12 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setVisualWordMovementEnabled(false);
     settings->setPasswordEchoEnabled(false);
     settings->setApplyDeviceScaleFactorInCompositor(true);
+    settings->setSmartInsertDeleteEnabled(true);
+#ifdef WIN32
+    settings->setSelectTrailingWhitespaceEnabled(true);
+#else
+    settings->setSelectTrailingWhitespaceEnabled(false);
+#endif
 }
 
 }

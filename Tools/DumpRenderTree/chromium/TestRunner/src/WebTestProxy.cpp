@@ -979,16 +979,6 @@ void WebTestProxyBase::didStopLoading()
         m_delegate->printMessage("postProgressFinishedNotification\n");
 }
 
-bool WebTestProxyBase::isSmartInsertDeleteEnabled()
-{
-    return m_testInterfaces->testRunner()->isSmartInsertDeleteEnabled();
-}
-
-bool WebTestProxyBase::isSelectTrailingWhitespaceEnabled()
-{
-    return m_testInterfaces->testRunner()->isSelectTrailingWhitespaceEnabled();
-}
-
 void WebTestProxyBase::showContextMenu(WebFrame*, const WebContextMenuData& contextMenuData)
 {
     m_testInterfaces->eventSender()->setContextMenuData(contextMenuData);

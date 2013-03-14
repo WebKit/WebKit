@@ -761,4 +761,14 @@ void WebSettingsImpl::setCompositedScrollingForFramesEnabled(bool enabled)
     m_settings->setCompositedScrollingForFramesEnabled(enabled);
 }
 
+void WebSettingsImpl::setSelectTrailingWhitespaceEnabled(bool enabled)
+{
+    m_settings->setSelectTrailingWhitespaceEnabled(enabled);
+}
+
+void WebSettingsImpl::setSmartInsertDeleteEnabled(bool enabled)
+{
+    m_settings->setSmartInsertDeleteEnabled(enabled);
+}
+
 } // namespace WebKit

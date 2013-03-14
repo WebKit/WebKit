@@ -38,6 +38,7 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
+#include "Settings.h"
 #include "WebFrame.h"
 #include "WebFramePrivate.h"
 #include "WebView.h"
@@ -149,14 +150,16 @@ bool EditorClientWx::shouldDeleteRange(Range*)
 
 bool EditorClientWx::smartInsertDeleteEnabled()
 {
-    notImplemented();
-    return false;
+    if (!m_page)
+        return false;
+    return m_page->settings()->smartInsertDeleteEnabled();
 }
 
 bool EditorClientWx::isSelectTrailingWhitespaceEnabled()
 {
-    notImplemented();
-    return false;
+    if (!m_page)
+        return false;
+    return m_page->settings()->selectTrailingWhitespaceEnabled();
 }
 
 bool EditorClientWx::isContinuousSpellCheckingEnabled()

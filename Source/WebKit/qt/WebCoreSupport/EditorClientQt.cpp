@@ -333,18 +333,27 @@ void EditorClientQt::pageDestroyed()
 
 bool EditorClientQt::smartInsertDeleteEnabled()
 {
-    return m_smartInsertDeleteEnabled;
+    Page* page = m_page->page;
+    if (!page)
+        return false;
+    return page->settings()->smartInsertDeleteEnabled();
 }
 
 void EditorClientQt::toggleSmartInsertDelete()
 {
-    bool current = m_smartInsertDeleteEnabled;
-    m_smartInsertDeleteEnabled = !current;
+    Page* page = m_page->page;
+    if (page) {
+        page->settings()->setSmartInsertDeleteEnabled(!page->settings()->smartInsertDeleteEnabled());
+        page->settings()->setSelectTrailingWhitespaceEnabled(!page->settings()->selectTrailingWhitespaceEnabled());
+    }
 }
 
 bool EditorClientQt::isSelectTrailingWhitespaceEnabled()
 {
-    return m_selectTrailingWhitespaceEnabled;
+    Page* page = m_page->page;
+    if (!page)
+        return false;
+    return page->settings()->selectTrailingWhitespaceEnabled();
 }
 
 void EditorClientQt::toggleContinuousSpellChecking()
@@ -541,8 +550,6 @@ EditorClientQt::EditorClientQt(QWebPageAdapter* pageAdapter)
     : m_page(pageAdapter)
     , m_editing(false)
     , m_inUndoRedo(false)
-    , m_smartInsertDeleteEnabled(true)
-    , m_selectTrailingWhitespaceEnabled(false)
 {
 }
 

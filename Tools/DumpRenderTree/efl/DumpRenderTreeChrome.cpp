@@ -315,8 +315,6 @@ void DumpRenderTreeChrome::resetDefaultsToConsistentValues()
     DumpRenderTreeSupportEfl::setValidationMessageTimerMagnification(mainView(), -1);
     DumpRenderTreeSupportEfl::setAuthorAndUserStylesEnabled(mainView(), true);
     DumpRenderTreeSupportEfl::setCSSGridLayoutEnabled(mainView(), false);
-    DumpRenderTreeSupportEfl::setSmartInsertDeleteEnabled(mainView(), false);
-    DumpRenderTreeSupportEfl::setSelectTrailingWhitespaceEnabled(mainView(), false);
     DumpRenderTreeSupportEfl::setDefersLoading(mainView(), false);
     DumpRenderTreeSupportEfl::setLoadsSiteIconsIgnoringImageLoadingSetting(mainView(), false);
     DumpRenderTreeSupportEfl::setSerializeHTTPLoads(false);

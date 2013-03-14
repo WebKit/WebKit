@@ -146,9 +146,6 @@ private:
     BOOL hasSpellCheckerDocumentTag;
     NSInteger spellCheckerDocumentTag;
 
-    BOOL smartInsertDeleteEnabled;
-    BOOL selectTrailingWhitespaceEnabled;
-        
 #if ENABLE(DASHBOARD_SUPPORT)
     BOOL dashboardBehaviorAlwaysSendMouseEventsToAllWindows;
     BOOL dashboardBehaviorAlwaysSendActiveNullEventsToPlugIns;

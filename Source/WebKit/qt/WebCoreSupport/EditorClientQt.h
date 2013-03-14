@@ -111,9 +111,6 @@ public:
 
     bool isEditing() const;
 
-    void setSmartInsertDeleteEnabled(bool b) { m_smartInsertDeleteEnabled = b; }
-    void setSelectTrailingWhitespaceEnabled(bool b) { m_selectTrailingWhitespaceEnabled = b; }
-
     static bool dumpEditingCallbacks;
     static bool acceptsEditing;
 
@@ -122,8 +119,6 @@ private:
     QWebPageAdapter* m_page;
     bool m_editing;
     bool m_inUndoRedo; // our undo stack works differently - don't re-enter!
-    bool m_smartInsertDeleteEnabled;
-    bool m_selectTrailingWhitespaceEnabled;
 };
 
 }

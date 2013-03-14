@@ -81,7 +81,6 @@ using namespace WebKit;
 
 bool DumpRenderTreeSupportGtk::s_drtRun = false;
 bool DumpRenderTreeSupportGtk::s_linksIncludedInTabChain = true;
-bool DumpRenderTreeSupportGtk::s_selectTrailingWhitespaceEnabled = false;
 DumpRenderTreeSupportGtk::FrameLoadEventCallback DumpRenderTreeSupportGtk::s_frameLoadEventCallback = 0;
 DumpRenderTreeSupportGtk::AuthenticationCallback DumpRenderTreeSupportGtk::s_authenticationCallback = 0;
 
@@ -110,16 +109,6 @@ void DumpRenderTreeSupportGtk::setLinksIncludedInFocusChain(bool enabled)
 bool DumpRenderTreeSupportGtk::linksIncludedInFocusChain()
 {
     return s_linksIncludedInTabChain;
-}
-
-void DumpRenderTreeSupportGtk::setSelectTrailingWhitespaceEnabled(bool enabled)
-{
-    s_selectTrailingWhitespaceEnabled = enabled;
-}
-
-bool DumpRenderTreeSupportGtk::selectTrailingWhitespaceEnabled()
-{
-    return s_selectTrailingWhitespaceEnabled;
 }
 
 /**
@@ -451,15 +440,6 @@ bool DumpRenderTreeSupportGtk::selectedRange(WebKitWebView* webView, int* start,
 void DumpRenderTreeSupportGtk::setDefersLoading(WebKitWebView* webView, bool defers)
 {
     core(webView)->setDefersLoading(defers);
-}
-
-void DumpRenderTreeSupportGtk::setSmartInsertDeleteEnabled(WebKitWebView* webView, bool enabled)
-{
-    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
-    g_return_if_fail(webView);
-
-    WebKit::EditorClient* client = static_cast<WebKit::EditorClient*>(core(webView)->editorClient());
-    client->setSmartInsertDeleteEnabled(enabled);
 }
 
 void DumpRenderTreeSupportGtk::forceWebViewPaint(WebKitWebView* webView)

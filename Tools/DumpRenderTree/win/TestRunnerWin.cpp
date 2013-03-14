@@ -723,32 +723,6 @@ void TestRunner::setWindowIsKey(bool flag)
     ::SendMessage(webViewWindow, flag ? WM_SETFOCUS : WM_KILLFOCUS, (WPARAM)::GetDesktopWindow(), 0);
 }
 
-void TestRunner::setSmartInsertDeleteEnabled(bool flag)
-{
-    COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
-        return;
-
-    COMPtr<IWebViewEditing> viewEditing;
-    if (FAILED(webView->QueryInterface(&viewEditing)))
-        return;
-
-    viewEditing->setSmartInsertDeleteEnabled(flag ? TRUE : FALSE);
-}
-
-void TestRunner::setSelectTrailingWhitespaceEnabled(bool flag)
-{
-    COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
-        return;
-
-    COMPtr<IWebViewEditing> viewEditing;
-    if (FAILED(webView->QueryInterface(&viewEditing)))
-        return;
-
-    viewEditing->setSelectTrailingWhitespaceEnabled(flag ? TRUE : FALSE);
-}
-
 static const CFTimeInterval waitToDumpWatchdogInterval = 30.0;
 
 static void CALLBACK waitUntilDoneWatchdogFired(HWND, UINT, UINT_PTR, DWORD)

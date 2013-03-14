@@ -375,9 +375,6 @@ http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html
 # WebKitTestRunner needs layoutTestController.addDisallowedURL
 plugins/get-url-that-the-resource-load-delegate-will-disallow.html
 
-# WebKitTestRunner needs layoutTestController.setSelectTrailingWhitespaceEnabled
-editing/selection/doubleclick-inline-first-last-contenteditable.html
-
 # WebKitTestRunner needs layoutTestController.pageProperty
 printing/page-rule-selection.html
 

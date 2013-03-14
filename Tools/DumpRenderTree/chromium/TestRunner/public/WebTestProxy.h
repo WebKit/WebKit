@@ -149,8 +149,6 @@ protected:
     WebKit::WebPlugin* createPlugin(WebKit::WebFrame*, const WebKit::WebPluginParams&);
     void setStatusText(const WebKit::WebString&);
     void didStopLoading();
-    bool isSmartInsertDeleteEnabled();
-    bool isSelectTrailingWhitespaceEnabled();
     void showContextMenu(WebKit::WebFrame*, const WebKit::WebContextMenuData&);
     WebKit::WebUserMediaClient* userMediaClient();
     void printPage(WebKit::WebFrame*);
@@ -367,14 +365,6 @@ public:
     {
         WebTestProxyBase::didStopLoading();
         Base::didStopLoading();
-    }
-    virtual bool isSmartInsertDeleteEnabled()
-    {
-        return WebTestProxyBase::isSmartInsertDeleteEnabled();
-    }
-    virtual bool isSelectTrailingWhitespaceEnabled()
-    {
-        return WebTestProxyBase::isSelectTrailingWhitespaceEnabled();
     }
     virtual void showContextMenu(WebKit::WebFrame* frame, const WebKit::WebContextMenuData& contextMenuData)
     {

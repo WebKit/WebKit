@@ -37,6 +37,7 @@
 #include "KeyboardCodes.h"
 #include "KeyboardEvent.h"
 #include "NotImplemented.h"
+#include "Page.h"
 #include "PlatformKeyboardEvent.h"
 #include "RenderObject.h"
 #include "Settings.h"
@@ -95,20 +96,16 @@ void EditorClientImpl::frameWillDetachPage(WebCore::Frame* frame)
 
 bool EditorClientImpl::smartInsertDeleteEnabled()
 {
-    if (m_webView->client())
-        return m_webView->client()->isSmartInsertDeleteEnabled();
-    return true;
+    if (m_webView->page())
+        return m_webView->page()->settings()->smartInsertDeleteEnabled();
+    return false;
 }
 
 bool EditorClientImpl::isSelectTrailingWhitespaceEnabled()
 {
-    if (m_webView->client())
-        return m_webView->client()->isSelectTrailingWhitespaceEnabled();
-#if OS(WINDOWS)
-    return true;
-#else
+    if (m_webView->page())
+        return m_webView->page()->settings()->selectTrailingWhitespaceEnabled();
     return false;
-#endif
 }
 
 bool EditorClientImpl::shouldSpellcheckByDefault()

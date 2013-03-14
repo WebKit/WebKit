@@ -272,11 +272,6 @@ void TestRunner::setWindowIsKey(bool)
     notImplemented();
 }
 
-void TestRunner::setSmartInsertDeleteEnabled(bool flag)
-{
-    DumpRenderTreeSupportEfl::setSmartInsertDeleteEnabled(browser->mainView(), flag);
-}
-
 static Eina_Bool waitToDumpWatchdogFired(void*)
 {
     waitToDumpWatchdog = 0;
@@ -419,11 +414,6 @@ void TestRunner::setIconDatabaseEnabled(bool enabled)
 
     if (ecore_file_mkpath(databasePath.utf8().data()))
         ewk_settings_icon_database_path_set(databasePath.utf8().data());
-}
-
-void TestRunner::setSelectTrailingWhitespaceEnabled(bool flag)
-{
-    DumpRenderTreeSupportEfl::setSelectTrailingWhitespaceEnabled(browser->mainView(), flag);
 }
 
 void TestRunner::setPopupBlockingEnabled(bool flag)

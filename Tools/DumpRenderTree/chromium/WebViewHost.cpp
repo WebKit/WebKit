@@ -170,20 +170,6 @@ bool WebViewHost::shouldApplyStyle(const WebString& style, const WebRange& range
     return true;
 }
 
-bool WebViewHost::isSmartInsertDeleteEnabled()
-{
-    return true;
-}
-
-bool WebViewHost::isSelectTrailingWhitespaceEnabled()
-{
-#if OS(WINDOWS)
-    return true;
-#else
-    return false;
-#endif
-}
-
 bool WebViewHost::handleCurrentKeyboardEvent()
 {
     if (m_editCommandName.empty())

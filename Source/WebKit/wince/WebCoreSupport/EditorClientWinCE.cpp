@@ -27,6 +27,7 @@
 #include "Frame.h"
 #include "KeyboardEvent.h"
 #include "NotImplemented.h"
+#include "Page.h"
 #include "PlatformKeyboardEvent.h"
 #include "UndoStep.h"
 #include "Settings.h"
@@ -209,14 +210,18 @@ void EditorClientWinCE::pageDestroyed()
 
 bool EditorClientWinCE::smartInsertDeleteEnabled()
 {
-    notImplemented();
-    return false;
+    Page* page = m_webView->page();
+    if (!page)
+        return false;
+    return page->settings()->smartInsertDeleteEnabled();
 }
 
 bool EditorClientWinCE::isSelectTrailingWhitespaceEnabled()
 {
-    notImplemented();
-    return false;
+    Page* page = m_webView->page();
+    if (!page)
+        return false;
+    return page->settings()->selectTrailingWhitespaceEnabled();
 }
 
 void EditorClientWinCE::toggleContinuousSpellChecking()

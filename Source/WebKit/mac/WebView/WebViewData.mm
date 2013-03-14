@@ -95,10 +95,6 @@ LayerFlushController::LayerFlushController(WebView* webView)
 
     shouldCloseWithWindow = objc_collectingEnabled();
 
-    smartInsertDeleteEnabled = ![[NSUserDefaults standardUserDefaults] objectForKey:WebSmartInsertDeleteEnabled]
-        || [[NSUserDefaults standardUserDefaults] boolForKey:WebSmartInsertDeleteEnabled];
-
-
     pluginDatabaseClientCount++;
 
 #if USE(DICTATION_ALTERNATIVES)

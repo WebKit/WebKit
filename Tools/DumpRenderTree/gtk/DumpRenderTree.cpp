@@ -501,8 +501,6 @@ static void resetDefaultsToConsistentValues()
 
     DumpRenderTreeSupportGtk::setLinksIncludedInFocusChain(true);
     webkit_icon_database_set_path(webkit_get_icon_database(), 0);
-    DumpRenderTreeSupportGtk::setSelectTrailingWhitespaceEnabled(false);
-    DumpRenderTreeSupportGtk::setSmartInsertDeleteEnabled(webView, true);
     DumpRenderTreeSupportGtk::setDefersLoading(webView, false);
     DumpRenderTreeSupportGtk::setSerializeHTTPLoads(false);
 

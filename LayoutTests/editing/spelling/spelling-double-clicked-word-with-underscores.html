@@ -21,7 +21,8 @@ initSpellTest("destination", "wellcome_ home.",  function(textNode) {
     shouldBeEqualToString("window.getSelection().toString()", "");
 
     // Double-click the misspelled word without the trailing whitespace.
-    testRunner.setSelectTrailingWhitespaceEnabled(false);
+    internals.settings.setSmartInsertDeleteEnabled(true);
+    internals.settings.setSelectTrailingWhitespaceEnabled(false);
     var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 40;
     var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
     eventSender.mouseMoveTo(x, y);
@@ -49,7 +50,8 @@ initSpellTest("destination", "wellcome_ home.",  function(textNode) {
     shouldBeEqualToString("window.getSelection().toString()", "");
 
     // Double-click the misspelled word with the trailing whitespace.
-    testRunner.setSelectTrailingWhitespaceEnabled(true);
+    internals.settings.setSmartInsertDeleteEnabled(false);
+    internals.settings.setSelectTrailingWhitespaceEnabled(true);
     var x = destination.offsetParent.offsetLeft + destination.offsetLeft + 40;
     var y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
     eventSender.mouseMoveTo(x, y);

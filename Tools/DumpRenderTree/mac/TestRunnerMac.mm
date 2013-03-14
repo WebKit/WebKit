@@ -634,16 +634,6 @@ void TestRunner::setWindowIsKey(bool windowIsKey)
     [[mainFrame webView] _updateActiveState];
 }
 
-void TestRunner::setSmartInsertDeleteEnabled(bool flag)
-{
-    [[mainFrame webView] setSmartInsertDeleteEnabled:flag];
-}
-
-void TestRunner::setSelectTrailingWhitespaceEnabled(bool flag)
-{
-    [[mainFrame webView] setSelectTrailingWhitespaceEnabled:flag];
-}
-
 static const CFTimeInterval waitToDumpWatchdogInterval = 30.0;
 
 static void waitUntilDoneWatchdogFired(CFRunLoopTimerRef timer, void* info)

@@ -207,8 +207,6 @@ TestRunner::TestRunner(TestInterfaces* interfaces)
     bindMethod("textSurroundingNode", &TestRunner::textSurroundingNode);
     bindMethod("disableAutoResizeMode", &TestRunner::disableAutoResizeMode);
     bindMethod("enableAutoResizeMode", &TestRunner::enableAutoResizeMode);
-    bindMethod("setSmartInsertDeleteEnabled", &TestRunner::setSmartInsertDeleteEnabled);
-    bindMethod("setSelectTrailingWhitespaceEnabled", &TestRunner::setSelectTrailingWhitespaceEnabled);
     bindMethod("setMockDeviceOrientation", &TestRunner::setMockDeviceOrientation);
     bindMethod("didAcquirePointerLock", &TestRunner::didAcquirePointerLock);
     bindMethod("didLosePointerLock", &TestRunner::didLosePointerLock);
@@ -409,12 +407,6 @@ void TestRunner::reset()
     m_shouldStayOnPageAfterHandlingBeforeUnload = false;
     m_shouldBlockRedirects = false;
     m_willSendRequestShouldReturnNull = false;
-    m_smartInsertDeleteEnabled = true;
-#ifdef WIN32
-    m_selectTrailingWhitespaceEnabled = true;
-#else
-    m_selectTrailingWhitespaceEnabled = false;
-#endif
     m_shouldDumpResourcePriorities = false;
 
     m_httpHeadersToClear.clear();
@@ -673,16 +665,6 @@ bool TestRunner::policyDelegateShouldNotifyDone() const
 bool TestRunner::shouldInterceptPostMessage() const
 {
     return m_interceptPostMessage.isBool() && m_interceptPostMessage.toBoolean();
-}
-
-bool TestRunner::isSmartInsertDeleteEnabled() const
-{
-    return m_smartInsertDeleteEnabled;
-}
-
-bool TestRunner::isSelectTrailingWhitespaceEnabled() const
-{
-    return m_selectTrailingWhitespaceEnabled;
 }
 
 bool TestRunner::shouldDumpResourcePriorities() const
@@ -1465,20 +1447,6 @@ void TestRunner::textSurroundingNode(const CppArgumentList& arguments, CppVarian
         return;
 
     result->set(surroundingText.textContent().utf8());
-}
-
-void TestRunner::setSmartInsertDeleteEnabled(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool())
-        m_smartInsertDeleteEnabled = arguments[0].value.boolValue;
-    result->setNull();
-}
-
-void TestRunner::setSelectTrailingWhitespaceEnabled(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool())
-        m_selectTrailingWhitespaceEnabled = arguments[0].value.boolValue;
-    result->setNull();
 }
 
 void TestRunner::dumpResourceRequestPriorities(const CppArgumentList& arguments, CppVariant* result)
