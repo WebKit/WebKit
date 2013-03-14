@@ -180,6 +180,9 @@ void QWebSettingsPrivate::apply()
         value = attributes.value(QWebSettings::CSSRegionsEnabled,
                                  global->attributes.value(QWebSettings::CSSRegionsEnabled));
         WebCore::RuntimeEnabledFeatures::setCSSRegionsEnabled(value);
+        value = attributes.value(QWebSettings::CSSCompositingEnabled,
+                                 global->attributes.value(QWebSettings::CSSCompositingEnabled));
+        WebCore::RuntimeEnabledFeatures::setCSSCompositingEnabled(value);
         value = attributes.value(QWebSettings::CSSGridLayoutEnabled,
                                  global->attributes.value(QWebSettings::CSSGridLayoutEnabled));
         settings->setCSSGridLayoutEnabled(value);
@@ -548,6 +551,7 @@ QWebSettings::QWebSettings()
     d->attributes.insert(QWebSettings::WebGLEnabled, true);
     d->attributes.insert(QWebSettings::WebAudioEnabled, false);
     d->attributes.insert(QWebSettings::CSSRegionsEnabled, true);
+    d->attributes.insert(QWebSettings::CSSCompositingEnabled, true);
     d->attributes.insert(QWebSettings::CSSGridLayoutEnabled, false);
     d->attributes.insert(QWebSettings::HyperlinkAuditingEnabled, false);
     d->attributes.insert(QWebSettings::TiledBackingStoreEnabled, false);

@@ -80,6 +80,7 @@ public:
         JavascriptCanCloseWindows,
         WebGLEnabled,
         CSSRegionsEnabled,
+        CSSCompositingEnabled,
         HyperlinkAuditingEnabled,
         CSSGridLayoutEnabled,
         ScrollAnimatorEnabled,
