@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/subpixel-utils.js"></script>
+<script src="../resources/rounded-rectangle.js"></script>
+<script>
+    window.onload = function () {
+        var stylesheet = document.getElementById("stylesheet");
+        generateShapeOutsideOnFloat(
+            "left-roundedrect", stylesheet.sheet,
+            {
+                'shapeX': 0, 'shapeY': 0,
+                'shapeWidth': 75, 'shapeHeight': 100,
+                'shapeRadiusX': 20, 'shapeRadiusY': 20
+            },
+            'left',
+            10
+        );
+        generateShapeOutsideOnFloat(
+            "right-roundedrect", stylesheet.sheet,
+            {
+                'shapeX': 0, 'shapeY': 0,
+                'shapeWidth': 75, 'shapeHeight': 100,
+                'shapeRadiusX': 20, 'shapeRadiusY': 20
+            },
+            'right',
+            10
+        );
+        generateShapeOutsideOnFloat(
+            "left-circle", stylesheet.sheet,
+            {
+                'shapeX': 0, 'shapeY': 0,
+                'shapeWidth': 70, 'shapeHeight': 70,
+                'shapeRadiusX': 35, 'shapeRadiusY': 35
+            },
+            'left',
+            10
+        );
+        generateShapeOutsideOnFloat(
+            "right-circle", stylesheet.sheet,
+            {
+                'shapeX': 0, 'shapeY': 0,
+                'shapeWidth': 70, 'shapeHeight': 70,
+                'shapeRadiusX': 35, 'shapeRadiusY': 35
+            },
+            'right',
+            10
+        );
+    }
+</script>
+<style id="stylesheet">
+.container {
+    font: 10px/1 Ahem, sans-serif;
+    width: 200px;
+    text-align: justify;
+    border: 1px solid black;
+}
+</style>
+</head>
+<body>
+  <h1><a href="https://bugs.webkit.org/show_bug.cgi?id=98676">Bug 100299</a> - [CSS Exclusions] shape-outside on floats for rounded rectangle shapes</h1>
+  <h2>The vertical black lines in the following box should wrap around the rounded rectangle on the left</h2>
+  <div style="height: 120px" class="container">
+    X X X X X X X X X X
+    <div id="left-roundedrect"></div>
+    X X X X X X X X X X
+    X X X X X X X X X X
+    X X X X X X X X X X
+    X X X X X X X X X X
+    X X X X X X X X X X
+    X X X X X X X X X X
+    X X X X X X X X X X
+  </div>
+  <h2>The vertical black lines in the following box should wrap around the rounded rectangle on the right</h2>
+  <div style="height: 120px" class="container">
+    X X X X X X X X X X
+    <div id="right-roundedrect"></div>
+    X X X X X X X X X X
+    X X X X X X X X X X
+    X X X X X X X X X X
+    X X X X X X X X X X
+    X X X X X X X X X X
+    X X X X X X X X X X
+    X X X X X X X X X X
+  </div>
+  <h2>The vertical black lines in the following box should wrap around the circle on the left. The circles are produced with rectangle(), not with circle().</h2>
+  <div style="height: 90px" class="container">
+    X X X X X X X X X X
+    <div id="left-circle"></div>
+    X X X X X X X X X X
+    X X X X X X X X X X
+    X X X X X X X X X X
+    X X X X X X X X X X
+    X X X X X X X X X X
+    X X X X X X X X X
+  </div>
+  <h2>The vertical black lines in the following box should wrap around the circle on the right. The circles are produced with rectangle(), not with circle().</h2>
+  <div style="height: 90px" class="container">
+    X X X X X X X X X X
+    <div id="right-circle"></div>
+    X X X X X X X X X X
+    X X X X X X X X X X
+    X X X X X X X X X X
+    X X X X X X X X X X
+    X X X X X X X X X X
+    X X X X X X X X X
+  </div>
+</body>
+</html>
+

@@ -18,6 +18,23 @@ function xInset(dimensions, lineTop, lineBottom) {
     return left;
 }
 
+function xOutset(dimensions, lineTop, lineBottom) {
+    var left = 0;
+    if (lineTop < dimensions.shapeHeight && lineBottom > dimensions.shapeHeight)
+        lineBottom = dimensions.shapeHeight;
+    if (lineTop < dimensions.shapeHeight && (lineTop < dimensions.shapeRadiusY || lineBottom > dimensions.shapeHeight - dimensions.shapeRadiusY)) {
+        var yFromEllipseCenter;
+        if (lineBottom < dimensions.shapeRadiusY) {
+            yFromEllipseCenter = lineBottom - dimensions.shapeRadiusY;
+            left = dimensions.shapeRadiusX - xFromEllipseCenter(yFromEllipseCenter, dimensions.shapeRadiusX, dimensions.shapeRadiusY);
+        } else if (lineTop > dimensions.shapeHeight - dimensions.shapeRadiusY) {
+            yFromEllipseCenter = lineTop - (dimensions.shapeHeight - dimensions.shapeRadiusY);
+            left = dimensions.shapeRadiusX - xFromEllipseCenter(yFromEllipseCenter, dimensions.shapeRadiusX, dimensions.shapeRadiusY);
+        }
+    }
+    return left;
+}
+
 function generateString(dimensions, lineHeight) {
     var resultLength = 0;
     if (dimensions.shapeRadiusX == 0 || dimensions.shapeRadiusY == 0)
@@ -111,4 +128,47 @@ function generateShapeElement(elementId, stylesheet, dimensions, lineHeight) {
 
     var element = document.getElementById(elementId);
     element.appendChild(p);
+}
+
+function generateShapeOutsideOnFloat(elementId, stylesheet, dimensions, floatValue, lineHeight) {
+    stylesheet.insertRule("#" + elementId + " { "
+        + "-webkit-shape-outside: rectangle("
+        + dimensions.shapeX + "px, "
+        + dimensions.shapeY + "px, "
+        + dimensions.shapeWidth + "px, "
+        + dimensions.shapeHeight + "px, "
+        + dimensions.shapeRadiusX + "px, "
+        + dimensions.shapeRadiusY + "px); "
+        + "float: " + floatValue + "; }");
+    simulateShapeOutline(elementId, stylesheet, dimensions);
+}
+
+// Note that this does not attempt to simulate where the float content would be
+// if the shape's X and Y are not 0.
+function generateSimulatedShapeOutsideOnFloat(elementId, stylesheet, dimensions, floatValue, lineHeight) {
+    var simpleRectangle = dimensions.shapeRadiusX == 0 || dimensions.shapeRadiusY == 0;
+    var floatHeight = simpleRectangle ? dimensions.shapeHeight : lineHeight;
+
+    stylesheet.insertRule("#" + elementId + " { float: " + floatValue + " }");
+    stylesheet.insertRule("." + elementId + "-float { "
+            + "height: " + floatHeight + "px; " 
+            + "float: " + floatValue + ";"
+            + "clear: " + floatValue + "; }");
+
+    var element = document.getElementById(elementId);
+    var simulationHTML = "";
+
+    for (var y = 0; y < dimensions.shapeHeight; y+= floatHeight) {
+        var outset = simpleRectangle ? 0 : xOutset(dimensions, y, y + lineHeight);
+
+        var width = dimensions.shapeWidth - outset;
+
+        simulationHTML += '<div class="' + elementId + '-float" style="width:' + width + 'px"></div>\n';
+    }
+
+    element.insertAdjacentHTML('afterend', simulationHTML);
+    if (floatValue == "right") {
+        dimensions.shapeX = -dimensions.shapeWidth;
+    }
+    simulateShapeOutline(elementId, stylesheet, dimensions);
 }
