@@ -254,6 +254,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkitdom/WebKitDOMStorageInfo.cpp \
 	DerivedSources/webkitdom/WebKitDOMStorageInfoPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMStoragePrivate.h \
+	DerivedSources/webkitdom/WebKitDOMStorageQuota.cpp \
+	DerivedSources/webkitdom/WebKitDOMStorageQuotaPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMStyleMedia.cpp \
 	DerivedSources/webkitdom/WebKitDOMStyleMediaPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMStyleSheet.cpp \
@@ -417,6 +419,7 @@ webkitgtk_gdom_built_h_api += \
 	DerivedSources/webkitdom/WebKitDOMDatabase.h \
 	DerivedSources/webkitdom/WebKitDOMStorage.h \
 	DerivedSources/webkitdom/WebKitDOMStorageInfo.h \
+	DerivedSources/webkitdom/WebKitDOMStorageQuota.h \
 	DerivedSources/webkitdom/WebKitDOMXPathExpression.h \
 	DerivedSources/webkitdom/WebKitDOMXPathNSResolver.h \
 	DerivedSources/webkitdom/WebKitDOMXPathResult.h \

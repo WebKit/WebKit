@@ -1,3 +1,26 @@
+2013-03-11  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Quota API: Update IDL to make it match the latest WD
+        https://bugs.webkit.org/show_bug.cgi?id=88396
+
+        Reviewed by Adam Barth.
+
+        Add a new interface object (navigator.StorageQuota) and deprecate the old one (window.StorageInfo)
+        to make the code match with the latest Quota API WD:
+        http://www.w3.org/TR/quota-api/
+
+        * WebKit.gyp:
+        * src/AssertMatchingEnums.cpp:
+        * src/StorageQuotaChromium.cpp: Renamed from Source/WebKit/chromium/src/StorageInfoChromium.cpp.
+        (WebCore):
+        (WebCore::StorageQuota::queryUsageAndQuota):
+        (WebCore::StorageQuota::requestQuota):
+        * src/WebStorageQuotaCallbacksImpl.cpp:
+        (WebKit::WebStorageQuotaCallbacksImpl::WebStorageQuotaCallbacksImpl):
+        * src/WebStorageQuotaCallbacksImpl.h:
+        (WebCore):
+        (WebStorageQuotaCallbacksImpl):
+
 2013-03-13  Chris Palmer  <palmer@google.com>
 
         Enable V8 binding integriy on Android.

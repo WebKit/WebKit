@@ -1074,13 +1074,16 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageInfo.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageInfoErrorCallback.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageErrorCallback.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageInfoQuotaCallback.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageQuota.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
-    <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageInfoUsageCallback.cpp">
+    <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageQuotaCallback.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageUsageCallback.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStringCallback.cpp">
@@ -7620,13 +7623,16 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageInfo.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageInfoErrorCallback.h">
+    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageErrorCallback.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageInfoQuotaCallback.h">
+    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageQuota.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageInfoUsageCallback.h">
+    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageQuotaCallback.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageUsageCallback.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStringCallback.h">
@@ -8433,16 +8439,22 @@
     <ClInclude Include="..\Modules\quota\DOMWindowQuota.h">
       <Filter>Modules\quota</Filter>
     </ClInclude>
+    <ClInclude Include="..\Modules\quota\NavigatorStorageQuota.h">
+      <Filter>Modules\quota</Filter>
+    </ClInclude>
     <ClInclude Include="..\Modules\quota\StorageInfo.h">
       <Filter>Modules\quota</Filter>
     </ClInclude>
-    <ClInclude Include="..\Modules\quota\StorageInfoErrorCallback.h">
+    <ClInclude Include="..\Modules\quota\StorageErrorCallback.h">
       <Filter>Modules\quota</Filter>
     </ClInclude>
-    <ClInclude Include="..\Modules\quota\StorageInfoQuotaCallback.h">
+    <ClInclude Include="..\Modules\quota\StorageQuota.h">
       <Filter>Modules\quota</Filter>
     </ClInclude>
-    <ClInclude Include="..\Modules\quota\StorageInfoUsageCallback.h">
+    <ClInclude Include="..\Modules\quota\StorageQuotaCallback.h">
+      <Filter>Modules\quota</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modules\quota\StorageUsageCallback.h">
       <Filter>Modules\quota</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\mediasource\MediaSource.h">

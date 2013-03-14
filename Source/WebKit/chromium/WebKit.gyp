@@ -413,7 +413,7 @@
                 'src/SpeechRecognitionClientProxy.h',
                 'src/StorageAreaProxy.cpp',
                 'src/StorageAreaProxy.h',
-                'src/StorageInfoChromium.cpp',
+                'src/StorageQuotaChromium.cpp',
                 'src/StorageNamespaceProxy.cpp',
                 'src/StorageNamespaceProxy.h',
                 'src/TextFieldDecoratorImpl.h',

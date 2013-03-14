@@ -35,21 +35,21 @@
 
 #include "DOMCoreException.h"
 #include "ExceptionCode.h"
-#include "StorageInfoErrorCallback.h"
-#include "StorageInfoQuotaCallback.h"
-#include "StorageInfoUsageCallback.h"
+#include "StorageErrorCallback.h"
+#include "StorageQuotaCallback.h"
+#include "StorageUsageCallback.h"
 
 using namespace WebCore;
 
 namespace WebKit {
 
-WebStorageQuotaCallbacksImpl::WebStorageQuotaCallbacksImpl(PassRefPtr<WebCore::StorageInfoUsageCallback> usageCallback, PassRefPtr<WebCore::StorageInfoErrorCallback> errorCallback)
+WebStorageQuotaCallbacksImpl::WebStorageQuotaCallbacksImpl(PassRefPtr<WebCore::StorageUsageCallback> usageCallback, PassRefPtr<WebCore::StorageErrorCallback> errorCallback)
     : m_usageCallback(usageCallback)
     , m_errorCallback(errorCallback)
 {
 }
 
-WebStorageQuotaCallbacksImpl::WebStorageQuotaCallbacksImpl(PassRefPtr<WebCore::StorageInfoQuotaCallback> quotaCallback, PassRefPtr<WebCore::StorageInfoErrorCallback> errorCallback)
+WebStorageQuotaCallbacksImpl::WebStorageQuotaCallbacksImpl(PassRefPtr<WebCore::StorageQuotaCallback> quotaCallback, PassRefPtr<WebCore::StorageErrorCallback> errorCallback)
     : m_quotaCallback(quotaCallback)
     , m_errorCallback(errorCallback)
 {

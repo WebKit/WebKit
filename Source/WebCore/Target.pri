@@ -3290,14 +3290,19 @@ enable?(SCRIPTED_SPEECH) {
 enable?(QUOTA) {
     HEADERS += \
         Modules/quota/DOMWindowQuota.idl \
+        Modules/quota/NavigatorStorageQuota.idl \
+        Modules/quota/StorageErrorCallback.h \
         Modules/quota/StorageInfo.h \
-        Modules/quota/StorageInfoErrorCallback.h \
-        Modules/quota/StorageInfoQuotaCallback.h \
-        Modules/quota/StorageInfoUsageCallback.h
+        Modules/quota/StorageQuota.h \
+        Modules/quota/StorageQuotaCallback.h \
+        Modules/quota/StorageUsageCallback.h
 
     SOURCES += \
-        Modules/quota/DOMWindowQuota.cpp
-        Modules/quota/StorageInfo.cpp
+        Modules/quota/DOMWindowQuota.cpp \
+        Modules/quota/NavigatorStorageQuota.cpp \
+        Modules/quota/StorageErrorCallback.cpp \
+        Modules/quota/StorageInfo.cpp \
+        Modules/quota/StorageQuota.cpp
 }
 
 enable?(GAMEPAD) {

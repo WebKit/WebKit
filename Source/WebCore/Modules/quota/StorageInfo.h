@@ -35,13 +35,15 @@
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class ScriptExecutionContext;
-class StorageInfoErrorCallback;
-class StorageInfoQuotaCallback;
-class StorageInfoUsageCallback;
+class StorageErrorCallback;
+class StorageQuota;
+class StorageQuotaCallback;
+class StorageUsageCallback;
 
 class StorageInfo : public RefCounted<StorageInfo> {
 public:
@@ -55,14 +57,19 @@ public:
         return adoptRef(new StorageInfo());
     }
 
-    void queryUsageAndQuota(ScriptExecutionContext*, int storageType, PassRefPtr<StorageInfoUsageCallback>, PassRefPtr<StorageInfoErrorCallback>);
+    void queryUsageAndQuota(ScriptExecutionContext*, int storageType, PassRefPtr<StorageUsageCallback>, PassRefPtr<StorageErrorCallback>);
 
-    void requestQuota(ScriptExecutionContext*, int storageType, unsigned long long newQuotaInBytes, PassRefPtr<StorageInfoQuotaCallback>, PassRefPtr<StorageInfoErrorCallback>);
+    void requestQuota(ScriptExecutionContext*, int storageType, unsigned long long newQuotaInBytes, PassRefPtr<StorageQuotaCallback>, PassRefPtr<StorageErrorCallback>);
 
     ~StorageInfo();
 
 private:
     StorageInfo();
+
+    StorageQuota* getStorageQuota(int storageType);
+
+    mutable RefPtr<StorageQuota> m_temporaryStorage;
+    mutable RefPtr<StorageQuota> m_persistentStorage;
 };
 
 } // namespace WebCore

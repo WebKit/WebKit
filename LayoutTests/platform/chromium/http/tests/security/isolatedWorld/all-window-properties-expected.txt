@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: window.webkitStorageInfo is deprecated. Use navigator.webkitTemporaryStorage or navigator.webkitPersistentStorage instead.
+Done.

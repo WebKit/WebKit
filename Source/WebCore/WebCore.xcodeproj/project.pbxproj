@@ -3139,17 +3139,8 @@
 		89F60B11157F686E0075E157 /* DOMWindowQuota.h in Headers */ = {isa = PBXBuildFile; fileRef = 89F60B0A157F686D0075E157 /* DOMWindowQuota.h */; };
 		89F60B13157F686E0075E157 /* StorageInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89F60B0C157F686D0075E157 /* StorageInfo.cpp */; };
 		89F60B14157F686E0075E157 /* StorageInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 89F60B0D157F686D0075E157 /* StorageInfo.h */; };
-		89F60CCE15808C070075E157 /* StorageInfoErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 89F60CCB15808C070075E157 /* StorageInfoErrorCallback.h */; };
-		89F60CCF15808C070075E157 /* StorageInfoQuotaCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 89F60CCC15808C070075E157 /* StorageInfoQuotaCallback.h */; };
-		89F60CD015808C070075E157 /* StorageInfoUsageCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 89F60CCD15808C070075E157 /* StorageInfoUsageCallback.h */; };
 		89F60CD915809D760075E157 /* JSStorageInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89F60CD115809D760075E157 /* JSStorageInfo.cpp */; };
 		89F60CDA15809D760075E157 /* JSStorageInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 89F60CD215809D760075E157 /* JSStorageInfo.h */; };
-		89F60CDB15809D760075E157 /* JSStorageInfoErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89F60CD315809D760075E157 /* JSStorageInfoErrorCallback.cpp */; };
-		89F60CDC15809D760075E157 /* JSStorageInfoErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 89F60CD415809D760075E157 /* JSStorageInfoErrorCallback.h */; };
-		89F60CDD15809D760075E157 /* JSStorageInfoQuotaCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89F60CD515809D760075E157 /* JSStorageInfoQuotaCallback.cpp */; };
-		89F60CDE15809D760075E157 /* JSStorageInfoQuotaCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 89F60CD615809D760075E157 /* JSStorageInfoQuotaCallback.h */; };
-		89F60CDF15809D760075E157 /* JSStorageInfoUsageCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 89F60CD715809D760075E157 /* JSStorageInfoUsageCallback.cpp */; };
-		89F60CE015809D760075E157 /* JSStorageInfoUsageCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 89F60CD815809D760075E157 /* JSStorageInfoUsageCallback.h */; };
 		8A12E35D11FA33280025836A /* DocumentLoadTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A12E35C11FA33280025836A /* DocumentLoadTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8A195932147EA16E00D1EA61 /* DOMWebKitNamedFlow.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A19592F147EA16E00D1EA61 /* DOMWebKitNamedFlow.h */; };
 		8A195933147EA16E00D1EA61 /* DOMWebKitNamedFlow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8A195930147EA16E00D1EA61 /* DOMWebKitNamedFlow.mm */; };
@@ -10510,6 +10501,18 @@
 		86FF885E15DE3B8200BD6B28 /* RenderTextTrackCue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderTextTrackCue.cpp; sourceTree = "<group>"; };
 		86FF885F15DE3B8200BD6B28 /* RenderTextTrackCue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTextTrackCue.h; sourceTree = "<group>"; };
 		890AE0E01256A07900F5968C /* DirectoryReaderBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DirectoryReaderBase.h; path = Modules/filesystem/DirectoryReaderBase.h; sourceTree = "<group>"; };
+		892ABE5C16EEE2AA009F3587 /* JSNavigatorStorageQuota.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSNavigatorStorageQuota.cpp; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSNavigatorStorageQuota.cpp; sourceTree = "<group>"; };
+		892ABE5D16EEE2AA009F3587 /* JSNavigatorStorageQuota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSNavigatorStorageQuota.h; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSNavigatorStorageQuota.h; sourceTree = "<group>"; };
+		892ABE5E16EEE2E5009F3587 /* JSDOMWindowQuota.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSDOMWindowQuota.cpp; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSDOMWindowQuota.cpp; sourceTree = "<group>"; };
+		892ABE5F16EEE2E5009F3587 /* JSDOMWindowQuota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSDOMWindowQuota.h; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSDOMWindowQuota.h; sourceTree = "<group>"; };
+		892ABE6016EEE2E5009F3587 /* JSStorageErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSStorageErrorCallback.cpp; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSStorageErrorCallback.cpp; sourceTree = "<group>"; };
+		892ABE6116EEE2E5009F3587 /* JSStorageErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSStorageErrorCallback.h; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSStorageErrorCallback.h; sourceTree = "<group>"; };
+		892ABE6216EEE2E5009F3587 /* JSStorageQuota.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSStorageQuota.cpp; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSStorageQuota.cpp; sourceTree = "<group>"; };
+		892ABE6316EEE2E5009F3587 /* JSStorageQuota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSStorageQuota.h; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSStorageQuota.h; sourceTree = "<group>"; };
+		892ABE6416EEE2E5009F3587 /* JSStorageQuotaCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSStorageQuotaCallback.cpp; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSStorageQuotaCallback.cpp; sourceTree = "<group>"; };
+		892ABE6516EEE2E5009F3587 /* JSStorageQuotaCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSStorageQuotaCallback.h; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSStorageQuotaCallback.h; sourceTree = "<group>"; };
+		892ABE6616EEE2E5009F3587 /* JSStorageUsageCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSStorageUsageCallback.cpp; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSStorageUsageCallback.cpp; sourceTree = "<group>"; };
+		892ABE6716EEE2E5009F3587 /* JSStorageUsageCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSStorageUsageCallback.h; path = ../../../../../../WebKitBuild/Release/DerivedSources/WebCore/JSStorageUsageCallback.h; sourceTree = "<group>"; };
 		8931DE5A14C44C44000DC9D2 /* JSBlobCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBlobCustom.cpp; sourceTree = "<group>"; };
 		893C47A51238908B002B3D86 /* FileCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCallback.h; path = Modules/filesystem/FileCallback.h; sourceTree = "<group>"; };
 		893C47A61238908B002B3D86 /* FileWriterCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileWriterCallback.h; path = Modules/filesystem/FileWriterCallback.h; sourceTree = "<group>"; };
@@ -10609,17 +10612,16 @@
 		89F60B0A157F686D0075E157 /* DOMWindowQuota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMWindowQuota.h; path = Modules/quota/DOMWindowQuota.h; sourceTree = "<group>"; };
 		89F60B0C157F686D0075E157 /* StorageInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StorageInfo.cpp; path = Modules/quota/StorageInfo.cpp; sourceTree = "<group>"; };
 		89F60B0D157F686D0075E157 /* StorageInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageInfo.h; path = Modules/quota/StorageInfo.h; sourceTree = "<group>"; };
-		89F60CCB15808C070075E157 /* StorageInfoErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageInfoErrorCallback.h; path = Modules/quota/StorageInfoErrorCallback.h; sourceTree = "<group>"; };
-		89F60CCC15808C070075E157 /* StorageInfoQuotaCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageInfoQuotaCallback.h; path = Modules/quota/StorageInfoQuotaCallback.h; sourceTree = "<group>"; };
-		89F60CCD15808C070075E157 /* StorageInfoUsageCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageInfoUsageCallback.h; path = Modules/quota/StorageInfoUsageCallback.h; sourceTree = "<group>"; };
 		89F60CD115809D760075E157 /* JSStorageInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStorageInfo.cpp; sourceTree = "<group>"; };
 		89F60CD215809D760075E157 /* JSStorageInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStorageInfo.h; sourceTree = "<group>"; };
-		89F60CD315809D760075E157 /* JSStorageInfoErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStorageInfoErrorCallback.cpp; sourceTree = "<group>"; };
-		89F60CD415809D760075E157 /* JSStorageInfoErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStorageInfoErrorCallback.h; sourceTree = "<group>"; };
-		89F60CD515809D760075E157 /* JSStorageInfoQuotaCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStorageInfoQuotaCallback.cpp; sourceTree = "<group>"; };
-		89F60CD615809D760075E157 /* JSStorageInfoQuotaCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStorageInfoQuotaCallback.h; sourceTree = "<group>"; };
-		89F60CD715809D760075E157 /* JSStorageInfoUsageCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStorageInfoUsageCallback.cpp; sourceTree = "<group>"; };
-		89F60CD815809D760075E157 /* JSStorageInfoUsageCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStorageInfoUsageCallback.h; sourceTree = "<group>"; };
+		89FD58D516EEDBBD00E183F0 /* StorageErrorCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StorageErrorCallback.cpp; path = Modules/quota/StorageErrorCallback.cpp; sourceTree = "<group>"; };
+		89FD58D616EEDBBD00E183F0 /* StorageErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageErrorCallback.h; path = Modules/quota/StorageErrorCallback.h; sourceTree = "<group>"; };
+		89FD58D716EEDBD400E183F0 /* NavigatorStorageQuota.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NavigatorStorageQuota.cpp; path = Modules/quota/NavigatorStorageQuota.cpp; sourceTree = "<group>"; };
+		89FD58D816EEDBD400E183F0 /* NavigatorStorageQuota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NavigatorStorageQuota.h; path = Modules/quota/NavigatorStorageQuota.h; sourceTree = "<group>"; };
+		89FD58D916EEDBF600E183F0 /* StorageQuota.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StorageQuota.cpp; path = Modules/quota/StorageQuota.cpp; sourceTree = "<group>"; };
+		89FD58DA16EEDBF600E183F0 /* StorageQuota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageQuota.h; path = Modules/quota/StorageQuota.h; sourceTree = "<group>"; };
+		89FD58DB16EEDBF600E183F0 /* StorageQuotaCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageQuotaCallback.h; path = Modules/quota/StorageQuotaCallback.h; sourceTree = "<group>"; };
+		89FD58DC16EEDBF600E183F0 /* StorageUsageCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageUsageCallback.h; path = Modules/quota/StorageUsageCallback.h; sourceTree = "<group>"; };
 		8A12E35C11FA33280025836A /* DocumentLoadTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentLoadTiming.h; sourceTree = "<group>"; };
 		8A19592F147EA16E00D1EA61 /* DOMWebKitNamedFlow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitNamedFlow.h; sourceTree = "<group>"; };
 		8A195930147EA16E00D1EA61 /* DOMWebKitNamedFlow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMWebKitNamedFlow.mm; sourceTree = "<group>"; };
@@ -17791,11 +17793,16 @@
 			children = (
 				89F60B09157F686D0075E157 /* DOMWindowQuota.cpp */,
 				89F60B0A157F686D0075E157 /* DOMWindowQuota.h */,
+				89FD58D716EEDBD400E183F0 /* NavigatorStorageQuota.cpp */,
+				89FD58D816EEDBD400E183F0 /* NavigatorStorageQuota.h */,
+				89FD58D516EEDBBD00E183F0 /* StorageErrorCallback.cpp */,
+				89FD58D616EEDBBD00E183F0 /* StorageErrorCallback.h */,
 				89F60B0C157F686D0075E157 /* StorageInfo.cpp */,
 				89F60B0D157F686D0075E157 /* StorageInfo.h */,
-				89F60CCB15808C070075E157 /* StorageInfoErrorCallback.h */,
-				89F60CCC15808C070075E157 /* StorageInfoQuotaCallback.h */,
-				89F60CCD15808C070075E157 /* StorageInfoUsageCallback.h */,
+				89FD58D916EEDBF600E183F0 /* StorageQuota.cpp */,
+				89FD58DA16EEDBF600E183F0 /* StorageQuota.h */,
+				89FD58DB16EEDBF600E183F0 /* StorageQuotaCallback.h */,
+				89FD58DC16EEDBF600E183F0 /* StorageUsageCallback.h */,
 			);
 			name = quota;
 			sourceTree = "<group>";
@@ -17803,14 +17810,20 @@
 		89F60B17157F6A020075E157 /* Quota */ = {
 			isa = PBXGroup;
 			children = (
+				892ABE5E16EEE2E5009F3587 /* JSDOMWindowQuota.cpp */,
+				892ABE5F16EEE2E5009F3587 /* JSDOMWindowQuota.h */,
+				892ABE5C16EEE2AA009F3587 /* JSNavigatorStorageQuota.cpp */,
+				892ABE5D16EEE2AA009F3587 /* JSNavigatorStorageQuota.h */,
+				892ABE6016EEE2E5009F3587 /* JSStorageErrorCallback.cpp */,
+				892ABE6116EEE2E5009F3587 /* JSStorageErrorCallback.h */,
 				89F60CD115809D760075E157 /* JSStorageInfo.cpp */,
 				89F60CD215809D760075E157 /* JSStorageInfo.h */,
-				89F60CD315809D760075E157 /* JSStorageInfoErrorCallback.cpp */,
-				89F60CD415809D760075E157 /* JSStorageInfoErrorCallback.h */,
-				89F60CD515809D760075E157 /* JSStorageInfoQuotaCallback.cpp */,
-				89F60CD615809D760075E157 /* JSStorageInfoQuotaCallback.h */,
-				89F60CD715809D760075E157 /* JSStorageInfoUsageCallback.cpp */,
-				89F60CD815809D760075E157 /* JSStorageInfoUsageCallback.h */,
+				892ABE6216EEE2E5009F3587 /* JSStorageQuota.cpp */,
+				892ABE6316EEE2E5009F3587 /* JSStorageQuota.h */,
+				892ABE6416EEE2E5009F3587 /* JSStorageQuotaCallback.cpp */,
+				892ABE6516EEE2E5009F3587 /* JSStorageQuotaCallback.h */,
+				892ABE6616EEE2E5009F3587 /* JSStorageUsageCallback.cpp */,
+				892ABE6716EEE2E5009F3587 /* JSStorageUsageCallback.h */,
 			);
 			name = Quota;
 			sourceTree = "<group>";
@@ -25232,9 +25245,6 @@
 				B55D5AA4119131FC00BCC315 /* JSSQLTransactionSyncCallback.h in Headers */,
 				51E0BAEB0DA55D4A00A9E417 /* JSStorageEvent.h in Headers */,
 				89F60CDA15809D760075E157 /* JSStorageInfo.h in Headers */,
-				89F60CDC15809D760075E157 /* JSStorageInfoErrorCallback.h in Headers */,
-				89F60CDE15809D760075E157 /* JSStorageInfoQuotaCallback.h in Headers */,
-				89F60CE015809D760075E157 /* JSStorageInfoUsageCallback.h in Headers */,
 				0FF5026A102BA9430066F39A /* JSStyleMedia.h in Headers */,
 				BCE0139B0C0BEF180043860A /* JSStyleSheet.h in Headers */,
 				AD726FEE16DA11BC003A4E6D /* JSStyleSheetCustom.h in Headers */,
@@ -26134,9 +26144,6 @@
 				51E0BABB0DA5547100A9E417 /* StorageEvent.h in Headers */,
 				C5EBDD84105EDDEC0056816F /* StorageEventDispatcher.h in Headers */,
 				89F60B14157F686E0075E157 /* StorageInfo.h in Headers */,
-				89F60CCE15808C070075E157 /* StorageInfoErrorCallback.h in Headers */,
-				89F60CCF15808C070075E157 /* StorageInfoQuotaCallback.h in Headers */,
-				89F60CD015808C070075E157 /* StorageInfoUsageCallback.h in Headers */,
 				51E0BB380DA5ACB600A9E417 /* StorageMap.h in Headers */,
 				C50D0E830FF4272900AC2644 /* StorageNamespace.h in Headers */,
 				C55E38BF10040D5D00A56BDB /* StorageNamespaceImpl.h in Headers */,
@@ -28638,9 +28645,6 @@
 				51D0C5160DAA90B7003B3831 /* JSStorageCustom.cpp in Sources */,
 				51E0BAEA0DA55D4A00A9E417 /* JSStorageEvent.cpp in Sources */,
 				89F60CD915809D760075E157 /* JSStorageInfo.cpp in Sources */,
-				89F60CDB15809D760075E157 /* JSStorageInfoErrorCallback.cpp in Sources */,
-				89F60CDD15809D760075E157 /* JSStorageInfoQuotaCallback.cpp in Sources */,
-				89F60CDF15809D760075E157 /* JSStorageInfoUsageCallback.cpp in Sources */,
 				0FF50269102BA9430066F39A /* JSStyleMedia.cpp in Sources */,
 				BCE0139A0C0BEF180043860A /* JSStyleSheet.cpp in Sources */,
 				BC98A27D0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp in Sources */,

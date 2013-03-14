@@ -1568,9 +1568,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageInfo.cpp" />
-    <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageInfoErrorCallback.cpp" />
-    <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageInfoQuotaCallback.cpp" />
-    <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageInfoUsageCallback.cpp" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageErrorCallback.cpp" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageQuota.cpp" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageQuotaCallback.cpp" />
+    <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageUsageCallback.cpp" />
     <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStringCallback.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
@@ -2743,7 +2744,10 @@
     <ClCompile Include="..\Modules\proximity\DeviceProximityController.cpp" />
     <ClCompile Include="..\Modules\proximity\DeviceProximityEvent.cpp" />
     <ClCompile Include="..\Modules\quota\DOMWindowQuota.cpp" />
+    <ClCompile Include="..\Modules\quota\NavigatorStorageQuota.cpp" />
+    <ClCompile Include="..\Modules\quota\StorageErrorCallback.cpp" />
     <ClCompile Include="..\Modules\quota\StorageInfo.cpp" />
+    <ClCompile Include="..\Modules\quota\StorageQuota.cpp" />
     <ClCompile Include="..\Modules\mediasource\MediaSource.cpp" />
     <ClCompile Include="..\Modules\mediasource\MediaSourceRegistry.cpp" />
     <ClCompile Include="..\Modules\mediasource\SourceBuffer.cpp" />
@@ -8469,9 +8473,10 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorage.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageEvent.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageInfo.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageInfoErrorCallback.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageInfoQuotaCallback.h" />
-    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageInfoUsageCallback.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageErrorCallback.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageQuota.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageQuotaCallback.h" />
+    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStorageUsageCallback.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStringCallback.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStyleMedia.h" />
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSStyleSheet.h" />
@@ -8793,10 +8798,12 @@
     <ClInclude Include="..\Modules\proximity\DeviceProximityController.h" />
     <ClInclude Include="..\Modules\proximity\DeviceProximityEvent.h" />
     <ClInclude Include="..\Modules\quota\DOMWindowQuota.h" />
+    <ClInclude Include="..\Modules\quota\NavigatorStorageQuota.h" />
     <ClInclude Include="..\Modules\quota\StorageInfo.h" />
-    <ClInclude Include="..\Modules\quota\StorageInfoErrorCallback.h" />
-    <ClInclude Include="..\Modules\quota\StorageInfoQuotaCallback.h" />
-    <ClInclude Include="..\Modules\quota\StorageInfoUsageCallback.h" />
+    <ClInclude Include="..\Modules\quota\StorageErrorCallback.h" />
+    <ClInclude Include="..\Modules\quota\StorageQuota.h" />
+    <ClInclude Include="..\Modules\quota\StorageQuotaCallback.h" />
+    <ClInclude Include="..\Modules\quota\StorageUsageCallback.h" />
     <ClInclude Include="..\Modules\mediasource\MediaSource.h" />
     <ClInclude Include="..\Modules\mediasource\MediaSourceRegistry.h" />
     <ClInclude Include="..\Modules\mediasource\SourceBuffer.h" />

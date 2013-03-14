@@ -34,14 +34,15 @@
 
 #include "StorageInfo.h"
 
-#include "NotImplemented.h"
-#include "StorageInfoErrorCallback.h"
-#include "StorageInfoQuotaCallback.h"
-#include "StorageInfoUsageCallback.h"
+#include "Document.h"
+#include "ExceptionCode.h"
+#include "ScriptExecutionContext.h"
+#include "StorageErrorCallback.h"
+#include "StorageQuota.h"
+#include "StorageQuotaCallback.h"
+#include "StorageUsageCallback.h"
 
 namespace WebCore {
-
-class ScriptExecutionContext;
 
 StorageInfo::StorageInfo()
 {
@@ -49,6 +50,45 @@ StorageInfo::StorageInfo()
 
 StorageInfo::~StorageInfo()
 {
+}
+
+void StorageInfo::queryUsageAndQuota(ScriptExecutionContext* scriptExecutionContext, int storageType, PassRefPtr<StorageUsageCallback> successCallback, PassRefPtr<StorageErrorCallback> errorCallback)
+{
+    // Dispatching the request to StorageQuota, as this interface is deprecated in favor of StorageQuota.
+    StorageQuota* storageQuota = getStorageQuota(storageType);
+    if (!storageQuota) {
+        // Unknown storage type is requested.
+        scriptExecutionContext->postTask(StorageErrorCallback::CallbackTask::create(errorCallback, NOT_SUPPORTED_ERR));
+        return;
+    }
+    storageQuota->queryUsageAndQuota(scriptExecutionContext, successCallback, errorCallback);
+}
+
+void StorageInfo::requestQuota(ScriptExecutionContext* scriptExecutionContext, int storageType, unsigned long long newQuotaInBytes, PassRefPtr<StorageQuotaCallback> successCallback, PassRefPtr<StorageErrorCallback> errorCallback)
+{
+    // Dispatching the request to StorageQuota, as this interface is deprecated in favor of StorageQuota.
+    StorageQuota* storageQuota = getStorageQuota(storageType);
+    if (!storageQuota) {
+        // Unknown storage type is requested.
+        scriptExecutionContext->postTask(StorageErrorCallback::CallbackTask::create(errorCallback, NOT_SUPPORTED_ERR));
+        return;
+    }
+    storageQuota->requestQuota(scriptExecutionContext, newQuotaInBytes, successCallback, errorCallback);
+}
+
+StorageQuota* StorageInfo::getStorageQuota(int storageType)
+{
+    switch (storageType) {
+    case TEMPORARY:
+        if (!m_temporaryStorage)
+            m_temporaryStorage = StorageQuota::create(StorageQuota::Temporary);
+        return m_temporaryStorage.get();
+    case PERSISTENT:
+        if (!m_persistentStorage)
+            m_persistentStorage = StorageQuota::create(StorageQuota::Persistent);
+        return m_persistentStorage.get();
+    }
+    return 0;
 }
 
 } // namespace WebCore

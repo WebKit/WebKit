@@ -133,10 +133,12 @@ IDL_BINDINGS += \
     $$PWD/Modules/notifications/NotificationPermissionCallback.idl \
     $$PWD/Modules/notifications/WorkerContextNotifications.idl \
     $$PWD/Modules/quota/DOMWindowQuota.idl \
+    $$PWD/Modules/quota/NavigatorStorageQuota.idl \
     $$PWD/Modules/quota/StorageInfo.idl \
-    $$PWD/Modules/quota/StorageInfoErrorCallback.idl \
-    $$PWD/Modules/quota/StorageInfoQuotaCallback.idl \
-    $$PWD/Modules/quota/StorageInfoUsageCallback.idl \
+    $$PWD/Modules/quota/StorageErrorCallback.idl \
+    $$PWD/Modules/quota/StorageQuota.idl \
+    $$PWD/Modules/quota/StorageQuotaCallback.idl \
+    $$PWD/Modules/quota/StorageUsageCallback.idl \
     $$PWD/Modules/webaudio/AudioBuffer.idl \
     $$PWD/Modules/webaudio/AudioBufferCallback.idl \
     $$PWD/Modules/webaudio/AudioBufferSourceNode.idl \
