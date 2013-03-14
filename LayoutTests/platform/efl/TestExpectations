@@ -454,7 +454,8 @@ webkit.org/b/86623 http/tests/misc/drag-over-iframe-invalid-source-crash.html
 webkit.org/b/86623 http/tests/security/dataTransfer-set-data-file-url.html
 webkit.org/b/86623 http/tests/security/drag-drop-different-origin.html
 webkit.org/b/86623 http/tests/security/drag-over-remote-content-iframe.html
-webkit.org/b/86623 editing/selection/drag-list-item.html [ Failure ]
+webkit.org/b/86623 editing/pasteboard/cleanup-on-move.html [ Failure ]
+webkit.org/b/86623 editing/pasteboard/drag-list-item.html [ Failure ]
 
 # Missing drag'n'drop, needs baselines
 webkit.org/b/86623 editing/pasteboard/4947130.html [ Missing ]

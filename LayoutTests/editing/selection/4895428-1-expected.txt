@@ -5,7 +5,6 @@ This tests dragging a selected table by mousing down on the contents of one of i
 |   contenteditable="true"
 |   id="source"
 |   style="border: 1px solid blue;"
-|   <br>
 | "
 "
 | <div>

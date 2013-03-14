@@ -29,8 +29,7 @@ function editingTest()
     pasteCommand();
 
     // Place the cursor between "walking" and "cross"
-    for (var i = 0; i < 2; ++i)
-        moveSelectionForwardByLineCommand();
+    moveSelectionForwardByLineCommand();
     for (var i = 0; i < 2; ++i)
         moveSelectionForwardByWordCommand();
 
@@ -42,24 +41,22 @@ function editingTest()
         "one two",
         "three",
         "one two",
-        "",
         "four",
         "monsters walking",
         "one two",
-        "",
         "cross the floor"
         ];
-    if (listItems.length != 9)
-        throw "Expected 8 list items, found " + listItems.length;
+    if (listItems.length != 7)
+        throw "Expected 7 list items, found " + listItems.length;
     for (var i = 0; i < results.length; ++i) {
         var actual = listItems[i].innerText.replace(/^\s+/g, "");
         if (results[i] != actual)
             throw "Unexpected list item: " + i + "," + results[i] + "," + listItems[i].innerText;
     }
 
-    // Verify that the cursor is in the right place (on the blank line).
+    // Verify that the cursor is in the right place (at the beginning of 'cross the floor').
     var selection = window.getSelection();
-    if (selection.baseNode != listItems[7] || selection.baseOffset != 0 || !selection.isCollapsed)
+    if (selection.baseNode != listItems[6].firstChild.firstChild.firstChild || selection.baseOffset != 0 || !selection.isCollapsed)
         throw "Wrong selection position";
 
     for (var i = 0; i < listItems.length; ++i) {

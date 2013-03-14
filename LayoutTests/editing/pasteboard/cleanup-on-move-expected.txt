@@ -1,0 +1,37 @@
+This test drags a selection of a couple of <li> and drops them after another <li> in the same list. It verifies that no empty <li> (actually with a <br> inside) are left after the moving operation.
+
+The original list looks like this. 'two' and 'three' are selected and are going to be dropped after 'four':
+| "
+"
+| <li>
+|   id="one"
+|   "one"
+| <li>
+|   id="two"
+|   "<#selection-anchor>two"
+| <li>
+|   id="three"
+|   "three<#selection-focus>"
+| <li>
+|   id="four"
+|   "four"
+| "
+"
+
+'two' and 'three' should appear as <li> after 'four' and no empty <li> (nor a <br> placeholder) should be there:
+| "
+"
+| <li>
+|   id="one"
+|   "one"
+| <li>
+|   id="four"
+|   "four"
+| <li>
+|   id="two"
+|   "two"
+| <li>
+|   id="three"
+|   "three"
+| "
+"

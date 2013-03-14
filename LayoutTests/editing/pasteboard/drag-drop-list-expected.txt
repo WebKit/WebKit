@@ -11,7 +11,5 @@ This tests dropping content onto a list items content when the content is wrappe
 |       "DropAboveMe<#selection-anchor> DragMe<#selection-focus>"
 | "
 "
-| <div>
-|   <br>
 | "
 "

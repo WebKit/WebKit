@@ -16,6 +16,7 @@
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
 editing/pasteboard/4947130.html
+editing/pasteboard/cleanup-on-move.html
 editing/pasteboard/copy-standalone-image-crash.html
 editing/pasteboard/drag-and-drop-image-contenteditable.html
 editing/pasteboard/drag-and-drop-inputimage-contenteditable.html
@@ -27,6 +28,7 @@ editing/pasteboard/drag-drop-modifies-page.html
 editing/pasteboard/drag-drop-url-text.html
 editing/pasteboard/drag-image-in-about-blank-frame.html
 editing/pasteboard/drag-image-to-contenteditable-in-iframe.html
+editing/pasteboard/drag-list-item.html
 editing/pasteboard/drag-selected-image-to-contenteditable.html
 editing/pasteboard/drop-file-svg.html
 editing/pasteboard/drop-inputtext-acquires-style.html
@@ -59,7 +61,6 @@ editing/selection/doubleclick-beside-cr-span.html
 editing/selection/doubleclick-whitespace-crash.html
 editing/selection/doubleclick-whitespace-img-crash.html
 editing/selection/doubleclick-whitespace.html
-editing/selection/drag-list-item.html
 editing/selection/drag-select-1.html
 editing/selection/drag-select-rapidly.html
 editing/selection/drag-start-event-client-x-y.html

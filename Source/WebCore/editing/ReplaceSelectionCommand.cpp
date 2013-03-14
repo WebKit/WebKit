@@ -1444,8 +1444,6 @@ Node* ReplaceSelectionCommand::insertAsListItems(PassRefPtr<HTMLElement> prpList
     }
     if (isStart || isMiddle)
         lastNode = lastNode->previousSibling();
-    if (isMiddle)
-        insertNodeAfter(createListItemElement(document()), lastNode);
     return lastNode;
 }
 

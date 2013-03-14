@@ -3,11 +3,9 @@ Pasting a list item into the middle of another list item should split the target
 one two: one two
 three: three
 one two: one two
-:
 four: four
 monsters walking: <span style="background-color:green"><b>monsters walking</b></span>
 one two: one two
-:
 cross the floor: <span style="background-color:green"><b>cross the floor</b></span>
 PASS
 

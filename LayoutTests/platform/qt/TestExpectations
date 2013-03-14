@@ -573,6 +573,10 @@ fast/events/moving-text-should-fire-drop-and-dragend-events-2.html
 fast/events/input-element-display-none-in-dragleave-crash.html
 fast/events/only-valid-drop-targets-receive-file-drop.html
 
+# New test added in r145195 is failing
+webkit.org/b/111853 editing/pasteboard/cleanup-on-move.html [ Skip ]
+webkit.org/b/111853 editing/pasteboard/drag-list-item.html [ Skip ]
+
 # =========================================================================== #
 #       Failing HTTP tests.                                                   #
 # =========================================================================== #
@@ -2678,9 +2682,6 @@ webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Failu
 webkit.org/b/111606 fast/borders/border-fit-2.html [ Skip ]
 webkit.org/b/111606 fast/borders/border-fit.html [ Skip ]
 webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Skip ]
-
-# New test added in r145195 is failing
-webkit.org/b/111853 editing/selection/drag-list-item.html [ Skip ]
 
 # jack server is not running or cannot be started
 fast/dom/beforeload/remove-video-poster-in-beforeload-listener.html
