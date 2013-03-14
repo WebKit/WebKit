@@ -1,3 +1,15 @@
+2013-03-14  Lucas Forschler  <lforschler@apple.com>
+
+        Merge r138606
+
+    2013-01-01  Dan Bernstein  <mitz@apple.com>
+
+            <rdar://problem/12942239> Update copyright strings
+
+            Reviewed by Sam Weinig.
+
+            * Info.plist:
+
 2013-03-03  Brady Eidson  <beidson@apple.com>
 
         Merge r143815
