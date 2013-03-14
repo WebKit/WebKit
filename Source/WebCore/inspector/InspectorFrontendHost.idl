@@ -72,4 +72,9 @@
     [Conditional=FILE_SYSTEM] DOMFileSystem isolatedFileSystem(in DOMString fileSystemId, in DOMString registeredName);
 
     boolean isUnderTest();
+
+    // Deprecated
+    boolean canInspectWorkers();
+    boolean canSaveAs();
+    DOMString hiddenPanels();
 };

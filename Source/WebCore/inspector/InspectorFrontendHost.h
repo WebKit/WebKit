@@ -93,6 +93,10 @@ public:
 
     bool isUnderTest();
 
+    bool canInspectWorkers();
+    bool canSaveAs();
+    String hiddenPanels();
+
 private:
 #if ENABLE(CONTEXT_MENUS)
     friend class FrontendMenuProvider;

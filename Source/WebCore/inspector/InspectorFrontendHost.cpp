@@ -321,6 +321,21 @@ bool InspectorFrontendHost::isUnderTest()
     return m_client && m_client->isUnderTest();
 }
 
+bool InspectorFrontendHost::canSaveAs()
+{
+    return false;
+}
+
+bool InspectorFrontendHost::canInspectWorkers()
+{
+    return false;
+}
+
+String InspectorFrontendHost::hiddenPanels()
+{
+    return "";
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)
