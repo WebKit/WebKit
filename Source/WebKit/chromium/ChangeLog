@@ -1,3 +1,24 @@
+2013-03-14  Marja Hölttä  <marja@chromium.org>
+
+        [V8] Store main world and non-main world templates separately.
+        https://bugs.webkit.org/show_bug.cgi?id=111724
+
+        Reviewed by Jochen Eisinger.
+
+        This is needed for generating specialized bindings for the main
+        world (bug 110874).
+
+        * src/WebArrayBuffer.cpp:
+        (WebKit::WebArrayBuffer::createFromV8Value):
+        * src/WebArrayBufferView.cpp:
+        (WebKit::WebArrayBufferView::createFromV8Value):
+        * src/WebBindings.cpp:
+        (WebKit::getRangeImpl):
+        (WebKit::getNodeImpl):
+        (WebKit::getElementImpl):
+        (WebKit::getArrayBufferImpl):
+        (WebKit::getArrayBufferViewImpl):
+
 2013-03-13  Rik Cabanier  <cabanier@adobe.com>
 
         create runtime flags for CSS Compositing

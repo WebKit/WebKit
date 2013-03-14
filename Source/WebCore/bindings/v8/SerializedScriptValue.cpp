@@ -1251,6 +1251,7 @@ Serializer::StateBase* Serializer::doSerialize(v8::Handle<v8::Value> value, Stat
     m_writer.writeReferenceCount(m_nextObjectReference);
     uint32_t objectReference;
     uint32_t arrayBufferIndex;
+    WrapperWorldType currentWorldType = worldType(m_isolate);
     if ((value->IsObject() || value->IsDate() || value->IsRegExp())
         && m_objectPool.tryGet(value.As<v8::Object>(), &objectReference)) {
         // Note that IsObject() also detects wrappers (eg, it will catch the things
@@ -1273,17 +1274,17 @@ Serializer::StateBase* Serializer::doSerialize(v8::Handle<v8::Value> value, Stat
         m_writer.writeUint32(value->Uint32Value());
     else if (value->IsNumber())
         m_writer.writeNumber(value.As<v8::Number>()->Value());
-    else if (V8ArrayBufferView::HasInstance(value, m_isolate))
+    else if (V8ArrayBufferView::HasInstance(value, m_isolate, currentWorldType))
         return writeAndGreyArrayBufferView(value.As<v8::Object>(), next);
     else if (value->IsString())
         writeString(value);
-    else if (V8MessagePort::HasInstance(value, m_isolate)) {
+    else if (V8MessagePort::HasInstance(value, m_isolate, currentWorldType)) {
         uint32_t messagePortIndex;
         if (m_transferredMessagePorts.tryGet(value.As<v8::Object>(), &messagePortIndex))
                 m_writer.writeTransferredMessagePort(messagePortIndex);
             else
                 return handleError(DataCloneError, next);
-    } else if (V8ArrayBuffer::HasInstance(value, m_isolate) && m_transferredArrayBuffers.tryGet(value.As<v8::Object>(), &arrayBufferIndex))
+    } else if (V8ArrayBuffer::HasInstance(value, m_isolate, currentWorldType) && m_transferredArrayBuffers.tryGet(value.As<v8::Object>(), &arrayBufferIndex))
         return writeTransferredArrayBuffer(value, arrayBufferIndex, next);
     else {
         v8::Handle<v8::Object> jsObject = value.As<v8::Object>();
@@ -1300,21 +1301,21 @@ Serializer::StateBase* Serializer::doSerialize(v8::Handle<v8::Value> value, Stat
             writeBooleanObject(value);
         else if (value->IsArray()) {
             return startArrayState(value.As<v8::Array>(), next);
-        } else if (V8File::HasInstance(value, m_isolate))
+        } else if (V8File::HasInstance(value, m_isolate, currentWorldType))
             writeFile(value);
-        else if (V8Blob::HasInstance(value, m_isolate))
+        else if (V8Blob::HasInstance(value, m_isolate, currentWorldType))
             writeBlob(value);
 #if ENABLE(FILE_SYSTEM)
-        else if (V8DOMFileSystem::HasInstance(value, m_isolate))
+        else if (V8DOMFileSystem::HasInstance(value, m_isolate, currentWorldType))
             return writeDOMFileSystem(value, next);
 #endif
-        else if (V8FileList::HasInstance(value, m_isolate))
+        else if (V8FileList::HasInstance(value, m_isolate, currentWorldType))
             writeFileList(value);
-        else if (V8ImageData::HasInstance(value, m_isolate))
+        else if (V8ImageData::HasInstance(value, m_isolate, currentWorldType))
             writeImageData(value);
         else if (value->IsRegExp())
             writeRegExp(value);
-        else if (V8ArrayBuffer::HasInstance(value, m_isolate))
+        else if (V8ArrayBuffer::HasInstance(value, m_isolate, currentWorldType))
             return writeArrayBuffer(value, next);
         else if (value->IsObject()) {
             if (isHostObject(jsObject) || jsObject->IsCallable() || value->IsNativeError())

@@ -77,7 +77,7 @@ template <typename T> void V8_USE(T) { }
 
 static v8::Handle<v8::Value> constructor1(const v8::Arguments& args)
 {
-    V8TRYCATCH(ArrayBuffer*, arrayBuffer, V8ArrayBuffer::HasInstance(args[0], args.GetIsolate()) ? V8ArrayBuffer::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
+    V8TRYCATCH(ArrayBuffer*, arrayBuffer, V8ArrayBuffer::HasInstance(args[0], args.GetIsolate(), worldType(args.GetIsolate())) ? V8ArrayBuffer::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
 
     RefPtr<TestOverloadedConstructors> impl = TestOverloadedConstructors::create(arrayBuffer);
     v8::Handle<v8::Object> wrapper = args.Holder();
@@ -88,7 +88,7 @@ static v8::Handle<v8::Value> constructor1(const v8::Arguments& args)
 
 static v8::Handle<v8::Value> constructor2(const v8::Arguments& args)
 {
-    V8TRYCATCH(ArrayBufferView*, arrayBufferView, V8ArrayBufferView::HasInstance(args[0], args.GetIsolate()) ? V8ArrayBufferView::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
+    V8TRYCATCH(ArrayBufferView*, arrayBufferView, V8ArrayBufferView::HasInstance(args[0], args.GetIsolate(), worldType(args.GetIsolate())) ? V8ArrayBufferView::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
 
     RefPtr<TestOverloadedConstructors> impl = TestOverloadedConstructors::create(arrayBufferView);
     v8::Handle<v8::Object> wrapper = args.Holder();
@@ -99,7 +99,7 @@ static v8::Handle<v8::Value> constructor2(const v8::Arguments& args)
 
 static v8::Handle<v8::Value> constructor3(const v8::Arguments& args)
 {
-    V8TRYCATCH(Blob*, blob, V8Blob::HasInstance(args[0], args.GetIsolate()) ? V8Blob::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
+    V8TRYCATCH(Blob*, blob, V8Blob::HasInstance(args[0], args.GetIsolate(), worldType(args.GetIsolate())) ? V8Blob::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
 
     RefPtr<TestOverloadedConstructors> impl = TestOverloadedConstructors::create(blob);
     v8::Handle<v8::Object> wrapper = args.Holder();
@@ -121,11 +121,11 @@ static v8::Handle<v8::Value> constructor4(const v8::Arguments& args)
 
 static v8::Handle<v8::Value> constructor(const v8::Arguments& args)
 {
-    if ((args.Length() == 1 && (V8ArrayBuffer::HasInstance(args[0], args.GetIsolate()))))
+    if ((args.Length() == 1 && (V8ArrayBuffer::HasInstance(args[0], args.GetIsolate(), worldType(args.GetIsolate())))))
         return TestOverloadedConstructorsV8Internal::constructor1(args);
-    if ((args.Length() == 1 && (V8ArrayBufferView::HasInstance(args[0], args.GetIsolate()))))
+    if ((args.Length() == 1 && (V8ArrayBufferView::HasInstance(args[0], args.GetIsolate(), worldType(args.GetIsolate())))))
         return TestOverloadedConstructorsV8Internal::constructor2(args);
-    if ((args.Length() == 1 && (V8Blob::HasInstance(args[0], args.GetIsolate()))))
+    if ((args.Length() == 1 && (V8Blob::HasInstance(args[0], args.GetIsolate(), worldType(args.GetIsolate())))))
         return TestOverloadedConstructorsV8Internal::constructor3(args);
     if (args.Length() == 1)
         return TestOverloadedConstructorsV8Internal::constructor4(args);
@@ -167,20 +167,20 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestOverloadedConstructor
 v8::Persistent<v8::FunctionTemplate> V8TestOverloadedConstructors::GetTemplate(v8::Isolate* isolate, WrapperWorldType worldType)
 {
     V8PerIsolateData* data = V8PerIsolateData::from(isolate);
-    V8PerIsolateData::TemplateMap::iterator result = data->templateMap().find(&info);
-    if (result != data->templateMap().end())
+    V8PerIsolateData::TemplateMap::iterator result = data->templateMap(worldType).find(&info);
+    if (result != data->templateMap(worldType).end())
         return result->value;
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        ConfigureV8TestOverloadedConstructorsTemplate(data->rawTemplate(&info), isolate, worldType);
-    data->templateMap().add(&info, templ);
+        ConfigureV8TestOverloadedConstructorsTemplate(data->rawTemplate(&info, worldType), isolate, worldType);
+    data->templateMap(worldType).add(&info, templ);
     return templ;
 }
 
-bool V8TestOverloadedConstructors::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate)
+bool V8TestOverloadedConstructors::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate, WrapperWorldType worldType)
 {
-    return V8PerIsolateData::from(isolate)->hasInstance(&info, value);
+    return V8PerIsolateData::from(isolate)->hasInstance(&info, value, worldType);
 }
 
 
