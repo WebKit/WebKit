@@ -1,3 +1,28 @@
+2013-03-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Split WebKitDefines.h in two files.
+
+        Reviewed by Gustavo Noronha Silva.
+
+        The WebKitDefines.h header has been split moving the forward
+        declarations specific to the UI process API to a new file
+        WebKitForwardDeclarations.h. This way we  can share the
+        WebKitDefines.h header and remove the WebKitWebExtensionDefines.h
+        header used in the web extensions API.
+
+        * GNUmakefile.list.am:
+        * UIProcess/API/gtk/WebKitContextMenu.h:
+        * UIProcess/API/gtk/WebKitContextMenuItem.h:
+        * UIProcess/API/gtk/WebKitDefines.h:
+        * UIProcess/API/gtk/WebKitDownload.h:
+        * UIProcess/API/gtk/WebKitFindController.h:
+        * UIProcess/API/gtk/WebKitPrintOperation.h:
+        * UIProcess/API/gtk/WebKitURISchemeRequest.h:
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebExtension.h:
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebExtensionDefines.h: Removed.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.h:
+
 2013-03-12  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] The style of visited links doesn't change in WebKit2

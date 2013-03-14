@@ -26,6 +26,7 @@
 
 #include <glib-object.h>
 #include <webkit2/WebKitDefines.h>
+#include <webkit2/WebKitForwardDeclarations.h>
 #include <webkit2/WebKitWebView.h>
 
 G_BEGIN_DECLS
