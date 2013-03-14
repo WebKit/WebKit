@@ -67,7 +67,7 @@ function init()
                   // limits on each side, near the limits, and the
                   // exact limits.
                   // This should be clamped to [0, 0, 0, 7, 7, 7]
-                  new Float32Array([ -Number.MAX_VALUE, -1, 0, 7, 8, Number.MAX_VALUE]),
+                  new Float32Array([ -123456789, -1, 0, 7, 8, 123456789]),
                   gl.STATIC_DRAW);
     gl.enableVertexAttribArray(1);
     gl.vertexAttribPointer(1, 1, gl.FLOAT, false, 0, 0);
