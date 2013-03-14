@@ -28,21 +28,9 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "CaptionUserPreferences.h"
+#include "PageGroup.h"
 
 namespace WebCore {
-
-void CaptionUserPreferences::registerForPreferencesChangedCallbacks(CaptionPreferencesChangedListener* listener)
-{
-    m_captionPreferenceChangeListeners.add(listener);
-}
-
-void CaptionUserPreferences::unregisterForPreferencesChangedCallbacks(CaptionPreferencesChangedListener* listener)
-{
-    if (m_captionPreferenceChangeListeners.isEmpty())
-        return;
-
-    m_captionPreferenceChangeListeners.remove(listener);
-}
 
 void CaptionUserPreferences::setUserPrefersCaptions(bool preference)
 {
@@ -55,11 +43,7 @@ void CaptionUserPreferences::setUserPrefersCaptions(bool preference)
 
 void CaptionUserPreferences::captionPreferencesChanged()
 {
-    if (m_captionPreferenceChangeListeners.isEmpty())
-        return;
-    
-    for (HashSet<CaptionPreferencesChangedListener*>::iterator i = m_captionPreferenceChangeListeners.begin(); i != m_captionPreferenceChangeListeners.end(); ++i)
-        (*i)->captionPreferencesChanged();
+    m_pageGroup->captionPreferencesChanged();
 }
 
 Vector<String> CaptionUserPreferences::preferredLanguages() const

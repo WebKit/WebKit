@@ -137,10 +137,8 @@ bool CaptionUserPreferencesMac::userHasCaptionPreferences() const
     return true;
 }
 
-void CaptionUserPreferencesMac::registerForPreferencesChangedCallbacks(CaptionPreferencesChangedListener* listener)
+void CaptionUserPreferencesMac::setInterestedInCaptionPreferenceChanges()
 {
-    CaptionUserPreferences::registerForPreferencesChangedCallbacks(listener);
-
     if (!MediaAccessibilityLibrary())
         return;
 
@@ -157,7 +155,7 @@ void CaptionUserPreferencesMac::registerForPreferencesChangedCallbacks(CaptionPr
 
 void CaptionUserPreferencesMac::captionPreferencesChanged()
 {
-    if (havePreferenceChangeListeners())
+    if (m_listeningForPreferenceChanges)
         updateCaptionStyleSheetOveride();
 
     CaptionUserPreferences::captionPreferencesChanged();

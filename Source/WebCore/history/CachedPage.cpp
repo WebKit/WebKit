@@ -56,6 +56,7 @@ CachedPage::CachedPage(Page* page)
     , m_cachedMainFrame(CachedFrame::create(page->mainFrame()))
     , m_needStyleRecalcForVisitedLinks(false)
     , m_needsFullStyleRecalc(false)
+    , m_needsCaptionPreferencesChanged(false)
 {
 #ifndef NDEBUG
     cachedPageCounter.increment();
@@ -95,6 +96,11 @@ void CachedPage::restore(Page* page)
 
     if (m_needsFullStyleRecalc)
         page->setNeedsRecalcStyleInAllFrames();
+
+#if ENABLE(VIDEO_TRACK)
+    if (m_needsCaptionPreferencesChanged)
+        page->captionPreferencesChanged();
+#endif
 
     clear();
 }

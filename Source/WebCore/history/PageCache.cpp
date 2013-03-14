@@ -436,6 +436,14 @@ void PageCache::markPagesForFullStyleRecalc(Page* page)
     }
 }
 
+#if ENABLE(VIDEO_TRACK)
+void PageCache::markPagesForCaptionPreferencesChanged()
+{
+    for (HistoryItem* current = m_head; current; current = current->m_next)
+        current->m_cachedPage->markForCaptionPreferencesChanged();
+}
+#endif
+
 void PageCache::add(PassRefPtr<HistoryItem> prpItem, Page* page)
 {
     ASSERT(prpItem);

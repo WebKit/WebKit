@@ -417,6 +417,13 @@ void PageGroup::invalidatedInjectedStyleSheetCacheInAllFrames()
 }
 
 #if ENABLE(VIDEO_TRACK)
+void PageGroup::captionPreferencesChanged()
+{
+    for (HashSet<Page*>::iterator i = m_pages.begin(); i != m_pages.end(); ++i)
+        (*i)->captionPreferencesChanged();
+    pageCache()->markPagesForCaptionPreferencesChanged();
+}
+
 CaptionUserPreferences* PageGroup::captionPreferences()
 {
     if (!m_captionPreferences)

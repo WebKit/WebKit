@@ -38,13 +38,6 @@ namespace WebCore {
 
 class PageGroup;
 
-class CaptionPreferencesChangedListener {
-public:
-    virtual void captionPreferencesChanged() = 0;
-protected:
-    virtual ~CaptionPreferencesChangedListener() { }
-};
-
 class CaptionUserPreferences {
 public:
     static PassOwnPtr<CaptionUserPreferences> create(PageGroup* group) { return adoptPtr(new CaptionUserPreferences(group)); }
@@ -56,10 +49,9 @@ public:
     virtual float captionFontSizeScale(bool& important) const { important = false; return 0.05f; }
     virtual String captionsStyleSheetOverride() const { return emptyString(); }
 
-    virtual void registerForPreferencesChangedCallbacks(CaptionPreferencesChangedListener*);
-    virtual void unregisterForPreferencesChangedCallbacks(CaptionPreferencesChangedListener*);
+    virtual void setInterestedInCaptionPreferenceChanges() { }
+
     virtual void captionPreferencesChanged();
-    bool havePreferenceChangeListeners() const { return !m_captionPreferenceChangeListeners.isEmpty(); }
 
     virtual void setPreferredLanguage(String);
     virtual Vector<String> preferredLanguages() const;
@@ -81,7 +73,6 @@ protected:
     }
 
 private:
-    HashSet<CaptionPreferencesChangedListener*> m_captionPreferenceChangeListeners;
     PageGroup* m_pageGroup;
     String m_userPreferredLanguage;
     bool m_testingMode;

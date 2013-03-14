@@ -98,6 +98,7 @@
 #endif
 
 #if ENABLE(VIDEO_TRACK)
+#include "CaptionUserPreferences.h"
 #include "HTMLTrackElement.h"
 #include "InbandTextTrack.h"
 #include "InbandTextTrackPrivate.h"
@@ -305,7 +306,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     LOG(Media, "HTMLMediaElement::HTMLMediaElement");
     document->registerForMediaVolumeCallbacks(this);
     document->registerForPrivateBrowsingStateChangedCallbacks(this);
-    
+
     if (document->settings() && document->settings()->mediaPlaybackRequiresUserGesture()) {
         addBehaviorRestriction(RequireUserGestureForRateChangeRestriction);
         addBehaviorRestriction(RequireUserGestureForLoadRestriction);
@@ -315,6 +316,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     addElementToDocumentMap(this, document);
 
 #if ENABLE(VIDEO_TRACK)
+    document->registerForCaptionPreferencesChangedCallbacks(this);
     if (document->page()) {
         CaptionUserPreferences* captionPreferences = document->page()->group().captionPreferences();
         if (captionPreferences->userHasCaptionPreferences())
@@ -332,6 +334,7 @@ HTMLMediaElement::~HTMLMediaElement()
     document()->unregisterForMediaVolumeCallbacks(this);
     document()->unregisterForPrivateBrowsingStateChangedCallbacks(this);
 #if ENABLE(VIDEO_TRACK)
+    document()->unregisterForCaptionPreferencesChangedCallbacks(this);
     if (m_textTracks)
         m_textTracks->clearOwner();
     if (m_textTracks) {
@@ -591,20 +594,6 @@ void HTMLMediaElement::attach()
             frame->loader()->client()->hideMediaPlayerProxyPlugin(m_proxyWidget.get());
     }
 #endif
-
-#if ENABLE(VIDEO_TRACK)
-    if (document()->page())
-        document()->page()->group().captionPreferences()->registerForPreferencesChangedCallbacks(this);
-#endif
-}
-
-void HTMLMediaElement::detach()
-{
-#if ENABLE(VIDEO_TRACK)
-    if (document()->page())
-        document()->page()->group().captionPreferences()->unregisterForPreferencesChangedCallbacks(this);
-#endif
-    HTMLElement::detach();
 }
 
 void HTMLMediaElement::didRecalcStyle(StyleChange)

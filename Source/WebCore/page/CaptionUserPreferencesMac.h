@@ -47,7 +47,7 @@ public:
     virtual float captionFontSizeScale(bool&) const OVERRIDE;
     virtual String captionsStyleSheetOverride() const OVERRIDE;
 
-    virtual void registerForPreferencesChangedCallbacks(CaptionPreferencesChangedListener*) OVERRIDE;
+    virtual void setInterestedInCaptionPreferenceChanges() OVERRIDE;
 
     virtual void setPreferredLanguage(String) OVERRIDE;
     virtual Vector<String> preferredLanguages() const OVERRIDE;
