@@ -123,8 +123,6 @@ loader.Loader.prototype = {
     },
     _loadResultsFiles: function()
     {
-        parseParameters();
-
         for (var builderName in currentBuilders())
             this._loadResultsFileForBuilder(builderName);
     },
