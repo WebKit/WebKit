@@ -47,7 +47,7 @@ WebInspector.FlameChart = function(cpuProfileView)
     this.element.onmousemove = this._onMouseMove.bind(this);
     this.element.onclick = this._onClick.bind(this);
     this._popoverHelper = new WebInspector.PopoverHelper(this.element, this._getPopoverAnchor.bind(this), this._showPopover.bind(this));
-    this._popoverHelper.setTimeout(300);
+    this._popoverHelper.setTimeout(250);
     this._anchorElement = this.element.createChild("span");
     this._anchorElement.className = "item-anchor";
     this._linkifier = new WebInspector.Linkifier();
@@ -190,11 +190,10 @@ WebInspector.FlameChart.prototype = {
     _onMouseMove: function(e)
     {
         var nodeIndex = this._coordinatesToNodeIndex(e.offsetX, e.offsetY);
-        if (nodeIndex !== this._highlightedNodeIndex) {
-            this._highlightedNodeIndex = nodeIndex;
-            this._hidePopover();
-            this.update();
-        }
+        if (nodeIndex === this._highlightedNodeIndex)
+            return;
+        this._highlightedNodeIndex = nodeIndex;
+        this.update();
 
         if (nodeIndex === -1)
             return;
@@ -280,5 +279,3 @@ WebInspector.FlameChart.prototype = {
 
     __proto__: WebInspector.View.prototype
 };
-
-//@ sourceURL=http://localhost/inspector/front-end/FlameChart.js
