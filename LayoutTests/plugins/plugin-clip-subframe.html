@@ -4,6 +4,7 @@
 function test() {
     // Increase the size of the container so the iframe becomes visible.
     document.getElementById("container").style.height = "400px";
+    document.getElementById("container").offsetWidth;
     setTimeout(done, 10);
 }
 
@@ -17,6 +18,7 @@ function done() {
 function runTest() {
     if (testRunner)
         testRunner.waitUntilDone();
+    document.getElementById("container").offsetWidth;
     setTimeout(test, 10);
 }
 </script>
