@@ -1,3 +1,15 @@
+2013-03-14  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add tools/protoc_wrapper to directories pulled in Chromium-in-WebKit configuration
+        https://bugs.webkit.org/show_bug.cgi?id=112363
+
+        Reviewed by Kenneth Russell.
+
+        Chromium r187704 added a reference to this script to src/gpu/gpu.gyp, which we pull in the Chromium-in-WebKit
+        configuration. This adds the script to DEPS so we can roll past that rev.
+
+        * DEPS:
+
 2013-03-14  Abhishek Arya  <inferno@chromium.org>
 
         Replace static_casts with to* helper functions.
