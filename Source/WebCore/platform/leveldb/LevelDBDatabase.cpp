@@ -28,6 +28,7 @@
 
 #if USE(LEVELDB)
 
+#include "HistogramSupport.h"
 #include "LevelDBComparator.h"
 #include "LevelDBIterator.h"
 #include "LevelDBSlice.h"
@@ -149,6 +150,22 @@ PassOwnPtr<LevelDBDatabase> LevelDBDatabase::open(const String& fileName, const 
     const leveldb::Status s = openDB(comparatorAdapter.get(), leveldb::IDBEnv(), fileName, &db);
 
     if (!s.ok()) {
+        enum {
+            LevelDBNotFound,
+            LevelDBCorruption,
+            LevelDBIOError,
+            LevelDBOther,
+            LevelDBMaxError
+        };
+        int levelDBError = LevelDBOther;
+        if (s.IsNotFound())
+            levelDBError = LevelDBNotFound;
+        else if (s.IsCorruption())
+            levelDBError = LevelDBCorruption;
+        else if (s.IsIOError())
+            levelDBError = LevelDBIOError;
+        HistogramSupport::histogramEnumeration("WebCore.IndexedDB.LevelDBOpenErrors", levelDBError, LevelDBMaxError);
+
         LOG_ERROR("Failed to open LevelDB database from %s: %s", fileName.ascii().data(), s.ToString().c_str());
         return nullptr;
     }
