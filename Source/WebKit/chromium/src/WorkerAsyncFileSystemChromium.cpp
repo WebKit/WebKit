@@ -179,15 +179,12 @@ void WorkerAsyncFileSystemChromium::createWriter(AsyncFileWriterClient* client, 
 
 void WorkerAsyncFileSystemChromium::createSnapshotFileAndReadMetadata(const KURL& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    KURL internalBlobURL = BlobURL::createInternalURL();
-
-    createWorkerFileSystemCallbacksBridge(createSnapshotFileCallback(internalBlobURL, callbacks))->postCreateSnapshotFileToMainThread(m_webFileSystem, internalBlobURL, path, m_modeForCurrentOperation);
+    createWorkerFileSystemCallbacksBridge(callbacks)->postCreateSnapshotFileToMainThread(m_webFileSystem, path, m_modeForCurrentOperation);
 }
 
 PassRefPtr<WorkerFileSystemCallbacksBridge> WorkerAsyncFileSystemChromium::createWorkerFileSystemCallbacksBridge(PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
     ASSERT(m_synchronousType == AsynchronousFileSystem || !m_bridgeForCurrentOperation);
-    (void)m_synchronousType;
 
     m_modeForCurrentOperation = fileSystemOperationsMode;
     m_modeForCurrentOperation.append(String::number(m_workerContext->thread()->runLoop().createUniqueId()));

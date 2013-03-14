@@ -35,6 +35,7 @@
 
 #include "AsyncFileSystem.h"
 #include "AsyncFileWriter.h"
+#include "BlobData.h"
 #include "FileMetadata.h"
 #include <wtf/text/WTFString.h>
 
@@ -53,6 +54,9 @@ public:
 
     // Called when a file metadata is read successfully.
     virtual void didReadMetadata(const FileMetadata&) { ASSERT_NOT_REACHED(); }
+
+    // Called when a snapshot file is created successfully.
+    virtual void didCreateSnapshotFile(const FileMetadata&, PassRefPtr<BlobDataHandle> snapshot) { ASSERT_NOT_REACHED(); }
 
     // Called when a directory entry is read.
     virtual void didReadDirectoryEntry(const String& name, bool isDirectory) { ASSERT_NOT_REACHED(); }

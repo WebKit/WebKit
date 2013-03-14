@@ -118,6 +118,11 @@ void AsyncFileSystemGtk::createWriter(AsyncFileWriterClient* client, const KURL&
     notImplemented();
 }
 
+void AsyncFileSystemGtk::createSnapshotFileAndReadMetadata(const KURL&, PassOwnPtr<AsyncFileSystemCallbacks>)
+{
+    notImplemented();
+}
+
 } // namespace WebCore
 
 #endif

@@ -202,6 +202,23 @@ private:
     BlobDataItemList m_items;
 };
 
+// FIXME: This class is mostly place holder until I get farther along with
+// https://bugs.webkit.org/show_bug.cgi?id=108733 and more specifically with landing
+// https://codereview.chromium.org/11192017/.
+class BlobDataHandle : public ThreadSafeRefCounted<BlobDataHandle> {
+public:
+    static PassRefPtr<BlobDataHandle> create(PassOwnPtr<BlobData> data, long long size)
+    {
+        return adoptRef(new BlobDataHandle(data, size));
+    }
+
+    ~BlobDataHandle();
+
+private:
+    BlobDataHandle(PassOwnPtr<BlobData>, long long size);
+    KURL m_internalURL;
+};
+
 } // namespace WebCore
 
 #endif // BlobData_h

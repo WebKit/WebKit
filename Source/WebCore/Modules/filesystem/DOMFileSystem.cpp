@@ -148,18 +148,23 @@ void DOMFileSystem::createWriter(const FileEntry* fileEntry, PassRefPtr<FileWrit
 
 namespace {
 
-class GetMetadataCallback : public FileSystemCallbacksBase {
+class SnapshotFileCallback : public FileSystemCallbacksBase {
 public:
-    static PassOwnPtr<GetMetadataCallback> create(PassRefPtr<DOMFileSystem> filesystem, const String& name, const KURL& url, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+    static PassOwnPtr<SnapshotFileCallback> create(PassRefPtr<DOMFileSystem> filesystem, const String& name, const KURL& url, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
     {
-        return adoptPtr(new GetMetadataCallback(filesystem, name, url, successCallback, errorCallback));
+        return adoptPtr(new SnapshotFileCallback(filesystem, name, url, successCallback, errorCallback));
     }
 
-    virtual void didReadMetadata(const FileMetadata& metadata)
+    virtual void didCreateSnapshotFile(const FileMetadata& metadata, PassRefPtr<BlobDataHandle> snapshot)
     {
         ASSERT(!metadata.platformPath.isEmpty());
         if (!m_successCallback)
             return;
+
+        // We can't directly use the snapshot blob data handle because the content type on it hasn't been set.
+        // The |snapshot| param is here to provide a a chain of custody thru thread bridging that is held onto until
+        // *after* we've coined a File with a new handle that has the correct type set on it. This allows the
+        // blob storage system to track when a temp file can and can't be safely deleted.
 
         // For regular filesystem types (temporary or persistent), we should not cache file metadata as it could change File semantics.
         // For other filesystem types (which could be platform-specific ones), there's a chance that the files are on remote filesystem. If the port has returned metadata just pass it to File constructor (so we may cache the metadata).
@@ -179,7 +184,7 @@ public:
     }
 
 private:
-    GetMetadataCallback(PassRefPtr<DOMFileSystem> filesystem, const String& name,  const KURL& url, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+    SnapshotFileCallback(PassRefPtr<DOMFileSystem> filesystem, const String& name,  const KURL& url, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
         : FileSystemCallbacksBase(errorCallback)
         , m_filesystem(filesystem)
         , m_name(name)
@@ -199,7 +204,7 @@ private:
 void DOMFileSystem::createFile(const FileEntry* fileEntry, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     KURL fileSystemURL = createFileSystemURL(fileEntry);
-    m_asyncFileSystem->createSnapshotFileAndReadMetadata(fileSystemURL, GetMetadataCallback::create(this, fileEntry->name(), fileSystemURL, successCallback, errorCallback));
+    m_asyncFileSystem->createSnapshotFileAndReadMetadata(fileSystemURL, SnapshotFileCallback::create(this, fileEntry->name(), fileSystemURL, successCallback, errorCallback));
 }
 
 } // namespace WebCore

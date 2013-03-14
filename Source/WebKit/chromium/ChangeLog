@@ -1,3 +1,44 @@
+2013-03-13  Michael Nordman  <michaeln@google.com>
+
+        [Chromium] FileSystem mods: Changes to snapshot file creation to reduce dependencies on blobs.
+        No longer send a |blobURL| to the browser process, no longer expect the browser process
+        to have registered a blob with that url.
+        https://bugs.webkit.org/show_bug.cgi?id=108851
+
+        Reviewed by Adam Barth.
+
+        * src/AsyncFileSystemChromium.cpp:
+        (WebCore):
+        (WebCore::FileWriterHelperCallbacks::didCreateSnapshotFile):
+        (WebCore::AsyncFileSystemChromium::createSnapshotFileAndReadMetadata):
+        * src/AsyncFileSystemChromium.h:
+        (AsyncFileSystemChromium):
+        * src/LocalFileSystemChromium.cpp:
+        (WebCore):
+        * src/WebFileSystemCallbacksImpl.cpp:
+        (WebKit::WebFileSystemCallbacksImpl::didCreateSnapshotFile):
+        (WebKit):
+        * src/WebFileSystemCallbacksImpl.h:
+        (WebCore):
+        (WebFileSystemCallbacksImpl):
+        * src/WorkerAsyncFileSystemChromium.cpp:
+        (WebCore::WorkerAsyncFileSystemChromium::createSnapshotFileAndReadMetadata):
+        (WebCore::WorkerAsyncFileSystemChromium::createWorkerFileSystemCallbacksBridge):
+        * src/WorkerFileSystemCallbacksBridge.cpp:
+        (WebKit::MainThreadFileSystemCallbacks::didCreateSnapshotFile):
+        (MainThreadFileSystemCallbacks):
+        (WebKit::WorkerFileSystemCallbacksBridge::postCreateSnapshotFileToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::createSnapshotFileOnMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::didCreateSnapshotFileOnMainThread):
+        (WebKit):
+        (WebKit::WorkerFileSystemCallbacksBridge::WorkerFileSystemCallbacksBridge):
+        (WebKit::WorkerFileSystemCallbacksBridge::didCreateSnapshotFileOnWorkerThread):
+        * src/WorkerFileSystemCallbacksBridge.h:
+        (WebCore):
+        (WebKit):
+        (WebKit::WorkerFileSystemCallbacksBridge::create):
+        (WorkerFileSystemCallbacksBridge):
+
 2013-03-13  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Restrict WebNode::addEventListener and friends to a whitelist of event types

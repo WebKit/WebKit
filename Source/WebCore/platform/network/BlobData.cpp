@@ -30,6 +30,8 @@
 
 #include "config.h"
 #include "BlobData.h"
+#include "BlobURL.h"
+#include "ThreadableBlobRegistry.h"
 
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -99,6 +101,19 @@ void BlobData::appendURL(const KURL& url, long long offset, long long length, do
 void BlobData::swapItems(BlobDataItemList& items)
 {
     m_items.swap(items);
+}
+
+
+BlobDataHandle::BlobDataHandle(PassOwnPtr<BlobData> data, long long size)
+{
+    UNUSED_PARAM(size);
+    m_internalURL = BlobURL::createInternalURL();
+    ThreadableBlobRegistry::registerBlobURL(m_internalURL, data);
+}
+
+BlobDataHandle::~BlobDataHandle()
+{
+    ThreadableBlobRegistry::unregisterBlobURL(m_internalURL);
 }
 
 } // namespace WebCore

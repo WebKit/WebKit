@@ -76,6 +76,27 @@ void WebFileSystemCallbacksImpl::didReadMetadata(const WebFileInfo& webFileInfo)
     delete this;
 }
 
+void WebFileSystemCallbacksImpl::didCreateSnapshotFile(const WebFileInfo& webFileInfo)
+{
+    // It's important to create a BlobDataHandle that refers to the platform file path prior
+    // to return from this method so the underlying file will not be deleted.
+    OwnPtr<BlobData> blobData = BlobData::create();
+    blobData->appendFile(webFileInfo.platformPath);
+    RefPtr<BlobDataHandle> snapshotBlob = BlobDataHandle::create(blobData.release(), webFileInfo.length);
+    didCreateSnapshotFile(webFileInfo, snapshotBlob);
+}
+
+void WebFileSystemCallbacksImpl::didCreateSnapshotFile(const WebFileInfo& webFileInfo, PassRefPtr<WebCore::BlobDataHandle> snapshot)
+{
+    FileMetadata fileMetadata;
+    fileMetadata.modificationTime = webFileInfo.modificationTime;
+    fileMetadata.length = webFileInfo.length;
+    fileMetadata.type = static_cast<FileMetadata::Type>(webFileInfo.type);
+    fileMetadata.platformPath = webFileInfo.platformPath;
+    m_callbacks->didCreateSnapshotFile(fileMetadata, snapshot);
+    delete this;
+}
+
 void WebFileSystemCallbacksImpl::didReadDirectory(const WebVector<WebFileSystemEntry>& entries, bool hasMore)
 {
     for (size_t i = 0; i < entries.size(); ++i)

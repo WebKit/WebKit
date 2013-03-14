@@ -69,8 +69,6 @@ public:
 protected:
     AsyncFileSystemChromium();
 
-    PassOwnPtr<AsyncFileSystemCallbacks> createSnapshotFileCallback(const KURL& internalBlobURL, PassOwnPtr<AsyncFileSystemCallbacks>) const;
-
     WebKit::WebFileSystem* m_webFileSystem;
 };
 

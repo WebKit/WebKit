@@ -33,16 +33,17 @@
 
 #if ENABLE(FILE_SYSTEM) && ENABLE(WORKERS)
 
+#include "BlobData.h"
 #include "CrossThreadTask.h"
 #include "KURL.h"
 #include "WebCommonWorkerClient.h"
+#include "WebFileSystemCallbacksImpl.h"
 #include "WebWorkerBase.h"
 #include "WorkerContext.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerScriptController.h"
 #include "WorkerThread.h"
 #include <public/WebFileInfo.h>
-#include <public/WebFileSystemCallbacks.h>
 #include <public/WebFileSystemEntry.h>
 #include <public/WebString.h>
 #include <public/WebURL.h>
@@ -121,6 +122,17 @@ public:
     virtual void didReadMetadata(const WebFileInfo& info)
     {
         m_bridge->didReadMetadataOnMainThread(info, m_mode);
+        delete this;
+    }
+
+    virtual void didCreateSnapshotFile(const WebFileInfo& info)
+    {
+        // It's important to create a BlobDataHandle that refers to the platform file path prior
+        // to return from this method so the underlying file will not be deleted.
+        OwnPtr<BlobData> blobData = BlobData::create();
+        blobData->appendFile(info.platformPath);
+        RefPtr<BlobDataHandle> snapshotBlob = BlobDataHandle::create(blobData.release(), info.length);
+        m_bridge->didCreateSnapshotFileOnMainThread(info, m_mode, snapshotBlob);
         delete this;
     }
 
@@ -289,13 +301,13 @@ void WorkerFileSystemCallbacksBridge::postReadDirectoryToMainThread(WebFileSyste
                            this, mode));
 }
 
-void WorkerFileSystemCallbacksBridge::postCreateSnapshotFileToMainThread(WebFileSystem* fileSystem, const KURL& internalBlobURL, const KURL& path, const String& mode)
+void WorkerFileSystemCallbacksBridge::postCreateSnapshotFileToMainThread(WebFileSystem* fileSystem, const KURL& path, const String& mode)
 {
     ASSERT(fileSystem);
     dispatchTaskToMainThread(
         createCallbackTask(&createSnapshotFileOnMainThread,
                            AllowCrossThreadAccess(fileSystem),
-                           internalBlobURL, path, this, mode));
+                           path, this, mode));
 }
 
 void WorkerFileSystemCallbacksBridge::openFileSystemOnMainThread(ScriptExecutionContext*, WebCommonWorkerClient* commonClient, WebFileSystem::Type type, long long size, bool create, PassRefPtr<WorkerFileSystemCallbacksBridge> bridge, const String& mode)
@@ -357,9 +369,9 @@ void WorkerFileSystemCallbacksBridge::readDirectoryOnMainThread(WebCore::ScriptE
     fileSystem->readDirectory(path, MainThreadFileSystemCallbacks::createLeakedPtr(bridge, mode));
 }
 
-void WorkerFileSystemCallbacksBridge::createSnapshotFileOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const KURL& internalBlobURL, const KURL& path, PassRefPtr<WorkerFileSystemCallbacksBridge> bridge, const String& mode)
+void WorkerFileSystemCallbacksBridge::createSnapshotFileOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const KURL& path, PassRefPtr<WorkerFileSystemCallbacksBridge> bridge, const String& mode)
 {
-    fileSystem->createSnapshotFileAndReadMetadata(internalBlobURL, path, MainThreadFileSystemCallbacks::createLeakedPtr(bridge, mode));
+    fileSystem->createSnapshotFileAndReadMetadata(path, MainThreadFileSystemCallbacks::createLeakedPtr(bridge, mode));
 }
 
 void WorkerFileSystemCallbacksBridge::didFailOnMainThread(WebFileError error, const String& mode)
@@ -383,6 +395,11 @@ void WorkerFileSystemCallbacksBridge::didReadMetadataOnMainThread(const WebFileI
     mayPostTaskToWorker(createCallbackTask(&didReadMetadataOnWorkerThread, this, info), mode);
 }
 
+void WorkerFileSystemCallbacksBridge::didCreateSnapshotFileOnMainThread(const WebFileInfo& info, const String& mode, PassRefPtr<BlobDataHandle> snapshotBlob)
+{
+    mayPostTaskToWorker(createCallbackTask(&didCreateSnapshotFileOnWorkerThread, this, info, snapshotBlob), mode);
+}
+
 void WorkerFileSystemCallbacksBridge::didReadDirectoryOnMainThread(const WebVector<WebFileSystemEntry>& entries, bool hasMore, const String& mode)
 {
     mayPostTaskToWorker(
@@ -390,7 +407,7 @@ void WorkerFileSystemCallbacksBridge::didReadDirectoryOnMainThread(const WebVect
                            this, entries, hasMore), mode);
 }
 
-WorkerFileSystemCallbacksBridge::WorkerFileSystemCallbacksBridge(WebCore::WorkerLoaderProxy* workerLoaderProxy, ScriptExecutionContext* scriptExecutionContext, WebFileSystemCallbacks* callbacks)
+WorkerFileSystemCallbacksBridge::WorkerFileSystemCallbacksBridge(WebCore::WorkerLoaderProxy* workerLoaderProxy, ScriptExecutionContext* scriptExecutionContext, WebFileSystemCallbacksImpl* callbacks)
     : m_workerLoaderProxy(workerLoaderProxy)
     , m_workerContext(scriptExecutionContext)
     , m_workerContextObserver(WorkerFileSystemContextObserver::create(static_cast<WorkerContext*>(m_workerContext), this).leakPtr())
@@ -422,6 +439,11 @@ void WorkerFileSystemCallbacksBridge::didSucceedOnWorkerThread(ScriptExecutionCo
 void WorkerFileSystemCallbacksBridge::didReadMetadataOnWorkerThread(ScriptExecutionContext*, PassRefPtr<WorkerFileSystemCallbacksBridge> bridge, const WebFileInfo& info)
 {
     bridge->m_callbacksOnWorkerThread->didReadMetadata(info);
+}
+
+void WorkerFileSystemCallbacksBridge::didCreateSnapshotFileOnWorkerThread(ScriptExecutionContext*, PassRefPtr<WorkerFileSystemCallbacksBridge> bridge, const WebFileInfo& info, PassRefPtr<BlobDataHandle> snapshotBlob)
+{
+    bridge->m_callbacksOnWorkerThread->didCreateSnapshotFile(info, snapshotBlob);
 }
 
 void WorkerFileSystemCallbacksBridge::didReadDirectoryOnWorkerThread(ScriptExecutionContext*, PassRefPtr<WorkerFileSystemCallbacksBridge> bridge, const WebVector<WebFileSystemEntry>& entries, bool hasMore)

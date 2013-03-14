@@ -113,10 +113,16 @@ public:
     {
     }
 
-    void didReadMetadata(const FileMetadata& metadata)
+    virtual void didCreateSnapshotFile(const FileMetadata& metadata, PassRefPtr<BlobDataHandle> snapshot)
     {
+        // We can't directly use the snapshot blob data handle because the content type on it hasn't been set.
+        // The |snapshot| param is here to provide a a chain of custody thru thread bridging that is held onto until
+        // *after* we've coined a File with a new handle that has the correct type set on it. This allows the
+        // blob storage system to track when a temp file can and can't be safely deleted.
+
         // For regular filesystem types (temporary or persistent), we should not cache file metadata as it could change File semantics.
-        // For other filesystem types (which could be platform-specific ones), there's a chance that the files are on remote filesystem. If the port has returned metadata just pass it to File constructor (so we may cache the metadata).
+        // For other filesystem types (which could be platform-specific ones), there's a chance that the files are on remote filesystem.
+        // If the port has returned metadata just pass it to File constructor (so we may cache the metadata).
         // FIXME: We should use the snapshot metadata for all files.
         // https://www.w3.org/Bugs/Public/show_bug.cgi?id=17746
         if (m_type == FileSystemTypeTemporary || m_type == FileSystemTypePersistent) {

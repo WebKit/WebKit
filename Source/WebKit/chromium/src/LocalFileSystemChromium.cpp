@@ -153,7 +153,7 @@ bool allowFileSystemForWorker(WebCommonWorkerClient* commonClient)
     return bridge->result();
 }
 
-void openFileSystemForWorker(WebCommonWorkerClient* commonClient, WebFileSystem::Type type, long long size, bool create, WebFileSystemCallbacks* callbacks, FileSystemSynchronousType synchronousType)
+void openFileSystemForWorker(WebCommonWorkerClient* commonClient, WebFileSystem::Type type, long long size, bool create, WebFileSystemCallbacksImpl* callbacks, FileSystemSynchronousType synchronousType)
 {
     WorkerScriptController* controller = WorkerScriptController::controllerForContext();
     WorkerContext* workerContext = controller->workerContext();
