@@ -1,3 +1,17 @@
+2013-03-13  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG bytecode parser is too aggressive about getting rid of GetLocals on captured variables
+        https://bugs.webkit.org/show_bug.cgi?id=112287
+        <rdar://problem/13342340>
+
+        Reviewed by Oliver Hunt.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::finalizeUnconditionally):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getLocal):
+
 2013-03-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Threaded HTML Parser is missing feature define flags in all but Chromium port's build files

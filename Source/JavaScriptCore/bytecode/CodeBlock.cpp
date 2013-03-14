@@ -539,8 +539,11 @@ void CodeBlock::dumpBytecode(PrintStream& out)
         static_cast<unsigned long>(instructions().size()),
         static_cast<unsigned long>(instructions().size() * sizeof(Instruction)),
         m_numParameters, m_numCalleeRegisters, m_numVars);
-    if (symbolTable() && symbolTable()->captureCount())
-        out.printf("; %d captured var(s)", symbolTable()->captureCount());
+    if (symbolTable() && symbolTable()->captureCount()) {
+        out.printf(
+            "; %d captured var(s) (from r%d to r%d, inclusive)",
+            symbolTable()->captureCount(), symbolTable()->captureStart(), symbolTable()->captureEnd() - 1);
+    }
     if (usesArguments()) {
         out.printf(
             "; uses arguments, in r%d, r%d",
@@ -2331,7 +2334,7 @@ void CodeBlock::finalizeUnconditionally()
         alternative()->optimizeAfterWarmUp();
         
         if (DFG::shouldShowDisassembly()) {
-            dataLog(*this, "will be jettisoned because of the following dead references:\n");
+            dataLog(*this, " will be jettisoned because of the following dead references:\n");
             for (unsigned i = 0; i < m_dfgData->transitions.size(); ++i) {
                 WeakReferenceTransition& transition = m_dfgData->transitions[i];
                 JSCell* origin = transition.m_codeOrigin.get();
