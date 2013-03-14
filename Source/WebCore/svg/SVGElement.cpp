@@ -562,22 +562,22 @@ SVGAttributeToPropertyMap& SVGElement::localAttributeToPropertyMap()
     return emptyMap;
 }
 
-void SVGElement::synchronizeRequiredFeatures(void* contextElement)
+void SVGElement::synchronizeRequiredFeatures(SVGElement* contextElement)
 {
     ASSERT(contextElement);
-    static_cast<SVGElement*>(contextElement)->synchronizeRequiredFeatures();
+    contextElement->synchronizeRequiredFeatures();
 }
 
-void SVGElement::synchronizeRequiredExtensions(void* contextElement)
+void SVGElement::synchronizeRequiredExtensions(SVGElement* contextElement)
 {
     ASSERT(contextElement);
-    static_cast<SVGElement*>(contextElement)->synchronizeRequiredExtensions();
+    contextElement->synchronizeRequiredExtensions();
 }
 
-void SVGElement::synchronizeSystemLanguage(void* contextElement)
+void SVGElement::synchronizeSystemLanguage(SVGElement* contextElement)
 {
     ASSERT(contextElement);
-    static_cast<SVGElement*>(contextElement)->synchronizeSystemLanguage();
+    contextElement->synchronizeSystemLanguage();
 }
 
 PassRefPtr<RenderStyle> SVGElement::customStyleForRenderer()

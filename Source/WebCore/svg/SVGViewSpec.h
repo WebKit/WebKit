@@ -95,9 +95,9 @@ private:
     static const AtomicString& viewBoxIdentifier();
     static const AtomicString& preserveAspectRatioIdentifier();
 
-    static PassRefPtr<SVGAnimatedProperty> lookupOrCreateTransformWrapper(void* contextElement);
-    static PassRefPtr<SVGAnimatedProperty> lookupOrCreateViewBoxWrapper(void* contextElement);
-    static PassRefPtr<SVGAnimatedProperty> lookupOrCreatePreserveAspectRatioWrapper(void* contextElement);
+    static PassRefPtr<SVGAnimatedProperty> lookupOrCreateTransformWrapper(SVGViewSpec* contextElement);
+    static PassRefPtr<SVGAnimatedProperty> lookupOrCreateViewBoxWrapper(SVGViewSpec* contextElement);
+    static PassRefPtr<SVGAnimatedProperty> lookupOrCreatePreserveAspectRatioWrapper(SVGViewSpec* contextElement);
 
     SVGElement* m_contextElement;
     SVGZoomAndPanType m_zoomAndPan;

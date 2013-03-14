@@ -97,9 +97,9 @@ public:
  
     virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
 
-    static void synchronizeRequiredFeatures(void* contextElement);
-    static void synchronizeRequiredExtensions(void* contextElement);
-    static void synchronizeSystemLanguage(void* contextElement);
+    static void synchronizeRequiredFeatures(SVGElement* contextElement);
+    static void synchronizeRequiredExtensions(SVGElement* contextElement);
+    static void synchronizeSystemLanguage(SVGElement* contextElement);
 
     virtual void synchronizeRequiredFeatures() { }
     virtual void synchronizeRequiredExtensions() { }

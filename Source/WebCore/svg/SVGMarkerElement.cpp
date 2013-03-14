@@ -227,10 +227,10 @@ bool SVGMarkerElement::selfHasRelativeLengths() const
         || markerHeight().isRelative();
 }
 
-void SVGMarkerElement::synchronizeOrientType(void* contextElement)
+void SVGMarkerElement::synchronizeOrientType(SVGElement* contextElement)
 {
     ASSERT(contextElement);
-    SVGMarkerElement* ownerType = static_cast<SVGMarkerElement*>(contextElement);
+    SVGMarkerElement* ownerType = toSVGMarkerElement(contextElement);
     if (!ownerType->m_orientType.shouldSynchronize)
         return;
 
@@ -242,10 +242,10 @@ void SVGMarkerElement::synchronizeOrientType(void* contextElement)
     ownerType->m_orientType.synchronize(ownerType, orientTypePropertyInfo()->attributeName, autoString);
 }
 
-PassRefPtr<SVGAnimatedProperty> SVGMarkerElement::lookupOrCreateOrientTypeWrapper(void* contextElement)
+PassRefPtr<SVGAnimatedProperty> SVGMarkerElement::lookupOrCreateOrientTypeWrapper(SVGElement* contextElement)
 {
     ASSERT(contextElement);
-    SVGMarkerElement* ownerType = static_cast<SVGMarkerElement*>(contextElement);
+    SVGMarkerElement* ownerType = toSVGMarkerElement(contextElement);
     return SVGAnimatedProperty::lookupOrCreateWrapper<SVGMarkerElement, SVGAnimatedEnumerationPropertyTearOff<SVGMarkerOrientType>, SVGMarkerOrientType>
            (ownerType, orientTypePropertyInfo(), ownerType->m_orientType.value);
 }

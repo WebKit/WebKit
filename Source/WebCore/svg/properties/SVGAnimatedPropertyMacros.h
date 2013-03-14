@@ -145,14 +145,14 @@ private: \
         m_##LowerProperty.synchronize(this, LowerProperty##PropertyInfo()->attributeName, value); \
     } \
 \
-    static PassRefPtr<SVGAnimatedProperty> lookupOrCreate##UpperProperty##Wrapper(void* maskedOwnerType) \
+    static PassRefPtr<SVGAnimatedProperty> lookupOrCreate##UpperProperty##Wrapper(SVGElement* maskedOwnerType) \
     { \
         ASSERT(maskedOwnerType); \
         UseOwnerType* ownerType = static_cast<UseOwnerType*>(maskedOwnerType); \
         return SVGAnimatedProperty::lookupOrCreateWrapper<UseOwnerType, TearOffType, PropertyType>(ownerType, LowerProperty##PropertyInfo(), ownerType->m_##LowerProperty.value); \
     } \
 \
-    static void synchronize##UpperProperty(void* maskedOwnerType) \
+    static void synchronize##UpperProperty(SVGElement* maskedOwnerType) \
     { \
         ASSERT(maskedOwnerType); \
         UseOwnerType* ownerType = static_cast<UseOwnerType*>(maskedOwnerType); \

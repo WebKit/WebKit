@@ -314,10 +314,10 @@ SVGPathByteStream* SVGPathElement::pathByteStream() const
     return static_cast<SVGAnimatedPathSegListPropertyTearOff*>(property)->animatedPathByteStream();
 }
 
-PassRefPtr<SVGAnimatedProperty> SVGPathElement::lookupOrCreateDWrapper(void* contextElement)
+PassRefPtr<SVGAnimatedProperty> SVGPathElement::lookupOrCreateDWrapper(SVGElement* contextElement)
 {
     ASSERT(contextElement);
-    SVGPathElement* ownerType = static_cast<SVGPathElement*>(contextElement);
+    SVGPathElement* ownerType = toSVGPathElement(contextElement);
 
     if (SVGAnimatedProperty* property = SVGAnimatedProperty::lookupWrapper<SVGPathElement, SVGAnimatedPathSegListPropertyTearOff>(ownerType, dPropertyInfo()))
         return property;
@@ -329,10 +329,10 @@ PassRefPtr<SVGAnimatedProperty> SVGPathElement::lookupOrCreateDWrapper(void* con
            (ownerType, dPropertyInfo(), ownerType->m_pathSegList.value);
 }
 
-void SVGPathElement::synchronizeD(void* contextElement)
+void SVGPathElement::synchronizeD(SVGElement* contextElement)
 {
     ASSERT(contextElement);
-    SVGPathElement* ownerType = static_cast<SVGPathElement*>(contextElement);
+    SVGPathElement* ownerType = toSVGPathElement(contextElement);
     if (!ownerType->m_pathSegList.shouldSynchronize)
         return;
     ownerType->m_pathSegList.synchronize(ownerType, dPropertyInfo()->attributeName, ownerType->m_pathSegList.value.valueAsString());

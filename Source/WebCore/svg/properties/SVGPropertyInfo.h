@@ -27,6 +27,7 @@
 namespace WebCore {
 
 class SVGAnimatedProperty;
+class SVGElement;
 
 enum AnimatedPropertyState {
     PropertyIsReadWrite,
@@ -57,8 +58,8 @@ enum AnimatedPropertyType {
 struct SVGPropertyInfo {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef void (*SynchronizeProperty)(void*);
-    typedef PassRefPtr<SVGAnimatedProperty> (*LookupOrCreateWrapperForAnimatedProperty)(void*);
+    typedef void (*SynchronizeProperty)(SVGElement*);
+    typedef PassRefPtr<SVGAnimatedProperty> (*LookupOrCreateWrapperForAnimatedProperty)(SVGElement*);
 
     SVGPropertyInfo(AnimatedPropertyType newType, AnimatedPropertyState newState, const QualifiedName& newAttributeName,
                     const AtomicString& newPropertyIdentifier, SynchronizeProperty newSynchronizeProperty,

@@ -74,20 +74,20 @@ SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Docum
     registerAnimatedPropertiesForSVGTextContentElement();
 }
 
-void SVGTextContentElement::synchronizeTextLength(void* contextElement)
+void SVGTextContentElement::synchronizeTextLength(SVGElement* contextElement)
 {
     ASSERT(contextElement);
-    SVGTextContentElement* ownerType = static_cast<SVGTextContentElement*>(contextElement);
+    SVGTextContentElement* ownerType = toSVGTextContentElement(contextElement);
     if (!ownerType->m_textLength.shouldSynchronize)
         return;
     AtomicString value(SVGPropertyTraits<SVGLength>::toString(ownerType->m_specifiedTextLength));
     ownerType->m_textLength.synchronize(ownerType, textLengthPropertyInfo()->attributeName, value);
 }
 
-PassRefPtr<SVGAnimatedProperty> SVGTextContentElement::lookupOrCreateTextLengthWrapper(void* contextElement)
+PassRefPtr<SVGAnimatedProperty> SVGTextContentElement::lookupOrCreateTextLengthWrapper(SVGElement* contextElement)
 {
     ASSERT(contextElement);
-    SVGTextContentElement* ownerType = static_cast<SVGTextContentElement*>(contextElement);
+    SVGTextContentElement* ownerType = toSVGTextContentElement(contextElement);
     return SVGAnimatedProperty::lookupOrCreateWrapper<SVGTextContentElement, SVGAnimatedLength, SVGLength>
            (ownerType, textLengthPropertyInfo(), ownerType->m_textLength.value);
 }

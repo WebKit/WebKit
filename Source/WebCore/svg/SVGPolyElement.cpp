@@ -137,19 +137,19 @@ void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
     ASSERT_NOT_REACHED();
 }
 
-void SVGPolyElement::synchronizePoints(void* contextElement)
+void SVGPolyElement::synchronizePoints(SVGElement* contextElement)
 {
     ASSERT(contextElement);
-    SVGPolyElement* ownerType = static_cast<SVGPolyElement*>(contextElement);
+    SVGPolyElement* ownerType = toSVGPolyElement(contextElement);
     if (!ownerType->m_points.shouldSynchronize)
         return;
     ownerType->m_points.synchronize(ownerType, pointsPropertyInfo()->attributeName, ownerType->m_points.value.valueAsString());
 }
 
-PassRefPtr<SVGAnimatedProperty> SVGPolyElement::lookupOrCreatePointsWrapper(void* contextElement)
+PassRefPtr<SVGAnimatedProperty> SVGPolyElement::lookupOrCreatePointsWrapper(SVGElement* contextElement)
 {
     ASSERT(contextElement);
-    SVGPolyElement* ownerType = static_cast<SVGPolyElement*>(contextElement);
+    SVGPolyElement* ownerType = toSVGPolyElement(contextElement);
     return SVGAnimatedProperty::lookupOrCreateWrapper<SVGPolyElement, SVGAnimatedPointList, SVGPointList>
            (ownerType, pointsPropertyInfo(), ownerType->m_points.value);
 }
