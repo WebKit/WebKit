@@ -67,6 +67,19 @@ namespace TimelineRecordType {
 extern const char Rasterize[];
 };
 
+class TimelineTimeConverter {
+public:
+    TimelineTimeConverter()
+        : m_startOffset(0)
+    {
+    }
+    double fromMonotonicallyIncreasingTime(double time) const  { return (time - m_startOffset) * 1000.0; }
+    void reset();
+
+private:
+    double m_startOffset;
+};
+
 class InspectorTimelineAgent
     : public InspectorBaseAgent<InspectorTimelineAgent>,
       public ScriptGCEventListener,
@@ -181,6 +194,7 @@ public:
     virtual void didResizeImage() OVERRIDE;
 
 private:
+    friend class TimelineRecordStack;
     friend class TimelineTraceEventProcessor;
 
     struct TimelineRecordEntry {
@@ -197,7 +211,7 @@ private:
         
     InspectorTimelineAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorMemoryAgent*, InspectorCompositeState*, InspectorType, InspectorClient*);
 
-    void appendBackgroundThreadRecord(PassRefPtr<InspectorObject> data, const String& type, double startTime, double endTime, const String& threadName);
+    void sendEvent(PassRefPtr<InspectorObject>);
     void appendRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack, Frame*);
     void pushCurrentRecord(PassRefPtr<InspectorObject>, const String& type, bool captureCallStack, Frame*, bool hasLowLevelDetails = false);
 
@@ -215,12 +229,13 @@ private:
     void innerAddRecordToTimeline(PassRefPtr<InspectorObject>, const String& type);
     void clearRecordStack();
 
+    const TimelineTimeConverter& timeConverter() const { return m_timeConverter; }
     double timestamp();
-    double timestampFromMicroseconds(double microseconds);
     Page* page();
 
     InspectorPageAgent* m_pageAgent;
     InspectorMemoryAgent* m_memoryAgent;
+    TimelineTimeConverter m_timeConverter;
 
     InspectorFrontend::Timeline* m_frontend;
     double m_timestampOffset;

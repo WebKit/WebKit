@@ -773,7 +773,6 @@ localizedStrings["Schedule Style Recalculation"] = "Schedule Style Recalculation
 localizedStrings["Invalidate Layout"] = "Invalidate Layout";
 localizedStrings["Composite Layers"] = "Composite Layers";
 localizedStrings["Interval Duration"] = "Interval Duration";
-localizedStrings["CPU time"] = "CPU time";
 localizedStrings["Replay XHR"] = "Replay XHR";
 localizedStrings["[ %d - %d ]"] = "[ %d - %d ]";
 localizedStrings["Search sources"] = "Search sources";

@@ -33,6 +33,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "InspectorTimelineAgent.h"
 #include "InspectorValues.h"
 
 #include <wtf/HashMap.h>
@@ -48,6 +49,38 @@ namespace WebCore {
 class InspectorClient;
 class InspectorTimelineAgent;
 class Page;
+
+class TimelineRecordStack {
+private:
+    struct Entry {
+        Entry(PassRefPtr<InspectorObject> record)
+            : record(record)
+            , children(InspectorArray::create())
+        {
+        }
+
+        RefPtr<InspectorObject> record;
+        RefPtr<InspectorArray> children;
+    };
+
+public:
+    TimelineRecordStack() { }
+    TimelineRecordStack(WeakPtr<InspectorTimelineAgent>);
+
+    void addScopedRecord(PassRefPtr<InspectorObject> record);
+    void closeScopedRecord(double endTime);
+    void addInstantRecord(PassRefPtr<InspectorObject> record);
+
+#ifndef NDEBUG
+    bool isOpenRecordOfType(const String& type);
+#endif
+
+private:
+    void send(PassRefPtr<InspectorObject>);
+
+    WeakPtr<InspectorTimelineAgent> m_timelineAgent;
+    Vector<Entry> m_stack;
+};
 
 class TimelineTraceEventProcessor : public ThreadSafeRefCounted<TimelineTraceEventProcessor> {
 public:
@@ -89,10 +122,24 @@ private:
         TypeCopyString = 7
     };
 
+    struct TimelineThreadState {
+        TimelineThreadState() { }
+
+        TimelineThreadState(WeakPtr<InspectorTimelineAgent> timelineAgent)
+            : recordStack(timelineAgent)
+            , inRasterizeEvent(false)
+        {
+        }
+
+        TimelineRecordStack recordStack;
+        bool inRasterizeEvent;
+    };
+
     class TraceEvent {
     public:
         TraceEvent()
-            : m_argumentCount(0)
+            : m_name(0)
+            , m_argumentCount(0)
         {
         }
 
@@ -122,6 +169,7 @@ private:
         unsigned long long id() const { return m_id; }
         ThreadIdentifier threadIdentifier() const { return m_threadIdentifier; }
         int argumentCount() const { return m_argumentCount; }
+        bool isNull() const { return !m_name; }
 
         bool asBool(const char* name) const
         {
@@ -168,8 +216,18 @@ private:
 
     typedef void (TimelineTraceEventProcessor::*TraceEventHandler)(const TraceEvent&);
 
+    TimelineThreadState& threadState(ThreadIdentifier thread)
+    {
+        ThreadStateMap::iterator it = m_threadStates.find(thread);
+        if (it != m_threadStates.end())
+            return it->value;
+        return m_threadStates.add(thread, TimelineThreadState(m_timelineAgent)).iterator->value;
+    }
+
     void processBackgroundEvents();
-    void sendTimelineRecord(PassRefPtr<InspectorObject> data, const String& recordType, double startTime, double endTime, const String& Thread);
+    PassRefPtr<InspectorObject> createRecord(const TraceEvent&, const String& recordType, PassRefPtr<InspectorObject> data = 0);
+
+    void registerHandler(const char* name, TraceEventPhase, TraceEventHandler);
 
     void onBeginFrame(const TraceEvent&);
     void onPaintLayerBegin(const TraceEvent&);
@@ -179,25 +237,21 @@ private:
     void onLayerDeleted(const TraceEvent&);
     void onPaint(const TraceEvent&);
 
-    void flushRasterizerStatistics();
-
-    void registerHandler(const char* name, TraceEventPhase, TraceEventHandler);
 
     WeakPtr<InspectorTimelineAgent> m_timelineAgent;
+    TimelineTimeConverter m_timeConverter;
     InspectorClient* m_inspectorClient;
+    unsigned long long m_pageId;
 
     typedef HashMap<std::pair<String, int>, TraceEventHandler> HandlersMap;
     HandlersMap m_handlersByType;
     Mutex m_backgroundEventsMutex;
     Vector<TraceEvent> m_backgroundEvents;
-    unsigned long long m_pageId;
+
+    typedef HashMap<ThreadIdentifier, TimelineThreadState> ThreadStateMap;
+    ThreadStateMap m_threadStates;
 
     HashSet<unsigned long long> m_knownLayers;
-    HashMap<ThreadIdentifier, double> m_rasterStartTimeByThread;
-    double m_firstRasterStartTime;
-    double m_lastRasterEndTime;
-    double m_frameRasterTime;
-
     unsigned long long m_layerId;
 };
 

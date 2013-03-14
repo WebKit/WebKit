@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2012 Google Inc. All rights reserved.
+* Copyright (C) 2013 Google Inc. All rights reserved.
 *
 * Redistribution and use in source and binary forms, with or without
 * modification, are permitted provided that the following conditions are
@@ -36,7 +36,6 @@
 
 #include "InspectorClient.h"
 #include "InspectorInstrumentation.h"
-#include "InspectorTimelineAgent.h"
 #include "TimelineRecordFactory.h"
 
 #include <wtf/CurrentTime.h>
@@ -104,13 +103,59 @@ private:
 };
 
 } // namespce
+
+
+TimelineRecordStack::TimelineRecordStack(WeakPtr<InspectorTimelineAgent> timelineAgent)
+    : m_timelineAgent(timelineAgent)
+{
+}
+
+void TimelineRecordStack::addScopedRecord(PassRefPtr<InspectorObject> record)
+{
+    m_stack.append(Entry(record));
+}
+
+void TimelineRecordStack::closeScopedRecord(double endTime)
+{
+    if (m_stack.isEmpty())
+        return;
+    Entry last = m_stack.last();
+    m_stack.removeLast();
+    last.record->setNumber("endTime", endTime);
+    if (last.children->length())
+        last.record->setArray("children", last.children);
+    addInstantRecord(last.record);
+}
+
+void TimelineRecordStack::addInstantRecord(PassRefPtr<InspectorObject> record)
+{
+    if (m_stack.isEmpty())
+        send(record);
+    else
+        m_stack.last().children->pushObject(record);
+}
+
+#ifndef NDEBUG
+bool TimelineRecordStack::isOpenRecordOfType(const String& type)
+{
+    String lastRecordType;
+    return m_stack.isEmpty() || (m_stack.last().record->getString("type", &lastRecordType) && type == lastRecordType);
+}
+#endif
+
+void TimelineRecordStack::send(PassRefPtr<InspectorObject> record)
+{
+    InspectorTimelineAgent* timelineAgent = m_timelineAgent.get();
+    if (!timelineAgent)
+        return;
+    timelineAgent->sendEvent(record);
+}
+
 TimelineTraceEventProcessor::TimelineTraceEventProcessor(WeakPtr<InspectorTimelineAgent> timelineAgent, InspectorClient *client)
     : m_timelineAgent(timelineAgent)
+    , m_timeConverter(timelineAgent.get()->timeConverter())
     , m_inspectorClient(client)
     , m_pageId(reinterpret_cast<unsigned long long>(m_timelineAgent.get()->page()))
-    , m_firstRasterStartTime(0)
-    , m_lastRasterEndTime(0)
-    , m_frameRasterTime(0)
     , m_layerId(0)
 {
     registerHandler(InstrumentationEvents::BeginFrame, TracePhaseInstant, &TimelineTraceEventProcessor::onBeginFrame);
@@ -178,7 +223,7 @@ void TimelineTraceEventProcessor::processEventOnAnyThread(TraceEventPhase phase,
 
 void TimelineTraceEventProcessor::onBeginFrame(const TraceEvent&)
 {
-    flushRasterizerStatistics();
+    processBackgroundEvents();
 }
 
 void TimelineTraceEventProcessor::onPaintLayerBegin(const TraceEvent& event)
@@ -195,26 +240,23 @@ void TimelineTraceEventProcessor::onPaintLayerEnd(const TraceEvent&)
 void TimelineTraceEventProcessor::onRasterTaskBegin(const TraceEvent& event)
 {
     unsigned long long layerId = event.asUInt(InstrumentationEventArguments::LayerId);
-    ThreadIdentifier threadIdentifier = event.threadIdentifier();
-    ASSERT(m_rasterStartTimeByThread.get(threadIdentifier) == HashTraits<double>::emptyValue());
-    double timestamp = m_knownLayers.contains(layerId) ? event.timestamp() : 0;
-    m_rasterStartTimeByThread.set(threadIdentifier, timestamp);
+    if (!m_knownLayers.contains(layerId))
+        return;
+    TimelineThreadState& state = threadState(event.threadIdentifier());
+    ASSERT(!state.inRasterizeEvent);
+    state.inRasterizeEvent = true;
+    RefPtr<InspectorObject> record = createRecord(event, TimelineRecordType::Rasterize);
+    state.recordStack.addScopedRecord(record.release());
 }
 
 void TimelineTraceEventProcessor::onRasterTaskEnd(const TraceEvent& event)
 {
-    HashMap<ThreadIdentifier, double>::iterator it = m_rasterStartTimeByThread.find(event.threadIdentifier());
-    if (it == m_rasterStartTimeByThread.end())
+    TimelineThreadState& state = threadState(event.threadIdentifier());
+    if (!state.inRasterizeEvent)
         return;
-    double startTime = it->value;
-    double endTime = event.timestamp();
-    if (startTime == HashTraits<double>::emptyValue()) // Rasterizing unknown layer.
-        return;
-    m_frameRasterTime += endTime - startTime;
-    it->value = HashTraits<double>::emptyValue();
-    if (!m_firstRasterStartTime || m_firstRasterStartTime > startTime)
-        m_firstRasterStartTime = startTime;
-    m_lastRasterEndTime = endTime;
+    ASSERT(state.recordStack.isOpenRecordOfType(TimelineRecordType::Rasterize));
+    state.recordStack.closeScopedRecord(m_timeConverter.fromMonotonicallyIncreasingTime(event.timestamp()));
+    state.inRasterizeEvent = false;
 }
 
 void TimelineTraceEventProcessor::onLayerDeleted(const TraceEvent& event)
@@ -235,25 +277,13 @@ void TimelineTraceEventProcessor::onPaint(const TraceEvent& event)
         m_knownLayers.add(m_layerId);
 }
 
-void TimelineTraceEventProcessor::flushRasterizerStatistics()
+PassRefPtr<InspectorObject> TimelineTraceEventProcessor::createRecord(const TraceEvent& event, const String& recordType, PassRefPtr<InspectorObject> data)
 {
-    processBackgroundEvents();
-    if (m_lastRasterEndTime) {
-        RefPtr<InspectorObject> data = TimelineRecordFactory::createRasterData(m_frameRasterTime, m_rasterStartTimeByThread.size());
-        sendTimelineRecord(data, TimelineRecordType::Rasterize, m_firstRasterStartTime, m_lastRasterEndTime, "multiple");
-    }
-    m_firstRasterStartTime = 0;
-    m_lastRasterEndTime = 0;
-    m_frameRasterTime = 0;
-}
-
-void TimelineTraceEventProcessor::sendTimelineRecord(PassRefPtr<InspectorObject> data, const String& recordType, double startTime, double endTime, const String& thread)
-{
-    ASSERT(isMainThread());
-    InspectorTimelineAgent* timelineAgent = m_timelineAgent.get();
-    if (!timelineAgent)
-        return;
-    timelineAgent->appendBackgroundThreadRecord(data, recordType, startTime, endTime, thread);
+    double startTime = m_timeConverter.fromMonotonicallyIncreasingTime(event.timestamp());
+    RefPtr<InspectorObject> record = TimelineRecordFactory::createBackgroundRecord(startTime, String::number(event.threadIdentifier()));
+    record->setString("type", recordType);
+    record->setObject("data", data ? data : InspectorObject::create());
+    return record.release();
 }
 
 void TimelineTraceEventProcessor::processBackgroundEvents()

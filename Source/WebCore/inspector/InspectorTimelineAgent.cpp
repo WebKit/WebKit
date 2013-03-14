@@ -122,6 +122,11 @@ static const char WebSocketDestroy[] = "WebSocketDestroy";
 const char Rasterize[] = "Rasterize";
 }
 
+void TimelineTimeConverter::reset()
+{
+    m_startOffset = monotonicallyIncreasingTime() - currentTime();
+}
+
 void InspectorTimelineAgent::pushGCEventRecords()
 {
     if (!m_gcEvents.size())
@@ -130,9 +135,9 @@ void InspectorTimelineAgent::pushGCEventRecords()
     GCEvents events = m_gcEvents;
     m_gcEvents.clear();
     for (GCEvents::iterator i = events.begin(); i != events.end(); ++i) {
-        RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestampFromMicroseconds(i->startTime), m_maxCallStackDepth);
+        RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(m_timeConverter.fromMonotonicallyIncreasingTime(i->startTime), m_maxCallStackDepth);
         record->setObject("data", TimelineRecordFactory::createGCEventData(i->collectedBytes));
-        record->setNumber("endTime", timestampFromMicroseconds(i->endTime));
+        record->setNumber("endTime", m_timeConverter.fromMonotonicallyIncreasingTime(i->endTime));
         addRecordToTimeline(record.release(), TimelineRecordType::GCEvent);
     }
 }
@@ -178,7 +183,7 @@ void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth)
     else
         m_maxCallStackDepth = 5;
     m_state->setLong(TimelineAgentState::timelineMaxCallStackDepth, m_maxCallStackDepth);
-    m_timestampOffset = currentTime() - monotonicallyIncreasingTime();
+    m_timeConverter.reset();
 
     m_instrumentingAgents->setInspectorTimelineAgent(this);
     ScriptGCEvent::addEventListener(this);
@@ -547,11 +552,9 @@ void InspectorTimelineAgent::innerAddRecordToTimeline(PassRefPtr<InspectorObject
     else
         setDOMCounters(record.get());
 
-    if (m_recordStack.isEmpty()) {
-        // FIXME: runtimeCast is a hack. We do it because we can't build TimelineEvent directly now.
-        RefPtr<TypeBuilder::Timeline::TimelineEvent> recordChecked = TypeBuilder::Timeline::TimelineEvent::runtimeCast(record.release());
-        m_frontend->eventRecorded(recordChecked.release());
-    } else {
+    if (m_recordStack.isEmpty())
+        sendEvent(record.release());
+    else {
         TimelineRecordEntry parent = m_recordStack.last();
         parent.children->pushObject(record.release());
     }
@@ -634,7 +637,6 @@ InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentin
     , m_pageAgent(pageAgent)
     , m_memoryAgent(memoryAgent)
     , m_frontend(0)
-    , m_timestampOffset(0)
     , m_id(1)
     , m_maxCallStackDepth(5)
     , m_platformInstrumentationClientInstalledAtStackDepth(0)
@@ -649,19 +651,14 @@ void InspectorTimelineAgent::appendRecord(PassRefPtr<InspectorObject> data, cons
     pushGCEventRecords();
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestamp(), captureCallStack ? m_maxCallStackDepth : 0);
     record->setObject("data", data);
-    record->setString("type", type);
     setFrameIdentifier(record.get(), frame);
     addRecordToTimeline(record.release(), type);
 }
 
-void InspectorTimelineAgent::appendBackgroundThreadRecord(PassRefPtr<InspectorObject> data, const String& type, double startTime, double endTime, const String& threadName)
+void InspectorTimelineAgent::sendEvent(PassRefPtr<InspectorObject> event)
 {
-    RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestampFromMicroseconds(startTime), 0);
-    record->setObject("data", data);
-    record->setString("type", type);
-    record->setString("thread", threadName);
-    record->setNumber("endTime", timestampFromMicroseconds(endTime));
-    RefPtr<TypeBuilder::Timeline::TimelineEvent> recordChecked = TypeBuilder::Timeline::TimelineEvent::runtimeCast(record.release());
+    // FIXME: runtimeCast is a hack. We do it because we can't build TimelineEvent directly now.
+    RefPtr<TypeBuilder::Timeline::TimelineEvent> recordChecked = TypeBuilder::Timeline::TimelineEvent::runtimeCast(event);
     m_frontend->eventRecorded(recordChecked.release());
 }
 
@@ -700,12 +697,7 @@ void InspectorTimelineAgent::clearRecordStack()
 
 double InspectorTimelineAgent::timestamp()
 {
-    return timestampFromMicroseconds(WTF::monotonicallyIncreasingTime());
-}
-
-double InspectorTimelineAgent::timestampFromMicroseconds(double microseconds)
-{
-    return (microseconds + m_timestampOffset) * 1000.0;
+    return m_timeConverter.fromMonotonicallyIncreasingTime(WTF::monotonicallyIncreasingTime());
 }
 
 Page* InspectorTimelineAgent::page()

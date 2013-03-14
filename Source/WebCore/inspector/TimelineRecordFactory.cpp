@@ -59,6 +59,14 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createGenericRecord(double st
     return record.release();
 }
 
+PassRefPtr<InspectorObject> TimelineRecordFactory::createBackgroundRecord(double startTime, const String& threadName)
+{
+    RefPtr<InspectorObject> record = InspectorObject::create();
+    record->setNumber("startTime", startTime);
+    record->setString("thread", threadName);
+    return record.release();
+}
+
 PassRefPtr<InspectorObject> TimelineRecordFactory::createGCEventData(const size_t usedHeapSizeDelta)
 {
     RefPtr<InspectorObject> data = InspectorObject::create();
@@ -211,14 +219,6 @@ void TimelineRecordFactory::addRectData(InspectorObject* data, const LayoutRect&
     data->setNumber("y", rect.y());
     data->setNumber("width", rect.width());
     data->setNumber("height", rect.height());
-}
-
-PassRefPtr<InspectorObject> TimelineRecordFactory::createRasterData(double totalCPUTime, int threadsUsed)
-{
-    RefPtr<InspectorObject> data = InspectorObject::create();
-    data->setNumber("totalCPUTime", totalCPUTime);
-    data->setNumber("threadsUsed", threadsUsed);
-    return data.release();
 }
 
 } // namespace WebCore
