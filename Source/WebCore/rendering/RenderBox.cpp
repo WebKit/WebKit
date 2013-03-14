@@ -1120,19 +1120,38 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
 
 void RenderBox::paintBackground(const PaintInfo& paintInfo, const LayoutRect& paintRect, BackgroundBleedAvoidance bleedAvoidance)
 {
-    if (isRoot())
+    if (isRoot()) {
         paintRootBoxFillLayers(paintInfo);
-    else if (!isBody()
-            || (document()->documentElement()->renderer() && document()->documentElement()->renderer()->hasBackground())
-            || (document()->documentElement()->renderer() != parent())) {
+        return;
+    }
+    if (isBody()) {
         // The <body> only paints its background if the root element has defined a background independent of the body,
         // or if the <body>'s parent is not the document element's renderer (e.g. inside SVG foreignObject).
-        if (!backgroundIsObscured())
-            paintFillLayers(paintInfo, style()->visitedDependentColor(CSSPropertyBackgroundColor), style()->backgroundLayers(), paintRect, bleedAvoidance);
+        RenderObject* documentElementRenderer = document()->documentElement()->renderer();
+        if (documentElementRenderer && !documentElementRenderer->hasBackground() && documentElementRenderer == parent())
+            return;
     }
+    if (backgroundIsKnownToBeObscured())
+        return;
+    paintFillLayers(paintInfo, style()->visitedDependentColor(CSSPropertyBackgroundColor), style()->backgroundLayers(), paintRect, bleedAvoidance);
 }
 
-bool RenderBox::backgroundIsOpaqueInRect(const LayoutRect& localRect) const
+LayoutRect RenderBox::backgroundPaintedExtent() const
+{
+    ASSERT(hasBackground());
+    LayoutRect backgroundRect = borderBoxRect();
+
+    Color backgroundColor = style()->visitedDependentColor(CSSPropertyBackgroundColor);
+    if (backgroundColor.isValid() && backgroundColor.alpha())
+        return backgroundRect;
+    if (!style()->backgroundLayers()->image() || style()->backgroundLayers()->next())
+        return backgroundRect;
+    BackgroundImageGeometry geometry;
+    const_cast<RenderBox*>(this)->calculateBackgroundImageGeometry(style()->backgroundLayers(), backgroundRect, geometry);
+    return geometry.destRect();
+}
+
+bool RenderBox::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) const
 {
     Color backgroundColor = style()->visitedDependentColor(CSSPropertyBackgroundColor);
     if (!backgroundColor.isValid() || backgroundColor.hasAlpha())
@@ -1163,7 +1182,7 @@ bool RenderBox::backgroundIsOpaqueInRect(const LayoutRect& localRect) const
     return backgroundRect.contains(localRect);
 }
 
-bool RenderBox::backgroundIsObscured() const
+bool RenderBox::backgroundIsKnownToBeObscured() const
 {
     ASSERT(!isRoot());
     // Test to see if the children trivially obscure the background.
@@ -1173,8 +1192,8 @@ bool RenderBox::backgroundIsObscured() const
     // Table background painting is special.
     if (isTable())
         return false;
-    // This could take background position, clip, etc. into account.
-    LayoutRect backgroundRect = borderBoxRect();
+
+    LayoutRect backgroundRect = backgroundPaintedExtent();
     // If we don't find a covering child fast there probably isn't one.
     static const unsigned maximumChildrenCountToTest = 4;
     unsigned count = 0;
@@ -1204,7 +1223,7 @@ bool RenderBox::backgroundIsObscured() const
             if (childLayer->hasTransform() || childLayer->isTransparent())
                 continue;
         }
-        if (childBox->backgroundIsOpaqueInRect(childLocalBackgroundRect))
+        if (childBox->backgroundIsKnownToBeOpaqueInRect(childLocalBackgroundRect))
             return true;
     }
     return false;

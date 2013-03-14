@@ -479,10 +479,10 @@ bool RenderImage::boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance 
     if (!RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(bleedAvoidance))
         return false;
 
-    return !backgroundIsObscured();
+    return !backgroundIsKnownToBeObscured();
 }
 
-bool RenderImage::backgroundIsObscured() const
+bool RenderImage::backgroundIsKnownToBeObscured() const
 {
     if (!m_imageResource->hasImage() || m_imageResource->errorOccurred())
         return false;

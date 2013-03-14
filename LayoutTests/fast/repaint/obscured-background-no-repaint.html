@@ -3,17 +3,33 @@
 <script>jsTestIsAsync = true;</script>
 <script src="../js/resources/js-test-pre.js"></script>
 <style type="text/css">
-    div {
+    #test1 div {
         height: 100px;
         width: 100px;
     }
-
-    .parent {
+    #test1 .parent {
         background-image: url(resources/animated.gif)
     }
-
-    .child {
+    #test1 .child {
         background-color: green;
+    }
+
+    #test2 .parent {
+        position: relative;
+        height: 100px;
+        width: 100px;
+        background-image: url(resources/animated.gif);
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    #test2 .child {
+        background-color: green;
+        position: relative;
+        left: 25px;
+        top: 25px;
+        height: 50px;
+        width: 50px;
     }
 </style>
 <script>
@@ -47,10 +63,18 @@
 </script>
 </head>
 <body onload="start()">
+<div id="test1">
     <div class="parent">
         <div class="child">
         </div>
     </div>
+</div>
+<div id="test2">
+    <div class="parent">
+        <div class="child">
+        </div>
+    </div>
+</div>
 </body>
 <script src="../js/resources/js-test-post.js"></script>
 </html>
