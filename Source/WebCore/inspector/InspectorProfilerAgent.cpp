@@ -292,8 +292,6 @@ void InspectorProfilerAgent::getCPUProfile(ErrorString* errorString, int rawUid,
     }
     profileObject = TypeBuilder::Profiler::CPUProfile::create();
     profileObject->setHead(it->value->buildInspectorObjectForHead());
-    if (it->value->bottomUpHead())
-        profileObject->setBottomUpHead(it->value->buildInspectorObjectForBottomUpHead());
     profileObject->setIdleTime(it->value->idleTime());
 }
 

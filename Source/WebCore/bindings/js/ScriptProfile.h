@@ -54,7 +54,6 @@ public:
     String title() const;
     unsigned int uid() const;
     ScriptProfileNode* head() const;
-    PassRefPtr<ScriptProfileNode> bottomUpHead() const;
     double idleTime() const;
 
 #if ENABLE(INSPECTOR)

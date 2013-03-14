@@ -60,11 +60,6 @@ PassRefPtr<ScriptProfileNode> ScriptProfile::head() const
     return ScriptProfileNode::create(m_profile->GetTopDownRoot());
 }
 
-PassRefPtr<ScriptProfileNode> ScriptProfile::bottomUpHead() const
-{
-    return ScriptProfileNode::create(m_profile->GetBottomUpRoot());
-}
-
 double ScriptProfile::idleTime() const
 {
     return m_idleTime;
@@ -98,11 +93,6 @@ static PassRefPtr<TypeBuilder::Profiler::CPUProfileNode> buildInspectorObjectFor
 PassRefPtr<TypeBuilder::Profiler::CPUProfileNode> ScriptProfile::buildInspectorObjectForHead() const
 {
     return buildInspectorObjectFor(m_profile->GetTopDownRoot());
-}
-
-PassRefPtr<TypeBuilder::Profiler::CPUProfileNode> ScriptProfile::buildInspectorObjectForBottomUpHead() const
-{
-    return buildInspectorObjectFor(m_profile->GetBottomUpRoot());
 }
 #endif
 

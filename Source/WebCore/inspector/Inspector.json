@@ -3111,7 +3111,6 @@
                 "description": "Profile.",
                 "properties": [
                     { "name": "head", "$ref": "CPUProfileNode", "optional": true },
-                    { "name": "bottomUpHead", "$ref": "CPUProfileNode", "optional": true },
                     { "name": "idleTime", "type": "number", "optional": true }
                 ]
             },

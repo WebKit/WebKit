@@ -60,12 +60,10 @@ public:
     String title() const;
     unsigned int uid() const;
     PassRefPtr<ScriptProfileNode> head() const;
-    PassRefPtr<ScriptProfileNode> bottomUpHead() const;
     double idleTime() const;
 
 #if ENABLE(INSPECTOR)
     PassRefPtr<TypeBuilder::Profiler::CPUProfileNode> buildInspectorObjectForHead() const;
-    PassRefPtr<TypeBuilder::Profiler::CPUProfileNode> buildInspectorObjectForBottomUpHead() const;
 #endif
 
 private:
