@@ -1,3 +1,13 @@
+2013-03-14  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Disable DRT on Windows
+
+        Reviewed by Jocelyn Turcotte.
+
+        We don't run and maintain DRT on Windows, so let's not try to maintain the build of it.
+
+        * qmake/mkspecs/features/configure.prf:
+
 2013-03-14  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Add an API for adding and removing user style sheets from a page group

@@ -96,7 +96,7 @@ defineTest(finalizeConfigure) {
 
     win32|!enable?(NETSCAPE_PLUGIN_API): WEBKIT_CONFIG -= build_test_npapi
 
-    wince* {
+    win* {
         WEBKIT_CONFIG -= build_drt
     }
 
