@@ -1,5 +1,11 @@
 2013-03-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed build fix. Add missing file.
+
+        * UIProcess/API/gtk/WebKitForwardDeclarations.h: Added.
+
+2013-03-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Split WebKitDefines.h in two files.
 
         Reviewed by Gustavo Noronha Silva.
