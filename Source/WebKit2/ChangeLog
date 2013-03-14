@@ -1,3 +1,17 @@
+2013-03-14  Andy Estes  <aestes@apple.com>
+
+        [WebKit2] Only preprocess sandbox profiles if we're building for the OS X SDK
+        https://bugs.webkit.org/show_bug.cgi?id=112330
+
+        Reviewed by David Kilzer.
+
+        We shouldn't preprocess sandbox profiles just because the computer
+        we're building on is a Mac. We should only do it if we're actually
+        building for the OS X SDK.
+
+        * DerivedSources.make: Check if $PLATFORM_NAME is macosx rather than if
+        $OS is MACOS.
+
 2013-03-14  Sam Weinig  <sam@webkit.org>
 
         Support private browsing on a per-page basis

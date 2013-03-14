@@ -144,7 +144,7 @@ all : \
 
 # Mac-specific rules
 
-ifeq ($(OS),MACOS)
+ifeq ($(PLATFORM_NAME),macosx)
 
 FRAMEWORK_FLAGS = $(shell echo $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_SEARCH_PATHS) | perl -e 'print "-F " . join(" -F ", split(" ", <>));')
 HEADER_FLAGS = $(shell echo $(BUILT_PRODUCTS_DIR) $(HEADER_SEARCH_PATHS) | perl -e 'print "-I" . join(" -I", split(" ", <>));')
@@ -172,7 +172,7 @@ all: $(SANDBOX_PROFILES)
 	@echo Pre-processing $* sandbox profile...
 	$(CC) $(SDK_FLAGS) $(TEXT_PREPROCESSOR_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" $< > $@
 
-endif # MACOS
+endif # macosx
 
 # ------------------------
 
