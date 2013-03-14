@@ -64,4 +64,7 @@
 - (size_t)_getDailyVisitCounts:(const int**)counts;
 - (size_t)_getWeeklyVisitCounts:(const int**)counts;
 
+- (BOOL)_isInPageCache;
+- (BOOL)_hasCachedPageExpired;
+
 @end

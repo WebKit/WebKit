@@ -461,10 +461,7 @@ CachedPage* PageCache::get(HistoryItem* item)
         return 0;
 
     if (CachedPage* cachedPage = item->m_cachedPage.get()) {
-        // FIXME: 1800 should not be hardcoded, it should come from
-        // WebKitBackForwardCacheExpirationIntervalKey in WebKit.
-        // Or we should remove WebKitBackForwardCacheExpirationIntervalKey.
-        if (currentTime() - cachedPage->timeStamp() <= 1800)
+        if (!cachedPage->hasExpired())
             return cachedPage;
         
         LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", item->url().string().ascii().data());

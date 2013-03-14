@@ -48,6 +48,7 @@ public:
     DocumentLoader* documentLoader() const { return m_cachedMainFrame->documentLoader(); }
 
     double timeStamp() const { return m_timeStamp; }
+    bool hasExpired() const;
     
     CachedFrame* cachedMainFrame() { return m_cachedMainFrame.get(); }
 
@@ -58,6 +59,7 @@ private:
     CachedPage(Page*);
 
     double m_timeStamp;
+    double m_expirationTime;
     RefPtr<CachedFrame> m_cachedMainFrame;
     bool m_needStyleRecalcForVisitedLinks;
     bool m_needsFullStyleRecalc;

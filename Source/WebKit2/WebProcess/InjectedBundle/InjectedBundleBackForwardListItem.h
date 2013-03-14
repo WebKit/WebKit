@@ -54,6 +54,7 @@ public:
     const String& target() const { return m_item->target(); }
     bool isTargetItem() const { return m_item->isTargetItem(); }
     bool isInPageCache() const { return m_item->isInPageCache(); }
+    bool hasCachedPageExpired() const { return m_item->hasCachedPageExpired(); }
 
     PassRefPtr<ImmutableArray> children() const;
 

@@ -230,6 +230,11 @@ const String& HistoryItem::alternateTitle() const
     return m_displayTitle;
 }
 
+bool HistoryItem::hasCachedPageExpired() const
+{
+    return m_cachedPage ? m_cachedPage->hasExpired() : false;
+}
+
 double HistoryItem::lastVisitedTime() const
 {
     return m_lastVisitedTime;

@@ -33,6 +33,7 @@
 #include "FrameView.h"
 #include "Node.h"
 #include "Page.h"
+#include "Settings.h"
 #include "VisitedLinkState.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/RefCountedLeakCounter.h>
@@ -51,6 +52,7 @@ PassRefPtr<CachedPage> CachedPage::create(Page* page)
 
 CachedPage::CachedPage(Page* page)
     : m_timeStamp(currentTime())
+    , m_expirationTime(m_timeStamp + page->settings()->backForwardCacheExpirationInterval())
     , m_cachedMainFrame(CachedFrame::create(page->mainFrame()))
     , m_needStyleRecalcForVisitedLinks(false)
     , m_needsFullStyleRecalc(false)
@@ -112,6 +114,11 @@ void CachedPage::destroy()
         m_cachedMainFrame->destroy();
 
     m_cachedMainFrame = 0;
+}
+
+bool CachedPage::hasExpired() const
+{
+    return currentTime() > m_expirationTime;
 }
 
 } // namespace WebCore

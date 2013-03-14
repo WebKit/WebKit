@@ -44,6 +44,7 @@ WK_EXPORT WKStringRef WKBundleBackForwardListItemCopyTarget(WKBundleBackForwardL
 WK_EXPORT bool WKBundleBackForwardListItemIsTargetItem(WKBundleBackForwardListItemRef item);
 
 WK_EXPORT bool WKBundleBackForwardListItemIsInPageCache(WKBundleBackForwardListItemRef item);
+WK_EXPORT bool WKBundleBackForwardListItemHasCachedPageExpired(WKBundleBackForwardListItemRef item);
 
 WK_EXPORT WKArrayRef WKBundleBackForwardListItemCopyChildren(WKBundleBackForwardListItemRef item);
 

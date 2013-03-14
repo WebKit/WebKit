@@ -102,6 +102,7 @@ public:
     const String& title() const;
     
     bool isInPageCache() const { return m_cachedPage; }
+    bool hasCachedPageExpired() const;
     
     double lastVisitedTime() const;
     

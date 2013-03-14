@@ -1488,6 +1488,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setDOMPasteAllowed([preferences isDOMPasteAllowed]);
     settings->setUsesPageCache([self usesPageCache]);
     settings->setPageCacheSupportsPlugins([preferences pageCacheSupportsPlugins]);
+    settings->setBackForwardCacheExpirationInterval([preferences _backForwardCacheExpirationInterval]);
     settings->setShowsURLsInToolTips([preferences showsURLsInToolTips]);
     settings->setShowsToolTipOverTruncatedText([preferences showsToolTipOverTruncatedText]);
     settings->setDeveloperExtrasEnabled([preferences developerExtrasEnabled]);

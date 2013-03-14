@@ -1079,8 +1079,7 @@ public:
 
 - (NSTimeInterval)_backForwardCacheExpirationInterval
 {
-    // FIXME: There's probably no good reason to read from the standard user defaults instead of self.
-    return (NSTimeInterval)[[NSUserDefaults standardUserDefaults] floatForKey:WebKitBackForwardCacheExpirationIntervalKey];
+    return (NSTimeInterval)[self _floatValueForKey:WebKitBackForwardCacheExpirationIntervalKey];
 }
 
 - (float)PDFScaleFactor

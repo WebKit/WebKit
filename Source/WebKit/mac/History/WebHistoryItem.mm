@@ -620,4 +620,14 @@ WebHistoryItem *kit(HistoryItem* item)
     return coreItem->weeklyVisitCounts().size();
 }
 
+- (BOOL)_isInPageCache
+{
+    return core(_private)->isInPageCache();
+}
+
+- (BOOL)_hasCachedPageExpired
+{
+    return core(_private)->hasCachedPageExpired();
+}
+
 @end
