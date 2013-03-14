@@ -140,6 +140,8 @@ private:
 
     void initialize(const IntSize&);
 
+    bool checkBufferIntegrity();
+
     PreserveDrawingBuffer m_preserveDrawingBuffer;
     AlphaRequirement m_alpha;
     bool m_scissorEnabled;
