@@ -184,8 +184,7 @@ void WorkerAsyncFileSystemChromium::createSnapshotFileAndReadMetadata(const KURL
 
 PassRefPtr<WorkerFileSystemCallbacksBridge> WorkerAsyncFileSystemChromium::createWorkerFileSystemCallbacksBridge(PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    ASSERT(m_synchronousType == AsynchronousFileSystem || !m_bridgeForCurrentOperation);
-    (void)m_synchronousType; // Needed for release builds, don't delete.
+    ASSERT_UNUSED(m_synchronousType, m_synchronousType == AsynchronousFileSystem || !m_bridgeForCurrentOperation);
 
     m_modeForCurrentOperation = fileSystemOperationsMode;
     m_modeForCurrentOperation.append(String::number(m_workerContext->thread()->runLoop().createUniqueId()));
