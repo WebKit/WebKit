@@ -38,10 +38,11 @@ function test()
         function dumpFormattedRecord(record, prefix)
         {
              prefix = prefix || "";
-             if (record.type !== "GCEvent")
+             // Here and below: pretend coalesced record are just not there, as coalescation is time dependent and, hence, not stable.
+             if (!record.coalesced && record.type !== "GCEvent")
                  InspectorTest.addResult(prefix + record.type);
              if (record._children) {
-                 var childPrefix = prefix + "    ";
+                 var childPrefix = prefix + (record.coalesced ? "" : "    ");
                  for (var i = 0; i < record._children.length; ++i)
                      dumpFormattedRecord(record._children[i], childPrefix);
              }
