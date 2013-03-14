@@ -67,6 +67,7 @@ void BitmapTextureImageBuffer::updateContents(TextureMapper*, GraphicsLayer* sou
     IntRect sourceRect(targetRect);
     sourceRect.setLocation(sourceOffset);
     context->save();
+    context->clip(targetRect);
     context->translate(targetRect.x() - sourceOffset.x(), targetRect.y() - sourceOffset.y());
     sourceLayer->paintGraphicsLayerContents(*context, sourceRect);
     context->restore();
