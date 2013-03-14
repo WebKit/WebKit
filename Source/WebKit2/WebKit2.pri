@@ -82,4 +82,4 @@ linux-*: {
 
 have?(QTQUICK): QT += qml quick
 
-enable?(GEOLOCATION): QT += location
+have?(qtlocation):enable?(GEOLOCATION): QT += location

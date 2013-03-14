@@ -22,7 +22,7 @@
 
 #include "FrameLoaderClientQt.h"
 #include "PlatformEvent.h"
-#if ENABLE(ORIENTATION_EVENTS)
+#if ENABLE(ORIENTATION_EVENTS) && HAVE(QTSENSORS)
 #include "qorientationsensor.h"
 #endif // ENABLE(ORIENTATION_EVENTS).
 #include "qwebelement.h"
@@ -228,7 +228,7 @@ public:
     int marginHeight;
     Qt::ScrollBarPolicy horizontalScrollBarPolicy;
     Qt::ScrollBarPolicy verticalScrollBarPolicy;
-#if ENABLE(ORIENTATION_EVENTS)
+#if ENABLE(ORIENTATION_EVENTS) && HAVE(QTSENSORS)
     QOrientationSensor m_orientation;
 #endif // ENABLE(ORIENTATION_EVENTS).
 

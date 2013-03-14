@@ -12,11 +12,9 @@ INCLUDEPATH += \
     $$SOURCE_DIR/qt/WebCoreSupport \
     $$ROOT_WEBKIT_DIR/Source/WTF/wtf/qt
 
-enable?(DEVICE_ORIENTATION)|enable?(ORIENTATION_EVENTS) {
-    QT += sensors
-}
+have?(qtsensors):if(enable?(DEVICE_ORIENTATION)|enable?(ORIENTATION_EVENTS)): QT += sensors
 
-enable?(GEOLOCATION): QT += location
+have?(qtlocation):enable?(GEOLOCATION): QT += location
 
 contains(CONFIG, texmap): DEFINES += WTF_USE_TEXTURE_MAPPER=1
 

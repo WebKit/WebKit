@@ -3719,7 +3719,7 @@ enable?(TEXT_AUTOSIZING) {
     SOURCES += # FIXME!
 }
 
-enable?(DEVICE_ORIENTATION) {
+have?(qtsensors):enable?(DEVICE_ORIENTATION) {
     HEADERS += \
         platform/qt/DeviceMotionClientQt.h \
         platform/qt/DeviceMotionProviderQt.h \

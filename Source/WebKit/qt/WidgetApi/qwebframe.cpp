@@ -209,7 +209,7 @@ QWebFrame::QWebFrame(QWebPage *parentPage)
     d->q = this;
     d->init(/*page adapter*/ parentPage->handle());
 
-#if ENABLE(ORIENTATION_EVENTS)
+#if ENABLE(ORIENTATION_EVENTS) && HAVE(QTSENSORS)
     connect(&d->m_orientation, SIGNAL(readingChanged()), this, SLOT(_q_orientationChanged()));
     d->m_orientation.start();
 #endif
@@ -222,7 +222,7 @@ QWebFrame::QWebFrame(QWebFrame* parent, QWebFrameData* frameData)
     d->page = parent->d->page;
     d->q = this;
     d->init(parent->d->pageAdapter, frameData);
-#if ENABLE(ORIENTATION_EVENTS)
+#if ENABLE(ORIENTATION_EVENTS) && HAVE(QTSENSORS)
     connect(&d->m_orientation, SIGNAL(readingChanged()), this, SLOT(_q_orientationChanged()));
     d->m_orientation.start();
 #endif

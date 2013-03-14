@@ -152,9 +152,7 @@ enable?(NETSCAPE_PLUGIN_API) {
     }
 }
 
-enable?(ORIENTATION_EVENTS)|enable?(DEVICE_ORIENTATION) {
-    QT += sensors
-}
+have?(qtsensors):if(enable?(ORIENTATION_EVENTS)|enable?(DEVICE_ORIENTATION)): QT += sensors
 
 use?(QT_MOBILITY_SYSTEMINFO) {
      CONFIG *= mobility

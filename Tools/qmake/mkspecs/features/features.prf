@@ -36,6 +36,8 @@ defineTest(detectFeatures) {
     haveQtModule(printsupport): WEBKIT_CONFIG += have_qtprintsupport
     haveQtModule(widgets): WEBKIT_CONFIG += have_qstyle
     haveQtModule(testlib): WEBKIT_CONFIG += have_qttestlib
+    haveQtModule(location): WEBKIT_CONFIG += have_qtlocation
+    haveQtModule(sensors): WEBKIT_CONFIG += have_qtsensors
 
     config_libxml2: WEBKIT_CONFIG += use_libxml2
     config_libxslt: WEBKIT_CONFIG += xslt
@@ -97,11 +99,13 @@ defineTest(detectFeatures) {
     # Enable CSS shaders when CSS filters and WebGL are enabled
     enable?(css_filters):enable?(webgl): WEBKIT_CONFIG += css_shaders
 
-    # Geolocation support if QtMobility exists
-    haveQtModule(location): WEBKIT_CONFIG += geolocation
+    # Geolocation support if QtLocation exists or if we're doing a developer build (Mock implementation exists
+    # and used for layout tests)
+    have?(qtlocation)|!production_build: WEBKIT_CONFIG += geolocation
 
-    # Orientation support
-    haveQtModule(sensors): WEBKIT_CONFIG += orientation_events device_orientation
+    # Orientation support if QtSensors exists or if we're doing a developer build (Mock implementation exists
+    # and used for layout tests)
+    have?(qtsensors)|!production_build: WEBKIT_CONFIG += orientation_events device_orientation
 
     # HTML5 Media Support
     mac {

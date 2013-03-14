@@ -167,7 +167,7 @@
 #endif
 
 #if PLATFORM(QT)
-#if ENABLE(DEVICE_ORIENTATION)
+#if ENABLE(DEVICE_ORIENTATION) && HAVE(QTSENSORS)
 #include "DeviceMotionClientQt.h"
 #include "DeviceOrientationClientQt.h"
 #endif
@@ -316,7 +316,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #if ENABLE(GEOLOCATION)
     WebCore::provideGeolocationTo(m_page.get(), new WebGeolocationClient(this));
 #endif
-#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(QT)
+#if ENABLE(DEVICE_ORIENTATION) && PLATFORM(QT) && HAVE(QTSENSORS)
     WebCore::provideDeviceMotionTo(m_page.get(), new DeviceMotionClientQt);
     WebCore::provideDeviceOrientationTo(m_page.get(), new DeviceOrientationClientQt);
 #endif
