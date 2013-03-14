@@ -207,7 +207,7 @@
           'ENABLE_WEB_AUDIO=1',
         ],
       }],
-      ['OS=="linux" or OS=="mac"', {
+      ['OS=="linux" or OS=="mac" or OS=="android"', {
         'feature_defines': [
           # 8Bit text runs should be enabled for all platforms webkit.org/b/111348
           'ENABLE_8BIT_TEXTRUN=1',
