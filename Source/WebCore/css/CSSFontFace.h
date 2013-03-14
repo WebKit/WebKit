@@ -26,6 +26,8 @@
 #ifndef CSSFontFace_h
 #define CSSFontFace_h
 
+#include "CSSFontFaceRule.h"
+#include "CSSFontFaceSource.h"
 #include "FontTraitsMask.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -36,14 +38,13 @@
 
 namespace WebCore {
 
-class CSSFontFaceSource;
 class CSSSegmentedFontFace;
 class FontDescription;
 class SimpleFontData;
 
 class CSSFontFace : public RefCounted<CSSFontFace> {
 public:
-    static PassRefPtr<CSSFontFace> create(FontTraitsMask traitsMask, bool isLocalFallback = false) { return adoptRef(new CSSFontFace(traitsMask, isLocalFallback)); }
+    static PassRefPtr<CSSFontFace> create(FontTraitsMask traitsMask, PassRefPtr<CSSFontFaceRule> rule, bool isLocalFallback = false) { return adoptRef(new CSSFontFace(traitsMask, rule, isLocalFallback)); }
 
     FontTraitsMask traitsMask() const { return m_traitsMask; }
 
@@ -85,12 +86,22 @@ public:
     bool hasSVGFontFaceSource() const;
 #endif
 
+#if ENABLE(FONT_LOAD_EVENTS)
+    enum LoadState { NotLoaded, Loading, Loaded, Error };
+    LoadState loadState() const { return m_loadState; }
+#endif
+
 private:
-    CSSFontFace(FontTraitsMask traitsMask, bool isLocalFallback)
+    CSSFontFace(FontTraitsMask traitsMask, PassRefPtr<CSSFontFaceRule> rule, bool isLocalFallback)
         : m_traitsMask(traitsMask)
         , m_activeSource(0)
         , m_isLocalFallback(isLocalFallback)
+#if ENABLE(FONT_LOAD_EVENTS)
+        , m_loadState(isLocalFallback ? Loaded : NotLoaded)
+        , m_rule(rule)
+#endif
     {
+        UNUSED_PARAM(rule);
     }
 
     FontTraitsMask m_traitsMask;
@@ -99,6 +110,12 @@ private:
     Vector<OwnPtr<CSSFontFaceSource> > m_sources;
     CSSFontFaceSource* m_activeSource;
     bool m_isLocalFallback;
+#if ENABLE(FONT_LOAD_EVENTS)
+    LoadState m_loadState;
+    RefPtr<CSSFontFaceRule> m_rule;
+    void notifyFontLoader(LoadState);
+    void notifyLoadingDone();
+#endif
 };
 
 }

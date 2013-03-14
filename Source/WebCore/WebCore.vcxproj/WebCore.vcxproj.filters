@@ -387,6 +387,9 @@
     <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSCSSCharsetRule.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSCSSFontFaceLoadEvent.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSCSSFontFaceRule.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
@@ -616,6 +619,9 @@
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSFileWriterSync.cpp">
+      <Filter>DerivedSources</Filter>
+    </ClCompile>
+    <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSFontLoader.cpp">
       <Filter>DerivedSources</Filter>
     </ClCompile>
     <ClCompile Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSGeolocation.cpp">
@@ -3582,6 +3588,9 @@
     <ClCompile Include="..\css\CSSFontFace.cpp">
       <Filter>css</Filter>
     </ClCompile>
+    <ClCompile Include="..\css\CSSFontFaceLoadEvent.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
     <ClCompile Include="..\css\CSSFontFaceRule.cpp">
       <Filter>css</Filter>
     </ClCompile>
@@ -3694,6 +3703,9 @@
       <Filter>css</Filter>
     </ClCompile>
     <ClCompile Include="..\css\FontFeatureValue.cpp">
+      <Filter>css</Filter>
+    </ClCompile>
+    <ClCompile Include="..\css\FontLoader.cpp">
       <Filter>css</Filter>
     </ClCompile>
     <ClCompile Include="..\css\FontValue.cpp">
@@ -6942,6 +6954,9 @@
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSCSSCharsetRule.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSCSSFontFaceLoadEvent.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSCSSFontFaceRule.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
@@ -7171,6 +7186,9 @@
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSFileWriterSync.h">
+      <Filter>DerivedSources</Filter>
+    </ClInclude>
+    <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSFontLoader.h">
       <Filter>DerivedSources</Filter>
     </ClInclude>
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\JSGeolocation.h">
@@ -10329,6 +10347,9 @@
     <ClInclude Include="..\css\CSSFontFace.h">
       <Filter>css</Filter>
     </ClInclude>
+    <ClInclude Include="..\css\CSSFontFaceLoadEvent.h">
+      <Filter>css</Filter>
+    </ClInclude>
     <ClInclude Include="..\css\CSSFontFaceRule.h">
       <Filter>css</Filter>
     </ClInclude>
@@ -10462,6 +10483,9 @@
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\FontFeatureValue.h">
+      <Filter>css</Filter>
+    </ClInclude>
+    <ClInclude Include="..\css\FontLoader.h">
       <Filter>css</Filter>
     </ClInclude>
     <ClInclude Include="..\css\FontValue.h">

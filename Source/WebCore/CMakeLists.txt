@@ -297,6 +297,7 @@ set(WebCore_IDL_FILES
 
     css/Counter.idl
     css/CSSCharsetRule.idl
+    css/CSSFontFaceLoadEvent.idl
     css/CSSFontFaceRule.idl
     css/CSSHostRule.idl
     css/CSSImportRule.idl
@@ -312,6 +313,7 @@ set(WebCore_IDL_FILES
     css/CSSValue.idl
     css/CSSValueList.idl
     css/DOMWindowCSS.idl
+    css/FontLoader.idl
     css/MediaList.idl
     css/MediaQueryList.idl
     css/RGBColor.idl
@@ -1019,6 +1021,7 @@ set(WebCore_SOURCES
     css/CSSCursorImageValue.cpp
     css/CSSDefaultStyleSheets.cpp
     css/CSSFontFace.cpp
+    css/CSSFontFaceLoadEvent.cpp
     css/CSSFontFaceRule.cpp
     css/CSSFontFaceSource.cpp
     css/CSSFontFaceSrcValue.cpp
@@ -1061,6 +1064,7 @@ set(WebCore_SOURCES
     css/DocumentRuleSets.cpp
     css/ElementRuleCollector.cpp
     css/FontFeatureValue.cpp
+    css/FontLoader.cpp
     css/FontValue.cpp
     css/InspectorCSSOMWrappers.cpp
     css/LengthFunctions.cpp

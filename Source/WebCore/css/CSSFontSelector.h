@@ -56,6 +56,7 @@ public:
     virtual unsigned version() const OVERRIDE { return m_version; }
 
     virtual PassRefPtr<FontData> getFontData(const FontDescription&, const AtomicString&);
+    CSSSegmentedFontFace* getFontFace(const FontDescription&, const AtomicString& family);
 
     void clearDocument();
 

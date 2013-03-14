@@ -113,6 +113,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSCrypto.h \
 	DerivedSources/WebCore/JSCSSCharsetRule.cpp \
 	DerivedSources/WebCore/JSCSSCharsetRule.h \
+	DerivedSources/WebCore/JSCSSFontFaceLoadEvent.cpp \
+	DerivedSources/WebCore/JSCSSFontFaceLoadEvent.h \
 	DerivedSources/WebCore/JSCSSFontFaceRule.cpp \
 	DerivedSources/WebCore/JSCSSFontFaceRule.h \
 	DerivedSources/WebCore/JSCSSHostRule.cpp \
@@ -292,6 +294,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSFloat64Array.h \
 	DerivedSources/WebCore/JSFocusEvent.cpp \
 	DerivedSources/WebCore/JSFocusEvent.h \
+	DerivedSources/WebCore/JSFontLoader.cpp \
+	DerivedSources/WebCore/JSFontLoader.h \
 	DerivedSources/WebCore/JSGamepad.cpp \
 	DerivedSources/WebCore/JSGamepad.h \
 	DerivedSources/WebCore/JSGamepadList.cpp \
@@ -1333,6 +1337,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/websockets/WebSocket.idl \
 	$(WebCore)/Modules/websockets/WorkerContextWebSocket.idl \
 	$(WebCore)/css/CSSCharsetRule.idl \
+	$(WebCore)/css/CSSFontFaceLoadEvent.idl \
 	$(WebCore)/css/CSSFontFaceRule.idl \
 	$(WebCore)/css/CSSHostRule.idl \
 	$(WebCore)/css/CSSImportRule.idl \
@@ -1349,6 +1354,7 @@ dom_binding_idls += \
 	$(WebCore)/css/CSSValueList.idl \
 	$(WebCore)/css/Counter.idl \
 	$(WebCore)/css/DOMWindowCSS.idl \
+	$(WebCore)/css/FontLoader.idl \
 	$(WebCore)/css/MediaList.idl \
 	$(WebCore)/css/MediaQueryList.idl \
 	$(WebCore)/css/RGBColor.idl \
@@ -2576,6 +2582,8 @@ webcore_sources += \
 	Source/WebCore/css/CSSDefaultStyleSheets.h \
 	Source/WebCore/css/CSSFontFace.cpp \
 	Source/WebCore/css/CSSFontFace.h \
+	Source/WebCore/css/CSSFontFaceLoadEvent.cpp \
+	Source/WebCore/css/CSSFontFaceLoadEvent.h \
 	Source/WebCore/css/CSSFontFaceRule.cpp \
 	Source/WebCore/css/CSSFontFaceRule.h \
 	Source/WebCore/css/CSSFontFaceSource.cpp \
@@ -2668,6 +2676,8 @@ webcore_sources += \
 	Source/WebCore/css/ElementRuleCollector.h \
 	Source/WebCore/css/FontFeatureValue.cpp \
 	Source/WebCore/css/FontFeatureValue.h \
+	Source/WebCore/css/FontLoader.cpp \
+	Source/WebCore/css/FontLoader.h \
 	Source/WebCore/css/FontValue.cpp \
 	Source/WebCore/css/FontValue.h \
 	Source/WebCore/css/InspectorCSSOMWrappers.cpp \

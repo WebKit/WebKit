@@ -190,6 +190,7 @@ IDL_BINDINGS += \
     $$PWD/Modules/websockets/WorkerContextWebSocket.idl \
     $$PWD/css/Counter.idl \
     $$PWD/css/CSSCharsetRule.idl \
+    $$PWD/css/CSSFontFaceLoadEvent.idl \
     $$PWD/css/CSSFontFaceRule.idl \
     $$PWD/css/CSSHostRule.idl \
     $$PWD/css/CSSImportRule.idl \
@@ -205,6 +206,7 @@ IDL_BINDINGS += \
     $$PWD/css/CSSValue.idl \
     $$PWD/css/CSSValueList.idl \
     $$PWD/css/DOMWindowCSS.idl \
+    $$PWD/css/FontLoader.idl \
     $$PWD/css/MediaList.idl \
     $$PWD/css/MediaQueryList.idl \
     $$PWD/css/Rect.idl \

@@ -19,7 +19,10 @@
  */
 
 // Introduced in DOM Level 2:
-interface CSSFontFaceRule : CSSRule {
+interface [
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject,
+] CSSFontFaceRule : CSSRule {
     readonly attribute CSSStyleDeclaration style;
 };
 

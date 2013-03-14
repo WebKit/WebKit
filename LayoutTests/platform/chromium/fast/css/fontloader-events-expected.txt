@@ -1,0 +1,14 @@
+Test that the event handlers of FontLoader are called in the correct order.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.type is "loading"
+PASS event.type is "loadstart"
+PASS event.type is "load"
+PASS event.type is "loadingdone"
+PASS numberOfEvents is 4
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello, world!

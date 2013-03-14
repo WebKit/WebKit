@@ -1,3 +1,15 @@
+2013-03-13  Kunihiko Sakamoto  <ksakamoto@chromium.org>
+
+        Implement FontLoader interface
+        https://bugs.webkit.org/show_bug.cgi?id=98395
+
+        Reviewed by Eric Seidel.
+
+        Enable FontLoadEvents runtime flag for TestShell.
+
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.cpp:
+        (WebTestRunner::TestInterfaces::TestInterfaces):
+
 2013-03-13  Julie Parent  <jparent@chromium.org>
 
         CLeanup: remove unnecessary call to parseParameters.

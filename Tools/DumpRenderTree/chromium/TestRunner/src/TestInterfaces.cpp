@@ -69,6 +69,7 @@ TestInterfaces::TestInterfaces()
     WebRuntimeFeatures::enableInputTypeTime(true);
     WebRuntimeFeatures::enableInputTypeWeek(true);
     WebRuntimeFeatures::enableFileSystem(true);
+    WebRuntimeFeatures::enableFontLoadEvents(true);
     WebRuntimeFeatures::enableJavaScriptI18NAPI(true);
     WebRuntimeFeatures::enableMediaSource(true);
     WebRuntimeFeatures::enableEncryptedMedia(true);

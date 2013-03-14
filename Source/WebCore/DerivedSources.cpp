@@ -54,6 +54,9 @@
 #include "JSCounter.cpp"
 #include "JSCrypto.cpp"
 #include "JSCSSCharsetRule.cpp"
+#if ENABLE(FONT_LOAD_EVENTS)
+#include "JSCSSFontFaceLoadEvent.cpp"
+#endif
 #include "JSCSSFontFaceRule.cpp"
 #include "JSCSSHostRule.cpp"
 #include "JSCSSImportRule.cpp"
@@ -138,6 +141,9 @@
 #include "JSFloat32Array.cpp"
 #include "JSFloat64Array.cpp"
 #include "JSFocusEvent.cpp"
+#if ENABLE(FONT_LOAD_EVENTS)
+#include "JSFontLoader.cpp"
+#endif
 #include "JSGeolocation.cpp"
 #include "JSGeoposition.cpp"
 #include "JSHashChangeEvent.cpp"

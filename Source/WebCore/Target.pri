@@ -265,6 +265,7 @@ SOURCES += \
     css/CSSCursorImageValue.cpp \
     css/CSSFontFace.cpp \
     css/CSSDefaultStyleSheets.cpp \
+    css/CSSFontFaceLoadEvent.cpp \
     css/CSSFontFaceRule.cpp \
     css/CSSFontFaceSrcValue.cpp \
     css/CSSFontSelector.cpp \
@@ -307,6 +308,7 @@ SOURCES += \
     css/DocumentRuleSets.cpp \
     css/ElementRuleCollector.cpp \
     css/FontFeatureValue.cpp \
+    css/FontLoader.cpp \
     css/FontValue.cpp \
     css/InspectorCSSOMWrappers.cpp \
     css/LengthFunctions.cpp \
@@ -1515,6 +1517,7 @@ HEADERS += \
     css/CSSCrossfadeValue.h \
     css/CSSCursorImageValue.h \
     css/CSSFontFace.h \
+    css/CSSFontFaceLoadEvent.h \
     css/CSSFontFaceRule.h \
     css/CSSFontFaceSource.h \
     css/CSSFontFaceSrcValue.h \
@@ -1556,6 +1559,7 @@ HEADERS += \
     css/CSSVariableValue.h \
     css/DOMWindowCSS.h \
     css/FontFeatureValue.h \
+    css/FontLoader.h \
     css/FontValue.h \
     css/LengthFunctions.h \
     css/MediaFeatureNames.h \

@@ -39,6 +39,8 @@
 namespace WebCore {
 
 class ArrayValue;
+class CSSFontFaceRule;
+class DOMError;
 class DOMWindow;
 class IDBKeyRange;
 class MediaKeyError;
@@ -48,6 +50,7 @@ class SpeechRecognitionResult;
 class SpeechRecognitionResultList;
 class Storage;
 class TrackBase;
+class VoidCallback;
 
 class Dictionary {
 public:
@@ -93,6 +96,11 @@ public:
     bool get(const String&, Dictionary&) const;
     bool get(const String&, Vector<String>&) const;
     bool get(const String&, ArrayValue&) const;
+#if ENABLE(FONT_LOAD_EVENTS)
+    bool get(const String&, RefPtr<CSSFontFaceRule>&) const;
+    bool get(const String&, RefPtr<DOMError>&) const;
+    bool get(const String&, RefPtr<VoidCallback>&) const;
+#endif
 
     bool getOwnPropertiesAsStringHashMap(HashMap<String, String>&) const;
     bool getOwnPropertyNames(Vector<String>&) const;

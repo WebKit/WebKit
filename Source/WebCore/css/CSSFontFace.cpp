@@ -29,7 +29,10 @@
 #include "CSSFontFaceSource.h"
 #include "CSSFontSelector.h"
 #include "CSSSegmentedFontFace.h"
+#include "Document.h"
 #include "FontDescription.h"
+#include "FontLoader.h"
+#include "RuntimeEnabledFeatures.h"
 #include "SimpleFontData.h"
 
 namespace WebCore {
@@ -81,14 +84,28 @@ void CSSFontFace::fontLoaded(CSSFontFaceSource* source)
     if (m_segmentedFontFaces.isEmpty())
         return;
 
-    HashSet<CSSSegmentedFontFace*>::iterator end = m_segmentedFontFaces.end();
-    for (HashSet<CSSSegmentedFontFace*>::iterator it = m_segmentedFontFaces.begin(); it != end; ++it)
-        (*it)->fontLoaded(this);
-
     // Use one of the CSSSegmentedFontFaces' font selector. They all have
     // the same font selector, so it's wasteful to store it in the CSSFontFace.
     CSSFontSelector* fontSelector = (*m_segmentedFontFaces.begin())->fontSelector();
     fontSelector->fontLoaded();
+
+#if ENABLE(FONT_LOAD_EVENTS)
+    if (RuntimeEnabledFeatures::fontLoadEventsEnabled() && m_loadState == Loading) {
+        if (source->ensureFontData())
+            notifyFontLoader(Loaded);
+        else if (!isValid())
+            notifyFontLoader(Error);
+    }
+#endif
+
+    HashSet<CSSSegmentedFontFace*>::iterator end = m_segmentedFontFaces.end();
+    for (HashSet<CSSSegmentedFontFace*>::iterator it = m_segmentedFontFaces.begin(); it != end; ++it)
+        (*it)->fontLoaded(this);
+
+#if ENABLE(FONT_LOAD_EVENTS)
+    if (RuntimeEnabledFeatures::fontLoadEventsEnabled())
+        notifyLoadingDone();
+#endif
 }
 
 PassRefPtr<SimpleFontData> CSSFontFace::getFontData(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic)
@@ -100,16 +117,65 @@ PassRefPtr<SimpleFontData> CSSFontFace::getFontData(const FontDescription& fontD
     ASSERT(!m_segmentedFontFaces.isEmpty());
     CSSFontSelector* fontSelector = (*m_segmentedFontFaces.begin())->fontSelector();
 
+#if ENABLE(FONT_LOAD_EVENTS)
+    if (RuntimeEnabledFeatures::fontLoadEventsEnabled() && m_loadState == NotLoaded)
+        notifyFontLoader(Loading);
+#endif
+
     size_t size = m_sources.size();
     for (size_t i = 0; i < size; ++i) {
         if (RefPtr<SimpleFontData> result = m_sources[i]->getFontData(fontDescription, syntheticBold, syntheticItalic, fontSelector)) {
             m_activeSource = m_sources[i].get();
+#if ENABLE(FONT_LOAD_EVENTS)
+            if (RuntimeEnabledFeatures::fontLoadEventsEnabled() && m_loadState == Loading && m_sources[i]->isLoaded()) {
+                notifyFontLoader(Loaded);
+                notifyLoadingDone();
+            }
+#endif
             return result.release();
         }
     }
 
+#if ENABLE(FONT_LOAD_EVENTS)
+    if (RuntimeEnabledFeatures::fontLoadEventsEnabled() && m_loadState == Loading) {
+        notifyFontLoader(Error);
+        notifyLoadingDone();
+    }
+#endif
     return 0;
 }
+
+#if ENABLE(FONT_LOAD_EVENTS)
+void CSSFontFace::notifyFontLoader(LoadState newState)
+{
+    m_loadState = newState;
+
+    Document* document = (*m_segmentedFontFaces.begin())->fontSelector()->document();
+    if (!document)
+        return;
+
+    switch (newState) {
+    case Loading:
+        document->fontloader()->beginFontLoading(m_rule.get());
+        break;
+    case Loaded:
+        document->fontloader()->fontLoaded(m_rule.get());
+        break;
+    case Error:
+        document->fontloader()->loadError(m_rule.get(), m_activeSource);
+        break;
+    default:
+        break;
+    }
+}
+
+void CSSFontFace::notifyLoadingDone()
+{
+    Document* document = (*m_segmentedFontFaces.begin())->fontSelector()->document();
+    if (document)
+        document->fontloader()->loadingDone();
+}
+#endif
 
 #if ENABLE(SVG_FONTS)
 bool CSSFontFace::hasSVGFontFaceSource() const

@@ -190,6 +190,10 @@ class TextAutosizer;
 class DOMSecurityPolicy;
 #endif
 
+#if ENABLE(FONT_LOAD_EVENTS)
+class FontLoader;
+#endif
+
 typedef int ExceptionCode;
 
 enum PageshowEventPersistence {
@@ -1197,6 +1201,10 @@ public:
 
     virtual const SecurityOrigin* topOrigin() const OVERRIDE;
 
+#if ENABLE(FONT_LOAD_EVENTS)
+    PassRefPtr<FontLoader> fontloader();
+#endif
+
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
 
@@ -1564,6 +1572,10 @@ private:
 #if ENABLE(TEMPLATE_ELEMENT)
     RefPtr<Document> m_templateDocument;
     Document* m_templateDocumentHost; // Manually managed weakref (backpointer from m_templateDocument).
+#endif
+
+#if ENABLE(FONT_LOAD_EVENTS)
+    RefPtr<FontLoader> m_fontloader;
 #endif
 };
 

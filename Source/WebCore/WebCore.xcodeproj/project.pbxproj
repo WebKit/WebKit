@@ -1048,6 +1048,16 @@
 		3FFFF9A9159D9A550020BBD5 /* WebKitCSSViewportRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FFFF9A7159D9A550020BBD5 /* WebKitCSSViewportRule.h */; };
 		3FFFF9AD159D9B060020BBD5 /* ViewportStyleResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3FFFF9AB159D9B060020BBD5 /* ViewportStyleResolver.cpp */; };
 		3FFFF9AE159D9B060020BBD5 /* ViewportStyleResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 3FFFF9AC159D9B060020BBD5 /* ViewportStyleResolver.h */; };
+		409EBDB116B7EE7100CBA3FC /* CSSFontFaceLoadEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 409EBDAE16B7EE2800CBA3FC /* CSSFontFaceLoadEvent.h */; };
+		409EBDB216B7EE7400CBA3FC /* CSSFontFaceLoadEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 409EBDAC16B7EE1C00CBA3FC /* CSSFontFaceLoadEvent.cpp */; };
+		409EBDB416B7EE8700CBA3FC /* FontLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 409EBDB316B7EE8700CBA3FC /* FontLoader.cpp */; };
+		409EBDB616B7EEA300CBA3FC /* FontLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 409EBDB516B7EEA300CBA3FC /* FontLoader.h */; };
+		409EBDBA16B7F04500CBA3FC /* JSFontLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 409EBDB916B7F04500CBA3FC /* JSFontLoader.cpp */; };
+		409EBDC016B7F38E00CBA3FC /* JSFontLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 409EBDBF16B7F38E00CBA3FC /* JSFontLoader.h */; };
+		409EBDC316B7F3A600CBA3FC /* JSCSSFontFaceLoadEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 409EBDC216B7F3A600CBA3FC /* JSCSSFontFaceLoadEvent.h */; };
+		409EBDC516B7F3CA00CBA3FC /* JSCSSFontFaceLoadEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 409EBDC416B7F3CA00CBA3FC /* JSCSSFontFaceLoadEvent.cpp */; };
+		40ECAE7E16B8B67200C36103 /* JSDOMError.h in Headers */ = {isa = PBXBuildFile; fileRef = 40ECAE7D16B8B67200C36103 /* JSDOMError.h */; };
+		40ECAE8116B8B68A00C36103 /* JSDOMError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 40ECAE8016B8B68A00C36103 /* JSDOMError.cpp */; };
 		41002CCD0F66EDEF009E660D /* ScriptFunctionCall.h in Headers */ = {isa = PBXBuildFile; fileRef = 41002CCB0F66EDEF009E660D /* ScriptFunctionCall.h */; };
 		41002CCE0F66EDEF009E660D /* ScriptFunctionCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41002CCC0F66EDEF009E660D /* ScriptFunctionCall.cpp */; };
 		410B7E721045FAB000D8224F /* JSMessageEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */; };
@@ -8448,6 +8458,18 @@
 		3FFFF9A7159D9A550020BBD5 /* WebKitCSSViewportRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSViewportRule.h; sourceTree = "<group>"; };
 		3FFFF9AB159D9B060020BBD5 /* ViewportStyleResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewportStyleResolver.cpp; sourceTree = "<group>"; };
 		3FFFF9AC159D9B060020BBD5 /* ViewportStyleResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewportStyleResolver.h; sourceTree = "<group>"; };
+		409EBDAC16B7EE1C00CBA3FC /* CSSFontFaceLoadEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontFaceLoadEvent.cpp; sourceTree = "<group>"; };
+		409EBDAE16B7EE2800CBA3FC /* CSSFontFaceLoadEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontFaceLoadEvent.h; sourceTree = "<group>"; };
+		409EBDAF16B7EE5700CBA3FC /* CSSFontFaceLoadEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CSSFontFaceLoadEvent.idl; sourceTree = "<group>"; };
+		409EBDB316B7EE8700CBA3FC /* FontLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontLoader.cpp; sourceTree = "<group>"; };
+		409EBDB516B7EEA300CBA3FC /* FontLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontLoader.h; sourceTree = "<group>"; };
+		409EBDB716B7EEBA00CBA3FC /* FontLoader.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FontLoader.idl; sourceTree = "<group>"; };
+		409EBDB916B7F04500CBA3FC /* JSFontLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFontLoader.cpp; sourceTree = "<group>"; };
+		409EBDBF16B7F38E00CBA3FC /* JSFontLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFontLoader.h; sourceTree = "<group>"; };
+		409EBDC216B7F3A600CBA3FC /* JSCSSFontFaceLoadEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCSSFontFaceLoadEvent.h; sourceTree = "<group>"; };
+		409EBDC416B7F3CA00CBA3FC /* JSCSSFontFaceLoadEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSFontFaceLoadEvent.cpp; sourceTree = "<group>"; };
+		40ECAE7D16B8B67200C36103 /* JSDOMError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMError.h; sourceTree = "<group>"; };
+		40ECAE8016B8B68A00C36103 /* JSDOMError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMError.cpp; sourceTree = "<group>"; };
 		41002CCB0F66EDEF009E660D /* ScriptFunctionCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptFunctionCall.h; sourceTree = "<group>"; };
 		41002CCC0F66EDEF009E660D /* ScriptFunctionCall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptFunctionCall.cpp; sourceTree = "<group>"; };
 		410B7E711045FAB000D8224F /* JSMessageEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMessageEventCustom.cpp; sourceTree = "<group>"; };
@@ -16185,10 +16207,16 @@
 				A8D06B370A265DCD005E7203 /* HTMLNames.h */,
 				53E29E5C167A8A1900586D3D /* InternalSettingsGenerated.cpp */,
 				53E29E5D167A8A1900586D3D /* InternalSettingsGenerated.h */,
+				40ECAE8016B8B68A00C36103 /* JSDOMError.cpp */,
+				40ECAE7D16B8B67200C36103 /* JSDOMError.h */,
 				938E65F609F0985D008A48EC /* JSHTMLElementWrapperFactory.cpp */,
 				938E65F009F09840008A48EC /* JSHTMLElementWrapperFactory.h */,
 				8574D1F10ADE6122004CBA11 /* JSSVGElementWrapperFactory.cpp */,
 				8574D1F20ADE6122004CBA11 /* JSSVGElementWrapperFactory.h */,
+				409EBDC416B7F3CA00CBA3FC /* JSCSSFontFaceLoadEvent.cpp */,
+				409EBDC216B7F3A600CBA3FC /* JSCSSFontFaceLoadEvent.h */,
+				409EBDB916B7F04500CBA3FC /* JSFontLoader.cpp */,
+				409EBDBF16B7F38E00CBA3FC /* JSFontLoader.h */,
 				FABE72FB1059C21100D999DD /* MathMLElementFactory.cpp */,
 				44A28AAB12DFB8AC00AE923B /* MathMLElementFactory.h */,
 				FABE72FC1059C21100D999DD /* MathMLNames.cpp */,
@@ -22051,6 +22079,9 @@
 				4A9CC81616BB9AC600EC645A /* CSSDefaultStyleSheets.h */,
 				BC64B4CD0CB4298A005F2B62 /* CSSFontFace.cpp */,
 				BC64B4CE0CB4298A005F2B62 /* CSSFontFace.h */,
+				409EBDAC16B7EE1C00CBA3FC /* CSSFontFaceLoadEvent.cpp */,
+				409EBDAE16B7EE2800CBA3FC /* CSSFontFaceLoadEvent.h */,
+				409EBDAF16B7EE5700CBA3FC /* CSSFontFaceLoadEvent.idl */,
 				A80E6CBD0A1989CA007FB8C5 /* CSSFontFaceRule.cpp */,
 				A80E6CD30A1989CA007FB8C5 /* CSSFontFaceRule.h */,
 				85C56CA30AA89CA400D95755 /* CSSFontFaceRule.idl */,
@@ -22163,6 +22194,9 @@
 				FBDB619E16D6036500BB3394 /* ElementRuleCollector.h */,
 				4A6E9FC113C17D1D0046A7F8 /* FontFeatureValue.cpp */,
 				4A6E9FC213C17D1D0046A7F8 /* FontFeatureValue.h */,
+				409EBDB316B7EE8700CBA3FC /* FontLoader.cpp */,
+				409EBDB516B7EEA300CBA3FC /* FontLoader.h */,
+				409EBDB716B7EEBA00CBA3FC /* FontLoader.idl */,
 				A80E6CC70A1989CA007FB8C5 /* FontValue.cpp */,
 				A80E6CC30A1989CA007FB8C5 /* FontValue.h */,
 				CD4E0AFA11F7BC27009D3811 /* fullscreen.css */,
@@ -23594,6 +23628,7 @@
 				AA21ECCD0ABF0FC6002B834C /* CSSCursorImageValue.h in Headers */,
 				4A9CC81816BB9AC600EC645A /* CSSDefaultStyleSheets.h in Headers */,
 				BC64B4D60CB4298A005F2B62 /* CSSFontFace.h in Headers */,
+				409EBDB116B7EE7100CBA3FC /* CSSFontFaceLoadEvent.h in Headers */,
 				A80E6CFD0A1989CA007FB8C5 /* CSSFontFaceRule.h in Headers */,
 				BC64B4D80CB4298A005F2B62 /* CSSFontFaceSource.h in Headers */,
 				BC64B4DA0CB4298A005F2B62 /* CSSFontFaceSrcValue.h in Headers */,
@@ -24553,6 +24588,7 @@
 				B2C3DA6A0D006CD600EF6F26 /* FontFamily.h in Headers */,
 				4A6E9FC813C17D570046A7F8 /* FontFeatureSettings.h in Headers */,
 				4A6E9FC413C17D1D0046A7F8 /* FontFeatureValue.h in Headers */,
+				409EBDB616B7EEA300CBA3FC /* FontLoader.h in Headers */,
 				0845680812B90DA600960A9F /* FontMetrics.h in Headers */,
 				F7A034C4126BF6BE007DC19E /* FontOrientation.h in Headers */,
 				B5320D6B122A24E9002D1440 /* FontPlatformData.h in Headers */,
@@ -24956,6 +24992,7 @@
 				930705DA09E0C9BF00B17FE4 /* JSCounter.h in Headers */,
 				975CA2A21303679D00E99AD9 /* JSCrypto.h in Headers */,
 				BC46C1FB0C0DDC8F0020CFC3 /* JSCSSCharsetRule.h in Headers */,
+				409EBDC316B7F3A600CBA3FC /* JSCSSFontFaceLoadEvent.h in Headers */,
 				BC46C1FD0C0DDC8F0020CFC3 /* JSCSSFontFaceRule.h in Headers */,
 				BC46C1FF0C0DDC8F0020CFC3 /* JSCSSImportRule.h in Headers */,
 				BC46C2010C0DDC8F0020CFC3 /* JSCSSMediaRule.h in Headers */,
@@ -24992,6 +25029,7 @@
 				1AC2260D0DB69F190089B669 /* JSDOMApplicationCache.h in Headers */,
 				93B70D6409EB0C7C009D8468 /* JSDOMBinding.h in Headers */,
 				BC60D7C10D29A46300B9918F /* JSDOMCoreException.h in Headers */,
+				40ECAE7E16B8B67200C36103 /* JSDOMError.h in Headers */,
 				898785A5122CA2A7003AABDA /* JSDOMFileSystem.h in Headers */,
 				893C483712495472002B3D86 /* JSDOMFileSystemSync.h in Headers */,
 				2E0888D51148848A00AF4265 /* JSDOMFormData.h in Headers */,
@@ -25051,6 +25089,7 @@
 				49EECF03105070C400099FAB /* JSFloat32Array.h in Headers */,
 				6EBC5EB0138B50F200A0CF8A /* JSFloat64Array.h in Headers */,
 				B6D9D27B14EAC0860090D75E /* JSFocusEvent.h in Headers */,
+				409EBDC016B7F38E00CBA3FC /* JSFontLoader.h in Headers */,
 				FDA15EAC12B03EE1003A583A /* JSGainNode.h in Headers */,
 				FE80DA640E9C4703000D6F75 /* JSGeolocation.h in Headers */,
 				FE80DA660E9C4703000D6F75 /* JSGeoposition.h in Headers */,
@@ -27296,6 +27335,7 @@
 				AA21ECCA0ABF0FBA002B834C /* CSSCursorImageValue.cpp in Sources */,
 				4A9CC81716BB9AC600EC645A /* CSSDefaultStyleSheets.cpp in Sources */,
 				BC64B4D50CB4298A005F2B62 /* CSSFontFace.cpp in Sources */,
+				409EBDB216B7EE7400CBA3FC /* CSSFontFaceLoadEvent.cpp in Sources */,
 				A80E6CE70A1989CA007FB8C5 /* CSSFontFaceRule.cpp in Sources */,
 				BC64B4D70CB4298A005F2B62 /* CSSFontFaceSource.cpp in Sources */,
 				BC64B4D90CB4298A005F2B62 /* CSSFontFaceSrcValue.cpp in Sources */,
@@ -27902,6 +27942,7 @@
 				72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */,
 				4A6E9FC713C17D570046A7F8 /* FontFeatureSettings.cpp in Sources */,
 				4A6E9FC313C17D1D0046A7F8 /* FontFeatureValue.cpp in Sources */,
+				409EBDB416B7EE8700CBA3FC /* FontLoader.cpp in Sources */,
 				B2AFFC800D00A5C10030074D /* FontMac.mm in Sources */,
 				84B62685133138F90095A489 /* FontPlatformData.cpp in Sources */,
 				B5320D6C122A24E9002D1440 /* FontPlatformDataCocoa.mm in Sources */,
@@ -28272,6 +28313,7 @@
 				975CA2A11303679D00E99AD9 /* JSCrypto.cpp in Sources */,
 				209B456B16796A7E00E54E4E /* JSCryptoCustom.cpp in Sources */,
 				BC46C1FA0C0DDC8F0020CFC3 /* JSCSSCharsetRule.cpp in Sources */,
+				409EBDC516B7F3CA00CBA3FC /* JSCSSFontFaceLoadEvent.cpp in Sources */,
 				BC46C1FC0C0DDC8F0020CFC3 /* JSCSSFontFaceRule.cpp in Sources */,
 				E1AD14911297337400ACA989 /* JSCSSFontFaceRuleCustom.cpp in Sources */,
 				BC46C1FE0C0DDC8F0020CFC3 /* JSCSSImportRule.cpp in Sources */,
@@ -28321,6 +28363,7 @@
 				1AC2260C0DB69F190089B669 /* JSDOMApplicationCache.cpp in Sources */,
 				93B70D6309EB0C7C009D8468 /* JSDOMBinding.cpp in Sources */,
 				BC60D7C00D29A46300B9918F /* JSDOMCoreException.cpp in Sources */,
+				40ECAE8116B8B68A00C36103 /* JSDOMError.cpp in Sources */,
 				898785A4122CA2A7003AABDA /* JSDOMFileSystem.cpp in Sources */,
 				893C483612495472002B3D86 /* JSDOMFileSystemSync.cpp in Sources */,
 				2E0888D41148848A00AF4265 /* JSDOMFormData.cpp in Sources */,
@@ -28397,6 +28440,7 @@
 				49EECF02105070C400099FAB /* JSFloat32Array.cpp in Sources */,
 				6EBC5EAF138B50F200A0CF8A /* JSFloat64Array.cpp in Sources */,
 				B6D9D27C14EAC0860090D75E /* JSFocusEvent.cpp in Sources */,
+				409EBDBA16B7F04500CBA3FC /* JSFontLoader.cpp in Sources */,
 				FDA15EAB12B03EE1003A583A /* JSGainNode.cpp in Sources */,
 				FE80DA630E9C4703000D6F75 /* JSGeolocation.cpp in Sources */,
 				FE80D7AB0E9C1ED2000D6F75 /* JSGeolocationCustom.cpp in Sources */,

@@ -29,6 +29,7 @@
 
 #include "CachedFont.h"
 #include "CSSFontFace.h"
+#include "CSSFontFaceRule.h"
 #include "CSSFontFaceSource.h"
 #include "CSSFontFaceSrcValue.h"
 #include "CSSPrimitiveValue.h"
@@ -225,8 +226,15 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule)
             source = adoptPtr(new CSSFontFaceSource(item->resource()));
         }
 
-        if (!fontFace)
-            fontFace = CSSFontFace::create(static_cast<FontTraitsMask>(traitsMask));
+        if (!fontFace) {
+            RefPtr<CSSFontFaceRule> rule;
+#if ENABLE(FONT_LOAD_EVENTS)
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=112116 - This CSSFontFaceRule has no parent.
+            if (RuntimeEnabledFeatures::fontLoadEventsEnabled())
+                rule = static_pointer_cast<CSSFontFaceRule>(fontFaceRule->createCSSOMWrapper());
+#endif
+            fontFace = CSSFontFace::create(static_cast<FontTraitsMask>(traitsMask), rule);
+        }
 
         if (source) {
 #if ENABLE(SVG_FONTS)
@@ -298,7 +306,7 @@ void CSSFontSelector::addFontFaceRule(const StyleRuleFontFace* fontFaceRule)
                 OwnPtr<Vector<RefPtr<CSSFontFace> > > familyLocallyInstalledFaces = adoptPtr(new Vector<RefPtr<CSSFontFace> >);
 
                 for (unsigned i = 0; i < numLocallyInstalledFaces; ++i) {
-                    RefPtr<CSSFontFace> locallyInstalledFontFace = CSSFontFace::create(static_cast<FontTraitsMask>(locallyInstalledFontsTraitsMasks[i]), true);
+                    RefPtr<CSSFontFace> locallyInstalledFontFace = CSSFontFace::create(static_cast<FontTraitsMask>(locallyInstalledFontsTraitsMasks[i]), 0, true);
                     locallyInstalledFontFace->addSource(adoptPtr(new CSSFontFaceSource(familyName)));
                     ASSERT(locallyInstalledFontFace->isValid());
                     familyLocallyInstalledFaces->append(locallyInstalledFontFace);
@@ -476,17 +484,25 @@ PassRefPtr<FontData> CSSFontSelector::getFontData(const FontDescription& fontDes
         return 0;
     }
 
-    String family = familyName.string();
-
-    Vector<RefPtr<CSSFontFace> >* familyFontFaces = m_fontFaces.get(family);
+    CSSSegmentedFontFace* face = getFontFace(fontDescription, familyName);
     // If no face was found, then return 0 and let the OS come up with its best match for the name.
-    if (!familyFontFaces || familyFontFaces->isEmpty()) {
+    if (!face) {
         // If we were handed a generic family, but there was no match, go ahead and return the correct font based off our
         // settings.
         if (fontDescription.genericFamily() == FontDescription::StandardFamily && !fontDescription.isSpecifiedFont())
             return fontDataForGenericFamily(m_document, fontDescription, "-webkit-standard");
         return fontDataForGenericFamily(m_document, fontDescription, familyName);
     }
+
+    // We have a face. Ask it for a font data. If it cannot produce one, it will fail, and the OS will take over.
+    return face->getFontData(fontDescription);
+}
+
+CSSSegmentedFontFace* CSSFontSelector::getFontFace(const FontDescription& fontDescription, const AtomicString& family)
+{
+    Vector<RefPtr<CSSFontFace> >* familyFontFaces = m_fontFaces.get(family);
+    if (!familyFontFaces || familyFontFaces->isEmpty())
+        return 0;
 
     OwnPtr<HashMap<unsigned, RefPtr<CSSSegmentedFontFace> > >& segmentedFontFaceCache = m_fonts.add(family, nullptr).iterator->value;
     if (!segmentedFontFaceCache)
@@ -535,9 +551,7 @@ PassRefPtr<FontData> CSSFontSelector::getFontData(const FontDescription& fontDes
         for (unsigned i = 0; i < numCandidates; ++i)
             face->appendFontFace(candidateFontFaces[i]);
     }
-
-    // We have a face.  Ask it for a font data.  If it cannot produce one, it will fail, and the OS will take over.
-    return face->getFontData(fontDescription);
+    return face.get();
 }
 
 void CSSFontSelector::clearDocument()

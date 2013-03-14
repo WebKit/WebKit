@@ -74,6 +74,7 @@
 #include "ExceptionCodePlaceholder.h"
 #include "FlowThreadController.h"
 #include "FocusController.h"
+#include "FontLoader.h"
 #include "FormController.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -487,6 +488,9 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
 #endif
 #if ENABLE(TEMPLATE_ELEMENT)
     , m_templateDocumentHost(0)
+#endif
+#if ENABLE(FONT_LOAD_EVENTS)
+    , m_fontloader(0)
 #endif
 {
     m_printing = false;
@@ -6088,6 +6092,15 @@ Document* Document::ensureTemplateDocument()
     m_templateDocument->setTemplateDocumentHost(this); // balanced in dtor.
 
     return m_templateDocument.get();
+}
+#endif
+
+#if ENABLE(FONT_LOAD_EVENTS)
+PassRefPtr<FontLoader> Document::fontloader()
+{
+    if (!m_fontloader)
+        m_fontloader = FontLoader::create(this);
+    return m_fontloader;
 }
 #endif
 

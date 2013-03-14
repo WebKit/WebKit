@@ -28,6 +28,8 @@
 
 #include "ArrayValue.h"
 #include "Dictionary.h"
+#include "JSCSSFontFaceRule.h"
+#include "JSDOMError.h"
 #include "JSDOMWindow.h"
 #include "JSEventTarget.h"
 #include "JSMessagePortCustom.h"
@@ -35,6 +37,7 @@
 #include "JSStorage.h"
 #include "JSTrackCustom.h"
 #include "JSUint8Array.h"
+#include "JSVoidCallback.h"
 #include "ScriptValue.h"
 #include "SerializedScriptValue.h"
 #include <wtf/HashMap.h>
@@ -223,6 +226,26 @@ void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<Medi
 void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<MediaStream>& result)
 {
     result = toMediaStream(value);
+}
+#endif
+
+#if ENABLE(FONT_LOAD_EVENTS)
+void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<CSSFontFaceRule>& result)
+{
+    result = toCSSFontFaceRule(value);
+}
+
+void JSDictionary::convertValue(JSC::ExecState*, JSC::JSValue value, RefPtr<DOMError>& result)
+{
+    result = toDOMError(value);
+}
+
+void JSDictionary::convertValue(JSC::ExecState* exec, JSC::JSValue value, RefPtr<VoidCallback>& result)
+{
+    if (!value.isFunction())
+        return;
+
+    result = JSVoidCallback::create(asObject(value), jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()));
 }
 #endif
 

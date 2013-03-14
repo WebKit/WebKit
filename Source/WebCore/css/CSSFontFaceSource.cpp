@@ -205,4 +205,24 @@ bool CSSFontFaceSource::isSVGFontFaceSource() const
 }
 #endif
 
+#if ENABLE(FONT_LOAD_EVENTS)
+bool CSSFontFaceSource::isDecodeError() const
+{
+    if (m_font)
+        return m_font->status() == CachedResource::DecodeError;
+    return false;
+}
+
+bool CSSFontFaceSource::ensureFontData()
+{
+    if (!m_font)
+        return false;
+#if ENABLE(SVG_FONTS)
+    if (m_hasExternalSVGFont)
+        return m_font->ensureSVGFontData();
+#endif
+    return m_font->ensureCustomFontData();
+}
+#endif
+
 }

@@ -64,6 +64,12 @@
 #include "V8MediaStream.h"
 #endif
 
+#if ENABLE(FONT_LOAD_EVENTS)
+#include "V8CSSFontFaceRule.h"
+#include "V8DOMError.h"
+#include "V8VoidCallback.h"
+#endif
+
 namespace WebCore {
 
 Dictionary::Dictionary()
@@ -497,6 +503,55 @@ bool Dictionary::get(const String& key, ArrayValue& value) const
     value = ArrayValue(v8::Local<v8::Array>::Cast(v8Value), m_isolate);
     return true;
 }
+
+#if ENABLE(FONT_LOAD_EVENTS)
+bool Dictionary::get(const String& key, RefPtr<CSSFontFaceRule>& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    CSSFontFaceRule* source = 0;
+    if (v8Value->IsObject()) {
+        v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
+        v8::Handle<v8::Object> fontface = wrapper->FindInstanceInPrototypeChain(V8CSSFontFaceRule::GetTemplate(m_isolate, worldType(m_isolate)));
+        if (!fontface.IsEmpty())
+            source = V8CSSFontFaceRule::toNative(fontface);
+    }
+    value = source;
+    return true;
+}
+
+bool Dictionary::get(const String& key, RefPtr<DOMError>& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    DOMError* error = 0;
+    if (v8Value->IsObject()) {
+        v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(v8Value);
+        v8::Handle<v8::Object> domError = wrapper->FindInstanceInPrototypeChain(V8DOMError::GetTemplate(m_isolate, worldType(m_isolate)));
+        if (!domError.IsEmpty())
+            error = V8DOMError::toNative(domError);
+    }
+    value = error;
+    return true;
+}
+
+bool Dictionary::get(const String& key, RefPtr<VoidCallback>& value) const
+{
+    v8::Local<v8::Value> v8Value;
+    if (!getKey(key, v8Value))
+        return false;
+
+    if (!v8Value->IsFunction())
+        return false;
+
+    value = V8VoidCallback::create(v8Value, getScriptExecutionContext());
+    return true;
+}
+#endif
 
 bool Dictionary::getOwnPropertiesAsStringHashMap(HashMap<String, String>& hashMap) const
 {
