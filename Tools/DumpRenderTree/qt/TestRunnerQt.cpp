@@ -57,9 +57,7 @@ void TestRunnerQt::reset()
 {
     m_hasDumped = false;
     m_loadFinished = false;
-    m_textDump = false;
     m_audioDump = false;
-    m_shouldDumpPixels = true;
     m_dumpBackForwardList = false;
     m_dumpChildrenAsText = false;
     m_dumpChildFrameScrollPositions = false;
@@ -154,12 +152,6 @@ void TestRunnerQt::maybeDump(bool /*success*/)
         emit done();
         m_hasDumped = true;
     }
-}
-
-void TestRunnerQt::dumpAsText(bool shouldDumpPixels)
-{
-    m_textDump = true;
-    m_shouldDumpPixels = shouldDumpPixels;
 }
 
 void TestRunnerQt::waitUntilDone()

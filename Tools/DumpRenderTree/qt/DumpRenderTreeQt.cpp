@@ -620,7 +620,7 @@ void DumpRenderTree::open(const QUrl& url)
         testRunner()->showWebInspector();
 
     if (isDumpAsTextTest(url))
-        testRunner()->dumpAsText();
+        m_jscController->setDumpAsText(true);
 
     if (isGlobalHistoryTest(url))
         testRunner()->dumpHistoryCallbacks();
@@ -934,10 +934,10 @@ QString DumpRenderTree::dumpBackForwardList(QWebPage* page)
     return result;
 }
 
-static const char *methodNameStringForFailedTest(TestRunnerQt *controller)
+static const char *methodNameStringForFailedTest(TestRunner *controller)
 {
     const char *errorMessage;
-    if (controller->shouldDumpAsText())
+    if (controller->dumpAsText())
         errorMessage = "[documentElement innerText]";
     // FIXME: Add when we have support
     //else if (controller->dumpDOMAsWebArchive())
@@ -965,7 +965,7 @@ void DumpRenderTree::dump()
 
     QString mimeType = DumpRenderTreeSupportQt::responseMimeType(mainFrame->handle());
     if (mimeType == "text/plain")
-        m_controller->dumpAsText();
+        m_jscController->setDumpAsText(true);
 
     // Dump render text...
     QString resultString;
@@ -974,7 +974,7 @@ void DumpRenderTree::dump()
     if (m_controller->shouldDumpAsAudio()) {
         resultContentType = "audio/wav";
         resultData = m_controller->audioData();
-    } else if (m_controller->shouldDumpAsText())
+    } else if (m_jscController->dumpAsText())
         resultString = dumpFramesAsText(mainFrame);
     else {
         resultString = DumpRenderTreeSupportQt::frameRenderTreeDump(mainFrame->handle());
@@ -996,13 +996,13 @@ void DumpRenderTree::dump()
         fprintf(stdout, "Content-Transfer-Encoding: base64\n");
         fprintf(stdout, "%s", resultData.toBase64().constData());
     } else
-        printf("ERROR: nil result from %s", methodNameStringForFailedTest(m_controller));
+        printf("ERROR: nil result from %s", methodNameStringForFailedTest(m_jscController.get()));
 
     // signal end of text block
     fputs("#EOF\n", stdout);
     fputs("#EOF\n", stderr);
 
-    if (m_dumpPixelsForCurrentTest && m_controller->shouldDumpPixels()) {
+    if (m_dumpPixelsForCurrentTest && m_jscController->generatePixelResults()) {
         QImage image;
         if (!m_controller->isPrinting()) {
             image = QImage(m_page->viewportSize(), QImage::Format_ARGB32);
