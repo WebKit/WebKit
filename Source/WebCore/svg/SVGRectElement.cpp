@@ -33,8 +33,6 @@
 
 namespace WebCore {
 
-class RenderSVGRect;
-
 // Animated property definitions
 DEFINE_ANIMATED_LENGTH(SVGRectElement, SVGNames::xAttr, X, x)
 DEFINE_ANIMATED_LENGTH(SVGRectElement, SVGNames::yAttr, Y, y)
