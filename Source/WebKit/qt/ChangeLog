@@ -1,3 +1,14 @@
+2013-03-15  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Unreviewed trivial DRT ASSERT fix
+
+        r145805 erroneously added setController calls for device orientation/motion
+        mock clients. Those ASSERT, the controller ctor already calls setController
+        on the client.
+
+        * WebCoreSupport/QWebPageAdapter.cpp:
+        (QWebPageAdapter::initializeWebCorePage):
+
 2013-03-14  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Add selectTrailingWhitespaceEnabled setting to WebCore::Page

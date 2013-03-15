@@ -208,11 +208,9 @@ void QWebPageAdapter::initializeWebCorePage()
     if (useMock) {
         DeviceOrientationClientMock* mockOrientationClient = new DeviceOrientationClientMock;
         WebCore::provideDeviceOrientationTo(page, mockOrientationClient);
-        mockOrientationClient->setController(WebCore::DeviceOrientationController::from(page));
 
         DeviceMotionClientMock* mockMotionClient= new DeviceMotionClientMock;
         WebCore::provideDeviceMotionTo(page, mockMotionClient);
-        mockMotionClient->setController(WebCore::DeviceMotionController::from(page));
     }
 #if HAVE(QTSENSORS)
     else {
