@@ -960,7 +960,7 @@ ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length)
 
 ALWAYS_INLINE bool equal(const UChar* a, const UChar* b, unsigned length)
 {
-    return !memcmp(a, b, length);
+    return !memcmp(a, b, length * sizeof(UChar));
 }
 #elif PLATFORM(IOS) && WTF_ARM_ARCH_AT_LEAST(7)
 ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length)
@@ -970,7 +970,7 @@ ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length)
 
 ALWAYS_INLINE bool equal(const UChar* a, const UChar* b, unsigned length)
 {
-    return !memcmp(a, b, length);
+    return !memcmp(a, b, length * sizeof(UChar));
 }
 #else
 ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length)

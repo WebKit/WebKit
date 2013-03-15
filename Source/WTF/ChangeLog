@@ -1,3 +1,13 @@
+2013-03-15  Benjamin Poulain  <bpoulain@apple.com>
+
+        [iOS] Fix the length pass to memcmp in the fallback versions of String's equal
+        https://bugs.webkit.org/show_bug.cgi?id=112463
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/text/StringImpl.h:
+        (WTF::equal): It might be a good idea to compare the full UChar strings...
+
 2013-03-15  Michael Saboff  <msaboff@apple.com>
 
         Add runtime check for improper register allocations in DFG
