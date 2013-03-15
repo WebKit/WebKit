@@ -1,5 +1,24 @@
 2013-03-15  Benjamin Poulain  <bpoulain@apple.com>
 
+        [iOS] Update StringImpl's equal to have a single version on all supported Apple CPUs
+        https://bugs.webkit.org/show_bug.cgi?id=112400
+
+        Reviewed by Michael Saboff.
+
+        * wtf/text/StringImpl.h:
+        (WTF::equal):
+        Tweak the code to make it work on older Apple CPUs:
+        -Use external "ouput" variable instead of the registers R9 and R12. This gets rid
+         of some register pressure previously imposed on the compiler. (Clang nicely
+         choose R9 and R12 when needed, following iOS ABI).
+        -Instead of using "R3" for storing the length / 4, update the length by -4 on
+         each iteration and work in the negative space for the tail. This frees one register
+         which is then used for isEqual.
+        -Get rid of the unconditional branch from the loop. By using subs and working in the
+         negative space, we can test for the Carry flag to jump back to the next LDR.
+
+2013-03-15  Benjamin Poulain  <bpoulain@apple.com>
+
         [iOS] Fix the length pass to memcmp in the fallback versions of String's equal
         https://bugs.webkit.org/show_bug.cgi?id=112463
 

@@ -917,55 +917,54 @@ ALWAYS_INLINE bool equal(const UChar* a, const UChar* b, unsigned length)
     
     return true;
 }
-#elif CPU(APPLE_ARMV7S)
-ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length)
-{
-    bool isEqual = false;
-    asm("lsr    r3, %[length], #2\n"
-
-        "0:\n" // Tag 0 = Start of loop over 32 bits.
-        "cbz    r3, 2f\n"
-        "ldr    r9, [%[a]], #4\n"
-        "sub    r3, #1\n"
-        "ldr    r12, [%[b]], #4\n"
-        "cmp    r9, r12\n"
-        "beq    0b\n"
-        "b      66f\n"
-
-        "2:\n" // Tag 2 = End of loop over 32 bits, check for pair of characters.
-        "tst    %[length], #2\n"
-        "beq    1f\n"
-        "ldrh   r9, [%[a]], #2\n"
-        "ldrh   r12, [%[b]], #2\n"
-        "cmp    r9, r12\n"
-        "bne    66f\n"
-
-        "1:\n" // Tag 1 = Check for a single character left.
-        "tst    %[length], #1\n"
-        "beq    42f\n"
-        "ldrb   r9, [%[a]]\n"
-        "ldrb   r12, [%[b]]\n"
-        "cmp    r9, r12\n"
-        "bne    66f\n"
-
-        "42:\n" // Tag 42 = Success.
-        "mov    %[isEqual], #1\n"
-        "66:\n" // Tag 66 = End without changing isEqual to 1.
-        : [isEqual]"+r"(isEqual), [a]"+r"(a), [b]"+r"(b)
-        : [length]"r"(length)
-        : "r3", "r9", "r12"
-        );
-    return isEqual;
-}
-
-ALWAYS_INLINE bool equal(const UChar* a, const UChar* b, unsigned length)
-{
-    return !memcmp(a, b, length * sizeof(UChar));
-}
 #elif PLATFORM(IOS) && WTF_ARM_ARCH_AT_LEAST(7)
 ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length)
 {
-    return !memcmp(a, b, length);
+    bool isEqual = false;
+    uint32_t aValue;
+    uint32_t bValue;
+    asm("subs   %[length], #4\n"
+        "blo    2f\n"
+
+        "0:\n" // Label 0 = Start of loop over 32 bits.
+        "ldr    %[aValue], [%[a]], #4\n"
+        "ldr    %[bValue], [%[b]], #4\n"
+        "cmp    %[aValue], %[bValue]\n"
+        "bne    66f\n"
+        "subs   %[length], #4\n"
+        "bhs    0b\n"
+
+        // At this point, length can be:
+        // -0: 00000000000000000000000000000000 (0 bytes left)
+        // -1: 11111111111111111111111111111111 (3 bytes left)
+        // -2: 11111111111111111111111111111110 (2 bytes left)
+        // -3: 11111111111111111111111111111101 (1 byte left)
+        // -4: 11111111111111111111111111111100 (length was 0)
+        // The pointers are at the correct position.
+        "2:\n" // Label 2 = End of loop over 32 bits, check for pair of characters.
+        "tst    %[length], #2\n"
+        "beq    1f\n"
+        "ldrh   %[aValue], [%[a]], #2\n"
+        "ldrh   %[bValue], [%[b]], #2\n"
+        "cmp    %[aValue], %[bValue]\n"
+        "bne    66f\n"
+
+        "1:\n" // Label 1 = Check for a single character left.
+        "tst    %[length], #1\n"
+        "beq    42f\n"
+        "ldrb   %[aValue], [%[a]]\n"
+        "ldrb   %[bValue], [%[b]]\n"
+        "cmp    %[aValue], %[bValue]\n"
+        "bne    66f\n"
+
+        "42:\n" // Label 42 = Success.
+        "mov    %[isEqual], #1\n"
+        "66:\n" // Label 66 = End without changing isEqual to 1.
+        : [length]"+r"(length), [isEqual]"+r"(isEqual), [a]"+r"(a), [b]"+r"(b), [aValue]"+r"(aValue), [bValue]"+r"(bValue)
+        :
+        :
+        );
+    return isEqual;
 }
 
 ALWAYS_INLINE bool equal(const UChar* a, const UChar* b, unsigned length)
