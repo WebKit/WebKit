@@ -104,6 +104,7 @@ String defaultValueForKey(const String& key)
     if (defaults.isEmpty()) {
 #define DEFINE_STRING_DEFAULTS(KeyUpper, KeyLower, TypeName, Type, DefaultValue) defaults.set(WebPreferencesKey::KeyLower##Key(), DefaultValue);
         FOR_EACH_WEBKIT_STRING_PREFERENCE(DEFINE_STRING_DEFAULTS)
+        FOR_EACH_WEBKIT_STRING_PREFERENCE_NOT_IN_WEBCORE(DEFINE_STRING_DEFAULTS)
 #undef DEFINE_STRING_DEFAULTS
     }
 

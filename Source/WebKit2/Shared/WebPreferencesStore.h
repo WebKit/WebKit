@@ -200,6 +200,9 @@ namespace WebKit {
     macro(FTPDirectoryTemplatePath, ftpDirectoryTemplatePath, String, String, "") \
     \
 
+#define FOR_EACH_WEBKIT_STRING_PREFERENCE_NOT_IN_WEBCORE(macro) \
+    macro(InspectorWindowFrame, inspectorWindowFrame, String, String, "") \
+    \
 
 #define FOR_EACH_WEBKIT_PREFERENCE(macro) \
     FOR_EACH_WEBKIT_BOOL_PREFERENCE(macro) \
@@ -207,6 +210,7 @@ namespace WebKit {
     FOR_EACH_WEBKIT_FLOAT_PREFERENCE(macro) \
     FOR_EACH_WEBKIT_UINT32_PREFERENCE(macro) \
     FOR_EACH_WEBKIT_STRING_PREFERENCE(macro) \
+    FOR_EACH_WEBKIT_STRING_PREFERENCE_NOT_IN_WEBCORE(macro) \
     \
 
 namespace WebPreferencesKey {

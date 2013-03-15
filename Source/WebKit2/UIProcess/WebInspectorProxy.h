@@ -88,6 +88,7 @@ public:
     void createInspectorWindow();
     void updateInspectorWindowTitle() const;
     void inspectedViewFrameDidChange();
+    void windowFrameDidChange();
 
     void setInspectorWindowFrame(WKRect&);
     WKRect inspectorWindowFrame();

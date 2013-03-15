@@ -1,3 +1,57 @@
+2013-03-13  Timothy Hatcher  <timothy@apple.com>
+
+        Delay creating the Inspector window so we don't cause a CoreIPC deadlock.
+
+        Other changes include:
+        * Create the Inspector WKView at the correct size so it does not need to
+          resize later when added to the window.
+        * Update the minimum and initial window sizes to better match the new UI.
+        * Store the Inspector window frame in WebKit preferences so each page group
+          can have different saved window frames. Handy for inspecting the Inspector.
+
+        https://bugs.webkit.org/show_bug.cgi?id=112300
+        rdar://problem/13412219
+
+        Reviewed by Geoff Garen.
+
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::defaultValueForKey):
+        Added FOR_EACH_WEBKIT_STRING_PREFERENCE_NOT_IN_WEBCORE.
+
+        * Shared/WebPreferencesStore.h:
+        (FOR_EACH_WEBKIT_STRING_PREFERENCE_NOT_IN_WEBCORE):
+        Added. Needed to keep WebPage::updatePreferences for trying to set WebCore::Settings.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::minimumWindowWidth):
+        (WebKit::WebInspectorProxy::initialWindowWidth):
+        Bumped the values to work better with the new UI.
+
+        * UIProcess/WebInspectorProxy.h:
+        (WebKit::WebInspectorProxy::windowFrameDidChange):
+        Added.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorProxyObjCAdapter windowDidMove:]):
+        (-[WKWebInspectorProxyObjCAdapter windowDidResize:]):
+        Call WebInspectorProxy::windowFrameDidChange.
+
+        (WebKit::WebInspectorProxy::createInspectorWindow):
+        Use the preferences for the page group to get the window frame.
+
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        Stop calling platformAttach or createInspectorWindow, do it in platformOpen.
+
+        (WebKit::WebInspectorProxy::platformOpen):
+        Call platformAttach or createInspectorWindow here instead.
+
+        (WebKit::WebInspectorProxy::windowFrameDidChange):
+        Added. Store the frame in the page group's preferences.
+
+        (WebKit::WebInspectorProxy::platformAttach):
+        (WebKit::WebInspectorProxy::platformDetach):
+        Remove code that called setHidden:. We don't need to do that anymore.
+
 2013-03-15  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Enforce the C++11 standard when compiling WebKit2
