@@ -49,8 +49,10 @@ void ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument(ContainerN
 
     if (ShadowTree* tree = toElement(node)->shadowTree()) {
         ShadowRootVector roots(tree);
-        for (size_t i = 0; i < roots.size(); ++i)
-            notifyNodeInsertedIntoDocument(roots[i].get());
+        for (size_t i = 0; i < roots.size(); ++i) {
+            if (node->inDocument() && roots[i]->host() == node)
+                notifyNodeInsertedIntoDocument(roots[i].get());
+        }
     }
 }
 
@@ -90,8 +92,10 @@ void ChildNodeRemovalNotifier::notifyDescendantRemovedFromDocument(ContainerNode
 
     if (ShadowTree* tree = toElement(node)->shadowTree()) {
         ShadowRootVector roots(tree);
-        for (size_t i = 0; i < roots.size(); ++i)
-            notifyNodeRemovedFromDocument(roots[i].get());
+        for (size_t i = 0; i < roots.size(); ++i) {
+            if (!node->inDocument() && roots[i]->host() == node)
+                notifyNodeRemovedFromDocument(roots[i].get());
+        }
     }
 }
 

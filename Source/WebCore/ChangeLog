@@ -1,5 +1,25 @@
 2013-03-15  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r131709
+
+    2012-10-18  MORITA Hajime  <morrita@google.com>
+
+            Assertion failure at TreeScopeAdopter::moveNodeToNewDocument()
+            https://bugs.webkit.org/show_bug.cgi?id=99510
+
+            Reviewed by Kent Tamura.
+
+            Shadow DOM notification call didn't have checks for mutation detection.
+            This change adds such checks.
+
+            Test: fast/forms/textarea/textarea-autofocus-removal-while-focusing-with-style.html
+
+            * dom/ContainerNodeAlgorithms.cpp:
+            (WebCore::ChildNodeInsertionNotifier::notifyDescendantInsertedIntoDocument):
+            (WebCore::ChildNodeRemovalNotifier::notifyDescendantRemovedFromDocument):
+
+2013-03-15  Lucas Forschler  <lforschler@apple.com>
+
         Merge r130999
 
     2012-10-10  Stephen Chenney  <schenney@chromium.org>
