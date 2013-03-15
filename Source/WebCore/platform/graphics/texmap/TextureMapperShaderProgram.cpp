@@ -264,7 +264,7 @@ static const char* fragmentTemplate =
 
         void applyBrightnessFilter(inout vec4 color)
         {
-            color = vec4(color.rgb * (1.0 + u_filterAmount), color.a);
+            color = vec4(color.rgb * u_filterAmount, color.a);
         }
 
         float contrast(float n) { return (n - 0.5) * u_filterAmount + 0.5; }
