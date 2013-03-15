@@ -86,17 +86,6 @@ static v8::Handle<v8::Value> valueAttrGetterCallback(v8::Local<v8::String> name,
     return TestSerializedScriptValueInterfaceV8Internal::valueAttrGetter(name, info);
 }
 
-static v8::Handle<v8::Value> valueAttrGetterForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
-    return imp->value() ? imp->value()->deserialize() : v8::Handle<v8::Value>(v8Null(info.GetIsolate()));
-}
-
-static v8::Handle<v8::Value> valueAttrGetterCallbackForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    return TestSerializedScriptValueInterfaceV8Internal::valueAttrGetterForMainWorld(name, info);
-}
-
 static void valueAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
@@ -110,19 +99,6 @@ static void valueAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Va
     TestSerializedScriptValueInterfaceV8Internal::valueAttrSetter(name, value, info);
 }
 
-static void valueAttrSetterForMainWorld(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
-{
-    TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
-    RefPtr<SerializedScriptValue> v = SerializedScriptValue::create(value, info.GetIsolate());
-    imp->setValue(WTF::getPtr(v));
-    return;
-}
-
-static void valueAttrSetterCallbackForMainWorld(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
-{
-    TestSerializedScriptValueInterfaceV8Internal::valueAttrSetterForMainWorld(name, value, info);
-}
-
 static v8::Handle<v8::Value> readonlyValueAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
@@ -132,17 +108,6 @@ static v8::Handle<v8::Value> readonlyValueAttrGetter(v8::Local<v8::String> name,
 static v8::Handle<v8::Value> readonlyValueAttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     return TestSerializedScriptValueInterfaceV8Internal::readonlyValueAttrGetter(name, info);
-}
-
-static v8::Handle<v8::Value> readonlyValueAttrGetterForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
-    return imp->readonlyValue() ? imp->readonlyValue()->deserialize() : v8::Handle<v8::Value>(v8Null(info.GetIsolate()));
-}
-
-static v8::Handle<v8::Value> readonlyValueAttrGetterCallbackForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    return TestSerializedScriptValueInterfaceV8Internal::readonlyValueAttrGetterForMainWorld(name, info);
 }
 
 static v8::Handle<v8::Value> cachedValueAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -163,24 +128,6 @@ static v8::Handle<v8::Value> cachedValueAttrGetterCallback(v8::Local<v8::String>
     return TestSerializedScriptValueInterfaceV8Internal::cachedValueAttrGetter(name, info);
 }
 
-static v8::Handle<v8::Value> cachedValueAttrGetterForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    v8::Handle<v8::String> propertyName = v8::String::NewSymbol("cachedValue");
-    v8::Handle<v8::Value> value = info.Holder()->GetHiddenValue(propertyName);
-    if (!value.IsEmpty())
-        return value;
-    TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
-    RefPtr<SerializedScriptValue> serialized = imp->cachedValue();
-    value = serialized ? serialized->deserialize() : v8::Handle<v8::Value>(v8Null(info.GetIsolate()));
-    info.Holder()->SetHiddenValue(propertyName, value);
-    return value;
-}
-
-static v8::Handle<v8::Value> cachedValueAttrGetterCallbackForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    return TestSerializedScriptValueInterfaceV8Internal::cachedValueAttrGetterForMainWorld(name, info);
-}
-
 static void cachedValueAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
@@ -193,20 +140,6 @@ static void cachedValueAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Valu
 static void cachedValueAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestSerializedScriptValueInterfaceV8Internal::cachedValueAttrSetter(name, value, info);
-}
-
-static void cachedValueAttrSetterForMainWorld(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
-{
-    TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
-    RefPtr<SerializedScriptValue> v = SerializedScriptValue::create(value, info.GetIsolate());
-    imp->setCachedValue(WTF::getPtr(v));
-    info.Holder()->DeleteHiddenValue(v8::String::NewSymbol("cachedValue")); // Invalidate the cached value.
-    return;
-}
-
-static void cachedValueAttrSetterCallbackForMainWorld(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
-{
-    TestSerializedScriptValueInterfaceV8Internal::cachedValueAttrSetterForMainWorld(name, value, info);
 }
 
 static v8::Handle<v8::Value> portsAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -227,24 +160,6 @@ static v8::Handle<v8::Value> portsAttrGetterCallback(v8::Local<v8::String> name,
     return TestSerializedScriptValueInterfaceV8Internal::portsAttrGetter(name, info);
 }
 
-static v8::Handle<v8::Value> portsAttrGetterForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
-    MessagePortArray* ports = imp->ports();
-    if (!ports)
-        return v8::Array::New(0);
-    MessagePortArray portsCopy(*ports);
-    v8::Local<v8::Array> portArray = v8::Array::New(portsCopy.size());
-    for (size_t i = 0; i < portsCopy.size(); ++i)
-        portArray->Set(v8Integer(i, info.GetIsolate()), toV8FastForMainWorld(portsCopy[i].get(), info, imp));
-    return portArray;
-}
-
-static v8::Handle<v8::Value> portsAttrGetterCallbackForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    return TestSerializedScriptValueInterfaceV8Internal::portsAttrGetterForMainWorld(name, info);
-}
-
 static v8::Handle<v8::Value> cachedReadonlyValueAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     v8::Handle<v8::String> propertyName = v8::String::NewSymbol("cachedReadonlyValue");
@@ -261,24 +176,6 @@ static v8::Handle<v8::Value> cachedReadonlyValueAttrGetter(v8::Local<v8::String>
 static v8::Handle<v8::Value> cachedReadonlyValueAttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     return TestSerializedScriptValueInterfaceV8Internal::cachedReadonlyValueAttrGetter(name, info);
-}
-
-static v8::Handle<v8::Value> cachedReadonlyValueAttrGetterForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    v8::Handle<v8::String> propertyName = v8::String::NewSymbol("cachedReadonlyValue");
-    v8::Handle<v8::Value> value = info.Holder()->GetHiddenValue(propertyName);
-    if (!value.IsEmpty())
-        return value;
-    TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
-    RefPtr<SerializedScriptValue> serialized = imp->cachedReadonlyValue();
-    value = serialized ? serialized->deserialize() : v8::Handle<v8::Value>(v8Null(info.GetIsolate()));
-    info.Holder()->SetHiddenValue(propertyName, value);
-    return value;
-}
-
-static v8::Handle<v8::Value> cachedReadonlyValueAttrGetterCallbackForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    return TestSerializedScriptValueInterfaceV8Internal::cachedReadonlyValueAttrGetterForMainWorld(name, info);
 }
 
 static v8::Handle<v8::Value> acceptTransferListMethod(const v8::Arguments& args)
@@ -395,19 +292,6 @@ static const V8DOMConfiguration::BatchedAttribute V8TestSerializedScriptValueInt
     {"cachedReadonlyValue", TestSerializedScriptValueInterfaceV8Internal::cachedReadonlyValueAttrGetterCallback, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 };
 
-static const V8DOMConfiguration::BatchedAttribute V8TestSerializedScriptValueInterfaceAttrsForMainWorld[] = {
-    // Attribute 'value' (Type: 'attribute' ExtAttr: '')
-    {"value", TestSerializedScriptValueInterfaceV8Internal::valueAttrGetterCallbackForMainWorld, TestSerializedScriptValueInterfaceV8Internal::valueAttrSetterCallbackForMainWorld, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-    // Attribute 'readonlyValue' (Type: 'readonly attribute' ExtAttr: '')
-    {"readonlyValue", TestSerializedScriptValueInterfaceV8Internal::readonlyValueAttrGetterCallbackForMainWorld, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-    // Attribute 'cachedValue' (Type: 'attribute' ExtAttr: 'CachedAttribute')
-    {"cachedValue", TestSerializedScriptValueInterfaceV8Internal::cachedValueAttrGetterCallbackForMainWorld, TestSerializedScriptValueInterfaceV8Internal::cachedValueAttrSetterCallbackForMainWorld, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-    // Attribute 'ports' (Type: 'readonly attribute' ExtAttr: '')
-    {"ports", TestSerializedScriptValueInterfaceV8Internal::portsAttrGetterCallbackForMainWorld, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-    // Attribute 'cachedReadonlyValue' (Type: 'readonly attribute' ExtAttr: 'CachedAttribute')
-    {"cachedReadonlyValue", TestSerializedScriptValueInterfaceV8Internal::cachedReadonlyValueAttrGetterCallbackForMainWorld, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-};
-
 static const V8DOMConfiguration::BatchedMethod V8TestSerializedScriptValueInterfaceMethods[] = {
     {"acceptTransferList", TestSerializedScriptValueInterfaceV8Internal::acceptTransferListMethodCallback},
     {"multiTransferList", TestSerializedScriptValueInterfaceV8Internal::multiTransferListMethodCallback},
@@ -424,7 +308,7 @@ v8::Handle<v8::Value> V8TestSerializedScriptValueInterface::constructorCallback(
     return TestSerializedScriptValueInterfaceV8Internal::constructor(args);
 }
 
-static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestSerializedScriptValueInterfaceTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate, WrapperWorldType currentWorldType)
+static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestSerializedScriptValueInterfaceTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate, WrapperWorldType worldType)
 {
     desc->ReadOnlyPrototype();
 
@@ -440,31 +324,28 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestSerializedScriptValue
     UNUSED_PARAM(proto); // In some cases, it will not be used.
     
 
-    if (currentWorldType == MainWorld)
-        V8DOMConfiguration::addToTemplate(desc, V8TestSerializedScriptValueInterfaceAttrsForMainWorld, WTF_ARRAY_LENGTH(V8TestSerializedScriptValueInterfaceAttrsForMainWorld), 0, 0, isolate, defaultSignature);
-
     // Custom toString template
     desc->Set(v8::String::NewSymbol("toString"), V8PerIsolateData::current()->toStringTemplate());
     return desc;
 }
 
-v8::Persistent<v8::FunctionTemplate> V8TestSerializedScriptValueInterface::GetTemplate(v8::Isolate* isolate, WrapperWorldType currentWorldType)
+v8::Persistent<v8::FunctionTemplate> V8TestSerializedScriptValueInterface::GetTemplate(v8::Isolate* isolate, WrapperWorldType worldType)
 {
     V8PerIsolateData* data = V8PerIsolateData::from(isolate);
-    V8PerIsolateData::TemplateMap::iterator result = data->templateMap(currentWorldType).find(&info);
-    if (result != data->templateMap(currentWorldType).end())
+    V8PerIsolateData::TemplateMap::iterator result = data->templateMap(worldType).find(&info);
+    if (result != data->templateMap(worldType).end())
         return result->value;
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        ConfigureV8TestSerializedScriptValueInterfaceTemplate(data->rawTemplate(&info, currentWorldType), isolate, currentWorldType);
-    data->templateMap(currentWorldType).add(&info, templ);
+        ConfigureV8TestSerializedScriptValueInterfaceTemplate(data->rawTemplate(&info, worldType), isolate, worldType);
+    data->templateMap(worldType).add(&info, templ);
     return templ;
 }
 
-bool V8TestSerializedScriptValueInterface::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate, WrapperWorldType currentWorldType)
+bool V8TestSerializedScriptValueInterface::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate, WrapperWorldType worldType)
 {
-    return V8PerIsolateData::from(isolate)->hasInstance(&info, value, currentWorldType);
+    return V8PerIsolateData::from(isolate)->hasInstance(&info, value, worldType);
 }
 
 

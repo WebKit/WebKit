@@ -53,11 +53,6 @@ v8::Handle<v8::Value> toV8(EventTarget* impl, v8::Handle<v8::Object> creationCon
     return v8Undefined();
 }
 
-v8::Handle<v8::Value> toV8ForMainWorld(EventTarget* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
-{
-    return toV8(impl, creationContext, isolate);
-}
-
 #undef TRY_TO_WRAP_WITH_INTERFACE
 
 } // namespace WebCore

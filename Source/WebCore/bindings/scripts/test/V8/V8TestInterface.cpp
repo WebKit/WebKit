@@ -97,24 +97,6 @@ static v8::Handle<v8::Value> supplementalStaticReadOnlyAttrAttrGetterCallback(v8
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
 
-static v8::Handle<v8::Value> supplementalStaticReadOnlyAttrAttrGetterForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    return v8Integer(TestSupplemental::supplementalStaticReadOnlyAttr(), info.GetIsolate());
-}
-
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-
-#if ENABLE(Condition11) || ENABLE(Condition12)
-
-static v8::Handle<v8::Value> supplementalStaticReadOnlyAttrAttrGetterCallbackForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    return TestInterfaceV8Internal::supplementalStaticReadOnlyAttrAttrGetterForMainWorld(name, info);
-}
-
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-
-#if ENABLE(Condition11) || ENABLE(Condition12)
-
 static v8::Handle<v8::Value> supplementalStaticAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     return v8String(TestSupplemental::supplementalStaticAttr(), info.GetIsolate(), ReturnUnsafeHandle);
@@ -127,24 +109,6 @@ static v8::Handle<v8::Value> supplementalStaticAttrAttrGetter(v8::Local<v8::Stri
 static v8::Handle<v8::Value> supplementalStaticAttrAttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     return TestInterfaceV8Internal::supplementalStaticAttrAttrGetter(name, info);
-}
-
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-
-#if ENABLE(Condition11) || ENABLE(Condition12)
-
-static v8::Handle<v8::Value> supplementalStaticAttrAttrGetterForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    return v8String(TestSupplemental::supplementalStaticAttr(), info.GetIsolate(), ReturnUnsafeHandle);
-}
-
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-
-#if ENABLE(Condition11) || ENABLE(Condition12)
-
-static v8::Handle<v8::Value> supplementalStaticAttrAttrGetterCallbackForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    return TestInterfaceV8Internal::supplementalStaticAttrAttrGetterForMainWorld(name, info);
 }
 
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
@@ -171,26 +135,6 @@ static void supplementalStaticAttrAttrSetterCallback(v8::Local<v8::String> name,
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
 
-static void supplementalStaticAttrAttrSetterForMainWorld(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
-{
-    V8TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<>, v, value);
-    TestSupplemental::setSupplementalStaticAttr(v);
-    return;
-}
-
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-
-#if ENABLE(Condition11) || ENABLE(Condition12)
-
-static void supplementalStaticAttrAttrSetterCallbackForMainWorld(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
-{
-    TestInterfaceV8Internal::supplementalStaticAttrAttrSetterForMainWorld(name, value, info);
-}
-
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-
-#if ENABLE(Condition11) || ENABLE(Condition12)
-
 static v8::Handle<v8::Value> supplementalStr1AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestInterface* imp = V8TestInterface::toNative(info.Holder());
@@ -210,25 +154,6 @@ static v8::Handle<v8::Value> supplementalStr1AttrGetterCallback(v8::Local<v8::St
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
 
-static v8::Handle<v8::Value> supplementalStr1AttrGetterForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    TestInterface* imp = V8TestInterface::toNative(info.Holder());
-    return v8String(TestSupplemental::supplementalStr1(imp), info.GetIsolate(), ReturnUnsafeHandle);
-}
-
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-
-#if ENABLE(Condition11) || ENABLE(Condition12)
-
-static v8::Handle<v8::Value> supplementalStr1AttrGetterCallbackForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    return TestInterfaceV8Internal::supplementalStr1AttrGetterForMainWorld(name, info);
-}
-
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-
-#if ENABLE(Condition11) || ENABLE(Condition12)
-
 static v8::Handle<v8::Value> supplementalStr2AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestInterface* imp = V8TestInterface::toNative(info.Holder());
@@ -242,25 +167,6 @@ static v8::Handle<v8::Value> supplementalStr2AttrGetter(v8::Local<v8::String> na
 static v8::Handle<v8::Value> supplementalStr2AttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     return TestInterfaceV8Internal::supplementalStr2AttrGetter(name, info);
-}
-
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-
-#if ENABLE(Condition11) || ENABLE(Condition12)
-
-static v8::Handle<v8::Value> supplementalStr2AttrGetterForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    TestInterface* imp = V8TestInterface::toNative(info.Holder());
-    return v8String(TestSupplemental::supplementalStr2(imp), info.GetIsolate(), ReturnUnsafeHandle);
-}
-
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-
-#if ENABLE(Condition11) || ENABLE(Condition12)
-
-static v8::Handle<v8::Value> supplementalStr2AttrGetterCallbackForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    return TestInterfaceV8Internal::supplementalStr2AttrGetterForMainWorld(name, info);
 }
 
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
@@ -288,27 +194,6 @@ static void supplementalStr2AttrSetterCallback(v8::Local<v8::String> name, v8::L
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
 
-static void supplementalStr2AttrSetterForMainWorld(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
-{
-    TestInterface* imp = V8TestInterface::toNative(info.Holder());
-    V8TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<>, v, value);
-    TestSupplemental::setSupplementalStr2(imp, v);
-    return;
-}
-
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-
-#if ENABLE(Condition11) || ENABLE(Condition12)
-
-static void supplementalStr2AttrSetterCallbackForMainWorld(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
-{
-    TestInterfaceV8Internal::supplementalStr2AttrSetterForMainWorld(name, value, info);
-}
-
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-
-#if ENABLE(Condition11) || ENABLE(Condition12)
-
 static v8::Handle<v8::Value> supplementalStr3AttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     return V8TestInterface::supplementalStr3AttrGetterCustom(name, info);
@@ -318,25 +203,7 @@ static v8::Handle<v8::Value> supplementalStr3AttrGetterCallback(v8::Local<v8::St
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
 
-static v8::Handle<v8::Value> supplementalStr3AttrGetterCallbackForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    return V8TestInterface::supplementalStr3AttrGetterCustom(name, info);
-}
-
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-
-#if ENABLE(Condition11) || ENABLE(Condition12)
-
 static void supplementalStr3AttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
-{
-    V8TestInterface::supplementalStr3AttrSetterCustom(name, value, info);
-}
-
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-
-#if ENABLE(Condition11) || ENABLE(Condition12)
-
-static void supplementalStr3AttrSetterCallbackForMainWorld(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     V8TestInterface::supplementalStr3AttrSetterCustom(name, value, info);
 }
@@ -364,25 +231,6 @@ static v8::Handle<v8::Value> supplementalNodeAttrGetterCallback(v8::Local<v8::St
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
 
-static v8::Handle<v8::Value> supplementalNodeAttrGetterForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    TestInterface* imp = V8TestInterface::toNative(info.Holder());
-    return toV8FastForMainWorld(TestSupplemental::supplementalNode(imp), info, imp);
-}
-
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-
-#if ENABLE(Condition11) || ENABLE(Condition12)
-
-static v8::Handle<v8::Value> supplementalNodeAttrGetterCallbackForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    return TestInterfaceV8Internal::supplementalNodeAttrGetterForMainWorld(name, info);
-}
-
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-
-#if ENABLE(Condition11) || ENABLE(Condition12)
-
 static void supplementalNodeAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestInterface* imp = V8TestInterface::toNative(info.Holder());
@@ -398,27 +246,6 @@ static void supplementalNodeAttrSetter(v8::Local<v8::String> name, v8::Local<v8:
 static void supplementalNodeAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestInterfaceV8Internal::supplementalNodeAttrSetter(name, value, info);
-}
-
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-
-#if ENABLE(Condition11) || ENABLE(Condition12)
-
-static void supplementalNodeAttrSetterForMainWorld(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
-{
-    TestInterface* imp = V8TestInterface::toNative(info.Holder());
-    Node* v = V8Node::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8Node::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
-    TestSupplemental::setSupplementalNode(imp, WTF::getPtr(v));
-    return;
-}
-
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-
-#if ENABLE(Condition11) || ENABLE(Condition12)
-
-static void supplementalNodeAttrSetterCallbackForMainWorld(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
-{
-    TestInterfaceV8Internal::supplementalNodeAttrSetterForMainWorld(name, value, info);
 }
 
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
@@ -554,33 +381,6 @@ static const V8DOMConfiguration::BatchedAttribute V8TestInterfaceAttrs[] = {
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
 };
 
-static const V8DOMConfiguration::BatchedAttribute V8TestInterfaceAttrsForMainWorld[] = {
-#if ENABLE(Condition11) || ENABLE(Condition12)
-    // Attribute 'supplementalStaticReadOnlyAttr' (Type: 'readonly attribute' ExtAttr: 'Conditional ImplementedBy')
-    {"supplementalStaticReadOnlyAttr", TestInterfaceV8Internal::supplementalStaticReadOnlyAttrAttrGetterCallbackForMainWorld, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-#if ENABLE(Condition11) || ENABLE(Condition12)
-    // Attribute 'supplementalStaticAttr' (Type: 'attribute' ExtAttr: 'Conditional ImplementedBy')
-    {"supplementalStaticAttr", TestInterfaceV8Internal::supplementalStaticAttrAttrGetterCallbackForMainWorld, TestInterfaceV8Internal::supplementalStaticAttrAttrSetterCallbackForMainWorld, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-#if ENABLE(Condition11) || ENABLE(Condition12)
-    // Attribute 'supplementalStr1' (Type: 'readonly attribute' ExtAttr: 'Conditional ImplementedBy')
-    {"supplementalStr1", TestInterfaceV8Internal::supplementalStr1AttrGetterCallbackForMainWorld, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-#if ENABLE(Condition11) || ENABLE(Condition12)
-    // Attribute 'supplementalStr2' (Type: 'attribute' ExtAttr: 'Conditional ImplementedBy')
-    {"supplementalStr2", TestInterfaceV8Internal::supplementalStr2AttrGetterCallbackForMainWorld, TestInterfaceV8Internal::supplementalStr2AttrSetterCallbackForMainWorld, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-#if ENABLE(Condition11) || ENABLE(Condition12)
-    // Attribute 'supplementalStr3' (Type: 'attribute' ExtAttr: 'CustomSetter CustomGetter Conditional ImplementedBy')
-    {"supplementalStr3", TestInterfaceV8Internal::supplementalStr3AttrGetterCallbackForMainWorld, TestInterfaceV8Internal::supplementalStr3AttrSetterCallbackForMainWorld, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-#if ENABLE(Condition11) || ENABLE(Condition12)
-    // Attribute 'supplementalNode' (Type: 'attribute' ExtAttr: 'Conditional ImplementedBy')
-    {"supplementalNode", TestInterfaceV8Internal::supplementalNodeAttrGetterCallbackForMainWorld, TestInterfaceV8Internal::supplementalNodeAttrSetterCallbackForMainWorld, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-#endif // ENABLE(Condition11) || ENABLE(Condition12)
-};
-
 static const V8DOMConfiguration::BatchedMethod V8TestInterfaceMethods[] = {
 #if ENABLE(Condition11) || ENABLE(Condition12)
     {"supplementalMethod1", TestInterfaceV8Internal::supplementalMethod1MethodCallback},
@@ -618,7 +418,7 @@ v8::Handle<v8::Value> V8TestInterface::constructorCallback(const v8::Arguments& 
     return TestInterfaceV8Internal::constructor(args);
 }
 
-static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestInterfaceTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate, WrapperWorldType currentWorldType)
+static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestInterfaceTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate, WrapperWorldType worldType)
 {
     desc->ReadOnlyPrototype();
 
@@ -636,12 +436,9 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestInterfaceTemplate(v8:
     UNUSED_PARAM(proto); // In some cases, it will not be used.
     
 
-    if (currentWorldType == MainWorld)
-        V8DOMConfiguration::addToTemplate(desc, V8TestInterfaceAttrsForMainWorld, WTF_ARRAY_LENGTH(V8TestInterfaceAttrsForMainWorld), 0, 0, isolate, defaultSignature);
-
     // Custom Signature 'supplementalMethod2'
     const int supplementalMethod2Argc = 2;
-    v8::Handle<v8::FunctionTemplate> supplementalMethod2Argv[supplementalMethod2Argc] = { v8::Handle<v8::FunctionTemplate>(), V8PerIsolateData::from(isolate)->rawTemplate(&V8TestObj::info, currentWorldType) };
+    v8::Handle<v8::FunctionTemplate> supplementalMethod2Argv[supplementalMethod2Argc] = { v8::Handle<v8::FunctionTemplate>(), V8PerIsolateData::from(isolate)->rawTemplate(&V8TestObj::info, worldType) };
     v8::Handle<v8::Signature> supplementalMethod2Signature = v8::Signature::New(desc, supplementalMethod2Argc, supplementalMethod2Argv);
 #if ENABLE(Condition11) || ENABLE(Condition12)
     proto->Set(v8::String::NewSymbol("supplementalMethod2"), v8::FunctionTemplate::New(TestInterfaceV8Internal::supplementalMethod2MethodCallback, v8Undefined(), supplementalMethod2Signature));
@@ -656,23 +453,23 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestInterfaceTemplate(v8:
     return desc;
 }
 
-v8::Persistent<v8::FunctionTemplate> V8TestInterface::GetTemplate(v8::Isolate* isolate, WrapperWorldType currentWorldType)
+v8::Persistent<v8::FunctionTemplate> V8TestInterface::GetTemplate(v8::Isolate* isolate, WrapperWorldType worldType)
 {
     V8PerIsolateData* data = V8PerIsolateData::from(isolate);
-    V8PerIsolateData::TemplateMap::iterator result = data->templateMap(currentWorldType).find(&info);
-    if (result != data->templateMap(currentWorldType).end())
+    V8PerIsolateData::TemplateMap::iterator result = data->templateMap(worldType).find(&info);
+    if (result != data->templateMap(worldType).end())
         return result->value;
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        ConfigureV8TestInterfaceTemplate(data->rawTemplate(&info, currentWorldType), isolate, currentWorldType);
-    data->templateMap(currentWorldType).add(&info, templ);
+        ConfigureV8TestInterfaceTemplate(data->rawTemplate(&info, worldType), isolate, worldType);
+    data->templateMap(worldType).add(&info, templ);
     return templ;
 }
 
-bool V8TestInterface::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate, WrapperWorldType currentWorldType)
+bool V8TestInterface::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate, WrapperWorldType worldType)
 {
-    return V8PerIsolateData::from(isolate)->hasInstance(&info, value, currentWorldType);
+    return V8PerIsolateData::from(isolate)->hasInstance(&info, value, worldType);
 }
 
 ActiveDOMObject* V8TestInterface::toActiveDOMObject(v8::Handle<v8::Object> object)

@@ -48,11 +48,6 @@ v8::Handle<v8::Value> toV8(MicroDataItemValue* itemValue, v8::Handle<v8::Object>
     return v8String(itemValue->getString(), isolate);
 }
 
-v8::Handle<v8::Value> toV8ForMainWorld(MicroDataItemValue* itemValue, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
-{
-    return toV8(itemValue, creationContext, isolate);
-}
-
 }
 
 #endif // ENABLE(MICRODATA)

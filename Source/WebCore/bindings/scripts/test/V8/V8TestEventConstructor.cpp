@@ -81,17 +81,6 @@ static v8::Handle<v8::Value> attr1AttrGetterCallback(v8::Local<v8::String> name,
     return TestEventConstructorV8Internal::attr1AttrGetter(name, info);
 }
 
-static v8::Handle<v8::Value> attr1AttrGetterForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    TestEventConstructor* imp = V8TestEventConstructor::toNative(info.Holder());
-    return v8String(imp->attr1(), info.GetIsolate(), ReturnUnsafeHandle);
-}
-
-static v8::Handle<v8::Value> attr1AttrGetterCallbackForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    return TestEventConstructorV8Internal::attr1AttrGetterForMainWorld(name, info);
-}
-
 static v8::Handle<v8::Value> attr2AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestEventConstructor* imp = V8TestEventConstructor::toNative(info.Holder());
@@ -101,17 +90,6 @@ static v8::Handle<v8::Value> attr2AttrGetter(v8::Local<v8::String> name, const v
 static v8::Handle<v8::Value> attr2AttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     return TestEventConstructorV8Internal::attr2AttrGetter(name, info);
-}
-
-static v8::Handle<v8::Value> attr2AttrGetterForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    TestEventConstructor* imp = V8TestEventConstructor::toNative(info.Holder());
-    return v8String(imp->attr2(), info.GetIsolate(), ReturnUnsafeHandle);
-}
-
-static v8::Handle<v8::Value> attr2AttrGetterCallbackForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    return TestEventConstructorV8Internal::attr2AttrGetterForMainWorld(name, info);
 }
 
 static v8::Handle<v8::Value> constructor(const v8::Arguments& args)
@@ -142,13 +120,6 @@ static const V8DOMConfiguration::BatchedAttribute V8TestEventConstructorAttrs[] 
     {"attr2", TestEventConstructorV8Internal::attr2AttrGetterCallback, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 };
 
-static const V8DOMConfiguration::BatchedAttribute V8TestEventConstructorAttrsForMainWorld[] = {
-    // Attribute 'attr1' (Type: 'readonly attribute' ExtAttr: '')
-    {"attr1", TestEventConstructorV8Internal::attr1AttrGetterCallbackForMainWorld, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-    // Attribute 'attr2' (Type: 'readonly attribute' ExtAttr: 'InitializedByEventConstructor')
-    {"attr2", TestEventConstructorV8Internal::attr2AttrGetterCallbackForMainWorld, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-};
-
 bool fillTestEventConstructorInit(TestEventConstructorInit& eventInit, const Dictionary& options)
 {
     options.get("attr2", eventInit.attr2);
@@ -166,7 +137,7 @@ v8::Handle<v8::Value> V8TestEventConstructor::constructorCallback(const v8::Argu
     return TestEventConstructorV8Internal::constructor(args);
 }
 
-static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestEventConstructorTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate, WrapperWorldType currentWorldType)
+static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestEventConstructorTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate, WrapperWorldType worldType)
 {
     desc->ReadOnlyPrototype();
 
@@ -178,31 +149,28 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestEventConstructorTempl
     desc->SetCallHandler(V8TestEventConstructor::constructorCallback);
     
 
-    if (currentWorldType == MainWorld)
-        V8DOMConfiguration::addToTemplate(desc, V8TestEventConstructorAttrsForMainWorld, WTF_ARRAY_LENGTH(V8TestEventConstructorAttrsForMainWorld), 0, 0, isolate, defaultSignature);
-
     // Custom toString template
     desc->Set(v8::String::NewSymbol("toString"), V8PerIsolateData::current()->toStringTemplate());
     return desc;
 }
 
-v8::Persistent<v8::FunctionTemplate> V8TestEventConstructor::GetTemplate(v8::Isolate* isolate, WrapperWorldType currentWorldType)
+v8::Persistent<v8::FunctionTemplate> V8TestEventConstructor::GetTemplate(v8::Isolate* isolate, WrapperWorldType worldType)
 {
     V8PerIsolateData* data = V8PerIsolateData::from(isolate);
-    V8PerIsolateData::TemplateMap::iterator result = data->templateMap(currentWorldType).find(&info);
-    if (result != data->templateMap(currentWorldType).end())
+    V8PerIsolateData::TemplateMap::iterator result = data->templateMap(worldType).find(&info);
+    if (result != data->templateMap(worldType).end())
         return result->value;
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        ConfigureV8TestEventConstructorTemplate(data->rawTemplate(&info, currentWorldType), isolate, currentWorldType);
-    data->templateMap(currentWorldType).add(&info, templ);
+        ConfigureV8TestEventConstructorTemplate(data->rawTemplate(&info, worldType), isolate, worldType);
+    data->templateMap(worldType).add(&info, templ);
     return templ;
 }
 
-bool V8TestEventConstructor::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate, WrapperWorldType currentWorldType)
+bool V8TestEventConstructor::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate, WrapperWorldType worldType)
 {
-    return V8PerIsolateData::from(isolate)->hasInstance(&info, value, currentWorldType);
+    return V8PerIsolateData::from(isolate)->hasInstance(&info, value, worldType);
 }
 
 
