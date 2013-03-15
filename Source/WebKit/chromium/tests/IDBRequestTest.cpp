@@ -96,6 +96,8 @@ TEST_F(IDBRequestTest, EventsAfterStopping)
     request->onSuccess(IDBKey::createInvalid());
     request->onSuccess(PassRefPtr<SharedBuffer>(0));
     request->onSuccess(PassRefPtr<SharedBuffer>(0), IDBKey::createInvalid(), IDBKeyPath());
+    request->onSuccess(0LL);
+    request->onSuccess();
     request->onSuccess(IDBKey::createInvalid(), IDBKey::createInvalid(), 0);
 }
 

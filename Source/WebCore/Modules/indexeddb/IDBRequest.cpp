@@ -371,16 +371,23 @@ void IDBRequest::onSuccess(PassRefPtr<SharedBuffer> valueBuffer, PassRefPtr<IDBK
 
 void IDBRequest::onSuccess(int64_t value)
 {
+    IDB_TRACE("IDBRequest::onSuccess(int64_t)");
+    if (!shouldEnqueueEvent())
+        return;
     return onSuccessInternal(SerializedScriptValue::numberValue(value));
 }
 
 void IDBRequest::onSuccess()
 {
+    IDB_TRACE("IDBRequest::onSuccess()");
+    if (!shouldEnqueueEvent())
+        return;
     return onSuccessInternal(SerializedScriptValue::undefinedValue());
 }
 
 void IDBRequest::onSuccessInternal(PassRefPtr<SerializedScriptValue> value)
 {
+    ASSERT(!m_contextStopped);
     DOMRequestState::Scope scope(m_requestState);
     return onSuccessInternal(deserializeIDBValue(requestState(), value));
 }
