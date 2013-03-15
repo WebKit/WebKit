@@ -77,4 +77,14 @@ v8::Local<v8::Signature> V8DOMConfiguration::configureTemplate(v8::Persistent<v8
     return defaultSignature;
 }
 
+void V8DOMConfiguration::addToTemplate(v8::Persistent<v8::FunctionTemplate> functionDescriptor, const BatchedAttribute* attributes, size_t attributeCount, const BatchedMethod* callbacks, size_t callbackCount, v8::Isolate* isolate, v8::Local<v8::Signature> signature)
+{
+    if (attributeCount) {
+        v8::Local<v8::ObjectTemplate> instance = functionDescriptor->InstanceTemplate();
+        batchConfigureAttributes(instance, functionDescriptor->PrototypeTemplate(), attributes, attributeCount, isolate);
+    }
+    if (callbackCount)
+        batchConfigureCallbacks(functionDescriptor->PrototypeTemplate(), signature, static_cast<v8::PropertyAttribute>(v8::DontDelete), callbacks, callbackCount, isolate);
+}
+
 } // namespace WebCore
