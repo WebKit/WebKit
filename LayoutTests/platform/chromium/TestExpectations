@@ -4412,7 +4412,7 @@ webkit.org/b/111199 [ Debug Win Mac ] platform/chromium/virtual/softwarecomposit
 # V8 bug: https://code.google.com/p/v8/issues/detail?id=2567
 webkit.org/b/110876 [ Debug ] html5lib/generated/ [ Skip ]
 # Some of these tests are slow on the webkit.org Linux Release bot as well.
-webkit.org/b/112381 [ Linux Release ] html5lib/generated/run-tests16-data.html [ Slow ]
+webkit.org/b/112381 [ Win Linux Release ] html5lib/generated/run-tests16-data.html [ Slow ]
 
 # HALF_FLOAT_OES is not yet working in chromium.
 crbug.com/179503 fast/canvas/webgl/oes-texture-half-float.html [ Failure ]
