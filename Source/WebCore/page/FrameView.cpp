@@ -1388,7 +1388,7 @@ void FrameView::addWidgetToUpdate(RenderObject* object)
     // Tell the DOM element that it needs a widget update.
     Node* node = object->node();
     if (node->hasTagName(objectTag) || node->hasTagName(embedTag)) {
-        HTMLPlugInImageElement* pluginElement = static_cast<HTMLPlugInImageElement*>(node);
+        HTMLPlugInImageElement* pluginElement = toHTMLPlugInImageElement(node);
         pluginElement->setNeedsWidgetUpdate(true);
     }
 
@@ -2527,10 +2527,18 @@ void FrameView::updateWidget(RenderObject* object)
         if (embeddedObject->showsUnavailablePluginIndicator())
             return;
 
+        if (object->isSnapshottedPlugIn()) {
+            if (ownerElement->hasTagName(objectTag) || ownerElement->hasTagName(embedTag)) {
+                HTMLPlugInImageElement* pluginElement = toHTMLPlugInImageElement(ownerElement);
+                pluginElement->updateSnapshotInfo();
+            }
+            return;
+        }
+
         // FIXME: This could turn into a real virtual dispatch if we defined
         // updateWidget(PluginCreationOption) on HTMLElement.
         if (ownerElement->hasTagName(objectTag) || ownerElement->hasTagName(embedTag) || ownerElement->hasTagName(appletTag)) {
-            HTMLPlugInImageElement* pluginElement = static_cast<HTMLPlugInImageElement*>(ownerElement);
+            HTMLPlugInImageElement* pluginElement = toHTMLPlugInImageElement(ownerElement);
             if (pluginElement->needsWidgetUpdate())
                 pluginElement->updateWidget(CreateAnyWidgetType);
         }
@@ -2545,11 +2553,6 @@ void FrameView::updateWidget(RenderObject* object)
         // Caution: it's possible the object was destroyed again, since loading a
         // plugin may run any arbitrary JavaScript.
         embeddedObject->updateWidgetPosition();
-    } else if (object->isSnapshottedPlugIn()) {
-        if (ownerElement->hasTagName(objectTag) || ownerElement->hasTagName(embedTag)) {
-            HTMLPlugInImageElement* pluginElement = static_cast<HTMLPlugInImageElement*>(ownerElement);
-            pluginElement->updateSnapshotInfo();
-        }
     }
 }
 

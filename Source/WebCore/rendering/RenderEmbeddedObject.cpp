@@ -38,6 +38,7 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLParamElement.h"
+#include "HTMLPlugInElement.h"
 #include "HitTestResult.h"
 #include "LocalizedStrings.h"
 #include "MIMETypeRegistry.h"
@@ -278,9 +279,7 @@ void RenderEmbeddedObject::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     LayoutSize oldSize = contentBoxRect().size();
-#endif
 
     updateLogicalWidth();
     updateLogicalHeight();
@@ -292,19 +291,27 @@ void RenderEmbeddedObject::layout()
 
     updateLayerTransform();
 
-    if (!widget() && frameView())
+    if (!widget() && frameView() && canHaveWidget())
         frameView()->addWidgetToUpdate(this);
 
     setNeedsLayout(false);
 
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    if (!canHaveChildren())
+        return;
+
     // This code copied from RenderMedia::layout().
-    RenderBox* controlsRenderer = toRenderBox(m_children.firstChild());
-    if (!controlsRenderer)
+    RenderObject* child = m_children.firstChild();
+
+    if (!child)
+        return;
+
+    RenderBox* childBox = toRenderBox(child);
+
+    if (!childBox)
         return;
     
     LayoutSize newSize = contentBoxRect().size();
-    if (newSize == oldSize && !controlsRenderer->needsLayout())
+    if (newSize == oldSize && !childBox->needsLayout())
         return;
     
     // When calling layout() on a child node, a parent must either push a LayoutStateMaintainter, or
@@ -312,15 +319,14 @@ void RenderEmbeddedObject::layout()
     // and this method will be called many times per second during playback, use a LayoutStateMaintainer:
     LayoutStateMaintainer statePusher(view(), this, locationOffset(), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
     
-    controlsRenderer->setLocation(LayoutPoint(borderLeft(), borderTop()) + LayoutSize(paddingLeft(), paddingTop()));
-    controlsRenderer->style()->setHeight(Length(newSize.height(), Fixed));
-    controlsRenderer->style()->setWidth(Length(newSize.width(), Fixed));
-    controlsRenderer->setNeedsLayout(true, MarkOnlyThis);
-    controlsRenderer->layout();
+    childBox->setLocation(LayoutPoint(borderLeft(), borderTop()) + LayoutSize(paddingLeft(), paddingTop()));
+    childBox->style()->setHeight(Length(newSize.height(), Fixed));
+    childBox->style()->setWidth(Length(newSize.width(), Fixed));
+    childBox->setNeedsLayout(true, MarkOnlyThis);
+    childBox->layout();
     setChildNeedsLayout(false);
     
     statePusher.pop();
-#endif
 }
 
 void RenderEmbeddedObject::viewCleared()
@@ -457,6 +463,22 @@ CursorDirective RenderEmbeddedObject::getCursor(const LayoutPoint& point, Cursor
         return SetCursor;
     }
     return RenderPart::getCursor(point, cursor);
+}
+
+bool RenderEmbeddedObject::canHaveChildren() const
+{
+#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+    if (!node())
+        return false;
+
+    if (toElement(node())->isMediaElement())
+        return true;
+#endif
+
+    if (isSnapshottedPlugIn())
+        return true;
+
+    return false;
 }
 
 }

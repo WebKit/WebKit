@@ -44,7 +44,7 @@
 namespace WebCore {
 
 RenderSnapshottedPlugIn::RenderSnapshottedPlugIn(HTMLPlugInImageElement* element)
-    : RenderBlock(element)
+    : RenderEmbeddedObject(element)
     , m_snapshotResource(RenderImageResource::create())
 {
     m_snapshotResource->initialize(this);
@@ -66,7 +66,7 @@ void RenderSnapshottedPlugIn::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
     LayoutSize oldSize = contentBoxRect().size();
 
-    RenderBlock::layout();
+    RenderEmbeddedObject::layout();
 
     LayoutSize newSize = contentBoxRect().size();
     if (newSize == oldSize)
@@ -92,7 +92,20 @@ void RenderSnapshottedPlugIn::paint(PaintInfo& paintInfo, const LayoutPoint& pai
         paintSnapshot(paintInfo, paintOffset);
     }
 
-    RenderBlock::paint(paintInfo, paintOffset);
+    PaintPhase newPhase = (paintInfo.phase == PaintPhaseChildOutlines) ? PaintPhaseOutline : paintInfo.phase;
+    newPhase = (newPhase == PaintPhaseChildBlockBackgrounds) ? PaintPhaseChildBlockBackground : newPhase;
+
+    PaintInfo paintInfoForChild(paintInfo);
+    paintInfoForChild.phase = newPhase;
+    paintInfoForChild.updatePaintingRootForChildren(this);
+
+    for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+        LayoutPoint childPoint = flipForWritingModeForChild(child, paintOffset);
+        if (!child->hasSelfPaintingLayer() && !child->isFloating())
+            child->paint(paintInfoForChild, childPoint);
+    }
+
+    RenderEmbeddedObject::paint(paintInfo, paintOffset);
 }
 
 void RenderSnapshottedPlugIn::paintSnapshot(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
@@ -131,7 +144,7 @@ CursorDirective RenderSnapshottedPlugIn::getCursor(const LayoutPoint& point, Cur
         overrideCursor = handCursor();
         return SetCursor;
     }
-    return RenderBlock::getCursor(point, overrideCursor);
+    return RenderEmbeddedObject::getCursor(point, overrideCursor);
 }
 
 void RenderSnapshottedPlugIn::handleEvent(Event* event)
