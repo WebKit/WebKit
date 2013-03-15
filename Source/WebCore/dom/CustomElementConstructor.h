@@ -48,21 +48,25 @@ class Element;
 class ScriptState;
 class ScriptValue;
 
+PassRefPtr<Element> setTypeExtension(PassRefPtr<Element>, const AtomicString& typeExtension);
+
 class CustomElementConstructor : public RefCounted<CustomElementConstructor> , public ContextDestructionObserver {
 public:
-    static PassRefPtr<CustomElementConstructor> create(ScriptState*, Document*, const QualifiedName&, const ScriptValue&);
+    static PassRefPtr<CustomElementConstructor> create(ScriptState*, Document*, const QualifiedName& typeName, const QualifiedName& localName, const ScriptValue&);
 
     virtual ~CustomElementConstructor();
 
-    Document* document() const { return toDocument(m_scriptExecutionContext); }
-    const QualifiedName& name() const { return m_name; }
+    Document* document() const { return static_cast<Document*>(m_scriptExecutionContext); }
+    const QualifiedName& typeName() const { return m_typeName; }
+    const QualifiedName& localName() const { return m_localName; }
 
     PassRefPtr<Element> createElement() const;
-    
-private:
-    CustomElementConstructor(Document*, const QualifiedName&);
 
-    QualifiedName m_name;
+private:
+    CustomElementConstructor(Document*, const QualifiedName& typeName, const QualifiedName& localName);
+
+    QualifiedName m_typeName;
+    QualifiedName m_localName;
 };
 
 }

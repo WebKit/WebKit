@@ -53,6 +53,12 @@ private:
     static v8::Handle<v8::Object> createWrapper(PassRefPtr<TestEventConstructor>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 };
 
+template<>
+class WrapperTypeTraits<TestEventConstructor > {
+public:
+    static WrapperTypeInfo* info() { return &V8TestEventConstructor::info; }
+};
+
 
 inline v8::Handle<v8::Object> wrap(TestEventConstructor* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {

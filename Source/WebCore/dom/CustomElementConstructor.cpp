@@ -37,21 +37,25 @@
 #include "CustomElementHelpers.h"
 #include "Document.h"
 #include "HTMLElement.h"
+#include "HTMLNames.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {
 
-PassRefPtr<CustomElementConstructor> CustomElementConstructor::create(ScriptState* state, Document* document, const QualifiedName& name, const ScriptValue& prototype)
+PassRefPtr<CustomElementConstructor> CustomElementConstructor::create(ScriptState* state, Document* document, const QualifiedName& typeName, const QualifiedName& localName, const ScriptValue& prototype)
 {
-    RefPtr<CustomElementConstructor> created = adoptRef(new CustomElementConstructor(document, name));
+    ASSERT(CustomElementHelpers::isValidPrototypeParameter(prototype, state));
+    ASSERT(localName == typeName || localName == *CustomElementHelpers::findLocalName(prototype));
+    RefPtr<CustomElementConstructor> created = adoptRef(new CustomElementConstructor(document, typeName, localName));
     if (!CustomElementHelpers::initializeConstructorWrapper(created.get(), prototype, state))
         return 0;
     return created.release();
 }
 
-CustomElementConstructor::CustomElementConstructor(Document* document, const QualifiedName& name)
+CustomElementConstructor::CustomElementConstructor(Document* document, const QualifiedName& typeName, const QualifiedName& localName)
     : ContextDestructionObserver(document)
-    , m_name(name)
+    , m_typeName(typeName)
+    , m_localName(localName)
 {
 }
 
@@ -63,7 +67,16 @@ PassRefPtr<Element> CustomElementConstructor::createElement() const
 {
     if (!document())
         return 0;
-    return HTMLElement::create(m_name, document());
+    if (m_localName != m_typeName)
+        return setTypeExtension(document()->createElement(m_localName, document()), m_typeName.localName());
+    return HTMLElement::create(m_typeName, document());
+}
+
+PassRefPtr<Element> setTypeExtension(PassRefPtr<Element> element, const AtomicString& typeExtension)
+{
+    if (!typeExtension.isEmpty())
+        element->setAttribute(HTMLNames::isAttr, typeExtension);
+    return element;
 }
 
 }

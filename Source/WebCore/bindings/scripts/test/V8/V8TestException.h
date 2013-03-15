@@ -51,6 +51,12 @@ private:
     static v8::Handle<v8::Object> createWrapper(PassRefPtr<TestException>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 };
 
+template<>
+class WrapperTypeTraits<TestException > {
+public:
+    static WrapperTypeInfo* info() { return &V8TestException::info; }
+};
+
 
 inline v8::Handle<v8::Object> wrap(TestException* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {

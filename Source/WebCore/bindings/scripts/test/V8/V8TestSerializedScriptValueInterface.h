@@ -53,6 +53,12 @@ private:
     static v8::Handle<v8::Object> createWrapper(PassRefPtr<TestSerializedScriptValueInterface>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 };
 
+template<>
+class WrapperTypeTraits<TestSerializedScriptValueInterface > {
+public:
+    static WrapperTypeInfo* info() { return &V8TestSerializedScriptValueInterface::info; }
+};
+
 
 inline v8::Handle<v8::Object> wrap(TestSerializedScriptValueInterface* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {

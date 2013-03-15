@@ -39,8 +39,6 @@ shouldThrow("document.register('x-bad-a', { prototype: HTMLElement.prototype })"
 shouldThrow("document.register('x-bad-b', { prototype: {} })", "'Error: InvalidStateError: DOM Exception 11'");
 // Bad prototype: wrong __proto__
 shouldThrow("document.register('x-bad-c', { prototype: Object.create(Document.prototype) })", "'Error: InvalidStateError: DOM Exception 11'");
-// Bug 110436 - Elements other than HTMLEmement should be allowed as a superclass.
-shouldThrow("document.register('x-bad-d', { prototype: Object.create(HTMLSpanElement.prototype) })", "'Error: InvalidStateError: DOM Exception 11'");
 // Call as function
 shouldThrow("fooConstructor()", "'TypeError: DOM object constructor cannot be called as a function.'")
 

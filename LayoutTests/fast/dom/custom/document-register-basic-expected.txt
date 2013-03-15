@@ -14,7 +14,6 @@ PASS document.register('X-FOO', createRegisterParamters()) threw exception Error
 PASS document.register('x-bad-a', { prototype: HTMLElement.prototype }) threw exception Error: InvalidStateError: DOM Exception 11.
 PASS document.register('x-bad-b', { prototype: {} }) threw exception Error: InvalidStateError: DOM Exception 11.
 PASS document.register('x-bad-c', { prototype: Object.create(Document.prototype) }) threw exception Error: InvalidStateError: DOM Exception 11.
-PASS document.register('x-bad-d', { prototype: Object.create(HTMLSpanElement.prototype) }) threw exception Error: InvalidStateError: DOM Exception 11.
 PASS fooConstructor() threw exception TypeError: DOM object constructor cannot be called as a function..
 PASS createdFoo.__proto__ is fooConstructor.prototype
 PASS createdFoo.constructor is fooConstructor

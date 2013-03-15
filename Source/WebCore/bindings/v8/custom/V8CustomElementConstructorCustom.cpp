@@ -48,7 +48,7 @@ v8::Handle<v8::Value> V8CustomElementConstructor::callAsFunctionCallback(const v
     RefPtr<Element> element = impl->createElement();
     if (!element)
         return v8Undefined();
-    return V8CustomElement::toV8(element.get(), args.Holder(), args.GetIsolate());
+    return V8CustomElement::wrap(element.get(), args.Holder(), impl, args.GetIsolate());
 }
 
 } // namespace WebCore

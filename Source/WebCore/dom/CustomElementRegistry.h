@@ -39,6 +39,7 @@
 #include "ScriptValue.h"
 #include "Supplementable.h"
 #include <wtf/Forward.h>
+#include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -59,18 +60,20 @@ public:
     ~CustomElementRegistry();
 
     PassRefPtr<CustomElementConstructor> registerElement(WebCore::ScriptState*, const AtomicString& name, const Dictionary& options, ExceptionCode&);
-    PassRefPtr<CustomElementConstructor> find(const QualifiedName&) const;
-    PassRefPtr<Element> createElement(const QualifiedName&) const;
+    PassRefPtr<CustomElementConstructor> findFor(Element*) const;
+    PassRefPtr<CustomElementConstructor> find(const QualifiedName& elementName, const QualifiedName& localName) const;
+    PassRefPtr<Element> createElement(const QualifiedName& localName, const AtomicString& typeExtension) const;
+
     Document* document() const;
 
-    static PassRefPtr<CustomElementConstructor> constructorOf(Element*);
-    
 private:
     static bool isValidName(const AtomicString&);
 
-    typedef HashMap<QualifiedName::QualifiedNameImpl*, RefPtr<CustomElementConstructor> >ConstructorMap;
+    typedef HashMap<std::pair<QualifiedName, QualifiedName>, RefPtr<CustomElementConstructor> > ConstructorMap;
+    typedef HashSet<QualifiedName> NameSet;
 
     ConstructorMap m_constructors;
+    NameSet m_names;
 };
 
 } // namespace WebCore

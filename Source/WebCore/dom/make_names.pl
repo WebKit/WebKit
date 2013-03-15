@@ -823,6 +823,11 @@ print F <<END
 #include "ContextFeatures.h"
 #include "RuntimeEnabledFeatures.h"
 
+#if ENABLE(CUSTOM_ELEMENTS)
+#include "CustomElementConstructor.h"
+#include "CustomElementRegistry.h"
+#endif
+
 #if ENABLE(DASHBOARD_SUPPORT) || ENABLE(VIDEO)
 #include "Document.h"
 #include "Settings.h"
@@ -896,6 +901,16 @@ END
 }
 
 print F <<END
+#if ENABLE(CUSTOM_ELEMENTS)
+    if (document->registry()) {
+        if (RefPtr<CustomElementConstructor> constructor = document->registry()->find(nullQName(), qName)) {
+            RefPtr<Element> element = constructor->createElement();
+            ASSERT(element->is$parameters{namespace}Element());
+            return static_pointer_cast<$parameters{namespace}Element>(element.release());
+        }
+    }
+#endif
+
     if (!gFunctionMap)
         createFunctionMap();
     if (ConstructorFunction function = gFunctionMap->get(qName.localName().impl())) {
@@ -912,11 +927,7 @@ if ($parameters{namespace} eq "HTML") {
 print F <<END
     }
 
-END
-;
-print F "    return $parameters{fallbackInterfaceName}::create(qName, document);\n";
-
-print F <<END
+    return $parameters{fallbackInterfaceName}::create(qName, document);
 }
 
 } // namespace WebCore
@@ -1172,8 +1183,11 @@ END
 ;
     } elsif ($wrapperFactoryType eq "V8") {
         print F <<END
-#include "V8CustomElement.h"
 #include "V8$parameters{namespace}Element.h"
+
+#if ENABLE(CUSTOM_ELEMENTS)
+#include "V8CustomElement.h"
+#endif
 
 #include <v8.h>
 END
@@ -1244,6 +1258,19 @@ END
 
     print F <<END
     }
+END
+;
+    if ($wrapperFactoryType eq "V8") {
+        print F <<END
+#if ENABLE(CUSTOM_ELEMENTS)
+    if (PassRefPtr<CustomElementConstructor> constructor = V8CustomElement::constructorOf(element))
+        return V8CustomElement::wrap(element, creationContext, constructor, isolate);
+#endif
+END
+;
+    }
+
+    print F <<END
     Create$parameters{namespace}ElementWrapperFunction createWrapperFunction = map.get(element->localName().impl());
     if (createWrapperFunction)
 END
@@ -1275,11 +1302,6 @@ END
     return V8SVGElement::createWrapper(element, creationContext, isolate);
 END
 ;
-        } elsif ($parameters{namespace} eq "HTML") {
-            print F <<END
-    return V8CustomElement::wrap(element, creationContext, isolate);
-END
-;
         } else {
             print F <<END
     return wrap(to$parameters{fallbackInterfaceName}(element), creationContext, isolate);
@@ -1289,12 +1311,48 @@ END
     }
     print F <<END
 }
+END
+;
 
+    if ($wrapperFactoryType eq "V8") {
+        print F <<END
+
+const QualifiedName* find$parameters{namespace}TagNameOfV8Type(const WrapperTypeInfo* type)
+{
+    typedef HashMap<const WrapperTypeInfo*, const QualifiedName*> TypeNameMap;
+    DEFINE_STATIC_LOCAL(TypeNameMap, map, ());
+    if (map.isEmpty()) {
+END
+;
+
+        for my $tagName (sort keys %enabledTags) {
+            if (!usesDefaultJSWrapper($tagName)) {
+                my $conditional = $enabledTags{$tagName}{conditional};
+                if ($conditional) {
+                    my $conditionalString = "ENABLE(" . join(") && ENABLE(", split(/&/, $conditional)) . ")";
+                    print F "#if ${conditionalString}\n";
+                }
+
+                my $JSInterfaceName = $enabledTags{$tagName}{JSInterfaceName};
+                print F "       map.set(WrapperTypeTraits<${JSInterfaceName}>::info(), &${tagName}Tag);\n";
+
+                if ($conditional) {
+                    print F "#endif\n";
+                }
+            }
+        }
+
+        print F <<END
+    }
+
+    return map.get(type);
 }
 
 END
 ;
+    }
 
+    print F "}\n\n";
     print F "#endif\n" if $parameters{guardFactoryWith};
 
     close F;
@@ -1345,6 +1403,7 @@ namespace WebCore {
 
     class $parameters{namespace}Element;
 
+    const QualifiedName* find$parameters{namespace}TagNameOfV8Type(const WrapperTypeInfo*);
     v8::Handle<v8::Object> createV8$parameters{namespace}Wrapper($parameters{namespace}Element*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
     inline v8::Handle<v8::Object> createV8$parameters{namespace}DirectWrapper($parameters{namespace}Element* element, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
     {

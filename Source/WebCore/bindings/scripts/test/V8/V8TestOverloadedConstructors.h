@@ -52,6 +52,12 @@ private:
     static v8::Handle<v8::Object> createWrapper(PassRefPtr<TestOverloadedConstructors>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 };
 
+template<>
+class WrapperTypeTraits<TestOverloadedConstructors > {
+public:
+    static WrapperTypeInfo* info() { return &V8TestOverloadedConstructors::info; }
+};
+
 
 inline v8::Handle<v8::Object> wrap(TestOverloadedConstructors* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {

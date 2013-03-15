@@ -33,6 +33,7 @@
 
 #include "DOMWrapperWorld.h"
 #include "V8CustomElementConstructor.h"
+#include "V8HTMLElementWrapperFactory.h"
 #include "V8HTMLParagraphElement.h"
 #include "V8HTMLSpanElement.h"
 
@@ -63,17 +64,11 @@ bool CustomElementHelpers::initializeConstructorWrapper(CustomElementConstructor
     return true;
 }
 
-// See FIXME on the caller side comment.
-static bool hasNoBuiltinsInPrototype(v8::Handle<v8::Object> htmlPrototype, v8::Handle<v8::Value> chain)
+static bool hasValidPrototypeChain(v8::Handle<v8::Object> requiredAncestor, v8::Handle<v8::Value> chain)
 {
-    while (!chain.IsEmpty()) {
-        if (chain == htmlPrototype)
+    while (!chain.IsEmpty() && chain->IsObject()) {
+        if (chain == requiredAncestor)
             return true;
-        if (!chain->IsObject())
-            return false;
-        // The internal field count indicates the object might be a native backed, built-in object.
-        if (v8::Handle<v8::Object>::Cast(chain)->InternalFieldCount())
-            return false;
         chain = v8::Handle<v8::Object>::Cast(chain)->GetPrototype();
     }
 
@@ -90,20 +85,14 @@ bool CustomElementHelpers::isValidPrototypeParameter(const ScriptValue& prototyp
     if (prototypeObject->HasOwnProperty(v8String("constructor", state->context()->GetIsolate())))
         return false;
     V8PerContextData* perContextData = V8PerContextData::from(state->context());
-    //
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=110436
-    //   document.register() should allow arbitrary HTMLElement subclassses.
-    //   Currently it supports custom elements which are
-    //   - direct subclasses of HTMLElement or
-    //   - subclasses of other custom elements
-    //
+    // FIXME: non-HTML subclasses should be also supported: https://bugs.webkit.org/show_bug.cgi?id=111693
     v8::Handle<v8::Object> htmlConstructor = v8::Handle<v8::Object>::Cast(perContextData->constructorForType(&V8HTMLElement::info));
     if (htmlConstructor.IsEmpty())
         return false;
     v8::Handle<v8::Object> htmlPrototype = v8::Handle<v8::Object>::Cast(htmlConstructor->Get(v8String("prototype", state->context()->GetIsolate())));
     if (htmlPrototype.IsEmpty())
         return false;
-    if (!hasNoBuiltinsInPrototype(htmlPrototype, prototypeObject))
+    if (!hasValidPrototypeChain(htmlPrototype, prototypeObject))
         return false;
     return true;
 }
@@ -120,6 +109,34 @@ bool CustomElementHelpers::isFeatureAllowed(v8::Handle<v8::Context> context)
     return true;
 }
 
+const QualifiedName* CustomElementHelpers::findLocalName(const ScriptValue& prototype)
+{
+    if (prototype.v8Value().IsEmpty() || !prototype.v8Value()->IsObject())
+        return 0;
+    return findLocalName(v8::Handle<v8::Object>::Cast(prototype.v8Value()));
+}
+
+WrapperTypeInfo* CustomElementHelpers::findWrapperType(v8::Handle<v8::Value> chain)
+{
+    while (!chain.IsEmpty() && chain->IsObject()) {
+        v8::Handle<v8::Object> chainObject = v8::Handle<v8::Object>::Cast(chain);
+        // Only prototype objects of native-backed types have the extra internal field storing WrapperTypeInfo.
+        if (v8PrototypeInternalFieldcount == chainObject->InternalFieldCount())
+            return reinterpret_cast<WrapperTypeInfo*>(chainObject->GetAlignedPointerFromInternalField(v8PrototypeTypeIndex));
+        chain = chainObject->GetPrototype();
+    }
+
+    return 0;
+}
+
+// This can return null. In that case, we should take the element name as its local name.
+const QualifiedName* CustomElementHelpers::findLocalName(v8::Handle<v8::Object> chain)
+{
+    WrapperTypeInfo* type = CustomElementHelpers::findWrapperType(chain);
+    if (!type)
+        return 0;
+    return findHTMLTagNameOfV8Type(type);
+}
 
 #endif // ENABLE(CUSTOM_ELEMENTS)
 

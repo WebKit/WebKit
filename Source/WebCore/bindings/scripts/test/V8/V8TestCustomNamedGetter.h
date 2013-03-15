@@ -52,6 +52,12 @@ private:
     static v8::Handle<v8::Object> createWrapper(PassRefPtr<TestCustomNamedGetter>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 };
 
+template<>
+class WrapperTypeTraits<TestCustomNamedGetter > {
+public:
+    static WrapperTypeInfo* info() { return &V8TestCustomNamedGetter::info; }
+};
+
 
 inline v8::Handle<v8::Object> wrap(TestCustomNamedGetter* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {

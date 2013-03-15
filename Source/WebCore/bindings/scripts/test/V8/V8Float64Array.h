@@ -53,6 +53,12 @@ private:
     static v8::Handle<v8::Object> createWrapper(PassRefPtr<Float64Array>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 };
 
+template<>
+class WrapperTypeTraits<Float64Array > {
+public:
+    static WrapperTypeInfo* info() { return &V8Float64Array::info; }
+};
+
 
 v8::Handle<v8::Object> wrap(Float64Array* impl, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 

@@ -51,6 +51,12 @@ private:
     static v8::Handle<v8::Object> createWrapper(PassRefPtr<TestMediaQueryListListener>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 };
 
+template<>
+class WrapperTypeTraits<TestMediaQueryListListener > {
+public:
+    static WrapperTypeInfo* info() { return &V8TestMediaQueryListListener::info; }
+};
+
 
 inline v8::Handle<v8::Object> wrap(TestMediaQueryListListener* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {

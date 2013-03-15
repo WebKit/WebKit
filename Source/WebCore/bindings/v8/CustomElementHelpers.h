@@ -39,6 +39,7 @@ namespace WebCore {
 #if ENABLE(CUSTOM_ELEMENTS)
 
 class CustomElementConstructor;
+class QualifiedName;
 class ScriptState;
 
 class CustomElementHelpers {
@@ -46,8 +47,11 @@ public:
     static bool initializeConstructorWrapper(CustomElementConstructor*, const ScriptValue& prototype, ScriptState*);
     static bool isValidPrototypeParameter(const ScriptValue&, ScriptState*);
     static bool isFeatureAllowed(ScriptState*);
+    static const QualifiedName* findLocalName(const ScriptValue& prototype);
 
     static bool isFeatureAllowed(v8::Handle<v8::Context>);
+    static WrapperTypeInfo* findWrapperType(v8::Handle<v8::Value> chain);
+    static const QualifiedName* findLocalName(v8::Handle<v8::Object> chain);
 };
 
 #endif // ENABLE(CUSTOM_ELEMENTS)

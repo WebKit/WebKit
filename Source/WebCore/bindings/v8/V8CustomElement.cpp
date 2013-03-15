@@ -42,29 +42,9 @@
 
 namespace WebCore {
 
-static WrapperTypeInfo* findWrapperTypeOf(v8::Handle<v8::Value> chain)
-{
-    while (!chain.IsEmpty() && chain->IsObject()) {
-        v8::Handle<v8::Object> chainObject = v8::Handle<v8::Object>::Cast(chain);
-        if (v8PrototypeInternalFieldcount == chainObject->InternalFieldCount())
-            return reinterpret_cast<WrapperTypeInfo*>(chainObject->GetAlignedPointerFromInternalField(v8PrototypeTypeIndex));
-        chain = chainObject->GetPrototype();
-    }
-
-    return 0;
-}
-
-v8::Handle<v8::Object> V8CustomElement::createWrapper(PassRefPtr<Element> impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+v8::Handle<v8::Object> V8CustomElement::createWrapper(PassRefPtr<Element> impl, v8::Handle<v8::Object> creationContext, PassRefPtr<CustomElementConstructor> constructor, v8::Isolate* isolate)
 {
     ASSERT(impl);
-
-    RefPtr<CustomElementConstructor> constructor = CustomElementRegistry::constructorOf(impl.get());
-    if (!constructor) {
-        v8::Handle<v8::Value> wrapperValue = WebCore::toV8(toHTMLUnknownElement(toHTMLElement(impl.get())), creationContext, isolate);
-        if (!wrapperValue.IsEmpty() && wrapperValue->IsObject())
-            return v8::Handle<v8::Object>::Cast(wrapperValue);
-        return v8::Handle<v8::Object>();
-    }
 
     // The constructor and registered lifecycle callbacks should be visible only from main world.
     // FIXME: This shouldn't be needed once each custom element has its own FunctionTemplate
@@ -81,7 +61,7 @@ v8::Handle<v8::Object> V8CustomElement::createWrapper(PassRefPtr<Element> impl, 
         return v8::Handle<v8::Object>();
     v8::Handle<v8::Object> constructorWapper = v8::Handle<v8::Object>::Cast(constructorValue);
     v8::Handle<v8::Object> prototype = v8::Handle<v8::Object>::Cast(constructorWapper->Get(v8::String::NewSymbol("prototype")));
-    WrapperTypeInfo* typeInfo = findWrapperTypeOf(prototype);
+    WrapperTypeInfo* typeInfo = CustomElementHelpers::findWrapperType(prototype);
     if (!typeInfo)
         return v8::Handle<v8::Object>();
 

@@ -51,6 +51,12 @@ private:
     static v8::Handle<v8::Object> createWrapper(PassRefPtr<TestActiveDOMObject>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 };
 
+template<>
+class WrapperTypeTraits<TestActiveDOMObject > {
+public:
+    static WrapperTypeInfo* info() { return &V8TestActiveDOMObject::info; }
+};
+
 
 inline v8::Handle<v8::Object> wrap(TestActiveDOMObject* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {

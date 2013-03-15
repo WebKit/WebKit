@@ -515,6 +515,12 @@ END
     push(@headerContent, <<END);
 };
 
+template<>
+class WrapperTypeTraits<${nativeType} > {
+public:
+    static WrapperTypeInfo* info() { return &${v8InterfaceName}::info; }
+};
+
 END
 
     my $customWrap = !!($interface->extendedAttributes->{"CustomToJSObject"} or $interface->extendedAttributes->{"V8CustomToJSObject"});

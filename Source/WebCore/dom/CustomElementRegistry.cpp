@@ -40,6 +40,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "HTMLNames.h"
+#include "HTMLUnknownElement.h"
 #include "RuntimeEnabledFeatures.h"
 #include <wtf/ASCIICType.h>
 
@@ -62,18 +63,15 @@ CustomElementRegistry::~CustomElementRegistry()
 {
 }
 
-PassRefPtr<CustomElementConstructor> CustomElementRegistry::constructorOf(Element* element)
+static inline bool nameIncludesHyphen(const AtomicString& name)
 {
-    RefPtr<CustomElementRegistry> self = element->document()->registry();
-    if (!self)
-        return 0;
-    return self->find(element->tagQName());
+    size_t hyphenPosition = name.find('-');
+    return (hyphenPosition != notFound);
 }
 
 bool CustomElementRegistry::isValidName(const AtomicString& name)
 {
-    size_t hyphenPosition = name.find('-');
-    if (hyphenPosition == notFound)
+    if (!nameIncludesHyphen(name))
         return false;
 
     DEFINE_STATIC_LOCAL(Vector<AtomicString>, reservedNames, ());
@@ -112,11 +110,6 @@ PassRefPtr<CustomElementConstructor> CustomElementRegistry::registerElement(Scri
         return 0;
     }
         
-    if (find(newName)) {
-        ec = INVALID_STATE_ERR;
-        return 0;
-    }
-
     ScriptValue prototypeValue;
     if (!options.get("prototype", prototypeValue)) {
         // FIXME: Implement the default value handling.
@@ -132,33 +125,71 @@ PassRefPtr<CustomElementConstructor> CustomElementRegistry::registerElement(Scri
         ec = INVALID_STATE_ERR;
         return 0;
     }
+
+    if (m_names.contains(newName)) {
+        ec = INVALID_STATE_ERR;
+        return 0;
+    }
+
+    const QualifiedName* localNameFound = CustomElementHelpers::findLocalName(prototypeValue);
+    QualifiedName localNameToUse = localNameFound ? *localNameFound : newName;
+    if (find(newName, localNameToUse)) {
+        ec = INVALID_STATE_ERR;
+        return 0;
+    }
     
-    // An script execution could happen in isValidPrototypeParameter(), which kills the document.
+    // A script execution could happen in isValidPrototypeParameter(), which kills the document.
     if (!document()) {
         ec = INVALID_STATE_ERR;
         return 0;
     }
 
-    RefPtr<CustomElementConstructor> constructor = CustomElementConstructor::create(state, document(), newName, prototypeValue);
+    RefPtr<CustomElementConstructor> constructor = CustomElementConstructor::create(state, document(), newName, localNameToUse, prototypeValue);
     if (!constructor) {
         ec = INVALID_STATE_ERR;
         return 0;
     }
         
-    m_constructors.add(constructor->name().impl(), constructor);
+    m_constructors.add(std::make_pair(constructor->typeName(), constructor->localName()), constructor);
+    m_names.add(constructor->typeName());
+
     return constructor;
 }
 
-PassRefPtr<CustomElementConstructor> CustomElementRegistry::find(const QualifiedName& name) const
+PassRefPtr<CustomElementConstructor> CustomElementRegistry::findFor(Element* element) const
 {
-    ConstructorMap::const_iterator found = m_constructors.find(name.impl());
-    return (found != m_constructors.end()) ? found->value : 0;
+    ASSERT(element->document()->registry() == this);
+
+    // Most elements can be rejected this quick screening.
+    if (!nameIncludesHyphen(element->tagName()) && !element->hasAttribute(HTMLNames::isAttr))
+        return 0;
+
+    QualifiedName idValue(nullAtom, element->getAttribute(HTMLNames::isAttr), HTMLNames::xhtmlNamespaceURI);
+    return find(idValue, element->tagQName());
 }
 
-PassRefPtr<Element> CustomElementRegistry::createElement(const QualifiedName& name) const
+PassRefPtr<CustomElementConstructor> CustomElementRegistry::find(const QualifiedName& typeName, const QualifiedName& localName) const
 {
-    if (RefPtr<CustomElementConstructor> found = find(name))
-        return found->createElement();
+    ConstructorMap::const_iterator found = m_constructors.end();
+    if (!typeName.localName().isEmpty())
+        found = m_constructors.find(std::make_pair(typeName, localName));
+    if (found == m_constructors.end())
+        found = m_constructors.find(std::make_pair(localName, localName));
+    if (found == m_constructors.end())
+        return 0;
+    return found->value;
+}
+
+PassRefPtr<Element> CustomElementRegistry::createElement(const QualifiedName& localName, const AtomicString& typeExtension) const
+{
+    const QualifiedName& typeName = QualifiedName(nullAtom, typeExtension, localName.namespaceURI());
+    if (RefPtr<CustomElementConstructor> found = find(typeName, localName)) {
+        RefPtr<Element> created = found->createElement();
+        if (!typeName.localName().isEmpty() && localName != typeName)
+            return setTypeExtension(created, typeExtension);
+        return created.release();
+    }
+
     return 0;
 }
 

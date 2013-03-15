@@ -53,6 +53,12 @@ private:
     static v8::Handle<v8::Object> createWrapper(PassRefPtr<TestNode>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 };
 
+template<>
+class WrapperTypeTraits<TestNode > {
+public:
+    static WrapperTypeInfo* info() { return &V8TestNode::info; }
+};
+
 
 inline v8::Handle<v8::Object> wrap(TestNode* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {

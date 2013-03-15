@@ -363,6 +363,9 @@
 #if defined(ENABLE_CUSTOM_ELEMENTS) && ENABLE_CUSTOM_ELEMENTS
     [V8EnabledAtRuntime=customDOMElements, Conditional=CUSTOM_ELEMENTS, ImplementedAs=registerElement, CallWith=ScriptState]
     CustomElementConstructor webkitRegister(in DOMString name, in [Optional] Dictionary options) raises(DOMException);
+    [ReturnNewObject] Element createElement(in DOMString localName, in [TreatNullAs=NullString] DOMString typeExtension) raises (DOMException);
+    [ReturnNewObject] Element createElementNS(in [TreatNullAs=NullString] DOMString namespaceURI, in DOMString qualifiedName,
+                                              in [TreatNullAs=NullString] DOMString typeExtension) raises (DOMException);
 #endif
 
 #if defined(LANGUAGE_CPP) && LANGUAGE_CPP
