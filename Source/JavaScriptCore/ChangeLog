@@ -1,3 +1,15 @@
+2013-03-14  Oliver Hunt  <oliver@apple.com>
+
+        REGRESSION(r145000): Crash loading arstechnica.com when Safari Web Inspector is open
+        https://bugs.webkit.org/show_bug.cgi?id=111868
+
+        Reviewed by Antti Koivisto.
+
+        Don't allow non-local property lookup when the debugger is enabled.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::resolve):
+
 2013-03-11  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: Objective-C functions exposed to JavaScript have the wrong type (object instead of function)

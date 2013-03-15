@@ -1271,7 +1271,7 @@ ResolveResult BytecodeGenerator::resolve(const Identifier& property)
     if (property == propertyNames().arguments || !canOptimizeNonLocals())
         return ResolveResult::dynamicResolve();
 
-    if (!m_scope || m_codeType != FunctionCode)
+    if (!m_scope || m_codeType != FunctionCode || m_shouldEmitDebugHooks)
         return ResolveResult::dynamicResolve();
 
     ScopeChainIterator iter = m_scope->begin();
