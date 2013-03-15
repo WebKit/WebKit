@@ -144,6 +144,7 @@ void SubresourceLoader::willSendRequest(ResourceRequest& newRequest, const Resou
 {
     // Store the previous URL because the call to ResourceLoader::willSendRequest will modify it.
     KURL previousURL = request().url();
+    RefPtr<SubresourceLoader> protect(this);
     
     ResourceLoader::willSendRequest(newRequest, redirectResponse);
     if (!previousURL.isNull() && !newRequest.isNull() && previousURL != newRequest.url()) {
