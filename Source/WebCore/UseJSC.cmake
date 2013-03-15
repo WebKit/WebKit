@@ -261,7 +261,6 @@ if (ENABLE_WEB_AUDIO)
         bindings/js/JSBiquadFilterNodeCustom.cpp
         bindings/js/JSOscillatorNodeCustom.cpp
         bindings/js/JSPannerNodeCustom.cpp
-        bindings/js/JSScriptProcessorNodeCustom.cpp
     )
 endif ()
 

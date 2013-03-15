@@ -41,16 +41,6 @@ using namespace JSC;
 
 namespace WebCore {
 
-void JSAudioContext::visitChildren(JSCell* cell, SlotVisitor& visitor)
-{
-    JSAudioContext* thisObject = jsCast<JSAudioContext*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(thisObject, visitor);
-    thisObject->m_impl->visitJSEventListeners(visitor);
-}
-
 EncodedJSValue JSC_HOST_CALL JSAudioContextConstructor::constructJSAudioContext(ExecState* exec)
 {
     JSAudioContextConstructor* jsConstructor = jsCast<JSAudioContextConstructor*>(exec->callee());

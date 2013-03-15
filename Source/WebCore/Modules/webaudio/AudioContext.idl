@@ -28,7 +28,6 @@
     ActiveDOMObject,
     CustomConstructor,
     ConstructorParameters=0,
-    JSCustomMarkFunction,
     EventTarget
 ] interface AudioContext {
     // All rendered audio ultimately connects to destination, which represents the audio hardware.
