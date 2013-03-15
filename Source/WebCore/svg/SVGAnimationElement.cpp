@@ -46,6 +46,7 @@
 #include "SVGURIReference.h"
 #include "SVGUseElement.h"
 #include "XLinkNames.h"
+#include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 
 using namespace std;
@@ -242,6 +243,8 @@ void SVGAnimationElement::beginElement()
 
 void SVGAnimationElement::beginElementAt(float offset)
 {
+    if (isnan(offset)) 
+        return;
     SMILTime elapsed = this->elapsed();
     addBeginTime(elapsed, elapsed + offset, SMILTimeWithOrigin::ScriptOrigin);
 }
@@ -253,6 +256,8 @@ void SVGAnimationElement::endElement()
 
 void SVGAnimationElement::endElementAt(float offset)
 {
+    if (isnan(offset)) 
+        return;
     SMILTime elapsed = this->elapsed();
     addEndTime(elapsed, elapsed + offset, SMILTimeWithOrigin::ScriptOrigin);
 }

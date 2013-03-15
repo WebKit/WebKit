@@ -674,6 +674,7 @@ SMILTime SVGSMILElement::simpleDuration() const
 
 void SVGSMILElement::addBeginTime(SMILTime eventTime, SMILTime beginTime, SMILTimeWithOrigin::Origin origin)
 {
+    ASSERT(!isnan(beginTime.value()));
     m_beginTimes.append(SMILTimeWithOrigin(beginTime, origin));
     sortTimeList(m_beginTimes);
     beginListChanged(eventTime);
@@ -681,6 +682,7 @@ void SVGSMILElement::addBeginTime(SMILTime eventTime, SMILTime beginTime, SMILTi
 
 void SVGSMILElement::addEndTime(SMILTime eventTime, SMILTime endTime, SMILTimeWithOrigin::Origin origin)
 {
+    ASSERT(!isnan(endTime.value()));
     m_endTimes.append(SMILTimeWithOrigin(endTime, origin));
     sortTimeList(m_endTimes);
     endListChanged(eventTime);
