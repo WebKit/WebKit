@@ -1,3 +1,25 @@
+2013-03-14  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [EFL][MiniBrowser] Add a search field to the MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=112122
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Implement a search field to test API ewk_view_text_find() and add a shortcut 'ctrl' + f.
+
+        * MiniBrowser/efl/main.c:
+        (_Browser_Window):
+        (search_box_show):
+        (search_box_hide):
+        (on_key_down):
+        (on_url_changed):
+        (on_search_field_aborted):
+        (on_search_field_activated):
+        (on_search_field_clicked):
+        (on_search_backward_button_clicked):
+        (on_search_forward_button_clicked):
+        (window_create):
+
 2013-03-14  Julie Parent  <jparent@chromium.org>
 
         Cleanup: Remove g_resourceLoader.
