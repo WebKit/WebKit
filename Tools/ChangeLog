@@ -1,3 +1,14 @@
+2013-03-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Update the link on build.webkit.org to refer to perf.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=112416
+
+        Reviewed by Philip Rogers.
+
+        Updated the link. Also updated the template to use HTML5 DOCTYPE.
+
+        * BuildSlaveSupport/build.webkit.org-config/templates/root.html:
+
 2013-03-15  Tobias Mueller  <tobiasmue@gnome.org>
 
         Build fix for Tools/GtkLauncher/Programs_GtkLauncher-main.o if gstreamer is not installed
