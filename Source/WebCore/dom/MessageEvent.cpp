@@ -153,7 +153,6 @@ SerializedScriptValue* MessageEvent::data() const
     return m_dataAsSerializedScriptValue.get();
 }
 
-// FIXME: remove this when we update the ObjC bindings (bug #28774).
 MessagePort* MessageEvent::messagePort()
 {
     if (!m_ports)
@@ -162,7 +161,6 @@ MessagePort* MessageEvent::messagePort()
     return (*m_ports)[0].get();
 }
 
-// FIXME: remove this when we update the ObjC bindings (bug #28774).
 void MessageEvent::initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, DOMWindow* source, MessagePort* port)
 {
     OwnPtr<MessagePortArray> ports;

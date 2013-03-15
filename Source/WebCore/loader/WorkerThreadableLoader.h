@@ -64,7 +64,7 @@ namespace WebCore {
 
         ~WorkerThreadableLoader();
 
-        virtual void cancel();
+        virtual void cancel() OVERRIDE;
 
         bool done() const { return m_workerClientWrapper->done(); }
 
@@ -72,8 +72,8 @@ namespace WebCore {
         using RefCounted<WorkerThreadableLoader>::deref;
 
     protected:
-        virtual void refThreadableLoader() { ref(); }
-        virtual void derefThreadableLoader() { deref(); }
+        virtual void refThreadableLoader() OVERRIDE { ref(); }
+        virtual void derefThreadableLoader() OVERRIDE { deref(); }
 
     private:
         // Creates a loader on the main thread and bridges communication between
@@ -112,14 +112,14 @@ namespace WebCore {
 
             static void mainThreadCreateLoader(ScriptExecutionContext*, MainThreadBridge*, PassOwnPtr<CrossThreadResourceRequestData>, ThreadableLoaderOptions, const String& outgoingReferrer);
             static void mainThreadCancel(ScriptExecutionContext*, MainThreadBridge*);
-            virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
-            virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
-            virtual void didReceiveData(const char*, int dataLength);
-            virtual void didReceiveCachedMetadata(const char*, int dataLength);
-            virtual void didFinishLoading(unsigned long identifier, double finishTime);
-            virtual void didFail(const ResourceError&);
-            virtual void didFailAccessControlCheck(const ResourceError&);
-            virtual void didFailRedirectCheck();
+            virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) OVERRIDE;
+            virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&) OVERRIDE;
+            virtual void didReceiveData(const char*, int dataLength) OVERRIDE;
+            virtual void didReceiveCachedMetadata(const char*, int dataLength) OVERRIDE;
+            virtual void didFinishLoading(unsigned long identifier, double finishTime) OVERRIDE;
+            virtual void didFail(const ResourceError&) OVERRIDE;
+            virtual void didFailAccessControlCheck(const ResourceError&) OVERRIDE;
+            virtual void didFailRedirectCheck() OVERRIDE;
 
             // Only to be used on the main thread.
             RefPtr<ThreadableLoader> m_mainThreadLoader;

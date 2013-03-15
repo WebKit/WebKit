@@ -92,9 +92,9 @@ public:
 
     // FIXME: Remove this when we have custom ObjC binding support.
     SerializedScriptValue* data() const;
-    // FIXME: remove this when we update the ObjC bindings (bug #28774).
+
+    // Needed for Objective-C bindings (see bug 28774).
     MessagePort* messagePort();
-    // FIXME: remove this when we update the ObjC bindings (bug #28774).
     void initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<SerializedScriptValue> data, const String& origin, const String& lastEventId, DOMWindow* source, MessagePort*);
 
     virtual const AtomicString& interfaceName() const;

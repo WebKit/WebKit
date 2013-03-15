@@ -47,19 +47,20 @@ namespace WebCore {
         static PassRefPtr<SharedWorkerContext> create(const String& name, const KURL&, const String& userAgent, PassOwnPtr<GroupSettings>, SharedWorkerThread*, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType);
         virtual ~SharedWorkerContext();
 
-        virtual bool isSharedWorkerContext() const { return true; }
+        virtual bool isSharedWorkerContext() const OVERRIDE { return true; }
 
         // EventTarget
-        virtual const AtomicString& interfaceName() const;
+        virtual const AtomicString& interfaceName() const OVERRIDE;
 
         // Setters/Getters for attributes in SharedWorkerContext.idl
         DEFINE_ATTRIBUTE_EVENT_LISTENER(connect);
         String name() const { return m_name; }
 
         SharedWorkerThread* thread();
+
     private:
         SharedWorkerContext(const String& name, const KURL&, const String& userAgent, PassOwnPtr<GroupSettings>, SharedWorkerThread*);
-        virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, PassRefPtr<ScriptCallStack>);
+        virtual void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, PassRefPtr<ScriptCallStack>) OVERRIDE;
 
         String m_name;
     };

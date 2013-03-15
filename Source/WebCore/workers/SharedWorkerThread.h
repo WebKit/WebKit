@@ -40,10 +40,10 @@ namespace WebCore {
     class SharedWorkerThread : public WorkerThread {
     public:
         static PassRefPtr<SharedWorkerThread> create(const String& name, const KURL&, const String& userAgent, const GroupSettings*, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);
-        ~SharedWorkerThread();
+        virtual ~SharedWorkerThread();
 
     protected:
-        virtual PassRefPtr<WorkerContext> createWorkerContext(const KURL&, const String& userAgent, PassOwnPtr<GroupSettings>, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType, PassRefPtr<SecurityOrigin> topOrigin);
+        virtual PassRefPtr<WorkerContext> createWorkerContext(const KURL&, const String& userAgent, PassOwnPtr<GroupSettings>, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType, PassRefPtr<SecurityOrigin> topOrigin) OVERRIDE;
 
     private:
         SharedWorkerThread(const String& name, const KURL&, const String& userAgent, const GroupSettings*, const String& sourceCode, WorkerLoaderProxy&, WorkerReportingProxy&, WorkerThreadStartMode, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType);

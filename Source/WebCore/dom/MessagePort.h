@@ -55,11 +55,10 @@ namespace WebCore {
     class MessagePort : public RefCounted<MessagePort>, public EventTarget {
     public:
         static PassRefPtr<MessagePort> create(ScriptExecutionContext& scriptExecutionContext) { return adoptRef(new MessagePort(scriptExecutionContext)); }
-        ~MessagePort();
+        virtual ~MessagePort();
 
-        void postMessage(PassRefPtr<SerializedScriptValue> message, ExceptionCode&);
         void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, ExceptionCode&);
-        // FIXME: remove this when we update the ObjC bindings (bug #28774).
+        // Needed for Objective-C bindings (see bug 28774).
         void postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort*, ExceptionCode&);
 
         void start();
@@ -82,8 +81,8 @@ namespace WebCore {
 
         void contextDestroyed();
 
-        virtual const AtomicString& interfaceName() const;
-        virtual ScriptExecutionContext* scriptExecutionContext() const;
+        virtual const AtomicString& interfaceName() const OVERRIDE;
+        virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
 
         void dispatchMessages();
 
@@ -111,10 +110,10 @@ namespace WebCore {
     private:
         explicit MessagePort(ScriptExecutionContext&);
 
-        virtual void refEventTarget() { ref(); }
-        virtual void derefEventTarget() { deref(); }
-        virtual EventTargetData* eventTargetData();
-        virtual EventTargetData* ensureEventTargetData();
+        virtual void refEventTarget() OVERRIDE { ref(); }
+        virtual void derefEventTarget() OVERRIDE { deref(); }
+        virtual EventTargetData* eventTargetData() OVERRIDE;
+        virtual EventTargetData* ensureEventTargetData() OVERRIDE;
 
         OwnPtr<MessagePortChannel> m_entangledChannel;
 

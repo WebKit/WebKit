@@ -53,36 +53,36 @@ namespace WebCore {
 
         // Implementations of WorkerContextProxy.
         // (Only use these methods in the worker object thread.)
-        virtual void startWorkerContext(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerThreadStartMode);
-        virtual void terminateWorkerContext();
-        virtual void postMessageToWorkerContext(PassRefPtr<SerializedScriptValue>, PassOwnPtr<MessagePortChannelArray>);
-        virtual bool hasPendingActivity() const;
-        virtual void workerObjectDestroyed();
+        virtual void startWorkerContext(const KURL& scriptURL, const String& userAgent, const String& sourceCode, WorkerThreadStartMode) OVERRIDE;
+        virtual void terminateWorkerContext() OVERRIDE;
+        virtual void postMessageToWorkerContext(PassRefPtr<SerializedScriptValue>, PassOwnPtr<MessagePortChannelArray>) OVERRIDE;
+        virtual bool hasPendingActivity() const OVERRIDE;
+        virtual void workerObjectDestroyed() OVERRIDE;
 #if ENABLE(INSPECTOR)
-        virtual void connectToInspector(WorkerContextProxy::PageInspector*);
-        virtual void disconnectFromInspector();
-        virtual void sendMessageToInspector(const String&);
+        virtual void connectToInspector(WorkerContextProxy::PageInspector*) OVERRIDE;
+        virtual void disconnectFromInspector() OVERRIDE;
+        virtual void sendMessageToInspector(const String&) OVERRIDE;
 #endif
 
         // Implementations of WorkerObjectProxy.
         // (Only use these methods in the worker context thread.)
-        virtual void postMessageToWorkerObject(PassRefPtr<SerializedScriptValue>, PassOwnPtr<MessagePortChannelArray>);
-        virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL);
-        virtual void postConsoleMessageToWorkerObject(MessageSource, MessageLevel, const String& message, int lineNumber, const String& sourceURL);
+        virtual void postMessageToWorkerObject(PassRefPtr<SerializedScriptValue>, PassOwnPtr<MessagePortChannelArray>) OVERRIDE;
+        virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL) OVERRIDE;
+        virtual void postConsoleMessageToWorkerObject(MessageSource, MessageLevel, const String& message, int lineNumber, const String& sourceURL) OVERRIDE;
 #if ENABLE(INSPECTOR)
-        virtual void postMessageToPageInspector(const String&);
-        virtual void updateInspectorStateCookie(const String&);
+        virtual void postMessageToPageInspector(const String&) OVERRIDE;
+        virtual void updateInspectorStateCookie(const String&) OVERRIDE;
 #endif
-        virtual void confirmMessageFromWorkerObject(bool hasPendingActivity);
-        virtual void reportPendingActivity(bool hasPendingActivity);
-        virtual void workerContextClosed();
-        virtual void workerContextDestroyed();
+        virtual void confirmMessageFromWorkerObject(bool hasPendingActivity) OVERRIDE;
+        virtual void reportPendingActivity(bool hasPendingActivity) OVERRIDE;
+        virtual void workerContextClosed() OVERRIDE;
+        virtual void workerContextDestroyed() OVERRIDE;
 
         // Implementation of WorkerLoaderProxy.
         // These methods are called on different threads to schedule loading
         // requests and to send callbacks back to WorkerContext.
-        virtual void postTaskToLoader(PassOwnPtr<ScriptExecutionContext::Task>);
-        virtual bool postTaskForModeToWorkerContext(PassOwnPtr<ScriptExecutionContext::Task>, const String& mode);
+        virtual void postTaskToLoader(PassOwnPtr<ScriptExecutionContext::Task>) OVERRIDE;
+        virtual bool postTaskForModeToWorkerContext(PassOwnPtr<ScriptExecutionContext::Task>, const String& mode) OVERRIDE;
 
         void workerThreadCreated(PassRefPtr<DedicatedWorkerThread>);
 

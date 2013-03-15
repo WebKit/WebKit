@@ -45,12 +45,10 @@ namespace WebCore {
 
         MessagePort* port() const { return m_port.get(); }
 
-        virtual const AtomicString& interfaceName() const;
+        virtual const AtomicString& interfaceName() const OVERRIDE;
 
     private:
         explicit SharedWorker(ScriptExecutionContext*);
-
-        virtual SharedWorker* toSharedWorker() { return this; }
 
         RefPtr<MessagePort> m_port;
     };

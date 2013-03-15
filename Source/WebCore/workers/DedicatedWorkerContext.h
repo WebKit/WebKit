@@ -45,23 +45,24 @@ namespace WebCore {
     public:
         typedef WorkerContext Base;
         static PassRefPtr<DedicatedWorkerContext> create(const KURL&, const String& userAgent, PassOwnPtr<GroupSettings>, DedicatedWorkerThread*, const String& contentSecurityPolicy, ContentSecurityPolicy::HeaderType contentSecurityPolicyType, PassRefPtr<SecurityOrigin> topOrigin);
+        virtual ~DedicatedWorkerContext();
 
-        virtual bool isDedicatedWorkerContext() const { return true; }
+        virtual bool isDedicatedWorkerContext() const OVERRIDE { return true; }
 
         // Overridden to allow us to check our pending activity after executing imported script.
-        virtual void importScripts(const Vector<String>& urls, ExceptionCode&);
+        virtual void importScripts(const Vector<String>& urls, ExceptionCode&) OVERRIDE;
 
         // EventTarget
-        virtual const AtomicString& interfaceName() const;
+        virtual const AtomicString& interfaceName() const OVERRIDE;
 
-        void postMessage(PassRefPtr<SerializedScriptValue>, ExceptionCode&);
         void postMessage(PassRefPtr<SerializedScriptValue>, const MessagePortArray*, ExceptionCode&);
-        // FIXME: remove this when we update the ObjC bindings (bug #28774).
+        // Needed for Objective-C bindings (see bug 28774).
         void postMessage(PassRefPtr<SerializedScriptValue>, MessagePort*, ExceptionCode&);
 
         DEFINE_ATTRIBUTE_EVENT_LISTENER(message);
 
         DedicatedWorkerThread* thread();
+
     private:
         DedicatedWorkerContext(const KURL&, const String& userAgent, PassOwnPtr<GroupSettings>, DedicatedWorkerThread*, PassRefPtr<SecurityOrigin> topOrigin);
     };

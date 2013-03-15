@@ -54,18 +54,17 @@ namespace WebCore {
         static PassRefPtr<Worker> create(ScriptExecutionContext*, const String& url, ExceptionCode&);
         virtual ~Worker();
 
-        virtual const AtomicString& interfaceName() const;
+        virtual const AtomicString& interfaceName() const OVERRIDE;
 
-        void postMessage(PassRefPtr<SerializedScriptValue> message, ExceptionCode&);
         void postMessage(PassRefPtr<SerializedScriptValue> message, const MessagePortArray*, ExceptionCode&);
-        // FIXME: remove this when we update the ObjC bindings (bug #28774).
+        // Needed for Objective-C bindings (see bug 28774).
         void postMessage(PassRefPtr<SerializedScriptValue> message, MessagePort*, ExceptionCode&);
 
         void terminate();
 
-        virtual bool canSuspend() const;
-        virtual void stop();
-        virtual bool hasPendingActivity() const;
+        virtual bool canSuspend() const OVERRIDE;
+        virtual void stop() OVERRIDE;
+        virtual bool hasPendingActivity() const OVERRIDE;
     
         DEFINE_ATTRIBUTE_EVENT_LISTENER(message);
 
@@ -73,11 +72,11 @@ namespace WebCore {
         explicit Worker(ScriptExecutionContext*);
 
         // WorkerScriptLoaderClient callbacks
-        virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
-        virtual void notifyFinished();
+        virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&) OVERRIDE;
+        virtual void notifyFinished() OVERRIDE;
 
-        virtual void refEventTarget() { ref(); }
-        virtual void derefEventTarget() { deref(); }
+        virtual void refEventTarget() OVERRIDE { ref(); }
+        virtual void derefEventTarget() OVERRIDE { deref(); }
 
         RefPtr<WorkerScriptLoader> m_scriptLoader;
         WorkerContextProxy* m_contextProxy; // The proxy outlives the worker to perform thread shutdown.
