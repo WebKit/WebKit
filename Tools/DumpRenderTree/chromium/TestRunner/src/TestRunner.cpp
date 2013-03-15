@@ -225,7 +225,6 @@ TestRunner::TestRunner(TestInterfaces* interfaces)
     bindMethod("setAllowFileAccessFromFileURLs", &TestRunner::setAllowFileAccessFromFileURLs);
     bindMethod("overridePreference", &TestRunner::overridePreference);
     bindMethod("setPluginsEnabled", &TestRunner::setPluginsEnabled);
-    bindMethod("setAsynchronousSpellCheckingEnabled", &TestRunner::setAsynchronousSpellCheckingEnabled);
     bindMethod("setTouchDragDropEnabled", &TestRunner::setTouchDragDropEnabled);
 
     // The following modify the state of the TestRunner.
@@ -1649,15 +1648,6 @@ void TestRunner::setPluginsEnabled(const CppArgumentList& arguments, CppVariant*
 {
     if (arguments.size() > 0 && arguments[0].isBool()) {
         m_delegate->preferences()->pluginsEnabled = arguments[0].toBoolean();
-        m_delegate->applyPreferences();
-    }
-    result->setNull();
-}
-
-void TestRunner::setAsynchronousSpellCheckingEnabled(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool()) {
-        m_delegate->preferences()->asynchronousSpellCheckingEnabled = cppVariantToBool(arguments[0]);
         m_delegate->applyPreferences();
     }
     result->setNull();

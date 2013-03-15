@@ -39,8 +39,6 @@ function done()
     if (next)
         return window.setTimeout(next, 0);
     testRoot.style.display = "none";
-
-    testRunner.setAsynchronousSpellCheckingEnabled(false);
     testRunner.notifyDone();
 }
 
@@ -94,8 +92,8 @@ function pasteAndVerify(source, dest, expectedMarked)
     trial();
 };
 
-if (window.testRunner)
-    testRunner.setAsynchronousSpellCheckingEnabled(true);
+if (window.internals)
+    internals.settings.setAsynchronousSpellCheckingEnabled(true);
 
 tests.push(function() { pasteAndVerify(testSourcePlain, testInput, [[0, 2]]); });
 tests.push(function() { pasteAndVerify(testSourceDecorated, testInput, [[0, 2]]); });

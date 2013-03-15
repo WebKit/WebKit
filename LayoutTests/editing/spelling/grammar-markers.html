@@ -8,8 +8,9 @@
 if (window.testRunner) {
     testRunner.waitUntilDone();
     testRunner.dumpAsText(true);
-    testRunner.setAsynchronousSpellCheckingEnabled(true);
 }
+if (window.internals)
+    internals.settings.setAsynchronousSpellCheckingEnabled(true);
 
 var source = document.getElementById('source');
 window.getSelection().selectAllChildren(source);
@@ -22,10 +23,8 @@ var retry = 10;
 function trial() {
     var hasMarker = internals.hasGrammarMarker(target, 4, 3);
     if (hasMarker || --retry == 0) {
-        if (window.testRunner) {
-            testRunner.setAsynchronousSpellCheckingEnabled(false);
+        if (window.testRunner)
             testRunner.notifyDone();
-        }
         return;
     }
     window.setTimeout(trial, 10);

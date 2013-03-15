@@ -1,3 +1,26 @@
+2013-03-15  Rouslan Solomakhin  <rouslan@chromium.org>
+
+        Remove setAsynchronousSpellCheckingEnabled from test runners
+        https://bugs.webkit.org/show_bug.cgi?id=112362
+
+        Reviewed by Tony Chang.
+
+        Remove setAsynchronousSpellCheckingEnabled from test runners. The setting is now
+        in internals.settings, so all ports can share it.
+
+        * DumpRenderTree/TestRunner.cpp: Remove setAsynchronousSpellCheckingEnabled() method.
+        * DumpRenderTree/TestRunner.h: Remove setAsynchronousSpellCheckingEnabled() method.
+        * DumpRenderTree/blackberry/TestRunnerBlackBerry.cpp: Remove setAsynchronousSpellCheckingEnabled() method.
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp: Remove setAsynchronousSpellCheckingEnabled() method.
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h: Remove setAsynchronousSpellCheckingEnabled() method.
+        * DumpRenderTree/efl/TestRunnerEfl.cpp: Remove setAsynchronousSpellCheckingEnabled() method.
+        * DumpRenderTree/gtk/TestRunnerGtk.cpp: Remove setAsynchronousSpellCheckingEnabled() method.
+        * DumpRenderTree/mac/TestRunnerMac.mm: Remove setAsynchronousSpellCheckingEnabled() method.
+        * DumpRenderTree/qt/TestRunnerQt.cpp: Remove setAsynchronousSpellCheckingEnabled() method.
+        * DumpRenderTree/qt/TestRunnerQt.h: Remove setAsynchronousSpellCheckingEnabled() method.
+        * DumpRenderTree/win/TestRunnerWin.cpp: Remove setAsynchronousSpellCheckingEnabled() method.
+        * DumpRenderTree/wx/TestRunnerWx.cpp: Remove setAsynchronousSpellCheckingEnabled() method.
+
 2013-03-15  Simon Fraser  <simon.fraser@apple.com>
 
         Fix the stupid unit tests.

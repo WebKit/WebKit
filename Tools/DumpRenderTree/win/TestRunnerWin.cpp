@@ -952,11 +952,6 @@ void TestRunner::setDeveloperExtrasEnabled(bool enabled)
     prefsPrivate->setDeveloperExtrasEnabled(enabled);
 }
 
-void TestRunner::setAsynchronousSpellCheckingEnabled(bool)
-{
-    // FIXME: Implement this.
-}
-
 void TestRunner::showWebInspector()
 {
     COMPtr<IWebView> webView;

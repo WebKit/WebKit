@@ -30,13 +30,13 @@ description(
 
 var jsTestIsAsync = true;
 
-if (window.testRunner) {
+if (window.testRunner)
     testRunner.dumpAsText();
-    testRunner.setAsynchronousSpellCheckingEnabled(true);
-}
 
-if (window.internals)
+if (window.internals) {
+    internals.settings.setAsynchronousSpellCheckingEnabled(true);
     internals.settings.setUnifiedTextCheckerEnabled(true);
+}
 
 var sourceIds = ['source'];
 var destElems = ['textarea', 'input', 'contenteditable'];
@@ -76,13 +76,8 @@ function doTestIfAny() {
     removeAllChildren(document.getElementById('container'));
     removeAllChildren(document.getElementById('move-target'));
 
-    if (window.internals)
-        internals.settings.setUnifiedTextCheckerEnabled(false);
-
-    if (window.testRunner) {
-        testRunner.setAsynchronousSpellCheckingEnabled(false);
+    if (window.testRunner)
         finishJSTest();
-    }
 }
 
 var requestId;

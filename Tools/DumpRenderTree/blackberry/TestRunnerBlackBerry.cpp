@@ -572,11 +572,6 @@ void TestRunner::deleteAllLocalStorage()
     notImplemented();
 }
 
-void TestRunner::setAsynchronousSpellCheckingEnabled(bool)
-{
-    notImplemented();
-}
-
 int TestRunner::numberOfPendingGeolocationPermissionRequests()
 {
     return DumpRenderTreeSupport::numberOfPendingGeolocationPermissionRequests(BlackBerry::WebKit::DumpRenderTree::currentInstance()->page());

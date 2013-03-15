@@ -421,11 +421,6 @@ void TestRunnerQt::setDeveloperExtrasEnabled(bool enabled)
     m_drt->webPage()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, enabled);
 }
 
-void TestRunnerQt::setAsynchronousSpellCheckingEnabled(bool)
-{
-    // FIXME: Implement this.
-}
-
 void TestRunnerQt::showWebInspector()
 {
     m_drt->webPage()->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
@@ -1165,10 +1160,6 @@ void TestRunner::abortModal()
 }
 
 void TestRunner::setStorageDatabaseIdleInterval(double)
-{
-}
-
-void TestRunner::setAsynchronousSpellCheckingEnabled(bool)
 {
 }
 

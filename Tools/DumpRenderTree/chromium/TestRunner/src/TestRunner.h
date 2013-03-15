@@ -302,9 +302,6 @@ private:
     // Enable or disable plugins.
     void setPluginsEnabled(const CppArgumentList&, CppVariant*);
 
-    // Changes asynchronous spellchecking flag on the settings.
-    void setAsynchronousSpellCheckingEnabled(const CppArgumentList&, CppVariant*);
-
     void setTouchDragDropEnabled(const CppArgumentList&, CppVariant*);
 
     ///////////////////////////////////////////////////////////////////////////

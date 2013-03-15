@@ -450,11 +450,6 @@ void TestRunner::abortModal()
 {
 }
 
-void TestRunner::setAsynchronousSpellCheckingEnabled(bool)
-{
-    // FIXME: Implement this.
-}
-
 bool TestRunner::findString(JSContextRef context, JSStringRef target, JSObjectRef optionsArray)
 {
     // FIXME: Implement

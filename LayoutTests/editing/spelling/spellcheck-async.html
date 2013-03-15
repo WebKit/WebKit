@@ -22,12 +22,13 @@ description("Test for Unified Spell Checker & Async Spell Checker.");
 
 if (window.testRunner) {
     testRunner.dumpAsText();
-    testRunner.setAsynchronousSpellCheckingEnabled(true);
     testRunner.waitUntilDone();
 }
 
-if (window.internals)
+if (window.internals) {
+    internals.settings.setAsynchronousSpellCheckingEnabled(true);
     internals.settings.setUnifiedTextCheckerEnabled(true);
+}
 
 var container = document.getElementById('container');
 function removeChildren(node) {
@@ -56,13 +57,8 @@ function doTestIfAny() {
 
     // No more tests.
     removeChildren(container);
-    if (window.internals)
-        internals.settings.setUnifiedTextCheckerEnabled(false);
-
-    if (window.testRunner) {
-        testRunner.setAsynchronousSpellCheckingEnabled(false);
+    if (window.testRunner)
         testRunner.notifyDone();
-    }
 }
 
 function createEditableElement(id) {

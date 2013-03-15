@@ -779,11 +779,6 @@ void TestRunner::setDeveloperExtrasEnabled(bool enabled)
     g_object_set(webSettings, "enable-developer-extras", enabled, NULL);
 }
 
-void TestRunner::setAsynchronousSpellCheckingEnabled(bool)
-{
-    // FIXME: Implement this.
-}
-
 void TestRunner::showWebInspector()
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);

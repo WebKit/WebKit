@@ -60,7 +60,6 @@ public:
         bool m_originalStyleScoped;
 #endif
         EditingBehaviorType m_originalEditingBehavior;
-        bool m_originalUnifiedSpellCheckerEnabled;
 #if ENABLE(TEXT_AUTOSIZING)
         bool m_originalTextAutosizingEnabled;
         IntSize m_originalTextAutosizingWindowSizeOverride;

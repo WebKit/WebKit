@@ -782,11 +782,6 @@ void TestRunner::setDeveloperExtrasEnabled(bool enabled)
     [[[mainFrame webView] preferences] setDeveloperExtrasEnabled:enabled];
 }
 
-void TestRunner::setAsynchronousSpellCheckingEnabled(bool enabled)
-{
-    [[[mainFrame webView] preferences] setAsynchronousSpellCheckingEnabled:enabled];
-}
-
 void TestRunner::showWebInspector()
 {
     [[[mainFrame webView] inspector] show:nil];

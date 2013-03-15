@@ -10,17 +10,10 @@
 
 <script>
 
-function done()
-{
-    testRunner.setAsynchronousSpellCheckingEnabled(false);
-    internals.settings.setUnifiedTextCheckerEnabled(false);
-    finishJSTest()
-}
-
 function verify(nretry)
 {
     if (!nretry) {
-       done();
+       finishJSTest()
        return;
     }
 
@@ -37,7 +30,7 @@ function verify(nretry)
     if (markedText != null) {
         shouldBeEqualToString("markedText", "wellcome");
         shouldBeEqualToString("markerDescription", "welcome");
-        done();
+        finishJSTest();
     }
 
     // Wait until the async spellchecking is done.
@@ -48,7 +41,7 @@ function test()
 {
     jsTestIsAsync = true;
     internals.settings.setUnifiedTextCheckerEnabled(true);
-    testRunner.setAsynchronousSpellCheckingEnabled(true);
+    internals.settings.setAsynchronousSpellCheckingEnabled(true);
 
     var sel = window.getSelection();
     var destination = document.getElementById("destination");

@@ -289,7 +289,6 @@ public:
     bool geolocationPermission() const { return m_geolocationPermission; }
 
     void setDeveloperExtrasEnabled(bool);
-    void setAsynchronousSpellCheckingEnabled(bool);
     void showWebInspector();
     void closeWebInspector();
     void evaluateInWebInspector(long callId, JSStringRef script);
