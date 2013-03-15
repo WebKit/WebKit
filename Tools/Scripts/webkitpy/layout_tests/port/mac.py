@@ -65,6 +65,9 @@ class MacPort(ApplePort):
             return 350 * 1000
         return super(MacPort, self).default_timeout_ms()
 
+    def supports_per_test_timeout(self):
+        return True
+
     def _build_driver_flags(self):
         return ['ARCHS=i386'] if self.architecture() == 'x86' else []
 

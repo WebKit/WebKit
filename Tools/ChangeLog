@@ -1,3 +1,16 @@
+2013-03-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Have the mac port support per_test_timeout in webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=112466
+
+        Reviewed by Dirk Pranke.
+        
+        Both WTR and DRT handle --timeout arguments, so we can
+        have the scripts pass the timeout values down to the tools.
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort.supports_per_test_timeout):
+
 2013-03-15  Rouslan Solomakhin  <rouslan@chromium.org>
 
         Remove setAsynchronousSpellCheckingEnabled from test runners
