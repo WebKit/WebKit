@@ -40,6 +40,8 @@ WebInspector.FlameChart = function(cpuProfileView)
 
     this.element.className = "flame-chart";
     this._canvas = this.element.createChild("canvas");
+    WebInspector.installDragHandle(this._canvas, this._startCanvasDragging.bind(this), this._canvasDragging.bind(this), this._endCanvasDragging.bind(this), "col-resize");
+
     this._cpuProfileView = cpuProfileView;
     this._xScaleFactor = 4.0;
     this._xOffset = 0;
@@ -61,6 +63,36 @@ WebInspector.FlameChart.Events = {
 }
 
 WebInspector.FlameChart.prototype = {
+    _startCanvasDragging: function(event)
+    {
+        if (!this._timelineData)
+            return false;
+        this._isDragging = true;
+        this._dragStartPoint = event.pageX;
+        this._dragStartXOffset = this._xOffset;
+        this._hidePopover();
+        return true;
+    },
+
+    _canvasDragging: function(event)
+    {
+        this._xOffset = this._dragStartXOffset + this._dragStartPoint - event.pageX;
+
+        if (this._xOffset < 0)
+            this._xOffset = 0;
+        else {
+            var maxXOffset = this._timelineData.totalTime * this._xScaleFactor - this._canvas.width;
+            if (this._xOffset > maxXOffset)
+                this._xOffset = maxXOffset;
+        }
+        this._scheduleUpdate();
+    },
+
+    _endCanvasDragging: function()
+    {
+        this._isDragging = false;
+    },
+
     _nodeCount: function()
     {
         var nodes = this._cpuProfileView.profileHead.children.slice();
@@ -154,14 +186,18 @@ WebInspector.FlameChart.prototype = {
 
     _getPopoverAnchor: function()
     {
-        if (this._highlightedNodeIndex === -1)
+        if (this._highlightedNodeIndex === -1 || this._isDragging)
             return null;
         return this._anchorElement;
     },
 
     _showPopover: function(anchor, popover)
     {
+        if (this._isDragging)
+            return;
         var node = this._timelineData.nodes[this._highlightedNodeIndex];
+        if (!node)
+            return;
         var contentHelper = new WebInspector.PopoverContentHelper(node.functionName);
         contentHelper.appendTextRow(WebInspector.UIString("Total time"), Number.secondsToString(node.totalTime / 1000, true));
         contentHelper.appendTextRow(WebInspector.UIString("Self time"), Number.secondsToString(node.selfTime / 1000, true));
@@ -191,6 +227,8 @@ WebInspector.FlameChart.prototype = {
 
     _onMouseMove: function(e)
     {
+        if (this._isDragging)
+            return;
         var nodeIndex = this._coordinatesToNodeIndex(e.offsetX, e.offsetY);
         if (nodeIndex === this._highlightedNodeIndex)
             return;
@@ -227,7 +265,7 @@ WebInspector.FlameChart.prototype = {
 
     _onMouseWheel: function(e)
     {
-        if (e.shiftKey)
+        if (!e.shiftKey)
             this._adjustXScale(e.wheelDelta, e.x);
         else
             this._adjustXOffset(e.wheelDelta);
