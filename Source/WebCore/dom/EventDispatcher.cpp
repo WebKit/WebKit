@@ -152,11 +152,9 @@ inline EventDispatchContinuation EventDispatcher::dispatchEventAtCapturing(Windo
 
     for (size_t i = m_eventPath.size() - 1; i > 0; --i) {
         const EventContext& eventContext = *m_eventPath[i];
-        if (eventContext.currentTargetSameAsTarget()) {
-            if (m_event->bubbles())
-                continue;
+        if (eventContext.currentTargetSameAsTarget())
             m_event->setEventPhase(Event::AT_TARGET);
-        } else
+        else
             m_event->setEventPhase(Event::CAPTURING_PHASE);
         eventContext.handleLocalEvents(m_event.get());
         if (m_event->propagationStopped())
@@ -183,7 +181,7 @@ inline EventDispatchContinuation EventDispatcher::dispatchEventAtBubbling(Window
         for (size_t i = 1; i < size; ++i) {
             const EventContext& eventContext = *m_eventPath[i];
             if (eventContext.currentTargetSameAsTarget())
-                m_event->setEventPhase(Event::AT_TARGET);
+                continue;
             else
                 m_event->setEventPhase(Event::BUBBLING_PHASE);
             eventContext.handleLocalEvents(m_event.get());
