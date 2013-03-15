@@ -42,7 +42,7 @@ v8::Handle<v8::Value> V8DataView::constructorCustom(const v8::Arguments& args)
         V8DOMWrapper::associateObjectWithWrapper(dataView.release(), &info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
         return wrapper;
     }
-    if (args[0]->IsNull() || !V8ArrayBuffer::HasInstance(args[0], args.GetIsolate(), worldType(args.GetIsolate())))
+    if (args[0]->IsNull() || !V8ArrayBuffer::HasInstance(args[0], args.GetIsolate()))
         return throwTypeError(0, args.GetIsolate());
     return constructWebGLArrayWithArrayBufferArgument<DataView, char>(args, &info, v8::kExternalByteArray, false);
 }

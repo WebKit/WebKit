@@ -69,15 +69,14 @@ static v8::Handle<v8::Value> npObjectInvokeImpl(const v8::Arguments& args, Invok
 {
     NPObject* npObject;
 
-    WrapperWorldType currentWorldType = worldType(args.GetIsolate());
     // These three types are subtypes of HTMLPlugInElement.
-    if (V8HTMLAppletElement::HasInstance(args.Holder(), args.GetIsolate(), currentWorldType) || V8HTMLEmbedElement::HasInstance(args.Holder(), args.GetIsolate(), currentWorldType)
-        || V8HTMLObjectElement::HasInstance(args.Holder(), args.GetIsolate(), currentWorldType)) {
+    if (V8HTMLAppletElement::HasInstance(args.Holder(), args.GetIsolate()) || V8HTMLEmbedElement::HasInstance(args.Holder(), args.GetIsolate())
+        || V8HTMLObjectElement::HasInstance(args.Holder(), args.GetIsolate())) {
         // The holder object is a subtype of HTMLPlugInElement.
         HTMLPlugInElement* element;
-        if (V8HTMLAppletElement::HasInstance(args.Holder(), args.GetIsolate(), currentWorldType))
+        if (V8HTMLAppletElement::HasInstance(args.Holder(), args.GetIsolate()))
             element = V8HTMLAppletElement::toNative(args.Holder());
-        else if (V8HTMLEmbedElement::HasInstance(args.Holder(), args.GetIsolate(), currentWorldType))
+        else if (V8HTMLEmbedElement::HasInstance(args.Holder(), args.GetIsolate()))
             element = V8HTMLEmbedElement::toNative(args.Holder());
         else
             element = V8HTMLObjectElement::toNative(args.Holder());

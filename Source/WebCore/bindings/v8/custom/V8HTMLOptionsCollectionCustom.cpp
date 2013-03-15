@@ -91,7 +91,7 @@ v8::Handle<v8::Value> V8HTMLOptionsCollection::removeMethodCustom(const v8::Argu
 
 v8::Handle<v8::Value> V8HTMLOptionsCollection::addMethodCustom(const v8::Arguments& args)
 {
-    if (!V8HTMLOptionElement::HasInstance(args[0], args.GetIsolate(), worldType(args.GetIsolate())))
+    if (!V8HTMLOptionElement::HasInstance(args[0], args.GetIsolate()))
         return setDOMException(TYPE_MISMATCH_ERR, args.GetIsolate());
     HTMLOptionsCollection* imp = V8HTMLOptionsCollection::toNative(args.Holder());
     HTMLOptionElement* option = V8HTMLOptionElement::toNative(v8::Handle<v8::Object>(v8::Handle<v8::Object>::Cast(args[0])));

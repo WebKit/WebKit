@@ -143,7 +143,7 @@ v8::Handle<v8::Value> V8Location::reloadAttrGetterCustom(v8::Local<v8::String> n
     static const char* privateTemplateUniqueKey = "reloadPrivateTemplate";
     WrapperWorldType currentWorldType = worldType(isolate);
     V8PerIsolateData* data = V8PerIsolateData::from(info.GetIsolate());
-    v8::Persistent<v8::FunctionTemplate> privateTemplate = data->privateTemplate(currentWorldType, &privateTemplateUniqueKey, V8Location::reloadMethodCustom, v8Undefined(), v8::Signature::New(data->rawTemplate(&V8Location::info, currentWorldType)));
+    v8::Persistent<v8::FunctionTemplate> privateTemplate = data->privateTemplate(currentWorldType, &privateTemplateUniqueKey, V8Location::reloadMethodCustom, v8Undefined(), v8::Signature::New(data->rawTemplate(&V8Location::info)));
 
     v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8Location::GetTemplate(isolate, currentWorldType));
     if (holder.IsEmpty()) {
@@ -154,7 +154,7 @@ v8::Handle<v8::Value> V8Location::reloadAttrGetterCustom(v8::Local<v8::String> n
     Location* imp = V8Location::toNative(holder);
     if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError)) {
         static const char* sharedTemplateUniqueKey = "reloadSharedTemplate";
-        v8::Persistent<v8::FunctionTemplate> sharedTemplate = data->privateTemplate(currentWorldType, &sharedTemplateUniqueKey, V8Location::reloadMethodCustom, v8Undefined(), v8::Signature::New(data->rawTemplate(&V8Location::info, currentWorldType)));
+        v8::Persistent<v8::FunctionTemplate> sharedTemplate = data->privateTemplate(currentWorldType, &sharedTemplateUniqueKey, V8Location::reloadMethodCustom, v8Undefined(), v8::Signature::New(data->rawTemplate(&V8Location::info)));
         return sharedTemplate->GetFunction();
     }
     return privateTemplate->GetFunction();
@@ -167,7 +167,7 @@ v8::Handle<v8::Value> V8Location::replaceAttrGetterCustom(v8::Local<v8::String> 
     static const char* privateTemplateUniqueKey = "replacePrivateTemplate";
     WrapperWorldType currentWorldType = worldType(info.GetIsolate());
     V8PerIsolateData* data = V8PerIsolateData::from(info.GetIsolate());
-    v8::Persistent<v8::FunctionTemplate> privateTemplate = V8PerIsolateData::from(isolate)->privateTemplate(currentWorldType, &privateTemplateUniqueKey, V8Location::replaceMethodCustom, v8Undefined(), v8::Signature::New(data->rawTemplate(&V8Location::info, currentWorldType)));
+    v8::Persistent<v8::FunctionTemplate> privateTemplate = V8PerIsolateData::from(isolate)->privateTemplate(currentWorldType, &privateTemplateUniqueKey, V8Location::replaceMethodCustom, v8Undefined(), v8::Signature::New(data->rawTemplate(&V8Location::info)));
 
     v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8Location::GetTemplate(isolate, currentWorldType));
     if (holder.IsEmpty()) {
@@ -178,7 +178,7 @@ v8::Handle<v8::Value> V8Location::replaceAttrGetterCustom(v8::Local<v8::String> 
     Location* imp = V8Location::toNative(holder);
     if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError)) {
         static const char* sharedTemplateUniqueKey = "replaceSharedTemplate";
-        v8::Persistent<v8::FunctionTemplate> sharedTemplate = V8PerIsolateData::from(info.GetIsolate())->privateTemplate(currentWorldType, &sharedTemplateUniqueKey, V8Location::replaceMethodCustom, v8Undefined(), v8::Signature::New(data->rawTemplate(&V8Location::info, currentWorldType)));
+        v8::Persistent<v8::FunctionTemplate> sharedTemplate = V8PerIsolateData::from(info.GetIsolate())->privateTemplate(currentWorldType, &sharedTemplateUniqueKey, V8Location::replaceMethodCustom, v8Undefined(), v8::Signature::New(data->rawTemplate(&V8Location::info)));
         return sharedTemplate->GetFunction();
     }
     return privateTemplate->GetFunction();
@@ -191,7 +191,7 @@ v8::Handle<v8::Value> V8Location::assignAttrGetterCustom(v8::Local<v8::String> n
     static const char* privateTemplateUniqueKey = "assignPrivateTemplate";
     WrapperWorldType currentWorldType = worldType(info.GetIsolate());
     V8PerIsolateData* data = V8PerIsolateData::from(info.GetIsolate());
-    v8::Persistent<v8::FunctionTemplate> privateTemplate = data->privateTemplate(currentWorldType, &privateTemplateUniqueKey, V8Location::assignMethodCustom, v8Undefined(), v8::Signature::New(data->rawTemplate(&V8Location::info, currentWorldType)));
+    v8::Persistent<v8::FunctionTemplate> privateTemplate = data->privateTemplate(currentWorldType, &privateTemplateUniqueKey, V8Location::assignMethodCustom, v8Undefined(), v8::Signature::New(data->rawTemplate(&V8Location::info)));
 
     v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8Location::GetTemplate(isolate, currentWorldType));
     if (holder.IsEmpty()) {
@@ -202,7 +202,7 @@ v8::Handle<v8::Value> V8Location::assignAttrGetterCustom(v8::Local<v8::String> n
     Location* imp = V8Location::toNative(holder);
     if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError)) {
         static const char* sharedTemplateUniqueKey = "assignSharedTemplate";
-        v8::Persistent<v8::FunctionTemplate> sharedTemplate = data->privateTemplate(currentWorldType, &sharedTemplateUniqueKey, V8Location::assignMethodCustom, v8Undefined(), v8::Signature::New(data->rawTemplate(&V8Location::info, currentWorldType)));
+        v8::Persistent<v8::FunctionTemplate> sharedTemplate = data->privateTemplate(currentWorldType, &sharedTemplateUniqueKey, V8Location::assignMethodCustom, v8Undefined(), v8::Signature::New(data->rawTemplate(&V8Location::info)));
         return sharedTemplate->GetFunction();
     }
     return privateTemplate->GetFunction();

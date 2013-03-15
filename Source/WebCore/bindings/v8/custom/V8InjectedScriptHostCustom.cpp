@@ -112,7 +112,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::isHTMLAllCollectionMethodCustom(cons
         return v8Boolean(false, args.GetIsolate());
 
     v8::HandleScope handleScope;
-    return v8::Boolean::New(V8HTMLAllCollection::HasInstance(args[0], args.GetIsolate(), worldType(args.GetIsolate())));
+    return v8::Boolean::New(V8HTMLAllCollection::HasInstance(args[0], args.GetIsolate()));
 }
 
 v8::Handle<v8::Value> V8InjectedScriptHost::typeMethodCustom(const v8::Arguments& args)
@@ -133,20 +133,19 @@ v8::Handle<v8::Value> V8InjectedScriptHost::typeMethodCustom(const v8::Arguments
         return v8::String::NewSymbol("date");
     if (value->IsRegExp())
         return v8::String::NewSymbol("regexp");
-    WrapperWorldType currentWorldType = worldType(args.GetIsolate());
-    if (V8Node::HasInstance(value, args.GetIsolate(), currentWorldType))
+    if (V8Node::HasInstance(value, args.GetIsolate()))
         return v8::String::NewSymbol("node");
-    if (V8NodeList::HasInstance(value, args.GetIsolate(), currentWorldType))
+    if (V8NodeList::HasInstance(value, args.GetIsolate()))
         return v8::String::NewSymbol("array");
-    if (V8HTMLCollection::HasInstance(value, args.GetIsolate(), currentWorldType))
+    if (V8HTMLCollection::HasInstance(value, args.GetIsolate()))
         return v8::String::NewSymbol("array");
-    if (V8Int8Array::HasInstance(value, args.GetIsolate(), currentWorldType) || V8Int16Array::HasInstance(value, args.GetIsolate(), currentWorldType) || V8Int32Array::HasInstance(value, args.GetIsolate(), currentWorldType))
+    if (V8Int8Array::HasInstance(value, args.GetIsolate()) || V8Int16Array::HasInstance(value, args.GetIsolate()) || V8Int32Array::HasInstance(value, args.GetIsolate()))
         return v8::String::NewSymbol("array");
-    if (V8Uint8Array::HasInstance(value, args.GetIsolate(), currentWorldType) || V8Uint16Array::HasInstance(value, args.GetIsolate(), currentWorldType) || V8Uint32Array::HasInstance(value, args.GetIsolate(), currentWorldType))
+    if (V8Uint8Array::HasInstance(value, args.GetIsolate()) || V8Uint16Array::HasInstance(value, args.GetIsolate()) || V8Uint32Array::HasInstance(value, args.GetIsolate()))
         return v8::String::NewSymbol("array");
-    if (V8Float32Array::HasInstance(value, args.GetIsolate(), currentWorldType) || V8Float64Array::HasInstance(value, args.GetIsolate(), currentWorldType))
+    if (V8Float32Array::HasInstance(value, args.GetIsolate()) || V8Float64Array::HasInstance(value, args.GetIsolate()))
         return v8::String::NewSymbol("array");
-    if (V8Uint8ClampedArray::HasInstance(value, args.GetIsolate(), currentWorldType))
+    if (V8Uint8ClampedArray::HasInstance(value, args.GetIsolate()))
         return v8::String::NewSymbol("array");
     return v8::Undefined();
 }
@@ -244,7 +243,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::getEventListenersMethodCustom(const 
     v8::HandleScope handleScope;
 
     v8::Local<v8::Value> value = args[0];
-    if (!V8Node::HasInstance(value, args.GetIsolate(), worldType(args.GetIsolate())))
+    if (!V8Node::HasInstance(value, args.GetIsolate()))
         return v8::Undefined();
     Node* node = V8Node::toNative(value->ToObject());
     if (!node)

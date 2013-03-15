@@ -303,7 +303,7 @@ public:
         ASSERT(value->IsObject());
         v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::Cast(value);
         ASSERT(V8DOMWrapper::maybeDOMWrapper(value));
-        ASSERT(V8Node::HasInstance(wrapper, m_isolate, MainWorld) || V8Node::HasInstance(wrapper, m_isolate, IsolatedWorld));
+        ASSERT(V8Node::HasInstance(wrapper, m_isolate));
         Node* node = V8Node::toNative(wrapper);
         // A minor DOM GC can handle only node wrappers in the main world.
         // Note that node->wrapper().IsEmpty() returns true for nodes that
@@ -376,7 +376,7 @@ public:
 
         if (classId == v8DOMNodeClassId) {
             UNUSED_PARAM(m_isolate);
-            ASSERT(V8Node::HasInstance(wrapper, m_isolate, MainWorld) || V8Node::HasInstance(wrapper, m_isolate, IsolatedWorld));
+            ASSERT(V8Node::HasInstance(wrapper, m_isolate));
             ASSERT(!wrapper.IsIndependent(m_isolate));
 
             Node* node = static_cast<Node*>(object);
