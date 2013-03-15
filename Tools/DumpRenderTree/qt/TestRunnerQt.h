@@ -59,18 +59,10 @@ public:
     TestRunnerQt(DumpRenderTree*);
 
     bool shouldDumpAsAudio() const { return m_audioDump; }
-    bool shouldDumpChildrenAsText() const { return m_dumpChildrenAsText; }
-    bool shouldDumpChildFrameScrollPositions() const { return m_dumpChildFrameScrollPositions; }
-    bool shouldDumpDatabaseCallbacks() const { return m_dumpDatabaseCallbacks; }
-    bool shouldDumpApplicationCacheDelegateCallbacks() const { return m_dumpApplicationCacheDelegateCallbacks; }
-    bool shouldDumpStatusCallbacks() const { return m_dumpStatusCallbacks; }
     bool shouldWaitUntilDone() const { return m_waitForDone; }
     bool shouldHandleErrorPages() const { return m_handleErrorPages; }
-    bool canOpenWindows() const { return m_canOpenWindows; }
-    bool shouldDumpTitleChanges() const { return m_dumpTitleChanges; }
     bool waitForPolicy() const { return m_waitForPolicy; }
     bool ignoreReqestForPermission() const { return m_ignoreDesktopNotification; }
-    bool isPrinting() { return m_isPrinting; }
 
     const QByteArray& audioData() const { return m_audioData; }
 
@@ -94,14 +86,7 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     void maybeDump(bool ok);
-    void dumpChildFramesAsText() { m_dumpChildrenAsText = true; }
-    void dumpChildFrameScrollPositions() { m_dumpChildFrameScrollPositions = true; }
-    void dumpDatabaseCallbacks() { m_dumpDatabaseCallbacks = true; }
-    void dumpApplicationCacheDelegateCallbacks() { m_dumpApplicationCacheDelegateCallbacks = true; }
-    void dumpStatusCallbacks() { m_dumpStatusCallbacks = true; }
     void dumpNotifications();
-    void setCanOpenWindows() { m_canOpenWindows = true; }
-    void setPrinting() { m_isPrinting = true; }
     void waitUntilDone();
     int webHistoryItemCount();
     void keepWebHistory();
@@ -139,7 +124,6 @@ public Q_SLOTS:
     void displayInvalidatedRegion();
     void clearBackForwardList();
     QString pathToLocalResource(const QString& url);
-    void dumpTitleChanges() { m_dumpTitleChanges = true; }
     QString encodeHostName(const QString& host);
     QString decodeHostName(const QString& host);
     void dumpSelectionRect() const { }
@@ -253,21 +237,14 @@ private:
     bool m_hasDumped;
     bool m_audioDump;
     bool m_disallowIncreaseForApplicationCacheQuota;
-    bool m_dumpChildrenAsText;
-    bool m_dumpChildFrameScrollPositions;
     bool m_canOpenWindows;
     bool m_waitForDone;
-    bool m_dumpTitleChanges;
-    bool m_dumpDatabaseCallbacks;
-    bool m_dumpApplicationCacheDelegateCallbacks;
-    bool m_dumpStatusCallbacks;
     bool m_waitForPolicy;
     bool m_handleErrorPages;
     bool m_loadFinished;
     bool m_globalFlag;
     bool m_userStyleSheetEnabled;
     bool m_isGeolocationPermissionSet;
-    bool m_isPrinting;
     bool m_geolocationPermission;
 
     QUrl m_userStyleSheetLocation;

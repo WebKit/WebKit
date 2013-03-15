@@ -823,7 +823,7 @@ QString DumpRenderTree::dumpFrameScrollPosition(QWebFrame* frame)
         result.append(QString("scrolled to %1,%2\n").arg(pos.x()).arg(pos.y()));
     }
 
-    if (m_controller->shouldDumpChildFrameScrollPositions()) {
+    if (m_jscController->dumpChildFrameScrollPositions()) {
         QList<QWebFrame*> children = frame->childFrames();
         for (int i = 0; i < children.size(); ++i)
             result += dumpFrameScrollPosition(children.at(i));
@@ -848,7 +848,7 @@ QString DumpRenderTree::dumpFramesAsText(QWebFrame* frame)
     result.append(innerText);
     result.append(QLatin1String("\n"));
 
-    if (m_controller->shouldDumpChildrenAsText()) {
+    if (m_jscController->dumpChildFramesAsText()) {
         QList<QWebFrame *> children = frame->childFrames();
         for (int i = 0; i < children.size(); ++i)
             result += dumpFramesAsText(children.at(i));
@@ -1002,7 +1002,7 @@ void DumpRenderTree::dump()
 
     if (m_dumpPixelsForCurrentTest && m_jscController->generatePixelResults()) {
         QImage image;
-        if (!m_controller->isPrinting()) {
+        if (!m_jscController->isPrinting()) {
             image = QImage(m_page->viewportSize(), QImage::Format_ARGB32);
             image.fill(Qt::white);
             QPainter painter(&image);
@@ -1083,7 +1083,7 @@ void DumpRenderTree::dump()
 
 void DumpRenderTree::titleChanged(const QString &s)
 {
-    if (m_controller->shouldDumpTitleChanges())
+    if (m_jscController->dumpTitleChanges())
         printf("TITLE CHANGED: '%s'\n", s.toUtf8().data());
 }
 
@@ -1096,7 +1096,7 @@ void DumpRenderTree::connectFrame(QWebFrame *frame)
 
 void DumpRenderTree::dumpDatabaseQuota(QWebFrame* frame, const QString& dbName)
 {
-    if (!m_controller->shouldDumpDatabaseCallbacks())
+    if (!m_jscController->dumpDatabaseCallbacks())
         return;
     QWebSecurityOrigin origin = frame->securityOrigin();
     printf("UI DELEGATE DATABASE CALLBACK: exceededDatabaseQuotaForSecurityOrigin:{%s, %s, %i} database:%s\n",
@@ -1109,7 +1109,7 @@ void DumpRenderTree::dumpDatabaseQuota(QWebFrame* frame, const QString& dbName)
 
 void DumpRenderTree::dumpApplicationCacheQuota(QWebSecurityOrigin* origin, quint64 defaultOriginQuota, quint64 totalSpaceNeeded)
 {
-    if (m_controller->shouldDumpApplicationCacheDelegateCallbacks()) {
+    if (m_jscController->dumpApplicationCacheDelegateCallbacks()) {
         // For example, numbers from 30000 - 39999 will output as 30000.
         // Rounding up or down not really matter for these tests. It's
         // sufficient to just get a range of 10000 to determine if we were
@@ -1131,7 +1131,7 @@ void DumpRenderTree::dumpApplicationCacheQuota(QWebSecurityOrigin* origin, quint
 
 void DumpRenderTree::statusBarMessage(const QString& message)
 {
-    if (!m_controller->shouldDumpStatusCallbacks())
+    if (!m_jscController->dumpStatusCallbacks())
         return;
 
     printf("UI DELEGATE STATUS CALLBACK: setStatusText:%s\n", message.toUtf8().constData());
@@ -1139,7 +1139,7 @@ void DumpRenderTree::statusBarMessage(const QString& message)
 
 QWebPage *DumpRenderTree::createWindow()
 {
-    if (!m_controller->canOpenWindows())
+    if (!m_jscController->canOpenWindows())
         return 0;
 
     // Create a dummy container object to track the page in DRT.
