@@ -142,6 +142,11 @@ void WebOverlay::removeAnimation(const BlackBerry::Platform::String& name)
     d->removeAnimation(name);
 }
 
+Platform::IntRect WebOverlay::pixelViewportRect() const
+{
+    return d->pixelViewportRect();
+}
+
 WebOverlay* WebOverlay::parent() const
 {
     return d->parent;
@@ -317,6 +322,12 @@ void WebOverlayPrivateWebKitThread::addAnimation(const String& name, Animation* 
 void WebOverlayPrivateWebKitThread::removeAnimation(const String& name)
 {
     m_layer->removeAnimation(name);
+}
+
+Platform::IntRect WebOverlayPrivateWebKitThread::pixelViewportRect() const
+{
+    notImplemented();
+    return Platform::IntRect();
 }
 
 void WebOverlayPrivateWebKitThread::addChild(WebOverlayPrivate* overlay)
@@ -589,6 +600,14 @@ void WebOverlayPrivateCompositingThread::removeAnimation(const String& name)
     scheduleCompositingRun();
 }
 
+Platform::IntRect WebOverlayPrivateCompositingThread::pixelViewportRect() const
+{
+    if (LayerRenderer* renderer = m_layerCompositingThread->layerRenderer())
+        return renderer->toWebKitWindowCoordinates(m_layerCompositingThread->getDrawRect());
+
+    return Platform::IntRect();
+}
+
 void WebOverlayPrivateCompositingThread::addChild(WebOverlayPrivate* overlay)
 {
     m_layerCompositingThread->addSublayer(overlay->layerCompositingThread());
@@ -734,6 +753,11 @@ float WebOverlay::opacity() const
 
 void WebOverlay::setOpacity(float)
 {
+}
+
+Platform::IntRect WebOverlay::pixelViewportRect() const
+{
+    return Platform::IntRect();
 }
 
 WebOverlay* WebOverlay::parent() const

@@ -1,5 +1,39 @@
 2013-03-15  Arvid Nilsson  <anilsson@rim.com>
 
+        [BlackBerry] Expose the compositing thread layer's draw rectangle to aid hit testing
+        https://bugs.webkit.org/show_bug.cgi?id=112255
+
+        Reviewed by Rob Buis.
+
+        PR 308284.
+        Reviewed internally by Yongxin Dai.
+
+        The cached draw rectangle is useful for hit testing. Add a getter for
+        this compositing thread layer property to the public WebOverlay API.
+        We name this getter using terminology familiar from the
+        ViewportAccessor interface, to clarify which coordinate system the
+        getter uses (pixel coordinates relative to the viewport).
+
+        Note that WebKit-thread flavor of WebOverlay is not currently used by
+        any API client and is marked obsolete. It is used internally in WebKit,
+        but for that case using GraphicsLayer directly works well. This will
+        allow the complexity of WebOverlay to be significantly reduced in the
+        future, by removing the WebKit-thread flavor entirely.
+
+        * Api/WebOverlay.cpp:
+        (BlackBerry::WebKit::WebOverlay::pixelViewportRect):
+        (WebKit):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::pixelViewportRect):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::pixelViewportRect):
+        * Api/WebOverlay.h:
+        (WebKit):
+        * Api/WebOverlay_p.h:
+        (WebOverlayPrivate):
+        (WebOverlayPrivateWebKitThread):
+        (WebOverlayPrivateCompositingThread):
+
+2013-03-15  Arvid Nilsson  <anilsson@rim.com>
+
         [BlackBerry] Allow an embedder to position child windows using window coordinates
         https://bugs.webkit.org/show_bug.cgi?id=112236
 

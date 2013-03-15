@@ -92,6 +92,8 @@ public:
     virtual void addAnimation(const WTF::String& name, WebCore::Animation*, const WebCore::KeyframeValueList&) = 0;
     virtual void removeAnimation(const WTF::String&) = 0;
 
+    virtual Platform::IntRect pixelViewportRect() const = 0;
+
     virtual void addChild(WebOverlayPrivate*) = 0;
     virtual void removeFromParent() = 0;
 
@@ -148,6 +150,8 @@ public:
 
     virtual void addAnimation(const WTF::String& name, WebCore::Animation*, const WebCore::KeyframeValueList&);
     virtual void removeAnimation(const WTF::String& name);
+
+    virtual Platform::IntRect pixelViewportRect() const;
 
     virtual void addChild(WebOverlayPrivate*);
     virtual void removeFromParent();
@@ -241,6 +245,8 @@ public:
 
     virtual void addAnimation(const WTF::String& name, WebCore::Animation*, const WebCore::KeyframeValueList&);
     virtual void removeAnimation(const WTF::String& name);
+
+    virtual Platform::IntRect pixelViewportRect() const;
 
     virtual void addChild(WebOverlayPrivate*);
     virtual void removeFromParent();
