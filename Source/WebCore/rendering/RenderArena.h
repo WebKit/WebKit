@@ -60,6 +60,8 @@ private:
     // Underlying arena pool
     ArenaPool m_pool;
 
+    // The mask used to secure the recycled freelist pointers.
+    uintptr_t m_mask;
     // The recycler array is sparse with the indices being multiples of 4,
     // i.e., 0, 4, 8, 12, 16, 20, ...
     void* m_recyclers[gMaxRecycledSize >> 2];
