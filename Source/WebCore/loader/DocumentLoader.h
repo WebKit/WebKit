@@ -35,6 +35,7 @@
 #include "IconDatabaseBase.h"
 #include "NavigationAction.h"
 #include "ResourceError.h"
+#include "ResourceLoaderOptions.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "StringWithDirection.h"
@@ -84,7 +85,7 @@ namespace WebCore {
         virtual void detachFromFrame();
 
         FrameLoader* frameLoader() const;
-        MainResourceLoader* mainResourceLoader() const { return m_mainResourceLoader.get(); }
+        ResourceLoader* mainResourceLoader() const;
         PassRefPtr<ResourceBuffer> mainResourceData() const;
         
         DocumentWriter* writer() const { return &m_writer; }
@@ -196,6 +197,7 @@ namespace WebCore {
         void setDidCreateGlobalHistoryEntry(bool didCreateGlobalHistoryEntry) { m_didCreateGlobalHistoryEntry = didCreateGlobalHistoryEntry; }
         
         void setDefersLoading(bool);
+        void setMainResourceDataBufferingPolicy(DataBufferingPolicy);
 
         void startLoadingMainResource();
         void cancelMainResourceLoad(const ResourceError&);

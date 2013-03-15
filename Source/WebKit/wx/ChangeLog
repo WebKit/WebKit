@@ -1,3 +1,15 @@
+2013-03-15  Nate Chapin  <japhet@chromium.org>
+
+        Hide MainResourceLoader from the outside world
+        https://bugs.webkit.org/show_bug.cgi?id=109971
+
+        Reviewed by Adam Barth.
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::convertMainResourceLoadToDownload):
+        * WebKitSupport/FrameLoaderClientWx.h:
+        (FrameLoaderClientWx):
+
 2013-03-15  Abhishek Arya  <inferno@chromium.org>
 
         Replace static_casts with to* helper functions.

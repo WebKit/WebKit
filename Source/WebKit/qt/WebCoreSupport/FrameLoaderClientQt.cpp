@@ -53,7 +53,6 @@
 #endif
 #include "JSDOMWindowBase.h"
 #include "MIMETypeRegistry.h"
-#include "MainResourceLoader.h"
 #include "MouseEvent.h"
 #include "NotImplemented.h"
 #include "Page.h"
@@ -68,6 +67,7 @@
 #include "RenderPart.h"
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
+#include "ResourceLoader.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ScriptController.h"
@@ -983,12 +983,12 @@ WTF::PassRefPtr<WebCore::DocumentLoader> FrameLoaderClientQt::createDocumentLoad
     return loader.release();
 }
 
-void FrameLoaderClientQt::convertMainResourceLoadToDownload(WebCore::MainResourceLoader* mainResourceLoader, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&)
+void FrameLoaderClientQt::convertMainResourceLoadToDownload(WebCore::DocumentLoader* documentLoader, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&)
 {
     if (!m_webFrame)
         return;
 
-    QNetworkReplyHandler* handler = mainResourceLoader->loader()->handle()->getInternal()->m_job;
+    QNetworkReplyHandler* handler = documentLoader->mainResourceLoader()->handle()->getInternal()->m_job;
     QNetworkReply* reply = handler->release();
     if (reply) {
         if (m_webFrame->pageAdapter->forwardUnsupportedContent)

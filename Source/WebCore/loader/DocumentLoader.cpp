@@ -120,6 +120,11 @@ FrameLoader* DocumentLoader::frameLoader() const
     return m_frame->loader();
 }
 
+ResourceLoader* DocumentLoader::mainResourceLoader() const
+{
+    return m_mainResourceLoader ? m_mainResourceLoader->loader() : 0;
+}
+
 DocumentLoader::~DocumentLoader()
 {
     ASSERT(!m_frame || frameLoader()->activeDocumentLoader() != this || !isLoading());
@@ -311,9 +316,9 @@ void DocumentLoader::finishedLoading(double finishTime)
     ASSERT(!m_frame->page()->defersLoading() || InspectorInstrumentation::isDebuggerPaused(m_frame));
 #endif
 
-    if (mainResourceLoader() && mainResourceLoader()->identifierForLoadWithoutResourceLoader()) {
-        frameLoader()->notifier()->dispatchDidFinishLoading(this, mainResourceLoader()->identifier(), finishTime);
-        mainResourceLoader()->clearIdentifierForLoadWithoutResourceLoader();
+    if (m_mainResourceLoader && m_mainResourceLoader->identifierForLoadWithoutResourceLoader()) {
+        frameLoader()->notifier()->dispatchDidFinishLoading(this, m_mainResourceLoader->identifier(), finishTime);
+        m_mainResourceLoader->clearIdentifierForLoadWithoutResourceLoader();
     }
 
 #if USE(CONTENT_FILTERING)
@@ -356,9 +361,9 @@ void DocumentLoader::finishedLoading(double finishTime)
 
     // If the document specified an application cache manifest, it violates the author's intent if we store it in the memory cache
     // and deny the appcache the chance to intercept it in the future, so remove from the memory cache.
-    if (frame() && mainResourceLoader()) {
-        if (mainResourceLoader()->cachedMainResource() && frame()->document()->hasManifest())
-            memoryCache()->remove(mainResourceLoader()->cachedMainResource());
+    if (frame() && m_mainResourceLoader) {
+        if (m_mainResourceLoader->cachedMainResource() && frame()->document()->hasManifest())
+            memoryCache()->remove(m_mainResourceLoader->cachedMainResource());
     }
     m_applicationCacheHost->finishedLoadingMainResource();
 }
@@ -501,8 +506,8 @@ void DocumentLoader::receivedData(const char* data, int length)
     }
 #endif
 
-    if (mainResourceLoader()->identifierForLoadWithoutResourceLoader())
-        frameLoader()->notifier()->dispatchDidReceiveData(this, mainResourceLoader()->identifier(), data, length, -1);
+    if (m_mainResourceLoader->identifierForLoadWithoutResourceLoader())
+        frameLoader()->notifier()->dispatchDidReceiveData(this, m_mainResourceLoader->identifier(), data, length, -1);
 
     m_applicationCacheHost->mainResourceDataReceived(data, length, -1, false);
     m_timeOfLastDataReceived = monotonicallyIncreasingTime();
@@ -926,6 +931,12 @@ void DocumentLoader::setDefersLoading(bool defers)
     setAllDefersLoading(m_plugInStreamLoaders, defers);
     if (!defers)
         deliverSubstituteResourcesAfterDelay();
+}
+
+void DocumentLoader::setMainResourceDataBufferingPolicy(DataBufferingPolicy dataBufferingPolicy)
+{
+    if (m_mainResourceLoader)
+        m_mainResourceLoader->setDataBufferingPolicy(dataBufferingPolicy);
 }
 
 void DocumentLoader::stopLoadingPlugIns()

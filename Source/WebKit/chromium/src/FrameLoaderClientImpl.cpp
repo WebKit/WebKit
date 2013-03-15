@@ -1466,7 +1466,7 @@ bool FrameLoaderClientImpl::canCachePage() const
 
 // Downloading is handled in the browser process, not WebKit. If we get to this
 // point, our download detection code in the ResourceDispatcherHost is broken!
-void FrameLoaderClientImpl::convertMainResourceLoadToDownload(MainResourceLoader* mainResourceLoader,
+void FrameLoaderClientImpl::convertMainResourceLoadToDownload(DocumentLoader* documentLoader,
                                      const ResourceRequest& request,
                                      const ResourceResponse& response)
 {

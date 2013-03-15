@@ -325,7 +325,7 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
         ResourceRequest request = this->request();
         frameLoader()->setOriginalURLForDownloadRequest(request);
 
-        frameLoader()->client()->convertMainResourceLoadToDownload(this, request, r);
+        frameLoader()->client()->convertMainResourceLoadToDownload(documentLoader(), request, r);
 
         // It might have gone missing
         if (loader())

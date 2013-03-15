@@ -857,7 +857,7 @@ void FrameLoaderClientEfl::dispatchDidFailLoad(const ResourceError& err)
                             err.failingURL().utf8().data());
 }
 
-void FrameLoaderClientEfl::convertMainResourceLoadToDownload(MainResourceLoader*, const ResourceRequest& request, const ResourceResponse&)
+void FrameLoaderClientEfl::convertMainResourceLoadToDownload(DocumentLoader*, const ResourceRequest& request, const ResourceResponse&)
 {
     if (!m_view)
         return;

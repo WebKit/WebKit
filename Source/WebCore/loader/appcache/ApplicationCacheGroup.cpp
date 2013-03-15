@@ -40,7 +40,6 @@
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "InspectorInstrumentation.h"
-#include "MainResourceLoader.h"
 #include "ManifestParser.h"
 #include "Page.h"
 #include "ResourceBuffer.h"

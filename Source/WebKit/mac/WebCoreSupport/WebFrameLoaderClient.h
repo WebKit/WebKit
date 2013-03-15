@@ -71,7 +71,7 @@ private:
     virtual void detachedFromParent2() OVERRIDE;
     virtual void detachedFromParent3() OVERRIDE;
 
-    virtual void convertMainResourceLoadToDownload(WebCore::MainResourceLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&) OVERRIDE;
+    virtual void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&) OVERRIDE;
 
     virtual void assignIdentifierToInitialRequest(unsigned long identifier, WebCore::DocumentLoader*, const WebCore::ResourceRequest&) OVERRIDE;
 

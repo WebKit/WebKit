@@ -79,7 +79,6 @@
 #include "LoaderStrategy.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
-#include "MainResourceLoader.h"
 #include "Page.h"
 #include "PageCache.h"
 #include "PageTransitionEvent.h"

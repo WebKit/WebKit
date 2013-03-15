@@ -175,7 +175,7 @@ public:
     virtual void dispatchDidBecomeFrameset(bool);
     virtual bool canCachePage() const;
     virtual void convertMainResourceLoadToDownload(
-        WebCore::MainResourceLoader*, const WebCore::ResourceRequest&,
+        WebCore::DocumentLoader*, const WebCore::ResourceRequest&,
         const WebCore::ResourceResponse&);
     virtual PassRefPtr<WebCore::Frame> createFrame(
         const WebCore::KURL& url, const WTF::String& name,

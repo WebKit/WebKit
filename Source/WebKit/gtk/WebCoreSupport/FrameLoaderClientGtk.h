@@ -184,7 +184,7 @@ namespace WebKit {
         virtual void dispatchDidBecomeFrameset(bool);
 
         virtual bool canCachePage() const;
-        virtual void convertMainResourceLoadToDownload(WebCore::MainResourceLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
+        virtual void convertMainResourceLoadToDownload(WebCore::DocumentLoader*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
 
         virtual PassRefPtr<WebCore::FrameNetworkingContext> createNetworkingContext();
 

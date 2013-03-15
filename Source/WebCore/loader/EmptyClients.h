@@ -228,7 +228,7 @@ public:
     virtual void detachedFromParent2() { }
     virtual void detachedFromParent3() { }
 
-    virtual void convertMainResourceLoadToDownload(MainResourceLoader*, const ResourceRequest&, const ResourceResponse&) OVERRIDE { }
+    virtual void convertMainResourceLoadToDownload(DocumentLoader*, const ResourceRequest&, const ResourceResponse&) OVERRIDE { }
 
     virtual void assignIdentifierToInitialRequest(unsigned long, DocumentLoader*, const ResourceRequest&) { }
     virtual bool shouldUseCredentialStorage(DocumentLoader*, unsigned long) { return false; }

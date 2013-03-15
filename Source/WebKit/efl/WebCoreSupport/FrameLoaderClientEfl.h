@@ -201,7 +201,7 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     virtual void dispatchDidBecomeFrameset(bool);
 
     virtual bool canCachePage() const;
-    virtual void convertMainResourceLoadToDownload(MainResourceLoader*, const ResourceRequest&, const ResourceResponse&);
+    virtual void convertMainResourceLoadToDownload(DocumentLoader*, const ResourceRequest&, const ResourceResponse&);
 
     virtual PassRefPtr<WebCore::FrameNetworkingContext> createNetworkingContext();
  private:

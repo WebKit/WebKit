@@ -34,7 +34,6 @@
 #include "HTMLEmbedElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
-#include "MainResourceLoader.h"
 #include "NodeList.h"
 #include "Page.h"
 #include "RawDataDocumentParser.h"
@@ -131,7 +130,7 @@ void PluginDocumentParser::appendBytes(DocumentWriter*, const char*, size_t)
             // In a plugin document, the main resource is the plugin. If we have a null widget, that means
             // the loading of the plugin was cancelled, which gives us a null mainResourceLoader(), so we
             // need to have this call in a null check of the widget or of mainResourceLoader().
-            frame->loader()->activeDocumentLoader()->mainResourceLoader()->setDataBufferingPolicy(DoNotBufferData);
+            frame->loader()->activeDocumentLoader()->setMainResourceDataBufferingPolicy(DoNotBufferData);
         }
     }
 }
@@ -179,7 +178,8 @@ void PluginDocument::cancelManualPluginLoad()
     if (!shouldLoadPluginManually())
         return;
 
-    frame()->loader()->activeDocumentLoader()->mainResourceLoader()->cancel();
+    DocumentLoader* documentLoader = frame()->loader()->activeDocumentLoader();
+    documentLoader->cancelMainResourceLoad(frame()->loader()->cancelledError(documentLoader->request()));
     setShouldLoadPluginManually(false);
 }
 

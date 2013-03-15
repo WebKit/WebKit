@@ -712,7 +712,7 @@ WTF::PassRefPtr<DocumentLoader> FrameLoaderClientWx::createDocumentLoader(const 
     return DocumentLoader::create(request, substituteData);
 }
 
-void FrameLoaderClientWx::convertMainResourceLoadToDownload(WebCore::MainResourceLoader*, const ResourceRequest&, const ResourceResponse&)
+void FrameLoaderClientWx::convertMainResourceLoadToDownload(WebCore::DocumentLoader*, const ResourceRequest&, const ResourceResponse&)
 {
     notImplemented();
 }

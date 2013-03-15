@@ -34,7 +34,6 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLParserIdioms.h"
-#include "MainResourceLoader.h"
 #include "PluginDocument.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderImage.h"

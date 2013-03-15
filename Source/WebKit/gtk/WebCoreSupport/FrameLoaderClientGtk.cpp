@@ -53,7 +53,6 @@
 #include "JSDOMWindow.h"
 #include "Language.h"
 #include "MIMETypeRegistry.h"
-#include "MainResourceLoader.h"
 #include "MouseEvent.h"
 #include "NotImplemented.h"
 #include "Page.h"
@@ -1113,12 +1112,12 @@ void FrameLoaderClient::dispatchDidFailLoad(const ResourceError& error)
     g_error_free(webError);
 }
 
-void FrameLoaderClient::convertMainResourceLoadToDownload(MainResourceLoader* mainResourceLoader, const ResourceRequest& request, const ResourceResponse& response)
+void FrameLoaderClient::convertMainResourceLoadToDownload(WebCore::DocumentLoader* documentLoader, const ResourceRequest& request, const ResourceResponse& response)
 {
     GRefPtr<WebKitNetworkRequest> networkRequest(adoptGRef(kitNew(request)));
     WebKitWebView* view = getViewFromFrame(m_frame);
 
-    webkit_web_view_request_download(view, networkRequest.get(), response, mainResourceLoader->loader()->handle());
+    webkit_web_view_request_download(view, networkRequest.get(), response, documentLoader->mainResourceLoader()->handle());
 }
 
 ResourceError FrameLoaderClient::cancelledError(const ResourceRequest& request)
