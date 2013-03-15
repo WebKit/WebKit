@@ -1,0 +1,26 @@
+<!doctyle html>
+<head>
+<style>
+span::after {
+    -webkit-mask-box-image-source: url(does-not-exist.gif)
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+function runTests() {
+    var host = document.getElementById("host");
+    var shadowRoot = host.webkitCreateShadowRoot();
+    shadowRoot.innerHTML = "<content id='content'>"
+    shadowRoot.getElementById("content").resetStyleInheritance = true;
+}
+</script>
+</head>
+<body onload="runTests()">
+  <p>[bug 112322] <a href="https://bugs.webkit.org/show_bug.cgi?id=112322">https://bugs.webkit.org/show_bug.cgi?id=112322</a> This test ensures WebKit does not crash when checking whether distributed nodes have any pseudo element or not. If there is no crash, the test passes.</p>
+  <div id='host'>
+    <span>PASS</span>
+  </div>
+</body>
+

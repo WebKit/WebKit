@@ -990,15 +990,12 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
             return sharedStyle;
     }
 
-    RefPtr<RenderStyle> cloneForParent;
-
     if (state.parentStyle()) {
         state.setStyle(RenderStyle::create());
         state.style()->inheritFrom(state.parentStyle(), isAtShadowBoundary(element) ? RenderStyle::AtShadowBoundary : RenderStyle::NotAtShadowBoundary);
     } else {
         state.setStyle(defaultStyleForElement());
-        cloneForParent = RenderStyle::clone(state.style());
-        state.setParentStyle(cloneForParent.get());
+        state.setParentStyle(RenderStyle::clone(state.style()));
     }
     // contenteditable attribute (implemented by -webkit-user-modify) should
     // be propagated from shadow host to distributed node.
@@ -1176,8 +1173,14 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element* e, const P
     initElement(e);
 
     state.initForStyleResolve(document(), e, parentStyle);
-    state.setStyle(RenderStyle::create());
-    state.style()->inheritFrom(m_state.parentStyle());
+
+    if (m_state.parentStyle()) {
+        state.setStyle(RenderStyle::create());
+        state.style()->inheritFrom(m_state.parentStyle());
+    } else {
+        state.setStyle(defaultStyleForElement());
+        state.setParentStyle(RenderStyle::clone(state.style()));
+    }
 
     // Since we don't use pseudo-elements in any of our quirk/print user agent rules, don't waste time walking
     // those rules.

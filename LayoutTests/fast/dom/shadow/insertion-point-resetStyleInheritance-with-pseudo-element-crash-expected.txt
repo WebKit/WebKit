@@ -1,0 +1,3 @@
+[bug 112322] https://bugs.webkit.org/show_bug.cgi?id=112322 This test ensures WebKit does not crash when checking whether distributed nodes have any pseudo element or not. If there is no crash, the test passes.
+
+PASS

@@ -455,8 +455,8 @@ public:
         PassRefPtr<RenderStyle> takeStyle() { return m_style.release(); }
 
         const ContainerNode* parentNode() const { return m_parentNode; }
-        void setParentStyle(RenderStyle* parentStyle) { m_parentStyle = parentStyle; }
-        RenderStyle* parentStyle() const { return m_parentStyle; }
+        void setParentStyle(PassRefPtr<RenderStyle> parentStyle) { m_parentStyle = parentStyle; }
+        RenderStyle* parentStyle() const { return m_parentStyle.get(); }
         RenderStyle* rootElementStyle() const { return m_rootElementStyle; }
 
         const RenderRegion* regionForStyling() const { return m_regionForStyling; }
@@ -507,7 +507,7 @@ public:
         RefPtr<RenderStyle> m_style;
         StyledElement* m_styledElement;
         ContainerNode* m_parentNode;
-        RenderStyle* m_parentStyle;
+        RefPtr<RenderStyle> m_parentStyle;
         RenderStyle* m_rootElementStyle;
 
         // Required to ASSERT in applyProperties.
