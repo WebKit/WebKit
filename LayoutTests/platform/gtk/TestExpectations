@@ -469,8 +469,9 @@ webkit.org/b/107257 [ Debug ] fast/js/toString-stack-overflow.html [ Crash ]
 
 webkit.org/b/107261 [ Debug ] dom/xhtml/level2/html/HTMLInputElement20.xhtml [ Crash Pass ]
 
-webkit.org/b/107376 [ Release ] storage/indexeddb/cursor-advance.html [ Crash Pass ]
-webkit.org/b/107377 storage/indexeddb/cursor-advance-workers.html [ Crash Pass ]
+webkit.org/b/107376 webkit.org/b/112468 storage/indexeddb/cursor-advance.html [ Crash Failure ]
+webkit.org/b/107377 webkit.org/b/112468 storage/indexeddb/cursor-advance-workers.html [ Crash Failure ]
+webkit.org/b/112468 storage/indexeddb/intversion-bad-parameters.html [ Crash Failure ]
 webkit.org/b/107377 storage/indexeddb/index-get-key-argument-required.html [ Crash Pass ]
 webkit.org/b/107377 storage/indexeddb/keypath-basics.html [ Crash Pass ]
 webkit.org/b/107377 storage/indexeddb/mozilla/remove-index.html [ Crash Pass ]
