@@ -21,7 +21,6 @@
 #include "FontOrientation.h"
 #include "FontRenderingMode.h"
 #include "FontWidthVariant.h"
-#include "TextOrientation.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
