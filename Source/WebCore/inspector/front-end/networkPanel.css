@@ -112,7 +112,7 @@
 }
 
 .network-item-view.visible {
-    display: -webkit-box;
+    display: -webkit-flex;
 }
 
 .network-item-view .tabbed-pane-header {

@@ -11,8 +11,8 @@
     max-height: 100%;
     color: white;
     background-color: rgba(17, 17, 17, 0.85);
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
+    display: -webkit-flex;
+    -webkit-flex-direction: column;
     border-top-width: 0;
     border-radius: 10px;
 }
@@ -35,7 +35,7 @@
     overflow-y: auto;
     overflow-x: hidden;
     scrollbar-width: 11px;
-    -webkit-box-flex: 1;
+    -webkit-flex: 1;
     margin: 8px;
     padding: 0 4px;
     font-size: 13px;

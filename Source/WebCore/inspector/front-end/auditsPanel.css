@@ -63,9 +63,9 @@
     bottom: 0;
     padding: 0 0 0 16px;
     white-space: nowrap;
-    display: -webkit-box;
+    display: -webkit-flex;
     text-align: left;
-    -webkit-box-orient: vertical;
+    -webkit-flex-direction: column;
 }
 
 .audit-launcher-view h1 {
@@ -80,10 +80,14 @@
 }
 
 .audit-launcher-view div.button-container {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
+    display: -webkit-flex;
+    -webkit-flex-direction: column;
     width: 100%;
     padding: 16px 0;
+}
+
+.audit-launcher-view div.button-container > button {
+    -webkit-align-self: flex-start;
 }
 
 .audit-launcher-view fieldset.audit-categories-container {

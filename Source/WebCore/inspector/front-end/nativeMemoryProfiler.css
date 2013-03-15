@@ -29,12 +29,12 @@
  */
 
 .memory-pie-chart-container {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
+    display: -webkit-flex;
+    -webkit-flex-direction: column;
 }
 
 .memory-pie-chart {
-    -webkit-box-flex: 1;
+    -webkit-flex: 1;
 }
 
 .memory-blocks-list .swatch {

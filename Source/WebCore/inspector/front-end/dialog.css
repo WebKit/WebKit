@@ -7,8 +7,8 @@
 
     -webkit-box-shadow: rgb(40,40,40) 0px 0px 50px;
     
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
+    display: -webkit-flex;
+    -webkit-flex-direction: column;
     
     background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#E9E9E9), to(#CFCFCF));
     font-size: 11px;

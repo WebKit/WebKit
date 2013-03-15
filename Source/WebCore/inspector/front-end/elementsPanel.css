@@ -530,10 +530,10 @@
 .sidebar-pane.composite .metrics {
     border-bottom: 1px solid rgb(64%, 64%, 64%);
     height: 206px;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-box-align: center;
-    -webkit-box-pack: center;
+    display: -webkit-flex;
+    -webkit-flex-direction: column;
+    -webkit-align-items: center;
+    -webkit-justify-content: center;
 }
 
 .sidebar-pane.composite .metrics-and-computed .sidebar-pane-toolbar {

@@ -57,7 +57,7 @@ input[type="search"]:focus, input[type="text"]:focus {
     padding-top: 1px;
     padding-left: 5px;
     border-bottom: 1px solid rgb(80, 80, 80);
-    -webkit-box-orient: horizontal;
+    -webkit-flex-direction: row;
     -webkit-background-origin: padding;
     -webkit-background-clip: padding;
 }
@@ -188,8 +188,8 @@ body.dock-to-bottom #search-toolbar-label {
 
 #toolbar-controls {
     float: right;
-    display: -webkit-box;
-    -webkit-box-align: center;
+    display: -webkit-flex;
+    -webkit-align-items: center;
     height: 100%;
 }
 
@@ -238,15 +238,15 @@ body.undocked.platform-mac-snowleopard #toolbar-dropdown {
 }
 
 #toolbar-dropdown .scrollable-content {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-box-align: start;
+    display: -webkit-flex;
+    -webkit-flex-direction: column;
+    -webkit-align-items: flex-start;
     padding-right: 0;
 }
 
 #toolbar-dropdown .toolbar-item {
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
     width: 100%;
     border: 1px solid rgba(0, 0, 0, 0);
 }
@@ -559,8 +559,8 @@ body:not(.platform-mac) .toolbar-item.close-left {
 }
 
 .toolbar-item.close-left, .toolbar-item.close-right {
-  display: -webkit-box;
-  -webkit-box-align: center;
+  display: -webkit-flex;
+  -webkit-align-items: center;
   height: 100%;
   cursor: default;
 }

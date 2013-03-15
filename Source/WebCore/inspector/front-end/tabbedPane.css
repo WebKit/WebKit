@@ -29,13 +29,13 @@
  */
  
  .tabbed-pane {
-    -webkit-box-orient: vertical;
-    display: -webkit-box;
+    -webkit-flex-direction: column;
+    display: -webkit-flex;
     height: 100%;
 }
 
 .tabbed-pane-content {
-    -webkit-box-flex: 1;
+    -webkit-flex: 1;
     position: relative;
     overflow: auto;
 }
