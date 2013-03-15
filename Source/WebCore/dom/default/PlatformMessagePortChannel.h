@@ -46,18 +46,6 @@ namespace WebCore {
     // The goal of this implementation is to eliminate contention except when cloning or closing the port, so each side of the channel has its own separate mutex.
     class PlatformMessagePortChannel : public ThreadSafeRefCounted<PlatformMessagePortChannel> {
     public:
-        static void createChannel(PassRefPtr<MessagePort>, PassRefPtr<MessagePort>);
-
-        // APIs delegated from MessagePortChannel.h
-        bool entangleIfOpen(MessagePort*);
-        void disentangle();
-        void postMessageToRemote(PassOwnPtr<MessagePortChannel::EventData>);
-        bool tryGetMessageFromRemote(OwnPtr<MessagePortChannel::EventData>&);
-        void close();
-        bool isConnectedTo(MessagePort*);
-        bool hasPendingActivity();
-        MessagePort* locallyEntangledPort(const ScriptExecutionContext*);
-
         // Wrapper for MessageQueue that allows us to do thread safe sharing by two proxies.
         class MessagePortQueue : public ThreadSafeRefCounted<MessagePortQueue> {
         public:
@@ -86,15 +74,12 @@ namespace WebCore {
 
         ~PlatformMessagePortChannel();
 
-    private:
         static PassRefPtr<PlatformMessagePortChannel> create(PassRefPtr<MessagePortQueue> incoming, PassRefPtr<MessagePortQueue> outgoing);
         PlatformMessagePortChannel(PassRefPtr<MessagePortQueue> incoming, PassRefPtr<MessagePortQueue> outgoing);
 
         PassRefPtr<PlatformMessagePortChannel> entangledChannel();
-        void setEntangledChannel(PassRefPtr<PlatformMessagePortChannel>);
 
         void setRemotePort(MessagePort*);
-        MessagePort* remotePort();
         void closeInternal();
 
         // Mutex used to ensure exclusive access to the object internals.

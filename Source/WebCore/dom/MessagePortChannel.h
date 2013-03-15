@@ -102,7 +102,10 @@ namespace WebCore {
 
         ~MessagePortChannel();
 
+#if PLATFORM(CHROMIUM)
+        // FIXME: PlatformMessagePortChannel is an implementation detail, and should not be exposed via a public function.
         PlatformMessagePortChannel* channel() const { return m_channel.get(); }
+#endif
 
     private:
         explicit MessagePortChannel(PassRefPtr<PlatformMessagePortChannel>);
