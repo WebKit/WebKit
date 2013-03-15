@@ -175,7 +175,8 @@ static CString injectedBundleDirectory()
     if (const char* bundleDirectory = g_getenv("WEBKIT_INJECTED_BUNDLE_PATH"))
         return bundleDirectory;
 
-    static const char* injectedBundlePath = LIBDIR""G_DIR_SEPARATOR_S"webkit2gtk-"WEBKITGTK_API_VERSION_STRING""G_DIR_SEPARATOR_S"injected-bundle"G_DIR_SEPARATOR_S;
+    static const char* injectedBundlePath = LIBDIR G_DIR_SEPARATOR_S "webkit2gtk-" WEBKITGTK_API_VERSION_STRING
+        G_DIR_SEPARATOR_S "injected-bundle" G_DIR_SEPARATOR_S;
     return injectedBundlePath;
 }
 

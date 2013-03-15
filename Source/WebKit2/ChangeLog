@@ -1,3 +1,22 @@
+2013-03-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Enforce the C++11 standard when compiling WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=112169
+
+        Reviewed by Gustavo Noronha Silva.
+
+        With a limited set of supported compilers the WebKit2 source code can now
+        be built with the C++11 language standard enforced.
+
+        * GNUmakefile.am:
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (injectedBundleDirectory): Adjust the string literals concatenation, moving away from empty strings
+        (which C++11 refuses to handle as concatenation operators) and using whitespace instead.
+        * UIProcess/InspectorServer/gtk/WebInspectorServerGtk.cpp:
+        (WebKit::WebInspectorServer::platformResourceForPath): Ditto.
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::inspectorFilesBasePath): Ditto.
+
 2013-03-15  Nate Chapin  <japhet@chromium.org>
 
         Hide MainResourceLoader from the outside world
