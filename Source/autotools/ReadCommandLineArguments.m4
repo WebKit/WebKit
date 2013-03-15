@@ -89,13 +89,6 @@ AC_ARG_ENABLE(video,
     [enable_video="yes"])
 AC_MSG_RESULT([$enable_video])
 
-AC_MSG_CHECKING([whether to enable XSLT support])
-AC_ARG_ENABLE(xslt, 
-    AC_HELP_STRING([--enable-xslt], [enable support for XSLT [default=yes]]),
-    [],
-    [enable_xslt="yes"])
-AC_MSG_RESULT([$enable_xslt])
-
 AC_MSG_CHECKING([whether to enable geolocation support])
 AC_ARG_ENABLE(geolocation, 
     AC_HELP_STRING([--enable-geolocation], [enable support for geolocation [default=yes]]),

@@ -26,7 +26,6 @@ Features:
  Spellcheck support                                       : $enable_spellcheck
  Web Audio support                                        : $enable_web_audio
  WebGL                                                    : $enable_webgl
- XSLT support                                             : $enable_xslt
 
 
 GTK+ configuration:

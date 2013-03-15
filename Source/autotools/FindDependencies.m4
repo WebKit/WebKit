@@ -388,12 +388,9 @@ if (test "$sqlite3_found" = "no"); then
     AC_MSG_ERROR([SQLite3 is required for the Database related features])
 fi
 
-# Check if libxslt is available.
-if test "$enable_xslt" = "yes"; then
-    PKG_CHECK_MODULES([LIBXSLT],[libxslt >= libxslt_required_version])
-    AC_SUBST([LIBXSLT_CFLAGS])
-    AC_SUBST([LIBXSLT_LIBS])
-fi
+PKG_CHECK_MODULES([LIBXSLT],[libxslt >= libxslt_required_version])
+AC_SUBST([LIBXSLT_CFLAGS])
+AC_SUBST([LIBXSLT_LIBS])
 
 # Check if geoclue is available.
 if test "$enable_geolocation" = "yes"; then

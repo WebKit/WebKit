@@ -1,3 +1,21 @@
+2013-03-14  Tobias Mueller  <tobiasmue@gnome.org>
+
+        Build: Remove XSLT option and depend hard on XSLT.
+        You will now not be able to give --disable-xslt or --enable-xslt
+        because it is not optional anymore.
+        https://bugs.webkit.org/show_bug.cgi?id=112368
+
+        Reviewed by Martin Robinson.
+
+        * Source/autotools/FindDependencies.m4:
+            Always check for libxslt
+        
+        * Source/autotools/PrintBuildConfiguration.m4:
+            Removed printing out the value of XSLT
+
+        * Source/autotools/ReadCommandLineArguments.m4:
+            Removed reading XSLT options
+
 2013-03-14  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
 
         [EFL] Use CROSS_PLATFORM_CONTEXT_MENU
