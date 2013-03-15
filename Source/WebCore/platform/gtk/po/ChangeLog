@@ -1,3 +1,48 @@
+2013-03-15  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed, build fix. Also gather translatable strings from WebKit2 files.
+
+        * POTFILES.in: added WebKit2GTK+ files that have translatable strings.
+        * ar.po: regenerated.
+        * as.po: ditto.
+        * bg.po: ditto.
+        * cs.po: ditto.
+        * de.po: ditto.
+        * el.po: ditto.
+        * en_CA.po: ditto.
+        * en_GB.po: ditto.
+        * eo.po: ditto.
+        * es.po: ditto.
+        * et.po: ditto.
+        * eu.po: ditto.
+        * fr.po: ditto.
+        * gl.po: ditto.
+        * gu.po: ditto.
+        * he.po: ditto.
+        * hi.po: ditto.
+        * hu.po: ditto.
+        * id.po: ditto.
+        * it.po: ditto.
+        * ko.po: ditto.
+        * lt.po: ditto.
+        * lv.po: ditto.
+        * mr.po: ditto.
+        * nb.po: ditto.
+        * nl.po: ditto.
+        * pa.po: ditto.
+        * pl.po: ditto.
+        * pt.po: ditto.
+        * pt_BR.po: ditto.
+        * ro.po: ditto.
+        * ru.po: ditto.
+        * sl.po: ditto.
+        * sr.po: ditto.
+        * sr@latin.po: ditto.
+        * sv.po: ditto.
+        * uk.po: ditto.
+        * vi.po: ditto.
+        * zh_CN.po: ditto.
+
 2013-03-04  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Enable translations for WebKit2
