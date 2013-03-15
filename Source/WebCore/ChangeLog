@@ -1,5 +1,26 @@
 2013-03-15  Lucas Forschler  <lforschler@apple.com>
 
+        Merge r136062
+
+    2012-11-28  Abhishek Arya  <inferno@chromium.org>
+
+            Heap-use-after-free in WebCore::EventHandler::handleMousePressEvent
+            https://bugs.webkit.org/show_bug.cgi?id=101098
+
+            Reviewed by Adam Barth.
+
+            |subframe| can be blown away inside passMousePressEventToSubframe
+            call. Use RefPtr to protect it in handleMousePressEvent function.
+            We use similar approach in handleMouseMoveEvent function.
+
+            No new tests. Test is extremely time dependent and needs to trigger
+            interaction gesture. Reproduced on ClusterFuzz.
+
+            * page/EventHandler.cpp:
+            (WebCore::EventHandler::handleMousePressEvent):
+
+2013-03-15  Lucas Forschler  <lforschler@apple.com>
+
         Merge r132970
 
     2012-10-30  Chris Evans  <cevans@google.com>
