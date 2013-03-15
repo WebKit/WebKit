@@ -793,16 +793,7 @@ WebInspector.DataGrid.prototype = {
             if (this._deleteCallback) {
                 handled = true;
                 this._deleteCallback(this.selectedNode);
-
-                nextSelectedNode = this.selectedNode.traverseNextNode(true);
-                while (nextSelectedNode && !nextSelectedNode.selectable)
-                    nextSelectedNode = nextSelectedNode.traverseNextNode(true);
-
-                if (!nextSelectedNode || nextSelectedNode.isCreationNode) {
-                    nextSelectedNode = this.selectedNode.traversePreviousNode(true);
-                    while (nextSelectedNode && !nextSelectedNode.selectable)
-                        nextSelectedNode = nextSelectedNode.traversePreviousNode(true);
-                }
+                this.changeNodeAfterDeletion();
             }
         } else if (isEnterKey(event)) {
             if (this._editCallback) {
@@ -818,6 +809,24 @@ WebInspector.DataGrid.prototype = {
 
         if (handled)
             event.consume(true);
+    },
+
+    changeNodeAfterDeletion: function()
+    {
+        var nextSelectedNode = this.selectedNode.traverseNextNode(true);
+        while (nextSelectedNode && !nextSelectedNode.selectable)
+            nextSelectedNode = nextSelectedNode.traverseNextNode(true);
+
+        if (!nextSelectedNode || nextSelectedNode.isCreationNode) {
+            nextSelectedNode = this.selectedNode.traversePreviousNode(true);
+            while (nextSelectedNode && !nextSelectedNode.selectable)
+                nextSelectedNode = nextSelectedNode.traversePreviousNode(true);
+        }
+
+        if (nextSelectedNode) {
+            nextSelectedNode.reveal();
+            nextSelectedNode.select();
+        }
     },
 
     /**
