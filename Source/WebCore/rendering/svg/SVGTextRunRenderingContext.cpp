@@ -187,6 +187,7 @@ GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, co
         return glyphData;
 
     // Characters enclosed by an <altGlyph> element, may not be registered in the GlyphPage.
+    const SimpleFontData* originalFontData = glyphData.fontData;
     if (!glyphData.fontData->isSVGFont()) {
         if (TextRun::RenderingContext* renderingContext = run.renderingContext()) {
             RenderObject* renderObject = static_cast<SVGTextRunRenderingContext*>(renderingContext)->renderer();
@@ -237,7 +238,7 @@ GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, co
 
     // Restore original state of the SVG Font glyph table and the current font fallback list,
     // to assure the next lookup of the same glyph won't immediately return the fallback glyph.
-    page->setGlyphDataForCharacter(character, glyphData.glyph, fontData);
+    page->setGlyphDataForCharacter(character, glyphData.glyph, originalFontData);
     fontList->setGlyphPageZero(originalGlyphPageZero);
     fontList->setGlyphPages(originalGlyphPages);
     return fallbackGlyphData;
