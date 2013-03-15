@@ -108,7 +108,7 @@ void ScrollbarEfl::setParent(ScrollView* view)
     if (!view || !view->evasObject())
         return;
 
-    Frame* frame = static_cast<FrameView*>(view)->frame();
+    Frame* frame = toFrameView(view)->frame();
     if (!frame || !frame->page())
         return;
 

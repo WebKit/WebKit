@@ -417,7 +417,7 @@ private:
     void reset();
     void init();
 
-    virtual bool isFrameView() const;
+    virtual bool isFrameView() const OVERRIDE { return true; }
 
     friend class RenderWidget;
     bool useSlowRepaints(bool considerOverlap = true) const;
@@ -642,6 +642,21 @@ inline LayoutUnit FrameView::mapFromCSSToLayoutUnits(int value)
 {
     return value * m_frame->pageZoomFactor() * m_frame->frameScaleFactor();
 }
+
+inline FrameView* toFrameView(Widget* widget)
+{
+    ASSERT(!widget || widget->isFrameView());
+    return static_cast<FrameView*>(widget);
+}
+
+inline const FrameView* toFrameView(const Widget* widget)
+{
+    ASSERT(!widget || widget->isFrameView());
+    return static_cast<const FrameView*>(widget);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toFrameView(const FrameView*);
 
 } // namespace WebCore
 

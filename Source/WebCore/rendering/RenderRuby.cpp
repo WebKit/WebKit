@@ -74,13 +74,13 @@ static inline bool isRubyAfterBlock(const RenderObject* object)
 static inline RenderBlock* rubyBeforeBlock(const RenderObject* ruby)
 {
     RenderObject* child = ruby->firstChild();
-    return isRubyBeforeBlock(child) ? static_cast<RenderBlock*>(child) : 0;
+    return isRubyBeforeBlock(child) ? toRenderBlock(child) : 0;
 }
 
 static inline RenderBlock* rubyAfterBlock(const RenderObject* ruby)
 {
     RenderObject* child = ruby->lastChild();
-    return isRubyAfterBlock(child) ? static_cast<RenderBlock*>(child) : 0;
+    return isRubyAfterBlock(child) ? toRenderBlock(child) : 0;
 }
 
 static RenderBlock* createAnonymousRubyInlineBlock(RenderObject* ruby)
@@ -97,14 +97,14 @@ static RenderRubyRun* lastRubyRun(const RenderObject* ruby)
     if (child && !child->isRubyRun())
         child = child->previousSibling();
     ASSERT(!child || child->isRubyRun() || child->isBeforeContent() || child == rubyBeforeBlock(ruby));
-    return child && child->isRubyRun() ? static_cast<RenderRubyRun*>(child) : 0;
+    return child && child->isRubyRun() ? toRenderRubyRun(child) : 0;
 }
 
 static inline RenderRubyRun* findRubyRunParent(RenderObject* child)
 {
     while (child && !child->isRubyRun())
         child = child->parent();
-    return static_cast<RenderRubyRun*>(child);
+    return toRenderRubyRun(child);
 }
 
 //=== ruby as inline object ===

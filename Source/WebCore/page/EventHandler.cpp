@@ -1176,7 +1176,7 @@ Frame* EventHandler::subframeForTargetNode(Node* node)
     if (!widget || !widget->isFrameView())
         return 0;
 
-    return static_cast<FrameView*>(widget)->frame();
+    return toFrameView(widget)->frame();
 }
 
 static bool isSubmitImage(Node* node)
@@ -2655,7 +2655,7 @@ bool EventHandler::passGestureEventToWidget(const PlatformGestureEvent& gestureE
     if (!widget->isFrameView())
         return false;
 
-    return static_cast<FrameView*>(widget)->frame()->eventHandler()->handleGestureEvent(gestureEvent);
+    return toFrameView(widget)->frame()->eventHandler()->handleGestureEvent(gestureEvent);
 }
 
 bool EventHandler::passGestureEventToWidgetIfPossible(const PlatformGestureEvent& gestureEvent, RenderObject* renderer)

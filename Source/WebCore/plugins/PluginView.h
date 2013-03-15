@@ -221,7 +221,7 @@ namespace WebCore {
         virtual void setParent(ScrollView*);
         virtual void setParentVisible(bool);
 
-        virtual bool isPluginView() const { return true; }
+        virtual bool isPluginView() const OVERRIDE { return true; }
 
         Frame* parentFrame() const { return m_parentFrame.get(); }
 
@@ -471,6 +471,21 @@ private:
 
         static PluginView* s_currentPluginView;
     };
+
+inline PluginView* toPluginView(Widget* widget)
+{
+    ASSERT(!widget || widget->isPluginView());
+    return static_cast<PluginView*>(widget);
+}
+
+inline const PluginView* toPluginView(const Widget* widget)
+{
+    ASSERT(!widget || widget->isPluginView());
+    return static_cast<const PluginView*>(widget);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toPluginView(const PluginView*);
 
 } // namespace WebCore
 

@@ -64,7 +64,7 @@ static JSObject* pluginScriptObjectFromPluginViewBase(HTMLPlugInElement* pluginE
     if (!pluginWidget->isPluginViewBase())
         return 0;
 
-    PluginViewBase* pluginViewBase = static_cast<PluginViewBase*>(pluginWidget);
+    PluginViewBase* pluginViewBase = toPluginViewBase(pluginWidget);
     return pluginViewBase->scriptObject(globalObject);
 }
 

@@ -2013,11 +2013,11 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
         Widget* widget = toRenderWidget(renderer)->widget();
         if (!widget || !widget->isFrameView())
             break;
-        Frame* frame = static_cast<FrameView*>(widget)->frame();
+        Frame* frame = toFrameView(widget)->frame();
         if (!frame)
             break;
         renderView = frame->document()->renderView();
-        frameView = static_cast<FrameView*>(widget);
+        frameView = toFrameView(widget);
     }
     
     return innerNode->renderer()->positionForPoint(pointResult);

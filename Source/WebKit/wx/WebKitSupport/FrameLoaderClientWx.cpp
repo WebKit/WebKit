@@ -898,7 +898,7 @@ PassRefPtr<Widget> FrameLoaderClientWx::createPlugin(const IntSize& size, HTMLPl
 
 void FrameLoaderClientWx::redirectDataToPlugin(Widget* pluginWidget)
 {
-    m_pluginView = static_cast<PluginView*>(pluginWidget);
+    m_pluginView = toPluginView(pluginWidget);
     if (pluginWidget)
         m_hasSentResponseToPlugin = false;
 }

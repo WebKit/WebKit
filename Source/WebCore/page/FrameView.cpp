@@ -306,11 +306,6 @@ void FrameView::removeFromAXObjectCache()
         axObjectCache()->remove(this);
 }
 
-bool FrameView::isFrameView() const
-{ 
-    return true; 
-}
-
 void FrameView::clearFrame()
 {
     m_frame = 0;
@@ -1042,7 +1037,7 @@ static inline void collectFrameViewChildren(FrameView* frameView, Vector<RefPtr<
     for (HashSet<RefPtr<Widget> >::iterator current = viewChildren->begin(); current != end; ++current) {
         Widget* widget = (*current).get();
         if (widget->isFrameView())
-            frameViews.append(static_cast<FrameView*>(widget));
+            frameViews.append(toFrameView(widget));
     }
 }
 
@@ -3238,7 +3233,7 @@ bool FrameView::hasCustomScrollbars() const
     for (HashSet<RefPtr<Widget> >::const_iterator current = viewChildren->begin(); current != end; ++current) {
         Widget* widget = current->get();
         if (widget->isFrameView()) {
-            if (static_cast<FrameView*>(widget)->hasCustomScrollbars())
+            if (toFrameView(widget)->hasCustomScrollbars())
                 return true;
         } else if (widget->isScrollbar()) {
             Scrollbar* scrollbar = static_cast<Scrollbar*>(widget);
@@ -3720,7 +3715,7 @@ IntRect FrameView::convertToContainingView(const IntRect& localRect) const
 {
     if (const ScrollView* parentScrollView = parent()) {
         if (parentScrollView->isFrameView()) {
-            const FrameView* parentView = static_cast<const FrameView*>(parentScrollView);
+            const FrameView* parentView = toFrameView(parentScrollView);
             // Get our renderer in the parent view
             RenderPart* renderer = m_frame->ownerRenderer();
             if (!renderer)
@@ -3743,7 +3738,7 @@ IntRect FrameView::convertFromContainingView(const IntRect& parentRect) const
 {
     if (const ScrollView* parentScrollView = parent()) {
         if (parentScrollView->isFrameView()) {
-            const FrameView* parentView = static_cast<const FrameView*>(parentScrollView);
+            const FrameView* parentView = toFrameView(parentScrollView);
 
             // Get our renderer in the parent view
             RenderPart* renderer = m_frame->ownerRenderer();
@@ -3767,7 +3762,7 @@ IntPoint FrameView::convertToContainingView(const IntPoint& localPoint) const
 {
     if (const ScrollView* parentScrollView = parent()) {
         if (parentScrollView->isFrameView()) {
-            const FrameView* parentView = static_cast<const FrameView*>(parentScrollView);
+            const FrameView* parentView = toFrameView(parentScrollView);
 
             // Get our renderer in the parent view
             RenderPart* renderer = m_frame->ownerRenderer();
@@ -3792,7 +3787,7 @@ IntPoint FrameView::convertFromContainingView(const IntPoint& parentPoint) const
 {
     if (const ScrollView* parentScrollView = parent()) {
         if (parentScrollView->isFrameView()) {
-            const FrameView* parentView = static_cast<const FrameView*>(parentScrollView);
+            const FrameView* parentView = toFrameView(parentScrollView);
 
             // Get our renderer in the parent view
             RenderPart* renderer = m_frame->ownerRenderer();
@@ -3903,7 +3898,7 @@ bool FrameView::containsScrollableArea(ScrollableArea* scrollableArea) const
 void FrameView::removeChild(Widget* widget)
 {
     if (widget->isFrameView())
-        removeScrollableArea(static_cast<FrameView*>(widget));
+        removeScrollableArea(toFrameView(widget));
 
     ScrollView::removeChild(widget);
 }

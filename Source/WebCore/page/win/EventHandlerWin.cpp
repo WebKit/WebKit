@@ -82,7 +82,7 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, 
     if (!widget->isFrameView())
         return false;
 
-    return static_cast<FrameView*>(widget)->frame()->eventHandler()->handleWheelEvent(wheelEvent);
+    return toFrameView(widget)->frame()->eventHandler()->handleWheelEvent(wheelEvent);
 }
 
 bool EventHandler::tabsToAllFormControls(KeyboardEvent*) const

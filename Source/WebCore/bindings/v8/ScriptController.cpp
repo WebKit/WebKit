@@ -526,7 +526,7 @@ PassScriptInstance ScriptController::createScriptInstanceForWidget(Widget* widge
     if (!widget->isPluginViewBase())
         return 0;
 
-    NPObject* npObject = static_cast<PluginViewBase*>(widget)->scriptableObject();
+    NPObject* npObject = toPluginViewBase(widget)->scriptableObject();
 
     if (!npObject)
         return 0;

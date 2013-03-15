@@ -376,7 +376,7 @@ PassRefPtr<Frame> FrameLoaderClientEfl::createFrame(const KURL& url, const Strin
 
 void FrameLoaderClientEfl::redirectDataToPlugin(Widget* pluginWidget)
 {
-    m_pluginView = static_cast<PluginView*>(pluginWidget);
+    m_pluginView = toPluginView(pluginWidget);
     if (pluginWidget)
         m_hasSentResponseToPlugin = false;
 }

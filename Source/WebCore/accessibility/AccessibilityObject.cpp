@@ -399,7 +399,7 @@ static void appendAccessibilityObject(AccessibilityObject* object, Accessibility
         if (!widget || !widget->isFrameView())
             return;
         
-        Document* doc = static_cast<FrameView*>(widget)->frame()->document();
+        Document* doc = toFrameView(widget)->frame()->document();
         if (!doc || !doc->renderer())
             return;
         

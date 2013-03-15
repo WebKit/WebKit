@@ -582,7 +582,7 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
     if (o.isWidget()) {
         Widget* widget = toRenderWidget(&o)->widget();
         if (widget && widget->isFrameView()) {
-            FrameView* view = static_cast<FrameView*>(widget);
+            FrameView* view = toFrameView(widget);
             RenderView* root = view->frame()->contentRenderer();
             if (root) {
                 view->layout();

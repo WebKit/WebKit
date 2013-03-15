@@ -363,7 +363,7 @@ void WebPluginContainerImpl::scrollRect(int dx, int dy, const WebRect& rect)
 {
     Widget* parentWidget = parent();
     if (parentWidget->isFrameView()) {
-        FrameView* parentFrameView = static_cast<FrameView*>(parentWidget);
+        FrameView* parentFrameView = toFrameView(parentWidget);
         if (!parentFrameView->isOverlapped()) {
             IntRect damageRect = convertToContainingWindow(static_cast<IntRect>(rect));
             IntSize scrollDelta(dx, dy);
@@ -494,7 +494,7 @@ void WebPluginContainerImpl::setWantsWheelEvents(bool wantsWheelEvents)
     if (Page* page = m_element->document()->page()) {
         if (ScrollingCoordinator* scrollingCoordinator = page->scrollingCoordinator()) {
             if (parent() && parent()->isFrameView())
-                scrollingCoordinator->frameViewLayoutUpdated(static_cast<FrameView*>(parent()));
+                scrollingCoordinator->frameViewLayoutUpdated(toFrameView(parent()));
         }
     }
 }
@@ -645,7 +645,7 @@ void WebPluginContainerImpl::handleMouseEvent(MouseEvent* event)
 
     // We cache the parent FrameView here as the plugin widget could be deleted
     // in the call to HandleEvent. See http://b/issue?id=1362948
-    FrameView* parentView = static_cast<FrameView*>(parent());
+    FrameView* parentView = toFrameView(parent());
 
     WebMouseEventBuilder webEvent(this, m_element->renderer(), *event);
     if (webEvent.type == WebInputEvent::Undefined)

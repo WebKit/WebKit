@@ -4151,7 +4151,7 @@ void RenderBox::addLayoutOverflow(const LayoutRect& rect)
         bool hasTopOverflow = !style()->isLeftToRightDirection() && !isHorizontalWritingMode();
         bool hasLeftOverflow = !style()->isLeftToRightDirection() && isHorizontalWritingMode();
         if (isFlexibleBox() && style()->isReverseFlexDirection()) {
-            RenderFlexibleBox* flexibleBox = static_cast<RenderFlexibleBox*>(this);
+            RenderFlexibleBox* flexibleBox = toRenderFlexibleBox(this);
             if (flexibleBox->isHorizontalFlow())
                 hasLeftOverflow = true;
             else

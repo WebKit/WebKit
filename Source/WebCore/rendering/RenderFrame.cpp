@@ -54,7 +54,7 @@ void RenderFrame::viewCleared()
     if (!element || !widget() || !widget()->isFrameView())
         return;
 
-    FrameView* view = static_cast<FrameView*>(widget());
+    FrameView* view = toFrameView(widget());
 
     int marginWidth = element->marginWidth();
     int marginHeight = element->marginHeight();

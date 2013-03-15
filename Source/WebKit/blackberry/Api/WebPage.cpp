@@ -2552,7 +2552,7 @@ static inline Frame* frameForNode(Node* node)
             if (renderer->isWidget()) {
                 Widget* widget = toRenderWidget(renderer)->widget();
                 if (widget && widget->isFrameView()) {
-                    if (Frame* frame = static_cast<FrameView*>(widget)->frame())
+                    if (Frame* frame = toFrameView(widget)->frame())
                         return frame;
                 }
             }
@@ -5412,7 +5412,7 @@ static bool needsLayoutRecursive(FrameView* view)
     for (HashSet<RefPtr<Widget> >::const_iterator current = viewChildren->begin(); current != end && !subframesNeedsLayout; ++current) {
         Widget* widget = (*current).get();
         if (widget->isFrameView())
-            subframesNeedsLayout |= needsLayoutRecursive(static_cast<FrameView*>(widget));
+            subframesNeedsLayout |= needsLayoutRecursive(toFrameView(widget));
     }
 
     return subframesNeedsLayout;

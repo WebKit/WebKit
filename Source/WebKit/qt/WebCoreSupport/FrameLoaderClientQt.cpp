@@ -1423,7 +1423,7 @@ public:
         QRect clipRect;
         if (parentScrollView) {
             ASSERT_WITH_SECURITY_IMPLICATION(parentScrollView->isFrameView());
-            clipRect = static_cast<FrameView*>(parentScrollView)->windowClipRect();
+            clipRect = toFrameView(parentScrollView)->windowClipRect();
             clipRect.translate(-windowRect.x(), -windowRect.y());
         }
         widget->setGeometryAndClip(windowRect, clipRect, isVisible());
@@ -1551,7 +1551,7 @@ PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, 
 
 void FrameLoaderClientQt::redirectDataToPlugin(Widget* pluginWidget)
 {
-    m_pluginView = static_cast<PluginView*>(pluginWidget);
+    m_pluginView = toPluginView(pluginWidget);
     if (pluginWidget)
         m_hasSentResponseToPlugin = false;
 }

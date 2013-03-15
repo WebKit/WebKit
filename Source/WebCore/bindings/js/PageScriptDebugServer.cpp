@@ -226,7 +226,7 @@ void PageScriptDebugServer::setJavaScriptPaused(FrameView* view, bool paused)
         Widget* widget = (*it).get();
         if (!widget->isPluginView())
             continue;
-        static_cast<PluginView*>(widget)->setJavaScriptPaused(paused);
+        toPluginView(widget)->setJavaScriptPaused(paused);
     }
 }
 

@@ -1412,7 +1412,7 @@ void InputHandler::ensureFocusPluginElementVisible()
 
     RenderWidget* renderWidget = static_cast<RenderWidget*>(m_currentFocusElement->renderer());
     if (renderWidget) {
-        PluginView* pluginView = static_cast<PluginView*>(renderWidget->widget());
+        PluginView* pluginView = toPluginView(renderWidget->widget());
 
         if (pluginView)
             selectionFocusRect = pluginView->ensureVisibleRect();

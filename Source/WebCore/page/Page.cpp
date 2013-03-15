@@ -1174,7 +1174,7 @@ void Page::collectPluginViews(Vector<RefPtr<PluginViewBase>, 32>& pluginViewBase
         for (HashSet<RefPtr<Widget> >::const_iterator it = children->begin(); it != end; ++it) {
             Widget* widget = (*it).get();
             if (widget->isPluginViewBase())
-                pluginViewBases.append(static_cast<PluginViewBase*>(widget));
+                pluginViewBases.append(toPluginViewBase(widget));
         }
     }
 }

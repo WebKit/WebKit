@@ -178,6 +178,21 @@ private:
     int m_numberOfInFlowChildrenOnFirstLine;
 };
 
+inline RenderFlexibleBox* toRenderFlexibleBox(RenderObject* object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isFlexibleBox());
+    return static_cast<RenderFlexibleBox*>(object);
+}
+
+inline const RenderFlexibleBox* toRenderFlexibleBox(const RenderObject* object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isFlexibleBox());
+    return static_cast<const RenderFlexibleBox*>(object);
+}
+
+// This will catch anyone doing an unnecessary cast.
+void toRenderFlexibleBox(const RenderFlexibleBox*);
+
 } // namespace WebCore
 
 #endif // RenderFlexibleBox_h

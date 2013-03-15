@@ -96,7 +96,7 @@ static WebRenderNode *copyRenderNode(RenderObject* node)
     
     RenderWidget* renderWidget = node->isWidget() ? toRenderWidget(node) : 0;
     Widget* widget = renderWidget ? renderWidget->widget() : 0;
-    FrameView* frameView = widget && widget->isFrameView() ? static_cast<FrameView*>(widget) : 0;
+    FrameView* frameView = widget && widget->isFrameView() ? toFrameView(widget) : 0;
     Frame* frame = frameView ? frameView->frame() : 0;
 
     // FIXME: broken with transforms

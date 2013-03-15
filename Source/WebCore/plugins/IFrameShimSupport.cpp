@@ -133,7 +133,7 @@ void getPluginOcclusions(Element* element, Widget* parentWidget, const IntRect& 
     if (!parentWidget->isFrameView())
         return;
 
-    FrameView* parentFrameView = static_cast<FrameView*>(parentWidget);
+    FrameView* parentFrameView = toFrameView(parentWidget);
 
     const HashSet<RefPtr<Widget> >* children = parentFrameView->children();
     for (HashSet<RefPtr<Widget> >::const_iterator it = children->begin(); it != children->end(); ++it) {
@@ -141,7 +141,7 @@ void getPluginOcclusions(Element* element, Widget* parentWidget, const IntRect& 
         if (!(*it)->isFrameView())
             continue;
 
-        const FrameView* frameView = static_cast<const FrameView*>((*it).get());
+        const FrameView* frameView = toFrameView((*it).get());
         // Check to make sure we can get both the element and the RenderObject
         // for this FrameView, if we can't just move on to the next object.
         if (!frameView->frame() || !frameView->frame()->ownerElement()

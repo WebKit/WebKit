@@ -144,7 +144,7 @@ Region ScrollingCoordinator::computeNonFastScrollableRegion(const Frame* frame, 
             if (!(*it)->isPluginViewBase())
                 continue;
 
-            PluginViewBase* pluginViewBase = static_cast<PluginViewBase*>((*it).get());
+            PluginViewBase* pluginViewBase = toPluginViewBase((*it).get());
             if (pluginViewBase->wantsWheelEvents())
                 nonFastScrollableRegion.unite(pluginViewBase->frameRect());
         }

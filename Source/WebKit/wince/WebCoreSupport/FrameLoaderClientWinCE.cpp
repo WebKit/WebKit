@@ -174,7 +174,7 @@ PassRefPtr<Frame> FrameLoaderClientWinCE::createFrame(const KURL& url, const Str
 
 void FrameLoaderClientWinCE::redirectDataToPlugin(Widget* pluginWidget)
 {
-    m_pluginView = static_cast<PluginView*>(pluginWidget);
+    m_pluginView = toPluginView(pluginWidget);
     if (pluginWidget)
         m_hasSentResponseToPlugin = false;
 }

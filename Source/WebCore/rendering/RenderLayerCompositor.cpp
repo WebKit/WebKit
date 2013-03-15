@@ -1643,7 +1643,7 @@ bool RenderLayerCompositor::shouldPropagateCompositingToEnclosingFrame() const
     RenderPart* frameRenderer = toRenderPart(renderer);
     if (frameRenderer->widget()) {
         ASSERT(frameRenderer->widget()->isFrameView());
-        FrameView* view = static_cast<FrameView*>(frameRenderer->widget());
+        FrameView* view = toFrameView(frameRenderer->widget());
         if (view->isOverlappedIncludingAncestors() || view->hasCompositingAncestor())
             return true;
     }

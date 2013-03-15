@@ -432,7 +432,7 @@ void PluginView::updatePluginWidget()
         return;
 
     ASSERT(parent()->isFrameView());
-    FrameView* frameView = static_cast<FrameView*>(parent());
+    FrameView* frameView = toFrameView(parent());
 
     IntRect oldWindowRect = m_windowRect;
     IntRect oldClipRect = m_clipRect;
@@ -553,7 +553,7 @@ void PluginView::paintIntoTransformedContext(HDC hdc)
 
     WINDOWPOS windowpos = { 0, 0, 0, 0, 0, 0, 0 };
 
-    IntRect r = static_cast<FrameView*>(parent())->contentsToWindow(frameRect());
+    IntRect r = toFrameView(parent())->contentsToWindow(frameRect());
 
     windowpos.x = r.x();
     windowpos.y = r.y();
@@ -586,7 +586,7 @@ void PluginView::paintWindowedPluginIntoContext(GraphicsContext* context, const 
     ASSERT(context->shouldIncludeChildWindows());
 
     ASSERT(parent()->isFrameView());
-    IntPoint locationInWindow = static_cast<FrameView*>(parent())->contentsToWindow(frameRect().location());
+    IntPoint locationInWindow = toFrameView(parent())->contentsToWindow(frameRect().location());
 
     LocalWindowsContext windowsContext(context, frameRect(), false);
 
@@ -646,7 +646,7 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     IntRect rectInWindow(rect);
     rectInWindow.intersect(frameRect());
 #else
-    IntRect rectInWindow = static_cast<FrameView*>(parent())->contentsToWindow(frameRect());
+    IntRect rectInWindow = toFrameView(parent())->contentsToWindow(frameRect());
 #endif
     LocalWindowsContext windowsContext(context, rectInWindow, m_isTransparent);
 
@@ -702,7 +702,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
 
     NPEvent npEvent;
 
-    IntPoint p = static_cast<FrameView*>(parent())->contentsToWindow(IntPoint(event->pageX(), event->pageY()));
+    IntPoint p = toFrameView(parent())->contentsToWindow(IntPoint(event->pageX(), event->pageY()));
 
     npEvent.lParam = MAKELPARAM(p.x(), p.y());
     npEvent.wParam = 0;
@@ -821,7 +821,7 @@ void PluginView::setNPWindowRect(const IntRect& rect)
         return;
 
 #if OS(WINCE)
-    IntRect r = static_cast<FrameView*>(parent())->contentsToWindow(rect);
+    IntRect r = toFrameView(parent())->contentsToWindow(rect);
     m_npWindow.x = r.x();
     m_npWindow.y = r.y();
 
@@ -836,7 +836,7 @@ void PluginView::setNPWindowRect(const IntRect& rect)
 # if PLATFORM(GTK) || PLATFORM(QT)
     IntPoint p = rect.location();
 # else
-    IntPoint p = static_cast<FrameView*>(parent())->contentsToWindow(rect.location());
+    IntPoint p = toFrameView(parent())->contentsToWindow(rect.location());
 # endif
     m_npWindow.x = p.x();
     m_npWindow.y = p.y();
@@ -1069,7 +1069,7 @@ PassRefPtr<Image> PluginView::snapshot()
         // Windowless plug-ins assume that they're drawing onto the view's DC.
         // Translate the context so that the plug-in draws at (0, 0).
         ASSERT(parent()->isFrameView());
-        IntPoint position = static_cast<FrameView*>(parent())->contentsToWindow(frameRect()).location();
+        IntPoint position = toFrameView(parent())->contentsToWindow(frameRect()).location();
         transform.eDx = -position.x();
         transform.eDy = -position.y();
         SetWorldTransform(hdc.get(), &transform);

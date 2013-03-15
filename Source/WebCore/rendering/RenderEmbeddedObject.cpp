@@ -102,7 +102,7 @@ bool RenderEmbeddedObject::requiresLayer() const
 
 bool RenderEmbeddedObject::allowsAcceleratedCompositing() const
 {
-    return widget() && widget()->isPluginViewBase() && static_cast<PluginViewBase*>(widget())->platformLayer();
+    return widget() && widget()->isPluginViewBase() && toPluginViewBase(widget())->platformLayer();
 }
 #endif
 
@@ -327,7 +327,7 @@ void RenderEmbeddedObject::viewCleared()
 {
     // This is required for <object> elements whose contents are rendered by WebCore (e.g. src="foo.html").
     if (node() && widget() && widget()->isFrameView()) {
-        FrameView* view = static_cast<FrameView*>(widget());
+        FrameView* view = toFrameView(widget());
         int marginWidth = -1;
         int marginHeight = -1;
         if (node()->hasTagName(iframeTag)) {
@@ -350,7 +350,7 @@ bool RenderEmbeddedObject::nodeAtPoint(const HitTestRequest& request, HitTestRes
     if (!widget() || !widget()->isPluginViewBase())
         return true;
 
-    PluginViewBase* view = static_cast<PluginViewBase*>(widget());
+    PluginViewBase* view = toPluginViewBase(widget());
     IntPoint roundedPoint = locationInContainer.roundedPoint();
 
     if (Scrollbar* horizontalScrollbar = view->horizontalScrollbar()) {
@@ -375,7 +375,7 @@ bool RenderEmbeddedObject::scroll(ScrollDirection direction, ScrollGranularity g
     if (!widget() || !widget()->isPluginViewBase())
         return false;
 
-    return static_cast<PluginViewBase*>(widget())->scroll(direction, granularity);
+    return toPluginViewBase(widget())->scroll(direction, granularity);
 }
 
 bool RenderEmbeddedObject::logicalScroll(ScrollLogicalDirection direction, ScrollGranularity granularity, float multiplier, Node** stopNode)

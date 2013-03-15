@@ -80,7 +80,7 @@ bool RenderPart::requiresAcceleratedCompositing() const
     // renderer and the plugin has a layer, then we need a layer. Second, if this is 
     // a renderer with a contentDocument and that document needs a layer, then we need
     // a layer.
-    if (widget() && widget()->isPluginViewBase() && static_cast<PluginViewBase*>(widget())->platformLayer())
+    if (widget() && widget()->isPluginViewBase() && toPluginViewBase(widget())->platformLayer())
         return true;
 
     if (!node() || !node()->isFrameOwnerElement())
@@ -107,7 +107,7 @@ RenderBox* RenderPart::embeddedContentBox() const
 {
     if (!node() || !widget() || !widget()->isFrameView())
         return 0;
-    return static_cast<FrameView*>(widget())->embeddedContentBox();
+    return toFrameView(widget())->embeddedContentBox();
 }
 
 bool RenderPart::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
@@ -115,7 +115,7 @@ bool RenderPart::nodeAtPoint(const HitTestRequest& request, HitTestResult& resul
     if (!widget() || !widget()->isFrameView() || !request.allowsChildFrameContent())
         return RenderWidget::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, action);
 
-    FrameView* childFrameView = static_cast<FrameView*>(widget());
+    FrameView* childFrameView = toFrameView(widget());
     RenderView* childRoot = childFrameView->renderView();
 
     if (childRoot) {

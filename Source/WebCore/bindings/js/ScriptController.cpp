@@ -390,7 +390,7 @@ PassRefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWid
     if (!widget->isPluginView())
         return 0;
 
-    return static_cast<PluginView*>(widget)->bindingInstance();
+    return toPluginView(widget)->bindingInstance();
 }
 #endif
 

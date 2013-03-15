@@ -634,7 +634,7 @@ Frame* Frame::frameForWidget(const Widget* widget)
     // Assume all widgets are either a FrameView or owned by a RenderWidget.
     // FIXME: That assumption is not right for scroll bars!
     ASSERT_WITH_SECURITY_IMPLICATION(widget->isFrameView());
-    return static_cast<const FrameView*>(widget)->frame();
+    return toFrameView(widget)->frame();
 }
 
 void Frame::clearTimers(FrameView *view, Document *document)

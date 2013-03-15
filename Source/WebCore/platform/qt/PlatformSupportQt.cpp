@@ -33,7 +33,7 @@ bool PlatformSupport::popupsAllowed(NPP npp)
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
     if (npp && npp->ndata)
-        return static_cast<PluginView*>(npp->ndata)->arePopupsAllowed();
+        return toPluginView(npp->ndata)->arePopupsAllowed();
 #endif
 
     return false;
@@ -48,7 +48,7 @@ NPObject* PlatformSupport::pluginScriptableObject(Widget* widget)
         return 0;
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    PluginView* pluginView = static_cast<PluginView*>(widget);
+    PluginView* pluginView = toPluginView(widget);
     return pluginView->npObject();
 #else
     return 0;

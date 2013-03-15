@@ -122,7 +122,7 @@ void PluginView::updatePluginWidget()
         return;
 
     ASSERT(parent()->isFrameView());
-    FrameView* frameView = static_cast<FrameView*>(parent());
+    FrameView* frameView = toFrameView(parent());
 
     IntRect oldWindowRect = m_windowRect;
     IntRect oldClipRect = m_clipRect;

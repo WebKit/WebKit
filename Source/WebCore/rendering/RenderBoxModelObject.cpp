@@ -2772,7 +2772,7 @@ void RenderBoxModelObject::mapAbsoluteToLocalPoint(MapCoordinatesFlags mode, Tra
     LayoutSize containerOffset = offsetFromContainer(o, LayoutPoint());
 
     if (!style()->hasOutOfFlowPosition() && o->hasColumns()) {
-        RenderBlock* block = static_cast<RenderBlock*>(o);
+        RenderBlock* block = toRenderBlock(o);
         LayoutPoint point(roundedLayoutPoint(transformState.mappedPoint()));
         point -= containerOffset;
         block->adjustForColumnRect(containerOffset, point);

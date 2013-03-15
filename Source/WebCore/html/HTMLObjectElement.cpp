@@ -502,7 +502,7 @@ bool HTMLObjectElement::appendFormData(FormDataList& encoding, bool)
     if (!widget || !widget->isPluginViewBase())
         return false;
     String value;
-    if (!static_cast<PluginViewBase*>(widget)->getFormValue(value))
+    if (!toPluginViewBase(widget)->getFormValue(value))
         return false;
     encoding.appendData(name(), value);
     return true;

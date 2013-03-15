@@ -883,7 +883,7 @@ void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 {
     // Ideally, this function shouldn't be necessary, see <rdar://problem/4852889>
     if (!pluginWidget || pluginWidget->isPluginView())
-        m_manualLoader = static_cast<PluginView*>(pluginWidget);
+        m_manualLoader = toPluginView(pluginWidget);
     else 
         m_manualLoader = static_cast<EmbeddedWidget*>(pluginWidget);
 }

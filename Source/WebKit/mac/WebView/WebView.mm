@@ -2095,7 +2095,7 @@ static inline IMP getMethod(id o, SEL s)
     for (HashSet<RefPtr<Widget> >::const_iterator it = children->begin(); it != end; ++it) {
         Widget* widget = (*it).get();
         if (widget->isFrameView()) {
-            [self _addScrollerDashboardRegionsForFrameView:static_cast<FrameView*>(widget) dashboardRegions:regions];
+            [self _addScrollerDashboardRegionsForFrameView:toFrameView(widget) dashboardRegions:regions];
             continue;
         }
 
