@@ -279,7 +279,7 @@ bool Dictionary::get(const String& key, RefPtr<Storage>& value) const
         return false;
 
     value = 0;
-    if (V8Storage::HasInstance(v8Value, m_isolate))
+    if (V8Storage::HasInstance(v8Value, m_isolate, worldType(m_isolate)))
         value = V8Storage::toNative(v8::Handle<v8::Object>::Cast(v8Value));
     return true;
 }
@@ -337,7 +337,7 @@ bool Dictionary::get(const String& key, RefPtr<Uint8Array>& value) const
         return false;
 
     value = 0;
-    if (V8Uint8Array::HasInstance(v8Value, m_isolate))
+    if (V8Uint8Array::HasInstance(v8Value, m_isolate, worldType(m_isolate)))
         value = V8Uint8Array::toNative(v8::Handle<v8::Object>::Cast(v8Value));
     return true;
 }
@@ -350,7 +350,7 @@ bool Dictionary::get(const String& key, RefPtr<MediaKeyError>& value) const
         return false;
 
     value = 0;
-    if (V8MediaKeyError::HasInstance(v8Value, m_isolate))
+    if (V8MediaKeyError::HasInstance(v8Value, m_isolate, worldType(m_isolate)))
         value = V8MediaKeyError::toNative(v8::Handle<v8::Object>::Cast(v8Value));
     return true;
 }
@@ -386,7 +386,7 @@ bool Dictionary::get(const String& key, RefPtr<SpeechRecognitionError>& value) c
         return false;
 
     value = 0;
-    if (V8SpeechRecognitionError::HasInstance(v8Value, m_isolate))
+    if (V8SpeechRecognitionError::HasInstance(v8Value, m_isolate, worldType(m_isolate)))
         value = V8SpeechRecognitionError::toNative(v8::Handle<v8::Object>::Cast(v8Value));
     return true;
 }
@@ -398,7 +398,7 @@ bool Dictionary::get(const String& key, RefPtr<SpeechRecognitionResult>& value) 
         return false;
 
     value = 0;
-    if (V8SpeechRecognitionResult::HasInstance(v8Value, m_isolate))
+    if (V8SpeechRecognitionResult::HasInstance(v8Value, m_isolate, worldType(m_isolate)))
         value = V8SpeechRecognitionResult::toNative(v8::Handle<v8::Object>::Cast(v8Value));
     return true;
 }
@@ -410,7 +410,7 @@ bool Dictionary::get(const String& key, RefPtr<SpeechRecognitionResultList>& val
         return false;
 
     value = 0;
-    if (V8SpeechRecognitionResultList::HasInstance(v8Value, m_isolate))
+    if (V8SpeechRecognitionResultList::HasInstance(v8Value, m_isolate, worldType(m_isolate)))
         value = V8SpeechRecognitionResultList::toNative(v8::Handle<v8::Object>::Cast(v8Value));
     return true;
 }
@@ -425,7 +425,7 @@ bool Dictionary::get(const String& key, RefPtr<MediaStream>& value) const
         return false;
 
     value = 0;
-    if (V8MediaStream::HasInstance(v8Value, m_isolate))
+    if (V8MediaStream::HasInstance(v8Value, m_isolate, worldType(m_isolate)))
         value = V8MediaStream::toNative(v8::Handle<v8::Object>::Cast(v8Value));
     return true;
 }

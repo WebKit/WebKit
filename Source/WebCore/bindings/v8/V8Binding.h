@@ -275,6 +275,9 @@ namespace WebCore {
         return static_cast<long long>(value->IntegerValue());
     }
 
+    WrapperWorldType worldType(v8::Isolate*);
+    WrapperWorldType worldTypeInMainThread(v8::Isolate*);
+
     template<class T> struct NativeValueTraits;
 
     template<>
@@ -322,7 +325,7 @@ namespace WebCore {
         for (size_t i = 0; i < length; ++i) {
             v8::Handle<v8::Value> element = array->Get(i);
 
-            if (V8T::HasInstance(element, isolate)) {
+            if (V8T::HasInstance(element, isolate, worldType(isolate))) {
                 v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(element);
                 result.append(V8T::toNative(object));
             } else {
@@ -466,9 +469,6 @@ namespace WebCore {
     v8::Local<v8::Value> handleMaxRecursionDepthExceeded();
 
     void crashIfV8IsDead();
-
-    WrapperWorldType worldType(v8::Isolate*);
-    WrapperWorldType worldTypeInMainThread(v8::Isolate*);
 
 } // namespace WebCore
 

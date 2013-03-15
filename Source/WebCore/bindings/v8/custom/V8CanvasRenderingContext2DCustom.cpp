@@ -61,10 +61,10 @@ static v8::Handle<v8::Value> toV8Object(CanvasStyle* style, v8::Handle<v8::Objec
 
 static PassRefPtr<CanvasStyle> toCanvasStyle(v8::Handle<v8::Value> value, v8::Isolate* isolate)
 {
-    if (V8CanvasGradient::HasInstance(value, isolate))
+    if (V8CanvasGradient::HasInstance(value, isolate, worldType(isolate)))
         return CanvasStyle::createFromGradient(V8CanvasGradient::toNative(v8::Handle<v8::Object>::Cast(value)));
 
-    if (V8CanvasPattern::HasInstance(value, isolate))
+    if (V8CanvasPattern::HasInstance(value, isolate, worldType(isolate)))
         return CanvasStyle::createFromPattern(V8CanvasPattern::toNative(v8::Handle<v8::Object>::Cast(value)));
 
     return 0;

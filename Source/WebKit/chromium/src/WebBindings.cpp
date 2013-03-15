@@ -214,7 +214,7 @@ static bool getRangeImpl(NPObject* object, WebRange* webRange, v8::Isolate* isol
     if (!V8Range::info.equals(toWrapperTypeInfo(v8Object)))
         return false;
 
-    Range* native = V8Range::HasInstance(v8Object, isolate) ? V8Range::toNative(v8Object) : 0;
+    Range* native = V8Range::HasInstanceInAnyWorld(v8Object, isolate) ? V8Range::toNative(v8Object) : 0;
     if (!native)
         return false;
 
@@ -229,7 +229,7 @@ static bool getNodeImpl(NPObject* object, WebNode* webNode, v8::Isolate* isolate
 
     V8NPObject* v8NPObject = reinterpret_cast<V8NPObject*>(object);
     v8::Handle<v8::Object> v8Object(v8NPObject->v8Object);
-    Node* native = V8Node::HasInstance(v8Object, isolate) ? V8Node::toNative(v8Object) : 0;
+    Node* native = V8Node::HasInstanceInAnyWorld(v8Object, isolate) ? V8Node::toNative(v8Object) : 0;
     if (!native)
         return false;
 
@@ -244,7 +244,7 @@ static bool getElementImpl(NPObject* object, WebElement* webElement, v8::Isolate
 
     V8NPObject* v8NPObject = reinterpret_cast<V8NPObject*>(object);
     v8::Handle<v8::Object> v8Object(v8NPObject->v8Object);
-    Element* native = V8Element::HasInstance(v8Object, isolate) ? V8Element::toNative(v8Object) : 0;
+    Element* native = V8Element::HasInstanceInAnyWorld(v8Object, isolate) ? V8Element::toNative(v8Object) : 0;
     if (!native)
         return false;
 
@@ -259,7 +259,7 @@ static bool getArrayBufferImpl(NPObject* object, WebArrayBuffer* arrayBuffer, v8
 
     V8NPObject* v8NPObject = reinterpret_cast<V8NPObject*>(object);
     v8::Handle<v8::Object> v8Object(v8NPObject->v8Object);
-    ArrayBuffer* native = V8ArrayBuffer::HasInstance(v8Object, isolate) ? V8ArrayBuffer::toNative(v8Object) : 0;
+    ArrayBuffer* native = V8ArrayBuffer::HasInstanceInAnyWorld(v8Object, isolate) ? V8ArrayBuffer::toNative(v8Object) : 0;
     if (!native)
         return false;
 
@@ -274,7 +274,7 @@ static bool getArrayBufferViewImpl(NPObject* object, WebArrayBufferView* arrayBu
 
     V8NPObject* v8NPObject = reinterpret_cast<V8NPObject*>(object);
     v8::Handle<v8::Object> v8Object(v8NPObject->v8Object);
-    ArrayBufferView* native = V8ArrayBufferView::HasInstance(v8Object, isolate) ? V8ArrayBufferView::toNative(v8Object) : 0;
+    ArrayBufferView* native = V8ArrayBufferView::HasInstanceInAnyWorld(v8Object, isolate) ? V8ArrayBufferView::toNative(v8Object) : 0;
     if (!native)
         return false;
 

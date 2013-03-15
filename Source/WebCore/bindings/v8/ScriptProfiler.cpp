@@ -235,7 +235,7 @@ void ScriptProfiler::visitNodeWrappers(WrappedNodeVisitor* visitor)
             if (classId != v8DOMNodeClassId)
                 return;
             UNUSED_PARAM(m_isolate);
-            ASSERT(V8Node::HasInstance(value, m_isolate));
+            ASSERT(V8Node::HasInstance(value, m_isolate, worldType(m_isolate)));
             ASSERT(value->IsObject());
             v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::Cast(value);
             m_visitor->visitNode(V8Node::toNative(wrapper));

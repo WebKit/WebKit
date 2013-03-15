@@ -37,7 +37,7 @@ void V8HTMLMediaElement::controllerAttrSetterCustom(v8::Local<v8::String> name, 
 {
     HTMLMediaElement* imp = V8HTMLMediaElement::toNative(info.Holder());
     MediaController* controller = 0;
-    if (V8MediaController::HasInstance(value, info.GetIsolate()))
+    if (V8MediaController::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())))
         controller = V8MediaController::toNative(value->ToObject());
     
     if (!controller) {
@@ -55,4 +55,3 @@ void V8HTMLMediaElement::controllerAttrSetterCustom(v8::Local<v8::String> name, 
 }
 
 #endif
-
