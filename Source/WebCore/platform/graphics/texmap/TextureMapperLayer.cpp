@@ -422,13 +422,14 @@ void TextureMapperLayer::paintRecursive(const TextureMapperPaintOptions& options
     if (!isVisible())
         return;
 
+    TextureMapperPaintOptions paintOptions(options);
+    paintOptions.opacity = options.opacity * m_currentOpacity;
+
     if (!shouldBlend()) {
-        paintSelfAndChildrenWithReplica(options);
+        paintSelfAndChildrenWithReplica(paintOptions);
         return;
     }
 
-    TextureMapperPaintOptions paintOptions(options);
-    paintOptions.opacity = options.opacity * m_currentOpacity;
     paintUsingOverlapRegions(paintOptions);
 }
 
