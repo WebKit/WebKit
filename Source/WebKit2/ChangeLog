@@ -1,3 +1,20 @@
+2013-03-15  Timothy Hatcher  <timothy@apple.com>
+
+        Disable suppressesIncrementalRendering for the Web Inspector.
+
+        This ends up causing the Inspector to show blank for a couple seconds before
+        it does its first paint. During that time the bare window chrome is showing
+        when the Inspector's background and other simple elements count be painting.
+        This causes the Inspector to look like it is loading slower than reality.
+
+        https://bugs.webkit.org/show_bug.cgi?id=112300
+        rdar://problem/13412219
+
+        Reviewed by Geoff Garen.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::createInspectorPageGroup): Disable suppressesIncrementalRendering.
+
 2013-03-13  Timothy Hatcher  <timothy@apple.com>
 
         Delay creating the Inspector window so we don't cause a CoreIPC deadlock.

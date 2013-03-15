@@ -71,7 +71,6 @@ static PassRefPtr<WebPageGroup> createInspectorPageGroup()
 #endif
 
     pageGroup->preferences()->setApplicationChromeModeEnabled(true);
-    pageGroup->preferences()->setSuppressesIncrementalRendering(true);
 
     return pageGroup.release();
 }

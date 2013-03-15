@@ -356,7 +356,6 @@ void WebInspectorFrontendClient::append(const String& url, const String& content
     [preferences setMinimumFontSize:0];
     [preferences setMinimumLogicalFontSize:9];
     [preferences setPlugInsEnabled:NO];
-    [preferences setSuppressesIncrementalRendering:YES];
     [preferences setTabsToLinks:NO];
     [preferences setUserStyleSheetEnabled:NO];
 
