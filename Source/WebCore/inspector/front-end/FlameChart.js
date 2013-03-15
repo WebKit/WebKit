@@ -257,16 +257,28 @@ WebInspector.FlameChart.prototype = {
 
     _adjustXScale: function(direction, x)
     {
+        var cursorTime = (x + this._xOffset) / this._xScaleFactor;
         if (direction > 0)
             this._xScaleFactor /= 2;
         else
             this._xScaleFactor *= 2;
+
+        var absoluteX = Math.floor(cursorTime * this._xScaleFactor);
+        var rightEndOfViewPort = absoluteX - x + this._canvas.width;
+
+        var rightEndOfGraph = Math.floor(this._timelineData.totalTime * this._xScaleFactor);
+        if (rightEndOfViewPort > rightEndOfGraph)
+            rightEndOfViewPort = rightEndOfGraph;
+
+        this._xOffset = rightEndOfViewPort - this._canvas.width;
+        if (this._xOffset < 0)
+            this._xOffset = 0;
     },
 
     _onMouseWheel: function(e)
     {
         if (!e.shiftKey)
-            this._adjustXScale(e.wheelDelta, e.x);
+            this._adjustXScale(e.wheelDelta, e.offsetX);
         else
             this._adjustXOffset(e.wheelDelta);
 
