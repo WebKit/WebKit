@@ -14,6 +14,8 @@ FAIL range.selectNodeContents(testDocument.body); internals.rangeAsText(range) s
 .
 PASS range.selectNodeContents(testDocument.body); internals.rangeAsText(range) is "hey"
 PASS range.setStartBefore(testDocument.body); range.setEndAfter(testDocument.body); internals.rangeAsText(range) is "hey"
+PASS range.selectNodeContents(internals.oldestShadowRoot(input)); internals.rangeAsText(range) is "b"
+PASS appendBrElement(internals.oldestShadowRoot(input).childNodes[0]); range.selectNodeContents(internals.oldestShadowRoot(input)); internals.rangeAsText(range) is "b"
 PASS successfullyParsed is true
 
 TEST COMPLETE

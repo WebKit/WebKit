@@ -260,6 +260,9 @@ private:
 
     // Used when m_stopsOnFormControls is set to determine if the iterator should keep advancing.
     bool m_shouldStop;
+
+    // Used in pasting inside password field.
+    bool m_emitsOriginalText;
 };
 
 // Builds on the text iterator, adding a character position so we can walk one

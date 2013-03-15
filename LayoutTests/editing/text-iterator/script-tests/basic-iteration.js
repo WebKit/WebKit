@@ -1,5 +1,16 @@
 description('Unit tests for WebCore text iterator');
 
+function appendBrElement(node)
+{
+    node.appendChild(document.createElement('br'));
+}
+
+function addShadowTreeWithDivElement(node)
+{
+    node.webkitCreateShadowRoot();
+    internals.oldestShadowRoot(node).innerHTML = '<div>b</div>';
+}
+
 var subframe = document.createElement('iframe');
 document.body.appendChild(subframe);
 
@@ -30,6 +41,12 @@ shouldBe('range.selectNodeContents(testDocument.body); internals.rangeAsText(ran
 testDocument.body.innerHTML = '<div class="note-rule-vertical" style="left:22px"></div>\n\t\t<div class="note-rule-vertical" style="left:26px"></div>\n\n\t\t<div class="note-wrapper">\n\t\t\t<div class="note-header">\n\t\t\t\t<div class="note-body" id="note-body">\n\t\t\t\t\t<div class="note-content" id="note-content" contenteditable="true" style="line-height: 20px; min-height: 580px; ">hey</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t\n';
 shouldBe('range.selectNodeContents(testDocument.body); internals.rangeAsText(range)', '"hey"');
 shouldBe('range.setStartBefore(testDocument.body); range.setEndAfter(testDocument.body); internals.rangeAsText(range)', '"hey"');
+
+testDocument.body.innerHTML = '<input id="a" value="b" />';
+var input = testDocument.querySelector('input');
+shouldBe('range.selectNodeContents(internals.oldestShadowRoot(input)); internals.rangeAsText(range)', '"b"');
+
+shouldBe('appendBrElement(internals.oldestShadowRoot(input).childNodes[0]); range.selectNodeContents(internals.oldestShadowRoot(input)); internals.rangeAsText(range)', '"b"');
 
 document.body.removeChild(subframe);
 

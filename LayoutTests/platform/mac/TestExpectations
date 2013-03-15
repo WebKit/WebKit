@@ -450,6 +450,7 @@ fast/dom/shadow
 editing/shadow
 inspector/elements/update-shadowdom.html
 accessibility/corresponding-control-deleted-crash.html
+editing/text-iterator/basic-iteration-shadowdom.html
 
 # ENABLE(TEMPLATE_ELEMENT) is disabled.
 fast/dom/HTMLTemplateElement

@@ -747,14 +747,13 @@ static bool shouldEmitTabBeforeNode(Node* node)
     return t && (t->cellBefore(rc) || t->cellAbove(rc));
 }
 
-static bool shouldEmitNewlineForNode(Node* node)
+static bool shouldEmitNewlineForNode(Node* node, bool emitsOriginalText)
 {
-    // br elements are represented by a single newline.
-    RenderObject* r = node->renderer();
-    if (!r)
-        return node->hasTagName(brTag);
-        
-    return r->isBR();
+    RenderObject* renderer = node->renderer();
+
+    if (renderer ? !renderer->isBR() : !node->hasTagName(brTag))
+        return false;
+    return emitsOriginalText || !(node->isInShadowTree() && node->shadowHost()->toInputElement());
 }
 
 static bool shouldEmitNewlinesBeforeAndAfterNode(Node* node)
@@ -956,7 +955,7 @@ void TextIterator::representNodeOffsetZero()
 
 bool TextIterator::handleNonTextNode()
 {
-    if (shouldEmitNewlineForNode(m_node))
+    if (shouldEmitNewlineForNode(m_node, m_emitsOriginalText))
         emitCharacter('\n', m_node->parentNode(), m_node, 0, 1);
     else if (m_emitsCharactersBetweenAllVisiblePositions && m_node->renderer() && m_node->renderer()->isHR())
         emitCharacter(' ', m_node->parentNode(), m_node, 0, 1);
@@ -1110,6 +1109,7 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator()
     , m_shouldHandleFirstLetter(false)
     , m_stopsOnFormControls(false)
     , m_shouldStop(false)
+    , m_emitsOriginalText(false)
 {
 }
 
@@ -1134,6 +1134,7 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range* r,
     , m_shouldHandleFirstLetter(false)
     , m_stopsOnFormControls(behavior & TextIteratorStopsOnFormControls)
     , m_shouldStop(false)
+    , m_emitsOriginalText(false)
 {
     ASSERT(behavior == TextIteratorDefaultBehavior || behavior == TextIteratorStopsOnFormControls);
 
@@ -1342,7 +1343,7 @@ bool SimplifiedBackwardsTextIterator::handleNonTextNode()
 {    
     // We can use a linefeed in place of a tab because this simple iterator is only used to
     // find boundaries, not actual content.  A linefeed breaks words, sentences, and paragraphs.
-    if (shouldEmitNewlineForNode(m_node) || shouldEmitNewlineAfterNode(m_node) || shouldEmitTabBeforeNode(m_node)) {
+    if (shouldEmitNewlineForNode(m_node, m_emitsOriginalText) || shouldEmitNewlineAfterNode(m_node) || shouldEmitTabBeforeNode(m_node)) {
         unsigned index = m_node->nodeIndex();
         // The start of this emitted range is wrong. Ensuring correctness would require
         // VisiblePositions and so would be slow. previousBoundary expects this.
@@ -1353,7 +1354,7 @@ bool SimplifiedBackwardsTextIterator::handleNonTextNode()
 
 void SimplifiedBackwardsTextIterator::exitNode()
 {
-    if (shouldEmitNewlineForNode(m_node) || shouldEmitNewlineBeforeNode(m_node) || shouldEmitTabBeforeNode(m_node)) {
+    if (shouldEmitNewlineForNode(m_node, m_emitsOriginalText) || shouldEmitNewlineBeforeNode(m_node) || shouldEmitTabBeforeNode(m_node)) {
         // The start of this emitted range is wrong. Ensuring correctness would require
         // VisiblePositions and so would be slow. previousBoundary expects this.
         emitCharacter('\n', m_node, 0, 0);
