@@ -27,7 +27,7 @@
 #include "LayoutRect.h"
 #include "PopupMenu.h"
 #include "PopupMenuClient.h"
-#include "RenderDeprecatedFlexibleBox.h"
+#include "RenderFlexibleBox.h"
 
 #if PLATFORM(MAC)
 #define POPUP_MENU_PULLS_DOWN 0
@@ -40,7 +40,7 @@ namespace WebCore {
 class HTMLSelectElement;
 class RenderText;
 
-class RenderMenuList : public RenderDeprecatedFlexibleBox, private PopupMenuClient {
+class RenderMenuList : public RenderFlexibleBox, private PopupMenuClient {
 
 public:
     RenderMenuList(Element*);
@@ -114,6 +114,15 @@ private:
     virtual PassRefPtr<Scrollbar> createScrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize) OVERRIDE;
 
     virtual bool hasLineIfEmpty() const { return true; }
+
+    // Flexbox defines baselines differently than regular blocks.
+    // For backwards compatibility, menulists need to do the regular block behavior.
+    virtual int baselinePosition(FontBaseline baseline, bool firstLine, LineDirectionMode direction, LinePositionMode position) const OVERRIDE
+    {
+        return RenderBlock::baselinePosition(baseline, firstLine, direction, position);
+    }
+    virtual int firstLineBoxBaseline() const OVERRIDE { return RenderBlock::firstLineBoxBaseline(); }
+    virtual int inlineBlockBaseline(LineDirectionMode direction) const OVERRIDE { return RenderBlock::inlineBlockBaseline(direction); }
 
     void getItemBackgroundColor(unsigned listIndex, Color&, bool& itemHasCustomBackgroundColor) const;
 

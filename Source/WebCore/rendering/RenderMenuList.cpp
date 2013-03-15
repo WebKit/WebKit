@@ -54,7 +54,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderMenuList::RenderMenuList(Element* element)
-    : RenderDeprecatedFlexibleBox(element)
+    : RenderFlexibleBox(element)
     , m_buttonText(0)
     , m_innerBlock(0)
     , m_optionsChanged(true)
@@ -91,14 +91,26 @@ void RenderMenuList::createInnerBlock()
     ASSERT(!firstChild());
     m_innerBlock = createAnonymousBlock();
     adjustInnerStyle();
-    RenderDeprecatedFlexibleBox::addChild(m_innerBlock);
+    RenderFlexibleBox::addChild(m_innerBlock);
 }
 
 void RenderMenuList::adjustInnerStyle()
 {
     RenderStyle* innerStyle = m_innerBlock->style();
-    innerStyle->setBoxFlex(1);
-    
+    innerStyle->setFlexGrow(1);
+    innerStyle->setFlexShrink(1);
+    // min-width: 0; is needed for correct shrinking.
+    // FIXME: Remove this line when https://bugs.webkit.org/show_bug.cgi?id=111790 is fixed.
+    innerStyle->setMinWidth(Length(0, Fixed));
+    // Use margin:auto instead of align-items:center to get safe centering, i.e.
+    // when the content overflows, treat it the same as align-items: flex-start.
+    // But we only do that for the cases where html.css would otherwise use center.
+    if (style()->alignItems() == AlignCenter) {
+        innerStyle->setMarginTop(Length());
+        innerStyle->setMarginBottom(Length());
+        innerStyle->setAlignSelf(AlignFlexStart);
+    }
+
     innerStyle->setPaddingLeft(Length(theme()->popupInternalPaddingLeft(style()), Fixed));
     innerStyle->setPaddingRight(Length(theme()->popupInternalPaddingRight(style()), Fixed));
     innerStyle->setPaddingTop(Length(theme()->popupInternalPaddingTop(style()), Fixed));
@@ -137,7 +149,7 @@ void RenderMenuList::addChild(RenderObject* newChild, RenderObject* beforeChild)
 void RenderMenuList::removeChild(RenderObject* oldChild)
 {
     if (oldChild == m_innerBlock || !m_innerBlock) {
-        RenderDeprecatedFlexibleBox::removeChild(oldChild);
+        RenderFlexibleBox::removeChild(oldChild);
         m_innerBlock = 0;
     } else
         m_innerBlock->removeChild(oldChild);

@@ -937,7 +937,7 @@ input::-webkit-calendar-picker-indicator:hover {
 select {
     -webkit-appearance: menulist;
     box-sizing: border-box;
-    -webkit-box-align: center;
+    -webkit-align-items: center;
     border: 1px solid;
     white-space: pre;
     -webkit-rtl-ordering: logical;
@@ -950,7 +950,7 @@ select[size],
 select[multiple],
 select[size][multiple] {
     -webkit-appearance: listbox;
-    -webkit-box-align: start;
+    -webkit-align-items: flex-start;
     border: 1px inset gray;
     border-radius: initial;
     white-space: initial;
@@ -959,7 +959,7 @@ select[size][multiple] {
 select[size="0"],
 select[size="1"] {
     -webkit-appearance: menulist;
-    -webkit-box-align: center;
+    -webkit-align-items: center;
     border: 1px solid;
     border-radius: 5px;
     white-space: pre;
