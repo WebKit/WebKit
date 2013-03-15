@@ -1,3 +1,10 @@
+2013-03-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Fix the stupid unit tests.
+
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        (test_sample_process):
+
 2013-03-14  Simon Fraser  <simon.fraser@apple.com>
 
         Collect samples for unresponsive web processes
