@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -46,6 +46,7 @@ WebPageCompositorPrivate::WebPageCompositorPrivate(WebPagePrivate* page, WebPage
     : m_client(client)
     , m_webPage(page)
     , m_drawsRootLayer(false)
+    , m_childWindowPlacement(WebPageCompositor::DocumentCoordinates)
 {
     ASSERT(m_webPage);
     setOneShot(true); // one-shot animation client
@@ -77,9 +78,10 @@ void WebPageCompositorPrivate::setContext(Platform::Graphics::GLES2Context* cont
     if (m_context == context)
         return;
 
-    m_context = context;
-    if (!m_context)
+    // LayerRenderer needs to clean up using the previous context.
+    if (!context)
         m_layerRenderer.clear();
+    m_context = context;
 }
 
 void WebPageCompositorPrivate::setRootLayer(LayerCompositingThread* rootLayer)
@@ -105,7 +107,7 @@ void WebPageCompositorPrivate::prepareFrame(double animationTime)
         return;
 
     if (!m_layerRenderer) {
-        m_layerRenderer = LayerRenderer::create(m_context);
+        m_layerRenderer = LayerRenderer::create(this);
         if (!m_layerRenderer->hardwareCompositing()) {
             m_layerRenderer.clear();
             return;
@@ -135,8 +137,6 @@ void WebPageCompositorPrivate::render(const IntRect& targetRect, const IntRect& 
     // done.
     if (!m_webPage || m_webPage->compositor() != this)
         return;
-
-    m_layerRenderer->setClearSurfaceOnDrawLayers(false);
 
     FloatRect contents = m_webPage->mapFromTransformedFloatRect(transformedContents);
 
@@ -185,11 +185,6 @@ bool WebPageCompositorPrivate::drawLayers(const IntRect& dstRect, const FloatRec
     if (!m_layerRenderer)
         return false;
 
-    bool shouldClear = drawsRootLayer();
-    if (BackingStore* backingStore = m_webPage->m_backingStore)
-        shouldClear = shouldClear || !backingStore->d->isOpenGLCompositing();
-    m_layerRenderer->setClearSurfaceOnDrawLayers(shouldClear);
-
     // OpenGL window coordinates origin is at the lower left corner of the surface while
     // WebKit uses upper left as the origin of the window coordinate system. The passed in 'dstRect'
     // is in WebKit window coordinate system. Here we setup the viewport to the corresponding value
@@ -219,6 +214,25 @@ void WebPageCompositorPrivate::releaseLayerResources()
 {
     if (m_layerRenderer)
         m_layerRenderer->releaseLayerResources();
+}
+
+bool WebPageCompositorPrivate::shouldClearSurfaceBeforeCompositing()
+{
+    if (m_client)
+        return false;
+
+    // Normally we wouldn't clear, but in legacy mode we have some more complex
+    // logic.
+    bool shouldClear = drawsRootLayer();
+    if (BackingStore* backingStore = m_webPage->m_backingStore)
+        shouldClear = shouldClear || !backingStore->d->isOpenGLCompositing();
+
+    return shouldClear;
+}
+
+bool WebPageCompositorPrivate::shouldChildWindowsUseDocumentCoordinates()
+{
+    return m_childWindowPlacement == WebPageCompositor::DocumentCoordinates;
 }
 
 void WebPageCompositorPrivate::animationFrameChanged()
@@ -269,6 +283,10 @@ WebPageCompositor::WebPageCompositor(WebPage* page, WebPageCompositorClient* cli
 
     RefPtr<WebPageCompositorPrivate> tmp = WebPageCompositorPrivate::create(page->d, client);
 
+    // FIXME: For legacy reasons, the internal default is to use document coordinates.
+    // Use window coordinates for new clients.
+    tmp->setChildWindowPlacement(WindowCoordinates);
+
     // Keep one ref ourselves...
     d = tmp.get();
     d->ref();
@@ -294,6 +312,11 @@ WebPageCompositor::~WebPageCompositor()
 WebPageCompositorClient* WebPageCompositor::client() const
 {
     return d->client();
+}
+
+void WebPageCompositor::setChildWindowPlacement(ChildWindowPlacement placement)
+{
+    d->setChildWindowPlacement(placement);
 }
 
 void WebPageCompositor::prepareFrame(Platform::Graphics::GLES2Context* context, double animationTime)
@@ -346,6 +369,10 @@ WebPageCompositor::~WebPageCompositor()
 WebPageCompositorClient* WebPageCompositor::client() const
 {
     return 0;
+}
+
+void WebPageCompositor::setChildWindowPlacement(ChildWindowPlacement)
+{
 }
 
 void WebPageCompositor::prepareFrame(Platform::Graphics::GLES2Context*, double)

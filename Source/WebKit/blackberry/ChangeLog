@@ -1,3 +1,52 @@
+2013-03-15  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Allow an embedder to position child windows using window coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=112236
+
+        Reviewed by Rob Buis.
+
+        PR 232752
+
+        Child windows used to always be positioned in document coordinates,
+        which requires the
+        BlackBerry::Platform::Graphics::Window::virtualRect() of the parent
+        window to be kept in sync with the document visible content rect.
+        This is easy if there's a one-to-one correspondence between windows
+        and scrollable frames.
+
+        However, for an embedder that can display an entire scene graph (where
+        the web page is just one of the nodes) in one window, several
+        scrollable nodes may be present in that window, and it's difficult to
+        know which scrollable node to sync the virtualRect with. It could also
+        lead to conflicts, if two scrollable nodes have child windows.
+
+        For the latter scenario, it makes more sense to use window coordinates
+        to place child windows.
+
+        The internal default is to use document coordinates, for legacy
+        reasons.
+
+        When an external WebPageCompositor is attached, we switch to using
+        window coordinates instead of document coordinates by default. The
+        behavior is still configurable using the new public
+        setChildWindowPlacement method.
+
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::WebPageCompositorPrivate):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::setContext):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::prepareFrame):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::render):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::drawLayers):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::shouldClearSurfaceBeforeCompositing):
+        (WebKit):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::shouldChildWindowsUseDocumentCoordinates):
+        (BlackBerry::WebKit::WebPageCompositor::WebPageCompositor):
+        (BlackBerry::WebKit::WebPageCompositor::setChildWindowPlacement):
+        * Api/WebPageCompositor.h:
+        * Api/WebPageCompositor_p.h:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::setChildWindowPlacement):
+        (WebPageCompositorPrivate):
+
 2013-03-15  Nate Chapin  <japhet@chromium.org>
 
         Hide MainResourceLoader from the outside world

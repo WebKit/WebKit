@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,6 +51,7 @@
 namespace WebCore {
 
 class LayerCompositingThread;
+class LayerRendererClient;
 class LayerRendererSurface;
 
 class LayerRenderingResults {
@@ -78,10 +79,12 @@ class LayerRenderer {
 public:
     static TransformationMatrix orthoMatrix(float left, float right, float bottom, float top, float nearZ, float farZ);
 
-    static PassOwnPtr<LayerRenderer> create(BlackBerry::Platform::Graphics::GLES2Context*);
+    static PassOwnPtr<LayerRenderer> create(LayerRendererClient*);
 
-    LayerRenderer(BlackBerry::Platform::Graphics::GLES2Context*);
+    LayerRenderer(LayerRendererClient*);
     ~LayerRenderer();
+
+    LayerRendererClient* client() const { return m_client; }
 
     void releaseLayerResources();
 
@@ -115,10 +118,7 @@ public:
 
     bool hardwareCompositing() const { return m_hardwareCompositing; }
 
-    void setClearSurfaceOnDrawLayers(bool clear) { m_clearSurfaceOnDrawLayers = clear; }
-    bool clearSurfaceOnDrawLayers() const { return m_clearSurfaceOnDrawLayers; }
-
-    BlackBerry::Platform::Graphics::GLES2Context* context() const { return m_context; }
+    BlackBerry::Platform::Graphics::GLES2Context* context() const;
 
     const LayerRenderingResults& lastRenderingResults() const { return m_lastRenderingResults; }
 
@@ -126,6 +126,7 @@ public:
     // Used when a layer discovers during rendering that it needs a commit.
     void setNeedsCommit() { m_needsCommit = true; }
 
+    IntRect toWebKitWindowCoordinates(const FloatRect&) const;
     IntRect toWebKitDocumentCoordinates(const FloatRect&) const;
 
     // If the layer has already been drawed on a surface.
@@ -147,7 +148,6 @@ private:
     void drawHolePunchRect(LayerCompositingThread*);
 
     IntRect toOpenGLWindowCoordinates(const FloatRect&) const;
-    IntRect toWebKitWindowCoordinates(const FloatRect&) const;
 
     bool makeContextCurrent();
 
@@ -168,6 +168,8 @@ private:
     bool createProgram(ProgramIndex);
     const BlackBerry::Platform::Graphics::GLES2Program& useProgram(ProgramIndex);
     const BlackBerry::Platform::Graphics::GLES2Program& useLayerProgram(LayerData::LayerProgram, bool isMask = false);
+
+    LayerRendererClient* m_client;
 
     BlackBerry::Platform::Graphics::GLES2Program m_programs[NumberOfPrograms];
 
@@ -193,14 +195,11 @@ private:
     LayerRendererSurface* m_currentLayerRendererSurface;
 
     bool m_hardwareCompositing;
-    bool m_clearSurfaceOnDrawLayers;
 
     // Map associating layers with textures ids used by the GL compositor.
     typedef HashSet<LayerCompositingThread*> LayerSet;
     LayerSet m_layers;
     LayerSet m_layersLockingTextureResources;
-
-    BlackBerry::Platform::Graphics::GLES2Context* m_context;
 
     bool m_isRobustnessSupported;
     PFNGLGETGRAPHICSRESETSTATUSEXTPROC m_glGetGraphicsResetStatusEXT;

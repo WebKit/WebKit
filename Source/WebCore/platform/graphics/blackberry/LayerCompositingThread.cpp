@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2007, 2008, 2009 Apple Inc. All rights reserved.
  *
@@ -39,6 +39,7 @@
 #include "LayerCompositingThreadClient.h"
 #include "LayerMessage.h"
 #include "LayerRenderer.h"
+#include "LayerRendererClient.h"
 #include "LayerWebKitThread.h"
 #if ENABLE(VIDEO)
 #include "MediaPlayer.h"
@@ -243,14 +244,21 @@ void LayerCompositingThread::drawTextures(double scale, const GLES2Program& prog
 #if ENABLE(VIDEO)
     if (m_mediaPlayer) {
         if (m_isVisible) {
-            // We need to specify the media player location in contents coordinates. The 'visibleRect'
-            // specifies the content region covered by our viewport. So we transform from our
-            // normalized device coordinates [-1, 1] to the 'visibleRect'.
-            float vrw2 = visibleRect.width() / 2.0;
-            float vrh2 = visibleRect.height() / 2.0;
-            float x = m_transformedBounds.p1().x() * vrw2 + vrw2 + visibleRect.x();
-            float y = -m_transformedBounds.p1().y() * vrh2 + vrh2 + visibleRect.y();
-            m_mediaPlayer->paint(0, IntRect((int)(x + 0.5), (int)(y + 0.5), m_bounds.width(), m_bounds.height()));
+            IntRect paintRect;
+            if (m_layerRenderer->client()->shouldChildWindowsUseDocumentCoordinates()) {
+                // We need to specify the media player location in contents coordinates. The 'visibleRect'
+                // specifies the content region covered by our viewport. So we transform from our
+                // normalized device coordinates [-1, 1] to the 'visibleRect'.
+                float vrw2 = visibleRect.width() / 2.0;
+                float vrh2 = visibleRect.height() / 2.0;
+                FloatPoint p(m_transformedBounds.p1().x() * vrw2 + vrw2 + visibleRect.x(),
+                    -m_transformedBounds.p1().y() * vrh2 + vrh2 + visibleRect.y());
+                paintRect = IntRect(roundedIntPoint(p), m_bounds);
+            } else {
+                FloatRect r = m_layerRenderer->toWebKitWindowCoordinates(m_drawRect);
+                paintRect = enclosingIntRect(r);
+            }
+            m_mediaPlayer->paint(0, paintRect);
             MediaPlayerPrivate* mpp = static_cast<MediaPlayerPrivate*>(m_mediaPlayer->platformMedia().media.qnxMediaPlayer);
             mpp->drawBufferingAnimation(m_drawTransform, program);
         }

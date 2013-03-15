@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "LayerRenderer.h"
+#include "LayerRendererClient.h"
 
 #include "LayerCompositingThread.h"
 #include "LayerFilterRenderer.h"
@@ -142,18 +143,17 @@ static Vector<LayerCompositingThread*> rawPtrVectorFromRefPtrVector(const Vector
     return sublayerList;
 }
 
-PassOwnPtr<LayerRenderer> LayerRenderer::create(GLES2Context* context)
+PassOwnPtr<LayerRenderer> LayerRenderer::create(LayerRendererClient* client)
 {
-    return adoptPtr(new LayerRenderer(context));
+    return adoptPtr(new LayerRenderer(client));
 }
 
-LayerRenderer::LayerRenderer(GLES2Context* context)
-    : m_scale(1.0)
+LayerRenderer::LayerRenderer(LayerRendererClient* client)
+    : m_client(client)
+    , m_scale(1.0)
     , m_animationTime(-numeric_limits<double>::infinity())
     , m_fbo(0)
     , m_currentLayerRendererSurface(0)
-    , m_clearSurfaceOnDrawLayers(true)
-    , m_context(context)
     , m_isRobustnessSupported(false)
     , m_needsCommit(false)
     , m_stencilCleared(false)
@@ -291,7 +291,7 @@ void LayerRenderer::setViewport(const IntRect& targetRect, const IntRect& clipRe
 #endif
     glScissor(m_scissorRect.x(), m_scissorRect.y(), m_scissorRect.width(), m_scissorRect.height());
 
-    if (m_clearSurfaceOnDrawLayers) {
+    if (m_client->shouldClearSurfaceBeforeCompositing()) {
         glClearColor(0, 0, 0, 0);
         glClear(GL_COLOR_BUFFER_BIT);
     }
@@ -352,7 +352,7 @@ void LayerRenderer::compositeLayers(const TransformationMatrix& matrix, LayerCom
     if (m_layersLockingTextureResources.size())
         glFinish();
 
-    m_context->swapBuffers();
+    m_client->context()->swapBuffers();
 
     glDisable(GL_SCISSOR_TEST);
     glDisable(GL_STENCIL_TEST);
@@ -558,7 +558,7 @@ IntRect LayerRenderer::toWebKitWindowCoordinates(const FloatRect& r) const
     float vw2 = m_viewport.width() / 2.0;
     float vh2 = m_viewport.height() / 2.0;
     float ox = m_viewport.x() + vw2;
-    float oy = m_context->surfaceSize().height() - (m_viewport.y() + vh2);
+    float oy = m_client->context()->surfaceSize().height() - (m_viewport.y() + vh2);
     return enclosingIntRect(FloatRect(r.x() * vw2 + ox, -(r.y()+r.height()) * vh2 + oy, r.width() * vw2, r.height() * vh2));
 }
 
@@ -1017,7 +1017,7 @@ void LayerRenderer::updateScissorIfNeeded(const FloatRect& clipRect)
 
 bool LayerRenderer::makeContextCurrent()
 {
-    bool ret = m_context->makeCurrent();
+    bool ret = m_client->context()->makeCurrent();
     if (ret && m_isRobustnessSupported) {
         if (m_glGetGraphicsResetStatusEXT() != GL_NO_ERROR) {
             BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelCritical, "Robust OpenGL context has been reset. Aborting.");
