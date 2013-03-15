@@ -19,6 +19,10 @@
     -webkit-flex: 1;
     flex: 1;
 }
+.flex-one-one-auto {
+    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
+}
 
 .row {
     -webkit-flex-direction: row;

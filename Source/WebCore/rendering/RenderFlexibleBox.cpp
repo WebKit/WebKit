@@ -521,8 +521,11 @@ LayoutUnit RenderFlexibleBox::mainAxisContentExtent(LayoutUnit contentLogicalHei
 {
     if (isColumnFlow()) {
         LogicalExtentComputedValues computedValues;
-        computeLogicalHeight(contentLogicalHeight, logicalTop(), computedValues);
-        return std::max(LayoutUnit(0), computedValues.m_extent - borderAndPaddingLogicalHeight() - scrollbarLogicalHeight());
+        LayoutUnit borderPaddingAndScrollbar = borderAndPaddingLogicalHeight() + scrollbarLogicalHeight();
+        // FIXME: Remove this std:max once we enable saturated layout arithmetic. It's just here to handle overflow.
+        LayoutUnit borderBoxLogicalHeight = std::max(contentLogicalHeight, contentLogicalHeight + borderPaddingAndScrollbar);
+        computeLogicalHeight(borderBoxLogicalHeight, logicalTop(), computedValues);
+        return std::max(LayoutUnit(0), computedValues.m_extent - borderPaddingAndScrollbar);
     }
     return contentLogicalWidth();
 }
