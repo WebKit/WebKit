@@ -274,6 +274,12 @@ class Manager(object):
                     continue
                 crashed_processes.append([test, failure.process_name, failure.pid])
 
+        sample_files = self._port.look_for_new_samples(crashed_processes, start_time)
+        if sample_files:
+            for test, sample_file in sample_files.iteritems():
+                writer = TestResultWriter(self._port._filesystem, self._port, self._port.results_directory(), test)
+                writer.copy_sample_file(sample_file)
+
         crash_logs = self._port.look_for_new_crash_logs(crashed_processes, start_time)
         if crash_logs:
             for test, crash_log in crash_logs.iteritems():

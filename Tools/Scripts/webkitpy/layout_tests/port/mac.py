@@ -186,6 +186,9 @@ class MacPort(ApplePort):
     def release_http_lock(self):
         pass
 
+    def sample_file_path(self, name, pid):
+        return self._filesystem.join(self.results_directory(), "{0}-{1}-sample.txt".format(name, pid))
+
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than, time_fn=None, sleep_fn=None, wait_for_log=True):
         # Note that we do slow-spin here and wait, since it appears the time
         # ReportCrash takes to actually write and flush the file varies when there are
@@ -222,16 +225,25 @@ class MacPort(ApplePort):
         crash_logs = {}
         for (test_name, process_name, pid) in crashed_processes:
             # Passing None for output.  This is a second pass after the test finished so
-            # if the output had any loggine we would have already collected it.
+            # if the output had any logging we would have already collected it.
             crash_log = self._get_crash_log(process_name, pid, None, None, start_time, wait_for_log=False)[1]
             if not crash_log:
                 continue
             crash_logs[test_name] = crash_log
         return crash_logs
 
+    def look_for_new_samples(self, unresponsive_processes, start_time):
+        sample_files = {}
+        for (test_name, process_name, pid) in unresponsive_processes:
+            sample_file = self.sample_file_path(process_name, pid)
+            if not self._filesystem.isfile(sample_file):
+                continue
+            sample_files[test_name] = sample_file
+        return sample_files
+
     def sample_process(self, name, pid):
         try:
-            hang_report = self._filesystem.join(self.results_directory(), "%s-%s.sample.txt" % (name, pid))
+            hang_report = self.sample_file_path(name, pid)
             self._executive.run_command([
                 "/usr/bin/sample",
                 pid,

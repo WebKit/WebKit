@@ -92,6 +92,7 @@ class TestResultWriter(object):
     FILENAME_SUFFIX_DIFF = "-diff"
     FILENAME_SUFFIX_STDERR = "-stderr"
     FILENAME_SUFFIX_CRASH_LOG = "-crash-log"
+    FILENAME_SUFFIX_SAMPLE = "-sample"
     FILENAME_SUFFIX_WDIFF = "-wdiff.html"
     FILENAME_SUFFIX_PRETTY_PATCH = "-pretty-diff.html"
     FILENAME_SUFFIX_IMAGE_DIFF = "-diff.png"
@@ -165,6 +166,10 @@ class TestResultWriter(object):
     def write_crash_log(self, crash_log):
         filename = self.output_filename(self.FILENAME_SUFFIX_CRASH_LOG + ".txt")
         self._write_text_file(filename, crash_log)
+
+    def copy_sample_file(self, sample_file):
+        filename = self.output_filename(self.FILENAME_SUFFIX_SAMPLE + ".txt")
+        self._filesystem.copyfile(sample_file, filename)
 
     def write_text_files(self, actual_text, expected_text):
         self.write_output_files(".txt", actual_text, expected_text)

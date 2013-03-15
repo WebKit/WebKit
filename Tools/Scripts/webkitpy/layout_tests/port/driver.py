@@ -362,6 +362,7 @@ class Driver(object):
             _log.debug('%s crash, pid = %s, error_line = %s' % (self._crashed_process_name, str(pid), error_line))
             if error_line.startswith("#PROCESS UNRESPONSIVE - "):
                 self._subprocess_was_unresponsive = True
+                self._port.sample_process(self._crashed_process_name, self._crashed_pid)
                 # We want to show this since it's not a regular crash and probably we don't have a crash log.
                 self.error_from_test += error_line
             return True
