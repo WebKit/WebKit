@@ -4894,6 +4894,13 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         LayoutRect overflowBox = visualOverflowRect();
         flipForWritingMode(overflowBox);
         overflowBox.moveBy(adjustedLocation);
+        if (style()->hasBorderRadius()) {
+            LayoutRect borderRect = borderBoxRect();
+            borderRect.moveBy(adjustedLocation);
+            RoundedRect border = style()->getRoundedBorderFor(borderRect, view());
+            if (!locationInContainer.intersects(border))
+                return false;
+        }
         if (!locationInContainer.intersects(overflowBox))
             return false;
     }

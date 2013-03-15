@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2003, 2006, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Xidorn Quan (quanxunzhen@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -179,6 +180,59 @@ void RoundedRect::adjustRadii()
     float widthRatio = static_cast<float>(m_rect.width()) / maxRadiusWidth;
     float heightRatio = static_cast<float>(m_rect.height()) / maxRadiusHeight;
     m_radii.scale(widthRatio < heightRatio ? widthRatio : heightRatio);
+}
+
+bool RoundedRect::intersectsQuad(const FloatQuad& quad) const
+{
+    FloatRect rect(m_rect);
+    if (!quad.intersectsRect(rect))
+        return false;
+
+    const IntSize& topLeft = m_radii.topLeft();
+    if (!topLeft.isEmpty()) {
+        FloatRect rect(m_rect.x(), m_rect.y(), topLeft.width(), topLeft.height());
+        if (quad.intersectsRect(rect)) {
+            FloatPoint center(m_rect.x() + topLeft.width(), m_rect.y() + topLeft.height());
+            FloatSize size(topLeft.width(), topLeft.height());
+            if (!quad.intersectsEllipse(center, size))
+                return false;
+        }
+    }
+
+    const IntSize& topRight = m_radii.topRight();
+    if (!topRight.isEmpty()) {
+        FloatRect rect(m_rect.maxX() - topRight.width(), m_rect.y(), topRight.width(), topRight.height());
+        if (quad.intersectsRect(rect)) {
+            FloatPoint center(m_rect.maxX() - topRight.width(), m_rect.y() + topRight.height());
+            FloatSize size(topRight.width(), topRight.height());
+            if (!quad.intersectsEllipse(center, size))
+                return false;
+        }
+    }
+
+    const IntSize& bottomLeft = m_radii.bottomLeft();
+    if (!bottomLeft.isEmpty()) {
+        FloatRect rect(m_rect.x(), m_rect.maxY() - bottomLeft.height(), bottomLeft.width(), bottomLeft.height());
+        if (quad.intersectsRect(rect)) {
+            FloatPoint center(m_rect.x() + bottomLeft.width(), m_rect.maxY() - bottomLeft.height());
+            FloatSize size(bottomLeft.width(), bottomLeft.height());
+            if (!quad.intersectsEllipse(center, size))
+                return false;
+        }
+    }
+
+    const IntSize& bottomRight = m_radii.bottomRight();
+    if (!bottomRight.isEmpty()) {
+        FloatRect rect(m_rect.maxX() - bottomRight.width(), m_rect.maxY() - bottomRight.height(), bottomRight.width(), bottomRight.height());
+        if (quad.intersectsRect(rect)) {
+            FloatPoint center(m_rect.maxX() - bottomRight.width(), m_rect.maxY() - bottomRight.height());
+            FloatSize size(bottomRight.width(), bottomRight.height());
+            if (!quad.intersectsEllipse(center, size))
+                return false;
+        }
+    }
+
+    return true;
 }
 
 } // namespace WebCore

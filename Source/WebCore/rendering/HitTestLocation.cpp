@@ -180,6 +180,11 @@ bool HitTestLocation::intersects(const FloatRect& rect) const
     return intersectsRect(rect);
 }
 
+bool HitTestLocation::intersects(const RoundedRect& rect) const
+{
+    return rect.intersectsQuad(m_transformedRect);
+}
+
 IntRect HitTestLocation::rectForPoint(const LayoutPoint& point, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
 {
     IntPoint actualPoint(flooredIntPoint(point));

@@ -26,6 +26,7 @@
 #include "FloatRect.h"
 #include "HitTestRequest.h"
 #include "LayoutRect.h"
+#include "RoundedRect.h"
 #include "TextDirection.h"
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
@@ -78,6 +79,7 @@ public:
 
     bool intersects(const LayoutRect&) const;
     bool intersects(const FloatRect&) const;
+    bool intersects(const RoundedRect&) const;
 
     const FloatPoint& transformedPoint() const { return m_transformedPoint; }
     const FloatQuad& transformedRect() const { return m_transformedRect; }
