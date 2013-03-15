@@ -41,6 +41,9 @@ function test()
              // Here and below: pretend coalesced record are just not there, as coalescation is time dependent and, hence, not stable.
              if (!record.coalesced && record.type !== "GCEvent")
                  InspectorTest.addResult(prefix + record.type);
+             // Ignore stray paint & rendering events for better stability.
+             if (record.category.name !== "loading" && record.category.name !== "scripting")
+                 return;
              if (record._children) {
                  var childPrefix = prefix + (record.coalesced ? "" : "    ");
                  for (var i = 0; i < record._children.length; ++i)

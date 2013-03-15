@@ -3586,9 +3586,6 @@ webkit.org/b/89936 [ XP ] fast/css/text-rendering.html [ Failure ]
 # Started timeout between r121233:r121239.
 webkit.org/b/90003 [ Win Debug ] fast/js/repeat-cached-vm-reentry.html [ Pass Timeout ]
 
-# Flaky
-webkit.org/b/90430 inspector/timeline/timeline-receive-response-event.html [ Pass Failure Timeout ]
-
 crbug.com/135709 platform/chromium/compositing/scrollbars/custom-composited-different-track-parts.html [ ImageOnlyFailure Pass ]
 
 # webkitIsFullScreen does not have the correct value after an iframe exits fullscreen
