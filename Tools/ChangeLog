@@ -1,3 +1,13 @@
+2013-03-15  Tobias Mueller  <tobiasmue@gnome.org>
+
+        Build fix for Tools/GtkLauncher/Programs_GtkLauncher-main.o if gstreamer is not installed
+        https://bugs.webkit.org/show_bug.cgi?id=112394
+
+        Reviewed by Philippe Normand.
+
+        * GtkLauncher/main.c:
+        (main): Guard using the gstreamer function with #ifdef WTF_USE_GSTREAMER
+
 2013-03-14  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r145169): [Mac][WK2] http/tests/security/cross-frame-access-put.html fails.

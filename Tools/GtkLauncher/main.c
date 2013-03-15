@@ -28,7 +28,9 @@
 #include "autotoolsconfig.h"
 #include "LauncherInspectorWindow.h"
 #include <errno.h>
+#ifdef WTF_USE_GSTREAMER
 #include <gst/gst.h>
+#endif
 #include <gtk/gtk.h>
 #include <stdlib.h>
 #include <string.h>
@@ -489,8 +491,9 @@ int main(int argc, char* argv[])
     GOptionContext *context = g_option_context_new(0);
     g_option_context_add_main_entries(context, commandLineOptions, 0);
     g_option_context_add_group(context, gtk_get_option_group(TRUE));
+#ifdef WTF_USE_GSTREAMER
     g_option_context_add_group(context, gst_init_get_option_group());
-
+#endif
     webkitSettings = webkit_web_settings_new();
     g_object_set(webkitSettings, "enable-developer-extras", TRUE, NULL);
     if (!addWebSettingsGroupToContext(context, webkitSettings)) {
