@@ -1234,7 +1234,7 @@ void dfgLinkClosureCall(ExecState* exec, CallLinkInfo& callLinkInfo, CodeBlock* 
             patchBuffer,
             ("DFG closure call stub for %s, return point %p, target %p (%s)",
                 toCString(*callerCodeBlock).data(), callLinkInfo.callReturnLocation.labelAtOffset(0).executableAddress(),
-                codePtr.executableAddress(), toCString(*calleeCodeBlock).data())),
+                codePtr.executableAddress(), toCString(pointerDump(calleeCodeBlock)).data())),
         *globalData, callerCodeBlock->ownerExecutable(), structure, executable, callLinkInfo.codeOrigin));
     
     RepatchBuffer repatchBuffer(callerCodeBlock);

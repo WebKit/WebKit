@@ -257,7 +257,7 @@ void JIT::privateCompileClosureCall(CallLinkInfo* callLinkInfo, CodeBlock* calle
                 toCString(*m_codeBlock).data(),
                 callLinkInfo->hotPathOther.labelAtOffset(0).executableAddress(),
                 codePtr.executableAddress(),
-                toCString(*calleeCodeBlock).data())),
+                toCString(pointerDump(calleeCodeBlock)).data())),
         *m_globalData, m_codeBlock->ownerExecutable(), expectedStructure, expectedExecutable,
         callLinkInfo->codeOrigin));
     

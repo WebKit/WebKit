@@ -1148,6 +1148,11 @@ void SpeculativeJIT::checkConsistency()
             }
             break;
         }
+        case DataFormatOSRMarker:
+        case DataFormatDead:
+        case DataFormatArguments:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
         }
     }
 

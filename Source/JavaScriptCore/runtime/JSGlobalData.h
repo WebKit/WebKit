@@ -132,8 +132,8 @@ namespace JSC {
 #endif
     struct ScratchBuffer {
         ScratchBuffer()
-            : m_activeLength(0)
         {
+            u.m_activeLength = 0;
         }
 
         static ScratchBuffer* create(size_t size)
@@ -144,12 +144,15 @@ namespace JSC {
         }
 
         static size_t allocationSize(size_t bufferSize) { return sizeof(ScratchBuffer) + bufferSize; }
-        void setActiveLength(size_t activeLength) { m_activeLength = activeLength; }
-        size_t activeLength() const { return m_activeLength; };
-        size_t* activeLengthPtr() { return &m_activeLength; };
+        void setActiveLength(size_t activeLength) { u.m_activeLength = activeLength; }
+        size_t activeLength() const { return u.m_activeLength; };
+        size_t* activeLengthPtr() { return &u.m_activeLength; };
         void* dataBuffer() { return m_buffer; }
 
-        size_t m_activeLength;
+        union {
+            size_t m_activeLength;
+            double pad; // Make sure m_buffer is double aligned.
+        } u;
 #if CPU(MIPS) && (defined WTF_MIPS_ARCH_REV && WTF_MIPS_ARCH_REV == 2)
         void* m_buffer[0] __attribute__((aligned(8)));
 #else

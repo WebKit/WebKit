@@ -146,7 +146,7 @@ public:
         }
         RELEASE_ASSERT(count * sizeof(JSValue) == desiredScratchBufferSize());
         
-        jit.move(MacroAssembler::TrustedImmPtr(&scratchBuffer->m_activeLength), scratchGPR);
+        jit.move(MacroAssembler::TrustedImmPtr(scratchBuffer->activeLengthPtr()), scratchGPR);
         jit.storePtr(MacroAssembler::TrustedImmPtr(static_cast<size_t>(count * sizeof(JSValue))), scratchGPR);
     }
     
@@ -163,7 +163,7 @@ public:
         }
         RELEASE_ASSERT(scratchGPR != InvalidGPRReg);
         
-        jit.move(MacroAssembler::TrustedImmPtr(&scratchBuffer->m_activeLength), scratchGPR);
+        jit.move(MacroAssembler::TrustedImmPtr(scratchBuffer->activeLengthPtr()), scratchGPR);
         jit.storePtr(MacroAssembler::TrustedImmPtr(0), scratchGPR);
 
         // Restore double registers first.
