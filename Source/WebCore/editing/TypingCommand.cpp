@@ -465,8 +465,9 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
         }
 
         VisiblePosition visibleStart(endingSelection().visibleStart());
-        // If we have a caret selection on an empty cell, we have nothing to do.
-        if (isEmptyTableCell(visibleStart.deepEquivalent().containerNode()))
+        // If we have a caret selection at the beginning of a cell, we have nothing to do.
+        Node* enclosingTableCell = enclosingNodeOfType(visibleStart.deepEquivalent(), &isTableCell);
+        if (enclosingTableCell && visibleStart == firstPositionInNode(enclosingTableCell))
             return;
 
         // If the caret is at the start of a paragraph after a table, move content into the last table cell.
@@ -554,7 +555,8 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
 
         Position downstreamEnd = endingSelection().end().downstream();
         VisiblePosition visibleEnd = endingSelection().visibleEnd();
-        if (isEmptyTableCell(visibleEnd.deepEquivalent().containerNode()))
+        Node* enclosingTableCell = enclosingNodeOfType(visibleEnd.deepEquivalent(), &isTableCell);
+        if (enclosingTableCell && visibleEnd == lastPositionInNode(enclosingTableCell))
             return;
         if (visibleEnd == endOfParagraph(visibleEnd))
             downstreamEnd = visibleEnd.next(CannotCrossEditingBoundary).deepEquivalent().downstream();
