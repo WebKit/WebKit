@@ -1534,6 +1534,125 @@ static v8::Handle<v8::Value> replaceableAttributeAttrGetterCallback(v8::Local<v8
     return TestObjV8Internal::replaceableAttributeAttrGetter(name, info);
 }
 
+static v8::Handle<v8::Value> nullableDoubleAttributeAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    bool isNull = false;
+    double v = imp->nullableDoubleAttribute(isNull);
+    if (isNull)
+        return v8Null(info.GetIsolate());
+    return v8::Number::New(v);
+}
+
+static v8::Handle<v8::Value> nullableDoubleAttributeAttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    return TestObjV8Internal::nullableDoubleAttributeAttrGetter(name, info);
+}
+
+static v8::Handle<v8::Value> nullableLongAttributeAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    bool isNull = false;
+    int v = imp->nullableLongAttribute(isNull);
+    if (isNull)
+        return v8Null(info.GetIsolate());
+    return v8Integer(v, info.GetIsolate());
+}
+
+static v8::Handle<v8::Value> nullableLongAttributeAttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    return TestObjV8Internal::nullableLongAttributeAttrGetter(name, info);
+}
+
+static v8::Handle<v8::Value> nullableBooleanAttributeAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    bool isNull = false;
+    bool v = imp->nullableBooleanAttribute(isNull);
+    if (isNull)
+        return v8Null(info.GetIsolate());
+    return v8Boolean(v, info.GetIsolate());
+}
+
+static v8::Handle<v8::Value> nullableBooleanAttributeAttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    return TestObjV8Internal::nullableBooleanAttributeAttrGetter(name, info);
+}
+
+static v8::Handle<v8::Value> nullableStringAttributeAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    bool isNull = false;
+    String v = imp->nullableStringAttribute(isNull);
+    if (isNull)
+        return v8Null(info.GetIsolate());
+    return v8String(v, info.GetIsolate(), ReturnUnsafeHandle);
+}
+
+static v8::Handle<v8::Value> nullableStringAttributeAttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    return TestObjV8Internal::nullableStringAttributeAttrGetter(name, info);
+}
+
+static v8::Handle<v8::Value> nullableLongSettableAttributeAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    bool isNull = false;
+    int v = imp->nullableLongSettableAttribute(isNull);
+    if (isNull)
+        return v8Null(info.GetIsolate());
+    return v8Integer(v, info.GetIsolate());
+}
+
+static v8::Handle<v8::Value> nullableLongSettableAttributeAttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    return TestObjV8Internal::nullableLongSettableAttributeAttrGetter(name, info);
+}
+
+static void nullableLongSettableAttributeAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    int v = toInt32(value);
+    imp->setNullableLongSettableAttribute(v);
+    return;
+}
+
+static void nullableLongSettableAttributeAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::nullableLongSettableAttributeAttrSetter(name, value, info);
+}
+
+static v8::Handle<v8::Value> nullableStringValueAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    ExceptionCode ec = 0;
+    bool isNull = false;
+    int v = imp->nullableStringValue(isNull, ec);
+    if (isNull)
+        return v8Null(info.GetIsolate());
+    if (UNLIKELY(ec))
+        return setDOMException(ec, info.GetIsolate());
+    return v8Integer(v, info.GetIsolate());
+}
+
+static v8::Handle<v8::Value> nullableStringValueAttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    return TestObjV8Internal::nullableStringValueAttrGetter(name, info);
+}
+
+static void nullableStringValueAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    int v = toInt32(value);
+    imp->setNullableStringValue(v);
+    return;
+}
+
+static void nullableStringValueAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::nullableStringValueAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> TestObjConstructorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     v8::Handle<v8::Value> data = info.Data();
@@ -2934,6 +3053,18 @@ static const V8DOMConfiguration::BatchedAttribute V8TestObjAttrs[] = {
     {"hash", TestObjV8Internal::hashAttrGetterCallback, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'replaceableAttribute' (Type: 'readonly attribute' ExtAttr: 'Replaceable')
     {"replaceableAttribute", TestObjV8Internal::replaceableAttributeAttrGetterCallback, TestObjV8Internal::TestObjReplaceableAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'nullableDoubleAttribute' (Type: 'readonly attribute' ExtAttr: '')
+    {"nullableDoubleAttribute", TestObjV8Internal::nullableDoubleAttributeAttrGetterCallback, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'nullableLongAttribute' (Type: 'readonly attribute' ExtAttr: '')
+    {"nullableLongAttribute", TestObjV8Internal::nullableLongAttributeAttrGetterCallback, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'nullableBooleanAttribute' (Type: 'readonly attribute' ExtAttr: '')
+    {"nullableBooleanAttribute", TestObjV8Internal::nullableBooleanAttributeAttrGetterCallback, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'nullableStringAttribute' (Type: 'readonly attribute' ExtAttr: '')
+    {"nullableStringAttribute", TestObjV8Internal::nullableStringAttributeAttrGetterCallback, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'nullableLongSettableAttribute' (Type: 'attribute' ExtAttr: '')
+    {"nullableLongSettableAttribute", TestObjV8Internal::nullableLongSettableAttributeAttrGetterCallback, TestObjV8Internal::nullableLongSettableAttributeAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'nullableStringValue' (Type: 'attribute' ExtAttr: '')
+    {"nullableStringValue", TestObjV8Internal::nullableStringValueAttrGetterCallback, TestObjV8Internal::nullableStringValueAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 };
 
 static const V8DOMConfiguration::BatchedMethod V8TestObjMethods[] = {

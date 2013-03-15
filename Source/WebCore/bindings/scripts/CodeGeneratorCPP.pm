@@ -697,6 +697,7 @@ sub GenerateImplementation
             my $attributeName = $attribute->signature->name;
             my $attributeType = GetCPPType($attribute->signature->type, 0);
             my $attributeIsReadonly = ($attribute->type =~ /^readonly/);
+            my $attributeIsNullable = $attribute->signature->isNullable;
 
             $attributeNames{$attributeName} = 1;
 
@@ -704,6 +705,7 @@ sub GenerateImplementation
             my $getterSig = "$attributeType $className\:\:$attributeName() const\n";
             my $hasGetterException = @{$attribute->getterExceptions};
             my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $attribute);
+            push(@arguments, "isNull") if $attributeIsNullable;
             push(@arguments, "ec") if $hasGetterException;
             if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
                 my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
@@ -736,6 +738,12 @@ sub GenerateImplementation
             push(@implContent, "{\n");
             push(@implContent, AddEarlyReturnStatement($attributeType));
             push(@implContent, @customGetterContent);
+
+            # FIXME: Should we return a default value when isNull == true?
+            if ($attributeIsNullable) {
+                push(@implContent, "    bool isNull = false;\n");
+            }
+
             if ($hasGetterException) {
                 # Differentiated between when the return type is a pointer and
                 # not for white space issue (ie. Foo *result vs. int result).

@@ -147,11 +147,17 @@ static const HashTableValue JSTestObjTableValues[] =
     { "id", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjId), (intptr_t)setJSTestObjId, NoIntrinsic },
     { "hash", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjHash), (intptr_t)0, NoIntrinsic },
     { "replaceableAttribute", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjReplaceableAttribute), (intptr_t)setJSTestObjReplaceableAttribute, NoIntrinsic },
+    { "nullableDoubleAttribute", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjNullableDoubleAttribute), (intptr_t)0, NoIntrinsic },
+    { "nullableLongAttribute", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjNullableLongAttribute), (intptr_t)0, NoIntrinsic },
+    { "nullableBooleanAttribute", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjNullableBooleanAttribute), (intptr_t)0, NoIntrinsic },
+    { "nullableStringAttribute", DontDelete | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjNullableStringAttribute), (intptr_t)0, NoIntrinsic },
+    { "nullableLongSettableAttribute", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjNullableLongSettableAttribute), (intptr_t)setJSTestObjNullableLongSettableAttribute, NoIntrinsic },
+    { "nullableStringValue", DontDelete, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjNullableStringValue), (intptr_t)setJSTestObjNullableStringValue, NoIntrinsic },
     { "constructor", DontEnum | ReadOnly, (intptr_t)static_cast<PropertySlot::GetValueFunc>(jsTestObjConstructor), (intptr_t)0, NoIntrinsic },
     { 0, 0, 0, 0, NoIntrinsic }
 };
 
-static const HashTable JSTestObjTable = { 141, 127, JSTestObjTableValues, 0 };
+static const HashTable JSTestObjTable = { 145, 127, JSTestObjTableValues, 0 };
 /* Hash table for constructor */
 
 static const HashTableValue JSTestObjConstructorTableValues[] =
@@ -976,6 +982,85 @@ JSValue jsTestObjReplaceableAttribute(ExecState* exec, JSValue slotBase, Propert
 }
 
 
+JSValue jsTestObjNullableDoubleAttribute(ExecState* exec, JSValue slotBase, PropertyName)
+{
+    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    UNUSED_PARAM(exec);
+    bool isNull = false;
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    JSValue result = jsNumber(impl->nullableDoubleAttribute(isNull));
+    if (isNull)
+        return jsNull();
+    return result;
+}
+
+
+JSValue jsTestObjNullableLongAttribute(ExecState* exec, JSValue slotBase, PropertyName)
+{
+    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    UNUSED_PARAM(exec);
+    bool isNull = false;
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    JSValue result = jsNumber(impl->nullableLongAttribute(isNull));
+    if (isNull)
+        return jsNull();
+    return result;
+}
+
+
+JSValue jsTestObjNullableBooleanAttribute(ExecState* exec, JSValue slotBase, PropertyName)
+{
+    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    UNUSED_PARAM(exec);
+    bool isNull = false;
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    JSValue result = jsBoolean(impl->nullableBooleanAttribute(isNull));
+    if (isNull)
+        return jsNull();
+    return result;
+}
+
+
+JSValue jsTestObjNullableStringAttribute(ExecState* exec, JSValue slotBase, PropertyName)
+{
+    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    UNUSED_PARAM(exec);
+    bool isNull = false;
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    JSValue result = jsStringWithCache(exec, impl->nullableStringAttribute(isNull));
+    if (isNull)
+        return jsNull();
+    return result;
+}
+
+
+JSValue jsTestObjNullableLongSettableAttribute(ExecState* exec, JSValue slotBase, PropertyName)
+{
+    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    UNUSED_PARAM(exec);
+    bool isNull = false;
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    JSValue result = jsNumber(impl->nullableLongSettableAttribute(isNull));
+    if (isNull)
+        return jsNull();
+    return result;
+}
+
+
+JSValue jsTestObjNullableStringValue(ExecState* exec, JSValue slotBase, PropertyName)
+{
+    JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
+    ExceptionCode ec = 0;
+    bool isNull = false;
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    JSC::JSValue result = jsNumber(impl->nullableStringValue(isNull, ec));
+    if (isNull)
+        return jsNull();
+    setDOMException(exec, ec);
+    return result;
+}
+
+
 JSValue jsTestObjConstructor(ExecState* exec, JSValue slotBase, PropertyName)
 {
     JSTestObj* domObject = jsCast<JSTestObj*>(asObject(slotBase));
@@ -1432,6 +1517,24 @@ void setJSTestObjReplaceableAttribute(ExecState* exec, JSObject* thisObject, JSV
     UNUSED_PARAM(exec);
     // Shadowing a built-in object
     jsCast<JSTestObj*>(thisObject)->putDirect(exec->globalData(), Identifier(exec, "replaceableAttribute"), value);
+}
+
+
+void setJSTestObjNullableLongSettableAttribute(ExecState* exec, JSObject* thisObject, JSValue value)
+{
+    UNUSED_PARAM(exec);
+    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    impl->setNullableLongSettableAttribute(value.toInt32(exec));
+}
+
+
+void setJSTestObjNullableStringValue(ExecState* exec, JSObject* thisObject, JSValue value)
+{
+    UNUSED_PARAM(exec);
+    JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
+    TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    impl->setNullableStringValue(value.toInt32(exec));
 }
 
 

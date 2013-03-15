@@ -995,9 +995,14 @@ END
     }
 
     my $useExceptions = 1 if @{$attribute->getterExceptions};
+    my $isNullable = $attribute->signature->isNullable;
     if ($useExceptions) {
         AddToImplIncludes("ExceptionCode.h");
         push(@implContentInternals, "    ExceptionCode ec = 0;\n");
+    }
+
+    if ($isNullable) {
+        push(@implContentInternals, "    bool isNull = false;\n");
     }
 
     my $returnType = $attribute->signature->type;
@@ -1005,6 +1010,7 @@ END
 
     if ($getterStringUsesImp) {
         my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $attribute);
+        push(@arguments, "isNull") if $isNullable;
         push(@arguments, "ec") if $useExceptions;
         if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
             my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
@@ -1028,18 +1034,26 @@ END
         push(@implContentInternals, "        return v8Undefined();\n");
     }
 
-    if ($useExceptions) {
+    if ($useExceptions || $isNullable) {
         if ($nativeType =~ /^V8StringResource/) {
             push(@implContentInternals, "    " . ConvertToV8StringResource($attribute->signature, $nativeType, "v", $getterString) . ";\n");
         } else {
             push(@implContentInternals, "    $nativeType v = $getterString;\n");
         }
-        push(@implContentInternals, "    if (UNLIKELY(ec))\n");
-        push(@implContentInternals, "        return setDOMException(ec, info.GetIsolate());\n");
 
-        if ($codeGenerator->ExtendedAttributeContains($attribute->signature->extendedAttributes->{"CallWith"}, "ScriptState")) {
-            push(@implContentInternals, "    if (state.hadException())\n");
-            push(@implContentInternals, "        return throwError(state.exception(), info.GetIsolate());\n");
+        if ($isNullable) {
+            push(@implContentInternals, "    if (isNull)\n");
+            push(@implContentInternals, "        return v8Null(info.GetIsolate());\n");
+        }
+
+        if ($useExceptions) {
+            push(@implContentInternals, "    if (UNLIKELY(ec))\n");
+            push(@implContentInternals, "        return setDOMException(ec, info.GetIsolate());\n");
+
+            if ($codeGenerator->ExtendedAttributeContains($attribute->signature->extendedAttributes->{"CallWith"}, "ScriptState")) {
+                push(@implContentInternals, "    if (state.hadException())\n");
+                push(@implContentInternals, "        return throwError(state.exception(), info.GetIsolate());\n");
+            }
         }
 
         $result = "v";

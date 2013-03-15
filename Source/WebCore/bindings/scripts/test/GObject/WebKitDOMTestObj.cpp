@@ -124,6 +124,12 @@ enum {
     PROP_ID,
     PROP_HASH,
     PROP_REPLACEABLE_ATTRIBUTE,
+    PROP_NULLABLE_DOUBLE_ATTRIBUTE,
+    PROP_NULLABLE_LONG_ATTRIBUTE,
+    PROP_NULLABLE_BOOLEAN_ATTRIBUTE,
+    PROP_NULLABLE_STRING_ATTRIBUTE,
+    PROP_NULLABLE_LONG_SETTABLE_ATTRIBUTE,
+    PROP_NULLABLE_STRING_VALUE,
 };
 
 static void webkit_dom_test_obj_finalize(GObject* object)
@@ -262,6 +268,14 @@ static void webkit_dom_test_obj_set_property(GObject* object, guint propertyId, 
     }
     case PROP_ID: {
         coreSelf->setId((g_value_get_long(value)));
+        break;
+    }
+    case PROP_NULLABLE_LONG_SETTABLE_ATTRIBUTE: {
+        coreSelf->setNullableLongSettableAttribute((g_value_get_long(value)));
+        break;
+    }
+    case PROP_NULLABLE_STRING_VALUE: {
+        coreSelf->setNullableStringValue((g_value_get_long(value)));
         break;
     }
     default:
@@ -497,6 +511,37 @@ static void webkit_dom_test_obj_get_property(GObject* object, guint propertyId, 
     }
     case PROP_REPLACEABLE_ATTRIBUTE: {
         g_value_set_long(value, coreSelf->replaceableAttribute());
+        break;
+    }
+    case PROP_NULLABLE_DOUBLE_ATTRIBUTE: {
+        bool isNull = false;
+        g_value_set_double(value, coreSelf->nullableDoubleAttribute(isNull));
+        break;
+    }
+    case PROP_NULLABLE_LONG_ATTRIBUTE: {
+        bool isNull = false;
+        g_value_set_long(value, coreSelf->nullableLongAttribute(isNull));
+        break;
+    }
+    case PROP_NULLABLE_BOOLEAN_ATTRIBUTE: {
+        bool isNull = false;
+        g_value_set_boolean(value, coreSelf->nullableBooleanAttribute(isNull));
+        break;
+    }
+    case PROP_NULLABLE_STRING_ATTRIBUTE: {
+        bool isNull = false;
+        g_value_take_string(value, convertToUTF8String(coreSelf->nullableStringAttribute(isNull)));
+        break;
+    }
+    case PROP_NULLABLE_LONG_SETTABLE_ATTRIBUTE: {
+        bool isNull = false;
+        g_value_set_long(value, coreSelf->nullableLongSettableAttribute(isNull));
+        break;
+    }
+    case PROP_NULLABLE_STRING_VALUE: {
+        bool isNull = false;
+        WebCore::ExceptionCode ec = 0;
+        g_value_set_long(value, coreSelf->nullableStringValue(isNull, ec));
         break;
     }
     default:
@@ -887,6 +932,56 @@ G_MAXLONG, /* max */
 G_MAXLONG, /* max */
 0, /* default */
                                                            WEBKIT_PARAM_READABLE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_NULLABLE_DOUBLE_ATTRIBUTE,
+                                    g_param_spec_double("nullable-double-attribute", /* name */
+                                                           "test_obj_nullable-double-attribute", /* short description */
+                                                           "read-only  gdouble TestObj.nullable-double-attribute", /* longer - could do with some extra doc stuff here */
+                                                           -G_MAXDOUBLE, /* min */
+G_MAXDOUBLE, /* max */
+0.0, /* default */
+                                                           WEBKIT_PARAM_READABLE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_NULLABLE_LONG_ATTRIBUTE,
+                                    g_param_spec_long("nullable-long-attribute", /* name */
+                                                           "test_obj_nullable-long-attribute", /* short description */
+                                                           "read-only  glong TestObj.nullable-long-attribute", /* longer - could do with some extra doc stuff here */
+                                                           G_MINLONG, /* min */
+G_MAXLONG, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READABLE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_NULLABLE_BOOLEAN_ATTRIBUTE,
+                                    g_param_spec_boolean("nullable-boolean-attribute", /* name */
+                                                           "test_obj_nullable-boolean-attribute", /* short description */
+                                                           "read-only  gboolean TestObj.nullable-boolean-attribute", /* longer - could do with some extra doc stuff here */
+                                                           FALSE, /* default */
+                                                           WEBKIT_PARAM_READABLE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_NULLABLE_STRING_ATTRIBUTE,
+                                    g_param_spec_string("nullable-string-attribute", /* name */
+                                                           "test_obj_nullable-string-attribute", /* short description */
+                                                           "read-only  gchar* TestObj.nullable-string-attribute", /* longer - could do with some extra doc stuff here */
+                                                           "", /* default */
+                                                           WEBKIT_PARAM_READABLE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_NULLABLE_LONG_SETTABLE_ATTRIBUTE,
+                                    g_param_spec_long("nullable-long-settable-attribute", /* name */
+                                                           "test_obj_nullable-long-settable-attribute", /* short description */
+                                                           "read-write  glong TestObj.nullable-long-settable-attribute", /* longer - could do with some extra doc stuff here */
+                                                           G_MINLONG, /* min */
+G_MAXLONG, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
+    g_object_class_install_property(gobjectClass,
+                                    PROP_NULLABLE_STRING_VALUE,
+                                    g_param_spec_long("nullable-string-value", /* name */
+                                                           "test_obj_nullable-string-value", /* short description */
+                                                           "read-write  glong TestObj.nullable-string-value", /* longer - could do with some extra doc stuff here */
+                                                           G_MINLONG, /* min */
+G_MAXLONG, /* max */
+0, /* default */
+                                                           WEBKIT_PARAM_READWRITE));
 }
 
 static void webkit_dom_test_obj_init(WebKitDOMTestObj* request)
@@ -2301,5 +2396,95 @@ webkit_dom_test_obj_get_replaceable_attribute(WebKitDOMTestObj* self)
     WebCore::TestObj* item = WebKit::core(self);
     glong result = item->replaceableAttribute();
     return result;
+}
+
+gdouble
+webkit_dom_test_obj_get_nullable_double_attribute(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    bool isNull = false;
+    gdouble result = item->nullableDoubleAttribute(isNull);
+    return result;
+}
+
+glong
+webkit_dom_test_obj_get_nullable_long_attribute(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    bool isNull = false;
+    glong result = item->nullableLongAttribute(isNull);
+    return result;
+}
+
+gboolean
+webkit_dom_test_obj_get_nullable_boolean_attribute(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), FALSE);
+    WebCore::TestObj* item = WebKit::core(self);
+    bool isNull = false;
+    gboolean result = item->nullableBooleanAttribute(isNull);
+    return result;
+}
+
+gchar*
+webkit_dom_test_obj_get_nullable_string_attribute(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    bool isNull = false;
+    gchar* result = convertToUTF8String(item->nullableStringAttribute(isNull));
+    return result;
+}
+
+glong
+webkit_dom_test_obj_get_nullable_long_settable_attribute(WebKitDOMTestObj* self)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    bool isNull = false;
+    glong result = item->nullableLongSettableAttribute(isNull);
+    return result;
+}
+
+void
+webkit_dom_test_obj_set_nullable_long_settable_attribute(WebKitDOMTestObj* self, glong value)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    WebCore::TestObj* item = WebKit::core(self);
+    item->setNullableLongSettableAttribute(value);
+}
+
+glong
+webkit_dom_test_obj_get_nullable_string_value(WebKitDOMTestObj* self, GError** error)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
+    g_return_val_if_fail(!error || !*error, 0);
+    WebCore::TestObj* item = WebKit::core(self);
+    bool isNull = false;
+    WebCore::ExceptionCode ec = 0;
+    glong result = item->nullableStringValue(isNull, ec);
+    if (ec) {
+        WebCore::ExceptionCodeDescription ecdesc(ec);
+        g_set_error_literal(error, g_quark_from_string("WEBKIT_DOM"), ecdesc.code, ecdesc.name);
+    }
+    return result;
+}
+
+void
+webkit_dom_test_obj_set_nullable_string_value(WebKitDOMTestObj* self, glong value)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    WebCore::TestObj* item = WebKit::core(self);
+    item->setNullableStringValue(value);
 }
 

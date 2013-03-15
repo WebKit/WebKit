@@ -76,6 +76,7 @@ my %baseTypeHash = ("Object" => 1, "Node" => 1, "NodeList" => 1, "NamedNodeMap" 
                     "SVGStringList" => 1, "SVGTransform" => 1, "SVGTransformList" => 1, "SVGUnitTypes" => 1);
 
 # Constants
+my $nullableInit = "bool isNull = false;";
 my $exceptionInit = "WebCore::ExceptionCode ec = 0;";
 my $jsContextSetter = "WebCore::JSMainThreadNullState state;";
 my $exceptionRaiseOnError = "WebCore::raiseOnDOMError(ec);";
@@ -1334,8 +1335,17 @@ sub GenerateImplementation
             }
 
             my $getterContent;
-            if ($hasGetterException) {
-                $getterContent = $getterContentHead . ($getterContentHead =~ /\($|, $/ ? "ec" : ", ec") . $getterContentTail;
+            if ($hasGetterException || $attribute->signature->isNullable) {
+                $getterContent = $getterContentHead;
+                my $getterWithoutAttributes = $getterContentHead =~ /\($|, $/ ? "ec" : ", ec";
+                if ($attribute->signature->isNullable) {
+                    $getterContent .= $getterWithoutAttributes ? "isNull" : ", isNull";
+                    $getterWithoutAttributes = 0;
+                }
+                if ($hasGetterException) {
+                    $getterContent .= $getterWithoutAttributes ? "ec" : ", ec";
+                }
+                $getterContent .= $getterContentTail;
             } else {
                 $getterContent = $getterContentHead . $getterContentTail;
             }
@@ -1346,6 +1356,12 @@ sub GenerateImplementation
             push(@implContent, "{\n");
             push(@implContent, "    $jsContextSetter\n");
             push(@implContent, @customGetterContent);
+
+            # FIXME: Should we return a default value when isNull == true?
+            if ($attribute->signature->isNullable) {
+                push(@implContents, "    $nullableInit\n");
+            }
+
             if ($hasGetterException) {
                 # Differentiated between when the return type is a pointer and
                 # not for white space issue (ie. Foo *result vs. int result).

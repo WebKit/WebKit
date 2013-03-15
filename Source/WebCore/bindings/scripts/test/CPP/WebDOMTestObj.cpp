@@ -664,6 +664,79 @@ int WebDOMTestObj::replaceableAttribute() const
     return impl()->replaceableAttribute();
 }
 
+double WebDOMTestObj::nullableDoubleAttribute() const
+{
+    if (!impl())
+        return 0;
+
+    bool isNull = false;
+    return impl()->nullableDoubleAttribute(isNull);
+}
+
+int WebDOMTestObj::nullableLongAttribute() const
+{
+    if (!impl())
+        return 0;
+
+    bool isNull = false;
+    return impl()->nullableLongAttribute(isNull);
+}
+
+bool WebDOMTestObj::nullableBooleanAttribute() const
+{
+    if (!impl())
+        return false;
+
+    bool isNull = false;
+    return impl()->nullableBooleanAttribute(isNull);
+}
+
+WebDOMString WebDOMTestObj::nullableStringAttribute() const
+{
+    if (!impl())
+        return WebDOMString();
+
+    bool isNull = false;
+    return static_cast<const WTF::String&>(impl()->nullableStringAttribute(isNull));
+}
+
+int WebDOMTestObj::nullableLongSettableAttribute() const
+{
+    if (!impl())
+        return 0;
+
+    bool isNull = false;
+    return impl()->nullableLongSettableAttribute(isNull);
+}
+
+void WebDOMTestObj::setNullableLongSettableAttribute(int newNullableLongSettableAttribute)
+{
+    if (!impl())
+        return;
+
+    impl()->setNullableLongSettableAttribute(newNullableLongSettableAttribute);
+}
+
+int WebDOMTestObj::nullableStringValue() const
+{
+    if (!impl())
+        return 0;
+
+    bool isNull = false;
+    WebCore::ExceptionCode ec = 0;
+    int result = impl()->nullableStringValue(isNull, ec);
+    webDOMRaiseError(static_cast<WebDOMExceptionCode>(ec));
+    return result;
+}
+
+void WebDOMTestObj::setNullableStringValue(int newNullableStringValue)
+{
+    if (!impl())
+        return;
+
+    impl()->setNullableStringValue(newNullableStringValue);
+}
+
 void WebDOMTestObj::voidMethod()
 {
     if (!impl())

@@ -145,6 +145,14 @@ public:
     void setId(int);
     WebDOMString hash() const;
     int replaceableAttribute() const;
+    double nullableDoubleAttribute() const;
+    int nullableLongAttribute() const;
+    bool nullableBooleanAttribute() const;
+    WebDOMString nullableStringAttribute() const;
+    int nullableLongSettableAttribute() const;
+    void setNullableLongSettableAttribute(int);
+    int nullableStringValue() const;
+    void setNullableStringValue(int);
 
     void voidMethod();
     void voidMethodWithArgs(int longArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);

@@ -470,6 +470,7 @@ sub GenerateProperty {
         $getterFunctionName = "coreSelf->$getterFunctionName";
         $setterFunctionName = "coreSelf->$setterFunctionName";
     }
+    push(@getterArguments, "isNull") if $attribute->signature->isNullable;
     push(@getterArguments, "ec") if @{$attribute->getterExceptions};
     push(@setterArguments, "ec") if @{$attribute->setterExceptions};
 
@@ -491,7 +492,10 @@ sub GenerateProperty {
     push(@txtGetProps, "    case ${propEnum}: {\n");
     push(@txtGetProps, "#if ${parentConditionalString}\n") if $parentConditionalString;
     push(@txtGetProps, "#if ${conditionalString}\n") if $conditionalString;
+    push(@txtGetProps, "        bool isNull = false;\n") if $attribute->signature->isNullable;
     push(@txtGetProps, "        WebCore::ExceptionCode ec = 0;\n") if @{$attribute->getterExceptions};
+
+    # FIXME: Should we return a default value when isNull == true?
 
     my $postConvertFunction = "";
     my $done = 0;
@@ -1003,8 +1007,14 @@ sub GenerateFunction {
         }
     }
 
+    # FIXME: Should we return a default value when isNull == true?
+    if ($function->signature->isNullable) {
+        push(@cBody, "    bool isNull = false;\n");
+        push(@callImplParams, "isNull");
+    }
+
     if (@{$function->raisesExceptions}) {
-        push(@cBody, "    WebCore::ExceptionCode ec = 0;\n") ;
+        push(@cBody, "    WebCore::ExceptionCode ec = 0;\n");
         push(@callImplParams, "ec");
     }
 

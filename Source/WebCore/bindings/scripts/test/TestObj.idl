@@ -271,4 +271,15 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
     void variadicStringMethod(in DOMString head, in DOMString... tail);
     void variadicDoubleMethod(in double head, in double... tail);
     void variadicNodeMethod(in Node head, in Node... tail);
+
+    // Nullable attributes.
+    readonly attribute double? nullableDoubleAttribute;
+    readonly attribute long? nullableLongAttribute;
+    readonly attribute boolean? nullableBooleanAttribute;
+    readonly attribute DOMString? nullableStringAttribute;
+
+    attribute long? nullableLongSettableAttribute;
+
+    attribute long? nullableStringValue
+        getter raises(DOMException);
 };

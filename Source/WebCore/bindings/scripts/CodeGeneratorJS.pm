@@ -1827,6 +1827,7 @@ sub GenerateImplementation
             foreach my $attribute (@{$interface->attributes}) {
                 my $name = $attribute->signature->name;
                 my $type = $attribute->signature->type;
+                my $isNullable = $attribute->signature->isNullable;
                 $codeGenerator->AssertNotSequenceType($type);
                 my $getFunctionName = GetAttributeGetterName($interfaceName, $className, $attribute);
                 my $implGetterFunctionName = $codeGenerator->WK_lcfirst($name);
@@ -1889,6 +1890,7 @@ sub GenerateImplementation
                     }
                 } elsif (!@{$attribute->getterExceptions}) {
                     push(@implContent, "    UNUSED_PARAM(exec);\n") if !$attribute->signature->extendedAttributes->{"CallWith"};
+                    push(@implContent, "    bool isNull = false;\n") if $isNullable;
 
                     my $cacheIndex = 0;
                     if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
@@ -1912,6 +1914,7 @@ sub GenerateImplementation
                         }
                     } else {
                         my ($functionName, @arguments) = $codeGenerator->GetterExpression(\%implIncludes, $interfaceName, $attribute);
+                        push(@arguments, "isNull") if $isNullable;
                         if ($attribute->signature->extendedAttributes->{"ImplementedBy"}) {
                             my $implementedBy = $attribute->signature->extendedAttributes->{"ImplementedBy"};
                             $implIncludes{"${implementedBy}.h"} = 1;
@@ -1933,6 +1936,11 @@ sub GenerateImplementation
                         } else {
                             push(@implContent, "    JSValue result = $jsType;\n");
                         }
+
+                        if ($isNullable) {
+                            push(@implContent, "    if (isNull)\n");
+                            push(@implContent, "        return jsNull();\n");
+                        }
                     }
 
                     push(@implContent, "    castedThis->m_" . $attribute->signature->name . ".set(exec->globalData(), castedThis, result);\n") if ($attribute->signature->extendedAttributes->{"CachedAttribute"});
@@ -1942,6 +1950,11 @@ sub GenerateImplementation
                     my @arguments = ("ec");
                     push(@implContent, "    ExceptionCode ec = 0;\n");
 
+                    if ($isNullable) {
+                        push(@implContent, "    bool isNull = false;\n");
+                        unshift(@arguments, "isNull");
+                    }
+
                     unshift(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"CallWith"}, \@implContent, "jsUndefined()"));
 
                     if ($svgPropertyOrListPropertyType) {
@@ -1950,6 +1963,11 @@ sub GenerateImplementation
                     } else {
                         push(@implContent, "    $interfaceName* impl = static_cast<$interfaceName*>(castedThis->impl());\n");
                         push(@implContent, "    JSC::JSValue result = " . NativeToJSValue($attribute->signature, 0, $interfaceName, "impl->$implGetterFunctionName(" . join(", ", @arguments) . ")", "castedThis") . ";\n");
+                    }
+
+                    if ($isNullable) {
+                        push(@implContent, "    if (isNull)\n");
+                        push(@implContent, "        return jsNull();\n");
                     }
 
                     push(@implContent, "    setDOMException(exec, ec);\n");

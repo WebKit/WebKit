@@ -1389,6 +1389,89 @@ webkit_dom_test_obj_get_hash(WebKitDOMTestObj* self);
 WEBKIT_API glong
 webkit_dom_test_obj_get_replaceable_attribute(WebKitDOMTestObj* self);
 
+/**
+ * webkit_dom_test_obj_get_nullable_double_attribute:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gdouble
+webkit_dom_test_obj_get_nullable_double_attribute(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_get_nullable_long_attribute:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API glong
+webkit_dom_test_obj_get_nullable_long_attribute(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_get_nullable_boolean_attribute:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gboolean
+webkit_dom_test_obj_get_nullable_boolean_attribute(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_get_nullable_string_attribute:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API gchar*
+webkit_dom_test_obj_get_nullable_string_attribute(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_get_nullable_long_settable_attribute:
+ * @self: A #WebKitDOMTestObj
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API glong
+webkit_dom_test_obj_get_nullable_long_settable_attribute(WebKitDOMTestObj* self);
+
+/**
+ * webkit_dom_test_obj_set_nullable_long_settable_attribute:
+ * @self: A #WebKitDOMTestObj
+ * @value: A #glong
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_set_nullable_long_settable_attribute(WebKitDOMTestObj* self, glong value);
+
+/**
+ * webkit_dom_test_obj_get_nullable_string_value:
+ * @self: A #WebKitDOMTestObj
+ * @error: #GError
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API glong
+webkit_dom_test_obj_get_nullable_string_value(WebKitDOMTestObj* self, GError** error);
+
+/**
+ * webkit_dom_test_obj_set_nullable_string_value:
+ * @self: A #WebKitDOMTestObj
+ * @value: A #glong
+ *
+ * Returns:
+ *
+**/
+WEBKIT_API void
+webkit_dom_test_obj_set_nullable_string_value(WebKitDOMTestObj* self, glong value);
+
 G_END_DECLS
 
 #endif /* WebKitDOMTestObj_h */

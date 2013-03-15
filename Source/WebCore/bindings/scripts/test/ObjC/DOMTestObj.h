@@ -115,6 +115,12 @@ enum {
 @property int idName;
 @property(readonly, copy) NSString *hashName;
 @property(readonly) int replaceableAttribute;
+@property(readonly) double nullableDoubleAttribute;
+@property(readonly) int nullableLongAttribute;
+@property(readonly) BOOL nullableBooleanAttribute;
+@property(readonly, copy) NSString *nullableStringAttribute;
+@property int nullableLongSettableAttribute;
+@property int nullableStringValue;
 
 - (void)voidMethod;
 - (void)voidMethodWithArgs:(int)longArg strArg:(NSString *)strArg objArg:(DOMTestObj *)objArg;

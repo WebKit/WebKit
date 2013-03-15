@@ -291,6 +291,19 @@ sub unquoteString
     die "Failed to parse string (" . $quotedString . ") at " . $self->{Line};
 }
 
+sub typeHasNullableSuffix
+{
+    my $type = shift;
+    return $type =~ /\?$/;
+}
+
+sub typeRemoveNullableSuffix
+{
+    my $type = shift;
+    $type =~ s/\?//g;
+    return $type;
+}
+
 my $nextAttributeOld_1 = '^(attribute|inherit|readonly)$';
 my $nextPrimitiveType_1 = '^(int|long|short|unsigned)$';
 my $nextPrimitiveType_2 = '^(double|float|unrestricted)$';
@@ -1127,7 +1140,14 @@ sub parseAttributeRest
         }
         $self->assertTokenValue($self->getToken(), "attribute", __LINE__);
         $newDataNode->signature(domSignature->new());
-        $newDataNode->signature->type($self->parseType());
+        my $type = $self->parseType();
+        if (typeHasNullableSuffix($type)) {
+            $newDataNode->signature->isNullable(1);
+        } else {
+            $newDataNode->signature->isNullable(0);
+        }
+        # Remove all "?" in the type declaration, e.g. "double?" -> "double".
+        $newDataNode->signature->type(typeRemoveNullableSuffix($type));
         my $token = $self->getToken();
         $self->assertTokenType($token, IdentifierToken);
         $newDataNode->signature->name($token->value());
@@ -1394,14 +1414,13 @@ sub parseOptionalOrRequiredArgument
         $self->assertTokenValue($self->getToken(), "optional", __LINE__);
         my $type = $self->parseType();
         # domDataNode can only consider last "?".
-        if ($type =~ /\?$/) {
+        if (typeHasNullableSuffix($type)) {
             $paramDataNode->isNullable(1);
         } else {
             $paramDataNode->isNullable(0);
         }
         # Remove all "?" if exists, e.g. "object?[]?" -> "object[]".
-        $type =~ s/\?//g;
-        $paramDataNode->type($type);
+        $paramDataNode->type(typeRemoveNullableSuffix($type));
         $paramDataNode->name($self->parseArgumentName());
         $self->parseDefault();
         return $paramDataNode;
@@ -1409,14 +1428,13 @@ sub parseOptionalOrRequiredArgument
     if ($next->type() == IdentifierToken || $next->value() =~ /$nextExceptionField_1/) {
         my $type = $self->parseType();
         # domDataNode can only consider last "?".
-        if ($type =~ /\?$/) {
+        if (typeHasNullableSuffix($type)) {
             $paramDataNode->isNullable(1);
         } else {
             $paramDataNode->isNullable(0);
         }
         # Remove all "?" if exists, e.g. "object?[]?" -> "object[]".
-        $type =~ s/\?//g;
-        $paramDataNode->type($type);
+        $paramDataNode->type(typeRemoveNullableSuffix($type));
         $paramDataNode->isVariadic($self->parseEllipsis());
         $paramDataNode->name($self->parseArgumentName());
         return $paramDataNode;
@@ -2394,7 +2412,14 @@ sub parseAttributeRestOld
         $self->assertTokenValue($self->getToken(), "attribute", __LINE__);
         my $extendedAttributeList = $self->parseExtendedAttributeListAllowEmpty();
         $newDataNode->signature(domSignature->new());
-        $newDataNode->signature->type($self->parseType());
+        my $type = $self->parseType();
+        if (typeHasNullableSuffix($type)) {
+            $newDataNode->signature->isNullable(1);
+        } else {
+            $newDataNode->signature->isNullable(0);
+        }
+        # Remove all "?" in the type declaration, e.g. "double?" -> "double".
+        $newDataNode->signature->type(typeRemoveNullableSuffix($type));
         $newDataNode->signature->extendedAttributes($extendedAttributeList);
         my $token = $self->getToken();
         $self->assertTokenType($token, IdentifierToken);

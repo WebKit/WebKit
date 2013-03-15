@@ -716,6 +716,57 @@
     return IMPL->replaceableAttribute();
 }
 
+- (double)nullableDoubleAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->nullableDoubleAttribute(isNull);
+}
+
+- (int)nullableLongAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->nullableLongAttribute(isNull);
+}
+
+- (BOOL)nullableBooleanAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->nullableBooleanAttribute(isNull);
+}
+
+- (NSString *)nullableStringAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->nullableStringAttribute(isNull);
+}
+
+- (int)nullableLongSettableAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    return IMPL->nullableLongSettableAttribute(isNull);
+}
+
+- (void)setNullableLongSettableAttribute:(int)newNullableLongSettableAttribute
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setNullableLongSettableAttribute(newNullableLongSettableAttribute);
+}
+
+- (int)nullableStringValue
+{
+    WebCore::JSMainThreadNullState state;
+    WebCore::ExceptionCode ec = 0;
+    int result = IMPL->nullableStringValue(isNull, ec);
+    WebCore::raiseOnDOMError(ec);
+    return result;
+}
+
+- (void)setNullableStringValue:(int)newNullableStringValue
+{
+    WebCore::JSMainThreadNullState state;
+    IMPL->setNullableStringValue(newNullableStringValue);
+}
+
 - (void)voidMethod
 {
     WebCore::JSMainThreadNullState state;
