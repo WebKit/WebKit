@@ -74,18 +74,27 @@ WebInspector.FlameChart.prototype = {
         return true;
     },
 
+    _maxXOffset: function()
+    {
+        if (!this._timelineData)
+            return 0;
+        var maxXOffset = Math.floor(this._timelineData.totalTime * this._xScaleFactor - this._canvas.width);
+        return maxXOffset > 0 ? maxXOffset : 0;
+    },
+
+    _setXOffset: function(xOffset)
+    {
+        xOffset = Number.constrain(xOffset, 0, this._maxXOffset());
+
+        if (xOffset !== this._xOffset) {
+            this._xOffset = xOffset;
+            this._scheduleUpdate();
+        }
+    },
+
     _canvasDragging: function(event)
     {
-        this._xOffset = this._dragStartXOffset + this._dragStartPoint - event.pageX;
-
-        if (this._xOffset < 0)
-            this._xOffset = 0;
-        else {
-            var maxXOffset = this._timelineData.totalTime * this._xScaleFactor - this._canvas.width;
-            if (this._xOffset > maxXOffset)
-                this._xOffset = maxXOffset;
-        }
-        this._scheduleUpdate();
+        this._setXOffset(this._dragStartXOffset + this._dragStartPoint - event.pageX);
     },
 
     _endCanvasDragging: function()
@@ -240,39 +249,35 @@ WebInspector.FlameChart.prototype = {
 
         var timelineData = this._timelineData;
 
+        var anchorLeft = Math.floor(timelineData.startTimes[nodeIndex] * this._xScaleFactor - this._xOffset);
+        anchorLeft = Number.constrain(anchorLeft, 0, this._canvas.width);
+
+        var anchorWidth = Math.floor(timelineData.durations[nodeIndex] * this._xScaleFactor);
+        anchorWidth = Number.constrain(anchorWidth, 0, this._canvas.width - anchorLeft);
+
         var style = this._anchorElement.style;
-        style.width = Math.floor(timelineData.durations[nodeIndex] * this._xScaleFactor) + "px";
+        style.width = anchorWidth + "px";
         style.height = this._barHeight + "px";
-        style.left = Math.floor(timelineData.startTimes[nodeIndex] * this._xScaleFactor - this._xOffset) + "px";
+        style.left = anchorLeft + "px";
         style.top = Math.floor(this._canvas.height - (timelineData.depths[nodeIndex] + 1) * this._barHeight) + "px";
     },
 
     _adjustXOffset: function(direction)
     {
         var step = this._xScaleFactor * 5;
-        this._xOffset += direction > 0 ? step : -step;
-        if (this._xOffset < 0)
-            this._xOffset = 0;
+        this._setXOffset(this._xOffset + (direction > 0 ? step : -step));
     },
 
     _adjustXScale: function(direction, x)
     {
         var cursorTime = (x + this._xOffset) / this._xScaleFactor;
+
         if (direction > 0)
             this._xScaleFactor /= 2;
         else
             this._xScaleFactor *= 2;
 
-        var absoluteX = Math.floor(cursorTime * this._xScaleFactor);
-        var rightEndOfViewPort = absoluteX - x + this._canvas.width;
-
-        var rightEndOfGraph = Math.floor(this._timelineData.totalTime * this._xScaleFactor);
-        if (rightEndOfViewPort > rightEndOfGraph)
-            rightEndOfViewPort = rightEndOfGraph;
-
-        this._xOffset = rightEndOfViewPort - this._canvas.width;
-        if (this._xOffset < 0)
-            this._xOffset = 0;
+        this._setXOffset(Math.floor(cursorTime * this._xScaleFactor - x));
     },
 
     _onMouseWheel: function(e)
@@ -337,6 +342,8 @@ WebInspector.FlameChart.prototype = {
                 break;
             var y = height - (timelineData.depths[i] + 1) * barHeight;
             var barWidth = Math.floor(timelineData.durations[i] * xScaleFactor);
+            if (x + barWidth < 0)
+                continue;
             if (barWidth < this._minWidth)
                 continue;
 
