@@ -1091,7 +1091,11 @@ String AccessibilityNodeObject::ariaAccessibilityDescription() const
 
 static Element* siblingWithAriaRole(String role, Node* node)
 {
-    for (Node* sibling = node->parentNode()->firstChild(); sibling; sibling = sibling->nextSibling()) {
+    Node* parent = node->parentNode();
+    if (!parent)
+        return 0;
+    
+    for (Node* sibling = parent->firstChild(); sibling; sibling = sibling->nextSibling()) {
         if (sibling->isElementNode()) {
             const AtomicString& siblingAriaRole = toElement(sibling)->getAttribute(roleAttr);
             if (equalIgnoringCase(siblingAriaRole, role))
@@ -1130,7 +1134,7 @@ AccessibilityObject* AccessibilityNodeObject::menuButtonForMenu() const
     if (menuItem) {
         // ARIA just has generic menu items. AppKit needs to know if this is a top level items like MenuBarButton or MenuBarItem
         AccessibilityObject* menuItemAX = axObjectCache()->getOrCreate(menuItem);
-        if (menuItemAX->isMenuButton())
+        if (menuItemAX && menuItemAX->isMenuButton())
             return menuItemAX;
     }
     return 0;
