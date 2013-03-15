@@ -201,7 +201,10 @@ void CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(Element* element,
 #endif
 
     if (!plugInsStyleSheet && (element->hasTagName(objectTag) || element->hasTagName(embedTag))) {
-        String plugInsRules = String(plugInsUserAgentStyleSheet, sizeof(plugInsUserAgentStyleSheet)) + RenderTheme::themeForPage(element->document()->page())->extraPlugInsStyleSheet() + element->document()->page()->chrome()->client()->plugInExtraStyleSheet();
+        Page* page = element->document()->page();
+        String plugInsRules = String(plugInsUserAgentStyleSheet, sizeof(plugInsUserAgentStyleSheet)) + RenderTheme::themeForPage(page)->extraPlugInsStyleSheet();
+        if (page)
+            plugInsRules = plugInsRules + page->chrome()->client()->plugInExtraStyleSheet();
         plugInsStyleSheet = parseUASheet(plugInsRules);
         defaultStyle->addRulesFromSheet(plugInsStyleSheet, screenEval());
         changedDefaultStyle = true;
