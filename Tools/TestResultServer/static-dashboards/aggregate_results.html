@@ -295,6 +295,11 @@ function extendedEncode(arrVals, maxVal)
 
     return chartData;
 }
+
+window.addEventListener('load', function() {
+    var resourceLoader = new loader.Loader(intializeHistory);
+    resourceLoader.load();
+}, false);
 </script>
 </head>
 <body></body>

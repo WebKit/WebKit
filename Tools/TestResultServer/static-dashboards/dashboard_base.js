@@ -32,7 +32,6 @@
 //
 // The calling page is expected to implement the following "abstract"
 // functions/objects:
-var g_resourceLoader;
 
 // Generates the contents of the dashboard. The page should override this with
 // a function that generates the page assuming all resources have loaded.
@@ -422,14 +421,15 @@ function isFlakinessDashboard()
 
 function handleLocationChange()
 {
-    if (!g_resourceLoader.isLoadingComplete())
-        return;
-
     if (parseParameters())
         generatePage();
 }
 
-window.onhashchange = handleLocationChange;
+// TODO(jparent): Move this to upcoming History object.
+function intializeHistory() {
+    window.onhashchange = handleLocationChange;
+    handleLocationChange();
+}
 
 function combinedDashboardState()
 {
@@ -618,8 +618,3 @@ function decompressResults(builderResults)
         flakyDeltasByBuild: flakyDeltasByBuild
     };
 }
-
-window.addEventListener('load', function() {
-    g_resourceLoader = new loader.Loader(handleLocationChange);
-    g_resourceLoader.load();
-}, false);

@@ -459,6 +459,11 @@ document.addEventListener('keydown', function(e) {
         break;
     }
 });
+
+window.addEventListener('load', function() {
+    var resourceLoader = new loader.Loader(intializeHistory);
+    resourceLoader.load();
+}, false);
 </script>
 </head>
 <body>

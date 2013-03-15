@@ -1,3 +1,43 @@
+2013-03-14  Julie Parent  <jparent@chromium.org>
+
+        Cleanup: Remove g_resourceLoader.
+        https://bugs.webkit.org/show_bug.cgi?id=112305
+
+        Reviewed by Dirk Pranke.
+        
+        Removing another global.
+        
+        Now, each dashboard creates its own loader, rather than having
+        a general global one.
+        
+        Remove usage of g_resourceLoader.isLoadingComplete from 
+        handleLocationChange by ensuring that handleLocationChange is
+        never called before the loader is done.  It was called in two
+        places before: 1 was from the callback when the loader is done,
+        so that was obviously true, and the other was from onhashchange,
+        where it would just return rather than running.  Instead, lets
+        only register the onhashchange handler once the loader is
+        setup, so the check is no longer necessary.
+        
+        Remove isLoadingComplete since it is now unused.
+        
+        Callback for loader is now initializeHistory, rather than just
+        handleLocationChange which will set up the hashchange handler now.
+        This will all eventually be moving to a new History object.
+
+        * TestResultServer/static-dashboards/aggregate_results.html:
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (handleLocationChange):
+        (intializeHistory):
+        (decompressResults):
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (generatePage):
+        * TestResultServer/static-dashboards/loader.js:
+        (.):
+        * TestResultServer/static-dashboards/loader_unittests.js:
+        * TestResultServer/static-dashboards/timeline_explorer.html:
+        * TestResultServer/static-dashboards/treemap.html:
+
 2013-03-14  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Add selectTrailingWhitespaceEnabled setting to WebCore::Page

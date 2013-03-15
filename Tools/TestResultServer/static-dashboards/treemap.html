@@ -361,4 +361,9 @@ function handleFocus(tree)
     if (!g_isGeneratingPage)
         setQueryParameter('treemapfocus', name);
 }
+
+window.addEventListener('load', function() {
+    var resourceLoader = new loader.Loader(intializeHistory);
+    resourceLoader.load();
+}, false);
 </script>

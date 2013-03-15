@@ -67,7 +67,6 @@ loader.Loader = function(opt_onLoadingComplete)
 
     this._buildersThatFailedToLoad = [];
     this._staleBuilders = [];
-    this._loadingComplete = false;
     this._errors = new ui.Errors();
     this._onLoadingComplete = opt_onLoadingComplete || function() {};
 }
@@ -97,10 +96,6 @@ loader.Loader.prototype = {
     {
         this._loadNext();
     },
-    isLoadingComplete: function()
-    {
-        return this._loadingComplete;
-    },
     showErrors: function() 
     {
         this._errors.show();
@@ -109,7 +104,6 @@ loader.Loader.prototype = {
     {
         var loadingStep = this._loadingSteps.shift();
         if (!loadingStep) {
-            this._loadingComplete = true;
             this._addErrors();
             this._onLoadingComplete();
             return;

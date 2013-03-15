@@ -134,6 +134,8 @@ var VIRTUAL_SUITES = {
     'platform/chromium/virtual/gpu/canvas/philip': 'canvas/philip'
 };
 
+var resourceLoader;
+
 //////////////////////////////////////////////////////////////////////////////
 // Methods and objects from dashboard_base.js to override.
 //////////////////////////////////////////////////////////////////////////////
@@ -143,7 +145,7 @@ function generatePage()
         return;
 
     document.body.innerHTML = '<div id="loading-ui">LOADING...</div>';
-    g_resourceLoader.showErrors();
+    resourceLoader.showErrors();
 
     // tests expands to all tests that match the CSV list.
     // result expands to all tests that ever have the given result
@@ -2598,4 +2600,9 @@ document.addEventListener('keydown', function(e) {
         hideLegend();
         ui.popup.hide();
     }
+}, false);
+
+window.addEventListener('load', function() {
+    resourceLoader = new loader.Loader(intializeHistory);
+    resourceLoader.load();
 }, false);
