@@ -3,10 +3,9 @@
     if (window.testRunner)
     {
         testRunner.dumpAsText();
-        testRunner.waitUntilDone();
     }
 
-    window.setTimeout('crash();', 0);
+    window.onload = crash;
 
     function crash()
     {
@@ -15,8 +14,6 @@
         document.body.offsetTop;
  
         document.getElementById("result").innerHTML = "PASS";
-        if (window.testRunner)
-            testRunner.notifyDone();
     }
     </script>
     <div id="result"></div>

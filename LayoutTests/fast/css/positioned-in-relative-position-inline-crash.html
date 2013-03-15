@@ -25,7 +25,7 @@ function runTest() {
     document.getElementById('positioned').style.color = 'red';
     setTimeout('dumpTest()', 10);
 }
-setTimeout('runTest()', 0);
+window.onload = runTest;
 </script>
 <body>
 PASS, if no exception or crash in debug

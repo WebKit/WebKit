@@ -1,19 +1,15 @@
 <!DOCTYPE html>
 <script>
-if (window.testRunner) {
+if (window.testRunner)
     testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
 
-setTimeout(function() {
+window.onload = function() {
     document.designMode="on";
     document.execCommand("selectall");
     document.execCommand("InsertText", false);
     document.open();
     document.write("This test ensures that selecting all and inserting text into a page with a frameset does not crash<br><br>PASS");
-    if (window.testRunner)
-        testRunner.notifyDone();
-}, 0);
+};
 </script>
 <frameset><frame></frame></frameset>
 </html>

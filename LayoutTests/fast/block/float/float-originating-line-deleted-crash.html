@@ -1,10 +1,9 @@
 <html>
 Test passes if it does not crash.
+<body>
 <script>
-if (window.testRunner) {
+if (window.testRunner)
     testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
 
 function runTest()
 {
@@ -12,12 +11,9 @@ function runTest()
     child.parentNode.removeChild(child);
 
 	document.body.offsetTop;
-    
-    if (window.testRunner)
-        testRunner.notifyDone();
 }
 
-setTimeout("runTest();", 0);
+window.onload = runTest;
 </script>
 <style id='test'>
     p { float: left; }

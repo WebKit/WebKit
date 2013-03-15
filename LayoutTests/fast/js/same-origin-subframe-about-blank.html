@@ -19,7 +19,7 @@ function reload_blank() {
   window.setTimeout("check_blank()", 0);
 }
 
-window.setTimeout("reload_blank()", 0);
+window.onload = reload_blank;
 
 </script>
 <body>
