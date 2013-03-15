@@ -39,6 +39,9 @@ WebInspector.FlameChart = function(cpuProfileView)
     this.registerRequiredCSS("flameChart.css");
 
     this.element.className = "flame-chart";
+    this._timelineGrid = new WebInspector.TimelineGrid();
+    this._calculator = new WebInspector.FlameChart.Calculator();
+    this.element.appendChild(this._timelineGrid.element);
     this._canvas = this.element.createChild("canvas");
     WebInspector.installDragHandle(this._canvas, this._startCanvasDragging.bind(this), this._canvasDragging.bind(this), this._endCanvasDragging.bind(this), "col-resize");
 
@@ -56,6 +59,54 @@ WebInspector.FlameChart = function(cpuProfileView)
     this._anchorElement.className = "item-anchor";
     this._linkifier = new WebInspector.Linkifier();
     this._highlightedNodeIndex = -1;
+}
+
+/**
+ * @constructor
+ * @implements {WebInspector.TimelineGrid.Calculator}
+ */
+WebInspector.FlameChart.Calculator = function()
+{
+}
+
+WebInspector.FlameChart.Calculator.prototype = {
+    /**
+     * @param {WebInspector.FlameChart} flameChart
+     */
+    _updateBoundaries: function(flameChart)
+    {
+        this._xScaleFactor = flameChart._xScaleFactor;
+        this._minimumBoundaries = flameChart._xOffset / this._xScaleFactor;
+        this._maximumBoundaries = (flameChart._xOffset + flameChart._canvas.width) / this._xScaleFactor;
+    },
+
+    /**
+     * @param {number} time
+     */
+    computePosition: function(time)
+    {
+        return (time - this._minimumBoundaries) * this._xScaleFactor;
+    },
+
+    formatTime: function(value)
+    {
+        return Number.secondsToString((value + this._minimumBoundaries) / 1000);
+    },
+
+    maximumBoundary: function()
+    {
+        return this._maximumBoundaries;
+    },
+
+    minimumBoundary: function()
+    {
+        return this._minimumBoundaries;
+    },
+
+    boundarySpan: function()
+    {
+        return this._maximumBoundaries - this._minimumBoundaries;
+    }
 }
 
 WebInspector.FlameChart.Events = {
@@ -372,6 +423,11 @@ WebInspector.FlameChart.prototype = {
     {
         this._updateTimerId = 0;
         this.draw(this.element.clientWidth, this.element.clientHeight);
+        if (this._timelineData) {
+            this._calculator._updateBoundaries(this);
+            this._timelineGrid.element.style.width = this.element.clientWidth;
+            this._timelineGrid.updateDividers(this._calculator);
+        }
     },
 
     __proto__: WebInspector.View.prototype
