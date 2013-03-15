@@ -135,8 +135,7 @@ void RenderTextControlSingleLine::layout()
 
         m_desiredInnerTextLogicalHeight = desiredLogicalHeight;
 
-        if (innerTextRenderer)
-            innerTextRenderer->style()->setLogicalHeight(Length(desiredLogicalHeight, Fixed));
+        innerTextRenderer->style()->setLogicalHeight(Length(desiredLogicalHeight, Fixed));
         if (innerBlockRenderer)
             innerBlockRenderer->style()->setLogicalHeight(Length(desiredLogicalHeight, Fixed));
     }
