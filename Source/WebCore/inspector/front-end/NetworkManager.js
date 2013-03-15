@@ -125,7 +125,7 @@ WebInspector.NetworkDispatcher = function(manager)
 WebInspector.NetworkDispatcher.prototype = {
     /**
      * @param {NetworkAgent.Headers} headersMap
-     * @return {Array.<Object>}
+     * @return {!Array.<!WebInspector.NetworkRequest.NameValue>}
      */
     _headersMapToHeadersArray: function(headersMap)
     {
@@ -133,7 +133,7 @@ WebInspector.NetworkDispatcher.prototype = {
         for (var name in headersMap) {
             var values = headersMap[name].split("\n");
             for (var i = 0; i < values.length; ++i)
-                result.push({ name: name, value: values[i] });
+                result.push({name: name, value: values[i]});
         }
         return result;
     },
