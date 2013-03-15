@@ -241,6 +241,8 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient);
 
+    view->didInitializeClients();
+
     WKRetain(newPage);
     return newPage;
 }
@@ -482,6 +484,8 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         0, // unableToImplementPolicy
     };
     WKPageSetPagePolicyClient(m_mainWebView->page(), &pagePolicyClient);
+
+    m_mainWebView->didInitializeClients();
 }
 
 void TestController::ensureViewSupportsOptions(WKDictionaryRef options)

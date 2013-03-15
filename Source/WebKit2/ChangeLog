@@ -1,3 +1,18 @@
+2013-03-14  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r145169): [Mac][WK2] http/tests/security/cross-frame-access-put.html fails.
+        <http://webkit.org/b/111815>
+        <rdar://problem/13380145>
+
+        Reviewed by Anders Carlsson.
+
+        Call getWindowFrame() to see if the UI client wants to override the window frame before sending
+        a WindowAndViewFramesChanged message to the web process.
+        This fixes a glitch in WTR and the Web Inspector where incorrect window frames were being used.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::windowAndViewFramesChanged):
+
 2013-03-14  Andy Estes  <aestes@apple.com>
 
         [WebKit2] Only preprocess sandbox profiles if we're building for the OS X SDK

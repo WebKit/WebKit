@@ -143,7 +143,13 @@ void WebPageProxy::windowAndViewFramesChanged(const FloatRect& windowFrameInScre
     if (!isValid())
         return;
 
-    process()->send(Messages::WebPage::WindowAndViewFramesChanged(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates, accessibilityViewCoordinates), m_pageID);
+    // If the UI client overrides getWindowFrame(), we call it here to make sure we send the appropriate window frame.  
+    FloatRect adjustedWindowFrameInScreenCoordinates;
+    getWindowFrame(adjustedWindowFrameInScreenCoordinates);
+    if (adjustedWindowFrameInScreenCoordinates.isEmpty())
+        adjustedWindowFrameInScreenCoordinates = windowFrameInScreenCoordinates;
+
+    process()->send(Messages::WebPage::WindowAndViewFramesChanged(adjustedWindowFrameInScreenCoordinates, viewFrameInWindowCoordinates, accessibilityViewCoordinates), m_pageID);
 }
 
 void WebPageProxy::viewExposedRectChanged(const FloatRect& exposedRect)

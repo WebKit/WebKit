@@ -168,6 +168,14 @@ void PlatformWebView::setWindowFrame(WKRect frame)
     [m_window setFrame:NSMakeRect(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height) display:YES];
 }
 
+void PlatformWebView::didInitializeClients()
+{
+    // Set a temporary 1x1 window frame to force a WindowAndViewFramesChanged notification. <rdar://problem/13380145>
+    WKRect wkFrame = windowFrame();
+    [m_window setFrame:NSMakeRect(0, 0, 1, 1) display:YES];
+    setWindowFrame(wkFrame);
+}
+
 void PlatformWebView::addChromeInputField()
 {
     NSTextField* textField = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 100, 20)];

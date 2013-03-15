@@ -81,6 +81,8 @@ public:
 
     WKRect windowFrame();
     void setWindowFrame(WKRect);
+
+    void didInitializeClients();
     
     void addChromeInputField();
     void removeChromeInputField();

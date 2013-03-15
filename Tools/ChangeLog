@@ -1,3 +1,23 @@
+2013-03-14  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r145169): [Mac][WK2] http/tests/security/cross-frame-access-put.html fails.
+        <http://webkit.org/b/111815>
+        <rdar://problem/13380145>
+
+        Reviewed by Anders Carlsson.
+
+        Add PlatformWebView::didInitializeClients() and call it after setting up all the clients
+        after creating a PlatformWebView. Otherwise, the initial WindowAndViewFramesChanged message
+        will be sent before there's a UI client set up to adjust the frame with WTR's fake origin.
+
+        * WebKitTestRunner/PlatformWebView.h:
+        (PlatformWebView):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::createWebViewWithOptions):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::didInitializeClients):
+
 2013-03-14  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][MiniBrowser] Add a search field to the MiniBrowser

@@ -118,4 +118,8 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
     return 0;
 }
 
+void PlatformWebView::didInitializeClients()
+{
+}
+
 } // namespace WTR
