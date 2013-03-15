@@ -28,8 +28,12 @@
     ImplementationLacksVTable
 ] interface TypeConversions {
     attribute long testLong;
+    attribute [EnforceRange] long testEnforceRangeLong;
     attribute unsigned long testUnsignedLong;
+    attribute [EnforceRange] unsigned long testEnforceRangeUnsignedLong;
 
     attribute long long testLongLong;
+    attribute [EnforceRange] long long testEnforceRangeLongLong;
     attribute unsigned long long testUnsignedLongLong;
+    attribute [EnforceRange] unsigned long long testEnforceRangeUnsignedLongLong;
 };

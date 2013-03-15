@@ -152,7 +152,7 @@ PassRefPtr<IDBRequest> IDBCursor::update(ScriptState* state, ScriptValue& value,
     return objectStore->put(IDBDatabaseBackendInterface::CursorUpdate, IDBAny::create(this), state, value, m_currentPrimaryKey, ec);
 }
 
-void IDBCursor::advance(long long count, ExceptionCode& ec)
+void IDBCursor::advance(unsigned long count, ExceptionCode& ec)
 {
     ec = 0;
     IDB_TRACE("IDBCursor::advance");
@@ -166,8 +166,7 @@ void IDBCursor::advance(long long count, ExceptionCode& ec)
         return;
     }
 
-    // FIXME: This should only need to check for 0 once webkit.org/b/96798 lands.
-    if (count < 1 || count > UINT_MAX) {
+    if (!count) {
         ec = TypeError;
         return;
     }

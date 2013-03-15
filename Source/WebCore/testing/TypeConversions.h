@@ -36,25 +36,33 @@ class TypeConversions : public RefCounted<TypeConversions> {
 public:
     static PassRefPtr<TypeConversions> create() { return adoptRef(new TypeConversions()); }
 
-    long testLong() { return m_testLong; }
-    void setTestLong(long value) { m_testLong = value; }
-    unsigned long testUnsignedLong() { return m_testUnsignedLong; }
-    void setTestUnsignedLong(unsigned long value) { m_testUnsignedLong = value; }
+    long testLong() { return m_long; }
+    void setTestLong(long value) { m_long = value; }
+    long testEnforceRangeLong() { return m_long; }
+    void setTestEnforceRangeLong(long value) { m_long = value; }
+    unsigned long testUnsignedLong() { return m_unsignedLong; }
+    void setTestUnsignedLong(unsigned long value) { m_unsignedLong = value; }
+    unsigned long testEnforceRangeUnsignedLong() { return m_unsignedLong; }
+    void setTestEnforceRangeUnsignedLong(unsigned long value) { m_unsignedLong = value; }
 
-    long long testLongLong() { return m_testLongLong; }
-    void setTestLongLong(long long value) { m_testLongLong = value; }
-    unsigned long long testUnsignedLongLong() { return m_testUnsignedLongLong; }
-    void setTestUnsignedLongLong(unsigned long long value) { m_testUnsignedLongLong = value; }
+    long long testLongLong() { return m_longLong; }
+    void setTestLongLong(long long value) { m_longLong = value; }
+    long long testEnforceRangeLongLong() { return m_longLong; }
+    void setTestEnforceRangeLongLong(long long value) { m_longLong = value; }
+    unsigned long long testUnsignedLongLong() { return m_unsignedLongLong; }
+    void setTestUnsignedLongLong(unsigned long long value) { m_unsignedLongLong = value; }
+    unsigned long long testEnforceRangeUnsignedLongLong() { return m_unsignedLongLong; }
+    void setTestEnforceRangeUnsignedLongLong(unsigned long long value) { m_unsignedLongLong = value; }
 
 private:
     TypeConversions()
     {
     }
 
-    long m_testLong;
-    unsigned long m_testUnsignedLong;
-    long long m_testLongLong;
-    unsigned long long m_testUnsignedLongLong;
+    long m_long;
+    unsigned long m_unsignedLong;
+    long long m_longLong;
+    unsigned long long m_unsignedLongLong;
 };
 
 } // namespace WebCore

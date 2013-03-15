@@ -52,6 +52,7 @@ DoNotCheckConstants
 DoNotCheckSecurity
 DoNotCheckSecurityOnGetter
 DoNotCheckSecurityOnSetter
+EnforceRange
 EventTarget
 ExtendsDOMGlobalObject
 GenerateIsReachable=ImplDocument|ImplElementRoot|ImplOwnerNodeRoot

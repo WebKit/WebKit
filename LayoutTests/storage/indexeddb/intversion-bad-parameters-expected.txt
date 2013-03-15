@@ -18,6 +18,15 @@ PASS indexedDB.open(dbname, 0) threw TypeError: Type error
 Expecting TypeError exception from indexedDB.open(dbname, -5)
 PASS Exception was thrown.
 PASS indexedDB.open(dbname, -5) threw TypeError: Type error
+Expecting TypeError exception from indexedDB.open(dbname, Infinity)
+PASS Exception was thrown.
+PASS indexedDB.open(dbname, Infinity) threw TypeError: Type error
+Expecting TypeError exception from indexedDB.open(dbname, -Infinity)
+PASS Exception was thrown.
+PASS indexedDB.open(dbname, -Infinity) threw TypeError: Type error
+Expecting TypeError exception from indexedDB.open(dbname, NaN)
+PASS Exception was thrown.
+PASS indexedDB.open(dbname, NaN) threw TypeError: Type error
 Expecting TypeError exception from indexedDB.open(dbname, -1)
 PASS Exception was thrown.
 PASS indexedDB.open(dbname, -1) threw TypeError: Type error

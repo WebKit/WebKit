@@ -150,6 +150,19 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
     static void    staticMethodWithCallbackArg(in [Callback] TestCallback callback);
 #endif
 
+#if defined(TESTING_V8)
+    // 'EnforceRange' extended attribute
+    void    methodWithEnforceRangeInt32(in [EnforceRange] long value);
+    void    methodWithEnforceRangeUInt32(in [EnforceRange] unsigned long value);
+    void    methodWithEnforceRangeInt64(in [EnforceRange] long long value);
+    void    methodWithEnforceRangeUInt64(in [EnforceRange] unsigned long long value);
+
+    attribute [EnforceRange] long enforcedRangeLongAttr;
+    attribute [EnforceRange] unsigned long enforcedRangeUnsignedLongAttr;
+    attribute [EnforceRange] long long enforcedRangeLongLongAttr;
+    attribute [EnforceRange] unsigned long long enforcedRangeUnsignedLongLongAttr;
+#endif
+
     // 'Conditional' extended attribute
     [Conditional=Condition1] attribute long conditionalAttr1;
     [Conditional=Condition1&Condition2] attribute long conditionalAttr2;

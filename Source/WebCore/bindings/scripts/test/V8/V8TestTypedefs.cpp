@@ -94,7 +94,7 @@ static v8::Handle<v8::Value> unsignedLongLongAttrAttrGetterCallback(v8::Local<v8
 static void unsignedLongLongAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestTypedefs* imp = V8TestTypedefs::toNative(info.Holder());
-    unsigned long long v = toInt64(value);
+    unsigned long long v = toUInt64(value);
     imp->setUnsignedLongLongAttr(v);
     return;
 }

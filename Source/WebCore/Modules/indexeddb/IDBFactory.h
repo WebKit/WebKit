@@ -57,7 +57,7 @@ public:
     PassRefPtr<IDBRequest> getDatabaseNames(ScriptExecutionContext*, ExceptionCode&);
 
     PassRefPtr<IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, ExceptionCode&);
-    PassRefPtr<IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, int64_t version, ExceptionCode&);
+    PassRefPtr<IDBOpenDBRequest> open(ScriptExecutionContext*, const String& name, unsigned long long version, ExceptionCode&);
     PassRefPtr<IDBOpenDBRequest> deleteDatabase(ScriptExecutionContext*, const String& name, ExceptionCode&);
 
     short cmp(ScriptExecutionContext*, const ScriptValue& first, const ScriptValue& second, ExceptionCode&);

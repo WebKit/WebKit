@@ -109,25 +109,25 @@ converter.testEnforceRangeLong = -0x8001
 PASS converter.testEnforceRangeLong is -0x8001
 converter.testEnforceRangeLong = 0x7FFFFFFF
 PASS converter.testEnforceRangeLong is 0x7FFFFFFF
-FAIL converter.testEnforceRangeLong = 0x80000000 should throw an exception. Was 2147483648.
-FAIL converter.testEnforceRangeLong = 0xFFFFFFFF should throw an exception. Was 4294967295.
+PASS converter.testEnforceRangeLong = 0x80000000 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeLong = 0xFFFFFFFF threw exception TypeError: Type error.
 converter.testEnforceRangeLong = -0x80000000
 PASS converter.testEnforceRangeLong is -0x80000000
-FAIL converter.testEnforceRangeLong = -0x80000001 should throw an exception. Was -2147483649.
-FAIL converter.testEnforceRangeLong = 0xDCBA9876543210 should throw an exception. Was 62129658859368980.
-FAIL converter.testEnforceRangeLong = Number.MAX_VALUE should throw an exception. Was 1.7976931348623157e+308.
+PASS converter.testEnforceRangeLong = -0x80000001 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeLong = 0xDCBA9876543210 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeLong = Number.MAX_VALUE threw exception TypeError: Type error.
 converter.testEnforceRangeLong = Number.MIN_VALUE
 PASS converter.testEnforceRangeLong is 0
-FAIL converter.testEnforceRangeLong = -Number.MAX_VALUE should throw an exception. Was -1.7976931348623157e+308.
+PASS converter.testEnforceRangeLong = -Number.MAX_VALUE threw exception TypeError: Type error.
 converter.testEnforceRangeLong = -Number.MIN_VALUE
 PASS converter.testEnforceRangeLong is 0
 converter.testEnforceRangeLong = 1.99
 PASS converter.testEnforceRangeLong is 1
 converter.testEnforceRangeLong = -1.99
 PASS converter.testEnforceRangeLong is -1
-FAIL converter.testEnforceRangeLong = Infinity should throw an exception. Was Infinity.
-FAIL converter.testEnforceRangeLong = -Infinity should throw an exception. Was -Infinity.
-FAIL converter.testEnforceRangeLong = NaN should throw an exception. Was NaN.
+PASS converter.testEnforceRangeLong = Infinity threw exception TypeError: Type error.
+PASS converter.testEnforceRangeLong = -Infinity threw exception TypeError: Type error.
+PASS converter.testEnforceRangeLong = NaN threw exception TypeError: Type error.
 converter.testEnforceRangeLong = false
 PASS converter.testEnforceRangeLong is 0
 converter.testEnforceRangeLong = true
@@ -136,10 +136,10 @@ converter.testEnforceRangeLong = ''
 PASS converter.testEnforceRangeLong is 0
 converter.testEnforceRangeLong = '1'
 PASS converter.testEnforceRangeLong is 1
-FAIL converter.testEnforceRangeLong = 'abc' should throw an exception. Was abc.
+PASS converter.testEnforceRangeLong = 'abc' threw exception TypeError: Type error.
 converter.testEnforceRangeLong = null
 PASS converter.testEnforceRangeLong is 0
-FAIL converter.testEnforceRangeLong = undefined should throw an exception. Was undefined.
+PASS converter.testEnforceRangeLong = undefined threw exception TypeError: Type error.
 PASS converter.testEnforceRangeLong = {valueOf:function(){throw new Error('custom');}} threw exception Error: custom.
 
 PASS 'testUnsignedLong' in converter is true
@@ -220,7 +220,7 @@ PASS 'testEnforceRangeUnsignedLong' in converter is true
 PASS typeof converter.testEnforceRangeUnsignedLong === 'number' is true
 converter.testEnforceRangeUnsignedLong = 0
 PASS converter.testEnforceRangeUnsignedLong is 0
-FAIL converter.testEnforceRangeUnsignedLong = -1 should throw an exception. Was -1.
+PASS converter.testEnforceRangeUnsignedLong = -1 threw exception TypeError: Type error.
 converter.testEnforceRangeUnsignedLong = 1
 PASS converter.testEnforceRangeUnsignedLong is 1
 converter.testEnforceRangeUnsignedLong = 0x7F
@@ -229,37 +229,37 @@ converter.testEnforceRangeUnsignedLong = 0x80
 PASS converter.testEnforceRangeUnsignedLong is 0x80
 converter.testEnforceRangeUnsignedLong = 0xFF
 PASS converter.testEnforceRangeUnsignedLong is 0xFF
-FAIL converter.testEnforceRangeUnsignedLong = -0x80 should throw an exception. Was -128.
-FAIL converter.testEnforceRangeUnsignedLong = -0x81 should throw an exception. Was -129.
+PASS converter.testEnforceRangeUnsignedLong = -0x80 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLong = -0x81 threw exception TypeError: Type error.
 converter.testEnforceRangeUnsignedLong = 0x7FFF
 PASS converter.testEnforceRangeUnsignedLong is 0x7FFF
 converter.testEnforceRangeUnsignedLong = 0x8000
 PASS converter.testEnforceRangeUnsignedLong is 0x8000
 converter.testEnforceRangeUnsignedLong = 0xFFFF
 PASS converter.testEnforceRangeUnsignedLong is 0xFFFF
-FAIL converter.testEnforceRangeUnsignedLong = -0x8000 should throw an exception. Was -32768.
-FAIL converter.testEnforceRangeUnsignedLong = -0x8001 should throw an exception. Was -32769.
+PASS converter.testEnforceRangeUnsignedLong = -0x8000 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLong = -0x8001 threw exception TypeError: Type error.
 converter.testEnforceRangeUnsignedLong = 0x7FFFFFFF
 PASS converter.testEnforceRangeUnsignedLong is 0x7FFFFFFF
 converter.testEnforceRangeUnsignedLong = 0x80000000
 PASS converter.testEnforceRangeUnsignedLong is 0x80000000
 converter.testEnforceRangeUnsignedLong = 0xFFFFFFFF
 PASS converter.testEnforceRangeUnsignedLong is 0xFFFFFFFF
-FAIL converter.testEnforceRangeUnsignedLong = -0x80000000 should throw an exception. Was -2147483648.
-FAIL converter.testEnforceRangeUnsignedLong = -0x80000001 should throw an exception. Was -2147483649.
-FAIL converter.testEnforceRangeUnsignedLong = 0xDCBA9876543210 should throw an exception. Was 62129658859368980.
-FAIL converter.testEnforceRangeUnsignedLong = Number.MAX_VALUE should throw an exception. Was 1.7976931348623157e+308.
+PASS converter.testEnforceRangeUnsignedLong = -0x80000000 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLong = -0x80000001 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLong = 0xDCBA9876543210 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLong = Number.MAX_VALUE threw exception TypeError: Type error.
 converter.testEnforceRangeUnsignedLong = Number.MIN_VALUE
 PASS converter.testEnforceRangeUnsignedLong is 0
-FAIL converter.testEnforceRangeUnsignedLong = -Number.MAX_VALUE should throw an exception. Was -1.7976931348623157e+308.
+PASS converter.testEnforceRangeUnsignedLong = -Number.MAX_VALUE threw exception TypeError: Type error.
 converter.testEnforceRangeUnsignedLong = -Number.MIN_VALUE
 PASS converter.testEnforceRangeUnsignedLong is 0
 converter.testEnforceRangeUnsignedLong = 1.99
 PASS converter.testEnforceRangeUnsignedLong is 1
-FAIL converter.testEnforceRangeUnsignedLong = -1.99 should throw an exception. Was -1.99.
-FAIL converter.testEnforceRangeUnsignedLong = Infinity should throw an exception. Was Infinity.
-FAIL converter.testEnforceRangeUnsignedLong = -Infinity should throw an exception. Was -Infinity.
-FAIL converter.testEnforceRangeUnsignedLong = NaN should throw an exception. Was NaN.
+PASS converter.testEnforceRangeUnsignedLong = -1.99 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLong = Infinity threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLong = -Infinity threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLong = NaN threw exception TypeError: Type error.
 converter.testEnforceRangeUnsignedLong = false
 PASS converter.testEnforceRangeUnsignedLong is 0
 converter.testEnforceRangeUnsignedLong = true
@@ -268,10 +268,10 @@ converter.testEnforceRangeUnsignedLong = ''
 PASS converter.testEnforceRangeUnsignedLong is 0
 converter.testEnforceRangeUnsignedLong = '1'
 PASS converter.testEnforceRangeUnsignedLong is 1
-FAIL converter.testEnforceRangeUnsignedLong = 'abc' should throw an exception. Was abc.
+PASS converter.testEnforceRangeUnsignedLong = 'abc' threw exception TypeError: Type error.
 converter.testEnforceRangeUnsignedLong = null
 PASS converter.testEnforceRangeUnsignedLong is 0
-FAIL converter.testEnforceRangeUnsignedLong = undefined should throw an exception. Was undefined.
+PASS converter.testEnforceRangeUnsignedLong = undefined threw exception TypeError: Type error.
 PASS converter.testEnforceRangeUnsignedLong = {valueOf:function(){throw new Error('custom');}} threw exception Error: custom.
 
 PASS 'testLongLong' in converter is true
@@ -319,17 +319,17 @@ PASS converter.testLongLong is 0
 converter.testLongLong = -Number.MIN_VALUE
 PASS converter.testLongLong is 0
 converter.testLongLong = Number.MAX_VALUE
-FAIL converter.testLongLong should be 0. Was -9223372036854776000.
+PASS converter.testLongLong is 0
 converter.testLongLong = -Number.MAX_VALUE
-FAIL converter.testLongLong should be 0. Was -9223372036854776000.
+PASS converter.testLongLong is 0
 converter.testLongLong = 1.99
 PASS converter.testLongLong is 1
 converter.testLongLong = -1.99
 PASS converter.testLongLong is -1
 converter.testLongLong = Infinity
-FAIL converter.testLongLong should be 0. Was -9223372036854776000.
+PASS converter.testLongLong is 0
 converter.testLongLong = -Infinity
-FAIL converter.testLongLong should be 0. Was -9223372036854776000.
+PASS converter.testLongLong is 0
 converter.testLongLong = NaN
 PASS converter.testLongLong is 0
 converter.testLongLong = false
@@ -386,20 +386,20 @@ converter.testEnforceRangeLongLong = -0x80000000
 PASS converter.testEnforceRangeLongLong is -0x80000000
 converter.testEnforceRangeLongLong = -0x80000001
 PASS converter.testEnforceRangeLongLong is -0x80000001
-FAIL converter.testEnforceRangeLongLong = 0xDCBA9876543210 should throw an exception. Was 62129658859368980.
+PASS converter.testEnforceRangeLongLong = 0xDCBA9876543210 threw exception TypeError: Type error.
 converter.testEnforceRangeLongLong = Number.MIN_VALUE
 PASS converter.testEnforceRangeLongLong is 0
 converter.testEnforceRangeLongLong = -Number.MIN_VALUE
 PASS converter.testEnforceRangeLongLong is 0
-FAIL converter.testEnforceRangeLongLong = Number.MAX_VALUE should throw an exception. Was 1.7976931348623157e+308.
-FAIL converter.testEnforceRangeLongLong = -Number.MAX_VALUE should throw an exception. Was -1.7976931348623157e+308.
+PASS converter.testEnforceRangeLongLong = Number.MAX_VALUE threw exception TypeError: Type error.
+PASS converter.testEnforceRangeLongLong = -Number.MAX_VALUE threw exception TypeError: Type error.
 converter.testEnforceRangeLongLong = 1.99
 PASS converter.testEnforceRangeLongLong is 1
 converter.testEnforceRangeLongLong = -1.99
 PASS converter.testEnforceRangeLongLong is -1
-FAIL converter.testEnforceRangeLongLong = Infinity should throw an exception. Was Infinity.
-FAIL converter.testEnforceRangeLongLong = -Infinity should throw an exception. Was -Infinity.
-FAIL converter.testEnforceRangeLongLong = NaN should throw an exception. Was NaN.
+PASS converter.testEnforceRangeLongLong = Infinity threw exception TypeError: Type error.
+PASS converter.testEnforceRangeLongLong = -Infinity threw exception TypeError: Type error.
+PASS converter.testEnforceRangeLongLong = NaN threw exception TypeError: Type error.
 converter.testEnforceRangeLongLong = false
 PASS converter.testEnforceRangeLongLong is 0
 converter.testEnforceRangeLongLong = true
@@ -408,10 +408,10 @@ converter.testEnforceRangeLongLong = ''
 PASS converter.testEnforceRangeLongLong is 0
 converter.testEnforceRangeLongLong = '1'
 PASS converter.testEnforceRangeLongLong is 1
-FAIL converter.testEnforceRangeLongLong = 'abc' should throw an exception. Was abc.
+PASS converter.testEnforceRangeLongLong = 'abc' threw exception TypeError: Type error.
 converter.testEnforceRangeLongLong = null
 PASS converter.testEnforceRangeLongLong is 0
-FAIL converter.testEnforceRangeLongLong = undefined should throw an exception. Was undefined.
+PASS converter.testEnforceRangeLongLong = undefined threw exception TypeError: Type error.
 PASS converter.testEnforceRangeLongLong = {valueOf:function(){throw new Error('custom');}} threw exception Error: custom.
 
 PASS 'testUnsignedLongLong' in converter is true
@@ -461,7 +461,7 @@ PASS converter.testUnsignedLongLong is 0
 converter.testUnsignedLongLong = Number.MAX_VALUE
 PASS converter.testUnsignedLongLong is 0
 converter.testUnsignedLongLong = -Number.MAX_VALUE
-FAIL converter.testUnsignedLongLong should be 0. Was 9223372036854776000.
+PASS converter.testUnsignedLongLong is 0
 converter.testUnsignedLongLong = 1.99
 PASS converter.testUnsignedLongLong is 1
 converter.testUnsignedLongLong = -1.99
@@ -469,7 +469,7 @@ PASS converter.testUnsignedLongLong is 0xFFFFFFFFFFFFFFFF
 converter.testUnsignedLongLong = Infinity
 PASS converter.testUnsignedLongLong is 0
 converter.testUnsignedLongLong = -Infinity
-FAIL converter.testUnsignedLongLong should be 0. Was 9223372036854776000.
+PASS converter.testUnsignedLongLong is 0
 converter.testUnsignedLongLong = NaN
 PASS converter.testUnsignedLongLong is 0
 converter.testUnsignedLongLong = false
@@ -492,7 +492,7 @@ PASS 'testEnforceRangeUnsignedLongLong' in converter is true
 PASS typeof converter.testEnforceRangeUnsignedLongLong === 'number' is true
 converter.testEnforceRangeUnsignedLongLong = 0
 PASS converter.testEnforceRangeUnsignedLongLong is 0
-FAIL converter.testEnforceRangeUnsignedLongLong = -1 should throw an exception. Was -1.
+PASS converter.testEnforceRangeUnsignedLongLong = -1 threw exception TypeError: Type error.
 converter.testEnforceRangeUnsignedLongLong = 1
 PASS converter.testEnforceRangeUnsignedLongLong is 1
 converter.testEnforceRangeUnsignedLongLong = 0x7F
@@ -501,37 +501,37 @@ converter.testEnforceRangeUnsignedLongLong = 0x80
 PASS converter.testEnforceRangeUnsignedLongLong is 0x80
 converter.testEnforceRangeUnsignedLongLong = 0xFF
 PASS converter.testEnforceRangeUnsignedLongLong is 0xFF
-FAIL converter.testEnforceRangeUnsignedLongLong = -0x80 should throw an exception. Was -128.
-FAIL converter.testEnforceRangeUnsignedLongLong = -0x81 should throw an exception. Was -129.
+PASS converter.testEnforceRangeUnsignedLongLong = -0x80 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLongLong = -0x81 threw exception TypeError: Type error.
 converter.testEnforceRangeUnsignedLongLong = 0x7FFF
 PASS converter.testEnforceRangeUnsignedLongLong is 0x7FFF
 converter.testEnforceRangeUnsignedLongLong = 0x8000
 PASS converter.testEnforceRangeUnsignedLongLong is 0x8000
 converter.testEnforceRangeUnsignedLongLong = 0xFFFF
 PASS converter.testEnforceRangeUnsignedLongLong is 0xFFFF
-FAIL converter.testEnforceRangeUnsignedLongLong = -0x8000 should throw an exception. Was -32768.
-FAIL converter.testEnforceRangeUnsignedLongLong = -0x8001 should throw an exception. Was -32769.
+PASS converter.testEnforceRangeUnsignedLongLong = -0x8000 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLongLong = -0x8001 threw exception TypeError: Type error.
 converter.testEnforceRangeUnsignedLongLong = 0x7FFFFFFF
 PASS converter.testEnforceRangeUnsignedLongLong is 0x7FFFFFFF
 converter.testEnforceRangeUnsignedLongLong = 0x80000000
 PASS converter.testEnforceRangeUnsignedLongLong is 0x80000000
 converter.testEnforceRangeUnsignedLongLong = 0xFFFFFFFF
 PASS converter.testEnforceRangeUnsignedLongLong is 0xFFFFFFFF
-FAIL converter.testEnforceRangeUnsignedLongLong = -0x80000000 should throw an exception. Was -2147483648.
-FAIL converter.testEnforceRangeUnsignedLongLong = -0x80000001 should throw an exception. Was -2147483649.
-FAIL converter.testEnforceRangeUnsignedLongLong = 0xDCBA9876543210 should throw an exception. Was 62129658859368980.
+PASS converter.testEnforceRangeUnsignedLongLong = -0x80000000 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLongLong = -0x80000001 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLongLong = 0xDCBA9876543210 threw exception TypeError: Type error.
 converter.testEnforceRangeUnsignedLongLong = Number.MIN_VALUE
 PASS converter.testEnforceRangeUnsignedLongLong is 0
 converter.testEnforceRangeUnsignedLongLong = -Number.MIN_VALUE
 PASS converter.testEnforceRangeUnsignedLongLong is 0
-FAIL converter.testEnforceRangeUnsignedLongLong = Number.MAX_VALUE should throw an exception. Was 1.7976931348623157e+308.
-FAIL converter.testEnforceRangeUnsignedLongLong = -Number.MAX_VALUE should throw an exception. Was -1.7976931348623157e+308.
+PASS converter.testEnforceRangeUnsignedLongLong = Number.MAX_VALUE threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLongLong = -Number.MAX_VALUE threw exception TypeError: Type error.
 converter.testEnforceRangeUnsignedLongLong = 1.99
 PASS converter.testEnforceRangeUnsignedLongLong is 1
-FAIL converter.testEnforceRangeUnsignedLongLong = -1.99 should throw an exception. Was -1.99.
-FAIL converter.testEnforceRangeUnsignedLongLong = Infinity should throw an exception. Was Infinity.
-FAIL converter.testEnforceRangeUnsignedLongLong = -Infinity should throw an exception. Was -Infinity.
-FAIL converter.testEnforceRangeUnsignedLongLong = NaN should throw an exception. Was NaN.
+PASS converter.testEnforceRangeUnsignedLongLong = -1.99 threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLongLong = Infinity threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLongLong = -Infinity threw exception TypeError: Type error.
+PASS converter.testEnforceRangeUnsignedLongLong = NaN threw exception TypeError: Type error.
 converter.testEnforceRangeUnsignedLongLong = false
 PASS converter.testEnforceRangeUnsignedLongLong is 0
 converter.testEnforceRangeUnsignedLongLong = true
@@ -540,10 +540,10 @@ converter.testEnforceRangeUnsignedLongLong = ''
 PASS converter.testEnforceRangeUnsignedLongLong is 0
 converter.testEnforceRangeUnsignedLongLong = '1'
 PASS converter.testEnforceRangeUnsignedLongLong is 1
-FAIL converter.testEnforceRangeUnsignedLongLong = 'abc' should throw an exception. Was abc.
+PASS converter.testEnforceRangeUnsignedLongLong = 'abc' threw exception TypeError: Type error.
 converter.testEnforceRangeUnsignedLongLong = null
 PASS converter.testEnforceRangeUnsignedLongLong is 0
-FAIL converter.testEnforceRangeUnsignedLongLong = undefined should throw an exception. Was undefined.
+PASS converter.testEnforceRangeUnsignedLongLong = undefined threw exception TypeError: Type error.
 PASS converter.testEnforceRangeUnsignedLongLong = {valueOf:function(){throw new Error('custom');}} threw exception Error: custom.
 
 PASS successfullyParsed is true

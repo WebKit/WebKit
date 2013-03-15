@@ -31,8 +31,7 @@
     [CallWith=ScriptExecutionContext, ImplementedAs=getDatabaseNames] IDBRequest webkitGetDatabaseNames()
         raises (DOMException);
 
-    // FIXME: Make this [EnforceRange] unsigned long long once webkit.org/b/96798 lands.
-    [CallWith=ScriptExecutionContext] IDBOpenDBRequest open(in DOMString name, in [Optional] long long version)
+    [CallWith=ScriptExecutionContext] IDBOpenDBRequest open(in DOMString name, in [EnforceRange, Optional] unsigned long long version)
         raises (DOMException);
     [CallWith=ScriptExecutionContext] IDBOpenDBRequest deleteDatabase(in DOMString name)
         raises (DOMException);

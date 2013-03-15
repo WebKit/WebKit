@@ -1329,6 +1329,8 @@ END
             push(@implContentInternals, "    " . ConvertToV8StringResource($attribute->signature, $nativeType, "v", $value, "VOID") . "\n");
         } elsif ($arrayType) {
             push(@implContentInternals, "    Vector<$arrayType> v = $value;\n");
+        } elsif ($attribute->signature->extendedAttributes->{"EnforceRange"}) {
+            push(@implContentInternals, "    V8TRYCATCH_WITH_TYPECHECK_VOID($nativeType, v, $value, info.GetIsolate());\n");
         } else {
             push(@implContentInternals, "    $nativeType v = $value;\n");
         }
@@ -1908,8 +1910,12 @@ sub GenerateParametersCheck
                     $parameterCheckString .= "        return throwTypeError(0, args.GetIsolate());\n";
                 }
             }
-            $parameterCheckString .= "    V8TRYCATCH($nativeType, $parameterName, " .
-                 JSValueToNative($parameter, $optional && $optional eq "DefaultIsNullString" ? "argumentOrNull(args, $paramIndex)" : "args[$paramIndex]", "args.GetIsolate()") . ");\n";
+            my $value = JSValueToNative($parameter, $optional && $optional eq "DefaultIsNullString" ? "argumentOrNull(args, $paramIndex)" : "args[$paramIndex]", "args.GetIsolate()");
+            if ($parameter->extendedAttributes->{"EnforceRange"}) {
+                $parameterCheckString .= "    V8TRYCATCH_WITH_TYPECHECK($nativeType, $parameterName, $value, args.GetIsolate());\n";
+            } else {
+                $parameterCheckString .= "    V8TRYCATCH($nativeType, $parameterName, $value);\n";
+            }
             if ($nativeType eq 'Dictionary') {
                $parameterCheckString .= "    if (!$parameterName.isUndefinedOrNull() && !$parameterName.isObject())\n";
                $parameterCheckString .= "        return throwTypeError(\"Not an object.\", args.GetIsolate());\n";
@@ -4002,14 +4008,23 @@ sub JSValueToNative
     my $getIsolate = shift;
 
     my $type = $signature->type;
+    my $intConversion = $signature->extendedAttributes->{"EnforceRange"} ? "EnforceRange" : "NormalConversion";
 
     return "$value" if $type eq "JSObject";
     return "$value->BooleanValue()" if $type eq "boolean";
     return "static_cast<$type>($value->NumberValue())" if $type eq "float" or $type eq "double";
 
-    return "toInt32($value)" if $type eq "long" or $type eq "short";
-    return "toUInt32($value)" if $type eq "unsigned long" or $type eq "unsigned short";
-    return "toInt64($value)" if $type eq "unsigned long long" or $type eq "long long";
+    if ($intConversion ne "NormalConversion") {
+        return "toInt32($value, $intConversion, ok)" if $type eq "long" or $type eq "short";
+        return "toUInt32($value, $intConversion, ok)" if $type eq "unsigned long" or $type eq "unsigned short";
+        return "toInt64($value, $intConversion, ok)" if $type eq "long long";
+        return "toUInt64($value, $intConversion, ok)" if $type eq "unsigned long long";
+    } else {
+        return "toInt32($value)" if $type eq "long" or $type eq "short";
+        return "toUInt32($value)" if $type eq "unsigned long" or $type eq "unsigned short";
+        return "toInt64($value)" if $type eq "long long";
+        return "toUInt64($value)" if $type eq "unsigned long long";
+    }
     return "static_cast<Range::CompareHow>($value->Int32Value())" if $type eq "CompareHow";
     return "toWebCoreDate($value)" if $type eq "Date";
     return "toDOMStringList($value, $getIsolate)" if $type eq "DOMStringList";

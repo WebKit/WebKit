@@ -111,11 +111,9 @@ PassRefPtr<IDBRequest> IDBFactory::getDatabaseNames(ScriptExecutionContext* cont
     return request;
 }
 
-PassRefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, const String& name, int64_t version, ExceptionCode& ec)
+PassRefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, const String& name, unsigned long long version, ExceptionCode& ec)
 {
-    // FIXME: This should only need to check for 0 once webkit.org/b/96798 lands.
-    const int64_t maxECMAScriptInteger = 0x20000000000000LL - 1;
-    if (version < 1 || version > maxECMAScriptInteger) {
+    if (!version) {
         ec = TypeError;
         return 0;
     }

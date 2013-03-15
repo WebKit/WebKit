@@ -20,6 +20,9 @@ function deleteSuccess(evt) {
     evalAndExpectExceptionClass("indexedDB.open(dbname, 'stringversion')", "TypeError");
     evalAndExpectExceptionClass("indexedDB.open(dbname, 0)", "TypeError");
     evalAndExpectExceptionClass("indexedDB.open(dbname, -5)", "TypeError");
+    evalAndExpectExceptionClass("indexedDB.open(dbname, Infinity)", "TypeError");
+    evalAndExpectExceptionClass("indexedDB.open(dbname, -Infinity)", "TypeError");
+    evalAndExpectExceptionClass("indexedDB.open(dbname, NaN)", "TypeError");
     evalAndExpectExceptionClass("indexedDB.open(dbname, -1)", "TypeError");
     evalAndExpectExceptionClass("indexedDB.open(dbname, 0x20000000000000)", "TypeError");
     evalAndExpectExceptionClass("indexedDB.open(dbname, null)", "TypeError");

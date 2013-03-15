@@ -64,7 +64,7 @@ function nonNumericPolicy(template)
     try {
         eval(template);
     } catch (e) {
-        NaNAllowed = 0;
+        nanAllowed = 0;
     }
 
     var omitAllowed = -1; // means "not applicable"
@@ -244,7 +244,7 @@ shouldBe("nonNumericPolicy('document.createElement(\"input\").setSelectionRange(
 
 // HTMLOptionsCollection
 
-shouldBe("nonNumericPolicy('createHTMLOptionsCollection().add(document.createElement(\"option\"), x)')", "'number or null allowed (or omitted, but not infinite)'");
+shouldBe("nonNumericPolicy('createHTMLOptionsCollection().add(document.createElement(\"option\"), x)')", "'any type allowed'");
 shouldBe("nonNumericPolicy('createHTMLOptionsCollection().remove(x)')", "'any type allowed'");
 
 // HTMLSelectElement

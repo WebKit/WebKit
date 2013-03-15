@@ -103,40 +103,49 @@ PassRefPtr<NodeFilter> toNodeFilter(v8::Handle<v8::Value> callback)
     return NodeFilter::create(V8NodeFilterCondition::create(callback));
 }
 
-int toInt32(v8::Handle<v8::Value> value, bool& ok)
+const int32_t kMinInt32 = -0x80000000;
+const int32_t kMaxInt32 = 0x7fffffff;
+const uint32_t kMaxUInt32 = 0xffffffff;
+const int64_t kJSMaxInteger = 0x20000000000000LL - 1; // 2^53 - 1, maximum integer exactly representable in ECMAScript.
+
+int32_t toInt32(v8::Handle<v8::Value> value, IntegerConversionConfiguration configuration, bool& ok)
 {
     ok = true;
-    
+
     // Fast case. The value is already a 32-bit integer.
     if (value->IsInt32())
         return value->Int32Value();
-    
+
     // Can the value be converted to a number?
     v8::Local<v8::Number> numberObject = value->ToNumber();
     if (numberObject.IsEmpty()) {
         ok = false;
         return 0;
     }
-    
+
+    if (configuration == EnforceRange) {
+        double x = numberObject->Value();
+        if (std::isnan(x) || std::isinf(x)) {
+            ok = false;
+            return 0;
+        }
+        x = (x < 0 ? -1 : 1) * floor(fabs(x));
+        if (x < kMinInt32 || x > kMaxInt32) {
+            ok = false;
+            return 0;
+        }
+
+        return x;
+    }
+
     // Does the value convert to nan or to an infinity?
     double numberValue = numberObject->Value();
-    if (std::isnan(numberValue) || std::isinf(numberValue)) {
-        ok = false;
+    if (std::isnan(numberValue) || std::isinf(numberValue))
         return 0;
-    }
-    
-    // Can the value be converted to a 32-bit integer?
-    v8::Local<v8::Int32> intValue = value->ToInt32();
-    if (intValue.IsEmpty()) {
-        ok = false;
-        return 0;
-    }
-    
-    // Return the result of the int32 conversion.
-    return intValue->Value();
+    return numberObject->Int32Value();
 }
-    
-uint32_t toUInt32(v8::Handle<v8::Value> value, bool& ok)
+
+uint32_t toUInt32(v8::Handle<v8::Value> value, IntegerConversionConfiguration configuration, bool& ok)
 {
     ok = true;
 
@@ -144,10 +153,16 @@ uint32_t toUInt32(v8::Handle<v8::Value> value, bool& ok)
     if (value->IsUint32())
         return value->Uint32Value();
 
+    // Fast case. The value is a 32-bit signed integer - possibly positive?
     if (value->IsInt32()) {
         int32_t result = value->Int32Value();
         if (result >= 0)
             return result;
+        if (configuration == EnforceRange) {
+            ok = false;
+            return 0;
+        }
+        return result;
     }
 
     // Can the value be converted to a number?
@@ -157,21 +172,110 @@ uint32_t toUInt32(v8::Handle<v8::Value> value, bool& ok)
         return 0;
     }
 
+    if (configuration == EnforceRange) {
+        double x = numberObject->Value();
+        if (std::isnan(x) || std::isinf(x)) {
+            ok = false;
+            return 0;
+        }
+        x = (x < 0 ? -1 : 1) * floor(fabs(x));
+        if (x < 0 || x > kMaxUInt32) {
+            ok = false;
+            return 0;
+        }
+
+        return x;
+    }
+
     // Does the value convert to nan or to an infinity?
     double numberValue = numberObject->Value();
-    if (std::isnan(numberValue) || std::isinf(numberValue)) {
+    if (std::isnan(numberValue) || std::isinf(numberValue))
+        return 0;
+    return numberObject->Uint32Value();
+}
+
+int64_t toInt64(v8::Handle<v8::Value> value, IntegerConversionConfiguration configuration, bool& ok)
+{
+    ok = true;
+
+    // Fast case. The value is a 32-bit integer.
+    if (value->IsInt32())
+        return value->Int32Value();
+
+    // Can the value be converted to a number?
+    v8::Local<v8::Number> numberObject = value->ToNumber();
+    if (numberObject.IsEmpty()) {
         ok = false;
         return 0;
     }
 
-    // Can the value be converted to a 32-bit unsigned integer?
-    v8::Local<v8::Uint32> uintValue = value->ToUint32();
-    if (uintValue.IsEmpty()) {
+    double x = numberObject->Value();
+
+    if (configuration == EnforceRange) {
+        if (std::isnan(x) || std::isinf(x)) {
+            ok = false;
+            return 0;
+        }
+        x = (x < 0 ? -1 : 1) * floor(fabs(x));
+        if (x < -kJSMaxInteger || x > kJSMaxInteger) {
+            ok = false;
+            return 0;
+        }
+        return x;
+    }
+
+    // NaNs and +/-Infinity should be 0, otherwise modulo 2^64.
+    unsigned long long integer;
+    doubleToInteger(x, integer);
+    return integer;
+}
+
+uint64_t toUInt64(v8::Handle<v8::Value> value, IntegerConversionConfiguration configuration, bool& ok)
+{
+    ok = true;
+
+    // Fast case. The value is a 32-bit unsigned integer.
+    if (value->IsUint32())
+        return value->Uint32Value();
+
+    // Fast case. The value is a 32-bit integer.
+    if (value->IsInt32()) {
+        int32_t result = value->Int32Value();
+        if (result >= 0)
+            return result;
+        if (configuration == EnforceRange) {
+            ok = false;
+            return 0;
+        }
+        return result;
+    }
+
+    // Can the value be converted to a number?
+    v8::Local<v8::Number> numberObject = value->ToNumber();
+    if (numberObject.IsEmpty()) {
         ok = false;
         return 0;
     }
 
-    return uintValue->Value();
+    double x = numberObject->Value();
+
+    if (configuration == EnforceRange) {
+        if (std::isnan(x) || std::isinf(x)) {
+            ok = false;
+            return 0;
+        }
+        x = (x < 0 ? -1 : 1) * floor(fabs(x));
+        if (x < 0 || x > kJSMaxInteger) {
+            ok = false;
+            return 0;
+        }
+        return x;
+    }
+
+    // NaNs and +/-Infinity should be 0, otherwise modulo 2^64.
+    unsigned long long integer;
+    doubleToInteger(x, integer);
+    return integer;
 }
 
 v8::Persistent<v8::FunctionTemplate> createRawTemplate(v8::Isolate* isolate)

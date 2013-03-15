@@ -35,8 +35,7 @@
 
     [CallWith=ScriptState] IDBRequest update(in any value)
         raises (DOMException);
-    // FIXME: Make this [EnforceRange] unsigned long once webkit.org/b/96798 lands.
-    void advance(in long long count)
+    void advance(in [EnforceRange] unsigned long count)
         raises (DOMException);
     [CallWith=ScriptExecutionContext, ImplementedAs=continueFunction] void continue(in [Optional] any key)
         raises (DOMException);

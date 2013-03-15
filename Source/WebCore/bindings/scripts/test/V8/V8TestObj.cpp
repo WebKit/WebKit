@@ -321,7 +321,7 @@ static v8::Handle<v8::Value> unsignedLongLongAttrAttrGetterCallback(v8::Local<v8
 static void unsignedLongLongAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    unsigned long long v = toInt64(value);
+    unsigned long long v = toUInt64(value);
     imp->setUnsignedLongLongAttr(v);
     return;
 }
@@ -1055,6 +1055,102 @@ static void withScriptArgumentsAndCallStackAttributeAttrSetter(v8::Local<v8::Str
 static void withScriptArgumentsAndCallStackAttributeAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObjV8Internal::withScriptArgumentsAndCallStackAttributeAttrSetter(name, value, info);
+}
+
+static v8::Handle<v8::Value> enforcedRangeLongAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8Integer(imp->enforcedRangeLongAttr(), info.GetIsolate());
+}
+
+static v8::Handle<v8::Value> enforcedRangeLongAttrAttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    return TestObjV8Internal::enforcedRangeLongAttrAttrGetter(name, info);
+}
+
+static void enforcedRangeLongAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    V8TRYCATCH_WITH_TYPECHECK_VOID(int, v, toInt32(value, EnforceRange, ok), info.GetIsolate());
+    imp->setEnforcedRangeLongAttr(v);
+    return;
+}
+
+static void enforcedRangeLongAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::enforcedRangeLongAttrAttrSetter(name, value, info);
+}
+
+static v8::Handle<v8::Value> enforcedRangeUnsignedLongAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8UnsignedInteger(imp->enforcedRangeUnsignedLongAttr(), info.GetIsolate());
+}
+
+static v8::Handle<v8::Value> enforcedRangeUnsignedLongAttrAttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    return TestObjV8Internal::enforcedRangeUnsignedLongAttrAttrGetter(name, info);
+}
+
+static void enforcedRangeUnsignedLongAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    V8TRYCATCH_WITH_TYPECHECK_VOID(unsigned, v, toUInt32(value, EnforceRange, ok), info.GetIsolate());
+    imp->setEnforcedRangeUnsignedLongAttr(v);
+    return;
+}
+
+static void enforcedRangeUnsignedLongAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::enforcedRangeUnsignedLongAttrAttrSetter(name, value, info);
+}
+
+static v8::Handle<v8::Value> enforcedRangeLongLongAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8::Number::New(static_cast<double>(imp->enforcedRangeLongLongAttr()));
+}
+
+static v8::Handle<v8::Value> enforcedRangeLongLongAttrAttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    return TestObjV8Internal::enforcedRangeLongLongAttrAttrGetter(name, info);
+}
+
+static void enforcedRangeLongLongAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    V8TRYCATCH_WITH_TYPECHECK_VOID(long long, v, toInt64(value, EnforceRange, ok), info.GetIsolate());
+    imp->setEnforcedRangeLongLongAttr(v);
+    return;
+}
+
+static void enforcedRangeLongLongAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::enforcedRangeLongLongAttrAttrSetter(name, value, info);
+}
+
+static v8::Handle<v8::Value> enforcedRangeUnsignedLongLongAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return v8::Number::New(static_cast<double>(imp->enforcedRangeUnsignedLongLongAttr()));
+}
+
+static v8::Handle<v8::Value> enforcedRangeUnsignedLongLongAttrAttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    return TestObjV8Internal::enforcedRangeUnsignedLongLongAttrAttrGetter(name, info);
+}
+
+static void enforcedRangeUnsignedLongLongAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    V8TRYCATCH_WITH_TYPECHECK_VOID(unsigned long long, v, toUInt64(value, EnforceRange, ok), info.GetIsolate());
+    imp->setEnforcedRangeUnsignedLongLongAttr(v);
+    return;
+}
+
+static void enforcedRangeUnsignedLongLongAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::enforcedRangeUnsignedLongLongAttrAttrSetter(name, value, info);
 }
 
 #if ENABLE(Condition1)
@@ -2296,6 +2392,66 @@ static v8::Handle<v8::Value> staticMethodWithCallbackArgMethodCallback(const v8:
     return TestObjV8Internal::staticMethodWithCallbackArgMethod(args);
 }
 
+static v8::Handle<v8::Value> methodWithEnforceRangeInt32Method(const v8::Arguments& args)
+{
+    if (args.Length() < 1)
+        return throwNotEnoughArgumentsError(args.GetIsolate());
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    V8TRYCATCH_WITH_TYPECHECK(int, value, toInt32(args[0], EnforceRange, ok), args.GetIsolate());
+    imp->methodWithEnforceRangeInt32(value);
+    return v8Undefined();
+}
+
+static v8::Handle<v8::Value> methodWithEnforceRangeInt32MethodCallback(const v8::Arguments& args)
+{
+    return TestObjV8Internal::methodWithEnforceRangeInt32Method(args);
+}
+
+static v8::Handle<v8::Value> methodWithEnforceRangeUInt32Method(const v8::Arguments& args)
+{
+    if (args.Length() < 1)
+        return throwNotEnoughArgumentsError(args.GetIsolate());
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    V8TRYCATCH_WITH_TYPECHECK(unsigned, value, toUInt32(args[0], EnforceRange, ok), args.GetIsolate());
+    imp->methodWithEnforceRangeUInt32(value);
+    return v8Undefined();
+}
+
+static v8::Handle<v8::Value> methodWithEnforceRangeUInt32MethodCallback(const v8::Arguments& args)
+{
+    return TestObjV8Internal::methodWithEnforceRangeUInt32Method(args);
+}
+
+static v8::Handle<v8::Value> methodWithEnforceRangeInt64Method(const v8::Arguments& args)
+{
+    if (args.Length() < 1)
+        return throwNotEnoughArgumentsError(args.GetIsolate());
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    V8TRYCATCH_WITH_TYPECHECK(long long, value, toInt64(args[0], EnforceRange, ok), args.GetIsolate());
+    imp->methodWithEnforceRangeInt64(value);
+    return v8Undefined();
+}
+
+static v8::Handle<v8::Value> methodWithEnforceRangeInt64MethodCallback(const v8::Arguments& args)
+{
+    return TestObjV8Internal::methodWithEnforceRangeInt64Method(args);
+}
+
+static v8::Handle<v8::Value> methodWithEnforceRangeUInt64Method(const v8::Arguments& args)
+{
+    if (args.Length() < 1)
+        return throwNotEnoughArgumentsError(args.GetIsolate());
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    V8TRYCATCH_WITH_TYPECHECK(unsigned long long, value, toUInt64(args[0], EnforceRange, ok), args.GetIsolate());
+    imp->methodWithEnforceRangeUInt64(value);
+    return v8Undefined();
+}
+
+static v8::Handle<v8::Value> methodWithEnforceRangeUInt64MethodCallback(const v8::Arguments& args)
+{
+    return TestObjV8Internal::methodWithEnforceRangeUInt64Method(args);
+}
+
 #if ENABLE(Condition1)
 
 static v8::Handle<v8::Value> conditionalMethod1Method(const v8::Arguments& args)
@@ -3001,6 +3157,14 @@ static const V8DOMConfiguration::BatchedAttribute V8TestObjAttrs[] = {
     {"withScriptExecutionContextAndScriptStateWithSpacesAttribute", TestObjV8Internal::withScriptExecutionContextAndScriptStateWithSpacesAttributeAttrGetterCallback, TestObjV8Internal::withScriptExecutionContextAndScriptStateWithSpacesAttributeAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'withScriptArgumentsAndCallStackAttribute' (Type: 'attribute' ExtAttr: 'CallWith')
     {"withScriptArgumentsAndCallStackAttribute", TestObjV8Internal::withScriptArgumentsAndCallStackAttributeAttrGetterCallback, TestObjV8Internal::withScriptArgumentsAndCallStackAttributeAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'enforcedRangeLongAttr' (Type: 'attribute' ExtAttr: 'EnforceRange')
+    {"enforcedRangeLongAttr", TestObjV8Internal::enforcedRangeLongAttrAttrGetterCallback, TestObjV8Internal::enforcedRangeLongAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'enforcedRangeUnsignedLongAttr' (Type: 'attribute' ExtAttr: 'EnforceRange')
+    {"enforcedRangeUnsignedLongAttr", TestObjV8Internal::enforcedRangeUnsignedLongAttrAttrGetterCallback, TestObjV8Internal::enforcedRangeUnsignedLongAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'enforcedRangeLongLongAttr' (Type: 'attribute' ExtAttr: 'EnforceRange')
+    {"enforcedRangeLongLongAttr", TestObjV8Internal::enforcedRangeLongLongAttrAttrGetterCallback, TestObjV8Internal::enforcedRangeLongLongAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'enforcedRangeUnsignedLongLongAttr' (Type: 'attribute' ExtAttr: 'EnforceRange')
+    {"enforcedRangeUnsignedLongLongAttr", TestObjV8Internal::enforcedRangeUnsignedLongLongAttrAttrGetterCallback, TestObjV8Internal::enforcedRangeUnsignedLongLongAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 #if ENABLE(Condition1)
     // Attribute 'conditionalAttr1' (Type: 'attribute' ExtAttr: 'Conditional')
     {"conditionalAttr1", TestObjV8Internal::conditionalAttr1AttrGetterCallback, TestObjV8Internal::conditionalAttr1AttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
@@ -3097,6 +3261,10 @@ static const V8DOMConfiguration::BatchedMethod V8TestObjMethods[] = {
     {"methodWithCallbackArg", TestObjV8Internal::methodWithCallbackArgMethodCallback},
     {"methodWithNonCallbackArgAndCallbackArg", TestObjV8Internal::methodWithNonCallbackArgAndCallbackArgMethodCallback},
     {"methodWithCallbackAndOptionalArg", TestObjV8Internal::methodWithCallbackAndOptionalArgMethodCallback},
+    {"methodWithEnforceRangeInt32", TestObjV8Internal::methodWithEnforceRangeInt32MethodCallback},
+    {"methodWithEnforceRangeUInt32", TestObjV8Internal::methodWithEnforceRangeUInt32MethodCallback},
+    {"methodWithEnforceRangeInt64", TestObjV8Internal::methodWithEnforceRangeInt64MethodCallback},
+    {"methodWithEnforceRangeUInt64", TestObjV8Internal::methodWithEnforceRangeUInt64MethodCallback},
 #if ENABLE(Condition1)
     {"conditionalMethod1", TestObjV8Internal::conditionalMethod1MethodCallback},
 #endif
