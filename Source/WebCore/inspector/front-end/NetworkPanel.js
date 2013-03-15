@@ -161,7 +161,7 @@ WebInspector.NetworkLogView.prototype = {
         columns.push({
             id: "name", 
             titleDOMFragment: this._makeHeaderFragment(WebInspector.UIString("Name"), WebInspector.UIString("Path")),
-            name: WebInspector.UIString("Name"),
+            title: WebInspector.UIString("Name"),
             sortable: true,
             weight: 20,
             disclosure: true
@@ -177,7 +177,7 @@ WebInspector.NetworkLogView.prototype = {
         columns.push({
             id: "status",
             titleDOMFragment: this._makeHeaderFragment(WebInspector.UIString("Status"), WebInspector.UIString("Text")),
-            name: WebInspector.UIString("Status"),
+            title: WebInspector.UIString("Status"),
             sortable: true,
             weight: 6
         });
@@ -222,7 +222,7 @@ WebInspector.NetworkLogView.prototype = {
         columns.push({
             id: "size",
             titleDOMFragment: this._makeHeaderFragment(WebInspector.UIString("Size"), WebInspector.UIString("Content")),
-            name: WebInspector.UIString("Size"),
+            title: WebInspector.UIString("Size"),
             sortable: true,
             weight: 6,
             aligned: "right"
@@ -231,7 +231,7 @@ WebInspector.NetworkLogView.prototype = {
         columns.push({
             id: "time",
             titleDOMFragment: this._makeHeaderFragment(WebInspector.UIString("Time"), WebInspector.UIString("Latency")),
-            name: WebInspector.UIString("Time"),
+            title: WebInspector.UIString("Time"),
             sortable: true,
             weight: 6,
             aligned: "right"
@@ -239,8 +239,8 @@ WebInspector.NetworkLogView.prototype = {
 
         columns.push({
             id: "timeline",
-            title: "",
-            name: WebInspector.UIString("Timeline"),
+            titleDOMFragment: document.createDocumentFragment(),
+            title: WebInspector.UIString("Timeline"),
             sortable: false,
             weight: 40,
             sort: "ascending"
@@ -1014,15 +1014,36 @@ WebInspector.NetworkLogView.prototype = {
         this._updateColumns();
     },
 
+    /**
+     * @return {!Array.<string>}
+     */
+    _getConfigurableColumnIDs: function()
+    {
+        if (this._configurableColumnIDs)
+            return this._configurableColumnIDs;
+
+        var columns = this._dataGrid.columns;
+        function compare(id1, id2)
+        {
+            return columns[id1].title.compareTo(columns[id2].title);
+        }
+
+        var columnIDs = Object.keys(this._coulmnsVisibilitySetting.get());
+        this._configurableColumnIDs = columnIDs.sort(compare);
+        return this._configurableColumnIDs;
+    },
+
     _contextMenu: function(event)
     {
         var contextMenu = new WebInspector.ContextMenu(event);
 
         if (this._detailedMode && event.target.isSelfOrDescendant(this._dataGrid.headerTableBody)) {
             var columnsVisibility = this._coulmnsVisibilitySetting.get();
-            for (var columnIdentifier in columnsVisibility) {
+            var columnIDs = this._getConfigurableColumnIDs();
+            for (var i = 0; i < columnIDs.length; ++i) {
+                var columnIdentifier = columnIDs[i];
                 var column = this._dataGrid.columns[columnIdentifier];
-                contextMenu.appendCheckboxItem(column.name || column.title, this._toggleColumnVisibility.bind(this, columnIdentifier), !!columnsVisibility[columnIdentifier]);
+                contextMenu.appendCheckboxItem(column.title, this._toggleColumnVisibility.bind(this, columnIdentifier), !!columnsVisibility[columnIdentifier]);
             }
             contextMenu.show();
             return;
