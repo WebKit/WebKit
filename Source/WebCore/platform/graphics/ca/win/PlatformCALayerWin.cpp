@@ -151,9 +151,9 @@ PlatformCALayer* PlatformCALayer::platformCALayer(void* platformLayer)
 
 PassRefPtr<PlatformCALayer> PlatformCALayer::clone(PlatformCALayerClient* owner) const
 {
-    PlatformCALayer::LayerType layerType = (layerType() == PlatformCALayer::LayerTypeTransformLayer) ?
+    PlatformCALayer::LayerType type = (layerType() == PlatformCALayer::LayerTypeTransformLayer) ?
         PlatformCALayer::LayerTypeTransformLayer : PlatformCALayer::LayerTypeLayer;
-    RefPtr<PlatformCALayer> newLayer = PlatformCALayer::create(layerType, owner);
+    RefPtr<PlatformCALayer> newLayer = PlatformCALayer::create(type, owner);
 
     newLayer->setPosition(position());
     newLayer->setBounds(bounds());
