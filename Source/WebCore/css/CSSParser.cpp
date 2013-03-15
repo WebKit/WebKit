@@ -9698,7 +9698,7 @@ inline bool CSSParser::isIdentifierStart()
 }
 
 template <typename CharacterType>
-inline CharacterType* CSSParser::checkAndSkipString(CharacterType* currentCharacter, int quote)
+static inline CharacterType* checkAndSkipString(CharacterType* currentCharacter, int quote)
 {
     // Returns with 0, if string check is failed. Otherwise
     // it returns with the following character. This is necessary
@@ -9896,61 +9896,53 @@ inline void CSSParser::parseString(CharacterType*& result, CSSParserString& resu
 }
 
 template <typename CharacterType>
-inline bool CSSParser::parseURIInternal(CharacterType*& start, CharacterType*& result)
+inline bool CSSParser::findURI(CharacterType*& start, CharacterType*& end, UChar& quote)
 {
-    CharacterType* uriStart = skipWhiteSpace(currentCharacter<CharacterType>());
-    CharacterType* savedResult = result;
-
-    if (*uriStart == '"' || *uriStart == '\'') {
-        CharacterType quote = *uriStart;
-        ++uriStart;
-
-        CharacterType* stringEnd = checkAndSkipString(uriStart, quote);
-        if (!stringEnd)
-            return true;
-        stringEnd = skipWhiteSpace(stringEnd);
-        if (*stringEnd != ')')
-            return true;
-
-        start = result = currentCharacter<CharacterType>() = uriStart;
-        if (!parseStringInternal(currentCharacter<CharacterType>(), result, quote))
+    start = skipWhiteSpace(currentCharacter<CharacterType>());
+    
+    if (*start == '"' || *start == '\'') {
+        quote = *start++;
+        end = checkAndSkipString(start, quote);
+        if (!end)
             return false;
-
-        currentCharacter<CharacterType>() = stringEnd + 1;
-        m_token = URI;
     } else {
-        CharacterType* stringEnd = uriStart;
-
-        while (isURILetter(*stringEnd)) {
-            if (*stringEnd != '\\')
-                ++stringEnd;
+        quote = 0;
+        end = start;
+        while (isURILetter(*end)) {
+            if (LIKELY(*end != '\\'))
+                ++end;
             else {
-                stringEnd = checkAndSkipEscape(stringEnd);
-                if (!stringEnd)
-                    return true;
-            }
-        }
-
-        stringEnd = skipWhiteSpace(stringEnd);
-        if (*stringEnd != ')')
-            return true;
-
-        start = result = currentCharacter<CharacterType>() = uriStart;
-        while (isURILetter(*currentCharacter<CharacterType>())) {
-            if (LIKELY(*currentCharacter<CharacterType>() != '\\'))
-                *result++ = *currentCharacter<CharacterType>()++;
-            else {
-                unsigned unicode = parseEscape<CharacterType>(currentCharacter<CharacterType>());
-                if (unicode > 0xff && sizeof(CharacterType) == 1) {
-                    result = savedResult;
+                end = checkAndSkipEscape(end);
+                if (!end)
                     return false;
-                }
-                UnicodeToChars(result, unicode);
             }
         }
+    }
 
-        currentCharacter<CharacterType>() = stringEnd + 1;
-        m_token = URI;
+    end = skipWhiteSpace(end);
+    if (*end != ')')
+        return false;
+    
+    return true;
+}
+
+template <typename SrcCharacterType, typename DestCharacterType>
+inline bool CSSParser::parseURIInternal(SrcCharacterType*& src, DestCharacterType*& dest, UChar quote)
+{
+    if (quote) {
+        ASSERT(quote == '"' || quote == '\'');
+        return parseStringInternal(src, dest, quote);
+    }
+    
+    while (isURILetter(*src)) {
+        if (LIKELY(*src != '\\'))
+            *dest++ = *src++;
+        else {
+            unsigned unicode = parseEscape<SrcCharacterType>(src);
+            if (unicode > 0xff && sizeof(SrcCharacterType) == 1)
+                return false;
+            UnicodeToChars(dest, unicode);
+        }
     }
 
     return true;
@@ -9959,14 +9951,29 @@ inline bool CSSParser::parseURIInternal(CharacterType*& start, CharacterType*& r
 template <typename CharacterType>
 inline void CSSParser::parseURI(CSSParserString& string)
 {
-    CharacterType* uriStart = string.characters<CharacterType>();
-    CharacterType* result = uriStart + string.length();
-    bool parseResult = parseURIInternal(uriStart, result);
+    CharacterType* uriStart;
+    CharacterType* uriEnd;
+    UChar quote;
+    if (!findURI(uriStart, uriEnd, quote))
+        return;
+    
+    CharacterType* dest = currentCharacter<CharacterType>() = uriStart;
+    if (LIKELY(parseURIInternal(currentCharacter<CharacterType>(), dest, quote)))
+        string.init(uriStart, dest - uriStart);
+    else {
+        // An escape sequence was encountered that can't be stored in 8 bits.
+        // Reset the current character to the start of the URI and re-parse with
+        // a 16-bit destination.
+        ASSERT(is8BitSource());
+        UChar* uriStart16 = currentCharacter16();
+        currentCharacter<CharacterType>() = uriStart;
+        bool result = parseURIInternal(currentCharacter<CharacterType>(), currentCharacter16(), quote);
+        ASSERT_UNUSED(result, result);
+        string.init(uriStart16, currentCharacter16() - uriStart16);
+    }
 
-    // parseIdentifier() parsed and created the string, therefore there shouldn't be any unhandled escapses.
-    ASSERT_UNUSED(parseResult, parseResult);
-
-    string.init(uriStart, result - uriStart);
+    currentCharacter<CharacterType>() = uriEnd + 1;
+    m_token = URI;
 }
 
 template <typename CharacterType>

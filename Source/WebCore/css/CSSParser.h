@@ -458,9 +458,6 @@ private:
     inline bool isIdentifierStart();
 
     template <typename CharacterType>
-    static inline CharacterType* checkAndSkipString(CharacterType*, int);
-
-    template <typename CharacterType>
     unsigned parseEscape(CharacterType*&);
     template <typename DestCharacterType>
     inline void UnicodeToChars(DestCharacterType*&, unsigned);
@@ -477,7 +474,10 @@ private:
     inline void parseString(CharacterType*&, CSSParserString& resultString, UChar);
 
     template <typename CharacterType>
-    inline bool parseURIInternal(CharacterType*&, CharacterType*&);
+    inline bool findURI(CharacterType*& start, CharacterType*& end, UChar& quote);
+
+    template <typename SrcCharacterType, typename DestCharacterType>
+    inline bool parseURIInternal(SrcCharacterType*&, DestCharacterType*&, UChar quote);
 
     template <typename CharacterType>
     inline void parseURI(CSSParserString&);
