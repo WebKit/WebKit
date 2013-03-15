@@ -424,17 +424,19 @@ EncodedJSValue DFG_OPERATION operationGetByVal(ExecState* exec, EncodedJSValue e
     if (LIKELY(baseValue.isCell())) {
         JSCell* base = baseValue.asCell();
 
-        if (property.isUInt32())
+        if (property.isUInt32()) {
             return getByVal(exec, base, property.asUInt32());
-        if (property.isDouble()) {
+        } else if (property.isDouble()) {
             double propertyAsDouble = property.asDouble();
             uint32_t propertyAsUInt32 = static_cast<uint32_t>(propertyAsDouble);
             if (propertyAsUInt32 == propertyAsDouble)
                 return getByVal(exec, base, propertyAsUInt32);
-        } else if (property.isString())
-            return JSValue::encode(base->getByString(exec, asString(property)->value(exec)));
+        } else if (property.isString()) {
+            if (JSValue result = base->fastGetOwnProperty(exec, asString(property)->value(exec)))
+                return JSValue::encode(result);
+        }
     }
-    
+
     if (isName(property))
         return JSValue::encode(baseValue.get(exec, jsCast<NameInstance*>(property.asCell())->privateName()));
 
@@ -451,13 +453,15 @@ EncodedJSValue DFG_OPERATION operationGetByValCell(ExecState* exec, JSCell* base
 
     if (property.isUInt32())
         return getByVal(exec, base, property.asUInt32());
-    else if (property.isDouble()) {
+    if (property.isDouble()) {
         double propertyAsDouble = property.asDouble();
         uint32_t propertyAsUInt32 = static_cast<uint32_t>(propertyAsDouble);
         if (propertyAsUInt32 == propertyAsDouble)
             return getByVal(exec, base, propertyAsUInt32);
-    } else if (property.isString())
-        return JSValue::encode(base->getByString(exec, asString(property)->value(exec)));
+    } else if (property.isString()) {
+        if (JSValue result = base->fastGetOwnProperty(exec, asString(property)->value(exec)))
+            return JSValue::encode(result);
+    }
 
     if (isName(property))
         return JSValue::encode(JSValue(base).get(exec, jsCast<NameInstance*>(property.asCell())->privateName()));

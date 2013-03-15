@@ -24,6 +24,7 @@ javascriptcore_built_nosources += \
 	DerivedSources/JavaScriptCore/NumberConstructor.lut.h \
 	DerivedSources/JavaScriptCore/NumberPrototype.lut.h \
 	DerivedSources/JavaScriptCore/ObjectConstructor.lut.h \
+   DerivedSources/JavaScriptCore/ObjectPrototype.lut.h \
 	DerivedSources/JavaScriptCore/RegExpConstructor.lut.h \
 	DerivedSources/JavaScriptCore/RegExpObject.lut.h \
 	DerivedSources/JavaScriptCore/RegExpPrototype.lut.h \

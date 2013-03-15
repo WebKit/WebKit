@@ -122,8 +122,7 @@ public:
     // call this function, not its slower virtual counterpart. (For integer
     // property names, we want a similar interface with appropriate optimizations.)
     bool fastGetOwnPropertySlot(ExecState*, PropertyName, PropertySlot&);
-    
-    JSValue getByString(ExecState*, const String&);
+    JSValue fastGetOwnProperty(ExecState*, const String&);
 
     static ptrdiff_t structureOffset()
     {
@@ -162,10 +161,6 @@ protected:
 
 private:
     friend class LLIntOffsetsExtractor;
-    
-    template<typename KeyType>
-    JSValue getByStringAndKey(ExecState*, const String&, const KeyType&);
-    JSValue getByStringSlow(ExecState*, const String&);
         
     WriteBarrier<Structure> m_structure;
 };

@@ -169,46 +169,20 @@ ALWAYS_INLINE bool JSCell::fastGetOwnPropertySlot(ExecState* exec, PropertyName 
     return methodTable()->getOwnPropertySlot(this, exec, propertyName, slot);
 }
 
-template<typename KeyType>
-ALWAYS_INLINE JSValue JSCell::getByStringAndKey(ExecState* exec, const String& name, const KeyType& key)
-{
-    JSCell* cell = this;
-    
-    while (true) {
-        if (UNLIKELY(cell->structure()->typeInfo().overridesGetOwnPropertySlot()))
-            return getByStringSlow(exec, name);
-        
-        unsigned attributes;
-        PropertyOffset offset = cell->structure()->get(exec->globalData(), key, attributes);
-        if (offset != invalidOffset) {
-            if (attributes & Accessor)
-                return cell->getByStringSlow(exec, name);
-            return asObject(cell)->getDirect(offset);
-        }
-        
-        JSValue prototype = cell->structure()->storedPrototype();
-        if (!prototype.isObject())
-            break;
-        cell = asObject(prototype);
-    }
-    
-    // Make sure we aren't going after indexed storage, and if we are, then just use that.
-    unsigned index = toUInt32FromStringImpl(name.impl());
-    if (index == PropertyName::NotAnIndex)
-        return jsUndefined();
-    
-    return JSValue(this).get(exec, index);
-}
-
 // Fast call to get a property where we may not yet have converted the string to an
 // identifier. The first time we perform a property access with a given string, try
 // performing the property map lookup without forming an identifier. We detect this
 // case by checking whether the hash has yet been set for this string.
-ALWAYS_INLINE JSValue JSCell::getByString(ExecState* exec, const String& name)
+ALWAYS_INLINE JSValue JSCell::fastGetOwnProperty(ExecState* exec, const String& name)
 {
-    if (name.impl()->hasHash())
-        return getByStringAndKey(exec, name, Identifier(exec, name));
-    return getByStringAndKey(exec, name, name);
+    if (!structure()->typeInfo().overridesGetOwnPropertySlot() && !structure()->hasGetterSetterProperties()) {
+        PropertyOffset offset = name.impl()->hasHash()
+            ? structure()->get(exec->globalData(), Identifier(exec, name))
+            : structure()->get(exec->globalData(), name);
+        if (offset != invalidOffset)
+            return asObject(this)->locationForOffset(offset)->get();
+    }
+    return JSValue();
 }
 
 inline bool JSCell::toBoolean(ExecState* exec) const

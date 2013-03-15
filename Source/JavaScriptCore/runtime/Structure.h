@@ -233,8 +233,7 @@ public:
     bool masqueradesAsUndefined(JSGlobalObject* lexicalGlobalObject);
 
     PropertyOffset get(JSGlobalData&, PropertyName);
-    PropertyOffset get(JSGlobalData&, PropertyName, unsigned& attributes);
-    PropertyOffset get(JSGlobalData&, const WTF::String& name, unsigned& attributes);
+    PropertyOffset get(JSGlobalData&, const WTF::String& name);
     JS_EXPORT_PRIVATE PropertyOffset get(JSGlobalData&, PropertyName, unsigned& attributes, JSCell*& specificValue);
 
     bool hasGetterSetterProperties() const { return m_hasGetterSetterProperties; }

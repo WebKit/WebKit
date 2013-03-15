@@ -69,22 +69,7 @@ inline PropertyOffset Structure::get(JSGlobalData& globalData, PropertyName prop
     return entry ? entry->offset : invalidOffset;
 }
 
-inline PropertyOffset Structure::get(JSGlobalData& globalData, PropertyName propertyName, unsigned& attributes)
-{
-    ASSERT(structure()->classInfo() == &s_info);
-    materializePropertyMapIfNecessary(globalData);
-    if (!propertyTable())
-        return invalidOffset;
-
-    PropertyMapEntry* entry = propertyTable()->find(propertyName.uid()).first;
-    if (!entry)
-        return invalidOffset;
-    
-    attributes = entry->attributes;
-    return entry->offset;
-}
-
-inline PropertyOffset Structure::get(JSGlobalData& globalData, const WTF::String& name, unsigned& attributes)
+inline PropertyOffset Structure::get(JSGlobalData& globalData, const WTF::String& name)
 {
     ASSERT(structure()->classInfo() == &s_info);
     materializePropertyMapIfNecessary(globalData);
@@ -92,11 +77,7 @@ inline PropertyOffset Structure::get(JSGlobalData& globalData, const WTF::String
         return invalidOffset;
 
     PropertyMapEntry* entry = propertyTable()->findWithString(name.impl()).first;
-    if (!entry)
-        return invalidOffset;
-
-    attributes = entry->attributes;
-    return entry->offset;
+    return entry ? entry->offset : invalidOffset;
 }
     
 inline bool Structure::masqueradesAsUndefined(JSGlobalObject* lexicalGlobalObject)

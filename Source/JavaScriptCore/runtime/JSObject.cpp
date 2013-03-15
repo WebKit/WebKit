@@ -2202,16 +2202,6 @@ bool JSObject::putDirectIndexBeyondVectorLength(ExecState* exec, unsigned i, JSV
     }
 }
 
-void JSObject::putDirectNativeFunction(ExecState* exec, JSGlobalObject* globalObject, const PropertyName& propertyName, unsigned functionLength, NativeFunction nativeFunction, Intrinsic intrinsic, unsigned attributes)
-{
-    StringImpl* name = propertyName.publicName();
-    ASSERT(name);
-    
-    JSFunction* function =
-        JSFunction::create(exec, globalObject, functionLength, name, nativeFunction, intrinsic);
-    putDirect(exec->globalData(), propertyName, function, attributes);
-}
-
 ALWAYS_INLINE unsigned JSObject::getNewVectorLength(unsigned currentVectorLength, unsigned currentLength, unsigned desiredLength)
 {
     ASSERT(desiredLength <= MAX_STORAGE_VECTOR_LENGTH);

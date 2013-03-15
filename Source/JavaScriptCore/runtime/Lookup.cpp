@@ -77,9 +77,11 @@ bool setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
         if (thisObj->staticFunctionsReified())
             return false;
     
-        thisObj->putDirectNativeFunction(
-            exec, thisObj->globalObject(), propertyName, entry->functionLength(),
-            entry->function(), entry->intrinsic(), entry->attributes());
+        StringImpl* name = propertyName.publicName();
+        ASSERT(name);
+        
+        JSFunction* function = JSFunction::create(exec, thisObj->globalObject(), entry->functionLength(), name, entry->function(), entry->intrinsic());
+        thisObj->putDirect(exec->globalData(), propertyName, function, entry->attributes());
         offset = thisObj->getDirectOffset(exec->globalData(), propertyName);
         ASSERT(isValidOffset(offset));
     }

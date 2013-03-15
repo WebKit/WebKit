@@ -40,40 +40,51 @@ static EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupSetter(ExecState*);
 static EncodedJSValue JSC_HOST_CALL objectProtoFuncPropertyIsEnumerable(ExecState*);
 static EncodedJSValue JSC_HOST_CALL objectProtoFuncToLocaleString(ExecState*);
 
+}
+
+#include "ObjectPrototype.lut.h"
+
+namespace JSC {
+
 ASSERT_HAS_TRIVIAL_DESTRUCTOR(ObjectPrototype);
 
-const ClassInfo ObjectPrototype::s_info = { "Object", &JSNonFinalObject::s_info, 0, 0, CREATE_METHOD_TABLE(ObjectPrototype) };
+const ClassInfo ObjectPrototype::s_info = { "Object", &JSNonFinalObject::s_info, 0, ExecState::objectPrototypeTable, CREATE_METHOD_TABLE(ObjectPrototype) };
+
+/* Source for ObjectPrototype.lut.h
+@begin objectPrototypeTable
+  toString              objectProtoFuncToString                 DontEnum|Function 0
+  toLocaleString        objectProtoFuncToLocaleString           DontEnum|Function 0
+  valueOf               objectProtoFuncValueOf                  DontEnum|Function 0
+  hasOwnProperty        objectProtoFuncHasOwnProperty           DontEnum|Function 1
+  propertyIsEnumerable  objectProtoFuncPropertyIsEnumerable     DontEnum|Function 1
+  isPrototypeOf         objectProtoFuncIsPrototypeOf            DontEnum|Function 1
+  __defineGetter__      objectProtoFuncDefineGetter             DontEnum|Function 2
+  __defineSetter__      objectProtoFuncDefineSetter             DontEnum|Function 2
+  __lookupGetter__      objectProtoFuncLookupGetter             DontEnum|Function 1
+  __lookupSetter__      objectProtoFuncLookupSetter             DontEnum|Function 1
+@end
+*/
 
 ObjectPrototype::ObjectPrototype(ExecState* exec, Structure* stucture)
     : JSNonFinalObject(exec->globalData(), stucture)
 {
 }
 
-void ObjectPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObject)
+void ObjectPrototype::finishCreation(JSGlobalData& globalData, JSGlobalObject*)
 {
-    JSGlobalData& globalData = exec->globalData();
-    
     Base::finishCreation(globalData);
     ASSERT(inherits(&s_info));
     globalData.prototypeMap.addPrototype(this);
-    
-    JSC_NATIVE_FUNCTION(toString, objectProtoFuncToString, DontEnum, 0);
-    JSC_NATIVE_FUNCTION(toLocaleString, objectProtoFuncToLocaleString, DontEnum, 0);
-    JSC_NATIVE_FUNCTION(valueOf, objectProtoFuncValueOf, DontEnum, 0);
-    JSC_NATIVE_FUNCTION(hasOwnProperty, objectProtoFuncHasOwnProperty, DontEnum, 1);
-    JSC_NATIVE_FUNCTION(propertyIsEnumerable, objectProtoFuncPropertyIsEnumerable, DontEnum, 1);
-    JSC_NATIVE_FUNCTION(isPrototypeOf, objectProtoFuncIsPrototypeOf, DontEnum, 1);
-    JSC_NATIVE_FUNCTION(__defineGetter__, objectProtoFuncDefineGetter, DontEnum, 2);
-    JSC_NATIVE_FUNCTION(__defineSetter__, objectProtoFuncDefineSetter, DontEnum, 2);
-    JSC_NATIVE_FUNCTION(__lookupGetter__, objectProtoFuncLookupGetter, DontEnum, 1);
-    JSC_NATIVE_FUNCTION(__lookupSetter__, objectProtoFuncLookupSetter, DontEnum, 1);
 }
 
-ObjectPrototype* ObjectPrototype::create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+bool ObjectPrototype::getOwnPropertySlot(JSCell* cell, ExecState* exec, PropertyName propertyName, PropertySlot &slot)
 {
-    ObjectPrototype* prototype = new (NotNull, allocateCell<ObjectPrototype>(*exec->heap())) ObjectPrototype(exec, structure);
-    prototype->finishCreation(exec, globalObject);
-    return prototype;
+    return getStaticFunctionSlot<JSNonFinalObject>(exec, ExecState::objectPrototypeTable(exec), jsCast<ObjectPrototype*>(cell), propertyName, slot);
+}
+
+bool ObjectPrototype::getOwnPropertyDescriptor(JSObject* object, ExecState* exec, PropertyName propertyName, PropertyDescriptor& descriptor)
+{
+    return getStaticFunctionDescriptor<JSNonFinalObject>(exec, ExecState::objectPrototypeTable(exec), jsCast<ObjectPrototype*>(object), propertyName, descriptor);
 }
 
 // ------------------------------ Functions --------------------------------

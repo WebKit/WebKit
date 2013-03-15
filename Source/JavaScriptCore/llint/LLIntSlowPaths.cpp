@@ -1060,8 +1060,10 @@ LLINT_SLOW_PATH_DECL(slow_path_del_by_id)
 
 inline JSValue getByVal(ExecState* exec, JSValue baseValue, JSValue subscript)
 {
-    if (LIKELY(baseValue.isCell() && subscript.isString()))
-        return baseValue.asCell()->getByString(exec, asString(subscript)->value(exec));
+    if (LIKELY(baseValue.isCell() && subscript.isString())) {
+        if (JSValue result = baseValue.asCell()->fastGetOwnProperty(exec, asString(subscript)->value(exec)))
+            return result;
+    }
     
     if (subscript.isUInt32()) {
         uint32_t i = subscript.asUInt32();

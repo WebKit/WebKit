@@ -227,10 +227,4 @@ bool JSCell::getOwnPropertyDescriptor(JSObject*, ExecState*, PropertyName, Prope
     return false;
 }
 
-JSValue JSCell::getByStringSlow(ExecState* exec, const String& name)
-{
-    Identifier ident(&exec->globalData(), name);
-    return JSValue(this).get(exec, ident);
-}
-
 } // namespace JSC

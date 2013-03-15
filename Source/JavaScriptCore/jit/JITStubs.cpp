@@ -2417,8 +2417,10 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_construct_NotJSConstruct)
 static JSValue getByVal(
     CallFrame* callFrame, JSValue baseValue, JSValue subscript, ReturnAddressPtr returnAddress)
 {
-    if (LIKELY(baseValue.isCell() && subscript.isString()))
-        return baseValue.asCell()->getByString(callFrame, asString(subscript)->value(callFrame));
+    if (LIKELY(baseValue.isCell() && subscript.isString())) {
+        if (JSValue result = baseValue.asCell()->fastGetOwnProperty(callFrame, asString(subscript)->value(callFrame)))
+            return result;
+    }
 
     if (subscript.isUInt32()) {
         uint32_t i = subscript.asUInt32();
