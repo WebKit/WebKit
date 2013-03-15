@@ -1923,6 +1923,10 @@ void SpeculativeJIT::compile(Node* node)
 {
     NodeType op = node->op();
 
+#if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
+    m_jit.clearRegisterAllocationOffsets();
+#endif
+
     switch (op) {
     case JSConstant:
         initConstantInfo(node);
@@ -4923,7 +4927,11 @@ void SpeculativeJIT::compile(Node* node)
         RELEASE_ASSERT_NOT_REACHED();
         break;
     }
-    
+
+#if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
+    m_jit.clearRegisterAllocationOffsets();
+#endif
+
     if (!m_compileOkay)
         return;
     

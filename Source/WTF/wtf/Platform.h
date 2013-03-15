@@ -850,6 +850,16 @@
 #define ENABLE_WRITE_BARRIER_PROFILING 0
 #endif
 
+/* Enable verification that that register allocations are not made within generated control flow.
+   Turned on for debug builds. */
+#if !defined(ENABLE_DFG_REGISTER_ALLOCATION_VALIDATION) && ENABLE(DFG_JIT)
+#if !defined(NDEBUG)
+#define ENABLE_DFG_REGISTER_ALLOCATION_VALIDATION 1
+#else
+#define ENABLE_DFG_REGISTER_ALLOCATION_VALIDATION 0
+#endif
+#endif
+
 /* Configure the JIT */
 #if CPU(X86) && COMPILER(MSVC)
 #define JSC_HOST_CALL __fastcall

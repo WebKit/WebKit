@@ -1,3 +1,13 @@
+2013-03-15  Michael Saboff  <msaboff@apple.com>
+
+        Add runtime check for improper register allocations in DFG
+        https://bugs.webkit.org/show_bug.cgi?id=112380
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/Platform.h: Added new ENABLE_DFG_REGISTER_ALLOCATION_VALIDATION compilation flag to
+        enable generation of register allocation checking.  This is on for debug builds.
+
 2013-03-13  Jessie Berlin  <jberlin@apple.com>
 
         Remove svn:executable from a file that isn't supposed to be executable.

@@ -173,6 +173,9 @@ public:
     // Allocate a gpr/fpr.
     GPRReg allocate()
     {
+#if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
+        m_jit.addRegisterAllocationAtOffset(m_jit.debugOffset());
+#endif
         VirtualRegister spillMe;
         GPRReg gpr = m_gprs.allocate(spillMe);
         if (spillMe != InvalidVirtualRegister) {
@@ -188,6 +191,9 @@ public:
     }
     GPRReg allocate(GPRReg specific)
     {
+#if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
+        m_jit.addRegisterAllocationAtOffset(m_jit.debugOffset());
+#endif
         VirtualRegister spillMe = m_gprs.allocateSpecific(specific);
         if (spillMe != InvalidVirtualRegister) {
 #if USE(JSVALUE32_64)
