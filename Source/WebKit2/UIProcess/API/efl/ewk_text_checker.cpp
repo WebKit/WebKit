@@ -29,6 +29,7 @@
 
 #if ENABLE(SPELLCHECK)
 
+#include "EwkView.h"
 #include "TextCheckerEnchant.h"
 #include "WKAPICast.h"
 #include "WKEinaSharedString.h"
@@ -84,7 +85,7 @@ static void setContinuousSpellCheckingEnabled(bool enabled, const void*)
 static uint64_t uniqueSpellDocumentTag(WKPageRef page, const void*)
 {
     if (clientCallbacks().unique_spell_document_tag_get)
-        return clientCallbacks().unique_spell_document_tag_get(toImpl(page)->viewWidget());
+        return clientCallbacks().unique_spell_document_tag_get(EwkView::toEvasObject(page));
 
     return 0;
 }

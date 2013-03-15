@@ -227,6 +227,14 @@ void EwkViewEventHandler<EVAS_CALLBACK_HIDE>::handleEvent(void* data, Evas*, Eva
     toEwkView(smartData)->page()->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 
+typedef HashMap<WKPageRef, Evas_Object*> WKPageToEvasObjectMap;
+
+static inline WKPageToEvasObjectMap& wkPageToEvasObjectMap()
+{
+    DEFINE_STATIC_LOCAL(WKPageToEvasObjectMap, map, ());
+    return map;
+}
+
 // EwkView implementation.
 
 EwkView::EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, PassRefPtr<EwkPageGroup> pageGroup, ViewBehavior behavior)
@@ -295,6 +303,9 @@ EwkView::EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, PassRe
     ASSERT(iconDatabase);
 
     iconDatabase->watchChanges(IconChangeCallbackData(EwkView::handleFaviconChanged, this));
+
+    WKPageToEvasObjectMap::AddResult result = wkPageToEvasObjectMap().add(wkPage(), m_evasObject);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
 EwkView::~EwkView()
@@ -304,6 +315,9 @@ EwkView::~EwkView()
     ASSERT(iconDatabase);
 
     iconDatabase->unwatchChanges(EwkView::handleFaviconChanged);
+
+    ASSERT(wkPageToEvasObjectMap().get(wkPage()) == m_evasObject);
+    wkPageToEvasObjectMap().remove(wkPage());
 }
 
 Evas_Object* EwkView::createEvasObject(Evas* canvas, Evas_Smart* smart, PassRefPtr<EwkContext> context, PassRefPtr<EwkPageGroup> pageGroup, ViewBehavior behavior)
@@ -370,10 +384,10 @@ bool EwkView::initSmartClassInterface(Ewk_View_Smart_Class& api)
     return true;
 }
 
-const Evas_Object* EwkView::toEvasObject(WKPageRef page)
+Evas_Object* EwkView::toEvasObject(WKPageRef page)
 {
     ASSERT(page);
-    return toImpl(page)->viewWidget();
+    return wkPageToEvasObjectMap().get(page);
 }
 
 WKPageRef EwkView::wkPage() const

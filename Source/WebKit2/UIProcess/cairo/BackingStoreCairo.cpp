@@ -54,7 +54,11 @@ void BackingStore::paint(cairo_t* context, const IntRect& rect)
 void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& updateInfo)
 {
     if (!m_backingStore)
+#if PLATFORM(EFL)
+        m_backingStore = WidgetBackingStore::create(EwkView::toEvasObject(toAPI(m_webPageProxy)), size());
+#else
         m_backingStore = WidgetBackingStore::create(m_webPageProxy->viewWidget(), size());
+#endif
 
     scroll(updateInfo.scrollRect, updateInfo.scrollOffset);
 

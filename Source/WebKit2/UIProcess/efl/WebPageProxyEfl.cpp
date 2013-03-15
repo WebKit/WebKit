@@ -38,11 +38,6 @@
 
 namespace WebKit {
 
-Evas_Object* WebPageProxy::viewWidget()
-{
-    return static_cast<WebView*>(m_pageClient)->evasObject();
-}
-
 String WebPageProxy::standardUserAgent(const String& /*applicationNameForUserAgent*/)
 {
     WTF::String platform;

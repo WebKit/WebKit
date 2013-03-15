@@ -1,3 +1,35 @@
+2013-03-15  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][EFL] Get rid of WebPageProxy::viewWidget() method
+        https://bugs.webkit.org/show_bug.cgi?id=112289
+
+        Reviewed by Alexey Proskuryakov.
+
+        Web page should not be aware of platform-specific view.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (wkPageToEvasObjectMap):
+        (EwkView::EwkView):
+        (EwkView::~EwkView):
+        (EwkView::toEvasObject):
+
+            EwkView::toEvasObject() relies on static map rather than on
+            removed WebPageProxy::viewWidget() method.
+
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/API/efl/ewk_text_checker.cpp:
+        (uniqueSpellDocumentTag):
+        * UIProcess/cairo/BackingStoreCairo.cpp:
+        (WebKit::BackingStore::incorporateUpdate):
+
+            Now uses EwkView::toEvasObject().
+
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+
+            Removed WebPageProxy::viewWidget() method.
+
 2013-03-14  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r145169): [Mac][WK2] http/tests/security/cross-frame-access-put.html fails.

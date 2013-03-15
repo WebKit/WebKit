@@ -112,7 +112,7 @@ public:
 
     static bool initSmartClassInterface(Ewk_View_Smart_Class&);
 
-    static const Evas_Object* toEvasObject(WKPageRef);
+    static Evas_Object* toEvasObject(WKPageRef);
 
     Evas_Object* evasObject() { return m_evasObject; }
 
