@@ -64,6 +64,7 @@ class TimelineTraceEventProcessor;
 typedef String ErrorString;
 
 namespace TimelineRecordType {
+extern const char DecodeImage[];
 extern const char Rasterize[];
 };
 

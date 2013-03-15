@@ -78,7 +78,6 @@ static const char InvalidateLayout[] = "InvalidateLayout";
 static const char Layout[] = "Layout";
 static const char Paint[] = "Paint";
 static const char ScrollLayer[] = "ScrollLayer";
-static const char DecodeImage[] = "DecodeImage";
 static const char ResizeImage[] = "ResizeImage";
 static const char CompositeLayers[] = "CompositeLayers";
 
@@ -119,6 +118,7 @@ static const char WebSocketReceiveHandshakeResponse[] = "WebSocketReceiveHandsha
 static const char WebSocketDestroy[] = "WebSocketDestroy";
 
 // Event names visible to other modules.
+const char DecodeImage[] = "DecodeImage";
 const char Rasterize[] = "Rasterize";
 }
 

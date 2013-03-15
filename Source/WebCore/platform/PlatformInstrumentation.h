@@ -31,6 +31,7 @@
 #ifndef PlatformInstrumentation_h
 #define PlatformInstrumentation_h
 
+#include <wtf/MainThread.h>
 #include <wtf/text/WTFString.h>
 
 #if PLATFORM(CHROMIUM)
@@ -51,6 +52,12 @@ public:
 
 class PlatformInstrumentation {
 public:
+    static const char ImageDecodeEvent[];
+    static const char ImageResizeEvent[];
+
+    static const char ImageTypeArgument[];
+    static const char CachedArgument[];
+
     static void setClient(PlatformInstrumentationClient*);
     static bool hasClient() { return m_client; }
 
@@ -60,44 +67,46 @@ public:
     static void didResizeImage();
 
 private:
+    static const char CategoryName[];
+
     static PlatformInstrumentationClient* m_client;
 };
 
-#define FAST_RETURN_IF_NO_CLIENT() if (!m_client) return;
+#define FAST_RETURN_IF_NO_CLIENT_OR_NOT_MAIN_THREAD() if (!m_client || !isMainThread()) return;
 
 inline void PlatformInstrumentation::willDecodeImage(const String& imageType)
 {
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT_BEGIN1("webkit", "Image Decode", "imageType", TRACE_STR_COPY(imageType.ascii().data()));
+    TRACE_EVENT_BEGIN1(CategoryName, ImageDecodeEvent, ImageTypeArgument, TRACE_STR_COPY(imageType.ascii().data()));
 #endif
-    FAST_RETURN_IF_NO_CLIENT();
+    FAST_RETURN_IF_NO_CLIENT_OR_NOT_MAIN_THREAD();
     m_client->willDecodeImage(imageType);
 }
 
 inline void PlatformInstrumentation::didDecodeImage()
 {
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT_END0("webkit", "Image Decode");
+    TRACE_EVENT_END0(CategoryName, ImageDecodeEvent);
 #endif
-    FAST_RETURN_IF_NO_CLIENT();
+    FAST_RETURN_IF_NO_CLIENT_OR_NOT_MAIN_THREAD();
     m_client->didDecodeImage();
 }
 
 inline void PlatformInstrumentation::willResizeImage(bool shouldCache)
 {
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT_BEGIN1("webkit", "Image Resize", "cached", shouldCache);
+    TRACE_EVENT_BEGIN1(CategoryName, ImageResizeEvent, CachedArgument, shouldCache);
 #endif
-    FAST_RETURN_IF_NO_CLIENT();
+    FAST_RETURN_IF_NO_CLIENT_OR_NOT_MAIN_THREAD();
     m_client->willResizeImage(shouldCache);
 }
 
 inline void PlatformInstrumentation::didResizeImage()
 {
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT_END0("webkit", "Image Resize");
+    TRACE_EVENT_END0(CategoryName, ImageResizeEvent);
 #endif
-    FAST_RETURN_IF_NO_CLIENT();
+    FAST_RETURN_IF_NO_CLIENT_OR_NOT_MAIN_THREAD();
     m_client->didResizeImage();
 }
 

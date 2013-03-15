@@ -234,9 +234,10 @@ private:
     void onPaintLayerEnd(const TraceEvent&);
     void onRasterTaskBegin(const TraceEvent&);
     void onRasterTaskEnd(const TraceEvent&);
+    void onImageDecodeBegin(const TraceEvent&);
+    void onImageDecodeEnd(const TraceEvent&);
     void onLayerDeleted(const TraceEvent&);
     void onPaint(const TraceEvent&);
-
 
     WeakPtr<InspectorTimelineAgent> m_timelineAgent;
     TimelineTimeConverter m_timeConverter;

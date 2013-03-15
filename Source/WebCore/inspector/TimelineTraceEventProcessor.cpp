@@ -165,6 +165,8 @@ TimelineTraceEventProcessor::TimelineTraceEventProcessor(WeakPtr<InspectorTimeli
     registerHandler(InstrumentationEvents::RasterTask, TracePhaseEnd, &TimelineTraceEventProcessor::onRasterTaskEnd);
     registerHandler(InstrumentationEvents::Layer, TracePhaseDeleteObject, &TimelineTraceEventProcessor::onLayerDeleted);
     registerHandler(InstrumentationEvents::Paint, TracePhaseInstant, &TimelineTraceEventProcessor::onPaint);
+    registerHandler(PlatformInstrumentation::ImageDecodeEvent, TracePhaseBegin, &TimelineTraceEventProcessor::onImageDecodeBegin);
+    registerHandler(PlatformInstrumentation::ImageDecodeEvent, TracePhaseEnd, &TimelineTraceEventProcessor::onImageDecodeEnd);
 
     TraceEventDispatcher::instance()->addProcessor(this, m_inspectorClient);
 }
@@ -257,6 +259,23 @@ void TimelineTraceEventProcessor::onRasterTaskEnd(const TraceEvent& event)
     ASSERT(state.recordStack.isOpenRecordOfType(TimelineRecordType::Rasterize));
     state.recordStack.closeScopedRecord(m_timeConverter.fromMonotonicallyIncreasingTime(event.timestamp()));
     state.inRasterizeEvent = false;
+}
+
+void TimelineTraceEventProcessor::onImageDecodeBegin(const TraceEvent& event)
+{
+    TimelineThreadState& state = threadState(event.threadIdentifier());
+    if (!state.inRasterizeEvent)
+        return;
+    state.recordStack.addScopedRecord(createRecord(event, TimelineRecordType::DecodeImage));
+}
+
+void TimelineTraceEventProcessor::onImageDecodeEnd(const TraceEvent& event)
+{
+    TimelineThreadState& state = threadState(event.threadIdentifier());
+    if (!state.inRasterizeEvent)
+        return;
+    ASSERT(state.recordStack.isOpenRecordOfType(TimelineRecordType::DecodeImage));
+    state.recordStack.closeScopedRecord(m_timeConverter.fromMonotonicallyIncreasingTime(event.timestamp()));
 }
 
 void TimelineTraceEventProcessor::onLayerDeleted(const TraceEvent& event)
