@@ -39,16 +39,14 @@ WebInspector.CPUProfileView = function(profile)
     this.showAverageTimeAsPercent = WebInspector.settings.createSetting("cpuProfilerShowAverageTimeAsPercent", true);
     this._viewType = WebInspector.settings.createSetting("cpuProfilerView", WebInspector.CPUProfileView._TypeHeavy);
 
-    var columns = { "self": { title: WebInspector.UIString("Self"), width: "72px", sort: "descending", sortable: true },
-                    "total": { title: WebInspector.UIString("Total"), width: "72px", sortable: true },
-                    "average": { title: WebInspector.UIString("Average"), width: "72px", sortable: true },
-                    "calls": { title: WebInspector.UIString("Calls"), width: "54px", sortable: true },
-                    "function": { title: WebInspector.UIString("Function"), disclosure: true, sortable: true } };
-
-    if (Capabilities.samplingCPUProfiler) {
-        delete columns.average;
-        delete columns.calls;
+    var columns = [];
+    columns.push({id: "self", title: WebInspector.UIString("Self"), width: "72px", sort: "descending", sortable: true});
+    columns.push({id: "total", title: WebInspector.UIString("Total"), width: "72px", sortable: true});
+    if (!Capabilities.samplingCPUProfiler) {
+        columns.push({id: "average", title: WebInspector.UIString("Average"), width: "72px", sortable: true});
+        columns.push({id: "calls", title: WebInspector.UIString("Calls"), width: "54px", sortable: true});
     }
+    columns.push({id: "function", title: WebInspector.UIString("Function"), disclosure: true, sortable: true});
 
     this.dataGrid = new WebInspector.DataGrid(columns);
     this.dataGrid.addEventListener("sorting changed", this._sortProfile, this);

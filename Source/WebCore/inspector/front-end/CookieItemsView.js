@@ -172,11 +172,10 @@ WebInspector.SimpleCookiesTable = function()
 {
     WebInspector.View.call(this);
 
-    var columns = {};
-    columns[0] = {};
-    columns[1] = {};
-    columns[0].title = WebInspector.UIString("Name");
-    columns[1].title = WebInspector.UIString("Value");
+    var columns = [
+        {title: WebInspector.UIString("Name")},
+        {title: WebInspector.UIString("Value")}
+    ];
 
     this._dataGrid = new WebInspector.DataGrid(columns);
     this._dataGrid.autoSizeColumns(20, 80);

@@ -35,28 +35,13 @@
 WebInspector.DirectoryContentView = function()
 {
     const indexes = WebInspector.DirectoryContentView.columnIndexes;
-    var columns = {};
-    columns[indexes.Name] = {};
-    columns[indexes.Name].title = WebInspector.UIString("Name");
-    columns[indexes.Name].sort = "ascending";
-    columns[indexes.Name].sortable = true;
-    columns[indexes.Name].width = "20%";
-    columns[indexes.URL] = {};
-    columns[indexes.URL].title = WebInspector.UIString("URL");
-    columns[indexes.URL].sortable = true;
-    columns[indexes.URL].width = "20%";
-    columns[indexes.Type] = {};
-    columns[indexes.Type].title = WebInspector.UIString("Type");
-    columns[indexes.Type].sortable = true;
-    columns[indexes.Type].width = "15%";
-    columns[indexes.Size] = {};
-    columns[indexes.Size].title = WebInspector.UIString("Size");
-    columns[indexes.Size].sortable = true;
-    columns[indexes.Size].width = "10%";
-    columns[indexes.ModificationTime] = {};
-    columns[indexes.ModificationTime].title = WebInspector.UIString("Modification Time");
-    columns[indexes.ModificationTime].sortable = true;
-    columns[indexes.ModificationTime].width = "25%";
+    var columns = [
+        {id: indexes.Name, title: WebInspector.UIString("Name"), sortable: true, sort: "ascending", width: "20%"},
+        {id: indexes.URL, title: WebInspector.UIString("URL"), sortable: true, width: "20%"},
+        {id: indexes.Type, title: WebInspector.UIString("Type"), sortable: true, width: "15%"},
+        {id: indexes.Size, title: WebInspector.UIString("Size"), sortable: true, width: "10%"},
+        {id: indexes.ModificationTime, title: WebInspector.UIString("Modification Time"), sortable: true, width: "25%"}
+    ];
 
     WebInspector.DataGrid.call(this, columns);
     this.addEventListener("sorting changed", this._sort, this);

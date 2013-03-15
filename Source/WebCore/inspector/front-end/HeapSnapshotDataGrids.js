@@ -425,15 +425,15 @@ WebInspector.HeapSnapshotPaddingNode.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.HeapSnapshotSortableDataGrid}
- * @param {Object=} columns
+ * @param {Array.<!WebInspector.DataGrid.ColumnDescriptor>=} columns
  */
 WebInspector.HeapSnapshotContainmentDataGrid = function(columns)
 {
-    columns = columns || {
-        object: { title: WebInspector.UIString("Object"), disclosure: true, sortable: true },
-        shallowSize: { title: WebInspector.UIString("Shallow Size"), width: "120px", sortable: true },
-        retainedSize: { title: WebInspector.UIString("Retained Size"), width: "120px", sortable: true, sort: "descending" }
-    };
+    columns = columns || [
+        {id: "object", title: WebInspector.UIString("Object"), disclosure: true, sortable: true},
+        {id: "shallowSize", title: WebInspector.UIString("Shallow Size"), width: "120px", sortable: true},
+        {id: "retainedSize", title: WebInspector.UIString("Retained Size"), width: "120px", sortable: true, sort: "descending"}
+    ];
     WebInspector.HeapSnapshotSortableDataGrid.call(this, columns);
 }
 
@@ -463,12 +463,12 @@ WebInspector.HeapSnapshotContainmentDataGrid.prototype = {
 WebInspector.HeapSnapshotRetainmentDataGrid = function()
 {
     this.showRetainingEdges = true;
-    var columns = {
-        object: { title: WebInspector.UIString("Object"), disclosure: true, sortable: true },
-        shallowSize: { title: WebInspector.UIString("Shallow Size"), width: "120px", sortable: true },
-        retainedSize: { title: WebInspector.UIString("Retained Size"), width: "120px", sortable: true },
-        distance: { title: WebInspector.UIString("Distance"), width: "80px", sortable: true, sort: "ascending" }
-    };
+    var columns = [
+        {id: "object", title: WebInspector.UIString("Object"), disclosure: true, sortable: true},
+        {id: "shallowSize", title: WebInspector.UIString("Shallow Size"), width: "120px", sortable: true},
+        {id: "retainedSize", title: WebInspector.UIString("Retained Size"), width: "120px", sortable: true},
+        {id: "distance", title: WebInspector.UIString("Distance"), width: "80px", sortable: true, sort: "ascending"}
+    ];
     WebInspector.HeapSnapshotContainmentDataGrid.call(this, columns);
 }
 
@@ -500,13 +500,13 @@ WebInspector.HeapSnapshotRetainmentDataGrid.prototype = {
  */
 WebInspector.HeapSnapshotConstructorsDataGrid = function()
 {
-    var columns = {
-        object: { title: WebInspector.UIString("Constructor"), disclosure: true, sortable: true },
-        distance: { title: WebInspector.UIString("Distance"), width: "90px", sortable: true },
-        count: { title: WebInspector.UIString("Objects Count"), width: "90px", sortable: true },
-        shallowSize: { title: WebInspector.UIString("Shallow Size"), width: "120px", sortable: true },
-        retainedSize: { title: WebInspector.UIString("Retained Size"), width: "120px", sort: "descending", sortable: true }
-    };
+    var columns = [
+        {id: "object", title: WebInspector.UIString("Constructor"), disclosure: true, sortable: true},
+        {id: "distance", title: WebInspector.UIString("Distance"), width: "90px", sortable: true},
+        {id: "count", title: WebInspector.UIString("Objects Count"), width: "90px", sortable: true},
+        {id: "shallowSize", title: WebInspector.UIString("Shallow Size"), width: "120px", sortable: true},
+        {id: "retainedSize", title: WebInspector.UIString("Retained Size"), width: "120px", sort: "descending", sortable: true}
+    ];
     WebInspector.HeapSnapshotViewportDataGrid.call(this, columns);
     this._profileIndex = -1;
     this._topLevelNodes = [];
@@ -608,15 +608,15 @@ WebInspector.HeapSnapshotConstructorsDataGrid.prototype = {
  */
 WebInspector.HeapSnapshotDiffDataGrid = function()
 {
-    var columns = {
-        object: { title: WebInspector.UIString("Constructor"), disclosure: true, sortable: true },
-        addedCount: { title: WebInspector.UIString("# New"), width: "72px", sortable: true },
-        removedCount: { title: WebInspector.UIString("# Deleted"), width: "72px", sortable: true },
-        countDelta: { title: "# Delta", width: "64px", sortable: true },
-        addedSize: { title: WebInspector.UIString("Alloc. Size"), width: "72px", sortable: true, sort: "descending" },
-        removedSize: { title: WebInspector.UIString("Freed Size"), width: "72px", sortable: true },
-        sizeDelta: { title: "Size Delta", width: "72px", sortable: true }
-    };
+    var columns = [
+        {id: "object", title: WebInspector.UIString("Constructor"), disclosure: true, sortable: true},
+        {id: "addedCount", title: WebInspector.UIString("# New"), width: "72px", sortable: true},
+        {id: "removedCount", title: WebInspector.UIString("# Deleted"), width: "72px", sortable: true},
+        {id: "countDelta", title: "# Delta", width: "64px", sortable: true},
+        {id: "addedSize", title: WebInspector.UIString("Alloc. Size"), width: "72px", sortable: true, sort: "descending"},
+        {id: "removedSize", title: WebInspector.UIString("Freed Size"), width: "72px", sortable: true},
+        {id: "sizeDelta", title: "Size Delta", width: "72px", sortable: true}
+    ];
     WebInspector.HeapSnapshotViewportDataGrid.call(this, columns);
 }
 
@@ -694,11 +694,11 @@ WebInspector.HeapSnapshotDiffDataGrid.prototype = {
  */
 WebInspector.HeapSnapshotDominatorsDataGrid = function()
 {
-    var columns = {
-        object: { title: WebInspector.UIString("Object"), disclosure: true, sortable: true },
-        shallowSize: { title: WebInspector.UIString("Shallow Size"), width: "120px", sortable: true },
-        retainedSize: { title: WebInspector.UIString("Retained Size"), width: "120px", sort: "descending", sortable: true }
-    };
+    var columns = [
+        {id: "object", title: WebInspector.UIString("Object"), disclosure: true, sortable: true},
+        {id: "shallowSize", title: WebInspector.UIString("Shallow Size"), width: "120px", sortable: true},
+        {id: "retainedSize", title: WebInspector.UIString("Retained Size"), width: "120px", sort: "descending", sortable: true}
+    ];
     WebInspector.HeapSnapshotSortableDataGrid.call(this, columns);
     this._objectIdToSelect = null;
 }

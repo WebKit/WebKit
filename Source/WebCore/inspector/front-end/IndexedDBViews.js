@@ -140,22 +140,14 @@ WebInspector.IDBDataView.prototype = {
      */
     _createDataGrid: function()
     {
-        var columns = {};
-        columns["number"] = {};
-        columns["number"].title = WebInspector.UIString("#");
-        columns["number"].width = "50px";
-
         var keyPath = this._isIndex ? this._index.keyPath : this._objectStore.keyPath;
-        columns["key"] = {};
-        columns["key"].titleDOMFragment = this._keyColumnHeaderFragment(WebInspector.UIString("Key"), keyPath);
-        
-        if (this._isIndex) {
-            columns["primaryKey"] = {};
-            columns["primaryKey"].titleDOMFragment = this._keyColumnHeaderFragment(WebInspector.UIString("Primary key"), this._objectStore.keyPath);
-        }
 
-        columns["value"] = {};
-        columns["value"].title = WebInspector.UIString("Value");
+        var columns = [];
+        columns.push({id: "number", title: WebInspector.UIString("#"), width: "50px"});
+        columns.push({id: "key", titleDOMFragment: this._keyColumnHeaderFragment(WebInspector.UIString("Key"), keyPath)});
+        if (this._isIndex)
+            columns.push({id: "primaryKey", titleDOMFragment: this._keyColumnHeaderFragment(WebInspector.UIString("Primary key"), this._objectStore.keyPath)});
+        columns.push({id: "value", title: WebInspector.UIString("Value")});
 
         var dataGrid = new WebInspector.DataGrid(columns);
         return dataGrid;

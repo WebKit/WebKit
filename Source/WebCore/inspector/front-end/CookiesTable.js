@@ -42,36 +42,16 @@ WebInspector.CookiesTable = function(expandable, refreshCallback)
     var readOnly = expandable;
     this._refreshCallback = refreshCallback;
 
-    var columns = {name: {}, value: {}, domain: {}, path: {}, expires: {}, size: {}, httpOnly: {}, secure: {}};
-    columns.name.title = WebInspector.UIString("Name");
-    columns.name.sortable = true;
-    columns.name.disclosure = expandable;
-    columns.name.width = "24%";
-    columns.name.sort = "ascending";
-    columns.value.title = WebInspector.UIString("Value");
-    columns.value.sortable = true;
-    columns.value.width = "34%";
-    columns.domain.title = WebInspector.UIString("Domain");
-    columns.domain.sortable = true;
-    columns.domain.width = "7%";
-    columns.path.title = WebInspector.UIString("Path");
-    columns.path.sortable = true;
-    columns.path.width = "7%";
-    columns.expires.title = WebInspector.UIString("Expires / Max-Age");
-    columns.expires.sortable = true;
-    columns.expires.width = "7%";
-    columns.size.title = WebInspector.UIString("Size");
-    columns.size.aligned = "right";
-    columns.size.sortable = true;
-    columns.size.width = "7%";
-    columns.httpOnly.title = WebInspector.UIString("HTTP");
-    columns.httpOnly.aligned = "centered";
-    columns.httpOnly.sortable = true;
-    columns.httpOnly.width = "7%";
-    columns.secure.title = WebInspector.UIString("Secure");
-    columns.secure.aligned = "centered";
-    columns.secure.sortable = true;
-    columns.secure.width = "7%";
+    var columns = [
+        {id: "name", title: WebInspector.UIString("Name"), sortable: true, disclosure: expandable, sort: "ascending", width: "24%"},
+        {id: "value", title: WebInspector.UIString("Value"), sortable: true, width: "34%"},
+        {id: "domain", title: WebInspector.UIString("Domain"), sortable: true, width: "7%"},
+        {id: "path", title: WebInspector.UIString("Path"), sortable: true, width: "7%"},
+        {id: "expires", title: WebInspector.UIString("Expires / Max-Age"), sortable: true, width: "7%"},
+        {id: "size", title: WebInspector.UIString("Size"), sortable: true, aligned: "right", width: "7%"},
+        {id: "httpOnly", title: WebInspector.UIString("HTTP"), sortable: true, aligned: "centered", width: "7%"},
+        {id: "secure", title: WebInspector.UIString("Secure"), sortable: true, aligned: "centered", width: "7%"}
+    ];
 
     this._dataGrid = new WebInspector.DataGrid(columns, null, readOnly ? null : this._onDeleteCookie.bind(this), refreshCallback);
     this._dataGrid.addEventListener("sorting changed", this._rebuildTable, this);

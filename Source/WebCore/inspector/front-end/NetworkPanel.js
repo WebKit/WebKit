@@ -157,62 +157,94 @@ WebInspector.NetworkLogView.prototype = {
 
     _createTable: function()
     {
-        var columns = {name: {}, method: {}, status: {}, domain: {}, type: {}, initiator: {}, cookies: {}, setCookies: {}, size: {}, time: {}, timeline: {}};
+        var columns = [];
+        columns.push({
+            id: "name", 
+            titleDOMFragment: this._makeHeaderFragment(WebInspector.UIString("Name"), WebInspector.UIString("Path")),
+            name: WebInspector.UIString("Name"),
+            sortable: true,
+            weight: 20,
+            disclosure: true
+        });
 
-        columns.name.titleDOMFragment = this._makeHeaderFragment(WebInspector.UIString("Name"), WebInspector.UIString("Path"));
-        columns.name.name = WebInspector.UIString("Name");
-        columns.name.sortable = true;
-        columns.name.weight = 20;
-        columns.name.disclosure = true;
+        columns.push({
+            id: "method",
+            title: WebInspector.UIString("Method"),
+            sortable: true,
+            weight: 6
+        });
 
-        columns.method.title = WebInspector.UIString("Method");
-        columns.method.sortable = true;
-        columns.method.weight = 6;
+        columns.push({
+            id: "status",
+            titleDOMFragment: this._makeHeaderFragment(WebInspector.UIString("Status"), WebInspector.UIString("Text")),
+            name: WebInspector.UIString("Status"),
+            sortable: true,
+            weight: 6
+        });
 
-        columns.status.titleDOMFragment = this._makeHeaderFragment(WebInspector.UIString("Status"), WebInspector.UIString("Text"));
-        columns.status.name = WebInspector.UIString("Status");
-        columns.status.sortable = true;
-        columns.status.weight = 6;
+        columns.push({
+            id: "domain",
+            title: WebInspector.UIString("Domain"),
+            sortable: true,
+            weight: 6
+        });
 
-        columns.domain.title = WebInspector.UIString("Domain");
-        columns.domain.sortable = true;
-        columns.domain.weight = 6;
+        columns.push({
+            id: "type",
+            title: WebInspector.UIString("Type"),
+            sortable: true,
+            weight: 6
+        });
 
-        columns.type.title = WebInspector.UIString("Type");
-        columns.type.sortable = true;
-        columns.type.weight = 6;
+        columns.push({
+            id: "initiator",
+            title: WebInspector.UIString("Initiator"),
+            sortable: true,
+            weight: 10
+        });
 
-        columns.initiator.title = WebInspector.UIString("Initiator");
-        columns.initiator.sortable = true;
-        columns.initiator.weight = 10;
+        columns.push({
+            id: "cookies",
+            title: WebInspector.UIString("Cookies"),
+            sortable: true,
+            weight: 6,
+            aligned: "right"
+        });
 
-        columns.cookies.title = WebInspector.UIString("Cookies");
-        columns.cookies.sortable = true;
-        columns.cookies.weight = 6;
-        columns.cookies.aligned = "right";
+        columns.push({
+            id: "setCookies",
+            title: WebInspector.UIString("Set-Cookies"),
+            sortable: true,
+            weight: 6,
+            aligned: "right"
+        });
 
-        columns.setCookies.title = WebInspector.UIString("Set-Cookies");
-        columns.setCookies.sortable = true;
-        columns.setCookies.weight = 6;
-        columns.setCookies.aligned = "right";
+        columns.push({
+            id: "size",
+            titleDOMFragment: this._makeHeaderFragment(WebInspector.UIString("Size"), WebInspector.UIString("Content")),
+            name: WebInspector.UIString("Size"),
+            sortable: true,
+            weight: 6,
+            aligned: "right"
+        });
 
-        columns.size.titleDOMFragment = this._makeHeaderFragment(WebInspector.UIString("Size"), WebInspector.UIString("Content"));
-        columns.size.name = WebInspector.UIString("Size");
-        columns.size.sortable = true;
-        columns.size.weight = 6;
-        columns.size.aligned = "right";
+        columns.push({
+            id: "time",
+            titleDOMFragment: this._makeHeaderFragment(WebInspector.UIString("Time"), WebInspector.UIString("Latency")),
+            name: WebInspector.UIString("Time"),
+            sortable: true,
+            weight: 6,
+            aligned: "right"
+        });
 
-        columns.time.titleDOMFragment = this._makeHeaderFragment(WebInspector.UIString("Time"), WebInspector.UIString("Latency"));
-        columns.time.name = WebInspector.UIString("Time");
-        columns.time.sortable = true;
-        columns.time.weight = 6;
-        columns.time.aligned = "right";
-
-        columns.timeline.title = "";
-        columns.timeline.name = WebInspector.UIString("Timeline");
-        columns.timeline.sortable = false;
-        columns.timeline.weight = 40;
-        columns.timeline.sort = "ascending";
+        columns.push({
+            id: "timeline",
+            title: "",
+            name: WebInspector.UIString("Timeline"),
+            sortable: false,
+            weight: 40,
+            sort: "ascending"
+        });
 
         this._dataGrid = new WebInspector.DataGrid(columns);
         this._dataGrid.resizeMethod = WebInspector.DataGrid.ResizeMethod.Last;

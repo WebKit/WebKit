@@ -179,13 +179,10 @@ WebInspector.DOMStorageItemsView.prototype = {
 
     _dataGridForDOMStorageItems: function(items)
     {
-        var columns = {key: {}, value: {}};
-
-        columns.key.title = WebInspector.UIString("Key");
-        columns.key.editable = true;
-
-        columns.value.title = WebInspector.UIString("Value");
-        columns.value.editable = true;
+        var columns = [
+            {id: "key", title: WebInspector.UIString("Key"), editable: true},
+            {id: "value", title: WebInspector.UIString("Value"), editable: true}
+        ];
 
         var nodes = [];
 

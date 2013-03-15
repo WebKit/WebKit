@@ -1587,7 +1587,7 @@ WebInspector.HeapSnapshotFilteredOrderedIterator.prototype = {
 
 WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.createComparator = function(fieldNames)
 {
-    return {fieldName1:fieldNames[0], ascending1:fieldNames[1], fieldName2:fieldNames[2], ascending2:fieldNames[3]};
+    return {fieldName1: fieldNames[0], ascending1: fieldNames[1], fieldName2: fieldNames[2], ascending2: fieldNames[3]};
 }
 
 /**

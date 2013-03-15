@@ -92,10 +92,12 @@ WebInspector.CSSSelectorProfileView = function(profile)
 
     this.showTimeAsPercent = WebInspector.settings.createSetting("selectorProfilerShowTimeAsPercent", true);
 
-    var columns = { "selector": { title: WebInspector.UIString("Selector"), width: "550px", sortable: true },
-                    "source": { title: WebInspector.UIString("Source"), width: "100px", sortable: true },
-                    "time": { title: WebInspector.UIString("Total"), width: "72px", sort: "descending", sortable: true },
-                    "matches": { title: WebInspector.UIString("Matches"), width: "72px", sortable: true } };
+    var columns = [
+        {id: "selector", title: WebInspector.UIString("Selector"), width: "550px", sortable: true},
+        {id: "source", title: WebInspector.UIString("Source"), width: "100px", sortable: true},
+        {id: "time", title: WebInspector.UIString("Total"), width: "72px", sort: "descending", sortable: true},
+        {id: "matches", title: WebInspector.UIString("Matches"), width: "72px", sortable: true}
+    ];
 
     this.dataGrid = new WebInspector.DataGrid(columns);
     this.dataGrid.element.addStyleClass("selector-profile-view");

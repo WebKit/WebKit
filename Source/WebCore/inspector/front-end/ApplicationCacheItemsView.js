@@ -196,15 +196,11 @@ WebInspector.ApplicationCacheItemsView.prototype = {
 
     _createDataGrid: function()
     {
-        var columns = { 0: {}, 1: {}, 2: {} };
-        columns[0].title = WebInspector.UIString("Resource");
-        columns[0].sort = "ascending";
-        columns[0].sortable = true;
-        columns[1].title = WebInspector.UIString("Type");
-        columns[1].sortable = true;
-        columns[2].title = WebInspector.UIString("Size");
-        columns[2].aligned = "right";
-        columns[2].sortable = true;
+        var columns = [
+            {title: WebInspector.UIString("Resource"), sort: "ascending", sortable: true},
+            {title: WebInspector.UIString("Type"), sortable: true},
+            {title: WebInspector.UIString("Size"), aligned: "right", sortable: true}
+        ];
         this._dataGrid = new WebInspector.DataGrid(columns);
         this._dataGrid.show(this.element);
         this._dataGrid.addEventListener("sorting changed", this._populateDataGrid, this);

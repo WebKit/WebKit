@@ -55,10 +55,10 @@ WebInspector.NativeMemorySnapshotView.prototype = {
  */
 WebInspector.NativeSnapshotDataGrid = function(profile)
 {
-    var columns = {
-        name: { title: WebInspector.UIString("Object"), width: "200px", disclosure: true, sortable: true },
-        size: { title: WebInspector.UIString("Size"), sortable: true, sort: "descending" },
-    };
+    var columns = [
+        {id: "name", title: WebInspector.UIString("Object"), width: "200px", disclosure: true, sortable: true},
+        {id: "size", title: WebInspector.UIString("Size"), sortable: true, sort: "descending"},
+    ];
     WebInspector.DataGrid.call(this, columns);
     this._profile = profile;
     this._totalNode = new WebInspector.NativeSnapshotNode(profile._memoryBlock, profile);

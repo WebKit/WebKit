@@ -26,12 +26,12 @@
 /**
  * @constructor
  * @extends {WebInspector.View}
- * @param {Object.<string, WebInspector.DataGrid.ColumnDescriptor>} columns
+ * @param {!Array.<!WebInspector.DataGrid.ColumnDescriptor>} columnsArray
  * @param {?function(WebInspector.DataGridNode, string, string, string)=} editCallback
  * @param {?function(WebInspector.DataGridNode)=} deleteCallback
  * @param {?function()=} refreshCallback
  */
-WebInspector.DataGrid = function(columns, editCallback, deleteCallback, refreshCallback)
+WebInspector.DataGrid = function(columnsArray, editCallback, deleteCallback, refreshCallback)
 {
     WebInspector.View.call(this);
     this.registerRequiredCSS("dataGrid.css");
@@ -71,10 +71,19 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback, refreshC
 
     var headerRow = document.createElement("tr");
     var columnGroup = document.createElement("colgroup");
-    this._columnCount = 0;
+    columnGroup.span = columnsArray.length;
 
-    for (var columnIdentifier in columns) {
-        var column = columns[columnIdentifier];
+    var fillerRow = document.createElement("tr");
+    fillerRow.className = "filler";
+
+    this._columnsArray = columnsArray;
+    this.columns = {};
+
+    for (var i = 0; i < columnsArray.length; ++i) {
+        var column = columnsArray[i];
+        column.ordinal = i;
+        var columnIdentifier = column.identifier = column.id || i;
+        this.columns[columnIdentifier] = column;
         if (column.disclosure)
             this.disclosureColumnIdentifier = columnIdentifier;
 
@@ -110,39 +119,19 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback, refreshC
             this.aligned[columnIdentifier] = column.aligned;
 
         headerRow.appendChild(cell);
-
-        ++this._columnCount;
+        fillerRow.createChild("td", columnIdentifier + "-column");
     }
 
-    columnGroup.span = this._columnCount;
-
     headerRow.createChild("th", "corner");
+    fillerRow.createChild("td", "corner");
 
     this._headerTableColumnGroup = columnGroup;
     this._headerTable.appendChild(this._headerTableColumnGroup);
     this.headerTableBody.appendChild(headerRow);
 
-    var fillerRow = document.createElement("tr");
-    fillerRow.className = "filler";
-
-    for (var columnIdentifier in columns)
-        fillerRow.createChild("td", columnIdentifier + "-column");
-    fillerRow.createChild("td", "corner");
-
     this._dataTableColumnGroup = columnGroup.cloneNode(true);
     this._dataTable.appendChild(this._dataTableColumnGroup);
     this.dataTableBody.appendChild(fillerRow);
-
-    this.columns = columns || {};
-    this._columnsArray = [];
-    for (var columnIdentifier in columns) {
-        columns[columnIdentifier].ordinal = this._columnsArray.length;
-        columns[columnIdentifier].identifier = columnIdentifier;
-        this._columnsArray.push(columns[columnIdentifier]);
-    }
-
-    for (var i = 0; i < this._columnsArray.length; ++i)
-        this._columnsArray[i].bodyElement = this._dataTableColumnGroup.children[i];
 
     this.selectedNode = null;
     this.expandNodesWhenArrowing = false;
@@ -152,7 +141,7 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback, refreshC
     this._columnWidthsInitialized = false;
 }
 
-/** @typedef {{editable:boolean, sort:string, sortable:boolean, aligned:string}} */
+/** @typedef {{id:?string, editable:boolean, sort:string, sortable:boolean, aligned:string}} */
 WebInspector.DataGrid.ColumnDescriptor;
 
 WebInspector.DataGrid.Events = {
@@ -170,14 +159,9 @@ WebInspector.DataGrid.createSortableDataGrid = function(columnNames, values)
     if (!numColumns)
         return null;
 
-    var columns = {};
-
-    for (var i = 0; i < columnNames.length; ++i) {
-        columns[i] = {};
-        columns[i].width = columnNames[i].length;
-        columns[i].title = columnNames[i];
-        columns[i].sortable = true;
-    }
+    var columns = [];
+    for (var i = 0; i < columnNames.length; ++i)
+        columns.push({title: columnNames[i], width: columnNames[i].length, sortable: true});
 
     var nodes = [];
     for (var i = 0; i < values.length / numColumns; ++i) {
@@ -408,7 +392,7 @@ WebInspector.DataGrid.prototype = {
         var columns = this._columnsArray;
         for (var i = columnOrdinal + increment; (i >= 0) && (i < columns.length); i += increment) {
             if (columns[i].editable)
-                return columns[i].ordinal;
+                return i;
         }
         return -1;
     },
@@ -520,16 +504,15 @@ WebInspector.DataGrid.prototype = {
     autoSizeColumns: function(minPercent, maxPercent, maxDescentLevel)
     {
         var widths = [];
-        var columnIdentifiers = Object.keys(this.columns);
-        for (var i = 0; i < columnIdentifiers.length; ++i)
-            widths[i] = (this.columns[columnIdentifiers[i]].title || "").length;
+        for (var i = 0; i < this._columnsArray.length; ++i)
+            widths.push((this._columnsArray[i].title || "").length);
 
         maxDescentLevel = maxDescentLevel || 0;
         var children = this._enumerateChildren(this._rootNode, [], maxDescentLevel + 1);
         for (var i = 0; i < children.length; ++i) {
             var node = children[i];
-            for (var j = 0; j < columnIdentifiers.length; ++j) {
-                var text = node.data[columnIdentifiers[j]] || "";
+            for (var j = 0; j < this._columnsArray.length; ++j) {
+                var text = node.data[this._columnsArray[j].identifier] || "";
                 if (text.length > widths[j])
                     widths[j] = text.length;
             }
@@ -537,8 +520,8 @@ WebInspector.DataGrid.prototype = {
 
         widths = this._autoSizeWidths(widths, minPercent, maxPercent);
 
-        for (var i = 0; i < columnIdentifiers.length; ++i)
-            this.columns[columnIdentifiers[i]].element.style.width = widths[i] + "%";
+        for (var i = 0; i < this._columnsArray.length; ++i)
+            this._columnsArray[i].element.style.width = widths[i] + "%";
         this._columnWidthsInitialized = false;
         this.updateWidths();
     },
@@ -597,17 +580,18 @@ WebInspector.DataGrid.prototype = {
     applyColumnWeights: function()
     {
         var sumOfWeights = 0.0;
-        for (var columnIdentifier in this.columns) {
-            if (this.isColumnVisible(columnIdentifier))
-                sumOfWeights += this.columns[columnIdentifier].weight;
+        for (var i = 0; i < this._columnsArray.length; ++i) {
+            var column = this._columnsArray[i];
+            if (this.isColumnVisible(column))
+                sumOfWeights += column.weight;
         }
         var factor = 100 / sumOfWeights;
 
-        for (var columnIdentifier in this.columns) {
-            var column = this.columns[columnIdentifier];
-            var width = this.isColumnVisible(columnIdentifier) ? ((factor * column.weight) + "%"): "0%";
-            this._headerTableColumnGroup.children[column.ordinal].style.width = width;
-            this._dataTableColumnGroup.children[column.ordinal].style.width = width;
+        for (var i = 0; i < this._columnsArray.length; ++i) {
+            var column = this._columnsArray[i];
+            var width = this.isColumnVisible(column) ? ((factor * column.weight) + "%"): "0%";
+            this._headerTableColumnGroup.children[i].style.width = width;
+            this._dataTableColumnGroup.children[i].style.width = width;
         }
 
         this._positionResizers();
@@ -615,11 +599,12 @@ WebInspector.DataGrid.prototype = {
     },
 
     /**
-     * @param {string} columnIdentifier
+     * @param {!WebInspector.DataGrid.ColumnDescriptor} column
+     * @return {boolean}
      */
-    isColumnVisible: function(columnIdentifier)
+    isColumnVisible: function(column)
     {
-        return !this.columns[columnIdentifier].hidden;
+        return !column.hidden;
     },
 
     /**
@@ -1118,8 +1103,9 @@ WebInspector.DataGridNode.prototype = {
 
     createCells: function()
     {
-        for (var columnIdentifier in this.dataGrid.columns) {
-            var cell = this.createCell(columnIdentifier);
+        var columnsArray = this.dataGrid._columnsArray;
+        for (var i = 0; i < columnsArray.length; ++i) {
+            var cell = this.createCell(columnsArray[i].identifier);
             this._element.appendChild(cell);
         }
     },
