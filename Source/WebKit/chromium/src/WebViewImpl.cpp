@@ -2992,11 +2992,22 @@ void WebViewImpl::setPageScaleFactor(float scaleFactor, const WebPoint& origin)
     if (!scaleFactor)
         scaleFactor = 1;
 
-    IntPoint scrollOffset = origin;
+    IntPoint newScrollOffset = origin;
     scaleFactor = clampPageScaleFactorToLimits(scaleFactor);
-    scrollOffset = clampOffsetAtScale(scrollOffset, scaleFactor);
+    newScrollOffset = clampOffsetAtScale(newScrollOffset, scaleFactor);
 
-    page()->setPageScaleFactor(scaleFactor, IntPoint(scrollOffset));
+    Frame* frame = page()->mainFrame();
+    FrameView* view = frame->view();
+    IntPoint oldScrollOffset = view->scrollPosition();
+
+    // Adjust the page scale in two steps. First, without change to scroll
+    // position, and then with a user scroll to the desired position.
+    // We do this because Page::setPageScaleFactor calls
+    // FrameView::setScrollPosition which is a programmatic scroll
+    // and we need this method to perform only user scrolls.
+    page()->setPageScaleFactor(scaleFactor, oldScrollOffset);
+    if (newScrollOffset != oldScrollOffset)
+        updateMainFrameScrollPosition(newScrollOffset, false);
 
     m_pageScaleFactorIsSet = true;
 
@@ -4166,6 +4177,21 @@ WebInputHandler* WebViewImpl::createInputHandler()
     return handler;
 }
 
+void WebViewImpl::updateMainFrameScrollPosition(const IntPoint& scrollPosition, bool programmaticScroll)
+{
+    FrameView* frameView = page()->mainFrame()->view();
+    if (!frameView)
+        return;
+
+    if (frameView->scrollPosition() == scrollPosition)
+        return;
+
+    bool oldProgrammaticScroll = frameView->inProgrammaticScroll();
+    frameView->setInProgrammaticScroll(programmaticScroll);
+    frameView->notifyScrollPositionChanged(scrollPosition);
+    frameView->setInProgrammaticScroll(oldProgrammaticScroll);
+}
+
 void WebViewImpl::applyScrollAndScale(const WebSize& scrollDelta, float pageScaleDelta)
 {
     if (!mainFrameImpl() || !mainFrameImpl()->frameView())
@@ -4173,7 +4199,9 @@ void WebViewImpl::applyScrollAndScale(const WebSize& scrollDelta, float pageScal
 
     if (pageScaleDelta == 1) {
         TRACE_EVENT_INSTANT2("webkit", "WebViewImpl::applyScrollAndScale::scrollBy", "x", scrollDelta.width, "y", scrollDelta.height);
-        mainFrameImpl()->frameView()->scrollBy(scrollDelta);
+        WebSize webScrollOffset = mainFrame()->scrollOffset();
+        IntPoint scrollOffset(webScrollOffset.width + scrollDelta.width, webScrollOffset.height + scrollDelta.height);
+        updateMainFrameScrollPosition(scrollOffset, false);
     } else {
         // The page scale changed, so apply a scale and scroll in a single
         // operation.
