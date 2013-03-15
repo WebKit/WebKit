@@ -173,6 +173,8 @@ private:
 
     void synthesizeMouseEventIfPossible(WebCore::TouchEvent*);
 
+    void focusPlugin();
+
     void calculateGeometry(const WebCore::IntRect& frameRect,
                            WebCore::IntRect& windowRect,
                            WebCore::IntRect& clipRect,

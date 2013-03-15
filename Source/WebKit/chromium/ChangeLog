@@ -1,3 +1,15 @@
+2013-03-15  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] Focus Plugin on TouchStart
+        https://bugs.webkit.org/show_bug.cgi?id=112385
+
+        Reviewed by Adam Barth.
+
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::handleMouseEvent):
+        * src/WebPluginContainerImpl.h:
+        (WebPluginContainerImpl):
+
 2013-03-15  Jochen Eisinger  <jochen@chromium.org>
 
         Expose whether a UserGestureToken still has gestures via WebKit API
