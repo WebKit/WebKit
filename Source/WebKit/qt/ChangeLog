@@ -1,3 +1,14 @@
+2013-03-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Build error with building with Qt 5.1
+        https://bugs.webkit.org/show_bug.cgi?id=112435
+
+        Reviewed by Noam Rosenthal.
+
+        QAccessibleWidget has moved to private.
+
+        * WidgetApi/qwebviewaccessible_p.h:
+
 2013-03-15  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Unreviewed trivial DRT ASSERT fix

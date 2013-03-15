@@ -1,3 +1,14 @@
+2013-03-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Build error with building with Qt 5.1
+        https://bugs.webkit.org/show_bug.cgi?id=112435
+
+        Reviewed by Noam Rosenthal.
+
+        QAccessibleWidget has moved to private.
+
+        * Source/widgetsapi.pri:
+
 2013-03-14  Tobias Mueller  <tobiasmue@gnome.org>
 
         Build: Remove XSLT option and depend hard on XSLT.

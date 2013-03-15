@@ -22,7 +22,11 @@
 
 #include <qaccessible.h>
 #include <qaccessibleobject.h>
+#if QT_VERSION >= QT_VERSION_CHECK(5, 1, 0)
+#include <private/qaccessiblewidget_p.h>
+#else
 #include <qaccessiblewidget.h>
+#endif
 
 class QWebFrame;
 class QWebPage;
