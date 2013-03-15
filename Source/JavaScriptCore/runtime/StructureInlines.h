@@ -53,8 +53,6 @@ inline Structure* Structure::create(JSGlobalData& globalData, const Structure* s
     ASSERT(globalData.structureStructure);
     Structure* newStructure = new (NotNull, allocateCell<Structure>(globalData.heap)) Structure(globalData, structure);
     newStructure->finishCreation(globalData);
-    if (structure->typeInfo().structureHasRareData())
-        newStructure->cloneRareDataFrom(globalData, structure);
     return newStructure;
 }
 

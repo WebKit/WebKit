@@ -207,7 +207,7 @@ Structure::Structure(JSGlobalData& globalData, const Structure* previous)
     , m_classInfo(previous->m_classInfo)
     , m_transitionWatchpointSet(InitializedWatching)
     , m_offset(invalidOffset)
-    , m_typeInfo(previous->typeInfo())
+    , m_typeInfo(previous->typeInfo().type(), previous->typeInfo().flags() & ~StructureHasRareData)
     , m_indexingType(previous->indexingTypeIncludingHistory())
     , m_inlineCapacity(previous->m_inlineCapacity)
     , m_dictionaryKind(previous->m_dictionaryKind)
@@ -221,6 +221,11 @@ Structure::Structure(JSGlobalData& globalData, const Structure* previous)
     , m_didTransition(true)
     , m_staticFunctionReified(previous->m_staticFunctionReified)
 {
+    if (previous->typeInfo().structureHasRareData() && previous->rareData()->needsCloning())
+        cloneRareDataFrom(globalData, previous);
+    else if (previous->previousID())
+        m_previousOrRareData.set(globalData, this, previous->previousID());
+
     previous->notifyTransitionFromThisStructure();
     if (previous->m_globalObject)
         m_globalObject.set(globalData, this, previous->m_globalObject.get());
@@ -692,6 +697,7 @@ void Structure::cloneRareDataFrom(JSGlobalData& globalData, const Structure* oth
 {
     ASSERT(other->typeInfo().structureHasRareData());
     StructureRareData* newRareData = StructureRareData::clone(globalData, other->rareData());
+    m_typeInfo = TypeInfo(typeInfo().type(), typeInfo().flags() | StructureHasRareData);
     m_previousOrRareData.set(globalData, this, newRareData);
 }
 

@@ -45,6 +45,9 @@ public:
 
     static Structure* createStructure(JSGlobalData&, JSGlobalObject*, JSValue prototype);
 
+    // Returns true if this StructureRareData should also be cloned when cloning the owner Structure.
+    bool needsCloning() const { return false; }
+
     Structure* previousID() const;
     void setPreviousID(JSGlobalData&, Structure* transition, Structure*);
     void clearPreviousID();

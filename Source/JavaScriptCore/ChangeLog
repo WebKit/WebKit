@@ -1,3 +1,24 @@
+2013-03-15  Andreas Kling  <akling@apple.com>
+
+        Don't also clone StructureRareData when cloning Structure.
+        <http://webkit.org/b/111672>
+
+        Reviewed by Mark Hahnenberg.
+
+        We were cloning a lot of StructureRareData with only the previousID pointer set since
+        the enumerationCache is not shared between clones.
+
+        Let the Structure copy constructor decide whether it wants to clone the rare data.
+        The decision is made by StructureRareData::needsCloning() and will currently always
+        return false, since StructureRareData only holds on to caches at present.
+        This may change in the future as more members are added to StructureRareData.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        (JSC::Structure::cloneRareDataFrom):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::create):
+
 2013-03-15  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Roll out r145838
