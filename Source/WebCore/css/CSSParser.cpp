@@ -11301,6 +11301,12 @@ CSSParserSelector* CSSParser::rewriteSpecifiersWithNamespaceIfNeeded(CSSParserSe
 {
     if (m_defaultNamespace != starAtom || specifiers->isCustomPseudoElement())
         return rewriteSpecifiersWithElementName(nullAtom, starAtom, specifiers, /*tagIsForNamespaceRule*/true);
+#if ENABLE(SHADOW_DOM)
+    if (CSSParserSelector* distributedPseudoElementSelector = specifiers->findDistributedPseudoElementSelector()) {
+        specifiers->prependTagSelector(QualifiedName(nullAtom, starAtom, m_defaultNamespace), /*tagIsForNamespaceRule*/true);
+        return rewriteSpecifiersForShadowDistributed(specifiers, distributedPseudoElementSelector);
+    }
+#endif
     return specifiers;
 }
 
@@ -11310,16 +11316,9 @@ CSSParserSelector* CSSParser::rewriteSpecifiersWithElementName(const AtomicStrin
     QualifiedName tag(namespacePrefix, elementName, determinedNamespace);
 
 #if ENABLE(SHADOW_DOM)
-    if (specifiers->isDistributedPseudoElement()) {
-        CSSParserSelector* argumentSelector = specifiers->functionArgumentSelector();
-        ASSERT(argumentSelector);
-        CSSParserSelector* end = argumentSelector;
-        while (end->tagHistory())
-            end = end->tagHistory();
-        OwnPtr<CSSParserSelector> elementNameSelector = adoptPtr(new CSSParserSelector(tag));
-        end->setTagHistory(elementNameSelector.release());
-        end->setRelation(CSSSelector::ShadowDistributed);
-        return argumentSelector;
+    if (CSSParserSelector* distributedPseudoElementSelector = specifiers->findDistributedPseudoElementSelector()) {
+        specifiers->prependTagSelector(tag, tagIsForNamespaceRule);
+        return rewriteSpecifiersForShadowDistributed(specifiers, distributedPseudoElementSelector);
     }
 #endif
 
@@ -11354,6 +11353,27 @@ CSSParserSelector* CSSParser::rewriteSpecifiersWithElementName(const AtomicStrin
     lastShadowDescendant->setRelation(CSSSelector::ShadowDescendant);
     return specifiers;
 }
+
+#if ENABLE(SHADOW_DOM)
+CSSParserSelector* CSSParser::rewriteSpecifiersForShadowDistributed(CSSParserSelector* specifiers, CSSParserSelector* distributedPseudoElementSelector)
+{
+    CSSParserSelector* argumentSelector = distributedPseudoElementSelector->functionArgumentSelector();
+    ASSERT(argumentSelector);
+    ASSERT(!specifiers->isDistributedPseudoElement());
+    for (CSSParserSelector* end = specifiers; end->tagHistory(); end = end->tagHistory()) {
+        if (end->tagHistory()->isDistributedPseudoElement()) {
+            end->clearTagHistory();
+            break;
+        }
+    }
+    CSSParserSelector* end = argumentSelector;
+    while (end->tagHistory())
+        end = end->tagHistory();
+    end->setTagHistory(sinkFloatingSelector(specifiers));
+    end->setRelation(CSSSelector::ShadowDistributed);
+    return argumentSelector;
+}
+#endif
 
 CSSParserSelector* CSSParser::rewriteSpecifiers(CSSParserSelector* specifiers, CSSParserSelector* newSpecifier)
 {
