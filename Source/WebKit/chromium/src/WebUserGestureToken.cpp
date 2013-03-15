@@ -35,6 +35,11 @@
 
 namespace WebKit {
 
+bool WebUserGestureToken::hasGestures() const
+{
+    return !m_token.isNull() && m_token->hasGestures();
+}
+
 WebUserGestureToken::WebUserGestureToken(PassRefPtr<WebCore::UserGestureToken> token)
 {
     m_token = token;

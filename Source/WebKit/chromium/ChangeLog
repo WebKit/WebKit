@@ -1,3 +1,18 @@
+2013-03-15  Jochen Eisinger  <jochen@chromium.org>
+
+        Expose whether a UserGestureToken still has gestures via WebKit API
+        https://bugs.webkit.org/show_bug.cgi?id=112342
+
+        Reviewed by Adam Barth.
+
+        * public/WebUserGestureToken.h:
+        (WebUserGestureToken):
+        * src/WebUserGestureToken.cpp:
+        (WebKit::WebUserGestureToken::hasGestures):
+        (WebKit):
+        * tests/WebUserGestureTokenTest.cpp:
+        (WebCore::TEST):
+
 2013-03-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled Chromium DEPS to r188418.  Requested by

@@ -42,6 +42,7 @@ enum ProcessingUserGestureState {
 class UserGestureToken : public RefCounted<UserGestureToken> {
 public:
     virtual ~UserGestureToken() { }
+    virtual bool hasGestures() const = 0;
 };
 
 

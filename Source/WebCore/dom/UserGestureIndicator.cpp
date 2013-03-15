@@ -35,6 +35,7 @@ public:
     static PassRefPtr<UserGestureToken> create() { return adoptRef(new GestureToken); }
 
     virtual ~GestureToken() { }
+    virtual bool hasGestures() const OVERRIDE { return m_consumableGestures > 0; }
 
     void addGesture() { m_consumableGestures++; }
     bool consumeGesture()
@@ -44,7 +45,6 @@ public:
         m_consumableGestures--;
         return true;
     }
-    bool hasGestures() const { return m_consumableGestures > 0; }
 
 private:
     GestureToken()

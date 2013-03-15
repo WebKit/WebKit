@@ -53,6 +53,7 @@ public:
     }
     ~WebUserGestureToken() { reset(); }
 
+    WEBKIT_EXPORT bool hasGestures() const;
     bool isNull() const { return m_token.isNull(); }
 
 #if WEBKIT_IMPLEMENTATION

@@ -45,6 +45,7 @@ namespace {
 TEST(WebUserGestureTokenTest, Basic)
 {
     WebUserGestureToken token;
+    EXPECT_FALSE(token.hasGestures());
 
     {
         WebScopedUserGesture indicator(token);
@@ -57,6 +58,7 @@ TEST(WebUserGestureTokenTest, Basic)
         token = WebUserGestureIndicator::currentUserGestureToken();
     }
 
+    EXPECT_TRUE(token.hasGestures());
     EXPECT_FALSE(WebUserGestureIndicator::isProcessingUserGesture());
 
     {
@@ -65,6 +67,8 @@ TEST(WebUserGestureTokenTest, Basic)
         WebUserGestureIndicator::consumeUserGesture();
         EXPECT_FALSE(WebUserGestureIndicator::isProcessingUserGesture());
     }
+
+    EXPECT_FALSE(token.hasGestures());
 
     {
         WebScopedUserGesture indicator(token);
