@@ -438,7 +438,7 @@ fi
 
 if test "$with_acceleration_backend" = "opengl"; then
     if test "$enable_gles2" = "yes"; then
-        acceleration_backend_description+= "(gles2"
+        acceleration_backend_description+="(gles2"
         OPENGL_LIBS="-lGLESv2"
     else
         acceleration_backend_description+="(gl"
