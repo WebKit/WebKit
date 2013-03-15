@@ -149,6 +149,30 @@ PlatformCALayer* PlatformCALayer::platformCALayer(void* platformLayer)
     return layerIntern ? layerIntern->owner() : 0;
 }
 
+PassRefPtr<PlatformCALayer> PlatformCALayer::clone(PlatformCALayerClient* owner) const
+{
+    PlatformCALayer::LayerType layerType = (layerType() == PlatformCALayer::LayerTypeTransformLayer) ?
+        PlatformCALayer::LayerTypeTransformLayer : PlatformCALayer::LayerTypeLayer;
+    RefPtr<PlatformCALayer> newLayer = PlatformCALayer::create(layerType, owner);
+
+    newLayer->setPosition(position());
+    newLayer->setBounds(bounds());
+    newLayer->setAnchorPoint(anchorPoint());
+    newLayer->setTransform(transform());
+    newLayer->setSublayerTransform(sublayerTransform());
+    newLayer->setContents(contents());
+    newLayer->setMasksToBounds(masksToBounds());
+    newLayer->setDoubleSided(isDoubleSided());
+    newLayer->setOpaque(isOpaque());
+    newLayer->setBackgroundColor(backgroundColor());
+    newLayer->setContentsScale(contentsScale());
+#if ENABLE(CSS_FILTERS)
+    newLayer->copyFiltersFrom(this);
+#endif
+
+    return newLayer;
+}
+
 PlatformLayer* PlatformCALayer::platformLayer() const
 {
     return m_layer.get();

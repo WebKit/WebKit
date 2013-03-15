@@ -2889,24 +2889,7 @@ PassRefPtr<PlatformCALayer> GraphicsLayerCA::fetchCloneLayers(GraphicsLayer* rep
 
 PassRefPtr<PlatformCALayer> GraphicsLayerCA::cloneLayer(PlatformCALayer *layer, CloneLevel cloneLevel)
 {
-    PlatformCALayer::LayerType layerType = (layer->layerType() == PlatformCALayer::LayerTypeTransformLayer) ? 
-                                                PlatformCALayer::LayerTypeTransformLayer : PlatformCALayer::LayerTypeLayer;
-    RefPtr<PlatformCALayer> newLayer = PlatformCALayer::create(layerType, this);
-    
-    newLayer->setPosition(layer->position());
-    newLayer->setBounds(layer->bounds());
-    newLayer->setAnchorPoint(layer->anchorPoint());
-    newLayer->setTransform(layer->transform());
-    newLayer->setSublayerTransform(layer->sublayerTransform());
-    newLayer->setContents(layer->contents());
-    newLayer->setMasksToBounds(layer->masksToBounds());
-    newLayer->setDoubleSided(layer->isDoubleSided());
-    newLayer->setOpaque(layer->isOpaque());
-    newLayer->setBackgroundColor(layer->backgroundColor());
-    newLayer->setContentsScale(layer->contentsScale());
-#if ENABLE(CSS_FILTERS)
-    newLayer->copyFiltersFrom(layer);
-#endif
+    RefPtr<PlatformCALayer> newLayer = layer->clone(this);
 
     if (cloneLevel == IntermediateCloneLevel) {
         newLayer->setOpacity(layer->opacity());

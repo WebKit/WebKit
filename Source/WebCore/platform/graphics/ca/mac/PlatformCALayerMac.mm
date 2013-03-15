@@ -35,16 +35,22 @@
 #import "GraphicsLayerCA.h"
 #import "LengthFunctions.h"
 #import "PlatformCAFilters.h"
+#import "SoftLinking.h"
 #import "TiledBacking.h"
 #import "WebLayer.h"
 #import "WebTiledLayer.h"
 #import "WebTiledBackingLayer.h"
 #import <objc/objc-auto.h>
 #import <objc/runtime.h>
+#import <AVFoundation/AVFoundation.h>
 #import <QuartzCore/QuartzCore.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/MathExtras.h>
+#import <wtf/RetainPtr.h>
 #import <wtf/UnusedParam.h>
+
+SOFT_LINK_FRAMEWORK_OPTIONAL(AVFoundation)
+SOFT_LINK_CLASS(AVFoundation, AVPlayerLayer)
 
 using std::min;
 using std::max;
@@ -76,7 +82,7 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
     // hasNonZeroBeginTime is stored in a key in the animation
     bool hasNonZeroBeginTime = [[animation valueForKey:WKNonZeroBeginTimeFlag] boolValue];
     CFTimeInterval startTime;
-    
+
     if (hasNonZeroBeginTime) {
         // We don't know what time CA used to commit the animation, so just use the current time
         // (even though this will be slightly off).
@@ -173,7 +179,10 @@ PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformLayer* layer, Plat
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (layer) {
-        m_layerType = LayerTypeCustom;
+        if ([layer isKindOfClass:getAVPlayerLayerClass()])
+            m_layerType = LayerTypeAVPlayerLayer;
+        else
+            m_layerType = LayerTypeCustom;
         m_layer = layer;
     } else {
         m_layerType = layerType;
@@ -196,6 +205,9 @@ PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformLayer* layer, Plat
             case LayerTypeTiledBackingLayer:
             case LayerTypePageTiledBackingLayer:
                 layerClass = [WebTiledBackingLayer class];
+                break;
+            case LayerTypeAVPlayerLayer:
+                layerClass = getAVPlayerLayerClass();
                 break;
             case LayerTypeCustom:
                 break;
@@ -227,6 +239,44 @@ PlatformCALayer::PlatformCALayer(LayerType layerType, PlatformLayer* layer, Plat
     }
     
     END_BLOCK_OBJC_EXCEPTIONS
+}
+
+PassRefPtr<PlatformCALayer> PlatformCALayer::clone(PlatformCALayerClient* owner) const
+{
+    LayerType type;
+    switch (layerType()) {
+    case LayerTypeTransformLayer:
+        type = LayerTypeTransformLayer;
+        break;
+    case LayerTypeAVPlayerLayer:
+        type = LayerTypeAVPlayerLayer;
+        break;
+    case LayerTypeLayer:
+    default:
+        type = LayerTypeLayer;
+        break;
+    };
+    RefPtr<PlatformCALayer> newLayer = PlatformCALayer::create(type, owner);
+
+    newLayer->setPosition(position());
+    newLayer->setBounds(bounds());
+    newLayer->setAnchorPoint(anchorPoint());
+    newLayer->setTransform(transform());
+    newLayer->setSublayerTransform(sublayerTransform());
+    newLayer->setContents(contents());
+    newLayer->setMasksToBounds(masksToBounds());
+    newLayer->setDoubleSided(isDoubleSided());
+    newLayer->setOpaque(isOpaque());
+    newLayer->setBackgroundColor(backgroundColor());
+    newLayer->setContentsScale(contentsScale());
+#if ENABLE(CSS_FILTERS)
+    newLayer->copyFiltersFrom(this);
+#endif
+
+    if (type == LayerTypeAVPlayerLayer)
+        [newLayer->playerLayer() setPlayer:[playerLayer() player]];
+
+    return newLayer;
 }
 
 PlatformCALayer::~PlatformCALayer()
@@ -810,5 +860,11 @@ void PlatformCALayer::synchronouslyDisplayTilesInRect(const FloatRect& rect)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 #endif
+
+AVPlayerLayer* PlatformCALayer::playerLayer() const
+{
+    ASSERT([m_layer.get() isKindOfClass:getAVPlayerLayerClass()]);
+    return (AVPlayerLayer*)m_layer.get();
+}
 
 #endif // USE(ACCELERATED_COMPOSITING)
