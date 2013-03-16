@@ -932,42 +932,6 @@ PassRefPtr<ClientRectList> Internals::inspectorHighlightRects(Document* document
 #endif
 }
 
-#if PLATFORM(CHROMIUM)
-void Internals::setBackgroundBlurOnNode(Node* node, int blurLength, ExceptionCode& ec)
-{
-    if (!node) {
-        ec = INVALID_ACCESS_ERR;
-        return;
-    }
-
-    RenderObject* renderObject = node->renderer();
-    if (!renderObject) {
-        ec = INVALID_NODE_TYPE_ERR;
-        return;
-    }
-
-    RenderLayer* renderLayer = renderObject->enclosingLayer();
-    if (!renderLayer || !renderLayer->isComposited()) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
-
-    GraphicsLayer* graphicsLayer = renderLayer->backing()->graphicsLayer();
-    if (!graphicsLayer) {
-        ec = INVALID_NODE_TYPE_ERR;
-        return;
-    }
-
-    FilterOperations filters;
-    filters.operations().append(BlurFilterOperation::create(Length(blurLength, Fixed), FilterOperation::BLUR));
-    static_cast<GraphicsLayerChromium*>(graphicsLayer)->setBackgroundFilters(filters);
-}
-#else
-void Internals::setBackgroundBlurOnNode(Node*, int, ExceptionCode&)
-{
-}
-#endif
-
 unsigned Internals::markerCountForNode(Node* node, const String& markerType, ExceptionCode& ec)
 {
     if (!node) {
