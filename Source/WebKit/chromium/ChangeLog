@@ -1,3 +1,18 @@
+2013-03-16  Hans Wennborg  <hans@chromium.org>
+
+        Remove redundant checks from WebInputEvent::isGestureEventType
+        https://bugs.webkit.org/show_bug.cgi?id=112503
+
+        Reviewed by Darin Fisher.
+
+        GesturePinchBegin, GesturePinchEnd and GesturePinchUpdate were checked
+        for twice.
+
+        This was found by experimenting with a potential new Clang warning.
+
+        * public/WebInputEvent.h:
+        (WebKit::WebInputEvent::isGestureEventType):
+
 2013-03-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled Chromium DEPS to r188504.  Requested by

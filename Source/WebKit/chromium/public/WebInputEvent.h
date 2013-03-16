@@ -235,10 +235,7 @@ public:
             || type == GestureDoubleTap
             || type == GestureTwoFingerTap
             || type == GestureLongPress
-            || type == GestureLongTap
-            || type == GesturePinchBegin
-            || type == GesturePinchEnd
-            || type == GesturePinchUpdate;
+            || type == GestureLongTap;
     }
 };
 
