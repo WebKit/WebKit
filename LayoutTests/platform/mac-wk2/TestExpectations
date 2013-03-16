@@ -271,8 +271,8 @@ webkit.org/b/98960 fast/parser/document-open-in-unload.html [ Skip ]
 webkit.org/b/76359 editing/shadow [ Skip ]
 webkit.org/b/76359 fast/dom/shadow [ Skip ]
 
-# fast/events/controlclick-no-onclick.html fails on Mac WK2
-webkit.org/b/105948 fast/events/controlclick-no-onclick.html [ Failure ]
+# fast/events/controlclick-no-onclick.html fails or times out on Mac WK2
+webkit.org/b/105948 fast/events/controlclick-no-onclick.html [ Skip ]
 
 webkit.org/b/105954 http/tests/navigation/reload-subframe-object.html [ Failure ]
 
