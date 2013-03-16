@@ -44,7 +44,6 @@
 
 namespace WebCore {
 
-class FormState;
 class ResourceRequest;
 
 class MainResourceLoader : public RefCounted<MainResourceLoader>, public CachedRawResourceClient {
@@ -53,7 +52,7 @@ public:
     static PassRefPtr<MainResourceLoader> create(DocumentLoader*);
     virtual ~MainResourceLoader();
 
-    void load(const ResourceRequest&, const SubstituteData&);
+    void load(const ResourceRequest&);
     void cancel();
     void cancel(const ResourceError&);
     ResourceLoader* loader() const;
@@ -77,6 +76,11 @@ public:
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
+    void takeIdentifierFromResourceLoader() { m_identifierForLoadWithoutResourceLoader = identifier(); }
+    void stopLoadingForPolicyChange();
+    void handleSubstituteDataLoadSoon(const ResourceRequest&);
+    void clearResource();
+
 private:
     explicit MainResourceLoader(DocumentLoader*);
 
@@ -85,20 +89,13 @@ private:
     virtual void dataReceived(CachedResource*, const char* data, int dataLength) OVERRIDE;
     virtual void notifyFinished(CachedResource*) OVERRIDE;
 
-    void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse);
     void didFinishLoading(double finishTime);
-    void handleSubstituteDataLoadSoon(const ResourceRequest&);
     void handleSubstituteDataLoadNow(MainResourceLoaderTimer*);
 
     void startDataLoadTimer();
 
     void receivedError(const ResourceError&);
     ResourceError interruptedForPolicyChangeError() const;
-    void stopLoadingForPolicyChange();
-    bool isPostOrRedirectAfterPost(const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
-
-    static void callContinueAfterNavigationPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
-    void continueAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue);
 
     static void callContinueAfterContentPolicy(void*, PolicyAction);
     void continueAfterContentPolicy(PolicyAction);
@@ -112,14 +109,12 @@ private:
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
 
     const ResourceRequest& request() const;
-    void clearResource();
 
     bool defersLoading() const;
 
     CachedResourceHandle<CachedRawResource> m_resource;
 
     ResourceRequest m_initialRequest;
-    SubstituteData m_substituteData;
     ResourceResponse m_response;
 
     MainResourceLoaderTimer m_dataLoadTimer;

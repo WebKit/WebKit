@@ -58,6 +58,7 @@ namespace WebCore {
     class ArchiveResourceCollection;
     class CachedResourceLoader;
     class ContentFilter;
+    class FormState;
     class Frame;
     class FrameLoader;
     class MainResourceLoader;
@@ -257,6 +258,9 @@ namespace WebCore {
         virtual void reportMemoryUsage(MemoryObjectInfo*) const;
         void checkLoadComplete();
 
+        // FIXME: This should be private once DocumentLoader and MainResourceLoader are merged.
+        void willSendRequest(ResourceRequest&, const ResourceResponse&);
+
     protected:
         DocumentLoader(const ResourceRequest&, const SubstituteData&);
 
@@ -276,6 +280,10 @@ namespace WebCore {
         bool maybeLoadEmpty();
 
         bool isMultipartReplacingLoad() const;
+        bool isPostOrRedirectAfterPost(const ResourceRequest&, const ResourceResponse&);
+
+        static void callContinueAfterNavigationPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
+        void continueAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue);
 
         void deliverSubstituteResourcesAfterDelay();
         void substituteResourceDeliveryTimerFired(Timer<DocumentLoader>*);
