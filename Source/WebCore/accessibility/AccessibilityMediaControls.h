@@ -90,7 +90,7 @@ private:
     explicit AccessibilityMediaControlsContainer(RenderObject*);
     bool controllingVideoElement() const;
     const String elementTypeName() const;
-    virtual bool computeAccessibilityIsIgnored() const { return false; }
+    virtual bool computeAccessibilityIsIgnored() const;
 };
 
 

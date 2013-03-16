@@ -47,6 +47,7 @@ protected:
 private:
     virtual bool isMockObject() const { return true; }
 
+    virtual bool computeAccessibilityIsIgnored() const;
     // Must be called when the parent object clears its children.
     virtual void detachFromParent() { m_parent = 0; }
 }; 

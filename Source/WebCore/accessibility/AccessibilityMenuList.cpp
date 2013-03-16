@@ -62,12 +62,12 @@ void AccessibilityMenuList::addChildren()
     if (!list)
         return;
 
-    if (list->accessibilityPlatformIncludesObject() == IgnoreObject) {
+    static_cast<AccessibilityMockObject*>(list)->setParent(this);
+    if (list->accessibilityIsIgnored()) {
         cache->remove(list->axObjectID());
         return;
     }
 
-    static_cast<AccessibilityMockObject*>(list)->setParent(this);
     m_children.append(list);
 
     list->addChildren();

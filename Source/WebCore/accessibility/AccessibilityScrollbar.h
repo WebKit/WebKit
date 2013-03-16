@@ -44,7 +44,6 @@ public:
 private:
     explicit AccessibilityScrollbar(Scrollbar*);
 
-    virtual bool computeAccessibilityIsIgnored() const { return false; }
     virtual bool canSetValueAttribute() const { return true; }
     virtual bool canSetNumericValue() const { return true; }
 

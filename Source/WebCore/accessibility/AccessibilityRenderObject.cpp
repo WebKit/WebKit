@@ -1051,22 +1051,6 @@ AccessibilityObject* AccessibilityRenderObject::titleUIElement() const
     return 0;   
 }
     
-bool AccessibilityRenderObject::ariaIsHidden() const
-{
-    if (equalIgnoringCase(getAttribute(aria_hiddenAttr), "true"))
-        return true;
-    
-    // aria-hidden hides this object and any children
-    AccessibilityObject* object = parentObject();
-    while (object) {
-        if (equalIgnoringCase(object->getAttribute(aria_hiddenAttr), "true"))
-            return true;
-        object = object->parentObject();
-    }
-
-    return false;
-}
-
 bool AccessibilityRenderObject::isAllowedChildOfTree() const
 {
     // Determine if this is in a tree. If so, we apply special behavior to make it work like an AXOutline.
@@ -1089,7 +1073,7 @@ bool AccessibilityRenderObject::isAllowedChildOfTree() const
     return true;
 }
     
-AccessibilityObjectInclusion AccessibilityRenderObject::accessibilityIsIgnoredBase() const
+AccessibilityObjectInclusion AccessibilityRenderObject::defaultObjectInclusion() const
 {
     // The following cases can apply to any element that's a subclass of AccessibilityRenderObject.
     
@@ -1103,24 +1087,9 @@ AccessibilityObjectInclusion AccessibilityRenderObject::accessibilityIsIgnoredBa
         
         return IgnoreObject;
     }
-    
-    // Anything marked as aria-hidden or a child of something aria-hidden must be hidden.
-    if (ariaIsHidden())
-        return IgnoreObject;
-    
-    // Anything that is a presentational role must be hidden.
-    if (isPresentationalChildOfAriaRole())
-        return IgnoreObject;
 
-    // Allow the platform to make a decision.
-    AccessibilityObjectInclusion decision = accessibilityPlatformIncludesObject();
-    if (decision == IncludeObject)
-        return IncludeObject;
-    if (decision == IgnoreObject)
-        return IgnoreObject;
-        
-    return DefaultBehavior;
-}  
+    return AccessibilityObject::defaultObjectInclusion();
+}
 
 bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
 {
@@ -1131,7 +1100,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     // Check first if any of the common reasons cause this element to be ignored.
     // Then process other use cases that need to be applied to all the various roles
     // that AccessibilityRenderObjects take on.
-    AccessibilityObjectInclusion decision = accessibilityIsIgnoredBase();
+    AccessibilityObjectInclusion decision = defaultObjectInclusion();
     if (decision == IncludeObject)
         return false;
     if (decision == IgnoreObject)
@@ -2733,8 +2702,10 @@ void AccessibilityRenderObject::addImageMapChildren()
             areaObject->setHTMLAreaElement(static_cast<HTMLAreaElement*>(current));
             areaObject->setHTMLMapElement(map);
             areaObject->setParent(this);
-            
-            m_children.append(areaObject);
+            if (!areaObject->accessibilityIsIgnored())
+                m_children.append(areaObject);
+            else
+                axObjectCache()->remove(areaObject->axObjectID());
         }
     }
 }

@@ -93,7 +93,7 @@ public:
     virtual void setAccessibleName(const AtomicString&);
     
     // Provides common logic used by all elements when determining isIgnored.
-    AccessibilityObjectInclusion accessibilityIsIgnoredBase() const;
+    virtual AccessibilityObjectInclusion defaultObjectInclusion() const;
     
     virtual int layoutCount() const;
     virtual double estimatedLoadingProgress() const;
@@ -228,7 +228,6 @@ protected:
 private:
     void ariaListboxSelectedChildren(AccessibilityChildrenVector&);
     void ariaListboxVisibleChildren(AccessibilityChildrenVector&);
-    bool ariaIsHidden() const;
     bool isAllowedChildOfTree() const;
     bool hasTextAlternative() const;
     String positionalDescriptionForMSAA() const;

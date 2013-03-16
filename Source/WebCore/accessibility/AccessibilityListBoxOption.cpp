@@ -124,8 +124,8 @@ bool AccessibilityListBoxOption::computeAccessibilityIsIgnored() const
 {
     if (!m_optionElement)
         return true;
-    
-    if (equalIgnoringCase(getAttribute(aria_hiddenAttr), "true"))
+
+    if (accessibilityIsIgnoredByDefault())
         return true;
     
     return parentObject()->accessibilityIsIgnored();

@@ -55,13 +55,7 @@ PassRefPtr<AccessibilityList> AccessibilityList::create(RenderObject* renderer)
 
 bool AccessibilityList::computeAccessibilityIsIgnored() const
 {
-    AccessibilityObjectInclusion decision = accessibilityIsIgnoredBase();
-    if (decision == IncludeObject)
-        return false;
-    if (decision == IgnoreObject)
-        return true;
-    
-    return false;
+    return accessibilityIsIgnoredByDefault();
 }
     
 bool AccessibilityList::isUnorderedList() const

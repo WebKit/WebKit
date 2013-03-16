@@ -152,17 +152,6 @@ AccessibilityObject* AccessibilityListBox::listBoxOptionAccessibilityObject(HTML
     return listBoxObject;
 }
     
-bool AccessibilityListBox::computeAccessibilityIsIgnored() const
-{
-    AccessibilityObjectInclusion decision = accessibilityIsIgnoredBase();
-    if (decision == IncludeObject)
-        return false;
-    if (decision == IgnoreObject)
-        return true;
-    
-    return false;
-}
-
 AccessibilityObject* AccessibilityListBox::elementAccessibilityHitTest(const IntPoint& point) const
 {
     // the internal HTMLSelectElement methods for returning a listbox option at a point

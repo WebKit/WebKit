@@ -49,7 +49,6 @@ private:
 
     virtual bool isMenuList() const { return true; }
     virtual AccessibilityRole roleValue() const { return PopUpButtonRole; }
-    virtual bool computeAccessibilityIsIgnored() const { return false; }
     virtual bool canSetFocusAttribute() const;
 
     virtual void addChildren();

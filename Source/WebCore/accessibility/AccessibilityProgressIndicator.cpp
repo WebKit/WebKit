@@ -44,7 +44,7 @@ PassRefPtr<AccessibilityProgressIndicator> AccessibilityProgressIndicator::creat
 
 bool AccessibilityProgressIndicator::computeAccessibilityIsIgnored() const
 {
-    return accessibilityIsIgnoredBase() == IgnoreObject;
+    return accessibilityIsIgnoredByDefault();
 }
     
 float AccessibilityProgressIndicator::valueForRange() const

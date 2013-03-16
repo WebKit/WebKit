@@ -74,7 +74,6 @@ private:
     
     virtual void accessibilityText(Vector<AccessibilityText>&);
     virtual bool isImageMapLink() const { return true; }
-    virtual bool computeAccessibilityIsIgnored() const { return false; }
 };
     
 } // namespace WebCore

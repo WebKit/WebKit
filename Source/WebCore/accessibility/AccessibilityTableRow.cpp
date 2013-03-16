@@ -88,7 +88,7 @@ AccessibilityObject* AccessibilityTableRow::observableObject() const
     
 bool AccessibilityTableRow::computeAccessibilityIsIgnored() const
 {    
-    AccessibilityObjectInclusion decision = accessibilityIsIgnoredBase();
+    AccessibilityObjectInclusion decision = defaultObjectInclusion();
     if (decision == IncludeObject)
         return false;
     if (decision == IgnoreObject)

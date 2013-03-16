@@ -56,7 +56,7 @@ PassRefPtr<AccessibilityTableCell> AccessibilityTableCell::create(RenderObject* 
 
 bool AccessibilityTableCell::computeAccessibilityIsIgnored() const
 {
-    AccessibilityObjectInclusion decision = accessibilityIsIgnoredBase();
+    AccessibilityObjectInclusion decision = defaultObjectInclusion();
     if (decision == IncludeObject)
         return false;
     if (decision == IgnoreObject)

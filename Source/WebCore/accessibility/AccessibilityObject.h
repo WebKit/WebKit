@@ -486,7 +486,9 @@ public:
     virtual Node* node() const { return 0; }
     virtual RenderObject* renderer() const { return 0; }
     virtual bool accessibilityIsIgnored() const;
-
+    virtual AccessibilityObjectInclusion defaultObjectInclusion() const;
+    bool accessibilityIsIgnoredByDefault() const;
+    
     int blockquoteLevel() const;
     virtual int headingLevel() const { return 0; }
     virtual int tableLevel() const { return 0; }
@@ -849,6 +851,7 @@ protected:
     static bool isAccessibilityTextSearchMatch(AccessibilityObject*, AccessibilitySearchCriteria*);
     static bool objectMatchesSearchCriteriaWithResultLimit(AccessibilityObject*, AccessibilitySearchCriteria*, AccessibilityChildrenVector&);
     virtual AccessibilityRole buttonRoleType() const;
+    bool ariaIsHidden() const;
 
 #if PLATFORM(GTK) || (PLATFORM(EFL) && HAVE(ACCESSIBILITY))
     bool allowsTextRanges() const;

@@ -64,7 +64,7 @@ bool AccessibilityMenuListPopup::isEnabled() const
 
 bool AccessibilityMenuListPopup::computeAccessibilityIsIgnored() const
 {
-    return accessibilityPlatformIncludesObject() != IncludeObject;
+    return accessibilityIsIgnoredByDefault();
 }
 
 AccessibilityMenuListOption* AccessibilityMenuListPopup::menuListOptionAccessibilityObject(HTMLElement* element) const

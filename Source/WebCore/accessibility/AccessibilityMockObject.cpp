@@ -37,4 +37,9 @@ AccessibilityMockObject::~AccessibilityMockObject()
 {
 }
     
+bool AccessibilityMockObject::computeAccessibilityIsIgnored() const
+{
+    return accessibilityIsIgnoredByDefault();
+}
+    
 }

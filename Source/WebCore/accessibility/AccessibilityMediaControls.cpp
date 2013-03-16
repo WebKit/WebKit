@@ -178,7 +178,7 @@ bool AccessibilityMediaControl::computeAccessibilityIsIgnored() const
     if (!m_renderer || !m_renderer->style() || m_renderer->style()->visibility() != VISIBLE || controlType() == MediaTimelineContainer)
         return true;
 
-    return false;
+    return accessibilityIsIgnoredByDefault();
 }
 
 AccessibilityRole AccessibilityMediaControl::roleValue() const
@@ -256,6 +256,10 @@ const String AccessibilityMediaControlsContainer::elementTypeName() const
     return audioElement;
 }
 
+bool AccessibilityMediaControlsContainer::computeAccessibilityIsIgnored() const
+{
+    return accessibilityIsIgnoredByDefault();
+}
 
 //
 // AccessibilityMediaTimeline
@@ -305,7 +309,10 @@ bool AccessibilityMediaTimeDisplay::computeAccessibilityIsIgnored() const
     if (!m_renderer || !m_renderer->style() || m_renderer->style()->visibility() != VISIBLE)
         return true;
 
-    return !m_renderer->style()->width().value();
+    if (!m_renderer->style()->width().value())
+        return true;
+    
+    return accessibilityIsIgnoredByDefault();
 }
 
 String AccessibilityMediaTimeDisplay::accessibilityDescription() const

@@ -541,7 +541,7 @@ AccessibilityRole AccessibilityTable::roleValue() const
     
 bool AccessibilityTable::computeAccessibilityIsIgnored() const
 {
-    AccessibilityObjectInclusion decision = accessibilityIsIgnoredBase();
+    AccessibilityObjectInclusion decision = defaultObjectInclusion();
     if (decision == IncludeObject)
         return false;
     if (decision == IgnoreObject)
