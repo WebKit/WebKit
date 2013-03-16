@@ -4418,3 +4418,6 @@ webkit.org/b/112384 [ Win ] fast/forms/basic-textareas.html [ ImageOnlyFailure P
 webkit.org/b/112384 [ Win ] fast/overflow/overflow-x-y.html [ ImageOnlyFailure Pass ]
 webkit.org/b/112384 [ Win ] fast/parser/open-comment-in-textarea.html [ ImageOnlyFailure Pass ]
 webkit.org/b/112384 [ Win ] fast/replaced/width100percent-textarea.html [ ImageOnlyFailure Pass ]
+
+# Need rebaseline
+webkit.org/b/110837 [ Mac Win ] fast/forms/color/input-appearance-color.html [ Failure ]

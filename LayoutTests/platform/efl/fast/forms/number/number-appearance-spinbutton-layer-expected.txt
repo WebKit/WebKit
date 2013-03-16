@@ -5,7 +5,7 @@ layer at (0,0) size 800x80
     RenderBody {BODY} at (8,8) size 784x64
       RenderBR {BR} at (197,8) size 0x19
       RenderTextControl {INPUT} at (2,34) size 193x28 [bgcolor=#FFFFFF]
-        RenderDeprecatedFlexibleBox {DIV} at (4,6) size 186x18
+        RenderFlexibleBox {DIV} at (4,6) size 186x18
           RenderBlock {DIV} at (0,0) size 186x18
       RenderText {#text} at (0,0) size 0x0
 layer at (14,48) size 186x18 scrollHeight 19
@@ -14,7 +14,7 @@ layer at (14,48) size 186x18 scrollHeight 19
       text run at (0,0) width 18: "10"
 layer at (10,10) size 193x28
   RenderTextControl {INPUT} at (2,2) size 193x28 [bgcolor=#FFFFFF]
-    RenderDeprecatedFlexibleBox {DIV} at (4,6) size 186x18
+    RenderFlexibleBox {DIV} at (4,6) size 186x18
       RenderBlock {DIV} at (0,0) size 186x18
 layer at (14,16) size 186x18 scrollHeight 19
   RenderBlock {DIV} at (0,0) size 186x18

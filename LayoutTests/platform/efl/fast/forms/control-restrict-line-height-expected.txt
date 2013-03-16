@@ -21,7 +21,7 @@ layer at (0,0) size 800x600
         text run at (396,76) width 4: " "
       RenderBR {BR} at (0,0) size 0x0
       RenderTextControl {INPUT} at (2,114) size 192x36 [bgcolor=#FFFFFF]
-        RenderDeprecatedFlexibleBox {DIV} at (4,6) size 185x26
+        RenderFlexibleBox {DIV} at (4,6) size 185x26
           RenderBlock {DIV} at (0,13) size 0x0
           RenderBlock {DIV} at (0,0) size 185x26
           RenderBlock {DIV} at (185,13) size 0x0

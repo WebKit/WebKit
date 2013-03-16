@@ -38,6 +38,7 @@
 #include "MouseEvent.h"
 #include "Page.h"
 #include "RenderSearchField.h"
+#include "RenderTextControl.h"
 #include "RenderView.h"
 #include "ScriptController.h"
 #include "SpeechInput.h"
@@ -49,6 +50,21 @@
 namespace WebCore {
 
 using namespace HTMLNames;
+
+TextControlInnerContainer::TextControlInnerContainer(Document* document)
+    : HTMLDivElement(divTag, document)
+{
+}
+
+PassRefPtr<TextControlInnerContainer> TextControlInnerContainer::create(Document* document)
+{
+    return adoptRef(new TextControlInnerContainer(document));
+}
+    
+RenderObject* TextControlInnerContainer::createRenderer(RenderArena* arena, RenderStyle*)
+{
+    return new (arena) RenderTextControlInnerContainer(this);
+}
 
 TextControlInnerElement::TextControlInnerElement(Document* document)
     : HTMLDivElement(divTag, document)

@@ -19,7 +19,7 @@ layer at (10,29) size 310x73
 layer at (10,29) size 310x13 scrollHeight 25
   RenderBlock {DIV} at (0,0) size 311x13
 layer at (10,41) size 310x60
-  RenderDeprecatedFlexibleBox (relative positioned) zI: 2147483644 {DIV} at (0,13) size 311x60 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) (1px solid #AAAAAA) (1px solid #888888) (1px solid #AAAAAA)]
+  RenderFlexibleBox zI: 2147483644 {DIV} at (0,13) size 311x60 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) (1px solid #AAAAAA) (1px solid #888888) (1px solid #AAAAAA)]
     RenderBlock {DIV} at (9,9) size 17x17
     RenderBlock {DIV} at (32,9) size 270x42
       RenderBlock {DIV} at (0,0) size 270x16

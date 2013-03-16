@@ -11,19 +11,19 @@ layer at (0,0) size 800x585
           RenderTableRow {TR} at (0,1) size 784x29
             RenderTableCell {TD} at (1,1) size 194x29 [r=0 c=0 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 192x23
-                RenderDeprecatedFlexibleBox {DIV} at (2,2) size 188x19
+                RenderFlexibleBox {DIV} at (2,2) size 188x19
                   RenderBlock {DIV} at (0,9) size 0x0
                   RenderBlock {DIV} at (0,0) size 177x19
                   RenderBlock {DIV} at (177,4) size 11x11
             RenderTableCell {TD} at (196,1) size 6x29 [r=0 c=1 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 4x23
-                RenderDeprecatedFlexibleBox {DIV} at (2,2) size 0x19
+                RenderFlexibleBox {DIV} at (2,2) size 0x19
                   RenderBlock {DIV} at (0,9) size 0x0
                   RenderBlock {DIV} at (0,0) size 0x19
                   RenderBlock {DIV} at (0,4) size 11x11
             RenderTableCell {TD} at (203,1) size 6x29 [r=0 c=2 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 4x23
-                RenderDeprecatedFlexibleBox {DIV} at (2,2) size 0x19
+                RenderFlexibleBox {DIV} at (2,2) size 0x19
                   RenderBlock {DIV} at (0,9) size 0x0
                   RenderBlock {DIV} at (0,0) size 0x19
                   RenderBlock {DIV} at (0,4) size 11x11
@@ -38,19 +38,19 @@ layer at (0,0) size 800x585
           RenderTableRow {TR} at (0,1) size 937x29
             RenderTableCell {TD} at (1,1) size 914x29 [r=0 c=0 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 912x23
-                RenderDeprecatedFlexibleBox {DIV} at (2,2) size 908x19
+                RenderFlexibleBox {DIV} at (2,2) size 908x19
                   RenderBlock {DIV} at (0,9) size 0x0
                   RenderBlock {DIV} at (0,0) size 897x19
                   RenderBlock {DIV} at (897,4) size 11x11
             RenderTableCell {TD} at (916,1) size 6x29 [r=0 c=1 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 4x23
-                RenderDeprecatedFlexibleBox {DIV} at (2,2) size 0x19
+                RenderFlexibleBox {DIV} at (2,2) size 0x19
                   RenderBlock {DIV} at (0,9) size 0x0
                   RenderBlock {DIV} at (0,0) size 0x19
                   RenderBlock {DIV} at (0,4) size 11x11
             RenderTableCell {TD} at (923,1) size 6x29 [r=0 c=2 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 4x23
-                RenderDeprecatedFlexibleBox {DIV} at (2,2) size 0x19
+                RenderFlexibleBox {DIV} at (2,2) size 0x19
                   RenderBlock {DIV} at (0,9) size 0x0
                   RenderBlock {DIV} at (0,0) size 0x19
                   RenderBlock {DIV} at (0,4) size 11x11

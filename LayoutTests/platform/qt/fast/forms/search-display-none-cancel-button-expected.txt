@@ -7,7 +7,7 @@ layer at (0,0) size 800x600
         text run at (0,0) width 472: "This tests that the display:none style will work on a search field's cancel button."
       RenderBR {BR} at (472,15) size 0x0
       RenderTextControl {INPUT} at (2,21) size 192x23
-        RenderDeprecatedFlexibleBox {DIV} at (2,2) size 188x19
+        RenderFlexibleBox {DIV} at (2,2) size 188x19
           RenderBlock {DIV} at (0,9) size 0x0
           RenderBlock {DIV} at (0,0) size 188x19
       RenderText {#text} at (0,0) size 0x0

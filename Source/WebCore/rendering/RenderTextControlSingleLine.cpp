@@ -116,10 +116,14 @@ void RenderTextControlSingleLine::layout()
     RenderBox* innerBlockRenderer = innerBlockElement() ? innerBlockElement()->renderBox() : 0;
 
     // To ensure consistency between layouts, we need to reset any conditionally overriden height.
-    if (innerTextRenderer)
+    if (innerTextRenderer && !innerTextRenderer->style()->logicalHeight().isAuto()) {
         innerTextRenderer->style()->setLogicalHeight(Length(Auto));
-    if (innerBlockRenderer)
+        innerTextRenderer->setNeedsLayout(true, MarkOnlyThis);
+    }
+    if (innerBlockRenderer && !innerBlockRenderer->style()->logicalHeight().isAuto()) {
         innerBlockRenderer->style()->setLogicalHeight(Length(Auto));
+        innerBlockRenderer->setNeedsLayout(true, MarkOnlyThis);
+    }
 
     RenderBlock::layoutBlock(false);
 
@@ -136,8 +140,11 @@ void RenderTextControlSingleLine::layout()
         m_desiredInnerTextLogicalHeight = desiredLogicalHeight;
 
         innerTextRenderer->style()->setLogicalHeight(Length(desiredLogicalHeight, Fixed));
-        if (innerBlockRenderer)
+        innerTextRenderer->setNeedsLayout(true, MarkOnlyThis);
+        if (innerBlockRenderer) {
             innerBlockRenderer->style()->setLogicalHeight(Length(desiredLogicalHeight, Fixed));
+            innerBlockRenderer->setNeedsLayout(true, MarkOnlyThis);
+        }
     }
     // The container might be taller because of decoration elements.
     if (containerRenderer) {
@@ -373,7 +380,10 @@ PassRefPtr<RenderStyle> RenderTextControlSingleLine::createInnerBlockStyle(const
     RefPtr<RenderStyle> innerBlockStyle = RenderStyle::create();
     innerBlockStyle->inheritFrom(startStyle);
 
-    innerBlockStyle->setBoxFlex(1);
+    innerBlockStyle->setFlexGrow(1);
+    // min-width: 0; is needed for correct shrinking.
+    // FIXME: Remove this line when https://bugs.webkit.org/show_bug.cgi?id=111790 is fixed.
+    innerBlockStyle->setMinWidth(Length(0, Fixed));
     innerBlockStyle->setDisplay(BLOCK);
     innerBlockStyle->setDirection(LTR);
 

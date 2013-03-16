@@ -11,21 +11,21 @@ layer at (0,0) size 800x600
           text run at (0,0) width 257: "You should not see any red on this page."
       RenderBlock {DIV} at (0,68) size 784x32
         RenderTextControl {INPUT} at (2,2) size 192x28 [bgcolor=#FFFFFF]
-          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 185x18
+          RenderFlexibleBox {DIV} at (4,6) size 185x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 185x18
             RenderBlock {DIV} at (185,9) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,100) size 784x32
         RenderTextControl {INPUT} at (2,2) size 192x28 [bgcolor=#FFFFFF]
-          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 185x18
+          RenderFlexibleBox {DIV} at (4,6) size 185x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 185x18
             RenderBlock {DIV} at (185,9) size 0x0
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,132) size 784x32
         RenderTextControl {INPUT} at (2,2) size 192x28 [bgcolor=#FFFFFF]
-          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 185x18
+          RenderFlexibleBox {DIV} at (4,6) size 185x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 185x18
             RenderBlock {DIV} at (185,9) size 0x0

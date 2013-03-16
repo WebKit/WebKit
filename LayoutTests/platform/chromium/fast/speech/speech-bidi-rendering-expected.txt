@@ -17,7 +17,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (282,2) size 8x18
             text run at (282,2) width 8: ": "
           RenderTextControl {INPUT} at (292,2) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderDeprecatedFlexibleBox {DIV} at (3,3) size 117x13
+            RenderFlexibleBox {DIV} at (3,3) size 117x13
               RenderBlock {DIV} at (0,0) size 103x13
               RenderBlock {DIV} at (103,0) size 14x14
         RenderListItem {LI} at (40,23) size 744x31
@@ -30,7 +30,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (282,6) size 8x18
             text run at (282,6) width 8: ": "
           RenderTextControl {INPUT} at (292,2) size 141x27 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderDeprecatedFlexibleBox {DIV} at (12,7) size 117x13
+            RenderFlexibleBox {DIV} at (12,7) size 117x13
               RenderBlock {DIV} at (0,0) size 103x13
               RenderBlock {DIV} at (103,0) size 14x14
         RenderListItem {LI} at (40,54) size 744x31
@@ -43,7 +43,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (282,6) size 8x18
             text run at (282,6) width 8: ": "
           RenderTextControl {INPUT} at (292,2) size 141x27 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderDeprecatedFlexibleBox {DIV} at (12,7) size 117x13
+            RenderFlexibleBox {DIV} at (12,7) size 117x13
               RenderBlock {DIV} at (0,0) size 103x13
               RenderBlock {DIV} at (103,0) size 14x14
         RenderListItem {LI} at (40,85) size 744x23
@@ -56,7 +56,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (270,2) size 8x18
             text run at (270,2) width 8: ": "
           RenderTextControl {INPUT} at (280,2) size 123x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderDeprecatedFlexibleBox {DIV} at (3,3) size 117x13
+            RenderFlexibleBox {DIV} at (3,3) size 117x13
               RenderBlock {DIV} at (14,0) size 103x13
               RenderBlock {DIV} at (0,0) size 14x14
         RenderListItem {LI} at (40,108) size 744x31
@@ -69,7 +69,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (270,6) size 8x18
             text run at (270,6) width 8: ": "
           RenderTextControl {INPUT} at (280,2) size 141x27 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderDeprecatedFlexibleBox {DIV} at (12,7) size 117x13
+            RenderFlexibleBox {DIV} at (12,7) size 117x13
               RenderBlock {DIV} at (14,0) size 103x13
               RenderBlock {DIV} at (0,0) size 14x14
         RenderListItem {LI} at (40,139) size 744x31
@@ -82,7 +82,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (270,6) size 8x18
             text run at (270,6) width 8: ": "
           RenderTextControl {INPUT} at (280,2) size 141x27 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
-            RenderDeprecatedFlexibleBox {DIV} at (12,7) size 117x13
+            RenderFlexibleBox {DIV} at (12,7) size 117x13
               RenderBlock {DIV} at (14,0) size 103x13
               RenderBlock {DIV} at (0,0) size 14x14
 layer at (343,47) size 103x13

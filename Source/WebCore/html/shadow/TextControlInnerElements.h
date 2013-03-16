@@ -35,6 +35,14 @@ namespace WebCore {
 
 class SpeechInput;
 
+class TextControlInnerContainer : public HTMLDivElement {
+public:
+    static PassRefPtr<TextControlInnerContainer> create(Document*);
+protected:
+    TextControlInnerContainer(Document*);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+};
+
 class TextControlInnerElement : public HTMLDivElement {
 public:
     static PassRefPtr<TextControlInnerElement> create(Document*);

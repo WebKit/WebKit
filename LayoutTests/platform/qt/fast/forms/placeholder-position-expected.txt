@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderTextControl {INPUT} at (2,2) size 192x23
-        RenderDeprecatedFlexibleBox {DIV} at (2,2) size 188x19
+        RenderFlexibleBox {DIV} at (2,2) size 188x19
           RenderBlock {DIV} at (0,9) size 0x0
           RenderBlock {DIV} at (0,0) size 177x19
           RenderBlock {DIV} at (177,4) size 11x11
@@ -12,13 +12,13 @@ layer at (0,0) size 800x600
       RenderTextControl {INPUT} at (2,29) size 192x23
       RenderBR {BR} at (196,46) size 0x0
       RenderTextControl {INPUT} at (2,56) size 192x23
-        RenderDeprecatedFlexibleBox {DIV} at (2,2) size 188x19
+        RenderFlexibleBox {DIV} at (2,2) size 188x19
           RenderBlock {DIV} at (0,9) size 0x0
           RenderBlock {DIV} at (0,0) size 177x19
           RenderBlock {DIV} at (177,4) size 11x11
       RenderBR {BR} at (196,73) size 0x0
       RenderTextControl {INPUT} at (2,83) size 192x23
-        RenderDeprecatedFlexibleBox {DIV} at (2,2) size 188x19
+        RenderFlexibleBox {DIV} at (2,2) size 188x19
           RenderBlock {DIV} at (0,9) size 0x0
           RenderBlock {DIV} at (0,0) size 177x19
           RenderBlock {DIV} at (177,4) size 11x11

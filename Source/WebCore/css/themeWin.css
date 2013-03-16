@@ -90,11 +90,11 @@ input[type="search"]::-webkit-search-cancel-button {
 }
 
 input[type="search"]::-webkit-search-results-decoration {
-    margin: 0 3px 0 2px;
+    margin: auto 3px auto 2px;
 }
 
 input[type="search"]::-webkit-search-results-button {
-    margin: 0 3px 0 2px;
+    margin: auto 3px auto 2px;
 }
 
 input::-webkit-outer-spin-button {

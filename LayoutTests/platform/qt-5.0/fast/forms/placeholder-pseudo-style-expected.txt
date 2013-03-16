@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
       RenderText {#text} at (196,23) size 4x19
         text run at (196,23) width 4: " "
       RenderTextControl {INPUT} at (202,21) size 192x23
-        RenderDeprecatedFlexibleBox {DIV} at (2,2) size 188x19
+        RenderFlexibleBox {DIV} at (2,2) size 188x19
           RenderBlock {DIV} at (0,9) size 0x0
           RenderBlock {DIV} at (0,0) size 177x19
           RenderBlock {DIV} at (177,4) size 11x11

@@ -23,6 +23,7 @@
 #define RenderTextControl_h
 
 #include "RenderBlock.h"
+#include "RenderFlexibleBox.h"
 
 namespace WebCore {
 
@@ -96,6 +97,27 @@ inline const RenderTextControl* toRenderTextControl(const RenderObject* object)
 
 // This will catch anyone doing an unnecessary cast.
 void toRenderTextControl(const RenderTextControl*);
+
+// Renderer for our inner container, for <search> and others.
+// We can't use RenderFlexibleBox directly, because flexboxes have a different
+// baseline definition, and then inputs of different types wouldn't line up
+// anymore.
+class RenderTextControlInnerContainer : public RenderFlexibleBox {
+public:
+    explicit RenderTextControlInnerContainer(Element* element)
+        : RenderFlexibleBox(element)
+    { }
+    virtual ~RenderTextControlInnerContainer() { }
+
+    virtual int baselinePosition(FontBaseline baseline, bool firstLine, LineDirectionMode direction, LinePositionMode position) const OVERRIDE
+    {
+        return RenderBlock::baselinePosition(baseline, firstLine, direction, position);
+    }
+    virtual int firstLineBoxBaseline() const OVERRIDE { return RenderBlock::firstLineBoxBaseline(); }
+    virtual int inlineBlockBaseline(LineDirectionMode direction) const OVERRIDE { return RenderBlock::inlineBlockBaseline(direction); }
+
+};
+
 
 } // namespace WebCore
 

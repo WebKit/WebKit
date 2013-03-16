@@ -14,7 +14,7 @@ layer at (0,0) size 800x472
         RenderText {#text} at (196,26) size 4x17
           text run at (196,26) width 4: " "
         RenderTextControl {INPUT} at (202,20) size 192x28 [bgcolor=#FFFFFF]
-          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 185x18
+          RenderFlexibleBox {DIV} at (4,6) size 185x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 185x18
             RenderBlock {DIV} at (185,9) size 0x0
@@ -23,7 +23,7 @@ layer at (0,0) size 800x472
         RenderTextControl {INPUT} at (402,20) size 192x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
         RenderTextControl {INPUT} at (2,52) size 192x28 [bgcolor=#FFFFFF]
-          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 185x18
+          RenderFlexibleBox {DIV} at (4,6) size 185x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 185x18
             RenderBlock {DIV} at (185,9) size 0x0
@@ -35,7 +35,7 @@ layer at (0,0) size 800x472
         RenderText {#text} at (196,90) size 4x17
           text run at (196,90) width 4: " "
         RenderTextControl {INPUT} at (202,84) size 192x28 [bgcolor=#FFFFFF]
-          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 185x18
+          RenderFlexibleBox {DIV} at (4,6) size 185x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 185x18
             RenderBlock {DIV} at (185,9) size 0x0
@@ -44,7 +44,7 @@ layer at (0,0) size 800x472
         RenderTextControl {INPUT} at (402,84) size 192x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
         RenderTextControl {INPUT} at (2,116) size 192x28 [bgcolor=#FFFFFF]
-          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 185x18
+          RenderFlexibleBox {DIV} at (4,6) size 185x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 185x18
             RenderBlock {DIV} at (185,9) size 0x0
@@ -60,7 +60,7 @@ layer at (0,0) size 800x472
         RenderText {#text} at (196,26) size 4x17
           text run at (196,26) width 4: " "
         RenderTextControl {INPUT} at (202,20) size 192x28 [bgcolor=#FFFFFF]
-          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 185x18
+          RenderFlexibleBox {DIV} at (4,6) size 185x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 185x18
             RenderBlock {DIV} at (185,9) size 0x0
@@ -69,7 +69,7 @@ layer at (0,0) size 800x472
         RenderTextControl {INPUT} at (402,20) size 192x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
         RenderTextControl {INPUT} at (2,52) size 192x28 [bgcolor=#FFFFFF]
-          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 185x18
+          RenderFlexibleBox {DIV} at (4,6) size 185x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 185x18
             RenderBlock {DIV} at (185,9) size 0x0
@@ -81,7 +81,7 @@ layer at (0,0) size 800x472
         RenderText {#text} at (196,90) size 4x17
           text run at (196,90) width 4: " "
         RenderTextControl {INPUT} at (202,84) size 192x28 [bgcolor=#FFFFFF]
-          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 185x18
+          RenderFlexibleBox {DIV} at (4,6) size 185x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 185x18
             RenderBlock {DIV} at (185,9) size 0x0
@@ -90,7 +90,7 @@ layer at (0,0) size 800x472
         RenderTextControl {INPUT} at (402,84) size 192x28 [bgcolor=#FFFFFF]
         RenderText {#text} at (0,0) size 0x0
         RenderTextControl {INPUT} at (2,116) size 192x28 [bgcolor=#FFFFFF]
-          RenderDeprecatedFlexibleBox {DIV} at (4,6) size 185x18
+          RenderFlexibleBox {DIV} at (4,6) size 185x18
             RenderBlock {DIV} at (0,9) size 0x0
             RenderBlock {DIV} at (0,0) size 185x18
             RenderBlock {DIV} at (185,9) size 0x0

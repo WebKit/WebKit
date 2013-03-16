@@ -4,7 +4,7 @@ layer at (0,0) size 800x41
   RenderBlock {HTML} at (0,0) size 800x41
     RenderBody {BODY} at (8,8) size 784x25
       RenderTextControl {INPUT} at (2,2) size 148x21 [bgcolor=#FFFFFF] [border: (1px solid #BDC7D8)]
-        RenderDeprecatedFlexibleBox {DIV} at (18,4) size 126x13
+        RenderFlexibleBox {DIV} at (18,4) size 126x13
           RenderBlock {DIV} at (0,6) size 0x0
           RenderBlock {DIV} at (0,0) size 118x13
           RenderBlock {DIV} at (118,2) size 8x8

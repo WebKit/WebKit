@@ -112,10 +112,10 @@ void TextFieldDecorationElement::decorate(HTMLInputElement* input, bool visible)
     ASSERT(existingRoot);
     RefPtr<HTMLDivElement> box = HTMLDivElement::create(input->document());
     decorationRoot->appendChild(box);
-    box->setInlineStyleProperty(CSSPropertyDisplay, CSSValueWebkitBox);
-    box->setInlineStyleProperty(CSSPropertyWebkitBoxAlign, CSSValueCenter);
+    box->setInlineStyleProperty(CSSPropertyDisplay, CSSValueWebkitFlex);
+    box->setInlineStyleProperty(CSSPropertyWebkitAlignItems, CSSValueCenter);
     ASSERT(existingRoot->childNodeCount() == 1);
-    toHTMLElement(existingRoot->firstChild())->setInlineStyleProperty(CSSPropertyWebkitBoxFlex, 1.0, CSSPrimitiveValue::CSS_NUMBER);
+    toHTMLElement(existingRoot->firstChild())->setInlineStyleProperty(CSSPropertyWebkitFlexGrow, 1.0, CSSPrimitiveValue::CSS_NUMBER);
 #if ENABLE(SHADOW_DOM)
     box->appendChild(HTMLShadowElement::create(HTMLNames::shadowTag, input->document()));
 #endif

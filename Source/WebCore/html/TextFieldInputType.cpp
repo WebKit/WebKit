@@ -243,7 +243,7 @@ void TextFieldInputType::createShadowSubtree()
     }
 
     ShadowRoot* shadowRoot = element()->userAgentShadowRoot();
-    m_container = HTMLDivElement::create(document);
+    m_container = TextControlInnerContainer::create(document);
     m_container->setPseudo(AtomicString("-webkit-textfield-decoration-container", AtomicString::ConstructFromLiteral));
     shadowRoot->appendChild(m_container, IGNORE_EXCEPTION);
 
