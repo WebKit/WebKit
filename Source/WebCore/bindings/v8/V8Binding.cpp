@@ -103,8 +103,8 @@ PassRefPtr<NodeFilter> toNodeFilter(v8::Handle<v8::Value> callback)
     return NodeFilter::create(V8NodeFilterCondition::create(callback));
 }
 
-const int32_t kMinInt32 = -0x80000000;
 const int32_t kMaxInt32 = 0x7fffffff;
+const int32_t kMinInt32 = -kMaxInt32 - 1;
 const uint32_t kMaxUInt32 = 0xffffffff;
 const int64_t kJSMaxInteger = 0x20000000000000LL - 1; // 2^53 - 1, maximum integer exactly representable in ECMAScript.
 
