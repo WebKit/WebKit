@@ -55,6 +55,10 @@ PassOwnPtr<EXTDrawBuffers> EXTDrawBuffers::create(WebGLRenderingContext* context
 // static
 bool EXTDrawBuffers::supported(WebGLRenderingContext* context)
 {
+#if OS(DARWIN)
+    // https://bugs.webkit.org/show_bug.cgi?id=112486
+    return false;
+#endif
     Extensions3D* extensions = context->graphicsContext3D()->getExtensions();
     return extensions->supports("GL_EXT_draw_buffers");
 }
