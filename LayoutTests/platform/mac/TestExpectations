@@ -304,6 +304,7 @@ http/tests/inspector/compiler-source-mapping-debug.html
 http/tests/inspector/network/network-xhr-replay.html
 
 webkit.org/b/109546 inspector/script-execution-state-change-notification.html [ Skip ]
+webkit.org/b/112502 inspector/elements/highlight-node-scaled.html [ Pass Failure ]
 
 # Flakey notification test.
 webkit.org/b/112499 http/tests/notifications/window-show-on-click.html [ Pass Failure ]
@@ -1173,7 +1174,7 @@ webkit.org/b/58192 http/tests/appcache/fail-on-update.html [ Failure Pass ]
 webkit.org/b/58192 http/tests/inspector/console-websocket-error.html [ Failure Pass ]
 webkit.org/b/58192 fast/canvas/webgl/gl-teximage.html [ Failure Pass ]
 webkit.org/b/58192 fast/frames/flattening/iframe-flattening-offscreen.html [ Failure Pass ]
-webkit.org/b/58192 fast/frames/flattening/frameset-flattening-advanced.htm [ Failure Pass ]
+webkit.org/b/58192 fast/frames/flattening/frameset-flattening-advanced.html [ Failure Pass ]
 webkit.org/b/58192 svg/dom/SVGScriptElement/script-set-href.svg [ Failure Pass ]
 
 # Flakey cookies tests
