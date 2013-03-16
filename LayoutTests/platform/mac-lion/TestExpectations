@@ -133,10 +133,3 @@ http/tests/notifications
 
 # Lion does not support the tiled drawing area
 platform/mac-wk2/tiled-drawing [ Skip ]
-
-# Not known to be flaky on Lion, but known to be flaky on Mountain Lion
-webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Pass ]
-webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565.html [ Pass ]
-webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba4444.html [ Pass ]
-webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html [ Pass ]
-webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html [ Pass ]
