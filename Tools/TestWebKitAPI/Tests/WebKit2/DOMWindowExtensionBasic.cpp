@@ -77,7 +77,7 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messag
         finished = true;
 }
 
-TEST(WebKit2, DOMWindowExtensionBasic)
+TEST(WebKit2, DISABLED_DOMWindowExtensionBasic)
 {
     WKRetainPtr<WKPageGroupRef> pageGroup(AdoptWK, WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("DOMWindowExtensionBasicPageGroup"))); 
 
