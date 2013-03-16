@@ -1,5 +1,86 @@
 2013-03-15  Arvid Nilsson  <anilsson@rim.com>
 
+        [BlackBerry] BlackBerry::Platform::Graphics::GraphicsContext integration related changes in Source/WebKit/blackberry
+        https://bugs.webkit.org/show_bug.cgi?id=112467
+
+        Reviewed by Rob Buis.
+
+        PR 293208
+
+        This patch contains contributions from many members of the BlackBerry
+        WebKit team:
+
+        Mike Lattanzio
+        Arvid Nilsson
+        Jakob Petsovits
+        Konrad Piascik
+        Jeff Rogers
+        Filip Spacek
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::render):
+        (BlackBerry::WebKit::BackingStorePrivate::blitVisibleContents):
+        (BlackBerry::WebKit::BackingStorePrivate::compositeContents):
+        (BlackBerry::WebKit::BackingStorePrivate::tileSize):
+        * Api/WebOverlay.cpp:
+        (BlackBerry::WebKit::WebOverlayPrivate::drawContents):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::paintContents):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::WebOverlayLayerCompositingThreadClient):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::setContentsToImage):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::clearUploadedContents):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::setContentsToColor):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::drawTextures):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::WebOverlayPrivateCompositingThread):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::removeFromParent):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::setContentsToImage):
+        * Api/WebOverlay.h:
+        * Api/WebOverlayClient.h:
+        * Api/WebOverlay_p.h:
+        (WebOverlayPrivate):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::showDebugBorders):
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::showRepaintCounter):
+        (WebOverlayLayerCompositingThreadClient):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::image):
+        (WebOverlayPrivateCompositingThread):
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::WebPageCompositorPrivate):
+        * WebKitSupport/BackingStoreTile.cpp:
+        (BlackBerry::WebKit::TileBuffer::~TileBuffer):
+        (BlackBerry::WebKit::TileBuffer::nativeBuffer):
+        (BlackBerry::WebKit::TileBuffer::paintBackground):
+        * WebKitSupport/DefaultTapHighlight.cpp:
+        (BlackBerry::WebKit::DefaultTapHighlight::paintContents):
+        (BlackBerry::WebKit::DefaultTapHighlight::showDebugBorders):
+        (WebKit):
+        (BlackBerry::WebKit::DefaultTapHighlight::showRepaintCounter):
+        * WebKitSupport/DefaultTapHighlight.h:
+        (DefaultTapHighlight):
+        * WebKitSupport/InspectorOverlayBlackBerry.cpp:
+        (BlackBerry::WebKit::InspectorOverlay::showDebugBorders):
+        (WebKit):
+        (BlackBerry::WebKit::InspectorOverlay::showRepaintCounter):
+        * WebKitSupport/InspectorOverlayBlackBerry.h:
+        (InspectorOverlay):
+        * WebKitSupport/SelectionOverlay.cpp:
+        (BlackBerry::WebKit::SelectionOverlay::draw):
+        (BlackBerry::WebKit::SelectionOverlay::hide):
+        (BlackBerry::WebKit::SelectionOverlay::paintContents):
+        (BlackBerry::WebKit::SelectionOverlay::showDebugBorders):
+        (WebKit):
+        (BlackBerry::WebKit::SelectionOverlay::showRepaintCounter):
+        * WebKitSupport/SelectionOverlay.h:
+        (SelectionOverlay):
+        * WebKitSupport/SurfacePool.cpp:
+        (BlackBerry::WebKit::SurfacePool::createPlatformGraphicsContext):
+        (BlackBerry::WebKit::SurfacePool::destroyPlatformGraphicsContext):
+        (BlackBerry::WebKit::SurfacePool::waitForBuffer):
+        (BlackBerry::WebKit::SurfacePool::notifyBuffersComposited):
+        (BlackBerry::WebKit::SurfacePool::destroyPlatformSync):
+        * WebKitSupport/SurfacePool.h:
+
+2013-03-15  Arvid Nilsson  <anilsson@rim.com>
+
         [BlackBerry] Expose the compositing thread layer's draw rectangle to aid hit testing
         https://bugs.webkit.org/show_bug.cgi?id=112255
 

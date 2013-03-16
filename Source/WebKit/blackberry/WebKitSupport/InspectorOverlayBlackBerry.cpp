@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -56,6 +56,15 @@ void InspectorOverlay::paintContents(const WebCore::GraphicsLayer*, WebCore::Gra
     context.restore();
 }
 
+bool InspectorOverlay::showDebugBorders(const WebCore::GraphicsLayer* layer) const
+{
+    return m_webPage->showDebugBorders(layer);
+}
+
+bool InspectorOverlay::showRepaintCounter(const WebCore::GraphicsLayer* layer) const
+{
+    return m_webPage->showRepaintCounter(layer);
+}
 #endif
 
 InspectorOverlay::~InspectorOverlay() { }

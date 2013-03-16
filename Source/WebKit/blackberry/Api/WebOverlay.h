@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -118,7 +118,7 @@ public:
     // Will result in a future call to WebOverlayClient::drawContents, if the layer draws custom contents.
     void invalidate();
 
-    // The client can be used to draw layer contents using Skia.
+    // The client can be used to draw layer contents.
     void setClient(WebOverlayClient*);
 
     // Must be called on UI thread.

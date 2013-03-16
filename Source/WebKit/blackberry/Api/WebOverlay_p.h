@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,12 +27,10 @@
 #include "WebOverlay.h"
 #include "WebOverlayOverride.h"
 
-#include <SkBitmap.h>
+#include <TiledImage.h>
 #include <pthread.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
-
-class SkCanvas;
 
 namespace WTF {
 class String;
@@ -103,7 +101,7 @@ public:
 
     virtual void clear() = 0;
     virtual void invalidate() = 0;
-    void drawContents(SkCanvas*);
+    void drawContents(Platform::Graphics::Drawable*);
 
     virtual void resetOverrides() = 0;
 
@@ -171,7 +169,8 @@ public:
     virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) { }
     virtual void notifyFlushRequired(const WebCore::GraphicsLayer*);
     virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& inClip);
-    virtual bool contentsVisible(const WebCore::GraphicsLayer*, const WebCore::IntRect& contentRect) const { return true; }
+    virtual bool showDebugBorders(const WebCore::GraphicsLayer*) const { return false; }
+    virtual bool showRepaintCounter(const WebCore::GraphicsLayer*) const { return false; }
 
 private:
     OwnPtr<WebCore::GraphicsLayer> m_layer;
@@ -184,35 +183,33 @@ public:
     WebOverlayLayerCompositingThreadClient();
     virtual ~WebOverlayLayerCompositingThreadClient() { }
 
-    void setLayer(WebCore::LayerCompositingThread* layer) { m_layerCompositingThread = layer; }
     void setClient(WebOverlay* owner, WebOverlayClient* client) { m_owner = owner; m_client = client; }
 
     bool drawsContent() const { return m_drawsContent; }
     void setDrawsContent(bool);
     void invalidate();
 
-    const SkBitmap& contents() const { return m_contents; }
-    void setContents(const SkBitmap&);
-
+    void setContentsToImage(const BlackBerry::Platform::Graphics::TiledImage&);
     void setContentsToColor(const WebCore::Color&);
+
+    const BlackBerry::Platform::Graphics::TiledImage& image() const { return m_image; }
 
     // LayerCompositingThreadClient
     virtual void layerCompositingThreadDestroyed(WebCore::LayerCompositingThread*);
     virtual void layerVisibilityChanged(WebCore::LayerCompositingThread*, bool visible);
     virtual void uploadTexturesIfNeeded(WebCore::LayerCompositingThread*);
-    virtual void drawTextures(WebCore::LayerCompositingThread*, double scale, int positionLocation, int texCoordLocation);
+    virtual void drawTextures(WebCore::LayerCompositingThread*, double scale, const Platform::Graphics::GLES2Program&);
     virtual void deleteTextures(WebCore::LayerCompositingThread*);
 
 private:
     void clearUploadedContents();
 
 private:
-    RefPtr<WebCore::Texture> m_texture;
     bool m_drawsContent;
-    SkBitmap m_contents;
-    SkBitmap m_uploadedContents;
+    RefPtr<WebCore::Texture> m_texture;
+    BlackBerry::Platform::Graphics::TiledImage m_image;
+    BlackBerry::Platform::Graphics::TiledImage m_uploadedImage;
     WebCore::Color m_color;
-    WebCore::LayerCompositingThread* m_layerCompositingThread;
     WebOverlay* m_owner;
     WebOverlayClient* m_client;
 };
@@ -262,6 +259,7 @@ public:
 
 private:
     WebOverlayLayerCompositingThreadClient* m_layerCompositingThreadClient;
+    const unsigned char* m_data;
 };
 
 }

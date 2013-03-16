@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,6 @@
 
 #include "LayerWebKitThread.h"
 #include "NotImplemented.h"
-#include "PlatformContextSkia.h"
 #include "TextureCacheCompositingThread.h"
 #include "WebAnimation.h"
 #include "WebAnimation_p.h"
@@ -35,15 +34,16 @@
 #include "WebPageCompositor_p.h"
 #include "WebPage_p.h"
 
+#include <BlackBerryPlatformGraphicsContext.h>
 #include <BlackBerryPlatformMessageClient.h>
 #include <BlackBerryPlatformString.h>
 #include <GLES2/gl2.h>
-#include <SkDevice.h>
+
+using namespace WebCore;
+using BlackBerry::Platform::Graphics::GLES2Program;
 
 namespace BlackBerry {
 namespace WebKit {
-
-using namespace WebCore;
 
 WebOverlay::WebOverlay()
     : d(0)
@@ -230,12 +230,12 @@ WebOverlayOverride* WebOverlayPrivate::override()
     return m_override.get();
 }
 
-void WebOverlayPrivate::drawContents(SkCanvas* canvas)
+void WebOverlayPrivate::drawContents(Platform::Graphics::Drawable* drawable)
 {
     if (!client)
         return;
 
-    client->drawOverlayContents(q, canvas);
+    client->drawOverlayContents(q, drawable);
 }
 
 void WebOverlayPrivate::scheduleCompositingRun()
@@ -383,12 +383,11 @@ void WebOverlayPrivateWebKitThread::notifyFlushRequired(const WebCore::GraphicsL
 
 void WebOverlayPrivateWebKitThread::paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext& c, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect&)
 {
-    drawContents(c.platformContext()->canvas());
+    drawContents(c.platformContext());
 }
 
 WebOverlayLayerCompositingThreadClient::WebOverlayLayerCompositingThreadClient()
     : m_drawsContent(false)
-    , m_layerCompositingThread(0)
     , m_client(0)
 {
 }
@@ -404,9 +403,9 @@ void WebOverlayLayerCompositingThreadClient::invalidate()
     clearUploadedContents();
 }
 
-void WebOverlayLayerCompositingThreadClient::setContents(const SkBitmap& contents)
+void WebOverlayLayerCompositingThreadClient::setContentsToImage(const BlackBerry::Platform::Graphics::TiledImage& image)
 {
-    m_contents = contents;
+    m_image = image;
     m_color = Color();
     m_texture.clear();
     clearUploadedContents();
@@ -414,12 +413,12 @@ void WebOverlayLayerCompositingThreadClient::setContents(const SkBitmap& content
 
 void WebOverlayLayerCompositingThreadClient::clearUploadedContents()
 {
-    m_uploadedContents = SkBitmap();
+    m_uploadedImage = BlackBerry::Platform::Graphics::TiledImage();
 }
 
 void WebOverlayLayerCompositingThreadClient::setContentsToColor(const Color& color)
 {
-    m_contents = SkBitmap();
+    m_image = BlackBerry::Platform::Graphics::TiledImage();
     m_color = color;
     m_texture.clear();
     clearUploadedContents();
@@ -434,9 +433,9 @@ void WebOverlayLayerCompositingThreadClient::layerVisibilityChanged(LayerComposi
 {
 }
 
-void WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded(LayerCompositingThread*)
+void WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded(LayerCompositingThread* layer)
 {
-    if (m_contents.isNull() && !m_color.isValid() && !m_drawsContent)
+    if (m_image.isNull() && !m_color.isValid() && !m_drawsContent)
         return;
 
     if (m_texture && m_texture->textureId())
@@ -447,38 +446,69 @@ void WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded(LayerComposi
         return;
     }
 
+    Texture::HostType textureContents = Texture::HostType();
+    IntSize textureSize;
+
     if (m_drawsContent) {
         if (!m_client || !m_owner)
             return;
 
-        if (m_contents.isNull()) {
-            m_contents.setConfig(SkBitmap::kARGB_8888_Config, m_layerCompositingThread->bounds().width(), m_layerCompositingThread->bounds().height());
-            m_contents.allocPixels();
-        }
+        textureSize = layer->bounds();
+        textureContents = BlackBerry::Platform::Graphics::createBuffer(IntSize(0, 0), BlackBerry::Platform::Graphics::NeverBacked);
+        if (!textureContents)
+            return;
 
-        SkDevice device(m_contents);
-        SkCanvas canvas(&device);
-        m_client->drawOverlayContents(m_owner, &canvas);
-        canvas.flush();
+        clearBuffer(textureContents, 0, 0, 0, 0);
+        PlatformGraphicsContext* platformContext = lockBufferDrawable(textureContents);
+        double transform[] = {
+            1, 0,
+            0, 1,
+            -layer->bounds().width() / 2.0, -layer->bounds().height() / 2.0
+        };
+        platformContext->setTransform(transform);
+        m_client->drawOverlayContents(m_owner, platformContext);
+
+        releaseBufferDrawable(textureContents);
+    } else if (!m_image.isNull()) {
+        textureSize = IntSize(m_image.width(), m_image.height());
+        textureContents = BlackBerry::Platform::Graphics::createBuffer(IntSize(0, 0), BlackBerry::Platform::Graphics::NeverBacked);
+        if (!textureContents)
+            return;
+
+        PlatformGraphicsContext* platformContext = BlackBerry::Platform::Graphics::lockBufferDrawable(textureContents);
+
+        AffineTransform transform;
+        platformContext->getTransform(reinterpret_cast<double*>(&transform));
+        transform.translate(-m_image.width() / 2.0, -m_image.height() / 2.0);
+        platformContext->setTransform(reinterpret_cast<double*>(&transform));
+
+        FloatRect rect(0, 0, m_image.width(), m_image.height());
+        platformContext->addImage(rect, rect, &m_image);
+        releaseBufferDrawable(textureContents);
+        m_uploadedImage = m_image;
     }
 
     m_texture = Texture::create();
-    m_texture->protect(IntSize(m_contents.width(), m_contents.height()));
-    IntRect bitmapRect(0, 0, m_contents.width(), m_contents.height());
-    m_uploadedContents = m_contents;
-    m_texture->updateContents(m_uploadedContents, bitmapRect, bitmapRect, false);
+    m_texture->protect(IntSize(), BlackBerry::Platform::Graphics::BackedWhenNecessary);
+    IntRect bitmapRect(0, 0, textureSize.width(), textureSize.height());
+    m_texture->updateContents(textureContents, bitmapRect, bitmapRect, false);
 }
 
-void WebOverlayLayerCompositingThreadClient::drawTextures(LayerCompositingThread* layer, double /*scale*/, int positionLocation, int texCoordLocation)
+void WebOverlayLayerCompositingThreadClient::drawTextures(LayerCompositingThread* layer, double scale, const GLES2Program& program)
 {
     if (!m_texture || !m_texture->textureId())
         return;
 
-    glBindTexture(GL_TEXTURE_2D, m_texture->textureId());
-    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, &layer->getTransformedBounds());
-    float texcoords[4 * 2] = { 0, 0,  0, 1,  1, 1,  1, 0 };
-    glVertexAttribPointer(texCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, texcoords);
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    TransformationMatrix matrix = layer->drawTransform();
+    if (!m_image.isNull()) {
+        if (m_image.size().isEmpty())
+            return;
+
+        matrix.scaleNonUniform(static_cast<double>(layer->bounds().width()) / m_image.width(), static_cast<double>(layer->bounds().height()) / m_image.height());
+    }
+    matrix.scale(layer->sizeIsScaleInvariant() ? 1.0 / scale : 1.0);
+    blitToBuffer(0, m_texture->textureId(), reinterpret_cast<BlackBerry::Platform::TransformationMatrix&>(matrix),
+        BlackBerry::Platform::Graphics::SourceOver, static_cast<unsigned char>(layer->drawOpacity() * 255));
 }
 
 void WebOverlayLayerCompositingThreadClient::deleteTextures(LayerCompositingThread*)
@@ -489,6 +519,7 @@ void WebOverlayLayerCompositingThreadClient::deleteTextures(LayerCompositingThre
 
 WebOverlayPrivateCompositingThread::WebOverlayPrivateCompositingThread(PassRefPtr<LayerCompositingThread> layerCompositingThread)
     : m_layerCompositingThreadClient(0)
+    , m_data(0)
 {
     m_layerCompositingThread = layerCompositingThread;
 }
@@ -497,7 +528,6 @@ WebOverlayPrivateCompositingThread::WebOverlayPrivateCompositingThread()
     : m_layerCompositingThreadClient(new WebOverlayLayerCompositingThreadClient)
 {
     m_layerCompositingThread = LayerCompositingThread::create(LayerData::CustomLayer, m_layerCompositingThreadClient);
-    m_layerCompositingThreadClient->setLayer(m_layerCompositingThread.get());
 }
 
 WebOverlayPrivateCompositingThread::~WebOverlayPrivateCompositingThread()
@@ -616,8 +646,8 @@ void WebOverlayPrivateCompositingThread::addChild(WebOverlayPrivate* overlay)
 
 void WebOverlayPrivateCompositingThread::removeFromParent()
 {
-    if (m_layerCompositingThread->superlayer() == page()->m_compositor->compositingThreadOverlayLayer())
-        page()->m_compositor->removeOverlay(m_layerCompositingThread.get());
+    if (page() && m_layerCompositingThread->superlayer() == page()->compositor()->compositingThreadOverlayLayer())
+        page()->m_webPage->removeCompositingThreadOverlay(q);
     else
         m_layerCompositingThread->removeFromSuperlayer();
     scheduleCompositingRun();
@@ -628,33 +658,14 @@ void WebOverlayPrivateCompositingThread::setContentsToImage(const unsigned char*
     if (!m_layerCompositingThreadClient)
         return;
 
-    const SkBitmap& oldContents = m_layerCompositingThreadClient->contents();
-    if (!oldContents.isNull()) {
-        SkAutoLockPixels lock(oldContents);
-        if (data == oldContents.getPixels())
-            return;
-    }
+    if (data == m_data)
+        return;
 
-    SkBitmap contents;
-    contents.setConfig(SkBitmap::kARGB_8888_Config, imageSize.width(), imageSize.height());
+    m_data = data;
 
-    switch (adoptionType) {
-    case WebOverlay::ReferenceImageData:
-        contents.setPixels(const_cast<unsigned char*>(data));
-        break;
-    case WebOverlay::CopyImageData:
-        if (contents.allocPixels()) {
-            contents.lockPixels();
-            size_t bytes = SkBitmap::ComputeSize(SkBitmap::kARGB_8888_Config, imageSize.width(), imageSize.height());
-            memcpy(contents.getPixels(), data, bytes);
-            contents.unlockPixels();
-        }
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
+    BlackBerry::Platform::Graphics::TiledImage image = BlackBerry::Platform::Graphics::TiledImage(imageSize, reinterpret_cast_ptr<const unsigned*>(data), true, BlackBerry::Platform::Graphics::TiledImage::Hardware);
 
-    m_layerCompositingThreadClient->setContents(contents);
+    m_layerCompositingThreadClient->setContentsToImage(image);
     m_layerCompositingThread->setNeedsTexture(true);
 }
 

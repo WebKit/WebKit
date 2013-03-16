@@ -45,6 +45,7 @@ namespace WebKit {
 WebPageCompositorPrivate::WebPageCompositorPrivate(WebPagePrivate* page, WebPageCompositorClient* client)
     : m_client(client)
     , m_webPage(page)
+    , m_context(0)
     , m_drawsRootLayer(false)
     , m_childWindowPlacement(WebPageCompositor::DocumentCoordinates)
 {

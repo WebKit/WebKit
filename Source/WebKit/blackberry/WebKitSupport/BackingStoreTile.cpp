@@ -45,7 +45,7 @@ TileBuffer::TileBuffer(const Platform::IntSize& size)
 
 TileBuffer::~TileBuffer()
 {
-    destroyBuffer(m_nativeBuffer);
+    Platform::Graphics::destroyBuffer(m_nativeBuffer);
 }
 
 Platform::IntSize TileBuffer::size() const
@@ -101,7 +101,7 @@ Platform::IntRectRegion TileBuffer::notRenderedRegion() const
 Platform::Graphics::Buffer* TileBuffer::nativeBuffer() const
 {
     if (!m_nativeBuffer)
-        m_nativeBuffer = createBuffer(m_size, Platform::Graphics::AlwaysBacked, SurfacePool::globalSurfacePool()->sharedPixmapGroup());
+        m_nativeBuffer = Platform::Graphics::createBuffer(m_size, Platform::Graphics::AlwaysBacked, SurfacePool::globalSurfacePool()->sharedPixmapGroup());
 
     return m_nativeBuffer;
 }
@@ -115,7 +115,7 @@ void TileBuffer::paintBackground()
 {
     m_backgroundPainted = true;
 
-    clearBuffer(nativeBuffer(), 0, 0, 0, 0);
+    Platform::Graphics::clearBuffer(nativeBuffer(), 0, 0, 0, 0);
 }
 
 }

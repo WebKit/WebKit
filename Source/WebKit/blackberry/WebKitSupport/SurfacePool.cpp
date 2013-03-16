@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,8 +18,6 @@
 
 #include "config.h"
 #include "SurfacePool.h"
-
-#include "PlatformContextSkia.h"
 
 #include <BlackBerryPlatformExecutableMessage.h>
 #include <BlackBerryPlatformGraphics.h>
@@ -122,12 +120,11 @@ void SurfacePool::initialize(const Platform::IntSize& tileSize)
 
 PlatformGraphicsContext* SurfacePool::createPlatformGraphicsContext(Platform::Graphics::Drawable* drawable) const
 {
-    return new WebCore::PlatformContextSkia(drawable);
+    return drawable;
 }
 
 void SurfacePool::destroyPlatformGraphicsContext(PlatformGraphicsContext* platformGraphicsContext) const
 {
-    delete platformGraphicsContext;
 }
 
 unsigned SurfacePool::numberOfAvailableBackBuffers() const
@@ -203,65 +200,16 @@ void SurfacePool::waitForBuffer(TileBuffer* tileBuffer)
 {
     if (!m_hasFenceExtension)
         return;
-
-#if BLACKBERRY_PLATFORM_GRAPHICS_EGL
-    EGLSyncKHR platformSync;
-
-    {
-        Platform::MutexLocker locker(&m_mutex);
-        platformSync = tileBuffer->fence()->takePlatformSync();
-    }
-
-    if (!platformSync)
-        return;
-
-    if (!eglClientWaitSyncKHR(Platform::Graphics::eglDisplay(), platformSync, 0, 100000000LL))
-        Platform::logAlways(Platform::LogLevelWarn, "Failed to wait for EGLSyncKHR object!\n");
-
-    // Instead of assuming eglDestroySyncKHR is thread safe, we add it to
-    // a garbage list for later collection on the thread that created it.
-    {
-        Platform::MutexLocker locker(&m_mutex);
-        m_garbage.insert(platformSync);
-    }
-#endif
 }
 
 void SurfacePool::notifyBuffersComposited(const TileBufferList& tileBuffers)
 {
     if (!m_hasFenceExtension)
         return;
-
-#if BLACKBERRY_PLATFORM_GRAPHICS_EGL
-    Platform::MutexLocker locker(&m_mutex);
-
-    EGLDisplay display = Platform::Graphics::eglDisplay();
-
-    // The EGL_KHR_fence_sync spec is nice enough to specify that the sync object
-    // is not actually deleted until everyone has stopped using it.
-    for (std::set<void*>::const_iterator it = m_garbage.begin(); it != m_garbage.end(); ++it)
-        eglDestroySyncKHR(display, *it);
-    m_garbage.clear();
-
-    // If we didn't blit anything, we don't need to create a new fence.
-    if (tileBuffers.isEmpty())
-        return;
-
-    // Create a new fence and assign to the tiles that were blit. Invalidate any previous
-    // fence that may be active among these tiles and add its sync object to the garbage set
-    // for later destruction to make sure it doesn't leak.
-    RefPtr<Fence> fence = Fence::create(eglCreateSyncKHR(display, EGL_SYNC_FENCE_KHR, 0));
-    for (unsigned int i = 0; i < tileBuffers.size(); ++i)
-        tileBuffers[i]->setFence(fence);
-#endif
 }
 
 void SurfacePool::destroyPlatformSync(void* platformSync)
 {
-#if BLACKBERRY_PLATFORM_GRAPHICS_EGL && USE(SKIA)
-    Platform::MutexLocker locker(&m_mutex);
-    m_garbage.insert(platformSync);
-#endif
 }
 
 }

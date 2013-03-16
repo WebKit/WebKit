@@ -49,8 +49,6 @@
 #include <BlackBerryPlatformViewportAccessor.h>
 #include <BlackBerryPlatformWindow.h>
 
-#include <SkImageDecoder.h>
-
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NotFound.h>
@@ -1064,12 +1062,7 @@ TileIndexList BackingStorePrivate::render(const TileIndexList& tileIndexList)
         TileBuffer* backBuffer = SurfacePool::globalSurfacePool()->takeBackBuffer();
         ASSERT(backBuffer);
 
-        // If the tile has been created, but this is the first time we are painting on it
-        // then it hasn't been given a default background yet so that we can save time during
-        // startup. That's why we are doing it here instead...
-        if (!backBuffer->backgroundPainted())
-            backBuffer->paintBackground();
-
+        backBuffer->paintBackground();
         backBuffer->setLastRenderScale(currentScale);
         backBuffer->setLastRenderOrigin(tileOrigin);
         backBuffer->clearRenderedRegion();
@@ -1222,6 +1215,18 @@ void BackingStorePrivate::blitVisibleContents(bool force)
         "BackingStorePrivate::blitVisibleContents(): dstRect=%s, documentSrcRect=%s, scale=%f",
         dstRect.toString().c_str(), documentSrcRect.toString().c_str(), viewportAccessor->scale());
 #endif
+
+    BlackBerry::Platform::Graphics::Buffer* dstBuffer = buffer();
+    ASSERT(dstBuffer);
+    if (dstBuffer) {
+        // On the GPU, clearing is free and allows for optimizations,
+        // so we always want to do this first for the whole surface.
+        // Don't call clearWindow() as we don't want to add it to the posted rect.
+        BlackBerry::Platform::Graphics::clearBuffer(dstBuffer,
+            m_webPageBackgroundColor.red(), m_webPageBackgroundColor.green(),
+            m_webPageBackgroundColor.blue(), m_webPageBackgroundColor.alpha());
+    } else
+        Platform::logAlways(Platform::LogLevelWarn, "Empty window buffer, can't blit contents.");
 
 #if DEBUG_CHECKERBOARD
     bool blitCheckered = false;
@@ -1425,13 +1430,14 @@ void BackingStorePrivate::compositeContents(WebCore::LayerRenderer* layerRendere
 
     Platform::IntRectRegion transformedContentsRegion = transformedContents;
     Platform::IntRectRegion backingStoreRegion = geometry->backingStoreRect();
-    Platform::IntRectRegion checkeredRegion
+    Platform::IntRectRegion clearRegion
         = Platform::IntRectRegion::subtractRegions(transformedContentsRegion, backingStoreRegion);
 
-    // Blit checkered to those parts that are not covered by the backingStoreRect.
-    std::vector<Platform::IntRect> checkeredRects = checkeredRegion.rects();
-    for (size_t i = 0; i < checkeredRects.size(); ++i)
-        layerRenderer->drawCheckerboardPattern(transform, m_webPage->d->mapFromTransformedFloatRect(WebCore::IntRect(checkeredRects.at(i))));
+    // Clear those parts that are not covered by the backingStoreRect.
+    Color clearColor(Color::white);
+    std::vector<Platform::IntRect> clearRects = clearRegion.rects();
+    for (size_t i = 0; i < clearRects.size(); ++i)
+        layerRenderer->drawColor(transform, m_webPage->d->mapFromTransformedFloatRect(WebCore::IntRect(clearRects.at(i))), clearColor);
 
     // Get the list of tile rects that makeup the content.
     TileRectList tileRectList = mapFromPixelContentsToTiles(transformedContents, geometry);
@@ -1442,7 +1448,7 @@ void BackingStorePrivate::compositeContents(WebCore::LayerRenderer* layerRendere
         TileBuffer* tileBuffer = currentMap.get(index);
 
         if (!tileBuffer || !geometry->isTileCorrespondingToBuffer(index, tileBuffer))
-            layerRenderer->drawCheckerboardPattern(transform, m_webPage->d->mapFromTransformedFloatRect(Platform::FloatRect(dirtyRect)));
+            layerRenderer->drawColor(transform, m_webPage->d->mapFromTransformedFloatRect(Platform::FloatRect(dirtyRect)), clearColor);
         else {
             Platform::IntPoint tileOrigin = tileBuffer->lastRenderOrigin();
             Platform::FloatRect tileDocumentContentsRect = m_webPage->d->mapFromTransformedFloatRect(Platform::FloatRect(tileBuffer->pixelContentsRect()));
@@ -1456,7 +1462,7 @@ void BackingStorePrivate::compositeContents(WebCore::LayerRenderer* layerRendere
             for (size_t i = 0; i < notRenderedRects.size(); ++i) {
                 Platform::IntRect tileSurfaceRect = notRenderedRects.at(i);
                 tileSurfaceRect.move(-tileOrigin.x(), -tileOrigin.y());
-                layerRenderer->drawCheckerboardPattern(transform, m_webPage->d->mapFromTransformedFloatRect(Platform::FloatRect(tileSurfaceRect)));
+                layerRenderer->drawColor(transform, m_webPage->d->mapFromTransformedFloatRect(Platform::FloatRect(tileSurfaceRect)), clearColor);
             }
         }
     }
@@ -1808,7 +1814,7 @@ int BackingStorePrivate::tileHeight()
 
 Platform::IntSize BackingStorePrivate::tileSize()
 {
-    static Platform::IntSize tileSize = Platform::Settings::instance()->tileSize(Platform::BackingStoreTileUsage);
+    static Platform::IntSize tileSize = Platform::Settings::instance()->tileSize();
     return tileSize;
 }
 

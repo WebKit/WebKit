@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,8 +24,8 @@
 
 #include "GraphicsContext.h"
 #include "LayerMessage.h"
+#include "LayerWebKitThread.h"
 #include "Path.h"
-#include "PlatformContextSkia.h"
 #include "RenderTheme.h"
 #include "WebPage_p.h"
 
@@ -45,37 +45,41 @@ SelectionOverlay::~SelectionOverlay()
 {
 }
 
-void SelectionOverlay::draw(const Platform::IntRectRegion& region)
+void SelectionOverlay::draw(const Selection& selection)
 {
     ASSERT(BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread());
 
-    m_region = region;
-    FloatRect rect = IntRect(m_region.extents());
-    if (rect.isEmpty()) {
-        hide();
-        return;
+    m_selection = selection;
+
+    while (m_layers.size() < m_selection.size())
+        m_layers.append(GraphicsLayer::create(this));
+
+    m_layers.resize(m_selection.size());
+
+    size_t i = 0;
+    for (Selection::iterator it = m_selection.begin(); it != m_selection.end(); ++it, ++i) {
+        GraphicsLayer* parent = it->key;
+        GraphicsLayer* overlay = m_layers[i].get();
+
+        parent->platformLayer()->addOverlay(overlay->platformLayer());
+        overlay->setPosition(FloatPoint::zero());
+        if (parent == m_page->m_overlayLayer)
+            overlay->setSize(m_page->contentsSize());
+        else
+            overlay->setSize(parent->size());
+        overlay->setAnchorPoint(FloatPoint3D(0, 0, 0));
+        overlay->setDrawsContent(true);
+        overlay->setNeedsDisplay();
     }
-
-    if (!m_overlay)
-        m_overlay = adoptPtr(new WebOverlay(this));
-
-    m_page->m_webPage->addOverlay(m_overlay.get());
-    m_overlay->resetOverrides();
-    m_overlay->setPosition(rect.location());
-    m_overlay->setSize(rect.size());
-    m_overlay->setDrawsContent(true);
-    m_overlay->setOpacity(1.0);
-    m_overlay->invalidate();
 }
 
 void SelectionOverlay::hide()
 {
     ASSERT(BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread());
 
-    if (!m_overlay)
-        return;
-
-    m_page->m_webPage->removeOverlay(m_overlay.get());
+    for (size_t i = 0; i < m_layers.size(); ++i)
+        m_layers[i]->platformLayer()->removeFromSuperlayer();
+    m_selection.clear();
 }
 
 void SelectionOverlay::notifyFlushRequired(const GraphicsLayer* layer)
@@ -83,38 +87,42 @@ void SelectionOverlay::notifyFlushRequired(const GraphicsLayer* layer)
     m_page->notifyFlushRequired(layer);
 }
 
-void SelectionOverlay::paintContents(const GraphicsLayer*, GraphicsContext& c, GraphicsLayerPaintingPhase, const IntRect& inClip)
+void SelectionOverlay::paintContents(const GraphicsLayer* layer, GraphicsContext& c, GraphicsLayerPaintingPhase, const IntRect& clip)
 {
-    std::vector<Platform::IntRect> rects = m_region.rects();
-    Platform::IntRect rect = m_region.extents();
-    SkRegion windowRegion;
-
-    unsigned rectCount = m_region.numRects();
-    if (!rectCount)
+    if (!layer->platformLayer()->superlayer())
         return;
 
-    IntRect clip(inClip);
-    clip.move(rect.x(), rect.y());
-    for (unsigned i = 0; i < rectCount; ++i) {
-        IntRect rectToPaint = rects[i];
-        rectToPaint.intersect(clip);
-        SkIRect r = SkIRect::MakeXYWH(rectToPaint.x(), rectToPaint.y(), rectToPaint.width(), rectToPaint.height());
-        windowRegion.op(r, SkRegion::kUnion_Op);
-    }
+    Selection::iterator it = m_selection.find(layer->platformLayer()->superlayer()->owner());
+    if (it == m_selection.end())
+        return;
 
-    SkPath pathToPaint;
-    windowRegion.getBoundaryPath(&pathToPaint);
+    const Vector<WebCore::FloatQuad>& quads = it->value;
 
-    Path path(pathToPaint);
     c.save();
-    c.translate(-rect.x(), -rect.y());
 
-    // Draw selection overlay
     Color color = RenderTheme::defaultTheme()->activeSelectionBackgroundColor();
     c.setFillColor(color, ColorSpaceDeviceRGB);
-    c.fillPath(path);
+
+    for (unsigned i = 0; i < quads.size(); ++i) {
+        FloatRect rectToPaint = quads[i].boundingBox();
+        rectToPaint.intersect(clip);
+        if (rectToPaint.isEmpty())
+            continue;
+
+        c.fillRect(rectToPaint);
+    }
 
     c.restore();
+}
+
+bool SelectionOverlay::showDebugBorders(const GraphicsLayer* layer) const
+{
+    return m_page->showDebugBorders(layer);
+}
+
+bool SelectionOverlay::showRepaintCounter(const GraphicsLayer* layer) const
+{
+    return m_page->showRepaintCounter(layer);
 }
 
 } // namespace WebKit

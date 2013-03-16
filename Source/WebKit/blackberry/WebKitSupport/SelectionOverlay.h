@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,12 +24,15 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "Color.h"
+#include "FloatQuad.h"
 #include "GraphicsLayerClient.h"
-#include "WebOverlay.h"
+#include "IntRect.h"
 
 #include <BlackBerryPlatformIntRectRegion.h>
+#include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/Vector.h>
 
 namespace BlackBerry {
 namespace WebKit {
@@ -38,27 +41,31 @@ class WebPagePrivate;
 
 class SelectionOverlay : public WebCore::GraphicsLayerClient {
 public:
+    typedef HashMap<WebCore::GraphicsLayer*, Vector<WebCore::FloatQuad> > Selection;
+
     static PassOwnPtr<SelectionOverlay> create(WebPagePrivate* page)
     {
         return adoptPtr(new SelectionOverlay(page));
     }
 
-    virtual ~SelectionOverlay();
+    ~SelectionOverlay();
 
-    virtual void draw(const Platform::IntRectRegion&);
-    virtual void hide();
+    void draw(const Selection&);
+    void hide();
 
     // GraphicsLayerClient
     virtual void notifyAnimationStarted(const WebCore::GraphicsLayer*, double time) { }
     virtual void notifyFlushRequired(const WebCore::GraphicsLayer*);
-    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& inClip);
+    virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect&);
+    virtual bool showDebugBorders(const WebCore::GraphicsLayer*) const;
+    virtual bool showRepaintCounter(const WebCore::GraphicsLayer*) const;
 
 private:
     SelectionOverlay(WebPagePrivate*);
 
     WebPagePrivate* m_page;
-    OwnPtr<WebOverlay> m_overlay;
-    BlackBerry::Platform::IntRectRegion m_region;
+    Selection m_selection;
+    Vector<OwnPtr<WebCore::GraphicsLayer> > m_layers;
 };
 
 } // namespace WebKit

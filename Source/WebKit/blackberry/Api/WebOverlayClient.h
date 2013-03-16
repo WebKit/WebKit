@@ -20,8 +20,7 @@
 #define WebOverlayClient_h
 
 #include "BlackBerryGlobal.h"
-
-class SkCanvas;
+#include <BlackBerryPlatformGraphics.h>
 
 namespace BlackBerry {
 namespace WebKit {
@@ -34,7 +33,7 @@ class BLACKBERRY_EXPORT WebOverlayClient {
 public:
     virtual ~WebOverlayClient() { }
 
-    virtual void drawOverlayContents(WebOverlay*, SkCanvas*) = 0;
+    virtual void drawOverlayContents(WebOverlay*, BlackBerry::Platform::Graphics::Drawable*) = 0;
 };
 
 }
