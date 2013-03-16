@@ -1352,7 +1352,7 @@ webkit.org/b/104954 http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyF
 
 webkit.org/b/104962 platform/mac/fast/loader/file-url-mimetypes-2.html [ Failure ]
 
-webkit.org/b/104848 fast/frames/sandboxed-iframe-parsing-space-characters.html [ Failure Pass ]
+webkit.org/b/112482 fast/frames/sandboxed-iframe-scripting [ Failure Pass ] [ Failure Pass ]
 
 webkit.org/b/105601 svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm [ Crash Pass ]
 
