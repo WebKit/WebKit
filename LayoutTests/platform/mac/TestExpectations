@@ -1338,6 +1338,10 @@ webkit.org/b/103663 [ MountainLion Lion SnowLeopard ] media/track/track-in-band.
 webkit.org/b/103663 [ MountainLion Lion SnowLeopard ] media/track/track-in-band-cues-added-once.html
 webkit.org/b/103663 [ MountainLion Lion SnowLeopard ] media/track/track-in-band-style.html
 
+# These two tests sometimes timeout
+webkit.org/b/112492 media/track/track-language-preference.html [ Failure Pass ]
+webkit.org/b/112492 media/track/track-prefer-captions.html [ Failure Pass ]
+
 webkit.org/b/104104 fast/overflow/scrollbar-click-retains-focus.html [ Failure ]
 
 webkit.org/b/104949 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure ]
