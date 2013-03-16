@@ -249,8 +249,10 @@ PassRefPtr<PlatformCALayer> PlatformCALayer::clone(PlatformCALayerClient* owner)
         type = LayerTypeTransformLayer;
         break;
     case LayerTypeAVPlayerLayer:
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
         type = LayerTypeAVPlayerLayer;
         break;
+#endif
     case LayerTypeLayer:
     default:
         type = LayerTypeLayer;
