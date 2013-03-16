@@ -4,6 +4,15 @@
 # <rdar://problem/9326220>
 fast/canvas/canvas-scale-shadowBlur.html
 
+# --- Color-profile related failures ---
+compositing/background-color/background-color-change-to-text.html [ ImageOnlyFailure Pass ]
+compositing/overlap-blending/children-opacity-huge.html [ ImageOnlyFailure Pass ]
+compositing/overlap-blending/children-opacity-no-overlap.html [ ImageOnlyFailure Pass ]
+css3/filters/custom/composited/custom-filter-blend-modes.html [ ImageOnlyFailure Pass ]
+svg/filters/feDisplacementMap-filterUnits.svg [ ImageOnlyFailure ]
+
+webkit.org/b/112265 svg/filters/filter-cycle.html [ ImageOnlyFailure Pass ]
+
 # These tests are potentially broken in the same way as "canvas-scale-shadowBlur"
 fast/canvas/canvas-strokePath-gradient-shadow.html
 fast/canvas/canvas-strokeRect-alpha-shadow.html
