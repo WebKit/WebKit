@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/subpixel-utils.js"></script>
+<script src="../resources/rounded-rectangle.js"></script>
+<script>
+    window.onload = function () {
+        var stylesheet = document.getElementById("stylesheet");
+        generateShapeOutsideOnFloat(
+            "left-circle", stylesheet.sheet,
+            {
+                'shapeCenterX': 20, 'shapeCenterY': 20,
+                'shapeRadius': 20
+            },
+            'left',
+            4
+        );
+        generateShapeOutsideOnFloat(
+            "right-circle", stylesheet.sheet,
+            {
+                'shapeCenterX': 20, 'shapeCenterY': 20,
+                'shapeRadius': 20
+            },
+            'right',
+            4
+        );
+    }
+</script>
+<style id="stylesheet">
+.container {
+    font: 4px/1 Ahem, sans-serif;
+    width: 80px;
+    text-align: justify;
+    border: 1px solid black;
+}
+</style>
+</head>
+<body>
+  <h1><a href="https://bugs.webkit.org/show_bug.cgi?id=98676">Bug 98673</a> - [CSS Exclusions] shape-outside on floats for circle and ellipse shapes</h1>
+  <h2>The vertical black lines in the following box should wrap around the circle on the left.</h2>
+  <div style="height: 60px" class="container">
+    X X X X X X X X X X X X X X X X X X X X
+    <div id="left-circle"></div>
+    X X X X X X X X X X X X X X X X X X X X
+    X X X X X X X X X X X X X X X X X X X X
+    X X X X X X X X X X X X X X X X X X X X
+    X X X X X X X X X X X X X X X X X X X X
+    X X X X
+  </div>
+  <h2>The vertical black lines in the following box should wrap around the circle on the right.</h2>
+  <div style="height: 60px" class="container">
+    X X X X X X X X X X X X X X X X X X X X
+    <div id="right-circle"></div>
+    X X X X X X X X X X X X X X X X X X X X
+    X X X X X X X X X X X X X X X X X X X X
+    X X X X X X X X X X X X X X X X X X X X
+    X X X X X X X X X X X X X X X X X X X X
+    X X X X
+  </div>
+</body>
+</html>

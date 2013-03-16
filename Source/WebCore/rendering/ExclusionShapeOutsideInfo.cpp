@@ -38,13 +38,8 @@
 namespace WebCore {
 bool ExclusionShapeOutsideInfo::isEnabledFor(const RenderBox* box)
 {
-    // FIXME: Enable shape outside for non-rectangular shapes! (bug 98664)
     ExclusionShapeValue* value = box->style()->shapeOutside();
-    return value && (value->type() == ExclusionShapeValue::SHAPE)
-        && (
-            (value->shape()->type() == BasicShape::BASIC_SHAPE_RECTANGLE)
-            || (value->shape()->type() == BasicShape::BASIC_SHAPE_POLYGON)
-        );
+    return (box->isFloating() && value && value->type() == ExclusionShapeValue::SHAPE) ? value->shape() : 0;
 }
 
 bool ExclusionShapeOutsideInfo::computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight)

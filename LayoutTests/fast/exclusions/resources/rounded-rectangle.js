@@ -1,6 +1,29 @@
 if (window.internals)
     window.internals.settings.setCSSExclusionsEnabled(true);
 
+function defined(value) { return typeof value !== "undefined"; }
+
+function convertToRoundedRect(dimensions) {
+    if (defined(dimensions.shapeCenterX) && defined(dimensions.shapeCenterY)) {
+        if (defined(dimensions.shapeRadius)) {
+            // Convert a circle.
+            dimensions.shapeX = dimensions.shapeCenterX - dimensions.shapeRadius;
+            dimensions.shapeY = dimensions.shapeCenterY - dimensions.shapeRadius;
+            dimensions.shapeWidth = dimensions.shapeRadius * 2;
+            dimensions.shapeHeight = dimensions.shapeRadius * 2;
+            dimensions.shapeRadiusX = dimensions.shapeRadius;
+            dimensions.shapeRadiusY = dimensions.shapeRadius;
+        } else {
+            // Convert an ellipse.
+            dimensions.shapeX = dimensions.shapeCenterX - dimensions.shapeRadiusX;
+            dimensions.shapeY = dimensions.shapeCenterY - dimensions.shapeRadiusY;
+            dimensions.shapeWidth = dimensions.shapeRadiusX * 2;
+            dimensions.shapeHeight = dimensions.shapeRadiusY * 2;
+        }
+    }
+    // Otherwise, we have a rounded rect, so no conversion is needed.
+}
+
 function xFromEllipseCenter(yFromEllipseCenter, radiusX, radiusY) {
     return radiusX * Math.sqrt(1 - Math.pow(yFromEllipseCenter / radiusY, 2));
 }
@@ -20,7 +43,7 @@ function xInset(dimensions, lineTop, lineBottom) {
 
 function xOutset(dimensions, lineTop, lineBottom) {
     var left = 0;
-    if (lineTop < dimensions.shapeHeight && lineBottom > dimensions.shapeHeight)
+    if (lineBottom > dimensions.shapeHeight)
         lineBottom = dimensions.shapeHeight;
     if (lineTop < dimensions.shapeHeight && (lineTop < dimensions.shapeRadiusY || lineBottom > dimensions.shapeHeight - dimensions.shapeRadiusY)) {
         var yFromEllipseCenter;
@@ -131,21 +154,43 @@ function generateShapeElement(elementId, stylesheet, dimensions, lineHeight) {
 }
 
 function generateShapeOutsideOnFloat(elementId, stylesheet, dimensions, floatValue, lineHeight) {
-    stylesheet.insertRule("#" + elementId + " { "
-        + "-webkit-shape-outside: rectangle("
-        + dimensions.shapeX + "px, "
-        + dimensions.shapeY + "px, "
-        + dimensions.shapeWidth + "px, "
-        + dimensions.shapeHeight + "px, "
-        + dimensions.shapeRadiusX + "px, "
-        + dimensions.shapeRadiusY + "px); "
-        + "float: " + floatValue + "; }");
+    if (defined(dimensions.shapeCenterX) && defined(dimensions.shapeCenterY)) { // circle or ellipse
+        if (defined(dimensions.shapeRadius)) {
+            stylesheet.insertRule("#" + elementId + " { "
+                + "-webkit-shape-outside: circle("
+                + dimensions.shapeCenterX + "px, "
+                + dimensions.shapeCenterY + "px, "
+                + dimensions.shapeRadius + "px); "
+                + "float: " + floatValue + "; }");
+        } else {
+            stylesheet.insertRule("#" + elementId + " { "
+                + "-webkit-shape-outside: ellipse("
+                + dimensions.shapeCenterX + "px, "
+                + dimensions.shapeCenterY + "px, "
+                + dimensions.shapeRadiusX + "px, "
+                + dimensions.shapeRadiusY + "px); "
+                + "float: " + floatValue + "; }");
+        }
+    } else {
+        stylesheet.insertRule("#" + elementId + " { "
+            + "-webkit-shape-outside: rectangle("
+            + dimensions.shapeX + "px, "
+            + dimensions.shapeY + "px, "
+            + dimensions.shapeWidth + "px, "
+            + dimensions.shapeHeight + "px, "
+            + dimensions.shapeRadiusX + "px, "
+            + dimensions.shapeRadiusY + "px); "
+            + "float: " + floatValue + "; }");
+    }
+    convertToRoundedRect(dimensions);
     simulateShapeOutline(elementId, stylesheet, dimensions);
 }
 
 // Note that this does not attempt to simulate where the float content would be
 // if the shape's X and Y are not 0.
 function generateSimulatedShapeOutsideOnFloat(elementId, stylesheet, dimensions, floatValue, lineHeight) {
+    convertToRoundedRect(dimensions);
+
     var simpleRectangle = dimensions.shapeRadiusX == 0 || dimensions.shapeRadiusY == 0;
     var floatHeight = simpleRectangle ? dimensions.shapeHeight : lineHeight;
 
@@ -167,8 +212,7 @@ function generateSimulatedShapeOutsideOnFloat(elementId, stylesheet, dimensions,
     }
 
     element.insertAdjacentHTML('afterend', simulationHTML);
-    if (floatValue == "right") {
+    if (floatValue == "right")
         dimensions.shapeX = -dimensions.shapeWidth;
-    }
     simulateShapeOutline(elementId, stylesheet, dimensions);
 }
