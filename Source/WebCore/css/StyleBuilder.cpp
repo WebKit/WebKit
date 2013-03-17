@@ -657,6 +657,120 @@ public:
     static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
 };
 
+class ApplyPropertyFontFamily {
+public:
+    static void applyInheritValue(CSSPropertyID, StyleResolver* styleResolver)
+    {
+        FontDescription fontDescription = styleResolver->style()->fontDescription();
+        FontDescription parentFontDescription = styleResolver->parentStyle()->fontDescription();
+        
+        fontDescription.setGenericFamily(parentFontDescription.genericFamily());
+        fontDescription.setFamily(parentFontDescription.firstFamily());
+        fontDescription.setIsSpecifiedFont(parentFontDescription.isSpecifiedFont());
+        styleResolver->setFontDescription(fontDescription);
+        return;
+    }
+
+    static void applyInitialValue(CSSPropertyID, StyleResolver* styleResolver)
+    {
+        FontDescription fontDescription = styleResolver->style()->fontDescription();
+        FontDescription initialDesc = FontDescription();
+        
+        // We need to adjust the size to account for the generic family change from monospace to non-monospace.
+        if (fontDescription.keywordSize() && fontDescription.useFixedDefaultSize())
+            styleResolver->setFontSize(fontDescription, styleResolver->fontSizeForKeyword(styleResolver->document(), CSSValueXxSmall + fontDescription.keywordSize() - 1, false));
+        fontDescription.setGenericFamily(initialDesc.genericFamily());
+        if (!initialDesc.firstFamily().familyIsEmpty())
+            fontDescription.setFamily(initialDesc.firstFamily());
+
+        styleResolver->setFontDescription(fontDescription);
+        return;
+    }
+
+    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
+    {
+        if (!value->isValueList())
+            return;
+
+        FontDescription fontDescription = styleResolver->style()->fontDescription();
+        FontFamily& firstFamily = fontDescription.firstFamily();
+        FontFamily* currFamily = 0;
+
+        // Before mapping in a new font-family property, we should reset the generic family.
+        bool oldFamilyUsedFixedDefaultSize = fontDescription.useFixedDefaultSize();
+        fontDescription.setGenericFamily(FontDescription::NoFamily);
+
+        for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
+            CSSValue* item = i.value();
+            if (!item->isPrimitiveValue())
+                continue;
+            CSSPrimitiveValue* contentValue = static_cast<CSSPrimitiveValue*>(item);
+            AtomicString face;
+            Settings* settings = styleResolver->document()->settings();
+            if (contentValue->isString())
+                face = contentValue->getStringValue();
+            else if (settings) {
+                switch (contentValue->getIdent()) {
+                case CSSValueWebkitBody:
+                    face = settings->standardFontFamily();
+                    break;
+                case CSSValueSerif:
+                    face = serifFamily;
+                    fontDescription.setGenericFamily(FontDescription::SerifFamily);
+                    break;
+                case CSSValueSansSerif:
+                    face = sansSerifFamily;
+                    fontDescription.setGenericFamily(FontDescription::SansSerifFamily);
+                    break;
+                case CSSValueCursive:
+                    face = cursiveFamily;
+                    fontDescription.setGenericFamily(FontDescription::CursiveFamily);
+                    break;
+                case CSSValueFantasy:
+                    face = fantasyFamily;
+                    fontDescription.setGenericFamily(FontDescription::FantasyFamily);
+                    break;
+                case CSSValueMonospace:
+                    face = monospaceFamily;
+                    fontDescription.setGenericFamily(FontDescription::MonospaceFamily);
+                    break;
+                case CSSValueWebkitPictograph:
+                    face = pictographFamily;
+                    fontDescription.setGenericFamily(FontDescription::PictographFamily);
+                    break;
+                }
+            }
+
+            if (!face.isEmpty()) {
+                if (!currFamily) {
+                    // Filling in the first family.
+                    firstFamily.setFamily(face);
+                    firstFamily.appendFamily(0); // Remove any inherited family-fallback list.
+                    currFamily = &firstFamily;
+                    fontDescription.setIsSpecifiedFont(fontDescription.genericFamily() == FontDescription::NoFamily);
+                } else {
+                    RefPtr<SharedFontFamily> newFamily = SharedFontFamily::create();
+                    newFamily->setFamily(face);
+                    currFamily->appendFamily(newFamily);
+                    currFamily = newFamily.get();
+                }
+            }
+        }
+
+        // We can't call useFixedDefaultSize() until all new font families have been added
+        // If currFamily is non-zero then we set at least one family on this description.
+        if (currFamily) {
+            if (fontDescription.keywordSize() && fontDescription.useFixedDefaultSize() != oldFamilyUsedFixedDefaultSize)
+                styleResolver->setFontSize(fontDescription, styleResolver->fontSizeForKeyword(styleResolver->document(), CSSValueXxSmall + fontDescription.keywordSize() - 1, !oldFamilyUsedFixedDefaultSize));
+
+            styleResolver->setFontDescription(fontDescription);
+        }
+        return;
+    }
+
+    static PropertyHandler createHandler() { return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue); }
+};
+
 class ApplyPropertyFontSize {
 private:
     // When the CSS keyword "larger" is used, this function will attempt to match within the keyword
@@ -1876,6 +1990,7 @@ StyleBuilder::StyleBuilder()
     setPropertyHandler(CSSPropertyDisplay, ApplyPropertyDisplay::createHandler());
     setPropertyHandler(CSSPropertyEmptyCells, ApplyPropertyDefault<EEmptyCell, &RenderStyle::emptyCells, EEmptyCell, &RenderStyle::setEmptyCells, EEmptyCell, &RenderStyle::initialEmptyCells>::createHandler());
     setPropertyHandler(CSSPropertyFloat, ApplyPropertyDefault<EFloat, &RenderStyle::floating, EFloat, &RenderStyle::setFloating, EFloat, &RenderStyle::initialFloating>::createHandler());
+    setPropertyHandler(CSSPropertyFontFamily, ApplyPropertyFontFamily::createHandler());
     setPropertyHandler(CSSPropertyFontSize, ApplyPropertyFontSize::createHandler());
     setPropertyHandler(CSSPropertyFontStyle, ApplyPropertyFont<FontItalic, &FontDescription::italic, &FontDescription::setItalic, FontItalicOff>::createHandler());
     setPropertyHandler(CSSPropertyFontVariant, ApplyPropertyFont<FontSmallCaps, &FontDescription::smallCaps, &FontDescription::setSmallCaps, FontSmallCapsOff>::createHandler());
