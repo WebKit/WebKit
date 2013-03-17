@@ -126,7 +126,7 @@ Vector<String> TextCheckerEnchant::getGuessesForWord(const String& word)
             numberOfSuggestions = maximumNumberOfSuggestions;
 
         for (i = 0; i < numberOfSuggestions; i++)
-            guesses.append(String(suggestions[i]));
+            guesses.append(String::fromUTF8(suggestions[i]));
 
         enchant_dict_free_suggestions(*iter, suggestions);
     }
