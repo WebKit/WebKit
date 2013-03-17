@@ -1,5 +1,13 @@
+AH_TOP([
+#ifndef __AUTOTOOLSCONFIG_H__
+#define __AUTOTOOLSCONFIG_H__ 1
+])
+
 # This adds the include line to the bottom of the autoconfig header.
-AH_BOTTOM([#include "WebKitFeatures.h"])
+AH_BOTTOM([
+#include "WebKitFeatures.h"
+#endif // __AUTOTOOLSCONFIG_H__
+])
 
 # This list of features represents those selected for release builds.
 # If you are adding a new or unstable feature, you should mark it
