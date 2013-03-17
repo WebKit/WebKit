@@ -91,9 +91,6 @@ public:
         return m_zoomInset;
     }
 
-    // FIXME: Remove this and the check for it in chromium.
-#define NEW_ZOOM_FILTER
-
     static WebFilterOperation createGrayscaleFilter(float amount) { return WebFilterOperation(FilterTypeGrayscale, amount); }
     static WebFilterOperation createSepiaFilter(float amount) { return WebFilterOperation(FilterTypeSepia, amount); }
     static WebFilterOperation createSaturateFilter(float amount) { return WebFilterOperation(FilterTypeSaturate, amount); }
