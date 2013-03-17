@@ -1171,6 +1171,9 @@ webkit.org/b/104054 svg/custom/use-href-update-crash.svg [ Failure Pass ]
 # Flakey plugin tests
 webkit.org/b/82752 plugins/netscape-dom-access-and-reload.html [ Failure Pass ]
 
+# Asserts sometimes
+webkit.org/b/111902 [ Debug ] fast/frames/sandboxed-iframe-navigation-allowed.html [ Crash Pass ]
+
 # Flaky tests when run multi-process
 webkit.org/b/58192 fast/dom/frame-loading-via-document-write.html [ Failure Pass ]
 webkit.org/b/58192 http/tests/appcache/fail-on-update-2.html [ Failure Pass ]
