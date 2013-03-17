@@ -699,6 +699,12 @@ Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-simple.
 Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-synconworker.html [ Pass Slow ] 
 Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-worker-twice.html [ Pass Slow ] 
 
+webkit.org/b/73003 editing/spelling/spellcheck-async.html [ Failure Slow ]
+webkit.org/b/73003 editing/spelling/spellcheck-async-mutation.html [ Failure Slow ]
+webkit.org/b/73003 editing/spelling/spellcheck-paste.html [ Pass Slow ]
+webkit.org/b/73003 editing/spelling/spellcheck-sequencenum.html [ Failure Slow ]
+webkit.org/b/50740 editing/spelling/spellcheck-queue.html [ Failure Slow ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of slow tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -724,10 +730,6 @@ webkit.org/b/98350 accessibility/aria-invalid.html [ Timeout ]
 
 # Missing DRT AccessibilityController::addNotificationListener implementation
 webkit.org/b/70606 accessibility/aria-checkbox-sends-notification.html [ Timeout ]
-
-webkit.org/b/73003 [ Release ] editing/spelling/spellcheck-async.html [ Timeout ]
-webkit.org/b/73003 [ Release ] editing/spelling/spellcheck-paste.html [ Timeout ]
-webkit.org/b/50740 [ Release ] editing/spelling/spellcheck-queue.html [ Timeout ]
 
 Bug(GTK) media/progress-events-generated-correctly.html [ Failure Timeout ]
 
@@ -1399,6 +1401,8 @@ webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-circle.html [ Imag
 webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-circle-padding.html [ ImageOnlyFailure ]
 webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-ellipse.html [ ImageOnlyFailure ]
 webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-ellipse-padding.html [ ImageOnlyFailure ]
+webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-circle.html [ ImageOnlyFailure ]
+webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-ellipse.html [ ImageOnlyFailure ]
 webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle.html [ ImageOnlyFailure ]
 
 webkit.org/b/110090 fast/events/clientXY-in-zoom-and-scroll.html [ Failure ]
