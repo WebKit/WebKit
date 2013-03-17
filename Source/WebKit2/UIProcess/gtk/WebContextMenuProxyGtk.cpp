@@ -47,9 +47,9 @@ static void contextMenuItemActivatedCallback(GtkAction* action, WebPageProxy* pa
 {
     gboolean isToggle = GTK_IS_TOGGLE_ACTION(action);
     WebKit::WebContextMenuItemData item(isToggle ? WebCore::CheckableActionType : WebCore::ActionType,
-                                        static_cast<WebCore::ContextMenuAction>(GPOINTER_TO_INT(g_object_get_data(G_OBJECT(action), gContextMenuActionId))),
-                                        gtk_action_get_label(action), gtk_action_get_sensitive(action),
-                                        isToggle ? gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)) : false);
+        static_cast<WebCore::ContextMenuAction>(GPOINTER_TO_INT(g_object_get_data(G_OBJECT(action), gContextMenuActionId))),
+        String::fromUTF8(gtk_action_get_label(action)), gtk_action_get_sensitive(action),
+        isToggle ? gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)) : false);
     page->contextMenuItemSelected(item);
 }
 
