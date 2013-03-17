@@ -145,6 +145,12 @@ MAINTAINERCLEANFILES += \
 	$(ALL_MOFILES) \
 	$(top_builddir)/Source/WebCore/platform/gtk/po/$(DOMAIN).pot
 
+EXTRA_DIST += \
+	$(srcdir)/Source/WebCore/platform/gtk/po/ChangeLog \
+	$(srcdir)/Source/WebCore/platform/gtk/po/POTFILES.in \
+	$(srcdir)/Source/WebCore/platform/gtk/po/README \
+	$(wildcard $(srcdir)/Source/WebCore/platform/gtk/po/*.po)
+
 DISTCLEANFILES += \
 	$(ALL_MOFILES) \
 	$(top_builddir)/Source/WebCore/platform/gtk/po/$(DOMAIN).pot
@@ -232,3 +238,7 @@ po-uninstall-local:
 	    rm -f $(DESTDIR)$(localedir)/$$lang/$$lc/$(DOMAIN).mo; \
 	  done; \
 	done
+
+install-data-local: po-install-data-local
+installdirs-data-local: po-installdirs-data-local
+uninstall-local: po-uninstall-local

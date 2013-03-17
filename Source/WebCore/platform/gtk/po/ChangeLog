@@ -1,3 +1,14 @@
+2013-03-17  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Fix and improve dist hooks for translations
+        https://bugs.webkit.org/show_bug.cgi?id=112519
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.am: move dist-related rules here; also move translation-related files
+        to this file's EXTRA_DIST, making sure to only list the files we actually want
+        shipped, so junk such as .orig, .rej and backup files do not end up in the tarball.
+
 2013-03-15  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed, build fix. Also gather translatable strings from WebKit2 files.

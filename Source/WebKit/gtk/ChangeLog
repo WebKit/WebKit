@@ -1,3 +1,12 @@
+2013-03-17  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Fix and improve dist hooks for translations
+        https://bugs.webkit.org/show_bug.cgi?id=112519
+
+        Reviewed by Carlos Garcia Campos.
+
+        * GNUmakefile.am: removed left-over translation files from EXTRA_DIST
+
 2013-03-15  Nate Chapin  <japhet@chromium.org>
 
         Hide MainResourceLoader from the outside world
