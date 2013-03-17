@@ -1182,6 +1182,7 @@ webkit.org/b/58192 http/tests/inspector/console-websocket-error.html [ Failure P
 webkit.org/b/58192 fast/canvas/webgl/gl-teximage.html [ Failure Pass ]
 webkit.org/b/58192 fast/frames/flattening/iframe-flattening-offscreen.html [ Failure Pass ]
 webkit.org/b/58192 fast/frames/flattening/frameset-flattening-advanced.html [ Failure Pass ]
+webkit.org/b/58192 fast/frames/flattening/frameset-flattening-subframesets.html [ Failure Pass ]
 webkit.org/b/58192 svg/dom/SVGScriptElement/script-set-href.svg [ Failure Pass ]
 
 # Flakey cookies tests
