@@ -253,7 +253,6 @@ webkit.org/b/98212 fast/dom/Geolocation/coordinates-interface-attributes.html [ 
 
 # These tests are for -apple- and -khtml- prefixes, which we don't support
 inspector/styles/vendor-prefixes.html [ WontFix ]
-fast/css/apple-prefix.html [ WontFix ]
 
 # This test is specific to JSC; the V8 equivalent is
 # platform/chromium/fast/storage/serialized-script-value.html

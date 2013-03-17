@@ -14,10 +14,10 @@ var style = document.getElementById('description').style;
 function parseDashboardRegion(string)
 {
     try {
-        style.removeProperty("-apple-dashboard-region");
-        style.setProperty("-apple-dashboard-region", string, "");
-        var result = style.getPropertyValue("-apple-dashboard-region");
-        style.removeProperty("-apple-dashboard-region");
+        style.removeProperty("-webkit-dashboard-region");
+        style.setProperty("-webkit-dashboard-region", string, "");
+        var result = style.getPropertyValue("-webkit-dashboard-region");
+        style.removeProperty("-webkit-dashboard-region");
         return result;
     } catch (e) {
         return "" + e;

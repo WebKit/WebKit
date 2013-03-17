@@ -80,7 +80,6 @@ webkit.org/b/71851 http/tests/security/contentTypeOptions [ Skip ]
 
 # These test -apple- and -khtml- prefixed CSS properties, which we don't support.
 inspector/styles/vendor-prefixes.html [ WontFix Failure ]
-fast/css/apple-prefix.html [ WontFix Failure ]
 
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html [ WontFix Timeout Failure ]

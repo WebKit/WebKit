@@ -69,6 +69,10 @@ bool RuntimeEnabledFeatures::isMediaStreamEnabled = true;
 bool RuntimeEnabledFeatures::isPeerConnectionEnabled = true;
 #endif
 
+#if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
+bool RuntimeEnabledFeatures::isLegacyCSSVendorPrefixesEnabled = false;
+#endif
+
 #if ENABLE(GAMEPAD)
 bool RuntimeEnabledFeatures::isGamepadEnabled = false;
 #endif

@@ -33,6 +33,7 @@
 #include "HashTools.h"
 #include "JSCSSValue.h"
 #include "JSNode.h"
+#include "RuntimeEnabledFeatures.h"
 #include "Settings.h"
 #include "StylePropertySet.h"
 #include <runtime/StringPrototype.h>
@@ -119,7 +120,7 @@ static PropertyNamePrefix getCSSPropertyNamePrefix(const StringImpl& propertyNam
     switch (firstChar) {
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
     case 'a':
-        if (matchesCSSPropertyNamePrefix(propertyName, "apple"))
+        if (RuntimeEnabledFeatures::legacyCSSVendorPrefixesEnabled() && matchesCSSPropertyNamePrefix(propertyName, "apple"))
             return PropertyNamePrefixApple;
         break;
 #endif
@@ -129,7 +130,7 @@ static PropertyNamePrefix getCSSPropertyNamePrefix(const StringImpl& propertyNam
         break;
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
     case 'k':
-        if (matchesCSSPropertyNamePrefix(propertyName, "khtml"))
+        if (RuntimeEnabledFeatures::legacyCSSVendorPrefixesEnabled() && matchesCSSPropertyNamePrefix(propertyName, "khtml"))
             return PropertyNamePrefixKHTML;
         break;
 #endif
@@ -222,6 +223,7 @@ static CSSPropertyInfo cssPropertyIDForJSCSSPropertyName(PropertyName propertyNa
 #if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
     case PropertyNamePrefixApple:
     case PropertyNamePrefixKHTML:
+        ASSERT(RuntimeEnabledFeatures::legacyCSSVendorPrefixesEnabled());
         writeWebKitPrefix(bufferPtr);
         i += 5;
         break;

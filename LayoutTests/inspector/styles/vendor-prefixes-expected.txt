@@ -4,9 +4,8 @@ Text
 [expanded] 
 display: block;
     div - block user agent stylesheet
-opacity: 0.75;
-    #inspected - 0.75 vendor-prefixes.html:11
-    /-- overloaded --/ #inspected - 1 vendor-prefixes.html:4
+opacity: 1;
+    #inspected - 1 vendor-prefixes.html:4
 
 [expanded] 
 element.style  { ()
@@ -14,13 +13,13 @@ element.style  { ()
 ======== Matched CSS Rules ========
 [expanded] 
 #inspected  { (vendor-prefixes.html:11)
--apple-opacity: 0.75;
+/-- overloaded --/ -apple-opacity: 0.75;
 
 [expanded] 
 #inspected  { (vendor-prefixes.html:4)
 /-- overloaded --/ -apple-opacity: 0.35;
 /-- overloaded --/ -webkit-opacity: 0.5;
-/-- overloaded --/ opacity: 1;
+opacity: 1;
 /-- overloaded --/ -khtml-opacity: 0.25;
 
 [expanded] 

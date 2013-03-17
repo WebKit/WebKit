@@ -201,6 +201,11 @@ public:
     static bool webkitRTCPeerConnectionEnabled() { return peerConnectionEnabled(); }
 #endif
 
+#if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
+    static void setLegacyCSSVendorPrefixesEnabled(bool isEnabled) { isLegacyCSSVendorPrefixesEnabled = isEnabled; }
+    static bool legacyCSSVendorPrefixesEnabled() { return isLegacyCSSVendorPrefixesEnabled; }
+#endif
+
 #if ENABLE(GAMEPAD)
     static void setWebkitGetGamepadsEnabled(bool isEnabled) { isGamepadEnabled = isEnabled; }
     static bool webkitGetGamepadsEnabled() { return isGamepadEnabled; }
@@ -337,6 +342,10 @@ private:
 
 #if ENABLE(GAMEPAD)
     static bool isGamepadEnabled;
+#endif
+
+#if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
+    static bool isLegacyCSSVendorPrefixesEnabled;
 #endif
 
 #if ENABLE(QUOTA)

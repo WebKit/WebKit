@@ -1,3 +1,16 @@
+2013-03-17  Adam Barth  <abarth@webkit.org>
+
+        Legacy CSS vendor prefixes should only work for Dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=111890
+
+        Reviewed by Eric Seidel.
+
+        Enable legacy CSS vendor prefixes when we've been asked to turn on
+        Dashboard compatibility mode.
+
+        * WebView/WebView.mm:
+        (-[WebView _setDashboardBehavior:to:]):
+
 2013-03-16  Pratik Solanki  <psolanki@apple.com>
 
         Disable High DPI Canvas on iOS

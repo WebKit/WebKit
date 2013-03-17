@@ -2159,7 +2159,6 @@ fast/loader/reload-zero-byte-plugin.html
 
 # These test -apple- and -khtml- prefixed CSS properties, which we don't support.
 inspector/styles/vendor-prefixes.html
-fast/css/apple-prefix.html
 
 # [Qt] fast/dom/HTMLDocument/hasFocus.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=66076

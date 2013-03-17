@@ -1275,9 +1275,6 @@ webkit.org/b/73544 http/tests/notifications [ Skip ]
 # The test is too slow on Debug bot and randomly fails
 webkit.org/b/61932 [ Debug ] jquery/manipulation.html [ Failure Pass Timeout ]
 
-# These test -apple- prefixed CSS properties, which we don't support.
-fast/css/apple-prefix.html [ WontFix ]
-
 webkit.org/b/75747 fast/css/color-correction-on-background-image.html [ Missing Failure ]
 webkit.org/b/75747 fast/css/color-correction-on-backgrounds.html [ Missing Failure ]
 webkit.org/b/75747 fast/css/color-correction-on-box-shadow.html [ Missing Failure ]

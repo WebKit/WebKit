@@ -2203,6 +2203,9 @@ static inline IMP getMethod(id o, SEL s)
         case WebDashboardBehaviorUseBackwardCompatibilityMode: {
             if (_private->page)
                 _private->page->settings()->setUsesDashboardBackwardCompatibilityMode(flag);
+#if ENABLE(LEGACY_CSS_VENDOR_PREFIXES)
+            RuntimeEnabledFeatures::setLegacyCSSVendorPrefixesEnabled(flag);
+#endif
             break;
         }
     }
