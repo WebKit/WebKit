@@ -1372,6 +1372,10 @@ webkit.org/b/105986 [ Debug ] svg/dynamic-updates/SVGFEMorphologyElement-dom-rad
 webkit.org/b/105986 [ Debug ] svg/dynamic-updates/SVGFEMorphologyElement-dom-operator-attr.html [ Pass Crash ]
 webkit.org/b/105986 [ Debug ] svg/dynamic-updates/SVGFEMergeNodeElement-dom-in-attr.html [ Pass Crash ]
 webkit.org/b/105986 [ Debug ] transitions/interrupt-transform-transition.html [ Pass Crash ]
+webkit.org/b/105986 [ Debug ] transitions/inherit-other-props.html [ Pass Crash ]
+webkit.org/b/105986 [ Debug ] fast/backgrounds/size/parsing-background-size-values.html [ Pass Crash ]
+webkit.org/b/105986 [ Debug ] transitions/flex-transitions.html [ Pass Crash ]
+webkit.org/b/105986 [ Debug ] transitions/interrupt-transform-transition.html [ Pass Crash ]
 
 webkit.org/b/105999 [ Lion ] fast/canvas/canvas-composite-canvas.html [ Failure ]
 webkit.org/b/105999 [ Lion ] fast/canvas/canvas-composite-image.html [ Failure ]
