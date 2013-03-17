@@ -220,13 +220,26 @@ void HTMLElementStack::pop()
 void HTMLElementStack::popUntil(const AtomicString& tagName)
 {
     while (!topStackItem()->hasLocalName(tagName)) {
-        // pop() will ASSERT at <body> if callers fail to check that there is an
-        // element with localName |tagName| on the stack of open elements.
+        // pop() will ASSERT if a <body>, <head> or <html> will be popped.
+        pop();
+    }
+}
+
+void HTMLElementStack::popUntil(const QualifiedName& tagName)
+{
+    while (!topStackItem()->hasTagName(tagName)) {
+        // pop() will ASSERT if a <body>, <head> or <html> will be popped.
         pop();
     }
 }
 
 void HTMLElementStack::popUntilPopped(const AtomicString& tagName)
+{
+    popUntil(tagName);
+    pop();
+}
+
+void HTMLElementStack::popUntilPopped(const QualifiedName& tagName)
 {
     popUntil(tagName);
     pop();

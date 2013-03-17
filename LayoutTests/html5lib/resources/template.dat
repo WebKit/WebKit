@@ -1230,3 +1230,31 @@
 |   <body>
 |     <span>
 |       "Foo"
+
+#data
+<template><svg><template>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       content
+|         <svg svg>
+|           <svg template>
+|   <body>
+
+#data
+<template><svg><foo><template><foreignObject><div></template><div>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       content
+|         <svg svg>
+|           <svg foo>
+|             <svg template>
+|               <svg foreignObject>
+|                 <div>
+|   <body>
+|     <div>
