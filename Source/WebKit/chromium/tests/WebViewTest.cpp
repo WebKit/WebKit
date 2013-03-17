@@ -45,7 +45,6 @@
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
 #include "WebInputEvent.h"
-#include "WebSettings.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
 #include <gtest/gtest.h>
@@ -482,7 +481,6 @@ TEST_F(WebViewTest, ResetScrollAndScaleState)
 {
     URLTestHelpers::registerMockedURLFromBaseURL(WebString::fromUTF8(m_baseURL.c_str()), WebString::fromUTF8("hello_world.html"));
     WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(m_baseURL + "hello_world.html"));
-    webViewImpl->settings()->setApplyPageScaleFactorInCompositor(true);
     webViewImpl->resize(WebSize(640, 480));
     EXPECT_EQ(0, webViewImpl->mainFrame()->scrollOffset().width);
     EXPECT_EQ(0, webViewImpl->mainFrame()->scrollOffset().height);
@@ -499,10 +497,6 @@ TEST_F(WebViewTest, ResetScrollAndScaleState)
     EXPECT_EQ(1.5f, webViewImpl->pageScaleFactor());
     EXPECT_EQ(16, webViewImpl->mainFrame()->scrollOffset().width);
     EXPECT_EQ(24, webViewImpl->mainFrame()->scrollOffset().height);
-    // WebViewImpl::setPageScaleFactor is performing user scrolls, which will set the
-    // wasScrolledByUser flag on the main frame, and prevent restoreScrollPositionAndViewState
-    // from restoring the scrolling position.
-    webViewImpl->page()->mainFrame()->view()->setWasScrolledByUser(false);
     webViewImpl->page()->mainFrame()->loader()->history()->restoreScrollPositionAndViewState();
     EXPECT_EQ(2.0f, webViewImpl->pageScaleFactor());
     EXPECT_EQ(116, webViewImpl->mainFrame()->scrollOffset().width);

@@ -611,8 +611,6 @@ private:
 
     void resetSavedScrollAndScaleState();
 
-    void updateMainFrameScrollPosition(const WebCore::IntPoint& scrollPosition, bool programmaticScroll);
-
     friend class WebView;  // So WebView::Create can call our constructor
     friend class WTF::RefCounted<WebViewImpl>;
     friend void setCurrentInputEventForTest(const WebInputEvent*);
