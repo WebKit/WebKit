@@ -1,3 +1,15 @@
+2013-03-17  Morten Stenshorne  <mstensho@opera.com>
+
+        Add reload button (and F5 accelerator) to the GtkLauncher toolbar
+        https://bugs.webkit.org/show_bug.cgi?id=112442
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GtkLauncher/main.c:
+        (reloadCb):
+        (createToolbar):
+        (createWindow):
+
 2013-03-15  Simon Fraser  <simon.fraser@apple.com>
 
         REGRESSION (r144884?): WebKit2.DOMWindowExtensionBasic API test is asserting

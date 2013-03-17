@@ -28,6 +28,7 @@
 #include "autotoolsconfig.h"
 #include "LauncherInspectorWindow.h"
 #include <errno.h>
+#include <gdk/gdkkeysyms.h>
 #ifdef WTF_USE_GSTREAMER
 #include <gst/gst.h>
 #endif
@@ -105,6 +106,11 @@ static void goBackCb(GtkWidget* widget,  WebKitWebView* webView)
 static void goForwardCb(GtkWidget* widget, WebKitWebView* webView)
 {
     webkit_web_view_go_forward(webView);
+}
+
+static void reloadCb(GtkWidget* widget, WebKitWebView* webView)
+{
+    webkit_web_view_reload(webView);
 }
 
 static WebKitWebView*
@@ -254,7 +260,7 @@ static GtkWidget* createStatusbar()
     return GTK_WIDGET(statusbar);
 }
 
-static GtkWidget* createToolbar(GtkWidget* uriEntry, WebKitWebView* webView)
+static GtkWidget* createToolbar(GtkWidget* window, GtkWidget* uriEntry, WebKitWebView* webView)
 {
     GtkWidget *toolbar = gtk_toolbar_new();
 
@@ -267,6 +273,10 @@ static GtkWidget* createToolbar(GtkWidget* uriEntry, WebKitWebView* webView)
 
     GtkToolItem *item;
 
+    /* Keyboard accelerators */
+    GtkAccelGroup *accelGroup = gtk_accel_group_new();
+    gtk_window_add_accel_group(GTK_WINDOW(window), accelGroup);
+
     /* the back button */
     item = gtk_tool_button_new_from_stock(GTK_STOCK_GO_BACK);
     g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(goBackCb), webView);
@@ -276,6 +286,12 @@ static GtkWidget* createToolbar(GtkWidget* uriEntry, WebKitWebView* webView)
     item = gtk_tool_button_new_from_stock(GTK_STOCK_GO_FORWARD);
     g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(goForwardCb), webView);
     gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+
+    /* The reload button */
+    item = gtk_tool_button_new_from_stock(GTK_STOCK_REFRESH);
+    g_signal_connect(G_OBJECT(item), "clicked", G_CALLBACK(reloadCb), webView);
+    gtk_toolbar_insert(GTK_TOOLBAR(toolbar), item, -1);
+    gtk_widget_add_accelerator(GTK_WIDGET(item), "clicked", accelGroup, GDK_KEY_F5, 0, GTK_ACCEL_VISIBLE);
 
     /* The URL entry */
     item = gtk_tool_item_new();
@@ -316,7 +332,7 @@ static GtkWidget* createWindow(WebKitWebView** outWebView)
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 #endif
     statusbar = createStatusbar(webView);
-    gtk_box_pack_start(GTK_BOX(vbox), createToolbar(uriEntry, webView), FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(vbox), createToolbar(window, uriEntry, webView), FALSE, FALSE, 0);
     gtk_box_pack_start(GTK_BOX(vbox), createBrowser(window, uriEntry, statusbar, webView, vbox), TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(vbox), statusbar, FALSE, FALSE, 0);
 
