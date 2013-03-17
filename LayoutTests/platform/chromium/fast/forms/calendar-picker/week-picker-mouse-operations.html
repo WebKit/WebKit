@@ -63,6 +63,65 @@ function test() {
     shouldBeEqualToString('highlightedDayCells()', '1999-12-27,1999-12-28,1999-12-29,1999-12-30,1999-12-31,2000-01-01,2000-01-02');
     shouldBeEqualToString('document.getElementById("week").value', '1999-W52');
 
+    debug('Check that clicking the month popup button opens the month popup.');
+    shouldBeFalse('popupWindow.global.picker.monthPopupView.isVisible');
+    clickMonthPopupButton();
+    shouldBeTrue('popupWindow.global.picker.monthPopupView.isVisible');
+    shouldBeEqualToString('highlightedMonthButton()', '2000-01');
+
+    debug('Check that hovering over a month button highlights it.');
+
+    hoverOverMonthButton(2000, 9);
+    shouldBeEqualToString('highlightedMonthButton()', '2000-10');
+
+    debug('Check that month wheel scrolls the list in the month popup.');
+
+    checkYearListViewScrollOffset();
+    eventSender.mouseScrollBy(0, 120);
+    shouldBeTrue('checkYearListViewScrollOffset() > 0');
+
+    checkYearListViewScrollOffset();
+    eventSender.mouseScrollBy(0, -120);
+    shouldBeTrue('checkYearListViewScrollOffset() < 0');
+
+    debug('Check that clicking the month popup sets the month.');
+
+    clickMonthButton(2000, 5);
+    shouldBeFalse('popupWindow.global.picker.monthPopupView.isVisible');
+    shouldBeEqualToString('currentMonth()', '2000-06');
+
+    debug('Check that clicking the month popup button opens the month popup.');
+    shouldBeFalse('popupWindow.global.picker.monthPopupView.isVisible');
+    clickMonthPopupButton();
+    shouldBeTrue('popupWindow.global.picker.monthPopupView.isVisible');
+    shouldBeEqualToString('highlightedMonthButton()', '2000-06');
+    checkYearListViewScrollOffset();
+
+    debug('Check that hovering over a month button highlights it.');
+
+    hoverOverMonthButton(2000, 9);
+    shouldBeEqualToString('highlightedMonthButton()', '2000-10');
+
+    debug('Check that month wheel scrolls the list in the month popup.');
+
+    eventSender.mouseScrollBy(0, 1);
+    shouldBeTrue('checkYearListViewScrollOffset() > 0');
+
+    eventSender.mouseScrollBy(0, -1);
+    shouldBeTrue('checkYearListViewScrollOffset() < 0');
+
+    debug('Check that clicking an year list cell opens it.');
+    eventSender.mouseScrollBy(0, 10);
+    shouldBeTrue('checkYearListViewScrollOffset() > 0');
+    clickYearListCell(1999);
+    shouldBeEqualToString('highlightedMonthButton()', '1999-10');
+
+    debug('Check that clicking the month popup sets the month.');
+
+    clickMonthButton(1999, 5);
+    shouldBeFalse('popupWindow.global.picker.monthPopupView.isVisible');
+    shouldBeEqualToString('currentMonth()', '1999-06');
+
     finishJSTest();
 }
 </script>

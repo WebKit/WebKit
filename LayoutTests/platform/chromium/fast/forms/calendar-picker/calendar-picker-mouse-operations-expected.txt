@@ -1,4 +1,4 @@
-Tests if calendar picker key bindings work as expected.
+Tests if calendar picker mouse opearations work as expected.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -34,6 +34,21 @@ PASS selectedDayCells() is "2000-02-05"
 PASS highlightedValue() is "2000-02-05"
 PASS highlightedDayCells() is "2000-02-05"
 PASS document.getElementById("date").value is "2000-02-05"
+Check that clicking the month popup button opens the month popup.
+PASS popupWindow.global.picker.monthPopupView.isVisible is false
+PASS popupWindow.global.picker.monthPopupView.isVisible is true
+PASS highlightedMonthButton() is "2000-02"
+Check that hovering over a month button highlights it.
+PASS highlightedMonthButton() is "2000-10"
+Check that month wheel scrolls the list in the month popup.
+PASS checkYearListViewScrollOffset() > 0 is true
+PASS checkYearListViewScrollOffset() < 0 is true
+Check that clicking an year list cell opens it.
+PASS checkYearListViewScrollOffset() > 0 is true
+PASS highlightedMonthButton() is "1999-10"
+Check that clicking the month popup sets the month.
+PASS popupWindow.global.picker.monthPopupView.isVisible is false
+PASS currentMonth() is "1999-06"
 PASS successfullyParsed is true
 
 TEST COMPLETE

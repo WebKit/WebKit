@@ -59,6 +59,18 @@ PASS selectedValue() is "2000-01-02"
 PASS selectedDayCells() is ""
 PASS highlightedValue() is "1999-12-26"
 PASS highlightedDayCells() is "1999-12-26"
+press pageDown
+PASS currentMonth() is "2000-01"
+PASS selectedValue() is "2000-01-02"
+PASS selectedDayCells() is "2000-01-02"
+PASS highlightedValue() is "1999-12-26"
+PASS highlightedDayCells() is "1999-12-26"
+press pageUp
+PASS currentMonth() is "1999-12"
+PASS selectedValue() is "2000-01-02"
+PASS selectedDayCells() is ""
+PASS highlightedValue() is "1999-12-26"
+PASS highlightedDayCells() is "1999-12-26"
 press m
 PASS isCalendarTableScrollingWithAnimation() is true
 PASS currentMonth() is "2000-01"
@@ -108,14 +120,46 @@ PASS selectedDayCells() is "1999-12-26"
 PASS highlightedValue() is "1999-12-26"
 PASS highlightedDayCells() is "1999-12-26"
 PASS document.getElementById("date").value is "1999-12-26"
-PASS isCalendarTableScrollingWithAnimation() is true
-PASS testToday() || testToday() is true
 Check if tabbing works.
 PASS focusedElement() is ".list-view calendar-table-view"
 PASS focusedElement() is ".calendar-navigation-button"
 PASS focusedElement() is ".calendar-navigation-button today-button"
 PASS focusedElement() is ".calendar-navigation-button"
 PASS focusedElement() is ".month-popup-button"
+open the month popup
+PASS popupWindow.global.picker.monthPopupView.isVisible is true
+PASS highlightedMonthButton() is "1999-12"
+press down
+PASS highlightedMonthButton() is "2000-04"
+press right
+PASS highlightedMonthButton() is "2000-05"
+press right
+PASS highlightedMonthButton() is "2000-06"
+press right
+PASS highlightedMonthButton() is "2000-07"
+press right
+PASS highlightedMonthButton() is "2000-08"
+press right
+PASS highlightedMonthButton() is "2000-09"
+press left
+PASS highlightedMonthButton() is "2000-08"
+press up
+PASS highlightedMonthButton() is "2000-04"
+press pageDown
+PASS highlightedMonthButton() is "2001-04"
+press pageUp
+PASS highlightedMonthButton() is "2000-04"
+select month in the month popup
+PASS popupWindow.global.picker.monthPopupView.isVisible is false
+PASS currentMonth() is "2000-04"
+PASS selectedValue() is "1999-12-26"
+PASS selectedDayCells() is ""
+PASS highlightedValue() is "1999-12-26"
+PASS highlightedDayCells() is ""
+focus calendar table
+press t
+PASS isCalendarTableScrollingWithAnimation() is true
+PASS testToday() || testToday() is true
 press esc
 PASS document.getElementById("mock-page-popup") is null
 PASS successfullyParsed is true

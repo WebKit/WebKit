@@ -38,6 +38,33 @@ PASS selectedDayCells() is "1999-12-27,1999-12-28,1999-12-29,1999-12-30,1999-12-
 PASS highlightedValue() is "1999-W52"
 PASS highlightedDayCells() is "1999-12-27,1999-12-28,1999-12-29,1999-12-30,1999-12-31,2000-01-01,2000-01-02"
 PASS document.getElementById("week").value is "1999-W52"
+Check that clicking the month popup button opens the month popup.
+PASS popupWindow.global.picker.monthPopupView.isVisible is false
+PASS popupWindow.global.picker.monthPopupView.isVisible is true
+PASS highlightedMonthButton() is "2000-01"
+Check that hovering over a month button highlights it.
+PASS highlightedMonthButton() is "2000-10"
+Check that month wheel scrolls the list in the month popup.
+PASS checkYearListViewScrollOffset() > 0 is true
+PASS checkYearListViewScrollOffset() < 0 is true
+Check that clicking the month popup sets the month.
+PASS popupWindow.global.picker.monthPopupView.isVisible is false
+PASS currentMonth() is "2000-06"
+Check that clicking the month popup button opens the month popup.
+PASS popupWindow.global.picker.monthPopupView.isVisible is false
+PASS popupWindow.global.picker.monthPopupView.isVisible is true
+PASS highlightedMonthButton() is "2000-06"
+Check that hovering over a month button highlights it.
+PASS highlightedMonthButton() is "2000-10"
+Check that month wheel scrolls the list in the month popup.
+PASS checkYearListViewScrollOffset() > 0 is true
+PASS checkYearListViewScrollOffset() < 0 is true
+Check that clicking an year list cell opens it.
+PASS checkYearListViewScrollOffset() > 0 is true
+PASS highlightedMonthButton() is "1999-10"
+Check that clicking the month popup sets the month.
+PASS popupWindow.global.picker.monthPopupView.isVisible is false
+PASS currentMonth() is "1999-06"
 PASS successfullyParsed is true
 
 TEST COMPLETE

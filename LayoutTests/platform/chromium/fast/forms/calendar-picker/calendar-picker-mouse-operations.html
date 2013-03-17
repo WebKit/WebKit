@@ -11,7 +11,7 @@
 <div id="console"></div>
 <input type=date id=date value="2000-01-02">
 <script>
-description("Tests if calendar picker key bindings work as expected.");
+description("Tests if calendar picker mouse opearations work as expected.");
 
 debug('Check that page popup doesn\'t exist at first.');
 shouldBeNull('document.getElementById("mock-page-popup")');
@@ -56,6 +56,38 @@ function test() {
     shouldBeEqualToString('highlightedValue()', '2000-02-05');
     shouldBeEqualToString('highlightedDayCells()', '2000-02-05');
     shouldBeEqualToString('document.getElementById("date").value', '2000-02-05');
+
+    debug('Check that clicking the month popup button opens the month popup.');
+    shouldBeFalse('popupWindow.global.picker.monthPopupView.isVisible');
+    clickMonthPopupButton();
+    shouldBeTrue('popupWindow.global.picker.monthPopupView.isVisible');
+    shouldBeEqualToString('highlightedMonthButton()', '2000-02');
+    checkYearListViewScrollOffset();
+
+    debug('Check that hovering over a month button highlights it.');
+
+    hoverOverMonthButton(2000, 9);
+    shouldBeEqualToString('highlightedMonthButton()', '2000-10');
+
+    debug('Check that month wheel scrolls the list in the month popup.');
+
+    eventSender.mouseScrollBy(0, 1);
+    shouldBeTrue('checkYearListViewScrollOffset() > 0');
+
+    eventSender.mouseScrollBy(0, -1);
+    shouldBeTrue('checkYearListViewScrollOffset() < 0');
+
+    debug('Check that clicking an year list cell opens it.');
+    eventSender.mouseScrollBy(0, 10);
+    shouldBeTrue('checkYearListViewScrollOffset() > 0');
+    clickYearListCell(1999);
+    shouldBeEqualToString('highlightedMonthButton()', '1999-10');
+
+    debug('Check that clicking the month popup sets the month.');
+
+    clickMonthButton(1999, 5);
+    shouldBeFalse('popupWindow.global.picker.monthPopupView.isVisible');
+    shouldBeEqualToString('currentMonth()', '1999-06');
 
     finishJSTest();
 }
