@@ -1,3 +1,4 @@
+set(Resources_DIR "${WEBCORE_DIR}/Resources")
 macro(GENERATE_THEME _target_name _name _option)
     set(DefaultTheme_DIR "${WEBCORE_DIR}/platform/efl/DefaultTheme")
 
@@ -28,6 +29,7 @@ macro(GENERATE_THEME _target_name _name _option)
             widget/combo/combo_press_button.png
             widget/combo/combo_press.png
             widget/combo/icon.png
+            widget/cursor/cursor.edc
             widget/entry/entry.edc
             widget/entry/img_focused.png
             widget/entry/img_hovered.png
@@ -94,6 +96,31 @@ macro(GENERATE_THEME _target_name _name _option)
             widget/spinner/sp_up_default.png
             widget/spinner/sp_up_hover.png
             widget/spinner/sp_up_pressed.png
+            ${Resources_DIR}/aliasCursor.png
+            ${Resources_DIR}/cellCursor.png
+            ${Resources_DIR}/contextMenuCursor.png
+            ${Resources_DIR}/copyCursor.png
+            ${Resources_DIR}/eastResizeCursor.png
+            ${Resources_DIR}/eastWestResizeCursor.png
+            ${Resources_DIR}/helpCursor.png
+            ${Resources_DIR}/linkCursor.png
+            ${Resources_DIR}/moveCursor.png
+            ${Resources_DIR}/noDropCursor.png
+            ${Resources_DIR}/noneCursor.png
+            ${Resources_DIR}/northEastResizeCursor.png
+            ${Resources_DIR}/northEastSouthWestResizeCursor.png
+            ${Resources_DIR}/northResizeCursor.png
+            ${Resources_DIR}/northSouthResizeCursor.png
+            ${Resources_DIR}/northWestResizeCursor.png
+            ${Resources_DIR}/northWestSouthEastResizeCursor.png
+            ${Resources_DIR}/panIcon.png
+            ${Resources_DIR}/progressCursor.png
+            ${Resources_DIR}/southEastResizeCursor.png
+            ${Resources_DIR}/southResizeCursor.png
+            ${Resources_DIR}/southWestResizeCursor.png
+            ${Resources_DIR}/verticalTextCursor.png
+            ${Resources_DIR}/waitCursor.png
+            ${Resources_DIR}/westResizeCursor.png
         WORKING_DIRECTORY ${DefaultTheme_DIR}
         VERBATIM
     )
@@ -108,9 +135,9 @@ if (ENABLE_PROGRESS_ELEMENT)
     list(APPEND DefaultTheme_DEFINITION "-DENABLE_PROGRESS_ELEMENT")
 endif ()
 
-GENERATE_THEME(DefaultTheme "default.edj" "${DefaultTheme_DEFINITION}")
+GENERATE_THEME(DefaultTheme "default.edj" "${DefaultTheme_DEFINITION} -DCURSOR_IMAGE_DIR=${Resources_DIR}")
 install(FILES "${THEME_BINARY_DIR}/default.edj" DESTINATION ${DATA_INSTALL_DIR}/themes)
 
 if (ENABLE_API_TESTS)
-    GENERATE_THEME(BigButtonTheme "big_button_theme.edj" "-DBIG_BUTTON_THEME_FOR_TESTING")
+    GENERATE_THEME(BigButtonTheme "big_button_theme.edj" "-DBIG_BUTTON_THEME_FOR_TESTING -DCURSOR_IMAGE_DIR=${Resources_DIR}")
 endif ()
