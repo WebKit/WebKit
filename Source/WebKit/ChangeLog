@@ -1,3 +1,9 @@
+2013-03-18  Roger Fong  <roger_fong@apple.com>
+
+        AppleWin VS2010 build fix.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2013-03-14  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Improve the handling of mock geolocation, device orientation and motion clients

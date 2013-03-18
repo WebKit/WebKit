@@ -2704,10 +2704,14 @@
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">ICUVersion.h</ForcedIncludeFiles>
     </ClCompile>
     <ClCompile Include="..\html\canvas\CanvasPathMethods.cpp" />
+    <ClCompile Include="..\html\parser\HTMLIdentifier.cpp" />
     <ClCompile Include="..\html\track\TextTrackCueGeneric.cpp" />
     <ClCompile Include="..\html\track\WebVTTElement.cpp" />
     <ClCompile Include="..\inspector\TimelineTraceEventProcessor.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Modules\filesystem\DirectoryEntry.cpp" />
     <ClCompile Include="..\Modules\filesystem\DirectoryEntrySync.cpp" />
@@ -3143,6 +3147,7 @@
     <ClCompile Include="..\platform\FileIconLoader.cpp" />
     <ClCompile Include="..\platform\FileStream.cpp" />
     <ClCompile Include="..\platform\FileSystem.cpp" />
+    <ClCompile Include="..\platform\graphics\ca\win\PlatformCAFiltersWin.cpp" />
     <ClCompile Include="..\platform\HistogramSupport.cpp" />
     <ClCompile Include="..\platform\KillRingNone.cpp" />
     <ClCompile Include="..\platform\KURL.cpp" />
@@ -5231,6 +5236,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\workers\SharedWorkerRepository.cpp" />
     <ClCompile Include="..\xml\DOMParser.cpp" />
     <ClCompile Include="..\xml\NativeXPathNSResolver.cpp" />
     <ClCompile Include="..\xml\XMLErrors.cpp" />
@@ -6945,7 +6951,6 @@
     <ClCompile Include="..\html\parser\HTMLEntityParser.cpp" />
     <ClCompile Include="..\html\parser\HTMLEntitySearch.cpp" />
     <ClCompile Include="..\html\parser\HTMLFormattingElementList.cpp" />
-    <ClCompile Include="..\html\parser\HTMLIdenitifier.cpp" />
     <ClCompile Include="..\html\parser\HTMLMetaCharsetParser.cpp" />
     <ClCompile Include="..\html\parser\HTMLParserIdioms.cpp" />
     <ClCompile Include="..\html\parser\HTMLParserOptions.cpp" />
@@ -10406,7 +10411,6 @@
     <ClInclude Include="..\html\parser\HTMLEntityParser.h" />
     <ClInclude Include="..\html\parser\HTMLEntitySearch.h" />
     <ClInclude Include="..\html\parser\HTMLFormattingElementList.h" />
-    <ClInclude Include="..\html\parser\HTMLIdentifier.h" />
     <ClInclude Include="..\html\parser\HTMLInputStream.h" />
     <ClInclude Include="..\html\parser\HTMLMetaCharsetParser.h" />
     <ClInclude Include="..\html\parser\HTMLParserIdioms.h" />

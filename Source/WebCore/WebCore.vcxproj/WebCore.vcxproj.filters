@@ -6841,6 +6841,24 @@
     <ClCompile Include="..\rendering\HitTestLocation.cpp">
       <Filter>rendering</Filter>
     </ClCompile>
+    <ClCompile Include="..\html\parser\HTMLIdentifier.cpp">
+      <Filter>html\parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\quota\NavigatorStorageQuota.cpp">
+      <Filter>Modules\quota</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\quota\StorageQuota.cpp">
+      <Filter>Modules\quota</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\quota\StorageErrorCallback.cpp">
+      <Filter>Modules\quota</Filter>
+    </ClCompile>
+    <ClCompile Include="..\workers\SharedWorkerRepository.cpp">
+      <Filter>workers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\ca\win\PlatformCAFiltersWin.cpp">
+      <Filter>platform\graphics\ca\win</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\CSSGrammar.h">
