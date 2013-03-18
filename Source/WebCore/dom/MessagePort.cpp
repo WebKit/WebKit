@@ -88,18 +88,17 @@ void MessagePort::postMessage(PassRefPtr<SerializedScriptValue> message, const M
     m_entangledChannel->postMessageToRemote(MessagePortChannel::EventData::create(message, channels.release()));
 }
 
-PassOwnPtr<MessagePortChannel> MessagePort::disentangle(ExceptionCode& ec)
+PassOwnPtr<MessagePortChannel> MessagePort::disentangle()
 {
-    if (!m_entangledChannel)
-        ec = INVALID_STATE_ERR;
-    else {
-        m_entangledChannel->disentangle();
+    ASSERT(m_entangledChannel);
 
-        // We can't receive any messages or generate any events, so remove ourselves from the list of active ports.
-        ASSERT(m_scriptExecutionContext);
-        m_scriptExecutionContext->destroyedMessagePort(this);
-        m_scriptExecutionContext = 0;
-    }
+    m_entangledChannel->disentangle();
+
+    // We can't receive any messages or generate any events, so remove ourselves from the list of active ports.
+    ASSERT(m_scriptExecutionContext);
+    m_scriptExecutionContext->destroyedMessagePort(this);
+    m_scriptExecutionContext = 0;
+
     return m_entangledChannel.release();
 }
 
@@ -221,7 +220,7 @@ PassOwnPtr<MessagePortChannelArray> MessagePort::disentanglePorts(const MessageP
     // Passed-in ports passed validity checks, so we can disentangle them.
     OwnPtr<MessagePortChannelArray> portArray = adoptPtr(new MessagePortChannelArray(ports->size()));
     for (unsigned int i = 0 ; i < ports->size() ; ++i) {
-        OwnPtr<MessagePortChannel> channel = (*ports)[i]->disentangle(ASSERT_NO_EXCEPTION); // Can't generate exception here if passed above checks.
+        OwnPtr<MessagePortChannel> channel = (*ports)[i]->disentangle();
         (*portArray)[i] = channel.release();
     }
     return portArray.release();

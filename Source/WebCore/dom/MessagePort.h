@@ -47,10 +47,6 @@ namespace WebCore {
     // The overwhelmingly common case is sending a single port, so handle that efficiently with an inline buffer of size 1.
     typedef Vector<RefPtr<MessagePort>, 1> MessagePortArray;
 
-    // FIXME: This class should inherit from ActiveDOMObject and use
-    // setPendingActivity / unsetPendingActivity instead of duplicating
-    // ActiveDOMObject's features and relying on JavaScript garbage collection
-    // to get its lifetime right.
     class MessagePort : public RefCounted<MessagePort>, public EventTarget {
     public:
         static PassRefPtr<MessagePort> create(ScriptExecutionContext& scriptExecutionContext) { return adoptRef(new MessagePort(scriptExecutionContext)); }
@@ -64,14 +60,11 @@ namespace WebCore {
         void close();
 
         void entangle(PassOwnPtr<MessagePortChannel>);
-        PassOwnPtr<MessagePortChannel> disentangle(ExceptionCode&);
+        PassOwnPtr<MessagePortChannel> disentangle();
 
-        // Disentangle an array of ports, returning the entangled channels.
-        // Per section 8.3.3 of the HTML5 spec, generates an INVALID_STATE_ERR exception if any of the passed ports are null or not entangled.
         // Returns 0 if there is an exception, or if the passed-in array is 0/empty.
         static PassOwnPtr<MessagePortChannelArray> disentanglePorts(const MessagePortArray*, ExceptionCode&);
 
-        // Entangles an array of channels, returning an array of MessagePorts in matching order.
         // Returns 0 if the passed array is 0/empty.
         static PassOwnPtr<MessagePortArray> entanglePorts(ScriptExecutionContext&, PassOwnPtr<MessagePortChannelArray>);
 
