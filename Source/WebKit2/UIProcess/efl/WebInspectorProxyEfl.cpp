@@ -101,7 +101,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
 
     // FIXME: Refactor to use WKViewRef.
     WKContextRef contextRef = toAPI(page()->process()->context());
-    m_inspectorView = EwkView::createEvasObject(ecore_evas_get(m_inspectorWindow), EwkContext::findOrCreateWrapper(contextRef), EwkPageGroup::create(toAPI(inspectorPageGroup())), EwkView::LegacyBehavior);
+    m_inspectorView = EwkView::createEvasObject(ecore_evas_get(m_inspectorWindow), EwkContext::findOrCreateWrapper(contextRef), EwkPageGroup::findOrCreateWrapper(toAPI(inspectorPageGroup())), EwkView::LegacyBehavior);
     if (!m_inspectorView)
         return 0;
 

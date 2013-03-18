@@ -240,9 +240,9 @@ static inline WKPageToEvasObjectMap& wkPageToEvasObjectMap()
 EwkView::EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, PassRefPtr<EwkPageGroup> pageGroup, ViewBehavior behavior)
     : m_evasObject(evasObject)
     , m_context(context)
-    , m_pageGroup(pageGroup)
-    , m_pendingSurfaceResize(false)
-    , m_webView(adoptRef(new WebView(toImpl(m_context->wkContext()), toImpl(m_pageGroup->wkPageGroup()), this)))
+    , m_webView(adoptRef(new WebView(toImpl(m_context->wkContext()), pageGroup ? toImpl(pageGroup->wkPageGroup()) : 0, this)))
+    , m_pageGroup(EwkPageGroup::findOrCreateWrapper(WKPageGetPageGroup(wkPage())))
+    , m_pendingSurfaceResize(false)    
     , m_pageLoadClient(PageLoadClientEfl::create(this))
     , m_pagePolicyClient(PagePolicyClientEfl::create(this))
     , m_pageUIClient(PageUIClientEfl::create(this))
@@ -337,7 +337,7 @@ Evas_Object* EwkView::createEvasObject(Evas* canvas, Evas_Smart* smart, PassRefP
 
     ASSERT(!smartData->priv);
 
-    smartData->priv = new EwkView(evasObject, context, (pageGroup ? pageGroup : EwkPageGroup::create()), behavior);
+    smartData->priv = new EwkView(evasObject, context, pageGroup, behavior);
 
     return evasObject;
 }

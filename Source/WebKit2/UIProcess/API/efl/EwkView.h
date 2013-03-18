@@ -254,6 +254,7 @@ private:
     // Note, initialization order matters.
     Evas_Object* m_evasObject;
     RefPtr<EwkContext> m_context;
+    RefPtr<WebKit::WebView> m_webView;
     RefPtr<EwkPageGroup> m_pageGroup;
     OwnPtr<Evas_GL> m_evasGL;
     OwnPtr<WebKit::EvasGLContext> m_evasGLContext;
@@ -261,7 +262,6 @@ private:
     WebCore::IntSize m_deviceSize;
     WebCore::TransformationMatrix m_userViewportTransform;
     bool m_pendingSurfaceResize;
-    RefPtr<WebKit::WebView> m_webView;
     OwnPtr<WebKit::PageLoadClientEfl> m_pageLoadClient;
     OwnPtr<WebKit::PagePolicyClientEfl> m_pagePolicyClient;
     OwnPtr<WebKit::PageUIClientEfl> m_pageUIClient;

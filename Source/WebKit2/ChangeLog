@@ -1,3 +1,53 @@
+2013-03-18  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][EFL] Fix code wrapping WKPageGroupRef
+        https://bugs.webkit.org/show_bug.cgi?id=112364
+
+        Reviewed by Alexey Proskuryakov.
+
+        The patch fixes following problems in EWK2 WKPageGroupRef wrapping
+        code: firstly it makes sure that there is only one EwkPageGroup
+        instance per WKPageGroup instance, secondly it allows web page to
+        to use the default page group (which is implicitly created inside
+        web context).
+
+        * UIProcess/API/C/efl/WKView.cpp:
+        (createWKView):
+
+            Now may pass '0' page group as a WebView creation argument so
+            that the default page group is used.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        (EwkView::createEvasObject):
+        * UIProcess/API/efl/EwkView.h:
+        (EwkView):
+
+            Web view should be created before page group, so they are rearranged
+            inside class declaration.
+
+        * UIProcess/API/efl/ewk_page_group.cpp:
+        (pageGroupMap):
+
+            A map to track corresponding EwkPageGroup and WKPageGroup
+            instances.
+
+        (EwkPageGroup::findOrCreateWrapper):
+
+            Returns the same EwkPageGroup instance for the same WKPageGroup
+            instance.
+
+        (EwkPageGroup::create):
+        (EwkPageGroup::EwkPageGroup):
+
+            Now there is only one constructor accepting WKPageGroupRef.
+
+        (EwkPageGroup::~EwkPageGroup):
+        * UIProcess/API/efl/ewk_page_group_private.h:
+        (EwkPageGroup):
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+
 2013-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Invalid charset encoding using when substituting a misspelled word in WebKit2

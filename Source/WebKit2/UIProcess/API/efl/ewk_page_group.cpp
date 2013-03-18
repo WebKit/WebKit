@@ -37,19 +37,46 @@ using namespace WebKit;
 
 const char EwkPageGroup::defaultIdentifier[] = "defaultPageGroupIdentifier";
 
+typedef HashMap<WKPageGroupRef, EwkPageGroup*> PageGroupMap;
+
+static inline PageGroupMap& pageGroupMap()
+{
+    DEFINE_STATIC_LOCAL(PageGroupMap, map, ());
+    return map;
+}
+
 static WKTypeRef convertFromCharToWKString(void* data)
 {
     return WKStringCreateWithUTF8CString(static_cast<char*>(data));
 }
 
+PassRefPtr<EwkPageGroup> EwkPageGroup::findOrCreateWrapper(WKPageGroupRef pageGroupRef)
+{
+    if (pageGroupMap().contains(pageGroupRef))
+        return pageGroupMap().get(pageGroupRef);
+
+    return adoptRef(new EwkPageGroup(pageGroupRef));
+}
+
+PassRefPtr<EwkPageGroup> EwkPageGroup::create(const String& identifier)
+{
+    WKRetainPtr<WKStringRef> identifierRef = adoptWK(toCopiedAPI(identifier.isEmpty() ? defaultIdentifier : identifier));
+    WKRetainPtr<WKPageGroupRef> pageGroupRef = adoptWK(WKPageGroupCreateWithIdentifier(identifierRef.get()));
+
+    return adoptRef(new EwkPageGroup(pageGroupRef.get()));
+}
+
 EwkPageGroup::EwkPageGroup(WKPageGroupRef pageGroupRef)
     : m_pageGroupRef(pageGroupRef)
 {
+    PageGroupMap::AddResult result = pageGroupMap().add(pageGroupRef, this);
+    ASSERT_UNUSED(result, result.isNewEntry);
 }
 
-EwkPageGroup::EwkPageGroup(const String& identifier)
+EwkPageGroup::~EwkPageGroup()
 {
-    m_pageGroupRef = adoptWK(WKPageGroupCreateWithIdentifier(adoptWK(toCopiedAPI(identifier)).get()));
+    ASSERT(pageGroupMap().get(m_pageGroupRef.get()) == this);
+    pageGroupMap().remove(m_pageGroupRef.get());
 }
 
 void EwkPageGroup::addUserStyleSheet(const String& source, const String& baseURL, Eina_List* whiteList, Eina_List* blackList, bool mainFrameOnly)

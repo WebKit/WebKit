@@ -40,18 +40,10 @@ class EwkPageGroup : public EwkObject {
 public:
     EWK_OBJECT_DECLARE(EwkPageGroup)
 
-    static PassRefPtr<EwkPageGroup> create(WKPageGroupRef pageGroupRef)
-    {
-        if (!pageGroupRef)
-            return adoptRef(new EwkPageGroup(defaultIdentifier));
+    static PassRefPtr<EwkPageGroup> findOrCreateWrapper(WKPageGroupRef pageGroupRef);
+    static PassRefPtr<EwkPageGroup> create(const String& identifier = String());
 
-        return adoptRef(new EwkPageGroup(pageGroupRef));
-    }
-
-    static PassRefPtr<EwkPageGroup> create(const String& identifier = String())
-    {
-        return adoptRef(new EwkPageGroup(identifier.isEmpty() ? defaultIdentifier : identifier));
-    }
+    ~EwkPageGroup();
 
     WKPageGroupRef wkPageGroup() const { return m_pageGroupRef.get(); }
 
@@ -59,8 +51,7 @@ public:
     void removeAllUserStyleSheets();
 
 private:
-    explicit EwkPageGroup(WKPageGroupRef pageGroupRef);
-    explicit EwkPageGroup(const String& identifier);
+    explicit EwkPageGroup(WKPageGroupRef pageGroupRef);    
 
     static const char defaultIdentifier[];
 
