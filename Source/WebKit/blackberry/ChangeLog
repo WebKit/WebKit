@@ -1,3 +1,36 @@
+2013-03-18  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Detach overlays from page when compositor is detached
+        https://bugs.webkit.org/show_bug.cgi?id=112424
+
+        Reviewed by Rob Buis.
+
+        PR 309160
+
+        If not detached properly, the overlays would have a dangling pointer to
+        the page.
+
+        * Api/WebOverlay.cpp:
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::WebOverlayLayerCompositingThreadClient):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::WebOverlayPrivateCompositingThread):
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::~WebOverlayPrivateCompositingThread):
+        * Api/WebOverlay_p.h:
+        (BlackBerry::WebKit::WebOverlayPrivate::setClient):
+        (WebOverlayLayerCompositingThreadClient):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::overlay):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::overlayDestroyed):
+        (WebOverlayPrivateCompositingThread):
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::detach):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::setPage):
+        (WebKit):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::attachOverlays):
+        * Api/WebPageCompositor_p.h:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::attachOverlays):
+        (BlackBerry::WebKit::WebPageCompositorPrivate::detachOverlays):
+        (WebPageCompositorPrivate):
+
 2013-03-18  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] BackingStoreClient: remove unnecessary call to toElement()

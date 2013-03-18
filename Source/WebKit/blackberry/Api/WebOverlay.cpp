@@ -386,9 +386,9 @@ void WebOverlayPrivateWebKitThread::paintContents(const WebCore::GraphicsLayer*,
     drawContents(c.platformContext());
 }
 
-WebOverlayLayerCompositingThreadClient::WebOverlayLayerCompositingThreadClient()
+WebOverlayLayerCompositingThreadClient::WebOverlayLayerCompositingThreadClient(WebOverlayPrivate* overlay)
     : m_drawsContent(false)
-    , m_client(0)
+    , m_overlay(overlay)
 {
 }
 
@@ -450,7 +450,7 @@ void WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded(LayerComposi
     IntSize textureSize;
 
     if (m_drawsContent) {
-        if (!m_client || !m_owner)
+        if (!m_overlay || !m_overlay->client)
             return;
 
         textureSize = layer->bounds();
@@ -466,7 +466,7 @@ void WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded(LayerComposi
             -layer->bounds().width() / 2.0, -layer->bounds().height() / 2.0
         };
         platformContext->setTransform(transform);
-        m_client->drawOverlayContents(m_owner, platformContext);
+        m_client->drawOverlayContents(m_overlay->q, platformContext);
 
         releaseBufferDrawable(textureContents);
     } else if (!m_image.isNull()) {
@@ -525,7 +525,7 @@ WebOverlayPrivateCompositingThread::WebOverlayPrivateCompositingThread(PassRefPt
 }
 
 WebOverlayPrivateCompositingThread::WebOverlayPrivateCompositingThread()
-    : m_layerCompositingThreadClient(new WebOverlayLayerCompositingThreadClient)
+    : m_layerCompositingThreadClient(new WebOverlayLayerCompositingThreadClient(this))
 {
     m_layerCompositingThread = LayerCompositingThread::create(LayerData::CustomLayer, m_layerCompositingThreadClient);
 }
@@ -533,14 +533,7 @@ WebOverlayPrivateCompositingThread::WebOverlayPrivateCompositingThread()
 WebOverlayPrivateCompositingThread::~WebOverlayPrivateCompositingThread()
 {
     if (m_layerCompositingThreadClient)
-        m_layerCompositingThreadClient->setClient(0, 0);
-}
-
-void WebOverlayPrivateCompositingThread::setClient(WebOverlayClient* client)
-{
-    WebOverlayPrivate::setClient(client);
-    if (m_layerCompositingThreadClient)
-        m_layerCompositingThreadClient->setClient(q, client);
+        m_layerCompositingThreadClient->overlayDestroyed();
 }
 
 FloatPoint WebOverlayPrivateCompositingThread::position() const

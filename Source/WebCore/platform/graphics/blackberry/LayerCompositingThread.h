@@ -120,6 +120,7 @@ class LayerCompositingThread : public ThreadSafeRefCounted<LayerCompositingThrea
 public:
     static PassRefPtr<LayerCompositingThread> create(LayerType, LayerCompositingThreadClient*);
 
+    LayerCompositingThreadClient* client() const { return m_client; }
     void setClient(LayerCompositingThreadClient* client) { m_client = client; }
 
     // Thread safe

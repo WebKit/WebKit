@@ -65,7 +65,7 @@ public:
     WebPagePrivate* page() const;
     void setPage(WebPagePrivate* page) { m_page = page; }
 
-    virtual void setClient(WebOverlayClient* c) { client = c; }
+    void setClient(WebOverlayClient* c) { client = c; }
 
     WebOverlayOverride* override();
 
@@ -180,10 +180,11 @@ private:
 // so it needs to be a separate object from the WebOverlayPrivateCompositingThread.
 class WebOverlayLayerCompositingThreadClient : public WebCore::LayerCompositingThreadClient {
 public:
-    WebOverlayLayerCompositingThreadClient();
+    WebOverlayLayerCompositingThreadClient(WebOverlayPrivate*);
     virtual ~WebOverlayLayerCompositingThreadClient() { }
 
-    void setClient(WebOverlay* owner, WebOverlayClient* client) { m_owner = owner; m_client = client; }
+    WebOverlayPrivate* overlay() const { return m_overlay; }
+    void overlayDestroyed() { m_overlay = 0; }
 
     bool drawsContent() const { return m_drawsContent; }
     void setDrawsContent(bool);
@@ -210,8 +211,7 @@ private:
     BlackBerry::Platform::Graphics::TiledImage m_image;
     BlackBerry::Platform::Graphics::TiledImage m_uploadedImage;
     WebCore::Color m_color;
-    WebOverlay* m_owner;
-    WebOverlayClient* m_client;
+    WebOverlayPrivate* m_overlay;
 };
 
 class WebOverlayPrivateCompositingThread : public WebOverlayPrivate {
@@ -219,8 +219,6 @@ public:
     WebOverlayPrivateCompositingThread(PassRefPtr<WebCore::LayerCompositingThread>);
     WebOverlayPrivateCompositingThread();
     ~WebOverlayPrivateCompositingThread();
-
-    virtual void setClient(WebOverlayClient*);
 
     virtual WebCore::FloatPoint position() const;
     virtual void setPosition(const WebCore::FloatPoint&);

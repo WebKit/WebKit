@@ -26,6 +26,7 @@
 
 #include "BackingStore_p.h"
 #include "LayerWebKitThread.h"
+#include "WebOverlay_p.h"
 #include "WebPage_p.h"
 
 #include <BlackBerryPlatformDebugMacros.h>
@@ -62,7 +63,9 @@ void WebPageCompositorPrivate::detach()
 {
     if (m_webPage)
         Platform::AnimationFrameRateController::instance()->removeClient(this);
+
     m_webPage = 0;
+    detachOverlays();
 }
 
 void WebPageCompositorPrivate::setPage(WebPagePrivate *p)
@@ -72,6 +75,22 @@ void WebPageCompositorPrivate::setPage(WebPagePrivate *p)
     ASSERT(p);
     ASSERT(m_webPage); // if this is null, we have a bug and we need to re-add.
     m_webPage = p;
+    attachOverlays();
+}
+
+void WebPageCompositorPrivate::attachOverlays(LayerCompositingThread* overlayRoot, WebPagePrivate* page)
+{
+    if (!overlayRoot)
+        return;
+
+    const Vector<RefPtr<LayerCompositingThread> >& overlays = overlayRoot->getSublayers();
+    for (size_t i = 0; i < overlays.size(); ++i) {
+        LayerCompositingThread* overlay = overlays[i].get();
+        if (LayerCompositingThreadClient* client = overlay->client()) {
+            if (WebOverlayPrivate* webOverlay = static_cast<WebOverlayLayerCompositingThreadClient*>(client)->overlay())
+                webOverlay->setPage(page);
+        }
+    }
 }
 
 void WebPageCompositorPrivate::setContext(Platform::Graphics::GLES2Context* context)

@@ -109,6 +109,9 @@ protected:
 
 private:
     void compositeLayers(const WebCore::TransformationMatrix&);
+    void attachOverlays() { attachOverlays(m_compositingThreadOverlayLayer.get(), m_webPage); }
+    void detachOverlays() { attachOverlays(m_compositingThreadOverlayLayer.get(), 0); }
+    static void attachOverlays(WebCore::LayerCompositingThread* overlayRoot, WebPagePrivate*);
 
     // LayerRendererClient
     virtual bool shouldClearSurfaceBeforeCompositing();
