@@ -50,7 +50,6 @@ all : \
     NumberConstructor.lut.h \
     NumberPrototype.lut.h \
     ObjectConstructor.lut.h \
-    ObjectPrototype.lut.h \
     RegExpConstructor.lut.h \
     RegExpPrototype.lut.h \
     RegExpJitTables.h \
