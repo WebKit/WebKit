@@ -1160,8 +1160,8 @@ void SelectionHandler::selectionPositionChanged(bool forceUpdateWithoutChange)
     else if (!m_selectionActive)
         return;
 
-    if (Node* focusedNode = frame->document()->focusedNode()
-        && (focusedNode->hasTagName(HTMLNames::selectTag) || (focusedNode->isElementNode() && DOMSupport::isPopupInputField(toElement(focusedNode))))) {
+    if (Node* focusedNode = frame->document()->focusedNode()) {
+        if (focusedNode->hasTagName(HTMLNames::selectTag) || (focusedNode->isElementNode() && DOMSupport::isPopupInputField(toElement(focusedNode)))) {
             SelectionLog(Platform::LogLevelInfo, "SelectionHandler::selectionPositionChanged selection is on a popup control, skipping rendering.");
             return;
         }

@@ -1,5 +1,17 @@
 2013-03-18  Alberto Garcia  <agarcia@igalia.com>
 
+        [BlackBerry] Prevent text selection inside Colour and Date/Time input fields
+        https://bugs.webkit.org/show_bug.cgi?id=111733
+
+        Reviewed by Rob Buis.
+
+        Fix missing brace.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::selectionPositionChanged):
+
+2013-03-18  Alberto Garcia  <agarcia@igalia.com>
+
         [BlackBerry] Add Proximity Detector.
         https://bugs.webkit.org/show_bug.cgi?id=112278
 
