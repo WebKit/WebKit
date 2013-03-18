@@ -1,3 +1,23 @@
+2013-03-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        [NRWT][GTK] Add gtk-wk1 directory to the list of baseline search paths when using DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=112619
+
+        Reviewed by Dirk Pranke.
+
+        When using DumpRenderTree on the Gtk port, NRWT should look for baselines first in the LayoutTests/platform/gtk-wk1
+        directory and then fall back to the generic LayoutTests/platform/gtk directory.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort.default_baseline_search_path): Implement the method on the GtkPort class, mapping every search path to the
+        Port._webkit_baseline_path method.
+        * Scripts/webkitpy/layout_tests/port/gtk_unittest.py:
+        (GtkPortTest.test_default_baseline_search_path): Add a test for the changes that are being introduced.
+        (GtkPortTest.test_port_specific_expectations_files): Wrap a couple of long lines.
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (TestRebaselineTest.test_baseline_directory): Enhance one and add an additional test case for baseline directories
+        that are expected based on the builder name.
+
 2013-03-18  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Create WebFileSystemType enum to allow easier filesystem refactoring
