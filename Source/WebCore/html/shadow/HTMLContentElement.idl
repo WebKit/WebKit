@@ -26,7 +26,8 @@
 
 [
     Conditional=SHADOW_DOM,
-    V8EnabledAtRuntime=shadowDOM
+    V8EnabledAtRuntime=shadowDOM,
+    V8SkipVTableValidation
 ] interface HTMLContentElement : HTMLElement {
     [Reflect] attribute DOMString select;
     attribute boolean resetStyleInheritance;
