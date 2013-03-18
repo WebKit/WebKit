@@ -1,3 +1,16 @@
+2013-03-18  Alberto Garcia  <agarcia@igalia.com>
+
+        [BlackBerry] EditorClientBlackBerry: fix access to WebPage attribute
+        https://bugs.webkit.org/show_bug.cgi?id=112556
+
+        Reviewed by Rob Buis.
+
+        This changed in r145849 and broke the BlackBerry build.
+
+        * WebCoreSupport/EditorClientBlackBerry.cpp:
+        (WebCore::EditorClientBlackBerry::smartInsertDeleteEnabled):
+        (WebCore::EditorClientBlackBerry::isSelectTrailingWhitespaceEnabled):
+
 2013-03-18  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Detach overlays from page when compositor is detached

@@ -70,7 +70,7 @@ bool EditorClientBlackBerry::shouldDeleteRange(Range* range)
 
 bool EditorClientBlackBerry::smartInsertDeleteEnabled()
 {
-    Page* page = WebPagePrivate::core(m_webPage);
+    Page* page = WebPagePrivate::core(m_webPagePrivate->m_webPage);
     if (!page)
         return false;
     return page->settings()->smartInsertDeleteEnabled();
@@ -78,7 +78,7 @@ bool EditorClientBlackBerry::smartInsertDeleteEnabled()
 
 bool EditorClientBlackBerry::isSelectTrailingWhitespaceEnabled()
 {
-    Page* page = WebPagePrivate::core(m_webPage);
+    Page* page = WebPagePrivate::core(m_webPagePrivate->m_webPage);
     if (!page)
         return false;
     return page->settings()->selectTrailingWhitespaceEnabled();
