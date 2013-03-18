@@ -74,151 +74,39 @@ WebInspector.TimelineOverviewPane = function(model)
     
     this._overviewItems[this._currentMode].revealAndSelect(false);
 
-    this._overviewGrid = new WebInspector.OverviewGrid("timeline");
+    this._overviewContainer = this.element.createChild("div", "fill");
+    this._overviewContainer.id = "timeline-overview-container";
+
+    this._overviewGrid = new WebInspector.TimelineGrid();
+    this._overviewGrid.element.id = "timeline-overview-grid";
+    this._overviewGrid.itemsGraphsElement.id = "timeline-overview-timelines";
+
+    this._overviewContainer.appendChild(this._overviewGrid.element);
 
     this._heapGraph = new WebInspector.HeapGraph(this._model);
     this._heapGraph.element.id = "timeline-overview-memory";
-    this._overviewGrid.insertBeforeItemsGraphsElement(this._heapGraph.element);
+    this._overviewGrid.element.insertBefore(this._heapGraph.element, this._overviewGrid.itemsGraphsElement);
+
+    this._overviewWindow = new WebInspector.TimelineOverviewWindow(this._overviewContainer, this._overviewGrid.dividersLabelBarElement);
+    this._overviewWindow.addEventListener(WebInspector.TimelineOverviewWindow.Events.WindowChanged, this._onWindowChanged, this);
 
     var separatorElement = document.createElement("div");
     separatorElement.id = "timeline-overview-separator";
     this.element.appendChild(separatorElement);
 
     this._categoryStrips = new WebInspector.TimelineCategoryStrips(this._model);
-    this._overviewGrid.itemsGraphsElement().appendChild(this._categoryStrips.element);
+    this._overviewGrid.itemsGraphsElement.appendChild(this._categoryStrips.element);
  
     var categories = WebInspector.TimelinePresentationModel.categories();
     for (var category in categories)
         categories[category].addEventListener(WebInspector.TimelineCategory.Events.VisibilityChanged, this._onCategoryVisibilityChanged, this);
 
+    this._overviewGrid.setScrollAndDividerTop(0, 0);
     this._overviewCalculator = new WebInspector.TimelineOverviewCalculator();
 
     model.addEventListener(WebInspector.TimelineModel.Events.RecordAdded, this._onRecordAdded, this);
     model.addEventListener(WebInspector.TimelineModel.Events.RecordsCleared, this._reset, this);
-    this._overviewGrid.addEventListener(WebInspector.OverviewGrid.Events.WindowChanged, this._onWindowChanged, this);
 }
-
-/**
- * @constructor
- */
-WebInspector.OverviewGrid = function(prefix)
-{
-    this.element = this.element.createChild("div", "fill");
-    this.element.id = prefix + "-overview-container";
-
-    this._grid = new WebInspector.TimelineGrid();
-    this._grid.element.id = prefix + "-overview-grid";
-    this._grid.itemsGraphsElement.id = prefix + "-overview-timelines";
-    this._grid.setScrollAndDividerTop(0, 0);
-
-    this.element.appendChild(this._grid.element);
-
-    this._window = new WebInspector.TimelineOverviewWindow(this.element, this._grid.dividersLabelBarElement);
-}
-
-WebInspector.OverviewGrid.prototype = {
-    itemsGraphsElement: function()
-    {
-        return this._grid.itemsGraphsElement;
-    },
-
-    /**
-     * @param {!Node} child
-     */
-    insertBeforeItemsGraphsElement: function(child)
-    {
-        this._grid.element.insertBefore(child, this._grid.itemsGraphsElement);
-    },
-
-    /**
-     * @return {number}
-     */
-    clientWidth: function()
-    {
-        return this.element.clientWidth;
-    },
-
-    showItemsGraphsElement: function()
-    {
-        this._grid.itemsGraphsElement.removeStyleClass("hidden");
-    },
-
-    hideItemsGraphsElement: function()
-    {
-        this._grid.itemsGraphsElement.addStyleClass("hidden");
-    },
-
-    /**
-     * @param {!WebInspector.TimelineOverviewCalculator} calculator
-     */
-    updateDividers: function(calculator)
-    {
-        this._grid.updateDividers(calculator);
-    },
-
-    /**
-     * @param {!Array.<Element>} dividers
-     */
-    addEventDividers: function(dividers)
-    {
-        this._grid.addEventDividers(dividers);
-    },
-
-    removeEventDividers: function()
-    {
-        this._grid.removeEventDividers();
-    },
-    
-    /**
-     * @param {?number} start
-     * @param {?number} end
-     */
-    setWindowPosition: function(start, end)
-    {
-        this._window._setWindowPosition(start, end);
-    },
-
-    reset: function()
-    {
-        this._window.reset();
-    },
-
-    /**
-     * @return {number}
-     */
-    windowLeft: function()
-    {
-        return this._window.windowLeft;
-    },
-
-    /**
-     * @return {number}
-     */
-    windowRight: function()
-    {
-        return this._window.windowRight;
-    },
-
-    /**
-     * @param {number} left
-     * @param {number} right
-     */
-    setWindow: function(left, right)
-    {
-        this._window._setWindow(left, right);
-    },
-    
-    /**
-     * @param {string} eventType
-     * @param {function(WebInspector.Event)} listener
-     * @param {Object=} thisObject
-     */
-    addEventListener: function(eventType, listener, thisObject)
-    {
-        this._window.addEventListener(eventType, listener, thisObject);
-    }
-}
-
 
 WebInspector.TimelineOverviewPane.MinSelectableSize = 12;
 
@@ -259,10 +147,10 @@ WebInspector.TimelineOverviewPane.prototype = {
             case WebInspector.TimelineOverviewPane.Mode.Events:
             case WebInspector.TimelineOverviewPane.Mode.Frames:
                 this._heapGraph.hide();
-                this._overviewGrid.showItemsGraphsElement();
+                this._overviewGrid.itemsGraphsElement.removeStyleClass("hidden");
                 break;
             case WebInspector.TimelineOverviewPane.Mode.Memory:
-                this._overviewGrid.hideItemsGraphsElement();
+                this._overviewGrid.itemsGraphsElement.addStyleClass("hidden");
                 this._heapGraph.show();
         }
         this._overviewItems[this._currentMode].revealAndSelect(false);
@@ -276,11 +164,11 @@ WebInspector.TimelineOverviewPane.prototype = {
             return;
         if (enabled) {
             this._frameOverview = new WebInspector.TimelineFrameOverview(this._model);
-            this._frameOverview.show(this._overviewGrid.element);
+            this._frameOverview.show(this._overviewContainer);
         } else {
             this._frameOverview.detach();
             this._frameOverview = null;
-            this._overviewGrid.showItemsGraphsElement();
+            this._overviewGrid.itemsGraphsElement.removeStyleClass("hidden");
             this._categoryStrips.update();
         }
     },
@@ -297,7 +185,7 @@ WebInspector.TimelineOverviewPane.prototype = {
 
         this._updateWindow();
         this._overviewCalculator.setWindow(this._model.minimumRecordTime(), this._model.maximumRecordTime());
-        this._overviewCalculator.setDisplayWindow(0, this._overviewGrid.clientWidth());
+        this._overviewCalculator.setDisplayWindow(0, this._overviewContainer.clientWidth);
 
         if (this._heapGraph.visible)
             this._heapGraph.update();
@@ -333,7 +221,7 @@ WebInspector.TimelineOverviewPane.prototype = {
      */
     sidebarResized: function(width)
     {
-        this._overviewGrid.element.style.left = width + "px";
+        this._overviewContainer.style.left = width + "px";
         this._topPaneSidebarElement.style.width = width + "px";
         this._update();
     },
@@ -356,7 +244,7 @@ WebInspector.TimelineOverviewPane.prototype = {
         if (!window)
             return;
 
-        this._overviewGrid.setWindowPosition(window.start, window.end);
+        this._overviewWindow._setWindowPosition(window.start, window.end);
     },
 
     _onRecordAdded: function(event)
@@ -376,8 +264,8 @@ WebInspector.TimelineOverviewPane.prototype = {
     {
         this._windowStartTime = 0;
         this._windowEndTime = Infinity;
+        this._overviewWindow.reset();
         this._overviewCalculator.reset();
-        this._overviewGrid.reset();
         this._eventDividers = [];
         this._overviewGrid.updateDividers(this._overviewCalculator);
         if (this._frameOverview)
@@ -397,12 +285,12 @@ WebInspector.TimelineOverviewPane.prototype = {
 
     windowLeft: function()
     {
-        return this._overviewGrid.windowLeft();
+        return this._overviewWindow.windowLeft;
     },
 
     windowRight: function()
     {
-        return this._overviewGrid.windowRight();
+        return this._overviewWindow.windowRight;
     },
 
     _onWindowChanged: function()
@@ -440,7 +328,7 @@ WebInspector.TimelineOverviewPane.prototype = {
         var left = this._windowStartTime ? (this._windowStartTime - offset) / timeSpan : 0;
         var right = this._windowEndTime < Infinity ? (this._windowEndTime - offset) / timeSpan : 1;
         this._ignoreWindowChangedEvent = true;
-        this._overviewGrid.setWindow(left, right);
+        this._overviewWindow._setWindow(left, right);
         this._ignoreWindowChangedEvent = false;
     },
 
