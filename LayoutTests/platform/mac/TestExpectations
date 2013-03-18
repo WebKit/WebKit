@@ -946,6 +946,8 @@ http/tests/security/MessagePort/event-listener-context.html
 # ASSERTION FAILED: m_wrapper || !m_jsFunction
 svg/custom/use-instanceRoot-as-event-target.xhtml
 
+webkit.org/b/112620 [ Debug ] svg/custom/image-with-attr-change-after-delete-crash.html [ Crash Pass ]
+
 # Assorted failures that need investigation
 
 # --- Canvas ---
