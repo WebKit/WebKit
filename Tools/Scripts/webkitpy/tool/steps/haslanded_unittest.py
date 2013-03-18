@@ -35,7 +35,7 @@ from webkitpy.tool.steps.haslanded import HasLanded
 class HasLandedTest(unittest.TestCase):
     maxDiff = None
 
-    @unittest.skipUnless(subprocess.call('which interdiff', shell=True) == 0, "requires interdiff")
+    @unittest.skipUnless(subprocess.call('which interdiff', shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0, "requires interdiff")
     def test_run(self):
         # These patches require trailing whitespace to remain valid patches.
         diff1 = """\
