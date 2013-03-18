@@ -116,6 +116,8 @@ bool ResourceBuffer::hasPurgeableBuffer() const
 void ResourceBuffer::createPurgeableBuffer() const
 {
     ASSERT(m_sharedBuffer);
+    if (!sharedBuffer()->hasOneRef())
+        return;
     sharedBuffer()->createPurgeableBuffer();
 }
 
