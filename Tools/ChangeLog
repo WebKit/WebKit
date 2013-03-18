@@ -1,3 +1,44 @@
+2013-03-18  Julie Parent  <jparent@chromium.org>
+
+        Cleanup: Move js for treemap and aggregate_results into own js files.
+        https://bugs.webkit.org/show_bug.cgi?id=112618
+
+        Reviewed by Dirk Pranke.
+        
+        No functional changes, just moving the code into separate js file
+        rather than inlined in the html, so we can test it, make it more
+        modular, etc.  Other dashboard types are already done this way.
+
+        * TestResultServer/static-dashboards/aggregate_results.html:
+        * TestResultServer/static-dashboards/aggregate_results.js: Copied from Tools/TestResultServer/static-dashboards/aggregate_results.html.
+        (generatePage):
+        (handleValidHashParameter):
+        (htmlForBuilder):
+        (rawValuesHTML):
+        (chartHTML):
+        (filteredValues):
+        (chart):
+        (htmlForRevisionRows):
+        (wrapHTMLInTable):
+        (htmlForSummaryTable):
+        (valuesPerExpectation):
+        (htmlForTestType):
+        (htmlForTableRow):
+        (extendedEncode):
+        * TestResultServer/static-dashboards/treemap.html:
+        * TestResultServer/static-dashboards/treemap.js: Copied from Tools/TestResultServer/static-dashboards/treemap.html.
+        (humanReadableTime):
+        (convertToWebTreemapFormat):
+        (reverseSortByAverage):
+        (generatePage):
+        (focusPath):
+        (.switch.return):
+        (handleQueryParameterChange):
+        (extractName):
+        (fullName):
+        (handleFocus.):
+        (handleFocus):
+
 2013-03-18  Zan Dobersek  <zdobersek@igalia.com>
 
         [webkitpy] '/usr/bin/interdiff' output while running test-webkitpy
