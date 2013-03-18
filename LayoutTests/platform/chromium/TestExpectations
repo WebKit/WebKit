@@ -4428,3 +4428,8 @@ webkit.org/b/112601 http/tests/security/cross-frame-access-port-explicit-domain.
 webkit.org/b/112603 fast/innerHTML/innerHTML-iframe.html [ Failure Pass ]
 
 webkit.org/b/112610 [ Win ] fast/text/word-space-with-kerning-3.html [ ImageOnlyFailure ]
+
+# Application cache blocking is not supported in Chromium
+webkit.org/b/112288 http/tests/security/cross-origin-appcache.html [ Failure ]
+webkit.org/b/112288 http/tests/security/cross-origin-appcache-allowed.html [ Failure ]
+webkit.org/b/112288 http/tests/security/same-origin-appcache-blocked.html [ Failure ]
