@@ -81,6 +81,12 @@ private:
     int m_maxDay;
     int m_minHour23;
     int m_maxHour23;
+    int m_minMinute;
+    int m_maxMinute;
+    int m_minSecond;
+    int m_maxSecond;
+    int m_minMillisecond;
+    int m_maxMillisecond;
 };
 
 DateTimeEditBuilder::DateTimeEditBuilder(DateTimeEditElement& elemnt, const DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents& dateValue)
@@ -91,6 +97,12 @@ DateTimeEditBuilder::DateTimeEditBuilder(DateTimeEditElement& elemnt, const Date
     , m_maxDay(31)
     , m_minHour23(0)
     , m_maxHour23(23)
+    , m_minMinute(0)
+    , m_maxMinute(59)
+    , m_minSecond(0)
+    , m_maxSecond(59)
+    , m_minMillisecond(0)
+    , m_maxMillisecond(999)
 {
     if (m_dateValue.type() == DateComponents::Date
         || m_dateValue.type() == DateComponents::DateTimeLocal
@@ -112,6 +124,19 @@ DateTimeEditBuilder::DateTimeEditBuilder(DateTimeEditElement& elemnt, const Date
             m_minHour23 = m_parameters.minimum.hour();
             m_maxHour23 = m_parameters.maximum.hour();
         }
+    }
+
+    if (m_minHour23 == m_maxHour23 && m_parameters.minimum.minute() <= m_parameters.maximum.minute()) {
+        m_minMinute = m_parameters.minimum.minute();
+        m_maxMinute = m_parameters.maximum.minute();
+    }
+    if (m_minMinute == m_maxMinute && m_parameters.minimum.second() <= m_parameters.maximum.second()) {
+        m_minSecond = m_parameters.minimum.second();
+        m_maxSecond = m_parameters.maximum.second();
+    }
+    if (m_minSecond == m_maxSecond && m_parameters.minimum.millisecond() <= m_parameters.maximum.millisecond()) {
+        m_minMillisecond = m_parameters.minimum.millisecond();
+        m_maxMillisecond = m_parameters.maximum.millisecond();
     }
 }
 
@@ -192,7 +217,7 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
 
     case DateTimeFormat::FieldTypeMinute: {
         DateTimeNumericFieldElement::Parameters parameters = createNumericFieldParameters(static_cast<int>(msPerMinute), static_cast<int>(msPerHour));
-        RefPtr<DateTimeNumericFieldElement> field = DateTimeMinuteFieldElement::create(document, m_editElement, parameters);
+        RefPtr<DateTimeNumericFieldElement> field = DateTimeMinuteFieldElement::create(document, m_editElement, m_minMinute, m_maxMinute, parameters);
         m_editElement.addField(field);
         if (shouldMinuteFieldDisabled()) {
             field->setValueAsDate(m_dateValue);
@@ -244,7 +269,7 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
 
     case DateTimeFormat::FieldTypeSecond: {
         DateTimeNumericFieldElement::Parameters parameters = createNumericFieldParameters(static_cast<int>(msPerSecond), static_cast<int>(msPerMinute));
-        RefPtr<DateTimeNumericFieldElement> field = DateTimeSecondFieldElement::create(document, m_editElement, parameters);
+        RefPtr<DateTimeNumericFieldElement> field = DateTimeSecondFieldElement::create(document, m_editElement, m_minSecond, m_maxSecond, parameters);
         m_editElement.addField(field);
         if (shouldSecondFieldDisabled()) {
             field->setValueAsDate(m_dateValue);
@@ -260,7 +285,7 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
 
     case DateTimeFormat::FieldTypeFractionalSecond: {
         DateTimeNumericFieldElement::Parameters parameters = createNumericFieldParameters(1, static_cast<int>(msPerSecond));
-        RefPtr<DateTimeNumericFieldElement> field = DateTimeMillisecondFieldElement::create(document, m_editElement, parameters);
+        RefPtr<DateTimeNumericFieldElement> field = DateTimeMillisecondFieldElement::create(document, m_editElement, m_minMillisecond, m_maxMillisecond, parameters);
         m_editElement.addField(field);
         if (shouldMillisecondFieldDisabled()) {
             field->setValueAsDate(m_dateValue);
@@ -332,7 +357,8 @@ bool DateTimeEditBuilder::shouldDayOfMonthFieldDisabled() const
 
 bool DateTimeEditBuilder::shouldHourFieldDisabled() const
 {
-    if (m_minHour23 == m_maxHour23 && m_minHour23 == m_dateValue.hour() && !shouldMinuteFieldDisabled())
+    if (m_minHour23 == m_maxHour23 && m_minHour23 == m_dateValue.hour()
+        && !(shouldMinuteFieldDisabled() && shouldSecondFieldDisabled() && shouldMillisecondFieldDisabled()))
         return true;
 
     if (m_dateValue.type() == DateComponents::Time)
@@ -352,12 +378,18 @@ bool DateTimeEditBuilder::shouldHourFieldDisabled() const
 
 bool DateTimeEditBuilder::shouldMillisecondFieldDisabled() const
 {
+    if (m_minMillisecond == m_maxMillisecond && m_minMillisecond == m_dateValue.millisecond())
+        return true;
+
     const Decimal decimalMsPerSecond(static_cast<int>(msPerSecond));
     return stepRange().minimum().abs().remainder(decimalMsPerSecond) == m_dateValue.millisecond() && stepRange().step().remainder(decimalMsPerSecond).isZero();
 }
 
 bool DateTimeEditBuilder::shouldMinuteFieldDisabled() const
 {
+    if (m_minMinute == m_maxMinute && m_minMinute == m_dateValue.minute())
+        return true;
+
     const Decimal decimalMsPerHour(static_cast<int>(msPerHour));
     Decimal minutePartOfMinimum = (stepRange().minimum().abs().remainder(decimalMsPerHour) / static_cast<int>(msPerMinute)).floor();
     return minutePartOfMinimum == m_dateValue.minute() && stepRange().step().remainder(decimalMsPerHour).isZero();
@@ -365,6 +397,9 @@ bool DateTimeEditBuilder::shouldMinuteFieldDisabled() const
 
 bool DateTimeEditBuilder::shouldSecondFieldDisabled() const
 {
+    if (m_minSecond == m_maxSecond && m_minSecond == m_dateValue.second())
+        return true;
+
     const Decimal decimalMsPerMinute(static_cast<int>(msPerMinute));
     Decimal secondPartOfMinimum = (stepRange().minimum().abs().remainder(decimalMsPerMinute) / static_cast<int>(msPerSecond)).floor();
     return secondPartOfMinimum == m_dateValue.second() && stepRange().step().remainder(decimalMsPerMinute).isZero();

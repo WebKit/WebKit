@@ -58,10 +58,9 @@ protected:
         int minimum;
     };
 
-    DateTimeNumericFieldElement(Document*, FieldOwner&, int minimum, int maximum, const String& placeholder, const Parameters& = Parameters());
+    DateTimeNumericFieldElement(Document*, FieldOwner&, const Range&, const Range& hardLimits, const String& placeholder, const Parameters& = Parameters());
 
     int clampValue(int value) const { return m_range.clampValue(value); }
-    virtual int clampValueForHardLimits(int) const;
     virtual int defaultValueForStepDown() const;
     virtual int defaultValueForStepUp() const;
     const Range& range() const { return m_range; }
@@ -92,6 +91,7 @@ private:
     DOMTimeStamp m_lastDigitCharTime;
     const String m_placeholder;
     const Range m_range;
+    const Range m_hardLimits;
     int m_value;
     bool m_hasValue;
     int m_step;

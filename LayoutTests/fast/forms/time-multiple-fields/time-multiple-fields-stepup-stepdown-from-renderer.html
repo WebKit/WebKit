@@ -85,6 +85,16 @@ shouldBeEqualToString('test("07:13:00.500", 0.100, null, null, ["delete", "upArr
 shouldBeEqualToString('test("07:13:00.500", 0.100, null, null, ["delete", "downArrow"])', '07:13:00.900');
 shouldBeEqualToString('test("07:13:00.500", 0.100, "00:00:00.050", null, ["delete", "upArrow"])', '07:13:00.050');
 shouldBeEqualToString('test("07:13:00.500", 0.100, "00:00:00.050", null, ["delete", "downArrow"])', '07:13:00.950');
+shouldBeEqualToString('stepUp("07:13:00.010", 0.001, "07:13:00.005", "07:13:00.010")', '07:13:00.005');
+shouldBeEqualToString('stepDown("07:13:00.005", 0.001, "07:13:00.005", "07:13:00.010")', '07:13:00.010');
+shouldBeEqualToString('stepUp("07:13:00.005", 0.001, "07:13:00.010", "07:13:00.020")', '07:13:00.010');
+shouldBeEqualToString('stepDown("07:13:00.005", 0.001, "07:13:00.010", "07:13:00.020")', '07:13:00.020');
+shouldBeEqualToString('stepUp("07:13:00.005", 0.001, "07:13:00.002", "07:13:00.002")', '07:13:00.002');
+shouldBeEqualToString('stepDown("07:13:00.005", 0.001, "07:13:00.002", "07:13:00.002")', '07:13:00.002');
+shouldBeEqualToString('stepUp("07:13:00.035", 0.01, "07:13:00.010", "07:13:00.035")', '07:13:00.010');
+shouldBeEqualToString('stepDown("07:13:00.035", 0.01, "07:13:00.010", "07:13:00.035")', '07:13:00.030');
+shouldBeEqualToString('stepUp("07:13:00.010", 0.001, "07:13:00.010", "07:13:01.020")', '07:13:00.011');
+shouldBeEqualToString('stepDown("07:13:00.010", 0.001, "07:13:00.010", "07:13:01.020")', '07:13:00.009');
 
 debug('Seconds');
 keyDown('leftArrow');
@@ -112,6 +122,16 @@ shouldBeEqualToString('test("07:13:30", 10, null, null, ["delete", "upArrow"])',
 shouldBeEqualToString('test("07:13:30", 10, null, null, ["delete", "downArrow"])', '07:13:50');
 shouldBeEqualToString('test("07:13:30", 10, "00:00:05", null, ["delete", "upArrow"])', '07:13:05');
 shouldBeEqualToString('test("07:13:30", 10, "00:00:05", null, ["delete", "downArrow"])', '07:13:55');
+shouldBeEqualToString('stepUp("07:13:10", 1, "07:13:05", "07:13:10")', '07:13:05');
+shouldBeEqualToString('stepDown("07:13:05", 1, "07:13:05", "07:13:10")', '07:13:10');
+shouldBeEqualToString('stepUp("07:13:05", 1, "07:13:10", "07:13:20")', '07:13:10');
+shouldBeEqualToString('stepDown("07:13:05", 1, "07:13:10", "07:13:20")', '07:13:20');
+shouldBeEqualToString('stepUp("07:13:05", 1, "07:13:02", "07:13:02")', '07:13:02');
+shouldBeEqualToString('stepDown("07:13:05", 1, "07:13:02", "07:13:02")', '07:13:02');
+shouldBeEqualToString('stepUp("07:13:35", 10, "07:13:10", "07:13:35")', '07:13:10');
+shouldBeEqualToString('stepDown("07:13:35", 10, "07:13:10", "07:13:35")', '07:13:30');
+shouldBeEqualToString('stepUp("07:13:10", 1, "07:13:10", "07:14:20")', '07:13:11');
+shouldBeEqualToString('stepDown("07:13:10", 1, "07:13:10", "07:14:20")', '07:13:09');
 
 debug('Minutes');
 keyDown('leftArrow');
@@ -139,6 +159,16 @@ shouldBeEqualToString('test("07:13", 600, null, null, ["delete", "upArrow"])', '
 shouldBeEqualToString('test("07:13", 600, null, null, ["delete", "downArrow"])', '07:50');
 shouldBeEqualToString('test("07:13", 600, "00:05", null, ["delete", "upArrow"])', '07:05');
 shouldBeEqualToString('test("07:13", 600, "00:05", null, ["delete", "downArrow"])', '07:55');
+shouldBeEqualToString('stepUp("07:10", 1, "07:05", "07:10")', '07:05');
+shouldBeEqualToString('stepDown("07:05", 1, "07:05", "07:10")', '07:10');
+shouldBeEqualToString('stepUp("07:05", 1, "07:10", "07:20")', '07:10');
+shouldBeEqualToString('stepDown("07:05", 1, "07:10", "07:20")', '07:20');
+shouldBeEqualToString('stepUp("07:05", 1, "07:00", "07:00")', '07:00');
+shouldBeEqualToString('stepDown("07:05", 1, "07:00", "07:00")', '07:00');
+shouldBeEqualToString('stepUp("07:35", 600, "07:10", "07:35")', '07:10');
+shouldBeEqualToString('stepDown("07:35", 600, "07:10", "07:35")', '07:30');
+shouldBeEqualToString('stepUp("07:10", 1, "07:10", "08:20")', '07:11');
+shouldBeEqualToString('stepDown("07:10", 1, "07:10", "08:20")', '07:09');
 
 debug('Hours, 1-12');
 keyDown('leftArrow');

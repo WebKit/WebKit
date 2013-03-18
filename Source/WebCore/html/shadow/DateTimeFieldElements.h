@@ -60,16 +60,13 @@ private:
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
-
-    // DateTimeNumericFieldElement function.
-    virtual int clampValueForHardLimits(int) const OVERRIDE FINAL;
 };
 
 class DateTimeHourFieldElementBase : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeHourFieldElementBase);
 
 protected:
-    DateTimeHourFieldElementBase(Document*, FieldOwner&, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters&);
+    DateTimeHourFieldElementBase(Document*, FieldOwner&, const Range&, const Range& hardLimits, const DateTimeNumericFieldElement::Parameters&);
     void initialize();
 
 private:
@@ -90,9 +87,6 @@ private:
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) OVERRIDE FINAL;
-
-    // DateTimeNumericFieldElement function.
-    virtual int clampValueForHardLimits(int) const OVERRIDE FINAL;
 };
 
 class DateTimeHour12FieldElement : public DateTimeHourFieldElementBase {
@@ -107,9 +101,6 @@ private:
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) OVERRIDE FINAL;
-
-    // DateTimeNumericFieldElement function.
-    virtual int clampValueForHardLimits(int) const OVERRIDE FINAL;
 };
 
 class DateTimeHour23FieldElement : public DateTimeHourFieldElementBase {
@@ -124,9 +115,6 @@ private:
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) OVERRIDE FINAL;
-
-    // DateTimeNumericFieldElement function.
-    virtual int clampValueForHardLimits(int) const OVERRIDE FINAL;
 };
 
 class DateTimeHour24FieldElement : public DateTimeHourFieldElementBase {
@@ -141,19 +129,16 @@ private:
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsInteger(int, EventBehavior = DispatchNoEvent) OVERRIDE FINAL;
-
-    // DateTimeNumericFieldElement function.
-    virtual int clampValueForHardLimits(int) const OVERRIDE FINAL;
 };
 
 class DateTimeMillisecondFieldElement : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeMillisecondFieldElement);
 
 public:
-    static PassRefPtr<DateTimeMillisecondFieldElement> create(Document*, FieldOwner&, const DateTimeNumericFieldElement::Parameters&);
+    static PassRefPtr<DateTimeMillisecondFieldElement> create(Document*, FieldOwner&, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters&);
 
 private:
-    DateTimeMillisecondFieldElement(Document*, FieldOwner&, const DateTimeNumericFieldElement::Parameters&);
+    DateTimeMillisecondFieldElement(Document*, FieldOwner&, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters&);
 
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
@@ -165,10 +150,10 @@ class DateTimeMinuteFieldElement : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeMinuteFieldElement);
 
 public:
-    static PassRefPtr<DateTimeMinuteFieldElement> create(Document*, FieldOwner&, const DateTimeNumericFieldElement::Parameters&);
+    static PassRefPtr<DateTimeMinuteFieldElement> create(Document*, FieldOwner&, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters&);
 
 private:
-    DateTimeMinuteFieldElement(Document*, FieldOwner&, const DateTimeNumericFieldElement::Parameters&);
+    DateTimeMinuteFieldElement(Document*, FieldOwner&, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters&);
 
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
@@ -189,19 +174,16 @@ private:
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
-
-    // DateTimeNumericFieldElement function.
-    virtual int clampValueForHardLimits(int) const OVERRIDE FINAL;
 };
 
 class DateTimeSecondFieldElement : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeSecondFieldElement);
 
 public:
-    static PassRefPtr<DateTimeSecondFieldElement> create(Document*, FieldOwner&, const DateTimeNumericFieldElement::Parameters&);
+    static PassRefPtr<DateTimeSecondFieldElement> create(Document*, FieldOwner&, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters&);
 
 private:
-    DateTimeSecondFieldElement(Document*, FieldOwner&, const DateTimeNumericFieldElement::Parameters&);
+    DateTimeSecondFieldElement(Document*, FieldOwner&, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters&);
 
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
@@ -237,9 +219,6 @@ private:
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
     virtual void setValueAsDate(const DateComponents&) OVERRIDE FINAL;
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
-
-    // DateTimeNumericFieldElement function.
-    virtual int clampValueForHardLimits(int) const OVERRIDE FINAL;
 };
 
 class DateTimeYearFieldElement : public DateTimeNumericFieldElement {
@@ -273,7 +252,6 @@ private:
     virtual void setValueAsDateTimeFieldsState(const DateTimeFieldsState&) OVERRIDE FINAL;
 
     // DateTimeNumericFieldElement functions.
-    virtual int clampValueForHardLimits(int) const OVERRIDE FINAL;
     virtual int defaultValueForStepDown() const OVERRIDE FINAL;
     virtual int defaultValueForStepUp() const OVERRIDE FINAL;
 

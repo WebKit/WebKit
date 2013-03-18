@@ -59,11 +59,12 @@ bool DateTimeNumericFieldElement::Range::isInRange(int value) const
 
 // ----------------------------
 
-DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document* document, FieldOwner& fieldOwner, int minimum, int maximum, const String& placeholder, const DateTimeNumericFieldElement::Parameters& parameters)
+DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document* document, FieldOwner& fieldOwner, const Range& range, const Range& hardLimits, const String& placeholder, const DateTimeNumericFieldElement::Parameters& parameters)
     : DateTimeFieldElement(document, fieldOwner)
     , m_lastDigitCharTime(0)
     , m_placeholder(placeholder)
-    , m_range(minimum, maximum)
+    , m_range(range)
+    , m_hardLimits(hardLimits)
     , m_value(0)
     , m_hasValue(false)
     , m_step(parameters.step)
@@ -80,11 +81,6 @@ DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document* document, Fie
             setInlineStyleProperty(CSSPropertyDirection, CSSValueLtr);
         }
     }
-}
-
-int DateTimeNumericFieldElement::clampValueForHardLimits(int value) const
-{
-    return clampValue(value);
 }
 
 float DateTimeNumericFieldElement::maximumWidth(const Font& font)
@@ -117,9 +113,9 @@ void DateTimeNumericFieldElement::didBlur()
 String DateTimeNumericFieldElement::formatValue(int value) const
 {
     Locale& locale = localeForOwner();
-    if (m_range.maximum > 999)
+    if (m_hardLimits.maximum > 999)
         return locale.convertToLocalizedNumber(String::format("%04d", value));
-    if (m_range.maximum > 99)
+    if (m_hardLimits.maximum > 99)
         return locale.convertToLocalizedNumber(String::format("%03d", value));
     return locale.convertToLocalizedNumber(String::format("%02d", value));
 }
@@ -183,7 +179,7 @@ void DateTimeNumericFieldElement::setEmptyValue(EventBehavior eventBehavior)
 
 void DateTimeNumericFieldElement::setValueAsInteger(int value, EventBehavior eventBehavior)
 {
-    m_value = clampValueForHardLimits(value);
+    m_value = m_hardLimits.clampValue(value);
     m_hasValue = true;
     updateVisibleValue(eventBehavior);
 }
