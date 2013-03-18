@@ -3451,7 +3451,6 @@ webkit.org/b/86683 [ Release ] inspector/profiler/heap-snapshot-summary-show-ran
 webkit.org/b/102781 [ DEBUG ] inspector/profiler/cpu-profiler-profiling-without-inspector.html [ Crash Pass ]
 
 webkit.org/b/86908 [ Win ] http/tests/security/cross-frame-access-put.html [ Failure Pass ]
-webkit.org/b/112583 http/tests/security/cross-frame-access-put.html [ Failure Pass ]
 
 webkit.org/b/86909 [ Win ] compositing/geometry/object-clip-rects-assertion.html [ Pass Slow Crash ]
 webkit.org/b/86909 [ Win ] platform/chromium/virtual/softwarecompositing/geometry/object-clip-rects-assertion.html [ Pass Slow ]
@@ -3910,9 +3909,6 @@ webkit.org/b/96550 http/tests/media/media-source/seek-to-end-after-duration-chan
 crbug.com/63921 platform/chromium/virtual/gpu/fast/canvas/canvas-fillPath-shadow.html [ Failure ]
 webkit.org/b/77550 platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.interpolate.colouralpha.html [ Failure ]
 
-webkit.org/b/97816 [ Linux ] platform/chromium/compositing/filters/background-filter-blur-off-axis.html [ Pass ImageOnlyFailure ]
-webkit.org/b/97816 [ Linux ] platform/chromium/compositing/filters/background-filter-blur-outsets.html [ Pass ImageOnlyFailure ]
-webkit.org/b/97816 [ Linux ] platform/chromium/compositing/filters/background-filter-blur.html [ Pass ImageOnlyFailure ]
 webkit.org/b/97816 [ Linux ] platform/chromium/compositing/plugins/webplugin-alpha.html [ Pass ImageOnlyFailure ]
 webkit.org/b/97816 [ Linux ] platform/chromium/compositing/plugins/webplugin-no-alpha.html [ Pass ImageOnlyFailure ]
 webkit.org/b/97816 [ Linux ] platform/chromium/compositing/plugins/webplugin-reflection.html [ Pass ImageOnlyFailure ]
@@ -4424,6 +4420,7 @@ webkit.org/b/110837 [ Mac ] fast/forms/color/input-appearance-color.html [ Failu
 webkit.org/b/112598 [ Win Mac Linux ] http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure Pass ]
 webkit.org/b/112601 http/tests/security/cross-frame-access-port-explicit-domain.html [ Failure Pass ]
 webkit.org/b/112603 fast/innerHTML/innerHTML-iframe.html [ Failure Pass ]
+webkit.org/b/112621 [ Win Linux ] fast/forms/datalist/update-range-with-datalist.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/112610 [ Win ] fast/text/word-space-with-kerning-3.html [ ImageOnlyFailure ]
 
