@@ -965,7 +965,7 @@ bool HTMLTreeBuilder::processTemplateEndTag(AtomicHTMLToken* token)
         return false;
     }
     m_tree.generateImpliedEndTags();
-    if (!m_tree.currentStackItem()->hasLocalName(token->name()))
+    if (!m_tree.currentStackItem()->hasTagName(templateTag))
         parseError(token);
     m_tree.openElements()->popUntilPopped(templateTag);
     m_tree.activeFormattingElements()->clearToLastMarker();
