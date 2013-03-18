@@ -390,6 +390,7 @@ localizedStrings["Show absolute total and self times."] = "Show absolute total a
 localizedStrings["Show console."] = "Show console.";
 localizedStrings["Show function definition"] = "Show function definition";
 localizedStrings["Show inherited"] = "Show inherited";
+localizedStrings["Show keyboard shortcuts"] = "Show keyboard shortcuts";
 localizedStrings["Show rulers"] = "Show rulers";
 localizedStrings["Show Shadow DOM"] = "Show Shadow DOM";
 localizedStrings["Show times as percentages."] = "Show times as percentages.";
