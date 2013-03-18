@@ -2497,4 +2497,122 @@ TEST_F(WebFrameTest, DidAccessInitialDocumentNavigator)
     m_webView = 0;
 }
 
+class TestMainFrameUserOrProgrammaticScrollFrameClient : public WebFrameClient {
+public:
+    TestMainFrameUserOrProgrammaticScrollFrameClient() { reset(); }
+    void reset()
+    {
+        m_didScrollMainFrame = false;
+        m_wasProgrammaticScroll = false;
+    }
+    bool wasUserScroll() const { return m_didScrollMainFrame && !m_wasProgrammaticScroll; }
+    bool wasProgrammaticScroll() const { return m_didScrollMainFrame && m_wasProgrammaticScroll; }
+
+    // WebFrameClient:
+    virtual void didChangeScrollOffset(WebFrame* frame) OVERRIDE
+    {
+        if (frame->parent())
+            return;
+        EXPECT_FALSE(m_didScrollMainFrame);
+        WebCore::FrameView* view = static_cast<WebFrameImpl*>(frame)->frameView();
+        // FrameView can be scrolled in FrameView::setFixedVisibleContentRect
+        // which is called from Frame::createView (before the frame is associated
+        // with the the view).
+        if (view) {
+            m_didScrollMainFrame = true;
+            m_wasProgrammaticScroll = view->inProgrammaticScroll();
+        }
+    }
+private:
+    bool m_didScrollMainFrame;
+    bool m_wasProgrammaticScroll;
+};
+
+TEST_F(WebFrameTest, CompositorScrollIsUserScrollLongPage)
+{
+    registerMockedHttpURLLoad("long_scroll.html");
+    TestMainFrameUserOrProgrammaticScrollFrameClient client;
+
+    // Make sure we initialize to minimum scale, even if the window size
+    // only becomes available after the load begins.
+    m_webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "long_scroll.html", true, &client);
+    m_webView->settings()->setApplyDeviceScaleFactorInCompositor(true);
+    m_webView->settings()->setApplyPageScaleFactorInCompositor(true);
+    m_webView->resize(WebSize(1000, 1000));
+    m_webView->layout();
+
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(m_webView);
+    EXPECT_FALSE(client.wasUserScroll());
+    EXPECT_FALSE(client.wasProgrammaticScroll());
+
+    // Do a compositor scroll, verify that this is counted as a user scroll.
+    webViewImpl->applyScrollAndScale(WebSize(0, 1), 1.1f);
+    EXPECT_TRUE(client.wasUserScroll());
+    client.reset();
+
+    EXPECT_FALSE(client.wasUserScroll());
+    EXPECT_FALSE(client.wasProgrammaticScroll());
+
+    // The page scale 1.0f and scroll.
+    webViewImpl->applyScrollAndScale(WebSize(0, 1), 1.0f);
+    EXPECT_TRUE(client.wasUserScroll());
+    client.reset();
+
+    // No scroll event if there is no scroll delta.
+    webViewImpl->applyScrollAndScale(WebSize(), 1.0f);
+    EXPECT_FALSE(client.wasUserScroll());
+    EXPECT_FALSE(client.wasProgrammaticScroll());
+    client.reset();
+
+    // Non zero page scale and scroll.
+    webViewImpl->applyScrollAndScale(WebSize(9, 13), 0.6f);
+    EXPECT_TRUE(client.wasUserScroll());
+    client.reset();
+
+    // Programmatic scroll.
+    WebFrameImpl* frameImpl = webViewImpl->mainFrameImpl();
+    frameImpl->executeScript(WebScriptSource("window.scrollTo(0, 20);"));
+    EXPECT_FALSE(client.wasUserScroll());
+    EXPECT_TRUE(client.wasProgrammaticScroll());
+    client.reset();
+
+    // Programmatic scroll to same offset. No scroll event should be generated.
+    frameImpl->executeScript(WebScriptSource("window.scrollTo(0, 20);"));
+    EXPECT_FALSE(client.wasProgrammaticScroll());
+    EXPECT_FALSE(client.wasUserScroll());
+    client.reset();
+
+    m_webView->close();
+    m_webView = 0;
+}
+
+TEST_F(WebFrameTest, CompositorScrollIsUserScrollShortPage)
+{
+    registerMockedHttpURLLoad("short_scroll.html");
+
+    TestMainFrameUserOrProgrammaticScrollFrameClient client;
+
+    // Short page tests.
+    m_webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "short_scroll.html", true, &client);
+
+    m_webView->settings()->setApplyDeviceScaleFactorInCompositor(true);
+    m_webView->settings()->setApplyPageScaleFactorInCompositor(true);
+    m_webView->resize(WebSize(1000, 1000));
+    m_webView->layout();
+
+    WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(m_webView);
+    EXPECT_FALSE(client.wasUserScroll());
+    EXPECT_FALSE(client.wasProgrammaticScroll());
+
+    // Non zero page scale and scroll.
+    webViewImpl->applyScrollAndScale(WebSize(9, 13), 2.0f);
+    EXPECT_FALSE(client.wasProgrammaticScroll());
+    EXPECT_TRUE(client.wasUserScroll());
+    client.reset();
+
+    m_webView->close();
+    m_webView = 0;
+}
+
+
 } // namespace

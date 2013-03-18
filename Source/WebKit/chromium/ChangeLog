@@ -1,3 +1,25 @@
+2013-03-18  John Knottenbelt  <jknotten@chromium.org>
+
+        [Chromium] Compositor is applying scroll offset using 'programmatic' API
+        https://bugs.webkit.org/show_bug.cgi?id=109712
+
+        Reviewed by James Robinson.
+
+        Ensure that the compositor uses non-programmatic APIs to scroll and
+        scale.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setPageScaleFactor):
+        (WebKit::WebViewImpl::updateMainFrameScrollPosition):
+        (WebKit):
+        (WebKit::WebViewImpl::applyScrollAndScale):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/WebFrameTest.cpp:
+        * tests/WebViewTest.cpp:
+        * tests/data/long_scroll.html: Added.
+        * tests/data/short_scroll.html: Added.
+
 2013-03-18  Tao Bai  <michaelbai@chromium.org>
 
         Access settings.defaultVideoPosterURL
