@@ -109,6 +109,9 @@ public:
         };
 
         struct CursorOptions {
+            int64_t databaseId;
+            int64_t objectStoreId;
+            int64_t indexId;
             Vector<char> lowKey;
             bool lowOpen;
             Vector<char> highKey;
@@ -136,6 +139,8 @@ public:
         {
         }
         explicit Cursor(const IDBBackingStore::Cursor* other);
+
+        virtual Vector<char> encodeKey(const IDBKey&) = 0;
 
         bool isPastBounds() const;
         bool haveEnteredRange() const;

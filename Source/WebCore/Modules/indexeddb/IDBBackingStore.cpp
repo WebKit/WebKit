@@ -1345,6 +1345,8 @@ bool IDBBackingStore::Cursor::continueFunction(const IDBKey* key, IteratorState 
 {
     RefPtr<IDBKey> previousKey = m_currentKey;
 
+    bool firstIteration = true;
+
     // When iterating with PrevNoDuplicate, spec requires that the
     // value we yield for each key is the first duplicate in forwards
     // order.
@@ -1354,7 +1356,11 @@ bool IDBBackingStore::Cursor::continueFunction(const IDBKey* key, IteratorState 
 
     for (;;) {
         if (nextState == Seek) {
-            if (forward)
+            // FIXME: Optimize seeking for reverse cursors as well.
+            if (firstIteration && key && forward) {
+                m_iterator->seek(encodeKey(*key));
+                firstIteration = false;
+            } else if (forward)
                 m_iterator->next();
             else
                 m_iterator->prev();
@@ -1476,6 +1482,12 @@ public:
     virtual PassRefPtr<SharedBuffer> value() const { ASSERT_NOT_REACHED(); return 0; }
     virtual bool loadCurrentRow();
 
+protected:
+    virtual Vector<char> encodeKey(const IDBKey &key)
+    {
+        return ObjectStoreDataKey::encode(m_cursorOptions.databaseId, m_cursorOptions.objectStoreId, key);
+    }
+
 private:
     ObjectStoreKeyCursorImpl(LevelDBTransaction* transaction, const IDBBackingStore::Cursor::CursorOptions& cursorOptions)
         : IDBBackingStore::Cursor(transaction, cursorOptions)
@@ -1530,6 +1542,12 @@ public:
     // IDBBackingStore::Cursor
     virtual PassRefPtr<SharedBuffer> value() const { return m_currentValue; }
     virtual bool loadCurrentRow();
+
+protected:
+    virtual Vector<char> encodeKey(const IDBKey &key)
+    {
+        return ObjectStoreDataKey::encode(m_cursorOptions.databaseId, m_cursorOptions.objectStoreId, key);
+    }
 
 private:
     ObjectStoreCursorImpl(LevelDBTransaction* transaction, const IDBBackingStore::Cursor::CursorOptions& cursorOptions)
@@ -1593,6 +1611,12 @@ public:
     virtual PassRefPtr<IDBKey> primaryKey() const { return m_primaryKey; }
     virtual const IDBBackingStore::RecordIdentifier& recordIdentifier() const { ASSERT_NOT_REACHED(); return m_recordIdentifier; }
     virtual bool loadCurrentRow();
+
+protected:
+    virtual Vector<char> encodeKey(const IDBKey &key)
+    {
+        return IndexDataKey::encode(m_cursorOptions.databaseId, m_cursorOptions.objectStoreId, m_cursorOptions.indexId, key);
+    }
 
 private:
     IndexKeyCursorImpl(LevelDBTransaction* transaction, const IDBBackingStore::Cursor::CursorOptions& cursorOptions)
@@ -1679,6 +1703,12 @@ public:
     virtual const IDBBackingStore::RecordIdentifier& recordIdentifier() const { ASSERT_NOT_REACHED(); return m_recordIdentifier; }
     bool loadCurrentRow();
 
+protected:
+    virtual Vector<char> encodeKey(const IDBKey &key)
+    {
+        return IndexDataKey::encode(m_cursorOptions.databaseId, m_cursorOptions.objectStoreId, m_cursorOptions.indexId, key);
+    }
+
 private:
     IndexCursorImpl(LevelDBTransaction* transaction, const IDBBackingStore::Cursor::CursorOptions& cursorOptions)
         : IDBBackingStore::Cursor(transaction, cursorOptions)
@@ -1757,6 +1787,9 @@ bool IndexCursorImpl::loadCurrentRow()
 
 bool objectStoreCursorOptions(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange* range, IndexedDB::CursorDirection direction, IDBBackingStore::Cursor::CursorOptions& cursorOptions)
 {
+    cursorOptions.databaseId = databaseId;
+    cursorOptions.objectStoreId = objectStoreId;
+
     bool lowerBound = range && range->lower();
     bool upperBound = range && range->upper();
     cursorOptions.forward = (direction == IndexedDB::CursorNextNoDuplicate || direction == IndexedDB::CursorNext);
@@ -1807,6 +1840,10 @@ bool indexCursorOptions(LevelDBTransaction* transaction, int64_t databaseId, int
     ASSERT(transaction);
     if (!KeyPrefix::validIds(databaseId, objectStoreId, indexId))
         return false;
+
+    cursorOptions.databaseId = databaseId;
+    cursorOptions.objectStoreId = objectStoreId;
+    cursorOptions.indexId = indexId;
 
     bool lowerBound = range && range->lower();
     bool upperBound = range && range->upper();
