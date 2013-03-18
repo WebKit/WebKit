@@ -417,6 +417,12 @@ void BaseMultipleFieldsDateAndTimeInputType::updateInnerTextValue()
     updateClearButtonVisibility();
 }
 
+void BaseMultipleFieldsDateAndTimeInputType::valueAttributeChanged()
+{
+    if (!element()->hasDirtyValue())
+        updateInnerTextValue();
+}
+
 #if ENABLE(DATALIST_ELEMENT)
 void BaseMultipleFieldsDateAndTimeInputType::listAttributeTargetChanged()
 {

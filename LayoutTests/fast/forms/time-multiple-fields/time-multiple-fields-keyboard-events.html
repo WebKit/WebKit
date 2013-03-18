@@ -59,6 +59,7 @@ input.addEventListener('change', countEvents, false);
 beginTest('Digit keys');
 keyDown('7'); // -> 07:[--] --
 keyDown('5'); // -> 07:[05] --
+input.className = "CLASS";
 keyDown('6'); // -> 07:56 [--]
 shouldBeUndefined('eventsCounter.input');
 shouldBeUndefined('eventsCounter.change');

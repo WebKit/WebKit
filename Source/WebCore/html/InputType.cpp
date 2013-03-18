@@ -896,6 +896,10 @@ void InputType::updatePlaceholderText()
 {
 }
 
+void InputType::attributeChanged()
+{
+}
+
 void InputType::multipleAttributeChanged()
 {
 }
@@ -909,6 +913,10 @@ void InputType::readonlyAttributeChanged()
 }
 
 void InputType::requiredAttributeChanged()
+{
+}
+
+void InputType::valueAttributeChanged()
 {
 }
 

@@ -105,6 +105,7 @@ private:
     virtual bool shouldUseInputMethod() const OVERRIDE FINAL;
     virtual void stepAttributeChanged() OVERRIDE FINAL;
     virtual void updateInnerTextValue() OVERRIDE FINAL;
+    virtual void valueAttributeChanged() OVERRIDE;
     virtual void listAttributeTargetChanged() OVERRIDE FINAL;
     virtual void updateClearButtonVisibility() OVERRIDE FINAL;
 

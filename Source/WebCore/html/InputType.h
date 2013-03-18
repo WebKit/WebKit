@@ -271,10 +271,12 @@ public:
     virtual bool supportsReadOnly() const;
     virtual void updateInnerTextValue();
     virtual void updatePlaceholderText();
+    virtual void attributeChanged();
     virtual void multipleAttributeChanged();
     virtual void disabledAttributeChanged();
     virtual void readonlyAttributeChanged();
     virtual void requiredAttributeChanged();
+    virtual void valueAttributeChanged();
     virtual String defaultToolTip() const;
 #if ENABLE(DATALIST_ELEMENT)
     virtual void listAttributeTargetChanged();

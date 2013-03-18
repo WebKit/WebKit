@@ -63,6 +63,7 @@ protected:
     virtual bool shouldHaveSpinButton() const;
     virtual void createShadowSubtree() OVERRIDE;
     virtual void destroyShadowSubtree() OVERRIDE;
+    virtual void attributeChanged() OVERRIDE;
     virtual void disabledAttributeChanged() OVERRIDE;
     virtual void readonlyAttributeChanged() OVERRIDE;
     virtual bool supportsReadOnly() const OVERRIDE;

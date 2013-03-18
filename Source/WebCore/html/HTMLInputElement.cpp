@@ -665,6 +665,7 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
         setFormControlValueMatchesRenderer(false);
         setNeedsValidityCheck();
         m_valueAttributeWasUpdatedAfterParsing = !m_parsingInProgress;
+        m_inputType->valueAttributeChanged();
     } else if (name == checkedAttr) {
         // Another radio button in the same group might be checked by state
         // restore. We shouldn't call setChecked() even if this has the checked
@@ -773,7 +774,7 @@ void HTMLInputElement::parseAttribute(const QualifiedName& name, const AtomicStr
 #endif
     else
         HTMLTextFormControlElement::parseAttribute(name, value);
-    m_inputType->updateInnerTextValue();
+    m_inputType->attributeChanged();
 }
 
 void HTMLInputElement::finishParsingChildren()

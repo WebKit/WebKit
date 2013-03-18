@@ -316,6 +316,13 @@ void TextFieldInputType::destroyShadowSubtree()
     m_container.clear();
 }
 
+void TextFieldInputType::attributeChanged()
+{
+    // FIXME: Updating the inner text on any attribute update should
+    // be unnecessary. We should figure out what attributes affect.
+    updateInnerTextValue();
+}
+
 void TextFieldInputType::disabledAttributeChanged()
 {
     if (m_innerSpinButton)
