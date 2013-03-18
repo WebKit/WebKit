@@ -188,6 +188,10 @@ public:
     virtual bool requiresTextTrackRepresentation() const { return false; }
     virtual void setTextTrackRepresentation(TextTrackRepresentation*) { }
 #endif
+
+#if USE(GSTREAMER)
+    virtual void simulateAudioInterruption() { }
+#endif
 };
 
 }

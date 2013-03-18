@@ -455,6 +455,10 @@ public:
 
     static void requeryMediaEngines();
 
+#if USE(GSTREAMER)
+    virtual void simulateAudioInterruption();
+#endif
+
 private:
     MediaPlayer(MediaPlayerClient*);
     void loadWithNextMediaEngine(MediaPlayerFactory*);
