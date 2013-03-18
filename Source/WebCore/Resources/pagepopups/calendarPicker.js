@@ -29,9 +29,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME:
-//  - Touch event
-//  - Adjust hit target size for touch
 
 /**
  * @enum {number}
@@ -66,6 +63,13 @@ var global = {
 
 // ----------------------------------------------------------------
 // Utility functions
+
+/**
+ * @return {!bool}
+ */
+function hasInaccuratePointingDevice() {
+    return matchMedia("(pointer: coarse)").matches;
+}
 
 /**
  * @return {!string} lowercase locale name. e.g. "en-us"
@@ -1003,6 +1007,71 @@ function Animator() {
     this.id = Animator._lastId++;
     /**
      * @type {!number}
+     */
+    this.duration = 100;
+    /**
+     * @type {?function}
+     */
+    this.step = null;
+    /**
+     * @type {!boolean}
+     * @protected
+     */
+    this._isRunning = false;
+    /**
+     * @type {!number}
+     */
+    this.currentValue = 0;
+    /**
+     * @type {!number}
+     * @protected
+     */
+    this._lastStepTime = 0;
+}
+
+Animator.prototype = Object.create(EventEmitter.prototype);
+
+Animator._lastId = 0;
+
+Animator.EventTypeDidAnimationStop = "didAnimationStop";
+
+/**
+ * @return {!boolean}
+ */
+Animator.prototype.isRunning = function() {
+    return this._isRunning;
+};
+
+Animator.prototype.start = function() {
+    this._lastStepTime = Date.now();
+    this._isRunning = true;
+    AnimationManager.shared.add(this);
+};
+
+Animator.prototype.stop = function() {
+    if (!this._isRunning)
+        return;
+    this._isRunning = false;
+    AnimationManager.shared.remove(this);
+    this.dispatchEvent(Animator.EventTypeDidAnimationStop, this);
+};
+
+/**
+ * @param {!number} now
+ */
+Animator.prototype.onAnimationFrame = function(now) {
+    this._lastStepTime = now;
+    this.step(this);
+};
+
+/**
+ * @constructor
+ * @extends Animator
+ */
+function TransitionAnimator() {
+    Animator.call(this);
+    /**
+     * @type {!number}
      * @protected
      */
     this._from = 0;
@@ -1019,91 +1088,144 @@ function Animator() {
     /**
      * @type {!number}
      */
-    this.duration = 100;
-    /**
-     * @type {?function}
-     */
-    this.step = null;
-    /**
-     * @type {!number}
-     * @protected
-     */
-    this._lastStepTime = 0;
-    /**
-     * @type {!number}
-     */
     this.progress = 0.0;
-    /**
-     * @type {!number}
-     * @protected
-     */
-    this._isRunning = false;
     /**
      * @type {!function}
      */
     this.timingFunction = AnimationTimingFunction.Linear;
 }
 
-Animator.prototype = Object.create(EventEmitter.prototype);
-
-Animator._lastId = 0;
-
-Animator.EventTypeDidAnimationStop = "didAnimationStop";
-
-/**
- * @return {!boolean}
- */
-Animator.prototype.isRunning = function() {
-    return this._isRunning;
-};
+TransitionAnimator.prototype = Object.create(Animator.prototype);
 
 /**
  * @param {!number} value
  */
-Animator.prototype.setFrom = function(value) {
+TransitionAnimator.prototype.setFrom = function(value) {
     this._from = value;
     this._delta = this._to - this._from;
 };
 
+TransitionAnimator.prototype.start = function() {
+    console.assert(isFinite(this.duration));
+    this.progress = 0.0;
+    this.currentValue = this._from;
+    Animator.prototype.start.call(this);
+};
+
 /**
  * @param {!number} value
  */
-Animator.prototype.setTo = function(value) {
+TransitionAnimator.prototype.setTo = function(value) {
     this._to = value;
     this._delta = this._to - this._from;
-};
-
-Animator.prototype.start = function() {
-    this._lastStepTime = Date.now();
-    this.progress = 0.0;
-    this._isRunning = true;
-    this.currentValue = this._from;
-    AnimationManager.shared.add(this);
-};
-
-Animator.prototype.stop = function() {
-    if (!this._isRunning)
-        return;
-    this._isRunning = false;
-    this.currentValue = this._to;
-    this.step(this);
-    AnimationManager.shared.remove(this);
-    this.dispatchEvent(Animator.EventTypeDidAnimationStop, this);
 };
 
 /**
  * @param {!number} now
  */
-Animator.prototype.onAnimationFrame = function(now) {
+TransitionAnimator.prototype.onAnimationFrame = function(now) {
     this.progress += (now - this._lastStepTime) / this.duration;
-    if (this.progress >= 1.0) {
-        this.progress = 1.0;
+    this.progress = Math.min(1.0, this.progress);
+    this._lastStepTime = now;
+    this.currentValue = this.timingFunction(this.progress) * this._delta + this._from;
+    this.step(this);
+    if (this.progress === 1.0) {
         this.stop();
         return;
     }
-    this.currentValue = this.timingFunction(this.progress) * this._delta + this._from;
-    this.step(this);
+};
+
+/**
+ * @constructor
+ * @extends Animator
+ * @param {!number} initialVelocity
+ * @param {!number} initialValue
+ */
+function FlingGestureAnimator(initialVelocity, initialValue) {
+    Animator.call(this);
+    /**
+     * @type {!number}
+     */
+    this.initialVelocity = initialVelocity;
+    /**
+     * @type {!number}
+     */
+    this.initialValue = initialValue;
+    /**
+     * @type {!number}
+     * @protected
+     */
+    this._elapsedTime = 0;
+    var startVelocity = Math.abs(this.initialVelocity);
+    if (startVelocity > this._velocityAtTime(0))
+        startVelocity = this._velocityAtTime(0);
+    if (startVelocity < 0)
+        startVelocity = 0;
+    /**
+     * @type {!number}
+     * @protected
+     */
+    this._timeOffset = this._timeAtVelocity(startVelocity);
+    /**
+     * @type {!number}
+     * @protected
+     */
+    this._positionOffset = this._valueAtTime(this._timeOffset);
+    /**
+     * @type {!number}
+     */
+    this.duration = this._timeAtVelocity(0);
+}
+
+FlingGestureAnimator.prototype = Object.create(Animator.prototype);
+
+// Velocity is subject to exponential decay. These parameters are coefficients
+// that determine the curve.
+FlingGestureAnimator._P0 = -5707.62;
+FlingGestureAnimator._P1 = 0.172;
+FlingGestureAnimator._P2 = 0.0037;
+
+/**
+ * @param {!number} t
+ */
+FlingGestureAnimator.prototype._valueAtTime = function(t) {
+    return FlingGestureAnimator._P0 * Math.exp(-FlingGestureAnimator._P2 * t) - FlingGestureAnimator._P1 * t - FlingGestureAnimator._P0;
+};
+
+/**
+ * @param {!number} t
+ */
+FlingGestureAnimator.prototype._velocityAtTime = function(t) {
+    return -FlingGestureAnimator._P0 * FlingGestureAnimator._P2 * Math.exp(-FlingGestureAnimator._P2 * t) - FlingGestureAnimator._P1;
+};
+
+/**
+ * @param {!number} v
+ */
+FlingGestureAnimator.prototype._timeAtVelocity = function(v) {
+    return -Math.log((v + FlingGestureAnimator._P1) / (-FlingGestureAnimator._P0 * FlingGestureAnimator._P2)) / FlingGestureAnimator._P2;
+};
+
+FlingGestureAnimator.prototype.start = function() {
+    this._lastStepTime = Date.now();
+    Animator.prototype.start.call(this);
+};
+
+/**
+ * @param {!number} now
+ */
+FlingGestureAnimator.prototype.onAnimationFrame = function(now) {
+    this._elapsedTime += now - this._lastStepTime;
     this._lastStepTime = now;
+    if (this._elapsedTime + this._timeOffset >= this.duration) {
+        this.stop();
+        return;
+    }
+    var position = this._valueAtTime(this._elapsedTime + this._timeOffset) - this._positionOffset;
+    if (this.initialVelocity < 0)
+        position = -position;
+    this.currentValue = position + this.initialValue;
+    this.step(this);
 };
 
 /**
@@ -1209,15 +1331,26 @@ function ScrollView() {
      * @type {Animator}
      * @protected
      */
-    this._scrollAnimator = new Animator();
-    this._scrollAnimator.step = this.onScrollAnimatorStep;
-
+    this._scrollAnimator = null;
     /**
      * @type {?Object}
      */
     this.delegate = null;
+    /**
+     * @type {!number}
+     */
+    this._lastTouchPosition = 0;
+    /**
+     * @type {!number}
+     */
+    this._lastTouchVelocity = 0;
+    /**
+     * @type {!number}
+     */
+    this._lastTouchTimeStamp = 0;
 
     this.element.addEventListener("mousewheel", this.onMouseWheel, false);
+    this.element.addEventListener("touchstart", this.onTouchStart, false);
 
     /**
      * The content offset is partitioned so the it can go beyond the CSS limit
@@ -1233,6 +1366,55 @@ ScrollView.prototype = Object.create(View.prototype);
 ScrollView.PartitionHeight = 100000;
 ScrollView.ClassNameScrollView = "scroll-view";
 ScrollView.ClassNameScrollViewContent = "scroll-view-content";
+
+/**
+ * @param {!Event} event
+ */
+ScrollView.prototype.onTouchStart = function(event) {
+    var touch = event.touches[0];
+    this._lastTouchPosition = touch.clientY;
+    this._lastTouchVelocity = 0;
+    this._lastTouchTimeStamp = event.timeStamp;
+    if (this._scrollAnimator)
+        this._scrollAnimator.stop();
+    window.addEventListener("touchmove", this.onWindowTouchMove, false);
+    window.addEventListener("touchend", this.onWindowTouchEnd, false);
+};
+
+/**
+ * @param {!Event} event
+ */
+ScrollView.prototype.onWindowTouchMove = function(event) {
+    var touch = event.touches[0];
+    var deltaTime = event.timeStamp - this._lastTouchTimeStamp;
+    var deltaY = this._lastTouchPosition - touch.clientY;
+    this.scrollBy(deltaY, false);
+    this._lastTouchVelocity = deltaY / deltaTime;
+    this._lastTouchPosition = touch.clientY;
+    this._lastTouchTimeStamp = event.timeStamp;
+    event.stopPropagation();
+    event.preventDefault();
+};
+
+/**
+ * @param {!Event} event
+ */
+ScrollView.prototype.onWindowTouchEnd = function(event) {
+    if (Math.abs(this._lastTouchVelocity) > 0.01) {
+        this._scrollAnimator = new FlingGestureAnimator(this._lastTouchVelocity, this._contentOffset);
+        this._scrollAnimator.step = this.onFlingGestureAnimatorStep;
+        this._scrollAnimator.start();
+    }
+    window.removeEventListener("touchmove", this.onWindowTouchMove, false);
+    window.removeEventListener("touchend", this.onWindowTouchEnd, false);
+};
+
+/**
+ * @param {!Animator} animator
+ */
+ScrollView.prototype.onFlingGestureAnimatorStep = function(animator) {
+    this.scrollTo(animator.currentValue, false);
+};
 
 /**
  * @return {!Animator}
@@ -1296,6 +1478,10 @@ ScrollView.prototype.scrollTo = function(offset, animate) {
         this.setContentOffset(offset);
         return;
     }
+    if (this._scrollAnimator)
+        this._scrollAnimator.stop();
+    this._scrollAnimator = new TransitionAnimator();
+    this._scrollAnimator.step = this.onScrollAnimatorStep;
     this._scrollAnimator.setFrom(this._contentOffset);
     this._scrollAnimator.setTo(offset);
     this._scrollAnimator.duration = 300;
@@ -1764,6 +1950,7 @@ function ScrubbyScrollBar(scrollView) {
     this._timer = null;
     
     this.element.addEventListener("mousedown", this.onMouseDown, false);
+    this.element.addEventListener("touchstart", this.onTouchStart, false);
 }
 
 ScrubbyScrollBar.prototype = Object.create(View.prototype);
@@ -1773,6 +1960,48 @@ ScrubbyScrollBar.ThumbMargin = 2;
 ScrubbyScrollBar.ThumbHeight = 30;
 ScrubbyScrollBar.ClassNameScrubbyScrollBar = "scrubby-scroll-bar";
 ScrubbyScrollBar.ClassNameScrubbyScrollThumb = "scrubby-scroll-thumb";
+
+/**
+ * @param {?Event} event
+ */
+ScrubbyScrollBar.prototype.onTouchStart = function(event) {
+    var touch = event.touches[0];
+    this._setThumbPositionFromEventPosition(touch.clientY);
+    if (this._thumbStyleTopAnimator)
+        this._thumbStyleTopAnimator.stop();
+    this._timer = setInterval(this.onScrollTimer, ScrubbyScrollBar.ScrollInterval);
+    window.addEventListener("touchmove", this.onWindowTouchMove, false);
+    window.addEventListener("touchend", this.onWindowTouchEnd, false);
+    event.stopPropagation();
+    event.preventDefault();
+};
+
+/**
+ * @param {?Event} event
+ */
+ScrubbyScrollBar.prototype.onWindowTouchMove = function(event) {
+    var touch = event.touches[0];
+    this._setThumbPositionFromEventPosition(touch.clientY);
+    event.stopPropagation();
+    event.preventDefault();
+};
+
+/**
+ * @param {?Event} event
+ */
+ScrubbyScrollBar.prototype.onWindowTouchEnd = function(event) {
+    this._thumbStyleTopAnimator = new TransitionAnimator();
+    this._thumbStyleTopAnimator.step = this.onThumbStyleTopAnimationStep;
+    this._thumbStyleTopAnimator.setFrom(this.thumb.offsetTop);
+    this._thumbStyleTopAnimator.setTo((this._height - this._thumbHeight) / 2);
+    this._thumbStyleTopAnimator.timingFunction = AnimationTimingFunction.EaseInOut;
+    this._thumbStyleTopAnimator.duration = 100;
+    this._thumbStyleTopAnimator.start();
+
+    window.removeEventListener("touchmove", this.onWindowTouchMove, false);
+    window.removeEventListener("touchend", this.onWindowTouchEnd, false);
+    clearInterval(this._timer);
+};
 
 /**
  * @return {!number} Height of the view in pixels.
@@ -1806,12 +2035,12 @@ ScrubbyScrollBar.prototype.setThumbHeight = function(height) {
 };
 
 /**
- * @param {?Event} event
+ * @param {number} position
  */
-ScrubbyScrollBar.prototype._setThumbPositionFromEvent = function(event) {
+ScrubbyScrollBar.prototype._setThumbPositionFromEventPosition = function(position) {
     var thumbMin = ScrubbyScrollBar.ThumbMargin;
     var thumbMax = this._height - this._thumbHeight - ScrubbyScrollBar.ThumbMargin * 2;
-    var y = event.clientY - this.element.getBoundingClientRect().top - this.element.clientTop + this.element.scrollTop;
+    var y = position - this.element.getBoundingClientRect().top - this.element.clientTop + this.element.scrollTop;
     var thumbPosition = y - this._thumbHeight / 2;
     thumbPosition = Math.max(thumbPosition, thumbMin);
     thumbPosition = Math.min(thumbPosition, thumbMax);
@@ -1823,27 +2052,29 @@ ScrubbyScrollBar.prototype._setThumbPositionFromEvent = function(event) {
  * @param {?Event} event
  */
 ScrubbyScrollBar.prototype.onMouseDown = function(event) {
-    this._setThumbPositionFromEvent(event);
+    this._setThumbPositionFromEventPosition(event.clientY);
 
     window.addEventListener("mousemove", this.onWindowMouseMove, false);
     window.addEventListener("mouseup", this.onWindowMouseUp, false);
     if (this._thumbStyleTopAnimator)
         this._thumbStyleTopAnimator.stop();
     this._timer = setInterval(this.onScrollTimer, ScrubbyScrollBar.ScrollInterval);
+    event.stopPropagation();
+    event.preventDefault();
 };
 
 /**
  * @param {?Event} event
  */
 ScrubbyScrollBar.prototype.onWindowMouseMove = function(event) {
-    this._setThumbPositionFromEvent(event);
+    this._setThumbPositionFromEventPosition(event.clientY);
 };
 
 /**
  * @param {?Event} event
  */
 ScrubbyScrollBar.prototype.onWindowMouseUp = function(event) {
-    this._thumbStyleTopAnimator = new Animator();
+    this._thumbStyleTopAnimator = new TransitionAnimator();
     this._thumbStyleTopAnimator.step = this.onThumbStyleTopAnimationStep;
     this._thumbStyleTopAnimator.setFrom(this.thumb.offsetTop);
     this._thumbStyleTopAnimator.setTo((this._height - this._thumbHeight) / 2);
@@ -1886,6 +2117,8 @@ function YearListCell(shortMonthLabels) {
      */
     this.label = createElement("div", YearListCell.ClassNameLabel, "----");
     this.element.appendChild(this.label);
+    this.label.style.height = (YearListCell.Height - YearListCell.BorderBottomWidth) + "px";
+    this.label.style.lineHeight = (YearListCell.Height - YearListCell.BorderBottomWidth) + "px";
 
     /**
      * @type {!Array} Array of the 12 month button elements.
@@ -1920,10 +2153,11 @@ function YearListCell(shortMonthLabels) {
 
 YearListCell.prototype = Object.create(ListCell.prototype);
 
-YearListCell.Height = 25;
+YearListCell.Height = hasInaccuratePointingDevice() ? 31 : 25;
+YearListCell.BorderBottomWidth = 1;
 YearListCell.ButtonRows = 3;
 YearListCell.ButtonColumns = 4;
-YearListCell.SelectedHeight = 121;
+YearListCell.SelectedHeight = hasInaccuratePointingDevice() ? 127 : 121;
 YearListCell.ClassNameYearListCell = "year-list-cell";
 YearListCell.ClassNameLabel = "label";
 YearListCell.ClassNameMonthChooser = "month-chooser";
@@ -2028,6 +2262,7 @@ function YearListView(minimumMonth, maximumMonth) {
     this.element.addEventListener("mouseover", this.onMouseOver, false);
     this.element.addEventListener("mouseout", this.onMouseOut, false);
     this.element.addEventListener("keydown", this.onKeyDown, false);
+    this.element.addEventListener("touchstart", this.onTouchStart, false);
 }
 
 YearListView.prototype = Object.create(ListView.prototype);
@@ -2035,6 +2270,19 @@ YearListView.prototype = Object.create(ListView.prototype);
 YearListView.Height = YearListCell.SelectedHeight - 1;
 YearListView.EventTypeYearListViewDidHide = "yearListViewDidHide";
 YearListView.EventTypeYearListViewDidSelectMonth = "yearListViewDidSelectMonth";
+
+/**
+ * @param {?Event} event
+ */
+YearListView.prototype.onTouchStart = function(event) {
+    var touch = event.touches[0];
+    var monthButtonElement = enclosingNodeOrSelfWithClass(touch.target, YearListCell.ClassNameMonthButton);
+    if (!monthButtonElement)
+        return;
+    var cellElement = enclosingNodeOrSelfWithClass(monthButtonElement, YearListCell.ClassNameYearListCell);
+    var cell = cellElement.$view;
+    this.highlightMonth(new Month(cell.row + 1, parseInt(monthButtonElement.dataset.month, 10)));
+};
 
 /**
  * @param {?Event} event
@@ -2099,7 +2347,7 @@ YearListView.prototype._animateRow = function(row, direction) {
         fromValue = oldAnimator.currentValue;
     }
     var cell = this.cellAtRow(row);
-    var animator = new Animator();
+    var animator = new TransitionAnimator();
     animator.step = this.onCellHeightAnimatorStep;
     animator.setFrom(fromValue);
     animator.setTo(direction === YearListView.RowAnimationDirection.Opening ? YearListCell.SelectedHeight : YearListCell.Height);
@@ -2577,9 +2825,13 @@ function CalendarNavigationButton() {
      * @type {number} Interval between reapeating clicks in milliseconds.
      */
     this.reapeatingClicksInterval = CalendarNavigationButton.DefaultRepeatingClicksInterval;
+    /**
+     * @type {?number} The ID for the timeout that triggers the repeating clicks.
+     */
     this._timer = null;
     this.element.addEventListener("click", this.onClick, false);
     this.element.addEventListener("mousedown", this.onMouseDown, false);
+    this.element.addEventListener("touchstart", this.onTouchStart, false);
 };
 
 CalendarNavigationButton.prototype = Object.create(View.prototype);
@@ -2609,7 +2861,30 @@ CalendarNavigationButton.prototype.onClick = function(event) {
 /**
  * @param {?Event} event
  */
+CalendarNavigationButton.prototype.onTouchStart = function(event) {
+    if (this._timer !== null)
+        return;
+    this._timer = setTimeout(this.onRepeatingClick, this.repeatingClicksStartingThreshold);
+    window.addEventListener("touchend", this.onWindowTouchEnd, false);
+};
+
+/**
+ * @param {?Event} event
+ */
+CalendarNavigationButton.prototype.onWindowTouchEnd = function(event) {
+    if (this._timer === null)
+        return;
+    clearTimeout(this._timer);
+    this._timer = null;
+    window.removeEventListener("touchend", this.onWindowMouseUp, false);
+};
+
+/**
+ * @param {?Event} event
+ */
 CalendarNavigationButton.prototype.onMouseDown = function(event) {
+    if (this._timer !== null)
+        return;
     this._timer = setTimeout(this.onRepeatingClick, this.repeatingClicksStartingThreshold);
     window.addEventListener("mouseup", this.onWindowMouseUp, false);
 };
@@ -2618,7 +2893,10 @@ CalendarNavigationButton.prototype.onMouseDown = function(event) {
  * @param {?Event} event
  */
 CalendarNavigationButton.prototype.onWindowMouseUp = function(event) {
+    if (this._timer === null)
+        return;
     clearTimeout(this._timer);
+    this._timer = null;
     window.removeEventListener("mouseup", this.onWindowMouseUp, false);
 };
 
@@ -2743,7 +3021,7 @@ function DayCell() {
 DayCell.prototype = Object.create(ListCell.prototype);
 
 DayCell.Width = 34;
-DayCell.Height = 20;
+DayCell.Height = hasInaccuratePointingDevice() ? 34 : 20;
 DayCell.BorderWidth = 1;
 DayCell.ClassNameDayCell = "day-cell";
 DayCell.ClassNameHighlighted = "highlighted";
@@ -3046,8 +3324,10 @@ function CalendarTableView(calendarPicker) {
     this.element.addEventListener("mouseover", this.onMouseOver, false);
     this.element.addEventListener("mouseout", this.onMouseOut, false);
 
-    // you shouldn't be able to use the mouse wheel to scroll.
+    // You shouldn't be able to use the mouse wheel to scroll.
     this.scrollView.element.removeEventListener("mousewheel", this.scrollView.onMouseWheel, false);
+    // You shouldn't be able to do gesture scroll.
+    this.scrollView.element.removeEventListener("touchstart", this.scrollView.onTouchStart, false);
 }
 
 CalendarTableView.prototype = Object.create(ListView.prototype);

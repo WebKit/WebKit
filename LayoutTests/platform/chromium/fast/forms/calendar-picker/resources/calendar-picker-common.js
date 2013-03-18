@@ -88,11 +88,15 @@ function highlightedMonthButton() {
     }).sort().join();
 }
 
-function clickMonthPopupButton() {
+function hoverOverMonthPopupButton() {
     skipAnimation();
     var buttonElement = popupWindow.global.picker.calendarHeaderView.monthPopupButton.element;
     var offset = cumulativeOffset(buttonElement);
     eventSender.mouseMoveTo(offset[0] + buttonElement.offsetWidth / 2, offset[1] + buttonElement.offsetHeight / 2);
+}
+
+function clickMonthPopupButton() {
+    hoverOverMonthPopupButton();
     eventSender.mouseDown();
     eventSender.mouseUp();
 }
@@ -150,5 +154,8 @@ function checkYearListViewScrollOffset() {
 }
 
 function isCalendarTableScrollingWithAnimation() {
-    return popupWindow.global.picker.calendarTableView.scrollView.scrollAnimator().isRunning();
+    var animator = popupWindow.global.picker.calendarTableView.scrollView.scrollAnimator();
+    if (!animator)
+        return false;
+    return animator.isRunning();
 }

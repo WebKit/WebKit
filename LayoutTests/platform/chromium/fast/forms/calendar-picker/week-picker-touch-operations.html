@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/common.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+<script src="resources/calendar-picker-common.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<input type=week id=week value="2000-W01">
+<script>
+description("Tests if calendar picker mouse operations work as expected.");
+
+debug('Check that page popup doesn\'t exist at first.');
+shouldBeNull('document.getElementById("mock-page-popup")');
+
+openPicker(document.getElementById('week'), test);
+
+function test() {
+    debug('Open the month popup.');
+    shouldBeFalse('popupWindow.global.picker.monthPopupView.isVisible');
+    clickMonthPopupButton();
+    shouldBeTrue('popupWindow.global.picker.monthPopupView.isVisible');
+
+    debug('Check that touch swiping scrolls the list in the month popup.');
+
+    window.internals.settings.setTouchEventEmulationEnabled(true);
+    checkYearListViewScrollOffset();
+
+    popupWindow.global.picker.monthPopupView.yearListView.element.addEventListener('touchend', testAfterSwipingDown, false);
+    hoverOverMonthButton(2000, 0);
+    eventSender.mouseDown();
+    hoverOverMonthButton(2000, 11);
+    eventSender.mouseUp();
+}
+
+function testAfterSwipingDown() {
+    shouldBeTrue('checkYearListViewScrollOffset() > 0');
+    popupWindow.global.picker.monthPopupView.yearListView.element.removeEventListener('touchend', testAfterSwipingDown, false);
+    setTimeout(testSwipingUp, 0);
+}
+
+function testSwipingUp() {
+    checkYearListViewScrollOffset();
+    popupWindow.global.picker.monthPopupView.yearListView.element.addEventListener('touchend', testAfterSwipingUp, false);
+    eventSender.mouseDown();
+    hoverOverMonthPopupButton();
+    eventSender.mouseUp();
+}
+
+function testAfterSwipingUp() {
+    shouldBeTrue('checkYearListViewScrollOffset() < 0');
+    popupWindow.global.picker.monthPopupView.yearListView.element.removeEventListener('touchend', testAfterSwipingUp, false);
+    window.internals.settings.setTouchEventEmulationEnabled(false);
+    finishJSTest();
+}
+</script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
