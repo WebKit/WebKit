@@ -49,8 +49,6 @@ bool AccessibilityController::addNotificationListener(JSValueRef functionCallbac
     if (!functionCallback)
         return false;
 
-    // Mac programmers should not be adding more than one global notification listener.
-    // Other platforms may be different.
     if (m_globalNotificationHandler)
         return false;
     m_globalNotificationHandler = [[AccessibilityNotificationHandler alloc] init];
@@ -62,11 +60,22 @@ bool AccessibilityController::addNotificationListener(JSValueRef functionCallbac
 
 bool AccessibilityController::removeNotificationListener()
 {
-    // Mac programmers should not be trying to remove a listener that's already removed.
     ASSERT(m_globalNotificationHandler);
+    
+    [m_globalNotificationHandler.get() stopObserving];
     m_globalNotificationHandler.clear();
 
     return true;
+}
+
+void AccessibilityController::logAccessibilityEvents()
+{
+}
+
+void AccessibilityController::resetToConsistentState()
+{
+    if (m_globalNotificationHandler)
+        removeNotificationListener();
 }
 
 static id findAccessibleObjectById(id obj, NSString *idAttribute)

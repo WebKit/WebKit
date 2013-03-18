@@ -75,7 +75,7 @@
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self stopObserving];
 
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(WTR::InjectedBundle::shared().page()->page());
     JSContextRef context = WKBundleFrameGetJavaScriptContext(mainFrame);
@@ -110,6 +110,11 @@
     ASSERT(webAccessibilityObjectWrapperClass);
     [webAccessibilityObjectWrapperClass accessibilitySetShouldRepostNotifications:YES];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_notificationReceived:) name:@"AXDRTNotification" object:nil];
+}
+
+- (void)stopObserving
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)_notificationReceived:(NSNotification *)notification

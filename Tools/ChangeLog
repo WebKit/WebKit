@@ -1,3 +1,33 @@
+2013-03-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Disable accessibility notifications after each test
+        https://bugs.webkit.org/show_bug.cgi?id=112579
+
+        Reviewed by Tim Horton.
+        
+        In WebKitTestRunner, if any tests triggered accessibility notifications,
+        the global notification handler would thereafter be active, and fire
+        notifications for all subsequent tests.
+        
+        Fix by implementing AccessibilityController::resetToConsistentState() for
+        Mac, and using it to clear the global notification handler.
+
+        * WebKitTestRunner/InjectedBundle/AccessibilityController.cpp:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityControllerMac.mm:
+        (WTR::AccessibilityController::addNotificationListener): Remove stupid comment.
+        (WTR::AccessibilityController::removeNotificationListener): Explicitly call
+        -stopObserving so that unregistering the observer doesn't rely on object lifetimes
+        (e.g. because of -autorelease).
+        (WTR::AccessibilityController::logAccessibilityEvents): Stub.
+        (WTR::AccessibilityController::resetToConsistentState): Remove the notification listener
+        if there is one.
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityNotificationHandler.h:
+        Add -stopObserving
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityNotificationHandler.mm:
+        (-[AccessibilityNotificationHandler dealloc]): Call -stopObserving
+        (-[AccessibilityNotificationHandler stopObserving]): Unregister from the notification
+        center.
+
 2013-03-18  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove WebGraphicsContext3DInProcessImpl support from DRT.
