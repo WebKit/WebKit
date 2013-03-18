@@ -68,6 +68,9 @@ using namespace HTMLNames;
 // Initialize default font size.
 float RenderThemeEfl::defaultFontSize = 16.0f;
 
+static const float minCancelButtonSize = 5;
+static const float maxCancelButtonSize = 21;
+
 // Constants for progress tag animation.
 // These values have been copied from RenderThemeGtk.cpp
 static const int progressAnimationFrames = 10;
@@ -947,6 +950,14 @@ void RenderThemeEfl::adjustSearchFieldCancelButtonStyle(StyleResolver* styleReso
     adjustSizeConstraints(style, SearchFieldCancelButton);
     style->resetBorder();
     style->setWhiteSpace(PRE);
+
+    // Logic taken from RenderThemeChromium.cpp.
+    // Scale the button size based on the font size.
+    float fontScale = style->fontSize() / defaultFontSize;
+    int cancelButtonSize = lroundf(std::min(std::max(minCancelButtonSize, defaultFontSize * fontScale), maxCancelButtonSize));
+
+    style->setWidth(Length(cancelButtonSize, Fixed));
+    style->setHeight(Length(cancelButtonSize, Fixed));
 }
 
 bool RenderThemeEfl::paintSearchFieldCancelButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)

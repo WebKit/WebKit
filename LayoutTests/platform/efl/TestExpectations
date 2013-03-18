@@ -849,10 +849,6 @@ webkit.org/b/85877 fast/forms/select-style.html [ Pass ]
 # EFL port needs Pasteboard implementation, needs baselines.
 webkit.org/b/84338 fast/forms/plaintext-mode-2.html [ Pass ]
 
-# Cancel mark in search field is not working.
-webkit.org/b/94880 fast/forms/search-cancel-button-style-sharing.html [ Pass ]
-webkit.org/b/94880 fast/forms/search-rtl.html [ Pass ]
-
 # Controls are not zoomed.
 webkit.org/b/102367 fast/forms/zoomed-controls.html [ Pass ]
 

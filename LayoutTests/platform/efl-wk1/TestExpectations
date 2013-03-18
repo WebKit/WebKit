@@ -193,6 +193,10 @@ Bug(EFL) fast/frames/flattening/iframe-flattening-out-of-view-and-scroll.html [ 
 Bug(EFL) fast/frames/flattening/iframe-flattening-out-of-view-scroll-and-relayout.html [ ImageOnlyFailure ]
 Bug(EFL) fast/frames/flattening/iframe-flattening-simple.html [ Failure ]
  
+# Cancel mark in search field doesn't work on wk1 pixel test
+Bug(EFL) fast/forms/search-cancel-button-style-sharing.html [ ImageOnlyFailure ]
+Bug(EFL) fast/forms/search-rtl.html [ ImageOnlyFailure ]
+
 # EFL's DRT explicitly disables X11 use
 webkit.org/b/98231 fast/dom/Window/Plug-ins.html [ Failure ]
 webkit.org/b/98231 fast/frames/sandboxed-iframe-about-blank.html [ Failure ]

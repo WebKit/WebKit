@@ -10,19 +10,19 @@ layer at (0,0) size 800x600
         RenderTextControl {INPUT} at (2,2) size 192x28 [bgcolor=#FFFFFF]
           RenderFlexibleBox {DIV} at (4,6) size 185x18
             RenderBlock {DIV} at (0,9) size 0x0
-            RenderBlock {DIV} at (0,0) size 185x18
-            RenderBlock {DIV} at (185,9) size 0x0
+            RenderBlock {DIV} at (0,0) size 169x18
+            RenderBlock {DIV} at (169,1) size 16x16
         RenderText {#text} at (196,8) size 4x17
           text run at (196,8) width 4: " "
         RenderTextControl {INPUT} at (202,2) size 192x28 [bgcolor=#FFFFFF]
           RenderFlexibleBox {DIV} at (4,6) size 185x18
             RenderBlock {DIV} at (0,9) size 0x0
-            RenderBlock {DIV} at (0,0) size 185x18
-            RenderBlock {DIV} at (185,9) size 0x0
+            RenderBlock {DIV} at (0,0) size 169x18
+            RenderBlock {DIV} at (169,1) size 16x16
         RenderText {#text} at (0,0) size 0x0
-layer at (14,50) size 185x18
-  RenderBlock {DIV} at (0,0) size 185x18
-layer at (214,50) size 185x18
-  RenderBlock {DIV} at (0,0) size 185x18
+layer at (14,50) size 169x18
+  RenderBlock {DIV} at (0,0) size 169x18
+layer at (214,50) size 169x18
+  RenderBlock {DIV} at (0,0) size 169x18
     RenderText {#text} at (0,0) size 56x17
       text run at (0,0) width 56: "this one"
