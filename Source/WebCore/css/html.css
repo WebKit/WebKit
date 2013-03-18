@@ -453,7 +453,7 @@ input[type="search"]::-webkit-textfield-decoration-container {
 input::-webkit-clear-button {
     -webkit-appearance: searchfield-cancel-button;
     display: inline-block;
-    -webkit-box-flex: 0;
+    -webkit-flex: none;
     -webkit-user-modify: read-only !important;
     margin-left: 2px;
 }
