@@ -81,7 +81,11 @@ public:
 
     // Create a shared memory object from the given handle and the requested protection. Will return 0 on failure.
     static PassRefPtr<SharedMemory> create(const Handle&, Protection);
-    
+
+    // Create a shared memory object with the given size by vm_copy'ing the given buffer.
+    // Will return 0 on failure.
+    static PassRefPtr<SharedMemory> createWithVMCopy(void*, size_t);
+
 #if OS(WINDOWS)
     static PassRefPtr<SharedMemory> adopt(HANDLE, size_t, Protection);
 #endif

@@ -92,6 +92,11 @@ static inline mach_vm_address_t toVMAddress(void* pointer)
     
 PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
 {
+    return SharedMemory::createWithVMCopy(0, size);
+}
+
+PassRefPtr<SharedMemory> SharedMemory::createWithVMCopy(void* data, size_t size)
+{
     ASSERT(size);
 
     mach_vm_address_t address;
@@ -99,6 +104,15 @@ PassRefPtr<SharedMemory> SharedMemory::create(size_t size)
     if (kr != KERN_SUCCESS) {
         LOG_ERROR("Failed to allocate mach_vm_allocate shared memory (%zu bytes). %s (%x)", size, mach_error_string(kr), kr); 
         return 0;
+    }
+    
+    if (data) {
+        kr = mach_vm_copy(mach_task_self(), toVMAddress(data), round_page(size), address);
+        if (kr != KERN_SUCCESS) {
+            LOG_ERROR("Failed to vm_copy in to shared memory (%zu bytes). %s (%x)", size, mach_error_string(kr), kr); 
+            mach_vm_deallocate(mach_task_self(), address, round_page(size));
+            return 0;
+        }
     }
 
     // Create a Mach port that represents the shared memory.

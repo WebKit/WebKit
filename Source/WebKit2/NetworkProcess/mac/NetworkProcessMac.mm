@@ -29,6 +29,7 @@
 #if ENABLE(NETWORK_PROCESS)
 
 #import "NetworkProcessCreationParameters.h"
+#import "NetworkResourceLoader.h"
 #import "PlatformCertificateInfo.h"
 #import "SandboxExtension.h"
 #import "SandboxInitializationParameters.h"
@@ -44,6 +45,12 @@
 
 #if USE(SECURITY_FRAMEWORK)
 #import "SecItemShim.h"
+#endif
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+typedef struct _CFURLCache* CFURLCacheRef;
+extern "C" CFURLCacheRef CFURLCacheCopySharedURLCache();
+extern "C" void _CFURLCacheSetMinSizeForVMCachedResource(CFURLCacheRef, CFIndex);
 #endif
 
 using namespace WebCore;
@@ -119,6 +126,14 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     if (!parameters.httpProxy.isNull() || !parameters.httpsProxy.isNull())
         overrideSystemProxies(parameters.httpProxy, parameters.httpsProxy);
+#endif
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    RetainPtr<CFURLCacheRef> cache = adoptCF(CFURLCacheCopySharedURLCache());
+    if (!cache)
+        return;
+
+    _CFURLCacheSetMinSizeForVMCachedResource(cache.get(), NetworkResourceLoader::fileBackedResourceMinimumSize());
 #endif
 }
 

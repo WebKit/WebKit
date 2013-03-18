@@ -1,3 +1,43 @@
+2013-03-18  Brady Eidson  <beidson@apple.com>
+
+        NetworkProcess should send vm_copied, mmap'ed memory to WebProcesses when a 
+        resource is already in the disk cache.
+        <rdar://problem/13414153> and https://bugs.webkit.org/show_bug.cgi?id=112387
+
+        Reviewed by Geoff Garen.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::sendAbortingOnFailure):
+        (WebKit::NetworkResourceLoader::didReceiveResponse): After notifying about the response,
+          call platformDidReceiveResponse.
+        * NetworkProcess/NetworkResourceLoader.h:
+
+        * NetworkProcess/mac/NetworkResourceLoaderMac.mm: Added.
+        (WebKit::NetworkResourceLoader::platformDidReceiveResponse): Attempt to pull a filesystem
+          mmap'ed buffer from the CFNetwork cache and - if it exists - abort the traditional load
+          and send that to the WebProcess instead.
+        (WebKit::NetworkResourceLoader:: fileBackedResourceMinimumSize): For now, use the VM page size.
+
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess): Set the threshold for what
+          should be backed by a file on disk instead of stored in the database.
+
+        Change SharedMemory to do a vm_copy if a previously existing buffer is being passed in:
+        * Platform/SharedMemory.h:
+        * Platform/mac/SharedMemoryMac.cpp:
+        (WebKit::SharedMemory::create):
+        (WebKit::SharedMemory::createWithVMCopy):
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::shareableResourceDeallocate):
+        (WebKit::createShareableResourceDeallocator):
+        (WebKit::WebResourceLoader::didReceiveResource): Create a special CFDataRef whose buffer is
+          backed by a ShareableResource to send to the ResourceLoader in one chunk.
+
+        * Shared/ShareableResource.h: Fix some comments.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-03-18  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][EFL] Fix code wrapping WKPageGroupRef

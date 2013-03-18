@@ -36,6 +36,7 @@
 #include "NetworkResourceLoadParameters.h"
 #include "PlatformCertificateInfo.h"
 #include "RemoteNetworkingContext.h"
+#include "ShareableResource.h"
 #include "SharedMemory.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebResourceLoaderMessages.h"
@@ -167,10 +168,12 @@ void NetworkResourceLoader::connectionToWebProcessDidClose()
     cleanup();
 }
 
-template<typename U> void NetworkResourceLoader::sendAbortingOnFailure(const U& message)
+template<typename U> bool NetworkResourceLoader::sendAbortingOnFailure(const U& message)
 {
-    if (!send(message))
+    bool result = send(message);
+    if (!result)
         abortInProgressLoad();
+    return result;
 }
 
 template<typename U> bool NetworkResourceLoader::sendSyncAbortingOnFailure(const U& message, const typename U::Reply& reply)
@@ -196,7 +199,11 @@ void NetworkResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceRe
     // FIXME (NetworkProcess): Cache the response.
     if (FormData* formData = request().httpBody())
         formData->removeGeneratedFilesIfNeeded();
-    sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponseWithCertificateInfo(response, PlatformCertificateInfo(response)));
+
+    if (!sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponseWithCertificateInfo(response, PlatformCertificateInfo(response))))
+        return;
+
+    platformDidReceiveResponse(response);
 }
 
 void NetworkResourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int encodedDataLength)

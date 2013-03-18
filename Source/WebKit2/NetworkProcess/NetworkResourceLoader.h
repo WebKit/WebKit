@@ -84,6 +84,7 @@ public:
 #endif
 
 #if PLATFORM(MAC)
+    static size_t fileBackedResourceMinimumSize();
 #if USE(CFNETWORK)
     virtual CFCachedURLResponseRef willCacheResponse(WebCore::ResourceHandle*, CFCachedURLResponseRef) OVERRIDE;
 #else
@@ -98,13 +99,15 @@ private:
     void scheduleCleanupOnMainThread();
     static void performCleanups(void*);
     void cleanup();
+    
+    void platformDidReceiveResponse(const WebCore::ResourceResponse&);
 
-    template<typename U> void sendAbortingOnFailure(const U& message);
+    template<typename U> bool sendAbortingOnFailure(const U& message);
     template<typename U> bool sendSyncAbortingOnFailure(const U& message, const typename U::Reply& reply);
     void abortInProgressLoad();
 
     RefPtr<RemoteNetworkingContext> m_networkingContext;
-    RefPtr<WebCore::ResourceHandle> m_handle;    
+    RefPtr<WebCore::ResourceHandle> m_handle;
 };
 
 } // namespace WebKit

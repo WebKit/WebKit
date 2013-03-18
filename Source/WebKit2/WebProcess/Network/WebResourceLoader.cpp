@@ -35,6 +35,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
 #include "WebProcess.h"
+#include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceLoader.h>
 
@@ -106,18 +107,46 @@ void WebResourceLoader::didFailResourceLoad(const ResourceError& error)
     m_coreLoader->didFail(error);
 }
 
+static void shareableResourceDeallocate(void *ptr, void *info)
+{
+    ShareableResource* resource = static_cast<ShareableResource*>(info);
+    resource->deref();
+}
+    
+static CFAllocatorRef createShareableResourceDeallocator(PassRefPtr<ShareableResource> resource)
+{
+    CFAllocatorContext context = { 0,
+        resource.leakRef(),
+        NULL, // retain
+        NULL, // release
+        NULL, // copyDescription
+        NULL, // allocate
+        NULL, // reallocate
+        shareableResourceDeallocate,
+        NULL,
+    };
+
+    return CFAllocatorCreate(kCFAllocatorDefault, &context);
+}
+
 void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& handle, double finishTime)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveResource for '%s'", m_coreLoader->url().string().utf8().data());
 
     RefPtr<ShareableResource> resource = ShareableResource::create(handle);
+    if (!resource) {
+        LOG_ERROR("Unabled to recreate the ShareableResource sent from the network process.");
+        m_coreLoader->didFail(internalError(m_coreLoader->request().url()));
+        return;
+    }
 
     // Only send data to the didReceiveData callback if it exists.
-    if (!resource->size()) {
-        // FIXME (NetworkProcess): Give ResourceLoader the ability to take ResourceBuffer arguments.
-        // That will allow us to pass it along to CachedResources and allow them to hang on to the shared memory behind the scenes.
-        // FIXME (NetworkProcess): Pass along the correct value for encodedDataLength.
-        m_coreLoader->didReceiveData(reinterpret_cast<const char*>(resource->data()), resource->size(), -1 /* encodedDataLength */ , DataPayloadWholeResource);
+    if (resource->size()) {
+        RetainPtr<CFAllocatorRef> deallocator(AdoptCF, createShareableResourceDeallocator(resource));
+        RetainPtr<CFDataRef> data(AdoptCF, CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(resource->data()), static_cast<CFIndex>(resource->size()), deallocator.get()));
+
+        RefPtr<SharedBuffer> buffer = SharedBuffer::wrapCFData(data.get());
+        m_coreLoader->didReceiveBuffer(buffer.get(), buffer->size(), DataPayloadWholeResource);
     }
 
     m_coreLoader->didFinishLoading(finishTime);
