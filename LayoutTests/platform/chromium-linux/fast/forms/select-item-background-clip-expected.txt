@@ -17,6 +17,6 @@ layer at (0,0) size 800x600
         RenderText {#text} at (163,20) size 4x19
           text run at (163,20) width 4: "."
       RenderBlock (anonymous) at (0,56) size 784x67
-        RenderListBox {SELECT} at (2,0) size 60x67 [bgcolor=#DDDDDD] [border: (3px solid #0000FF)]
+        RenderListBox {SELECT} at (2,0) size 60x67 [bgcolor=#FFFFFF] [border: (3px solid #0000FF)]
         RenderText {#text} at (0,0) size 0x0
         RenderText {#text} at (0,0) size 0x0
