@@ -91,8 +91,8 @@ layer at (0,0) size 800x600
         RenderTextControl {INPUT} at (46,338) size 192x28 [bgcolor=#FFFFFF]
           RenderFlexibleBox {DIV} at (4,6) size 185x18
             RenderBlock {DIV} at (0,9) size 0x0
-            RenderBlock {DIV} at (0,0) size 185x18
-            RenderBlock {DIV} at (185,9) size 0x0
+            RenderBlock {DIV} at (0,0) size 169x18
+            RenderBlock {DIV} at (169,1) size 16x16
         RenderText {#text} at (0,0) size 0x0
 layer at (50,34) size 185x18
   RenderBlock {DIV} at (4,6) size 185x18
@@ -102,5 +102,5 @@ layer at (63,306) size 185x18
   RenderBlock {DIV} at (4,6) size 185x18
 layer at (78,338) size 185x18
   RenderBlock {DIV} at (4,6) size 185x18
-layer at (58,370) size 185x18
-  RenderBlock {DIV} at (0,0) size 185x18
+layer at (58,370) size 169x18
+  RenderBlock {DIV} at (0,0) size 169x18

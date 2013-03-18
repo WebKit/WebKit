@@ -1,4 +1,4 @@
-layer at (0,0) size 951x585
+layer at (0,0) size 955x585
   RenderView at (0,0) size 800x585
 layer at (0,0) size 800x585
   RenderBlock {HTML} at (0,0) size 800x585
@@ -13,20 +13,20 @@ layer at (0,0) size 800x585
               RenderTextControl {INPUT} at (1,3) size 192x28 [bgcolor=#FFFFFF]
                 RenderFlexibleBox {DIV} at (4,6) size 185x18
                   RenderBlock {DIV} at (0,9) size 0x0
-                  RenderBlock {DIV} at (0,0) size 185x18
-                  RenderBlock {DIV} at (185,9) size 0x0
+                  RenderBlock {DIV} at (0,0) size 169x18
+                  RenderBlock {DIV} at (169,1) size 16x16
             RenderTableCell {TD} at (196,1) size 9x34 [r=0 c=1 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 7x28 [bgcolor=#FFFFFF]
                 RenderFlexibleBox {DIV} at (4,6) size 0x18
                   RenderBlock {DIV} at (0,9) size 0x0
                   RenderBlock {DIV} at (0,0) size 0x18
-                  RenderBlock {DIV} at (0,9) size 0x0
+                  RenderBlock {DIV} at (0,1) size 16x16
             RenderTableCell {TD} at (206,1) size 9x34 [r=0 c=2 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 7x28 [bgcolor=#FFFFFF]
                 RenderFlexibleBox {DIV} at (4,6) size 0x18
                   RenderBlock {DIV} at (0,9) size 0x0
                   RenderBlock {DIV} at (0,0) size 0x18
-                  RenderBlock {DIV} at (0,9) size 0x0
+                  RenderBlock {DIV} at (0,1) size 16x16
             RenderTableCell {TD} at (216,8) size 567x20 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x17
                 text run at (1,1) width 4: " "
@@ -40,28 +40,28 @@ layer at (0,0) size 800x585
               RenderTextControl {INPUT} at (1,3) size 912x28 [bgcolor=#FFFFFF]
                 RenderFlexibleBox {DIV} at (4,6) size 905x18
                   RenderBlock {DIV} at (0,9) size 0x0
-                  RenderBlock {DIV} at (0,0) size 905x18
-                  RenderBlock {DIV} at (905,9) size 0x0
+                  RenderBlock {DIV} at (0,0) size 889x18
+                  RenderBlock {DIV} at (889,1) size 16x16
             RenderTableCell {TD} at (916,1) size 9x34 [r=0 c=1 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 7x28 [bgcolor=#FFFFFF]
                 RenderFlexibleBox {DIV} at (4,6) size 0x18
                   RenderBlock {DIV} at (0,9) size 0x0
                   RenderBlock {DIV} at (0,0) size 0x18
-                  RenderBlock {DIV} at (0,9) size 0x0
+                  RenderBlock {DIV} at (0,1) size 16x16
             RenderTableCell {TD} at (926,1) size 9x34 [r=0 c=2 rs=1 cs=1]
               RenderTextControl {INPUT} at (1,3) size 7x28 [bgcolor=#FFFFFF]
                 RenderFlexibleBox {DIV} at (4,6) size 0x18
                   RenderBlock {DIV} at (0,9) size 0x0
                   RenderBlock {DIV} at (0,0) size 0x18
-                  RenderBlock {DIV} at (0,9) size 0x0
+                  RenderBlock {DIV} at (0,1) size 16x16
             RenderTableCell {TD} at (936,8) size 6x20 [r=0 c=3 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x17
                 text run at (1,1) width 4: " "
-layer at (14,36) size 185x18
-  RenderBlock {DIV} at (0,0) size 185x18
+layer at (14,36) size 169x18
+  RenderBlock {DIV} at (0,0) size 169x18
     RenderText {#text} at (0,0) size 67x17
       text run at (0,0) width 67: "New Mail"
-layer at (14,108) size 905x18
-  RenderBlock {DIV} at (0,0) size 905x18
+layer at (14,108) size 889x18
+  RenderBlock {DIV} at (0,0) size 889x18
     RenderText {#text} at (0,0) size 67x17
       text run at (0,0) width 67: "New Mail"

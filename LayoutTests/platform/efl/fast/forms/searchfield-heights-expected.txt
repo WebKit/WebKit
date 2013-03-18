@@ -9,32 +9,32 @@ layer at (0,0) size 800x600
       RenderTextControl {INPUT} at (0,117) size 69x10 [bgcolor=#FFFFFF]
         RenderFlexibleBox {DIV} at (4,2) size 62x8
           RenderBlock {DIV} at (0,3) size 0x1
-          RenderBlock {DIV} at (0,0) size 62x7
-          RenderBlock {DIV} at (62,3) size 0x1
+          RenderBlock {DIV} at (0,0) size 56x7
+          RenderBlock {DIV} at (56,0) size 6x7
       RenderText {#text} at (69,113) size 4x17
         text run at (69,113) width 4: " "
       RenderTextControl {INPUT} at (75,101) size 173x40 [bgcolor=#FFFFFF]
         RenderFlexibleBox {DIV} at (4,6) size 166x30
           RenderBlock {DIV} at (0,15) size 0x0
-          RenderBlock {DIV} at (0,6) size 166x18
-          RenderBlock {DIV} at (166,15) size 0x0
+          RenderBlock {DIV} at (0,6) size 151x18
+          RenderBlock {DIV} at (151,7) size 15x16
       RenderText {#text} at (250,113) size 4x17
         text run at (250,113) width 4: " "
       RenderTextControl {INPUT} at (256,18) size 316x200 [bgcolor=#FFFFFF]
         RenderFlexibleBox {DIV} at (4,6) size 309x190
           RenderBlock {DIV} at (0,95) size 0x0
-          RenderBlock {DIV} at (0,79) size 309x32
-          RenderBlock {DIV} at (309,95) size 0x0
+          RenderBlock {DIV} at (0,79) size 288x32
+          RenderBlock {DIV} at (288,84) size 21x22
       RenderText {#text} at (0,0) size 0x0
-layer at (12,128) size 62x7
-  RenderBlock {DIV} at (0,0) size 62x7
+layer at (12,128) size 56x7
+  RenderBlock {DIV} at (0,0) size 56x7
     RenderText {#text} at (0,0) size 10x6
       text run at (0,0) width 10: "mini"
-layer at (87,122) size 166x17
-  RenderBlock {DIV} at (0,0) size 166x17
+layer at (87,122) size 151x17
+  RenderBlock {DIV} at (0,0) size 151x17
     RenderText {#text} at (0,0) size 35x17
       text run at (0,0) width 35: "small"
-layer at (268,112) size 309x31
-  RenderBlock {DIV} at (0,0) size 309x31
+layer at (268,112) size 288x31
+  RenderBlock {DIV} at (0,0) size 288x31
     RenderText {#text} at (0,0) size 84x30
       text run at (0,0) width 84: "regular"
