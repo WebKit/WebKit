@@ -1,3 +1,15 @@
+2013-03-18  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Build WinCairo port under VS2010 
+        https://bugs.webkit.org/show_bug.cgi?id=112604
+
+        Reviewed by Tim Horton.
+
+        * WebKit.vcxproj/WebKit.sln: Add Debug_WinCairo and Release_WinCairo
+        build targets. No other changes in this patch.
+        * WebKit.vcxproj/FeatureDefinesCairo.props: Add parallel property
+        sheet for WinCairo version of build.
+
 2013-03-18  Roger Fong  <roger_fong@apple.com>
 
         AppleWin VS2010 build fix.
