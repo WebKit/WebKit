@@ -315,6 +315,7 @@ webkit.org/b/109890 [ Debug ] platform/mac-wk2/plugins/destroy-during-async-npp-
 
 webkit.org/b/97124 [ Debug ] fast/loader/stateobjects/document-destroyed-navigate-back.html [ Pass Crash ]
 webkit.org/b/97124 [ Debug ] fast/loader/document-with-fragment-url-3.html [ Pass Crash ]
+webkit.org/b/97124 [ Debug ] fast/events/pageshow-pagehide-on-back-uncached.html [ Pass Crash ]
 webkit.org/b/97124 [ Debug ] svg/animations/mozilla/animateMotion-by-1.svg [ Pass Crash ]
 
 ### END OF (1) Classified failures with bug reports
