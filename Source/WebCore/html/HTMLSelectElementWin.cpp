@@ -26,6 +26,8 @@
 #include "config.h"
 #include "HTMLSelectElement.h"
 
+#if OS(WINDOWS)
+
 #include "Element.h"
 #include "KeyboardEvent.h"
 #include "RenderMenuList.h"
@@ -48,10 +50,12 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
 
     int index = selectedIndex();
     ASSERT(index >= 0);
-    ASSERT_WITH_SECURITY_IMPLICATION(index < listItems().size());
+    ASSERT_WITH_SECURITY_IMPLICATION(index < static_cast<int>(listItems().size()));
     setSelectedIndex(index);
     event->setDefaultHandled();
     return true;
 }
 
 }
+
+#endif
