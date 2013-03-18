@@ -54,6 +54,8 @@ WebInspector.ResourceScriptMapping.prototype = {
         var uiSourceCode = this._workspaceUISourceCodeForScript(script);
         if (!uiSourceCode)
             return null;
+        if (uiSourceCode.scriptFile() && uiSourceCode.scriptFile().hasDivergedFromVM())
+            return null;
         return new WebInspector.UILocation(uiSourceCode, debuggerModelLocation.lineNumber, debuggerModelLocation.columnNumber || 0);
     },
 
@@ -112,7 +114,7 @@ WebInspector.ResourceScriptMapping.prototype = {
         if (!scripts.length)
             return;
         for (var i = 0; i < scripts.length; ++i)
-            scripts[i].enableSourceMapping(this);
+            scripts[i].updateLocations();
     },
 
     /**
@@ -124,7 +126,7 @@ WebInspector.ResourceScriptMapping.prototype = {
         if (!scripts.length)
             return;
         for (var i = 0; i < scripts.length; ++i)
-            scripts[i].disableSourceMapping(this);
+            scripts[i].updateLocations();
     },
 
     /**

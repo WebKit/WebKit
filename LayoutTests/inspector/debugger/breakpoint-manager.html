@@ -25,6 +25,8 @@ function test()
     var shiftingMapping = {
         rawLocationToUILocation: function(rawLocation)
         {
+            if (this._disabled)
+                return null;
             return new WebInspector.UILocation(uiSourceCodes[rawLocation.scriptId], rawLocation.lineNumber + 10, 0);
         },
 
@@ -106,8 +108,9 @@ function test()
 
         disableSourceMapping: function(sourceMapping)
         {
+            sourceMapping._disabled = true;
             for (var scriptId in this._scripts)
-                this._scripts[scriptId].disableSourceMapping(sourceMapping);
+                this._scripts[scriptId].updateLocations();
         }
     }
     DebuggerModelMock.prototype.__proto__ = WebInspector.Object.prototype;
@@ -350,10 +353,8 @@ function test()
             var breakpointManager = createBreakpointManager(serializedBreakpoints);
             var uiSourceCodeA = addUISourceCode(breakpointManager, "a.js");
             InspectorTest.addResult("\n  Toggling source mapping.");
-            breakpointManager._sourceMapping = shiftingMapping;
             breakpointManager._debuggerModel.pushSourceMapping(shiftingMapping);
             InspectorTest.addResult("\n  Toggling source mapping back.");
-            breakpointManager._sourceMapping = defaultMapping;
             breakpointManager._debuggerModel.disableSourceMapping(shiftingMapping);
             resetBreakpointManager(breakpointManager, next);
         },
