@@ -1,3 +1,17 @@
+2013-03-18  Dirk Pranke  <dpranke@chromium.org>
+
+        [chromium] build xdisplaycheck when building DRT
+        https://bugs.webkit.org/show_bug.cgi?id=112636
+
+        Reviewed by Tony Chang.
+
+        It appears that we need xdisplaycheck to be built in order for
+        Xvfb to be started correctly on the bots, and DRT was missing
+        a dependency on it. This may be the cause of the ASAN bot not
+        starting up properly (it only builds DRT).
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2013-03-18  David Levin  <levin@chromium.org>
 
         Implement icon change notification dump for Chromium's test shell.

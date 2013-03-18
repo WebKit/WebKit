@@ -197,6 +197,9 @@
                     },
                 }],
                 ['use_x11 == 1', {
+                    'dependencies': [
+                        '<(chromium_src_dir)/tools/xdisplaycheck/xdisplaycheck.gyp:xdisplaycheck',
+                    ],
                     'copies': [{
                         'destination': '<(PRODUCT_DIR)',
                         'files': [
