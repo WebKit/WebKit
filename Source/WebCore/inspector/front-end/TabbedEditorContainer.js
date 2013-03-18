@@ -197,7 +197,7 @@ WebInspector.TabbedEditorContainer.prototype = {
 
         // Select tab if this file was the last to be shown.
         if (!index) {
-            this._innerShowFile(uiSourceCode, true);
+            this._innerShowFile(uiSourceCode, false);
             return;
         }
 
@@ -205,7 +205,7 @@ WebInspector.TabbedEditorContainer.prototype = {
         var addedProjectType = uiSourceCode.project().type();
         var snippetsProjectType = WebInspector.projectTypes.Snippets;
         if (this._history.index(this._currentFile.uri()) && currentProjectType === snippetsProjectType && addedProjectType !== snippetsProjectType)
-            this._innerShowFile(uiSourceCode, true);
+            this._innerShowFile(uiSourceCode, false);
     },
 
     /**
