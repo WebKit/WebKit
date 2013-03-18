@@ -51,21 +51,44 @@ struct _WebKitWebViewGroupClass {
     GObjectClass parent_class;
 };
 
+/**
+ * WebKitInjectedContentFrames:
+ * @WEBKIT_INJECTED_CONTENT_FRAMES_ALL: Content will be injected into all frames.
+ * @WEBKIT_INJECTED_CONTENT_FRAMES_TOP_ONLY: Content will only be injected into the main frame.
+ *
+ * Enum values used for determining into which frames content is injected.
+ */
+typedef enum {
+    WEBKIT_INJECTED_CONTENT_FRAMES_ALL,
+    WEBKIT_INJECTED_CONTENT_FRAMES_TOP_ONLY,
+} WebKitInjectedContentFrames;
+
 WEBKIT_API GType
-webkit_web_view_group_get_type     (void);
+webkit_web_view_group_get_type                     (void);
 
 WEBKIT_API WebKitWebViewGroup *
-webkit_web_view_group_new          (const gchar        *name);
+webkit_web_view_group_new                          (const gchar                 *name);
 
 WEBKIT_API const gchar *
-webkit_web_view_group_get_name     (WebKitWebViewGroup *group);
+webkit_web_view_group_get_name                     (WebKitWebViewGroup          *group);
 
 WEBKIT_API WebKitSettings *
-webkit_web_view_group_get_settings (WebKitWebViewGroup *group);
+webkit_web_view_group_get_settings                 (WebKitWebViewGroup          *group);
 
 WEBKIT_API void
-webkit_web_view_group_set_settings (WebKitWebViewGroup *group,
-                                    WebKitSettings     *settings);
+webkit_web_view_group_set_settings                 (WebKitWebViewGroup          *group,
+                                                    WebKitSettings              *settings);
+
+WEBKIT_API void
+webkit_web_view_group_add_user_style_sheet         (WebKitWebViewGroup           *group,
+                                                    const gchar                  *source,
+                                                    const gchar                  *base_uri,
+                                                    const gchar * const          *whitelist,
+                                                    const gchar * const          *blacklist,
+                                                    WebKitInjectedContentFrames   injected_frames);
+
+WEBKIT_API void
+webkit_web_view_group_remove_all_user_style_sheets (WebKitWebViewGroup          *group);
 
 G_END_DECLS
 
