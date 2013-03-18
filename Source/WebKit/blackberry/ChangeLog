@@ -1,3 +1,13 @@
+2013-03-18  Alberto Garcia  <agarcia@igalia.com>
+
+        [BlackBerry] BackingStoreClient: remove unnecessary call to toElement()
+        https://bugs.webkit.org/show_bug.cgi?id=112547
+
+        Reviewed by Carlos Garcia Campos.
+
+        * WebKitSupport/BackingStoreClient.cpp:
+        (BlackBerry::WebKit::BackingStoreClient::absoluteRect):
+
 2013-03-15  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] BlackBerry::Platform::Graphics::GraphicsContext integration related changes in Source/WebKit/blackberry
