@@ -34,7 +34,7 @@ select[size],
 select[multiple],
 select[size][multiple] {
     -webkit-appearance: menulist;
-    -webkit-box-align: center;
+    -webkit-align-items: center;
     border: 1px solid;
     border-radius: initial;
     white-space: pre;
