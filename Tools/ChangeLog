@@ -1,3 +1,15 @@
+2013-03-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, rolling out r145272.
+        http://trac.webkit.org/changeset/145272
+        https://bugs.webkit.org/show_bug.cgi?id=111884
+
+        Turns out the ASAN build is still broken; possibly there's
+        something still setting LD_LIBRARY_PATH, or possibly there's
+        something else wrong. In the meantime, we need it to work again.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2013-03-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         delete-stale-build-files is too aggressive
