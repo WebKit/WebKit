@@ -4419,4 +4419,4 @@ webkit.org/b/112384 [ Win ] fast/parser/open-comment-in-textarea.html [ ImageOnl
 webkit.org/b/112384 [ Win ] fast/replaced/width100percent-textarea.html [ ImageOnlyFailure Pass ]
 
 # Need rebaseline
-webkit.org/b/110837 [ Mac Win ] fast/forms/color/input-appearance-color.html [ Failure ]
+webkit.org/b/110837 [ Mac ] fast/forms/color/input-appearance-color.html [ Failure ]
