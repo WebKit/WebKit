@@ -536,6 +536,14 @@ int Element::offsetHeight()
     return 0;
 }
 
+Element* Element::bindingsOffsetParent()
+{
+    Element* element = offsetParent();
+    if (!element || !element->isInShadowTree())
+        return element;
+    return element->containingShadowRoot()->type() == ShadowRoot::UserAgentShadowRoot ? 0 : element;
+}
+
 Element* Element::offsetParent()
 {
     document()->updateLayoutIgnorePendingStylesheets();

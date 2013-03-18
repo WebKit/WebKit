@@ -75,7 +75,7 @@
     readonly attribute long offsetTop;
     readonly attribute long offsetWidth;
     readonly attribute long offsetHeight;
-    readonly attribute Element offsetParent;
+    [ImplementedAs=bindingsOffsetParent] readonly attribute Element offsetParent;
     readonly attribute long clientLeft;
     readonly attribute long clientTop;
     readonly attribute long clientWidth;
