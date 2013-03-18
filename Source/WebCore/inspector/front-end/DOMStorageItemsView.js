@@ -151,10 +151,12 @@ WebInspector.DOMStorageItemsView.prototype = {
                     return;
                 }
                 keyFound = true;
-                childNode.data.value = storageData.newValue;
-                childNode.refresh();
-                childNode.select();
-                childNode.reveal();
+                if (childNode.data.value !== storageData.newValue) {
+                    childNode.data.value = storageData.newValue;
+                    childNode.refresh();
+                    childNode.select();
+                    childNode.reveal();
+                }
                 this.deleteButton.visible = true;
             }
         }
@@ -227,10 +229,24 @@ WebInspector.DOMStorageItemsView.prototype = {
         if ("key" === columnIdentifier) {
             if (oldText)
                 domStorage.removeItem(oldText);
-
             domStorage.setItem(newText, editingNode.data.value);
+            this._removeDupes(editingNode);
         } else
             domStorage.setItem(editingNode.data.key, newText);
+    },
+
+    /**
+     * @param {!WebInspector.DataGridNode} masterNode
+     */
+    _removeDupes: function(masterNode)
+    {
+        var rootNode = this._dataGrid.rootNode();
+        var children = rootNode.children;
+        for (var i = children.length - 1; i >= 0; --i) {
+            var childNode = children[i];
+            if ((childNode.data.key === masterNode.data.key) && (masterNode !== childNode))
+                rootNode.removeChild(childNode);
+        }
     },
 
     _deleteCallback: function(node)
