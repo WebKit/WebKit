@@ -339,6 +339,8 @@ WebInspector.MemoryStatistics.prototype = {
             return;
         if (this._markerXPosition === undefined)
             return;
+        if (this._maximumIndex === -1)
+            return;
         var i = this._recordIndexAt(this._markerXPosition);
 
         this._updateCurrentValue(this._counters[i]);
