@@ -49,7 +49,9 @@
 #include "FrameView.h"
 #include "HTMLContentElement.h"
 #include "HTMLInputElement.h"
+#if ENABLE(VIDEO)
 #include "HTMLMediaElement.h"
+#endif
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
 #include "HistoryItem.h"
@@ -2000,6 +2002,7 @@ void Internals::initializeMockCDM()
 #endif
 
 
+#if ENABLE(VIDEO)
 void Internals::simulateAudioInterruption(Node* node)
 {
 #if USE(GSTREAMER)
@@ -2009,5 +2012,6 @@ void Internals::simulateAudioInterruption(Node* node)
     UNUSED_PARAM(node);
 #endif
 }
+#endif
 
 }

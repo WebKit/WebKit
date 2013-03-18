@@ -250,7 +250,7 @@
 
     void setUsesOverlayScrollbars(in boolean enabled);
 
-    void simulateAudioInterruption(in Node node);
+    [Conditional=VIDEO] void simulateAudioInterruption(in Node node);
 
     [Conditional=ENCRYPTED_MEDIA_V2] void initializeMockCDM();
     
