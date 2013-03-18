@@ -1,3 +1,36 @@
+2013-03-18  Julie Parent  <jparent@chromium.org>
+
+        Cleanup: Move timeline_exporer js out of html file into js.
+        https://bugs.webkit.org/show_bug.cgi?id=112188
+
+        Reviewed by Dirk Pranke.
+        
+        Moves the javascript out of the html file and into a new js file.
+        This follows the format of flakiness_dashboard.{html|js}.
+        
+        Also moves code from dashboard_base that is used only by this one
+        dashboard, and makes it private to the dashboard.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        * TestResultServer/static-dashboards/timeline_explorer.html:
+        * TestResultServer/static-dashboards/timeline_explorer.js: Copied from Tools/TestResultServer/static-dashboards/timeline_explorer.html.
+        (generatePage):
+        (initCurrentBuilderTestResults):
+        (shouldShowWebKitRevisionsOnly):
+        (updateTimelineForBuilder.):
+        (updateTimelineForBuilder):
+        (selectBuild):
+        (updateBuildIndicator):
+        (.addRow):
+        (.addNumberRow):
+        (.inspectorNode.getElementsByTagName.0.onclick):
+        (.inspectorNode.getElementsByTagName.1.onclick):
+        (.inspectorNode.getElementsByTagName.2.onclick):
+        (updateBuildInspector):
+        (showResultsDelta):
+        (decompressResults.addFlakyDelta):
+        (decompressResults):
+
 2013-03-18  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, rolling out r145272.
