@@ -38,6 +38,7 @@
 #include "WebKit/chromium/public/WebDOMMessageEvent.h"
 #include "WebKit/chromium/public/WebDragOperation.h"
 #include "WebKit/chromium/public/WebEditingAction.h"
+#include "WebKit/chromium/public/WebIconURL.h"
 #include "WebKit/chromium/public/WebNavigationPolicy.h"
 #include "WebKit/chromium/public/WebNavigationType.h"
 #include "WebKit/chromium/public/WebSecurityOrigin.h"
@@ -170,6 +171,7 @@ protected:
     void didFailProvisionalLoad(WebKit::WebFrame*, const WebKit::WebURLError&);
     void didCommitProvisionalLoad(WebKit::WebFrame*, bool isNewNavigation);
     void didReceiveTitle(WebKit::WebFrame*, const WebKit::WebString& title, WebKit::WebTextDirection);
+    void didChangeIcon(WebKit::WebFrame*, WebKit::WebIconURL::Type);
     void didFinishDocumentLoad(WebKit::WebFrame*);
     void didHandleOnloadEvents(WebKit::WebFrame*);
     void didFailLoad(WebKit::WebFrame*, const WebKit::WebURLError&);
@@ -457,6 +459,11 @@ public:
     {
         WebTestProxyBase::didReceiveTitle(frame, title, direction);
         Base::didReceiveTitle(frame, title, direction);
+    }
+    virtual void didChangeIcon(WebKit::WebFrame* frame, WebKit::WebIconURL::Type iconType)
+    {
+        WebTestProxyBase::didChangeIcon(frame, iconType);
+        Base::didChangeIcon(frame, iconType);
     }
     virtual void didFinishDocumentLoad(WebKit::WebFrame* frame)
     {

@@ -1146,6 +1146,14 @@ void WebTestProxyBase::didReceiveTitle(WebFrame* frame, const WebString& title, 
     m_testInterfaces->testRunner()->setTitleTextDirection(direction);
 }
 
+void WebTestProxyBase::didChangeIcon(WebFrame* frame, WebIconURL::Type)
+{
+    if (m_testInterfaces->testRunner()->shouldDumpIconChanges()) {
+        printFrameDescription(m_delegate, frame);
+        m_delegate->printMessage(string(" - didChangeIcons\n"));
+    }
+}
+
 void WebTestProxyBase::didFinishDocumentLoad(WebFrame* frame)
 {
     if (m_testInterfaces->testRunner()->shouldDumpFrameLoadCallbacks()) {

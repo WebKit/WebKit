@@ -1,3 +1,35 @@
+2013-03-18  David Levin  <levin@chromium.org>
+
+        Implement icon change notification dump for Chromium's test shell.
+        https://bugs.webkit.org/show_bug.cgi?id=112614
+
+        This was previously implemented for some other platforms in r58111
+        and r116547.
+
+        In r122806, fast/dom/icon-url-property.html stopped using it, but
+        it is useful for tests, so I plan to re-add it to that test again.
+
+        Reviewed by Jochen Eisinger.
+
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        (WebTestRunner::WebTestProxy::didChangeIcon): Add handler so that
+         icon change notifications from WebKit may be logged in test output.
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner): Expose dumpIconChanges.
+        (WebTestRunner::TestRunner::reset): Clear the new dump variable.
+        (WebTestRunner::TestRunner::shouldDumpIconChanges): Expose the dump vairable.
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::dumpIconChanges): Implement the test method.
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner::WebTestProxyBase::didChangeIcon):
+        (WebTestRunner):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::didChangeIcon): Add the output about changing the icon.
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2013-03-18  Julie Parent  <jparent@chromium.org>
 
         Cleanup: Move js for treemap and aggregate_results into own js files.

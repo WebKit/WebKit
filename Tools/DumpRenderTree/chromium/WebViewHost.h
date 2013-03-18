@@ -190,6 +190,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void didCommitProvisionalLoad(WebKit::WebFrame*, bool isNewNavigation);
     virtual void didClearWindowObject(WebKit::WebFrame*);
     virtual void didReceiveTitle(WebKit::WebFrame*, const WebKit::WebString&, WebKit::WebTextDirection);
+    virtual void didChangeIcon(WebKit::WebFrame* , WebKit::WebIconURL::Type);
     virtual void didNavigateWithinPage(WebKit::WebFrame*, bool isNewNavigation);
     virtual void willSendRequest(WebKit::WebFrame*, unsigned identifier, WebKit::WebURLRequest&, const WebKit::WebURLResponse&);
 #ifdef WEBKIT_USE_NEW_WEBFILESYSTEMTYPE

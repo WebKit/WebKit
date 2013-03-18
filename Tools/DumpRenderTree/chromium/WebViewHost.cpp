@@ -478,6 +478,10 @@ void WebViewHost::didReceiveTitle(WebFrame* frame, const WebString& title, WebTe
     setPageTitle(title);
 }
 
+void WebViewHost::didChangeIcon(WebFrame* , WebIconURL::Type)
+{
+}
+
 void WebViewHost::didNavigateWithinPage(WebFrame* frame, bool isNewNavigation)
 {
     frame->dataSource()->setExtraData(m_pendingExtraData.leakPtr());

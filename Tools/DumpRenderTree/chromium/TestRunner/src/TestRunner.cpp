@@ -232,6 +232,7 @@ TestRunner::TestRunner(TestInterfaces* interfaces)
     bindMethod("dumpAsText", &TestRunner::dumpAsText);
     bindMethod("dumpChildFramesAsText", &TestRunner::dumpChildFramesAsText);
     bindMethod("dumpChildFrameScrollPositions", &TestRunner::dumpChildFrameScrollPositions);
+    bindMethod("dumpIconChanges", &TestRunner::dumpIconChanges);
     bindMethod("setAudioData", &TestRunner::setAudioData);
     bindMethod("dumpFrameLoadCallbacks", &TestRunner::dumpFrameLoadCallbacks);
     bindMethod("dumpUserGestureInFrameLoadCallbacks", &TestRunner::dumpUserGestureInFrameLoadCallbacks);
@@ -385,6 +386,7 @@ void TestRunner::reset()
     m_generatePixelResults = true;
     m_dumpChildFrameScrollPositions = false;
     m_dumpChildFramesAsText = false;
+    m_dumpIconChanges = false;
     m_dumpAsAudio = false;
     m_dumpFrameLoadCallbacks = false;
     m_dumpUserGestureInFrameLoadCallbacks = false;
@@ -524,6 +526,11 @@ bool TestRunner::stopProvisionalFrameLoads() const
 bool TestRunner::shouldDumpTitleChanges() const
 {
     return m_dumpTitleChanges;
+}
+
+bool TestRunner::shouldDumpIconChanges() const
+{
+    return m_dumpIconChanges;
 }
 
 bool TestRunner::shouldDumpCreateView() const
@@ -1882,6 +1889,12 @@ void TestRunner::dumpChildFrameScrollPositions(const CppArgumentList&, CppVarian
 void TestRunner::dumpChildFramesAsText(const CppArgumentList&, CppVariant* result)
 {
     m_dumpChildFramesAsText = true;
+    result->setNull();
+}
+
+void TestRunner::dumpIconChanges(const CppArgumentList&, CppVariant* result)
+{
+    m_dumpIconChanges = true;
     result->setNull();
 }
 
