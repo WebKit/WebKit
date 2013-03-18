@@ -58,9 +58,6 @@ namespace WebCore {
     public:
         static void createChannel(PassRefPtr<MessagePort>, PassRefPtr<MessagePort>);
 
-        // Creates a new wrapper for the passed channel.
-        static PassOwnPtr<MessagePortChannel> create(PassRefPtr<PlatformMessagePortChannel>);
-
         // Entangles the channel with a port (called when a port has been cloned, after the clone has been marshaled to its new owning thread and is ready to receive messages).
         // Returns false if the entanglement failed because the port was closed.
         bool entangleIfOpen(MessagePort*);
@@ -103,6 +100,9 @@ namespace WebCore {
         ~MessagePortChannel();
 
 #if PLATFORM(CHROMIUM)
+        // Creates a new wrapper for the passed channel.
+        static PassOwnPtr<MessagePortChannel> create(PassRefPtr<PlatformMessagePortChannel>);
+
         // FIXME: PlatformMessagePortChannel is an implementation detail, and should not be exposed via a public function.
         PlatformMessagePortChannel* channel() const { return m_channel.get(); }
 #endif

@@ -42,22 +42,14 @@ void MessagePortChannel::createChannel(PassRefPtr<MessagePort> port1, PassRefPtr
     RefPtr<PlatformMessagePortChannel::MessagePortQueue> queue1 = PlatformMessagePortChannel::MessagePortQueue::create();
     RefPtr<PlatformMessagePortChannel::MessagePortQueue> queue2 = PlatformMessagePortChannel::MessagePortQueue::create();
 
-    // Create proxies for each endpoint.
-    RefPtr<PlatformMessagePortChannel> channel1 = PlatformMessagePortChannel::create(queue1, queue2);
-    RefPtr<PlatformMessagePortChannel> channel2 = PlatformMessagePortChannel::create(queue2, queue1);
+    OwnPtr<MessagePortChannel> channel1 = adoptPtr(new MessagePortChannel(PlatformMessagePortChannel::create(queue1, queue2)));
+    OwnPtr<MessagePortChannel> channel2 = adoptPtr(new MessagePortChannel(PlatformMessagePortChannel::create(queue2, queue1)));
 
-    // Entangle the two endpoints.
-    channel1->m_entangledChannel = channel2;
-    channel2->m_entangledChannel = channel1;
+    channel1->m_channel->m_entangledChannel = channel2->m_channel;
+    channel2->m_channel->m_entangledChannel = channel1->m_channel;
 
-    // Now entangle the proxies with the appropriate local ports.
-    port1->entangle(MessagePortChannel::create(channel2));
-    port2->entangle(MessagePortChannel::create(channel1));
-}
-
-PassOwnPtr<MessagePortChannel> MessagePortChannel::create(PassRefPtr<PlatformMessagePortChannel> channel)
-{
-    return adoptPtr(new MessagePortChannel(channel));
+    port1->entangle(channel2.release());
+    port2->entangle(channel1.release());
 }
 
 MessagePortChannel::MessagePortChannel(PassRefPtr<PlatformMessagePortChannel> channel)
@@ -67,7 +59,6 @@ MessagePortChannel::MessagePortChannel(PassRefPtr<PlatformMessagePortChannel> ch
 
 MessagePortChannel::~MessagePortChannel()
 {
-    // Make sure we close our platform channel when the base is freed, to keep the channel objects from leaking.
     close();
 }
 
