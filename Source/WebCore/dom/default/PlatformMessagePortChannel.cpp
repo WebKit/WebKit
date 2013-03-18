@@ -37,6 +37,17 @@
 
 namespace WebCore {
 
+PassOwnPtr<PlatformMessagePortChannel::EventData> PlatformMessagePortChannel::EventData::create(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels)
+{
+    return adoptPtr(new EventData(message, channels));
+}
+
+PlatformMessagePortChannel::EventData::EventData(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels)
+    : m_message(message)
+    , m_channels(channels)
+{
+}
+
 void MessagePortChannel::createChannel(PassRefPtr<MessagePort> port1, PassRefPtr<MessagePort> port2)
 {
     RefPtr<PlatformMessagePortChannel::MessagePortQueue> queue1 = PlatformMessagePortChannel::MessagePortQueue::create();
@@ -80,21 +91,27 @@ void MessagePortChannel::disentangle()
         remote->setRemotePort(0);
 }
 
-void MessagePortChannel::postMessageToRemote(PassOwnPtr<MessagePortChannel::EventData> message)
+void MessagePortChannel::postMessageToRemote(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels)
 {
     MutexLocker lock(m_channel->m_mutex);
     if (!m_channel->m_outgoingQueue)
         return;
-    bool wasEmpty = m_channel->m_outgoingQueue->appendAndCheckEmpty(message);
+    bool wasEmpty = m_channel->m_outgoingQueue->appendAndCheckEmpty(PlatformMessagePortChannel::EventData::create(message, channels));
     if (wasEmpty && m_channel->m_remotePort)
         m_channel->m_remotePort->messageAvailable();
 }
 
-bool MessagePortChannel::tryGetMessageFromRemote(OwnPtr<MessagePortChannel::EventData>& result)
+bool MessagePortChannel::tryGetMessageFromRemote(RefPtr<SerializedScriptValue>& message, OwnPtr<MessagePortChannelArray>& channels)
 {
     MutexLocker lock(m_channel->m_mutex);
-    result = m_channel->m_incomingQueue->tryGetMessage();
-    return result;
+    OwnPtr<PlatformMessagePortChannel::EventData> result = m_channel->m_incomingQueue->tryGetMessage();
+    if (!result)
+        return false;
+
+    message = result->message();
+    channels = result->channels();
+
+    return true;
 }
 
 void MessagePortChannel::close()

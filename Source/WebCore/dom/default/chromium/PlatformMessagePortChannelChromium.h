@@ -56,8 +56,8 @@ public:
     // APIs delegated from MessagePortChannel.h
     bool entangleIfOpen(MessagePort*);
     void disentangle();
-    void postMessageToRemote(PassOwnPtr<MessagePortChannel::EventData>);
-    bool tryGetMessageFromRemote(OwnPtr<MessagePortChannel::EventData>&);
+    void postMessageToRemote(PassRefPtr<SerializedScriptValue>, PassOwnPtr<MessagePortChannelArray>);
+    bool tryGetMessageFromRemote(RefPtr<SerializedScriptValue>&, OwnPtr<MessagePortChannelArray>&);
     void close();
     bool isConnectedTo(MessagePort*);
     bool hasPendingActivity();

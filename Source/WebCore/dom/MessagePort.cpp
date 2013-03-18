@@ -85,7 +85,7 @@ void MessagePort::postMessage(PassRefPtr<SerializedScriptValue> message, const M
         if (ec)
             return;
     }
-    m_entangledChannel->postMessageToRemote(MessagePortChannel::EventData::create(message, channels.release()));
+    m_entangledChannel->postMessageToRemote(message, channels.release());
 }
 
 PassOwnPtr<MessagePortChannel> MessagePort::disentangle()
@@ -167,8 +167,9 @@ void MessagePort::dispatchMessages()
     // The HTML5 spec specifies that any messages sent to a document that is not fully active should be dropped, so this behavior is OK.
     ASSERT(started());
 
-    OwnPtr<MessagePortChannel::EventData> eventData;
-    while (m_entangledChannel && m_entangledChannel->tryGetMessageFromRemote(eventData)) {
+    RefPtr<SerializedScriptValue> message;
+    OwnPtr<MessagePortChannelArray> channels;
+    while (m_entangledChannel && m_entangledChannel->tryGetMessageFromRemote(message, channels)) {
 
 #if ENABLE(WORKERS)
         // close() in Worker onmessage handler should prevent next message from dispatching.
@@ -176,8 +177,8 @@ void MessagePort::dispatchMessages()
             return;
 #endif
 
-        OwnPtr<MessagePortArray> ports = MessagePort::entanglePorts(*m_scriptExecutionContext, eventData->channels());
-        RefPtr<Event> evt = MessageEvent::create(ports.release(), eventData->message());
+        OwnPtr<MessagePortArray> ports = MessagePort::entanglePorts(*m_scriptExecutionContext, channels.release());
+        RefPtr<Event> evt = MessageEvent::create(ports.release(), message.release());
 
         dispatchEvent(evt.release(), ASSERT_NO_EXCEPTION);
     }

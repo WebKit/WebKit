@@ -72,14 +72,14 @@ void MessagePortChannel::disentangle()
     m_channel->disentangle();
 }
 
-void MessagePortChannel::postMessageToRemote(PassOwnPtr<MessagePortChannel::EventData> message)
+void MessagePortChannel::postMessageToRemote(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels)
 {
-    m_channel->postMessageToRemote(message);
+    m_channel->postMessageToRemote(message, channels);
 }
 
-bool MessagePortChannel::tryGetMessageFromRemote(OwnPtr<MessagePortChannel::EventData>& result)
+bool MessagePortChannel::tryGetMessageFromRemote(RefPtr<SerializedScriptValue>& message, OwnPtr<MessagePortChannelArray>& channels)
 {
-    return m_channel->tryGetMessageFromRemote(result);
+    return m_channel->tryGetMessageFromRemote(message, channels);
 }
 
 void MessagePortChannel::close()
@@ -171,13 +171,12 @@ void PlatformMessagePortChannel::disentangle()
     m_localPort = 0;
 }
 
-void PlatformMessagePortChannel::postMessageToRemote(PassOwnPtr<MessagePortChannel::EventData> message)
+void PlatformMessagePortChannel::postMessageToRemote(PassRefPtr<SerializedScriptValue> message, PassOwnPtr<MessagePortChannelArray> channels)
 {
     if (!m_localPort || !m_webChannel)
         return;
 
-    WebKit::WebString messageString = message->message()->toWireString();
-    OwnPtr<MessagePortChannelArray> channels = message->channels();
+    WebKit::WebString messageString = message->toWireString();
     WebKit::WebMessagePortChannelArray* webChannels = 0;
     if (channels && channels->size()) {
         webChannels = new WebKit::WebMessagePortChannelArray(channels->size());
@@ -190,7 +189,7 @@ void PlatformMessagePortChannel::postMessageToRemote(PassOwnPtr<MessagePortChann
     m_webChannel->postMessage(messageString, webChannels);
 }
 
-bool PlatformMessagePortChannel::tryGetMessageFromRemote(OwnPtr<MessagePortChannel::EventData>& result)
+bool PlatformMessagePortChannel::tryGetMessageFromRemote(RefPtr<SerializedScriptValue>& serializedMessage, OwnPtr<MessagePortChannelArray>& channels)
 {
     if (!m_webChannel)
         return false;
@@ -199,7 +198,6 @@ bool PlatformMessagePortChannel::tryGetMessageFromRemote(OwnPtr<MessagePortChann
     WebKit::WebMessagePortChannelArray webChannels;
     bool rv = m_webChannel->tryGetMessage(&message, webChannels);
     if (rv) {
-        OwnPtr<MessagePortChannelArray> channels;
         if (webChannels.size()) {
             channels = adoptPtr(new MessagePortChannelArray(webChannels.size()));
             for (size_t i = 0; i < webChannels.size(); ++i) {
@@ -208,8 +206,7 @@ bool PlatformMessagePortChannel::tryGetMessageFromRemote(OwnPtr<MessagePortChann
                 (*channels)[i] = MessagePortChannel::create(platformChannel);
             }
         }
-        RefPtr<SerializedScriptValue> serializedMessage = SerializedScriptValue::createFromWire(message);
-        result = MessagePortChannel::EventData::create(serializedMessage.release(), channels.release());
+        serializedMessage = SerializedScriptValue::createFromWire(message);
     }
 
     return rv;
