@@ -1,3 +1,9 @@
+2013-03-18  Roger Fong  <roger_fong@apple.com>
+
+        AppleWin VS2010 Debug configuration build fix..
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+
 2013-03-18  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Get build working under VS2010.
