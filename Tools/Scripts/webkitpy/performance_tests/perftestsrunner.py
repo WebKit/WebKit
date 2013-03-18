@@ -212,9 +212,12 @@ class PerfTestsRunner(object):
                     return exit_code
 
         if self._options.generate_results and not self._options.profile:
-            exit_code = self._upload_and_show_results()
-            if exit_code:
-                return exit_code
+            test_results_server = self._options.test_results_server
+            if test_results_server and not self._upload_json(test_results_server, self._output_json_path()):
+                return self.EXIT_CODE_FAILED_UPLOADING
+
+            if self._options.show_results:
+                self._port.show_results_html_file(self._results_page_path())
 
         return unexpected
 
@@ -241,20 +244,18 @@ class PerfTestsRunner(object):
         if not output:
             return self.EXIT_CODE_BAD_MERGE
 
-        self._generate_output_files(output_json_path, self._results_page_path(), output)
+        filesystem = self._host.filesystem
+        json_output = json.dumps(output)
+        filesystem.write_text_file(output_json_path, json_output)
 
-    def _upload_and_show_results(self):
-        options = self._options
+        template_path = filesystem.join(self._port.perf_tests_dir(), 'resources/results-template.html')
+        template = filesystem.read_text_file(template_path)
 
-        if options.test_results_server:
-            if options.test_results_server == 'webkit-perf.appspot.com':
-                options.test_results_server = 'perf.webkit.org'
+        absolute_path_to_trunk = filesystem.dirname(self._port.perf_tests_dir())
+        results_page = template.replace('%AbsolutePathToWebKitTrunk%', absolute_path_to_trunk)
+        results_page = results_page.replace('%PeformanceTestsResultsJSON%', json_output)
 
-            if not self._upload_json(options.test_results_server, self._output_json_path()):
-                return self.EXIT_CODE_FAILED_UPLOADING
-
-        if options.show_results:
-            self._port.show_results_html_file(self._results_page_path())
+        filesystem.write_text_file(self._results_page_path(), results_page)
 
     def _generate_results_dict(self, timestamp, description, platform, builder_name, build_number):
         revisions = {}
@@ -326,22 +327,6 @@ class PerfTestsRunner(object):
         except Exception, error:
             _log.error("Failed to merge output JSON file %s: %s" % (output_json_path, error))
         return None
-
-    def _generate_output_files(self, output_json_path, results_page_path, output):
-        filesystem = self._host.filesystem
-
-        json_output = json.dumps(output)
-        filesystem.write_text_file(output_json_path, json_output)
-
-        if results_page_path:
-            template_path = filesystem.join(self._port.perf_tests_dir(), 'resources/results-template.html')
-            template = filesystem.read_text_file(template_path)
-
-            absolute_path_to_trunk = filesystem.dirname(self._port.perf_tests_dir())
-            results_page = template.replace('%AbsolutePathToWebKitTrunk%', absolute_path_to_trunk)
-            results_page = results_page.replace('%PeformanceTestsResultsJSON%', json_output)
-
-            filesystem.write_text_file(results_page_path, results_page)
 
     def _upload_json(self, test_results_server, json_path, host_path="/api/report", file_uploader=FileUploader):
         url = "https://%s%s" % (test_results_server, host_path)

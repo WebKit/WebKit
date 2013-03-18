@@ -1,3 +1,17 @@
+2013-03-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove the temporary hack for webkit-perf.appspot.com and cleanup the code
+        https://bugs.webkit.org/show_bug.cgi?id=112494
+
+        Reviewed by Dirk Pranke.
+
+        Removed the code to override webkit-perf.appspot.com by perf.webkit.org.
+        Also merged two pairs of methods to cleanup the code.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner.run): Merged _upload_and_show_results.
+        (PerfTestsRunner._generate_results): Merged _generate_output_files.
+
 2013-03-18  Dirk Pranke  <dpranke@chromium.org>
 
         [chromium] build xdisplaycheck when building DRT
