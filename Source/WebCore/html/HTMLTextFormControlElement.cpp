@@ -176,11 +176,12 @@ void HTMLTextFormControlElement::fixPlaceholderRenderer(HTMLElement* placeholder
         return;
     RenderObject* placeholderRenderer = placeholder->renderer();
     RenderObject* siblingRenderer = siblingElement->renderer();
-    ASSERT(siblingRenderer);
+    if (!siblingRenderer)
+        return;
     if (placeholderRenderer->nextSibling() == siblingRenderer)
         return;
     RenderObject* parentRenderer = placeholderRenderer->parent();
-    ASSERT(parentRenderer == siblingRenderer->parent());
+    ASSERT(siblingRenderer->parent() == parentRenderer);
     parentRenderer->removeChild(placeholderRenderer);
     parentRenderer->addChild(placeholderRenderer, siblingRenderer);
 }

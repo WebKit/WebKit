@@ -183,13 +183,17 @@ void RenderTextControlSingleLine::layout()
 
     HTMLElement* placeholderElement = inputElement()->placeholderElement();
     if (RenderBox* placeholderBox = placeholderElement ? placeholderElement->renderBox() : 0) {
-        ASSERT(innerTextRenderer);
-        placeholderBox->style()->setWidth(Length(innerTextRenderer->width() - placeholderBox->borderAndPaddingWidth(), Fixed));
-        placeholderBox->style()->setHeight(Length(innerTextRenderer->height() - placeholderBox->borderAndPaddingHeight(), Fixed));
+        LayoutSize innerTextSize;
+        if (innerTextRenderer)
+            innerTextSize = innerTextRenderer->size();
+        placeholderBox->style()->setWidth(Length(innerTextSize.width() - placeholderBox->borderAndPaddingWidth(), Fixed));
+        placeholderBox->style()->setHeight(Length(innerTextSize.height() - placeholderBox->borderAndPaddingHeight(), Fixed));
         bool neededLayout = placeholderBox->needsLayout();
         bool placeholderBoxHadLayout = placeholderBox->everHadLayout();
         placeholderBox->layoutIfNeeded();
-        LayoutPoint textOffset = innerTextRenderer->location();
+        LayoutPoint textOffset;
+        if (innerTextRenderer)
+            textOffset = innerTextRenderer->location();
         if (innerBlockElement() && innerBlockElement()->renderBox())
             textOffset += toLayoutSize(innerBlockElement()->renderBox()->location());
         if (containerRenderer)
