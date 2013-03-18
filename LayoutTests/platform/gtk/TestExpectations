@@ -1420,8 +1420,6 @@ webkit.org/b/110694 html5lib/generated/run-plain-text-unsafe-data.html [ Failure
 # Need support for ResourceHandle::didChangePriority and DRT support
 webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Failure ]
 
-webkit.org/b/111058 plugins/plugin-clip-subframe.html [ Failure ]
-
 # CURSOR_VISIBILITY is not enabled in gtk
 webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Failure ]
 

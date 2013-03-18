@@ -268,6 +268,7 @@ TestNetscapePlugin_libtestnetscapeplugin_la_SOURCES = \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/GetURLWithJavaScriptURL.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/GetURLWithJavaScriptURLDestroyingPlugin.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/GetUserAgentWithNullNPPFromNPPNew.cpp \
+	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/LogNPPSetWindow.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/NPDeallocateCalledBeforeNPShutdown.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/NPPNewFails.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/NPPSetWindowCalledDuringDestruction.cpp \
