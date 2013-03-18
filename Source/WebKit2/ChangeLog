@@ -1,3 +1,23 @@
+2013-03-18  Andreas Kling  <akling@apple.com>
+
+        [WK2][Mac] Don't consider empty window frames cacheable.
+        <http://webkit.org/b/112631>
+        <rdar://problem/13384894>
+
+        Reviewed by Anders Carlsson.
+
+        If the UI client overrides getWindowFrame() and returns an empty rect, send that over
+        to the web process and mark it as uncached. This forces the next ChromeClient::windowRect()
+        call to synchronously retrieve the window frame from the other side.
+
+        Fixes an issue with the Mac Web Inspector which uses empty rects to signify that there is
+        no known window frame yet. In this case, we should not be falling back to the native frame.
+
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::windowAndViewFramesChanged):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::windowAndViewFramesChanged):
+
 2013-03-18  Brady Eidson  <beidson@apple.com>
 
         Mac build fix after http://trac.webkit.org/changeset/146088

@@ -2942,7 +2942,7 @@ void WebPage::windowAndViewFramesChanged(const FloatRect& windowFrameInScreenCoo
     for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
         (*it)->windowAndViewFramesChanged(enclosingIntRect(windowFrameInScreenCoordinates), enclosingIntRect(viewFrameInWindowCoordinates));
 
-    m_hasCachedWindowFrame = true;
+    m_hasCachedWindowFrame = !m_windowFrameInScreenCoordinates.isEmpty();
 }
 #endif
 

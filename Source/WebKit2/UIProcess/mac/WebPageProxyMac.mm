@@ -143,11 +143,9 @@ void WebPageProxy::windowAndViewFramesChanged(const FloatRect& windowFrameInScre
     if (!isValid())
         return;
 
-    // If the UI client overrides getWindowFrame(), we call it here to make sure we send the appropriate window frame.  
+    // In case the UI client overrides getWindowFrame(), we call it here to make sure we send the appropriate window frame.
     FloatRect adjustedWindowFrameInScreenCoordinates;
     getWindowFrame(adjustedWindowFrameInScreenCoordinates);
-    if (adjustedWindowFrameInScreenCoordinates.isEmpty())
-        adjustedWindowFrameInScreenCoordinates = windowFrameInScreenCoordinates;
 
     process()->send(Messages::WebPage::WindowAndViewFramesChanged(adjustedWindowFrameInScreenCoordinates, viewFrameInWindowCoordinates, accessibilityViewCoordinates), m_pageID);
 }
