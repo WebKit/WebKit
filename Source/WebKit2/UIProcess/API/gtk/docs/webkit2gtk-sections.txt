@@ -945,10 +945,13 @@ webkit_security_manager_get_type
 <SECTION>
 <FILE>WebKitWebViewGroup</FILE>
 WebKitWebViewGroup
+WebKitInjectedContentFrames
 webkit_web_view_group_new
 webkit_web_view_group_get_name
 webkit_web_view_group_get_settings
 webkit_web_view_group_set_settings
+webkit_web_view_group_add_user_style_sheet
+webkit_web_view_group_remove_all_user_style_sheets
 
 <SUBSECTION Standard>
 WebKitWebViewGroupClass

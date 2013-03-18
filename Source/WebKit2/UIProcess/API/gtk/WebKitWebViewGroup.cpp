@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebKitWebViewGroup.h"
 
+#include "ImmutableArray.h"
 #include "WebKitPrivate.h"
 #include "WebKitSettingsPrivate.h"
 #include "WebKitWebViewGroupPrivate.h"
@@ -220,4 +221,67 @@ void webkit_web_view_group_set_settings(WebKitWebViewGroup* group, WebKitSetting
     group->priv->settings = settings;
     webkitWebViewGroupAttachSettingsToPageGroup(group);
     g_object_notify(G_OBJECT(group), "settings");
+}
+
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_INJECTED_CONTENT_FRAMES_ALL, WebCore::InjectInAllFrames);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_INJECTED_CONTENT_FRAMES_TOP_ONLY, WebCore::InjectInTopFrameOnly);
+
+static PassRefPtr<ImmutableArray> toImmutableArray(const char* const* list)
+{
+    if (!list)
+        return 0;
+
+    Vector<RefPtr<APIObject> > entries;
+    while (*list) {
+        entries.append(WebString::createFromUTF8String(*list));
+        list++;
+    }
+    return ImmutableArray::adopt(entries);
+}
+
+/**
+ * webkit_web_view_group_add_user_style_sheet:
+ * @group: a #WebKitWebViewGroup
+ * @source: the source of the style_sheet to inject
+ * @base_uri: (allow-none): the base URI to use when processing the style_sheet contents or %NULL for about:blank
+ * @whitelist: (array zero-terminated=1) (allow-none): a whitelist of URI patterns or %NULL
+ * @blacklist: (array zero-terminated=1) (allow-none): a blacklist of URI patterns or %NULL
+ * @injected_frames: a #WebKitInjectedFrames describing to which frames the style_sheet should apply
+ *
+ * Inject an external style sheet into pages. It is possible to only apply the style sheet
+ * to some URIs by passing non-null values for @whitelist or @blacklist. Passing a %NULL
+ * whitelist implies that all URIs are on the whitelist. The style sheet is applied if a URI matches
+ * the whitelist and not the blacklist. URI patterns must be of the form [protocol]://[host]/[path]
+ * where the host and path components can contain the wildcard character ('*') to represent zero
+ * or more other characters.
+ */
+void webkit_web_view_group_add_user_style_sheet(WebKitWebViewGroup* group, const char* source, const char* baseURI, const char* const* whitelist, const char* const* blacklist, WebKitInjectedContentFrames injectedFrames)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW_GROUP(group));
+    g_return_if_fail(source);
+
+    RefPtr<ImmutableArray> webWhitelist = toImmutableArray(whitelist);
+    RefPtr<ImmutableArray> webBlacklist = toImmutableArray(blacklist);
+
+    // We always use UserStyleUserLevel to match the behavior of WKPageGroupAddUserStyleSheet.
+    group->priv->pageGroup->addUserStyleSheet(
+        String::fromUTF8(source),
+        String::fromUTF8(baseURI),
+        webWhitelist.get(),
+        webBlacklist.get(),
+        static_cast<WebCore::UserContentInjectedFrames>(injectedFrames),
+        WebCore::UserStyleUserLevel);
+}
+
+/**
+ * webkit_web_view_group_remove_all_user_style_sheets:
+ * @group: a #WebKitWebViewGroup
+ *
+ * Remove all style sheets previously injected into this #WebKitWebViewGroup
+ * via webkit_web_view_group_add_user_style_sheet().
+ */
+void webkit_web_view_group_remove_all_user_style_sheets(WebKitWebViewGroup* group)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW_GROUP(group));
+    group->priv->pageGroup->removeAllUserStyleSheets();
 }
