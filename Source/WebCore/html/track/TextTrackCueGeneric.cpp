@@ -135,6 +135,20 @@ void TextTrackCueGeneric::setPosition(int position, ExceptionCode& ec)
     TextTrackCue::setPosition(position, ec);
 }
 
+void TextTrackCueGeneric::videoSizeDidChange(const IntSize& videoSize)
+{
+    if (!hasDisplayTree())
+        return;
+
+    if (baseFontSizeRelativeToVideoHeight()) {
+        double fontSize = videoSize.height() * baseFontSizeRelativeToVideoHeight() / 100;
+        if (fontSizeMultiplier())
+            fontSize *= fontSizeMultiplier() / 100;
+        displayTreeInternal()->setInlineStyleProperty(CSSPropertyFontSize, String::number(fontSize) + "px");
+    }
+
+}
+
 bool TextTrackCueGeneric::operator==(const TextTrackCue& cue) const
 {
     if (cue.cueType() != TextTrackCue::Generic)

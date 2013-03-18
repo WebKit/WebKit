@@ -138,6 +138,7 @@ public:
     bool isActive();
     void setIsActive(bool);
 
+    bool hasDisplayTree() const { return m_displayTree; }
     PassRefPtr<TextTrackCueBox> getDisplayTree(const IntSize& videoSize);
     PassRefPtr<HTMLDivElement> element() const { return m_cueBackgroundBox; }
 
@@ -170,6 +171,8 @@ public:
         End
     };
     CueAlignment getAlignment() const { return m_cueAlignment; }
+
+    virtual void videoSizeDidChange(const IntSize&) { }
 
     virtual bool operator==(const TextTrackCue&) const;
     virtual bool operator!=(const TextTrackCue& cue) const
