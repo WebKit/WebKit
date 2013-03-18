@@ -1,3 +1,16 @@
+2013-03-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        delete-stale-build-files is too aggressive
+        https://bugs.webkit.org/show_bug.cgi?id=112595
+
+        Reviewed by Tim Horton.
+
+        It appears that whitelisting file extensions to keep is not a good idea.
+        Blacklist files to delete instead, and only delete .o files for now.
+        We can add more file extensions as needed.
+
+        * BuildSlaveSupport/delete-stale-build-files:
+
 2013-03-18  Simon Fraser  <simon.fraser@apple.com>
 
         Disable accessibility notifications after each test

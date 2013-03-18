@@ -62,7 +62,7 @@ def main():
             ext = os.path.splitext(full_path)[1]
 
             try:
-                if ext in ('.dep', '.timestamp', '.txt', '.html', '.js', '.generated') or os.path.getsize(full_path):
+                if ext not in ('.o',) or os.path.getsize(full_path):
                     continue
             except OSError as exception:
                 print exception
