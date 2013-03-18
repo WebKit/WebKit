@@ -1,5 +1,12 @@
 2013-03-18  Brady Eidson  <beidson@apple.com>
 
+        Mac build fix after http://trac.webkit.org/changeset/146088
+
+        * NetworkProcess/mac/NetworkResourceLoaderMac.mm:
+        (WebKit::NetworkResourceLoader::platformDidReceiveResponse):
+
+2013-03-18  Brady Eidson  <beidson@apple.com>
+
         NetworkProcess should send vm_copied, mmap'ed memory to WebProcesses when a 
         resource is already in the disk cache.
         <rdar://problem/13414153> and https://bugs.webkit.org/show_bug.cgi?id=112387

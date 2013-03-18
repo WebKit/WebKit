@@ -46,7 +46,7 @@ void NetworkResourceLoader::platformDidReceiveResponse(const WebCore::ResourceRe
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 1090
     return;
-#endif
+#else
 
     // Check the cache to see if we can vm_copy a filesystem-backed resource buffer.   
     RetainPtr<CFURLCacheRef> cache = adoptCF(CFURLCacheCopySharedURLCache());
@@ -90,6 +90,7 @@ void NetworkResourceLoader::platformDidReceiveResponse(const WebCore::ResourceRe
     abortInProgressLoad();
     
     send(Messages::WebResourceLoader::DidReceiveResource(handle, currentTime()));
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED < 1090
 }
 
 size_t NetworkResourceLoader::fileBackedResourceMinimumSize()
