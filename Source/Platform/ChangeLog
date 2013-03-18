@@ -1,3 +1,23 @@
+2013-03-18  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Create WebFileSystemType enum to allow easier filesystem refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=112571
+
+        Reviewed by Adam Barth.
+
+        New top-level enum (not tied to WebFileSystem class) will allow
+        easier refactoring of filesystem methods within the Platform/
+        directory. (All changes are behind an #ifdef so we can sync
+        required changes in embedders.)
+
+        * chromium/public/WebFileSystemType.h: new file
+        (WebKit):
+
+        * Platform.gypi:
+        * chromium/public/WebFileSystem.h:
+        * chromium/public/WebFileSystemType.h: Copied from Source/WebKit/chromium/public/WebCommonWorkerClient.h.
+        (WebKit):
+
 2013-03-17  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove the zoom filter operation ifdef

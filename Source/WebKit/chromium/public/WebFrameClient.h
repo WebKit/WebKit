@@ -33,6 +33,7 @@
 
 #include "../../../Platform/chromium/public/WebCommon.h"
 #include "../../../Platform/chromium/public/WebFileSystem.h"
+#include "../../../Platform/chromium/public/WebFileSystemType.h"
 #include "../../../Platform/chromium/public/WebURLError.h"
 #include "../../../Platform/chromium/public/WebURLRequest.h"
 #include "WebDOMMessageEvent.h"
@@ -359,9 +360,15 @@ public:
     // is completed successfully. WebFileSystemCallbacks::didFail() must be
     // called otherwise. The create bool is for indicating whether or not to
     // create root path for file systems if it do not exist.
+#ifdef WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
+    virtual void openFileSystem(
+        WebFrame*, WebFileSystemType, long long size,
+        bool create, WebFileSystemCallbacks*) { }
+#else
     virtual void openFileSystem(
         WebFrame*, WebFileSystem::Type, long long size,
         bool create, WebFileSystemCallbacks*) { }
+#endif
 
     // Deletes FileSystem.
     // WebFileSystemCallbacks::didSucceed() must be called when the operation
@@ -369,8 +376,13 @@ public:
     // called otherwise.
     // All in-flight operations and following operations may fail after the
     // FileSystem is deleted.
+#ifdef WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
+    virtual void deleteFileSystem(
+        WebFrame*, WebFileSystemType, WebFileSystemCallbacks*) { }
+#else
     virtual void deleteFileSystem(
         WebFrame*, WebFileSystem::Type, WebFileSystemCallbacks*) { }
+#endif
 
     // Quota ---------------------------------------------------------
 

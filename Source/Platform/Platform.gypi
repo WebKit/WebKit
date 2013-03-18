@@ -60,6 +60,7 @@
             'chromium/public/WebFileSystem.h',
             'chromium/public/WebFileSystemCallbacks.h',
             'chromium/public/WebFileSystemEntry.h',
+            'chromium/public/WebFileSystemType.h',
             'chromium/public/WebFileUtilities.h',
             'chromium/public/WebFilterOperation.h',
             'chromium/public/WebFilterOperations.h',

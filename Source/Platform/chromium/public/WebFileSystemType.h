@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,54 +28,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebCommonWorkerClient_h
-#define WebCommonWorkerClient_h
+#ifndef WebFileSystemType_h
+#define WebFileSystemType_h
 
-#include "../../../Platform/chromium/public/WebCommon.h"
-#include "../../../Platform/chromium/public/WebFileSystem.h"
-#include "../../../Platform/chromium/public/WebFileSystemType.h"
+// TODO(pilgrim) Uncomment this once all embedders have been updated to use this new enum
+// #define WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
 
 namespace WebKit {
 
-class WebApplicationCacheHost;
-class WebApplicationCacheHostClient;
-class WebFrame;
-class WebNotificationPresenter;
-class WebString;
-class WebWorker;
-class WebWorkerClient;
-
-class WebCommonWorkerClient {
-public:
-    // Called on the main webkit thread before opening a web database.
-    virtual bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize)
-    {
-        return true;
-    }
-
-    // Called on the main webkit thread before opening a file system.
-    virtual bool allowFileSystem()
-    {
-        return true;
-    }
-
-    // Called on the main webkit thread before opening a file system.
 #ifdef WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
-    virtual void openFileSystem(WebFileSystemType, long long size, bool create, WebFileSystemCallbacks*)
-#else
-    virtual void openFileSystem(WebFileSystem::Type, long long size, bool create, WebFileSystemCallbacks*)
-#endif
-    {
-        WEBKIT_ASSERT_NOT_REACHED();
-    }
+enum WebFileSystemType {
+    WebFileSystemTypeTemporary,
+    WebFileSystemTypePersistent,
 
-    // Called on the main webkit thread before opening an indexed database.
-    virtual bool allowIndexedDB(const WebString& name)
-    {
-        return true;
-    }
+    // Indicates an isolated filesystem which only exposes a set of files.
+    WebFileSystemTypeIsolated,
+
+    // Indicates a non-sandboxed filesystem.
+    WebFileSystemTypeExternal,
 };
-
+#endif // WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
 
 } // namespace WebKit
 

@@ -39,6 +39,7 @@
 #include "WebTestDelegate.h"
 #include "WebTestProxy.h"
 #include "WebViewClient.h"
+#include <public/WebFileSystemType.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
@@ -191,8 +192,13 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void didReceiveTitle(WebKit::WebFrame*, const WebKit::WebString&, WebKit::WebTextDirection);
     virtual void didNavigateWithinPage(WebKit::WebFrame*, bool isNewNavigation);
     virtual void willSendRequest(WebKit::WebFrame*, unsigned identifier, WebKit::WebURLRequest&, const WebKit::WebURLResponse&);
+#ifdef WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
+    virtual void openFileSystem(WebKit::WebFrame*, WebKit::WebFileSystemType, long long size, bool create, WebKit::WebFileSystemCallbacks*);
+    virtual void deleteFileSystem(WebKit::WebFrame*, WebKit::WebFileSystemType, WebKit::WebFileSystemCallbacks*);
+#else
     virtual void openFileSystem(WebKit::WebFrame*, WebKit::WebFileSystem::Type, long long size, bool create, WebKit::WebFileSystemCallbacks*);
     virtual void deleteFileSystem(WebKit::WebFrame*, WebKit::WebFileSystem::Type, WebKit::WebFileSystemCallbacks*);
+#endif
     virtual bool willCheckAndDispatchMessageEvent(
         WebKit::WebFrame* sourceFrame, WebKit::WebFrame* targetFrame, 
         WebKit::WebSecurityOrigin target, WebKit::WebDOMMessageEvent);

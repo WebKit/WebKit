@@ -32,6 +32,7 @@
 #define WebFileSystem_h
 
 #include "WebCommon.h"
+#include "WebFileSystemType.h"
 #include "WebURL.h"
 
 namespace WebKit {

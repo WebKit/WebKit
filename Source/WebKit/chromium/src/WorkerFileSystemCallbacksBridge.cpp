@@ -206,7 +206,11 @@ void WorkerFileSystemCallbacksBridge::cleanUpAfterCallback()
     }
 }
 
+#ifdef WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
+void WorkerFileSystemCallbacksBridge::postOpenFileSystemToMainThread(WebCommonWorkerClient* commonClient, WebFileSystemType type, long long size, bool create, const String& mode)
+#else
 void WorkerFileSystemCallbacksBridge::postOpenFileSystemToMainThread(WebCommonWorkerClient* commonClient, WebFileSystem::Type type, long long size, bool create, const String& mode)
+#endif
 {
     dispatchTaskToMainThread(
         createCallbackTask(&openFileSystemOnMainThread,
@@ -310,7 +314,11 @@ void WorkerFileSystemCallbacksBridge::postCreateSnapshotFileToMainThread(WebFile
                            path, this, mode));
 }
 
+#ifdef WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
+void WorkerFileSystemCallbacksBridge::openFileSystemOnMainThread(ScriptExecutionContext*, WebCommonWorkerClient* commonClient, WebFileSystemType type, long long size, bool create, PassRefPtr<WorkerFileSystemCallbacksBridge> bridge, const String& mode)
+#else
 void WorkerFileSystemCallbacksBridge::openFileSystemOnMainThread(ScriptExecutionContext*, WebCommonWorkerClient* commonClient, WebFileSystem::Type type, long long size, bool create, PassRefPtr<WorkerFileSystemCallbacksBridge> bridge, const String& mode)
+#endif
 {
     if (!commonClient)
         bridge->didFailOnMainThread(WebFileErrorAbort, mode);
