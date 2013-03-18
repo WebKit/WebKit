@@ -27,6 +27,7 @@
     Conditional=WEB_AUDIO,
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
+    ActiveDOMObject,
     EventTarget
 ] interface ScriptProcessorNode : AudioNode {
     // Rendering callback

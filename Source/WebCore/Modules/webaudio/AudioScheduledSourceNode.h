@@ -56,6 +56,9 @@ public:
     
     AudioScheduledSourceNode(AudioContext*, float sampleRate);
 
+    // unhide the ActiveDOMObject signature
+    using AudioSourceNode::stop;
+    
     // Scheduling.
     void start(double when);
     void stop(double when);

@@ -75,6 +75,31 @@ function doBufferSizeTest(size) {
     }
 }
 
+function performGCTest() {
+    // now test that ScriptProcessorNodes are not garbage collected
+    // if they are unreachable but connected to a running audio context.
+    var context = new webkitOfflineAudioContext(2, renderLengthInFrames, sampleRate);
+
+    window.audioprocessWasCalled = false;
+
+    context.oncomplete = function () {
+        shouldBeTrue('audioprocessWasCalled');
+        finishJSTest();
+    };
+
+    // add the scriptprocessor and callback in a nested function to be sure they'll
+    // be unreachable.
+    (function() {
+        var jsnode = context.createScriptProcessor(bufferSize, 0, 1);
+        jsnode.onaudioprocess = function() {
+            audioprocessWasCalled = true;
+        };
+        jsnode.connect(context.destination);
+    })();
+    gc();
+    context.startRendering();
+}
+
 function runTest() {
     if (window.testRunner) {
         testRunner.dumpAsText();
@@ -148,8 +173,9 @@ function runTest() {
     jsnode.onaudioprocess = processAudioData;
 
     bufferSource.noteOn(0);
-    context.oncomplete = finishJSTest;
+    context.oncomplete = performGCTest;
     context.startRendering();
+
 }
 
 runTest();
