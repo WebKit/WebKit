@@ -1,3 +1,21 @@
+2013-03-18  Tao Bai  <michaelbai@chromium.org>
+
+        Access settings.defaultVideoPosterURL
+        https://bugs.webkit.org/show_bug.cgi?id=112378
+
+        Reviewed by Dimitri Glazkov.
+
+        The defaultVideoPosterURL setting has been added in
+        https://bugs.webkit.org/show_bug.cgi?id=110263,
+        this added methods to access it in Chromium.
+        The settings will be used by Android WebView API
+        WebChromeClient.getDefaultVideoPoster()
+
+        * public/WebSettings.h: add setDefaultVideoPosterURL
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setDefaultVideoPosterURL): set defaultVideoPosterURL
+        * src/WebSettingsImpl.h: add setDefaultVideoPosterURL
+
 2013-03-17  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Remove unused WebNode::hasEventListeners API

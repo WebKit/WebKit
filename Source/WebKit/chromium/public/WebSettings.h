@@ -89,6 +89,7 @@ public:
     virtual void setDefaultFontSize(int) = 0;
     virtual void setDefaultTextEncodingName(const WebString&) = 0;
     virtual void setDefaultTileSize(WebSize) = 0;
+    virtual void setDefaultVideoPosterURL(const WebString&) = 0;
     virtual void setDeferred2dCanvasEnabled(bool) = 0;
     virtual void setDeferredImageDecodingEnabled(bool) = 0;
     virtual void setDeveloperExtrasEnabled(bool) = 0;

@@ -115,6 +115,11 @@ void WebSettingsImpl::setDefaultFixedFontSize(int size)
     m_settings->setDefaultFixedFontSize(size);
 }
 
+void WebSettingsImpl::setDefaultVideoPosterURL(const WebString& url)
+{
+    m_settings->setDefaultVideoPosterURL(url);
+}
+
 void WebSettingsImpl::setMinimumFontSize(int size)
 {
     m_settings->setMinimumFontSize(size);
