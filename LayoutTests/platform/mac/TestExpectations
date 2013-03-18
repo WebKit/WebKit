@@ -1180,10 +1180,14 @@ webkit.org/b/58192 http/tests/appcache/fail-on-update-2.html [ Failure Pass ]
 webkit.org/b/58192 http/tests/appcache/fail-on-update.html [ Failure Pass ]
 webkit.org/b/58192 http/tests/inspector/console-websocket-error.html [ Failure Pass ]
 webkit.org/b/58192 fast/canvas/webgl/gl-teximage.html [ Failure Pass ]
-webkit.org/b/58192 fast/frames/flattening/iframe-flattening-offscreen.html [ Failure Pass ]
-webkit.org/b/58192 fast/frames/flattening/frameset-flattening-advanced.html [ Failure Pass ]
-webkit.org/b/58192 fast/frames/flattening/frameset-flattening-subframesets.html [ Failure Pass ]
 webkit.org/b/58192 svg/dom/SVGScriptElement/script-set-href.svg [ Failure Pass ]
+
+# Flakey frame flattening tests
+webkit.org/b/112532 fast/frames/flattening/iframe-flattening-offscreen.html [ Failure Pass ]
+webkit.org/b/112532 fast/frames/flattening/iframe-flattening-out-of-view.html [ Failure Pass ]
+webkit.org/b/112532 fast/frames/flattening/frameset-flattening-advanced.html [ Failure Pass ]
+webkit.org/b/112532 fast/frames/flattening/frameset-flattening-subframesets.html [ Failure Pass ]
+webkit.org/b/106185 fast/frames/flattening/iframe-flattening-fixed-height.html [ Failure Pass ]
 
 # Flakey cookies tests
 webkit.org/b/73694 http/tests/cookies/simple-cookies-expired.html [ Failure Pass ]
@@ -1386,8 +1390,6 @@ webkit.org/b/105999 [ Lion ] fast/canvas/canvas-composite-image.html [ Failure ]
 
 webkit.org/b/106151 [ Lion ] http/tests/misc/link-rel-icon-beforeload.html [ Pass Failure ]
 
-webkit.org/b/106185 fast/frames/flattening/iframe-flattening-fixed-height.html [ Pass Failure ]
-
 webkit.org/b/106957 svg/dom/SVGViewSpec-invalid-ref-crash.html [ Failure ]
 
 # Enable when support drag-and-drop autoscrolling
@@ -1487,6 +1489,9 @@ webkit.org/b/111754 inspector/debugger/debugger-expand-scope.html [ Crash Pass ]
 webkit.org/b/111606 fast/borders/border-fit-2.html [ Failure Pass ]
 webkit.org/b/111606 fast/borders/border-fit.html [ Failure Pass ]
 webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Failure Pass ]
+
+# Flakey
+webkit.org/b/112533 media/auto-play-in-sandbox-with-allow-scripts.html [ Pass Failure ]
 
 # The following tests only fail on Mac EWS bots. Unfortunately, we haven't been able to figure out the cause of these failures.
 webkit.org/b/112176 canvas/philip/tests/2d.path.arc.scale.2.html [ Failure Pass ]
