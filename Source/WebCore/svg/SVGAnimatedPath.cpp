@@ -42,7 +42,7 @@ PassOwnPtr<SVGAnimatedType> SVGAnimatedPathAnimator::constructFromString(const S
 
 PassOwnPtr<SVGAnimatedType> SVGAnimatedPathAnimator::startAnimValAnimation(const SVGElementAnimatedPropertyList& animatedTypes)
 {
-    ASSERT(animatedTypes.size() == 1);
+    ASSERT(animatedTypes.size() >= 1);
     SVGAnimatedPathSegListPropertyTearOff* property = castAnimatedPropertyToActualType<SVGAnimatedPathSegListPropertyTearOff>(animatedTypes[0].properties[0].get());
     const SVGPathSegList& baseValue = property->currentBaseValue();
 
@@ -72,7 +72,7 @@ void SVGAnimatedPathAnimator::stopAnimValAnimation(const SVGElementAnimatedPrope
 
 void SVGAnimatedPathAnimator::resetAnimValToBaseVal(const SVGElementAnimatedPropertyList& animatedTypes, SVGAnimatedType* type)
 {
-    ASSERT(animatedTypes.size() == 1);
+    ASSERT(animatedTypes.size() >= 1);
     ASSERT(type);
     ASSERT(type->type() == m_type);
     const SVGPathSegList& baseValue = castAnimatedPropertyToActualType<SVGAnimatedPathSegListPropertyTearOff>(animatedTypes[0].properties[0].get())->currentBaseValue();
