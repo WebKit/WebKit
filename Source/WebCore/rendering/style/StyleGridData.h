@@ -41,7 +41,7 @@ public:
 
     bool operator==(const StyleGridData& o) const
     {
-        return m_gridColumns == o.m_gridColumns && m_gridRows == o.m_gridRows && m_gridAutoFlow != o.m_gridAutoFlow;
+        return m_gridColumns == o.m_gridColumns && m_gridRows == o.m_gridRows && m_gridAutoFlow == o.m_gridAutoFlow;
     }
 
     bool operator!=(const StyleGridData& o) const
