@@ -291,4 +291,5 @@ _ZNK7WebCore16HTMLInputElement18shouldAutocompleteEv;
 local:
 _Z*;
 cti*;
+leveldb*;
 };

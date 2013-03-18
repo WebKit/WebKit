@@ -1,3 +1,12 @@
+2013-03-17  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] Exports leveldb symbols
+        https://bugs.webkit.org/show_bug.cgi?id=112526
+
+        Reviewed by Carlos Garcia Campos.
+
+        * Source/autotools/symbols.filter: make leveldb symbols local.
+
 2013-03-15  Jae Hyun Park  <jae.park@company100.net>
 
         [GTK] acceleration_backend_description does not concatenate "(gles2"
