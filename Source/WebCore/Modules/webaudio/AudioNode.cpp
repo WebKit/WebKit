@@ -45,8 +45,7 @@
 namespace WebCore {
 
 AudioNode::AudioNode(AudioContext* context, float sampleRate)
-    : ActiveDOMObject(context->scriptExecutionContext(), this)
-    , m_isInitialized(false)
+    : m_isInitialized(false)
     , m_nodeType(NodeTypeUnknown)
     , m_context(context)
     , m_sampleRate(sampleRate)
@@ -76,11 +75,6 @@ AudioNode::~AudioNode()
 #endif
 }
 
-bool AudioNode::hasPendingActivity() const
-{
-    return !m_isDisabled && (m_connectionRefCount > 0);
-}
-    
 void AudioNode::initialize()
 {
     m_isInitialized = true;

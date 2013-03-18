@@ -16,7 +16,6 @@ PASS Successfully created ScriptProcessorNode with bufferSize = 4096.
 PASS Successfully created ScriptProcessorNode with bufferSize = 8192.
 PASS Successfully created ScriptProcessorNode with bufferSize = 16384.
 PASS onaudioprocess was called with correct data.
-PASS audioprocessWasCalled is true
 PASS successfullyParsed is true
 
 TEST COMPLETE
