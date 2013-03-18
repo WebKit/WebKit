@@ -1,3 +1,17 @@
+2013-03-18  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Get build working under VS2010.
+        https://bugs.webkit.org/show_bug.cgi?id=112604
+
+        Reviewed by Tim Horton.
+
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj: Use CFLite-specific
+        build target (standard version links against CoreFoundation.lib
+        instead of CFLite.lib).
+        * JavaScriptCore.vcxproj/testapi/testapiCommonCFLite.props: Added.
+        * JavaScriptCore.vcxproj/testapi/testapiDebugCFLite.props: Added.
+        * JavaScriptCore.vcxproj/testapi/testapiReleaseCFLite.props: Added.
+
 2013-03-18  Roger Fong  <roger_fong@apple.com>
 
         AppleWin VS2010 Debug configuration build fix..
