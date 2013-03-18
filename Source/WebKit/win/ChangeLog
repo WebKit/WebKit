@@ -1,3 +1,11 @@
+2013-03-18  Roger Fong  <roger_fong@apple.com>
+
+        Fix typo on Windows following r145849 that was causing DRT to crash 100% of the time.
+
+        * WebView.cpp:
+        (WebView::setSmartInsertDeleteEnabled):
+        (WebView::setSelectTrailingWhitespaceEnabled):
+
 2013-03-15  Nate Chapin  <japhet@chromium.org>
 
         Hide MainResourceLoader from the outside world

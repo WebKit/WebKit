@@ -4080,7 +4080,7 @@ HRESULT STDMETHODCALLTYPE WebView::typingStyle(
 HRESULT STDMETHODCALLTYPE WebView::setSmartInsertDeleteEnabled( 
         /* [in] */ BOOL flag)
 {
-    if (m_page->settings()->smartInsertDeleteEnabled() == !!flag) {
+    if (m_page->settings()->smartInsertDeleteEnabled() != !!flag) {
         m_page->settings()->setSmartInsertDeleteEnabled(!!flag);
         setSelectTrailingWhitespaceEnabled(!flag);
     }
@@ -4097,7 +4097,7 @@ HRESULT STDMETHODCALLTYPE WebView::smartInsertDeleteEnabled(
 HRESULT STDMETHODCALLTYPE WebView::setSelectTrailingWhitespaceEnabled( 
         /* [in] */ BOOL flag)
 {
-    if (m_page->settings()->selectTrailingWhitespaceEnabled() == !!flag) {
+    if (m_page->settings()->selectTrailingWhitespaceEnabled() != !!flag) {
         m_page->settings()->setSelectTrailingWhitespaceEnabled(!!flag);
         setSmartInsertDeleteEnabled(!flag);
     }
