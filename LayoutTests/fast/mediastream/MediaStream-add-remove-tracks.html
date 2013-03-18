@@ -68,21 +68,18 @@ function gotStream2(s) {
     videoTrack = stream1.getVideoTracks()[0];
 
     tryRemoveTrack(stream1, audioTrack);
-    tryRemoveTrack(stream1, videoTrack);
-
     // verify removed tracks
     shouldBe('stream1.getAudioTracks().length', '0');
-    shouldBe('stream1.getVideoTracks().length', '0');
-
     shouldBeNull('stream1.getTrackById(audioTrack.id)');
-    shouldBeNull('stream1.getTrackById(videoTrack.id)');
-
     // remove a non-existent (already removed) track (should not throw)
     tryRemoveTrack(stream1, audioTrack);
-    tryRemoveTrack(stream1, videoTrack);
-
     // (re-)add tracks
     tryAddTrack(stream1, audioTrack);
+
+    tryRemoveTrack(stream1, videoTrack);
+    shouldBe('stream1.getVideoTracks().length', '0');
+    shouldBeNull('stream1.getTrackById(videoTrack.id)');
+    tryRemoveTrack(stream1, videoTrack);
     tryAddTrack(stream1, videoTrack);
 
     // verify added tracks
@@ -110,6 +107,11 @@ function gotStream2(s) {
     // verify added tracks
     shouldBe('stream1.getAudioTracks().length', '2');
     shouldBe('stream1.getVideoTracks().length', '2');
+
+    // when all tracks have been removed, stream.ended should return true.
+    tryRemoveTrack(stream2, stream2.getAudioTracks()[0]);
+    tryRemoveTrack(stream2, stream2.getVideoTracks()[0]);
+    shouldBeTrue('stream2.ended');
 
     stream1.stop();
 

@@ -8,8 +8,8 @@ PASS stream1.getVideoTracks().length is 1
 PASS stream2.getAudioTracks().length is 1
 PASS stream2.getVideoTracks().length is 1
 PASS stream1.getAudioTracks().length is 0
-PASS stream1.getVideoTracks().length is 0
 PASS stream1.getTrackById(audioTrack.id) is null
+PASS stream1.getVideoTracks().length is 0
 PASS stream1.getTrackById(videoTrack.id) is null
 PASS stream1.getAudioTracks().length is 1
 PASS stream1.getVideoTracks().length is 1
@@ -21,6 +21,7 @@ PASS stream1.getAudioTracks().length is 1
 PASS stream1.getVideoTracks().length is 1
 PASS stream1.getAudioTracks().length is 2
 PASS stream1.getVideoTracks().length is 2
+PASS stream2.ended is true
 PASS stream1.addTrack(audioTrack) threw exception Error: InvalidStateError: DOM Exception 11.
 PASS stream1.removeTrack(audioTrack) threw exception Error: InvalidStateError: DOM Exception 11.
 PASS successfullyParsed is true

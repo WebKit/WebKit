@@ -200,6 +200,9 @@ void MediaStream::removeTrack(PassRefPtr<MediaStreamTrack> prpTrack , ExceptionC
     }
     }
 
+    if (!m_audioTracks.size() && !m_videoTracks.size())
+        m_descriptor->setEnded();
+
     MediaStreamCenter::instance().didRemoveMediaStreamTrack(m_descriptor.get(), track->component());
 }
 
