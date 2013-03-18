@@ -1,3 +1,21 @@
+2013-03-18  Michael Saboff  <msaboff@apple.com>
+
+        Potentially unsafe register allocations in DFG code generation
+        https://bugs.webkit.org/show_bug.cgi?id=112477
+
+        Reviewed by Geoffrey Garen.
+
+        Moved allocation of temporary GPRs to be before any generated branches in the functions below.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+
 2013-03-15  Filip Pizlo  <fpizlo@apple.com>
 
         DFG string conversions and allocations should be inlined
