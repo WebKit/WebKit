@@ -1,0 +1,23 @@
+<html>
+  <style>
+    @font-face {
+      font-family: test1;
+      src: url(../../resources/SpaceOnly.otf);
+    }
+    @font-face {
+      font-family: test2;
+      src: url(../custom/resources/SVGFreeSans.svg) format('svg');
+    }
+    body {
+      font-family: test1,test2;
+      font-variant: small-caps;
+    }
+  </style>
+  <script>
+    if (window.testRunner)
+      testRunner.dumpAsText();
+  </script>
+  <body>
+    This test passes if it doesn't crash.
+  </body>
+</html>

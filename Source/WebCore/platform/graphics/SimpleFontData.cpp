@@ -151,9 +151,7 @@ void SimpleFontData::platformGlyphInit()
 
 SimpleFontData::~SimpleFontData()
 {
-#if ENABLE(SVG_FONTS)
     if (!m_fontData)
-#endif
         platformDestroy();
 
     if (isCustomFont())
@@ -277,6 +275,15 @@ SimpleFontData::DerivedFontData::~DerivedFontData()
         }
     }
 #endif
+}
+
+PassRefPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescription& fontDescription, float scaleFactor) const
+{
+    // FIXME: Support scaled fonts that used AdditionalFontData.
+    if (m_fontData)
+        return 0;
+
+    return platformCreateScaledFontData(fontDescription, scaleFactor);
 }
 
 } // namespace WebCore

@@ -90,7 +90,7 @@ void SimpleFontData::platformDestroy()
 #endif
 }
 
-PassRefPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescription& fontDescription, float scaleFactor) const
+PassRefPtr<SimpleFontData> SimpleFontData::platformCreateScaledFontData(const FontDescription& fontDescription, float scaleFactor) const
 {
     FontDescription desc = FontDescription(fontDescription);
     desc.setSpecifiedSize(scaleFactor * fontDescription.computedSize());
