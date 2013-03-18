@@ -178,18 +178,6 @@ bool WebNode::isElementNode() const
     return m_private->isElementNode();
 }
 
-bool WebNode::hasEventListeners(const WebString& eventType) const
-{
-    // FIXME: "permissionrequest" seems like an implementation detail of the
-    //        the browser plug-in. Perhaps the browser plug-in should have
-    //        a more special-purpose mechanism?
-    //        See http://code.google.com/p/chromium/issues/detail?id=189561
-
-    // Please do not add more eventTypes to this list without an API review.
-    RELEASE_ASSERT(eventType == "permissionrequest");
-    return m_private->hasEventListeners(eventType);
-}
-
 void WebNode::addEventListener(const WebString& eventType, WebDOMEventListener* listener, bool useCapture)
 {
     // Please do not add more eventTypes to this list without an API review.
