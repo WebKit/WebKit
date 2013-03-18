@@ -317,7 +317,7 @@ unsigned HTMLVideoElement::webkitDroppedFrameCount() const
 
 KURL HTMLVideoElement::posterImageURL() const
 {
-    const AtomicString& url = stripLeadingAndTrailingHTMLSpaces(imageSourceURL());
+    String url = stripLeadingAndTrailingHTMLSpaces(imageSourceURL());
     if (url.isEmpty())
         return KURL();
     return document()->completeURL(url);
