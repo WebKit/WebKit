@@ -319,6 +319,11 @@ protected:
     InlineFlowBox* m_prevLineBox; // The previous box that also uses our RenderObject
     InlineFlowBox* m_nextLineBox; // The next box that also uses our RenderObject
 
+#if ENABLE(CSS3_TEXT)
+    // Maximum logicalTop among all children of an InlineFlowBox. Used to
+    // calculate the offset for TextUnderlinePositionUnder.
+    void computeMaxLogicalTop(float& maxLogicalTop);
+#endif // CSS3_TEXT
 private:
     unsigned m_includeLogicalLeftEdge : 1;
     unsigned m_includeLogicalRightEdge : 1;

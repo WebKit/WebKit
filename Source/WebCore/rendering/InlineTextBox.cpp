@@ -958,6 +958,33 @@ static StrokeStyle textDecorationStyleToStrokeStyle(TextDecorationStyle decorati
     return strokeStyle;
 }
 
+#if ENABLE(CSS3_TEXT)
+static int computeUnderlineOffset(const TextUnderlinePosition underlinePosition, const FontMetrics& fontMetrics, const InlineTextBox* inlineTextBox, const int textDecorationThickness)
+{
+    // Compute the gap between the font and the underline. Use at least one
+    // pixel gap, if underline is thick then use a bigger gap.
+    const int gap = max<int>(1, ceilf(textDecorationThickness / 2.0));
+
+    // According to the specification TextUnderlinePositionAuto should default to 'alphabetic' for horizontal text
+    // and to 'under Left' for vertical text (e.g. japanese). We support only horizontal text for now.
+    switch (underlinePosition) {
+    case TextUnderlinePositionAlphabetic:
+    case TextUnderlinePositionAuto:
+        return fontMetrics.ascent() + gap; // Position underline near the alphabetic baseline.
+    case TextUnderlinePositionUnder: {
+        // Position underline relative to the under edge of the lowest element's content box.
+        const float offset = inlineTextBox->root()->maxLogicalTop() - inlineTextBox->logicalTop();
+        if (offset > 0)
+            return inlineTextBox->logicalHeight() + gap + offset;
+        return inlineTextBox->logicalHeight() + gap;
+    }
+    }
+
+    ASSERT_NOT_REACHED();
+    return fontMetrics.ascent() + gap;
+}
+#endif // CSS3_TEXT
+
 void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& boxOrigin, ETextDecoration deco, TextDecorationStyle decorationStyle, const ShadowData* shadow)
 {
     // FIXME: We should improve this rule and not always just assume 1.
@@ -1034,11 +1061,16 @@ void InlineTextBox::paintDecoration(GraphicsContext* context, const FloatPoint& 
         context->setStrokeStyle(textDecorationStyleToStrokeStyle(decorationStyle));
         if (deco & UNDERLINE) {
             context->setStrokeColor(underline, colorSpace);
+#if ENABLE(CSS3_TEXT)
+            TextUnderlinePosition underlinePosition = styleToUse->textUnderlinePosition();
+            const int underlineOffset = computeUnderlineOffset(underlinePosition, styleToUse->fontMetrics(), this, textDecorationThickness);
+            context->drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + underlineOffset), width, isPrinting);
+
+            if (decorationStyle == TextDecorationStyleDouble)
+                context->drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + underlineOffset + doubleOffset), width, isPrinting);
+#else
             // Leave one pixel of white between the baseline and the underline.
             context->drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + baseline + 1), width, isPrinting);
-#if ENABLE(CSS3_TEXT)
-            if (decorationStyle == TextDecorationStyleDouble)
-                context->drawLineForText(FloatPoint(localOrigin.x(), localOrigin.y() + baseline + 1 + doubleOffset), width, isPrinting);
 #endif // CSS3_TEXT
         }
         if (deco & OVERLINE) {

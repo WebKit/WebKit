@@ -739,6 +739,25 @@ void InlineFlowBox::placeBoxesInBlockDirection(LayoutUnit top, LayoutUnit maxHei
     }
 }
 
+#if ENABLE(CSS3_TEXT)
+void InlineFlowBox::computeMaxLogicalTop(float& maxLogicalTop)
+{
+    for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
+        if (curr->renderer()->isOutOfFlowPositioned())
+            continue; // Positioned placeholders don't affect calculations.
+
+        if (descendantsHaveSameLineHeightAndBaseline())
+            continue;
+
+        maxLogicalTop = max<float>(maxLogicalTop, curr->y());
+        float localMaxLogicalTop = 0;
+        if (curr->isInlineFlowBox())
+            toInlineFlowBox(curr)->computeMaxLogicalTop(localMaxLogicalTop);
+        maxLogicalTop = max<float>(maxLogicalTop, localMaxLogicalTop);
+    }
+}
+#endif // CSS3_TEXT
+
 void InlineFlowBox::flipLinesInBlockDirection(LayoutUnit lineTop, LayoutUnit lineBottom)
 {
     // Flip the box on the line such that the top is now relative to the lineBottom instead of the lineTop.
