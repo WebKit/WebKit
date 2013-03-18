@@ -211,7 +211,7 @@ PassOwnPtr<MessagePortChannelArray> MessagePort::disentanglePorts(const MessageP
     // Walk the incoming array - if there are any duplicate ports, or null ports or cloned ports, throw an error (per section 8.3.3 of the HTML5 spec).
     for (unsigned int i = 0; i < ports->size(); ++i) {
         MessagePort* port = (*ports)[i].get();
-        if (!port || port->isCloned() || portSet.contains(port)) {
+        if (!port || port->isNeutered() || portSet.contains(port)) {
             ec = DATA_CLONE_ERR;
             return nullptr;
         }

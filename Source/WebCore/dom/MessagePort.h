@@ -36,7 +36,6 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
-#include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
 
@@ -99,13 +98,15 @@ namespace WebCore {
         EventListener* onmessage() { return getAttributeEventListener(eventNames().messageEvent); }
 
         // Returns null if there is no entangled port, or if the entangled port is run by a different thread.
-        // Returns null otherwise.
-        // NOTE: This is used solely to enable a GC optimization. Some platforms may not be able to determine ownership of the remote port (since it may live cross-process) - those platforms may always return null.
+        // This is used solely to enable a GC optimization. Some platforms may not be able to determine ownership
+        // of the remote port (since it may live cross-process) - those platforms may always return null.
         MessagePort* locallyEntangledPort();
+
         // A port starts out its life entangled, and remains entangled until it is closed or is cloned.
-        bool isEntangled() { return !m_closed && !isCloned(); }
-        // A port is cloned if its entangled channel has been removed and sent to a new owner via postMessage().
-        bool isCloned() { return !m_entangledChannel; }
+        bool isEntangled() { return !m_closed && !isNeutered(); }
+
+        // A port gets neutered when it is transferred to a new owner via postMessage().
+        bool isNeutered() { return !m_entangledChannel; }
 
     private:
         explicit MessagePort(ScriptExecutionContext&);
