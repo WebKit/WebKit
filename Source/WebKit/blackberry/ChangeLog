@@ -1,5 +1,21 @@
 2013-03-18  Alberto Garcia  <agarcia@igalia.com>
 
+        [BlackBerry] Add Proximity Detector.
+        https://bugs.webkit.org/show_bug.cgi?id=112278
+
+        Reviewed by Rob Buis.
+
+        Fix variable names so they actually match the function
+        declarations.
+
+        Fix call to rectForPoint(), which was moved from HitTestResult to
+        HitTestLocation in r117091 and r126859.
+
+        * WebKitSupport/ProximityDetector.cpp:
+        (BlackBerry::WebKit::ProximityDetector::findBestPoint):
+
+2013-03-18  Alberto Garcia  <agarcia@igalia.com>
+
         [BlackBerry] EditorClientBlackBerry: fix access to WebPage attribute
         https://bugs.webkit.org/show_bug.cgi?id=112556
 

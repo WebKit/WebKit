@@ -59,25 +59,25 @@ IntPoint ProximityDetector::findBestPoint(const IntPoint& documentPos, const Int
     ASSERT(m_webPage);
 
     if (!m_webPage->m_mainFrame)
-        return contentPos;
+        return documentPos;
 
     Document* document = m_webPage->m_mainFrame->document();
 
     if (!document || !document->frame()->view())
-        return contentPos;
+        return documentPos;
 
-    unsigned left = -paddingRect.x();
-    unsigned top = -paddingRect.y();
-    unsigned right = paddingRect.maxX();
-    unsigned bottom = paddingRect.maxY();
+    unsigned left = -documentPaddingRect.x();
+    unsigned top = -documentPaddingRect.y();
+    unsigned right = documentPaddingRect.maxX();
+    unsigned bottom = documentPaddingRect.maxY();
 
     // Adjust hit point to frame
-    IntPoint frameContentPos(document->frame()->view()->windowToContents(m_webPage->m_mainFrame->view()->contentsToWindow(contentPos)));
+    IntPoint frameContentPos(document->frame()->view()->windowToContents(m_webPage->m_mainFrame->view()->contentsToWindow(documentPos)));
     HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping);
     HitTestResult result(frameContentPos, top, right, bottom, left);
     document->renderView()->layer()->hitTest(request, result);
 
-    IntPoint bestPoint = contentPos;
+    IntPoint bestPoint = documentPos;
     int bestPriority = 0;
 
     // Iterate over the list of nodes checking both priority and location
@@ -91,7 +91,7 @@ IntPoint ProximityDetector::findBestPoint(const IntPoint& documentPos, const Int
             continue;
 
         IntRect curRect = curNode->renderer()->absoluteBoundingBoxRect(true /*use transforms*/);
-        IntRect hitTestRect = HitTestResult::rectForPoint(contentPos, top, right, bottom, left);
+        IntRect hitTestRect = HitTestLocation::rectForPoint(documentPos, top, right, bottom, left);
 
         // Check that top corner does not exceed padding
         if (!hitTestRect.contains(curRect.location()))
@@ -101,7 +101,7 @@ IntPoint ProximityDetector::findBestPoint(const IntPoint& documentPos, const Int
         if (!priority)
             continue;
 
-        bool equalPriorityAndCloser = (priority == bestPriority) && (contentPos.distanceSquaredToPoint(bestPoint) > contentPos.distanceSquaredToPoint(curRect.location()));
+        bool equalPriorityAndCloser = (priority == bestPriority) && (documentPos.distanceSquaredToPoint(bestPoint) > documentPos.distanceSquaredToPoint(curRect.location()));
         if (priority > bestPriority || equalPriorityAndCloser) {
             bestPoint = curRect.location(); // use top left
             bestPriority = priority;
