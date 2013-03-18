@@ -64,7 +64,6 @@ static const char optionEnableAcceleratedPainting[] = "--enable-accelerated-pain
 static const char optionEnableAcceleratedCompositingForVideo[] = "--enable-accelerated-video";
 static const char optionEnableAcceleratedFixedPosition[] = "--enable-accelerated-fixed-position";
 static const char optionEnableAcceleratedOverflowScroll[] = "--enable-accelerated-overflow-scroll";
-static const char optionUseGraphicsContext3DImplementation[] = "--use-graphics-context-3d-implementation=";
 static const char optionEnablePerTilePainting[] = "--enable-per-tile-painting";
 static const char optionEnableDeferredImageDecoding[] = "--enable-deferred-image-decoding";
 static const char optionDisableThreadedHTMLParser[] = "--disable-threaded-html-parser";
@@ -191,15 +190,7 @@ int main(int argc, char* argv[])
             deferred2DCanvasEnabled = true;
         else if (argument == optionEnableAcceleratedPainting)
             acceleratedPaintingEnabled = true;
-        else if (!argument.find(optionUseGraphicsContext3DImplementation)) {
-            string implementation = argument.substr(strlen(optionUseGraphicsContext3DImplementation));
-            if (!implementation.compare("IN_PROCESS")) 
-              webkit_support::SetGraphicsContext3DImplementation(webkit_support::IN_PROCESS);
-            else if (!implementation.compare("IN_PROCESS_COMMAND_BUFFER")) 
-              webkit_support::SetGraphicsContext3DImplementation(webkit_support::IN_PROCESS_COMMAND_BUFFER);
-            else 
-              fprintf(stderr, "Unknown GraphicContext3D implementation %s\n", implementation.c_str());
-        } else if (argument == optionEnablePerTilePainting)
+        else if (argument == optionEnablePerTilePainting)
             perTilePaintingEnabled = true;
         else if (argument == optionEnableDeferredImageDecoding)
             deferredImageDecodingEnabled = true;

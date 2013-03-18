@@ -1,3 +1,15 @@
+2013-03-18  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove WebGraphicsContext3DInProcessImpl support from DRT.
+        https://bugs.webkit.org/show_bug.cgi?id=112392
+
+        Reviewed by James Robinson.
+
+        Removes the command line flag option from DRT.
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main):
+
 2013-03-18  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] plugins/plugin-clip-subframe.html is failing
