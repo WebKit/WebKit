@@ -1,3 +1,16 @@
+2013-03-18  W. James MacLean  <wjmaclean@chromium.org>
+
+        [chromium] Remove code that relies on boundsContainsPageScale().
+        https://bugs.webkit.org/show_bug.cgi?id=112465
+
+        The boundsContainsPageScale() API is going away, remove code that
+        depends on it.
+
+        Reviewed by James Robinson.
+
+        * chromium/public/WebContentLayer.h:
+        (WebContentLayer):
+
 2013-03-18  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Create WebFileSystemType enum to allow easier filesystem refactoring

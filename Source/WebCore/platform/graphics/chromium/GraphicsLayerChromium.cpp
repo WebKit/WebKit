@@ -831,14 +831,13 @@ void GraphicsLayerChromium::setupContentsLayer(WebLayer* contentsLayer)
     updateNames();
 }
 
-void GraphicsLayerChromium::setAppliesPageScale(bool appliesScale)
+void GraphicsLayerChromium::setAppliesPageScale(bool)
 {
-    m_layer->setBoundsContainPageScale(appliesScale);
 }
 
 bool GraphicsLayerChromium::appliesPageScale() const
 {
-    return m_layer->boundsContainPageScale();
+    return false;
 }
 
 void GraphicsLayerChromium::paint(GraphicsContext& context, const IntRect& clip)
