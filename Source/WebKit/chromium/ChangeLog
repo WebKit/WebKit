@@ -1,3 +1,12 @@
+2013-03-18  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Protect against key prefix overflows
+        https://bugs.webkit.org/show_bug.cgi?id=111138
+
+        Reviewed by Tony Chang.
+
+        Add tests for invalid indexIds in basic get/put operations.
+
 2013-03-18  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Create WebFileSystemType enum to allow easier filesystem refactoring
