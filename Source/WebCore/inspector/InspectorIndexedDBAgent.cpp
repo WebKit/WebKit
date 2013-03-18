@@ -55,6 +55,7 @@
 #include "IDBMetadata.h"
 #include "IDBObjectStore.h"
 #include "IDBOpenDBRequest.h"
+#include "IDBPendingTransactionMonitor.h"
 #include "IDBRequest.h"
 #include "IDBTransaction.h"
 #include "InjectedScript.h"
@@ -189,6 +190,7 @@ public:
 
         RefPtr<IDBDatabase> idbDatabase = requestResult->idbDatabase();
         m_executableWithDatabase->execute(idbDatabase);
+        IDBPendingTransactionMonitor::deactivateNewTransactions();
         idbDatabase->close();
     }
 
