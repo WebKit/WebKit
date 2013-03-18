@@ -3306,7 +3306,6 @@
             'html/HTMLScriptElement.h',
             'html/HTMLSelectElement.cpp',
             'html/HTMLSelectElement.h',
-            'html/HTMLSelectElementWin.cpp',
             'html/HTMLSourceElement.cpp',
             'html/HTMLSourceElement.h',
             'html/HTMLSpanElement.cpp',

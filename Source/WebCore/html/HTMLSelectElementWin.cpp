@@ -26,8 +26,6 @@
 #include "config.h"
 #include "HTMLSelectElement.h"
 
-#if OS(WINDOWS)
-
 #include "Element.h"
 #include "KeyboardEvent.h"
 #include "RenderMenuList.h"
@@ -57,5 +55,3 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
 }
 
 }
-
-#endif
