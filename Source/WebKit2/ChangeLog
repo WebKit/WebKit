@@ -1,3 +1,16 @@
+2013-03-18  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [WebKit2][GTK] Initialize gettext also in the UIProcess side
+        https://bugs.webkit.org/show_bug.cgi?id=112489
+
+        Reviewed by Carlos Garcia Campos.
+
+        * UIProcess/API/gtk/WebKitPrivate.cpp:
+        (wkInitialize): set text domain and codeset for the library on
+        process startup, the first one is required for translations to be
+        found when not installed on the main system directories searched
+        by gettext, the second one is to please glib and GTK+
+
 2013-03-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Invalid charset encoding using when substituting a misspelled word in WebKit2
