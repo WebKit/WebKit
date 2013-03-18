@@ -2577,11 +2577,15 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
     const SegmentList& segments = exclusionShapeInsideInfo->segments();
     SegmentRangeList& segmentRanges = exclusionShapeInsideInfo->segmentRanges();
 
-    for (unsigned i = 0; i < segments.size(); i++) {
+    for (unsigned i = 0; i < segments.size() && !end.atEnd(); i++) {
         InlineIterator segmentStart = resolver.position();
         end = nextSegmentBreak(resolver, lineInfo, renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
 
         ASSERT(segmentRanges.size() == i);
+        if (resolver.position().atEnd()) {
+            segmentRanges.append(LineSegmentRange(segmentStart, end));
+            break;
+        }
         if (resolver.position() == end) {
             // Nothing fit this segment
             segmentRanges.append(LineSegmentRange(segmentStart, segmentStart));
