@@ -146,13 +146,17 @@ WebInspector.TimelineModel.aggregateTimeByCategory = function(total, addend)
 }
 
 WebInspector.TimelineModel.prototype = {
-    startRecord: function()
+    /**
+     * @param {boolean=} includeDomCounters
+     * @param {boolean=} includeNativeMemoryStatistics
+     */
+    startRecord: function(includeDomCounters, includeNativeMemoryStatistics)
     {
         if (this._collectionEnabled)
             return;
         this.reset();
         var maxStackFrames = WebInspector.settings.timelineLimitStackFramesFlag.get() ? WebInspector.settings.timelineStackFramesToCapture.get() : 30;
-        WebInspector.timelineManager.start(maxStackFrames);
+        WebInspector.timelineManager.start(maxStackFrames, includeDomCounters, includeNativeMemoryStatistics);
         this._collectionEnabled = true;
     },
 

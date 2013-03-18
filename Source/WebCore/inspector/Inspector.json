@@ -2599,29 +2599,16 @@
             {
                 "name": "start",
                 "parameters": [
-                    { "name": "maxCallStackDepth", "optional": true, "type": "integer", "description": "Samples JavaScript stack traces up to <code>maxCallStackDepth</code>, defaults to 5." }
+                    { "name": "maxCallStackDepth", "optional": true, "type": "integer", "description": "Samples JavaScript stack traces up to <code>maxCallStackDepth</code>, defaults to 5." },
+                    { "name": "includeDomCounters", "optional": true, "type": "boolean", "hidden": true, "description": "Whether DOM counters data should be included into timeline events." },
+                    { "name": "includeNativeMemoryStatistics", "optional": true, "type": "boolean", "hidden": true, "description": "Whether native memory usage statistics should be reported as part of timeline events." }
+
                 ],
                 "description": "Starts capturing instrumentation events."
             },
             {
                 "name": "stop",
                 "description": "Stops capturing instrumentation events."
-            },
-            {
-                "name": "setIncludeDomCounters",
-                "parameters": [
-                    { "name": "enabled", "type": "boolean", "description": "Whether DOM counters data should be included into timeline events." }
-                ],
-                "hidden": true,
-                "description": "Controls if DOM counters should be send as part of timeline events."
-            },
-            {
-                "name": "setIncludeNativeMemoryStatistics",
-                "parameters": [
-                    { "name": "enabled", "type": "boolean", "description": "Whether native memory usage statistics should be reported as part of timeline events." }
-                ],
-                "hidden": true,
-                "description": "Controls whether statistics on native memory usage is sent with timeline events."
             },
             {
                 "name": "supportsFrameInstrumentation",

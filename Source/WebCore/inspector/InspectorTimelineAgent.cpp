@@ -169,11 +169,13 @@ void InspectorTimelineAgent::restore()
     if (m_state->getBoolean(TimelineAgentState::timelineAgentEnabled)) {
         m_maxCallStackDepth = m_state->getLong(TimelineAgentState::timelineMaxCallStackDepth);
         ErrorString error;
-        start(&error, &m_maxCallStackDepth);
+        bool includeDomCounters = m_state->getBoolean(TimelineAgentState::includeDomCounters);
+        bool includeNativeMemoryStatistics = m_state->getBoolean(TimelineAgentState::includeNativeMemoryStatistics);
+        start(&error, &m_maxCallStackDepth, &includeDomCounters, &includeNativeMemoryStatistics);
     }
 }
 
-void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth)
+void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth, const bool* includeDomCounters, const bool* includeNativeMemoryStatistics)
 {
     if (!m_frontend)
         return;
@@ -183,6 +185,8 @@ void InspectorTimelineAgent::start(ErrorString*, const int* maxCallStackDepth)
     else
         m_maxCallStackDepth = 5;
     m_state->setLong(TimelineAgentState::timelineMaxCallStackDepth, m_maxCallStackDepth);
+    m_state->setBoolean(TimelineAgentState::includeDomCounters, includeDomCounters && *includeDomCounters);
+    m_state->setBoolean(TimelineAgentState::includeNativeMemoryStatistics, includeNativeMemoryStatistics && *includeNativeMemoryStatistics);
     m_timeConverter.reset();
 
     m_instrumentingAgents->setInspectorTimelineAgent(this);
@@ -207,16 +211,6 @@ void InspectorTimelineAgent::stop(ErrorString*)
     m_gcEvents.clear();
 
     m_state->setBoolean(TimelineAgentState::timelineAgentEnabled, false);
-}
-
-void InspectorTimelineAgent::setIncludeDomCounters(ErrorString*, bool value)
-{
-    m_state->setBoolean(TimelineAgentState::includeDomCounters, value);
-}
-
-void InspectorTimelineAgent::setIncludeNativeMemoryStatistics(ErrorString*, bool value)
-{
-    m_state->setBoolean(TimelineAgentState::includeNativeMemoryStatistics, value);
 }
 
 void InspectorTimelineAgent::canMonitorMainThread(ErrorString*, bool* result)

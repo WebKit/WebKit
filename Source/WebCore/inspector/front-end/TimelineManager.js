@@ -48,12 +48,14 @@ WebInspector.TimelineManager.EventTypes = {
 WebInspector.TimelineManager.prototype = {
     /**
      * @param {number=} maxCallStackDepth
+     * @param {boolean=} includeDomCounters
+     * @param {boolean=} includeNativeMemoryStatistics
      */
-    start: function(maxCallStackDepth)
+    start: function(maxCallStackDepth, includeDomCounters, includeNativeMemoryStatistics)
     {
         this._enablementCount++;
         if (this._enablementCount === 1)
-            TimelineAgent.start(maxCallStackDepth, this._started.bind(this));
+            TimelineAgent.start(maxCallStackDepth, includeDomCounters, includeNativeMemoryStatistics, this._started.bind(this));
     },
 
     stop: function()
