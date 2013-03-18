@@ -576,6 +576,8 @@ private:
             case AllocatePropertyStorage:
             case ReallocatePropertyStorage:
             case TypeOf:
+            case ToString:
+            case NewStringObject:
                 return 0;
                 
             case GetIndexedPropertyStorage:

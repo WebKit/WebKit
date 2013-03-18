@@ -190,6 +190,7 @@ public:
         case KnownInt32Use:
         case KnownNumberUse:
         case KnownCellUse:
+        case KnownStringUse:
             ASSERT(!(forNode(edge).m_type & ~typeFilterFor(edge.useKind())));
             break;
         default:

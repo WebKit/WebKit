@@ -413,7 +413,8 @@ private:
         }
         
         case StringCharAt:
-        case StrCat: {
+        case StrCat:
+        case ToString: {
             changed |= setPrediction(SpecString);
             break;
         }
@@ -436,6 +437,11 @@ private:
                 } else
                     changed |= mergePrediction(child);
             }
+            break;
+        }
+            
+        case NewStringObject: {
+            changed |= setPrediction(SpecStringObject);
             break;
         }
             

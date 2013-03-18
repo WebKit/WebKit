@@ -70,6 +70,18 @@ Vector<FrequentExitSite> ExitProfile::exitSitesFor(unsigned bytecodeIndex)
     return result;
 }
 
+bool ExitProfile::hasExitSite(const FrequentExitSite& site) const
+{
+    if (!m_frequentExitSites)
+        return false;
+    
+    for (unsigned i = m_frequentExitSites->size(); i--;) {
+        if (m_frequentExitSites->at(i) == site)
+            return true;
+    }
+    return false;
+}
+
 QueryableExitProfile::QueryableExitProfile(const ExitProfile& profile)
 {
     if (!profile.m_frequentExitSites)

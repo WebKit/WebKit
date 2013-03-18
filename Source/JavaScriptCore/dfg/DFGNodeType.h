@@ -222,6 +222,8 @@ namespace JSC { namespace DFG {
     macro(TypeOf, NodeResultJS) \
     macro(LogicalNot, NodeResultBoolean) \
     macro(ToPrimitive, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
+    macro(ToString, NodeResultJS | NodeMustGenerate | NodeMightClobber) \
+    macro(NewStringObject, NodeResultJS) \
     macro(StrCat, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
     \
     /* Nodes used for activations. Activation support works by having it anchored at */\

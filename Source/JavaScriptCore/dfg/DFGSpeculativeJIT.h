@@ -1085,6 +1085,16 @@ public:
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure));
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(C_DFGOperation_EJssSt operation, GPRReg result, GPRReg arg1, Structure* structure)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(structure));
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(C_DFGOperation_EJ operation, GPRReg result, GPRReg arg1)
+    {
+        m_jit.setupArgumentsWithExecState(arg1);
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(S_DFGOperation_J operation, GPRReg result, GPRReg arg1)
     {
         m_jit.setupArguments(arg1);
@@ -1471,6 +1481,16 @@ public:
     JITCompiler::Call callOperation(C_DFGOperation_ESt operation, GPRReg result, Structure* structure)
     {
         m_jit.setupArgumentsWithExecState(TrustedImmPtr(structure));
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(C_DFGOperation_EJssSt operation, GPRReg result, GPRReg arg1, Structure* structure)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, TrustedImmPtr(structure));
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(C_DFGOperation_EJ operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload)
+    {
+        m_jit.setupArgumentsWithExecState(arg1Payload, arg1Tag);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(S_DFGOperation_J operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload)
@@ -2031,6 +2051,9 @@ public:
     void emitObjectOrOtherBranch(Edge value, BlockIndex taken, BlockIndex notTaken);
     void emitBranch(Node*);
     
+    void compileToStringOnCell(Node*);
+    void compileNewStringObject(Node*);
+    
     void compileIntegerCompare(Node*, MacroAssembler::RelationalCondition);
     void compileDoubleCompare(Node*, MacroAssembler::DoubleCondition);
     
@@ -2204,6 +2227,11 @@ public:
     void speculateObject(Edge);
     void speculateObjectOrOther(Edge);
     void speculateString(Edge);
+    template<typename StructureLocationType>
+    void speculateStringObjectForStructure(StructureLocationType);
+    void speculateStringObject(GPRReg);
+    void speculateStringObject(Edge);
+    void speculateStringOrStringObject(Edge);
     void speculateNotCell(Edge);
     void speculateOther(Edge);
     void speculate(Node*, Edge);
@@ -2838,7 +2866,7 @@ public:
         , m_gprOrInvalid(InvalidGPRReg)
     {
         ASSERT(m_jit);
-        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || (edge.useKind() == CellUse || edge.useKind() == KnownCellUse || edge.useKind() == ObjectUse || edge.useKind() == StringUse));
+        ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || (edge.useKind() == CellUse || edge.useKind() == KnownCellUse || edge.useKind() == ObjectUse || edge.useKind() == StringUse || edge.useKind() == KnownStringUse || edge.useKind() == StringObjectUse || edge.useKind() == StringOrStringObjectUse));
         if (jit->isFilled(node()))
             gpr();
     }
@@ -2923,6 +2951,21 @@ private:
     Edge m_edge;
     GPRReg m_gprOrInvalid;
 };
+
+template<typename StructureLocationType>
+void SpeculativeJIT::speculateStringObjectForStructure(StructureLocationType structureLocation)
+{
+    Structure* stringObjectStructure =
+        m_jit.globalObjectFor(m_currentNode->codeOrigin)->stringObjectStructure();
+    Structure* stringPrototypeStructure = stringObjectStructure->storedPrototype().asCell()->structure();
+    ASSERT(stringPrototypeStructure->transitionWatchpointSetIsStillValid());
+    
+    speculationCheck(
+        NotStringObject, JSValueRegs(), 0,
+        m_jit.branchPtr(
+            JITCompiler::NotEqual, structureLocation, TrustedImmPtr(stringObjectStructure)));
+    stringPrototypeStructure->addTransitionWatchpoint(speculationWatchpoint(NotStringObject));
+}
 
 #define DFG_TYPE_CHECK(source, edge, typesPassedThrough, jumpToFail) do { \
         if (!needsTypeCheck((edge), (typesPassedThrough)))              \

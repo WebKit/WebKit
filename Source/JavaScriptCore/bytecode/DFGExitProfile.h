@@ -133,6 +133,20 @@ public:
     // meant to only be used from debugging/profiling code.
     Vector<FrequentExitSite> exitSitesFor(unsigned bytecodeIndex);
     
+    // This is O(n) and should be called on less-frequently executed code paths
+    // in the compiler. It should be strictly cheaper than building a
+    // QueryableExitProfile, if you really expect this to be called infrequently
+    // and you believe that there are few exit sites.
+    bool hasExitSite(const FrequentExitSite&) const;
+    bool hasExitSite(ExitKind kind) const
+    {
+        return hasExitSite(FrequentExitSite(kind));
+    }
+    bool hasExitSite(unsigned bytecodeIndex, ExitKind kind) const
+    {
+        return hasExitSite(FrequentExitSite(bytecodeIndex, kind));
+    }
+    
 private:
     friend class QueryableExitProfile;
     

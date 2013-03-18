@@ -230,7 +230,6 @@ namespace JSC {
         const HashTable* regExpTable;
         const HashTable* regExpConstructorTable;
         const HashTable* regExpPrototypeTable;
-        const HashTable* stringTable;
         const HashTable* stringConstructorTable;
         
         Strong<Structure> structureStructure;

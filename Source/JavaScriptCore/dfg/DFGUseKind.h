@@ -48,6 +48,9 @@ enum UseKind {
     ObjectUse,
     ObjectOrOtherUse,
     StringUse,
+    KnownStringUse,
+    StringObjectUse,
+    StringOrStringObjectUse,
     NotCellUse,
     OtherUse,
     LastUseKind // Must always be the last entry in the enum, as it is used to denote the number of enum elements.
@@ -76,7 +79,12 @@ ALWAYS_INLINE SpeculatedType typeFilterFor(UseKind useKind)
     case ObjectOrOtherUse:
         return SpecObject | SpecOther;
     case StringUse:
+    case KnownStringUse:
         return SpecString;
+    case StringObjectUse:
+        return SpecStringObject;
+    case StringOrStringObjectUse:
+        return SpecString | SpecStringObject;
     case NotCellUse:
         return ~SpecCell;
     case OtherUse:

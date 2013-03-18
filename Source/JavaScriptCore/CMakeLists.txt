@@ -333,7 +333,6 @@ set(JavaScriptCore_LUT_FILES
     runtime/RegExpObject.cpp
     runtime/RegExpPrototype.cpp
     runtime/StringConstructor.cpp
-    runtime/StringPrototype.cpp
 )
 
 set(JavaScriptCore_LIBRARIES

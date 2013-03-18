@@ -47,6 +47,7 @@ enum Intrinsic {
     LogIntrinsic,
     RegExpExecIntrinsic,
     RegExpTestIntrinsic,
+    StringPrototypeValueOfIntrinsic
 };
 
 } // namespace JSC

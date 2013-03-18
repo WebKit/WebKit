@@ -14,6 +14,8 @@ public:
     static const bool needsDestruction = true;
 
     const ClassInfo* classInfo() const { return m_classInfo; }
+    
+    static ptrdiff_t classInfoOffset() { return OBJECT_OFFSETOF(JSDestructibleObject, m_classInfo); }
 
 protected:
     JSDestructibleObject(JSGlobalData& globalData, Structure* structure, Butterfly* butterfly = 0)

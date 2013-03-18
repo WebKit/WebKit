@@ -39,6 +39,7 @@
 #include "PreciseJumpTargets.h"
 #include "PutByIdStatus.h"
 #include "ResolveGlobalStatus.h"
+#include "StringConstructor.h"
 #include <wtf/CommaPrinter.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>
@@ -164,6 +165,7 @@ private:
     // Handle calls. This resolves issues surrounding inlining and intrinsics.
     void handleCall(Interpreter*, Instruction* currentInstruction, NodeType op, CodeSpecializationKind);
     void emitFunctionChecks(const CallLinkStatus&, Node* callTarget, int registerOffset, CodeSpecializationKind);
+    void emitArgumentPhantoms(int registerOffset, int argumentCountIncludingThis, CodeSpecializationKind);
     // Handle inlining. Return true if it succeeded, false if we need to plant a call.
     bool handleInlining(bool usesResult, Node* callTargetNode, int resultOperand, const CallLinkStatus&, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, CodeSpecializationKind);
     // Handle setting the result of an intrinsic.
@@ -1206,9 +1208,14 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
     }
 
     if (InternalFunction* function = callLinkStatus.internalFunction()) {
-        if (handleConstantInternalFunction(usesResult, resultOperand, function, registerOffset, argumentCountIncludingThis, prediction, kind))
+        if (handleConstantInternalFunction(usesResult, resultOperand, function, registerOffset, argumentCountIncludingThis, prediction, kind)) {
+            // This phantoming has to be *after* the code for the intrinsic, to signify that
+            // the inputs must be kept alive whatever exits the intrinsic may do.
+            addToGraph(Phantom, callTarget);
+            emitArgumentPhantoms(registerOffset, argumentCountIncludingThis, kind);
             return;
-            
+        }
+        
         // Can only handle this using the generic call handler.
         addCall(interpreter, currentInstruction, op);
         return;
@@ -1219,14 +1226,10 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
         emitFunctionChecks(callLinkStatus, callTarget, registerOffset, kind);
             
         if (handleIntrinsic(usesResult, resultOperand, intrinsic, registerOffset, argumentCountIncludingThis, prediction)) {
-            // Need to keep all inputs alive for OSR, and need to ensure that we get
-            // backwards propagation of NodeUsedAsValue. Note that inlining doesn't
-            // need to do this because it already Flushes the arguments, which has a
-            // similar effect.
+            // This phantoming has to be *after* the code for the intrinsic, to signify that
+            // the inputs must be kept alive whatever exits the intrinsic may do.
             addToGraph(Phantom, callTarget);
-            for (int i = 0; i < argumentCountIncludingThis; ++i)
-                addToGraph(Phantom, get(registerOffset + argumentToOperand(i)));
-            
+            emitArgumentPhantoms(registerOffset, argumentCountIncludingThis, kind);
             return;
         }
     } else if (handleInlining(usesResult, callTarget, resultOperand, callLinkStatus, registerOffset, argumentCountIncludingThis, nextOffset, kind))
@@ -1259,6 +1262,12 @@ void ByteCodeParser::emitFunctionChecks(const CallLinkStatus& callLinkStatus, No
         addToGraph(CheckStructure, OpInfo(m_graph.addStructureSet(callLinkStatus.structure())), callTarget);
         addToGraph(CheckExecutable, OpInfo(callLinkStatus.executable()), callTarget, thisArgument);
     }
+}
+
+void ByteCodeParser::emitArgumentPhantoms(int registerOffset, int argumentCountIncludingThis, CodeSpecializationKind kind)
+{
+    for (int i = kind == CodeForCall ? 0 : 1; i < argumentCountIncludingThis; ++i)
+        addToGraph(Phantom, get(registerOffset + argumentToOperand(i)));
 }
 
 bool ByteCodeParser::handleInlining(bool usesResult, Node* callTargetNode, int resultOperand, const CallLinkStatus& callLinkStatus, int registerOffset, int argumentCountIncludingThis, unsigned nextOffset, CodeSpecializationKind kind)
@@ -1628,7 +1637,6 @@ bool ByteCodeParser::handleConstantInternalFunction(
     // is good enough.
     
     UNUSED_PARAM(prediction); // Remove this once we do more things.
-    UNUSED_PARAM(kind); // Remove this once we do more things.
     
     if (function->classInfo() == &ArrayConstructor::s_info) {
         if (argumentCountIncludingThis == 2) {
@@ -1643,6 +1651,19 @@ bool ByteCodeParser::handleConstantInternalFunction(
         setIntrinsicResult(
             usesResult, resultOperand,
             addToGraph(Node::VarArg, NewArray, OpInfo(ArrayWithUndecided), OpInfo(0)));
+        return true;
+    } else if (function->classInfo() == &StringConstructor::s_info) {
+        Node* result;
+        
+        if (argumentCountIncludingThis <= 1)
+            result = cellConstant(m_globalData->smallStrings.emptyString());
+        else
+            result = addToGraph(ToString, get(registerOffset + argumentToOperand(1)));
+        
+        if (kind == CodeForConstruct)
+            result = addToGraph(NewStringObject, OpInfo(function->globalObject()->stringObjectStructure()), result);
+        
+        setIntrinsicResult(usesResult, resultOperand, result);
         return true;
     }
     

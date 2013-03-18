@@ -32,12 +32,28 @@ namespace JSC {
     public:
         typedef JSDestructibleObject Base;
 
+        static size_t allocationSize(size_t inlineCapacity)
+        {
+            ASSERT_UNUSED(inlineCapacity, !inlineCapacity);
+            return sizeof(JSWrapperObject);
+        }
+
         JSValue internalValue() const;
         void setInternalValue(JSGlobalData&, JSValue);
 
         static Structure* createStructure(JSGlobalData& globalData, JSGlobalObject* globalObject, JSValue prototype) 
         { 
             return Structure::create(globalData, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), &s_info);
+        }
+        
+        static ptrdiff_t internalValueOffset() { return OBJECT_OFFSETOF(JSWrapperObject, m_internalValue); }
+        static ptrdiff_t internalValueCellOffset()
+        {
+#if USE(JSVALUE64)
+            return internalValueOffset();
+#else
+            return internalValueOffset() + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload);
+#endif
         }
 
     protected:

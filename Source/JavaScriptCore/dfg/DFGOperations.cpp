@@ -1547,6 +1547,30 @@ StringImpl* DFG_OPERATION operationResolveRope(ExecState* exec, JSString* string
     return string->value(exec).impl();
 }
 
+JSCell* DFG_OPERATION operationNewStringObject(ExecState* exec, JSString* string, Structure* structure)
+{
+    JSGlobalData& globalData = exec->globalData();
+    NativeCallFrameTracer tracer(&globalData, exec);
+    
+    return StringObject::create(exec, structure, string);
+}
+
+JSCell* DFG_OPERATION operationToStringOnCell(ExecState* exec, JSCell* cell)
+{
+    JSGlobalData& globalData = exec->globalData();
+    NativeCallFrameTracer tracer(&globalData, exec);
+    
+    return JSValue(cell).toString(exec);
+}
+
+JSCell* DFG_OPERATION operationToString(ExecState* exec, EncodedJSValue value)
+{
+    JSGlobalData& globalData = exec->globalData();
+    NativeCallFrameTracer tracer(&globalData, exec);
+
+    return JSValue::decode(value).toString(exec);
+}
+
 double DFG_OPERATION operationFModOnInts(int32_t a, int32_t b)
 {
     return fmod(a, b);

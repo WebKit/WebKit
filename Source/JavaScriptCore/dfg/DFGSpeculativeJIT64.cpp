@@ -1125,7 +1125,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
 #endif
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;
-    ASSERT(edge.useKind() != KnownCellUse || !(value.m_type & ~SpecCell));
+    ASSERT((edge.useKind() != KnownCellUse && edge.useKind() != KnownStringUse) || !(value.m_type & ~SpecCell));
     value.filter(SpecCell);
     VirtualRegister virtualRegister = edge->virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
@@ -3188,52 +3188,65 @@ void SpeculativeJIT::compile(Node* node)
     }
         
     case ToPrimitive: {
-        switch (node->child1().useKind()) {
-        case Int32Use: {
-            // It's really profitable to speculate integer, since it's really cheap,
-            // it means we don't have to do any real work, and we emit a lot less code.
+        RELEASE_ASSERT(node->child1().useKind() == UntypedUse);
+        JSValueOperand op1(this, node->child1());
+        GPRTemporary result(this, op1);
+        
+        GPRReg op1GPR = op1.gpr();
+        GPRReg resultGPR = result.gpr();
+        
+        op1.use();
+        
+        if (!(m_state.forNode(node->child1()).m_type & ~(SpecNumber | SpecBoolean)))
+            m_jit.move(op1GPR, resultGPR);
+        else {
+            MacroAssembler::Jump alreadyPrimitive = m_jit.branchTest64(MacroAssembler::NonZero, op1GPR, GPRInfo::tagMaskRegister);
+            MacroAssembler::Jump notPrimitive = m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(op1GPR, JSCell::structureOffset()), MacroAssembler::TrustedImmPtr(m_jit.globalData()->stringStructure.get()));
             
-            SpeculateIntegerOperand op1(this, node->child1());
-            GPRTemporary result(this, op1);
+            alreadyPrimitive.link(&m_jit);
+            m_jit.move(op1GPR, resultGPR);
             
-            m_jit.move(op1.gpr(), result.gpr());
-            if (op1.format() == DataFormatInteger)
-                m_jit.or64(GPRInfo::tagTypeNumberRegister, result.gpr());
-            
-            jsValueResult(result.gpr(), node);
-            break;
+            addSlowPathGenerator(
+                slowPathCall(notPrimitive, this, operationToPrimitive, resultGPR, op1GPR));
         }
         
-        case UntypedUse: {
+        jsValueResult(resultGPR, node, UseChildrenCalledExplicitly);
+        break;
+    }
+        
+    case ToString: {
+        if (node->child1().useKind() == UntypedUse) {
             JSValueOperand op1(this, node->child1());
-            GPRTemporary result(this, op1);
-        
             GPRReg op1GPR = op1.gpr();
+            
+            GPRResult result(this);
             GPRReg resultGPR = result.gpr();
-        
-            op1.use();
-        
-            if (!(m_state.forNode(node->child1()).m_type & ~(SpecNumber | SpecBoolean)))
-                m_jit.move(op1GPR, resultGPR);
-            else {
-                MacroAssembler::Jump alreadyPrimitive = m_jit.branchTest64(MacroAssembler::NonZero, op1GPR, GPRInfo::tagMaskRegister);
-                MacroAssembler::Jump notPrimitive = m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(op1GPR, JSCell::structureOffset()), MacroAssembler::TrustedImmPtr(m_jit.globalData()->stringStructure.get()));
             
-                alreadyPrimitive.link(&m_jit);
-                m_jit.move(op1GPR, resultGPR);
+            flushRegisters();
             
-                addSlowPathGenerator(
-                    slowPathCall(notPrimitive, this, operationToPrimitive, resultGPR, op1GPR));
+            JITCompiler::Jump done;
+            if (node->child1()->prediction() & SpecString) {
+                JITCompiler::Jump slowPath = m_jit.branchTest64(
+                    JITCompiler::NonZero, op1GPR, GPRInfo::tagMaskRegister);
+                done = m_jit.branchPtr(
+                    JITCompiler::Equal,
+                    JITCompiler::Address(op1GPR, JSCell::structureOffset()),
+                    TrustedImmPtr(m_jit.globalData()->stringStructure.get()));
+                slowPath.link(&m_jit);
             }
+            callOperation(operationToString, resultGPR, op1GPR);
+            if (done.isSet())
+                done.link(&m_jit);
+            cellResult(resultGPR, node);
+            break;
+        }
         
-            jsValueResult(resultGPR, node, UseChildrenCalledExplicitly);
-            break;
-        }
-            
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-            break;
-        }
+        compileToStringOnCell(node);
+        break;
+    }
+        
+    case NewStringObject: {
+        compileNewStringObject(node);
         break;
     }
         

@@ -71,6 +71,15 @@ void printInternal(PrintStream& out, UseKind useKind)
     case StringUse:
         out.print("String");
         break;
+    case KnownStringUse:
+        out.print("KnownString");
+        break;
+    case StringObjectUse:
+        out.print("StringObject");
+        break;
+    case StringOrStringObjectUse:
+        out.print("StringOrStringObject");
+        break;
     case NotCellUse:
         out.print("NotCell");
         break;

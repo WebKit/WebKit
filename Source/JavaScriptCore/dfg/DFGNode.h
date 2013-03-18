@@ -349,6 +349,12 @@ struct Node {
         children.setChild1(Edge(phi));
     }
     
+    void convertToToString()
+    {
+        ASSERT(m_op == ToPrimitive);
+        m_op = ToString;
+    }
+    
     JSCell* weakConstant()
     {
         ASSERT(op() == WeakJSConstant);
@@ -844,6 +850,7 @@ struct Node {
         case ForwardStructureTransitionWatchpoint:
         case ArrayifyToStructure:
         case NewObject:
+        case NewStringObject:
             return true;
         default:
             return false;
@@ -1120,6 +1127,16 @@ struct Node {
         return isStringSpeculation(prediction());
     }
  
+    bool shouldSpeculateStringObject()
+    {
+        return isStringObjectSpeculation(prediction());
+    }
+    
+    bool shouldSpeculateStringOrStringObject()
+    {
+        return isStringOrStringObjectSpeculation(prediction());
+    }
+    
     bool shouldSpeculateFinalObject()
     {
         return isFinalObjectSpeculation(prediction());

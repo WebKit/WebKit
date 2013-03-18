@@ -194,6 +194,17 @@ fast/js/dfg-side-effect-assignment-osr-exit
 fast/js/dfg-sqrt-backwards-propagation
 fast/js/dfg-string-stricteq
 fast/js/dfg-tear-off-arguments-not-activation
+fast/js/dfg-to-string-bad-toString
+fast/js/dfg-to-string-bad-valueOf
+fast/js/dfg-to-string-int-or-string
+fast/js/dfg-to-string-int
+fast/js/dfg-to-string-side-effect
+fast/js/dfg-to-string-side-effect-clobbers-toString
+fast/js/dfg-to-string-toString-becomes-bad-with-dictionary-string-prototype
+fast/js/dfg-to-string-toString-becomes-bad
+fast/js/dfg-to-string-toString-in-string
+fast/js/dfg-to-string-valueOf-becomes-bad
+fast/js/dfg-to-string-valueOf-in-string
 fast/js/dfg-uint16array
 fast/js/dfg-uint32-to-number-in-middle-of-copy-propagation
 fast/js/dfg-uint32-to-number-on-captured-variable

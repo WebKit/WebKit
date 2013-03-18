@@ -24,7 +24,6 @@ LUT_FILES += \
     runtime/RegExpObject.cpp \
     runtime/RegExpPrototype.cpp \
     runtime/StringConstructor.cpp \
-    runtime/StringPrototype.cpp \
 
 KEYWORDLUT_FILES += \
     parser/Keywords.table

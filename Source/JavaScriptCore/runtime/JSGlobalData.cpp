@@ -97,7 +97,6 @@ extern const HashTable privateNamePrototypeTable;
 extern const HashTable regExpTable;
 extern const HashTable regExpConstructorTable;
 extern const HashTable regExpPrototypeTable;
-extern const HashTable stringTable;
 extern const HashTable stringConstructorTable;
 
 // Note: Platform.h will enforce that ENABLE(ASSEMBLER) is true if either
@@ -158,7 +157,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, HeapType heapType)
     , regExpTable(fastNew<HashTable>(JSC::regExpTable))
     , regExpConstructorTable(fastNew<HashTable>(JSC::regExpConstructorTable))
     , regExpPrototypeTable(fastNew<HashTable>(JSC::regExpPrototypeTable))
-    , stringTable(fastNew<HashTable>(JSC::stringTable))
     , stringConstructorTable(fastNew<HashTable>(JSC::stringConstructorTable))
     , identifierTable(globalDataType == Default ? wtfThreadData().currentIdentifierTable() : createIdentifierTable())
     , propertyNames(new CommonIdentifiers(this))
@@ -288,7 +286,6 @@ JSGlobalData::~JSGlobalData()
     regExpTable->deleteTable();
     regExpConstructorTable->deleteTable();
     regExpPrototypeTable->deleteTable();
-    stringTable->deleteTable();
     stringConstructorTable->deleteTable();
 
     fastDelete(const_cast<HashTable*>(arrayConstructorTable));
@@ -307,7 +304,6 @@ JSGlobalData::~JSGlobalData()
     fastDelete(const_cast<HashTable*>(regExpTable));
     fastDelete(const_cast<HashTable*>(regExpConstructorTable));
     fastDelete(const_cast<HashTable*>(regExpPrototypeTable));
-    fastDelete(const_cast<HashTable*>(stringTable));
     fastDelete(const_cast<HashTable*>(stringConstructorTable));
 
     opaqueJSClassData.clear();

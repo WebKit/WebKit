@@ -271,8 +271,6 @@ sub output() {
         }
 
         my $intrinsic = "NoIntrinsic";
-        $intrinsic = "CharCodeAtIntrinsic" if ($key eq "charCodeAt");
-        $intrinsic = "CharAtIntrinsic" if ($key eq "charAt");
         $intrinsic = "FromCharCodeIntrinsic" if ($key eq "fromCharCode");
         if ($name eq "mathTable") {
             $intrinsic = "MinIntrinsic" if ($key eq "min");

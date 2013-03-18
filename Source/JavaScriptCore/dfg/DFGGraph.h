@@ -376,6 +376,16 @@ public:
         return baselineCodeBlockForOriginAndBaselineCodeBlock(codeOrigin, m_profiledBlock);
     }
     
+    bool hasGlobalExitSite(const CodeOrigin& codeOrigin, ExitKind exitKind)
+    {
+        return baselineCodeBlockFor(codeOrigin)->hasExitSite(FrequentExitSite(exitKind));
+    }
+    
+    bool hasExitSite(const CodeOrigin& codeOrigin, ExitKind exitKind)
+    {
+        return baselineCodeBlockFor(codeOrigin)->hasExitSite(FrequentExitSite(codeOrigin.bytecodeIndex, exitKind));
+    }
+    
     int argumentsRegisterFor(const CodeOrigin& codeOrigin)
     {
         if (!codeOrigin.inlineCallFrame)
@@ -522,6 +532,18 @@ public:
         case PutByVal:
         case PutByValAlias:
             return !byValIsPure(node);
+        case ToString:
+            switch (node->child1().useKind()) {
+            case StringObjectUse:
+            case StringOrStringObjectUse:
+                return false;
+            case CellUse:
+            case UntypedUse:
+                return true;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                return true;
+            }
         default:
             RELEASE_ASSERT_NOT_REACHED();
             return true; // If by some oddity we hit this case in release build it's safer to have CSE assume the worst.

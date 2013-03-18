@@ -1,3 +1,139 @@
+2013-03-15  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG string conversions and allocations should be inlined
+        https://bugs.webkit.org/show_bug.cgi?id=112376
+
+        Reviewed by Geoffrey Garen.
+        
+        This turns new String(), String(), String.prototype.valueOf(), and
+        String.prototype.toString() into intrinsics. It gives the DFG the ability to handle
+        conversions from StringObject to JSString and vice-versa, and also gives it the
+        ability to handle cases where a variable may be either a StringObject or a JSString.
+        To do this, I added StringObject to value profiling (and removed the stale
+        distinction between Myarguments and Foreignarguments). I also cleaned up ToPrimitive
+        handling, using some of the new functionality but also taking advantage of the
+        existence of Identity(String:@a).
+        
+        This is a 2% SunSpider speed-up. Also there are some speed-ups on V8v7 and Kraken.
+        On microbenchmarks that stress new String() this is a 14x speed-up.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (JSC::CodeBlock::hasExitSite):
+        (JSC):
+        * bytecode/DFGExitProfile.cpp:
+        (JSC::DFG::ExitProfile::hasExitSite):
+        (DFG):
+        * bytecode/DFGExitProfile.h:
+        (ExitProfile):
+        (JSC::DFG::ExitProfile::hasExitSite):
+        * bytecode/ExitKind.cpp:
+        (JSC::exitKindToString):
+        * bytecode/ExitKind.h:
+        * bytecode/SpeculatedType.cpp:
+        (JSC::dumpSpeculation):
+        (JSC::speculationToAbbreviatedString):
+        (JSC::speculationFromClassInfo):
+        * bytecode/SpeculatedType.h:
+        (JSC):
+        (JSC::isStringObjectSpeculation):
+        (JSC::isStringOrStringObjectSpeculation):
+        * create_hash_table:
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::executeEffects):
+        * dfg/DFGAbstractState.h:
+        (JSC::DFG::AbstractState::filterEdgeByUse):
+        * dfg/DFGByteCodeParser.cpp:
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::emitArgumentPhantoms):
+        (DFG):
+        (JSC::DFG::ByteCodeParser::handleConstantInternalFunction):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::putStructureStoreElimination):
+        * dfg/DFGEdge.h:
+        (JSC::DFG::Edge::shift):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::isStringPrototypeMethodSane):
+        (FixupPhase):
+        (JSC::DFG::FixupPhase::canOptimizeStringObjectAccess):
+        (JSC::DFG::FixupPhase::observeUseKindOnNode):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::hasGlobalExitSite):
+        (Graph):
+        (JSC::DFG::Graph::hasExitSite):
+        (JSC::DFG::Graph::clobbersWorld):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToToString):
+        (Node):
+        (JSC::DFG::Node::hasStructure):
+        (JSC::DFG::Node::shouldSpeculateStringObject):
+        (JSC::DFG::Node::shouldSpeculateStringOrStringObject):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileToStringOnCell):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::compileNewStringObject):
+        (JSC::DFG::SpeculativeJIT::speculateObject):
+        (JSC::DFG::SpeculativeJIT::speculateObjectOrOther):
+        (JSC::DFG::SpeculativeJIT::speculateString):
+        (JSC::DFG::SpeculativeJIT::speculateStringObject):
+        (JSC::DFG::SpeculativeJIT::speculateStringOrStringObject):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculateCellOperand::SpeculateCellOperand):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::speculateStringObjectForStructure):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGUseKind.cpp:
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h:
+        (JSC::DFG::typeFilterFor):
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::regExpPrototypeTable):
+        * runtime/CommonIdentifiers.h:
+        * runtime/Intrinsic.h:
+        * runtime/JSDestructibleObject.h:
+        (JSDestructibleObject):
+        (JSC::JSDestructibleObject::classInfoOffset):
+        * runtime/JSGlobalData.cpp:
+        (JSC):
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::~JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        * runtime/JSObject.cpp:
+        * runtime/JSObject.h:
+        (JSC):
+        * runtime/JSWrapperObject.h:
+        (JSC::JSWrapperObject::allocationSize):
+        (JSWrapperObject):
+        (JSC::JSWrapperObject::internalValueOffset):
+        (JSC::JSWrapperObject::internalValueCellOffset):
+        * runtime/StringPrototype.cpp:
+        (JSC):
+        (JSC::StringPrototype::finishCreation):
+        (JSC::StringPrototype::create):
+        * runtime/StringPrototype.h:
+        (StringPrototype):
+
 2013-03-18  Filip Pizlo  <fpizlo@apple.com>
 
         ObjectPrototype properties should be eagerly created rather than lazily via static tables

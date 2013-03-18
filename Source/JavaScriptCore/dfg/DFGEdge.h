@@ -148,7 +148,7 @@ private:
     friend class AdjacencyList;
     
 #if USE(JSVALUE64)
-    static uint32_t shift() { return 5; }
+    static uint32_t shift() { return 6; }
     
     static uintptr_t makeWord(Node* node, UseKind useKind, ProofStatus proofStatus)
     {

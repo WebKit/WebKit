@@ -3922,6 +3922,115 @@ GPRReg SpeculativeJIT::temporaryRegisterForPutByVal(GPRTemporary& temporary, Arr
     return temporary.gpr();
 }
 
+void SpeculativeJIT::compileToStringOnCell(Node* node)
+{
+    SpeculateCellOperand op1(this, node->child1());
+    GPRReg op1GPR = op1.gpr();
+    
+    switch (node->child1().useKind()) {
+    case StringObjectUse: {
+        GPRTemporary result(this);
+        GPRReg resultGPR = result.gpr();
+        
+        if (!m_state.forNode(node->child1()).m_currentKnownStructure.isSubsetOf(StructureSet(m_jit.globalObjectFor(node->codeOrigin)->stringObjectStructure()))) {
+            speculateStringObject(op1GPR);
+            m_state.forNode(node->child1()).filter(SpecStringObject);
+        }
+        m_jit.loadPtr(JITCompiler::Address(op1GPR, JSWrapperObject::internalValueCellOffset()), resultGPR);
+        cellResult(resultGPR, node);
+        break;
+    }
+        
+    case StringOrStringObjectUse: {
+        GPRTemporary result(this);
+        GPRReg resultGPR = result.gpr();
+        
+        m_jit.loadPtr(JITCompiler::Address(op1GPR, JSCell::structureOffset()), resultGPR);
+        JITCompiler::Jump isString = m_jit.branchPtr(
+            JITCompiler::Equal, resultGPR, TrustedImmPtr(m_jit.globalData()->stringStructure.get()));
+        
+        speculateStringObjectForStructure(resultGPR);
+        
+        m_jit.loadPtr(JITCompiler::Address(op1GPR, JSWrapperObject::internalValueCellOffset()), resultGPR);
+        
+        JITCompiler::Jump done = m_jit.jump();
+        isString.link(&m_jit);
+        m_jit.move(op1GPR, resultGPR);
+        done.link(&m_jit);
+        
+        m_state.forNode(node->child1()).filter(SpecString | SpecStringObject);
+        
+        cellResult(resultGPR, node);
+        break;
+    }
+        
+    case CellUse: {
+        GPRResult result(this);
+        GPRReg resultGPR = result.gpr();
+        
+        // We flush registers instead of silent spill/fill because in this mode we
+        // believe that most likely the input is not a string, and we need to take
+        // slow path.
+        flushRegisters();
+        JITCompiler::Jump done;
+        if (node->child1()->prediction() & SpecString) {
+            done = m_jit.branchPtr(
+                JITCompiler::Equal,
+                JITCompiler::Address(op1GPR, JSCell::structureOffset()),
+                TrustedImmPtr(m_jit.globalData()->stringStructure.get()));
+        }
+        callOperation(operationToStringOnCell, resultGPR, op1GPR);
+        if (done.isSet())
+            done.link(&m_jit);
+        cellResult(resultGPR, node);
+        break;
+    }
+        
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+void SpeculativeJIT::compileNewStringObject(Node* node)
+{
+    SpeculateCellOperand operand(this, node->child1());
+    
+    GPRTemporary result(this);
+    GPRTemporary scratch1(this);
+    GPRTemporary scratch2(this);
+
+    GPRReg operandGPR = operand.gpr();
+    GPRReg resultGPR = result.gpr();
+    GPRReg scratch1GPR = scratch1.gpr();
+    GPRReg scratch2GPR = scratch2.gpr();
+    
+    JITCompiler::JumpList slowPath;
+    
+    emitAllocateJSObject<StringObject>(
+        resultGPR, TrustedImmPtr(node->structure()), TrustedImmPtr(0), scratch1GPR, scratch2GPR,
+        slowPath);
+    
+    m_jit.storePtr(
+        TrustedImmPtr(&StringObject::s_info),
+        JITCompiler::Address(resultGPR, JSDestructibleObject::classInfoOffset()));
+#if USE(JSVALUE64)
+    m_jit.store64(
+        operandGPR, JITCompiler::Address(resultGPR, JSWrapperObject::internalValueOffset()));
+#else
+    m_jit.store32(
+        TrustedImm32(JSValue::CellTag),
+        JITCompiler::Address(resultGPR, JSWrapperObject::internalValueOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
+    m_jit.store32(
+        operandGPR,
+        JITCompiler::Address(resultGPR, JSWrapperObject::internalValueOffset() + OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
+#endif
+    
+    addSlowPathGenerator(slowPathCall(
+        slowPath, this, operationNewStringObject, resultGPR, operandGPR, node->structure()));
+    
+    cellResult(resultGPR, node);
+}
+
 void SpeculativeJIT::speculateInt32(Edge edge)
 {
     if (!needsTypeCheck(edge, SpecInt32))
@@ -3973,10 +4082,11 @@ void SpeculativeJIT::speculateObject(Edge edge)
         return;
     
     SpeculateCellOperand operand(this, edge);
+    GPRReg gpr = operand.gpr();
     DFG_TYPE_CHECK(
-        JSValueSource::unboxedCell(operand.gpr()), edge, SpecObject, m_jit.branchPtr(
+        JSValueSource::unboxedCell(gpr), edge, SpecObject, m_jit.branchPtr(
             MacroAssembler::Equal, 
-            MacroAssembler::Address(operand.gpr(), JSCell::structureOffset()), 
+            MacroAssembler::Address(gpr, JSCell::structureOffset()), 
             MacroAssembler::TrustedImmPtr(m_jit.globalData()->stringStructure.get())));
 }
 
@@ -3993,7 +4103,7 @@ void SpeculativeJIT::speculateObjectOrOther(Edge edge)
     MacroAssembler::Jump notCell = m_jit.branchTest64(
         MacroAssembler::NonZero, gpr, GPRInfo::tagMaskRegister);
     DFG_TYPE_CHECK(
-        JSValueRegs(operand.gpr()), edge, (~SpecCell) | SpecObject, m_jit.branchPtr(
+        JSValueRegs(gpr), edge, (~SpecCell) | SpecObject, m_jit.branchPtr(
             MacroAssembler::Equal, 
             MacroAssembler::Address(gpr, JSCell::structureOffset()), 
             MacroAssembler::TrustedImmPtr(m_jit.globalData()->stringStructure.get())));
@@ -4042,11 +4152,56 @@ void SpeculativeJIT::speculateString(Edge edge)
         return;
     
     SpeculateCellOperand operand(this, edge);
+    GPRReg gpr = operand.gpr();
     DFG_TYPE_CHECK(
-        JSValueSource::unboxedCell(operand.gpr()), edge, SpecString, m_jit.branchPtr(
+        JSValueSource::unboxedCell(gpr), edge, SpecString, m_jit.branchPtr(
             MacroAssembler::NotEqual, 
-            MacroAssembler::Address(operand.gpr(), JSCell::structureOffset()), 
+            MacroAssembler::Address(gpr, JSCell::structureOffset()), 
             MacroAssembler::TrustedImmPtr(m_jit.globalData()->stringStructure.get())));
+}
+
+void SpeculativeJIT::speculateStringObject(GPRReg gpr)
+{
+    speculateStringObjectForStructure(JITCompiler::Address(gpr, JSCell::structureOffset()));
+}
+
+void SpeculativeJIT::speculateStringObject(Edge edge)
+{
+    if (!needsTypeCheck(edge, SpecStringObject))
+        return;
+    
+    SpeculateCellOperand operand(this, edge);
+    GPRReg gpr = operand.gpr();
+    if (!needsTypeCheck(edge, SpecStringObject))
+        return;
+    
+    speculateStringObject(gpr);
+    m_state.forNode(edge).filter(SpecStringObject);
+}
+
+void SpeculativeJIT::speculateStringOrStringObject(Edge edge)
+{
+    if (!needsTypeCheck(edge, SpecString | SpecStringObject))
+        return;
+    
+    SpeculateCellOperand operand(this, edge);
+    GPRReg gpr = operand.gpr();
+    if (!needsTypeCheck(edge, SpecString | SpecStringObject))
+        return;
+    
+    GPRTemporary structure(this);
+    GPRReg structureGPR = structure.gpr();
+    
+    m_jit.loadPtr(JITCompiler::Address(gpr, JSCell::structureOffset()), structureGPR);
+    
+    JITCompiler::Jump isString = m_jit.branchPtr(
+        JITCompiler::Equal, structureGPR, TrustedImmPtr(m_jit.globalData()->stringStructure.get()));
+    
+    speculateStringObjectForStructure(structureGPR);
+    
+    isString.link(&m_jit);
+    
+    m_state.forNode(edge).filter(SpecString | SpecStringObject);
 }
 
 void SpeculativeJIT::speculateNotCell(Edge edge)
@@ -4107,6 +4262,9 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
     case KnownCellUse:
         ASSERT(!needsTypeCheck(edge, SpecCell));
         break;
+    case KnownStringUse:
+        ASSERT(!needsTypeCheck(edge, SpecString));
+        break;
     case Int32Use:
         speculateInt32(edge);
         break;
@@ -4130,6 +4288,12 @@ void SpeculativeJIT::speculate(Node*, Edge edge)
         break;
     case StringUse:
         speculateString(edge);
+        break;
+    case StringObjectUse:
+        speculateStringObject(edge);
+        break;
+    case StringOrStringObjectUse:
+        speculateStringOrStringObject(edge);
         break;
     case NotCellUse:
         speculateNotCell(edge);

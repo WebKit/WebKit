@@ -33,6 +33,7 @@
 #include "GetByIdStatus.h"
 #include "Operations.h"
 #include "PutByIdStatus.h"
+#include "StringObject.h"
 
 namespace JSC { namespace DFG {
 
@@ -769,7 +770,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             RELEASE_ASSERT_NOT_REACHED();
             break;
         }
-        forNode(node).set(SpecString);
+        forNode(node).set(m_graph.m_globalData.stringStructure.get());
         break;
     }
             
@@ -857,7 +858,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         
     case StringCharAt:
         node->setCanExit(true);
-        forNode(node).set(SpecString);
+        forNode(node).set(m_graph.m_globalData.stringStructure.get());
         break;
             
     case GetByVal: {
@@ -876,7 +877,7 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             forNode(node).makeTop();
             break;
         case Array::String:
-            forNode(node).set(SpecString);
+            forNode(node).set(m_graph.m_globalData.stringStructure.get());
             break;
         case Array::Arguments:
             forNode(node).makeTop();
@@ -1031,11 +1032,8 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             break;
         }
         
-        if (node->child1().useKind() == Int32Use) {
-            forNode(node).set(SpecInt32);
-            break;
-        }
-
+        ASSERT(node->child1().useKind() == UntypedUse);
+        
         AbstractValue& source = forNode(node->child1());
         AbstractValue& destination = forNode(node);
         
@@ -1060,6 +1058,8 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         // ToPrimitive will currently forget string constants. But that's not a big
         // deal since we don't do any optimization on those currently.
         
+        clobberWorld(node->codeOrigin, indexInBlock);
+        
         SpeculatedType type = source.m_type;
         if (type & ~(SpecNumber | SpecString | SpecBoolean)) {
             type &= (SpecNumber | SpecString | SpecBoolean);
@@ -1068,9 +1068,38 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         destination.set(type);
         break;
     }
+        
+    case ToString: {
+        switch (node->child1().useKind()) {
+        case StringObjectUse:
+            // This also filters that the StringObject has the primordial StringObject
+            // structure.
+            forNode(node->child1()).filter(m_graph.globalObjectFor(node->codeOrigin)->stringObjectStructure());
+            node->setCanExit(true); // We could be more precise but it's likely not worth it.
+            break;
+        case StringOrStringObjectUse:
+            node->setCanExit(true); // We could be more precise but it's likely not worth it.
+            break;
+        case CellUse:
+        case UntypedUse:
+            clobberWorld(node->codeOrigin, indexInBlock);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        forNode(node).set(m_graph.m_globalData.stringStructure.get());
+        break;
+    }
+        
+    case NewStringObject: {
+        ASSERT(node->structure()->classInfo() == &StringObject::s_info);
+        forNode(node).set(node->structure());
+        break;
+    }
             
     case StrCat:
-        forNode(node).set(SpecString);
+        forNode(node).set(m_graph.m_globalData.stringStructure.get());
         break;
             
     case NewArray:

@@ -787,6 +787,8 @@ namespace JSC {
             ASSERT(JITCode::isBaselineCode(getJITType()));
             return m_exitProfile.add(site);
         }
+        
+        bool hasExitSite(const DFG::FrequentExitSite& site) const { return m_exitProfile.hasExitSite(site); }
 
         DFG::ExitProfile& exitProfile() { return m_exitProfile; }
         
@@ -1389,7 +1391,7 @@ namespace JSC {
             return baselineCodeBlockForInlineCallFrame(codeOrigin.inlineCallFrame);
         return baselineCodeBlock;
     }
-    
+
     inline int CodeBlock::argumentIndexAfterCapture(size_t argument)
     {
         if (argument >= static_cast<size_t>(symbolTable()->parameterCount()))
