@@ -876,3 +876,5 @@ localizedStrings["Split panels vertically when docked to right"] = "Split panels
 localizedStrings["(no domain)"] = "(no domain)";
 localizedStrings["This file was changed externally. Would you like to reload it?"] = "This file was changed externally. Would you like to reload it?";
 localizedStrings["It is recommended to restart inspector after making these changes. Would you like to restart it?"] = "It is recommended to restart inspector after making these changes. Would you like to restart it?";
+localizedStrings["Limit number of captured JS stack frames"] = "Limit number of captured JS stack frames";
+localizedStrings["Frames to capture"] = "Frames to capture";

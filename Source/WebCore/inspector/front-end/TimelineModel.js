@@ -151,7 +151,8 @@ WebInspector.TimelineModel.prototype = {
         if (this._collectionEnabled)
             return;
         this.reset();
-        WebInspector.timelineManager.start(30);
+        var maxStackFrames = WebInspector.settings.timelineLimitStackFramesFlag.get() ? WebInspector.settings.timelineStackFramesToCapture.get() : 30;
+        WebInspector.timelineManager.start(maxStackFrames);
         this._collectionEnabled = true;
     },
 
