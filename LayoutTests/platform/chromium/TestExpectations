@@ -4426,3 +4426,5 @@ webkit.org/b/110837 [ Mac ] fast/forms/color/input-appearance-color.html [ Failu
 webkit.org/b/112598 [ Win Mac Linux ] http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure Pass ]
 webkit.org/b/112601 http/tests/security/cross-frame-access-port-explicit-domain.html [ Failure Pass ]
 webkit.org/b/112603 fast/innerHTML/innerHTML-iframe.html [ Failure Pass ]
+
+webkit.org/b/112610 [ Win ] fast/text/word-space-with-kerning-3.html [ ImageOnlyFailure ]
