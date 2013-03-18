@@ -116,13 +116,16 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
     if (context->isDocument() && !toDocument(context)->contentSecurityPolicy()->allowInlineEventHandlers(m_sourceURL, m_position.m_line))
         return;
 
-    v8::HandleScope handleScope;
-
     ASSERT(context->isDocument());
     Frame* frame = toDocument(context)->frame();
-    ASSERT(frame);
+    if (!frame)
+        return;
+
     if (!frame->script()->canExecuteScripts(NotAboutToExecuteScript))
         return;
+
+    v8::HandleScope handleScope;
+
     // Use the outer scope to hold context.
     v8::Local<v8::Context> v8Context = toV8Context(context, worldContext());
     v8::Isolate* isolate = v8Context->GetIsolate();
