@@ -49,6 +49,7 @@
 #include "FrameView.h"
 #include "HTMLContentElement.h"
 #include "HTMLInputElement.h"
+#include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
 #include "HistoryItem.h"
@@ -1997,5 +1998,16 @@ void Internals::initializeMockCDM()
     CDM::registerCDMFactory(MockCDM::create, MockCDM::supportsKeySytem);
 }
 #endif
+
+
+void Internals::simulateAudioInterruption(Node* node)
+{
+#if USE(GSTREAMER)
+    HTMLMediaElement* element = toMediaElement(node);
+    element->player()->simulateAudioInterruption();
+#else
+    UNUSED_PARAM(node);
+#endif
+}
 
 }

@@ -1165,6 +1165,16 @@ void MediaPlayer::requeryMediaEngines()
     installedMediaEngines(RequeryEngines);
 }
 
+#if USE(GSTREAMER)
+void MediaPlayer::simulateAudioInterruption()
+{
+    if (!m_private)
+        return;
+
+    m_private->simulateAudioInterruption();
+}
+#endif
+
 }
 
 #endif

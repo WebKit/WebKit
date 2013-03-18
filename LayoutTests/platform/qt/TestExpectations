@@ -2666,3 +2666,6 @@ webkit.org/b/110054 compositing/geometry/limit-layer-bounds-fixed.html [ Failure
 
 # [Qt] newly added svg/as-background-image/svg-transformed-background.html fails
 webkit.org/b/110442 svg/as-background-image/svg-transformed-background.html [ Skip ]
+
+# Feature not implemented
+webkit.org/b/91611 [ Mac Win ] media/media-higher-prio-audio-stream.html [ Skip ]

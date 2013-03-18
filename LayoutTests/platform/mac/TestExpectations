@@ -1428,3 +1428,6 @@ webkit.org/b/110027 compositing/transitions/transform-on-large-layer.html [ Pass
 webkit.org/b/110173 media/video-controls-captions-trackmenu.html [ Crash Pass ]
 
 webkit.org/b/110186 inspector/editor/brace-matcher.html [ Pass Failure ]
+
+# Feature not implemented
+webkit.org/b/91611 media/media-higher-prio-audio-stream.html [ Skip ]

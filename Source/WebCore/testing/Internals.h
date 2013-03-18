@@ -289,6 +289,8 @@ public:
     void enableMockSpeechSynthesizer();
 #endif
                     
+    void simulateAudioInterruption(Node*);
+
 private:
     explicit Internals(Document*);
     Document* contextDocument() const;
