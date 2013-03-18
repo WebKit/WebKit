@@ -159,24 +159,6 @@ void RenderFrameSet::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     }
 }
 
-bool RenderFrameSet::nodeAtPoint(const HitTestRequest& request, HitTestResult& result,
-    const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
-{
-    if (action != HitTestForeground)
-        return false;
-
-    bool inside = RenderBox::nodeAtPoint(request, result, locationInContainer, accumulatedOffset, action)
-        || m_isResizing;
-
-    if (inside && frameSet()->noResize()
-            && !request.readOnly() && !result.innerNode() && !request.touchMove()) {
-        result.setInnerNode(node());
-        result.setInnerNonSharedNode(node());
-    }
-
-    return inside || m_isChildResizing;
-}
-
 void RenderFrameSet::GridAxis::resize(int size)
 {
     m_sizes.resize(size);
