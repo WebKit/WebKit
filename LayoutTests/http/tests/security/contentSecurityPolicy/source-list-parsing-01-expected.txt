@@ -27,8 +27,3 @@ PASS
 Frame: '<!--framePath //<!--frame3-->-->'
 --------
 PASS
-
---------
-Frame: '<!--framePath //<!--frame4-->-->'
---------
-PASS

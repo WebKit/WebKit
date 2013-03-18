@@ -222,8 +222,9 @@ static bool isSourceListNone(const String& value)
 
 class CSPSource {
 public:
-    CSPSource(const String& scheme, const String& host, int port, const String& path, bool hostHasWildcard, bool portHasWildcard)
-        : m_scheme(scheme)
+    CSPSource(ContentSecurityPolicy* policy, const String& scheme, const String& host, int port, const String& path, bool hostHasWildcard, bool portHasWildcard)
+        : m_policy(policy)
+        , m_scheme(scheme)
         , m_host(host)
         , m_port(port)
         , m_path(path)
@@ -244,6 +245,14 @@ public:
 private:
     bool schemeMatches(const KURL& url) const
     {
+        if (m_scheme.isEmpty()) {
+            String protectedResourceScheme(m_policy->securityOrigin()->protocol());
+#if ENABLE(CSP_NEXT)
+            if (equalIgnoringCase("http", protectedResourceScheme))
+                return url.protocolIs("http") || url.protocolIs("https");
+#endif
+            return equalIgnoringCase(url.protocol(), protectedResourceScheme);
+        }
         return equalIgnoringCase(url.protocol(), m_scheme);
     }
 
@@ -280,16 +289,17 @@ private:
             return true;
 
         if (!port)
-            return isDefaultPortForProtocol(m_port, m_scheme);
+            return isDefaultPortForProtocol(m_port, url.protocol());
 
         if (!m_port)
-            return isDefaultPortForProtocol(port, m_scheme);
+            return isDefaultPortForProtocol(port, url.protocol());
 
         return false;
     }
 
     bool isSchemeOnly() const { return m_host.isEmpty(); }
 
+    ContentSecurityPolicy* m_policy;
     String m_scheme;
     String m_host;
     int m_port;
@@ -388,11 +398,9 @@ void CSPSourceList::parse(const UChar* begin, const UChar* end)
             // list itself.
             if (scheme.isEmpty() && host.isEmpty())
                 continue;
-            if (scheme.isEmpty())
-                scheme = m_policy->securityOrigin()->protocol();
             if (isDirectiveName(host))
                 m_policy->reportDirectiveAsSourceExpression(m_directiveName, host);
-            m_list.append(CSPSource(scheme, host, port, path, hostHasWildcard, portHasWildcard));
+            m_list.append(CSPSource(m_policy, scheme, host, port, path, hostHasWildcard, portHasWildcard));
         } else
             m_policy->reportInvalidSourceExpression(m_directiveName, String(beginSource, position - beginSource));
 
@@ -632,7 +640,7 @@ bool CSPSourceList::parsePort(const UChar* begin, const UChar* end, int& port, b
 
 void CSPSourceList::addSourceSelf()
 {
-    m_list.append(CSPSource(m_policy->securityOrigin()->protocol(), m_policy->securityOrigin()->host(), m_policy->securityOrigin()->port(), String(), false, false));
+    m_list.append(CSPSource(m_policy, m_policy->securityOrigin()->protocol(), m_policy->securityOrigin()->host(), m_policy->securityOrigin()->port(), String(), false, false));
 }
 
 void CSPSourceList::addSourceStar()

@@ -29,7 +29,7 @@ function testImpl(experimental, preescapedPolicy) {
         policy = encodeURIComponent(policy);
 
     var scriptToLoad = baseURL + encodeURIComponent(current[2]);
-    if (current[2].match(/^data:/))
+    if (current[2].match(/^data:/) || current[2].match(/^https?:/))
         scriptToLoad = encodeURIComponent(current[2]);
 
     iframe.src = baseURL + "resources/echo-script-src.pl?" +
