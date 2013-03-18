@@ -1,3 +1,14 @@
+2013-03-18  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Get build working under VS2010.
+        https://bugs.webkit.org/show_bug.cgi?id=112604
+
+        Reviewed by Tim Horton.
+
+        * WTF.vcxproj/WTF.vcxproj: Add Debug_WinCairo and Release_WinCairo
+        targets so headers get copied to appropriate build folder.
+        * WTF.vcxproj/WTFGenerated.vcxproj: Ditto.
+
 2013-03-15  Benjamin Poulain  <bpoulain@apple.com>
 
         [iOS] Update StringImpl's equal to have a single version on all supported Apple CPUs
