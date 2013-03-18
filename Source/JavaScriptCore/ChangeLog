@@ -1,3 +1,30 @@
+2013-03-18  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Get build working under VS2010.
+        https://bugs.webkit.org/show_bug.cgi?id=112604
+
+        Reviewed by Tim Horton.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj: Add build targets for
+        Debug_WinCairo and Release_WinCairo using CFLite.
+        * JavaScriptCore.vcxproj/JavaScriptCoreCFLite.props: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCoreDebugCFLite.props: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGenerator.vcxproj:
+        Add Debug_WinCairo and Release_WinCairo build targets to
+        make sure headers are copied to proper build folder.
+        * JavaScriptCore.vcxproj/JavaScriptCoreGenerated.vcxproj: Ditto.
+        * JavaScriptCore.vcxproj/JavaScriptCoreReleaseCFLite.props: Added.
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/LLIntAssembly.vcxproj:
+        Add Debug_WinCairo and Release_WinCairo build targets to
+        make sure headers are copied to proper build folder.
+        * JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets/LLIntDesiredOffsets.vcxproj:
+        Ditto.
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractor.vcxproj:
+        Ditto.
+        * JavaScriptCore.vcxproj/jsc/jsc.vcxproj: Ditto.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExp.vcxproj: Ditto.
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj: Ditto.
+
 2013-03-18  Michael Saboff  <msaboff@apple.com>
 
         Potentially unsafe register allocations in DFG code generation
