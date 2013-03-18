@@ -1196,6 +1196,7 @@ webkit.org/b/112532 fast/frames/flattening/iframe-flattening-out-of-view.html [ 
 webkit.org/b/112532 fast/frames/flattening/frameset-flattening-advanced.html [ Failure Pass ]
 webkit.org/b/112532 fast/frames/flattening/frameset-flattening-subframesets.html [ Failure Pass ]
 webkit.org/b/106185 fast/frames/flattening/iframe-flattening-fixed-height.html [ Failure Pass ]
+webkit.org/b/106185 fast/frames/flattening/frameset-flattening-grid.html [ Failure Pass ]
 
 # Flakey cookies tests
 webkit.org/b/73694 http/tests/cookies/simple-cookies-expired.html [ Failure Pass ]
