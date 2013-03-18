@@ -41,8 +41,9 @@ class AudioBus;
 
 class AudioProcessor {
 public:
-    AudioProcessor(float sampleRate)
+    AudioProcessor(float sampleRate, unsigned numberOfChannels)
         : m_initialized(false)
+        , m_numberOfChannels(numberOfChannels)
         , m_sampleRate(sampleRate)
     {
     }
@@ -60,6 +61,7 @@ public:
     virtual void reset() = 0;
 
     virtual void setNumberOfChannels(unsigned) = 0;
+    virtual unsigned numberOfChannels() const = 0;
 
     bool isInitialized() const { return m_initialized; }
 
@@ -70,6 +72,7 @@ public:
 
 protected:
     bool m_initialized;
+    unsigned m_numberOfChannels;
     float m_sampleRate;
 };
 

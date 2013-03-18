@@ -71,7 +71,7 @@ void AudioBasicProcessorNode::process(size_t framesToProcess)
 {
     AudioBus* destinationBus = output(0)->bus();
     
-    if (!isInitialized() || !processor())
+    if (!isInitialized() || !processor() || processor()->numberOfChannels() != numberOfChannels())
         destinationBus->zero();
     else {
         AudioBus* sourceBus = input(0)->bus();
