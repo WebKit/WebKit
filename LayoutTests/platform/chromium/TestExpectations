@@ -4407,12 +4407,6 @@ webkit.org/b/91611 media/media-higher-prio-audio-stream.html [ Skip ]
 # Flaky assertion failures on debug bots
 webkit.org/b/112369 [ Debug ] inspector/debugger/pause-in-inline-script.html [ Pass Crash Timeout ]
 
-webkit.org/b/112384 [ Win ] fast/forms/basic-textareas-quirks.html [ ImageOnlyFailure Pass ]
-webkit.org/b/112384 [ Win ] fast/forms/basic-textareas.html [ ImageOnlyFailure Pass ]
-webkit.org/b/112384 [ Win ] fast/overflow/overflow-x-y.html [ ImageOnlyFailure Pass ]
-webkit.org/b/112384 [ Win ] fast/parser/open-comment-in-textarea.html [ ImageOnlyFailure Pass ]
-webkit.org/b/112384 [ Win ] fast/replaced/width100percent-textarea.html [ ImageOnlyFailure Pass ]
-
 # Need rebaseline
 webkit.org/b/110837 [ Mac ] fast/forms/color/input-appearance-color.html [ Failure ]
 
