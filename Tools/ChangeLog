@@ -1,5 +1,15 @@
 2013-03-19  Roger Fong  <roger_fong@apple.com>
 
+        Changes to VS2010 project files should only trigger builds on Windows bots.
+        https://bugs.webkit.org/show_bug.cgi?id=112731
+
+        Reviewed by Timothy Horton.
+
+        * BuildSlaveSupport/build.webkit.org-config/wkbuild.py:
+        (_should_file_trigger_build):
+
+2013-03-19  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. webkitpy tests fix for Windows, runtests.py run-webkit-tests arguments changed.
 
         * Scripts/webkitpy/tool/steps/runtests.py:
