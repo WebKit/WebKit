@@ -28,6 +28,7 @@
 #if defined(__LP64__) && defined(__clang__)
 
 #import "WKDOMNode.h"
+#import "WKDOMNodePrivate.h"
 
 #import "InjectedBundleNodeHandle.h"
 #import "WKBundleAPICast.h"

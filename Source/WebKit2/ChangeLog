@@ -1,3 +1,34 @@
+2013-03-18  Sam Weinig  <sam@webkit.org>
+
+        Need a bundle SPI to generate a snapshot of a specific DOM node (like [DOMNode renderedImage])
+        <rdar://problem/13148631>
+        https://bugs.webkit.org/show_bug.cgi?id=110034
+
+        Reviewed by Tim Horton.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandle.cpp:
+        (WKBundleNodeHandleCopySnapshotWithOptions):
+        * WebProcess/InjectedBundle/API/c/WKBundleNodeHandlePrivate.h:
+        Add WKBundleNodeHandleCopySnapshotWithOptions function.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMNode.mm:
+        * WebProcess/InjectedBundle/API/mac/WKDOMNodePrivate.h:
+        Fix conversion method between WKDOMNode and WKBundleNodeHandleRef to have the same
+        name in the header and implementation.
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::imageForRect):
+        (WebKit):
+        (WebKit::InjectedBundleNodeHandle::renderedImage):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h:
+        Add implementation of WKBundleNodeHandleCopySnapshotWithOptions.
+
+        * Shared/ImageOptions.h:
+        (WebKit::snapshotOptionsToImageOptions):
+        * WebProcess/WebPage/WebPage.cpp:
+        Move snapshotOptionsToImageOptions conversion function to a location where
+        it can be shared.
+
 2013-03-18  Andreas Kling  <akling@apple.com>
 
         [WK2][Mac] Don't consider empty window frames cacheable.

@@ -29,7 +29,7 @@
 
 @interface WKDOMNode (WKPrivate)
 
-- (WKBundleNodeHandleRef)_copyWKBundleNodeHandleRef;
+- (WKBundleNodeHandleRef)_copyBundleNodeHandleRef;
 
 @end
 

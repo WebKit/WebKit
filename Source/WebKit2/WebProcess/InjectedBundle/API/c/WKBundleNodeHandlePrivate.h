@@ -29,6 +29,7 @@
 #include <JavaScriptCore/JavaScript.h>
 #include <WebKit2/WKBase.h>
 #include <WebKit2/WKGeometry.h>
+#include <WebKit2/WKImage.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,6 +44,7 @@ WK_EXPORT WKBundleNodeHandleRef WKBundleNodeHandleCopyDocument(WKBundleNodeHandl
 /* Additional DOM Operations */
 
 WK_EXPORT WKRect WKBundleNodeHandleGetRenderRect(WKBundleNodeHandleRef nodeHandle, bool* isReplaced);
+WK_EXPORT WKImageRef WKBundleNodeHandleCopySnapshotWithOptions(WKBundleNodeHandleRef nodeHandle, WKSnapshotOptions options);
 
 /* Element Specific Operations */
 WK_EXPORT WKRect WKBundleNodeHandleGetElementBounds(WKBundleNodeHandleRef elementHandle);

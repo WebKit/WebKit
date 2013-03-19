@@ -27,6 +27,7 @@
 #define InjectedBundleNodeHandle_h
 
 #include "APIObject.h"
+#include "ImageOptions.h"
 #include <JavaScriptCore/JSBase.h>
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
@@ -41,6 +42,7 @@ namespace WebKit {
 
 class InjectedBundleScriptWorld;
 class WebFrame;
+class WebImage;
 
 class InjectedBundleNodeHandle : public APIObject {
 public:
@@ -60,6 +62,7 @@ public:
     // Note: These should only be operations that are not exposed to JavaScript.
     WebCore::IntRect elementBounds() const;
     WebCore::IntRect renderRect(bool*) const;
+    PassRefPtr<WebImage> renderedImage(SnapshotOptions);
     void setHTMLInputElementValueForUser(const String&);
     bool isHTMLInputElementAutofilled() const;
     void setHTMLInputElementAutofilled(bool);

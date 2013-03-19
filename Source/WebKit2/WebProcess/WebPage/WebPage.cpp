@@ -1391,16 +1391,6 @@ void WebPage::uninstallPageOverlay(PageOverlay* pageOverlay, bool shouldFadeOut)
     m_drawingArea->didUninstallPageOverlay();
 }
 
-static ImageOptions snapshotOptionsToImageOptions(SnapshotOptions snapshotOptions)
-{
-    unsigned imageOptions = 0;
-
-    if (snapshotOptions & SnapshotOptionsShareable)
-        imageOptions |= ImageOptionsShareable;
-
-    return static_cast<ImageOptions>(imageOptions);
-}
-
 PassRefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, double scaleFactor, SnapshotOptions options)
 {
     FrameView* frameView = m_mainFrame->coreFrame()->view();

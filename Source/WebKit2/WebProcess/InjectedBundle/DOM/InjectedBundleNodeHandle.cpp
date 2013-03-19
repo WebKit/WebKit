@@ -26,12 +26,16 @@
 #include "config.h"
 #include "InjectedBundleNodeHandle.h"
 
+#include "ShareableBitmap.h"
 #include "WebFrame.h"
 #include "WebFrameLoaderClient.h"
+#include "WebImage.h"
 #include <JavaScriptCore/APICast.h>
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
+#include <WebCore/FrameView.h>
+#include <WebCore/GraphicsContext.h>
 #include <WebCore/HTMLFrameElement.h>
 #include <WebCore/HTMLIFrameElement.h>
 #include <WebCore/HTMLInputElement.h>
@@ -41,6 +45,7 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/JSNode.h>
 #include <WebCore/Node.h>
+#include <WebCore/RenderObject.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
 
@@ -116,6 +121,50 @@ IntRect InjectedBundleNodeHandle::elementBounds() const
 IntRect InjectedBundleNodeHandle::renderRect(bool* isReplaced) const
 {
     return m_node.get()->pixelSnappedRenderRect(isReplaced);
+}
+
+static PassRefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& rect, SnapshotOptions options)
+{
+    RefPtr<WebImage> snapshot = WebImage::create(rect.size(), snapshotOptionsToImageOptions(options));
+    if (!snapshot->bitmap())
+        return 0;
+
+    OwnPtr<GraphicsContext> graphicsContext = snapshot->bitmap()->createGraphicsContext();
+    graphicsContext->translate(-rect.x(), -rect.y());
+
+    frameView->paintContentsForSnapshot(graphicsContext.get(), rect, FrameView::IncludeSelection, FrameView::DocumentCoordinates);
+
+    return snapshot.release();
+}
+
+PassRefPtr<WebImage> InjectedBundleNodeHandle::renderedImage(SnapshotOptions options)
+{
+    Document* document = m_node->document();
+    if (!document)
+        return 0;
+
+    Frame* frame = document->frame();
+    if (!frame)
+        return 0;
+
+    FrameView* frameView = frame->view();
+    if (!frameView)
+        return 0;
+
+    document->updateLayout();
+
+    RenderObject* renderer = m_node->renderer();
+    if (!renderer)
+        return 0;
+
+    LayoutRect topLevelRect;
+    IntRect paintingRect = pixelSnappedIntRect(renderer->paintingRootRect(topLevelRect));
+
+    frameView->setNodeToDraw(m_node.get());
+    RefPtr<WebImage> image = imageForRect(frameView, paintingRect, options);
+    frameView->setNodeToDraw(0);
+
+    return image.release();
 }
 
 void InjectedBundleNodeHandle::setHTMLInputElementValueForUser(const String& value)

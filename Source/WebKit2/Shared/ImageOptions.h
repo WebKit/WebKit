@@ -40,6 +40,17 @@ enum {
 };
 typedef uint32_t SnapshotOptions;
 
+
+inline ImageOptions snapshotOptionsToImageOptions(SnapshotOptions snapshotOptions)
+{
+    unsigned imageOptions = 0;
+
+    if (snapshotOptions & SnapshotOptionsShareable)
+        imageOptions |= ImageOptionsShareable;
+
+    return static_cast<ImageOptions>(imageOptions);
+}
+
 } // namespace WebKit
 
 #endif // ImageOptions_h

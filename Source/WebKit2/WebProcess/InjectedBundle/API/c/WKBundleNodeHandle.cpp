@@ -31,6 +31,7 @@
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
 #include "WebFrame.h"
+#include "WebImage.h"
 
 using namespace WebKit;
 
@@ -54,6 +55,12 @@ WKBundleNodeHandleRef WKBundleNodeHandleCopyDocument(WKBundleNodeHandleRef nodeH
 WKRect WKBundleNodeHandleGetRenderRect(WKBundleNodeHandleRef nodeHandleRef, bool* isReplaced)
 {
     return toAPI(toImpl(nodeHandleRef)->renderRect(isReplaced));
+}
+
+WKImageRef WKBundleNodeHandleCopySnapshotWithOptions(WKBundleNodeHandleRef nodeHandleRef, WKSnapshotOptions options)
+{
+    RefPtr<WebImage> image = toImpl(nodeHandleRef)->renderedImage(toSnapshotOptions(options));
+    return toAPI(image.release().leakRef());
 }
 
 WKRect WKBundleNodeHandleGetElementBounds(WKBundleNodeHandleRef elementHandleRef)
