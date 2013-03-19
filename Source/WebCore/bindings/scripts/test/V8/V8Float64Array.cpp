@@ -135,14 +135,14 @@ v8::Handle<v8::Value> V8Float64Array::constructorCallback(const v8::Arguments& a
     return Float64ArrayV8Internal::constructor(args);
 }
 
-static v8::Persistent<v8::FunctionTemplate> ConfigureV8Float64ArrayTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate, WrapperWorldType worldType)
+static v8::Persistent<v8::FunctionTemplate> ConfigureV8Float64ArrayTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate, WrapperWorldType currentWorldType)
 {
     desc->ReadOnlyPrototype();
 
     v8::Local<v8::Signature> defaultSignature;
-    defaultSignature = V8DOMConfiguration::configureTemplate(desc, "Float64Array", V8ArrayBufferView::GetTemplate(isolate, worldType), V8Float64Array::internalFieldCount,
+    defaultSignature = V8DOMConfiguration::configureTemplate(desc, "Float64Array", V8ArrayBufferView::GetTemplate(isolate, currentWorldType), V8Float64Array::internalFieldCount,
         0, 0,
-        V8Float64ArrayMethods, WTF_ARRAY_LENGTH(V8Float64ArrayMethods), isolate);
+        V8Float64ArrayMethods, WTF_ARRAY_LENGTH(V8Float64ArrayMethods), isolate, currentWorldType);
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
     desc->SetCallHandler(V8Float64Array::constructorCallback);
     v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();
@@ -153,7 +153,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8Float64ArrayTemplate(v8::
 
     // Custom Signature 'foo'
     const int fooArgc = 1;
-    v8::Handle<v8::FunctionTemplate> fooArgv[fooArgc] = { V8PerIsolateData::from(isolate)->rawTemplate(&V8Float32Array::info, worldType) };
+    v8::Handle<v8::FunctionTemplate> fooArgv[fooArgc] = { V8PerIsolateData::from(isolate)->rawTemplate(&V8Float32Array::info, currentWorldType) };
     v8::Handle<v8::Signature> fooSignature = v8::Signature::New(desc, fooArgc, fooArgv);
     proto->Set(v8::String::NewSymbol("foo"), v8::FunctionTemplate::New(Float64ArrayV8Internal::fooMethodCallback, v8Undefined(), fooSignature));
 
@@ -162,23 +162,23 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8Float64ArrayTemplate(v8::
     return desc;
 }
 
-v8::Persistent<v8::FunctionTemplate> V8Float64Array::GetTemplate(v8::Isolate* isolate, WrapperWorldType worldType)
+v8::Persistent<v8::FunctionTemplate> V8Float64Array::GetTemplate(v8::Isolate* isolate, WrapperWorldType currentWorldType)
 {
     V8PerIsolateData* data = V8PerIsolateData::from(isolate);
-    V8PerIsolateData::TemplateMap::iterator result = data->templateMap(worldType).find(&info);
-    if (result != data->templateMap(worldType).end())
+    V8PerIsolateData::TemplateMap::iterator result = data->templateMap(currentWorldType).find(&info);
+    if (result != data->templateMap(currentWorldType).end())
         return result->value;
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        ConfigureV8Float64ArrayTemplate(data->rawTemplate(&info, worldType), isolate, worldType);
-    data->templateMap(worldType).add(&info, templ);
+        ConfigureV8Float64ArrayTemplate(data->rawTemplate(&info, currentWorldType), isolate, currentWorldType);
+    data->templateMap(currentWorldType).add(&info, templ);
     return templ;
 }
 
-bool V8Float64Array::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate, WrapperWorldType worldType)
+bool V8Float64Array::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate, WrapperWorldType currentWorldType)
 {
-    return V8PerIsolateData::from(isolate)->hasInstance(&info, value, worldType);
+    return V8PerIsolateData::from(isolate)->hasInstance(&info, value, currentWorldType);
 }
 
 bool V8Float64Array::HasInstanceInAnyWorld(v8::Handle<v8::Value> value, v8::Isolate* isolate)

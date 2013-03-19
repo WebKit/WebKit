@@ -109,7 +109,7 @@ static v8::Handle<v8::Value> V8TestNamedConstructorConstructorCallback(const v8:
     return setDOMException(ec, args.GetIsolate());
 }
 
-v8::Persistent<v8::FunctionTemplate> V8TestNamedConstructorConstructor::GetTemplate(v8::Isolate* isolate, WrapperWorldType worldType)
+v8::Persistent<v8::FunctionTemplate> V8TestNamedConstructorConstructor::GetTemplate(v8::Isolate* isolate, WrapperWorldType currentWorldType)
 {
     static v8::Persistent<v8::FunctionTemplate> cachedTemplate;
     if (!cachedTemplate.IsEmpty())
@@ -121,20 +121,20 @@ v8::Persistent<v8::FunctionTemplate> V8TestNamedConstructorConstructor::GetTempl
     v8::Local<v8::ObjectTemplate> instance = result->InstanceTemplate();
     instance->SetInternalFieldCount(V8TestNamedConstructor::internalFieldCount);
     result->SetClassName(v8::String::NewSymbol("TestNamedConstructor"));
-    result->Inherit(V8TestNamedConstructor::GetTemplate(isolate, worldType));
+    result->Inherit(V8TestNamedConstructor::GetTemplate(isolate, currentWorldType));
 
     cachedTemplate = v8::Persistent<v8::FunctionTemplate>::New(isolate, result);
     return cachedTemplate;
 }
 
-static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestNamedConstructorTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate, WrapperWorldType worldType)
+static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestNamedConstructorTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate, WrapperWorldType currentWorldType)
 {
     desc->ReadOnlyPrototype();
 
     v8::Local<v8::Signature> defaultSignature;
     defaultSignature = V8DOMConfiguration::configureTemplate(desc, "TestNamedConstructor", v8::Persistent<v8::FunctionTemplate>(), V8TestNamedConstructor::internalFieldCount,
         0, 0,
-        0, 0, isolate);
+        0, 0, isolate, currentWorldType);
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
     
 
@@ -143,23 +143,23 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestNamedConstructorTempl
     return desc;
 }
 
-v8::Persistent<v8::FunctionTemplate> V8TestNamedConstructor::GetTemplate(v8::Isolate* isolate, WrapperWorldType worldType)
+v8::Persistent<v8::FunctionTemplate> V8TestNamedConstructor::GetTemplate(v8::Isolate* isolate, WrapperWorldType currentWorldType)
 {
     V8PerIsolateData* data = V8PerIsolateData::from(isolate);
-    V8PerIsolateData::TemplateMap::iterator result = data->templateMap(worldType).find(&info);
-    if (result != data->templateMap(worldType).end())
+    V8PerIsolateData::TemplateMap::iterator result = data->templateMap(currentWorldType).find(&info);
+    if (result != data->templateMap(currentWorldType).end())
         return result->value;
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        ConfigureV8TestNamedConstructorTemplate(data->rawTemplate(&info, worldType), isolate, worldType);
-    data->templateMap(worldType).add(&info, templ);
+        ConfigureV8TestNamedConstructorTemplate(data->rawTemplate(&info, currentWorldType), isolate, currentWorldType);
+    data->templateMap(currentWorldType).add(&info, templ);
     return templ;
 }
 
-bool V8TestNamedConstructor::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate, WrapperWorldType worldType)
+bool V8TestNamedConstructor::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate, WrapperWorldType currentWorldType)
 {
-    return V8PerIsolateData::from(isolate)->hasInstance(&info, value, worldType);
+    return V8PerIsolateData::from(isolate)->hasInstance(&info, value, currentWorldType);
 }
 
 bool V8TestNamedConstructor::HasInstanceInAnyWorld(v8::Handle<v8::Value> value, v8::Isolate* isolate)

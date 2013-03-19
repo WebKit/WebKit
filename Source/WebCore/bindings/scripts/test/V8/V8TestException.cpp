@@ -84,17 +84,17 @@ static v8::Handle<v8::Value> nameAttrGetterCallback(v8::Local<v8::String> name, 
 
 static const V8DOMConfiguration::BatchedAttribute V8TestExceptionAttrs[] = {
     // Attribute 'name' (Type: 'readonly attribute' ExtAttr: '')
-    {"name", TestExceptionV8Internal::nameAttrGetterCallback, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"name", TestExceptionV8Internal::nameAttrGetterCallback, 0, 0, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 };
 
-static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestExceptionTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate, WrapperWorldType worldType)
+static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestExceptionTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate, WrapperWorldType currentWorldType)
 {
     desc->ReadOnlyPrototype();
 
     v8::Local<v8::Signature> defaultSignature;
     defaultSignature = V8DOMConfiguration::configureTemplate(desc, "TestException", v8::Persistent<v8::FunctionTemplate>(), V8TestException::internalFieldCount,
         V8TestExceptionAttrs, WTF_ARRAY_LENGTH(V8TestExceptionAttrs),
-        0, 0, isolate);
+        0, 0, isolate, currentWorldType);
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
     
 
@@ -103,23 +103,23 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestExceptionTemplate(v8:
     return desc;
 }
 
-v8::Persistent<v8::FunctionTemplate> V8TestException::GetTemplate(v8::Isolate* isolate, WrapperWorldType worldType)
+v8::Persistent<v8::FunctionTemplate> V8TestException::GetTemplate(v8::Isolate* isolate, WrapperWorldType currentWorldType)
 {
     V8PerIsolateData* data = V8PerIsolateData::from(isolate);
-    V8PerIsolateData::TemplateMap::iterator result = data->templateMap(worldType).find(&info);
-    if (result != data->templateMap(worldType).end())
+    V8PerIsolateData::TemplateMap::iterator result = data->templateMap(currentWorldType).find(&info);
+    if (result != data->templateMap(currentWorldType).end())
         return result->value;
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        ConfigureV8TestExceptionTemplate(data->rawTemplate(&info, worldType), isolate, worldType);
-    data->templateMap(worldType).add(&info, templ);
+        ConfigureV8TestExceptionTemplate(data->rawTemplate(&info, currentWorldType), isolate, currentWorldType);
+    data->templateMap(currentWorldType).add(&info, templ);
     return templ;
 }
 
-bool V8TestException::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate, WrapperWorldType worldType)
+bool V8TestException::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate, WrapperWorldType currentWorldType)
 {
-    return V8PerIsolateData::from(isolate)->hasInstance(&info, value, worldType);
+    return V8PerIsolateData::from(isolate)->hasInstance(&info, value, currentWorldType);
 }
 
 bool V8TestException::HasInstanceInAnyWorld(v8::Handle<v8::Value> value, v8::Isolate* isolate)

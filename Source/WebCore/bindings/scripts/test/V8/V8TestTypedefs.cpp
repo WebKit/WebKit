@@ -498,19 +498,19 @@ static v8::Handle<v8::Value> constructor(const v8::Arguments& args)
 
 static const V8DOMConfiguration::BatchedAttribute V8TestTypedefsAttrs[] = {
     // Attribute 'unsignedLongLongAttr' (Type: 'attribute' ExtAttr: '')
-    {"unsignedLongLongAttr", TestTypedefsV8Internal::unsignedLongLongAttrAttrGetterCallback, TestTypedefsV8Internal::unsignedLongLongAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"unsignedLongLongAttr", TestTypedefsV8Internal::unsignedLongLongAttrAttrGetterCallback, TestTypedefsV8Internal::unsignedLongLongAttrAttrSetterCallback, 0, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'immutableSerializedScriptValue' (Type: 'attribute' ExtAttr: 'Immutable')
-    {"immutableSerializedScriptValue", TestTypedefsV8Internal::immutableSerializedScriptValueAttrGetterCallback, TestTypedefsV8Internal::immutableSerializedScriptValueAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"immutableSerializedScriptValue", TestTypedefsV8Internal::immutableSerializedScriptValueAttrGetterCallback, TestTypedefsV8Internal::immutableSerializedScriptValueAttrSetterCallback, 0, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'TestSubObj' (Type: 'readonly attribute' ExtAttr: '')
-    {"TestSubObj", TestTypedefsV8Internal::TestTypedefsConstructorGetter, 0, &V8TestSubObj::info, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"TestSubObj", TestTypedefsV8Internal::TestTypedefsConstructorGetter, 0, 0, 0, &V8TestSubObj::info, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'attrWithGetterException' (Type: 'attribute' ExtAttr: '')
-    {"attrWithGetterException", TestTypedefsV8Internal::attrWithGetterExceptionAttrGetterCallback, TestTypedefsV8Internal::attrWithGetterExceptionAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"attrWithGetterException", TestTypedefsV8Internal::attrWithGetterExceptionAttrGetterCallback, TestTypedefsV8Internal::attrWithGetterExceptionAttrSetterCallback, 0, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'attrWithSetterException' (Type: 'attribute' ExtAttr: '')
-    {"attrWithSetterException", TestTypedefsV8Internal::attrWithSetterExceptionAttrGetterCallback, TestTypedefsV8Internal::attrWithSetterExceptionAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"attrWithSetterException", TestTypedefsV8Internal::attrWithSetterExceptionAttrGetterCallback, TestTypedefsV8Internal::attrWithSetterExceptionAttrSetterCallback, 0, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'stringAttrWithGetterException' (Type: 'attribute' ExtAttr: '')
-    {"stringAttrWithGetterException", TestTypedefsV8Internal::stringAttrWithGetterExceptionAttrGetterCallback, TestTypedefsV8Internal::stringAttrWithGetterExceptionAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"stringAttrWithGetterException", TestTypedefsV8Internal::stringAttrWithGetterExceptionAttrGetterCallback, TestTypedefsV8Internal::stringAttrWithGetterExceptionAttrSetterCallback, 0, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'stringAttrWithSetterException' (Type: 'attribute' ExtAttr: '')
-    {"stringAttrWithSetterException", TestTypedefsV8Internal::stringAttrWithSetterExceptionAttrGetterCallback, TestTypedefsV8Internal::stringAttrWithSetterExceptionAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"stringAttrWithSetterException", TestTypedefsV8Internal::stringAttrWithSetterExceptionAttrGetterCallback, TestTypedefsV8Internal::stringAttrWithSetterExceptionAttrSetterCallback, 0, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 };
 
 static const V8DOMConfiguration::BatchedMethod V8TestTypedefsMethods[] = {
@@ -533,14 +533,14 @@ v8::Handle<v8::Value> V8TestTypedefs::constructorCallback(const v8::Arguments& a
     return TestTypedefsV8Internal::constructor(args);
 }
 
-static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestTypedefsTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate, WrapperWorldType worldType)
+static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestTypedefsTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate, WrapperWorldType currentWorldType)
 {
     desc->ReadOnlyPrototype();
 
     v8::Local<v8::Signature> defaultSignature;
     defaultSignature = V8DOMConfiguration::configureTemplate(desc, "TestTypedefs", v8::Persistent<v8::FunctionTemplate>(), V8TestTypedefs::internalFieldCount,
         V8TestTypedefsAttrs, WTF_ARRAY_LENGTH(V8TestTypedefsAttrs),
-        V8TestTypedefsMethods, WTF_ARRAY_LENGTH(V8TestTypedefsMethods), isolate);
+        V8TestTypedefsMethods, WTF_ARRAY_LENGTH(V8TestTypedefsMethods), isolate, currentWorldType);
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
     desc->SetCallHandler(V8TestTypedefs::constructorCallback);
     v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();
@@ -551,25 +551,25 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestTypedefsTemplate(v8::
 
     // Custom Signature 'methodWithSequenceArg'
     const int methodWithSequenceArgArgc = 1;
-    v8::Handle<v8::FunctionTemplate> methodWithSequenceArgArgv[methodWithSequenceArgArgc] = { V8PerIsolateData::from(isolate)->rawTemplate(&V8sequence<SerializedScriptValue>::info, worldType) };
+    v8::Handle<v8::FunctionTemplate> methodWithSequenceArgArgv[methodWithSequenceArgArgc] = { V8PerIsolateData::from(isolate)->rawTemplate(&V8sequence<SerializedScriptValue>::info, currentWorldType) };
     v8::Handle<v8::Signature> methodWithSequenceArgSignature = v8::Signature::New(desc, methodWithSequenceArgArgc, methodWithSequenceArgArgv);
     proto->Set(v8::String::NewSymbol("methodWithSequenceArg"), v8::FunctionTemplate::New(TestTypedefsV8Internal::methodWithSequenceArgMethodCallback, v8Undefined(), methodWithSequenceArgSignature));
 
     // Custom Signature 'nullableArrayArg'
     const int nullableArrayArgArgc = 1;
-    v8::Handle<v8::FunctionTemplate> nullableArrayArgArgv[nullableArrayArgArgc] = { V8PerIsolateData::from(isolate)->rawTemplate(&V8DOMString[]::info, worldType) };
+    v8::Handle<v8::FunctionTemplate> nullableArrayArgArgv[nullableArrayArgArgc] = { V8PerIsolateData::from(isolate)->rawTemplate(&V8DOMString[]::info, currentWorldType) };
     v8::Handle<v8::Signature> nullableArrayArgSignature = v8::Signature::New(desc, nullableArrayArgArgc, nullableArrayArgArgv);
     proto->Set(v8::String::NewSymbol("nullableArrayArg"), v8::FunctionTemplate::New(TestTypedefsV8Internal::nullableArrayArgMethodCallback, v8Undefined(), nullableArrayArgSignature));
 
     // Custom Signature 'stringArrayFunction'
     const int stringArrayFunctionArgc = 1;
-    v8::Handle<v8::FunctionTemplate> stringArrayFunctionArgv[stringArrayFunctionArgc] = { V8PerIsolateData::from(isolate)->rawTemplate(&V8DOMString[]::info, worldType) };
+    v8::Handle<v8::FunctionTemplate> stringArrayFunctionArgv[stringArrayFunctionArgc] = { V8PerIsolateData::from(isolate)->rawTemplate(&V8DOMString[]::info, currentWorldType) };
     v8::Handle<v8::Signature> stringArrayFunctionSignature = v8::Signature::New(desc, stringArrayFunctionArgc, stringArrayFunctionArgv);
     proto->Set(v8::String::NewSymbol("stringArrayFunction"), v8::FunctionTemplate::New(TestTypedefsV8Internal::stringArrayFunctionMethodCallback, v8Undefined(), stringArrayFunctionSignature));
 
     // Custom Signature 'stringArrayFunction2'
     const int stringArrayFunction2Argc = 1;
-    v8::Handle<v8::FunctionTemplate> stringArrayFunction2Argv[stringArrayFunction2Argc] = { V8PerIsolateData::from(isolate)->rawTemplate(&V8DOMString[]::info, worldType) };
+    v8::Handle<v8::FunctionTemplate> stringArrayFunction2Argv[stringArrayFunction2Argc] = { V8PerIsolateData::from(isolate)->rawTemplate(&V8DOMString[]::info, currentWorldType) };
     v8::Handle<v8::Signature> stringArrayFunction2Signature = v8::Signature::New(desc, stringArrayFunction2Argc, stringArrayFunction2Argv);
     proto->Set(v8::String::NewSymbol("stringArrayFunction2"), v8::FunctionTemplate::New(TestTypedefsV8Internal::stringArrayFunction2MethodCallback, v8Undefined(), stringArrayFunction2Signature));
 
@@ -578,23 +578,23 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestTypedefsTemplate(v8::
     return desc;
 }
 
-v8::Persistent<v8::FunctionTemplate> V8TestTypedefs::GetTemplate(v8::Isolate* isolate, WrapperWorldType worldType)
+v8::Persistent<v8::FunctionTemplate> V8TestTypedefs::GetTemplate(v8::Isolate* isolate, WrapperWorldType currentWorldType)
 {
     V8PerIsolateData* data = V8PerIsolateData::from(isolate);
-    V8PerIsolateData::TemplateMap::iterator result = data->templateMap(worldType).find(&info);
-    if (result != data->templateMap(worldType).end())
+    V8PerIsolateData::TemplateMap::iterator result = data->templateMap(currentWorldType).find(&info);
+    if (result != data->templateMap(currentWorldType).end())
         return result->value;
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        ConfigureV8TestTypedefsTemplate(data->rawTemplate(&info, worldType), isolate, worldType);
-    data->templateMap(worldType).add(&info, templ);
+        ConfigureV8TestTypedefsTemplate(data->rawTemplate(&info, currentWorldType), isolate, currentWorldType);
+    data->templateMap(currentWorldType).add(&info, templ);
     return templ;
 }
 
-bool V8TestTypedefs::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate, WrapperWorldType worldType)
+bool V8TestTypedefs::HasInstance(v8::Handle<v8::Value> value, v8::Isolate* isolate, WrapperWorldType currentWorldType)
 {
-    return V8PerIsolateData::from(isolate)->hasInstance(&info, value, worldType);
+    return V8PerIsolateData::from(isolate)->hasInstance(&info, value, currentWorldType);
 }
 
 bool V8TestTypedefs::HasInstanceInAnyWorld(v8::Handle<v8::Value> value, v8::Isolate* isolate)

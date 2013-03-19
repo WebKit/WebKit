@@ -49,20 +49,20 @@
     const unsigned short      DOCUMENT_FRAGMENT_NODE         = 11;
     const unsigned short      NOTATION_NODE                  = 12;
 
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString        nodeName;
+    readonly attribute [TreatReturnedNullStringAs=Null, V8PerWorldBindings] DOMString        nodeName;
 
              // FIXME: the spec says this can also raise on retrieval.
-             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString        nodeValue
+             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, V8PerWorldBindings] DOMString        nodeValue
                  setter raises(DOMException);
 
-    readonly attribute unsigned short   nodeType;
-    readonly attribute Node             parentNode;
-    readonly attribute NodeList         childNodes;
-    readonly attribute Node             firstChild;
-    readonly attribute Node             lastChild;
-    readonly attribute Node             previousSibling;
-    readonly attribute Node             nextSibling;
-    readonly attribute Document         ownerDocument;
+    readonly attribute [V8PerWorldBindings] unsigned short   nodeType;
+    readonly attribute [V8PerWorldBindings] Node             parentNode;
+    readonly attribute [V8PerWorldBindings] NodeList         childNodes;
+    readonly attribute [V8PerWorldBindings] Node             firstChild;
+    readonly attribute [V8PerWorldBindings] Node             lastChild;
+    readonly attribute [V8PerWorldBindings] Node             previousSibling;
+    readonly attribute [V8PerWorldBindings] Node             nextSibling;
+    readonly attribute [V8PerWorldBindings] Document         ownerDocument;
 
     [ObjCLegacyUnnamedParameters, Custom] Node insertBefore(in [CustomReturn] Node newChild,
                                                             in Node refChild)
@@ -84,23 +84,23 @@
     [ObjCLegacyUnnamedParameters] boolean isSupported(in [Optional=DefaultIsUndefined] DOMString feature, 
                                        in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString version);
 
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString        namespaceURI;
-             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString        prefix
+    readonly attribute [TreatReturnedNullStringAs=Null, V8PerWorldBindings] DOMString        namespaceURI;
+             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, V8PerWorldBindings] DOMString        prefix
                  setter raises(DOMException);
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString        localName;
+    readonly attribute [TreatReturnedNullStringAs=Null, V8PerWorldBindings] DOMString        localName;
 
 #if defined(LANGUAGE_OBJECTIVE_C)
-    readonly attribute NamedNodeMap     attributes;
+    readonly attribute [V8PerWorldBindings] NamedNodeMap     attributes;
     boolean            hasAttributes();
 #endif
 
 
     // Introduced in DOM Level 3:
 
-    readonly attribute [TreatReturnedNullStringAs=Null] DOMString       baseURI;
+    readonly attribute [TreatReturnedNullStringAs=Null, V8PerWorldBindings] DOMString       baseURI;
 
              // FIXME: the spec says this can also raise on retrieval.
-             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString       textContent
+             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, V8PerWorldBindings] DOMString       textContent
                  setter raises(DOMException);
 
     boolean            isSameNode(in [Optional=DefaultIsUndefined] Node other);
@@ -123,11 +123,11 @@
     boolean contains(in [Optional=DefaultIsUndefined] Node other);
 
     // IE extensions
-    readonly attribute Element          parentElement;
+    readonly attribute [V8PerWorldBindings] Element          parentElement;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     // Objective-C extensions
-    readonly attribute boolean          isContentEditable;
+    readonly attribute [V8PerWorldBindings] boolean          isContentEditable;
 
     void inspect();
 #endif /* defined(LANGUAGE_OBJECTIVE_C) */

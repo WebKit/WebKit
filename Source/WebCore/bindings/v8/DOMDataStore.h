@@ -84,6 +84,14 @@ public:
     }
 
     template<typename T>
+    static v8::Handle<v8::Object> getWrapperForMainWorld(T* object)
+    {
+        if (mainWorldWrapperIsStoredInObject(object) && isMainWorldObject(object))
+            return getWrapperFromObject(object);
+        return mainWorldStore()->get(object);
+    }
+
+    template<typename T>
     static void setWrapper(T* object, v8::Handle<v8::Object> wrapper, v8::Isolate* isolate, const WrapperConfiguration& configuration)
     {
         if (mainWorldWrapperIsStoredInObject(object) && isMainWorldObject(object)) {
