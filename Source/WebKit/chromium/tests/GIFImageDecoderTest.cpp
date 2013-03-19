@@ -41,6 +41,8 @@
 #include <public/WebUnitTestSupport.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/StringHasher.h>
+#include <wtf/Vector.h>
 
 using namespace WebCore;
 using namespace WebKit;
@@ -66,9 +68,19 @@ static PassRefPtr<SharedBuffer> readFile(const char* fileName)
     return SharedBuffer::adoptVector(buffer);
 }
 
+static PassOwnPtr<GIFImageDecoder> createDecoder()
+{
+    return adoptPtr(new GIFImageDecoder(ImageSource::AlphaNotPremultiplied, ImageSource::GammaAndColorProfileApplied));
+}
+
+static unsigned hashSkBitmap(const SkBitmap& bitmap)
+{
+    return StringHasher::hashMemory(bitmap.getPixels(), bitmap.getSize());
+}
+
 TEST(GIFImageDecoderTest, decodeTwoFrames)
 {
-    OwnPtr<GIFImageDecoder> decoder(adoptPtr(new GIFImageDecoder(ImageSource::AlphaNotPremultiplied, ImageSource::GammaAndColorProfileApplied)));
+    OwnPtr<GIFImageDecoder> decoder(createDecoder());
 
     RefPtr<SharedBuffer> data = readFile("/LayoutTests/fast/images/resources/animated.gif");
     ASSERT_TRUE(data.get());
@@ -91,7 +103,7 @@ TEST(GIFImageDecoderTest, decodeTwoFrames)
 
 TEST(GIFImageDecoderTest, parseAndDecode)
 {
-    OwnPtr<GIFImageDecoder> decoder(adoptPtr(new GIFImageDecoder(ImageSource::AlphaNotPremultiplied, ImageSource::GammaAndColorProfileApplied)));
+    OwnPtr<GIFImageDecoder> decoder(createDecoder());
 
     RefPtr<SharedBuffer> data = readFile("/LayoutTests/fast/images/resources/animated.gif");
     ASSERT_TRUE(data.get());
@@ -115,7 +127,7 @@ TEST(GIFImageDecoderTest, parseAndDecode)
 
 TEST(GIFImageDecoderTest, parseByteByByte)
 {
-    OwnPtr<GIFImageDecoder> decoder(adoptPtr(new GIFImageDecoder(ImageSource::AlphaNotPremultiplied, ImageSource::GammaAndColorProfileApplied)));
+    OwnPtr<GIFImageDecoder> decoder(createDecoder());
 
     RefPtr<SharedBuffer> data = readFile("/LayoutTests/fast/images/resources/animated.gif");
     ASSERT_TRUE(data.get());
@@ -140,7 +152,7 @@ TEST(GIFImageDecoderTest, parseByteByByte)
 
 TEST(GIFImageDecoderTest, parseAndDecodeByteByByte)
 {
-    OwnPtr<GIFImageDecoder> decoder(adoptPtr(new GIFImageDecoder(ImageSource::AlphaNotPremultiplied, ImageSource::GammaAndColorProfileApplied)));
+    OwnPtr<GIFImageDecoder> decoder(createDecoder());
 
     RefPtr<SharedBuffer> data = readFile("/LayoutTests/fast/images/resources/animated-gif-with-offsets.gif");
     ASSERT_TRUE(data.get());
@@ -169,7 +181,7 @@ TEST(GIFImageDecoderTest, parseAndDecodeByteByByte)
 // Second frame in the file is broken but test that first frame can be decoded.
 TEST(GIFImageDecoderTest, brokenSecondFrame)
 {
-    OwnPtr<GIFImageDecoder> decoder(adoptPtr(new GIFImageDecoder(ImageSource::AlphaNotPremultiplied, ImageSource::GammaAndColorProfileApplied)));
+    OwnPtr<GIFImageDecoder> decoder(createDecoder());
 
     RefPtr<SharedBuffer> data = readFile("/Source/WebKit/chromium/tests/data/broken.gif");
     ASSERT_TRUE(data.get());
@@ -185,6 +197,55 @@ TEST(GIFImageDecoderTest, brokenSecondFrame)
     frame = decoder->frameBufferAtIndex(1);
     EXPECT_FALSE(frame);
     EXPECT_EQ(cAnimationLoopOnce, decoder->repetitionCount());
+}
+
+TEST(GIFImageDecoderTest, progressiveDecode)
+{
+    RefPtr<SharedBuffer> fullData = readFile("/Source/WebKit/chromium/tests/data/radient.gif");
+    ASSERT_TRUE(fullData.get());
+    const size_t fullLength = fullData->size();
+
+    OwnPtr<GIFImageDecoder> decoder;
+    ImageFrame* frame;
+
+    Vector<unsigned> truncatedHashes;
+    Vector<unsigned> progressiveHashes;
+
+    // Compute hashes when the file is truncated.
+    const size_t increment = 1;
+    for (size_t i = 1; i <= fullLength; i += increment) {
+        decoder = createDecoder();
+        RefPtr<SharedBuffer> data = SharedBuffer::create(fullData->data(), i);
+        decoder->setData(data.get(), i == fullLength);
+        frame = decoder->frameBufferAtIndex(0);
+        if (!frame) {
+            truncatedHashes.append(0);
+            continue;
+        }
+        truncatedHashes.append(hashSkBitmap(frame->getSkBitmap()));
+    }
+
+    // Compute hashes when the file is progressively decoded.
+    decoder = createDecoder();
+    for (size_t i = 1; i <= fullLength; i += increment) {
+        RefPtr<SharedBuffer> data = SharedBuffer::create(fullData->data(), i);
+        decoder->setData(data.get(), i == fullLength);
+        frame = decoder->frameBufferAtIndex(0);
+        if (!frame) {
+            progressiveHashes.append(0);
+            continue;
+        }
+        progressiveHashes.append(hashSkBitmap(frame->getSkBitmap()));
+    }
+
+    bool match = true;
+    for (size_t i = 0; i < truncatedHashes.size(); ++i) {
+        if (truncatedHashes[i] != progressiveHashes[i]) {
+            match = false;
+            break;
+        }
+    }
+    EXPECT_TRUE(match);
 }
 
 #endif

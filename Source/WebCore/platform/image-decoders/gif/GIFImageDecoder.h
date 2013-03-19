@@ -72,7 +72,6 @@ namespace WebCore {
         // failure, this will mark the image as failed.
         bool initFrameBuffer(unsigned frameIndex);
 
-        bool m_alreadyScannedThisDataForFrameCount;
         bool m_currentBufferSawAlpha;
         mutable int m_repetitionCount;
         OwnPtr<GIFImageReader> m_reader;
