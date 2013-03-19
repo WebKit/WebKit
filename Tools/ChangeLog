@@ -1,3 +1,34 @@
+2013-03-19  Daniel Bates  <dbates@webkit.org>
+
+        svn-apply has trouble applying a patch that adds a Windows newline to EOF
+        https://bugs.webkit.org/show_bug.cgi?id=112732
+
+        Reviewed by Eric Seidel.
+
+        Fixes an issues where a diff that adds a Windows line ending (CRLF) to the end
+        of an existing file cannot be applied.
+
+        In particular, svn-{apply, unapply} compensate for differences in line endings
+        by converting the line endings in a diff to match the line endings in the target
+        file. The diff(1) command precedes the last line of a diff that adds a newline
+        character to the end of a file with the special character sequence "\n \\ No newline at end of file\n"
+        Svn-{apply, unapply} converts the newline characters (\n) in this character sequence
+        to \r\n (CRLF) when the target file has Windows line endings and patch(1) complains
+        when applying this modified diff. Instead, svn-{apply, unapply} should not modify
+        the newline characters in this special character sequence to match the line endings
+        in the target file.
+
+        * Scripts/VCSUtils.pm:
+        (parseDiff):
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiffWithMockFiles.pl:
+        Added tests:
+            - "SVN: Patch adds Windows newline to EOF and IndexPath has Windows line endings"
+            - "SVN: Patch adds Mac newline to EOF and IndexPath has Mac line endings"
+            - "Git: Patch adds Windows newline to EOF and IndexPath has Windows line endings"
+            - "Git: Patch adds Mac newline to EOF and IndexPath has Mac line endings"
+        (escapeNewLineCharacters): Added.
+        (toMacLineEndings): Added.
+
 2013-03-19  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove compositor settings that don't go through WebKit

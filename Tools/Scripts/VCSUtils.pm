@@ -1,4 +1,4 @@
-# Copyright (C) 2007, 2008, 2009 Apple Inc.  All rights reserved.
+# Copyright (C) 2007, 2008, 2009, 2010, 2011, 2012, 2013 Apple Inc.  All rights reserved.
 # Copyright (C) 2009, 2010 Chris Jerdonek (chris.jerdonek@gmail.com)
 # Copyright (C) 2010, 2011 Research In Motion Limited. All rights reserved.
 # Copyright (C) 2012 Daniel Bates (dbates@intudata.com)
@@ -1005,13 +1005,23 @@ sub parseDiff($$;$)
             # Then we are in the body of the diff.
             my $isChunkRange = defined(parseChunkRange($line));
             $numTextChunks += 1 if $isChunkRange;
+            my $nextLine = <$fileHandle>;
+            my $willAddNewLineAtEndOfFile = defined($nextLine) && $nextLine =~ /^\\ No newline at end of file$/;
+            if ($willAddNewLineAtEndOfFile) {
+                # Diff(1) always emits a LF character preceeding the line "\ No newline at end of file".
+                # We must preserve both the added LF character and the line ending of this sentinel line
+                # or patch(1) will complain.
+                $svnText .= $line . $nextLine;
+                $line = <$fileHandle>;
+                next;
+            }
             if ($indexPathEOL && !$isChunkRange) {
                 # The chunk range is part of the body of the diff, but its line endings should't be
                 # modified or patch(1) will complain. So, we only modify non-chunk range lines.
                 $line =~ s/\r\n|\r|\n/$indexPathEOL/g;
             }
             $svnText .= $line;
-            $line = <$fileHandle>;
+            $line = $nextLine;
             next;
         } # Otherwise, we found a diff header.
 
@@ -1023,6 +1033,10 @@ sub parseDiff($$;$)
 
         ($headerHashRef, $line) = parseDiffHeader($fileHandle, $line);
         if (!$optionsHashRef || !$optionsHashRef->{shouldNotUseIndexPathEOL}) {
+            # FIXME: We shouldn't query the file system (via firstEOLInFile()) to determine the
+            #        line endings of the file indexPath. Instead, either the caller to parseDiff()
+            #        should provide this information or parseDiff() should take a delegate that it
+            #        can use to query for this information.
             $indexPathEOL = firstEOLInFile($headerHashRef->{indexPath}) if !$headerHashRef->{isNew} && !$headerHashRef->{isBinary};
         }
 
