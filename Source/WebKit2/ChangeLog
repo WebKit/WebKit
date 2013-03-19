@@ -1,3 +1,20 @@
+2013-03-19  Dean Jackson  <dino@apple.com>
+
+        Restarting a snapshotted plugin should restart all plugins from the same domain on the page
+        https://bugs.webkit.org/show_bug.cgi?id=112725
+
+        Reviewed by Tim Horton.
+
+        When we add a plugin domain hash to the list of sites that autostart, we
+        send a message to our owning process. That message might not return before
+        another plugin queries if it is in the list. So, before we send the message,
+        add the current hash to the list with a very small timeout. That way the
+        response will be to either extend the timeout, or not add the hash (in which
+        case it will expire soon).
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::addPlugInAutoStartOrigin):
+
 2013-03-19  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Fix WebKit2 builds after r146193

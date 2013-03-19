@@ -33,6 +33,7 @@
 #include "LocalizedStrings.h"
 #include "Logging.h"
 #include "MouseEvent.h"
+#include "NodeList.h"
 #include "NodeRenderStyle.h"
 #include "NodeRenderingContext.h"
 #include "Page.h"
@@ -53,6 +54,8 @@
 namespace WebCore {
 
 using namespace HTMLNames;
+
+typedef Vector<RefPtr<HTMLPlugInImageElement> > HTMLPlugInImageElementList;
 
 static const int sizingTinyDimensionThreshold = 40;
 static const int sizingSmallWidthThreshold = 250;
@@ -403,12 +406,57 @@ void HTMLPlugInImageElement::swapRendererTimerFired(Timer<HTMLPlugInImageElement
     ensureUserAgentShadowRoot();
 }
 
+static void addPlugInsFromNodeListMatchingOriginHash(HTMLPlugInImageElementList& plugInList, PassRefPtr<NodeList> collection, unsigned originHash)
+{
+    for (unsigned i = 0, length = collection->length(); i < length; i++) {
+        Node* node = collection->item(i);
+        if (node->isPluginElement()) {
+            HTMLPlugInElement* plugInElement = toHTMLPlugInElement(node);
+            if (plugInElement->isPlugInImageElement() && plugInElement->displayState() <= HTMLPlugInElement::DisplayingSnapshot && plugInElement->plugInOriginHash() == originHash)
+                plugInList.append(toHTMLPlugInImageElement(node));
+        }
+    }
+}
+
 void HTMLPlugInImageElement::userDidClickSnapshot(PassRefPtr<MouseEvent> event)
 {
     m_pendingClickEventFromSnapshot = event;
     if (document()->page() && !SchemeRegistry::shouldTreatURLSchemeAsLocal(document()->page()->mainFrame()->document()->baseURL().protocol()))
         document()->page()->plugInClient()->addAutoStartOrigin(document()->page()->mainFrame()->document()->baseURL().host(), m_plugInOriginHash);
 
+    restartSnapshottedPlugIn();
+
+    // Restart any other snapshotted plugins in the page with the same origin. Note that they
+    // may be in different frames, so traverse from the top of the document.
+
+    HTMLPlugInImageElementList pluginsNeedingRestart;
+
+    if (!document()->page())
+        return;
+
+    for (Frame* frame = document()->page()->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        if (frame->loader()->subframeLoader()->containsPlugins()) {
+            if (!frame->document())
+                continue;
+
+            RefPtr<NodeList> plugins = frame->document()->getElementsByTagName(embedTag.localName());
+            if (plugins)
+                addPlugInsFromNodeListMatchingOriginHash(pluginsNeedingRestart, plugins, m_plugInOriginHash);
+
+            plugins = frame->document()->getElementsByTagName(objectTag.localName());
+            if (plugins)
+                addPlugInsFromNodeListMatchingOriginHash(pluginsNeedingRestart, plugins, m_plugInOriginHash);
+        }
+    }
+
+    for (size_t i = 0, length = pluginsNeedingRestart.size(); i < length; i++) {
+        pluginsNeedingRestart[i]->setDisplayState(Playing);
+        pluginsNeedingRestart[i]->restartSnapshottedPlugIn();
+    }
+}
+
+void HTMLPlugInImageElement::restartSnapshottedPlugIn()
+{
     reattach();
 }
 

@@ -776,6 +776,12 @@ void WebProcess::addPlugInAutoStartOrigin(const String& pageOrigin, unsigned plu
         return;
     }
 
+    // We might attempt to start another plugin before the didAddPlugInAutoStartOrigin message
+    // comes back from the parent process. Temporarily add this hash to the list with a thirty
+    // second timeout. That way, even if the parent decides not to add it, we'll only be
+    // incorrect for a little while.
+    m_plugInAutoStartOrigins.set(plugInOriginHash, currentTime() + 30 * 1000);
+
     parentProcessConnection()->send(Messages::WebContext::AddPlugInAutoStartOriginHash(pageOrigin, plugInOriginHash), 0);
 }
 

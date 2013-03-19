@@ -97,6 +97,8 @@ protected:
 
     virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
 
+    void restartSnapshottedPlugIn();
+
 private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool willRecalcStyle(StyleChange);
