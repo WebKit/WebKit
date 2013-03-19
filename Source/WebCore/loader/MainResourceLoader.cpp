@@ -66,9 +66,7 @@
 namespace WebCore {
 
 MainResourceLoader::MainResourceLoader(DocumentLoader* documentLoader)
-    : m_dataLoadTimer(this, &MainResourceLoader::handleSubstituteDataLoadNow)
-    , m_documentLoader(documentLoader)
-    , m_identifierForLoadWithoutResourceLoader(0)
+    : m_documentLoader(documentLoader)
 {
 }
 
@@ -80,42 +78,6 @@ MainResourceLoader::~MainResourceLoader()
 PassRefPtr<MainResourceLoader> MainResourceLoader::create(DocumentLoader* documentLoader)
 {
     return adoptRef(new MainResourceLoader(documentLoader));
-}
-
-void MainResourceLoader::receivedError(const ResourceError& error)
-{
-    // Calling receivedMainResourceError will likely result in the last reference to this object to go away.
-    RefPtr<MainResourceLoader> protect(this);
-    RefPtr<Frame> protectFrame(m_documentLoader->frame());
-
-    if (m_identifierForLoadWithoutResourceLoader) {
-        ASSERT(!loader());
-        frameLoader()->client()->dispatchDidFailLoading(documentLoader(), m_identifierForLoadWithoutResourceLoader, error);
-    }
-
-    // It is important that we call DocumentLoader::mainReceivedError before calling 
-    // ResourceLoadNotifier::didFailToLoad because mainReceivedError clears out the relevant
-    // document loaders. Also, mainReceivedError ends up calling a FrameLoadDelegate method
-    // and didFailToLoad calls a ResourceLoadDelegate method and they need to be in the correct order.
-    documentLoader()->mainReceivedError(error);
-}
-
-void MainResourceLoader::cancel()
-{
-    cancel(ResourceError());
-}
-
-void MainResourceLoader::cancel(const ResourceError& error)
-{
-    RefPtr<MainResourceLoader> protect(this);
-    ResourceError resourceError = error.isNull() ? frameLoader()->cancelledError(request()) : error;
-
-    m_dataLoadTimer.stop();
-    if (loader())
-        loader()->cancel(resourceError);
-
-    clearResource();
-    receivedError(resourceError);
 }
 
 void MainResourceLoader::clearResource()
@@ -177,18 +139,7 @@ void MainResourceLoader::notifyFinished(CachedResource* resource)
         return;
     }
 #endif
-
-    const ResourceError& error = m_resource->resourceError();
-    if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForMainError(request(), error))
-        return;
-
-    // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
-    // See <rdar://problem/6304600> for more details.
-#if !USE(CF)
-    ASSERT(!defersLoading());
-#endif
-    
-    receivedError(error);
+    m_documentLoader->mainReceivedError(m_resource->resourceError());
 }
 
 void MainResourceLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
@@ -196,58 +147,12 @@ void MainResourceLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) c
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Loader);
     info.addMember(m_resource, "resource");
     info.addMember(m_initialRequest, "initialRequest");
-    info.addMember(m_dataLoadTimer, "dataLoadTimer");
     info.addMember(m_documentLoader, "documentLoader");
-}
-
-void MainResourceLoader::handleSubstituteDataLoadNow(MainResourceLoaderTimer*)
-{
-    RefPtr<MainResourceLoader> protect(this);
-
-    KURL url = m_documentLoader->substituteData().responseURL();
-    if (url.isEmpty())
-        url = m_initialRequest.url();
-
-    // Clear the initial request here so that subsequent entries into the
-    // loader will not think there's still a deferred load left to do.
-    m_initialRequest = ResourceRequest();
-        
-    ResourceResponse response(url, m_documentLoader->substituteData().mimeType(), m_documentLoader->substituteData().content()->size(), m_documentLoader->substituteData().textEncoding(), "");
-    responseReceived(0, response);
-}
-
-void MainResourceLoader::startDataLoadTimer()
-{
-    m_dataLoadTimer.startOneShot(0);
-
-#if HAVE(RUNLOOP_TIMER)
-    if (SchedulePairHashSet* scheduledPairs = m_documentLoader->frame()->page()->scheduledRunLoopPairs())
-        m_dataLoadTimer.schedule(*scheduledPairs);
-#endif
-}
-
-void MainResourceLoader::handleSubstituteDataLoadSoon(const ResourceRequest& r)
-{
-    m_initialRequest = r;
-    
-    if (m_documentLoader->deferMainResourceDataLoad())
-        startDataLoadTimer();
-    else
-        handleSubstituteDataLoadNow(0);
 }
 
 void MainResourceLoader::load(const ResourceRequest& initialRequest)
 {
-    RefPtr<MainResourceLoader> protect(this);
     ResourceRequest request(initialRequest);
-
-    if (m_documentLoader->substituteData().isValid()) {
-        m_identifierForLoadWithoutResourceLoader = m_documentLoader->frame()->page()->progress()->createUniqueIdentifier();
-        frameLoader()->notifier()->assignIdentifierToInitialRequest(m_identifierForLoadWithoutResourceLoader, documentLoader(), request);
-        frameLoader()->notifier()->dispatchWillSendRequest(documentLoader(), m_identifierForLoadWithoutResourceLoader, request, ResourceResponse());
-        handleSubstituteDataLoadSoon(request);
-        return;
-    }
 
     DEFINE_STATIC_LOCAL(ResourceLoaderOptions, mainResourceLoadOptions,
         (SendCallbacks, SniffContent, BufferData, AllowStoredCredentials, AskClientForCrossOriginCredentials, SkipSecurityCheck));
@@ -257,21 +162,7 @@ void MainResourceLoader::load(const ResourceRequest& initialRequest)
         documentLoader()->setRequest(ResourceRequest());
         return;
     }
-    if (!loader()) {
-        m_identifierForLoadWithoutResourceLoader = m_documentLoader->frame()->page()->progress()->createUniqueIdentifier();
-        frameLoader()->notifier()->assignIdentifierToInitialRequest(m_identifierForLoadWithoutResourceLoader, documentLoader(), request);
-        frameLoader()->notifier()->dispatchWillSendRequest(documentLoader(), m_identifierForLoadWithoutResourceLoader, request, ResourceResponse());
-    }
     m_resource->addClient(this);
-
-    // A bunch of headers are set when the underlying ResourceLoader is created, and DocumentLoader::m_request needs to include those.
-    if (loader())
-        request = loader()->originalRequest();
-    // If there was a fragment identifier on initialRequest, the cache will have stripped it. DocumentLoader::m_request should include
-    // the fragment identifier, so add that back in.
-    if (equalIgnoringFragmentIdentifier(initialRequest.url(), request.url()))
-        request.setURL(initialRequest.url());
-    documentLoader()->setRequest(request);
 }
 
 void MainResourceLoader::setDefersLoading(bool defers)
@@ -298,9 +189,6 @@ ResourceLoader* MainResourceLoader::loader() const
 
 unsigned long MainResourceLoader::identifier() const
 {
-    ASSERT(!m_identifierForLoadWithoutResourceLoader || !loader() || !loader()->identifier());
-    if (m_identifierForLoadWithoutResourceLoader)
-        return m_identifierForLoadWithoutResourceLoader;
     if (ResourceLoader* resourceLoader = loader())
         return resourceLoader->identifier();
     return 0;

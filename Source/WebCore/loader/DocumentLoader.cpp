@@ -51,6 +51,7 @@
 #include "MainResourceLoader.h"
 #include "MemoryCache.h"
 #include "Page.h"
+#include "ProgressTracker.h"
 #include "ResourceBuffer.h"
 #include "SchemeRegistry.h"
 #include "Settings.h"
@@ -112,6 +113,8 @@ DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData&
     , m_substituteResourceDeliveryTimer(this, &DocumentLoader::substituteResourceDeliveryTimerFired)
     , m_didCreateGlobalHistoryEntry(false)
     , m_timeOfLastDataReceived(0.0)
+    , m_identifierForLoadWithoutResourceLoader(0)
+    , m_dataLoadTimer(this, &DocumentLoader::handleSubstituteDataLoadNow)
     , m_waitingForContentPolicy(false)
     , m_applicationCacheHost(adoptPtr(new ApplicationCacheHost(this)))
 {
@@ -216,6 +219,19 @@ void DocumentLoader::setMainDocumentError(const ResourceError& error)
 void DocumentLoader::mainReceivedError(const ResourceError& error)
 {
     ASSERT(!error.isNull());
+    if (m_applicationCacheHost->maybeLoadFallbackForMainError(request(), error))
+        return;
+
+    if (m_identifierForLoadWithoutResourceLoader) {
+        ASSERT(!mainResourceLoader());
+        frameLoader()->client()->dispatchDidFailLoading(this, m_identifierForLoadWithoutResourceLoader, error);
+    }
+
+    // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
+    // See <rdar://problem/6304600> for more details.
+#if !USE(CF)
+    ASSERT(!m_frame->page()->defersLoading());
+#endif
 
     m_applicationCacheHost->failedLoadingMainResource();
 
@@ -278,7 +294,7 @@ void DocumentLoader::stopLoading()
     
     if (m_mainResourceLoader)
         // Stop the main resource loader and let it send the cancelled message.
-        m_mainResourceLoader->cancel(frameLoader->cancelledError(m_request));
+        cancelMainResourceLoad(frameLoader->cancelledError(m_request));
     else if (!m_subresourceLoaders.isEmpty())
         // The main resource loader already finished loading. Set the cancelled error on the 
         // document and let the subresourceLoaders send individual cancelled messages below.
@@ -324,9 +340,9 @@ void DocumentLoader::finishedLoading(double finishTime)
 
     RefPtr<DocumentLoader> protect(this);
 
-    if (m_mainResourceLoader && m_mainResourceLoader->identifierForLoadWithoutResourceLoader()) {
-        frameLoader()->notifier()->dispatchDidFinishLoading(this, m_mainResourceLoader->identifier(), finishTime);
-        m_mainResourceLoader->clearIdentifierForLoadWithoutResourceLoader();
+    if (m_identifierForLoadWithoutResourceLoader) {
+        frameLoader()->notifier()->dispatchDidFinishLoading(this, m_identifierForLoadWithoutResourceLoader, finishTime);
+        m_identifierForLoadWithoutResourceLoader = 0;
     }
 
 #if USE(CONTENT_FILTERING)
@@ -389,6 +405,33 @@ bool DocumentLoader::isPostOrRedirectAfterPost(const ResourceRequest& newRequest
     return false;
 }
 
+void DocumentLoader::handleSubstituteDataLoadNow(DocumentLoaderTimer*)
+{
+    KURL url = m_substituteData.responseURL();
+    if (url.isEmpty())
+        url = m_request.url();
+    ResourceResponse response(url, m_substituteData.mimeType(), m_substituteData.content()->size(), m_substituteData.textEncoding(), "");
+    responseReceived(response);
+}
+
+void DocumentLoader::startDataLoadTimer()
+{
+    m_dataLoadTimer.startOneShot(0);
+
+#if HAVE(RUNLOOP_TIMER)
+    if (SchedulePairHashSet* scheduledPairs = m_frame->page()->scheduledRunLoopPairs())
+        m_dataLoadTimer.schedule(*scheduledPairs);
+#endif
+}
+
+void DocumentLoader::handleSubstituteDataLoadSoon()
+{
+    if (deferMainResourceDataLoad())
+        startDataLoadTimer();
+    else
+        handleSubstituteDataLoadNow(0);
+}
+
 void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
 {
     // Note that there are no asserts here as there are for the other callbacks. This is due to the
@@ -442,7 +485,7 @@ void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const Resource
         ASSERT(!m_substituteData.isValid());
         m_applicationCacheHost->maybeLoadMainResourceForRedirect(newRequest, m_substituteData);
         if (m_substituteData.isValid())
-            m_mainResourceLoader->takeIdentifierFromResourceLoader();
+            m_identifierForLoadWithoutResourceLoader = mainResourceLoader()->identifier();
     }
 
     // FIXME: Ideally we'd stop the I/O until we hear back from the navigation policy delegate
@@ -458,7 +501,7 @@ void DocumentLoader::callContinueAfterNavigationPolicy(void* argument, const Res
     static_cast<DocumentLoader*>(argument)->continueAfterNavigationPolicy(request, shouldContinue);
 }
 
-void DocumentLoader::continueAfterNavigationPolicy(const ResourceRequest& request, bool shouldContinue)
+void DocumentLoader::continueAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue)
 {
     if (!shouldContinue)
         stopLoadingForPolicyChange();
@@ -477,7 +520,7 @@ void DocumentLoader::continueAfterNavigationPolicy(const ResourceRequest& reques
         resourceLoader->setSendCallbackPolicy(DoNotSendCallbacks);
         m_mainResourceLoader->clearResource();
         resourceLoader->setSendCallbackPolicy(SendCallbacks);
-        m_mainResourceLoader->handleSubstituteDataLoadSoon(request);
+        handleSubstituteDataLoadSoon();
     }
 }
 
@@ -504,7 +547,7 @@ void DocumentLoader::responseReceived(const ResourceResponse& response)
     HTTPHeaderMap::const_iterator it = response.httpHeaderFields().find(xFrameOptionHeader);
     if (it != response.httpHeaderFields().end()) {
         String content = it->value;
-        unsigned long identifier = m_mainResourceLoader->identifier();
+        unsigned long identifier = m_identifierForLoadWithoutResourceLoader ? m_identifierForLoadWithoutResourceLoader : mainResourceLoader()->identifier();
         if (frameLoader()->shouldInterruptLoadForXFrameOptions(content, response.url(), identifier)) {
             InspectorInstrumentation::continueAfterXFrameOptionsDenied(m_frame, this, identifier, response);
             String message = "Refused to display '" + response.url().elidedString() + "' in a frame because it set 'X-Frame-Options' to '" + content + "'.";
@@ -530,8 +573,8 @@ void DocumentLoader::responseReceived(const ResourceResponse& response)
 
     setResponse(response);
 
-    if (m_mainResourceLoader->identifierForLoadWithoutResourceLoader())
-        frameLoader()->notifier()->dispatchDidReceiveResponse(this, m_mainResourceLoader->identifierForLoadWithoutResourceLoader(), m_response, 0);
+    if (m_identifierForLoadWithoutResourceLoader)
+        frameLoader()->notifier()->dispatchDidReceiveResponse(this, m_identifierForLoadWithoutResourceLoader, m_response, 0);
 
     ASSERT(!m_waitingForContentPolicy);
     m_waitingForContentPolicy = true;
@@ -780,8 +823,8 @@ void DocumentLoader::receivedData(const char* data, int length)
     }
 #endif
 
-    if (m_mainResourceLoader->identifierForLoadWithoutResourceLoader())
-        frameLoader()->notifier()->dispatchDidReceiveData(this, m_mainResourceLoader->identifier(), data, length, -1);
+    if (m_identifierForLoadWithoutResourceLoader)
+        frameLoader()->notifier()->dispatchDidReceiveData(this, m_identifierForLoadWithoutResourceLoader, data, length, -1);
 
     m_applicationCacheHost->mainResourceDataReceived(data, length, -1, false);
     m_timeOfLastDataReceived = monotonicallyIncreasingTime();
@@ -1311,6 +1354,15 @@ void DocumentLoader::startLoadingMainResource()
 
     m_applicationCacheHost->maybeLoadMainResource(m_request, m_substituteData);
 
+    if (m_substituteData.isValid()) {
+        m_identifierForLoadWithoutResourceLoader = m_frame->page()->progress()->createUniqueIdentifier();
+        frameLoader()->notifier()->assignIdentifierToInitialRequest(m_identifierForLoadWithoutResourceLoader, this, m_request);
+        frameLoader()->notifier()->dispatchWillSendRequest(this, m_identifierForLoadWithoutResourceLoader, m_request, ResourceResponse());
+        handleSubstituteDataLoadSoon();
+        return;
+    }
+
+    ResourceRequest request(m_request);
     m_mainResourceLoader->load(m_request);
 
     if (m_request.isNull()) {
@@ -1320,19 +1372,41 @@ void DocumentLoader::startLoadingMainResource()
         // a new ApplicationCacheHost.
         m_applicationCacheHost = adoptPtr(new ApplicationCacheHost(this));
         maybeLoadEmpty();
+        return;
     }
+
+    if (!mainResourceLoader()) {
+        m_identifierForLoadWithoutResourceLoader = m_frame->page()->progress()->createUniqueIdentifier();
+        frameLoader()->notifier()->assignIdentifierToInitialRequest(m_identifierForLoadWithoutResourceLoader, this, request);
+        frameLoader()->notifier()->dispatchWillSendRequest(this, m_identifierForLoadWithoutResourceLoader, request, ResourceResponse());
+    }
+
+    // A bunch of headers are set when the underlying ResourceLoader is created, and m_request needs to include those.
+    if (mainResourceLoader())
+        request = mainResourceLoader()->originalRequest();
+    // If there was a fragment identifier on m_request, the cache will have stripped it. m_request should include
+    // the fragment identifier, so add that back in.
+    if (equalIgnoringFragmentIdentifier(m_request.url(), request.url()))
+        request.setURL(m_request.url());
+    setRequest(request);
 }
 
 void DocumentLoader::cancelMainResourceLoad(const ResourceError& error)
 {
     ASSERT(!error.isNull());
+    RefPtr<DocumentLoader> protect(this);
 
+    m_dataLoadTimer.stop();
     if (m_waitingForContentPolicy) {
         frameLoader()->policyChecker()->cancelCheck();
         ASSERT(m_waitingForContentPolicy);
         m_waitingForContentPolicy = false;
     }
-    m_mainResourceLoader->cancel(error);
+
+    if (mainResourceLoader())
+        mainResourceLoader()->cancel(error);
+
+    mainReceivedError(error);
 }
 
 void DocumentLoader::subresourceLoaderFinishedLoadingOnePart(ResourceLoader* loader)

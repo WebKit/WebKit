@@ -36,12 +36,6 @@
 #include "SubstituteData.h"
 #include <wtf/Forward.h>
 
-#if HAVE(RUNLOOP_TIMER)
-#include <wtf/RunLoopTimer.h>
-#else
-#include "Timer.h"
-#endif
-
 namespace WebCore {
 
 class ResourceRequest;
@@ -53,30 +47,18 @@ public:
     virtual ~MainResourceLoader();
 
     void load(const ResourceRequest&);
-    void cancel();
-    void cancel(const ResourceError&);
     ResourceLoader* loader() const;
     PassRefPtr<ResourceBuffer> resourceData();
 
     void setDefersLoading(bool);
     void setDataBufferingPolicy(DataBufferingPolicy);
 
-#if HAVE(RUNLOOP_TIMER)
-    typedef RunLoopTimer<MainResourceLoader> MainResourceLoaderTimer;
-#else
-    typedef Timer<MainResourceLoader> MainResourceLoaderTimer;
-#endif
-
     CachedRawResource* cachedMainResource() { return m_resource.get(); }
-    unsigned long identifierForLoadWithoutResourceLoader() const { return m_identifierForLoadWithoutResourceLoader; }
-    void clearIdentifierForLoadWithoutResourceLoader() { m_identifierForLoadWithoutResourceLoader = 0; }
 
     unsigned long identifier() const;
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
-    void takeIdentifierFromResourceLoader() { m_identifierForLoadWithoutResourceLoader = identifier(); }
-    void handleSubstituteDataLoadSoon(const ResourceRequest&);
     void clearResource();
 
 private:
@@ -86,16 +68,6 @@ private:
     virtual void responseReceived(CachedResource*, const ResourceResponse&) OVERRIDE;
     virtual void dataReceived(CachedResource*, const char* data, int dataLength) OVERRIDE;
     virtual void notifyFinished(CachedResource*) OVERRIDE;
-
-    void handleSubstituteDataLoadNow(MainResourceLoaderTimer*);
-
-    void startDataLoadTimer();
-
-    void receivedError(const ResourceError&);
-    
-#if PLATFORM(QT)
-    void substituteMIMETypeFromPluginDatabase(const ResourceResponse&);
-#endif
 
     FrameLoader* frameLoader() const;
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
@@ -108,10 +80,7 @@ private:
 
     ResourceRequest m_initialRequest;
 
-    MainResourceLoaderTimer m_dataLoadTimer;
     RefPtr<DocumentLoader> m_documentLoader;
-
-    unsigned long m_identifierForLoadWithoutResourceLoader;
 };
 
 }
