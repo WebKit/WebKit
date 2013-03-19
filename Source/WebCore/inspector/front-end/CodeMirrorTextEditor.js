@@ -34,6 +34,7 @@ importScript("cm/javascript.js");
 importScript("cm/xml.js");
 importScript("cm/htmlmixed.js");
 importScript("cm/matchbrackets.js");
+importScript("cm/closebrackets.js");
 
 /**
  * @constructor
@@ -54,7 +55,8 @@ WebInspector.CodeMirrorTextEditor = function(url, delegate)
     this._codeMirror = window.CodeMirror(this.element, {
         lineNumbers: true,
         gutters: ["CodeMirror-linenumbers", "breakpoints"],
-        matchBrackets: true
+        matchBrackets: true,
+        autoCloseBrackets: WebInspector.experimentsSettings.textEditorSmartBraces.isEnabled()
     });
 
     var indent = WebInspector.settings.textEditorIndent.get();

@@ -14758,6 +14758,9 @@
     <None Include="..\inspector\front-end\cm\htmlmixed.js">
       <Filter>inspector\front-end</Filter>
     </None>
+    <None Include="..\inspector\front-end\cm\closebrackets.js">
+      <Filter>inspector\front-end</Filter>
+    </None>
     <None Include="..\inspector\front-end\cm\matchbrackets.js">
       <Filter>inspector\front-end</Filter>
     </None>
