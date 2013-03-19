@@ -36,6 +36,7 @@
 #endif
 #include "PageClientBlackBerry.h"
 #include "PlatformMouseEvent.h"
+#include "ProximityDetector.h"
 #include "ScriptSourceCode.h"
 #include "SelectionOverlay.h"
 #include "Timer.h"
@@ -522,6 +523,7 @@ public:
     InputHandler* m_inputHandler;
     SelectionHandler* m_selectionHandler;
     TouchEventHandler* m_touchEventHandler;
+    ProximityDetector* m_proximityDetector;
 
 #if ENABLE(EVENT_MODE_METATAGS)
     WebCore::CursorEventMode m_cursorEventMode;

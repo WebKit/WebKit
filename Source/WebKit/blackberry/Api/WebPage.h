@@ -329,6 +329,8 @@ public:
     void dispatchInspectorMessage(const BlackBerry::Platform::String& message);
     void inspectCurrentContextElement();
 
+    Platform::IntPoint adjustDocumentScrollPosition(const Platform::IntPoint& documentScrollPosition, const Platform::IntRect& documentPaddingRect);
+
     // FIXME: Needs API review on this header. See PR #120402.
     void notifyPagePause();
     void notifyPageResume();

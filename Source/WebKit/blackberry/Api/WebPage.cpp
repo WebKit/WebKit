@@ -392,6 +392,7 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_inputHandler(new InputHandler(this))
     , m_selectionHandler(new SelectionHandler(this))
     , m_touchEventHandler(new TouchEventHandler(this))
+    , m_proximityDetector(new ProximityDetector(this))
 #if ENABLE(EVENT_MODE_METATAGS)
     , m_cursorEventMode(ProcessedCursorEvents)
     , m_touchEventMode(ProcessedTouchEvents)
@@ -487,6 +488,9 @@ WebPagePrivate::~WebPagePrivate()
 
     delete m_touchEventHandler;
     m_touchEventHandler = 0;
+
+    delete m_proximityDetector;
+    m_proximityDetector = 0;
 
 #if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     delete m_dumpRenderTree;
@@ -5286,6 +5290,11 @@ void WebPage::inspectCurrentContextElement()
 {
     if (isWebInspectorEnabled() && d->m_currentContextNode.get())
         d->m_page->inspectorController()->inspect(d->m_currentContextNode.get());
+}
+
+Platform::IntPoint WebPage::adjustDocumentScrollPosition(const Platform::IntPoint& documentScrollPosition, const Platform::IntRect& documentPaddingRect)
+{
+    return d->m_proximityDetector->findBestPoint(documentScrollPosition, documentPaddingRect);
 }
 
 bool WebPagePrivate::compositorDrawsRootLayer() const

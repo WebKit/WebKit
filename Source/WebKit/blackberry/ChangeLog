@@ -1,3 +1,22 @@
+2013-03-19  Iris Wu  <shuwu@blackberry.com>
+
+        [BlackBerry] Hook up scroll position to proximity detector
+        https://bugs.webkit.org/show_bug.cgi?id=112743
+
+        Reviewed by Rob Buis.
+
+        PR 243385
+        Reviewed Internally By Genevieve Mak.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::~WebPagePrivate):
+        (BlackBerry::WebKit::WebPage::adjustDocumentScrollPosition):
+        (WebKit):
+        * Api/WebPage.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2013-03-19  Chris Hutten-Czapski  <chutten@blackberry.com>
 
         [BlackBerry] Don't handle keyboard scrolling shortcuts in webkit
