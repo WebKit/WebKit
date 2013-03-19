@@ -48,6 +48,7 @@
 #include "V8SVGPoint.h"
 #include "V8ScriptProfile.h"
 #include "V8TestCallback.h"
+#include "V8TestEnumType.h"
 #include "V8TestSubObj.h"
 #include "V8a.h"
 #include "V8b.h"
@@ -1881,6 +1882,21 @@ static v8::Handle<v8::Value> methodReturningSequenceMethodCallback(const v8::Arg
     return TestObjV8Internal::methodReturningSequenceMethod(args);
 }
 
+static v8::Handle<v8::Value> methodWithEnumArgMethod(const v8::Arguments& args)
+{
+    if (args.Length() < 1)
+        return throwNotEnoughArgumentsError(args.GetIsolate());
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, enumArg, args[0]);
+    imp->methodWithEnumArg(enumArg);
+    return v8Undefined();
+}
+
+static v8::Handle<v8::Value> methodWithEnumArgMethodCallback(const v8::Arguments& args)
+{
+    return TestObjV8Internal::methodWithEnumArgMethod(args);
+}
+
 static v8::Handle<v8::Value> methodThatRequiresAllArgsAndThrowsMethod(const v8::Arguments& args)
 {
     if (args.Length() < 2)
@@ -3382,6 +3398,12 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
     v8::Handle<v8::FunctionTemplate> methodWithSequenceArgArgv[methodWithSequenceArgArgc] = { V8PerIsolateData::from(isolate)->rawTemplate(&V8sequence<ScriptProfile>::info, worldType) };
     v8::Handle<v8::Signature> methodWithSequenceArgSignature = v8::Signature::New(desc, methodWithSequenceArgArgc, methodWithSequenceArgArgv);
     proto->Set(v8::String::NewSymbol("methodWithSequenceArg"), v8::FunctionTemplate::New(TestObjV8Internal::methodWithSequenceArgMethodCallback, v8Undefined(), methodWithSequenceArgSignature));
+
+    // Custom Signature 'methodWithEnumArg'
+    const int methodWithEnumArgArgc = 1;
+    v8::Handle<v8::FunctionTemplate> methodWithEnumArgArgv[methodWithEnumArgArgc] = { V8PerIsolateData::from(isolate)->rawTemplate(&V8TestEnumType::info) };
+    v8::Handle<v8::Signature> methodWithEnumArgSignature = v8::Signature::New(desc, methodWithEnumArgArgc, methodWithEnumArgArgv);
+    proto->Set(v8::String::NewSymbol("methodWithEnumArg"), v8::FunctionTemplate::New(TestObjV8Internal::methodWithEnumArgMethodCallback, v8Undefined(), methodWithEnumArgSignature));
 
     // Custom Signature 'methodThatRequiresAllArgsAndThrows'
     const int methodThatRequiresAllArgsAndThrowsArgc = 2;

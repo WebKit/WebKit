@@ -37,6 +37,7 @@ class WebDOMNode;
 class WebDOMObject;
 class WebDOMSVGPoint;
 class WebDOMString;
+class WebDOMTestEnumType;
 class WebDOMTestObj;
 class WebDOMa;
 class WebDOMb;
@@ -160,6 +161,7 @@ public:
     int longMethodWithArgs(int longArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
     WebDOMTestObj objMethod();
     WebDOMTestObj objMethodWithArgs(int longArg, const WebDOMString& strArg, const WebDOMTestObj& objArg);
+    void methodWithEnumArg(const WebDOMTestEnumType& enumArg);
     WebDOMTestObj methodThatRequiresAllArgsAndThrows(const WebDOMString& strArg, const WebDOMTestObj& objArg);
     void serializedValue(const WebDOMString& serializedArg);
     void optionsObject(const WebDOMDictionary& oo, const WebDOMDictionary& ooo);

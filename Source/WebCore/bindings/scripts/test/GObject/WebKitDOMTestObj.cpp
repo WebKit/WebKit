@@ -32,6 +32,7 @@
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMSVGPointPrivate.h"
 #include "WebKitDOMSerializedScriptValuePrivate.h"
+#include "WebKitDOMTestEnumTypePrivate.h"
 #include "WebKitDOMTestObjPrivate.h"
 #include "WebKitDOMaPrivate.h"
 #include "WebKitDOMbPrivate.h"
@@ -1058,6 +1059,17 @@ webkit_dom_test_obj_obj_method_with_args(WebKitDOMTestObj* self, glong longArg, 
     WebCore::TestObj* convertedObjArg = WebKit::core(objArg);
     RefPtr<WebCore::TestObj> gobjectResult = WTF::getPtr(item->objMethodWithArgs(longArg, convertedStrArg, convertedObjArg));
     return WebKit::kit(gobjectResult.get());
+}
+
+void
+webkit_dom_test_obj_method_with_enum_arg(WebKitDOMTestObj* self, WebKitDOMTestEnumType* enumArg)
+{
+    WebCore::JSMainThreadNullState state;
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self));
+    g_return_if_fail(WEBKIT_DOM_IS_TEST_ENUM_TYPE(enumArg));
+    WebCore::TestObj* item = WebKit::core(self);
+    WebCore::TestEnumType* convertedEnumArg = WebKit::core(enumArg);
+    item->methodWithEnumArg(convertedEnumArg);
 }
 
 WebKitDOMTestObj*

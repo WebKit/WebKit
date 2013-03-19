@@ -81,6 +81,7 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
     void methodWithSequenceArg(in sequence<ScriptProfile> sequenceArg);
     sequence<ScriptProfile> methodReturningSequence(in long longArg);
 
+    void methodWithEnumArg(in TestEnumType enumArg);
     TestObj methodThatRequiresAllArgsAndThrows(in DOMString strArg, in TestObj objArg)
         raises(DOMException);
 

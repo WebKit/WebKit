@@ -2147,7 +2147,23 @@ sub GenerateImplementation
                                     }
                                 }
 
-                                my $nativeValue = JSValueToNative($attribute->signature, "value");
+                                my $nativeValue;
+                                if ($codeGenerator->IsEnumType($type)) {
+                                    push(@implContent, "    String& string = value.isEmpty() ? String() : value.toString(exec)->value(exec);\n");
+                                    push(@implContent, "    if (exec->hadException())\n");
+                                    push(@implContent, "        return;\n");
+                                    my @enumValues = $codeGenerator->ValidEnumValues($type);
+                                    my @enumChecks = ();
+                                    foreach my $enumValue (@enumValues) {
+                                        push(@enumChecks, "string != \"$enumValue\"");
+                                    }
+                                    push (@implContent, "    if (" . join(" && ", @enumChecks) . ")\n");
+                                    push (@implContent, "        return;\n");
+                                    $nativeValue = "string";
+                                } else {
+                                    $nativeValue = JSValueToNative($attribute->signature, "value");
+                                }
+
                                 if ($svgPropertyOrListPropertyType) {
                                     if ($svgPropertyType) {
                                         push(@implContent, "    if (impl->isReadOnly()) {\n");
@@ -2771,6 +2787,21 @@ sub GenerateParametersCheck
                 push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
             }
 
+        } elsif ($codeGenerator->IsEnumType($argType)) {
+            $implIncludes{"<runtime/Error.h>"} = 1;
+
+            my $argValue = "exec->argument($argsIndex)";
+            push(@$outputArray, "    const String& ${name}(${argValue}.isEmpty() ? String() : ${argValue}.toString(exec)->value(exec));\n");
+            push(@$outputArray, "    if (exec->hadException())\n");
+            push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
+
+            my @enumValues = $codeGenerator->ValidEnumValues($argType);
+            my @enumChecks = ();
+            foreach my $enumValue (@enumValues) {
+                push(@enumChecks, "${name} != \"$enumValue\"");
+            }
+            push (@$outputArray, "    if (" . join(" && ", @enumChecks) . ")\n");
+            push (@$outputArray, "        return throwVMTypeError(exec);\n");
         } else {
             # If the "StrictTypeChecking" extended attribute is present, and the argument's type is an
             # interface type, then if the incoming value does not implement that interface, a TypeError
@@ -3275,6 +3306,11 @@ sub NativeToJSValue
 
     if ($codeGenerator->IsPrimitiveType($type) or $type eq "DOMTimeStamp") {
         return "jsNumber($value)";
+    }
+
+    if ($codeGenerator->IsEnumType($type)) {
+        AddToImplIncludes("<runtime/JSString.h>", $conditional);
+        return "jsStringWithCache(exec, $value)";
     }
 
     if ($codeGenerator->IsStringType($type)) {

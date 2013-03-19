@@ -28,12 +28,14 @@
 #include "Node.h"
 #include "SVGPoint.h"
 #include "SerializedScriptValue.h"
+#include "TestEnumType.h"
 #include "WebDOMDictionary.h"
 #include "WebDOMDocument.h"
 #include "WebDOMNode.h"
 #include "WebDOMObject.h"
 #include "WebDOMSVGPoint.h"
 #include "WebDOMString.h"
+#include "WebDOMTestEnumType.h"
 #include "WebDOMTestObj.h"
 #include "WebDOMa.h"
 #include "WebDOMb.h"
@@ -783,6 +785,14 @@ WebDOMTestObj WebDOMTestObj::objMethodWithArgs(int longArg, const WebDOMString& 
         return WebDOMTestObj();
 
     return toWebKit(WTF::getPtr(impl()->objMethodWithArgs(longArg, strArg, toWebCore(objArg))));
+}
+
+void WebDOMTestObj::methodWithEnumArg(const WebDOMTestEnumType& enumArg)
+{
+    if (!impl())
+        return;
+
+    impl()->methodWithEnumArg(toWebCore(enumArg));
 }
 
 WebDOMTestObj WebDOMTestObj::methodThatRequiresAllArgsAndThrows(const WebDOMString& strArg, const WebDOMTestObj& objArg)
