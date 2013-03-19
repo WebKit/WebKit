@@ -1,3 +1,17 @@
+2013-03-19  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Implement and32 on ARMv7 and ARM traditional platforms
+        https://bugs.webkit.org/show_bug.cgi?id=112663
+
+        Reviewed by Zoltan Herczeg.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::and32): Add missing method.
+        (MacroAssemblerARM):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::and32): Add missing method.
+        (MacroAssemblerARMv7):
+
 2013-03-18  Filip Pizlo  <fpizlo@apple.com>
 
         DFG ToString generic cases should work correctly

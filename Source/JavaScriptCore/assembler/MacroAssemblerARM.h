@@ -152,6 +152,12 @@ public:
             m_assembler.bitAnds(dest, src, w);
     }
 
+    void and32(Address src, RegisterID dest)
+    {
+        load32(src, ARMRegisters::S1);
+        and32(ARMRegisters::S1, dest);
+    }
+
     void lshift32(RegisterID shiftAmount, RegisterID dest)
     {
         lshift32(dest, shiftAmount, dest);

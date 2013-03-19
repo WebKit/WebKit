@@ -263,6 +263,12 @@ public:
         and32(imm, dest, dest);
     }
 
+    void and32(Address src, RegisterID dest)
+    {
+        load32(src, dataTempRegister);
+        and32(dataTempRegister, dest);
+    }
+
     void countLeadingZeros32(RegisterID src, RegisterID dest)
     {
         m_assembler.clz(dest, src);
