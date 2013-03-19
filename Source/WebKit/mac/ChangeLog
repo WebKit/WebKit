@@ -1,3 +1,9 @@
+2013-03-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac build fix attempt after r146239.
+
+        * WebCoreSupport/WebFrameNetworkingContext.h:
+
 2013-03-19  Sergey Ryazanov  <serya@chromium.org>
 
         Web Inspector: split Console into two entities, a web-facing bound object and page console.

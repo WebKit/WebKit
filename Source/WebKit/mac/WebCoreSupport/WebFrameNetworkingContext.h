@@ -19,6 +19,7 @@
 */
 
 #import <WebCore/FrameNetworkingContext.h>
+#import <wtf/SchedulePair.h>
 
 class WebFrameNetworkingContext : public WebCore::FrameNetworkingContext {
 public:
