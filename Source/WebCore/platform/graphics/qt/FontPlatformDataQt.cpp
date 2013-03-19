@@ -71,7 +71,10 @@ FontPlatformData::FontPlatformData(const FontDescription& description, const Ato
     font.setWeight(toQFontWeight(description.weight()));
     font.setWordSpacing(wordSpacing);
     font.setLetterSpacing(QFont::AbsoluteSpacing, letterSpacing);
+#if QT_VERSION < QT_VERSION_CHECK(5, 1, 0)
+    // Kept enabled for Qt < 5.1 to maintain stable baselines for 5.0.
     font.setStyleStrategy(QFont::ForceIntegerMetrics);
+#endif
 
     m_data->bold = font.bold();
     // WebKit allows font size zero but QFont does not. We will return
