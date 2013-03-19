@@ -1,3 +1,17 @@
+2013-03-19  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Make ImageDiff similar to Chromium's ImageDiff
+        https://bugs.webkit.org/show_bug.cgi?id=94782
+
+        Based on patch by Csaba Osztrogonác.
+        Reviewed by Jocelyn Turcotte.
+
+        The diff image is generated with bright red indicating errors, but letting the base image
+        shine through so the context of the error-pixel can be identified.
+
+        * DumpRenderTree/qt/ImageDiff.cpp:
+        (main):
+
 2013-03-18  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt] Fix the build of QtTestBrowser if the print preview dialog is disabled in Qt

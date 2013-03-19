@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 {
     QCoreApplication app(argc, argv);
 
-    qreal tolerance = 0;
+    qreal tolerance = 0; // Tolerated percentage of error pixels.
 
     QStringList args = app.arguments();
     for (int i = 0; i < argc; ++i)
@@ -93,11 +93,9 @@ int main(int argc, char* argv[])
                 int h = actualImage.height();
                 QImage diffImage(w, h, QImage::Format_ARGB32);
 
-                int count = 0;
-                qreal sum = 0;
-                qreal maxDistance = 0;
+                int errorCount = 0;
 
-                for (int x = 0; x < w; ++x)
+                for (int x = 0; x < w; ++x) {
                     for (int y = 0; y < h; ++y) {
                         QRgb pixel = actualImage.pixel(x, y);
                         QRgb basePixel = baselineImage.pixel(x, y);
@@ -106,26 +104,19 @@ int main(int argc, char* argv[])
                         qreal blue = (qBlue(pixel) - qBlue(basePixel)) / static_cast<float>(qMax(255 - qBlue(basePixel), qBlue(basePixel)));
                         qreal alpha = (qAlpha(pixel) - qAlpha(basePixel)) / static_cast<float>(qMax(255 - qAlpha(basePixel), qAlpha(basePixel)));
                         qreal distance = qSqrt(red * red + green * green + blue * blue + alpha * alpha) / 2.0f;
-                        int gray = distance * qreal(255);
-                        diffImage.setPixel(x, y, qRgb(gray, gray, gray));
                         if (distance >= 1 / qreal(255)) {
-                            count++;
-                            sum += distance;
-                            maxDistance = qMax(maxDistance, distance);
-                        }
+                            errorCount++;
+                            diffImage.setPixel(x, y, qRgb(255, 0, 0));
+                        } else
+                            diffImage.setPixel(x, y, qRgba(qRed(basePixel), qGreen(basePixel), qBlue(basePixel), qAlpha(basePixel) * 0.5));
+                    }
                 }
 
                 qreal difference = 0;
-                if (count)
-                    difference = 100 * sum / static_cast<qreal>(w * h);
-                if (difference <= tolerance) {
-                    difference = 0;
-                } else {
-                    difference = qRound(difference * 100) / 100.0f;
-                    difference = qMax(difference, qreal(0.01));
-                }
+                if (errorCount)
+                    difference = 100 * errorCount / static_cast<qreal>(w * h);
 
-                if (!difference)
+                if (difference <= tolerance)
                     fprintf(stdout, "diff: %01.2f%% passed\n", difference);
                 else {
                     QBuffer buffer;
