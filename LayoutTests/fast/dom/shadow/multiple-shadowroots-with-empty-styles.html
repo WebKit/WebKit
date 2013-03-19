@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="output"></div>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+document.addEventListener("DOMContentLoaded", function() {
+    var output = document.querySelector("#output");
+    // 1. make an element and insert it into the document. 
+    // 2. create a shadow root that contains a style element.
+    var f = document.createElement("div");
+    output.appendChild(f);
+    var fs = f.webkitCreateShadowRoot();
+    fs.innerHTML = "<style></style><div>Hello from foo.</div>";
+    //
+    // 3. make another element.
+    // 4. create a shadow root on this element that contains a style element.
+    // 5. create another shadow root on the element.
+    // 6. insert the element into the document.
+    var b = document.createElement("div");
+    var bs0 = b.webkitCreateShadowRoot();
+    bs0.innerHTML = "<style></style><div>Hello from bar.</div>";
+    var bs1 = b.webkitCreateShadowRoot();
+    bs1.innerHTML = "<shadow></shadow><div>Hello from zot.</div>";
+    // NOTE: must add to dom after adding shadowRoot to observe problem.
+    output.appendChild(b);
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+});
+</script>
+</body>
+</html>
