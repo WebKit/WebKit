@@ -29,6 +29,7 @@
 #include "ImageFrameGenerator.h"
 #include "ScaledImageFragment.h"
 #include "SharedBuffer.h"
+#include "TraceEvent.h"
 
 namespace WebCore {
 
@@ -235,6 +236,8 @@ unsigned ImageDecodingStore::cacheEntries()
 
 void ImageDecodingStore::prune()
 {
+    TRACE_EVENT0("webkit", "ImageDecodingStore::prune");
+
     Vector<OwnPtr<CacheEntry> > cacheEntriesToDelete;
     {
         MutexLocker lock(m_mutex);
@@ -260,6 +263,7 @@ void ImageDecodingStore::insertCacheInternal(PassOwnPtr<CacheEntry> cacheEntry)
 {
     if (!cacheEntry->isDiscardable())
         incrementMemoryUsage(cacheEntry->memoryUsageInBytes());
+    TRACE_COUNTER1("webkit", "ImageDecodingStoreMemoryUsageBytes", m_memoryUsageInBytes);
 
     // m_orderedCacheList is used to support LRU operations to reorder cache
     // entries quickly.
@@ -269,6 +273,7 @@ void ImageDecodingStore::insertCacheInternal(PassOwnPtr<CacheEntry> cacheEntry)
     // m_cacheMap is used for indexing and quick lookup of a cached image. It owns
     // all cache entries.
     m_cacheMap.add(key, cacheEntry);
+    TRACE_COUNTER1("webkit", "ImageDecodingStoreNumOfEntries", m_cacheMap.size());
 
     // m_cachedSizeMap keeps all scaled sizes associated with an ImageFrameGenerator.
     CachedSizeMap::AddResult result = m_cachedSizeMap.add(key.first, SizeSet());
@@ -279,10 +284,12 @@ void ImageDecodingStore::removeFromCacheInternal(const CacheEntry* cacheEntry, V
 {
     if (!cacheEntry->isDiscardable())
         decrementMemoryUsage(cacheEntry->memoryUsageInBytes());
+    TRACE_COUNTER1("webkit", "ImageDecodingStoreMemoryUsageBytes", m_memoryUsageInBytes);
 
     // Remove from m_cacheMap.
     CacheIdentifier key = cacheEntry->cacheKey();
     deletionList->append(m_cacheMap.take(key));
+    TRACE_COUNTER1("webkit", "ImageDecodingStoreNumOfEntries", m_cacheMap.size());
 
     // Remove from m_cachedSizeMap.
     CachedSizeMap::iterator iter = m_cachedSizeMap.find(key.first);

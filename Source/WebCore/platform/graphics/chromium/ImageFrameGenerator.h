@@ -83,6 +83,7 @@ private:
     ThreadSafeDataTransport m_data;
     bool m_decodeFailedAndEmpty;
     bool m_hasAlpha;
+    int m_decodeCount;
     DiscardablePixelRefAllocator m_allocator;
 
     OwnPtr<ImageDecoderFactory> m_imageDecoderFactory;
