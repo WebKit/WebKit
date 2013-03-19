@@ -230,7 +230,7 @@ void DocumentLoader::mainReceivedError(const ResourceError& error)
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
     // See <rdar://problem/6304600> for more details.
 #if !USE(CF)
-    ASSERT(!m_frame->page()->defersLoading());
+    ASSERT(!mainResourceLoader() || !mainResourceLoader()->defersLoading());
 #endif
 
     m_applicationCacheHost->failedLoadingMainResource();
@@ -526,6 +526,7 @@ void DocumentLoader::continueAfterNavigationPolicy(const ResourceRequest&, bool 
 
 void DocumentLoader::responseReceived(const ResourceResponse& response)
 {
+    RefPtr<DocumentLoader> protect(this);
     bool willLoadFallback = m_applicationCacheHost->maybeLoadFallbackForMainResponse(request(), response);
 
     // The memory cache doesn't understand the application cache or its caching rules. So if a main resource is served
@@ -560,7 +561,7 @@ void DocumentLoader::responseReceived(const ResourceResponse& response)
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
     // See <rdar://problem/6304600> for more details.
 #if !USE(CF)
-    ASSERT(!m_frame->page()->defersLoading());
+    ASSERT(!mainResourceLoader() || !mainResourceLoader()->defersLoading());
 #endif
 
     if (m_isLoadingMultipartContent) {
@@ -802,7 +803,7 @@ void DocumentLoader::receivedData(const char* data, int length)
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
     // See <rdar://problem/6304600> for more details.
 #if !USE(CF)
-    ASSERT(!m_frame->page()->defersLoading());
+    ASSERT(!mainResourceLoader() || !mainResourceLoader()->defersLoading());
 #endif
 
 #if USE(CONTENT_FILTERING)
@@ -1391,10 +1392,10 @@ void DocumentLoader::startLoadingMainResource()
     setRequest(request);
 }
 
-void DocumentLoader::cancelMainResourceLoad(const ResourceError& error)
+void DocumentLoader::cancelMainResourceLoad(const ResourceError& resourceError)
 {
-    ASSERT(!error.isNull());
     RefPtr<DocumentLoader> protect(this);
+    ResourceError error = resourceError.isNull() ? frameLoader()->cancelledError(m_request) : resourceError;
 
     m_dataLoadTimer.stop();
     if (m_waitingForContentPolicy) {
