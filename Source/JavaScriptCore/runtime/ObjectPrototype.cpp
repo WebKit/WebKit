@@ -57,16 +57,16 @@ void ObjectPrototype::finishCreation(ExecState* exec, JSGlobalObject* globalObje
     ASSERT(inherits(&s_info));
     globalData.prototypeMap.addPrototype(this);
     
-    JSC_NATIVE_FUNCTION(toString, objectProtoFuncToString, DontEnum, 0);
-    JSC_NATIVE_FUNCTION(toLocaleString, objectProtoFuncToLocaleString, DontEnum, 0);
-    JSC_NATIVE_FUNCTION(valueOf, objectProtoFuncValueOf, DontEnum, 0);
-    JSC_NATIVE_FUNCTION(hasOwnProperty, objectProtoFuncHasOwnProperty, DontEnum, 1);
-    JSC_NATIVE_FUNCTION(propertyIsEnumerable, objectProtoFuncPropertyIsEnumerable, DontEnum, 1);
-    JSC_NATIVE_FUNCTION(isPrototypeOf, objectProtoFuncIsPrototypeOf, DontEnum, 1);
-    JSC_NATIVE_FUNCTION(__defineGetter__, objectProtoFuncDefineGetter, DontEnum, 2);
-    JSC_NATIVE_FUNCTION(__defineSetter__, objectProtoFuncDefineSetter, DontEnum, 2);
-    JSC_NATIVE_FUNCTION(__lookupGetter__, objectProtoFuncLookupGetter, DontEnum, 1);
-    JSC_NATIVE_FUNCTION(__lookupSetter__, objectProtoFuncLookupSetter, DontEnum, 1);
+    JSC_NATIVE_FUNCTION("toString", objectProtoFuncToString, DontEnum, 0);
+    JSC_NATIVE_FUNCTION("toLocaleString", objectProtoFuncToLocaleString, DontEnum, 0);
+    JSC_NATIVE_FUNCTION("valueOf", objectProtoFuncValueOf, DontEnum, 0);
+    JSC_NATIVE_FUNCTION("hasOwnProperty", objectProtoFuncHasOwnProperty, DontEnum, 1);
+    JSC_NATIVE_FUNCTION("propertyIsEnumerable", objectProtoFuncPropertyIsEnumerable, DontEnum, 1);
+    JSC_NATIVE_FUNCTION("isPrototypeOf", objectProtoFuncIsPrototypeOf, DontEnum, 1);
+    JSC_NATIVE_FUNCTION("__defineGetter__", objectProtoFuncDefineGetter, DontEnum, 2);
+    JSC_NATIVE_FUNCTION("__defineSetter__", objectProtoFuncDefineSetter, DontEnum, 2);
+    JSC_NATIVE_FUNCTION("__lookupGetter__", objectProtoFuncLookupGetter, DontEnum, 1);
+    JSC_NATIVE_FUNCTION("__lookupSetter__", objectProtoFuncLookupSetter, DontEnum, 1);
 }
 
 ObjectPrototype* ObjectPrototype::create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)

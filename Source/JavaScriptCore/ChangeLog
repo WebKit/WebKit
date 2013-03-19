@@ -1,3 +1,19 @@
+2013-03-18  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC_NATIVE_FUNCTION() takes an identifier for the name and then uses #name, which is unsafe if name was already #define'd to something else
+        https://bugs.webkit.org/show_bug.cgi?id=112639
+
+        Reviewed by Michael Saboff.
+        
+        Change it to take a string instead.
+
+        * runtime/JSObject.h:
+        (JSC):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::finishCreation):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::finishCreation):
+
 2013-03-18  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Get build working under VS2010.

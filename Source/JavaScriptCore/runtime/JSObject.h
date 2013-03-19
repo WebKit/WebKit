@@ -1457,7 +1457,7 @@ COMPILE_ASSERT(!(sizeof(JSObject) % sizeof(WriteBarrierBase<Unknown>)), JSObject
 // have the expected meanings.
 #define JSC_NATIVE_INTRINSIC_FUNCTION(jsName, cppName, attributes, length, intrinsic) \
     putDirectNativeFunction(\
-        exec, globalObject, Identifier(exec, #jsName), (length), cppName, \
+        exec, globalObject, Identifier(exec, (jsName)), (length), cppName, \
         (intrinsic), (attributes))
 
 // As above, but this assumes that the function you're defining doesn't have an
