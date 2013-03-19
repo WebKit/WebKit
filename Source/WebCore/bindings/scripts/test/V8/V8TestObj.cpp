@@ -3401,7 +3401,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
 
     // Custom Signature 'methodWithEnumArg'
     const int methodWithEnumArgArgc = 1;
-    v8::Handle<v8::FunctionTemplate> methodWithEnumArgArgv[methodWithEnumArgArgc] = { V8PerIsolateData::from(isolate)->rawTemplate(&V8TestEnumType::info) };
+    v8::Handle<v8::FunctionTemplate> methodWithEnumArgArgv[methodWithEnumArgArgc] = { V8PerIsolateData::from(isolate)->rawTemplate(&V8TestEnumType::info, worldType) };
     v8::Handle<v8::Signature> methodWithEnumArgSignature = v8::Signature::New(desc, methodWithEnumArgArgc, methodWithEnumArgArgv);
     proto->Set(v8::String::NewSymbol("methodWithEnumArg"), v8::FunctionTemplate::New(TestObjV8Internal::methodWithEnumArgMethodCallback, v8Undefined(), methodWithEnumArgSignature));
 
