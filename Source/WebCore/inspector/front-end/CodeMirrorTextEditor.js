@@ -68,6 +68,7 @@ WebInspector.CodeMirrorTextEditor = function(url, delegate)
 
     this._tokenHighlighter = new WebInspector.CodeMirrorTextEditor.TokenHighlighter(this._codeMirror);
     this._blockIndentController = new WebInspector.CodeMirrorTextEditor.BlockIndentController(this._codeMirror);
+    this._fixWordMovement = new WebInspector.CodeMirrorTextEditor.FixWordMovement(this._codeMirror);
 
     this._codeMirror.on("change", this._change.bind(this));
     this._codeMirror.on("gutterClick", this._gutterClick.bind(this));
@@ -517,4 +518,39 @@ WebInspector.CodeMirrorTextEditor.BlockIndentController.prototype = {
         } else
             return CodeMirror.Pass;
     }
+}
+
+WebInspector.CodeMirrorTextEditor.FixWordMovement = function(codeMirror)
+{
+    function moveLeft(shift, codeMirror)
+    {
+        var cursor = codeMirror.getCursor("head");
+        if (cursor.ch !== 0 || cursor.line === 0)
+            return CodeMirror.Pass;
+        codeMirror.setExtending(shift);
+        codeMirror.execCommand("goLineUp");
+        codeMirror.execCommand("goLineEnd")
+        codeMirror.setExtending(false);
+    }
+    function moveRight(shift, codeMirror)
+    {
+        var cursor = codeMirror.getCursor("head");
+        var line = codeMirror.getLine(cursor.line);
+        if (cursor.ch !== line.length || cursor.line + 1 === codeMirror.lineCount())
+            return CodeMirror.Pass;
+        codeMirror.setExtending(shift);
+        codeMirror.execCommand("goLineDown");
+        codeMirror.execCommand("goLineStart");
+        codeMirror.setExtending(false);
+    }
+
+    var modifierKey = WebInspector.isMac() ? "Alt" : "Ctrl";
+    var leftKey = modifierKey + "-Left";
+    var rightKey = modifierKey + "-Right";
+    var keyMap = {};
+    keyMap[leftKey] = moveLeft.bind(this, false);
+    keyMap[rightKey] = moveRight.bind(this, false);
+    keyMap["Shift-" + leftKey] = moveLeft.bind(this, true);
+    keyMap["Shift-" + rightKey] = moveRight.bind(this, true);
+    codeMirror.addKeyMap(keyMap);
 }
