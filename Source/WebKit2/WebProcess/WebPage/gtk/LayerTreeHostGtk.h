@@ -34,6 +34,7 @@
 #include "TextureMapperLayer.h"
 #include <WebCore/GLContext.h>
 #include <WebCore/GraphicsLayerClient.h>
+#include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 
 namespace WebKit {
@@ -68,9 +69,9 @@ private:
     virtual void setNonCompositedContentsNeedDisplayInRect(const WebCore::IntRect&) OVERRIDE;
     virtual void scrollNonCompositedContents(const WebCore::IntRect& scrollRect);
 
-    virtual void didInstallPageOverlay();
-    virtual void didUninstallPageOverlay();
-    virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&);
+    virtual void didInstallPageOverlay(PageOverlay*) OVERRIDE;
+    virtual void didUninstallPageOverlay(PageOverlay*) OVERRIDE;
+    virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&) OVERRIDE;
 
     virtual bool flushPendingLayerChanges();
 
@@ -80,8 +81,8 @@ private:
     virtual void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& clipRect);
     virtual void didCommitChangesForLayer(const WebCore::GraphicsLayer*) const { }
 
-    void createPageOverlayLayer();
-    void destroyPageOverlayLayer();
+    void createPageOverlayLayer(PageOverlay*);
+    void destroyPageOverlayLayer(PageOverlay*);
 
     enum CompositePurpose { ForResize, NotForResize };
     void compositeLayersToContext(CompositePurpose = NotForResize);
@@ -99,7 +100,8 @@ private:
     bool m_notifyAfterScheduledLayerFlush;
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
     OwnPtr<WebCore::GraphicsLayer> m_nonCompositedContentLayer;
-    OwnPtr<WebCore::GraphicsLayer> m_pageOverlayLayer;
+    typedef HashMap<PageOverlay*, OwnPtr<WebCore::GraphicsLayer> > PageOverlayLayerMap;
+    PageOverlayLayerMap m_pageOverlayLayers;
     OwnPtr<WebCore::TextureMapper> m_textureMapper;
     OwnPtr<WebCore::GLContext> m_context;
     bool m_layerFlushSchedulingEnabled;

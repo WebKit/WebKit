@@ -1,3 +1,31 @@
+2013-03-19  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Fix WebKit2 builds after r146193
+        https://bugs.webkit.org/show_bug.cgi?id=112700
+
+        Reviewed by Martin Robinson.
+
+        Apply changes to the LayerTreeHostGtk class that are analogous to changes made in r146193
+        to the LayerTreeHostMac class, namely introducing a PageOverlayLayersMap and using that as
+        the source of GraphicsLayer objects that should be operated on, making it possible to
+        support multiple page overlays.
+
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::initialize):
+        (WebKit::LayerTreeHostGtk::invalidate):
+        (WebKit::LayerTreeHostGtk::setNonCompositedContentsNeedDisplay):
+        (WebKit::LayerTreeHostGtk::setNonCompositedContentsNeedDisplayInRect):
+        (WebKit::LayerTreeHostGtk::sizeDidChange):
+        (WebKit::LayerTreeHostGtk::didInstallPageOverlay):
+        (WebKit::LayerTreeHostGtk::didUninstallPageOverlay):
+        (WebKit::LayerTreeHostGtk::setPageOverlayNeedsDisplay):
+        (WebKit::LayerTreeHostGtk::paintContents):
+        (WebKit::LayerTreeHostGtk::flushPendingLayerChanges):
+        (WebKit::LayerTreeHostGtk::createPageOverlayLayer):
+        (WebKit::LayerTreeHostGtk::destroyPageOverlayLayer):
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.h:
+        (LayerTreeHostGtk):
+
 2013-03-19  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] Should support multiple page overlays, like the API suggests
