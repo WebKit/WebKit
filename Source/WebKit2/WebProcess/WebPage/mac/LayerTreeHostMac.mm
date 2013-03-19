@@ -115,8 +115,10 @@ void LayerTreeHostMac::invalidate()
 void LayerTreeHostMac::setNonCompositedContentsNeedDisplay()
 {
     m_nonCompositedContentLayer->setNeedsDisplay();
-    if (m_pageOverlayLayer)
-        m_pageOverlayLayer->setNeedsDisplay();
+
+    PageOverlayLayerMap::iterator end = m_pageOverlayLayers.end();
+    for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(); it != end; ++it)
+        it->value->setNeedsDisplay();
 
     scheduleLayerFlush();
 }
@@ -124,8 +126,10 @@ void LayerTreeHostMac::setNonCompositedContentsNeedDisplay()
 void LayerTreeHostMac::setNonCompositedContentsNeedDisplayInRect(const IntRect& rect)
 {
     m_nonCompositedContentLayer->setNeedsDisplayInRect(rect);
-    if (m_pageOverlayLayer)
-        m_pageOverlayLayer->setNeedsDisplayInRect(rect);
+
+    PageOverlayLayerMap::iterator end = m_pageOverlayLayers.end();
+    for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(); it != end; ++it)
+        it->value->setNeedsDisplayInRect(rect);
 
     scheduleLayerFlush();
 }
@@ -161,8 +165,9 @@ void LayerTreeHostMac::sizeDidChange(const IntSize& newSize)
     if (newSize.height() > oldSize.height())
         m_nonCompositedContentLayer->setNeedsDisplayInRect(FloatRect(0, oldSize.height(), newSize.width(), newSize.height() - oldSize.height()));
 
-    if (m_pageOverlayLayer)
-        m_pageOverlayLayer->setSize(newSize);
+    PageOverlayLayerMap::iterator end = m_pageOverlayLayers.end();
+    for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(); it != end; ++it)
+        it->value->setSize(newSize);
 
     scheduleLayerFlush();
     flushPendingLayerChanges();
@@ -177,22 +182,26 @@ void LayerTreeHostMac::deviceOrPageScaleFactorChanged()
     m_nonCompositedContentLayer->deviceOrPageScaleFactorChanged();
 }
 
-void LayerTreeHostMac::didInstallPageOverlay()
+void LayerTreeHostMac::didInstallPageOverlay(PageOverlay* pageOverlay)
 {
-    createPageOverlayLayer();
+    createPageOverlayLayer(pageOverlay);
     scheduleLayerFlush();
 }
 
-void LayerTreeHostMac::didUninstallPageOverlay()
+void LayerTreeHostMac::didUninstallPageOverlay(PageOverlay* pageOverlay)
 {
-    destroyPageOverlayLayer();
+    destroyPageOverlayLayer(pageOverlay);
     scheduleLayerFlush();
 }
 
-void LayerTreeHostMac::setPageOverlayNeedsDisplay(const IntRect& rect)
+void LayerTreeHostMac::setPageOverlayNeedsDisplay(PageOverlay* pageOverlay, const IntRect& rect)
 {
-    ASSERT(m_pageOverlayLayer);
-    m_pageOverlayLayer->setNeedsDisplayInRect(rect);
+    GraphicsLayer* layer = m_pageOverlayLayers.get(pageOverlay);
+
+    if (!layer)
+        return;
+
+    layer->setNeedsDisplayInRect(rect);
     scheduleLayerFlush();
 }
 
@@ -254,9 +263,12 @@ void LayerTreeHostMac::paintContents(const GraphicsLayer* graphicsLayer, Graphic
         return;
     }
 
-    if (graphicsLayer == m_pageOverlayLayer) {
-        m_webPage->drawPageOverlay(graphicsContext, clipRect);
-        return;
+    PageOverlayLayerMap::iterator end = m_pageOverlayLayers.end();
+    for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(); it != end; ++it) {
+        if (it->value == graphicsLayer) {
+            m_webPage->drawPageOverlay(it->key, graphicsContext, clipRect);
+            break;
+        }
     }
 }
 
@@ -295,8 +307,12 @@ void LayerTreeHostMac::initialize()
 
     m_rootLayer->addChild(m_nonCompositedContentLayer.get());
 
-    if (m_webPage->hasPageOverlay())
-        createPageOverlayLayer();
+    if (m_webPage->hasPageOverlay()) {
+        PageOverlayList& pageOverlays = m_webPage->pageOverlays();
+        PageOverlayList::iterator end = pageOverlays.end();
+        for (PageOverlayList::iterator it = pageOverlays.begin(); it != end; ++it)
+            createPageOverlayLayer(it->get());
+    }
 
     switch (m_webPage->layerHostingMode()) {
         case LayerHostingModeDefault:
@@ -343,32 +359,38 @@ bool LayerTreeHostMac::flushPendingLayerChanges()
 
     m_rootLayer->flushCompositingStateForThisLayerOnly();
     m_nonCompositedContentLayer->flushCompositingStateForThisLayerOnly();
-    if (m_pageOverlayLayer)
-        m_pageOverlayLayer->flushCompositingStateForThisLayerOnly();
+
+    PageOverlayLayerMap::iterator end = m_pageOverlayLayers.end();
+    for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(); it != end; ++it)
+        it->value->flushCompositingStateForThisLayerOnly();
 
     return m_webPage->corePage()->mainFrame()->view()->flushCompositingStateIncludingSubframes();
 }
 
-void LayerTreeHostMac::createPageOverlayLayer()
+void LayerTreeHostMac::createPageOverlayLayer(PageOverlay* pageOverlay)
 {
-    ASSERT(!m_pageOverlayLayer);
-
-    m_pageOverlayLayer = GraphicsLayer::create(graphicsLayerFactory(), this);
+    OwnPtr<GraphicsLayer> layer = GraphicsLayer::create(graphicsLayerFactory(), this);
 #ifndef NDEBUG
-    m_pageOverlayLayer->setName("LayerTreeHost page overlay content");
+    layer->setName("LayerTreeHost page overlay content");
 #endif
 
-    m_pageOverlayLayer->setDrawsContent(true);
-    m_pageOverlayLayer->setSize(m_webPage->size());
+    layer->setAcceleratesDrawing(m_webPage->corePage()->settings()->acceleratedDrawingEnabled());
+    layer->setDrawsContent(true);
+    layer->setSize(m_webPage->size());
+    layer->setShowDebugBorder(m_webPage->corePage()->settings()->showDebugBorders());
+    layer->setShowRepaintCounter(m_webPage->corePage()->settings()->showRepaintCounter());
 
-    m_rootLayer->addChild(m_pageOverlayLayer.get());
+    m_rootLayer->addChild(layer.get());
+
+    m_pageOverlayLayers.add(pageOverlay, layer.release());
 }
 
-void LayerTreeHostMac::destroyPageOverlayLayer()
+void LayerTreeHostMac::destroyPageOverlayLayer(PageOverlay* pageOverlay)
 {
-    ASSERT(m_pageOverlayLayer);
-    m_pageOverlayLayer->removeFromParent();
-    m_pageOverlayLayer = nullptr;
+    OwnPtr<GraphicsLayer> layer = m_pageOverlayLayers.take(pageOverlay);
+    ASSERT(layer);
+
+    layer->removeFromParent();
 }
 
 } // namespace WebKit

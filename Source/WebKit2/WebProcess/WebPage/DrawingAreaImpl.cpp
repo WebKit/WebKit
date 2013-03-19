@@ -224,34 +224,34 @@ bool DrawingAreaImpl::forceRepaintAsync(uint64_t callbackID)
     return m_layerTreeHost && m_layerTreeHost->forceRepaintAsync(callbackID);
 }
 
-void DrawingAreaImpl::didInstallPageOverlay()
+void DrawingAreaImpl::didInstallPageOverlay(PageOverlay* pageOverlay)
 {
     if (m_layerTreeHost)
-        m_layerTreeHost->didInstallPageOverlay();
+        m_layerTreeHost->didInstallPageOverlay(pageOverlay);
 }
 
-void DrawingAreaImpl::didUninstallPageOverlay()
+void DrawingAreaImpl::didUninstallPageOverlay(PageOverlay* pageOverlay)
 {
     if (m_layerTreeHost)
-        m_layerTreeHost->didUninstallPageOverlay();
+        m_layerTreeHost->didUninstallPageOverlay(pageOverlay);
 
     setNeedsDisplay();
 }
 
-void DrawingAreaImpl::setPageOverlayNeedsDisplay(const IntRect& rect)
+void DrawingAreaImpl::setPageOverlayNeedsDisplay(PageOverlay* pageOverlay, const IntRect& rect)
 {
     if (m_layerTreeHost) {
-        m_layerTreeHost->setPageOverlayNeedsDisplay(rect);
+        m_layerTreeHost->setPageOverlayNeedsDisplay(pageOverlay, rect);
         return;
     }
 
     setNeedsDisplayInRect(rect);
 }
 
-void DrawingAreaImpl::setPageOverlayOpacity(float value)
+void DrawingAreaImpl::setPageOverlayOpacity(PageOverlay* pageOverlay, float value)
 {
     if (m_layerTreeHost)
-        m_layerTreeHost->setPageOverlayOpacity(value);
+        m_layerTreeHost->setPageOverlayOpacity(pageOverlay, value);
 }
 
 bool DrawingAreaImpl::pageOverlayShouldApplyFadeWhenPainting() const
@@ -725,8 +725,14 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
 
     for (size_t i = 0; i < rects.size(); ++i) {
         m_webPage->drawRect(*graphicsContext, rects[i]);
-        if (m_webPage->hasPageOverlay())
-            m_webPage->drawPageOverlay(*graphicsContext, rects[i]);
+
+        if (m_webPage->hasPageOverlay()) {
+            PageOverlayList& pageOverlays = m_webPage->pageOverlays();
+            PageOverlayList::iterator end = pageOverlays.end();
+            for (PageOverlayList::iterator it = pageOverlays.begin(); it != end; ++it)
+                m_webPage->drawPageOverlay(it->get(), *graphicsContext, rects[i]);
+        }
+
         updateInfo.updateRects.append(rects[i]);
     }
 

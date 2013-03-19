@@ -1,3 +1,136 @@
+2013-03-18  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Should support multiple page overlays, like the API suggests
+        https://bugs.webkit.org/show_bug.cgi?id=112505
+        <rdar://problem/13424796>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/LayerTreeHost.h:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::didInstallPageOverlay):
+        (WebKit::DrawingArea::didUninstallPageOverlay):
+        (WebKit::DrawingArea::setPageOverlayNeedsDisplay):
+        (WebKit::DrawingArea::setPageOverlayOpacity):
+        Add PageOverlay argument.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::didInstallPageOverlay):
+        (WebKit::DrawingAreaImpl::didUninstallPageOverlay):
+        (WebKit::DrawingAreaImpl::setPageOverlayNeedsDisplay):
+        (WebKit::DrawingAreaImpl::setPageOverlayOpacity):
+        Add PageOverlay argument, forward it to LayerTreeHost.
+        (WebKit::DrawingAreaImpl::display):
+        Paint all of the PageOverlays that WebPage knows about.
+
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::setNeedsDisplay):
+        (WebKit::PageOverlay::fadeAnimationTimerFired):
+        Pass the relevant PageOverlay into the DrawingArea methods that now take it.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::drawPageOverlay):
+        Take the PageOverlay to draw as an argument.
+        (WebKit::WebPage::installPageOverlay):
+        (WebKit::WebPage::uninstallPageOverlay):
+        Allow (un)installation of multiple PageOverlays.
+        (WebKit::WebPage::mouseEvent):
+        (WebKit::WebPage::mouseEventSyncForTesting):
+        Hit-test PageOverlays in reverse order of installation (most recently installed should be topmost).
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit::WebPage::drawPageOverlay): Take the PageOverlay to draw as an argument.
+        (WebKit::WebPage::hasPageOverlay): Return true if we have any number of overlays.
+        (WebKit::WebPage::pageOverlays): Return the whole vector of overlays.
+
+        * WebProcess/WebPage/mac/LayerTreeHostMac.h:
+        Add PageOverlay argument to a few methods.
+        Add storage for a map of PageOverlay->GraphicsLayers.
+
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::setNonCompositedContentsNeedDisplay):
+        (WebKit::LayerTreeHostMac::setNonCompositedContentsNeedDisplayInRect):
+        (WebKit::LayerTreeHostMac::sizeDidChange):
+        (WebKit::LayerTreeHostMac::flushPendingLayerChanges):
+        Operate on all installed PageOverlays, not just the most recently installed one.
+
+        (WebKit::LayerTreeHostMac::didInstallPageOverlay):
+        (WebKit::LayerTreeHostMac::didUninstallPageOverlay):
+        Forward the passed-in PageOverlay on to createPageOverlayLayer/destroyPageOverlayLayer.
+
+        (WebKit::LayerTreeHostMac::setPageOverlayNeedsDisplay):
+        Look up the GraphicsLayer for the PageOverlay we need to dirty, and dirty it.
+
+        (WebKit::LayerTreeHostMac::paintContents):
+        Find the PageOverlay corresponding to the GraphicsLayer that we're painting, and ask WebPage to paint it.
+        While not ideal (crawling the map), the vast majority of the time there will only be one entry.
+
+        (WebKit::LayerTreeHostMac::initialize):
+        Create layers for all of WebPage's active PageOverlays.
+        
+        (WebKit::LayerTreeHostMac::createPageOverlayLayer):
+        Stick the newly-created GraphicsLayer into the m_pageOverlayLayers map.
+        Also, drive-by add support for accelerated overlays and debug borders/repaint counters in overlays.
+
+        (WebKit::LayerTreeHostMac::destroyPageOverlayLayer):
+        Remove the relevant overlay from the m_pageOverlayLayers map and tear it down.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        (TiledCoreAnimationDrawingArea):
+        Add PageOverlay argument to a few methods.
+        Add storage for a map of PageOverlay->GraphicsLayers.
+        Add storage for a map of GraphicsLayer->CALayers.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::didInstallPageOverlay):
+        Pass PageOverlay argument on to createPageOverlayLayer.
+        
+        (WebKit::TiledCoreAnimationDrawingArea::didUninstallPageOverlay):
+        Pass PageOverlay argument on to destroyPageOverlayLayer.
+        Refrain from re-enabling threaded scrolling if there are still more overlays installed.
+        
+        (WebKit::TiledCoreAnimationDrawingArea::setPageOverlayNeedsDisplay):
+        Look up the GraphicsLayer for the PageOverlay we need to dirty, and dirty it.
+
+        (WebKit::TiledCoreAnimationDrawingArea::paintContents):
+        Find the PageOverlay corresponding to the GraphicsLayer that we're painting, and ask WebPage to paint it.
+        While not ideal (crawling the map), the vast majority of the time there will only be one entry.
+
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences):
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        (WebKit::TiledCoreAnimationDrawingArea::setExposedRect):
+        (WebKit::TiledCoreAnimationDrawingArea::mainFrameScrollabilityChanged):
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry):
+        (WebKit::TiledCoreAnimationDrawingArea::setRootCompositingLayer):
+        Operate on all installed PageOverlays, not just the most recently installed one.
+
+        (WebKit::TiledCoreAnimationDrawingArea::createPageOverlayLayer):
+        Stick the newly-created GraphicsLayer into the m_pageOverlayLayers map.
+        Also, add its platformLayer to our m_pageOverlayPlatformLayers map.
+
+        (WebKit::TiledCoreAnimationDrawingArea::destroyPageOverlayLayer):
+        Remove the relevant overlay from the m_pageOverlayLayers and m_pageOverlayPlatformLayers maps and tear it down.
+
+        (WebKit::TiledCoreAnimationDrawingArea::didCommitChangesForLayer):
+        When we commit changes for the layer, if the GraphicsLayer's backing platform CALayer
+        has changed out from under us (we have a reference to the previous one in the m_pageOverlayPlatformLayers map),
+        the GraphicsLayer has probably switched to/from a tiled layer, and we need to swap out the
+        layer we have inserted into the root layer. We need to keep the layer ordering consistent with
+        installation order, as well.
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::didInstallPageOverlay):
+        Assert if we try to install more than one page overlay into a CoordinatedLayerTreeHost,
+        as this patch does not implement multiple overlay support for Coordinated Graphics.
+        Keep track of the current PageOverlay so that paintContents can hand WebPage the right one.
+        (WebKit::CoordinatedLayerTreeHost::didUninstallPageOverlay): Remove our reference to the PageOverlay.
+        (WebKit::CoordinatedLayerTreeHost::setPageOverlayNeedsDisplay): Add unused PageOverlay argument.
+        (WebKit::CoordinatedLayerTreeHost::setPageOverlayOpacity): Add unused PageOverlay argument.
+        (WebKit::CoordinatedLayerTreeHost::paintContents): Hand WebPage the PageOverlay we're currently displaying.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        (CoordinatedLayerTreeHost): Add PageOverlay* argument to relevant functions, and storage for m_pageOverlay.
+
 2013-03-18  Sam Weinig  <sam@webkit.org>
 
         Need a bundle SPI to generate a snapshot of a specific DOM node (like [DOMNode renderedImage])

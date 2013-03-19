@@ -72,10 +72,10 @@ public:
     virtual bool forceRepaintAsync(uint64_t callbackID);
     virtual void sizeDidChange(const WebCore::IntSize& newSize);
 
-    virtual void didInstallPageOverlay();
-    virtual void didUninstallPageOverlay();
-    virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&);
-    virtual void setPageOverlayOpacity(float);
+    virtual void didInstallPageOverlay(PageOverlay*);
+    virtual void didUninstallPageOverlay(PageOverlay*);
+    virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&);
+    virtual void setPageOverlayOpacity(PageOverlay*, float);
     virtual bool pageOverlayShouldApplyFadeWhenPainting() const { return false; }
 
     virtual void pauseRendering() { m_isSuspended = true; }
@@ -171,6 +171,7 @@ private:
 
     // The page overlay layer. Will be null if there's no page overlay.
     OwnPtr<WebCore::GraphicsLayer> m_pageOverlayLayer;
+    RefPtr<PageOverlay> m_pageOverlay;
 
     WebCore::CoordinatedGraphicsState m_state;
 
