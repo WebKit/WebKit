@@ -6862,9 +6862,6 @@
     <ClCompile Include="..\platform\image-decoders\ImageDecoder.cpp">
       <Filter>platform\image-decoders</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\image-decoders\ImageDecoder.h">
-      <Filter>platform\image-decoders</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\CSSGrammar.h">
@@ -14398,6 +14395,9 @@
     </ClInclude>
     <ClInclude Include="..\rendering\HitTestLocation.h">
       <Filter>rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\image-decoders\ImageDecoder.h">
+      <Filter>platform\image-decoders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

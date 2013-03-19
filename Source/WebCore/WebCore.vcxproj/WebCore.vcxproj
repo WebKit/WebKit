@@ -4289,8 +4289,14 @@
     <ClCompile Include="..\platform\graphics\WOFFFileFormat.cpp" />
     <ClCompile Include="..\platform\graphics\win\DIBPixelData.cpp" />
     <ClCompile Include="..\platform\graphics\win\FontCacheWin.cpp" />
-    <ClCompile Include="..\platform\graphics\win\FontCGWin.cpp" />
-    <ClCompile Include="..\platform\graphics\win\FontCustomPlatformData.cpp" />
+    <ClCompile Include="..\platform\graphics\win\FontCGWin.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\win\FontCustomPlatformData.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\platform\graphics\win\FontCustomPlatformDataCairo.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
@@ -12035,12 +12041,12 @@
     <ClInclude Include="..\platform\graphics\WidthIterator.h" />
     <ClInclude Include="..\platform\text\WritingMode.h" />
     <ClInclude Include="..\platform\text\transcoder\FontTranscoder.h" />
-    <ClCompile Include="..\platform\image-decoders\ImageDecoder.h">
+    <ClInclude Include="..\platform\image-decoders\ImageDecoder.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    </ClInclude>
     <CustomBuildStep Include="..\platform\image-decoders\gif\GIFImageDecoder.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
