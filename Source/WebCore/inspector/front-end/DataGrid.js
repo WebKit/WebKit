@@ -917,7 +917,7 @@ WebInspector.DataGrid.prototype = {
             // FIXME: Use the column names for Editing, instead of just "Edit".
             if (this._editCallback) {
                 if (gridNode === this.creationNode)
-                    contextMenu.appendItem(WebInspector.UIString("Add New"), this._startEditing.bind(this, event.target));
+                    contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Add new" : "Add New"), this._startEditing.bind(this, event.target));
                 else {
                     var columnIdentifier = this.columnIdentifierFromNode(event.target);
                     if (columnIdentifier && this.columns[columnIdentifier].editable)

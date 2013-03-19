@@ -1556,7 +1556,7 @@ WebInspector.FileSystemListTreeElement.prototype = {
     _handleContextMenuEvent: function(event)
     {
         var contextMenu = new WebInspector.ContextMenu(event);
-        contextMenu.appendItem(WebInspector.UIString("Refresh FileSystem List"), this._refreshFileSystem.bind(this));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Refresh FileSystem list" : "Refresh FileSystem List"), this._refreshFileSystem.bind(this));
         contextMenu.show();
     },
 

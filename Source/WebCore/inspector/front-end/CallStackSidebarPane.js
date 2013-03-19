@@ -199,10 +199,10 @@ WebInspector.CallStackSidebarPane.Placard.prototype = {
         var contextMenu = new WebInspector.ContextMenu(event);
 
         if (WebInspector.debuggerModel.canSetScriptSource()) {
-            contextMenu.appendItem(WebInspector.UIString("Restart Frame"), this._restartFrame.bind(this));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Restart frame" : "Restart Frame"), this._restartFrame.bind(this));
             contextMenu.appendSeparator();
         }
-        contextMenu.appendItem(WebInspector.UIString("Copy Stack Trace"), this._pane._copyStackTrace.bind(this._pane));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Copy stack trace" : "Copy Stack Trace"), this._pane._copyStackTrace.bind(this._pane));
 
         contextMenu.show();
     },

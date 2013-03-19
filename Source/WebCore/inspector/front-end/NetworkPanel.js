@@ -1700,7 +1700,7 @@ WebInspector.NetworkPanel.prototype = {
             WebInspector.inspectorView.setCurrentPanel(this);
             this.revealAndHighlightRequest(/** @type {WebInspector.NetworkRequest} */ (target));
         }
-        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Reveal in network panel" : "Reveal in Network Panel"), reveal.bind(this));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Reveal in Network panel" : "Reveal in Network Panel"), reveal.bind(this));
     },
 
     _injectStyles: function()

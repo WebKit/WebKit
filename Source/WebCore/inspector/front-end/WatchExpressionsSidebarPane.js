@@ -317,7 +317,7 @@ WebInspector.WatchExpressionsSection.prototype = {
     _emptyElementContextMenu: function(event)
     {
         var contextMenu = new WebInspector.ContextMenu(event);
-        contextMenu.appendItem(WebInspector.UIString("Add watch expression"), this.addNewExpressionAndEdit.bind(this));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Add watch expression" : "Add Watch Expression"), this.addNewExpressionAndEdit.bind(this));
         contextMenu.show();
     },
 
@@ -396,11 +396,11 @@ WebInspector.WatchExpressionTreeElement.prototype = {
     populateContextMenu: function(contextMenu)
     {
         if (!this.isEditing()) {
-            contextMenu.appendItem(WebInspector.UIString("Add watch expression"), this.treeOutline.section.addNewExpressionAndEdit.bind(this.treeOutline.section));
-            contextMenu.appendItem(WebInspector.UIString("Delete watch expression"), this._deleteButtonClicked.bind(this));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Add watch expression" : "Add Watch Expression"), this.treeOutline.section.addNewExpressionAndEdit.bind(this.treeOutline.section));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Delete watch expression" : "Delete Watch Expression"), this._deleteButtonClicked.bind(this));
         }
         if (this.treeOutline.section.watchExpressions.length > 1)
-            contextMenu.appendItem(WebInspector.UIString("Delete all watch expressions"), this._deleteAllButtonClicked.bind(this));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Delete all watch expressions" : "Delete All Watch Expressions"), this._deleteAllButtonClicked.bind(this));
     },
 
     _contextMenu: function(event)

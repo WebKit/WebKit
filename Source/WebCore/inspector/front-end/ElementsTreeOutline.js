@@ -519,7 +519,7 @@ WebInspector.ElementsTreeOutline.prototype = {
             WebInspector.domAgent.inspectElement(treeElement.representedObject.id);
         }
         var contextMenu = new WebInspector.ContextMenu(event);
-        contextMenu.appendItem(WebInspector.UIString("Reveal in Elements Panel"), focusElement.bind(this));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Reveal in Elements panel" : "Reveal in Elements Panel"), focusElement.bind(this));
         contextMenu.show();
     },
 
@@ -1266,7 +1266,7 @@ WebInspector.ElementsTreeElement.prototype = {
         this.treeOutline._populateContextMenu(contextMenu, this.representedObject);
 
         contextMenu.appendSeparator();
-        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Scroll into view" : "Scroll Into View"), this._scrollIntoView.bind(this)); 
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Scroll into view" : "Scroll into View"), this._scrollIntoView.bind(this)); 
     },
 
     _populateForcedPseudoStateItems: function(subMenu)

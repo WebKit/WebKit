@@ -342,7 +342,7 @@ WebInspector.ElementsPanel.prototype = {
 
         if (WebInspector.experimentsSettings.cssRegions.isEnabled()) {
             contextMenu.appendSeparator();
-            contextMenu.appendItem(WebInspector.UIString("CSS Named Flows..."), this._showNamedFlowCollections.bind(this));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "CSS named flows\u2026" : "CSS Named Flows\u2026"), this._showNamedFlowCollections.bind(this));
         }
 
         contextMenu.appendSeparator();
@@ -1092,7 +1092,7 @@ WebInspector.ElementsPanel.prototype = {
             remoteObject.pushNodeToFrontend(selectNode);
         }
 
-        contextMenu.appendItem(WebInspector.UIString("Reveal in Elements Panel"), revealElement.bind(this));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Reveal in Elements panel" : "Reveal in Elements Panel"), revealElement.bind(this));
     },
 
     _sidebarContextMenuEventFired: function(event)

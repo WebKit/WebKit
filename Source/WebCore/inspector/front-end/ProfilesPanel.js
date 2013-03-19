@@ -632,7 +632,7 @@ WebInspector.ProfilesPanel.prototype = {
             var contextMenu = new WebInspector.ContextMenu(event);
             if (this.visibleView instanceof WebInspector.HeapSnapshotView)
                 this.visibleView.populateContextMenu(contextMenu, event);
-            contextMenu.appendItem(WebInspector.UIString("Load Heap Snapshot\u2026"), this._fileSelectorElement.click.bind(this._fileSelectorElement));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Load heap snapshot\u2026" : "Load Heap Snapshot\u2026"), this._fileSelectorElement.click.bind(this._fileSelectorElement));
             contextMenu.show();
         }
 
@@ -1221,8 +1221,8 @@ WebInspector.ProfilesPanel.prototype = {
                 this.showObject(result, viewName);
         }
 
-        contextMenu.appendItem(WebInspector.UIString("Reveal in Dominators View"), revealInView.bind(this, "Dominators"));
-        contextMenu.appendItem(WebInspector.UIString("Reveal in Summary View"), revealInView.bind(this, "Summary"));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Reveal in Dominators view" : "Reveal in Dominators View"), revealInView.bind(this, "Dominators"));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Reveal in Summary view" : "Reveal in Summary View"), revealInView.bind(this, "Summary"));
     },
 
     __proto__: WebInspector.Panel.prototype
@@ -1300,12 +1300,12 @@ WebInspector.ProfileSidebarTreeElement.prototype = {
         var contextMenu = new WebInspector.ContextMenu(event);
         // FIXME: use context menu provider
         if (profile.canSaveToFile()) {
-            contextMenu.appendItem(WebInspector.UIString("Save Heap Snapshot\u2026"), profile.saveToFile.bind(profile));
-            contextMenu.appendItem(WebInspector.UIString("Load Heap Snapshot\u2026"), panel._fileSelectorElement.click.bind(panel._fileSelectorElement));
-            contextMenu.appendItem(WebInspector.UIString("Delete Heap Snapshot"), this.ondelete.bind(this));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save heap snapshot\u2026" : "Save Heap Snapshot\u2026"), profile.saveToFile.bind(profile));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Load heap snapshot\u2026" : "Load Heap Snapshot\u2026"), panel._fileSelectorElement.click.bind(panel._fileSelectorElement));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Delete heap snapshot" : "Delete Heap Snapshot"), this.ondelete.bind(this));
         } else {
-            contextMenu.appendItem(WebInspector.UIString("Load Heap Snapshot\u2026"), panel._fileSelectorElement.click.bind(panel._fileSelectorElement));
-            contextMenu.appendItem(WebInspector.UIString("Delete profile"), this.ondelete.bind(this));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Load heap snapshot\u2026" : "Load Heap Snapshot\u2026"), panel._fileSelectorElement.click.bind(panel._fileSelectorElement));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Delete profile" : "Delete Profile"), this.ondelete.bind(this));
         }
         contextMenu.show();
     },

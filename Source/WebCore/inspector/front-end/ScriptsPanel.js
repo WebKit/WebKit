@@ -1192,9 +1192,9 @@ WebInspector.ScriptsPanel.prototype = {
         if (uiSourceCode.project().type() === WebInspector.projectTypes.FileSystem) {
             var hasMappings = !!uiSourceCode.url;
             if (!hasMappings)
-                contextMenu.appendItem(WebInspector.UIString("Map to network resource..."), this._mapFileSystemToNetwork.bind(this, uiSourceCode));
+                contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Map to network resource\u2026" : "Map to Network Resource\u2026"), this._mapFileSystemToNetwork.bind(this, uiSourceCode));
             else
-                contextMenu.appendItem(WebInspector.UIString("Remove network mapping"), this._removeNetworkMapping.bind(this, uiSourceCode));
+                contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Remove network mapping" : "Remove Network Mapping"), this._removeNetworkMapping.bind(this, uiSourceCode));
         }
 
         if (uiSourceCode.project().type() === WebInspector.projectTypes.Network) {
@@ -1209,7 +1209,7 @@ WebInspector.ScriptsPanel.prototype = {
             if (!this._workspace.projects().filter(filterProject).length)
                 return;
             if (this._workspace.uiSourceCodeForURL(uiSourceCode.url) === uiSourceCode)
-                contextMenu.appendItem(WebInspector.UIString("Map to file system resource..."), this._mapNetworkToFileSystem.bind(this, uiSourceCode));
+                contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Map to file system resource\u2026" : "Map to File System Resource\u2026"), this._mapNetworkToFileSystem.bind(this, uiSourceCode));
         }
     },
 
@@ -1223,7 +1223,7 @@ WebInspector.ScriptsPanel.prototype = {
             return;
 
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (target);
-        contextMenu.appendItem(WebInspector.UIString("Local modifications..."), this._showLocalHistory.bind(this, uiSourceCode));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Local modifications\u2026" : "Local Modifications\u2026"), this._showLocalHistory.bind(this, uiSourceCode));
 
         if (WebInspector.isolatedFileSystemManager.supportsFileSystems() && WebInspector.experimentsSettings.fileSystemProject.isEnabled())
             this._appendUISourceCodeMappingItems(contextMenu, uiSourceCode);
@@ -1261,7 +1261,7 @@ WebInspector.ScriptsPanel.prototype = {
             DebuggerAgent.getFunctionDetails(remoteObject.objectId, didGetDetails.bind(this));
         }
 
-        contextMenu.appendItem(WebInspector.UIString("Show function definition"), revealFunction.bind(this));
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Show function definition" : "Show Function Definition"), revealFunction.bind(this));
     },
 
     showGoToSourceDialog: function()

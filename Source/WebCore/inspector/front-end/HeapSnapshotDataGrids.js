@@ -112,13 +112,13 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
             {
                 profilesPanel.showObject(node.snapshotNodeId, "Dominators");
             }
-            contextMenu.appendItem(WebInspector.UIString("Reveal in Dominators View"), revealInDominatorsView.bind(this));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Reveal in Dominators view" : "Reveal in Dominators View"), revealInDominatorsView.bind(this));
         } else if (node instanceof WebInspector.HeapSnapshotDominatorObjectNode) {
             function revealInSummaryView()
             {
                 profilesPanel.showObject(node.snapshotNodeId, "Summary");
             }
-            contextMenu.appendItem(WebInspector.UIString("Reveal in Summary View"), revealInSummaryView.bind(this));
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Reveal in Summary view" : "Reveal in Summary View"), revealInSummaryView.bind(this));
         }
     },
 
