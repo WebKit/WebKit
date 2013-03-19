@@ -163,8 +163,6 @@ class WebGestureEvent;
 class WebTouchEvent;
 #endif
 
-typedef Vector<RefPtr<PageOverlay> > PageOverlayList;
-
 class WebPage : public APIObject, public CoreIPC::MessageReceiver, public CoreIPC::MessageSender<WebPage> {
 public:
     static const Type APIType = TypeBundlePage;
@@ -209,7 +207,7 @@ public:
     // -- Called by the DrawingArea.
     // FIXME: We could genericize these into a DrawingArea client interface. Would that be beneficial?
     void drawRect(WebCore::GraphicsContext&, const WebCore::IntRect&);
-    void drawPageOverlay(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect&);
+    void drawPageOverlay(WebCore::GraphicsContext&, const WebCore::IntRect&);
     void layoutIfNeeded();
 
     // -- Called from WebCore clients.
@@ -377,9 +375,7 @@ public:
     bool windowAndWebPageAreFocused() const;
     void installPageOverlay(PassRefPtr<PageOverlay>, bool shouldFadeIn = false);
     void uninstallPageOverlay(PageOverlay*, bool shouldFadeOut = false);
-    bool hasPageOverlay() const { return m_pageOverlays.size(); }
-    PageOverlayList& pageOverlays() { return m_pageOverlays; }
-    
+    bool hasPageOverlay() const { return m_pageOverlay; }
     WebCore::IntPoint screenToWindow(const WebCore::IntPoint&);
     WebCore::IntRect windowToScreen(const WebCore::IntRect&);
 
@@ -923,7 +919,7 @@ private:
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(QT)
     TapHighlightController m_tapHighlightController;
 #endif
-    PageOverlayList m_pageOverlays;
+    RefPtr<PageOverlay> m_pageOverlay;
 
     RefPtr<WebPage> m_underlayPage;
 

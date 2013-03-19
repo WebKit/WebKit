@@ -30,12 +30,10 @@
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/LayerFlushScheduler.h>
 #include <WebCore/LayerFlushSchedulerClient.h>
-#include <wtf/HashMap.h>
 
 namespace WebKit {
 
 class LayerHostingContext;
-class PageOverlay;
 
 class LayerTreeHostMac : public LayerTreeHost, private WebCore::GraphicsLayerClient, private WebCore::LayerFlushSchedulerClient {
 public:
@@ -59,9 +57,9 @@ private:
     virtual void sizeDidChange(const WebCore::IntSize& newSize) OVERRIDE;
     virtual void deviceOrPageScaleFactorChanged() OVERRIDE;
 
-    virtual void didInstallPageOverlay(PageOverlay*) OVERRIDE;
-    virtual void didUninstallPageOverlay(PageOverlay*) OVERRIDE;
-    virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&) OVERRIDE;
+    virtual void didInstallPageOverlay() OVERRIDE;
+    virtual void didUninstallPageOverlay() OVERRIDE;
+    virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&) OVERRIDE;
 
     virtual void pauseRendering() OVERRIDE;
     virtual void resumeRendering() OVERRIDE;
@@ -82,8 +80,8 @@ private:
     void performScheduledLayerFlush();
     bool flushPendingLayerChanges();
 
-    void createPageOverlayLayer(PageOverlay*);
-    void destroyPageOverlayLayer(PageOverlay*);
+    void createPageOverlayLayer();
+    void destroyPageOverlayLayer();
 
     bool m_isValid;
     bool m_notifyAfterScheduledLayerFlush;
@@ -92,8 +90,7 @@ private:
 
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
     OwnPtr<WebCore::GraphicsLayer> m_nonCompositedContentLayer;
-    typedef HashMap<PageOverlay*, OwnPtr<WebCore::GraphicsLayer> > PageOverlayLayerMap;
-    PageOverlayLayerMap m_pageOverlayLayers;
+    OwnPtr<WebCore::GraphicsLayer> m_pageOverlayLayer;
 
     OwnPtr<LayerHostingContext> m_layerHostingContext;
     WebCore::LayerFlushScheduler m_layerFlushScheduler;

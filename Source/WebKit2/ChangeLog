@@ -1,3 +1,82 @@
+2013-03-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r146183.
+        http://trac.webkit.org/changeset/146183
+        https://bugs.webkit.org/show_bug.cgi?id=112673
+
+        Caused a few dozens of editing tests to fail on Mac WK2
+        (Requested by rniwa on #webkit).
+
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::didInstallPageOverlay):
+        (WebKit::CoordinatedLayerTreeHost::didUninstallPageOverlay):
+        (WebKit::CoordinatedLayerTreeHost::setPageOverlayNeedsDisplay):
+        (WebKit::CoordinatedLayerTreeHost::setPageOverlayOpacity):
+        (WebKit::CoordinatedLayerTreeHost::paintContents):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        (CoordinatedLayerTreeHost):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit):
+        (WebKit::DrawingArea::didInstallPageOverlay):
+        (WebKit::DrawingArea::didUninstallPageOverlay):
+        (WebKit::DrawingArea::setPageOverlayNeedsDisplay):
+        (WebKit::DrawingArea::setPageOverlayOpacity):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::didInstallPageOverlay):
+        (WebKit::DrawingAreaImpl::didUninstallPageOverlay):
+        (WebKit::DrawingAreaImpl::setPageOverlayNeedsDisplay):
+        (WebKit::DrawingAreaImpl::setPageOverlayOpacity):
+        (WebKit::DrawingAreaImpl::display):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        (DrawingAreaImpl):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (LayerTreeHost):
+        (WebKit::LayerTreeHost::setPageOverlayOpacity):
+        * WebProcess/WebPage/PageOverlay.cpp:
+        (WebKit::PageOverlay::setNeedsDisplay):
+        (WebKit::PageOverlay::fadeAnimationTimerFired):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::drawPageOverlay):
+        (WebKit::WebPage::installPageOverlay):
+        (WebKit::WebPage::uninstallPageOverlay):
+        (WebKit::WebPage::mouseEvent):
+        (WebKit::WebPage::mouseEventSyncForTesting):
+        * WebProcess/WebPage/WebPage.h:
+        (WebKit):
+        (WebPage):
+        (WebKit::WebPage::hasPageOverlay):
+        * WebProcess/WebPage/mac/LayerTreeHostMac.h:
+        (WebKit):
+        (LayerTreeHostMac):
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::setNonCompositedContentsNeedDisplay):
+        (WebKit::LayerTreeHostMac::setNonCompositedContentsNeedDisplayInRect):
+        (WebKit::LayerTreeHostMac::sizeDidChange):
+        (WebKit::LayerTreeHostMac::didInstallPageOverlay):
+        (WebKit::LayerTreeHostMac::didUninstallPageOverlay):
+        (WebKit::LayerTreeHostMac::setPageOverlayNeedsDisplay):
+        (WebKit::LayerTreeHostMac::paintContents):
+        (WebKit::LayerTreeHostMac::initialize):
+        (WebKit::LayerTreeHostMac::flushPendingLayerChanges):
+        (WebKit::LayerTreeHostMac::createPageOverlayLayer):
+        (WebKit::LayerTreeHostMac::destroyPageOverlayLayer):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        (TiledCoreAnimationDrawingArea):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::didInstallPageOverlay):
+        (WebKit::TiledCoreAnimationDrawingArea::didUninstallPageOverlay):
+        (WebKit::TiledCoreAnimationDrawingArea::setPageOverlayNeedsDisplay):
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences):
+        (WebKit::TiledCoreAnimationDrawingArea::paintContents):
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        (WebKit::TiledCoreAnimationDrawingArea::setExposedRect):
+        (WebKit::TiledCoreAnimationDrawingArea::mainFrameScrollabilityChanged):
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry):
+        (WebKit::TiledCoreAnimationDrawingArea::setRootCompositingLayer):
+        (WebKit::TiledCoreAnimationDrawingArea::createPageOverlayLayer):
+        (WebKit::TiledCoreAnimationDrawingArea::destroyPageOverlayLayer):
+        (WebKit::TiledCoreAnimationDrawingArea::didCommitChangesForLayer):
+
 2013-03-18  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] Should support multiple page overlays, like the API suggests

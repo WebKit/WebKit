@@ -252,31 +252,26 @@ void CoordinatedLayerTreeHost::sizeDidChange(const WebCore::IntSize& newSize)
     scheduleLayerFlush();
 }
 
-void CoordinatedLayerTreeHost::didInstallPageOverlay(PageOverlay* pageOverlay)
+void CoordinatedLayerTreeHost::didInstallPageOverlay()
 {
-    ASSERT(!m_pageOverlay);
-    m_pageOverlay = pageOverlay;
-
     createPageOverlayLayer();
     scheduleLayerFlush();
 }
 
-void CoordinatedLayerTreeHost::didUninstallPageOverlay(PageOverlay* pageOverlay)
+void CoordinatedLayerTreeHost::didUninstallPageOverlay()
 {
-    m_pageOverlay = 0;
-
     destroyPageOverlayLayer();
     scheduleLayerFlush();
 }
 
-void CoordinatedLayerTreeHost::setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect& rect)
+void CoordinatedLayerTreeHost::setPageOverlayNeedsDisplay(const WebCore::IntRect& rect)
 {
     ASSERT(m_pageOverlayLayer);
     m_pageOverlayLayer->setNeedsDisplayInRect(rect);
     scheduleLayerFlush();
 }
 
-void CoordinatedLayerTreeHost::setPageOverlayOpacity(PageOverlay*, float value)
+void CoordinatedLayerTreeHost::setPageOverlayOpacity(float value)
 {
     ASSERT(m_pageOverlayLayer);
     m_pageOverlayLayer->setOpacity(value);
@@ -622,7 +617,7 @@ void CoordinatedLayerTreeHost::paintContents(const WebCore::GraphicsLayer* graph
     if (graphicsLayer == m_pageOverlayLayer) {
         // Overlays contain transparent contents and won't clear the context as part of their rendering, so we do it here.
         graphicsContext.clearRect(clipRect);
-        m_webPage->drawPageOverlay(m_pageOverlay.get(), graphicsContext, clipRect);
+        m_webPage->drawPageOverlay(graphicsContext, clipRect);
         return;
     }
 }

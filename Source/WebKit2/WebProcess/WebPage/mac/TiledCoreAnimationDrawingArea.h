@@ -34,7 +34,6 @@
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/LayerFlushScheduler.h>
 #include <WebCore/LayerFlushSchedulerClient.h>
-#include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS CALayer;
@@ -68,9 +67,9 @@ private:
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) OVERRIDE;
     virtual void scheduleCompositingLayerFlush() OVERRIDE;
 
-    virtual void didInstallPageOverlay(PageOverlay*) OVERRIDE;
-    virtual void didUninstallPageOverlay(PageOverlay*) OVERRIDE;
-    virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&) OVERRIDE;
+    virtual void didInstallPageOverlay() OVERRIDE;
+    virtual void didUninstallPageOverlay() OVERRIDE;
+    virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&) OVERRIDE;
     virtual void updatePreferences(const WebPreferencesStore&) OVERRIDE;
     virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) OVERRIDE;
 
@@ -101,8 +100,8 @@ private:
 
     void setRootCompositingLayer(CALayer *);
 
-    void createPageOverlayLayer(PageOverlay*);
-    void destroyPageOverlayLayer(PageOverlay*);
+    void createPageOverlayLayer();
+    void destroyPageOverlayLayer();
     WebCore::TiledBacking* mainFrameTiledBacking() const;
     void updateDebugInfoLayer(bool showLayer);
 
@@ -116,9 +115,8 @@ private:
 
     RetainPtr<CALayer> m_debugInfoLayer;
 
-    typedef HashMap<PageOverlay*, OwnPtr<WebCore::GraphicsLayer> > PageOverlayLayerMap;
-    PageOverlayLayerMap m_pageOverlayLayers;
-    mutable HashMap<const WebCore::GraphicsLayer*, RetainPtr<CALayer> > m_pageOverlayPlatformLayers;
+    OwnPtr<WebCore::GraphicsLayer> m_pageOverlayLayer;
+    mutable RetainPtr<CALayer> m_pageOverlayPlatformLayer;
 
     bool m_isPaintingSuspended;
     bool m_hasRootCompositingLayer;

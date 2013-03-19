@@ -1107,13 +1107,13 @@ void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
     m_mainFrame->coreFrame()->view()->paint(&graphicsContext, rect);
 }
 
-void WebPage::drawPageOverlay(PageOverlay* pageOverlay, GraphicsContext& graphicsContext, const IntRect& rect)
+void WebPage::drawPageOverlay(GraphicsContext& graphicsContext, const IntRect& rect)
 {
-    ASSERT(pageOverlay);
+    ASSERT(m_pageOverlay);
 
     GraphicsContextStateSaver stateSaver(graphicsContext);
     graphicsContext.clip(rect);
-    pageOverlay->drawRect(graphicsContext, rect);
+    m_pageOverlay->drawRect(graphicsContext, rect);
 }
 
 double WebPage::textZoomFactor() const
@@ -1355,36 +1355,40 @@ void WebPage::postInjectedBundleMessage(const String& messageName, CoreIPC::Mess
 
 void WebPage::installPageOverlay(PassRefPtr<PageOverlay> pageOverlay, bool shouldFadeIn)
 {
-    RefPtr<PageOverlay> overlay = pageOverlay;
-    
-    if (m_pageOverlays.contains(overlay.get()))
-        return;
+    if (m_pageOverlay) {
+        m_pageOverlay->setPage(0);
 
-    m_pageOverlays.append(overlay);
-    overlay->setPage(this);
+        if (pageOverlay) {
+            // We're installing a page overlay when a page overlay is already active.
+            // In this case we don't want to fade in the new overlay.
+            shouldFadeIn = false;
+        }
+    }
+
+    m_pageOverlay = pageOverlay;
+    m_pageOverlay->setPage(this);
 
     if (shouldFadeIn)
-        overlay->startFadeInAnimation();
+        m_pageOverlay->startFadeInAnimation();
 
-    m_drawingArea->didInstallPageOverlay(overlay.get());
-    overlay->setNeedsDisplay();
+    m_drawingArea->didInstallPageOverlay();
+    m_pageOverlay->setNeedsDisplay();
 }
 
 void WebPage::uninstallPageOverlay(PageOverlay* pageOverlay, bool shouldFadeOut)
 {
-    size_t existingOverlayIndex = m_pageOverlays.find(pageOverlay);
-    if (existingOverlayIndex == notFound)
+    if (pageOverlay != m_pageOverlay)
         return;
 
     if (shouldFadeOut) {
-        pageOverlay->startFadeOutAnimation();
+        m_pageOverlay->startFadeOutAnimation();
         return;
     }
 
-    pageOverlay->setPage(0);
-    m_pageOverlays.remove(existingOverlayIndex);
+    m_pageOverlay->setPage(0);
+    m_pageOverlay = nullptr;
 
-    m_drawingArea->didUninstallPageOverlay(pageOverlay);
+    m_drawingArea->didUninstallPageOverlay();
 }
 
 PassRefPtr<WebImage> WebPage::scaledSnapshotWithOptions(const IntRect& rect, double scaleFactor, SnapshotOptions options)
@@ -1556,12 +1560,9 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
     }
 #endif
     bool handled = false;
-    if (m_pageOverlays.size()) {
+    if (m_pageOverlay) {
         // Let the page overlay handle the event.
-        PageOverlayList::reverse_iterator end = m_pageOverlays.rend();
-        for (PageOverlayList::reverse_iterator it = m_pageOverlays.rbegin(); it != end; ++it)
-            if ((handled = (*it)->mouseEvent(mouseEvent)))
-                break;
+        handled = m_pageOverlay->mouseEvent(mouseEvent);
     }
 
     if (!handled && canHandleUserEvents()) {
@@ -1581,12 +1582,7 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent)
 
 void WebPage::mouseEventSyncForTesting(const WebMouseEvent& mouseEvent, bool& handled)
 {
-    if (m_pageOverlays.size()) {
-        PageOverlayList::reverse_iterator end = m_pageOverlays.rend();
-        for (PageOverlayList::reverse_iterator it = m_pageOverlays.rbegin(); it != end; ++it)
-            if ((handled = (*it)->mouseEvent(mouseEvent)))
-                break;
-    }
+    handled = m_pageOverlay && m_pageOverlay->mouseEvent(mouseEvent);
 
     if (!handled) {
         CurrentEvent currentEvent(mouseEvent);
