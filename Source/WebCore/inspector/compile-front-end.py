@@ -135,6 +135,7 @@ modules = [
             "HelpScreen.js",
             "InspectorView.js",
             "KeyboardShortcut.js",
+            "OverviewGrid.js",
             "Panel.js",
             "PanelEnablerView.js",
             "Placard.js",

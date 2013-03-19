@@ -77706,6 +77706,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\OverviewGrid.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\Panel.js"
 					>
 				</File>

@@ -14893,6 +14893,9 @@
     <None Include="..\inspector\front-end\OverridesView.js">
       <Filter>inspector\front-end</Filter>
     </None>
+    <None Include="..\inspector\front-end\OverviewGrid.js">
+      <Filter>inspector\front-end</Filter>
+    </None>
     <None Include="..\inspector\front-end\Panel.js">
       <Filter>inspector\front-end</Filter>
     </None>

@@ -13520,6 +13520,7 @@
     <None Include="..\inspector\front-end\ObjectPopoverHelper.js" />
     <None Include="..\inspector\front-end\ObjectPropertiesSection.js" />
     <None Include="..\inspector\front-end\OverridesView.js" />
+    <None Include="..\inspector\front-end\OverviewGrid.js" />
     <None Include="..\inspector\front-end\Panel.js" />
     <None Include="..\inspector\front-end\panelEnablerView.css" />
     <None Include="..\inspector\front-end\PanelEnablerView.js" />
