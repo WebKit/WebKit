@@ -1571,6 +1571,16 @@ JSCell* DFG_OPERATION operationToString(ExecState* exec, EncodedJSValue value)
     return JSValue::decode(value).toString(exec);
 }
 
+JSCell* DFG_OPERATION operationStringAdd(ExecState* exec, JSString* left, JSString* right)
+{
+    JSGlobalData& globalData = exec->globalData();
+    NativeCallFrameTracer tracer(&globalData, exec);
+
+    // Don't even bother calling jsString() because our fast path would have done whatever
+    // optimizations that function would have done.
+    return JSRopeString::create(globalData, left, right);
+}
+
 double DFG_OPERATION operationFModOnInts(int32_t a, int32_t b)
 {
     return fmod(a, b);

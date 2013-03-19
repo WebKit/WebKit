@@ -159,11 +159,18 @@ namespace JSC {
         }
 
         static size_t offsetOfLength() { return OBJECT_OFFSETOF(JSString, m_length); }
+        static size_t offsetOfFlags() { return OBJECT_OFFSETOF(JSString, m_flags); }
         static size_t offsetOfValue() { return OBJECT_OFFSETOF(JSString, m_value); }
 
         static JS_EXPORTDATA const ClassInfo s_info;
 
         static void visitChildren(JSCell*, SlotVisitor&);
+
+        enum {
+            HashConstLock = 1u << 2,
+            IsHashConstSingleton = 1u << 1,
+            Is8Bit = 1u
+        };
 
     protected:
         friend class JSValue;
@@ -186,12 +193,6 @@ namespace JSC {
 
         unsigned m_flags;
         
-        enum {
-            HashConstLock = 1u << 2,
-            IsHashConstSingleton = 1u << 1,
-            Is8Bit = 1u
-        };
-
         // A string is represented either by a String or a rope of fibers.
         unsigned m_length;
         mutable String m_value;
@@ -308,6 +309,8 @@ namespace JSC {
         }
 
         void visitFibers(SlotVisitor&);
+        
+        static ptrdiff_t offsetOfFibers() { return OBJECT_OFFSETOF(JSRopeString, m_fibers); }
 
     private:
         friend JSValue jsString(ExecState*, Register*, unsigned);

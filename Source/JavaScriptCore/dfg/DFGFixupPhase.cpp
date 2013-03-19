@@ -148,6 +148,30 @@ private:
                 fixDoubleEdge<NumberUse>(node->child2());
                 break;
             }
+            
+            // FIXME: Optimize for the case where one of the operands is the
+            // empty string. Also consider optimizing for the case where we don't
+            // believe either side is the emtpy string. Both of these things should
+            // be easy.
+            
+            if (node->child1()->shouldSpeculateString()
+                && attemptToMakeFastStringAdd<StringUse>(node, node->child1(), node->child2()))
+                break;
+            if (node->child2()->shouldSpeculateString()
+                && attemptToMakeFastStringAdd<StringUse>(node, node->child2(), node->child1()))
+                break;
+            if (node->child1()->shouldSpeculateStringObject()
+                && attemptToMakeFastStringAdd<StringObjectUse>(node, node->child1(), node->child2()))
+                break;
+            if (node->child2()->shouldSpeculateStringObject()
+                && attemptToMakeFastStringAdd<StringObjectUse>(node, node->child2(), node->child1()))
+                break;
+            if (node->child1()->shouldSpeculateStringOrStringObject()
+                && attemptToMakeFastStringAdd<StringOrStringObjectUse>(node, node->child1(), node->child2()))
+                break;
+            if (node->child2()->shouldSpeculateStringOrStringObject()
+                && attemptToMakeFastStringAdd<StringOrStringObjectUse>(node, node->child2(), node->child1()))
+                break;
             break;
         }
             
@@ -860,6 +884,74 @@ private:
         }
         dataLogF("\n");
 #endif
+    }
+    
+    template<UseKind useKind>
+    bool isStringObjectUse()
+    {
+        switch (useKind) {
+        case StringObjectUse:
+        case StringOrStringObjectUse:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
+    template<UseKind useKind>
+    void convertStringAddUse(Node* node, Edge& edge)
+    {
+        if (useKind == StringUse) {
+            // This preserves the binaryUseKind() invariant ot ValueAdd: ValueAdd's
+            // two edges will always have identical use kinds, which makes the
+            // decision process much easier.
+            observeUseKindOnNode<StringUse>(edge.node());
+            m_insertionSet.insertNode(
+                m_indexInBlock, SpecNone, Phantom, node->codeOrigin,
+                Edge(edge.node(), StringUse));
+            edge.setUseKind(KnownStringUse);
+            return;
+        }
+        
+        // FIXME: We ought to be able to have a ToPrimitiveToString node.
+        
+        observeUseKindOnNode<useKind>(edge.node());
+        edge = Edge(m_insertionSet.insertNode(
+            m_indexInBlock, SpecString, ToString, node->codeOrigin,
+            Edge(edge.node(), useKind)), KnownStringUse);
+    }
+    
+    template<UseKind leftUseKind>
+    bool attemptToMakeFastStringAdd(Node* node, Edge& left, Edge& right)
+    {
+        ASSERT(leftUseKind == StringUse || leftUseKind == StringObjectUse || leftUseKind == StringOrStringObjectUse);
+        
+        if (isStringObjectUse<leftUseKind>() && !canOptimizeStringObjectAccess(node->codeOrigin))
+            return false;
+        
+        if (right->shouldSpeculateString()) {
+            convertStringAddUse<leftUseKind>(node, left);
+            convertStringAddUse<StringUse>(node, right);
+            return true;
+        }
+        
+        if (right->shouldSpeculateStringObject()
+            && canOptimizeStringObjectAccess(node->codeOrigin)) {
+            convertStringAddUse<leftUseKind>(node, left);
+            convertStringAddUse<StringObjectUse>(node, right);
+            return true;
+        }
+        
+        if (right->shouldSpeculateStringOrStringObject()
+            && canOptimizeStringObjectAccess(node->codeOrigin)) {
+            convertStringAddUse<leftUseKind>(node, left);
+            convertStringAddUse<StringOrStringObjectUse>(node, right);
+            return true;
+        }
+        
+        // FIXME: We ought to be able to convert the right case to do
+        // ToPrimitiveToString.
+        return false; // Let the slow path worry about it.
     }
     
     bool isStringPrototypeMethodSane(Structure* stringPrototypeStructure, const Identifier& ident)

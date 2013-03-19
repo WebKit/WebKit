@@ -3094,6 +3094,61 @@ void SpeculativeJIT::compileAdd(Node* node)
         return;
     }
         
+    case KnownStringUse: {
+        SpeculateCellOperand op1(this, node->child1());
+        SpeculateCellOperand op2(this, node->child2());
+        GPRTemporary result(this);
+        GPRTemporary allocator(this);
+        GPRTemporary scratch(this);
+        
+        GPRReg op1GPR = op1.gpr();
+        GPRReg op2GPR = op2.gpr();
+        GPRReg resultGPR = result.gpr();
+        GPRReg allocatorGPR = allocator.gpr();
+        GPRReg scratchGPR = scratch.gpr();
+        
+        JITCompiler::Jump op1NotEmpty = m_jit.branchTest32(
+            JITCompiler::NonZero, JITCompiler::Address(op1GPR, JSString::offsetOfLength()));
+        
+        m_jit.move(op2GPR, resultGPR);
+        JITCompiler::Jump done1 = m_jit.jump();
+        
+        op1NotEmpty.link(&m_jit);
+        JITCompiler::Jump op2NotEmpty = m_jit.branchTest32(
+            JITCompiler::NonZero, JITCompiler::Address(op2GPR, JSString::offsetOfLength()));
+        
+        m_jit.move(op1GPR, resultGPR);
+        JITCompiler::Jump done2 = m_jit.jump();
+        
+        op2NotEmpty.link(&m_jit);
+        
+        JITCompiler::JumpList slowPath;
+        MarkedAllocator& markedAllocator = m_jit.globalData()->heap.allocatorForObjectWithImmortalStructureDestructor(sizeof(JSRopeString));
+        m_jit.move(TrustedImmPtr(&markedAllocator), allocatorGPR);
+        emitAllocateJSCell(resultGPR, allocatorGPR, TrustedImmPtr(m_jit.globalData()->stringStructure.get()), scratchGPR, slowPath);
+        
+        m_jit.storePtr(TrustedImmPtr(0), JITCompiler::Address(resultGPR, JSString::offsetOfValue()));
+        m_jit.storePtr(TrustedImmPtr(0), JITCompiler::Address(resultGPR, JSRopeString::offsetOfFibers() + sizeof(WriteBarrier<JSString>) * 2));
+        m_jit.storePtr(op1GPR, JITCompiler::Address(resultGPR, JSRopeString::offsetOfFibers()));
+        m_jit.storePtr(op2GPR, JITCompiler::Address(resultGPR, JSRopeString::offsetOfFibers() + sizeof(WriteBarrier<JSString>)));
+        m_jit.load32(JITCompiler::Address(op1GPR, JSString::offsetOfFlags()), scratchGPR);
+        m_jit.load32(JITCompiler::Address(op1GPR, JSString::offsetOfLength()), allocatorGPR);
+        m_jit.and32(JITCompiler::Address(op2GPR, JSString::offsetOfFlags()), scratchGPR);
+        m_jit.add32(JITCompiler::Address(op2GPR, JSString::offsetOfLength()), allocatorGPR);
+        m_jit.and32(JITCompiler::TrustedImm32(JSString::Is8Bit), scratchGPR);
+        m_jit.store32(scratchGPR, JITCompiler::Address(resultGPR, JSString::offsetOfFlags()));
+        m_jit.store32(allocatorGPR, JITCompiler::Address(resultGPR, JSString::offsetOfLength()));
+        
+        addSlowPathGenerator(slowPathCall(
+            slowPath, this, operationStringAdd, resultGPR, op1GPR, op2GPR));
+        
+        done1.link(&m_jit);
+        done2.link(&m_jit);
+        
+        cellResult(resultGPR, node);
+        return;
+    }
+        
     case UntypedUse: {
         RELEASE_ASSERT(node->op() == ValueAdd);
         compileValueAdd(node);

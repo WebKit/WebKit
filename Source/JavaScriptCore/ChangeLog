@@ -1,5 +1,42 @@
 2013-03-18  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG should inline binary string concatenations (i.e. ValueAdd with string children)
+        https://bugs.webkit.org/show_bug.cgi?id=112599
+
+        Reviewed by Oliver Hunt.
+        
+        This does as advertised: if you do x + y where x and y are strings, you'll get
+        a fast inlined JSRopeString allocation (along with whatever checks are necessary).
+        It also does good things if either x or y (or both) are StringObjects, or some
+        other thing like StringOrStringObject. It also lays the groundwork for making this
+        fast if either x or y are numbers, or some other reasonably-cheap-to-convert
+        value.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::executeEffects):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (FixupPhase):
+        (JSC::DFG::FixupPhase::isStringObjectUse):
+        (JSC::DFG::FixupPhase::convertStringAddUse):
+        (JSC::DFG::FixupPhase::attemptToMakeFastStringAdd):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileAdd):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSCell):
+        (JSC::DFG::SpeculativeJIT::emitAllocateJSObject):
+        * runtime/JSString.h:
+        (JSC::JSString::offsetOfFlags):
+        (JSString):
+        (JSRopeString):
+        (JSC::JSRopeString::offsetOfFibers):
+
+2013-03-18  Filip Pizlo  <fpizlo@apple.com>
+
         JSC_NATIVE_FUNCTION() takes an identifier for the name and then uses #name, which is unsafe if name was already #define'd to something else
         https://bugs.webkit.org/show_bug.cgi?id=112639
 

@@ -87,6 +87,7 @@ typedef JSCell* DFG_OPERATION (*C_DFGOperation_ECC)(ExecState*, JSCell*, JSCell*
 typedef JSCell* DFG_OPERATION (*C_DFGOperation_EIcf)(ExecState*, InlineCallFrame*);
 typedef JSCell* DFG_OPERATION (*C_DFGOperation_EJ)(ExecState*, EncodedJSValue);
 typedef JSCell* DFG_OPERATION (*C_DFGOperation_EJssSt)(ExecState*, JSString*, Structure*);
+typedef JSCell* DFG_OPERATION (*C_DFGOperation_EJssJss)(ExecState*, JSString*, JSString*);
 typedef JSCell* DFG_OPERATION (*C_DFGOperation_EOZ)(ExecState*, JSObject*, int32_t);
 typedef JSCell* DFG_OPERATION (*C_DFGOperation_ESt)(ExecState*, Structure*);
 typedef double DFG_OPERATION (*D_DFGOperation_DD)(double, double);
@@ -217,6 +218,7 @@ StringImpl* DFG_OPERATION operationResolveRope(ExecState*, JSString*);
 JSCell* DFG_OPERATION operationNewStringObject(ExecState*, JSString*, Structure*);
 JSCell* DFG_OPERATION operationToStringOnCell(ExecState*, JSCell*);
 JSCell* DFG_OPERATION operationToString(ExecState*, EncodedJSValue);
+JSCell* DFG_OPERATION operationStringAdd(ExecState*, JSString*, JSString*);
 
 // This method is used to lookup an exception hander, keyed by faultLocation, which is
 // the return location from one of the calls out to one of the helper operations above.

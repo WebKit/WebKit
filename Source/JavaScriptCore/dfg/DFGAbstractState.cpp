@@ -466,6 +466,9 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             else
                 forNode(node).set(SpecDouble);
             break;
+        case KnownStringUse:
+            forNode(node).set(m_graph.m_globalData.stringStructure.get());
+            break;
         default:
             RELEASE_ASSERT(node->op() == ValueAdd);
             clobberWorld(node->codeOrigin, indexInBlock);
