@@ -1258,14 +1258,18 @@ JITCompiler::Jump SpeculativeJIT::convertToDouble(JSValueOperand& op, FPRReg res
 {
     FPRTemporary scratch(this);
 
-    JITCompiler::Jump isInteger = m_jit.branch32(MacroAssembler::Equal, op.tagGPR(), TrustedImm32(JSValue::Int32Tag));
-    JITCompiler::Jump notNumber = m_jit.branch32(MacroAssembler::AboveOrEqual, op.payloadGPR(), TrustedImm32(JSValue::LowestTag));
+    GPRReg opPayloadGPR = op.payloadGPR();
+    GPRReg opTagGPR = op.tagGPR();
+    FPRReg scratchFPR = scratch.fpr();
 
-    unboxDouble(op.tagGPR(), op.payloadGPR(), result, scratch.fpr());
+    JITCompiler::Jump isInteger = m_jit.branch32(MacroAssembler::Equal, opTagGPR, TrustedImm32(JSValue::Int32Tag));
+    JITCompiler::Jump notNumber = m_jit.branch32(MacroAssembler::AboveOrEqual, opPayloadGPR, TrustedImm32(JSValue::LowestTag));
+
+    unboxDouble(opTagGPR, opPayloadGPR, result, scratchFPR);
     JITCompiler::Jump done = m_jit.jump();
 
     isInteger.link(&m_jit);
-    m_jit.convertInt32ToDouble(op.payloadGPR(), result);
+    m_jit.convertInt32ToDouble(opPayloadGPR, result);
 
     done.link(&m_jit);
 
@@ -2314,18 +2318,22 @@ void SpeculativeJIT::compile(Node* node)
             SpeculateStrictInt32Operand op1(this, node->child1());
             SpeculateStrictInt32Operand op2(this, node->child2());
             GPRTemporary result(this, op1);
-            
-            MacroAssembler::Jump op1Less = m_jit.branch32(op == ArithMin ? MacroAssembler::LessThan : MacroAssembler::GreaterThan, op1.gpr(), op2.gpr());
-            m_jit.move(op2.gpr(), result.gpr());
-            if (op1.gpr() != result.gpr()) {
+
+            GPRReg op1GPR = op1.gpr();
+            GPRReg op2GPR = op2.gpr();
+            GPRReg resultGPR - result.gpr();
+
+            MacroAssembler::Jump op1Less = m_jit.branch32(op == ArithMin ? MacroAssembler::LessThan : MacroAssembler::GreaterThan, op1GPR, op2GPR);
+            m_jit.move(op2GPR, resultGPR);
+            if (op1GPR != resultGPR) {
                 MacroAssembler::Jump done = m_jit.jump();
                 op1Less.link(&m_jit);
-                m_jit.move(op1.gpr(), result.gpr());
+                m_jit.move(op1GPR, resultGPR);
                 done.link(&m_jit);
             } else
                 op1Less.link(&m_jit);
             
-            integerResult(result.gpr(), node);
+            integerResult(resultGPR, node);
             break;
         }
         
@@ -2333,33 +2341,37 @@ void SpeculativeJIT::compile(Node* node)
             SpeculateDoubleOperand op1(this, node->child1());
             SpeculateDoubleOperand op2(this, node->child2());
             FPRTemporary result(this, op1);
-        
+
+            FPRReg op1FPR = op1.fpr();
+            FPRReg op2FPR = op2.fpr();
+            FPRReg resultFPR = result.fpr();
+
             MacroAssembler::JumpList done;
         
-            MacroAssembler::Jump op1Less = m_jit.branchDouble(op == ArithMin ? MacroAssembler::DoubleLessThan : MacroAssembler::DoubleGreaterThan, op1.fpr(), op2.fpr());
+            MacroAssembler::Jump op1Less = m_jit.branchDouble(op == ArithMin ? MacroAssembler::DoubleLessThan : MacroAssembler::DoubleGreaterThan, op1FPR, op2FPR);
         
             // op2 is eather the lesser one or one of then is NaN
-            MacroAssembler::Jump op2Less = m_jit.branchDouble(op == ArithMin ? MacroAssembler::DoubleGreaterThanOrEqual : MacroAssembler::DoubleLessThanOrEqual, op1.fpr(), op2.fpr());
+            MacroAssembler::Jump op2Less = m_jit.branchDouble(op == ArithMin ? MacroAssembler::DoubleGreaterThanOrEqual : MacroAssembler::DoubleLessThanOrEqual, op1FPR, op2FPR);
         
             // Unordered case. We don't know which of op1, op2 is NaN. Manufacture NaN by adding 
             // op1 + op2 and putting it into result.
-            m_jit.addDouble(op1.fpr(), op2.fpr(), result.fpr());
+            m_jit.addDouble(op1FPR, op2FPR, resultFPR);
             done.append(m_jit.jump());
         
             op2Less.link(&m_jit);
-            m_jit.moveDouble(op2.fpr(), result.fpr());
+            m_jit.moveDouble(op2FPR, resultFPR);
         
-            if (op1.fpr() != result.fpr()) {
+            if (op1FPR != resultFPR) {
                 done.append(m_jit.jump());
             
                 op1Less.link(&m_jit);
-                m_jit.moveDouble(op1.fpr(), result.fpr());
+                m_jit.moveDouble(op1FPR, resultFPR);
             } else
                 op1Less.link(&m_jit);
         
             done.link(&m_jit);
         
-            doubleResult(result.fpr(), node);
+            doubleResult(resultFPR, node);
             break;
         }
             

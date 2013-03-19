@@ -212,6 +212,9 @@ public:
     }
     FPRReg fprAllocate()
     {
+#if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
+        m_jit.addRegisterAllocationAtOffset(m_jit.debugOffset());
+#endif
         VirtualRegister spillMe;
         FPRReg fpr = m_fprs.allocate(spillMe);
         if (spillMe != InvalidVirtualRegister)

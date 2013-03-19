@@ -2709,12 +2709,13 @@ void SpeculativeJIT::compilePutByValForFloatTypedArray(const TypedArrayDescripto
     
     Edge baseUse = m_jit.graph().varArgChild(node, 0);
     Edge valueUse = m_jit.graph().varArgChild(node, 2);
-    
+
     SpeculateDoubleOperand valueOp(this, valueUse);
-    
+    FPRTemporary scratch(this);
+    FPRReg valueFPR = valueOp.fpr();
+    FPRReg scratchFPR = scratch.fpr();
+
     ASSERT_UNUSED(baseUse, node->arrayMode().alreadyChecked(m_jit.graph(), node, m_state.forNode(baseUse)));
-    
-    GPRTemporary result(this);
     
     MacroAssembler::Jump outOfBounds;
     if (node->op() == PutByVal)
@@ -2722,14 +2723,13 @@ void SpeculativeJIT::compilePutByValForFloatTypedArray(const TypedArrayDescripto
     
     switch (elementSize) {
     case 4: {
-        FPRTemporary scratch(this);
-        m_jit.moveDouble(valueOp.fpr(), scratch.fpr());
-        m_jit.convertDoubleToFloat(valueOp.fpr(), scratch.fpr());
-        m_jit.storeFloat(scratch.fpr(), MacroAssembler::BaseIndex(storageReg, property, MacroAssembler::TimesFour));
+        m_jit.moveDouble(valueFPR, scratchFPR);
+        m_jit.convertDoubleToFloat(valueFPR, scratchFPR);
+        m_jit.storeFloat(scratchFPR, MacroAssembler::BaseIndex(storageReg, property, MacroAssembler::TimesFour));
         break;
     }
     case 8:
-        m_jit.storeDouble(valueOp.fpr(), MacroAssembler::BaseIndex(storageReg, property, MacroAssembler::TimesEight));
+        m_jit.storeDouble(valueFPR, MacroAssembler::BaseIndex(storageReg, property, MacroAssembler::TimesEight));
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
