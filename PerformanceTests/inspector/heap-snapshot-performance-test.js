@@ -33,9 +33,10 @@ function test()
         {
             timer.finish(backendTimerCookie);
             transferTimerCookie = timer.start("transfer-snapshot");
-            var profiles = WebInspector.panels.profiles.getProfiles("HEAP");
+            var type = WebInspector.panels.profiles.getProfileType("HEAP");
+            var profiles = type.getProfiles();
             WebInspector.panels.profiles._showProfile(profiles[profiles.length - 1]);
-            InspectorTest.addSniffer(WebInspector.panels.profiles, "_finishHeapSnapshot", step1);
+            InspectorTest.addSniffer(type, "finishHeapSnapshot", step1);
         }
 
         function step1(uid)
@@ -43,7 +44,7 @@ function test()
             timer.finish(transferTimerCookie);
             showTimerCookie = timer.start("show-snapshot");
             var panel = WebInspector.panels.profiles;
-            var profile = panel._profilesIdMap[panel._makeKey(uid, WebInspector.HeapSnapshotProfileType.TypeId)];
+            var profile = panel.getProfile("HEAP", uid);
             profile.load(step2); // Add load callback.
         }
 
