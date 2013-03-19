@@ -100,6 +100,9 @@ void SelectionOverlay::paintContents(const GraphicsLayer* layer, GraphicsContext
 
     c.save();
 
+    GraphicsLayer* parent = it->key;
+    c.translate(-parent->offsetFromRenderer().width(), -parent->offsetFromRenderer().height());
+
     Color color = RenderTheme::defaultTheme()->activeSelectionBackgroundColor();
     c.setFillColor(color, ColorSpaceDeviceRGB);
 

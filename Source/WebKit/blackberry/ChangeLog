@@ -1,3 +1,17 @@
+2013-03-19  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Selection overlay is sometimes in wrong position.
+        https://bugs.webkit.org/show_bug.cgi?id=112748
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Arvid Nilsson.
+
+        Internal PR 305384.
+        Translate by parent's offset when drawing selection overlay.
+
+        * WebKitSupport/SelectionOverlay.cpp:
+        (BlackBerry::WebKit::SelectionOverlay::paintContents):
+
 2013-03-19  Iris Wu  <shuwu@blackberry.com>
 
         [BlackBerry] Hook up scroll position to proximity detector
