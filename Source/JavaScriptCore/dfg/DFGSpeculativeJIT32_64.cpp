@@ -2321,7 +2321,7 @@ void SpeculativeJIT::compile(Node* node)
 
             GPRReg op1GPR = op1.gpr();
             GPRReg op2GPR = op2.gpr();
-            GPRReg resultGPR - result.gpr();
+            GPRReg resultGPR = result.gpr();
 
             MacroAssembler::Jump op1Less = m_jit.branch32(op == ArithMin ? MacroAssembler::LessThan : MacroAssembler::GreaterThan, op1GPR, op2GPR);
             m_jit.move(op2GPR, resultGPR);

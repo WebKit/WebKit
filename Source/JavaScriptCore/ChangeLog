@@ -1,5 +1,12 @@
 2013-03-18  Michael Saboff  <msaboff@apple.com>
 
+        Unreviewed build fix for 32 bit builds.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2013-03-18  Michael Saboff  <msaboff@apple.com>
+
         EFL: Unsafe branch detected in compilePutByValForFloatTypedArray()
         https://bugs.webkit.org/show_bug.cgi?id=112609
 
