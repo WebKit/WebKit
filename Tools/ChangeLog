@@ -1,3 +1,15 @@
+2013-03-18  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt] Fix the build of QtTestBrowser if the print preview dialog is disabled in Qt
+
+        Rubber-stamped by Csaba Osztrogonác.
+
+        Check for QT_NO_PRINTPREVIEWDIALOG instead of QT_NO_PRINTER
+        since the latter might not cover the former.
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::print):
+
 2013-03-18  Simon Fraser  <simon.fraser@apple.com>
 
         Style tweeks to default.css.

@@ -51,7 +51,7 @@
 #ifndef QT_NO_SHORTCUT
 #include <QMenuBar>
 #endif
-#if !defined(QT_NO_PRINTER) && HAVE(QTPRINTSUPPORT)
+#if !defined(QT_NO_PRINTPREVIEWDIALOG) && HAVE(QTPRINTSUPPORT)
 #include <QPrintPreviewDialog>
 #endif
 #include <QSlider>
@@ -758,7 +758,7 @@ void LauncherWindow::toggleZoomTextOnly(bool b)
 
 void LauncherWindow::print()
 {
-#if !defined(QT_NO_PRINTER) && HAVE(QTPRINTSUPPORT)
+#if !defined(QT_NO_PRINTPREVIEWDIALOG) && HAVE(QTPRINTSUPPORT)
     QPrintPreviewDialog dlg(this);
     connect(&dlg, SIGNAL(paintRequested(QPrinter*)),
             page()->mainFrame(), SLOT(print(QPrinter*)));
