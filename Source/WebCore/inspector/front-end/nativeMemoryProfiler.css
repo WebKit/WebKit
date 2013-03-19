@@ -73,10 +73,6 @@
     border: none;
 }
 
-.native-snapshot-view .data-grid table {
-    font-size: 11px;
-}
-
 .native-snapshot-view .data-grid td {
     height: 14px;
     line-height: 14px;

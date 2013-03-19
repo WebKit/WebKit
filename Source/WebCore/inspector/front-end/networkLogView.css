@@ -5,13 +5,11 @@
     left: 0;
     right: 0;
     bottom: 0;
-    font-size: 11px;
 }
 
 .network-log-grid.data-grid table.data {
     -webkit-background-size: 1px 82px;
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0)), color-stop(0.5, rgba(0, 0, 0, 0)), color-stop(0.5, rgba(0, 0, 0, 0.05)), to(rgba(0, 0, 0, 0.05)));
-    font-size: 11px;
 }
 
 .network-log-grid.data-grid.small table.data {
@@ -32,7 +30,6 @@
 .network-log-grid.data-grid th {
     border-bottom: 1px solid rgb(64%, 64%, 64%);
     height: 30px;
-    font-size: 11px;
     font-weight: bold;
 }
 
@@ -57,7 +54,6 @@
     background-color: transparent;
     border: none;
     width: 100%;
-    font-size: 11px;
     font-weight: bold;
 }
 
@@ -490,7 +486,6 @@
     color: white;
     height: 20px !important;
     border: none;
-    font-size: 11px;
     font-weight: bold;
     padding: 0 0 0 8px;
     white-space: pre;
