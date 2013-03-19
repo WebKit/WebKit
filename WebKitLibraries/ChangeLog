@@ -1,3 +1,11 @@
+2013-03-19  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed build fix.
+
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops: This file was out
+        of sync with the main Windows build, and the VS2010 version of the
+        WinCairo port, preventing consistent builds.
+
 2013-03-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Threaded HTML Parser is missing feature define flags in all but Chromium port's build files
