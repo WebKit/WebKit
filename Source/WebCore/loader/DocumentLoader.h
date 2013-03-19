@@ -212,7 +212,7 @@ namespace WebCore {
         void getIconDataForIconURL(const String&);
         
         bool isLoadingMainResource() const;
-        bool isLoadingMultipartContent() const;
+        bool isLoadingMultipartContent() const { return m_isLoadingMultipartContent; }
 
         void stopLoadingPlugIns();
         void stopLoadingSubresources();
@@ -285,6 +285,12 @@ namespace WebCore {
         static void callContinueAfterNavigationPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
         void continueAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue);
 
+        static void callContinueAfterContentPolicy(void*, PolicyAction);
+        void continueAfterContentPolicy(PolicyAction);
+
+        void stopLoadingForPolicyChange();
+        ResourceError interruptedForPolicyChangeError() const;
+
         void deliverSubstituteResourcesAfterDelay();
         void substituteResourceDeliveryTimerFired(Timer<DocumentLoader>*);
                 
@@ -325,6 +331,7 @@ namespace WebCore {
         bool m_isStopping;
         bool m_gotFirstByte;
         bool m_isClientRedirect;
+        bool m_isLoadingMultipartContent;
         bool m_loadingEmptyDocument;
 
         // FIXME: Document::m_processingLoadEvent and DocumentLoader::m_wasOnloadHandled are roughly the same
@@ -368,6 +375,8 @@ namespace WebCore {
         DocumentLoadTiming m_documentLoadTiming;
 
         double m_timeOfLastDataReceived;
+
+        bool m_waitingForContentPolicy;
     
         RefPtr<IconLoadDecisionCallback> m_iconLoadDecisionCallback;
         RefPtr<IconDataCallback> m_iconDataCallback;

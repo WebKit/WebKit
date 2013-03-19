@@ -72,12 +72,10 @@ public:
     void clearIdentifierForLoadWithoutResourceLoader() { m_identifierForLoadWithoutResourceLoader = 0; }
 
     unsigned long identifier() const;
-    bool isLoadingMultipartContent() const { return m_loadingMultipartContent; }
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
     void takeIdentifierFromResourceLoader() { m_identifierForLoadWithoutResourceLoader = identifier(); }
-    void stopLoadingForPolicyChange();
     void handleSubstituteDataLoadSoon(const ResourceRequest&);
     void clearResource();
 
@@ -89,17 +87,11 @@ private:
     virtual void dataReceived(CachedResource*, const char* data, int dataLength) OVERRIDE;
     virtual void notifyFinished(CachedResource*) OVERRIDE;
 
-    void didFinishLoading(double finishTime);
     void handleSubstituteDataLoadNow(MainResourceLoaderTimer*);
 
     void startDataLoadTimer();
 
     void receivedError(const ResourceError&);
-    ResourceError interruptedForPolicyChangeError() const;
-
-    static void callContinueAfterContentPolicy(void*, PolicyAction);
-    void continueAfterContentPolicy(PolicyAction);
-    void continueAfterContentPolicy(PolicyAction, const ResourceResponse&);
     
 #if PLATFORM(QT)
     void substituteMIMETypeFromPluginDatabase(const ResourceResponse&);
@@ -115,13 +107,10 @@ private:
     CachedResourceHandle<CachedRawResource> m_resource;
 
     ResourceRequest m_initialRequest;
-    ResourceResponse m_response;
 
     MainResourceLoaderTimer m_dataLoadTimer;
     RefPtr<DocumentLoader> m_documentLoader;
 
-    bool m_loadingMultipartContent;
-    bool m_waitingForContentPolicy;
     unsigned long m_identifierForLoadWithoutResourceLoader;
 };
 
