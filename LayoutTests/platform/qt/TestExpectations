@@ -1357,6 +1357,7 @@ svg/css/stars-with-shadow.html
 svg/custom/use-on-symbol-inside-pattern.svg
 svg/batik/text/longTextOnPath.svg
 svg/carto.net/tabgroup.svg
+webkit.org/b/112680 jquery/manipulation.html [ Skip ]
 
 # [Qt] New inspector/console/console-filter-test.html fails on 32bit since r141269.
 # https://bugs.webkit.org/show_bug.cgi?id=108481
