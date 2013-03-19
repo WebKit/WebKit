@@ -1516,6 +1516,3 @@ webkit.org/b/76364 fast/css/lang-mapped-to-webkit-locale-dynamic.xhtml [ Pass Fa
 
 # Feature not implemented
 webkit.org/b/91611 media/media-higher-prio-audio-stream.html [ Skip ]
-
-# Fails in WK1, dumpIconChanges missing in WK2.
-webkit.org/b/112647 fast/dom/icon-url-property.html [ Failure ]

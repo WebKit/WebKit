@@ -31,7 +31,8 @@ function setFavIcon(iconURL) {
 function runTests() {
     if (window.testRunner) {
         testRunner.dumpAsText();
-        testRunner.dumpIconChanges();
+        if (testRunner.dumpIconChanges)
+            testRunner.dumpIconChanges();
     }
 
     iconURL = document.getElementsByTagName("head")[0].getElementsByTagName("link")[0].href;
