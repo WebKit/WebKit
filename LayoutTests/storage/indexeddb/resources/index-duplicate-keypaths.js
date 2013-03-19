@@ -42,6 +42,7 @@ function testCollideAutoIncrementSetup()
     request.onupgradeneeded = testCollideAutoIncrement;
     request.onerror = unexpectedErrorCallback;
     request.onblocked = unexpectedBlockedCallback;
+    request.onsuccess = storeCollidedAutoIncrementData;
 }
 
 function testCollideAutoIncrement()
@@ -52,7 +53,6 @@ function testCollideAutoIncrement()
     evalAndLog("store = db.createObjectStore('collideWithAutoIncrement', {keyPath: 'foo', autoIncrement: true})");
     evalAndLog("index = store.createIndex('foo', 'foo')");
 
-    trans.oncomplete = storeCollidedAutoIncrementData;
     trans.onerror = unexpectedErrorCallback;
     trans.onabort = unexpectedAbortCallback;
 }
