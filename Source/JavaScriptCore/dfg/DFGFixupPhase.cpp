@@ -1240,12 +1240,6 @@ private:
         }
         
         ASSERT(newEdge->shouldSpeculateInteger());
-        
-        // Completely kill the ValueToInt32. We wouldn't have to do crazy things like this
-        // if it weren't for https://bugs.webkit.org/show_bug.cgi?id=111238.
-        node->setOpAndDefaultFlags(Nop);
-        node->child1() = Edge();
-        
         edge = newEdge;
     }
     

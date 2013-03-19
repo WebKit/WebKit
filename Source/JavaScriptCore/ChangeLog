@@ -1,3 +1,14 @@
+2013-03-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Crash in SpeculativeJIT::fillSpeculateIntInternal<false> on http://bellard.org/jslinux
+        https://bugs.webkit.org/show_bug.cgi?id=112738
+
+        Reviewed by Filip Pizlo.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixIntEdge): We shouldn't be killing this node because it could be
+        referenced by other people.
+
 2013-03-19  Oliver Hunt  <oliver@apple.com>
 
         RELEASE_ASSERT fires in exception handler lookup
