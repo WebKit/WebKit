@@ -138,7 +138,7 @@ void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
     if (SVGTests::handleAttributeChange(this, attrName))
         return;
 
-    RenderSVGRect* renderer = static_cast<RenderSVGRect*>(this->renderer());
+    RenderSVGShape* renderer = toRenderSVGShape(this->renderer());
     if (!renderer)
         return;
 

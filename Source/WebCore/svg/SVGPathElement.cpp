@@ -260,7 +260,7 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
     if (SVGTests::handleAttributeChange(this, attrName))
         return;
 
-    RenderSVGPath* renderer = static_cast<RenderSVGPath*>(this->renderer());
+    RenderSVGPath* renderer = toRenderSVGPath(this->renderer());
 
     if (attrName == SVGNames::dAttr) {
         if (m_pathSegList.shouldSynchronize && !SVGAnimatedProperty::lookupWrapper<SVGPathElement, SVGAnimatedPathSegListPropertyTearOff>(this, dPropertyInfo())->isAnimating()) {
@@ -382,7 +382,7 @@ void SVGPathElement::pathSegListChanged(SVGPathSegRole role, ListModification li
 
     invalidateSVGAttributes();
     
-    RenderSVGPath* renderer = static_cast<RenderSVGPath*>(this->renderer());
+    RenderSVGPath* renderer = toRenderSVGPath(this->renderer());
     if (!renderer)
         return;
 
@@ -395,7 +395,7 @@ FloatRect SVGPathElement::getBBox(StyleUpdateStrategy styleUpdateStrategy)
     if (styleUpdateStrategy == AllowStyleUpdate)
         this->document()->updateLayoutIgnorePendingStylesheets();
 
-    RenderSVGPath* renderer = static_cast<RenderSVGPath*>(this->renderer());
+    RenderSVGPath* renderer = toRenderSVGPath(this->renderer());
 
     // FIXME: Eventually we should support getBBox for detached elements.
     if (!renderer)

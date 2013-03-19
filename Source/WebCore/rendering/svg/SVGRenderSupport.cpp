@@ -50,6 +50,7 @@ FloatRect SVGRenderSupport::repaintRectForRendererInLocalCoordinatesExcludingSVG
 {
     // FIXME: Add support for RenderSVGBlock.
 
+    // FIXME: This should use a safer cast such as toRenderSVGModelObject().
     if (object->isSVGShape() || object->isSVGImage() || object->isSVGContainer())
         return static_cast<const RenderSVGModelObject*>(object)->repaintRectInLocalCoordinatesExcludingSVGShadow();
 
@@ -314,11 +315,12 @@ bool SVGRenderSupport::rendererHasSVGShadow(const RenderObject* object)
 {
     // FIXME: Add support for RenderSVGBlock.
 
+    // FIXME: This should use a safer cast such as toRenderSVGModelObject().
     if (object->isSVGShape() || object->isSVGImage() || object->isSVGContainer())
         return static_cast<const RenderSVGModelObject*>(object)->hasSVGShadow();
 
     if (object->isSVGRoot())
-        return static_cast<const RenderSVGRoot*>(object)->hasSVGShadow();
+        return toRenderSVGRoot(object)->hasSVGShadow();
 
     return false;
 }
@@ -327,6 +329,7 @@ void SVGRenderSupport::setRendererHasSVGShadow(RenderObject* object, bool hasSha
 {
     // FIXME: Add support for RenderSVGBlock.
 
+    // FIXME: This should use a safer cast such as toRenderSVGModelObject().
     if (object->isSVGShape() || object->isSVGImage() || object->isSVGContainer())
         return static_cast<RenderSVGModelObject*>(object)->setHasSVGShadow(hasShadow);
 

@@ -3737,7 +3737,8 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
                     rootRelativeBounds = calculateLayerBounds(paintingInfo.rootLayer, &offsetFromRoot, 0);
                     rootRelativeBoundsComputed = true;
                 }
-            
+
+                // FIXME: This should use a safer cast such as toRenderSVGResourceContainer().
                 static_cast<RenderSVGResourceClipper*>(element->renderer())->applyClippingToContext(renderer(), rootRelativeBounds, paintingInfo.paintDirtyRect, context);
             }
         }

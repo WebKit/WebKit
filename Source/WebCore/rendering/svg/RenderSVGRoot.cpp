@@ -494,7 +494,7 @@ void RenderSVGRoot::addResourceForClientInvalidation(RenderSVGResourceContainer*
         svgRoot = svgRoot->parent();
     if (!svgRoot)
         return;
-    static_cast<RenderSVGRoot*>(svgRoot)->m_resourcesNeedingToInvalidateClients.add(resource);
+    toRenderSVGRoot(svgRoot)->m_resourcesNeedingToInvalidateClients.add(resource);
 }
 
 }

@@ -37,7 +37,7 @@ public:
     virtual ~RenderSVGPath();
 
 private:
-    virtual bool isSVGPath() const { return true; }
+    virtual bool isSVGPath() const OVERRIDE { return true; }
     virtual const char* renderName() const { return "RenderSVGPath"; }
 
     virtual void updateShapeFromElement() OVERRIDE;
@@ -53,6 +53,12 @@ private:
 
     Vector<FloatPoint> m_zeroLengthLinecapLocations;
 };
+
+inline RenderSVGPath* toRenderSVGPath(RenderObject* object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isSVGPath());
+    return static_cast<RenderSVGPath*>(object);
+}
 
 }
 

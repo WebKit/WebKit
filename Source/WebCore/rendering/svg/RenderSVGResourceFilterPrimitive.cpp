@@ -53,12 +53,12 @@ void RenderSVGResourceFilterPrimitive::styleDidChange(StyleDifference diff, cons
     const SVGRenderStyle* newStyle = this->style()->svgStyle();
     if (node()->hasTagName(SVGNames::feFloodTag)) {
         if (newStyle->floodColor() != oldStyle->svgStyle()->floodColor())
-            static_cast<RenderSVGResourceFilter*>(filter)->primitiveAttributeChanged(this, SVGNames::flood_colorAttr);
+            toRenderSVGFilter(filter)->primitiveAttributeChanged(this, SVGNames::flood_colorAttr);
         if (newStyle->floodOpacity() != oldStyle->svgStyle()->floodOpacity())
-            static_cast<RenderSVGResourceFilter*>(filter)->primitiveAttributeChanged(this, SVGNames::flood_opacityAttr);
+            toRenderSVGFilter(filter)->primitiveAttributeChanged(this, SVGNames::flood_opacityAttr);
     } else if (node()->hasTagName(SVGNames::feDiffuseLightingTag) || node()->hasTagName(SVGNames::feSpecularLightingTag)) {
         if (newStyle->lightingColor() != oldStyle->svgStyle()->lightingColor())
-            static_cast<RenderSVGResourceFilter*>(filter)->primitiveAttributeChanged(this, SVGNames::lighting_colorAttr);
+            toRenderSVGFilter(filter)->primitiveAttributeChanged(this, SVGNames::lighting_colorAttr);
     }
 }
 
