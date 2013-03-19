@@ -30,6 +30,7 @@
 
 #include "DFGBasicBlockInlines.h"
 #include "DFGGraph.h"
+#include "DFGInsertionSet.h"
 #include "DFGPhase.h"
 #include "Operations.h"
 
@@ -84,6 +85,9 @@ public:
             BasicBlock* block = m_graph.m_blocks[blockIndex].get();
             if (!block)
                 continue;
+
+            InsertionSet insertionSet(m_graph);
+
             for (unsigned indexInBlock = block->size(); indexInBlock--;) {
                 Node* node = block->at(indexInBlock);
                 if (node->shouldGenerate())
@@ -116,14 +120,32 @@ public:
                     // Leave them as not shouldGenerate.
                     break;
                 }
-                    
+
                 default: {
+                    if (node->flags() & NodeHasVarArgs) {
+                        for (unsigned childIdx = node->firstChild(); childIdx < node->firstChild() + node->numChildren(); childIdx++) {
+                            Edge edge = m_graph.m_varArgChildren[childIdx];
+
+                            if (!edge || edge.isProved() || edge.useKind() == UntypedUse)
+                                continue;
+
+                            insertionSet.insertNode(indexInBlock, SpecNone, Phantom, node->codeOrigin, edge);
+                        }
+
+                        node->convertToPhantomUnchecked();
+                        node->children.reset();
+                        node->setRefCount(1);
+                        break;
+                    }
+
                     node->convertToPhantom();
                     eliminateIrrelevantPhantomChildren(node);
                     node->setRefCount(1);
                     break;
                 } }
             }
+
+            insertionSet.execute(block);
         }
         
         m_graph.m_refCountState = ExactRefCount;

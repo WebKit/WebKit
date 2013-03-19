@@ -196,18 +196,29 @@ struct Node {
         m_op = op;
         m_flags = defaultFlags(op);
     }
-    
+
     void setOpAndDefaultNonExitFlags(NodeType op)
+    {
+        ASSERT(!(m_flags & NodeHasVarArgs));
+        setOpAndDefaultNonExitFlagsUnchecked(op);
+    }
+
+    void setOpAndDefaultNonExitFlagsUnchecked(NodeType op)
     {
         m_op = op;
         m_flags = (defaultFlags(op) & ~NodeExitsForward) | (m_flags & NodeExitsForward);
     }
-    
+
     void convertToPhantom()
     {
         setOpAndDefaultNonExitFlags(Phantom);
     }
-    
+
+    void convertToPhantomUnchecked()
+    {
+        setOpAndDefaultNonExitFlagsUnchecked(Phantom);
+    }
+
     void convertToIdentity()
     {
         setOpAndDefaultNonExitFlags(Identity);

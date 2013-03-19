@@ -1,3 +1,24 @@
+2013-03-19  Michael Saboff  <msaboff@apple.com>
+
+        Crash when loading http://www.jqchart.com/jquery/gauges/RadialGauge/LiveData
+        https://bugs.webkit.org/show_bug.cgi?id=112694
+
+        Reviewed by Filip Pizlo.
+
+        We were trying to convert an NewArray to a Phantom, but convertToPhantom doesn't handle
+        nodes with variable arguments.  Added code to insert a Phantom node in front of all the
+        live children of a var args node.  Added ASSERT not var args for convertToPhantom to
+        catch any other similar cases.  Added a new convertToPhantomUnchecked() for converting 
+        var arg nodes.
+
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::run):
+        * dfg/DFGNode.h:
+        (Node):
+        (JSC::DFG::Node::setOpAndDefaultNonExitFlags): Added ASSERT(!(m_flags & NodeHasVarArgs))
+        (JSC::DFG::Node::setOpAndDefaultNonExitFlagsUnchecked):
+        (JSC::DFG::Node::convertToPhantomUnchecked):
+
 2013-03-19  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Crash in SpeculativeJIT::fillSpeculateIntInternal<false> on http://bellard.org/jslinux
