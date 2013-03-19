@@ -17,7 +17,7 @@ Editing source:
     Dumping breakpoint storage
         edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me-breakpoints.js, lineNumber: 2, project type: debugger, project id: debugger:file://
+        url: edit-me-breakpoints.js, lineNumber: 2, project type: debugger, project id: debugger:
 Undoing source editing:
     OriginalTextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.removeBreakpoint(lineNumber = 2)
@@ -46,7 +46,7 @@ Editing source:
     Dumping breakpoint storage
         edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me-breakpoints.js, lineNumber: 2, project type: debugger, project id: debugger:file://
+        url: edit-me-breakpoints.js, lineNumber: 2, project type: debugger, project id: debugger:
 Committing edited source:
     OriginalTextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.removeBreakpoint(lineNumber = 2)
@@ -75,17 +75,17 @@ Editing source:
     Dumping breakpoint storage
         edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me-breakpoints.js, lineNumber: 2, project type: debugger, project id: debugger:file://
+        url: edit-me-breakpoints.js, lineNumber: 2, project type: debugger, project id: debugger:
 Committing edited source:
     Dumping breakpoint storage
         edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me-breakpoints.js, lineNumber: 2, project type: debugger, project id: debugger:file://
+        url: edit-me-breakpoints.js, lineNumber: 2, project type: debugger, project id: debugger:
 Editing source again so that live edit could succeed:
     Dumping breakpoint storage
         edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me-breakpoints.js, lineNumber: 2, project type: debugger, project id: debugger:file://
+        url: edit-me-breakpoints.js, lineNumber: 2, project type: debugger, project id: debugger:
 Committing edited source again:
     OriginalTextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.removeBreakpoint(lineNumber = 2)
@@ -114,17 +114,17 @@ Editing source:
     Dumping breakpoint storage
         edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me-breakpoints.js, lineNumber: 2, project type: debugger, project id: debugger:file://
+        url: edit-me-breakpoints.js, lineNumber: 2, project type: debugger, project id: debugger:
 Committing edited source:
     Dumping breakpoint storage
         edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me-breakpoints.js, lineNumber: 2, project type: debugger, project id: debugger:file://
+        url: edit-me-breakpoints.js, lineNumber: 2, project type: debugger, project id: debugger:
 Undoing source editing:
     Dumping breakpoint storage
         edit-me-breakpoints.js:2, enabled:true
     Dumping breakpoint locations
-        url: edit-me-breakpoints.js, lineNumber: 2, project type: debugger, project id: debugger:file://
+        url: edit-me-breakpoints.js, lineNumber: 2, project type: debugger, project id: debugger:
 Committing edited source again:
     OriginalTextEditor.removeBreakpoint(lineNumber = 2)
     TextEditor.removeBreakpoint(lineNumber = 2)

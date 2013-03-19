@@ -25,6 +25,7 @@
     <file>ConsolePanel.js</file>
     <file>ConsoleView.js</file>
     <file>ContentProvider.js</file>
+    <file>ContentProviderBasedProjectDelegate.js</file>
     <file>ContentProviders.js</file>
     <file>ContextMenu.js</file>
     <file>CookieItemsView.js</file>

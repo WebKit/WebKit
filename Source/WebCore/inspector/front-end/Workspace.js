@@ -450,7 +450,7 @@ WebInspector.Workspace.prototype = {
         var entry = this._fileMapping.mappingEntryForURL(url);
         var fileSystemPath = entry ? this._fileSystemPathForEntry(entry) : null;
         if (!fileSystemPath) {
-            var splittedURL = WebInspector.SimpleWorkspaceProvider.splitURL(url);
+            var splittedURL = WebInspector.ParsedURL.splitURL(url);
             var projectId = WebInspector.SimpleProjectDelegate.projectId(splittedURL[0], WebInspector.projectTypes.Network);
             var path = WebInspector.SimpleWorkspaceProvider.pathForSplittedURL(splittedURL);
             var project = this.project(projectId);

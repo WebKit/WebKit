@@ -65,6 +65,7 @@ modules = [
             "CompilerScriptMapping.js",
             "ConsoleModel.js",
             "ContentProvider.js",
+            "ContentProviderBasedProjectDelegate.js",
             "ContentProviders.js",
             "CookieParser.js",
             "CSSMetadata.js",

@@ -326,3 +326,7 @@ a.worker-item {
 a.worker-item:hover {
     color: rgb(15%, 15%, 15%);
 }
+
+.source-frame-debugger-script {
+    background-color: rgba(255, 255, 194, 0.5);
+}

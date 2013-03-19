@@ -77210,6 +77210,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ContentProviderBasedProjectDelegate.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ContentProviders.js"
 					>
 				</File>

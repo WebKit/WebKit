@@ -30,15 +30,14 @@
 
 /**
  * @constructor
- * @implements {WebInspector.ProjectDelegate}
- * @extends {WebInspector.Object}
+ * @extends {WebInspector.ContentProviderBasedProjectDelegate}
+ * @param {string} name
+ * @param {string} type
  */
 WebInspector.SimpleProjectDelegate = function(name, type)
 {
+    WebInspector.ContentProviderBasedProjectDelegate.call(this, type);
     this._name = name;
-    this._type = type;
-    /** @type {Object.<string, WebInspector.ContentProvider>} */
-    this._contentProviders = {};
     this._lastUniqueSuffix = 0;
 }
 
@@ -54,15 +53,7 @@ WebInspector.SimpleProjectDelegate.prototype = {
      */
     id: function()
     {
-        return WebInspector.SimpleProjectDelegate.projectId(this._name, this._type);
-    },
-
-    /**
-     * @return {string}
-     */
-    type: function()
-    {
-        return this._type;
+        return WebInspector.SimpleProjectDelegate.projectId(this._name, this.type());
     },
 
     /**
@@ -73,7 +64,7 @@ WebInspector.SimpleProjectDelegate.prototype = {
         if (typeof this._displayName !== "undefined")
             return this._displayName;
         if (!this._name) {
-            this._displayName = this._type !== WebInspector.projectTypes.Snippets ? WebInspector.UIString("(no domain)") : "";
+            this._displayName = this.type() !== WebInspector.projectTypes.Snippets ? WebInspector.UIString("(no domain)") : "";
             return this._displayName;
         }
         var parsedURL = new WebInspector.ParsedURL(this._name);
@@ -89,47 +80,6 @@ WebInspector.SimpleProjectDelegate.prototype = {
 
     /**
      * @param {Array.<string>} path
-     * @param {function(?string,boolean,string)} callback
-     */
-    requestFileContent: function(path, callback)
-    {
-        var contentProvider = this._contentProviders[path.join("/")];
-        contentProvider.requestContent(callback);
-    },
-
-    /**
-     * @return {boolean}
-     */
-    canSetFileContent: function()
-    {
-        return false;
-    },
-
-    /**
-     * @param {Array.<string>} path
-     * @param {string} newContent
-     * @param {function(?string)} callback
-     */
-    setFileContent: function(path, newContent, callback)
-    {
-        callback(null);
-    },
-
-    /**
-     * @param {Array.<string>} path
-     * @param {string} query
-     * @param {boolean} caseSensitive
-     * @param {boolean} isRegex
-     * @param {function(Array.<WebInspector.ContentProvider.SearchMatch>)} callback
-     */
-    searchInFileContent: function(path, query, caseSensitive, isRegex, callback)
-    {
-        var contentProvider = this._contentProviders[path.join("/")];
-        contentProvider.searchInContent(query, caseSensitive, isRegex, callback);
-    },
-
-    /**
-     * @param {Array.<string>} path
      * @param {string} url
      * @param {WebInspector.ContentProvider} contentProvider
      * @param {boolean} isEditable
@@ -140,10 +90,7 @@ WebInspector.SimpleProjectDelegate.prototype = {
     {
         if (forceUniquePath)
             this._ensureUniquePath(path);
-        var fileDescriptor = new WebInspector.FileDescriptor(path, url, url, contentProvider.contentType(), isEditable, isContentScript);
-        this._contentProviders[path.join("/")] = contentProvider;
-        this.dispatchEventToListeners(WebInspector.ProjectDelegate.Events.FileAdded, fileDescriptor);
-        return path;
+        return this.addContentProvider(path, url, contentProvider, isEditable, isContentScript);
     },
 
     /**
@@ -153,29 +100,15 @@ WebInspector.SimpleProjectDelegate.prototype = {
      {
         var uniquePath = path.join("/");
         var suffix = "";
-        while (this._contentProviders[uniquePath]) {
+        var contentProviders = this.contentProviders();
+        while (contentProviders[uniquePath]) {
             suffix = " (" + (++this._lastUniqueSuffix) + ")";
             uniquePath = path + suffix;
         }
         path[path.length - 1] += suffix;
     },
-
-    /**
-     * @param {Array.<string>} path
-     */
-    removeFile: function(path)
-    {
-        delete this._contentProviders[path.join("/")];
-        this.dispatchEventToListeners(WebInspector.ProjectDelegate.Events.FileRemoved, path);
-    },
-
-    reset: function()
-    {
-        this._contentProviders = {};
-        this.dispatchEventToListeners(WebInspector.ProjectDelegate.Events.Reset, null);
-    },
     
-    __proto__: WebInspector.Object.prototype
+    __proto__: WebInspector.ContentProviderBasedProjectDelegate.prototype
 }
 
 /**
@@ -189,37 +122,6 @@ WebInspector.SimpleWorkspaceProvider = function(workspace, type)
     this._workspace = workspace;
     this._type = type;
     this._simpleProjectDelegates = {};
-}
-
-/**
- * @param {string} url
- * @return {Array.<string>}
- */
-WebInspector.SimpleWorkspaceProvider.splitURL = function(url)
-{
-    var parsedURL = new WebInspector.ParsedURL(url);
-    var origin;
-    var folderPath;
-    var name;
-    if (parsedURL.isValid) {
-        origin = parsedURL.scheme + "://" + parsedURL.host;
-        if (parsedURL.port)
-            origin += ":" + parsedURL.port;
-        folderPath = parsedURL.folderPathComponents;
-        name = parsedURL.lastPathComponent;
-        if (parsedURL.queryParams)
-            name += "?" + parsedURL.queryParams;
-    } else {
-        origin = "";
-        folderPath = "";
-        name = url;
-    }
-    var result = [origin];
-    var splittedPath = folderPath.split("/");
-    for (var i = 1; i < splittedPath.length; ++i)
-        result.push(splittedPath[i]);
-    result.push(name);
-    return result;
 }
 
 /**
@@ -282,7 +184,7 @@ WebInspector.SimpleWorkspaceProvider.prototype = {
      */
     _innerAddFileForURL: function(url, contentProvider, isEditable, forceUnique, isContentScript)
     {
-        var splittedURL = WebInspector.SimpleWorkspaceProvider.splitURL(url);
+        var splittedURL = WebInspector.ParsedURL.splitURL(url);
         var projectName = splittedURL[0];
         var path = WebInspector.SimpleWorkspaceProvider.pathForSplittedURL(splittedURL);
         return this._innerAddFile(projectName, path, url, contentProvider, isEditable, forceUnique, isContentScript);

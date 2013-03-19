@@ -45,6 +45,8 @@ WebInspector.JavaScriptSourceFrame = function(scriptsPanel, uiSourceCode)
         this._breakpointAdded({data:locations[i]});
 
     WebInspector.UISourceCodeFrame.call(this, uiSourceCode);
+    if (uiSourceCode.project().type() === WebInspector.projectTypes.Debugger)
+        this.element.addStyleClass("source-frame-debugger-script");
 
     this._popoverHelper = new WebInspector.ObjectPopoverHelper(this.textEditor.element,
             this._getPopoverAnchor.bind(this), this._resolveObjectForPopover.bind(this), this._onHidePopover.bind(this), true);

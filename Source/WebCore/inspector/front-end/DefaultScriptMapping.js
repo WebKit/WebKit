@@ -35,7 +35,9 @@
  */
 WebInspector.DefaultScriptMapping = function(workspace)
 {
-    this._workspaceProvider = new WebInspector.SimpleWorkspaceProvider(workspace, WebInspector.projectTypes.Debugger);
+    this._projectDelegate = new WebInspector.DebuggerProjectDelegate();
+    this._workspace = workspace;
+    this._workspace.addProject(this._projectDelegate);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._debuggerReset, this);
     this._debuggerReset();
 }
@@ -73,9 +75,8 @@ WebInspector.DefaultScriptMapping.prototype = {
      */
     addScript: function(script)
     {
-        var contentProvider = script.isInlineScript() ? new WebInspector.ConcatenatedScriptsContentProvider([script]) : script;
-        var uiSourceCode = this._workspaceProvider.addUniqueFileForURL(script.sourceURL, contentProvider, false, script.isContentScript);
-
+        var path = this._projectDelegate.addScript(script);
+        var uiSourceCode = this._workspace.uiSourceCode(this._projectDelegate.id(), path);
         this._uiSourceCodeForScriptId[script.scriptId] = uiSourceCode;
         this._scriptIdForUISourceCode.put(uiSourceCode, script.scriptId);
         uiSourceCode.setSourceMapping(this);
@@ -99,6 +100,48 @@ WebInspector.DefaultScriptMapping.prototype = {
         /** @type {Object.<string, WebInspector.UISourceCode>} */
         this._uiSourceCodeForScriptId = {};
         this._scriptIdForUISourceCode = new Map();
-        this._workspaceProvider.reset();
+        this._projectDelegate.reset();
     }
+}
+
+/**
+ * @constructor
+ * @extends {WebInspector.ContentProviderBasedProjectDelegate}
+ */
+WebInspector.DebuggerProjectDelegate = function()
+{
+    WebInspector.ContentProviderBasedProjectDelegate.call(this, WebInspector.projectTypes.Debugger);
+}
+
+WebInspector.DebuggerProjectDelegate.prototype = {
+    /**
+     * @return {string}
+     */
+    id: function()
+    {
+        return "debugger:";
+    },
+
+    /**
+     * @return {string}
+     */
+    displayName: function()
+    {
+        return "debugger";
+    },
+
+    /**
+     * @param {WebInspector.Script} script
+     * @return {Array.<string>}
+     */
+    addScript: function(script)
+    {
+        var contentProvider = script.isInlineScript() ? new WebInspector.ConcatenatedScriptsContentProvider([script]) : script;
+        var splittedURL = WebInspector.ParsedURL.splitURL(script.sourceURL);
+        var name = splittedURL[splittedURL.length - 1];
+        name = "[VM] " + name + " (" + script.scriptId + ")";
+        return this.addContentProvider([name], script.sourceURL, contentProvider, false, script.isContentScript);
+    },
+    
+    __proto__: WebInspector.ContentProviderBasedProjectDelegate.prototype
 }
