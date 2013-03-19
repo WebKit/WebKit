@@ -198,6 +198,8 @@ fast/js/dfg-to-string-bad-toString
 fast/js/dfg-to-string-bad-valueOf
 fast/js/dfg-to-string-int-or-string
 fast/js/dfg-to-string-int
+fast/js/dfg-to-string-on-cell
+fast/js/dfg-to-string-on-value
 fast/js/dfg-to-string-side-effect
 fast/js/dfg-to-string-side-effect-clobbers-toString
 fast/js/dfg-to-string-toString-becomes-bad-with-dictionary-string-prototype

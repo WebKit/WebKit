@@ -4029,10 +4029,13 @@ void SpeculativeJIT::compileToStringOnCell(Node* node)
         flushRegisters();
         JITCompiler::Jump done;
         if (node->child1()->prediction() & SpecString) {
-            done = m_jit.branchPtr(
-                JITCompiler::Equal,
+            JITCompiler::Jump needCall = m_jit.branchPtr(
+                JITCompiler::NotEqual,
                 JITCompiler::Address(op1GPR, JSCell::structureOffset()),
                 TrustedImmPtr(m_jit.globalData()->stringStructure.get()));
+            m_jit.move(op1GPR, resultGPR);
+            done = m_jit.jump();
+            needCall.link(&m_jit);
         }
         callOperation(operationToStringOnCell, resultGPR, op1GPR);
         if (done.isSet())

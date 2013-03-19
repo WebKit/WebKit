@@ -3337,13 +3337,16 @@ void SpeculativeJIT::compile(Node* node)
             
             JITCompiler::Jump done;
             if (node->child1()->prediction() & SpecString) {
-                JITCompiler::Jump slowPath = m_jit.branch32(
+                JITCompiler::Jump slowPath1 = m_jit.branch32(
                     JITCompiler::NotEqual, op1TagGPR, TrustedImm32(JSValue::CellTag));
-                done = m_jit.branchPtr(
-                    JITCompiler::Equal,
+                JITCompiler::Jump slowPath2 = m_jit.branchPtr(
+                    JITCompiler::NotEqual,
                     JITCompiler::Address(op1PayloadGPR, JSCell::structureOffset()),
                     TrustedImmPtr(m_jit.globalData()->stringStructure.get()));
-                slowPath.link(&m_jit);
+                m_jit.move(op1PayloadGPR, resultGPR);
+                done = m_jit.jump();
+                slowPath1.link(&m_jit);
+                slowPath2.link(&m_jit);
             }
             callOperation(operationToString, resultGPR, op1TagGPR, op1PayloadGPR);
             if (done.isSet())
