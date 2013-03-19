@@ -96,11 +96,12 @@ WebInspector.TimelineOverviewPane = function(model)
 
     model.addEventListener(WebInspector.TimelineModel.Events.RecordAdded, this._onRecordAdded, this);
     model.addEventListener(WebInspector.TimelineModel.Events.RecordsCleared, this._reset, this);
-    this._overviewGrid.addEventListener(WebInspector.TimelineOverviewWindow.Events.WindowChanged, this._onWindowChanged, this);
+    this._overviewGrid.addEventListener(WebInspector.OverviewGrid.Events.WindowChanged, this._onWindowChanged, this);
 }
 
 /**
  * @constructor
+ * @param {string} prefix
  */
 WebInspector.OverviewGrid = function(prefix)
 {
@@ -115,7 +116,7 @@ WebInspector.OverviewGrid = function(prefix)
 
     this.element.appendChild(this._grid.element);
 
-    this._window = new WebInspector.TimelineOverviewWindow(this.element, this._grid.dividersLabelBarElement);
+    this._window = new WebInspector.OverviewGrid.Window(this.element, this._grid.dividersLabelBarElement, prefix);
 }
 
 WebInspector.OverviewGrid.prototype = {
@@ -222,11 +223,11 @@ WebInspector.OverviewGrid.prototype = {
 }
 
 
-WebInspector.TimelineOverviewPane.MinSelectableSize = 12;
+WebInspector.OverviewGrid.MinSelectableSize = 12;
 
-WebInspector.TimelineOverviewPane.WindowScrollSpeedFactor = .3;
+WebInspector.OverviewGrid.WindowScrollSpeedFactor = .3;
 
-WebInspector.TimelineOverviewPane.ResizerOffset = 3.5; // half pixel because offset values are not rounded but ceiled
+WebInspector.OverviewGrid.ResizerOffset = 3.5; // half pixel because offset values are not rounded but ceiled
 
 WebInspector.TimelineOverviewPane.Mode = {
     Events: "Events",
@@ -471,11 +472,13 @@ WebInspector.TimelineOverviewPane.prototype = {
  * @extends {WebInspector.Object}
  * @param {Element} parentElement
  * @param {Element} dividersLabelBarElement
+ * @param {string} prefix
  */
-WebInspector.TimelineOverviewWindow = function(parentElement, dividersLabelBarElement)
+WebInspector.OverviewGrid.Window = function(parentElement, dividersLabelBarElement, prefix)
 {
     this._parentElement = parentElement;
     this._dividersLabelBarElement = dividersLabelBarElement;
+    this._prefix = prefix;
 
     WebInspector.installDragHandle(this._parentElement, this._startWindowSelectorDragging.bind(this), this._windowSelectorDragging.bind(this), this._endWindowSelectorDragging.bind(this), "ew-resize");
     WebInspector.installDragHandle(this._dividersLabelBarElement, this._startWindowDragging.bind(this), this._windowDragging.bind(this), this._endWindowDragging.bind(this), "ew-resize");
@@ -487,35 +490,35 @@ WebInspector.TimelineOverviewWindow = function(parentElement, dividersLabelBarEl
     this._parentElement.addEventListener("dblclick", this._resizeWindowMaximum.bind(this), true);
 
     this._overviewWindowElement = document.createElement("div");
-    this._overviewWindowElement.className = "timeline-overview-window";
+    this._overviewWindowElement.className = prefix + "-overview-window";
     parentElement.appendChild(this._overviewWindowElement);
 
     this._overviewWindowBordersElement = document.createElement("div");
-    this._overviewWindowBordersElement.className = "timeline-overview-window-rulers";
+    this._overviewWindowBordersElement.className = prefix + "-overview-window-rulers";
     parentElement.appendChild(this._overviewWindowBordersElement);
 
     var overviewDividersBackground = document.createElement("div");
-    overviewDividersBackground.className = "timeline-overview-dividers-background";
+    overviewDividersBackground.className = prefix + "-overview-dividers-background";
     parentElement.appendChild(overviewDividersBackground);
 
     this._leftResizeElement = document.createElement("div");
-    this._leftResizeElement.className = "timeline-window-resizer";
+    this._leftResizeElement.className = prefix + "-window-resizer";
     this._leftResizeElement.style.left = 0;
     parentElement.appendChild(this._leftResizeElement);
     WebInspector.installDragHandle(this._leftResizeElement, null, this._leftResizeElementDragging.bind(this), null, "ew-resize");
 
     this._rightResizeElement = document.createElement("div");
-    this._rightResizeElement.className = "timeline-window-resizer timeline-window-resizer-right";
+    this._rightResizeElement.className = prefix + "-window-resizer " + prefix + "-window-resizer-right";
     this._rightResizeElement.style.right = 0;
     parentElement.appendChild(this._rightResizeElement);
     WebInspector.installDragHandle(this._rightResizeElement, null, this._rightResizeElementDragging.bind(this), null, "ew-resize");
 }
 
-WebInspector.TimelineOverviewWindow.Events = {
+WebInspector.OverviewGrid.Events = {
     WindowChanged: "WindowChanged"
 }
 
-WebInspector.TimelineOverviewWindow.prototype = {
+WebInspector.OverviewGrid.Window.prototype = {
     reset: function()
     {
         this.windowLeft = 0.0;
@@ -554,7 +557,7 @@ WebInspector.TimelineOverviewWindow.prototype = {
     _startWindowSelectorDragging: function(event)
     {
         var position = event.pageX - this._parentElement.offsetLeft;
-        this._overviewWindowSelector = new WebInspector.TimelineOverviewPane.WindowSelector(this._parentElement, position);
+        this._overviewWindowSelector = new WebInspector.OverviewGrid.WindowSelector(this._parentElement, position, this._prefix);
         return true;
     },
 
@@ -576,13 +579,13 @@ WebInspector.TimelineOverviewWindow.prototype = {
         delete this._overviewWindowSelector;
         if (window.end === window.start) { // Click, not drag.
             var middle = window.end;
-            window.start = Math.max(0, middle - WebInspector.TimelineOverviewPane.MinSelectableSize / 2);
-            window.end = Math.min(this._parentElement.clientWidth, middle + WebInspector.TimelineOverviewPane.MinSelectableSize / 2);
-        } else if (window.end - window.start < WebInspector.TimelineOverviewPane.MinSelectableSize) {
-            if (this._parentElement.clientWidth - window.end > WebInspector.TimelineOverviewPane.MinSelectableSize)
-                window.end = window.start + WebInspector.TimelineOverviewPane.MinSelectableSize;
+            window.start = Math.max(0, middle - WebInspector.OverviewGrid.MinSelectableSize / 2);
+            window.end = Math.min(this._parentElement.clientWidth, middle + WebInspector.OverviewGrid.MinSelectableSize / 2);
+        } else if (window.end - window.start < WebInspector.OverviewGrid.MinSelectableSize) {
+            if (this._parentElement.clientWidth - window.end > WebInspector.OverviewGrid.MinSelectableSize)
+                window.end = window.start + WebInspector.OverviewGrid.MinSelectableSize;
             else
-                window.start = window.end - WebInspector.TimelineOverviewPane.MinSelectableSize;
+                window.start = window.end - WebInspector.OverviewGrid.MinSelectableSize;
         }
         this._setWindowPosition(window.start, window.end);
     },
@@ -593,7 +596,7 @@ WebInspector.TimelineOverviewWindow.prototype = {
      */
     _startWindowDragging: function(event)
     {
-        var windowLeft = this._leftResizeElement.offsetLeft + WebInspector.TimelineOverviewPane.ResizerOffset;
+        var windowLeft = this._leftResizeElement.offsetLeft + WebInspector.OverviewGrid.ResizerOffset;
         this._dragOffset = windowLeft - event.pageX;
         return true;
     },
@@ -603,7 +606,7 @@ WebInspector.TimelineOverviewWindow.prototype = {
      */
     _windowDragging: function(event)
     {
-        var windowLeft = this._leftResizeElement.offsetLeft + WebInspector.TimelineOverviewPane.ResizerOffset;
+        var windowLeft = this._leftResizeElement.offsetLeft + WebInspector.OverviewGrid.ResizerOffset;
         var start = this._dragOffset + event.pageX;
         this._moveWindow(start);
         event.preventDefault();
@@ -622,8 +625,8 @@ WebInspector.TimelineOverviewWindow.prototype = {
      */
     _moveWindow: function(start)
     {
-        var windowLeft = this._leftResizeElement.offsetLeft + WebInspector.TimelineOverviewPane.ResizerOffset;
-        var windowRight = this._rightResizeElement.offsetLeft + WebInspector.TimelineOverviewPane.ResizerOffset;
+        var windowLeft = this._leftResizeElement.offsetLeft + WebInspector.OverviewGrid.ResizerOffset;
+        var windowRight = this._rightResizeElement.offsetLeft + WebInspector.OverviewGrid.ResizerOffset;
         var windowSize = windowRight - windowLeft;
         var end = start + windowSize;
 
@@ -660,8 +663,8 @@ WebInspector.TimelineOverviewWindow.prototype = {
         // Glue to edge.
         if (end > this._parentElement.clientWidth - 10)
             end = this._parentElement.clientWidth;
-        else if (end < this._leftResizeElement.offsetLeft + WebInspector.TimelineOverviewPane.MinSelectableSize)
-            end = this._leftResizeElement.offsetLeft + WebInspector.TimelineOverviewPane.MinSelectableSize;
+        else if (end < this._leftResizeElement.offsetLeft + WebInspector.OverviewGrid.MinSelectableSize)
+            end = this._leftResizeElement.offsetLeft + WebInspector.OverviewGrid.MinSelectableSize;
         this._setWindowPosition(null, end);
     },
 
@@ -700,7 +703,7 @@ WebInspector.TimelineOverviewWindow.prototype = {
         }
         this._overviewWindowElement.style.width = (this.windowRight - this.windowLeft) * 100 + "%";
         this._overviewWindowBordersElement.style.right = (1 - this.windowRight + 2 * rulerAdjustment) * 100 + "%";
-        this.dispatchEventToListeners(WebInspector.TimelineOverviewWindow.Events.WindowChanged);
+        this.dispatchEventToListeners(WebInspector.OverviewGrid.Events.WindowChanged);
     },
 
     /**
@@ -716,8 +719,8 @@ WebInspector.TimelineOverviewWindow.prototype = {
             this._zoom(Math.pow(zoomFactor, -event.wheelDeltaY * mouseWheelZoomSpeed), referencePoint);
         }
         if (typeof event.wheelDeltaX === "number" && event.wheelDeltaX) {
-            var windowLeft = this._leftResizeElement.offsetLeft + WebInspector.TimelineOverviewPane.ResizerOffset;
-            var start = windowLeft - Math.round(event.wheelDeltaX * WebInspector.TimelineOverviewPane.WindowScrollSpeedFactor);
+            var windowLeft = this._leftResizeElement.offsetLeft + WebInspector.OverviewGrid.ResizerOffset;
+            var start = windowLeft - Math.round(event.wheelDeltaX * WebInspector.OverviewGrid.WindowScrollSpeedFactor);
             this._moveWindow(start);
             event.preventDefault();
         }
@@ -729,11 +732,11 @@ WebInspector.TimelineOverviewWindow.prototype = {
      */
     _zoom: function(factor, referencePoint)
     {
-        var left = this._leftResizeElement.offsetLeft + WebInspector.TimelineOverviewPane.ResizerOffset;
-        var right = this._rightResizeElement.offsetLeft + WebInspector.TimelineOverviewPane.ResizerOffset;
+        var left = this._leftResizeElement.offsetLeft + WebInspector.OverviewGrid.ResizerOffset;
+        var right = this._rightResizeElement.offsetLeft + WebInspector.OverviewGrid.ResizerOffset;
 
         var delta = factor * (right - left);
-        if (factor < 1 && delta < WebInspector.TimelineOverviewPane.MinSelectableSize)
+        if (factor < 1 && delta < WebInspector.OverviewGrid.MinSelectableSize)
             return;
         var max = this._parentElement.clientWidth;
         left = Math.max(0, Math.min(max - delta, referencePoint + (left - referencePoint) * factor));
@@ -815,23 +818,25 @@ WebInspector.TimelineOverviewCalculator.prototype = {
 
 /**
  * @constructor
+ * @param {string} prefix
  */
-WebInspector.TimelineOverviewPane.WindowSelector = function(parent, position)
+WebInspector.OverviewGrid.WindowSelector = function(parent, position, prefix)
 {
+    this._prefix = prefix;
     this._startPosition = position;
     this._width = parent.offsetWidth;
     this._windowSelector = document.createElement("div");
-    this._windowSelector.className = "timeline-window-selector";
+    this._windowSelector.className = prefix + "-window-selector";
     this._windowSelector.style.left = this._startPosition + "px";
     this._windowSelector.style.right = this._width - this._startPosition +  + "px";
     parent.appendChild(this._windowSelector);
 }
 
-WebInspector.TimelineOverviewPane.WindowSelector.prototype = {
+WebInspector.OverviewGrid.WindowSelector.prototype = {
     _createSelectorElement: function(parent, left, width, height)
     {
         var selectorElement = document.createElement("div");
-        selectorElement.className = "timeline-window-selector";
+        selectorElement.className = this._prefix + "-window-selector";
         selectorElement.style.left = left + "px";
         selectorElement.style.width = width + "px";
         selectorElement.style.top = "0px";
