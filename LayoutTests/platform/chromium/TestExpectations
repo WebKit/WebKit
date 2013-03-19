@@ -4422,6 +4422,7 @@ webkit.org/b/112601 http/tests/security/cross-frame-access-port-explicit-domain.
 webkit.org/b/112603 fast/innerHTML/innerHTML-iframe.html [ Failure Pass ]
 webkit.org/b/112621 [ Win Linux ] fast/forms/datalist/update-range-with-datalist.html [ ImageOnlyFailure Pass ]
 webkit.org/b/112629 http/tests/xmlhttprequest/send-array-buffer.html [ Failure Pass ]
+webkit.org/b/112643 http/tests/history/redirect-js-location-0-seconds.html [ Failure Pass ]
 
 webkit.org/b/112610 [ Win ] fast/text/word-space-with-kerning-3.html [ ImageOnlyFailure ]
 
