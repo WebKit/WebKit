@@ -74,12 +74,12 @@ void SVGImage::setContainerSize(const IntSize& size)
         return;
 
     FrameView* view = frameView();
-    view->resize(this->size());
+    view->resize(this->containerSize());
 
     renderer->setContainerSize(size);
 }
 
-IntSize SVGImage::size() const
+IntSize SVGImage::containerSize() const
 {
     if (!m_page)
         return IntSize();
@@ -192,7 +192,7 @@ void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const Fl
     context->translate(destOffset.x(), destOffset.y());
     context->scale(scale);
 
-    view->resize(size());
+    view->resize(containerSize());
 
     if (view->needsLayout())
         view->layout();
@@ -336,6 +336,9 @@ bool SVGImage::dataChanged(bool allDataReceived)
         loader->activeDocumentLoader()->writer()->begin(KURL()); // create the empty document
         loader->activeDocumentLoader()->writer()->addData(data()->data(), data()->size());
         loader->activeDocumentLoader()->writer()->end();
+
+        // Set the intrinsic size before a container size is available.
+        m_intrinsicSize = containerSize();
     }
 
     return m_page;

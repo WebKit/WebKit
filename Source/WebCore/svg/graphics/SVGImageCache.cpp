@@ -74,9 +74,9 @@ IntSize SVGImageCache::imageSizeForRenderer(const RenderObject* renderer) const
     if (it == m_imageForContainerMap.end())
         return imageSize;
 
-    RefPtr<SVGImageForContainer> image = it->value;
-    ASSERT(!image->size().isEmpty());
-    return image->size();
+    RefPtr<SVGImageForContainer> imageForContainer = it->value;
+    ASSERT(!imageForContainer->size().isEmpty());
+    return imageForContainer->size();
 }
 
 // FIXME: This doesn't take into account the animation timeline so animations will not
@@ -90,9 +90,9 @@ Image* SVGImageCache::imageForRenderer(const RenderObject* renderer)
     if (it == m_imageForContainerMap.end())
         return Image::nullImage();
 
-    RefPtr<SVGImageForContainer> image = it->value;
-    ASSERT(!image->size().isEmpty());
-    return image.get();
+    RefPtr<SVGImageForContainer> imageForContainer = it->value;
+    ASSERT(!imageForContainer->size().isEmpty());
+    return imageForContainer.get();
 }
 
 } // namespace WebCore

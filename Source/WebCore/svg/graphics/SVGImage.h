@@ -51,7 +51,7 @@ public:
     FrameView* frameView() const;
 
     virtual bool isSVGImage() const { return true; }
-    virtual IntSize size() const;
+    virtual IntSize size() const OVERRIDE { return m_intrinsicSize; }
 
     virtual bool hasRelativeWidth() const;
     virtual bool hasRelativeHeight() const;
@@ -71,6 +71,7 @@ private:
     virtual String filenameExtension() const;
 
     virtual void setContainerSize(const IntSize&);
+    IntSize containerSize() const;
     virtual bool usesContainerSize() const { return true; }
     virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
@@ -94,6 +95,7 @@ private:
 
     OwnPtr<SVGImageChromeClient> m_chromeClient;
     OwnPtr<Page> m_page;
+    IntSize m_intrinsicSize;
 };
 }
 
