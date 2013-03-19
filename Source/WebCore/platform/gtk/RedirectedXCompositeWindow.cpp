@@ -27,7 +27,7 @@
 #include "config.h"
 #include "RedirectedXCompositeWindow.h"
 
-#if USE(GLX)
+#if USE(OPENGL) && PLATFORM(X11)
 
 #include <X11/extensions/Xcomposite.h>
 #include <X11/extensions/Xdamage.h>
@@ -267,4 +267,4 @@ void RedirectedXCompositeWindow::callDamageNotifyCallback()
 
 } // namespace WebCore
 
-#endif // USE(GLX)
+#endif // USE(OPENGL) && PLATFORM(X11)
