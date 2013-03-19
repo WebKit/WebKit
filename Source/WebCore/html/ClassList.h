@@ -35,8 +35,6 @@
 
 namespace WebCore {
 
-using namespace HTMLNames;
-
 class Element;
 
 typedef int ExceptionCode;
@@ -65,8 +63,8 @@ private:
 
     const SpaceSplitString& classNames() const;
 
-    virtual AtomicString value() const OVERRIDE { return m_element->getAttribute(classAttr); }
-    virtual void setValue(const AtomicString& value) OVERRIDE { m_element->setAttribute(classAttr, value); }
+    virtual AtomicString value() const OVERRIDE { return m_element->getAttribute(HTMLNames::classAttr); }
+    virtual void setValue(const AtomicString& value) OVERRIDE { m_element->setAttribute(HTMLNames::classAttr, value); }
 
     Element* m_element;
     mutable OwnPtr<SpaceSplitString> m_classNamesForQuirksMode;

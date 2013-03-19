@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+using namespace HTMLNames;
+
 ClassList::ClassList(Element* element) : m_element(element) { }
 
 void ClassList::ref()
