@@ -725,6 +725,17 @@ private:
                 }
             } else
                 arrayMode = arrayMode.refine(node->child1()->prediction(), node->prediction());
+            
+            if (arrayMode.type() == Array::Generic) {
+                // Check if the input is something that we can't get array length for, but for which we
+                // could insert some conversions in order to transform it into something that we can do it
+                // for.
+                if (node->child1()->shouldSpeculateStringObject())
+                    attemptToForceStringArrayModeByToStringConversion<StringObjectUse>(arrayMode, node);
+                else if (node->child1()->shouldSpeculateStringOrStringObject())
+                    attemptToForceStringArrayModeByToStringConversion<StringOrStringObjectUse>(arrayMode, node);
+            }
+            
             if (!arrayMode.supportsLength())
                 break;
             node->setOp(GetArrayLength);
@@ -887,6 +898,26 @@ private:
     }
     
     template<UseKind useKind>
+    Node* createToString(Node* node, Edge edge)
+    {
+        return m_insertionSet.insertNode(
+            m_indexInBlock, SpecString, ToString, node->codeOrigin,
+            Edge(edge.node(), useKind));
+    }
+    
+    template<UseKind useKind>
+    void attemptToForceStringArrayModeByToStringConversion(ArrayMode& arrayMode, Node* node)
+    {
+        ASSERT(arrayMode == ArrayMode(Array::Generic));
+        
+        if (!canOptimizeStringObjectAccess(node->codeOrigin))
+            return;
+        
+        node->child1().setNode(createToString<useKind>(node, node->child1()));
+        arrayMode = ArrayMode(Array::String);
+    }
+    
+    template<UseKind useKind>
     bool isStringObjectUse()
     {
         switch (useKind) {
@@ -916,9 +947,7 @@ private:
         // FIXME: We ought to be able to have a ToPrimitiveToString node.
         
         observeUseKindOnNode<useKind>(edge.node());
-        edge = Edge(m_insertionSet.insertNode(
-            m_indexInBlock, SpecString, ToString, node->codeOrigin,
-            Edge(edge.node(), useKind)), KnownStringUse);
+        edge = Edge(createToString<useKind>(node, edge), KnownStringUse);
     }
     
     template<UseKind leftUseKind>

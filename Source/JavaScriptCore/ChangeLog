@@ -1,3 +1,21 @@
+2013-03-18  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should optimize StringObject.length and StringOrStringObject.length
+        https://bugs.webkit.org/show_bug.cgi?id=112658
+
+        Reviewed by Mark Hahnenberg.
+        
+        Implemented by injecting a ToString(StringObject:@a) or ToString(StringOrStringObject:@a) prior
+        to GetArrayLength with ArrayMode(Array::String) if @a is predicted StringObject or
+        StringOrStringObject.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::createToString):
+        (FixupPhase):
+        (JSC::DFG::FixupPhase::attemptToForceStringArrayModeByToStringConversion):
+        (JSC::DFG::FixupPhase::convertStringAddUse):
+
 2013-03-19  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Implement and32 on ARMv7 and ARM traditional platforms
