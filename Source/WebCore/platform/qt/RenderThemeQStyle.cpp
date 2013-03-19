@@ -538,8 +538,9 @@ bool RenderThemeQStyle::paintInnerSpinButton(RenderObject* o, const PaintInfo& p
 
 ControlPart RenderThemeQStyle::initializeCommonQStyleOptions(QStyleFacadeOption &option, RenderObject* o) const
 {
-    // Default bits: no focus, no mouse over
+    // Default bits: no focus, no mouse over, enabled
     option.state &= ~(QStyleFacade::State_HasFocus | QStyleFacade::State_MouseOver);
+    option.state |= QStyleFacade::State_Enabled;
 
     if (isReadOnlyControl(o))
         // Readonly is supported on textfields.

@@ -1,3 +1,17 @@
+2013-03-19  David Rosca  <nowrep@gmail.com>
+
+        [Qt] QStyle: Set State_Enabled by default when painting style widgets.
+        https://bugs.webkit.org/show_bug.cgi?id=112688
+
+        Reviewed by Jocelyn Turcotte.
+
+        All Qt style widgets were painted with a disabled state, even when
+        they actually were enabled.
+        This change fixes it by setting State_Enabled as a default state,
+        which is then correctly removed when element is disabled.
+
+        * Source/WebCore/platform/qt/RenderThemeQStyle.cpp:
+
 2013-03-17  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Exports leveldb symbols
