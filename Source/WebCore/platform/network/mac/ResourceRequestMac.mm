@@ -55,11 +55,6 @@ NSURLRequest *ResourceRequest::nsURLRequest(HTTPBodyUpdatePolicy bodyPolicy) con
     return [[m_nsRequest.get() retain] autorelease];
 }
 
-CFURLRequestRef ResourceRequest::cfURLRequest(HTTPBodyUpdatePolicy bodyPolicy) const
-{
-    return [nsURLRequest(bodyPolicy) _CFURLRequest];
-}
-
 #if USE(CFNETWORK)
 
 ResourceRequest::ResourceRequest(NSURLRequest *nsRequest)
@@ -76,6 +71,11 @@ void ResourceRequest::updateNSURLRequest()
 }
 
 #else
+
+CFURLRequestRef ResourceRequest::cfURLRequest(HTTPBodyUpdatePolicy bodyPolicy) const
+{
+    return [nsURLRequest(bodyPolicy) _CFURLRequest];
+}
 
 void ResourceRequest::doUpdateResourceRequest()
 {
