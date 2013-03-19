@@ -429,7 +429,7 @@ my @features = (
       define => "ENABLE_SVG_FONTS", default => 1, value => \$svgFontsSupport },
 
     { option => "system-malloc", desc => "Toggle system allocator instead of TCmalloc",
-      define => "USE_SYSTEM_MALLOC", default => isWinCE(), value => \$systemMallocSupport },
+      define => "USE_SYSTEM_MALLOC", default => (isBlackBerry() || isWinCE()), value => \$systemMallocSupport },
 
     { option => "template-element", desc => "Toggle HTMLTemplateElement support",
       define => "ENABLE_TEMPLATE_ELEMENT", default => (isEfl() || isGtk()), value => \$templateElementSupport },

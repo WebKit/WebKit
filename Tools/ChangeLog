@@ -1,3 +1,15 @@
+2013-03-19  Alberto Garcia  <agarcia@igalia.com>
+
+        [BlackBerry] Enable USE_SYSTEM_MALLOC by default
+        https://bugs.webkit.org/show_bug.cgi?id=112365
+
+        Reviewed by Benjamin Poulain.
+
+        Enable USE_SYSTEM_MALLOC by default via FeatureList.pm instead of
+        harcoding it in wtf/Platform.h
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2013-03-19  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Make ImageDiff similar to Chromium's ImageDiff

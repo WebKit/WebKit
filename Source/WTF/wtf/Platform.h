@@ -497,10 +497,6 @@
 #endif
 #endif
 
-#if OS(QNX)
-#define USE_SYSTEM_MALLOC 1
-#endif
-
 #if PLATFORM(BLACKBERRY)
 #define WTF_USE_SKIA 1
 #define WTF_USE_LOW_QUALITY_IMAGE_INTERPOLATION 1
