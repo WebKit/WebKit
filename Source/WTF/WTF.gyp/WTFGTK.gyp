@@ -41,7 +41,7 @@
         ['exclude', 'wtf/wx'],
         ['exclude', 'wtf/unicode/qt4'],
         ['exclude', 'wtf/unicode/wchar'],
-        ['exclude', '(Default|Wchar|Mac|None|Qt|Win|Wx|Efl)\\.(cpp|mm)$'],
+        ['exclude', '(Default|Wchar|Mac|CF|None|Qt|Win|Wx|Efl)\\.(cpp|mm)$'],
       ],
       'cflags' : [ '-fPIC', ],
       'all_dependent_settings': {

@@ -1,3 +1,9 @@
+2013-03-19  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix the WTF gyp build for GTK+.
+
+        * WTF.gyp/WTFGTK.gyp: Skip files with CF in the name.
+
 2013-03-19  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] Enable USE_SYSTEM_MALLOC by default
