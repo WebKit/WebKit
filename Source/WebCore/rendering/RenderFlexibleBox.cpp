@@ -536,7 +536,12 @@ LayoutUnit RenderFlexibleBox::computeMainAxisExtentForChild(RenderBox* child, Si
     // to figure out the logical height/width.
     if (isColumnFlow())
         return child->computeContentLogicalHeight(sizeType, size);
-    return child->adjustContentBoxLogicalWidthForBoxSizing(valueForLength(size, contentLogicalWidth(), view()));
+    if (size.isAuto())
+        return -1;
+    // FIXME: Figure out how this should work for regions and pass in the appropriate values.
+    LayoutUnit offsetFromLogicalTopOfFirstPage = 0;
+    RenderRegion* region = 0;
+    return child->computeLogicalWidthInRegionUsing(sizeType, size, contentLogicalWidth(), this, region, offsetFromLogicalTopOfFirstPage) - child->borderAndPaddingLogicalWidth();
 }
 
 WritingMode RenderFlexibleBox::transformedWritingMode() const
@@ -921,9 +926,8 @@ void RenderFlexibleBox::computeMainAxisPreferredSizes(OrderHashSet& orderValues)
 
 LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(RenderBox* child, LayoutUnit childSize)
 {
-    // FIXME: Support intrinsic min/max lengths.
     Length max = isHorizontalFlow() ? child->style()->maxWidth() : child->style()->maxHeight();
-    if (max.isSpecified()) {
+    if (max.isSpecifiedOrIntrinsic()) {
         LayoutUnit maxExtent = computeMainAxisExtentForChild(child, MaxSize, max);
         if (maxExtent != -1 && childSize > maxExtent)
             childSize = maxExtent;
@@ -931,11 +935,13 @@ LayoutUnit RenderFlexibleBox::adjustChildSizeForMinAndMax(RenderBox* child, Layo
 
     Length min = isHorizontalFlow() ? child->style()->minWidth() : child->style()->minHeight();
     LayoutUnit minExtent = 0;
-    if (min.isSpecified())
+    if (min.isSpecifiedOrIntrinsic())
         minExtent = computeMainAxisExtentForChild(child, MinSize, min);
     else if (min.isAuto()) {
-        minExtent = hasOrthogonalFlow(child) ? child->logicalHeight() : child->minPreferredLogicalWidth();
-        minExtent -= mainAxisBorderAndPaddingExtentForChild(child);
+        if (hasOrthogonalFlow(child))
+            minExtent = child->logicalHeight() - child->borderAndPaddingLogicalHeight();
+        else
+            minExtent = computeMainAxisExtentForChild(child, MinSize, Length(MinContent));
     }
     return std::max(childSize, minExtent);
 }

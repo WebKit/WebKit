@@ -4410,6 +4410,8 @@ webkit.org/b/112369 [ Debug ] inspector/debugger/pause-in-inline-script.html [ P
 # Need rebaseline
 webkit.org/b/110837 [ Mac ] fast/forms/color/input-appearance-color.html [ Failure ]
 
+Bug(ojan) [ Mac Win ] css3/flexbox/flexbox-baseline.html [ ImageOnlyFailure Failure ]
+
 # Flaky tests
 webkit.org/b/112598 [ Win Mac Linux ] http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure Pass ]
 webkit.org/b/112601 http/tests/security/cross-frame-access-port-explicit-domain.html [ Failure Pass ]
