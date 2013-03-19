@@ -641,3 +641,10 @@ Bug(_arm) security/autocomplete-cleared-on-back.html [ Skip ]
 Bug(_arm) svg/foreignObject/viewport-foreignobject-crash.html [ Skip ]
 Bug(_arm) touchadjustment/html-label.html [ Skip ]
 
+
+# REGRESSION(r146164): It made all inspector tests timeout on ARM traditional
+# https://bugs.webkit.org/show_bug.cgi?id=112697
+http/tests/inspector
+http/tests/inspector-enabled
+inspector
+inspector-protocol
