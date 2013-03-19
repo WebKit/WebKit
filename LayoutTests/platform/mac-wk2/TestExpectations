@@ -427,6 +427,9 @@ sputnik/Unicode/Unicode_218/S7.6_A5.2_T1.html
 ########################################
 ### START OF (5) Features that are not supported in WebKit1, so skipped in mac/TestExpectations then re-enabled here
 
+# Snapshotted plugins not enabled on WK1 but are on WK2
+plugins/snapshotting [ Pass ]
+
 ### END OF (5) Features that are not supported in WebKit1, so skipped in mac/TestExpectations then re-enabled here
 ########################################
 

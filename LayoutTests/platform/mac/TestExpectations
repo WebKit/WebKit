@@ -1516,3 +1516,6 @@ webkit.org/b/76364 fast/css/lang-mapped-to-webkit-locale-dynamic.xhtml [ Pass Fa
 
 # Feature not implemented
 webkit.org/b/91611 media/media-higher-prio-audio-stream.html [ Skip ]
+
+# Snapshotted plugins not enabled on WK1
+plugins/snapshotting [ Skip ]

@@ -429,6 +429,9 @@ webkit.org/b/107825 media/media-controls-clone.html [ Failure ]
 # Require ENABLE(CUSTOM_ELEMENTS) support
 webkit.org/b/110735 fast/dom/custom [ Failure ]
 
+# Snapshotted plugins not enabled
+webkit.org/b/98696 plugins/snapshotting [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////

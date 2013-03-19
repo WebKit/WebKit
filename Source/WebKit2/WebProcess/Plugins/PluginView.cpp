@@ -73,7 +73,6 @@ namespace WebKit {
 
 // This simulated mouse click delay in HTMLPlugInImageElement.cpp should generally be the same or shorter than this delay.
 static const double pluginSnapshotTimerDelay = 1.1;
-static const unsigned maximumSnapshotRetries = 60;
 
 class PluginView::URLRequest : public RefCounted<URLRequest> {
 public:
@@ -570,9 +569,13 @@ void PluginView::didInitializePlugin()
     redeliverManualStream();
 
 #if PLATFORM(MAC)
-    if (m_pluginElement->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick)
+    if (m_pluginElement->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick) {
+        if (frame() && !frame()->settings()->maximumPlugInSnapshotAttempts()) {
+            m_pluginElement->setDisplayState(HTMLPlugInElement::DisplayingSnapshot);
+            return;
+        }
         m_pluginSnapshotTimer.restart();
-    else {
+    } else {
         if (m_plugin->pluginLayer()) {
             if (frame()) {
                 frame()->view()->enterCompositingMode();
@@ -1623,6 +1626,7 @@ void PluginView::pluginSnapshotTimerFired(DeferrableOneShotTimer<PluginView>*)
     m_pluginElement->updateSnapshot(snapshotImage.get());
 
 #if PLATFORM(MAC)
+    unsigned maximumSnapshotRetries = frame() ? frame()->settings()->maximumPlugInSnapshotAttempts() : 0;
     if (snapshotImage && isAlmostSolidColor(static_cast<BitmapImage*>(snapshotImage.get())) && m_countSnapshotRetries < maximumSnapshotRetries) {
         ++m_countSnapshotRetries;
         m_pluginSnapshotTimer.restart();

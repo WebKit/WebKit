@@ -1,0 +1,19 @@
+<p>This test forces a plugin to snapshot immediately, then tries to restart it.</p>
+<script>
+if (window.testRunner) {
+    window.internals.settings.setPlugInSnapshottingEnabled(true);
+    window.internals.settings.setMaximumPlugInSnapshotAttempts(0);
+    testRunner.waitUntilDone();
+    setTimeout(function () {
+        var embed = document.querySelector("embed");
+        var rect = embed.getBoundingClientRect();
+        eventSender.mouseMoveTo(rect.left + 10, rect.top + 10);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+        setTimeout(function () {
+            testRunner.notifyDone();
+        }, 500);
+    }, 500);
+}
+</script>
+<embed src="../resources/simple_blank.swf"></embed>

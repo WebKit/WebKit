@@ -363,6 +363,9 @@ touchadjustment/touch-links-two-finger-tap.html
 # CURSOR_VISIBILITY is not enabled in qt
 webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Failure ]
 
+# Snapshotted plugins not enabled
+webkit.org/b/98696 plugins/snapshotting [ Skip ]
+
 # =========================================================================== #
 #       Feature not yet supported.                                            #
 # =========================================================================== #

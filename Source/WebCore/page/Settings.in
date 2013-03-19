@@ -181,6 +181,7 @@ diagnosticLoggingEnabled initial=false
 applyDeviceScaleFactorInCompositor initial=true
 applyPageScaleFactorInCompositor initial=false
 plugInSnapshottingEnabled initial=false
+maximumPlugInSnapshotAttempts type=unsigned, initial=20
 frameFlatteningEnabled initial=false
 
 allowCustomScrollbarInMainFrame initial=true
