@@ -34,6 +34,8 @@ svg/custom/use-referencing-style-crash.svg
 # This test requires media controls has a volume slider.
 media/video-volume-slider.html
 
+webkit.org/b/108223 fast/forms/range/slider-delete-while-dragging-thumb.html [ Crash Pass ]
+
 webkit.org/b/112659 media/video-playing-and-pause.html [ Failure Pass ]
 
 # This test requires generation of progress events during loading
