@@ -47,6 +47,7 @@ class GraphicsLayerFactory;
 
 namespace WebKit {
 
+class PageOverlay;
 class UpdateInfo;
 class WebPage;
 
@@ -72,10 +73,10 @@ public:
     virtual void sizeDidChange(const WebCore::IntSize& newSize) = 0;
     virtual void deviceOrPageScaleFactorChanged() = 0;
 
-    virtual void didInstallPageOverlay() = 0;
-    virtual void didUninstallPageOverlay() = 0;
-    virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&) = 0;
-    virtual void setPageOverlayOpacity(float) { }
+    virtual void didInstallPageOverlay(PageOverlay*) = 0;
+    virtual void didUninstallPageOverlay(PageOverlay*) = 0;
+    virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&) = 0;
+    virtual void setPageOverlayOpacity(PageOverlay*, float) { }
     virtual bool pageOverlayShouldApplyFadeWhenPainting() const { return true; }
 
     virtual void pauseRendering() { }

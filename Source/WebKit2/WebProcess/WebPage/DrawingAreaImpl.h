@@ -60,10 +60,10 @@ private:
     virtual void forceRepaint();
     virtual bool forceRepaintAsync(uint64_t callbackID);
 
-    virtual void didInstallPageOverlay();
-    virtual void didUninstallPageOverlay();
-    virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&);
-    virtual void setPageOverlayOpacity(float);
+    virtual void didInstallPageOverlay(PageOverlay*);
+    virtual void didUninstallPageOverlay(PageOverlay*);
+    virtual void setPageOverlayNeedsDisplay(PageOverlay*, const WebCore::IntRect&);
+    virtual void setPageOverlayOpacity(PageOverlay*, float);
     virtual bool pageOverlayShouldApplyFadeWhenPainting() const;
 
     virtual void setPaintingEnabled(bool);
