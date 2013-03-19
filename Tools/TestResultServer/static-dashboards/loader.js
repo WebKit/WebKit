@@ -123,7 +123,7 @@ loader.Loader.prototype = {
     _loadResultsFileForBuilder: function(builderName)
     {
         var resultsFilename;
-        if (isTreeMap())
+        if (history.isTreeMap())
             resultsFilename = 'times_ms.json';
         else if (g_crossDashboardState.showAllRuns)
             resultsFilename = 'results.json';
@@ -141,7 +141,7 @@ loader.Loader.prototype = {
     },
     _handleResultsFileLoaded: function(builderName, fileData)
     {
-        if (isTreeMap())
+        if (history.isTreeMap())
             this._processTimesJSONData(builderName, fileData);
         else
             this._processResultsJSONData(builderName, fileData);

@@ -78,7 +78,7 @@ function handleValidHashParameter(key, value)
 {
     switch(key) {
     case 'builder':
-        validateParameter(g_currentState, key, value,
+        history.validateParameter(g_currentState, key, value,
             function() { return value in currentBuilders(); });
         return true;
     case 'buildTimestamp':

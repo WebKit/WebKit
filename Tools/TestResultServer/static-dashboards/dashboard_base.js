@@ -172,12 +172,12 @@ function handleValidHashParameterWrapper(key, value)
 {
     switch(key) {
     case 'testType':
-        validateParameter(g_crossDashboardState, key, value,
+        history.validateParameter(g_crossDashboardState, key, value,
             function() { return TEST_TYPES.indexOf(value) != -1; });
         return true;
 
     case 'group':
-        validateParameter(g_crossDashboardState, key, value,
+        history.validateParameter(g_crossDashboardState, key, value,
             function() {
               return value in LAYOUT_TESTS_BUILDER_GROUPS ||
                   value in CHROMIUM_GPU_TESTS_BUILDER_GROUPS ||
@@ -209,44 +209,6 @@ function $(id)
     return document.getElementById(id);
 }
 
-
-function validateParameter(state, key, value, validateFn)
-{
-    if (validateFn())
-        state[key] = value;
-    else
-        console.log(key + ' value is not valid: ' + value);
-}
-
-function queryHashAsMap()
-{
-    var hash = window.location.hash;
-    var paramsList = hash ? hash.substring(1).split('&') : [];
-    var paramsMap = {};
-    var invalidKeys = [];
-    for (var i = 0; i < paramsList.length; i++) {
-        var thisParam = paramsList[i].split('=');
-        if (thisParam.length != 2) {
-            console.log('Invalid query parameter: ' + paramsList[i]);
-            continue;
-        }
-
-        paramsMap[thisParam[0]] = decodeURIComponent(thisParam[1]);
-    }
-
-    // FIXME: remove support for mapping from the master parameter to the group
-    // one once the waterfall starts to pass in the builder name instead.
-    if (paramsMap.master) {
-        paramsMap.group = LEGACY_BUILDER_MASTERS_TO_GROUPS[paramsMap.master];
-        if (!paramsMap.group)
-            console.log('ERROR: Unknown master name: ' + paramsMap.master);
-        window.location.hash = window.location.hash.replace('master=' + paramsMap.master, 'group=' + paramsMap.group);
-        delete paramsMap.master;
-    }
-
-    return paramsMap;
-}
-
 function parseParameter(parameters, key)
 {
     if (!(key in parameters))
@@ -259,17 +221,17 @@ function parseParameter(parameters, key)
 function parseCrossDashboardParameters()
 {
     g_crossDashboardState = {};
-    var parameters = queryHashAsMap();
+    var parameters = history.queryHashAsMap();
     for (parameterName in g_defaultCrossDashboardStateValues)
         parseParameter(parameters, parameterName);
 
-    fillMissingValues(g_crossDashboardState, g_defaultCrossDashboardStateValues);
+    history.fillMissingValues(g_crossDashboardState, g_defaultCrossDashboardStateValues);
 }
 
 function parseDashboardSpecificParameters()
 {
     g_currentState = {};
-    var parameters = queryHashAsMap();
+    var parameters = history.queryHashAsMap();
     for (parameterName in g_defaultDashboardSpecificStateValues)
         parseParameter(parameters, parameterName);
 }
@@ -293,9 +255,9 @@ function parseParameters()
     }
 
     parseDashboardSpecificParameters();
-    var dashboardSpecificDiffState = diffStates(oldDashboardSpecificState, g_currentState);
+    var dashboardSpecificDiffState = history.diffStates(oldDashboardSpecificState, g_currentState);
 
-    fillMissingValues(g_currentState, g_defaultDashboardSpecificStateValues);
+    history.fillMissingValues(g_currentState, g_defaultDashboardSpecificStateValues);
 
     // FIXME: dashboard_base shouldn't know anything about specific dashboard specific keys.
     if (dashboardSpecificDiffState.builder)
@@ -309,36 +271,11 @@ function parseParameters()
     return shouldGeneratePage;
 }
 
-function diffStates(oldState, newState)
-{
-    // If there is no old state, everything in the current state is new.
-    if (!oldState)
-        return newState;
-
-    var changedParams = {};
-    for (curKey in newState) {
-        var oldVal = oldState[curKey];
-        var newVal = newState[curKey];
-        // Add new keys or changed values.
-        if (!oldVal || oldVal != newVal)
-            changedParams[curKey] = newVal;
-    }
-    return changedParams;
-}
-
 function defaultValue(key)
 {
     if (key in g_defaultDashboardSpecificStateValues)
         return g_defaultDashboardSpecificStateValues[key];
     return g_defaultCrossDashboardStateValues[key];
-}
-
-function fillMissingValues(to, from)
-{
-    for (var state in from) {
-        if (!(state in to))
-            to[state] = from[state];
-    }
 }
 
 // FIXME: Rename this to g_dashboardSpecificState;
@@ -400,11 +337,6 @@ function isTipOfTreeWebKitBuilder()
 
 var g_resultsByBuilder = {};
 var g_expectationsByPlatform = {};
-
-function isTreeMap()
-{
-    return string.endsWith(window.location.pathname, 'treemap.html');
-}
 
 function isFlakinessDashboard()
 {

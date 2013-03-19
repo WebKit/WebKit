@@ -166,7 +166,7 @@ function handleValidHashParameter(key, value)
 {
     switch(key) {
     case 'tests':
-        validateParameter(g_currentState, key, value,
+        history.validateParameter(g_currentState, key, value,
             function() {
                 return string.isValidName(value);
             });
@@ -174,7 +174,7 @@ function handleValidHashParameter(key, value)
 
     case 'result':
         value = value.toUpperCase();
-        validateParameter(g_currentState, key, value,
+        history.validateParameter(g_currentState, key, value,
             function() {
                 for (var result in LAYOUT_TEST_EXPECTATIONS_MAP_) {
                     if (value == LAYOUT_TEST_EXPECTATIONS_MAP_[result])
@@ -185,7 +185,7 @@ function handleValidHashParameter(key, value)
         return true;
 
     case 'builder':
-        validateParameter(g_currentState, key, value,
+        history.validateParameter(g_currentState, key, value,
             function() {
                 return value in currentBuilders();
             });
@@ -193,7 +193,7 @@ function handleValidHashParameter(key, value)
         return true;
 
     case 'sortColumn':
-        validateParameter(g_currentState, key, value,
+        history.validateParameter(g_currentState, key, value,
             function() {
                 // Get all possible headers since the actual used set of headers
                 // depends on the values in g_currentState, which are currently being set.
@@ -207,7 +207,7 @@ function handleValidHashParameter(key, value)
         return true;
 
     case 'sortOrder':
-        validateParameter(g_currentState, key, value,
+        history.validateParameter(g_currentState, key, value,
             function() {
                 return value == FORWARD || value == BACKWARD;
             });
@@ -216,7 +216,7 @@ function handleValidHashParameter(key, value)
     case 'resultsHeight':
     case 'updateIndex':
     case 'revision':
-        validateParameter(g_currentState, key, Number(value),
+        history.validateParameter(g_currentState, key, Number(value),
             function() {
                 return value.match(/^\d+$/);
             });

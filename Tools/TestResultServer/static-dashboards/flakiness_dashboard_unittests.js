@@ -545,11 +545,6 @@ test('isChromiumWebkitDepsTestRunner', 1, function() {
     deepEqual(builderList.filter(isChromiumWebkitDepsTestRunner), expectedBuilders);
 });
 
-test('queryHashAsMap', 2, function() {
-    equal(window.location.hash, '#useTestData=true');
-    deepEqual(queryHashAsMap(), {useTestData: 'true'});
-});
-
 test('parseCrossDashboardParameters', 2, function() {
     equal(window.location.hash, '#useTestData=true');
     parseCrossDashboardParameters();
@@ -561,25 +556,6 @@ test('parseCrossDashboardParameters', 2, function() {
 
     deepEqual(g_crossDashboardState, expectedParameters);
 });
-
-test('diffStates', 5, function() {
-    var newState = {a: 1, b: 2};
-    deepEqual(diffStates(null, newState), newState);
-
-    var oldState = {a: 1};
-    deepEqual(diffStates(oldState, newState), {b: 2});
-
-    // FIXME: This is kind of weird. I think the existing users of this code work correctly, but it's a confusing result.
-    var oldState = {c: 1};
-    deepEqual(diffStates(oldState, newState), {a:1, b: 2});
-
-    var oldState = {a: 1, b: 2};
-    deepEqual(diffStates(oldState, newState), {});
-
-    var oldState = {a: 2, b: 3};
-    deepEqual(diffStates(oldState, newState), {a: 1, b: 2});
-});
-
 
 test('builderGroupIsToTWebKitAttribute', 2, function() {
     var dummyMaster = new builders.BuilderMaster('Chromium', 'dummyurl', {'layout-tests': {'builders': ['WebKit Linux', 'WebKit Linux (dbg)', 'WebKit Mac10.7', 'WebKit Win']}});

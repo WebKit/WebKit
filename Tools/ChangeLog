@@ -1,3 +1,37 @@
+2013-03-19  Julie Parent  <jparent@chromium.org>
+
+        Dashboards: Introduce history namespace and unit tests.
+        https://bugs.webkit.org/show_bug.cgi?id=112645
+
+        Reviewed by Ojan Vafai.
+        
+        Laying the framework for introducing the new history object and
+        namespace.  This moves only static functions into the history
+        namespace, and moves corresponding unit tests into seperate
+        unit test file.
+
+        * TestResultServer/static-dashboards/aggregate_results.html:
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (parseCrossDashboardParameters):
+        (parseDashboardSpecificParameters):
+        (parseParameters):
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (.switch.return):
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        * TestResultServer/static-dashboards/history.js: Added.
+        * TestResultServer/static-dashboards/history_unittests.js: Added.
+        * TestResultServer/static-dashboards/loader.js:
+        (.):
+        * TestResultServer/static-dashboards/run-embedded-unittests.html:
+        * TestResultServer/static-dashboards/run-unittests.html:
+        * TestResultServer/static-dashboards/timeline_explorer.html:
+        * TestResultServer/static-dashboards/timeline_explorer.js:
+        * TestResultServer/static-dashboards/treemap.html:
+        * TestResultServer/static-dashboards/treemap.js:
+        (.switch.return):
+        * TestResultServer/static-dashboards/ui.js:
+
 2013-03-19  Daniel Bates  <dbates@webkit.org>
 
         svn-apply has trouble applying a patch that adds a Windows newline to EOF

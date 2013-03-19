@@ -182,12 +182,12 @@ function handleValidHashParameter(key, value)
 {
     switch(key) {
     case 'builder':
-        validateParameter(g_currentState, key, value,
+        history.validateParameter(g_currentState, key, value,
             function() { return value in currentBuilders(); });
         return true;
 
     case 'treemapfocus':
-        validateParameter(g_currentState, key, value,
+        history.validateParameter(g_currentState, key, value,
             function() {
                 // FIXME: There's probably a simpler regexp here. Just trying to match ascii + forward-slash.
                 // e.g. LayoutTests/foo/bar.html

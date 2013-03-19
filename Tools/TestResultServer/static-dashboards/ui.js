@@ -122,7 +122,7 @@ ui.html.testTypeSwitcher = function(opt_noBuilderMenu, opt_extraHtml, opt_includ
     html += ui.html.select('Group', 'group',
         Object.keys(currentBuilderGroupCategory()));
 
-    if (!isTreeMap())
+    if (!history.isTreeMap())
         html += ui.html.checkbox('showAllRuns', 'Show all runs', g_crossDashboardState.showAllRuns);
 
     if (opt_extraHtml)
