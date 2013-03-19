@@ -1,5 +1,12 @@
 2013-03-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another Mac build fix attempt after r146239.
+
+        * WebCoreSupport/WebFrameNetworkingContext.h:
+        (WebFrameNetworkingContext):
+
+2013-03-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         Mac build fix attempt after r146239.
 
         * WebCoreSupport/WebFrameNetworkingContext.h:
