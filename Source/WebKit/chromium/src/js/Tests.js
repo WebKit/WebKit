@@ -314,35 +314,11 @@ TestSuite.prototype.testRendererProcessNativeMemorySize = function()
     var test = this;
     var KB = 1024;
     var MB = KB * KB;
-    var arraySize = 20000000;
-    var initialSize;
-
-    function checkFuzzyValue(value, expected, allowedDelta)
-    {
-        var relativeDiff = Math.abs(value - expected) / expected;
-        if (relativeDiff > allowedDelta)
-            test.fail("Value (" + value + ") differs from expected (" + expected + ") by more than " + (allowedDelta * 100) + "%.");
-    }
 
     function step1(error, memoryBlock)
     {
         test.assertTrue(!error, "An error has occurred: " + error);
         test.assertTrue(memoryBlock.size > 1 * MB && memoryBlock.size < 1500 * MB, "Unfeasible process size: " + memoryBlock.size + " bytes.");
-
-        initialSize = memoryBlock.size;
-
-        test.evaluateInConsole_("var a = new Uint8Array(" + arraySize + ");", function() {});
-
-        MemoryAgent.getProcessMemoryDistribution(false, step2);
-    }
-
-    function step2(error, memoryBlock)
-    {
-        test.assertTrue(!error, "An error has occurred: " + error);
-        var deltaBytes = memoryBlock.size - initialSize;
-        // Checks that the process size has grown approximately by
-        // the size of the allocated array (within 10% confidence interval).
-        checkFuzzyValue(deltaBytes, arraySize, 0.1);
 
         test.releaseControl();
     }

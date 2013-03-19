@@ -1,3 +1,16 @@
+2013-03-19  Alexei Filippov  <alph@chromium.org>
+
+        Web Inspector: Remove flaky part of testRendererProcessNativeMemorySize test.
+        https://bugs.webkit.org/show_bug.cgi?id=112703
+
+        Reviewed by Yury Semikhatsky.
+
+        The memory increase size check happened to be flaky. Remove it.
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype.testRendererProcessNativeMemorySize.step1):
+        (.TestSuite.prototype.testRendererProcessNativeMemorySize):
+
 2013-03-18  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Remove NCCH code that relies on boundsContainsPageScale().
