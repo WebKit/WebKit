@@ -25,10 +25,12 @@
  */
 
 #include "config.h"
+#include "ewk_view_private.h"
 #include "PlatformWebView.h"
 
 #include "EWebKit2.h"
-#include "WebKit2/WKAPICast.h"
+#include <WebKit2/WKAPICast.h>
+#include <WebKit2/WKRetainPtr.h>
 #include <Ecore_Evas.h>
 
 extern bool useX11Window;
@@ -64,23 +66,19 @@ static void onWebProcessCrashed(void*, Evas_Object*, void* eventInfo)
 PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
 {
     m_window = initEcoreEvas();
-    Evas* evas = ecore_evas_get(m_window);
-    m_view = WKViewCreate(evas, contextRef, pageGroupRef);
-    ewk_view_theme_set(WKViewGetEvasObject(m_view), THEME_DIR"/default.edj");
-    evas_object_smart_callback_add(WKViewGetEvasObject(m_view), "webprocess,crashed", onWebProcessCrashed, 0);
+
+    m_view = EWKViewCreate(contextRef, pageGroupRef, ecore_evas_get(m_window), /* smart */ 0);
+
+    WKRetainPtr<WKStringRef> wkTheme = adoptWK(WKStringCreateWithUTF8CString(THEME_DIR "/default.edj"));
+    WKViewSetThemePath(EWKViewGetWKView(m_view), wkTheme.get());
+
+    evas_object_smart_callback_add(m_view, "webprocess,crashed", onWebProcessCrashed, 0);
     resizeTo(600, 800);
 }
 
 PlatformWebView::~PlatformWebView()
 {
-    Evas_Object* evasObject = WKViewGetEvasObject(m_view);
-
-    // Release first. WebView should not live longer than EwkView, as EwkView owns objects that page proxy refers to.
-    WKRelease(m_view);
-
-    // FIXME: The C WKView API currently creates the Evas_Object, so we have to destruct it
-    // (and its dependencies EwkView and WebKit::WebView) this way, until this get fixed.
-    evas_object_del(evasObject);
+    evas_object_del(m_view);
 
     ecore_evas_free(m_window);
     ecore_evas_shutdown();
@@ -88,33 +86,33 @@ PlatformWebView::~PlatformWebView()
 
 void PlatformWebView::resizeTo(unsigned width, unsigned height)
 {
-    evas_object_resize(WKViewGetEvasObject(m_view), width, height);
+    evas_object_resize(m_view, width, height);
 }
 
 WKPageRef PlatformWebView::page() const
 {
-    return WKViewGetPage(m_view);
+    return WKViewGetPage(EWKViewGetWKView(m_view));
 }
 
 void PlatformWebView::simulateSpacebarKeyPress()
 {
-    Evas* evas = ecore_evas_get(m_window);
-    evas_object_focus_set(WKViewGetEvasObject(m_view), true);
+    Evas* evas = evas_object_evas_get(m_view);
+    evas_object_focus_set(m_view, true);
     evas_event_feed_key_down(evas, "space", "space", " ", 0, 0, 0);
     evas_event_feed_key_up(evas, "space", "space", " ", 0, 1, 0);
 }
 
 void PlatformWebView::simulateMouseMove(unsigned x, unsigned y)
 {
-    Evas* evas = ecore_evas_get(m_window);
-    evas_object_show(WKViewGetEvasObject(m_view));
+    Evas* evas = evas_object_evas_get(m_view);
+    evas_object_show(m_view);
     evas_event_feed_mouse_move(evas, x, y, 0, 0);
 }
 
 void PlatformWebView::simulateRightClick(unsigned x, unsigned y)
 {
-    Evas* evas = ecore_evas_get(m_window);
-    evas_object_show(WKViewGetEvasObject(m_view));
+    Evas* evas = evas_object_evas_get(m_view);
+    evas_object_show(m_view);
     evas_event_feed_mouse_move(evas, x, y, 0, 0);
     evas_event_feed_mouse_down(evas, 3, EVAS_BUTTON_NONE, 0, 0);
     evas_event_feed_mouse_up(evas, 3, EVAS_BUTTON_NONE, 0, 0);

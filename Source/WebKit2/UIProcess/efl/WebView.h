@@ -50,8 +50,12 @@ class WebView : public APIObject, public PageClient {
 public:
     static const Type APIType = TypeView;
 
-    WebView(WebContext*, WebPageGroup*, EwkView*);
     virtual ~WebView();
+
+    static PassRefPtr<WebView> create(WebContext*, WebPageGroup*);
+
+    // FIXME: Remove when possible.
+    void setEwkView(EwkView*);
 
     void initialize();
 
@@ -96,6 +100,7 @@ public:
     WebCore::AffineTransform transformToScene() const;
 
 private:
+    WebView(WebContext*, WebPageGroup*);
     WebCore::CoordinatedGraphicsScene* coordinatedGraphicsScene();
 
     // PageClient

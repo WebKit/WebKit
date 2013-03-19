@@ -20,6 +20,7 @@
 
 #include "config.h"
 #include "ewk_view.h"
+#include "ewk_view_private.h"
 
 #include "EwkView.h"
 #include "FindClientEfl.h"
@@ -88,19 +89,48 @@ Eina_Bool ewk_view_smart_class_set(Ewk_View_Smart_Class* api)
     return EwkView::initSmartClassInterface(*api);
 }
 
-Evas_Object* ewk_view_smart_add(Evas* canvas, Evas_Smart* smart, Ewk_Context* context, Ewk_Page_Group* pageGroup)
+Evas_Object* EWKViewCreate(WKContextRef context, WKPageGroupRef pageGroup, Evas* canvas, Evas_Smart* smart)
 {
-    return EwkView::createEvasObject(canvas, smart, ewk_object_cast<EwkContext*>(context), ewk_object_cast<EwkPageGroup*>(pageGroup));
+    WKRetainPtr<WKViewRef> wkView = adoptWK(WKViewCreate(context, pageGroup));
+    WKPageSetUseFixedLayout(WKViewGetPage(wkView.get()), true);
+    if (EwkView* ewkView = EwkView::create(wkView.get(), canvas, smart))
+        return ewkView->evasObject();
+
+    return 0;
 }
 
-Evas_Object* ewk_view_add_with_context(Evas* canvas, Ewk_Context* context)
+WKViewRef EWKViewGetWKView(Evas_Object* ewkView)
 {
-    return EwkView::createEvasObject(canvas, ewk_object_cast<EwkContext*>(context));
+    EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, 0);
+
+    return impl->wkView();
+}
+
+Evas_Object* ewk_view_smart_add(Evas* canvas, Evas_Smart* smart, Ewk_Context* context, Ewk_Page_Group* pageGroup)
+{
+    EwkContext* ewkContext = ewk_object_cast<EwkContext*>(context);
+    EwkPageGroup* ewkPageGroup = ewk_object_cast<EwkPageGroup*>(pageGroup);
+
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ewkContext, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ewkContext->wkContext(), 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ewkPageGroup, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ewkPageGroup->wkPageGroup(), 0);
+
+    return EWKViewCreate(ewkContext->wkContext(), ewkPageGroup->wkPageGroup(), canvas, smart);
 }
 
 Evas_Object* ewk_view_add(Evas* canvas)
 {
-    return ewk_view_add_with_context(canvas, ewk_context_default_get());
+    return EWKViewCreate(adoptWK(WKContextCreate()).get(), 0, canvas, 0);
+}
+
+Evas_Object* ewk_view_add_with_context(Evas* canvas, Ewk_Context* context)
+{
+    EwkContext* ewkContext = ewk_object_cast<EwkContext*>(context);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ewkContext, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ewkContext->wkContext(), 0);
+
+    return EWKViewCreate(ewkContext->wkContext(), 0, canvas, 0);
 }
 
 Ewk_Context* ewk_view_context_get(const Evas_Object* ewkView)

@@ -34,8 +34,13 @@
 #include "ewk_page_group_private.h"
 #include "ewk_settings.h"
 #include "ewk_view.h"
+#include "ewk_view_private.h"
 #include <WebCore/EflInspectorUtilities.h>
 #include <WebCore/NotImplemented.h>
+#include <WebKit2/WKPage.h>
+#include <WebKit2/WKPageGroup.h>
+#include <WebKit2/WKPreferencesPrivate.h>
+#include <WebKit2/WKString.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -99,20 +104,19 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     if (!m_inspectorWindow)
         return 0;
 
-    // FIXME: Refactor to use WKViewRef.
-    WKContextRef contextRef = toAPI(page()->process()->context());
-    m_inspectorView = EwkView::createEvasObject(ecore_evas_get(m_inspectorWindow), EwkContext::findOrCreateWrapper(contextRef), EwkPageGroup::findOrCreateWrapper(toAPI(inspectorPageGroup())), EwkView::LegacyBehavior);
-    if (!m_inspectorView)
-        return 0;
+    WKContextRef wkContext = toAPI(page()->process()->context());
+    WKPageGroupRef wkPageGroup = toAPI(inspectorPageGroup());
 
-    EwkView* ewkView = toEwkView(m_inspectorView);
-    ASSERT(ewkView);
-    ewkView->setThemePath(TEST_THEME_DIR "/default.edj");
+    m_inspectorView = EWKViewCreate(wkContext, wkPageGroup, ecore_evas_get(m_inspectorWindow), /* smart */ 0);
+    WKViewRef wkView = EWKViewGetWKView(m_inspectorView);
 
-    Ewk_Settings* settings = ewkView->settings();
-    ewk_settings_file_access_from_file_urls_allowed_set(settings, true);
+    WKRetainPtr<WKStringRef> wkTheme = adoptWK(WKStringCreateWithUTF8CString(TEST_THEME_DIR "/default.edj"));
+    WKViewSetThemePath(wkView, wkTheme.get());
 
-    return ewkView->page();
+    WKPreferencesRef wkPreferences = WKPageGroupGetPreferences(wkPageGroup);
+    WKPreferencesSetFileAccessFromFileURLsAllowed(wkPreferences, true);
+
+    return toImpl(WKViewGetPage(wkView));
 }
 
 void WebInspectorProxy::platformOpen()

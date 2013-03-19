@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include "ewk_view_private.h"
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include "Test.h"
@@ -104,11 +105,12 @@ TEST(WebKit2, WKViewClientWebProcessCallbacks)
     WKRetainPtr<WKURLRef> url(AdoptWK, Util::createURLForResource("simple", "html"));
 
     PlatformWebView view(context.get());
+    WKViewRef wkView = EWKViewGetWKView(view.platformView());
 
-    TestStatesData states = TestStatesData(view.platformView(), url.get());
+    TestStatesData states = TestStatesData(wkView, url.get());
 
     setPageLoaderClient(view.page(), &states);
-    setViewClient(view.platformView(), &states);
+    setViewClient(wkView, &states);
 
     WKPageLoadURL(view.page(), url.get());
     Util::run(&states.didFinishLoad);

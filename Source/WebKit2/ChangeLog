@@ -1,3 +1,63 @@
+2013-03-19  Kenneth Rohde Christiansen  <kenneth@webkit.org> and Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Separate WebView further from EwkView
+        https://bugs.webkit.org/show_bug.cgi?id=111591
+
+        Reviewed by Caio Marcelo de Oliveira Filho.
+
+        Main points are:
+        - WKView API has no dependency on EFL types
+        - WebView class does not store the Evas_Object
+
+        * UIProcess/API/C/efl/WKView.cpp:
+        (WKViewCreate):
+
+            WKView creation does not require any EFL objects to be passed.
+
+        * UIProcess/API/C/efl/WKView.h:
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        (EwkView::create):
+
+            WKViewRef is passed to EwkView constructor from outside rather than
+            created inside.
+
+        (EwkView::webView):
+        * UIProcess/API/efl/EwkView.h:
+        (EwkView):
+        (EwkView::wkView):
+        (EwkView::page):
+
+            EwkView keeps WKViewRef rather than pointer to WebView class.
+
+        * UIProcess/API/efl/ewk_view_private.h: Added.
+        (EWKViewCreate):
+        (EWKViewGetWKView):
+
+            Added private API to create ewk view evas object and return its WKViewRef.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewkCreateEvasObject):
+        (ewk_view_smart_add):
+        (ewk_view_add):
+        (ewk_view_add_with_context):
+        * UIProcess/efl/WebInspectorProxyEfl.cpp:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+
+            Updated accordingly to the new APIs.
+
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::create):
+        (WebKit):
+        (WebKit::WebView::setEwkView):
+        (WebKit::WebView::isViewFocused):
+        (WebKit::WebView::isViewVisible):
+        * UIProcess/efl/WebView.h:
+        (WebView):
+
+            Implementation of updated WKView API.
+
 2013-03-19  Dean Jackson  <dino@apple.com>
 
         Allow PlugIn Snapshotting to be tested

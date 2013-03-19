@@ -19,6 +19,7 @@
  */
 
 #include "config.h"
+#include "ewk_view_private.h"
 #include "PlatformWebView.h"
 
 #include "EWebKit2.h"
@@ -59,52 +60,44 @@ PlatformWebView::PlatformWebView(WKContextRef context, WKPageGroupRef pageGroup,
     m_usingFixedLayout = options ? WKBooleanGetValue(static_cast<WKBooleanRef>(WKDictionaryGetItemForKey(options, useFixedLayoutKey.get()))) : false;
 
     m_window = initEcoreEvas();
-    Evas* evas = ecore_evas_get(m_window);
 
-    if (m_usingFixedLayout) {
-        m_view = WKViewCreateWithFixedLayout(evas, context, pageGroup);
-        evas_object_resize(WKViewGetEvasObject(m_view), 800, 600);
-    } else
-        m_view = WKViewCreate(evas, context, pageGroup);
+    m_view = EWKViewCreate(context, pageGroup, ecore_evas_get(m_window), /* smart */ 0);
 
-    ewk_view_theme_set(WKViewGetEvasObject(m_view), THEME_DIR"/default.edj");
+    WKPageSetUseFixedLayout(WKViewGetPage(EWKViewGetWKView(m_view)), m_usingFixedLayout);
+
+    if (m_usingFixedLayout)
+        resizeTo(800, 600);
+
+    ewk_view_theme_set(m_view, THEME_DIR"/default.edj");
     m_windowIsKey = false;
-    evas_object_show(WKViewGetEvasObject(m_view));
+    evas_object_show(m_view);
 }
 
 PlatformWebView::~PlatformWebView()
 {
-    Evas_Object* evasObject = WKViewGetEvasObject(m_view);
-
-    // Release first. WebView should not live longer than EwkView, as EwkView owns objects that page proxy refers to.
-    WKRelease(m_view);
-
-    // FIXME: The C WKView API currently creates the Evas_Object, so we have to destruct it
-    // (and its dependencies EwkView and WebKit::WebView) this way, until this get fixed.
-    evas_object_del(evasObject);
+    evas_object_del(m_view);
 
     ecore_evas_free(m_window);
 }
 
 void PlatformWebView::resizeTo(unsigned width, unsigned height)
 {
-    evas_object_resize(WKViewGetEvasObject(m_view), width, height);
+    evas_object_resize(m_view, width, height);
 }
 
 WKPageRef PlatformWebView::page()
 {
-    return WKViewGetPage(m_view);
+    return WKViewGetPage(EWKViewGetWKView(m_view));
 }
 
 void PlatformWebView::focus()
 {
-    Evas_Object* evasObject = WKViewGetEvasObject(m_view);
     // In a few cases, an iframe might receive focus from JavaScript and Evas is not aware of it at all
     // (WebCoreSupport::focusedFrameChanged() does not emit any notification). We then manually remove the
     // focus from the view to make the call give focus to evas_object_focus_set(..., true) to be effectful.
     if (WKPageGetFocusedFrame(page()) != WKPageGetMainFrame(page()))
-        evas_object_focus_set(evasObject, false);
-    evas_object_focus_set(evasObject, true);
+        evas_object_focus_set(m_view, false);
+    evas_object_focus_set(m_view, true);
 }
 
 WKRect PlatformWebView::windowFrame()
@@ -140,7 +133,7 @@ WKRetainPtr<WKImageRef> PlatformWebView::windowSnapshotImage()
     ecore_evas_geometry_get(m_window, 0, 0, &width, &height);
     ASSERT(width > 0 && height > 0);
 
-    return adoptWK(WKViewCreateSnapshot(m_view));
+    return adoptWK(WKViewCreateSnapshot(EWKViewGetWKView(m_view)));
 }
 
 bool PlatformWebView::viewSupportsOptions(WKDictionaryRef options) const

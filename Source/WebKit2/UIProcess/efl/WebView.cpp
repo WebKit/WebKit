@@ -51,8 +51,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebView::WebView(WebContext* context, WebPageGroup* pageGroup, EwkView* ewkView)
-    : m_ewkView(ewkView)
+WebView::WebView(WebContext* context, WebPageGroup* pageGroup)
+    : m_ewkView(0)
     , m_page(context->createWebPage(this, pageGroup))
 {
     m_page->pageGroup()->preferences()->setAcceleratedCompositingEnabled(true);
@@ -62,10 +62,6 @@ WebView::WebView(WebContext* context, WebPageGroup* pageGroup, EwkView* ewkView)
     bool showDebugVisuals = debugVisualsEnvironment && !strcmp(debugVisualsEnvironment, "1");
     m_page->pageGroup()->preferences()->setCompositingBordersVisible(showDebugVisuals);
     m_page->pageGroup()->preferences()->setCompositingRepaintCountersVisible(showDebugVisuals);
-
-#if ENABLE(FULLSCREEN_API)
-    m_page->fullScreenManager()->setWebView(evasObject());
-#endif
 }
 
 WebView::~WebView()
@@ -74,6 +70,22 @@ WebView::~WebView()
         return;
 
     m_page->close();
+}
+
+PassRefPtr<WebView> WebView::create(WebContext* context, WebPageGroup* pageGroup)
+{
+    return adoptRef(new WebView(context, pageGroup));
+}
+
+// FIXME: Remove when possible.
+void WebView::setEwkView(EwkView* ewkView)
+{
+    m_ewkView = ewkView;
+
+#if ENABLE(FULLSCREEN_API)
+    m_page->fullScreenManager()->setWebView(ewkView->evasObject());
+#endif
+
 }
 
 void WebView::initialize()
@@ -276,11 +288,19 @@ bool WebView::isViewWindowActive()
 
 bool WebView::isViewFocused()
 {
+    // FIXME: Unneeded after webkit.org/b/110877
+    if (!m_ewkView)
+        return false;
+
     return m_ewkView->isFocused();
 }
 
 bool WebView::isViewVisible()
 {
+    // FIXME: Unneeded after webkit.org/b/110877
+    if (!m_ewkView)
+        return false;
+
     return m_ewkView->isVisible();
 }
 

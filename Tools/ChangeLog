@@ -1,3 +1,39 @@
+2013-03-19  Kenneth Rohde Christiansen  <kenneth@webkit.org> and Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WK2] Separate WebView further from EwkView
+        https://bugs.webkit.org/show_bug.cgi?id=111591
+
+        Reviewed by Caio Marcelo de Oliveira Filho.
+
+        Updated EFL PlatformWebView to meet the new WKView API and ewk view private API.
+        PlatformWKView is pointer to Evas_Object for EFL, as this is more natural and
+        since we can afford it having EWKViewGetWKView() private API to access WKView.
+
+        * TestWebKitAPI/PlatformWebView.h:
+        * TestWebKitAPI/Tests/WebKit2/efl/WKViewClientWebProcessCallbacks.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/efl/PlatformWebView.cpp:
+        (TestWebKitAPI::PlatformWebView::PlatformWebView):
+        (TestWebKitAPI::PlatformWebView::~PlatformWebView):
+        (TestWebKitAPI::PlatformWebView::resizeTo):
+        (TestWebKitAPI::PlatformWebView::page):
+        (TestWebKitAPI::PlatformWebView::simulateSpacebarKeyPress):
+        (TestWebKitAPI::PlatformWebView::simulateMouseMove):
+        (TestWebKitAPI::PlatformWebView::simulateRightClick):
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/efl/EventSenderProxyEfl.cpp:
+        (WTR::EventSenderProxy::dispatchEvent):
+        (WTR::EventSenderProxy::keyDown):
+        (WTR::EventSenderProxy::sendTouchEvent):
+        (WTR::EventSenderProxy::setTouchModifier):
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+        (WTR::PlatformWebView::~PlatformWebView):
+        (WTR::PlatformWebView::resizeTo):
+        (WTR::PlatformWebView::page):
+        (WTR::PlatformWebView::focus):
+        (WTR::PlatformWebView::windowSnapshotImage):
+
 2013-03-19  Roger Fong  <roger_fong@apple.com>
 
         Changes to VS2010 project files should only trigger builds on Windows bots.

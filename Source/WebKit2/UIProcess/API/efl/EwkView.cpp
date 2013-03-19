@@ -237,12 +237,12 @@ static inline WKPageToEvasObjectMap& wkPageToEvasObjectMap()
 
 // EwkView implementation.
 
-EwkView::EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, PassRefPtr<EwkPageGroup> pageGroup, ViewBehavior behavior)
-    : m_evasObject(evasObject)
-    , m_context(context)
-    , m_webView(adoptRef(new WebView(toImpl(m_context->wkContext()), pageGroup ? toImpl(pageGroup->wkPageGroup()) : 0, this)))
+EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
+    : m_webView(view)
+    , m_evasObject(evasObject)
+    , m_context(EwkContext::findOrCreateWrapper(WKPageGetContext(wkPage())))
     , m_pageGroup(EwkPageGroup::findOrCreateWrapper(WKPageGetPageGroup(wkPage())))
-    , m_pendingSurfaceResize(false)    
+    , m_pendingSurfaceResize(false)
     , m_pageLoadClient(PageLoadClientEfl::create(this))
     , m_pagePolicyClient(PagePolicyClientEfl::create(this))
     , m_pageUIClient(PageUIClientEfl::create(this))
@@ -270,6 +270,9 @@ EwkView::EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, PassRe
     ASSERT(m_evasObject);
     ASSERT(m_context);
 
+    // FIXME: Remove when possible.
+    webView()->setEwkView(this);
+
     m_evasGL = adoptPtr(evas_gl_new(evas_object_evas_get(m_evasObject)));
     if (m_evasGL)
         m_evasGLContext = EvasGLContext::create(m_evasGL.get());
@@ -280,8 +283,6 @@ EwkView::EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, PassRe
     }
 
     WKViewInitialize(wkView());
-
-    WKPageSetUseFixedLayout(wkPage(), behavior == DefaultBehavior);
 
     WKPageGroupRef wkPageGroup = WKPageGetPageGroup(wkPage());
     WKPreferencesRef wkPreferences = WKPageGroupGetPreferences(wkPageGroup);
@@ -320,13 +321,11 @@ EwkView::~EwkView()
     wkPageToEvasObjectMap().remove(wkPage());
 }
 
-Evas_Object* EwkView::createEvasObject(Evas* canvas, Evas_Smart* smart, PassRefPtr<EwkContext> context, PassRefPtr<EwkPageGroup> pageGroup, ViewBehavior behavior)
+EwkView* EwkView::create(WKViewRef webView, Evas* canvas, Evas_Smart* smart)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(canvas, 0);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(smart, 0);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(context, 0);
 
-    Evas_Object* evasObject = evas_object_smart_add(canvas, smart);
+    Evas_Object* evasObject = evas_object_smart_add(canvas, smart ? smart : defaultSmartClassInstance());
     EINA_SAFETY_ON_NULL_RETURN_VAL(evasObject, 0);
 
     Ewk_View_Smart_Data* smartData = toSmartData(evasObject);
@@ -337,14 +336,9 @@ Evas_Object* EwkView::createEvasObject(Evas* canvas, Evas_Smart* smart, PassRefP
 
     ASSERT(!smartData->priv);
 
-    smartData->priv = new EwkView(evasObject, context, pageGroup, behavior);
+    smartData->priv = new EwkView(webView, evasObject);
 
-    return evasObject;
-}
-
-Evas_Object* EwkView::createEvasObject(Evas* canvas, PassRefPtr<EwkContext> context, PassRefPtr<EwkPageGroup> pageGroup, ViewBehavior behavior)
-{
-    return createEvasObject(canvas, defaultSmartClassInstance(), context, pageGroup, behavior);
+    return smartData->priv;
 }
 
 bool EwkView::initSmartClassInterface(Ewk_View_Smart_Class& api)
@@ -959,6 +953,11 @@ unsigned long long EwkView::informDatabaseQuotaReached(const String& databaseNam
     return defaultQuota;
 }
 #endif
+
+WebView* EwkView::webView()
+{
+    return toImpl(m_webView.get());
+}
 
 /**
  * @internal

@@ -314,14 +314,16 @@ void EventSenderProxy::updateClickCountForButton(int button)
 
 void EventSenderProxy::dispatchEvent(const WTREvent& event)
 {
+    Evas* evas = evas_object_evas_get(m_testController->mainWebView()->platformView());
+
     if (event.eventType == WTREventTypeMouseDown)
-        dispatchMouseDownEvent(ecore_evas_get(m_testController->mainWebView()->platformWindow()), event.button, event.modifiers, m_clickCount);
+        dispatchMouseDownEvent(evas, event.button, event.modifiers, m_clickCount);
     else if (event.eventType == WTREventTypeMouseUp)
-        dispatchMouseUpEvent(ecore_evas_get(m_testController->mainWebView()->platformWindow()), event.button, event.modifiers);
+        dispatchMouseUpEvent(evas, event.button, event.modifiers);
     else if (event.eventType == WTREventTypeMouseMove)
-        dispatchMouseMoveEvent(ecore_evas_get(m_testController->mainWebView()->platformWindow()), static_cast<int>(m_position.x), static_cast<int>(m_position.y));
+        dispatchMouseMoveEvent(evas, static_cast<int>(m_position.x), static_cast<int>(m_position.y));
     else if (event.eventType == WTREventTypeMouseScrollBy)
-        dispatchMouseScrollByEvent(ecore_evas_get(m_testController->mainWebView()->platformWindow()), event.horizontal, event.vertical);
+        dispatchMouseScrollByEvent(evas, event.horizontal, event.vertical);
 }
 
 void EventSenderProxy::replaySavedEvents()
@@ -412,7 +414,7 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers,
     if ((strlen(keyName) == 1) && (keyName[0] >= 'A' && keyName[0] <= 'Z'))
         wkModifiers |= kWKEventModifiersShiftKey;
 
-    Evas* evas = ecore_evas_get(m_testController->mainWebView()->platformWindow());
+    Evas* evas = evas_object_evas_get(m_testController->mainWebView()->platformView());
 
     int eventIndex = 0;
     // Mimic the emacs ctrl-o binding by inserting a paragraph
@@ -438,7 +440,7 @@ void EventSenderProxy::sendTouchEvent(Ewk_Touch_Event_Type eventType)
 {
     ASSERT(m_touchPoints);
 
-    Evas_Object* ewkView = WKViewGetEvasObject(m_testController->mainWebView()->platformView());
+    Evas_Object* ewkView = m_testController->mainWebView()->platformView();
     ewk_view_feed_touch_event(ewkView, eventType, m_touchPoints, evas_key_modifier_get(evas_object_evas_get(ewkView)));
 
     Eina_List* list;
@@ -490,7 +492,7 @@ void EventSenderProxy::updateTouchPoint(int index, int x, int y)
 
 void EventSenderProxy::setTouchModifier(WKEventModifiers modifier, bool enable)
 {
-    Evas_Object* ewkView = WKViewGetEvasObject(m_testController->mainWebView()->platformView());
+    Evas_Object* ewkView = m_testController->mainWebView()->platformView();
 
     for (unsigned index = 0; index < (sizeof(modifierNames) / sizeof(char*)); ++index) {
         if (modifier & (1 << index)) {
