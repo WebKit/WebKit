@@ -33,7 +33,6 @@
 #import "WebFrameInternal.h"
 #import <JavaScriptCore/JSLock.h>
 #import <JavaScriptCore/MemoryStatistics.h>
-#import <WebCore/Console.h>
 #import <WebCore/FontCache.h>
 #import <WebCore/Frame.h>
 #import <WebCore/GCController.h>
@@ -42,6 +41,7 @@
 #import <WebCore/IconDatabase.h>
 #import <WebCore/JSDOMWindow.h>
 #import <WebCore/PageCache.h>
+#import <WebCore/PageConsole.h>
 #import <WebCore/PrintContext.h>
 #import <WebCore/RenderTreeAsText.h>
 #import <WebCore/RenderView.h>
@@ -168,13 +168,13 @@ using namespace WebCore;
 + (BOOL)shouldPrintExceptions
 {
     JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
-    return Console::shouldPrintExceptions();
+    return PageConsole::shouldPrintExceptions();
 }
 
 + (void)setShouldPrintExceptions:(BOOL)print
 {
     JSLockHolder lock(JSDOMWindow::commonJSGlobalData());
-    Console::setShouldPrintExceptions(print);
+    PageConsole::setShouldPrintExceptions(print);
 }
 
 + (void)emptyCache

@@ -4235,6 +4235,8 @@ webcore_sources += \
 	Source/WebCore/page/OriginAccessEntry.h \
 	Source/WebCore/page/Page.cpp \
 	Source/WebCore/page/Page.h \
+	Source/WebCore/page/PageConsole.cpp \
+	Source/WebCore/page/PageConsole.h \
 	Source/WebCore/page/PageGroup.cpp \
 	Source/WebCore/page/PageGroup.h \
 	Source/WebCore/page/PageGroupLoadDeferrer.cpp \

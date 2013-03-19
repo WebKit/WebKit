@@ -27590,6 +27590,14 @@
 				RelativePath="..\page\Page.cpp"
 				>
 			</File>
+                        <File
+				RelativePath="..\page\PageConsole.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\PageConsole.h"
+				>
+			</File>
 			<File
 				RelativePath="..\page\PageGroup.cpp"
 				>

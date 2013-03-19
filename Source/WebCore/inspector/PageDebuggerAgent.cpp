@@ -34,11 +34,11 @@
 
 #include "PageDebuggerAgent.h"
 
-#include "Console.h"
 #include "InspectorOverlay.h"
 #include "InspectorPageAgent.h"
 #include "InstrumentingAgents.h"
 #include "Page.h"
+#include "PageConsole.h"
 #include "PageScriptDebugServer.h"
 
 namespace WebCore {
@@ -88,12 +88,12 @@ PageScriptDebugServer& PageDebuggerAgent::scriptDebugServer()
 
 void PageDebuggerAgent::muteConsole()
 {
-    Console::mute();
+    PageConsole::mute();
 }
 
 void PageDebuggerAgent::unmuteConsole()
 {
-    Console::unmute();
+    PageConsole::unmute();
 }
 
 InjectedScript PageDebuggerAgent::injectedScriptForEval(ErrorString* errorString, const int* executionContextId)

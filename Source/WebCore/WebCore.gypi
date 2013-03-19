@@ -2252,6 +2252,7 @@
             'page/OriginAccessEntry.cpp',
             'page/OriginAccessEntry.h',
             'page/Page.cpp',
+            'page/PageConsole.cpp',
             'page/PageGroup.cpp',
             'page/PageGroupLoadDeferrer.cpp',
             'page/PageGroupLoadDeferrer.h',

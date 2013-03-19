@@ -74,6 +74,7 @@ class InspectorClient;
 class InspectorController;
 class MediaCanStartListener;
 class Node;
+class PageConsole;
 class PageGroup;
 class PlugInClient;
 class PluginData;
@@ -378,6 +379,7 @@ public:
     void sawMediaEngine(const String& engineName);
     void resetSeenMediaEngines();
 
+    PageConsole* console() { return m_console.get(); }
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
 #if ENABLE(VIDEO_TRACK)
@@ -504,6 +506,7 @@ private:
     AlternativeTextClient* m_alternativeTextClient;
 
     bool m_scriptedAnimationsSuspended;
+    OwnPtr<PageConsole> m_console;
 
     HashSet<String> m_seenPlugins;
     HashSet<String> m_seenMediaEngines;

@@ -947,6 +947,7 @@ SOURCES += \
     page/NavigatorBase.cpp \
     page/OriginAccessEntry.cpp \
     page/Page.cpp \
+    page/PageConsole.cpp \
     page/PageGroup.cpp \
     page/PageGroupLoadDeferrer.cpp \
     page/PageVisibilityState.cpp \
@@ -2144,6 +2145,7 @@ HEADERS += \
     page/PageGroup.h \
     page/PageGroupLoadDeferrer.h \
     page/Page.h \
+    page/PageConsole.h \
     page/PageVisibilityState.h \
     page/PlugInClient.h \
     page/PopupOpeningObserver.h \

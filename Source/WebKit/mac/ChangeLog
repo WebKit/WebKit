@@ -1,3 +1,16 @@
+2013-03-19  Sergey Ryazanov  <serya@chromium.org>
+
+        Web Inspector: split Console into two entities, a web-facing bound object and page console.
+        https://bugs.webkit.org/show_bug.cgi?id=111578
+
+        Reviewed by Vsevolod Vlasov.
+
+        Otherwise, a lot of logging in WebCore needs to go through the DOMWindow which is unnecessary.
+
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics shouldPrintExceptions]):
+        (+[WebCoreStatistics setShouldPrintExceptions:]):
+
 2013-03-17  Adam Barth  <abarth@webkit.org>
 
         Legacy CSS vendor prefixes should only work for Dashboard

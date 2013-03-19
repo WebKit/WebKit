@@ -26,12 +26,13 @@
 #include "config.h"
 #include "JSCustomXPathNSResolver.h"
 
-#include "Console.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "JSDOMWindowCustom.h"
 #include "JSMainThreadExecState.h"
+#include "Page.h"
+#include "PageConsole.h"
 #include "SecurityOrigin.h"
 #include <runtime/JSLock.h>
 
@@ -78,7 +79,8 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
         callType = m_customResolver->methodTable()->getCallData(m_customResolver.get(), callData);
         if (callType == CallTypeNone) {
             // FIXME: Pass actual line number and source URL.
-            m_globalObject->impl()->console()->addMessage(JSMessageSource, ErrorMessageLevel, "XPathNSResolver does not have a lookupNamespaceURI method.");
+            if (PageConsole* console = m_globalObject->impl()->pageConsole())
+                console->addMessage(JSMessageSource, ErrorMessageLevel, "XPathNSResolver does not have a lookupNamespaceURI method.");
             return String();
         }
         function = m_customResolver.get();

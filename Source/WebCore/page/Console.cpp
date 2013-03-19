@@ -41,6 +41,7 @@
 #include "InspectorController.h"
 #include "MemoryInfo.h"
 #include "Page.h"
+#include "PageConsole.h"
 #include "PageGroup.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
@@ -61,10 +62,6 @@
 
 namespace WebCore {
 
-namespace {
-    int muteCount = 0;
-}
-
 Console::Console(Frame* frame)
     : DOMWindowProperty(frame)
 {
@@ -72,126 +69,6 @@ Console::Console(Frame* frame)
 
 Console::~Console()
 {
-}
-
-static void printSourceURLAndLine(const String& sourceURL, unsigned lineNumber)
-{
-    if (!sourceURL.isEmpty()) {
-        if (lineNumber > 0)
-            printf("%s:%d: ", sourceURL.utf8().data(), lineNumber);
-        else
-            printf("%s: ", sourceURL.utf8().data());
-    }
-}
-
-static void printMessageSourceAndLevelPrefix(MessageSource source, MessageLevel level)
-{
-    const char* sourceString;
-    switch (source) {
-    case XMLMessageSource:
-        sourceString = "XML";
-        break;
-    case JSMessageSource:
-        sourceString = "JS";
-        break;
-    case NetworkMessageSource:
-        sourceString = "NETWORK";
-        break;
-    case ConsoleAPIMessageSource:
-        sourceString = "CONSOLEAPI";
-        break;
-    case StorageMessageSource:
-        sourceString = "STORAGE";
-        break;
-    case AppCacheMessageSource:
-        sourceString = "APPCACHE";
-        break;
-    case RenderingMessageSource:
-        sourceString = "RENDERING";
-        break;
-    case CSSMessageSource:
-        sourceString = "CSS";
-        break;
-    case SecurityMessageSource:
-        sourceString = "SECURITY";
-        break;
-    case OtherMessageSource:
-        sourceString = "OTHER";
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        sourceString = "UNKNOWN";
-        break;
-    }
-
-    const char* levelString;
-    switch (level) {
-    case DebugMessageLevel:
-        levelString = "DEBUG";
-        break;
-    case LogMessageLevel:
-        levelString = "LOG";
-        break;
-    case WarningMessageLevel:
-        levelString = "WARN";
-        break;
-    case ErrorMessageLevel:
-        levelString = "ERROR";
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        levelString = "UNKNOWN";
-        break;
-    }
-
-    printf("%s %s:", sourceString, levelString);
-}
-
-void Console::addMessage(MessageSource source, MessageLevel level, const String& message, unsigned long requestIdentifier, Document* document)
-{
-    String url;
-    if (document)
-        url = document->url().string();
-    unsigned line = 0;
-    if (document && document->parsing() && !document->isInDocumentWrite() && document->scriptableDocumentParser()) {
-        ScriptableDocumentParser* parser = document->scriptableDocumentParser();
-        if (!parser->isWaitingForScripts() && !parser->isExecutingScript())
-            line = parser->lineNumber().oneBasedInt();
-    }
-    addMessage(source, level, message, url, line, 0, 0, requestIdentifier);
-}
-
-void Console::addMessage(MessageSource source, MessageLevel level, const String& message, PassRefPtr<ScriptCallStack> callStack)
-{
-    addMessage(source, level, message, String(), 0, callStack, 0);
-}
-
-void Console::addMessage(MessageSource source, MessageLevel level, const String& message, const String& url, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack, ScriptState* state, unsigned long requestIdentifier)
-{
-    if (muteCount && source != ConsoleAPIMessageSource)
-        return;
-
-    Page* page = this->page();
-    if (!page)
-        return;
-
-    if (callStack)
-        InspectorInstrumentation::addMessageToConsole(page, source, LogMessageType, level, message, callStack, requestIdentifier);
-    else
-        InspectorInstrumentation::addMessageToConsole(page, source, LogMessageType, level, message, url, lineNumber, state, requestIdentifier);
-
-    if (!m_frame->settings() || m_frame->settings()->privateBrowsingEnabled())
-        return;
-
-    page->chrome()->client()->addMessageToConsole(source, level, message, lineNumber, url);
-
-    if (!m_frame->settings()->logsPageMessagesToSystemConsoleEnabled() && !shouldPrintExceptions())
-        return;
-
-    printSourceURLAndLine(url, lineNumber);
-    printMessageSourceAndLevelPrefix(source, level);
-
-    printf(" %s\n", message.utf8().data());
 }
 
 static void internalAddMessage(Page* page, MessageType type, MessageLevel level, ScriptState* state, PassRefPtr<ScriptArguments> prpArguments, bool acceptNoArguments = false, bool printTrace = false)
@@ -212,17 +89,17 @@ static void internalAddMessage(Page* page, MessageType type, MessageLevel level,
     bool gotMessage = arguments->getFirstArgumentAsString(message);
     InspectorInstrumentation::addMessageToConsole(page, ConsoleAPIMessageSource, type, level, message, state, arguments);
 
-    if (!page->settings() || page->settings()->privateBrowsingEnabled())
+    if (page->settings()->privateBrowsingEnabled())
         return;
 
     if (gotMessage)
         page->chrome()->client()->addMessageToConsole(ConsoleAPIMessageSource, type, level, message, lastCaller.lineNumber(), lastCaller.sourceURL());
 
-    if (!page->settings()->logsPageMessagesToSystemConsoleEnabled() && !Console::shouldPrintExceptions())
+    if (!page->settings()->logsPageMessagesToSystemConsoleEnabled() && !PageConsole::shouldPrintExceptions())
         return;
 
-    printSourceURLAndLine(lastCaller.sourceURL(), lastCaller.lineNumber());
-    printMessageSourceAndLevelPrefix(ConsoleAPIMessageSource, level);
+    PageConsole::printSourceURLAndLine(lastCaller.sourceURL(), lastCaller.lineNumber());
+    PageConsole::printMessageSourceAndLevelPrefix(ConsoleAPIMessageSource, level);
 
     for (size_t i = 0; i < arguments->argumentCount(); ++i) {
         String argAsString = arguments->argumentAt(i).toString(arguments->globalState());
@@ -388,36 +265,11 @@ void Console::groupEnd()
     InspectorInstrumentation::addMessageToConsole(page(), ConsoleAPIMessageSource, EndGroupMessageType, LogMessageLevel, String(), String(), 0);
 }
 
-// static
-void Console::mute()
-{
-    muteCount++;
-}
-
-// static
-void Console::unmute()
-{
-    ASSERT(muteCount > 0);
-    muteCount--;
-}
-
 PassRefPtr<MemoryInfo> Console::memory() const
 {
     // FIXME: Because we create a new object here each time,
     // console.memory !== console.memory, which seems wrong.
     return MemoryInfo::create(m_frame);
-}
-
-static bool printExceptions = false;
-
-bool Console::shouldPrintExceptions()
-{
-    return printExceptions;
-}
-
-void Console::setShouldPrintExceptions(bool print)
-{
-    printExceptions = print;
 }
 
 Page* Console::page() const

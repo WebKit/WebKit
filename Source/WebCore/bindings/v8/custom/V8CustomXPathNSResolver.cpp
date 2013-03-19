@@ -30,8 +30,10 @@
 #include "config.h"
 #include "V8CustomXPathNSResolver.h"
 
-#include "Console.h"
 #include "DOMWindow.h"
+#include "Frame.h"
+#include "Page.h"
+#include "PageConsole.h"
 #include "ScriptCallStack.h"
 #include "ScriptController.h"
 #include "ScriptExecutionContext.h"
@@ -69,7 +71,9 @@ String V8CustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     }
 
     if (lookupNamespaceURIFunc.IsEmpty() && !m_resolver->IsFunction()) {
-        activeDOMWindow(BindingState::instance())->console()->addMessage(JSMessageSource, ErrorMessageLevel, "XPathNSResolver does not have a lookupNamespaceURI method.");
+        Frame* frame = activeDOMWindow(BindingState::instance())->frame();
+        if (frame && frame->page())
+            frame->page()->console()->addMessage(JSMessageSource, ErrorMessageLevel, "XPathNSResolver does not have a lookupNamespaceURI method.");
         return String();
     }
 

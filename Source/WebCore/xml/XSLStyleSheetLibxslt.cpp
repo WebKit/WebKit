@@ -24,12 +24,12 @@
 
 #if ENABLE(XSLT)
 
-#include "Console.h"
-#include "DOMWindow.h"
 #include "CachedResourceLoader.h"
 #include "Document.h"
 #include "Frame.h"
 #include "Node.h"
+#include "Page.h"
+#include "PageConsole.h"
 #include "TransformSource.h"
 #include "XMLDocumentParser.h"
 #include "XMLDocumentParserScope.h"
@@ -144,9 +144,10 @@ bool XSLStyleSheet::parseString(const String& string)
         xmlFreeDoc(m_stylesheetDoc);
     m_stylesheetDocTaken = false;
 
-    Console* console = 0;
-    if (ownerDocument()->frame())
-        console = ownerDocument()->domWindow()->console();
+    PageConsole* console = 0;
+    Frame* frame = ownerDocument()->frame();
+    if (frame && frame->page())
+        console = frame->page()->console();
 
     XMLDocumentParserScope scope(cachedResourceLoader(), XSLTProcessor::genericErrorFunc, XSLTProcessor::parseErrorFunc, console);
 

@@ -42,7 +42,6 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Comment.h"
-#include "Console.h"
 #include "ContentSecurityPolicy.h"
 #include "ContextFeatures.h"
 #include "CookieJar.h"
@@ -124,6 +123,7 @@
 #include "NodeTraversal.h"
 #include "NodeWithIndex.h"
 #include "Page.h"
+#include "PageConsole.h"
 #include "PageGroup.h"
 #include "PageTransitionEvent.h"
 #include "PlatformKeyboardEvent.h"
@@ -4844,10 +4844,8 @@ void Document::addConsoleMessage(MessageSource source, MessageLevel level, const
         return;
     }
 
-    if (DOMWindow* window = domWindow()) {
-        if (Console* console = window->console())
-            console->addMessage(source, level, message, requestIdentifier, this);
-    }
+    if (Page* page = this->page())
+        page->console()->addMessage(source, level, message, requestIdentifier, this);
 }
 
 void Document::addMessage(MessageSource source, MessageLevel level, const String& message, const String& sourceURL, unsigned lineNumber, PassRefPtr<ScriptCallStack> callStack, ScriptState* state, unsigned long requestIdentifier)
@@ -4857,10 +4855,8 @@ void Document::addMessage(MessageSource source, MessageLevel level, const String
         return;
     }
 
-    if (DOMWindow* window = domWindow()) {
-        if (Console* console = window->console())
-            console->addMessage(source, level, message, sourceURL, lineNumber, callStack, state, requestIdentifier);
-    }
+    if (Page* page = this->page())
+        page->console()->addMessage(source, level, message, sourceURL, lineNumber, callStack, state, requestIdentifier);
 }
 
 const SecurityOrigin* Document::topOrigin() const

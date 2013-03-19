@@ -59,6 +59,7 @@ namespace WebCore {
     class Navigator;
     class Node;
     class Page;
+    class PageConsole;
     class Performance;
     class PostMessageTimer;
     class ScheduledAction;
@@ -233,6 +234,7 @@ namespace WebCore {
         PassRefPtr<WebKitPoint> webkitConvertPointFromNodeToPage(Node*, const WebKitPoint*) const;        
 
         Console* console() const;
+        PageConsole* pageConsole() const;
 
         void printErrorMessage(const String&);
         String crossDomainAccessErrorMessage(DOMWindow* activeWindow);

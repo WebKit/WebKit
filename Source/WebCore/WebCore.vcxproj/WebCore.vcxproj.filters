@@ -6696,6 +6696,9 @@
     <ClCompile Include="..\page\Page.cpp">
       <Filter>page</Filter>
     </ClCompile>
+    <ClCompile Include="..\page\PageConsole.cpp">
+      <Filter>page</Filter>
+    </ClCompile>
     <ClCompile Include="..\page\PageGroup.cpp">
       <Filter>page</Filter>
     </ClCompile>

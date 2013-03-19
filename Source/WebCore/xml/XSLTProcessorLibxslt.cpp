@@ -27,10 +27,10 @@
 #include "XSLTProcessor.h"
 
 #include "CachedResourceLoader.h"
-#include "Console.h"
-#include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
+#include "Page.h"
+#include "PageConsole.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
@@ -82,7 +82,7 @@ void XSLTProcessor::genericErrorFunc(void*, const char*, ...)
 
 void XSLTProcessor::parseErrorFunc(void* userData, xmlError* error)
 {
-    Console* console = static_cast<Console*>(userData);
+    PageConsole* console = static_cast<PageConsole*>(userData);
     if (!console)
         return;
 
@@ -137,9 +137,10 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
             globalCachedResourceLoader->printAccessDeniedMessage(url);
         }
 
-        Console* console = 0;
-        if (globalProcessor->xslStylesheet()->ownerDocument()->frame())
-            console = globalProcessor->xslStylesheet()->ownerDocument()->domWindow()->console();
+        PageConsole* console = 0;
+        Frame* frame = globalProcessor->xslStylesheet()->ownerDocument()->frame();
+        if (frame && frame->page())
+            console = frame->page()->console();
         xmlSetStructuredErrorFunc(console, XSLTProcessor::parseErrorFunc);
         xmlSetGenericErrorFunc(console, XSLTProcessor::genericErrorFunc);
 
