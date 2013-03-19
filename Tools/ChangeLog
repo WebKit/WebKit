@@ -1,3 +1,19 @@
+2013-03-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Style tweeks to default.css.
+        
+        Rubber-stamped by David Kilzer.
+        
+        Give visited links a different color to other links, so you can
+        see which builds you've viewed.
+        
+        Make the <small> text less tiny.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/default.css:
+        (small):
+        (a:link,a:visited,a:active):
+        (a:visited):
+
 2013-03-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the temporary hack for webkit-perf.appspot.com and cleanup the code

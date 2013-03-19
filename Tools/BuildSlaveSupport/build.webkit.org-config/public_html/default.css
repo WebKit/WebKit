@@ -11,6 +11,10 @@ body.interface {
     color: #333;
 }
 
+small {
+  font-size: 9px;
+}
+
 .auth {
     position: absolute;
     top: 5px;
@@ -18,7 +22,11 @@ body.interface {
 }
 
 a:link,a:visited,a:active {
-    color: #444;
+    color: #333;
+}
+
+a:visited {
+    color: #557;
 }
 
 table {
