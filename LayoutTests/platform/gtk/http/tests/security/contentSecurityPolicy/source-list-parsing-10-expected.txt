@@ -10,4 +10,4 @@ PASS
 --------
 Frame: '<!--framePath //<!--frame1-->-->'
 --------
-PASS
+FAIL
