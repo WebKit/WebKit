@@ -111,6 +111,7 @@ localizedStrings["Clear Console"] = "Clear Console";
 localizedStrings["Clear console"] = "Clear console";
 localizedStrings["Clear audit results."] = "Clear audit results.";
 localizedStrings["Clear console log."] = "Clear console log.";
+localizedStrings["Clear object store"] = "Clear object store";
 localizedStrings["Clear"] = "Clear";
 localizedStrings["Click to open a colorpicker. Shift-click to change color format"] = "Click to open a colorpicker. Shift-click to change color format";
 localizedStrings["Closure"] = "Closure";

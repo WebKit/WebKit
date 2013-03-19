@@ -179,12 +179,30 @@ function test()
 
         function step2()
         {
-            clearDatabase();
+            runClearTests();
         }
     }
 
-    function clearDatabase()
+    function runClearTests()
     {
+        indexedDBModel.clearObjectStore(databaseId, objectStoreName, step1);
+        InspectorTest.addResult("Cleared data from objectStore");
+
+        function step1() {
+            indexedDBModel.addEventListener(WebInspector.IndexedDBModel.EventTypes.DatabaseLoaded, step2);
+            indexedDBModel.refreshDatabase(databaseId);
+        }
+        function step2() {
+            indexedDBModel.removeEventListener(WebInspector.IndexedDBModel.EventTypes.DatabaseLoaded, step2);
+            loadValuesAndDump(false, null, 0, 10, step3);
+        }
+
+        function step3() {
+            deleteDatabase();
+        }
+    }
+
+    function deleteDatabase() {
         InspectorTest.deleteObjectStoreIndex(mainFrameId, databaseName, objectStoreName, indexName, step2);
 
         function step2()

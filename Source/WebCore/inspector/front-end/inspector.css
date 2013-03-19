@@ -2242,6 +2242,10 @@ body.inactive li.selected .bubble.search-matches {
     -webkit-mask-position: -128px 0;
 }
 
+.clear-storage-status-bar-item .glyph {
+    -webkit-mask-position: -64px 0;
+}
+
 .refresh-storage-status-bar-item .glyph {
     -webkit-mask-position: 0 0;
 }

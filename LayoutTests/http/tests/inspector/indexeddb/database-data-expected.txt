@@ -61,4 +61,7 @@ Dumping values, fromIndex = true, skipCount = 0, pageSize = 2, idbKeyRange = nul
     Key = value_01, primaryKey = key_01, value = {"key":"key_01","value":"value_01"}
     Key = value_02, primaryKey = key_02, value = {"key":"key_02","value":"value_02"}
     hasMore = true
+Cleared data from objectStore
+Dumping values, fromIndex = false, skipCount = 0, pageSize = 10, idbKeyRange = null
+    hasMore = false
 

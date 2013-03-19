@@ -163,6 +163,15 @@ WebInspector.IndexedDBModel.prototype = {
     },
 
     /**
+     * @param {WebInspector.IndexedDBModel.DatabaseId} databaseId
+     * @param {WebInspector.IndexedDBModel.ObjectStore} objectStore
+     */
+    clearObjectStore: function(databaseId, objectStoreName, callback)
+    {
+        IndexedDBAgent.clearObjectStore(databaseId.securityOrigin, databaseId.name, objectStoreName, callback);
+    },
+
+    /**
      * @param {WebInspector.Event} event
      */
     _securityOriginAdded: function(event)
@@ -289,7 +298,7 @@ WebInspector.IndexedDBModel.prototype = {
             if (!this._databaseNamesBySecurityOrigin[databaseId.securityOrigin])
                 return;
             var databaseModel = new WebInspector.IndexedDBModel.Database(databaseId, databaseWithObjectStores.version, databaseWithObjectStores.intVersion);
-            this._databases.put(databaseId, databaseModel); 
+            this._databases.put(databaseId, databaseModel);
             for (var i = 0; i < databaseWithObjectStores.objectStores.length; ++i) {
                 var objectStore = databaseWithObjectStores.objectStores[i];
                 var objectStoreIDBKeyPath = WebInspector.IndexedDBModel.idbKeyPathFromKeyPath(objectStore.keyPath);
@@ -359,7 +368,7 @@ WebInspector.IndexedDBModel.prototype = {
                 console.error("IndexedDBAgent error: " + error);
                 return;
             }
-            
+
             if (!this._databaseNamesBySecurityOrigin[databaseId.securityOrigin])
                 return;
             var entries = [];
