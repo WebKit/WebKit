@@ -1281,7 +1281,7 @@ void IDBDatabaseBackendImpl::deleteDatabase(PassRefPtr<IDBCallbacks> prpCallback
     if (isDeleteDatabaseBlocked()) {
         for (DatabaseCallbacksSet::const_iterator it = m_databaseCallbacksSet.begin(); it != m_databaseCallbacksSet.end(); ++it) {
             // Front end ensures the event is not fired at connections that have closePending set.
-            (*it)->onVersionChange(NoStringVersion);
+            (*it)->onVersionChange(m_metadata.intVersion, IDBDatabaseMetadata::NoIntVersion);
         }
         // FIXME: Only fire onBlocked if there are open connections after the
         // VersionChangeEvents are received, not just set up to fire.

@@ -307,7 +307,8 @@ void IDBDatabase::onVersionChange(int64_t oldVersion, int64_t newVersion)
     if (m_closePending)
         return;
 
-    enqueueEvent(IDBVersionChangeEvent::create(IDBAny::create(oldVersion), IDBAny::create(newVersion), eventNames().versionchangeEvent));
+    RefPtr<IDBAny> newVersionAny = newVersion == IDBDatabaseMetadata::NoIntVersion ? IDBAny::createNull() : IDBAny::create(newVersion);
+    enqueueEvent(IDBVersionChangeEvent::create(IDBAny::create(oldVersion), newVersionAny.release(), eventNames().versionchangeEvent));
 }
 
 void IDBDatabase::onVersionChange(const String& newVersion)
