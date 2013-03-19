@@ -2950,6 +2950,8 @@ void FrameLoader::applyUserAgent(ResourceRequest& request)
 
 bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, const KURL& url, unsigned long requestIdentifier)
 {
+    FeatureObserver::observe(m_frame->document(), FeatureObserver::XFrameOptions);
+
     Frame* topFrame = m_frame->tree()->top();
     if (m_frame == topFrame)
         return false;
@@ -2957,9 +2959,16 @@ bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, con
     if (equalIgnoringCase(content, "deny"))
         return true;
     else if (equalIgnoringCase(content, "sameorigin")) {
+        FeatureObserver::observe(m_frame->document(), FeatureObserver::XFrameOptionsSameOrigin);
         RefPtr<SecurityOrigin> origin = SecurityOrigin::create(url);
         if (!origin->isSameSchemeHostPort(topFrame->document()->securityOrigin()))
             return true;
+        for (Frame* frame = m_frame->tree()->parent(); frame; frame = frame->tree()->parent()) {
+            if (!origin->isSameSchemeHostPort(frame->document()->securityOrigin())) {
+                FeatureObserver::observe(m_frame->document(), FeatureObserver::XFrameOptionsSameOriginWithBadAncestorChain);
+                break;
+            }
+        }
     } else if (!equalIgnoringCase(content, "allowall")) {
         String message = "Invalid 'X-Frame-Options' header encountered when loading '" + url.elidedString() + "': '" + content + "' is not a recognized directive. The header will be ignored.";
         m_frame->document()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, message, requestIdentifier);
