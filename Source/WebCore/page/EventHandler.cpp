@@ -2475,8 +2475,13 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
         adjustGesturePosition(gestureEvent, adjustedPoint);
 #endif
         hitType |= HitTestRequest::Active;
-    } else if (gestureEvent.type() == PlatformEvent::GestureTap || gestureEvent.type() == PlatformEvent::GestureTapDownCancel)
+    } else if (gestureEvent.type() == PlatformEvent::GestureTapDownCancel)
         hitType |= HitTestRequest::Release;
+    else if (gestureEvent.type() == PlatformEvent::GestureTap) {
+        // The mouseup event synthesized for this gesture will clear the active state of the
+        // targeted node, so performing a ReadOnly hit test here is fine.
+        hitType |= HitTestRequest::ReadOnly;
+    }
     else
         hitType |= HitTestRequest::Active | HitTestRequest::ReadOnly;
 
