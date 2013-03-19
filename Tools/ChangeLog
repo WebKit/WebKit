@@ -1,3 +1,13 @@
+2013-03-19  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, rolling out r146101.
+        https://bugs.webkit.org/show_bug.cgi?id=111884
+
+        re-enable custom freetype on asan; this needs to be on
+        now that the bot is running lucid.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2013-03-19  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] Enable USE_SYSTEM_MALLOC by default
