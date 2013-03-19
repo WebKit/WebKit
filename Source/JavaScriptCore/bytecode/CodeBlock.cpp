@@ -2498,7 +2498,7 @@ void CodeBlock::stronglyVisitWeakReferences(SlotVisitor& visitor)
 
 HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset)
 {
-    RELEASE_ASSERT(bytecodeOffset < instructions().size());
+    ASSERT(bytecodeOffset < instructions().size());
 
     if (!m_rareData)
         return 0;
