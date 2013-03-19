@@ -263,12 +263,12 @@ private:
 };
 
 
-HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, HTMLDocument* document, bool, const HTMLParserOptions& options)
+HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, HTMLDocument* document, ParserContentPolicy parserContentPolicy, bool, const HTMLParserOptions& options)
     : m_framesetOk(true)
 #ifndef NDEBUG
     , m_isAttached(true)
 #endif
-    , m_tree(document, options.maximumDOMTreeDepth)
+    , m_tree(document, parserContentPolicy, options.maximumDOMTreeDepth)
     , m_insertionMode(InitialMode)
     , m_originalInsertionMode(InitialMode)
     , m_shouldSkipLeadingNewline(false)
@@ -280,13 +280,13 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, HTMLDocument* docum
 
 // FIXME: Member variables should be grouped into self-initializing structs to
 // minimize code duplication between these constructors.
-HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission, const HTMLParserOptions& options)
+HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, DocumentFragment* fragment, Element* contextElement, ParserContentPolicy parserContentPolicy, const HTMLParserOptions& options)
     : m_framesetOk(true)
 #ifndef NDEBUG
     , m_isAttached(true)
 #endif
-    , m_fragmentContext(fragment, contextElement, scriptingPermission)
-    , m_tree(fragment, scriptingPermission, options.maximumDOMTreeDepth)
+    , m_fragmentContext(fragment, contextElement)
+    , m_tree(fragment, parserContentPolicy, options.maximumDOMTreeDepth)
     , m_insertionMode(InitialMode)
     , m_originalInsertionMode(InitialMode)
     , m_shouldSkipLeadingNewline(false)
@@ -333,14 +333,12 @@ void HTMLTreeBuilder::detach()
 HTMLTreeBuilder::FragmentParsingContext::FragmentParsingContext()
     : m_fragment(0)
     , m_contextElement(0)
-    , m_scriptingPermission(AllowScriptingContent)
 {
 }
 
-HTMLTreeBuilder::FragmentParsingContext::FragmentParsingContext(DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission)
+HTMLTreeBuilder::FragmentParsingContext::FragmentParsingContext(DocumentFragment* fragment, Element* contextElement)
     : m_fragment(fragment)
     , m_contextElement(contextElement)
-    , m_scriptingPermission(scriptingPermission)
 {
     ASSERT(!fragment->hasChildNodes());
 }
@@ -790,7 +788,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken* token)
     if (token->name() == appletTag
         || token->name() == embedTag
         || token->name() == objectTag) {
-        if (isParsingFragment() && !pluginContentIsAllowed(m_fragmentContext.scriptingPermission()))
+        if (!pluginContentIsAllowed(m_tree.parserContentPolicy()))
             return;
     }
     if (token->name() == appletTag
@@ -2180,10 +2178,9 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken* token)
         if (token->name() == scriptTag) {
             // Pause ourselves so that parsing stops until the script can be processed by the caller.
             ASSERT(m_tree.currentStackItem()->hasTagName(scriptTag));
-            m_scriptToProcess = m_tree.currentElement();
+            if (scriptingContentIsAllowed(m_tree.parserContentPolicy()))
+                m_scriptToProcess = m_tree.currentElement();
             m_tree.openElements()->pop();
-            if (isParsingFragment() && !scriptingContentIsAllowed(m_fragmentContext.scriptingPermission()))
-                m_scriptToProcess->removeChildren();
             setInsertionMode(m_originalInsertionMode);
 
             if (m_parser->tokenizer()) {

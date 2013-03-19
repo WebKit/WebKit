@@ -76,7 +76,7 @@ public:
     // Exposed for HTMLParserScheduler
     void resumeParsingAfterYield();
 
-    static void parseDocumentFragment(const String&, DocumentFragment*, Element* contextElement, FragmentScriptingPermission = AllowScriptingContent);
+    static void parseDocumentFragment(const String&, DocumentFragment*, Element* contextElement, ParserContentPolicy = AllowScriptingContent);
 
     HTMLTokenizer* tokenizer() const { return m_tokenizer.get(); }
 
@@ -105,16 +105,16 @@ protected:
     virtual void finish() OVERRIDE;
 
     HTMLDocumentParser(HTMLDocument*, bool reportErrors);
-    HTMLDocumentParser(DocumentFragment*, Element* contextElement, FragmentScriptingPermission);
+    HTMLDocumentParser(DocumentFragment*, Element* contextElement, ParserContentPolicy);
 
     HTMLTreeBuilder* treeBuilder() const { return m_treeBuilder.get(); }
 
     void forcePlaintextForTextDocument();
 
 private:
-    static PassRefPtr<HTMLDocumentParser> create(DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission permission)
+    static PassRefPtr<HTMLDocumentParser> create(DocumentFragment* fragment, Element* contextElement, ParserContentPolicy parserContentPolicy)
     {
-        return adoptRef(new HTMLDocumentParser(fragment, contextElement, permission));
+        return adoptRef(new HTMLDocumentParser(fragment, contextElement, parserContentPolicy));
     }
 
     // DocumentParser

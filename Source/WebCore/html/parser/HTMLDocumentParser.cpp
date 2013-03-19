@@ -83,7 +83,7 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors
     , m_token(m_options.useThreading ? nullptr : adoptPtr(new HTMLToken))
     , m_tokenizer(m_options.useThreading ? nullptr : HTMLTokenizer::create(m_options))
     , m_scriptRunner(HTMLScriptRunner::create(document, this))
-    , m_treeBuilder(HTMLTreeBuilder::create(this, document, reportErrors, m_options))
+    , m_treeBuilder(HTMLTreeBuilder::create(this, document, parserContentPolicy(), reportErrors, m_options))
     , m_parserScheduler(HTMLParserScheduler::create(this))
     , m_xssAuditorDelegate(document)
 #if ENABLE(THREADED_HTML_PARSER)
@@ -100,12 +100,12 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors
 
 // FIXME: Member variables should be grouped into self-initializing structs to
 // minimize code duplication between these constructors.
-HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission)
-    : ScriptableDocumentParser(fragment->document())
+HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* fragment, Element* contextElement, ParserContentPolicy parserContentPolicy)
+    : ScriptableDocumentParser(fragment->document(), parserContentPolicy)
     , m_options(fragment->document())
     , m_token(adoptPtr(new HTMLToken))
     , m_tokenizer(HTMLTokenizer::create(m_options))
-    , m_treeBuilder(HTMLTreeBuilder::create(this, fragment, contextElement, scriptingPermission, m_options))
+    , m_treeBuilder(HTMLTreeBuilder::create(this, fragment, contextElement, this->parserContentPolicy(), m_options))
     , m_xssAuditorDelegate(fragment->document())
 #if ENABLE(THREADED_HTML_PARSER)
     , m_weakFactory(this)
@@ -261,6 +261,8 @@ void HTMLDocumentParser::resumeParsingAfterYield()
 
 void HTMLDocumentParser::runScriptsForPausedTreeBuilder()
 {
+    ASSERT(scriptingContentIsAllowed(parserContentPolicy()));
+
     TextPosition scriptStartPosition = TextPosition::belowRangePosition();
     RefPtr<Element> scriptElement = m_treeBuilder->takeScriptToProcess(scriptStartPosition);
     // We will not have a scriptRunner when parsing a DocumentFragment.
@@ -952,9 +954,9 @@ void HTMLDocumentParser::executeScriptsWaitingForStylesheets()
         resumeParsingAfterScriptExecution();
 }
 
-void HTMLDocumentParser::parseDocumentFragment(const String& source, DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission)
+void HTMLDocumentParser::parseDocumentFragment(const String& source, DocumentFragment* fragment, Element* contextElement, ParserContentPolicy parserContentPolicy)
 {
-    RefPtr<HTMLDocumentParser> parser = HTMLDocumentParser::create(fragment, contextElement, scriptingPermission);
+    RefPtr<HTMLDocumentParser> parser = HTMLDocumentParser::create(fragment, contextElement, parserContentPolicy);
     parser->insert(source); // Use insert() so that the parser will not yield.
     parser->finish();
     ASSERT(!parser->processingData()); // Make sure we're done. <rdar://problem/3963151>

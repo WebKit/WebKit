@@ -483,7 +483,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
                     if (DocumentLoader* loader = frame->loader()->documentLoader())
                         loader->addAllArchiveResources(coreArchive.get());
 
-                    fragment = createFragmentFromMarkup(frame->document(), markupString, mainResource->url(), DisallowScriptingAndPluginContentIfNeeded);
+                    fragment = createFragmentFromMarkup(frame->document(), markupString, mainResource->url(), DisallowScriptingAndPluginContent);
                     [markupString release];
                 } else if (MIMETypeRegistry::isSupportedImageMIMEType(MIMEType))
                    fragment = documentFragmentWithImageResource(frame, mainResource);                    
@@ -522,7 +522,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
             }
         }
         if ([HTMLString length] != 0 &&
-            (fragment = createFragmentFromMarkup(frame->document(), HTMLString, "", DisallowScriptingAndPluginContentIfNeeded)))
+            (fragment = createFragmentFromMarkup(frame->document(), HTMLString, "", DisallowScriptingAndPluginContent)))
             return fragment.release();
     }
 

@@ -1019,57 +1019,61 @@ bool Element::shouldInvalidateDistributionWhenAttributeChanged(ElementShadow* el
 // It is a simple solution that has the advantage of not requiring any
 // code or configuration change if a new event handler is defined.
 
-static bool isEventHandlerAttribute(const QualifiedName& name)
+static inline bool isEventHandlerAttribute(const Attribute& attribute)
 {
-    return name.namespaceURI().isNull() && name.localName().startsWith("on");
+    return attribute.name().namespaceURI().isNull() && attribute.name().localName().startsWith("on");
 }
 
-// FIXME: Share code with Element::isURLAttribute.
-static bool isAttributeToRemove(const QualifiedName& name, const AtomicString& value)
+bool Element::isJavaScriptURLAttribute(const Attribute& attribute)
 {
-    return (name.localName() == hrefAttr.localName() || name.localName() == nohrefAttr.localName()
-        || name == srcAttr || name == actionAttr || name == formactionAttr) && protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(value));
+    if (!isURLAttribute(attribute))
+        return false;
+    if (!protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(attribute.value())))
+        return false;
+    return true;
 }
 
-void Element::parserSetAttributes(const Vector<Attribute>& attributeVector, FragmentScriptingPermission scriptingPermission)
+bool Element::isJavaScriptAttribute(const Attribute& attribute)
+{
+    if (isEventHandlerAttribute(attribute))
+        return true;
+    if (isJavaScriptURLAttribute(attribute))
+        return true;
+    return false;
+}
+
+void Element::stripJavaScriptAttributes(Vector<Attribute>& attributeVector)
+{
+    size_t destination = 0;
+    for (size_t source = 0; source < attributeVector.size(); ++source) {
+        if (isJavaScriptAttribute(attributeVector[source]))
+            continue;
+
+        if (source != destination)
+            attributeVector[destination] = attributeVector[source];
+
+        ++destination;
+    }
+    attributeVector.shrink(destination);
+}
+
+void Element::parserSetAttributes(const Vector<Attribute>& attributeVector)
 {
     ASSERT(!inDocument());
     ASSERT(!parentNode());
-
     ASSERT(!m_elementData);
 
     if (attributeVector.isEmpty())
         return;
 
-    Vector<Attribute> filteredAttributes = attributeVector;
-
-    // If the element is created as result of a paste or drag-n-drop operation
-    // we want to remove all the script and event handlers.
-    if (!scriptingContentIsAllowed(scriptingPermission)) {
-        size_t i = 0;
-        while (i < filteredAttributes.size()) {
-            Attribute& attribute = filteredAttributes[i];
-            if (isEventHandlerAttribute(attribute.name())) {
-                filteredAttributes.remove(i);
-                continue;
-            }
-
-            if (isAttributeToRemove(attribute.name(), attribute.value()))
-                attribute.setValue(emptyAtom);
-            i++;
-        }
-    }
-
     if (document() && document()->sharedObjectPool())
-        m_elementData = document()->sharedObjectPool()->cachedShareableElementDataWithAttributes(filteredAttributes);
+        m_elementData = document()->sharedObjectPool()->cachedShareableElementDataWithAttributes(attributeVector);
     else
-        m_elementData = ShareableElementData::createWithAttributes(filteredAttributes);
+        m_elementData = ShareableElementData::createWithAttributes(attributeVector);
 
-    // Iterate over the set of attributes we already have on the stack in case
-    // attributeChanged mutates m_elementData.
-    // FIXME: Find a way so we don't have to do this.
-    for (unsigned i = 0; i < filteredAttributes.size(); ++i)
-        attributeChanged(filteredAttributes[i].name(), filteredAttributes[i].value());
+    // Use attributeVector instead of m_elementData because attributeChanged might modify m_elementData.
+    for (unsigned i = 0; i < attributeVector.size(); ++i)
+        attributeChanged(attributeVector[i].name(), attributeVector[i].value());
 }
 
 bool Element::hasAttributes() const

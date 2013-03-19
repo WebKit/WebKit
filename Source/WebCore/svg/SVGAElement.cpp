@@ -50,6 +50,8 @@
 
 namespace WebCore {
 
+using namespace HTMLNames;
+
 // Animated property definitions
 DEFINE_ANIMATED_STRING(SVGAElement, SVGNames::targetAttr, SVGTarget, svgTarget)
 DEFINE_ANIMATED_STRING(SVGAElement, XLinkNames::hrefAttr, Href, href)
@@ -204,6 +206,11 @@ bool SVGAElement::isFocusable() const
         return false;
     
     return SVGElement::isFocusable();
+}
+
+bool SVGAElement::isURLAttribute(const Attribute& attribute) const
+{
+    return attribute.name().localName() == hrefAttr || SVGStyledTransformableElement::isURLAttribute(attribute);
 }
 
 bool SVGAElement::isMouseFocusable() const

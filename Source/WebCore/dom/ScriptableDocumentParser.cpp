@@ -26,12 +26,20 @@
 #include "config.h"
 #include "ScriptableDocumentParser.h"
 
+#include "Document.h"
+#include "Frame.h"
+#include "ScriptController.h"
+#include "Settings.h"
+
 namespace WebCore {
 
-ScriptableDocumentParser::ScriptableDocumentParser(Document* document)
+ScriptableDocumentParser::ScriptableDocumentParser(Document* document, ParserContentPolicy parserContentPolicy)
     : DecodedDataDocumentParser(document)
     , m_wasCreatedByScript(false)
+    , m_parserContentPolicy(parserContentPolicy)
 {
+    if (!pluginContentIsAllowed(m_parserContentPolicy) && (!document->settings() || document->settings()->unsafePluginPastingEnabled()))
+        m_parserContentPolicy = allowPluginContent(m_parserContentPolicy);
 }
 
 };

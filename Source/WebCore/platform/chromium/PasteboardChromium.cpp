@@ -187,7 +187,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
         WebKit::WebURL url;
         WebKit::WebString markup = WebKit::Platform::current()->clipboard()->readHTML(buffer, &url, &fragmentStart, &fragmentEnd);
         if (!markup.isEmpty()) {
-            if (RefPtr<DocumentFragment> fragment = createFragmentFromMarkupWithContext(frame->document(), markup, fragmentStart, fragmentEnd, KURL(url), DisallowScriptingAndPluginContentIfNeeded))
+            if (RefPtr<DocumentFragment> fragment = createFragmentFromMarkupWithContext(frame->document(), markup, fragmentStart, fragmentEnd, KURL(url), DisallowScriptingAndPluginContent))
                 return fragment.release();
         }
     }

@@ -172,7 +172,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
     chosePlainText = false;
 
     if (dataObject->hasMarkup()) {
-        RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(frame->document(), dataObject->markup(), "", DisallowScriptingAndPluginContentIfNeeded);
+        RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(frame->document(), dataObject->markup(), "", DisallowScriptingAndPluginContent);
         if (fragment)
             return fragment.release();
     }

@@ -64,6 +64,13 @@ using namespace std;
 
 namespace WebCore {
 
+static inline void setAttributes(Element* element, Vector<Attribute>& attributeVector, ParserContentPolicy parserContentPolicy)
+{
+    if (!scriptingContentIsAllowed(parserContentPolicy))
+        element->stripJavaScriptAttributes(attributeVector);
+    element->parserSetAttributes(attributeVector);
+}
+
 class EntityResolver : public QXmlStreamEntityResolver {
     virtual QString resolveUndeclaredEntity(const QString &name);
 };
@@ -104,13 +111,12 @@ XMLDocumentParser::XMLDocumentParser(Document* document, FrameView* frameView)
     , m_pendingScript(0)
     , m_scriptStartPosition(TextPosition::belowRangePosition())
     , m_parsingFragment(false)
-    , m_scriptingPermission(AllowScriptingContent)
 {
     m_stream.setEntityResolver(new EntityResolver);
 }
 
-XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parentElement, FragmentScriptingPermission permission)
-    : ScriptableDocumentParser(fragment->document())
+XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parentElement, ParserContentPolicy parserContentPolicy)
+    : ScriptableDocumentParser(fragment->document(), parserContentPolicy)
     , m_view(0)
     , m_wroteText(false)
     , m_currentNode(fragment)
@@ -126,7 +132,6 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parent
     , m_pendingScript(0)
     , m_scriptStartPosition(TextPosition::belowRangePosition())
     , m_parsingFragment(true)
-    , m_scriptingPermission(permission)
 {
     fragment->ref();
 
@@ -330,7 +335,7 @@ static inline String prefixFromQName(const QString& qName)
         return qName.left(offset);
 }
 
-static inline void handleNamespaceAttributes(Vector<Attribute, 8>& prefixedAttributes, const QXmlStreamNamespaceDeclarations &ns, ExceptionCode& ec)
+static inline void handleNamespaceAttributes(Vector<Attribute>& prefixedAttributes, const QXmlStreamNamespaceDeclarations &ns, ExceptionCode& ec)
 {
     for (int i = 0; i < ns.count(); ++i) {
         const QXmlStreamNamespaceDeclaration &decl = ns[i];
@@ -346,7 +351,7 @@ static inline void handleNamespaceAttributes(Vector<Attribute, 8>& prefixedAttri
     }
 }
 
-static inline void handleElementAttributes(Vector<Attribute, 8>& prefixedAttributes, const QXmlStreamAttributes &attrs, ExceptionCode& ec)
+static inline void handleElementAttributes(Vector<Attribute>& prefixedAttributes, const QXmlStreamAttributes &attrs, ExceptionCode& ec)
 {
     for (int i = 0; i < attrs.count(); ++i) {
         const QXmlStreamAttribute &attr = attrs[i];
@@ -470,17 +475,17 @@ void XMLDocumentParser::parseStartElement()
     bool isFirstElement = !m_sawFirstElement;
     m_sawFirstElement = true;
 
-    Vector<Attribute, 8> prefixedAttributes;
+    Vector<Attribute> prefixedAttributes;
     ExceptionCode ec = 0;
     handleNamespaceAttributes(prefixedAttributes, m_stream.namespaceDeclarations(), ec);
     if (ec) {
-        newElement->parserSetAttributes(prefixedAttributes, m_scriptingPermission);
+        setAttributes(newElement.get(), prefixedAttributes, parserContentPolicy());
         stopParsing();
         return;
     }
 
     handleElementAttributes(prefixedAttributes, m_stream.attributes(), ec);
-    newElement->parserSetAttributes(prefixedAttributes, m_scriptingPermission);
+    setAttributes(newElement.get(), prefixedAttributes, parserContentPolicy());
     if (ec) {
         stopParsing();
         return;
@@ -510,7 +515,7 @@ void XMLDocumentParser::parseEndElement()
     RefPtr<ContainerNode> n = m_currentNode;
     n->finishParsingChildren();
 
-    if (!scriptingContentIsAllowed(m_scriptingPermission) && n->isElementNode() && toScriptElement(toElement(n.get()))) {
+    if (!scriptingContentIsAllowed(parserContentPolicy()) && n->isElementNode() && toScriptElement(toElement(n.get()))) {
         popCurrentNode();
         n->remove(IGNORE_EXCEPTION);
         return;

@@ -668,16 +668,13 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     return createMarkupInternal(document, range, updatedRange, nodes, shouldAnnotate, convertBlocksToInlines, shouldResolveURLs);
 }
 
-PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document* document, const String& markup, const String& baseURL, FragmentScriptingPermission scriptingPermission)
+PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document* document, const String& markup, const String& baseURL, ParserContentPolicy parserContentPolicy)
 {
     // We use a fake body element here to trick the HTML parser to using the InBody insertion mode.
     RefPtr<HTMLBodyElement> fakeBody = HTMLBodyElement::create(document);
     RefPtr<DocumentFragment> fragment = DocumentFragment::create(document);
 
-    if (scriptingPermission == DisallowScriptingAndPluginContentIfNeeded && (!document->settings() || document->settings()->unsafePluginPastingEnabled()))
-        scriptingPermission = DisallowScriptingContent;
-
-    fragment->parseHTML(markup, fakeBody.get(), scriptingPermission);
+    fragment->parseHTML(markup, fakeBody.get(), parserContentPolicy);
 
     if (!baseURL.isEmpty() && baseURL != blankURL() && baseURL != document->baseURL())
         completeURLs(fragment.get(), baseURL);
@@ -725,7 +722,7 @@ static void trimFragment(DocumentFragment* fragment, Node* nodeBeforeContext, No
 }
 
 PassRefPtr<DocumentFragment> createFragmentFromMarkupWithContext(Document* document, const String& markup, unsigned fragmentStart, unsigned fragmentEnd,
-    const String& baseURL, FragmentScriptingPermission scriptingPermission)
+    const String& baseURL, ParserContentPolicy parserContentPolicy)
 {
     // FIXME: Need to handle the case where the markup already contains these markers.
 
@@ -736,7 +733,7 @@ PassRefPtr<DocumentFragment> createFragmentFromMarkupWithContext(Document* docum
     MarkupAccumulator::appendComment(taggedMarkup, fragmentMarkerTag);
     taggedMarkup.append(markup.substring(fragmentEnd));
 
-    RefPtr<DocumentFragment> taggedFragment = createFragmentFromMarkup(document, taggedMarkup.toString(), baseURL, scriptingPermission);
+    RefPtr<DocumentFragment> taggedFragment = createFragmentFromMarkup(document, taggedMarkup.toString(), baseURL, parserContentPolicy);
     RefPtr<Document> taggedDocument = Document::create(0, KURL());
     taggedDocument->setContextFeatures(document->contextFeatures());
     taggedDocument->takeAllChildrenFrom(taggedFragment.get());
@@ -986,7 +983,7 @@ String urlToMarkup(const KURL& url, const String& title)
     return markup.toString();
 }
 
-PassRefPtr<DocumentFragment> createFragmentForInnerOuterHTML(const String& markup, Element* contextElement, FragmentScriptingPermission scriptingPermission, ExceptionCode& ec)
+PassRefPtr<DocumentFragment> createFragmentForInnerOuterHTML(const String& markup, Element* contextElement, ParserContentPolicy parserContentPolicy, ExceptionCode& ec)
 {
     Document* document = contextElement->document();
 #if ENABLE(TEMPLATE_ELEMENT)
@@ -996,11 +993,11 @@ PassRefPtr<DocumentFragment> createFragmentForInnerOuterHTML(const String& marku
     RefPtr<DocumentFragment> fragment = DocumentFragment::create(document);
 
     if (document->isHTMLDocument()) {
-        fragment->parseHTML(markup, contextElement, scriptingPermission);
+        fragment->parseHTML(markup, contextElement, parserContentPolicy);
         return fragment;
     }
 
-    bool wasValid = fragment->parseXML(markup, contextElement, scriptingPermission);
+    bool wasValid = fragment->parseXML(markup, contextElement, parserContentPolicy);
     if (!wasValid) {
         ec = SYNTAX_ERR;
         return 0;
@@ -1043,7 +1040,7 @@ static inline void removeElementPreservingChildren(PassRefPtr<DocumentFragment> 
     fragment->removeChild(element, ASSERT_NO_EXCEPTION);
 }
 
-PassRefPtr<DocumentFragment> createContextualFragment(const String& markup, HTMLElement* element, FragmentScriptingPermission scriptingPermission, ExceptionCode& ec)
+PassRefPtr<DocumentFragment> createContextualFragment(const String& markup, HTMLElement* element, ParserContentPolicy parserContentPolicy, ExceptionCode& ec)
 {
     ASSERT(element);
     if (element->ieForbidsInsertHTML()) {
@@ -1057,7 +1054,7 @@ PassRefPtr<DocumentFragment> createContextualFragment(const String& markup, HTML
         return 0;
     }
 
-    RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(markup, element, scriptingPermission, ec);
+    RefPtr<DocumentFragment> fragment = createFragmentForInnerOuterHTML(markup, element, parserContentPolicy, ec);
     if (!fragment)
         return 0;
 

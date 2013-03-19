@@ -965,11 +965,10 @@ void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Node* beforeC
 bool HTMLElement::isURLAttribute(const Attribute& attribute) const
 {
 #if ENABLE(MICRODATA)
-    return attribute.name() == itemidAttr;
-#else
-    UNUSED_PARAM(attribute);
-    return false;
+    if (attribute.name() == itemidAttr)
+        return true;
 #endif
+    return StyledElement::isURLAttribute(attribute);
 }
 
 #if ENABLE(MICRODATA)

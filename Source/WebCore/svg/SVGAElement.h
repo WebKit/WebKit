@@ -60,6 +60,7 @@ private:
     virtual bool isMouseFocusable() const;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isFocusable() const;
+    virtual bool isURLAttribute(const Attribute&) const;
 
     virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const;
 

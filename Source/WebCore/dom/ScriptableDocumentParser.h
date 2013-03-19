@@ -27,6 +27,7 @@
 #define ScriptableDocumentParser_h
 
 #include "DecodedDataDocumentParser.h"
+#include "FragmentScriptingPermission.h"
 #include <wtf/text/TextPosition.h>
 
 namespace WebCore {
@@ -50,14 +51,17 @@ public:
     void setWasCreatedByScript(bool wasCreatedByScript) { m_wasCreatedByScript = wasCreatedByScript; }
     bool wasCreatedByScript() const { return m_wasCreatedByScript; }
 
+    ParserContentPolicy parserContentPolicy() { return m_parserContentPolicy; }
+
 protected:
-    explicit ScriptableDocumentParser(Document*);
+    explicit ScriptableDocumentParser(Document*, ParserContentPolicy = AllowScriptingContent);
 
 private:
     virtual ScriptableDocumentParser* asScriptableDocumentParser() { return this; }
 
     // http://www.whatwg.org/specs/web-apps/current-work/#script-created-parser
     bool m_wasCreatedByScript;
+    ParserContentPolicy m_parserContentPolicy;
 };
 
 }

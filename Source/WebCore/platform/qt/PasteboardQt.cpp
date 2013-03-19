@@ -112,7 +112,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
     if (mimeData->hasHtml()) {
         QString html = mimeData->html();
         if (!html.isEmpty()) {
-            RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(frame->document(), html, "", DisallowScriptingAndPluginContentIfNeeded);
+            RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(frame->document(), html, "", DisallowScriptingAndPluginContent);
             if (fragment)
                 return fragment.release();
         }

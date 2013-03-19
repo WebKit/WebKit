@@ -58,13 +58,13 @@ class HTMLDocumentParser;
 class HTMLTreeBuilder {
     WTF_MAKE_NONCOPYABLE(HTMLTreeBuilder); WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<HTMLTreeBuilder> create(HTMLDocumentParser* parser, HTMLDocument* document, bool reportErrors, const HTMLParserOptions& options)
+    static PassOwnPtr<HTMLTreeBuilder> create(HTMLDocumentParser* parser, HTMLDocument* document, ParserContentPolicy parserContentPolicy, bool reportErrors, const HTMLParserOptions& options)
     {
-        return adoptPtr(new HTMLTreeBuilder(parser, document, reportErrors, options));
+        return adoptPtr(new HTMLTreeBuilder(parser, document, parserContentPolicy, reportErrors, options));
     }
-    static PassOwnPtr<HTMLTreeBuilder> create(HTMLDocumentParser* parser, DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission, const HTMLParserOptions& options)
+    static PassOwnPtr<HTMLTreeBuilder> create(HTMLDocumentParser* parser, DocumentFragment* fragment, Element* contextElement, ParserContentPolicy parserContentPolicy, const HTMLParserOptions& options)
     {
-        return adoptPtr(new HTMLTreeBuilder(parser, fragment, contextElement, scriptingPermission, options));
+        return adoptPtr(new HTMLTreeBuilder(parser, fragment, contextElement, parserContentPolicy, options));
     }
     ~HTMLTreeBuilder();
 
@@ -121,8 +121,8 @@ private:
         AfterAfterFramesetMode,
     };
 
-    HTMLTreeBuilder(HTMLDocumentParser*, HTMLDocument*, bool reportErrors, const HTMLParserOptions&);
-    HTMLTreeBuilder(HTMLDocumentParser*, DocumentFragment*, Element* contextElement, FragmentScriptingPermission, const HTMLParserOptions&);
+    HTMLTreeBuilder(HTMLDocumentParser*, HTMLDocument*, ParserContentPolicy, bool reportErrors, const HTMLParserOptions&);
+    HTMLTreeBuilder(HTMLDocumentParser*, DocumentFragment*, Element* contextElement, ParserContentPolicy, const HTMLParserOptions&);
 
     void processToken(AtomicHTMLToken*);
 
@@ -204,19 +204,15 @@ private:
         WTF_MAKE_NONCOPYABLE(FragmentParsingContext);
     public:
         FragmentParsingContext();
-        FragmentParsingContext(DocumentFragment*, Element* contextElement, FragmentScriptingPermission);
+        FragmentParsingContext(DocumentFragment*, Element* contextElement);
         ~FragmentParsingContext();
 
         DocumentFragment* fragment() const { return m_fragment; }
         Element* contextElement() const { ASSERT(m_fragment); return m_contextElement; }
-        FragmentScriptingPermission scriptingPermission() const { ASSERT(m_fragment); return m_scriptingPermission; }
 
     private:
         DocumentFragment* m_fragment;
         Element* m_contextElement;
-
-        // DisallowScriptingContent causes the Parser to remove children from <script> tags (so javascript doesn't show up in pastes).
-        FragmentScriptingPermission m_scriptingPermission;
     };
 
     bool m_framesetOk;

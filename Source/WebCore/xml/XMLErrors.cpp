@@ -93,7 +93,7 @@ static inline PassRefPtr<Element> createXHTMLParserErrorHeader(Document* doc, co
 
     Vector<Attribute> reportAttributes;
     reportAttributes.append(Attribute(styleAttr, "display: block; white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black"));
-    reportElement->parserSetAttributes(reportAttributes, DisallowScriptingContent);
+    reportElement->parserSetAttributes(reportAttributes);
 
     RefPtr<Element> h3 = doc->createElement(h3Tag, true);
     reportElement->parserAppendChild(h3.get());
@@ -102,7 +102,7 @@ static inline PassRefPtr<Element> createXHTMLParserErrorHeader(Document* doc, co
     RefPtr<Element> fixed = doc->createElement(divTag, true);
     Vector<Attribute> fixedAttributes;
     fixedAttributes.append(Attribute(styleAttr, "font-family:monospace;font-size:12px"));
-    fixed->parserSetAttributes(fixedAttributes, DisallowScriptingContent);
+    fixed->parserSetAttributes(fixedAttributes);
     reportElement->parserAppendChild(fixed.get());
 
     fixed->parserAppendChild(doc->createTextNode(errorMessages));
@@ -161,7 +161,7 @@ void XMLErrors::insertErrorMessageBlock()
         Vector<Attribute> attributes;
         attributes.append(Attribute(styleAttr, "white-space: normal"));
         RefPtr<Element> paragraph = m_document->createElement(pTag, true);
-        paragraph->parserSetAttributes(attributes, DisallowScriptingContent);
+        paragraph->parserSetAttributes(attributes);
         paragraph->parserAppendChild(m_document->createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."));
         reportElement->parserAppendChild(paragraph.release());
     }

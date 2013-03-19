@@ -378,7 +378,9 @@ public:
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) { }
 
     // Only called by the parser immediately after element construction.
-    void parserSetAttributes(const Vector<Attribute>&, FragmentScriptingPermission);
+    void parserSetAttributes(const Vector<Attribute>&);
+
+    void stripJavaScriptAttributes(Vector<Attribute>&);
 
     const ElementData* elementData() const { return m_elementData.get(); }
     UniqueElementData* ensureUniqueElementData();
@@ -719,6 +721,9 @@ private:
     void detachAttrNodeFromElementWithValue(Attr*, const AtomicString& value);
 
     void createRendererIfNeeded();
+
+    bool isJavaScriptAttribute(const Attribute&);
+    bool isJavaScriptURLAttribute(const Attribute&);
 
     RefPtr<ElementData> m_elementData;
 };

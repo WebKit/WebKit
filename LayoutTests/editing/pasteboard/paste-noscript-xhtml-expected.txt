@@ -45,7 +45,10 @@ Copied content:
 |   formaction="javascript:sayHello()"
 |   id="form1"
 |   style="width: 200px; height: 150px; background-color:#cee;"
-|   "This is a form<#selection-focus>"
+|   "This is a form. "
+|   <button>
+|     formaction="javascript:sayHello()"
+|     "Submit.<#selection-focus>"
 | "
 
 "
@@ -64,21 +67,19 @@ Pasted content:
 |   id="anchor1"
 |   "CNN"
 | <a>
-|   href=""
 |   id="anchor2"
 |   "Hello"
-| <script>
-| <script>
 | <iframe>
 |   id="iframe1"
-|   src=""
 |   style="width: 200px; height: 100px; background-color: rgb(204, 238, 238);"
 | <form>
-|   action=""
-|   formaction=""
+|   formaction="javascript:sayHello()"
 |   id="form1"
 |   style="width: 200px; height: 150px; background-color: rgb(204, 238, 238);"
-|   "This is a form<#selection-caret>"
+|   "This is a form."
+|   " "
+|   <button>
+|     "Submit.<#selection-caret>"
 
 FRAME 0:
 | <head>

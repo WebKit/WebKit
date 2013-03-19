@@ -367,6 +367,13 @@ private:
     unsigned m_currentOffset;
 };
 
+static inline void setAttributes(Element* element, Vector<Attribute>& attributeVector, ParserContentPolicy parserContentPolicy)
+{
+    if (!scriptingContentIsAllowed(parserContentPolicy))
+        element->stripJavaScriptAttributes(attributeVector);
+    element->parserSetAttributes(attributeVector);
+}
+
 static void switchToUTF16(xmlParserCtxtPtr ctxt)
 {
     // Hack around libxml2's lack of encoding overide support by manually
@@ -563,12 +570,11 @@ XMLDocumentParser::XMLDocumentParser(Document* document, FrameView* frameView)
     , m_pendingScript(0)
     , m_scriptStartPosition(TextPosition::belowRangePosition())
     , m_parsingFragment(false)
-    , m_scriptingPermission(AllowScriptingContent)
 {
 }
 
-XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parentElement, FragmentScriptingPermission scriptingPermission)
-    : ScriptableDocumentParser(fragment->document())
+XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parentElement, ParserContentPolicy parserContentPolicy)
+    : ScriptableDocumentParser(fragment->document(), parserContentPolicy)
     , m_view(0)
     , m_context(0)
     , m_pendingCallbacks(PendingCallbacks::create())
@@ -587,7 +593,6 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parent
     , m_pendingScript(0)
     , m_scriptStartPosition(TextPosition::belowRangePosition())
     , m_parsingFragment(true)
-    , m_scriptingPermission(scriptingPermission)
 {
     fragment->ref();
 
@@ -700,7 +705,7 @@ struct _xmlSAX2Namespace {
 };
 typedef struct _xmlSAX2Namespace xmlSAX2Namespace;
 
-static inline void handleNamespaceAttributes(Vector<Attribute, 8>& prefixedAttributes, const xmlChar** libxmlNamespaces, int nb_namespaces, ExceptionCode& ec)
+static inline void handleNamespaceAttributes(Vector<Attribute>& prefixedAttributes, const xmlChar** libxmlNamespaces, int nb_namespaces, ExceptionCode& ec)
 {
     xmlSAX2Namespace* namespaces = reinterpret_cast<xmlSAX2Namespace*>(libxmlNamespaces);
     for (int i = 0; i < nb_namespaces; i++) {
@@ -726,7 +731,7 @@ struct _xmlSAX2Attributes {
 };
 typedef struct _xmlSAX2Attributes xmlSAX2Attributes;
 
-static inline void handleElementAttributes(Vector<Attribute, 8>& prefixedAttributes, const xmlChar** libxmlAttributes, int nb_attributes, ExceptionCode& ec)
+static inline void handleElementAttributes(Vector<Attribute>& prefixedAttributes, const xmlChar** libxmlAttributes, int nb_attributes, ExceptionCode& ec)
 {
     xmlSAX2Attributes* attributes = reinterpret_cast<xmlSAX2Attributes*>(libxmlAttributes);
     for (int i = 0; i < nb_attributes; i++) {
@@ -797,17 +802,17 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
         return;
     }
 
-    Vector<Attribute, 8> prefixedAttributes;
+    Vector<Attribute> prefixedAttributes;
     ExceptionCode ec = 0;
     handleNamespaceAttributes(prefixedAttributes, libxmlNamespaces, nb_namespaces, ec);
     if (ec) {
-        newElement->parserSetAttributes(prefixedAttributes, m_scriptingPermission);
+        setAttributes(newElement.get(), prefixedAttributes, parserContentPolicy());
         stopParsing();
         return;
     }
 
     handleElementAttributes(prefixedAttributes, libxmlAttributes, nb_attributes, ec);
-    newElement->parserSetAttributes(prefixedAttributes, m_scriptingPermission);
+    setAttributes(newElement.get(), prefixedAttributes, parserContentPolicy());
     if (ec) {
         stopParsing();
         return;
@@ -863,7 +868,7 @@ void XMLDocumentParser::endElementNs()
     if (hackAroundLibXMLEntityParsingBug() && context()->depth <= depthTriggeringEntityExpansion())
         setDepthTriggeringEntityExpansion(-1);
 
-    if (!scriptingContentIsAllowed(m_scriptingPermission) && n->isElementNode() && toScriptElement(toElement(n.get()))) {
+    if (!scriptingContentIsAllowed(parserContentPolicy()) && n->isElementNode() && toScriptElement(toElement(n.get()))) {
         popCurrentNode();
         n->remove(IGNORE_EXCEPTION);
         return;

@@ -154,7 +154,7 @@ PassRefPtr<DocumentFragment> DragData::asFragment(Frame* frame, PassRefPtr<Range
         String html;
         KURL baseURL;
         m_platformDragData->htmlAndBaseURL(html, baseURL);
-        if (RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(frame->document(), html, baseURL, DisallowScriptingAndPluginContentIfNeeded))
+        if (RefPtr<DocumentFragment> fragment = createFragmentFromMarkup(frame->document(), html, baseURL, DisallowScriptingAndPluginContent))
             return fragment.release();
     }
 
