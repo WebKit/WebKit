@@ -677,14 +677,12 @@ WebInspector.CSSMetadata._propertyDataMap = {
  */
 WebInspector.CSSMetadata.keywordsForProperty = function(propertyName)
 {
-    var acceptedKeywords = ["initial"];
+    var acceptedKeywords = ["inherit", "initial"];
     var descriptor = WebInspector.CSSMetadata.descriptor(propertyName);
     if (descriptor && descriptor.values)
         acceptedKeywords.push.apply(acceptedKeywords, descriptor.values);
     if (propertyName in WebInspector.CSSMetadata._colorAwareProperties)
         acceptedKeywords.push.apply(acceptedKeywords, WebInspector.CSSMetadata._colors);
-    if (propertyName in WebInspector.CSSMetadata.InheritedProperties)
-        acceptedKeywords.push("inherit");
     return new WebInspector.CSSMetadata(acceptedKeywords);
 }
 
