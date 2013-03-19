@@ -60,7 +60,6 @@ static const char optionEnableThreadedCompositing[] = "--enable-threaded-composi
 static const char optionForceCompositingMode[] = "--force-compositing-mode";
 static const char optionEnableAccelerated2DCanvas[] = "--enable-accelerated-2d-canvas";
 static const char optionEnableDeferred2DCanvas[] = "--enable-deferred-2d-canvas";
-static const char optionEnableAcceleratedPainting[] = "--enable-accelerated-painting";
 static const char optionEnableAcceleratedCompositingForVideo[] = "--enable-accelerated-video";
 static const char optionEnableAcceleratedFixedPosition[] = "--enable-accelerated-fixed-position";
 static const char optionEnableAcceleratedOverflowScroll[] = "--enable-accelerated-overflow-scroll";
@@ -140,7 +139,6 @@ int main(int argc, char* argv[])
     bool threadedHTMLParser = true;
     bool accelerated2DCanvasEnabled = false;
     bool deferred2DCanvasEnabled = false;
-    bool acceleratedPaintingEnabled = false;
     bool perTilePaintingEnabled = false;
     bool deferredImageDecodingEnabled = false;
     bool stressOpt = false;
@@ -149,7 +147,6 @@ int main(int argc, char* argv[])
     string javaScriptFlags;
     bool encodeBinary = false;
     bool noTimeout = false;
-    bool acceleratedAnimationEnabled = false;
     for (int i = 1; i < argc; ++i) {
         string argument(argv[i]);
         if (argument == "-")
@@ -188,8 +185,6 @@ int main(int argc, char* argv[])
             accelerated2DCanvasEnabled = true;
         else if (argument == optionEnableDeferred2DCanvas)
             deferred2DCanvasEnabled = true;
-        else if (argument == optionEnableAcceleratedPainting)
-            acceleratedPaintingEnabled = true;
         else if (argument == optionEnablePerTilePainting)
             perTilePaintingEnabled = true;
         else if (argument == optionEnableDeferredImageDecoding)
@@ -234,8 +229,6 @@ int main(int argc, char* argv[])
         shell.setThreadedHTMLParser(threadedHTMLParser);
         shell.setAccelerated2dCanvasEnabled(accelerated2DCanvasEnabled);
         shell.setDeferred2dCanvasEnabled(deferred2DCanvasEnabled);
-        shell.setAcceleratedPaintingEnabled(acceleratedPaintingEnabled);
-        shell.setAcceleratedAnimationEnabled(acceleratedAnimationEnabled);
         shell.setPerTilePaintingEnabled(perTilePaintingEnabled);
         shell.setDeferredImageDecodingEnabled(deferredImageDecodingEnabled);
         shell.setJavaScriptFlags(javaScriptFlags);

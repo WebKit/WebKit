@@ -1,3 +1,22 @@
+2013-03-19  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove compositor settings that don't go through WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=112718
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main):
+        * DumpRenderTree/chromium/TestRunner/public/WebPreferences.h:
+        * DumpRenderTree/chromium/TestRunner/src/WebPreferences.cpp:
+        (WebTestRunner::WebPreferences::reset):
+        (WebTestRunner::WebPreferences::applyTo):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::resetWebSettings):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell):
+
 2013-03-19  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, rolling out r146101.

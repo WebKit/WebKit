@@ -1,3 +1,19 @@
+2013-03-19  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove compositor settings that don't go through WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=112718
+
+        Reviewed by Adam Barth.
+
+        This removes settings that used to propagate through WebLayerTreeView::Settings by way of WebViewImpl but are
+        now directly set by the embedder.
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::WebSettingsImpl):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+
 2013-03-19  Alpha Lam  <hclam@chromium.org>
 
         GIFImageReader to count frames and decode in one pass

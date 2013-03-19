@@ -122,9 +122,7 @@ public:
     void setThreadedHTMLParser(bool enabled) { m_threadedHTMLParser = enabled; }
     void setAccelerated2dCanvasEnabled(bool enabled) { m_accelerated2dCanvasEnabled = enabled; }
     void setDeferred2dCanvasEnabled(bool enabled) { m_deferred2dCanvasEnabled = enabled; }
-    void setAcceleratedPaintingEnabled(bool enabled) { m_acceleratedPaintingEnabled = enabled; }
     void setPerTilePaintingEnabled(bool enabled) { m_perTilePaintingEnabled = enabled; }
-    void setAcceleratedAnimationEnabled(bool enabled) { m_acceleratedAnimationEnabled = enabled; }
     void setDeferredImageDecodingEnabled(bool enabled) { m_deferredImageDecodingEnabled = enabled; }
 #if defined(OS_WIN)
     // Access to the finished event. Used by the static WatchDog thread.
@@ -219,9 +217,7 @@ private:
     bool m_threadedHTMLParser;
     bool m_accelerated2dCanvasEnabled;
     bool m_deferred2dCanvasEnabled;
-    bool m_acceleratedPaintingEnabled;
     bool m_perTilePaintingEnabled;
-    bool m_acceleratedAnimationEnabled;
     bool m_deferredImageDecodingEnabled;
     WebTestRunner::WebPreferences m_prefs;
     bool m_stressOpt;

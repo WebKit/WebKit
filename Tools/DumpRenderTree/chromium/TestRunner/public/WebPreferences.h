@@ -95,7 +95,6 @@ struct WEBTESTRUNNER_EXPORT WebPreferences {
     bool threadedHTMLParser;
     bool accelerated2dCanvasEnabled;
     bool deferred2dCanvasEnabled;
-    bool acceleratedPaintingEnabled;
     bool perTilePaintingEnabled;
     bool acceleratedAnimationEnabled;
     bool deferredImageDecodingEnabled;
