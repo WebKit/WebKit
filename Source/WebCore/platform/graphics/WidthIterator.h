@@ -61,13 +61,15 @@ public:
 
     static bool supportsTypesettingFeatures(const Font& font)
     {
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED <= 1080
-        return !font.typesettingFeatures();
-#else
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 1080
         if (!font.isPrinterFont())
             return !font.typesettingFeatures();
 
         return !(font.typesettingFeatures() & ~(Kerning | Ligatures));
+#elif PLATFORM(QT) && QT_VERSION >= 0x050100
+        return !(font.typesettingFeatures() & ~Kerning) && !font.isSmallCaps();
+#else
+        return !font.typesettingFeatures();
 #endif
     }
 
