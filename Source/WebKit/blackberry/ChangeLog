@@ -1,3 +1,17 @@
+2013-03-19  Chris Hutten-Czapski  <chutten@blackberry.com>
+
+        [BlackBerry] Don't handle keyboard scrolling shortcuts in webkit
+        https://bugs.webkit.org/show_bug.cgi?id=112716
+
+        Informally Reviewed by Mike Fenton (mifenton@rim.com)
+        Reviewed by Rob Buis.
+
+        The comment is right, this isn't the correct place to handle keyboard
+        scrolling shortcuts. That's what we have clients for.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::keyEvent):
+
 2013-03-19  Andy Chen  <andchen@blackberry.com>
 
         [BlackBerry] When selecting an object, assign focus to new node instead of clearing previous focused node

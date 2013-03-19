@@ -4273,54 +4273,6 @@ void WebPage::setForcedTextEncoding(const BlackBerry::Platform::String& encoding
         return d->focusedOrMainFrame()->loader()->reloadWithOverrideEncoding(encoding);
 }
 
-static void handleScrolling(unsigned character, WebPagePrivate* scroller)
-{
-    const int scrollFactor = 20;
-    int dx = 0, dy = 0;
-    switch (character) {
-    case KEYCODE_LEFT:
-        dx = -scrollFactor;
-        break;
-    case KEYCODE_RIGHT:
-        dx = scrollFactor;
-        break;
-    case KEYCODE_UP:
-        dy = -scrollFactor;
-        break;
-    case KEYCODE_DOWN:
-        dy = scrollFactor;
-        break;
-    case KEYCODE_PG_UP:
-        ASSERT(scroller);
-        dy = scrollFactor - scroller->actualVisibleSize().height();
-        break;
-    case KEYCODE_PG_DOWN:
-        ASSERT(scroller);
-        dy = scroller->actualVisibleSize().height() - scrollFactor;
-        break;
-    }
-
-    if (dx || dy) {
-        // Don't use the scrollBy function because it triggers the scroll as originating from BlackBerry
-        // but then it expects a separate invalidate which isn't sent in this case.
-        ASSERT(scroller && scroller->m_mainFrame && scroller->m_mainFrame->view());
-        IntPoint pos(scroller->scrollPosition() + IntSize(dx, dy));
-
-        // Prevent over scrolling for arrows and Page up/down.
-        if (pos.x() < 0)
-            pos.setX(0);
-        if (pos.y() < 0)
-            pos.setY(0);
-        if (pos.x() + scroller->actualVisibleSize().width() > scroller->contentsSize().width())
-            pos.setX(scroller->contentsSize().width() - scroller->actualVisibleSize().width());
-        if (pos.y() + scroller->actualVisibleSize().height() > scroller->contentsSize().height())
-            pos.setY(scroller->contentsSize().height() - scroller->actualVisibleSize().height());
-
-        scroller->m_mainFrame->view()->setScrollPosition(pos);
-        scroller->m_client->scrollChanged();
-    }
-}
-
 bool WebPage::keyEvent(const Platform::KeyboardEvent& keyboardEvent)
 {
     if (!d->m_mainFrame->view())
@@ -4331,16 +4283,7 @@ bool WebPage::keyEvent(const Platform::KeyboardEvent& keyboardEvent)
 
     ASSERT(d->m_page->focusController());
 
-    bool handled = d->m_inputHandler->handleKeyboardInput(keyboardEvent);
-
-    // This is hotkey handling and perhaps doesn't belong here.
-    if (!handled && keyboardEvent.type() == Platform::KeyboardEvent::KeyDown && !d->m_inputHandler->isInputMode() && !keyboardEvent.modifiers()) {
-        IntPoint previousPos = d->scrollPosition();
-        handleScrolling(keyboardEvent.character(), d);
-        handled = previousPos != d->scrollPosition();
-    }
-
-    return handled;
+    return d->m_inputHandler->handleKeyboardInput(keyboardEvent);
 }
 
 bool WebPage::deleteTextRelativeToCursor(unsigned int leftOffset, unsigned int rightOffset)
