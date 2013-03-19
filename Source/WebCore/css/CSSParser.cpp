@@ -2610,6 +2610,13 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         return false;
     }
 
+    case CSSPropertyWebkitGridAutoColumns:
+    case CSSPropertyWebkitGridAutoRows:
+        if (!cssGridLayoutEnabled())
+            return false;
+        parsedValue = parseGridTrackSize();
+        break;
+
     case CSSPropertyWebkitGridColumns:
     case CSSPropertyWebkitGridRows:
         if (!cssGridLayoutEnabled())
@@ -4735,52 +4742,45 @@ bool CSSParser::parseGridTrackList(CSSPropertyID propId, bool important)
 
     RefPtr<CSSValueList> values = CSSValueList::createSpaceSeparated();
     while (m_valueList->current()) {
-        if (!parseGridTrackGroup(values.get()))
+        RefPtr<CSSPrimitiveValue> primitiveValue = parseGridTrackSize();
+        if (!primitiveValue)
             return false;
 
-        m_valueList->next();
+        values->append(primitiveValue.release());
     }
     addProperty(propId, values.release(), important);
     return true;
 }
 
-bool CSSParser::parseGridTrackGroup(CSSValueList* values)
-{
-    return parseGridTrackMinMax(values);
-}
-
-bool CSSParser::parseGridTrackMinMax(CSSValueList* values)
+PassRefPtr<CSSPrimitiveValue> CSSParser::parseGridTrackSize()
 {
     CSSParserValue* currentValue = m_valueList->current();
-    if (currentValue->id == CSSValueAuto) {
-        values->append(cssValuePool().createIdentifierValue(CSSValueAuto));
-        return true;
-    }
+    m_valueList->next();
+
+    if (currentValue->id == CSSValueAuto)
+        return cssValuePool().createIdentifierValue(CSSValueAuto);
 
     if (currentValue->unit == CSSParserValue::Function && equalIgnoringCase(currentValue->function->name, "minmax(")) {
         // The spec defines the following grammar: minmax( <track-breadth> , <track-breadth> )
         CSSParserValueList* arguments = currentValue->function->args.get();
         if (!arguments || arguments->size() != 3 || !isComma(arguments->valueAt(1)))
-            return false;
+            return 0;
 
         RefPtr<CSSPrimitiveValue> minTrackBreadth = parseGridBreadth(arguments->valueAt(0));
         if (!minTrackBreadth)
-            return false;
+            return 0;
 
         RefPtr<CSSPrimitiveValue> maxTrackBreadth = parseGridBreadth(arguments->valueAt(2));
         if (!maxTrackBreadth)
-            return false;
+            return 0;
 
-        values->append(createPrimitiveValuePair(minTrackBreadth, maxTrackBreadth));
-        return true;
+        return createPrimitiveValuePair(minTrackBreadth, maxTrackBreadth);
     }
 
-    if (PassRefPtr<CSSPrimitiveValue> trackBreadth = parseGridBreadth(currentValue)) {
-        values->append(trackBreadth);
-        return true;
-    }
+    if (PassRefPtr<CSSPrimitiveValue> trackBreadth = parseGridBreadth(currentValue))
+        return trackBreadth;
 
-    return false;
+    return 0;
 }
 
 PassRefPtr<CSSPrimitiveValue> CSSParser::parseGridBreadth(CSSParserValue* currentValue)

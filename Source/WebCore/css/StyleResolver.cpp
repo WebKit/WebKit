@@ -2092,8 +2092,12 @@ static bool createGridTrackBreadth(CSSPrimitiveValue* primitiveValue, const Styl
     return true;
 }
 
-static bool createGridTrackMinMax(CSSPrimitiveValue* primitiveValue, const StyleResolver::State& state, GridTrackSize& trackSize)
+static bool createGridTrackSize(CSSValue* value, GridTrackSize& trackSize, const StyleResolver::State& state)
 {
+    if (!value->isPrimitiveValue())
+        return false;
+
+    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     Pair* minMaxTrackBreadth = primitiveValue->getPairValue();
     if (!minMaxTrackBreadth) {
         Length workingLength;
@@ -2113,25 +2117,6 @@ static bool createGridTrackMinMax(CSSPrimitiveValue* primitiveValue, const Style
     return true;
 }
 
-static bool createGridTrackGroup(CSSValue* value, const StyleResolver::State& state, Vector<GridTrackSize>& trackSizes)
-{
-    if (!value->isValueList())
-        return false;
-
-    for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
-        CSSValue* currValue = i.value();
-        if (!currValue->isPrimitiveValue())
-            return false;
-
-        GridTrackSize trackSize;
-        if (!createGridTrackMinMax(static_cast<CSSPrimitiveValue*>(currValue), state, trackSize))
-            return false;
-
-        trackSizes.append(trackSize);
-    }
-    return true;
-}
-
 static bool createGridTrackList(CSSValue* value, Vector<GridTrackSize>& trackSizes, const StyleResolver::State& state)
 {
     // Handle 'none'.
@@ -2140,7 +2125,18 @@ static bool createGridTrackList(CSSValue* value, Vector<GridTrackSize>& trackSiz
         return primitiveValue->getIdent() == CSSValueNone;
     }
 
-    return createGridTrackGroup(value, state, trackSizes);
+    if (!value->isValueList())
+        return false;
+
+    for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
+        CSSValue* currValue = i.value();
+        GridTrackSize trackSize;
+        if (!createGridTrackSize(currValue, trackSize, state))
+            return false;
+
+        trackSizes.append(trackSize);
+    }
+    return true;
 }
 
 
@@ -2888,6 +2884,20 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     }
 #endif
+    case CSSPropertyWebkitGridAutoColumns: {
+        GridTrackSize trackSize;
+        if (!createGridTrackSize(value, trackSize, state))
+            return;
+        state.style()->setGridAutoColumns(trackSize);
+        return;
+    }
+    case CSSPropertyWebkitGridAutoRows: {
+        GridTrackSize trackSize;
+        if (!createGridTrackSize(value, trackSize, state))
+            return;
+        state.style()->setGridAutoRows(trackSize);
+        return;
+    }
     case CSSPropertyWebkitGridColumns: {
         Vector<GridTrackSize> trackSizes;
         if (!createGridTrackList(value, trackSizes, state))

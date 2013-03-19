@@ -34,6 +34,8 @@ StyleGridData::StyleGridData()
     : m_gridColumns(RenderStyle::initialGridColumns())
     , m_gridRows(RenderStyle::initialGridRows())
     , m_gridAutoFlow(RenderStyle::initialGridAutoFlow())
+    , m_gridAutoRows(RenderStyle::initialGridAutoRows())
+    , m_gridAutoColumns(RenderStyle::initialGridAutoColumns())
 {
 }
 
@@ -42,6 +44,8 @@ StyleGridData::StyleGridData(const StyleGridData& o)
     , m_gridColumns(o.m_gridColumns)
     , m_gridRows(o.m_gridRows)
     , m_gridAutoFlow(o.m_gridAutoFlow)
+    , m_gridAutoRows(o.m_gridAutoRows)
+    , m_gridAutoColumns(o.m_gridAutoColumns)
 {
 }
 

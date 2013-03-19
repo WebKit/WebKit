@@ -777,6 +777,8 @@ public:
     const Vector<GridTrackSize>& gridColumns() const { return rareNonInheritedData->m_grid->m_gridColumns; }
     const Vector<GridTrackSize>& gridRows() const { return rareNonInheritedData->m_grid->m_gridRows; }
     GridAutoFlow gridAutoFlow() const { return rareNonInheritedData->m_grid->m_gridAutoFlow; }
+    const GridTrackSize& gridAutoColumns() const { return rareNonInheritedData->m_grid->m_gridAutoColumns; }
+    const GridTrackSize& gridAutoRows() const { return rareNonInheritedData->m_grid->m_gridAutoRows; }
 
     const GridPosition& gridItemStart() const { return rareNonInheritedData->m_gridItem->m_gridStart; }
     const GridPosition& gridItemEnd() const { return rareNonInheritedData->m_gridItem->m_gridEnd; }
@@ -1287,6 +1289,8 @@ public:
     void setFlexDirection(EFlexDirection direction) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexDirection, direction); }
     void setFlexWrap(EFlexWrap w) { SET_VAR(rareNonInheritedData.access()->m_flexibleBox, m_flexWrap, w); }
     void setJustifyContent(EJustifyContent p) { SET_VAR(rareNonInheritedData, m_justifyContent, p); }
+    void setGridAutoColumns(const GridTrackSize& length) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridAutoColumns, length); }
+    void setGridAutoRows(const GridTrackSize& length) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridAutoRows, length); }
     void setGridColumns(const Vector<GridTrackSize>& lengths) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridColumns, lengths); }
     void setGridRows(const Vector<GridTrackSize>& lengths) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridRows, lengths); }
     void setGridAutoFlow(GridAutoFlow flow) { SET_VAR(rareNonInheritedData.access()->m_grid, m_gridAutoFlow, flow); }
@@ -1707,6 +1711,9 @@ public:
     static Vector<GridTrackSize> initialGridRows() { return Vector<GridTrackSize>(); }
 
     static GridAutoFlow initialGridAutoFlow() { return AutoFlowNone; }
+
+    static GridTrackSize initialGridAutoColumns() { return GridTrackSize(Auto); }
+    static GridTrackSize initialGridAutoRows() { return GridTrackSize(Auto); }
 
     // 'auto' is the default.
     static GridPosition initialGridPosition() { return GridPosition(); }

@@ -286,7 +286,9 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitFontKerning,
     CSSPropertyWebkitFontSmoothing,
     CSSPropertyWebkitFontVariantLigatures,
+    CSSPropertyWebkitGridAutoColumns,
     CSSPropertyWebkitGridAutoFlow,
+    CSSPropertyWebkitGridAutoRows,
     CSSPropertyWebkitGridColumns,
     CSSPropertyWebkitGridRows,
     CSSPropertyWebkitGridStart,
@@ -1039,7 +1041,7 @@ static PassRefPtr<CSSValue> valueForGridTrackBreadth(const Length& trackBreadth,
     return zoomAdjustedPixelValueForLength(trackBreadth, style);
 }
 
-static PassRefPtr<CSSValue> valueForGridTrackMinMax(const GridTrackSize& trackSize, const RenderStyle* style, RenderView* renderView)
+static PassRefPtr<CSSValue> valueForGridTrackSize(const GridTrackSize& trackSize, const RenderStyle* style, RenderView* renderView)
 {
     switch (trackSize.type()) {
     case LengthTrackSizing:
@@ -1054,21 +1056,16 @@ static PassRefPtr<CSSValue> valueForGridTrackMinMax(const GridTrackSize& trackSi
     return 0;
 }
 
-static PassRefPtr<CSSValue> valueForGridTrackGroup(const Vector<GridTrackSize>& trackSizes, const RenderStyle* style, RenderView* renderView)
-{
-    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
-    for (size_t i = 0; i < trackSizes.size(); ++i)
-        list->append(valueForGridTrackMinMax(trackSizes[i], style, renderView));
-    return list.release();
-}
-
 static PassRefPtr<CSSValue> valueForGridTrackList(const Vector<GridTrackSize>& trackSizes, const RenderStyle* style, RenderView *renderView)
 {
     // Handle the 'none' case here.
     if (!trackSizes.size())
         return cssValuePool().createIdentifierValue(CSSValueNone);
 
-    return valueForGridTrackGroup(trackSizes, style, renderView);
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    for (size_t i = 0; i < trackSizes.size(); ++i)
+        list->append(valueForGridTrackSize(trackSizes[i], style, renderView));
+    return list.release();
 }
 
 static PassRefPtr<CSSValue> valueForGridPosition(const GridPosition& position)
@@ -1932,8 +1929,12 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             }
             return list.release();
         }
+        case CSSPropertyWebkitGridAutoColumns:
+            return valueForGridTrackSize(style->gridAutoColumns(), style.get(), m_node->document()->renderView());
         case CSSPropertyWebkitGridAutoFlow:
             return cssValuePool().createValue(style->gridAutoFlow());
+        case CSSPropertyWebkitGridAutoRows:
+            return valueForGridTrackSize(style->gridAutoRows(), style.get(), m_node->document()->renderView());
         case CSSPropertyWebkitGridColumns:
             return valueForGridTrackList(style->gridColumns(), style.get(), m_node->document()->renderView());
         case CSSPropertyWebkitGridRows:

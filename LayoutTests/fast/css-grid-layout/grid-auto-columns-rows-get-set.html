@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+.gridAutoFixedFixed {
+    -webkit-grid-auto-rows: 30px;
+    -webkit-grid-auto-columns: 50px;
+}
+
+.gridAutoMinMax {
+    -webkit-grid-auto-rows: minmax(10%, 15px);
+    -webkit-grid-auto-columns: minmax(30%, 100px);
+}
+
+.gridAutoMinMaxContent {
+    -webkit-grid-auto-rows: -webkit-min-content;
+    -webkit-grid-auto-columns: -webkit-max-content;
+}
+</style>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div class="grid gridAutoFixedFixed" id="gridAutoFixedFixed"></div>
+<div class="grid gridAutoMinMax" id="gridAutoMinMax"></div>
+<div class="grid gridAutoMinMaxContent" id="gridAutoMinMaxContent"></div>
+<script>
+description('Test that setting and getting grid-auto-columns and grid-auto-rows works as expected');
+
+debug("Test getting -webkit-grid-auto-columns and -webkit-grid-auto-rows set through CSS");
+var gridAutoFixedFixed = document.getElementById("gridAutoFixedFixed");
+shouldBe("getComputedStyle(gridAutoFixedFixed, '').getPropertyValue('-webkit-grid-auto-rows')", "'30px'");
+shouldBe("getComputedStyle(gridAutoFixedFixed, '').getPropertyValue('-webkit-grid-auto-columns')", "'50px'");
+
+var gridAutoMinMax = document.getElementById("gridAutoMinMax");
+shouldBe("getComputedStyle(gridAutoMinMax, '').getPropertyValue('-webkit-grid-auto-rows')", "'minmax(10%, 15px)'");
+shouldBe("getComputedStyle(gridAutoMinMax, '').getPropertyValue('-webkit-grid-auto-columns')", "'minmax(30%, 100px)'");
+
+var gridAutoMinMaxContent = document.getElementById("gridAutoMinMaxContent");
+shouldBe("getComputedStyle(gridAutoMinMaxContent, '').getPropertyValue('-webkit-grid-auto-rows')", "'-webkit-min-content'");
+shouldBe("getComputedStyle(gridAutoMinMaxContent, '').getPropertyValue('-webkit-grid-auto-columns')", "'-webkit-max-content'");
+
+debug("");
+debug("Test the initial value");
+var element = document.createElement("div");
+document.body.appendChild(element);
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns')", "'auto'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-rows')", "'auto'");
+
+debug("");
+debug("Test getting and setting -webkit-grid-auto-columns and -webkit-grid-auto-rows through JS");
+element.style.font = "10px Ahem";
+element.style.webkitGridAutoColumns = "18em";
+element.style.webkitGridAutoRows = "66em";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns')", "'180px'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-rows')", "'660px'");
+
+element = document.createElement("div");
+document.body.appendChild(element);
+element.style.webkitGridAutoColumns = "minmax(-webkit-min-content, 8vh)";
+element.style.webkitGridAutoRows = "minmax(10vw, -webkit-min-content)";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns')", "'minmax(-webkit-min-content, 48px)'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-rows')", "'minmax(80px, -webkit-min-content)'");
+
+element = document.createElement("div");
+document.body.appendChild(element);
+element.style.webkitGridAutoColumns = "minmax(-webkit-min-content, -webkit-max-content)";
+element.style.webkitGridAutoRows = "minmax(-webkit-max-content, -webkit-min-content)";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns')", "'minmax(-webkit-min-content, -webkit-max-content)'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-rows')", "'minmax(-webkit-max-content, -webkit-min-content)'");
+
+debug("");
+debug("Test setting grid-auto-columns and grid-auto-rows to bad minmax value through JS");
+element = document.createElement("div");
+document.body.appendChild(element);
+// No comma.
+element.style.webkitGridAutoColumns = "minmax(10px 20px)";
+// Only 1 argument provided.
+element.style.webkitGridAutoRows = "minmax(10px)";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns')", "'auto'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-rows')", "'auto'");
+
+element = document.createElement("div");
+document.body.appendChild(element);
+// Nested minmax.
+element.style.webkitGridAutoColumns = "minmax(minmax(10px, 20px), 20px)";
+// Only 2 arguments are allowed.
+element.style.webkitGridAutoRows = "minmax(10px, 20px, 30px)";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns')", "'auto'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-rows')", "'auto'");
+
+element = document.createElement("div");
+document.body.appendChild(element);
+// No breadth value.
+element.style.webkitGridAutoColumns = "minmax()";
+// No comma.
+element.style.webkitGridAutoRows = "minmax(30px 30% 30em)";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns')", "'auto'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-rows')", "'auto'");
+
+element = document.createElement("div");
+document.body.appendChild(element);
+// Auto is not allowed inside minmax.
+element.style.webkitGridAutoColumns = "minmax(auto, 8vh)";
+element.style.webkitGridAutoRows = "minmax(10vw, auto)";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns')", "'auto'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-rows')", "'auto'");
+
+element = document.createElement("div");
+document.body.appendChild(element);
+// None is not allowed for grid-auto-{rows|columns}.
+element.style.webkitGridAutoColumns = "none";
+element.style.webkitGridAutoRows = "none";
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-columns')", "'auto'");
+shouldBe("getComputedStyle(element, '').getPropertyValue('-webkit-grid-auto-rows')", "'auto'");
+
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

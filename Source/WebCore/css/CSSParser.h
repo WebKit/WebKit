@@ -158,8 +158,7 @@ public:
     bool cssGridLayoutEnabled() const;
     bool parseGridItemPositionShorthand(CSSPropertyID, bool important);
     bool parseGridTrackList(CSSPropertyID, bool important);
-    bool parseGridTrackGroup(CSSValueList*);
-    bool parseGridTrackMinMax(CSSValueList*);
+    PassRefPtr<CSSPrimitiveValue> parseGridTrackSize();
     PassRefPtr<CSSPrimitiveValue> parseGridBreadth(CSSParserValue*);
 
     bool parseDashboardRegions(CSSPropertyID, bool important);

@@ -41,7 +41,7 @@ public:
 
     bool operator==(const StyleGridData& o) const
     {
-        return m_gridColumns == o.m_gridColumns && m_gridRows == o.m_gridRows && m_gridAutoFlow == o.m_gridAutoFlow;
+        return m_gridColumns == o.m_gridColumns && m_gridRows == o.m_gridRows && m_gridAutoFlow == o.m_gridAutoFlow && m_gridAutoRows == o.m_gridAutoRows && m_gridAutoColumns == o.m_gridAutoColumns;
     }
 
     bool operator!=(const StyleGridData& o) const
@@ -54,6 +54,9 @@ public:
     Vector<GridTrackSize> m_gridRows;
 
     GridAutoFlow m_gridAutoFlow;
+
+    GridTrackSize m_gridAutoRows;
+    GridTrackSize m_gridAutoColumns;
 
 private:
     StyleGridData();
