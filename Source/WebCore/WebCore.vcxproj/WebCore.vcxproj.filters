@@ -6859,6 +6859,12 @@
     <ClCompile Include="..\platform\graphics\ca\win\PlatformCAFiltersWin.cpp">
       <Filter>platform\graphics\ca\win</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\image-decoders\ImageDecoder.cpp">
+      <Filter>platform\image-decoders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\image-decoders\ImageDecoder.h">
+      <Filter>platform\image-decoders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\CSSGrammar.h">
@@ -15301,12 +15307,6 @@
     </CustomBuildStep>
     <CustomBuildStep Include="..\platform\network\curl\ResourceResponse.h">
       <Filter>platform\network\curl</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="..\platform\image-decoders\ImageDecoder.cpp">
-      <Filter>platform\image-decoders</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="..\platform\image-decoders\ImageDecoder.h">
-      <Filter>platform\image-decoders</Filter>
     </CustomBuildStep>
     <CustomBuildStep Include="..\platform\image-decoders\gif\GIFImageDecoder.h">
       <Filter>platform\image-decoders\gif</Filter>
