@@ -1,0 +1,41 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="extensions-test.js"></script>
+<script type="text/javascript">
+
+function extension_testEvalInIFrame(nextTest) 
+{
+    var url = 'http://127.0.0.1:8000/inspector/resources/extensions-frame-eval.html';
+    var origin = "http://127.0.0.1:8000"
+    var options = {
+        frameURL: url
+    };
+    var loc = "window.location.pathname";
+    webInspector.inspectedWindow.eval(loc, options, callbackAndNextTest(extension_onEval, nextTest));
+}
+
+function extension_testEvalInIFrameBadOption(nextTest) 
+{
+    var url = 'http://127.0.0.1:8000/inspector/resources/extensions-frame-eval.html';
+    var origin = "http://127.0.0.1:8000"
+    var options = {
+        frameURL: url,
+        scriptExecutionContext: "bogus"
+    };
+    var loc = "window.location.pathname";
+    webInspector.inspectedWindow.eval(loc, options, callbackAndNextTest(extension_onEval, nextTest));
+}
+
+function extension_onEval(value, isException)
+{
+    output("Evaluate: " + JSON.stringify(value) + " (exception: " + isException + ")");
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests WebInspector extension API</p>
+<iframe src="resources/extensions-frame-eval.html"></iframe>
+</body>
+</html>

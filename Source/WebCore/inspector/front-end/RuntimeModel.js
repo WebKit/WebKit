@@ -74,12 +74,11 @@ WebInspector.RuntimeModel.prototype = {
 
     /**
      * @param {WebInspector.ResourceTreeFrame} frame
-     * @param {string} securityOrigin
+     * @return {WebInspector.FrameExecutionContextList}
      */
-    contextByFrameAndSecurityOrigin: function(frame, securityOrigin)
+    contextListByFrame: function(frame)
     {
-        var frameContext = this._frameIdToContextList[frame.id];
-        return frameContext && frameContext.contextBySecurityOrigin(securityOrigin);
+        return this._frameIdToContextList[frame.id];
     },
 
     _frameAdded: function(event)
@@ -411,6 +410,11 @@ WebInspector.FrameExecutionContextList.prototype =
     executionContexts: function()
     {
         return this._executionContexts;
+    },
+
+    mainWorldContext: function() 
+    {
+        return this._executionContexts[0];
     },
 
     /**

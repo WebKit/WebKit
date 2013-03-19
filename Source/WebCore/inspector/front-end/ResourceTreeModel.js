@@ -301,6 +301,14 @@ WebInspector.ResourceTreeModel.prototype = {
     },
 
     /**
+     * @return {Array.<WebInspector.ResourceTreeFrame>}
+     */
+    frames: function() 
+    {
+        return Object.values(this._frames);
+    },
+
+    /**
      * @param {WebInspector.Event} event
      */
     _consoleMessageAdded: function(event)
