@@ -137,9 +137,9 @@ static EditingBehaviorType editingBehaviorTypeForPlatform()
 
 static const double defaultIncrementalRenderingSuppressionTimeoutInSeconds = 5;
 #if USE(UNIFIED_TEXT_CHECKING)
-static const double defaultUnifiedTextCheckerEnabled = true;
+static const bool defaultUnifiedTextCheckerEnabled = true;
 #else
-static const double defaultUnifiedTextCheckerEnabled = false;
+static const bool defaultUnifiedTextCheckerEnabled = false;
 #endif
 #if PLATFORM(CHROMIUM)
 #if OS(MAC_OS_X)
