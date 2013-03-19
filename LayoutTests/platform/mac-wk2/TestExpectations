@@ -321,6 +321,9 @@ webkit.org/b/97124 [ Debug ] fast/loader/dynamic-iframe-extra-back-forward-item.
 webkit.org/b/97124 [ Debug ] fast/events/pageshow-pagehide-on-back-uncached.html [ Pass Crash ]
 webkit.org/b/97124 [ Debug ] svg/animations/mozilla/animateMotion-by-1.svg [ Pass Crash ]
 
+webkit.org/b/112642 [ Debug ] editing/deleting/paste-with-transparent-background-color.html [ Crash Pass ]
+webkit.org/b/112642 [ Debug ] editing/pasteboard/5780697-1.html [ Crash Pass ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

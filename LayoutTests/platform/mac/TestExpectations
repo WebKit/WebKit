@@ -992,8 +992,6 @@ platform/mac/editing/spelling/autocorrection-simple.html
 platform/mac/editing/spelling/delete-autocorrected-word-1.html
 platform/mac/editing/spelling/delete-autocorrected-word-2.html
 
-webkit.org/b/112642 [ Debug ] editing/deleting/paste-with-transparent-background-color.html [ Crash Pass ]
-
 # Mac does not have global selections.
 editing/pasteboard/paste-global-selection.html
 
