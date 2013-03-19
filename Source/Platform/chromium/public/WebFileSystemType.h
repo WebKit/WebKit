@@ -31,8 +31,8 @@
 #ifndef WebFileSystemType_h
 #define WebFileSystemType_h
 
-// TODO(pilgrim) Uncomment this once all embedders have been updated to use this new enum
-// #define WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
+// TODO(pilgrim) Clean up everything around this ifdef
+#define WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
 
 namespace WebKit {
 
