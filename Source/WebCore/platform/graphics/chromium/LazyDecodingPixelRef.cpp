@@ -29,6 +29,7 @@
 #include "ImageDecoder.h"
 #include "ImageDecodingStore.h"
 #include "ImageFrameGenerator.h"
+#include "SkData.h"
 #include "TraceEvent.h"
 #include <wtf/MainThread.h>
 
@@ -54,6 +55,18 @@ bool LazyDecodingPixelRef::isScaled(const SkISize& fullSize) const
 bool LazyDecodingPixelRef::isClipped() const
 {
     return m_scaledSize.width() != m_scaledSubset.width() || m_scaledSize.height() != m_scaledSubset.height();
+}
+
+SkData* LazyDecodingPixelRef::onRefEncodedData()
+{
+    RefPtr<SharedBuffer> buffer = 0;
+    bool allDataReceived = false;
+    m_frameGenerator->copyData(&buffer, &allDataReceived);
+    if (buffer && allDataReceived) {
+        SkData* skdata = SkData::NewWithCopy((void*)buffer->data(), buffer->size());
+        return skdata;
+    }
+    return 0;
 }
 
 void* LazyDecodingPixelRef::onLockPixels(SkColorTable**)

@@ -38,6 +38,8 @@
 
 using skia::LazyPixelRef;
 
+class SkData;
+
 namespace WebCore {
 
 class ImageFrameGenerator;
@@ -62,6 +64,8 @@ protected:
     virtual void* onLockPixels(SkColorTable**);
     virtual void onUnlockPixels();
     virtual bool onLockPixelsAreWritable() const;
+
+    virtual SkData* onRefEncodedData() SK_OVERRIDE;
 
 private:
     RefPtr<ImageFrameGenerator> m_frameGenerator;

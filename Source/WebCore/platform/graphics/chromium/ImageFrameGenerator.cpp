@@ -69,6 +69,14 @@ void ImageFrameGenerator::setData(PassRefPtr<SharedBuffer> data, bool allDataRec
     m_data.setData(data.get(), allDataReceived);
 }
 
+void ImageFrameGenerator::copyData(RefPtr<SharedBuffer>* data, bool* allDataReceived)
+{
+    SharedBuffer* buffer = 0;
+    m_data.data(&buffer, allDataReceived);
+    if (buffer)
+        *data = buffer->copy();
+}
+
 const ScaledImageFragment* ImageFrameGenerator::decodeAndScale(const SkISize& scaledSize)
 {
     // Prevents concurrent decode or scale operations on the same image data.
