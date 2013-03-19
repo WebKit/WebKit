@@ -1,0 +1,52 @@
+<html>
+<head>
+<style>
+* {
+    background-color: papayawhip;
+}
+</style>
+<script src="../../../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../../../http/tests/inspector/elements-test.js"></script>
+<script>
+function createShadowRoot()
+{
+    var root = host.webkitCreateShadowRoot();
+    root.appendChild(document.createElement('content'));
+    var styles = document.createElement('style');
+    styles.textContent = '@host { * { border: 1px solid black; background-color: red } } content::-webkit-distributed(div) { font-size: 24px }';
+    root.appendChild(styles);
+    root.appendChild(document.createElement('content'));
+}
+
+function test()
+{
+    InspectorTest.runTestSuite([
+        function testInit(next)
+        {
+            WebInspector.settings.showShadowDOM.set(true);
+            InspectorTest.evaluateInPage("createShadowRoot()", callback);
+            function callback()
+            {
+                InspectorTest.selectNodeAndWaitForStyles("host", next);
+            }
+        },
+
+        function testDumpStyles(next)
+        {
+            InspectorTest.dumpSelectedElementStyles(true);
+            WebInspector.settings.showShadowDOM.set(false);
+            next();
+        }
+    ]);
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that @host-provided styles are displayed in the Styles pane. <a href="https://bugs.webkit.org/show_bug.cgi?id=112664">Bug 112664</a>
+</p>
+
+<div id="host" style="background-color: white;">Content</div>
+</body>
+</html>

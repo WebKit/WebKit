@@ -1,0 +1,39 @@
+Tests that @host-provided styles are displayed in the Styles pane. Bug 112664
+
+Content
+
+Running: testInit
+
+Running: testDumpStyles
+[expanded] 
+element.style  { ()
+background-color: white;
+
+======== Matched CSS Rules ========
+[expanded] 
+*  { (host-rules.html:0)
+border: 1px solid black;
+    border-top-color: black;
+    border-top-style: solid;
+    border-top-width: 1px;
+    border-right-color: black;
+    border-right-style: solid;
+    border-right-width: 1px;
+    border-bottom-color: black;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+    border-left-color: black;
+    border-left-style: solid;
+    border-left-width: 1px;
+/-- overloaded --/ background-color: red;
+
+[expanded] 
+*  { (host-rules.html:4)
+/-- overloaded --/ background-color: papayawhip;
+
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+
