@@ -1,3 +1,13 @@
+2013-03-18  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove unused type WebTransformationMatrix
+        https://bugs.webkit.org/show_bug.cgi?id=112634
+
+        Reviewed by Adam Barth.
+
+        * Platform.gypi:
+        * chromium/public/WebTransformationMatrix.h: Removed.
+
 2013-03-18  W. James MacLean  <wjmaclean@chromium.org>
 
         [chromium] Remove code that relies on boundsContainsPageScale().

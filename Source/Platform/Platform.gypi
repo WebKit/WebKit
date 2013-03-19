@@ -134,7 +134,6 @@
             'chromium/public/WebString.h',
             'chromium/public/WebThread.h',
             'chromium/public/WebThreadSafeData.h',
-            'chromium/public/WebTransformationMatrix.h',
             'chromium/public/WebTransformAnimationCurve.h',
             'chromium/public/WebTransformKeyframe.h',
             'chromium/public/WebTransformOperations.h',
