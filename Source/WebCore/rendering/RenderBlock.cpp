@@ -3957,7 +3957,7 @@ void RenderBlock::removeFloatingObject(RenderBox* o)
 
 void RenderBlock::removeFloatingObjectsBelow(FloatingObject* lastFloat, int logicalOffset)
 {
-    if (!m_floatingObjects)
+    if (!containsFloats())
         return;
     
     const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
