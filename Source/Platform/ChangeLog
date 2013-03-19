@@ -1,3 +1,41 @@
+2013-03-19  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Implement Web Speech Synthesis for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=111695
+
+        Reviewed by Adam Barth.
+
+        Exposes a platform API that the embedder can implement to
+        provide speech synthesis for the Chromium port.
+
+        * Platform.gypi:
+        * chromium/public/Platform.h:
+        (WebKit):
+        (Platform):
+        (WebKit::Platform::speechSynthesizer):
+        * chromium/public/WebSpeechSynthesisUtterance.h: Added.
+        (WebKit):
+        (WebSpeechSynthesisUtterance):
+        (WebKit::WebSpeechSynthesisUtterance::WebSpeechSynthesisUtterance):
+        (WebKit::WebSpeechSynthesisUtterance::~WebSpeechSynthesisUtterance):
+        (WebKit::WebSpeechSynthesisUtterance::operator=):
+        (WebKit::WebSpeechSynthesisUtterance::isNull):
+        * chromium/public/WebSpeechSynthesisVoice.h: Added.
+        (WebCore):
+        (WebKit):
+        (WebSpeechSynthesisVoice):
+        (WebKit::WebSpeechSynthesisVoice::WebSpeechSynthesisVoice):
+        (WebKit::WebSpeechSynthesisVoice::~WebSpeechSynthesisVoice):
+        (WebKit::WebSpeechSynthesisVoice::operator=):
+        * chromium/public/WebSpeechSynthesizer.h: Added.
+        (WebKit):
+        (WebSpeechSynthesizer):
+        (WebKit::WebSpeechSynthesizer::~WebSpeechSynthesizer):
+        * chromium/public/WebSpeechSynthesizerClient.h: Added.
+        (WebKit):
+        (WebSpeechSynthesizerClient):
+        (WebKit::WebSpeechSynthesizerClient::~WebSpeechSynthesizerClient):
+
 2013-03-19  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Flip WEBKIT_USE_NEW_WEBFILESYSTEMTYPE

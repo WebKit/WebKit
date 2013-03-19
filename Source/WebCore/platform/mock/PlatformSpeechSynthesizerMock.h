@@ -39,7 +39,7 @@ public:
     static PassOwnPtr<PlatformSpeechSynthesizerMock> create(PlatformSpeechSynthesizerClient*);
     
     virtual ~PlatformSpeechSynthesizerMock();
-    virtual void speak(const PlatformSpeechSynthesisUtterance&);
+    virtual void speak(PassRefPtr<PlatformSpeechSynthesisUtterance>);
     virtual void pause();
     virtual void resume();
     virtual void cancel();
@@ -50,7 +50,7 @@ private:
     void speakingFinished(Timer<PlatformSpeechSynthesizerMock>*);
     
     Timer<PlatformSpeechSynthesizerMock> m_speakingFinishedTimer;
-    const PlatformSpeechSynthesisUtterance* m_utterance;
+    RefPtr<PlatformSpeechSynthesisUtterance> m_utterance;
 };
     
 } // namespace WebCore

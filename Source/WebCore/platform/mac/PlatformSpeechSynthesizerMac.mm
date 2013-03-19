@@ -29,6 +29,7 @@
 #include "PlatformSpeechSynthesisUtterance.h"
 #include "PlatformSpeechSynthesisVoice.h"
 #include <AppKit/NSSpeechSynthesizer.h>
+#include <wtf/PassRefPtr.h>
 #include <wtf/RetainPtr.h>
 
 #if ENABLE(SPEECH_SYNTHESIS)
@@ -37,14 +38,14 @@
 {
     WebCore::PlatformSpeechSynthesizer* m_synthesizerObject;
     // Hold a Ref to the utterance so that it won't disappear until the synth is done with it.
-    const WebCore::PlatformSpeechSynthesisUtterance* m_utterance;
+    WebCore::PlatformSpeechSynthesisUtterance* m_utterance;
     
     RetainPtr<NSSpeechSynthesizer> m_synthesizer;
     float m_basePitch;
 }
 
 - (WebSpeechSynthesisWrapper *)initWithSpeechSynthesizer:(WebCore::PlatformSpeechSynthesizer *)synthesizer;
-- (void)speakUtterance:(const WebCore::PlatformSpeechSynthesisUtterance *)utterance;
+- (void)speakUtterance:(WebCore::PlatformSpeechSynthesisUtterance *)utterance;
 
 @end
 
@@ -81,7 +82,7 @@
     m_basePitch = [[m_synthesizer objectForProperty:NSSpeechPitchBaseProperty error:nil] floatValue];
 }
 
-- (void)speakUtterance:(const WebCore::PlatformSpeechSynthesisUtterance *)utterance
+- (void)speakUtterance:(WebCore::PlatformSpeechSynthesisUtterance *)utterance
 {
     // When speak is called we should not have an existing speech utterance outstanding.
     ASSERT(!m_utterance);
@@ -165,7 +166,7 @@
     UNUSED_PARAM(sender);
     
     // Clear the m_utterance variable in case finish speaking kicks off a new speaking job immediately.
-    const WebCore::PlatformSpeechSynthesisUtterance* utterance = m_utterance;
+    WebCore::PlatformSpeechSynthesisUtterance* utterance = m_utterance;
     m_utterance = 0;
     
     if (finishedSpeaking)
@@ -187,6 +188,15 @@
 @end
 
 namespace WebCore {
+
+PlatformSpeechSynthesizer::PlatformSpeechSynthesizer(PlatformSpeechSynthesizerClient* client)
+    : m_speechSynthesizerClient(client)
+{
+}
+
+PlatformSpeechSynthesizer::~PlatformSpeechSynthesizer()
+{
+}
 
 void PlatformSpeechSynthesizer::initializeVoiceList()
 {
@@ -220,12 +230,12 @@ void PlatformSpeechSynthesizer::resume()
     [m_platformSpeechWrapper.get() resume];
 }
     
-void PlatformSpeechSynthesizer::speak(const PlatformSpeechSynthesisUtterance& utterance)
+void PlatformSpeechSynthesizer::speak(PassRefPtr<PlatformSpeechSynthesisUtterance> utterance)
 {
     if (!m_platformSpeechWrapper)
         m_platformSpeechWrapper.adoptNS([[WebSpeechSynthesisWrapper alloc] initWithSpeechSynthesizer:this]);
     
-    [m_platformSpeechWrapper.get() speakUtterance:&utterance];
+    [m_platformSpeechWrapper.get() speakUtterance:utterance.get()];
 }
 
 void PlatformSpeechSynthesizer::cancel()

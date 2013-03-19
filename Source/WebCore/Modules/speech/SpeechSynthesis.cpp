@@ -28,8 +28,8 @@
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
-#include "PlatformSpeechSynthesis.h"
 #include "PlatformSpeechSynthesisVoice.h"
+#include "PlatformSpeechSynthesizer.h"
 #include "SpeechSynthesisEvent.h"
 #include "SpeechSynthesisUtterance.h"
 #include <wtf/CurrentTime.h>
@@ -152,7 +152,7 @@ void SpeechSynthesis::handleSpeakingCompleted(SpeechSynthesisUtterance* utteranc
     }
 }
     
-void SpeechSynthesis::boundaryEventOccurred(const PlatformSpeechSynthesisUtterance* utterance, SpeechBoundary boundary, unsigned charIndex)
+void SpeechSynthesis::boundaryEventOccurred(PassRefPtr<PlatformSpeechSynthesisUtterance> utterance, SpeechBoundary boundary, unsigned charIndex)
 {
     DEFINE_STATIC_LOCAL(const String, wordBoundaryString, (ASCIILiteral("word")));
     DEFINE_STATIC_LOCAL(const String, sentenceBoundaryString, (ASCIILiteral("sentence")));
@@ -169,33 +169,38 @@ void SpeechSynthesis::boundaryEventOccurred(const PlatformSpeechSynthesisUtteran
     }
 }
 
-void SpeechSynthesis::didStartSpeaking(const PlatformSpeechSynthesisUtterance* utterance)
+void SpeechSynthesis::didStartSpeaking(PassRefPtr<PlatformSpeechSynthesisUtterance> utterance)
 {
-    fireEvent(eventNames().startEvent, static_cast<SpeechSynthesisUtterance*>(utterance->client()), 0, String());
+    if (utterance->client())
+        fireEvent(eventNames().startEvent, static_cast<SpeechSynthesisUtterance*>(utterance->client()), 0, String());
 }
     
-void SpeechSynthesis::didPauseSpeaking(const PlatformSpeechSynthesisUtterance* utterance)
+void SpeechSynthesis::didPauseSpeaking(PassRefPtr<PlatformSpeechSynthesisUtterance> utterance)
 {
     m_isPaused = true;
-    fireEvent(eventNames().pauseEvent, static_cast<SpeechSynthesisUtterance*>(utterance->client()), 0, String());
+    if (utterance->client())
+        fireEvent(eventNames().pauseEvent, static_cast<SpeechSynthesisUtterance*>(utterance->client()), 0, String());
 }
 
-void SpeechSynthesis::didResumeSpeaking(const PlatformSpeechSynthesisUtterance* utterance)
+void SpeechSynthesis::didResumeSpeaking(PassRefPtr<PlatformSpeechSynthesisUtterance> utterance)
 {
     m_isPaused = false;
-    fireEvent(eventNames().resumeEvent, static_cast<SpeechSynthesisUtterance*>(utterance->client()), 0, String());
+    if (utterance->client())
+        fireEvent(eventNames().resumeEvent, static_cast<SpeechSynthesisUtterance*>(utterance->client()), 0, String());
 }
 
-void SpeechSynthesis::didFinishSpeaking(const PlatformSpeechSynthesisUtterance* utterance)
+void SpeechSynthesis::didFinishSpeaking(PassRefPtr<PlatformSpeechSynthesisUtterance> utterance)
 {
-    handleSpeakingCompleted(static_cast<SpeechSynthesisUtterance*>(utterance->client()), false);
+    if (utterance->client())
+        handleSpeakingCompleted(static_cast<SpeechSynthesisUtterance*>(utterance->client()), false);
 }
     
-void SpeechSynthesis::speakingErrorOccurred(const PlatformSpeechSynthesisUtterance* utterance)
+void SpeechSynthesis::speakingErrorOccurred(PassRefPtr<PlatformSpeechSynthesisUtterance> utterance)
 {
-    handleSpeakingCompleted(static_cast<SpeechSynthesisUtterance*>(utterance->client()), true);
+    if (utterance->client())
+        handleSpeakingCompleted(static_cast<SpeechSynthesisUtterance*>(utterance->client()), true);
 }
-    
+
 } // namespace WebCore
 
 #endif // ENABLE(INPUT_SPEECH)
