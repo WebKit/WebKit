@@ -23,12 +23,14 @@
 #include "Document.h"
 #include "FatFingers.h"
 #include "FloatQuad.h"
+#include "FocusController.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
 #include "HitTestResult.h"
 #include "InputHandler.h"
 #include "IntRect.h"
+#include "Page.h"
 #include "RenderLayer.h"
 #include "SelectionOverlay.h"
 #include "TouchEventHandler.h"
@@ -880,12 +882,13 @@ void SelectionHandler::selectObject(const WebCore::IntPoint& location, TextGranu
         Platform::IntPoint(location).toString().c_str());
 
     WebCore::IntPoint relativePoint = DOMSupport::convertPointToFrame(m_webPage->mainFrame(), focusedFrame, location);
-    // Clear input focus if we're not selecting in old input field.
-    if (!m_webPage->m_inputHandler->boundingBoxForInputField().contains(relativePoint))
-        m_webPage->clearFocusNode();
 
     VisiblePosition pointLocation(focusedFrame->visiblePositionForPoint(relativePoint));
     VisibleSelection selection = VisibleSelection(pointLocation, pointLocation);
+
+    // Move focus to the new node if we're not selecting in old input field.
+    if (!m_webPage->m_inputHandler->boundingBoxForInputField().contains(relativePoint))
+        m_webPage->m_page->focusController()->setFocusedNode(selection.start().anchorNode(), focusedFrame);
 
     m_selectionActive = expandSelectionToGranularity(focusedFrame, selection, granularity, m_webPage->m_inputHandler->isInputMode());
 }

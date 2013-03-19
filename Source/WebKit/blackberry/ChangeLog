@@ -1,3 +1,23 @@
+2013-03-19  Andy Chen  <andchen@blackberry.com>
+
+        [BlackBerry] When selecting an object, assign focus to new node instead of clearing previous focused node
+        https://bugs.webkit.org/show_bug.cgi?id=112707
+
+        Reviewed by Rob Buis.
+
+        In SelectionHandler, when selecting a new object, we should set focus
+        to the anchor node of selection instead of removing it from the old input.
+        In InputHandler, when focusedNodeChanged is called, if the new node is
+        not an Element node, we need to set focus to its Element parent node,
+        instead of removing focus from the old node.
+        PR 304631
+        Internally reviewed by Mike Fenton.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::focusedNodeChanged):
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::selectObject):
+
 2013-03-18  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] Prevent text selection inside Colour and Date/Time input fields

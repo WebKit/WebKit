@@ -442,6 +442,9 @@ void InputHandler::focusedNodeChanged()
             setElementFocused(element);
             return;
         }
+    } else if (node && DOMSupport::isTextBasedContentEditableElement(node->parentElement())) {
+        setElementFocused(node->parentElement());
+        return;
     }
 
     if (isActiveTextEdit() && m_currentFocusElement->isContentEditable()) {
