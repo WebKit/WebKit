@@ -1,3 +1,17 @@
+2013-03-18  Benjamin Poulain  <benjamin@webkit.org>
+
+        [iOS] Make a UChar string equal() based on the LChar version
+        https://bugs.webkit.org/show_bug.cgi?id=112495
+
+        Reviewed by David Kilzer.
+
+        * wtf/text/StringImpl.h:
+        (WTF::equal):
+        Create a equal() function for UChar based on the work done for LChar.
+
+        On A6, this is a speed up of about 40% for any string of 2 or more characters.
+        It is slower by 8% on a single UChar comparison.
+
 2013-03-18  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Get build working under VS2010.

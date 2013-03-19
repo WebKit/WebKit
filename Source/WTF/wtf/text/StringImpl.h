@@ -969,7 +969,41 @@ ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length)
 
 ALWAYS_INLINE bool equal(const UChar* a, const UChar* b, unsigned length)
 {
-    return !memcmp(a, b, length * sizeof(UChar));
+    bool isEqual = false;
+    uint32_t aValue;
+    uint32_t bValue;
+    asm("subs   %[length], #2\n"
+        "blo    1f\n"
+
+        "0:\n" // Label 0 = Start of loop over 32 bits.
+        "ldr    %[aValue], [%[a]], #4\n"
+        "ldr    %[bValue], [%[b]], #4\n"
+        "cmp    %[aValue], %[bValue]\n"
+        "bne    66f\n"
+        "subs   %[length], #2\n"
+        "bhs    0b\n"
+
+        // At this point, length can be:
+        // -0: 00000000000000000000000000000000 (0 bytes left)
+        // -1: 11111111111111111111111111111111 (1 character left, 2 bytes)
+        // -2: 11111111111111111111111111111110 (length was zero)
+        // The pointers are at the correct position.
+        "1:\n" // Label 1 = Check for a single character left.
+        "tst    %[length], #1\n"
+        "beq    42f\n"
+        "ldrh   %[aValue], [%[a]]\n"
+        "ldrh   %[bValue], [%[b]]\n"
+        "cmp    %[aValue], %[bValue]\n"
+        "bne    66f\n"
+
+        "42:\n" // Label 42 = Success.
+        "mov    %[isEqual], #1\n"
+        "66:\n" // Label 66 = End without changing isEqual to 1.
+        : [length]"+r"(length), [isEqual]"+r"(isEqual), [a]"+r"(a), [b]"+r"(b), [aValue]"+r"(aValue), [bValue]"+r"(bValue)
+        :
+        :
+        );
+    return isEqual;
 }
 #else
 ALWAYS_INLINE bool equal(const LChar* a, const LChar* b, unsigned length)
