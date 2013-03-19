@@ -169,14 +169,12 @@ WebInspector.SourceFrame.prototype = {
     {
         for (var line in this._messageBubbles) {
             var bubble = this._messageBubbles[line];
-            bubble.parentNode.removeChild(bubble);
+            this._textEditor.removeDecoration(line, bubble);
         }
 
         this._messages = [];
         this._rowMessages = {};
         this._messageBubbles = {};
-
-        this._textEditor.doResize();
     },
 
     /**
@@ -340,8 +338,6 @@ WebInspector.SourceFrame.prototype = {
         this._textEditor.beginUpdates();
 
         this._addExistingMessagesToSource();
-
-        this._textEditor.doResize();
 
         this._textEditor.endUpdates();
     },
