@@ -35,6 +35,10 @@
                 "parameters": [
                     { "name": "reason", "type": "string", "description": "The reason why connection has been terminated." }
                 ]
+            },
+            {
+                "name": "targetCrashed",
+                "description": "Fired when debugging target has crashed"
             }
         ]
     },

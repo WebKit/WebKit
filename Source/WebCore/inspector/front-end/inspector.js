@@ -982,6 +982,13 @@ WebInspector.detached = function(reason)
     (new WebInspector.RemoteDebuggingTerminatedScreen(reason)).showModal();
 }
 
+WebInspector.targetCrashed = function()
+{
+    (new WebInspector.HelpScreenUntilReload(
+        WebInspector.UIString("Inspected target crashed"),
+        WebInspector.UIString("Inspected target has crashed. Once it reloads we will attach to it automatically."))).showModal();
+}
+
 WebInspector._updateFocusedNode = function(nodeId)
 {
     if (WebInspector._nodeSearchButton.toggled) {
