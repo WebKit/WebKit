@@ -66,9 +66,6 @@ public:
     // mode).
     virtual WebSize deviceViewportSize() const = 0;
 
-    // FIXME: remove this after WebKit roll
-    virtual WebFloatPoint adjustEventPointForPinchZoom(const WebFloatPoint& p) const { return p; }
-
     virtual void setDeviceScaleFactor(float) = 0;
     virtual float deviceScaleFactor() const = 0;
 
@@ -124,11 +121,8 @@ public:
     // been added to the tree.
     virtual void registerForAnimations(WebLayer* layer) { }
 
-    // Debugging / dangerous ---------------------------------------------
 
-    // Fills in a WebRenderingStats struct containing information about the state of the compositor.
-    // This call is relatively expensive in threaded mode as it blocks on the compositor thread.
-    virtual void renderingStats(WebRenderingStats&) const = 0;
+    // Debugging / dangerous ---------------------------------------------
 
     // Toggles the FPS counter in the HUD layer
     virtual void setShowFPSCounter(bool) { }
@@ -141,12 +135,6 @@ public:
 
     // Toggles continuous painting
     virtual void setContinuousPaintingEnabled(bool) { }
-
-    // FIXME: Remove this.
-    virtual void loseCompositorContext(int numTimes) { }
-
-    // DEPRECATED.
-    struct Settings { };
 };
 
 } // namespace WebKit

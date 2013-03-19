@@ -1,3 +1,13 @@
+2013-03-19  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove deprecated/unused bits of WebLayerTreeView
+        https://bugs.webkit.org/show_bug.cgi?id=112714
+
+        Reviewed by Adam Barth.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebLayerTreeView):
+
 2013-03-18  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove unused type WebTransformationMatrix
