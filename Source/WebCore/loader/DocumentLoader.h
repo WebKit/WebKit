@@ -30,6 +30,8 @@
 #ifndef DocumentLoader_h
 #define DocumentLoader_h
 
+#include "CachedRawResource.h"
+#include "CachedResourceHandle.h"
 #include "DocumentLoadTiming.h"
 #include "DocumentWriter.h"
 #include "IconDatabaseBase.h"
@@ -65,7 +67,6 @@ namespace WebCore {
     class FormState;
     class Frame;
     class FrameLoader;
-    class MainResourceLoader;
     class Page;
     class ResourceBuffer;
     class ResourceLoader;
@@ -75,7 +76,8 @@ namespace WebCore {
     typedef HashSet<RefPtr<ResourceLoader> > ResourceLoaderSet;
     typedef Vector<ResourceResponse> ResponseVector;
 
-    class DocumentLoader : public RefCounted<DocumentLoader> {
+    class DocumentLoader : public RefCounted<DocumentLoader>, private CachedRawResourceClient {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
         static PassRefPtr<DocumentLoader> create(const ResourceRequest& request, const SubstituteData& data)
         {
@@ -214,8 +216,8 @@ namespace WebCore {
         void continueIconLoadWithDecision(IconLoadDecision);
         void getIconLoadDecisionForIconURL(const String&);
         void getIconDataForIconURL(const String&);
-        
-        bool isLoadingMainResource() const;
+
+        bool isLoadingMainResource() const { return m_loadingMainResource; }
         bool isLoadingMultipartContent() const { return m_isLoadingMultipartContent; }
 
         void stopLoadingPlugIns();
@@ -262,9 +264,6 @@ namespace WebCore {
         virtual void reportMemoryUsage(MemoryObjectInfo*) const;
         void checkLoadComplete();
 
-        // FIXME: This should be private once DocumentLoader and MainResourceLoader are merged.
-        void willSendRequest(ResourceRequest&, const ResourceResponse&);
-
     protected:
         DocumentLoader(const ResourceRequest&, const SubstituteData&);
 
@@ -280,6 +279,12 @@ namespace WebCore {
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
         void clearArchiveResources();
 #endif
+
+        void willSendRequest(ResourceRequest&, const ResourceResponse&);
+        virtual void redirectReceived(CachedResource*, ResourceRequest&, const ResourceResponse&) OVERRIDE;
+        virtual void responseReceived(CachedResource*, const ResourceResponse&) OVERRIDE;
+        virtual void dataReceived(CachedResource*, const char* data, int length) OVERRIDE;
+        virtual void notifyFinished(CachedResource*) OVERRIDE;
 
         bool maybeLoadEmpty();
 
@@ -310,12 +315,10 @@ namespace WebCore {
         Frame* m_frame;
         RefPtr<CachedResourceLoader> m_cachedResourceLoader;
 
-        RefPtr<MainResourceLoader> m_mainResourceLoader;
+        CachedResourceHandle<CachedRawResource> m_mainResource;
         ResourceLoaderSet m_subresourceLoaders;
         ResourceLoaderSet m_multipartSubresourceLoaders;
         ResourceLoaderSet m_plugInStreamLoaders;
-
-        RefPtr<ResourceBuffer> m_mainResourceData;
         
         mutable DocumentWriter m_writer;
 
@@ -345,7 +348,6 @@ namespace WebCore {
         bool m_gotFirstByte;
         bool m_isClientRedirect;
         bool m_isLoadingMultipartContent;
-        bool m_loadingEmptyDocument;
 
         // FIXME: Document::m_processingLoadEvent and DocumentLoader::m_wasOnloadHandled are roughly the same
         // and should be merged.
@@ -385,6 +387,7 @@ namespace WebCore {
         String m_clientRedirectSourceForHistory;
         bool m_didCreateGlobalHistoryEntry;
 
+        bool m_loadingMainResource;
         DocumentLoadTiming m_documentLoadTiming;
 
         double m_timeOfLastDataReceived;

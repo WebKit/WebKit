@@ -884,7 +884,6 @@ SOURCES += \
     loader/ImageLoader.cpp \
     loader/LinkLoader.cpp \
     loader/LoaderStrategy.cpp \
-    loader/MainResourceLoader.cpp \
     loader/MixedContentChecker.cpp \
     loader/NavigationAction.cpp \
     loader/NetscapePlugInStreamLoader.cpp \
@@ -2082,7 +2081,6 @@ HEADERS += \
     loader/LinkLoader.h \
     loader/LinkLoaderClient.h \
     loader/LoaderStrategy.h \
-    loader/MainResourceLoader.h \
     loader/MixedContentChecker.h \
     loader/NavigationAction.h \
     loader/NetscapePlugInStreamLoader.h \
