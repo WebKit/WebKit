@@ -123,6 +123,7 @@ iframe.view {
     font-size: 9px;
     color: rgb(50%, 50%, 50%);
     white-space: nowrap;
+    pointer-events: none;
 }
 
 .overview-grid-window-selector {

@@ -81,7 +81,7 @@ WebInspector.OverviewGrid.prototype = {
     },
 
     /**
-     * @param {!WebInspector.TimelineOverviewCalculator} calculator
+     * @param {!WebInspector.TimelineGrid.Calculator} calculator
      */
     updateDividers: function(calculator)
     {
@@ -194,13 +194,13 @@ WebInspector.OverviewGrid.Window = function(parentElement, dividersLabelBarEleme
     this._leftResizeElement.className = "overview-grid-window-resizer";
     this._leftResizeElement.style.left = 0;
     parentElement.appendChild(this._leftResizeElement);
-    WebInspector.installDragHandle(this._leftResizeElement, null, this._leftResizeElementDragging.bind(this), null, "ew-resize");
+    WebInspector.installDragHandle(this._leftResizeElement, this._resizerElementStartDragging.bind(this), this._leftResizeElementDragging.bind(this), null, "ew-resize");
 
     this._rightResizeElement = document.createElement("div");
     this._rightResizeElement.className = "overview-grid-window-resizer overview-grid-window-resizer-right";
     this._rightResizeElement.style.right = 0;
     parentElement.appendChild(this._rightResizeElement);
-    WebInspector.installDragHandle(this._rightResizeElement, null, this._rightResizeElementDragging.bind(this), null, "ew-resize");
+    WebInspector.installDragHandle(this._rightResizeElement, this._resizerElementStartDragging.bind(this), this._rightResizeElementDragging.bind(this), null, "ew-resize");
 }
 
 WebInspector.OverviewGrid.Events = {
@@ -224,10 +224,20 @@ WebInspector.OverviewGrid.Window.prototype = {
     /**
      * @param {Event} event
      */
+    _resizerElementStartDragging: function(event)
+    {
+        this._resizerParentOffsetLeft = event.pageX - event.offsetX - event.target.offsetLeft;
+        event.preventDefault();
+        return true;
+    },
+
+    /**
+     * @param {Event} event
+     */
     _leftResizeElementDragging: function(event)
     {
-      this._resizeWindowLeft(event.pageX - this._parentElement.offsetLeft);
-      event.preventDefault();
+        this._resizeWindowLeft(event.pageX - this._resizerParentOffsetLeft);
+        event.preventDefault();
     },
 
     /**
@@ -235,8 +245,8 @@ WebInspector.OverviewGrid.Window.prototype = {
      */
     _rightResizeElementDragging: function(event)
     {
-      this._resizeWindowRight(event.pageX - this._parentElement.offsetLeft);
-      event.preventDefault();
+        this._resizeWindowRight(event.pageX - this._resizerParentOffsetLeft);
+        event.preventDefault();
     },
 
     /**
@@ -245,7 +255,8 @@ WebInspector.OverviewGrid.Window.prototype = {
      */
     _startWindowSelectorDragging: function(event)
     {
-        var position = event.pageX - this._parentElement.offsetLeft;
+        this._offsetLeft = event.pageX - event.offsetX;
+        var position = event.pageX - this._offsetLeft;
         this._overviewWindowSelector = new WebInspector.OverviewGrid.WindowSelector(this._parentElement, position);
         return true;
     },
@@ -255,7 +266,7 @@ WebInspector.OverviewGrid.Window.prototype = {
      */
     _windowSelectorDragging: function(event)
     {
-        this._overviewWindowSelector._updatePosition(event.pageX - this._parentElement.offsetLeft);
+        this._overviewWindowSelector._updatePosition(event.pageX - this._offsetLeft);
         event.preventDefault();
     },
 
@@ -264,7 +275,7 @@ WebInspector.OverviewGrid.Window.prototype = {
      */
     _endWindowSelectorDragging: function(event)
     {
-        var window = this._overviewWindowSelector._close(event.pageX - this._parentElement.offsetLeft);
+        var window = this._overviewWindowSelector._close(event.pageX - this._offsetLeft);
         delete this._overviewWindowSelector;
         if (window.end === window.start) { // Click, not drag.
             var middle = window.end;
@@ -404,7 +415,7 @@ WebInspector.OverviewGrid.Window.prototype = {
         const mouseWheelZoomSpeed = 1 / 120;
 
         if (typeof event.wheelDeltaY === "number" && event.wheelDeltaY) {
-            var referencePoint = event.pageX - this._parentElement.offsetLeft;
+            var referencePoint = event.offsetX;
             this._zoom(Math.pow(zoomFactor, -event.wheelDeltaY * mouseWheelZoomSpeed), referencePoint);
         }
         if (typeof event.wheelDeltaX === "number" && event.wheelDeltaX) {
@@ -446,7 +457,7 @@ WebInspector.OverviewGrid.WindowSelector = function(parent, position)
     this._windowSelector = document.createElement("div");
     this._windowSelector.className = "overview-grid-window-selector";
     this._windowSelector.style.left = this._startPosition + "px";
-    this._windowSelector.style.right = this._width - this._startPosition +  + "px";
+    this._windowSelector.style.right = this._width - this._startPosition + "px";
     parent.appendChild(this._windowSelector);
 }
 

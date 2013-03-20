@@ -1,9 +1,24 @@
-.flame-chart {
-    height: 100%;
-    overflow: hidden;
-}
-
-.flame-chart .item-anchor {
+.chart-container .item-anchor {
     position: absolute;
     z-index: -100;
+}
+
+.overview-container {
+    overflow: hidden;
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    height: 80px;
+}
+
+.chart-container {
+    overflow: hidden;
+    position: absolute;
+    top: 80px;
+    width: 100%;
+    bottom: 0px;
+}
+
+#flame-chart-overview-grid .resources-dividers-label-bar {
+    pointer-events: auto;
 }

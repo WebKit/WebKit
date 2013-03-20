@@ -339,6 +339,7 @@ WebInspector.TimelineOverviewPane.prototype = {
 
 /**
  * @constructor
+ * @implements {WebInspector.TimelineGrid.Calculator}
  */
 WebInspector.TimelineOverviewCalculator = function()
 {
