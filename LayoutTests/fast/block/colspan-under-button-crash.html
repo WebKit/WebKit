@@ -27,8 +27,8 @@ window.onload = function() {
     document.documentElement.removeChild(pElem);
 
     document.body.innerHTML = "PASS if no crash or assert in debug";
-    if (window.testRunner)
-        testRunner.dumpAsText();
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
 }
 </script>
 </html>

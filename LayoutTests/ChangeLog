@@ -1,3 +1,41 @@
+2013-03-20  Eric Carlson  <eric.carlson@apple.com>
+
+        <rdar://problem/13465764> Many merged tests are failing
+
+        Rubber stamped by Mark Rowe.
+
+        Change all instances of "testRunner" back to "layoutTestController".
+
+        * editing/style/apply-style-crash.html:
+        * fast/backgrounds/background-clip-text-on-body.html:
+        * fast/backgrounds/transformed-body-background.html:
+        * fast/backgrounds/transformed-body-html-background.html:
+        * fast/backgrounds/transformed-html-body-background.html:
+        * fast/block/colspan-under-button-crash.html:
+        * fast/block/float/float-not-removed-from-pre-block.html:
+        * fast/block/line-layout/double-line-break-obj-removal-crash.html:
+        * fast/canvas/canvas-measureText.html:
+        * fast/css-generated-content/bug-106384.html:
+        * fast/css/image-set-value-not-removed-crash.html:
+        * fast/dom/Geolocation/watchPosition-unique.html:
+        * fast/dom/ready-state-change-crash.html:
+        * fast/dom/window-load-crash.html:
+        * fast/forms/textarea/textarea-autofocus-removal-while-focusing-with-style.html:
+        * fast/frames/frame-unload-crash2.html:
+        * fast/images/crossfade-client-not-removed-crash.html:
+        * fast/js/concat-large-strings-crash.html:
+        * fast/js/concat-large-strings-crash2.html:
+        * fast/multicol/continuation-crash.html:
+        * fast/multicol/float-not-removed-crash.html:
+        * fast/multicol/span/list-multi-column-crash.html:
+        * fast/parser/foster-parent-adopted.html:
+        * fast/parser/foster-parent-adopted2.html:
+        * http/tests/security/xssAuditor/script-tag-with-actual-comma.html:
+        * http/tests/security/xssAuditor/script-tag-with-source-data-url3.html:
+        * plugins/plugin-remove-readystatechange.html:
+        * svg/animations/animate-keytimes-crash.html:
+        * svg/custom/elementTimeControl-nan-crash.html:
+
 2013-03-15  Lucas Forschler  <lforschler@apple.com>
 
         Merge r132724

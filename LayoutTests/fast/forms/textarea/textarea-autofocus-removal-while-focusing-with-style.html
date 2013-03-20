@@ -3,8 +3,8 @@
 </head>
 <body>
 <script>
-testRunner.dumpAsText();
-testRunner.waitUntilDone();
+layoutTestController.dumpAsText();
+layoutTestController.waitUntilDone();
 var docElement = document.documentElement;
 textArea = document.createElement("textarea");
 textArea.setAttribute("autofocus", "");
@@ -14,7 +14,7 @@ docElement.appendChild(textArea);
 document.implementation.createDocument("http://www.w3.org/1999/xhtml", "html", null).adoptNode(textArea);
 window.setTimeout(function() {
     document.body.innerHTML = "PASS unless crash.";
-    testRunner.notifyDone();
+    layoutTestController.notifyDone();
 }, 0);
 </script>
 </body>

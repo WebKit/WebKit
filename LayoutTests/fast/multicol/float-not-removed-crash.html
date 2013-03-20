@@ -7,9 +7,9 @@ Test passes if it does not crash.
 .class3 { -webkit-column-count: 65536; }
 </style>
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
 }
 
 function crash() {
@@ -33,7 +33,7 @@ function crash() {
     document.documentElement.offsetTop;
     setTimeout('test3.appendChild(test4);', 0);
     setTimeout('test2.appendChild(test7);', 2);
-    setTimeout('if (window.testRunner) testRunner.notifyDone();', 4);
+    setTimeout('if (window.layoutTestController) layoutTestController.notifyDone();', 4);
 }
 
 window.onload = crash;

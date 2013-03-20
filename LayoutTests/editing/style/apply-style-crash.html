@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
 }
 
 onload = function() {
@@ -18,8 +18,8 @@ setTimeout(function() {
     document.body.offsetTop;
     document.body.innerHTML = "PASS. WebKit didn't crash.";
 
-    if (window.testRunner)
-        testRunner.notifyDone();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }, 0)
 </script>
 <div id="x"><iframe src="data:"></iframe>

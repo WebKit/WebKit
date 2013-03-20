@@ -8,15 +8,15 @@ Test for WK108828: This test passes if it does not crash.
   </rect>
 </svg>
 <script>
-  if (window.testRunner())
-    testRunner.waitUntilDone();
+  if (window.layoutTestController())
+    layoutTestController.waitUntilDone();
 
   setTimeout(function() {
     var svg = document.getElementById('svg');
     svg.pauseAnimations();
     svg.setCurrentTime(10);
-    if (window.testRunner)
-      testRunner.notifyDone();
+    if (window.layoutTestController)
+      layoutTestController.notifyDone();
   }, 1);
 </script>
 </html>

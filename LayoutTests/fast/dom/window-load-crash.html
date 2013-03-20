@@ -3,16 +3,16 @@
 Test passes if it does not crash.
 <base href=http://blocked>
 <script>
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
 }
 
 function crash()
 {
     GCController.collect();
-    if (window.testRunner)
-        testRunner.notifyDone();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }
 </script>
 <iframe onload=crash() src=does-not-exist.html srcdoc="<script>window.onload = function() { frames[0].document.getElementsByTagName('a')[0].click(); }</script><iframe seamless srcdoc='<a href=does-not-exist.html>'>">

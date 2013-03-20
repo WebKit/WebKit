@@ -7,8 +7,8 @@ It ensures a readystatechange event can't get dispatched until after a plugin is
 </div>
 <embed id="viewer" src="resources/simple_blank.swf"></embed>
 <script>
-if (window.testRunner)
-    testRunner.dumpAsText();
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
 
 var i = 0;
 document.addEventListener('readystatechange', function() {

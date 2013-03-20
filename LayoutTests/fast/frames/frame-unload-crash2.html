@@ -2,14 +2,14 @@
 <html>
 <iframe srcdoc=""></iframe>
 <script>
-if (window.testRunner) {
-    testRunner.waitUntilDone();
-    testRunner.dumpAsText();
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
 }
 
 function finish() {
-    if (window.testRunner)
-        testRunner.notifyDone();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
 }
 
 frames[0].onunload = function () {
