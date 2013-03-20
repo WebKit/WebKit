@@ -1472,6 +1472,7 @@ static Browser_Window *window_create(Evas_Object *opener, const char *url, int w
 
     evas_object_resize(window->elm_window, width ? width : window_width, height ? height : window_height);
     evas_object_show(window->elm_window);
+    search_box_hide(window);
 
     view_focus_set(window, EINA_TRUE);
 

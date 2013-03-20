@@ -1,3 +1,15 @@
+2013-03-20  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [EFL][WK2] Don't show the SearchBar by default when MiniBrowser opened
+        https://bugs.webkit.org/show_bug.cgi?id=112687
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Hide the SearchBar by default on window creation.
+
+        * MiniBrowser/efl/main.c:
+        (window_create):
+
 2013-03-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r146304.
