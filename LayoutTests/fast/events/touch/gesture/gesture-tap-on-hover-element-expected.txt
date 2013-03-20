@@ -1,5 +1,4 @@
 Hover over me
-Click me
 Don't click me
 Tests that a gesture tap is dispatched before the hover state on the active element is cleared.
 
