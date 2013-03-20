@@ -169,7 +169,8 @@ WebInspector.SourceFrame.prototype = {
     {
         for (var line in this._messageBubbles) {
             var bubble = this._messageBubbles[line];
-            this._textEditor.removeDecoration(line, bubble);
+            var lineNumber = parseInt(line, 10);
+            this._textEditor.removeDecoration(lineNumber, bubble);
         }
 
         this._messages = [];
@@ -500,6 +501,10 @@ WebInspector.SourceFrame.prototype = {
             this.addMessageToSource(this._messages[i].line - 1, this._messages[i]);
     },
 
+    /**
+     * @param {number} lineNumber
+     * @param {WebInspector.ConsoleMessage} msg
+     */
     addMessageToSource: function(lineNumber, msg)
     {
         if (lineNumber >= this._textEditor.linesCount)
@@ -576,6 +581,10 @@ WebInspector.SourceFrame.prototype = {
         rowMessage.repeatCountElement.textContent = WebInspector.UIString(" (repeated %d times)", rowMessage.repeatCount);
     },
 
+    /**
+     * @param {number} lineNumber
+     * @param {WebInspector.ConsoleMessage} msg
+     */
     removeMessageFromSource: function(lineNumber, msg)
     {
         if (lineNumber >= this._textEditor.linesCount)
