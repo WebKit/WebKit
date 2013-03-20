@@ -51,6 +51,8 @@ PASS (new inner.PopStateEvent()).isInner is true
 PASS (new inner.PopStateEvent()).constructor.isInner is true
 PASS (new inner.ProgressEvent()).isInner is true
 PASS (new inner.ProgressEvent()).constructor.isInner is true
+PASS (new inner.SecurityPolicyViolationEvent()).isInner is true
+PASS (new inner.SecurityPolicyViolationEvent()).constructor.isInner is true
 PASS (new inner.StorageEvent()).isInner is true
 PASS (new inner.StorageEvent()).constructor.isInner is true
 PASS (new inner.TrackEvent()).isInner is true
