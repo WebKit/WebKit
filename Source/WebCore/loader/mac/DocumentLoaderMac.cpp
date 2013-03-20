@@ -28,6 +28,7 @@
 
 #include "config.h"
 #include "DocumentLoader.h"
+#include "MainResourceLoader.h"
 #include "ResourceHandle.h"
 #include "ResourceLoader.h"
 #include <wtf/UnusedParam.h>
@@ -54,8 +55,8 @@ static void unscheduleAll(const ResourceLoaderSet& loaders, SchedulePair* pair)
 
 void DocumentLoader::schedule(SchedulePair* pair)
 {
-    if (mainResourceLoader() && mainResourceLoader()->handle())
-        mainResourceLoader()->handle()->schedule(pair);
+    if (m_mainResourceLoader && m_mainResourceLoader->loader() && m_mainResourceLoader->loader()->handle())
+        m_mainResourceLoader->loader()->handle()->schedule(pair);
     scheduleAll(m_subresourceLoaders, pair);
     scheduleAll(m_plugInStreamLoaders, pair);
     scheduleAll(m_multipartSubresourceLoaders, pair);
@@ -63,8 +64,8 @@ void DocumentLoader::schedule(SchedulePair* pair)
 
 void DocumentLoader::unschedule(SchedulePair* pair)
 {
-    if (mainResourceLoader() && mainResourceLoader()->handle())
-        mainResourceLoader()->handle()->unschedule(pair);
+    if (m_mainResourceLoader && m_mainResourceLoader->loader() && m_mainResourceLoader->loader()->handle())
+        m_mainResourceLoader->loader()->handle()->unschedule(pair);
     unscheduleAll(m_subresourceLoaders, pair);
     unscheduleAll(m_plugInStreamLoaders, pair);
     unscheduleAll(m_multipartSubresourceLoaders, pair);

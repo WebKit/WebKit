@@ -1827,6 +1827,7 @@
 		656D373C0ADBA5DE00A4554D /* FrameLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37240ADBA5DE00A4554D /* FrameLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D373E0ADBA5DE00A4554D /* FrameLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37260ADBA5DE00A4554D /* FrameLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D373F0ADBA5DE00A4554D /* ResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37270ADBA5DE00A4554D /* ResourceLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		656D37410ADBA5DE00A4554D /* MainResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37290ADBA5DE00A4554D /* MainResourceLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D37430ADBA5DE00A4554D /* NetscapePlugInStreamLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D372B0ADBA5DE00A4554D /* NetscapePlugInStreamLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		656D37480ADBA5DE00A4554D /* SubresourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 656D37300ADBA5DE00A4554D /* SubresourceLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		6571DCC81385E6A400702DD0 /* MemoryPressureHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 657EDA071385CB97004E0645 /* MemoryPressureHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3409,6 +3410,7 @@
 		93D3C17D0F97AA760053C013 /* DOMHTMLCanvasElement.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 93D3C1580F97A9D70053C013 /* DOMHTMLCanvasElement.h */; };
 		93D9D53C0DA27E180077216C /* RangeBoundaryPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D9D53B0DA27E180077216C /* RangeBoundaryPoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93E227E00AF589AD00D48324 /* DocumentLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E227DB0AF589AD00D48324 /* DocumentLoader.cpp */; };
+		93E227E10AF589AD00D48324 /* MainResourceLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E227DC0AF589AD00D48324 /* MainResourceLoader.cpp */; };
 		93E227E30AF589AD00D48324 /* ResourceLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E227DE0AF589AD00D48324 /* ResourceLoader.cpp */; };
 		93E227E40AF589AD00D48324 /* SubresourceLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E227DF0AF589AD00D48324 /* SubresourceLoader.cpp */; };
 		93E241FF0B2B4E4000C732A1 /* HTMLFrameOwnerElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E241FE0B2B4E4000C732A1 /* HTMLFrameOwnerElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9320,6 +9322,7 @@
 		656D37240ADBA5DE00A4554D /* FrameLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameLoader.h; sourceTree = "<group>"; };
 		656D37260ADBA5DE00A4554D /* FrameLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FrameLoaderClient.h; sourceTree = "<group>"; };
 		656D37270ADBA5DE00A4554D /* ResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceLoader.h; sourceTree = "<group>"; };
+		656D37290ADBA5DE00A4554D /* MainResourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MainResourceLoader.h; sourceTree = "<group>"; };
 		656D372B0ADBA5DE00A4554D /* NetscapePlugInStreamLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NetscapePlugInStreamLoader.h; sourceTree = "<group>"; };
 		656D37300ADBA5DE00A4554D /* SubresourceLoader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SubresourceLoader.h; sourceTree = "<group>"; };
 		657EDA061385CB97004E0645 /* MemoryPressureHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryPressureHandler.cpp; sourceTree = "<group>"; };
@@ -10929,6 +10932,7 @@
 		93D3C1580F97A9D70053C013 /* DOMHTMLCanvasElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLCanvasElement.h; sourceTree = "<group>"; };
 		93D9D53B0DA27E180077216C /* RangeBoundaryPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RangeBoundaryPoint.h; sourceTree = "<group>"; };
 		93E227DB0AF589AD00D48324 /* DocumentLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentLoader.cpp; sourceTree = "<group>"; };
+		93E227DC0AF589AD00D48324 /* MainResourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainResourceLoader.cpp; sourceTree = "<group>"; };
 		93E227DD0AF589AD00D48324 /* NetscapePlugInStreamLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetscapePlugInStreamLoader.cpp; sourceTree = "<group>"; };
 		93E227DE0AF589AD00D48324 /* ResourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceLoader.cpp; sourceTree = "<group>"; };
 		93E227DF0AF589AD00D48324 /* SubresourceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubresourceLoader.cpp; sourceTree = "<group>"; };
@@ -21549,6 +21553,8 @@
 				984264EF12D5280A000D88A4 /* LinkLoaderClient.h */,
 				51ABF64C16392E2800132A7A /* LoaderStrategy.cpp */,
 				51E6820F16387302003BBF3C /* LoaderStrategy.h */,
+				93E227DC0AF589AD00D48324 /* MainResourceLoader.cpp */,
+				656D37290ADBA5DE00A4554D /* MainResourceLoader.h */,
 				52F10862162B6D82009AC81E /* MixedContentChecker.cpp */,
 				52F10863162B6D82009AC81E /* MixedContentChecker.h */,
 				93CCF05F0AF6CA7600018E89 /* NavigationAction.cpp */,
@@ -25558,6 +25564,7 @@
 				935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */,
 				BCE1C41B0D982980003B02F2 /* Location.h in Headers */,
 				A8239E0109B3CF8A00B60641 /* Logging.h in Headers */,
+				656D37410ADBA5DE00A4554D /* MainResourceLoader.h in Headers */,
 				E187056316E54A0D00585E97 /* MainThreadTask.h in Headers */,
 				1A8F6BC60DB55CDC001DB794 /* ManifestParser.h in Headers */,
 				93309DF8099E64920056E581 /* markup.h in Headers */,
@@ -28980,6 +28987,7 @@
 				BCE1C41C0D982981003B02F2 /* Location.cpp in Sources */,
 				A8239E0009B3CF8A00B60641 /* Logging.cpp in Sources */,
 				1402645E0AFDC19B005919E2 /* LoggingMac.mm in Sources */,
+				93E227E10AF589AD00D48324 /* MainResourceLoader.cpp in Sources */,
 				1A8F6BC50DB55CDC001DB794 /* ManifestParser.cpp in Sources */,
 				93309DF7099E64920056E581 /* markup.cpp in Sources */,
 				9728C3131268E4390041E89B /* MarkupAccumulator.cpp in Sources */,

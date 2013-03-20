@@ -48,13 +48,13 @@
 #include "HistoryItem.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
+#include "MainResourceLoader.h"
 #include "MemoryCache.h"
 #include "Page.h"
 #include "ProgressTracker.h"
 #include "ResourceBuffer.h"
 #include "SchemeRegistry.h"
 #include "Settings.h"
-#include "SubresourceLoader.h"
 #include "TextResourceDecoder.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/Assertions.h>
@@ -107,11 +107,11 @@ DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData&
     , m_gotFirstByte(false)
     , m_isClientRedirect(false)
     , m_isLoadingMultipartContent(false)
+    , m_loadingEmptyDocument(false)
     , m_wasOnloadHandled(false)
     , m_stopRecordingResponses(false)
     , m_substituteResourceDeliveryTimer(this, &DocumentLoader::substituteResourceDeliveryTimerFired)
     , m_didCreateGlobalHistoryEntry(false)
-    , m_loadingMainResource(false)
     , m_timeOfLastDataReceived(0.0)
     , m_identifierForLoadWithoutResourceLoader(0)
     , m_dataLoadTimer(this, &DocumentLoader::handleSubstituteDataLoadNow)
@@ -129,7 +129,7 @@ FrameLoader* DocumentLoader::frameLoader() const
 
 ResourceLoader* DocumentLoader::mainResourceLoader() const
 {
-    return m_mainResource ? m_mainResource->loader() : 0;
+    return m_mainResourceLoader ? m_mainResourceLoader->loader() : 0;
 }
 
 DocumentLoader::~DocumentLoader()
@@ -140,19 +140,16 @@ DocumentLoader::~DocumentLoader()
     if (m_iconDataCallback)
         m_iconDataCallback->invalidate();
     m_cachedResourceLoader->clearDocumentLoader();
-    
-    if (m_mainResource) {
-        m_mainResource->removeClient(this);
-        m_mainResource = 0;
-    }
 }
 
 PassRefPtr<ResourceBuffer> DocumentLoader::mainResourceData() const
 {
+    if (m_mainResourceData)
+        return m_mainResourceData;
     if (m_substituteData.isValid())
         return ResourceBuffer::create(m_substituteData.content()->data(), m_substituteData.content()->size());
-    if (m_mainResource)
-        return m_mainResource->resourceBuffer();
+    if (m_mainResourceLoader)
+        return m_mainResourceLoader->resourceData();
     return 0;
 }
 
@@ -295,7 +292,7 @@ void DocumentLoader::stopLoading()
 
     FrameLoader* frameLoader = DocumentLoader::frameLoader();
     
-    if (isLoadingMainResource())
+    if (m_mainResourceLoader)
         // Stop the main resource loader and let it send the cancelled message.
         cancelMainResourceLoad(frameLoader->cancelledError(m_request));
     else if (!m_subresourceLoaders.isEmpty())
@@ -333,26 +330,6 @@ bool DocumentLoader::isLoading() const
     return isLoadingMainResource() || !m_subresourceLoaders.isEmpty() || !m_plugInStreamLoaders.isEmpty();
 }
 
-void DocumentLoader::notifyFinished(CachedResource* resource)
-{
-    ASSERT_UNUSED(resource, m_mainResource == resource);
-    ASSERT(m_mainResource);
-    if (!m_mainResource->errorOccurred() && !m_mainResource->wasCanceled()) {
-        finishedLoading(m_mainResource->loadFinishTime());
-        return;
-    }
-
-    // FIXME: we should fix the design to eliminate the need for a platform ifdef here
-#if !PLATFORM(CHROMIUM)
-    if (m_request.cachePolicy() == ReturnCacheDataDontLoad && !m_mainResource->wasCanceled()) {
-        frameLoader()->retryAfterFailedCacheOnlyMainResourceLoad();
-        return;
-    }
-#endif
-
-    mainReceivedError(m_mainResource->resourceError());
-}
-
 void DocumentLoader::finishedLoading(double finishTime)
 {
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
@@ -374,7 +351,7 @@ void DocumentLoader::finishedLoading(double finishTime)
         int length;
         const char* data = m_contentFilter->getReplacementData(length);
         if (data)
-            dataReceived(m_mainResource.get(), data, length);
+            receivedData(data, length);
     }
 #endif
 
@@ -408,9 +385,9 @@ void DocumentLoader::finishedLoading(double finishTime)
 
     // If the document specified an application cache manifest, it violates the author's intent if we store it in the memory cache
     // and deny the appcache the chance to intercept it in the future, so remove from the memory cache.
-    if (m_frame) {
-        if (m_mainResource && m_frame->document()->hasManifest())
-            memoryCache()->remove(m_mainResource.get());
+    if (frame() && m_mainResourceLoader) {
+        if (m_mainResourceLoader->cachedMainResource() && frame()->document()->hasManifest())
+            memoryCache()->remove(m_mainResourceLoader->cachedMainResource());
     }
     m_applicationCacheHost->finishedLoadingMainResource();
 }
@@ -434,7 +411,7 @@ void DocumentLoader::handleSubstituteDataLoadNow(DocumentLoaderTimer*)
     if (url.isEmpty())
         url = m_request.url();
     ResourceResponse response(url, m_substituteData.mimeType(), m_substituteData.content()->size(), m_substituteData.textEncoding(), "");
-    responseReceived(0, response);
+    responseReceived(response);
 }
 
 void DocumentLoader::startDataLoadTimer()
@@ -453,12 +430,6 @@ void DocumentLoader::handleSubstituteDataLoadSoon()
         startDataLoadTimer();
     else
         handleSubstituteDataLoadNow(0);
-}
-
-void DocumentLoader::redirectReceived(CachedResource* resource, ResourceRequest& request, const ResourceResponse& redirectResponse)
-{
-    ASSERT_UNUSED(resource, resource == m_mainResource);
-    willSendRequest(request, redirectResponse);
 }
 
 void DocumentLoader::willSendRequest(ResourceRequest& newRequest, const ResourceResponse& redirectResponse)
@@ -544,21 +515,17 @@ void DocumentLoader::continueAfterNavigationPolicy(const ResourceRequest&, bool 
         // If the ResourceLoader is indeed cancelled, it would normally send resource load callbacks.
         // However, from an API perspective, this isn't a cancellation. Therefore, sever our relationship with the network load,
         // but prevent the ResourceLoader from sending ResourceLoadNotifier callbacks.
-        RefPtr<ResourceLoader> resourceLoader = mainResourceLoader();
+        RefPtr<ResourceLoader> resourceLoader = m_mainResourceLoader->loader();
         ASSERT(resourceLoader->shouldSendResourceLoadCallbacks());
         resourceLoader->setSendCallbackPolicy(DoNotSendCallbacks);
-        if (m_mainResource) {
-            m_mainResource->removeClient(this);
-            m_mainResource = 0;
-        }
+        m_mainResourceLoader->clearResource();
         resourceLoader->setSendCallbackPolicy(SendCallbacks);
         handleSubstituteDataLoadSoon();
     }
 }
 
-void DocumentLoader::responseReceived(CachedResource* resource, const ResourceResponse& response)
+void DocumentLoader::responseReceived(const ResourceResponse& response)
 {
-    ASSERT_UNUSED(resource, m_mainResource == resource);
     RefPtr<DocumentLoader> protect(this);
     bool willLoadFallback = m_applicationCacheHost->maybeLoadFallbackForMainResponse(request(), response);
 
@@ -572,7 +539,7 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
         shouldRemoveResourceFromCache = true;
 #endif
     if (shouldRemoveResourceFromCache)
-        memoryCache()->remove(m_mainResource.get());
+        memoryCache()->remove(m_mainResourceLoader->cachedMainResource());
 
     if (willLoadFallback)
         return;
@@ -599,7 +566,7 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
 
     if (m_isLoadingMultipartContent) {
         setupForReplace();
-        m_mainResource->clear();
+        m_mainResourceLoader->cachedMainResource()->clear();
     } else if (response.isMultipart()) {
         FeatureObserver::observe(m_frame->document(), FeatureObserver::MultipartMainResource);
         m_isLoadingMultipartContent = true;
@@ -670,8 +637,8 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
     }
 
     case PolicyDownload: {
-        // m_mainResource can be null, e.g. when loading a substitute resource from application cache.
-        if (!m_mainResource) {
+        // The main CachedResource can be null, e.g. when loading a substitute resource from application cache.
+        if (!m_mainResourceLoader->cachedMainResource()) {
             mainReceivedError(frameLoader()->client()->cannotShowURLError(m_request));
             return;
         }
@@ -712,7 +679,7 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
 
     if (!isStopping() && m_substituteData.isValid()) {
         if (m_substituteData.content()->size())
-            dataReceived(0, m_substituteData.content()->data(), m_substituteData.content()->size());
+            receivedData(m_substituteData.content()->data(), m_substituteData.content()->size());
         if (isLoadingMainResource())
             finishedLoading(0);
     }
@@ -791,7 +758,8 @@ void DocumentLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Loader);
     info.addMember(m_frame, "frame");
     info.addMember(m_cachedResourceLoader, "cachedResourceLoader");
-    info.addMember(m_mainResource, "mainResource");
+    info.addMember(m_mainResourceLoader, "mainResourceLoader");
+    info.addMember(m_mainResourceData, "mainResourceData");
     info.addMember(m_subresourceLoaders, "subresourceLoaders");
     info.addMember(m_multipartSubresourceLoaders, "multipartSubresourceLoaders");
     info.addMember(m_plugInStreamLoaders, "plugInStreamLoaders");
@@ -820,11 +788,10 @@ void DocumentLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_applicationCacheHost, "applicationCacheHost");
 }
 
-void DocumentLoader::dataReceived(CachedResource* resource, const char* data, int length)
+void DocumentLoader::receivedData(const char* data, int length)
 {
     ASSERT(data);
     ASSERT(length);
-    ASSERT_UNUSED(resource, resource == m_mainResource);
     ASSERT(!m_response.isNull());
 
 #if USE(CFNETWORK) || PLATFORM(MAC)
@@ -934,7 +901,12 @@ void DocumentLoader::detachFromFrame()
 
 void DocumentLoader::clearMainResourceLoader()
 {
-    m_loadingMainResource = false;
+    if (m_mainResourceLoader) {
+        m_mainResourceData = m_mainResourceLoader->resourceData();
+        m_mainResourceLoader = 0;
+    }
+    m_loadingEmptyDocument = false;
+
     if (this == frameLoader()->activeDocumentLoader())
         checkLoadComplete();
 }
@@ -1271,8 +1243,8 @@ const KURL& DocumentLoader::unreachableURL() const
 
 void DocumentLoader::setDefersLoading(bool defers)
 {
-    if (mainResourceLoader())
-        mainResourceLoader()->setDefersLoading(defers);
+    if (m_mainResourceLoader)
+        m_mainResourceLoader->setDefersLoading(defers);
     setAllDefersLoading(m_subresourceLoaders, defers);
     setAllDefersLoading(m_plugInStreamLoaders, defers);
     if (!defers)
@@ -1281,8 +1253,8 @@ void DocumentLoader::setDefersLoading(bool defers)
 
 void DocumentLoader::setMainResourceDataBufferingPolicy(DataBufferingPolicy dataBufferingPolicy)
 {
-    if (m_mainResource)
-        m_mainResource->setDataBufferingPolicy(dataBufferingPolicy);
+    if (m_mainResourceLoader)
+        m_mainResourceLoader->setDataBufferingPolicy(dataBufferingPolicy);
 }
 
 void DocumentLoader::stopLoadingPlugIns()
@@ -1299,13 +1271,13 @@ void DocumentLoader::addSubresourceLoader(ResourceLoader* loader)
 {
     // The main resource's underlying ResourceLoader will ask to be added here.
     // It is much simpler to handle special casing of main resource loads if we don't
-    // let it be added. In the main resource load case, mainResourceLoader()
+    // let it be added. In the main resource load case, m_mainResourceLoader->loader()
     // will still be null at this point, but m_gotFirstByte should be false here if and only
     // if we are just starting the main resource load.
     if (!m_gotFirstByte)
         return;
     ASSERT(!m_subresourceLoaders.contains(loader));
-    ASSERT(!mainResourceLoader() || mainResourceLoader() != loader);
+    ASSERT(!m_mainResourceLoader || m_mainResourceLoader->loader() != loader);
     m_subresourceLoaders.add(loader);
 }
 
@@ -1330,6 +1302,11 @@ void DocumentLoader::removePlugInStreamLoader(ResourceLoader* loader)
     checkLoadComplete();
 }
 
+bool DocumentLoader::isLoadingMainResource() const
+{
+    return !!m_mainResourceLoader || m_loadingEmptyDocument;
+}
+
 bool DocumentLoader::isMultipartReplacingLoad() const
 {
     return isLoadingMultipartContent() && frameLoader()->isReplacing();
@@ -1341,6 +1318,7 @@ bool DocumentLoader::maybeLoadEmpty()
     if (!shouldLoadEmpty && !frameLoader()->client()->representationExistsForURLScheme(m_request.url().protocol()))
         return false;
 
+    m_loadingEmptyDocument = true;
     if (m_request.url().isEmpty() && !frameLoader()->stateMachine()->creatingInitialEmptyDocument())
         m_request.setURL(blankURL());
     String mimeType = shouldLoadEmpty ? "text/html" : frameLoader()->client()->generatedMIMETypeForURLScheme(m_request.url().protocol());
@@ -1353,12 +1331,12 @@ void DocumentLoader::startLoadingMainResource()
 {
     m_mainDocumentError = ResourceError();
     timing()->markNavigationStart();
-    ASSERT(!m_mainResource);
-    ASSERT(!m_loadingMainResource);
-    m_loadingMainResource = true;
+    ASSERT(!m_mainResourceLoader);
 
     if (maybeLoadEmpty())
         return;
+
+    m_mainResourceLoader = MainResourceLoader::create(this);
 
     // FIXME: Is there any way the extra fields could have not been added by now?
     // If not, it would be great to remove this line of code.
@@ -1386,12 +1364,10 @@ void DocumentLoader::startLoadingMainResource()
     }
 
     ResourceRequest request(m_request);
-    DEFINE_STATIC_LOCAL(ResourceLoaderOptions, mainResourceLoadOptions,
-        (SendCallbacks, SniffContent, BufferData, AllowStoredCredentials, AskClientForCrossOriginCredentials, SkipSecurityCheck));
-    CachedResourceRequest cachedResourceRequest(request, mainResourceLoadOptions);
-    m_mainResource = m_cachedResourceLoader->requestMainResource(cachedResourceRequest);
-    if (!m_mainResource) {
-        setRequest(ResourceRequest());
+    m_mainResourceLoader->load(m_request);
+
+    if (m_request.isNull()) {
+        m_mainResourceLoader = 0;
         // If the load was aborted by clearing m_request, it's possible the ApplicationCacheHost
         // is now in a state where starting an empty load will be inconsistent. Replace it with
         // a new ApplicationCacheHost.
@@ -1405,7 +1381,6 @@ void DocumentLoader::startLoadingMainResource()
         frameLoader()->notifier()->assignIdentifierToInitialRequest(m_identifierForLoadWithoutResourceLoader, this, request);
         frameLoader()->notifier()->dispatchWillSendRequest(this, m_identifierForLoadWithoutResourceLoader, request, ResourceResponse());
     }
-    m_mainResource->addClient(this);
 
     // A bunch of headers are set when the underlying ResourceLoader is created, and m_request needs to include those.
     if (mainResourceLoader())

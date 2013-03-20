@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="DebugSuffix|Win32">
@@ -3993,6 +3993,7 @@
     <ClCompile Include="..\loader\ImageLoader.cpp" />
     <ClCompile Include="..\loader\LinkLoader.cpp" />
     <ClCompile Include="..\loader\LoaderStrategy.cpp" />
+    <ClCompile Include="..\loader\MainResourceLoader.cpp" />
     <ClCompile Include="..\loader\MixedContentChecker.cpp" />
     <ClCompile Include="..\loader\NavigationAction.cpp" />
     <ClCompile Include="..\loader\NavigationScheduler.cpp" />
@@ -11493,6 +11494,7 @@
     <ClInclude Include="..\loader\LinkLoader.h" />
     <ClInclude Include="..\loader\LinkLoaderClient.h" />
     <ClInclude Include="..\loader\LoaderStrategy.h" />
+    <ClInclude Include="..\loader\MainResourceLoader.h" />
     <ClInclude Include="..\loader\MixedContentChecker.h" />
     <ClInclude Include="..\loader\NavigationAction.h" />
     <ClInclude Include="..\loader\NavigationScheduler.h" />
