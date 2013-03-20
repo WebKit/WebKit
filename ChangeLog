@@ -1,3 +1,15 @@
+2013-03-20  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Define MODULE_VERSION
+        https://bugs.webkit.org/show_bug.cgi?id=112808
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        Upstream http://codereview.qt-project.org/49052
+        Use 5.2.0 as this is the next release that will be branched from trunk.
+
+        * .qmake.conf:
+
 2013-03-20  Rouslan Solomakhin  <rouslan@chromium.org>
 
         Copy-paste should not spellcheck when continuous spellcheck is turned off
