@@ -462,6 +462,30 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
     return URL;
 }
 
+static PassRefPtr<DocumentFragment> fragmentFromWebArchive(Frame* frame, PassRefPtr<LegacyWebArchive> coreArchive)
+{
+    RefPtr<ArchiveResource> mainResource = coreArchive->mainResource();
+    if (!mainResource)
+        return 0;
+
+    NSString *MIMEType = mainResource->mimeType();
+    if (!frame || !frame->document())
+        return 0;
+
+    if (frame->loader()->client()->canShowMIMETypeAsHTML(MIMEType)) {
+        RetainPtr<NSString> markupString(AdoptNS, [[NSString alloc] initWithData:[mainResource->data()->createNSData() autorelease] encoding:NSUTF8StringEncoding]);
+        // FIXME: seems poor form to do this as a side effect of getting a document fragment
+        if (DocumentLoader* loader = frame->loader()->documentLoader())
+            loader->addAllArchiveResources(coreArchive.get());
+        return createFragmentFromMarkup(frame->document(), markupString.get(), mainResource->url(), DisallowScriptingAndPluginContent);
+    }
+
+    if (MIMETypeRegistry::isSupportedImageMIMEType(MIMEType))
+        return documentFragmentWithImageResource(frame, mainResource);
+
+    return 0;
+}
+
 PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefPtr<Range> context, bool allowPlainText, bool& chosePlainText)
 {
     Vector<String> types;
@@ -470,28 +494,13 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
     chosePlainText = false;
 
     if (types.contains(WebArchivePboardType)) {
-        RefPtr<LegacyWebArchive> coreArchive = LegacyWebArchive::create(KURL(), platformStrategies()->pasteboardStrategy()->bufferForType(WebArchivePboardType, m_pasteboardName).get());
-        if (coreArchive) {
-            RefPtr<ArchiveResource> mainResource = coreArchive->mainResource();
-            if (mainResource) {
-                NSString *MIMEType = mainResource->mimeType();
-                if (!frame || !frame->document())
-                    return 0;
-                if (frame->loader()->client()->canShowMIMETypeAsHTML(MIMEType)) {
-                    NSString *markupString = [[NSString alloc] initWithData:[mainResource->data()->createNSData() autorelease] encoding:NSUTF8StringEncoding];
-                    // FIXME: seems poor form to do this as a side effect of getting a document fragment
-                    if (DocumentLoader* loader = frame->loader()->documentLoader())
-                        loader->addAllArchiveResources(coreArchive.get());
-
-                    fragment = createFragmentFromMarkup(frame->document(), markupString, mainResource->url(), DisallowScriptingAndPluginContent);
-                    [markupString release];
-                } else if (MIMETypeRegistry::isSupportedImageMIMEType(MIMEType))
-                   fragment = documentFragmentWithImageResource(frame, mainResource);                    
+        if (RefPtr<SharedBuffer> webArchiveBuffer = platformStrategies()->pasteboardStrategy()->bufferForType(WebArchivePboardType, m_pasteboardName)) {
+            if (RefPtr<LegacyWebArchive> coreArchive = LegacyWebArchive::create(KURL(), webArchiveBuffer.get())) {
+                if ((fragment = fragmentFromWebArchive(frame, coreArchive)))
+                    return fragment.release();
             }
         }
-        if (fragment)
-            return fragment.release();
-    } 
+    }
 
     if (types.contains(String(NSFilenamesPboardType))) {
         Vector<String> paths;
