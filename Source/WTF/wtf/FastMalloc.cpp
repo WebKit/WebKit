@@ -1868,8 +1868,9 @@ void TCMalloc_PageHeap::initializeScavenger()
 {
     m_scavengeQueue = dispatch_queue_create("com.apple.JavaScriptCore.FastMallocSavenger", NULL);
     m_scavengeTimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, m_scavengeQueue);
-    dispatch_time_t startTime = dispatch_time(DISPATCH_TIME_NOW, kScavengeDelayInSeconds * NSEC_PER_SEC);
-    dispatch_source_set_timer(m_scavengeTimer, startTime, kScavengeDelayInSeconds * NSEC_PER_SEC, 1000 * NSEC_PER_USEC);
+    uint64_t scavengeDelayInNanoseconds = kScavengeDelayInSeconds * NSEC_PER_SEC;
+    dispatch_time_t startTime = dispatch_time(DISPATCH_TIME_NOW, scavengeDelayInNanoseconds);
+    dispatch_source_set_timer(m_scavengeTimer, startTime, scavengeDelayInNanoseconds, scavengeDelayInNanoseconds / 10);
     dispatch_source_set_event_handler(m_scavengeTimer, ^{ periodicScavenge(); });
     m_scavengingSuspended = true;
 }

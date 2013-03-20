@@ -1,3 +1,15 @@
+2013-03-20  Mark Rowe  <mrowe@apple.com>
+
+        FastMalloc scavenge timer specifies an overly narrow leeway value.
+
+        Reviewed by Alexey Proskuryakov.
+
+        There's no need to allow only 1ms of leeway on a 2s timer.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::initializeScavenger): Bump the leeway window
+        to 10% of the scavenge timer.
+
 2013-03-20  JungJik Lee  <jungjik.lee@samsung.com>
 
         [EFL] Disable REQUEST_ANIMATION_FRAME_TIMER to render a new animation frame.
