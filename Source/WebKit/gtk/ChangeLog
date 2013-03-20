@@ -1,3 +1,9 @@
+2013-03-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Update NEWS and Versions.m4 for 1.11.92 release.
+
+        * NEWS: Added release notes for 1.11.92.
+
 2013-03-17  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Fix and improve dist hooks for translations
