@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: line 12: SecurityError: DOM Exception 18: An attempt was made to break through the security policy of the user agent.
-FAIL: Timed out waiting for notifyDone to be called
-
