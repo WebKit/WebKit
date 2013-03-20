@@ -611,7 +611,11 @@ bool FocusController::setFocusedNode(Node* node, PassRefPtr<Frame> newFocusedFra
     
     if (oldDocument && oldDocument != newDocument)
         oldDocument->setFocusedNode(0);
-    
+
+    if (newFocusedFrame && !newFocusedFrame->page()) {
+        setFocusedFrame(0);
+        return false;
+    }
     setFocusedFrame(newFocusedFrame);
 
     // Setting the focused node can result in losing our last reft to node when JS event handlers fire.

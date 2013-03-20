@@ -1,0 +1,22 @@
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+addEventListener('change', function(e) {
+    document.body.appendChild(document.getElementById('frame1'));
+}, false);
+
+function handleFocus() {
+    outerInput.focus();
+    document.execCommand('inserttext', false, 'abc');
+    frame1.innerInput.focus();
+    document.body.appendChild(document.createTextNode('PASS'));
+    testRunner.notifyDone();
+}
+</script>
+<div>
+ <input value="foo" id="outerInput"></input>
+ <iframe frameborder="0" id="frame1" height="100" width="540" srcdoc="&lt;input autofocus id='innerInput' onfocus='parent.handleFocus()'>"></iframe>
+</div>
