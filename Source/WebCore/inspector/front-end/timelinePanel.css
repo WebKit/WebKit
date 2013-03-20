@@ -88,63 +88,12 @@
     pointer-events: auto;
 }
 
-.timeline-window-selector {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    background-color: rgba(125, 173, 217, 0.5);
-    z-index: 250;
-}
-
-.timeline-overview-window {
-    background-color: white;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 60px;
-    z-index: 150;
-}
-
-.timeline-frame-overview .timeline-overview-window {
+.timeline-frame-overview .overview-grid-window {
     bottom: 0;
 }
 
-.timeline-overview-dividers-background {
-    left: 0%;
-    right: 0%;
-    top: 0px;
-    bottom: 60px;
-    background-color: black;
-    position: absolute;
-}
-
-.timeline-frame-overview .timeline-overview-dividers-background {
+.timeline-frame-overview .overview-grid-dividers-background {
     bottom: 0;
-}
-
-.timeline-overview-window-rulers {
-    top: 0;
-    bottom: 0;
-    position: absolute;
-    opacity: 0.2;
-    border-right: 1px solid black;
-    border-left: 1px solid black;
-    z-index: 150;
-}
-
-.timeline-window-resizer {
-    position: absolute;
-    top: 0px;
-    bottom: 60px;
-    width: 5px;
-    margin-left: -3px;
-    margin-right: -2px;
-    background-color: rgb(153, 153, 153);
-    z-index: 500;
-    cursor: ew-resize;
-    -webkit-border-radius: 2px;
-    -webkit-box-shadow: white 1px 0 0, white -1px 0 0, white 0 1px 0, white 0 -1px 0;
 }
 
 #timeline-overview-grid #resources-graphs {

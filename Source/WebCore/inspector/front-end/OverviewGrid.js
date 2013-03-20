@@ -45,7 +45,7 @@ WebInspector.OverviewGrid = function(prefix)
 
     this.element.appendChild(this._grid.element);
 
-    this._window = new WebInspector.OverviewGrid.Window(this.element, this._grid.dividersLabelBarElement, prefix);
+    this._window = new WebInspector.OverviewGrid.Window(this.element, this._grid.dividersLabelBarElement);
 }
 
 WebInspector.OverviewGrid.prototype = {
@@ -163,13 +163,11 @@ WebInspector.OverviewGrid.ResizerOffset = 3.5; // half pixel because offset valu
  * @extends {WebInspector.Object}
  * @param {Element} parentElement
  * @param {Element} dividersLabelBarElement
- * @param {string} prefix
  */
-WebInspector.OverviewGrid.Window = function(parentElement, dividersLabelBarElement, prefix)
+WebInspector.OverviewGrid.Window = function(parentElement, dividersLabelBarElement)
 {
     this._parentElement = parentElement;
     this._dividersLabelBarElement = dividersLabelBarElement;
-    this._prefix = prefix;
 
     WebInspector.installDragHandle(this._parentElement, this._startWindowSelectorDragging.bind(this), this._windowSelectorDragging.bind(this), this._endWindowSelectorDragging.bind(this), "ew-resize");
     WebInspector.installDragHandle(this._dividersLabelBarElement, this._startWindowDragging.bind(this), this._windowDragging.bind(this), this._endWindowDragging.bind(this), "ew-resize");
@@ -181,25 +179,25 @@ WebInspector.OverviewGrid.Window = function(parentElement, dividersLabelBarEleme
     this._parentElement.addEventListener("dblclick", this._resizeWindowMaximum.bind(this), true);
 
     this._overviewWindowElement = document.createElement("div");
-    this._overviewWindowElement.className = prefix + "-overview-window";
+    this._overviewWindowElement.className = "overview-grid-window";
     parentElement.appendChild(this._overviewWindowElement);
 
     this._overviewWindowBordersElement = document.createElement("div");
-    this._overviewWindowBordersElement.className = prefix + "-overview-window-rulers";
+    this._overviewWindowBordersElement.className = "overview-grid-window-rulers";
     parentElement.appendChild(this._overviewWindowBordersElement);
 
     var overviewDividersBackground = document.createElement("div");
-    overviewDividersBackground.className = prefix + "-overview-dividers-background";
+    overviewDividersBackground.className = "overview-grid-dividers-background";
     parentElement.appendChild(overviewDividersBackground);
 
     this._leftResizeElement = document.createElement("div");
-    this._leftResizeElement.className = prefix + "-window-resizer";
+    this._leftResizeElement.className = "overview-grid-window-resizer";
     this._leftResizeElement.style.left = 0;
     parentElement.appendChild(this._leftResizeElement);
     WebInspector.installDragHandle(this._leftResizeElement, null, this._leftResizeElementDragging.bind(this), null, "ew-resize");
 
     this._rightResizeElement = document.createElement("div");
-    this._rightResizeElement.className = prefix + "-window-resizer " + prefix + "-window-resizer-right";
+    this._rightResizeElement.className = "overview-grid-window-resizer overview-grid-window-resizer-right";
     this._rightResizeElement.style.right = 0;
     parentElement.appendChild(this._rightResizeElement);
     WebInspector.installDragHandle(this._rightResizeElement, null, this._rightResizeElementDragging.bind(this), null, "ew-resize");
@@ -248,7 +246,7 @@ WebInspector.OverviewGrid.Window.prototype = {
     _startWindowSelectorDragging: function(event)
     {
         var position = event.pageX - this._parentElement.offsetLeft;
-        this._overviewWindowSelector = new WebInspector.OverviewGrid.WindowSelector(this._parentElement, position, this._prefix);
+        this._overviewWindowSelector = new WebInspector.OverviewGrid.WindowSelector(this._parentElement, position);
         return true;
     },
 
@@ -440,15 +438,13 @@ WebInspector.OverviewGrid.Window.prototype = {
 
 /**
  * @constructor
- * @param {string} prefix
  */
-WebInspector.OverviewGrid.WindowSelector = function(parent, position, prefix)
+WebInspector.OverviewGrid.WindowSelector = function(parent, position)
 {
-    this._prefix = prefix;
     this._startPosition = position;
     this._width = parent.offsetWidth;
     this._windowSelector = document.createElement("div");
-    this._windowSelector.className = prefix + "-window-selector";
+    this._windowSelector.className = "overview-grid-window-selector";
     this._windowSelector.style.left = this._startPosition + "px";
     this._windowSelector.style.right = this._width - this._startPosition +  + "px";
     parent.appendChild(this._windowSelector);
@@ -458,7 +454,7 @@ WebInspector.OverviewGrid.WindowSelector.prototype = {
     _createSelectorElement: function(parent, left, width, height)
     {
         var selectorElement = document.createElement("div");
-        selectorElement.className = this._prefix + "-window-selector";
+        selectorElement.className = "overview-grid-window-selector";
         selectorElement.style.left = left + "px";
         selectorElement.style.width = width + "px";
         selectorElement.style.top = "0px";

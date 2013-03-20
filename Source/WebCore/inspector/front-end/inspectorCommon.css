@@ -125,6 +125,56 @@ iframe.view {
     white-space: nowrap;
 }
 
+.overview-grid-window-selector {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background-color: rgba(125, 173, 217, 0.5);
+    z-index: 250;
+}
+
+.overview-grid-window {
+    background-color: white;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 60px;
+    z-index: 150;
+}
+
+.overview-grid-dividers-background {
+    left: 0%;
+    right: 0%;
+    top: 0px;
+    bottom: 60px;
+    background-color: black;
+    position: absolute;
+}
+
+.overview-grid-window-rulers {
+    top: 0;
+    bottom: 0;
+    position: absolute;
+    opacity: 0.2;
+    border-right: 1px solid black;
+    border-left: 1px solid black;
+    z-index: 150;
+}
+
+.overview-grid-window-resizer {
+    position: absolute;
+    top: 0px;
+    bottom: 60px;
+    width: 5px;
+    margin-left: -3px;
+    margin-right: -2px;
+    background-color: rgb(153, 153, 153);
+    z-index: 500;
+    cursor: ew-resize;
+    -webkit-border-radius: 2px;
+    -webkit-box-shadow: white 1px 0 0, white -1px 0 0, white 0 1px 0, white 0 -1px 0;
+}
 
 /* Network timing is shared between popover and network item view pane */
 
