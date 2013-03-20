@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script>
+if (window.internals)
+    internals.settings.setDialogElementEnabled(false);
+</script>
 <script src="../../js/resources/js-test-pre.js"></script>
 </head>
 <body>
 <dialog id="mydialog"></dialog>
 <script>
 description("The DIALOG element should not be recognized if the dialog feature is off.");
-if (window.internals)
-    internals.settings.setDialogElementEnabled(false);
 dialog = document.getElementById('mydialog');
 shouldBeTrue("typeof dialog.show == 'undefined'");
 </script>
