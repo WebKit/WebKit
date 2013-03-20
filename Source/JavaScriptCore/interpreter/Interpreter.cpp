@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010, 2012, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1333,11 +1333,23 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     return checkedReturn(result);
 }
 
-NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookID debugHookID, int firstLine, int lastLine, int column)
+NEVER_INLINE void Interpreter::debug(CallFrame* callFrame, DebugHookID debugHookID, int firstLine, int lastLine, int charPosition)
 {
     Debugger* debugger = callFrame->dynamicGlobalObject()->debugger();
     if (!debugger)
         return;
+
+    CodeBlock* codeBlock = callFrame->codeBlock();
+    size_t actualCharPosition = charPosition + codeBlock->sourceOffset();
+
+    SourceProvider* provider = codeBlock->source();
+    String source = provider->source();
+    size_t lineTerminatorPosition = source.reverseFindLineTerminator(actualCharPosition);
+    int column;
+    if (lineTerminatorPosition != notFound)
+        column = actualCharPosition - (lineTerminatorPosition + 1);
+    else
+        column = actualCharPosition;
 
     switch (debugHookID) {
         case DidEnterCallFrame:

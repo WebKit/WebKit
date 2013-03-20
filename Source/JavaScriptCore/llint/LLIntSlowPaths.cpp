@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1637,9 +1637,9 @@ LLINT_SLOW_PATH_DECL(slow_path_debug)
     int debugHookID = pc[1].u.operand;
     int firstLine = pc[2].u.operand;
     int lastLine = pc[3].u.operand;
-    int column = pc[4].u.operand;
+    int charPosition = pc[4].u.operand;
 
-    globalData.interpreter->debug(exec, static_cast<DebugHookID>(debugHookID), firstLine, lastLine, column);
+    globalData.interpreter->debug(exec, static_cast<DebugHookID>(debugHookID), firstLine, lastLine, charPosition);
     
     LLINT_END();
 }

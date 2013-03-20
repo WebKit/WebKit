@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2009, 2013 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -44,7 +44,7 @@ namespace JSC {
 
     inline Node::Node(const JSTokenLocation& location)
         : m_lineNumber(location.line)
-        , m_columnNumber(location.column)
+        , m_charPosition(location.charPosition)
     {
     }
 

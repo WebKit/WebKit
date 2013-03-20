@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -230,7 +230,7 @@ namespace JSC {
         SamplingTool* sampler() { return m_sampler.get(); }
 
         NEVER_INLINE HandlerInfo* throwException(CallFrame*&, JSValue&, unsigned bytecodeOffset);
-        NEVER_INLINE void debug(CallFrame*, DebugHookID, int firstLine, int lastLine, int column);
+        NEVER_INLINE void debug(CallFrame*, DebugHookID, int firstLine, int lastLine, int charPosition);
         static const String getTraceLine(CallFrame*, StackFrameCodeType, const String&, int);
         JS_EXPORT_PRIVATE static void getStackTrace(JSGlobalData*, Vector<StackFrame>& results);
         static void addStackTraceIfNecessary(CallFrame*, JSObject* error);

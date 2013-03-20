@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2013 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2007 Maks Orlovich
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
@@ -127,11 +127,11 @@ namespace JSC {
 
         int lineNo() const { return m_lineNumber; }
 
-        int columnNo() const { return m_columnNumber; }
+        int charPosition() const { return m_charPosition; }
 
     protected:
         int m_lineNumber;
-        int m_columnNumber;
+        int m_charPosition;
     };
 
     class ExpressionNode : public Node {
@@ -169,11 +169,9 @@ namespace JSC {
         StatementNode(const JSTokenLocation&);
 
     public:
-        JS_EXPORT_PRIVATE void setLoc(int firstLine, int lastLine);
-        void setLoc(int firstLine, int lastLine, int column);
+        void setLoc(int firstLine, int lastLine, int charPosition);
         int firstLine() const { return lineNo(); }
         int lastLine() const { return m_lastLine; }
-        int column() const { return columnNo();}
 
         virtual bool isEmptyStatement() const { return false; }
         virtual bool isReturnNode() const { return false; }
@@ -1295,8 +1293,8 @@ namespace JSC {
         typedef DeclarationStacks::VarStack VarStack;
         typedef DeclarationStacks::FunctionStack FunctionStack;
 
-        ScopeNode(JSGlobalData*, const JSTokenLocation&, bool inStrictContext);
-        ScopeNode(JSGlobalData*, const JSTokenLocation&, const SourceCode&, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, CodeFeatures, int numConstants);
+        ScopeNode(JSGlobalData*, const JSTokenLocation& start, const JSTokenLocation& end, bool inStrictContext);
+        ScopeNode(JSGlobalData*, const JSTokenLocation& start, const JSTokenLocation& end, const SourceCode&, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, CodeFeatures, int numConstants);
 
         using ParserArenaRefCounted::operator new;
 
@@ -1312,6 +1310,9 @@ namespace JSC {
         const SourceCode& source() const { return m_source; }
         const String& sourceURL() const { return m_source.provider()->url(); }
         intptr_t sourceID() const { return m_source.providerID(); }
+
+        int startLine() const { return m_startLineNumber; }
+        int startCharPosition() const { return m_startCharPosition;}
 
         void setFeatures(CodeFeatures features) { m_features = features; }
         CodeFeatures features() { return m_features; }
@@ -1345,6 +1346,9 @@ namespace JSC {
         void setSource(const SourceCode& source) { m_source = source; }
         ParserArena m_arena;
 
+        int m_startLineNumber;
+        int m_startCharPosition;
+
     private:
         CodeFeatures m_features;
         SourceCode m_source;
@@ -1358,12 +1362,12 @@ namespace JSC {
     class ProgramNode : public ScopeNode {
     public:
         static const bool isFunctionNode = false;
-        static PassRefPtr<ProgramNode> create(JSGlobalData*, const JSTokenLocation&, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
+        static PassRefPtr<ProgramNode> create(JSGlobalData*, const JSTokenLocation& start, const JSTokenLocation& end, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
 
         static const bool scopeIsFunction = false;
 
     private:
-        ProgramNode(JSGlobalData*, const JSTokenLocation&, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
+        ProgramNode(JSGlobalData*, const JSTokenLocation& start, const JSTokenLocation& end, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
 
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
     };
@@ -1371,12 +1375,12 @@ namespace JSC {
     class EvalNode : public ScopeNode {
     public:
         static const bool isFunctionNode = false;
-        static PassRefPtr<EvalNode> create(JSGlobalData*, const JSTokenLocation&, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
+        static PassRefPtr<EvalNode> create(JSGlobalData*, const JSTokenLocation& start, const JSTokenLocation& end, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
 
         static const bool scopeIsFunction = false;
 
     private:
-        EvalNode(JSGlobalData*, const JSTokenLocation&, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
+        EvalNode(JSGlobalData*, const JSTokenLocation& start, const JSTokenLocation& end, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
 
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
     };
@@ -1403,8 +1407,8 @@ namespace JSC {
     class FunctionBodyNode : public ScopeNode {
     public:
         static const bool isFunctionNode = true;
-        static FunctionBodyNode* create(JSGlobalData*, const JSTokenLocation&, bool isStrictMode);
-        static PassRefPtr<FunctionBodyNode> create(JSGlobalData*, const JSTokenLocation&, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
+        static FunctionBodyNode* create(JSGlobalData*, const JSTokenLocation& start, const JSTokenLocation& end, bool isStrictMode);
+        static PassRefPtr<FunctionBodyNode> create(JSGlobalData*, const JSTokenLocation& start, const JSTokenLocation& end, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
 
         FunctionParameters* parameters() const { return m_parameters.get(); }
         size_t parameterCount() const { return m_parameters->size(); }
@@ -1427,8 +1431,8 @@ namespace JSC {
         static const bool scopeIsFunction = true;
 
     private:
-        FunctionBodyNode(JSGlobalData*, const JSTokenLocation&, bool inStrictContext);
-        FunctionBodyNode(JSGlobalData*, const JSTokenLocation&, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
+        FunctionBodyNode(JSGlobalData*, const JSTokenLocation& start, const JSTokenLocation& end, bool inStrictContext);
+        FunctionBodyNode(JSGlobalData*, const JSTokenLocation& start, const JSTokenLocation& end, SourceElements*, VarStack*, FunctionStack*, IdentifierSet&, const SourceCode&, CodeFeatures, int numConstants);
 
         Identifier m_ident;
         Identifier m_inferredName;

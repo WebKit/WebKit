@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2006, 2007, 2008, 2009, 2011, 2012 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2006, 2007, 2008, 2009, 2011, 2012, 2013 Apple Inc. All Rights Reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2010 Zoltan Herczeg (zherczeg@inf.u-szeged.hu)
  *  Copyright (C) 2012 Mathias Bynens (mathias@qiwi.be)
@@ -550,7 +550,7 @@ void Lexer<T>::setCode(const SourceCode& source, ParserArena* arena)
     m_codeEnd = m_codeStart + source.endOffset();
     m_error = false;
     m_atLineStart = true;
-    m_columnNumber = 0;
+    m_charPosition = 0;
     m_lexErrorMessage = String();
     
     m_buffer8.reserveInitialCapacity(initialReadBufferCapacity);
@@ -567,7 +567,7 @@ template <typename T>
 template <int shiftAmount> ALWAYS_INLINE void Lexer<T>::internalShift()
 {
     m_code += shiftAmount;
-    m_columnNumber += shiftAmount;
+    m_charPosition += shiftAmount;
     m_current = *m_code;
 }
 
@@ -579,7 +579,7 @@ ALWAYS_INLINE void Lexer<T>::shift()
     ++m_code;
     if (LIKELY(m_code < m_codeEnd))
         m_current = *m_code;
-    ++m_columnNumber;
+    ++m_charPosition;
 }
 
 template <typename T>
@@ -1319,7 +1319,7 @@ start:
         return EOFTOK;
     
     tokenLocation->startOffset = currentOffset();
-    tokenLocation->column = m_columnNumber;
+    tokenLocation->charPosition = m_charPosition;
 
     CharacterType type;
     if (LIKELY(isLatin1(m_current)))
@@ -1642,7 +1642,6 @@ inNumberAfterDecimalPoint:
         shiftLineTerminator();
         m_atLineStart = true;
         m_terminator = true;
-        m_columnNumber = 0;
         goto start;
     case CharacterInvalid:
         m_lexErrorMessage = invalidCharacterMessage();
@@ -1665,7 +1664,6 @@ inSingleLineComment:
     shiftLineTerminator();
     m_atLineStart = true;
     m_terminator = true;
-    m_columnNumber = 0;
     if (!lastTokenWasRestrKeyword())
         goto start;
 

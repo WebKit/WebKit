@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2011, 2012 Apple Inc. All rights reserved.
+ *  Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2011, 2012, 2013 Apple Inc. All rights reserved.
  *  Copyright (C) 2010 Zoltan Herczeg (zherczeg@inf.u-szeged.hu)
  *
  *  This library is free software; you can redistribute it and/or
@@ -90,7 +90,7 @@ public:
     JSTokenType lex(JSTokenData*, JSTokenLocation*, unsigned, bool strictMode);
     bool nextTokenIsColon();
     int lineNumber() const { return m_lineNumber; }
-    int currentColumnNumber() const { return m_columnNumber; }
+    int currentCharPosition() const { return m_charPosition; }
     void setLastLineNumber(int lastLineNumber) { m_lastLineNumber = lastLineNumber; }
     int lastLineNumber() const { return m_lastLineNumber; }
     bool prevTerminator() const { return m_terminator; }
@@ -170,7 +170,7 @@ private:
 
     int m_lineNumber;
     int m_lastLineNumber;
-    int m_columnNumber;
+    int m_charPosition;
 
     Vector<LChar> m_buffer8;
     Vector<UChar> m_buffer16;
@@ -317,7 +317,7 @@ ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSTokenData* tokenData, 
         m_current = 0;
 
     m_code = ptr;
-    m_columnNumber = m_columnNumber + (m_code - start);
+    m_charPosition = m_charPosition + (m_code - start);
 
     // Create the identifier if needed
     if (lexerFlags & LexexFlagsDontBuildKeywords)
@@ -327,7 +327,7 @@ ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSTokenData* tokenData, 
     tokenLocation->line = m_lineNumber;
     tokenLocation->startOffset = start - m_codeStart;
     tokenLocation->endOffset = currentOffset();
-    tokenLocation->column = m_columnNumber;
+    tokenLocation->charPosition = m_charPosition;
     m_lastToken = IDENT;
     return IDENT;
     

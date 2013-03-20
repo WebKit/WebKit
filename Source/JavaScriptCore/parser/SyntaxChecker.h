@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -150,7 +150,7 @@ public:
     ExpressionType createConditionalExpr(const JSTokenLocation&, ExpressionType, ExpressionType, ExpressionType) { return ConditionalExpr; }
     ExpressionType createAssignResolve(const JSTokenLocation&, const Identifier&, ExpressionType, int, int, int) { return AssignmentExpr; }
     ExpressionType createFunctionExpr(const JSTokenLocation&, const Identifier*, int, int, int, int, int, int) { return FunctionExpr; }
-    int createFunctionBody(const JSTokenLocation&, bool) { return 1; }
+    int createFunctionBody(const JSTokenLocation&, const JSTokenLocation&, bool) { return 1; }
     void setFunctionStart(int, int) { }
     int createArguments() { return 1; }
     int createArguments(int) { return 1; }

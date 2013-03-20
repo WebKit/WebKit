@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2012, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  * Copyright (C) 2012 Igalia, S.L.
  *
@@ -2121,7 +2121,7 @@ void BytecodeGenerator::emitPopScope()
     m_dynamicScopeDepth--;
 }
 
-void BytecodeGenerator::emitDebugHook(DebugHookID debugHookID, int firstLine, int lastLine, int column)
+void BytecodeGenerator::emitDebugHook(DebugHookID debugHookID, int firstLine, int lastLine, int charPosition)
 {
 #if ENABLE(DEBUG_WITH_BREAKPOINT)
     if (debugHookID != DidReachBreakpoint)
@@ -2134,7 +2134,7 @@ void BytecodeGenerator::emitDebugHook(DebugHookID debugHookID, int firstLine, in
     instructions().append(debugHookID);
     instructions().append(firstLine);
     instructions().append(lastLine);
-    instructions().append(column);
+    instructions().append(charPosition);
 }
 
 void BytecodeGenerator::pushFinallyContext(StatementNode* finallyBlock)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -265,13 +265,13 @@ public:
     ExpressionNode* createFunctionExpr(const JSTokenLocation& location, const Identifier* name, FunctionBodyNode* body, ParameterNode* parameters, int openBracePos, int closeBracePos, int bodyStartLine, int bodyEndLine)
     {
         FuncExprNode* result = new (m_globalData) FuncExprNode(location, *name, body, m_sourceCode->subExpression(openBracePos, closeBracePos, bodyStartLine), parameters);
-        body->setLoc(bodyStartLine, bodyEndLine, location.column);
+        body->setLoc(bodyStartLine, bodyEndLine, location.charPosition);
         return result;
     }
 
-    FunctionBodyNode* createFunctionBody(const JSTokenLocation& location, bool inStrictContext)
+    FunctionBodyNode* createFunctionBody(const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, bool inStrictContext)
     {
-        return FunctionBodyNode::create(m_globalData, location, inStrictContext);
+        return FunctionBodyNode::create(m_globalData, startLocation, endLocation, inStrictContext);
     }
 
     void setFunctionStart(FunctionBodyNode* body, int functionStart)
@@ -282,14 +282,14 @@ public:
     template <bool> PropertyNode* createGetterOrSetterProperty(const JSTokenLocation& location, PropertyNode::Type type, const Identifier* name, ParameterNode* params, FunctionBodyNode* body, int openBracePos, int closeBracePos, int bodyStartLine, int bodyEndLine)
     {
         ASSERT(name);
-        body->setLoc(bodyStartLine, bodyEndLine, location.column);
+        body->setLoc(bodyStartLine, bodyEndLine, location.charPosition);
         body->setInferredName(*name);
         return new (m_globalData) PropertyNode(m_globalData, *name, new (m_globalData) FuncExprNode(location, m_globalData->propertyNames->nullIdentifier, body, m_sourceCode->subExpression(openBracePos, closeBracePos, bodyStartLine), params), type);
     }
     
     template <bool> PropertyNode* createGetterOrSetterProperty(JSGlobalData*, const JSTokenLocation& location, PropertyNode::Type type, double name, ParameterNode* params, FunctionBodyNode* body, int openBracePos, int closeBracePos, int bodyStartLine, int bodyEndLine)
     {
-        body->setLoc(bodyStartLine, bodyEndLine, location.column);
+        body->setLoc(bodyStartLine, bodyEndLine, location.charPosition);
         return new (m_globalData) PropertyNode(m_globalData, name, new (m_globalData) FuncExprNode(location, m_globalData->propertyNames->nullIdentifier, body, m_sourceCode->subExpression(openBracePos, closeBracePos, bodyStartLine), params), type);
     }
 
@@ -326,49 +326,49 @@ public:
         if (*name == m_globalData->propertyNames->arguments)
             usesArguments();
         m_scope.m_funcDeclarations->data.append(decl->body());
-        body->setLoc(bodyStartLine, bodyEndLine, location.column);
+        body->setLoc(bodyStartLine, bodyEndLine, location.charPosition);
         return decl;
     }
 
     StatementNode* createBlockStatement(const JSTokenLocation& location, JSC::SourceElements* elements, int startLine, int endLine)
     {
         BlockNode* block = new (m_globalData) BlockNode(location, elements);
-        block->setLoc(startLine, endLine, location.column);
+        block->setLoc(startLine, endLine, location.charPosition);
         return block;
     }
 
     StatementNode* createExprStatement(const JSTokenLocation& location, ExpressionNode* expr, int start, int end)
     {
         ExprStatementNode* result = new (m_globalData) ExprStatementNode(location, expr);
-        result->setLoc(start, end, location.column);
+        result->setLoc(start, end, location.charPosition);
         return result;
     }
 
     StatementNode* createIfStatement(const JSTokenLocation& location, ExpressionNode* condition, StatementNode* trueBlock, int start, int end)
     {
         IfNode* result = new (m_globalData) IfNode(location, condition, trueBlock);
-        result->setLoc(start, end, location.column);
+        result->setLoc(start, end, location.charPosition);
         return result;
     }
 
     StatementNode* createIfStatement(const JSTokenLocation& location, ExpressionNode* condition, StatementNode* trueBlock, StatementNode* falseBlock, int start, int end)
     {
         IfNode* result = new (m_globalData) IfElseNode(location, condition, trueBlock, falseBlock);
-        result->setLoc(start, end, location.column);
+        result->setLoc(start, end, location.charPosition);
         return result;
     }
 
     StatementNode* createForLoop(const JSTokenLocation& location, ExpressionNode* initializer, ExpressionNode* condition, ExpressionNode* iter, StatementNode* statements, int start, int end)
     {
         ForNode* result = new (m_globalData) ForNode(location, initializer, condition, iter, statements);
-        result->setLoc(start, end);
+        result->setLoc(start, end, location.charPosition);
         return result;
     }
 
     StatementNode* createForInLoop(const JSTokenLocation& location, const Identifier* ident, ExpressionNode* initializer, ExpressionNode* iter, StatementNode* statements, int start, int divot, int end, int initStart, int initEnd, int startLine, int endLine)
     {
         ForInNode* result = new (m_globalData) ForInNode(m_globalData, location, *ident, initializer, iter, statements, initStart, initStart - start, initEnd - initStart);
-        result->setLoc(startLine, endLine, location.column);
+        result->setLoc(startLine, endLine, location.charPosition);
         setExceptionLocation(result, start, divot + 1, end);
         return result;
     }
@@ -376,7 +376,7 @@ public:
     StatementNode* createForInLoop(const JSTokenLocation& location, ExpressionNode* lhs, ExpressionNode* iter, StatementNode* statements, int eStart, int eDivot, int eEnd, int start, int end)
     {
         ForInNode* result = new (m_globalData) ForInNode(location, lhs, iter, statements);
-        result->setLoc(start, end, location.column);
+        result->setLoc(start, end, location.charPosition);
         setExceptionLocation(result, eStart, eDivot, eEnd);
         return result;
     }
@@ -390,7 +390,7 @@ public:
             result = new (m_globalData) EmptyStatementNode(location);
         else
             result = new (m_globalData) VarStatementNode(location, expr);
-        result->setLoc(start, end, location.column);
+        result->setLoc(start, end, location.charPosition);
         return result;
     }
 
@@ -398,7 +398,7 @@ public:
     {
         ReturnNode* result = new (m_globalData) ReturnNode(location, expression);
         setExceptionLocation(result, eStart, eEnd, eEnd);
-        result->setLoc(startLine, endLine, location.column);
+        result->setLoc(startLine, endLine, location.charPosition);
         return result;
     }
 
@@ -406,7 +406,7 @@ public:
     {
         BreakNode* result = new (m_globalData) BreakNode(m_globalData, location);
         setExceptionLocation(result, eStart, eEnd, eEnd);
-        result->setLoc(startLine, endLine, location.column);
+        result->setLoc(startLine, endLine, location.charPosition);
         return result;
     }
 
@@ -414,7 +414,7 @@ public:
     {
         BreakNode* result = new (m_globalData) BreakNode(location, *ident);
         setExceptionLocation(result, eStart, eEnd, eEnd);
-        result->setLoc(startLine, endLine, location.column);
+        result->setLoc(startLine, endLine, location.charPosition);
         return result;
     }
 
@@ -422,7 +422,7 @@ public:
     {
         ContinueNode* result = new (m_globalData) ContinueNode(m_globalData, location);
         setExceptionLocation(result, eStart, eEnd, eEnd);
-        result->setLoc(startLine, endLine, location.column);
+        result->setLoc(startLine, endLine, location.charPosition);
         return result;
     }
 
@@ -430,7 +430,7 @@ public:
     {
         ContinueNode* result = new (m_globalData) ContinueNode(location, *ident);
         setExceptionLocation(result, eStart, eEnd, eEnd);
-        result->setLoc(startLine, endLine, location.column);
+        result->setLoc(startLine, endLine, location.charPosition);
         return result;
     }
 
@@ -439,7 +439,7 @@ public:
         TryNode* result = new (m_globalData) TryNode(location, tryBlock, *ident, catchBlock, finallyBlock);
         if (catchBlock)
             usesCatch();
-        result->setLoc(startLine, endLine, location.column);
+        result->setLoc(startLine, endLine, location.charPosition);
         return result;
     }
 
@@ -447,21 +447,21 @@ public:
     {
         CaseBlockNode* cases = new (m_globalData) CaseBlockNode(firstClauses, defaultClause, secondClauses);
         SwitchNode* result = new (m_globalData) SwitchNode(location, expr, cases);
-        result->setLoc(startLine, endLine, location.column);
+        result->setLoc(startLine, endLine, location.charPosition);
         return result;
     }
 
     StatementNode* createWhileStatement(const JSTokenLocation& location, ExpressionNode* expr, StatementNode* statement, int startLine, int endLine)
     {
         WhileNode* result = new (m_globalData) WhileNode(location, expr, statement);
-        result->setLoc(startLine, endLine, location.column);
+        result->setLoc(startLine, endLine, location.charPosition);
         return result;
     }
 
     StatementNode* createDoWhileStatement(const JSTokenLocation& location, StatementNode* statement, ExpressionNode* expr, int startLine, int endLine)
     {
         DoWhileNode* result = new (m_globalData) DoWhileNode(location, statement, expr);
-        result->setLoc(startLine, endLine, location.column);
+        result->setLoc(startLine, endLine, location.charPosition);
         return result;
     }
 
@@ -476,14 +476,14 @@ public:
     {
         usesWith();
         WithNode* result = new (m_globalData) WithNode(location, expr, statement, end, end - start);
-        result->setLoc(startLine, endLine, location.column);
+        result->setLoc(startLine, endLine, location.charPosition);
         return result;
     }    
     
     StatementNode* createThrowStatement(const JSTokenLocation& location, ExpressionNode* expr, int start, int end, int startLine, int endLine)
     {
         ThrowNode* result = new (m_globalData) ThrowNode(location, expr);
-        result->setLoc(startLine, endLine, location.column);
+        result->setLoc(startLine, endLine, location.charPosition);
         setExceptionLocation(result, start, end, end);
         return result;
     }
@@ -491,14 +491,14 @@ public:
     StatementNode* createDebugger(const JSTokenLocation& location, int startLine, int endLine)
     {
         DebuggerStatementNode* result = new (m_globalData) DebuggerStatementNode(location);
-        result->setLoc(startLine, endLine, location.column);
+        result->setLoc(startLine, endLine, location.charPosition);
         return result;
     }
     
     StatementNode* createConstStatement(const JSTokenLocation& location, ConstDeclNode* decls, int startLine, int endLine)
     {
         ConstStatementNode* result = new (m_globalData) ConstStatementNode(location, decls);
-        result->setLoc(startLine, endLine, location.column);
+        result->setLoc(startLine, endLine, location.charPosition);
         return result;
     }
 

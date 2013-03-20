@@ -697,6 +697,7 @@ public:
     ALWAYS_INLINE size_t findIgnoringCase(const char* s, unsigned index = 0) { return findIgnoringCase(reinterpret_cast<const LChar*>(s), index); };
     WTF_EXPORT_STRING_API size_t findIgnoringCase(StringImpl*, unsigned index = 0);
 
+    WTF_EXPORT_STRING_API size_t reverseFindLineTerminator(unsigned index = UINT_MAX);
     WTF_EXPORT_STRING_API size_t reverseFind(UChar, unsigned index = UINT_MAX);
     WTF_EXPORT_STRING_API size_t reverseFind(StringImpl*, unsigned index = UINT_MAX);
     WTF_EXPORT_STRING_API size_t reverseFindIgnoringCase(StringImpl*, unsigned index = UINT_MAX);
@@ -1107,7 +1108,23 @@ inline size_t find(const UChar* characters, unsigned length, CharacterMatchFunct
     return notFound;
 }
 
-template <typename CharacterType>
+template<typename CharacterType>
+inline size_t reverseFindLineTerminator(const CharacterType* characters, unsigned length, unsigned index = UINT_MAX)
+{
+    if (!length)
+        return notFound;
+    if (index >= length)
+        index = length - 1;
+    CharacterType c = characters[index];
+    while ((c != '\n') && (c != '\r')) {
+        if (!index--)
+            return notFound;
+        c = characters[index];
+    }
+    return index;
+}
+
+template<typename CharacterType>
 inline size_t reverseFind(const CharacterType* characters, unsigned length, CharacterType matchCharacter, unsigned index = UINT_MAX)
 {
     if (!length)

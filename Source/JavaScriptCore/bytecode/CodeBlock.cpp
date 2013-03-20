@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010, 2012, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1473,8 +1473,8 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int debugHookID = (++it)->u.operand;
             int firstLine = (++it)->u.operand;
             int lastLine = (++it)->u.operand;
-            int column = (++it)->u.operand;
-            out.printf("[%4d] debug\t\t %s, %d, %d, %d", location, debugHookName(debugHookID), firstLine, lastLine, column);
+            int charPosition = (++it)->u.operand;
+            out.printf("[%4d] debug\t\t %s, %d, %d, %d", location, debugHookName(debugHookID), firstLine, lastLine, charPosition);
             break;
         }
         case op_profile_will_call: {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2012, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  * Copyright (C) 2012 Igalia, S.L.
  *
@@ -374,7 +374,7 @@ namespace JSC {
             } else if (startOffset > ExpressionRangeInfo::MaxOffset) {
                 // If the start offset is out of bounds we clear both offsets
                 // so we only get the divot marker.  Error message will have to be reduced
-                // to line and column number.
+                // to line and charPosition number.
                 startOffset = 0;
                 endOffset = 0;
             } else if (endOffset > ExpressionRangeInfo::MaxOffset) {
@@ -511,7 +511,7 @@ namespace JSC {
         RegisterID* emitPushWithScope(RegisterID* scope);
         void emitPopScope();
 
-        void emitDebugHook(DebugHookID, int firstLine, int lastLine, int column);
+        void emitDebugHook(DebugHookID, int firstLine, int lastLine, int charPosition);
 
         int scopeDepth() { return m_dynamicScopeDepth + m_finallyDepth; }
         bool hasFinaliser() { return m_finallyDepth != 0; }

@@ -1,3 +1,125 @@
+2013-03-20  Mark Lam  <mark.lam@apple.com>
+
+        Fix incorrect debugger column number value.
+        https://bugs.webkit.org/show_bug.cgi?id=112741.
+
+        Reviewed by Oliver Hunt.
+
+        1. In lexer, parser, and debugger code, renamed column to charPosition.
+        2. Convert the charPosition to the equivalent column number before
+           passing it to the debugger.
+        3. Changed ScopeNodes to take both a startLocation and an endLocation.
+           This allows FunctionBodyNodes, ProgramNodes, and EvalNodess to emit
+           correct debug hooks with correct starting line and column numbers.
+        4. Fixed the Lexer to not reset the charPosition (previously
+           columnNumber) in Lexer::lex().
+
+        * JavaScriptCore.order:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitDebugHook):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitExpressionInfo):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrayNode::toArgumentList):
+        (JSC::ConstStatementNode::emitBytecode):
+        (JSC::EmptyStatementNode::emitBytecode):
+        (JSC::DebuggerStatementNode::emitBytecode):
+        (JSC::ExprStatementNode::emitBytecode):
+        (JSC::VarStatementNode::emitBytecode):
+        (JSC::IfNode::emitBytecode):
+        (JSC::IfElseNode::emitBytecode):
+        (JSC::DoWhileNode::emitBytecode):
+        (JSC::WhileNode::emitBytecode):
+        (JSC::ForNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        (JSC::ContinueNode::emitBytecode):
+        (JSC::BreakNode::emitBytecode):
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::WithNode::emitBytecode):
+        (JSC::SwitchNode::emitBytecode):
+        (JSC::LabelNode::emitBytecode):
+        (JSC::ThrowNode::emitBytecode):
+        (JSC::TryNode::emitBytecode):
+        (JSC::ProgramNode::emitBytecode):
+        (JSC::EvalNode::emitBytecode):
+        (JSC::FunctionBodyNode::emitBytecode):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::debug):
+        - convert charPosition to column for the debugger.
+        * interpreter/Interpreter.h:
+        * jit/JITStubs.cpp:
+        (DEFINE_STUB_FUNCTION(void, op_debug)):
+        * llint/LLIntSlowPaths.cpp:
+        (LLINT_SLOW_PATH_DECL(slow_op_debug)):
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createFunctionExpr):
+        (JSC::ASTBuilder::createFunctionBody):
+        (JSC::ASTBuilder::createGetterOrSetterProperty):
+        (JSC::ASTBuilder::createFuncDeclStatement):
+        (JSC::ASTBuilder::createBlockStatement):
+        (JSC::ASTBuilder::createExprStatement):
+        (JSC::ASTBuilder::createIfStatement):
+        (JSC::ASTBuilder::createForLoop):
+        (JSC::ASTBuilder::createForInLoop):
+        (JSC::ASTBuilder::createVarStatement):
+        (JSC::ASTBuilder::createReturnStatement):
+        (JSC::ASTBuilder::createBreakStatement):
+        (JSC::ASTBuilder::createContinueStatement):
+        (JSC::ASTBuilder::createTryStatement):
+        (JSC::ASTBuilder::createSwitchStatement):
+        (JSC::ASTBuilder::createWhileStatement):
+        (JSC::ASTBuilder::createDoWhileStatement):
+        (JSC::ASTBuilder::createWithStatement):
+        (JSC::ASTBuilder::createThrowStatement):
+        (JSC::ASTBuilder::createDebugger):
+        (JSC::ASTBuilder::createConstStatement):
+        * parser/Lexer.cpp:
+        (JSC::::setCode):
+        (JSC::::internalShift):
+        (JSC::::shift):
+        (JSC::::lex):
+        * parser/Lexer.h:
+        (JSC::Lexer::currentCharPosition):
+        (Lexer):
+        (JSC::::lexExpectIdentifier):
+        * parser/NodeConstructors.h:
+        (JSC::Node::Node):
+        * parser/Nodes.cpp:
+        (JSC::StatementNode::setLoc):
+        (JSC::ScopeNode::ScopeNode):
+        (JSC::ProgramNode::ProgramNode):
+        (JSC::ProgramNode::create):
+        (JSC::EvalNode::EvalNode):
+        (JSC::EvalNode::create):
+        (JSC::FunctionBodyNode::FunctionBodyNode):
+        (JSC::FunctionBodyNode::create):
+        * parser/Nodes.h:
+        (JSC::Node::charPosition):
+        (Node):
+        (StatementNode):
+        (JSC::StatementNode::lastLine):
+        (ScopeNode):
+        (JSC::ScopeNode::startLine):
+        (JSC::ScopeNode::startCharPosition):
+        (ProgramNode):
+        (EvalNode):
+        (FunctionBodyNode):
+        * parser/Parser.cpp:
+        (JSC::::Parser):
+        (JSC::::parseFunctionBody):
+        (JSC::::parseFunctionInfo):
+        * parser/Parser.h:
+        (JSC::::parse):
+        * parser/ParserTokens.h:
+        (JSC::JSTokenLocation::JSTokenLocation):
+        (JSTokenLocation):
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createFunctionBody):
+
 2013-03-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r146089): It broke 20 sputnik tests on ARM traditional and Thumb2

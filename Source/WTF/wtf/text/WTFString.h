@@ -1,6 +1,6 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -260,6 +260,9 @@ public:
         { return m_impl ? m_impl->find(matchFunction, start) : notFound; }
     size_t find(const LChar* str, unsigned start = 0) const
         { return m_impl ? m_impl->find(str, start) : notFound; }
+
+    size_t reverseFindLineTerminator(unsigned start = UINT_MAX) const
+        { return m_impl ? m_impl->reverseFindLineTerminator(start) : notFound; }
 
     // Find the last instance of a single character or string.
     size_t reverseFind(UChar c, unsigned start = UINT_MAX) const

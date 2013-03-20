@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -950,6 +950,8 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(ParserError& error)
     errLine = -1;
     errMsg = String();
 
+    JSTokenLocation startLocation(tokenLocation());
+
     String parseError = parseInner();
 
     int lineNumber = m_lexer->lineNumber();
@@ -966,11 +968,12 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(ParserError& error)
 
     RefPtr<ParsedNode> result;
     if (m_sourceElements) {
-        JSTokenLocation location;
-        location.line = m_lexer->lastLineNumber();
-        location.column = m_lexer->currentColumnNumber();
+        JSTokenLocation endLocation;
+        endLocation.line = m_lexer->lastLineNumber();
+        endLocation.charPosition = m_lexer->currentCharPosition();
         result = ParsedNode::create(m_globalData,
-                                    location,
+                                    startLocation,
+                                    endLocation,
                                     m_sourceElements,
                                     m_varDeclarations ? &m_varDeclarations->data : 0,
                                     m_funcDeclarations ? &m_funcDeclarations->data : 0,
@@ -978,7 +981,7 @@ PassRefPtr<ParsedNode> Parser<LexerType>::parse(ParserError& error)
                                     *m_source,
                                     m_features,
                                     m_numConstants);
-        result->setLoc(m_source->firstLine(), m_lastLine, m_lexer->currentColumnNumber());
+        result->setLoc(m_source->firstLine(), m_lastLine, m_lexer->currentCharPosition());
     } else {
         // We can never see a syntax error when reparsing a function, since we should have
         // reported the error when parsing the containing program or eval code. So if we're

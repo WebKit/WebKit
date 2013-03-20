@@ -361,7 +361,6 @@ EXPORTS
     ?setGetter@PropertyDescriptor@JSC@@QAEXVJSValue@2@@Z
     ?setGlobalThis@JSGlobalObject@JSC@@IAEXAAVJSGlobalData@2@PAVJSObject@2@@Z
     ?setIndexQuicklyToUndecided@JSObject@JSC@@AAEXAAVJSGlobalData@2@IVJSValue@2@@Z
-    ?setLoc@StatementNode@JSC@@QAEXHH@Z
     ?setMainThreadCallbacksPaused@WTF@@YAX_N@Z
     ?setOption@Options@JSC@@SA_NPBD@Z
     ?setOrderLowerFirst@Collator@WTF@@QAEX_N@Z

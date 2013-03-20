@@ -1,7 +1,7 @@
 /*
 *  Copyright (C) 1999-2002 Harri Porten (porten@kde.org)
 *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
-*  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+*  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2013 Apple Inc. All rights reserved.
 *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
 *  Copyright (C) 2007 Maks Orlovich
 *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
@@ -52,18 +52,11 @@ namespace JSC {
 
 // ------------------------------ StatementNode --------------------------------
 
-void StatementNode::setLoc(int firstLine, int lastLine, int column)
+void StatementNode::setLoc(int firstLine, int lastLine, int charPosition)
 {
     m_lineNumber = firstLine;
     m_lastLine = lastLine;
-    m_columnNumber = column;
-}
-
-void StatementNode::setLoc(int firstLine, int lastLine)
-{
-    m_lineNumber = firstLine;
-    m_lastLine = lastLine;
-    m_columnNumber = 0;
+    m_charPosition = charPosition;
 }
 
 // ------------------------------ SourceElements --------------------------------
@@ -83,18 +76,22 @@ StatementNode* SourceElements::singleStatement() const
 
 // ------------------------------ ScopeNode -----------------------------
 
-ScopeNode::ScopeNode(JSGlobalData* globalData, const JSTokenLocation& location, bool inStrictContext)
-    : StatementNode(location)
+ScopeNode::ScopeNode(JSGlobalData* globalData, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, bool inStrictContext)
+    : StatementNode(endLocation)
     , ParserArenaRefCounted(globalData)
+    , m_startLineNumber(startLocation.line)
+    , m_startCharPosition(startLocation.charPosition)
     , m_features(inStrictContext ? StrictModeFeature : NoFeatures)
     , m_numConstants(0)
     , m_statements(0)
 {
 }
 
-ScopeNode::ScopeNode(JSGlobalData* globalData, const JSTokenLocation& location, const SourceCode& source, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, CodeFeatures features, int numConstants)
-    : StatementNode(location)
+ScopeNode::ScopeNode(JSGlobalData* globalData, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, const SourceCode& source, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, CodeFeatures features, int numConstants)
+    : StatementNode(endLocation)
     , ParserArenaRefCounted(globalData)
+    , m_startLineNumber(startLocation.line)
+    , m_startCharPosition(startLocation.charPosition)
     , m_features(features)
     , m_source(source)
     , m_numConstants(numConstants)
@@ -115,14 +112,14 @@ StatementNode* ScopeNode::singleStatement() const
 
 // ------------------------------ ProgramNode -----------------------------
 
-inline ProgramNode::ProgramNode(JSGlobalData* globalData, const JSTokenLocation& location, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
-    : ScopeNode(globalData, location, source, children, varStack, funcStack, capturedVariables, features, numConstants)
+inline ProgramNode::ProgramNode(JSGlobalData* globalData, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
+    : ScopeNode(globalData, startLocation, endLocation, source, children, varStack, funcStack, capturedVariables, features, numConstants)
 {
 }
 
-PassRefPtr<ProgramNode> ProgramNode::create(JSGlobalData* globalData, const JSTokenLocation& location, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
+PassRefPtr<ProgramNode> ProgramNode::create(JSGlobalData* globalData, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
 {
-    RefPtr<ProgramNode> node = new ProgramNode(globalData, location, children, varStack, funcStack,  capturedVariables, source, features, numConstants);
+    RefPtr<ProgramNode> node = new ProgramNode(globalData, startLocation, endLocation, children, varStack, funcStack,  capturedVariables, source, features, numConstants);
 
     ASSERT(node->m_arena.last() == node);
     node->m_arena.removeLast();
@@ -133,14 +130,14 @@ PassRefPtr<ProgramNode> ProgramNode::create(JSGlobalData* globalData, const JSTo
 
 // ------------------------------ EvalNode -----------------------------
 
-inline EvalNode::EvalNode(JSGlobalData* globalData, const JSTokenLocation& location, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
-    : ScopeNode(globalData, location, source, children, varStack, funcStack, capturedVariables, features, numConstants)
+inline EvalNode::EvalNode(JSGlobalData* globalData, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
+    : ScopeNode(globalData, startLocation, endLocation, source, children, varStack, funcStack, capturedVariables, features, numConstants)
 {
 }
 
-PassRefPtr<EvalNode> EvalNode::create(JSGlobalData* globalData, const JSTokenLocation& location, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
+PassRefPtr<EvalNode> EvalNode::create(JSGlobalData* globalData, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& source, CodeFeatures features, int numConstants)
 {
-    RefPtr<EvalNode> node = new EvalNode(globalData, location, children, varStack, funcStack, capturedVariables, source, features, numConstants);
+    RefPtr<EvalNode> node = new EvalNode(globalData, startLocation, endLocation, children, varStack, funcStack, capturedVariables, source, features, numConstants);
 
     ASSERT(node->m_arena.last() == node);
     node->m_arena.removeLast();
@@ -176,13 +173,13 @@ FunctionParameters::~FunctionParameters()
         identifiers()[i].~Identifier();
 }
 
-inline FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, const JSTokenLocation& location, bool inStrictContext)
-    : ScopeNode(globalData, location, inStrictContext)
+inline FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, bool inStrictContext)
+    : ScopeNode(globalData, startLocation, endLocation, inStrictContext)
 {
 }
 
-inline FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, const JSTokenLocation& location, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
-    : ScopeNode(globalData, location, sourceCode, children, varStack, funcStack, capturedVariables, features, numConstants)
+inline FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
+    : ScopeNode(globalData, startLocation, endLocation, sourceCode, children, varStack, funcStack, capturedVariables, features, numConstants)
 {
 }
 
@@ -200,14 +197,14 @@ void FunctionBodyNode::finishParsing(PassRefPtr<FunctionParameters> parameters, 
     m_functionNameIsInScopeToggle = functionNameIsInScopeToggle;
 }
 
-FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData, const JSTokenLocation& location, bool inStrictContext)
+FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, bool inStrictContext)
 {
-    return new FunctionBodyNode(globalData, location, inStrictContext);
+    return new FunctionBodyNode(globalData, startLocation, endLocation, inStrictContext);
 }
 
-PassRefPtr<FunctionBodyNode> FunctionBodyNode::create(JSGlobalData* globalData, const JSTokenLocation& location, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
+PassRefPtr<FunctionBodyNode> FunctionBodyNode::create(JSGlobalData* globalData, const JSTokenLocation& startLocation, const JSTokenLocation& endLocation, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, IdentifierSet& capturedVariables, const SourceCode& sourceCode, CodeFeatures features, int numConstants)
 {
-    RefPtr<FunctionBodyNode> node = new FunctionBodyNode(globalData, location, children, varStack, funcStack, capturedVariables, sourceCode, features, numConstants);
+    RefPtr<FunctionBodyNode> node = new FunctionBodyNode(globalData, startLocation, endLocation, children, varStack, funcStack, capturedVariables, sourceCode, features, numConstants);
 
     ASSERT(node->m_arena.last() == node);
     node->m_arena.removeLast();

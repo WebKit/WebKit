@@ -1,3 +1,20 @@
+2013-03-20  Mark Lam  <mark.lam@apple.com>
+
+        Introducing String::reverseFindLineTerminator().
+        https://bugs.webkit.org/show_bug.cgi?id=112741.
+
+        Reviewed by Oliver Hunt.
+
+        This is needed by the JSC debugger code for computing column numbers.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::reverseFindLineTerminator):
+        * wtf/text/StringImpl.h:
+        (StringImpl):
+        (WTF::reverseFindLineTerminator):
+        * wtf/text/WTFString.h:
+        (WTF::String::reverseFindLineTerminator):
+
 2013-03-19  Martin Robinson  <mrobinson@igalia.com>
 
         Fix the WTF gyp build for GTK+.

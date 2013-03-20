@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller ( mueller@kde.org )
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
  * This library is free software; you can redistribute it and/or
@@ -1114,6 +1114,13 @@ size_t StringImpl::findIgnoringCase(StringImpl* matchString, unsigned index)
         return findIgnoringCaseInner(characters16() + index, matchString->characters8(), index, searchLength, matchLength);
 
     return findIgnoringCaseInner(characters16() + index, matchString->characters16(), index, searchLength, matchLength);
+}
+
+size_t StringImpl::reverseFindLineTerminator(unsigned index)
+{
+    if (is8Bit())
+        return WTF::reverseFindLineTerminator(characters8(), m_length, index);
+    return WTF::reverseFindLineTerminator(characters16(), m_length, index);
 }
 
 size_t StringImpl::reverseFind(UChar c, unsigned index)
