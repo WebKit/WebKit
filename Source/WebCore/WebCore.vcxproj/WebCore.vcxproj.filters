@@ -6865,6 +6865,9 @@
     <ClCompile Include="..\platform\image-decoders\ImageDecoder.cpp">
       <Filter>platform\image-decoders</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\network\curl\CookieJarCurl.cpp">
+      <Filter>platform\network\curl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\CSSGrammar.h">
@@ -15297,9 +15300,6 @@
       <Filter>platform\network\cf</Filter>
     </CustomBuildStep>
     <CustomBuildStep Include="..\platform\network\curl\AuthenticationChallenge.h">
-      <Filter>platform\network\curl</Filter>
-    </CustomBuildStep>
-    <CustomBuildStep Include="..\platform\network\curl\CookieJarCurl.cpp">
       <Filter>platform\network\curl</Filter>
     </CustomBuildStep>
     <CustomBuildStep Include="..\platform\network\curl\FormDataStreamCurl.h">
