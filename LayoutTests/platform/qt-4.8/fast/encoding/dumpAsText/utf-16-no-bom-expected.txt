@@ -1,1 +1,0 @@
-Should be "CYRILLIC SMALL LETTER IO" (like e with diaeresis): ё

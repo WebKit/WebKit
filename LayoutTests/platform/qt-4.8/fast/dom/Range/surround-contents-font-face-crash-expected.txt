@@ -1,7 +1,0 @@
-ALERT: PASS. WebKit didn't crash.
-This page contains the following errors:
-
-error on line 21 at column 0: Premature end of document.
-Below is a rendering of the page up to the first error.
-
-

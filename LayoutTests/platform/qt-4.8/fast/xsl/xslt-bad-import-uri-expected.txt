@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: line 2: <html xmlns='http://www.w3.org/1999/xhtml/'><body><p>Running an XSL-T 1.0 stylesheet with a 2.0 processor.</p></body></html>
-CONSOLE MESSAGE: line 5: <html xmlns='http://www.w3.org/1999/xhtml/'><body><p>The element with local name <span class='XQuery-keyword'>apply-imports</span> does not exist in XSL-T.</p></body></html>
-This tests that a bad @import URI does not cause a crash. 
