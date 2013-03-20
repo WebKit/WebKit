@@ -169,6 +169,9 @@ void PageConsole::addMessage(MessageSource source, MessageLevel level, const Str
     else
         InspectorInstrumentation::addMessageToConsole(page, source, LogMessageType, level, message, url, lineNumber, state, requestIdentifier);
 
+    if (source == CSSMessageSource)
+        return;
+
     if (page->settings()->privateBrowsingEnabled())
         return;
 
