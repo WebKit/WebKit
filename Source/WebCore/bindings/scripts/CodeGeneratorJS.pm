@@ -2144,7 +2144,7 @@ sub GenerateImplementation
 
                                 my $nativeValue;
                                 if ($codeGenerator->IsEnumType($type)) {
-                                    push(@implContent, "    String& string = value.isEmpty() ? String() : value.toString(exec)->value(exec);\n");
+                                    push(@implContent, "    const String string = value.isEmpty() ? String() : value.toString(exec)->value(exec);\n");
                                     push(@implContent, "    if (exec->hadException())\n");
                                     push(@implContent, "        return;\n");
                                     my @enumValues = $codeGenerator->ValidEnumValues($type);
@@ -2786,7 +2786,7 @@ sub GenerateParametersCheck
             $implIncludes{"<runtime/Error.h>"} = 1;
 
             my $argValue = "exec->argument($argsIndex)";
-            push(@$outputArray, "    const String& ${name}(${argValue}.isEmpty() ? String() : ${argValue}.toString(exec)->value(exec));\n");
+            push(@$outputArray, "    const String ${name}(${argValue}.isEmpty() ? String() : ${argValue}.toString(exec)->value(exec));\n");
             push(@$outputArray, "    if (exec->hadException())\n");
             push(@$outputArray, "        return JSValue::encode(jsUndefined());\n");
 
