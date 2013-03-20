@@ -227,11 +227,6 @@ void TestRunnerQt::removeAllWebNotificationPermissions()
     DumpRenderTreeSupportQt::clearNotificationPermissions();
 }
 
-void TestRunnerQt::simulateWebNotificationClick(const QWebElement& notification)
-{
-    // FIXME: implement.
-}
-
 void TestRunnerQt::simulateLegacyWebNotificationClick(const QString& title)
 {
     DumpRenderTreeSupportQt::simulateDesktopNotificationClick(title);
@@ -483,11 +478,6 @@ void TestRunnerQt::setPopupBlockingEnabled(bool enable)
     m_drt->webPage()->settings()->setAttribute(QWebSettings::JavascriptCanOpenWindows, !enable);
 }
 
-void TestRunnerQt::setPluginsEnabled(bool flag)
-{
-    // FIXME: Implement
-}
-
 void TestRunnerQt::setPOSIXLocale(const QString& locale)
 {
     QLocale qlocale(locale);
@@ -497,11 +487,6 @@ void TestRunnerQt::setPOSIXLocale(const QString& locale)
 void TestRunnerQt::setWindowIsKey(bool isKey)
 {
     m_drt->switchFocus(isKey);
-}
-
-void TestRunnerQt::setMainFrameIsFirstResponder(bool isFirst)
-{
-    //FIXME: only need this for the moment: https://bugs.webkit.org/show_bug.cgi?id=32990
 }
 
 void TestRunnerQt::setJavaScriptCanAccessClipboard(bool enable)
@@ -519,25 +504,9 @@ void TestRunnerQt::setXSSAuditorEnabled(bool enable)
     m_drt->webPage()->settings()->setAttribute(QWebSettings::XSSAuditingEnabled, enable);
 }
 
-void TestRunnerQt::dispatchPendingLoadRequests()
-{
-    // FIXME: Implement for testing fix for 6727495
-}
-
 void TestRunnerQt::clearAllApplicationCaches()
 {
     DumpRenderTreeSupportQt::clearAllApplicationCaches();
-}
-
-void TestRunnerQt::clearApplicationCacheForOrigin(const QString& url)
-{
-    // FIXME: Implement to support deleting all application caches for an origin.
-}
-
-long long TestRunnerQt::localStorageDiskUsageForOrigin(const QString& originIdentifier)
-{
-    // FIXME: Implement to support getting disk usage in bytes for an origin.
-    return 0;
 }
 
 void TestRunnerQt::setApplicationCacheOriginQuota(unsigned long long quota)
@@ -547,26 +516,10 @@ void TestRunnerQt::setApplicationCacheOriginQuota(unsigned long long quota)
     m_topLoadingFrame->securityOrigin().setApplicationCacheQuota(quota);
 }
 
-long long TestRunnerQt::applicationCacheDiskUsageForOrigin(const QString& origin)
-{
-    // FIXME: Implement to support getting disk usage by all application caches for an origin.
-    return 0;
-}
-
 QStringList TestRunnerQt::originsWithApplicationCache()
 {
     // FIXME: Implement to get origins that have application caches.
     return QStringList();
-}
-
-void TestRunnerQt::setCacheModel(int model)
-{
-    // qwebsetting doesn't have matched setting yet :
-    // WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER
-    // WEBKIT_CACHE_MODEL_DOCUMENT_BROWSER
-    // WEBKIT_CACHE_MODEL_WEB_BROWSER
-
-    // FIXME: Implement.
 }
 
 void TestRunnerQt::setDatabaseQuota(int size)
@@ -747,11 +700,6 @@ bool TestRunner::findString(JSContextRef context, JSStringRef string, JSObjectRe
     return drt->webPage()->findText(JSStringCopyQString(string), findFlags);
 }
 
-void TestRunnerQt::authenticateSession(const QString&, const QString&, const QString&)
-{
-    // FIXME: If there is a concept per-session (per-process) credential storage, the credentials should be added to it for later use.
-}
-
 void TestRunnerQt::setIconDatabaseEnabled(bool enable)
 {
     if (enable && !m_drt->persistentStoragePath().isEmpty())
@@ -805,27 +753,10 @@ void TestRunnerQt::setMockGeolocationPosition(double latitude, double longitude,
         DumpRenderTreeSupportQt::setMockGeolocationPosition(page->handle(), latitude, longitude, accuracy);
 }
 
-void TestRunnerQt::addMockSpeechInputResult(const QString& result, double confidence, const QString& language)
-{
-    // FIXME: Implement for speech input layout tests.
-    // See https://bugs.webkit.org/show_bug.cgi?id=39485.
-}
-
-void TestRunnerQt::setMockSpeechInputDumpRect(bool flag)
-{
-    // FIXME: Implement for speech input layout tests.
-    // See https://bugs.webkit.org/show_bug.cgi?id=39485.
-}
-
 void TestRunnerQt::startSpeechInput(const QString& inputElement)
 {
     // FIXME: Implement for speech input layout tests.
     // See https://bugs.webkit.org/show_bug.cgi?id=39485.
-}
-
-void TestRunnerQt::evaluateScriptInIsolatedWorldAndReturnValue(int worldID, const QString& script)
-{
-    // FIXME: Implement.
 }
 
 void TestRunnerQt::evaluateScriptInIsolatedWorld(int worldID, const QString& script)
@@ -848,46 +779,6 @@ void TestRunnerQt::removeAllVisitedLinks()
 void TestRunnerQt::addURLToRedirect(const QString& origin, const QString& destination)
 {
     DumpRenderTreeSupportQt::addURLToRedirect(origin, destination);
-}
-
-void TestRunnerQt::originsWithLocalStorage()
-{
-    // FIXME: Implement.
-}
-
-void TestRunnerQt::deleteAllLocalStorage()
-{
-    // FIXME: Implement.
-}
-
-void TestRunnerQt::deleteLocalStorageForOrigin(const QString& originIdentifier)
-{
-    // FIXME: Implement.
-}
-
-void TestRunnerQt::observeStorageTrackerNotifications(unsigned number)
-{
-    // FIXME: Implement.
-}
-
-void TestRunnerQt::syncLocalStorage()
-{
-    // FIXME: Implement.
-}
-
-void TestRunnerQt::resetPageVisibility()
-{
-    // FIXME: Implement this.
-}
-
-void TestRunnerQt::setPageVisibility(const char*)
-{
-    // FIXME: Implement this.
-}
-
-void TestRunnerQt::setAutomaticLinkDetectionEnabled(bool)
-{
-    // FIXME: Implement this.
 }
 
 void TestRunnerQt::setTextDirection(const QString& directionName)
