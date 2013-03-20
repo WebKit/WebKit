@@ -1,3 +1,68 @@
+2013-03-20  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][WK2] Refactor handling of content suspension to properly cover corner cases
+        https://bugs.webkit.org/show_bug.cgi?id=111751
+
+        Reviewed by Jocelyn Turcotte.
+
+        The current suspend / resume infrastructure turned out to be insufficient to cover
+        all corner cases during transitions between gestures of complex gesture chains.
+
+        The requirements for robust suspend / resume handling are:
+            - Keep the content suspended while the user is continuously interacting,
+        eg. does not lift the finger between transition from a pan to a pinch gesture
+        and vice versa.
+            - The content should not be suspended unnecessarily (like for a tap gesture),
+        only during panning and scroll animation (flick), as well as pinch zoom and scale
+        animation (also includes double-tap-to-zoom).
+            - The content should never end up stuck in suspended state after long gesture
+        chains and continuous interaction.
+
+        This patch reintroduces reference counting based suspension in form of a new
+        ViewportInteractionTracker member class to make it possible to reliably control the
+        suspend / resume cycles during scrolling and scaling.
+        During continuous gestures, while the user is interacting, the reference count is
+        increased without actually suspending the content to prevent resuming unnecessarily
+        during continuous interaction. At the same time this also assures that the page is
+        not suspended for simple tap gestures, which was a side-effect of the previous
+        approach based on update deferrers.
+        The newly added functionality replaces boolean members that tried to achive the
+        above requirements.
+        Additionally this patch also removes the redundant m_hasSuspendedContent member
+        from the PageViewportController since WebPageProxy already keeps this information.
+
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::PageViewportController):
+        (WebKit::PageViewportController::pageDidRequestScroll):
+        (WebKit::PageViewportController::updateMinimumScaleToFit):
+        * UIProcess/PageViewportController.h:
+        (PageViewportController):
+        * UIProcess/WebPageProxy.h:
+        (WebKit::WebPageProxy::areActiveDOMObjectsAndAnimationsSuspended):
+        * UIProcess/qt/PageViewportControllerClientQt.cpp:
+        (WebKit::PageViewportControllerClientQt::PageViewportControllerClientQt):
+        (WebKit::PageViewportControllerClientQt::ViewportInteractionTracker::begin):
+        (WebKit):
+        (WebKit::PageViewportControllerClientQt::ViewportInteractionTracker::end):
+        (WebKit::PageViewportControllerClientQt::animateContentRectVisible):
+        (WebKit::PageViewportControllerClientQt::flickMoveStarted):
+        (WebKit::PageViewportControllerClientQt::flickMoveEnded):
+        (WebKit::PageViewportControllerClientQt::pageItemPositionChanged):
+        (WebKit::PageViewportControllerClientQt::scaleAnimationStateChanged):
+        (WebKit::PageViewportControllerClientQt::touchBegin):
+        (WebKit::PageViewportControllerClientQt::touchEnd):
+        (WebKit::PageViewportControllerClientQt::zoomToAreaGestureEnded):
+        (WebKit::PageViewportControllerClientQt::pinchGestureStarted):
+        (WebKit::PageViewportControllerClientQt::pinchGestureRequestUpdate):
+        (WebKit::PageViewportControllerClientQt::pinchGestureEnded):
+        (WebKit::PageViewportControllerClientQt::pinchGestureCancelled):
+        (WebKit::PageViewportControllerClientQt::didChangeContentsSize):
+        * UIProcess/qt/PageViewportControllerClientQt.h:
+        (ViewportInteractionTracker):
+        (WebKit::PageViewportControllerClientQt::ViewportInteractionTracker::ViewportInteractionTracker):
+        (WebKit::PageViewportControllerClientQt::ViewportInteractionTracker::inProgress):
+        (PageViewportControllerClientQt):
+
 2013-03-19  Kenneth Rohde Christiansen  <kenneth@webkit.org> and Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WK2] Separate WebView further from EwkView

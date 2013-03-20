@@ -455,6 +455,7 @@ public:
     void setCustomTextEncodingName(const String&);
     String customTextEncodingName() const { return m_customTextEncodingName; }
 
+    bool areActiveDOMObjectsAndAnimationsSuspended() const { return m_isPageSuspended; }
     void resumeActiveDOMObjectsAndAnimations();
     void suspendActiveDOMObjectsAndAnimations();
 

@@ -22,8 +22,6 @@
 #ifndef PageViewportController_h
 #define PageViewportController_h
 
-#if USE(TILED_BACKING_STORE)
-
 #include <WebCore/FloatPoint.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/FloatSize.h>
@@ -47,9 +45,6 @@ public:
     PageViewportController(WebKit::WebPageProxy*, PageViewportControllerClient*);
     virtual ~PageViewportController() { }
 
-    void suspendContent();
-    void resumeContent();
-
     float innerBoundedViewportScale(float) const;
     float outerBoundedViewportScale(float) const;
 
@@ -60,7 +55,6 @@ public:
 
     WebCore::FloatSize visibleContentsSize() const;
 
-    bool hasSuspendedContent() const { return m_hasSuspendedContent; }
     bool hadUserInteraction() const { return m_hadUserInteraction; }
     bool allowsUserScaling() const { return m_allowsUserScaling; }
 
@@ -99,7 +93,6 @@ private:
     float m_minimumScaleToFit;
     bool m_initiallyFitToViewport;
 
-    bool m_hasSuspendedContent;
     bool m_hadUserInteraction;
 
     WebCore::FloatPoint m_contentsPosition;
@@ -116,7 +109,5 @@ private:
 bool fuzzyCompare(float, float, float epsilon);
 
 } // namespace WebKit
-
-#endif
 
 #endif // PageViewportController_h

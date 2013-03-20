@@ -102,6 +102,24 @@ private:
         virtual void updateCurrentValue(const QVariant&);
     };
 
+    class ViewportInteractionTracker {
+    public:
+        ViewportInteractionTracker(PageViewportControllerClientQt* client, bool shouldSuspend = true)
+            : m_controllerClient(client)
+            , m_shouldSuspend(shouldSuspend)
+            , m_inProgress(false)
+        { }
+
+        void begin();
+        void end();
+        bool inProgress() const { return m_inProgress; }
+
+    private:
+        PageViewportControllerClientQt* m_controllerClient;
+        bool m_shouldSuspend;
+        bool m_inProgress;
+    };
+
     struct ScaleStackItem {
         ScaleStackItem(qreal scale, qreal xPosition)
             : scale(scale)
@@ -112,6 +130,7 @@ private:
         qreal xPosition;
     };
 
+    friend class ViewportInteractionTracker;
     friend class ScaleAnimation;
     friend class ::QWebKitTest;
 
@@ -128,17 +147,19 @@ private:
     void animateContentRectVisible(const QRectF& contentRect);
     void scaleContent(qreal itemScale, const QPointF& centerInCSSCoordinates = QPointF());
     void clearRelativeZoomState();
-    void resumeAndUpdateContent();
+
+    ViewportInteractionTracker m_scaleChange;
+    ViewportInteractionTracker m_scrollChange;
+    ViewportInteractionTracker m_touchInteraction;
 
     ScaleAnimation* m_scaleAnimation;
     QPointF m_lastPinchCenterInViewportCoordinates;
     QPointF m_lastScrollPosition;
+    int m_activeInteractionCount;
     qreal m_pinchStartScale;
     qreal m_lastCommittedScale;
     qreal m_zoomOutScale;
     QList<ScaleStackItem> m_scaleStack;
-    bool m_isUserInteracting;
-    bool m_ignoreViewportChanges;
 };
 
 } // namespace WebKit
