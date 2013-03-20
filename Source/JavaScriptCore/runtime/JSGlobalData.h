@@ -420,12 +420,12 @@ namespace JSC {
         unsigned m_timeoutCount;
 #endif
 
-        unsigned m_newStringsSinceLastHashConst;
+        unsigned m_newStringsSinceLastHashCons;
 
-        static const unsigned s_minNumberOfNewStringsToHashConst = 100;
+        static const unsigned s_minNumberOfNewStringsToHashCons = 100;
 
-        bool haveEnoughNewStringsToHashConst() { return m_newStringsSinceLastHashConst > s_minNumberOfNewStringsToHashConst; }
-        void resetNewStringsSinceLastHashConst() { m_newStringsSinceLastHashConst = 0; }
+        bool haveEnoughNewStringsToHashCons() { return m_newStringsSinceLastHashCons > s_minNumberOfNewStringsToHashCons; }
+        void resetNewStringsSinceLastHashCons() { m_newStringsSinceLastHashCons = 0; }
 
 #define registerTypedArrayFunction(type, capitalizedType) \
         void registerTypedArrayDescriptor(const capitalizedType##Array*, const TypedArrayDescriptor& descriptor) \

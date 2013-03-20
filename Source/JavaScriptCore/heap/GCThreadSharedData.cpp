@@ -55,7 +55,7 @@ size_t GCThreadSharedData::childVisitCount()
 GCThreadSharedData::GCThreadSharedData(JSGlobalData* globalData)
     : m_globalData(globalData)
     , m_copiedSpace(&globalData->heap.m_storageSpace)
-    , m_shouldHashConst(false)
+    , m_shouldHashCons(false)
     , m_sharedMarkStack(globalData->heap.blockAllocator())
     , m_numberOfActiveParallelMarkers(0)
     , m_parallelMarkersShouldExit(false)
@@ -115,9 +115,9 @@ void GCThreadSharedData::reset()
 #endif
     m_weakReferenceHarvesters.removeAll();
 
-    if (m_shouldHashConst) {
-        m_globalData->resetNewStringsSinceLastHashConst();
-        m_shouldHashConst = false;
+    if (m_shouldHashCons) {
+        m_globalData->resetNewStringsSinceLastHashCons();
+        m_shouldHashCons = false;
     }
 }
 

@@ -124,7 +124,7 @@ private:
     
     GCThreadSharedData& m_shared;
 
-    bool m_shouldHashConst; // Local per-thread copy of shared flag for performance reasons
+    bool m_shouldHashCons; // Local per-thread copy of shared flag for performance reasons
     typedef HashMap<StringImpl*, JSValue> UniqueStringMap;
     UniqueStringMap m_uniqueStrings;
 

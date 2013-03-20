@@ -1,3 +1,40 @@
+2013-03-19  Filip Pizlo  <fpizlo@apple.com>
+
+        It's called "Hash Consing" not "Hash Consting"
+        https://bugs.webkit.org/show_bug.cgi?id=112768
+
+        Rubber stamped by Mark Hahnenberg.
+        
+        See http://en.wikipedia.org/wiki/Hash_consing
+
+        * heap/GCThreadSharedData.cpp:
+        (JSC::GCThreadSharedData::GCThreadSharedData):
+        (JSC::GCThreadSharedData::reset):
+        * heap/GCThreadSharedData.h:
+        (GCThreadSharedData):
+        * heap/SlotVisitor.cpp:
+        (JSC::SlotVisitor::SlotVisitor):
+        (JSC::SlotVisitor::setup):
+        (JSC::SlotVisitor::reset):
+        (JSC::JSString::tryHashConsLock):
+        (JSC::JSString::releaseHashConsLock):
+        (JSC::JSString::shouldTryHashCons):
+        (JSC::SlotVisitor::internalAppend):
+        * heap/SlotVisitor.h:
+        (SlotVisitor):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        (JSC::JSGlobalData::haveEnoughNewStringsToHashCons):
+        (JSC::JSGlobalData::resetNewStringsSinceLastHashCons):
+        * runtime/JSString.h:
+        (JSC::JSString::finishCreation):
+        (JSString):
+        (JSC::JSString::isHashConsSingleton):
+        (JSC::JSString::clearHashConsSingleton):
+        (JSC::JSString::setHashConsSingleton):
+
 2013-03-20  Filip Pizlo  <fpizlo@apple.com>
 
         DFG implementation of op_strcat should inline rope allocations

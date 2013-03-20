@@ -80,7 +80,7 @@ private:
     JSGlobalData* m_globalData;
     CopiedSpace* m_copiedSpace;
     
-    bool m_shouldHashConst;
+    bool m_shouldHashCons;
 
     Vector<GCThread*> m_gcThreads;
 

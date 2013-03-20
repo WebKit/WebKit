@@ -95,7 +95,7 @@ namespace JSC {
             Base::finishCreation(globalData);
             m_length = length;
             setIs8Bit(m_value.impl()->is8Bit());
-            globalData.m_newStringsSinceLastHashConst++;
+            globalData.m_newStringsSinceLastHashCons++;
         }
 
         void finishCreation(JSGlobalData& globalData, size_t length, size_t cost)
@@ -105,7 +105,7 @@ namespace JSC {
             m_length = length;
             setIs8Bit(m_value.impl()->is8Bit());
             Heap::heap(this)->reportExtraMemoryCost(cost);
-            globalData.m_newStringsSinceLastHashConst++;
+            globalData.m_newStringsSinceLastHashCons++;
         }
 
     protected:
@@ -114,7 +114,7 @@ namespace JSC {
             Base::finishCreation(globalData);
             m_length = 0;
             setIs8Bit(true);
-            globalData.m_newStringsSinceLastHashConst++;
+            globalData.m_newStringsSinceLastHashCons++;
         }
         
     public:
@@ -167,8 +167,8 @@ namespace JSC {
         static void visitChildren(JSCell*, SlotVisitor&);
 
         enum {
-            HashConstLock = 1u << 2,
-            IsHashConstSingleton = 1u << 1,
+            HashConsLock = 1u << 2,
+            IsHashConsSingleton = 1u << 1,
             Is8Bit = 1u
         };
 
@@ -184,12 +184,12 @@ namespace JSC {
             else
                 m_flags &= ~Is8Bit;
         }
-        bool shouldTryHashConst();
-        bool isHashConstSingleton() const { return m_flags & IsHashConstSingleton; }
-        void clearHashConstSingleton() { m_flags &= ~IsHashConstSingleton; }
-        void setHashConstSingleton() { m_flags |= IsHashConstSingleton; }
-        bool tryHashConstLock();
-        void releaseHashConstLock();
+        bool shouldTryHashCons();
+        bool isHashConsSingleton() const { return m_flags & IsHashConsSingleton; }
+        void clearHashConsSingleton() { m_flags &= ~IsHashConsSingleton; }
+        void setHashConsSingleton() { m_flags |= IsHashConsSingleton; }
+        bool tryHashConsLock();
+        void releaseHashConsLock();
 
         unsigned m_flags;
         

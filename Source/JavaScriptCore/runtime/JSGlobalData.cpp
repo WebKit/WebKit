@@ -182,7 +182,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, HeapType heapType)
 #if CPU(X86) && ENABLE(JIT)
     , m_timeoutCount(512)
 #endif
-    , m_newStringsSinceLastHashConst(0)
+    , m_newStringsSinceLastHashCons(0)
 #if ENABLE(ASSEMBLER)
     , m_canUseAssembler(enableAssembler(executableAllocator))
 #endif
