@@ -40,7 +40,7 @@ WebInspector.ResourceWebSocketFrameView = function(resource)
         var date = new Date(payload.time * 1000);
         var row = {
             data: "",
-            length: payload.payloadData.length.toString(),
+            length: typeof payload.payloadData === "undefined" ? payload.errorMessage.length.toString() : payload.payloadData.length.toString(),
             time: date.toLocaleTimeString()
         };
 
