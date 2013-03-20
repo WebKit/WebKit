@@ -511,7 +511,7 @@ libWebCoreModules_la_CFLAGS = $(libWebCore_la_CFLAGS)
 libWebCoreModules_la_CPPFLAGS = $(libWebCore_la_CPPFLAGS)
 
 libLevelDB_la_CXXFLAGS = $(global_cxxflags)
-libLevelDB_la_CFLAGS = $(global_cxflags)
+libLevelDB_la_CFLAGS = $(global_cflags)
 libLevelDB_la_CPPFLAGS = \
 	$(global_cppflags) \
 	-fno-builtin-memcmp \
