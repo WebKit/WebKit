@@ -1835,15 +1835,16 @@ String DOMWindow::crossDomainAccessErrorMessage(DOMWindow* activeWindow)
         return message + " The frame requesting access has a protocol of '" + activeOrigin->protocol() + "', the frame being accessed has a protocol of '" + targetOrigin->protocol() + "'. Protocols must match.\n";
 
     // 'document.domain' errors.
+    message = "Blocked a frame with origin \"" + activeOrigin->toString() + "\" from accessing a frame with origin \"" + targetOrigin->toString() + "\". ";
     if (targetOrigin->domainWasSetInDOM() && activeOrigin->domainWasSetInDOM())
-        return message + " The frame requesting access set 'document.domain' to '" + activeOrigin->domain() + "', the frame being accessed set it to '" + targetOrigin->domain() + "'. Both must set 'document.domain' to the same value to allow access.\n";
+        return message + "The frame requesting access set \"document.domain\" to \"" + activeOrigin->domain() + "\", the frame being accessed set it to \"" + targetOrigin->domain() + "\". Both must set \"document.domain\" to the same value to allow access.";
     if (activeOrigin->domainWasSetInDOM())
-        return message + " The frame requesting access set 'document.domain' to '" + activeOrigin->domain() + "', but the frame being accessed did not. Both must set 'document.domain' to the same value to allow access.\n";
+        return message + "The frame requesting access set \"document.domain\" to \"" + activeOrigin->domain() + "\", but the frame being accessed did not. Both must set \"document.domain\" to the same value to allow access.";
     if (targetOrigin->domainWasSetInDOM())
-        return message + " The frame being accessed set 'document.domain' to '" + targetOrigin->domain() + "', but the frame requesting access did not. Both must set 'document.domain' to the same value to allow access.\n";
+        return message + "The frame being accessed set \"document.domain\" to \"" + targetOrigin->domain() + "\", but the frame requesting access did not. Both must set \"document.domain\" to the same value to allow access.";
 
     // Default.
-    return "Blocked a frame with origin \"" + activeOrigin->toString() + "\" from accessing a frame with origin \"" + targetOrigin->toString() + "\". Protocols, domains, and ports must match.";
+    return message + "Protocols, domains, and ports must match.";
 }
 
 bool DOMWindow::isInsecureScriptAccess(DOMWindow* activeWindow, const String& urlString)

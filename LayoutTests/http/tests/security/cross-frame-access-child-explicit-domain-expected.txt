@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/resources/cross-frame-iframe-with-explicit-domain-set.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-child-explicit-domain.html. The frame being accessed set 'document.domain' to '127.0.0.1', but the frame requesting access did not. Both must set 'document.domain' to the same value to allow access.
-
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://127.0.0.1:8000". The frame being accessed set "document.domain" to "127.0.0.1", but the frame requesting access did not. Both must set "document.domain" to the same value to allow access.
 
 PASS: Cross frame access to frame explicitly setting document.domain was denied.
 
