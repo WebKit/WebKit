@@ -94,13 +94,13 @@ layer at (0,0) size 800x494
       RenderText {#text} at (122,23) size 59x18
         text run at (122,23) width 59: " after text"
     RenderBlock {DIV} at (0,410) size 800x45
-      RenderText {#text} at (0,12) size 183x18
-        text run at (0,12) width 183: "should align with the middle "
+      RenderText {#text} at (0,11) size 183x18
+        text run at (0,11) width 183: "should align with the middle "
       RenderFlexibleBox {DIV} at (183,5) size 40x40 [bgcolor=#D3D3D3]
         RenderBlock {DIV} at (0,0) size 40x21 [border: none (1px solid #000000) none]
-        RenderBlock {DIV} at (0,21) size 40x20
-      RenderText {#text} at (223,12) size 124x18
-        text run at (223,12) width 124: " of the grey flexbox"
+        RenderBlock {DIV} at (0,20) size 40x20
+      RenderText {#text} at (223,11) size 124x18
+        text run at (223,11) width 124: " of the grey flexbox"
     RenderBlock {DIV} at (0,455) size 800x39
       RenderText {#text} at (0,21) size 184x18
         text run at (0,21) width 184: "should align with the bottom "

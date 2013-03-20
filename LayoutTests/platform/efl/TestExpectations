@@ -1851,7 +1851,6 @@ webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Failu
 
 webkit.org/b/111058 plugins/plugin-clip-subframe.html [ Failure ]
 
-Bug(ojan) css3/flexbox/flexbox-baseline.html [ Failure ]
 
 # Newly added tests in r144190 are failing.
 webkit.org/b/111172 compositing/overlap-blending/children-opacity-huge.html [ ImageOnlyFailure ]
