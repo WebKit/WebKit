@@ -590,8 +590,9 @@ static String languageIdentifier(const String& languageCode)
         return languageCode;
 
     String lowercaseLanguageCode = languageCode.lower();
-    
-    if (lowercaseLanguageCode.length() >= 3 && (lowercaseLanguageCode[2] == '_' || lowercaseLanguageCode[2] == '-'))
+
+    // Need 2U here to disambiguate String::operator[] from operator(NSString*, int)[] in a production build.
+    if (lowercaseLanguageCode.length() >= 3 && (lowercaseLanguageCode[2U] == '_' || lowercaseLanguageCode[2U] == '-'))
         lowercaseLanguageCode.truncate(2);
     
     return lowercaseLanguageCode;
