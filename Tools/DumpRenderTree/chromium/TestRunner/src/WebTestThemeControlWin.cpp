@@ -35,8 +35,9 @@
 //
 
 #include "config.h"
-#include "WebThemeControlDRTWin.h"
+#include "WebTestThemeControlWin.h"
 
+#include "TestCommon.h"
 #include "skia/ext/skia_utils_win.h"
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "third_party/skia/include/core/SkPaint.h"
@@ -44,15 +45,19 @@
 #include "third_party/skia/include/core/SkRect.h"
 
 #include <algorithm>
-#include <wtf/Assertions.h>
 
+using namespace WebKit;
 using namespace std;
 
-static const SkColor edgeColor     = SK_ColorBLACK;
-static const SkColor readOnlyColor = SkColorSetRGB(0xe9, 0xc2, 0xa6);
-static const SkColor fgColor       = SK_ColorBLACK;
-static const SkColor bgColors[]    = {
-    SK_ColorBLACK,                   // Unknown
+namespace WebTestRunner {
+
+namespace {
+
+const SkColor edgeColor     = SK_ColorBLACK;
+const SkColor readOnlyColor = SkColorSetRGB(0xe9, 0xc2, 0xa6);
+const SkColor fgColor       = SK_ColorBLACK;
+const SkColor bgColors[]    = {
+    SK_ColorBLACK, // Unknown
     SkColorSetRGB(0xc9, 0xc9, 0xc9), // Disabled
     SkColorSetRGB(0xf3, 0xe0, 0xd0), // Readonly
     SkColorSetRGB(0x89, 0xc4, 0xff), // Normal
@@ -60,16 +65,16 @@ static const SkColor bgColors[]    = {
     SkColorSetRGB(0x20, 0xf6, 0xcc), // Focused
     SkColorSetRGB(0x00, 0xf3, 0xac), // Hover
     SkColorSetRGB(0xa9, 0xff, 0x12), // Pressed
-    SkColorSetRGB(0xcc, 0xcc, 0xcc)  // Indeterminate
+    SkColorSetRGB(0xcc, 0xcc, 0xcc) // Indeterminate
 };
 
-static SkIRect validate(const SkIRect& rect, WebThemeControlDRTWin::Type ctype)
+SkIRect validate(const SkIRect& rect, WebTestThemeControlWin::Type ctype)
 {
     switch (ctype) {
-    case WebThemeControlDRTWin::UncheckedBoxType:
-    case WebThemeControlDRTWin::CheckedBoxType:
-    case WebThemeControlDRTWin::UncheckedRadioType:
-    case WebThemeControlDRTWin::CheckedRadioType: {
+    case WebTestThemeControlWin::UncheckedBoxType:
+    case WebTestThemeControlWin::CheckedBoxType:
+    case WebTestThemeControlWin::UncheckedRadioType:
+    case WebTestThemeControlWin::CheckedRadioType: {
         SkIRect retval = rect;
 
         // The maximum width and height is 13.
@@ -91,12 +96,9 @@ static SkIRect validate(const SkIRect& rect, WebThemeControlDRTWin::Type ctype)
     }
 }
 
-// WebThemeControlDRTWin
+}
 
-WebThemeControlDRTWin::WebThemeControlDRTWin(SkCanvas* canvas,
-                                             const SkIRect& irect,
-                                             Type ctype,
-                                             State cstate)
+WebTestThemeControlWin::WebTestThemeControlWin(SkCanvas* canvas, const SkIRect& irect, Type ctype, State cstate)
     : m_canvas(canvas)
     , m_irect(validate(irect, ctype))
     , m_type(ctype)
@@ -113,11 +115,11 @@ WebThemeControlDRTWin::WebThemeControlDRTWin(SkCanvas* canvas,
 {
 }
 
-WebThemeControlDRTWin::~WebThemeControlDRTWin()
+WebTestThemeControlWin::~WebTestThemeControlWin()
 {
 }
 
-void WebThemeControlDRTWin::box(const SkIRect& rect, SkColor fillColor)
+void WebTestThemeControlWin::box(const SkIRect& rect, SkColor fillColor)
 {
     SkPaint paint;
 
@@ -130,19 +132,14 @@ void WebThemeControlDRTWin::box(const SkIRect& rect, SkColor fillColor)
     m_canvas->drawIRect(rect, paint);
 }
 
-void WebThemeControlDRTWin::line(int x0, int y0, int x1, int y1, SkColor color)
+void WebTestThemeControlWin::line(int x0, int y0, int x1, int y1, SkColor color)
 {
     SkPaint paint;
     paint.setColor(color);
-    m_canvas->drawLine(SkIntToScalar(x0), SkIntToScalar(y0),
-                       SkIntToScalar(x1), SkIntToScalar(y1),
-                       paint);
+    m_canvas->drawLine(SkIntToScalar(x0), SkIntToScalar(y0), SkIntToScalar(x1), SkIntToScalar(y1), paint);
 }
 
-void WebThemeControlDRTWin::triangle(int x0, int y0,
-                                     int x1, int y1,
-                                     int x2, int y2,
-                                     SkColor color)
+void WebTestThemeControlWin::triangle(int x0, int y0, int x1, int y1, int x2, int y2, SkColor color)
 {
     SkPath path;
     SkPaint paint;
@@ -161,7 +158,7 @@ void WebThemeControlDRTWin::triangle(int x0, int y0,
     m_canvas->drawPath(path, paint);
 }
 
-void WebThemeControlDRTWin::roundRect(SkColor color)
+void WebTestThemeControlWin::roundRect(SkColor color)
 {
     SkRect rect;
     SkScalar radius = SkIntToScalar(5);
@@ -177,7 +174,7 @@ void WebThemeControlDRTWin::roundRect(SkColor color)
     m_canvas->drawRoundRect(rect, radius, radius, paint);
 }
 
-void WebThemeControlDRTWin::oval(SkColor color)
+void WebTestThemeControlWin::oval(SkColor color)
 {
     SkRect rect;
     SkPaint paint;
@@ -192,7 +189,7 @@ void WebThemeControlDRTWin::oval(SkColor color)
     m_canvas->drawOval(rect, paint);
 }
 
-void WebThemeControlDRTWin::circle(SkScalar radius, SkColor color)
+void WebTestThemeControlWin::circle(SkScalar radius, SkColor color)
 {
     SkScalar cy = SkIntToScalar(m_top  + m_height / 2);
     SkScalar cx = SkIntToScalar(m_left + m_width / 2);
@@ -207,23 +204,15 @@ void WebThemeControlDRTWin::circle(SkScalar radius, SkColor color)
     m_canvas->drawCircle(cx, cy, radius, paint);
 }
 
-void WebThemeControlDRTWin::nestedBoxes(int indentLeft,
-                                        int indentTop,
-                                        int indentRight,
-                                        int indentBottom,
-                                        SkColor outerColor,
-                                        SkColor innerColor)
+void WebTestThemeControlWin::nestedBoxes(int indentLeft, int indentTop, int indentRight, int indentBottom, SkColor outerColor, SkColor innerColor)
 {
     SkIRect lirect;
     box(m_irect, outerColor);
-    lirect.set(m_irect.fLeft + indentLeft,
-               m_irect.fTop + indentTop,
-               m_irect.fRight - indentRight,
-               m_irect.fBottom - indentBottom);
+    lirect.set(m_irect.fLeft + indentLeft, m_irect.fTop + indentTop, m_irect.fRight - indentRight, m_irect.fBottom - indentBottom);
     box(lirect, innerColor);
 }
 
-void WebThemeControlDRTWin::markState()
+void WebTestThemeControlWin::markState()
 {
     // The horizontal lines in a read only control are spaced by this amount.
     const int readOnlyLineOffset = 5;
@@ -246,40 +235,31 @@ void WebThemeControlDRTWin::markState()
 
     case HotState:
         // Draw a triangle in the upper left corner of the control.
-        triangle(m_left,                 m_top,
-                 m_left + triangleSize,  m_top,
-                 m_left,                 m_top + triangleSize,    m_edgeColor);
+        triangle(m_left, m_top, m_left + triangleSize, m_top, m_left, m_top + triangleSize, m_edgeColor);
         break;
 
     case HoverState:
         // Draw a triangle in the upper right corner of the control.
-        triangle(m_right,                m_top,
-                 m_right,                m_top + triangleSize,
-                 m_right - triangleSize, m_top,                   m_edgeColor);
+        triangle(m_right, m_top, m_right, m_top + triangleSize, m_right - triangleSize, m_top, m_edgeColor);
         break;
 
     case FocusedState:
         // Draw a triangle in the bottom right corner of the control.
-        triangle(m_right,                m_bottom,
-                 m_right - triangleSize, m_bottom,
-                 m_right,                m_bottom - triangleSize, m_edgeColor);
+        triangle(m_right, m_bottom, m_right - triangleSize, m_bottom, m_right, m_bottom - triangleSize, m_edgeColor);
         break;
 
     case PressedState:
         // Draw a triangle in the bottom left corner of the control.
-        triangle(m_left,                 m_bottom,
-                 m_left,                 m_bottom - triangleSize,
-                 m_left + triangleSize,  m_bottom,                m_edgeColor);
+        triangle(m_left, m_bottom, m_left, m_bottom - triangleSize, m_left + triangleSize, m_bottom, m_edgeColor);
         break;
 
     default:
-        ASSERT_NOT_REACHED();
-        CRASH();
+        WEBKIT_ASSERT_NOT_REACHED();
         break;
     }
 }
 
-void WebThemeControlDRTWin::draw()
+void WebTestThemeControlWin::draw()
 {
     int halfWidth = m_width / 2;
     int halfHeight = m_height / 2;
@@ -307,14 +287,12 @@ void WebThemeControlDRTWin::draw()
 
     switch (m_type) {
     case UnknownType:
-        ASSERT_NOT_REACHED();
-        CRASH();
+        WEBKIT_ASSERT_NOT_REACHED();
         break;
 
     case TextFieldType:
         // We render this by hand outside of this function.
-        ASSERT_NOT_REACHED();
-        CRASH();
+        WEBKIT_ASSERT_NOT_REACHED();
         break;
 
     case PushButtonType:
@@ -396,57 +374,43 @@ void WebThemeControlDRTWin::draw()
     case HorizontalScrollGripType: {
         // Draw a horizontal crosshatch for the grip.
         int longOffset = halfWidth - gripLongIndent;
-        line(m_left  + gripLongIndent, m_top    + halfHeight,
-             m_right - gripLongIndent, m_top    + halfHeight,      m_fgColor);
-        line(m_left  + longOffset,     m_top    + gripShortIndent,
-             m_left  + longOffset,     m_bottom - gripShortIndent, m_fgColor);
-        line(m_right - longOffset,     m_top    + gripShortIndent,
-             m_right - longOffset,     m_bottom - gripShortIndent, m_fgColor);
+        line(m_left + gripLongIndent, m_top + halfHeight, m_right - gripLongIndent, m_top + halfHeight, m_fgColor);
+        line(m_left + longOffset, m_top + gripShortIndent, m_left + longOffset, m_bottom - gripShortIndent, m_fgColor);
+        line(m_right - longOffset, m_top + gripShortIndent, m_right - longOffset, m_bottom - gripShortIndent, m_fgColor);
         break;
     }
 
     case VerticalScrollGripType: {
         // Draw a vertical crosshatch for the grip.
         int longOffset = halfHeight - gripLongIndent;
-        line(m_left  + halfWidth,       m_top    + gripLongIndent,
-             m_left  + halfWidth,       m_bottom - gripLongIndent, m_fgColor);
-        line(m_left  + gripShortIndent, m_top    + longOffset,
-             m_right - gripShortIndent, m_top    + longOffset,     m_fgColor);
-        line(m_left  + gripShortIndent, m_bottom - longOffset,
-             m_right - gripShortIndent, m_bottom - longOffset,     m_fgColor);
+        line(m_left + halfWidth, m_top + gripLongIndent, m_left + halfWidth, m_bottom - gripLongIndent, m_fgColor);
+        line(m_left + gripShortIndent, m_top + longOffset, m_right - gripShortIndent, m_top + longOffset, m_fgColor);
+        line(m_left + gripShortIndent, m_bottom - longOffset, m_right - gripShortIndent, m_bottom - longOffset, m_fgColor);
         break;
     }
 
     case LeftArrowType:
         // Draw a left arrow inside a box.
         box(m_irect, m_bgColor);
-        triangle(m_right - quarterWidth, m_top    + quarterHeight,
-                 m_right - quarterWidth, m_bottom - quarterHeight,
-                 m_left  + quarterWidth, m_top    + halfHeight,    m_fgColor);
+        triangle(m_right - quarterWidth, m_top + quarterHeight, m_right - quarterWidth, m_bottom - quarterHeight, m_left + quarterWidth, m_top + halfHeight, m_fgColor);
         break;
 
     case RightArrowType:
         // Draw a left arrow inside a box.
         box(m_irect, m_bgColor);
-        triangle(m_left  + quarterWidth, m_top    + quarterHeight,
-                 m_right - quarterWidth, m_top    + halfHeight,
-                 m_left  + quarterWidth, m_bottom - quarterHeight, m_fgColor);
+        triangle(m_left + quarterWidth, m_top + quarterHeight, m_right - quarterWidth, m_top + halfHeight, m_left + quarterWidth, m_bottom - quarterHeight, m_fgColor);
         break;
 
     case UpArrowType:
         // Draw an up arrow inside a box.
         box(m_irect, m_bgColor);
-        triangle(m_left  + quarterWidth, m_bottom - quarterHeight,
-                 m_left  + halfWidth,    m_top    + quarterHeight,
-                 m_right - quarterWidth, m_bottom - quarterHeight, m_fgColor);
+        triangle(m_left + quarterWidth, m_bottom - quarterHeight, m_left + halfWidth, m_top + quarterHeight, m_right - quarterWidth, m_bottom - quarterHeight, m_fgColor);
         break;
 
     case DownArrowType:
         // Draw a down arrow inside a box.
         box(m_irect, m_bgColor);
-        triangle(m_left  + quarterWidth, m_top    + quarterHeight,
-                 m_right - quarterWidth, m_top    + quarterHeight,
-                 m_left  + halfWidth,    m_bottom - quarterHeight, m_fgColor);
+        triangle(m_left + quarterWidth, m_top + quarterHeight, m_right - quarterWidth, m_top + quarterHeight, m_left + halfWidth, m_bottom - quarterHeight, m_fgColor);
         break;
 
     case HorizontalSliderTrackType: {
@@ -474,14 +438,11 @@ void WebThemeControlDRTWin::draw()
     case DropDownButtonType:
         // Draw a box with a big down arrow on top.
         box(m_irect, m_bgColor);
-        triangle(m_left  + quarterWidth, m_top,
-                 m_right - quarterWidth, m_top,
-                 m_left  + halfWidth,    m_bottom, m_fgColor);
+        triangle(m_left + quarterWidth, m_top, m_right - quarterWidth, m_top, m_left + halfWidth, m_bottom, m_fgColor);
         break;
 
     default:
-        ASSERT_NOT_REACHED();
-        CRASH();
+        WEBKIT_ASSERT_NOT_REACHED();
         break;
     }
 
@@ -491,7 +452,7 @@ void WebThemeControlDRTWin::draw()
 // Because rendering a text field is dependent on input
 // parameters the other controls don't have, we render it directly
 // rather than trying to overcomplicate draw() further.
-void WebThemeControlDRTWin::drawTextField(bool drawEdges, bool fillContentArea, SkColor color)
+void WebTestThemeControlWin::drawTextField(bool drawEdges, bool fillContentArea, SkColor color)
 {
     SkPaint paint;
 
@@ -509,7 +470,7 @@ void WebThemeControlDRTWin::drawTextField(bool drawEdges, bool fillContentArea, 
     markState();
 }
 
-void WebThemeControlDRTWin::drawProgressBar(const SkIRect& fillRect)
+void WebTestThemeControlWin::drawProgressBar(const SkIRect& fillRect)
 {
     SkPaint paint;
 
@@ -527,3 +488,4 @@ void WebThemeControlDRTWin::drawProgressBar(const SkIRect& fillRect)
     markState();
 }
 
+}
