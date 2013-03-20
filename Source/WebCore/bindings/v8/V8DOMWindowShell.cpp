@@ -239,7 +239,7 @@ bool V8DOMWindowShell::initializeIfNeeded()
         disposeContext();
         return false;
     }
-
+    m_perContextData->setActivityLogger(DOMWrapperWorld::activityLogger(m_world->worldId()));
     if (!installDOMWindow()) {
         disposeContext();
         return false;

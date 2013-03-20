@@ -32,6 +32,7 @@
 #define V8PerContextData_h
 
 #include "ScopedPersistent.h"
+#include "V8DOMActivityLogger.h"
 #include "WrapperTypeInfo.h"
 #include <v8.h>
 #include <wtf/HashMap.h>
@@ -93,6 +94,16 @@ public:
         return &m_v8NPObjectMap;
     }
 
+    V8DOMActivityLogger* activityLogger()
+    {
+        return m_activityLogger;
+    }
+
+    void setActivityLogger(V8DOMActivityLogger* logger)
+    {
+        m_activityLogger = logger;
+    }
+
 private:
     explicit V8PerContextData(v8::Persistent<v8::Context> context)
         : m_context(context)
@@ -113,7 +124,10 @@ private:
     ConstructorMap m_constructorMap;
 
     V8NPObjectMap m_v8NPObjectMap;
-
+    // We cache a pointer to the V8DOMActivityLogger associated with the world
+    // corresponding to this context. The ownership of the pointer is retained
+    // by the DOMActivityLoggerMap in DOMWrapperWorld.
+    V8DOMActivityLogger* m_activityLogger;
     v8::Persistent<v8::Context> m_context;
     ScopedPersistent<v8::Value> m_errorPrototype;
     ScopedPersistent<v8::Value> m_objectPrototype;
