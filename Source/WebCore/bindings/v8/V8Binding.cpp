@@ -108,6 +108,20 @@ const int32_t kMinInt32 = -kMaxInt32 - 1;
 const uint32_t kMaxUInt32 = 0xffffffff;
 const int64_t kJSMaxInteger = 0x20000000000000LL - 1; // 2^53 - 1, maximum integer exactly representable in ECMAScript.
 
+static double enforceRange(double x, double minimum, double maximum, bool& ok)
+{
+    if (std::isnan(x) || std::isinf(x)) {
+        ok = false;
+        return 0;
+    }
+    x = trunc(x);
+    if (x < minimum || x > maximum) {
+        ok = false;
+        return 0;
+    }
+    return x;
+}
+
 int32_t toInt32(v8::Handle<v8::Value> value, IntegerConversionConfiguration configuration, bool& ok)
 {
     ok = true;
@@ -123,20 +137,8 @@ int32_t toInt32(v8::Handle<v8::Value> value, IntegerConversionConfiguration conf
         return 0;
     }
 
-    if (configuration == EnforceRange) {
-        double x = numberObject->Value();
-        if (std::isnan(x) || std::isinf(x)) {
-            ok = false;
-            return 0;
-        }
-        x = (x < 0 ? -1 : 1) * floor(fabs(x));
-        if (x < kMinInt32 || x > kMaxInt32) {
-            ok = false;
-            return 0;
-        }
-
-        return x;
-    }
+    if (configuration == EnforceRange)
+        return enforceRange(numberObject->Value(), kMinInt32, kMaxInt32, ok);
 
     // Does the value convert to nan or to an infinity?
     double numberValue = numberObject->Value();
@@ -172,20 +174,8 @@ uint32_t toUInt32(v8::Handle<v8::Value> value, IntegerConversionConfiguration co
         return 0;
     }
 
-    if (configuration == EnforceRange) {
-        double x = numberObject->Value();
-        if (std::isnan(x) || std::isinf(x)) {
-            ok = false;
-            return 0;
-        }
-        x = (x < 0 ? -1 : 1) * floor(fabs(x));
-        if (x < 0 || x > kMaxUInt32) {
-            ok = false;
-            return 0;
-        }
-
-        return x;
-    }
+    if (configuration == EnforceRange)
+        return enforceRange(numberObject->Value(), 0, kMaxUInt32, ok);
 
     // Does the value convert to nan or to an infinity?
     double numberValue = numberObject->Value();
@@ -211,18 +201,8 @@ int64_t toInt64(v8::Handle<v8::Value> value, IntegerConversionConfiguration conf
 
     double x = numberObject->Value();
 
-    if (configuration == EnforceRange) {
-        if (std::isnan(x) || std::isinf(x)) {
-            ok = false;
-            return 0;
-        }
-        x = (x < 0 ? -1 : 1) * floor(fabs(x));
-        if (x < -kJSMaxInteger || x > kJSMaxInteger) {
-            ok = false;
-            return 0;
-        }
-        return x;
-    }
+    if (configuration == EnforceRange)
+        return enforceRange(x, -kJSMaxInteger, kJSMaxInteger, ok);
 
     // NaNs and +/-Infinity should be 0, otherwise modulo 2^64.
     unsigned long long integer;
@@ -259,18 +239,8 @@ uint64_t toUInt64(v8::Handle<v8::Value> value, IntegerConversionConfiguration co
 
     double x = numberObject->Value();
 
-    if (configuration == EnforceRange) {
-        if (std::isnan(x) || std::isinf(x)) {
-            ok = false;
-            return 0;
-        }
-        x = (x < 0 ? -1 : 1) * floor(fabs(x));
-        if (x < 0 || x > kJSMaxInteger) {
-            ok = false;
-            return 0;
-        }
-        return x;
-    }
+    if (configuration == EnforceRange)
+        return enforceRange(x, 0, kJSMaxInteger, ok);
 
     // NaNs and +/-Infinity should be 0, otherwise modulo 2^64.
     unsigned long long integer;
