@@ -70,7 +70,7 @@ v8::Handle<v8::Object> toObjectWrapper(T* domObject, v8::Isolate* isolate)
     v8::Handle<v8::Value> value = toV8(domObject, v8::Handle<v8::Object>(), isolate);
     if (value.IsEmpty())
         return v8::Object::New();
-    return value.As<v8::Object>();
+    return v8::Local<v8::Object>::New(isolate, value.As<v8::Object>());
 }
 
 v8::Local<v8::Value> V8LazyEventListener::callListenerFunction(ScriptExecutionContext* context, v8::Handle<v8::Value> jsEvent, Event* event)
