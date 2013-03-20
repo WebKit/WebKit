@@ -1,3 +1,10 @@
+2013-03-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am: Add WebKitFeatures.txt and WebKitFeatures.h to
+        DISTCLEANFILES.
+
 2013-03-17  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Exports leveldb symbols
