@@ -257,9 +257,10 @@ void Font::initFormatForTextLayout(QTextLayout* layout) const
         range.format.setFontWordSpacing(m_wordSpacing);
     if (m_letterSpacing)
         range.format.setFontLetterSpacing(m_letterSpacing);
+    if (typesettingFeatures() & Kerning)
+        range.format.setFontKerning(true);
     if (isSmallCaps())
         range.format.setFontCapitalization(QFont::SmallCaps);
-    range.format.setFontKerning(typesettingFeatures() & Kerning);
 
     if (range.format.propertyCount())
         layout->setAdditionalFormats(QList<QTextLayout::FormatRange>() << range);
