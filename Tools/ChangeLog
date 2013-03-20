@@ -1,3 +1,15 @@
+2013-03-19  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Support -webkit-font-smoothing
+        https://bugs.webkit.org/show_bug.cgi?id=106009
+
+        Reviewed by Jocelyn Turcotte.
+
+        Set shouldUseFontSmoothing to false to match WebKitTestRunner.
+
+        * DumpRenderTree/qt/TestRunnerQt.cpp:
+        (TestRunnerQt::reset):
+
 2013-03-20  Krzysztof Czech  <k.czech@samsung.com>
 
         [GTK] accessibility/aria-scrollbar-role.html is failing

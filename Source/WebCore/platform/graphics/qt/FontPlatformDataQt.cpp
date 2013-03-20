@@ -2,6 +2,7 @@
     Copyright (C) 2008 Holger Hans Peter Freyther
     Copyright (C) 2009 Torch Mobile Inc. http://www.torchmobile.com/
     Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
+    Copyright (C) 2013 Digia Plc. and/or its subsidiary(-ies)
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -23,6 +24,7 @@
 #include "config.h"
 #include "FontPlatformData.h"
 
+#include "Font.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -72,8 +74,12 @@ FontPlatformData::FontPlatformData(const FontDescription& description, const Ato
     font.setWordSpacing(wordSpacing);
     font.setLetterSpacing(QFont::AbsoluteSpacing, letterSpacing);
 #if QT_VERSION < QT_VERSION_CHECK(5, 1, 0)
-    // Kept enabled for Qt < 5.1 to maintain stable baselines for 5.0.
+    // To maintain stable baselines for Qt 5.0, keep force integer metrics enabled and ignore font-smoothing setting.
     font.setStyleStrategy(QFont::ForceIntegerMetrics);
+#else
+    if (description.fontSmoothing() == NoSmoothing
+        || (description.fontSmoothing() == AutoSmoothing && !Font::shouldUseSmoothing()))
+        font.setStyleStrategy(QFont::NoAntialias);
 #endif
 
     m_data->bold = font.bold();

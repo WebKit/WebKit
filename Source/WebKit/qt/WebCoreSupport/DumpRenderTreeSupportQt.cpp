@@ -38,6 +38,7 @@
 #include "EditorClientQt.h"
 #include "Element.h"
 #include "FocusController.h"
+#include "Font.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoaderClientQt.h"
@@ -870,6 +871,11 @@ void DumpRenderTreeSupportQt::setSeamlessIFramesEnabled(bool enabled)
 #else
     UNUSED_PARAM(enabled);
 #endif
+}
+
+void DumpRenderTreeSupportQt::setShouldUseFontSmoothing(bool enabled)
+{
+    WebCore::Font::setShouldUseSmoothing(enabled);
 }
 
 QString DumpRenderTreeSupportQt::frameRenderTreeDump(QWebFrameAdapter* adapter)
