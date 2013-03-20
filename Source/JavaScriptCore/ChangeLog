@@ -1,3 +1,16 @@
+2013-03-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION(r146089): It broke 20 sputnik tests on ARM traditional and Thumb2
+        https://bugs.webkit.org/show_bug.cgi?id=112676
+
+        Rubber-stamped by Filip Pizlo.
+
+        Add one more EABI_32BIT_DUMMY_ARG to make DFG JIT ARM EABI compatible
+        again after r146089 similar to https://bugs.webkit.org/show_bug.cgi?id=84449
+
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+
 2013-03-19  Michael Saboff  <msaboff@apple.com>
 
         Crash when loading http://www.jqchart.com/jquery/gauges/RadialGauge/LiveData
