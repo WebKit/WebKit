@@ -1888,6 +1888,9 @@ static v8::Handle<v8::Value> methodWithEnumArgMethod(const v8::Arguments& args)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestObj* imp = V8TestObj::toNative(args.Holder());
     V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, enumArg, args[0]);
+    String string = enumArg;
+    if (!(string == "" || string == "EnumValue1" || string == "EnumValue2" || string == "EnumValue3"))
+        return throwTypeError(0, args.GetIsolate());
     imp->methodWithEnumArg(enumArg);
     return v8Undefined();
 }
