@@ -504,7 +504,7 @@ reviewers_list = [
     Reviewer("Brady Eidson", "beidson@apple.com", "bradee-oh"),
     Reviewer("Brent Fulgham", "bfulgham@webkit.org", "bfulgham"),
     Reviewer("Brian Weinstein", "bweinstein@apple.com", "bweinstein"),
-    Reviewer("Caio Marcelo de Oliveira Filho", ["cmarcelo@webkit.org", "caio.oliveira@openbossa.org"], "cmarcelo"),
+    Reviewer("Caio Marcelo de Oliveira Filho", ["cmarcelo@webkit.org", "cmarcelo@gmail.com", "caio.oliveira@openbossa.org"], "cmarcelo"),
     Reviewer("Cameron Zwarich", ["zwarich@apple.com", "cwzwarich@apple.com", "cwzwarich@webkit.org"]),
     Reviewer("Carlos Garcia Campos", ["cgarcia@igalia.com", "carlosgc@gnome.org", "carlosgc@webkit.org"], "KaL"),
     Reviewer("Chang Shu", ["cshu@webkit.org", "c.shu@sisa.samsung.com"], "cshu"),

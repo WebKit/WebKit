@@ -1,3 +1,9 @@
+2013-03-20  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Unreviewed. Adding another email for me.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-03-20  Justin Novosad  <junov@google.com>
 
         [Chromium] Code cleanup: removing support for non-deferred 2d canvas rendering
