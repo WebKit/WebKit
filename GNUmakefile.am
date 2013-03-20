@@ -189,6 +189,7 @@ include Source/WebKit2/GNUmakefile.am
 include Source/WebKit2/UIProcess/API/gtk/tests/GNUmakefile.am
 include Tools/MiniBrowser/gtk/GNUmakefile.am
 include Tools/WebKitTestRunner/GNUmakefile.am
+include Source/ThirdParty/ANGLE/GNUmakefile.am
 include Source/ThirdParty/gtest/GNUmakefile.am
 include Tools/TestWebKitAPI/GNUmakefile.am
 # [GTK] Refactor the translations now that we have webkit2

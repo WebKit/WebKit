@@ -1,3 +1,12 @@
+2013-03-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Build ANGLE sources into a separate library from libWebCore.la
+        https://bugs.webkit.org/show_bug.cgi?id=112778
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Added, sets up the libANGLE.la library.
+
 2013-03-05  Kenneth Russell  <kbr@google.com>
 
         Upgrade ANGLE to r1987

@@ -1,3 +1,12 @@
+2013-03-20  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Build ANGLE sources into a separate library from libWebCore.la
+        https://bugs.webkit.org/show_bug.cgi?id=112778
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Include the GNUmakefile.am covering the libANGLE.la library.
+
 2013-03-20  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Define MODULE_VERSION
