@@ -1,3 +1,14 @@
+2013-03-20  Peter Gal  <galpeter@inf.u-szeged.hu>
+
+        Implement and32 on MIPS platform
+        https://bugs.webkit.org/show_bug.cgi?id=112665
+
+        Reviewed by Zoltan Herczeg.
+
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::and32): Added missing method.
+        (MacroAssemblerMIPS):
+
 2013-03-20  Mark Lam  <mark.lam@apple.com>
 
         Fix incorrect debugger column number value.

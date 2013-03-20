@@ -267,6 +267,12 @@ public:
         m_assembler.sw(dataTempRegister, addrTempRegister, 4);
     }
 
+    void and32(Address src, RegisterID dest)
+    {
+        load32(src, dataTempRegister);
+        and32(dataTempRegister, dest);
+    }
+
     void and32(RegisterID src, RegisterID dest)
     {
         m_assembler.andInsn(dest, dest, src);
