@@ -1,3 +1,9 @@
+2013-03-20  Roger Fong  <roger_fong@apple.com>
+
+        Test fix for Win EWS bots, catch various errors and restart script if necessary.
+
+        * EWSTools/start-queue-win.sh:
+
 2013-03-20  Sami Kyostila  <skyostil@chromium.org>
 
         Unreviewed, add myself to committers.py.
