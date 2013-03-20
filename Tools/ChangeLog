@@ -1,5 +1,14 @@
 2013-03-20  Roger Fong  <roger_fong@apple.com>
 
+        API test gardening AppleWin port.
+
+        The BitmapImageEmptyFrameTest should only be tested on Cairo not on AppleWin port.
+
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj:
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+
+2013-03-20  Roger Fong  <roger_fong@apple.com>
+
         Test fix for Win EWS bots, catch various errors and restart script if necessary.
 
         * EWSTools/start-queue-win.sh:

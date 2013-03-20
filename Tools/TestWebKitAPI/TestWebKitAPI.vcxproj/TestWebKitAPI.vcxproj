@@ -106,7 +106,12 @@
   <ItemGroup>
     <ClCompile Include="..\TestsController.cpp" />
     <ClCompile Include="..\Tests\WebCore\LayoutUnit.cpp" />
-    <ClCompile Include="..\Tests\WebCore\win\BitmapImage.cpp" />
+    <ClCompile Include="..\Tests\WebCore\win\BitmapImage.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\Tests\WebKit\win\WebViewDestruction.cpp" />
     <ClCompile Include="..\Tests\WTF\cf\RetainPtr.cpp" />
     <ClCompile Include="..\Tests\WTF\cf\RetainPtrHashing.cpp" />
