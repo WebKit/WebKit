@@ -135,18 +135,23 @@ WebInspector.Settings.prototype = {
      */
     createSetting: function(key, defaultValue)
     {
-        return new WebInspector.Setting(key, defaultValue, this._eventSupport);
+        return new WebInspector.Setting(key, defaultValue, this._eventSupport, window.localStorage);
     }
 }
 
 /**
  * @constructor
+ * @param {string} name
+ * @param {*} defaultValue
+ * @param {!WebInspector.Object} eventSupport
+ * @param {?Storage} storage
  */
-WebInspector.Setting = function(name, defaultValue, eventSupport)
+WebInspector.Setting = function(name, defaultValue, eventSupport, storage)
 {
     this._name = name;
     this._defaultValue = defaultValue;
     this._eventSupport = eventSupport;
+    this._storage = storage;
 }
 
 WebInspector.Setting.prototype = {
@@ -171,22 +176,25 @@ WebInspector.Setting.prototype = {
             return this._value;
 
         this._value = this._defaultValue;
-        if (window.localStorage != null && this._name in window.localStorage) {
+        if (this._storage && this._name in this._storage) {
             try {
-                this._value = JSON.parse(window.localStorage[this._name]);
+                this._value = JSON.parse(this._storage[this._name]);
             } catch(e) {
-                window.localStorage.removeItem(this._name);
+                delete this._storage[this._name];
             }
         }
         return this._value;
     },
 
+    /**
+     * @param {!Object} value
+     */
     set: function(value)
     {
         this._value = value;
-        if (window.localStorage != null) {
+        if (this._storage) {
             try {
-                window.localStorage[this._name] = JSON.stringify(value);
+                this._storage[this._name] = JSON.stringify(value);
             } catch(e) {
                 console.error("Error saving setting with name:" + this._name);
             }
