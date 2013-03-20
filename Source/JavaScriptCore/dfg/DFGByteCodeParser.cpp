@@ -2352,9 +2352,31 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_strcat: {
             int startOperand = currentInstruction[2].u.operand;
             int numOperands = currentInstruction[3].u.operand;
-            for (int operandIdx = startOperand; operandIdx < startOperand + numOperands; ++operandIdx)
-                addVarArgChild(get(operandIdx));
-            set(currentInstruction[1].u.operand, addToGraph(Node::VarArg, StrCat, OpInfo(0), OpInfo(0)));
+#if CPU(X86)
+            // X86 doesn't have enough registers to compile MakeRope with three arguments.
+            // Rather than try to be clever, we just make MakeRope dumber on this processor.
+            const unsigned maxRopeArguments = 2;
+#else
+            const unsigned maxRopeArguments = 3;
+#endif
+            Node* operands[AdjacencyList::Size];
+            unsigned indexInOperands = 0;
+            for (unsigned i = 0; i < AdjacencyList::Size; ++i)
+                operands[i] = 0;
+            for (int operandIdx = startOperand; operandIdx < startOperand + numOperands; ++operandIdx) {
+                if (indexInOperands == maxRopeArguments) {
+                    operands[0] = addToGraph(MakeRope, operands[0], operands[1], operands[2]);
+                    for (unsigned i = 1; i < AdjacencyList::Size; ++i)
+                        operands[i] = 0;
+                    indexInOperands = 1;
+                }
+                
+                ASSERT(indexInOperands < AdjacencyList::Size);
+                ASSERT(indexInOperands < maxRopeArguments);
+                operands[indexInOperands++] = addToGraph(ToString, get(operandIdx));
+            }
+            set(currentInstruction[1].u.operand,
+                addToGraph(MakeRope, operands[0], operands[1], operands[2]));
             NEXT_OPCODE(op_strcat);
         }
 

@@ -116,9 +116,8 @@ public:
         initialize();
     }
     
-    // Call this if you wish to remove an edge and the node treats the list of children
-    // as a "bag" - an unordered set where the index of the edge does not matter.
-    void removeEdgeFromBag(unsigned edgeIndex)
+    // Call this if you wish to remove an edge and the node treats the list of children.
+    void removeEdge(unsigned edgeIndex)
     {
         for (unsigned i = edgeIndex; i < Size - 1; ++i)
             setChild(i, child(i + 1));

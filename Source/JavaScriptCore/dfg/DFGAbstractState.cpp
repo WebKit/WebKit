@@ -466,15 +466,17 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
             else
                 forNode(node).set(SpecDouble);
             break;
-        case KnownStringUse:
-            forNode(node).set(m_graph.m_globalData.stringStructure.get());
-            break;
         default:
             RELEASE_ASSERT(node->op() == ValueAdd);
             clobberWorld(node->codeOrigin, indexInBlock);
             forNode(node).set(SpecString | SpecInt32 | SpecNumber);
             break;
         }
+        break;
+    }
+        
+    case MakeRope: {
+        forNode(node).set(m_graph.m_globalData.stringStructure.get());
         break;
     }
             
@@ -1100,10 +1102,6 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         forNode(node).set(node->structure());
         break;
     }
-            
-    case StrCat:
-        forNode(node).set(m_graph.m_globalData.stringStructure.get());
-        break;
             
     case NewArray:
         node->setCanExit(true);

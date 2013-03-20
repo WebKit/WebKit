@@ -1098,6 +1098,11 @@ public:
         m_jit.setupArgumentsWithExecState(arg1, arg2);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
+    JITCompiler::Call callOperation(C_DFGOperation_EJssJssJss operation, GPRReg result, GPRReg arg1, GPRReg arg2, GPRReg arg3)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
     JITCompiler::Call callOperation(C_DFGOperation_EJ operation, GPRReg result, GPRReg arg1)
     {
         m_jit.setupArgumentsWithExecState(arg1);
@@ -1499,6 +1504,11 @@ public:
     JITCompiler::Call callOperation(C_DFGOperation_EJssJss operation, GPRReg result, GPRReg arg1, GPRReg arg2)
     {
         m_jit.setupArgumentsWithExecState(arg1, arg2);
+        return appendCallWithExceptionCheckSetResult(operation, result);
+    }
+    JITCompiler::Call callOperation(C_DFGOperation_EJssJssJss operation, GPRReg result, GPRReg arg1, GPRReg arg2, GPRReg arg3)
+    {
+        m_jit.setupArgumentsWithExecState(arg1, arg2, arg3);
         return appendCallWithExceptionCheckSetResult(operation, result);
     }
     JITCompiler::Call callOperation(C_DFGOperation_EJ operation, GPRReg result, GPRReg arg1Tag, GPRReg arg1Payload)
@@ -2105,6 +2115,7 @@ public:
     void compileDoubleAsInt32(Node*);
     void compileInt32ToDouble(Node*);
     void compileAdd(Node*);
+    void compileMakeRope(Node*);
     void compileArithSub(Node*);
     void compileArithNegate(Node*);
     void compileArithMul(Node*);
@@ -2887,6 +2898,8 @@ public:
         , m_gprOrInvalid(InvalidGPRReg)
     {
         ASSERT(m_jit);
+        if (!edge)
+            return;
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || (edge.useKind() == CellUse || edge.useKind() == KnownCellUse || edge.useKind() == ObjectUse || edge.useKind() == StringUse || edge.useKind() == KnownStringUse || edge.useKind() == StringObjectUse || edge.useKind() == StringOrStringObjectUse));
         if (jit->isFilled(node()))
             gpr();
@@ -2894,6 +2907,8 @@ public:
 
     ~SpeculateCellOperand()
     {
+        if (!m_edge)
+            return;
         ASSERT(m_gprOrInvalid != InvalidGPRReg);
         m_jit->unlock(m_gprOrInvalid);
     }
@@ -2910,6 +2925,7 @@ public:
 
     GPRReg gpr()
     {
+        ASSERT(m_edge);
         if (m_gprOrInvalid == InvalidGPRReg)
             m_gprOrInvalid = m_jit->fillSpeculateCell(edge());
         return m_gprOrInvalid;
@@ -2917,6 +2933,7 @@ public:
     
     void use()
     {
+        ASSERT(m_edge);
         m_jit->use(node());
     }
 

@@ -413,8 +413,8 @@ private:
         }
         
         case StringCharAt:
-        case StrCat:
-        case ToString: {
+        case ToString:
+        case MakeRope: {
             changed |= setPrediction(SpecString);
             break;
         }

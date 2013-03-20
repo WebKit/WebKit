@@ -182,7 +182,7 @@ private:
             if (!edge)
                 continue;
             if (edge.isProved() || edge.useKind() == UntypedUse)
-                node->children.removeEdgeFromBag(i--);
+                node->children.removeEdge(i--);
         }
     }
     

@@ -833,14 +833,14 @@ private:
                 && !m_createsArguments.contains(edge->codeOrigin.inlineCallFrame);
             if (!isDeadArgumentsRegister && !isAliasedArgumentsRegister)
                 break;
-            node->children.removeEdgeFromBag(edgeIndex);
+            node->children.removeEdge(edgeIndex);
             break;
         }
             
         case CreateArguments: { // Arises if we CSE two GetLocals to the arguments register and then CSE the second use of the GetLocal to the first.
             if (m_createsArguments.contains(edge->codeOrigin.inlineCallFrame))
                 break;
-            node->children.removeEdgeFromBag(edgeIndex);
+            node->children.removeEdge(edgeIndex);
             break;
         }
             

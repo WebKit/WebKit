@@ -224,7 +224,7 @@ namespace JSC { namespace DFG {
     macro(ToPrimitive, NodeResultJS | NodeMustGenerate | NodeClobbersWorld) \
     macro(ToString, NodeResultJS | NodeMustGenerate | NodeMightClobber) \
     macro(NewStringObject, NodeResultJS) \
-    macro(StrCat, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
+    macro(MakeRope, NodeResultJS) \
     \
     /* Nodes used for activations. Activation support works by having it anchored at */\
     /* epilgoues via TearOffActivation, and all CreateActivation nodes kept alive by */\

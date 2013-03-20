@@ -2165,6 +2165,10 @@ void SpeculativeJIT::compile(Node* node)
     case ArithAdd:
         compileAdd(node);
         break;
+        
+    case MakeRope:
+        compileMakeRope(node);
+        break;
 
     case ArithSub:
         compileArithSub(node);
@@ -3520,44 +3524,6 @@ void SpeculativeJIT::compile(Node* node)
         done.link(&m_jit);
         callOperation(operationNewArrayWithSize, resultGPR, structureGPR, sizeGPR);
         cellResult(resultGPR, node);
-        break;
-    }
-        
-    case StrCat: {
-        size_t scratchSize = sizeof(EncodedJSValue) * node->numChildren();
-        ScratchBuffer* scratchBuffer = m_jit.globalData()->scratchBufferForSize(scratchSize);
-        EncodedJSValue* buffer = scratchBuffer ? static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) : 0;
-        
-        for (unsigned operandIdx = 0; operandIdx < node->numChildren(); ++operandIdx) {
-            JSValueOperand operand(this, m_jit.graph().m_varArgChildren[node->firstChild() + operandIdx]);
-            GPRReg opGPR = operand.gpr();
-            operand.use();
-            
-            m_jit.store64(opGPR, buffer + operandIdx);
-        }
-        
-        flushRegisters();
-
-        if (scratchSize) {
-            GPRTemporary scratch(this);
-
-            // Tell GC mark phase how much of the scratch buffer is active during call.
-            m_jit.move(TrustedImmPtr(scratchBuffer->activeLengthPtr()), scratch.gpr());
-            m_jit.storePtr(TrustedImmPtr(scratchSize), scratch.gpr());
-        }
-
-        GPRResult result(this);
-        
-        callOperation(operationStrCat, result.gpr(), static_cast<void *>(buffer), node->numChildren());
-
-        if (scratchSize) {
-            GPRTemporary scratch(this);
-
-            m_jit.move(TrustedImmPtr(scratchBuffer->activeLengthPtr()), scratch.gpr());
-            m_jit.storePtr(TrustedImmPtr(0), scratch.gpr());
-        }
-
-        cellResult(result.gpr(), node, UseChildrenCalledExplicitly);
         break;
     }
         

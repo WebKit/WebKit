@@ -2228,6 +2228,10 @@ void SpeculativeJIT::compile(Node* node)
         compileAdd(node);
         break;
 
+    case MakeRope:
+        compileMakeRope(node);
+        break;
+
     case ArithSub:
         compileArithSub(node);
         break;
@@ -3364,48 +3368,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case StrCat: {
-        size_t scratchSize = sizeof(EncodedJSValue) * node->numChildren();
-        ScratchBuffer* scratchBuffer = m_jit.globalData()->scratchBufferForSize(scratchSize);
-        EncodedJSValue* buffer = scratchBuffer ? static_cast<EncodedJSValue*>(scratchBuffer->dataBuffer()) : 0;
-        
-        for (unsigned operandIdx = 0; operandIdx < node->numChildren(); ++operandIdx) {
-            JSValueOperand operand(this, m_jit.graph().m_varArgChildren[node->firstChild() + operandIdx]);
-            GPRReg opTagGPR = operand.tagGPR();
-            GPRReg opPayloadGPR = operand.payloadGPR();
-            operand.use();
-            
-            m_jit.store32(opTagGPR, reinterpret_cast<char*>(buffer + operandIdx) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag));
-            m_jit.store32(opPayloadGPR, reinterpret_cast<char*>(buffer + operandIdx) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
-        }
-        
-        flushRegisters();
-
-        if (scratchSize) {
-            GPRTemporary scratch(this);
-
-            // Tell GC mark phase how much of the scratch buffer is active during call.
-            m_jit.move(TrustedImmPtr(scratchBuffer->activeLengthPtr()), scratch.gpr());
-            m_jit.storePtr(TrustedImmPtr(scratchSize), scratch.gpr());
-        }
-
-        GPRResult resultPayload(this);
-        GPRResult2 resultTag(this);
-        
-        callOperation(operationStrCat, resultTag.gpr(), resultPayload.gpr(), static_cast<void *>(buffer), node->numChildren());
-
-        if (scratchSize) {
-            GPRTemporary scratch(this);
-
-            m_jit.move(TrustedImmPtr(scratchBuffer->activeLengthPtr()), scratch.gpr());
-            m_jit.storePtr(TrustedImmPtr(0), scratch.gpr());
-        }
-
-        // FIXME: make the callOperation above explicitly return a cell result, or jitAssert the tag is a cell tag.
-        cellResult(resultPayload.gpr(), node, UseChildrenCalledExplicitly);
-        break;
-    }
-
     case NewArray: {
         JSGlobalObject* globalObject = m_jit.graph().globalObjectFor(node->codeOrigin);
         if (!globalObject->isHavingABadTime() && !hasArrayStorage(node->indexingType())) {

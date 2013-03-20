@@ -1,3 +1,85 @@
+2013-03-20  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG implementation of op_strcat should inline rope allocations
+        https://bugs.webkit.org/show_bug.cgi?id=112780
+
+        Reviewed by Oliver Hunt.
+        
+        This gets rid of the StrCat node and adds a MakeRope node. The MakeRope node can
+        take either two or three operands, and allocates a rope string with either two or
+        three fibers. (The magic choice of three children for non-VarArg nodes happens to
+        match exactly with the magic choice of three fibers for rope strings.)
+        
+        ValueAdd on KnownString is replaced with MakeRope with two children.
+        
+        StrCat gets replaced by an appropriate sequence of MakeRope's.
+        
+        MakeRope does not do the dynamic check to see if its children are empty strings.
+        This is replaced by a static check, instead. The downside is that we may use more
+        memory if the strings passed to MakeRope turn out to dynamically be empty. The
+        upside is that we do fewer checks in the cases where either the strings are not
+        empty, or where the strings are statically known to be empty. I suspect both of
+        those cases are more common, than the case where the string is dynamically empty.
+        
+        This also results in some badness for X86. MakeRope needs six registers if it is
+        allocating a three-rope. We don't have six registers to spare on X86. Currently,
+        the code side-steps this problem by just never usign three-ropes in optimized
+        code on X86. All other architectures, including X86_64, don't have this problem.
+        
+        This is a shocking speed-up. 9% progressions on both V8/splay and
+        SunSpider/date-format-xparb. 1% progression on V8v7 overall, and ~0.5% progression
+        on SunSpider. 2x speed-up on microbenchmarks that test op_strcat.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::executeEffects):
+        * dfg/DFGAdjacencyList.h:
+        (AdjacencyList):
+        (JSC::DFG::AdjacencyList::removeEdge):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::removeArgumentsReferencingPhantomChild):
+        * dfg/DFGBackwardsPropagationPhase.cpp:
+        (JSC::DFG::BackwardsPropagationPhase::propagate):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::putStructureStoreElimination):
+        (JSC::DFG::CSEPhase::eliminateIrrelevantPhantomChildren):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::eliminateIrrelevantPhantomChildren):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::createToString):
+        (JSC::DFG::FixupPhase::attemptToForceStringArrayModeByToStringConversion):
+        (JSC::DFG::FixupPhase::convertStringAddUse):
+        (FixupPhase):
+        (JSC::DFG::FixupPhase::convertToMakeRope):
+        (JSC::DFG::FixupPhase::fixupMakeRope):
+        (JSC::DFG::FixupPhase::attemptToMakeFastStringAdd):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileAdd):
+        (JSC::DFG::SpeculativeJIT::compileMakeRope):
+        (DFG):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::callOperation):
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculateCellOperand::SpeculateCellOperand):
+        (JSC::DFG::SpeculateCellOperand::~SpeculateCellOperand):
+        (JSC::DFG::SpeculateCellOperand::gpr):
+        (JSC::DFG::SpeculateCellOperand::use):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * runtime/JSString.h:
+        (JSRopeString):
+
 2013-03-20  Peter Gal  <galpeter@inf.u-szeged.hu>
 
         Implement and32 on MIPS platform

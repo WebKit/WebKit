@@ -312,6 +312,8 @@ namespace JSC {
         
         static ptrdiff_t offsetOfFibers() { return OBJECT_OFFSETOF(JSRopeString, m_fibers); }
 
+        static const unsigned s_maxInternalRopeLength = 3;
+        
     private:
         friend JSValue jsString(ExecState*, Register*, unsigned);
         friend JSValue jsStringFromArguments(ExecState*, JSValue);
@@ -323,8 +325,6 @@ namespace JSC {
         
         JSString* getIndexSlowCase(ExecState*, unsigned);
 
-        static const unsigned s_maxInternalRopeLength = 3;
-        
         mutable FixedArray<WriteBarrier<JSString>, s_maxInternalRopeLength> m_fibers;
     };
 

@@ -88,6 +88,7 @@ typedef JSCell* DFG_OPERATION (*C_DFGOperation_EIcf)(ExecState*, InlineCallFrame
 typedef JSCell* DFG_OPERATION (*C_DFGOperation_EJ)(ExecState*, EncodedJSValue);
 typedef JSCell* DFG_OPERATION (*C_DFGOperation_EJssSt)(ExecState*, JSString*, Structure*);
 typedef JSCell* DFG_OPERATION (*C_DFGOperation_EJssJss)(ExecState*, JSString*, JSString*);
+typedef JSCell* DFG_OPERATION (*C_DFGOperation_EJssJssJss)(ExecState*, JSString*, JSString*, JSString*);
 typedef JSCell* DFG_OPERATION (*C_DFGOperation_EOZ)(ExecState*, JSObject*, int32_t);
 typedef JSCell* DFG_OPERATION (*C_DFGOperation_ESt)(ExecState*, Structure*);
 typedef double DFG_OPERATION (*D_DFGOperation_DD)(double, double);
@@ -145,7 +146,6 @@ EncodedJSValue DFG_OPERATION operationResolveBase(ExecState*, Identifier*, Resol
 EncodedJSValue DFG_OPERATION operationResolveBaseStrictPut(ExecState*, Identifier*, ResolveOperations*, PutToBaseOperation*) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationResolveGlobal(ExecState*, ResolveOperation*, JSGlobalObject*, Identifier*) WTF_INTERNAL;
 EncodedJSValue DFG_OPERATION operationToPrimitive(ExecState*, EncodedJSValue) WTF_INTERNAL;
-EncodedJSValue DFG_OPERATION operationStrCat(ExecState*, void*, size_t) WTF_INTERNAL;
 char* DFG_OPERATION operationNewArray(ExecState*, Structure*, void*, size_t) WTF_INTERNAL;
 char* DFG_OPERATION operationNewArrayBuffer(ExecState*, Structure*, size_t, size_t) WTF_INTERNAL;
 char* DFG_OPERATION operationNewEmptyArray(ExecState*, Structure*) WTF_INTERNAL;
@@ -218,7 +218,8 @@ StringImpl* DFG_OPERATION operationResolveRope(ExecState*, JSString*);
 JSCell* DFG_OPERATION operationNewStringObject(ExecState*, JSString*, Structure*);
 JSCell* DFG_OPERATION operationToStringOnCell(ExecState*, JSCell*);
 JSCell* DFG_OPERATION operationToString(ExecState*, EncodedJSValue);
-JSCell* DFG_OPERATION operationStringAdd(ExecState*, JSString*, JSString*);
+JSCell* DFG_OPERATION operationMakeRope2(ExecState*, JSString*, JSString*);
+JSCell* DFG_OPERATION operationMakeRope3(ExecState*, JSString*, JSString*, JSString*);
 
 // This method is used to lookup an exception hander, keyed by faultLocation, which is
 // the return location from one of the calls out to one of the helper operations above.

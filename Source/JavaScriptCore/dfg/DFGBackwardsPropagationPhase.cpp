@@ -328,11 +328,8 @@ private:
             break;
         }
             
-        case StrCat: {
-            for (unsigned childIdx = node->firstChild();
-                childIdx < node->firstChild() + node->numChildren();
-                ++childIdx)
-                m_graph.m_varArgChildren[childIdx]->mergeFlags(NodeUsedAsNumber | NodeUsedAsOther);
+        case ToString: {
+            node->child1()->mergeFlags(NodeUsedAsNumber | NodeUsedAsOther);
             break;
         }
             

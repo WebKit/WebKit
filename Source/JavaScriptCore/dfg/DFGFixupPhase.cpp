@@ -175,6 +175,11 @@ private:
             break;
         }
             
+        case MakeRope: {
+            fixupMakeRope(node);
+            break;
+        }
+            
         case ArithAdd:
         case ArithSub: {
             if (attemptToMakeIntegerAdd(node))
@@ -862,7 +867,6 @@ private:
         case IsString:
         case IsObject:
         case IsFunction:
-        case StrCat:
         case CreateActivation:
         case TearOffActivation:
         case CreateArguments:
@@ -898,11 +902,11 @@ private:
     }
     
     template<UseKind useKind>
-    Node* createToString(Node* node, Edge edge)
+    void createToString(Node* node, Edge& edge)
     {
-        return m_insertionSet.insertNode(
+        edge.setNode(m_insertionSet.insertNode(
             m_indexInBlock, SpecString, ToString, node->codeOrigin,
-            Edge(edge.node(), useKind));
+            Edge(edge.node(), useKind)));
     }
     
     template<UseKind useKind>
@@ -913,7 +917,7 @@ private:
         if (!canOptimizeStringObjectAccess(node->codeOrigin))
             return;
         
-        node->child1().setNode(createToString<useKind>(node, node->child1()));
+        createToString<useKind>(node, node->child1());
         arrayMode = ArrayMode(Array::String);
     }
     
@@ -947,7 +951,34 @@ private:
         // FIXME: We ought to be able to have a ToPrimitiveToString node.
         
         observeUseKindOnNode<useKind>(edge.node());
-        edge = Edge(createToString<useKind>(node, edge), KnownStringUse);
+        createToString<useKind>(node, edge);
+    }
+    
+    void convertToMakeRope(Node* node)
+    {
+        node->setOpAndDefaultFlags(MakeRope);
+        fixupMakeRope(node);
+    }
+    
+    void fixupMakeRope(Node* node)
+    {
+        for (unsigned i = 0; i < AdjacencyList::Size; ++i) {
+            Edge& edge = node->children.child(i);
+            if (!edge)
+                break;
+            edge.setUseKind(KnownStringUse);
+            if (!m_graph.isConstant(edge.node()))
+                continue;
+            JSString* string = jsCast<JSString*>(m_graph.valueOfJSConstant(edge.node()).asCell());
+            if (string->length())
+                continue;
+            node->children.removeEdge(i--);
+        }
+        
+        if (!node->child2()) {
+            ASSERT(!node->child3());
+            node->convertToIdentity();
+        }
     }
     
     template<UseKind leftUseKind>
@@ -961,6 +992,7 @@ private:
         if (right->shouldSpeculateString()) {
             convertStringAddUse<leftUseKind>(node, left);
             convertStringAddUse<StringUse>(node, right);
+            convertToMakeRope(node);
             return true;
         }
         
@@ -968,6 +1000,7 @@ private:
             && canOptimizeStringObjectAccess(node->codeOrigin)) {
             convertStringAddUse<leftUseKind>(node, left);
             convertStringAddUse<StringObjectUse>(node, right);
+            convertToMakeRope(node);
             return true;
         }
         
@@ -975,6 +1008,7 @@ private:
             && canOptimizeStringObjectAccess(node->codeOrigin)) {
             convertStringAddUse<leftUseKind>(node, left);
             convertStringAddUse<StringOrStringObjectUse>(node, right);
+            convertToMakeRope(node);
             return true;
         }
         

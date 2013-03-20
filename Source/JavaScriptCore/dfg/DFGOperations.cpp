@@ -1253,14 +1253,6 @@ EncodedJSValue DFG_OPERATION operationToPrimitive(ExecState* exec, EncodedJSValu
     return JSValue::encode(JSValue::decode(value).toPrimitive(exec));
 }
 
-EncodedJSValue DFG_OPERATION operationStrCat(ExecState* exec, void* buffer, size_t size)
-{
-    JSGlobalData* globalData = &exec->globalData();
-    NativeCallFrameTracer tracer(globalData, exec);
-
-    return JSValue::encode(jsString(exec, static_cast<Register*>(buffer), size));
-}
-
 char* DFG_OPERATION operationNewArray(ExecState* exec, Structure* arrayStructure, void* buffer, size_t size)
 {
     JSGlobalData* globalData = &exec->globalData();
@@ -1571,14 +1563,20 @@ JSCell* DFG_OPERATION operationToString(ExecState* exec, EncodedJSValue value)
     return JSValue::decode(value).toString(exec);
 }
 
-JSCell* DFG_OPERATION operationStringAdd(ExecState* exec, JSString* left, JSString* right)
+JSCell* DFG_OPERATION operationMakeRope2(ExecState* exec, JSString* left, JSString* right)
 {
     JSGlobalData& globalData = exec->globalData();
     NativeCallFrameTracer tracer(&globalData, exec);
 
-    // Don't even bother calling jsString() because our fast path would have done whatever
-    // optimizations that function would have done.
     return JSRopeString::create(globalData, left, right);
+}
+
+JSCell* DFG_OPERATION operationMakeRope3(ExecState* exec, JSString* a, JSString* b, JSString* c)
+{
+    JSGlobalData& globalData = exec->globalData();
+    NativeCallFrameTracer tracer(&globalData, exec);
+
+    return JSRopeString::create(globalData, a, b, c);
 }
 
 double DFG_OPERATION operationFModOnInts(int32_t a, int32_t b)
