@@ -112,7 +112,6 @@ webkit.org/b/111984 accessibility/aria-hidden-updates-alldescendants.html [ Fail
 webkit.org/b/111986 accessibility/aria-invalid.html [ Failure ]
 webkit.org/b/111987 accessibility/aria-link-supports-press.html [ Failure ]
 webkit.org/b/111988 accessibility/aria-readonly.html [ Failure ]
-webkit.org/b/111989 accessibility/aria-scrollbar-role.html [ Failure ]
 webkit.org/b/111991 accessibility/aria-text-role.html [ Failure ]
 webkit.org/b/111992 accessibility/aria-used-on-image-maps.html [ Failure ]
 webkit.org/b/111993 accessibility/button-press-action.html [ Failure ]
