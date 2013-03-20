@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<script src="../repaint/resources/text-based-repaint.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+
+function repaintTest()
+{
+    var gridItem = document.getElementsByClassName("sizedToGridArea")[0];
+    gridItem.style.webkitGridColumn = "3";
+}
+window.addEventListener("load", runRepaintTest, false);
+</script>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+body {
+    font: 10px/1 Ahem;
+}
+
+.grid {
+    width: -webkit-fit-content;
+    -webkit-grid-rows: 50px;
+    -webkit-grid-columns: minmax(100px, 180px) 100px minmax(50px, 100px);
+}
+.sizedToGridArea {
+    background-color: purple;
+}
+</style>
+<body>
+<div>This test checks that changing the grid-column on a grid item properly repaint. The final grid item should be 50px * 50px. There should be no trace of the grid item at the old position.</div>
+<div class="constrainedContainer">
+    <div class="grid">
+        <div class="sizedToGridArea"></div>
+    </div>
+</div>
+</body>
+</html>

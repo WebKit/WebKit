@@ -663,6 +663,8 @@ void RenderGrid::layoutGridItems()
         child->setOverrideContainingBlockContentLogicalWidth(overrideContainingBlockContentLogicalWidth);
         child->setOverrideContainingBlockContentLogicalHeight(overrideContainingBlockContentLogicalHeight);
 
+        LayoutRect oldChildRect = child->frameRect();
+
         // FIXME: Grid items should stretch to fill their cells. Once we
         // implement grid-{column,row}-align, we can also shrink to fit. For
         // now, just size as if we were a regular child.
@@ -670,6 +672,12 @@ void RenderGrid::layoutGridItems()
 
         // FIXME: Handle border & padding on the grid element.
         child->setLogicalLocation(childPosition);
+
+        // If the child moved, we have to repaint it as well as any floating/positioned
+        // descendants. An exception is if we need a layout. In this case, we know we're going to
+        // repaint ourselves (and the child) anyway.
+        if (!selfNeedsLayout() && child->checkForRepaintDuringLayout())
+            child->repaintDuringLayoutIfMoved(oldChildRect);
     }
 
     for (size_t i = 0; i < rowTracks.size(); ++i)

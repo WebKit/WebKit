@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<script src="../repaint/resources/text-based-repaint.js"></script>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+
+function repaintTest()
+{
+    var gridElement = document.getElementsByClassName("grid")[0];
+    gridElement.style.webkitGridRows = "100px 50px";
+}
+window.addEventListener("load", runRepaintTest, false);
+</script>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+body {
+    font: 10px/1 Ahem;
+}
+
+.grid {
+    width: -webkit-fit-content;
+    -webkit-grid-rows: 50px 100px;
+    -webkit-grid-columns: 100px;
+}
+.sizedToGridArea {
+    background-color: purple;
+}
+</style>
+<body>
+<div>This test checks that changing the grid-rows lead to a repaint. The final grid element should be 100px * 150px, the grid item should be 100px * 100px. No trace of the elements before the grid-rows change should be seen.</div>
+<div class="constrainedContainer">
+    <div class="grid">
+        <div class="sizedToGridArea"></div>
+    </div>
+</div>
+</body>
+</html>
