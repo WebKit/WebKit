@@ -93,11 +93,12 @@ void RenderReplaced::layout()
     m_overflow.clear();
     addVisualEffectOverflow();
     updateLayerTransform();
-    
+    invalidateBackgroundObscurationStatus();
+
     repainter.repaintAfterLayout();
     setNeedsLayout(false);
 }
- 
+
 void RenderReplaced::intrinsicSizeChanged()
 {
     int scaledWidth = static_cast<int>(cDefaultWidth * style()->effectiveZoom());

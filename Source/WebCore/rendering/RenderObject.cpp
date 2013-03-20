@@ -1911,7 +1911,7 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
             clearPositionedState();
         }
         setHorizontalWritingMode(true);
-        setPaintBackground(false);
+        setHasBoxDecorations(false);
         setHasOverflowClip(false);
         setHasTransform(false);
         setHasReflection(false);

@@ -165,7 +165,7 @@ void RenderImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 
     if (hasBoxDecorations() || hasMask())
         RenderReplaced::imageChanged(newImage, rect);
-    
+
     if (!m_imageResource)
         return;
 
@@ -284,6 +284,8 @@ void RenderImage::notifyFinished(CachedResource* newImage)
     
     if (documentBeingDestroyed())
         return;
+
+    invalidateBackgroundObscurationStatus();
 
 #if USE(ACCELERATED_COMPOSITING)
     if (newImage == m_imageResource->cachedImage()) {
@@ -479,32 +481,26 @@ bool RenderImage::boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance 
     if (!RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(bleedAvoidance))
         return false;
 
-    return !backgroundIsKnownToBeObscured();
+    return !const_cast<RenderImage*>(this)->backgroundIsKnownToBeObscured();
 }
 
-bool RenderImage::backgroundIsKnownToBeObscured() const
+bool RenderImage::computeBackgroundIsKnownToBeObscured()
 {
     if (!m_imageResource->hasImage() || m_imageResource->errorOccurred())
         return false;
-
     if (m_imageResource->cachedImage() && !m_imageResource->cachedImage()->isLoaded())
         return false;
 
     EFillBox backgroundClip = style()->backgroundClip();
-
     // Background paints under borders.
     if (backgroundClip == BorderFillBox && style()->hasBorder() && !borderObscuresBackground())
         return false;
-
     // Background shows in padding area.
     if ((backgroundClip == BorderFillBox || backgroundClip == PaddingFillBox) && style()->hasPadding())
         return false;
 
     // Check for image with alpha.
-    Image* image = m_imageResource->image().get();
-    if (!image)
-        return false;
-    return image->currentFrameKnownToBeOpaque();
+    return m_imageResource->cachedImage() && m_imageResource->cachedImage()->currentFrameKnownToBeOpaque(this);
 }
 
 LayoutUnit RenderImage::minimumReplacedHeight() const

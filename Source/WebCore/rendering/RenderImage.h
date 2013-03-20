@@ -86,7 +86,7 @@ private:
 
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&);
 
-    virtual bool backgroundIsKnownToBeObscured() const OVERRIDE;
+    virtual bool computeBackgroundIsKnownToBeObscured() OVERRIDE;
 
     virtual LayoutUnit minimumReplacedHeight() const OVERRIDE;
 

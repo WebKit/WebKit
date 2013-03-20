@@ -271,6 +271,10 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         }
     }
 
+    // Our opaqueness might have changed without triggering layout.
+    if (parent() && (diff == StyleDifferenceRepaint || diff == StyleDifferenceRepaintLayer))
+        parent()->invalidateBackgroundObscurationStatus();
+
     bool isBodyRenderer = isBody();
     bool isRootRenderer = isRoot();
 
@@ -383,6 +387,7 @@ void RenderBox::layout()
         child = child->nextSibling();
     }
     statePusher.pop();
+    invalidateBackgroundObscurationStatus();
     setNeedsLayout(false);
 }
 
@@ -1182,15 +1187,14 @@ bool RenderBox::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) c
     return backgroundRect.contains(localRect);
 }
 
-bool RenderBox::backgroundIsKnownToBeObscured() const
+bool RenderBox::computeBackgroundIsKnownToBeObscured()
 {
-    ASSERT(!isRoot());
     // Test to see if the children trivially obscure the background.
-    // FIXME: This test can be done once per layout and it can be much more comprehensive.
+    // FIXME: This test can be much more comprehensive.
     if (!hasBackground())
         return false;
-    // Table background painting is special.
-    if (isTable())
+    // Table and root background painting is special.
+    if (isTable() || isRoot())
         return false;
 
     LayoutRect backgroundRect = backgroundPaintedExtent();
