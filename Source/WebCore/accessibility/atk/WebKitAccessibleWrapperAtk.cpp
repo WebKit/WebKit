@@ -695,7 +695,10 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
     if (coreObject->isFocused() || isTextWithCaret(coreObject))
         atk_state_set_add_state(stateSet, ATK_STATE_FOCUSED);
 
-    // TODO: ATK_STATE_HORIZONTAL
+    if (coreObject->orientation() == AccessibilityOrientationHorizontal)
+        atk_state_set_add_state(stateSet, ATK_STATE_HORIZONTAL);
+    else if (coreObject->orientation() == AccessibilityOrientationVertical)
+        atk_state_set_add_state(stateSet, ATK_STATE_VERTICAL);
 
     if (coreObject->isIndeterminate())
         atk_state_set_add_state(stateSet, ATK_STATE_INDETERMINATE);
@@ -744,8 +747,6 @@ static void setAtkStateSetFromCoreObject(AccessibilityObject* coreObject, AtkSta
         atk_state_set_add_state(stateSet, ATK_STATE_MULTI_LINE);
 
     // TODO: ATK_STATE_SENSITIVE
-
-    // TODO: ATK_STATE_VERTICAL
 
     if (coreObject->isVisited())
         atk_state_set_add_state(stateSet, ATK_STATE_VISITED);
@@ -977,7 +978,7 @@ static guint16 getInterfaceMaskFromObject(AccessibilityObject* coreObject)
         interfaceMask |= 1 << WAI_DOCUMENT;
 
     // Value
-    if (role == SliderRole || role == SpinButtonRole)
+    if (role == SliderRole || role == SpinButtonRole || role == ScrollBarRole)
         interfaceMask |= 1 << WAI_VALUE;
 
     return interfaceMask;

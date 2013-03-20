@@ -175,6 +175,15 @@ static inline gchar* replaceCharactersForResults(gchar* str)
     return g_strdup(uString.utf8().data());
 }
 
+static bool checkElementState(PlatformUIElement element, AtkStateType stateType)
+{
+    if (!ATK_IS_OBJECT(element))
+        return false;
+
+    GRefPtr<AtkStateSet> stateSet = adoptGRef(atk_object_ref_state_set(ATK_OBJECT(element)));
+    return atk_state_set_contains_state(stateSet.get(), stateType);
+}
+
 AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
     : m_element(element)
 {
@@ -490,7 +499,19 @@ double AccessibilityUIElement::clickPointY()
 
 JSStringRef AccessibilityUIElement::orientation() const
 {
-    return 0;
+    if (!m_element || !ATK_IS_OBJECT(m_element))
+        return JSStringCreateWithCharacters(0, 0);
+
+    const char* axOrientation = 0;
+    if (checkElementState(m_element, ATK_STATE_HORIZONTAL))
+        axOrientation = "AXOrientation: AXHorizontalOrientation";
+    else if (checkElementState(m_element, ATK_STATE_VERTICAL))
+        axOrientation = "AXOrientation: AXVerticalOrientation";
+
+    if (!axOrientation)
+        return JSStringCreateWithCharacters(0, 0);
+
+    return JSStringCreateWithUTF8CString(axOrientation);
 }
 
 double AccessibilityUIElement::intValue() const
@@ -537,15 +558,6 @@ JSStringRef AccessibilityUIElement::valueDescription()
     // FIXME: implement after it has been implemented in ATK.
     // See: https://bugzilla.gnome.org/show_bug.cgi?id=684576
     return JSStringCreateWithCharacters(0, 0);
-}
-
-static bool checkElementState(PlatformUIElement element, AtkStateType stateType)
-{
-    if (!ATK_IS_OBJECT(element))
-        return false;
-
-    GRefPtr<AtkStateSet> stateSet = adoptGRef(atk_object_ref_state_set(ATK_OBJECT(element)));
-    return atk_state_set_contains_state(stateSet.get(), stateType);
 }
 
 bool AccessibilityUIElement::isEnabled()

@@ -790,7 +790,6 @@ webkit.org/b/79757 fast/selectors/selection-window-inactive.html [ ImageOnlyFail
 
 webkit.org/b/98355 accessibility/aria-link-supports-press.html [ Failure ]
 webkit.org/b/98357 accessibility/aria-readonly.html [ Failure ]
-webkit.org/b/98358 accessibility/aria-scrollbar-role.html [ Failure ]
 webkit.org/b/98359 accessibility/aria-text-role.html [ Failure ]
 webkit.org/b/98360 accessibility/aria-used-on-image-maps.html [ Failure ]
 webkit.org/b/98361 accessibility/button-press-action.html [ Failure ]
