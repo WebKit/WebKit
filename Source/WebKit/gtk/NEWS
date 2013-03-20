@@ -1,4 +1,40 @@
 ==================
+WebKitGTK+ 1.11.92
+==================
+
+What's new in WebKitGTK+ 1.11.92?
+
+  - Add methods to add and clear user style sheets to the WebKit2 GTK+
+    API.
+  - Fix visited links style in WebKit2.
+  - Add webkit_uri_request_get_http_headers to WebKit2 GTK+ API.
+  - Add webkit_web_context_set_disk_cache_directory to WebKit2 GTK+ API.
+  - Add webkit_web_page_get_id() to WebKit2 GTK+ web extensions API.
+  - Add API to retrieve a snapshot from a WebKitWebView to WebKit2
+    GTK+.
+  - Add WebKitWebView::web-process-crashed signal to WebKit2 GTK+ API.
+  - Fix WebKitDownload to always return a valid request even if the
+    download operation hasn't started yet.
+  - Add respect-image-orientation setting to WebKitWebSettings in
+    WebKit1 API.
+  - Fixed memory leak when loading with webkit_web_view_load_request()
+    in WebKit2.
+  - Fix charset encoding used for spelling suggestions in the WebKit2
+    context menu.
+  - Fix warnings about "Localized string not found" when running the
+    web inspector.
+  - Stop playback of html5 media when receiving a higher priority
+    audio event.
+  - Fix the offset handling in GStreamer WebKitWebSource.
+  - Replace nbsp with spaces when using X clipboard.
+  - Fix a crash in WebKit2 when a WebKitWebView is closed with the
+    HTTP authentication dialog open.
+  - Fix the build when using deprecated versions of GTK+ 2.
+  - Enable translations in WebKit2.
+  - Limit the supported compilers to GCC >= 4.7 and Clang >= 3.0 and
+    enforce C++11 standard when building.
+
+==================
 WebKitGTK+ 1.11.91
 ==================
 
