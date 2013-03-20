@@ -1,3 +1,18 @@
+2013-03-20  Tien-Ren Chen  <trchen@chromium.org>
+
+        Correct coordinated scrolling for RTL iframe and overflow:scroll
+        https://bugs.webkit.org/show_bug.cgi?id=112088
+
+        Reviewed by James Robinson.
+
+        Added test to ensure RTL iframe has appropriate impl-side scroll position.
+
+        * tests/ScrollingCoordinatorChromiumTest.cpp:
+        (WebKit::TEST_F):
+        (WebKit):
+        * tests/data/rtl-iframe-inner.html: Added.
+        * tests/data/rtl-iframe.html: Added.
+
 2013-03-20  Yufeng Shen  <miletus@chromium.org>
 
         Remove PlatformEvent::GestureDoubleTap

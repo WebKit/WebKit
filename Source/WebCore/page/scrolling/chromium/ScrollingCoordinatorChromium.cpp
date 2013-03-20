@@ -248,7 +248,7 @@ void ScrollingCoordinatorChromium::scrollableAreaScrollLayerDidChange(Scrollable
     WebLayer* webLayer = scrollingWebLayerForScrollableArea(scrollableArea);
     if (webLayer) {
         webLayer->setScrollable(true);
-        webLayer->setScrollPosition(scrollableArea->scrollPosition());
+        webLayer->setScrollPosition(IntPoint(scrollableArea->scrollPosition() - scrollableArea->minimumScrollPosition()));
         webLayer->setMaxScrollPosition(IntSize(scrollableArea->scrollSize(HorizontalScrollbar), scrollableArea->scrollSize(VerticalScrollbar)));
     }
     if (WebScrollbarLayer* scrollbarLayer = getWebScrollbarLayer(scrollableArea, HorizontalScrollbar))

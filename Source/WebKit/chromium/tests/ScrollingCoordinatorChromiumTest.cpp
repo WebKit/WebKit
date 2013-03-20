@@ -281,4 +281,42 @@ TEST_F(ScrollingCoordinatorChromiumTest, iframeScrolling)
 #endif
 }
 
+TEST_F(ScrollingCoordinatorChromiumTest, rtlIframe)
+{
+    registerMockedHttpURLLoad("rtl-iframe.html");
+    registerMockedHttpURLLoad("rtl-iframe-inner.html");
+    navigateTo(m_baseURL + "rtl-iframe.html");
+
+    // Verify the properties of the accelerated scrolling element starting from the RenderObject
+    // all the way to the WebLayer.
+    Element* scrollableFrame = m_webViewImpl->mainFrameImpl()->frame()->document()->getElementById("scrollable");
+    ASSERT_TRUE(scrollableFrame);
+
+    RenderObject* renderer = scrollableFrame->renderer();
+    ASSERT_TRUE(renderer);
+    ASSERT_TRUE(renderer->isWidget());
+
+    RenderWidget* renderWidget = toRenderWidget(renderer);
+    ASSERT_TRUE(renderWidget);
+    ASSERT_TRUE(renderWidget->widget());
+    ASSERT_TRUE(renderWidget->widget()->isFrameView());
+
+    FrameView* innerFrameView = static_cast<FrameView*>(renderWidget->widget());
+    RenderView* innerRenderView = innerFrameView->renderView();
+    ASSERT_TRUE(innerRenderView);
+
+    RenderLayerCompositor* innerCompositor = innerRenderView->compositor();
+    ASSERT_TRUE(innerCompositor->inCompositingMode());
+    ASSERT_TRUE(innerCompositor->scrollLayer());
+
+    GraphicsLayerChromium* scrollLayer = static_cast<GraphicsLayerChromium*>(innerCompositor->scrollLayer());
+    ASSERT_EQ(innerFrameView, scrollLayer->scrollableArea());
+
+    WebLayer* webScrollLayer = static_cast<WebLayer*>(scrollLayer->platformLayer());
+    ASSERT_TRUE(webScrollLayer->scrollable());
+
+    ASSERT_EQ(973, webScrollLayer->scrollPosition().x);
+    ASSERT_EQ(973, webScrollLayer->maxScrollPosition().width);
+}
+
 } // namespace
