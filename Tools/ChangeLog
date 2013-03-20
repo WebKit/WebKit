@@ -1,3 +1,74 @@
+2013-03-19  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, rolling out r146290.
+        http://trac.webkit.org/changeset/146290
+        https://bugs.webkit.org/show_bug.cgi?id=112751
+
+        Broke Chromium Mac build.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestRunner/public/WebTestInterfaces.h:
+        (WebKit):
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.cpp:
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.h:
+        (TestInterfaces):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestInterfaces.cpp:
+        * DumpRenderTree/chromium/TestRunner/src/WebTestThemeEngineWin.cpp: Removed.
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::initialize):
+        * DumpRenderTree/chromium/TestShell.h:
+        (WebKit):
+        * DumpRenderTree/chromium/TestShellMac.mm:
+        (platformInit):
+        * DumpRenderTree/chromium/TestShellWin.cpp:
+        (platformInit):
+        * DumpRenderTree/chromium/WebThemeControlDRTWin.cpp: Renamed from Tools/DumpRenderTree/chromium/TestRunner/src/WebTestThemeControlWin.cpp.
+        (WebThemeControlDRTWin::WebThemeControlDRTWin):
+        (WebThemeControlDRTWin::~WebThemeControlDRTWin):
+        (WebThemeControlDRTWin::box):
+        (WebThemeControlDRTWin::line):
+        (WebThemeControlDRTWin::triangle):
+        (WebThemeControlDRTWin::roundRect):
+        (WebThemeControlDRTWin::oval):
+        (WebThemeControlDRTWin::circle):
+        (WebThemeControlDRTWin::nestedBoxes):
+        (WebThemeControlDRTWin::markState):
+        (WebThemeControlDRTWin::draw):
+        (WebThemeControlDRTWin::drawTextField):
+        (WebThemeControlDRTWin::drawProgressBar):
+        * DumpRenderTree/chromium/WebThemeControlDRTWin.h: Renamed from Tools/DumpRenderTree/chromium/TestRunner/src/WebTestThemeControlWin.h.
+        (WebThemeControlDRTWin):
+        * DumpRenderTree/chromium/WebThemeEngineDRTMac.h: Renamed from Tools/DumpRenderTree/chromium/TestRunner/src/WebTestThemeEngineMac.h.
+        (WebThemeEngineDRTMac):
+        * DumpRenderTree/chromium/WebThemeEngineDRTMac.mm: Renamed from Tools/DumpRenderTree/chromium/TestRunner/src/WebTestThemeEngineMac.mm.
+        (+[FakeActiveWindow alwaysActiveWindow]):
+        (+[FakeActiveWindow alwaysInactiveWindow]):
+        (-[FakeActiveWindow initWithActiveControls:]):
+        (-[FakeActiveWindow _hasActiveControls]):
+        (WebThemeEngineDRTMac::paintScrollbarThumb):
+        (stateToHIEnableState):
+        (WebThemeEngineDRTMac::paintHIThemeScrollbarThumb):
+        (WebThemeEngineDRTMac::paintNSScrollerScrollbarThumb):
+        * DumpRenderTree/chromium/WebThemeEngineDRTWin.cpp: Added.
+        (webRectToSkIRect):
+        (drawControl):
+        (drawTextField):
+        (drawProgressBar):
+        (WebThemeEngineDRTWin::paintButton):
+        (WebThemeEngineDRTWin::paintMenuList):
+        (WebThemeEngineDRTWin::paintScrollbarArrow):
+        (WebThemeEngineDRTWin::paintScrollbarThumb):
+        (WebThemeEngineDRTWin::paintScrollbarTrack):
+        (WebThemeEngineDRTWin::paintSpinButton):
+        (WebThemeEngineDRTWin::paintTextField):
+        (WebThemeEngineDRTWin::paintTrackbar):
+        (WebThemeEngineDRTWin::paintProgressBar):
+        (WebThemeEngineDRTWin::getSize):
+        * DumpRenderTree/chromium/WebThemeEngineDRTWin.h: Renamed from Tools/DumpRenderTree/chromium/TestRunner/src/WebTestThemeEngineWin.h.
+        (WebThemeEngineDRTWin):
+        (WebThemeEngineDRTWin::WebThemeEngineDRTWin):
+
 2013-03-19  Krzysztof Czech  <k.czech@samsung.com>
 
         [EFL] canvas-fallback-content.html is failing

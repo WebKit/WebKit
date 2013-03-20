@@ -40,7 +40,6 @@ class WebMediaStreamCenter;
 class WebMediaStreamCenterClient;
 class WebRTCPeerConnectionHandler;
 class WebRTCPeerConnectionHandlerClient;
-class WebThemeEngine;
 class WebURL;
 class WebView;
 }
@@ -65,7 +64,6 @@ public:
     void configureForTestWithURL(const WebKit::WebURL&, bool generatePixels);
 
     WebTestRunner* testRunner();
-    WebKit::WebThemeEngine* themeEngine();
 
     WebKit::WebMediaStreamCenter* createMediaStreamCenter(WebKit::WebMediaStreamCenterClient*);
     WebKit::WebRTCPeerConnectionHandler* createWebRTCPeerConnectionHandler(WebKit::WebRTCPeerConnectionHandlerClient*);

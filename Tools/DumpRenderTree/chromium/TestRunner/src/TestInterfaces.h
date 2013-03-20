@@ -34,15 +34,8 @@
 #include <memory>
 #include <vector>
 
-#if defined(WIN32)
-#include "WebTestThemeEngineWin.h"
-#elif defined(__APPLE__)
-#include "WebTestThemeEngineMac.h"
-#endif
-
 namespace WebKit {
 class WebFrame;
-class WebThemeEngine;
 class WebURL;
 class WebView;
 }
@@ -79,7 +72,6 @@ public:
     WebTestDelegate* delegate();
     WebTestProxyBase* proxy();
     const std::vector<WebTestProxyBase*>& windowList();
-    WebKit::WebThemeEngine* themeEngine();
 
 private:
     std::auto_ptr<AccessibilityController> m_accessibilityController;
@@ -92,13 +84,6 @@ private:
     WebTestProxyBase* m_proxy;
 
     std::vector<WebTestProxyBase*> m_windowList;
-#if !defined(USE_DEFAULT_RENDER_THEME)
-#if defined(WIN32)
-    std::auto_ptr<WebKit::WebTestThemeEngineWin> m_themeEngine;
-#elif defined(__APPLE__)
-    std::auto_ptr<WebKit::WebTestThemeEngineMac> m_themeEngine;
-#endif
-#endif
 };
 
 }
