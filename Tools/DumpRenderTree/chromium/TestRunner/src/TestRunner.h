@@ -303,8 +303,6 @@ private:
     // Enable or disable plugins.
     void setPluginsEnabled(const CppArgumentList&, CppVariant*);
 
-    void setTouchDragDropEnabled(const CppArgumentList&, CppVariant*);
-
     ///////////////////////////////////////////////////////////////////////////
     // Methods that modify the state of TestRunner
 

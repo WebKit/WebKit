@@ -129,7 +129,6 @@ void WebPreferences::reset()
     cssCustomFilterEnabled = false;
     shouldRespectImageOrientation = false;
     asynchronousSpellCheckingEnabled = false;
-    touchDragDropEnabled = false;
 }
 
 void WebPreferences::applyTo(WebView* webView)
@@ -197,9 +196,9 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setMockScrollbarsEnabled(mockScrollbarsEnabled);
     settings->setShouldRespectImageOrientation(shouldRespectImageOrientation);
     settings->setAsynchronousSpellCheckingEnabled(asynchronousSpellCheckingEnabled);
-    settings->setTouchDragDropEnabled(touchDragDropEnabled);
 
     // Fixed values.
+    settings->setTouchDragDropEnabled(false);
     settings->setTextDirectionSubmenuInclusionBehaviorNeverIncluded();
     settings->setDownloadableBinaryFontsEnabled(true);
     settings->setAllowScriptsToCloseWindows(false);

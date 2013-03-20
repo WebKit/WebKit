@@ -89,7 +89,7 @@
     function runTests()
     {
         if (window.testRunner && window.internals && internals.touchNodeAdjustedToBestClickableNode) {
-            testRunner.setTouchDragDropEnabled(true);
+            internals.settings.setTouchDragDropEnabled(true);
             description('Tests if a long press gesture on links will trigger a drag/drop when touch adjustment is used.');
             testDirectTouches();
             testIndirectTouches();

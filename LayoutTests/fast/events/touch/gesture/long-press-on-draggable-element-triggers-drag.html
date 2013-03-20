@@ -14,8 +14,8 @@ function test()
     if (window.testRunner)
         testRunner.dumpAsText();
 
-    if (testRunner.setTouchDragDropEnabled)
-        testRunner.setTouchDragDropEnabled(true);
+    if (window.internals)
+        internals.settings.setTouchDragDropEnabled(true);
 
     document.ondragstart = function() { document.getElementById("result").innerHTML = "PASS"; }
 

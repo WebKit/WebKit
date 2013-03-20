@@ -1,3 +1,18 @@
+2013-03-19  Tony Chang  <tony@chromium.org>
+
+        Move testRunner.setTouchDragDropEnabled to internals.settings
+        https://bugs.webkit.org/show_bug.cgi?id=112739
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner): Remove unnecessary code.
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner): Remove unnecessary code.
+        * DumpRenderTree/chromium/TestRunner/src/WebPreferences.cpp:
+        (WebTestRunner::WebPreferences::reset):
+        (WebTestRunner::WebPreferences::applyTo): Always set to false.
+
 2013-03-19  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Migrate to WEBKIT_USE_NEW_WEBFILESYSTEMTYPE

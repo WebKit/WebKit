@@ -225,7 +225,6 @@ TestRunner::TestRunner(TestInterfaces* interfaces)
     bindMethod("setAllowFileAccessFromFileURLs", &TestRunner::setAllowFileAccessFromFileURLs);
     bindMethod("overridePreference", &TestRunner::overridePreference);
     bindMethod("setPluginsEnabled", &TestRunner::setPluginsEnabled);
-    bindMethod("setTouchDragDropEnabled", &TestRunner::setTouchDragDropEnabled);
 
     // The following modify the state of the TestRunner.
     bindMethod("dumpEditingCallbacks", &TestRunner::dumpEditingCallbacks);
@@ -1655,15 +1654,6 @@ void TestRunner::setPluginsEnabled(const CppArgumentList& arguments, CppVariant*
 {
     if (arguments.size() > 0 && arguments[0].isBool()) {
         m_delegate->preferences()->pluginsEnabled = arguments[0].toBoolean();
-        m_delegate->applyPreferences();
-    }
-    result->setNull();
-}
-
-void TestRunner::setTouchDragDropEnabled(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool()) {
-        m_delegate->preferences()->touchDragDropEnabled = arguments[0].toBoolean();
         m_delegate->applyPreferences();
     }
     result->setNull();
