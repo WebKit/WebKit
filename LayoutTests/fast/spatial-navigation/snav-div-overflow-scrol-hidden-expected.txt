@@ -11,8 +11,8 @@ PASS gFocusedDocument.activeElement.getAttribute("id") is "f2"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "f3"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "f3"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "f4"
-PASS gFocusedDocument.activeElement.getAttribute("id") is "f4"
-PASS gFocusedDocument.activeElement.getAttribute("id") is "f5"
+FAIL gFocusedDocument.activeElement.getAttribute("id") should be f4. Was f5.
+FAIL gFocusedDocument.activeElement.getAttribute("id") should be f5. Was f6.
 PASS gFocusedDocument.activeElement.getAttribute("id") is "f6"
 PASS gFocusedDocument.activeElement.getAttribute("id") is "f9"
 This test is testing that div with overflow:auto would scroll, by div with overflow:hidden would not.

@@ -1401,12 +1401,6 @@ webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 # Transient. Needs rebaseline.
 webkit.org/b/103955 fast/repaint/caret-with-transformation.html [ Missing ]
 
-# Needs rebaseline.
-webkit.org/b/105574 editing/input/caret-at-the-edge-of-contenteditable.html [ Failure ]
-webkit.org/b/105574 editing/input/reveal-caret-of-multiline-contenteditable.html [ Failure ]
-webkit.org/b/105574 editing/input/reveal-caret-of-multiline-input.html [ Failure ]
-webkit.org/b/105574 fast/spatial-navigation/snav-div-overflow-scrol-hidden.html [ Failure ]
-
 # Rebaseline required after https://webkit.org/b/31397
 webkit.org/b/107567 svg/batik/text/xmlSpace.svg [ Failure ] 
 webkit.org/b/107567 fast/text/capitalize-empty-generated-string.html [ Failure ] 
