@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
  *
@@ -31,11 +32,6 @@
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
-
-PassRefPtr<RTCStatsReport> RTCStatsReport::create()
-{
-    return adoptRef(new RTCStatsReport("inner fake ID", "inner fake type", 0));
-}
 
 PassRefPtr<RTCStatsReport> RTCStatsReport::create(const String& id, const String& type, double timestamp)
 {
@@ -71,18 +67,6 @@ const PassRefPtr<RTCStatsReport> RTCStatsReport::remote()
 void RTCStatsReport::addStatistic(const String& name, const String& value)
 {
     m_stats.add(name, value);
-}
-
-void RTCStatsReport::addElement(bool isLocal, double timestamp)
-{
-    // We ignore isLocal.
-    m_timestamp = timestamp;
-}
-
-void RTCStatsReport::addStatistic(bool isLocal, const String& name, const String& value)
-{
-    // We ignore isLocal.
-    addStatistic(name, value);
 }
 
 } // namespace WebCore

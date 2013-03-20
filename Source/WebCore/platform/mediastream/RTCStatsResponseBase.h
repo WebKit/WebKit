@@ -39,12 +39,6 @@ public:
 
     virtual size_t addReport(String id, String type, double timestamp) = 0;
     virtual void addStatistic(size_t report, String name, String value) = 0;
-    // DEPRECATED - use addReport(id, type, timestamp)
-    virtual size_t addReport() = 0;
-    // DEPRECATED - use addReport(id, type, timestamp)
-    virtual void addElement(size_t report, bool isLocal, double timestamp) = 0;
-    // DEPRECATED - use addStatistic(report, name, value)
-    virtual void addStatistic(size_t report, bool isLocal, String name, String value) = 0;
 };
 
 } // namespace WebCore

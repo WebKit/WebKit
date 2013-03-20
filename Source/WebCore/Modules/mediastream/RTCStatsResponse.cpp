@@ -59,25 +59,6 @@ void RTCStatsResponse::addStatistic(size_t report, String name, String value)
     m_result[report]->addStatistic(name, value);
 }
 
-// DEPRECATED
-size_t RTCStatsResponse::addReport()
-{
-    String fakeId = String::format("Fake ID %lu", (unsigned long) m_result.size());
-    return addReport(fakeId, "no type", 0);
-}
-
-void RTCStatsResponse::addElement(size_t report, bool isLocal, double timestamp)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(report >= 0 && report < m_result.size());
-    m_result[report]->addElement(isLocal, timestamp);
-}
-
-void RTCStatsResponse::addStatistic(size_t report, bool isLocal, String name, String value)
-{
-    ASSERT_WITH_SECURITY_IMPLICATION(report >= 0 && report < m_result.size());
-    m_result[report]->addStatistic(isLocal, name, value);
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

@@ -36,8 +36,6 @@ namespace WebCore {
 class RTCStatsReport : public RefCounted<RTCStatsReport> {
 public:
     static PassRefPtr<RTCStatsReport> create(const String& id, const String& type, double timestamp);
-    // DEPRECATED
-    static PassRefPtr<RTCStatsReport> create();
 
     double timestamp() const { return m_timestamp; }
     String id() { return m_id; }
@@ -50,10 +48,6 @@ public:
     const PassRefPtr<RTCStatsReport> remote();
 
     void addStatistic(const String& name, const String& value);
-    // DEPRECATED
-    void addElement(bool isLocal, double timestamp);
-    // DEPRECATED
-    void addStatistic(bool isLocal, const String& name, const String& value);
 
 private:
     RTCStatsReport(const String& id, const String& type, double timestamp);

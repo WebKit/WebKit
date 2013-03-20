@@ -1,3 +1,13 @@
+2013-03-20  Harald Alvestrand  <hta@google.com>
+
+        Remove Local/Remote and RTCStatsElement from WebRTCStats API
+        https://bugs.webkit.org/show_bug.cgi?id=112678
+
+        Reviewed by Adam Barth.
+
+        * chromium/public/WebRTCStatsResponse.h:
+        (WebRTCStatsResponse):
+
 2013-03-20  Aaron Colwell  <acolwell@chromium.org>
 
         Add support for MediaSource::isTypeSupported()

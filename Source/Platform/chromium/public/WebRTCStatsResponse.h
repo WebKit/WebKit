@@ -53,12 +53,6 @@ public:
 
     WEBKIT_EXPORT size_t addReport(WebString id, WebString type, double timestamp);
     WEBKIT_EXPORT void addStatistic(size_t report, WebString name, WebString value);
-    // DEPRECATED
-    WEBKIT_EXPORT size_t addReport();
-    // DEPRECATED
-    WEBKIT_EXPORT void addElement(size_t report, bool isLocal, double timestamp);
-    // DEPRECATED
-    WEBKIT_EXPORT void addStatistic(size_t report, bool isLocal, WebString name, WebString value);
 
 #if WEBKIT_IMPLEMENTATION
     WebRTCStatsResponse(const WTF::PassRefPtr<WebCore::RTCStatsResponseBase>&);

@@ -49,12 +49,6 @@ public:
 
     virtual size_t addReport(String id, String type, double timestamp) OVERRIDE;
     virtual void addStatistic(size_t report, String name, String value) OVERRIDE;
-    // DEPRECATED
-    virtual size_t addReport() OVERRIDE;
-    // DEPRECATED
-    virtual void addElement(size_t report, bool isLocal, double timestamp) OVERRIDE;
-    // DEPRECATED
-    virtual void addStatistic(size_t report, bool isLocal, String name, String value) OVERRIDE;
 
 private:
     RTCStatsResponse();
