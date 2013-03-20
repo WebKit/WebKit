@@ -1,3 +1,25 @@
+2013-03-20  Filip Pizlo  <fpizlo@apple.com>
+
+        "" + x where x is not a string should be optimized by the DFG to some manner of ToString conversion
+        https://bugs.webkit.org/show_bug.cgi?id=112845
+
+        Reviewed by Mark Hahnenberg.
+        
+        I like to do "" + x. So I decided to make DFG recognize it, and related idioms.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupToPrimitive):
+        (FixupPhase):
+        (JSC::DFG::FixupPhase::fixupToString):
+        (JSC::DFG::FixupPhase::attemptToMakeFastStringAdd):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::resultOfToPrimitive):
+        (DFG):
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGPredictionPropagationPhase.h:
+        (DFG):
+
 2013-03-20  Zoltan Herczeg  <zherczeg@webkit.org>
 
         ARMv7 replaceWithJump ASSERT failure after r135330.

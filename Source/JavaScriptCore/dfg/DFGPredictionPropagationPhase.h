@@ -30,6 +30,8 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "SpeculatedType.h"
+
 namespace JSC { namespace DFG {
 
 class Graph;
@@ -44,6 +46,9 @@ class Graph;
 // this phase, we'll have full information for the expected type of each node.
 
 bool performPredictionPropagation(Graph&);
+
+// Helper used for FixupPhase for computing the predicted type of a ToPrimitive.
+SpeculatedType resultOfToPrimitive(SpeculatedType type);
 
 } } // namespace JSC::DFG::Phase
 
