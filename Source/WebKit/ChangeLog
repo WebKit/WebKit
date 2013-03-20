@@ -1,3 +1,32 @@
+2013-03-19  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Build the WebKit.dll under VS2010.
+        https://bugs.webkit.org/show_bug.cgi?id=112759
+
+        Reviewed by Tim Horton.
+
+        * WebKit.vcxproj/Interfaces/Interfaces.vcxproj: Update project to
+        build WinCairo variant using new property sheets.
+        * WebKit.vcxproj/Interfaces/InterfacesDebugWinCairo.props: Added.
+        * WebKit.vcxproj/Interfaces/InterfacesReleaseWinCairo.props: Added.
+        * WebKit.vcxproj/WebKit.sln: Update solution to use WinCairo
+        build targets for WebKit.dll-related projects.
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj: Update project to build
+        WinCairo variant using new property sheets.
+        * WebKit.vcxproj/WebKit/cURL.props: Added.
+        * WebKit.vcxproj/WebKit/WebKitDebugWinCairo.props: Added.
+        * WebKit.vcxproj/WebKit/WebKitReleaseWinCairo.props: Added.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGenerator.vcxproj:
+        Update project to build WinCairo variant using new property sheets.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorDebugWinCairo.props: Added.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorReleaseWinCairo.props: Added.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUID.vcxproj: Update project to
+        build WinCairo variant using new property sheets.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDDebugWinCairo.props: Added.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDReleaseWinCairo.props: Added.
+        * WebKit.vcxproj/WinCairo.props: Added.
+        * WebKit.vcxproj/debug_wincairo.props: Added.
+
 2013-03-20  Eric Carlson  <eric.carlson@apple.com>
 
         Allow ports specific text track menu
