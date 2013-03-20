@@ -91,6 +91,9 @@ WebInspector.InspectorView.prototype = {
         return panel;
     },
 
+    /**
+     * @return {WebInspector.Panel}
+     */
     currentPanel: function()
     {
         return this._currentPanel;

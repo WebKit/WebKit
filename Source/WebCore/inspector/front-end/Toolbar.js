@@ -40,10 +40,17 @@ WebInspector.Toolbar = function()
     this._dropdownButton = document.getElementById("toolbar-dropdown-arrow");
     this._dropdownButton.addEventListener("click", this._toggleDropdown.bind(this), false);
 
+    this._panelsMenuButton = document.getElementById("toolbar-panels-menu");
+    if (WebInspector.experimentsSettings.customizableToolbar.isEnabled())
+        this._panelsMenuButton.addEventListener("click", this._togglePanelsMenu.bind(this), false);
+    else
+        this._panelsMenuButton.addStyleClass("hidden");
+
     document.getElementById("close-button-left").addEventListener("click", this._onClose, true);
     document.getElementById("close-button-right").addEventListener("click", this._onClose, true);
 
     this._isWindowMoveSupported = WebInspector.isMac() && !Preferences.showDockToRight;
+    this._panelDescriptors = [];
 }
 
 WebInspector.Toolbar.prototype = {
@@ -53,11 +60,101 @@ WebInspector.Toolbar.prototype = {
     },
 
     /**
-     * @param {WebInspector.PanelDescriptor} panelDescriptor
+     * @param {!WebInspector.PanelDescriptor} panelDescriptor
      */
     addPanel: function(panelDescriptor)
     {
-        this.element.appendChild(this._createPanelToolbarItem(panelDescriptor));
+        this._panelDescriptors.push(panelDescriptor);
+        panelDescriptor._toolbarElement = this._createPanelToolbarItem(panelDescriptor);
+        if (this._isPanelVisible(panelDescriptor.name()))
+            panelDescriptor._toolbarElement.removeStyleClass("hidden");
+        else
+            panelDescriptor._toolbarElement.addStyleClass("hidden");
+        this.element.appendChild(panelDescriptor._toolbarElement);
+        this.resize();
+    },
+
+    /**
+     * @param {!string} name
+     * @return {boolean}
+     */
+    _isPanelVisibleByDefault: function(name)
+    {
+        var visible = {
+            "elements": true,
+            "console": true,
+            "network": true,
+            "scripts": true,
+            "timeline": true,
+            "profiles": true,
+            "cpu-profiler": true,
+            "heap-profiler": true,
+            "audits": true,
+            "resources": true,
+        };
+        return !!visible[name];
+    },
+
+    /**
+     * @param {!string} name
+     * @return {boolean}
+     */
+    _isPanelVisible: function(name)
+    {
+        if (!WebInspector.experimentsSettings.customizableToolbar.isEnabled())
+            return true;
+        var visiblePanels = WebInspector.settings.visiblePanels.get();
+        return visiblePanels.hasOwnProperty(name) ? visiblePanels[name] : this._isPanelVisibleByDefault(name);
+    },
+
+    /**
+     * @param {!string} name
+     * @param {boolean} visible
+     */
+    _setPanelVisible: function(name, visible)
+    {
+        var visiblePanels = WebInspector.settings.visiblePanels.get();
+        visiblePanels[name] = visible;
+        WebInspector.settings.visiblePanels.set(visiblePanels);
+    },
+
+    /**
+     * @param {!WebInspector.PanelDescriptor} panelDescriptor
+     */
+    _hidePanel: function(panelDescriptor)
+    {
+        if (!this._isPanelVisible(panelDescriptor.name()))
+            return;
+        // Do not hide the last visible panel.
+        var count = 0;
+        for (var i = 0; i < this._panelDescriptors.length; ++i) {
+            if (this._isPanelVisible(this._panelDescriptors[i].name()))
+                ++count;
+        }
+        if (count === 1)
+            return;
+        this._setPanelVisible(panelDescriptor.name(), false);
+        panelDescriptor._toolbarElement.addStyleClass("hidden");
+        if (WebInspector.inspectorView.currentPanel().name === panelDescriptor.name()) {
+            for (var i = 0; i < this._panelDescriptors.length; ++i) {
+                if (this._isPanelVisible(this._panelDescriptors[i].name())) {
+                    WebInspector.showPanel(this._panelDescriptors[i].name());
+                    break;
+                }
+            }
+        }
+        this.resize();
+    },
+
+    /**
+     * @param {!WebInspector.PanelDescriptor} panelDescriptor
+     */
+    _showPanel: function(panelDescriptor)
+    {
+        if (this._isPanelVisible(panelDescriptor.name()))
+            return;
+        panelDescriptor._toolbarElement.removeStyleClass("hidden");
+        this._setPanelVisible(panelDescriptor.name(), true);
         this.resize();
     },
 
@@ -218,6 +315,28 @@ WebInspector.Toolbar.prototype = {
     _toggleDropdown: function()
     {
         this._setDropdownVisible(!this._dropdown || !this._dropdown.visible);
+    },
+
+    _togglePanelsMenu: function(event)
+    {
+        function togglePanel(panelDescriptor)
+        {
+            if (this._isPanelVisible(panelDescriptor.name()))
+                this._hidePanel(panelDescriptor);
+            else
+                this._showPanel(panelDescriptor);
+        }
+
+        var contextMenu = new WebInspector.ContextMenu(event);
+        var numDefaultPanels = 4;
+        for (var i = 0; i < this._panelDescriptors.length; ++i) {
+            if (i === numDefaultPanels)
+                contextMenu.appendSeparator();
+            var descr = this._panelDescriptors[i];
+            contextMenu.appendCheckboxItem(descr.title(), togglePanel.bind(this, descr), this._isPanelVisible(descr.name()));
+        }
+
+        contextMenu.showSoftMenu();
     },
 
     _updateDropdownButtonAndHideDropdown: function()

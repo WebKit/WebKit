@@ -127,6 +127,7 @@ WebInspector.Settings = function()
     this.workerInspectorHeight = this.createSetting("workerInspectorHeight", 600);
     this.messageURLFilters = this.createSetting("messageURLFilters", {});
     this.splitVerticallyWhenDockedToRight = this.createSetting("splitVerticallyWhenDockedToRight", true);
+    this.visiblePanels = this.createSetting("visiblePanels", {});
 }
 
 WebInspector.Settings.prototype = {
@@ -227,6 +228,7 @@ WebInspector.ExperimentsSettings = function()
     this.showWhitespaceInEditor = this._createExperiment("showWhitespaceInEditor", "Show whitespace characters in editor");
     this.textEditorSmartBraces = this._createExperiment("textEditorSmartBraces", "Enable smart braces in text editor");
     this.separateProfilers = this._createExperiment("separateProfilers", "Separate profiler tools");
+    this.customizableToolbar = this._createExperiment("customizableToolbar", "Allow customizing tools visible on the toolbar");
     this.cpuFlameChart = this._createExperiment("cpuFlameChart", "Show Flame Chart in CPU Profiler");
 
     this._cleanUpSetting();

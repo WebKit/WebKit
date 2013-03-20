@@ -281,6 +281,28 @@ body.show-toolbar-icons #toolbar-dropdown .toolbar-label {
     line-height: 32px;
 }
 
+#toolbar-panels-menu {
+    font-size: 17px;
+    font-weight: bold;
+    border: 0;
+    background-color: transparent;
+    -webkit-border-radius: 5px;
+    text-shadow: none;
+    cursor: default;
+    margin: 0;
+    /* A line height of 0 allows precise text positioning using padding. */
+    line-height: 0;
+    padding: 13px 6px 11px;
+}
+
+#toolbar-panels-menu:hover {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(191, 191, 191, 0.7)), to(rgba(171, 171, 171, 0.5)));
+}
+
+#toolbar-panels-menu:active {
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(111, 111, 111, 0.8)), to(rgba(91, 91, 91, 0.8)));
+}
+
 .scrollable-content {
     position: static;
     height: 100%;
