@@ -1,3 +1,16 @@
+2013-03-20  Jose Lejin PJ  <jose.lejin@gmail.com>
+
+        ewk_settings_memory_cache_clear should clear JS garbage and release FastMalloc's free pages to OS
+        https://bugs.webkit.org/show_bug.cgi?id=112536
+
+        Reviewed by Gyuyoung Kim.
+
+        Added changes to clear JS garbage and release FastMalloc's free pages to OS
+        while calling ewk_settings_memory_cache_clear API. 
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_memory_cache_clear):
+
 2013-03-20  JungJik Lee  <jungjik.lee@samsung.com>
 
         [EFL] Disable REQUEST_ANIMATION_FRAME_TIMER to render a new animation frame.
