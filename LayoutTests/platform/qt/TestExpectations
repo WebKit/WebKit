@@ -1822,8 +1822,6 @@ fast/text/emphasis-avoid-ruby.html
 # https://bugs.webkit.org/show_bug.cgi?id=80293
 fast/text/international/spaces-combined-in-vertical-text.html
 
-webkit.org/b/112668 fast/text/word-space-with-kerning-3.html [ Skip ]
-
 fast/writing-mode/border-styles-vertical-lr.html
 fast/writing-mode/border-styles-vertical-rl.html
 
