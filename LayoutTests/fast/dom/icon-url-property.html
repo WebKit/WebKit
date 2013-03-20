@@ -11,8 +11,20 @@ function debugOutput(str) {
     debugDiv.appendChild(div);
 }
 
+function createFavIconElement(iconURL) {
+    var link = document.createElement("link");
+    link.type = "image/x-icon";
+    link.rel = "shortcut icon";
+    link.href = iconURL;
+    return link;
+}
+
+function getHeadElement() {
+    return document.getElementsByTagName("head")[0];
+}
+
 function setFavIcon(iconURL) {
-    var docHead = document.getElementsByTagName("head")[0];
+    var docHead = getHeadElement();
     var links = docHead.getElementsByTagName("link");
     for (var i = 0; i < links.length; ++i) {
       var link = links[i];
@@ -21,11 +33,7 @@ function setFavIcon(iconURL) {
         break; // Assuming only one match at most.
       }
     }
-    var link = document.createElement("link");
-    link.type = "image/x-icon";
-    link.rel = "shortcut icon";
-    link.href = iconURL;
-    docHead.appendChild(link);
+    docHead.appendChild(createFavIconElement(iconURL));
 }
 
 function runTests() {
@@ -52,6 +60,10 @@ function runTests() {
     else
         debugOutput('FAIL - URL list does not match expected');
 
+    // Add some more fav icons to verify that didChangeIcons gets called.
+    var docHead = getHeadElement();
+    docHead.insertBefore(createFavIconElement("http://example.org/icon1.ico"), docHead.firstChild);
+    docHead.appendChild(createFavIconElement("http://example.org/icon2.ico"));
 }
 
 </script>
