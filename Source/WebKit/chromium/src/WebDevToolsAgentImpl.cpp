@@ -606,7 +606,7 @@ bool WebDevToolsAgentImpl::captureScreenshot(String* data)
     return true;
 }
 
-bool WebDevToolsAgentImpl::handleJavaScriptDialog(bool accept)
+bool WebDevToolsAgentImpl::handleJavaScriptDialog(bool accept, const String* promptText)
 {
     // Operation was already performed in the browser process.
     return true;

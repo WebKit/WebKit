@@ -1302,9 +1302,9 @@ void InspectorPageAgent::captureScreenshot(ErrorString* errorString, String* dat
         *errorString = "Could not capture screenshot";
 }
 
-void InspectorPageAgent::handleJavaScriptDialog(ErrorString* errorString, bool accept)
+void InspectorPageAgent::handleJavaScriptDialog(ErrorString* errorString, bool accept, const String* promptText)
 {
-    if (!m_client->handleJavaScriptDialog(accept))
+    if (!m_client->handleJavaScriptDialog(accept, promptText))
         *errorString = "Could not handle JavaScript dialog";
 }
 

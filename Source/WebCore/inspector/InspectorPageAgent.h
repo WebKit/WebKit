@@ -128,7 +128,7 @@ public:
     virtual void getCompositingBordersVisible(ErrorString*, bool* out_param);
     virtual void setCompositingBordersVisible(ErrorString*, bool);
     virtual void captureScreenshot(ErrorString*, String* data);
-    virtual void handleJavaScriptDialog(ErrorString*, bool accept);
+    virtual void handleJavaScriptDialog(ErrorString*, bool accept, const String* promptText);
 
     // Geolocation override helpers.
     GeolocationPosition* overrideGeolocationPosition(GeolocationPosition*);

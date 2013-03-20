@@ -94,7 +94,7 @@ public:
 
     virtual bool captureScreenshot(String*) { return false; }
 
-    virtual bool handleJavaScriptDialog(bool) { return false; }
+    virtual bool handleJavaScriptDialog(bool, const String*) { return false; }
 
     virtual bool canSetFileInputFiles() { return false; }
 

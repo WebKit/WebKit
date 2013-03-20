@@ -118,7 +118,7 @@ public:
 
     virtual bool captureScreenshot(WTF::String* data);
 
-    virtual bool handleJavaScriptDialog(bool accept);
+    virtual bool handleJavaScriptDialog(bool accept, const WTF::String* promptText);
 
     int hostId() { return m_hostId; }
 
