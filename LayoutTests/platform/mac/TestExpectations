@@ -1273,10 +1273,6 @@ webkit.org/b/90987 fast/forms/input-in-table-cell-no-value.html [ ImageOnlyFailu
 # Skip tests in fast/text/shaping
 webkit.org/b/90951 fast/text/shaping
 
-# Rebaseline required after https://bugs.webkit.org/show_bug.cgi?id=101177
-webkit.org/b/101177 svg/dynamic-updates/SVGUseElement-dom-requiredFeatures.html [ ImageOnlyFailure Pass ]
-webkit.org/b/101177 svg/repaint/inner-svg-change-viewBox.svg [ ImageOnlyFailure Pass ]
-
 # These tests need to be rebaselined after https://bugs.webkit.org/show_bug.cgi?id=99984
 webkit.org/b/99984 svg/as-image/image-preserveAspectRatio-all.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/99984 svg/filters/feImage-preserveAspectRatio-all.svg [ ImageOnlyFailure Pass ]
