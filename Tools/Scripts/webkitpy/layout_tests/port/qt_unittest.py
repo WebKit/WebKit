@@ -42,14 +42,6 @@ class QtPortTest(port_testcase.PortTestCase):
     port_name = 'qt-mac'
     port_maker = QtPort
     search_paths_cases = [
-        {'search_paths':['qt-4.8', 'qt-mac', 'qt'], 'os_name':'mac', 'use_webkit2':False, 'qt_version':'4.8'},
-        {'search_paths':['qt-4.8', 'qt-win', 'qt'], 'os_name':'win', 'use_webkit2':False, 'qt_version':'4.8'},
-        {'search_paths':['qt-4.8', 'qt-linux', 'qt'], 'os_name':'linux', 'use_webkit2':False, 'qt_version':'4.8'},
-
-        {'search_paths':['qt-4.8', 'qt-mac', 'qt'], 'os_name':'mac', 'use_webkit2':False},
-        {'search_paths':['qt-4.8', 'qt-win', 'qt'], 'os_name':'win', 'use_webkit2':False},
-        {'search_paths':['qt-4.8', 'qt-linux', 'qt'], 'os_name':'linux', 'use_webkit2':False},
-
         {'search_paths':['qt-5.0-mac-wk2', 'qt-5.0-wk2', 'qt-5.0', 'qt-mac', 'qt'], 'os_name':'mac', 'use_webkit2':True, 'qt_version':'5.0'},
         {'search_paths':['qt-5.0-wk2', 'qt-5.0', 'qt-win', 'qt'], 'os_name':'win', 'use_webkit2':True, 'qt_version':'5.0'},
         {'search_paths':['qt-5.0-wk2', 'qt-5.0', 'qt-linux', 'qt'], 'os_name':'linux', 'use_webkit2':True, 'qt_version':'5.0'},
@@ -59,7 +51,7 @@ class QtPortTest(port_testcase.PortTestCase):
         {'search_paths':['qt-5.0-wk1', 'qt-5.0', 'qt-linux', 'qt'], 'os_name':'linux', 'use_webkit2':False, 'qt_version':'5.0'},
     ]
 
-    def _assert_search_path(self, search_paths, os_name, use_webkit2=False, qt_version='4.8'):
+    def _assert_search_path(self, search_paths, os_name, use_webkit2=False, qt_version='5.0'):
         # FIXME: Port constructors should not "parse" the port name, but
         # rather be passed components (directly or via setters).  Once
         # we fix that, this method will need a re-write.
@@ -71,7 +63,7 @@ class QtPortTest(port_testcase.PortTestCase):
         absolute_search_paths = map(port._webkit_baseline_path, search_paths)
         self.assertEqual(port.baseline_search_path(), absolute_search_paths)
 
-    def _assert_expectations_files(self, search_paths, os_name, use_webkit2=False, qt_version='4.8'):
+    def _assert_expectations_files(self, search_paths, os_name, use_webkit2=False, qt_version='5.0'):
         # FIXME: Port constructors should not "parse" the port name, but
         # rather be passed components (directly or via setters).  Once
         # we fix that, this method will need a re-write.
@@ -83,8 +75,6 @@ class QtPortTest(port_testcase.PortTestCase):
         self.assertEqual(port.expectations_files(), search_paths)
 
     def _qt_version(self, qt_version):
-        if qt_version in '4.8':
-            return 'QMake version 2.01a\nUsing Qt version 4.8.0 in /usr/local/Trolltech/Qt-4.8.2/lib'
         if qt_version in '5.0':
             return 'QMake version 2.01a\nUsing Qt version 5.0.0 in /usr/local/Trolltech/Qt-5.0.0/lib'
 

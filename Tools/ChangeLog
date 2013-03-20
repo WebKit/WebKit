@@ -1,3 +1,18 @@
+2013-03-20  Ádám Kallai  <kadam@inf.u-szeged.hu>
+
+        [Qt] Qt 4.8 tool related stuff removal from webkitpy.
+        https://bugs.webkit.org/show_bug.cgi?id=112699.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort._search_paths):
+        (QtPort._port_specific_expectations_files):
+        * Scripts/webkitpy/layout_tests/port/qt_unittest.py:
+        (QtPortTest):
+        (QtPortTest._assert_search_path):
+        (QtPortTest._assert_expectations_files):
+
 2013-03-19  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Enable kerning by default
