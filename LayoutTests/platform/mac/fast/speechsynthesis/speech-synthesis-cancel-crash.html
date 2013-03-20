@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="console"></div>
+
+<script>
+
+    description("This tests that cancelling speech at the right time will not crash due to mismanaging of the queue during a cancel.");
+
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    if (window.internals)
+        window.internals.enableMockSpeechSynthesizer();
+
+    window.jsTestIsAsync = true;
+
+    function speak() {
+        var x = window.parent.speechSynthesis;
+        x.cancel();
+        x.resume();
+        x.speak(new SpeechSynthesisUtterance("X"));
+     }
+     speak();
+
+     // Don't crash!
+     setTimeout("speak(); finishJSTest()", 52);
+</script>
+
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

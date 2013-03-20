@@ -156,12 +156,19 @@
 
 - (void)cancel
 {
+    if (!m_utterance)
+        return;
+    
     [m_synthesizer stopSpeakingAtBoundary:NSSpeechImmediateBoundary];
+    m_synthesizerObject->client()->speakingErrorOccurred(m_utterance);
+    m_utterance = 0;
 }
 
 - (void)speechSynthesizer:(NSSpeechSynthesizer *)sender didFinishSpeaking:(BOOL)finishedSpeaking
 {
-    ASSERT(m_utterance);
+    if (!m_utterance)
+        return;
+    
     UNUSED_PARAM(sender);
     
     // Clear the m_utterance variable in case finish speaking kicks off a new speaking job immediately.
@@ -176,9 +183,11 @@
 
 - (void)speechSynthesizer:(NSSpeechSynthesizer *)sender willSpeakWord:(NSRange)characterRange ofString:(NSString *)string
 {
-    ASSERT(m_utterance);
     UNUSED_PARAM(sender);
     UNUSED_PARAM(string);
+
+    if (!m_utterance)
+        return;
 
     // Mac platform only supports word boundaries.
     m_synthesizerObject->client()->boundaryEventOccurred(m_utterance, WebCore::SpeechWordBoundary, characterRange.location);

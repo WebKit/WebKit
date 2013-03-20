@@ -112,8 +112,14 @@ void SpeechSynthesis::speak(SpeechSynthesisUtterance* utterance)
 void SpeechSynthesis::cancel()
 {
     // Remove all the items from the utterance queue.
+    // Hold on to the current utterance so the platform synthesizer can have a chance to clean up.
+    RefPtr<SpeechSynthesisUtterance> current = m_currentSpeechUtterance;
     m_utteranceQueue.clear();
     m_platformSpeechSynthesizer->cancel();
+    current = 0;
+    
+    // The platform should have called back immediately and cleared the current utterance.
+    ASSERT(!m_currentSpeechUtterance);
 }
 
 void SpeechSynthesis::pause()
@@ -124,6 +130,8 @@ void SpeechSynthesis::pause()
 
 void SpeechSynthesis::resume()
 {
+    if (!m_currentSpeechUtterance)
+        return;
     m_platformSpeechSynthesizer->resume();
 }
 
