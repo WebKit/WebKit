@@ -1,3 +1,13 @@
+2013-03-20  Eric Carlson  <eric.carlson@apple.com>
+
+        Allow ports specific text track menu
+        https://bugs.webkit.org/show_bug.cgi?id=112800
+
+        Reviewed by Dean Jackson.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in: Add new exports.
+        * win/WebKit.vcproj/WebKitExports.def.in: Ditto.
+
 2013-03-20  Roger Fong  <roger_fong@apple.com>
 
         AppleWin VS2010 build fix.

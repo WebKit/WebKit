@@ -320,7 +320,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     if (document->page()) {
         CaptionUserPreferences* captionPreferences = document->page()->group().captionPreferences();
         if (captionPreferences->userHasCaptionPreferences())
-            m_disableCaptions = !captionPreferences->userPrefersCaptions();
+            m_disableCaptions = !captionPreferences->shouldShowCaptions();
     }
 #endif
 }
@@ -2862,7 +2862,7 @@ void HTMLMediaElement::setSelectedTextTrack(PassRefPtr<PlatformTextTrack> platfo
     TrackDisplayUpdateScope scope(this);
 
     if (!platformTrack) {
-        toggleTrackAtIndex(textTracksOffIndex(), true);
+        setSelectedTextTrack(0);
         return;
     }
 
@@ -2877,7 +2877,7 @@ void HTMLMediaElement::setSelectedTextTrack(PassRefPtr<PlatformTextTrack> platfo
 
     if (i == m_textTracks->length())
         return;
-    toggleTrackAtIndex(i, true);
+    setSelectedTextTrack(textTrack);
 }
 
 Vector<RefPtr<PlatformTextTrack> > HTMLMediaElement::platformTextTracks()
@@ -3076,7 +3076,7 @@ bool HTMLMediaElement::userPrefersCaptions() const
         return false;
 
     CaptionUserPreferences* captionPreferences = page->group().captionPreferences();
-    return captionPreferences->userHasCaptionPreferences() && captionPreferences->userPrefersCaptions();
+    return captionPreferences->userHasCaptionPreferences() && captionPreferences->shouldShowCaptions();
 }
 
 bool HTMLMediaElement::userIsInterestedInThisTrackKind(String kind) const
@@ -3084,15 +3084,19 @@ bool HTMLMediaElement::userIsInterestedInThisTrackKind(String kind) const
     if (m_disableCaptions)
         return false;
 
-    Settings* settings = document()->settings();
+    Page* page = document()->page();
+    if (!page)
+        return false;
+
+    CaptionUserPreferences* captionPreferences = page->group().captionPreferences();
     bool userPrefersCaptionsOrSubtitles = m_closedCaptionsVisible || userPrefersCaptions();
 
     if (kind == TextTrack::subtitlesKeyword())
-        return (settings && settings->shouldDisplaySubtitles()) || userPrefersCaptionsOrSubtitles;
+        return captionPreferences->userPrefersSubtitles() || userPrefersCaptionsOrSubtitles;
     if (kind == TextTrack::captionsKeyword())
-        return (settings && settings->shouldDisplayCaptions()) || userPrefersCaptionsOrSubtitles;
+        return captionPreferences->userPrefersCaptions() || userPrefersCaptionsOrSubtitles;
     if (kind == TextTrack::descriptionsKeyword())
-        return settings && settings->shouldDisplayTextDescriptions();
+        return captionPreferences->userPrefersTextDescriptions() || userPrefersCaptionsOrSubtitles;
 
     return false;
 }
@@ -3178,25 +3182,27 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
         trackToEnable->setMode(TextTrack::showingKeyword());
 }
 
-void HTMLMediaElement::toggleTrackAtIndex(int index, bool exclusive)
+void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
 {
     TextTrackList* trackList = textTracks();
     if (!trackList || !trackList->length())
         return;
-
-    CaptionUserPreferences* captionPreferences = document()->page() ? document()->page()->group().captionPreferences() : 0;
-    if (captionPreferences)
-        captionPreferences->setUserPrefersCaptions(index != textTracksOffIndex());
+    if (trackToSelect && !trackList->contains(trackToSelect))
+        return;
 
     for (int i = 0, length = trackList->length(); i < length; ++i) {
         TextTrack* track = trackList->item(i);
-        if (i == index) {
-            track->setMode(TextTrack::showingKeyword());
-            if (captionPreferences && track->language().length())
-                captionPreferences->setPreferredLanguage(track->language());
-        }
-        else if (exclusive || index == HTMLMediaElement::textTracksOffIndex())
+        if (!trackToSelect || track != trackToSelect)
             track->setMode(TextTrack::disabledKeyword());
+        else
+            track->setMode(TextTrack::showingKeyword());
+    }
+
+    CaptionUserPreferences* captionPreferences = document()->page() ? document()->page()->group().captionPreferences() : 0;
+    if (captionPreferences) {
+        captionPreferences->setShouldShowCaptions(trackToSelect);
+        if (trackToSelect && trackToSelect->language().length())
+            captionPreferences->setPreferredLanguage(trackToSelect->language());
     }
 }
 
@@ -4520,11 +4526,15 @@ void HTMLMediaElement::captionPreferencesChanged()
     if (!isVideo())
         return;
 
-    m_processingPreferenceChange = true;
-    setClosedCaptionsVisible(userPrefersCaptions());
-
     if (hasMediaControls())
         mediaControls()->textTrackPreferencesChanged();
+
+    bool prefersCaptions = userPrefersCaptions();
+    if (m_disableCaptions == !prefersCaptions)
+        return;
+
+    m_processingPreferenceChange = true;
+    setClosedCaptionsVisible(prefersCaptions);
 }
 
 void HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured()

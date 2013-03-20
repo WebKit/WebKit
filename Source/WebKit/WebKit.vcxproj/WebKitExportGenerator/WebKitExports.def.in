@@ -416,6 +416,8 @@ EXPORTS
         ?setAuthorAndUserStylesEnabled@Settings@WebCore@@QAEX_N@Z
         ?setAcceleratedCompositingEnabled@Settings@WebCore@@QAEX_N@Z
         ?setAutofilled@HTMLInputElement@WebCore@@QAEX_N@Z
+        ?captionPreferences@PageGroup@WebCore@@QAEPAVCaptionUserPreferences@2@XZ
+        ?initGroup@Page@WebCore@@AAEXXZ
 
 #if ENABLE(WORKERS)
         ?workerThreadCount@WorkerThread@WebCore@@SAIXZ

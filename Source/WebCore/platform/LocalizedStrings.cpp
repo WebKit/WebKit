@@ -1027,8 +1027,36 @@ String textTrackOffText()
 
 String textTrackNoLabelText()
 {
-    return WEB_UI_STRING_KEY("Unknown", "Unknown (closed captions track)", "Menu item label for a closed captions track that has no other name");
+    return WEB_UI_STRING_KEY("Unknown", "Unknown (text track)", "Menu item label for a text track that has no other name");
 }
+    
+#if PLATFORM(MAC)
+String textTrackCountryAndLanguageMenuItemText(const String& title, const String& country, const String& language)
+{
+    return formatLocalizedString(WEB_UI_STRING("%@ (%@-%@)", "Text track display name format that includes the country and language of the subtitle, in the form of 'Title (Language-Country)'"), title.createCFString().get(), language.createCFString().get(), country.createCFString().get());
+}
+
+String textTrackLanguageMenuItemText(const String& title, const String& language)
+{
+    return formatLocalizedString(WEB_UI_STRING("%@ (%@)", "Text track display name format that includes the language of the subtitle, in the form of 'Title (Language)'"), title.createCFString().get(), language.createCFString().get());
+}
+
+String closedCaptionTrackMenuItemText(const String& title)
+{
+    return formatLocalizedString(WEB_UI_STRING("%@ CC", "Text track contains closed captions"), title.createCFString().get());
+}
+
+String sdhTrackMenuItemText(const String& title)
+{
+    return formatLocalizedString(WEB_UI_STRING("%@ SDH", "Text track contains subtitles for the deaf and hard of hearing"), title.createCFString().get());
+}
+
+String easyReaderTrackMenuItemText(const String& title)
+{
+    return formatLocalizedString(WEB_UI_STRING("%@ Easy Reader", "Text track contains simplified (3rd grade level) subtitles"), title.createCFString().get());
+}
+#endif
+
 #endif
 
 String snapshottedPlugInLabelTitle()

@@ -11,10 +11,10 @@ First item in captions menu should be labelled 'Off'
 EXPECTED (item.textContent == 'Off') OK
 
 Second item in captions menu should be labelled 'English CC'
-EXPECTED (item.textContent == 'English CC'), OBSERVED 'Unknown' FAIL
+EXPECTED (item.textContent == 'English CC'), OBSERVED 'Unknown SDH' FAIL
 
-Third item in captions menu should be labelled 'Unknown'
-EXPECTED (item.textContent == 'Unknown') OK
+Third item in captions menu should be labelled 'Unknown SDH'
+EXPECTED (item.textContent == 'Unknown SDH'), OBSERVED 'Unknown' FAIL
 
 Fourth item in captions menu should be labelled 'Unknown'
 TypeError: 'undefined' is not an object (evaluating 'item.textContent')

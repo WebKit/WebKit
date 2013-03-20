@@ -28,17 +28,108 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "CaptionUserPreferences.h"
+#include "Page.h"
 #include "PageGroup.h"
+#include "Settings.h"
+#include "TextTrackList.h"
+#include <wtf/NonCopyingSort.h>
 
 namespace WebCore {
 
+CaptionUserPreferences::CaptionUserPreferences(PageGroup* group)
+    : m_pageGroup(group)
+    , m_timer(this, &CaptionUserPreferences::timerFired)
+    , m_testingMode(false)
+    , m_havePreferences(false)
+    , m_shouldShowCaptions(false)
+{
+}
+
+CaptionUserPreferences::~CaptionUserPreferences()
+{
+}
+
+bool CaptionUserPreferences::shouldShowCaptions() const
+{
+    return m_testingMode ? m_shouldShowCaptions : false;
+}
+
+void CaptionUserPreferences::timerFired(Timer<CaptionUserPreferences>*)
+{
+    captionPreferencesChanged();
+}
+
+void CaptionUserPreferences::notify()
+{
+    if (!m_testingMode)
+        return;
+
+    m_havePreferences = true;
+    if (!m_timer.isActive())
+        m_timer.startOneShot(0);
+}
+
+void CaptionUserPreferences::setShouldShowCaptions(bool preference)
+{
+    m_shouldShowCaptions = preference;
+    notify();
+}
+
+bool CaptionUserPreferences::userPrefersCaptions() const
+{
+    Page* page = *(pageGroup()->pages().begin());
+    if (!page)
+        return false;
+
+    return page->settings()->shouldDisplayCaptions();
+}
+
 void CaptionUserPreferences::setUserPrefersCaptions(bool preference)
 {
-    m_userPrefersCaptions = preference;
-    if (m_testingMode) {
-        m_havePreferences = true;
-        captionPreferencesChanged();
-    }
+    Page* page = *(pageGroup()->pages().begin());
+    if (!page)
+        return;
+
+    page->settings()->setShouldDisplayCaptions(preference);
+    notify();
+}
+
+bool CaptionUserPreferences::userPrefersSubtitles() const
+{
+    Page* page = *(pageGroup()->pages().begin());
+    if (!page)
+        return false;
+
+    return page->settings()->shouldDisplaySubtitles();
+}
+
+void CaptionUserPreferences::setUserPrefersSubtitles(bool preference)
+{
+    Page* page = *(pageGroup()->pages().begin());
+    if (!page)
+        return;
+
+    page->settings()->setShouldDisplaySubtitles(preference);
+    notify();
+}
+
+bool CaptionUserPreferences::userPrefersTextDescriptions() const
+{
+    Page* page = *(pageGroup()->pages().begin());
+    if (!page)
+        return false;
+    
+    return page->settings()->shouldDisplayTextDescriptions();
+}
+
+void CaptionUserPreferences::setUserPrefersTextDescriptions(bool preference)
+{
+    Page* page = *(pageGroup()->pages().begin());
+    if (!page)
+        return;
+    
+    page->settings()->setShouldDisplayTextDescriptions(preference);
+    notify();
 }
 
 void CaptionUserPreferences::captionPreferencesChanged()
@@ -58,19 +149,40 @@ Vector<String> CaptionUserPreferences::preferredLanguages() const
 void CaptionUserPreferences::setPreferredLanguage(String language)
 {
     m_userPreferredLanguage = language;
-    if (m_testingMode) {
-        m_havePreferences = true;
-        captionPreferencesChanged();
-    }
+    notify();
 }
 
-String CaptionUserPreferences::displayNameForTrack(TextTrack* track) const
+static String trackDisplayName(TextTrack* track)
 {
     if (track->label().isEmpty() && track->language().isEmpty())
         return textTrackNoLabelText();
     if (!track->label().isEmpty())
         return track->label();
     return track->language();
+}
+
+String CaptionUserPreferences::displayNameForTrack(TextTrack* track) const
+{
+    return trackDisplayName(track);
+}
+    
+static bool textTrackCompare(const RefPtr<TextTrack>& a, const RefPtr<TextTrack>& b)
+{
+    return codePointCompare(trackDisplayName(a.get()), trackDisplayName(b.get())) < 0;
+}
+
+Vector<RefPtr<TextTrack> > CaptionUserPreferences::sortedTrackListForMenu(TextTrackList* trackList)
+{
+    ASSERT(trackList);
+
+    Vector<RefPtr<TextTrack> > tracksForMenu;
+
+    for (unsigned i = 0, length = trackList->length(); i < length; ++i)
+        tracksForMenu.append(trackList->item(i));
+
+    nonCopyingSort(tracksForMenu.begin(), tracksForMenu.end(), textTrackCompare);
+
+    return tracksForMenu;
 }
 
 }

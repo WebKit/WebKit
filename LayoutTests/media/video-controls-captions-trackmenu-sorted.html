@@ -7,11 +7,16 @@
         <script src="video-test.js"></script>
         <script src="trackmenu-test.js"></script>
         <script>
+            var test = 0;
             if (window.testRunner)
                 testRunner.dumpAsText();
 
-            function testSortedMenu()
+            function textTrackMenuItems()
             {
+                // Show and hide the menu to force a recalculation.
+                clickCCButton();
+                clickCCButton();
+
                 var trackListElement = getTrackListElement();
                 if (!trackListElement)
                     return;
@@ -20,25 +25,54 @@
                     failTest("There should be a ul element in track list menu");
                     return;
                 }
-                var lastTrackLabel = null;
-                var trackListItems = trackListSection.querySelectorAll("li");
-                if (!trackListItems || trackListItems.length != 7) {
-                    failTest("There should be seven li elements in the menu");
-                    return;
+                return trackListSection.querySelectorAll("li");
+            }
+
+            function testSortedMenu()
+            {
+                switch (test)
+                {
+                case 0:
+                    consoleWrite("<br><i>** Test with preferred language set to English, track type set to captions<" + "/i>");
+                    run("internals.settings.setShouldDisplayTrackKind('Captions', true)");
+                    window.setTimeout(testSortedMenu, 0);
+                    break;
+
+                case 1:
+                    trackMenuItems = textTrackMenuItems();
+                    testExpected("trackMenuItems[0].textContent", "Off");
+                    testExpected("trackMenuItems[1].textContent", "u (English) SDH");
+                    testExpected("trackMenuItems[2].textContent", "y (English-Australia) SDH");
+                    testExpected("trackMenuItems[3].textContent", "v (English)");
+                    testExpected("trackMenuItems[4].textContent", "x (English-Australia)");
+                    testExpected("trackMenuItems[5].textContent", "w (Japanese) SDH");
+                    testExpected("trackMenuItems[6].textContent", "z (Japanese)");
+                    testExpected("video.textTracks.length", 6);
+                    testExpected("trackMenuItems.length", 7);
+
+                    consoleWrite("<br><i>** Change preferred language to Japanese, change preference to subtitles<" + "/i>");
+                    run("internals.setUserPreferredLanguages(['ja'])");
+                    run("internals.settings.setShouldDisplayTrackKind('Captions', false)");
+                    run("internals.settings.setShouldDisplayTrackKind('Subtitles', true)");
+
+                    window.setTimeout(testSortedMenu, 0);
+                break;
+
+                case 2:
+                    trackMenuItems = textTrackMenuItems();
+                    testExpected("trackMenuItems[0].textContent", "Off");
+                    testExpected("trackMenuItems[1].textContent", "z (Japanese)");
+                    testExpected("trackMenuItems[2].textContent", "v (English)");
+                    testExpected("trackMenuItems[3].textContent", "x (English-Australia)");
+                    testExpected("video.textTracks.length", 6);
+                    testExpected("trackMenuItems.length", 4);
+
+                    consoleWrite("");
+                    endTest();
+                break;
                 }
-                for (var j = 0; j < trackListItems.length; j++) {
-                    var item = trackListItems[j];
-                    if (j == 0)
-                        logResult(item.textContent == "Off", "First item should be labelled off");
-                    else {
-                        if (lastTrackLabel)
-                            logResult(item.textContent > lastTrackLabel, lastTrackLabel + " comes before " + item.textContent);
-                        else
-                            logResult(true, item.textContent + " is the first real item in the list");
-                        lastTrackLabel = item.textContent;
-                    }
-                }
-                endTest();
+
+                ++test;
             }
 
             function start()
@@ -51,14 +85,14 @@
     </head>
 
     <body onload="start()">
-        <p>Test that captions and subtitles are sorted in the menu.</p>
+        <p>Test that captions and subtitles are sorted in the menu according to user preferences.</p>
         <video width="500" height="300" controls>
-            <track label="c" kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="ja">
-            <track label="b" kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="en-au">
-            <track label="a" kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="en">
-            <track label="b" kind="subtitles" src="track/captions-webvtt/captions-fast.vtt" srclang="ja">
-            <track label="a" kind="subtitles" src="track/captions-webvtt/captions-fast.vtt" srclang="en-au">
-            <track label="c" kind="subtitles" src="track/captions-webvtt/captions-fast.vtt" srclang="en">
+            <track label="z" kind="subtitles" src="track/captions-webvtt/captions-fast.vtt" srclang="ja">
+            <track label="y" kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="en-au">
+            <track label="x" kind="subtitles" src="track/captions-webvtt/captions-fast.vtt" srclang="en-au">
+            <track label="w" kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="ja">
+            <track label="v" kind="subtitles" src="track/captions-webvtt/captions-fast.vtt" srclang="en">
+            <track label="u" kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="en">
         </video>
     </body>
 </html>

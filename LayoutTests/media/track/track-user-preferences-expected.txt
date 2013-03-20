@@ -18,10 +18,10 @@ EXPECTED (event.target.readyState == '2') OK
 
 Test 3: select 'fr' track from menu
 - show captions menu.
-EXPECTED (trackMenuItems[1].className == '') OK
-EXPECTED (trackMenuItems[2].className == '') OK
-EXPECTED (trackMenuItems[3].className == 'selected') OK
-- click on menu item 2.
+EXPECTED (trackMenuItems[menuIndexForLanguage('French')].className == '') OK
+EXPECTED (trackMenuItems[menuIndexForLanguage('English')].className == '') OK
+EXPECTED (trackMenuItems[menuIndexForLanguage('Norwegian')].className == 'selected') OK
+- click on 'French' menu item.
 EVENT(load)
 EXPECTED (event.target.srclang == 'fr') OK
 EXPECTED (event.target.readyState == '2') OK
@@ -38,7 +38,7 @@ EXPECTED (video.textTracks[2].language == 'fr') OK
 
 Test 5: turning captions off from menu disables caption selection
 - show captions menu.
-- click on menu item 0.
+- click on 'Off' menu item.
 - creating tracks for: [ru,jp,en].
 EXPECTED (video.textTracks[0].mode == 'disabled') OK
 EXPECTED (video.textTracks[1].mode == 'disabled') OK

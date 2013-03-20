@@ -429,6 +429,15 @@ PassRefPtr<PlatformTextTrack> TextTrack::platformTextTrack()
 }
 #endif
 
+bool TextTrack::isMainProgramContent() const
+{
+    // "Main program" content is intrinsic to the presentation of the media file, regardless of locale. Content such as
+    // directors commentary is not "main program" because it is not essential for the presentation. HTML5 doesn't have
+    // a way to express this in a machine-reable form, it is typically done with the track label, so we assume that caption
+    // tracks are main content and all other track types are not.
+    return m_kind == captionsKeyword();
+}
+
 } // namespace WebCore
 
 #endif

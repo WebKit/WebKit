@@ -1,15 +1,32 @@
-Test that captions and subtitles are sorted in the menu.
+Test that captions and subtitles are sorted in the menu according to user preferences.
 
 EVENT(canplaythrough)
 
 *** Set the user language preference.
 RUN(internals.setUserPreferredLanguages(['en']))
-First item should be labelled off OK
-a English (Australia) is the first real item in the list OK
-a English (Australia) comes before a English SDH OK
-a English SDH comes before b English (Australia) SDH OK
-b English (Australia) SDH comes before b Japanese OK
-b Japanese comes before c English OK
-c English comes before c Japanese SDH OK
+
+** Test with preferred language set to English, track type set to captions
+RUN(internals.settings.setShouldDisplayTrackKind('Captions', true))
+EXPECTED (trackMenuItems[0].textContent == 'Off') OK
+EXPECTED (trackMenuItems[1].textContent == 'u (English) SDH') OK
+EXPECTED (trackMenuItems[2].textContent == 'y (English-Australia) SDH') OK
+EXPECTED (trackMenuItems[3].textContent == 'v (English)') OK
+EXPECTED (trackMenuItems[4].textContent == 'x (English-Australia)') OK
+EXPECTED (trackMenuItems[5].textContent == 'w (Japanese) SDH') OK
+EXPECTED (trackMenuItems[6].textContent == 'z (Japanese)') OK
+EXPECTED (video.textTracks.length == '6') OK
+EXPECTED (trackMenuItems.length == '7') OK
+
+** Change preferred language to Japanese, change preference to subtitles
+RUN(internals.setUserPreferredLanguages(['ja']))
+RUN(internals.settings.setShouldDisplayTrackKind('Captions', false))
+RUN(internals.settings.setShouldDisplayTrackKind('Subtitles', true))
+EXPECTED (trackMenuItems[0].textContent == 'Off') OK
+EXPECTED (trackMenuItems[1].textContent == 'z (Japanese)') OK
+EXPECTED (trackMenuItems[2].textContent == 'v (English)') OK
+EXPECTED (trackMenuItems[3].textContent == 'x (English-Australia)') OK
+EXPECTED (video.textTracks.length == '6') OK
+EXPECTED (trackMenuItems.length == '4') OK
+
 END OF TEST
 

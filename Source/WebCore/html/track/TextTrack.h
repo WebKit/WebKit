@@ -119,6 +119,10 @@ public:
 
     virtual bool isClosedCaptions() const { return false; }
 
+    virtual bool containsOnlyForcedSubtitles() const { return false; }
+    virtual bool isMainProgramContent() const;
+    virtual bool isEasyToRead() const { return false; }
+
     int trackIndex();
     void invalidateTrackIndex();
 

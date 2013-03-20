@@ -7,9 +7,10 @@ RUN(internals.setUserPreferredLanguages(['en']))
 
 *** Add another text track.
 RUN(video.addTextTrack("captions", "Commentary", "ru"))
+
 *** Turning captions on
 There should be 5 items in the menu.
-EXPECTED (5 == '5') OK
+EXPECTED (trackListItems.length == '5') OK
 EXPECTED (video.textTracks.length == '4') OK
 Track 0 should be showing
 EXPECTED (video.textTracks[0].mode == 'showing') OK
@@ -25,7 +26,7 @@ EXPECTED (textTrackDisplayElement(video, 'display').innerText == 'Lorem') OK
 RUN(video.removeChild(document.querySelectorAll("track")[0]))
 *** Turning captions off
 There should be 4 items in the menu.
-EXPECTED (4 == '4') OK
+EXPECTED (trackListItems.length == '4') OK
 EXPECTED (video.textTracks.length == '3') OK
 Track 0 should be disabled
 EXPECTED (video.textTracks[0].mode == 'disabled') OK

@@ -154,8 +154,10 @@ String preferredLanguageFromList(const Vector<String>& languageList, const Vecto
 String displayNameForLanguageLocale(const String& localeName)
 {
 #if PLATFORM(MAC)
-    if (!localeName.isNull() && !localeName.isEmpty())
-        return CFLocaleCopyDisplayNameForPropertyValue(CFLocaleCopyCurrent(), kCFLocaleIdentifier, localeName.createCFString().get());
+    if (!localeName.isNull() && !localeName.isEmpty()) {
+        RetainPtr<CFLocaleRef> currentLocale(AdoptCF, CFLocaleCopyCurrent());
+        return CFLocaleCopyDisplayNameForPropertyValue(currentLocale.get(), kCFLocaleIdentifier, localeName.createCFString().get());
+    }
 #endif
     return localeName;
 }

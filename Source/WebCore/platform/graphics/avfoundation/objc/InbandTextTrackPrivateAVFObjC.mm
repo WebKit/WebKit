@@ -52,8 +52,9 @@ SOFT_LINK_CLASS(AVFoundation, AVPlayerItemLegibleOutput)
 #define AVMediaCharacteristicVisual getAVMediaCharacteristicVisual()
 #define AVMediaCharacteristicAudible getAVMediaCharacteristicAudible()
 #define AVMediaTypeClosedCaption getAVMediaTypeClosedCaption()
-#define AVMediaTypeVideo getAVMediaTypeVideo()
-#define AVMediaTypeAudio getAVMediaTypeAudio()
+#define AVMediaCharacteristicContainsOnlyForcedSubtitles getAVMediaCharacteristicContainsOnlyForcedSubtitles()
+#define AVMediaCharacteristicIsMainProgramContent getAVMediaCharacteristicIsMainProgramContent()
+#define AVMediaCharacteristicEasyToRead getAVMediaCharacteristicEasyToRead()
 
 SOFT_LINK_POINTER(AVFoundation, AVMediaTypeClosedCaption, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicLegible, NSString *)
@@ -62,6 +63,10 @@ SOFT_LINK_POINTER(AVFoundation, AVMetadataKeySpaceCommon, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaTypeSubtitle, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicTranscribesSpokenDialogForAccessibility, NSString *)
 SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicDescribesMusicAndSoundForAccessibility, NSString *)
+SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicContainsOnlyForcedSubtitles, NSString *)
+SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicIsMainProgramContent, NSString *)
+SOFT_LINK_POINTER(AVFoundation, AVMediaCharacteristicEasyToRead, NSString *)
+
 #define AVMetadataItem getAVMetadataItemClass()
 #define AVPlayerItemLegibleOutput getAVPlayerItemLegibleOutputClass()
 #define AVMediaCharacteristicLegible getAVMediaCharacteristicLegible()
@@ -117,6 +122,30 @@ bool InbandTextTrackPrivateAVFObjC::isClosedCaptions() const
         return false;
     
     return [[m_mediaSelectionOption mediaType] isEqualToString:AVMediaTypeClosedCaption];
+}
+
+bool InbandTextTrackPrivateAVFObjC::containsOnlyForcedSubtitles() const
+{
+    if (!m_mediaSelectionOption)
+        return false;
+    
+    return [m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicContainsOnlyForcedSubtitles];
+}
+
+bool InbandTextTrackPrivateAVFObjC::isMainProgramContent() const
+{
+    if (!m_mediaSelectionOption)
+        return false;
+    
+    return [m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent];
+}
+
+bool InbandTextTrackPrivateAVFObjC::isEasyToRead() const
+{
+    if (!m_mediaSelectionOption)
+        return false;
+
+    return [m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicEasyToRead];
 }
 
 AtomicString InbandTextTrackPrivateAVFObjC::label() const

@@ -56,6 +56,9 @@ public:
     enum Kind { Subtitles, Captions, Descriptions, Chapters, Metadata, None };
     virtual Kind kind() const { return Subtitles; }
     virtual bool isClosedCaptions() const { return false; }
+    virtual bool containsOnlyForcedSubtitles() const { return false; }
+    virtual bool isMainProgramContent() const { return true; }
+    virtual bool isEasyToRead() const { return false; }
 
     virtual AtomicString label() const { return emptyAtom; }
     virtual AtomicString language() const { return emptyAtom; }

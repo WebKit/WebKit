@@ -103,6 +103,30 @@ bool InbandTextTrack::isClosedCaptions() const
     return m_private->isClosedCaptions();
 }
 
+bool InbandTextTrack::containsOnlyForcedSubtitles() const
+{
+    if (!m_private)
+        return false;
+    
+    return m_private->containsOnlyForcedSubtitles();
+}
+
+bool InbandTextTrack::isMainProgramContent() const
+{
+    if (!m_private)
+        return false;
+    
+    return m_private->isMainProgramContent();
+}
+
+bool InbandTextTrack::isEasyToRead() const
+{
+    if (!m_private)
+        return false;
+    
+    return m_private->isEasyToRead();
+}
+    
 size_t InbandTextTrack::inbandTrackIndex()
 {
     ASSERT(m_private);

@@ -211,6 +211,22 @@ void TextTrackList::remove(TextTrack* track)
     tracks->remove(index);
 }
 
+bool TextTrackList::contains(TextTrack* track) const
+{
+    const Vector<RefPtr<TextTrack> >* tracks = 0;
+    
+    if (track->trackType() == TextTrack::TrackElement)
+        tracks = &m_elementTracks;
+    else if (track->trackType() == TextTrack::AddTrack)
+        tracks = &m_addTrackTracks;
+    else if (track->trackType() == TextTrack::InBand)
+        tracks = &m_inbandTracks;
+    else
+        ASSERT_NOT_REACHED();
+    
+    return tracks->find(track) != notFound;
+}
+
 const AtomicString& TextTrackList::interfaceName() const
 {
     return eventNames().interfaceForTextTrackList;

@@ -44,10 +44,26 @@
                 return trackListItems;
             }
 
-            function selectCaptionMenuItem(index)
+            function menuIndexForLanguage(language)
             {
-                consoleWrite("- click on menu item " + index + ".");
                 var trackMenuItems = trackMenuList();
+                for (i = 0; i < trackMenuItems.length; ++i) {
+                    if (trackMenuItems[i].textContent.indexOf(language) >= 0)
+                        break;
+                }
+                return (i < trackMenuItems.length) ? i : -1;
+            }
+
+            function selectCaptionMenuItem(language)
+            {
+                var trackMenuItems = trackMenuList();
+                var index = menuIndexForLanguage(language);
+                if (index < 0) {
+                    failTest("Menu item " + language + " not found in track list menu.");
+                    return;
+                }
+
+                consoleWrite("- click on '" + language + "' menu item.");
                 var selectedTrackItem = trackMenuItems[index];
                 var boundingRect = selectedTrackItem.getBoundingClientRect();
                 var x = boundingRect.left + boundingRect.width / 2;
@@ -70,7 +86,7 @@
             {
                 var track = document.createElement('track');
                 track.setAttribute('kind', "captions");
-                track.src = 'data:text/vtt,'+encodeURIComponent("WEBVTT\n\n00:00:00.000 --> 00:00:01.000\nCaption 1\n");
+                track.src = 'data:text/vtt,' + encodeURIComponent("WEBVTT\n\n00:00:00.000 --> 00:00:01.000\nCaption 1\n");
                 track.setAttribute('srclang', language);
                 track.setAttribute('onload', 'trackLoaded()');
                 if (isDefault) {
@@ -108,20 +124,17 @@
                     break;
 
                 case 3:
-                    // Clear the debug setting so it isn't considered in the track selection logic
-                    internals.settings.setShouldDisplayTrackKind('Captions', false);
-
                     consoleWrite("<br>Test 3: select 'fr' track from menu");
                     showCaptionMenu();
                     break;
 
                 case 4:
                     trackMenuItems = trackMenuList();
-                    testExpected("trackMenuItems[1].className", "");
-                    testExpected("trackMenuItems[2].className", "");
-                    testExpected("trackMenuItems[3].className", "selected");
+                    testExpected("trackMenuItems[menuIndexForLanguage('French')].className", "");
+                    testExpected("trackMenuItems[menuIndexForLanguage('English')].className", "");
+                    testExpected("trackMenuItems[menuIndexForLanguage('Norwegian')].className", "selected");
 
-                    selectCaptionMenuItem(2);
+                    selectCaptionMenuItem("French");
                     expectedLanguage = 'fr';
                     break;
 
@@ -143,7 +156,7 @@
                     break;
 
                 case 7:
-                    selectCaptionMenuItem(0);
+                    selectCaptionMenuItem("Off");
                     createTrackElements([ 'ru', 'jp', 'en']);
                     timer = setTimeout(nextStep, 100);
                     break;

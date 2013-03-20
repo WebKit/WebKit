@@ -268,6 +268,13 @@ namespace WebCore {
     String textTrackSubtitlesText();
     String textTrackOffText();
     String textTrackNoLabelText();
+#if PLATFORM(MAC)
+    String textTrackCountryAndLanguageMenuItemText(const String& title, const String& country, const String& language);
+    String textTrackLanguageMenuItemText(const String& title, const String& language);
+    String closedCaptionTrackMenuItemText(const String&);
+    String sdhTrackMenuItemText(const String&);
+    String easyReaderTrackMenuItemText(const String&);
+#endif
 #endif
 
     String snapshottedPlugInLabelTitle();

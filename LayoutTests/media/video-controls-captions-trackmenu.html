@@ -15,6 +15,7 @@
                 consoleWrite("<br>*** Add another text track.");
                 run('video.addTextTrack("captions", "Commentary", "ru")');
                 window.setTimeout(turnCaptionsOn, 100);
+                consoleWrite("");
             }
 
             function trackMenuList()
@@ -39,10 +40,10 @@
 
             function testMenu()
             {
-                var trackListItems = trackMenuList();
+                trackListItems = trackMenuList();
                 var expectedItemCount = video.textTracks.length + 1;
                 consoleWrite("There should be " + expectedItemCount + " items in the menu.");
-                testExpected(trackListItems.length, expectedItemCount);
+                testExpected("trackListItems.length", expectedItemCount);
             }
 
             function selectCaptionMenuItem(index, nextStep)
@@ -62,7 +63,7 @@
             function turnCaptionsOn()
             {
                 consoleWrite("*** Turning captions on");
-                // Click on the third item, which is the second track (Off is the first item in the menu)
+                // Click on the second item, which is the second track (Off is the first item in the menu)
                 selectCaptionMenuItem(2, testCaptionsVisible);
             }
 
@@ -117,8 +118,8 @@
     <body onload="start()">
         <p>Test that we are able to trigger the list of captions, and select from the list.</p>
         <video width="500" height="300" controls>
+            <track kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="fr">
             <track kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="en">
-            <track kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="en-au">
             <track kind="captions" src="track/captions-webvtt/captions-fast.vtt" srclang="ja">
         </video>
     </body>

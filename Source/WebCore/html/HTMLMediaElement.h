@@ -267,7 +267,7 @@ public:
     void configureTextTracks();
     void configureTextTrackGroup(const TrackGroup&);
 
-    void toggleTrackAtIndex(int index, bool exclusive = true);
+    void setSelectedTextTrack(TextTrack*);
     static int textTracksOffIndex() { return -1; }
     static int textTracksIndexNotFound() { return -2; }
 
