@@ -84,11 +84,6 @@ WebTestRunner* WebTestInterfaces::testRunner()
     return m_interfaces->testRunner();
 }
 
-WebThemeEngine* WebTestInterfaces::themeEngine()
-{
-    return m_interfaces->themeEngine();
-}
-
 TestInterfaces* WebTestInterfaces::testInterfaces()
 {
     return m_interfaces.get();

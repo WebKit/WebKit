@@ -27,14 +27,12 @@
 // port rendering more than usual Chromium path, thus allowing us to share
 // more pixel baselines.
 
-#ifndef WebTestThemeEngineMac_h
-#define WebTestThemeEngineMac_h
+#ifndef WebThemeEngineDRTMac_h
+#define WebThemeEngineDRTMac_h
 
 #include <public/mac/WebThemeEngine.h>
 
-namespace WebTestRunner {
-
-class WebTestThemeEngineMac : public WebKit::WebThemeEngine {
+class WebThemeEngineDRTMac : public WebKit::WebThemeEngine {
 public:
     virtual void paintScrollbarThumb(
         WebKit::WebCanvas*,
@@ -58,6 +56,4 @@ private:
         const WebKit::WebThemeEngine::ScrollbarInfo&);
 };
 
-}
-
-#endif // WebTestThemeEngineMac_h
+#endif // WebThemeEngineDRTMac_h

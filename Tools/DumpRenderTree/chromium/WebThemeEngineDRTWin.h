@@ -44,16 +44,16 @@
 // choose to do so at some point.
 //
 
-#ifndef WebTestThemeEngineWin_h
-#define WebTestThemeEngineWin_h
+#ifndef WebThemeEngineDRTWin_h
+#define WebThemeEngineDRTWin_h
 
 #include <public/win/WebThemeEngine.h>
+#include <wtf/Noncopyable.h>
 
-namespace WebTestRunner {
-
-class WebTestThemeEngineWin : public WebKit::WebThemeEngine {
+class WebThemeEngineDRTWin : public WebKit::WebThemeEngine {
+    WTF_MAKE_NONCOPYABLE(WebThemeEngineDRTWin);
 public:
-    WebTestThemeEngineWin() { }
+    WebThemeEngineDRTWin() { }
 
     // WebThemeEngine methods:
     virtual void paintButton(
@@ -97,6 +97,4 @@ public:
     virtual WebKit::WebSize getSize(int part);
 };
 
-}
-
-#endif // WebTestThemeEngineWin_h
+#endif // WebThemeEngineDRTWin_h
