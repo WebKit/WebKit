@@ -343,7 +343,7 @@ bool RenderStyle::inheritedDataShared(const RenderStyle* other) const
         && rareInheritedData.get() == other->rareInheritedData.get();
 }
 
-static bool positionedObjectMoved(const LengthBox& a, const LengthBox& b)
+static bool positionedObjectMoved(const LengthBox& a, const LengthBox& b, const Length& width)
 {
     // If any unit types are different, then we can't guarantee
     // that this was just a movement.
@@ -359,6 +359,10 @@ static bool positionedObjectMoved(const LengthBox& a, const LengthBox& b)
     if (!a.left().isIntrinsicOrAuto() && !a.right().isIntrinsicOrAuto())
         return false;
     if (!a.top().isIntrinsicOrAuto() && !a.bottom().isIntrinsicOrAuto())
+        return false;
+    // If our width is auto and left or right is specified then this 
+    // is not just a movement - we need to resize to our container.
+    if ((!a.left().isIntrinsicOrAuto() || !a.right().isIntrinsicOrAuto()) && width.isIntrinsicOrAuto())
         return false;
 
     // One of the units is fixed or percent in both directions and stayed
@@ -626,7 +630,8 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
     if (position() != StaticPosition) {
         if (surround->offset != other->surround->offset) {
              // Optimize for the case where a positioned layer is moving but not changing size.
-            if (position() == AbsolutePosition && positionedObjectMoved(surround->offset, other->surround->offset))
+            if (position() == AbsolutePosition && positionedObjectMoved(surround->offset, other->surround->offset, m_box->width()))
+
                 return StyleDifferenceLayoutPositionedMovementOnly;
 
             // FIXME: We would like to use SimplifiedLayout for relative positioning, but we can't quite do that yet.
