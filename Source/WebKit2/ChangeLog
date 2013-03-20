@@ -1,3 +1,22 @@
+2013-03-20  Benjamin Poulain  <bpoulain@apple.com>
+
+        [WK2] Remove VIEW_MODE_CSS_MEDIA from WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=112849
+
+        Reviewed by Sam Weinig.
+
+        The code was added in r137148 for the sole purpose of testing,
+        and it is not even being properly tested.
+
+        Remove the code until someone actually implement the feature in WebKit2.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageCanShowMIMEType):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+
 2013-03-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Build ANGLE sources into a separate library from libWebCore.la

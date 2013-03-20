@@ -469,22 +469,3 @@ bool WKBundlePageCanShowMIMEType(WKBundlePageRef pageRef, WKStringRef mimeTypeRe
 {
     return toImpl(pageRef)->canShowMIMEType(toWTFString(mimeTypeRef));
 }
-
-#if ENABLE(VIEW_MODE_CSS_MEDIA)
-void WKBundlePageSetViewMode(WKBundlePageRef pageRef, WKStringRef mode)
-{
-    String modeWTF = toWTFString(mode);
-    if (modeWTF == "windowed")
-        toImpl(pageRef)->setViewMode(WebCore::Page::ViewModeWindowed);
-    else if (modeWTF == "floating")
-        toImpl(pageRef)->setViewMode(WebCore::Page::ViewModeFloating);
-    else if (modeWTF == "fullscreen")
-        toImpl(pageRef)->setViewMode(WebCore::Page::ViewModeFullscreen);
-    else if (modeWTF == "maximized")
-        toImpl(pageRef)->setViewMode(WebCore::Page::ViewModeMaximized);
-    else if (modeWTF == "minimized")
-        toImpl(pageRef)->setViewMode(WebCore::Page::ViewModeMinimized);
-    else
-        ASSERT_NOT_REACHED();
-}
-#endif // ENABLE(VIEW_MODE_CSS_MEDIA)

@@ -155,7 +155,6 @@ interface TestRunner {
 
     // Control full screen behavior.
     void setHasCustomFullScreenBehavior(in boolean value);
-    void setViewModeMediaFeature(in DOMString mode);
 
     // Web notifications support
     void grantWebNotificationPermission(in DOMString origin);

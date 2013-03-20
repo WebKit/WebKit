@@ -315,9 +315,6 @@ public:
     void setPageZoomFactor(double);
     void setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFactor);
     void windowScreenDidChange(uint64_t);
-#if ENABLE(VIEW_MODE_CSS_MEDIA)
-    void setViewMode(WebCore::Page::ViewMode);
-#endif // ENABLE(VIEW_MODE_CSS_MEDIA)
 
     void scalePage(double scale, const WebCore::IntPoint& origin);
     double pageScaleFactor() const;

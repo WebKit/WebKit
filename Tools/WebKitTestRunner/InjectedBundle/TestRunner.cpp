@@ -780,16 +780,6 @@ void TestRunner::queueNonLoadingScript(JSStringRef script)
     InjectedBundle::shared().queueNonLoadingScript(scriptWK.get());
 }
 
-void TestRunner::setViewModeMediaFeature(JSStringRef mode)
-{
-#if ENABLE(VIEW_MODE_CSS_MEDIA)
-    WKRetainPtr<WKStringRef> modeWK = toWK(mode);
-    WKBundlePageSetViewMode(InjectedBundle::shared().page()->page(), modeWK.get());
-#else
-    UNUSED_PARAM(mode);
-#endif // ENABLE(VIEW_MODE_CSS_MEDIA)
-}
-
 void TestRunner::setHandlesAuthenticationChallenges(bool handlesAuthenticationChallenges)
 {
     WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("SetHandlesAuthenticationChallenge"));
