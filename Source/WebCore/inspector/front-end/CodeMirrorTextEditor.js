@@ -74,6 +74,7 @@ WebInspector.CodeMirrorTextEditor = function(url, delegate)
 
     this._codeMirror.on("change", this._change.bind(this));
     this._codeMirror.on("gutterClick", this._gutterClick.bind(this));
+    this._codeMirror.on("cursorActivity", this._cursorActivity.bind(this));
     this.element.addEventListener("contextmenu", this._contextMenu.bind(this));
 
     this._lastRange = this.range();
@@ -85,6 +86,17 @@ WebInspector.CodeMirrorTextEditor = function(url, delegate)
 }
 
 WebInspector.CodeMirrorTextEditor.prototype = {
+
+    /**
+     * @param {WebInspector.TextRange} textRange
+     * @return {string}
+     */
+    copyRange: function(textRange)
+    {
+        var pos = this._toPos(textRange);
+        return this._codeMirror.getRange(pos.start, pos.end);
+    },
+
     /**
      * @param {string} mimeType
      */
@@ -299,6 +311,13 @@ WebInspector.CodeMirrorTextEditor.prototype = {
         var newRange = this.range();
         this._delegate.onTextChanged(this._lastRange, newRange);
         this._lastRange = newRange;
+    },
+
+    _cursorActivity: function()
+    {
+        var start = this._codeMirror.getCursor("anchor");
+        var end = this._codeMirror.getCursor("head");
+        this._delegate.selectionChanged(this._toRange(start, end));
     },
 
     /**
