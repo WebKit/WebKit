@@ -497,20 +497,12 @@ void WebViewHost::willSendRequest(WebFrame* frame, unsigned, WebURLRequest& requ
     request.setExtraData(webkit_support::CreateWebURLRequestExtraData(frame->document().referrerPolicy()));
 }
 
-#ifdef WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
 void WebViewHost::openFileSystem(WebFrame* frame, WebFileSystemType type, long long size, bool create, WebFileSystemCallbacks* callbacks)
-#else
-void WebViewHost::openFileSystem(WebFrame* frame, WebFileSystem::Type type, long long size, bool create, WebFileSystemCallbacks* callbacks)
-#endif
 {
     webkit_support::OpenFileSystem(frame, type, size, create, callbacks);
 }
 
-#ifdef WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
 void WebViewHost::deleteFileSystem(WebKit::WebFrame* frame, WebKit::WebFileSystemType type, WebKit::WebFileSystemCallbacks* callbacks)
-#else
-void WebViewHost::deleteFileSystem(WebKit::WebFrame* frame, WebKit::WebFileSystem::Type type, WebKit::WebFileSystemCallbacks* callbacks)
-#endif
 {
     webkit_support::DeleteFileSystem(frame, type, callbacks);
 }

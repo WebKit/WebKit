@@ -1,3 +1,35 @@
+2013-03-19  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Migrate to WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
+        https://bugs.webkit.org/show_bug.cgi?id=112754
+
+        Reviewed by Darin Fisher.
+
+        Remove old code behind ifndef WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
+        now that it's always defined.
+
+        * public/WebCommonWorkerClient.h:
+        (WebCommonWorkerClient):
+        * public/WebFrame.h:
+        (WebFrame):
+        * public/WebFrameClient.h:
+        (WebFrameClient):
+        (WebKit::WebFrameClient::openFileSystem):
+        (WebKit::WebFrameClient::deleteFileSystem):
+        * src/LocalFileSystemChromium.cpp:
+        (WebCore):
+        (WebCore::openFileSystemHelper):
+        (WebCore::LocalFileSystem::deleteFileSystem):
+        * src/WebFrameImpl.cpp:
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::openFileSystem):
+        * src/WebWorkerClientImpl.h:
+        * src/WorkerFileSystemCallbacksBridge.cpp:
+        * src/WorkerFileSystemCallbacksBridge.h:
+        (WorkerFileSystemCallbacksBridge):
+
 2013-03-19  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, rolling out r146277.

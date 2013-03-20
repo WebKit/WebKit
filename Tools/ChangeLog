@@ -1,3 +1,17 @@
+2013-03-19  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Migrate to WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
+        https://bugs.webkit.org/show_bug.cgi?id=112754
+
+        Reviewed by Darin Fisher.
+
+        Remove old code behind ifndef WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
+        now that it's always defined.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2013-03-19  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, rolling out r146290.

@@ -122,13 +122,8 @@ bool WebWorkerClientImpl::allowFileSystem()
     return !webView->permissionClient() || webView->permissionClient()->allowFileSystem(m_webFrame);
 }
 
-#ifdef WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
 void WebWorkerClientImpl::openFileSystem(WebFileSystemType type, long long size, bool create,
     WebFileSystemCallbacks* callbacks)
-#else
-void WebWorkerClientImpl::openFileSystem(WebFileSystem::Type type, long long size, bool create,
-    WebFileSystemCallbacks* callbacks)
-#endif
 {
     if (askedToTerminate()) {
         callbacks->didFail(WebFileErrorAbort);

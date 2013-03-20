@@ -128,7 +128,6 @@ public:
         int argc,
         v8::Handle<v8::Value> argv[]);
     virtual v8::Local<v8::Context> mainWorldScriptContext() const;
-#ifdef WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
     virtual v8::Handle<v8::Value> createFileSystem(WebFileSystemType,
         const WebString& name,
         const WebString& path);
@@ -140,19 +139,6 @@ public:
         const WebString& fileSystemPath,
         const WebString& filePath,
         bool isDirectory);
-#else
-    virtual v8::Handle<v8::Value> createFileSystem(WebFileSystem::Type,
-        const WebString& name,
-        const WebString& path);
-    virtual v8::Handle<v8::Value> createSerializableFileSystem(WebFileSystem::Type,
-        const WebString& name,
-        const WebString& path);
-    virtual v8::Handle<v8::Value> createFileEntry(WebFileSystem::Type,
-        const WebString& fileSystemName,
-        const WebString& fileSystemPath,
-        const WebString& filePath,
-        bool isDirectory);
-#endif
     virtual void reload(bool ignoreCache);
     virtual void reloadWithOverrideURL(const WebURL& overrideUrl, bool ignoreCache);
     virtual void loadRequest(const WebURLRequest&);

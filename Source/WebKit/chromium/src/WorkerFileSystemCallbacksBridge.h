@@ -85,11 +85,7 @@ public:
     }
 
     // Methods that create an instance and post an initial request task to the main thread. They must be called on the worker thread.
-#ifdef WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
     void postOpenFileSystemToMainThread(WebCommonWorkerClient*, WebFileSystemType, long long size, bool create, const String& mode);
-#else
-    void postOpenFileSystemToMainThread(WebCommonWorkerClient*, WebFileSystem::Type, long long size, bool create, const String& mode);
-#endif
     void postMoveToMainThread(WebFileSystem*, const WebCore::KURL& srcPath, const WebCore::KURL& destPath, const String& mode);
     void postCopyToMainThread(WebFileSystem*, const WebCore::KURL& srcPath, const WebCore::KURL& destPath, const String& mode);
     void postRemoveToMainThread(WebFileSystem*, const WebCore::KURL& path, const String& mode);
@@ -114,11 +110,7 @@ private:
     WorkerFileSystemCallbacksBridge(WebCore::WorkerLoaderProxy*, WebCore::ScriptExecutionContext*, WebFileSystemCallbacksImpl*);
 
     // Methods that are to be called on the main thread.
-#ifdef WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
     static void openFileSystemOnMainThread(WebCore::ScriptExecutionContext*, WebCommonWorkerClient*, WebFileSystemType, long long size, bool create, PassRefPtr<WorkerFileSystemCallbacksBridge>, const String& mode);
-#else
-    static void openFileSystemOnMainThread(WebCore::ScriptExecutionContext*, WebCommonWorkerClient*, WebFileSystem::Type, long long size, bool create, PassRefPtr<WorkerFileSystemCallbacksBridge>, const String& mode);
-#endif
     static void moveOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& srcPath, const WebCore::KURL& destPath, PassRefPtr<WorkerFileSystemCallbacksBridge>, const String& mode);
     static void copyOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& srcPath, const WebCore::KURL& destPath, PassRefPtr<WorkerFileSystemCallbacksBridge>, const String& mode);
     static void removeOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem*, const WebCore::KURL& path, PassRefPtr<WorkerFileSystemCallbacksBridge>, const String& mode);
