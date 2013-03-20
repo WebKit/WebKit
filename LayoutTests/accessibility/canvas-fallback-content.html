@@ -52,7 +52,7 @@ if (window.testRunner && window.accessibilityController) {
         debug("");
     }
 
-    var comboBoxRole = (testRunner.platformName == "gtk") ? "AXRole: AXComboBox" : "AXRole: AXPopUpButton";
+    var comboBoxRole = (testRunner.platformName == "gtk" || testRunner.platformName == "efl") ? "AXRole: AXComboBox" : "AXRole: AXPopUpButton";
 
     // Check rendered controls.
     check("link1", "AXRole: AXLink");

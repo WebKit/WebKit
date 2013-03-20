@@ -838,3 +838,9 @@ void TestRunner::closeIdleLocalStorageDatabases()
 {
     notImplemented();
 }
+
+JSRetainPtr<JSStringRef> TestRunner::platformName() const
+{
+    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("efl"));
+    return platformName;
+}

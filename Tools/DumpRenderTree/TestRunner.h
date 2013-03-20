@@ -120,7 +120,7 @@ public:
     size_t webHistoryItemCount();
     int windowCount();
     
-#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WIN)
+#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WIN) || PLATFORM(EFL)
     JSRetainPtr<JSStringRef> platformName() const;
 #endif
 
