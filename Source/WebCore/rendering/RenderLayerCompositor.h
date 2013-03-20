@@ -272,6 +272,8 @@ public:
 
     bool viewHasTransparentBackground(Color* backgroundColor = 0) const;
 
+    bool hasNonMainLayersWithTiledBacking() const { return m_layersWithTiledBackingCount; }
+
     CompositingReasons reasonsForCompositing(const RenderLayer*) const;
     
 private:
@@ -343,8 +345,6 @@ private:
     Page* page() const;
     TiledBacking* pageTiledBacking() const;
     
-    bool haveNonMainLayersWithTiledBacking() const { return m_layersWithTiledBackingCount; }
-
     GraphicsLayerFactory* graphicsLayerFactory() const;
     ScrollingCoordinator* scrollingCoordinator() const;
 
