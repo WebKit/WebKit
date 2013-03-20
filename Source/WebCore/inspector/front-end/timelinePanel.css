@@ -175,6 +175,15 @@
     color: inherit;
 }
 
+.timeline-misc-status-bar-items {
+    right: 64px;
+}
+
+.timeline-misc-status-bar-filters {
+    display: -webkit-flex;
+    -webkit-flex-orientation: row;
+}
+
 .timeline-category-statusbar-item {
     height: 24px;
     line-height: 24px;
@@ -183,6 +192,8 @@
     text-overflow: ellipsis;
     overflow: hidden;
     font-weight: bold;
+    min-width: 20px;
+    -webkit-flex: auto 0 1;
 }
 
 .timeline-category-statusbar-item,
@@ -406,6 +417,7 @@
 .timeline-records-stats {
     margin-top: 5px;
     margin-left: 6px;
+    -webkit-flex: 1;
 }
 
 .timeline-records-stats-container {

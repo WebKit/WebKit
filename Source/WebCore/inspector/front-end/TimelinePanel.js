@@ -274,9 +274,9 @@ WebInspector.TimelinePanel.prototype = {
         this._statusBarItems.push(this._durationFilterSelector);
 
         this._miscStatusBarItems = document.createElement("div");
-        this._miscStatusBarItems.className = "status-bar-items";
+        this._miscStatusBarItems.className = "status-bar-items timeline-misc-status-bar-items";
 
-        this._statusBarFilters = this._miscStatusBarItems.createChild("div");
+        this._statusBarFilters = this._miscStatusBarItems.createChild("div", "timeline-misc-status-bar-filters");
         var categories = WebInspector.TimelinePresentationModel.categories();
         for (var categoryName in categories) {
             var category = categories[categoryName];
