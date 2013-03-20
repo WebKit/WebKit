@@ -41,7 +41,6 @@ function defineCommonExtensionSymbols(apiPrivate)
     if (!apiPrivate.console)
         apiPrivate.console = {};
     apiPrivate.console.Severity = {
-        Tip: "tip",
         Debug: "debug",
         Log: "log",
         Warning: "warning",

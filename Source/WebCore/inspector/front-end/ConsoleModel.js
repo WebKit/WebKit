@@ -218,11 +218,15 @@ WebInspector.ConsoleMessage.create = function(source, level, message, type, url,
 
 // Note: Keep these constants in sync with the ones in Console.h
 WebInspector.ConsoleMessage.MessageSource = {
-    HTML: "html",
     XML: "xml",
     JS: "javascript",
     Network: "network",
     ConsoleAPI: "console-api",
+    Storage: "storage",
+    AppCache: "appcache",
+    Rendering: "rendering",
+    CSS: "css",
+    Security: "security",
     Other: "other"
 }
 
@@ -243,7 +247,6 @@ WebInspector.ConsoleMessage.MessageType = {
 }
 
 WebInspector.ConsoleMessage.MessageLevel = {
-    Tip: "tip",
     Log: "log",
     Warning: "warning",
     Error: "error",

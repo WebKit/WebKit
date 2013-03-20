@@ -348,8 +348,6 @@ WebInspector.ExtensionServer.prototype = {
         function convertSeverity(level)
         {
             switch (level) {
-                case WebInspector.extensionAPI.console.Severity.Tip:
-                    return WebInspector.ConsoleMessage.MessageLevel.Tip;
                 case WebInspector.extensionAPI.console.Severity.Log:
                     return WebInspector.ConsoleMessage.MessageLevel.Log;
                 case WebInspector.extensionAPI.console.Severity.Warning:
@@ -381,8 +379,6 @@ WebInspector.ExtensionServer.prototype = {
             if (!level)
                 return;
             switch (level) {
-                case WebInspector.ConsoleMessage.MessageLevel.Tip:
-                    return WebInspector.extensionAPI.console.Severity.Tip;
                 case WebInspector.ConsoleMessage.MessageLevel.Log:
                     return WebInspector.extensionAPI.console.Severity.Log;
                 case WebInspector.ConsoleMessage.MessageLevel.Warning:

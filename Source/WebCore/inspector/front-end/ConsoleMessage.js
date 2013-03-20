@@ -727,9 +727,6 @@ WebInspector.ConsoleMessageImpl.prototype = {
         this._element = element;
 
         switch (this.level) {
-        case WebInspector.ConsoleMessage.MessageLevel.Tip:
-            element.addStyleClass("console-tip-level");
-            break;
         case WebInspector.ConsoleMessage.MessageLevel.Log:
             element.addStyleClass("console-log-level");
             break;
@@ -793,9 +790,6 @@ WebInspector.ConsoleMessageImpl.prototype = {
     {
         var sourceString;
         switch (this.source) {
-            case WebInspector.ConsoleMessage.MessageSource.HTML:
-                sourceString = "HTML";
-                break;
             case WebInspector.ConsoleMessage.MessageSource.XML:
                 sourceString = "XML";
                 break;
@@ -807,6 +801,21 @@ WebInspector.ConsoleMessageImpl.prototype = {
                 break;
             case WebInspector.ConsoleMessage.MessageSource.ConsoleAPI:
                 sourceString = "ConsoleAPI";
+                break;
+            case WebInspector.ConsoleMessage.MessageSource.Storage:
+                sourceString = "Storage";
+                break;
+            case WebInspector.ConsoleMessage.MessageSource.AppCache:
+                sourceString = "AppCache";
+                break;
+            case WebInspector.ConsoleMessage.MessageSource.Rendering:
+                sourceString = "Rendering";
+                break;
+            case WebInspector.ConsoleMessage.MessageSource.CSS:
+                sourceString = "CSS";
+                break;
+            case WebInspector.ConsoleMessage.MessageSource.Security:
+                sourceString = "Security";
                 break;
             case WebInspector.ConsoleMessage.MessageSource.Other:
                 sourceString = "Other";
@@ -848,9 +857,6 @@ WebInspector.ConsoleMessageImpl.prototype = {
 
         var levelString;
         switch (this.level) {
-            case WebInspector.ConsoleMessage.MessageLevel.Tip:
-                levelString = "Tip";
-                break;
             case WebInspector.ConsoleMessage.MessageLevel.Log:
                 levelString = "Log";
                 break;
