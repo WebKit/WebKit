@@ -504,6 +504,18 @@ void ChromeClientEfl::setCursorHiddenUntilMouseMoves(bool)
     notImplemented();
 }
 
+#if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
+void ChromeClientEfl::scheduleAnimation()
+{
+    notImplemented();
+}
+
+void ChromeClientEfl::serviceScriptedAnimations()
+{
+    notImplemented();
+}
+#endif
+
 void ChromeClientEfl::cancelGeolocationPermissionForFrame(Frame*, Geolocation*)
 {
     notImplemented();

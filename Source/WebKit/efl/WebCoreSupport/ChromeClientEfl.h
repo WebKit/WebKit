@@ -155,6 +155,11 @@ public:
     virtual void setCursor(const Cursor&);
     virtual void setCursorHiddenUntilMouseMoves(bool);
 
+#if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER)
+    virtual void scheduleAnimation();
+    virtual void serviceScriptedAnimations();
+#endif
+
     virtual void scrollRectIntoView(const IntRect&) const { }
 
     virtual void cancelGeolocationPermissionForFrame(Frame*, Geolocation*);

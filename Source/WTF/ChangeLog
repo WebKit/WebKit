@@ -1,3 +1,22 @@
+2013-03-20  JungJik Lee  <jungjik.lee@samsung.com>
+
+        [EFL] Disable REQUEST_ANIMATION_FRAME_TIMER to render a new animation frame.
+        https://bugs.webkit.org/show_bug.cgi?id=112114
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The issue is that if the animation starts outside of the area covered by keepRects,
+        the web process does not create tiles of the animation layer and the layer moves 
+        without having any tiles. In order to fix this issue, CoordinatedLayerHost must call 
+        scheduleLayerFlush to create new tiles when the layer enters the area covered by keepRect.
+        However EFL port didn't call scheduleLayerFlush periodically for animation.
+        We can tie scripted animations with synchronization of the layer and that already 
+        has been implemented in r123786 by Qt port. This patch is for activating r123786 patch.
+
+        The testing is covered by ManualTests/animation/transition-on-and-offscreen-animation.html
+
+        * wtf/Platform.h: Disable REQUEST_ANIMATION_FRAME_TIMER.
+
 2013-03-20  Mark Lam  <mark.lam@apple.com>
 
         Introducing String::reverseFindLineTerminator().

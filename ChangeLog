@@ -1,3 +1,14 @@
+2013-03-20  JungJik Lee  <jungjik.lee@samsung.com>
+
+        [EFL] Disable REQUEST_ANIMATION_FRAME_TIMER to render a new animation frame.
+        https://bugs.webkit.org/show_bug.cgi?id=112114
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add a manual test to check the running of scripted transition animation.
+
+        * ManualTests/animation/transition-on-and-offscreen-animation.html: Added.
+
 2013-03-19  David Rosca  <nowrep@gmail.com>
 
         [Qt] QStyle: Set State_Enabled by default when painting style widgets.

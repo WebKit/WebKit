@@ -1,3 +1,21 @@
+2013-03-20  JungJik Lee  <jungjik.lee@samsung.com>
+
+        [EFL] Disable REQUEST_ANIMATION_FRAME_TIMER to render a new animation frame.
+        https://bugs.webkit.org/show_bug.cgi?id=112114
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add dummy functions for WK1.
+
+        Example test case: ManualTests/animation/transition-on-and-offscreen-animation.html
+
+        * WebCoreSupport/ChromeClientEfl.cpp: Add dummy functions for WK1.
+        (WebCore):
+        (WebCore::ChromeClientEfl::scheduleAnimation):
+        (WebCore::ChromeClientEfl::serviceScriptedAnimations):
+        * WebCoreSupport/ChromeClientEfl.h:
+        (ChromeClientEfl):
+
 2013-03-15  Nate Chapin  <japhet@chromium.org>
 
         Hide MainResourceLoader from the outside world
