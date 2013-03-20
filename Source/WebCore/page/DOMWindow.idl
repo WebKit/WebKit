@@ -570,6 +570,7 @@
     [Conditional=WEBGL] attribute WebGLContextEventConstructor WebGLContextEvent;
     [Conditional=PROXIMITY_EVENTS] attribute DeviceProximityEventConstructor DeviceProximityEvent;
     [Conditional=REQUEST_AUTOCOMPLETE] attribute AutocompleteErrorEventConstructor AutocompleteErrorEvent;
+    [Conditional=CSP_NEXT, V8EnabledAtRuntime=experimentalContentSecurityPolicyFeatures] attribute SecurityPolicyViolationEventConstructor SecurityPolicyViolationEvent;
 
     attribute EventExceptionConstructor EventException;
 

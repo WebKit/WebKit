@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test-pre.js"></script>
+    <script>
+        description('Check that a SecurityPolicyViolationEvent handler exists, and that events can be created.');
+
+        try {
+            shouldBeEqualToString('typeof document.onsecuritypolicyviolation', 'object');
+            shouldBeEqualToString('typeof SecurityPolicyViolationEvent', 'function');
+            var data = {
+                'documentURI': 'documentURIValue',
+                'referrer': 'referrerValue',
+                'blockedURI': 'blockedURIValue',
+                'violatedDirective': 'violatedDirectiveValue',
+                'effectiveDirective': 'effectiveDirectiveValue',
+                'originalPolicy': 'originalPolicyValue',
+                'sourceURL': 'sourceURLValue',
+                'lineNumber': 1
+            };
+            window.e = new SecurityPolicyViolationEvent('SecurityPolicyViolation', data);
+            shouldBeEqualToString('typeof window.e', 'object');
+            for (key in data)
+                shouldBe('window.e.' + key, JSON.stringify(data[key]));
+        } catch (ex) {
+            testFailed('Exception thrown: ' + ex.message);
+        }
+    </script>
+    <script src="/js-test-resources/js-test-post.js"></script>
+</head>
+<body>
+</body>
+</html>

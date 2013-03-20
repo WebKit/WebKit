@@ -259,6 +259,8 @@ namespace WebCore {
     macro(webkitprerenderload) \
     macro(webkitprerenderdomcontentloaded) \
     \
+    macro(securitypolicyviolation) \
+    \
 
 // end of DOM_EVENT_NAMES_FOR_EACH
 
