@@ -63,7 +63,6 @@ public:
     bool scrollAnimationActive() const;
     void cancelScrollAnimation();
 
-    bool panGestureActive() const;
     void panGestureStarted(const QPointF& position, qint64 eventTimestampMillis);
     void panGestureRequestUpdate(const QPointF& position, qint64 eventTimestampMillis);
     void panGestureEnded(const QPointF& position, qint64 eventTimestampMillis);
@@ -72,7 +71,6 @@ public:
     bool scaleAnimationActive() const;
     void interruptScaleAnimation();
 
-    bool pinchGestureActive() const;
     void pinchGestureStarted(const QPointF& pinchCenterInViewportCoordinates);
     void pinchGestureRequestUpdate(const QPointF& pinchCenterInViewportCoordinates, qreal totalScaleFactor);
     void pinchGestureEnded();

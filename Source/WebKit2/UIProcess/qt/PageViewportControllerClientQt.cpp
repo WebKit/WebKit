@@ -125,11 +125,8 @@ void PageViewportControllerClientQt::setContentRectVisiblePositionAtScale(const 
 
 void PageViewportControllerClientQt::animateContentRectVisible(const QRectF& contentRect)
 {
-    ASSERT(m_scaleAnimation->state() == QAbstractAnimation::Stopped);
-
+    ASSERT(!scaleAnimationActive());
     ASSERT(!scrollAnimationActive());
-    if (scrollAnimationActive())
-        return;
 
     QRectF viewportRectInContentCoords = m_viewportItem->mapRectToWebContent(m_viewportItem->boundingRect());
     if (contentRect == viewportRectInContentCoords) {
@@ -192,6 +189,10 @@ void PageViewportControllerClientQt::scaleAnimationStateChanged(QAbstractAnimati
 
 void PageViewportControllerClientQt::touchBegin()
 {
+    // Check for sane event delivery. At this point neither a pan gesture nor a pinch gesture should be active.
+    ASSERT(!m_viewportItem->isDragging());
+    ASSERT(!(m_pinchStartScale > 0));
+
     m_controller->setHadUserInteraction(true);
 
     // Prevent resuming the page during transition between gestures while the user is interacting.
@@ -366,15 +367,10 @@ bool PageViewportControllerClientQt::scrollAnimationActive() const
     return m_viewportItem->isFlicking();
 }
 
-bool PageViewportControllerClientQt::panGestureActive() const
-{
-    return m_controller->hadUserInteraction() && m_viewportItem->isDragging();
-}
-
 void PageViewportControllerClientQt::panGestureStarted(const QPointF& position, qint64 eventTimestampMillis)
 {
     // This can only happen as a result of a user interaction.
-    ASSERT(m_controller->hadUserInteraction());
+    ASSERT(m_touchInteraction.inProgress());
 
     m_viewportItem->handleFlickableMousePress(position, eventTimestampMillis);
     m_lastPinchCenterInViewportCoordinates = position;
@@ -429,15 +425,10 @@ void PageViewportControllerClientQt::interruptScaleAnimation()
     m_scaleAnimation->stop();
 }
 
-bool PageViewportControllerClientQt::pinchGestureActive() const
-{
-    return m_controller->hadUserInteraction() && (m_pinchStartScale > 0);
-}
-
 void PageViewportControllerClientQt::pinchGestureStarted(const QPointF& pinchCenterInViewportCoordinates)
 {
     // This can only happen as a result of a user interaction.
-    ASSERT(m_controller->hadUserInteraction());
+    ASSERT(m_touchInteraction.inProgress());
 
     if (!m_controller->allowsUserScaling())
         return;

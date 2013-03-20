@@ -1,5 +1,30 @@
 2013-03-20  Andras Becsi  <andras.becsi@digia.com>
 
+        [Qt][WK2] Clean up sanity checks related to gesture recognition
+        https://bugs.webkit.org/show_bug.cgi?id=112679
+
+        Reviewed by Jocelyn Turcotte.
+
+        The only callers of the panGestureActive and pinchGestureActive member
+        functions of the page viewport controller client are event delivery
+        related sanity check assers, thus they can be replaced by checking
+        for the corresponding internal states and therefore the superfluous
+        members can be removed.
+        Also update other asserts in the page viewport controller client to
+        be more accurate about the expected states.
+
+        * UIProcess/qt/PageViewportControllerClientQt.cpp:
+        (WebKit::PageViewportControllerClientQt::animateContentRectVisible):
+        (WebKit::PageViewportControllerClientQt::touchBegin):
+        (WebKit::PageViewportControllerClientQt::panGestureStarted):
+        (WebKit::PageViewportControllerClientQt::pinchGestureStarted):
+        * UIProcess/qt/PageViewportControllerClientQt.h:
+        (PageViewportControllerClientQt):
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (WebKit::QtWebPageEventHandler::handleInputEvent):
+
+2013-03-20  Andras Becsi  <andras.becsi@digia.com>
+
         [Qt][WK2] Refactor handling of content suspension to properly cover corner cases
         https://bugs.webkit.org/show_bug.cgi?id=111751
 
