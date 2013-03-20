@@ -122,7 +122,7 @@ WebInspector.DefaultTextEditor.prototype = {
     /**
      * @param {string} regex
      * @param {string} cssClass
-     * @return {WebInspector.TextEditorMainPanel.HighlightDescriptor}
+     * @return {Object}
      */
     highlightRegex: function(regex, cssClass)
     {
@@ -130,7 +130,7 @@ WebInspector.DefaultTextEditor.prototype = {
     },
 
     /**
-     * @param {WebInspector.TextEditorMainPanel.HighlightDescriptor} highlightDescriptor
+     * @param {Object} highlightDescriptor
      */
     removeHighlight: function(highlightDescriptor)
     {
@@ -140,6 +140,7 @@ WebInspector.DefaultTextEditor.prototype = {
     /**
      * @param {WebInspector.TextRange} range
      * @param {string} cssClass
+     * @return {Object}
      */
     highlightRange: function(range, cssClass)
     {
@@ -1461,7 +1462,7 @@ WebInspector.TextEditorMainPanel.prototype = {
     /**
      * @param {string} regex
      * @param {string} cssClass
-     * @return {WebInspector.TextEditorMainPanel.HighlightDescriptor}
+     * @return {Object}
      */
     highlightRegex: function(regex, cssClass)
     {
@@ -1472,7 +1473,7 @@ WebInspector.TextEditorMainPanel.prototype = {
     },
 
     /**
-     * @param {WebInspector.TextEditorMainPanel.HighlightDescriptor} highlightDescriptor
+     * @param {Object} highlightDescriptor
      */
     removeHighlight: function(highlightDescriptor)
     {
@@ -1483,6 +1484,7 @@ WebInspector.TextEditorMainPanel.prototype = {
     /**
      * @param {WebInspector.TextRange} range
      * @param {string} cssClass
+     * @return {Object}
      */
     highlightRange: function(range, cssClass)
     {

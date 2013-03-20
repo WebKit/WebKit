@@ -127,6 +127,25 @@ WebInspector.CodeMirrorTextEditor.prototype = {
     },
 
     /**
+     * @param {Object} highlightDescriptor
+     */
+    removeHighlight: function(highlightDescriptor)
+    {
+        highlightDescriptor.clear();
+    },
+
+    /**
+     * @param {WebInspector.TextRange} range
+     * @param {string} cssClass
+     * @return {Object}
+     */
+    highlightRange: function(range, cssClass)
+    {
+        var pos = this._toPos(range);
+        return this._codeMirror.markText(pos.start, pos.end, { className: cssClass });
+    },
+
+    /**
      * @return {Element}
      */
     defaultFocusedElement: function()
