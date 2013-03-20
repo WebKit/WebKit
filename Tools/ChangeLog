@@ -1,3 +1,9 @@
+2013-03-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed. Merge the latest delete-stale-build-files to make bots green.
+
+        * BuildSlaveSupport/delete-stale-build-files:
+
 2013-03-04  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/13337144> - Update 536.29 branch Loader and UI client layouts
