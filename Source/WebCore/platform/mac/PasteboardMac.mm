@@ -468,7 +468,7 @@ static PassRefPtr<DocumentFragment> fragmentFromWebArchive(Frame* frame, PassRef
     if (!mainResource)
         return 0;
 
-    NSString *MIMEType = mainResource->mimeType();
+    const String& MIMEType = mainResource->mimeType();
     if (!frame || !frame->document())
         return 0;
 
