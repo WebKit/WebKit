@@ -1,0 +1,12 @@
+Test if WebKit does not spellcheck text when pasting text and continuous spellcheck is turned off. To test manually, disable continuous spellcheck, copy the text "zz apple" and paste it to the textarea. When "zz" is not marked as misspelled, this test succeeds.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS internals.hasSpellingMarker(document, 0, 2) is true
+PASS The destination node does not have any markers.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+zz apple
+

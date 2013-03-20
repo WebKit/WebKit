@@ -167,6 +167,7 @@
     boolean hasSpellingMarker(in Document document, in long from, in long length) raises (DOMException);
     boolean hasGrammarMarker(in Document document, in long from, in long length) raises (DOMException);
     boolean hasAutocorrectedMarker(in Document document, in long from, in long length) raises (DOMException);
+    void setContinuousSpellCheckingEnabled(in boolean enabled) raises (DOMException);
 
     unsigned long numberOfScrollableAreas(in Document document) raises (DOMException);
 

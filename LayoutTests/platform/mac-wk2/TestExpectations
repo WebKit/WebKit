@@ -85,6 +85,7 @@ editing/selection/word-granularity.html
 editing/spelling/context-menu-suggestions.html
 editing/spelling/spellcheck-paste.html
 editing/spelling/spellcheck-paste-disabled.html
+editing/spelling/spellcheck-paste-continuous-disabled.html
 editing/undo/undo-smart-delete-reversed-selection.html
 fast/block/positioning/hittest-on-relative-positioned-children.html
 fast/css/user-drag-none.html

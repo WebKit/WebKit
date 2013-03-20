@@ -1,3 +1,12 @@
+2013-03-20  Rouslan Solomakhin  <rouslan@chromium.org>
+
+        Copy-paste should not spellcheck when continuous spellcheck is turned off
+        https://bugs.webkit.org/show_bug.cgi?id=112464
+
+        Reviewed by Ryosuke Niwa.
+
+        * Source/autotools/symbols.filter: Export WebCore::Editor::isContinuousSpellCheckingEnabled() and WebCore::Editor::toggleContinuousSpellChecking() for use by internals.
+
 2013-03-20  JungJik Lee  <jungjik.lee@samsung.com>
 
         [EFL] Disable REQUEST_ANIMATION_FRAME_TIMER to render a new animation frame.

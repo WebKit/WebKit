@@ -272,6 +272,8 @@ void Internals::resetToConsistentState(Page* page)
 #if ENABLE(VIDEO_TRACK) && !PLATFORM(WIN)
     page->group().captionPreferences()->setTestingMode(false);
 #endif
+    if (!page->mainFrame()->editor()->isContinuousSpellCheckingEnabled())
+        page->mainFrame()->editor()->toggleContinuousSpellChecking();
 }
 
 Internals::Internals(Document* document)
@@ -1500,6 +1502,15 @@ bool Internals::hasAutocorrectedMarker(Document* document, int from, int length,
         return 0;
     
     return document->frame()->editor()->selectionStartHasMarkerFor(DocumentMarker::Autocorrected, from, length);
+}
+
+void Internals::setContinuousSpellCheckingEnabled(bool enabled, ExceptionCode&)
+{
+    if (!contextDocument() || !contextDocument()->frame() || !contextDocument()->frame()->editor())
+        return;
+
+    if (enabled != contextDocument()->frame()->editor()->isContinuousSpellCheckingEnabled())
+        contextDocument()->frame()->editor()->toggleContinuousSpellChecking();
 }
 
 #if ENABLE(INSPECTOR)

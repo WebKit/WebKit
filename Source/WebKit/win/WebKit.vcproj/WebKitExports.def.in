@@ -312,6 +312,8 @@ EXPORTS
         ??0ContextDestructionObserver@WebCore@@QAE@PAVScriptExecutionContext@1@@Z
         ?nodesFromRect@Document@WebCore@@QBE?AV?$PassRefPtr@VNodeList@WebCore@@@WTF@@HHIIIII@Z
         ?selectionStartHasMarkerFor@Editor@WebCore@@QBE_NW4MarkerType@DocumentMarker@2@HH@Z
+        ?isContinuousSpellCheckingEnabled@Editor@WebCore@@QBE_NXZ
+        ?toggleContinuousSpellChecking@Editor@WebCore@@QAEXXZ
 #if ENABLE(FULLSCREEN_API)
         ?webkitWillEnterFullScreenForElement@Document@WebCore@@QAEXPAVElement@2@@Z
         ?webkitDidEnterFullScreenForElement@Document@WebCore@@QAEXPAVElement@2@@Z
