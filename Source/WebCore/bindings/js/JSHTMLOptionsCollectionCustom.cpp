@@ -103,14 +103,10 @@ JSValue JSHTMLOptionsCollection::add(ExecState* exec)
     if (exec->argumentCount() < 2)
         imp->add(option, ec);
     else {
-        bool ok;
-        int index = finiteInt32Value(exec->argument(1), exec, ok);
+        int index = exec->argument(1).toInt32(exec);
         if (exec->hadException())
             return jsUndefined();
-        if (!ok)
-            ec = TYPE_MISMATCH_ERR;
-        else
-            imp->add(option, index, ec);
+        imp->add(option, index, ec);
     }
     setDOMException(exec, ec);
     return jsUndefined();

@@ -28,7 +28,7 @@ PASS nonNumericPolicy('document.body.scrollTop = x') is 'any type allowed'
 PASS nonNumericPolicy('document.images.item(x)') is 'any type allowed'
 PASS nonNumericPolicy('document.createElement("input").setSelectionRange(x, 0)') is 'any type allowed'
 PASS nonNumericPolicy('document.createElement("input").setSelectionRange(0, x)') is 'any type allowed'
-FAIL nonNumericPolicy('createHTMLOptionsCollection().add(document.createElement("option"), x)') should be any type allowed. Was mixed.
+PASS nonNumericPolicy('createHTMLOptionsCollection().add(document.createElement("option"), x)') is 'any type allowed'
 PASS nonNumericPolicy('createHTMLOptionsCollection().remove(x)') is 'any type allowed'
 PASS nonNumericPolicy('createHTMLSelectElement().remove(x)') is 'any type allowed'
 PASS nonNumericPolicy('createHTMLSelectElement().item(x)') is 'any type allowed'
