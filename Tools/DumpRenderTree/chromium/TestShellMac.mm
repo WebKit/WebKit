@@ -31,11 +31,8 @@
 #include "config.h"
 
 #include "TestShell.h"
-#include "WebThemeEngineDRTMac.h"
 #include "webkit/support/webkit_support.h"
 #import <AppKit/AppKit.h>
-
-static WebThemeEngineDRTMac themeEngine;
 
 // A class to be the target/selector of the "watchdog" thread that ensures
 // pages timeout if they take too long and tells the test harness via stdout.
@@ -129,7 +126,6 @@ void TestShell::waitTestFinished()
 
 void platformInit(int*, char***)
 {
-    webkit_support::SetThemeEngine(&themeEngine);
 }
 
 void openStartupDialog()
