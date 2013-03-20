@@ -153,7 +153,7 @@ void ImageBufferData::draw(GraphicsContext* thisContext, GraphicsContext* otherC
     }
 }
 
-ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace colorSpace, RenderingMode renderingMode, DeferralMode deferralMode, HostWindow* window, bool& success)
+ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace colorSpace, RenderingMode renderingMode, HostWindow* window, bool& success)
     : m_size(size)
     , m_logicalSize(size)
     , m_resolutionScale(1)

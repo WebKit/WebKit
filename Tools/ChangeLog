@@ -1,3 +1,26 @@
+2013-03-20  Justin Novosad  <junov@google.com>
+
+        [Chromium] Code cleanup: removing support for non-deferred 2d canvas rendering
+        https://bugs.webkit.org/show_bug.cgi?id=112605
+
+        Reviewed by James Robinson.
+
+        Deleting all the code that was used for propagating and supporting
+        the Chromium setting for disabling deferred 2d canvas rendering.
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main):
+        * DumpRenderTree/chromium/TestRunner/public/WebPreferences.h:
+        * DumpRenderTree/chromium/TestRunner/src/WebPreferences.cpp:
+        (WebTestRunner::WebPreferences::reset):
+        (WebTestRunner::WebPreferences::applyTo):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::resetWebSettings):
+        (TestShell::runFileTest):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell):
+
 2013-03-20  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Qt 4.8 tool related stuff removal from webkitpy.

@@ -72,7 +72,7 @@ ImageBufferData::ImageBufferData(const IntSize& size)
 {
 }
 
-static SkCanvas* createAcceleratedCanvas(const IntSize& size, ImageBufferData* data, DeferralMode deferralMode)
+static SkCanvas* createAcceleratedCanvas(const IntSize& size, ImageBufferData* data)
 {
     RefPtr<GraphicsContext3D> context3D = SharedGraphicsContext3D::get();
     if (!context3D)
@@ -94,7 +94,7 @@ static SkCanvas* createAcceleratedCanvas(const IntSize& size, ImageBufferData* d
     SkAutoTUnref<SkDevice> device(new SkGpuDevice(gr, texture.get()));
 #if USE(ACCELERATED_COMPOSITING)
     Canvas2DLayerBridge::ThreadMode threadMode = WebKit::Platform::current()->isThreadedCompositingEnabled() ? Canvas2DLayerBridge::Threaded : Canvas2DLayerBridge::SingleThread;
-    data->m_layerBridge = Canvas2DLayerBridge::create(context3D.release(), size, deferralMode, threadMode, texture.get()->getTextureHandle());
+    data->m_layerBridge = Canvas2DLayerBridge::create(context3D.release(), size, threadMode, texture.get()->getTextureHandle());
     canvas = data->m_layerBridge->skCanvas(device.get());
 #else
     canvas = new SkCanvas(device.get());
@@ -151,7 +151,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace,
     success = true;
 }
 
-ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace, RenderingMode renderingMode, DeferralMode deferralMode, bool& success)
+ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace, RenderingMode renderingMode, bool& success)
     : m_data(size)
     , m_size(size)
     , m_logicalSize(size)
@@ -160,7 +160,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace,
     OwnPtr<SkCanvas> canvas;
 
     if (renderingMode == Accelerated)
-        canvas = adoptPtr(createAcceleratedCanvas(size, &m_data, deferralMode));
+        canvas = adoptPtr(createAcceleratedCanvas(size, &m_data));
     else if (renderingMode == UnacceleratedNonPlatformBuffer)
         canvas = adoptPtr(createNonPlatformCanvas(size));
 

@@ -63,7 +63,7 @@ public:
 
 class Canvas2DLayerBridgeTest : public Test {
 protected:
-    void fullLifecycleTest(Canvas2DLayerBridge::ThreadMode threadMode, DeferralMode deferralMode)
+    void fullLifecycleTest(Canvas2DLayerBridge::ThreadMode threadMode)
     {
         RefPtr<GraphicsContext3D> mainContext = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new MockCanvasContext));
 
@@ -76,52 +76,29 @@ protected:
         WebGLId backTextureId = 1;
         WebGLId frontTextureId = 1;
 
-        // Threaded and non deferred canvases are double buffered.
-        if (threadMode == Canvas2DLayerBridge::Threaded && deferralMode == NonDeferred) {
-            frontTextureId = 2;
-            // Create texture (on the main thread) and do the copy (on the impl thread).
-            EXPECT_CALL(mainMock, createTexture()).WillOnce(Return(frontTextureId));
-        }
-
-        OwnPtr<Canvas2DLayerBridge> bridge = Canvas2DLayerBridge::create(mainContext.get(), size, deferralMode, threadMode, backTextureId);
+        OwnPtr<Canvas2DLayerBridge> bridge = Canvas2DLayerBridge::create(mainContext.get(), size, threadMode, backTextureId);
 
         ::testing::Mock::VerifyAndClearExpectations(&mainMock);
 
         EXPECT_CALL(mainMock, flush());
-        if (threadMode == Canvas2DLayerBridge::Threaded && deferralMode == NonDeferred)
-            EXPECT_CALL(updater, appendCopy(backTextureId, frontTextureId, WebSize(300, 150)));
         EXPECT_EQ(frontTextureId, bridge->prepareTexture(updater));
         ::testing::Mock::VerifyAndClearExpectations(&mainMock);
         ::testing::Mock::VerifyAndClearExpectations(&updater);
 
-        if (threadMode == Canvas2DLayerBridge::Threaded && deferralMode == NonDeferred) {
-            EXPECT_CALL(mainMock, deleteTexture(frontTextureId));
-            EXPECT_CALL(mainMock, flush());
-        }
         bridge.clear();
     }
 };
 
 namespace {
 
-TEST_F(Canvas2DLayerBridgeTest, testFullLifecycleSingleThreadedDeferred)
+TEST_F(Canvas2DLayerBridgeTest, testFullLifecycleSingleThreaded)
 {
-    fullLifecycleTest(Canvas2DLayerBridge::SingleThread, NonDeferred);
+    fullLifecycleTest(Canvas2DLayerBridge::SingleThread);
 }
 
-TEST_F(Canvas2DLayerBridgeTest, testFullLifecycleSingleThreadedNonDeferred)
+TEST_F(Canvas2DLayerBridgeTest, testFullLifecycleThreaded)
 {
-    fullLifecycleTest(Canvas2DLayerBridge::SingleThread, Deferred);
-}
-
-TEST_F(Canvas2DLayerBridgeTest, testFullLifecycleThreadedNonDeferred)
-{
-    fullLifecycleTest(Canvas2DLayerBridge::Threaded, NonDeferred);
-}
-
-TEST_F(Canvas2DLayerBridgeTest, testFullLifecycleThreadedDeferred)
-{
-    fullLifecycleTest(Canvas2DLayerBridge::Threaded, Deferred);
+    fullLifecycleTest(Canvas2DLayerBridge::Threaded);
 }
 
 } // namespace

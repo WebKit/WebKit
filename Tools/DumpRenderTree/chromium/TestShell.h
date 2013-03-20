@@ -121,7 +121,6 @@ public:
     void setForceCompositingMode(bool enabled) { m_forceCompositingMode = enabled; }
     void setThreadedHTMLParser(bool enabled) { m_threadedHTMLParser = enabled; }
     void setAccelerated2dCanvasEnabled(bool enabled) { m_accelerated2dCanvasEnabled = enabled; }
-    void setDeferred2dCanvasEnabled(bool enabled) { m_deferred2dCanvasEnabled = enabled; }
     void setPerTilePaintingEnabled(bool enabled) { m_perTilePaintingEnabled = enabled; }
     void setDeferredImageDecodingEnabled(bool enabled) { m_deferredImageDecodingEnabled = enabled; }
 #if defined(OS_WIN)
@@ -216,7 +215,6 @@ private:
     bool m_forceCompositingMode;
     bool m_threadedHTMLParser;
     bool m_accelerated2dCanvasEnabled;
-    bool m_deferred2dCanvasEnabled;
     bool m_perTilePaintingEnabled;
     bool m_deferredImageDecodingEnabled;
     WebTestRunner::WebPreferences m_prefs;

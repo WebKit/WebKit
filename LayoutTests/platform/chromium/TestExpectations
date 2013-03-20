@@ -1456,6 +1456,14 @@ webkit.org/b/75276 [ Android ] fast/repaint/shadow-multiple-horizontal.html [ Im
 webkit.org/b/75276 [ Android ] fast/repaint/shadow-multiple-strict-horizontal.html [ ImageOnlyFailure ]
 webkit.org/b/75276 [ Android ] fast/repaint/shadow-multiple-strict-vertical.html [ ImageOnlyFailure ]
 
+# These tests fail due to a bug with 2D canvas command deferral
+crbug.com/222140 platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.beside.html [ Failure ]
+crbug.com/222140 platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.shape1.html [ Failure ]
+crbug.com/222140 platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.behind.html [ Failure ]
+crbug.com/222140 platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.shape2.html [ Failure ]
+crbug.com/222140 platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.touch1.html [ Failure ]
+crbug.com/222140 platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.touch3.html [ Failure ]
+
 # -----------------------------------------------------------------
 # WebGL Tests
 # -----------------------------------------------------------------

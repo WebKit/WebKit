@@ -106,7 +106,7 @@ static void releaseImageData(void*, const void* data, size_t)
     fastFree(const_cast<void*>(data));
 }
 
-ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace imageColorSpace, RenderingMode renderingMode, DeferralMode, bool& success)
+ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace imageColorSpace, RenderingMode renderingMode, bool& success)
     : m_data(size) // NOTE: The input here isn't important as ImageBufferDataCG's constructor just ignores it.
     , m_logicalSize(size)
     , m_resolutionScale(resolutionScale)

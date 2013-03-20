@@ -59,7 +59,6 @@ static const char optionEnableSoftwareCompositing[] = "--enable-software-composi
 static const char optionEnableThreadedCompositing[] = "--enable-threaded-compositing";
 static const char optionForceCompositingMode[] = "--force-compositing-mode";
 static const char optionEnableAccelerated2DCanvas[] = "--enable-accelerated-2d-canvas";
-static const char optionEnableDeferred2DCanvas[] = "--enable-deferred-2d-canvas";
 static const char optionEnableAcceleratedCompositingForVideo[] = "--enable-accelerated-video";
 static const char optionEnableAcceleratedFixedPosition[] = "--enable-accelerated-fixed-position";
 static const char optionEnableAcceleratedOverflowScroll[] = "--enable-accelerated-overflow-scroll";
@@ -138,7 +137,6 @@ int main(int argc, char* argv[])
     bool forceCompositingMode = false;
     bool threadedHTMLParser = true;
     bool accelerated2DCanvasEnabled = false;
-    bool deferred2DCanvasEnabled = false;
     bool perTilePaintingEnabled = false;
     bool deferredImageDecodingEnabled = false;
     bool stressOpt = false;
@@ -183,8 +181,6 @@ int main(int argc, char* argv[])
             threadedHTMLParser = false;
         else if (argument == optionEnableAccelerated2DCanvas)
             accelerated2DCanvasEnabled = true;
-        else if (argument == optionEnableDeferred2DCanvas)
-            deferred2DCanvasEnabled = true;
         else if (argument == optionEnablePerTilePainting)
             perTilePaintingEnabled = true;
         else if (argument == optionEnableDeferredImageDecoding)
@@ -228,7 +224,6 @@ int main(int argc, char* argv[])
         shell.setForceCompositingMode(forceCompositingMode);
         shell.setThreadedHTMLParser(threadedHTMLParser);
         shell.setAccelerated2dCanvasEnabled(accelerated2DCanvasEnabled);
-        shell.setDeferred2dCanvasEnabled(deferred2DCanvasEnabled);
         shell.setPerTilePaintingEnabled(perTilePaintingEnabled);
         shell.setDeferredImageDecodingEnabled(deferredImageDecodingEnabled);
         shell.setJavaScriptFlags(javaScriptFlags);

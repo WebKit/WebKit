@@ -520,22 +520,6 @@ bool HTMLCanvasElement::shouldAccelerate(const IntSize& size) const
 #endif
 }
 
-bool HTMLCanvasElement::shouldDefer() const
-{
-#if USE(SKIA)
-    if (m_context && !m_context->is2d())
-        return false;
-
-    Settings* settings = document()->settings();
-    if (!settings || !settings->deferred2dCanvasEnabled())
-        return false;
-
-    return true;
-#else
-    return false;
-#endif
-}
-
 void HTMLCanvasElement::createImageBuffer() const
 {
     ASSERT(!m_imageBuffer);
@@ -565,8 +549,7 @@ void HTMLCanvasElement::createImageBuffer() const
 #else
         Unaccelerated;
 #endif
-    DeferralMode deferralMode = shouldDefer() ? Deferred : NonDeferred;
-    m_imageBuffer = ImageBuffer::create(size(), m_deviceScaleFactor, ColorSpaceDeviceRGB, renderingMode, deferralMode);
+    m_imageBuffer = ImageBuffer::create(size(), m_deviceScaleFactor, ColorSpaceDeviceRGB, renderingMode);
     if (!m_imageBuffer)
         return;
     m_imageBuffer->context()->setShadowsIgnoreTransforms(true);

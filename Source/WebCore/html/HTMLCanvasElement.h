@@ -160,8 +160,6 @@ private:
 
     void setSurfaceSize(const IntSize&);
 
-    bool shouldDefer() const;
-
     bool paintsIntoCanvasBuffer() const;
 
     HashSet<CanvasObserver*> m_observers;

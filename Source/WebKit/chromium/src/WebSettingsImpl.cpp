@@ -514,7 +514,6 @@ void WebSettingsImpl::setAntialiased2dCanvasEnabled(bool enabled)
 
 void WebSettingsImpl::setDeferred2dCanvasEnabled(bool enabled)
 {
-    m_settings->setDeferred2dCanvasEnabled(enabled);
 }
 
 void WebSettingsImpl::setDeferredImageDecodingEnabled(bool enabled)

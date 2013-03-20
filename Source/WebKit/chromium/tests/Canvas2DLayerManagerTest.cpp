@@ -42,7 +42,7 @@ using testing::Test;
 class FakeCanvas2DLayerBridge : public Canvas2DLayerBridge {
 public:
     FakeCanvas2DLayerBridge() 
-        : Canvas2DLayerBridge(GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new WebKit::FakeWebGraphicsContext3D)), IntSize(1, 1), Deferred, SingleThread, 0)
+        : Canvas2DLayerBridge(GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new WebKit::FakeWebGraphicsContext3D)), IntSize(1, 1), SingleThread, 0)
         , m_freeableBytes(0)
         , m_freeMemoryIfPossibleCount(0)
         , m_flushCount(0)

@@ -27,7 +27,6 @@
 #define Canvas2DLayerBridge_h
 
 #include "GraphicsContext3D.h"
-#include "ImageBuffer.h" // For DeferralMode enum.
 #include "IntSize.h"
 #include "SkDeferredCanvas.h"
 #include <public/WebExternalTextureLayer.h>
@@ -50,9 +49,9 @@ public:
         Threaded
     };
 
-    static PassOwnPtr<Canvas2DLayerBridge> create(PassRefPtr<GraphicsContext3D> context, const IntSize& size, DeferralMode deferralMode, ThreadMode threading, unsigned textureId)
+    static PassOwnPtr<Canvas2DLayerBridge> create(PassRefPtr<GraphicsContext3D> context, const IntSize& size, ThreadMode threading, unsigned textureId)
     {
-        return adoptPtr(new Canvas2DLayerBridge(context, size, deferralMode, threading, textureId));
+        return adoptPtr(new Canvas2DLayerBridge(context, size, threading, textureId));
     }
 
     virtual ~Canvas2DLayerBridge();
@@ -81,15 +80,11 @@ public:
     unsigned backBufferTexture();
 
 protected:
-    Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D>, const IntSize&, DeferralMode, ThreadMode, unsigned textureId);
-    SkDeferredCanvas* deferredCanvas();
+    Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D>, const IntSize&, ThreadMode, unsigned textureId);
 
-    DeferralMode m_deferralMode;
-    bool m_useDoubleBuffering;
-    unsigned m_frontBufferTexture;
     unsigned m_backBufferTexture;
     IntSize m_size;
-    SkCanvas* m_canvas;
+    SkDeferredCanvas* m_canvas;
     OwnPtr<WebKit::WebExternalTextureLayer> m_layer;
     RefPtr<GraphicsContext3D> m_context;
     size_t m_bytesAllocated;
