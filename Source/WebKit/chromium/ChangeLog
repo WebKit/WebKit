@@ -1,3 +1,16 @@
+2013-03-20  Yufeng Shen  <miletus@chromium.org>
+
+        Remove PlatformEvent::GestureDoubleTap
+        https://bugs.webkit.org/show_bug.cgi?id=93045
+
+        Reviewed by Antonio Gomes.
+
+        PlatformEvent::GestureDoubleTap is not currently
+        used in WebCore so remove it.
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformGestureEventBuilder::PlatformGestureEventBuilder):
+
 2013-03-20  Justin Novosad  <junov@google.com>
 
         [Chromium] Code cleanup: removing support for non-deferred 2d canvas rendering

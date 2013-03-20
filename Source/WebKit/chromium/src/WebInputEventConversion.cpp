@@ -186,9 +186,6 @@ PlatformGestureEventBuilder::PlatformGestureEventBuilder(Widget* widget, const W
     case WebInputEvent::GestureTapCancel:
         m_type = PlatformEvent::GestureTapDownCancel;
         break;
-    case WebInputEvent::GestureDoubleTap:
-        m_type = PlatformEvent::GestureDoubleTap;
-        break;
     case WebInputEvent::GestureTwoFingerTap:
         m_type = PlatformEvent::GestureTwoFingerTap;
         m_area = expandedIntSize(FloatSize(e.data.twoFingerTap.firstFingerWidth / scale, e.data.twoFingerTap.firstFingerHeight / scale));

@@ -53,7 +53,6 @@ PassRefPtr<GestureEvent> GestureEvent::create(PassRefPtr<AbstractView> view, con
         eventType = eventNames().gesturetapEvent; break;
     case PlatformEvent::GestureTapDown:
         eventType = eventNames().gesturetapdownEvent; break;
-    case PlatformEvent::GestureDoubleTap:
     case PlatformEvent::GestureTwoFingerTap:
     case PlatformEvent::GestureLongPress:
     case PlatformEvent::GesturePinchBegin:

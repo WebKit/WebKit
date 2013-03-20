@@ -2454,11 +2454,6 @@ bool EventHandler::handleGestureTapDown()
 
 bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
 {
-    // We don't use DoubleTap at the moment, it's mostly redundant with tap since tap now contains
-    // a tap count. FIXME: We should probably remove GestureDoubleTap (http://wkb.ug/93045).
-    if (gestureEvent.type() == PlatformEvent::GestureDoubleTap)
-        return false;
-
     Node* eventTarget = 0;
     Scrollbar* scrollbar = 0;
     if (gestureEvent.type() == PlatformEvent::GestureScrollEnd
@@ -2545,7 +2540,6 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
         return handleGestureLongTap(gestureEvent);
     case PlatformEvent::GestureTwoFingerTap:
         return handleGestureTwoFingerTap(gestureEvent);
-    case PlatformEvent::GestureDoubleTap:
     case PlatformEvent::GesturePinchBegin:
     case PlatformEvent::GesturePinchEnd:
     case PlatformEvent::GesturePinchUpdate:

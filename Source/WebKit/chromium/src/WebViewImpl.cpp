@@ -827,9 +827,11 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         if (m_webSettings->doubleTapToZoomEnabled() && m_minimumPageScaleFactor != m_maximumPageScaleFactor) {
             m_client->cancelScheduledContentIntents();
             animateZoomAroundPoint(platformEvent.position(), DoubleTap);
-            eventSwallowed = true;
-            break;
         }
+        // GestureDoubleTap is currently only used by Android for zooming. For WebCore,
+        // GestureTap with tap count = 2 is used instead. So we drop GestureDoubleTap here.
+        eventSwallowed = true;
+        break;
     case WebInputEvent::GestureScrollBegin:
     case WebInputEvent::GesturePinchBegin:
         m_client->cancelScheduledContentIntents();
