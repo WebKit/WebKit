@@ -1,3 +1,24 @@
+2013-03-20  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        ARMv7 replaceWithJump ASSERT failure after r135330.
+        https://bugs.webkit.org/show_bug.cgi?id=103146
+
+        Reviewed by Filip Pizlo.
+
+        On Linux, the 24 bit distance range of jumps sometimes does not
+        enough to cover all targets addresses. This patch supports jumps
+        outside of this range using a mov/movt/bx 10 byte long sequence.
+
+        * assembler/ARMv7Assembler.h:
+        (ARMv7Assembler):
+        (JSC::ARMv7Assembler::revertJumpTo_movT3movtcmpT2):
+        (JSC::ARMv7Assembler::nopw):
+        (JSC::ARMv7Assembler::label):
+        (JSC::ARMv7Assembler::replaceWithJump):
+        (JSC::ARMv7Assembler::maxJumpReplacementSize):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::revertJumpReplacementToBranchPtrWithPatch):
+
 2013-03-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: Fix over-releasing in allocateConstructorAndPrototypeWithSuperClassInfo:
