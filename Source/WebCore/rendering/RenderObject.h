@@ -844,12 +844,6 @@ public:
     // Repaint only if our old bounds and new bounds are different. The caller may pass in newBounds and newOutlineBox if they are known.
     bool repaintAfterLayoutIfNeeded(const RenderLayerModelObject* repaintContainer, const LayoutRect& oldBounds, const LayoutRect& oldOutlineBox, const LayoutRect* newBoundsPtr = 0, const LayoutRect* newOutlineBoxPtr = 0);
 
-    // Repaint only if the object moved.
-    virtual void repaintDuringLayoutIfMoved(const LayoutRect&);
-
-    // Called to repaint a block's floats.
-    virtual void repaintOverhangingFloats(bool paintAllDescendants = false);
-
     bool checkForRepaintDuringLayout() const;
 
     // Returns the rect that should be repainted whenever this object changes.  The rect is in the view's

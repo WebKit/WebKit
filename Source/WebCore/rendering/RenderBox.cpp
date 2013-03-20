@@ -2013,6 +2013,10 @@ void RenderBox::repaintDuringLayoutIfMoved(const LayoutRect& oldRect)
     }
 }
 
+void RenderBox::repaintOverhangingFloats(bool)
+{
+}
+
 void RenderBox::updateLogicalWidth()
 {
     LogicalExtentComputedValues computedValues;

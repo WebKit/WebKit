@@ -2845,7 +2845,7 @@ void RenderBlock::repaintOverhangingFloats(bool paintAllDescendants)
         // condition is replaced with being a descendant of us.
         if (logicalBottomForFloat(r) > logicalHeight() && ((paintAllDescendants && r->m_renderer->isDescendantOf(this)) || r->shouldPaint()) && !r->m_renderer->hasSelfPaintingLayer()) {
             r->m_renderer->repaint();
-            r->m_renderer->repaintOverhangingFloats();
+            r->m_renderer->repaintOverhangingFloats(false);
         }
     }
 }

@@ -1510,14 +1510,6 @@ bool RenderObject::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* repa
     return false;
 }
 
-void RenderObject::repaintDuringLayoutIfMoved(const LayoutRect&)
-{
-}
-
-void RenderObject::repaintOverhangingFloats(bool)
-{
-}
-
 bool RenderObject::checkForRepaintDuringLayout() const
 {
     return !document()->view()->needsFullRepaint() && !hasLayer() && everHadLayout();

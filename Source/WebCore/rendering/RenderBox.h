@@ -377,8 +377,8 @@ public:
 
     virtual LayoutRect clippedOverflowRectForRepaint(const RenderLayerModelObject* repaintContainer) const OVERRIDE;
     virtual void computeRectForRepaint(const RenderLayerModelObject* repaintContainer, LayoutRect&, bool fixed = false) const OVERRIDE;
-
-    virtual void repaintDuringLayoutIfMoved(const LayoutRect&);
+    void repaintDuringLayoutIfMoved(const LayoutRect&);
+    virtual void repaintOverhangingFloats(bool paintAllDescendants);
 
     virtual LayoutUnit containingBlockLogicalWidthForContent() const;
     LayoutUnit containingBlockLogicalHeightForContent(AvailableLogicalHeightType) const;
