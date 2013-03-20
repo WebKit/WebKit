@@ -598,6 +598,14 @@ body:not(.platform-mac) .toolbar-item.close-left {
     background-color: white;
 }
 
+.animate-slow * {
+    -webkit-transition-duration: 2.5s !important;
+}
+
+.animate #main {
+    -webkit-transition: bottom 250ms linear;
+}
+
 body.show-toolbar-icons #main {
     top: 56px;
 }
@@ -664,6 +672,10 @@ body.drawer-visible #main-panels {
     border-bottom: 1px solid rgb(202, 202, 202);
     cursor: ns-resize;
     height: 24px;
+}
+
+.animate #floating-status-bar-container {
+    -webkit-transition: padding 250ms linear;
 }
 
 body.drawer-visible #floating-status-bar-container {
@@ -908,6 +920,10 @@ body.port-qt .dock-status-bar-item {
     right: 0;
     height: 200px;
     background-color: white;
+}
+
+.animate #drawer {
+    -webkit-transition: height 250ms linear;
 }
 
 #drawer-contents {
@@ -2520,6 +2536,10 @@ body.platform-mac .search-drawer-header input[type="checkbox"].search-config-che
     -webkit-flex: 1 1 0;
     width: 0;
     overflow: hidden;
+}
+
+.animate #bottom-status-bar-container > * {
+    -webkit-transition: opacity 250ms linear;
 }
 
 .search-status-bar-item {
