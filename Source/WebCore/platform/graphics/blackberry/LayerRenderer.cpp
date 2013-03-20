@@ -403,8 +403,6 @@ void LayerRenderer::compositeBuffer(const TransformationMatrix& transform, const
         const GLES2Program& program = useProgram(LayerProgramRGBA);
         glUniform1f(program.opacityLocation(), opacity);
 
-        glEnableVertexAttribArray(program.positionLocation());
-        glEnableVertexAttribArray(program.texCoordLocation());
         glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &vertices);
         glVertexAttribPointer(program.texCoordLocation(), 2, GL_FLOAT, GL_FALSE, 0, texcoords);
 
@@ -431,7 +429,6 @@ void LayerRenderer::drawColor(const TransformationMatrix& transform, const Float
     } else
         glDisable(GL_BLEND);
 
-    glEnableVertexAttribArray(program.positionLocation());
     glUniform4f(m_colorColorLocation, color.red() / 255.0, color.green() / 255.0, color.blue() / 255.0, color.alpha() / 255.0);
     glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &vertices);
 
@@ -594,8 +591,8 @@ void LayerRenderer::drawDebugBorder(LayerCompositingThread* layer)
     } else
         glDisable(GL_BLEND);
 
-    useProgram(ColorProgram);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, &layer->getTransformedBounds());
+    const GLES2Program& program = useProgram(ColorProgram);
+    glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &layer->getTransformedBounds());
     glUniform4f(m_colorColorLocation, borderColor.red() / 255.0, borderColor.green() / 255.0, borderColor.blue() / 255.0, 1);
 
     glLineWidth(std::max(1.0f, layer->borderWidth()));
@@ -605,13 +602,13 @@ void LayerRenderer::drawDebugBorder(LayerCompositingThread* layer)
 // Clears a rectangle inside the layer's bounds.
 void LayerRenderer::drawHolePunchRect(LayerCompositingThread* layer)
 {
-    useProgram(ColorProgram);
+    const GLES2Program& program = useProgram(ColorProgram);
     glUniform4f(m_colorColorLocation, 0, 0, 0, 0);
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ZERO);
     FloatQuad hole = layer->getTransformedHolePunchRect();
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, &hole);
+    glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &hole);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     checkGLError();
 }
@@ -943,9 +940,9 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
         glStencilOp(GL_KEEP, GL_INCR, GL_INCR);
 
         updateScissorIfNeeded(clipRect);
-        useProgram(ColorProgram);
+        const GLES2Program& program = useProgram(ColorProgram);
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, &layer->getTransformedBounds());
+        glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &layer->getTransformedBounds());
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     }
@@ -986,9 +983,9 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
         glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
 
         updateScissorIfNeeded(clipRect);
-        useProgram(ColorProgram);
+        const GLES2Program& program = useProgram(ColorProgram);
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, &layer->getTransformedBounds());
+        glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &layer->getTransformedBounds());
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
@@ -1196,6 +1193,10 @@ const GLES2Program& LayerRenderer::useProgram(ProgramIndex index)
         return program;
 
     glUseProgram(program.m_program);
+
+    glEnableVertexAttribArray(program.positionLocation());
+    if (index != ColorProgram)
+        glEnableVertexAttribArray(program.texCoordLocation());
 
     return program;
 }

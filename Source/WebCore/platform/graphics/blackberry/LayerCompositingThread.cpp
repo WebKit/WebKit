@@ -232,8 +232,6 @@ void LayerCompositingThread::drawTextures(double scale, const GLES2Program& prog
 
             glEnable(GL_BLEND);
             glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-            glEnableVertexAttribArray(program.positionLocation());
-            glEnableVertexAttribArray(program.texCoordLocation());
             glUniform1f(program.opacityLocation(), drawOpacity());
             glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &m_transformedBounds);
             glVertexAttribPointer(program.texCoordLocation(), 2, GL_FLOAT, GL_FALSE, 0, texcoords);
@@ -313,8 +311,6 @@ void LayerCompositingThread::drawSurface(const TransformationMatrix& drawTransfo
         glBindTexture(GL_TEXTURE_2D, surfaceTexID);
 
         FloatQuad surfaceQuad = getTransformedRect(m_bounds, IntRect(IntPoint::zero(), m_bounds), drawTransform);
-        glEnableVertexAttribArray(program.positionLocation());
-        glEnableVertexAttribArray(program.texCoordLocation());
         glUniform1f(program.opacityLocation(), layerRendererSurface()->drawOpacity());
         glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &surfaceQuad);
 
