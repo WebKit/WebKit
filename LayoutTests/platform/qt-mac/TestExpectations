@@ -5796,6 +5796,7 @@ webkit.org/b/89052 fast/css/image-orientation
 # CSS3 Text support is not yet enabled (needs ENABLE_CSS3_TEXT).
 webkit.org/b/58491 fast/css3-text/css3-text-decoration
 webkit.org/b/76173 fast/css3-text/css3-text-align-last
+webkit.org/b/112755 fast/css3-text/css3-text-indent [ Failure ]
 
 # Needs rebaseline after bug 86441
 # failing new tests

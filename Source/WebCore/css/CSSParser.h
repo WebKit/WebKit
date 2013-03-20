@@ -269,6 +269,8 @@ public:
     bool parseTextUnderlinePosition(bool important);
 #endif // CSS3_TEXT
 
+    PassRefPtr<CSSValue> parseTextIndent();
+    
     bool parseLineBoxContain(bool important);
     bool parseCalculation(CSSParserValue*, CalculationPermittedValueRange);
 

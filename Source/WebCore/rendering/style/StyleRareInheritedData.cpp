@@ -87,6 +87,9 @@ StyleRareInheritedData::StyleRareInheritedData()
     , textEmphasisMark(TextEmphasisMarkNone)
     , textEmphasisPosition(TextEmphasisPositionOver)
     , m_textOrientation(TextOrientationVerticalRight)
+#if ENABLE(CSS3_TEXT)
+    , m_textIndentLine(RenderStyle::initialTextIndentLine())
+#endif
     , m_lineBoxContain(RenderStyle::initialLineBoxContain())
 #if ENABLE(CSS_IMAGE_ORIENTATION)
     , m_imageOrientation(RenderStyle::initialImageOrientation())
@@ -157,6 +160,9 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , textEmphasisMark(o.textEmphasisMark)
     , textEmphasisPosition(o.textEmphasisPosition)
     , m_textOrientation(o.m_textOrientation)
+#if ENABLE(CSS3_TEXT)
+    , m_textIndentLine(o.m_textIndentLine)
+#endif
     , m_lineBoxContain(o.m_lineBoxContain)
 #if ENABLE(CSS_IMAGE_ORIENTATION)
     , m_imageOrientation(o.m_imageOrientation)
@@ -251,6 +257,9 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && textEmphasisMark == o.textEmphasisMark
         && textEmphasisPosition == o.textEmphasisPosition
         && m_textOrientation == o.m_textOrientation
+#if ENABLE(CSS3_TEXT)
+        && m_textIndentLine == o.m_textIndentLine
+#endif
         && m_lineBoxContain == o.m_lineBoxContain
         && hyphenationString == o.hyphenationString
         && locale == o.locale

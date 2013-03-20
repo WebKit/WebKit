@@ -2490,6 +2490,8 @@ fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align
 fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-line.html
 fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-color.html
 fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-underline-position.html
+fast/css3-text/css3-text-indent/getComputedStyle/getComputedStyle-text-indent-inherited.html
+fast/css3-text/css3-text-indent/getComputedStyle/getComputedStyle-text-indent.html
 
 # ACCELERATED_OVERFLOW_SCROLLING is disabled on Windows
 compositing/overflow/scrolling-without-painting.html

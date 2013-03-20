@@ -598,7 +598,6 @@ static inline bool isSimpleLengthPropertyID(CSSPropertyID propertyId, bool& acce
     case CSSPropertyMarginRight:
     case CSSPropertyMarginTop:
     case CSSPropertyRight:
-    case CSSPropertyTextIndent:
     case CSSPropertyTop:
     case CSSPropertyWebkitMarginAfter:
     case CSSPropertyWebkitMarginBefore:
@@ -2189,8 +2188,8 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             validPrimitive = validUnit(value, FLength);
         break;
 
-    case CSSPropertyTextIndent:          // <length> | <percentage> | inherit
-        validPrimitive = (!id && validUnit(value, FLength | FPercent));
+    case CSSPropertyTextIndent:
+        parsedValue = parseTextIndent();
         break;
 
     case CSSPropertyPaddingTop:          //// <padding-width> | inherit
@@ -9242,6 +9241,50 @@ bool CSSParser::parseTextEmphasisStyle(bool important)
     }
 
     return false;
+}
+
+PassRefPtr<CSSValue> CSSParser::parseTextIndent()
+{
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+
+    // <length> | <percentage> | inherit
+    if (m_valueList->size() == 1) {
+        CSSParserValue* value = m_valueList->current();
+        if (!value->id && validUnit(value, FLength | FPercent)) {
+            list->append(createPrimitiveNumericValue(value));
+            m_valueList->next();
+            return list.release();
+        }
+    }
+
+#if ENABLE(CSS3_TEXT)
+    // The case where text-indent has only <length>(or <percentage>) value
+    // is handled above if statement even though CSS3_TEXT is enabled.
+
+    // [ [ <length> | <percentage> ] && -webkit-each-line ] | inherit
+    if (m_valueList->size() != 2)
+        return 0;
+
+    CSSParserValue* firstValue = m_valueList->current();
+    CSSParserValue* secondValue = m_valueList->next();
+    CSSParserValue* lengthOrPercentageValue = 0;
+
+    // [ <length> | <percentage> ] -webkit-each-line
+    if (validUnit(firstValue, FLength | FPercent) && secondValue->id == CSSValueWebkitEachLine)
+        lengthOrPercentageValue = firstValue;
+    // -webkit-each-line [ <length> | <percentage> ]
+    else if (firstValue->id == CSSValueWebkitEachLine && validUnit(secondValue, FLength | FPercent))
+        lengthOrPercentageValue = secondValue;
+
+    if (lengthOrPercentageValue) {
+        list->append(createPrimitiveNumericValue(lengthOrPercentageValue));
+        list->append(cssValuePool().createIdentifierValue(CSSValueWebkitEachLine));
+        m_valueList->next();
+        return list.release();
+    }
+#endif
+
+    return 0;
 }
 
 bool CSSParser::parseLineBoxContain(bool important)

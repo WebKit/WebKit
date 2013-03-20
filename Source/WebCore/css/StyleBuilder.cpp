@@ -1933,6 +1933,56 @@ public:
 };
 #endif
 
+class ApplyPropertyTextIndent {
+public:
+    static void applyInheritValue(CSSPropertyID, StyleResolver* styleResolver)
+    {
+        styleResolver->style()->setTextIndent(styleResolver->parentStyle()->textIndent());
+#if ENABLE(CSS3_TEXT)
+        styleResolver->style()->setTextIndentLine(styleResolver->parentStyle()->textIndentLine());
+#endif
+    }
+
+    static void applyInitialValue(CSSPropertyID, StyleResolver* styleResolver)
+    {
+        styleResolver->style()->setTextIndent(RenderStyle::initialTextIndent());
+#if ENABLE(CSS3_TEXT)
+        styleResolver->style()->setTextIndentLine(RenderStyle::initialTextIndentLine());
+#endif
+    }
+
+    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
+    {
+        if (!value->isValueList())
+            return;
+
+        // [ <length> | <percentage> ] -webkit-each-line
+        // The order is guaranteed. See CSSParser::parseTextIndent.
+        // The second value, -webkit-each-line is handled only when CSS3_TEXT is enabled.
+
+        CSSValueList* valueList = static_cast<CSSValueList*>(value);
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(valueList->itemWithoutBoundsCheck(0));
+        Length lengthOrPercentageValue = primitiveValue->convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion | ViewportPercentageConversion>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom());
+        ASSERT(!lengthOrPercentageValue.isUndefined());
+        styleResolver->style()->setTextIndent(lengthOrPercentageValue);
+
+#if ENABLE(CSS3_TEXT)
+        ASSERT(valueList->length() <= 2);
+        CSSPrimitiveValue* eachLineValue = static_cast<CSSPrimitiveValue*>(valueList->item(1));
+        if (eachLineValue) {
+            ASSERT(eachLineValue->getIdent() == CSSValueWebkitEachLine);
+            styleResolver->style()->setTextIndentLine(TextIndentEachLine);
+        } else
+            styleResolver->style()->setTextIndentLine(TextIndentFirstLine);
+#endif
+    }
+
+    static PropertyHandler createHandler()
+    {
+        return PropertyHandler(&applyInheritValue, &applyInitialValue, &applyValue);
+    }
+};
+
 const StyleBuilder& StyleBuilder::sharedStyleBuilder()
 {
     DEFINE_STATIC_LOCAL(StyleBuilder, styleBuilderInstance, ());
@@ -2050,7 +2100,7 @@ StyleBuilder::StyleBuilder()
     setPropertyHandler(CSSPropertyWebkitTextAlignLast, ApplyPropertyDefault<TextAlignLast, &RenderStyle::textAlignLast, TextAlignLast, &RenderStyle::setTextAlignLast, TextAlignLast, &RenderStyle::initialTextAlignLast>::createHandler());
     setPropertyHandler(CSSPropertyWebkitTextUnderlinePosition, ApplyPropertyTextUnderlinePosition::createHandler());
 #endif // CSS3_TEXT
-    setPropertyHandler(CSSPropertyTextIndent, ApplyPropertyLength<&RenderStyle::textIndent, &RenderStyle::setTextIndent, &RenderStyle::initialTextIndent>::createHandler());
+    setPropertyHandler(CSSPropertyTextIndent, ApplyPropertyTextIndent::createHandler());
     setPropertyHandler(CSSPropertyTextOverflow, ApplyPropertyDefault<TextOverflow, &RenderStyle::textOverflow, TextOverflow, &RenderStyle::setTextOverflow, TextOverflow, &RenderStyle::initialTextOverflow>::createHandler());
     setPropertyHandler(CSSPropertyTextRendering, ApplyPropertyFont<TextRenderingMode, &FontDescription::textRenderingMode, &FontDescription::setTextRenderingMode, AutoTextRendering>::createHandler());
     setPropertyHandler(CSSPropertyTextTransform, ApplyPropertyDefault<ETextTransform, &RenderStyle::textTransform, ETextTransform, &RenderStyle::setTextTransform, ETextTransform, &RenderStyle::initialTextTransform>::createHandler());

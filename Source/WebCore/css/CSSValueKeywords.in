@@ -1009,3 +1009,9 @@ snap
 drag
 no-drag
 #endif
+
+#if defined(ENABLE_CSS3_TEXT) && ENABLE_CSS3_TEXT
+// text-indent
+-webkit-each-line
+#endif
+

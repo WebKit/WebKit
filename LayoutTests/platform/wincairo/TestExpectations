@@ -2977,6 +2977,8 @@ webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last-inherited.html
 fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align-last.html
 fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-line.html
+fast/css3-text/css3-text-indent/getComputedStyle/getComputedStyle-text-indent-inherited.html
+fast/css3-text/css3-text-indent/getComputedStyle/getComputedStyle-text-indent.html
 
 # Spellchecker behavior tests.
 webkit.org/b/108370 editing/spelling/spelling-double-clicked-word.html [ Skip ]

@@ -1,0 +1,128 @@
+This tests check that text-indent parses properly the properties from CSS3 Text.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test the initial value:
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Value '10em':
+PASS e.style.textIndent is '10em'
+PASS e.style.getPropertyValue('text-indent') is '10em'
+PASS computedStyle.textIndent is '100px'
+PASS computedStyle.getPropertyValue('text-indent') is '100px'
+
+Value '20ex':
+PASS e.style.textIndent is '20ex'
+PASS e.style.getPropertyValue('text-indent') is '20ex'
+PASS computedStyle.textIndent is '200px'
+PASS computedStyle.getPropertyValue('text-indent') is '200px'
+
+Value '50%':
+PASS e.style.textIndent is '50%'
+PASS e.style.getPropertyValue('text-indent') is '50%'
+PASS computedStyle.textIndent is '50%'
+PASS computedStyle.getPropertyValue('text-indent') is '50%'
+
+Value 'calc(10px + 20px)':
+PASS e.style.textIndent is 'calc(10px + 20px)'
+PASS e.style.getPropertyValue('text-indent') is 'calc(10px + 20px)'
+PASS computedStyle.textIndent is '30px'
+PASS computedStyle.getPropertyValue('text-indent') is '30px'
+
+Value '10em -webkit-each-line':
+PASS e.style.textIndent is '10em -webkit-each-line'
+PASS e.style.getPropertyValue('text-indent') is '10em -webkit-each-line'
+PASS computedStyle.textIndent is '100px -webkit-each-line'
+PASS computedStyle.getPropertyValue('text-indent') is '100px -webkit-each-line'
+
+Value '-webkit-each-line 10em':
+PASS e.style.textIndent is '10em -webkit-each-line'
+PASS e.style.getPropertyValue('text-indent') is '10em -webkit-each-line'
+PASS computedStyle.textIndent is '100px -webkit-each-line'
+PASS computedStyle.getPropertyValue('text-indent') is '100px -webkit-each-line'
+
+Value '20ex -webkit-each-line':
+PASS e.style.textIndent is '20ex -webkit-each-line'
+PASS e.style.getPropertyValue('text-indent') is '20ex -webkit-each-line'
+PASS computedStyle.textIndent is '200px -webkit-each-line'
+PASS computedStyle.getPropertyValue('text-indent') is '200px -webkit-each-line'
+
+Value '-webkit-each-line 20ex':
+PASS e.style.textIndent is '20ex -webkit-each-line'
+PASS e.style.getPropertyValue('text-indent') is '20ex -webkit-each-line'
+PASS computedStyle.textIndent is '200px -webkit-each-line'
+PASS computedStyle.getPropertyValue('text-indent') is '200px -webkit-each-line'
+
+Value '30% -webkit-each-line':
+PASS e.style.textIndent is '30% -webkit-each-line'
+PASS e.style.getPropertyValue('text-indent') is '30% -webkit-each-line'
+PASS computedStyle.textIndent is '30% -webkit-each-line'
+PASS computedStyle.getPropertyValue('text-indent') is '30% -webkit-each-line'
+
+Value '-webkit-each-line 30%':
+PASS e.style.textIndent is '30% -webkit-each-line'
+PASS e.style.getPropertyValue('text-indent') is '30% -webkit-each-line'
+PASS computedStyle.textIndent is '30% -webkit-each-line'
+PASS computedStyle.getPropertyValue('text-indent') is '30% -webkit-each-line'
+
+Value 'calc(10px + 20px) -webkit-each-line':
+PASS e.style.textIndent is 'calc(10px + 20px) -webkit-each-line'
+PASS e.style.getPropertyValue('text-indent') is 'calc(10px + 20px) -webkit-each-line'
+PASS computedStyle.textIndent is '30px -webkit-each-line'
+PASS computedStyle.getPropertyValue('text-indent') is '30px -webkit-each-line'
+
+Value '-webkit-each-line calc(10px + 20px)':
+PASS e.style.textIndent is 'calc(10px + 20px) -webkit-each-line'
+PASS e.style.getPropertyValue('text-indent') is 'calc(10px + 20px) -webkit-each-line'
+PASS computedStyle.textIndent is '30px -webkit-each-line'
+PASS computedStyle.getPropertyValue('text-indent') is '30px -webkit-each-line'
+
+
+Invalid value test - '10m':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - '10m -webkit-each-line':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - '-webkit-each-line 10m':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - '10em 10em':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - '-webkit-each-line':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - '10em -webkit-each-line 10em':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+Invalid value test - '-webkit-each-line 10em -webkit-each-line':
+PASS e.style.textIndent is '0px'
+PASS e.style.getPropertyValue('text-indent') is '0px'
+PASS computedStyle.textIndent is '0px'
+PASS computedStyle.getPropertyValue('text-indent') is '0px'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
