@@ -101,7 +101,7 @@
 
 .data-grid td {
     vertical-align: top;
-    height: 12px;
+    height: 16px; /* Keep in sync with .data-grid table.data @ -webkit-background-size */
     line-height: 12px;
     padding: 2px 4px;
     white-space: nowrap;
