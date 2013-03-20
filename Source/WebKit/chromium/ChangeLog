@@ -1,3 +1,13 @@
+2013-03-19  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed, rolling out r146277.
+        http://trac.webkit.org/changeset/146277
+        https://bugs.webkit.org/show_bug.cgi?id=111695
+
+        Broke Chromium Android build
+
+        * features.gypi:
+
 2013-03-19  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove compositor settings that don't go through WebKit

@@ -28,9 +28,7 @@
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
     
@@ -48,7 +46,7 @@ public:
 private:
     PlatformSpeechSynthesis(SpeechSynthesis*);
 
-    SpeechSynthesis* m_speechSynthesis;
+    SpeechSynthesis* m_speechSynthsis;
 };
     
 } // namespace WebCore
