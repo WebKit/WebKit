@@ -1,3 +1,23 @@
+2013-03-20  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: Fix over-releasing in allocateConstructorAndPrototypeWithSuperClassInfo:
+        https://bugs.webkit.org/show_bug.cgi?id=112832
+
+        Reviewed by Geoffrey Garen.
+
+        If either the m_constructor or m_prototype (but not both) is collected, we will call 
+        allocateConstructorAndPrototypeWithSuperClassInfo, which will create a new object to replace the one 
+        that was collected, but at the end of the method we call release on both of them. 
+        This is incorrect since we autorelease the JSValue in the case that the object doesn't need to be 
+        reallocated. Thus we'll end up overreleasing later during the drain of the autorelease pool.
+
+        * API/JSWrapperMap.mm:
+        (objectWithCustomBrand): We no longer alloc here. We instead call the JSValue valueWithValue class method,
+        which autoreleases for us.
+        (-[JSObjCClassInfo allocateConstructorAndPrototypeWithSuperClassInfo:]): We no longer call release on the 
+        constructor or prototype JSValues.
+        * API/tests/testapi.mm: Added a new test that crashes on ToT due to over-releasing.
+
 2013-03-19  Filip Pizlo  <fpizlo@apple.com>
 
         It's called "Hash Consing" not "Hash Consting"

@@ -135,7 +135,7 @@ static JSObjectRef makeWrapper(JSContextRef ctx, JSClassRef jsClass, id wrappedO
 // Make an object that is in all ways a completely vanilla JavaScript object,
 // other than that it has a native brand set that will be displayed by the default
 // Object.prototype.toString conversion.
-static JSValue *createObjectWithCustomBrand(JSContext *context, NSString *brand, JSClassRef parentClass = 0, Class cls = 0)
+static JSValue *objectWithCustomBrand(JSContext *context, NSString *brand, JSClassRef parentClass = 0, Class cls = 0)
 {
     JSClassDefinition definition;
     definition = kJSClassDefinitionEmpty;
@@ -144,7 +144,7 @@ static JSValue *createObjectWithCustomBrand(JSContext *context, NSString *brand,
     JSClassRef classRef = JSClassCreate(&definition);
     JSObjectRef result = makeWrapper([context globalContextRef], classRef, cls);
     JSClassRelease(classRef);
-    return [[JSValue alloc] initWithValue:result inContext:context];
+    return [JSValue valueWithValue:result inContext:context];
 }
 
 // Look for @optional properties in the prototype containing a selector to property
@@ -379,12 +379,12 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
         if (m_prototype)
             prototype = [JSValue valueWithValue:toRef(m_prototype.get()) inContext:m_context];
         else
-            prototype = createObjectWithCustomBrand(m_context, [NSString stringWithFormat:@"%sPrototype", className]);
+            prototype = objectWithCustomBrand(m_context, [NSString stringWithFormat:@"%sPrototype", className]);
 
         if (m_constructor)
             constructor = [JSValue valueWithValue:toRef(m_constructor.get()) inContext:m_context];
         else
-            constructor = createObjectWithCustomBrand(m_context, [NSString stringWithFormat:@"%sConstructor", className], wrapperClass(), [m_class retain]);
+            constructor = objectWithCustomBrand(m_context, [NSString stringWithFormat:@"%sConstructor", className], wrapperClass(), [m_class retain]);
 
         JSContextRef cContext = [m_context globalContextRef];
         m_prototype = toJS(JSValueToObject(cContext, valueInternalValue(prototype), 0));
@@ -401,9 +401,6 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
 
         // Set [Prototype].
         JSObjectSetPrototype([m_context globalContextRef], toRef(m_prototype.get()), toRef(superClassInfo->m_prototype.get()));
-
-        [constructor release];
-        [prototype release];
     }
 }
 

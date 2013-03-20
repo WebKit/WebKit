@@ -562,6 +562,22 @@ void testObjectiveCAPI()
 
     @autoreleasepool {
         JSContext *context = [[JSContext alloc] init];
+        TestObject *testObject = [TestObject testObject];
+        @autoreleasepool {
+            context[@"testObject"] = testObject;
+            [context evaluateScript:@"var constructor = Object.getPrototypeOf(testObject).constructor; constructor.prototype = undefined;"];
+            [context evaluateScript:@"testObject = undefined"];
+        }
+        
+        JSSynchronousGarbageCollectForDebugging([context globalContextRef]);
+
+        @autoreleasepool {
+            context[@"testObject"] = testObject;
+        }
+    }
+
+    @autoreleasepool {
+        JSContext *context = [[JSContext alloc] init];
         TextXYZ *testXYZ = [[TextXYZ alloc] init];
 
         @autoreleasepool {
