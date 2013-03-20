@@ -685,18 +685,23 @@ void LayerRenderer::updateLayersRecursive(LayerCompositingThread* layer, const T
         FloatRect visibleRect = m_visibleRect;
         for (LayerCompositingThread* curr = layer->superlayer(); curr; curr = curr->superlayer()) {
 
-            // If we reach a container for fixed position layers, and it has its override's position set, it means it is a scrollable iframe
-            if (curr->isContainerForFixedPositionLayers() && curr->override()->isPositionSet()) {
+            if (curr->isContainerForFixedPositionLayers()) {
                 layoutRect = curr->frameVisibleRect();
                 contentsSize = curr->frameContentsSize();
 
-                // Inverted logic of
-                // FloatPoint layerPosition(-scrollPosition.x() + anchor.x() * bounds.width(),
-                //                          -scrollPosition.y() + anchor.y() * bounds.height());
-                FloatPoint scrollPosition(
-                    -(curr->override()->position().x() - (curr->anchorPoint().x() * curr->bounds().width())),
-                    -(curr->override()->position().y() - (curr->anchorPoint().y() * curr->bounds().height())));
-                visibleRect = FloatRect(scrollPosition, layoutRect.size());
+                // If we reach a container for fixed position layers, and it has its override's position set, it means it is a scrollable iframe
+                // currently being scrolled. Otherwise, use the WebKit-thread scroll position stored in frameVisibleRect().
+                if (curr->override()->isPositionSet()) {
+                    // Inverted logic of
+                    // FloatPoint layerPosition(-scrollPosition.x() + anchor.x() * bounds.width(),
+                    //                          -scrollPosition.y() + anchor.y() * bounds.height());
+                    FloatPoint scrollPosition(
+                        -(curr->override()->position().x() - (curr->anchorPoint().x() * curr->bounds().width())),
+                        -(curr->override()->position().y() - (curr->anchorPoint().y() * curr->bounds().height())));
+                    visibleRect = FloatRect(scrollPosition, layoutRect.size());
+                } else
+                    visibleRect = layoutRect;
+
                 break;
             }
         }
