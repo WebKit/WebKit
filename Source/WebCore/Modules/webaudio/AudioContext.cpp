@@ -197,6 +197,8 @@ AudioContext::~AudioContext()
     ASSERT(!m_referencedNodes.size());
     ASSERT(!m_finishedNodes.size());
     ASSERT(!m_automaticPullNodes.size());
+    if (m_automaticPullNodesNeedUpdating)
+        m_renderingAutomaticPullNodes.resize(m_automaticPullNodes.size());
     ASSERT(!m_renderingAutomaticPullNodes.size());
 }
 
