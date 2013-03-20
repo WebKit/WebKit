@@ -1,5 +1,23 @@
 2013-03-19  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
+        [Qt] Enable kerning by default
+        https://bugs.webkit.org/show_bug.cgi?id=112704
+
+        Reviewed by Jocelyn Turcotte.
+
+        Enable default kerning when fast kerning is available.
+
+        To support layout tests that depend on kerning being off by default,
+        a method is added to DumpRenderTreeSupportQt to reset the default.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::resetDefaultTypesettingFeatures):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        * WebCoreSupport/InitWebCoreQt.cpp:
+        (WebKit::initializeWebKitQt):
+
+2013-03-19  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
         [Qt] Support -webkit-font-smoothing
         https://bugs.webkit.org/show_bug.cgi?id=106009
 

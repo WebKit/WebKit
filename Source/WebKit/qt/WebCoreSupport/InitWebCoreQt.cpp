@@ -32,6 +32,7 @@
 
 #include "Chrome.h"
 #include "ChromeClientQt.h"
+#include "Font.h"
 #include "Image.h"
 #include "InitializeLogging.h"
 #include "NotImplemented.h"
@@ -72,6 +73,11 @@ Q_DECL_EXPORT void initializeWebKitQt()
     if (initCallback) {
         WebCore::RenderThemeQStyle::setStyleFactoryFunction(createStyleForPage);
         WebCore::RenderThemeQt::setCustomTheme(WebCore::RenderThemeQStyle::create, new WebCore::ScrollbarThemeQStyle);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 1, 0)
+        // Only enable kerning by default in Qt 5.1 where it can use the fast font path.
+        // In Qt 5.0 this would have forced the complex font path.
+        WebCore::Font::setDefaultTypesettingFeatures(WebCore::Kerning);
+#endif
     }
 }
 

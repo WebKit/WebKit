@@ -204,6 +204,8 @@ public:
     static QString frameRenderTreeDump(QWebFrameAdapter*);
     static void clearNotificationPermissions();
 
+    static void disableDefaultTypesettingFeatures();
+
     static void getJSWindowObject(QWebFrameAdapter*, JSContextRef*, JSObjectRef*);
 };
 

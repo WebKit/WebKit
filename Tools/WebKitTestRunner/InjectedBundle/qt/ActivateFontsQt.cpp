@@ -39,6 +39,7 @@ void activateFonts()
 {
     WebKit::QtTestSupport::initializeTestFonts();
     QCoreApplication::setAttribute(Qt::AA_Use96Dpi, true);
+    DumpRenderTreeSupportQt::disableDefaultTypesettingFeatures();
 }
 
 }

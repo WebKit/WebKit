@@ -893,6 +893,11 @@ void DumpRenderTreeSupportQt::clearNotificationPermissions()
 #endif
 }
 
+void DumpRenderTreeSupportQt::disableDefaultTypesettingFeatures()
+{
+    WebCore::Font::setDefaultTypesettingFeatures(0);
+}
+
 void DumpRenderTreeSupportQt::getJSWindowObject(QWebFrameAdapter* adapter, JSContextRef* context, JSObjectRef* object)
 {
     JSDOMWindow* window = toJSDOMWindow(adapter->frame, mainThreadNormalWorld());

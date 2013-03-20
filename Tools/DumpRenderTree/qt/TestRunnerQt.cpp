@@ -89,6 +89,7 @@ void TestRunnerQt::reset()
     DumpRenderTreeSupportQt::resetGeolocationMock(m_drt->pageAdapter());
     DumpRenderTreeSupportQt::dumpNotification(false);
     DumpRenderTreeSupportQt::setShouldUseFontSmoothing(false);
+    DumpRenderTreeSupportQt::disableDefaultTypesettingFeatures();
     setIconDatabaseEnabled(false);
     clearAllDatabases();
     removeAllWebNotificationPermissions();
