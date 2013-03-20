@@ -1,0 +1,40 @@
+Tests MediaSource.isTypeSupported().
+
+Testing invalid type strings.
+MediaSource.isTypeSupported(video) : false
+MediaSource.isTypeSupported(video/) : false
+MediaSource.isTypeSupported(video/webm) : false
+MediaSource.isTypeSupported(video/webm;) : false
+MediaSource.isTypeSupported(video/webm;codecs) : false
+MediaSource.isTypeSupported(video/webm;codecs=) : false
+MediaSource.isTypeSupported(video/webm;codecs=") : false
+MediaSource.isTypeSupported(video/webm;codecs="") : false
+MediaSource.isTypeSupported(video/webm;codecs=",") : false
+MediaSource.isTypeSupported(audio/webm;codecs="vp8") : false
+MediaSource.isTypeSupported(audio/mp4;codecs="avc1.4d001e") : false
+MediaSource.isTypeSupported(audio/mp4;codecs="vorbis") : false
+MediaSource.isTypeSupported(audio/webm;codecs="mp4a.40.2") : false
+MediaSource.isTypeSupported(video/mp4;codecs="vp8") : false
+MediaSource.isTypeSupported(video/webm;codecs="mp4a.40.2") : false
+MediaSource.isTypeSupported(audio/webm;codecs="mp4a") : false
+MediaSource.isTypeSupported(audio/webm;codecs="mp4a.40") : false
+MediaSource.isTypeSupported(audio/webm;codecs="mp4a.40.") : false
+MediaSource.isTypeSupported(audio/mp4;codecs="mp4a.67.3") : false
+Testing valid type strings.
+MediaSource.isTypeSupported(video/webm;codecs="vp8") : true
+MediaSource.isTypeSupported(video/webm;codecs="vorbis") : true
+MediaSource.isTypeSupported(video/webm;codecs="vp8,vorbis") : true
+MediaSource.isTypeSupported(video/webm;codecs="vorbis, vp8") : true
+MediaSource.isTypeSupported(audio/webm;codecs="vorbis") : true
+MediaSource.isTypeSupported(video/mp4;codecs="avc1.4d001e") : false
+MediaSource.isTypeSupported(video/mp4;codecs="avc1.42001e") : false
+MediaSource.isTypeSupported(audio/mp4;codecs="mp4a.40.2") : false
+MediaSource.isTypeSupported(audio/mp4;codecs="mp4a.40.5") : false
+MediaSource.isTypeSupported(audio/mp4;codecs="mp4a.67") : false
+MediaSource.isTypeSupported(video/mp4;codecs="mp4a.40.2") : false
+MediaSource.isTypeSupported(video/mp4;codecs="avc1.4d001e,mp4a.40.2") : false
+MediaSource.isTypeSupported(video/mp4;codecs="mp4a.40.2 , avc1.4d001e ") : false
+MediaSource.isTypeSupported(video/mp4;codecs="avc1.4d001e,mp4a.40.5") : false
+MediaSource.isTypeSupported(video/mp4;codecs="avc1.4d001e,mp4a.40.5") : false
+END OF TEST
+

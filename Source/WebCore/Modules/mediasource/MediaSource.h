@@ -51,19 +51,17 @@ public:
     static PassRefPtr<MediaSource> create(ScriptExecutionContext*);
     virtual ~MediaSource() { }
 
+    // MediaSource.idl methods
     SourceBufferList* sourceBuffers();
     SourceBufferList* activeSourceBuffers();
-
     double duration() const;
     void setDuration(double, ExceptionCode&);
-
     SourceBuffer* addSourceBuffer(const String& type, ExceptionCode&);
     void removeSourceBuffer(SourceBuffer*, ExceptionCode&);
-
     const String& readyState() const;
     void setReadyState(const String&);
-
     void endOfStream(const String& error, ExceptionCode&);
+    static bool isTypeSupported(const String& type);
 
     void setPrivateAndOpen(PassOwnPtr<MediaSourcePrivate>);
 

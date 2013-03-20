@@ -35,6 +35,7 @@
 
 #include "ContentType.h"
 #include "Event.h"
+#include "MIMETypeRegistry.h"
 #include "SourceBufferPrivate.h"
 #include "TimeRanges.h"
 #include <wtf/Uint8Array.h>
@@ -116,10 +117,7 @@ SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec
 
     // 2. If type contains a MIME type that is not supported ..., then throw a
     // NOT_SUPPORTED_ERR exception and abort these steps.
-    ContentType contentType(type);
-    Vector<String> codecs = contentType.codecs();
-
-    if (!codecs.size()) {
+    if (!isTypeSupported(type)) {
         ec = NOT_SUPPORTED_ERR;
         return 0;
     }
@@ -132,6 +130,8 @@ SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec
     }
 
     // 5. Create a new SourceBuffer object and associated resources.
+    ContentType contentType(type);
+    Vector<String> codecs = contentType.codecs();
     OwnPtr<SourceBufferPrivate> sourceBufferPrivate;
     switch (m_private->addSourceBuffer(contentType.type(), codecs, &sourceBufferPrivate)) {
     case MediaSourcePrivate::Ok: {
@@ -258,6 +258,28 @@ void MediaSource::endOfStream(const String& error, ExceptionCode& ec)
     // 2. Change the readyState attribute value to "ended".
     setReadyState(endedKeyword());
     m_private->endOfStream(eosStatus);
+}
+
+bool MediaSource::isTypeSupported(const String& type)
+{
+    // Section 2.1 isTypeSupported() method steps.
+    // https://dvcs.w3.org/hg/html-media/raw-file/tip/media-source/media-source.html#widl-MediaSource-isTypeSupported-boolean-DOMString-type
+    // 1. If type is an empty string, then return false.
+    if (type.isNull() || type.isEmpty())
+        return false;
+
+    ContentType contentType(type);
+    String codecs = contentType.parameter("codecs");
+
+    // 2. If type does not contain a valid MIME type string, then return false.
+    if (contentType.type().isEmpty() || codecs.isEmpty())
+        return false;
+
+    // 3. If type contains a media type or media subtype that the MediaSource does not support, then return false.
+    // 4. If type contains at a codec that the MediaSource does not support, then return false.
+    // 5. If the MediaSource does not support the specified combination of media type, media subtype, and codecs then return false.
+    // 6. Return true.
+    return MIMETypeRegistry::isSupportedMediaSourceMIMEType(contentType.type(), codecs);
 }
 
 void MediaSource::setPrivateAndOpen(PassOwnPtr<MediaSourcePrivate> mediaSourcePrivate)

@@ -51,7 +51,9 @@
     
     void endOfStream(in [Optional=DefaultIsNullString] DOMString error)
         raises (DOMException);
-    
+
+    static boolean isTypeSupported (DOMString type);
+
     // EventTarget interface
     void addEventListener(in DOMString type,
                           in EventListener listener,

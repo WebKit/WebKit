@@ -51,6 +51,9 @@ public:
                                                const WebKit::WebString& keySystem) {
         return supportsMediaMIMEType(mimeType, codecs);
     }
+
+    virtual bool supportsMediaSourceMIMEType(const WebKit::WebString& mimeType, const WebKit::WebString& codecs) = 0;
+
     virtual SupportsType supportsNonImageMIMEType(const WebKit::WebString& mimeType) = 0;
 
     virtual WebKit::WebString mimeTypeForExtension(const WebKit::WebString& fileExtension) = 0;

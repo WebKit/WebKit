@@ -1,3 +1,13 @@
+2013-03-20  Aaron Colwell  <acolwell@chromium.org>
+
+        Add support for MediaSource::isTypeSupported()
+        https://bugs.webkit.org/show_bug.cgi?id=112301
+
+        Reviewed by Darin Fisher.
+
+        * chromium/public/WebMimeRegistry.h:
+        (WebMimeRegistry): Added supportsMediaSourceMIMEType() method.
+
 2013-03-19  Kenneth Russell  <kbr@google.com>
 
         Unreviewed, rolling out r146277.

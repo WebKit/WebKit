@@ -67,6 +67,11 @@ public:
     // Check to see if a mime type is suitable for being loaded using <video> and <audio>
     static bool isSupportedMediaMIMEType(const String& mimeType); 
 
+#if ENABLE(MEDIA_SOURCE)
+    // Check to see if the mime type and codecs are supported by the MediaSource implementation.
+    static bool isSupportedMediaSourceMIMEType(const String& mimeType, const String& codecs);
+#endif
+
     // Check to see if the mime type is not suitable for being loaded as a text
     // document in a frame. Only valid for mime types begining with "text/".
     static bool isUnsupportedTextMIMEType(const String& mimeType);
