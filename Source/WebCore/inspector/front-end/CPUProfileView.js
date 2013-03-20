@@ -40,7 +40,7 @@ WebInspector.CPUProfileView = function(profile)
     this._viewType = WebInspector.settings.createSetting("cpuProfilerView", WebInspector.CPUProfileView._TypeHeavy);
 
     var columns = [];
-    columns.push({id: "self", title: WebInspector.UIString("Self"), width: "72px", sort: "descending", sortable: true});
+    columns.push({id: "self", title: WebInspector.UIString("Self"), width: "72px", sort: WebInspector.DataGrid.Order.Descending, sortable: true});
     columns.push({id: "total", title: WebInspector.UIString("Total"), width: "72px", sortable: true});
     if (!Capabilities.samplingCPUProfiler) {
         columns.push({id: "average", title: WebInspector.UIString("Average"), width: "72px", sortable: true});
@@ -49,7 +49,7 @@ WebInspector.CPUProfileView = function(profile)
     columns.push({id: "function", title: WebInspector.UIString("Function"), disclosure: true, sortable: true});
 
     this.dataGrid = new WebInspector.DataGrid(columns);
-    this.dataGrid.addEventListener("sorting changed", this._sortProfile, this);
+    this.dataGrid.addEventListener(WebInspector.DataGrid.Events.SortingChanged, this._sortProfile, this);
     this.dataGrid.element.addEventListener("mousedown", this._mouseDownInDataGrid.bind(this), true);
 
     if (WebInspector.experimentsSettings.cpuFlameChart.isEnabled()) {
@@ -496,8 +496,8 @@ WebInspector.CPUProfileView.prototype = {
 
     _sortProfile: function()
     {
-        var sortAscending = this.dataGrid.sortOrder === "ascending";
-        var sortColumnIdentifier = this.dataGrid.sortColumnIdentifier;
+        var sortAscending = this.dataGrid.isSortOrderAscending();
+        var sortColumnIdentifier = this.dataGrid.sortColumnIdentifier();
         var sortProperty = {
                 "average": "averageTime",
                 "self": "selfTime",

@@ -36,7 +36,7 @@ WebInspector.DirectoryContentView = function()
 {
     const indexes = WebInspector.DirectoryContentView.columnIndexes;
     var columns = [
-        {id: indexes.Name, title: WebInspector.UIString("Name"), sortable: true, sort: "ascending", width: "20%"},
+        {id: indexes.Name, title: WebInspector.UIString("Name"), sortable: true, sort: WebInspector.DataGrid.Order.Ascending, width: "20%"},
         {id: indexes.URL, title: WebInspector.UIString("URL"), sortable: true, width: "20%"},
         {id: indexes.Type, title: WebInspector.UIString("Type"), sortable: true, width: "15%"},
         {id: indexes.Size, title: WebInspector.UIString("Size"), sortable: true, width: "10%"},
@@ -44,7 +44,7 @@ WebInspector.DirectoryContentView = function()
     ];
 
     WebInspector.DataGrid.call(this, columns);
-    this.addEventListener("sorting changed", this._sort, this);
+    this.addEventListener(WebInspector.DataGrid.Events.SortingChanged, this._sort, this);
 }
 
 WebInspector.DirectoryContentView.columnIndexes = {
@@ -69,8 +69,8 @@ WebInspector.DirectoryContentView.prototype = {
 
     _sort: function()
     {
-        var column = /** @type {string} */ (this.sortColumnIdentifier);
-        this.sortNodes(WebInspector.DirectoryContentView.Node.comparator(column, this.sortOrder === "descending"), false);
+        var column = /** @type {string} */ (this.sortColumnIdentifier());
+        this.sortNodes(WebInspector.DirectoryContentView.Node.comparator(column, !this.isSortOrderAscending()), false);
     },
 
     __proto__: WebInspector.DataGrid.prototype

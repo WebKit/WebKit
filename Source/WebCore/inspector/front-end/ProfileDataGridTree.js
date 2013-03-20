@@ -36,8 +36,6 @@ WebInspector.ProfileDataGridNode = function(profileNode, owningTree, hasChildren
 
     WebInspector.DataGridNode.call(this, null, hasChildren);
 
-    this.addEventListener("populate", this._populate, this);
-
     this.tree = owningTree;
 
     this.childrenByCallUID = {};
@@ -235,8 +233,12 @@ WebInspector.ProfileDataGridNode.prototype = {
         return this.parent !== this.dataGrid ? this.parent : this.tree;
     },
 
-    _populate: function()
+    populate: function()
     {
+        if (this._populated)
+            return;
+        this._populated = true;
+
         this._sharedPopulate();
 
         if (this._parent) {
@@ -245,9 +247,6 @@ WebInspector.ProfileDataGridNode.prototype = {
             if (currentComparator)
                 this.sort(currentComparator, true);
         }
-
-        if (this.removeEventListener)
-            this.removeEventListener("populate", this._populate, this);
     },
 
     // When focusing and collapsing we modify lots of nodes in the tree.

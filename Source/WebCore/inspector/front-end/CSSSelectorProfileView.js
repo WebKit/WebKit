@@ -95,13 +95,13 @@ WebInspector.CSSSelectorProfileView = function(profile)
     var columns = [
         {id: "selector", title: WebInspector.UIString("Selector"), width: "550px", sortable: true},
         {id: "source", title: WebInspector.UIString("Source"), width: "100px", sortable: true},
-        {id: "time", title: WebInspector.UIString("Total"), width: "72px", sort: "descending", sortable: true},
+        {id: "time", title: WebInspector.UIString("Total"), width: "72px", sort: WebInspector.DataGrid.Order.Descending, sortable: true},
         {id: "matches", title: WebInspector.UIString("Matches"), width: "72px", sortable: true}
     ];
 
     this.dataGrid = new WebInspector.DataGrid(columns);
     this.dataGrid.element.addStyleClass("selector-profile-view");
-    this.dataGrid.addEventListener("sorting changed", this._sortProfile, this);
+    this.dataGrid.addEventListener(WebInspector.DataGrid.Events.SortingChanged, this._sortProfile, this);
     this.dataGrid.element.addEventListener("mousedown", this._mouseDownInDataGrid.bind(this), true);
     this.dataGrid.show(this.element);
 
@@ -192,8 +192,8 @@ WebInspector.CSSSelectorProfileView.prototype = {
 
     _sortProfile: function()
     {
-        var sortAscending = this.dataGrid.sortOrder === "ascending";
-        var sortColumnIdentifier = this.dataGrid.sortColumnIdentifier;
+        var sortAscending = this.dataGrid.isSortOrderAscending();
+        var sortColumnIdentifier = this.dataGrid.sortColumnIdentifier();
 
         function selectorComparator(a, b)
         {

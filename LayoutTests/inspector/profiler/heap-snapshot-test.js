@@ -322,8 +322,8 @@ InspectorTest.clickColumn = function(column, callback)
     function sortingComplete()
     {
         InspectorTest._currentGrid().removeEventListener("sorting complete", sortingComplete, this);
-        InspectorTest.assertEquals(column.identifier, this._currentGrid().sortColumnIdentifier, "unexpected sorting");
-        column.sort = this._currentGrid().sortOrder;
+        InspectorTest.assertEquals(column.identifier, this._currentGrid().sortColumnIdentifier(), "unexpected sorting");
+        column.sort = this._currentGrid().sortOrder();
         function callCallback()
         {
             callback(column);

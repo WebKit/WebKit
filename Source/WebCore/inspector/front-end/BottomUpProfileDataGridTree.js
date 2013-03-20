@@ -70,7 +70,7 @@ WebInspector.BottomUpProfileDataGridNode.prototype = {
     _exclude: function(aCallUID)
     {
         if (this._remainingNodeInfos)
-            this._populate();
+            this.populate();
 
         this._save();
 
@@ -224,7 +224,7 @@ WebInspector.BottomUpProfileDataGridTree = function(profileView, rootProfileNode
     // Populate the top level nodes.
     var any = /** @type{*} */(this);
     var node = /** @type{WebInspector.ProfileDataGridNode} */(any);
-    WebInspector.BottomUpProfileDataGridNode.prototype._populate.call(node);
+    WebInspector.BottomUpProfileDataGridNode.prototype.populate.call(node);
 
     return this;
 }

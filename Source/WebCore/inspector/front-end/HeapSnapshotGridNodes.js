@@ -46,7 +46,6 @@ WebInspector.HeapSnapshotGridNode = function(tree, hasChildren)
      * Position is an item position in the provider.
      */
     this._retrievedChildrenRanges = [];
-    this.addEventListener("populate", this._populate, this);
 }
 
 WebInspector.HeapSnapshotGridNode.prototype = {
@@ -148,9 +147,12 @@ WebInspector.HeapSnapshotGridNode.prototype = {
         return cell;
     },
 
-    _populate: function(event)
+    populate: function(event)
     {
-        this.removeEventListener("populate", this._populate, this);
+        if (this._populated)
+            return;
+        this._populated = true;
+
         function sorted()
         {
             this._populateChildren();
@@ -160,8 +162,8 @@ WebInspector.HeapSnapshotGridNode.prototype = {
 
     expandWithoutPopulate: function(callback)
     {
-        // Make sure default _populate won't be invoked.
-        this.removeEventListener("populate", this._populate, this);
+        // Make sure default populate won't take action.
+        this._populated = true;
         this.expand();
         this._provider().sortAndRewind(this.comparator(), callback);
     },
@@ -585,8 +587,8 @@ WebInspector.HeapSnapshotObjectNode.prototype = {
 
     comparator: function()
     {
-        var sortAscending = this._dataGrid.sortOrder === "ascending";
-        var sortColumnIdentifier = this._dataGrid.sortColumnIdentifier;
+        var sortAscending = this._dataGrid.isSortOrderAscending();
+        var sortColumnIdentifier = this._dataGrid.sortColumnIdentifier();
         var sortFields = {
             object: ["!edgeName", sortAscending, "retainedSize", false],
             count: ["!edgeName", true, "retainedSize", false],
@@ -682,8 +684,8 @@ WebInspector.HeapSnapshotInstanceNode.prototype = {
 
     comparator: function()
     {
-        var sortAscending = this._dataGrid.sortOrder === "ascending";
-        var sortColumnIdentifier = this._dataGrid.sortColumnIdentifier;
+        var sortAscending = this._dataGrid.isSortOrderAscending();
+        var sortColumnIdentifier = this._dataGrid.sortColumnIdentifier();
         var sortFields = {
             object: ["!edgeName", sortAscending, "retainedSize", false],
             distance: ["distance", sortAscending, "retainedSize", false],
@@ -698,7 +700,7 @@ WebInspector.HeapSnapshotInstanceNode.prototype = {
 
     _emptyData: function()
     {
-        return {count:"", countDelta:"", sizeDelta: ""};
+        return {count: "", countDelta: "", sizeDelta: ""};
     },
 
     _enhanceData: function(data)
@@ -801,8 +803,8 @@ WebInspector.HeapSnapshotConstructorNode.prototype = {
 
     comparator: function()
     {
-        var sortAscending = this._dataGrid.sortOrder === "ascending";
-        var sortColumnIdentifier = this._dataGrid.sortColumnIdentifier;
+        var sortAscending = this._dataGrid.isSortOrderAscending();
+        var sortColumnIdentifier = this._dataGrid.sortColumnIdentifier();
         var sortFields = {
             object: ["id", sortAscending, "retainedSize", false],
             distance: ["distance", true, "retainedSize", false],
@@ -981,8 +983,8 @@ WebInspector.HeapSnapshotDiffNode.prototype = {
 
     comparator: function()
     {
-        var sortAscending = this._dataGrid.sortOrder === "ascending";
-        var sortColumnIdentifier = this._dataGrid.sortColumnIdentifier;
+        var sortAscending = this._dataGrid.isSortOrderAscending();
+        var sortColumnIdentifier = this._dataGrid.sortColumnIdentifier();
         var sortFields = {
             object: ["id", sortAscending, "selfSize", false],
             addedCount: ["selfSize", sortAscending, "id", true],
@@ -1092,8 +1094,8 @@ WebInspector.HeapSnapshotDominatorObjectNode.prototype = {
 
     comparator: function()
     {
-        var sortAscending = this._dataGrid.sortOrder === "ascending";
-        var sortColumnIdentifier = this._dataGrid.sortColumnIdentifier;
+        var sortAscending = this._dataGrid.isSortOrderAscending();
+        var sortColumnIdentifier = this._dataGrid.sortColumnIdentifier();
         var sortFields = {
             object: ["id", sortAscending, "retainedSize", false],
             shallowSize: ["selfSize", sortAscending, "id", true],

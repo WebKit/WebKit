@@ -53,7 +53,7 @@ WebInspector.TopDownProfileDataGridNode.prototype = {
     _exclude: function(aCallUID)
     {
         if (this._remainingChildren)
-            this._populate();
+            this.populate();
 
         this._save();
 
@@ -86,7 +86,7 @@ WebInspector.TopDownProfileDataGridTree = function(profileView, rootProfileNode)
 
     var any = /** @type{*} */(this);
     var node = /** @type{WebInspector.ProfileDataGridNode} */(any);
-    WebInspector.TopDownProfileDataGridNode.prototype._populate.call(node);
+    WebInspector.TopDownProfileDataGridNode.prototype.populate.call(node);
 }
 
 WebInspector.TopDownProfileDataGridTree.prototype = {
