@@ -46,7 +46,7 @@
 #include <wtf/Vector.h>
 
 #if HAVE(RUNLOOP_TIMER)
-#include "RunLoopTimer.h"
+#include <wtf/RunLoopTimer.h>
 #endif
 
 namespace WTF {
