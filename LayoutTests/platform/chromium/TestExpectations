@@ -2050,6 +2050,17 @@ webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/iframes/scroll
 webkit.org/b/109507 compositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
 webkit.org/b/109507 platform/chromium/virtual/gpu/compositedscrolling/overflow/composited-scrolling-paint-phases.html [ Failure ]
 webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
+webkit.org/b/109507 compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
+webkit.org/b/109507 compositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
+webkit.org/b/109507 compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
+webkit.org/b/109507 compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
+webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/repaint/invalidations-on-composited-layers.html [ Failure ]
+webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
+webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
+webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
+webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
+webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/tiling/huge-layer-add-remove-child.html [ Failure ]
+webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/tiling/huge-layer-with-layer-children.html [ Failure ]
 
 # The following upstream patches add -Webkit-color-correction support:
 # http://trac.webkit.org/changeset/50760
