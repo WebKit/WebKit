@@ -2749,7 +2749,7 @@ webkit.org/b/60131 fast/css/visited-link-hang.html [ Pass Slow ]
 # Introduced in r84443
 webkit.org/b/59063 fast/images/animated-gif-restored-from-bfcache.html [ Failure ]
 
-webkit.org/b/56702 [ Win Debug ] http/tests/navigation/ping-cross-origin-from-https.html [ Pass Timeout ]
+webkit.org/b/56702 [ Win Debug ] http/tests/navigation/ping-cross-origin-from-https.html [ Failure Pass Timeout ]
 
 crbug.com/86338 fast/loader/file-protocol-fragment.html [ Failure ]
 crbug.com/86340 [ Win Debug ] fast/filesystem/file-writer-write-overlapped.html [ Failure Pass ]

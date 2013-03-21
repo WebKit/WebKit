@@ -4,10 +4,10 @@ layer at (0,0) size 785x616
   RenderBlock {HTML} at (0,0) size 785x616
     RenderBody {BODY} at (8,8) size 769x600
 layer at (8,8) size 769x600
-  RenderSVGRoot {svg} at (40,36) size 436x150 [opacity=0.50]
-    RenderSVGContainer {g} at (40,36) size 146x140
+  RenderSVGRoot {svg} at (40,36) size 456x170 [opacity=0.50]
+    RenderSVGContainer {g} at (40,36) size 156x150
       RenderSVGPath {path} at (40,36) size 146x140 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,100.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=10.00]}] [fill={[type=SOLID] [color=#999999]}] [data="M 1.83691e-15 30 L -35.2671 48.541 L -28.5317 9.27051 L -57.0634 -18.541 L -17.6336 -24.2705 L -1.10215e-14 -60 L 17.6336 -24.2705 L 57.0634 -18.541 L 28.5317 9.27051 L 35.2671 48.541 Z"]
-    RenderSVGContainer {g} at (200,46) size 128x125
+    RenderSVGContainer {g} at (200,46) size 138x135
       RenderSVGPath {path} at (200,46) size 128x125 [transform={m=((1.00,0.00)(0.00,1.00)) t=(250.00,100.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=10.00] [dash array={20.00}]}] [fill={[type=SOLID] [color=#999999]}] [data="M 1.83691e-15 30 L -35.2671 48.541 L -28.5317 9.27051 L -57.0634 -18.541 L -17.6336 -24.2705 L -1.10215e-14 -60 L 17.6336 -24.2705 L 57.0634 -18.541 L 28.5317 9.27051 L 35.2671 48.541 Z"]
-    RenderSVGContainer {g} at (349,46) size 117x122
+    RenderSVGContainer {g} at (349,46) size 127x132
       RenderSVGPath {path} at (349,46) size 117x122 [transform={m=((1.00,0.00)(0.00,1.00)) t=(400.00,100.00)}] [stroke={[type=SOLID] [color=#000000] [stroke width=10.00] [dash array={20.00}]}] [fill={[type=SOLID] [color=#999999]}] [data="M 1.53076e-15 25 L -29.3893 40.4509 L -23.7764 7.72542 L -47.5528 -15.4508 L -14.6946 -20.2254 L -9.18455e-15 -50 L 14.6946 -20.2254 L 47.5528 -15.4508 L 23.7764 7.72542 L 29.3893 40.4509 Z"]
