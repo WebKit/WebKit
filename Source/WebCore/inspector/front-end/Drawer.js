@@ -46,6 +46,7 @@ WebInspector.Drawer = function()
     this.element.appendChild(this._drawerContentsElement);
     this._viewStatusBar = document.createElement("div");
     this._viewStatusBar.addEventListener("webkitTransitionEnd", this.immediatelyFinishAnimation.bind(this), false);
+    this._viewStatusBar.style.opacity = 0;
     this._bottomStatusBar = document.getElementById("bottom-status-bar-container");
 }
 
@@ -110,7 +111,7 @@ WebInspector.Drawer.prototype = {
         this._animationFinished = animationFinished.bind(this);
 
         // Assert that transition will be done and we receive transitionEnd event
-        console.assert(this._viewStatusBar.style.opacity != 1);
+        console.assert(this._viewStatusBar.style.opacity === "0");
 
         if (animationType === WebInspector.Drawer.AnimationType.Immediately)
             this.immediatelyFinishAnimation();
@@ -153,7 +154,7 @@ WebInspector.Drawer.prototype = {
         this._animationFinished = animationFinished.bind(this);
 
         // Assert that transition will be done and we receive transitionEnd event
-        console.assert(this._viewStatusBar.style.opacity != 0);
+        console.assert(this._viewStatusBar.style.opacity === "1");
 
         if (animationType === WebInspector.Drawer.AnimationType.Immediately)
             this.immediatelyFinishAnimation();
