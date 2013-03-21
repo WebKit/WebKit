@@ -329,6 +329,14 @@ const GridTrackSize& RenderGrid::gridTrackSize(TrackSizingDirection direction, s
     return trackStyles[i];
 }
 
+static size_t estimatedGridSizeForPosition(const GridPosition& position)
+{
+    if (position.isAuto())
+        return 1;
+
+    return std::max(position.integerPosition(), 1);
+}
+
 size_t RenderGrid::maximumIndexInDirection(TrackSizingDirection direction) const
 {
     const Vector<GridTrackSize>& trackStyles = (direction == ForColumns) ? style()->gridColumns() : style()->gridRows();
@@ -342,11 +350,13 @@ size_t RenderGrid::maximumIndexInDirection(TrackSizingDirection direction) const
         const GridPosition& initialPosition = (direction == ForColumns) ? child->style()->gridItemStart() : child->style()->gridItemBefore();
         const GridPosition& finalPosition = (direction == ForColumns) ? child->style()->gridItemEnd() : child->style()->gridItemAfter();
 
-        size_t resolvedInitialPosition = initialPosition.isAuto() ? 1 : initialPosition.integerPosition();
-        size_t resolvedFinalPosition = finalPosition.isAuto() ? 1 : finalPosition.integerPosition();
+        size_t estimatedSizeForInitialPosition = estimatedGridSizeForPosition(initialPosition);
+        size_t estimatedSizeForFinalPosition = estimatedGridSizeForPosition(finalPosition);
+        ASSERT(estimatedSizeForInitialPosition);
+        ASSERT(estimatedSizeForFinalPosition);
 
-        maximumIndex = std::max(maximumIndex, resolvedInitialPosition);
-        maximumIndex = std::max(maximumIndex, resolvedFinalPosition);
+        maximumIndex = std::max(maximumIndex, estimatedSizeForInitialPosition);
+        maximumIndex = std::max(maximumIndex, estimatedSizeForFinalPosition);
     }
 
     return maximumIndex;
