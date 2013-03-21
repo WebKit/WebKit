@@ -1,3 +1,15 @@
+2013-03-21  Alexey Proskuryakov  <ap@apple.com>
+
+        [Mac] Move NSOperationQueue out of NetworkingContext
+        https://bugs.webkit.org/show_bug.cgi?id=112970
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/mac/RemoteNetworkingContext.h:
+        * NetworkProcess/mac/RemoteNetworkingContext.mm:
+        Tell ResourceHandle to use an operation queue in the new way.
+
 2013-03-21  Timothy Hatcher  <timothy@apple.com>
 
         Support connecting the Web Inspector without showing it.

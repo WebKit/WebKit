@@ -73,6 +73,7 @@ public:
     virtual bool shouldUseCredentialStorage(WebCore::ResourceHandle*) OVERRIDE;
     virtual void didReceiveAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) OVERRIDE;
     virtual void didCancelAuthenticationChallenge(WebCore::ResourceHandle*, const WebCore::AuthenticationChallenge&) OVERRIDE;
+    virtual bool usesAsyncCallbacks() OVERRIDE { return true; }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     virtual bool canAuthenticateAgainstProtectionSpace(WebCore::ResourceHandle*, const WebCore::ProtectionSpace&) OVERRIDE;

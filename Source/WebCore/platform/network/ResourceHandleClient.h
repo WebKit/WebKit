@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2013 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,7 +60,7 @@ namespace WebCore {
         ResourceHandleClient();
         virtual ~ResourceHandleClient();
 
-        // request may be modified
+        // Request may be modified.
         virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& /*redirectResponse*/) { }
         virtual void didSendData(ResourceHandle*, unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
 
@@ -73,6 +74,8 @@ namespace WebCore {
         virtual void didFail(ResourceHandle*, const ResourceError&) { }
         virtual void wasBlocked(ResourceHandle*) { }
         virtual void cannotShowURL(ResourceHandle*) { }
+
+        virtual bool usesAsyncCallbacks() { return false; }
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
         virtual bool supportsDataArray() { return false; }

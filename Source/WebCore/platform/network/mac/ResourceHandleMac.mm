@@ -130,6 +130,17 @@ static void applyBasicAuthorizationHeader(ResourceRequest& request, const Creden
     request.addHTTPHeaderField("Authorization", authenticationHeader);
 }
 
+static NSOperationQueue *operationQueueForAsyncClients()
+{
+    static NSOperationQueue *queue;
+    if (!queue) {
+        queue = [[NSOperationQueue alloc] init];
+        // Default concurrent operation count depends on current system workload, but delegate methods are mostly idling in IPC, so we can run as many as needed.
+        [queue setMaxConcurrentOperationCount:NSIntegerMax];
+    }
+    return queue;
+}
+
 ResourceHandleInternal::~ResourceHandleInternal()
 {
 }
@@ -235,9 +246,9 @@ bool ResourceHandle::start()
         }
     }
 
-    if (NSOperationQueue *operationQueue = d->m_context->scheduledOperationQueue()) {
+    if (client() && client()->usesAsyncCallbacks()) {
         ASSERT(!scheduled);
-        [connection() setDelegateQueue:operationQueue];
+        [connection() setDelegateQueue:operationQueueForAsyncClients()];
         scheduled = true;
     }
 
