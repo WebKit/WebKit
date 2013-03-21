@@ -509,8 +509,6 @@ webkit.org/b/111451 [ Debug ] editing/selection/selection-in-iframe-removed-cras
 # Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/44199 perf [ Skip ]
-
 webkit.org/b/55126 media/video-aspect-ratio.html [ Failure Pass ]
 
 webkit.org/b/56561 svg/custom/clip-path-referencing-use2.svg [ Failure Pass ]
@@ -631,6 +629,8 @@ webkit.org/b/107018 svg/animations/animate-linear-discrete-additive.svg [ ImageO
 webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-b.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/107018 svg/animations/animate-linear-discrete-additive-c.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/107018 svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg [ ImageOnlyFailure Pass ]
+
+webkit.org/b/112918 http/tests/appcache/abort-cache-ondownloading-resource-404.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
