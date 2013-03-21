@@ -45,6 +45,7 @@ WebInspector.FlameChart = function(cpuProfileView)
     this._overviewContainer.appendChild(this._overviewGrid.element);
     this._overviewCalculator = new WebInspector.FlameChart.OverviewCalculator();
     this._overviewGrid.addEventListener(WebInspector.OverviewGrid.Events.WindowChanged, this._onWindowChanged, this);
+    this._overviewCanvas = this._overviewContainer.createChild("canvas");
 
     this._chartContainer = this.element.createChild("div", "chart-container");
     this._timelineGrid = new WebInspector.TimelineGrid();
@@ -432,8 +433,46 @@ WebInspector.FlameChart.prototype = {
 
     onResize: function()
     {
+        this._updateOverviewCanvas = true;
         this._hidePopover();
         this._scheduleUpdate();
+    },
+
+    _drawOverviewCanvas: function(width, height)
+    {
+        this._overviewCanvas.width = width;
+        this._overviewCanvas.height = height;
+
+        if (!this._timelineData)
+            return;
+
+        var nodeCount = this._timelineData.nodeCount;
+        var depths = this._timelineData.depths;
+        var startTimes = this._timelineData.startTimes;
+        var durations = this._timelineData.durations;
+        var drawData = new Uint8Array(width);
+        var scaleFactor = width / this._timelineData.totalTime;
+
+        for (var nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
+            var start = Math.floor(startTimes[nodeIndex] * scaleFactor);
+            var finish = Math.floor((startTimes[nodeIndex] + durations[nodeIndex]) * scaleFactor);
+            for (var x = start; x < finish; ++x)
+                drawData[x] = Math.max(drawData[x], depths[nodeIndex] + 1);
+        }
+
+        var context = this._overviewCanvas.getContext("2d");
+        var yScaleFactor = 2;
+        context.lineWidth = 0.5;
+        context.strokeStyle = "rgba(20,0,0,0.8)";
+        context.fillStyle="rgba(214,225,254, 0.8)";
+        context.moveTo(0, height - 1);
+        for (var x = 0; x < width; ++x)
+            context.lineTo(x, height - drawData[x] * yScaleFactor - 1);
+        context.moveTo(width - 1, height - 1);
+        context.moveTo(0, height - 1);
+        context.fill();
+        context.stroke();
+        context.closePath();
     },
 
     /**
@@ -495,6 +534,10 @@ WebInspector.FlameChart.prototype = {
             this._timelineGrid.element.style.width = this.element.clientWidth;
             this._timelineGrid.updateDividers(this._calculator);
             this._overviewGrid.updateDividers(this._overviewCalculator);
+        }
+        if (this._updateOverviewCanvas) {
+            this._drawOverviewCanvas(this._overviewContainer.clientWidth, this._overviewContainer.clientHeight);
+            this._updateOverviewCanvas = false;
         }
     },
 
