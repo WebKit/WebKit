@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Security-Policy" content="img-src 'none'">
+    <script src="/js-test-resources/js-test-pre.js"></script>
+    <script>
+        description('Check that a SecurityPolicyViolationEvent is fired upon blocking an image.');
+
+        window.jsTestIsAsync = true;
+
+        document.addEventListener('securitypolicyviolation', function handleEvent(e) {
+            var expectations = {
+                'documentURI': document.location.toString(),
+                'referrer': document.referrer,
+                'blockedURI': 'http://127.0.0.1:8000/security/resources/abe.png',
+                'violatedDirective': 'img-src \'none\'',
+                'effectiveDirective': 'img-src',
+                'originalPolicy': 'img-src \'none\'',
+                'sourceURL': document.location.toString(),
+                'lineNumber': 30
+            };
+            window.e = e;
+            for (key in expectations)
+                shouldBe('window.e.' + key, JSON.stringify(expectations[key]));
+            finishJSTest();
+        });
+
+        window.onload = function () {
+            var img = document.createElement('img');
+            img.src = '/security/resources/abe.png';
+            document.body.appendChild(img);
+        };
+    </script>
+    <script src="/js-test-resources/js-test-post.js"></script>
+</head>
+<body>
+</body>
+</html>

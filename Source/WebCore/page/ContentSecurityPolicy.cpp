@@ -43,6 +43,7 @@
 #include "ScriptCallStackFactory.h"
 #include "ScriptState.h"
 #include "SecurityOrigin.h"
+#include "SecurityPolicyViolationEvent.h"
 #include "TextEncoding.h"
 #include <wtf/HashSet.h>
 #include <wtf/text/TextPosition.h>
@@ -1671,12 +1672,35 @@ void ContentSecurityPolicy::enforceSandboxFlags(SandboxFlags mask) const
     m_scriptExecutionContext->enforceSandboxFlags(mask);
 }
 
+#if ENABLE(CSP_NEXT)
+static void gatherSecurityPolicyViolationEventData(SecurityPolicyViolationEventInit& init, Document* document, const String& directiveText, const String& effectiveDirective, const KURL& blockedURL, const String& header)
+{
+    init.documentURI = document->url().string();
+    init.referrer = document->referrer();
+    init.blockedURI = blockedURL.isValid() ? blockedURL.string() : String();
+    init.violatedDirective = directiveText;
+    init.effectiveDirective = effectiveDirective;
+    init.originalPolicy = header;
+    init.sourceURL = String();
+    init.lineNumber = 0;
+
+    RefPtr<ScriptCallStack> stack = createScriptCallStack(2, false);
+    if (!stack)
+        return;
+
+    const ScriptCallFrame& callFrame = getFirstNonNativeFrame(stack);
+
+    if (callFrame.lineNumber()) {
+        KURL source = KURL(KURL(), callFrame.sourceURL());
+        init.sourceURL = source.string();
+        init.lineNumber = callFrame.lineNumber();
+    }
+}
+#endif
+
 void ContentSecurityPolicy::reportViolation(const String& directiveText, const String& effectiveDirective, const String& consoleMessage, const KURL& blockedURL, const Vector<KURL>& reportURIs, const String& header, const String& contextURL, const WTF::OrdinalNumber& contextLine, ScriptState* state) const
 {
     logToConsole(consoleMessage, contextURL, contextLine, state);
-
-    if (reportURIs.isEmpty())
-        return;
 
     // FIXME: Support sending reports from worker.
     if (!m_scriptExecutionContext->isDocument())
@@ -1685,6 +1709,18 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
     Document* document = toDocument(m_scriptExecutionContext);
     Frame* frame = document->frame();
     if (!frame)
+        return;
+
+#if ENABLE(CSP_NEXT)
+    if (experimentalFeaturesEnabled()) {
+        // FIXME: This code means that we're gathering information like line numbers twice. Once we can bring this out from behind the flag, we should reuse the data gathered here when generating the JSON report below.
+        SecurityPolicyViolationEventInit init;
+        gatherSecurityPolicyViolationEventData(init, document, directiveText, effectiveDirective, blockedURL, header);
+        document->enqueueDocumentEvent(SecurityPolicyViolationEvent::create(eventNames().securitypolicyviolationEvent, init));
+    }
+#endif
+
+    if (reportURIs.isEmpty())
         return;
 
     // We need to be careful here when deciding what information to send to the
