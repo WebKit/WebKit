@@ -1,3 +1,13 @@
+2013-03-21  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] Missing backslash in install-dependencies script
+        https://bugs.webkit.org/show_bug.cgi?id=112907
+
+        Reviewed by Philippe Normand.
+
+        * gtk/install-dependencies: Add missing backslash to dependencies
+        list.
+
 2013-03-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         EWS bots have stopped uploading results to bugzilla

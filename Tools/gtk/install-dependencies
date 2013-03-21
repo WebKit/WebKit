@@ -64,7 +64,7 @@ function installDependenciesWithApt {
         libpango1.0-dev \
         libpng12-dev \
         libpulse-dev \
-        librsvg2-dev
+        librsvg2-dev \
         libsecret-1-dev \
         libsqlite3-dev \
         libtheora-dev \
