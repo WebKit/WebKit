@@ -1,3 +1,20 @@
+2013-03-20  Cosmin Truta  <ctruta@blackberry.com>
+
+        [QNX][ARM] REGRESSION(r135330): Various failures in Octane
+        https://bugs.webkit.org/show_bug.cgi?id=112863
+
+        Reviewed by Yong Li.
+
+        This was fixed in http://trac.webkit.org/changeset/146396 on Linux only.
+        Enable this fix on QNX.
+
+        * assembler/ARMv7Assembler.h:
+        (ARMv7Assembler):
+        (JSC::ARMv7Assembler::replaceWithJump):
+        (JSC::ARMv7Assembler::maxJumpReplacementSize):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::revertJumpReplacementToBranchPtrWithPatch):
+
 2013-03-20  Filip Pizlo  <fpizlo@apple.com>
 
         Fix indentation of JSString.h
