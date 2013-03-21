@@ -59,7 +59,7 @@ def main():
         "cc1plus",
         "cc1objplus",
         "clang",
-        r"clang\+\+",
+        r"clang\\+\\+",
         "gcc-4.2",
         "httpd",
         "i686-apple-darwin10-gcc-4.2.1",
@@ -102,7 +102,7 @@ def main():
         for task in tasksToKillMac:
             os.system("killall -9 -v -m " + task)
         # Kill all instances of python executing run-webkit-tests
-        os.system("ps aux | grep -P '.+/Python .+(run_webkit_tests|run-webkit-tests)' | grep -v grep | awk '{print $2}' | xargs kill")
+        os.system("ps aux | grep -E '.+/Python .+(run_webkit_tests|run-webkit-tests)' | grep -v grep | awk '{print $2}' | xargs kill")
     elif sys.platform == 'cygwin' or sys.platform == 'win32':
         for task in tasksToKillWin:
             os.system("taskkill /t /f /im " + task)

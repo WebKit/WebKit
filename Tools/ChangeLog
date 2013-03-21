@@ -1,3 +1,18 @@
+2013-03-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        kill-old-processes spits out error messages on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=112878
+
+        Reviewed by Jessie Berlin.
+
+        Use grep -E instead of grep -P since grep on Mac doesn't seem to support the latter even though it's
+        included in the list of options grep --help shows.
+
+        Also use double-slash in escaping ++ in clang++ since the slashes needs to escape + inside the shell.
+
+        * BuildSlaveSupport/kill-old-processes:
+        (main):
+
 2013-03-21  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] AccessibilityUIElement: add dummy implementations of scroll methods
