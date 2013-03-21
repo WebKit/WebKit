@@ -1,0 +1,39 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/console-test.js"></script>
+
+<style>
+x {}
+
+x {
+    #
+}
+
+x {
+    color: *;  /* Test simple error to ensure parsing recovered. */
+}
+
+</style>
+
+<script>
+
+function test()
+{
+    // Ensure script generated errors don't go to the console.
+    var style = document.createElement('style');
+    style.textContent = "x{y:*}";
+    document.head.appendChild(style);
+
+    InspectorTest.expandConsoleMessages();
+    InspectorTest.dumpConsoleMessages();
+    InspectorTest.completeTest();
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p id="p">Tests CSS warnings are properly exposed.</p>
+</body>
+</html>

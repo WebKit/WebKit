@@ -439,6 +439,8 @@ public:
 
     static KURL completeURL(const CSSParserContext&, const String& url);
 
+    Location currentLocation();
+
 private:
     bool is8BitSource() { return m_is8BitSource; }
 
@@ -577,6 +579,7 @@ private:
     unsigned m_length;
     int m_token;
     int m_lineNumber;
+    int m_tokenStartLineNumber;
     int m_lastSelectorLineNumber;
 
     bool m_allowImportRules;

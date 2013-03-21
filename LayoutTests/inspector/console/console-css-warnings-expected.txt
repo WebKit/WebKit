@@ -1,0 +1,5 @@
+Tests CSS warnings are properly exposed.
+
+Unexpected CSS token: # console-css-warnings.html:10
+Unexpected CSS token: * console-css-warnings.html:14
+

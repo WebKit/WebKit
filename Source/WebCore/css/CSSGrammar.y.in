@@ -50,6 +50,7 @@
     Vector<RefPtr<StyleKeyframe> >* keyframeRuleList;
     float val;
     CSSPropertyID id;
+    CSSParser::Location location;
 }
 
 %{
@@ -335,6 +336,8 @@ static inline bool isCSSTokenAString(int yytype)
 
 %type <string> element_name
 %type <string> attr_name
+
+%type <location> errors
 
 %%
 
@@ -1534,7 +1537,8 @@ pseudo:
   ;
 
 declaration_list:
-    declaration {
+    /* empty */ { $$ = false; }
+    | declaration {
         $$ = $1;
     }
     | decl_list declaration {
@@ -1545,10 +1549,12 @@ declaration_list:
     | decl_list {
         $$ = $1;
     }
-    | error invalid_block_list error {
+    | errors invalid_block_list error {
+        parser->syntaxError($1);
         $$ = false;
     }
-    | error {
+    | errors {
+        parser->syntaxError($1);
         $$ = false;
     }
     | decl_list error {
@@ -1570,11 +1576,13 @@ decl_list:
     | declaration invalid_block_list ';' maybe_space {
         $$ = false;
     }
-    | error ';' maybe_space {
+    | errors ';' maybe_space {
+        parser->syntaxError($1);
         parser->markPropertyStart();
         $$ = false;
     }
-    | error invalid_block_list error ';' maybe_space {
+    | errors invalid_block_list error ';' maybe_space {
+        parser->syntaxError($1);
         $$ = false;
     }
     | decl_list declaration ';' maybe_space {
@@ -2010,6 +2018,15 @@ invalid_block_list:
     invalid_block
   | invalid_block_list error invalid_block
 ;
+
+errors:
+    error {
+        $$ = parser->currentLocation();
+    }
+  | errors error {
+        $$ = $1;
+    }
+    ;
 
 %%
 
