@@ -1,3 +1,18 @@
+2013-03-21  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Move common props files for VS2010 solution to WebKitLibraries folder and update all projects accordingly.
+
+        * WebKit.vcxproj/FeatureDefines.props: Removed.
+        * WebKit.vcxproj/FeatureDefinesCairo.props: Removed.
+        * WebKit.vcxproj/WebKit/cURL.props: Removed.
+        * WebKit.vcxproj/WinCairo.props: Removed.
+        * WebKit.vcxproj/common.props: Removed.
+        * WebKit.vcxproj/debug.props: Removed.
+        * WebKit.vcxproj/debug_wincairo.props: Removed.
+        * WebKit.vcxproj/debugsuffix.props: Removed.
+        * WebKit.vcxproj/production.props: Removed.
+        * WebKit.vcxproj/release.props: Removed.
+
 2013-03-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Windows build fix after r146430.

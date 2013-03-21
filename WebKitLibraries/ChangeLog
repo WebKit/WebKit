@@ -1,3 +1,18 @@
+2013-03-21  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Move common props files for VS2010 solution to WebKitLibraries folder and update all projects accordingly.
+
+        * win/tools/vsprops/FeatureDefines.props: Copied from ../Source/WebKit/WebKit.vcxproj/FeatureDefines.props.
+        * win/tools/vsprops/FeatureDefinesCairo.props: Copied from ../Source/WebKit/WebKit.vcxproj/FeatureDefinesCairo.props.
+        * win/tools/vsprops/WinCairo.props: Copied from ../Source/WebKit/WebKit.vcxproj/WinCairo.props.
+        * win/tools/vsprops/cURL.props: Copied from ../Source/WebKit/WebKit.vcxproj/WebKit/cURL.props.
+        * win/tools/vsprops/common.props: Copied from ../Source/WebKit/WebKit.vcxproj/common.props.
+        * win/tools/vsprops/debug.props: Copied from ../Source/WebKit/WebKit.vcxproj/debug.props.
+        * win/tools/vsprops/debug_wincairo.props: Copied from ../Source/WebKit/WebKit.vcxproj/debug_wincairo.props.
+        * win/tools/vsprops/debugsuffix.props: Copied from ../Source/WebKit/WebKit.vcxproj/debugsuffix.props.
+        * win/tools/vsprops/production.props: Copied from ../Source/WebKit/WebKit.vcxproj/production.props.
+        * win/tools/vsprops/release.props: Copied from ../Source/WebKit/WebKit.vcxproj/release.props.
+
 2013-03-19  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed build fix.
