@@ -68,6 +68,7 @@
 #include <BlackBerryPlatformSettings.h>
 #include <BlackBerryPlatformString.h>
 #include <BlackBerryPlatformWindow.h>
+#include <network/DomainTools.h>
 
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -825,24 +826,27 @@ PassOwnPtr<ColorChooser> ChromeClientBlackBerry::createColorChooser(ColorChooser
 
 void ChromeClientBlackBerry::addSearchProvider(const BlackBerry::Platform::String& originURL, const BlackBerry::Platform::String& newURL)
 {
-    // See if the input URL host matches of the origin host.
-    KURL originHost = KURL(KURL(), originURL);
+    // Early return if this function is not triggered by a user gesture.
+    if (!ScriptController::processingUserGesture())
+        return;
+
+    // Security origin host & target host must share a common registered domain
     KURL url = KURL(KURL(), newURL);
-    if (url.isValid() && originHost.host() == url.host())
+    String originHost = KURL(KURL(), originURL).host();
+
+    if (url.isValid() && BlackBerry::Platform::getRegisteredDomain(originHost) == BlackBerry::Platform::getRegisteredDomain(url.host()))
         m_webPagePrivate->client()->addSearchProvider(newURL);
 }
 
-int ChromeClientBlackBerry::isSearchProviderInstalled(const BlackBerry::Platform::String& originURL, const BlackBerry::Platform::String& newURL)
+int ChromeClientBlackBerry::isSearchProviderInstalled(const BlackBerry::Platform::String& newURL)
 {
 //    Returns a value based on comparing url to the URLs of the results pages of the installed search engines.
 //    0 - None of the installed search engines match url.
 //    1 - One or more installed search engines match url, but none are the user's default search engine.
 //    2 - The user's default search engine matches url.
 
-    // See if the input URL host matches of the origin host.
-    KURL originHost = KURL(KURL(), originURL);
     KURL url = KURL(KURL(), newURL);
-    if (url.isValid() && originHost.host() == url.host())
+    if (url.isValid())
         return m_webPagePrivate->client()->isSearchProviderInstalled(newURL);
     return 0;
 }

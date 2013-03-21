@@ -86,9 +86,8 @@ static JSValueRef IsSearchProviderInstalledMethod(
         JSStringGetUTF8CString(string, newURL, sizeUTF8);
         JSStringRelease(string);
 
-        String originURL = frame->document()->securityOrigin()->toString();
         ChromeClientBlackBerry* chrome = static_cast<ChromeClientBlackBerry*> (page->chrome()->client());
-        int retVal = chrome->isSearchProviderInstalled(originURL, newURL);
+        int retVal = chrome->isSearchProviderInstalled(newURL);
 
         jsRetVal = JSValueMakeNumber(ctx, retVal);
     }

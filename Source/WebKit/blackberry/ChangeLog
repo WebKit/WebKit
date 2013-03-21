@@ -1,3 +1,23 @@
+2013-03-21  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] addSearchProvider shouldn't match the full host, only the server
+        https://bugs.webkit.org/show_bug.cgi?id=112960
+
+        Reviewed by Rob Buis.
+        Internally Reviewed by Jeff Rogers.
+
+        Remove full host matching. only check if domains are from the same server.
+
+        Also, check user gesture before dispatching the addSearchProvider event to the browser.
+
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::addSearchProvider):
+        (WebCore::ChromeClientBlackBerry::isSearchProviderInstalled):
+        * WebCoreSupport/ChromeClientBlackBerry.h:
+        (ChromeClientBlackBerry):
+        * WebCoreSupport/ExternalExtension.cpp:
+        (IsSearchProviderInstalledMethod):
+
 2013-03-19  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Selection overlay is sometimes in wrong position.
