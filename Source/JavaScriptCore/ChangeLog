@@ -1,3 +1,15 @@
+2013-03-21  Alberto Garcia  <agarcia@igalia.com>
+
+        [BlackBerry] GCActivityCallback: replace JSLock with JSLockHolder
+        https://bugs.webkit.org/show_bug.cgi?id=112448
+
+        Reviewed by Xan Lopez.
+
+        This changed in r121381.
+
+        * runtime/GCActivityCallbackBlackBerry.cpp:
+        (JSC::DefaultGCActivityCallback::doWork):
+
 2013-03-21  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: wrapperClass holds a static JSClassRef, which causes JSGlobalObjects to leak
