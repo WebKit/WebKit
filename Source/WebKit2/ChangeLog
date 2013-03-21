@@ -1,3 +1,10 @@
+2013-03-21  Alexey Proskuryakov  <ap@apple.com>
+
+        Build fix.
+
+        * NetworkProcess/mac/NetworkResourceLoaderMac.mm: Include CurrentTime.h, as needed
+        to call currentTime().
+
 2013-03-21  Tim Horton  <timothy_horton@apple.com>
 
         Tiled page overlay layers don't create tiles until the first flush after they switch to being tiled

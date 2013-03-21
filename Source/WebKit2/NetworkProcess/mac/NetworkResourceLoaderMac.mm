@@ -29,6 +29,7 @@
 #include "ShareableResource.h"
 #include "SharedMemory.h"
 #include "WebResourceLoaderMessages.h"
+#include <wtf/CurrentTime.h>
 
 using namespace WebCore;
 
