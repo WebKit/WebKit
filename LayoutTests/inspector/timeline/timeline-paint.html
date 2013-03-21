@@ -4,10 +4,17 @@
 <script src="../../http/tests/inspector/timeline-test.js"></script>
 <script>
 
-function performActions()
+function display()
 {
     if (window.testRunner)
         testRunner.display();
+}
+
+function updateSubframeAndDisplay()
+{
+    frames[0].document.body.children[0].style.backgroundColor = "green";
+    if (window.testRunner)
+        testRunner.displayInvalidatedRegion();
 }
 
 function test()
@@ -15,7 +22,7 @@ function test()
     InspectorTest.startTimeline(step1);
     function step1()
     {
-        InspectorTest.evaluateInPage("performActions()", step2);
+        InspectorTest.evaluateInPage("display()", step2);
     }
 
     function step2()
@@ -32,6 +39,35 @@ function test()
                 break;
             }
         }
+        InspectorTest.startTimeline(step4);
+    }
+
+    function step4()
+    {
+        InspectorTest.evaluateInPage("updateSubframeAndDisplay()", step5);
+    }
+
+    function step5()
+    {
+        InspectorTest.stopTimeline(step6);
+    }
+
+    function step6(records)
+    {
+        var paintRecord;
+        for (var i = 0; i < records.length; ++i) {
+            var record = records[i];
+            if (record.type === WebInspector.TimelineModel.RecordType.Paint && record.children && record.children.length) {
+                paintRecord = record;
+                break;
+            }
+        }
+        InspectorTest.assertTrue(paintRecord, "Paint record with subframe paint not found");
+        var subframePaint = paintRecord.children[0];
+        InspectorTest.assertGreaterOrEqual(subframePaint.data.x, paintRecord.data.x);
+        InspectorTest.assertGreaterOrEqual(subframePaint.data.y, paintRecord.data.y);
+        InspectorTest.assertGreaterOrEqual(paintRecord.data.x + paintRecord.data.width, subframePaint.data.x + subframePaint.data.width);
+        InspectorTest.assertGreaterOrEqual(paintRecord.data.y + paintRecord.data.height, subframePaint.data.y + subframePaint.data.height);
         InspectorTest.completeTest();
     }
 }
@@ -43,6 +79,6 @@ function test()
 <p>
 Tests the Timeline API instrumentation of a paint event
 </p>
-
+<iframe src="resources/timeline-iframe-paint.html" style="position: absolute; left: 40px; top: 40px; width: 100px; height: 100px; border: none"></iframe>
 </body>
 </html>

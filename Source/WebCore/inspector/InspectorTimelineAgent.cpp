@@ -297,11 +297,12 @@ void InspectorTimelineAgent::willPaint(Frame* frame)
     pushCurrentRecord(InspectorObject::create(), TimelineRecordType::Paint, true, frame, true);
 }
 
-void InspectorTimelineAgent::didPaint(const LayoutRect& rect)
+void InspectorTimelineAgent::didPaint(Frame* frame, const LayoutRect& rect)
 {
     TimelineRecordEntry entry = m_recordStack.last();
     ASSERT(entry.type == TimelineRecordType::Paint);
-    TimelineRecordFactory::addRectData(entry.data.get(), rect);
+    LayoutRect rectInRootCoordinates = frame->view()->contentsToRootView(pixelSnappedIntRect(rect));
+    TimelineRecordFactory::addRectData(entry.data.get(), rectInRootCoordinates);
     didCompleteCurrentRecord(TimelineRecordType::Paint);
 }
 

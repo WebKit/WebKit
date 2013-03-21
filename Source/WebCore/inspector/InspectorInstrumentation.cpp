@@ -535,10 +535,10 @@ void InspectorInstrumentation::willPaintImpl(InstrumentingAgents* instrumentingA
         timelineAgent->willPaint(frame);
 }
 
-void InspectorInstrumentation::didPaintImpl(InstrumentingAgents*  instrumentingAgents, GraphicsContext* context, const LayoutRect& rect)
+void InspectorInstrumentation::didPaintImpl(InstrumentingAgents*  instrumentingAgents, Frame* frame, GraphicsContext* context, const LayoutRect& rect)
 {
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
-        timelineAgent->didPaint(rect);
+        timelineAgent->didPaint(frame, rect);
     if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
         pageAgent->didPaint(context, rect);
 }

@@ -129,7 +129,7 @@ public:
     void didRecalculateStyle();
 
     void willPaint(Frame*);
-    void didPaint(const LayoutRect&);
+    void didPaint(Frame*, const LayoutRect&);
 
     void willScroll(Frame*);
     void didScroll();
