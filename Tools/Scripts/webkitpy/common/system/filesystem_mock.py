@@ -395,7 +395,7 @@ class MockFileSystem(object):
     def splitext(self, path):
         idx = path.rfind('.')
         if idx == -1:
-            idx = 0
+            idx = len(path)
         return (path[0:idx], path[idx:])
 
 

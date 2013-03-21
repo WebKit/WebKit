@@ -60,7 +60,7 @@ class WorkspaceTest(unittest.TestCase):
     def test_create_zip_exception(self):
         workspace = Workspace(None, MockExecutive(should_log=True, should_throw=True))
         expected_logs = """MOCK run_command: ['zip', '-9', '-r', '/zip/path', '.'], cwd=/source/path
-Workspace.create_zip failed:
+Workspace.create_zip failed in /source/path:
 MOCK ScriptError
 
 MOCK output of child process

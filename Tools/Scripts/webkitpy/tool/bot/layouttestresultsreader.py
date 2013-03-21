@@ -90,7 +90,7 @@ class LayoutTestResultsReader(object):
         if not filesystem.isdir(results_directory):
             _log.info("%s does not exist, not archiving." % results_directory)
             return None
-        archive = workspace.create_zip(zip_path, results_directory)
+        archive = workspace.create_zip(filesystem.abspath(zip_path), filesystem.abspath(results_directory))
         # Remove the results directory to prevent http logs, etc. from getting huge between runs.
         # We could have create_zip remove the original, but this is more explicit.
         filesystem.rmtree(results_directory)

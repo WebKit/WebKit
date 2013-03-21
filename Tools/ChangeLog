@@ -1,3 +1,39 @@
+2013-03-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        EWS bots have stopped uploading results to bugzilla
+        https://bugs.webkit.org/show_bug.cgi?id=101091
+
+        Reviewed by Adam Barth.
+
+        The bug was caused by LayoutTestResultsReader passing a relative file path to the archive zip
+        to workspace.archive_zip. Because archive_zip uses the results directory as the working directory,
+        this relative file path resoled to a file inside a non-existent directory for "zip".
+
+        Fixed the bug by resolving both test results directory and zip archive paths in
+        LayoutTestResultsReader.archive.
+
+        Also made workspace.create_zip print the source_path so that we may debug these issues more easily
+        in the future.
+
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        (MockFileSystem.splitext): Don't assume the entire file path is a file extension when there is no ".".
+
+        * Scripts/webkitpy/common/system/workspace.py:
+        (Workspace.create_zip): Log the source path when "zip" failed.
+
+        * Scripts/webkitpy/common/system/workspace_mock.py:
+        (MockWorkspace.create_zip): Record zip_path and source_path for testing.
+
+        * Scripts/webkitpy/common/system/workspace_unittest.py:
+        (WorkspaceTest.test_create_zip_exception): Test that.
+
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader.py:
+        (LayoutTestResultsReader.archive): Resolve paths before passing them to workspace.create_zip.
+        This is the actual bug fix.
+
+        * Scripts/webkitpy/tool/bot/layouttestresultsreader_unittest.py:
+        (test_archive_last_layout_test_results_with_relative_path): Added a test case.
+
 2013-03-20  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] move WebThemeEngine implementations to TestRunner library

@@ -102,3 +102,19 @@ class LayoutTestResultsReaderTest(unittest.TestCase):
 
         self.assertIsNotNone(reader.archive(patch))
         self.assertFalse(host.filesystem.exists(results_directory))
+
+    def test_archive_last_layout_test_results_with_relative_path(self):
+        host = MockHost()
+        results_directory = "/mock-checkout/layout-test-results"
+
+        host.filesystem.maybe_make_directory(results_directory)
+        host.filesystem.maybe_make_directory('/var/logs')
+        self.assertTrue(host.filesystem.exists(results_directory))
+
+        host.filesystem.chdir('/var')
+        reader = LayoutTestResultsReader(host, results_directory, 'logs')
+        patch = host.bugs.fetch_attachment(10001)
+        # Should fail because the results_directory does not exist.
+        self.assertIsNotNone(reader.archive(patch))
+        self.assertEqual(host.workspace.source_path, results_directory)
+        self.assertEqual(host.workspace.zip_path, '/var/logs/50000-layout-test-results.zip')
