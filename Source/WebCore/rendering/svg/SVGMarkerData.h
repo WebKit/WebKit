@@ -82,19 +82,23 @@ public:
 private:
     float currentAngle(SVGMarkerType type) const
     {
-        FloatPoint inslopeChange(m_inslopePoints[1] - m_inslopePoints[0]);
-        FloatPoint outslopeChange(m_outslopePoints[1] - m_outslopePoints[0]);
+        // For details of this calculation, see: http://www.w3.org/TR/SVG/single-page.html#painting-MarkerElement
+        FloatPoint inSlope(m_inslopePoints[1] - m_inslopePoints[0]);
+        FloatPoint outSlope(m_outslopePoints[1] - m_outslopePoints[0]);
 
-        double inslope = rad2deg(inslopeChange.slopeAngleRadians());
-        double outslope = rad2deg(outslopeChange.slopeAngleRadians());
+        double inAngle = rad2deg(inSlope.slopeAngleRadians());
+        double outAngle = rad2deg(outSlope.slopeAngleRadians());
 
         switch (type) {
         case StartMarker:
-            return narrowPrecisionToFloat(outslope);
+            return narrowPrecisionToFloat(outAngle);
         case MidMarker:
-            return narrowPrecisionToFloat((inslope + outslope) / 2);
+            // WK193015: Prevent bugs due to angles being non-continuous.
+            if (fabs(inAngle - outAngle) > 180)
+                inAngle += 360;
+            return narrowPrecisionToFloat((inAngle + outAngle) / 2);
         case EndMarker:
-            return narrowPrecisionToFloat(inslope);
+            return narrowPrecisionToFloat(inAngle);
         }
 
         ASSERT_NOT_REACHED();
