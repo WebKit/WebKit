@@ -113,6 +113,12 @@ void TiledCoreAnimationDrawingArea::scroll(const IntRect& scrollRect, const IntS
 {
 }
 
+void TiledCoreAnimationDrawingArea::didChangeScrollOffsetForAnyFrame()
+{
+    for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(), end = m_pageOverlayLayers.end(); it != end; ++it)
+        it->value->setNeedsDisplay();
+}
+
 void TiledCoreAnimationDrawingArea::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 {
     CALayer *rootCompositingLayer = graphicsLayer ? graphicsLayer->platformLayer() : nil;
@@ -325,7 +331,6 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
         visibleRect.intersect(enclosingIntRect(m_exposedRect));
     for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(); it != end; ++it) {
         GraphicsLayer* layer = it->value.get();
-        layer->setNeedsDisplay();
         layer->flushCompositingState(visibleRect);
     }
 

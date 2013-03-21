@@ -1,3 +1,31 @@
+2013-03-21  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Page overlays shouldn't dirty the entire layer when flushing if the main frame can't scroll
+        https://bugs.webkit.org/show_bug.cgi?id=111662
+        <rdar://problem/13355808>
+
+        Reviewed by Dean Jackson.
+
+        Instead of setNeedsDisplay()ing the whole page overlay layer every time through
+        TCADA::flushLayers, do it at scroll time instead. Repainting on scroll is
+        necessary to keep things painted in the right place when we scroll (the overlay
+        is fixed to the size of the view), but is quite wasteful in apps that don’t scroll.
+
+        This works with threaded scrolling because overlay installation forces us
+        into main-thread scrolling mode.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::didChangeScrollOffset):
+        Plumb scroll offset changes through to the drawing area, so it can invalidate the page overlay.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        (TiledCoreAnimationDrawingArea):
+        Add didChangeScrollOffsetForAnyFrame, for WebFrameLoaderClient to call us back when any frame scrolls.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::didChangeScrollOffsetForAnyFrame):
+        Invalidate the page overlay when any frame scrolls, so that find indicators in subframes are kept in the right place.
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        Stop unconditionally invalidating the page overlay when we flush layers.
+
 2013-03-21  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Move NSOperationQueue out of NetworkingContext

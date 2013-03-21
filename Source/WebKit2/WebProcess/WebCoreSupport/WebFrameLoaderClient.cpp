@@ -1545,6 +1545,8 @@ void WebFrameLoaderClient::didChangeScrollOffset()
     if (!webPage)
         return;
 
+    webPage->drawingArea()->didChangeScrollOffsetForAnyFrame();
+
     if (!m_frame->isMainFrame())
         return;
 

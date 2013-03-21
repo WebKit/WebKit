@@ -77,6 +77,8 @@ private:
     virtual void setExposedRect(const WebCore::FloatRect&) OVERRIDE;
     virtual void mainFrameScrollabilityChanged(bool) OVERRIDE;
 
+    virtual void didChangeScrollOffsetForAnyFrame() OVERRIDE;
+
     virtual void dispatchAfterEnsuringUpdatedScrollPosition(const Function<void ()>&) OVERRIDE;
 
     // WebCore::GraphicsLayerClient
