@@ -2700,5 +2700,9 @@ fast/repaint/border-fit-lines.html
 # Snapshotted plugins not enabled
 webkit.org/b/98696 plugins/snapshotting [ Skip ]
 
+webkit.org/b/112867 compositing/geometry/limit-layer-bounds-fixed.html [ Pass Failure ]
+
+webkit.org/b/112868 fast/dom/MutationObserver/database-callback-delivery.html [ Pass Failure ]
+
 webkit.org/b/112764 fast/frames/xss-auditor-handles-file-urls.html [ Failure ]
 webkit.org/b/112766 media/media-higher-prio-audio-stream.html [ Failure ]
