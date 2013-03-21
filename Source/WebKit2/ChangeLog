@@ -1,3 +1,21 @@
+2013-03-21  Tim Horton  <timothy_horton@apple.com>
+
+        Tiled page overlay layers don't create tiles until the first flush after they switch to being tiled
+        https://bugs.webkit.org/show_bug.cgi?id=112860
+        <rdar://problem/13468400>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        (TiledCoreAnimationDrawingArea): Add storage for m_clipsToExposedRect.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        The page overlay layer will never have children, so we can use flushCompositingState instead of the ForThisLayerOnly variant.
+        Pass the visible rect of the page overlay layer (computed by intersecting its bounds with the exposed
+        rect that comes from the WKView) to flushCompositingState; don't bother setting the visible rect manually.
+        (WebKit::TiledCoreAnimationDrawingArea::mainFrameScrollabilityChanged):
+        Store m_clipsToExposedRect so we can use it in flushLayers.
+
 2013-03-20  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] Remove VIEW_MODE_CSS_MEDIA from WebKit2

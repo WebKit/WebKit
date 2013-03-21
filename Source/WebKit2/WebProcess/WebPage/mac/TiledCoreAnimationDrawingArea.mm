@@ -70,6 +70,7 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
     , m_layerTreeStateIsFrozen(false)
     , m_layerFlushScheduler(this)
     , m_isPaintingSuspended(!parameters.isVisible)
+    , m_clipsToExposedRect(false)
 {
     Page* page = m_webPage->corePage();
 
@@ -319,12 +320,13 @@ bool TiledCoreAnimationDrawingArea::flushLayers()
     }
 
     PageOverlayLayerMap::iterator end = m_pageOverlayLayers.end();
+    IntRect visibleRect = enclosingIntRect(m_rootLayer.get().frame);
+    if (m_clipsToExposedRect)
+        visibleRect.intersect(enclosingIntRect(m_exposedRect));
     for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(); it != end; ++it) {
         GraphicsLayer* layer = it->value.get();
         layer->setNeedsDisplay();
-        if (TiledBacking* overlayTiledBacking = layer->tiledBacking())
-            overlayTiledBacking->setVisibleRect(enclosingIntRect(m_rootLayer.get().frame));
-        layer->flushCompositingStateForThisLayerOnly();
+        layer->flushCompositingState(visibleRect);
     }
 
     bool returnValue = m_webPage->corePage()->mainFrame()->view()->flushCompositingStateIncludingSubframes();
@@ -375,6 +377,7 @@ void TiledCoreAnimationDrawingArea::setExposedRect(const FloatRect& exposedRect)
 
 void TiledCoreAnimationDrawingArea::mainFrameScrollabilityChanged(bool isScrollable)
 {
+    m_clipsToExposedRect = !isScrollable;
     mainFrameTiledBacking()->setClipsToExposedRect(!isScrollable);
 
     PageOverlayLayerMap::iterator end = m_pageOverlayLayers.end();

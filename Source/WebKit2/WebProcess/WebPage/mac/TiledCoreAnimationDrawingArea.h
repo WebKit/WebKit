@@ -124,6 +124,7 @@ private:
     bool m_hasRootCompositingLayer;
 
     WebCore::FloatRect m_exposedRect;
+    bool m_clipsToExposedRect;
 
     WebCore::IntSize m_lastSentIntrinsicContentSize;
     bool m_inUpdateGeometry;
