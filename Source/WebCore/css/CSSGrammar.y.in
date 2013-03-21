@@ -59,6 +59,31 @@ static inline int cssyyerror(void*, const char*)
     return 1;
 }
 
+static inline bool isCSSTokenAString(int yytype)
+{
+    switch (yytype) {
+    case IDENT:
+    case STRING:
+    case NTH:
+    case HEX:
+    case IDSEL:
+    case DIMEN:
+    case INVALIDDIMEN:
+    case URI:
+    case FUNCTION:
+    case ANYFUNCTION:
+    case NOTFUNCTION:
+    case CALCFUNCTION:
+    case MINFUNCTION:
+    case MAXFUNCTION:
+    case VAR_DEFINITION:
+    case UNICODERANGE:
+        return true;
+    default:
+        return false;
+    }
+}
+
 %}
 
 #if ENABLE_SHADOW_DOM

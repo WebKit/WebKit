@@ -54,32 +54,7 @@ using namespace HTMLNames;
 #define YYDEBUG 0
 
 #if YYDEBUG > 0
-#define YYPRINT(File,Type,Value) print_token_value(File,Type,Value)
-static void print_token_value(FILE * yyoutput, int yytype, YYSTYPE const &yyvalue)
-{
-    switch (yytype) {
-    case IDENT:
-    case STRING:
-    case NTH:
-    case HEX:
-    case IDSEL:
-    case DIMEN:
-    case INVALIDDIMEN:
-    case URI:
-    case FUNCTION:
-    case ANYFUNCTION:
-    case NOTFUNCTION:
-    case CALCFUNCTION:
-    case MINFUNCTION:
-    case MAXFUNCTION:
-    case VAR_DEFINITION:
-    case UNICODERANGE:
-        YYFPRINTF(yyoutput, "%s", String(yyvalue.string).utf8().data());
-        break;
-    default:
-        break;
-    }
-}
+#define YYPRINT(File,Type,Value) if (isCSSTokenAString(Type)) YYFPRINTF(File, "%s", String((Value).string).utf8().data())
 #endif
 
 %}
