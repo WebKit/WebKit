@@ -233,7 +233,6 @@ webkit.org/b/89052 fast/css/image-orientation
 # CSS3 Text support is not yet enabled (needs ENABLE_CSS3_TEXT).
 webkit.org/b/58491 fast/css3-text/css3-text-decoration
 webkit.org/b/76173 fast/css3-text/css3-text-align-last
-webkit.org/b/112755 fast/css3-text/css3-text-indent [ Failure ]
 
 # Chromium does not support smart pasting in text controls yet.
 webkit.org/b/60830 editing/pasteboard/smart-paste-in-text-control.html
@@ -1441,7 +1440,8 @@ webkit.org/b/109056 accessibility/html-html-element-is-ignored.html [ Skip ]
 webkit.org/b/73912 accessibility/aria-checkbox-sends-notification.html [ Failure Pass ]
 #webkit.org/b/98787 accessibility/aria-hidden-negates-no-visibility.html [ Skip ]
 webkit.org/b/110508 accessibility/table-with-hidden-head-section.html [ Skip ]
-webkit.org/b/111062 [ Linux Win Debug ] accessibility/svg-remote-element.html [ Failure ]
+webkit.org/b/111004 [ Linux Debug ] accessibility/svg-remote-element.html [ Pass Failure ]
+webkit.org/b/111004 [ Win7 Debug ] accessibility/svg-remote-element.html [ Failure ]
 
 # -----------------------------------------------------------------
 # Test failures with Skia GPU rendering of canvas 2D
@@ -2429,7 +2429,6 @@ crbug.com/65877 fast/writing-mode/japanese-ruby-vertical-lr.html [ Failure Pass 
 crbug.com/65877 fast/writing-mode/japanese-ruby-vertical-rl.html [ Failure Pass ]
 crbug.com/65877 [ Android Linux Win ] fast/writing-mode/japanese-ruby-horizontal-bt.html [ Failure Pass ]
 crbug.com/65877 [ Linux ] fast/writing-mode/broken-ideographic-font.html [ Failure ]
-#BUGCR65877 LINUX ANDROID WIN : fast/writing-mode/broken-ideograph-small-caps.html = IMAGE
 crbug.com/65877 [ Android ] fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure ]
 crbug.com/65877 [ Win ] fast/text/international/text-combine-image-test.html [ Failure ]
 webkit.org/b/53451 [ Android ] fast/text/international/text-combine-image-test.html [ Failure ]
@@ -2854,9 +2853,12 @@ crbug.com/85755 fast/js/exception-properties.html [ Failure ]
 
 webkit.org/b/62580 fast/loader/inherit-charset-to-empty-frame.html [ Failure Pass ]
 
-# Has been timing out since r88913.
-webkit.org/b/62754 [ Android Linux Mac Release ] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Failure Timeout ]
-webkit.org/b/62754 [ Android Linux Mac Debug ] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Failure Slow ]
+webkit.org/b/62754 [ Mac Debug ] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Failure ]
+webkit.org/b/62754 [ Mac Linux Release ] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Timeout ]
+webkit.org/b/62754 [ Win7 Debug ] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Pass Failure Timeout ]
+webkit.org/b/62754 [ Linux Debug ] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Slow ]
+webkit.org/b/62754 [ Android Release ] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Failure Timeout ]
+webkit.org/b/62754 [ Android Debug ] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Failure Slow ]
 
 crbug.com/87732 fast/regex/toString.html [ Failure ]
 
@@ -4257,7 +4259,8 @@ webkit.org/b/106858 [ Linux Win Debug ] scrollingcoordinator/non-fast-scrollable
 
 webkit.org/b/107204 fast/events/touch/multi-touch-inside-iframes.html [ Pass Failure ]
 
-webkit.org/b/107328 http/tests/cache/cancel-multiple-post-xhrs.html [ Missing ]
+webkit.org/b/107328 http/tests/cache/cancel-multiple-post-xhrs.html [ Pass Missing ]
+
 webkit.org/b/107341 [ Debug ] inspector/profiler/memory-instrumentation-cached-images.html [ Failure ]
 
 # Flaky on most platforms
@@ -4418,6 +4421,7 @@ webkit.org/b/112610 [ Win ] fast/text/word-space-with-kerning-3.html [ ImageOnly
 
 # Application cache blocking is not supported in Chromium
 webkit.org/b/112288 http/tests/security/cross-origin-appcache.html [ Failure ]
+webkit.org/b/112288 http/tests/security/same-origin-appcache-blocked.html [ Failure ]
 
 # Snapshotted plugins not enabled
 webkit.org/b/98696 plugins/snapshotting [ Skip ]
