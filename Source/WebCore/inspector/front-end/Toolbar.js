@@ -41,7 +41,7 @@ WebInspector.Toolbar = function()
     this._dropdownButton.addEventListener("click", this._toggleDropdown.bind(this), false);
 
     this._panelsMenuButton = document.getElementById("toolbar-panels-menu");
-    if (WebInspector.experimentsSettings.customizableToolbar.isEnabled())
+    if (this._isToolbarCustomizable())
         this._panelsMenuButton.addEventListener("click", this._togglePanelsMenu.bind(this), false);
     else
         this._panelsMenuButton.addStyleClass("hidden");
@@ -96,12 +96,20 @@ WebInspector.Toolbar.prototype = {
     },
 
     /**
+     * @return {boolean}
+     */
+    _isToolbarCustomizable: function()
+    {
+        return false;
+    },
+
+    /**
      * @param {!string} name
      * @return {boolean}
      */
     _isPanelVisible: function(name)
     {
-        if (!WebInspector.experimentsSettings.customizableToolbar.isEnabled())
+        if (!this._isToolbarCustomizable())
             return true;
         var visiblePanels = WebInspector.settings.visiblePanels.get();
         return visiblePanels.hasOwnProperty(name) ? visiblePanels[name] : this._isPanelVisibleByDefault(name);

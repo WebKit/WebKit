@@ -225,7 +225,6 @@ WebInspector.ExperimentsSettings = function()
     this.showWhitespaceInEditor = this._createExperiment("showWhitespaceInEditor", "Show whitespace characters in editor");
     this.textEditorSmartBraces = this._createExperiment("textEditorSmartBraces", "Enable smart braces in text editor");
     this.separateProfilers = this._createExperiment("separateProfilers", "Separate profiler tools");
-    this.customizableToolbar = this._createExperiment("customizableToolbar", "Allow customizing tools visible on the toolbar");
     this.cpuFlameChart = this._createExperiment("cpuFlameChart", "Show Flame Chart in CPU Profiler");
 
     this._cleanUpSetting();
