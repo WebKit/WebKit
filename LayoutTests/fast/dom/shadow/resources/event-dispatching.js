@@ -138,6 +138,7 @@ function addEventListeners(nodes)
         node.addEventListener('mouseover', recordEvent, false);
         node.addEventListener('mousewheel', recordEvent, false);
         node.addEventListener('touchstart', recordEvent, false);
+        node.addEventListener('gesturetap', recordEvent, false);
         // <content> might be an inactive insertion point, so style it also.
         if (node.tagName == 'DIV' || node.tagName == 'DETAILS' || node.tagName == 'SUMMARY' || node.tagName == 'CONTENT')
             node.setAttribute('style', 'padding-top: ' + defaultPaddingSize + 'px;');

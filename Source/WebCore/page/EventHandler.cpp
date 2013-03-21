@@ -2464,7 +2464,7 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
     }
 
     IntPoint adjustedPoint = gestureEvent.position();
-    HitTestRequest::HitTestRequestType hitType = HitTestRequest::TouchEvent;
+    HitTestRequest::HitTestRequestType hitType = HitTestRequest::TouchEvent | HitTestRequest::AllowShadowContent;
     if (gestureEvent.type() == PlatformEvent::GestureTapDown) {
 #if ENABLE(TOUCH_ADJUSTMENT)
         adjustGesturePosition(gestureEvent, adjustedPoint);

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../js/resources/js-test-pre.js"></script>
+    <script src="resources/shadow-dom.js"></script>
+    <script src="resources/event-dispatching.js"></script>
+</head>
+<body>
+<div id="sandbox">
+</div>
+<pre id="console"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+sandbox.appendChild(
+    createDOM('div', {'id': 'container'},
+              createDOM('div', {'id': 'div1'},
+                        createShadowRoot(
+                            createDOM('div', {},
+                                      document.createTextNode('foo')),
+                            createDOM('div', {'id': 'div1-shadow-root-child'},
+                                      document.createTextNode('foo')),
+                            createDOM('div', {},
+                                      document.createTextNode('foo'))))));
+
+sandbox.offsetLeft;
+
+function gestureTap(elementId)
+{
+    var element = getNodeInShadowTreeStack(elementId);
+    if (window.eventSender) {
+        eventSender.gestureTap(element.offsetLeft + element.offsetWidth / 2, element.offsetTop + element.offsetHeight / 2);
+        eventSender.leapForward(10);
+        eventSender.keyDown(' ');
+    }
+}
+
+addEventListeners(['div1', 'div1/div1-shadow-root-child']);
+gestureTap('div1/div1-shadow-root-child');
+debugDispatchedEvent('gesturetap');
+</script>
+</body>
+</html>
