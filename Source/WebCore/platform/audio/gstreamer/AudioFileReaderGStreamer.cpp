@@ -453,7 +453,7 @@ PassOwnPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono
     gst_buffer_list_iterator_add_group(m_frontRightBuffersIterator);
 #endif
 
-    GRefPtr<GMainContext> context = g_main_context_new();
+    GRefPtr<GMainContext> context = adoptGRef(g_main_context_new());
     g_main_context_push_thread_default(context.get());
     m_loop = adoptGRef(g_main_loop_new(context.get(), FALSE));
 
