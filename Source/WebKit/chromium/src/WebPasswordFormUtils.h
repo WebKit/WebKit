@@ -32,6 +32,7 @@
 #define WebPasswordFormUtils_h
 
 #include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 class HTMLInputElement;
@@ -48,6 +49,7 @@ namespace WebKit {
 // implement their own heuristics related autocomplete.
 struct PasswordFormFields {
     WebCore::HTMLInputElement* userName;
+    Vector<String> alternateUserNames;
     Vector<WebCore::HTMLInputElement*> passwords;
     WebCore::HTMLFormControlElement* submit;
     PasswordFormFields() : userName(0), submit(0) { }

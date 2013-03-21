@@ -113,6 +113,7 @@ void assemblePasswordFormResult(const KURL& fullOrigin,
                                 const KURL& fullAction,
                                 HTMLFormControlElement* submit,
                                 HTMLInputElement* userName,
+                                const Vector<String>& alternateUserNames,
                                 HTMLInputElement* oldPassword,
                                 HTMLInputElement* password,
                                 WebPasswordFormData* result)
@@ -129,6 +130,7 @@ void assemblePasswordFormResult(const KURL& fullOrigin,
     signonRealmURL.setPath("");
     result->signonRealm = signonRealmURL;
 
+    result->possibleUserNames = alternateUserNames;
     if (submit)
         result->submitElement = submit->name();
     if (userName) {
@@ -173,6 +175,7 @@ WebPasswordFormData::WebPasswordFormData(const WebFormElement& webForm)
 
     assemblePasswordFormResult(fullOrigin, fullAction,
                                fields.submit, fields.userName,
+                               fields.alternateUserNames,
                                oldPassword, password, this);
 }
 

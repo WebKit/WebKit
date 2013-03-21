@@ -1,3 +1,19 @@
+2013-03-21  Garrett Casto  <gcasto@chromium.org>
+
+        [chromium] Add possibleUserNames to WebPasswordFormData
+        https://bugs.webkit.org/show_bug.cgi?id=112375
+
+        Reviewed by Adam Barth.
+
+        * public/WebPasswordFormData.h:
+        (WebPasswordFormData):
+        * src/WebPasswordFormData.cpp:
+        (WebKit::WebPasswordFormData::WebPasswordFormData):
+        * src/WebPasswordFormUtils.cpp:
+        (WebKit::findPasswordFormFields):
+        * src/WebPasswordFormUtils.h:
+        (PasswordFormFields):
+
 2013-03-21  Terry Anderson  <tdanderson@chromium.org>
 
         [chromium] Remove SK_SUPPORT_HINTING_SCALE_FACTOR flag and code
