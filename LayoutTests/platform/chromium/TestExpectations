@@ -111,7 +111,7 @@ webkit.org/b/90488 [ Win Mac Debug ] inspector/styles/styles-computed-trace.html
 
 # Chromium r163873 slowed down these tests
 webkit.org/b/100287 [ Linux Win Mac ] compositing/culling/filter-occlusion-blur-large.html [ Pass Slow  ]
-webkit.org/b/66989 transforms/3d/point-mapping/3d-point-mapping-deep.html [ Failure ImageOnlyFailure Slow ]
+webkit.org/b/66989 transforms/3d/point-mapping/3d-point-mapping-deep.html [ Pass ImageOnlyFailure Slow ]
 
 # The test has been timing out since landed in r130587.
 webkit.org/b/98659 [ Debug ] fast/dom/gc-dom-tree-lifetime.html [ Pass Timeout ]
@@ -1300,9 +1300,9 @@ webkit.org/b/79454 [ Android Linux Mac ] svg/text/text-viewbox-rescale.html [ Im
 # when comparing the former and new results. This may be due to bad test design or may be revealing a bug
 # in the code. Turbulence results are very different.
 webkit.org/b/80517 [ Android ] svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr.html [ ImageOnlyFailure ]
-webkit.org/b/80517 [ Android XP ] svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetY-attr.html [ ImageOnlyFailure ]
+webkit.org/b/80517 [ Android ] svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetY-attr.html [ ImageOnlyFailure ]
 webkit.org/b/80517 [ Android ] svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetX-prop.html [ ImageOnlyFailure ]
-webkit.org/b/80517 [ Android XP ] svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetY-prop.html [ ImageOnlyFailure ]
+webkit.org/b/80517 [ Android ] svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetY-prop.html [ ImageOnlyFailure ]
 webkit.org/b/80517 [ Android ] svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr.html [ ImageOnlyFailure ]
 webkit.org/b/80517 [ Android ] svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html [ ImageOnlyFailure ]
 webkit.org/b/80517 [ Debug ] svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html [ ImageOnlyFailure Pass ]
@@ -1456,14 +1456,6 @@ webkit.org/b/64876 [ Linux Win ] platform/chromium/virtual/gpu/fast/canvas/canva
 webkit.org/b/75276 [ Android ] fast/repaint/shadow-multiple-horizontal.html [ ImageOnlyFailure ]
 webkit.org/b/75276 [ Android ] fast/repaint/shadow-multiple-strict-horizontal.html [ ImageOnlyFailure ]
 webkit.org/b/75276 [ Android ] fast/repaint/shadow-multiple-strict-vertical.html [ ImageOnlyFailure ]
-
-# These tests fail due to a bug with 2D canvas command deferral
-crbug.com/222140 platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.beside.html [ Failure ]
-crbug.com/222140 platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.shape1.html [ Failure ]
-crbug.com/222140 platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.behind.html [ Failure ]
-crbug.com/222140 platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.cone.shape2.html [ Failure ]
-crbug.com/222140 platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.touch1.html [ Failure ]
-crbug.com/222140 platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.radial.touch3.html [ Failure ]
 
 # -----------------------------------------------------------------
 # WebGL Tests
@@ -2068,7 +2060,7 @@ crbug.com/28005 [ Android ] fast/css/color-correction.html [ Failure ]
 crbug.com/28005 [ Android ] fast/css/color-correction-on-box-shadow.html [ Failure ]
 crbug.com/28005 [ Android ] fast/css/color-correction-on-text-shadow.html [ Failure ]
 crbug.com/28005 [ Android ] fast/css/color-correction-on-background-image.html [ Failure ]
-crbug.com/28005 [ Android XP ] fast/css/color-correction-untagged-images.html [ Failure ]
+crbug.com/28005 [ Android ] fast/css/color-correction-untagged-images.html [ Failure ]
 
 # Timeout on Debug.
 webkit.org/b/82954 [ Mac Win Linux ] svg/hixie/perf/007.xml [ ImageOnlyFailure Pass Slow ]
@@ -4032,7 +4024,6 @@ webkit.org/b/94240 [ Linux ] platform/chromium/virtual/deferred/fast/images/colo
 webkit.org/b/94240 [ Android ] platform/chromium/virtual/deferred/fast/images/embed-image.html [ Failure ]
 webkit.org/b/94240 [ Linux Win SnowLeopard ] platform/chromium/virtual/deferred/fast/images/gif-large-checkerboard.html [ ImageOnlyFailure ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/gif-loop-count.html [ ImageOnlyFailure ]
-webkit.org/b/94240 [ XP ] platform/chromium/virtual/deferred/fast/images/imagemap-circle-focus-ring.html [ Failure ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/pdf-as-image-landscape.html [ WontFix ]
 webkit.org/b/94240 [ Win Mac Android ] platform/chromium/virtual/deferred/fast/images/pixel-crack-image-background-webkit-transform-scale.html [ ImageOnlyFailure ]
 webkit.org/b/94240 [ Mac Android ] platform/chromium/virtual/deferred/fast/images/support-broken-image-delegate.html [ Failure ]
@@ -4125,9 +4116,7 @@ webkit.org/b/100647 [ Win ] webaudio/audiobuffersource-loop-points.html [ Failur
 webkit.org/b/100806 [ Win ] fast/css/font-face-implicit-local-font.html [ Failure ]
 webkit.org/b/100806 [ Win ] fast/css/font-face-unicode-range.html [ Failure ImageOnlyFailure ]
 webkit.org/b/100806 [ Win ] fast/css/font-face-descending-unicode-range.html [ Pass Failure ]
-webkit.org/b/100806 [ Win ] fast/css/font-face-download-error.html [ Failure ]
-# Seems to have the wrong font in the SVG part of the test (CSS is ok).
-webkit.org/b/100806 [ Win ] svg/custom/font-face-simple.svg [ Failure ]
+webkit.org/b/100806 [ Win ] fast/css/font-face-download-error.html [ Pass Failure ]
 
 # This test is consistently leaking state into the next test (object-src-url-allowed.html) after r133069.
 webkit.org/b/100955 http/tests/security/contentSecurityPolicy/object-src-none-blocked.html [ Skip ]
@@ -4259,8 +4248,6 @@ crbug.com/166932 [ Debug ] plugins/embed-attributes-setting.html [ Crash Pass ]
 # Brightnes filter update needs rebaseline.
 webkit.org/b/106746 css3/filters/filter-property-parsing.html [ Failure ]
 
-webkit.org/b/106609 [ Win ] animations/fill-mode-iteration-count-non-integer.html [ Failure ]
-
 webkit.org/b/106858 [ Mac Debug ] scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ ImageOnlyFailure Crash ]
 webkit.org/b/106858 [ Linux Win Debug ] scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ ImageOnlyFailure Pass ]
 webkit.org/b/106858 [ Mac Debug ] scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ ImageOnlyFailure ]
@@ -4278,7 +4265,9 @@ webkit.org/b/110873 fast/sub-pixel/transformed-iframe-copy-on-scroll.html [ Imag
 
 webkit.org/b/107899 [ Linux Win Android ] fast/repaint/selection-clear.html [ ImageOnlyFailure ]
 
-webkit.org/b/107962 http/tests/loading/redirect-methods.html [ Failure ]
+webkit.org/b/107962 [ Mac ] http/tests/loading/redirect-methods.html [ Failure ]
+webkit.org/b/107962 [ Linux Release ] http/tests/loading/redirect-methods.html [ Pass Failure ]
+webkit.org/b/107962 [ Win7 ] http/tests/loading/redirect-methods.html [ Slow ]
 webkit.org/b/107962 http/tests/cache/cached-main-resource.html [ Failure ]
 webkit.org/b/107962 http/tests/cache/iframe-304-crash.html [ Failure ]
 
@@ -4333,14 +4322,24 @@ webkit.org/b/110851 platform/chromium/virtual/softwarecompositing/overflow/overf
 webkit.org/b/110851 platform/chromium/virtual/softwarecompositing/repaint/page-scale-repaint.html [ ImageOnlyFailure ]
 
 # Pixel tests for RTL iframe scrollbar is erroneous. Cannot observe on actual browser.
-crbug.com/192172 [ Linux ] compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ImageOnlyFailure ]
-crbug.com/192172 [ Linux Win ] compositing/rtl/rtl-iframe-absolute-overflow.html [ Pass Failure ImageOnlyFailure ]
-crbug.com/192172 [ Linux Win ] compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ImageOnlyFailure ]
-crbug.com/192172 [ Linux Win ] compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ImageOnlyFailure ]
-crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ImageOnlyFailure ]
-crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ImageOnlyFailure ]
-crbug.com/192172 [ Linux Win ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ImageOnlyFailure ]
-crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ImageOnlyFailure ]
+crbug.com/192172 [ Linux ] compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
+crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
+crbug.com/192172 [ Linux ] compositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
+crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
+crbug.com/192172 [ Linux ] compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
+crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
+crbug.com/192172 [ Linux ] compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
+crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
+
+# These tests flakily reorder the scrollbars in debug, causing text failures
+webkit.org/b/111199 [ Debug Win7 Lion ] compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Pass Failure ]
+webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Pass Failure ]
+webkit.org/b/111199 [ Debug Win7 Lion ] compositing/rtl/rtl-iframe-absolute-overflow.html [ Pass Failure ]
+webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ Pass Failure ]
+webkit.org/b/111199 [ Debug Win7 Lion ] compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Pass Failure ]
+webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Pass Failure ]
+webkit.org/b/111199 [ Debug Win7 Lion ] compositing/rtl/rtl-iframe-fixed-overflow.html [ Pass Failure ]
+webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Pass Failure ]
 
 # Need rebaseline
 webkit.org/b/110654 [ Mac Win ] css2.1/20110323/replaced-elements-001.htm [ Failure ]
@@ -4354,15 +4353,6 @@ webkit.org/b/110915 [ Linux ] platform/chromium-linux/fast/text/chromium-linux-f
 # This fails on Precise due to a difference in Garuda.ttf between Lucid and Precise.
 # We can rebaseline when we drop Lucid support.
 webkit.org/b/110540 [ Linux ] fast/text/international/thai-line-breaks.html [ ImageOnlyFailure Pass ]
-
-# These tests flakily reorder the scrollbars in debug, causing text failures
-# Some platforms covered above under crbug.com/192172
-webkit.org/b/111199 [ Debug Mac ] compositing/rtl/rtl-iframe-absolute-overflow.html [ Pass Failure ImageOnlyFailure ]
-webkit.org/b/111199 [ Debug Win Mac ] compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Pass Failure ImageOnlyFailure ]
-webkit.org/b/111199 [ Debug Win Mac ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ Pass Failure ImageOnlyFailure ]
-webkit.org/b/111199 [ Debug Win Mac ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Pass Failure ImageOnlyFailure ]
-webkit.org/b/111199 [ Debug Mac ] compositing/rtl/rtl-iframe-fixed-overflow.html [ Pass Failure ]
-webkit.org/b/111199 [ Debug Win Mac ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Pass Failure ]
 
 # The html5lib tests are all too slow to run in Debug, largely due to v8 per-document boot-up.
 # V8 bug: https://code.google.com/p/v8/issues/detail?id=2567
@@ -4434,8 +4424,6 @@ webkit.org/b/112610 [ Win ] fast/text/word-space-with-kerning-3.html [ ImageOnly
 
 # Application cache blocking is not supported in Chromium
 webkit.org/b/112288 http/tests/security/cross-origin-appcache.html [ Failure ]
-webkit.org/b/112288 http/tests/security/cross-origin-appcache-allowed.html [ Failure ]
-webkit.org/b/112288 http/tests/security/same-origin-appcache-blocked.html [ Failure ]
 
 # Snapshotted plugins not enabled
 webkit.org/b/98696 plugins/snapshotting [ Skip ]
