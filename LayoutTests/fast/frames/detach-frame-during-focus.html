@@ -8,7 +8,12 @@ addEventListener('change', function(e) {
     document.body.appendChild(document.getElementById('frame1'));
 }, false);
 
-function handleFocus() {
+var didStartTest = false;
+function startTest() {
+    if (didStartTest)
+        return;
+    didStartTest = true;;
+    frame1.innerInput.focus();
     outerInput.focus();
     document.execCommand('inserttext', false, 'abc');
     frame1.innerInput.focus();
@@ -17,6 +22,6 @@ function handleFocus() {
 }
 </script>
 <div>
- <input value="foo" id="outerInput"></input>
- <iframe frameborder="0" id="frame1" height="100" width="540" srcdoc="&lt;input autofocus id='innerInput' onfocus='parent.handleFocus()'>"></iframe>
+ <input value="foo" id="outerInput">
+ <iframe onload="startTest()" id="frame1" height="100" width="540" srcdoc="&lt;input id='innerInput'>"></iframe>
 </div>
