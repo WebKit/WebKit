@@ -30,10 +30,39 @@
 
 namespace WebCore {
 
-static const int pbufferAttributes[] = { GLX_PBUFFER_WIDTH, 1, GLX_PBUFFER_HEIGHT, 1, 0 };
+static PFNGLXBINDTEXIMAGEEXTPROC pGlXBindTexImageEXT = 0;
+static PFNGLXRELEASETEXIMAGEEXTPROC pGlXReleaseTexImageEXT = 0;
 
-GLXTransportSurface::GLXTransportSurface(SurfaceAttributes attributes)
-    : GLTransportSurface(attributes)
+static bool resolveGLMethods()
+{
+    static bool resolved = false;
+    if (resolved)
+        return true;
+
+    pGlXBindTexImageEXT = reinterpret_cast<PFNGLXBINDTEXIMAGEEXTPROC>(glXGetProcAddress(reinterpret_cast<const GLubyte*>("glXBindTexImageEXT")));
+    pGlXReleaseTexImageEXT = reinterpret_cast<PFNGLXRELEASETEXIMAGEEXTPROC>(glXGetProcAddress(reinterpret_cast<const GLubyte*>("glXReleaseTexImageEXT")));
+
+    resolved = pGlXBindTexImageEXT && pGlXReleaseTexImageEXT;
+
+    return resolved;
+}
+
+static int glxAttributes[] = {
+    GLX_TEXTURE_FORMAT_EXT,
+    GLX_TEXTURE_FORMAT_RGBA_EXT,
+    GLX_TEXTURE_TARGET_EXT,
+    GLX_TEXTURE_2D_EXT,
+    0
+};
+
+static bool isMesaGLX()
+{
+    static bool isMesa = !!strstr(glXGetClientString(X11Helper::nativeDisplay(), GLX_VENDOR), "Mesa");
+    return isMesa;
+}
+
+GLXTransportSurface::GLXTransportSurface(const IntSize& size, SurfaceAttributes attributes)
+    : GLTransportSurface(size, attributes)
 {
     m_sharedDisplay = X11Helper::nativeDisplay();
     attributes |= GLPlatformSurface::DoubleBuffered;
@@ -45,7 +74,7 @@ GLXTransportSurface::GLXTransportSurface(SurfaceAttributes attributes)
         return;
     }
 
-    X11Helper::createOffScreenWindow(&m_bufferHandle, *visInfo.get());
+    X11Helper::createOffScreenWindow(&m_bufferHandle, *visInfo.get(), size);
 
     if (!m_bufferHandle) {
         destroy();
@@ -164,6 +193,92 @@ void GLXOffScreenSurface::freeResources()
 
     m_configSelector = nullptr;
     m_drawable = 0;
+}
+
+GLXTransportSurfaceClient::GLXTransportSurfaceClient(const PlatformBufferHandle handle)
+    : GLTransportSurfaceClient(handle)
+{
+    if (!resolveGLMethods())
+        return;
+
+    XWindowAttributes attr;
+    Display* display = X11Helper::nativeDisplay();
+    if (!XGetWindowAttributes(display, handle, &attr))
+        return;
+
+    // Ensure that the window is mapped.
+    if (attr.map_state == IsUnmapped || attr.map_state == IsUnviewable)
+        return;
+
+    ScopedXPixmapCreationErrorHandler handler;
+
+    XRenderPictFormat* format = XRenderFindVisualFormat(display, attr.visual);
+    bool hasAlpha = (format->type == PictTypeDirect && format->direct.alphaMask);
+    m_xPixmap = XCompositeNameWindowPixmap(display, handle);
+
+    if (!m_xPixmap)
+        return;
+
+    glxAttributes[1] = (format->depth == 32 && hasAlpha) ? GLX_TEXTURE_FORMAT_RGBA_EXT : GLX_TEXTURE_FORMAT_RGB_EXT;
+
+    GLPlatformSurface::SurfaceAttributes sharedSurfaceAttributes = GLPlatformSurface::Default;
+
+    if (hasAlpha) {
+        sharedSurfaceAttributes = GLPlatformSurface::SupportAlpha;
+        m_hasAlpha = true;
+    }
+
+    GLXConfigSelector configSelector(sharedSurfaceAttributes);
+
+    m_glxPixmap = glXCreatePixmap(display, configSelector.surfaceClientConfig(format->depth, XVisualIDFromVisual(attr.visual)), m_xPixmap, glxAttributes);
+
+    if (!m_glxPixmap || !handler.isValidOperation()) {
+        destroy();
+        return;
+    }
+
+    createTexture();
+    glXWaitX();
+    pGlXBindTexImageEXT(display, m_glxPixmap, GLX_FRONT_EXT, 0);
+}
+
+GLXTransportSurfaceClient::~GLXTransportSurfaceClient()
+{
+}
+
+void GLXTransportSurfaceClient::destroy()
+{
+    Display* display = X11Helper::nativeDisplay();
+    if (!display)
+        return;
+
+    if (m_texture) {
+        pGlXReleaseTexImageEXT(display, m_glxPixmap, GLX_FRONT_EXT);
+        GLTransportSurfaceClient::destroy();
+    }
+
+    if (m_glxPixmap) {
+        glXDestroyPixmap(display, m_glxPixmap);
+        m_glxPixmap = 0;
+        glXWaitGL();
+    }
+
+    if (m_xPixmap) {
+        X11Helper::destroyPixmap(m_xPixmap);
+        m_xPixmap = 0;
+    }
+}
+
+void GLXTransportSurfaceClient::prepareTexture()
+{
+    if (isMesaGLX() && m_texture) {
+        Display* display = X11Helper::nativeDisplay();
+        glBindTexture(GL_TEXTURE_2D, m_texture);
+        // Mesa doesn't re-bind texture to the front buffer on glXSwapBufer
+        // Manually release previous lock and rebind texture to surface to ensure frame updates.
+        pGlXReleaseTexImageEXT(display, m_glxPixmap, GLX_FRONT_EXT);
+        pGlXBindTexImageEXT(display, m_glxPixmap, GLX_FRONT_EXT, 0);
+    }
 }
 
 }

@@ -54,20 +54,6 @@ PassOwnPtr<GLPlatformSurface> GLPlatformSurface::createOffScreenSurface(SurfaceA
     return nullptr;
 }
 
-PassOwnPtr<GLPlatformSurface> GLPlatformSurface::createTransportSurface(SurfaceAttributes attributes)
-{
-#if USE(GLX)
-    OwnPtr<GLPlatformSurface> surface = adoptPtr(new GLXTransportSurface(attributes));
-#elif USE(EGL)
-    OwnPtr<GLPlatformSurface> surface = adoptPtr(new EGLWindowTransportSurface(attributes));
-#endif
-
-    if (surface && surface->handle() && surface->drawable())
-        return surface.release();
-
-    return nullptr;
-}
-
 GLPlatformSurface::GLPlatformSurface(SurfaceAttributes)
     : m_sharedDisplay(0)
     , m_drawable(0)

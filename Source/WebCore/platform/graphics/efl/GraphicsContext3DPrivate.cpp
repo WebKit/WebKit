@@ -68,36 +68,12 @@ bool GraphicsContext3DPrivate::initialize()
         if (!m_offScreenContext->initialize(m_offScreenSurface.get()))
             return false;
 
-#if USE(GRAPHICS_SURFACE)
         if (!makeContextCurrent())
             return false;
-
-        m_context->validateAttributes();
-        GLPlatformSurface::SurfaceAttributes sharedSurfaceAttributes = GLPlatformSurface::Default;
-        if (m_context->m_attrs.alpha)
-            sharedSurfaceAttributes = GLPlatformSurface::SupportAlpha;
-
-        m_offScreenContext->releaseCurrent();
-        m_sharedSurface = GLPlatformSurface::createTransportSurface(sharedSurfaceAttributes);
-        if (!m_sharedSurface)
-            return false;
-
-        m_sharedContext = GLPlatformContext::createContext(m_context->m_renderStyle);
-        if (!m_sharedContext)
-            return false;
-
-        if (!m_sharedContext->initialize(m_sharedSurface.get(), m_offScreenContext->handle()))
-            return false;
-
-        if (!makeSharedContextCurrent())
-            return false;
-
-        m_surfaceHandle = GraphicsSurfaceToken(m_sharedSurface->handle());
+#if USE(GRAPHICS_SURFACE)
+        m_surfaceOperation = CreateSurface;
 #endif
     }
-
-    if (!makeContextCurrent())
-        return false;
 
     return true;
 }
@@ -114,16 +90,13 @@ void GraphicsContext3DPrivate::releaseResources()
 
     // Release the current context and drawable only after destroying any associated gl resources.
 #if USE(GRAPHICS_SURFACE)
-    if (m_sharedContext && m_sharedContext->handle() && m_sharedSurface)
-        makeSharedContextCurrent();
+    if (m_previousGraphicsSurface)
+        m_previousGraphicsSurface = nullptr;
 
-    if (m_sharedSurface)
-        m_sharedSurface->destroy();
+    if (m_graphicsSurface)
+        m_graphicsSurface = nullptr;
 
-    if (m_sharedContext) {
-        m_sharedContext->destroy();
-        m_sharedContext->releaseCurrent();
-    }
+    m_surfaceHandle = GraphicsSurfaceToken();
 #endif
     if (m_offScreenSurface)
         m_offScreenSurface->destroy();
@@ -191,6 +164,8 @@ bool GraphicsContext3DPrivate::prepareBuffer() const
 
         if (enableScissorTest)
             m_context->enable(GraphicsContext3D::SCISSOR_TEST);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, m_context->m_state.boundFBO);
     }
 
     return true;
@@ -204,38 +179,80 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper*, const FloatR
 #endif
 
 #if USE(GRAPHICS_SURFACE)
-bool GraphicsContext3DPrivate::makeSharedContextCurrent() const
+void GraphicsContext3DPrivate::createGraphicsSurface()
 {
-    bool success = m_sharedContext->makeCurrent(m_sharedSurface.get());
+    static PendingSurfaceOperation pendingOperation = DeletePreviousSurface | Resize | CreateSurface;
+    if (!(m_surfaceOperation & pendingOperation))
+        return;
 
-    if (!m_sharedContext->isValid()) {
-        // FIXME: Restore context
-        if (m_contextLostCallback)
-            m_contextLostCallback->onContextLost();
-
-        return false;
+    if (m_surfaceOperation & DeletePreviousSurface) {
+        m_previousGraphicsSurface = nullptr;
+        m_surfaceOperation &= ~DeletePreviousSurface;
     }
 
-    return success;
+    if (!(m_surfaceOperation & pendingOperation))
+        return;
+
+    // Don't release current graphics surface until we have prepared surface
+    // with requested size. This is to avoid flashing during resize.
+    if (m_surfaceOperation & Resize) {
+        m_previousGraphicsSurface = m_graphicsSurface;
+        m_surfaceOperation &= ~Resize;
+        m_surfaceOperation |= DeletePreviousSurface;
+        m_size = IntSize(m_context->m_currentWidth, m_context->m_currentHeight);
+    } else
+        m_surfaceOperation &= ~CreateSurface;
+
+    m_targetRect = IntRect(IntPoint(), m_size);
+
+    if (m_size.isEmpty()) {
+        if (m_graphicsSurface) {
+            m_graphicsSurface = nullptr;
+            m_surfaceHandle = GraphicsSurfaceToken();
+            makeContextCurrent();
+        }
+
+        return;
+    }
+
+    m_offScreenContext->releaseCurrent();
+    GraphicsSurface::Flags flags = GraphicsSurface::SupportsTextureTarget | GraphicsSurface::SupportsSharing;
+
+    if (m_context->m_attrs.alpha)
+        flags |= GraphicsSurface::SupportsAlpha;
+
+    m_graphicsSurface = GraphicsSurface::create(m_size, flags, m_offScreenContext->handle());
+
+    if (!m_graphicsSurface)
+        m_surfaceHandle = GraphicsSurfaceToken();
+    else
+        m_surfaceHandle = GraphicsSurfaceToken(m_graphicsSurface->exportToken());
+
+    makeContextCurrent();
 }
 
 void GraphicsContext3DPrivate::didResizeCanvas(const IntSize& size)
 {
-    m_size = size;
+    if (m_surfaceOperation & CreateSurface) {
+        m_size = size;
+        createGraphicsSurface();
+        return;
+    }
 
-    if (makeSharedContextCurrent())
-        m_sharedSurface->setGeometry(IntRect(0, 0, m_size.width(), m_size.height()));
+    m_surfaceOperation |= Resize;
 }
 
 uint32_t GraphicsContext3DPrivate::copyToGraphicsSurface()
 {
-    if (m_context->m_layerComposited || !prepareBuffer() || !makeSharedContextCurrent())
+    createGraphicsSurface();
+
+    if (!m_graphicsSurface || m_context->m_layerComposited || !prepareBuffer())
         return 0;
 
-    m_sharedSurface->updateContents(m_context->m_texture);
+    m_graphicsSurface->copyFromTexture(m_context->m_texture, m_targetRect);
     makeContextCurrent();
-    glBindFramebuffer(GL_FRAMEBUFFER,  m_context->m_state.boundFBO);
-    return 0;
+
+    return m_graphicsSurface->frontBuffer();
 }
 
 GraphicsSurfaceToken GraphicsContext3DPrivate::graphicsSurfaceToken() const

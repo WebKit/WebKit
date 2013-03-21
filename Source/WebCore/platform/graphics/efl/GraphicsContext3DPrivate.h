@@ -59,25 +59,37 @@ public:
     bool makeContextCurrent() const;
 
 private:
+#if USE(GRAPHICS_SURFACE)
+    enum PendingOperation {
+        Default = 0x00, // No Pending Operation.
+        CreateSurface = 0x01,
+        Resize = 0x02,
+        DeletePreviousSurface = 0x04
+    };
+
+    typedef unsigned PendingSurfaceOperation;
+#endif
+
     GraphicsContext3DPrivate(GraphicsContext3D*, HostWindow*);
     bool initialize();
+    void createGraphicsSurface();
     bool prepareBuffer() const;
     void releaseResources();
-#if USE(GRAPHICS_SURFACE)
-    bool makeSharedContextCurrent() const;
-#endif
+
     GraphicsContext3D* m_context;
     HostWindow* m_hostWindow;
     OwnPtr<GLPlatformContext> m_offScreenContext;
     OwnPtr<GLPlatformSurface> m_offScreenSurface;
 #if USE(GRAPHICS_SURFACE)
-    OwnPtr<GLPlatformContext> m_sharedContext;
-    OwnPtr<GLPlatformSurface> m_sharedSurface;
     GraphicsSurfaceToken m_surfaceHandle;
+    RefPtr<GraphicsSurface> m_graphicsSurface;
+    RefPtr<GraphicsSurface> m_previousGraphicsSurface;
+    PendingSurfaceOperation m_surfaceOperation : 3;
 #endif
     OwnPtr<GraphicsContext3D::ContextLostCallback> m_contextLostCallback;
     ListHashSet<GC3Denum> m_syntheticErrors;
     IntSize m_size;
+    IntRect m_targetRect;
 };
 
 } // namespace WebCore
@@ -85,4 +97,3 @@ private:
 #endif
 
 #endif
-

@@ -30,8 +30,8 @@
 
 namespace WebCore {
 
-EGLWindowTransportSurface::EGLWindowTransportSurface(SurfaceAttributes attributes)
-    : GLTransportSurface(attributes)
+EGLWindowTransportSurface::EGLWindowTransportSurface(const IntSize& size, SurfaceAttributes attributes)
+    : GLTransportSurface(size, attributes)
 {
     m_configSelector = adoptPtr(new EGLConfigSelector(attributes, NativeWrapper::nativeDisplay()));
     m_sharedDisplay = m_configSelector->display();

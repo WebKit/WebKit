@@ -43,16 +43,12 @@ public:
     enum Attributes {
         Default = 0x00, // No Alpha channel. Only R,G,B values set.
         SupportAlpha = 0x01,
-        DoubleBuffered = 0x04
+        DoubleBuffered = 0x02
     };
 
-    typedef int SurfaceAttributes;
+    typedef unsigned SurfaceAttributes;
     // Creates a GL surface used for offscreen rendering.
     static PassOwnPtr<GLPlatformSurface> createOffScreenSurface(SurfaceAttributes = GLPlatformSurface::Default);
-
-    // Creates a GL surface used for offscreen rendering. The results can be transported
-    // to the UI process for display.
-    static PassOwnPtr<GLPlatformSurface> createTransportSurface(SurfaceAttributes = GLPlatformSurface::Default);
 
     virtual ~GLPlatformSurface();
 
