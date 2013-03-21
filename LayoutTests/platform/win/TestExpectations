@@ -2706,3 +2706,5 @@ webkit.org/b/112868 fast/dom/MutationObserver/database-callback-delivery.html [ 
 
 webkit.org/b/112764 fast/frames/xss-auditor-handles-file-urls.html [ Failure ]
 webkit.org/b/112766 media/media-higher-prio-audio-stream.html [ Failure ]
+
+webkit.org/b/112881 fast/text/custom-font-data-crash2.html [ Crash Pass ]
