@@ -405,6 +405,27 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
 
 void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
+    ASSERT(!redirectResponse.isNull());
+
+    if (redirectResponse.httpStatusCode() == 307) {
+        String lastHTTPMethod = d->m_lastHTTPMethod;
+        if (!equalIgnoringCase(lastHTTPMethod, request.httpMethod())) {
+            request.setHTTPMethod(lastHTTPMethod);
+    
+            FormData* body = d->m_firstRequest.httpBody();
+            if (!equalIgnoringCase(lastHTTPMethod, "GET") && body && !body->isEmpty())
+                request.setHTTPBody(body);
+
+            String originalContentType = d->m_firstRequest.httpContentType();
+            if (!originalContentType.isEmpty())
+                request.setHTTPHeaderField("Content-Type", originalContentType);
+        }
+    }
+
+    // Should not set Referer after a redirect from a secure resource to non-secure one.
+    if (!request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https") && d->m_context->shouldClearReferrerOnHTTPSToHTTPRedirect())
+        request.clearHTTPReferrer();
+
     const KURL& url = request.url();
     d->m_user = url.user();
     d->m_pass = url.pass();
@@ -605,13 +626,10 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 {
     UNUSED_PARAM(connection);
 
-    // the willSendRequest call may cancel this load, in which case self could be deallocated
-    RetainPtr<WebCoreResourceHandleAsDelegate> protect(self);
-
     if (!m_handle || !m_handle->client())
         return nil;
     
-    // See <rdar://problem/5380697> .  This is a workaround for a behavior change in CFNetwork where willSendRequest gets called more often.
+    // See <rdar://problem/5380697>. This is a workaround for a behavior change in CFNetwork where willSendRequest gets called more often.
     if (!redirectResponse)
         return newRequest;
 
@@ -622,29 +640,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
         LOG(Network, "Handle %p delegate connection:%p willSendRequest:%@ redirectResponse:non-HTTP", m_handle, connection, [newRequest description]); 
 #endif
 
-    if ([redirectResponse isKindOfClass:[NSHTTPURLResponse class]] && [(NSHTTPURLResponse *)redirectResponse statusCode] == 307) {
-        String lastHTTPMethod = m_handle->lastHTTPMethod();
-        if (!equalIgnoringCase(lastHTTPMethod, String([newRequest HTTPMethod]))) {
-            NSMutableURLRequest *mutableRequest = [newRequest mutableCopy];
-            [mutableRequest setHTTPMethod:lastHTTPMethod];
-    
-            FormData* body = m_handle->firstRequest().httpBody();
-            if (!equalIgnoringCase(lastHTTPMethod, "GET") && body && !body->isEmpty())
-                WebCore::setHTTPBody(mutableRequest, body);
-
-            String originalContentType = m_handle->firstRequest().httpContentType();
-            if (!originalContentType.isEmpty())
-                [mutableRequest setValue:originalContentType forHTTPHeaderField:@"Content-Type"];
-
-            newRequest = [mutableRequest autorelease];
-        }
-    }
-
     ResourceRequest request = newRequest;
-
-    // Should not set Referer after a redirect from a secure resource to non-secure one.
-    if (!request.url().protocolIs("https") && protocolIs(request.httpReferrer(), "https") && m_handle->context()->shouldClearReferrerOnHTTPSToHTTPRedirect())
-        request.clearHTTPReferrer();
 
     m_handle->willSendRequest(request, redirectResponse);
 
