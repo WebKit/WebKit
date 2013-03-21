@@ -2084,8 +2084,6 @@
             'loader/LinkLoaderClient.h',
             'loader/LoaderStrategy.cpp',
             'loader/LoaderStrategy.h',
-            'loader/MainResourceLoader.cpp',
-            'loader/MainResourceLoader.h',
             'loader/MixedContentChecker.cpp',
             'loader/MixedContentChecker.h',
             'loader/NavigationAction.cpp',

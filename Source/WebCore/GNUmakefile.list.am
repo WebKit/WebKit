@@ -4078,8 +4078,6 @@ webcore_sources += \
 	Source/WebCore/loader/LinkLoaderClient.h \
 	Source/WebCore/loader/LoaderStrategy.cpp \
 	Source/WebCore/loader/LoaderStrategy.h \
-	Source/WebCore/loader/MainResourceLoader.cpp \
-	Source/WebCore/loader/MainResourceLoader.h \
 	Source/WebCore/loader/MixedContentChecker.cpp \
 	Source/WebCore/loader/MixedContentChecker.h \
 	Source/WebCore/loader/NavigationAction.cpp \

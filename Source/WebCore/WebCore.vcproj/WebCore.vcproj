@@ -28131,14 +28131,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\loader\MainResourceLoader.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\loader\MainResourceLoader.h"
-				>
-			</File>
-			<File
 				RelativePath="..\loader\MixedContentChecker.cpp"
 				>
 			</File>
