@@ -31,12 +31,8 @@
 #ifndef WebFileSystemType_h
 #define WebFileSystemType_h
 
-// TODO(pilgrim) Clean up everything around this ifdef
-#define WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
-
 namespace WebKit {
 
-#ifdef WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
 enum WebFileSystemType {
     WebFileSystemTypeTemporary,
     WebFileSystemTypePersistent,
@@ -47,7 +43,6 @@ enum WebFileSystemType {
     // Indicates a non-sandboxed filesystem.
     WebFileSystemTypeExternal,
 };
-#endif // WEBKIT_USE_NEW_WEBFILESYSTEMTYPE
 
 } // namespace WebKit
 
