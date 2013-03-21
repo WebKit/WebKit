@@ -146,7 +146,6 @@ IDL_BINDINGS += \
     $$PWD/Modules/webaudio/ChannelSplitterNode.idl \
     $$PWD/Modules/webaudio/AudioContext.idl \
     $$PWD/Modules/webaudio/AudioDestinationNode.idl \
-    $$PWD/Modules/webaudio/AudioGain.idl \
     $$PWD/Modules/webaudio/GainNode.idl \
     $$PWD/Modules/webaudio/AudioListener.idl \
     $$PWD/Modules/webaudio/AudioNode.idl \

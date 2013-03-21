@@ -6598,7 +6598,6 @@
 		FD31600512B0267600C1A359 /* AudioContext.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FBB12B0267500C1A359 /* AudioContext.h */; };
 		FD31600712B0267600C1A359 /* AudioDestinationNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FBD12B0267500C1A359 /* AudioDestinationNode.cpp */; };
 		FD31600812B0267600C1A359 /* AudioDestinationNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FBE12B0267500C1A359 /* AudioDestinationNode.h */; };
-		FD31600A12B0267600C1A359 /* AudioGain.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FC012B0267500C1A359 /* AudioGain.h */; };
 		FD31600C12B0267600C1A359 /* GainNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FC212B0267500C1A359 /* GainNode.cpp */; };
 		FD31600D12B0267600C1A359 /* GainNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD315FC312B0267500C1A359 /* GainNode.h */; };
 		FD31600F12B0267600C1A359 /* AudioListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD315FC512B0267500C1A359 /* AudioListener.cpp */; };
@@ -6746,8 +6745,6 @@
 		FDA15EA612B03EE1003A583A /* JSAudioContext.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8A12B03EE1003A583A /* JSAudioContext.h */; };
 		FDA15EA712B03EE1003A583A /* JSAudioDestinationNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8B12B03EE1003A583A /* JSAudioDestinationNode.cpp */; };
 		FDA15EA812B03EE1003A583A /* JSAudioDestinationNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8C12B03EE1003A583A /* JSAudioDestinationNode.h */; };
-		FDA15EA912B03EE1003A583A /* JSAudioGain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8D12B03EE1003A583A /* JSAudioGain.cpp */; };
-		FDA15EAA12B03EE1003A583A /* JSAudioGain.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8E12B03EE1003A583A /* JSAudioGain.h */; };
 		FDA15EAB12B03EE1003A583A /* JSGainNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8F12B03EE1003A583A /* JSGainNode.cpp */; };
 		FDA15EAC12B03EE1003A583A /* JSGainNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E9012B03EE1003A583A /* JSGainNode.h */; };
 		FDA15EAD12B03EE1003A583A /* JSAudioListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E9112B03EE1003A583A /* JSAudioListener.cpp */; };
@@ -14390,8 +14387,6 @@
 		FD315FBD12B0267500C1A359 /* AudioDestinationNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioDestinationNode.cpp; sourceTree = "<group>"; };
 		FD315FBE12B0267500C1A359 /* AudioDestinationNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioDestinationNode.h; sourceTree = "<group>"; };
 		FD315FBF12B0267500C1A359 /* AudioDestinationNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioDestinationNode.idl; sourceTree = "<group>"; };
-		FD315FC012B0267500C1A359 /* AudioGain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioGain.h; sourceTree = "<group>"; };
-		FD315FC112B0267500C1A359 /* AudioGain.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AudioGain.idl; sourceTree = "<group>"; };
 		FD315FC212B0267500C1A359 /* GainNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GainNode.cpp; sourceTree = "<group>"; };
 		FD315FC312B0267500C1A359 /* GainNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GainNode.h; sourceTree = "<group>"; };
 		FD315FC412B0267500C1A359 /* GainNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GainNode.idl; sourceTree = "<group>"; };
@@ -14557,8 +14552,6 @@
 		FDA15E8A12B03EE1003A583A /* JSAudioContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioContext.h; sourceTree = "<group>"; };
 		FDA15E8B12B03EE1003A583A /* JSAudioDestinationNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioDestinationNode.cpp; sourceTree = "<group>"; };
 		FDA15E8C12B03EE1003A583A /* JSAudioDestinationNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioDestinationNode.h; sourceTree = "<group>"; };
-		FDA15E8D12B03EE1003A583A /* JSAudioGain.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioGain.cpp; sourceTree = "<group>"; };
-		FDA15E8E12B03EE1003A583A /* JSAudioGain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioGain.h; sourceTree = "<group>"; };
 		FDA15E8F12B03EE1003A583A /* JSGainNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGainNode.cpp; sourceTree = "<group>"; };
 		FDA15E9012B03EE1003A583A /* JSGainNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGainNode.h; sourceTree = "<group>"; };
 		FDA15E9112B03EE1003A583A /* JSAudioListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioListener.cpp; sourceTree = "<group>"; };
@@ -23063,8 +23056,6 @@
 				FD315FBD12B0267500C1A359 /* AudioDestinationNode.cpp */,
 				FD315FBE12B0267500C1A359 /* AudioDestinationNode.h */,
 				FD315FBF12B0267500C1A359 /* AudioDestinationNode.idl */,
-				FD315FC012B0267500C1A359 /* AudioGain.h */,
-				FD315FC112B0267500C1A359 /* AudioGain.idl */,
 				FD315FC512B0267500C1A359 /* AudioListener.cpp */,
 				FD315FC612B0267500C1A359 /* AudioListener.h */,
 				FD315FC712B0267500C1A359 /* AudioListener.idl */,
@@ -23265,8 +23256,6 @@
 				FDA15E8A12B03EE1003A583A /* JSAudioContext.h */,
 				FDA15E8B12B03EE1003A583A /* JSAudioDestinationNode.cpp */,
 				FDA15E8C12B03EE1003A583A /* JSAudioDestinationNode.h */,
-				FDA15E8D12B03EE1003A583A /* JSAudioGain.cpp */,
-				FDA15E8E12B03EE1003A583A /* JSAudioGain.h */,
 				FDA15E9112B03EE1003A583A /* JSAudioListener.cpp */,
 				FDA15E9212B03EE1003A583A /* JSAudioListener.h */,
 				FDA15E9312B03EE1003A583A /* JSAudioNode.cpp */,
@@ -23420,7 +23409,6 @@
 				FD31608212B026F700C1A359 /* AudioDSPKernelProcessor.h in Headers */,
 				FD31608312B026F700C1A359 /* AudioFileReader.h in Headers */,
 				FD3160BF12B0272A00C1A359 /* AudioFileReaderMac.h in Headers */,
-				FD31600A12B0267600C1A359 /* AudioGain.h in Headers */,
 				FDE2D55B159E66EB00DCCCF8 /* AudioIOCallback.h in Headers */,
 				FD31601012B0267600C1A359 /* AudioListener.h in Headers */,
 				FD31601312B0267600C1A359 /* AudioNode.h in Headers */,
@@ -24962,7 +24950,6 @@
 				FDA15EA012B03EE1003A583A /* JSAudioBufferSourceNode.h in Headers */,
 				FDA15EA612B03EE1003A583A /* JSAudioContext.h in Headers */,
 				FDA15EA812B03EE1003A583A /* JSAudioDestinationNode.h in Headers */,
-				FDA15EAA12B03EE1003A583A /* JSAudioGain.h in Headers */,
 				FDA15EAE12B03EE1003A583A /* JSAudioListener.h in Headers */,
 				FDA15EB012B03EE1003A583A /* JSAudioNode.h in Headers */,
 				FDA15EB412B03EE1003A583A /* JSAudioParam.h in Headers */,
@@ -28275,7 +28262,6 @@
 				FDA15EA512B03EE1003A583A /* JSAudioContext.cpp in Sources */,
 				FDEAAAF412B02EE400DCF33B /* JSAudioContextCustom.cpp in Sources */,
 				FDA15EA712B03EE1003A583A /* JSAudioDestinationNode.cpp in Sources */,
-				FDA15EA912B03EE1003A583A /* JSAudioGain.cpp in Sources */,
 				FDA15EAD12B03EE1003A583A /* JSAudioListener.cpp in Sources */,
 				FDA15EAF12B03EE1003A583A /* JSAudioNode.cpp in Sources */,
 				FDA15EB312B03EE1003A583A /* JSAudioParam.cpp in Sources */,

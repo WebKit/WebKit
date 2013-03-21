@@ -3436,7 +3436,6 @@ enable?(WEB_AUDIO) {
         Modules/webaudio/ChannelSplitterNode.h \
         Modules/webaudio/AudioContext.h \
         Modules/webaudio/AudioDestinationNode.h \
-        Modules/webaudio/AudioGain.h \
         Modules/webaudio/GainNode.h \
         Modules/webaudio/AudioListener.h \
         Modules/webaudio/AudioNode.h \

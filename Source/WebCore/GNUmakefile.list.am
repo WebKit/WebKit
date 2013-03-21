@@ -51,8 +51,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSAudioContext.h \
 	DerivedSources/WebCore/JSAudioDestinationNode.cpp \
 	DerivedSources/WebCore/JSAudioDestinationNode.h \
-	DerivedSources/WebCore/JSAudioGain.cpp \
-	DerivedSources/WebCore/JSAudioGain.h \
 	DerivedSources/WebCore/JSGainNode.cpp \
 	DerivedSources/WebCore/JSGainNode.h \
 	DerivedSources/WebCore/JSAudioListener.cpp \
@@ -1296,7 +1294,6 @@ dom_binding_idls += \
 	$(WebCore)/Modules/webaudio/ChannelSplitterNode.idl \
 	$(WebCore)/Modules/webaudio/AudioContext.idl \
 	$(WebCore)/Modules/webaudio/AudioDestinationNode.idl \
-	$(WebCore)/Modules/webaudio/AudioGain.idl \
 	$(WebCore)/Modules/webaudio/GainNode.idl \
 	$(WebCore)/Modules/webaudio/AudioListener.idl \
 	$(WebCore)/Modules/webaudio/AudioNode.idl \
@@ -2053,7 +2050,6 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webaudio/AudioContext.h \
 	Source/WebCore/Modules/webaudio/AudioDestinationNode.cpp \
 	Source/WebCore/Modules/webaudio/AudioDestinationNode.h \
-	Source/WebCore/Modules/webaudio/AudioGain.h \
 	Source/WebCore/Modules/webaudio/GainNode.cpp \
 	Source/WebCore/Modules/webaudio/GainNode.h \
 	Source/WebCore/Modules/webaudio/AudioListener.cpp \

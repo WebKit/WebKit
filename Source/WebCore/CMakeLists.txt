@@ -251,7 +251,6 @@ set(WebCore_IDL_FILES
     Modules/webaudio/ChannelMergerNode.idl
     Modules/webaudio/AudioContext.idl
     Modules/webaudio/AudioDestinationNode.idl
-    Modules/webaudio/AudioGain.idl
     Modules/webaudio/GainNode.idl
     Modules/webaudio/AudioListener.idl
     Modules/webaudio/AudioNode.idl

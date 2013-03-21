@@ -37,7 +37,7 @@
 
     readonly attribute unsigned short playbackState;
 
-    readonly attribute AudioGain gain;
+    readonly attribute AudioParam gain;
     readonly attribute AudioParam playbackRate;
 
     attribute boolean loop; // This is the proper attribute name from the specification.

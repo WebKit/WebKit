@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<!--
+Verifies GainNode attributes and their type.
+-->
+
+<html>
+<head>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+
+</head>
+<body>
+
+<script>
+description("Tests GainNode attributes in IDL.");
+
+function runTest() {
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+    }
+
+    // Create audio context.
+    var context = new webkitAudioContext();
+
+    // Create gain node.
+    var gainNode = context.createGainNode();
+
+    if (gainNode.gain.toString().indexOf("AudioParam") > -1)
+        testPassed("gain is of AudioParam type.");
+    else
+        testFailed("gain is not of AudioParam type.");
+}
+
+runTest();
+</script>
+<script src="../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>

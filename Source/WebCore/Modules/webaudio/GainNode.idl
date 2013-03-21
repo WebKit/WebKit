@@ -27,5 +27,5 @@
     JSGenerateToJSObject
 ] interface GainNode : AudioNode {
     // FIXME: eventually it will be interesting to remove the readonly restriction, but need to properly deal with thread safety here.
-    readonly attribute AudioGain gain;
+    readonly attribute AudioParam gain;
 };

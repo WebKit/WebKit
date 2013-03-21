@@ -136,7 +136,6 @@ BINDING_IDLS = \
     $(WebCore)/Modules/webaudio/ChannelSplitterNode.idl \
     $(WebCore)/Modules/webaudio/AudioContext.idl \
     $(WebCore)/Modules/webaudio/AudioDestinationNode.idl \
-    $(WebCore)/Modules/webaudio/AudioGain.idl \
     $(WebCore)/Modules/webaudio/GainNode.idl \
     $(WebCore)/Modules/webaudio/AudioListener.idl \
     $(WebCore)/Modules/webaudio/AudioNode.idl \
