@@ -13,6 +13,11 @@ crbug.com/178745 [ Debug ] plugins/geturlnotify-during-document-teardown.html [ 
 crbug.com/178745 [ Debug ] plugins/open-and-close-window-with-plugin.html [ Crash ]
 crbug.com/178745 [ Release ] plugins/geturlnotify-during-document-teardown.html [ Failure ]
 crbug.com/178745 [ Release ] plugins/open-and-close-window-with-plugin.html [ Failure ]
+crbug.com/222818 css3/filters/huge-region-composited.html [ Crash ]
+crbug.com/222896 platform/chromium/virtual/softwarecompositing/layer-creation/spanOverlapsCanvas.html [ Crash ]
+crbug.com/222896 platform/chromium/virtual/softwarecompositing/visibility/visibility-simple-canvas2d-layer.html [ Crash ]
+crbug.com/222896 platform/chromium/virtual/softwarecompositing/overflow/overflow-hidden-canvas-layer.html [ Crash ]
+crbug.com/222906 platform/chromium/media/video-capture-preview.html [ Crash ]
 
 # -----------------------------------------------------------------
 # To be rebaselined
