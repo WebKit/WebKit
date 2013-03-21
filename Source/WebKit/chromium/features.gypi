@@ -247,11 +247,6 @@
           'WTF_USE_HARFBUZZ=1',
         ],
       }],
-      ['chromeos==1', {
-        'feature_defines': [
-          'SK_SUPPORT_HINTING_SCALE_FACTOR',
-        ],
-      }],
       ['use_default_render_theme==1', {
         'feature_defines': [
           'ENABLE_DEFAULT_RENDER_THEME=1',

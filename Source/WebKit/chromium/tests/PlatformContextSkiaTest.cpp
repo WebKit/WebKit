@@ -1154,21 +1154,4 @@ TEST(PlatformContextSkiaTest, PreserveOpaqueOnlyMattersForFirstLayer)
     EXPECT_PIXELS_MATCH_EXACT(bitmap, platformContext.opaqueRegion().asRect());
 }
 
-#if defined(SK_SUPPORT_HINTING_SCALE_FACTOR)
-TEST(PlatformContextSkiaTest, hintingScaleFactorAppliedOnPaint)
-{
-    SkBitmap bitmap;
-    SkCanvas canvas(bitmap);
-
-    SkScalar hintingScale = SkIntToScalar(2);
-    PlatformContextSkia platformContext(&canvas);
-    platformContext.setHintingScaleFactor(hintingScale); 
-
-    SkPaint paint;
-    EXPECT_EQ(paint.getHintingScaleFactor(), SK_Scalar1);
-    platformContext.setupPaintCommon(&paint);
-    EXPECT_EQ(paint.getHintingScaleFactor(), hintingScale);
-}
-#endif
-
 } // namespace

@@ -1,3 +1,17 @@
+2013-03-21  Terry Anderson  <tdanderson@chromium.org>
+
+        [chromium] Remove SK_SUPPORT_HINTING_SCALE_FACTOR flag and code
+        https://bugs.webkit.org/show_bug.cgi?id=112928
+
+        Reviewed by Stephen White.
+
+        This flag was only for ChromeOS builds with HighDPI. It is no longer needed and can be removed. 
+        See http://crbug.com/17550
+
+        * features.gypi:
+        * tests/OpaqueRectTrackingContentLayerDelegateTest.cpp:
+        * tests/PlatformContextSkiaTest.cpp:
+
 2013-03-21  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Remove onVersionChange(string) plumbing

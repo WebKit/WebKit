@@ -197,9 +197,6 @@ PlatformContextSkia::PlatformContextSkia(SkCanvas* canvas)
     , m_deferred(false)
     , m_drawingToImageBuffer(false)
     , m_deviceScaleFactor(1)
-#if defined(SK_SUPPORT_HINTING_SCALE_FACTOR)
-    , m_hintingScaleFactor(SK_Scalar1)
-#endif
 {
     m_stateStack.append(State());
     m_state = &m_stateStack.last();
@@ -359,9 +356,6 @@ void PlatformContextSkia::setupPaintCommon(SkPaint* paint) const
     paint->setAntiAlias(m_state->m_useAntialiasing);
     paint->setXfermodeMode(m_state->m_xferMode);
     paint->setLooper(m_state->m_looper);
-#if defined(SK_SUPPORT_HINTING_SCALE_FACTOR)
-    paint->setHintingScaleFactor(m_hintingScaleFactor);
-#endif
 }
 
 void PlatformContextSkia::setupShader(SkPaint* paint, Gradient* grad, Pattern* pat, SkColor color) const

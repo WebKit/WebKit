@@ -52,10 +52,6 @@ OpaqueRectTrackingContentLayerDelegate::~OpaqueRectTrackingContentLayerDelegate(
 void OpaqueRectTrackingContentLayerDelegate::paintContents(SkCanvas* canvas, const WebRect& clip, bool canPaintLCDText, WebFloatRect& opaque)
 {
     PlatformContextSkia platformContext(canvas);
-#if defined(SK_SUPPORT_HINTING_SCALE_FACTOR)
-    if (canvas)
-        platformContext.setHintingScaleFactor(canvas->getTotalMatrix().getScaleX());
-#endif
     platformContext.setTrackOpaqueRegion(!m_opaque);
     platformContext.setDrawingToImageBuffer(!m_opaque);
     GraphicsContext context(&platformContext);

@@ -251,11 +251,6 @@ public:
     void drawTextOnPath(const void* text, size_t byteLength, const SkPath&,
         const SkMatrix*, const SkPaint&);
 
-#if defined(SK_SUPPORT_HINTING_SCALE_FACTOR)
-    void setHintingScaleFactor(SkScalar factor) { m_hintingScaleFactor = factor; }
-    SkScalar hintingScaleFactor() const { return m_hintingScaleFactor; }
-#endif
-
 private:
     // Used when restoring and the state has an image clip. Only shows the pixels in
     // m_canvas that are also in imageBuffer.
@@ -299,9 +294,6 @@ private:
     bool m_deferred;
     bool m_drawingToImageBuffer;
     float m_deviceScaleFactor;
-#if defined(SK_SUPPORT_HINTING_SCALE_FACTOR)
-    SkScalar m_hintingScaleFactor;
-#endif
 };
 
 inline void PlatformContextSkia::realizeSave(SkCanvas::SaveFlags flags)

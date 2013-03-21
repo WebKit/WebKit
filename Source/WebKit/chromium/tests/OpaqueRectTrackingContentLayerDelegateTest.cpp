@@ -101,22 +101,6 @@ struct PaintFillPartialOpaque : public PaintCallback {
     IntRect m_opaqueRect;
 };
 
-#if defined(SK_SUPPORT_HINTING_SCALE_FACTOR)
-struct HintingScaleCallback : public PaintCallback {
-    HintingScaleCallback()
-        : hintingScale(SK_Scalar1)
-    {
-    }
-
-    virtual void operator()(GraphicsContext& context, const IntRect& contentRect)
-    {
-        hintingScale = context.platformContext()->hintingScaleFactor();
-    }
-
-    SkScalar hintingScale;
-};
-#endif
-
 #define EXPECT_EQ_RECT(a, b) \
     EXPECT_EQ(a.x, b.x); \
     EXPECT_EQ(a.width, b.width); \
@@ -210,24 +194,5 @@ TEST_F(OpaqueRectTrackingContentLayerDelegateTest, testPartialOpaqueRectTranslat
     delegate.paintContents(skCanvas(), contentRect, false, opaqueRect);
     EXPECT_EQ_RECT(WebFloatRect(partialRect.x(), partialRect.y(), partialRect.width(), partialRect.height()), opaqueRect);
 }
-
-#if defined(SK_SUPPORT_HINTING_SCALE_FACTOR)
-TEST_F(OpaqueRectTrackingContentLayerDelegateTest, testHintingScaleFactorSet)
-{
-    HintingScaleCallback callback;
-    TestLayerPainterChromium painter(callback);
-    OpaqueRectTrackingContentLayerDelegate delegate(&painter);
-
-    SkScalar hintingScale = SkIntToScalar(2);
-    SkCanvas canvas;
-    canvas.scale(hintingScale, hintingScale);
-    EXPECT_EQ(callback.hintingScale, SK_Scalar1);
-
-    IntRect rectA;
-    WebFloatRect rectB;
-    delegate.paintContents(&canvas, rectA, false, rectB);
-    EXPECT_EQ(callback.hintingScale, hintingScale);
-}
-#endif
 
 } // namespace
