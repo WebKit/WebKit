@@ -187,9 +187,6 @@ WebInspector.Setting.prototype = {
         return this._value;
     },
 
-    /**
-     * @param {!Object} value
-     */
     set: function(value)
     {
         this._value = value;
