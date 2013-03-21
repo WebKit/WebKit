@@ -1,0 +1,13 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 111x111
+    RenderSVGContainer {g} at (0,0) size 111x111
+      RenderSVGHiddenContainer {defs} at (0,0) size 0x0
+        RenderSVGResourceFilter {filter} [id="ResultImage"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+          [feDisplacementMap scale="100.00" xChannelSelector="RED" yChannelSelector="GREEN"]
+            [feImage image-size="100x100"]
+            [feImage image-size="100x100"]
+      RenderSVGRect {rect} at (0,0) size 111x111 [fill={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
+        [filter="ResultImage"] RenderSVGResourceFilter {filter} at (-10,-10) size 120x120
+      RenderSVGRect {rect} at (0,0) size 101x101 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]

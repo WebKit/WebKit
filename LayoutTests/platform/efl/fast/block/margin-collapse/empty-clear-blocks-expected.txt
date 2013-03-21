@@ -76,7 +76,7 @@ layer at (0,0) size 785x1130
             text run at (0,36) width 32: "high."
         RenderText {#text} at (100,0) size 284x17
           text run at (100,0) width 284: "This paragraph has a bottom margin of 50px."
-      RenderBlock {SPAN} at (0,815) size 769x0
+      RenderBlock {SPAN} at (0,785) size 769x0
       RenderBlock {SPAN} at (0,815) size 769x18
         RenderText {#text} at (0,0) size 255x17
           text run at (0,0) width 255: "This text should be 20px under the float."
@@ -101,4 +101,4 @@ layer at (0,0) size 785x1130
               text run at (0,36) width 32: "high."
           RenderText {#text} at (100,0) size 284x17
             text run at (100,0) width 284: "This paragraph has a bottom margin of 50px."
-        RenderBlock {SPAN} at (10,140) size 749x0
+        RenderBlock {SPAN} at (10,110) size 749x0

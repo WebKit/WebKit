@@ -1795,3 +1795,7 @@ webkit.org/b/111860 fast/forms/number/number-validation-message.html [ Failure ]
 
 # Snapshotted plugins not enabled
 webkit.org/b/98696 plugins/snapshotting [ Skip ]
+
+# Failing after r133834
+webkit.org/b/101400 svg/css/shadow-changes.svg [ Failure ]
+webkit.org/b/101400 svg/css/composite-shadow-text.svg [ Failure ]

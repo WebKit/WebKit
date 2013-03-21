@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
             text run at (0,0) width 483: "This text should be inside a black rectangle and below the 2em white square."
       RenderBlock {DIV} at (0,291) size 800x70 [bgcolor=#DDDDDD] [border: (2px solid #000000)]
         RenderBlock (floating) {DIV} at (2,2) size 32x32 [bgcolor=#FFFFFF]
-        RenderBlock {DIV} at (2,50) size 796x0
+        RenderBlock {DIV} at (2,34) size 796x0
         RenderBlock (anonymous) at (2,50) size 796x18
           RenderText {#text} at (0,0) size 512x17
             text run at (0,0) width 512: "This text should also be inside a black rectangle and below the 2em white square."

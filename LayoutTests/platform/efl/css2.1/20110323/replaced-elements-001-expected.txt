@@ -1,19 +1,19 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x140
-  RenderBlock {HTML} at (0,0) size 800x140
-    RenderBody {BODY} at (8,16) size 784x108
+layer at (0,0) size 800x176
+  RenderBlock {HTML} at (0,0) size 800x176
+    RenderBody {BODY} at (8,16) size 784x144
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 598x17
           text run at (0,0) width 598: "Below, there should be 2 orange boxes horizontally centered within their respective green bars."
-      RenderBlock {DIV} at (16,34) size 752x29 [bgcolor=#008000]
+      RenderBlock {DIV} at (16,34) size 752x47 [bgcolor=#008000]
         RenderBlock (anonymous) at (0,0) size 752x18
           RenderText {#text} at (0,0) size 36x17
             text run at (0,0) width 36: "         "
-        RenderButton {INPUT} at (368,20) size 16x9 [bgcolor=#FFA500] [border: (2px outset #C0C0C0)]
-      RenderBlock {FORM} at (0,79) size 784x29
-        RenderBlock {DIV} at (16,0) size 752x29 [bgcolor=#008000]
+        RenderButton {INPUT} at (368,20) size 16x27 [bgcolor=#FFA500] [border: (2px outset #C0C0C0)]
+      RenderBlock {FORM} at (0,97) size 784x47
+        RenderBlock {DIV} at (16,0) size 752x47 [bgcolor=#008000]
           RenderBlock (anonymous) at (0,0) size 752x18
             RenderText {#text} at (0,0) size 36x17
               text run at (0,0) width 36: "         "
-          RenderButton {INPUT} at (368,20) size 16x9 [bgcolor=#FFA500] [border: (2px outset #C0C0C0)]
+          RenderButton {INPUT} at (368,20) size 16x27 [bgcolor=#FFA500] [border: (2px outset #C0C0C0)]

@@ -6,11 +6,11 @@ layer at (0,0) size 800x600
       RenderBlock {xhtml:div} at (0,0) size 580x18
         RenderText {#text} at (0,0) size 78x17
           text run at (0,0) width 78: "This is a test"
-      RenderBlock (anonymous) at (0,18) size 580x46
+      RenderBlock (anonymous) at (0,18) size 580x62
         RenderInline {xhtml:a} at (0,0) size 66x17 [color=#0000EE]
           RenderText {#text} at (0,0) size 66x17
             text run at (0,0) width 66: "and a link."
         RenderBR {xhtml:br} at (66,0) size 0x17
-        RenderButton {xhtml:input} at (2,22) size 34x22 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderButton {xhtml:input} at (2,20) size 34x40 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
         RenderText {#text} at (0,0) size 0x0
     RenderSVGRect {rect} at (9,9) size 582x382 [stroke={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=580.00] [height=380.00]
