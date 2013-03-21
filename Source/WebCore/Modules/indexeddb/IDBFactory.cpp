@@ -45,6 +45,7 @@
 #include "IDBKey.h"
 #include "IDBKeyRange.h"
 #include "IDBOpenDBRequest.h"
+#include "IDBTracing.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "SecurityOrigin.h"
@@ -99,6 +100,7 @@ static String getIndexedDBDatabasePath(ScriptExecutionContext* context)
 
 PassRefPtr<IDBRequest> IDBFactory::getDatabaseNames(ScriptExecutionContext* context, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBFactory::getDatabaseNames");
     if (!isContextValid(context))
         return 0;
     if (!context->securityOrigin()->canAccessDatabase(context->topOrigin())) {
@@ -113,6 +115,7 @@ PassRefPtr<IDBRequest> IDBFactory::getDatabaseNames(ScriptExecutionContext* cont
 
 PassRefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, const String& name, unsigned long long version, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBFactory::open");
     if (!version) {
         ec = TypeError;
         return 0;
@@ -144,11 +147,13 @@ PassRefPtr<IDBOpenDBRequest> IDBFactory::openInternal(ScriptExecutionContext* co
 
 PassRefPtr<IDBOpenDBRequest> IDBFactory::open(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBFactory::open");
     return openInternal(context, name, IDBDatabaseMetadata::NoIntVersion, ec);
 }
 
 PassRefPtr<IDBOpenDBRequest> IDBFactory::deleteDatabase(ScriptExecutionContext* context, const String& name, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBFactory::deleteDatabase");
     HistogramSupport::histogramEnumeration("WebCore.IndexedDB.FrontEndAPICalls", IDBDeleteDatabaseCall, IDBMethodsMax);
     if (name.isNull()) {
         ec = TypeError;

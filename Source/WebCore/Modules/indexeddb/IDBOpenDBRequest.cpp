@@ -64,6 +64,7 @@ const AtomicString& IDBOpenDBRequest::interfaceName() const
 
 void IDBOpenDBRequest::onBlocked(int64_t oldVersion)
 {
+    IDB_TRACE("IDBOpenDBRequest::onBlocked()");
     if (!shouldEnqueueEvent())
         return;
     RefPtr<IDBAny> newVersionAny = (m_version == IDBDatabaseMetadata::DefaultIntVersion) ? IDBAny::createNull() : IDBAny::create(m_version);

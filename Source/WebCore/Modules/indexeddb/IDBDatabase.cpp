@@ -159,6 +159,7 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
 
 PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, const IDBKeyPath& keyPath, bool autoIncrement, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBDatabase::createObjectStore");
     HistogramSupport::histogramEnumeration("WebCore.IndexedDB.FrontEndAPICalls", IDBCreateObjectStoreCall, IDBMethodsMax);
     if (!m_versionChangeTransaction) {
         ec = IDBDatabaseException::InvalidStateError;
@@ -198,6 +199,7 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
 
 void IDBDatabase::deleteObjectStore(const String& name, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBDatabase::deleteObjectStore");
     HistogramSupport::histogramEnumeration("WebCore.IndexedDB.FrontEndAPICalls", IDBDeleteObjectStoreCall, IDBMethodsMax);
     if (!m_versionChangeTransaction) {
         ec = IDBDatabaseException::InvalidStateError;
@@ -221,6 +223,7 @@ void IDBDatabase::deleteObjectStore(const String& name, ExceptionCode& ec)
 
 PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* context, const Vector<String>& scope, const String& modeString, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBDatabase::transaction");
     HistogramSupport::histogramEnumeration("WebCore.IndexedDB.FrontEndAPICalls", IDBTransactionCall, IDBMethodsMax);
     if (!scope.size()) {
         ec = IDBDatabaseException::InvalidAccessError;
@@ -269,6 +272,7 @@ void IDBDatabase::forceClose()
 
 void IDBDatabase::close()
 {
+    IDB_TRACE("IDBDatabase::close");
     if (m_closePending)
         return;
 
@@ -301,6 +305,7 @@ void IDBDatabase::closeConnection()
 
 void IDBDatabase::onVersionChange(int64_t oldVersion, int64_t newVersion)
 {
+    IDB_TRACE("IDBDatabase::onVersionChange");
     if (m_contextStopped || !scriptExecutionContext())
         return;
 
