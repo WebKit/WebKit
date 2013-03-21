@@ -33,13 +33,14 @@ namespace WebCore {
 
 PassOwnPtr<PlatformSpeechSynthesizerMock> PlatformSpeechSynthesizerMock::create(PlatformSpeechSynthesizerClient* client)
 {
-    return adoptPtr(new PlatformSpeechSynthesizerMock(client));
+    OwnPtr<PlatformSpeechSynthesizerMock> synthesizer = adoptPtr(new PlatformSpeechSynthesizerMock(client));
+    synthesizer->initializeVoiceList();
+    return synthesizer.release();
 }
     
 PlatformSpeechSynthesizerMock::PlatformSpeechSynthesizerMock(PlatformSpeechSynthesizerClient* client)
     : PlatformSpeechSynthesizer(client)
     , m_speakingFinishedTimer(this, &PlatformSpeechSynthesizerMock::speakingFinished)
-    , m_utterance(0)
 {
 }
     
@@ -50,7 +51,7 @@ PlatformSpeechSynthesizerMock::~PlatformSpeechSynthesizerMock()
 
 void PlatformSpeechSynthesizerMock::speakingFinished(Timer<PlatformSpeechSynthesizerMock>*)
 {
-    ASSERT(m_utterance);
+    ASSERT(m_utterance.get());
     client()->didFinishSpeaking(m_utterance);
     m_utterance = 0;
 }
@@ -63,10 +64,10 @@ void PlatformSpeechSynthesizerMock::initializeVoiceList()
     m_voiceList.append(PlatformSpeechSynthesisVoice::create(String("mock.voice.logan"), String("logan"), String("fr-CA"), true, true));
 }
 
-void PlatformSpeechSynthesizerMock::speak(const PlatformSpeechSynthesisUtterance& utterance)
+void PlatformSpeechSynthesizerMock::speak(PassRefPtr<PlatformSpeechSynthesisUtterance> utterance)
 {
     ASSERT(!m_utterance);
-    m_utterance = &utterance;
+    m_utterance = utterance;
     client()->didStartSpeaking(m_utterance);
     
     // Fire a fake word and then sentence boundary event.

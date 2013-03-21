@@ -29,6 +29,11 @@
 #if ENABLE(SPEECH_SYNTHESIS)
 
 namespace WebCore {
+
+PassRefPtr<PlatformSpeechSynthesisUtterance> PlatformSpeechSynthesisUtterance::create(PlatformSpeechSynthesisUtteranceClient* client)
+{
+    return adoptRef(new PlatformSpeechSynthesisUtterance(client));
+}
     
 PlatformSpeechSynthesisUtterance::PlatformSpeechSynthesisUtterance(PlatformSpeechSynthesisUtteranceClient* client)
     : m_client(client)

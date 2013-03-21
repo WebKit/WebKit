@@ -29,6 +29,8 @@
 #if ENABLE(SPEECH_SYNTHESIS)
 
 #include "PlatformSpeechSynthesisVoice.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -40,9 +42,9 @@ protected:
     virtual ~PlatformSpeechSynthesisUtteranceClient() { }
 };
     
-class PlatformSpeechSynthesisUtterance {
+class PlatformSpeechSynthesisUtterance : public RefCounted<PlatformSpeechSynthesisUtterance> {
 public:
-    explicit PlatformSpeechSynthesisUtterance(PlatformSpeechSynthesisUtteranceClient*);
+    static PassRefPtr<PlatformSpeechSynthesisUtterance> create(PlatformSpeechSynthesisUtteranceClient*);
     
     const String& text() const { return m_text; }
     void setText(const String& text) { m_text = text; }
@@ -69,8 +71,11 @@ public:
     void setStartTime(double startTime) { m_startTime = startTime; }
     
     PlatformSpeechSynthesisUtteranceClient* client() const { return m_client; }
+    void setClient(PlatformSpeechSynthesisUtteranceClient* client) { m_client = client; }
     
 private:
+    explicit PlatformSpeechSynthesisUtterance(PlatformSpeechSynthesisUtteranceClient*);
+
     PlatformSpeechSynthesisUtteranceClient* m_client;
     String m_text;
     String m_lang;
