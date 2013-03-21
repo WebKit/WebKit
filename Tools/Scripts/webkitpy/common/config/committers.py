@@ -133,6 +133,7 @@ contributors_who_are_not_committers = [
     Contributor("Anton Vayvod", "avayvod@chromium.org", "avayvod"),
     Contributor("Aryeh Gregor", "ayg@aryeh.name", "AryehGregor"),
     Contributor("Balazs Ankes", "bank@inf.u-szeged.hu", "abalazs"),
+    Contributor("Bem Jones-Bey", "bjonesbe@adobe.com", "bemjb"),
     Contributor("Brian Salomon", "bsalomon@google.com"),
     Contributor("Christian Biesinger", "cbiesinger@chromium.org", "cbiesinger"),
     Contributor("Commit Queue", "commit-queue@webkit.org"),

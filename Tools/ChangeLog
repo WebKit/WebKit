@@ -1,3 +1,9 @@
+2013-03-21  Zoltan Horvath  <zoltan@webkit.org>
+
+        Unreviewed. Add Bem Jones-Bey to the list of contributors.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-03-21  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] Missing atk in install-dependencies script
