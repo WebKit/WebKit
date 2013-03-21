@@ -103,7 +103,7 @@ void LoadFontCallback::notifyError()
 }
 
 FontLoader::FontLoader(Document* document)
-    : ActiveDOMObject(document, this)
+    : ActiveDOMObject(document)
     , m_document(document)
     , m_loadingCount(0)
 {

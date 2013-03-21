@@ -88,7 +88,7 @@ PassRefPtr<DOMFileSystem> DOMFileSystem::createIsolatedFileSystem(ScriptExecutio
 
 DOMFileSystem::DOMFileSystem(ScriptExecutionContext* context, const String& name, FileSystemType type, const KURL& rootURL, PassOwnPtr<AsyncFileSystem> asyncFileSystem)
     : DOMFileSystemBase(context, name, type, rootURL, asyncFileSystem)
-    , ActiveDOMObject(context, this)
+    , ActiveDOMObject(context)
 {
 }
 

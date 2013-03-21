@@ -122,7 +122,7 @@ PassRefPtr<AudioContext> AudioContext::create(Document* document, ExceptionCode&
 
 // Constructor for rendering to the audio hardware.
 AudioContext::AudioContext(Document* document)
-    : ActiveDOMObject(document, this)
+    : ActiveDOMObject(document)
     , m_isStopScheduled(false)
     , m_isInitialized(false)
     , m_isAudioThreadFinished(false)
@@ -148,7 +148,7 @@ AudioContext::AudioContext(Document* document)
 
 // Constructor for offline (non-realtime) rendering.
 AudioContext::AudioContext(Document* document, unsigned numberOfChannels, size_t numberOfFrames, float sampleRate)
-    : ActiveDOMObject(document, this)
+    : ActiveDOMObject(document)
     , m_isStopScheduled(false)
     , m_isInitialized(false)
     , m_isAudioThreadFinished(false)

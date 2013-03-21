@@ -143,7 +143,7 @@ const char* WebSocket::subProtocolSeperator()
 }
 
 WebSocket::WebSocket(ScriptExecutionContext* context)
-    : ActiveDOMObject(context, this)
+    : ActiveDOMObject(context)
     , m_state(CONNECTING)
     , m_bufferedAmount(0)
     , m_bufferedAmountAfterClose(0)

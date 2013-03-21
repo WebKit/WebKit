@@ -241,7 +241,7 @@ PassRefPtr<Geolocation> Geolocation::create(ScriptExecutionContext* context)
 }
 
 Geolocation::Geolocation(ScriptExecutionContext* context)
-    : ActiveDOMObject(context, this)
+    : ActiveDOMObject(context)
     , m_allowGeolocation(Unknown)
 {
 }

@@ -50,7 +50,7 @@ PassRefPtr<NotificationCenter> NotificationCenter::create(ScriptExecutionContext
 }
 
 NotificationCenter::NotificationCenter(ScriptExecutionContext* context, NotificationClient* client)
-    : ActiveDOMObject(context, this)
+    : ActiveDOMObject(context)
     , m_client(client)
 {
 }

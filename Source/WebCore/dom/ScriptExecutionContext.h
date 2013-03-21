@@ -36,7 +36,6 @@
 #include "SecurityContext.h"
 #include "Supplementable.h"
 #include <wtf/Forward.h>
-#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -103,14 +102,14 @@ public:
     bool activeDOMObjectsAreStopped() const { return m_activeDOMObjectsAreStopped; }
 
     // Called from the constructor and destructors of ActiveDOMObject.
-    void didCreateActiveDOMObject(ActiveDOMObject*, void* upcastPointer);
+    void didCreateActiveDOMObject(ActiveDOMObject*);
     void willDestroyActiveDOMObject(ActiveDOMObject*);
 
     // Called after the construction of an ActiveDOMObject to synchronize suspend state.
     void suspendActiveDOMObjectIfNeeded(ActiveDOMObject*);
 
-    typedef const HashMap<ActiveDOMObject*, void*> ActiveDOMObjectsMap;
-    ActiveDOMObjectsMap& activeDOMObjects() const { return m_activeDOMObjects; }
+    typedef HashSet<ActiveDOMObject*> ActiveDOMObjectsSet;
+    const ActiveDOMObjectsSet& activeDOMObjects() const { return m_activeDOMObjects; }
 
     void didCreateDestructionObserver(ContextDestructionObserver*);
     void willDestroyDestructionObserver(ContextDestructionObserver*);
@@ -203,7 +202,7 @@ private:
 
     HashSet<MessagePort*> m_messagePorts;
     HashSet<ContextDestructionObserver*> m_destructionObservers;
-    HashMap<ActiveDOMObject*, void*> m_activeDOMObjects;
+    ActiveDOMObjectsSet m_activeDOMObjects;
     bool m_iteratingActiveDOMObjects;
     bool m_inDestructor;
 

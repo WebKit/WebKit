@@ -55,7 +55,7 @@ PassRefPtr<FileWriter> FileWriter::create(ScriptExecutionContext* context)
 }
 
 FileWriter::FileWriter(ScriptExecutionContext* context)
-    : ActiveDOMObject(context, this)
+    : ActiveDOMObject(context)
     , m_readyState(INIT)
     , m_operationInProgress(OperationNone)
     , m_queuedOperation(OperationNone)

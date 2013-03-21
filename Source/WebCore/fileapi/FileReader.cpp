@@ -56,7 +56,7 @@ PassRefPtr<FileReader> FileReader::create(ScriptExecutionContext* context)
 }
 
 FileReader::FileReader(ScriptExecutionContext* context)
-    : ActiveDOMObject(context, this)
+    : ActiveDOMObject(context)
     , m_state(EMPTY)
     , m_aborting(false)
     , m_readType(FileReaderLoader::ReadAsBinaryString)

@@ -54,13 +54,13 @@
 namespace WebCore {
 
 Notification::Notification()
-    : ActiveDOMObject(0, this)
+    : ActiveDOMObject(0)
 {
 }
 
 #if ENABLE(LEGACY_NOTIFICATIONS)
 Notification::Notification(const KURL& url, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider)
-    : ActiveDOMObject(context, this)
+    : ActiveDOMObject(context)
     , m_isHTML(true)
     , m_state(Idle)
     , m_notificationCenter(provider)
@@ -81,7 +81,7 @@ Notification::Notification(const KURL& url, ScriptExecutionContext* context, Exc
 
 #if ENABLE(LEGACY_NOTIFICATIONS)
 Notification::Notification(const String& title, const String& body, const String& iconURI, ScriptExecutionContext* context, ExceptionCode& ec, PassRefPtr<NotificationCenter> provider)
-    : ActiveDOMObject(context, this)
+    : ActiveDOMObject(context)
     , m_isHTML(false)
     , m_title(title)
     , m_body(body)
@@ -103,7 +103,7 @@ Notification::Notification(const String& title, const String& body, const String
 
 #if ENABLE(NOTIFICATIONS)
 Notification::Notification(ScriptExecutionContext* context, const String& title)
-    : ActiveDOMObject(context, this)
+    : ActiveDOMObject(context)
     , m_isHTML(false)
     , m_title(title)
     , m_state(Idle)

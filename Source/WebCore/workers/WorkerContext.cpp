@@ -181,10 +181,9 @@ WorkerNavigator* WorkerContext::navigator() const
 
 bool WorkerContext::hasPendingActivity() const
 {
-    ActiveDOMObjectsMap& activeObjects = activeDOMObjects();
-    ActiveDOMObjectsMap::const_iterator activeObjectsEnd = activeObjects.end();
-    for (ActiveDOMObjectsMap::const_iterator iter = activeObjects.begin(); iter != activeObjectsEnd; ++iter) {
-        if (iter->key->hasPendingActivity())
+    ActiveDOMObjectsSet::const_iterator activeObjectsEnd = activeDOMObjects().end();
+    for (ActiveDOMObjectsSet::const_iterator iter = activeDOMObjects().begin(); iter != activeObjectsEnd; ++iter) {
+        if ((*iter)->hasPendingActivity())
             return true;
     }
 

@@ -68,7 +68,7 @@ PassRefPtr<IDBRequest> IDBRequest::create(ScriptExecutionContext* context, PassR
 }
 
 IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> source, IDBDatabaseBackendInterface::TaskType taskType, IDBTransaction* transaction)
-    : ActiveDOMObject(context, this)
+    : ActiveDOMObject(context)
     , m_result(0)
     , m_errorCode(0)
     , m_contextStopped(false)

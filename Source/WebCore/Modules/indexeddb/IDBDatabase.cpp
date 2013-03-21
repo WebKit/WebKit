@@ -59,7 +59,7 @@ PassRefPtr<IDBDatabase> IDBDatabase::create(ScriptExecutionContext* context, Pas
 }
 
 IDBDatabase::IDBDatabase(ScriptExecutionContext* context, PassRefPtr<IDBDatabaseBackendInterface> backend, PassRefPtr<IDBDatabaseCallbacks> callbacks)
-    : ActiveDOMObject(context, this)
+    : ActiveDOMObject(context)
     , m_backend(backend)
     , m_closePending(false)
     , m_contextStopped(false)

@@ -42,7 +42,7 @@ PassRefPtr<RTCStatsRequestImpl> RTCStatsRequestImpl::create(ScriptExecutionConte
 }
 
 RTCStatsRequestImpl::RTCStatsRequestImpl(ScriptExecutionContext* context, PassRefPtr<RTCStatsCallback> callback, PassRefPtr<MediaStreamTrack> selector)
-    : ActiveDOMObject(context, this)
+    : ActiveDOMObject(context)
     , m_successCallback(callback)
     , m_stream(selector ? selector->component()->stream() : 0)
     , m_component(selector ? selector->component() : 0)

@@ -50,7 +50,7 @@ PassRefPtr<MediaSource> MediaSource::create(ScriptExecutionContext* context)
 }
 
 MediaSource::MediaSource(ScriptExecutionContext* context)
-    : ActiveDOMObject(context, this)
+    : ActiveDOMObject(context)
     , m_readyState(closedKeyword())
     , m_asyncEventQueue(GenericEventQueue::create(this))
 {

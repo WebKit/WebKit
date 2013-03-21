@@ -42,7 +42,7 @@ PassRefPtr<MediaStreamTrack> MediaStreamTrack::create(ScriptExecutionContext* co
 }
 
 MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext* context, MediaStreamComponent* component)
-    : ActiveDOMObject(context, this)
+    : ActiveDOMObject(context)
     , m_stopped(false)
     , m_component(component)
 {

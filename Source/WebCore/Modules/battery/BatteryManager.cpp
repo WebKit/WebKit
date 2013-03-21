@@ -44,7 +44,7 @@ BatteryManager::~BatteryManager()
 }
 
 BatteryManager::BatteryManager(Navigator* navigator)
-    : ActiveDOMObject(navigator->frame()->document(), this)
+    : ActiveDOMObject(navigator->frame()->document())
     , m_batteryController(BatteryController::from(navigator->frame()->page()))
     , m_batteryStatus(0)
 {

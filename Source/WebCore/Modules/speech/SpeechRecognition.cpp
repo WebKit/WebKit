@@ -162,7 +162,7 @@ void SpeechRecognition::stop()
 }
 
 SpeechRecognition::SpeechRecognition(ScriptExecutionContext* context)
-    : ActiveDOMObject(context, this)
+    : ActiveDOMObject(context)
     , m_grammars(SpeechGrammarList::create()) // FIXME: The spec is not clear on the default value for the grammars attribute.
     , m_continuous(false)
     , m_interimResults(false)

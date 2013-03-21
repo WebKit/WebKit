@@ -60,7 +60,7 @@ PassOwnPtr<Prerenderer> Prerenderer::create(Document* document)
 }
 
 Prerenderer::Prerenderer(Document* document)
-    : ActiveDOMObject(document, this)
+    : ActiveDOMObject(document)
     , m_initializedClient(false)
     , m_client(0)
 {

@@ -98,7 +98,7 @@ namespace WebCore {
 
 
 DatabaseContext::DatabaseContext(ScriptExecutionContext* context)
-    : ActiveDOMObject(context, this)
+    : ActiveDOMObject(context)
     , m_hasOpenDatabases(false)
     , m_isRegistered(true) // will register on construction below.
     , m_hasRequestedTermination(false)

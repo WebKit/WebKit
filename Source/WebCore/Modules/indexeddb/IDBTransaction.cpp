@@ -91,7 +91,7 @@ const AtomicString& IDBTransaction::modeReadWriteLegacy()
 
 
 IDBTransaction::IDBTransaction(ScriptExecutionContext* context, int64_t id, const Vector<String>& objectStoreNames, IndexedDB::TransactionMode mode, IDBDatabase* db, IDBOpenDBRequest* openDBRequest, const IDBDatabaseMetadata& previousMetadata)
-    : ActiveDOMObject(context, this)
+    : ActiveDOMObject(context)
     , m_id(id)
     , m_database(db)
     , m_objectStoreNames(objectStoreNames)

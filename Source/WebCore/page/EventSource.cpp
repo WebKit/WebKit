@@ -59,7 +59,7 @@ namespace WebCore {
 const unsigned long long EventSource::defaultReconnectDelay = 3000;
 
 inline EventSource::EventSource(ScriptExecutionContext* context, const KURL& url, const Dictionary& eventSourceInit)
-    : ActiveDOMObject(context, this)
+    : ActiveDOMObject(context)
     , m_url(url)
     , m_withCredentials(false)
     , m_state(CONNECTING)

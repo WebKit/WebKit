@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-ActiveDOMObject::ActiveDOMObject(ScriptExecutionContext* scriptExecutionContext, void* upcastPointer)
+ActiveDOMObject::ActiveDOMObject(ScriptExecutionContext* scriptExecutionContext)
     : ContextDestructionObserver(scriptExecutionContext)
     , m_pendingActivityCount(0)
 #if !ASSERT_DISABLED
@@ -45,7 +45,7 @@ ActiveDOMObject::ActiveDOMObject(ScriptExecutionContext* scriptExecutionContext,
         return;
 
     ASSERT(m_scriptExecutionContext->isContextThread());
-    m_scriptExecutionContext->didCreateActiveDOMObject(this, upcastPointer);
+    m_scriptExecutionContext->didCreateActiveDOMObject(this);
 }
 
 ActiveDOMObject::~ActiveDOMObject()
