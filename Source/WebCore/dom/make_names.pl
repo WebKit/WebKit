@@ -31,7 +31,6 @@
 
 use strict;
 
-use StaticString;
 use Config;
 use Getopt::Long;
 use File::Path;
@@ -55,7 +54,6 @@ my %enabledTags = ();
 my %enabledAttrs = ();
 my %allTags = ();
 my %allAttrs = ();
-my %allStrings = ();
 my %parameters = ();
 my $extraDefines = 0;
 my $initDefaults = 1;
@@ -117,19 +115,14 @@ if (length($fontNamesIn)) {
     printLicenseHeader($F);
     printCppHead($F, "CSS", $familyNamesFileBase, "WTF");
 
-    print F StaticString::GenerateStrings(\%parameters);
-
     while ( my ($name, $identifier) = each %parameters ) {
         print F "DEFINE_GLOBAL(AtomicString, $name)\n";
     }
 
     printInit($F, 0);
 
-    print F "\n";
-    print F StaticString::GenerateStringAsserts(\%parameters);
-
     while ( my ($name, $identifier) = each %parameters ) {
-        print F "    new ((void*)&$name) AtomicString(${name}Impl);\n";
+        print F "    new ((void*)&$name) AtomicString(\"$identifier\");\n";
     }
 
     print F "}\n}\n}\n";
@@ -142,13 +135,11 @@ die "You must specify at least one of --tags <file> or --attrs <file>" unless (l
 if (length($tagsFile)) {
     %allTags = %{readTags($tagsFile, 0)};
     %enabledTags = %{readTags($tagsFile, 1)};
-    namesToStrings(\%allTags, \%allStrings);
 }
 
 if (length($attrsFile)) {
     %allAttrs = %{readAttrs($attrsFile, 0)};
     %enabledAttrs = %{readAttrs($attrsFile, 1)};
-    namesToStrings(\%allAttrs, \%allStrings);
 }
 
 die "You must specify a namespace (e.g. SVG) for <namespace>Names.h" unless $parameters{namespace};
@@ -220,31 +211,6 @@ sub defaultInterfaceName
 }
 
 ### Parsing handlers
-
-sub valueForName
-{
-    my $name = shift;
-    my $value = $extensionAttrs{$name};
-
-    if (!$value) {
-        $value = $name;
-        $value =~ s/_/-/g;
-    }
-
-    return $value;
-}
-
-sub namesToStrings
-{
-    my $namesRef = shift;
-    my $stringsRef = shift;
-
-    my %names = %$namesRef;
-
-    for my $name (keys %names) {
-        $stringsRef->{$name} = valueForName($name);
-    }
-}
 
 sub tagsHandler
 {
@@ -670,8 +636,6 @@ sub printNamesCppFile
 
     print F "DEFINE_GLOBAL(AtomicString, ${lowerNamespace}NamespaceURI)\n\n";
 
-    print F StaticString::GenerateStrings(\%allStrings);
-
     if (keys %allTags) {
         print F "// Tags\n";
         for my $name (sort keys %allTags) {
@@ -708,10 +672,7 @@ sub printNamesCppFile
     print(F "    AtomicString ${lowerNamespace}NS(\"$parameters{namespaceURI}\", AtomicString::ConstructFromLiteral);\n\n");
 
     print(F "    // Namespace\n");
-    print(F "    new ((void*)&${lowerNamespace}NamespaceURI) AtomicString(${lowerNamespace}NS);\n");
-    print(F "\n");
-    print F StaticString::GenerateStringAsserts(\%allStrings);
-
+    print(F "    new ((void*)&${lowerNamespace}NamespaceURI) AtomicString(${lowerNamespace}NS);\n\n");
     if (keys %allTags) {
         my $tagsNamespace = $parameters{tagsNullNamespace} ? "nullAtom" : "${lowerNamespace}NS";
         printDefinitions($F, \%allTags, "tags", $tagsNamespace);
@@ -813,11 +774,17 @@ sub printDefinitions
     print F "    // " . ucfirst($type) . "\n";
 
     for my $name (sort keys %$namesRef) {
+        my $realName = $extensionAttrs{$name};
+        if (!$realName) {
+            $realName = $name;
+            $realName =~ s/_/-/g;
+        }
+
         # To generate less code in init(), the common case of nullAtom for the namespace, we call createQualifiedName() without passing $namespaceURI.
         if ($namespaceURI eq "nullAtom") {
-            print F "    createQualifiedName((void*)&$name","${shortCamelType}, ${name}Impl);\n";
+            print F "    createQualifiedName((void*)&$name","${shortCamelType}, \"$realName\", ", length $realName ,");\n";
         } else {
-            print F "    createQualifiedName((void*)&$name","${shortCamelType}, ${name}Impl, $namespaceURI);\n";
+            print F "    createQualifiedName((void*)&$name","${shortCamelType}, \"$realName\", ", length $realName ,", $namespaceURI);\n";
         }
     }
 }

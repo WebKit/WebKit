@@ -746,8 +746,6 @@
         {
           'action_name': 'HTMLNames',
           'inputs': [
-            '../bindings/scripts/Hasher.pm',
-            '../bindings/scripts/StaticString.pm',
             '../dom/make_names.pl',
             '../html/HTMLTagNames.in',
             '../html/HTMLAttributeNames.in',
@@ -775,8 +773,6 @@
         {
           'action_name': 'WebKitFontFamilyNames',
           'inputs': [
-            '../bindings/scripts/Hasher.pm',
-            '../bindings/scripts/StaticString.pm',
             '../dom/make_names.pl',
             '../css/WebKitFontFamilyNames.in',
           ],
@@ -798,8 +794,6 @@
         {
           'action_name': 'SVGNames',
           'inputs': [
-            '../bindings/scripts/Hasher.pm',
-            '../bindings/scripts/StaticString.pm',
             '../dom/make_names.pl',
             '../svg/svgtags.in',
             '../svg/svgattrs.in',
@@ -888,8 +882,6 @@
         {
           'action_name': 'MathMLNames',
           'inputs': [
-            '../bindings/scripts/Hasher.pm',
-            '../bindings/scripts/StaticString.pm',
             '../dom/make_names.pl',
             '../mathml/mathtags.in',
             '../mathml/mathattrs.in',
@@ -1024,8 +1016,6 @@
         {
           'action_name': 'XLinkNames',
           'inputs': [
-            '../bindings/scripts/Hasher.pm',
-            '../bindings/scripts/StaticString.pm',
             '../dom/make_names.pl',
             '../svg/xlinkattrs.in',
           ],
@@ -1047,8 +1037,6 @@
         {
           'action_name': 'XMLNSNames',
           'inputs': [
-            '../bindings/scripts/Hasher.pm',
-            '../bindings/scripts/StaticString.pm',
             '../dom/make_names.pl',
             '../xml/xmlnsattrs.in',
           ],
@@ -1070,8 +1058,6 @@
         {
           'action_name': 'XMLNames',
           'inputs': [
-            '../bindings/scripts/Hasher.pm',
-            '../bindings/scripts/StaticString.pm',
             '../dom/make_names.pl',
             '../xml/xmlattrs.in',
           ],

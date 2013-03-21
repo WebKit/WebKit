@@ -145,7 +145,7 @@ $(GENSOURCES_WEBCORE)/XPathGrammar.cpp: $(WebCore)/xml/XPathGrammar.y
 # MathML tag and attribute names, and element factory
 DerivedSources/WebCore/MathMLElementFactory.h: DerivedSources/WebCore/MathMLElementFactory.cpp
 DerivedSources/WebCore/MathMLNames.h: DerivedSources/WebCore/MathMLNames.cpp
-DerivedSources/WebCore/MathMLElementFactory.cpp DerivedSources/WebCore/MathMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/mathml/mathtags.in $(WebCore)/mathml/mathattrs.in
+DerivedSources/WebCore/MathMLElementFactory.cpp DerivedSources/WebCore/MathMLNames.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/mathml/mathtags.in $(WebCore)/mathml/mathattrs.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/mathml/mathtags.in --attrs $(WebCore)/mathml/mathattrs.in --factory --wrapperFactory --outputDir "$(GENSOURCES_WEBCORE)"
 
 # ----
@@ -190,13 +190,13 @@ endif # END_ENABLE_SVG
 # SVG tag and attribute names (need to pass an extra flag if svg experimental features are enabled)
 DerivedSources/WebCore/SVGNames.cpp: DerivedSources/WebCore/SVGElementFactory.cpp
 DerivedSources/WebCore/JSSVGElementWrapperFactory.cpp: DerivedSources/WebCore/SVGElementFactory.cpp
-DerivedSources/WebCore/SVGElementFactory.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/svg/svgtags.in $(WebCore)/svg/svgattrs.in
+DerivedSources/WebCore/SVGElementFactory.cpp: $(WebCore)/dom/make_names.pl $(WebCore)/svg/svgtags.in $(WebCore)/svg/svgattrs.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --extraDefines "$(feature_defines)" --factory --wrapperFactory --outputDir "$(GENSOURCES_WEBCORE)"
 
 # end SVG Features
 
 DerivedSources/WebCore/XLinkNames.h: DerivedSources/WebCore/XLinkNames.cpp
-DerivedSources/WebCore/XLinkNames.cpp : $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/svg/xlinkattrs.in
+DerivedSources/WebCore/XLinkNames.cpp : $(WebCore)/dom/make_names.pl $(WebCore)/svg/xlinkattrs.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/svg/xlinkattrs.in --outputDir "$(GENSOURCES_WEBCORE)"
 
 if USE_TEXTURE_MAPPER_CAIRO
@@ -293,7 +293,7 @@ DerivedSources/WebCore/UserAgentStyleSheets.h: $(WebCore)/css/make-css-file-arra
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $<  --defines "$(feature_defines)" $@ DerivedSources/WebCore/UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
 
 DerivedSources/WebCore/WebKitFontFamilyNames.cpp: DerivedSources/WebCore/WebKitFontFamilyNames.h
-DerivedSources/WebCore/WebKitFontFamilyNames.h: $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/css/WebKitFontFamilyNames.in
+DerivedSources/WebCore/WebKitFontFamilyNames.h: $(WebCore)/dom/make_names.pl $(WebCore)/css/WebKitFontFamilyNames.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --fonts $(WebCore)/css/WebKitFontFamilyNames.in --outputDir "$(GENSOURCES_WEBCORE)"
 
 
@@ -302,14 +302,14 @@ DerivedSources/WebCore/JSHTMLElementWrapperFactory.cpp: DerivedSources/WebCore/H
 DerivedSources/WebCore/HTMLElementFactory.cpp: DerivedSources/WebCore/HTMLElementFactory.h
 DerivedSources/WebCore/HTMLElementFactory.h: DerivedSources/WebCore/HTMLNames.cpp
 DerivedSources/WebCore/HTMLNames.cpp: DerivedSources/WebCore/HTMLNames.h
-DerivedSources/WebCore/HTMLNames.h: $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/html/HTMLTagNames.in $(WebCore)/html/HTMLAttributeNames.in
+DerivedSources/WebCore/HTMLNames.h: $(WebCore)/dom/make_names.pl $(WebCore)/html/HTMLTagNames.in $(WebCore)/html/HTMLAttributeNames.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --extraDefines "$(feature_defines)" --factory --wrapperFactory --outputDir "$(GENSOURCES_WEBCORE)"
 
 
-DerivedSources/WebCore/XMLNSNames.cpp DerivedSources/WebCore/XMLNSNames.h: $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/xml/xmlnsattrs.in
+DerivedSources/WebCore/XMLNSNames.cpp DerivedSources/WebCore/XMLNSNames.h: $(WebCore)/dom/make_names.pl $(WebCore)/xml/xmlnsattrs.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/xml/xmlnsattrs.in --outputDir "$(GENSOURCES_WEBCORE)"
 
-DerivedSources/WebCore/XMLNames.cpp DerivedSources/WebCore/XMLNames.h: $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/xml/xmlattrs.in
+DerivedSources/WebCore/XMLNames.cpp DerivedSources/WebCore/XMLNames.h: $(WebCore)/dom/make_names.pl $(WebCore)/xml/xmlattrs.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/xml/xmlattrs.in --outputDir "$(GENSOURCES_WEBCORE)"
 
 DerivedSources/WebCore/EventFactory.cpp DerivedSources/WebCore/EventHeaders.h DerivedSources/WebCore/EventInterfaces.h: $(WebCore)/dom/make_event_factory.pl $(WebCore)/dom/EventNames.in
