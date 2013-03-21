@@ -525,25 +525,21 @@ void InspectorInstrumentation::didDispatchXHRLoadEventImpl(const InspectorInstru
         timelineAgent->didDispatchXHRLoadEvent();
 }
 
-InspectorInstrumentationCookie InspectorInstrumentation::willPaintImpl(InstrumentingAgents* instrumentingAgents, Frame* frame)
+void InspectorInstrumentation::willPaintImpl(InstrumentingAgents* instrumentingAgents, Frame* frame)
 {
 #if PLATFORM(CHROMIUM)
     TRACE_EVENT_INSTANT1("instrumentation", InstrumentationEvents::Paint, InstrumentationEventArguments::PageId, frame ? reinterpret_cast<unsigned long long>(frame->page()) : 0);
 #endif
 
-    int timelineAgentId = 0;
-    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent()) {
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
         timelineAgent->willPaint(frame);
-        timelineAgentId = timelineAgent->id();
-    }
-    return InspectorInstrumentationCookie(instrumentingAgents, timelineAgentId);
 }
 
-void InspectorInstrumentation::didPaintImpl(const InspectorInstrumentationCookie& cookie, GraphicsContext* context, const LayoutRect& rect)
+void InspectorInstrumentation::didPaintImpl(InstrumentingAgents*  instrumentingAgents, GraphicsContext* context, const LayoutRect& rect)
 {
-    if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
         timelineAgent->didPaint(rect);
-    if (InspectorPageAgent* pageAgent = cookie.instrumentingAgents()->inspectorPageAgent())
+    if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
         pageAgent->didPaint(context, rect);
 }
 

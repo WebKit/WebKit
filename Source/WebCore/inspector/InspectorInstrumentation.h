@@ -169,8 +169,8 @@ public:
     static void didDispatchXHRLoadEvent(const InspectorInstrumentationCookie&);
     static void willScrollLayer(Frame*);
     static void didScrollLayer(Frame*);
-    static InspectorInstrumentationCookie willPaint(Frame*);
-    static void didPaint(const InspectorInstrumentationCookie&, GraphicsContext*, const LayoutRect&);
+    static void willPaint(Frame*);
+    static void didPaint(Frame*, GraphicsContext*, const LayoutRect&);
     static void willComposite(Page*);
     static void didComposite(Page*);
     static InspectorInstrumentationCookie willRecalculateStyle(Document*);
@@ -373,8 +373,8 @@ private:
     static void didDispatchXHRLoadEventImpl(const InspectorInstrumentationCookie&);
     static void willScrollLayerImpl(InstrumentingAgents*, Frame*);
     static void didScrollLayerImpl(InstrumentingAgents*);
-    static InspectorInstrumentationCookie willPaintImpl(InstrumentingAgents*, Frame*);
-    static void didPaintImpl(const InspectorInstrumentationCookie&, GraphicsContext*, const LayoutRect&);
+    static void willPaintImpl(InstrumentingAgents*, Frame*);
+    static void didPaintImpl(InstrumentingAgents*, GraphicsContext*, const LayoutRect&);
     static InspectorInstrumentationCookie willRecalculateStyleImpl(InstrumentingAgents*, Frame*);
     static void didRecalculateStyleImpl(const InspectorInstrumentationCookie&);
     static void didScheduleStyleRecalculationImpl(InstrumentingAgents*, Document*);
@@ -1101,26 +1101,25 @@ inline void InspectorInstrumentation::didDispatchXHRLoadEvent(const InspectorIns
 #endif
 }
 
-inline InspectorInstrumentationCookie InspectorInstrumentation::willPaint(Frame* frame)
+inline void InspectorInstrumentation::willPaint(Frame* frame)
 {
 #if ENABLE(INSPECTOR)
-    FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
+    FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         return willPaintImpl(instrumentingAgents, frame);
 #else
     UNUSED_PARAM(frame);
 #endif
-    return InspectorInstrumentationCookie();
 }
 
-inline void InspectorInstrumentation::didPaint(const InspectorInstrumentationCookie& cookie, GraphicsContext* context, const LayoutRect& rect)
+inline void InspectorInstrumentation::didPaint(Frame* frame, GraphicsContext* context, const LayoutRect& rect)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (cookie.isValid())
-        didPaintImpl(cookie, context, rect);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
+        didPaintImpl(instrumentingAgents, context, rect);
 #else
-    UNUSED_PARAM(cookie);
+    UNUSED_PARAM(frame);
     UNUSED_PARAM(context);
     UNUSED_PARAM(rect);
 #endif

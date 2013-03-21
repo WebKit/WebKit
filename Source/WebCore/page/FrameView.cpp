@@ -3351,7 +3351,7 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
     if (!frame())
         return;
 
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willPaint(m_frame.get());
+    InspectorInstrumentation::willPaint(m_frame.get());
 
     Document* document = m_frame->document();
 
@@ -3446,7 +3446,7 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
     if (isTopLevelPainter)
         sCurrentPaintTimeStamp = 0;
 
-    InspectorInstrumentation::didPaint(cookie, p, rect);
+    InspectorInstrumentation::didPaint(m_frame.get(), p, rect);
 }
 
 void FrameView::setPaintBehavior(PaintBehavior behavior)
