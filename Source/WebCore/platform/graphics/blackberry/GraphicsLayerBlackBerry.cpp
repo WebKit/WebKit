@@ -48,6 +48,7 @@
 
 #include "FloatConversion.h"
 #include "FloatRect.h"
+#include "GraphicsLayerFactory.h"
 #include "Image.h"
 #include "LayerAnimation.h"
 #include "LayerWebKitThread.h"
@@ -79,6 +80,14 @@ static void clearLayerBackgroundColor(LayerWebKitThread& layer)
     layer.setBackgroundColor(Color::transparent);
 }
 
+PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerFactory* factory, GraphicsLayerClient* client)
+{
+    if (!factory)
+        return adoptPtr(new GraphicsLayerBlackBerry(client));
+
+    return factory->createGraphicsLayer(client);
+}
+
 PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 {
     return adoptPtr(new GraphicsLayerBlackBerry(client));
@@ -88,7 +97,6 @@ GraphicsLayerBlackBerry::GraphicsLayerBlackBerry(GraphicsLayerClient* client)
     : GraphicsLayer(client)
     , m_suspendTime(0)
     , m_contentsLayerPurpose(NoContentsLayer)
-    , m_contentsLayerHasBackgroundColor(false)
 {
     m_layer = LayerWebKitThread::create(LayerData::Layer, this);
 
@@ -312,22 +320,12 @@ bool GraphicsLayerBlackBerry::setFilters(const FilterOperations& filters)
 
 void GraphicsLayerBlackBerry::setBackgroundColor(const Color& color)
 {
-    if (m_backgroundColorSet && m_backgroundColor == color)
+    if (color == m_backgroundColor)
         return;
 
     GraphicsLayer::setBackgroundColor(color);
 
-    m_contentsLayerHasBackgroundColor = true;
     updateLayerBackgroundColor();
-}
-
-void GraphicsLayerBlackBerry::clearBackgroundColor()
-{
-    if (!m_backgroundColorSet)
-        return;
-
-    GraphicsLayer::clearBackgroundColor();
-    clearLayerBackgroundColor(*m_contentsLayer);
 }
 
 void GraphicsLayerBlackBerry::setContentsOpaque(bool opaque)
@@ -806,14 +804,10 @@ void GraphicsLayerBlackBerry::updateHasFixedAncestorInDOMTree()
 
 void GraphicsLayerBlackBerry::updateLayerBackgroundColor()
 {
-    if (!m_contentsLayer)
-        return;
-
-    // We never create the contents layer just for background color yet.
-    if (m_backgroundColorSet)
-        setLayerBackgroundColor(*m_contentsLayer, m_backgroundColor);
+    if (m_backgroundColor.isValid())
+        setLayerBackgroundColor(*m_layer, m_backgroundColor);
     else
-        clearLayerBackgroundColor(*m_contentsLayer);
+        clearLayerBackgroundColor(*m_layer);
 }
 
 #if ENABLE(CSS_FILTERS)
@@ -888,7 +882,7 @@ void GraphicsLayerBlackBerry::setupContentsLayer(LayerWebKitThread* contentsLaye
 
         updateContentsRect();
 
-        if (showDebugBorders()) {
+        if (isShowingDebugBorder()) {
             setLayerBorderColor(*m_contentsLayer, Color(0, 0, 128, 180));
             m_contentsLayer->setBorderWidth(1);
         }

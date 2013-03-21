@@ -83,7 +83,6 @@ public:
 #endif
 
     virtual void setBackgroundColor(const Color&);
-    virtual void clearBackgroundColor();
 
     virtual void setContentsOpaque(bool);
     virtual void setBackfaceVisibility(bool);
@@ -180,7 +179,6 @@ private:
     };
 
     ContentsLayerPurpose m_contentsLayerPurpose;
-    bool m_contentsLayerHasBackgroundColor : 1;
 };
 
 } // namespace WebCore
