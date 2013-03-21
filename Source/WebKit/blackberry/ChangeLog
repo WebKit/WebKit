@@ -1,3 +1,22 @@
+2013-03-21  Iris Wu  <shuwu@blackberry.com>
+
+        [BlackBerry] Last paragraph can't be selected by touch hold selection if there is no new line after it in subframe.
+        https://bugs.webkit.org/show_bug.cgi?id=112966
+
+        Reviewed by Rob Buis.
+
+        PR 312044
+        Reviewed Internally By Genevieve Mak.
+
+        If selection reaches the bottom of content, ignore scroll margin
+        so the text on the bottom can be selected.
+        Stop expanding selection only if the end of document is selected
+        or touch is released.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::expandSelection):
+        (BlackBerry::WebKit::SelectionHandler::ensureSelectedTextVisible):
+
 2013-03-21  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] addSearchProvider shouldn't match the full host, only the server

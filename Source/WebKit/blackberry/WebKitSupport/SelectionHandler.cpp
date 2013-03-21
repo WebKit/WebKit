@@ -764,7 +764,6 @@ void SelectionHandler::expandSelection(bool isScrollStarted)
         if (!findNextAnimationOverlayRegion()) {
             drawAnimationOverlay(m_nextAnimationOverlayRegion, false);
             selectNextParagraph();
-            m_webPage->m_client->stopExpandingSelection();
             return;
         }
 
@@ -784,7 +783,8 @@ bool SelectionHandler::ensureSelectedTextVisible(const WebCore::IntPoint& point,
 {
     WebCore::IntRect viewportRect = selectionViewportRect();
     if (!scrollIfNeeded)
-        return viewportRect.maxY() >= point.y() + m_scrollMargin.height();
+        // If reaching the bottom of content, ignore scroll margin so the text on the bottom can be selected.
+        return viewportRect.maxY() >= m_webPage->contentsSize().height() ? viewportRect.maxY() >= point.y() : viewportRect.maxY() >= point.y() + m_scrollMargin.height();
 
     // Scroll position adjustment here is based on main frame. If selecting in a subframe, don't do animation.
     if (!m_selectionViewportRect.isEmpty())
