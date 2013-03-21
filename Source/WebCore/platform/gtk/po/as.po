@@ -1,15 +1,15 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
-# Nilamdyuti Goswami <ngoswami@redhat.com>, 2012.
+# Nilamdyuti Goswami <ngoswami@redhat.com>, 2012, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://bugs.webkit.org/\n"
-"POT-Creation-Date: 2013-03-15 17:34-0300\n"
-"PO-Revision-Date: 2012-11-27 21:39+0530\n"
+"POT-Creation-Date: 2013-03-21 10:19-0300\n"
+"PO-Revision-Date: 2013-03-20 17:09+0530\n"
 "Last-Translator: Nilamdyuti Goswami <ngoswami@redhat.com>\n"
-"Language-Team: as_IN <kde-i18n-doc@kde.org>\n"
+"Language-Team: Assamese <kde-i18n-doc@kde.org>\n"
 "Language: as_IN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -60,7 +60,7 @@ msgstr "অবৈধ পৃষ্ঠাৰ বিস্তাৰ"
 #: GtkAuthenticationDialog.cpp:171
 #, c-format
 msgid "The site %s:%i requests a username and password"
-msgstr ""
+msgstr "ছাইট %s:%i এ এটা ব্যৱহাৰকাৰীনাম আৰু পাছৱাৰ্ড অনুৰোধ কৰিছে"
 
 #: GtkAuthenticationDialog.cpp:175
 msgid "_Remember password"
@@ -315,7 +315,6 @@ msgid "term"
 msgstr "চৰ্ত"
 
 #: LocalizedStringsGtk.cpp:422
-#, fuzzy
 msgid "description"
 msgstr "বিৱৰণ"
 
@@ -1327,11 +1326,11 @@ msgstr "খাপ খাবলে স্টেন্ডএলৌন ছবিস
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:287
 msgid "Respect Image Orientation"
-msgstr ""
+msgstr "ছবিৰ দিশৰ সন্মান"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:288
 msgid "Whether WebKit should respect image orientation."
-msgstr ""
+msgstr "WebKit এ ছবিৰ দিশক সন্মান দিব লাগে নে।"
 
 #: ../../../WebKit/gtk/webkit/webkitwebsettings.cpp:296
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:870
@@ -1745,8 +1744,8 @@ msgid "An associated WebKitWebSettings instance"
 msgstr "এটা সংযুক্ত WebKitWebSettings উদাহৰণ"
 
 #: ../../../WebKit/gtk/webkit/webkitwebview.cpp:3287
-#: ../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:93
-#: ../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:153
+#: ../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:92
+#: ../../../WebKit2/UIProcess/gtk/WebInspectorProxyGtk.cpp:152
 msgid "Web Inspector"
 msgstr "ৱেব নীৰিক্ষক"
 
@@ -1819,303 +1818,266 @@ msgstr "#WebKitWebView ৰ favicon ৰ বাবপ URl।"
 msgid ""
 "Cannot determine destination URI for download with suggested filename %s"
 msgstr ""
+"উপদেশ দিয়া ফাইলনাম %s ৰ সৈতে ডাউনল'ডৰ বাবে গন্তব্য URl নিৰ্ধাৰণ কৰিব নোৱাৰি"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:139
-#, fuzzy
 msgid "Destination"
-msgstr "গন্তব্য URl"
+msgstr "গন্তব্য"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:140
-#, fuzzy
 msgid "The local URI to where the download will be saved"
-msgstr "URl যলৈকে প্ৰতিক্ৰিয়া কৰা হব।"
+msgstr "স্থানীয় URl যত ডাউনল'ড সংৰক্ষণ কৰা হব"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:152
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:122
-#, fuzzy
 msgid "Response"
-msgstr "নেটৱাৰ্কৰ প্ৰতিক্ৰিয়া"
+msgstr "প্ৰতিক্ৰিয়া"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:153
-#, fuzzy
 msgid "The response of the download"
-msgstr "ডাউনল'ডৰ বৰ্তমান প্ৰগতি নিৰ্ধাৰণ কৰে"
+msgstr "ডাউনল'ডৰ প্ৰতিক্ৰিয়া"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitDownload.cpp:170
-#, fuzzy
 msgid "Estimated Progress"
-msgstr "প্ৰগতি"
+msgstr "আনুমানিক প্ৰগতি"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:141
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:255
 #, c-format
 msgid "Unknown favicon for page %s"
-msgstr ""
+msgstr "পৃষ্ঠা %s ৰ বাবে অজ্ঞাত favicon"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:147
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:251
 #, c-format
 msgid "Page %s does not have a favicon"
-msgstr ""
+msgstr "পৃষ্ঠা %s ৰ এটা favicon নাই"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFaviconDatabase.cpp:247
 msgid "Favicons database not initialized yet"
-msgstr ""
+msgstr "Favicons ডাটাবেইচ এতিয়াও আৰম্ভ কৰা হোৱা নাই"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:174
-#, fuzzy
 msgid "Search text"
-msgstr "ৱেবত সন্ধান কৰক (_S)"
+msgstr "লিখনী সন্ধান কৰক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:175
-#, fuzzy
 msgid "Text to search for in the view"
-msgstr "ৱেব দৰ্শনৰ স্বনিৰ্বাচিত এনক'ডিং"
+msgstr "দৰ্শনত সন্ধান কৰিবলে লিখনী"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:187
 msgid "Search Options"
-msgstr ""
+msgstr "সন্ধান বিকল্পসমূহ"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:188
 msgid "Search options to be used in the search operation"
-msgstr ""
+msgstr "সন্ধান কাৰ্য্যত ব্যৱহাৰ কৰিবলে সন্ধান বিকল্পসমূহ"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:201
-#, fuzzy
 msgid "Maximum matches count"
-msgstr "সৰ্বাধিক স্কেইল কাৰক"
+msgstr "সৰ্বাধিক মিলৰ গণনা"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:202
-#, fuzzy
 msgid "The maximum number of matches in a given text to report"
-msgstr "দৰ্শনপোৰ্টৰ সৰ্বাধিক স্কেইল।"
+msgstr "সংবাদন কৰিবলে এটা প্ৰদান কৰা লিখনীত মিলসমূহৰ সৰ্বাধিক সংখ্যা"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:214
-#, fuzzy
 msgid "WebView"
-msgstr "ৱেব দৰ্শন"
+msgstr "WebView"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitFindController.cpp:215
-#, fuzzy
 msgid "The WebView associated with this find controller"
-msgstr "হিট পৰিক্ষা ফলাফলৰ সৈতে সংযুক্ত অভ্যন্তৰীক DOM ন'ড।"
+msgstr "এই সন্ধান নিয়ন্ত্ৰকৰ সৈতে সংযুক্ত WebView"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:153
 msgid "Flags with the context of the WebKitHitTestResult"
-msgstr ""
+msgstr "WebKitHitTestResult ৰ পৰিপ্ৰেক্ষতিত ফ্লেগসমূহ"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:167
-#, fuzzy
 msgid "The link URI"
 msgstr "সংযোগ URl"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:179
-#, fuzzy
 msgid "Link Title"
-msgstr "শীৰ্ষক"
+msgstr "সংযোগ শীৰ্ষক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:180
 msgid "The link title"
-msgstr ""
+msgstr "সংযোগ শীৰ্ষক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:192
 msgid "Link Label"
-msgstr ""
+msgstr "সংযোগ লেবেল"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:193
 msgid "The link label"
-msgstr ""
+msgstr "সংযোগ লেবেল"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:206
-#, fuzzy
 msgid "The image URI"
 msgstr "ছবিৰ URl"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitHitTestResult.cpp:219
-#, fuzzy
 msgid "The media URI"
-msgstr "মাধ্যম URl"
+msgstr "মাধ্যমৰ URl"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:105
 msgid "Navigation type"
-msgstr ""
+msgstr "মাৰ্গদৰ্শনৰ ধৰণ"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:106
 msgid "The type of navigation triggering this decision"
-msgstr ""
+msgstr "এই নিৰ্ণয় আৰম্ভ কৰা মাৰ্গদৰ্শনৰ ধৰণ"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:123
 msgid "Mouse button"
-msgstr ""
+msgstr "মাউছ বুটাম"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:124
 msgid "The mouse button used if this decision was triggered by a mouse event"
-msgstr ""
+msgstr "ব্যৱহৃত মাউছ বুটাম যদি এই নিৰ্ণয় এটা মাউছ ঘটনা দ্বাৰা আৰম্ভ কৰা হৈছিল"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:140
 msgid "Mouse event modifiers"
-msgstr ""
+msgstr "মাউছ ঘটনা পৰিবৰ্তকসমূহ"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:141
 msgid "The modifiers active if this decision was triggered by a mouse event"
-msgstr ""
+msgstr "সক্ৰিয় পৰিবৰ্তকসমূহ যদি এই নিৰ্ণয় এটা মাউছ ঘটনা দ্বাৰা আৰম্ভ কৰা হৈছিল"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:154
 msgid "Navigation URI request"
-msgstr ""
+msgstr "মাৰ্গদৰ্শন URl অনুৰোধ"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:155
-#, fuzzy
 msgid "The URI request that is associated with this navigation"
-msgstr "মাৰ্গদৰ্শনৰ লক্ষ্য হিচাপে অনুৰোধ কৰা URl"
+msgstr "এই মাৰ্গদৰ্শনৰ সৈতে সংযুক্ত URl অনুৰোধ"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:170
-#, fuzzy
 msgid "Frame name"
 msgstr "ফ্ৰেইমৰ নাম"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitNavigationPolicyDecision.cpp:171
 msgid "The name of the new frame this navigation action targets"
-msgstr ""
+msgstr "এই মাৰ্গদৰ্শন কাৰ্য্য লক্ষ্য কৰা নতুন ফ্ৰেইমৰ নাম"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:155
 msgid "The web view that will be printed"
-msgstr ""
+msgstr "ৱেব দৰ্শন যাক প্ৰিন্ট কৰা হব"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:167
-#, fuzzy
 msgid "Print Settings"
-msgstr "সংহতিসমূহ"
+msgstr "প্ৰিন্ট সংহতিসমূহ"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:168
 msgid "The initial print settings for the print operation"
-msgstr ""
+msgstr "প্ৰিন্ট কাৰ্য্যৰ বাবে আৰম্ভণি প্ৰিন্ট সংহতিসমূহ"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:179
 msgid "Page Setup"
-msgstr ""
+msgstr "পৃষ্ঠাৰ সংস্থাপন"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitPrintOperation.cpp:180
-#, fuzzy
 msgid "The initial page setup for the print operation"
-msgstr "দৰ্শনপোৰ্টৰ আৰম্ভণি স্কেইল।"
+msgstr "প্ৰিন্ট কাৰ্য্যৰ বাবে আৰম্ভণি পৃষ্ঠাৰ সংস্থাপন"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:91
 msgid "Response URI request"
-msgstr ""
+msgstr "URl অনুৰোধ প্ৰতিক্ৰিয়া কৰক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:92
 msgid "The URI request that is associated with this policy decision"
-msgstr ""
+msgstr "এই নীতি অধিবেশনৰ সৈতে জড়িত URl অনুৰোধ"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:105
 msgid "URI response"
-msgstr ""
+msgstr "URI প্ৰতিক্ৰিয়া"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitResponsePolicyDecision.cpp:106
 msgid "The URI response that is associated with this policy decision"
-msgstr ""
+msgstr "এই নীতি নিৰ্ণয়ৰ সৈতে সংযুক্ত URl প্ৰতিক্ৰিয়া"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:442
-#, fuzzy
 msgid "Enable JavaScript"
-msgstr "স্ক্ৰিপ্টসমূহ সামৰ্থবান কৰক"
+msgstr "JavaScript সামৰ্থবান কৰক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:443
-#, fuzzy
 msgid "Enable JavaScript."
-msgstr "স্ক্ৰিপ্টসমূহ সামৰ্থবান কৰক"
+msgstr "JavaScript সামৰ্থবান কৰক।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:457
-#, fuzzy
 msgid "Auto load images"
-msgstr "ছবিসমূহ স্ব ল'ড কৰক"
+msgstr "ছবিসমূহ স্বচালিতভাৱে ল'ড কৰক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:471
 msgid "Load icons ignoring image load setting"
-msgstr ""
+msgstr "ছবি ল'ড সংহতি উপেক্ষা কৰি আইকনসমূহ ল'ড কৰক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:472
 msgid "Whether to load site icons ignoring image load setting."
-msgstr ""
+msgstr "ছবি ল'ড সংহতি উপেক্ষা কৰি ছাইট আইকনসমূহ ল'ড কৰা হব নে।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:490
-#, fuzzy
 msgid "Whether to enable offline web application cache."
-msgstr "অফলাইন ৱেব এপ্লিকেচন ক্যাশ সামৰ্থবান কৰা হব নে"
+msgstr "অফলাইন ৱেব এপ্লিকেচন ক্যাশ সামৰ্থবান কৰা হব নে।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:506
-#, fuzzy
 msgid "Enable HTML5 local storage"
 msgstr "HTML5 স্থানীয় সংৰক্ষণ সামৰ্থবান কৰক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:507
-#, fuzzy
 msgid "Whether to enable HTML5 Local Storage support."
-msgstr "HTML5 স্থানীয় সংৰক্ষণ সমৰ্থন সামৰ্থবান কৰা হব নে"
+msgstr "HTML5 স্থানীয় সংৰক্ষণ সমৰ্থন সামৰ্থবান কৰা হব নে।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:524
-#, fuzzy
 msgid "Enable HTML5 database"
 msgstr "HTML5 ডাটাবেইচ সামৰ্থবান কৰক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:525
-#, fuzzy
 msgid "Whether to enable HTML5 database support."
-msgstr "HTML5 ডাটাবেইচ সমৰ্থন সামৰ্থবান কৰা হব নে"
+msgstr "HTML5 ডাটাবেইচ সমৰ্থন সামৰ্থবান কৰা হব নে।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:538
-#, fuzzy
 msgid "Enable XSS auditor"
 msgstr "XSS অডিটৰ সামৰ্থবান কৰক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:539
-#, fuzzy
 msgid "Whether to enable the XSS auditor."
-msgstr "XSS অডিটৰ সামৰ্থবান কৰা হব নে"
+msgstr "XSS অডিটৰ সামৰ্থবান কৰা হব নে।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:554
-#, fuzzy
 msgid "Enable frame flattening"
-msgstr "ফ্ৰেইম ফ্লেটেনিং সামৰ্থবান কৰা হব নে"
+msgstr "ফ্ৰেইম ফ্লেটেনিং সামৰ্থবান কৰক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:555
-#, fuzzy
 msgid "Whether to enable frame flattening."
-msgstr "ফ্ৰেইম ফ্লেটেনিং সামৰ্থবান কৰা হব নে"
+msgstr "ফ্ৰেইম ফ্লেটেনিং সামৰ্থবান কৰা হব নে।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:567
-#, fuzzy
 msgid "Enable plugins"
 msgstr "প্লাগিনসমূহ সামৰ্থবান কৰক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:580
-#, fuzzy
 msgid "Enable Java"
-msgstr "Java এপ্লেট সামৰ্থবান কৰক"
+msgstr "Java সামৰ্থবান কৰক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:581
-#, fuzzy
 msgid "Whether Java support should be enabled."
-msgstr "মাধ্যম স্ট্ৰিম সামৰ্থবান কৰা হব নে"
+msgstr "Java সমৰ্থন সামৰ্থবান কৰা হব নে।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:595
-#, fuzzy
 msgid "Whether JavaScript can open windows automatically."
-msgstr "JavaScript এ উইন্ডোসমূহ স্বচালিতভাৱে খোলিব পাৰিব নে"
+msgstr "JavaScript এ উইন্ডোসমূহ স্বচালিতভাৱে খোলিব পাৰিব নে।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:610
-#, fuzzy
 msgid "Enable hyperlink auditing"
 msgstr "হাইপাৰলিঙ্ক অডিটিং সামৰ্থবান কৰক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:611
-#, fuzzy
 msgid "Whether <a ping> should be able to send pings."
-msgstr "<a ping> এ পিঙ পঠাবলে সক্ষম থাকিব নে"
+msgstr "<a ping> এ পিঙ পঠাবলে সক্ষম থাকিব নে।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:623
-#, fuzzy
 msgid "Default font family"
 msgstr "অবিকল্পিত ফন্ট পৰিয়াল"
 
@@ -2123,368 +2085,351 @@ msgstr "অবিকল্পিত ফন্ট পৰিয়াল"
 msgid ""
 "The font family to use as the default for content that does not specify a "
 "font."
-msgstr ""
+msgstr "এটা ফন্ট ধাৰ্য্য নকৰা সমলৰ বাবে অবিকল্পিত হিচাপে ব্যৱহাৰ কৰিবলে ফন্ট পৰিয়াল।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:637
-#, fuzzy
 msgid "Monospace font family"
 msgstr "মনোস্পেইচ ফন্ট পৰিয়াল"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:638
-#, fuzzy
 msgid "The font family used as the default for content using monospace font."
-msgstr "মনোস্পেইচ লিখনী প্ৰদৰ্শন কৰিবলে ব্যৱহাৰ কৰা অবিকল্পিত ফন্ট পৰিয়াল।"
+msgstr ""
+"মনোস্পেইচ ফন্ট ব্যৱহাৰ কৰা সমলৰ বাবে অবিকল্পিত হিচাপে ব্যৱহাৰ কৰা ফন্ট পৰিয়াল।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:650
-#, fuzzy
 msgid "Serif font family"
 msgstr "চেৰিফ ফন্ট পৰিয়াল"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:651
 msgid "The font family used as the default for content using serif font."
-msgstr ""
+msgstr "চেৰিফ ফন্ট ব্যৱহাৰ কৰা সমলৰ বাবে অবিকল্পিত হিচাপে ব্যৱহাৰ কৰা ফন্ট পৰিয়াল।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:663
-#, fuzzy
 msgid "Sans-serif font family"
-msgstr "চান্স চেৰিফ ফন্ট পৰিয়াল"
+msgstr "চান্স-চেৰিফ ফন্ট পৰিয়াল"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:664
 msgid "The font family used as the default for content using sans-serif font."
 msgstr ""
+"চান্স-চেৰিফ ফন্ট ব্যৱহাৰ কৰা সমলৰ বাবে অবিকল্পিত হিচাপে ব্যৱহাৰ কৰা ফন্ট পৰিয়াল।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:676
-#, fuzzy
 msgid "Cursive font family"
-msgstr "কাৰ্চিব ফন্ট পৰিয়াল"
+msgstr "কাৰ্চিভ ফন্ট পৰিয়াল"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:677
 msgid "The font family used as the default for content using cursive font."
-msgstr ""
+msgstr "কাৰ্চিভ ফন্ট ব্যৱহাৰ কৰা সমলৰ বাবে অবিকল্পিত হিচাপে ব্যৱহাৰ কৰা ফন্ট পৰিয়াল।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:689
-#, fuzzy
 msgid "Fantasy font family"
-msgstr "কাল্পনিক ফন্ট পৰিয়াল"
+msgstr "ফেন্টাচি ফন্ট পৰিয়াল"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:690
 msgid "The font family used as the default for content using fantasy font."
 msgstr ""
+"ফেন্টাচি ফন্ট ব্যৱহাৰ কৰা সমলৰ বাবে অবিকল্পিত হিচাপে ব্যৱহাৰ কৰা ফন্ট পৰিয়াল।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:702
 msgid "Pictograph font family"
-msgstr ""
+msgstr "পিক্টোগ্ৰাফ ফন্টৰ পৰিয়াল"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:703
 msgid "The font family used as the default for content using pictograph font."
 msgstr ""
+"পিক্টোগ্ৰাফ ফন্ট ব্যৱহাৰ কৰা সমলৰ বাবে অবিকল্পিত হিচাপে ব্যৱহাৰ কৰা ফন্ট পৰিয়াল।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:716
-#, fuzzy
 msgid "Default font size"
 msgstr "অবিকল্পিত ফন্ট আকাৰ"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:730
-#, fuzzy
 msgid "Default monospace font size"
 msgstr "অবিকল্পিত মনোস্পেইচ ফন্টৰ আকাৰ"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:745
-#, fuzzy
 msgid "Minimum font size"
 msgstr "নূন্যতম ফন্টৰ আকাৰ"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:758
 msgid "Default charset"
-msgstr ""
+msgstr "অবিকল্পিত চাৰচেট"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:759
 msgid ""
 "The default text charset used when interpreting content with unspecified "
 "charset."
-msgstr ""
+msgstr "অধাৰ্য্যত চাৰচেটৰ সৈতে সমল বিশ্লেষণ কৰোতে ব্যৱহৃত অবিকল্পিত লিখনী চাৰচেট।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:772
-#, fuzzy
 msgid "Enable private browsing"
 msgstr "ব্যক্তিগত ব্ৰাউছিং সামৰ্থবান কৰক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:773
-#, fuzzy
 msgid "Whether to enable private browsing"
-msgstr "ফ্ৰেইম ফ্লেটেনিং সামৰ্থবান কৰা হব নে"
+msgstr "ব্যক্তিগত ব্ৰাউছিং সামৰ্থবান কৰা হব নে"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:785
-#, fuzzy
 msgid "Enable developer extras"
 msgstr "উন্নয়নকাৰী অতিৰিক্তসমূহ সামৰ্থবান কৰক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:786
-#, fuzzy
 msgid "Whether to enable developer extras"
 msgstr "উন্নয়নকাৰী অতিৰিক্তসমূহ সামৰ্থবান কৰক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:798
-#, fuzzy
 msgid "Enable resizable text areas"
-msgstr "লিখনী স্থানসমূহ পুনৰ আকাৰ দিয়ক"
+msgstr "পুনৰ আকাৰ দিব পৰা লিখনী আকাৰসমূহ সামৰ্থবান কৰক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:799
-#, fuzzy
 msgid "Whether to enable resizable text areas"
-msgstr "ফ্ৰেইম ফ্লেটেনিং সামৰ্থবান কৰা হব নে"
+msgstr "পুনৰ আকাৰ দিব পৰা লিখনী স্থানবোৰ সামৰ্থবান কৰা হব নে"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:814
-#, fuzzy
 msgid "Enable tabs to links"
-msgstr "প্লাগিনসমূহ সামৰ্থবান কৰক"
+msgstr "সংযোগসমূহলে টেবসমূহ সামৰ্থবান কৰক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:815
-#, fuzzy
 msgid "Whether to enable tabs to links"
-msgstr "নিমজ স্ক্ৰলিং সামৰ্থবান কৰা হব নে"
+msgstr "টেবসমূহ সংযোগসমূহলে সামৰ্থবান কৰা হব নে"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:828
-#, fuzzy
 msgid "Enable DNS prefetching"
-msgstr "বানান নীৰিক্ষণ সামৰ্থবান কৰক"
+msgstr "DNS প্ৰিফেচিং সামৰ্থবান কৰক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:829
-#, fuzzy
 msgid "Whether to enable DNS prefetching"
-msgstr "DOM পেইস্ট সামৰ্থবান কৰা হব নে"
+msgstr "DNS প্ৰিফেচিং সামৰ্থবান কৰা হব নে"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:858
-#, fuzzy
 msgid "Whether to enable the Javascriipt Fullscreen API"
-msgstr "নিমজ স্ক্ৰলিং সামৰ্থবান কৰা হব নে"
+msgstr "Javascriipt পূৰ্ণপৰ্দা API সামৰ্থবান কৰা হব নে"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:871
-#, fuzzy
 msgid "Whether background images should be drawn during printing"
-msgstr "পটভূমি ছবিসমূহ প্ৰিন্ট কৰা হব নে।"
+msgstr "প্ৰিন্টিংৰ সময় পটভূমি ছবিসমূহ অঁকা হব নে"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:922
 msgid "Allow modal dialogs"
-msgstr ""
+msgstr "মডেল ডাইলগসমূহৰ অনুমতি দিয়ক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:923
 msgid "Whether it is possible to create modal dialogs"
-msgstr ""
+msgstr "মডেল ডাইলগসমূহ সৃষ্টি কৰাটো সম্ভব নে"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:938
 msgid "Zoom Text Only"
-msgstr ""
+msgstr "কেৱল লিখনী ডাঙৰ কৰক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:939
 msgid "Whether zoom level of web view changes only the text size"
-msgstr ""
+msgstr "ৱেব দৰ্শনৰ জুম স্তৰে কেৱল লিখনী আকাৰ পৰিবৰ্তন কৰে নে"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:953
-#, fuzzy
 msgid "JavaScript can access clipboard"
 msgstr "JavaScript এ ক্লিপবৰ্ড অভিগম কৰিব পাৰে"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1000
 msgid "Draw compositing indicators"
-msgstr ""
+msgstr "কম্পোচিটিং ইণ্ডিকেটৰসমূহ আঁকক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1001
 msgid "Whether to draw compositing borders and repaint counters"
-msgstr ""
+msgstr "কম্পোচিটিং প্ৰান্তবোৰ অঁকা আৰু কাউন্টাৰসমূহ পুনৰ ৰঙ কৰা হব নে"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1059
-#, fuzzy
 msgid "User agent string"
-msgstr "ব্যবহাৰকাৰী সহায়ক"
+msgstr "ব্যবহাৰকাৰী সহায়ক স্ট্ৰিং"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitSettings.cpp:1060
-#, fuzzy
 msgid "The user agent string"
-msgstr "WebKitGtk দ্বাৰা ব্যৱহাৰ কৰা ব্যৱহাৰকাৰী-সহায়ক"
+msgstr "ব্যৱহাৰকাৰী সহায়ক স্ট্ৰিং"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:100
-#, fuzzy
 msgid "The URI for which the response was made."
-msgstr "URl যলৈকে প্ৰতিক্ৰিয়া কৰা হব।"
+msgstr "URl যাৰ বাবে প্ৰতিক্ৰিয়া সৃষ্টি কৰা হৈছিল।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:111
-#, fuzzy
 msgid "Status Code"
-msgstr "অৱস্থা"
+msgstr "অৱস্থাৰ ক'ড"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:112
 msgid "The status code of the response as returned by the server."
-msgstr ""
+msgstr "চাৰ্ভাৰ দ্বাৰা ঘুৰাই দিয়া প্ৰতিক্ৰিয়াৰ অৱস্থা ক'ড।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:124
 msgid "Content Length"
-msgstr ""
+msgstr "সমলৰ দৈৰ্ঘ্য"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:125
-#, fuzzy
 msgid "The expected content length of the response."
-msgstr "প্ৰতিক্ৰিয়াৰ বাবে উপদেশ দিয়া ফাইলনাম।"
+msgstr "প্ৰতিক্ৰিয়াৰ প্ৰত্যাশিত সমল দৈৰ্ঘ্য।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:138
-#, fuzzy
 msgid "The MIME type of the response"
-msgstr "সম্পদৰ MIME ধৰণ"
+msgstr "প্ৰতিক্ৰিয়াৰ MIME ধৰণ"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitURIResponse.cpp:151
-#, fuzzy
 msgid "The suggested filename for the URI response"
-msgstr "প্ৰতিক্ৰিয়াৰ বাবে উপদেশ দিয়া ফাইলনাম।"
+msgstr "URl প্ৰতিক্ৰিয়াৰ বাবে উপদেশিত ফাইলনাম"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:134
-#, fuzzy
 msgid "Attached Height"
-msgstr "উপলব্ধ উচ্চতা"
+msgstr "সংলগ্ন উচ্চতা"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebInspector.cpp:135
 msgid "The height that the inspector view should have when it is attached"
-msgstr ""
+msgstr "সংলগ্ন হওতে নীৰিক্ষক দৰ্শনৰ থাকিব লগিয়া উচ্চতা"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:110
-#, fuzzy
 msgid "The current active URI of the resource"
-msgstr "সম্পদৰ URl"
+msgstr "সম্পদৰ বৰ্তমান সক্ৰিয় URl"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebResource.cpp:123
-#, fuzzy
 msgid "The response of the resource"
-msgstr "সম্পদৰ ফ্ৰেইম নাম"
+msgstr "সম্পদৰ প্ৰতিক্ৰিয়া"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:577
-#, fuzzy
 msgid "Web Context"
-msgstr "পৰিপ্ৰেক্ষতিত"
+msgstr "ৱেব পৰিপ্ৰেক্ষতিত"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:578
-#, fuzzy
 msgid "The web context for the view"
-msgstr "দৰ্শনপোৰ্ট প্ৰস্থ।"
+msgstr "দৰ্শনৰ বাবে ৱেব পৰিপ্ৰেক্ষতিত"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:592
 msgid "Main frame document title"
-msgstr ""
+msgstr "মূখ্য ফ্ৰেইম দস্তাবেজ শীৰ্ষক"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:610
 msgid "Estimated Load Progress"
-msgstr ""
+msgstr "আনুমানিক ল'ডৰ প্ৰগতি"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:611
 msgid "An estimate of the percent completion for a document load"
-msgstr ""
+msgstr "এটা দস্তাবেজ ল'ডৰ বাবে শতাংশ সম্পূৰ্ণৰ এটা অনুমান"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:623
 msgid "Favicon"
-msgstr ""
+msgstr "Favicon"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:624
-#, fuzzy
 msgid "The favicon associated to the view, if any"
-msgstr "অনুৰোধৰ সৈতে বৰ্তমানে জড়িত ফিল্টাৰ"
+msgstr "দৰ্শনৰ সৈতে সংযুক্ত favicon, যদি উপলব্ধ"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:636
-#, fuzzy
 msgid "The current active URI of the view"
-msgstr "ফ্ৰেইমৰ দস্তাবেজ শীৰ্ষক"
+msgstr "দৰ্শনৰ বৰ্তমান সক্ৰিয় URI"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:650
-#, fuzzy
 msgid "The zoom level of the view content"
-msgstr "সমলৰ জুমৰ স্তৰ"
+msgstr "দৰ্শন সমলৰ জুম স্তৰ"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:668
-#, fuzzy
 msgid "Whether the view is loading a page"
-msgstr "প্লাগিন সামৰ্থবান আছে নে"
+msgstr "দৰ্শনে এটা পৃষ্ঠা ল'ড কৰি আছে নে"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:682
 msgid "The view mode to display the web view contents"
-msgstr ""
+msgstr "ৱেব দৰ্শন সমলসমূহ প্ৰদৰ্শন কৰিবলে দৰ্শন অৱস্থা"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWebView.cpp:2416
 msgid "An exception was raised in JavaScript"
-msgstr ""
+msgstr "JavaScript ত এটা ব্যতিক্ৰম দাঙি ধৰা হৈছিল"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:209
 msgid "Geometry"
-msgstr ""
+msgstr "জ্যামিতি"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:210
-#, fuzzy
 msgid "The size and position of the window on the screen."
-msgstr "পৰ্দাৰ প্ৰতি ইঞ্চ বিন্দুৰ সংখ্যা।"
+msgstr "পৰ্দাত উইন্ডোৰ আকাৰ আৰু অৱস্থান।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:222
 msgid "Toolbar Visible"
-msgstr ""
+msgstr "টুলবাৰ দৃশ্যমান"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:223
-#, fuzzy
 msgid "Whether the toolbar should be visible for the window."
-msgstr "Mozilla শৈলীৰ API সামৰ্থবান কৰা হব নে।"
+msgstr "উইন্ডোৰ বাবে টুলবাৰ দৃশ্যমান হব লাগিব নে।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:235
 msgid "Statusbar Visible"
-msgstr ""
+msgstr "অৱস্থাবাৰ দৃশ্যমান"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:236
-#, fuzzy
 msgid "Whether the statusbar should be visible for the window."
-msgstr "পৃষ্ঠাৰ ক্যাশ ব্যৱহাৰ কৰা হব নে"
+msgstr "উইন্ডোৰ বাবে অৱস্থাবাৰ দৃশ্যমান হব লাগিব নে।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:248
 msgid "Scrollbars Visible"
-msgstr ""
+msgstr "স্ক্ৰলবাৰসমূহ দৃশ্যমান"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:249
-#, fuzzy
 msgid "Whether the scrollbars should be visible for the window."
-msgstr "Mozilla শৈলীৰ API সামৰ্থবান কৰা হব নে।"
+msgstr "উইন্ডোৰ বাবে স্ক্ৰলবাৰসমূহ দৃশ্যমান হব লাগিব নে।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:261
 msgid "Menubar Visible"
-msgstr ""
+msgstr "মেনুবাৰ দৃশ্যমান"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:262
-#, fuzzy
 msgid "Whether the menubar should be visible for the window."
-msgstr "<a ping> এ পিঙ পঠাবলে সক্ষম থাকিব নে"
+msgstr "উইন্ডোৰ বাবে মেনুবাৰ দৃশ্যমান হব লাগিব নে।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:274
 msgid "Locationbar Visible"
-msgstr ""
+msgstr "অৱস্থানবাৰ দৃশ্যমান"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:275
-#, fuzzy
 msgid "Whether the locationbar should be visible for the window."
-msgstr "<a ping> এ পিঙ পঠাবলে সক্ষম থাকিব নে"
+msgstr "উইন্ডোৰ বাবে অৱস্থানবাৰ দৃশ্যমান হব লাগিব নে।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:286
-#, fuzzy
 msgid "Resizable"
-msgstr "লিখনী স্থানসমূহ পুনৰ আকাৰ দিয়ক"
+msgstr "পুনৰ আকাৰ দিব পৰা"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:287
-#, fuzzy
 msgid "Whether the window can be resized."
-msgstr "লিখনী স্থানসমূহ পুনৰ আকাৰ দিব পাৰি নি।"
+msgstr "উইন্ডোক পুনৰ আকাৰ দিব পাৰি নে।"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:299
-#, fuzzy
 msgid "Fullscreen"
-msgstr "পূৰ্ণপৰ্দা ত্যাগ কৰক"
+msgstr "পূৰ্ণপৰ্দা"
 
 #: ../../../WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp:300
 msgid "Whether window will be displayed fullscreen."
-msgstr ""
-
-#~ msgid "A username and password are being requested by the site %s"
-#~ msgstr "ছাইট %s দ্বাৰা এটা ব্যৱহাৰকাৰীনাম আৰু পাছৱাৰ্ড অনুৰোধ কৰা হৈছে"
+msgstr "উইন্ডোক পূৰ্ণপৰ্দাত প্ৰদৰ্শন কৰা হব নে।"
 
 #~ msgctxt "Title string for images"
 #~ msgid "%s  (%dx%d pixels)"
 #~ msgstr "%s  (%dx%d পিক্সেলসমূহ)"
+
+#~| msgid "stop displaying closed captions"
+#~ msgctxt "Closed Captions"
+#~ msgid "Menu section heading for closed captions"
+#~ msgstr "বন্ধ কেপষণসমূহৰ বাবে মেনু অংশ হেডিং"
+
+#~ msgctxt "Subtitles"
+#~ msgid "Menu section heading for subtitles"
+#~ msgstr "উপশীৰ্ষকসমূহৰ বাবে মেনু অংশ হেডিং"
+
+#~ msgctxt "Off"
+#~ msgid ""
+#~ "Menu item label for the track that represents disabling closed captions"
+#~ msgstr "বন্ধ কেপষণসমূহ অসামৰ্থবান কৰা প্ৰতিনিদ্ধিত্ব কৰা ট্ৰেকৰ বাবে মেনু বস্তু লেবেল"
+
+#~ msgctxt "No label"
+#~ msgid "Menu item label for a closed captions track that has no other name"
+#~ msgstr "অন্য কোনো নাম নথকা এটা বন্ধ কেপষণসমূহ ট্ৰেকৰ বাবে মেনু বস্তু লেবেল"
+
+#~ msgctxt "Snapshotted Plug-In"
+#~ msgid "Title of the label to show on a snapshotted plug-in"
+#~ msgstr "এটা স্নেপষটেড প্লাগ-ইনত দেখুৱাবলে লেবেলৰ শীৰ্ষক"
+
+#~ msgctxt "Click to restart"
+#~ msgid "Subtitle of the label to show on a snapshotted plug-in"
+#~ msgstr "এটা স্নেপষটেড প্লাগ-ইনত দেখুৱাবলে লেবেলৰ উপশীৰ্ষক"
+
+#~ msgid "A username and password are being requested by the site %s"
+#~ msgstr "ছাইট %s দ্বাৰা এটা ব্যৱহাৰকাৰীনাম আৰু পাছৱাৰ্ড অনুৰোধ কৰা হৈছে"
