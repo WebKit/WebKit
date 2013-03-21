@@ -90,7 +90,7 @@ public:
     JSTokenType lex(JSTokenData*, JSTokenLocation*, unsigned, bool strictMode);
     bool nextTokenIsColon();
     int lineNumber() const { return m_lineNumber; }
-    int currentCharPosition() const { return m_charPosition; }
+    int currentCharPosition() const { return m_code - m_codeStartPlusOffset; }
     void setLastLineNumber(int lastLineNumber) { m_lastLineNumber = lastLineNumber; }
     int lastLineNumber() const { return m_lastLineNumber; }
     bool prevTerminator() const { return m_terminator; }
@@ -170,7 +170,6 @@ private:
 
     int m_lineNumber;
     int m_lastLineNumber;
-    int m_charPosition;
 
     Vector<LChar> m_buffer8;
     Vector<UChar> m_buffer16;
@@ -181,6 +180,7 @@ private:
     const T* m_code;
     const T* m_codeStart;
     const T* m_codeEnd;
+    const T* m_codeStartPlusOffset;
     bool m_isReparsing;
     bool m_atLineStart;
     bool m_error;
@@ -317,7 +317,6 @@ ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSTokenData* tokenData, 
         m_current = 0;
 
     m_code = ptr;
-    m_charPosition = m_charPosition + (m_code - start);
 
     // Create the identifier if needed
     if (lexerFlags & LexexFlagsDontBuildKeywords)
@@ -327,7 +326,7 @@ ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSTokenData* tokenData, 
     tokenLocation->line = m_lineNumber;
     tokenLocation->startOffset = start - m_codeStart;
     tokenLocation->endOffset = currentOffset();
-    tokenLocation->charPosition = m_charPosition;
+    tokenLocation->charPosition = currentCharPosition();
     m_lastToken = IDENT;
     return IDENT;
     

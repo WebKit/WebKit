@@ -1,3 +1,25 @@
+2013-03-21  Mark Lam  <mark.lam@apple.com>
+
+        Fix lexer charPosition computation when "rewind"ing the lexer.
+        https://bugs.webkit.org/show_bug.cgi?id=112952.
+
+        Reviewed by Michael Saboff.
+
+        Changed the Lexer to no longer keep a m_charPosition. Instead, we compute
+        currentCharPosition() from m_code and m_codeStartPlusOffset, where
+        m_codeStartPlusOffset is the SourceProvider m_codeStart + the SourceCode
+        start offset. This ensures that the charPosition is always in sync with
+        m_code.
+
+        * parser/Lexer.cpp:
+        (JSC::::setCode):
+        (JSC::::internalShift):
+        (JSC::::shift):
+        (JSC::::lex):
+        * parser/Lexer.h:
+        (JSC::Lexer::currentCharPosition):
+        (JSC::::lexExpectIdentifier):
+
 2013-03-21  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] GCActivityCallback: replace JSLock with JSLockHolder

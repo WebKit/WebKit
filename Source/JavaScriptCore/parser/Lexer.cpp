@@ -546,11 +546,11 @@ void Lexer<T>::setCode(const SourceCode& source, ParserArena* arena)
         m_codeStart = 0;
 
     m_source = &source;
-    m_code = m_codeStart + source.startOffset();
+    m_codeStartPlusOffset = m_codeStart + source.startOffset();
+    m_code = m_codeStartPlusOffset;
     m_codeEnd = m_codeStart + source.endOffset();
     m_error = false;
     m_atLineStart = true;
-    m_charPosition = 0;
     m_lexErrorMessage = String();
     
     m_buffer8.reserveInitialCapacity(initialReadBufferCapacity);
@@ -567,7 +567,6 @@ template <typename T>
 template <int shiftAmount> ALWAYS_INLINE void Lexer<T>::internalShift()
 {
     m_code += shiftAmount;
-    m_charPosition += shiftAmount;
     m_current = *m_code;
 }
 
@@ -579,7 +578,6 @@ ALWAYS_INLINE void Lexer<T>::shift()
     ++m_code;
     if (LIKELY(m_code < m_codeEnd))
         m_current = *m_code;
-    ++m_charPosition;
 }
 
 template <typename T>
@@ -1319,7 +1317,7 @@ start:
         return EOFTOK;
     
     tokenLocation->startOffset = currentOffset();
-    tokenLocation->charPosition = m_charPosition;
+    tokenLocation->charPosition = currentCharPosition();
 
     CharacterType type;
     if (LIKELY(isLatin1(m_current)))
