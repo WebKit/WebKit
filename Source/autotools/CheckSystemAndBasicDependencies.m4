@@ -1,34 +1,27 @@
 AC_CANONICAL_HOST
-AC_MSG_CHECKING([for native Win32])
-case "$host" in
-     *-*-mingw*)
-       os_win32=yes
-       ;;
-     *)
-       os_win32=no
-       ;;
-esac
-AC_MSG_RESULT([$os_win32])
 
-case "$host" in
-     *-*-linux*)
-       os_linux=yes
-       ;;
-     *-*-freebsd*)
-       os_freebsd=yes
-       ;;
-     *-*-darwin*)
-       os_darwin=yes
-       ;;
-esac
+os_win32=no
+os_linux=no
+os_freebsd=no
+os_gnu=no
 
 case "$host_os" in
-     gnu* | linux* | k*bsd*-gnu)
-       os_gnu=yes
-       ;;
-     *)
-       os_gnu=no
-       ;;
+    mingw*)
+        os_win32_yes
+        ;;
+    freebsd*)
+        os_freebsd=yes
+        ;;
+    linux*)
+        os_linux=yes
+        os_gnu=yes
+        ;;
+    darwin*)
+        os_darwin=yes
+        ;;
+    gnu*|k*bsd*-gnu*)
+        os_gnu=yes
+        ;;
 esac
 
 AC_PATH_PROG(PERL, perl)

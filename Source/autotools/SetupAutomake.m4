@@ -19,6 +19,7 @@ AM_CONDITIONAL([OS_WIN32],[test "$os_win32" = "yes"])
 AM_CONDITIONAL([OS_UNIX],[test "$os_win32" = "no"])
 AM_CONDITIONAL([OS_LINUX],[test "$os_linux" = "yes"])
 AM_CONDITIONAL([OS_GNU],[test "$os_gnu" = "yes"])
+AM_CONDITIONAL([OS_DARWIN],[test "$os_darwin" = "yes"])
 AM_CONDITIONAL([OS_FREEBSD],[test "$os_freebsd" = "yes"])
 
 # Target conditionals.

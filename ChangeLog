@@ -1,3 +1,16 @@
+2013-03-21  Martin Robinson  <mrobinson@igalia.com>
+
+        Source/ThirdParty/leveldb/db/builder.cc does not build on systems without <endian.h>
+        https://bugs.webkit.org/show_bug.cgi?id=111817
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Improve processing of the autoconf host variable.  Setup up the wiring to detect
+        whether or not we are compiling for Darwin.
+
+        * Source/autotools/CheckSystemAndBasicDependencies.m4: Improve host detection.
+        * Source/autotools/SetupAutomake.m4: Tell automake if we are compiling for Darwin or not.
+
 2013-03-20  Michael Pruett  <michael@68k.org>
 
         [JSC] Implement EnforceRange IDL attribute for integer conversions
