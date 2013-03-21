@@ -1,3 +1,79 @@
+2013-03-21  Timothy Hatcher  <timothy@apple.com>
+
+        Support connecting the Web Inspector without showing it.
+
+        This allows you to get the debugger attached in the background. When a breakpoint is hit
+        the Inspector will open. This change also reduces some WebProcess messaging by removing
+        the DidLoadInspectorPage message and stops sending the SetAttachedWindow message on close.
+
+        https://bugs.webkit.org/show_bug.cgi?id=112445
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/API/C/WKInspector.cpp:
+        (WKInspectorIsConnected): Added.
+        (WKInspectorConnect): Added.
+        (WKInspectorHide): Added.
+
+        * UIProcess/API/C/WKInspector.h:
+        Added new APIs.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::WebInspectorProxy):
+        Initialize new state booleans.
+
+        (WebKit::WebInspectorProxy::invalidate):
+        Don't set state booleans that didClose already resets.
+
+        (WebKit::WebInspectorProxy::connect): Added.
+        (WebKit::WebInspectorProxy::show):
+        Open if we are already connected. Call connect().
+
+        (WebKit::WebInspectorProxy::hide): Added.
+
+        (WebKit::WebInspectorProxy::close):
+        Call didClose we can detach or close the window immediately instead of waiting for a
+        message from the WebProcess.
+
+        (WebKit::WebInspectorProxy::attach):
+        (WebKit::WebInspectorProxy::detach):
+        Check for !m_page to match other functions.
+
+        (WebKit::WebInspectorProxy::createInspectorPage):
+        (WebKit::WebInspectorProxy::didLoadInspectorPage):
+        Removed. Moved logic to open().
+
+        (WebKit::WebInspectorProxy::open): Added.
+
+        (WebKit::WebInspectorProxy::didClose):
+        Clear new state booleans. Don't perform work again if already closed. Use platformDetach()
+        instead of detach() to avoid sending the SetAttachedWindow message.
+
+        (WebKit::WebInspectorProxy::bringToFront):
+        Call open() if we are not visible yet, otherwise platformBringToFront.
+
+        * UIProcess/WebInspectorProxy.h:
+        (WebKit::WebInspectorProxy::isConnected): Added.
+
+        * UIProcess/WebInspectorProxy.messages.in: Removed DidLoadInspectorPage.
+
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformHide): Added stub.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformHide): Added.
+
+        * UIProcess/qt/WebInspectorProxyQt.cpp:
+        (WebKit::WebInspectorProxy::platformHide): Added stub.
+
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp:
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.h:
+        Removed frontendLoaded().
+
+        * WebProcess/WebPage/WebInspector.cpp:
+        * WebProcess/WebPage/WebInspector.h:
+        Removed didLoadInspectorPage().
+
 2013-03-21  Alexey Proskuryakov  <ap@apple.com>
 
         Build fix.

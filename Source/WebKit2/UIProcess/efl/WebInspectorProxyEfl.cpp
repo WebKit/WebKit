@@ -142,6 +142,11 @@ void WebInspectorProxy::platformDidClose()
     }
 }
 
+void WebInspectorProxy::platformHide()
+{
+    notImplemented();
+}
+
 void WebInspectorProxy::platformBringToFront()
 {
     notImplemented();

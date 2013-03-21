@@ -40,9 +40,14 @@ WK_EXPORT WKTypeID WKInspectorGetTypeID();
 
 WK_EXPORT WKPageRef WKInspectorGetPage(WKInspectorRef inspector);
 
+WK_EXPORT bool WKInspectorIsConnected(WKInspectorRef inspector);
 WK_EXPORT bool WKInspectorIsVisible(WKInspectorRef inspector);
 WK_EXPORT bool WKInspectorIsFront(WKInspectorRef inspector);
+
+WK_EXPORT void WKInspectorConnect(WKInspectorRef inspector);
+
 WK_EXPORT void WKInspectorShow(WKInspectorRef inspector);
+WK_EXPORT void WKInspectorHide(WKInspectorRef inspector);
 WK_EXPORT void WKInspectorClose(WKInspectorRef inspector);
 
 WK_EXPORT void WKInspectorShowConsole(WKInspectorRef inspector);

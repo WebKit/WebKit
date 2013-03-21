@@ -88,6 +88,9 @@ WebInspectorProxy::WebInspectorProxy(WebPageProxy* page)
     , m_isDebuggingJavaScript(false)
     , m_isProfilingJavaScript(false)
     , m_isProfilingPage(false)
+    , m_showMessageSent(false)
+    , m_createdInspectorPage(false)
+    , m_ignoreFirstBringToFront(false)
 #if PLATFORM(GTK) || PLATFORM(EFL)
     , m_inspectorView(0)
     , m_inspectorWindow(0)
@@ -113,14 +116,10 @@ void WebInspectorProxy::invalidate()
     m_page->process()->removeMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_page->pageID());
 
     m_page->close();
+
     didClose();
 
     m_page = 0;
-
-    m_isVisible = false;
-    m_isDebuggingJavaScript = false;
-    m_isProfilingJavaScript = false;
-    m_isProfilingPage = false;
 }
 
 // Public APIs
@@ -132,12 +131,44 @@ bool WebInspectorProxy::isFront()
     return platformIsFront();
 }
 
+void WebInspectorProxy::connect()
+{
+    if (!m_page)
+        return;
+
+    if (m_showMessageSent)
+        return;
+
+    m_showMessageSent = true;
+    m_ignoreFirstBringToFront = true;
+
+    m_page->process()->send(Messages::WebInspector::Show(), m_page->pageID());
+}
+
 void WebInspectorProxy::show()
 {
     if (!m_page)
         return;
 
-    m_page->process()->send(Messages::WebInspector::Show(), m_page->pageID());
+    if (isConnected()) {
+        open();
+        return;
+    }
+
+    connect();
+
+    // Don't ignore the first bringToFront so it opens the Inspector.
+    m_ignoreFirstBringToFront = false;
+}
+
+void WebInspectorProxy::hide()
+{
+    if (!m_page)
+        return;
+
+    m_isVisible = false;
+
+    platformHide();
 }
 
 void WebInspectorProxy::close()
@@ -146,6 +177,8 @@ void WebInspectorProxy::close()
         return;
 
     m_page->process()->send(Messages::WebInspector::Close(), m_page->pageID());
+
+    didClose();
 }
 
 void WebInspectorProxy::showConsole()
@@ -168,13 +201,13 @@ void WebInspectorProxy::showMainResourceForFrame(WebFrameProxy* frame)
 {
     if (!m_page)
         return;
-    
+
     m_page->process()->send(Messages::WebInspector::ShowMainResourceForFrame(frame->frameID()), m_page->pageID());
 }
 
 void WebInspectorProxy::attach()
 {
-    if (!canAttach())
+    if (!m_page || !canAttach())
         return;
 
     m_isAttached = true;
@@ -189,8 +222,11 @@ void WebInspectorProxy::attach()
 
 void WebInspectorProxy::detach()
 {
+    if (!m_page)
+        return;
+
     m_isAttached = false;
-    
+
     if (m_isVisible)
         inspectorPageGroup()->preferences()->setInspectorStartsAttached(false);
 
@@ -341,35 +377,53 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
     m_page->process()->assumeReadAccessToBaseURL(inspectorBaseURL());
 
     inspectorPage->loadURL(url);
+
+    m_createdInspectorPage = true;
 }
 
-void WebInspectorProxy::didLoadInspectorPage()
+void WebInspectorProxy::open()
 {
+    ASSERT(m_createdInspectorPage);
+
     m_isVisible = true;
 
-    // platformOpen is responsible for rendering attached mode depending on m_isAttached.
     platformOpen();
 }
 
 void WebInspectorProxy::didClose()
 {
+    if (!m_createdInspectorPage)
+        return;
+
     m_isVisible = false;
     m_isDebuggingJavaScript = false;
     m_isProfilingJavaScript = false;
     m_isProfilingPage = false;
+    m_createdInspectorPage = false;
+    m_showMessageSent = false;
+    m_ignoreFirstBringToFront = false;
 
-    if (m_isAttached) {
-        // Detach here so we only need to have one code path that is responsible for cleaning up the inspector
-        // state.
-        detach();
-    }
+    if (m_isAttached)
+        platformDetach();
+    m_isAttached = false;
 
     platformDidClose();
 }
 
 void WebInspectorProxy::bringToFront()
 {
-    platformBringToFront();
+    // WebCore::InspectorFrontendClientLocal tells us to do this on load. We want to
+    // ignore it once if we only wanted to connect. This allows the Inspector to later
+    // request to be brought to the front when a breakpoint is hit or some other action.
+    if (m_ignoreFirstBringToFront) {
+        m_ignoreFirstBringToFront = false;
+        return;
+    }
+
+    if (m_isVisible)
+        platformBringToFront();
+    else
+        open();
 }
 
 void WebInspectorProxy::attachAvailabilityChanged(bool available)

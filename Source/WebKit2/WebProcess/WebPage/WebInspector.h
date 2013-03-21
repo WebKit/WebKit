@@ -92,7 +92,6 @@ private:
     void destroyInspectorPage();
 
     // Called from WebInspectorFrontendClient
-    void didLoadInspectorPage();
     void didClose();
     void bringToFront();
     void inspectedURLChanged(const String&);

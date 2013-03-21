@@ -78,10 +78,14 @@ public:
     // Public APIs
     WebPageProxy* page() const { return m_page; }
 
+    bool isConnected() const { return m_createdInspectorPage; }
     bool isVisible() const { return m_isVisible; }
     bool isFront();
 
+    void connect();
+
     void show();
+    void hide();
     void close();
     
 #if PLATFORM(MAC)
@@ -144,6 +148,7 @@ private:
     void platformOpen();
     void platformDidClose();
     void platformBringToFront();
+    void platformHide();
     bool platformIsFront();
     void platformAttachAvailabilityChanged(bool);
     void platformInspectedURLChanged(const String&);
@@ -154,7 +159,6 @@ private:
 
     // Called by WebInspectorProxy messages
     void createInspectorPage(uint64_t& inspectorPageID, WebPageCreationParameters&);
-    void didLoadInspectorPage();
     void didClose();
     void bringToFront();
     void attachAvailabilityChanged(bool);
@@ -166,6 +170,8 @@ private:
 
     bool canAttach();
     bool shouldOpenAttached();
+
+    void open();
 
     static WebPageGroup* inspectorPageGroup();
 
@@ -189,6 +195,9 @@ private:
     bool m_isDebuggingJavaScript;
     bool m_isProfilingJavaScript;
     bool m_isProfilingPage;
+    bool m_showMessageSent;
+    bool m_createdInspectorPage;
+    bool m_ignoreFirstBringToFront;
 
 #if PLATFORM(MAC)
     RetainPtr<WKWebInspectorWKView> m_inspectorView;

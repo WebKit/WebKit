@@ -45,13 +45,6 @@ WebInspectorFrontendClient::WebInspectorFrontendClient(WebPage* page, WebPage* i
 {
 }
 
-void WebInspectorFrontendClient::frontendLoaded()
-{
-    InspectorFrontendClientLocal::frontendLoaded();
-
-    m_page->inspector()->didLoadInspectorPage();
-}
-
 String WebInspectorFrontendClient::localizedStringsURL()
 {
     return m_page->inspector()->localizedStringsURL();

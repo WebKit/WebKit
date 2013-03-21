@@ -419,6 +419,20 @@ void WebInspectorProxy::platformDidClose()
     m_inspectorProxyObjCAdapter = 0;
 }
 
+void WebInspectorProxy::platformHide()
+{
+    if (m_isAttached) {
+        platformDetach();
+        return;
+    }
+
+    if (m_inspectorWindow) {
+        [m_inspectorWindow.get() setDelegate:nil];
+        [m_inspectorWindow.get() orderOut:nil];
+        m_inspectorWindow = 0;
+    }
+}
+
 void WebInspectorProxy::platformBringToFront()
 {
     // FIXME <rdar://problem/10937688>: this will not bring a background tab in Safari to the front, only its window.

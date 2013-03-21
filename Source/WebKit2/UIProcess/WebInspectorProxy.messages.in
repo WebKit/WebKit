@@ -24,7 +24,6 @@
 
 messages -> WebInspectorProxy {
     CreateInspectorPage() -> (uint64_t inspectorPageID, WebKit::WebPageCreationParameters inspectorPageParameters)
-    DidLoadInspectorPage()
     DidClose()
     BringToFront()
     InspectedURLChanged(WTF::String urlString)

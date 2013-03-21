@@ -125,6 +125,11 @@ void WebInspectorProxy::platformDidClose()
     m_inspectorView = 0;
 }
 
+void WebInspectorProxy::platformHide()
+{
+    notImplemented();
+}
+
 void WebInspectorProxy::platformBringToFront()
 {
     if (m_client.bringToFront(this))

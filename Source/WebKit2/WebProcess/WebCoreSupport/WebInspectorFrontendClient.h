@@ -39,8 +39,6 @@ public:
     WebInspectorFrontendClient(WebPage* page, WebPage* inspectorPage);
 
 private:
-    virtual void frontendLoaded() OVERRIDE;
-
     virtual String localizedStringsURL() OVERRIDE;
 
     virtual void bringToFront() OVERRIDE;
