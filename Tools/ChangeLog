@@ -1,3 +1,18 @@
+2013-03-21  Alberto Garcia  <agarcia@igalia.com>
+
+        [BlackBerry] AccessibilityUIElement: add dummy implementations of scroll methods
+        https://bugs.webkit.org/show_bug.cgi?id=112597
+
+        Reviewed by Xan Lopez.
+
+        These were introduced for the Chromium port in r105295. We need
+        dummy implementations in order to compile the BlackBerry port.
+
+        * DumpRenderTree/blackberry/AccessibilityUIElementBlackBerry.cpp:
+        (AccessibilityUIElement::scrollToMakeVisible):
+        (AccessibilityUIElement::scrollToMakeVisibleWithSubFocus):
+        (AccessibilityUIElement::scrollToGlobalPoint):
+
 2013-03-21  Roger Fong  <roger_fong@apple.com>
 
         Re-enable WinEWS tests following r146376.
