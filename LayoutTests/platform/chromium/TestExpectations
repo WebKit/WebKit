@@ -4202,9 +4202,6 @@ webkit.org/b/107962 http/tests/cache/iframe-304-crash.html [ Failure ]
 
 webkit.org/b/107893 [ MountainLion ] fast/exclusions/shape-inside/shape-inside-first-fit-001.html [ ImageOnlyFailure ] 
 
-# Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=9221
-webkit.org/b/9221 [ Mac ] fast/css/resize-corner-tracking-transformed.html [ Failure ]
-
 # The test is flaky on chromium-ews
 webkit.org/b/107953 inspector-protocol/debugger-terminate-dedicated-worker-while-paused.html [ Pass Failure ]
 
