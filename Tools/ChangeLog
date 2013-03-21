@@ -1,3 +1,10 @@
+2013-03-21  Roger Fong  <roger_fong@apple.com>
+
+        Re-enable WinEWS tests following r146376.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (WinEWS):
+
 2013-03-21  Zoltan Horvath  <zoltan@webkit.org>
 
         Unreviewed. Add Bem Jones-Bey to the list of contributors.
