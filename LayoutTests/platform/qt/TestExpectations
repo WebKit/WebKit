@@ -1919,6 +1919,12 @@ webkit.org/b/111290 fast/regions/seamless-iframe-flowed-into-regions.html [ Skip
 webkit.org/b/110546 [ DEBUG ] fast/parser/document-write-fighting-eof.html [ Skip ]
 webkit.org/b/110546 [ DEBUG ] fast/parser/document-write-partial-entity-before-load.html [ Skip ]
 
+webkit.org/b/112904 fast/frames/detach-frame-during-focus.html [ Skip ]
+
+webkit.org/b/112914 fast/media/mq-resolution-dpi-dpcm-warning.html [ Skip ]
+webkit.org/b/112914 fast/media/mq-resolution.html [ Skip ]
+webkit.org/b/112914 fast/media/w3c/test_media_queries.html [ Skip ]
+
 # ============================================================================= #
 # failing security tests
 # ============================================================================= #
