@@ -56,6 +56,10 @@
 #include "ScrollingCoordinatorCoordinatedGraphics.h"
 #endif
 
+#if PLATFORM(BLACKBERRY)
+#include "ScrollingCoordinatorBlackBerry.h"
+#endif
+
 namespace WebCore {
 
 PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
@@ -70,6 +74,10 @@ PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 
 #if USE(COORDINATED_GRAPHICS)
     return adoptRef(new ScrollingCoordinatorCoordinatedGraphics(page));
+#endif
+
+#if PLATFORM(BLACKBERRY)
+    return adoptRef(new ScrollingCoordinatorBlackBerry(page));
 #endif
 
     return adoptRef(new ScrollingCoordinator(page));

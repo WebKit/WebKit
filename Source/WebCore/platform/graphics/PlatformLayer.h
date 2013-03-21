@@ -64,6 +64,11 @@ class TextureMapperPlatformLayer;
 typedef TextureMapperPlatformLayer PlatformLayer;
 };
 #endif
+#elif PLATFORM(BLACKBERRY)
+namespace WebCore {
+class LayerWebKitThread;
+typedef LayerWebKitThread PlatformLayer;
+}
 #else
 typedef void* PlatformLayer;
 #endif

@@ -119,6 +119,7 @@ list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/bridge/blackberry"
     "${WEBCORE_DIR}/history/blackberry"
     "${WEBCORE_DIR}/page/blackberry"
+    "${WEBCORE_DIR}/page/scrolling/blackberry"
     "${WEBCORE_DIR}/platform/blackberry"
     "${WEBCORE_DIR}/platform/graphics/blackberry"
     "${WEBCORE_DIR}/platform/image-decoders/bmp"
