@@ -48,10 +48,14 @@ void V8DOMConfiguration::batchConfigureConstants(v8::Handle<v8::FunctionTemplate
     }
 }
 
-void V8DOMConfiguration::batchConfigureCallbacks(v8::Handle<v8::ObjectTemplate> prototype, v8::Handle<v8::Signature> signature, v8::PropertyAttribute attributes, const BatchedMethod* callbacks, size_t callbackCount, v8::Isolate*)
+void V8DOMConfiguration::batchConfigureCallbacks(v8::Handle<v8::ObjectTemplate> prototype, v8::Handle<v8::Signature> signature, v8::PropertyAttribute attributes, const BatchedMethod* callbacks, size_t callbackCount, v8::Isolate*, WrapperWorldType currentWorldType)
 {
-    for (size_t i = 0; i < callbackCount; ++i)
-        prototype->Set(v8::String::NewSymbol(callbacks[i].name), v8::FunctionTemplate::New(callbacks[i].callback, v8Undefined(), signature), attributes);
+    for (size_t i = 0; i < callbackCount; ++i) {
+        v8::InvocationCallback callback = callbacks[i].callback;
+        if (currentWorldType == MainWorld && callbacks[i].callbackForMainWorld)
+            callback = callbacks[i].callbackForMainWorld;
+        prototype->Set(v8::String::NewSymbol(callbacks[i].name), v8::FunctionTemplate::New(callback, v8Undefined(), signature), attributes);
+    }
 }
 
 v8::Local<v8::Signature> V8DOMConfiguration::configureTemplate(v8::Persistent<v8::FunctionTemplate> functionDescriptor, const char* interfaceName, v8::Persistent<v8::FunctionTemplate> parentClass,
@@ -73,7 +77,7 @@ v8::Local<v8::Signature> V8DOMConfiguration::configureTemplate(v8::Persistent<v8
         batchConfigureAttributes(instance, functionDescriptor->PrototypeTemplate(), attributes, attributeCount, isolate, currentWorldType);
     v8::Local<v8::Signature> defaultSignature = v8::Signature::New(functionDescriptor);
     if (callbackCount)
-        batchConfigureCallbacks(functionDescriptor->PrototypeTemplate(), defaultSignature, static_cast<v8::PropertyAttribute>(v8::DontDelete), callbacks, callbackCount, isolate);
+        batchConfigureCallbacks(functionDescriptor->PrototypeTemplate(), defaultSignature, static_cast<v8::PropertyAttribute>(v8::DontDelete), callbacks, callbackCount, isolate, currentWorldType);
     return defaultSignature;
 }
 

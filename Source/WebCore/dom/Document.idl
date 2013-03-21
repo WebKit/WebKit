@@ -29,36 +29,36 @@
     readonly attribute DOMImplementation implementation;
     readonly attribute Element documentElement;
 
-    [ReturnNewObject] Element createElement(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString tagName)
+    [ReturnNewObject, V8PerWorldBindings] Element createElement(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString tagName)
         raises (DOMException);
-    DocumentFragment   createDocumentFragment();
-    [ReturnNewObject] Text createTextNode(in [Optional=DefaultIsUndefined] DOMString data);
-    [ReturnNewObject] Comment createComment(in [Optional=DefaultIsUndefined] DOMString data);
-    [ReturnNewObject] CDATASection createCDATASection(in [Optional=DefaultIsUndefined] DOMString data)
+    [V8PerWorldBindings] DocumentFragment   createDocumentFragment();
+    [ReturnNewObject, V8PerWorldBindings] Text createTextNode(in [Optional=DefaultIsUndefined] DOMString data);
+    [ReturnNewObject, V8PerWorldBindings] Comment createComment(in [Optional=DefaultIsUndefined] DOMString data);
+    [ReturnNewObject, V8PerWorldBindings] CDATASection createCDATASection(in [Optional=DefaultIsUndefined] DOMString data)
         raises(DOMException);
-    [ObjCLegacyUnnamedParameters, ReturnNewObject] ProcessingInstruction createProcessingInstruction(in [Optional=DefaultIsUndefined] DOMString target,
+    [ObjCLegacyUnnamedParameters, ReturnNewObject, V8PerWorldBindings] ProcessingInstruction createProcessingInstruction(in [Optional=DefaultIsUndefined] DOMString target,
                                                                                  in [Optional=DefaultIsUndefined] DOMString data)
         raises (DOMException);
-    [ReturnNewObject] Attr createAttribute(in [Optional=DefaultIsUndefined] DOMString name)
+    [ReturnNewObject, V8PerWorldBindings] Attr createAttribute(in [Optional=DefaultIsUndefined] DOMString name)
         raises (DOMException);
-    [ReturnNewObject] EntityReference createEntityReference(in [Optional=DefaultIsUndefined] DOMString name)
+    [ReturnNewObject, V8PerWorldBindings] EntityReference createEntityReference(in [Optional=DefaultIsUndefined] DOMString name)
         raises(DOMException);
-    NodeList           getElementsByTagName(in [Optional=DefaultIsUndefined] DOMString tagname);
+    [V8PerWorldBindings] NodeList getElementsByTagName(in [Optional=DefaultIsUndefined] DOMString tagname);
 
     // Introduced in DOM Level 2:
 
-    [ObjCLegacyUnnamedParameters, ReturnNewObject] Node importNode(in [Optional=DefaultIsUndefined] Node importedNode,
+    [ObjCLegacyUnnamedParameters, ReturnNewObject, V8PerWorldBindings] Node importNode(in [Optional=DefaultIsUndefined] Node importedNode,
                                                in [Optional] boolean deep)
         raises (DOMException);
-    [ObjCLegacyUnnamedParameters, ReturnNewObject] Element createElementNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
+    [ObjCLegacyUnnamedParameters, ReturnNewObject, V8PerWorldBindings] Element createElementNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
                                                        in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString qualifiedName)
         raises (DOMException);
-    [ObjCLegacyUnnamedParameters, ReturnNewObject] Attr createAttributeNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
+    [ObjCLegacyUnnamedParameters, ReturnNewObject, V8PerWorldBindings] Attr createAttributeNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
                                                       in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString qualifiedName)
         raises (DOMException);
-    [ObjCLegacyUnnamedParameters] NodeList getElementsByTagNameNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
+    [ObjCLegacyUnnamedParameters, V8PerWorldBindings] NodeList getElementsByTagNameNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
                                                    in [Optional=DefaultIsUndefined] DOMString localName);
-    Element            getElementById(in [Optional=DefaultIsUndefined] DOMString elementId);
+    [V8PerWorldBindings] Element            getElementById(in [Optional=DefaultIsUndefined] DOMString elementId);
 
     // DOM Level 3 Core
 
@@ -70,7 +70,7 @@
              attribute boolean xmlStandalone
                 setter raises (DOMException);
 
-    Node               adoptNode(in [Optional=DefaultIsUndefined] Node source)
+    [V8PerWorldBindings] Node adoptNode(in [Optional=DefaultIsUndefined] Node source)
         raises (DOMException);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C || defined(LANGUAGE_GOBJECT) && LANGUAGE_GOBJECT
@@ -85,21 +85,21 @@
 
     // DOM Level 2 Events (DocumentEvents interface)
 
-    Event              createEvent(in [Optional=DefaultIsUndefined] DOMString eventType)
+    [V8PerWorldBindings] Event              createEvent(in [Optional=DefaultIsUndefined] DOMString eventType)
         raises(DOMException);
 
     // DOM Level 2 Tranversal and Range (DocumentRange interface)
 
-    Range              createRange();
+    [V8PerWorldBindings] Range              createRange();
 
     // DOM Level 2 Tranversal and Range (DocumentTraversal interface)
 
-    [ObjCLegacyUnnamedParameters] NodeIterator createNodeIterator(in [Optional=DefaultIsUndefined] Node root,
+    [ObjCLegacyUnnamedParameters, V8PerWorldBindings] NodeIterator createNodeIterator(in [Optional=DefaultIsUndefined] Node root,
                                                    in [Optional=DefaultIsUndefined] unsigned long whatToShow,
                                                    in [Optional=DefaultIsUndefined] NodeFilter filter,
                                                    in [Optional=DefaultIsUndefined] boolean expandEntityReferences)
         raises(DOMException);
-    [ObjCLegacyUnnamedParameters] TreeWalker createTreeWalker(in [Optional=DefaultIsUndefined] Node root,
+    [ObjCLegacyUnnamedParameters, V8PerWorldBindings] TreeWalker createTreeWalker(in [Optional=DefaultIsUndefined] Node root,
                                                in [Optional=DefaultIsUndefined] unsigned long whatToShow,
                                                in [Optional=DefaultIsUndefined] NodeFilter filter,
                                                in [Optional=DefaultIsUndefined] boolean expandEntityReferences)
@@ -115,15 +115,15 @@
 
     // DOM Level 2 Style (DocumentCSS interface)
 
-    [ObjCLegacyUnnamedParameters] CSSStyleDeclaration getOverrideStyle(in [Optional=DefaultIsUndefined] Element element,
+    [ObjCLegacyUnnamedParameters, V8PerWorldBindings] CSSStyleDeclaration getOverrideStyle(in [Optional=DefaultIsUndefined] Element element,
                                                         in [Optional=DefaultIsUndefined] DOMString pseudoElement);
 
     // DOM Level 3 XPath (XPathEvaluator interface)
-    [ObjCLegacyUnnamedParameters] XPathExpression createExpression(in [Optional=DefaultIsUndefined] DOMString expression,
+    [ObjCLegacyUnnamedParameters, V8PerWorldBindings] XPathExpression createExpression(in [Optional=DefaultIsUndefined] DOMString expression,
                                                     in [Optional=DefaultIsUndefined] XPathNSResolver resolver)
         raises(DOMException);
-    XPathNSResolver    createNSResolver(in Node nodeResolver);
-    [ObjCLegacyUnnamedParameters, V8Custom] XPathResult evaluate(in [Optional=DefaultIsUndefined] DOMString expression,
+    [V8PerWorldBindings] XPathNSResolver    createNSResolver(in Node nodeResolver);
+    [ObjCLegacyUnnamedParameters, V8Custom, V8PerWorldBindings] XPathResult evaluate(in [Optional=DefaultIsUndefined] DOMString expression,
                                                   in [Optional=DefaultIsUndefined] Node contextNode,
                                                   in [Optional=DefaultIsUndefined] XPathNSResolver resolver,
                                                   in [Optional=DefaultIsUndefined] unsigned short type,
@@ -147,7 +147,7 @@
     boolean            queryCommandIndeterm(in [Optional=DefaultIsUndefined] DOMString command);
     boolean            queryCommandState(in [Optional=DefaultIsUndefined] DOMString command);
     boolean            queryCommandSupported(in [Optional=DefaultIsUndefined] DOMString command);
-    DOMString          queryCommandValue(in [Optional=DefaultIsUndefined] DOMString command);
+    [V8PerWorldBindings] DOMString queryCommandValue(in [Optional=DefaultIsUndefined] DOMString command);
 
     // Moved down from HTMLDocument
 
@@ -176,10 +176,10 @@
     readonly attribute HTMLCollection anchors;
     readonly attribute DOMString lastModified;
 
-    NodeList getElementsByName(in [Optional=DefaultIsUndefined] DOMString elementName);
+    [V8PerWorldBindings] NodeList getElementsByName(in [Optional=DefaultIsUndefined] DOMString elementName);
 
 #if defined(ENABLE_MICRODATA) && ENABLE_MICRODATA
-    NodeList getItems(in [TreatNullAs=NullString, TreatUndefinedAs=NullString, Optional=DefaultIsUndefined] DOMString typeNames);
+    [V8PerWorldBindings] NodeList getItems(in [TreatNullAs=NullString, TreatUndefinedAs=NullString, Optional=DefaultIsUndefined] DOMString typeNames);
 #endif
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
@@ -192,14 +192,14 @@
     [TreatReturnedNullStringAs=Undefined] readonly attribute DOMString defaultCharset;
     [TreatReturnedNullStringAs=Undefined] readonly attribute DOMString readyState;
 
-    Element            elementFromPoint(in [Optional=DefaultIsUndefined] long x, 
-                                        in [Optional=DefaultIsUndefined] long y);
-    Range              caretRangeFromPoint(in [Optional=DefaultIsUndefined] long x, 
-                                           in [Optional=DefaultIsUndefined] long y);
+    [V8PerWorldBindings] Element elementFromPoint(in [Optional=DefaultIsUndefined] long x, 
+                                                  in [Optional=DefaultIsUndefined] long y);
+    [V8PerWorldBindings] Range caretRangeFromPoint(in [Optional=DefaultIsUndefined] long x, 
+                                                   in [Optional=DefaultIsUndefined] long y);
 
     // Mozilla extensions
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    DOMSelection       getSelection();
+    [V8PerWorldBindings] DOMSelection getSelection();
 #endif
     [TreatReturnedNullStringAs=Null] readonly attribute DOMString characterSet;
 
@@ -234,14 +234,14 @@
 #endif
 
     // HTML 5
-    NodeList getElementsByClassName(in [Optional=DefaultIsUndefined] DOMString tagname);
+    [V8PerWorldBindings] NodeList getElementsByClassName(in [Optional=DefaultIsUndefined] DOMString tagname);
 
     readonly attribute DOMString compatMode;
 
     // NodeSelector - Selector API
-    Element querySelector(in DOMString selectors)
+    [V8PerWorldBindings] Element querySelector(in DOMString selectors)
         raises(DOMException);
-    NodeList querySelectorAll(in DOMString selectors)
+    [V8PerWorldBindings] NodeList querySelectorAll(in DOMString selectors)
         raises(DOMException);
 
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
@@ -345,7 +345,7 @@
 #endif
 
 #if defined(ENABLE_TOUCH_EVENTS) && ENABLE_TOUCH_EVENTS
-    [ReturnNewObject, V8EnabledAtRuntime=touch] Touch createTouch(in [Optional=DefaultIsUndefined] DOMWindow window,
+    [ReturnNewObject, V8EnabledAtRuntime=touch, V8PerWorldBindings] Touch createTouch(in [Optional=DefaultIsUndefined] DOMWindow window,
                                                      in [Optional=DefaultIsUndefined] EventTarget target,
                                                      in [Optional=DefaultIsUndefined] long identifier,
                                                      in [Optional=DefaultIsUndefined] long pageX,
@@ -362,10 +362,10 @@
 #endif
 
 #if defined(ENABLE_CUSTOM_ELEMENTS) && ENABLE_CUSTOM_ELEMENTS
-    [V8EnabledAtRuntime=customDOMElements, Conditional=CUSTOM_ELEMENTS, ImplementedAs=registerElement, CallWith=ScriptState]
+    [V8EnabledAtRuntime=customDOMElements, Conditional=CUSTOM_ELEMENTS, ImplementedAs=registerElement, CallWith=ScriptState, V8PerWorldBindings]
     CustomElementConstructor webkitRegister(in DOMString name, in [Optional] Dictionary options) raises(DOMException);
-    [ReturnNewObject] Element createElement(in DOMString localName, in [TreatNullAs=NullString] DOMString typeExtension) raises (DOMException);
-    [ReturnNewObject] Element createElementNS(in [TreatNullAs=NullString] DOMString namespaceURI, in DOMString qualifiedName,
+    [ReturnNewObject, V8PerWorldBindings] Element createElement(in DOMString localName, in [TreatNullAs=NullString] DOMString typeExtension) raises (DOMException);
+    [ReturnNewObject, V8PerWorldBindings] Element createElementNS(in [TreatNullAs=NullString] DOMString namespaceURI, in DOMString qualifiedName,
                                               in [TreatNullAs=NullString] DOMString typeExtension) raises (DOMException);
 #endif
 

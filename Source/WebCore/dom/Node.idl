@@ -76,7 +76,7 @@
         raises(DOMException);
 
     boolean            hasChildNodes();
-    Node               cloneNode(in [Optional=DefaultIsUndefined] boolean deep);
+    [V8PerWorldBindings] Node               cloneNode(in [Optional=DefaultIsUndefined] boolean deep);
     void               normalize();
 
     // Introduced in DOM Level 2:

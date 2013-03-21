@@ -34,12 +34,12 @@
                                      in [Optional=DefaultIsUndefined] DOMString value)
         raises(DOMException);
     void removeAttribute(in [Optional=DefaultIsUndefined] DOMString name);
-    Attr getAttributeNode(in [Optional=DefaultIsUndefined] DOMString name);
-    Attr setAttributeNode(in [Optional=DefaultIsUndefined] Attr newAttr)
+    [V8PerWorldBindings] Attr getAttributeNode(in [Optional=DefaultIsUndefined] DOMString name);
+    [V8PerWorldBindings] Attr setAttributeNode(in [Optional=DefaultIsUndefined] Attr newAttr)
         raises(DOMException);
-    Attr removeAttributeNode(in [Optional=DefaultIsUndefined] Attr oldAttr)
+    [V8PerWorldBindings] Attr removeAttributeNode(in [Optional=DefaultIsUndefined] Attr oldAttr)
         raises(DOMException);
-    NodeList getElementsByTagName(in [Optional=DefaultIsUndefined] DOMString name);
+    [V8PerWorldBindings] NodeList getElementsByTagName(in [Optional=DefaultIsUndefined] DOMString name);
 
 #if !defined(LANGUAGE_OBJECTIVE_C)
     // For ObjC this is defined on Node for legacy support.
@@ -57,11 +57,11 @@
         raises(DOMException);
     [ObjCLegacyUnnamedParameters] void removeAttributeNS(in [TreatNullAs=NullString] DOMString namespaceURI,
                                           in DOMString localName);
-    [ObjCLegacyUnnamedParameters] NodeList getElementsByTagNameNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
+    [ObjCLegacyUnnamedParameters, V8PerWorldBindings] NodeList getElementsByTagNameNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
                                                    in [Optional=DefaultIsUndefined] DOMString localName);
-    [ObjCLegacyUnnamedParameters] Attr getAttributeNodeNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
+    [ObjCLegacyUnnamedParameters, V8PerWorldBindings] Attr getAttributeNodeNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
                                            in [Optional=DefaultIsUndefined] DOMString localName);
-    Attr setAttributeNodeNS(in [Optional=DefaultIsUndefined] Attr newAttr)
+    [V8PerWorldBindings] Attr setAttributeNodeNS(in [Optional=DefaultIsUndefined] Attr newAttr)
         raises(DOMException);
     boolean hasAttribute(in DOMString name);
     [ObjCLegacyUnnamedParameters] boolean hasAttributeNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
@@ -96,7 +96,7 @@
     void scrollByPages(in [Optional=DefaultIsUndefined] long pages);
 
     // HTML 5
-    NodeList getElementsByClassName(in [Optional=DefaultIsUndefined] DOMString name);
+    [V8PerWorldBindings] NodeList getElementsByClassName(in [Optional=DefaultIsUndefined] DOMString name);
 
     [Reflect=class, V8PerWorldBindings] attribute DOMString className;
     [V8PerWorldBindings] readonly attribute DOMTokenList classList;
@@ -106,9 +106,9 @@
 #endif
 
     // NodeSelector - Selector API
-    Element querySelector(in DOMString selectors)
+    [V8PerWorldBindings] Element querySelector(in DOMString selectors)
         raises(DOMException);
-    NodeList querySelectorAll(in DOMString selectors)
+    [V8PerWorldBindings] NodeList querySelectorAll(in DOMString selectors)
         raises(DOMException);
 
     // WebKit extension, pending specification.
@@ -125,7 +125,7 @@
     // ShadowAware API
 #if defined(ENABLE_SHADOW_DOM) && ENABLE_SHADOW_DOM && defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     [Reflect=pseudo, V8EnabledAtRuntime=shadowDOM, ImplementedAs=pseudo, V8PerWorldBindings] attribute DOMString webkitPseudo;
-    [V8EnabledAtRuntime=shadowDOM, ImplementedAs=createShadowRoot] ShadowRoot webkitCreateShadowRoot() raises(DOMException);
+    [V8EnabledAtRuntime=shadowDOM, ImplementedAs=createShadowRoot, V8PerWorldBindings] ShadowRoot webkitCreateShadowRoot() raises(DOMException);
     [V8EnabledAtRuntime=shadowDOM, ImplementedAs=shadowRoot, V8PerWorldBindings] readonly attribute ShadowRoot webkitShadowRoot;
 #endif
 
@@ -135,8 +135,8 @@
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     // CSSOM View Module API
-    ClientRectList getClientRects();
-    ClientRect getBoundingClientRect();
+    [V8PerWorldBindings] ClientRectList getClientRects();
+    [V8PerWorldBindings] ClientRect getBoundingClientRect();
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
