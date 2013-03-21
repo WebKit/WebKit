@@ -1,4 +1,5 @@
 # Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+# Copyright (C) 2013 University of Szeged. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -26,6 +27,28 @@ require "ast"
 require "opt"
 require "risc"
 
+def isARMv7
+    case $activeBackend
+    when "ARMv7"
+        true
+    when "ARMv7_TRADITIONAL", "ARM"
+        false
+    else
+        raise "bad value for $activeBackend: #{$activeBackend}"
+    end
+end
+
+def isARMv7Traditional
+    case $activeBackend
+    when "ARMv7_TRADITIONAL"
+        true
+    when "ARMv7", "ARM"
+        false
+    else
+        raise "bad value for $activeBackend: #{$activeBackend}"
+    end
+end
+
 class Node
     def armSingle
         doubleOperand = armOperand
@@ -47,14 +70,16 @@ ARM_SCRATCH_FPR = SpecialRegister.new("d8")
 def armMoveImmediate(value, register)
     # Currently we only handle the simple cases, and fall back to mov/movt for the complex ones.
     if value >= 0 && value < 256
-        $asm.puts "movw #{register.armOperand}, \##{value}"
+        $asm.puts "mov #{register.armOperand}, \##{value}"
     elsif (~value) >= 0 && (~value) < 256
         $asm.puts "mvn #{register.armOperand}, \##{~value}"
-    else
+    elsif isARMv7 or isARMv7Traditional
         $asm.puts "movw #{register.armOperand}, \##{value & 0xffff}"
         if (value & 0xffff0000) != 0
             $asm.puts "movt #{register.armOperand}, \##{(value >> 16) & 0xffff}"
         end
+    else
+        $asm.puts "ldr #{register.armOperand}, =#{value}"
     end
 end
 
@@ -150,7 +175,7 @@ end
 class BaseIndex
     def armEmitLea(destination)
         raise "Malformed BaseIndex, offset should be zero at #{codeOriginString}" unless offset.value == 0
-        $asm.puts "add.w #{destination.armOperand}, #{base.armOperand}, #{index.armOperand}, lsl \##{scaleShift}"
+        $asm.puts "add #{destination.armOperand}, #{base.armOperand}, #{index.armOperand}, lsl \##{scaleShift}"
     end
 end
 
@@ -161,7 +186,22 @@ end
 #
 
 class Sequence
+    def getModifiedListARM
+        raise unless $activeBackend == "ARM"
+        getModifiedListARMCommon
+    end
+
     def getModifiedListARMv7
+        raise unless $activeBackend == "ARMv7"
+        getModifiedListARMCommon
+    end
+
+    def getModifiedListARMv7_TRADITIONAL
+        raise unless $activeBackend == "ARMv7_TRADITIONAL"
+        getModifiedListARMCommon
+    end
+
+    def getModifiedListARMCommon
         result = @list
         result = riscLowerSimpleBranchOps(result)
         result = riscLowerHardBranchOps(result)
@@ -237,8 +277,6 @@ def emitArmTest(operands)
     
     if mask.immediate? and mask.value == -1
         $asm.puts "tst #{value.armOperand}, #{value.armOperand}"
-    elsif mask.immediate?
-        $asm.puts "tst.w #{value.armOperand}, #{mask.armOperand}"
     else
         $asm.puts "tst #{value.armOperand}, #{mask.armOperand}"
     end
@@ -259,7 +297,22 @@ def emitArmTestSet(operands, code)
 end
 
 class Instruction
+    def lowerARM
+        raise unless $activeBackend == "ARM"
+        lowerARMCommon
+    end
+
     def lowerARMv7
+        raise unless $activeBackend == "ARMv7"
+        lowerARMCommon
+    end
+
+    def lowerARMv7_TRADITIONAL
+        raise unless $activeBackend == "ARMv7_TRADITIONAL"
+        lowerARMCommon
+    end
+
+    def lowerARMCommon
         $asm.codeOrigin codeOriginString if $enableCodeOriginComments
         $asm.annotation annotation if $enableInstrAnnotations
 
@@ -465,6 +518,9 @@ class Instruction
                 $asm.puts "b #{operands[0].asmLabel}"
             else
                 $asm.puts "mov pc, #{operands[0].armOperand}"
+            end
+            if not isARMv7 and not isARMv7Traditional
+                $asm.puts ".ltorg"
             end
         when "call"
             if operands[0].label?

@@ -105,7 +105,7 @@ macro dispatchAfterCall()
 end
 
 macro cCall2(function, arg1, arg2)
-    if ARMv7
+    if ARM or ARMv7 or ARMv7_TRADITIONAL
         move arg1, t0
         move arg2, t1
         call function
@@ -126,7 +126,7 @@ end
 
 # This barely works. arg3 and arg4 should probably be immediates.
 macro cCall4(function, arg1, arg2, arg3, arg4)
-    if ARMv7
+    if ARM or ARMv7 or ARMv7_TRADITIONAL
         move arg1, t0
         move arg2, t1
         move arg3, t2
@@ -1891,7 +1891,7 @@ macro nativeCallTrampoline(executableOffsetToFunction)
         call executableOffsetToFunction[t1]
         addp 16 - 4, sp
         loadp JITStackFrame::globalData + 4[sp], t3
-    elsif ARMv7
+    elsif ARM or ARMv7 or ARMv7_TRADITIONAL
         loadp JITStackFrame::globalData[sp], t3
         storep cfr, JSGlobalData::topCallFrame[t3]
         move t0, t2

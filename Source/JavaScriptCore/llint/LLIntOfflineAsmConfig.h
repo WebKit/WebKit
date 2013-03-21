@@ -62,6 +62,19 @@
 #define OFFLINE_ASM_ARMv7 0
 #endif
 
+#if CPU(ARM_TRADITIONAL)
+#if WTF_ARM_ARCH_AT_LEAST(7)
+#define OFFLINE_ASM_ARMv7_TRADITIONAL 1
+#define OFFLINE_ASM_ARM 0
+#else
+#define OFFLINE_ASM_ARM 1
+#define OFFLINE_ASM_ARMv7_TRADITIONAL 0
+#endif
+#else
+#define OFFLINE_ASM_ARMv7_TRADITIONAL 0
+#define OFFLINE_ASM_ARM 0
+#endif
+
 #if CPU(X86_64)
 #define OFFLINE_ASM_X86_64 1
 #else
