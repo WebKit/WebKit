@@ -41,7 +41,6 @@
 #include "WebGamepads.h"
 #include "WebGraphicsContext3D.h"
 #include "WebLocalizedString.h"
-#include "WebSpeechSynthesizer.h"
 #include "WebString.h"
 #include "WebVector.h"
 
@@ -70,8 +69,6 @@ class WebRTCPeerConnectionHandler;
 class WebRTCPeerConnectionHandlerClient;
 class WebSandboxSupport;
 class WebSocketStreamHandle;
-class WebSpeechSynthesizer;
-class WebSpeechSynthesizerClient;
 class WebStorageNamespace;
 class WebUnitTestSupport;
 class WebThemeEngine;
@@ -118,8 +115,6 @@ public:
     // Must return non-null.
     virtual WebHyphenator* hyphenator() { return 0; }
 
-    // May return null.
-    virtual WebSpeechSynthesizer* createSpeechSynthesizer(WebSpeechSynthesizerClient*) { return 0; }
 
     // Audio --------------------------------------------------------------
 

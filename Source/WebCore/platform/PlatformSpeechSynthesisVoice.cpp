@@ -34,11 +34,6 @@ PassRefPtr<PlatformSpeechSynthesisVoice> PlatformSpeechSynthesisVoice::create(co
 {
     return adoptRef(new PlatformSpeechSynthesisVoice(voiceURI, name, lang, localService, isDefault));
 }
-
-PassRefPtr<PlatformSpeechSynthesisVoice> PlatformSpeechSynthesisVoice::create()
-{
-    return adoptRef(new PlatformSpeechSynthesisVoice());
-}
     
 PlatformSpeechSynthesisVoice::PlatformSpeechSynthesisVoice(const String& voiceURI, const String& name, const String& lang, bool localService, bool isDefault)
     : m_voiceURI(voiceURI)
@@ -46,12 +41,6 @@ PlatformSpeechSynthesisVoice::PlatformSpeechSynthesisVoice(const String& voiceUR
     , m_lang(lang)
     , m_localService(localService)
     , m_default(isDefault)
-{
-}
-
-PlatformSpeechSynthesisVoice::PlatformSpeechSynthesisVoice()
-    : m_localService(false)
-    , m_default(false)
 {
 }
 

@@ -1,3 +1,13 @@
+2013-03-21  Anton Muhin  <antonm@chromium.org>
+
+        Unreviewed, rolling out r146483.
+        http://trac.webkit.org/changeset/146483
+        https://bugs.webkit.org/show_bug.cgi?id=111695
+
+        Breaks debug builds.
+
+        * bytecode/GlobalResolveInfo.h: Removed property svn:mergeinfo.
+
 2013-03-21  Gabor Rapcsanyi  <rgabor@webkit.org>
 
         Implement LLInt for CPU(ARM_TRADITIONAL)

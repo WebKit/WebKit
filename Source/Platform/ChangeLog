@@ -1,3 +1,20 @@
+2013-03-21  Anton Muhin  <antonm@chromium.org>
+
+        Unreviewed, rolling out r146483.
+        http://trac.webkit.org/changeset/146483
+        https://bugs.webkit.org/show_bug.cgi?id=111695
+
+        Breaks
+
+        * Platform.gypi:
+        * chromium/public/Platform.h:
+        (WebKit):
+        (Platform):
+        * chromium/public/WebSpeechSynthesisUtterance.h: Removed.
+        * chromium/public/WebSpeechSynthesisVoice.h: Removed.
+        * chromium/public/WebSpeechSynthesizer.h: Removed.
+        * chromium/public/WebSpeechSynthesizerClient.h: Removed.
+
 2013-03-21  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Add isOrphan() to the WebLayer API

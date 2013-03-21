@@ -37,26 +37,15 @@ namespace WebCore {
 class PlatformSpeechSynthesisVoice : public RefCounted<PlatformSpeechSynthesisVoice> {
 public:
     static PassRefPtr<PlatformSpeechSynthesisVoice> create(const String& voiceURI, const String& name, const String& lang, bool localService, bool isDefault);
-    static PassRefPtr<PlatformSpeechSynthesisVoice> create();
-
+    
     const String& voiceURI() const { return m_voiceURI; }
-    void setVoiceURI(const String& voiceURI) { m_voiceURI = voiceURI; }
-
     const String& name() const { return m_name; }
-    void setName(const String& name) { m_name = name; }
-
     const String& lang() const { return m_lang; }
-    void setLang(const String& lang) { m_lang = lang; }
-
     bool localService() const { return m_localService; }
-    void setLocalService(bool localService) { m_localService = localService; }
-
     bool isDefault() const { return m_default; }
-    void setIsDefault(bool isDefault) { m_default = isDefault; }
-
+    
 private:
     PlatformSpeechSynthesisVoice(const String& voiceURI, const String& name, const String& lang, bool localService, bool isDefault);
-    PlatformSpeechSynthesisVoice();
 
     String m_voiceURI;
     String m_name;
