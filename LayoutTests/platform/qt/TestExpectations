@@ -2603,6 +2603,10 @@ webkit.org/b/103424 fast/backgrounds/background-opaque-images-over-color.html
 webkit.org/b/101491 compositing/text-on-scaled-layer.html [ Skip ]
 webkit.org/b/101491 compositing/text-on-scaled-surface.html [ Skip ]
 
+webkit.org/b/112895 compositing/rtl/rtl-overflow-scrolling.html [ Skip ]
+
+webkit.org/b/112893 editing/spelling/spellcheck-paste-continuous-disabled.html [ Skip ]
+
 # No support for exposing in-band text tracks
 webkit.org/b/103769 media/track/track-in-band.html [ Skip ]
 webkit.org/b/103769 media/track/track-in-band-cues-added-once.html [ Skip ]
