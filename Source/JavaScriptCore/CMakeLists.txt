@@ -24,7 +24,6 @@ set(JavaScriptCore_INCLUDE_DIRECTORIES
 )
 
 set(JavaScriptCore_SOURCES
-    API/JSAPIWrapperObject.cpp
     API/JSBase.cpp
     API/JSCallbackConstructor.cpp
     API/JSCallbackFunction.cpp

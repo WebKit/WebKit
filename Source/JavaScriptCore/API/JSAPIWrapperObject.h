@@ -30,16 +30,19 @@
 #include "JSDestructibleObject.h"
 #include "WeakReferenceHarvester.h"
 
+#if JSC_OBJC_API_ENABLED
+
 namespace JSC {
     
 class JSAPIWrapperObject : public JSDestructibleObject {
 public:
     typedef JSDestructibleObject Base;
     
+    void finishCreation(JSGlobalData&);
     static void visitChildren(JSCell*, JSC::SlotVisitor&);
     
     void* wrappedObject() { return m_wrappedObject; }
-    void setWrappedObject(void* wrappedObject) { m_wrappedObject = wrappedObject; }
+    void setWrappedObject(void*);
 
 protected:
     static const unsigned StructureFlags = OverridesVisitChildren | Base::StructureFlags;
@@ -51,5 +54,7 @@ private:
 };
 
 } // namespace JSC
+
+#endif
 
 #endif // JSAPIWrapperObject_h

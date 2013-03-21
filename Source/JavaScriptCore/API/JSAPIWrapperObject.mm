@@ -33,9 +33,31 @@
 #include "Structure.h"
 #include "StructureInlines.h"
 
+#if JSC_OBJC_API_ENABLED
+
+class JSAPIWrapperObjectHandleOwner : public JSC::WeakHandleOwner {
+public:
+    virtual void finalize(JSC::Handle<JSC::Unknown>, void*);
+};
+
+static JSAPIWrapperObjectHandleOwner* jsAPIWrapperObjectHandleOwner()
+{
+    DEFINE_STATIC_LOCAL(JSAPIWrapperObjectHandleOwner, jsWrapperObjectHandleOwner, ());
+    return &jsWrapperObjectHandleOwner;
+}
+
+void JSAPIWrapperObjectHandleOwner::finalize(JSC::Handle<JSC::Unknown> handle, void*)
+{
+    JSC::WeakSet::deallocate(JSC::WeakImpl::asWeakImpl(handle.slot()));
+    JSC::JSAPIWrapperObject* wrapperObject = JSC::jsCast<JSC::JSAPIWrapperObject*>(handle.get().asCell());
+    if (!wrapperObject->wrappedObject())
+        return;
+    [static_cast<id>(wrapperObject->wrappedObject()) release];
+}
+
 namespace JSC {
     
-template <> const ClassInfo JSCallbackObject<JSAPIWrapperObject>::s_info = { "EnumerableCallbackObject", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSCallbackObject) };
+template <> const ClassInfo JSCallbackObject<JSAPIWrapperObject>::s_info = { "JSAPIWrapperObject", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(JSCallbackObject) };
 
 template<> const bool JSCallbackObject<JSAPIWrapperObject>::needsDestruction = true;
 
@@ -51,6 +73,18 @@ JSAPIWrapperObject::JSAPIWrapperObject(JSGlobalData& globalData, Structure* stru
 {
 }
 
+void JSAPIWrapperObject::finishCreation(JSGlobalData& globalData)
+{
+    Base::finishCreation(globalData);
+    WeakSet::allocate(this, jsAPIWrapperObjectHandleOwner(), 0); // Balanced in JSAPIWrapperObjectHandleOwner::finalize.
+}
+    
+void JSAPIWrapperObject::setWrappedObject(void* wrappedObject)
+{
+    ASSERT(!m_wrappedObject);
+    m_wrappedObject = [static_cast<id>(wrappedObject) retain];
+}
+
 void JSAPIWrapperObject::visitChildren(JSCell* cell, JSC::SlotVisitor& visitor)
 {
     JSAPIWrapperObject* thisObject = JSC::jsCast<JSAPIWrapperObject*>(cell);
@@ -62,3 +96,5 @@ void JSAPIWrapperObject::visitChildren(JSCell* cell, JSC::SlotVisitor& visitor)
 }
 
 } // namespace JSC
+
+#endif // JSC_OBJC_API_ENABLED

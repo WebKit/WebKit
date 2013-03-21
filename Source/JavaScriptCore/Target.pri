@@ -33,7 +33,6 @@ INSTALLDEPS += all
 debug_and_release: INCLUDEPATH += $$JAVASCRIPTCORE_GENERATED_SOURCES_DIR/$$targetSubDir()
 
 SOURCES += \
-    API/JSAPIWrapperObject.cpp \
     API/JSBase.cpp \
     API/JSCallbackConstructor.cpp \
     API/JSCallbackFunction.cpp \

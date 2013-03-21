@@ -36,7 +36,6 @@
             'API/APIShims.h',
             'API/JavaScriptCore.h',
             'API/JavaScript.h',
-            'API/JSAPIWrapperObject.cpp',
             'API/JSAPIWrapperObject.h',
             'API/JSBase.cpp',
             'API/JSBase.h',

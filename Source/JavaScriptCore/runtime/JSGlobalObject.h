@@ -144,8 +144,8 @@ protected:
     WriteBarrier<Structure> m_callbackObjectStructure;
 #if JSC_OBJC_API_ENABLED
     WriteBarrier<Structure> m_objcCallbackFunctionStructure;
-#endif
     WriteBarrier<Structure> m_objcWrapperObjectStructure;
+#endif
     WriteBarrier<Structure> m_dateStructure;
     WriteBarrier<Structure> m_nullPrototypeObjectStructure;
     WriteBarrier<Structure> m_errorStructure;
@@ -307,8 +307,8 @@ public:
     Structure* callbackObjectStructure() const { return m_callbackObjectStructure.get(); }
 #if JSC_OBJC_API_ENABLED
     Structure* objcCallbackFunctionStructure() const { return m_objcCallbackFunctionStructure.get(); }
-#endif
     Structure* objcWrapperObjectStructure() const { return m_objcWrapperObjectStructure.get(); }
+#endif
     Structure* dateStructure() const { return m_dateStructure.get(); }
     Structure* nullPrototypeObjectStructure() const { return m_nullPrototypeObjectStructure.get(); }
     Structure* errorStructure() const { return m_errorStructure.get(); }

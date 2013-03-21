@@ -34,7 +34,6 @@ javascriptcore_built_nosources += \
 javascriptcore_sources += \
 	Source/JavaScriptCore/API/APICast.h \
 	Source/JavaScriptCore/API/APIShims.h \
-    Source/JavaScriptCore/API/JSAPIWrapperObject.cpp \
     Source/JavaScriptCore/API/JSAPIWrapperObject.h \
 	Source/JavaScriptCore/API/JSBase.cpp \
 	Source/JavaScriptCore/API/JSBasePrivate.h \

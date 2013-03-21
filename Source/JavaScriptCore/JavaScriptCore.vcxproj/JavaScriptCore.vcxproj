@@ -144,7 +144,6 @@
     <Link />
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\API\JSAPIWrapperObject.cpp" />
     <ClCompile Include="..\API\JSBase.cpp" />
     <ClCompile Include="..\API\JSCallbackConstructor.cpp" />
     <ClCompile Include="..\API\JSCallbackFunction.cpp" />

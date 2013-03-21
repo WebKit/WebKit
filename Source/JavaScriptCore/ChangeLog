@@ -1,3 +1,56 @@
+2013-03-21  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: wrapperClass holds a static JSClassRef, which causes JSGlobalObjects to leak
+        https://bugs.webkit.org/show_bug.cgi?id=112856
+
+        Reviewed by Geoffrey Garen.
+
+        Through a very convoluted path that involves the caching of prototypes on the JSClassRef, we can leak 
+        JSGlobalObjects when inserting an Objective-C object into multiple independent JSContexts.
+
+        * API/JSAPIWrapperObject.cpp: Removed.
+        * API/JSAPIWrapperObject.h:
+        (JSAPIWrapperObject):
+        * API/JSAPIWrapperObject.mm: Copied from Source/JavaScriptCore/API/JSAPIWrapperObject.cpp. Made this an
+        Objective-C++ file so that we can call release on the wrappedObject. Also added a WeakHandleOwner for 
+        JSAPIWrapperObjects. This will also be used in a future patch for https://bugs.webkit.org/show_bug.cgi?id=112608.
+        (JSAPIWrapperObjectHandleOwner):
+        (jsAPIWrapperObjectHandleOwner):
+        (JSAPIWrapperObjectHandleOwner::finalize): This finalize replaces the old finalize that was done through
+        the C API.
+        (JSC::JSAPIWrapperObject::finishCreation): Allocate the WeakImpl. Balanced in finalize.
+        (JSC::JSAPIWrapperObject::setWrappedObject): We now do the retain of the wrappedObject here rather than in random
+        places scattered around JSWrapperMap.mm
+        * API/JSObjectRef.cpp: Added some ifdefs for platforms that don't support the Obj-C API.
+        (JSObjectGetPrivate): Ditto.
+        (JSObjectSetPrivate): Ditto.
+        (JSObjectGetPrivateProperty): Ditto.
+        (JSObjectSetPrivateProperty): Ditto.
+        (JSObjectDeletePrivateProperty): Ditto.
+        * API/JSValueRef.cpp: Ditto.
+        (JSValueIsObjectOfClass): Ditto.
+        * API/JSWrapperMap.mm: Remove wrapperClass().
+        (objectWithCustomBrand): Change to no longer use a parent class, which was only used to give the ability to 
+        finalize wrapper objects.
+        (-[JSObjCClassInfo initWithContext:forClass:superClassInfo:]): Change to no longer use wrapperClass(). 
+        (-[JSObjCClassInfo allocateConstructorAndPrototypeWithSuperClassInfo:]): Ditto.
+        (tryUnwrapObjcObject): We now check if the object inherits from JSAPIWrapperObject.
+        * API/tests/testapi.mm: Added a test that exports an Objective-C object to two different JSContexts and makes 
+        sure that the first one is collected properly by using a weak JSManagedValue for the wrapper in the first JSContext.
+        * CMakeLists.txt: Build file modifications.
+        * GNUmakefile.list.am: Ditto.
+        * JavaScriptCore.gypi: Ditto.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Ditto.
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj: Ditto.
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Ditto.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Ditto.
+        * runtime/JSGlobalObject.cpp: More ifdefs for unsupported platforms.
+        (JSC::JSGlobalObject::reset): Ditto.
+        (JSC::JSGlobalObject::visitChildren): Ditto.
+        * runtime/JSGlobalObject.h: Ditto.
+        (JSGlobalObject): Ditto.
+        (JSC::JSGlobalObject::objcCallbackFunctionStructure): Ditto.
+
 2013-03-21  Anton Muhin  <antonm@chromium.org>
 
         Unreviewed, rolling out r146483.

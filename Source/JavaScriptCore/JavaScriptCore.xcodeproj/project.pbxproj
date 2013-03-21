@@ -843,7 +843,7 @@
 		C2C8D02D14A3C6E000578E65 /* CopiedSpaceInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C8D02B14A3C6B200578E65 /* CopiedSpaceInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2C8D03014A3CEFC00578E65 /* CopiedBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C8D02E14A3CEFC00578E65 /* CopiedBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2C8D03114A3CEFC00578E65 /* HeapBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = C2C8D02F14A3CEFC00578E65 /* HeapBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		C2CF39C116E15A8100DD69BE /* JSAPIWrapperObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2CF39BF16E15A8100DD69BE /* JSAPIWrapperObject.cpp */; };
+		C2CF39C116E15A8100DD69BE /* JSAPIWrapperObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = C2CF39BF16E15A8100DD69BE /* JSAPIWrapperObject.mm */; };
 		C2CF39C216E15A8100DD69BE /* JSAPIWrapperObject.h in Headers */ = {isa = PBXBuildFile; fileRef = C2CF39C016E15A8100DD69BE /* JSAPIWrapperObject.h */; };
 		C2D58C3415912FEE0021A844 /* GCActivityCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2D58C3315912FEE0021A844 /* GCActivityCallback.cpp */; };
 		C2E526BD1590EF000054E48D /* HeapTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2E526BB1590EF000054E48D /* HeapTimer.cpp */; };
@@ -1745,7 +1745,7 @@
 		C2C8D02B14A3C6B200578E65 /* CopiedSpaceInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopiedSpaceInlines.h; sourceTree = "<group>"; };
 		C2C8D02E14A3CEFC00578E65 /* CopiedBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CopiedBlock.h; sourceTree = "<group>"; };
 		C2C8D02F14A3CEFC00578E65 /* HeapBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapBlock.h; sourceTree = "<group>"; };
-		C2CF39BF16E15A8100DD69BE /* JSAPIWrapperObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAPIWrapperObject.cpp; sourceTree = "<group>"; };
+		C2CF39BF16E15A8100DD69BE /* JSAPIWrapperObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSAPIWrapperObject.mm; sourceTree = "<group>"; };
 		C2CF39C016E15A8100DD69BE /* JSAPIWrapperObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAPIWrapperObject.h; sourceTree = "<group>"; };
 		C2D58C3315912FEE0021A844 /* GCActivityCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCActivityCallback.cpp; sourceTree = "<group>"; };
 		C2E526BB1590EF000054E48D /* HeapTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapTimer.cpp; sourceTree = "<group>"; };
@@ -2222,7 +2222,7 @@
 				5DE3D0F40DD8DDFB00468714 /* WebKitAvailability.h */,
 				C25D709916DE99F400FCA6BC /* JSManagedValue.mm */,
 				C25D709A16DE99F400FCA6BC /* JSManagedValue.h */,
-				C2CF39BF16E15A8100DD69BE /* JSAPIWrapperObject.cpp */,
+				C2CF39BF16E15A8100DD69BE /* JSAPIWrapperObject.mm */,
 				C2CF39C016E15A8100DD69BE /* JSAPIWrapperObject.h */,
 			);
 			path = API;
@@ -3812,7 +3812,7 @@
 				0FD3C82614115D4000FD81CB /* DFGDriver.cpp in Sources */,
 				0FF0F19E16B72A0B005DF95B /* DFGEdge.cpp in Sources */,
 				0FBC0AE71496C7C400D4FBDD /* DFGExitProfile.cpp in Sources */,
-				C2CF39C116E15A8100DD69BE /* JSAPIWrapperObject.cpp in Sources */,
+				C2CF39C116E15A8100DD69BE /* JSAPIWrapperObject.mm in Sources */,
 				0F2BDC15151C5D4D00CD8910 /* DFGFixupPhase.cpp in Sources */,
 				86EC9DC71328DF82002B2AD7 /* DFGGraph.cpp in Sources */,
 				86EC9DCB1328DF82002B2AD7 /* DFGJITCompiler.cpp in Sources */,

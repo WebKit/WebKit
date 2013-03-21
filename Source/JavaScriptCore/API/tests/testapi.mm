@@ -523,7 +523,6 @@ void testObjectiveCAPI()
         TestObject *testObject = [TestObject testObject];
         context[@"testObject"] = testObject;
         JSValue *result = [context evaluateScript:@"Function.prototype.toString.call(testObject.callback)"];
-        NSLog(@"toString = %@", [result toString]);
         checkResult(@"Function.prototype.toString", !context.exception && ![result isUndefined]);
     }
 
@@ -629,6 +628,26 @@ void testObjectiveCAPI()
             checkResult(@"Event handler onclick doesn't fire", ![result toBool]);
         }
     }
+
+    @autoreleasepool {
+        JSVirtualMachine *vm = [[JSVirtualMachine alloc] init];
+        TestObject *testObject = [TestObject testObject];
+        JSManagedValue *weakValue;
+        @autoreleasepool {
+            JSContext *context = [[JSContext alloc] initWithVirtualMachine:vm];
+            context[@"testObject"] = testObject;
+            weakValue = [[JSManagedValue alloc] initWithValue:context[@"testObject"]];
+        }
+
+        @autoreleasepool {
+            JSContext *context = [[JSContext alloc] initWithVirtualMachine:vm];
+            context[@"testObject"] = testObject;
+            JSSynchronousGarbageCollectForDebugging([context globalContextRef]);
+            checkResult(@"weak value == nil", ![weakValue value]);
+            checkResult(@"root is still alive", ![context[@"testObject"] isUndefined]);
+        }
+    }
+
 }
 
 #else

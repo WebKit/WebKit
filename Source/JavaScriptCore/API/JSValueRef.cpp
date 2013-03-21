@@ -149,8 +149,10 @@ bool JSValueIsObjectOfClass(JSContextRef ctx, JSValueRef value, JSClassRef jsCla
             return jsCast<JSCallbackObject<JSGlobalObject>*>(o)->inherits(jsClass);
         if (o->inherits(&JSCallbackObject<JSDestructibleObject>::s_info))
             return jsCast<JSCallbackObject<JSDestructibleObject>*>(o)->inherits(jsClass);
+#if JSC_OBJC_API_ENABLED
         if (o->inherits(&JSCallbackObject<JSAPIWrapperObject>::s_info))
             return jsCast<JSCallbackObject<JSAPIWrapperObject>*>(o)->inherits(jsClass);
+#endif
     }
     return false;
 }

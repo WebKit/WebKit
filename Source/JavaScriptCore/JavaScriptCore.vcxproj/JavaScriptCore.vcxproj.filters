@@ -750,9 +750,6 @@
     <ClCompile Include="..\runtime\PropertyTable.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
-    <ClCompile Include="..\API\JSAPIWrapperObject.cpp">
-      <Filter>API</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICast.h">
