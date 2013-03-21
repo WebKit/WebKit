@@ -1,3 +1,16 @@
+2013-03-20  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Top-level solution change to build under VS2010.
+        https://bugs.webkit.org/show_bug.cgi?id=112861.
+
+        Reviewed by Tim Horton.
+
+        * WebKit.vcxproj/WebKit.sln: Add final set of WinCairo build
+        targets.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+        Add #if/def guards around some media-specific exports that
+        are not provided by the WinCairo port.
+
 2013-03-19  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Build the WebKit.dll under VS2010.
