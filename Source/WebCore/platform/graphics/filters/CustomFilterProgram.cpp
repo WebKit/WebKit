@@ -86,12 +86,5 @@ CustomFilterProgramInfo CustomFilterProgram::programInfo() const
     return CustomFilterProgramInfo(vertexShaderString(), fragmentShaderString(), m_programType, m_mixSettings, m_meshType);
 }
 
-bool CustomFilterProgram::operator==(const CustomFilterProgram& o) const
-{
-    return m_programType == o.m_programType
-        && (m_programType != PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE || m_mixSettings == o.m_mixSettings)
-        && m_meshType == o.m_meshType;
-}
-
 } // namespace WebCore
 #endif // ENABLE(CSS_SHADERS)

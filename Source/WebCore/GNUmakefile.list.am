@@ -4663,7 +4663,10 @@ webcore_sources += \
 	Source/WebCore/rendering/style/StyleCachedImageSet.h \
 	Source/WebCore/rendering/style/StyleCachedShader.cpp \
 	Source/WebCore/rendering/style/StyleCachedShader.h \
+	Source/WebCore/rendering/style/StyleCustomFilterProgram.cpp \
 	Source/WebCore/rendering/style/StyleCustomFilterProgram.h \
+	Source/WebCore/rendering/style/StyleCustomFilterProgramCache.cpp \
+	Source/WebCore/rendering/style/StyleCustomFilterProgramCache.h \
 	Source/WebCore/rendering/style/StyleDashboardRegion.h \
 	Source/WebCore/rendering/style/StyleDeprecatedFlexibleBoxData.cpp \
 	Source/WebCore/rendering/style/StyleDeprecatedFlexibleBoxData.h \

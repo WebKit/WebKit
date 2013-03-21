@@ -164,9 +164,11 @@
 #include "CustomFilterNumberParameter.h"
 #include "CustomFilterOperation.h"
 #include "CustomFilterParameter.h"
+#include "CustomFilterProgramInfo.h"
 #include "CustomFilterTransformParameter.h"
 #include "StyleCachedShader.h"
 #include "StyleCustomFilterProgram.h"
+#include "StyleCustomFilterProgramCache.h"
 #include "StylePendingShader.h"
 #include "StyleShader.h"
 #include "WebKitCSSMixFunctionValue.h"
@@ -3941,6 +3943,23 @@ StyleShader* StyleResolver::cachedOrPendingStyleShaderFromValue(WebKitCSSShaderV
     return shader;
 }
 
+PassRefPtr<CustomFilterProgram> StyleResolver::lookupCustomFilterProgram(WebKitCSSShaderValue* vertexShader, WebKitCSSShaderValue* fragmentShader, 
+    CustomFilterProgramType programType, const CustomFilterProgramMixSettings& mixSettings, CustomFilterMeshType meshType)
+{
+    CachedResourceLoader* cachedResourceLoader = m_state.document()->cachedResourceLoader();
+    KURL vertexShaderURL = vertexShader ? vertexShader->completeURL(cachedResourceLoader) : KURL();
+    KURL fragmentShaderURL = fragmentShader ? fragmentShader->completeURL(cachedResourceLoader) : KURL();
+    RefPtr<StyleCustomFilterProgram> program;
+    if (m_customFilterProgramCache)
+        program = m_customFilterProgramCache->lookup(CustomFilterProgramInfo(vertexShaderURL, fragmentShaderURL, programType, mixSettings, meshType));
+    if (!program) {
+        // Create a new StyleCustomFilterProgram that will be resolved during the loadPendingShaders and added to the cache.
+        program = StyleCustomFilterProgram::create(vertexShaderURL, vertexShader ? styleShader(vertexShader) : 0, 
+            fragmentShaderURL, fragmentShader ? styleShader(fragmentShader) : 0, programType, mixSettings, meshType);
+    }
+    return program.release();
+}
+
 void StyleResolver::loadPendingShaders()
 {
     if (!m_state.style()->hasFilter() || !m_state.hasPendingShaders())
@@ -3955,13 +3974,26 @@ void StyleResolver::loadPendingShaders()
             CustomFilterOperation* customFilter = static_cast<CustomFilterOperation*>(filterOperation.get());
             ASSERT(customFilter->program());
             StyleCustomFilterProgram* program = static_cast<StyleCustomFilterProgram*>(customFilter->program());
-            if (program->vertexShader() && program->vertexShader()->isPendingShader()) {
-                WebKitCSSShaderValue* shaderValue = static_cast<StylePendingShader*>(program->vertexShader())->cssShaderValue();
-                program->setVertexShader(shaderValue->cachedShader(cachedResourceLoader));
-            }
-            if (program->fragmentShader() && program->fragmentShader()->isPendingShader()) {
-                WebKitCSSShaderValue* shaderValue = static_cast<StylePendingShader*>(program->fragmentShader())->cssShaderValue();
-                program->setFragmentShader(shaderValue->cachedShader(cachedResourceLoader));
+            // Note that the StylePendingShaders could be already resolved to StyleCachedShaders. That's because the rule was matched before.
+            // However, the StyleCustomFilterProgram that was initially created could have been removed from the cache in the meanwhile,
+            // meaning that we get a new StyleCustomFilterProgram here that is not yet in the cache, but already has loaded StyleShaders.
+            if (!program->hasPendingShaders() && program->inCache())
+                continue;
+            if (!m_customFilterProgramCache)
+                m_customFilterProgramCache = adoptPtr(new StyleCustomFilterProgramCache());
+            RefPtr<StyleCustomFilterProgram> styleProgram = m_customFilterProgramCache->lookup(program);
+            if (styleProgram.get())
+                customFilter->setProgram(styleProgram.release());
+            else {
+                if (program->vertexShader() && program->vertexShader()->isPendingShader()) {
+                    WebKitCSSShaderValue* shaderValue = static_cast<StylePendingShader*>(program->vertexShader())->cssShaderValue();
+                    program->setVertexShader(shaderValue->cachedShader(cachedResourceLoader));
+                }
+                if (program->fragmentShader() && program->fragmentShader()->isPendingShader()) {
+                    WebKitCSSShaderValue* shaderValue = static_cast<StylePendingShader*>(program->fragmentShader())->cssShaderValue();
+                    program->setFragmentShader(shaderValue->cachedShader(cachedResourceLoader));
+                }
+                m_customFilterProgramCache->add(program);
             }
         }
     }
@@ -4105,20 +4137,19 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperationWith
     unsigned shadersListLength = shadersList->length();
     ASSERT(shadersListLength);
 
-    RefPtr<StyleShader> vertexShader = styleShader(shadersList->itemWithoutBoundsCheck(0));
-    RefPtr<StyleShader> fragmentShader;
+    WebKitCSSShaderValue* vertexShader = toWebKitCSSShaderValue(shadersList->itemWithoutBoundsCheck(0));
+    WebKitCSSShaderValue* fragmentShader = 0;
     CustomFilterProgramType programType = PROGRAM_TYPE_BLENDS_ELEMENT_TEXTURE;
     CustomFilterProgramMixSettings mixSettings;
 
     if (shadersListLength > 1) {
         CSSValue* fragmentShaderOrMixFunction = shadersList->itemWithoutBoundsCheck(1);
-
         if (fragmentShaderOrMixFunction->isWebKitCSSMixFunctionValue()) {
             WebKitCSSMixFunctionValue* mixFunction = static_cast<WebKitCSSMixFunctionValue*>(fragmentShaderOrMixFunction);
             CSSValueListIterator iterator(mixFunction);
 
             ASSERT(mixFunction->length());
-            fragmentShader = styleShader(iterator.value());
+            fragmentShader = toWebKitCSSShaderValue(iterator.value());
             iterator.advance();
 
             ASSERT(mixFunction->length() <= 3);
@@ -4134,9 +4165,12 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperationWith
             }
         } else {
             programType = PROGRAM_TYPE_NO_ELEMENT_TEXTURE;
-            fragmentShader = styleShader(fragmentShaderOrMixFunction);
+            fragmentShader = toWebKitCSSShaderValue(fragmentShaderOrMixFunction);
         }
     }
+
+    if (!vertexShader && !fragmentShader)
+        return 0;
     
     unsigned meshRows = 1;
     unsigned meshColumns = 1;
@@ -4192,8 +4226,8 @@ PassRefPtr<CustomFilterOperation> StyleResolver::createCustomFilterOperationWith
     CustomFilterParameterList parameterList;
     if (parametersValue && !parseCustomFilterParameterList(parametersValue, parameterList))
         return 0;
-    
-    RefPtr<StyleCustomFilterProgram> program = StyleCustomFilterProgram::create(vertexShader.release(), fragmentShader.release(), programType, mixSettings, meshType);
+
+    RefPtr<CustomFilterProgram> program = lookupCustomFilterProgram(vertexShader, fragmentShader, programType, mixSettings, meshType);
     return CustomFilterOperation::create(program.release(), parameterList, meshRows, meshColumns, meshType);
 }
 

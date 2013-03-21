@@ -1286,6 +1286,8 @@ SOURCES += \
     rendering/style/StyleCachedImage.cpp \
     rendering/style/StyleCachedImageSet.cpp \
     rendering/style/StyleCachedShader.cpp \
+    rendering/style/StyleCustomFilterProgram.cpp \
+    rendering/style/StyleCustomFilterProgramCache.cpp \
     rendering/style/StyleDeprecatedFlexibleBoxData.cpp \
     rendering/style/StyleFilterData.cpp \
     rendering/style/StyleFlexibleBoxData.cpp \
@@ -2583,6 +2585,7 @@ HEADERS += \
     rendering/style/StyleCachedImage.h \
     rendering/style/StyleCachedShader.h \
     rendering/style/StyleCustomFilterProgram.h \
+    rendering/style/StyleCustomFilterProgramCache.h \
     rendering/style/StyleDeprecatedFlexibleBoxData.h \
     rendering/style/StyleFilterData.h \
     rendering/style/StyleFlexibleBoxData.h \

@@ -63,8 +63,6 @@ public:
     CustomFilterProgramMixSettings mixSettings() const { return m_mixSettings; }
     CustomFilterMeshType meshType() const { return m_meshType; }
 
-    virtual bool operator==(const CustomFilterProgram&) const;
-    bool operator!=(const CustomFilterProgram& o) const { return !(*this == o); }
 protected:
     // StyleCustomFilterProgram can notify the clients that the cached resources are
     // loaded and it is ready to create CustomFilterCompiledProgram objects.
@@ -77,6 +75,12 @@ protected:
     CustomFilterProgram(CustomFilterProgramType, const CustomFilterProgramMixSettings&, CustomFilterMeshType);
 
 private:
+    // CustomFilterPrograms are unique combinations of shaders and can be 
+    // compared using just the pointer value instead.
+    // These will catch anyone doing a value equal comparison.
+    bool operator==(const CustomFilterProgram&) const;
+    bool operator!=(const CustomFilterProgram&) const;
+
     typedef HashCountedSet<CustomFilterProgramClient*> CustomFilterProgramClientList;
     CustomFilterProgramClientList m_clients;
     CustomFilterProgramType m_programType;

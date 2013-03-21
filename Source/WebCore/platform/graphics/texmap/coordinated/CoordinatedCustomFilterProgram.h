@@ -41,17 +41,6 @@ public:
 
     virtual bool isLoaded() const OVERRIDE { return true; }
 
-    virtual bool operator==(const CustomFilterProgram& o) const OVERRIDE
-    {
-        // We don't use the != operator because that would recursively call this method.
-        if (!CustomFilterProgram::operator==(o))
-            return false;
-
-        // The following cast is ugly, but CoordinatedCustomFilterProgram is the single implementation of CustomFilterProgram on UI Process.
-        const CoordinatedCustomFilterProgram* other = static_cast<const CoordinatedCustomFilterProgram*>(&o);
-        return m_vertexShaderString == other->vertexShaderString() && m_fragmentShaderString == other->fragmentShaderString();
-    }
-
 protected:
     virtual String vertexShaderString() const OVERRIDE { return m_vertexShaderString; }
     virtual String fragmentShaderString() const OVERRIDE { return m_fragmentShaderString; }

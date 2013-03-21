@@ -46968,6 +46968,18 @@
 					>
 				</File>
 				<File
+					RelativePath="..\rendering\style\StyleCustomFilterProgram.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\style\StyleCustomFilterProgramCache.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\style\StyleCustomFilterProgramCache.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\rendering\style\StyleDeprecatedFlexibleBoxData.cpp"
 					>
 					<FileConfiguration

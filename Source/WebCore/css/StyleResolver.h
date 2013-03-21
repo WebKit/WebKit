@@ -43,6 +43,9 @@
 #if ENABLE(CSS_FILTERS) && ENABLE(SVG)
 #include "WebKitCSSSVGDocumentValue.h"
 #endif
+#if ENABLE(CSS_SHADERS)
+#include "CustomFilterConstants.h"
+#endif
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
@@ -72,6 +75,8 @@ class ContainerNode;
 class CustomFilterOperation;
 class CustomFilterParameter;
 class CustomFilterParameterList;
+class CustomFilterProgram;
+struct CustomFilterProgramMixSettings;
 class Document;
 class Element;
 class Frame;
@@ -87,6 +92,7 @@ class RuleData;
 class RuleSet;
 class Settings;
 class StaticCSSRuleList;
+class StyleCustomFilterProgramCache;
 class StyleBuilder;
 class StyleScopeResolver;
 class StyleImage;
@@ -317,6 +323,8 @@ public:
     PassRefPtr<CustomFilterOperation> createCustomFilterOperationWithInlineSyntax(WebKitCSSFilterValue*);
     PassRefPtr<CustomFilterOperation> createCustomFilterOperation(WebKitCSSFilterValue*);
     void loadPendingShaders();
+    PassRefPtr<CustomFilterProgram> lookupCustomFilterProgram(WebKitCSSShaderValue* vertexShader, WebKitCSSShaderValue* fragmentShader, 
+        CustomFilterProgramType, const CustomFilterProgramMixSettings&, CustomFilterMeshType);
 #endif
 #if ENABLE(SVG)
     void loadPendingSVGDocuments();
@@ -630,6 +638,10 @@ private:
     InspectorCSSOMWrappers m_inspectorCSSOMWrappers;
 
     State m_state;
+
+#if ENABLE(CSS_SHADERS)
+    OwnPtr<StyleCustomFilterProgramCache> m_customFilterProgramCache;
+#endif
 
     friend class StyleBuilder;
     friend bool operator==(const MatchedProperties&, const MatchedProperties&);

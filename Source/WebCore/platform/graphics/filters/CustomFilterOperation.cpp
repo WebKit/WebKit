@@ -63,7 +63,7 @@ PassRefPtr<FilterOperation> CustomFilterOperation::blend(const FilterOperation* 
         return this;
     
     const CustomFilterOperation* fromOp = static_cast<const CustomFilterOperation*>(from);
-    if (*m_program.get() != *fromOp->m_program.get()
+    if (m_program.get() != fromOp->m_program.get()
         || m_meshRows != fromOp->m_meshRows
         || m_meshColumns != fromOp->m_meshColumns
         || m_meshType != fromOp->m_meshType)

@@ -76,7 +76,7 @@ private:
             return false;
 
         const CustomFilterOperation* other = static_cast<const CustomFilterOperation*>(&o);
-        return *m_program.get() == *other->m_program.get()
+        return m_program.get() == other->m_program.get()
             && m_meshRows == other->m_meshRows
             && m_meshColumns == other->m_meshColumns
             && m_meshType == other->m_meshType
