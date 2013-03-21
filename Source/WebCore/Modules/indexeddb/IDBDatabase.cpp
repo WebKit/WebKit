@@ -352,12 +352,11 @@ bool IDBDatabase::hasPendingActivity() const
 {
     // The script wrapper must not be collected before the object is closed or
     // we can't fire a "versionchange" event to let script manually close the connection.
-    return !m_closePending && !m_eventTargetData.eventListenerMap.isEmpty();
+    return !m_closePending && !m_eventTargetData.eventListenerMap.isEmpty() && !m_contextStopped;
 }
 
 void IDBDatabase::stop()
 {
-    ActiveDOMObject::stop();
     // Stop fires at a deterministic time, so we need to call close in it.
     close();
 
