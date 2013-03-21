@@ -3685,7 +3685,6 @@ enable?(FILTERS) {
         platform/graphics/filters/FilterOperations.cpp \
         platform/graphics/filters/FilterOperation.cpp \
         platform/graphics/filters/FilterEffect.cpp \
-        platform/graphics/filters/LightSource.cpp \
         platform/graphics/filters/PointLightSource.cpp \
         platform/graphics/filters/SpotLightSource.cpp \
         platform/graphics/filters/SourceAlpha.cpp \

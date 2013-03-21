@@ -32737,10 +32737,6 @@
 						>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\filters\LightSource.cpp"
-						>
-					</File>
-					<File
 						RelativePath="..\platform\graphics\filters\LightSource.h"
 						>
 					</File>

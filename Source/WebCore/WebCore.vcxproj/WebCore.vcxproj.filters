@@ -3189,9 +3189,6 @@
     <ClCompile Include="..\platform\graphics\filters\FilterOperations.cpp">
       <Filter>platform\graphics\filters</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\filters\LightSource.cpp">
-      <Filter>platform\graphics\filters</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\graphics\filters\PointLightSource.cpp">
       <Filter>platform\graphics\filters</Filter>
     </ClCompile>

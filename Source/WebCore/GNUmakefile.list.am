@@ -5600,7 +5600,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/graphics/filters/FilterOperation.cpp \
 	Source/WebCore/platform/graphics/filters/FilterOperations.cpp \
 	Source/WebCore/platform/graphics/filters/FilterOperations.h \
-	Source/WebCore/platform/graphics/filters/LightSource.cpp \
 	Source/WebCore/platform/graphics/filters/LightSource.h \
 	Source/WebCore/platform/graphics/filters/PointLightSource.cpp \
 	Source/WebCore/platform/graphics/filters/PointLightSource.h \

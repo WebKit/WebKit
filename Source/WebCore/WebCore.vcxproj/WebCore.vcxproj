@@ -4601,7 +4601,6 @@
     <ClCompile Include="..\platform\graphics\filters\FilterEffect.cpp" />
     <ClCompile Include="..\platform\graphics\filters\FilterOperation.cpp" />
     <ClCompile Include="..\platform\graphics\filters\FilterOperations.cpp" />
-    <ClCompile Include="..\platform\graphics\filters\LightSource.cpp" />
     <ClCompile Include="..\platform\graphics\filters\PointLightSource.cpp" />
     <ClCompile Include="..\platform\graphics\filters\SourceAlpha.cpp" />
     <ClCompile Include="..\platform\graphics\filters\SourceGraphic.cpp" />

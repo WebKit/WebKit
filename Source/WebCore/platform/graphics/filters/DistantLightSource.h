@@ -36,9 +36,10 @@ public:
     }
 
     float azimuth() const { return m_azimuth; }
-    bool setAzimuth(float);
     float elevation() const { return m_elevation; }
-    bool setElevation(float);
+
+    virtual bool setAzimuth(float) OVERRIDE;
+    virtual bool setElevation(float) OVERRIDE;
 
     virtual void initPaintingData(PaintingData&);
     virtual void updatePaintingData(PaintingData&, int x, int y, float z);

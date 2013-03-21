@@ -2156,7 +2156,6 @@
 		84730D8B1248F0B300D3A9C9 /* FETile.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D6E1248F0B300D3A9C9 /* FETile.h */; };
 		84730D8C1248F0B300D3A9C9 /* FETurbulence.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84730D6F1248F0B300D3A9C9 /* FETurbulence.cpp */; };
 		84730D8D1248F0B300D3A9C9 /* FETurbulence.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D701248F0B300D3A9C9 /* FETurbulence.h */; };
-		84730D901248F0B300D3A9C9 /* LightSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 84730D731248F0B300D3A9C9 /* LightSource.cpp */; };
 		84730D911248F0B300D3A9C9 /* LightSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D741248F0B300D3A9C9 /* LightSource.h */; };
 		84730D921248F0B300D3A9C9 /* PointLightSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D751248F0B300D3A9C9 /* PointLightSource.h */; };
 		84730D931248F0B300D3A9C9 /* SpotLightSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 84730D761248F0B300D3A9C9 /* SpotLightSource.h */; };
@@ -9676,7 +9675,6 @@
 		84730D6E1248F0B300D3A9C9 /* FETile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FETile.h; path = filters/FETile.h; sourceTree = "<group>"; };
 		84730D6F1248F0B300D3A9C9 /* FETurbulence.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FETurbulence.cpp; path = filters/FETurbulence.cpp; sourceTree = "<group>"; };
 		84730D701248F0B300D3A9C9 /* FETurbulence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FETurbulence.h; path = filters/FETurbulence.h; sourceTree = "<group>"; };
-		84730D731248F0B300D3A9C9 /* LightSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LightSource.cpp; path = filters/LightSource.cpp; sourceTree = "<group>"; };
 		84730D741248F0B300D3A9C9 /* LightSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LightSource.h; path = filters/LightSource.h; sourceTree = "<group>"; };
 		84730D751248F0B300D3A9C9 /* PointLightSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PointLightSource.h; path = filters/PointLightSource.h; sourceTree = "<group>"; };
 		84730D761248F0B300D3A9C9 /* SpotLightSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotLightSource.h; path = filters/SpotLightSource.h; sourceTree = "<group>"; };
@@ -19042,7 +19040,6 @@
 				49ECEB641499790D00CDD3A4 /* FilterOperation.h */,
 				49ECEB651499790D00CDD3A4 /* FilterOperations.cpp */,
 				49ECEB661499790D00CDD3A4 /* FilterOperations.h */,
-				84730D731248F0B300D3A9C9 /* LightSource.cpp */,
 				84730D741248F0B300D3A9C9 /* LightSource.h */,
 				A1E1154513015C4E0054AC8C /* PointLightSource.cpp */,
 				84730D751248F0B300D3A9C9 /* PointLightSource.h */,
@@ -28947,7 +28944,6 @@
 				8CADF2AA135C7B36009EF43F /* LevelDBDatabase.cpp in Sources */,
 				8C0E334C138A92C7008DA94F /* LevelDBTransaction.cpp in Sources */,
 				8C0E334E138A92C7008DA94F /* LevelDBWriteBatch.cpp in Sources */,
-				84730D901248F0B300D3A9C9 /* LightSource.cpp in Sources */,
 				89B5EAA111E8003D00F2367E /* LineEnding.cpp in Sources */,
 				A7AD2F870EC89D07008AB002 /* LinkHash.cpp in Sources */,
 				98CE4326129E00BD005821DC /* LinkLoader.cpp in Sources */,

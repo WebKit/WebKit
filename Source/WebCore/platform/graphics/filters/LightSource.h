@@ -74,16 +74,16 @@ public:
     // specified "surfaceScale" constant, which type is <number> in the SVG standard
     virtual void updatePaintingData(PaintingData&, int x, int y, float z) = 0;
 
-    bool setAzimuth(float);
-    bool setElevation(float);
-    bool setX(float);
-    bool setY(float);
-    bool setZ(float);
-    bool setPointsAtX(float);
-    bool setPointsAtY(float);
-    bool setPointsAtZ(float);
-    bool setSpecularExponent(float);
-    bool setLimitingConeAngle(float);
+    virtual bool setAzimuth(float) { return false; }
+    virtual bool setElevation(float) { return false; }
+    virtual bool setX(float) { return false; }
+    virtual bool setY(float) { return false; }
+    virtual bool setZ(float) { return false; }
+    virtual bool setPointsAtX(float) { return false; }
+    virtual bool setPointsAtY(float) { return false; }
+    virtual bool setPointsAtZ(float) { return false; }
+    virtual bool setSpecularExponent(float) { return false; }
+    virtual bool setLimitingConeAngle(float) { return false; }
 
 private:
     LightType m_type;
