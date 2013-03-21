@@ -119,10 +119,6 @@ webkit.org/b/98659 [ Debug ] fast/dom/gc-dom-tree-lifetime.html [ Pass Timeout ]
 # Has been timing out intermittently for a long time.
 webkit.org/b/101236 [ Debug ] css3/filters/custom/custom-filter-animation.html [ Pass Timeout ]
 
-# Needs rebaseline
-webkit.org/b/112828 css3/filters/effect-reference.html [ Failure ImageOnlyFailure Pass ]
-webkit.org/b/112828 css3/filters/effect-reference-hw.html [ Failure ImageOnlyFailure Pass ]
-
 # Has been failing since r133544-133546
 webkit.org/b/104282 [ Release ] fast/js/toString-and-valueOf-override.html [ Failure ]
 

@@ -35,6 +35,9 @@ layer at (0,0) size 800x600
           RenderSVGResourceFilter {filter} [id="offset"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
             [feOffset dx="10.00" dy="10.00"]
               [SourceGraphic]
+          RenderSVGResourceFilter {filter} [id="convolvematrix"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
+            [feConvolveMatrix order="width=3 height=3" kernelMatrix="[1.00, 1.00, 1.00, 1.00, -7.00, 1.00, 1.00, 1.00, 1.00]" divisor="1.00" bias="0.30" target="(1,1)" edgeMode="DUPLICATE" kernelUnitLength="(1,1)" preserveAlpha="0"]
+              [SourceGraphic]
       RenderText {#text} at (0,95) size 4x19
         text run at (0,95) width 4: " "
       RenderText {#text} at (0,0) size 0x0
@@ -52,6 +55,8 @@ layer at (0,0) size 800x600
         text run at (364,210) width 4: " "
       RenderText {#text} at (548,210) size 4x19
         text run at (548,210) width 4: " "
+      RenderText {#text} at (732,210) size 4x19
+        text run at (732,210) width 4: " "
       RenderText {#text} at (0,0) size 0x0
 layer at (22,18) size 160x90
   RenderImage {IMG} at (14,10) size 160x90
@@ -69,3 +74,5 @@ layer at (386,133) size 160x90
   RenderImage {IMG} at (378,125) size 160x90
 layer at (570,133) size 160x90
   RenderImage {IMG} at (562,125) size 160x90
+layer at (18,248) size 160x90
+  RenderImage {IMG} at (10,240) size 160x90
