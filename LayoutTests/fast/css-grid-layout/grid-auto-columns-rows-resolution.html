@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+.grid {
+    -webkit-grid-rows: 20px;
+    -webkit-grid-columns: 10px;
+}
+
+.gridAutoFixedFixed {
+    -webkit-grid-auto-rows: 30px;
+    -webkit-grid-auto-columns: 50px;
+}
+
+.gridAutoMinMax {
+    height: 1000px;
+    -webkit-grid-auto-rows: minmax(10%, 15px);
+    -webkit-grid-auto-columns: minmax(30%, 100px);
+}
+
+.gridAutoMinMaxContent {
+    -webkit-grid-auto-rows: -webkit-min-content;
+    -webkit-grid-auto-columns: -webkit-max-content;
+}
+</style>
+</head>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.grid');">
+
+<div>This test checks that implicit rows / columns obey grid-auto-{rows|columns}.</div>
+
+<div class="unconstrainedContainer" style="position: relative">
+    <div class="grid gridAutoFixedFixed">
+        <div class="sizedToGridArea secondRowSecondColumn" data-offset-x="10" data-offset-y="20" data-expected-width="50" data-expected-height="30">XXXXX XXXXXX</div>
+    </div>
+</div>
+
+<div class="unconstrainedContainer" style="position: relative">
+    <div class="grid gridAutoMinMax">
+        <div class="sizedToGridArea secondRowSecondColumn" data-offset-x="10" data-offset-y="20" data-expected-width="300" data-expected-height="100">XXXXX XXXXXX</div>
+    </div>
+</div>
+
+<div class="unconstrainedContainer" style="position: relative">
+    <div class="grid gridAutoMinMaxContent">
+        <div class="sizedToGridArea secondRowSecondColumn" data-offset-x="10" data-offset-y="20" data-expected-width="120" data-expected-height="10">XXXXX XXXXXX</div>
+    </div>
+</div>
+
+</body>
+</html>

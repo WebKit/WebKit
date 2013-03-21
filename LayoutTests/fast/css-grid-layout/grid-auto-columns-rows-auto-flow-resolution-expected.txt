@@ -1,0 +1,37 @@
+This test checks that grid rows / columns created via the auto-placement algorithm do follow, grid-auto-{rows|columns}.
+XXXXX XXXXXX
+PASS
+XXXXX XXXXXX
+PASS
+XXXXX XXXXXX
+PASS
+XXXXX XXXXXX
+PASS
+XXXXX XXXXXX
+PASS
+XXXXX XXXXXX
+PASS
+XXXXX XXXXXX
+PASS
+XXXXX XXXXXX
+PASS
+XXXXX XXXXXX
+PASS
+XXXXX XXXXXX
+FAIL:
+Expected 20 for height, but got 1000. 
+
+<div class="grid gridAutoMinMaxContent gridAutoFlowColumn">
+        <div class="sizedToGridArea autoRowFirstColumn" data-offset-x="0" data-offset-y="5" data-expected-width="10" data-expected-height="20">XXXXX XXXXXX</div>
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="10" data-expected-height="5"></div>
+    </div>
+XXXXX XXXXXX
+FAIL:
+Expected 20 for height, but got 1000. 
+
+<div class="grid gridAutoMinMaxContent gridAutoFlowRow">
+        <div class="sizedToGridArea autoRowFirstColumn" data-offset-x="0" data-offset-y="5" data-expected-width="10" data-expected-height="20">XXXXX XXXXXX</div>
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="10" data-expected-height="5"></div>
+    </div>
+XXXXX XXXXXX
+PASS

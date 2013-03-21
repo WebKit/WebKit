@@ -263,13 +263,13 @@ LayoutUnit RenderGrid::computePreferredTrackWidth(const Length& length, size_t t
 
 void RenderGrid::computedUsedBreadthOfGridTracks(TrackSizingDirection direction, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks)
 {
-    const Vector<GridTrackSize>& trackStyles = (direction == ForColumns) ? style()->gridColumns() : style()->gridRows();
     LayoutUnit availableLogicalSpace = (direction == ForColumns) ? availableLogicalWidth() : availableLogicalHeight(IncludeMarginBorderPadding);
     Vector<GridTrack>& tracks = (direction == ForColumns) ? columnTracks : rowTracks;
-    for (size_t i = 0; i < trackStyles.size(); ++i) {
+    for (size_t i = 0; i < tracks.size(); ++i) {
         GridTrack& track = tracks[i];
-        const Length& minTrackBreadth = trackStyles[i].minTrackBreadth();
-        const Length& maxTrackBreadth = trackStyles[i].maxTrackBreadth();
+        const GridTrackSize& trackSize = gridTrackSize(direction, i);
+        const Length& minTrackBreadth = trackSize.minTrackBreadth();
+        const Length& maxTrackBreadth = trackSize.maxTrackBreadth();
 
         track.m_usedBreadth = computeUsedBreadthOfMinLength(direction, minTrackBreadth);
         track.m_maxBreadth = computeUsedBreadthOfMaxLength(direction, maxTrackBreadth);
@@ -323,11 +323,9 @@ LayoutUnit RenderGrid::computeUsedBreadthOfSpecifiedLength(TrackSizingDirection 
 const GridTrackSize& RenderGrid::gridTrackSize(TrackSizingDirection direction, size_t i) const
 {
     const Vector<GridTrackSize>& trackStyles = (direction == ForColumns) ? style()->gridColumns() : style()->gridRows();
-    if (i >= trackStyles.size()) {
-        // FIXME: This should match the default grid sizing (https://webkit.org/b/103333)
-        DEFINE_STATIC_LOCAL(GridTrackSize, defaultAutoSize, (Auto));
-        return defaultAutoSize;
-    }
+    if (i >= trackStyles.size())
+        return (direction == ForColumns) ? style()->gridAutoColumns() : style()->gridAutoRows();
+
     return trackStyles[i];
 }
 

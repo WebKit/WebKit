@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+.grid {
+    -webkit-grid-rows: 5px;
+    -webkit-grid-columns: 10px;
+}
+
+.gridAutoFixedFixed {
+    -webkit-grid-auto-rows: 30px;
+    -webkit-grid-auto-columns: 50px;
+}
+
+.gridAutoMinMax {
+    font: 10/1 Ahem;
+    -webkit-grid-auto-rows: minmax(10em, 15px);
+    -webkit-grid-auto-columns: minmax(30%, 100px);
+}
+
+.gridAutoMinMaxContent {
+    -webkit-grid-auto-rows: -webkit-min-content;
+    -webkit-grid-auto-columns: -webkit-max-content;
+}
+</style>
+</head>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.grid');">
+
+<div>This test checks that grid rows / columns created via the auto-placement algorithm do follow, grid-auto-{rows|columns}.</div>
+
+<div class="unconstrainedContainer" style="position: relative">
+    <div class="grid gridAutoFixedFixed gridAutoFlowRow">
+        <div class="sizedToGridArea firstRowAutoColumn" data-offset-x="10" data-offset-y="0" data-expected-width="50" data-expected-height="5">XXXXX XXXXXX</div>
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="10" data-expected-height="5"></div>
+    </div>
+</div>
+
+<div class="unconstrainedContainer" style="position: relative">
+    <div class="grid gridAutoFixedFixed gridAutoFlowColumn">
+        <div class="sizedToGridArea autoRowFirstColumn" data-offset-x="0" data-offset-y="5" data-expected-width="10" data-expected-height="30">XXXXX XXXXXX</div>
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="10" data-expected-height="5"></div>
+    </div>
+</div>
+
+<div class="unconstrainedContainer" style="position: relative">
+    <div class="grid gridAutoFixedFixed gridAutoFlowRow">
+        <div class="sizedToGridArea autoRowFirstColumn" data-offset-x="0" data-offset-y="5" data-expected-width="10" data-expected-height="30">XXXXX XXXXXX</div>
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="10" data-expected-height="5"></div>
+    </div>
+</div>
+
+<div class="unconstrainedContainer" style="position: relative">
+    <div class="grid gridAutoFixedFixed gridAutoFlowColumn">
+        <div class="sizedToGridArea firstRowAutoColumn" data-offset-x="10" data-offset-y="0" data-expected-width="50" data-expected-height="5">XXXXX XXXXXX</div>
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="10" data-expected-height="5"></div>
+    </div>
+</div>
+
+<div class="unconstrainedContainer" style="position: relative">
+    <div class="grid gridAutoMinMax gridAutoFlowRow">
+        <div class="sizedToGridArea firstRowAutoColumn" data-offset-x="10" data-offset-y="0" data-expected-width="300" data-expected-height="5">XXXXX XXXXXX</div>
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="10" data-expected-height="5"></div>
+    </div>
+</div>
+
+<div class="unconstrainedContainer" style="position: relative">
+    <div class="grid gridAutoMinMax gridAutoFlowColumn">
+        <div class="sizedToGridArea autoRowFirstColumn" data-offset-x="0" data-offset-y="5" data-expected-width="10" data-expected-height="100">XXXXX XXXXXX</div>
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="10" data-expected-height="5"></div>
+    </div>
+</div>
+
+<div class="unconstrainedContainer" style="position: relative">
+    <div class="grid gridAutoMinMax gridAutoFlowRow">
+        <div class="sizedToGridArea autoRowFirstColumn" data-offset-x="0" data-offset-y="5" data-expected-width="10" data-expected-height="100">XXXXX XXXXXX</div>
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="10" data-expected-height="5"></div>
+    </div>
+</div>
+
+<div class="unconstrainedContainer" style="position: relative">
+    <div class="grid gridAutoMinMax gridAutoFlowColumn">
+        <div class="sizedToGridArea firstRowAutoColumn" data-offset-x="10" data-offset-y="0" data-expected-width="300" data-expected-height="5">XXXXX XXXXXX</div>
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="10" data-expected-height="5"></div>
+    </div>
+</div>
+
+<div class="unconstrainedContainer" style="position: relative">
+    <div class="grid gridAutoMinMaxContent gridAutoFlowRow">
+        <div class="sizedToGridArea firstRowAutoColumn" data-offset-x="10" data-offset-y="0" data-expected-width="120" data-expected-height="5">XXXXX XXXXXX</div>
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="10" data-expected-height="5"></div>
+    </div>
+</div>
+
+<div class="unconstrainedContainer" style="position: relative">
+    <div class="grid gridAutoMinMaxContent gridAutoFlowColumn">
+        <div class="sizedToGridArea autoRowFirstColumn" data-offset-x="0" data-offset-y="5" data-expected-width="10" data-expected-height="20">XXXXX XXXXXX</div>
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="10" data-expected-height="5"></div>
+    </div>
+</div>
+
+<div class="unconstrainedContainer" style="position: relative">
+    <div class="grid gridAutoMinMaxContent gridAutoFlowRow">
+        <div class="sizedToGridArea autoRowFirstColumn" data-offset-x="0" data-offset-y="5" data-expected-width="10" data-expected-height="20">XXXXX XXXXXX</div>
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="10" data-expected-height="5"></div>
+    </div>
+</div>
+
+<div class="unconstrainedContainer" style="position: relative">
+    <div class="grid gridAutoMinMaxContent gridAutoFlowColumn">
+        <div class="sizedToGridArea firstRowAutoColumn" data-offset-x="10" data-offset-y="0" data-expected-width="120" data-expected-height="5">XXXXX XXXXXX</div>
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="0" data-offset-y="0" data-expected-width="10" data-expected-height="5"></div>
+    </div>
+</div>
+
+</body>
+</html>
