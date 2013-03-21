@@ -85,6 +85,7 @@ fast/js/dfg-arguments-out-of-bounds
 fast/js/dfg-arguments-unexpected-escape
 fast/js/dfg-arith-add-overflow-check-elimination-tower-of-large-numbers
 fast/js/dfg-arith-add-overflow-check-elimination-predicted-but-not-proven-int
+fast/js/dfg-array-dead
 fast/js/dfg-arrayify-elimination
 fast/js/dfg-arrayify-when-late-prevent-extensions
 fast/js/dfg-arrayify-when-prevent-extensions
