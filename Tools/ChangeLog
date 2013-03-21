@@ -1,5 +1,17 @@
 2013-03-20  Brent Fulgham  <bfulgham@webkit.org>
 
+        [WinCairo] Unreviewed build fix for TestWebKitAPI under VS2010
+
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPICommonWinCairo.props: Added.
+        New property sheet that does not link against CoreFoundation and
+        CFNetwork.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPIDebugWinCairo.props:
+        Use new TestWebKitAPICommonWinCairo property sheet.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPIReleaseWinCairo.props:
+        Ditto.
+
+2013-03-20  Brent Fulgham  <bfulgham@webkit.org>
+
         [WinCairo] Unreviewed build fix for VS2010.
 
         Had to add WinCairo-specific property sheets to deal with some
