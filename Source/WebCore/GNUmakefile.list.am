@@ -5924,6 +5924,7 @@ webcore_platform_sources += \
 	Source/WebCore/platform/network/ProtectionSpace.h \
 	Source/WebCore/platform/network/ResourceErrorBase.cpp \
 	Source/WebCore/platform/network/ResourceErrorBase.h \
+	Source/WebCore/platform/network/ResourceHandleClient.cpp \
 	Source/WebCore/platform/network/ResourceHandleClient.h \
 	Source/WebCore/platform/network/ResourceHandle.cpp \
 	Source/WebCore/platform/network/ResourceHandle.h \

@@ -26,22 +26,11 @@
 #ifndef ResourceHandleClient_h
 #define ResourceHandleClient_h
 
-#include "SharedBuffer.h"
-#include <wtf/CurrentTime.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include <wtf/PassRefPtr.h>
 
 #if USE(CFNETWORK)
 #include <CFNetwork/CFURLCachePriv.h>
 #include <CFNetwork/CFURLResponsePriv.h>
-#endif
-
-#if USE(SOUP)
-#include <glib.h>
-#endif
-
-#if PLATFORM(WIN) && USE(CFNETWORK)
-#include <ConditionalMacros.h>
 #endif
 
 #if PLATFORM(MAC)
@@ -49,16 +38,15 @@ OBJC_CLASS NSCachedURLResponse;
 #endif
 
 namespace WebCore {
-    class AsyncFileStream;
     class AuthenticationChallenge;
     class Credential;
-    class FileStreamClient;
     class KURL;
     class ProtectionSpace;
     class ResourceHandle;
     class ResourceError;
     class ResourceRequest;
     class ResourceResponse;
+    class SharedBuffer;
 
     enum CacheStoragePolicy {
         StorageAllowed,
@@ -68,19 +56,8 @@ namespace WebCore {
     
     class ResourceHandleClient {
     public:
-#if USE(SOUP)
-        ResourceHandleClient(): m_buffer(0) { }
-
-        virtual ~ResourceHandleClient()
-        {
-            if (m_buffer) {
-                g_free(m_buffer);
-                m_buffer = 0;
-            }
-        }
-#else
-        virtual ~ResourceHandleClient() { }
-#endif
+        ResourceHandleClient();
+        virtual ~ResourceHandleClient();
 
         // request may be modified
         virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& /*redirectResponse*/) { }
@@ -89,10 +66,7 @@ namespace WebCore {
         virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) { }
         
         virtual void didReceiveData(ResourceHandle*, const char*, int, int /*encodedDataLength*/) { }
-        virtual void didReceiveBuffer(ResourceHandle* handle, PassRefPtr<SharedBuffer> buffer, int encodedDataLength)
-        {
-            didReceiveData(handle, buffer->data(), buffer->size(), encodedDataLength);
-        }
+        virtual void didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer>, int encodedDataLength);
         
         virtual void didReceiveCachedMetadata(ResourceHandle*, const char*, int) { }
         virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/) { }
@@ -106,15 +80,7 @@ namespace WebCore {
 #endif
 
 #if USE(SOUP)
-        virtual char* getBuffer(int requestedLength, int* actualLength)
-        {
-            *actualLength = requestedLength;
-
-            if (!m_buffer)
-                m_buffer = static_cast<char*>(g_malloc(requestedLength));
-
-            return m_buffer;
-        }
+        virtual char* getBuffer(int requestedLength, int* actualLength);
 #endif
 
         virtual bool shouldUseCredentialStorage(ResourceHandle*) { return false; }

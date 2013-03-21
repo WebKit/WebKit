@@ -4643,6 +4643,7 @@
     <ClCompile Include="..\platform\network\ProxyServer.cpp" />
     <ClCompile Include="..\platform\network\ResourceErrorBase.cpp" />
     <ClCompile Include="..\platform\network\ResourceHandle.cpp" />
+    <ClCompile Include="..\platform\network\ResourceHandleClient.cpp" />
     <ClCompile Include="..\platform\network\ResourceLoadTiming.cpp" />
     <ClCompile Include="..\platform\network\ResourceRequestBase.cpp" />
     <ClCompile Include="..\platform\network\ResourceResponseBase.cpp" />

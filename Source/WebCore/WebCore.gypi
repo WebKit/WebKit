@@ -4593,6 +4593,7 @@
             'platform/network/ProxyServer.cpp',
             'platform/network/ResourceErrorBase.cpp',
             'platform/network/ResourceHandle.cpp',
+            'platform/network/ResourceHandleClient.cpp',
             'platform/network/ResourceHandleInternal.h',
             'platform/network/ResourceLoadTiming.cpp',
             'platform/network/ResourceRequestBase.cpp',
