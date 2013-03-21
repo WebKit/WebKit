@@ -1081,8 +1081,6 @@ Bug(GTK) fast/frames/meta-refresh-user-gesture.html [ Failure ]
 # Rounding color problems inside pixman
 webkit.org/b/49964 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
 
-webkit.org/b/50740 editing/spelling/spellcheck-async-mutation.html [ Failure ]
-
 # DRT does not obey testRunner.addURLToRedirect()
 Bug(GTK) http/tests/loading/cross-origin-XHR-willLoadRequest.html [ Failure ]
 
