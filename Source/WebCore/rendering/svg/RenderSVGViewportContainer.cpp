@@ -149,6 +149,17 @@ bool RenderSVGViewportContainer::pointIsInsideViewportClip(const FloatPoint& poi
     return m_viewport.contains(pointInParent);
 }
 
+void RenderSVGViewportContainer::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+{
+    // An empty viewBox disables rendering.
+    if (node()->hasTagName(SVGNames::svgTag)) {
+        if (toSVGSVGElement(node())->hasEmptyViewBox())
+            return;
+    }
+
+    RenderSVGContainer::paint(paintInfo, paintOffset);
+}
+
 }
 
 #endif // ENABLE(SVG)

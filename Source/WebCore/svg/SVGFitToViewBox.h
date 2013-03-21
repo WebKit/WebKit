@@ -48,9 +48,8 @@ public:
         ASSERT(target->document());
         if (name == SVGNames::viewBoxAttr) {
             FloatRect viewBox;
-            if (!value.isNull())
-                parseViewBox(target->document(), value, viewBox);
-            target->setViewBoxBaseValue(viewBox);
+            bool valueIsValid = !value.isNull() && parseViewBox(target->document(), value, viewBox);
+            target->setViewBoxBaseValue(viewBox, valueIsValid);
             return true;
         }
 

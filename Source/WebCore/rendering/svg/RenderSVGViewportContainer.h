@@ -41,6 +41,8 @@ public:
     virtual void determineIfLayoutSizeChanged();
     virtual void setNeedsTransformUpdate() { m_needsTransformUpdate = true; }
 
+    virtual void paint(PaintInfo&, const LayoutPoint&) OVERRIDE;
+
 private:
     virtual bool isSVGViewportContainer() const { return true; }
     virtual const char* renderName() const { return "RenderSVGViewportContainer"; }

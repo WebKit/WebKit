@@ -269,8 +269,15 @@ void RenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paint
     if (pixelSnappedBorderBoxRect().isEmpty())
         return;
 
-    // Don't paint, if the context explicitely disabled it.
+    // Don't paint, if the context explicitly disabled it.
     if (paintInfo.context->paintingDisabled())
+        return;
+
+    // An empty viewBox also disables rendering.
+    // (http://www.w3.org/TR/SVG/coords.html#ViewBoxAttribute)
+    SVGSVGElement* svg = toSVGSVGElement(node());
+    ASSERT(svg);
+    if (svg->hasEmptyViewBox())
         return;
 
     Page* page = 0;

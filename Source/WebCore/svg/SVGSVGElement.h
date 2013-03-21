@@ -135,6 +135,8 @@ public:
     SVGZoomAndPanType zoomAndPan() const { return m_zoomAndPan; }
     void setZoomAndPan(unsigned short zoomAndPan) { m_zoomAndPan = SVGZoomAndPan::parseFromNumber(zoomAndPan); }
 
+    bool hasEmptyViewBox() { return hasAttribute(SVGNames::viewBoxAttr) && viewBoxIsValid() && viewBox().isEmpty(); }
+
 protected:
     virtual void didMoveToNewDocument(Document* oldDocument) OVERRIDE;
 

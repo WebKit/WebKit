@@ -77,6 +77,10 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderObject* object, unsign
     if (!m_attributes.patternContentElement())
         return 0;
 
+    // An empty viewBox disables rendering.
+    if (m_attributes.hasViewBox() && m_attributes.viewBox().isEmpty())
+        return 0;
+
     // Compute all necessary transformations to build the tile image & the pattern.
     FloatRect tileBoundaries;
     AffineTransform tileImageTransform;

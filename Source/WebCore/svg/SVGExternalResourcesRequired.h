@@ -46,7 +46,7 @@ public:
 
 protected:
     // These types look a bit awkward, but have to match the generic types of the SVGAnimatedProperty macros.
-    virtual void setExternalResourcesRequiredBaseValue(const bool&) = 0;
+    virtual void setExternalResourcesRequiredBaseValue(const bool&, const bool validValue = true) = 0;
     virtual bool& externalResourcesRequiredBaseValue() const = 0;
 
     virtual void setHaveFiredLoadEvent(bool) { }

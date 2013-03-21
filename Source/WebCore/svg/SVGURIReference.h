@@ -54,7 +54,7 @@ public:
     }
 
 protected:
-    virtual void setHrefBaseValue(const String&) = 0;
+    virtual void setHrefBaseValue(const String&, const bool validValue = true) = 0;
 };
 
 } // namespace WebCore
