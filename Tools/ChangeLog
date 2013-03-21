@@ -1,5 +1,14 @@
 2013-03-21  Claudio Saavedra  <csaavedra@igalia.com>
 
+        [GTK] Missing atk in install-dependencies script
+        https://bugs.webkit.org/show_bug.cgi?id=112272
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * gtk/install-dependencies: Add missing atk dependency.
+
+2013-03-21  Claudio Saavedra  <csaavedra@igalia.com>
+
         [GTK] Missing backslash in install-dependencies script
         https://bugs.webkit.org/show_bug.cgi?id=112907
 

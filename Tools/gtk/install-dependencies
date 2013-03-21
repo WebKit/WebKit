@@ -47,6 +47,7 @@ function installDependenciesWithApt {
         gperf \
         gtk-doc-tools \
         intltool \
+        libatk1.0-dev \
         libenchant-dev \
         libfaad-dev \
         libgail-3-dev \
@@ -105,6 +106,7 @@ function installDependenciesWithYum {
         autoconf \
         automake \
         bison \
+        atk-devel \
         cairo-devel \
         enchant-devel \
         flex \
