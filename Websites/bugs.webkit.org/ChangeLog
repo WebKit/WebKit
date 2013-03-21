@@ -1,3 +1,14 @@
+2013-03-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        EWS bubbles need more space
+        https://bugs.webkit.org/show_bug.cgi?id=112964
+
+        Reviewed by Philip Rogers.
+
+        Increased the width from 500px to 600px so that all bubbles fit.
+
+        * template/en/custom/attachment/list.html.tmpl:
+
 2013-03-08  David Kilzer  <ddkilzer@apple.com>
 
         (CVE-2013-0786) [SECURITY] build_subselect() leaks the existence of products and components you cannot access
