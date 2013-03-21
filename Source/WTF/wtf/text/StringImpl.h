@@ -690,11 +690,11 @@ public:
     size_t find(UChar character, unsigned start = 0);
     WTF_EXPORT_STRING_API size_t find(CharacterMatchFunctionPtr, unsigned index = 0);
     size_t find(const LChar*, unsigned index = 0);
-    ALWAYS_INLINE size_t find(const char* s, unsigned index = 0) { return find(reinterpret_cast<const LChar*>(s), index); };
+    ALWAYS_INLINE size_t find(const char* s, unsigned index = 0) { return find(reinterpret_cast<const LChar*>(s), index); }
     WTF_EXPORT_STRING_API size_t find(StringImpl*);
     WTF_EXPORT_STRING_API size_t find(StringImpl*, unsigned index);
     size_t findIgnoringCase(const LChar*, unsigned index = 0);
-    ALWAYS_INLINE size_t findIgnoringCase(const char* s, unsigned index = 0) { return findIgnoringCase(reinterpret_cast<const LChar*>(s), index); };
+    ALWAYS_INLINE size_t findIgnoringCase(const char* s, unsigned index = 0) { return findIgnoringCase(reinterpret_cast<const LChar*>(s), index); }
     WTF_EXPORT_STRING_API size_t findIgnoringCase(StringImpl*, unsigned index = 0);
 
     WTF_EXPORT_STRING_API size_t reverseFindLineTerminator(unsigned index = UINT_MAX);
@@ -706,7 +706,7 @@ public:
     WTF_EXPORT_STRING_API bool startsWith(UChar) const;
     WTF_EXPORT_STRING_API bool startsWith(const char*, unsigned matchLength, bool caseSensitive) const;
     template<unsigned matchLength>
-    bool startsWith(const char (&prefix)[matchLength], bool caseSensitive = true) const { return startsWith(prefix, matchLength - 1, caseSensitive); };
+    bool startsWith(const char (&prefix)[matchLength], bool caseSensitive = true) const { return startsWith(prefix, matchLength - 1, caseSensitive); }
 
     WTF_EXPORT_STRING_API bool endsWith(StringImpl*, bool caseSensitive = true);
     WTF_EXPORT_STRING_API bool endsWith(UChar) const;
@@ -772,6 +772,32 @@ private:
 #ifdef STRING_STATS
     WTF_EXPORTDATA static StringStats m_stringStats;
 #endif
+
+public:
+    struct StaticASCIILiteral {
+        // These member variables must match the layout of StringImpl.
+        unsigned m_refCount;
+        unsigned m_length;
+        const LChar* m_data8;
+        void* m_buffer;
+        unsigned m_hashAndFlags;
+
+        // These values mimic ConstructFromLiteral.
+        static const unsigned s_initialRefCount = s_refCountIncrement;
+        static const unsigned s_initialFlags = s_hashFlag8BitBuffer | BufferInternal | s_hashFlagHasTerminatingNullCharacter;
+        static const unsigned s_hashShift = s_flagCount;
+    };
+
+#ifndef NDEBUG
+    void assertHashIsCorrect()
+    {
+        ASSERT(hasHash());
+        ASSERT(existingHash() == StringHasher::computeHashAndMaskTop8Bits(characters8(), length()));
+    }
+#endif
+
+private:
+    // These member variables must match the layout of StaticASCIILiteral.
     unsigned m_refCount;
     unsigned m_length;
     union {
@@ -788,6 +814,20 @@ private:
     };
     mutable unsigned m_hashAndFlags;
 };
+
+COMPILE_ASSERT(sizeof(StringImpl) == sizeof(StringImpl::StaticASCIILiteral), StringImpl_should_match_its_StaticASCIILiteral);
+
+#if !ASSERT_DISABLED
+// StringImpls created from StaticASCIILiteral will ASSERT
+// in the generic ValueCheck<T>::checkConsistency
+// as they are not allocated by fastMalloc.
+// We don't currently have any way to detect that case
+// so we ignore the consistency check for all StringImpl*.
+template<> struct
+ValueCheck<StringImpl*> {
+    static void checkConsistency(const StringImpl*) { }
+};
+#endif
 
 template <>
 ALWAYS_INLINE const LChar* StringImpl::getCharacters<LChar>() const { return characters8(); }
