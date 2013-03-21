@@ -125,13 +125,15 @@ RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(Element* element)
 {
     setChildrenInline(false); // All of our children must be block-level
     m_stretchingChildren = false;
-    const KURL& url = document()->url();
-    if (url.protocolIs("chrome"))
-        FeatureObserver::observe(document(), FeatureObserver::DeprecatedFlexboxChrome);
-    else if (url.protocolIs("chrome-extension"))
-        FeatureObserver::observe(document(), FeatureObserver::DeprecatedFlexboxChromeExtension);
-    else
-        FeatureObserver::observe(document(), FeatureObserver::DeprecatedFlexboxWebContent);
+    if (!isAnonymous()) {
+        const KURL& url = document()->url();
+        if (url.protocolIs("chrome"))
+            FeatureObserver::observe(document(), FeatureObserver::DeprecatedFlexboxChrome);
+        else if (url.protocolIs("chrome-extension"))
+            FeatureObserver::observe(document(), FeatureObserver::DeprecatedFlexboxChromeExtension);
+        else
+            FeatureObserver::observe(document(), FeatureObserver::DeprecatedFlexboxWebContent);
+    }
 }
 
 RenderDeprecatedFlexibleBox::~RenderDeprecatedFlexibleBox()
