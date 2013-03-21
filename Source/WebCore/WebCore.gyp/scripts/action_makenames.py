@@ -131,6 +131,8 @@ def main(args):
             eventsInput = inputAbsPosix
         elif inputBasename.endswith('Names.in'):
             options.append(inputAbsPosix)
+        elif inputBasename.endswith('.pm'):
+            continue
         else:
             assert False
 

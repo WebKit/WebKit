@@ -172,16 +172,14 @@ unsigned QualifiedName::QualifiedNameImpl::computeHash() const
     return hashComponents(components);
 }
 
-void createQualifiedName(void* targetAddress, const char* name, unsigned nameLength, const AtomicString& nameNamespace)
+void createQualifiedName(void* targetAddress, StringImpl* name, const AtomicString& nameNamespace)
 {
-    AtomicString atomicName(name, nameLength, AtomicString::ConstructFromLiteral);
-    new (reinterpret_cast<void*>(targetAddress)) QualifiedName(nullAtom, atomicName, nameNamespace);
+    new (reinterpret_cast<void*>(targetAddress)) QualifiedName(nullAtom, AtomicString(name), nameNamespace);
 }
 
-void createQualifiedName(void* targetAddress, const char* name, unsigned nameLength)
+void createQualifiedName(void* targetAddress, StringImpl* name)
 {
-    AtomicString atomicName(name, nameLength, AtomicString::ConstructFromLiteral);
-    new (reinterpret_cast<void*>(targetAddress)) QualifiedName(nullAtom, atomicName, nullAtom);
+    new (reinterpret_cast<void*>(targetAddress)) QualifiedName(nullAtom, AtomicString(name), nullAtom);
 }
 
 }

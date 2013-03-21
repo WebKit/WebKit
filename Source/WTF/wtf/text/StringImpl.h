@@ -772,6 +772,32 @@ private:
 #ifdef STRING_STATS
     WTF_EXPORTDATA static StringStats m_stringStats;
 #endif
+
+public:
+    struct StaticASCIILiteral {
+        // These member variables must match the layout of StringImpl.
+        unsigned m_refCount;
+        unsigned m_length;
+        const LChar* m_data8;
+        void* m_buffer;
+        unsigned m_hashAndFlags;
+
+        // These values mimic ConstructFromLiteral.
+        static const unsigned s_initialRefCount = s_refCountIncrement;
+        static const unsigned s_initialFlags = s_hashFlag8BitBuffer | BufferInternal | s_hashFlagHasTerminatingNullCharacter;
+        static const unsigned s_hashShift = s_flagCount;
+    };
+
+#ifndef NDEBUG
+    void assertHashIsCorrect()
+    {
+        ASSERT(hasHash());
+        ASSERT(existingHash() == StringHasher::computeHashAndMaskTop8Bits(characters8(), length()));
+    }
+#endif
+
+private:
+    // These member variables must match the layout of StaticASCIILiteral.
     unsigned m_refCount;
     unsigned m_length;
     union {
@@ -788,6 +814,8 @@ private:
     };
     mutable unsigned m_hashAndFlags;
 };
+
+COMPILE_ASSERT(sizeof(StringImpl) == sizeof(StringImpl::StaticASCIILiteral), StringImpl_should_match_its_StaticASCIILiteral);
 
 template <>
 ALWAYS_INLINE const LChar* StringImpl::getCharacters<LChar>() const { return characters8(); }
