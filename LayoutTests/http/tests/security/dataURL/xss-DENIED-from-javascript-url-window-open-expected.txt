@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/dataURL/xss-DENIED-from-javascript-url-window-open.html from frame with URL data:text/html,<html><head><script>function test() {try {opener.document.getElementById("accessMe").innerHTML = "FAIL: Access from a window opened with a data: URL was allowed!";} catch (e) {}if (window.testRunner)testRunner.globalFlag = true;}</script></head><body onload="test();"><p>Opened Frame.</p></body></html>. The frame requesting access has a protocol of '', the frame being accessed has a protocol of 'http'. Protocols must match.
+CONSOLE MESSAGE: Blocked a frame with origin "null" from accessing a frame with origin "http://127.0.0.1:8000".  The frame requesting access has a protocol of "data", the frame being accessed has a protocol of "http". Protocols must match.
 
 Opener Frame
 

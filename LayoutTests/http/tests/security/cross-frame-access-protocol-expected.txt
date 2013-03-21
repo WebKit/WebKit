@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL https://127.0.0.1:8443/security/resources/cross-frame-iframe.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-protocol.html. The frame requesting access has a protocol of 'http', the frame being accessed has a protocol of 'https'. Protocols must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "https://127.0.0.1:8443".  The frame requesting access has a protocol of "http", the frame being accessed has a protocol of "https". Protocols must match.
 
 
 PASS: Cross frame access to https from http was denied!

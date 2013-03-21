@@ -1,7 +1,7 @@
 CONSOLE MESSAGE: line 4: The XSS Auditor blocked access to 'http://127.0.0.1:8000/security/xssAuditor/resources/echo-intertag.pl?q=%3Cscript%3Ealert(String.fromCharCode(0x58,0x53,0x53))%3C/script%3E&csp=block&valid-header=2' because the source code of a script was found within the request. The server sent a 'Content-Security-Policy' header requesting this behavior.
-CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL data:text/html,<p></p> from frame with URL http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-block-filter.html. The frame requesting access has a protocol of 'http', the frame being accessed has a protocol of ''. Protocols must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "null".  The frame requesting access has a protocol of "http", the frame being accessed has a protocol of "data". Protocols must match.
 
-CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL data:text/html,<p></p> from frame with URL http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-block-filter.html. The frame requesting access has a protocol of 'http', the frame being accessed has a protocol of ''. Protocols must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "null".  The frame requesting access has a protocol of "http", the frame being accessed has a protocol of "data". Protocols must match.
 
 ALERT: Loaded cross-origin frame.
 Testing behavior when "reflected-xss" is set to block, and "X-XSS-Protection" is set to filter.

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8080/security/resources/innocent-victim-with-iframe.html from frame with URL data:text/html,<script>(function () {            setTimeout(function() {                if (window.testRunner)                    testRunner.notifyDone();            }, 0);            window.name = "__proto__";            parent.__proto__.alert.constructor("alert(document.body.innerHTML)")();        })()</script>. The frame requesting access has a protocol of '', the frame being accessed has a protocol of 'http'. Protocols must match.
+CONSOLE MESSAGE: Blocked a frame with origin "null" from accessing a frame with origin "http://localhost:8080".  The frame requesting access has a protocol of "data", the frame being accessed has a protocol of "http". Protocols must match.
 
 CONSOLE MESSAGE: line 1: Uncaught TypeError: Cannot read property 'alert' of undefined
 

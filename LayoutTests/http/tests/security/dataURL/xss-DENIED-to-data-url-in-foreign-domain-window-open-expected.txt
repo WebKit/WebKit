@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL data:text/html,<html><head><script>function loaded() {if (window.testRunner)testRunner.globalFlag = true;}</script></head><body onload='loaded();'><p id='accessMe'>PASS: Access from the main frame was denied!</p><p>Inner-inner iframe. This iframe (which is data: URL and whose parent is on a foreign domain) is the frame that the main frame is trying to access.  It should not have access to it.</p></body></html> from frame with URL http://127.0.0.1:8000/security/dataURL/xss-DENIED-to-data-url-in-foreign-domain-window-open.html. The frame requesting access has a protocol of 'http', the frame being accessed has a protocol of ''. Protocols must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "null".  The frame requesting access has a protocol of "http", the frame being accessed has a protocol of "data". Protocols must match.
 
 PASS: Cross frame access to a data: URL embed in a frame window.open'ed on foreign domain denied!
 

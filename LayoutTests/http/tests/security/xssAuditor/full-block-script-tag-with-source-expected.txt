@@ -1,5 +1,5 @@
 CONSOLE MESSAGE: line 4: The XSS Auditor blocked access to 'http://127.0.0.1:8000/security/xssAuditor/resources/echo-intertag.pl?enable-full-block=1&q=%3Cscript%20src='http://localhost:8000/security/xssAuditor/resources/xss.js'%3E%3C/script%3E' because the source code of a script was found within the request. The server sent an 'X-XSS-Protection' header requesting this behavior.
-CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL data:text/html,<p></p> from frame with URL http://127.0.0.1:8000/security/xssAuditor/full-block-script-tag-with-source.html. The frame requesting access has a protocol of 'http', the frame being accessed has a protocol of ''. Protocols must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "null".  The frame requesting access has a protocol of "http", the frame being accessed has a protocol of "data". Protocols must match.
 
 ALERT: URL mismatch: undefined vs. http://127.0.0.1:8000/security/xssAuditor/resources/echo-intertag.pl?enable-full-block=1&q=%3Cscript%20src='http://localhost:8000/security/xssAuditor/resources/xss.js'%3E%3C/script%3E
 There should be no content in the iframe below:
