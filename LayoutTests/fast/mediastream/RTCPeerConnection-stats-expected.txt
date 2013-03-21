@@ -19,6 +19,7 @@ PASS local.names().indexOf("type") is >= 0
 PASS local.stat("type") is "audio"
 PASS res.timestamp is >= startTime
 PASS res.id is non-null.
+PASS res.type is non-null.
 PASS res.names().length is >= 1
 PASS res.names().indexOf("type") is >= 0
 PASS res.stat("type") is "audio"

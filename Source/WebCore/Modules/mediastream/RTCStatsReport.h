@@ -39,6 +39,7 @@ public:
 
     double timestamp() const { return m_timestamp; }
     String id() { return m_id; }
+    String type() { return m_type; }
     String stat(const String& name) { return m_stats.get(name); }
     Vector<String> names() const;
 

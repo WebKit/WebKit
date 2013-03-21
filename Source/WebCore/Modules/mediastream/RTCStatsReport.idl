@@ -28,6 +28,7 @@
 ] interface RTCStatsReport {
     readonly attribute Date timestamp;
     readonly attribute DOMString id;
+    readonly attribute DOMString type;
     DOMString stat(in DOMString name);
     sequence<DOMString> names();
     // DEPRECATED - fake for old RTCStatsElement object.

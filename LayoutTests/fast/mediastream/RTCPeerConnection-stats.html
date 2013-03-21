@@ -62,6 +62,7 @@ function statsHandler2(status)
     res = result[0];
     shouldBeGreaterThanOrEqual('res.timestamp', 'startTime');
     shouldBeNonNull('res.id');
+    shouldBeNonNull('res.type');
     shouldBeGreaterThanOrEqual('res.names().length', '1');
     shouldBeGreaterThanOrEqual('res.names().indexOf("type")', '0');
     shouldBe('res.stat("type")', '"audio"');
