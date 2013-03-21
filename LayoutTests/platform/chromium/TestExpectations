@@ -231,8 +231,9 @@ webkit.org/b/85262 fast/media/mq-resolution-dpi-dpcm-warning.html [ Skip ]
 webkit.org/b/89052 fast/css/image-orientation
 
 # CSS3 Text support is not yet enabled (needs ENABLE_CSS3_TEXT).
-webkit.org/b/58491 fast/css3-text/css3-text-decoration
-webkit.org/b/76173 fast/css3-text/css3-text-align-last
+webkit.org/b/58491 fast/css3-text/css3-text-decoration [ Skip ]
+webkit.org/b/76173 fast/css3-text/css3-text-align-last [ Skip ]
+webkit.org/b/112755 fast/css3-text/css3-text-indent [ Skip ]
 
 # Chromium does not support smart pasting in text controls yet.
 webkit.org/b/60830 editing/pasteboard/smart-paste-in-text-control.html
@@ -1376,17 +1377,6 @@ webkit.org/b/85107 svg/as-image/animated-svg-as-image.html [ ImageOnlyFailure Pa
 
 webkit.org/b/93589 svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg [ Failure Pass Timeout ]
 
-# These tests need to be rebaselined after https://bugs.webkit.org/show_bug.cgi?id=65643
-webkit.org/b/101396 svg/css/shadow-changes.svg
-webkit.org/b/101396 svg/repaint/repaint-webkit-svg-shadow.svg
-webkit.org/b/101396 svg/css/composite-shadow-example.html
-webkit.org/b/101396 svg/css/composite-shadow-with-opacity.html
-webkit.org/b/101396 fast/repaint/moving-shadow-on-container.html
-webkit.org/b/101396 svg/css/composite-shadow-text.svg
-webkit.org/b/101396 svg/custom/simple-text-double-shadow.svg
-webkit.org/b/101396 svg/css/clippath-with-shadow.svg
-webkit.org/b/101396 svg/css/arrow-with-shadow.svg
-
 webkit.org/b/111626 [ Mac Debug ] svg/css/font-face-crash.html [ Pass Crash ]
 
 # -----------------------------------------------------------------
@@ -2229,14 +2219,6 @@ webkit.org/b/45991 platform/chromium/virtual/gpu/canvas/philip/tests/2d.pattern.
 webkit.org/b/45991 [ Android Linux Win MountainLion ] canvas/philip/tests/2d.text.draw.baseline.ideographic.html [ Failure ]
 webkit.org/b/45991 [ Linux Win MountainLion ] platform/chromium/virtual/gpu/canvas/philip/tests/2d.text.draw.baseline.ideographic.html [ Failure ]
 
-# Rebaseline after Skia rev. 6227 lands
-crbug.com/148638  [ Android ] fast/repaint/list-marker.html [ Failure ImageOnlyFailure ]
-crbug.com/148638  [ Android ] svg/hixie/perf/001.xml [ Failure ImageOnlyFailure ]
-crbug.com/148638  [ Android ] svg/hixie/perf/002.xml [ Failure ImageOnlyFailure ]
-crbug.com/148638  [ Android ] svg/transforms/text-with-pattern-inside-transformed-html.xhtml [ Failure ImageOnlyFailure ]
-crbug.com/148638  [ Mac ] svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Pass Timeout ImageOnlyFailure ]
-crbug.com/148638  [ Android ] svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Failure ImageOnlyFailure ]
- 
 # Update canvas/philip in WK r71481
 crbug.com/62301 canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html [ Failure ]
 crbug.com/62301 canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html [ Failure ]
@@ -2540,7 +2522,8 @@ webkit.org/b/90363 [ Android Release ] fast/overflow/lots-of-sibling-inline-boxe
 
 # WebKit roll 74255:74308
 crbug.com/67416 [ Android Win ] fast/text/emphasis.html [ Failure ]
-crbug.com/67416 [ Win Mac Android ] fast/text/emphasis-vertical.html [ Failure ImageOnlyFailure ]
+crbug.com/67416 [ Android Win MountainLion ] fast/text/emphasis-vertical.html [ Failure ]
+crbug.com/67416 [ Linux Lion SnowLeopard ] fast/text/emphasis-vertical.html [ ImageOnlyFailure ]
 crbug.com/67540 [ Android Linux ] fast/text/emphasis-avoid-ruby.html [ ImageOnlyFailure ]
 crbug.com/67540 [ Android Linux SnowLeopard Win ] fast/repaint/text-emphasis-h.html [ ImageOnlyFailure ]
 crbug.com/67540 [ Android Linux ] fast/repaint/text-emphasis-v.html [ ImageOnlyFailure ]
@@ -3620,9 +3603,6 @@ webkit.org/b/93624 [ Win ] inspector/console/console-format-collections.html [ F
 # Started failing around r122770
 webkit.org/b/91445 [ Linux ] plugins/embed-attributes-style.html [ ImageOnlyFailure Pass ]
 
-# Needs rebaseline after bug 97217 is fixed
-webkit.org/b/97325 css3/masking/clip-path-circle-relative-overflow.html [ ImageOnlyFailure Pass ]
-
 webkit.org/b/91544 media/media-continues-playing-after-replace-source.html [ Pass Timeout ]
 
 webkit.org/b/92019 fast/text/international/inline-plaintext-relayout-with-leading-neutrals.html [ ImageOnlyFailure Pass ]
@@ -3695,9 +3675,6 @@ webkit.org/b/93938 [ Debug ] fast/forms/range/slider-mouse-events.html [ Failure
 webkit.org/b/93938 [ Lion Release ] fast/forms/range/slider-mouse-events.html [ Failure Pass ]
 webkit.org/b/93938 [ Linux Win7 ] fast/forms/range/slider-onchange-event.html [ Failure Pass ]
 
-# Require rebaselining after  https://bugs.webkit.org/show_bug.cgi?id=89826
-webkit.org/b/89826 [ Mac Win ] fast/css/word-space-extra.html [ Failure ]
-
 webkit.org/b/94002 [ Win7 Debug ] inspector/debugger [ Pass Timeout ]
 webkit.org/b/94002 [ Win7 Debug ] inspector/debugger/event-listener-breakpoints.html [ Pass Timeout Failure ]
 webkit.org/b/110963 [ Win7 Debug ] inspector/debugger/debugger-scripts-reload.html [ Pass Timeout Crash ]
@@ -3754,38 +3731,6 @@ webkit.org/b/94532 [ Linux ] fast/forms/formmethod-attribute-button-html.html [ 
 webkit.org/b/94660 fast/js/create-lots-of-workers.html [ Crash Pass Timeout ]
 
 webkit.org/b/94793 http/tests/notifications/event-listener-crash.html [ Failure Pass ]
-
-# Needs rebaseline
-webkit.org/b/111319 platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-rtl.html [ Pass ImageOnlyFailure ]
-webkit.org/b/111319 platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-with-scroll-bar.html [ Pass ImageOnlyFailure ]
-webkit.org/b/111319 platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance.html [ Pass ImageOnlyFailure ]
-webkit.org/b/111319 platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-locale-hebrew.html [ Pass ImageOnlyFailure ]
-webkit.org/b/111319 platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-rtl.html [ Pass ImageOnlyFailure ]
-webkit.org/b/111319 platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance-with-scroll-bar.html [ Pass ImageOnlyFailure ]
-webkit.org/b/111319 platform/chromium/fast/forms/suggestion-picker/datetimelocal-suggestion-picker-appearance.html [ Pass ImageOnlyFailure ]
-webkit.org/b/111319 platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance-rtl.html [ Pass ImageOnlyFailure ]
-webkit.org/b/111319 platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance-with-scroll-bar.html [ Pass ImageOnlyFailure ]
-webkit.org/b/111319 platform/chromium/fast/forms/suggestion-picker/month-suggestion-picker-appearance.html [ Pass ImageOnlyFailure ]
-webkit.org/b/111319 platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-locale-hebrew.html [ Pass ImageOnlyFailure ]
-webkit.org/b/111319 platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-rtl.html [ Pass ImageOnlyFailure ]
-webkit.org/b/111319 platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance-with-scroll-bar.html [ Pass ImageOnlyFailure ]
-webkit.org/b/111319 platform/chromium/fast/forms/suggestion-picker/time-suggestion-picker-appearance.html [ Pass ImageOnlyFailure ]
-webkit.org/b/111319 platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-rtl.html [ Pass ImageOnlyFailure ]
-webkit.org/b/111319 platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance-with-scroll-bar.html [ Pass ImageOnlyFailure ]
-webkit.org/b/111319 platform/chromium/fast/forms/suggestion-picker/week-suggestion-picker-appearance.html [ Pass ImageOnlyFailure ]
-webkit.org/b/109439 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ar.html [ ImageOnlyFailure Pass ]
-webkit.org/b/109439 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-month-popup.html [ ImageOnlyFailure Pass ]
-webkit.org/b/109439 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-required-ar.html [ ImageOnlyFailure Pass ] 
-webkit.org/b/109439 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-required.html [ ImageOnlyFailure Pass ] 
-webkit.org/b/109439 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru.html [ ImageOnlyFailure Pass ] 
-webkit.org/b/109439 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step.html [ ImageOnlyFailure Pass ] 
-webkit.org/b/109439 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance.html [ ImageOnlyFailure Pass ] 
-webkit.org/b/109439 platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step.html [ ImageOnlyFailure Pass ] 
-webkit.org/b/109439 platform/chromium/fast/forms/calendar-picker/month-picker-appearance.html [ ImageOnlyFailure Pass ] 
-webkit.org/b/109439 platform/chromium/fast/forms/calendar-picker/week-picker-appearance-step.html [ ImageOnlyFailure Pass ] 
-webkit.org/b/109439 platform/chromium/fast/forms/calendar-picker/week-picker-appearance.html [ ImageOnlyFailure Pass ] 
-
-
 
 # Failing tests with 2d canvas acceleration.
 crbug.com/145084 [ Android ] platform/chromium/virtual/gpu/canvas/philip [ Failure Pass ]
@@ -3956,14 +3901,9 @@ webkit.org/b/98275 media/event-queue-crash.html [ Skip ]
 # Needs platform results after webkit.org/b/106221
 webkit.org/b/106221 svg/filters/filter-hidden-content.svg [ Failure Pass ]
 
-# Needs rebaselining on after webkit.org/b/107339
-webkit.org/b/107339 [ Mac Android Win ] platform/chromium/fast/events/touch/compositor-touch-hit-rects.html [ Pass Failure ]
-
-# Requires rebaselining after https://bugs.webkit.org/show_bug.cgi?id=11645
-webkit.org/b/11645 [ Mac Android ] fast/table/025.html [ Failure ]
+webkit.org/b/98687 fast/css-generated-content/table-row-group-to-inline.html [ Failure ]
 
 # Needs rebaseline after bug https://bugs.webkit.org/show_bug.cgi?id=104462
-webkit.org/b/98687 fast/css-generated-content/table-row-group-to-inline.html [ Failure ]
 webkit.org/b/104595 fast/css/empty-generated-content.html [ Failure ]
 
 # These are real failues due to 95121.
@@ -4167,10 +4107,6 @@ webkit.org/b/103609 [ MountainLion ] fast/regions/autoheight-dynamic-update.html
 webkit.org/b/103609 [ MountainLion ] fast/regions/firstletter-inside-flowthread.html [ ImageOnlyFailure ]
 webkit.org/b/103609 [ MountainLion ] fast/regions/listmarker-inside-flowthread.html [ ImageOnlyFailure ]
 
-# Rebaseline after https://bugs.webkit.org/show_bug.cgi?id=102624
-webkit.org/b/102624 [ Linux Win ] fast/events/stopPropagation-submit.html [ Failure ]
-webkit.org/b/103149 [ Mac ] fast/events/stopPropagation-submit.html [ Pass Failure ]
-
 # Some compositing tests doesn't work on multiple platforms.
 webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/nested-reflection-animated.html [ ImageOnlyFailure ]
 
@@ -4220,10 +4156,6 @@ webkit.org/b/106238 [ Win ] svg/dynamic-updates/SVGUseElement-dom-href1-attr.htm
 webkit.org/b/106238 [ Win ] svg/dynamic-updates/SVGUseElement-svgdom-href1-prop.html [ ImageOnlyFailure Pass ]
 webkit.org/b/106249 [ Win ] fast/speech/scripted/navigate-away.html [ Failure Pass ]
 
-# Needs rebaseline. Reducing yellow box top margin is intentional. Looks good on Chromium Linux.
-webkit.org/b/96597 fast/multicol/vertical-rl/float-multicol.html [ Failure ImageOnlyFailure ]
-# Needs rebaseline. Current expectation is wrong because margin of body don't collapse with margin of 1st child.
-webkit.org/b/96597 [ Linux ] fast/text/emphasis-vertical.html [ ImageOnlyFailure ]
 webkit.org/b/106332 http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html [ Skip ]
 webkit.org/b/106387 [ Win ] svg/W3C-SVG-1.1/animate-elem-80-t.svg [ Failure Pass ]
 webkit.org/b/106387 [ Win ] svg/W3C-SVG-1.1/filters-comptran-01-b.svg [ ImageOnlyFailure Pass ]
@@ -4234,9 +4166,6 @@ webkit.org/b/106426 [ Win ] inspector/geolocation-error.html [ Failure Pass ]
 webkit.org/b/106426 [ Win ] inspector/geolocation-success.html [ Failure Pass ]
 webkit.org/b/106426 [ Win ] inspector/geolocation-watchPosition.html [ Failure Pass ]
 crbug.com/166932 [ Debug ] plugins/embed-attributes-setting.html [ Crash Pass ]
-
-# Brightnes filter update needs rebaseline.
-webkit.org/b/106746 css3/filters/filter-property-parsing.html [ Failure ]
 
 webkit.org/b/106858 [ Mac Debug ] scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ ImageOnlyFailure Crash ]
 webkit.org/b/106858 [ Linux Win Debug ] scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ ImageOnlyFailure Pass ]
@@ -4331,10 +4260,6 @@ webkit.org/b/111199 [ Debug Win7 Lion ] compositing/rtl/rtl-iframe-fixed-overflo
 webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Pass Failure ]
 webkit.org/b/111199 [ Debug Win7 Lion ] compositing/rtl/rtl-iframe-fixed-overflow.html [ Pass Failure ]
 webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Pass Failure ]
-
-# Need rebaseline
-webkit.org/b/110654 [ Mac Win ] css2.1/20110323/replaced-elements-001.htm [ Failure ]
-webkit.org/b/110654 [ Win ] tables/mozilla/bugs/bug92647-2.html [ Failure ]
 
 # This is possibly a bug in the version of fontconfig on Precise, not sure.
 webkit.org/b/110915 [ Linux ] platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html [ Failure Pass ]

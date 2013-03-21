@@ -637,6 +637,28 @@ PASS subRule.cssText is 'brightness(0.5)'
 PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_GRAYSCALE
 PASS subRule.cssText is 'grayscale(0.25)'
 
+Parameter less than -100% : brightness(-1.1)
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-filter') is 'brightness(-1.1)'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS
+PASS subRule.cssText is 'brightness(-1.1)'
+
+Parameter more than 100% : brightness(101%)
+PASS cssRule.type is 1
+PASS declaration.length is 1
+PASS declaration.getPropertyValue('-webkit-filter') is 'brightness(101%)'
+PASS jsWrapperClass(filterRule) is 'CSSValueList'
+FAIL jsWrapperClass(filterRule.__proto__) should be CSSValueListPrototype. Was Object.
+FAIL jsWrapperClass(filterRule.constructor) should be CSSValueListConstructor. Was Function.
+PASS filterRule.length is 1
+PASS subRule.operationType is WebKitCSSFilterValue.CSS_FILTER_BRIGHTNESS
+PASS subRule.cssText is 'brightness(101%)'
+
 Rule combinations : grayscale(0.25) brightness(0.5)
 PASS cssRule.type is 1
 PASS declaration.length is 1

@@ -441,7 +441,7 @@ layer at (0,0) size 785x2576
               text run at (369,223) width 124: " elements too"
           RenderText {#text} at (493,220) size 743x39
             text run at (493,220) width 250: ". (with monospace font from"
-            text run at (0,240) width 141: "elements to too) "
+            text run at (0,240) width 161: "elements to too) "
         RenderText {#text} at (0,0) size 0x0
         RenderBR {BR} at (0,0) size 0x0
         RenderBR {BR} at (0,260) size 0x19
