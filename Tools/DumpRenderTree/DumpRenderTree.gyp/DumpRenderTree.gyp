@@ -379,6 +379,12 @@
         {
             'target_name': 'DumpRenderTree_resources',
             'type': 'none',
+            'dependencies': [
+                '<(chromium_src_dir)/net/net.gyp:net_resources',
+                '<(chromium_src_dir)/ui/ui.gyp:ui_resources',
+                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_resources',
+                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_strings',
+            ],
             'actions': [{
                 'action_name': 'repack_local',
                 'variables': {

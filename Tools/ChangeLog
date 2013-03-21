@@ -1,3 +1,19 @@
+2013-03-21  Dirk Pranke  <dpranke@chromium.org>
+
+        [chromium] add missing project dependencies to DRT to fix Mac Valgrind
+        https://bugs.webkit.org/show_bug.cgi?id=112953
+
+        Reviewed by Tony Chang.
+
+        When I created the DumpRenderTree_resources target in r144863 I
+        forgot to declare the needed dependencies on the other resource
+        targets. Due to a quirk of ordering, this appears to have been fine
+        w/ ninja but not w/ Xcode (which is still being used on the chromium
+        mac valgrind bots). Declaring the dependencies fixes the build
+        failures.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2013-03-21  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Correct assert in Empty BitmapImage Test.
