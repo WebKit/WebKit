@@ -10,11 +10,13 @@ From https://bugs.webkit.org/show_bug.cgi?id=44629. The parent is a tiled layer.
         (GraphicsLayer
           (position 8.00 68.00)
           (bounds 502.00 5002.00)
+          (contentsOpaque 1)
           (drawsContent 1)
           (children 1
             (GraphicsLayer
               (position 51.00 101.00)
               (bounds 200.00 4800.00)
+              (contentsOpaque 1)
               (drawsContent 1)
             )
           )

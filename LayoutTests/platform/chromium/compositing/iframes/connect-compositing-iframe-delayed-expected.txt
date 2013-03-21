@@ -31,6 +31,7 @@ When the parent document becomes composited, the layer trees should get connecte
                                 (GraphicsLayer
                                   (position 18.00 10.00)
                                   (bounds 210.00 210.00)
+                                  (contentsOpaque 1)
                                   (drawsContent 1)
                                 )
                               )
@@ -53,6 +54,7 @@ When the parent document becomes composited, the layer trees should get connecte
         (GraphicsLayer
           (position 8.00 8.00)
           (bounds 100.00 100.00)
+          (contentsOpaque 1)
           (drawsContent 1)
         )
       )

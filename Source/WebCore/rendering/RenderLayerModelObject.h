@@ -46,6 +46,10 @@ public:
 
     virtual bool requiresLayer() const = 0;
 
+    // Returns true if the background is painted opaque in the given rect.
+    // The query rect is given in local coordinate system.
+    virtual bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect&) const { return false; }
+
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
     // This is null for anonymous renderers.

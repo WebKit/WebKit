@@ -11,6 +11,7 @@ Test CSS clip with composited layers. Left and right sides should look the same.
           (position 25.00 35.00)
           (anchor 0.50 0.44)
           (bounds 90.00 80.00)
+          (contentsOpaque 1)
           (drawsContent 1)
           (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
         )

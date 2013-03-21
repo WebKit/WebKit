@@ -8,11 +8,13 @@
         (GraphicsLayer
           (position 100.00 1100.00)
           (bounds 256.00 256.00)
+          (contentsOpaque 1)
           (drawsContent 1)
         )
         (GraphicsLayer
           (position 0.00 1000.00)
           (bounds 500.00 500.00)
+          (contentsOpaque 1)
           (drawsContent 1)
         )
       )

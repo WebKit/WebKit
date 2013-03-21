@@ -2044,6 +2044,13 @@ crbug.com/24182 [ Debug ] fast/forms/input-maxlength.html [ Pass Slow ]
 # WebKit roll 49405:49413
 crbug.com/28409 http/tests/xmlhttprequest/logout.html [ Failure ]
 
+# Rebaseline after landing https://bugs.webkit.org/show_bug.cgi?id=70634
+webkit.org/b/109507 compositing/iframes/scrolling-iframe.html [ Failure ]
+webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/iframes/scrolling-iframe.html [ Failure ]
+webkit.org/b/109507 compositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
+webkit.org/b/109507 platform/chromium/virtual/gpu/compositedscrolling/overflow/composited-scrolling-paint-phases.html [ Failure ]
+webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
+
 # The following upstream patches add -Webkit-color-correction support:
 # http://trac.webkit.org/changeset/50760
 # http://trac.webkit.org/changeset/50852

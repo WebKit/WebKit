@@ -11,6 +11,7 @@ After (should not be empty):
         (GraphicsLayer
           (position 495.00 30.00)
           (bounds 300.00 100.00)
+          (contentsOpaque 1)
           (drawsContent 1)
         )
       )

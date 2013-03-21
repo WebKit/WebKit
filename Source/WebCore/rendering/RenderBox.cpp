@@ -92,6 +92,17 @@ static const int autoscrollBeltSize = 20;
 
 bool RenderBox::s_hadOverflowClip = false;
 
+static bool skipBodyBackground(const RenderBox* bodyElementRenderer)
+{
+    ASSERT(bodyElementRenderer->isBody());
+    // The <body> only paints its background if the root element has defined a background independent of the body,
+    // or if the <body>'s parent is not the document element's renderer (e.g. inside SVG foreignObject).
+    RenderObject* documentElementRenderer = bodyElementRenderer->document()->documentElement()->renderer();
+    return documentElementRenderer
+        && !documentElementRenderer->hasBackground()
+        && (documentElementRenderer == bodyElementRenderer->parent());
+}
+
 RenderBox::RenderBox(ContainerNode* node)
     : RenderBoxModelObject(node)
     , m_minPreferredLogicalWidth(-1)
@@ -1129,13 +1140,8 @@ void RenderBox::paintBackground(const PaintInfo& paintInfo, const LayoutRect& pa
         paintRootBoxFillLayers(paintInfo);
         return;
     }
-    if (isBody()) {
-        // The <body> only paints its background if the root element has defined a background independent of the body,
-        // or if the <body>'s parent is not the document element's renderer (e.g. inside SVG foreignObject).
-        RenderObject* documentElementRenderer = document()->documentElement()->renderer();
-        if (documentElementRenderer && !documentElementRenderer->hasBackground() && documentElementRenderer == parent())
-            return;
-    }
+    if (isBody() && skipBodyBackground(this))
+        return;
     if (backgroundIsKnownToBeObscured())
         return;
     paintFillLayers(paintInfo, style()->visitedDependentColor(CSSPropertyBackgroundColor), style()->backgroundLayers(), paintRect, bleedAvoidance);
@@ -1158,6 +1164,9 @@ LayoutRect RenderBox::backgroundPaintedExtent() const
 
 bool RenderBox::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) const
 {
+    if (isBody() && skipBodyBackground(this))
+        return false;
+
     Color backgroundColor = style()->visitedDependentColor(CSSPropertyBackgroundColor);
     if (!backgroundColor.isValid() || backgroundColor.hasAlpha())
         return false;

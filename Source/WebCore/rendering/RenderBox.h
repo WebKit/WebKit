@@ -51,6 +51,8 @@ public:
     // position:static elements that are not flex-items get their z-index coerced to auto.
     virtual bool requiresLayer() const OVERRIDE { return isRoot() || isPositioned() || createsGroup() || hasClipPath() || hasOverflowClip() || hasTransform() || hasHiddenBackface() || hasReflection() || style()->specifiesColumns() || !style()->hasAutoZIndex() || (style()->shapeOutside() && isFloating()); }
 
+    virtual bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) const OVERRIDE;
+
     // Use this with caution! No type checking is done!
     RenderBox* firstChildBox() const;
     RenderBox* lastChildBox() const;
@@ -592,7 +594,6 @@ protected:
     virtual void updateFromStyle() OVERRIDE;
 
     LayoutRect backgroundPaintedExtent() const;
-    bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) const;
     virtual bool computeBackgroundIsKnownToBeObscured() OVERRIDE;
     void paintBackground(const PaintInfo&, const LayoutRect&, BackgroundBleedAvoidance = BackgroundBleedNone);
     

@@ -20,6 +20,7 @@ This layer should not have backing store.
                 (GraphicsLayer
                   (position 31.00 51.00)
                   (bounds 100.00 100.00)
+                  (contentsOpaque 1)
                   (drawsContent 1)
                   (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
                 )

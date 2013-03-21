@@ -13,6 +13,7 @@
         (GraphicsLayer
           (position 266.00 20.00)
           (bounds 100.00 100.00)
+          (contentsOpaque 1)
         )
         (GraphicsLayer
           (position 390.00 18.00)
