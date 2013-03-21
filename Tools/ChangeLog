@@ -1,3 +1,17 @@
+2013-03-20  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed build fix for VS2010.
+
+        Had to add WinCairo-specific property sheets to deal with some
+        library and path differences with the main Apple port.
+
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTree.vcxproj:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeDebugWinCairo.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeReleaseWinCairo.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffCommonWinCairo.props: Added.
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffDebugWinCairo.props: Added.
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffReleaseWinCairo.props: Added.
+
 2013-03-20  Benjamin Poulain  <bpoulain@apple.com>
 
         [WK2] Remove VIEW_MODE_CSS_MEDIA from WebKit2

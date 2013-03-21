@@ -96,13 +96,14 @@
     <ClCompile Include="..\..\AccessibilityUIElement.cpp" />
     <ClCompile Include="..\..\cairo\PixelDumpSupportCairo.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\..\cg\PixelDumpSupportCG.cpp" />
+    <ClCompile Include="..\..\cg\PixelDumpSupportCG.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\CyclicRedundancyCheck.cpp" />
     <ClCompile Include="..\..\DumpRenderTreeCommon.cpp" />
     <ClCompile Include="..\..\GCController.cpp" />
@@ -136,13 +137,14 @@
     <ClInclude Include="..\..\AccessibilityUIElement.h" />
     <ClInclude Include="..\..\cairo\PixelDumpSupportCairo.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\..\cg\PixelDumpSupportCG.h" />
+    <ClInclude Include="..\..\cg\PixelDumpSupportCG.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\..\config.h" />
     <ClInclude Include="..\..\CyclicRedundancyCheck.h" />
     <ClInclude Include="..\..\DumpRenderTree.h" />

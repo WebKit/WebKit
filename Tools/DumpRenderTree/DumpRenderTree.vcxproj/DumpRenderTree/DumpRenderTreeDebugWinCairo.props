@@ -9,4 +9,9 @@
     <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\WebKit\WebKitCFLite.props" />
     <Import Project="DumpRenderTreeCommon.props" />
   </ImportGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\cairo;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
 </Project>
