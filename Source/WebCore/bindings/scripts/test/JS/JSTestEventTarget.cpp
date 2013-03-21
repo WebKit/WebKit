@@ -234,7 +234,7 @@ EncodedJSValue JSC_HOST_CALL jsTestEventTargetPrototypeFunctionItem(ExecState* e
     TestEventTarget* impl = static_cast<TestEventTarget*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    int index(exec->argument(0).toUInt32(exec));
+    int index(toUInt32(exec, exec->argument(0), NormalConversion));
     if (index < 0) {
         setDOMException(exec, INDEX_SIZE_ERR);
         return JSValue::encode(jsUndefined());

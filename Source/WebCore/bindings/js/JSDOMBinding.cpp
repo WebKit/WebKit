@@ -2,6 +2,7 @@
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Samuel Weinig <sam@webkit.org>
+ *  Copyright (C) 2013 Michael Pruett <michael@68k.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -257,6 +258,87 @@ Structure* cacheDOMStructure(JSDOMGlobalObject* globalObject, Structure* structu
     JSDOMStructureMap& structures = globalObject->structures();
     ASSERT(!structures.contains(classInfo));
     return structures.set(classInfo, WriteBarrier<Structure>(globalObject->globalData(), globalObject, structure)).iterator->value.get();
+}
+
+static const int32_t kMaxInt32 = 0x7fffffff;
+static const int32_t kMinInt32 = -kMaxInt32 - 1;
+static const uint32_t kMaxUInt32 = 0xffffffffU;
+static const int64_t kJSMaxInteger = 0x20000000000000LL - 1; // 2^53 - 1, largest integer exactly representable in ECMAScript.
+
+static double enforceRange(ExecState* exec, double x, double minimum, double maximum)
+{
+    if (std::isnan(x) || std::isinf(x)) {
+        throwTypeError(exec);
+        return 0;
+    }
+    x = trunc(x);
+    if (x < minimum || x > maximum) {
+        throwTypeError(exec);
+        return 0;
+    }
+    return x;
+}
+
+// http://www.w3.org/TR/WebIDL/#es-long
+int32_t toInt32EnforceRange(ExecState* exec, JSValue value)
+{
+    if (value.isInt32())
+        return value.toInt32(exec);
+
+    double x = value.toNumber(exec);
+    if (exec->hadException())
+        return 0;
+    return enforceRange(exec, x, kMinInt32, kMaxInt32);
+}
+
+// http://www.w3.org/TR/WebIDL/#es-unsigned-long
+uint32_t toUInt32EnforceRange(ExecState* exec, JSValue value)
+{
+    if (value.isUInt32())
+        return value.toUInt32(exec);
+
+    double x = value.toNumber(exec);
+    if (exec->hadException())
+        return 0;
+    return enforceRange(exec, x, 0, kMaxUInt32);
+}
+
+// http://www.w3.org/TR/WebIDL/#es-long-long
+int64_t toInt64(ExecState* exec, JSValue value, IntegerConversionConfiguration configuration)
+{
+    if (value.isInt32())
+        return value.toInt32(exec);
+
+    double x = value.toNumber(exec);
+    if (exec->hadException())
+        return 0;
+
+    if (configuration == EnforceRange)
+        return enforceRange(exec, x, -kJSMaxInteger, kJSMaxInteger);
+
+    // Map NaNs and +/-Infinity to 0; convert finite values modulo 2^64.
+    unsigned long long n;
+    doubleToInteger(x, n);
+    return n;
+}
+
+// http://www.w3.org/TR/WebIDL/#es-unsigned-long-long
+uint64_t toUInt64(ExecState* exec, JSValue value, IntegerConversionConfiguration configuration)
+{
+    if (value.isUInt32())
+        return value.toUInt32(exec);
+
+    double x = value.toNumber(exec);
+    if (exec->hadException())
+        return 0;
+
+    if (configuration == EnforceRange)
+        return enforceRange(exec, x, 0, kJSMaxInteger);
+
+    // Map NaNs and +/-Infinity to 0; convert finite values modulo 2^64.
+    unsigned long long n;
+    doubleToInteger(x, n);
+    return n;
 }
 
 } // namespace WebCore

@@ -1,3 +1,12 @@
+2013-03-20  Michael Pruett  <michael@68k.org>
+
+        [JSC] Implement EnforceRange IDL attribute for integer conversions
+        https://bugs.webkit.org/show_bug.cgi?id=112506
+
+        Reviewed by Kentaro Hara.
+
+        * Source/autotools/symbols.filter:
+
 2013-03-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Build ANGLE sources into a separate library from libWebCore.la

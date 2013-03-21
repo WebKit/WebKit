@@ -3206,10 +3206,12 @@ sub JSValueToNative
     return "$value.toBoolean(exec)" if $type eq "boolean";
     return "$value.toNumber(exec)" if $type eq "double";
     return "$value.toFloat(exec)" if $type eq "float";
-    # FIXME: Add [EnforceRange] support
-    return "$value.toInt32(exec)" if $type eq "long" or $type eq "short";
-    return "$value.toUInt32(exec)" if $type eq "unsigned long" or $type eq "unsigned short";
-    return "static_cast<$type>($value.toInteger(exec))" if $type eq "long long" or $type eq "unsigned long long";
+
+    my $intConversion = $signature->extendedAttributes->{"EnforceRange"} ? "EnforceRange" : "NormalConversion";
+    return "toInt32(exec, $value, $intConversion)" if $type eq "long" or $type eq "short";
+    return "toUInt32(exec, $value, $intConversion)" if $type eq "unsigned long" or $type eq "unsigned short";
+    return "toInt64(exec, $value, $intConversion)" if $type eq "long long";
+    return "toUInt64(exec, $value, $intConversion)" if $type eq "unsigned long long";
 
     return "valueToDate(exec, $value)" if $type eq "Date";
     return "static_cast<Range::CompareHow>($value.toInt32(exec))" if $type eq "CompareHow";

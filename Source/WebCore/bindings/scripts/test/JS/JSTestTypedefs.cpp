@@ -280,7 +280,7 @@ void setJSTestTypedefsUnsignedLongLongAttr(ExecState* exec, JSObject* thisObject
     UNUSED_PARAM(exec);
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(thisObject);
     TestTypedefs* impl = static_cast<TestTypedefs*>(castedThis->impl());
-    impl->setUnsignedLongLongAttr(static_cast<unsigned long long>(value.toInteger(exec)));
+    impl->setUnsignedLongLongAttr(toUInt64(exec, value, NormalConversion));
 }
 
 
@@ -298,7 +298,7 @@ void setJSTestTypedefsAttrWithGetterException(ExecState* exec, JSObject* thisObj
     UNUSED_PARAM(exec);
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(thisObject);
     TestTypedefs* impl = static_cast<TestTypedefs*>(castedThis->impl());
-    impl->setAttrWithGetterException(value.toInt32(exec));
+    impl->setAttrWithGetterException(toInt32(exec, value, NormalConversion));
 }
 
 
@@ -308,7 +308,7 @@ void setJSTestTypedefsAttrWithSetterException(ExecState* exec, JSObject* thisObj
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(thisObject);
     TestTypedefs* impl = static_cast<TestTypedefs*>(castedThis->impl());
     ExceptionCode ec = 0;
-    impl->setAttrWithSetterException(value.toInt32(exec), ec);
+    impl->setAttrWithSetterException(toInt32(exec, value, NormalConversion), ec);
     setDOMException(exec, ec);
 }
 
