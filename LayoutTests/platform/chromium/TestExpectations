@@ -960,7 +960,7 @@ webkit.org/b/109272 platform/chromium/fast/forms/calendar-picker/calendar-picker
 webkit.org/b/109272 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance.html [ Skip ]
 webkit.org/b/109272 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-mouse-operations.html [ Skip ]
 
-webkit.org/b/112923 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-month-popup.html [ Pass Failure ]
+webkit.org/b/112923 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-month-popup.html [ Pass ImageOnlyFailure ]
 
 # Skip until 109528 is fixed.
 #webkit.org/b/109528 platform/chromium/fast/forms/suggestion-picker/date-suggestion-picker-appearance-with-scroll-bar.html [ Skip ]
