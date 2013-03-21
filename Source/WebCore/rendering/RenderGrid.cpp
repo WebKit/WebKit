@@ -435,17 +435,25 @@ void RenderGrid::resolveContentBasedTrackSizingFunctions(TrackSizingDirection di
 void RenderGrid::resolveContentBasedTrackSizingFunctionsForItems(TrackSizingDirection direction, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks, RenderBox* gridItem, FilterFunction filterFunction, SizingFunction sizingFunction, AccumulatorGetter trackGetter, AccumulatorGrowFunction trackGrowthFunction)
 {
     const GridCoordinate coordinate = cachedGridCoordinate(gridItem);
-    // FIXME: If the grid item spans several grid tracks, we should handle all of them, not just the first one.
-    const size_t trackIndex = (direction == ForColumns) ? coordinate.columns.initialPositionIndex : coordinate.rows.initialPositionIndex;
-    const GridTrackSize& trackSize = gridTrackSize(direction, trackIndex);
-    if (!(trackSize.*filterFunction)())
-        return;
+    const size_t initialTrackIndex = (direction == ForColumns) ? coordinate.columns.initialPositionIndex : coordinate.rows.initialPositionIndex;
+    const size_t finalTrackIndex = (direction == ForColumns) ? coordinate.columns.finalPositionIndex : coordinate.rows.finalPositionIndex;
 
-    GridTrack& track = (direction == ForColumns) ? columnTracks[trackIndex] : rowTracks[trackIndex];
-    LayoutUnit contentSize = (this->*sizingFunction)(gridItem, direction, columnTracks);
-    LayoutUnit additionalBreadthSpace = contentSize - (track.*trackGetter)();
     Vector<GridTrack*> tracks;
-    tracks.append(&track);
+    for (size_t trackIndex = initialTrackIndex; trackIndex <= finalTrackIndex; ++trackIndex) {
+        const GridTrackSize& trackSize = gridTrackSize(direction, trackIndex);
+        if (!(trackSize.*filterFunction)())
+            continue;
+
+        GridTrack& track = (direction == ForColumns) ? columnTracks[trackIndex] : rowTracks[trackIndex];
+        tracks.append(&track);
+    }
+
+    LayoutUnit additionalBreadthSpace = (this->*sizingFunction)(gridItem, direction, columnTracks);
+    for (size_t trackIndexForSpace = initialTrackIndex; trackIndexForSpace <= finalTrackIndex; ++trackIndexForSpace) {
+        GridTrack& track = (direction == ForColumns) ? columnTracks[trackIndexForSpace] : rowTracks[trackIndexForSpace];
+        additionalBreadthSpace -= (track.*trackGetter)();
+    }
+
     // FIXME: We should pass different values for |tracksForGrowthAboveMaxBreadth|.
     distributeSpaceToTracks(tracks, &tracks, trackGetter, trackGrowthFunction, additionalBreadthSpace);
 }

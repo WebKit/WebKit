@@ -2,7 +2,6 @@ This test checks that changing the grid-column on a grid item properly repaint. 
 (repaint rects
   (rect 8 38 100 50)
   (rect 8 38 50 50)
-  (rect 8 38 100 50)
   (rect 208 38 50 50)
 )
 
