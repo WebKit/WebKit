@@ -1,3 +1,17 @@
+2013-03-21  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Add isOrphan() to the WebLayer API
+        https://bugs.webkit.org/show_bug.cgi?id=112649
+
+        Reviewed by James Robinson.
+
+        This method will be used by WebMediaPlayerClientImpl to tell
+        if the compositing video layer is currently being used to
+        display the video content or not.
+
+        * chromium/public/WebLayer.h:
+        (WebLayer):
+
 2013-03-21  Dominic Mazzoni  <dmazzoni@google.com>
 
         Implement Web Speech Synthesis for Chromium

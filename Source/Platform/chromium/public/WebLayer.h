@@ -202,6 +202,9 @@ public:
     // Forces this layer to use a render surface. There is no benefit in doing
     // so, but this is to facilitate benchmarks and tests.
     virtual void setForceRenderSurface(bool) = 0;
+
+    // True if the layer is not part of a tree attached to a WebLayerTreeView.
+    virtual bool isOrphan() const = 0;
 };
 
 } // namespace WebKit
