@@ -50,10 +50,10 @@ public:
 TEST(WebCore, BitmapImageEmptyFrameTest)
 {
     SIZE sz = {16, 16};
-    BitmapImageTest bitmapImageTest;
+    RefPtr<BitmapImageTest> bitmapImageTest = adoptRef(new BitmapImageTest);
     int bits[256];
     HBITMAP hBitmap = CreateBitmap(16, 16, 1, 32, bits);
-    bitmapImageTest.getHBITMAPOfSize(hBitmap, &sz);
+    bitmapImageTest->getHBITMAPOfSize(hBitmap, &sz);
 }
 
 } // namespace TestWebKitAPI
