@@ -580,55 +580,6 @@ webkit.org/b/98895 perf/accessibility-title-ui-element.html [ Skip ]
 # not SKIP, just WONTFIX.
 webkit.org/b/66218 fast/harness/sample-fail-mismatch-reftest.html [ WontFix ImageOnlyFailure ]
 
-# These tests need to be rebaselined after https://bugs.webkit.org/show_bug.cgi?id=99984
-webkit.org/b/99984 svg/as-image/image-preserveAspectRatio-all.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/99984 svg/filters/feImage-preserveAspectRatio-all.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/99984 svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr.html [ ImageOnlyFailure Pass ]
-webkit.org/b/99984 svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop.html [ ImageOnlyFailure Pass ]
-
-# Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=105437
-webkit.org/b/105437 svg/W3C-SVG-1.1-SE/filters-image-03-f.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/W3C-SVG-1.1-SE/filters-image-05-f.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/W3C-SVG-1.1/filters-displace-01-f.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/W3C-SVG-1.1/filters-image-01-b.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/dynamic-updates/SVGFEDisplacementMapElement-dom-in-attr.html [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/dynamic-updates/SVGFEDisplacementMapElement-dom-in2-attr.html [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/dynamic-updates/SVGFEDisplacementMapElement-dom-scale-attr.html [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/dynamic-updates/SVGFEDisplacementMapElement-dom-xChannelSelector-attr.html [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/dynamic-updates/SVGFEDisplacementMapElement-dom-yChannelSelector-attr.html [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-in-prop.html [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-in2-prop.html [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-scale-prop.html [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-xChannelSelector-prop.html [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/dynamic-updates/SVGFEDisplacementMapElement-svgdom-yChannelSelector-prop.html [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr.html [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop.html [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-objectBoundingBox.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-userSpaceOnUse.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-objectBoundingBox.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-userSpaceOnUse.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-late-indirect-update.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/custom/feDisplacementMap-01.svg [ Missing ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-animated-transform-on-target-rect.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-multiple-targets-id-change.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-position.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-preserveAspectratio.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-reference-invalidation.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-subregions.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-subregions-preseveAspectRatio-none.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-subregions-preseveAspectRatio-none-with-viewBox.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-target-add-to-document.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-target-attribute-change.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-target-attribute-change-with-use-indirection-2.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-target-attribute-change-with-use-indirection.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-target-changes-id.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-target-id-change.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-target-inline-style-change.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-target-property-change.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-target-reappend-to-document.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-target-remove-from-document.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/105437 svg/filters/feImage-target-style-change.svg [ ImageOnlyFailure Pass ]
-
 # -------------------------------------------------------------------------------------
 # Only the Chromium port supports the features below, but its DRT implementation is not
 # capable of running those tests either. They are currently skipped by all ports.
@@ -1556,10 +1507,6 @@ webkit.org/b/100324 css3/supports-dom-api.html
 # fast/selectors/unqualified-hover-quirks.html or itself.
 webkit.org/b/10890 fast/selectors/unqualified-hover-strict.html [ Failure Pass ]
 
-# May need rebaseline
-webkit.org/b/23166 fast/css/background-clip-radius-values.html [ Pass ImageOnlyFailure ]
-webkit.org/b/23166 ietestcenter/css3/bordersbackgrounds/border-radius-clip-002.htm [ Pass ImageOnlyFailure ]
-
 # New inspector/profiler/memory-instrumentation-canvas.html fails on JSC platforms
 webkit.org/b/99001 inspector/profiler/memory-instrumentation-canvas.html
 webkit.org/b/73936 inspector/profiler/canvas2d/canvas-has-uninstrumented-canvases.html
@@ -1576,17 +1523,6 @@ webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing [ Skip ]
 
 # Regression after r131640.
 webkit.org/b/99691 gamepad/gamepad-out-of-range-crasher.html [ Failure ]
-
-# These tests need to be rebaselined after https://bugs.webkit.org/show_bug.cgi?id=65643
-webkit.org/b/101400 svg/css/shadow-changes.svg
-webkit.org/b/101400 svg/repaint/repaint-webkit-svg-shadow.svg
-webkit.org/b/101400 svg/css/composite-shadow-example.html
-webkit.org/b/101400 svg/css/composite-shadow-with-opacity.html
-webkit.org/b/101400 fast/repaint/moving-shadow-on-container.html
-webkit.org/b/101400 svg/css/composite-shadow-text.svg
-webkit.org/b/101400 svg/custom/simple-text-double-shadow.svg
-webkit.org/b/101400 svg/css/clippath-with-shadow.svg
-webkit.org/b/101400 svg/css/arrow-with-shadow.svg
 
 # Resource Timing is not enable yet, skip it.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
@@ -1769,13 +1705,6 @@ webkit.org/b/106992 http/tests/misc/object-embedding-svg-delayed-size-negotiatio
 
 webkit.org/b/107375 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 
-# Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=14664
-webkit.org/b/107476 fast/block/float/024.html [ Failure ]
-webkit.org/b/107476 fast/block/margin-collapse/empty-clear-blocks.html [ Failure ]
-
-# Needs a rebaseline after WK108429 lands.
-webkit.org/b/108429 svg/custom/text-ctm.svg [ Pass Failure ]
-
 # New test, needs platform results
 webkit.org/b/106221 svg/filters/filter-hidden-content.svg [ Failure Pass ]
 
@@ -1839,10 +1768,6 @@ webkit.org/b/110694 html5lib/generated/run-domjs-unsafe-data.html [ Failure ]
 webkit.org/b/110694 html5lib/generated/run-pending-spec-changes-plain-text-unsafe-data.html [ Failure ]
 webkit.org/b/110694 html5lib/generated/run-plain-text-unsafe-data.html [ Failure ]
 
-# Need rebaseline
-webkit.org/b/110654 css2.1/20110323/replaced-elements-001.htm [ Failure ]
-webkit.org/b/110654 svg/custom/foreign-object-skew.svg [ Failure ]
-webkit.org/b/110654 tables/mozilla/bugs/bug92647-2.html [ Failure ]
 # New test
 webkit.org/b/110654 css3/flexbox/button.html [ Failure ]
 
