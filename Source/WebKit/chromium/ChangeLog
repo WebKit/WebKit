@@ -1,3 +1,10 @@
+2013-03-20  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled Chromium DEPS to r189497.  Requested by
+        "Dana Jansens" <danakj@chromium.org> via sheriffbot.
+
+        * DEPS:
+
 2013-03-20  Tien-Ren Chen  <trchen@chromium.org>
 
         Correct coordinated scrolling for RTL iframe and overflow:scroll
