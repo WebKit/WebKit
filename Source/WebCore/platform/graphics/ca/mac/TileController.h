@@ -123,6 +123,7 @@ private:
     virtual bool aggressivelyRetainsTiles() const OVERRIDE { return m_aggressivelyRetainsTiles; }
     virtual void setUnparentsOffscreenTiles(bool flag) OVERRIDE { m_unparentsOffscreenTiles = flag; }
     virtual bool unparentsOffscreenTiles() const OVERRIDE { return m_unparentsOffscreenTiles; }
+    virtual double retainedTileBackingStoreMemory() const OVERRIDE;
     virtual IntRect tileCoverageRect() const OVERRIDE;
     virtual CALayer *tiledScrollingIndicatorLayer() OVERRIDE;
     virtual void setScrollingModeIndication(ScrollingModeIndication) OVERRIDE;

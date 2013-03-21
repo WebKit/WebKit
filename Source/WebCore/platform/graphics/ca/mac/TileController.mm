@@ -878,6 +878,22 @@ IntRect TileController::tileGridExtent() const
     return IntRect(topLeft.x(), topLeft.y(), bottomRight.x() - topLeft.x() + 1, bottomRight.y() - topLeft.y() + 1);
 }
 
+double TileController::retainedTileBackingStoreMemory() const
+{
+    double totalBytes = 0;
+    
+    for (TileMap::const_iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
+        const TileInfo& tileInfo = it->value;
+        if ([tileInfo.layer.get() superlayer]) {
+            CGRect bounds = [tileInfo.layer.get() bounds];
+            double contentsScale = [tileInfo.layer.get() contentsScale];
+            totalBytes += 4 * bounds.size.width * contentsScale * bounds.size.height * contentsScale;
+        }
+    }
+
+    return totalBytes;
+}
+
 // Return the rect in layer coords, not tile coords.
 IntRect TileController::tileCoverageRect() const
 {
