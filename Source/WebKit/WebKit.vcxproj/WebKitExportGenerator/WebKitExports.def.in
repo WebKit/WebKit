@@ -420,6 +420,10 @@ EXPORTS
         ?captionPreferences@PageGroup@WebCore@@QAEPAVCaptionUserPreferences@2@XZ
 #endif
         ?initGroup@Page@WebCore@@AAEXXZ
+        ?toInt32EnforceRange@WebCore@@YAHPAVExecState@JSC@@VJSValue@3@@Z
+        ?toInt64@WebCore@@YA_JPAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z
+        ?toUInt32EnforceRange@WebCore@@YAIPAVExecState@JSC@@VJSValue@3@@Z
+        ?toUInt64@WebCore@@YA_KPAVExecState@JSC@@VJSValue@3@W4IntegerConversionConfiguration@1@@Z
 
 #if ENABLE(WORKERS)
         ?workerThreadCount@WorkerThread@WebCore@@SAIXZ
