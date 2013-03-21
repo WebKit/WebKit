@@ -41,7 +41,6 @@ public:
     virtual ~IDBDatabaseCallbacksProxy();
 
     virtual void onForcedClose();
-    virtual void onVersionChange(const String& requestedVersion);
     virtual void onVersionChange(int64_t oldVersion, int64_t newVersion);
 
     virtual void onAbort(int64_t transactionId, PassRefPtr<WebCore::IDBDatabaseError>);

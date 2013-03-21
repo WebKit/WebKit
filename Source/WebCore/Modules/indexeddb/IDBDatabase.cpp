@@ -311,18 +311,6 @@ void IDBDatabase::onVersionChange(int64_t oldVersion, int64_t newVersion)
     enqueueEvent(IDBVersionChangeEvent::create(IDBAny::create(oldVersion), newVersionAny.release(), eventNames().versionchangeEvent));
 }
 
-void IDBDatabase::onVersionChange(const String& newVersion)
-{
-    if (m_contextStopped || !scriptExecutionContext())
-        return;
-
-    if (m_closePending)
-        return;
-
-    RefPtr<IDBAny> newVersionAny = newVersion.isEmpty() ? IDBAny::createNull() : IDBAny::createString(newVersion);
-    enqueueEvent(IDBVersionChangeEvent::create(version(), newVersionAny.release(), eventNames().versionchangeEvent));
-}
-
 void IDBDatabase::enqueueEvent(PassRefPtr<Event> event)
 {
     ASSERT(!m_contextStopped);
