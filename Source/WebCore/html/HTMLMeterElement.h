@@ -71,8 +71,6 @@ private:
 
     virtual bool supportLabels() const OVERRIDE { return true; }
 
-    virtual bool supportsFocus() const;
-
     virtual bool recalcWillValidate() const { return false; }
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const OVERRIDE;

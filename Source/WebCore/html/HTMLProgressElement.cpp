@@ -82,11 +82,6 @@ RenderProgress* HTMLProgressElement::renderProgress() const
     return static_cast<RenderProgress*>(renderObject);
 }
 
-bool HTMLProgressElement::supportsFocus() const
-{
-    return HTMLElement::supportsFocus() && !disabled();
-}
-
 void HTMLProgressElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == valueAttr)

@@ -71,11 +71,6 @@ bool HTMLMeterElement::childShouldCreateRenderer(const NodeRenderingContext& chi
     return childContext.isOnUpperEncapsulationBoundary() && HTMLElement::childShouldCreateRenderer(childContext);
 }
 
-bool HTMLMeterElement::supportsFocus() const
-{
-    return HTMLElement::supportsFocus() && !disabled();
-}
-
 void HTMLMeterElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
 {
     if (name == valueAttr || name == minAttr || name == maxAttr || name == lowAttr || name == highAttr || name == optimumAttr)
