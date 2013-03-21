@@ -51,10 +51,10 @@ class DateTimeDayFieldElement : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeDayFieldElement);
 
 public:
-    static PassRefPtr<DateTimeDayFieldElement> create(Document*, FieldOwner&, const String& placeholder, int minimum, int maximum);
+    static PassRefPtr<DateTimeDayFieldElement> create(Document*, FieldOwner&, const String& placeholder, const Range&);
 
 private:
-    DateTimeDayFieldElement(Document*, FieldOwner&, const String& placeholder, int minimum, int maximum);
+    DateTimeDayFieldElement(Document*, FieldOwner&, const String& placeholder, const Range&);
 
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
@@ -66,7 +66,7 @@ class DateTimeHourFieldElementBase : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeHourFieldElementBase);
 
 protected:
-    DateTimeHourFieldElementBase(Document*, FieldOwner&, const Range&, const Range& hardLimits, const DateTimeNumericFieldElement::Parameters&);
+    DateTimeHourFieldElementBase(Document*, FieldOwner&, const Range&, const Range& hardLimits, const Step&);
     void initialize();
 
 private:
@@ -79,10 +79,10 @@ class DateTimeHour11FieldElement : public DateTimeHourFieldElementBase {
     WTF_MAKE_NONCOPYABLE(DateTimeHour11FieldElement);
 
 public:
-    static PassRefPtr<DateTimeHour11FieldElement> create(Document*, FieldOwner&, int minimumHour23, int maximumHour23, const DateTimeNumericFieldElement::Parameters&);
+    static PassRefPtr<DateTimeHour11FieldElement> create(Document*, FieldOwner&, const Range&, const Step&);
 
 private:
-    DateTimeHour11FieldElement(Document*, FieldOwner&, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters&);
+    DateTimeHour11FieldElement(Document*, FieldOwner&, const Range& hour23Range, const Step&);
 
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
@@ -93,10 +93,10 @@ class DateTimeHour12FieldElement : public DateTimeHourFieldElementBase {
     WTF_MAKE_NONCOPYABLE(DateTimeHour12FieldElement);
 
 public:
-    static PassRefPtr<DateTimeHour12FieldElement> create(Document*, FieldOwner&, int minimumHour23, int maximumHour23, const DateTimeNumericFieldElement::Parameters&);
+    static PassRefPtr<DateTimeHour12FieldElement> create(Document*, FieldOwner&, const Range&, const Step&);
 
 private:
-    DateTimeHour12FieldElement(Document*, FieldOwner&, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters&);
+    DateTimeHour12FieldElement(Document*, FieldOwner&, const Range& hour23Range, const Step&);
 
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
@@ -107,10 +107,10 @@ class DateTimeHour23FieldElement : public DateTimeHourFieldElementBase {
     WTF_MAKE_NONCOPYABLE(DateTimeHour23FieldElement);
 
 public:
-    static PassRefPtr<DateTimeHour23FieldElement> create(Document*, FieldOwner&, int minimumHour23, int maximumHour23, const DateTimeNumericFieldElement::Parameters&);
+    static PassRefPtr<DateTimeHour23FieldElement> create(Document*, FieldOwner&, const Range&, const Step&);
 
 private:
-    DateTimeHour23FieldElement(Document*, FieldOwner&, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters&);
+    DateTimeHour23FieldElement(Document*, FieldOwner&, const Range& hour23Range, const Step&);
 
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
@@ -121,10 +121,10 @@ class DateTimeHour24FieldElement : public DateTimeHourFieldElementBase {
     WTF_MAKE_NONCOPYABLE(DateTimeHour24FieldElement);
 
 public:
-    static PassRefPtr<DateTimeHour24FieldElement> create(Document*, FieldOwner&, int minimumHour23, int maximumHour23, const DateTimeNumericFieldElement::Parameters&);
+    static PassRefPtr<DateTimeHour24FieldElement> create(Document*, FieldOwner&, const Range&, const Step&);
 
 private:
-    DateTimeHour24FieldElement(Document*, FieldOwner&, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters&);
+    DateTimeHour24FieldElement(Document*, FieldOwner&, const Range& hour23Range, const Step&);
 
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
@@ -135,10 +135,10 @@ class DateTimeMillisecondFieldElement : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeMillisecondFieldElement);
 
 public:
-    static PassRefPtr<DateTimeMillisecondFieldElement> create(Document*, FieldOwner&, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters&);
+    static PassRefPtr<DateTimeMillisecondFieldElement> create(Document*, FieldOwner&, const Range&, const Step&);
 
 private:
-    DateTimeMillisecondFieldElement(Document*, FieldOwner&, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters&);
+    DateTimeMillisecondFieldElement(Document*, FieldOwner&, const Range&, const Step&);
 
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
@@ -150,10 +150,10 @@ class DateTimeMinuteFieldElement : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeMinuteFieldElement);
 
 public:
-    static PassRefPtr<DateTimeMinuteFieldElement> create(Document*, FieldOwner&, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters&);
+    static PassRefPtr<DateTimeMinuteFieldElement> create(Document*, FieldOwner&, const Range&, const Step&);
 
 private:
-    DateTimeMinuteFieldElement(Document*, FieldOwner&, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters&);
+    DateTimeMinuteFieldElement(Document*, FieldOwner&, const Range&, const Step&);
 
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
@@ -165,10 +165,10 @@ class DateTimeMonthFieldElement : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeMonthFieldElement);
 
 public:
-    static PassRefPtr<DateTimeMonthFieldElement> create(Document*, FieldOwner&, const String& placeholder, int minimum, int maximum);
+    static PassRefPtr<DateTimeMonthFieldElement> create(Document*, FieldOwner&, const String& placeholder, const Range&);
 
 private:
-    DateTimeMonthFieldElement(Document*, FieldOwner&, const String& placeholder, int minimum, int maximum);
+    DateTimeMonthFieldElement(Document*, FieldOwner&, const String& placeholder, const Range&);
 
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
@@ -180,10 +180,10 @@ class DateTimeSecondFieldElement : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeSecondFieldElement);
 
 public:
-    static PassRefPtr<DateTimeSecondFieldElement> create(Document*, FieldOwner&, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters&);
+    static PassRefPtr<DateTimeSecondFieldElement> create(Document*, FieldOwner&, const Range&, const Step&);
 
 private:
-    DateTimeSecondFieldElement(Document*, FieldOwner&, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters&);
+    DateTimeSecondFieldElement(Document*, FieldOwner&, const Range&, const Step&);
 
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;
@@ -210,10 +210,10 @@ class DateTimeWeekFieldElement : public DateTimeNumericFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeWeekFieldElement);
 
 public:
-    static PassRefPtr<DateTimeWeekFieldElement> create(Document*, FieldOwner&, int minimum, int maximum);
+    static PassRefPtr<DateTimeWeekFieldElement> create(Document*, FieldOwner&, const Range&);
 
 private:
-    DateTimeWeekFieldElement(Document*, FieldOwner&, int minimum, int maximum);
+    DateTimeWeekFieldElement(Document*, FieldOwner&, const Range&);
 
     // DateTimeFieldElement functions.
     virtual void populateDateTimeFieldsState(DateTimeFieldsState&) OVERRIDE FINAL;

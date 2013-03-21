@@ -42,23 +42,24 @@ class DateTimeNumericFieldElement : public DateTimeFieldElement {
     WTF_MAKE_NONCOPYABLE(DateTimeNumericFieldElement);
 
 public:
-    struct Parameters {
-        Parameters(int step = 1, int stepBase = 0) : step(step), stepBase(stepBase) { }
+    struct Step {
+        Step(int step = 1, int stepBase = 0) : step(step), stepBase(stepBase) { }
         int step;
         int stepBase;
     };
 
-protected:
     struct Range {
-        Range(int minimum, int maximum);
+        Range(int minimum, int maximum) : minimum(minimum), maximum(maximum) { }
         int clampValue(int) const;
         bool isInRange(int) const;
+        bool isSingleton() const { return minimum == maximum; }
 
-        int maximum;
         int minimum;
+        int maximum;
     };
 
-    DateTimeNumericFieldElement(Document*, FieldOwner&, const Range&, const Range& hardLimits, const String& placeholder, const Parameters& = Parameters());
+protected:
+    DateTimeNumericFieldElement(Document*, FieldOwner&, const Range&, const Range& hardLimits, const String& placeholder, const Step& = Step());
 
     int clampValue(int value) const { return m_range.clampValue(value); }
     virtual int defaultValueForStepDown() const;
@@ -92,10 +93,9 @@ private:
     const String m_placeholder;
     const Range m_range;
     const Range m_hardLimits;
+    const Step m_step;
     int m_value;
     bool m_hasValue;
-    int m_step;
-    int m_stepBase;
     mutable StringBuilder m_typeAheadBuffer;
 };
 

@@ -40,13 +40,6 @@ namespace WebCore {
 
 static const DOMTimeStamp typeAheadTimeout = 1000;
 
-DateTimeNumericFieldElement::Range::Range(int minimum, int maximum)
-    : maximum(maximum)
-    , minimum(minimum)
-{
-    ASSERT(minimum <= maximum);
-}
-
 int DateTimeNumericFieldElement::Range::clampValue(int value) const
 {
     return std::min(std::max(value, minimum), maximum);
@@ -59,18 +52,19 @@ bool DateTimeNumericFieldElement::Range::isInRange(int value) const
 
 // ----------------------------
 
-DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document* document, FieldOwner& fieldOwner, const Range& range, const Range& hardLimits, const String& placeholder, const DateTimeNumericFieldElement::Parameters& parameters)
+DateTimeNumericFieldElement::DateTimeNumericFieldElement(Document* document, FieldOwner& fieldOwner, const Range& range, const Range& hardLimits, const String& placeholder, const DateTimeNumericFieldElement::Step& step)
     : DateTimeFieldElement(document, fieldOwner)
     , m_lastDigitCharTime(0)
     , m_placeholder(placeholder)
     , m_range(range)
     , m_hardLimits(hardLimits)
+    , m_step(step)
     , m_value(0)
     , m_hasValue(false)
-    , m_step(parameters.step)
-    , m_stepBase(parameters.stepBase)
 {
-    ASSERT(m_step);
+    ASSERT(m_step.step);
+    ASSERT(m_range.minimum <= m_range.maximum);
+    ASSERT(m_hardLimits.minimum <= m_hardLimits.maximum);
 
     // We show a direction-neutral string such as "--" as a placeholder. It
     // should follow the direction of numeric values.
@@ -228,22 +222,22 @@ String DateTimeNumericFieldElement::visibleValue() const
 
 int DateTimeNumericFieldElement::roundDown(int n) const
 {
-    n -= m_stepBase;
+    n -= m_step.stepBase;
     if (n >= 0)
-        n = n / m_step * m_step;
+        n = n / m_step.step * m_step.step;
     else
-        n = -((-n + m_step - 1) / m_step * m_step);
-    return n + m_stepBase;
+        n = -((-n + m_step.step - 1) / m_step.step * m_step.step);
+    return n + m_step.stepBase;
 }
 
 int DateTimeNumericFieldElement::roundUp(int n) const
 {
-    n -= m_stepBase;
+    n -= m_step.stepBase;
     if (n >= 0)
-        n = (n + m_step - 1) / m_step * m_step;
+        n = (n + m_step.step - 1) / m_step.step * m_step.step;
     else
-        n = -(-n / m_step * m_step);
-    return n + m_stepBase;
+        n = -(-n / m_step.step * m_step.step);
+    return n + m_step.stepBase;
 }
 
 } // namespace WebCore
