@@ -4344,8 +4344,6 @@ webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompos
 # Need rebaseline
 webkit.org/b/110654 [ Mac Win ] css2.1/20110323/replaced-elements-001.htm [ Failure ]
 webkit.org/b/110654 [ Win ] tables/mozilla/bugs/bug92647-2.html [ Failure ]
-# New test
-webkit.org/b/110654 [ Mac Win ] css3/flexbox/button.html [ Failure ]
 
 # This is possibly a bug in the version of fontconfig on Precise, not sure.
 webkit.org/b/110915 [ Linux ] platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html [ Failure Pass ]
@@ -4407,10 +4405,6 @@ webkit.org/b/91611 media/media-higher-prio-audio-stream.html [ Skip ]
 
 # Flaky assertion failures on debug bots
 webkit.org/b/112369 [ Debug ] inspector/debugger/pause-in-inline-script.html [ Pass Crash Timeout ]
-
-# Need rebaseline
-webkit.org/b/110837 [ Mac ] fast/forms/color/input-appearance-color.html [ Failure ]
-
 
 # Flaky tests
 webkit.org/b/112598 [ Win Mac Linux ] http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure Pass ]
