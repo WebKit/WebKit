@@ -430,11 +430,6 @@ noinst_LTLIBRARIES += \
 	libWebCoreModules.la \
 	libWebCore.la
 
-if ENABLE_INDEXED_DATABASE
-noinst_LTLIBRARIES += \
-	libLevelDB.la
-endif
-
 if ENABLE_SVG
 noinst_LTLIBRARIES += \
 	libWebCoreSVG.la
@@ -509,38 +504,6 @@ libWebCoreModules_la_SOURCES = \
 libWebCoreModules_la_CXXFLAGS = $(libWebCore_la_CXXFLAGS)
 libWebCoreModules_la_CFLAGS = $(libWebCore_la_CFLAGS)
 libWebCoreModules_la_CPPFLAGS = $(libWebCore_la_CPPFLAGS)
-
-libLevelDB_la_CXXFLAGS = $(global_cxxflags)
-libLevelDB_la_CFLAGS = $(global_cflags)
-libLevelDB_la_CPPFLAGS = \
-	$(global_cppflags) \
-	-fno-builtin-memcmp \
-	-I$(srcdir)/Source/ThirdParty/leveldb \
-	-I$(srcdir)/Source/ThirdParty/leveldb/include \
-	-DLEVELDB_PLATFORM_POSIX
-
-if OS_WIN32
-libLevelDB_la_CPPFLAGS += \
-	-DOS_WIN
-else
-libLevelDB_la_CPPFLAGS += \
-	-pthread
-endif
-
-if OS_LINUX
-libLevelDB_la_CPPFLAGS += \
-	-DOS_LINUX
-endif
-
-if OS_FREEBSD
-libLevelDB_la_CPPFLAGS += \
-	-DOS_FREEBSD
-endif
-
-if OS_DARWIN
-libLevelDB_la_CPPFLAGS += \
-	-DOS_MACOSX
-endif
 
 libWebCorePlatform_la_SOURCES = \
 	$(webcore_platform_sources)
