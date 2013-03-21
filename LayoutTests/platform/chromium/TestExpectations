@@ -3915,9 +3915,6 @@ webkit.org/b/106221 svg/filters/filter-hidden-content.svg [ Failure Pass ]
 
 webkit.org/b/98687 fast/css-generated-content/table-row-group-to-inline.html [ Failure ]
 
-# Needs rebaseline after bug https://bugs.webkit.org/show_bug.cgi?id=104462
-webkit.org/b/104595 fast/css/empty-generated-content.html [ Failure ]
-
 # These are real failues due to 95121.
 # This is spilling caused by LANCZOS3 scaling algorithm that samples outside the source rect.
 webkit.org/b/95121 [ Win Mac Android ] fast/images/pixel-crack-image-background-webkit-transform-scale.html [ ImageOnlyFailure ]
@@ -3964,7 +3961,7 @@ crbug.com/172970 fast/events/touch/emulate-touch-events.html [ Failure Pass ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/animated-gif-restored-from-bfcache.html [ Failure ]
 webkit.org/b/94240 [ Linux ] platform/chromium/virtual/deferred/fast/images/color-jpeg-with-color-profile.html [ ImageOnlyFailure ]
 webkit.org/b/94240 [ Android ] platform/chromium/virtual/deferred/fast/images/embed-image.html [ Failure ]
-webkit.org/b/94240 [ Linux Win SnowLeopard ] platform/chromium/virtual/deferred/fast/images/gif-large-checkerboard.html [ ImageOnlyFailure ]
+webkit.org/b/94240 [ Linux Win ] platform/chromium/virtual/deferred/fast/images/gif-large-checkerboard.html [ ImageOnlyFailure ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/gif-loop-count.html [ ImageOnlyFailure ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/pdf-as-image-landscape.html [ WontFix ]
 webkit.org/b/94240 [ Win Mac Android ] platform/chromium/virtual/deferred/fast/images/pixel-crack-image-background-webkit-transform-scale.html [ ImageOnlyFailure ]
