@@ -1,3 +1,19 @@
+2013-03-21  Min Qin  <qinmin@chromium.org>
+
+        Cleanup android media layout test code
+        https://bugs.webkit.org/show_bug.cgi?id=112944
+
+        Reviewed by Adam Barth.
+
+        Chromium change: https://codereview.chromium.org/12892010/
+        The current android layout tests are using WebmediaPlayerInProcessAndroid class.
+        The code path has been largely diverged from that of the WebMediaPlayerImplAndroid.
+        It is not worth the effort to keep the code path, and the layout tests will not reflect the actual behavior on the browser.
+        Instead, we should switch to use content shell for layout tests.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::resetTestController):
+
 2013-03-21  Dirk Pranke  <dpranke@chromium.org>
 
         [chromium] add missing project dependencies to DRT to fix Mac Valgrind

@@ -278,9 +278,6 @@ void TestShell::resetTestController()
     m_testInterfaces->resetAll();
     m_devToolsTestInterfaces->resetAll();
     m_webViewHost->reset();
-#if OS(ANDROID)
-    webkit_support::ReleaseMediaResources();
-#endif
     m_drtDevToolsAgent->reset();
     if (m_drtDevToolsClient)
         m_drtDevToolsClient->reset();
