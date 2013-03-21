@@ -28,7 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// WebThemeControlDRTWin implements the generic rendering of controls
+// WebTestThemeControlWin implements the generic rendering of controls
 // needed by WebThemeEngineDRTWin. See the comments in that class
 // header file for why this class is needed and used.
 //
@@ -36,18 +36,18 @@
 // are optimized for testability, not a pleasing appearance.
 //
 
-#ifndef WebThemeControlDRTWin_h
-#define WebThemeControlDRTWin_h
+#ifndef WebTestThemeControlWin_h
+#define WebTestThemeControlWin_h
 
 #include "third_party/skia/include/core/SkColor.h"
 #include "third_party/skia/include/core/SkRect.h"
-#include <wtf/Noncopyable.h>
 
 // Skia forward declarations
 class SkCanvas;
 
-class WebThemeControlDRTWin {
-    WTF_MAKE_NONCOPYABLE(WebThemeControlDRTWin);
+namespace WebTestRunner {
+
+class WebTestThemeControlWin {
 public:
     // This list of states mostly mirrors the list in WebCore/platform/ThemeTypes.h
     // but is maintained separately since that isn't public and also to minimize
@@ -124,8 +124,8 @@ public:
 
     // Constructs a control of the given size, type and state to draw
     // on to the given canvas.
-    WebThemeControlDRTWin(SkCanvas*, const SkIRect&, Type, State);
-    ~WebThemeControlDRTWin();
+    WebTestThemeControlWin(SkCanvas*, const SkIRect&, Type, State);
+    ~WebTestThemeControlWin();
 
     // Draws the control.
     void draw();
@@ -168,12 +168,7 @@ private:
     // with a border in the default edge color, and then draws another box
     // indented on all four sides by the specified amounts, filled with the
     // inner color and with a border in the default edge color.
-    void nestedBoxes(int indentLeft,
-                     int indentTop,
-                     int indentRight,
-                     int indentBottom,
-                     SkColor outerColor,
-                     SkColor innerColor);
+    void nestedBoxes(int indentLeft, int indentTop, int indentRight, int indentBottom, SkColor outerColor, SkColor innerColor);
 
     // Draws a line between the two points in the given color.
     void line(int x0, int y0, int x1, int y1, SkColor);
@@ -200,4 +195,6 @@ private:
     const int m_height;
 };
 
-#endif // WebThemeControlDRTWin_h
+}
+
+#endif // WebTestThemeControlWin_h

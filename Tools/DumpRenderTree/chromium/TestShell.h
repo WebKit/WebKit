@@ -47,6 +47,7 @@ class WebDevToolsAgentClient;
 class WebFrame;
 class WebThread;
 class WebView;
+class WebThemeEngine;
 class WebURL;
 }
 

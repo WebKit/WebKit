@@ -28,7 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebThemeEngineDRTMac.h"
+#include "WebTestThemeEngineMac.h"
 
 #include <public/WebCanvas.h>
 #include <public/WebRect.h>
@@ -89,7 +89,25 @@ static NSWindow* alwaysInactiveWindow = nil;
 
 @end
 
-void WebThemeEngineDRTMac::paintScrollbarThumb(
+namespace WebTestRunner {
+
+namespace {
+
+ThemeTrackEnableState stateToHIEnableState(WebThemeEngine::State state)
+{
+    switch (state) {
+    case WebThemeEngine::StateDisabled:
+        return kThemeTrackDisabled;
+    case WebThemeEngine::StateInactive:
+        return kThemeTrackInactive;
+    default:
+        return kThemeTrackActive;
+    }
+}
+
+}
+
+void WebTestThemeEngineMac::paintScrollbarThumb(
     WebCanvas* canvas,
     WebThemeEngine::State state,
     WebThemeEngine::Size size,
@@ -103,21 +121,9 @@ void WebThemeEngineDRTMac::paintScrollbarThumb(
         paintNSScrollerScrollbarThumb(canvas, state, size, rect, scrollbarInfo);
 }
 
-static ThemeTrackEnableState stateToHIEnableState(WebThemeEngine::State state)
-{
-    switch (state) {
-    case WebThemeEngine::StateDisabled:
-        return kThemeTrackDisabled;
-    case WebThemeEngine::StateInactive:
-        return kThemeTrackInactive;
-    default:
-        return kThemeTrackActive;
-    }
-}
-
 // Duplicated from webkit/glue/webthemeengine_impl_mac.cc in the downstream
 // Chromium WebThemeEngine implementation.
-void WebThemeEngineDRTMac::paintHIThemeScrollbarThumb(
+void WebTestThemeEngineMac::paintHIThemeScrollbarThumb(
     WebCanvas* canvas,
     WebThemeEngine::State state,
     WebThemeEngine::Size size,
@@ -146,7 +152,7 @@ void WebThemeEngineDRTMac::paintHIThemeScrollbarThumb(
     HIThemeDrawTrack(&trackInfo, 0, cgContext, kHIThemeOrientationNormal);
 }
 
-void WebThemeEngineDRTMac::paintNSScrollerScrollbarThumb(
+void WebTestThemeEngineMac::paintNSScrollerScrollbarThumb(
     WebCanvas* canvas,
     WebThemeEngine::State state,
     WebThemeEngine::Size size,
@@ -188,4 +194,6 @@ void WebThemeEngineDRTMac::paintNSScrollerScrollbarThumb(
     [scroller release];
 
     [NSGraphicsContext restoreGraphicsState];
+}
+
 }

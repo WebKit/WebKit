@@ -1,3 +1,79 @@
+2013-03-20  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move WebThemeEngine implementations to TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=112751
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestRunner/public/WebTestInterfaces.h:
+        (WebKit):
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.cpp:
+        (WebTestRunner::TestInterfaces::themeEngine):
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.h:
+        (WebKit):
+        (TestInterfaces):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestInterfaces.cpp:
+        (WebTestRunner::WebTestInterfaces::themeEngine):
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestThemeControlWin.cpp: Renamed from Tools/DumpRenderTree/chromium/WebThemeControlDRTWin.cpp.
+        (WebTestRunner::WebTestThemeControlWin::WebTestThemeControlWin):
+        (WebTestRunner):
+        (WebTestRunner::WebTestThemeControlWin::~WebTestThemeControlWin):
+        (WebTestRunner::WebTestThemeControlWin::box):
+        (WebTestRunner::WebTestThemeControlWin::line):
+        (WebTestRunner::WebTestThemeControlWin::triangle):
+        (WebTestRunner::WebTestThemeControlWin::roundRect):
+        (WebTestRunner::WebTestThemeControlWin::oval):
+        (WebTestRunner::WebTestThemeControlWin::circle):
+        (WebTestRunner::WebTestThemeControlWin::nestedBoxes):
+        (WebTestRunner::WebTestThemeControlWin::markState):
+        (WebTestRunner::WebTestThemeControlWin::draw):
+        (WebTestRunner::WebTestThemeControlWin::drawTextField):
+        (WebTestRunner::WebTestThemeControlWin::drawProgressBar):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestThemeControlWin.h: Renamed from Tools/DumpRenderTree/chromium/WebThemeControlDRTWin.h.
+        (WebTestRunner):
+        (WebTestThemeControlWin):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestThemeEngineMac.h: Renamed from Tools/DumpRenderTree/chromium/WebThemeEngineDRTMac.h.
+        (WebTestRunner):
+        (WebTestThemeEngineMac):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestThemeEngineMac.mm: Renamed from Tools/DumpRenderTree/chromium/WebThemeEngineDRTMac.mm.
+        (+[FakeActiveWindow alwaysActiveWindow]):
+        (+[FakeActiveWindow alwaysInactiveWindow]):
+        (-[FakeActiveWindow initWithActiveControls:]):
+        (-[FakeActiveWindow _hasActiveControls]):
+        (WebTestRunner::WebTestThemeEngineMac::paintScrollbarThumb):
+        (WebTestRunner):
+        (WebTestRunner::WebTestThemeEngineMac::paintHIThemeScrollbarThumb):
+        (WebTestRunner::WebTestThemeEngineMac::paintNSScrollerScrollbarThumb):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestThemeEngineWin.cpp: Added.
+        (WebTestRunner::WebTestThemeEngineWin::paintButton):
+        (WebTestRunner):
+        (WebTestRunner::WebTestThemeEngineWin::paintMenuList):
+        (WebTestRunner::WebTestThemeEngineWin::paintScrollbarArrow):
+        (WebTestRunner::WebTestThemeEngineWin::paintScrollbarThumb):
+        (WebTestRunner::WebTestThemeEngineWin::paintScrollbarTrack):
+        (WebTestRunner::WebTestThemeEngineWin::paintSpinButton):
+        (WebTestRunner::WebTestThemeEngineWin::paintTextField):
+        (WebTestRunner::WebTestThemeEngineWin::paintTrackbar):
+        (WebTestRunner::WebTestThemeEngineWin::paintProgressBar):
+        (WebTestRunner::WebTestThemeEngineWin::getSize):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestThemeEngineWin.h: Renamed from Tools/DumpRenderTree/chromium/WebThemeEngineDRTWin.h.
+        (WebTestRunner):
+        (WebTestThemeEngineWin):
+        (WebTestRunner::WebTestThemeEngineWin::WebTestThemeEngineWin):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::initialize):
+        * DumpRenderTree/chromium/TestShell.h:
+        (WebKit):
+        * DumpRenderTree/chromium/TestShellMac.mm:
+        (platformInit):
+        * DumpRenderTree/chromium/TestShellWin.cpp:
+        (platformInit):
+        * DumpRenderTree/chromium/WebThemeEngineDRTWin.cpp: Removed.
+
 2013-03-20  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed build fix for TestWebKitAPI under VS2010
