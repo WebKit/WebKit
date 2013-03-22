@@ -1744,7 +1744,7 @@ WebInspector.IDBObjectStoreTreeElement.prototype = {
 
     _clearObjectStore: function()
     {
-        function callback(result) {
+        function callback() {
             this.update(this._objectStore);
         }
         this._model.clearObjectStore(this._databaseId, this._objectStore.name, callback.bind(this));

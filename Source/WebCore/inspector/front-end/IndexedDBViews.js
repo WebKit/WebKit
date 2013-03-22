@@ -354,7 +354,7 @@ WebInspector.IDBDataView.prototype = {
 
     _clearButtonClicked: function(event)
     {
-        function cleared(result) {
+        function cleared() {
             this._clearButton.setEnabled(true);
             this._updateData(true);
         }

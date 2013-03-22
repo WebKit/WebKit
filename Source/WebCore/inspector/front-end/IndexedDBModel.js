@@ -164,7 +164,8 @@ WebInspector.IndexedDBModel.prototype = {
 
     /**
      * @param {WebInspector.IndexedDBModel.DatabaseId} databaseId
-     * @param {WebInspector.IndexedDBModel.ObjectStore} objectStore
+     * @param {string} objectStoreName
+     * @param {function()} callback
      */
     clearObjectStore: function(databaseId, objectStoreName, callback)
     {

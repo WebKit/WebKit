@@ -103,7 +103,16 @@ WebInspector.SourceFrame.prototype = {
     {
         this._ensureContentLoaded();
         this._textEditor.show(this.element);
+        this._editorAttached = true;
         this._wasShownOrLoaded();
+    },
+
+    /**
+     * @return {boolean}
+     */
+    _isEditorShowing: function()
+    {
+        return this.isShowing() && this._editorAttached;
     },
 
     willHide: function()
@@ -201,7 +210,7 @@ WebInspector.SourceFrame.prototype = {
     _innerHighlightLineIfNeeded: function()
     {
         if (typeof this._lineToHighlight === "number") {
-            if (this.loaded && this._textEditor.isShowing()) {
+            if (this.loaded && this._isEditorShowing()) {
                 this._textEditor.highlightLine(this._lineToHighlight);
                 delete this._lineToHighlight
             }
@@ -228,7 +237,7 @@ WebInspector.SourceFrame.prototype = {
     _innerRevealLineIfNeeded: function()
     {
         if (typeof this._lineToReveal === "number") {
-            if (this.loaded && this._textEditor.isShowing()) {
+            if (this.loaded && this._isEditorShowing()) {
                 this._textEditor.revealLine(this._lineToReveal);
                 delete this._lineToReveal
             }
@@ -254,9 +263,9 @@ WebInspector.SourceFrame.prototype = {
     _innerScrollToLineIfNeeded: function()
     {
         if (typeof this._lineToScrollTo === "number") {
-            if (this.loaded && this._textEditor.isShowing()) {
+            if (this.loaded && this._isEditorShowing()) {
                 this._textEditor.scrollToLine(this._lineToScrollTo);
-                delete this._lineToScrollTo
+                delete this._lineToScrollTo;
             }
         }
     },
@@ -277,7 +286,7 @@ WebInspector.SourceFrame.prototype = {
 
     _innerSetSelectionIfNeeded: function()
     {
-        if (this._selectionToSet && this.loaded && this._textEditor.isShowing()) {
+        if (this._selectionToSet && this.loaded && this._isEditorShowing()) {
             this._textEditor.setSelection(this._selectionToSet);
             delete this._selectionToSet;
         }
