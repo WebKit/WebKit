@@ -1859,6 +1859,7 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/geolocation/Coordinates.h \
 	Source/WebCore/Modules/geolocation/Geolocation.cpp \
 	Source/WebCore/Modules/geolocation/Geolocation.h \
+	Source/WebCore/Modules/geolocation/GeolocationClient.h \
 	Source/WebCore/Modules/geolocation/GeolocationController.cpp \
 	Source/WebCore/Modules/geolocation/GeolocationController.h \
 	Source/WebCore/Modules/geolocation/GeolocationError.h \
@@ -4210,7 +4211,6 @@ webcore_sources += \
 	Source/WebCore/page/FrameTree.h \
 	Source/WebCore/page/FrameView.cpp \
 	Source/WebCore/page/FrameView.h \
-	Source/WebCore/page/GeolocationClient.h \
 	Source/WebCore/page/GestureTapHighlighter.cpp \
 	Source/WebCore/page/GestureTapHighlighter.h \
 	Source/WebCore/page/GroupSettings.cpp \

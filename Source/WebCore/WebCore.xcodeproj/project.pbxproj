@@ -3581,6 +3581,7 @@
 		9746AF2114F4DDE6003E7A71 /* Coordinates.h in Headers */ = {isa = PBXBuildFile; fileRef = 9746AF1114F4DDE6003E7A70 /* Coordinates.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9746AF2314F4DDE6003E7A70 /* Geolocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9746AF1314F4DDE6003E7A70 /* Geolocation.cpp */; };
 		9746AF2414F4DDE6003E7A70 /* Geolocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 9746AF1414F4DDE6003E7A70 /* Geolocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9746AF2514F4DDE6003E7A71 /* GeolocationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 9746AF1514F4DDE6003E7A71 /* GeolocationClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9746AF2614F4DDE6003E7A70 /* GeolocationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9746AF1614F4DDE6003E7A70 /* GeolocationController.cpp */; };
 		9746AF2714F4DDE6003E7A70 /* GeolocationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 9746AF1714F4DDE6003E7A70 /* GeolocationController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9746AF2814F4DDE6003E7A70 /* GeolocationError.h in Headers */ = {isa = PBXBuildFile; fileRef = 9746AF1814F4DDE6003E7A70 /* GeolocationError.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5567,7 +5568,6 @@
 		BC53DA601143141A000D817E /* DOMObjectHashTableMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BC53DA5F1143141A000D817E /* DOMObjectHashTableMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC53DA62114314BD000D817E /* DOMObjectHashTableMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC53DA61114314BD000D817E /* DOMObjectHashTableMap.cpp */; };
 		BC53DAC711433064000D817E /* JSDOMWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC53DAC611433064000D817E /* JSDOMWrapper.cpp */; };
-		BC56CB2310D5AC8000A77C64 /* GeolocationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC56CB1E10D5AC8000A77C64 /* GeolocationClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5823F50C0A98DF0053F1B5 /* JSHTMLElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5823F40C0A98DF0053F1B5 /* JSHTMLElementCustom.cpp */; };
 		BC5825F30C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */; };
 		BC588AF00BFA6CF900EE679E /* HTMLParserErrorCodes.h in Headers */ = {isa = PBXBuildFile; fileRef = BC588AEF0BFA6CF900EE679E /* HTMLParserErrorCodes.h */; };
@@ -11097,6 +11097,7 @@
 		9746AF1314F4DDE6003E7A70 /* Geolocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Geolocation.cpp; path = Modules/geolocation/Geolocation.cpp; sourceTree = "<group>"; };
 		9746AF1414F4DDE6003E7A70 /* Geolocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Geolocation.h; path = Modules/geolocation/Geolocation.h; sourceTree = "<group>"; };
 		9746AF1514F4DDE6003E7A70 /* Geolocation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Geolocation.idl; path = Modules/geolocation/Geolocation.idl; sourceTree = "<group>"; };
+		9746AF1514F4DDE6003E7A71 /* GeolocationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeolocationClient.h; path = Modules/geolocation/GeolocationClient.h; sourceTree = "<group>"; };
 		9746AF1614F4DDE6003E7A70 /* GeolocationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GeolocationController.cpp; path = Modules/geolocation/GeolocationController.cpp; sourceTree = "<group>"; };
 		9746AF1714F4DDE6003E7A70 /* GeolocationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeolocationController.h; path = Modules/geolocation/GeolocationController.h; sourceTree = "<group>"; };
 		9746AF1814F4DDE6003E7A70 /* GeolocationError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeolocationError.h; path = Modules/geolocation/GeolocationError.h; sourceTree = "<group>"; };
@@ -13197,7 +13198,6 @@
 		BC53DA5F1143141A000D817E /* DOMObjectHashTableMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMObjectHashTableMap.h; sourceTree = "<group>"; };
 		BC53DA61114314BD000D817E /* DOMObjectHashTableMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMObjectHashTableMap.cpp; sourceTree = "<group>"; };
 		BC53DAC611433064000D817E /* JSDOMWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWrapper.cpp; sourceTree = "<group>"; };
-		BC56CB1E10D5AC8000A77C64 /* GeolocationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeolocationClient.h; sourceTree = "<group>"; };
 		BC5823F40C0A98DF0053F1B5 /* JSHTMLElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLElementCustom.cpp; sourceTree = "<group>"; };
 		BC5825F20C0B89380053F1B5 /* JSCSSStyleDeclarationCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSStyleDeclarationCustom.cpp; sourceTree = "<group>"; };
 		BC588AEF0BFA6CF900EE679E /* HTMLParserErrorCodes.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLParserErrorCodes.h; sourceTree = "<group>"; };
@@ -16527,7 +16527,6 @@
 				65A21483097A3F5300B9050A /* FrameTree.h */,
 				65CBFEF70974F607001DAC25 /* FrameView.cpp */,
 				65CBFEF80974F607001DAC25 /* FrameView.h */,
-				BC56CB1E10D5AC8000A77C64 /* GeolocationClient.h */,
 				C50B561412119D23008B46E0 /* GroupSettings.cpp */,
 				C50B561512119D23008B46E0 /* GroupSettings.h */,
 				BC94D1500C275C8B006BC617 /* History.cpp */,
@@ -18514,6 +18513,7 @@
 				9746AF1314F4DDE6003E7A70 /* Geolocation.cpp */,
 				9746AF1414F4DDE6003E7A70 /* Geolocation.h */,
 				9746AF1514F4DDE6003E7A70 /* Geolocation.idl */,
+				9746AF1514F4DDE6003E7A71 /* GeolocationClient.h */,
 				9746AF1614F4DDE6003E7A70 /* GeolocationController.cpp */,
 				9746AF1714F4DDE6003E7A70 /* GeolocationController.h */,
 				9746AF1814F4DDE6003E7A70 /* GeolocationError.h */,
@@ -24634,7 +24634,7 @@
 				A622A8FF122C44A600A785B3 /* GenericBinding.h in Headers */,
 				0720B0A114D3323500642955 /* GenericEventQueue.h in Headers */,
 				9746AF2414F4DDE6003E7A70 /* Geolocation.h in Headers */,
-				BC56CB2310D5AC8000A77C64 /* GeolocationClient.h in Headers */,
+				9746AF2514F4DDE6003E7A71 /* GeolocationClient.h in Headers */,
 				9746AF2714F4DDE6003E7A70 /* GeolocationController.h in Headers */,
 				9746AF2814F4DDE6003E7A70 /* GeolocationError.h in Headers */,
 				9746AF2914F4DDE6003E7A70 /* GeolocationPosition.h in Headers */,

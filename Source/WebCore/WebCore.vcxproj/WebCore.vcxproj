@@ -11235,6 +11235,7 @@
     <ClInclude Include="..\Modules\filesystem\WorkerContextFileSystem.h" />
     <ClInclude Include="..\Modules\geolocation\Coordinates.h" />
     <ClInclude Include="..\Modules\geolocation\Geolocation.h" />
+    <ClInclude Include="..\Modules\geolocation\GeolocationClient.h" />
     <ClInclude Include="..\Modules\geolocation\GeolocationController.h" />
     <ClInclude Include="..\Modules\geolocation\GeolocationError.h" />
     <ClInclude Include="..\Modules\geolocation\GeolocationPosition.h" />
@@ -11421,7 +11422,6 @@
     <ClInclude Include="..\page\FrameDestructionObserver.h" />
     <ClInclude Include="..\page\FrameTree.h" />
     <ClInclude Include="..\page\FrameView.h" />
-    <ClInclude Include="..\page\GeolocationClient.h" />
     <ClInclude Include="..\page\GroupSettings.h" />
     <ClInclude Include="..\page\History.h" />
     <ClInclude Include="..\page\animation\ImplicitAnimation.h" />

@@ -25190,6 +25190,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Modules\geolocation\GeolocationClient.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Modules\geolocation\GeolocationController.cpp"
 					>
 				</File>
@@ -27560,10 +27564,6 @@
 			</File>
 			<File
 				RelativePath="..\page\FrameView.h"
-				>
-			</File>
-			<File
-				RelativePath="..\page\GeolocationClient.h"
 				>
 			</File>
 			<File

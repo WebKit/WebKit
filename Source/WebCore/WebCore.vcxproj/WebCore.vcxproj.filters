@@ -8373,6 +8373,9 @@
     <ClInclude Include="..\Modules\geolocation\Geolocation.h">
       <Filter>Modules\geolocation</Filter>
     </ClInclude>
+    <ClInclude Include="..\Modules\geolocation\GeolocationClient.h">
+      <Filter>page</Filter>
+    </ClInclude>
     <ClInclude Include="..\Modules\geolocation\GeolocationController.h">
       <Filter>Modules\geolocation</Filter>
     </ClInclude>
@@ -8911,9 +8914,6 @@
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\FrameView.h">
-      <Filter>page</Filter>
-    </ClInclude>
-    <ClInclude Include="..\page\GeolocationClient.h">
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\GroupSettings.h">
