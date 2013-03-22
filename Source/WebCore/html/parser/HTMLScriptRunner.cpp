@@ -29,6 +29,7 @@
 #include "Attribute.h"
 #include "CachedScript.h"
 #include "CachedResourceLoader.h"
+#include "CustomElementRegistry.h"
 #include "Element.h"
 #include "Event.h"
 #include "Frame.h"
@@ -128,8 +129,12 @@ void HTMLScriptRunner::executePendingScriptAndDispatchEvent(PendingScript& pendi
     if (pendingScript.cachedScript() && pendingScript.watchingForLoad())
         stopWatchingForLoad(pendingScript);
 
-    if (!isExecutingScript())
+    if (!isExecutingScript()) {
+#if ENABLE(CUSTOM_ELEMENTS)
+        CustomElementRegistry::deliverAllLifecycleCallbacks();
+#endif
         MutationObserver::deliverAllMutations();
+    }
 
     // Clear the pending script before possible rentrancy from executeScript()
     RefPtr<Element> element = pendingScript.releaseElementAndClear();
@@ -292,8 +297,12 @@ void HTMLScriptRunner::runScript(Element* script, const TextPosition& scriptStar
         // every script element, even if it's not ready to execute yet. There's
         // unfortuantely no obvious way to tell if prepareScript is going to
         // execute the script from out here.
-        if (!isExecutingScript())
+        if (!isExecutingScript()) {
+#if ENABLE(CUSTOM_ELEMENTS)
+            CustomElementRegistry::deliverAllLifecycleCallbacks();
+#endif
             MutationObserver::deliverAllMutations();
+        }
 
         InsertionPointRecord insertionPointRecord(m_host->inputStream());
         NestingLevelIncrementer nestingLevelIncrementer(m_scriptNestingLevel);

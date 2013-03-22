@@ -76,6 +76,7 @@
         raises(DOMException);
 
     boolean            hasChildNodes();
+    [V8DeliverCustomElementCallbacks]
     Node               cloneNode(in [Optional=DefaultIsUndefined] boolean deep);
     void               normalize();
 

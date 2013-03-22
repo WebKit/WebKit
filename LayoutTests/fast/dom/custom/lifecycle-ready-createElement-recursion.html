@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+document.register = document.register || document.webkitRegister;
+document.register("x-foo", { prototype: Object.create(HTMLElement.prototype, { readyCallback: { value: function () { this.innerHTML = "<x-foo>Hello</x-foo>"; } } }) });
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.createElement("x-foo");
+debug("PASS unless crash");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

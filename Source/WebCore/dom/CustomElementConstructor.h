@@ -59,11 +59,14 @@ public:
     Document* document() const { return static_cast<Document*>(m_scriptExecutionContext); }
     const QualifiedName& typeName() const { return m_typeName; }
     const QualifiedName& localName() const { return m_localName; }
+    bool isExtended() const { return m_typeName != m_localName; }
 
-    PassRefPtr<Element> createElement() const;
+    PassRefPtr<Element> createElement();
 
 private:
     CustomElementConstructor(Document*, const QualifiedName& typeName, const QualifiedName& localName);
+
+    PassRefPtr<Element> createElementInternal();
 
     QualifiedName m_typeName;
     QualifiedName m_localName;

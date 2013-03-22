@@ -29,7 +29,8 @@
     readonly attribute DOMImplementation implementation;
     readonly attribute Element documentElement;
 
-    [ReturnNewObject] Element createElement(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString tagName)
+    [ReturnNewObject, V8DeliverCustomElementCallbacks]
+    Element createElement(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString tagName)
         raises (DOMException);
     DocumentFragment   createDocumentFragment();
     [ReturnNewObject] Text createTextNode(in [Optional=DefaultIsUndefined] DOMString data);
@@ -47,14 +48,16 @@
 
     // Introduced in DOM Level 2:
 
-    [ObjCLegacyUnnamedParameters, ReturnNewObject] Node importNode(in [Optional=DefaultIsUndefined] Node importedNode,
-                                               in [Optional] boolean deep)
+    [ObjCLegacyUnnamedParameters, ReturnNewObject, V8DeliverCustomElementCallbacks]
+    Node importNode(in [Optional=DefaultIsUndefined] Node importedNode,
+                    in [Optional] boolean deep)
         raises (DOMException);
-    [ObjCLegacyUnnamedParameters, ReturnNewObject] Element createElementNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
-                                                       in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString qualifiedName)
+    [ObjCLegacyUnnamedParameters, ReturnNewObject, V8DeliverCustomElementCallbacks]
+    Element createElementNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
+                            in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString qualifiedName)
         raises (DOMException);
     [ObjCLegacyUnnamedParameters, ReturnNewObject] Attr createAttributeNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
-                                                      in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString qualifiedName)
+                                                                          in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString qualifiedName)
         raises (DOMException);
     [ObjCLegacyUnnamedParameters] NodeList getElementsByTagNameNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
                                                    in [Optional=DefaultIsUndefined] DOMString localName);
@@ -131,7 +134,7 @@
         raises(DOMException);
 
     // Common extensions
-
+    [V8DeliverCustomElementCallbacks]
     boolean            execCommand(in [Optional=DefaultIsUndefined] DOMString command,
                                    in [Optional=DefaultIsUndefined] boolean userInterface,
                                    in [TreatNullAs=NullString, TreatUndefinedAs=NullString,Optional=DefaultIsUndefined] DOMString value);
@@ -362,11 +365,13 @@
 #endif
 
 #if defined(ENABLE_CUSTOM_ELEMENTS) && ENABLE_CUSTOM_ELEMENTS
-    [V8EnabledAtRuntime=customDOMElements, Conditional=CUSTOM_ELEMENTS, ImplementedAs=registerElement, CallWith=ScriptState]
+    [V8EnabledAtRuntime=customDOMElements, Conditional=CUSTOM_ELEMENTS, ImplementedAs=registerElement, CallWith=ScriptState, V8DeliverCustomElementCallbacks]
     CustomElementConstructor webkitRegister(in DOMString name, in [Optional] Dictionary options) raises(DOMException);
-    [ReturnNewObject] Element createElement(in DOMString localName, in [TreatNullAs=NullString] DOMString typeExtension) raises (DOMException);
-    [ReturnNewObject] Element createElementNS(in [TreatNullAs=NullString] DOMString namespaceURI, in DOMString qualifiedName,
-                                              in [TreatNullAs=NullString] DOMString typeExtension) raises (DOMException);
+    [ReturnNewObject, V8DeliverCustomElementCallbacks]
+    Element createElement(in DOMString localName, in [TreatNullAs=NullString] DOMString typeExtension) raises (DOMException);
+    [ReturnNewObject, V8DeliverCustomElementCallbacks]
+    Element createElementNS(in [TreatNullAs=NullString] DOMString namespaceURI, in DOMString qualifiedName,
+                            in [TreatNullAs=NullString] DOMString typeExtension) raises (DOMException);
 #endif
 
 #if defined(LANGUAGE_CPP) && LANGUAGE_CPP

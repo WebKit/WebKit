@@ -31,7 +31,9 @@
 #include "config.h"
 #include "CustomElementHelpers.h"
 
+#include "CustomElementRegistry.h"
 #include "DOMWrapperWorld.h"
+#include "ScriptController.h"
 #include "V8CustomElementConstructor.h"
 #include "V8HTMLElementWrapperFactory.h"
 #include "V8HTMLParagraphElement.h"
@@ -136,6 +138,44 @@ const QualifiedName* CustomElementHelpers::findLocalName(v8::Handle<v8::Object> 
     if (!type)
         return 0;
     return findHTMLTagNameOfV8Type(type);
+}
+
+void CustomElementHelpers::invokeReadyCallbackIfNeeded(Element* element, v8::Handle<v8::Context> context)
+{
+    v8::Handle<v8::Value> wrapperValue = toV8(element, context->Global(), context->GetIsolate());
+    if (wrapperValue.IsEmpty() || !wrapperValue->IsObject())
+        return;
+    v8::Handle<v8::Object> wrapper = v8::Handle<v8::Object>::Cast(wrapperValue);
+    v8::Handle<v8::Value> prototypeValue = wrapper->GetPrototype();
+    if (prototypeValue.IsEmpty() || !prototypeValue->IsObject())
+        return;
+    v8::Handle<v8::Object> prototype = v8::Handle<v8::Object>::Cast(prototypeValue);
+    v8::Handle<v8::Value> functionValue = prototype->Get(v8::String::NewSymbol("readyCallback"));
+    if (functionValue.IsEmpty() || !functionValue->IsFunction())
+        return;
+
+    v8::Handle<v8::Function> function = v8::Handle<v8::Function>::Cast(functionValue);
+    v8::TryCatch exceptionCatcher;
+    exceptionCatcher.SetVerbose(true);
+    v8::Handle<v8::Value> args[] = { };
+    ScriptController::callFunctionWithInstrumentation(element->document(), function, wrapper, 0, args);
+}
+
+
+void CustomElementHelpers::invokeReadyCallbacksIfNeeded(ScriptExecutionContext* executionContext, const Vector<CustomElementInvocation>& invocations)
+{
+    ASSERT(!invocations.isEmpty());
+
+    v8::HandleScope handleScope;
+    v8::Handle<v8::Context> context = toV8Context(executionContext, mainThreadNormalWorld());
+    if (context.IsEmpty())
+        return;
+    v8::Context::Scope scope(context);
+
+    for (size_t i = 0; i < invocations.size(); ++i) {
+        ASSERT(executionContext == invocations[i].element()->document());
+        invokeReadyCallbackIfNeeded(invocations[i].element(), context);
+    }
 }
 
 #endif // ENABLE(CUSTOM_ELEMENTS)
