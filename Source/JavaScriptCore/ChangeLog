@@ -1,3 +1,18 @@
+2013-03-22  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX (r146558): Call [super dealloc] from -[TinyDOMNode dealloc]
+        <http://webkit.org/b/112608>
+
+        Fixes the following build failure:
+
+            Source/JavaScriptCore/API/tests/testapi.mm:205:1: error: method possibly missing a [super dealloc] call [-Werror,-Wobjc-missing-super-calls]
+            }
+            ^
+            1 error generated.
+
+        * API/tests/testapi.mm:
+        (-[TinyDOMNode dealloc]): Call [super dealloc].
+
 2013-03-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Leak bots erroneously report JSC::WatchpointSet as leaking
