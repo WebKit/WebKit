@@ -427,7 +427,7 @@ webkit.org/b/107825 [ Release ] media/video-controls-fullscreen-volume.html [ Fa
 webkit.org/b/107825 media/media-controls-clone.html [ Failure ]
 
 # Require ENABLE(CUSTOM_ELEMENTS) support
-webkit.org/b/110735 fast/dom/custom [ Failure ]
+webkit.org/b/110735 fast/dom/custom [ Skip ]
 
 # Snapshotted plugins not enabled
 webkit.org/b/98696 plugins/snapshotting [ Skip ]
@@ -500,6 +500,9 @@ webkit.org/b/112152 [ Debug ] accessibility/aria-hidden-with-elements.html [ Cra
 webkit.org/b/112152 [ Debug ] accessibility/table-with-hidden-head-section.html [ Crash ]
 
 webkit.org/b/111451 [ Debug ] editing/selection/selection-in-iframe-removed-crash.html [ Crash Pass ]
+
+webkit.org/b/113019 [ Debug ] storage/indexeddb/factory-basics-workers.html [ Crash ]
+webkit.org/b/113019 [ Debug ] storage/indexeddb/transaction-error.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
