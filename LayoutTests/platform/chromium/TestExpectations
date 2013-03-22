@@ -1349,7 +1349,7 @@ webkit.org/b/85107 svg/as-image/animated-svg-as-image.html [ ImageOnlyFailure Pa
 webkit.org/b/93589 svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg [ Failure Pass Timeout ]
 
 # This test needs a rebaseline after https://bugs.webkit.org/show_bug.cgi?id=112054
-webkit.org/b/112054 svg/custom/marker-orient-auto.html
+webkit.org/b/112054 svg/custom/marker-orient-auto.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/111626 [ Mac Debug ] svg/css/font-face-crash.html [ Pass Crash ]
 
