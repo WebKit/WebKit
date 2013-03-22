@@ -133,4 +133,3 @@ V8ReadOnly
 V8SkipVTableValidation
 V8Unforgeable
 V8WrapAsFunction
-V8DeliverCustomElementCallbacks

@@ -33,15 +33,12 @@
 
 #include "ExceptionCode.h"
 #include "ScriptValue.h"
-#include <wtf/Forward.h>
 
 namespace WebCore {
 
 #if ENABLE(CUSTOM_ELEMENTS)
 
 class CustomElementConstructor;
-class CustomElementInvocation;
-class Element;
 class QualifiedName;
 class ScriptState;
 
@@ -55,11 +52,6 @@ public:
     static bool isFeatureAllowed(v8::Handle<v8::Context>);
     static WrapperTypeInfo* findWrapperType(v8::Handle<v8::Value> chain);
     static const QualifiedName* findLocalName(v8::Handle<v8::Object> chain);
-
-    static void invokeReadyCallbacksIfNeeded(ScriptExecutionContext*, const Vector<CustomElementInvocation>&);
-
-private:
-    static void invokeReadyCallbackIfNeeded(Element*, v8::Handle<v8::Context>);
 };
 
 #endif // ENABLE(CUSTOM_ELEMENTS)

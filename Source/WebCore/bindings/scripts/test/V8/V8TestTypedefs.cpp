@@ -514,12 +514,12 @@ static const V8DOMConfiguration::BatchedAttribute V8TestTypedefsAttrs[] = {
 };
 
 static const V8DOMConfiguration::BatchedMethod V8TestTypedefsMethods[] = {
-    {"func", TestTypedefsV8Internal::funcMethodCallback, 0},
-    {"multiTransferList", TestTypedefsV8Internal::multiTransferListMethodCallback, 0},
-    {"setShadow", TestTypedefsV8Internal::setShadowMethodCallback, 0},
-    {"funcWithClamp", TestTypedefsV8Internal::funcWithClampMethodCallback, 0},
-    {"immutablePointFunction", TestTypedefsV8Internal::immutablePointFunctionMethodCallback, 0},
-    {"methodWithException", TestTypedefsV8Internal::methodWithExceptionMethodCallback, 0},
+    {"func", TestTypedefsV8Internal::funcMethodCallback},
+    {"multiTransferList", TestTypedefsV8Internal::multiTransferListMethodCallback},
+    {"setShadow", TestTypedefsV8Internal::setShadowMethodCallback},
+    {"funcWithClamp", TestTypedefsV8Internal::funcWithClampMethodCallback},
+    {"immutablePointFunction", TestTypedefsV8Internal::immutablePointFunctionMethodCallback},
+    {"methodWithException", TestTypedefsV8Internal::methodWithExceptionMethodCallback},
 };
 
 v8::Handle<v8::Value> V8TestTypedefs::constructorCallback(const v8::Arguments& args)

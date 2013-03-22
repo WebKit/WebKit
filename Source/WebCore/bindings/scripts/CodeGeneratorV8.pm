@@ -1256,25 +1256,6 @@ END
 END
 }
 
-sub GenerateCustomElementInvocationScopeIfNeeded
-{
-    my $out = shift;
-    my $ext = shift;
-
-    if ($ext->{"V8DeliverCustomElementCallbacks"}) {
-        if ($ext->{"Reflect"}) {
-            die "IDL error: Reflect and V8DeliverCustomElementCallbacks cannot coexist yet";
-        }
-
-        AddToImplIncludes("CustomElementRegistry.h", "CUSTOM_ELEMENTS");
-        push(@$out, <<END);
-#if ENABLE(CUSTOM_ELEMENTS)
-    CustomElementRegistry::CallbackDeliveryScope deliveryScope;
-#endif
-END
-    }
-}
-
 sub GenerateNormalAttrSetterCallback
 {
     my $attribute = shift;
@@ -1422,8 +1403,6 @@ END
     if ($codeGenerator->IsRefPtrType($returnType) && !$codeGenerator->GetArrayType($returnType)) {
         $result = "WTF::getPtr(" . $result . ")";
     }
-
-    GenerateCustomElementInvocationScopeIfNeeded(\@implContentInternals, $attribute->signature->extendedAttributes);
 
     my $useExceptions = 1 if @{$attribute->setterExceptions};
 
@@ -1577,7 +1556,6 @@ sub GenerateOverloadedFunction
 {
     my $function = shift;
     my $interface = shift;
-    my $forMainWorldSuffix = shift;
     my $interfaceName = $interface->name;
 
     # Generate code for choosing the correct overload to call. Overloads are
@@ -1591,7 +1569,7 @@ sub GenerateOverloadedFunction
     my $leastNumMandatoryParams = 255;
     push(@implContentInternals, "#if ${conditionalString}\n\n") if $conditionalString;
     push(@implContentInternals, <<END);
-static v8::Handle<v8::Value> ${name}Method${forMainWorldSuffix}(const v8::Arguments& args)
+static v8::Handle<v8::Value> ${name}Method(const v8::Arguments& args)
 {
 END
     push(@implContentInternals, GenerateFeatureObservation($function->signature->extendedAttributes->{"V8MeasureAs"}));
@@ -1601,7 +1579,7 @@ END
         $leastNumMandatoryParams = $numMandatoryParams if ($numMandatoryParams < $leastNumMandatoryParams);
         push(@implContentInternals, "    if ($parametersCheck)\n");
         my $overloadedIndexString = $overload->{overloadIndex};
-        push(@implContentInternals, "        return ${name}${overloadedIndexString}Method${forMainWorldSuffix}(args);\n");
+        push(@implContentInternals, "        return ${name}${overloadedIndexString}Method(args);\n");
     }
     if ($leastNumMandatoryParams >= 1) {
         push(@implContentInternals, "    if (args.Length() < $leastNumMandatoryParams)\n");
@@ -1618,7 +1596,6 @@ sub GenerateFunctionCallback
 {
     my $function = shift;
     my $interface = shift;
-    my $forMainWorldSuffix = shift;
 
     my $interfaceName = $interface->name;
     my $v8InterfaceName = "V8$interfaceName";
@@ -1627,14 +1604,14 @@ sub GenerateFunctionCallback
     my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
     push(@implContentInternals, "#if ${conditionalString}\n\n") if $conditionalString;
     push(@implContentInternals, <<END);
-static v8::Handle<v8::Value> ${name}MethodCallback${forMainWorldSuffix}(const v8::Arguments& args)
+static v8::Handle<v8::Value> ${name}MethodCallback(const v8::Arguments& args)
 {
 END
     push(@implContentInternals, GenerateFeatureObservation($function->signature->extendedAttributes->{"V8MeasureAs"}));
     if (HasCustomMethod($function->signature->extendedAttributes)) {
         push(@implContentInternals, "    return ${v8InterfaceName}::${name}MethodCustom(args);\n");
     } else {
-        push(@implContentInternals, "    return ${interfaceName}V8Internal::${name}Method${forMainWorldSuffix}(args);\n");
+        push(@implContentInternals, "    return ${interfaceName}V8Internal::${name}Method(args);\n");
     }
     push(@implContentInternals, "}\n\n");
     push(@implContentInternals, "#endif // ${conditionalString}\n\n") if $conditionalString;
@@ -1644,7 +1621,6 @@ sub GenerateFunction
 {
     my $function = shift;
     my $interface = shift;
-    my $forMainWorldSuffix = shift;
 
     my $interfaceName = $interface->name;
     my $v8InterfaceName = "V8$interfaceName";
@@ -1662,7 +1638,7 @@ sub GenerateFunction
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
     push(@implContentInternals, "#if ${conditionalString}\n\n") if $conditionalString;
-    push(@implContentInternals, "static v8::Handle<v8::Value> ${name}Method${forMainWorldSuffix}(const v8::Arguments& args)\n");
+    push(@implContentInternals, "static v8::Handle<v8::Value> ${name}Method(const v8::Arguments& args)\n");
     push(@implContentInternals, "{\n");
 
     if ($name eq "addEventListener" || $name eq "removeEventListener") {
@@ -1725,8 +1701,6 @@ END
 END
     }
 
-    GenerateCustomElementInvocationScopeIfNeeded(\@implContentInternals, $funcExt);
-
     # Check domain security if needed
     if ($interface->extendedAttributes->{"CheckSecurity"} && !$function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
         # We have not find real use cases yet.
@@ -1761,11 +1735,11 @@ END
 END
     }
 
-    my ($parameterCheckString, $paramIndex, %replacements) = GenerateParametersCheck($function, $interfaceName, $forMainWorldSuffix);
+    my ($parameterCheckString, $paramIndex, %replacements) = GenerateParametersCheck($function, $interfaceName);
     push(@implContentInternals, $parameterCheckString);
 
     # Build the function call string.
-    push(@implContentInternals, GenerateFunctionCallString($function, $paramIndex, "    ", $interfaceName, $forMainWorldSuffix, %replacements));
+    push(@implContentInternals, GenerateFunctionCallString($function, $paramIndex, "    ", $interfaceName, %replacements));
 
     if ($raisesExceptions) {
         push(@implContentInternals, "    }\n");
@@ -1849,7 +1823,6 @@ sub GenerateParametersCheck
 {
     my $function = shift;
     my $interfaceName = shift;
-    my $forMainWorldSuffix = shift;
 
     my $parameterCheckString = "";
     my $paramIndex = 0;
@@ -1865,7 +1838,7 @@ sub GenerateParametersCheck
         my $optional = $parameter->extendedAttributes->{"Optional"};
         if ($optional && $optional ne "DefaultIsUndefined" && $optional ne "DefaultIsNullString" && $nativeType ne "Dictionary" && !$parameter->extendedAttributes->{"Callback"}) {
             $parameterCheckString .= "    if (args.Length() <= $paramIndex) {\n";
-            my $functionCall = GenerateFunctionCallString($function, $paramIndex, "    " x 2, $interfaceName, $forMainWorldSuffix, %replacements);
+            my $functionCall = GenerateFunctionCallString($function, $paramIndex, "    " x 2, $interfaceName, %replacements);
             $parameterCheckString .= $functionCall;
             $parameterCheckString .= "    }\n";
         }
@@ -2088,7 +2061,7 @@ END
 
     # FIXME: Currently [Constructor(...)] does not yet support [Optional] arguments.
     # It just supports [Optional=DefaultIsUndefined] or [Optional=DefaultIsNullString].
-    my ($parameterCheckString, $paramIndex, %replacements) = GenerateParametersCheck($function, $interfaceName, "");
+    my ($parameterCheckString, $paramIndex, %replacements) = GenerateParametersCheck($function, $interfaceName);
     push(@implContentInternals, $parameterCheckString);
 
     if ($interface->extendedAttributes->{"CallWith"} && $interface->extendedAttributes->{"CallWith"} eq "ScriptExecutionContext") {
@@ -2594,15 +2567,7 @@ END
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
     push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-    if ($function->signature->extendedAttributes->{"V8PerWorldBindings"}) {
-        push(@implContent, "    if (currentWorldType == MainWorld) {\n");
-        push(@implContent, "        ${conditional}$template->Set(v8::String::NewSymbol(\"$name\"), v8::FunctionTemplate::New(${interfaceName}V8Internal::${name}MethodCallbackForMainWorld, v8Undefined(), ${signature})$property_attributes);\n");
-        push(@implContent, "    } else {\n");
-        push(@implContent, "        ${conditional}$template->Set(v8::String::NewSymbol(\"$name\"), v8::FunctionTemplate::New(${interfaceName}V8Internal::${name}MethodCallback, v8Undefined(), ${signature})$property_attributes);\n");
-        push(@implContent, "    }\n");
-    } else {
-        push(@implContent, "    ${conditional}$template->Set(v8::String::NewSymbol(\"$name\"), v8::FunctionTemplate::New(${interfaceName}V8Internal::${name}MethodCallback, v8Undefined(), ${signature})$property_attributes);\n");
-    }
+    push(@implContent, "    ${conditional}$template->Set(v8::String::NewSymbol(\"$name\"), v8::FunctionTemplate::New(${interfaceName}V8Internal::${name}MethodCallback, v8Undefined(), ${signature})$property_attributes);\n");
     push(@implContent, "#endif // ${conditionalString}\n") if $conditionalString;
 }
 
@@ -2947,22 +2912,12 @@ END
     my $needsDomainSafeFunctionSetter = 0;
     # Generate methods for functions.
     foreach my $function (@{$interface->functions}) {
-        GenerateFunction($function, $interface, "");
-        if ($function->signature->extendedAttributes->{"V8PerWorldBindings"}) {
-            GenerateFunction($function, $interface, "ForMainWorld");
-        }
-
+        GenerateFunction($function, $interface);
         if ($function->{overloadIndex} == @{$function->{overloads}}) {
             if ($function->{overloadIndex} > 1) {
-                GenerateOverloadedFunction($function, $interface, "");
-                if ($function->signature->extendedAttributes->{"V8PerWorldBindings"}) {
-                    GenerateOverloadedFunction($function, $interface, "ForMainWorld");
-                }
+                GenerateOverloadedFunction($function, $interface);
             }
-            GenerateFunctionCallback($function, $interface, "");
-            if ($function->signature->extendedAttributes->{"V8PerWorldBindings"}) {
-                GenerateFunctionCallback($function, $interface, "ForMainWorld");
-            }
+            GenerateFunctionCallback($function, $interface);
         }
 
         if ($function->signature->name eq "item") {
@@ -3050,14 +3005,10 @@ END
             push(@implContent, "static const V8DOMConfiguration::BatchedMethod ${v8InterfaceName}Methods[] = {\n");
         }
         my $name = $function->signature->name;
-        my $methodForMainWorld = "0";
-        if ($function->signature->extendedAttributes->{"V8PerWorldBindings"}) {
-            $methodForMainWorld = "${interfaceName}V8Internal::${name}MethodCallbackForMainWorld";
-        }
         my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
         push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
         push(@implContent, <<END);
-    {"$name", ${interfaceName}V8Internal::${name}MethodCallback, ${methodForMainWorld}},
+    {"$name", ${interfaceName}V8Internal::${name}MethodCallback},
 END
         push(@implContent, "#endif\n") if $conditionalString;
         $num_callbacks++;
@@ -3897,7 +3848,6 @@ sub GenerateFunctionCallString
     my $numberOfParameters = shift;
     my $indent = shift;
     my $interfaceName = shift;
-    my $forMainWorldSuffix = shift;
     my %replacements = @_;
 
     my $name = $function->signature->name;
@@ -4000,9 +3950,9 @@ sub GenerateFunctionCallString
         my $svgNativeType = $codeGenerator->GetSVGTypeNeedingTearOff($returnType);
         # FIXME: Update for all ScriptWrappables.
         if (IsDOMNodeType($interfaceName)) {
-            $result .= $indent . "return toV8Fast${forMainWorldSuffix}(WTF::getPtr(${svgNativeType}::create($return)), args, imp);\n";
+            $result .= $indent . "return toV8Fast(WTF::getPtr(${svgNativeType}::create($return)), args, imp);\n";
         } else {
-            $result .= $indent . "return toV8${forMainWorldSuffix}(WTF::getPtr(${svgNativeType}::create($return)), args.Holder(), args.GetIsolate());\n";
+            $result .= $indent . "return toV8(WTF::getPtr(${svgNativeType}::create($return)), args.Holder(), args.GetIsolate());\n";
         }
         return $result;
     }
@@ -4017,9 +3967,9 @@ sub GenerateFunctionCallString
     my $nativeValue;
     # FIXME: Update for all ScriptWrappables.
     if (IsDOMNodeType($interfaceName)) {
-        $nativeValue = NativeToJSValue($function->signature, $return, "args.Holder()", "args.GetIsolate()", "args", "imp", "ReturnUnsafeHandle", $forMainWorldSuffix);
+        $nativeValue = NativeToJSValue($function->signature, $return, "args.Holder()", "args.GetIsolate()", "args", "imp", "ReturnUnsafeHandle", "");
     } else {
-        $nativeValue = NativeToJSValue($function->signature, $return, "args.Holder()", "args.GetIsolate()", 0, 0, "ReturnUnsafeHandle", $forMainWorldSuffix);
+        $nativeValue = NativeToJSValue($function->signature, $return, "args.Holder()", "args.GetIsolate()", 0, 0, "ReturnUnsafeHandle", "");
     }
 
     $result .= $indent . "return " . $nativeValue . ";\n";

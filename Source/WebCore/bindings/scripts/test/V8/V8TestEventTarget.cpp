@@ -154,9 +154,9 @@ static v8::Handle<v8::Value> dispatchEventMethodCallback(const v8::Arguments& ar
 } // namespace TestEventTargetV8Internal
 
 static const V8DOMConfiguration::BatchedMethod V8TestEventTargetMethods[] = {
-    {"item", TestEventTargetV8Internal::itemMethodCallback, 0},
-    {"addEventListener", TestEventTargetV8Internal::addEventListenerMethodCallback, 0},
-    {"removeEventListener", TestEventTargetV8Internal::removeEventListenerMethodCallback, 0},
+    {"item", TestEventTargetV8Internal::itemMethodCallback},
+    {"addEventListener", TestEventTargetV8Internal::addEventListenerMethodCallback},
+    {"removeEventListener", TestEventTargetV8Internal::removeEventListenerMethodCallback},
 };
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestEventTargetTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate, WrapperWorldType currentWorldType)

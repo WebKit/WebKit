@@ -31,7 +31,6 @@
 #include "config.h"
 #include "V8RecursionScope.h"
 
-#include "CustomElementRegistry.h"
 #include "IDBPendingTransactionMonitor.h"
 #include "MutationObserver.h"
 
@@ -47,12 +46,8 @@ void V8RecursionScope::didLeaveScriptContext()
     IDBPendingTransactionMonitor::deactivateNewTransactions();
 #endif
 
-    if (m_isDocumentContext) {
+    if (m_isDocumentContext)
         MutationObserver::deliverAllMutations();
-#if ENABLE(CUSTOM_ELEMENTS)
-        CustomElementRegistry::deliverAllLifecycleCallbacks();
-#endif
-    }
 }
 
 } // namespace WebCore

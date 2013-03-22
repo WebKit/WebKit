@@ -121,7 +121,7 @@ v8::Handle<v8::Object> wrap(Float64Array* impl, v8::Handle<v8::Object> creationC
 }
 
 static const V8DOMConfiguration::BatchedMethod V8Float64ArrayMethods[] = {
-    {"set", Float64ArrayV8Internal::setMethodCallback, 0},
+    {"set", Float64ArrayV8Internal::setMethodCallback},
 };
 
 v8::Handle<v8::Value> V8Float64Array::constructorCallback(const v8::Arguments& args)

@@ -88,7 +88,7 @@ static v8::Handle<v8::Value> anotherFunctionMethodCallback(const v8::Arguments& 
 } // namespace TestCustomNamedGetterV8Internal
 
 static const V8DOMConfiguration::BatchedMethod V8TestCustomNamedGetterMethods[] = {
-    {"anotherFunction", TestCustomNamedGetterV8Internal::anotherFunctionMethodCallback, 0},
+    {"anotherFunction", TestCustomNamedGetterV8Internal::anotherFunctionMethodCallback},
 };
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestCustomNamedGetterTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate, WrapperWorldType currentWorldType)

@@ -63,15 +63,7 @@ CustomElementConstructor::~CustomElementConstructor()
 {
 }
 
-PassRefPtr<Element> CustomElementConstructor::createElement()
-{
-    RefPtr<Element> element = createElementInternal();
-    if (element)
-        document()->didCreateCustomElement(element.get(), this);
-    return element.release();
-}
-
-PassRefPtr<Element> CustomElementConstructor::createElementInternal()
+PassRefPtr<Element> CustomElementConstructor::createElement() const
 {
     if (!document())
         return 0;

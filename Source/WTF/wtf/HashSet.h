@@ -243,10 +243,10 @@ namespace WTF {
         deleteAllValues<typename HashSet<T, U, V>::ValueType>(collection.m_impl);
     }
 
-    template<typename C, typename W>
-    inline void copyToVector(const C& collection, W& vector)
+    template<typename T, typename U, typename V, typename W>
+    inline void copyToVector(const HashSet<T, U, V>& collection, W& vector)
     {
-        typedef typename C::const_iterator iterator;
+        typedef typename HashSet<T, U, V>::const_iterator iterator;
         
         vector.resize(collection.size());
         

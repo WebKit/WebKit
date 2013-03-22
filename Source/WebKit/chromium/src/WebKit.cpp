@@ -31,7 +31,6 @@
 #include "config.h"
 #include "WebKit.h"
 
-#include "CustomElementRegistry.h"
 #include "EventTracer.h"
 #include "ImageDecodingStore.h"
 #include "LayoutTestSupport.h"
@@ -81,9 +80,6 @@ public:
     virtual void willProcessTask() { }
     virtual void didProcessTask()
     {
-#if ENABLE(CUSTOM_ELEMENTS)
-        WebCore::CustomElementRegistry::deliverAllLifecycleCallbacks();
-#endif
         WebCore::MutationObserver::deliverAllMutations();
     }
 };

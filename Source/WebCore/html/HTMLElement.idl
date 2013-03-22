@@ -39,7 +39,7 @@
              [Reflect] attribute DOMString accessKey;
 
     // Extensions
-             [TreatNullAs=NullString, V8DeliverCustomElementCallbacks] attribute DOMString innerHTML
+             [TreatNullAs=NullString] attribute DOMString innerHTML
                  setter raises(DOMException);
              [TreatNullAs=NullString] attribute DOMString innerText
                  setter raises(DOMException);

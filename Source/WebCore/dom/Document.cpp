@@ -854,7 +854,7 @@ PassRefPtr<Element> Document::createElement(const AtomicString& localName, const
             return created;
     }
 
-    return setTypeExtension(createElement(localName, ec), typeExtension);
+    return setTypeExtension(createElement(localName, ec), typeExtension); //  FIXME: take care of @is
 }
 
 PassRefPtr<Element> Document::createElementNS(const AtomicString& namespaceURI, const String& qualifiedName, const AtomicString& typeExtension, ExceptionCode& ec)
@@ -892,13 +892,6 @@ PassRefPtr<CustomElementConstructor> Document::registerElement(WebCore::ScriptSt
     if (!m_registry)
         m_registry = adoptRef(new CustomElementRegistry(this));
     return m_registry->registerElement(state, name, options, ec);
-}
-
-void Document::didCreateCustomElement(Element* element, CustomElementConstructor* constructor)
-{
-    // m_registry is cleared Document::dispose() and can be null here.
-    if (m_registry)
-        m_registry->didCreateElement(element);
 }
 #endif // ENABLE(CUSTOM_ELEMENTS)
 
