@@ -856,9 +856,9 @@ void InputHandler::requestSpellingCheckingOptions(imf_sp_text_t& spellCheckingOp
     m_webPage->m_client->requestSpellingCheckingOptions(spellCheckingOptionRequest, caretRect, screenOffset, shouldMoveDialog);
 }
 
-void InputHandler::setElementUnfocused(bool refocusOccuring)
+void InputHandler::setElementUnfocused(bool refocusOccuring, bool isFrameUnloading)
 {
-    if (isActiveTextEdit()) {
+    if (isActiveTextEdit() && m_currentFocusElement->attached() && m_currentFocusElement->document()->attached()) {
         FocusLog(Platform::LogLevelInfo, "InputHandler::setElementUnfocused");
 
         // Pass any text into the field to IMF to learn.
@@ -883,8 +883,9 @@ void InputHandler::setElementUnfocused(bool refocusOccuring)
             m_currentFocusElement->renderer()->repaint();
 
         // If the frame selection isn't focused, focus it.
-        if (!m_currentFocusElement->document()->frame()->selection()->isFocused())
-            m_currentFocusElement->document()->frame()->selection()->setFocused(true);
+        FrameSelection* frameSelection = m_currentFocusElement->document()->frame()->selection();
+        if (frameSelection && !frameSelection->isFocused())
+            frameSelection->setFocused(true);
     }
 
     m_spellingHandler->setSpellCheckActive(false);
@@ -2562,7 +2563,6 @@ int32_t InputHandler::commitText(spannable_string_t* spannableString, int32_t re
 void InputHandler::restoreViewState()
 {
     setInputModeEnabled();
-    focusedNodeChanged();
 }
 
 void InputHandler::showTextInputTypeSuggestionBox(bool allowEmptyPrefix)

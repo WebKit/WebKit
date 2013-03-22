@@ -1,3 +1,22 @@
+2013-03-22  Nima Ghanavatian  <nghanavatian@blackberry.com>
+
+        Check focused node reference when traversing through history
+        https://bugs.webkit.org/show_bug.cgi?id=113082
+
+        Reviewed by Rob Buis.
+
+        PR312101
+        Check if we have a valid node and document before attempting to access its frame and
+        frame selection. This is causing issues when going back to a page after a redirect
+        where a stale pointer is used.
+        Further, the focused node should be changed after the frame is fully loaded.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidFinishLoad):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::setElementUnfocused):
+        (BlackBerry::WebKit::InputHandler::restoreViewState):
+
 2013-03-22  Genevieve Mak  <gmak@rim.com>
 
         [BlackBerry] Hit Test doesn't need to be active

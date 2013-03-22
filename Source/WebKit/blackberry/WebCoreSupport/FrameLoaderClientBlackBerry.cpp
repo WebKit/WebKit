@@ -648,6 +648,8 @@ void FrameLoaderClientBlackBerry::dispatchDidFinishLoad()
         && !m_webPagePrivate->m_webSettings->isPrivateBrowsingEnabled())
         credentialManager().autofillPasswordForms(m_frame->document()->forms());
 #endif
+
+    m_webPagePrivate->m_inputHandler->focusedNodeChanged();
 }
 
 void FrameLoaderClientBlackBerry::dispatchDidFinishDocumentLoad()
