@@ -62,6 +62,7 @@ public:
     
     void addOpaqueRoot(void*);
     bool containsOpaqueRoot(void*);
+    TriState containsOpaqueRootTriState(void*);
     int opaqueRootCount();
 
     GCThreadSharedData& sharedData() { return m_shared; }

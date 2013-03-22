@@ -434,6 +434,7 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
 
 - (void)dealloc
 {
+    [m_cachedObjCWrappers release];
     [m_classMap release];
     [super dealloc];
 }

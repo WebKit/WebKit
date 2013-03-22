@@ -1,3 +1,76 @@
+2013-03-21  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: Need a good way to preserve custom properties on JS wrappers
+        https://bugs.webkit.org/show_bug.cgi?id=112608
+
+        Reviewed by Geoffrey Garen.
+
+        Currently, we just use a weak map, which means that garbage collection can cause a wrapper to 
+        disappear if it isn't directly exported to JavaScript.
+
+        The most straightforward and safe way (with respect to garbage collection and concurrency) is to have 
+        clients add and remove their external references along with their owners. Effectively, the client is 
+        recording the structure of the external object graph so that the garbage collector can make sure to 
+        mark any wrappers that are reachable through either the JS object graph of the external Obj-C object 
+        graph. By keeping these wrappers alive, this has the effect that custom properties on these wrappers 
+        will also remain alive.
+
+        The rule for if an object needs to be tracked by the runtime (and therefore whether the client should report it) is as follows:
+        For a particular object, its references to its children should be added if:
+        1. The child is referenced from JavaScript.
+        2. The child contains references to other objects for which (1) or (2) are true.
+
+        * API/JSAPIWrapperObject.mm:
+        (JSAPIWrapperObjectHandleOwner::finalize):
+        (JSAPIWrapperObjectHandleOwner::isReachableFromOpaqueRoots): A wrapper object is kept alive only if its JSGlobalObject
+        is marked and its corresponding Objective-C object was added to the set of opaque roots.
+        (JSC::JSAPIWrapperObject::visitChildren): We now call out to scanExternalObjectGraph, which handles adding all Objective-C
+        objects to the set of opaque roots.
+        * API/JSAPIWrapperObject.h:
+        (JSAPIWrapperObject):
+        * API/JSContext.mm: Moved dealloc to its proper place in the main implementation.
+        (-[JSContext dealloc]):
+        * API/JSVirtualMachine.h:
+        * API/JSVirtualMachine.mm:
+        (-[JSVirtualMachine initWithContextGroupRef:]):
+        (-[JSVirtualMachine dealloc]):
+        (getInternalObjcObject): Helper funciton to get the Objective-C object out of JSManagedValues or JSValues if there is one.
+        (-[JSVirtualMachine addManagedReference:withOwner:]): Adds the Objective-C object to the set of objects 
+        owned by the owner object in that particular virtual machine.
+        (-[JSVirtualMachine removeManagedReference:withOwner:]): Removes the relationship between the two objects.
+        (-[JSVirtualMachine externalObjectGraph]):
+        (scanExternalObjectGraph): Does a depth-first search of the external object graph in a particular virtual machine starting at
+        the specified root. Each new object it encounters it adds to the set of opaque roots. These opaque roots will keep their 
+        corresponding wrapper objects alive if they have them. 
+        * API/JSManagedReferenceInternal.h: Added.
+        * API/JSVirtualMachine.mm: Added the per-JSVirtualMachine map between objects and the objects they own, which is more formally
+        known as that virtual machine's external object graph.
+        * API/JSWrapperMap.mm:
+        (-[JSWrapperMap dealloc]): We were leaking this before :-(
+        (-[JSVirtualMachine initWithContextGroupRef:]):
+        (-[JSVirtualMachine dealloc]):
+        (-[JSVirtualMachine externalObjectGraph]):
+        * API/JSVirtualMachineInternal.h:
+        * API/tests/testapi.mm: Added two new tests using the TinyDOMNode class. The first tests that a custom property added to a wrapper 
+        doesn't vanish after GC, even though that wrapper isn't directly accessible to the JS garbage collector but is accessible through 
+        the external Objective-C object graph. The second test makes sure that adding an object to the external object graph with the same 
+        owner doesn't cause any sort of problems.
+        (+[TinyDOMNode sharedVirtualMachine]):
+        (-[TinyDOMNode init]):
+        (-[TinyDOMNode dealloc]):
+        (-[TinyDOMNode appendChild:]):
+        (-[TinyDOMNode numberOfChildren]):
+        (-[TinyDOMNode childAtIndex:]):
+        (-[TinyDOMNode removeChildAtIndex:]):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/SlotVisitor.h:
+        (SlotVisitor):
+        * heap/SlotVisitorInlines.h:
+        (JSC::SlotVisitor::containsOpaqueRootTriState): Added a new method to SlotVisitor to allow scanExternalObjectGraph to have a 
+        thread-safe view of opaque roots during parallel marking. The set of opaque roots available to any one SlotVisitor isn't guaranteed
+        to be 100% correct, but that just results in a small duplication of work in scanExternalObjectGraph. To indicate this change for
+        false negatives we return a TriState that's either true or mixed, but never false.
+
 2013-03-21  Mark Lam  <mark.lam@apple.com>
 
         Fix O(n^2) op_debug bytecode charPosition to column computation.

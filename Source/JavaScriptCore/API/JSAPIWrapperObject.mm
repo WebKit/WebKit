@@ -29,6 +29,7 @@
 #include "JSCJSValueInlines.h"
 #include "JSCallbackObject.h"
 #include "JSCellInlines.h"
+#include "JSVirtualMachineInternal.h"
 #include "SlotVisitorInlines.h"
 #include "Structure.h"
 #include "StructureInlines.h"
@@ -38,6 +39,7 @@
 class JSAPIWrapperObjectHandleOwner : public JSC::WeakHandleOwner {
 public:
     virtual void finalize(JSC::Handle<JSC::Unknown>, void*);
+    virtual bool isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor&);
 };
 
 static JSAPIWrapperObjectHandleOwner* jsAPIWrapperObjectHandleOwner()
@@ -48,11 +50,21 @@ static JSAPIWrapperObjectHandleOwner* jsAPIWrapperObjectHandleOwner()
 
 void JSAPIWrapperObjectHandleOwner::finalize(JSC::Handle<JSC::Unknown> handle, void*)
 {
-    JSC::WeakSet::deallocate(JSC::WeakImpl::asWeakImpl(handle.slot()));
     JSC::JSAPIWrapperObject* wrapperObject = JSC::jsCast<JSC::JSAPIWrapperObject*>(handle.get().asCell());
     if (!wrapperObject->wrappedObject())
         return;
     [static_cast<id>(wrapperObject->wrappedObject()) release];
+    JSC::WeakSet::deallocate(JSC::WeakImpl::asWeakImpl(handle.slot()));
+}
+
+bool JSAPIWrapperObjectHandleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, JSC::SlotVisitor& visitor)
+{
+    JSC::JSAPIWrapperObject* wrapperObject = JSC::jsCast<JSC::JSAPIWrapperObject*>(handle.get().asCell());
+    // We use the JSGlobalObject when processing weak handles to prevent the situation where using
+    // the same Objective-C object in multiple global objects keeps all of the global objects alive.
+    if (!wrapperObject->wrappedObject())
+        return false;
+    return JSC::Heap::isMarked(wrapperObject->structure()->globalObject()) && visitor.containsOpaqueRoot(wrapperObject->wrappedObject());
 }
 
 namespace JSC {
@@ -92,7 +104,7 @@ void JSAPIWrapperObject::visitChildren(JSCell* cell, JSC::SlotVisitor& visitor)
     Base::visitChildren(cell, visitor);
 
     if (thisObject->wrappedObject())
-        visitor.addOpaqueRoot(thisObject->wrappedObject());
+        scanExternalObjectGraph(cell->structure()->globalObject()->globalData(), visitor, thisObject->wrappedObject());
 }
 
 } // namespace JSC

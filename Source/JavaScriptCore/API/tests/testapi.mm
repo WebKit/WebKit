@@ -153,6 +153,85 @@ bool testXYZTested = false;
 }
 @end
 
+@class TinyDOMNode;
+
+@protocol TinyDOMNode <JSExport>
+- (void)appendChild:(TinyDOMNode *)child;
+- (NSUInteger)numberOfChildren;
+- (TinyDOMNode *)childAtIndex:(NSUInteger)index;
+- (void)removeChildAtIndex:(NSUInteger)index;
+@end
+
+@interface TinyDOMNode : NSObject<TinyDOMNode>
++ (JSVirtualMachine *)sharedVirtualMachine;
++ (void)clearSharedVirtualMachine;
+@end
+
+@implementation TinyDOMNode {
+    NSMutableArray *m_children;
+}
+
+static JSVirtualMachine *sharedInstance = nil;
+
++ (JSVirtualMachine *)sharedVirtualMachine
+{
+    if (!sharedInstance)
+        sharedInstance = [[JSVirtualMachine alloc] init];
+    return sharedInstance;
+}
+
++ (void)clearSharedVirtualMachine
+{
+    sharedInstance = nil;
+}
+
+- (id)init
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    m_children = [[NSMutableArray alloc] initWithCapacity:0];
+
+    return self;
+}
+
+- (void)dealloc
+{
+    NSEnumerator *enumerator = [m_children objectEnumerator];
+    id nextChild;
+    while ((nextChild = [enumerator nextObject]))
+        [[TinyDOMNode sharedVirtualMachine] removeManagedReference:nextChild withOwner:self];
+}
+
+- (void)appendChild:(TinyDOMNode *)child
+{
+    [[TinyDOMNode sharedVirtualMachine] addManagedReference:child withOwner:self];
+    [m_children addObject:child];
+}
+
+- (NSUInteger)numberOfChildren
+{
+    return [m_children count];
+}
+
+- (TinyDOMNode *)childAtIndex:(NSUInteger)index
+{
+    if (index >= [m_children count])
+        return nil;
+    return [m_children objectAtIndex:index];
+}
+
+- (void)removeChildAtIndex:(NSUInteger)index
+{
+    if (index >= [m_children count])
+        return;
+    [[TinyDOMNode sharedVirtualMachine] removeManagedReference:[m_children objectAtIndex:index] withOwner:self];
+    [m_children removeObjectAtIndex:index];
+}
+
+@end
+
 static void checkResult(NSString *description, bool passed)
 {
     NSLog(@"TEST: \"%@\": %@", description, passed ? @"PASSED" : @"FAILED");
@@ -648,6 +727,72 @@ void testObjectiveCAPI()
         }
     }
 
+    @autoreleasepool {
+        JSVirtualMachine *vm = [TinyDOMNode sharedVirtualMachine];
+        JSContext *context = [[JSContext alloc] initWithVirtualMachine:vm];
+        TinyDOMNode *root = [[TinyDOMNode alloc] init];
+        TinyDOMNode *lastNode = root;
+        for (NSUInteger i = 0; i < 3; i++) {
+            TinyDOMNode *newNode = [[TinyDOMNode alloc] init];
+            [lastNode appendChild:newNode];
+            lastNode = newNode;
+        }
+
+        @autoreleasepool {
+            context[@"root"] = root;
+            context[@"getLastNodeInChain"] = ^(TinyDOMNode *head){
+                TinyDOMNode *lastNode = nil;
+                while (head) {
+                    lastNode = head;
+                    head = [lastNode childAtIndex:0];
+                }
+                return lastNode;
+            };
+            [context evaluateScript:@"getLastNodeInChain(root).myCustomProperty = 42;"];
+        }
+
+        JSSynchronousGarbageCollectForDebugging([context globalContextRef]);
+
+        JSValue *myCustomProperty = [context evaluateScript:@"getLastNodeInChain(root).myCustomProperty"];
+        checkResult(@"My custom property == 42", [myCustomProperty isNumber] && [myCustomProperty toInt32] == 42);
+
+        [TinyDOMNode clearSharedVirtualMachine];
+    }
+
+    @autoreleasepool {
+        JSVirtualMachine *vm = [TinyDOMNode sharedVirtualMachine];
+        JSContext *context = [[JSContext alloc] initWithVirtualMachine:vm];
+        TinyDOMNode *root = [[TinyDOMNode alloc] init];
+        TinyDOMNode *lastNode = root;
+        for (NSUInteger i = 0; i < 3; i++) {
+            TinyDOMNode *newNode = [[TinyDOMNode alloc] init];
+            [lastNode appendChild:newNode];
+            lastNode = newNode;
+        }
+
+        @autoreleasepool {
+            context[@"root"] = root;
+            context[@"getLastNodeInChain"] = ^(TinyDOMNode *head){
+                TinyDOMNode *lastNode = nil;
+                while (head) {
+                    lastNode = head;
+                    head = [lastNode childAtIndex:0];
+                }
+                return lastNode;
+            };
+            [context evaluateScript:@"getLastNodeInChain(root).myCustomProperty = 42;"];
+
+            [root appendChild:[root childAtIndex:0]];
+            [root removeChildAtIndex:0];
+        }
+
+        JSSynchronousGarbageCollectForDebugging([context globalContextRef]);
+
+        JSValue *myCustomProperty = [context evaluateScript:@"getLastNodeInChain(root).myCustomProperty"];
+        checkResult(@"duplicate calls to addManagedReference don't cause things to die", [myCustomProperty isNumber] && [myCustomProperty toInt32] == 42);
+
+        [TinyDOMNode clearSharedVirtualMachine];
+    }
 }
 
 #else

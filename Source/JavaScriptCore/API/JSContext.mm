@@ -78,6 +78,15 @@
     return self;
 }
 
+- (void)dealloc
+{
+    [m_wrapperMap release];
+    JSGlobalContextRelease(m_context);
+    [m_virtualMachine release];
+    [self.exceptionHandler release];
+    [super dealloc];
+}
+
 - (JSValue *)evaluateScript:(NSString *)script
 {
     JSValueRef exceptionValue = 0;
@@ -193,15 +202,6 @@
     [m_virtualMachine addContext:self forGlobalContextRef:m_context];
 
     return self;
-}
-
-- (void)dealloc
-{
-    [m_wrapperMap release];
-    JSGlobalContextRelease(m_context);
-    [m_virtualMachine release];
-    [self.exceptionHandler release];
-    [super dealloc];
 }
 
 - (void)notifyException:(JSValueRef)exceptionValue

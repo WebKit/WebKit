@@ -55,6 +55,6 @@ private:
 
 } // namespace JSC
 
-#endif
+#endif // JSC_OBJC_API_ENABLED
 
 #endif // JSAPIWrapperObject_h

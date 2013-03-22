@@ -37,6 +37,9 @@ NS_CLASS_AVAILABLE(10_9, NA)
 
 - (id)init;
 
+- (void)addManagedReference:(id)object withOwner:(id)owner;
+- (void)removeManagedReference:(id)object withOwner:(id)owner;
+
 @end
 
 #endif

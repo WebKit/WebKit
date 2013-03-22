@@ -121,6 +121,16 @@ inline bool SlotVisitor::containsOpaqueRoot(void* root)
 #endif
 }
 
+inline TriState SlotVisitor::containsOpaqueRootTriState(void* root)
+{
+    if (m_opaqueRoots.contains(root))
+        return TrueTriState;
+    MutexLocker locker(m_shared.m_opaqueRootsLock);
+    if (m_shared.m_opaqueRoots.contains(root))
+        return TrueTriState;
+    return MixedTriState;
+}
+
 inline int SlotVisitor::opaqueRootCount()
 {
     ASSERT(!m_isInParallelMode);

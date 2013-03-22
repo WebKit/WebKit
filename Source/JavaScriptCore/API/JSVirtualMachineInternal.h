@@ -26,11 +26,16 @@
 #ifndef JSVirtualMachineInternal_h
 #define JSVirtualMachineInternal_h
 
-#import <JavaScriptCore/JSVirtualMachine.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 
 #if JSC_OBJC_API_ENABLED
 
+namespace JSC {
+class JSGlobalData;
+class SlotVisitor;
+}
+
+#if defined(__OBJC__)
 @interface JSVirtualMachine(Internal)
 
 JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *);
@@ -40,7 +45,12 @@ JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *);
 - (JSContext *)contextForGlobalContextRef:(JSGlobalContextRef)globalContext;
 - (void)addContext:(JSContext *)wrapper forGlobalContextRef:(JSGlobalContextRef)globalContext;
 
+- (NSMapTable *)externalObjectGraph;
+
 @end
+#endif // defined(__OBJC__)
+
+void scanExternalObjectGraph(JSC::JSGlobalData&, JSC::SlotVisitor&, void* root);
 
 #endif
 
