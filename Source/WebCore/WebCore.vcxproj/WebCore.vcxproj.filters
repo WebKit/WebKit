@@ -3321,6 +3321,9 @@
     <ClCompile Include="..\platform\network\SocketStreamHandleBase.cpp">
       <Filter>platform\network</Filter>
     </ClCompile>
+    <ClCompile Include="..\platform\network\SynchronousLoaderClient.cpp">
+      <Filter>platform\network</Filter>
+    </ClCompile>
     <ClCompile Include="..\platform\network\cf\AuthenticationCF.cpp">
       <Filter>platform\network\cf</Filter>
     </ClCompile>
@@ -10150,6 +10153,9 @@
       <Filter>platform\network</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\network\SocketStreamHandleClient.h">
+      <Filter>platform\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\network\SynchronousLoaderClient.h">
       <Filter>platform\network</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\network\cf\DownloadBundle.h">

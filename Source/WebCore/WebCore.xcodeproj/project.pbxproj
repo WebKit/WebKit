@@ -6234,6 +6234,11 @@
 		E17B491616A9B094001C8839 /* TransitionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E17B491416A9B093001C8839 /* TransitionEvent.h */; };
 		E17B492116A9B8FF001C8839 /* JSTransitionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E17B491F16A9B8FF001C8839 /* JSTransitionEvent.h */; };
 		E17B492216A9B8FF001C8839 /* JSTransitionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E17B492016A9B8FF001C8839 /* JSTransitionEvent.cpp */; };
+		E180810E16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = E180810C16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.mm */; };
+		E180810F16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = E180810D16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.h */; };
+		E180811216FCF42F00B80D07 /* SynchronousLoaderClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E180811016FCF42E00B80D07 /* SynchronousLoaderClient.cpp */; };
+		E180811616FCF9CB00B80D07 /* SynchronousLoaderClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = E180811416FCF9CB00B80D07 /* SynchronousLoaderClient.mm */; };
+		E180811716FCF9CB00B80D07 /* SynchronousLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E180811516FCF9CB00B80D07 /* SynchronousLoaderClient.h */; };
 		E182568F0EF2B02D00933242 /* JSWorkerContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E182568D0EF2B02D00933242 /* JSWorkerContext.cpp */; };
 		E18256900EF2B02D00933242 /* JSWorkerContext.h in Headers */ = {isa = PBXBuildFile; fileRef = E182568E0EF2B02D00933242 /* JSWorkerContext.h */; };
 		E18258AC0EF3CD7000933242 /* JSWorkerContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18258AB0EF3CD7000933242 /* JSWorkerContextCustom.cpp */; };
@@ -13947,6 +13952,11 @@
 		E17B491416A9B093001C8839 /* TransitionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransitionEvent.h; sourceTree = "<group>"; };
 		E17B491F16A9B8FF001C8839 /* JSTransitionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTransitionEvent.h; sourceTree = "<group>"; };
 		E17B492016A9B8FF001C8839 /* JSTransitionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTransitionEvent.cpp; sourceTree = "<group>"; };
+		E180810C16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreResourceHandleAsDelegate.mm; sourceTree = "<group>"; };
+		E180810D16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreResourceHandleAsDelegate.h; sourceTree = "<group>"; };
+		E180811016FCF42E00B80D07 /* SynchronousLoaderClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SynchronousLoaderClient.cpp; sourceTree = "<group>"; };
+		E180811416FCF9CB00B80D07 /* SynchronousLoaderClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SynchronousLoaderClient.mm; sourceTree = "<group>"; };
+		E180811516FCF9CB00B80D07 /* SynchronousLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SynchronousLoaderClient.h; sourceTree = "<group>"; };
 		E182568D0EF2B02D00933242 /* JSWorkerContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerContext.cpp; sourceTree = "<group>"; };
 		E182568E0EF2B02D00933242 /* JSWorkerContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWorkerContext.h; sourceTree = "<group>"; };
 		E18258AB0EF3CD7000933242 /* JSWorkerContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWorkerContextCustom.cpp; sourceTree = "<group>"; };
@@ -16316,6 +16326,8 @@
 				510D4A30103165EE0049EA54 /* SocketStreamHandleBase.cpp */,
 				510D4A31103165EE0049EA54 /* SocketStreamHandleBase.h */,
 				510D4A32103165EE0049EA54 /* SocketStreamHandleClient.h */,
+				E180811016FCF42E00B80D07 /* SynchronousLoaderClient.cpp */,
+				E180811516FCF9CB00B80D07 /* SynchronousLoaderClient.h */,
 			);
 			path = network;
 			sourceTree = "<group>";
@@ -16337,6 +16349,9 @@
 				514C764B0CE9234E007EF3CD /* ResourceResponseMac.mm */,
 				1FAFBF1615A5FA5200083A20 /* UTIUtilities.h */,
 				1FAFBF1715A5FA5200083A20 /* UTIUtilities.mm */,
+				E180810C16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.mm */,
+				E180810D16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.h */,
+				E180811416FCF9CB00B80D07 /* SynchronousLoaderClient.mm */,
 				37F818FB0D657606005E1F05 /* WebCoreURLResponse.h */,
 				37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */,
 			);
@@ -26767,6 +26782,8 @@
 				DAED203116F244480070EC0F /* PageConsole.h in Headers */,
 				2D5BC42716F882EE007048D0 /* SecurityPolicyViolationEvent.h in Headers */,
 				50E18CDA16F9285800C65486 /* StyleCustomFilterProgramCache.h in Headers */,
+				E180810F16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.h in Headers */,
+				E180811716FCF9CB00B80D07 /* SynchronousLoaderClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -29975,6 +29992,9 @@
 				E1BA003116FB92AC00BA7A35 /* ResourceHandleClient.cpp in Sources */,
 				50E18CD816F9285800C65486 /* StyleCustomFilterProgram.cpp in Sources */,
 				50E18CD916F9285800C65486 /* StyleCustomFilterProgramCache.cpp in Sources */,
+				E180810E16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.mm in Sources */,
+				E180811216FCF42F00B80D07 /* SynchronousLoaderClient.cpp in Sources */,
+				E180811616FCF9CB00B80D07 /* SynchronousLoaderClient.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -4650,6 +4650,7 @@
     <ClCompile Include="..\platform\network\ResourceResponseBase.cpp" />
     <ClCompile Include="..\platform\network\SocketStreamErrorBase.cpp" />
     <ClCompile Include="..\platform\network\SocketStreamHandleBase.cpp" />
+    <ClCompile Include="..\platform\network\SynchronousLoaderClient.cpp" />
     <ClCompile Include="..\platform\network\cf\AuthenticationCF.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_WinCairo|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
@@ -11933,6 +11934,7 @@
     <ClInclude Include="..\platform\network\SocketStreamErrorBase.h" />
     <ClInclude Include="..\platform\network\SocketStreamHandleBase.h" />
     <ClInclude Include="..\platform\network\SocketStreamHandleClient.h" />
+    <ClInclude Include="..\platform\network\SynchronousLoaderClient.h" />
     <CustomBuildStep Include="..\platform\network\cf\AuthenticationCF.h" />
     <CustomBuildStep Include="..\platform\network\cf\AuthenticationChallenge.h" />
     <ClInclude Include="..\platform\network\cf\DownloadBundle.h" />

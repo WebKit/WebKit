@@ -42,6 +42,7 @@
 #include "ResourceHandleClient.h"
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
+#include "SynchronousLoaderClient.h"
 #include <CFNetwork/CFNetwork.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -76,45 +77,6 @@ __declspec(dllimport) CFURLConnectionRef CFURLConnectionCreateWithProperties(
 namespace WebCore {
 
 #if USE(CFNETWORK)
-
-class WebCoreSynchronousLoaderClient : public ResourceHandleClient {
-public:
-    static PassOwnPtr<WebCoreSynchronousLoaderClient> create(ResourceResponse& response, ResourceError& error)
-    {
-        return adoptPtr(new WebCoreSynchronousLoaderClient(response, error));
-    }
-
-    void setAllowStoredCredentials(bool allow) { m_allowStoredCredentials = allow; }
-    bool isDone() { return m_isDone; }
-
-    CFMutableDataRef data() { return m_data.get(); }
-
-private:
-    WebCoreSynchronousLoaderClient(ResourceResponse& response, ResourceError& error)
-        : m_allowStoredCredentials(false)
-        , m_response(response)
-        , m_error(error)
-        , m_isDone(false)
-    {
-    }
-
-    virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& /*redirectResponse*/);
-    virtual bool shouldUseCredentialStorage(ResourceHandle*);
-    virtual void didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge&);
-    virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
-    virtual void didReceiveData(ResourceHandle*, const char*, int, int /*encodedDataLength*/);
-    virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/);
-    virtual void didFail(ResourceHandle*, const ResourceError&);
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    virtual bool canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace&);
-#endif
-
-    bool m_allowStoredCredentials;
-    ResourceResponse& m_response;
-    RetainPtr<CFMutableDataRef> m_data;
-    ResourceError& m_error;
-    bool m_isDone;
-};
 
 static HashSet<String>& allowsAnyHTTPSCertificateHosts()
 {
@@ -706,7 +668,7 @@ CFStringRef ResourceHandle::synchronousLoadRunLoopMode()
     return CFSTR("WebCoreSynchronousLoaderRunLoopMode");
 }
 
-void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& vector)
+void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     LOG(Network, "ResourceHandle::platformLoadResourceSynchronously:%s allowStoredCredentials:%u", request.url().string().utf8().data(), storedCredentials);
 
@@ -715,7 +677,7 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     ASSERT(response.isNull());
     ASSERT(error.isNull());
 
-    OwnPtr<WebCoreSynchronousLoaderClient> client = WebCoreSynchronousLoaderClient::create(response, error);
+    OwnPtr<SynchronousLoaderClient> client = SynchronousLoaderClient::create();
     client->setAllowStoredCredentials(storedCredentials == AllowStoredCredentials);
 
     RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, client.get(), false /*defersLoading*/, true /*shouldContentSniff*/));
@@ -736,29 +698,25 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     while (!client->isDone())
         CFRunLoopRunInMode(synchronousLoadRunLoopMode(), UINT_MAX, true);
 
+    error = client->error();
+
     CFURLConnectionCancel(handle->connection());
-    
+
     if (error.isNull() && response.mimeType().isNull())
         setDefaultMIMEType(response.cfURLResponse());
-
-    RetainPtr<CFDataRef> data = client->data();
     
-    if (!error.isNull()) {
+    if (error.isNull())
+        response = client->response();
+    else {
         response = ResourceResponse(request.url(), String(), 0, String(), String());
-
-        CFErrorRef cfError = error;
-        CFStringRef domain = CFErrorGetDomain(cfError);
-        // FIXME: Return the actual response for failed authentication.
-        if (domain == kCFErrorDomainCFNetwork)
-            response.setHTTPStatusCode(CFErrorGetCode(cfError));
+        // FIXME: ResourceHandleMac also handles authentication errors by setting code to 401. CFNet version should probably do the same.
+        if (error.domain() == String(kCFErrorDomainCFNetwork))
+            response.setHTTPStatusCode(error.errorCode());
         else
             response.setHTTPStatusCode(404);
     }
 
-    if (data) {
-        ASSERT(vector.isEmpty());
-        vector.append(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()));
-    }
+    data.swap(client->mutableData());
 }
 
 void ResourceHandle::setHostAllowsAnyHTTPSCertificate(const String& host)
@@ -808,62 +766,6 @@ void ResourceHandle::unschedule(SchedulePair* pair)
         return;
 
     CFURLConnectionUnscheduleFromRunLoop(d->m_connection.get(), runLoop, pair->mode());
-}
-#endif
-
-void WebCoreSynchronousLoaderClient::willSendRequest(ResourceHandle* handle, ResourceRequest& request, const ResourceResponse& /*redirectResponse*/)
-{
-    // FIXME: This needs to be fixed to follow the redirect correctly even for cross-domain requests.
-    if (!protocolHostAndPortAreEqual(handle->firstRequest().url(), request.url())) {
-        ASSERT(!m_error.cfError());
-        RetainPtr<CFErrorRef> cfError(AdoptCF, CFErrorCreate(kCFAllocatorDefault, kCFErrorDomainCFNetwork, kCFURLErrorBadServerResponse, 0));
-        m_error = cfError.get();
-        m_isDone = true;
-        CFURLRequestRef nullRequest = 0;
-        request = nullRequest;
-        return;
-    }
-}
-void WebCoreSynchronousLoaderClient::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
-{
-    m_response = response;
-}
-
-void WebCoreSynchronousLoaderClient::didReceiveData(ResourceHandle*, const char* data, int length, int /*encodedDataLength*/)
-{
-    if (!m_data)
-        m_data.adoptCF(CFDataCreateMutable(kCFAllocatorDefault, 0));
-    CFDataAppendBytes(m_data.get(), reinterpret_cast<const UInt8*>(data), length);
-}
-
-void WebCoreSynchronousLoaderClient::didFinishLoading(ResourceHandle*, double)
-{
-    m_isDone = true;
-}
-
-void WebCoreSynchronousLoaderClient::didFail(ResourceHandle*, const ResourceError& error)
-{
-    m_error = error;
-    m_isDone = true;
-}
-
-void WebCoreSynchronousLoaderClient::didReceiveAuthenticationChallenge(ResourceHandle* handle, const AuthenticationChallenge& challenge)
-{
-    // FIXME: The user should be asked for credentials, as in async case.
-    CFURLConnectionUseCredential(handle->connection(), 0, challenge.cfURLAuthChallengeRef());
-}
-
-bool WebCoreSynchronousLoaderClient::shouldUseCredentialStorage(ResourceHandle*)
-{
-    // FIXME: We should ask FrameLoaderClient whether using credential storage is globally forbidden.
-    return m_allowStoredCredentials;
-}
-
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-bool WebCoreSynchronousLoaderClient::canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace&)
-{
-    // FIXME: We should ask FrameLoaderClient. <http://webkit.org/b/65196>
-    return true;
 }
 #endif
 
