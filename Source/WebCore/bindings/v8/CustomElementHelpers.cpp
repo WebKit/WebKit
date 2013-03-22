@@ -157,7 +157,7 @@ void CustomElementHelpers::invokeReadyCallbackIfNeeded(Element* element, v8::Han
     v8::Handle<v8::Function> function = v8::Handle<v8::Function>::Cast(functionValue);
     v8::TryCatch exceptionCatcher;
     exceptionCatcher.SetVerbose(true);
-    v8::Handle<v8::Value> args[] = { };
+    v8::Handle<v8::Value> args[] = { v8::Handle<v8::Value>() };
     ScriptController::callFunctionWithInstrumentation(element->document(), function, wrapper, 0, args);
 }
 
