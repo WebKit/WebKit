@@ -62,9 +62,6 @@
 #include <wtf/ListHashSet.h>
 #endif
 
-struct OpaqueJSClass;
-struct OpaqueJSClassContextData;
-
 namespace JSC {
 
     class CodeBlock;
@@ -368,8 +365,6 @@ namespace JSC {
 
         void gatherConservativeRoots(ConservativeRoots&);
 #endif
-
-        HashMap<OpaqueJSClass*, OwnPtr<OpaqueJSClassContextData> > opaqueJSClassData;
 
         JSGlobalObject* dynamicGlobalObject;
 

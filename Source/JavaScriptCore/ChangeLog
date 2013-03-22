@@ -1,3 +1,37 @@
+2013-03-22  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        opaqueJSClassData should be cached on JSGlobalObject, not the JSGlobalData
+        https://bugs.webkit.org/show_bug.cgi?id=113086
+
+        Reviewed by Geoffrey Garen.
+
+        opaqueJSClassData stores cached prototypes for JSClassRefs in the C API. It doesn't make sense to 
+        share these prototypes within a JSGlobalData across JSGlobalObjects, and in fact doing so will cause 
+        a leak of the original JSGlobalObject that these prototypes were created in. Therefore we should move 
+        this cache to JSGlobalObject where it belongs and where it won't cause memory leaks.
+
+        * API/JSBase.cpp: Needed to add an extern "C" so that testapi.c can use the super secret GC function.
+        * API/JSClassRef.cpp: We now grab the cached context data from the global object rather than the global data.
+        (OpaqueJSClass::contextData):
+        * API/JSClassRef.h: Remove this header because it's unnecessary and causes circular dependencies.
+        * API/tests/testapi.c: Added a new test that makes sure that using the same JSClassRef in two different contexts
+        doesn't cause leaks of the original global object.
+        (leakFinalize):
+        (nestedAllocateObject): This is a hack to bypass the conservative scan of the GC, which was unnecessarily marking
+        objects and keeping them alive, ruining the test result.
+        (testLeakingPrototypesAcrossContexts):
+        (main):
+        * API/tests/testapi.mm: extern "C" this so we can continue using it here.
+        * runtime/JSGlobalData.cpp: Remove JSClassRef related stuff.
+        (JSC::JSGlobalData::~JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        * runtime/JSGlobalObject.h: Add the stuff that JSGlobalData had. We add it to JSGlobalObjectRareData so that 
+        clients who don't use the C API don't have to pay the memory cost of this extra HashMap.
+        (JSGlobalObject):
+        (JSGlobalObjectRareData):
+        (JSC::JSGlobalObject::opaqueJSClassData):
+
 2013-03-19  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add support for building the WebCore bindings to the gyp build

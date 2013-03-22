@@ -24,6 +24,7 @@
 
 #include "ArrayAllocationProfile.h"
 #include "JSArray.h"
+#include "JSClassRef.h"
 #include "JSGlobalData.h"
 #include "JSSegmentedVariableObject.h"
 #include "JSWeakObjectMapRefInternal.h"
@@ -37,6 +38,9 @@
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RandomNumber.h>
+
+struct OpaqueJSClass;
+struct OpaqueJSClassContextData;
 
 namespace JSC {
 
@@ -86,6 +90,7 @@ struct GlobalObjectMethodTable {
 class JSGlobalObject : public JSSegmentedVariableObject {
 private:
     typedef HashSet<RefPtr<OpaqueJSWeakObjectMap> > WeakMapSet;
+    typedef HashMap<OpaqueJSClass*, OwnPtr<OpaqueJSClassContextData> > OpaqueJSClassDataMap;
 
     struct JSGlobalObjectRareData {
         JSGlobalObjectRareData()
@@ -95,6 +100,8 @@ private:
 
         WeakMapSet weakMaps;
         unsigned profileGroup;
+        
+        OpaqueJSClassDataMap opaqueJSClassData;
     };
 
 protected:
@@ -393,6 +400,12 @@ public:
     {
         if (m_rareData)
             m_rareData->weakMaps.remove(map);
+    }
+
+    OpaqueJSClassDataMap& opaqueJSClassData()
+    {
+        createRareDataIfNeeded();
+        return m_rareData->opaqueJSClassData;
     }
 
     double weakRandomNumber() { return m_weakRandom.get(); }

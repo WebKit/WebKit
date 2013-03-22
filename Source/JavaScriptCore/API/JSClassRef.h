@@ -26,10 +26,9 @@
 #ifndef JSClassRef_h
 #define JSClassRef_h
 
-#include "JSObjectRef.h"
+#include <JavaScriptCore/JSObjectRef.h>
 
 #include "Weak.h"
-#include "JSObject.h"
 #include "Protect.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
@@ -87,7 +86,7 @@ public:
 struct OpaqueJSClass : public ThreadSafeRefCounted<OpaqueJSClass> {
     static PassRefPtr<OpaqueJSClass> create(const JSClassDefinition*);
     static PassRefPtr<OpaqueJSClass> createNoAutomaticPrototype(const JSClassDefinition*);
-    ~OpaqueJSClass();
+    JS_EXPORT_PRIVATE ~OpaqueJSClass();
     
     String className();
     OpaqueJSClassStaticValuesTable* staticValues(JSC::ExecState*);

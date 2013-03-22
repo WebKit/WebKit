@@ -55,6 +55,8 @@ using std::isnan;
 void testObjectiveCAPI(void);
 #endif
 
+extern void JSSynchronousGarbageCollectForDebugging(JSContextRef);
+
 static JSGlobalContextRef context;
 int failed;
 static void assertEqualsAsBoolean(JSValueRef value, bool expectedValue)
@@ -130,6 +132,61 @@ static void assertEqualsAsCharactersPtr(JSValueRef value, const char* expectedVa
 
     free(cfBuffer);
     JSStringRelease(valueAsString);
+}
+
+static int leakedObject = 1;
+
+static void leakFinalize(JSObjectRef object)
+{
+    (void)object;
+    leakedObject = 0;
+}
+
+// This is a hack to avoid the C++ stack keeping the original JSObject alive.
+static void nestedAllocateObject(JSContextRef context, JSClassRef class, unsigned n)
+{
+    if (!n) {
+        JSObjectRef object = JSObjectMake(context, class, 0);
+        JSObjectRef globalObject = JSContextGetGlobalObject(context);
+        JSStringRef propertyName = JSStringCreateWithUTF8CString("value");
+        JSObjectSetProperty(context, globalObject, propertyName, object, kJSPropertyAttributeNone, 0);
+        JSStringRelease(propertyName);
+        return;
+    }
+    nestedAllocateObject(context, class, n - 1);
+}
+
+static void testLeakingPrototypesAcrossContexts()
+{
+    JSClassDefinition leakDefinition = kJSClassDefinitionEmpty;
+    leakDefinition.finalize = leakFinalize;
+    JSClassRef leakClass = JSClassCreate(&leakDefinition);
+
+    JSContextGroupRef group = JSContextGroupCreate();
+
+    {
+        JSGlobalContextRef context1 = JSGlobalContextCreateInGroup(group, NULL);
+        nestedAllocateObject(context1, leakClass, 10);
+        JSGlobalContextRelease(context1);
+    }
+
+    {
+        JSGlobalContextRef context2 = JSGlobalContextCreateInGroup(group, NULL);
+        JSObjectRef object2 = JSObjectMake(context2, leakClass, 0);
+        JSValueProtect(context2, object2);
+        JSSynchronousGarbageCollectForDebugging(context2);
+        if (leakedObject) {
+            printf("FAIL: Failed to finalize the original object after the first GC.\n");
+            failed = 1;
+        } else
+            printf("PASS: Finalized the original object as expected.\n");
+        JSValueUnprotect(context2, object2);
+        JSGlobalContextRelease(context2);
+    }
+
+    JSContextGroupRelease(group);
+
+    JSClassRelease(leakClass);
 }
 
 static bool timeZoneIsPST()
@@ -1684,6 +1741,8 @@ int main(int argc, char* argv[])
         JSScriptRelease(scriptObject);
         free(scriptUTF8);
     }
+
+    testLeakingPrototypesAcrossContexts();
 
     // Clear out local variables pointing at JSObjectRefs to allow their values to be collected
     function = NULL;

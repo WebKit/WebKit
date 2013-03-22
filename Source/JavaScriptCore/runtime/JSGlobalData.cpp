@@ -44,7 +44,6 @@
 #include "JSActivation.h"
 #include "JSAPIValueWrapper.h"
 #include "JSArray.h"
-#include "JSClassRef.h"
 #include "JSFunction.h"
 #include "JSLock.h"
 #include "JSNameScope.h"
@@ -305,8 +304,6 @@ JSGlobalData::~JSGlobalData()
     fastDelete(const_cast<HashTable*>(regExpConstructorTable));
     fastDelete(const_cast<HashTable*>(regExpPrototypeTable));
     fastDelete(const_cast<HashTable*>(stringConstructorTable));
-
-    opaqueJSClassData.clear();
 
     delete emptyList;
 

@@ -111,7 +111,7 @@ void JSReportExtraMemoryCost(JSContextRef ctx, size_t size)
     exec->globalData().heap.reportExtraMemoryCost(size);
 }
 
-JS_EXPORT void JSSynchronousGarbageCollectForDebugging(JSContextRef);
+extern "C" JS_EXPORT void JSSynchronousGarbageCollectForDebugging(JSContextRef);
 
 void JSSynchronousGarbageCollectForDebugging(JSContextRef ctx)
 {
