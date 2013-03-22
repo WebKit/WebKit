@@ -1,3 +1,14 @@
+2013-03-21  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Histogram available disk space on attempt to open database
+        https://bugs.webkit.org/show_bug.cgi?id=112862
+
+        Reviewed by Adam Barth.
+
+        * chromium/public/Platform.h:
+        (WebKit::Platform::availableDiskSpaceInBytes):
+        (Platform):
+
 2013-03-21  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Removed unused WEBKIT_USE_NEW_WEBFILESYSTEMTYPE flag

@@ -46,6 +46,7 @@
 
 #if PLATFORM(CHROMIUM)
 #include <env_idb.h>
+#include <public/Platform.h>
 #endif
 
 #if !PLATFORM(CHROMIUM)
@@ -142,6 +143,22 @@ bool LevelDBDatabase::destroy(const String& fileName)
     return s.ok();
 }
 
+static void histogramFreeSpace(const char* type, String fileName)
+{
+#if PLATFORM(CHROMIUM)
+    String name = "WebCore.IndexedDB.LevelDB.Open" + String(type) + "FreeDiskSpace";
+    long long freeDiskSpaceInKBytes = WebKit::Platform::current()->availableDiskSpaceInBytes(fileName) / 1024;
+    if (freeDiskSpaceInKBytes < 0) {
+        HistogramSupport::histogramEnumeration("WebCore.IndexedDB.LevelDB.FreeDiskSpaceFailure", 1, 1);
+        return;
+    }
+    int clampedDiskSpaceKBytes = freeDiskSpaceInKBytes > INT_MAX ? INT_MAX : freeDiskSpaceInKBytes;
+    const uint64_t histogramMax = static_cast<uint64_t>(1e9);
+    COMPILE_ASSERT(histogramMax <= INT_MAX, histogramMaxTooBig);
+    HistogramSupport::histogramCustomCounts(name.utf8().data(), clampedDiskSpaceKBytes, 1, histogramMax, 11/*buckets*/);
+#endif
+}
+
 PassOwnPtr<LevelDBDatabase> LevelDBDatabase::open(const String& fileName, const LevelDBComparator* comparator)
 {
     OwnPtr<ComparatorAdapter> comparatorAdapter = adoptPtr(new ComparatorAdapter(comparator));
@@ -166,9 +183,13 @@ PassOwnPtr<LevelDBDatabase> LevelDBDatabase::open(const String& fileName, const 
             levelDBError = LevelDBIOError;
         HistogramSupport::histogramEnumeration("WebCore.IndexedDB.LevelDBOpenErrors", levelDBError, LevelDBMaxError);
 
+        histogramFreeSpace("Failure", fileName);
+
         LOG_ERROR("Failed to open LevelDB database from %s: %s", fileName.ascii().data(), s.ToString().c_str());
         return nullptr;
     }
+
+    histogramFreeSpace("Success", fileName);
 
     OwnPtr<LevelDBDatabase> result = adoptPtr(new LevelDBDatabase);
     result->m_db = adoptPtr(db);
