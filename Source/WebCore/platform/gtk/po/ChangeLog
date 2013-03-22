@@ -1,3 +1,12 @@
+2013-03-22  Krishnababu Krothapalli  <kkrothap@redhat.com>
+
+        Telugu [te] language translation submission for WebKitGTK+ HEAD
+        https://bugs.webkit.org/show_bug.cgi?id=103052
+
+        Reviewed by Gustavo Noronha Silva (kov).
+
+        * te.po: Added.
+
 2013-03-22  Shankar Prasad  <svenkate@redhat.com>
 
         [kn] Kannada Translation for webkit
