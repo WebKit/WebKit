@@ -27,11 +27,8 @@
     Conditional=SCRIPTED_SPEECH,
     ConstructorTemplate=Event,
 ] interface SpeechRecognitionEvent : Event {
-    // DEPRECATED
-    [InitializedByEventConstructor] readonly attribute SpeechRecognitionResult result;
-    [InitializedByEventConstructor] readonly attribute SpeechRecognitionResultList resultHistory;
-
     [InitializedByEventConstructor] readonly attribute unsigned long resultIndex;
     [InitializedByEventConstructor] readonly attribute SpeechRecognitionResultList results;
-    // FIXME: Add the emma attribute.
+
+    readonly attribute Document emma;
 };

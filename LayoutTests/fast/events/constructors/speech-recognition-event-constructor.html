@@ -13,9 +13,8 @@ description("This tests the constructor for the SpeechRecognitionEvent DOM class
 // Test constructor without initializer.
 shouldBe("new webkitSpeechRecognitionEvent('eventType').bubbles", "false");
 shouldBe("new webkitSpeechRecognitionEvent('eventType').cancelable", "false");
-shouldBe("new webkitSpeechRecognitionEvent('eventType').result", "null");
+shouldBe("new webkitSpeechRecognitionEvent('eventType').results", "null");
 shouldBe("new webkitSpeechRecognitionEvent('eventType').resultIndex", "0");
-shouldBe("new webkitSpeechRecognitionEvent('eventType').resultHistory", "null");
 
 // Test passing bubbles in the initializer.
 shouldBe("new webkitSpeechRecognitionEvent('eventType', { bubbles: false }).bubbles", "false");

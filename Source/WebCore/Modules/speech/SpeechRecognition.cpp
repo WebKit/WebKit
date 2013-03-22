@@ -62,13 +62,19 @@ void SpeechRecognition::start(ExceptionCode& ec)
 void SpeechRecognition::stopFunction()
 {
     ASSERT(m_controller);
-    m_controller->stop(this);
+    if (m_started && !m_stopping) {
+        m_stopping = true;
+        m_controller->stop(this);
+    }
 }
 
 void SpeechRecognition::abort()
 {
     ASSERT(m_controller);
-    m_controller->abort(this);
+    if (m_started && !m_stopping) {
+        m_stopping = true;
+        m_controller->abort(this);
+    }
 }
 
 void SpeechRecognition::didStartAudio()
@@ -99,11 +105,6 @@ void SpeechRecognition::didEndSound()
 void SpeechRecognition::didEndAudio()
 {
     dispatchEvent(Event::create(eventNames().audioendEvent, /*canBubble=*/false, /*cancelable=*/false));
-}
-
-void SpeechRecognition::didReceiveResult(PassRefPtr<SpeechRecognitionResult> result, unsigned long resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory)
-{
-    dispatchEvent(SpeechRecognitionEvent::createResult(result, resultIndex, resultHistory));
 }
 
 void SpeechRecognition::didReceiveResults(const Vector<RefPtr<SpeechRecognitionResult> >& newFinalResults, const Vector<RefPtr<SpeechRecognitionResult> >& currentInterimResults)
@@ -139,6 +140,7 @@ void SpeechRecognition::didStart()
 void SpeechRecognition::didEnd()
 {
     m_started = false;
+    m_stopping = false;
     if (!m_stoppedByActiveDOMObject)
         dispatchEvent(Event::create(eventNames().endEvent, /*canBubble=*/false, /*cancelable=*/false));
     unsetPendingActivity(this);
@@ -170,6 +172,7 @@ SpeechRecognition::SpeechRecognition(ScriptExecutionContext* context)
     , m_controller(0)
     , m_stoppedByActiveDOMObject(false)
     , m_started(false)
+    , m_stopping(false)
 {
     Document* document = toDocument(scriptExecutionContext());
 

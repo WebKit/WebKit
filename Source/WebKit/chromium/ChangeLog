@@ -1,3 +1,15 @@
+2013-03-22  Tommy Widenflycht  <tommyw@google.com>
+
+        Clean up the speach recognintion API
+        https://bugs.webkit.org/show_bug.cgi?id=112916
+
+        Reviewed by Adam Barth.
+
+        * public/WebSpeechRecognizerClient.h:
+        * src/SpeechRecognitionClientProxy.cpp:
+        * src/SpeechRecognitionClientProxy.h:
+        (SpeechRecognitionClientProxy):
+
 2013-03-22  Hajime Morrita  <morrita@google.com>
 
         Custom Elements: "readyCallback" lifecycle callback should be called.

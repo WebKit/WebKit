@@ -29,23 +29,16 @@
 #if ENABLE(SCRIPTED_SPEECH)
 
 #include "Event.h"
-#include "SpeechRecognitionError.h"
 #include "SpeechRecognitionResult.h"
 #include "SpeechRecognitionResultList.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class SpeechRecognitionError;
-class SpeechRecognitionResult;
-class SpeechRecognitionResultList;
+class Document;
 
 struct SpeechRecognitionEventInit : public EventInit {
     SpeechRecognitionEventInit();
-
-    // DEPRECATED
-    RefPtr<SpeechRecognitionResult> result;
-    RefPtr<SpeechRecognitionResultList> resultHistory;
 
     unsigned long resultIndex;
     RefPtr<SpeechRecognitionResultList> results;
@@ -57,18 +50,12 @@ public:
     static PassRefPtr<SpeechRecognitionEvent> create(const AtomicString&, const SpeechRecognitionEventInit&);
     virtual ~SpeechRecognitionEvent();
 
-    // DEPRECATED
-    static PassRefPtr<SpeechRecognitionEvent> createResult(PassRefPtr<SpeechRecognitionResult>, short resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory);
-
     static PassRefPtr<SpeechRecognitionEvent> createResult(unsigned long resultIndex, const Vector<RefPtr<SpeechRecognitionResult> >& results);
     static PassRefPtr<SpeechRecognitionEvent> createNoMatch(PassRefPtr<SpeechRecognitionResult>);
 
     unsigned long resultIndex() const { return m_resultIndex; }
     SpeechRecognitionResultList* results() const { return m_results.get(); }
-
-    // DEPRECATED
-    SpeechRecognitionResult* result() const { return m_result.get(); }
-    SpeechRecognitionResultList* resultHistory() const { return m_resultHistory.get(); }
+    Document* emma() { return 0; }
 
     // Event
     virtual const AtomicString& interfaceName() const OVERRIDE;
@@ -76,16 +63,10 @@ public:
 private:
     SpeechRecognitionEvent();
     SpeechRecognitionEvent(const AtomicString&, const SpeechRecognitionEventInit&);
-    SpeechRecognitionEvent(const AtomicString& eventName, PassRefPtr<SpeechRecognitionResult>, short resultIndex, PassRefPtr<SpeechRecognitionResultList> resultHistory); // FIXME: Remove.
-    SpeechRecognitionEvent(const AtomicString& eventName, unsigned long resultIndex, const Vector<RefPtr<SpeechRecognitionResult> >& results);
-    explicit SpeechRecognitionEvent(PassRefPtr<SpeechRecognitionError>);
+    SpeechRecognitionEvent(const AtomicString& eventName, unsigned long resultIndex, PassRefPtr<SpeechRecognitionResultList> results);
 
     unsigned long m_resultIndex;
     RefPtr<SpeechRecognitionResultList> m_results;
-
-    // DEPRECATED
-    RefPtr<SpeechRecognitionResult> m_result;
-    RefPtr<SpeechRecognitionResultList> m_resultHistory;
 };
 
 } // namespace WebCore
