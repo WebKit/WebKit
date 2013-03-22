@@ -214,37 +214,22 @@ WebInspector.FlameChart.prototype = {
         this._isDragging = false;
     },
 
-    _nodeCount: function()
-    {
-        var nodes = this._cpuProfileView.profileHead.children.slice();
-
-        var nodeCount = 0;
-        while (nodes.length) {
-            var node = nodes.pop();
-            ++nodeCount;
-            nodes = nodes.concat(node.children);
-        }
-        return nodeCount;
-    },
-
     _calculateTimelineData: function()
     {
+        if (this._cpuProfileView.samples)
+            return this._calculateTimelineDataForSamples();
+
         if (this._timelineData)
             return this._timelineData;
 
         if (!this._cpuProfileView.profileHead)
             return null;
 
-        var nodeCount = this._nodeCount();
         var functionColorPairs = { };
         var currentColorIndex = 0;
 
-        var startTimes = new Float32Array(nodeCount);
-        var durations = new Float32Array(nodeCount);
-        var depths = new Uint8Array(nodeCount);
-        var nodes = new Array(nodeCount);
-        var colorPairs = new Array(nodeCount);
         var index = 0;
+        var entries = [];
 
         function appendReversedArray(toArray, fromArray)
         {
@@ -271,11 +256,14 @@ WebInspector.FlameChart.prototype = {
                 functionColorPairs[functionUID] = colorPair = {highlighted: "hsl(" + hue + ", 100%, 33%)", normal: "hsl(" + hue + ", 100%, 66%)"};
             }
 
-            colorPairs[index] = colorPair;
-            depths[index] = level;
-            durations[index] = node.totalTime;
-            startTimes[index] = offset;
-            nodes[index] = node;
+            entries.push({
+                colorPair: colorPair,
+                depth: level,
+                duration: node.totalTime,
+                startTime: offset,
+                node: node
+            });
+
 
             ++index;
 
@@ -293,14 +281,84 @@ WebInspector.FlameChart.prototype = {
         }
 
         this._timelineData = {
-            nodeCount: nodeCount,
+            entries: entries,
             totalTime: this._cpuProfileView.profileHead.totalTime,
-            startTimes: startTimes,
-            durations: durations,
-            depths: depths,
-            colorPairs: colorPairs,
-            nodes: nodes
         }
+
+        return this._timelineData;
+    },
+
+    _calculateTimelineDataForSamples: function()
+    {
+        if (this._timelineData)
+            return this._timelineData;
+
+        if (!this._cpuProfileView.profileHead)
+            return null;
+
+        var samples = this._cpuProfileView.samples;
+        var idToNode = this._cpuProfileView._idToNode;
+        var samplesCount = samples.length;
+        var functionColorPairs = { };
+        var currentColorIndex = 0;
+
+        var index = 0;
+        var entries = [];
+
+        var openIntervals = [];
+        var stackTrace = [];
+        for (var sampleIndex = 0; sampleIndex < samplesCount; sampleIndex++) {
+            var node = idToNode[samples[sampleIndex]];
+            stackTrace.length = 0;
+            while (node) {
+                stackTrace.push(node);
+                node = node.parent;
+            }
+            stackTrace.pop(); // Remove (root) node
+
+            var depth = 0;
+            node = stackTrace.pop();
+            while (node && depth < openIntervals.length && node === openIntervals[depth].node) {
+                var intervalIndex = openIntervals[depth].index;
+                entries[intervalIndex].duration += 1;
+                node = stackTrace.pop();
+                ++depth;
+            }
+            if (depth < openIntervals.length)
+                openIntervals.length = depth;
+            if (!node)
+                continue;
+
+            while (node) {
+                var functionUID = node.functionName + ":" + node.url + ":" + node.lineNumber;
+                var colorPair = functionColorPairs[functionUID];
+                if (!colorPair) {
+                    ++currentColorIndex;
+                    var hue = (currentColorIndex * 5 + 11 * (currentColorIndex % 2)) % 360;
+                    functionColorPairs[functionUID] = colorPair = {highlighted: "hsl(" + hue + ", 100%, 33%)", normal: "hsl(" + hue + ", 100%, 66%)"};
+                }
+
+                entries.push({
+                    colorPair: colorPair,
+                    depth: depth,
+                    duration: 1,
+                    startTime: sampleIndex,
+                    node: node
+                });
+
+                openIntervals.push({node: node, index: index});
+
+                ++index;
+
+                node = stackTrace.pop();
+                ++depth;
+            }
+        }
+
+        this._timelineData = {
+            entries: entries,
+            totalTime: samplesCount,
+        };
 
         return this._timelineData;
     },
@@ -316,7 +374,7 @@ WebInspector.FlameChart.prototype = {
     {
         if (this._isDragging)
             return;
-        var node = this._timelineData.nodes[this._highlightedNodeIndex];
+        var node = this._timelineData.entries[this._highlightedNodeIndex].node;
         if (!node)
             return;
         var contentHelper = new WebInspector.PopoverContentHelper(node.functionName);
@@ -342,7 +400,7 @@ WebInspector.FlameChart.prototype = {
     {
         if (this._highlightedNodeIndex === -1)
             return;
-        var node = this._timelineData.nodes[this._highlightedNodeIndex];
+        var node = this._timelineData.entries[this._highlightedNodeIndex].node;
         this.dispatchEventToListeners(WebInspector.FlameChart.Events.SelectedNode, node);
     },
 
@@ -359,19 +417,20 @@ WebInspector.FlameChart.prototype = {
         if (nodeIndex === -1)
             return;
 
-        var timelineData = this._timelineData;
+        var timelineEntries = this._timelineData.entries;
 
-        var anchorLeft = Math.floor(timelineData.startTimes[nodeIndex] * this._timeToPixel - this._pixelWindowLeft);
+        var anchorLeft = Math.floor(timelineEntries[nodeIndex].startTime * this._timeToPixel - this._pixelWindowLeft);
         anchorLeft = Number.constrain(anchorLeft, 0, this._canvas.width);
 
-        var anchorWidth = Math.floor(timelineData.durations[nodeIndex] * this._timeToPixel);
+        var anchorWidth = Math.floor(timelineEntries[nodeIndex].duration * this._timeToPixel);
+
         anchorWidth = Number.constrain(anchorWidth, 0, this._canvas.width - anchorLeft);
 
         var style = this._anchorElement.style;
         style.width = anchorWidth + "px";
         style.height = this._barHeight + "px";
         style.left = anchorLeft + "px";
-        style.top = Math.floor(this._canvas.height - (timelineData.depths[nodeIndex] + 1) * this._barHeight) + "px";
+        style.top = Math.floor(this._canvas.height - (timelineEntries[nodeIndex].depth + 1) * this._barHeight) + "px";
     },
 
     _onMouseWheel: function(e)
@@ -390,14 +449,15 @@ WebInspector.FlameChart.prototype = {
         var timelineData = this._timelineData;
         if (!timelineData)
             return -1;
+        var timelineEntries = timelineData.entries;
         var cursorTime = Math.floor((x + this._pixelWindowLeft) * this._pixelToTime);
         var cursorLevel = Math.floor((this._canvas.height - y) / this._barHeight);
 
-        for (var i = 0; i < timelineData.nodeCount; ++i) {
-            if (cursorTime < timelineData.startTimes[i])
+        for (var i = 0; i < timelineEntries.length; ++i) {
+            if (cursorTime < timelineEntries[i].startTime)
                 return -1;
-            if (cursorTime < (timelineData.startTimes[i] + timelineData.durations[i])
-                && cursorLevel === timelineData.depths[i])
+            if (cursorTime < (timelineEntries[i].startTime + timelineEntries[i].duration)
+                && cursorLevel === timelineEntries[i].depth)
                 return i;
         }
         return -1;
@@ -418,18 +478,17 @@ WebInspector.FlameChart.prototype = {
         if (!this._timelineData)
             return;
 
-        var nodeCount = this._timelineData.nodeCount;
-        var depths = this._timelineData.depths;
-        var startTimes = this._timelineData.startTimes;
-        var durations = this._timelineData.durations;
+        var timelineEntries = this._timelineData.entries;
+
         var drawData = new Uint8Array(width);
         var scaleFactor = width / this._totalTime;
 
-        for (var nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
-            var start = Math.floor(startTimes[nodeIndex] * scaleFactor);
-            var finish = Math.floor((startTimes[nodeIndex] + durations[nodeIndex]) * scaleFactor);
+        for (var nodeIndex = 0; nodeIndex < timelineEntries.length; ++nodeIndex) {
+            var entry = timelineEntries[nodeIndex];
+            var start = Math.floor(entry.startTime * scaleFactor);
+            var finish = Math.floor((entry.startTime + entry.duration) * scaleFactor);
             for (var x = start; x < finish; ++x)
-                drawData[x] = Math.max(drawData[x], depths[nodeIndex] + 1);
+                drawData[x] = Math.max(drawData[x], entry.depth + 1);
         }
 
         var context = this._overviewCanvas.getContext("2d");
@@ -456,25 +515,26 @@ WebInspector.FlameChart.prototype = {
         var timelineData = this._calculateTimelineData();
         if (!timelineData)
             return;
+        var timelineEntries = timelineData.entries;
         this._canvas.height = height;
         this._canvas.width = width;
         var barHeight = this._barHeight;
 
         var context = this._canvas.getContext("2d");
 
-        for (var i = 0; i < timelineData.nodeCount; ++i) {
-            var startTime = timelineData.startTimes[i];
+        for (var i = 0; i < timelineEntries.length; ++i) {
+            var startTime = timelineEntries[i].startTime;
             if (startTime > this._timeWindowRight)
                 break;
-            if ((startTime + timelineData.durations[i]) < this._timeWindowLeft)
+            if ((startTime + timelineEntries[i].duration) < this._timeWindowLeft)
                 continue;
             var x = Math.floor(startTime * this._timeToPixel) - this._pixelWindowLeft;
-            var y = height - (timelineData.depths[i] + 1) * barHeight;
-            var barWidth = Math.floor(timelineData.durations[i] * this._timeToPixel);
+            var y = height - (timelineEntries[i].depth + 1) * barHeight;
+            var barWidth = Math.floor(timelineEntries[i].duration * this._timeToPixel);
             if (barWidth < this._minWidth)
                 continue;
 
-            var colorPair = timelineData.colorPairs[i];
+            var colorPair = timelineEntries[i].colorPair;
             var color;
             if (this._highlightedNodeIndex === i)
                 color =  colorPair.highlighted;

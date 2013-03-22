@@ -3106,7 +3106,8 @@
                     { "name": "numberOfCalls", "type": "integer", "description": "Number of calls." },
                     { "name": "visible", "type": "boolean", "description": "Visibility." },
                     { "name": "callUID", "type": "number", "description": "Call UID." },
-                    { "name": "children", "type": "array", "items": { "$ref": "CPUProfileNode" }, "description": "Child nodes." }
+                    { "name": "children", "type": "array", "items": { "$ref": "CPUProfileNode" }, "description": "Child nodes." },
+                    { "name": "id", "optional": true, "type": "integer", "description": "Unique id of the node." }
                 ]
             },
             {
@@ -3115,7 +3116,8 @@
                 "description": "Profile.",
                 "properties": [
                     { "name": "head", "$ref": "CPUProfileNode", "optional": true },
-                    { "name": "idleTime", "type": "number", "optional": true }
+                    { "name": "idleTime", "type": "number", "optional": true },
+                    { "name": "samples", "optional": true, "type": "array", "items": { "type": "integer" }, "description": "Ids of samples top nodes." }
                 ]
             },
             {

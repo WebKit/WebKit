@@ -122,11 +122,14 @@ WebInspector.CPUProfileView.prototype = {
             return;
         }
         this.profileHead = profile.head;
+        this.samples = profile.samples;
 
         if (profile.idleTime)
             this._injectIdleTimeNode(profile);
 
         this._assignParentsInProfile();
+        if (this.samples)
+            this._buildIdToNodeMap();
         this._changeView();
         this._updatePercentButton();
         if (this.flameChart)
@@ -549,6 +552,18 @@ WebInspector.CPUProfileView.prototype = {
                 if (children[i].children.length > 0)
                     nodesToTraverse.push({ parent: children[i], children: children[i].children });
             }
+        }
+    },
+
+    _buildIdToNodeMap: function()
+    {
+        var idToNode = this._idToNode = {};
+        var stack = [this.profileHead];
+        while (stack.length) {
+            var node = stack.pop();
+            idToNode[node.id] = node;
+            for (var i = 0; i < node.children.length; i++)
+                stack.push(node.children[i]);
         }
     },
 
