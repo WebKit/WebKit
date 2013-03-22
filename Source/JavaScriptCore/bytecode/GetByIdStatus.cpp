@@ -125,6 +125,9 @@ GetByIdStatus GetByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
     if (!stubInfo.seen)
         return computeFromLLInt(profiledBlock, bytecodeIndex, ident);
     
+    if (stubInfo.resetByGC)
+        return GetByIdStatus(TakesSlowPath, true);
+
     PolymorphicAccessStructureList* list;
     int listSize;
     switch (stubInfo.accessType) {

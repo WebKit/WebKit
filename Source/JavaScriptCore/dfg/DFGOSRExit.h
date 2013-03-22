@@ -100,11 +100,11 @@ struct OSRExit {
     ExitKind m_kind;
     uint32_t m_count;
     
-    bool considerAddingAsFrequentExitSite(CodeBlock* dfgCodeBlock, CodeBlock* profiledCodeBlock)
+    bool considerAddingAsFrequentExitSite(CodeBlock* profiledCodeBlock)
     {
         if (!m_count || !exitKindIsCountable(m_kind))
             return false;
-        return considerAddingAsFrequentExitSiteSlow(dfgCodeBlock, profiledCodeBlock);
+        return considerAddingAsFrequentExitSiteSlow(profiledCodeBlock);
     }
 
     void setPatchableCodeOffset(MacroAssembler::PatchableJump);
@@ -118,7 +118,7 @@ struct OSRExit {
     RefPtr<ValueRecoveryOverride> m_valueRecoveryOverride;
 
 private:
-    bool considerAddingAsFrequentExitSiteSlow(CodeBlock* dfgCodeBlock, CodeBlock* profiledCodeBlock);
+    bool considerAddingAsFrequentExitSiteSlow(CodeBlock* profiledCodeBlock);
 };
 
 struct SpeculationFailureDebugInfo {

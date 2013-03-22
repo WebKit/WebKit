@@ -1456,10 +1456,8 @@ DEFINE_STUB_FUNCTION(void, op_put_by_id)
     stackFrame.args[0].jsValue().put(callFrame, ident, stackFrame.args[2].jsValue(), slot);
     
     if (accessType == static_cast<AccessType>(stubInfo->accessType)) {
-        if (!stubInfo->seenOnce())
-            stubInfo->setSeen();
-        else
-            tryCachePutByID(callFrame, codeBlock, STUB_RETURN_ADDRESS, stackFrame.args[0].jsValue(), slot, stubInfo, false);
+        stubInfo->setSeen();
+        tryCachePutByID(callFrame, codeBlock, STUB_RETURN_ADDRESS, stackFrame.args[0].jsValue(), slot, stubInfo, false);
     }
     
     CHECK_FOR_EXCEPTION_AT_END();
@@ -1482,10 +1480,8 @@ DEFINE_STUB_FUNCTION(void, op_put_by_id_direct)
     asObject(baseValue)->putDirect(callFrame->globalData(), ident, stackFrame.args[2].jsValue(), slot);
     
     if (accessType == static_cast<AccessType>(stubInfo->accessType)) {
-        if (!stubInfo->seenOnce())
-            stubInfo->setSeen();
-        else
-            tryCachePutByID(callFrame, codeBlock, STUB_RETURN_ADDRESS, stackFrame.args[0].jsValue(), slot, stubInfo, true);
+        stubInfo->setSeen();
+        tryCachePutByID(callFrame, codeBlock, STUB_RETURN_ADDRESS, stackFrame.args[0].jsValue(), slot, stubInfo, true);
     }
     
     CHECK_FOR_EXCEPTION_AT_END();

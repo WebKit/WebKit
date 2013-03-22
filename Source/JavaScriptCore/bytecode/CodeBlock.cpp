@@ -2338,10 +2338,6 @@ void CodeBlock::finalizeUnconditionally()
         if (verboseUnlinking)
             dataLog(*this, " has dead weak references, jettisoning during GC.\n");
 
-        // Make sure that the baseline JIT knows that it should re-warm-up before
-        // optimizing.
-        alternative()->optimizeAfterWarmUp();
-        
         if (DFG::shouldShowDisassembly()) {
             dataLog(*this, " will be jettisoned because of the following dead references:\n");
             for (unsigned i = 0; i < m_dfgData->transitions.size(); ++i) {
@@ -2427,7 +2423,7 @@ void CodeBlock::finalizeUnconditionally()
             if (stubInfo.visitWeakReferences())
                 continue;
             
-            resetStubInternal(repatchBuffer, stubInfo);
+            resetStubDuringGCInternal(repatchBuffer, stubInfo);
         }
     }
 #endif
@@ -2464,6 +2460,12 @@ void CodeBlock::resetStubInternal(RepatchBuffer& repatchBuffer, StructureStubInf
     }
     
     stubInfo.reset();
+}
+
+void CodeBlock::resetStubDuringGCInternal(RepatchBuffer& repatchBuffer, StructureStubInfo& stubInfo)
+{
+    resetStubInternal(repatchBuffer, stubInfo);
+    stubInfo.resetByGC = true;
 }
 #endif
 
@@ -2842,12 +2844,10 @@ void CodeBlock::reoptimize()
 {
     ASSERT(replacement() != this);
     ASSERT(replacement()->alternative() == this);
-    replacement()->tallyFrequentExitSites();
     if (DFG::shouldShowDisassembly())
         dataLog(*replacement(), " will be jettisoned due to reoptimization of ", *this, ".\n");
     replacement()->jettison();
     countReoptimization();
-    optimizeAfterWarmUp();
 }
 
 CodeBlock* ProgramCodeBlock::replacement()
@@ -2906,30 +2906,29 @@ DFG::CapabilityLevel FunctionCodeBlock::canCompileWithDFGInternal()
     return DFG::canCompileFunctionForCall(this);
 }
 
-void ProgramCodeBlock::jettison()
+void CodeBlock::jettison()
 {
     ASSERT(JITCode::isOptimizingJIT(getJITType()));
     ASSERT(this == replacement());
+    alternative()->optimizeAfterWarmUp();
+    tallyFrequentExitSites();
     if (DFG::shouldShowDisassembly())
         dataLog("Jettisoning ", *this, ".\n");
+    jettisonImpl();
+}
+
+void ProgramCodeBlock::jettisonImpl()
+{
     static_cast<ProgramExecutable*>(ownerExecutable())->jettisonOptimizedCode(*globalData());
 }
 
-void EvalCodeBlock::jettison()
+void EvalCodeBlock::jettisonImpl()
 {
-    ASSERT(JITCode::isOptimizingJIT(getJITType()));
-    ASSERT(this == replacement());
-    if (DFG::shouldShowDisassembly())
-        dataLog("Jettisoning ", *this, ".\n");
     static_cast<EvalExecutable*>(ownerExecutable())->jettisonOptimizedCode(*globalData());
 }
 
-void FunctionCodeBlock::jettison()
+void FunctionCodeBlock::jettisonImpl()
 {
-    ASSERT(JITCode::isOptimizingJIT(getJITType()));
-    ASSERT(this == replacement());
-    if (DFG::shouldShowDisassembly())
-        dataLog("Jettisoning ", *this, ".\n");
     static_cast<FunctionExecutable*>(ownerExecutable())->jettisonOptimizedCodeFor(*globalData(), m_isConstructor ? CodeForConstruct : CodeForCall);
 }
 
@@ -3272,7 +3271,7 @@ void CodeBlock::tallyFrequentExitSites()
     for (unsigned i = 0; i < m_dfgData->osrExit.size(); ++i) {
         DFG::OSRExit& exit = m_dfgData->osrExit[i];
         
-        if (!exit.considerAddingAsFrequentExitSite(this, profiledBlock))
+        if (!exit.considerAddingAsFrequentExitSite(profiledBlock))
             continue;
         
 #if DFG_ENABLE(DEBUG_VERBOSE)

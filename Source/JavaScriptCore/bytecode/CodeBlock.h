@@ -437,7 +437,7 @@ namespace JSC {
         JITCode::JITType getJITType() const { return m_jitCode.jitType(); }
         ExecutableMemoryHandle* executableMemory() { return getJITCode().getExecutableMemory(); }
         virtual JSObject* compileOptimized(ExecState*, JSScope*, unsigned bytecodeIndex) = 0;
-        virtual void jettison() = 0;
+        void jettison();
         enum JITCompilationResult { AlreadyCompiled, CouldNotCompile, CompiledSuccessfully };
         JITCompilationResult jitCompile(ExecState* exec)
         {
@@ -1051,9 +1051,16 @@ namespace JSC {
     protected:
 #if ENABLE(JIT)
         virtual bool jitCompileImpl(ExecState*) = 0;
+        virtual void jettisonImpl() = 0;
 #endif
         virtual void visitWeakReferences(SlotVisitor&);
         virtual void finalizeUnconditionally();
+
+#if ENABLE(DFG_JIT)
+        void tallyFrequentExitSites();
+#else
+        void tallyFrequentExitSites() { }
+#endif
 
     private:
         friend class DFGCodeBlocks;
@@ -1064,11 +1071,6 @@ namespace JSC {
         ClosureCallStubRoutine* findClosureCallForReturnPC(ReturnAddressPtr);
 #endif
         
-#if ENABLE(DFG_JIT)
-        void tallyFrequentExitSites();
-#else
-        void tallyFrequentExitSites() { }
-#endif
 #if ENABLE(VALUE_PROFILER)
         void updateAllPredictionsAndCountLiveness(OperationInProgress, unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles);
 #endif
@@ -1145,6 +1147,7 @@ namespace JSC {
 
 #if ENABLE(JIT)
         void resetStubInternal(RepatchBuffer&, StructureStubInfo&);
+        void resetStubDuringGCInternal(RepatchBuffer&, StructureStubInfo&);
 #endif
         WriteBarrier<UnlinkedCodeBlock> m_unlinkedCode;
         int m_numParameters;
@@ -1320,7 +1323,7 @@ namespace JSC {
 #if ENABLE(JIT)
     protected:
         virtual JSObject* compileOptimized(ExecState*, JSScope*, unsigned bytecodeIndex);
-        virtual void jettison();
+        virtual void jettisonImpl();
         virtual bool jitCompileImpl(ExecState*);
         virtual CodeBlock* replacement();
         virtual DFG::CapabilityLevel canCompileWithDFGInternal();
@@ -1345,7 +1348,7 @@ namespace JSC {
 #if ENABLE(JIT)
     protected:
         virtual JSObject* compileOptimized(ExecState*, JSScope*, unsigned bytecodeIndex);
-        virtual void jettison();
+        virtual void jettisonImpl();
         virtual bool jitCompileImpl(ExecState*);
         virtual CodeBlock* replacement();
         virtual DFG::CapabilityLevel canCompileWithDFGInternal();
@@ -1370,7 +1373,7 @@ namespace JSC {
 #if ENABLE(JIT)
     protected:
         virtual JSObject* compileOptimized(ExecState*, JSScope*, unsigned bytecodeIndex);
-        virtual void jettison();
+        virtual void jettisonImpl();
         virtual bool jitCompileImpl(ExecState*);
         virtual CodeBlock* replacement();
         virtual DFG::CapabilityLevel canCompileWithDFGInternal();

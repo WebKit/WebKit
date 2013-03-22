@@ -111,7 +111,6 @@ namespace JSC {
     v(unsigned, likelyToTakeSlowCaseMinimumCount, 100) \
     v(unsigned, couldTakeSlowCaseMinimumCount, 10) \
     \
-    v(double, osrExitProminenceForFrequentExitSite, 0.3) \
     v(unsigned, osrExitCountForReoptimization, 100) \
     v(unsigned, osrExitCountForReoptimizationFromLoop, 5) \
     \

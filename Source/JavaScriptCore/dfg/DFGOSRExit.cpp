@@ -72,11 +72,8 @@ void OSRExit::correctJump(LinkBuffer& linkBuffer)
     m_patchableCodeOffset = linkBuffer.offsetOf(label);
 }
 
-bool OSRExit::considerAddingAsFrequentExitSiteSlow(CodeBlock* dfgCodeBlock, CodeBlock* profiledCodeBlock)
+bool OSRExit::considerAddingAsFrequentExitSiteSlow(CodeBlock* profiledCodeBlock)
 {
-    if (static_cast<double>(m_count) / dfgCodeBlock->osrExitCounter() <= Options::osrExitProminenceForFrequentExitSite())
-        return false;
-    
     FrequentExitSite exitSite;
     
     if (m_kind == ArgumentsEscaped) {

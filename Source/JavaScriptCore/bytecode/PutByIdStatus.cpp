@@ -94,9 +94,13 @@ PutByIdStatus PutByIdStatus::computeFor(CodeBlock* profiledBlock, unsigned bytec
     if (!stubInfo.seen)
         return computeFromLLInt(profiledBlock, bytecodeIndex, ident);
     
+    if (stubInfo.resetByGC)
+        return PutByIdStatus(TakesSlowPath, 0, 0, 0, invalidOffset);
+
     switch (stubInfo.accessType) {
     case access_unset:
-        return computeFromLLInt(profiledBlock, bytecodeIndex, ident);
+        // If the JIT saw it but didn't optimize it, then assume that this takes slow path.
+        return PutByIdStatus(TakesSlowPath, 0, 0, 0, invalidOffset);
         
     case access_put_by_id_replace: {
         PropertyOffset offset = stubInfo.u.putByIdReplace.baseObjectStructure->get(

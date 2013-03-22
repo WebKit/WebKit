@@ -1,3 +1,62 @@
+2013-03-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Fix some minor issues in the DFG's profiling of heap accesses
+        https://bugs.webkit.org/show_bug.cgi?id=113010
+
+        Reviewed by Goeffrey Garen.
+        
+        1) If a CodeBlock gets jettisoned by GC, we should count the exit sites.
+
+        2) If a CodeBlock clears a structure stub during GC, it should record this, and
+        the DFG should prefer to not inline that access (i.e. treat it as if it had an
+        exit site).
+
+        3) If a PutById was seen by the baseline JIT, and the JIT attempted to cache it,
+        but it chose not to, then assume that it will take slow path.
+
+        4) If we frequently exited because of a structure check on a weak constant,
+        don't try to inline that access in the future.
+
+        5) Treat all exits that were counted as being frequent.
+        
+        81% speed-up on Octane/gbemu. Small speed-ups elsewhere, and no regressions.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::finalizeUnconditionally):
+        (JSC):
+        (JSC::CodeBlock::resetStubDuringGCInternal):
+        (JSC::CodeBlock::reoptimize):
+        (JSC::CodeBlock::jettison):
+        (JSC::ProgramCodeBlock::jettisonImpl):
+        (JSC::EvalCodeBlock::jettisonImpl):
+        (JSC::FunctionCodeBlock::jettisonImpl):
+        (JSC::CodeBlock::tallyFrequentExitSites):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        (JSC::CodeBlock::tallyFrequentExitSites):
+        (ProgramCodeBlock):
+        (EvalCodeBlock):
+        (FunctionCodeBlock):
+        * bytecode/GetByIdStatus.cpp:
+        (JSC::GetByIdStatus::computeFor):
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFor):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::StructureStubInfo):
+        (StructureStubInfo):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGOSRExit.cpp:
+        (JSC::DFG::OSRExit::considerAddingAsFrequentExitSiteSlow):
+        * dfg/DFGOSRExit.h:
+        (JSC::DFG::OSRExit::considerAddingAsFrequentExitSite):
+        (OSRExit):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/Options.h:
+        (JSC):
+
 2013-03-22  Filip Pizlo  <fpizlo@apple.com>
 
         DFG folding of PutById to SimpleReplace should consider the specialized function case

@@ -97,6 +97,7 @@ struct StructureStubInfo {
     StructureStubInfo()
         : accessType(access_unset)
         , seen(false)
+        , resetByGC(false)
     {
     }
 
@@ -200,7 +201,8 @@ struct StructureStubInfo {
     unsigned bytecodeIndex;
 
     int8_t accessType;
-    int8_t seen;
+    bool seen : 1;
+    bool resetByGC : 1;
 
 #if ENABLE(DFG_JIT)
     CodeOrigin codeOrigin;
