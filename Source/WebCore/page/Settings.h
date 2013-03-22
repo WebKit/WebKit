@@ -119,11 +119,11 @@ namespace WebCore {
         void setLoadsImagesAutomatically(bool);
         bool loadsImagesAutomatically() const { return m_loadsImagesAutomatically; }
 
-        void setScriptEnabled(bool);
-        // Instead of calling isScriptEnabled directly, please consider calling
-        // ScriptController::canExecuteScripts, which takes things like the
-        // HTML sandbox attribute into account.
+        // Clients that execute script should call ScriptController::canExecuteScripts()
+        // instead of this function. ScriptController::canExecuteScripts() checks the
+        // HTML sandbox, plug-in sandboxing, and other important details.
         bool isScriptEnabled() const { return m_isScriptEnabled; }
+        void setScriptEnabled(bool);
 
         SETTINGS_GETTERS_AND_SETTERS
 

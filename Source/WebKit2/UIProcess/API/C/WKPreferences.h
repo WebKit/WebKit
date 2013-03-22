@@ -53,6 +53,10 @@ WK_EXPORT void WKPreferencesSetJavaScriptEnabled(WKPreferencesRef preferences, b
 WK_EXPORT bool WKPreferencesGetJavaScriptEnabled(WKPreferencesRef preferences);
 
 // Defaults to true.
+WK_EXPORT void WKPreferencesSetJavaScriptMarkupEnabled(WKPreferencesRef preferences, bool javaScriptEnabled);
+WK_EXPORT bool WKPreferencesGetJavaScriptMarkupEnabled(WKPreferencesRef preferences);
+
+// Defaults to true.
 WK_EXPORT void WKPreferencesSetLoadsImagesAutomatically(WKPreferencesRef preferences, bool loadsImagesAutomatically);
 WK_EXPORT bool WKPreferencesGetLoadsImagesAutomatically(WKPreferencesRef preferences);
 

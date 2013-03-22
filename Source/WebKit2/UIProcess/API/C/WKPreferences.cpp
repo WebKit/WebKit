@@ -69,6 +69,16 @@ bool WKPreferencesGetJavaScriptEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->javaScriptEnabled();
 }
 
+void WKPreferencesSetJavaScriptMarkupEnabled(WKPreferencesRef preferencesRef, bool javaScriptMarkupEnabled)
+{
+    toImpl(preferencesRef)->setJavaScriptMarkupEnabled(javaScriptMarkupEnabled);
+}
+
+bool WKPreferencesGetJavaScriptMarkupEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->javaScriptMarkupEnabled();
+}
+
 void WKPreferencesSetLoadsImagesAutomatically(WKPreferencesRef preferencesRef, bool loadsImagesAutomatically)
 {
     toImpl(preferencesRef)->setLoadsImagesAutomatically(loadsImagesAutomatically);

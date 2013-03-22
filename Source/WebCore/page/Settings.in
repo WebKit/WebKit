@@ -76,6 +76,7 @@ showsToolTipOverTruncatedText initial=false
 forceFTPDirectoryListings initial=false
 developerExtrasEnabled initial=false
 javaScriptExperimentsEnabled initial=false
+scriptMarkupEnabled initial=true
 needsSiteSpecificQuirks initial=false
 webArchiveDebugModeEnabled initial=false, conditional=WEB_ARCHIVE
 localFileContentSniffingEnabled initial=false

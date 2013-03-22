@@ -1,3 +1,27 @@
+2013-03-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Added a setting for whether JavaScript markup is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=112999
+
+        Reviewed by Maciej Stachowiak.
+
+        This setting is useful for clients that want protection from script
+        injection attacks.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesGetJavaScriptMarkupEnabled):
+        (WKPreferencesSetJavaScriptMarkupEnabled):
+        (WKPreferencesGetJavaScriptEnabled):
+        * UIProcess/API/C/WKPreferences.h:
+        * UIProcess/API/mac/WKBrowsingContextGroup.mm:
+        (-[WKBrowsingContextGroup allowsJavaScriptMarkup]):
+        (-[WKBrowsingContextGroup setAllowsJavaScriptMarkup:]):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Plumbed through to API.
+
 2013-03-22  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Include the right GL header for GLES2

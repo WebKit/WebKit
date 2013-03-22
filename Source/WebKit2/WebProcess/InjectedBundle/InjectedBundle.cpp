@@ -211,6 +211,7 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
     macro(WebKitFrameFlatteningEnabled, FrameFlatteningEnabled, frameFlatteningEnabled) \
     macro(WebKitJavaEnabled, JavaEnabled, javaEnabled) \
     macro(WebKitJavaScriptEnabled, ScriptEnabled, javaScriptEnabled) \
+    macro(WebKitJavaScriptMarkupEnabled, ScriptEnabled, javaScriptEnabled) \
     macro(WebKitLoadSiteIconsKey, LoadsSiteIconsIgnoringImageLoadingSetting, loadsSiteIconsIgnoringImageLoadingPreference) \
     macro(WebKitOfflineWebApplicationCacheEnabled, OfflineWebApplicationCacheEnabled, offlineWebApplicationCacheEnabled) \
     macro(WebKitPageCacheSupportsPluginsPreferenceKey, PageCacheSupportsPlugins, pageCacheSupportsPlugins) \

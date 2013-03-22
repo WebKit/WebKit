@@ -75,6 +75,16 @@
     WKPreferencesSetJavaScriptEnabled(WKPageGroupGetPreferences(self._pageGroupRef), allowsJavaScript);
 }
 
+- (BOOL)allowsJavaScriptMarkup
+{
+    return WKPreferencesGetJavaScriptMarkupEnabled(WKPageGroupGetPreferences(self._pageGroupRef));
+}
+
+- (void)setAllowsJavaScriptMarkup:(BOOL)allowsJavaScriptMarkup
+{
+    WKPreferencesSetJavaScriptMarkupEnabled(WKPageGroupGetPreferences(self._pageGroupRef), allowsJavaScriptMarkup);
+}
+
 - (BOOL)allowsPlugIns
 {
     return WKPreferencesGetPluginsEnabled(WKPageGroupGetPreferences(self._pageGroupRef));
