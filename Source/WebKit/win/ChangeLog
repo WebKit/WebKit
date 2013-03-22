@@ -1,3 +1,12 @@
+2013-03-21  peavo@outlook.com  <peavo@outlook.com>
+
+        WinCairo build fails to link.
+        https://bugs.webkit.org/show_bug.cgi?id=112892
+
+        Reviewed by Kentaro Hara.
+
+        * WebKit.vcproj/WebKitExports.def.in: Added ENABLE(VIDEO_TRACK) guard.
+
 2013-03-20  Michael Pruett  <michael@68k.org>
 
         [JSC] Implement EnforceRange IDL attribute for integer conversions
