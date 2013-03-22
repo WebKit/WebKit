@@ -32,13 +32,13 @@ def write_file_if_contents_changed(filename, contents):
 
 def write_feature_defines_header(feature_defines):
     contents = ''
-    for (feature, value) in feature_defines.iteritems():
+    for (feature, value) in feature_defines.items():
         contents += '#define {0} {1}\n'.format(feature, value)
     write_file_if_contents_changed("WebKitFeatures.h", contents)
 
 def write_flattened_feature_defines_file(feature_defines):
     contents = ''
-    for (feature, value) in feature_defines.iteritems():
+    for (feature, value) in feature_defines.items():
         contents += '{0}={1}\n'.format(feature, value)
     write_file_if_contents_changed("WebKitFeatures.txt", contents)
 
