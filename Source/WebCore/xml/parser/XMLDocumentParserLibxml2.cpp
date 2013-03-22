@@ -826,6 +826,7 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
 
     m_currentNode->parserAppendChild(newElement.get());
 
+    const ContainerNode* currentNode = m_currentNode;
 #if ENABLE(TEMPLATE_ELEMENT)
     if (newElement->hasTagName(HTMLNames::templateTag))
         pushCurrentNode(toHTMLTemplateElement(newElement.get())->content());
@@ -835,7 +836,7 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
     pushCurrentNode(newElement.get());
 #endif
 
-    if (m_view && !newElement->attached())
+    if (m_view && currentNode->attached() && !newElement->attached())
         newElement->attach();
 
     if (newElement->hasTagName(HTMLNames::htmlTag))
