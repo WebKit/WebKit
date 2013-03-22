@@ -4713,3 +4713,14 @@ Bug(schenney) svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml [ I
 Bug(schenney) svg/zoom/text/zoom-coords-viewattr-01-b.svg [ ImageOnlyFailure ]
 Bug(schenney) transforms/2d/hindi-rotated.html [ Failure ]
 Bug(schenney) transitions/svg-text-shadow-transition.html [ ImageOnlyFailure ]
+
+webkit.org/b/113067 [ Debug ] compositing/layers-inside-overflow-scroll.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] compositing/self-painting-layers.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] compositing/video/video-reflection.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] compositing/geometry/video-fixed-scrolling.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] compositing/geometry/video-opacity-overlay.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] compositing/overflow/overflow-compositing-descendant.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] compositing/overflow/scroll-ancestor-update.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] compositing/reflections/load-video-in-reflection.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] compositing/visibility/visibility-simple-video-layer.html [ Crash Pass ]
+
