@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class TransformationMatrix;
+
 class GraphicsContext3DPrivate {
 public:
     static PassOwnPtr<GraphicsContext3DPrivate> create(GraphicsContext3D*, HostWindow*);

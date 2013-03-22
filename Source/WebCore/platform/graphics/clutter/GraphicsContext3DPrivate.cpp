@@ -24,7 +24,7 @@
 
 #include "HostWindow.h"
 #include "NotImplemented.h"
-
+#include "TransformationMatrix.h"
 
 namespace WebCore {
 
