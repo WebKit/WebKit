@@ -80,6 +80,7 @@ public:
     virtual void setNeedsDisplayInRect(const FloatRect&);
 
     virtual bool addAnimation(const KeyframeValueList&, const IntSize& boxSize, const Animation*, const String& animationName, double timeOffset);
+    virtual void removeAnimation(const String& animationName);
 
     virtual void flushCompositingState(const FloatRect&);
     virtual void flushCompositingStateForThisLayerOnly();
@@ -88,6 +89,12 @@ public:
 
 private:
     FloatPoint computePositionRelativeToBase(float& pageScale) const;
+
+    bool animationIsRunning(const String& animationName) const
+    {
+        return m_runningAnimations.find(animationName) != m_runningAnimations.end();
+    }
+
     void commitLayerChangesBeforeSublayers(float pageScaleFactor, const FloatPoint& positionRelativeToBase);
     void commitLayerChangesAfterSublayers();
 

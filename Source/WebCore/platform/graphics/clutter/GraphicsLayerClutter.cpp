@@ -282,6 +282,13 @@ GraphicsLayerClutter::~GraphicsLayerClutter()
     if (graphicsLayerActorGetLayerType(m_layer.get()) == GraphicsLayerClutter::LayerTypeRootLayer)
         return;
 
+    // Even though we call notifyFlushRequired to remove existing animations in removeAnimation(),
+    // removeClutterAnimationFromLayer has been never reached since the root layer is destroyed.
+    // It means that we haven't lost a change to remove actual animations from clutterActor. 
+    // So, we call explictly updateAnimations once here to remove uncommitted animations. 
+    if (m_uncommittedChanges & AnimationChanged)
+        updateAnimations();
+
     willBeDestroyed();
 
     // We destroy the actors on an idle so that the main loop can run enough to
@@ -992,10 +999,27 @@ bool GraphicsLayerClutter::addAnimation(const KeyframeValueList& valueList, cons
     return createdAnimations;
 }
 
+void GraphicsLayerClutter::removeAnimation(const String& animationName)
+{
+    if (!animationIsRunning(animationName))
+        return;
+
+    m_animationsToProcess.add(animationName, AnimationProcessingAction(Remove));
+    noteLayerPropertyChanged(AnimationChanged);
+}
+
 bool GraphicsLayerClutter::removeClutterAnimationFromLayer(AnimatedPropertyID property, const String& animationName, int index)
 {
-    notImplemented();
-    return false;
+    GraphicsLayerActor* layer = animatedLayer(property);
+
+    String animationID = animationIdentifier(animationName, property, index);
+
+    PlatformClutterAnimation* existingAnimation = graphicsLayerActorGetAnimationForKey(layer, animationID);
+    if (!existingAnimation)
+        return false;
+
+    existingAnimation->removeAnimationForKey(layer, animationID);
+    return true;
 }
 
 void GraphicsLayerClutter::pauseClutterAnimationOnLayer(AnimatedPropertyID property, const String& animationName, int index, double timeOffset)
