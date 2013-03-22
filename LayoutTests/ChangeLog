@@ -1,5 +1,11 @@
 2013-03-22  Eric Carlson  <eric.carlson@apple.com>
 
+        Add the newline at end of the test results, apparently lost when merging r131709.
+
+        * fast/forms/textarea/textarea-autofocus-removal-while-focusing-with-style-expected.txt:
+
+2013-03-22  Eric Carlson  <eric.carlson@apple.com>
+
         Merge r135523 to get the updated test results.
 
     2012-11-22  Daniel Bates  <dbates@webkit.org>
