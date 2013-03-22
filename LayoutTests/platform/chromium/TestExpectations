@@ -6,111 +6,112 @@
 # SLOW TESTS
 # -----------------------------------------------------------------
 
-crbug.com/24182 [ Debug ] css3/flexbox/multiline-justify-content.html [ Pass Slow ]
+crbug.com/24182 [ Debug ] css3/flexbox/multiline-justify-content.html [ Slow ]
 webkit.org/b/91666 [ Mac ] editing/input/emacs-ctrl-o.html [ Failure Slow ]
 webkit.org/b/91666 [ Mac ] editing/pasteboard/emacs-ctrl-k-y-001.html [ Failure Slow ]
 webkit.org/b/91666 [ Mac ] editing/pasteboard/emacs-ctrl-a-k-y.html [ Failure Slow ]
-webkit.org/b/82097 editing/selection/move-by-word-visually-crash-test-5.html [ Pass Slow ]
-webkit.org/b/79679 platform/chromium/virtual/gpu/fast/canvas/getPutImageDataPairTest.html [ Pass Slow ]
+webkit.org/b/82097 editing/selection/move-by-word-visually-crash-test-5.html [ Slow ]
+webkit.org/b/79679 platform/chromium/virtual/gpu/fast/canvas/getPutImageDataPairTest.html [ Slow ]
 webkit.org/b/92287 [ Linux Mac Win ] fast/canvas/webgl/context-creation-and-destruction.html [ Pass Timeout Failure ]
 webkit.org/b/92287 [ Linux Mac Win ] platform/chromium/virtual/gpu/fast/canvas/webgl/context-creation-and-destruction.html [ Pass Timeout Failure ]
-crbug.com/24182 [ Debug ] fast/css/large-list-of-rules-crash.html [ Pass Slow ]
-crbug.com/24182 [ SnowLeopard Debug ] fast/dom/shadow/tree-scope-crash.html [ Pass Slow ]
-crbug.com/24182 [ SnowLeopard Debug ] fast/dom/Window/window-postmessage-clone-deep-array.html [ Pass Slow ]
-crbug.com/24182 [ Android Linux Mac Debug ] fast/dom/Window/window-postmessage-clone-really-deep-array.html [ Pass Slow ]
-crbug.com/24182 [ SnowLeopard Debug ] fast/frames/calculate-percentage.html [ Pass Slow ]
-crbug.com/24182 [ SnowLeopard Debug ] fast/frames/frameset-frameborder-boolean-values.html [ Pass Slow ]
-crbug.com/24182 [ Debug ] fast/frames/valid.html [ Pass Slow ]
-webkit.org/b/77184 [ Debug ] fast/js/dfg-double-vote-fuzz.html [ Pass Slow ]
+crbug.com/24182 [ Debug ] fast/css/large-list-of-rules-crash.html [ Slow ]
+crbug.com/24182 [ SnowLeopard Debug ] fast/dom/shadow/tree-scope-crash.html [ Slow ]
+crbug.com/24182 [ SnowLeopard Debug ] fast/dom/Window/window-postmessage-clone-deep-array.html [ Slow ]
+crbug.com/24182 [ Android Linux Mac Debug ] fast/dom/Window/window-postmessage-clone-really-deep-array.html [ Slow ]
+crbug.com/24182 [ SnowLeopard Debug ] fast/frames/calculate-percentage.html [ Slow ]
+crbug.com/24182 [ SnowLeopard Debug ] fast/frames/frameset-frameborder-boolean-values.html [ Slow ]
+crbug.com/24182 [ Debug ] fast/frames/valid.html [ Slow ]
+webkit.org/b/77184 [ Debug ] fast/js/dfg-double-vote-fuzz.html [ Slow ]
 webkit.org/b/92948 [ Debug ] fast/js/dfg-osr-entry-hoisted-clobbered-structure-check.html [ Pass Timeout ]
-crbug.com/24182 fast/js/regexp-overflow.html [ Pass Slow ]
+crbug.com/24182 fast/js/regexp-overflow.html [ Slow ]
 crbug.com/24182 [ SnowLeopard Lion Debug ] fast/js/repeat-cached-vm-reentry.html [ Pass Timeout ]
 crbug.com/24182 [ Debug ] fast/js/toString-and-valueOf-override.html [ Failure Timeout ]
-crbug.com/24182 [ SnowLeopard Debug ] fast/loader/javascript-url-iframe-crash.html [ Pass Slow ]
-crbug.com/24182 [ Android ] fast/parser/nested-fragment-parser-crash.html [ Pass Slow ]
-crbug.com/24182 [ Debug ] html5lib/webkit-resumer.html [ Pass Slow ]
+crbug.com/24182 [ SnowLeopard Debug ] fast/loader/javascript-url-iframe-crash.html [ Slow ]
+crbug.com/24182 [ Android ] fast/parser/nested-fragment-parser-crash.html [ Slow ]
+crbug.com/24182 [ Debug ] html5lib/webkit-resumer.html [ Slow ]
 crbug.com/24182 [ Win Debug ] http/tests/cache/stopped-revalidation.html [ Pass Slow Failure ]
-crbug.com/24182 [ Win Release ] http/tests/loading/onload-vs-immediate-refresh.pl [ Pass Slow ]
-crbug.com/24182 [ Win ] http/tests/local/file-url-sent-as-referer.html [ Pass Slow ]
-crbug.com/24182 [ SnowLeopard Debug ] http/tests/misc/dns-prefetch-control.html [ Pass Slow ]
-crbug.com/24182 [ Win Debug ] http/tests/misc/uncacheable-script-repeated.html [ Pass Slow ]
-crbug.com/24182 [ Win ] http/tests/navigation/slowtimerredirect-basic.html [ Pass Slow ]
-crbug.com/24182 [ SnowLeopard Debug ] http/tests/security/xss-DENIED-iframe-src-alias.html [ Pass Slow ]
-crbug.com/24182 [ Android Win ] http/tests/xmlhttprequest/simple-cross-origin-progress-events.html [ Pass Slow ]
-crbug.com/24182 [ Win ] http/tests/xmlhttprequest/supported-xml-content-types.html [ Pass Slow ]
-crbug.com/24182 [ Win ] http/tests/xmlhttprequest/XMLHttpRequestException.html [ Pass Slow ]
-crbug.com/24182 [ Debug ] ietestcenter/Javascript/15.4.4.16-7-c-ii-2.html [ Pass Slow ]
-crbug.com/24182 [ Debug ] ietestcenter/Javascript/15.4.4.17-7-c-ii-2.html [ Pass Slow ]
-crbug.com/24182 [ Debug ] ietestcenter/Javascript/15.4.4.18-7-c-ii-1.html [ Pass Slow ]
-crbug.com/24182 [ Debug ] ietestcenter/Javascript/15.4.4.19-8-c-ii-1.html [ Pass Slow ]
-crbug.com/24182 [ Debug ] ietestcenter/Javascript/15.4.4.20-9-c-ii-1.html [ Pass Slow ]
-crbug.com/24182 [ Android ] jquery [ Pass Slow ]
+crbug.com/24182 [ Win Release ] http/tests/loading/onload-vs-immediate-refresh.pl [ Slow ]
+crbug.com/24182 [ Win ] http/tests/local/file-url-sent-as-referer.html [ Slow ]
+crbug.com/24182 [ SnowLeopard Debug ] http/tests/misc/dns-prefetch-control.html [ Slow ]
+crbug.com/24182 [ Win Debug ] http/tests/misc/uncacheable-script-repeated.html [ Slow ]
+crbug.com/24182 [ Win ] http/tests/navigation/slowtimerredirect-basic.html [ Slow ]
+crbug.com/24182 [ SnowLeopard Debug ] http/tests/security/xss-DENIED-iframe-src-alias.html [ Slow ]
+crbug.com/24182 [ Android Win ] http/tests/xmlhttprequest/simple-cross-origin-progress-events.html [ Slow ]
+crbug.com/24182 [ Win ] http/tests/xmlhttprequest/supported-xml-content-types.html [ Slow ]
+crbug.com/24182 [ Win ] http/tests/xmlhttprequest/XMLHttpRequestException.html [ Slow ]
+crbug.com/24182 [ Debug ] ietestcenter/Javascript/15.4.4.16-7-c-ii-2.html [ Slow ]
+crbug.com/24182 [ Debug ] ietestcenter/Javascript/15.4.4.17-7-c-ii-2.html [ Slow ]
+crbug.com/24182 [ Debug ] ietestcenter/Javascript/15.4.4.18-7-c-ii-1.html [ Slow ]
+crbug.com/24182 [ Debug ] ietestcenter/Javascript/15.4.4.19-8-c-ii-1.html [ Slow ]
+crbug.com/24182 [ Debug ] ietestcenter/Javascript/15.4.4.20-9-c-ii-1.html [ Slow ]
+crbug.com/24182 [ Android ] jquery [ Slow ]
 crbug.com/24182 [ Debug ] jquery/attributes.html [ Pass Timeout ]
 crbug.com/24182 [ Debug ] jquery/core.html [ Pass Timeout ]
-crbug.com/24182 [ Debug ] jquery/data.html [ Pass Slow ]
-crbug.com/24182 [ Debug ] jquery/dimensions.html [ Pass Slow ]
+crbug.com/24182 [ Debug ] jquery/data.html [ Slow ]
+crbug.com/24182 [ Debug ] jquery/dimensions.html [ Slow ]
 crbug.com/24182 jquery/event.html [ Pass Timeout ]
 crbug.com/24182 jquery/manipulation.html [ Pass Timeout ]
-crbug.com/24182 [ Debug ] jquery/offset.html [ Pass Slow ]
+crbug.com/24182 [ Debug ] jquery/offset.html [ Slow ]
 crbug.com/24182 [ Linux Win Debug ] jquery/traversing.html [ Pass Timeout ]
-crbug.com/24182 [ SnowLeopard Debug ] svg/dom/baseVal-animVal-crash.html [ Pass Slow ]
-crbug.com/24182 [ Debug ] css3/flexbox/position-absolute-child.html [ Pass Slow ]
-crbug.com/24182 [ Mac Win Debug ] fast/events/tabindex-focus-blur-all.html [ Pass Slow ]
-crbug.com/24182 [ SnowLeopard Win Debug ] fast/frames/invalid.html [ Pass Slow ]
-crbug.com/24182 [ Debug ] fast/js/dfg-int8array.html [ Pass Slow ]
-crbug.com/24182 [ Debug ] fast/js/dfg-uint8array.html [ Pass Slow ]
-crbug.com/24182 [ Debug ] fast/js/dfg-int16array.html [ Pass Slow ]
-crbug.com/24182 [ Debug ] fast/js/dfg-uint16array.html [ Pass Slow ]
-crbug.com/24182 [ Debug ] fast/js/dfg-int32array.html [ Pass Slow ]
-crbug.com/24182 [ Debug ] fast/js/dfg-uint32array.html [ Pass Slow ]
-crbug.com/24182 [ Debug ] fast/js/dfg-float32array.html [ Pass Slow ]
-crbug.com/24182 [ Debug ] fast/js/dfg-float64array.html [ Pass Slow ]
-crbug.com/24182 [ Debug ] fast/js/dfg-uint8clampedarray.html [ Pass Slow ]
-crbug.com/24182 [ Debug ] fast/js/dfg-int32array-overflow-values.html [ Pass Slow ]
-crbug.com/24182 [ Debug ] fast/js/dfg-uint32array-overflow-values.html [ Pass Slow ]
-webkit.org/b/93631 [ Android ] fast/js/dfg-inline-many-blocks.html [ Pass Slow ]
-webkit.org/b/93631 [ Android ] fast/js/dfg-weak-js-constant-silent-fill.html [ Pass Slow ]
-webkit.org/b/93631 [ Android ] fast/js/exception-sequencing.html [ Pass Slow ]
-webkit.org/b/93631 [ Android Win Mac ] fast/js/exception-sequencing-binops.html [ Pass Slow ]
-webkit.org/b/93631 [ Android Win Mac ] fast/js/exception-sequencing-binops2.html [ Pass Slow ]
-webkit.org/b/93631 [ Android ] fast/js/toInt32UInt32.html [ Pass Slow ]
-crbug.com/24182 [ Android Debug ] editing/selection/caret-at-bidi-boundary.html [ Pass Slow ]
-crbug.com/24182 [ Android Debug ] fast/css/css-selector-deeply-nested.html [ Pass Slow ]
-webkit.org/b/65862 storage/indexeddb [ Pass Slow ]
-crbug.com/24182 [ Win Debug ] platform/chromium/virtual/gpu/fast/canvas/canvas-composite-alpha.html [ Pass Slow ]
-webkit.org/b/24182 [ Debug ] fast/dom/css-delete-doc.html [ Pass Slow ]
-webkit.org/b/100272 [ Debug ] fast/media/w3c/test_media_queries.html [ Pass Slow ]
-webkit.org/b/70878 [ Linux Debug ] http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html [ Pass Slow ]
-webkit.org/b/102179 [ Win Debug ] platform/chromium/virtual/gpu/fast/hidpi/image-set-without-specified-width.html [ Pass Slow ]
+crbug.com/24182 [ SnowLeopard Debug ] svg/dom/baseVal-animVal-crash.html [ Slow ]
+crbug.com/24182 [ Debug ] css3/flexbox/position-absolute-child.html [ Slow ]
+crbug.com/24182 [ Mac Win Debug ] fast/events/tabindex-focus-blur-all.html [ Slow ]
+crbug.com/24182 [ SnowLeopard Win Debug ] fast/frames/invalid.html [ Slow ]
+crbug.com/24182 [ Debug ] fast/js/dfg-int8array.html [ Slow ]
+crbug.com/24182 [ Debug ] fast/js/dfg-uint8array.html [ Slow ]
+crbug.com/24182 [ Debug ] fast/js/dfg-int16array.html [ Slow ]
+crbug.com/24182 [ Debug ] fast/js/dfg-uint16array.html [ Slow ]
+crbug.com/24182 [ Debug ] fast/js/dfg-int32array.html [ Slow ]
+crbug.com/24182 [ Debug ] fast/js/dfg-uint32array.html [ Slow ]
+crbug.com/24182 [ Debug ] fast/js/dfg-float32array.html [ Slow ]
+crbug.com/24182 [ Debug ] fast/js/dfg-float64array.html [ Slow ]
+crbug.com/24182 [ Debug ] fast/js/dfg-uint8clampedarray.html [ Slow ]
+crbug.com/24182 [ Debug ] fast/js/dfg-int32array-overflow-values.html [ Slow ]
+crbug.com/24182 [ Debug ] fast/js/dfg-uint32array-overflow-values.html [ Slow ]
+crbug.com/24182 [ XP Release ] fast/js/dfg-uint32array-overflow-values.html [ Slow ]
+webkit.org/b/93631 [ Android ] fast/js/dfg-inline-many-blocks.html [ Slow ]
+webkit.org/b/93631 [ Android ] fast/js/dfg-weak-js-constant-silent-fill.html [ Slow ]
+webkit.org/b/93631 [ Android ] fast/js/exception-sequencing.html [ Slow ]
+webkit.org/b/93631 [ Android Win Mac ] fast/js/exception-sequencing-binops.html [ Slow ]
+webkit.org/b/93631 [ Android Win Mac ] fast/js/exception-sequencing-binops2.html [ Slow ]
+webkit.org/b/93631 [ Android ] fast/js/toInt32UInt32.html [ Slow ]
+crbug.com/24182 [ Android Debug ] editing/selection/caret-at-bidi-boundary.html [ Slow ]
+crbug.com/24182 [ Android Debug ] fast/css/css-selector-deeply-nested.html [ Slow ]
+webkit.org/b/65862 storage/indexeddb [ Slow ]
+crbug.com/24182 [ Win Debug ] platform/chromium/virtual/gpu/fast/canvas/canvas-composite-alpha.html [ Slow ]
+webkit.org/b/24182 [ Debug ] fast/dom/css-delete-doc.html [ Slow ]
+webkit.org/b/100272 [ Debug ] fast/media/w3c/test_media_queries.html [ Slow ]
+webkit.org/b/70878 [ Linux Debug ] http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html [ Slow ]
+webkit.org/b/102179 [ Win Debug ] platform/chromium/virtual/gpu/fast/hidpi/image-set-without-specified-width.html [ Slow ]
 webkit.org/b/102463 [ Debug ] fast/forms/validation-message-appearance.html [ Pass ImageOnlyFailure ]
 webkit.org/b/102464 [ Debug ] fast/images/webgl-teximage2d.html [ Pass Timeout ]
 webkit.org/b/102464 [ Debug ] platform/chromium/virtual/deferred/fast/images/webgl-teximage2d.html [ Pass Timeout ]
 webkit.org/b/103744 svg/dom/viewspec-parser-7.html [ Pass Timeout ]
 webkit.org/b/103744 svg/dom/viewspec-parser-6.html [ Pass Timeout ]
-crbug.com/24182 [ Debug ] platform/chromium/inspector/styles/device-metrics-fit-window.html [ Pass Slow ]
-webkit.org/b/105785 [ Release ] http/tests/inspector/indexeddb [ Pass Slow ]
-crbug.com/24182 [ Debug ] platform/chromium/virtual/gpu/fast/hidpi/image-set-background-dynamic.html [ Pass Slow ]
-webkit.org/b/106606 fast/canvas/webgl/context-release-upon-reload.html [ Pass Slow ]
-webkit.org/b/106606 platform/chromium/virtual/gpu/fast/canvas/webgl/context-release-upon-reload.html [ Pass Slow ]
-webkit.org/b/107587 [ Win7 Debug ] platform/chromium/virtual/gpu/fast/hidpi/clip-text-in-hidpi.html [ Pass Slow ]
-webkit.org/b/107587 [ Win7 Debug ] platform/chromium/virtual/gpu/fast/hidpi/device-scale-factor-paint.html [ Pass Slow ]
-webkit.org/b/107587 [ Win7 Debug ] platform/chromium/virtual/gpu/fast/hidpi/focus-rings.html [ Pass Slow ]
-webkit.org/b/109400 [ Win ] http/tests/css/css-image-loading.html [ Pass Slow ]
-webkit.org/b/109400 [ Mac Win ] http/tests/css/shared-stylesheet-mutation-preconstruct.html [ Pass Slow ]
+crbug.com/24182 [ Debug ] platform/chromium/inspector/styles/device-metrics-fit-window.html [ Slow ]
+webkit.org/b/105785 [ Release ] http/tests/inspector/indexeddb [ Slow ]
+crbug.com/24182 [ Debug ] platform/chromium/virtual/gpu/fast/hidpi/image-set-background-dynamic.html [ Slow ]
+webkit.org/b/106606 fast/canvas/webgl/context-release-upon-reload.html [ Slow ]
+webkit.org/b/106606 platform/chromium/virtual/gpu/fast/canvas/webgl/context-release-upon-reload.html [ Slow ]
+webkit.org/b/107587 [ Win7 Debug ] platform/chromium/virtual/gpu/fast/hidpi/clip-text-in-hidpi.html [ Slow ]
+webkit.org/b/107587 [ Win7 Debug ] platform/chromium/virtual/gpu/fast/hidpi/device-scale-factor-paint.html [ Slow ]
+webkit.org/b/107587 [ Win7 Debug ] platform/chromium/virtual/gpu/fast/hidpi/focus-rings.html [ Slow ]
+webkit.org/b/109400 [ Win ] http/tests/css/css-image-loading.html [ Slow ]
+webkit.org/b/109400 [ Mac Win ] http/tests/css/shared-stylesheet-mutation-preconstruct.html [ Slow ]
 
-crbug.com/24182 [ Mac Debug ] fast/frames/remove-frame-with-scrollbars-crash.html [ Pass Slow ]
-crbug.com/24182 [ Mac Debug ] fast/forms/post-popup-no-multiple-windows.html [ Pass Slow ]
+crbug.com/24182 [ Mac Debug ] fast/frames/remove-frame-with-scrollbars-crash.html [ Slow ]
+crbug.com/24182 [ Mac Debug ] fast/forms/post-popup-no-multiple-windows.html [ Slow ]
 
 # These tests started being slow when we switched to DRT.
-webkit.org/b/90488 [ Debug ] inspector [ Pass Slow ]
-webkit.org/b/90488 [ Debug ] http/tests/inspector [ Pass Slow ]
-webkit.org/b/90488 [ Debug ] http/tests/inspector-enabled [ Pass Slow ]
+webkit.org/b/90488 [ Debug ] inspector [ Slow ]
+webkit.org/b/90488 [ Debug ] http/tests/inspector [ Slow ]
+webkit.org/b/90488 [ Debug ] http/tests/inspector-enabled [ Slow ]
 
 # Similar slowness, but always times out on some platforms.
 webkit.org/b/90488 [ Win Mac Debug ] inspector/styles/styles-computed-trace.html [ Timeout ]
 
 # Chromium r163873 slowed down these tests
-webkit.org/b/100287 [ Linux Win Mac ] compositing/culling/filter-occlusion-blur-large.html [ Pass Slow  ]
+webkit.org/b/100287 [ Linux Win Mac ] compositing/culling/filter-occlusion-blur-large.html [ Slow ]
 webkit.org/b/66989 transforms/3d/point-mapping/3d-point-mapping-deep.html [ Pass ImageOnlyFailure Slow ]
 
 # The test has been timing out since landed in r130587.
@@ -122,16 +123,16 @@ webkit.org/b/101236 [ Debug ] css3/filters/custom/custom-filter-animation.html [
 # Has been failing since r133544-133546
 webkit.org/b/104282 [ Release ] fast/js/toString-and-valueOf-override.html [ Failure ]
 
-webkit.org/b/101362 [ Debug ] fast/dom/Window/customized-property-survives-gc.html [ Pass Slow ]
+webkit.org/b/101362 [ Debug ] fast/dom/Window/customized-property-survives-gc.html [ Slow ]
 
-webkit.org/b/110324 [ Debug ] fast/js/regress/nested-function-parsing.html [ Pass Slow ]
+webkit.org/b/110324 [ Debug ] fast/js/regress/nested-function-parsing.html [ Slow ]
 
 webkit.org/b/110924 fast/js/regress/inlined-put-by-id-transition.html [ Pass Crash ]
-webkit.org/b/111038 [ Debug Win ] fast/loader/policy-delegate-action-hit-test-zoomed.html [ Pass Slow ]
-webkit.org/b/111046 [ Debug Mac ] plugins/pass-different-npp-struct.html [ Pass Slow ]
+webkit.org/b/111038 [ Debug Win ] fast/loader/policy-delegate-action-hit-test-zoomed.html [ Slow ]
+webkit.org/b/111046 [ Debug Mac ] plugins/pass-different-npp-struct.html [ Slow ]
 
 # This test os slow since r144263
-webkit.org/b/111054 [ Debug Mac Win7 ] fast/forms/time-multiple-fields/time-multiple-fields-stepup-stepdown-from-renderer.html [ Pass Slow ]
+webkit.org/b/111054 [ Debug Mac Win7 ] fast/forms/time-multiple-fields/time-multiple-fields-stepup-stepdown-from-renderer.html [ Slow ]
 
 # -----------------------------------------------------------------
 # TEMPORARILY SKIPPED TESTS
@@ -1081,7 +1082,7 @@ webkit.org/b/60107 [ Win Release ] inspector/console/console-clear.html [ Failur
 webkit.org/b/82894 [ Release ] inspector/profiler/heap-snapshot-inspect-dom-wrapper.html [ Pass Timeout ]
 webkit.org/b/82894 [ Debug ] inspector/profiler/heap-snapshot-inspect-dom-wrapper.html
 
-webkit.org/b/60109 [ Win Linux Mac Release ] inspector/elements/edit-dom-actions.html [ Pass Slow ]
+webkit.org/b/60109 [ Win Linux Mac Release ] inspector/elements/edit-dom-actions.html [ Slow ]
 webkit.org/b/60109 [ Win Mac Debug ] inspector/elements/edit-dom-actions.html [ Skip ]
 
 webkit.org/b/90488 [ Mac Debug ] inspector/elements/edit-style-attribute.html [ Pass Timeout ]
@@ -1149,8 +1150,8 @@ webkit.org/b/78655 editing/pasteboard/drag-files-to-editable-element.html [ Fail
 # New test in r93068
 webkit.org/b/66268 [ Linux Win ] editing/deleting/regional-indicators.html [ Failure ]
 
-webkit.org/b/67121 [ Debug ] editing/selection/move-by-word-visually-multi-space.html [ Pass Slow ]
-webkit.org/b/67121 [ Android Release ] editing/selection/move-by-word-visually-multi-space.html [ Pass Slow ]
+webkit.org/b/67121 [ Debug ] editing/selection/move-by-word-visually-multi-space.html [ Slow ]
+webkit.org/b/67121 [ Android Release ] editing/selection/move-by-word-visually-multi-space.html [ Slow ]
 
 # -----------------------------------------------------------------
 # Security tests
@@ -1607,7 +1608,7 @@ crbug.com/10399 [ Mac ] fast/encoding/char-encoding-mac.html [ Failure ]
 webkit.org/b/48651 [ Android Mac ] http/tests/navigation/error404-goback.html [ Failure ImageOnlyFailure ]
 webkit.org/b/48651 [ Mac ] http/tests/navigation/error404-subframeload.html [ ImageOnlyFailure ]
 
-crbug.com/26253 [ Win Release ] http/tests/navigation/reload-subframe-object.html [ Pass Slow ]
+crbug.com/26253 [ Win Release ] http/tests/navigation/reload-subframe-object.html [ Slow ]
 crbug.com/9798 [ Win Release ] http/tests/navigation/no-referrer-reset.html [ Pass Timeout ]
 
 crbug.com/23477 [ Mac ] fast/backgrounds/bgCompositeCopy.html [ ImageOnlyFailure ]
@@ -1991,14 +1992,14 @@ crbug.com/27486 [ Android Linux Win ] fast/forms/range/slider-zoomed.html [ Fail
 # This test isn't just slow -- sometimes it times out indefinitely.
 crbug.com/27569 http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html [ Pass Timeout ]
 
-crbug.com/9798 [ Win Debug ] fast/dom/Window/slow-unload-handler.html [ Pass Slow ]
+crbug.com/9798 [ Win Debug ] fast/dom/Window/slow-unload-handler.html [ Slow ]
 
 crbug.com/9798 [ Win Debug ] http/tests/misc/redirect-with-quotes.php [ Pass Timeout ]
-crbug.com/9798 [ Win ] http/tests/misc/refresh-headers.php [ Pass Slow ]
+crbug.com/9798 [ Win ] http/tests/misc/refresh-headers.php [ Slow ]
 crbug.com/9798 [ Win ] http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.html [ Pass Timeout ]
 crbug.com/9798 [ Win Debug ] http/tests/xmlhttprequest/encode-request-url-2.html [ Pass Timeout ]
-crbug.com/9797 crbug.com/9798 [ Win Release ] http/tests/xmlhttprequest/state-after-network-error.html [ Pass Slow ]
-crbug.com/9798 [ Android Linux Release ] transitions/transition-timing-function.html [ Pass Slow ]
+crbug.com/9797 crbug.com/9798 [ Win Release ] http/tests/xmlhttprequest/state-after-network-error.html [ Slow ]
+crbug.com/9798 [ Android Linux Release ] transitions/transition-timing-function.html [ Slow ]
 # This test definitely times out (i.e. is not just slow).
 crbug.com/9798 [ Win Release ] http/tests/xmlhttprequest/small-chunks-response-text.html [ Pass Timeout ]
 
@@ -2038,27 +2039,28 @@ crbug.com/23956 fast/dom/Range/getClientRects.html [ Failure ]
 crbug.com/9798 [ Win ] http/tests/cookies/multiple-cookies.html [ Pass Timeout ]
 
 # Got slow with V8 update to 1.3.15. Debug logging perhaps?
-crbug.com/24182 [ Debug ] fast/forms/input-implicit-length-limit.html [ Pass Slow ]
-crbug.com/24182 [ Debug ] fast/forms/input-maxlength.html [ Pass Slow ]
+crbug.com/24182 [ Debug ] fast/forms/input-implicit-length-limit.html [ Slow ]
+crbug.com/24182 [ Debug ] fast/forms/input-maxlength.html [ Slow ]
 
 # WebKit roll 49405:49413
 crbug.com/28409 http/tests/xmlhttprequest/logout.html [ Failure ]
 
 # Rebaseline after landing https://bugs.webkit.org/show_bug.cgi?id=70634
+# After removing the first ten lines, uncomment the other expectations for these tests below.
 webkit.org/b/109507 compositing/iframes/scrolling-iframe.html [ Failure ]
 webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/iframes/scrolling-iframe.html [ Failure ]
+webkit.org/b/109507 compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
+webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
+webkit.org/b/109507 compositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
+webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
+webkit.org/b/109507 compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
+webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
+webkit.org/b/109507 compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
+webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
 webkit.org/b/109507 compositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
 webkit.org/b/109507 platform/chromium/virtual/gpu/compositedscrolling/overflow/composited-scrolling-paint-phases.html [ Failure ]
 webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
-webkit.org/b/109507 compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
-webkit.org/b/109507 compositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
-webkit.org/b/109507 compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
-webkit.org/b/109507 compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
 webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/repaint/invalidations-on-composited-layers.html [ Failure ]
-webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
-webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
-webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
-webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
 webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/tiling/huge-layer-add-remove-child.html [ Failure ]
 webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/tiling/huge-layer-with-layer-children.html [ Failure ]
 
@@ -2337,7 +2339,7 @@ crbug.com/51416 fast/dom/DeviceMotion/window-property.html [ Failure ]
 # Slow test introduced in r64817
 crbug.com/51571 [ Win ] http/tests/misc/bad-charset-alias.html [ Pass Timeout ]
 
-crbug.com/51854 [ Win ] http/tests/storage/callbacks-are-called-in-correct-context.html [ Pass Slow ]
+crbug.com/51854 [ Win ] http/tests/storage/callbacks-are-called-in-correct-context.html [ Slow ]
 
 # Times out frequently since the test was added
 crbug.com/52017 [ Android Linux ] http/tests/misc/isindex-with-no-form.html [ Pass Timeout ]
@@ -2370,11 +2372,11 @@ webkit.org/b/45652 fast/viewport/viewport-128.html [ Timeout ]
 
 webkit.org/b/98900 [ Android Debug ] fast/frames/frame-limit.html [ Timeout Pass ]
 webkit.org/b/45737 [ Win Linux Mac Debug ] fast/frames/frame-limit.html [ Timeout ]
-webkit.org/b/45737 [ Win Linux Release ] fast/frames/frame-limit.html [ Pass Slow ]
+webkit.org/b/45737 [ Win Linux Release ] fast/frames/frame-limit.html [ Slow ]
 
 # Regressions from webkit roll r67178:t67358
 webkit.org/b/60092 [ Debug ] fast/forms/select-set-length-with-mutation-remove.html [ Crash Pass Timeout ]
-webkit.org/b/60093 [ Android Linux Debug ] http/tests/incremental/slow-utf8-text.pl [ Pass Slow ]
+webkit.org/b/60093 [ Android Linux Debug ] http/tests/incremental/slow-utf8-text.pl [ Slow ]
 
 webkit.org/b/91432 fast/canvas/webgl/read-pixels-test.html [ Timeout ]
 webkit.org/b/91432 platform/chromium/virtual/gpu/fast/canvas/webgl/read-pixels-test.html [ Timeout ]
@@ -2409,7 +2411,7 @@ crbug.com/58212 [ Win ] http/tests/appcache/main-resource-redirect.html [ Failur
 crbug.com/58257 [ Win ] http/tests/misc/last-modified-parsing.html [ Failure Pass Timeout ]
 
 # Failing from r69420, mac failing from r71493:r71496
-crbug.com/58735 http/tests/misc/prefetch-purpose.html [ Pass Slow ]
+crbug.com/58735 http/tests/misc/prefetch-purpose.html [ Slow ]
 
 # V8 does not implement ECMAScript strict mode
 crbug.com/58936 fast/js/basic-strict-mode.html [ Failure ]
@@ -2566,7 +2568,7 @@ webkit.org/b/52082 [ Android Win ] fast/text/midword-break-after-breakable-char.
 
 # These have been flaky for as long as we have test history.
 webkit.org/b/52063 [ Win ] http/tests/navigation/ping-cross-origin.html [ Pass Timeout ]
-webkit.org/b/52063 [ Mac ] http/tests/navigation/ping-cross-origin.html [ Pass Slow ]
+webkit.org/b/52063 [ Mac ] http/tests/navigation/ping-cross-origin.html [ Slow ]
 
 # These were flaky, now failing more consistently after r75169.
 webkit.org/b/52061 [ Debug ] transitions/suspend-transform-transition.html [ ImageOnlyFailure Pass ]
@@ -2645,7 +2647,7 @@ webkit.org/b/54051 [ Mac ] plugins/windowless_plugin_paint_test.html [ Timeout ]
 # Actual failures
 webkit.org/b/54322 [ SnowLeopard ] fast/text/international/text-combine-image-test.html [ ImageOnlyFailure ]
 
-webkit.org/b/54322 [ SnowLeopard ] fast/loader/loadInProgress.html [ Pass Slow ]
+webkit.org/b/54322 [ SnowLeopard ] fast/loader/loadInProgress.html [ Slow ]
 webkit.org/b/54322 [ SnowLeopard ] transitions/transition-end-event-rendering.html [ Failure Pass ]
 
 code.google.com/p/v8/issues/detail?id=1168 fast/js/mozilla/strict/15.5.5.2.html [ Failure ]
@@ -2666,7 +2668,7 @@ crbug.com/69594 http/tests/appcache/different-https-origin-resource-main.html
 
 crbug.com/76253 plugins/npruntime/np-deallocate-called-before-np-shutdown.html [ Failure ]
 
-crbug.com/76550 [ Android Linux Win Debug ] fast/dom/Window/window-function-frame-getter-precedence.html [ Pass Slow ]
+crbug.com/76550 [ Android Linux Win Debug ] fast/dom/Window/window-function-frame-getter-precedence.html [ Slow ]
 crbug.com/76550 [ Mac Debug ] fast/dom/Window/window-function-frame-getter-precedence.html [ Pass Timeout ]
 
 # New and flaky
@@ -2763,7 +2765,7 @@ webkit.org/b/60103 [ Win ] fast/replaced/border-radius-clip.html [ ImageOnlyFail
 webkit.org/b/60103 [ Mac ] fast/replaced/border-radius-clip.html [ Failure ]
 
 # Need to figure out why this is slow.
-webkit.org/b/60131 fast/css/visited-link-hang.html [ Pass Slow ]
+webkit.org/b/60131 fast/css/visited-link-hang.html [ Slow ]
 
 # Introduced in r84443
 webkit.org/b/59063 fast/images/animated-gif-restored-from-bfcache.html [ Failure ]
@@ -2873,8 +2875,8 @@ webkit.org/b/64000 [ Debug ] fast/events/click-focus-anchor.html [ Failure Pass 
 
 crbug.com/88588 fast/lists/inlineBoxWrapperNullCheck.html [ Failure Pass ]
 
-crbug.com/88894 http/tests/cache/subresource-expiration-1.html [ Pass Slow ]
-crbug.com/88894 http/tests/cache/subresource-expiration-2.html [ Pass Slow ]
+crbug.com/88894 http/tests/cache/subresource-expiration-1.html [ Slow ]
+crbug.com/88894 http/tests/cache/subresource-expiration-2.html [ Slow ]
 
 webkit.org/b/107935 platform/chromium/virtual/gpu/compositedscrolling/overflow/composited-scrolling-creates-a-stacking-container.html [ Failure ]
 webkit.org/b/107935 compositing/overflow/composited-scrolling-creates-a-stacking-container.html [ Failure ]
@@ -2924,7 +2926,7 @@ webkit.org/b/66419 http/tests/misc/authentication-redirect-2/authentication-sent
 webkit.org/b/66419 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Failure Timeout ]
 webkit.org/b/66419 http/tests/loading/authentication-after-redirect-stores-wrong-credentials/authentication-after-redirect-stores-wrong-credentials.html [ Failure Timeout ]
 
-webkit.org/b/66795 [ Android Linux Mac ] fast/js/reentrant-caching.html [ Pass Slow ]
+webkit.org/b/66795 [ Android Linux Mac ] fast/js/reentrant-caching.html [ Slow ]
 
 webkit.org/b/66900 [ Android Linux Debug ] fast/writing-mode/japanese-rl-text-with-broken-font.html [ Failure Pass ]
 
@@ -2955,7 +2957,7 @@ webkit.org/b/69136 [ Mac ] fast/frames/frame-set-rotation-hit.html [ ImageOnlyFa
 webkit.org/b/69136 [ Mac ] fast/frames/frame-set-scaling-hit.html [ ImageOnlyFailure ]
 
 # New failures from WebKit r51577
-webkit.org/b/72530 [ Debug ] fast/frames/sandboxed-iframe-navigation-targetlink.html [ Pass Slow ]
+webkit.org/b/72530 [ Debug ] fast/frames/sandboxed-iframe-navigation-targetlink.html [ Slow ]
 
 webkit.org/b/69998 [ Linux Win ] plugins/refcount-leaks.html [ Failure Pass ]
 
@@ -3006,11 +3008,11 @@ webkit.org/b/70988 [ Mac ] jquery/traversing.html [ Pass Timeout ]
 # Crashing since on or before r122699, please uncomment previous line before removing.
 webkit.org/b/91415 [ Mac Debug ] fast/frames/calculate-fixed.html [ Failure Pass Slow ]
 webkit.org/b/91415 [ Mac Release ] fast/frames/calculate-fixed.html [ Failure Pass ]
-webkit.org/b/91415 [ Win Debug ] fast/frames/calculate-fixed.html [ Pass Slow ]
+webkit.org/b/91415 [ Win Debug ] fast/frames/calculate-fixed.html [ Slow ]
 
-webkit.org/b/71278 fast/events/dispatch-message-string-data.html [ Pass Slow ]
+webkit.org/b/71278 fast/events/dispatch-message-string-data.html [ Slow ]
 
-webkit.org/b/71451 fast/frames/sandboxed-iframe-navigation-windowopen.html [ Pass Slow ]
+webkit.org/b/71451 fast/frames/sandboxed-iframe-navigation-windowopen.html [ Slow ]
 
 webkit.org/b/94681 fast/js/array-functions-non-arrays.html [ Failure ]
 webkit.org/b/94688 fast/js/toString-overrides.html [ Failure ]
@@ -3099,7 +3101,7 @@ crbug.com/181300 platform/chromium/virtual/softwarecompositing/tiling/rotated-ti
 webkit.org/b/75932 fast/js/array-defineOwnProperty.html [ Failure ]
 webkit.org/b/75932 fast/js/mozilla/strict/15.4.4.6.html [ Failure ]
 
-code.google.com/p/v8/issues/detail?id=1900 [ Linux Debug ] inspector/debugger/watch-expressions-panel-switch.html [ Pass Slow ]
+code.google.com/p/v8/issues/detail?id=1900 [ Linux Debug ] inspector/debugger/watch-expressions-panel-switch.html [ Slow ]
 code.google.com/p/v8/issues/detail?id=1900 [ Linux Debug ] inspector/debugger/debugger-breakpoints-not-activated-on-reload.html [ Pass Timeout ]
 
 # New reftest failing on Win7.
@@ -3128,8 +3130,8 @@ webkit.org/b/91012 touchadjustment/focusout-on-touch.html [ Skip ]
 webkit.org/b/77397 [ Linux ] plugins/crash-restoring-plugin-page-from-page-cache.html [ Crash Timeout ]
 webkit.org/b/77397 [ Mac Win ] plugins/crash-restoring-plugin-page-from-page-cache.html [ Timeout ]
 
-webkit.org/b/78159 [ Debug ] compositing/iframes/scrolling-iframe.html [ Failure Pass ]
-webkit.org/b/78159 [ Debug ] platform/chromium/virtual/softwarecompositing/iframes/scrolling-iframe.html [ Failure Pass ]
+#webkit.org/b/78159 [ Debug ] compositing/iframes/scrolling-iframe.html [ Failure Pass ]
+#webkit.org/b/78159 [ Debug ] platform/chromium/virtual/softwarecompositing/iframes/scrolling-iframe.html [ Failure Pass ]
 
 # Tests Error.stack behavior. We aren't consistent with JSC and do not intend to become so.
 fast/js/stack-trace.html [ WontFix ]
@@ -3335,7 +3337,7 @@ webkit.org/b/82404 plugins/netscape-dom-access-and-reload.html [ Failure Pass ]
 webkit.org/b/82413 [ Android Linux ] fast/filesystem/workers/async-operations.html [ Pass Timeout ]
 webkit.org/b/82413 [ Mac Debug ] fast/filesystem/workers/async-operations.html [ Pass Timeout ]
 
-webkit.org/b/82417 [ Android Linux ] fast/frames/set-unloaded-frame-location.html [ Pass Slow ]
+webkit.org/b/82417 [ Android Linux ] fast/frames/set-unloaded-frame-location.html [ Slow ]
 
 webkit.org/b/82669 [ Android Linux Win ] fast/text/international/spaces-combined-in-vertical-text.html [ Failure ]
 
@@ -3402,7 +3404,7 @@ webkit.org/b/84550 [ SnowLeopard ] fast/canvas/2d.text.draw.fill.maxWidth.gradie
 webkit.org/b/84688 [ SnowLeopard ] compositing/animation/computed-style-during-delay.html [ Failure Pass ]
 webkit.org/b/84688 [ SnowLeopard ] platform/chromium/virtual/softwarecompositing/animation/computed-style-during-delay.html [ Failure Pass ]
 
-webkit.org/b/84696 [ Release ] fast/workers/storage/interrupt-database.html [ Pass Slow ]
+webkit.org/b/84696 [ Release ] fast/workers/storage/interrupt-database.html [ Slow ]
 
 webkit.org/b/84720 [ Debug ] fast/repaint/fixed-right-in-page-scale.html [ ImageOnlyFailure Pass ]
 webkit.org/b/84720 fast/repaint/fixed-scale.html [ ImageOnlyFailure Pass ]
@@ -3414,13 +3416,13 @@ webkit.org/b/84724 [ SnowLeopard ] platform/chromium/media/video-frame-size-chan
 
 webkit.org/b/84735 [ Win ] http/tests/inspector/change-iframe-src.html [ Pass Timeout ]
 
-webkit.org/b/84802 [ Linux Debug ] fast/js/random-array-gc-stress.html [ Pass Slow ]
-webkit.org/b/93631 [ Android ] fast/js/random-array-gc-stress.html [ Pass Slow ]
+webkit.org/b/84802 [ Linux Debug ] fast/js/random-array-gc-stress.html [ Slow ]
+webkit.org/b/93631 [ Android ] fast/js/random-array-gc-stress.html [ Slow ]
 webkit.org/b/84802 [ Mac Win Debug ] fast/js/random-array-gc-stress.html [ Pass Timeout ]
 
 webkit.org/b/84847 [ Win Release ] inspector/timeline/timeline-start-time.html [ Failure Pass ]
 
-webkit.org/b/85106 tables/mozilla/other/slashlogo.html [ Pass Slow ]
+webkit.org/b/85106 tables/mozilla/other/slashlogo.html [ Slow ]
 
 webkit.org/b/85174 fast/files/blob-constructor.html [ Failure ]
 
@@ -3464,12 +3466,12 @@ webkit.org/b/102781 [ DEBUG ] inspector/profiler/cpu-profiler-profiling-without-
 webkit.org/b/86908 [ Win ] http/tests/security/cross-frame-access-put.html [ Failure Pass ]
 
 webkit.org/b/86909 [ Win ] compositing/geometry/object-clip-rects-assertion.html [ Pass Slow Crash ]
-webkit.org/b/86909 [ Win ] platform/chromium/virtual/softwarecompositing/geometry/object-clip-rects-assertion.html [ Pass Slow ]
+webkit.org/b/86909 [ Win ] platform/chromium/virtual/softwarecompositing/geometry/object-clip-rects-assertion.html [ Slow ]
 webkit.org/b/86909 [ Win ] http/tests/inspector/appcache/appcache-iframe-manifests.html [ Pass Timeout ]
 webkit.org/b/86909 [ Win ] http/tests/inspector/network/network-content-replacement-xhr.html [ Pass Timeout ]
 webkit.org/b/86909 [ Win Debug ] http/tests/security/referrer-policy-redirect-link.html [ Pass Timeout ]
 webkit.org/b/86909 [ Win Debug ] platform/chromium/virtual/gpu/fast/canvas/imagedata-contains-uint8clampedarray.html [ Pass Timeout ]
-webkit.org/b/86909 [ Win ] platform/chromium/virtual/gpu/fast/canvas/webgl/webgl-composite-modes-repaint.html [ Pass Slow ]
+webkit.org/b/86909 [ Win ] platform/chromium/virtual/gpu/fast/canvas/webgl/webgl-composite-modes-repaint.html [ Slow ]
 
 # Ref-tests can't have platform specific results.
 webkit.org/b/87175 fast/regions/floats-basic-in-variable-width-regions.html
@@ -3532,15 +3534,15 @@ webkit.org/b/87653 [ Android Linux Win ] platform/chromium/virtual/softwarecompo
 # Fails with a mismatch in $("menulist").selectedIndex
 webkit.org/b/87748 [ Mac ] fast/forms/select/optgroup-clicking.html [ Failure ]
 
-webkit.org/b/87772 [ Release ] svg/dom/viewspec-parser-1.html [ Pass Slow ]
+webkit.org/b/87772 [ Release ] svg/dom/viewspec-parser-1.html [ Slow ]
 webkit.org/b/87772 [ Debug ] svg/dom/viewspec-parser-1.html [ Timeout Pass ]
-webkit.org/b/87772 [ Release ] svg/dom/viewspec-parser-2.html [ Pass Slow ]
+webkit.org/b/87772 [ Release ] svg/dom/viewspec-parser-2.html [ Slow ]
 webkit.org/b/87772 [ Debug ] svg/dom/viewspec-parser-2.html [ Timeout Pass ]
-webkit.org/b/87772 [ Release ] svg/dom/viewspec-parser-3.html [ Pass Slow ]
+webkit.org/b/87772 [ Release ] svg/dom/viewspec-parser-3.html [ Slow ]
 webkit.org/b/87772 [ Debug ] svg/dom/viewspec-parser-3.html [ Timeout Pass ]
-webkit.org/b/87772 [ Release ] svg/dom/viewspec-parser-4.html [ Pass Slow ]
+webkit.org/b/87772 [ Release ] svg/dom/viewspec-parser-4.html [ Slow ]
 webkit.org/b/87772 [ Debug ] svg/dom/viewspec-parser-4.html [ Timeout Pass ]
-webkit.org/b/87772 [ Release ] svg/dom/viewspec-parser-5.html [ Pass Slow ]
+webkit.org/b/87772 [ Release ] svg/dom/viewspec-parser-5.html [ Slow ]
 webkit.org/b/87772 [ Debug ] svg/dom/viewspec-parser-5.html [ Timeout Pass ]
 
 webkit.org/b/87880 [ Release ] fast/layers/scroll-with-transform-composited-layer.html [ ImageOnlyFailure Pass ]
@@ -3558,6 +3560,7 @@ webkit.org/b/88833 [ Debug ] media/video-played-collapse.html [ Failure Pass ]
 
 webkit.org/b/88833 [ Win Debug ] media/track/track-kind.html [ Pass Timeout ]
 webkit.org/b/88833 http/tests/media/video-play-progress.html [ Pass Timeout ]
+webkit.org/b/88833 media/track/track-prefer-captions.html [ Slow ]
 
 webkit.org/b/88832 [ XP ] http/tests/xmlhttprequest/origin-exact-matching.html [ Pass Timeout ]
 
@@ -3649,7 +3652,7 @@ webkit.org/b/101670 media/video-controls-captions-trackmenu-localized.html [ Ski
 webkit.org/b/101670 media/video-controls-captions-trackmenu-hide-on-click.html [ Skip ]
 webkit.org/b/101670 media/track/track-user-preferences.html [ Skip ]
 
-webkit.org/b/92835 [ Android Mac Win Debug ] svg/as-background-image/svg-as-background-5.html [ Pass Slow ]
+webkit.org/b/92835 [ Android Mac Win Debug ] svg/as-background-image/svg-as-background-5.html [ Slow ]
 
 webkit.org/b/92850 [ Android Linux Debug ] http/tests/websocket/tests/hybi/workers/close-code-and-reason.html [ Crash Pass ]
 
@@ -3683,7 +3686,6 @@ webkit.org/b/85856 platform/chromium/virtual/gpu/compositedscrolling/scrollbars/
 webkit.org/b/93565 [ Debug ] fast/dom/Document/document-reopen.html [ Failure Pass ]
 webkit.org/b/93566 [ Debug ] fast/parser/iframe-sets-parent-to-javascript-url.html [ Failure Pass ]
 webkit.org/b/93567 [ Debug ] fast/parser/javascript-url-compat-mode.html [ Failure Pass ]
-webkit.org/b/93569 [ Debug ] http/tests/navigation/lockedhistory-iframe.html [ Failure Pass Timeout ]
 webkit.org/b/93568 [ Debug ] http/tests/misc/window-dot-stop.html [ Failure Pass Timeout ]
 
 # V8 does not support static attributes
@@ -3742,8 +3744,8 @@ webkit.org/b/94353 platform/chromium/virtual/softwarecompositing/overflow/overfl
 webkit.org/b/110871 compositing/overlap-blending/ [ Skip ]
 webkit.org/b/110871 platform/chromium/virtual/softwarecompositing/overlap-blending/ [ Skip ]
 
-webkit.org/b/90488 [ Win ] http/tests/inspector/network-preflight-options.html [ Pass Slow ]
-webkit.org/b/90488 [ Win ] inspector/extensions/extensions-reload.html [ Pass Slow ]
+webkit.org/b/90488 [ Win ] http/tests/inspector/network-preflight-options.html [ Slow ]
+webkit.org/b/90488 [ Win ] inspector/extensions/extensions-reload.html [ Slow ]
 
 webkit.org/b/94521 [ Linux ] fast/loader/loadInProgress.html [ Crash Pass ]
 
@@ -3763,7 +3765,7 @@ crbug.com/145084 [ Android ] platform/chromium/virtual/gpu/fast/canvas [ Failure
 crbug.com/145087 [ Android ] compositing/geometry/fixed-position-composited-switch.html [ Failure ]
 crbug.com/145087 [ Android ] compositing/geometry/limit-layer-bounds-opacity-transition.html [ Failure ]
 crbug.com/145087 [ Android ] compositing/reflections/nested-reflection-animated.html [ Failure Pass ]
-crbug.com/145087 [ Android ] compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure Pass ]
+#crbug.com/145087 [ Android ] compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure Pass ]
 crbug.com/145087 [ Android ] compositing/rtl/rtl-iframe-fixed.html [ Failure Pass ]
 crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/geometry/fixed-position-composited-switch.html [ Failure ]
 crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/geometry/limit-layer-bounds-opacity-transition.html [ Failure ]
@@ -3771,7 +3773,7 @@ crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/refle
 crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/rtl/rtl-fixed-overflow-scrolled.html [ Failure Pass ]
 crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/rtl/rtl-fixed-overflow.html [ Failure Pass ]
 crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/rtl/rtl-fixed.html [ Failure Pass ]
-crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure Pass ]
+#crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure Pass ]
 crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed.html [ Failure Pass ]
 
 # Failing media tests on Android.
@@ -4118,8 +4120,8 @@ webkit.org/b/103308 [ SnowLeopard Lion ] css3/filters/custom/custom-filter-trans
 
 webkit.org/b/103363 [ Mac ] touchadjustment/touch-links-longpress.html [ Failure ]
 webkit.org/b/103446 [ Mac ] http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
-webkit.org/b/103449 [ MountainLion Win  ] platform/chromium/virtual/gpu/fast/canvas/font-update.html [ ImageOnlyFailure Pass ]
-webkit.org/b/103451 [ Release Mac Win  ] fast/frames/frame-name-reset.html [ Crash Pass ]
+webkit.org/b/103449 [ MountainLion Win ] platform/chromium/virtual/gpu/fast/canvas/font-update.html [ ImageOnlyFailure Pass ]
+webkit.org/b/103451 [ Release Mac Win ] fast/frames/frame-name-reset.html [ Crash Pass ]
 webkit.org/b/103471 [ Win Mac Linux ] http/tests/navigation/slowmetaredirect-basic.html [ Pass Timeout ]
 webkit.org/b/103472 [ Mac Win Debug ] fast/frames/sandboxed-iframe-navigation-parent.html [ Pass Slow Crash ]
 
@@ -4259,24 +4261,24 @@ webkit.org/b/110851 platform/chromium/virtual/softwarecompositing/overflow/overf
 webkit.org/b/110851 platform/chromium/virtual/softwarecompositing/repaint/page-scale-repaint.html [ ImageOnlyFailure ]
 
 # Pixel tests for RTL iframe scrollbar is erroneous. Cannot observe on actual browser.
-crbug.com/192172 [ Linux ] compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
-crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
-crbug.com/192172 [ Linux ] compositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
-crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
-crbug.com/192172 [ Linux ] compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
-crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
-crbug.com/192172 [ Linux ] compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
-crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
+#crbug.com/192172 [ Linux ] compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
+#crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
+#crbug.com/192172 [ Linux ] compositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
+#crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
+#crbug.com/192172 [ Linux ] compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
+#crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
+#crbug.com/192172 [ Linux ] compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
+#crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
 
 # These tests flakily reorder the scrollbars in debug, causing text failures
-webkit.org/b/111199 [ Debug Win7 Lion ] compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Pass Failure ]
-webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Pass Failure ]
-webkit.org/b/111199 [ Debug Win7 Lion ] compositing/rtl/rtl-iframe-absolute-overflow.html [ Pass Failure ]
-webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ Pass Failure ]
-webkit.org/b/111199 [ Debug Win7 Lion ] compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Pass Failure ]
-webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Pass Failure ]
-webkit.org/b/111199 [ Debug Win7 Lion ] compositing/rtl/rtl-iframe-fixed-overflow.html [ Pass Failure ]
-webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Pass Failure ]
+#webkit.org/b/111199 [ Debug Win7 Lion ] compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Pass Failure ]
+#webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Pass Failure ]
+#webkit.org/b/111199 [ Debug Win7 Lion ] compositing/rtl/rtl-iframe-absolute-overflow.html [ Pass Failure ]
+#webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ Pass Failure ]
+#webkit.org/b/111199 [ Debug Win7 Lion ] compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Pass Failure ]
+#webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Pass Failure ]
+#webkit.org/b/111199 [ Debug Win7 Lion ] compositing/rtl/rtl-iframe-fixed-overflow.html [ Pass Failure ]
+#webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Pass Failure ]
 
 # This is possibly a bug in the version of fontconfig on Precise, not sure.
 webkit.org/b/110915 [ Linux ] platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html [ Failure Pass ]
@@ -4346,6 +4348,17 @@ webkit.org/b/112603 fast/innerHTML/innerHTML-iframe.html [ Failure Pass ]
 webkit.org/b/112621 [ Win Linux ] fast/forms/datalist/update-range-with-datalist.html [ ImageOnlyFailure Pass ]
 webkit.org/b/112629 http/tests/xmlhttprequest/send-array-buffer.html [ Failure Pass ]
 webkit.org/b/112643 http/tests/history/redirect-js-location-0-seconds.html [ Failure Pass ]
+webkit.org/b/112980 [ Win Mac ] fast/frames/seamless/seamless-form-post-override.html [ Failure Pass ]
+webkit.org/b/112980 [ Win Mac ] fast/frames/seamless/seamless-window-location-replace.html [ Failure Pass ]
+webkit.org/b/112980 [ Win Mac ] http/tests/navigation/lockedhistory-iframe.html [ Failure Pass ]
+webkit.org/b/112980 [ Win Mac ] http/tests/security/mixedContent/data-url-iframe-in-main-frame.html [ Failure Pass ]
+webkit.org/b/112980 [ XP Release ] platform/chromium/http/tests/security/mixedContent/insecure-image-in-main-frame-blocked.html [ Failure Pass ]
+webkit.org/b/112981 [ Win ] svg/batik/masking/maskRegions.svg [ Failure Pass ]
+webkit.org/b/112981 [ Win ] svg/batik/text/textProperties2.svg [ Failure Pass ]
+webkit.org/b/112981 [ Win ] svg/batik/text/verticalTextOnPath.svg [ Failure Pass ]
+webkit.org/b/112984 [ Win Release ] fast/mediastream/RTCPeerConnection-statsSelector.html [ Failure Pass ]
+webkit.org/b/112984 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_cached.html [ Failure Pass ]
+webkit.org/b/112987 [ Mac XP Release ] http/tests/xmlhttprequest/origin-whitelisting-https.html [ Failure Pass ]
 
 webkit.org/b/112610 [ Win ] fast/text/word-space-with-kerning-3.html [ ImageOnlyFailure ]
 
