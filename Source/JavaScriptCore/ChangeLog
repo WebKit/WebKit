@@ -1,5 +1,21 @@
 2013-03-22  David Kilzer  <ddkilzer@apple.com>
 
+        Revert "BUILD FIX (r146558): Call [super dealloc] from -[TinyDOMNode dealloc]"
+
+        This fixes a build failure introduced by this change:
+
+            Source/JavaScriptCore/API/tests/testapi.mm:206:6: error: ARC forbids explicit message send of 'dealloc'
+                [super dealloc];
+                 ^     ~~~~~~~
+            1 error generated.
+
+        Not sure why this didn't fail locally on my Mac Pro.
+
+        * API/tests/testapi.mm:
+        (-[TinyDOMNode dealloc]): Remove call to [super dealloc].
+
+2013-03-22  David Kilzer  <ddkilzer@apple.com>
+
         BUILD FIX (r146558): Call [super dealloc] from -[TinyDOMNode dealloc]
         <http://webkit.org/b/112608>
 
