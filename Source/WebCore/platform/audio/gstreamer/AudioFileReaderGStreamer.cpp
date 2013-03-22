@@ -458,9 +458,9 @@ PassOwnPtr<AudioBus> AudioFileReader::createBus(float sampleRate, bool mixToMono
     m_loop = adoptGRef(g_main_loop_new(context.get(), FALSE));
 
     // Start the pipeline processing just after the loop is started.
-    GSource* timeoutSource = g_timeout_source_new(0);
-    g_source_attach(timeoutSource, context.get());
-    g_source_set_callback(timeoutSource, reinterpret_cast<GSourceFunc>(enteredMainLoopCallback), this, 0);
+    GRefPtr<GSource> timeoutSource = adoptGRef(g_timeout_source_new(0));
+    g_source_attach(timeoutSource.get(), context.get());
+    g_source_set_callback(timeoutSource.get(), reinterpret_cast<GSourceFunc>(enteredMainLoopCallback), this, 0);
 
     g_main_loop_run(m_loop.get());
     g_main_context_pop_thread_default(context.get());
