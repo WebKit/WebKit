@@ -1468,3 +1468,5 @@ webkit.org/b/91611 media/media-higher-prio-audio-stream.html [ Skip ]
 
 # Snapshotted plugins not enabled on WK1
 plugins/snapshotting [ Skip ]
+
+webkit.org/b/113083 media/track/track-user-preferences.html [ Failure ]
