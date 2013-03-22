@@ -16,6 +16,11 @@
       'BUILDING_GTK__=1',
       'BUILDING_WEBKIT=1',
       'HAVE_CONFIG_H',
+      'WEBKITGTK_API_VERSION_STRING=\"<(api_version)\"',
+
+      # TODO: We should really use datadir, but it typically requires multiple shell evaluations.
+      # See http://www.gnu.org/savannah-checkouts/gnu/autoconf/manual/autoconf-2.69/html_node/Installation-Directory-Variables.html
+      'DATA_DIR=\"@prefix@/share\"',
     ],
 
     # We pass this as a cflag instead of an include so that we can point to
