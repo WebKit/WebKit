@@ -1,3 +1,12 @@
+2013-03-22  Shankar Prasad  <svenkate@redhat.com>
+
+        [kn] Kannada Translation for webkit
+        https://bugs.webkit.org/show_bug.cgi?id=106301
+
+        Reviewed by Gustavo Noronha Silva (kov).
+
+        * kn.po: Added.
+
 2013-03-21  Sandeep Shedmake  <sshedmak@redhat.com>
 
         [l10n] [mr] Updated WebKitGTK+ Translation(s) in Marathi [mr] language
