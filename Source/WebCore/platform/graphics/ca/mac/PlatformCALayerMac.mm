@@ -249,10 +249,8 @@ PassRefPtr<PlatformCALayer> PlatformCALayer::clone(PlatformCALayerClient* owner)
         type = LayerTypeTransformLayer;
         break;
     case LayerTypeAVPlayerLayer:
-// FIXME: This is causing assertions, so disable for now
-// https://bugs.webkit.org/show_bug.cgi?id=112490
-//        type = LayerTypeAVPlayerLayer;
-//        break;
+        type = LayerTypeAVPlayerLayer;
+        break;
     case LayerTypeLayer:
     default:
         type = LayerTypeLayer;
@@ -275,8 +273,13 @@ PassRefPtr<PlatformCALayer> PlatformCALayer::clone(PlatformCALayerClient* owner)
     newLayer->copyFiltersFrom(this);
 #endif
 
-    if (type == LayerTypeAVPlayerLayer)
-        [newLayer->playerLayer() setPlayer:[playerLayer() player]];
+    if (type == LayerTypeAVPlayerLayer) {
+        AVPlayerLayer* destinationPlayerLayer = newLayer->playerLayer();
+        AVPlayerLayer* sourcePlayerLayer = playerLayer();
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [destinationPlayerLayer setPlayer:[sourcePlayerLayer player]];
+        });
+    }
 
     return newLayer;
 }
