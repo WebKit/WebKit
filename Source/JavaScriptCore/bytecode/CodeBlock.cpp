@@ -1473,8 +1473,8 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int debugHookID = (++it)->u.operand;
             int firstLine = (++it)->u.operand;
             int lastLine = (++it)->u.operand;
-            int charPosition = (++it)->u.operand;
-            out.printf("[%4d] debug\t\t %s, %d, %d, %d", location, debugHookName(debugHookID), firstLine, lastLine, charPosition);
+            int column = (++it)->u.operand;
+            out.printf("[%4d] debug\t\t %s, %d, %d, %d", location, debugHookName(debugHookID), firstLine, lastLine, column);
             break;
         }
         case op_profile_will_call: {
@@ -2003,6 +2003,15 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             instructions[i + 1] = &globalObject->registerAt(entry.getIndex());
             break;
         }
+
+        case op_debug: {
+            size_t charPosition = pc[i + 4].u.operand;
+            size_t actualCharPosition = charPosition + m_sourceOffset;
+            size_t column = m_source->charPositionToColumnNumber(actualCharPosition);
+            instructions[i + 4] = column;
+            break;
+        }
+
         default:
             break;
         }

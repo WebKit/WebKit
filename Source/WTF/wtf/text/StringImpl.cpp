@@ -1116,11 +1116,11 @@ size_t StringImpl::findIgnoringCase(StringImpl* matchString, unsigned index)
     return findIgnoringCaseInner(characters16() + index, matchString->characters16(), index, searchLength, matchLength);
 }
 
-size_t StringImpl::reverseFindLineTerminator(unsigned index)
+size_t StringImpl::findNextLineStart(unsigned index)
 {
     if (is8Bit())
-        return WTF::reverseFindLineTerminator(characters8(), m_length, index);
-    return WTF::reverseFindLineTerminator(characters16(), m_length, index);
+        return WTF::findNextLineStart(characters8(), m_length, index);
+    return WTF::findNextLineStart(characters16(), m_length, index);
 }
 
 size_t StringImpl::reverseFind(UChar c, unsigned index)

@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "SourceProvider.h"
+#include <wtf/StdLibExtras.h>
 #include <wtf/TCSpinLock.h>
 
 namespace JSC {
@@ -39,6 +40,50 @@ SourceProvider::SourceProvider(const String& url, const TextPosition& startPosit
 
 SourceProvider::~SourceProvider()
 {
+}
+
+Vector<size_t>& SourceProvider::lineStarts()
+{
+    if (!m_lineStarts) {
+        m_lineStarts = adoptPtr(new Vector<size_t>());
+        String source = this->source();
+        size_t index = 0;
+        do {
+            m_lineStarts->append(index);
+            index = source.findNextLineStart(index);
+        } while (index != notFound);
+        m_lineStarts->shrinkToFit();
+    }
+    return *m_lineStarts;
+}
+
+
+static inline size_t charPositionExtractor(const size_t* value)
+{
+    return *value;
+}
+
+size_t SourceProvider::charPositionToColumnNumber(size_t charPosition)
+{
+    Vector<size_t>& lineStarts = this->lineStarts();
+    size_t* data = lineStarts.data();
+    size_t dataSize = lineStarts.size();
+
+    // Get the nearest line start entry (which could be to the left or to the
+    // right of the requested charPosition.
+    const size_t* line = approximateBinarySearch<size_t, size_t>(data, dataSize, charPosition, charPositionExtractor);
+    size_t lineStartPosition = *line;
+
+    if (lineStartPosition > charPosition) {
+        if (data < line) {
+            line--;
+            lineStartPosition = *line;
+        }
+    }
+
+    ASSERT(data <= line);
+    ASSERT(lineStartPosition <= charPosition);
+    return charPosition - lineStartPosition;
 }
 
 static TCMalloc_SpinLock providerIdLock = SPINLOCK_INITIALIZER;

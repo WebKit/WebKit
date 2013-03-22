@@ -261,8 +261,8 @@ public:
     size_t find(const LChar* str, unsigned start = 0) const
         { return m_impl ? m_impl->find(str, start) : notFound; }
 
-    size_t reverseFindLineTerminator(unsigned start = UINT_MAX) const
-        { return m_impl ? m_impl->reverseFindLineTerminator(start) : notFound; }
+    size_t findNextLineStart(unsigned start = 0) const
+        { return m_impl ? m_impl->findNextLineStart(start) : notFound; }
 
     // Find the last instance of a single character or string.
     size_t reverseFind(UChar c, unsigned start = UINT_MAX) const

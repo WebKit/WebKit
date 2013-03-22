@@ -1,3 +1,20 @@
+2013-03-21  Mark Lam  <mark.lam@apple.com>
+
+        Introducing String::findNextLineStart().
+        https://bugs.webkit.org/show_bug.cgi?id=112957.
+
+        Reviewed by Geoffrey Garen.
+
+        This is replaces String::reverseFindLineTerminator() in the JSC
+        debugger's code for computing column numbers.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::findNextLineStart):
+        * wtf/text/StringImpl.h:
+        (WTF::findNextLineStart):
+        * wtf/text/WTFString.h:
+        (WTF::String::findNextLineStart):
+
 2013-03-21  Adam Barth  <abarth@webkit.org>
 
         HTMLNames should construct strings at compile time

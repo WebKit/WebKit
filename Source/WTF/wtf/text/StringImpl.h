@@ -697,7 +697,8 @@ public:
     ALWAYS_INLINE size_t findIgnoringCase(const char* s, unsigned index = 0) { return findIgnoringCase(reinterpret_cast<const LChar*>(s), index); }
     WTF_EXPORT_STRING_API size_t findIgnoringCase(StringImpl*, unsigned index = 0);
 
-    WTF_EXPORT_STRING_API size_t reverseFindLineTerminator(unsigned index = UINT_MAX);
+    WTF_EXPORT_STRING_API size_t findNextLineStart(unsigned index = UINT_MAX);
+
     WTF_EXPORT_STRING_API size_t reverseFind(UChar, unsigned index = UINT_MAX);
     WTF_EXPORT_STRING_API size_t reverseFind(StringImpl*, unsigned index = UINT_MAX);
     WTF_EXPORT_STRING_API size_t reverseFindIgnoringCase(StringImpl*, unsigned index = UINT_MAX);
@@ -1144,6 +1145,37 @@ inline size_t find(const UChar* characters, unsigned length, CharacterMatchFunct
         if (matchFunction(characters[index]))
             return index;
         ++index;
+    }
+    return notFound;
+}
+
+template<typename CharacterType>
+inline size_t findNextLineStart(const CharacterType* characters, unsigned length, unsigned index = 0)
+{
+    while (index < length) {
+        CharacterType c = characters[index++];
+        if ((c != '\n') && (c != '\r'))
+            continue;
+
+        // There can only be a start of a new line if there are more characters
+        // beyond the current character.
+        if (index < length) {
+            // The 3 common types of line terminators are 1. \r\n (Windows), 
+            // 2. \r (old MacOS) and 3. \n (Unix'es).
+
+            if (c == '\n')
+                return index; // Case 3: just \n.
+
+            CharacterType c2 = characters[index];
+            if (c2 != '\n')
+                return index; // Case 2: just \r.
+
+            // Case 1: \r\n.
+            // But, there's only a start of a new line if there are more
+            // characters beyond the \r\n.
+            if (++index < length)
+                return index; 
+        }
     }
     return notFound;
 }

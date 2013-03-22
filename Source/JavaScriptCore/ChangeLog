@@ -1,3 +1,39 @@
+2013-03-21  Mark Lam  <mark.lam@apple.com>
+
+        Fix O(n^2) op_debug bytecode charPosition to column computation.
+        https://bugs.webkit.org/show_bug.cgi?id=112957.
+
+        Reviewed by Geoffrey Garen.
+
+        The previous algorithm does a linear reverse scan of the source string
+        to find the line start for any given char position. This results in a
+        O(n^2) algortithm when the source string has no line breaks.
+
+        The new algorithm computes a line start column table for a
+        SourceProvider on first use. This line start table is used to fix up
+        op_debug's charPosition operand into a column operand when an
+        UnlinkedCodeBlock is linked into a CodeBlock. The initialization of
+        the line start table is O(n), and the CodeBlock column fix up is
+        O(log(n)).
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode): 
+        (JSC::CodeBlock::CodeBlock): - do column fix up.
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::debug): - no need to do column fixup anymore.
+        * interpreter/Interpreter.h:
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * parser/SourceProvider.cpp:
+        (JSC::SourceProvider::lineStarts):
+        (JSC::charPositionExtractor):
+        (JSC::SourceProvider::charPositionToColumnNumber):
+        - initialize line start column table if needed.
+        - look up line start for the given char position.
+        * parser/SourceProvider.h:
+
 2013-03-21  Filip Pizlo  <fpizlo@apple.com>
 
         JSC profiler should have an at-a-glance report of the success of DFG optimization

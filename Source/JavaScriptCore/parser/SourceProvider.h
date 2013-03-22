@@ -66,14 +66,19 @@ namespace JSC {
         bool isValid() const { return m_validated; }
         void setValid() { m_validated = true; }
 
+        size_t charPositionToColumnNumber(size_t charPosition);
+
     private:
 
         JS_EXPORT_PRIVATE void getID();
+        Vector<size_t>& lineStarts();
 
         String m_url;
         TextPosition m_startPosition;
         bool m_validated : 1;
         uintptr_t m_id : sizeof(uintptr_t) * 8 - 1;
+
+        OwnPtr<Vector<size_t> > m_lineStarts;
     };
 
     class StringSourceProvider : public SourceProvider {
