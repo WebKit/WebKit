@@ -56,10 +56,9 @@ WebInspector.FlameChart = function(cpuProfileView)
     WebInspector.installDragHandle(this._canvas, this._startCanvasDragging.bind(this), this._canvasDragging.bind(this), this._endCanvasDragging.bind(this), "col-resize");
 
     this._cpuProfileView = cpuProfileView;
-    this._xScaleFactor = 4.0;
     this._windowLeft = 0.0;
     this._windowRight = 1.0;
-    this._barHeight = 10;
+    this._barHeight = 15;
     this._minWidth = 1;
     this._canvas.addEventListener("mousemove", this._onMouseMove.bind(this), false);
     this._canvas.addEventListener("mousewheel", this._onMouseWheel.bind(this), false);
@@ -523,6 +522,10 @@ WebInspector.FlameChart.prototype = {
         var barHeight = this._barHeight;
 
         var context = this._canvas.getContext("2d");
+        var paddingLeft = 2;
+        context.font = (barHeight - 3) + "px sans-serif";
+        context.textBaseline = "top";
+        this._dotsWidth = context.measureText("\u2026").width;
 
         for (var i = 0; i < timelineEntries.length; ++i) {
             var startTime = timelineEntries[i].startTime;
@@ -547,6 +550,46 @@ WebInspector.FlameChart.prototype = {
             context.rect(x, y, barWidth - 1, barHeight - 1);
             context.fillStyle = color;
             context.fill();
+
+            var xText = Math.max(0, x);
+            var widthText = barWidth - paddingLeft + x - xText;
+            var title = this._prepareTitle(context, timelineData.entries[i].node.functionName, barWidth - paddingLeft - xText + x);
+            if (title) {
+                context.fillStyle = "#333";
+                context.fillText(title, xText + paddingLeft, y - 1);
+            }
+        }
+    },
+
+    _prepareTitle: function(context, title, maxSize)
+    {
+        if (maxSize < this._dotsWidth)
+            return null;
+        var titleWidth = context.measureText(title).width;
+        if (maxSize > titleWidth)
+            return title;
+        maxSize -= this._dotsWidth;
+        var dotRegExp=/[\.\$]/g;
+        var match = dotRegExp.exec(title);
+        if (!match) {
+            var visiblePartSize = maxSize / titleWidth;
+            var newTextLength = Math.floor(title.length * visiblePartSize) + 1;
+            var minTextLength = 4;
+            if (newTextLength < minTextLength)
+                return null;
+            var substring;
+            do {
+                --newTextLength;
+                substring = title.substring(0, newTextLength);
+            } while (context.measureText(substring).width > maxSize);
+            return title.substring(0, newTextLength) + "\u2026";
+        }
+        while (match) {
+            var substring = title.substring(match.index + 1);
+            var width = context.measureText(substring).width;
+            if (maxSize > width)
+                return "\u2026" + substring;
+            match = dotRegExp.exec(title);
         }
     },
 
