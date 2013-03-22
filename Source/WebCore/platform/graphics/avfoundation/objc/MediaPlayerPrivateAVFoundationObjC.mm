@@ -171,6 +171,7 @@ enum MediaPlayerAVFoundationObservationContext {
 }
 - (id)initWithCallback:(MediaPlayerPrivateAVFoundationObjC*)callback;
 - (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest;
+- (void)setCallback:(MediaPlayerPrivateAVFoundationObjC*)callback;
 @end
 #endif
 
@@ -234,6 +235,7 @@ MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
     playerToPrivateMap().remove(player());
 #endif
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    [m_loaderDelegate.get() setCallback:0];
     [[m_avAsset.get() resourceLoader] setDelegate:nil queue:0];
 #endif
     cancelLoad();
@@ -1531,13 +1533,24 @@ NSArray* itemKVOProperties()
 - (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest
 {
     UNUSED_PARAM(resourceLoader);
+    if (!m_callback)
+        return NO;
+
     return m_callback->shouldWaitForLoadingOfResource(loadingRequest);
 }
 
 - (void)resourceLoader:(AVAssetResourceLoader *)resourceLoader didCancelLoadingRequest:(AVAssetResourceLoadingRequest *)loadingRequest
 {
     UNUSED_PARAM(resourceLoader);
+    if (!m_callback)
+        return;
+
     return m_callback->didCancelLoadingRequest(loadingRequest);
+}
+
+- (void)setCallback:(MediaPlayerPrivateAVFoundationObjC*)callback
+{
+    m_callback = callback;
 }
 @end
 #endif
