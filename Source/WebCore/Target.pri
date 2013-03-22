@@ -1447,6 +1447,7 @@ HEADERS += \
     plugins/npruntime.h
 
 HEADERS += \
+    Modules/geolocation/Coordinates.h \
     Modules/geolocation/Geolocation.h \
     Modules/geolocation/GeolocationController.h \
     Modules/geolocation/GeolocationError.h \
@@ -2118,7 +2119,6 @@ HEADERS += \
     page/ConsoleTypes.h \
     page/ContextMenuController.h \
     page/ContextMenuProvider.h \
-    page/Coordinates.h \
     page/DeviceClient.h \
     page/DeviceController.h \
     page/DiagnosticLoggingKeys.h \

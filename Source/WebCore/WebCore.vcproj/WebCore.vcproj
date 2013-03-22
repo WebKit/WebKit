@@ -25178,6 +25178,10 @@
 				Name="geolocation"
 				>
 				<File
+					RelativePath="..\Modules\geolocation\Coordinates.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Modules\geolocation\Geolocation.cpp"
 					>
 				</File>
@@ -27372,10 +27376,6 @@
 			</File>
 			<File
 				RelativePath="..\page\ContextMenuProvider.h"
-				>
-			</File>
-			<File
-				RelativePath="..\page\Coordinates.h"
 				>
 			</File>
 			<File

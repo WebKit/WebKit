@@ -91,6 +91,7 @@ BINDING_IDLS = \
     $(WebCore)/Modules/filesystem/Metadata.idl \
     $(WebCore)/Modules/filesystem/MetadataCallback.idl \
     $(WebCore)/Modules/filesystem/WorkerContextFileSystem.idl \
+    $(WebCore)/Modules/geolocation/Coordinates.idl \
     $(WebCore)/Modules/geolocation/Geolocation.idl \
     $(WebCore)/Modules/geolocation/Geoposition.idl \
     $(WebCore)/Modules/geolocation/NavigatorGeolocation.idl \
@@ -441,7 +442,6 @@ BINDING_IDLS = \
     $(WebCore)/page/AbstractView.idl \
     $(WebCore)/page/BarInfo.idl \
     $(WebCore)/page/Console.idl \
-    $(WebCore)/page/Coordinates.idl \
     $(WebCore)/page/Crypto.idl \
     $(WebCore)/page/DOMSecurityPolicy.idl \
     $(WebCore)/page/DOMSelection.idl \

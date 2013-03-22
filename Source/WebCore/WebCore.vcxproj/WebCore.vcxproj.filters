@@ -8367,6 +8367,9 @@
     <ClInclude Include="..\Modules\filesystem\WorkerContextFileSystem.h">
       <Filter>Modules\filesystem</Filter>
     </ClInclude>
+    <ClInclude Include="..\Modules\geolocation\Coordinates.h">
+      <Filter>Modules\geolocation</Filter>
+    </ClInclude>
     <ClInclude Include="..\Modules\geolocation\Geolocation.h">
       <Filter>Modules\geolocation</Filter>
     </ClInclude>
@@ -8836,9 +8839,6 @@
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\ContextMenuProvider.h">
-      <Filter>page</Filter>
-    </ClInclude>
-    <ClInclude Include="..\page\Coordinates.h">
       <Filter>page</Filter>
     </ClInclude>
     <ClInclude Include="..\page\Crypto.h">

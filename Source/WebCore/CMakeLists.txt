@@ -179,6 +179,7 @@ set(WebCore_IDL_FILES
     Modules/gamepad/GamepadList.idl
     Modules/gamepad/NavigatorGamepad.idl
 
+    Modules/geolocation/Coordinates.idl
     Modules/geolocation/Geolocation.idl
     Modules/geolocation/Geoposition.idl
     Modules/geolocation/NavigatorGeolocation.idl
@@ -563,7 +564,6 @@ set(WebCore_IDL_FILES
 
     page/BarInfo.idl
     page/Console.idl
-    page/Coordinates.idl
     page/Crypto.idl
     page/DOMSecurityPolicy.idl
     page/DOMSelection.idl

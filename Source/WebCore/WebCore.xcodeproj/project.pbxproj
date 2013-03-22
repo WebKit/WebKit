@@ -3578,6 +3578,7 @@
 		973F418B169B96030006BF60 /* HTMLParserOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 973F4187169B95EF0006BF60 /* HTMLParserOptions.cpp */; };
 		974187D316A7932700FA77A7 /* HTMLParserThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 974187D016A7932200FA77A7 /* HTMLParserThread.cpp */; };
 		974187D416A7932900FA77A7 /* HTMLParserThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 974187D116A7932200FA77A7 /* HTMLParserThread.h */; };
+		9746AF2114F4DDE6003E7A71 /* Coordinates.h in Headers */ = {isa = PBXBuildFile; fileRef = 9746AF1114F4DDE6003E7A70 /* Coordinates.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9746AF2314F4DDE6003E7A70 /* Geolocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9746AF1314F4DDE6003E7A70 /* Geolocation.cpp */; };
 		9746AF2414F4DDE6003E7A70 /* Geolocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 9746AF1414F4DDE6003E7A70 /* Geolocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9746AF2614F4DDE6003E7A70 /* GeolocationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9746AF1614F4DDE6003E7A70 /* GeolocationController.cpp */; };
@@ -6821,7 +6822,6 @@
 		FE4AADEF16D2C37400026FFC /* AbstractSQLStatementBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = FE4AADED16D2C37400026FFC /* AbstractSQLStatementBackend.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE6F6AAF169E057500FC30A2 /* DatabaseBackendContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE6F6AAD169E057500FC30A2 /* DatabaseBackendContext.cpp */; };
 		FE6F6AB0169E057500FC30A2 /* DatabaseBackendContext.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6F6AAE169E057500FC30A2 /* DatabaseBackendContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		FE6FD4880F676E5700092873 /* Coordinates.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6FD4850F676E5700092873 /* Coordinates.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE6FD48D0F676E9300092873 /* JSCoordinates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE6FD48B0F676E9300092873 /* JSCoordinates.cpp */; };
 		FE6FD48E0F676E9300092873 /* JSCoordinates.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6FD48C0F676E9300092873 /* JSCoordinates.h */; };
 		FE700DD10F92D81A008E2BFE /* JSCoordinatesCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE700DD00F92D81A008E2BFE /* JSCoordinatesCustom.cpp */; };
@@ -11092,6 +11092,8 @@
 		973F4188169B95EF0006BF60 /* HTMLParserOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLParserOptions.h; path = parser/HTMLParserOptions.h; sourceTree = "<group>"; };
 		974187D016A7932200FA77A7 /* HTMLParserThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLParserThread.cpp; path = parser/HTMLParserThread.cpp; sourceTree = "<group>"; };
 		974187D116A7932200FA77A7 /* HTMLParserThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLParserThread.h; path = parser/HTMLParserThread.h; sourceTree = "<group>"; };
+		9746AF1114F4DDE6003E7A70 /* Coordinates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Coordinates.h; path = Modules/geolocation/Coordinates.h; sourceTree = "<group>"; };
+		9746AF1214F4DDE6003E7A70 /* Coordinates.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Coordinates.idl; path = Modules/geolocation/Coordinates.idl; sourceTree = "<group>"; };
 		9746AF1314F4DDE6003E7A70 /* Geolocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Geolocation.cpp; path = Modules/geolocation/Geolocation.cpp; sourceTree = "<group>"; };
 		9746AF1414F4DDE6003E7A70 /* Geolocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Geolocation.h; path = Modules/geolocation/Geolocation.h; sourceTree = "<group>"; };
 		9746AF1514F4DDE6003E7A70 /* Geolocation.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Geolocation.idl; path = Modules/geolocation/Geolocation.idl; sourceTree = "<group>"; };
@@ -14634,8 +14636,6 @@
 		FE4AADED16D2C37400026FFC /* AbstractSQLStatementBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AbstractSQLStatementBackend.h; path = Modules/webdatabase/AbstractSQLStatementBackend.h; sourceTree = "<group>"; };
 		FE6F6AAD169E057500FC30A2 /* DatabaseBackendContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DatabaseBackendContext.cpp; path = Modules/webdatabase/DatabaseBackendContext.cpp; sourceTree = "<group>"; };
 		FE6F6AAE169E057500FC30A2 /* DatabaseBackendContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DatabaseBackendContext.h; path = Modules/webdatabase/DatabaseBackendContext.h; sourceTree = "<group>"; };
-		FE6FD4850F676E5700092873 /* Coordinates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Coordinates.h; sourceTree = "<group>"; };
-		FE6FD4860F676E5700092873 /* Coordinates.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Coordinates.idl; sourceTree = "<group>"; };
 		FE6FD48B0F676E9300092873 /* JSCoordinates.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCoordinates.cpp; sourceTree = "<group>"; };
 		FE6FD48C0F676E9300092873 /* JSCoordinates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCoordinates.h; sourceTree = "<group>"; };
 		FE700DD00F92D81A008E2BFE /* JSCoordinatesCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCoordinatesCustom.cpp; sourceTree = "<group>"; };
@@ -16476,8 +16476,6 @@
 				065AD4F30B0C2EDA005A2B1D /* ContextMenuController.cpp */,
 				065AD4F40B0C2EDA005A2B1D /* ContextMenuController.h */,
 				7ADE722510CBBB9B006B3B3A /* ContextMenuProvider.h */,
-				FE6FD4850F676E5700092873 /* Coordinates.h */,
-				FE6FD4860F676E5700092873 /* Coordinates.idl */,
 				975CA287130365F800E99AD9 /* Crypto.cpp */,
 				975CA288130365F800E99AD9 /* Crypto.h */,
 				975CA289130365F800E99AD9 /* Crypto.idl */,
@@ -18511,6 +18509,8 @@
 		971145FF14EF007900674FD9 /* geolocation */ = {
 			isa = PBXGroup;
 			children = (
+				9746AF1114F4DDE6003E7A70 /* Coordinates.h */,
+				9746AF1214F4DDE6003E7A70 /* Coordinates.idl */,
 				9746AF1314F4DDE6003E7A70 /* Geolocation.cpp */,
 				9746AF1414F4DDE6003E7A70 /* Geolocation.h */,
 				9746AF1514F4DDE6003E7A70 /* Geolocation.idl */,
@@ -23600,7 +23600,7 @@
 				E1424C94164B52C800F32D40 /* CookieJar.h in Headers */,
 				339B5B63131DAA3200F48D02 /* CookiesStrategy.h in Headers */,
 				33D0212D131DB37B004091A8 /* CookieStorage.h in Headers */,
-				FE6FD4880F676E5700092873 /* Coordinates.h in Headers */,
+				9746AF2114F4DDE6003E7A71 /* Coordinates.h in Headers */,
 				A80E6D040A1989CA007FB8C5 /* Counter.h in Headers */,
 				BC5EB9790E82069200B25965 /* CounterContent.h in Headers */,
 				BC5EB9510E82056B00B25965 /* CounterDirectives.h in Headers */,

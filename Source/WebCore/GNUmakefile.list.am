@@ -1227,6 +1227,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/gamepad/Gamepad.idl \
 	$(WebCore)/Modules/gamepad/GamepadList.idl \
 	$(WebCore)/Modules/gamepad/NavigatorGamepad.idl \
+	$(WebCore)/Modules/geolocation/Coordinates.idl \
 	$(WebCore)/Modules/geolocation/Geolocation.idl \
 	$(WebCore)/Modules/geolocation/Geoposition.idl \
 	$(WebCore)/Modules/geolocation/NavigatorGeolocation.idl \
@@ -1594,7 +1595,6 @@ dom_binding_idls += \
 	$(WebCore)/loader/appcache/DOMApplicationCache.idl \
 	$(WebCore)/page/BarInfo.idl \
 	$(WebCore)/page/Console.idl \
-	$(WebCore)/page/Coordinates.idl \
 	$(WebCore)/page/Crypto.idl \
 	$(WebCore)/page/DOMSecurityPolicy.idl \
 	$(WebCore)/page/DOMSelection.idl \
@@ -1856,6 +1856,7 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/gamepad/GamepadList.h \
 	Source/WebCore/Modules/gamepad/NavigatorGamepad.cpp \
 	Source/WebCore/Modules/gamepad/NavigatorGamepad.h \
+	Source/WebCore/Modules/geolocation/Coordinates.h \
 	Source/WebCore/Modules/geolocation/Geolocation.cpp \
 	Source/WebCore/Modules/geolocation/Geolocation.h \
 	Source/WebCore/Modules/geolocation/GeolocationController.cpp \
@@ -4164,7 +4165,6 @@ webcore_sources += \
 	Source/WebCore/page/ContextMenuController.cpp \
 	Source/WebCore/page/ContextMenuController.h \
 	Source/WebCore/page/ContextMenuProvider.h \
-	Source/WebCore/page/Coordinates.h \
 	Source/WebCore/page/Crypto.cpp \
 	Source/WebCore/page/Crypto.h \
 	Source/WebCore/page/DeviceClient.h \

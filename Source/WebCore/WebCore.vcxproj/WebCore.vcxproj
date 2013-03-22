@@ -11233,6 +11233,7 @@
     <ClInclude Include="..\Modules\filesystem\MetadataCallback.h" />
     <ClInclude Include="..\Modules\filesystem\SyncCallbackHelper.h" />
     <ClInclude Include="..\Modules\filesystem\WorkerContextFileSystem.h" />
+    <ClInclude Include="..\Modules\geolocation\Coordinates.h" />
     <ClInclude Include="..\Modules\geolocation\Geolocation.h" />
     <ClInclude Include="..\Modules\geolocation\GeolocationController.h" />
     <ClInclude Include="..\Modules\geolocation\GeolocationError.h" />
@@ -11396,7 +11397,6 @@
     <ClInclude Include="..\page\ContextMenuClient.h" />
     <ClInclude Include="..\page\ContextMenuController.h" />
     <ClInclude Include="..\page\ContextMenuProvider.h" />
-    <ClInclude Include="..\page\Coordinates.h" />
     <ClInclude Include="..\page\Crypto.h" />
     <ClInclude Include="..\page\animation\CSSPropertyAnimation.h" />
     <ClInclude Include="..\page\DeviceClient.h" />
