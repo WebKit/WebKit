@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,6 +55,10 @@ public:
     unsigned profiledBytecodesSize() const { return m_profiledBytecodes.size(); }
     const ProfiledBytecodes& profiledBytecodesAt(unsigned i) const { return m_profiledBytecodes[i]; }
     
+    void noticeInlinedGetById() { m_numInlinedGetByIds++; }
+    void noticeInlinedPutById() { m_numInlinedPutByIds++; }
+    void noticeInlinedCall() { m_numInlinedCalls++; }
+    
     Bytecodes* bytecodes() const { return m_bytecodes; }
     CompilationKind kind() const { return m_kind; }
     
@@ -73,6 +77,9 @@ private:
     HashMap<OriginStack, OwnPtr<ExecutionCounter> > m_counters;
     Vector<OSRExitSite> m_osrExitSites;
     SegmentedVector<OSRExit> m_osrExits;
+    unsigned m_numInlinedGetByIds;
+    unsigned m_numInlinedPutByIds;
+    unsigned m_numInlinedCalls;
 };
 
 } } // namespace JSC::Profiler

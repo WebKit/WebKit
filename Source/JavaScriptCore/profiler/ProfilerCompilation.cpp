@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,9 @@ namespace JSC { namespace Profiler {
 Compilation::Compilation(Bytecodes* bytecodes, CompilationKind kind)
     : m_bytecodes(bytecodes)
     , m_kind(kind)
+    , m_numInlinedGetByIds(0)
+    , m_numInlinedPutByIds(0)
+    , m_numInlinedCalls(0)
 {
 }
 
@@ -123,6 +126,10 @@ JSValue Compilation::toJS(ExecState* exec) const
     for (unsigned i = 0; i < m_osrExits.size(); ++i)
         exits->putDirectIndex(exec, i, m_osrExits[i].toJS(exec));
     result->putDirect(exec->globalData(), exec->propertyNames().osrExits, exits);
+    
+    result->putDirect(exec->globalData(), exec->propertyNames().numInlinedGetByIds, jsNumber(m_numInlinedGetByIds));
+    result->putDirect(exec->globalData(), exec->propertyNames().numInlinedPutByIds, jsNumber(m_numInlinedPutByIds));
+    result->putDirect(exec->globalData(), exec->propertyNames().numInlinedCalls, jsNumber(m_numInlinedCalls));
     
     return result;
 }

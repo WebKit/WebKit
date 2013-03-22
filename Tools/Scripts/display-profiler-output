@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright (C) 2012 Apple Inc. All rights reserved.
+# Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -325,7 +325,9 @@ class OSRExit
 end
 
 class Compilation
-    attr_accessor :bytecode, :engine, :descriptions, :counters, :compilationIndex, :osrExits, :profiledBytecodes
+    attr_accessor :bytecode, :engine, :descriptions, :counters, :compilationIndex
+    attr_accessor :osrExits, :profiledBytecodes, :numInlinedGetByIds, :numInlinedPutByIds
+    attr_accessor :numInlinedCalls
     
     def initialize(json)
         @bytecode = $bytecodes[json["bytecodesID"].to_i]
@@ -375,6 +377,9 @@ class Compilation
             | subJson |
             @profiledBytecodes << ProfiledBytecodes.new(subJson)
         }
+        @numInlinedGetByIds = json["numInlinedGetByIds"]
+        @numInlinedPutByIds = json["numInlinedPutByIds"]
+        @numInlinedCalls = json["numInlinedCalls"]
     end
     
     def counter(origin)
@@ -507,6 +512,9 @@ def summary(mode)
         
         exitCountCols = 7
         remaining -= exitCountCols + 1
+        
+        recentOptsCols = 12
+        remaining -= recentOptsCols + 1
     end
     
     if remaining > 0
@@ -525,6 +533,7 @@ def summary(mode)
         print(" " + center("#Compil", compilationsCols))
         print(" " + center("Inlines", inlinesCols))
         print(" " + center("#Exits", exitCountCols))
+        print(" " + center("Last Opts", recentOptsCols))
     end
     if sourceCols
         print(" " + center("Source", sourceCols))
@@ -540,6 +549,8 @@ def summary(mode)
         print(" " + center("Base/DFG", machineCountCols))
         print(" " + (" " * compilationsCols))
         print(" " + center("Src/Total", inlinesCols))
+        print(" " + (" " * exitCountCols))
+        print(" " + center("Get/Put/Call", recentOptsCols))
     end
     puts
     $bytecodes.sort {
@@ -564,6 +575,15 @@ def summary(mode)
             print(" " + center(bytecode.compilations.size.to_s, compilationsCols))
             print(" " + center(bytecode.sourceMachineInlineSites.to_s + "/" + bytecode.totalMachineInlineSites.to_s, inlinesCols))
             print(" " + center(bytecode.totalExitCount.to_s, exitCountCols))
+            lastCompilation = bytecode.compilations[-1]
+            if lastCompilation
+                optData = [lastCompilation.numInlinedGetByIds,
+                           lastCompilation.numInlinedPutByIds,
+                           lastCompilation.numInlinedCalls]
+            else
+                optData = ["N/A"]
+            end
+            print(" " + center(optData.join('/'), recentOptsCols))
         end
         if sourceCols
             print(" " + sourceOnOneLine(bytecode.source, sourceCols))
@@ -826,6 +846,7 @@ def executeCommand(*commandArray)
             end
             
             puts("Compilation #{compilation}:")
+            puts("    Num inlined: GetByIds: #{compilation.numInlinedGetByIds}  PutByIds: #{compilation.numInlinedPutByIds}  Calls: #{compilation.numInlinedCalls}")
             puts(center("Actual Counts", actualCountCols) + " " + center("Source Counts", sourceCountCols) + " " + center("Disassembly in #{compilation.engine}", screenWidth - 1 - sourceCountCols - 1 - actualCountCols))
             puts((" " * actualCountCols) + " " + center("Base/DFG", sourceCountCols))
 

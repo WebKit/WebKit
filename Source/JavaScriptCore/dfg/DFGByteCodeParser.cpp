@@ -1230,10 +1230,15 @@ void ByteCodeParser::handleCall(Interpreter* interpreter, Instruction* currentIn
             // the inputs must be kept alive whatever exits the intrinsic may do.
             addToGraph(Phantom, callTarget);
             emitArgumentPhantoms(registerOffset, argumentCountIncludingThis, kind);
+            if (m_graph.m_compilation)
+                m_graph.m_compilation->noticeInlinedCall();
             return;
         }
-    } else if (handleInlining(usesResult, callTarget, resultOperand, callLinkStatus, registerOffset, argumentCountIncludingThis, nextOffset, kind))
+    } else if (handleInlining(usesResult, callTarget, resultOperand, callLinkStatus, registerOffset, argumentCountIncludingThis, nextOffset, kind)) {
+        if (m_graph.m_compilation)
+            m_graph.m_compilation->noticeInlinedCall();
         return;
+    }
     
     addCall(interpreter, currentInstruction, op);
 }
@@ -1717,6 +1722,8 @@ void ByteCodeParser::handleGetById(
     // execution if it doesn't have a prediction, so we do it manually.
     if (prediction == SpecNone)
         addToGraph(ForceOSRExit);
+    else if (m_graph.m_compilation)
+        m_graph.m_compilation->noticeInlinedGetById();
     
     Node* originalBaseForBaselineJIT = base;
                 
@@ -2595,8 +2602,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 m_inlineStackTop->m_profiledBlock,
                 m_currentIndex,
                 m_codeBlock->identifier(identifierNumber));
-            if (!putByIdStatus.isSet())
+            bool canCountAsInlined = true;
+            if (!putByIdStatus.isSet()) {
                 addToGraph(ForceOSRExit);
+                canCountAsInlined = false;
+            }
             
             bool hasExitSite = m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache);
             
@@ -2684,7 +2694,11 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     addToGraph(PutByIdDirect, OpInfo(identifierNumber), base, value);
                 else
                     addToGraph(PutById, OpInfo(identifierNumber), base, value);
+                canCountAsInlined = false;
             }
+            
+            if (canCountAsInlined && m_graph.m_compilation)
+                m_graph.m_compilation->noticeInlinedPutById();
 
             NEXT_OPCODE(op_put_by_id);
         }

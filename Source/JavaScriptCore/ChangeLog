@@ -1,3 +1,24 @@
+2013-03-21  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC profiler should have an at-a-glance report of the success of DFG optimization
+        https://bugs.webkit.org/show_bug.cgi?id=112988
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::handleCall):
+        (JSC::DFG::ByteCodeParser::handleGetById):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * profiler/ProfilerCompilation.cpp:
+        (JSC::Profiler::Compilation::Compilation):
+        (JSC::Profiler::Compilation::toJS):
+        * profiler/ProfilerCompilation.h:
+        (JSC::Profiler::Compilation::noticeInlinedGetById):
+        (JSC::Profiler::Compilation::noticeInlinedPutById):
+        (JSC::Profiler::Compilation::noticeInlinedCall):
+        (Compilation):
+        * runtime/CommonIdentifiers.h:
+
 2013-03-21  Mark Lam  <mark.lam@apple.com>
 
         Fix lexer charPosition computation when "rewind"ing the lexer.

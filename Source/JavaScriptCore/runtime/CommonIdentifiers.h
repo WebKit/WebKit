@@ -73,6 +73,9 @@
     macro(multiline) \
     macro(name) \
     macro(now) \
+    macro(numInlinedGetByIds) \
+    macro(numInlinedPutByIds) \
+    macro(numInlinedCalls) \
     macro(Object) \
     macro(opcode) \
     macro(origin) \

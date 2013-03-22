@@ -1,3 +1,12 @@
+2013-03-21  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC profiler should have an at-a-glance report of the success of DFG optimization
+        https://bugs.webkit.org/show_bug.cgi?id=112988
+
+        Reviewed by Geoffrey Garen.
+
+        * Scripts/display-profiler-output:
+
 2013-03-21  Dirk Pranke  <dpranke@chromium.org>
 
         [chromium] Linux ASAN WebKit canary is running out of memory
