@@ -161,6 +161,7 @@ iframe.view {
     border-right: 1px solid black;
     border-left: 1px solid black;
     z-index: 150;
+    pointer-events: none;
 }
 
 .overview-grid-window-resizer {

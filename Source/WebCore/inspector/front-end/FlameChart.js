@@ -57,12 +57,13 @@ WebInspector.FlameChart = function(cpuProfileView)
 
     this._cpuProfileView = cpuProfileView;
     this._xScaleFactor = 4.0;
-    this._xOffset = 0;
+    this._windowLeft = 0.0;
+    this._windowRight = 1.0;
     this._barHeight = 10;
     this._minWidth = 1;
-    this._canvas.addEventListener("mousemove", this._onMouseMove.bind(this));
-    this._canvas.addEventListener("mousewheel", this._onMouseWheel.bind(this));
-    this.element.addEventListener("click", this._onClick.bind(this));
+    this._canvas.addEventListener("mousemove", this._onMouseMove.bind(this), false);
+    this._canvas.addEventListener("mousewheel", this._onMouseWheel.bind(this), false);
+    this.element.addEventListener("click", this._onClick.bind(this), false);
     this._popoverHelper = new WebInspector.PopoverHelper(this._chartContainer, this._getPopoverAnchor.bind(this), this._showPopover.bind(this));
     this._popoverHelper.setTimeout(250);
     this._anchorElement = this._chartContainer.createChild("span");
@@ -85,9 +86,9 @@ WebInspector.FlameChart.Calculator.prototype = {
      */
     _updateBoundaries: function(flameChart)
     {
-        this._xScaleFactor = flameChart._xScaleFactor;
-        this._minimumBoundaries = flameChart._xOffset / this._xScaleFactor;
-        this._maximumBoundaries = (flameChart._xOffset + flameChart._canvas.width) / this._xScaleFactor;
+        this._minimumBoundaries = flameChart._windowLeft * flameChart._timelineData.totalTime;
+        this._maximumBoundaries = flameChart._windowRight * flameChart._timelineData.totalTime;
+        this._timeToPixel = flameChart._canvas.width / this.boundarySpan();
     },
 
     /**
@@ -95,7 +96,7 @@ WebInspector.FlameChart.Calculator.prototype = {
      */
     computePosition: function(time)
     {
-        return (time - this._minimumBoundaries) * this._xScaleFactor;
+        return (time - this._minimumBoundaries) * this._timeToPixel;
     },
 
     formatTime: function(value)
@@ -174,9 +175,6 @@ WebInspector.FlameChart.Events = {
 WebInspector.FlameChart.prototype = {
     _onWindowChanged: function(event)
     {
-        var timeIntervalWidth = this._timelineData.totalTime * (event.target.windowRight - event.target.windowLeft);
-        this._xScaleFactor = this._canvas.width / timeIntervalWidth;
-        this._xOffset = this._timelineData.totalTime * event.target.windowLeft * this._xScaleFactor;
         this._hidePopover();
         this._scheduleUpdate();
     },
@@ -187,32 +185,28 @@ WebInspector.FlameChart.prototype = {
             return false;
         this._isDragging = true;
         this._dragStartPoint = event.pageX;
-        this._dragStartXOffset = this._xOffset;
+        this._dragStartWindowLeft = this._windowLeft;
+        this._dragStartWindowRight = this._windowRight;
         this._hidePopover();
         return true;
     },
 
-    _maxXOffset: function()
-    {
-        if (!this._timelineData)
-            return 0;
-        var maxXOffset = Math.floor(this._timelineData.totalTime * this._xScaleFactor - this._canvas.width);
-        return maxXOffset > 0 ? maxXOffset : 0;
-    },
-
-    _setXOffset: function(xOffset)
-    {
-        xOffset = Number.constrain(xOffset, 0, this._maxXOffset());
-
-        if (xOffset !== this._xOffset) {
-            this._xOffset = xOffset;
-            this._scheduleUpdate();
-        }
-    },
-
     _canvasDragging: function(event)
     {
-        this._setXOffset(this._dragStartXOffset + this._dragStartPoint - event.pageX);
+        var pixelShift = this._dragStartPoint - event.pageX;
+        var windowShift = pixelShift / this._totalPixels;
+
+        var windowLeft = Math.max(0, this._dragStartWindowLeft + windowShift);
+        if (windowLeft === this._windowLeft)
+            return;
+        windowShift = windowLeft - this._dragStartWindowLeft;
+        
+        var windowRight = Math.min(1, this._dragStartWindowRight + windowShift);
+        if (windowRight === this._windowRight)
+            return;
+        windowShift = windowRight - this._dragStartWindowRight;
+
+        this._overviewGrid.setWindow(this._dragStartWindowLeft + windowShift, this._dragStartWindowRight + windowShift);
     },
 
     _endCanvasDragging: function()
@@ -367,10 +361,10 @@ WebInspector.FlameChart.prototype = {
 
         var timelineData = this._timelineData;
 
-        var anchorLeft = Math.floor(timelineData.startTimes[nodeIndex] * this._xScaleFactor - this._xOffset);
+        var anchorLeft = Math.floor(timelineData.startTimes[nodeIndex] * this._timeToPixel - this._pixelWindowLeft);
         anchorLeft = Number.constrain(anchorLeft, 0, this._canvas.width);
 
-        var anchorWidth = Math.floor(timelineData.durations[nodeIndex] * this._xScaleFactor);
+        var anchorWidth = Math.floor(timelineData.durations[nodeIndex] * this._timeToPixel);
         anchorWidth = Number.constrain(anchorWidth, 0, this._canvas.width - anchorLeft);
 
         var style = this._anchorElement.style;
@@ -380,33 +374,11 @@ WebInspector.FlameChart.prototype = {
         style.top = Math.floor(this._canvas.height - (timelineData.depths[nodeIndex] + 1) * this._barHeight) + "px";
     },
 
-    _adjustXOffset: function(direction)
-    {
-        var step = this._xScaleFactor * 5;
-        this._setXOffset(this._xOffset + (direction > 0 ? step : -step));
-    },
-
-    _adjustXScale: function(direction, x)
-    {
-        var cursorTime = (x + this._xOffset) / this._xScaleFactor;
-
-        if (direction < 0)
-            this._xScaleFactor /= 2;
-        else
-            this._xScaleFactor *= 2;
-
-        this._setXOffset(Math.floor(cursorTime * this._xScaleFactor - x));
-    },
-
     _onMouseWheel: function(e)
     {
-        if (!e.shiftKey)
-            this._adjustXScale(e.wheelDelta, e.offsetX);
-        else
-            this._adjustXOffset(e.wheelDelta);
-
+        var zoomFactor = (e.wheelDelta > 0) ? 0.9 : 1.1;
+        this._overviewGrid.zoom(zoomFactor);
         this._hidePopover();
-        this._scheduleUpdate();
     },
 
     /**
@@ -418,7 +390,7 @@ WebInspector.FlameChart.prototype = {
         var timelineData = this._timelineData;
         if (!timelineData)
             return -1;
-        var cursorTime = (x + this._xOffset) / this._xScaleFactor;
+        var cursorTime = Math.floor((x + this._pixelWindowLeft) * this._pixelToTime);
         var cursorLevel = Math.floor((this._canvas.height - y) / this._barHeight);
 
         for (var i = 0; i < timelineData.nodeCount; ++i) {
@@ -451,7 +423,7 @@ WebInspector.FlameChart.prototype = {
         var startTimes = this._timelineData.startTimes;
         var durations = this._timelineData.durations;
         var drawData = new Uint8Array(width);
-        var scaleFactor = width / this._timelineData.totalTime;
+        var scaleFactor = width / this._totalTime;
 
         for (var nodeIndex = 0; nodeIndex < nodeCount; ++nodeIndex) {
             var start = Math.floor(startTimes[nodeIndex] * scaleFactor);
@@ -486,20 +458,19 @@ WebInspector.FlameChart.prototype = {
             return;
         this._canvas.height = height;
         this._canvas.width = width;
-        var xScaleFactor = this._xScaleFactor;
         var barHeight = this._barHeight;
-        var xOffset = this._xOffset;
 
         var context = this._canvas.getContext("2d");
 
         for (var i = 0; i < timelineData.nodeCount; ++i) {
-            var x = Math.floor(timelineData.startTimes[i] * xScaleFactor) - xOffset;
-            if (x > width)
+            var startTime = timelineData.startTimes[i];
+            if (startTime > this._timeWindowRight)
                 break;
-            var y = height - (timelineData.depths[i] + 1) * barHeight;
-            var barWidth = Math.floor(timelineData.durations[i] * xScaleFactor);
-            if (x + barWidth < 0)
+            if ((startTime + timelineData.durations[i]) < this._timeWindowLeft)
                 continue;
+            var x = Math.floor(startTime * this._timeToPixel) - this._pixelWindowLeft;
+            var y = height - (timelineData.depths[i] + 1) * barHeight;
+            var barWidth = Math.floor(timelineData.durations[i] * this._timeToPixel);
             if (barWidth < this._minWidth)
                 continue;
 
@@ -523,18 +494,40 @@ WebInspector.FlameChart.prototype = {
             return;
         this._updateTimerId = setTimeout(this.update.bind(this), 10);
     },
+    
+    _updateBoundaries: function()
+    {
+        this._windowLeft = this._overviewGrid.windowLeft();
+        this._windowRight = this._overviewGrid.windowRight();
+        this._windowWidth = this._windowRight - this._windowLeft;
+
+        this._totalTime = this._timelineData.totalTime;
+        this._timeWindowLeft = this._windowLeft * this._totalTime;
+        this._timeWindowRight = this._windowRight * this._totalTime;
+
+        this._pixelWindowWidth = this._chartContainer.clientWidth;
+        this._totalPixels = Math.floor(this._pixelWindowWidth / this._windowWidth);
+        this._pixelWindowLeft = Math.floor(this._totalPixels * this._windowLeft);
+        this._pixelWindowRight = Math.floor(this._totalPixels * this._windowRight);
+
+        this._timeToPixel = this._totalPixels / this._totalTime;
+        this._pixelToTime = this._totalTime / this._totalPixels;
+    },
 
     update: function()
     {
         this._updateTimerId = 0;
+        if (!this._timelineData)
+            this._calculateTimelineData();
+        if (!this._timelineData)
+            return;
+        this._updateBoundaries();
         this.draw(this._chartContainer.clientWidth, this._chartContainer.clientHeight);
-        if (this._timelineData) {
-            this._calculator._updateBoundaries(this);
-            this._overviewCalculator._updateBoundaries(this);
-            this._timelineGrid.element.style.width = this.element.clientWidth;
-            this._timelineGrid.updateDividers(this._calculator);
-            this._overviewGrid.updateDividers(this._overviewCalculator);
-        }
+        this._calculator._updateBoundaries(this);
+        this._overviewCalculator._updateBoundaries(this);
+        this._timelineGrid.element.style.width = this.element.clientWidth;
+        this._timelineGrid.updateDividers(this._calculator);
+        this._overviewGrid.updateDividers(this._overviewCalculator);
         if (this._updateOverviewCanvas) {
             this._drawOverviewCanvas(this._overviewContainer.clientWidth, this._overviewContainer.clientHeight);
             this._updateOverviewCanvas = false;

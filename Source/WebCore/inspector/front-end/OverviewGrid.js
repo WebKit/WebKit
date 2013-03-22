@@ -148,6 +148,14 @@ WebInspector.OverviewGrid.prototype = {
     addEventListener: function(eventType, listener, thisObject)
     {
         this._window.addEventListener(eventType, listener, thisObject);
+    },
+
+    /**
+     * @param {!number} zoomFactor
+     */
+    zoom: function(zoomFactor)
+    {
+        this._window._zoom(zoomFactor);
     }
 }
 
@@ -428,7 +436,7 @@ WebInspector.OverviewGrid.Window.prototype = {
 
     /**
      * @param {number} factor
-     * @param {number} referencePoint
+     * @param {number=} referencePoint
      */
     _zoom: function(factor, referencePoint)
     {
@@ -439,6 +447,8 @@ WebInspector.OverviewGrid.Window.prototype = {
         if (factor < 1 && delta < WebInspector.OverviewGrid.MinSelectableSize)
             return;
         var max = this._parentElement.clientWidth;
+        if (typeof referencePoint !== "number")
+            referencePoint = (right + left) / 2;
         left = Math.max(0, Math.min(max - delta, referencePoint + (left - referencePoint) * factor));
         right = Math.min(max, left + delta);
         this._setWindowPosition(left, right);
