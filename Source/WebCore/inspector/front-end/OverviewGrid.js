@@ -152,10 +152,11 @@ WebInspector.OverviewGrid.prototype = {
 
     /**
      * @param {!number} zoomFactor
+     * @param {!number} referencePoint
      */
-    zoom: function(zoomFactor)
+    zoom: function(zoomFactor, referencePoint)
     {
-        this._window._zoom(zoomFactor);
+        this._window._zoom(zoomFactor, referencePoint);
     }
 }
 
@@ -436,7 +437,7 @@ WebInspector.OverviewGrid.Window.prototype = {
 
     /**
      * @param {number} factor
-     * @param {number=} referencePoint
+     * @param {number} referencePoint
      */
     _zoom: function(factor, referencePoint)
     {

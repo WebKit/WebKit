@@ -22,3 +22,7 @@
 #flame-chart-overview-grid .resources-dividers-label-bar {
     pointer-events: auto;
 }
+
+#flame-chart-overview-container {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+}
