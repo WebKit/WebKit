@@ -27,6 +27,7 @@ CONFIG += staticlib
 }
 
 SOURCES += \
+    Modules/geolocation/Coordinates.cpp \
     Modules/geolocation/Geolocation.cpp \
     Modules/geolocation/GeolocationController.cpp \
     Modules/geolocation/NavigatorGeolocation.cpp \
@@ -95,7 +96,6 @@ SOURCES += \
      bindings/js/JSCanvasRenderingContextCustom.cpp \
      bindings/js/JSClipboardCustom.cpp \
      bindings/js/JSConsoleCustom.cpp \
-     bindings/js/JSCoordinatesCustom.cpp \
      bindings/js/JSCryptoCustom.cpp \
      bindings/js/JSCustomXPathNSResolver.cpp \
      bindings/js/JSDictionary.cpp \

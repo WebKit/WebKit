@@ -1734,6 +1734,9 @@
     <ClCompile Include="..\Modules\filesystem\WorkerContextFileSystem.cpp">
       <Filter>Modules\filesystem</Filter>
     </ClCompile>
+    <ClCompile Include="..\Modules\geolocation\Coordinates.cpp">
+      <Filter>Modules\geolocation</Filter>
+    </ClCompile>
     <ClCompile Include="..\Modules\geolocation\Geolocation.cpp">
       <Filter>Modules\geolocation</Filter>
     </ClCompile>
@@ -5869,9 +5872,6 @@
       <Filter>bindings\js</Filter>
     </ClCompile>
     <ClCompile Include="..\bindings\js\JSConsoleCustom.cpp">
-      <Filter>bindings\js</Filter>
-    </ClCompile>
-    <ClCompile Include="..\bindings\js\JSCoordinatesCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
     <ClCompile Include="..\bindings\js\JSCSSFontFaceRuleCustom.cpp">

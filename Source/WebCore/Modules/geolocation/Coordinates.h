@@ -42,16 +42,11 @@ public:
 
     double latitude() const { return m_latitude; }
     double longitude() const { return m_longitude; }
-    double altitude() const { return m_altitude; }
+    double altitude(bool& isNull) const;
     double accuracy() const { return m_accuracy; }
-    double altitudeAccuracy() const { return m_altitudeAccuracy; }
-    double heading() const { return m_heading; }
-    double speed() const { return m_speed; }
-
-    bool canProvideAltitude() const { return m_canProvideAltitude; }
-    bool canProvideAltitudeAccuracy() const { return m_canProvideAltitudeAccuracy; }
-    bool canProvideHeading() const { return m_canProvideHeading; }
-    bool canProvideSpeed() const { return m_canProvideSpeed; }
+    double altitudeAccuracy(bool& isNull) const;
+    double heading(bool& isNull) const;
+    double speed(bool& isNull) const;
     
 private:
     Coordinates(double latitude, double longitude, bool providesAltitude, double altitude, double accuracy, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed)

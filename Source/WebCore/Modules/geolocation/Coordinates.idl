@@ -29,9 +29,9 @@
 ] interface Coordinates {
     readonly attribute double latitude;
     readonly attribute double longitude;
-    [Custom] readonly attribute double altitude;
+    readonly attribute double? altitude;
     readonly attribute double accuracy;
-    [Custom] readonly attribute double altitudeAccuracy;
-    [Custom] readonly attribute double heading;
-    [Custom] readonly attribute double speed;
+    readonly attribute double? altitudeAccuracy;
+    readonly attribute double? heading;
+    readonly attribute double? speed;
 };

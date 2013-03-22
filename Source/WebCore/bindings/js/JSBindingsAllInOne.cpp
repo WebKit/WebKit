@@ -50,7 +50,6 @@
 #include "JSCanvasRenderingContextCustom.cpp"
 #include "JSClipboardCustom.cpp"
 #include "JSConsoleCustom.cpp"
-#include "JSCoordinatesCustom.cpp"
 #include "JSCryptoCustom.cpp"
 #include "JSCustomSQLStatementErrorCallback.cpp"
 #include "JSCustomXPathNSResolver.cpp"

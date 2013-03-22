@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2013 Google Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,44 +24,44 @@
  */
 
 #include "config.h"
-#include "JSCoordinates.h"
-
 #include "Coordinates.h"
 
-using namespace JSC;
-
 namespace WebCore {
+
+double Coordinates::altitude(bool& isNull) const
+{
+    if (m_canProvideAltitude)
+        return m_altitude;
+
+    isNull = true;
+    return 0;
+}
+
+double Coordinates::altitudeAccuracy(bool& isNull) const
+{
+    if (m_canProvideAltitudeAccuracy)
+        return m_altitudeAccuracy;
+
+    isNull = true;
+    return 0;
+}
+
+double Coordinates::heading(bool& isNull) const
+{
+    if (m_canProvideHeading)
+        return m_heading;
+
+    isNull = true;
+    return 0;
+}
+
+double Coordinates::speed(bool& isNull) const
+{
+    if (m_canProvideSpeed)
+        return m_speed;
+
+    isNull = true;
+    return 0;
+}
     
-JSValue JSCoordinates::altitude(ExecState*) const
-{
-    Coordinates* imp = impl();
-    if (!imp->canProvideAltitude())
-        return jsNull();
-    return jsNumber(imp->altitude());
-}
-
-JSValue JSCoordinates::altitudeAccuracy(ExecState*) const
-{
-    Coordinates* imp = impl();
-    if (!imp->canProvideAltitudeAccuracy())
-        return jsNull();
-    return jsNumber(imp->altitudeAccuracy());
-}
-
-JSValue JSCoordinates::heading(ExecState*) const
-{
-    Coordinates* imp = impl();
-    if (!imp->canProvideHeading())
-        return jsNull();
-    return jsNumber(imp->heading());
-}
-
-JSValue JSCoordinates::speed(ExecState*) const
-{
-    Coordinates* imp = impl();
-    if (!imp->canProvideSpeed())
-        return jsNull();
-    return jsNumber(imp->speed());
-}
-
 } // namespace WebCore

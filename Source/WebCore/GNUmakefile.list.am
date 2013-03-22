@@ -1856,6 +1856,7 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/gamepad/GamepadList.h \
 	Source/WebCore/Modules/gamepad/NavigatorGamepad.cpp \
 	Source/WebCore/Modules/gamepad/NavigatorGamepad.h \
+	Source/WebCore/Modules/geolocation/Coordinates.cpp \
 	Source/WebCore/Modules/geolocation/Coordinates.h \
 	Source/WebCore/Modules/geolocation/Geolocation.cpp \
 	Source/WebCore/Modules/geolocation/Geolocation.h \
@@ -2332,7 +2333,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSCanvasRenderingContextCustom.cpp \
 	Source/WebCore/bindings/js/JSClipboardCustom.cpp \
 	Source/WebCore/bindings/js/JSConsoleCustom.cpp \
-	Source/WebCore/bindings/js/JSCoordinatesCustom.cpp \
 	Source/WebCore/bindings/js/JSCryptoCustom.cpp \
 	Source/WebCore/bindings/js/JSCustomSQLStatementErrorCallback.cpp \
 	Source/WebCore/bindings/js/JSCustomXPathNSResolver.cpp \
