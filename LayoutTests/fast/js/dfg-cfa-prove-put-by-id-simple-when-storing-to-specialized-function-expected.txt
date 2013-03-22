@@ -1,0 +1,211 @@
+Checks that the DFG CFA does the right things if it proves that a put_by_id is a simple replace when storing to a specialized function property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+baz!
+PASS bar.call({f:baz}, baz) is "baz"
+fuzz!
+PASS bar.call({f:baz}, fuzz) is "fuzz"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,13 @@
+2013-03-22  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG folding of PutById to SimpleReplace should consider the specialized function case
+        https://bugs.webkit.org/show_bug.cgi?id=113093
+
+        Reviewed by Geoffrey Garen and Mark Hahnenberg.
+
+        * bytecode/PutByIdStatus.cpp:
+        (JSC::PutByIdStatus::computeFor):
+
 2013-03-22  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX (r146558): Build testapi.mm with ARC enabled for armv7s

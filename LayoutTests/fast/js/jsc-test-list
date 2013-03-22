@@ -99,6 +99,7 @@ fast/js/dfg-branch-logical-not-peephole-around-osr-exit
 fast/js/dfg-branch-not-fail
 fast/js/dfg-captured-var-get-local
 fast/js/dfg-cfa-merge-with-dead-use-at-tail
+fast/js/dfg-cfa-prove-put-by-id-simple-when-storing-to-specialized-function
 fast/js/dfg-cfg-simplify-eliminate-set-local-type-check-then-branch-not-null
 fast/js/dfg-cfg-simplify-eliminate-set-local-type-check-then-branch-not-null-and-decrement
 fast/js/dfg-cfg-simplify-eliminate-set-local-type-check-then-typeof

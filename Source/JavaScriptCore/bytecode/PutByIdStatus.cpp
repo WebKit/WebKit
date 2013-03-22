@@ -147,11 +147,16 @@ PutByIdStatus PutByIdStatus::computeFor(JSGlobalData& globalData, JSGlobalObject
         return PutByIdStatus(TakesSlowPath);
     
     unsigned attributes;
-    JSCell* specificValueIgnored;
-    PropertyOffset offset = structure->get(globalData, ident, attributes, specificValueIgnored);
+    JSCell* specificValue;
+    PropertyOffset offset = structure->get(globalData, ident, attributes, specificValue);
     if (isValidOffset(offset)) {
         if (attributes & (Accessor | ReadOnly))
             return PutByIdStatus(TakesSlowPath);
+        if (specificValue) {
+            // We need the PutById slow path to verify that we're storing the right value into
+            // the specialized slot.
+            return PutByIdStatus(TakesSlowPath);
+        }
         return PutByIdStatus(SimpleReplace, structure, 0, 0, offset);
     }
     
