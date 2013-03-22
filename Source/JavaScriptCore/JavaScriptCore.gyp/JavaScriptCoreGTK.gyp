@@ -126,28 +126,31 @@
     },
     {
       'target_name': 'libjavascriptcoregtk',
-        'type': 'shared_library',
-        'dependencies': [
-          '<(Dependencies):glib',
-          '<(Dependencies):icu',
-          '<(Source)/WTF/WTF.gyp/WTFGTK.gyp:wtf',
-          'GenerateLUTs',
-          'LLIntOffsetExtractor',
-        ],
-        'product_extension': 'so.<@(javascriptcore_soname_version)',
-        'product_name': 'javascriptcoregtk-<@(api_version)',
-        'cflags': [ '-fPIC', ],
+      'type': 'shared_library',
+      'dependencies': [
+        '<(Dependencies):glib',
+        '<(Dependencies):icu',
+        '<(Source)/WTF/WTF.gyp/WTFGTK.gyp:wtf',
+        'GenerateLUTs',
+        'LLIntOffsetExtractor',
+      ],
+      'product_extension': 'so.<@(javascriptcore_soname_version)',
+      'product_name': 'javascriptcoregtk-<@(api_version)',
+      'cflags': [ '-fPIC', ],
+      'include_dirs': [ '<@(javascriptcore_includes)' ],
+      'sources': [
+        '<@(javascriptcore_yarr_files)',
+        '<@(javascriptcore_derived_source_files)',
+        '<@(javascriptcore_files)',
+      ],
+      'sources/': [
+        ['exclude', '(BlackBerry)\\.(cpp|mm|h)$'],
+        ['exclude', 'JSStringRefBSTR\\.(h|cpp)$'],
+        ['exclude', 'JSStringRefCF\\.(h|cpp)$'],
+      ],
+      'direct_dependent_settings': {
         'include_dirs': [ '<@(javascriptcore_includes)' ],
-        'sources': [
-          '<@(javascriptcore_yarr_files)',
-          '<@(javascriptcore_derived_source_files)',
-          '<@(javascriptcore_files)',
-        ],
-        'sources/': [
-          ['exclude', '(BlackBerry)\\.(cpp|mm|h)$'],
-          ['exclude', 'JSStringRefBSTR\\.(h|cpp)$'],
-          ['exclude', 'JSStringRefCF\\.(h|cpp)$'],
-        ],
+      },
       'actions': [
         {
           'action_name': 'llintassembly_header_generation',
@@ -191,14 +194,12 @@
         'dependencies': [ 'libjavascriptcoregtk' ],
         'type': 'executable',
         'sources': [ '<@(jsc_files)' ],
-        'include_dirs': [ '<@(javascriptcore_includes)' ],
     },
     {
       'target_name': 'minidom',
         'dependencies': [ 'libjavascriptcoregtk' ],
         'type': 'executable',
         'sources': [ '<@(minidom_files)' ],
-        'include_dirs': [ '<@(javascriptcore_includes)', ],
     },
   ]
 }

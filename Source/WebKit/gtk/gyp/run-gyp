@@ -8,6 +8,10 @@ configuration = eval(open("Configuration.gypi").read())
 build_directory = os.path.abspath(os.getcwd())
 toplevel_directory = configuration['variables']['toplevel_directory']
 
+os.environ['PYTHONPATH'] = "%s:%s" % (
+    os.path.abspath(os.path.join(toplevel_directory, 'Source', 'WebCore', 'WebCore.gyp', 'scripts')),
+    os.getenv('PYTHONPATH', ''))
+
 # We change to the top-level directory and pass -Goutput_dir so
 # that gyp will not generate the makefiles in the source directory
 # See https://groups.google.com/forum/?fromgroups#!topic/gyp-developer/UvpraIUYwSs
@@ -15,5 +19,5 @@ os.chdir(toplevel_directory)
 sys.exit(subprocess.call(['gyp',
                           '--depth=.',
                           '--generator-output=%s' % build_directory,
-                          'Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCoreGTK.gyp',
+                          'Source/WebCore/WebCore.gyp/WebCoreGTK.gyp',
                           '-I', os.path.join(build_directory, 'Configuration.gypi')]))

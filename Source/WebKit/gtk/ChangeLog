@@ -1,3 +1,15 @@
+2013-03-19  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add support for building the WebCore bindings to the gyp build
+        https://bugs.webkit.org/show_bug.cgi?id=112638
+
+        Reviewed by Nico Weber.
+
+        * gyp/Configuration.gypi.in: Added options for enabling SVG and setting the location of
+        the WebCore derived sources.
+        * gyp/run-gyp: Include the gyp scripts directory on the Python path and make the WebCoreGTK
+        gyp file the default for the build.
+
 2013-03-22  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] [gyp] Expose a few more compiler defines for the gyp build

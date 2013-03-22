@@ -31,6 +31,8 @@
       '-I.',
     ],
 
+    'enable_svg': 1,
+
     'BISON': '@BISON@',
     'FLEX': '@FLEX@',
     'GPERF': '@GPERF@',

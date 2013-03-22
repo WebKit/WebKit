@@ -1,3 +1,13 @@
+2013-03-19  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add support for building the WebCore bindings to the gyp build
+        https://bugs.webkit.org/show_bug.cgi?id=112638
+
+        Reviewed by Nico Weber.
+
+        * JavaScriptCore.gyp/JavaScriptCoreGTK.gyp: Export all include directories to direct
+        dependents and fix the indentation of the libjavascriptcore target.
+
 2013-03-21  Filip Pizlo  <fpizlo@apple.com>
 
         Fix some minor issues in the DFG's profiling of heap accesses
