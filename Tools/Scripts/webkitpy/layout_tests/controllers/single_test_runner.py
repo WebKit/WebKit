@@ -41,18 +41,19 @@ from webkitpy.layout_tests.models.test_results import TestResult
 _log = logging.getLogger(__name__)
 
 
-def run_single_test(port, options, test_input, driver, worker_name, stop_when_done):
-    runner = SingleTestRunner(options, port, driver, test_input, worker_name, stop_when_done)
+def run_single_test(port, options, results_directory, worker_name, driver, test_input, stop_when_done):
+    runner = SingleTestRunner(port, options, results_directory, worker_name, driver, test_input, stop_when_done)
     return runner.run()
 
 
 class SingleTestRunner(object):
     (ALONGSIDE_TEST, PLATFORM_DIR, VERSION_DIR, UPDATE) = ('alongside', 'platform', 'version', 'update')
 
-    def __init__(self, options, port, driver, test_input, worker_name, stop_when_done):
-        self._options = options
+    def __init__(self, port, options, results_directory, worker_name, driver, test_input, stop_when_done):
         self._port = port
         self._filesystem = port.host.filesystem
+        self._options = options
+        self._results_directory = results_directory
         self._driver = driver
         self._timeout = test_input.timeout
         self._worker_name = worker_name
@@ -114,13 +115,13 @@ class SingleTestRunner(object):
         test_result = self._compare_output(expected_driver_output, driver_output)
         if self._options.new_test_results:
             self._add_missing_baselines(test_result, driver_output)
-        test_result_writer.write_test_result(self._filesystem, self._port, self._test_name, driver_output, expected_driver_output, test_result.failures)
+        test_result_writer.write_test_result(self._filesystem, self._port, self._results_directory, self._test_name, driver_output, expected_driver_output, test_result.failures)
         return test_result
 
     def _run_rebaseline(self):
         driver_output = self._driver.run_test(self._driver_input(), self._stop_when_done)
         failures = self._handle_error(driver_output)
-        test_result_writer.write_test_result(self._filesystem, self._port, self._test_name, driver_output, None, failures)
+        test_result_writer.write_test_result(self._filesystem, self._port, self._results_directory, self._test_name, driver_output, None, failures)
         # FIXME: It the test crashed or timed out, it might be better to avoid
         # to write new baselines.
         self._overwrite_baselines(driver_output)
@@ -305,7 +306,7 @@ class SingleTestRunner(object):
             total_test_time += test_result.test_run_time
 
         assert(reference_output)
-        test_result_writer.write_test_result(self._filesystem, self._port, self._test_name, test_output, reference_output, test_result.failures)
+        test_result_writer.write_test_result(self._filesystem, self._port, self._results_directory, self._test_name, test_output, reference_output, test_result.failures)
         reftest_type = set([reference_file[0] for reference_file in self._reference_files])
         return TestResult(self._test_name, test_result.failures, total_test_time + test_result.test_run_time, test_result.has_stderr, reftest_type=reftest_type, pid=test_result.pid, references=reference_test_names)
 

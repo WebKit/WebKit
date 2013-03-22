@@ -649,6 +649,13 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/failures/flaky/text-actual.txt'))
         self.assertFalse(host.filesystem.exists('retries'))
 
+    def test_retrying_uses_retries_directory(self):
+        host = MockHost()
+        res, err, _ = logging_run(['--debug-rwt-logging', 'failures/unexpected/text-image-checksum.html'], tests_included=True, host=host)
+        self.assertEqual(res, 1)
+        self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/failures/unexpected/text-image-checksum-actual.txt'))
+        self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/retries/failures/unexpected/text-image-checksum-actual.txt'))
+
     def test_run_order__inline(self):
         # These next tests test that we run the tests in ascending alphabetical
         # order per directory. HTTP tests are sharded separately from other tests,

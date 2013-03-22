@@ -50,6 +50,6 @@ class TestResultWriterTest(unittest.TestCase):
         driver_output1 = DriverOutput('text1', 'image1', 'imagehash1', 'audio1')
         driver_output2 = DriverOutput('text2', 'image2', 'imagehash2', 'audio2')
         failures = [test_failures.FailureReftestMismatch(test_reference_file)]
-        test_result_writer.write_test_result(host.filesystem, ImageDiffTestPort(host), test_name,
+        test_result_writer.write_test_result(host.filesystem, ImageDiffTestPort(host), port.results_directory(), test_name,
                                              driver_output1, driver_output2, failures)
         self.assertEqual([0], used_tolerance_values)

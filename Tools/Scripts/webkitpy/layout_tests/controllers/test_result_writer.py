@@ -35,10 +35,10 @@ from webkitpy.layout_tests.models import test_failures
 _log = logging.getLogger(__name__)
 
 
-def write_test_result(filesystem, port, test_name, driver_output,
+def write_test_result(filesystem, port, results_directory, test_name, driver_output,
                       expected_driver_output, failures):
     """Write the test result to the result output directory."""
-    root_output_dir = port.results_directory()
+    root_output_dir = results_directory
     writer = TestResultWriter(filesystem, port, root_output_dir, test_name)
 
     if driver_output.error:

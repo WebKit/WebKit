@@ -1,3 +1,33 @@
+2013-03-21  Dirk Pranke  <dpranke@chromium.org>
+
+        nrwt is no longer saving retry results in the retries/ subdirectory
+        https://bugs.webkit.org/show_bug.cgi?id=112995
+
+        Reviewed by Ojan Vafai.
+
+        I think this has been broken a long time, unfortunately. This
+        patch should fix that.
+
+        In order to do so, I had to pass the directory to use from
+        the Worker object through the SingleTestWriter to the
+        TestResultWriter. While I was plumbing that through, I rationalized
+        the order of the parameter arguments a bit ...
+
+        * Scripts/webkitpy/layout_tests/controllers/layout_test_runner.py:
+        (Worker._run_single_test):
+        * Scripts/webkitpy/layout_tests/controllers/single_test_runner.py:
+        (run_single_test):
+        (SingleTestRunner.__init__):
+        (SingleTestRunner._run_compare_test):
+        (SingleTestRunner._run_rebaseline):
+        (SingleTestRunner._run_reftest):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer.py:
+        (write_test_result):
+        * Scripts/webkitpy/layout_tests/controllers/test_result_writer_unittest.py:
+        (TestResultWriterTest.test_reftest_diff_image):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_retrying_uses_retries_directory):
+
 2013-03-21  Filip Pizlo  <fpizlo@apple.com>
 
         JSC profiler should have an at-a-glance report of the success of DFG optimization

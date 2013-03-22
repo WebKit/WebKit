@@ -432,8 +432,8 @@ class Worker(object):
         return self._run_single_test(self._driver, test_input, stop_when_done)
 
     def _run_single_test(self, driver, test_input, stop_when_done):
-        return single_test_runner.run_single_test(self._port, self._options,
-            test_input, driver, self._name, stop_when_done)
+        return single_test_runner.run_single_test(self._port, self._options, self._results_directory,
+            self._name, driver, test_input, stop_when_done)
 
 
 class TestShard(object):
