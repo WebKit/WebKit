@@ -1,3 +1,14 @@
+2013-03-22  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: Histogram available disk space on attempt to open database
+        https://bugs.webkit.org/show_bug.cgi?id=112862
+
+        Reviewed by Tony Chang.
+
+        * chromium/public/Platform.h:
+        (WebKit::Platform::availableDiskSpaceInBytes):
+        (Platform):
+
 2013-03-22  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Finalize the RTCPeerConnection states
