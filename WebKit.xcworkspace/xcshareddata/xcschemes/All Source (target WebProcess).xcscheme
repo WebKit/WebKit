@@ -161,7 +161,7 @@
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "DYLD_INSERT_LIBRARIES"
-            value = "$(BUILT_PRODUCTS_DIR)/WebProcessShim.dylib"
+            value = "$(BUILT_PRODUCTS_DIR)/SecItemShim.dylib"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>

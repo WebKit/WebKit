@@ -1,3 +1,16 @@
+2013-03-22  Yuki Sekiguchi  <yuki.sekiguchi@access-company.com>
+
+        Cannot run All Source (target WebProcess) on Xcode.
+        https://bugs.webkit.org/show_bug.cgi?id=111042
+
+        Reviewed by Alexey Proskuryakov.
+
+        WebProcessShim is renamed by r139066.
+        However, WebProcessShim is not renamed to SecItemShim in WebKit.xcworkspace.
+        This make WebProcess.app load WebProcessShim.dylib, and it cause dyld loading error.
+
+        * WebKit.xcworkspace/xcshareddata/xcschemes/All Source (target WebProcess).xcscheme: Renamed WebProcessShim to SecItemShim.
+
 2013-03-21  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Move libLevelDB.la setup into a separate GNUmakefile.am
