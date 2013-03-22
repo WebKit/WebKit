@@ -1,3 +1,14 @@
+2013-03-22  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Include the right GL header for GLES2
+        https://bugs.webkit.org/show_bug.cgi?id=113034
+
+        Reviewed by Martin Robinson.
+
+        Include GLES2/gl2.h when using GLES2.
+
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+
 2013-03-22  Timothy Hatcher  <timothy@apple.com>
 
         Fix an assert when opening the Web Inspector window for the first time.

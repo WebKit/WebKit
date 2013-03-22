@@ -32,7 +32,13 @@
 #include "TextureMapperGL.h"
 #include "TextureMapperLayer.h"
 #include "webkitwebviewprivate.h"
+
+#if USE(OPENGL_ES_2)
+#include <GLES2/gl2.h>
+#else
 #include <GL/gl.h>
+#endif
+
 #include <cairo.h>
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>

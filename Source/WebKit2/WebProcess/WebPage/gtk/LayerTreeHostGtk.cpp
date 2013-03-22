@@ -33,7 +33,13 @@
 #include "TextureMapperGL.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+
+#if USE(OPENGL_ES_2)
+#include <GLES2/gl2.h>
+#else
 #include <GL/gl.h>
+#endif
+
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/GLContext.h>

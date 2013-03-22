@@ -1,3 +1,14 @@
+2013-03-22  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        [GTK] Include the right GL header for GLES2
+        https://bugs.webkit.org/show_bug.cgi?id=113034
+
+        Reviewed by Martin Robinson.
+
+        Include GLES2/gl2.h when using GLES2.
+
+        * WebCoreSupport/AcceleratedCompositingContextGL.cpp:
+
 2013-03-20  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Build ANGLE sources into a separate library from libWebCore.la
