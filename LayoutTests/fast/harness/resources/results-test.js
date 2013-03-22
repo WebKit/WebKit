@@ -772,6 +772,13 @@ function runTests()
         assertTrue(flaggedTestsTextbox.innerText == 'foo/bar1.html\nfoo/bar2.html');
     });
 
+    results = mockResults();
+    results.tests['foo/bar-image.html'] = mockExpectation('PASS', 'TEXT IMAGE+TEXT');
+    results.pixel_tests_enabled = false;
+    runTest(results, function() {
+        assertTrue(document.querySelector('tbody td:nth-child(3) a').getAttribute('href') == 'retries/foo/bar-image-diffs.html');
+    });
+
     document.body.innerHTML = '<pre>' + g_log.join('\n') + '</pre>';
 }
 

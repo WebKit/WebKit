@@ -563,6 +563,37 @@ function textResultLinks(prefix)
     return html;
 }
 
+function imageResultsCell(testObject, testPrefix, actual) {
+    var row = '';
+
+    if (actual.indexOf('IMAGE') != -1) {
+        globalState().hasImageFailures = true;
+
+        if (testObject.reftest_type && testObject.reftest_type.indexOf('!=') != -1) {
+            row += resultLink(testPrefix, '-expected-mismatch.html', 'ref mismatch html');
+            row += resultLink(testPrefix, '-actual.png', 'actual');
+        } else {
+            if (testObject.reftest_type && testObject.reftest_type.indexOf('==') != -1) {
+                row += resultLink(testPrefix, '-expected.html', 'ref html');
+            }
+            if (globalState().shouldToggleImages) {
+                row += resultLink(testPrefix, '-diffs.html', 'images');
+            } else {
+                row += resultLink(testPrefix, '-expected.png', 'expected');
+                row += resultLink(testPrefix, '-actual.png', 'actual');
+            }
+
+            var diff = testObject.image_diff_percent;
+            row += resultLink(testPrefix, '-diff.png', 'diff (' + diff + '%)');
+        }
+    }
+
+    if (actual.indexOf('MISSING') != -1 && testObject.is_missing_image)
+        row += resultLink(testPrefix, '-actual.png', 'png result');
+
+    return row;
+}
+
 function tableRow(testObject)
 {    
     var row = '<tbody'
@@ -574,66 +605,39 @@ function tableRow(testObject)
 
     row += '<td>' + testLinkWithExpandButton(testObject.name) + '</td>';
 
-    var test_prefix = stripExtension(testObject.name);
+    var testPrefix = stripExtension(testObject.name);
     row += '<td>';
     
     var actual = testObject.actual;
-    var expected = testObject.expected;
     if (actual.indexOf('TEXT') != -1) {
         globalState().hasTextFailures = true;
-        row += textResultLinks(test_prefix);
+        row += textResultLinks(testPrefix);
     }
     
     if (actual.indexOf('AUDIO') != -1) {
-        row += resultLink(test_prefix, '-expected.wav', 'expected audio');
-        row += resultLink(test_prefix, '-actual.wav', 'actual audio');
+        row += resultLink(testPrefix, '-expected.wav', 'expected audio');
+        row += resultLink(testPrefix, '-actual.wav', 'actual audio');
     }
 
     if (actual.indexOf('MISSING') != -1) {
-        expected = '';
         if (testObject.is_missing_audio)
-            row += resultLink(test_prefix, '-actual.wav', 'audio result');
+            row += resultLink(testPrefix, '-actual.wav', 'audio result');
         if (testObject.is_missing_text)
-            row += resultLink(test_prefix, '-actual.txt', 'result');
+            row += resultLink(testPrefix, '-actual.txt', 'result');
     }
 
-    row += '</td><td>';
+    var actualTokens = actual.split(/\s+/);
+    var cell = imageResultsCell(testObject, testPrefix, actualTokens[0]);
+    if (!cell && actualTokens.length > 1)
+        cell = imageResultsCell(testObject, 'retries/' + testPrefix, actualTokens[1]);
 
-    if (actual.indexOf('IMAGE') != -1) {
-        globalState().hasImageFailures = true;
-
-        if (testObject.reftest_type && testObject.reftest_type.indexOf('!=') != -1) {
-            row += resultLink(test_prefix, '-expected-mismatch.html', 'ref mismatch html');
-            row += resultLink(test_prefix, '-actual.png', 'actual');
-        } else {
-            if (testObject.reftest_type && testObject.reftest_type.indexOf('==') != -1) {
-                row += resultLink(test_prefix, '-expected.html', 'ref html');
-            }
-            if (globalState().shouldToggleImages) {
-                row += resultLink(test_prefix, '-diffs.html', 'images');
-            } else {
-                row += resultLink(test_prefix, '-expected.png', 'expected');
-                row += resultLink(test_prefix, '-actual.png', 'actual');
-            }
-
-            var diff = testObject.image_diff_percent;
-            row += resultLink(test_prefix, '-diff.png', 'diff (' + diff + '%)');
-        }
-    }
-
-    if (actual.indexOf('MISSING') != -1) {
-        expected = '';
-        if (testObject.is_missing_image)
-            row += resultLink(test_prefix, '-actual.png', 'png result');
-    }
-
-    row += '</td>';
+    row += '</td><td>' + cell + '</td>';
 
     if (globalState().results.uses_expectations_file || actual.indexOf(' ') != -1)
         row += '<td>' + actual + '</td>';
 
     if (globalState().results.uses_expectations_file)
-        row += '<td>' + expected + '</td>';
+        row += '<td>' + (actual.indexOf('MISSING') == -1 ? testObject.expected : '') + '</td>';
 
     row += '</tr></tbody>';
     return row;

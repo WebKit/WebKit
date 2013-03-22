@@ -158,6 +158,12 @@ def get_test_results(args, host=None):
     return all_results
 
 
+def parse_full_results(full_results_text):
+    json_to_eval = full_results_text.replace("ADD_RESULTS(", "").replace(");", "")
+    compressed_results = json.loads(json_to_eval)
+    return compressed_results
+
+
 class StreamTestingMixin(object):
     def assertContains(self, stream, string):
         self.assertTrue(string in stream.getvalue())
@@ -649,6 +655,21 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/failures/flaky/text-actual.txt'))
         self.assertFalse(host.filesystem.exists('retries'))
 
+    def test_retrying_force_pixel_tests(self):
+        host = MockHost()
+        res, err, _ = logging_run(['--no-pixel-tests', 'failures/unexpected/text-image-checksum.html'], tests_included=True, host=host)
+        self.assertEqual(res, 1)
+        self.assertTrue('Retrying' in err.getvalue())
+        self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/failures/unexpected/text-image-checksum-actual.txt'))
+        self.assertFalse(host.filesystem.exists('/tmp/layout-test-results/failures/unexpected/text-image-checksum-actual.png'))
+        self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/retries/failures/unexpected/text-image-checksum-actual.txt'))
+        self.assertTrue(host.filesystem.exists('/tmp/layout-test-results/retries/failures/unexpected/text-image-checksum-actual.png'))
+        json_string = host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')
+        json = parse_full_results(json_string)
+        self.assertEqual(json["tests"]["failures"]["unexpected"]["text-image-checksum.html"],
+            {"expected": "PASS", "actual": "TEXT IMAGE+TEXT", "image_diff_percent": 1})
+        self.assertFalse(json["pixel_tests_enabled"])
+
     def test_retrying_uses_retries_directory(self):
         host = MockHost()
         res, err, _ = logging_run(['--debug-rwt-logging', 'failures/unexpected/text-image-checksum.html'], tests_included=True, host=host)
@@ -825,25 +846,15 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
 
 class EndToEndTest(unittest.TestCase):
-    def parse_full_results(self, full_results_text):
-        json_to_eval = full_results_text.replace("ADD_RESULTS(", "").replace(");", "")
-        compressed_results = json.loads(json_to_eval)
-        return compressed_results
-
-        # Check that we recorded the test run times and ordering. Note that
-        # pretty much none of the actual values can be guaranteed, but at least
-        # we can test that they're there.
-        stats = json.loads(host.filesystem.read_text_file('/tmp/layout-test-results/stats.json'))
-        self.assertEqual(len(stats['http']['tests']['passes']['image.html']['results']), 5)
-
     def test_reftest_with_two_notrefs(self):
         # Test that we update expectations in place. If the expectation
         # is missing, update the expected generic location.
         host = MockHost()
         res, _, _ = logging_run(['--no-show-results', 'reftests/foo/'], tests_included=True, host=host)
         file_list = host.filesystem.written_files.keys()
+
         json_string = host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')
-        json = self.parse_full_results(json_string)
+        json = parse_full_results(json_string)
         self.assertTrue("multiple-match-success.html" not in json["tests"]["reftests"]["foo"])
         self.assertTrue("multiple-mismatch-success.html" not in json["tests"]["reftests"]["foo"])
         self.assertTrue("multiple-both-success.html" not in json["tests"]["reftests"]["foo"])

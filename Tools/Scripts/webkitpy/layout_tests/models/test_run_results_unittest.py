@@ -84,7 +84,7 @@ def summarized_results(port, expected, passing, flaky):
     else:
         retry_results = None
 
-    return test_run_results.summarize_results(port, initial_results.expectations, initial_results, retry_results)
+    return test_run_results.summarize_results(port, initial_results.expectations, initial_results, retry_results, enabled_pixel_tests_in_retry=False)
 
 
 class InterpretTestFailuresTest(unittest.TestCase):

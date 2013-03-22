@@ -109,14 +109,15 @@ def _interpret_test_failures(failures):
     if test_failures.FailureMissingImage in failure_types or test_failures.FailureMissingImageHash in failure_types:
         test_dict['is_missing_image'] = True
 
-    for failure in failures:
-        if isinstance(failure, test_failures.FailureImageHashMismatch) or isinstance(failure, test_failures.FailureReftestMismatch):
-            test_dict['image_diff_percent'] = failure.diff_percent
+    if 'image_diff_percent' not in test_dict:
+        for failure in failures:
+            if isinstance(failure, test_failures.FailureImageHashMismatch) or isinstance(failure, test_failures.FailureReftestMismatch):
+                test_dict['image_diff_percent'] = failure.diff_percent
 
     return test_dict
 
 
-def summarize_results(port_obj, expectations, initial_results, retry_results):
+def summarize_results(port_obj, expectations, initial_results, retry_results, enabled_pixel_tests_in_retry):
     """Returns a dictionary containing a summary of the test runs, with the following fields:
         'version': a version indicator
         'fixable': The number of fixable tests (NOW - PASS)
@@ -187,6 +188,11 @@ def summarize_results(port_obj, expectations, initial_results, retry_results):
             elif retry_results:
                 retry_result_type = retry_results.unexpected_results_by_name[test_name].type
                 if result_type != retry_result_type:
+                    if enabled_pixel_tests_in_retry and result_type == test_expectations.TEXT and retry_result_type == test_expectations.IMAGE_PLUS_TEXT:
+                        num_regressions += 1
+                    else:
+                        actual.append(keywords[retry_result_type])
+                        num_flaky += 1
                     actual.append(keywords[retry_result_type])
                     num_flaky += 1
                 else:
@@ -198,6 +204,11 @@ def summarize_results(port_obj, expectations, initial_results, retry_results):
         test_dict['actual'] = " ".join(actual)
 
         test_dict.update(_interpret_test_failures(result.failures))
+
+        if retry_results:
+            retry_result = retry_results.unexpected_results_by_name.get(test_name)
+            if retry_result:
+                test_dict.update(_interpret_test_failures(retry_result.failures))
 
         # Store test hierarchically by directory. e.g.
         # foo/bar/baz.html: test_dict

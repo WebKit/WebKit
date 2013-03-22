@@ -192,17 +192,23 @@ class Manager(object):
             return test_run_results.RunDetails(exit_code=-1)
 
         start_time = time.time()
+        enabled_pixel_tests_in_retry = False
         try:
             initial_results = self._run_tests(tests_to_run, tests_to_skip, self._options.repeat_each, self._options.iterations,
                 int(self._options.child_processes), retrying=False)
 
             tests_to_retry = self._tests_to_retry(initial_results, include_crashes=self._port.should_retry_crashes())
             if self._options.retry_failures and tests_to_retry and not initial_results.interrupted:
+                enabled_pixel_tests_in_retry = self._force_pixel_tests_if_needed()
+
                 _log.info('')
                 _log.info("Retrying %d unexpected failure(s) ..." % len(tests_to_retry))
                 _log.info('')
                 retry_results = self._run_tests(tests_to_retry, tests_to_skip=set(), repeat_each=1, iterations=1,
                     num_workers=1, retrying=True)
+
+                if enabled_pixel_tests_in_retry:
+                    self._options.pixel_tests = False
             else:
                 retry_results = None
         finally:
@@ -218,7 +224,7 @@ class Manager(object):
             self._look_for_new_crash_logs(retry_results, start_time)
 
         _log.debug("summarizing results")
-        summarized_results = test_run_results.summarize_results(self._port, self._expectations, initial_results, retry_results)
+        summarized_results = test_run_results.summarize_results(self._port, self._expectations, initial_results, retry_results, enabled_pixel_tests_in_retry)
         self._printer.print_results(end_time - start_time, initial_results, summarized_results)
 
         if not self._options.dry_run:
@@ -243,19 +249,28 @@ class Manager(object):
             for test in tests_to_run:
                 for _ in xrange(repeat_each):
                     test_inputs.append(self._test_input_for_file(test))
-
         return self._runner.run_tests(self._expectations, test_inputs, tests_to_skip, num_workers, needs_http, needs_websockets, retrying)
 
     def _clean_up_run(self):
-        """Restores the system after we're done running tests."""
-        _log.debug("flushing stdout")
+        _log.debug("Flushing stdout")
         sys.stdout.flush()
-        _log.debug("flushing stderr")
+        _log.debug("Flushing stderr")
         sys.stderr.flush()
-        _log.debug("stopping helper")
+        _log.debug("Stopping helper")
         self._port.stop_helper()
-        _log.debug("cleaning up port")
+        _log.debug("Cleaning up port")
         self._port.clean_up_test_run()
+
+    def _force_pixel_tests_if_needed(self):
+        if self._options.pixel_tests:
+            return False
+
+        _log.debug("Restarting helper")
+        self._port.stop_helper()
+        self._options.pixel_tests = True
+        self._port.start_helper()
+
+        return True
 
     def _look_for_new_crash_logs(self, run_results, start_time):
         """Since crash logs can take a long time to be written out if the system is

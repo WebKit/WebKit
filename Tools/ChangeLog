@@ -1,3 +1,40 @@
+2013-03-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        NRWT: Enable pixel tests when retrying tests
+        https://bugs.webkit.org/show_bug.cgi?id=112898
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run): Call _force_pixel_tests_if_needed before retrying tests and set pixel_tests False
+        if we've forced pixel tests in the retry.
+        (Manager._run_tests):
+        (Manager._clean_up_run): Fixed the capitalizations.
+        (Manager._force_pixel_tests_if_needed): Added.
+
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (_interpret_test_failures): Now that this function maybe called multiple times, only set
+        'image_diff_percent' if it doesn't already exist.
+
+        (summarize_results): When the first attempt resulted in a text failure and the second attempt
+        resulted in image and text failures and we've forced to run pixel tests in the retry run,
+        treat this as a regular regression instead of a flakiness.
+
+        Also update test_dict with retry_result so that image_diff_percent maybe filled in if retry
+        run had image diffs.
+
+        * Scripts/webkitpy/layout_tests/models/test_run_results_unittest.py:
+        (summarized_results):
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (parse_full_results): Moved out of EndToEndTest to be used in test_retrying_force_pixel_tests.
+        Also removed some dead code.
+
+        (RunTest.test_retrying_force_pixel_tests): Added. Assert that we generate and only generate
+        pixel results in retries when pixel tests is turned off. Also assert that image_diff_percent
+        is set and pixel_tests_enabled is set to false.
+        (EndToEndTest.test_reftest_with_two_notrefs):
+
 2013-03-22  Tim Horton  <timothy_horton@apple.com>
 
         Make it possible to run layout tests on Retina MBP
