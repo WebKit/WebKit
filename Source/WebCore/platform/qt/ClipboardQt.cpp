@@ -112,7 +112,7 @@ ClipboardQt::~ClipboardQt()
 
 void ClipboardQt::clearData(const String& type)
 {
-    if (policy() != ClipboardWritable)
+    if (!canWriteData())
         return;
 
     if (m_writableData) {
@@ -131,7 +131,7 @@ void ClipboardQt::clearData(const String& type)
 
 void ClipboardQt::clearAllData()
 {
-    if (policy() != ClipboardWritable)
+    if (!canWriteData())
         return;
 
 #ifndef QT_NO_CLIPBOARD
@@ -146,7 +146,7 @@ void ClipboardQt::clearAllData()
 String ClipboardQt::getData(const String& type) const
 {
 
-    if (policy() != ClipboardReadable)
+    if (!canReadData())
         return String();
 
     if (isHtmlMimeType(type) && m_readableData->hasHtml())
@@ -163,7 +163,7 @@ String ClipboardQt::getData(const String& type) const
 
 bool ClipboardQt::setData(const String& type, const String& data)
 {
-    if (policy() != ClipboardWritable)
+    if (!canWriteData())
         return false;
 
     if (!m_writableData)
@@ -184,7 +184,7 @@ bool ClipboardQt::setData(const String& type, const String& data)
 // extensions beyond IE's API
 ListHashSet<String> ClipboardQt::types() const
 {
-    if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
+    if (!canReadTypes())
         return ListHashSet<String>();
 
     ASSERT(m_readableData);
@@ -197,7 +197,7 @@ ListHashSet<String> ClipboardQt::types() const
 
 PassRefPtr<FileList> ClipboardQt::files() const
 {
-    if (policy() != ClipboardReadable || !m_readableData->hasUrls())
+    if (!canReadData() || !m_readableData->hasUrls())
         return FileList::create();
 
     RefPtr<FileList> fileList = FileList::create();
@@ -225,7 +225,7 @@ void ClipboardQt::setDragImageElement(Node* node, const IntPoint& point)
 
 void ClipboardQt::setDragImage(CachedImage* image, Node *node, const IntPoint &loc)
 {
-    if (policy() != ClipboardImageWritable && policy() != ClipboardWritable)
+    if (!canSetDragImage())
         return;
 
     if (m_dragImage)
@@ -359,7 +359,7 @@ PassRefPtr<DataTransferItemList> ClipboardQt::items()
     if (!m_readableData)
         return items;
 
-    if (isForCopyAndPaste() && policy() == ClipboardReadable) {
+    if (isForCopyAndPaste() && canReadData()) {
         const QStringList types = m_readableData->formats();
         for (int i = 0; i < types.count(); ++i)
             items->addPasteboardItem(types.at(i));

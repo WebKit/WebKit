@@ -155,7 +155,7 @@ static void addHTMLClipboardTypesForCocoaType(ListHashSet<String>& resultTypes, 
 
 void ClipboardMac::clearData(const String& type)
 {
-    if (policy() != ClipboardWritable)
+    if (!canWriteData())
         return;
 
     // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
@@ -167,7 +167,7 @@ void ClipboardMac::clearData(const String& type)
 
 void ClipboardMac::clearAllData()
 {
-    if (policy() != ClipboardWritable)
+    if (!canWriteData())
         return;
 
     // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
@@ -220,7 +220,7 @@ static Vector<String> absoluteURLsFromPasteboard(const String& pasteboardName, b
 
 String ClipboardMac::getData(const String& type) const
 {
-    if (policy() != ClipboardReadable || m_clipboardContents == DragAndDropFiles)
+    if (!canReadData() || m_clipboardContents == DragAndDropFiles)
         return String();
 
     const String& cocoaType = cocoaTypeFromHTMLClipboardType(type);
@@ -249,7 +249,7 @@ String ClipboardMac::getData(const String& type) const
 
 bool ClipboardMac::setData(const String &type, const String &data)
 {
-    if (policy() != ClipboardWritable || m_clipboardContents == DragAndDropFiles)
+    if (!canWriteData() || m_clipboardContents == DragAndDropFiles)
         return false;
     // note NSPasteboard enforces changeCount itself on writing - can't write if not the owner
 
@@ -283,7 +283,7 @@ bool ClipboardMac::setData(const String &type, const String &data)
 
 ListHashSet<String> ClipboardMac::types() const
 {
-    if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
+    if (!canReadTypes())
         return ListHashSet<String>();
 
     Vector<String> types;
@@ -312,7 +312,7 @@ ListHashSet<String> ClipboardMac::types() const
 // clipboard are not reflected in any FileList objects the page has accessed and stored
 PassRefPtr<FileList> ClipboardMac::files() const
 {
-    if (policy() != ClipboardReadable || m_clipboardContents == DragAndDropData)
+    if (!canReadData() || m_clipboardContents == DragAndDropData)
         return FileList::create();
 
     Vector<String> absoluteURLs = absoluteURLsFromPasteboardFilenames(m_pasteboardName);
@@ -340,7 +340,7 @@ void ClipboardMac::setDragImageElement(Node *node, const IntPoint &loc)
 
 void ClipboardMac::setDragImage(CachedImage* image, Node *node, const IntPoint &loc)
 {
-    if (policy() == ClipboardImageWritable || policy() == ClipboardWritable) {
+    if (canSetDragImage()) {
         if (m_dragImage)
             m_dragImage->removeClient(this);
         m_dragImage = image;

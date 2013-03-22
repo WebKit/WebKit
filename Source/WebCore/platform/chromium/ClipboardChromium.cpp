@@ -89,14 +89,14 @@ DataTransferItemListPolicyWrapper::~DataTransferItemListPolicyWrapper()
 
 size_t DataTransferItemListPolicyWrapper::length() const
 {
-    if (m_clipboard->policy() == ClipboardNumb)
+    if (!m_clipboard->canReadTypes())
         return 0;
     return m_dataObject->length();
 }
 
 PassRefPtr<DataTransferItem> DataTransferItemListPolicyWrapper::item(unsigned long index)
 {
-    if (m_clipboard->policy() == ClipboardNumb)
+    if (!m_clipboard->canReadTypes())
         return 0;
     RefPtr<ChromiumDataObjectItem> item = m_dataObject->item(index);
     if (!item)
@@ -107,7 +107,7 @@ PassRefPtr<DataTransferItem> DataTransferItemListPolicyWrapper::item(unsigned lo
 
 void DataTransferItemListPolicyWrapper::deleteItem(unsigned long index, ExceptionCode& ec)
 {
-    if (m_clipboard->policy() != ClipboardWritable) {
+    if (!m_clipboard->canWriteData()) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -116,21 +116,21 @@ void DataTransferItemListPolicyWrapper::deleteItem(unsigned long index, Exceptio
 
 void DataTransferItemListPolicyWrapper::clear()
 {
-    if (m_clipboard->policy() != ClipboardWritable)
+    if (!m_clipboard->canWriteData())
         return;
     m_dataObject->clearAll();
 }
 
 void DataTransferItemListPolicyWrapper::add(const String& data, const String& type, ExceptionCode& ec)
 {
-    if (m_clipboard->policy() != ClipboardWritable)
+    if (!m_clipboard->canWriteData())
         return;
     m_dataObject->add(data, type, ec);
 }
 
 void DataTransferItemListPolicyWrapper::add(PassRefPtr<File> file)
 {
-    if (m_clipboard->policy() != ClipboardWritable)
+    if (!m_clipboard->canWriteData())
         return;
     m_dataObject->add(file, m_clipboard->frame()->document()->scriptExecutionContext());
 }
@@ -156,21 +156,21 @@ DataTransferItemPolicyWrapper::~DataTransferItemPolicyWrapper()
 
 String DataTransferItemPolicyWrapper::kind() const
 {
-    if (m_clipboard->policy() == ClipboardNumb)
+    if (!m_clipboard->canReadTypes())
         return String();
     return m_item->kind();
 }
 
 String DataTransferItemPolicyWrapper::type() const
 {
-    if (m_clipboard->policy() == ClipboardNumb)
+    if (!m_clipboard->canReadTypes())
         return String();
     return m_item->type();
 }
 
 void DataTransferItemPolicyWrapper::getAsString(PassRefPtr<StringCallback> callback) const
 {
-    if (m_clipboard->policy() != ClipboardReadable && m_clipboard->policy() != ClipboardWritable)
+    if (!m_clipboard->canReadData())
         return;
 
     m_item->getAsString(callback, m_clipboard->frame()->document()->scriptExecutionContext());
@@ -178,7 +178,7 @@ void DataTransferItemPolicyWrapper::getAsString(PassRefPtr<StringCallback> callb
 
 PassRefPtr<Blob> DataTransferItemPolicyWrapper::getAsFile() const
 {
-    if (m_clipboard->policy() != ClipboardReadable && m_clipboard->policy() != ClipboardWritable)
+    if (!m_clipboard->canReadData())
         return 0;
 
     return m_item->getAsFile();
@@ -238,7 +238,7 @@ PassRefPtr<ClipboardChromium> ClipboardChromium::create(ClipboardType clipboardT
 
 void ClipboardChromium::clearData(const String& type)
 {
-    if (policy() != ClipboardWritable)
+    if (!canWriteData())
         return;
 
     m_dataObject->clearData(normalizeType(type));
@@ -248,7 +248,7 @@ void ClipboardChromium::clearData(const String& type)
 
 void ClipboardChromium::clearAllData()
 {
-    if (policy() != ClipboardWritable)
+    if (!canWriteData())
         return;
 
     m_dataObject->clearAll();
@@ -256,7 +256,7 @@ void ClipboardChromium::clearAllData()
 
 String ClipboardChromium::getData(const String& type) const
 {
-    if (policy() != ClipboardReadable)
+    if (!canReadData())
         return String();
 
     bool convertToURL = false;
@@ -268,7 +268,7 @@ String ClipboardChromium::getData(const String& type) const
 
 bool ClipboardChromium::setData(const String& type, const String& data)
 {
-    if (policy() != ClipboardWritable)
+    if (!canWriteData())
         return false;
 
     return m_dataObject->setData(normalizeType(type), data);
@@ -277,7 +277,7 @@ bool ClipboardChromium::setData(const String& type, const String& data)
 // extensions beyond IE's API
 ListHashSet<String> ClipboardChromium::types() const
 {
-    if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
+    if (!canReadTypes())
         return ListHashSet<String>();
 
     return m_dataObject->types();
@@ -286,7 +286,7 @@ ListHashSet<String> ClipboardChromium::types() const
 PassRefPtr<FileList> ClipboardChromium::files() const
 {
     RefPtr<FileList> files = FileList::create();
-    if (policy() != ClipboardReadable)
+    if (!canReadData())
         return files.release();
 
     for (size_t i = 0; i < m_dataObject->length(); ++i) {
@@ -302,7 +302,7 @@ PassRefPtr<FileList> ClipboardChromium::files() const
 
 void ClipboardChromium::setDragImage(CachedImage* image, Node* node, const IntPoint& loc)
 {
-    if (policy() != ClipboardImageWritable && policy() != ClipboardWritable)
+    if (!canSetDragImage())
         return;
 
     if (m_dragImage)

@@ -47,7 +47,7 @@ DataTransferItemListQt::DataTransferItemListQt(PassRefPtr<Clipboard> owner, Scri
 
 size_t DataTransferItemListQt::length() const
 {
-    if (m_owner->policy() == ClipboardNumb)
+    if (!m_owner->canReadTypes())
         return 0;
 
     return m_items.size();
@@ -55,7 +55,7 @@ size_t DataTransferItemListQt::length() const
 
 PassRefPtr<DataTransferItem> DataTransferItemListQt::item(unsigned long index)
 {
-    if (m_owner->policy() == ClipboardNumb || index >= length())
+    if (!m_owner->canReadTypes() || index >= length())
         return 0;
 
     return m_items[index];
@@ -63,7 +63,7 @@ PassRefPtr<DataTransferItem> DataTransferItemListQt::item(unsigned long index)
 
 void DataTransferItemListQt::deleteItem(unsigned long index, ExceptionCode& ec)
 {
-    if (m_owner->policy() != ClipboardWritable) {
+    if (!m_owner->canWriteData()) {
         ec = INVALID_STATE_ERR;
         return;
     }
@@ -76,7 +76,7 @@ void DataTransferItemListQt::deleteItem(unsigned long index, ExceptionCode& ec)
 
 void DataTransferItemListQt::clear()
 {
-    if (m_owner->policy() != ClipboardWritable)
+    if (!m_owner->canWriteData())
         return;
 
     m_items.clear();
@@ -85,7 +85,7 @@ void DataTransferItemListQt::clear()
 
 void DataTransferItemListQt::add(const String& data, const String& type, ExceptionCode& ec)
 {
-    if (m_owner->policy() != ClipboardWritable)
+    if (!m_owner->canWriteData())
         return;
 
     // Only one 'string' item with a given type is allowed in the collection.
@@ -101,7 +101,7 @@ void DataTransferItemListQt::add(const String& data, const String& type, Excepti
 
 void DataTransferItemListQt::add(PassRefPtr<File> file)
 {
-    if (m_owner->policy() != ClipboardWritable || !file)
+    if (!m_owner->canWriteData() || !file)
         return;
 
     m_items.append(DataTransferItem::create(m_owner, m_context, file));

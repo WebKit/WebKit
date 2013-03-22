@@ -42,7 +42,7 @@ ClipboardBlackBerry::~ClipboardBlackBerry()
 
 void ClipboardBlackBerry::clearData(const String& type)
 {
-    if (policy() != ClipboardWritable)
+    if (!canWriteData())
         return;
 
     BlackBerry::Platform::Clipboard::clearClipboardByType(type.utf8().data());
@@ -50,7 +50,7 @@ void ClipboardBlackBerry::clearData(const String& type)
 
 void ClipboardBlackBerry::clearAllData()
 {
-    if (policy() != ClipboardWritable)
+    if (!canWriteData())
         return;
 
     BlackBerry::Platform::Clipboard::clearClipboard();
@@ -58,7 +58,7 @@ void ClipboardBlackBerry::clearAllData()
 
 String ClipboardBlackBerry::getData(const String& type) const
 {
-    if (policy() != ClipboardReadable)
+    if (!canReadData())
         return String();
 
     return String::fromUTF8(BlackBerry::Platform::Clipboard::readClipboardByType(type.utf8().data()).c_str());
@@ -66,7 +66,7 @@ String ClipboardBlackBerry::getData(const String& type) const
 
 bool ClipboardBlackBerry::setData(const String& type, const String& text)
 {
-    if (policy() != ClipboardWritable)
+    if (!canWriteData())
         return false;
 
     if (type == "text/plain")
@@ -80,7 +80,7 @@ bool ClipboardBlackBerry::setData(const String& type, const String& text)
 
 ListHashSet<String> ClipboardBlackBerry::types() const
 {
-    if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
+    if (!canReadTypes())
         return ListHashSet<String>();
 
     // We use hardcoded list here since there seems to be no API to get the list.

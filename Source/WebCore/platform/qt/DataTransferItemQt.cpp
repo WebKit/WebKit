@@ -95,8 +95,7 @@ DataTransferItemQt::DataTransferItemQt(PassRefPtr<Clipboard> owner,
 
 void DataTransferItemQt::getAsString(PassRefPtr<StringCallback> callback) const
 {
-    if ((owner()->policy() != ClipboardReadable && owner()->policy() != ClipboardWritable)
-        || kind() != kindString)
+    if (!owner()->policy()->canReadData() || kind() != kindString)
         return;
 
     if (m_dataSource == InternalSource) {

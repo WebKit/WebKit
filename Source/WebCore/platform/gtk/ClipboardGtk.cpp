@@ -103,7 +103,7 @@ static ClipboardDataType dataObjectTypeFromHTMLClipboardType(const String& rawTy
 
 void ClipboardGtk::clearData(const String& typeString)
 {
-    if (policy() != ClipboardWritable)
+    if (!canWriteData())
         return;
 
     ClipboardDataType type = dataObjectTypeFromHTMLClipboardType(typeString);
@@ -133,7 +133,7 @@ void ClipboardGtk::clearData(const String& typeString)
 
 void ClipboardGtk::clearAllData()
 {
-    if (policy() != ClipboardWritable)
+    if (!canWriteData())
         return;
 
     // We do not clear filenames. According to the spec: "The clearData() method
@@ -148,7 +148,7 @@ void ClipboardGtk::clearAllData()
 
 String ClipboardGtk::getData(const String& typeString) const
 {
-    if (policy() != ClipboardReadable || !m_dataObject)
+    if (!canReadData() || !m_dataObject)
         return String();
 
     if (m_clipboard)
@@ -169,7 +169,7 @@ String ClipboardGtk::getData(const String& typeString) const
 
 bool ClipboardGtk::setData(const String& typeString, const String& data)
 {
-    if (policy() != ClipboardWritable)
+    if (!canWriteData())
         return false;
 
     bool success = false;
@@ -190,7 +190,7 @@ bool ClipboardGtk::setData(const String& typeString, const String& data)
 
 ListHashSet<String> ClipboardGtk::types() const
 {
-    if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
+    if (!canReadTypes())
         return ListHashSet<String>();
 
     if (m_clipboard)
@@ -219,7 +219,7 @@ ListHashSet<String> ClipboardGtk::types() const
 
 PassRefPtr<FileList> ClipboardGtk::files() const
 {
-    if (policy() != ClipboardReadable)
+    if (!canReadData())
         return FileList::create();
 
     if (m_clipboard)
@@ -244,7 +244,7 @@ void ClipboardGtk::setDragImageElement(Node* element, const IntPoint& location)
 
 void ClipboardGtk::setDragImage(CachedImage* image, Node* element, const IntPoint& location)
 {
-    if (policy() != ClipboardImageWritable && policy() != ClipboardWritable)
+    if (!canSetDragImage())
         return;
 
     if (m_dragImage)

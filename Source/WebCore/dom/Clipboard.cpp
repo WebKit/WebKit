@@ -51,6 +51,26 @@ void Clipboard::setAccessPolicy(ClipboardAccessPolicy policy)
     m_policy = policy;
 }
 
+bool Clipboard::canReadTypes() const
+{
+    return m_policy == ClipboardReadable || m_policy == ClipboardTypesReadable || m_policy == ClipboardWritable;
+}
+
+bool Clipboard::canReadData() const
+{
+    return m_policy == ClipboardReadable || m_policy == ClipboardWritable;
+}
+
+bool Clipboard::canWriteData() const
+{
+    return m_policy == ClipboardWritable;
+}
+
+bool Clipboard::canSetDragImage() const
+{
+    return m_policy == ClipboardImageWritable || m_policy == ClipboardWritable;
+}
+
 // These "conversion" methods are called by both WebCore and WebKit, and never make sense to JS, so we don't
 // worry about security for these. They don't allow access to the pasteboard anyway.
 
@@ -128,7 +148,7 @@ void Clipboard::setDestinationOperation(DragOperation op)
 
 bool Clipboard::hasFileOfType(const String& type) const
 {
-    if (m_policy != ClipboardReadable && m_policy != ClipboardTypesReadable)
+    if (!canReadTypes())
         return false;
     
     RefPtr<FileList> fileList = files();
@@ -144,7 +164,7 @@ bool Clipboard::hasFileOfType(const String& type) const
 
 bool Clipboard::hasStringOfType(const String& type) const
 {
-    if (m_policy != ClipboardReadable && m_policy != ClipboardTypesReadable)
+    if (!canReadTypes())
         return false;
     
     return types().contains(type); 
@@ -159,7 +179,9 @@ void Clipboard::setDropEffect(const String &effect)
     if (effect != "none" && effect != "copy"  && effect != "link" && effect != "move")
         return;
 
-    if (m_policy == ClipboardReadable || m_policy == ClipboardTypesReadable)
+    // FIXME: The spec actually allows this in all circumstances, even though there's no point in
+    // setting the drop effect when this condition is not true.
+    if (canReadTypes())
         m_dropEffect = effect;
 }
 
@@ -179,7 +201,7 @@ void Clipboard::setEffectAllowed(const String &effect)
     }
 
 
-    if (m_policy == ClipboardWritable)
+    if (canWriteData())
         m_effectAllowed = effect;
 }
     
