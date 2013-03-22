@@ -518,10 +518,10 @@ public:
     bool hasTerminatingNullCharacter() const { return m_hashAndFlags & s_hashFlagHasTerminatingNullCharacter; }
 
     bool isAtomic() const { return m_hashAndFlags & s_hashFlagIsAtomic; }
-    void setIsAtomic(bool isIdentifier)
+    void setIsAtomic(bool isAtomic)
     {
         ASSERT(!isStatic());
-        if (isIdentifier)
+        if (isAtomic)
             m_hashAndFlags |= s_hashFlagIsAtomic;
         else
             m_hashAndFlags &= ~s_hashFlagIsAtomic;
