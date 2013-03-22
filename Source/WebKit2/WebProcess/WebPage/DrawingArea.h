@@ -88,6 +88,8 @@ public:
     virtual void setExposedRect(const WebCore::FloatRect&) { }
     virtual void mainFrameScrollabilityChanged(bool) { }
 
+    virtual void didChangeScrollOffsetForAnyFrame() {}
+
 #if USE(ACCELERATED_COMPOSITING)
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return 0; }
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;

@@ -1,5 +1,13 @@
 2013-03-21  Tim Horton  <timothy_horton@apple.com>
 
+        Unreviewed build fix, forgot to stage one file.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::didChangeScrollOffsetForAnyFrame):
+        (DrawingArea):
+
+2013-03-21  Tim Horton  <timothy_horton@apple.com>
+
         [wk2] Page overlays shouldn't dirty the entire layer when flushing if the main frame can't scroll
         https://bugs.webkit.org/show_bug.cgi?id=111662
         <rdar://problem/13355808>
