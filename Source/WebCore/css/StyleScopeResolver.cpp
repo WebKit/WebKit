@@ -155,6 +155,10 @@ void StyleScopeResolver::collectFeaturesTo(RuleFeatureSet& features)
 {
     for (ScopedRuleSetMap::iterator it = m_authorStyles.begin(); it != m_authorStyles.end(); ++it)
         features.add(it->value->features());
+#if ENABLE(SHADOW_DOM)
+    for (ScopedRuleSetMap::iterator it = m_atHostRules.begin(); it != m_atHostRules.end(); ++it)
+        features.add(it->value->features());
+#endif
 }
 
 inline RuleSet* StyleScopeResolver::ensureAtHostRuleSetFor(const ShadowRoot* shadowRoot)
