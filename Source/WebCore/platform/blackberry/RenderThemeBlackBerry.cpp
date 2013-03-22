@@ -37,6 +37,7 @@
 #include "UserAgentStyleSheets.h"
 
 #include <BlackBerryPlatformLog.h>
+#include <BlackBerryPlatformScreen.h>
 
 namespace WebCore {
 
@@ -380,7 +381,10 @@ bool RenderThemeBlackBerry::paintTextFieldOrTextAreaOrSearchField(RenderObject* 
 
     static RefPtr<Image> bg, bgDisabled, bgHighlight;
     if (!bg) {
-        bg = loadImage("core_textinput_bg");
+        if (BlackBerry::Platform::Graphics::Screen::primaryScreen()->displayTechnology() == BlackBerry::Platform::Graphics::OledDisplayTechnology)
+            bg = loadImage("core_textinput_bg_oled");
+        else
+            bg = loadImage("core_textinput_bg");
         bgDisabled = loadImage("core_textinput_bg_disabled");
         bgHighlight = loadImage("core_textinput_bg_highlight");
     }
