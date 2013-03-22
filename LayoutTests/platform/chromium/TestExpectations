@@ -1641,8 +1641,9 @@ webkit.org/b/98647 [ Android ] platform/chromium/compositing/3d-corners.html [ I
 webkit.org/b/98647 [ Android ] fast/repaint/block-selection-gap-in-composited-layer.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] fast/css/transform-default-parameter.html [ ImageOnlyFailure ]
 # webkit.org/b/98647 [ Android ] fast/canvas/canvas-toDataURL-webp.html [ ImageOnlyFailure ]
-# After libwebp 0.3.0 lands in chrome this test expectation needs to be updated.
+# After libwebp 0.3.0 lands in chrome the next 2 test expectations need to be updated.
 webkit.org/b/93310 fast/canvas/canvas-toDataURL-webp.html [ ImageOnlyFailure Pass ]
+webkit.org/b/93310 platform/chromium/virtual/gpu/fast/canvas/canvas-toDataURL-webp.html [ ImageOnlyFailure Pass ]
 webkit.org/b/98647 [ Android ] compositing/backface-visibility/backface-visibility-3d.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] compositing/backface-visibility/backface-visibility-image.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] compositing/backface-visibility/backface-visibility-non3d.html [ ImageOnlyFailure ]
