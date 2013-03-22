@@ -1,3 +1,16 @@
+2013-03-22  Genevieve Mak  <gmak@rim.com>
+
+        [BlackBerry] Hit Test doesn't need to be active
+        https://bugs.webkit.org/show_bug.cgi?id=113072
+
+        Reviewed by Rob Buis.
+
+        Reviewed Internally By Mike Lattanzio.
+        PR #306074
+
+        * WebKitSupport/ProximityDetector.cpp:
+        (BlackBerry::WebKit::ProximityDetector::findBestPoint):
+
 2013-03-22  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Selection overlay clipped incorrectly
