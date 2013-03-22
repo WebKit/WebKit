@@ -1,5 +1,12 @@
 2013-03-22  Eric Carlson  <eric.carlson@apple.com>
 
+        Update results where white-space changed because of the change from testRunner" to "layoutTestController.
+
+        * fast/block/float/float-not-removed-from-pre-block-expected.txt:
+        * fast/css/image-set-value-not-removed-crash-expected.txt:
+
+2013-03-22  Eric Carlson  <eric.carlson@apple.com>
+
         <rdar://problem/13465764> Many merged tests are failing
 
         Change all instances of "testRunner" back to "layoutTestController" in svg files, which
