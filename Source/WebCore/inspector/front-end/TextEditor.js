@@ -101,12 +101,6 @@ WebInspector.TextEditor.prototype = {
      */
     setExecutionLine: function(lineNumber) { },
 
-    /**
-     * @param {WebInspector.TextRange} range
-     * @return {string}
-     */
-    copyRange: function(range) { },
-
     clearExecutionLine: function() { },
 
     /**
@@ -175,6 +169,12 @@ WebInspector.TextEditor.prototype = {
      * @param {WebInspector.TextRange} textRange
      */
     setSelection: function(textRange) { },
+
+    /**
+     * @param {WebInspector.TextRange} range
+     * @return {string}
+     */
+    copyRange: function(range) { },
 
     /**
      * @param {string} text 
