@@ -1,3 +1,16 @@
+2013-03-22  Eric Carlson  <eric.carlson@apple.com>
+
+        Merge r135523 to get the updated test results.
+
+    2012-11-22  Daniel Bates  <dbates@webkit.org>
+
+            JavaScript fails to concatenate large strings
+            <https://bugs.webkit.org/show_bug.cgi?id=102963>
+
+            Update test result.
+
+            * fast/js/concat-large-strings-crash-expected.txt:
+
 2013-03-20  Eric Carlson  <eric.carlson@apple.com>
 
         <rdar://problem/13465764> Many merged tests are failing
