@@ -1,3 +1,24 @@
+2013-03-22  Tim Horton  <timothy_horton@apple.com>
+
+        Make it possible to run layout tests on Retina MBP
+        https://bugs.webkit.org/show_bug.cgi?id=93673
+
+        Reviewed by Ryosuke Niwa.
+
+        Use NSWindow SPI and override -backingScaleFactor so that WKTR and DRT
+        windows on 2x machines still run at 1x.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (createWebViewAndOffscreenWindow):
+        Reset the window resolution to 1x on creation.
+        * DumpRenderTree/mac/DumpRenderTreeWindow.h: Add NSWindow details.
+        * DumpRenderTree/mac/DumpRenderTreeWindow.mm:
+        (-[DumpRenderTreeWindow backingScaleFactor]): Override, always return 1.
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (-[WebKitTestRunnerWindow backingScaleFactor]): Override, always return 1.
+        (WTR::PlatformWebView::PlatformWebView):
+        Add NSWindow details, reset the window resolution to 1x on creation.
+
 2013-03-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Leak bots shouldn't build

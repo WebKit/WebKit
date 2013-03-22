@@ -554,6 +554,7 @@ WebView *createWebViewAndOffscreenWindow()
     [[window contentView] addSubview:webView];
     [window orderBack:nil];
     [window setAutodisplay:NO];
+    [window _setWindowResolution:1 displayIfChanged:YES];
 
     [window startListeningForAcceleratedCompositingChanges];
     
