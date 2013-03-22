@@ -88,6 +88,10 @@
       '<(WebCore)/testing/TypeConversions.idl',
       '<(SHARED_INTERMEDIATE_DIR)/WebCore/InternalSettingsGenerated.idl',
     ],
+
+    'excluded_directories_pattern': '(android|chromium|ca|cf|cg|curl|efl|linux|mac|openvg|opentype|posix|qt|skia|iphone|win|wince|wx)/',
+    'excluded_files_suffixes': '(Android|CF|CG|Curl|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Skia|Win|WinCE|Wx|V8)\\.(cpp|mm?)$',
+    'excluded_files_patterns': '.*(Chromium|Android).*',
   },
 
 
@@ -796,6 +800,19 @@
       ],
     },
     {
+      'target_name': 'WebCoreDOM',
+      'type': 'static_library',
+      'dependencies': [ 'WebCoreDependencies', ],
+      'include_dirs': [ '<@(webcoregtk_include_dirs)', ],
+      'sources': [ '<@(webcore_dom_files)', ],
+      'sources/': [
+        ['exclude', '<(excluded_directories_pattern)'],
+        ['exclude', '<(excluded_files_suffixes)'],
+        ['exclude', '<(excluded_files_patterns)'],
+        ['exclude', 'AllInOne\\.cpp$'],
+      ],
+    },
+    {
       'target_name': 'WebCoreHTML',
       'type': 'static_library',
       'dependencies': [ 'WebCoreDependencies', ],
@@ -810,6 +827,7 @@
       'target_name': 'WebCore',
       'type': 'none',
       'dependencies': [ 
+        'WebCoreDOM',
         'WebCoreHTML',
         'WebCoreBindings',
       ],
