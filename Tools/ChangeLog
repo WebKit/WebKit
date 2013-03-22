@@ -1,3 +1,21 @@
+2013-03-22  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        [Qt] Fix the TestWebKitAPI build
+        https://bugs.webkit.org/show_bug.cgi?id=113044
+
+        Reviewed by Tor Arne Vestbø.
+
+        The generate-forwarding-headers script would only be run
+        after the targets in InjectedBundle.pri since the second
+        addStrictSubdirOrderBetween call in
+        Tools/TestWebKitAPI/TestWebKitAPI.pro would overwrite
+        the derived_sources -> injected_bundle order in SUBDIRS.
+
+        Fix it by only moving the dependent target at the end of
+        SUBDIRS, don't touch its dependency.
+
+        * qmake/mkspecs/features/functions.prf:
+
 2013-03-22  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL][WK2] View is not focused when fullscreen mode toggled

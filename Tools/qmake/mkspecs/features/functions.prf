@@ -133,8 +133,8 @@ defineTest(addStrictSubdirOrderBetween) {
     }
 
     # Make sure the order is right
-    SUBDIRS -= $$firstSubdir $$secondSubdir
-    SUBDIRS += $$firstSubdir $$secondSubdir
+    SUBDIRS -= $$secondSubdir
+    SUBDIRS += $$secondSubdir
     NO_RECURSIVE_QMAKE_SUBDIRS += $$firstSubdir $$secondSubdir
     CONFIG *= ordered
 
