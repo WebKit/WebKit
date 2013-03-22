@@ -210,6 +210,11 @@ void TiledCoreAnimationDrawingArea::setPageOverlayNeedsDisplay(PageOverlay* page
     if (!layer)
         return;
 
+    if (!layer->drawsContent()) {
+        layer->setDrawsContent(true);
+        layer->setSize(expandedIntSize(FloatSize(m_rootLayer.get().frame.size)));
+    }
+
     layer->setNeedsDisplayInRect(rect);
     scheduleCompositingLayerFlush();
 }
@@ -409,8 +414,11 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize)
     }
 
     PageOverlayLayerMap::iterator end = m_pageOverlayLayers.end();
-    for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(); it != end; ++it)
-        it->value->setSize(viewSize);
+    for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(); it != end; ++it) {
+        GraphicsLayer* layer = it->value.get();
+        if (layer->drawsContent())
+            layer->setSize(viewSize);
+    }
 
     if (!m_layerTreeStateIsFrozen)
         flushLayers();
@@ -525,8 +533,6 @@ void TiledCoreAnimationDrawingArea::createPageOverlayLayer(PageOverlay* pageOver
 #endif
 
     layer->setAcceleratesDrawing(m_webPage->corePage()->settings()->acceleratedDrawingEnabled());
-    layer->setDrawsContent(true);
-    layer->setSize(expandedIntSize(FloatSize(m_rootLayer.get().frame.size)));
     layer->setShowDebugBorder(m_webPage->corePage()->settings()->showDebugBorders());
     layer->setShowRepaintCounter(m_webPage->corePage()->settings()->showRepaintCounter());
 

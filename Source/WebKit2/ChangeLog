@@ -1,3 +1,30 @@
+2013-03-21  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Page Overlays: Don't create backing store until the client asks us to paint
+        https://bugs.webkit.org/show_bug.cgi?id=112989
+        <rdar://problem/13355759>
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::highlight):
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindUIAfterPageScroll):
+        Invalidate the entire overlay on installation, to maintain existing behavior
+        on platforms where the fade-in animation is not performed by invalidating the overlay.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::installPageOverlay):
+        Don't invalidate the overlay upon installation.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::setPageOverlayNeedsDisplay):
+        Create backing store for the page overlay layer the first time it is painted into.
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry):
+        Don't update the size of the page overlay layer unless we intend for it to have backing store.
+        (WebKit::TiledCoreAnimationDrawingArea::createPageOverlayLayer):
+        Don't create backing store when we create the page overlay layer.
+
 2013-03-21  Brady Eidson  <beidson@apple.com>
 
         If a previously loaded resource is later stored to the disk cache, replace the buffer with MMAP'ed memory.

@@ -170,10 +170,9 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
             RefPtr<PageOverlay> findPageOverlay = PageOverlay::create(this);
             m_findPageOverlay = findPageOverlay.get();
             m_webPage->installPageOverlay(findPageOverlay.release(), true);
-        } else {
-            // The page overlay needs to be repainted.
             m_findPageOverlay->setNeedsDisplay();
-        }
+        } else
+            m_findPageOverlay->setNeedsDisplay();
     }
 }
 

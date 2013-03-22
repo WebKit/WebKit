@@ -1360,7 +1360,6 @@ void WebPage::installPageOverlay(PassRefPtr<PageOverlay> pageOverlay, bool shoul
         overlay->startFadeInAnimation();
 
     m_drawingArea->didInstallPageOverlay(overlay.get());
-    overlay->setNeedsDisplay();
 }
 
 void WebPage::uninstallPageOverlay(PageOverlay* pageOverlay, bool shouldFadeOut)
