@@ -23,6 +23,7 @@
 #include "TextureMapperGL.h"
 
 #include "Extensions3D.h"
+#include "FilterOperations.h"
 #include "GraphicsContext.h"
 #include "Image.h"
 #include "LengthFunctions.h"

@@ -20,6 +20,7 @@
 #include "config.h"
 #include "TextureMapper.h"
 
+#include "FilterOperations.h"
 #include "GraphicsLayer.h"
 #include "TextureMapperImageBuffer.h"
 #include "Timer.h"

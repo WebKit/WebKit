@@ -23,7 +23,7 @@
 
 #if USE(TEXTURE_MAPPER)
 #include "GraphicsContext3D.h"
-#include "TextureMapperGL.h"
+#include "TransformationMatrix.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>

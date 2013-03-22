@@ -28,6 +28,8 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "FloatRect.h"
+
 #if USE(GLX)
 #include "GLXSurface.h"
 #endif

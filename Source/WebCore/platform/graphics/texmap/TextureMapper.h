@@ -32,7 +32,6 @@
 #define TEXMAP_OPENGL_ES_2
 #endif
 
-#include "FilterOperations.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "IntSize.h"
@@ -50,6 +49,7 @@ class BitmapTexturePool;
 class CustomFilterProgram;
 class GraphicsLayer;
 class TextureMapper;
+class FilterOperations;
 
 // A 2D texture that can be the target of software or GL rendering.
 class BitmapTexture : public RefCounted<BitmapTexture> {

@@ -35,6 +35,7 @@ class CustomFilterProgram;
 class CustomFilterCompiledProgram;
 class TextureMapperGLData;
 class TextureMapperShaderProgram;
+class FilterOperation;
 
 // An OpenGL-ES2 implementation of TextureMapper.
 class TextureMapperGL : public TextureMapper {
