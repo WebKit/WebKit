@@ -20,7 +20,6 @@
 #include "config.h"
 #include "TextureMapperImageBuffer.h"
 
-#include "FilterEffectRenderer.h"
 #include "GraphicsLayer.h"
 #if PLATFORM(QT)
 #include "NativeImageQt.h"
@@ -164,19 +163,8 @@ void TextureMapperImageBuffer::drawNumber(int /* number */, const Color&, const 
 }
 
 #if ENABLE(CSS_FILTERS)
-PassRefPtr<BitmapTexture> BitmapTextureImageBuffer::applyFilters(TextureMapper*, const BitmapTexture& contentTexture, const FilterOperations& filters)
+PassRefPtr<BitmapTexture> BitmapTextureImageBuffer::applyFilters(TextureMapper*, const BitmapTexture&, const FilterOperations&)
 {
-    RefPtr<FilterEffectRenderer> renderer = FilterEffectRenderer::create();
-    renderer->setSourceImageRect(FloatRect(FloatPoint::zero(), contentTexture.size()));
-
-    // The renderer parameter is only needed for CSS shaders and reference filters.
-    if (renderer->build(0 /*renderer */, filters)) {
-        renderer->allocateBackingStoreIfNeeded();
-        GraphicsContext* context = renderer->inputContext();
-        context->drawImageBuffer(static_cast<const BitmapTextureImageBuffer&>(contentTexture).m_image.get(), ColorSpaceDeviceRGB, IntPoint::zero());
-        renderer->apply();
-        m_image->context()->drawImageBuffer(renderer->output(), ColorSpaceDeviceRGB, renderer->outputRect());
-    }
     return this;
 }
 #endif
