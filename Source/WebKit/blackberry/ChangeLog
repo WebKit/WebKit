@@ -1,3 +1,18 @@
+2013-03-22  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Selection overlay clipped incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=113069
+
+        Reviewed by George Staikos.
+        Internally reviewed by Arvid Nilsson.
+
+        As a follow-up to r146278, the clip rect also needs to be
+        adjusted by the parent's offset when drawing the
+        selection overlay.
+
+        * WebKitSupport/SelectionOverlay.cpp:
+        (BlackBerry::WebKit::SelectionOverlay::paintContents):
+
 2013-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [BlackBerry] Add custom BackForwardList client implementation

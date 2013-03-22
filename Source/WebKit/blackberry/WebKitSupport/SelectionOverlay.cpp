@@ -87,7 +87,7 @@ void SelectionOverlay::notifyFlushRequired(const GraphicsLayer* layer)
     m_page->notifyFlushRequired(layer);
 }
 
-void SelectionOverlay::paintContents(const GraphicsLayer* layer, GraphicsContext& c, GraphicsLayerPaintingPhase, const IntRect& clip)
+void SelectionOverlay::paintContents(const GraphicsLayer* layer, GraphicsContext& c, GraphicsLayerPaintingPhase, const IntRect& inClip)
 {
     if (!layer->platformLayer()->superlayer())
         return;
@@ -97,10 +97,13 @@ void SelectionOverlay::paintContents(const GraphicsLayer* layer, GraphicsContext
         return;
 
     const Vector<WebCore::FloatQuad>& quads = it->value;
+    GraphicsLayer* parent = it->key;
+
+    IntRect clip(inClip);
+    clip.move(parent->offsetFromRenderer().width(), parent->offsetFromRenderer().height());
 
     c.save();
 
-    GraphicsLayer* parent = it->key;
     c.translate(-parent->offsetFromRenderer().width(), -parent->offsetFromRenderer().height());
 
     Color color = RenderTheme::defaultTheme()->activeSelectionBackgroundColor();
