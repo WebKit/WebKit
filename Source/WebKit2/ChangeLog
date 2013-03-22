@@ -1,3 +1,18 @@
+2013-03-21  Jer Noble  <jer.noble@apple.com>
+
+        After switching to another space and back, video races to catch up with audio
+        https://bugs.webkit.org/show_bug.cgi?id=113006
+
+        Reviewed by Anders Carlsson.
+
+        Add an observer for the NSWorkspaceActiveSpaceDidChangeNotification notification, and trigger
+        a visibility update when that notification is observed.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView dealloc]): Unregister the observer.
+        (-[WKView _activeSpaceDidChange:]): Notify the view that its visibility may have changed.
+        (-[WKView initWithFrame:contextRef:pageGroupRef:relatedToPage:]): Add the observer.
+
 2013-03-21  Geoffrey Garen  <ggaren@apple.com>
 
         Added a setting for whether JavaScript markup is enabled

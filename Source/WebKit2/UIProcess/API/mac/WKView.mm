@@ -281,6 +281,9 @@ struct WKViewInterpretKeyEventsParameters {
     Vector<WKView *>& allViews = [WKView _allViews];
     allViews.remove(allViews.find(self));
 
+    NSNotificationCenter* workspaceNotificationCenter = [[NSWorkspace sharedWorkspace] notificationCenter];
+    [workspaceNotificationCenter removeObserver:self name:NSWorkspaceActiveSpaceDidChangeNotification object:nil];
+
     WebContext::statistics().wkViewCount--;
 
     [super dealloc];
@@ -2134,6 +2137,11 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
         drawingArea->colorSpaceDidChange();
 }
 
+- (void)_activeSpaceDidChange:(NSNotification *)notification
+{
+    _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
+}
+
 - (void)_accessibilityRegisterUIProcessTokens
 {
     // Initialize remote accessibility when the window connection has been established.
@@ -3160,6 +3168,9 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     [WKView _allViews].append(self);
 
     WebContext::statistics().wkViewCount++;
+
+    NSNotificationCenter* workspaceNotificationCenter = [[NSWorkspace sharedWorkspace] notificationCenter];
+    [workspaceNotificationCenter addObserver:self selector:@selector(_activeSpaceDidChange:) name:NSWorkspaceActiveSpaceDidChangeNotification object:nil];
 
     return self;
 }
