@@ -1,3 +1,18 @@
+2013-03-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Leak bots shouldn't build
+        https://bugs.webkit.org/show_bug.cgi?id=112774
+
+        Reviewed by Simon Fraser.
+
+        Since leak bots use regular debug builds, there is no need to build on these bots.
+        Simply downloading builds will dramatically improve the cycle time of these bots.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (TestLeaksFactory): Renamed from BuildAndTestLeaksFactory and changed to inherit from
+        TestFactory instead of BuildAndTestFactory.
+
 2013-03-22  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         [Qt] Fix the TestWebKitAPI build

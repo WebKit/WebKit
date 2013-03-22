@@ -78,13 +78,13 @@
                     { "name": "sh4-linux-1", "platform": "qt-sh4"}
                   ],
 
-    "builders":   [ { "name": "Apple Lion (Leaks)", "type": "BuildAndTestLeaks", "builddir": "lion-leaks",
+    "builders":   [ { "name": "Apple Lion (Leaks)", "type": "TestLeaks", "builddir": "lion-leaks",
                       "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["apple-macpro-3"]
                     },
                     { "name": "Apple Lion Debug (Build)", "type": "Build", "builddir": "lion-debug",
                       "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["lion-debug-tests-wk1", "lion-debug-tests-wk2"],
+                      "triggers": ["lion-debug-tests-wk1", "lion-debug-tests-wk2", "lion-leaks"],
                       "slavenames": ["apple-xserve-2", "apple-xserve-10"]
                     },
                     { "name": "Apple Lion Release (Build)", "type": "Build", "builddir": "lion-release",
@@ -113,13 +113,13 @@
                       "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["apple-xserve-11"]
                     },
-                    { "name": "Apple MountainLion (Leaks)", "type": "BuildAndTestLeaks", "builddir": "mountainlion-leaks",
+                    { "name": "Apple MountainLion (Leaks)", "type": "TestLeaks", "builddir": "mountainlion-leaks",
                       "platform": "mac-mountainlion", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["apple-mini-201"]
                     },
                     { "name": "Apple MountainLion Debug (Build)", "type": "Build", "builddir": "mountainlion-debug",
                       "platform": "mac-mountainlion", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["mountainlion-debug-tests-wk1", "mountainlion-debug-tests-wk2"],
+                      "triggers": ["mountainlion-debug-tests-wk1", "mountainlion-debug-tests-wk2", "mountainlion-leaks"],
                       "slavenames": ["apple-mini-202", "apple-mini-203"]
                     },
                     { "name": "Apple MountainLion Release (Build)", "type": "Build", "builddir": "mountainlion-release",
@@ -385,6 +385,9 @@
                     { "type": "Triggerable", "name": "lion-debug-tests-wk2",
                       "builderNames": ["Apple Lion Debug WK2 (Tests)"]
                     },
+                    { "type": "Triggerable", "name": "lion-leaks",
+                      "builderNames": ["Apple Lion (Leaks)"]
+                    },
                     { "type": "Triggerable", "name": "mountainlion-release-tests-wk1",
                       "builderNames": ["Apple MountainLion Release WK1 (Tests)"]
                     },
@@ -399,6 +402,9 @@
                     },
                     { "type": "Triggerable", "name": "mountainlion-debug-tests-wk2",
                       "builderNames": ["Apple MountainLion Debug WK2 (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "mountainlion-leaks",
+                      "builderNames": ["Apple MountainLion (Leaks)"]
                     },
                     { "type": "Triggerable", "name": "win-release-tests",
                       "builderNames": ["Apple Win 7 Release (Tests)"]
