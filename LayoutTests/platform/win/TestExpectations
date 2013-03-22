@@ -2710,3 +2710,6 @@ webkit.org/b/112766 media/media-higher-prio-audio-stream.html [ Failure ]
 webkit.org/b/112881 fast/text/custom-font-data-crash2.html [ Crash Pass ]
 
 webkit.org/b/113012 compositing/overflow/composited-scrolling-paint-phases.html [ Pass Failure ]
+
+webkit.org/b/113075 media/video-seek-by-small-increment.html [ Pass Crash ]
+webkit.org/b/113076 media/video-volume.html [ Pass Crash ]
