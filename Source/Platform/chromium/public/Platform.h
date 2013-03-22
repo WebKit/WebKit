@@ -359,9 +359,6 @@ public:
     // Callable from a background WebKit thread.
     virtual void callOnMainThread(void (*func)(void*), void* context) { }
 
-    // Checks the partition/volume where fileName resides.
-    virtual long long availableDiskSpaceInBytes(const WebString& fileName) { return 0; }
-
 
     // Testing -------------------------------------------------------------
 
