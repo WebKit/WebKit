@@ -64,6 +64,9 @@ public:
     unsigned getSomeData(const char*& data, unsigned position = 0) const;
     
     SharedBuffer* sharedBuffer() const;
+#if PLATFORM(MAC)
+    void tryReplaceSharedBufferContents(SharedBuffer*);
+#endif
     PassRefPtr<ResourceBuffer> copy() const;
 
     bool hasPurgeableBuffer() const;

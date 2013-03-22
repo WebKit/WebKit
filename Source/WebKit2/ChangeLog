@@ -1,3 +1,50 @@
+2013-03-21  Brady Eidson  <beidson@apple.com>
+
+        If a previously loaded resource is later stored to the disk cache, replace the buffer with MMAP'ed memory.
+        <rdar://problem/13414154> and https://bugs.webkit.org/show_bug.cgi?id=112943
+
+        Reviewed by Geoff Garen.
+
+        Add a timer that will try to look up the disk cached buffer for the resource a few seconds after the load
+        completes and - if the resource is disk backed - send it to the WebProcess for sharing:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::NetworkResourceLoader):
+        (WebKit::NetworkResourceLoader::diskCacheTimerFired):
+        (WebKit::NetworkResourceLoader::didReceiveResponse):
+        (WebKit::NetworkResourceLoader::didReceiveData):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        * NetworkProcess/NetworkResourceLoader.h:
+
+        * NetworkProcess/mac/NetworkResourceLoaderMac.mm:
+        (WebKit::NetworkResourceLoader::tryGetShareableHandleForResource):
+
+        Refactor SharedMemory to remove the unnecessary vm_copy and only vm_allocate when an appropriate buffer
+        doesn't already exist:
+        * Platform/SharedMemory.h:
+        * Platform/mac/SharedMemoryMac.cpp:
+        (WebKit::SharedMemory::create):
+        (WebKit::SharedMemory::createFromVMBuffer):
+        (WebKit::SharedMemory::~SharedMemory):
+
+        Give ShareableResource the ability to create a CFDataRef that wraps "this", and return it in a SharedBuffer:
+        * Shared/ShareableResource.cpp:
+        (WebKit::shareableResourceDeallocate):
+        (WebKit::createShareableResourceDeallocator):
+        (WebKit::ShareableResource::Handle::tryWrapInSharedBuffer):
+        * Shared/ShareableResource.h:
+
+        * Shared/WebCoreArgumentCoders.cpp: Encode/decode the cache partition for ResourceRequest.
+
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveMessage):
+        (WebKit::NetworkProcessConnection::didCacheResource): Lookup the CachedResource in the WebCore memory cache
+          and try to replace its encoded data with the shared mmap'ed buffer.
+        * WebProcess/Network/NetworkProcessConnection.h:
+        * WebProcess/Network/NetworkProcessConnection.messages.in:
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::didReceiveResource):
+
 2013-03-21  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed build fix, forgot to stage one file.

@@ -27,6 +27,7 @@
 #define NetworkProcessConnection_h
 
 #include "Connection.h"
+#include "ShareableResource.h"
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -56,14 +57,19 @@ public:
     
     CoreIPC::Connection* connection() const { return m_connection.get(); }
 
+    void didReceiveNetworkProcessConnectionMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
+
 private:
     NetworkProcessConnection(CoreIPC::Connection::Identifier);
 
     // CoreIPC::Connection::Client
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
-    virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
-    virtual void didClose(CoreIPC::Connection*);
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&) OVERRIDE;
+    virtual void didClose(CoreIPC::Connection*) OVERRIDE;
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
+
+    // Message handlers.
+    void didCacheResource(const WebCore::ResourceRequest&, const ShareableResource::Handle&);
 
     // The connection from the web process to the network process.
     RefPtr<CoreIPC::Connection> m_connection;

@@ -107,47 +107,20 @@ void WebResourceLoader::didFailResourceLoad(const ResourceError& error)
     m_coreLoader->didFail(error);
 }
 
-static void shareableResourceDeallocate(void *ptr, void *info)
-{
-    ShareableResource* resource = static_cast<ShareableResource*>(info);
-    resource->deref();
-}
-    
-static CFAllocatorRef createShareableResourceDeallocator(PassRefPtr<ShareableResource> resource)
-{
-    CFAllocatorContext context = { 0,
-        resource.leakRef(),
-        NULL, // retain
-        NULL, // release
-        NULL, // copyDescription
-        NULL, // allocate
-        NULL, // reallocate
-        shareableResourceDeallocate,
-        NULL,
-    };
-
-    return CFAllocatorCreate(kCFAllocatorDefault, &context);
-}
-
 void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& handle, double finishTime)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveResource for '%s'", m_coreLoader->url().string().utf8().data());
 
-    RefPtr<ShareableResource> resource = ShareableResource::create(handle);
-    if (!resource) {
-        LOG_ERROR("Unabled to recreate the ShareableResource sent from the network process.");
+    RefPtr<SharedBuffer> buffer = handle.tryWrapInSharedBuffer();
+    if (!buffer) {
+        LOG_ERROR("Unable to create buffer from ShareableResource sent from the network process.");
         m_coreLoader->didFail(internalError(m_coreLoader->request().url()));
         return;
     }
 
     // Only send data to the didReceiveData callback if it exists.
-    if (resource->size()) {
-        RetainPtr<CFAllocatorRef> deallocator(AdoptCF, createShareableResourceDeallocator(resource));
-        RetainPtr<CFDataRef> data(AdoptCF, CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(resource->data()), static_cast<CFIndex>(resource->size()), deallocator.get()));
-
-        RefPtr<SharedBuffer> buffer = SharedBuffer::wrapCFData(data.get());
+    if (buffer->size())
         m_coreLoader->didReceiveBuffer(buffer.get(), buffer->size(), DataPayloadWholeResource);
-    }
 
     m_coreLoader->didFinishLoading(finishTime);
 }

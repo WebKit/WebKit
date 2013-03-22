@@ -29,7 +29,7 @@
 #include "ShareableResource.h"
 #include "SharedMemory.h"
 #include "WebResourceLoaderMessages.h"
-#include <wtf/CurrentTime.h>
+#include <WebCore/SoftLinking.h>
 
 using namespace WebCore;
 
@@ -39,11 +39,21 @@ typedef struct _CFCachedURLResponse* CFCachedURLResponseRef;
 extern "C" CFURLCacheRef CFURLCacheCopySharedURLCache();
 extern "C" CFCachedURLResponseRef CFURLCacheCopyResponseForRequest(CFURLCacheRef, CFURLRequestRef);
 extern "C" CFArrayRef CFCachedURLResponseCopyReceiverDataArray(CFCachedURLResponseRef);
+
+SOFT_LINK_FRAMEWORK(CFNetwork)
+static bool CFURLCacheIsMemMappedData(CFURLCacheRef cache, CFDataRef data)
+{
+    static CFBooleanRef (*softLinkIsCacheMMAPedData)(CFURLCacheRef cache, CFDataRef data) = (CFBooleanRef (*)(CFURLCacheRef cache, CFDataRef data)) dlsym(CFNetworkLibrary(), "_CFURLCacheIsResponseDataMemMapped");
+    
+    if (softLinkIsCacheMMAPedData)
+        return softLinkIsCacheMMAPedData(cache, data) == kCFBooleanTrue;
+    return false;
+}
 #endif
 
 namespace WebKit {
 
-void NetworkResourceLoader::platformDidReceiveResponse(const WebCore::ResourceResponse&)
+void NetworkResourceLoader::tryGetShareableHandleForResource(ShareableResource::Handle& handle)
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED < 1090
     return;
@@ -73,24 +83,18 @@ void NetworkResourceLoader::platformDidReceiveResponse(const WebCore::ResourceRe
     if (CFDataGetLength(data) < (CFIndex)fileBackedResourceMinimumSize())
         return;
     
-    RefPtr<SharedMemory> sharedMemory = SharedMemory::createWithVMCopy((void*)CFDataGetBytePtr(data), CFDataGetLength(data));
-    if (!sharedMemory) {
-        LOG_ERROR("Failed to create VMCopied shared memory for cached resource.  We'll let it load normally.");
+    if (!CFURLCacheIsMemMappedData(cache.get(), data))
         return;
-    }
- 
-    size_t size = sharedMemory->size();
-    RefPtr<ShareableResource> resource = ShareableResource::create(sharedMemory.release(), 0, size);
-    ShareableResource::Handle handle;
-    if (!resource->createHandle(handle)) {
-        LOG_ERROR("Failed to create ShareableResource handle to send to the WebProcess for resource.  We'll let it load normally.");
+
+    RefPtr<SharedMemory> sharedMemory = SharedMemory::createFromVMBuffer((void*)CFDataGetBytePtr(data), CFDataGetLength(data));
+    if (!sharedMemory) {
+        LOG_ERROR("Failed to create VMCopied shared memory for cached resource.");
         return;
     }
 
-    // Since we're delivering this resource by ourselves all at once, we'll abort the resource handle since we don't need anymore callbacks from CFNetwork.
-    abortInProgressLoad();
-    
-    send(Messages::WebResourceLoader::DidReceiveResource(handle, currentTime()));
+    size_t size = sharedMemory->size();
+    RefPtr<ShareableResource> resource = ShareableResource::create(sharedMemory.release(), 0, size);
+    resource->createHandle(handle);
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED < 1090
 }
 

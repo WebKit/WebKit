@@ -33,6 +33,7 @@
 #include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcess.h"
+#include "NetworkProcessConnectionMessages.h"
 #include "NetworkResourceLoadParameters.h"
 #include "PlatformCertificateInfo.h"
 #include "RemoteNetworkingContext.h"
@@ -43,6 +44,7 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceBuffer.h>
 #include <WebCore/ResourceHandle.h>
+#include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 
 using namespace WebCore;
@@ -51,6 +53,10 @@ namespace WebKit {
 
 NetworkResourceLoader::NetworkResourceLoader(const NetworkResourceLoadParameters& loadParameters, NetworkConnectionToWebProcess* connection)
     : SchedulableLoader(loadParameters, connection)
+    , m_bytesReceived(0)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    , m_diskCacheTimer(RunLoop::main(), this, &NetworkResourceLoader::diskCacheTimerFired)
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 {
     ASSERT(isMainThread());
 }
@@ -168,6 +174,21 @@ void NetworkResourceLoader::connectionToWebProcessDidClose()
     cleanup();
 }
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+void NetworkResourceLoader::diskCacheTimerFired()
+{
+    ASSERT(isMainThread());
+    RefPtr<NetworkResourceLoader> adoptedRef = adoptRef(this); // Balance out the ref() when setting the timer.
+
+    ShareableResource::Handle handle;
+    tryGetShareableHandleForResource(handle);
+    if (handle.isNull())
+        return;
+
+    send(Messages::NetworkProcessConnection::DidCacheResource(request(), handle));
+}
+#endif // #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+
 template<typename U> bool NetworkResourceLoader::sendAbortingOnFailure(const U& message)
 {
     bool result = send(message);
@@ -203,7 +224,17 @@ void NetworkResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceRe
     if (!sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponseWithCertificateInfo(response, PlatformCertificateInfo(response))))
         return;
 
-    platformDidReceiveResponse(response);
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    ShareableResource::Handle handle;
+    tryGetShareableHandleForResource(handle);
+    if (handle.isNull())
+        return;
+
+    // Since we're delivering this resource by ourselves all at once, we'll abort the resource handle since we don't need anymore callbacks from ResourceHandle.
+    abortInProgressLoad();
+    
+    send(Messages::WebResourceLoader::DidReceiveResource(handle, currentTime()));
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 }
 
 void NetworkResourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int encodedDataLength)
@@ -211,6 +242,8 @@ void NetworkResourceLoader::didReceiveData(ResourceHandle*, const char* data, in
     // FIXME (NetworkProcess): For the memory cache we'll also need to cache the response data here.
     // Such buffering will need to be thread safe, as this callback is happening on a background thread.
     
+    m_bytesReceived += length;
+
     CoreIPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(data), length);
     sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedDataLength));
 }
@@ -221,6 +254,17 @@ void NetworkResourceLoader::didFinishLoading(ResourceHandle*, double finishTime)
     // Such bookkeeping will need to be thread safe, as this callback is happening on a background thread.
     invalidateSandboxExtensions();
     send(Messages::WebResourceLoader::DidFinishResourceLoad(finishTime));
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    // If this resource was large enough that it should be cached to disk as a separate file,
+    // then we should try to re-deliver the resource to the WebProcess once it *is* saved as a separate file.    
+    if (m_bytesReceived >= fileBackedResourceMinimumSize()) {
+        // FIXME: Once a notification API exists that obliviates this timer, use that instead.
+        ref(); // Balanced by an adoptRef() in diskCacheTimerFired().
+        m_diskCacheTimer.startOneShot(10);
+    }
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    
     scheduleCleanupOnMainThread();
 }
 

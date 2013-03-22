@@ -32,6 +32,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
+namespace WebCore {
+class SharedBuffer;
+}
+
 namespace WebKit {
     
 class ShareableResource : public RefCounted<ShareableResource> {
@@ -47,6 +51,8 @@ public:
 
         void encode(CoreIPC::ArgumentEncoder&) const;
         static bool decode(CoreIPC::ArgumentDecoder&, Handle&);
+
+        PassRefPtr<WebCore::SharedBuffer> tryWrapInSharedBuffer() const;
 
     private:
         friend class ShareableResource;

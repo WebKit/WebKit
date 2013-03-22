@@ -50,6 +50,7 @@ class InspectorResource;
 class PurgeableBuffer;
 class ResourceBuffer;
 class SecurityOrigin;
+class SharedBuffer;
 class SubresourceLoader;
 
 // A resource that is held in the cache. Classes who want to use this object should derive
@@ -262,6 +263,10 @@ public:
     virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
     virtual bool canReuse(const ResourceRequest&) const { return true; }
+
+#if PLATFORM(MAC)
+    void tryReplaceEncodedData(PassRefPtr<SharedBuffer>);
+#endif
 
 protected:
     virtual void checkNotify();

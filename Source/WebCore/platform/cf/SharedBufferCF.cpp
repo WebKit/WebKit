@@ -93,6 +93,15 @@ void SharedBuffer::clearPlatformData()
     m_cfData = 0;
 }
 
+void SharedBuffer::tryReplaceContentsWithPlatformBuffer(SharedBuffer* newContents)
+{
+    if (!newContents->m_cfData)
+        return;
+
+    clear();
+    m_cfData = newContents->m_cfData;
+}
+
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
 void SharedBuffer::append(CFDataRef data)
 {

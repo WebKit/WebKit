@@ -118,6 +118,8 @@ public:
 
     void createPurgeableBuffer() const;
 
+    void tryReplaceContentsWithPlatformBuffer(SharedBuffer*);
+
 private:
     SharedBuffer();
     explicit SharedBuffer(size_t);

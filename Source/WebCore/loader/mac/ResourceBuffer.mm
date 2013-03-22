@@ -33,4 +33,12 @@ NSData* ResourceBuffer::createNSData()
     return m_sharedBuffer->createNSData();
 }
 
+void ResourceBuffer::tryReplaceSharedBufferContents(SharedBuffer* newContents)
+{
+    if (!m_sharedBuffer)
+        m_sharedBuffer = newContents;
+    else
+        m_sharedBuffer->tryReplaceContentsWithPlatformBuffer(newContents);
+}
+
 } // namespace WebCore

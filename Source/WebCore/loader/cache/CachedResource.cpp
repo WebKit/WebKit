@@ -969,4 +969,19 @@ void CachedResource::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
         info.addRawBuffer(m_purgeableData.get(), m_purgeableData->size(), "PurgeableData", "purgeableData");
 }
 
+#if PLATFORM(MAC)
+void CachedResource::tryReplaceEncodedData(PassRefPtr<SharedBuffer> newBuffer)
+{
+    if (!m_data)
+        return;
+    
+    // Because the disk cache is asynchronous and racey with regards to the data we might be asked to replace,
+    // we need to verify that the new buffer has the same contents as our old buffer.
+    if (m_data->size() != newBuffer->size() || memcmp(m_data->data(), newBuffer->data(), m_data->size()))
+        return;
+
+    m_data->tryReplaceSharedBufferContents(newBuffer.get());
+}
+#endif
+
 }

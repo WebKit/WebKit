@@ -27,6 +27,9 @@
 #include "ShareableResource.h"
 
 #include "ArgumentCoders.h"
+#include <WebCore/SharedBuffer.h>
+
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -50,6 +53,43 @@ bool ShareableResource::Handle::decode(CoreIPC::ArgumentDecoder& decoder, Handle
     if (!decoder.decode(handle.m_size))
         return false;
     return true;
+}
+
+static void shareableResourceDeallocate(void *ptr, void *info)
+{
+    (static_cast<ShareableResource*>(info))->deref(); // Balanced by ref() in createShareableResourceDeallocator()
+}
+    
+static CFAllocatorRef createShareableResourceDeallocator(ShareableResource* resource)
+{
+    resource->ref(); // Balanced by deref in shareableResourceDeallocate()
+
+    CFAllocatorContext context = { 0,
+        resource,
+        NULL, // retain
+        NULL, // release
+        NULL, // copyDescription
+        NULL, // allocate
+        NULL, // reallocate
+        shareableResourceDeallocate,
+        NULL, // preferredSize
+    };
+
+    return CFAllocatorCreate(kCFAllocatorDefault, &context);
+}
+
+PassRefPtr<SharedBuffer> ShareableResource::Handle::tryWrapInSharedBuffer() const
+{
+    RefPtr<ShareableResource> resource = ShareableResource::create(*this);
+    if (!resource) {
+        LOG_ERROR("Failed to recreate ShareableResource from handle.");
+        return 0;
+    }
+
+    RetainPtr<CFAllocatorRef> deallocator(AdoptCF, createShareableResourceDeallocator(resource.get()));
+    RetainPtr<CFDataRef> data(AdoptCF, CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(resource->data()), static_cast<CFIndex>(resource->size()), deallocator.get()));
+
+    return SharedBuffer::wrapCFData(data.get());
 }
     
 PassRefPtr<ShareableResource> ShareableResource::create(PassRefPtr<SharedMemory> sharedMemory, unsigned offset, unsigned size)

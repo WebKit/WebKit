@@ -84,7 +84,7 @@ public:
 
     // Create a shared memory object with the given size by vm_copy'ing the given buffer.
     // Will return 0 on failure.
-    static PassRefPtr<SharedMemory> createWithVMCopy(void*, size_t);
+    static PassRefPtr<SharedMemory> createFromVMBuffer(void*, size_t);
 
 #if OS(WINDOWS)
     static PassRefPtr<SharedMemory> adopt(HANDLE, size_t, Protection);
@@ -109,6 +109,8 @@ public:
 private:
     size_t m_size;
     void* m_data;
+    bool m_shouldVMDeallocateData;
+
 #if OS(DARWIN)
     mach_port_t m_port;
 #elif OS(WINDOWS)

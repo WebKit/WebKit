@@ -30,8 +30,10 @@
 
 #include "MessageSender.h"
 #include "SchedulableLoader.h"
+#include "ShareableResource.h"
 #include <WebCore/ResourceHandleClient.h>
 #include <WebCore/ResourceLoaderOptions.h>
+#include <WebCore/RunLoop.h>
 
 namespace WebCore {
 class ResourceBuffer;
@@ -107,8 +109,17 @@ private:
     template<typename U> bool sendSyncAbortingOnFailure(const U& message, const typename U::Reply& reply);
     void abortInProgressLoad();
 
+    void tryGetShareableHandleForResource(ShareableResource::Handle&);
+
     RefPtr<RemoteNetworkingContext> m_networkingContext;
     RefPtr<WebCore::ResourceHandle> m_handle;
+
+    uint64_t m_bytesReceived;
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    void diskCacheTimerFired();
+    WebCore::RunLoop::Timer<NetworkResourceLoader> m_diskCacheTimer;
+#endif
 };
 
 } // namespace WebKit
