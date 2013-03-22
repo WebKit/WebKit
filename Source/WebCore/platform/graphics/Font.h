@@ -297,7 +297,7 @@ private:
     }
 
 #if PLATFORM(QT)
-    void initFormatForTextLayout(QTextLayout*) const;
+    void initFormatForTextLayout(QTextLayout*, const TextRun&) const;
 #endif
 
     static TypesettingFeatures s_defaultTypesettingFeatures;

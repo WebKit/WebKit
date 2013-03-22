@@ -182,7 +182,7 @@ void Font::drawComplexText(GraphicsContext* ctx, const TextRun& run, const Float
     const QString string = fromRawDataWithoutRef(sanitized);
     QTextLayout layout(string);
     layout.setRawFont(rawFont());
-    initFormatForTextLayout(&layout);
+    initFormatForTextLayout(&layout, run);
     QTextLine line = setupLayout(&layout, run);
     const QPointF adjustedPoint(point.x(), point.y() - line.ascent());
 
@@ -206,14 +206,11 @@ float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFon
 
     QTextLayout layout(string);
     layout.setRawFont(rawFont());
-    initFormatForTextLayout(&layout);
+    initFormatForTextLayout(&layout, run);
     QTextLine line = setupLayout(&layout, run);
     float x1 = line.cursorToX(0);
     float x2 = line.cursorToX(run.length());
     float width = qAbs(x2 - x1);
-    // RenderBlockLineLayout expects us to only add word-spacing for trailing spaces, not for leading spaces.
-    if (treatAsSpace(run[0]))
-        width -= m_wordSpacing;
 
     return width + run.expansion();
 }
@@ -225,7 +222,7 @@ int Font::offsetForPositionForComplexText(const TextRun& run, float position, bo
 
     QTextLayout layout(string);
     layout.setRawFont(rawFont());
-    initFormatForTextLayout(&layout);
+    initFormatForTextLayout(&layout, run);
     QTextLine line = setupLayout(&layout, run);
     return line.xToCursor(position);
 }
@@ -237,7 +234,7 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run, const FloatPoint
 
     QTextLayout layout(string);
     layout.setRawFont(rawFont());
-    initFormatForTextLayout(&layout);
+    initFormatForTextLayout(&layout, run);
     QTextLine line = setupLayout(&layout, run);
 
     float x1 = line.cursorToX(from);
@@ -248,11 +245,17 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run, const FloatPoint
     return FloatRect(pt.x() + x1, pt.y(), x2 - x1, h);
 }
 
-void Font::initFormatForTextLayout(QTextLayout* layout) const
+void Font::initFormatForTextLayout(QTextLayout* layout, const TextRun& run) const
 {
     QTextLayout::FormatRange range;
-    range.start = 0;
-    range.length = layout->text().length();
+    // WebCore expects word-spacing to be ignored on leading spaces contrary to what Qt does.
+    // To avoid word-spacing on any leading spaces, we exclude them from FormatRange which
+    // word-spacing along with other options would be applied to. This is safe since the other
+    // formatting options does not affect spaces.
+    unsigned length = layout->text().length();
+    for (range.start = 0; treatAsSpace(run[range.start]) && range.start < length; ++range.start) { }
+    range.length = length - range.start;
+
     if (m_wordSpacing)
         range.format.setFontWordSpacing(m_wordSpacing);
     if (m_letterSpacing)
@@ -262,7 +265,7 @@ void Font::initFormatForTextLayout(QTextLayout* layout) const
     if (isSmallCaps())
         range.format.setFontCapitalization(QFont::SmallCaps);
 
-    if (range.format.propertyCount())
+    if (range.format.propertyCount() && range.length)
         layout->setAdditionalFormats(QList<QTextLayout::FormatRange>() << range);
 }
 
