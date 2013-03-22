@@ -273,6 +273,11 @@ use?(libjpeg): LIBS += -ljpeg
 use?(libpng): LIBS += -lpng
 use?(webp): LIBS += -lwebp
 
+enable?(opencl) {
+    LIBS += -lOpenCL
+    INCLUDEPATH += $$SOURCE_DIR/platform/graphics/gpu/opencl
+}
+
 mac {
     LIBS += -framework Carbon -framework AppKit -framework IOKit
 }
@@ -319,12 +324,6 @@ mac {
 unix:!mac:*-g++*:QMAKE_CXXFLAGS += -fdata-sections
 unix:!mac:*-g++*:QMAKE_LFLAGS += -Wl,--gc-sections
 linux*-g++*:QMAKE_LFLAGS += $$QMAKE_LFLAGS_NOUNDEF
-
-contains(DEFINES, ENABLE_OPENCL=1) {
-    LIBS += -lOpenCL
-
-    INCLUDEPATH += $$SOURCE_DIR/platform/graphics/gpu/opencl
-}
 
 enable_fast_mobile_scrolling: DEFINES += ENABLE_FAST_MOBILE_SCROLLING=1
 

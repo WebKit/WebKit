@@ -474,8 +474,14 @@ OpenCLHandle FilterEffect::createOpenCLImageResult(uint8_t* source)
     clImageFormat.image_channel_data_type = CL_UNORM_INT8;
 
     int errorCode = 0;
+#ifdef CL_API_SUFFIX__VERSION_1_2
+    cl_image_desc imageDescriptor = { CL_MEM_OBJECT_IMAGE2D, m_absolutePaintRect.width(), m_absolutePaintRect.height(), 0, 0, 0, 0, 0, 0, 0};
+    m_openCLImageResult = clCreateImage(context->deviceContext(), CL_MEM_READ_WRITE | (source ? CL_MEM_COPY_HOST_PTR : 0),
+        &clImageFormat, &imageDescriptor, source, &errorCode);
+#else
     m_openCLImageResult = clCreateImage2D(context->deviceContext(), CL_MEM_READ_WRITE | (source ? CL_MEM_COPY_HOST_PTR : 0),
         &clImageFormat, m_absolutePaintRect.width(), m_absolutePaintRect.height(), 0, source, &errorCode);
+#endif
     if (context->isFailed(errorCode))
         return 0;
 

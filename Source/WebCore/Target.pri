@@ -4254,7 +4254,7 @@ contains(CONFIG, opengl-shims) {
     DEFINES += QT_OPENGL_SHIMS=1
 }
 
-contains(DEFINES, ENABLE_OPENCL=1) {
+enable?(opencl) {
     HEADERS += \
         platform/graphics/gpu/opencl/OpenCLHandle.h \
         platform/graphics/gpu/opencl/FilterContextOpenCL.h

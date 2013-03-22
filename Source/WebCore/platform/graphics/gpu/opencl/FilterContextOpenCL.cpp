@@ -136,8 +136,13 @@ OpenCLHandle FilterContextOpenCL::createOpenCLImage(IntSize paintSize)
     clImageFormat.image_channel_order = CL_RGBA;
     clImageFormat.image_channel_data_type = CL_UNORM_INT8;
 
+#ifdef CL_API_SUFFIX__VERSION_1_2
+    cl_image_desc imageDescriptor = { CL_MEM_OBJECT_IMAGE2D, paintSize.width(), paintSize.height(), 0, 0, 0, 0, 0, 0, 0};
+    OpenCLHandle image = clCreateImage(context->deviceContext(), CL_MEM_READ_WRITE, &clImageFormat, &imageDescriptor, 0, 0);
+#else
     OpenCLHandle image = clCreateImage2D(context->deviceContext(), CL_MEM_READ_WRITE, &clImageFormat,
         paintSize.width(), paintSize.height(), 0, 0, 0);
+#endif
     return image;
 }
 
