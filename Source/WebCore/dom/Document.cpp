@@ -2679,7 +2679,7 @@ void Document::updateBaseURL()
         // The documentURI attribute is read-only from JavaScript, but writable from Objective C, so we need to retain
         // this fallback behavior. We use a null base URL, since the documentURI attribute is an arbitrary string
         // and DOM 3 Core does not specify how it should be resolved.
-        m_baseURL = KURL(KURL(), documentURI());
+        m_baseURL = KURL(ParsedURLString, documentURI());
     }
     selectorQueryCache()->invalidate();
 

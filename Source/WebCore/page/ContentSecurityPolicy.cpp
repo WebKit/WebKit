@@ -1691,7 +1691,7 @@ static void gatherSecurityPolicyViolationEventData(SecurityPolicyViolationEventI
     const ScriptCallFrame& callFrame = getFirstNonNativeFrame(stack);
 
     if (callFrame.lineNumber()) {
-        KURL source = KURL(KURL(), callFrame.sourceURL());
+        KURL source = KURL(ParsedURLString, callFrame.sourceURL());
         init.sourceURL = source.string();
         init.lineNumber = callFrame.lineNumber();
     }
@@ -1759,7 +1759,7 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
         const ScriptCallFrame& callFrame = getFirstNonNativeFrame(stack);
 
         if (callFrame.lineNumber()) {
-            KURL source = KURL(KURL(), callFrame.sourceURL());
+            KURL source = KURL(ParsedURLString, callFrame.sourceURL());
             cspReport->setString("source-file", document->securityOrigin()->canRequest(source) ? source.strippedForUseAsReferrer() : SecurityOrigin::create(source)->toString());
             cspReport->setNumber("line-number", callFrame.lineNumber());
         }
