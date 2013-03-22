@@ -52,6 +52,7 @@
 #include "ViewportArguments.h"
 #include <wtf/Deque.h>
 #include <wtf/FixedArray.h>
+#include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -1209,6 +1210,8 @@ public:
     Document* templateDocumentHost() { return m_templateDocumentHost; }
 #endif
 
+    void didAssociateFormControl(Element*);
+
     virtual void addConsoleMessage(MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier = 0);
 
     virtual const SecurityOrigin* topOrigin() const OVERRIDE;
@@ -1296,6 +1299,8 @@ private:
 
     void addListenerType(ListenerType listenerType) { m_listenerTypes |= listenerType; }
     void addMutationEventListenerTypeIfEnabled(ListenerType);
+
+    void didAssociateFormControlsTimerFired(Timer<Document>*);
 
     void styleResolverThrowawayTimerFired(Timer<Document>*);
     Timer<Document> m_styleResolverThrowawayTimer;
@@ -1592,6 +1597,10 @@ private:
 #if ENABLE(FONT_LOAD_EVENTS)
     RefPtr<FontLoader> m_fontloader;
 #endif
+
+    Timer<Document> m_didAssociateFormControlsTimer;
+    HashSet<Element*> m_associatedFormControls;
+
 };
 
 inline void Document::notifyRemovePendingSheetIfNeeded()

@@ -208,6 +208,9 @@ public:
     virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const { return false; }
     
     virtual bool isEmptyChromeClient() const { return true; }
+
+    virtual void didAssociateFormControls(const Vector<Element*>&) { }
+    virtual bool shouldNotifyOnFormChanges() { return false; }
 };
 
 class EmptyFrameLoaderClient : public FrameLoaderClient {

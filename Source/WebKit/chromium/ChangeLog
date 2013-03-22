@@ -1,3 +1,25 @@
+2013-03-22  Dane Wallinga  <dgwallinga@chromium.org>
+
+        Add client callbacks to notify of changes of associated from controls
+        https://bugs.webkit.org/show_bug.cgi?id=110375
+
+        Reviewed by Ryosuke Niwa.
+
+        Implement form association methods of ChromeClient
+        to inform autofill of form changes after a page has loaded
+
+        * public/WebAutofillClient.h:
+        (WebAutofillClient):
+        (WebKit::WebAutofillClient::didAssociateInput):
+        (WebKit::WebAutofillClient::didAddForm):
+        (WebKit::WebAutofillClient::didAssociateFormControls):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::didAssociateFormControls):
+        (WebKit):
+        (WebKit::ChromeClientImpl::shouldNotifyOnFormChanges):
+        * src/ChromeClientImpl.h:
+        (ChromeClientImpl):
+
 2013-03-22  Alec Flett  <alecflett@chromium.org>
 
         [chromium] Support Quota API in Worker

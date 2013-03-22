@@ -234,6 +234,9 @@ public:
     virtual bool isPointerLocked();
 #endif
 
+    virtual void didAssociateFormControls(const Vector<WebCore::Element*>&) OVERRIDE;
+    virtual bool shouldNotifyOnFormChanges() OVERRIDE;
+
 private:
     WebNavigationPolicy getNavigationPolicy();
     void getPopupMenuInfo(WebCore::PopupContainer*, WebPopupMenuInfo*);

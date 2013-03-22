@@ -77,6 +77,7 @@
 #include "Settings.h"
 #include "TextFieldDecorationElement.h"
 #include "WebAccessibilityObject.h"
+#include "WebAutofillClient.h"
 #if ENABLE(INPUT_TYPE_COLOR)
 #include "WebColorChooser.h"
 #endif
@@ -1143,6 +1144,22 @@ void ChromeClientImpl::annotatedRegionsChanged()
         client->draggableRegionsChanged();
 }
 #endif
+
+void ChromeClientImpl::didAssociateFormControls(const Vector<Element*>& elements)
+{
+    if (!m_webView->autofillClient())
+        return;
+    WebVector<WebNode> elementVector(static_cast<size_t>(elements.size()));
+    size_t elementsCount = elements.size();
+    for (size_t i = 0; i < elementsCount; ++i)
+        elementVector[i] = elements[i];
+    m_webView->autofillClient()->didAssociateFormControls(elementVector);
+}
+
+bool ChromeClientImpl::shouldNotifyOnFormChanges()
+{
+    return true;
+}
 
 #if ENABLE(NAVIGATOR_CONTENT_UTILS)
 PassOwnPtr<NavigatorContentUtilsClientImpl> NavigatorContentUtilsClientImpl::create(WebViewImpl* webView)

@@ -40,6 +40,8 @@ class WebKeyboardEvent;
 class WebNode;
 class WebString;
 
+template <typename T> class WebVector;
+
 class WebAutofillClient {
 public:
     enum {
@@ -92,6 +94,8 @@ public:
 
     // Informs the client whether or not any subsequent text changes should be ignored.
     virtual void setIgnoreTextChanges(bool ignore) { }
+
+    virtual void didAssociateFormControls(const WebVector<WebNode>&) { }
 
 protected:
     virtual ~WebAutofillClient() { }

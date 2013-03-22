@@ -496,6 +496,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
 #if ENABLE(FONT_LOAD_EVENTS)
     , m_fontloader(0)
 #endif
+    , m_didAssociateFormControlsTimer(this, &Document::didAssociateFormControlsTimerFired)
 {
     m_printing = false;
     m_paginatedForScreen = false;
@@ -6159,5 +6160,27 @@ PassRefPtr<FontLoader> Document::fontloader()
     return m_fontloader;
 }
 #endif
+
+void Document::didAssociateFormControl(Element* element)
+{
+    if (!frame() || !frame()->page() || !frame()->page()->chrome()->client()->shouldNotifyOnFormChanges())
+        return;
+    m_associatedFormControls.add(element);
+    if (!m_didAssociateFormControlsTimer.isActive())
+        m_didAssociateFormControlsTimer.startOneShot(0);
+}
+
+void Document::didAssociateFormControlsTimerFired(Timer<Document>* timer)
+{
+    ASSERT_UNUSED(timer, timer == &m_didAssociateFormControlsTimer);
+    if (!frame() || !frame()->page())
+        return;
+
+    Vector<Element*> associatedFormControls;
+    copyToVector(m_associatedFormControls, associatedFormControls);
+
+    frame()->page()->chrome()->client()->didAssociateFormControls(associatedFormControls);
+    m_associatedFormControls.clear();
+}
 
 } // namespace WebCore
