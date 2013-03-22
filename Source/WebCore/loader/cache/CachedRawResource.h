@@ -66,6 +66,8 @@ private:
     virtual void didDownloadData(int);
 #endif
 
+    virtual void switchClientsToRevalidatedResource() OVERRIDE;
+
     unsigned long m_identifier;
 
     struct RedirectPair {

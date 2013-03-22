@@ -144,6 +144,15 @@ void CachedRawResource::didSendData(unsigned long long bytesSent, unsigned long 
         c->dataSent(this, bytesSent, totalBytesToBeSent);
 }
 
+void CachedRawResource::switchClientsToRevalidatedResource()
+{
+    ASSERT(m_loader);
+    // If we're in the middle of a successful revalidation, responseReceived() hasn't been called, so we haven't set m_identifier.
+    ASSERT(!m_identifier);
+    static_cast<CachedRawResource*>(resourceToRevalidate())->m_identifier = m_loader->identifier();
+    CachedResource::switchClientsToRevalidatedResource();
+}
+
 void CachedRawResource::setDefersLoading(bool defers)
 {
     if (m_loader)
