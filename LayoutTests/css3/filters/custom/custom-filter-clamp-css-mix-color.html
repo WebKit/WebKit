@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Tests that css_MixColor values greater than 1.0 are clamped to 1.0 before blending and compositing.</title>
+    <!-- The test passes if there is a green square. If the square is a different color, the test fails. -->
+    <script>
+        if (window.testRunner) {
+            window.testRunner.overridePreference("WebKitCSSCustomFilterEnabled", "1");
+            window.testRunner.overridePreference("WebKitWebGLEnabled", "1");
+            window.testRunner.waitUntilDone();
+        }
+
+        function runTest() {
+            // We need to run the test after the shaders are downloaded.
+            if (window.testRunner)
+                window.testRunner.notifyDone();
+        }
+    </script>
+    <style type="text/css">
+        #filter-target {
+            background-color: rgb(10%, 50%, 100%);
+            width: 100px;
+            height: 100px;
+            -webkit-filter: custom(none mix(url('../resources/mix-color.fs') multiply copy), mix_color 10.0 1.0 0.0 1.0);
+        }
+    </style>
+</head>
+<body onload="runTest()">
+    <!--
+        Initial values:
+            Cb = (0.1, 0.5, 1.0)
+            Cs = (10.0, 1.0, 0.0)
+
+        Correct result:
+
+            Clamp Cs:
+                Cs = (1.0, 1.0, 0.0)
+
+            Multiply blend mode:
+                B(Cb, Cs) = Cb * Cs
+                B(Cb, Cs) = (0.1, 0.5, 1.0) * (1.0, 1.0, 0.0)
+                B(Cb, Cs) = (0.1, 0.5, 0.0) => Green
+
+        Incorrect result:
+
+            Use unclamped Cs:
+                Cs = (10.0, 1.0, 0.0)
+
+            Multiply blend mode:
+                B(Cb, Cs) = Cb * Cs
+                B(Cb, Cs) = (0.1, 0.5, 1.0) * (10.0, 1.0, 0.0)
+                B(Cb, Cs) = (1.0, 0.5, 0.0) => Orange
+
+        If the custom filter fails to apply, the result will simply be the backdrop color:
+                Cb = (0.1, 0.5, 1.0) => Blue
+    -->
+    <div id="filter-target"></div>
+</body>
+</html>

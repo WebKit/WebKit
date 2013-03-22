@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Tests that negative css_MixColor values are clamped to 0.0 before blending and compositing.</title>
+    <!--
+        This is the reference file for the test.
+        The test passes if there is a black square. If the square is a different color, the test fails.
+    -->
+    <style type="text/css">
+        #filter-target {
+            background-color: rgb(0%, 0%, 0%);
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div id="filter-target"></div>
+</body>
+</html>
