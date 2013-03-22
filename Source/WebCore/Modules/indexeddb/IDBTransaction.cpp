@@ -116,8 +116,8 @@ IDBTransaction::IDBTransaction(ScriptExecutionContext* context, int64_t id, cons
 
 IDBTransaction::~IDBTransaction()
 {
-    ASSERT(m_state == Finished);
-    ASSERT(m_requestList.isEmpty());
+    ASSERT(m_state == Finished || m_contextStopped);
+    ASSERT(m_requestList.isEmpty() || m_contextStopped);
 }
 
 const String& IDBTransaction::mode() const
