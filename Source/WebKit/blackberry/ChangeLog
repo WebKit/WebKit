@@ -1,3 +1,49 @@
+2013-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [BlackBerry] Add custom BackForwardList client implementation
+        https://bugs.webkit.org/show_bug.cgi?id=113024
+
+        Reviewed by Rob Buis.
+
+        PR 310030
+        Internally reviewed by Joe Mason.
+
+        Adds a new class BackForwardListBlackBerry that implements
+        BackForwardList client and wraps the BackForwardListImpl including
+        the BlackBerry specific changes to notify the API layer when the
+        BackForwardList changes.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init): Create a
+        BackForwardListBlackBerry.
+        (BlackBerry::WebKit::WebPage::getBackForwardList): Use
+        BackForwardListBlackBerry instead of BackForwardListImpl.
+        (BlackBerry::WebKit::WebPage::clearBackForwardList): Ditto.
+        * WebCoreSupport/BackForwardListBlackBerry.cpp: Added.
+        (WebCore):
+        (WebCore::BackForwardListBlackBerry::BackForwardListBlackBerry):
+        (WebCore::BackForwardListBlackBerry::~BackForwardListBlackBerry):
+        (WebCore::BackForwardListBlackBerry::current):
+        (WebCore::BackForwardListBlackBerry::notifyBackForwardListChanged):
+        (WebCore::BackForwardListBlackBerry::addItem):
+        (WebCore::BackForwardListBlackBerry::goToItem):
+        (WebCore::BackForwardListBlackBerry::itemAtIndex):
+        (WebCore::BackForwardListBlackBerry::backListCount):
+        (WebCore::BackForwardListBlackBerry::forwardListCount):
+        (WebCore::BackForwardListBlackBerry::isActive):
+        (WebCore::BackForwardListBlackBerry::close):
+        (WebCore::BackForwardListBlackBerry::clear):
+        (WebCore::BackForwardListBlackBerry::entries):
+        (WebCore::BackForwardListBlackBerry::currentItem):
+        * WebCoreSupport/BackForwardListBlackBerry.h: Added.
+        (WebKit):
+        (WebCore):
+        (BackForwardListBlackBerry):
+        (WebCore::BackForwardListBlackBerry::create):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        * WebCoreSupport/FrameLoaderClientBlackBerry.h:
+        (FrameLoaderClientBlackBerry):
+
 2013-03-21  Iris Wu  <shuwu@blackberry.com>
 
         [BlackBerry] Last paragraph can't be selected by touch hold selection if there is no new line after it in subframe.

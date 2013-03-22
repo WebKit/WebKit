@@ -22,7 +22,6 @@
 #include "AboutData.h"
 #include "AutofillManager.h"
 #include "BackForwardController.h"
-#include "BackForwardListImpl.h"
 #include "BackingStoreClient.h"
 #include "BackingStore_p.h"
 #include "Chrome.h"
@@ -126,22 +125,6 @@ int FrameLoaderClientBlackBerry::playerId() const
 bool FrameLoaderClientBlackBerry::cookiesEnabled() const
 {
     return m_webPagePrivate->m_webSettings->areCookiesEnabled();
-}
-
-void FrameLoaderClientBlackBerry::dispatchDidAddBackForwardItem(HistoryItem* item) const
-{
-    // Inform the client that the back/forward list has changed.
-    invalidateBackForwardList();
-}
-
-void FrameLoaderClientBlackBerry::dispatchDidRemoveBackForwardItem(HistoryItem* item) const
-{
-    invalidateBackForwardList();
-}
-
-void FrameLoaderClientBlackBerry::dispatchDidChangeBackForwardIndex() const
-{
-    invalidateBackForwardList();
 }
 
 void FrameLoaderClientBlackBerry::dispatchDidChangeLocationWithinPage()
@@ -958,21 +941,6 @@ bool FrameLoaderClientBlackBerry::shouldGoToHistoryItem(HistoryItem*) const
 bool FrameLoaderClientBlackBerry::shouldStopLoadingForHistoryItem(HistoryItem*) const
 {
     return true;
-}
-
-void FrameLoaderClientBlackBerry::invalidateBackForwardList() const
-{
-    notifyBackForwardListChanged();
-}
-
-void FrameLoaderClientBlackBerry::notifyBackForwardListChanged() const
-{
-    BackForwardListImpl* backForwardList = static_cast<BackForwardListImpl*>(m_webPagePrivate->m_page->backForward()->client());
-    ASSERT(backForwardList);
-
-    unsigned listSize = backForwardList->entries().size();
-    unsigned currentIndex = backForwardList->backListCount();
-    m_webPagePrivate->m_client->resetBackForwardList(listSize, currentIndex);
 }
 
 Frame* FrameLoaderClientBlackBerry::dispatchCreatePage(const NavigationAction& navigation)

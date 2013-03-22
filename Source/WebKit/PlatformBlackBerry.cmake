@@ -97,6 +97,7 @@ list(APPEND WebKit_SOURCES
     blackberry/Api/WebViewportArguments.cpp
     blackberry/Api/JavaScriptVariant.cpp
     blackberry/WebCoreSupport/AutofillManager.cpp
+    blackberry/WebCoreSupport/BackForwardListBlackBerry.cpp
     blackberry/WebCoreSupport/CacheClientBlackBerry.cpp
     blackberry/WebCoreSupport/ChromeClientBlackBerry.cpp
     blackberry/WebCoreSupport/ClientExtension.cpp

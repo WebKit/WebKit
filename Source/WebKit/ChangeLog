@@ -1,3 +1,15 @@
+2013-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [BlackBerry] Add custom BackForwardList client implementation
+        https://bugs.webkit.org/show_bug.cgi?id=113024
+
+        Reviewed by Rob Buis.
+
+        PR 310030
+        Internally reviewed by Joe Mason.
+
+        * PlatformBlackBerry.cmake: Add new files to compilation.
+
 2013-03-21  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Move common props files for VS2010 solution to WebKitLibraries folder and update all projects accordingly.
