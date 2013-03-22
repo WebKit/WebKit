@@ -90,6 +90,16 @@
       },
     },
     {
+      'target_name': 'gstreamer',
+      'type': 'none',
+      'direct_dependent_settings': {
+        'cflags': [ '<@(GSTREAMER_CFLAGS)' ],
+        'link_settings': {
+          'libraries' : [ '<@(GSTREAMER_LIBS)' ],
+        },
+      },
+    },
+    {
       'target_name': 'gtk2',
       'type': 'none',
       'direct_dependent_settings': {

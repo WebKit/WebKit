@@ -93,6 +93,39 @@
 
   'targets': [
     {
+      'target_name': 'WebCoreDependencies',
+      'type': 'none',
+      'dependencies': [
+        '<(Dependencies):cairo',
+        '<(Dependencies):freetype',
+        '<(Dependencies):gail',
+        '<(Dependencies):glib',
+        '<(Dependencies):gstreamer',
+        '<(Dependencies):gtk',
+        '<(Dependencies):icu',
+        '<(Dependencies):libsoup',
+        '<(Dependencies):libsecret',
+        '<(Source)/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCoreGTK.gyp:libjavascriptcoregtk',
+        '<(Source)/WTF/WTF.gyp/WTFGTK.gyp:wtf',
+        '<(Source)/ThirdParty/ANGLE/ANGLE.gyp/ANGLE.gyp:angle',
+        'WebCoreBindingsSources',
+      ],
+      'export_dependent_settings': [
+        '<(Dependencies):cairo',
+        '<(Dependencies):freetype',
+        '<(Dependencies):gail',
+        '<(Dependencies):glib',
+        '<(Dependencies):gstreamer',
+        '<(Dependencies):gtk',
+        '<(Dependencies):icu',
+        '<(Dependencies):libsoup',
+        '<(Dependencies):libsecret',
+        '<(Source)/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCoreGTK.gyp:libjavascriptcoregtk',
+        '<(Source)/WTF/WTF.gyp/WTFGTK.gyp:wtf',
+        '<(Source)/ThirdParty/ANGLE/ANGLE.gyp/ANGLE.gyp:angle',
+      ],
+    },
+    {
       'target_name': 'InspectorProtocolSources',
       'type': 'none',
       'dependencies': [
@@ -741,31 +774,13 @@
       'type': 'static_library',
       'hard_dependency': 1,
       'dependencies': [
-        '<(Dependencies):glib',
-        '<(Dependencies):icu',
-        '<(Dependencies):libsoup',
-        '<(Dependencies):cairo',
-        '<(Dependencies):freetype',
-        'WebCoreBindingsSources',
+        'WebCoreDependencies',
         'InjectedScriptSource',
         'InjectedScriptCanvasModuleSource',
         'InspectorOverlayPage',
         'InspectorProtocolSources',
-        '<(Source)/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCoreGTK.gyp:libjavascriptcoregtk',
-        '<(Source)/WTF/WTF.gyp/WTFGTK.gyp:wtf',
-        '<(Source)/ThirdParty/ANGLE/ANGLE.gyp/ANGLE.gyp:angle',
       ],
-      'include_dirs': [
-        '<@(webcoregtk_include_dirs)',
-        '<(webcore_derived_sources_directory)',
-        '<(webcore_derived_sources_directory)/bindings',
-      ],
-      'direct_dependent_settings': {
-        'include_dirs': [
-          '<(SHARED_INTERMEDIATE_DIR)/WebCore',
-          '<(SHARED_INTERMEDIATE_DIR)/WebCore/bindings',
-        ],
-      },
+      'include_dirs': [ '<@(webcoregtk_include_dirs)', ],
       'sources': [
         '<@(webcore_derived_source_files)',
       ],
@@ -780,7 +795,24 @@
         }],
       ],
     },
-
+    {
+      'target_name': 'WebCoreHTML',
+      'type': 'static_library',
+      'dependencies': [ 'WebCoreDependencies', ],
+      'include_dirs': [ '<@(webcoregtk_include_dirs)', ],
+      'sources': [ '<@(webcore_html_files)', ],
+      'sources/': [
+        ['exclude', 'AllInOne\\.cpp$'],
+        ['exclude', 'Android\\.cpp$'],
+      ],
+    },
+    {
+      'target_name': 'WebCore',
+      'type': 'none',
+      'dependencies': [ 
+        'WebCoreHTML',
+        'WebCoreBindings',
+      ],
+    },
   ],
 }
-
