@@ -338,6 +338,7 @@ static inline bool isCSSTokenAString(int yytype)
 %type <string> attr_name
 
 %type <location> errors
+%type <location> error_location
 
 %%
 
@@ -1557,10 +1558,12 @@ declaration_list:
         parser->syntaxError($1);
         $$ = false;
     }
-    | decl_list error {
+    | decl_list errors {
+        parser->syntaxError($2);
         $$ = $1;
     }
-    | decl_list invalid_block_list {
+    | decl_list error_location invalid_block_list {
+        parser->syntaxError($2);
         $$ = $1;
     }
     ;
@@ -1570,10 +1573,12 @@ decl_list:
         parser->markPropertyStart();
         $$ = $1;
     }
-    | declaration invalid_block_list maybe_space {
+    | declaration error_location invalid_block_list maybe_space {
+        parser->syntaxError($2);
         $$ = false;
     }
-    | declaration invalid_block_list ';' maybe_space {
+    | declaration error_location invalid_block_list ';' maybe_space {
+        parser->syntaxError($2);
         $$ = false;
     }
     | errors ';' maybe_space {
@@ -1591,11 +1596,13 @@ decl_list:
         if ($2)
             $$ = $2;
     }
-    | decl_list error ';' maybe_space {
+    | decl_list errors ';' maybe_space {
+        parser->syntaxError($2);
         parser->markPropertyStart();
         $$ = $1;
     }
-    | decl_list error invalid_block_list error ';' maybe_space {
+    | decl_list errors invalid_block_list error ';' maybe_space {
+        parser->syntaxError($2);
         parser->markPropertyStart();
         $$ = $1;
     }
@@ -1628,14 +1635,16 @@ declaration:
         parser->markPropertyEnd($5, isPropertyParsed);
     }
     |
-    property error {
+    property errors {
+        parser->syntaxError($2);
         $$ = false;
     }
     |
-    property ':' maybe_space error expr prio {
+    property ':' maybe_space errors expr prio {
         /* The default movable type template has letter-spacing: .none;  Handle this by looking for
         error tokens at the start of an expr, recover the expr and then treat as an error, cleaning
         up and deleting the shifted expr.  */
+        parser->syntaxError($4);
         parser->markPropertyEnd(false, false);
         $$ = false;
     }
@@ -1646,25 +1655,29 @@ declaration:
         $$ = false;
     }
     |
-    IMPORTANT_SYM maybe_space {
+    IMPORTANT_SYM maybe_space error_location {
         /* Handle this case: div { text-align: center; !important } Just reduce away the stray !important. */
+        parser->syntaxError($3);
         $$ = false;
     }
     |
-    property ':' maybe_space {
+    property ':' maybe_space error_location {
         /* div { font-family: } Just reduce away this property with no value. */
+        parser->syntaxError($4);
         parser->markPropertyEnd(false, false);
         $$ = false;
     }
     |
-    property ':' maybe_space error {
+    property ':' maybe_space errors {
         /* if we come across rules with invalid values like this case: p { weight: *; }, just discard the rule */
+        parser->syntaxError($4);
         parser->markPropertyEnd(false, false);
         $$ = false;
     }
     |
-    property invalid_block {
+    property error_location invalid_block {
         /* if we come across: div { color{;color:maroon} }, ignore everything within curly brackets */
+        parser->syntaxError($2);
         $$ = false;
     }
   ;
@@ -2025,6 +2038,11 @@ errors:
     }
   | errors error {
         $$ = $1;
+    }
+    ;
+
+error_location: {
+        $$ = parser->currentLocation();
     }
     ;
 
