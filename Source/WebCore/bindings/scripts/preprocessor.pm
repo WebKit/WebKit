@@ -66,6 +66,7 @@ sub applyPreprocessor
     if ($Config{osname} eq "cygwin" || $Config{osname} eq 'MSWin32') {
         # This call can fail if Windows rebases cygwin, so retry a few times until it succeeds.
         for (my $tries = 0; !$pid && ($tries < 20); $tries++) {
+            system("TASKKILL /F /T /IM gcc-3.exe>nul 2>&1");
             eval {
                 # Suppress STDERR so that if we're using cl.exe, the output
                 # name isn't needlessly echoed.
@@ -73,6 +74,7 @@ sub applyPreprocessor
                 $pid = open3(\*PP_IN, \*PP_OUT, $err, split(' ', $preprocessor), @args, @macros, $fileName);
                 1;
             } or do {
+                print "Failed GCC attempt";
                 sleep 1;
             }
         };
