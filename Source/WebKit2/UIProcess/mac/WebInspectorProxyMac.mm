@@ -250,6 +250,8 @@ void WebInspectorProxy::createInspectorWindow()
     [window setContentBorderThickness:windowContentBorderThickness forEdge:NSMaxYEdge];
     WKNSWindowMakeBottomCornersSquare(window);
 
+    m_inspectorWindow.adoptNS(window);
+
     NSView *contentView = [window contentView];
 
     // Create a full screen button so we can turn it into a dock button.
@@ -297,8 +299,6 @@ void WebInspectorProxy::createInspectorWindow()
     // Center the window if the saved frame was empty.
     if (NSIsEmptyRect(savedWindowFrame))
         [window center];
-
-    m_inspectorWindow.adoptNS(window);
 
     updateInspectorWindowTitle();
 }

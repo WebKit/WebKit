@@ -1,3 +1,16 @@
+2013-03-22  Timothy Hatcher  <timothy@apple.com>
+
+        Fix an assert when opening the Web Inspector window for the first time.
+
+        rdar://problem/13471765
+        https://webkit.org/b/113053
+
+        Reviewed by Eric Carlson.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::createInspectorWindow): Assign m_inspectorWindow
+        earlier so it is ready for when center is called and windowDidMove: gets called.
+
 2013-03-21  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] Page Overlays: Don't create backing store until the client asks us to paint
