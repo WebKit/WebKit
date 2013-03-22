@@ -1,3 +1,17 @@
+2013-03-22  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [EFL][WK2] View is not focused when fullscreen mode toggled
+        https://bugs.webkit.org/show_bug.cgi?id=113009
+
+        Reviewed by Laszlo Gombos.
+
+        Set focus on view when fullscreen mode enabled/disabled
+        by FullScreen API.
+
+        * MiniBrowser/efl/main.c:
+        (on_fullscreen_accept):
+        (on_fullscreen_deny):
+
 2013-03-21  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt is no longer saving retry results in the retries/ subdirectory

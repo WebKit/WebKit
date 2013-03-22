@@ -1005,6 +1005,7 @@ on_fullscreen_accept(void *user_data, Evas_Object *obj, void *event_info)
     PermissionData *permission_data = (PermissionData *)user_data;
 
     evas_object_del(permission_data->permission_popup);
+    evas_object_focus_set(permission_data->ewk_view, EINA_TRUE);
     free(permission_data);
 }
 
@@ -1015,6 +1016,7 @@ on_fullscreen_deny(void *user_data, Evas_Object *obj, void *event_info)
 
     ewk_view_fullscreen_exit(permission_data->ewk_view);
     evas_object_del(permission_data->permission_popup);
+    evas_object_focus_set(permission_data->ewk_view, EINA_TRUE);
     free(permission_data);
 }
 
