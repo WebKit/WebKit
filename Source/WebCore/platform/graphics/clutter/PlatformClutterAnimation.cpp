@@ -433,11 +433,14 @@ void PlatformClutterAnimation::addClutterTransitionForProperty(const String& pro
 {
     ASSERT(property != "NoProperty");
 
-    GType gType = (property == "opacity" ? G_TYPE_UINT : G_TYPE_FLOAT);
-
     GRefPtr<ClutterTransition> transition = adoptGRef(clutter_property_transition_new(property.utf8().data()));
-    clutter_transition_set_from(transition.get(), gType, (gType == G_TYPE_UINT ? static_cast<unsigned>(fromValue) : fromValue));
-    clutter_transition_set_to(transition.get(), gType, (gType == G_TYPE_UINT ? static_cast<unsigned>(toValue) : toValue));
+    if (property == "opacity") {
+        clutter_transition_set_from(transition.get(), G_TYPE_UINT, static_cast<unsigned>(fromValue));
+        clutter_transition_set_to(transition.get(), G_TYPE_UINT, static_cast<unsigned>(toValue));
+    } else {
+        clutter_transition_set_from(transition.get(), G_TYPE_FLOAT, fromValue);
+        clutter_transition_set_to(transition.get(), G_TYPE_FLOAT, toValue);
+    }
 
     clutter_timeline_set_progress_mode(timeline(), toClutterAnimationMode(m_timingFunction));
 
@@ -490,8 +493,13 @@ void PlatformClutterAnimation::addClutterKeyframeTransitionForProperty(const Str
     GType gType = (property == "opacity" ? G_TYPE_UINT : G_TYPE_FLOAT);
 
     GRefPtr<ClutterTransition> transition = adoptGRef(clutter_keyframe_transition_new(property.utf8().data()));
-    clutter_transition_set_from(transition.get(), gType, values.first());
-    clutter_transition_set_to(transition.get(), gType, values.last());
+    if (gType == G_TYPE_UINT) {
+        clutter_transition_set_from(transition.get(), gType, static_cast<unsigned>(values.first()));
+        clutter_transition_set_to(transition.get(), gType, static_cast<unsigned>(values.last()));
+    } else {
+        clutter_transition_set_from(transition.get(), gType, values.first());
+        clutter_transition_set_to(transition.get(), gType, values.last());
+    }
 
     // Ignore the first keyframe, since it's a '0' frame, meaningless.
     const unsigned nKeyframes = values.size() - 1;
