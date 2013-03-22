@@ -39,7 +39,6 @@
 #include "HistogramSupport.h"
 #include "LineEnding.h"
 #include "ScriptCallStack.h"
-#include "ScriptExecutionContext.h"
 #include "TextEncoding.h"
 #include <wtf/ArrayBuffer.h>
 #include <wtf/ArrayBufferView.h>
@@ -89,11 +88,8 @@ void BlobBuilder::append(const String& text, const String& endingType)
 }
 
 #if ENABLE(BLOB)
-void BlobBuilder::append(ScriptExecutionContext* context, ArrayBuffer* arrayBuffer)
+void BlobBuilder::append(ArrayBuffer* arrayBuffer)
 {
-    String consoleMessage("ArrayBuffer values are deprecated in Blob Constructor. Use ArrayBufferView instead.");
-    context->addConsoleMessage(JSMessageSource, WarningMessageLevel, consoleMessage);
-
     HistogramSupport::histogramEnumeration("WebCore.Blob.constructor.ArrayBufferOrView", BlobConstructorArrayBuffer, BlobConstructorArrayBufferOrViewMax);
 
     if (!arrayBuffer)

@@ -53,8 +53,6 @@ v8::Handle<v8::Object> wrap(Blob* impl, v8::Handle<v8::Object> creationContext, 
 
 v8::Handle<v8::Value> V8Blob::constructorCustom(const v8::Arguments& args)
 {
-    ScriptExecutionContext* context = getScriptExecutionContext();
-
     if (!args.Length()) {
         RefPtr<Blob> blob = Blob::create();
         return toV8(blob.get(), args.Holder(), args.GetIsolate());
@@ -100,7 +98,7 @@ v8::Handle<v8::Value> V8Blob::constructorCustom(const v8::Arguments& args)
         if (V8ArrayBuffer::HasInstance(item, args.GetIsolate(), worldType(args.GetIsolate()))) {
             ArrayBuffer* arrayBuffer = V8ArrayBuffer::toNative(v8::Handle<v8::Object>::Cast(item));
             ASSERT(arrayBuffer);
-            blobBuilder.append(context, arrayBuffer);
+            blobBuilder.append(arrayBuffer);
         } else if (V8ArrayBufferView::HasInstance(item, args.GetIsolate(), worldType(args.GetIsolate()))) {
             ArrayBufferView* arrayBufferView = V8ArrayBufferView::toNative(v8::Handle<v8::Object>::Cast(item));
             ASSERT(arrayBufferView);

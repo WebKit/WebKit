@@ -78,3 +78,17 @@ shouldBe("new Blob([new Float32Array(100)]).size", "400");
 shouldBe("new Blob([new Float64Array(100)]).size", "800");
 shouldBe("new Blob([new Float64Array(100), new Int32Array(100), new Uint8Array(100), new DataView(new ArrayBuffer(100))]).size", "1400");
 shouldBe("new Blob([new Blob([new Int32Array(100)]), new Uint8Array(100), new Float32Array(100), new DataView(new ArrayBuffer(100))]).size", "1000");
+
+// Test ArrayBuffer Parameters
+shouldBe("new Blob([(new DataView(new ArrayBuffer(100))).buffer]).size", "100");
+shouldBe("new Blob([(new Uint8Array(100)).buffer]).size", "100");
+shouldBe("new Blob([(new Uint8ClampedArray(100)).buffer]).size", "100");
+shouldBe("new Blob([(new Uint16Array(100)).buffer]).size", "200");
+shouldBe("new Blob([(new Uint32Array(100)).buffer]).size", "400");
+shouldBe("new Blob([(new Int8Array(100)).buffer]).size", "100");
+shouldBe("new Blob([(new Int16Array(100)).buffer]).size", "200");
+shouldBe("new Blob([(new Int32Array(100)).buffer]).size", "400");
+shouldBe("new Blob([(new Float32Array(100)).buffer]).size", "400");
+shouldBe("new Blob([(new Float64Array(100)).buffer]).size", "800");
+shouldBe("new Blob([(new Float64Array(100)).buffer, (new Int32Array(100)).buffer, (new Uint8Array(100)).buffer, (new DataView(new ArrayBuffer(100))).buffer]).size", "1400");
+shouldBe("new Blob([new Blob([(new Int32Array(100)).buffer]), (new Uint8Array(100)).buffer, (new Float32Array(100)).buffer, (new DataView(new ArrayBuffer(100))).buffer]).size", "1000");

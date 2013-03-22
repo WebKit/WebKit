@@ -120,7 +120,7 @@ EncodedJSValue JSC_HOST_CALL JSBlobConstructor::constructJSBlob(ExecState* exec)
         JSValue item = array->getIndex(exec, i);
 #if ENABLE(BLOB)
         if (item.inherits(&JSArrayBuffer::s_info))
-            blobBuilder.append(context, toArrayBuffer(item));
+            blobBuilder.append(toArrayBuffer(item));
         else if (item.inherits(&JSArrayBufferView::s_info))
             blobBuilder.append(toArrayBufferView(item));
         else
