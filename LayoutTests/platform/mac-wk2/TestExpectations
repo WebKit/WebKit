@@ -325,6 +325,10 @@ webkit.org/b/97124 [ Debug ] svg/animations/mozilla/animateMotion-by-1.svg [ Pas
 webkit.org/b/112642 [ Debug ] editing/deleting/paste-with-transparent-background-color.html [ Crash Pass ]
 webkit.org/b/112642 [ Debug ] editing/pasteboard/5780697-1.html [ Crash Pass ]
 
+webkit.org/b/113020 [ Debug ] inspector/profiler/cpu-profiler-profile-removal.html [ Crash Pass ]
+webkit.org/b/113020 [ Debug ] inspector/profiler/webgl/webgl-profiler-get-error.html [ Crash Pass ]
+webkit.org/b/113020 [ Debug ] inspector/profiler/canvas2d/canvas2d-gradient-capturing.html [ Crash Pass ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
