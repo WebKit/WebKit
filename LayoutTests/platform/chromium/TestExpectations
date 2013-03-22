@@ -2049,14 +2049,14 @@ crbug.com/28409 http/tests/xmlhttprequest/logout.html [ Failure ]
 # After removing the first ten lines, uncomment the other expectations for these tests below.
 webkit.org/b/109507 compositing/iframes/scrolling-iframe.html [ Failure ]
 webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/iframes/scrolling-iframe.html [ Failure ]
-webkit.org/b/109507 compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
-webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
-webkit.org/b/109507 compositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
-webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
-webkit.org/b/109507 compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
-webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
-webkit.org/b/109507 compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
-webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
+webkit.org/b/109507 compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ImageOnlyFailure ]
+webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ImageOnlyFailure ]
+webkit.org/b/109507 compositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ImageOnlyFailure ]
+webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ImageOnlyFailure ]
+webkit.org/b/109507 compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ImageOnlyFailure ]
+webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ImageOnlyFailure ]
+webkit.org/b/109507 compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ImageOnlyFailure ]
+webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ImageOnlyFailure ]
 webkit.org/b/109507 compositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
 webkit.org/b/109507 platform/chromium/virtual/gpu/compositedscrolling/overflow/composited-scrolling-paint-phases.html [ Failure ]
 webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
@@ -2878,10 +2878,6 @@ crbug.com/88588 fast/lists/inlineBoxWrapperNullCheck.html [ Failure Pass ]
 crbug.com/88894 http/tests/cache/subresource-expiration-1.html [ Slow ]
 crbug.com/88894 http/tests/cache/subresource-expiration-2.html [ Slow ]
 
-webkit.org/b/107935 platform/chromium/virtual/gpu/compositedscrolling/overflow/composited-scrolling-creates-a-stacking-container.html [ Failure ]
-webkit.org/b/107935 compositing/overflow/composited-scrolling-creates-a-stacking-container.html [ Failure ]
-webkit.org/b/107935 platform/chromium/virtual/softwarecompositing/overflow/composited-scrolling-creates-a-stacking-container.html [ Failure ]
-
 # V8 now follows spec on toisostring, test needs to be fixed.
 crbug.com/88936 fast/js/date-toisostring.html [ Failure ]
 
@@ -3560,7 +3556,7 @@ webkit.org/b/88833 [ Debug ] media/video-played-collapse.html [ Failure Pass ]
 
 webkit.org/b/88833 [ Win Debug ] media/track/track-kind.html [ Pass Timeout ]
 webkit.org/b/88833 http/tests/media/video-play-progress.html [ Pass Timeout ]
-webkit.org/b/88833 media/track/track-prefer-captions.html [ Slow ]
+webkit.org/b/88833 media/track/track-prefer-captions.html [ Timeout ]
 
 webkit.org/b/88832 [ XP ] http/tests/xmlhttprequest/origin-exact-matching.html [ Pass Timeout ]
 
