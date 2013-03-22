@@ -170,6 +170,11 @@ void DateTimeLocalInputType::setupLayoutParameters(DateTimeEditElement::LayoutPa
     layoutParameters.placeholderForMonth = placeholderForMonthField();
     layoutParameters.placeholderForYear = placeholderForYearField();
 }
+
+bool DateTimeLocalInputType::isValidFormat(bool hasYear, bool hasMonth, bool hasWeek, bool hasDay, bool hasAMPM, bool hasHour, bool hasMinute, bool hasSecond) const
+{
+    return hasYear && hasMonth && hasDay && hasAMPM && hasHour && hasMinute;
+}
 #endif
 
 } // namespace WebCore

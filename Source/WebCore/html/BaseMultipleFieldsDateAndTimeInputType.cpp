@@ -35,6 +35,7 @@
 #include "CSSValueKeywords.h"
 #include "DateComponents.h"
 #include "DateTimeFieldsState.h"
+#include "DateTimeFormat.h"
 #include "ElementShadow.h"
 #include "FocusController.h"
 #include "FormController.h"
@@ -52,6 +53,80 @@
 #include <wtf/DateMath.h>
 
 namespace WebCore {
+
+class DateTimeFormatValidator : public DateTimeFormat::TokenHandler {
+public:
+    DateTimeFormatValidator()
+        : m_hasYear(false)
+        , m_hasMonth(false)
+        , m_hasWeek(false)
+        , m_hasDay(false)
+        , m_hasAMPM(false)
+        , m_hasHour(false)
+        , m_hasMinute(false)
+        , m_hasSecond(false) { }
+
+    virtual void visitField(DateTimeFormat::FieldType, int) OVERRIDE FINAL;
+    virtual void visitLiteral(const String&) OVERRIDE FINAL { }
+
+    bool validateFormat(const String& format, const BaseMultipleFieldsDateAndTimeInputType&);
+
+private:
+    bool m_hasYear;
+    bool m_hasMonth;
+    bool m_hasWeek;
+    bool m_hasDay;
+    bool m_hasAMPM;
+    bool m_hasHour;
+    bool m_hasMinute;
+    bool m_hasSecond;
+};
+
+void DateTimeFormatValidator::visitField(DateTimeFormat::FieldType fieldType, int)
+{
+    switch (fieldType) {
+    case DateTimeFormat::FieldTypeYear:
+        m_hasYear = true;
+        break;
+    case DateTimeFormat::FieldTypeMonth: // Fallthrough.
+    case DateTimeFormat::FieldTypeMonthStandAlone:
+        m_hasMonth = true;
+        break;
+    case DateTimeFormat::FieldTypeWeekOfYear:
+        m_hasWeek = true;
+        break;
+    case DateTimeFormat::FieldTypeDayOfMonth:
+        m_hasDay = true;
+        break;
+    case DateTimeFormat::FieldTypePeriod:
+        m_hasAMPM = true;
+        break;
+    case DateTimeFormat::FieldTypeHour11: // Fallthrough.
+    case DateTimeFormat::FieldTypeHour12:
+        m_hasHour = true;
+        break;
+    case DateTimeFormat::FieldTypeHour23: // Fallthrough.
+    case DateTimeFormat::FieldTypeHour24:
+        m_hasHour = true;
+        m_hasAMPM = true;
+        break;
+    case DateTimeFormat::FieldTypeMinute:
+        m_hasMinute = true;
+        break;
+    case DateTimeFormat::FieldTypeSecond:
+        m_hasSecond = true;
+        break;
+    default:
+        break;
+    }
+}
+
+bool DateTimeFormatValidator::validateFormat(const String& format, const BaseMultipleFieldsDateAndTimeInputType& inputType)
+{
+    if (!DateTimeFormat::parse(format, *this))
+        return false;
+    return inputType.isValidFormat(m_hasYear, m_hasMonth, m_hasWeek, m_hasDay, m_hasAMPM, m_hasHour, m_hasMinute, m_hasSecond);
+}
 
 void BaseMultipleFieldsDateAndTimeInputType::didBlurFromControl()
 {
@@ -409,6 +484,9 @@ void BaseMultipleFieldsDateAndTimeInputType::updateInnerTextValue()
     const AtomicString pattern = m_dateTimeEditElement->fastGetAttribute(HTMLNames::patternAttr);
     if (!pattern.isEmpty())
         layoutParameters.dateTimeFormat = pattern;
+
+    if (!DateTimeFormatValidator().validateFormat(layoutParameters.dateTimeFormat, *this))
+        layoutParameters.dateTimeFormat = layoutParameters.fallbackDateTimeFormat;
 
     if (hasValue)
         m_dateTimeEditElement->setValueAsDate(layoutParameters, date);

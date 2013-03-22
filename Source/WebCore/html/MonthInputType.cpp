@@ -167,6 +167,11 @@ void MonthInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters
     layoutParameters.placeholderForMonth = "--";
     layoutParameters.placeholderForYear = "----";
 }
+
+bool MonthInputType::isValidFormat(bool hasYear, bool hasMonth, bool hasWeek, bool hasDay, bool hasAMPM, bool hasHour, bool hasMinute, bool hasSecond) const
+{
+    return hasYear && hasMonth;
+}
 #endif
 } // namespace WebCore
 

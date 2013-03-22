@@ -164,6 +164,11 @@ void DateTimeInputType::setupLayoutParameters(DateTimeEditElement::LayoutParamet
     layoutParameters.placeholderForMonth = placeholderForMonthField();
     layoutParameters.placeholderForYear = placeholderForYearField();
 }
+
+bool DateTimeInputType::isValidFormat(bool hasYear, bool hasMonth, bool hasWeek, bool hasDay, bool hasAMPM, bool hasHour, bool hasMinute, bool hasSecond) const
+{
+    return hasYear && hasMonth && hasDay && hasAMPM && hasHour && hasMinute;
+}
 #endif
 
 String DateTimeInputType::sanitizeValue(const String& proposedValue) const

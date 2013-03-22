@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../resources/common.js"></script>
+</head>
+<body>
+<script>
+description('Checks incomplete datetime formats are rejected.');
+
+var input = document.createElement('input');
+input.type = 'month';
+document.body.appendChild(input);
+
+function setDateTimeFormat(pattern) {
+    var value = input.value;
+    getElementByPseudoId(internals.youngestShadowRoot(input), '-webkit-datetime-edit').setAttribute('pattern', pattern);
+    input.value = ''; // Updates the element for new format
+    input.value = value;
+}
+
+input.value = '1999-07';
+
+debug('Valid format');
+setDateTimeFormat('MM-yyyy');
+shouldBeEqualToString('getUserAgentShadowTextContent(input)', '07-1999');
+
+debug('Invalid format, fallback to yyyy-MM');
+setDateTimeFormat('mm-yyyy');
+shouldBeEqualToString('getUserAgentShadowTextContent(input)', '1999-07');
+setDateTimeFormat('M');
+shouldBeEqualToString('getUserAgentShadowTextContent(input)', '1999-07');
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

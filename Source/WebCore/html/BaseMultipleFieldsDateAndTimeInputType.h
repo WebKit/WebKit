@@ -49,6 +49,9 @@ class BaseMultipleFieldsDateAndTimeInputType
     , protected PickerIndicatorElement::PickerIndicatorOwner
     , protected SpinButtonElement::SpinButtonOwner
     , protected ClearButtonElement::ClearButtonOwner {
+public:
+    virtual bool isValidFormat(bool hasYear, bool hasMonth, bool hasWeek, bool hasDay, bool hasAMPM, bool hasHour, bool hasMinute, bool hasSecond) const = 0;
+
 protected:
     BaseMultipleFieldsDateAndTimeInputType(HTMLInputElement*);
     virtual ~BaseMultipleFieldsDateAndTimeInputType();

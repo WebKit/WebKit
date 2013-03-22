@@ -170,6 +170,11 @@ void TimeInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&
     if (!parseToDateComponents(element()->fastGetAttribute(maxAttr), &layoutParameters.maximum))
         layoutParameters.maximum = DateComponents();
 }
+
+bool TimeInputType::isValidFormat(bool hasYear, bool hasMonth, bool hasWeek, bool hasDay, bool hasAMPM, bool hasHour, bool hasMinute, bool hasSecond) const
+{
+    return hasHour && hasMinute && hasAMPM;
+}
 #endif
 
 } // namespace WebCore

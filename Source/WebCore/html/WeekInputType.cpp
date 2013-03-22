@@ -120,6 +120,11 @@ void WeekInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&
         layoutParameters.maximum = DateComponents();
     layoutParameters.placeholderForYear = "----";
 }
+
+bool WeekInputType::isValidFormat(bool hasYear, bool hasMonth, bool hasWeek, bool hasDay, bool hasAMPM, bool hasHour, bool hasMinute, bool hasSecond) const
+{
+    return hasYear && hasWeek;
+}
 #endif
 
 } // namespace WebCore

@@ -64,6 +64,7 @@ private:
     // BaseMultipleFieldsDateAndTimeInputType functions
     virtual String formatDateTimeFieldsState(const DateTimeFieldsState&) const OVERRIDE;
     virtual void setupLayoutParameters(DateTimeEditElement::LayoutParameters&, const DateComponents&) const OVERRIDE;
+    virtual bool isValidFormat(bool hasYear, bool hasMonth, bool hasWeek, bool hasDay, bool hasAMPM, bool hasHour, bool hasMinute, bool hasSecond) const;
 #endif
 };
 
