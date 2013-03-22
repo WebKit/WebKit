@@ -1,5 +1,20 @@
 2013-03-22  David Kilzer  <ddkilzer@apple.com>
 
+        BUILD FIX (r146558): Build testapi.mm with ARC enabled for armv7s
+        <http://webkit.org/b/112608>
+
+        Fixes the following build failure:
+
+            Source/JavaScriptCore/API/tests/testapi.mm:205:1: error: method possibly missing a [super dealloc] call [-Werror,-Wobjc-missing-super-calls]
+            }
+            ^
+            1 error generated.
+
+        * Configurations/ToolExecutable.xcconfig: Enable ARC for armv7s
+        architecture.
+
+2013-03-22  David Kilzer  <ddkilzer@apple.com>
+
         Revert "BUILD FIX (r146558): Call [super dealloc] from -[TinyDOMNode dealloc]"
 
         This fixes a build failure introduced by this change:
