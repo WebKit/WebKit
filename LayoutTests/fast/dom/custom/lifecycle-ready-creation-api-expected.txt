@@ -1,0 +1,25 @@
+This test ensures that the lifecycle callbacks of API-originated elements are visible in following script block.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.createElement('x-foo').callbacksCalled is true
+PASS document.createElement('div', 'x-bar').callbacksCalled is true
+PASS document.createElementNS('http://www.w3.org/1999/xhtml', 'x-foo').callbacksCalled is true
+PASS document.createElementNS('http://www.w3.org/1999/xhtml', 'div', 'x-bar').callbacksCalled is true
+PASS foo.cloneNode().callbacksCalled is true
+PASS foo.cloneNode(true).firstChild.callbacksCalled is true
+PASS bar.cloneNode().callbacksCalled is true
+PASS bar.cloneNode(true).firstChild.callbacksCalled is true
+PASS foreignFoo.callbacksCalled is undefined.
+PASS foreignFoo.firstChild.callbacksCalled is undefined.
+PASS importedFoo.callbacksCalled is true
+PASS importedFoo.firstChild.callbacksCalled is true
+PASS window.callbacksCalled is []
+PASS importedBar.callbacksCalled is true
+PASS importedBar.firstChild.callbacksCalled is true
+PASS window.callbacksCalled is ['DIV', 'X-FOO']
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

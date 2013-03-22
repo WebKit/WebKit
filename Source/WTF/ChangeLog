@@ -1,3 +1,13 @@
+2013-03-21  Hajime Morrita  <morrita@google.com>
+
+        Custom Elements: "readyCallback" lifecycle callback should be called.
+        https://bugs.webkit.org/show_bug.cgi?id=112538
+
+        Reviewed by Elliott Sprehn.
+
+        * wtf/HashSet.h:
+        (WTF::copyToVector): Generalized to let it accept variants like ListHahsSet instead of only HashSet.
+
 2013-03-21  Mark Lam  <mark.lam@apple.com>
 
         Introducing String::findNextLineStart().

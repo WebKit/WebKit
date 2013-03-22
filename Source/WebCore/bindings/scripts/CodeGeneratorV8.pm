@@ -1256,6 +1256,25 @@ END
 END
 }
 
+sub GenerateCustomElementInvocationScopeIfNeeded
+{
+    my $out = shift;
+    my $ext = shift;
+
+    if ($ext->{"V8DeliverCustomElementCallbacks"}) {
+        if ($ext->{"Reflect"}) {
+            die "IDL error: Reflect and V8DeliverCustomElementCallbacks cannot coexist yet";
+        }
+
+        AddToImplIncludes("CustomElementRegistry.h", "CUSTOM_ELEMENTS");
+        push(@$out, <<END);
+#if ENABLE(CUSTOM_ELEMENTS)
+    CustomElementRegistry::CallbackDeliveryScope deliveryScope;
+#endif
+END
+    }
+}
+
 sub GenerateNormalAttrSetterCallback
 {
     my $attribute = shift;
@@ -1403,6 +1422,8 @@ END
     if ($codeGenerator->IsRefPtrType($returnType) && !$codeGenerator->GetArrayType($returnType)) {
         $result = "WTF::getPtr(" . $result . ")";
     }
+
+    GenerateCustomElementInvocationScopeIfNeeded(\@implContentInternals, $attribute->signature->extendedAttributes);
 
     my $useExceptions = 1 if @{$attribute->setterExceptions};
 
@@ -1703,6 +1724,8 @@ END
     ${interfaceName}* imp = ${v8InterfaceName}::toNative(args.Holder());
 END
     }
+
+    GenerateCustomElementInvocationScopeIfNeeded(\@implContentInternals, $funcExt);
 
     # Check domain security if needed
     if ($interface->extendedAttributes->{"CheckSecurity"} && !$function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
