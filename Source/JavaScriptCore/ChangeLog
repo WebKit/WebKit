@@ -1,3 +1,36 @@
+2013-03-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Leak bots erroneously report JSC::WatchpointSet as leaking
+        https://bugs.webkit.org/show_bug.cgi?id=107781
+
+        Reviewed by Filip Pizlo.
+
+        Since leaks doesn't support tagged pointers, avoid using it by flipping the bit flag to indicate
+        the entry is "fat". We set the flag when the entry is NOT fat; i.e. slim.
+
+        Replaced FatFlag by SlimFlag and initialized m_bits with this flag to indicate that the entry is
+        initially "slim".
+
+        * runtime/SymbolTable.cpp:
+        (JSC::SymbolTableEntry::copySlow): Don't set FatFlag since it has been replaced by SlimFlag.
+        (JSC::SymbolTableEntry::inflateSlow): Ditto.
+
+        * runtime/SymbolTable.h:
+        (JSC::SymbolTableEntry::Fast::Fast): Set SlimFlag by default.
+        (JSC::SymbolTableEntry::Fast::isNull): Ignore SlimFlag.
+        (JSC::SymbolTableEntry::Fast::isFat): An entry is fat when m_bits is not entirely zero and SlimFlag
+        is not set.
+
+        (JSC::SymbolTableEntry::SymbolTableEntry): Set SlimFlag by default.
+        (JSC::SymbolTableEntry::SymbolTableEntry::getFast): Set SlimFlag when creating Fast from a fat entry.
+        (JSC::SymbolTableEntry::isNull): Ignore SlimFlag.
+        (JSC::SymbolTableEntry::FatEntry::FatEntry): Strip SlimFlag.
+        (JSC::SymbolTableEntry::isFat): An entry is fat when m_bits is not entirely zero and SlimFlag is unset.
+        (JSC::SymbolTableEntry::fatEntry): Don't strip FatFlag as this flag doesn't exist anymore.
+        (JSC::SymbolTableEntry::pack): Preserve SlimFlag.
+
+        (JSC::SymbolTableIndexHashTraits): empty value is no longer zero so don't set emptyValueIsZero true.
+
 2013-03-21  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: Need a good way to preserve custom properties on JS wrappers

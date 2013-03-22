@@ -93,7 +93,7 @@ namespace JSC {
         class Fast {
         public:
             Fast()
-                : m_bits(0)
+                : m_bits(SlimFlag)
             {
             }
             
@@ -104,7 +104,7 @@ namespace JSC {
         
             bool isNull() const
             {
-                return !m_bits;
+                return !(m_bits & ~SlimFlag);
             }
 
             int getIndex() const
@@ -129,7 +129,7 @@ namespace JSC {
 
             bool isFat() const
             {
-                return m_bits & FatFlag;
+                return !(m_bits & SlimFlag);
             }
             
         private:
@@ -138,19 +138,19 @@ namespace JSC {
         };
 
         SymbolTableEntry()
-            : m_bits(0)
+            : m_bits(SlimFlag)
         {
         }
 
         SymbolTableEntry(int index)
-            : m_bits(0)
+            : m_bits(SlimFlag)
         {
             ASSERT(isValidIndex(index));
             pack(index, false, false);
         }
 
         SymbolTableEntry(int index, unsigned attributes)
-            : m_bits(0)
+            : m_bits(SlimFlag)
         {
             ASSERT(isValidIndex(index));
             pack(index, attributes & ReadOnly, attributes & DontEnum);
@@ -162,7 +162,7 @@ namespace JSC {
         }
         
         SymbolTableEntry(const SymbolTableEntry& other)
-            : m_bits(0)
+            : m_bits(SlimFlag)
         {
             *this = other;
         }
@@ -178,7 +178,7 @@ namespace JSC {
         
         bool isNull() const
         {
-            return !bits();
+            return !(bits() & ~SlimFlag);
         }
 
         int getIndex() const
@@ -196,7 +196,7 @@ namespace JSC {
             Fast result;
             wasFat = isFat();
             if (wasFat)
-                result.m_bits = fatEntry()->m_bits;
+                result.m_bits = fatEntry()->m_bits | SlimFlag;
             else
                 result.m_bits = m_bits;
             return result;
@@ -246,7 +246,7 @@ namespace JSC {
         }
         
     private:
-        static const intptr_t FatFlag = 0x1;
+        static const intptr_t SlimFlag = 0x1;
         static const intptr_t ReadOnlyFlag = 0x2;
         static const intptr_t DontEnumFlag = 0x4;
         static const intptr_t NotNullFlag = 0x8;
@@ -256,7 +256,7 @@ namespace JSC {
             WTF_MAKE_FAST_ALLOCATED;
         public:
             FatEntry(intptr_t bits)
-                : m_bits(bits | FatFlag)
+                : m_bits(bits & ~SlimFlag)
             {
             }
             
@@ -270,19 +270,19 @@ namespace JSC {
         
         bool isFat() const
         {
-            return m_bits & FatFlag;
+            return !(m_bits & SlimFlag);
         }
         
         const FatEntry* fatEntry() const
         {
             ASSERT(isFat());
-            return bitwise_cast<const FatEntry*>(m_bits & ~FatFlag);
+            return bitwise_cast<const FatEntry*>(m_bits);
         }
         
         FatEntry* fatEntry()
         {
             ASSERT(isFat());
-            return bitwise_cast<FatEntry*>(m_bits & ~FatFlag);
+            return bitwise_cast<FatEntry*>(m_bits);
         }
         
         FatEntry* inflate()
@@ -319,8 +319,9 @@ namespace JSC {
 
         void pack(int index, bool readOnly, bool dontEnum)
         {
+            ASSERT(!isFat());
             intptr_t& bitsRef = bits();
-            bitsRef = (static_cast<intptr_t>(index) << FlagBits) | NotNullFlag;
+            bitsRef = (static_cast<intptr_t>(index) << FlagBits) | NotNullFlag | SlimFlag;
             if (readOnly)
                 bitsRef |= ReadOnlyFlag;
             if (dontEnum)
@@ -336,7 +337,6 @@ namespace JSC {
     };
 
     struct SymbolTableIndexHashTraits : HashTraits<SymbolTableEntry> {
-        static const bool emptyValueIsZero = true;
         static const bool needsDestruction = true;
     };
 
