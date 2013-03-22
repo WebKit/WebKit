@@ -163,6 +163,7 @@ svg/hixie/viewbox/preserveAspectRatio/002.xml
 editing/execCommand/copy-without-selection.html
 editing/pasteboard/copy-two-pasteboard-types-both-work.html
 editing/pasteboard/pasting-empty-html-falls-back-to-text.html
+editing/pasteboard/can-read-in-copy-and-cut-events.html
 
 # Drag & Drop doesn't work correctly in DRT <rdar://5621244>
 editing/pasteboard/drag-and-drop-objectimage-contenteditable.html
