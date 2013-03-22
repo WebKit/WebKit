@@ -72,7 +72,8 @@ private:
     virtual const AtomicString& shadowPseudoId() const;
     virtual void detach();
     virtual bool isSpinButtonElement() const { return true; }
-    virtual bool isEnabledFormControl() const { return shadowHost()->isEnabledFormControl(); }
+    virtual bool disabled() const OVERRIDE { return shadowHost() && shadowHost()->disabled(); }
+    virtual bool isEnabledFormControl() const OVERRIDE { return !disabled(); }
     virtual bool matchesReadOnlyPseudoClass() const OVERRIDE;
     virtual bool matchesReadWritePseudoClass() const OVERRIDE;
     virtual void defaultEventHandler(Event*);
