@@ -856,7 +856,7 @@ void InputHandler::requestSpellingCheckingOptions(imf_sp_text_t& spellCheckingOp
     m_webPage->m_client->requestSpellingCheckingOptions(spellCheckingOptionRequest, caretRect, screenOffset, shouldMoveDialog);
 }
 
-void InputHandler::setElementUnfocused(bool refocusOccuring, bool isFrameUnloading)
+void InputHandler::setElementUnfocused(bool refocusOccuring)
 {
     if (isActiveTextEdit() && m_currentFocusElement->attached() && m_currentFocusElement->document()->attached()) {
         FocusLog(Platform::LogLevelInfo, "InputHandler::setElementUnfocused");
