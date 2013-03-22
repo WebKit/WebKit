@@ -53,7 +53,7 @@ function gotStream(s) {
     shouldBe('stream.getVideoTracks().length', '0');
 
     pc = new webkitRTCPeerConnection(null, null);
-    pc.onicechange = pc_onicechange;
+    pc.oniceconnectionstatechange = pc_onicechange;
 }
 
 shouldNotThrow("navigator.webkitGetUserMedia({audio:true}, gotStream, error);");

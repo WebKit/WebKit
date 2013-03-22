@@ -26,13 +26,13 @@ function getUserMedia(dictionary, callback) {
 
 function onStateChange(event) {
     testPassed('onStateChange was called.');
-    shouldBe("pc.readyState", "'closed'");
+    shouldBe("pc.signalingState", "'closed'");
     finishJSTest();
 }
 
 function onNegotiationNeeded(event) {
     testPassed('onNegotiationNeeded was called.');
-    pc.onstatechange = onStateChange;
+    pc.onsignalingstatechange = onStateChange;
     pc.close();
     testPassed('onNegotiationNeeded done.')
 }

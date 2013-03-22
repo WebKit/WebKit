@@ -8,7 +8,7 @@ PASS gotStream done.
 PASS onNegotiationNeeded was called.
 PASS onNegotiationNeeded done.
 PASS onStateChange was called.
-PASS pc.readyState is 'closed'
+PASS pc.signalingState is 'closed'
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -227,15 +227,14 @@ namespace WebCore {
     macro(connecting) \
     macro(addstream) \
     macro(removestream) \
-    macro(statechange) \
+    macro(signalingstatechange) \
     macro(removetrack) \
     macro(mute) \
     macro(unmute) \
-    macro(icechange) \
+    macro(iceconnectionstatechange) \
     macro(icecandidate) \
     macro(negotiationneeded) \
     macro(datachannel) \
-    macro(gatheringchange) \
     macro(tonechange) \
     \
     macro(show) \

@@ -1,3 +1,12 @@
+2013-03-22  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Finalize the RTCPeerConnection states
+        https://bugs.webkit.org/show_bug.cgi?id=112792
+
+        Reviewed by Adam Barth.
+
+        * chromium/public/WebRTCPeerConnectionHandlerClient.h:
+
 2013-03-21  David Grogan  <dgrogan@chromium.org>
 
         Unreviewed, rolling out r146560.

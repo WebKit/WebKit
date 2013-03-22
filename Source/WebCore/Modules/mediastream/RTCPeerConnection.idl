@@ -52,9 +52,6 @@
     readonly attribute RTCSessionDescription remoteDescription
         getter raises(DOMException);
 
-    // DEPRECATED
-    readonly attribute DOMString readyState;
-
     readonly attribute DOMString signalingState;
 
     void updateIce(in [Optional] Dictionary configuration, in [Optional] Dictionary mediaConstraints)
@@ -88,11 +85,10 @@
 
     attribute EventListener onnegotiationneeded;
     attribute EventListener onicecandidate;
-    attribute EventListener onstatechange;
+    attribute EventListener onsignalingstatechange;
     attribute EventListener onaddstream;
     attribute EventListener onremovestream;
-    attribute EventListener ongatheringchange;
-    attribute EventListener onicechange;
+    attribute EventListener oniceconnectionstatechange;
     attribute EventListener ondatachannel;
 
     // EventTarget interface

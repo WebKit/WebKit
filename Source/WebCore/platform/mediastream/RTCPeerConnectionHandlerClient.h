@@ -53,7 +53,7 @@ public:
     };
 
     enum IceConnectionState {
-        IceConnectionStateStarting = 1,
+        IceConnectionStateNew = 1,
         IceConnectionStateChecking = 2,
         IceConnectionStateConnected = 3,
         IceConnectionStateCompleted = 4,

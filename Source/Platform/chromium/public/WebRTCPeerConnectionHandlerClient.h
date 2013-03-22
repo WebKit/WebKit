@@ -48,13 +48,16 @@ public:
     };
 
     enum ICEConnectionState {
-        ICEConnectionStateStarting = 1,
+        ICEConnectionStateNew = 1,
         ICEConnectionStateChecking = 2,
         ICEConnectionStateConnected = 3,
         ICEConnectionStateCompleted = 4,
         ICEConnectionStateFailed = 5,
         ICEConnectionStateDisconnected = 6,
         ICEConnectionStateClosed = 7,
+
+        // DEPRECATED
+        ICEConnectionStateStarting = 1,
     };
 
     enum ICEGatheringState {

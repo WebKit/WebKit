@@ -92,7 +92,7 @@ shouldNotThrow('dc = pc.createDataChannel("label3", {reliable:false});');
 shouldBe("dc.reliable", "false");
 
 pc = new webkitRTCPeerConnection(null, null);
-pc.onicechange = pc_onicechange;
+pc.oniceconnectionstatechange = pc_onicechange;
 pc.ondatachannel = pc_ondatachannel;
 
 window.jsTestIsAsync = true;

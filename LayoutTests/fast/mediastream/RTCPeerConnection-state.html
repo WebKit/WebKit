@@ -12,13 +12,13 @@ var pc = null;
 function stateChanged()
 {
     testPassed("stateChanged was called");
-    shouldBe('pc.readyState','"closed"');
+    shouldBeEqualToString('pc.signalingState', 'closed');
     finishJSTest();
 }
 
 shouldNotThrow('pc = new webkitRTCPeerConnection({iceServers:[]}, null);');
-shouldBe('pc.readyState', '"stable"');
-pc.onstatechange = stateChanged;
+shouldBeEqualToString('pc.signalingState', 'stable');
+pc.onsignalingstatechange = stateChanged;
 pc.close();
 
 window.jsTestIsAsync = true;

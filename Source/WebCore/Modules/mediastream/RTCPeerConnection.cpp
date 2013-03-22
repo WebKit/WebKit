@@ -135,7 +135,7 @@ RTCPeerConnection::RTCPeerConnection(ScriptExecutionContext* context, PassRefPtr
     : ActiveDOMObject(context)
     , m_signalingState(SignalingStateStable)
     , m_iceGatheringState(IceGatheringStateNew)
-    , m_iceConnectionState(IceConnectionStateStarting)
+    , m_iceConnectionState(IceConnectionStateNew)
     , m_scheduledEventTimer(this, &RTCPeerConnection::scheduledEventTimerFired)
     , m_stopped(false)
 {
@@ -296,11 +296,6 @@ void RTCPeerConnection::addIceCandidate(RTCIceCandidate* iceCandidate, Exception
         ec = SYNTAX_ERR;
 }
 
-String RTCPeerConnection::readyState() const
-{
-    return signalingState();
-}
-
 String RTCPeerConnection::signalingState() const
 {
     switch (m_signalingState) {
@@ -340,8 +335,8 @@ String RTCPeerConnection::iceGatheringState() const
 String RTCPeerConnection::iceConnectionState() const
 {
     switch (m_iceConnectionState) {
-    case IceConnectionStateStarting:
-        return ASCIILiteral("starting");
+    case IceConnectionStateNew:
+        return ASCIILiteral("new");
     case IceConnectionStateChecking:
         return ASCIILiteral("checking");
     case IceConnectionStateConnected:
@@ -622,23 +617,20 @@ void RTCPeerConnection::changeSignalingState(SignalingState signalingState)
 {
     if (m_signalingState != SignalingStateClosed && m_signalingState != signalingState) {
         m_signalingState = signalingState;
-        scheduleDispatchEvent(Event::create(eventNames().statechangeEvent, false, false));
+        scheduleDispatchEvent(Event::create(eventNames().signalingstatechangeEvent, false, false));
     }
 }
 
 void RTCPeerConnection::changeIceGatheringState(IceGatheringState iceGatheringState)
 {
-    if (m_iceGatheringState != iceGatheringState) {
-        m_iceGatheringState = iceGatheringState;
-        scheduleDispatchEvent(Event::create(eventNames().gatheringchangeEvent, false, false));
-    }
+    m_iceGatheringState = iceGatheringState;
 }
 
 void RTCPeerConnection::changeIceConnectionState(IceConnectionState iceConnectionState)
 {
     if (m_iceConnectionState != IceConnectionStateClosed && m_iceConnectionState != iceConnectionState) {
         m_iceConnectionState = iceConnectionState;
-        scheduleDispatchEvent(Event::create(eventNames().icechangeEvent, false, false));
+        scheduleDispatchEvent(Event::create(eventNames().iceconnectionstatechangeEvent, false, false));
     }
 }
 

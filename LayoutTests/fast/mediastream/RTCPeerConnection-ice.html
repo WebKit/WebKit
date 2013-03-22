@@ -22,7 +22,7 @@ function onIceCandidate(event)
     testPassed("onIceCandidate was called.");
     shouldBe('event.candidate.candidate', '"nano nano"');
 
-    pc.onicechange = onIceChange2;
+    pc.oniceconnectionstatechange = onIceChange2;
     pc.close();
 }
 
@@ -36,7 +36,7 @@ function onIceChange1()
 }
 
 shouldNotThrow('pc = new webkitRTCPeerConnection(null, null);');
-pc.onicechange = onIceChange1;
+pc.oniceconnectionstatechange = onIceChange1;
 
 window.jsTestIsAsync = true;
 window.successfullyParsed = true;
