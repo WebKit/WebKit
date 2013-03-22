@@ -1,3 +1,20 @@
+2013-03-21  Dirk Pranke  <dpranke@chromium.org>
+
+        [chromium] Linux ASAN WebKit canary is running out of memory
+        https://bugs.webkit.org/show_bug.cgi?id=112978
+
+        Reviewed by Tony Chang.
+
+        Running the AddressSanitizer on a crash takes a lot of
+        memory, so we should serialize access to it to avoid running
+        out of memory on a machine.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort._get_crash_log):
+        * Scripts/webkitpy/layout_tests/port/http_lock.py:
+        (HttpLock.__init__):
+        (HttpLock.wait_for_httpd_lock):
+
 2013-03-21  Min Qin  <qinmin@chromium.org>
 
         Cleanup android media layout test code

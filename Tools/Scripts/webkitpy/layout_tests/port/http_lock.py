@@ -24,6 +24,9 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+# FIXME: rename this file, and add more text about how this is
+# different from the base file_lock class.
+
 """This class helps to block NRWT threads when more NRWTs run
 perf, http and websocket tests in a same time."""
 
@@ -42,7 +45,7 @@ _log = logging.getLogger(__name__)
 
 
 class HttpLock(object):
-    def __init__(self, lock_path, lock_file_prefix="WebKitHttpd.lock.", guard_lock="WebKit.lock", filesystem=None, executive=None):
+    def __init__(self, lock_path, lock_file_prefix="WebKitHttpd.lock.", guard_lock="WebKit.lock", filesystem=None, executive=None, name='HTTP'):
         self._executive = executive or Executive()
         self._filesystem = filesystem or FileSystem()
         self._lock_path = lock_path
@@ -54,6 +57,7 @@ class HttpLock(object):
         self._guard_lock_file = self._filesystem.join(self._lock_path, guard_lock)
         self._guard_lock = FileLock(self._guard_lock_file)
         self._process_lock_file_name = ""
+        self._name = name
 
     def cleanup_http_lock(self):
         """Delete the lock file if exists."""
@@ -123,11 +127,11 @@ class HttpLock(object):
         """Create a lock file and wait until it's turn comes. If something goes wrong
         it wont do any locking."""
         if not self._create_lock_file():
-            _log.debug("Warning, http locking failed!")
+            _log.debug("Warning, %s locking failed!" % self._name)
             return
 
         # FIXME: This can hang forever!
         while self._current_lock_pid() != os.getpid():
             time.sleep(1)
 
-        _log.debug("HTTP lock acquired")
+        _log.debug("%s lock acquired" % self._name)
