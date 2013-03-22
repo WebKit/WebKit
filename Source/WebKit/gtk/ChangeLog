@@ -1,3 +1,13 @@
+2013-03-22  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [gyp] Feature defines are not space separated
+        https://bugs.webkit.org/show_bug.cgi?id=113108
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * gyp/configure.ac: Properly export feature defines for gyp during
+        configure phase.
+
 2013-03-22  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Include the right GL header for GLES2

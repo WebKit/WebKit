@@ -26,7 +26,7 @@ m4_include([WebKitMacros/SetupAutoconfHeader.m4])
 m4_include([WebKitMacros/SetupWebKitFeatures.m4])
 
 # Expose the WebKit features as one long string to the configure template processor.
-WEBKIT_FEATURES=`cat WebKitFeatures.txt | tr -d '\n'`
+WEBKIT_FEATURES=`cat WebKitFeatures.txt | tr '\n' ' '`
 AC_SUBST(WEBKIT_FEATURES)
 
 AC_SUBST(TOPLEVEL_DIRECTORY)
