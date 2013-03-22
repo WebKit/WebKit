@@ -713,10 +713,8 @@ void ResourceHandleManager::initializeHandle(ResourceHandle* job)
     d->m_url = fastStrDup(url.latin1().data());
     curl_easy_setopt(d->m_handle, CURLOPT_URL, d->m_url);
 
-    if (m_cookieJarFileName) {
-        curl_easy_setopt(d->m_handle, CURLOPT_COOKIEFILE, m_cookieJarFileName);
+    if (m_cookieJarFileName)
         curl_easy_setopt(d->m_handle, CURLOPT_COOKIEJAR, m_cookieJarFileName);
-    }
 
     struct curl_slist* headers = 0;
     if (job->firstRequest().httpHeaderFields().size() > 0) {
@@ -768,6 +766,8 @@ void ResourceHandleManager::initCookieSession()
 
     if (!curl)
         return;
+
+    curl_easy_setopt(curl, CURLOPT_SHARE, m_curlShareHandle);
 
     if (m_cookieJarFileName) {
         curl_easy_setopt(curl, CURLOPT_COOKIEFILE, m_cookieJarFileName);

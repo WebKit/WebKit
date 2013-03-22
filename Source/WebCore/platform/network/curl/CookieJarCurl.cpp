@@ -216,7 +216,6 @@ void setCookiesFromDOM(const NetworkStorageSession&, const KURL&, const KURL& ur
     CURLSH* curlsh = ResourceHandleManager::sharedInstance()->getCurlShareHandle();
 
     curl_easy_setopt(curl, CURLOPT_COOKIEJAR, cookieJarFileName);
-    curl_easy_setopt(curl, CURLOPT_COOKIEFILE, cookieJarFileName);
     curl_easy_setopt(curl, CURLOPT_SHARE, curlsh);
 
     // CURL accepts cookies in either Set-Cookie or Netscape file format.
