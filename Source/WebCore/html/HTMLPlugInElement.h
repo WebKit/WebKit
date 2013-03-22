@@ -51,7 +51,8 @@ public:
     enum DisplayState {
         WaitingForSnapshot,
         DisplayingSnapshot,
-        PlayingWithPendingMouseClick,
+        Restarting,
+        RestartingWithPendingMouseClick,
         Playing
     };
     DisplayState displayState() const { return m_displayState; }

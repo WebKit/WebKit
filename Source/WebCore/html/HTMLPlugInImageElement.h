@@ -121,7 +121,6 @@ private:
     bool m_needsWidgetUpdate;
     bool m_shouldPreferPlugInsForImages;
     bool m_needsDocumentActivationCallbacks;
-    bool m_isPrimarySnapshottedPlugIn;
     RefPtr<RenderStyle> m_customStyleForPageCache;
     RefPtr<MouseEvent> m_pendingClickEventFromSnapshot;
     DeferrableOneShotTimer<HTMLPlugInImageElement> m_simulatedMouseClickTimer;

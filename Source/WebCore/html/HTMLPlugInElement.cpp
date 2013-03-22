@@ -203,7 +203,7 @@ void HTMLPlugInElement::defaultEventHandler(Event* event)
             return;
         }
 
-        if (r->isSnapshottedPlugIn() && displayState() < PlayingWithPendingMouseClick) {
+        if (r->isSnapshottedPlugIn() && displayState() < Restarting) {
             toRenderSnapshottedPlugIn(r)->handleEvent(event);
             HTMLFrameOwnerElement::defaultEventHandler(event);
             return;

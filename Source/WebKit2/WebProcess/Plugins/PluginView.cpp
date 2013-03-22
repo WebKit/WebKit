@@ -569,7 +569,7 @@ void PluginView::didInitializePlugin()
     redeliverManualStream();
 
 #if PLATFORM(MAC)
-    if (m_pluginElement->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick) {
+    if (m_pluginElement->displayState() < HTMLPlugInElement::Restarting) {
         if (frame() && !frame()->settings()->maximumPlugInSnapshotAttempts()) {
             m_pluginElement->setDisplayState(HTMLPlugInElement::DisplayingSnapshot);
             return;
@@ -709,7 +709,7 @@ void PluginView::setFrameRect(const WebCore::IntRect& rect)
 
 void PluginView::paint(GraphicsContext* context, const IntRect& /*dirtyRect*/)
 {
-    if (!m_plugin || !m_isInitialized || m_pluginElement->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick)
+    if (!m_plugin || !m_isInitialized || m_pluginElement->displayState() < HTMLPlugInElement::Restarting)
         return;
 
     if (context->paintingDisabled()) {
@@ -1215,7 +1215,7 @@ void PluginView::invalidateRect(const IntRect& dirtyRect)
         return;
 #endif
 
-    if (m_pluginElement->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick)
+    if (m_pluginElement->displayState() < HTMLPlugInElement::Restarting)
         return;
 
     RenderBoxModelObject* renderer = toRenderBoxModelObject(m_pluginElement->renderer());
@@ -1373,7 +1373,7 @@ bool PluginView::isAcceleratedCompositingEnabled()
     if (!settings)
         return false;
 
-    if (m_pluginElement->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick)
+    if (m_pluginElement->displayState() < HTMLPlugInElement::Restarting)
         return false;
     return settings->acceleratedCompositingEnabled();
 }

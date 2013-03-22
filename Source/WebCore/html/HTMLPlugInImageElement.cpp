@@ -76,7 +76,6 @@ HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Doc
     , m_needsWidgetUpdate(!createdByParser)
     , m_shouldPreferPlugInsForImages(preferPlugInsForImagesOption == ShouldPreferPlugInsForImages)
     , m_needsDocumentActivationCallbacks(false)
-    , m_isPrimarySnapshottedPlugIn(false)
     , m_simulatedMouseClickTimer(this, &HTMLPlugInImageElement::simulatedMouseClickTimerFired, simulatedMouseClickTimerDelay)
     , m_swapRendererTimer(this, &HTMLPlugInImageElement::swapRendererTimerFired)
     , m_createdDuringUserGesture(ScriptController::processingUserGesture())
@@ -302,13 +301,12 @@ void HTMLPlugInImageElement::updateSnapshot(PassRefPtr<Image> image)
         renderer()->repaint();
 }
 
-static AtomicString classNameForShadowRoot(const Node* node, bool isPrimary)
+static AtomicString classNameForShadowRoot(const Node* node)
 {
     DEFINE_STATIC_LOCAL(const AtomicString, plugInTinySizeClassName, ("tiny", AtomicString::ConstructFromLiteral));
     DEFINE_STATIC_LOCAL(const AtomicString, plugInSmallSizeClassName, ("small", AtomicString::ConstructFromLiteral));
     DEFINE_STATIC_LOCAL(const AtomicString, plugInMediumSizeClassName, ("medium", AtomicString::ConstructFromLiteral));
     DEFINE_STATIC_LOCAL(const AtomicString, plugInLargeSizeClassName, ("large", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(const AtomicString, plugInLargeSizePrimaryClassName, ("large primary", AtomicString::ConstructFromLiteral));
 
     RenderBox* renderBox = static_cast<RenderBox*>(node->renderer());
     LayoutUnit width = renderBox->contentWidth();
@@ -323,14 +321,13 @@ static AtomicString classNameForShadowRoot(const Node* node, bool isPrimary)
     if (width < sizingMediumWidthThreshold || height < sizingMediumHeightThreshold)
         return plugInMediumSizeClassName;
 
-    return isPrimary ? plugInLargeSizePrimaryClassName : plugInLargeSizeClassName;
+    return plugInLargeSizeClassName;
 }
     
 void HTMLPlugInImageElement::setIsPrimarySnapshottedPlugIn(bool isPrimarySnapshottedPlugIn)
 {
-    m_isPrimarySnapshottedPlugIn = isPrimarySnapshottedPlugIn;
-    
-    updateSnapshotInfo();
+    if (isPrimarySnapshottedPlugIn)
+        restartSnapshottedPlugIn();
 }
 
 void HTMLPlugInImageElement::updateSnapshotInfo()
@@ -340,7 +337,7 @@ void HTMLPlugInImageElement::updateSnapshotInfo()
         return;
 
     Element* shadowContainer = toElement(root->firstChild());
-    shadowContainer->setAttribute(classAttr, classNameForShadowRoot(this, m_isPrimarySnapshottedPlugIn));
+    shadowContainer->setAttribute(classAttr, classNameForShadowRoot(this));
 }
 
 void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
@@ -457,6 +454,9 @@ void HTMLPlugInImageElement::userDidClickSnapshot(PassRefPtr<MouseEvent> event)
 
 void HTMLPlugInImageElement::restartSnapshottedPlugIn()
 {
+    if (displayState() != RestartingWithPendingMouseClick)
+        setDisplayState(Restarting);
+
     reattach();
 }
 
@@ -468,7 +468,7 @@ void HTMLPlugInImageElement::dispatchPendingMouseClick()
 
 void HTMLPlugInImageElement::simulatedMouseClickTimerFired(DeferrableOneShotTimer<HTMLPlugInImageElement>*)
 {
-    ASSERT(displayState() == PlayingWithPendingMouseClick);
+    ASSERT(displayState() == RestartingWithPendingMouseClick);
     ASSERT(m_pendingClickEventFromSnapshot);
 
     dispatchSimulatedClick(m_pendingClickEventFromSnapshot.get(), SendMouseOverUpDownEvents, DoNotShowPressedLook);
@@ -547,7 +547,7 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
     LOG(Plugins, "%p Plug-in hash %x is %dx%d, origin is not auto-start, set to wait for snapshot", this, m_plugInOriginHash, contentWidth, contentHeight);
     // We may have got to this point by restarting a snapshotted plug-in, in which case we don't want to
     // reset the display state.
-    if (displayState() != PlayingWithPendingMouseClick)
+    if (displayState() != RestartingWithPendingMouseClick && displayState() != Restarting)
         setDisplayState(WaitingForSnapshot);
 }
 

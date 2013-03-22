@@ -88,7 +88,7 @@ void RenderSnapshottedPlugIn::updateSnapshot(PassRefPtr<Image> image)
 
 void RenderSnapshottedPlugIn::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (paintInfo.phase == PaintPhaseForeground && plugInImageElement()->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick) {
+    if (paintInfo.phase == PaintPhaseForeground && plugInImageElement()->displayState() < HTMLPlugInElement::Restarting) {
         paintSnapshot(paintInfo, paintOffset);
     }
 
@@ -140,7 +140,7 @@ void RenderSnapshottedPlugIn::paintSnapshot(PaintInfo& paintInfo, const LayoutPo
 
 CursorDirective RenderSnapshottedPlugIn::getCursor(const LayoutPoint& point, Cursor& overrideCursor) const
 {
-    if (plugInImageElement()->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick) {
+    if (plugInImageElement()->displayState() < HTMLPlugInElement::Restarting) {
         overrideCursor = handCursor();
         return SetCursor;
     }
@@ -158,7 +158,7 @@ void RenderSnapshottedPlugIn::handleEvent(Event* event)
         if (mouseEvent->button() != LeftButton)
             return;
 
-        plugInImageElement()->setDisplayState(HTMLPlugInElement::PlayingWithPendingMouseClick);
+        plugInImageElement()->setDisplayState(HTMLPlugInElement::RestartingWithPendingMouseClick);
         plugInImageElement()->userDidClickSnapshot(mouseEvent);
         event->setDefaultHandled();
     } else if (event->type() == eventNames().mousedownEvent) {
