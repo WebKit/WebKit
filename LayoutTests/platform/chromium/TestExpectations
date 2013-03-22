@@ -83,7 +83,8 @@ webkit.org/b/24182 [ Debug ] fast/dom/css-delete-doc.html [ Slow ]
 webkit.org/b/100272 [ Debug ] fast/media/w3c/test_media_queries.html [ Slow ]
 webkit.org/b/70878 [ Linux Debug ] http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html [ Slow ]
 webkit.org/b/102179 [ Win Debug ] platform/chromium/virtual/gpu/fast/hidpi/image-set-without-specified-width.html [ Slow ]
-webkit.org/b/102463 [ Debug ] fast/forms/validation-message-appearance.html [ Pass ImageOnlyFailure ]
+# Temp comment schenney
+# webkit.org/b/102463 [ Debug ] fast/forms/validation-message-appearance.html [ Pass ImageOnlyFailure ]
 webkit.org/b/102464 [ Debug ] fast/images/webgl-teximage2d.html [ Pass Timeout ]
 webkit.org/b/102464 [ Debug ] platform/chromium/virtual/deferred/fast/images/webgl-teximage2d.html [ Pass Timeout ]
 webkit.org/b/103744 svg/dom/viewspec-parser-7.html [ Pass Timeout ]
@@ -1263,7 +1264,8 @@ crbug.com/62433 [ Win ] fast/images/gif-loop-count.html [ ImageOnlyFailure ]
 # Reporting translation of -0.00.
 webkit.org/b/106126 [ Win ] svg/overflow/overflow-on-inner-svg-element.svg [ Failure Pass ]
 webkit.org/b/106126 [ Win ] svg/dom/css-transforms.xhtml [ Failure Pass ]
-webkit.org/b/106126 [ Win ] svg/custom/feComponentTransfer-Table.svg [ ImageOnlyFailure Pass ]
+# Temp comment schenney
+# webkit.org/b/106126 [ Win ] svg/custom/feComponentTransfer-Table.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/106126 [ Win ] svg/custom/embedding-external-svgs.xhtml [ Failure Pass ]
 
 #
@@ -1310,7 +1312,8 @@ webkit.org/b/80517 [ Android ] svg/dynamic-updates/SVGFETurbulenceElement-dom-ba
 webkit.org/b/80517 [ Android ] svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html [ ImageOnlyFailure ]
 webkit.org/b/80517 [ Debug ] svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/81217 [ Android ] svg/custom/js-late-pattern-and-object-creation.svg [ ImageOnlyFailure ]
+# Temp comment schenney
+# webkit.org/b/81217 [ Android ] svg/custom/js-late-pattern-and-object-creation.svg [ ImageOnlyFailure ]
 webkit.org/b/81217 svg/hixie/perf/003.xml [ ImageOnlyFailure Pass ]
 
 webkit.org/b/81240 [ SnowLeopard Lion ] svg/text/bidi-reorder-value-lists.svg [ Failure Pass ]
@@ -1328,7 +1331,8 @@ webkit.org/b/82416 svg/custom/pattern-userSpaceOnUse-userToBaseTransform.xhtml [
 webkit.org/b/82509 [ Android Linux ] svg/text/append-text-node-to-tspan.html [ ImageOnlyFailure Pass ]
 
 # Flaky on MAC 10.6
-webkit.org/b/82954 [ SnowLeopard ] svg/text/text-text-05-t.svg [ Failure Pass ]
+# Temp comment schenney
+# webkit.org/b/82954 [ SnowLeopard ] svg/text/text-text-05-t.svg [ Failure Pass ]
 webkit.org/b/82954 [ SnowLeopard ] svg/W3C-SVG-1.1/animate-elem-77-t.svg [ Failure Pass ]
 webkit.org/b/82954 [ SnowLeopard ] svg/W3C-SVG-1.1/text-text-05-t.svg [ Failure Pass ]
 webkit.org/b/82594 [ SnowLeopard ] svg/text/exs-display-none.svg [ ImageOnlyFailure Pass ]
@@ -1449,9 +1453,12 @@ platform/chromium/virtual/gpu/canvas/philip/tests/2d.shadow.blur.low.html [ Wont
 # This test is overly-finicky about pixel values.
 webkit.org/b/64876 [ Linux Win ] platform/chromium/virtual/gpu/fast/canvas/canvas-scale-strokePath-shadow.html [ Failure ]
 
-webkit.org/b/75276 [ Android ] fast/repaint/shadow-multiple-horizontal.html [ ImageOnlyFailure ]
-webkit.org/b/75276 [ Android ] fast/repaint/shadow-multiple-strict-horizontal.html [ ImageOnlyFailure ]
-webkit.org/b/75276 [ Android ] fast/repaint/shadow-multiple-strict-vertical.html [ ImageOnlyFailure ]
+# Temp comment schenney
+# webkit.org/b/75276 [ Android ] fast/repaint/shadow-multiple-horizontal.html [ ImageOnlyFailure ]
+# Temp comment schenney
+# webkit.org/b/75276 [ Android ] fast/repaint/shadow-multiple-strict-horizontal.html [ ImageOnlyFailure ]
+# Temp comment schenney
+# webkit.org/b/75276 [ Android ] fast/repaint/shadow-multiple-strict-vertical.html [ ImageOnlyFailure ]
 
 # -----------------------------------------------------------------
 # WebGL Tests
@@ -1653,7 +1660,8 @@ webkit.org/b/98647 [ Android ] compositing/culling/filter-occlusion-blur-large.h
 webkit.org/b/98647 [ Android ] compositing/culling/filter-occlusion-blur.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] compositing/direct-image-compositing.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] compositing/generated-content.html [ ImageOnlyFailure ]
-webkit.org/b/98647 [ Android ] compositing/geometry/clipping-foreground.html [ ImageOnlyFailure ]
+# Temp comment schenney
+#webkit.org/b/98647 [ Android ] compositing/geometry/clipping-foreground.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] compositing/geometry/composited-html-size.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] compositing/geometry/fixed-in-composited.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] compositing/geometry/fixed-position.html [ ImageOnlyFailure ]
@@ -1677,7 +1685,8 @@ webkit.org/b/98647 [ Android ] compositing/sibling-positioning.html [ ImageOnlyF
 webkit.org/b/98647 [ Android ] compositing/transitions/scale-transition-no-start.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] compositing/visibility/visibility-image-layers.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] css3/images/cross-fade-tiled.html [ ImageOnlyFailure ]
-webkit.org/b/98647 [ Android ] transforms/2d/hindi-rotated.html [ ImageOnlyFailure ]
+# Temp comment schenney
+# webkit.org/b/98647 [ Android ] transforms/2d/hindi-rotated.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] transforms/3d/point-mapping/3d-point-mapping-3.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] transforms/3d/point-mapping/3d-point-mapping-origins.html [ ImageOnlyFailure ]
 webkit.org/b/98647 [ Android ] transforms/3d/point-mapping/3d-point-mapping-overlapping.html [ ImageOnlyFailure ]
@@ -1718,11 +1727,13 @@ webkit.org/b/98647 [ Android ] css3/filters/filtered-compositing-descendant.html
 webkit.org/b/98762 [ Android ] fast/layers/no-clipping-overflow-hidden-added-after-transition.html [ ImageOnlyFailure ]
 webkit.org/b/98762 [ Android ] compositing/absolute-position-changed-with-composited-parent-layer.html [ ImageOnlyFailure ]
 webkit.org/b/98762 [ Android ] compositing/animation/state-at-end-event-transform-layer.html [ ImageOnlyFailure ]
-webkit.org/b/98762 [ Android ] compositing/culling/scrolled-within-boxshadow.html [ ImageOnlyFailure ]
+# Temp comment schenney
+# webkit.org/b/98762 [ Android ] compositing/culling/scrolled-within-boxshadow.html [ ImageOnlyFailure ]
 webkit.org/b/98762 [ Android ] compositing/geometry/abs-position-inside-opacity.html [ ImageOnlyFailure ]
 webkit.org/b/98762 [ Android ] compositing/geometry/partial-layout-update.html [ ImageOnlyFailure ]
 webkit.org/b/98762 [ Android ] compositing/geometry/root-layer-update.html [ ImageOnlyFailure ]
-webkit.org/b/98762 [ Android ] compositing/iframes/composited-iframe-alignment.html [ ImageOnlyFailure ]
+# Temp comment schenney
+#webkit.org/b/98762 [ Android ] compositing/iframes/composited-iframe-alignment.html [ ImageOnlyFailure ]
 webkit.org/b/98762 [ Android ] compositing/overflow/ancestor-overflow.html [ ImageOnlyFailure ]
 webkit.org/b/98762 [ Android ] compositing/overflow/overflow-positioning.html [ ImageOnlyFailure ]
 webkit.org/b/98762 [ Android ] compositing/overflow/scrollbar-painting.html [ ImageOnlyFailure ]
@@ -1737,7 +1748,8 @@ webkit.org/b/98763 [ Android ] compositing/geometry/tall-page-composited.html [ 
 webkit.org/b/98763 [ Android ] compositing/geometry/vertical-scroll-composited.html [ ImageOnlyFailure ]
 webkit.org/b/98763 [ Android ] compositing/layer-creation/fixed-position-and-transform.html [ ImageOnlyFailure ]
 webkit.org/b/98763 [ Android ] compositing/layer-creation/fixed-position-under-transform.html [ ImageOnlyFailure ]
-webkit.org/b/98763 [ Android ] compositing/masks/masked-ancestor.html [ ImageOnlyFailure ]
+# Temp comment schenney
+#webkit.org/b/98763 [ Android ] compositing/masks/masked-ancestor.html [ ImageOnlyFailure ]
 webkit.org/b/98763 [ Android ] compositing/masks/multiple-masks.html [ ImageOnlyFailure ]
 # tasak: Uncomment this after rebaselining for webkit.org/b/103700.
 # webkit.org/b/98763 [ Android ] compositing/masks/simple-composited-mask.html [ ImageOnlyFailure ]
@@ -2048,22 +2060,35 @@ crbug.com/28409 http/tests/xmlhttprequest/logout.html [ Failure ]
 
 # Rebaseline after landing https://bugs.webkit.org/show_bug.cgi?id=70634
 # After removing the first ten lines, uncomment the other expectations for these tests below.
-webkit.org/b/109507 compositing/iframes/scrolling-iframe.html [ Failure ]
-webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/iframes/scrolling-iframe.html [ Failure ]
-webkit.org/b/109507 compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ImageOnlyFailure ]
-webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ImageOnlyFailure ]
-webkit.org/b/109507 compositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ImageOnlyFailure ]
-webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ImageOnlyFailure ]
-webkit.org/b/109507 compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ImageOnlyFailure ]
-webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ImageOnlyFailure ]
-webkit.org/b/109507 compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ImageOnlyFailure ]
-webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ImageOnlyFailure ]
+# Temp comment schenney
+# webkit.org/b/109507 compositing/iframes/scrolling-iframe.html [ Failure ]
+# Temp comment schenney
+# webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/iframes/scrolling-iframe.html [ Failure ]
+# Temp comment schenney
+# webkit.org/b/109507 compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ImageOnlyFailure ]
+# Temp comment schenney
+# webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ImageOnlyFailure ]
+# Temp comment schenney
+# webkit.org/b/109507 compositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ImageOnlyFailure ]
+# Temp comment schenney
+# webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ImageOnlyFailure ]
+# Temp comment schenney
+# webkit.org/b/109507 compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ImageOnlyFailure ]
+# Temp comment schenney
+# webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ImageOnlyFailure ]
+# Temp comment schenney
+# webkit.org/b/109507 compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ImageOnlyFailure ]
+# Temp comment schenney
+# webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ImageOnlyFailure ]
 webkit.org/b/109507 compositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
 webkit.org/b/109507 platform/chromium/virtual/gpu/compositedscrolling/overflow/composited-scrolling-paint-phases.html [ Failure ]
 webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
-webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/repaint/invalidations-on-composited-layers.html [ Failure ]
-webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/tiling/huge-layer-add-remove-child.html [ Failure ]
-webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/tiling/huge-layer-with-layer-children.html [ Failure ]
+# Temp comment schenney
+# webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/repaint/invalidations-on-composited-layers.html [ Failure ]
+# Temp comment schenney
+# webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/tiling/huge-layer-add-remove-child.html [ Failure ]
+# Temp comment schenney
+# webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/tiling/huge-layer-with-layer-children.html [ Failure ]
 
 # The following upstream patches add -Webkit-color-correction support:
 # http://trac.webkit.org/changeset/50760
@@ -2073,8 +2098,10 @@ webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/tiling/huge-la
 crbug.com/28005 [ Android ] fast/css/color-correction-on-backgrounds.html [ Failure ]
 crbug.com/28005 [ Android ] fast/css/color-correction-on-text.html [ Failure ]
 crbug.com/28005 [ Android ] fast/css/color-correction.html [ Failure ]
-crbug.com/28005 [ Android ] fast/css/color-correction-on-box-shadow.html [ Failure ]
-crbug.com/28005 [ Android ] fast/css/color-correction-on-text-shadow.html [ Failure ]
+# Temp comment schenney
+#crbug.com/28005 [ Android ] fast/css/color-correction-on-box-shadow.html [ Failure ]
+# Temp comment schenney
+#crbug.com/28005 [ Android ] fast/css/color-correction-on-text-shadow.html [ Failure ]
 crbug.com/28005 [ Android ] fast/css/color-correction-on-background-image.html [ Failure ]
 crbug.com/28005 [ Android ] fast/css/color-correction-untagged-images.html [ Failure ]
 
@@ -2231,7 +2258,8 @@ crbug.com/42875 sputnik [ WontFix ]
 crbug.com/43319 [ Android Linux Debug ] fast/forms/select-empty-option-height.html [ Pass Timeout ]
 
 # Not included in tests modified by 81992, but started failing on Android at same time:
-crbug.com/77494 [ Android ] fast/repaint/transform-replaced-shadows.html [ Failure ImageOnlyFailure ]
+# Temp comment schenney
+# crbug.com/77494 [ Android ] fast/repaint/transform-replaced-shadows.html [ Failure ImageOnlyFailure ]
 
 crbug.com/43890 [ Win ] http/tests/loading/basic.html [ Failure Pass ]
 
@@ -2422,7 +2450,8 @@ crbug.com/58936 fast/js/numeric-escapes-in-string-literals.html [ Failure ]
 # content of <video> elements.
 webkit.org/b/91205 media/nodesFromRect-shadowContent.html [ Skip ]
 
-webkit.org/b/96470 [ Android Win ] fast/text/international/vertical-text-glyph-test.html [ Failure ]
+# Temp comment schenney
+# webkit.org/b/96470 [ Android Win ] fast/text/international/vertical-text-glyph-test.html [ Failure ]
 webkit.org/b/96470 [ Android Win ] fast/text/international/vertical-text-metrics-test.html [ Failure ]
 
 # Added in Webkit r69707 without expected results.
@@ -2433,14 +2462,17 @@ crbug.com/143479 platform/gtk/accessibility/aria-table-hierarchy.html [ Failure 
 crbug.com/143476 fast/js/date-parse-test.html [ Failure ]
 
 # Vertical text needs to be implemented in platforms other than OS X.
-crbug.com/65877 fast/writing-mode/japanese-ruby-vertical-lr.html [ Failure Pass ]
-crbug.com/65877 fast/writing-mode/japanese-ruby-vertical-rl.html [ Failure Pass ]
+# Temp comment schenney
+# crbug.com/65877 fast/writing-mode/japanese-ruby-vertical-lr.html [ Failure Pass ]
+# Temp comment schenney
+# crbug.com/65877 fast/writing-mode/japanese-ruby-vertical-rl.html [ Failure Pass ]
 crbug.com/65877 [ Android Linux Win ] fast/writing-mode/japanese-ruby-horizontal-bt.html [ Failure Pass ]
 crbug.com/65877 [ Linux ] fast/writing-mode/broken-ideographic-font.html [ Failure ]
 crbug.com/65877 [ Android ] fast/writing-mode/Kusa-Makura-background-canvas.html [ Failure ]
 crbug.com/65877 [ Win ] fast/text/international/text-combine-image-test.html [ Failure ]
 webkit.org/b/53451 [ Android ] fast/text/international/text-combine-image-test.html [ Failure ]
-webkit.org/b/94410 [ Win ] fast/writing-mode/vertical-baseline-alignment.html [ ImageOnlyFailure ]
+# Temp comment schenney
+# webkit.org/b/94410 [ Win ] fast/writing-mode/vertical-baseline-alignment.html [ ImageOnlyFailure ]
 
 # New test, introduced by http://trac.webkit.org/changeset/70813 with only platform/mac baselines.
 webkit.org/b/61161 [ Android ] fast/writing-mode/border-image-horizontal-bt.html [ Failure ]
@@ -2598,7 +2630,8 @@ crbug.com/70882 [ Win ] fast/text/offsetForPosition-complex-fallback.html [ Fail
 crbug.com/71022 [ Android Win ] fast/text/justify-ideograph-complex.html [ Failure ]
 crbug.com/71022 [ Mac ] fast/text/justify-ideograph-complex.html [ ImageOnlyFailure ]
 crbug.com/71022 [ Android Win ] fast/text/justify-ideograph-simple.html [ Failure ]
-crbug.com/71022 [ Android Win ] fast/text/justify-ideograph-vertical.html [ Failure ]
+# Temp comment schenney
+# crbug.com/71022 [ Android Win ] fast/text/justify-ideograph-vertical.html [ Failure ]
 
 # It is failing since r77459.
 # Fix miscalculation of the overhang area used for painting. We were
@@ -2661,7 +2694,8 @@ crbug.com/74497 platform/win/plugins/windowless-paint-rect-coordinates.html [ Fa
 webkit.org/b/55300 [ Mac Android ] fast/images/support-broken-image-delegate.html [ Failure ]
 
 # introduced by Dave Hyatt in WK r80582
-crbug.com/75561 [ Android ] fast/writing-mode/text-orientation-basic.html [ Failure ]
+# Temp comment schenney
+# crbug.com/75561 [ Android ] fast/writing-mode/text-orientation-basic.html [ Failure ]
 
 
 # Skip an overly restrictive cross-origin HTTPS test
@@ -2891,9 +2925,12 @@ webkit.org/b/70887 [ Debug ] jquery/css.html [ Pass Timeout ]
 webkit.org/b/65009 [ Mac ] scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
 webkit.org/b/65009 [ Mac ] platform/chromium/virtual/gpu/compositedscrolling/scrollbars/scrollbar-drag-thumb-with-large-content.html [ Failure ]
 
-webkit.org/b/65124 [ Android Win MountainLion ] fast/repaint/japanese-rl-selection-clear.html [ Failure ]
-webkit.org/b/65124 [ Win MountainLion ] fast/repaint/japanese-rl-selection-repaint.html [ Failure ]
-webkit.org/b/65124 [ Android Win MountainLion ] fast/repaint/japanese-rl-selection-repaint-in-regions.html [ Failure ]
+# Temp comment schenney
+# webkit.org/b/65124 [ Android Win MountainLion ] fast/repaint/japanese-rl-selection-clear.html [ Failure ]
+# Temp comment schenney
+# webkit.org/b/65124 [ Win MountainLion ] fast/repaint/japanese-rl-selection-repaint.html [ Failure ]
+# Temp comment schenney
+# webkit.org/b/65124 [ Android Win MountainLion ] fast/repaint/japanese-rl-selection-repaint-in-regions.html [ Failure ]
 webkit.org/b/65124 [ Android ] fast/repaint/line-flow-with-floats-in-regions.html [ Failure ]
 
 webkit.org/b/65199 [ Android Linux SnowLeopard Win ] fast/writing-mode/broken-ideograph-small-caps.html [ Failure ]
@@ -3067,7 +3104,8 @@ webkit.org/b/72761 accessibility/anonymous-render-block-in-continuation-causes-c
 
 webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
 
-webkit.org/b/78544 [ Android Linux ] fast/text/international/danda-space.html [ Failure ImageOnlyFailure Pass ]
+# Temp comment schenney
+# webkit.org/b/78544 [ Android Linux ] fast/text/international/danda-space.html [ Failure ImageOnlyFailure Pass ]
 
 webkit.org/b/74357 plugins/netscape-plugin-page-cache-works.html [ Skip ]
 
@@ -3172,7 +3210,8 @@ webkit.org/b/81145 [ Lion MountainLion ] fast/repaint/transform-absolute-in-posi
 webkit.org/b/81145 [ Lion MountainLion ] animations/cross-fade-webkit-mask-box-image.html [ ImageOnlyFailure ]
 webkit.org/b/81145 [ Lion MountainLion ] fast/frames/invalid.html [ Failure ImageOnlyFailure Pass Slow ]
 webkit.org/b/81145 [ Lion MountainLion ] fast/repaint/background-scaling.html [ ImageOnlyFailure ]
-webkit.org/b/81145 [ Lion MountainLion ] fast/repaint/scale-page-shrink.html [ ImageOnlyFailure ]
+# Temp comment schenney
+# webkit.org/b/81145 [ Lion MountainLion ] fast/repaint/scale-page-shrink.html [ ImageOnlyFailure ]
 webkit.org/b/81145 [ Lion MountainLion ] editing/spelling/spelling-backspace-between-lines.html [ Failure ]
 webkit.org/b/81145 [ Lion MountainLion ] platform/chromium/virtual/gpu/fast/canvas/set-colors.html [ Failure ]
 webkit.org/b/81145 [ Lion MountainLion ] plugins/plugin-javascript-access.html [ Failure ]
@@ -3649,7 +3688,8 @@ webkit.org/b/101670 media/video-controls-captions-trackmenu-localized.html [ Ski
 webkit.org/b/101670 media/video-controls-captions-trackmenu-hide-on-click.html [ Skip ]
 webkit.org/b/101670 media/track/track-user-preferences.html [ Skip ]
 
-webkit.org/b/92835 [ Android Mac Win Debug ] svg/as-background-image/svg-as-background-5.html [ Slow ]
+# Temp comment schenney
+# webkit.org/b/92835 [ Android Mac Win Debug ] svg/as-background-image/svg-as-background-5.html [ Slow ]
 
 webkit.org/b/92850 [ Android Linux Debug ] http/tests/websocket/tests/hybi/workers/close-code-and-reason.html [ Crash Pass ]
 
@@ -4090,7 +4130,8 @@ webkit.org/b/102277 fast/events/overflow-scroll-fake-mouse-move.html [ Pass Fail
 # This test is consistently leaking state into the next test.
 webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
 
-webkit.org/b/102724 [ Linux ] svg/carto.net/colourpicker.svg [ ImageOnlyFailure Pass ]
+# Temp comment schenney
+# webkit.org/b/102724 [ Linux ] svg/carto.net/colourpicker.svg [ ImageOnlyFailure Pass ]
 
 webkit.org/b/103927 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_frame_initiator_type.html [ Failure ]
 webkit.org/b/103927 [ Mac Linux ] http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_dynamic_insertion.html [ Failure ]
@@ -4166,7 +4207,8 @@ webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/Google/resource-ti
 # New test added in r137331
 webkit.org/b/104715 [ MountainLion ] fast/block/float/floats-wrap-inside-inline-007.html [ ImageOnlyFailure ]
 
-webkit.org/b/103667 [ Linux ] fast/ruby/position-after.html [ ImageOnlyFailure ]
+# Temp comment schenney
+# webkit.org/b/103667 [ Linux ] fast/ruby/position-after.html [ ImageOnlyFailure ]
 
 webkit.org/b/105595 [ Mac ] svg/text/alt-glyph-for-surrogate-pair.svg [ ImageOnlyFailure ]
 webkit.org/b/47975 [ MountainLion ] fast/block/float/max-width-clear-float-with-overflow-hidden.html [ ImageOnlyFailure ]
@@ -4177,7 +4219,8 @@ webkit.org/b/106249 [ Win ] fast/speech/scripted/navigate-away.html [ Failure Pa
 
 webkit.org/b/106332 http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html [ Skip ]
 webkit.org/b/106387 [ Win ] svg/W3C-SVG-1.1/animate-elem-80-t.svg [ Failure Pass ]
-webkit.org/b/106387 [ Win ] svg/W3C-SVG-1.1/filters-comptran-01-b.svg [ ImageOnlyFailure Pass ]
+# Temp comment schenney
+# webkit.org/b/106387 [ Win ] svg/W3C-SVG-1.1/filters-comptran-01-b.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/106390 [ Win ] svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop.html [ ImageOnlyFailure Pass ]
 webkit.org/b/106390 [ Win ] svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr.html [ ImageOnlyFailure Pass ]
 webkit.org/b/106473 [ Linux ] fast/images/embed-does-not-propagate-dimensions-to-object-ancestor.html [ Crash Pass ]
@@ -4324,7 +4367,8 @@ webkit.org/b/111872 fast/dom/title-directionality-removeChild.html [ Pass Failur
 webkit.org/b/111808 [ Debug ] fast/js/regress/nested-function-parsing-random.html [ Pass Timeout ]
 
 # Subtle pixel difference in debug only.
-webkit.org/b/112058 [ Debug SnowLeopard ] svg/custom/foreign-object-skew.svg [ ImageOnlyFailure ]
+# Temp comment schenney
+# webkit.org/b/112058 [ Debug SnowLeopard ] svg/custom/foreign-object-skew.svg [ ImageOnlyFailure ]
 
 webkit.org/b/112193 fast/dom/Window/window-postmessage-clone.html [ Failure Pass ]
 
@@ -4365,3 +4409,307 @@ webkit.org/b/112288 http/tests/security/same-origin-appcache-blocked.html [ Fail
 
 # Snapshotted plugins not enabled
 webkit.org/b/98696 plugins/snapshotting [ Skip ]
+
+# To be rebaselined today, 03/22/2013
+Bug(schenney) css2.1/t0905-c414-flt-fit-01-d-g.html [ Failure ]
+Bug(schenney) css2.1/t0905-c5525-flthw-00-c-g.html [ Failure ]
+Bug(schenney) css2.1/t100801-c544-valgn-00-a-ag.html [ ImageOnlyFailure ]
+Bug(schenney) css2.1/t100801-c544-valgn-02-d-agi.html [ ImageOnlyFailure ]
+Bug(schenney) css2.1/t100801-c544-valgn-03-d-agi.html [ ImageOnlyFailure ]
+Bug(schenney) css2.1/t100801-c544-valgn-04-d-agi.html [ ImageOnlyFailure ]
+Bug(schenney) editing/selection/select-text-overflow-ellipsis.html [ ImageOnlyFailure ]
+Bug(schenney) editing/selection/vertical-lr-ltr-extend-line-backward-br.html [ ImageOnlyFailure ]
+Bug(schenney) editing/selection/vertical-lr-ltr-extend-line-forward-br.html [ ImageOnlyFailure ]
+Bug(schenney) editing/selection/vertical-rl-ltr-extend-line-backward-br.html [ ImageOnlyFailure ]
+Bug(schenney) editing/selection/vertical-rl-ltr-extend-line-backward-p.html [ ImageOnlyFailure ]
+Bug(schenney) editing/selection/vertical-rl-ltr-extend-line-backward-wrap.html [ ImageOnlyFailure ]
+Bug(schenney) editing/selection/vertical-rl-ltr-extend-line-forward-br.html [ ImageOnlyFailure ]
+Bug(schenney) editing/selection/vertical-rl-ltr-extend-line-forward-p.html [ ImageOnlyFailure ]
+Bug(schenney) editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html [ ImageOnlyFailure ]
+Bug(schenney) fast/backgrounds/animated-svg-as-mask.html [ ImageOnlyFailure ]
+Bug(schenney) fast/borders/border-antialiasing.html [ ImageOnlyFailure ]
+Bug(schenney) fast/borders/border-radius-split-inline.html [ ImageOnlyFailure ]
+Bug(schenney) fast/borders/border-radius-with-box-shadow-01.html [ ImageOnlyFailure ]
+Bug(schenney) fast/borders/border-radius-with-box-shadow.html [ ImageOnlyFailure ]
+Bug(schenney) fast/box-shadow/basic-shadows.html [ ImageOnlyFailure ]
+Bug(schenney) fast/box-shadow/box-shadow-clipped-slices.html [ ImageOnlyFailure ]
+Bug(schenney) fast/box-shadow/box-shadow-radius.html [ ImageOnlyFailure ]
+Bug(schenney) fast/box-shadow/box-shadow-transformed.html [ ImageOnlyFailure ]
+Bug(schenney) fast/box-shadow/inset-box-shadow-radius.html [ ImageOnlyFailure ]
+Bug(schenney) fast/box-shadow/inset-box-shadows.html [ ImageOnlyFailure ]
+Bug(schenney) fast/box-shadow/inset.html [ ImageOnlyFailure ]
+Bug(schenney) fast/box-shadow/scaled-box-shadow.html [ ImageOnlyFailure ]
+Bug(schenney) fast/box-shadow/shadow-buffer-partial.html [ ImageOnlyFailure ]
+Bug(schenney) fast/box-shadow/shadow-tiling-artifact.html [ ImageOnlyFailure ]
+Bug(schenney) fast/box-shadow/single-pixel-shadow.html [ ImageOnlyFailure ]
+Bug(schenney) fast/canvas/canvas-incremental-repaint.html [ ImageOnlyFailure ]
+Bug(schenney) fast/css/box-shadow-and-border-radius.html [ ImageOnlyFailure ]
+Bug(schenney) fast/css/color-correction-on-box-shadow.html [ Failure ImageOnlyFailure ]
+Bug(schenney) fast/css/color-correction-on-text-shadow.html [ Failure ImageOnlyFailure ]
+Bug(schenney) fast/css/empty-pseudo-class.html [ ImageOnlyFailure ]
+Bug(schenney) fast/css/first-child-pseudo-class.html [ ImageOnlyFailure ]
+Bug(schenney) fast/css/first-of-type-pseudo-class.html [ ImageOnlyFailure ]
+Bug(schenney) fast/css/font-family-pictograph.html [ Failure ]
+Bug(schenney) fast/css/last-child-pseudo-class.html [ ImageOnlyFailure ]
+Bug(schenney) fast/css/last-of-type-pseudo-class.html [ ImageOnlyFailure ]
+Bug(schenney) fast/css/line-height-determined-by-primary-font.html [ ImageOnlyFailure ]
+Bug(schenney) fast/css/only-child-pseudo-class.html [ ImageOnlyFailure ]
+Bug(schenney) fast/css/only-of-type-pseudo-class.html [ ImageOnlyFailure ]
+Bug(schenney) fast/css/shadow-multiple.html [ ImageOnlyFailure ]
+Bug(schenney) fast/dynamic/text-combine.html [ ImageOnlyFailure ]
+Bug(schenney) fast/forms/date/date-appearance-l10n.html [ ImageOnlyFailure ]
+Bug(schenney) fast/forms/datetimelocal/datetimelocal-appearance-l10n.html [ ImageOnlyFailure ]
+Bug(schenney) fast/forms/month/month-appearance-l10n.html [ ImageOnlyFailure ]
+Bug(schenney) fast/forms/validation-message-appearance.html [ ImageOnlyFailure ]
+Bug(schenney) fast/line-grid/line-grid-contains-value.html [ ImageOnlyFailure ]
+Bug(schenney) fast/multicol/nested-columns.html [ ImageOnlyFailure ]
+Bug(schenney) fast/multicol/shadow-breaking.html [ ImageOnlyFailure ]
+Bug(schenney) fast/multicol/vertical-lr/nested-columns.html [ ImageOnlyFailure ]
+Bug(schenney) fast/repaint/box-shadow-h.html [ ImageOnlyFailure ]
+Bug(schenney) fast/repaint/box-shadow-v.html [ ImageOnlyFailure ]
+Bug(schenney) fast/repaint/japanese-rl-selection-clear.html [ ImageOnlyFailure ]
+Bug(schenney) fast/repaint/japanese-rl-selection-repaint-in-regions.html [ ImageOnlyFailure ]
+Bug(schenney) fast/repaint/japanese-rl-selection-repaint.html [ ImageOnlyFailure ]
+Bug(schenney) fast/repaint/moving-shadow-on-container.html [ ImageOnlyFailure ]
+Bug(schenney) fast/repaint/moving-shadow-on-path.html [ ImageOnlyFailure ]
+Bug(schenney) fast/repaint/scale-page-shrink.html [ ImageOnlyFailure ]
+Bug(schenney) fast/repaint/shadow-multiple-horizontal.html [ ImageOnlyFailure ]
+Bug(schenney) fast/repaint/shadow-multiple-strict-horizontal.html [ ImageOnlyFailure ]
+Bug(schenney) fast/repaint/shadow-multiple-strict-vertical.html [ ImageOnlyFailure ]
+Bug(schenney) fast/repaint/shadow-multiple-vertical.html [ ImageOnlyFailure ]
+Bug(schenney) fast/repaint/transform-replaced-shadows.html [ ImageOnlyFailure ]
+Bug(schenney) fast/ruby/position-after.html [ ImageOnlyFailure ]
+Bug(schenney) fast/text/complex-text-opacity.html [ Failure ]
+Bug(schenney) fast/text/decorations-with-text-combine.html [ ImageOnlyFailure ]
+Bug(schenney) fast/text/international/bidi-neutral-directionality-paragraph-start.html [ Failure ]
+Bug(schenney) fast/text/international/complex-character-based-fallback.html [ Failure ]
+Bug(schenney) fast/text/international/danda-space.html [ Failure ]
+Bug(schenney) fast/text/international/hindi-spacing.html [ Failure ]
+Bug(schenney) fast/text/international/hindi-whitespace.html [ Failure ]
+Bug(schenney) fast/text/international/plane2.html [ ImageOnlyFailure ]
+Bug(schenney) fast/text/international/text-spliced-font.html [ ImageOnlyFailure ]
+Bug(schenney) fast/text/international/vertical-text-glyph-test.html [ ImageOnlyFailure ]
+Bug(schenney) fast/text/justify-ideograph-vertical.html [ ImageOnlyFailure ]
+Bug(schenney) fast/text/orientation-sideways.html [ ImageOnlyFailure ]
+Bug(schenney) fast/text/shadow-translucent-fill.html [ ImageOnlyFailure ]
+Bug(schenney) fast/text/stroking-decorations.html [ ImageOnlyFailure ]
+Bug(schenney) fast/text/stroking.html [ ImageOnlyFailure ]
+Bug(schenney) fast/text/whitespace/024.html [ ImageOnlyFailure ]
+Bug(schenney) fast/transforms/shadows.html [ ImageOnlyFailure ]
+Bug(schenney) fast/writing-mode/border-vertical-lr.html [ ImageOnlyFailure ]
+Bug(schenney) fast/writing-mode/box-shadow-horizontal-bt.html [ ImageOnlyFailure ]
+Bug(schenney) fast/writing-mode/box-shadow-vertical-lr.html [ ImageOnlyFailure ]
+Bug(schenney) fast/writing-mode/box-shadow-vertical-rl.html [ ImageOnlyFailure ]
+Bug(schenney) fast/writing-mode/english-lr-text.html [ ImageOnlyFailure ]
+Bug(schenney) fast/writing-mode/japanese-lr-selection.html [ ImageOnlyFailure ]
+Bug(schenney) fast/writing-mode/japanese-lr-text.html [ ImageOnlyFailure ]
+Bug(schenney) fast/writing-mode/japanese-rl-selection.html [ ImageOnlyFailure ]
+Bug(schenney) fast/writing-mode/japanese-rl-text.html [ ImageOnlyFailure ]
+Bug(schenney) fast/writing-mode/japanese-ruby-vertical-lr.html [ ImageOnlyFailure ]
+Bug(schenney) fast/writing-mode/japanese-ruby-vertical-rl.html [ ImageOnlyFailure ]
+Bug(schenney) fast/writing-mode/text-orientation-basic.html [ ImageOnlyFailure ]
+Bug(schenney) fast/writing-mode/vertical-align-table-baseline.html [ ImageOnlyFailure ]
+Bug(schenney) fast/writing-mode/vertical-baseline-alignment.html [ ImageOnlyFailure ]
+Bug(schenney) http/tests/loading/pdf-commit-load-callbacks.html [ Failure ]
+Bug(schenney) ietestcenter/css3/text/textshadow-001.htm [ ImageOnlyFailure ]
+Bug(schenney) ietestcenter/css3/text/textshadow-002.htm [ ImageOnlyFailure ]
+Bug(schenney) ietestcenter/css3/text/textshadow-003.htm [ ImageOnlyFailure ]
+Bug(schenney) ietestcenter/css3/text/textshadow-004.htm [ ImageOnlyFailure ]
+Bug(schenney) ietestcenter/css3/text/textshadow-010.htm [ ImageOnlyFailure ]
+Bug(schenney) media/track/track-cue-rendering-vertical.html [ ImageOnlyFailure ]
+Bug(schenney) platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ar.html [ ImageOnlyFailure ]
+Bug(schenney) platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-required-ar.html [ ImageOnlyFailure ]
+Bug(schenney) platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-required.html [ ImageOnlyFailure ]
+Bug(schenney) platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru.html [ ImageOnlyFailure ]
+Bug(schenney) platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step.html [ ImageOnlyFailure ]
+Bug(schenney) platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance.html [ ImageOnlyFailure ]
+Bug(schenney) platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step.html [ ImageOnlyFailure ]
+Bug(schenney) platform/chromium/fast/forms/calendar-picker/month-picker-appearance.html [ ImageOnlyFailure ]
+Bug(schenney) platform/chromium/fast/forms/calendar-picker/week-picker-appearance-step.html [ ImageOnlyFailure ]
+Bug(schenney) platform/chromium/fast/forms/calendar-picker/week-picker-appearance.html [ ImageOnlyFailure ]
+Bug(schenney) platform/chromium/fast/forms/color/color-suggestion-picker-appearance.html [ ImageOnlyFailure ]
+Bug(schenney) platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance.html [ ImageOnlyFailure ]
+Bug(schenney) platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance.html [ ImageOnlyFailure ]
+Bug(schenney) platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance.html [ ImageOnlyFailure ]
+Bug(schenney) platform/chromium/virtual/softwarecompositing/culling/scrolled-within-boxshadow.html [ Failure ImageOnlyFailure ]
+Bug(schenney) platform/chromium/virtual/softwarecompositing/culling/translated-boxshadow.html [ Failure ImageOnlyFailure ]
+Bug(schenney) platform/chromium/virtual/softwarecompositing/culling/unscrolled-within-boxshadow.html [ Failure ImageOnlyFailure ]
+Bug(schenney) platform/chromium/virtual/softwarecompositing/geometry/clipping-foreground.html [ Failure ImageOnlyFailure ]
+Bug(schenney) platform/chromium/virtual/softwarecompositing/geometry/foreground-layer.html [ Failure ImageOnlyFailure ]
+Bug(schenney) platform/chromium/virtual/softwarecompositing/iframes/composited-iframe-alignment.html [ Failure ImageOnlyFailure ]
+Bug(schenney) platform/chromium/virtual/softwarecompositing/masks/masked-ancestor.html [ Failure ImageOnlyFailure ]
+Bug(schenney) platform/chromium/virtual/softwarecompositing/repaint/invalidations-on-composited-layers.html [ Failure ImageOnlyFailure ]
+Bug(schenney) platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ImageOnlyFailure ]
+Bug(schenney) platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ImageOnlyFailure ]
+Bug(schenney) platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ImageOnlyFailure ]
+Bug(schenney) platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ImageOnlyFailure ]
+Bug(schenney) platform/chromium/virtual/softwarecompositing/shadows/shadow-drawing.html [ Failure ImageOnlyFailure ]
+Bug(schenney) platform/chromium/virtual/softwarecompositing/tiling/huge-layer-add-remove-child.html [ Failure ImageOnlyFailure ]
+Bug(schenney) platform/chromium/virtual/softwarecompositing/tiling/huge-layer-with-layer-children.html [ Failure ImageOnlyFailure ]
+Bug(schenney) compositing/culling/scrolled-within-boxshadow.html [ Failure ImageOnlyFailure ]
+Bug(schenney) compositing/culling/translated-boxshadow.html [ Failure ImageOnlyFailure ]
+Bug(schenney) compositing/culling/unscrolled-within-boxshadow.html [ Failure ImageOnlyFailure ]
+Bug(schenney) compositing/geometry/clipping-foreground.html [ Failure ImageOnlyFailure ]
+Bug(schenney) compositing/geometry/foreground-layer.html [ Failure ImageOnlyFailure ]
+Bug(schenney) compositing/iframes/composited-iframe-alignment.html [ Failure ImageOnlyFailure ]
+Bug(schenney) compositing/masks/masked-ancestor.html [ Failure ImageOnlyFailure ]
+Bug(schenney) compositing/repaint/invalidations-on-composited-layers.html [ Failure ImageOnlyFailure ]
+Bug(schenney) compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ImageOnlyFailure ]
+Bug(schenney) compositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ImageOnlyFailure ]
+Bug(schenney) compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ImageOnlyFailure ]
+Bug(schenney) compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ImageOnlyFailure ]
+Bug(schenney) compositing/shadows/shadow-drawing.html [ Failure ImageOnlyFailure ]
+Bug(schenney) compositing/tiling/huge-layer-add-remove-child.html [ Failure ImageOnlyFailure ]
+Bug(schenney) compositing/tiling/huge-layer-with-layer-children.html [ Failure ImageOnlyFailure ]
+Bug(schenney) printing/iframe-print.html [ ImageOnlyFailure ]
+Bug(schenney) printing/setPrinting.html [ ImageOnlyFailure ]
+Bug(schenney) printing/width-overflow.html [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/g-dirLTR-ubNone.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/g-dirLTR-ubOverride.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/g-dirRTL-ubNone.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/g-dirRTL-ubOverride.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/text-anchor-dirLTR-anchorEnd.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/text-anchor-dirLTR-anchorStart.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/text-anchor-dirNone-anchorEnd.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/text-anchor-dirNone-anchorMiddle.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/text-anchor-dirNone-anchorStart.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/text-anchor-dirRTL-anchorEnd.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/text-anchor-dirRTL-anchorStart.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/text-anchor-no-markup.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/text-dirLTR-ubNone.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/text-dirLTR-ubOverride.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/text-dirRTL-ubNone.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/text-dirRTL-ubOverride.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-default-context.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-ltr-context.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/tspan-dirRTL-ubNone-in-default-context.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/tspan-dirRTL-ubNone-in-ltr-context.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/tspan-dirRTL-ubOverride-in-default-context.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/tspan-dirRTL-ubOverride-in-ltr-context.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/tspan-direction-ltr.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-I18N/tspan-direction-rtl.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-SVG-1.1/animate-elem-11-t.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-SVG-1.1/animate-elem-22-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-SVG-1.1/animate-elem-84-t.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-SVG-1.1/filters-comptran-01-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-SVG-1.1/masking-path-03-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-SVG-1.1/paths-data-04-t.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-SVG-1.1/paths-data-06-t.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-SVG-1.1/paths-data-08-t.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-SVG-1.1/text-align-02-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-SVG-1.1/text-align-05-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-SVG-1.1/text-align-06-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-SVG-1.1/text-tspan-01-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-SVG-1.2-Tiny/struct-use-recursion-02-t.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-SVG-1.2-Tiny/struct-use-recursion-03-t.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/as-background-image/animated-svg-as-background.html [ ImageOnlyFailure ]
+Bug(schenney) svg/as-background-image/svg-as-background-5.html [ ImageOnlyFailure ]
+Bug(schenney) svg/batik/text/textAnchor.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/batik/text/textFeatures.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/batik/text/textLayout2.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/batik/text/textLength.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/batik/text/xmlSpace.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/carto.net/button.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/carto.net/colourpicker.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/carto.net/combobox.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/carto.net/scrollbar.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/carto.net/slider.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/carto.net/tabgroup.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/carto.net/textbox.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/carto.net/window.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/css/arrow-with-shadow.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/css/circle-in-mask-with-shadow.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/css/composite-shadow-example.html [ ImageOnlyFailure ]
+Bug(schenney) svg/css/composite-shadow-text.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/css/composite-shadow-with-opacity.html [ ImageOnlyFailure ]
+Bug(schenney) svg/css/group-with-shadow.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/css/path-with-shadow.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/css/root-shadow-offscreen.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/css/shadow-and-opacity.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/css/shadow-changes.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/css/shadow-with-large-radius.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/css/shadow-with-negative-offset.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/css/stars-with-shadow.html [ ImageOnlyFailure ]
+Bug(schenney) svg/css/text-gradient-shadow.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/css/text-shadow-multiple.xhtml [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/alignment-baseline-modes.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/dominant-baseline-modes.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/feComponentTransfer-Discrete.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/feComponentTransfer-Gamma.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/feComponentTransfer-Linear.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/feComponentTransfer-Table.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/font-face-cascade-order.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/font-face-simple.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/foreign-object-skew.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/glyph-selection-lang-attribute.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/invalid-css.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/js-late-gradient-and-object-creation.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/js-late-pattern-and-object-creation.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/linking-uri-01-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/marker-default-width-height.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/path-textPath-simulation.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/preserve-aspect-ratio-syntax.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/repaint-shadow.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/shapes-supporting-markers.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/text-tref-03-b-change-href-dom.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/text-tref-03-b-change-href.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/text-tref-03-b-referenced-element-removal.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/text-tref-03-b-tref-removal.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/transform-with-shadow-and-gradient.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/tref-own-content-removal.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/viewbox-syntax.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/filters/shadow-on-rect-with-filter.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/hixie/intrinsic/003.html [ Failure ]
+Bug(schenney) svg/hixie/text/003.html [ ImageOnlyFailure ]
+Bug(schenney) svg/text/bidi-text-anchor-direction.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/small-fonts-3.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-align-01-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-align-02-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-align-03-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-align-04-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-align-05-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-align-06-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-altglyph-01-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-deco-01-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-fonts-01-t.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-fonts-02-t.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-intro-05-t.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-path-01-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-text-03-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-text-04-t.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-text-05-t.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-text-06-t.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-text-07-t.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-text-08-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-tref-01-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-tselect-01-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-tselect-02-f.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-tspan-01-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-ws-01-t.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/text/text-ws-02-t.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/wicd/rightsizing-grid.xhtml [ ImageOnlyFailure ]
+Bug(schenney) svg/zoom/page/zoom-coords-viewattr-01-b.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/zoom/page/zoom-mask-with-percentages.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml [ ImageOnlyFailure ]
+Bug(schenney) svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml [ ImageOnlyFailure ]
+Bug(schenney) svg/zoom/text/zoom-coords-viewattr-01-b.svg [ ImageOnlyFailure ]
+Bug(schenney) transforms/2d/hindi-rotated.html [ Failure ]
+Bug(schenney) transitions/svg-text-shadow-transition.html [ ImageOnlyFailure ]

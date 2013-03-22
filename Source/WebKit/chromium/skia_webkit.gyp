@@ -43,12 +43,6 @@
           # DO NOT remove the define until you are ready to rebaseline, and
           # AFTER the flag has been removed from skia.gyp in Chromium.
 
-          'SK_DISABLE_BLUR_ROUNDING',
-          'SK_IGNORE_SUBPIXEL_AXIS_ALIGN_FIX',
-          'SK_IGNORE_PICTURE_RECORD_SAVE_LAYER_OPT',
-          'SK_IGNORE_FAST_RECT_BLUR',
-          'SK_IGNORE_CUBIC_STROKE_FIX',
-
         ],
       },
     },

@@ -1,3 +1,11 @@
+2013-03-22  Stephen Chenney  <schenney@chromium.org>
+
+        Skia flag removal to enable bug fixes and performance improvements.
+
+        Unreviewed code enabling.
+
+        * skia_webkit.gyp:
+
 2013-03-22  Tommy Widenflycht  <tommyw@google.com>
 
         Clean up the speach recognintion API
