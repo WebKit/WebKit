@@ -18,10 +18,10 @@
     light =  document.getElementById('light');
     newDefs = document.getElementById('defs').cloneNode(true);
 
-    if (window.testRunner) {
-      testRunner.dumpAsText();
+    if (window.layoutTestController) {
+      layoutTestController.dumpAsText();
       // Force a paint at this point to generate cached filter results.
-      testRunner.display();
+      layoutTestController.display();
     }
 
     docElement.appendChild(newDefs);

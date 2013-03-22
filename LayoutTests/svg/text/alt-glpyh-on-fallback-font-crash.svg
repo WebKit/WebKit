@@ -14,8 +14,8 @@
     </g>
   </g>
   <script>
-    if (window.testRunner)
-      testRunner.dumpAsText();
+    if (window.layoutTestController)
+      layoutTestController.dumpAsText();
 
     var docElement = document.body ? document.body : document.documentElement;
     if (docElement) docElement.offsetTop;

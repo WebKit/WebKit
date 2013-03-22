@@ -1,5 +1,18 @@
 2013-03-22  Eric Carlson  <eric.carlson@apple.com>
 
+        <rdar://problem/13465764> Many merged tests are failing
+
+        Change all instances of "testRunner" back to "layoutTestController" in svg files, which
+        my initial commit missed.
+
+        * fast/css/font-size-nan.svg:
+        * svg/custom/stale-resource-data-crash.svg:
+        * svg/custom/use-href-update-crash.svg:
+        * svg/custom/use-rebuild-resources-crash.svg:
+        * svg/text/alt-glpyh-on-fallback-font-crash.svg:
+
+2013-03-22  Eric Carlson  <eric.carlson@apple.com>
+
         Add the newline at end of the test results, apparently lost when merging r131709.
 
         * fast/forms/textarea/textarea-autofocus-removal-while-focusing-with-style-expected.txt:

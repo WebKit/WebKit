@@ -23,8 +23,8 @@
       document.getElementById('svg').appendChild(clone);
     }
 
-    if (window.testRunner)
-      testRunner.dumpAsText();
+    if (window.layoutTestController)
+      layoutTestController.dumpAsText();
 
     document.addEventListener("DOMContentLoaded", initCF, false);
   </script>
