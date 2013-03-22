@@ -127,6 +127,7 @@
     [Reflect=pseudo, V8EnabledAtRuntime=shadowDOM, ImplementedAs=pseudo, V8PerWorldBindings] attribute DOMString webkitPseudo;
     [V8EnabledAtRuntime=shadowDOM, ImplementedAs=createShadowRoot, V8PerWorldBindings] ShadowRoot webkitCreateShadowRoot() raises(DOMException);
     [V8EnabledAtRuntime=shadowDOM, ImplementedAs=shadowRoot, V8PerWorldBindings] readonly attribute ShadowRoot webkitShadowRoot;
+    [V8EnabledAtRuntime=shadowDOM, ImplementedAs=insertionParentForBinding, V8PerWorldBindings] readonly attribute Node webkitInsertionParent;
 #endif
 
     // DOM 4

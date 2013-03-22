@@ -259,6 +259,8 @@ public:
     bool isDocumentFragment() const { return getFlag(IsDocumentFragmentFlag); }
     bool isShadowRoot() const { return isDocumentFragment() && isTreeScope(); }
     bool isInsertionPoint() const { return getFlag(NeedsShadowTreeWalkerFlag) && isInsertionPointNode(); }
+    // Returns Node rather than InsertionPoint. Should be used only for language bindings.
+    Node* insertionParentForBinding() const;
 
     bool needsShadowTreeWalker() const;
     bool needsShadowTreeWalkerSlow() const;

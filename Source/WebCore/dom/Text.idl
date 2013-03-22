@@ -29,5 +29,10 @@
     readonly attribute DOMString       wholeText;
     Text               replaceWholeText(in [Optional=DefaultIsUndefined] DOMString content)
                                         raises(DOMException);
+    // ShadowAware API
+#if defined(ENABLE_SHADOW_DOM) && ENABLE_SHADOW_DOM && defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+    [V8EnabledAtRuntime=shadowDOM, ImplementedAs=insertionParentForBinding, V8PerWorldBindings] readonly attribute Node webkitInsertionParent;
+#endif
+
 };
 

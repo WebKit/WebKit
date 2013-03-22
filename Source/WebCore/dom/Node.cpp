@@ -67,6 +67,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
 #include "HTMLStyleElement.h"
+#include "InsertionPoint.h"
 #include "InspectorCounters.h"
 #include "KeyboardEvent.h"
 #include "LabelsNodeList.h"
@@ -1271,6 +1272,11 @@ Element* Node::parentOrShadowHostElement() const
         return 0;
 
     return toElement(parent);
+}
+
+Node* Node::insertionParentForBinding() const
+{
+    return resolveReprojection(this);
 }
 
 bool Node::needsShadowTreeWalkerSlow() const

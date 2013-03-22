@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/shadow-dom.js"></script>
+</head>
+<body>
+<script>
+description("Tests for node's insertionParent().");
+
+var textNode = document.createTextNode('hello');
+
+document.body.appendChild(
+    createDOM('div', {},
+              createDOM('div', {'id': 'host-1'},
+                        createShadowRoot(
+                            createDOM('content', {'id': 'content-1'})),
+                        createDOM('div', {'id': 'child'})),
+              createDOM('div', {'id': 'host-2'},
+                        createShadowRoot(
+                            createDOM('content', {'id': 'content-2', 'select': '.cls'}),
+                            createDOM('div', {'id': 'host-3'},
+                                      createShadowRoot(
+                                          createDOM('content', {'id': 'content-3'})),
+                                      createDOM('content'))),
+                        createDOM('div', {'id': 'reprojected-child', 'class': 'cls'}),
+                        textNode)));
+
+document.body.offsetLeft;
+
+shouldBeUndefined("document.webkitInsertionParent");
+shouldBeNull("document.getElementById('host-1').webkitInsertionParent");
+shouldBeEqualToString("document.getElementById('child').webkitInsertionParent.id", "content-1");
+shouldBeEqualToString("document.getElementById('reprojected-child').webkitInsertionParent.id", "content-2");
+shouldBeEqualToString("textNode.webkitInsertionParent.id", "content-3");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
