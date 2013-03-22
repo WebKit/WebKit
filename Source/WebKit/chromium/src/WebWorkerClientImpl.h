@@ -87,6 +87,7 @@ public:
     virtual void openFileSystem(WebFileSystemType, long long size, bool create,
         WebFileSystemCallbacks*) OVERRIDE;
     virtual bool allowIndexedDB(const WebString& name) OVERRIDE;
+    virtual void queryUsageAndQuota(WebStorageQuotaType, WebStorageQuotaCallbacks*) OVERRIDE;
 
 private:
     WebWorkerClientImpl(WebCore::Worker*, WebFrameImpl*);

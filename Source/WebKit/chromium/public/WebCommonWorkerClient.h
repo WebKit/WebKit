@@ -34,6 +34,9 @@
 #include "../../../Platform/chromium/public/WebCommon.h"
 #include "../../../Platform/chromium/public/WebFileSystem.h"
 #include "../../../Platform/chromium/public/WebFileSystemType.h"
+// FIXME: need to move this to Platform
+#include "WebStorageQuotaCallbacks.h"
+#include "WebStorageQuotaType.h"
 
 namespace WebKit {
 
@@ -69,6 +72,10 @@ public:
     virtual bool allowIndexedDB(const WebString& name)
     {
         return true;
+    }
+    virtual void queryUsageAndQuota(WebStorageQuotaType, WebStorageQuotaCallbacks*)
+    {
+        WEBKIT_ASSERT_NOT_REACHED();
     }
 };
 

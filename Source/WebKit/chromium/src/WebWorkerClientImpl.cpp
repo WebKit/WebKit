@@ -142,6 +142,15 @@ bool WebWorkerClientImpl::allowIndexedDB(const WebString& name)
     return !webView->permissionClient() || webView->permissionClient()->allowIndexedDB(m_webFrame, name, WebSecurityOrigin());
 }
 
+void WebWorkerClientImpl::queryUsageAndQuota(WebStorageQuotaType type, WebStorageQuotaCallbacks* callbacks)
+{
+    if (askedToTerminate()) {
+        callbacks->didFail(WebStorageQuotaErrorAbort);
+        return;
+    }
+    m_webFrame->client()->queryStorageUsageAndQuota(m_webFrame, type, callbacks);
+}
+
 WebWorkerClientImpl::WebWorkerClientImpl(Worker* worker, WebFrameImpl* webFrame)
     : WebCore::WorkerMessagingProxy(worker)
     , m_webFrame(webFrame)

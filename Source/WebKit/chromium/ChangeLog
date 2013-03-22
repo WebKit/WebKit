@@ -1,3 +1,56 @@
+2013-03-22  Alec Flett  <alecflett@chromium.org>
+
+        [chromium] Support Quota API in Worker
+        https://bugs.webkit.org/show_bug.cgi?id=112713
+
+        Hook up WebKit side of queryUsageAndQuota. Tests
+        and WebCore code will come in https://bugs.webkit.org/show_bug.cgi?id=112972
+
+        Reviewed by David Levin.
+
+        * WebKit.gyp:
+        * public/WebCommonWorkerClient.h:
+        (WebKit::WebCommonWorkerClient::queryUsageAndQuota):
+        * src/StorageQuotaChromium.cpp:
+        (WebCore::StorageQuota::queryUsageAndQuota):
+        (WebCore::StorageQuota::requestQuota):
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::queryUsageAndQuota):
+        (WebKit):
+        * src/WebWorkerClientImpl.h:
+        * src/WorkerStorageQuotaCallbacksBridge.cpp: Added.
+        (WebKit):
+        (MainThreadStorageQuotaCallbacks):
+        (WebKit::MainThreadStorageQuotaCallbacks::createLeakedPtr):
+        (WebKit::MainThreadStorageQuotaCallbacks::~MainThreadStorageQuotaCallbacks):
+        (WebKit::MainThreadStorageQuotaCallbacks::didQueryStorageUsageAndQuota):
+        (WebKit::MainThreadStorageQuotaCallbacks::didFail):
+        (WebKit::MainThreadStorageQuotaCallbacks::didGrantStorageQuota):
+        (WebKit::MainThreadStorageQuotaCallbacks::MainThreadStorageQuotaCallbacks):
+        (WorkerStorageQuotaContextObserver):
+        (WebKit::WorkerStorageQuotaContextObserver::create):
+        (WebKit::WorkerStorageQuotaContextObserver::notifyStop):
+        (WebKit::WorkerStorageQuotaContextObserver::WorkerStorageQuotaContextObserver):
+        (WebKit::WorkerStorageQuotaCallbacksBridge::stop):
+        (WebKit::WorkerStorageQuotaCallbacksBridge::cleanUpAfterCallback):
+        (WebKit::WorkerStorageQuotaCallbacksBridge::WorkerStorageQuotaCallbacksBridge):
+        (WebKit::WorkerStorageQuotaCallbacksBridge::~WorkerStorageQuotaCallbacksBridge):
+        (WebKit::WorkerStorageQuotaCallbacksBridge::postQueryUsageAndQuotaToMainThread):
+        (WebKit::WorkerStorageQuotaCallbacksBridge::queryUsageAndQuotaOnMainThread):
+        (WebKit::WorkerStorageQuotaCallbacksBridge::didFailOnMainThread):
+        (WebKit::WorkerStorageQuotaCallbacksBridge::didQueryStorageUsageAndQuotaOnMainThread):
+        (WebKit::WorkerStorageQuotaCallbacksBridge::didFailOnWorkerThread):
+        (WebKit::WorkerStorageQuotaCallbacksBridge::didQueryStorageUsageAndQuotaOnWorkerThread):
+        (WebKit::WorkerStorageQuotaCallbacksBridge::runTaskOnMainThread):
+        (WebKit::WorkerStorageQuotaCallbacksBridge::runTaskOnWorkerThread):
+        (WebKit::WorkerStorageQuotaCallbacksBridge::dispatchTaskToMainThread):
+        (WebKit::WorkerStorageQuotaCallbacksBridge::mayPostTaskToWorker):
+        * src/WorkerStorageQuotaCallbacksBridge.h: Added.
+        (WebCore):
+        (WebKit):
+        (WorkerStorageQuotaCallbacksBridge):
+        (WebKit::WorkerStorageQuotaCallbacksBridge::create):
+
 2013-03-22  Stephen Chenney  <schenney@chromium.org>
 
         Skia flag removal to enable bug fixes and performance improvements.
