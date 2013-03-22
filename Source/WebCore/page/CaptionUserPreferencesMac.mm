@@ -598,6 +598,40 @@ static String languageIdentifier(const String& languageCode)
     return lowercaseLanguageCode;
 }
 
+int CaptionUserPreferencesMac::textTrackSelectionScore(TextTrack* track) const
+{
+    if (!shouldShowCaptions())
+        return 0;
+    if (track->kind() != TextTrack::captionsKeyword() && track->kind() != TextTrack::subtitlesKeyword())
+        return 0;
+    if (track->containsOnlyForcedSubtitles())
+        return 0;
+    if (!track->isMainProgramContent())
+        return 0;
+
+    int trackScore = 0;
+
+    if (userPrefersCaptions()) {
+        // When the user prefers accessiblity tracks, rank is SDH, then CC, then subtitles.
+        if (track->kind() == track->subtitlesKeyword())
+            trackScore = 1;
+        else if (track->isClosedCaptions())
+            trackScore = 2;
+        else
+            trackScore = 3;
+    } else {
+        // When the user prefers translation tracks, rank is subtitles, then SDH, then CC tracks.
+        if (track->kind() == track->subtitlesKeyword())
+            trackScore = 3;
+        else if (!track->isClosedCaptions())
+            trackScore = 2;
+        else
+            trackScore = 1;
+    }
+
+    return trackScore + textTrackLanguageSelectionScore(track);
+}
+
 static bool textTrackCompare(const RefPtr<TextTrack>& a, const RefPtr<TextTrack>& b)
 {
     String preferredLanguageDisplayName = displayNameForLanguageLocale(languageIdentifier(defaultLanguage()));

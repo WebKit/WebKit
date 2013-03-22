@@ -49,6 +49,9 @@ public:
     virtual bool shouldShowCaptions() const;
     virtual void setShouldShowCaptions(bool);
 
+    virtual int textTrackSelectionScore(TextTrack*) const;
+    virtual int textTrackLanguageSelectionScore(TextTrack*) const;
+
     virtual bool userPrefersCaptions() const;
     virtual void setUserPrefersCaptions(bool);
 

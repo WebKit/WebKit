@@ -3079,59 +3079,27 @@ bool HTMLMediaElement::userPrefersCaptions() const
     return captionPreferences->userHasCaptionPreferences() && captionPreferences->shouldShowCaptions();
 }
 
-bool HTMLMediaElement::userIsInterestedInThisTrackKind(String kind) const
-{
-    if (m_disableCaptions)
-        return false;
-
-    Page* page = document()->page();
-    if (!page)
-        return false;
-
-    CaptionUserPreferences* captionPreferences = page->group().captionPreferences();
-    bool userPrefersCaptionsOrSubtitles = m_closedCaptionsVisible || userPrefersCaptions();
-
-    if (kind == TextTrack::subtitlesKeyword())
-        return captionPreferences->userPrefersSubtitles() || userPrefersCaptionsOrSubtitles;
-    if (kind == TextTrack::captionsKeyword())
-        return captionPreferences->userPrefersCaptions() || userPrefersCaptionsOrSubtitles;
-    if (kind == TextTrack::descriptionsKeyword())
-        return captionPreferences->userPrefersTextDescriptions() || userPrefersCaptionsOrSubtitles;
-
-    return false;
-}
-
 void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
 {
     ASSERT(group.tracks.size());
 
-    String bestMatchingLanguage;
-    if (group.hasSrcLang && document()->page()) {
-        Vector<String> trackLanguages;
-        trackLanguages.reserveInitialCapacity(group.tracks.size());
-        for (size_t i = 0; i < group.tracks.size(); ++i) {
-            String srcLanguage = group.tracks[i]->language();
-            if (srcLanguage.length())
-                trackLanguages.append(srcLanguage);
-        }
-        bestMatchingLanguage = preferredLanguageFromList(trackLanguages, document()->page()->group().captionPreferences()->preferredLanguages());
-    }
+    Page* page = document()->page();
+    CaptionUserPreferences* captionPreferences = page? page->group().captionPreferences() : 0;
 
     // First, find the track in the group that should be enabled (if any).
     Vector<RefPtr<TextTrack> > currentlyEnabledTracks;
     RefPtr<TextTrack> trackToEnable;
     RefPtr<TextTrack> defaultTrack;
     RefPtr<TextTrack> fallbackTrack;
+    int highestTrackScore = 0;
     for (size_t i = 0; i < group.tracks.size(); ++i) {
         RefPtr<TextTrack> textTrack = group.tracks[i];
 
         if (m_processingPreferenceChange && textTrack->mode() == TextTrack::showingKeyword())
             currentlyEnabledTracks.append(textTrack);
 
-        if (trackToEnable)
-            continue;
-
-        if (userIsInterestedInThisTrackKind(textTrack->kind())) {
+        int trackScore = captionPreferences ? captionPreferences->textTrackSelectionScore(textTrack.get()) : 0;
+        if (trackScore) {
             // * If the text track kind is { [subtitles or captions] [descriptions] } and the user has indicated an interest in having a
             // track with this text track kind, text track language, and text track label enabled, and there is no
             // other text track in the media element's list of text tracks with a text track kind of either subtitles
@@ -3141,17 +3109,14 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
             // to believe is appropriate for the user, and there is no other text track in the media element's list of
             // text tracks with a text track kind of chapters whose text track mode is showing
             //    Let the text track mode be showing.
-            if (bestMatchingLanguage.length()) {
-                if (textTrack->language() == bestMatchingLanguage)
-                    trackToEnable = textTrack;
-            } else if (textTrack->isDefault()) {
-                // The user is interested in this type of track, but their language preference doesn't match any track so we will
-                // enable the 'default' track.
-                defaultTrack = textTrack;
+            if (trackScore > highestTrackScore) {
+                highestTrackScore = trackScore;
+                trackToEnable = textTrack;
             }
 
-            // Remember the first track that doesn't match language or have 'default' to potentially use as fallback.
-            if (!fallbackTrack)
+            if (!defaultTrack && textTrack->isDefault())
+                defaultTrack = textTrack;
+            if (!defaultTrack && !fallbackTrack)
                 fallbackTrack = textTrack;
         } else if (!group.visibleTrack && !defaultTrack && textTrack->isDefault()) {
             // * If the track element has a default attribute specified, and there is no other text track in the media
@@ -4328,6 +4293,7 @@ void HTMLMediaElement::setClosedCaptionsVisible(bool closedCaptionVisible)
 
 #if ENABLE(VIDEO_TRACK)
     if (RuntimeEnabledFeatures::webkitVideoTrackEnabled()) {
+        m_processingPreferenceChange = true;
         m_disableCaptions = !m_closedCaptionsVisible;
 
         markCaptionAndSubtitleTracksAsUnconfigured();
@@ -4529,12 +4495,7 @@ void HTMLMediaElement::captionPreferencesChanged()
     if (hasMediaControls())
         mediaControls()->textTrackPreferencesChanged();
 
-    bool prefersCaptions = userPrefersCaptions();
-    if (m_disableCaptions == !prefersCaptions)
-        return;
-
-    m_processingPreferenceChange = true;
-    setClosedCaptionsVisible(prefersCaptions);
+    setClosedCaptionsVisible(userPrefersCaptions());
 }
 
 void HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured()

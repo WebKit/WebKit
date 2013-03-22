@@ -1254,7 +1254,7 @@ void MediaControlTextTrackContainerElement::updateDisplay()
         TextTrackCue* cue = activeCues[i].data();
 
         ASSERT(cue->isActive());
-        if (!cue->track() || !cue->track()->isRendered())
+        if (!cue->track() || !cue->track()->isRendered() || !cue->isActive())
             continue;
 
         RefPtr<TextTrackCueBox> displayBox = cue->getDisplayTree(m_videoDisplaySize.size());

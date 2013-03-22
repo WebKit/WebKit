@@ -60,6 +60,7 @@ public:
 
 #endif
 
+    virtual int textTrackSelectionScore(TextTrack*) const OVERRIDE;
     virtual Vector<RefPtr<TextTrack> > sortedTrackListForMenu(TextTrackList*) OVERRIDE;
     virtual String displayNameForTrack(TextTrack*) const OVERRIDE;
 

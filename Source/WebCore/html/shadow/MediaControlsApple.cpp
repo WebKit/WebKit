@@ -306,7 +306,7 @@ void MediaControlsApple::changedClosedCaptionsVisibility()
 {
     MediaControls::changedClosedCaptionsVisibility();
     if (m_closedCaptionsTrackList)
-        m_closedCaptionsTrackList->updateDisplay();
+        m_closedCaptionsTrackList->resetTrackListMenu();
 }
 
 void MediaControlsApple::reset()

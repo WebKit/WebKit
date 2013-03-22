@@ -272,7 +272,6 @@ public:
     static int textTracksIndexNotFound() { return -2; }
 
     bool userPrefersCaptions() const;
-    bool userIsInterestedInThisTrackKind(String) const;
     bool textTracksAreReady() const;
     void configureTextTrackDisplay();
     void updateTextTrackDisplay();

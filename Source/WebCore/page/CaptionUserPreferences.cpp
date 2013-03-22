@@ -51,7 +51,10 @@ CaptionUserPreferences::~CaptionUserPreferences()
 
 bool CaptionUserPreferences::shouldShowCaptions() const
 {
-    return m_testingMode ? m_shouldShowCaptions : false;
+    if (!m_testingMode)
+        return false;
+    
+    return m_shouldShowCaptions || userPrefersCaptions() || userPrefersSubtitles();
 }
 
 void CaptionUserPreferences::timerFired(Timer<CaptionUserPreferences>*)
@@ -72,6 +75,10 @@ void CaptionUserPreferences::notify()
 void CaptionUserPreferences::setShouldShowCaptions(bool preference)
 {
     m_shouldShowCaptions = preference;
+    if (m_testingMode && !preference) {
+        setUserPrefersCaptions(false);
+        setUserPrefersSubtitles(false);
+    }
     notify();
 }
 
@@ -183,6 +190,36 @@ Vector<RefPtr<TextTrack> > CaptionUserPreferences::sortedTrackListForMenu(TextTr
     nonCopyingSort(tracksForMenu.begin(), tracksForMenu.end(), textTrackCompare);
 
     return tracksForMenu;
+}
+
+int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track) const
+{
+    int trackScore = 0;
+
+    if (track->kind() != TextTrack::captionsKeyword() && track->kind() != TextTrack::subtitlesKeyword())
+        return trackScore;
+
+    if (track->kind() == TextTrack::subtitlesKeyword() && userPrefersSubtitles())
+        trackScore = 1;
+    else if (track->kind() == TextTrack::captionsKeyword() && userPrefersCaptions())
+        trackScore = 1;
+    
+    return trackScore + textTrackLanguageSelectionScore(track);
+}
+
+int CaptionUserPreferences::textTrackLanguageSelectionScore(TextTrack* track) const
+{
+    if (track->language().isEmpty())
+        return 0;
+
+    Vector<String> languages = preferredLanguages();
+    size_t languageMatchIndex = indexOfBestMatchingLanguageInList(track->language(), languages);
+    if (languageMatchIndex >= languages.size())
+        return 0;
+
+    // Matching a track language is more important than matching track type, so this multiplier must be
+    // greater than the maximum value returned by textTrackSelectionScore.
+    return (languages.size() - languageMatchIndex) * 10;
 }
 
 }
