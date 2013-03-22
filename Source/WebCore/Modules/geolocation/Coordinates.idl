@@ -24,6 +24,7 @@
  */
 
 [
+    Conditional=GEOLOCATION,
     OmitConstructor,
     ImplementationLacksVTable
 ] interface Coordinates {
