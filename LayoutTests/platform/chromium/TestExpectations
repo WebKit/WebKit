@@ -3934,3 +3934,4 @@ webkit.org/b/113067 [ Debug ] compositing/overflow/scroll-ancestor-update.html [
 webkit.org/b/113067 [ Debug ] compositing/reflections/load-video-in-reflection.html [ Crash Pass ]
 webkit.org/b/113067 [ Debug ] compositing/visibility/visibility-simple-video-layer.html [ Crash Pass ]
 
+webkit.org/b/113114 media/video-controls-captions.html [ Timeout ]
