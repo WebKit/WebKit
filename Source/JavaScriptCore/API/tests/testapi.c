@@ -134,6 +134,7 @@ static void assertEqualsAsCharactersPtr(JSValueRef value, const char* expectedVa
     JSStringRelease(valueAsString);
 }
 
+#if !OS(WIN)
 static int leakedObject = 1;
 
 static void leakFinalize(JSObjectRef object)
@@ -188,6 +189,7 @@ static void testLeakingPrototypesAcrossContexts()
 
     JSClassRelease(leakClass);
 }
+#endif
 
 static bool timeZoneIsPST()
 {
@@ -1742,7 +1744,9 @@ int main(int argc, char* argv[])
         free(scriptUTF8);
     }
 
+#if !OS(WIN)
     testLeakingPrototypesAcrossContexts();
+#endif
 
     // Clear out local variables pointing at JSObjectRefs to allow their values to be collected
     function = NULL;

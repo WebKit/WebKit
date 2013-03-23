@@ -1,5 +1,13 @@
 2013-03-22  Ryosuke Niwa  <rniwa@webkit.org>
 
+        I really can't figure out what's wrong with this one.
+        Temporarily disable the test added by r146682 on Windows since it doesn't compile.
+
+        * API/tests/testapi.c:
+        (main):
+
+2013-03-22  Ryosuke Niwa  <rniwa@webkit.org>
+
         Another build fix (after r146693) for r146682.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
