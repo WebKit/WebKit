@@ -1440,6 +1440,8 @@ webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg
 
 webkit.org/b/112705 fast/dom/icon-url-property.html [ Failure ]
 
+webkit.org/b/113127 media/track/track-prefer-captions.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
