@@ -3438,8 +3438,6 @@ webkit.org/b/101093 [ Mac ] fast/sub-pixel/float-wrap-zoom.html [ ImageOnlyFailu
 # Crashy since at least r133035; gives a v8 error
 webkit.org/b/101099 [ Linux Debug ] fast/files/workers/worker-apply-blob-url-to-xhr.html [ Crash Pass ]
 
-# This reftest doesn't work on Mac 10.8 for some reason.
-
 # Has been flaky in Debug since at least r133070, possibly earlier.
 webkit.org/b/83471 [ Debug ] svg/as-image/same-image-two-instances.html [ ImageOnlyFailure Pass ]
 webkit.org/b/83471 [ Debug ] svg/as-image/img-relative-height.html [ ImageOnlyFailure Pass ]
@@ -3818,8 +3816,8 @@ webkit.org/b/112288 http/tests/security/same-origin-appcache-blocked.html [ Fail
 # Snapshotted plugins not enabled
 webkit.org/b/98696 plugins/snapshotting [ Skip ]
 
-Bug(schenney) [ MountainLion ] fast/writing-mode/text-orientation-basic.html [ ImageOnlyFailure ]
-Bug(schenney) svg/css/root-shadow-offscreen.svg [ ImageOnlyFailure ]
+crbug.com/223329 [ MountainLion ] fast/writing-mode/text-orientation-basic.html [ ImageOnlyFailure ]
+crbug.com/223332 svg/css/root-shadow-offscreen.svg [ ImageOnlyFailure ]
 
 webkit.org/b/113067 [ Debug ] compositing/layers-inside-overflow-scroll.html [ Crash Pass ]
 webkit.org/b/113067 [ Debug ] compositing/self-painting-layers.html [ Crash Pass ]
