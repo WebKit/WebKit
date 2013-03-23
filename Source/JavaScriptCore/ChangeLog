@@ -1,3 +1,10 @@
+2013-03-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another build fix (after r146693) for r146682.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+
 2013-03-22  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. AppleWin build fix.

@@ -46,6 +46,7 @@ EXPORTS
     ??1MediaTime@WTF@@QAE@XZ 
     ??1MemoryInstrumentation@WTF@@UAE@XZ
     ??1Mutex@WTF@@QAE@XZ
+    ??1OpaqueJSClass@@QAE@XZ
     ??1RefCountedLeakCounter@WTF@@QAE@XZ
     ??1SourceProvider@JSC@@UAE@XZ
     ??1SourceProviderCache@JSC@@QAE@XZ
