@@ -1,3 +1,11 @@
+2013-03-22  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Turn off EWS test on Win again.
+        The battle continues.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (WinEWS):
+
 2013-03-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         NRWT: Enable pixel tests when retrying tests
