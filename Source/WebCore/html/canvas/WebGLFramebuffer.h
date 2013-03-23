@@ -98,6 +98,8 @@ public:
     // Wrapper for drawBuffersEXT/drawBuffersARB to work around a driver bug.
     void drawBuffers(const Vector<GC3Denum>& bufs);
 
+    GC3Denum getDrawBuffer(GC3Denum);
+
 protected:
     WebGLFramebuffer(WebGLRenderingContext*);
 

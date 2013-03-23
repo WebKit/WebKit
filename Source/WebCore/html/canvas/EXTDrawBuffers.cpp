@@ -60,7 +60,8 @@ bool EXTDrawBuffers::supported(WebGLRenderingContext* context)
     return false;
 #endif
     Extensions3D* extensions = context->graphicsContext3D()->getExtensions();
-    return extensions->supports("GL_EXT_draw_buffers");
+    return (extensions->supports("GL_EXT_draw_buffers")
+        && satisfiesWebGLRequirements(context));
 }
 
 void EXTDrawBuffers::drawBuffersEXT(const Vector<GC3Denum>& buffers)
@@ -81,6 +82,7 @@ void EXTDrawBuffers::drawBuffersEXT(const Vector<GC3Denum>& buffers)
         // Because the backbuffer is simulated on all current WebKit ports, we need to change BACK to COLOR_ATTACHMENT0.
         GC3Denum value = (bufs[0] == GraphicsContext3D::BACK) ? GraphicsContext3D::COLOR_ATTACHMENT0 : GraphicsContext3D::NONE;
         m_context->graphicsContext3D()->getExtensions()->drawBuffersEXT(1, &value);
+        m_context->setBackDrawBuffer(bufs[0]);
     } else {
         if (n > m_context->getMaxDrawBuffers()) {
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "drawBuffersEXT", "more than max draw buffers");
@@ -94,6 +96,90 @@ void EXTDrawBuffers::drawBuffersEXT(const Vector<GC3Denum>& buffers)
         }
         m_context->m_framebufferBinding->drawBuffers(buffers);
     }
+}
+
+// static
+bool EXTDrawBuffers::satisfiesWebGLRequirements(WebGLRenderingContext* webglContext)
+{
+    GraphicsContext3D* context = webglContext->graphicsContext3D();
+
+    // This is called after we make sure GL_EXT_draw_buffers is supported.
+    GC3Dint maxDrawBuffers = 0;
+    GC3Dint maxColorAttachments = 0;
+    context->getIntegerv(Extensions3D::MAX_DRAW_BUFFERS_EXT, &maxDrawBuffers);
+    context->getIntegerv(Extensions3D::MAX_COLOR_ATTACHMENTS_EXT, &maxColorAttachments);
+    if (maxDrawBuffers < 4 || maxColorAttachments < 4)
+        return false;
+
+    Platform3DObject fbo = context->createFramebuffer();
+    context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, fbo);
+
+#if PLATFORM(CHROMIUM)
+    const unsigned char* buffer = 0; // Chromium doesn't allow init data for depth/stencil tetxures.
+#else
+    const unsigned char buffer[4] = { 0, 0, 0, 0 }; // textures are required to be initialized for other ports.
+#endif
+    bool supportsDepth = (context->getExtensions()->supports("GL_CHROMIUM_depth_texture")
+        || context->getExtensions()->supports("GL_OES_depth_texture")
+        || context->getExtensions()->supports("GL_ARB_depth_texture"));
+    bool supportsDepthStencil = (context->getExtensions()->supports("GL_EXT_packed_depth_stencil")
+        || context->getExtensions()->supports("GL_OES_packed_depth_stencil"));
+    Platform3DObject depthStencil = 0;
+    if (supportsDepthStencil) {
+        depthStencil = context->createTexture();
+        context->bindTexture(GraphicsContext3D::TEXTURE_2D, depthStencil);
+        context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::DEPTH_STENCIL, 1, 1, 0, GraphicsContext3D::DEPTH_STENCIL, GraphicsContext3D::UNSIGNED_INT_24_8, buffer);
+    }
+    Platform3DObject depth = 0;
+    if (supportsDepth) {
+        depth = context->createTexture();
+        context->bindTexture(GraphicsContext3D::TEXTURE_2D, depth);
+        context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::DEPTH_COMPONENT, 1, 1, 0, GraphicsContext3D::DEPTH_COMPONENT, GraphicsContext3D::UNSIGNED_INT, buffer);
+    }
+
+    Vector<Platform3DObject> colors;
+    bool ok = true;
+    GC3Dint maxAllowedBuffers = std::min(maxDrawBuffers, maxColorAttachments);
+    for (GC3Dint i = 0; i < maxAllowedBuffers; ++i) {
+        Platform3DObject color = context->createTexture();
+        colors.append(color);
+        context->bindTexture(GraphicsContext3D::TEXTURE_2D, color);
+        context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, 1, 1, 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, buffer);
+        context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0 + i, GraphicsContext3D::TEXTURE_2D, color, 0);
+        if (context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
+            ok = false;
+            break;
+        }
+        if (supportsDepth) {
+            context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::TEXTURE_2D, depth, 0);
+            if (context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
+                ok = false;
+                break;
+            }
+            context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::TEXTURE_2D, 0, 0);
+        }
+        if (supportsDepthStencil) {
+            context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::TEXTURE_2D, depthStencil, 0);
+            context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::TEXTURE_2D, depthStencil, 0);
+            if (context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
+                ok = false;
+                break;
+            }
+            context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::TEXTURE_2D, 0, 0);
+            context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::TEXTURE_2D, 0, 0);
+        }
+    }
+
+    webglContext->restoreCurrentFramebuffer();
+    context->deleteFramebuffer(fbo);
+    webglContext->restoreCurrentTexture2D();
+    if (supportsDepth)
+        context->deleteTexture(depth);
+    if (supportsDepthStencil)
+        context->deleteTexture(depthStencil);
+    for (size_t i = 0; i < colors.size(); ++i)
+        context->deleteTexture(colors[i]);
+    return ok;
 }
 
 } // namespace WebCore

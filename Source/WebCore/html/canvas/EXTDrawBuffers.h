@@ -44,6 +44,8 @@ public:
 
 private:
     EXTDrawBuffers(WebGLRenderingContext*);
+
+    static bool satisfiesWebGLRequirements(WebGLRenderingContext*);
 };
 
 } // namespace WebCore

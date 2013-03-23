@@ -624,6 +624,17 @@ void WebGLFramebuffer::drawBuffersIfNecessary(bool force)
     }
 }
 
+GC3Denum WebGLFramebuffer::getDrawBuffer(GC3Denum drawBuffer)
+{
+    int index = static_cast<int>(drawBuffer - Extensions3D::DRAW_BUFFER0_EXT);
+    ASSERT(index >= 0);
+    if (index < static_cast<int>(m_drawBuffers.size()))
+        return m_drawBuffers[index];
+    if (drawBuffer == Extensions3D::DRAW_BUFFER0_EXT)
+        return GraphicsContext3D::COLOR_ATTACHMENT0;
+    return GraphicsContext3D::NONE;
+}
+
 }
 
 #endif // ENABLE(WEBGL)

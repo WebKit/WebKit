@@ -483,6 +483,9 @@ public:
 
     GC3Dint m_maxDrawBuffers;
     GC3Dint m_maxColorAttachments;
+    GC3Denum m_backDrawBuffer;
+    bool m_drawBuffersWebGLRequirementsChecked;
+    bool m_drawBuffersSupported;
 
     GC3Dint m_packAlignment;
     GC3Dint m_unpackAlignment;
@@ -747,6 +750,14 @@ public:
     // Later, return the cached value.
     GC3Dint getMaxDrawBuffers();
     GC3Dint getMaxColorAttachments();
+
+    void setBackDrawBuffer(GC3Denum);
+
+    void restoreCurrentFramebuffer();
+    void restoreCurrentTexture2D();
+
+    // Check if EXT_draw_buffers extension is supported and if it satisfies the WebGL requirements.
+    bool supportsDrawBuffers();
 
     friend class WebGLStateRestorer;
 };
