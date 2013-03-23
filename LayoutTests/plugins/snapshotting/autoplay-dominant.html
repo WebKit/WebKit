@@ -1,0 +1,12 @@
+<p>This test's dominant plugin should play automatically</p>
+<script>
+if (window.testRunner) {
+    window.internals.settings.setPlugInSnapshottingEnabled(true);
+    window.internals.settings.setMaximumPlugInSnapshotAttempts(0);
+    testRunner.waitUntilDone();
+    setTimeout(function () {
+        testRunner.notifyDone();
+    }, 500);
+}
+</script>
+<embed src="../resources/simple_blank.swf" width="600" height="600"></embed>
