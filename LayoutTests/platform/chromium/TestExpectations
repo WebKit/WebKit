@@ -75,8 +75,7 @@ webkit.org/b/24182 [ Debug ] fast/dom/css-delete-doc.html [ Slow ]
 webkit.org/b/100272 [ Debug ] fast/media/w3c/test_media_queries.html [ Slow ]
 webkit.org/b/70878 [ Linux Debug ] http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html [ Slow ]
 webkit.org/b/102179 [ Win Debug ] platform/chromium/virtual/gpu/fast/hidpi/image-set-without-specified-width.html [ Slow ]
-# Temp comment schenney
-# webkit.org/b/102463 [ Debug ] fast/forms/validation-message-appearance.html [ Pass ImageOnlyFailure ]
+webkit.org/b/102463 [ Debug ] fast/forms/validation-message-appearance.html [ Pass ImageOnlyFailure ]
 webkit.org/b/102464 [ Debug ] fast/images/webgl-teximage2d.html [ Pass Timeout ]
 webkit.org/b/102464 [ Debug ] platform/chromium/virtual/deferred/fast/images/webgl-teximage2d.html [ Pass Timeout ]
 webkit.org/b/103744 svg/dom/viewspec-parser-7.html [ Pass Timeout ]
@@ -1236,8 +1235,7 @@ crbug.com/62433 [ Win ] fast/images/gif-loop-count.html [ ImageOnlyFailure ]
 # Reporting translation of -0.00.
 webkit.org/b/106126 [ Win ] svg/overflow/overflow-on-inner-svg-element.svg [ Failure Pass ]
 webkit.org/b/106126 [ Win ] svg/dom/css-transforms.xhtml [ Failure Pass ]
-# Temp comment schenney
-# webkit.org/b/106126 [ Win ] svg/custom/feComponentTransfer-Table.svg [ ImageOnlyFailure Pass ]
+webkit.org/b/106126 [ Win ] svg/custom/feComponentTransfer-Table.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/106126 [ Win ] svg/custom/embedding-external-svgs.xhtml [ Failure Pass ]
 
 #
@@ -1295,8 +1293,7 @@ webkit.org/b/82416 svg/custom/pattern-userSpaceOnUse-userToBaseTransform.xhtml [
 webkit.org/b/82509 [ Linux ] svg/text/append-text-node-to-tspan.html [ ImageOnlyFailure Pass ]
 
 # Flaky on MAC 10.6
-# Temp comment schenney
-# webkit.org/b/82954 [ SnowLeopard ] svg/text/text-text-05-t.svg [ Failure Pass ]
+webkit.org/b/82954 [ SnowLeopard ] svg/text/text-text-05-t.svg [ Failure Pass ]
 webkit.org/b/82954 [ SnowLeopard ] svg/W3C-SVG-1.1/animate-elem-77-t.svg [ Failure Pass ]
 webkit.org/b/82954 [ SnowLeopard ] svg/W3C-SVG-1.1/text-text-05-t.svg [ Failure Pass ]
 webkit.org/b/82594 [ SnowLeopard ] svg/text/exs-display-none.svg [ ImageOnlyFailure Pass ]
@@ -2708,8 +2705,6 @@ webkit.org/b/81145 [ Lion MountainLion ] fast/repaint/transform-absolute-in-posi
 webkit.org/b/81145 [ Lion MountainLion ] animations/cross-fade-webkit-mask-box-image.html [ ImageOnlyFailure ]
 webkit.org/b/81145 [ Lion MountainLion ] fast/frames/invalid.html [ Failure ImageOnlyFailure Pass Slow ]
 webkit.org/b/81145 [ Lion MountainLion ] fast/repaint/background-scaling.html [ ImageOnlyFailure ]
-# Temp comment schenney
-# webkit.org/b/81145 [ Lion MountainLion ] fast/repaint/scale-page-shrink.html [ ImageOnlyFailure ]
 webkit.org/b/81145 [ Lion MountainLion ] editing/spelling/spelling-backspace-between-lines.html [ Failure ]
 webkit.org/b/81145 [ Lion MountainLion ] platform/chromium/virtual/gpu/fast/canvas/set-colors.html [ Failure ]
 webkit.org/b/81145 [ Lion MountainLion ] plugins/plugin-javascript-access.html [ Failure ]
@@ -3634,8 +3629,7 @@ webkit.org/b/106249 [ Win ] fast/speech/scripted/navigate-away.html [ Failure Pa
 
 webkit.org/b/106332 http/tests/misc/authentication-redirect-4/authentication-sent-to-redirect-same-origin-url.html [ Skip ]
 webkit.org/b/106387 [ Win ] svg/W3C-SVG-1.1/animate-elem-80-t.svg [ Failure Pass ]
-# Temp comment schenney
-# webkit.org/b/106387 [ Win ] svg/W3C-SVG-1.1/filters-comptran-01-b.svg [ ImageOnlyFailure Pass ]
+webkit.org/b/106387 [ Win ] svg/W3C-SVG-1.1/filters-comptran-01-b.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/106390 [ Win ] svg/dynamic-updates/SVGFEComponentTransferElement-svgdom-tableValues-prop.html [ ImageOnlyFailure Pass ]
 webkit.org/b/106390 [ Win ] svg/dynamic-updates/SVGFEComponentTransferElement-dom-tableValues-attr.html [ ImageOnlyFailure Pass ]
 webkit.org/b/106473 [ Linux ] fast/images/embed-does-not-propagate-dimensions-to-object-ancestor.html [ Crash Pass ]
@@ -3823,39 +3817,6 @@ webkit.org/b/112288 http/tests/security/same-origin-appcache-blocked.html [ Fail
 
 # Snapshotted plugins not enabled
 webkit.org/b/98696 plugins/snapshotting [ Skip ]
-
-# To be rebaselined today, 03/22/2013
-Bug(schenney) css2.1/t0905-c414-flt-fit-01-d-g.html [ Failure ]
-Bug(schenney) css2.1/t0905-c5525-flthw-00-c-g.html [ Failure ]
-Bug(schenney) css2.1/t100801-c544-valgn-00-a-ag.html [ ImageOnlyFailure ]
-Bug(schenney) css2.1/t100801-c544-valgn-02-d-agi.html [ ImageOnlyFailure ]
-Bug(schenney) css2.1/t100801-c544-valgn-03-d-agi.html [ ImageOnlyFailure ]
-Bug(schenney) css2.1/t100801-c544-valgn-04-d-agi.html [ ImageOnlyFailure ]
-Bug(schenney) editing/selection/select-text-overflow-ellipsis.html [ ImageOnlyFailure ]
-Bug(schenney) editing/selection/vertical-lr-ltr-extend-line-backward-br.html [ ImageOnlyFailure ]
-Bug(schenney) editing/selection/vertical-lr-ltr-extend-line-forward-br.html [ ImageOnlyFailure ]
-Bug(schenney) editing/selection/vertical-rl-ltr-extend-line-backward-br.html [ ImageOnlyFailure ]
-Bug(schenney) editing/selection/vertical-rl-ltr-extend-line-backward-p.html [ ImageOnlyFailure ]
-Bug(schenney) editing/selection/vertical-rl-ltr-extend-line-backward-wrap.html [ ImageOnlyFailure ]
-Bug(schenney) editing/selection/vertical-rl-ltr-extend-line-forward-br.html [ ImageOnlyFailure ]
-Bug(schenney) editing/selection/vertical-rl-ltr-extend-line-forward-p.html [ ImageOnlyFailure ]
-Bug(schenney) editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html [ ImageOnlyFailure ]
-Bug(schenney) fast/backgrounds/animated-svg-as-mask.html [ ImageOnlyFailure ]
-Bug(schenney) fast/borders/border-antialiasing.html [ ImageOnlyFailure ]
-Bug(schenney) fast/borders/border-radius-split-inline.html [ ImageOnlyFailure ]
-Bug(schenney) fast/borders/border-radius-with-box-shadow-01.html [ ImageOnlyFailure ]
-Bug(schenney) fast/borders/border-radius-with-box-shadow.html [ ImageOnlyFailure ]
-Bug(schenney) fast/box-shadow/basic-shadows.html [ ImageOnlyFailure ]
-Bug(schenney) fast/box-shadow/box-shadow-clipped-slices.html [ ImageOnlyFailure ]
-Bug(schenney) fast/box-shadow/box-shadow-radius.html [ ImageOnlyFailure ]
-Bug(schenney) fast/box-shadow/box-shadow-transformed.html [ ImageOnlyFailure ]
-Bug(schenney) fast/box-shadow/inset-box-shadow-radius.html [ ImageOnlyFailure ]
-Bug(schenney) fast/box-shadow/inset-box-shadows.html [ ImageOnlyFailure ]
-Bug(schenney) fast/box-shadow/inset.html [ ImageOnlyFailure ]
-Bug(schenney) fast/box-shadow/scaled-box-shadow.html [ ImageOnlyFailure ]
-Bug(schenney) fast/box-shadow/shadow-buffer-partial.html [ ImageOnlyFailure ]
-Bug(schenney) fast/box-shadow/shadow-tiling-artifact.html [ ImageOnlyFailure ]
-Bug(schenney) fast/box-shadow/single-pixel-shadow.html [ ImageOnlyFailure ]
 
 Bug(schenney) [ MountainLion ] fast/writing-mode/text-orientation-basic.html [ ImageOnlyFailure ]
 Bug(schenney) svg/css/root-shadow-offscreen.svg [ ImageOnlyFailure ]
