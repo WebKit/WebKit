@@ -3806,6 +3806,7 @@ webkit.org/b/112984 [ Win Release ] fast/mediastream/RTCPeerConnection-statsSele
 webkit.org/b/112984 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_cached.html [ Failure Pass ]
 webkit.org/b/112987 [ Mac XP Release ] http/tests/xmlhttprequest/origin-whitelisting-https.html [ Failure Pass ]
 webkit.org/b/113128 fast/files/xhr-response-blob.html [ Failure Pass ]
+webkit.org/b/113129 [ Win7 Debug ] inspector/styles/edit-inspector-stylesheet.html [ Failure Pass ]
 
 webkit.org/b/112610 [ Win ] fast/text/word-space-with-kerning-3.html [ ImageOnlyFailure ]
 
