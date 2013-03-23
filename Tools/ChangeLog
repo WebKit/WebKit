@@ -1,3 +1,9 @@
+2013-03-22  Kiran Muppala  <cmuppala@apple.com>
+
+        Unreviewed.  Move self from contributor to committer list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-03-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         EWS should use a human readable port name when uploading layout test archives
