@@ -176,10 +176,10 @@ class PatchProcessingQueueTest(CommandsTest):
         queue._options = Mock()
         queue._options.port = None
         patch = queue._tool.bugs.fetch_attachment(10001)
-        expected_logs = """MOCK add_attachment_to_bug: bug_id=50000, description=Archive of layout-test-results from bot filename=layout-test-results.zip mimetype=None
+        expected_logs = """MOCK add_attachment_to_bug: bug_id=50000, description=Archive of layout-test-results from bot for mac-snowleopard filename=layout-test-results.zip mimetype=None
 -- Begin comment --
 The attached test failures were seen while running run-webkit-tests on the mock-queue.
-Port: MockPort  Platform: MockPlatform 1.0
+Port: mac-snowleopard  Platform: MockPlatform 1.0
 -- End comment --
 """
         OutputCapture().assert_outputs(self, queue._upload_results_archive_for_patch, [patch, Mock()], expected_logs=expected_logs)

@@ -31,6 +31,7 @@ import unittest2 as unittest
 from webkitpy.tool.bot.botinfo import BotInfo
 from webkitpy.tool.mocktool import MockTool
 from webkitpy.common.net.statusserver_mock import MockStatusServer
+from webkitpy.layout_tests.port.test import TestPort
 
 
 class BotInfoTest(unittest.TestCase):
@@ -38,4 +39,4 @@ class BotInfoTest(unittest.TestCase):
     def test_summary_text(self):
         tool = MockTool()
         tool.status_server = MockStatusServer("MockBotId")
-        self.assertEqual(BotInfo(tool).summary_text(), "Bot: MockBotId  Port: MockPort  Platform: MockPlatform 1.0")
+        self.assertEqual(BotInfo(tool, 'port-name').summary_text(), "Bot: MockBotId  Port: port-name  Platform: MockPlatform 1.0")

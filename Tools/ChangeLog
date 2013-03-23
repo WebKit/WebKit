@@ -1,3 +1,32 @@
+2013-03-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        EWS should use a human readable port name when uploading layout test archives
+        https://bugs.webkit.org/show_bug.cgi?id=113099
+
+        Reviewed by Dirk Pranke.
+
+        Use new port's object's name() method to report human readable port names.
+        This will also help us resolving the bug to apply layout test results posted by EWS.
+
+        * Scripts/webkitpy/tool/bot/botinfo.py:
+        (BotInfo.__init__): Take port's name.
+        (BotInfo.summary_text):
+
+        * Scripts/webkitpy/tool/bot/botinfo_unittest.py:
+        (BotInfoTest.test_summary_text):
+
+        * Scripts/webkitpy/tool/bot/flakytestreporter.py:
+        (FlakyTestReporter.__init__): Preserve the old behavior since we don't have a real port object here.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (PatchProcessingQueue.__init__): Initialize self._port.
+        (PatchProcessingQueue._upload_results_archive_for_patch): Intansitate a real port object if needed,
+        and use that for the attachment filename and the comment posted.
+
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (PatchProcessingQueueTest.test_upload_results_archive_for_patch): Port name is updated to be
+        "mac-snowleopard" as expected for TestPort.
+
 2013-03-22  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Turn off EWS test on Win again.
