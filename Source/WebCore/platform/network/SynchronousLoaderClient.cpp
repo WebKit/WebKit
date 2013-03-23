@@ -49,11 +49,7 @@ void SynchronousLoaderClient::willSendRequest(ResourceHandle* handle, ResourceRe
     ASSERT(m_error.isNull());
     m_error = platformBadResponseError();
     m_isDone = true;
-#if USE(CFNETWORK)
-    request = static_cast<CFURLRequestRef>(0);
-#else
-    request = static_cast<NSURLRequest *>(0);
-#endif
+    request = 0;
 }
 
 bool SynchronousLoaderClient::shouldUseCredentialStorage(ResourceHandle*)
