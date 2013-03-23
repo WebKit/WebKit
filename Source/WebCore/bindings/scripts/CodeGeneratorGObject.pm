@@ -1318,7 +1318,7 @@ sub GenerateEndHeader {
 sub UsesManualKitImplementation {
     my $type = shift;
 
-    return 1 if $type eq "Node" or $type eq "Element" or $type eq "Event";
+    return 1 if $type eq "Node" or $type eq "Element" or $type eq "HTMLElement" or $type eq "Event";
     return 0;
 }
 

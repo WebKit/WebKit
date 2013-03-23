@@ -33,6 +33,7 @@
 namespace WebCore {
 class Node;
 class Element;
+class HTMLElement;
 class Event;
 class EventTarget;
 } // namespace WebCore
@@ -40,6 +41,7 @@ class EventTarget;
 namespace WebKit {
 WebKitDOMNode* kit(WebCore::Node* node);
 WebKitDOMElement* kit(WebCore::Element* element);
+WebKitDOMHTMLElement* kit(WebCore::HTMLElement*);
 WebKitDOMEvent* kit(WebCore::Event* event);
 WebKitDOMEventTarget* kit(WebCore::EventTarget* target);
 } // namespace WebKit

@@ -100,6 +100,18 @@ WebKitDOMElement* kit(Element* element)
     return static_cast<WebKitDOMElement*>(wrappedElement);
 }
 
+WebKitDOMHTMLElement* kit(HTMLElement* element)
+{
+    if (!element)
+        return 0;
+
+    gpointer kitElement = DOMObjectCache::get(element);
+    if (kitElement)
+        return static_cast<WebKitDOMHTMLElement*>(kitElement);
+
+    return static_cast<WebKitDOMHTMLElement*>(createHTMLElementWrapper(element));
+}
+
 WebKitDOMEvent* kit(Event* event)
 {
     if (!event)

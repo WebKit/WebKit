@@ -1,3 +1,17 @@
+2013-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK][Regression] webkit_dom_html_table_element_insert_row returns value that doesn't pass WEBKIT_DOM_IS_HTML_TABLE_ROW_ELEMENT macro
+        https://bugs.webkit.org/show_bug.cgi?id=111714
+
+        Reviewed by Martin Robinson.
+
+        Add test that checks webkit_dom_html_table_element_insert_row() to
+        also preproduce this issue.
+
+        * tests/testdomdocument.c:
+        (test_dom_document_insert_row):
+        (main):
+
 2013-03-22  Gustavo Noronha Silva  <gns@gnome.org>
 
         Trivial fixes to the gyp-build autogen.sh script.

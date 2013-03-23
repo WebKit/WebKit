@@ -33,6 +33,7 @@
 #define HTML_DOCUMENT_ELEMENTS_ID "<html><body><div id=\"testok\"></div><div id=\"testbad\">first</div><div id=\"testbad\">second</div></body></html>"
 #define HTML_DOCUMENT_LINKS "<html><head><title>Title</title></head><body><a href=\"about:blank\">blank</a><a href=\"http://www.google.com\">google</a><a href=\"http://www.webkit.org\">webkit</a></body></html>"
 #define HTML_DOCUMENT_IFRAME "<html><head><title>IFrame</title></head><body><iframe id='iframe'></iframe><div id='test'></div></body></html>"
+#define HTML_DOCUMENT_TABLE "<html><body><table id=\"table\"></table></body></html>"
 
 typedef struct {
     GtkWidget* webView;
@@ -186,6 +187,27 @@ static void test_dom_document_get_links(DomDocumentFixture* fixture, gconstpoint
         g_assert_cmpstr(webkit_dom_html_anchor_element_get_href(anchor), ==, uris[i]);
     }
     g_object_unref(collection);
+}
+
+static void test_dom_document_insert_row(DomDocumentFixture* fixture, gconstpointer data)
+{
+    g_assert(fixture);
+    WebKitWebView* view = (WebKitWebView*)fixture->webView;
+    g_assert(view);
+    WebKitDOMDocument* document = webkit_web_view_get_dom_document(view);
+    g_assert(WEBKIT_DOM_IS_DOCUMENT(document));
+    WebKitDOMElement* table = webkit_dom_document_get_element_by_id(document, "table");
+    g_assert(WEBKIT_DOM_IS_HTML_ELEMENT(table));
+    WebKitDOMHTMLCollection* rows = webkit_dom_html_table_element_get_rows(WEBKIT_DOM_HTML_TABLE_ELEMENT(table));
+    g_assert(WEBKIT_DOM_IS_HTML_COLLECTION(rows));
+
+    // Table is initially empty.
+    g_assert_cmpint(webkit_dom_html_collection_get_length(rows), ==, 0);
+    WebKitDOMHTMLElement* row = webkit_dom_html_table_element_insert_row(WEBKIT_DOM_HTML_TABLE_ELEMENT(table), -1, NULL);
+    g_assert(WEBKIT_DOM_IS_HTML_TABLE_ROW_ELEMENT(row));
+    rows = webkit_dom_html_table_element_get_rows(WEBKIT_DOM_HTML_TABLE_ELEMENT(table));
+    g_assert(WEBKIT_DOM_IS_HTML_COLLECTION(rows));
+    g_assert_cmpint(webkit_dom_html_collection_get_length(rows), ==, 1);
 }
 
 static void weak_notify(gpointer data, GObject* zombie)
@@ -352,6 +374,12 @@ int main(int argc, char** argv)
                DomDocumentFixture, HTML_DOCUMENT_LINKS,
                dom_document_fixture_setup,
                test_dom_document_get_links,
+               dom_document_fixture_teardown);
+
+    g_test_add("/webkit/domdocument/test_table_insert_row",
+               DomDocumentFixture, HTML_DOCUMENT_TABLE,
+               dom_document_fixture_setup,
+               test_dom_document_insert_row,
                dom_document_fixture_teardown);
 
     g_test_add("/webkit/domdocument/test_garbage_collection",
