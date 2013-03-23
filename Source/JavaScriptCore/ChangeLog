@@ -1,3 +1,10 @@
+2013-03-22  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. AppleWin build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/copy-files.cmd:
+        * JavaScriptCore.vcxproj/copy-files.cmd:
+
 2013-03-22  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         -[TinyDOMNode dealloc] should call [super dealloc] when ARC is not enabled

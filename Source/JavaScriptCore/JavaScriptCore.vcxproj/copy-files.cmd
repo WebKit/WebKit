@@ -13,6 +13,7 @@ for %%f in (
     APICast.h
     APIShims.h
     JSBase.h
+    JSClassRef.h
     JSContextRef.h
     JSContextRefPrivate.h
     JSObjectRef.h
