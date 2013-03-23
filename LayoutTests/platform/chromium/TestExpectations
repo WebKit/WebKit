@@ -2124,10 +2124,6 @@ crbug.com/67540 [ Linux ] fast/repaint/text-emphasis-v.html [ ImageOnlyFailure ]
 
 crbug.com/67540 webkit.org/b/94735 [ Linux ] fast/text/emphasis-overlap.html [ Failure ImageOnlyFailure ]
 
-# See also CRBUG139863
-crbug.com/67442 fast/canvas/fillText-shadow.html [ Failure ]
-crbug.com/67442 platform/chromium/virtual/gpu/fast/canvas/fillText-shadow.html [ Failure ]
-
 crbug.com/68436 [ Linux Debug ] fast/dom/DOMImplementation/createDocument-with-used-doctype.html [ Pass Timeout ]
 crbug.com/68436 [ Mac Win Debug ] fast/dom/DOMImplementation/createDocument-with-used-doctype.html [ Failure Timeout ]
 
@@ -3809,6 +3805,7 @@ webkit.org/b/112981 [ Win ] svg/batik/text/verticalTextOnPath.svg [ Failure Pass
 webkit.org/b/112984 [ Win Release ] fast/mediastream/RTCPeerConnection-statsSelector.html [ Failure Pass ]
 webkit.org/b/112984 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_cached.html [ Failure Pass ]
 webkit.org/b/112987 [ Mac XP Release ] http/tests/xmlhttprequest/origin-whitelisting-https.html [ Failure Pass ]
+webkit.org/b/113128 fast/files/xhr-response-blob.html [ Failure Pass ]
 
 webkit.org/b/112610 [ Win ] fast/text/word-space-with-kerning-3.html [ ImageOnlyFailure ]
 
@@ -3822,23 +3819,26 @@ webkit.org/b/98696 plugins/snapshotting [ Skip ]
 crbug.com/223329 [ MountainLion ] fast/writing-mode/text-orientation-basic.html [ ImageOnlyFailure ]
 crbug.com/223332 svg/css/root-shadow-offscreen.svg [ ImageOnlyFailure ]
 
-webkit.org/b/113067 [ Debug ] compositing/layers-inside-overflow-scroll.html [ Crash ]
-webkit.org/b/113067 [ Debug ] platform/chromium/virtual/softwarecompositing/layers-inside-overflow-scroll.html [ Crash ]
-webkit.org/b/113067 [ Debug ] compositing/self-painting-layers.html [ Crash ]
-webkit.org/b/113067 [ Debug ] platform/chromium/virtual/softwarecompositing/self-painting-layers.html [ Crash ]
-webkit.org/b/113067 [ Debug ] compositing/video/video-reflection.html [ Crash ]
-webkit.org/b/113067 [ Debug ] platform/chromium/virtual/softwarecompositing/video/video-reflection.html [ Crash ]
-webkit.org/b/113067 [ Debug ] compositing/geometry/video-fixed-scrolling.html [ Crash ]
-webkit.org/b/113067 [ Debug ] platform/chromium/virtual/softwarecompositing/geometry/video-fixed-scrolling.html [ Crash ]
-webkit.org/b/113067 [ Debug ] compositing/geometry/video-opacity-overlay.html [ Crash ]
-webkit.org/b/113067 [ Debug ] platform/chromium/virtual/softwarecompositing/geometry/video-opacity-overlay.html [ Crash ]
+webkit.org/b/113067 [ Debug ] compositing/layers-inside-overflow-scroll.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] platform/chromium/virtual/softwarecompositing/layers-inside-overflow-scroll.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] compositing/self-painting-layers.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] platform/chromium/virtual/softwarecompositing/self-painting-layers.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] compositing/video/video-reflection.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] platform/chromium/virtual/softwarecompositing/video/video-reflection.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] compositing/geometry/video-fixed-scrolling.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] platform/chromium/virtual/softwarecompositing/geometry/video-fixed-scrolling.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] compositing/geometry/video-opacity-overlay.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] platform/chromium/virtual/softwarecompositing/geometry/video-opacity-overlay.html [ Crash Pass ]
 webkit.org/b/113067 [ Debug ] compositing/overflow/overflow-compositing-descendant.html [ Crash ]
-webkit.org/b/113067 [ Debug ] platform/chromium/virtual/softwarecompositing/overflow/overflow-compositing-descendant.html [ Crash ]
-webkit.org/b/113067 [ Debug ] compositing/overflow/scroll-ancestor-update.html [ Crash ]
-webkit.org/b/113067 [ Debug ] platform/chromium/virtual/softwarecompositing/overflow/scroll-ancestor-update.html [ Crash ]
-webkit.org/b/113067 [ Debug ] compositing/reflections/load-video-in-reflection.html [ Crash ]
-webkit.org/b/113067 [ Debug ] platform/chromium/virtual/softwarecompositing/reflections/load-video-in-reflection.html [ Crash ]
-webkit.org/b/113067 [ Debug ] compositing/visibility/visibility-simple-video-layer.html [ Crash ]
-webkit.org/b/113067 [ Debug ] platform/chromium/virtual/softwarecompositing/visibility/visibility-simple-video-layer.html [ Crash ]
+webkit.org/b/113067 [ Debug ] platform/chromium/virtual/softwarecompositing/overflow/overflow-compositing-descendant.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] compositing/overflow/scroll-ancestor-update.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] platform/chromium/virtual/softwarecompositing/overflow/scroll-ancestor-update.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] compositing/reflections/load-video-in-reflection.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] platform/chromium/virtual/softwarecompositing/reflections/load-video-in-reflection.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] compositing/visibility/visibility-simple-video-layer.html [ Crash Pass ]
+webkit.org/b/113067 [ Debug ] platform/chromium/virtual/softwarecompositing/visibility/visibility-simple-video-layer.html [ Crash Pass ]
 
 webkit.org/b/113114 media/video-controls-captions.html [ Timeout ]
+
+# Almost certainly just needs rebaseline, but the bot won't give me results
+bugpkasting [ XP ] fast/text/international/bold-bengali.html [ Failure ]
