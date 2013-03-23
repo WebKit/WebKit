@@ -1809,8 +1809,6 @@ webkit.org/b/71758 fast/url/idna2003.html [ Failure Pass ]
 crbug.com/42696 http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.html [ Timeout ]
 
 # WebKit roll 58304:58400
-webkit.org/b/93221 [ Lion SnowLeopard ] fast/text/international/bold-bengali.html [ ImageOnlyFailure ]
-webkit.org/b/93221 [ Win7 ] fast/text/international/bold-bengali.html [ Failure ]
 
 # These 5,000+ tests are already being run by the V8 team (and have no chromium expectations).
 # They should be moved to the JavaScriptCore test suite.
@@ -2005,8 +2003,7 @@ crbug.com/58936 fast/js/numeric-escapes-in-string-literals.html [ Failure ]
 # content of <video> elements.
 webkit.org/b/91205 media/nodesFromRect-shadowContent.html [ Skip ]
 
-# Temp comment schenney
-# webkit.org/b/96470 [ Win ] fast/text/international/vertical-text-glyph-test.html [ Failure ]
+webkit.org/b/96470 [ Win ] fast/text/international/vertical-text-glyph-test.html [ Failure ]
 webkit.org/b/96470 [ Win ] fast/text/international/vertical-text-metrics-test.html [ Failure ]
 
 # Added in Webkit r69707 without expected results.
@@ -2125,7 +2122,6 @@ webkit.org/b/90363 [ Debug ] fast/overflow/lots-of-sibling-inline-boxes.html [ P
 crbug.com/67416 [ Win ] fast/text/emphasis.html [ Failure ]
 crbug.com/67416 [ Win MountainLion ] fast/text/emphasis-vertical.html [ Failure ]
 crbug.com/67416 [ Linux Lion SnowLeopard ] fast/text/emphasis-vertical.html [ ImageOnlyFailure ]
-crbug.com/67540 [ Linux ] fast/text/emphasis-avoid-ruby.html [ ImageOnlyFailure ]
 crbug.com/67540 [ Linux SnowLeopard Win ] fast/repaint/text-emphasis-h.html [ ImageOnlyFailure ]
 crbug.com/67540 [ Linux ] fast/repaint/text-emphasis-v.html [ ImageOnlyFailure ]
 
@@ -2172,8 +2168,7 @@ crbug.com/70882 [ Win ] fast/text/offsetForPosition-complex-fallback.html [ Fail
 crbug.com/71022 [ Win ] fast/text/justify-ideograph-complex.html [ Failure ]
 crbug.com/71022 [ Mac ] fast/text/justify-ideograph-complex.html [ ImageOnlyFailure ]
 crbug.com/71022 [ Win ] fast/text/justify-ideograph-simple.html [ Failure ]
-# Temp comment schenney
-# crbug.com/71022 [ Win ] fast/text/justify-ideograph-vertical.html [ Failure ]
+crbug.com/71022 [ Win ] fast/text/justify-ideograph-vertical.html [ Failure ]
 
 # It is failing since r77459.
 # Fix miscalculation of the overhang area used for painting. We were
@@ -2313,9 +2308,6 @@ crbug.com/79857 [ Debug ] fast/events/popup-blocking-timers6.html [ Failure Pass
 
 crbug.com/79859 [ Linux Debug ] fast/css/create_element_align.xhtml [ Pass Timeout ]
 
-crbug.com/79910 [ SnowLeopard ] fast/text/international/bidi-linebreak-001.html [ ImageOnlyFailure ]
-crbug.com/79910 [ SnowLeopard ] fast/text/international/bidi-linebreak-002.html [ ImageOnlyFailure ]
-crbug.com/79910 [ SnowLeopard ] fast/text/international/bidi-linebreak-003.html [ ImageOnlyFailure ]
 
 webkit.org/b/58924 [ Mac ] plugins/mouse-click-iframe-to-plugin.html [ Pass Timeout ]
 
@@ -3904,22 +3896,6 @@ Bug(schenney) fast/repaint/shadow-multiple-strict-vertical.html [ ImageOnlyFailu
 Bug(schenney) fast/repaint/shadow-multiple-vertical.html [ ImageOnlyFailure ]
 Bug(schenney) fast/repaint/transform-replaced-shadows.html [ ImageOnlyFailure ]
 Bug(schenney) fast/ruby/position-after.html [ ImageOnlyFailure ]
-Bug(schenney) fast/text/complex-text-opacity.html [ Failure ]
-Bug(schenney) fast/text/decorations-with-text-combine.html [ ImageOnlyFailure ]
-Bug(schenney) fast/text/international/bidi-neutral-directionality-paragraph-start.html [ Failure ]
-Bug(schenney) fast/text/international/complex-character-based-fallback.html [ Failure ]
-Bug(schenney) fast/text/international/hindi-spacing.html [ Failure ]
-Bug(schenney) fast/text/international/hindi-whitespace.html [ Failure ]
-Bug(schenney) fast/text/international/plane2.html [ ImageOnlyFailure ]
-Bug(schenney) fast/text/international/text-spliced-font.html [ ImageOnlyFailure ]
-Bug(schenney) fast/text/international/vertical-text-glyph-test.html [ ImageOnlyFailure ]
-Bug(schenney) fast/text/justify-ideograph-vertical.html [ ImageOnlyFailure ]
-Bug(schenney) fast/text/orientation-sideways.html [ ImageOnlyFailure ]
-Bug(schenney) fast/text/shadow-translucent-fill.html [ ImageOnlyFailure ]
-Bug(schenney) fast/text/stroking-decorations.html [ ImageOnlyFailure ]
-Bug(schenney) fast/text/stroking.html [ ImageOnlyFailure ]
-Bug(schenney) fast/text/whitespace/024.html [ ImageOnlyFailure ]
-Bug(schenney) fast/transforms/shadows.html [ ImageOnlyFailure ]
 
 Bug(schenney) [ MountainLion ] fast/writing-mode/text-orientation-basic.html [ ImageOnlyFailure ]
 Bug(schenney) svg/css/root-shadow-offscreen.svg [ ImageOnlyFailure ]
