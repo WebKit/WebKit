@@ -36,6 +36,7 @@
 #if USE(CFNETWORK)
 #include "FormDataStreamCFNet.h"
 #include <CFNetwork/CFURLRequestPriv.h>
+#include <wtf/text/CString.h>
 #endif
 
 #if PLATFORM(MAC)
@@ -171,6 +172,15 @@ void ResourceRequest::doUpdatePlatformRequest()
         CFURLRequestSetSSLProperties(cfRequest, CFURLRequestGetSSLProperties(m_cfRequest.get()));
     }
 
+#if ENABLE(CACHE_PARTITIONING)
+    String partition = cachePartition();
+    if (!partition.isNull() && !partition.isEmpty()) {
+        CString utf8String = partition.utf8();
+        RetainPtr<CFStringRef> partitionValue(AdoptCF, CFStringCreateWithBytes(0, reinterpret_cast<const UInt8*>(utf8String.data()), utf8String.length(), kCFStringEncodingUTF8, false));
+        _CFURLRequestSetProtocolProperty(cfRequest, wkCachePartitionKey(), partitionValue.get());
+    }
+#endif
+
     m_cfRequest.adoptCF(cfRequest);
 #if PLATFORM(MAC)
     updateNSURLRequest();
@@ -255,6 +265,12 @@ void ResourceRequest::doUpdateResourceRequest()
                 m_responseContentDispositionEncodingFallbackArray.append(CFStringConvertEncodingToIANACharSetName(encoding));
         }
     }
+
+#if ENABLE(CACHE_PARTITIONING)
+    RetainPtr<CFStringRef> cachePartition(AdoptCF, static_cast<CFStringRef>(_CFURLRequestCopyProtocolPropertyForKey(m_cfRequest.get(), wkCachePartitionKey())));
+    if (cachePartition)
+        m_cachePartition = cachePartition.get();
+#endif
 }
 
 void ResourceRequest::doUpdateResourceHTTPBody()
