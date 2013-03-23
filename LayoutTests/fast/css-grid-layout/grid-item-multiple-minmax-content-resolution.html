@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+.gridMinMaxAutoWithColumnMinMaxAuto {
+    -webkit-grid-columns: minmax(50px, 180px) auto;
+    -webkit-grid-rows: auto minmax(50px, 100px);
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.grid')">
+
+<p>Test that several different grid items along with several minmax tracks are properly sized.</p>
+
+<div class="unconstrainedContainer" style="position: relative;">
+<div class="grid gridMinMaxAutoWithColumnMinMaxAuto">
+    <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="180" data-expected-height="10">XXXXX XXXXX</div>
+    <div class="sizedToGridArea firstRowSecondColumn" data-expected-width="170" data-expected-height="10">XXXXX XXXXX XXXXX</div>
+    <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="180" data-expected-height="100">XXXXX XXXXX XXXXX XXXXX</div>
+    <div class="sizedToGridArea secondRowSecondColumn" data-expected-width="170" data-expected-height="100">XXXXX XXXXX</div>
+</div>
+</div>
+
+<div class="constrainedContainer" style="position: relative;">
+<div class="grid gridMinMaxAutoWithColumnMinMaxAuto">
+    <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="50" data-expected-height="30">XXXXX XXXXX</div>
+    <div class="sizedToGridArea firstRowSecondColumn" data-expected-width="50" data-expected-height="30">XXXXX XXXXX XXXXX</div>
+    <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="50" data-expected-height="50">XXXXX XXXXX</div>
+    <div class="sizedToGridArea secondRowSecondColumn" data-expected-width="50" data-expected-height="50">XXXXX XXXXX XXXXX XXXXX</div>
+</div>
+</div>
+
+<div style="height: 100px; width: 220px; position: relative;">
+<div class="grid gridMinMaxAutoWithColumnMinMaxAuto">
+    <div class="sizedToGridArea firstRowFirstColumn" data-expected-width="110" data-expected-height="20">XXXXX XXXXX</div>
+    <div class="sizedToGridArea firstRowSecondColumn" data-expected-width="110" data-expected-height="20">XXXXX XXXXX XXXXX</div>
+    <div class="sizedToGridArea secondRowFirstColumn" data-expected-width="110" data-expected-height="80">XXXXX XXXXX</div>
+    <div class="sizedToGridArea secondRowSecondColumn" data-expected-width="110" data-expected-height="80">XXXXX XXXXX XXXXX XXXXX</div>
+</div>
+</div>
+
+</body>
+</html>

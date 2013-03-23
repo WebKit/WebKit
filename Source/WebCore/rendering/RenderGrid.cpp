@@ -372,7 +372,9 @@ LayoutUnit RenderGrid::logicalContentHeightForChild(RenderBox* child, Vector<Gri
         child->setNeedsLayout(true, MarkOnlyThis);
 
     child->setOverrideContainingBlockContentLogicalWidth(gridAreaBreadthForChild(child, ForColumns, columnTracks));
-    child->clearOverrideContainingBlockContentLogicalHeight();
+    // If |child| has a percentage logical height, we shouldn't let it override its intrinsic height, which is
+    // what we are interested in here. Thus we need to set the override logical height to -1 (no possible resolution).
+    child->setOverrideContainingBlockContentLogicalHeight(-1);
     child->layout();
     return child->logicalHeight();
 }
