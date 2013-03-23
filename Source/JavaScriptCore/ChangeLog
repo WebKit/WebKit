@@ -1,3 +1,25 @@
+2013-03-22  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX (r145119): Make JSValue* properties default to (assign)
+        <rdar://problem/13380794>
+
+        Reviewed by Mark Hahnenberg.
+
+        Fixes the following build failures:
+
+            Source/JavaScriptCore/API/tests/testapi.mm:106:1: error: no 'assign', 'retain', or 'copy' attribute is specified - 'assign' is assumed [-Werror,-Wobjc-property-no-attribute]
+            @property JSValue *onclick;
+            ^
+            Source/JavaScriptCore/API/tests/testapi.mm:106:1: error: default property attrib ute 'assign' not appropriate for non-GC object [-Werror,-Wobjc-property-no-attribute]
+            Source/JavaScriptCore/API/tests/testapi.mm:107:1: error: no 'assign', 'retain', or 'copy' attribute is specified - 'assign' is assumed [-Werror,-Wobjc-property-no-attribute]
+            @property JSValue *weakOnclick;
+            ^
+            Source/JavaScriptCore/API/tests/testapi.mm:107:1: error: default property attribute 'assign' not appropriate for non-GC object [-Werror,-Wobjc-property-no-attribute]
+            4 errors generated.
+
+        * API/tests/testapi.mm: Default to (assign) for JSValue*
+        properties.
+
 2013-03-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         testLeakingPrototypesAcrossContexts added in r146682 doesn't compile on Win and fails on Mac

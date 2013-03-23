@@ -103,8 +103,8 @@ bool testXYZTested = false;
 @protocol TextXYZ <JSExport>
 @property int x;
 @property (readonly) int y;
-@property JSValue *onclick;
-@property JSValue *weakOnclick;
+@property (assign) JSValue *onclick;
+@property (assign) JSValue *weakOnclick;
 - (void)test:(NSString *)message;
 @end
 
