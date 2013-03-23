@@ -202,6 +202,10 @@ static JSVirtualMachine *sharedInstance = nil;
     id nextChild;
     while ((nextChild = [enumerator nextObject]))
         [[TinyDOMNode sharedVirtualMachine] removeManagedReference:nextChild withOwner:self];
+
+#if !__has_feature(objc_arc)
+    [super dealloc];
+#endif
 }
 
 - (void)appendChild:(TinyDOMNode *)child
