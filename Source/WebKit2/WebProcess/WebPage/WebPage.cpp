@@ -2405,6 +2405,13 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setSmartInsertDeleteEnabled(store.getBoolValueForKey(WebPreferencesKey::smartInsertDeleteEnabledKey()));
     settings->setShowsURLsInToolTips(store.getBoolValueForKey(WebPreferencesKey::showsURLsInToolTipsEnabledKey()));
 
+#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
+    settings->setHiddenPageDOMTimerThrottlingEnabled(store.getBoolValueForKey(WebPreferencesKey::hiddenPageDOMTimerThrottlingEnabledKey()));
+#endif
+#if ENABLE(PAGE_VISIBILITY_API)
+    settings->setHiddenPageCSSAnimationSuspensionEnabled(store.getBoolValueForKey(WebPreferencesKey::hiddenPageCSSAnimationSuspensionEnabledKey()));
+#endif
+
     platformPreferencesDidChange(store);
 
     if (m_drawingArea)

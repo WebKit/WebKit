@@ -131,6 +131,8 @@
 #define WebKitStorageBlockingPolicyKey @"WebKitStorageBlockingPolicy"
 #define WebKitPlugInSnapshottingEnabledPreferenceKey @"WebKitPlugInSnapshottingEnabled"
 #define WebKitQTKitEnabledPreferenceKey @"WebKitQTKitEnabled"
+#define WebKitHiddenPageDOMTimerThrottlingEnabledPreferenceKey @"WebKitHiddenPageDOMTimerThrottlingEnabled"
+#define WebKitHiddenPageCSSAnimationSuspensionEnabledPreferenceKey @"WebKitHiddenPageCSSAnimationSuspensionEnabled"
 
 // These are private both because callers should be using the cover methods and because the
 // cover methods themselves are private.

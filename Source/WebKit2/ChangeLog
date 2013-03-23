@@ -1,3 +1,28 @@
+2013-03-21  Kiran Muppala  <cmuppala@apple.com>
+
+        Add runtime setting for hidden page DOM timer throttling and CSS animation suspension
+        https://bugs.webkit.org/show_bug.cgi?id=112308
+
+        Reviewed by Gavin Barraclough.
+
+        Add private preference for enabling/disabling hidden page DOM timer
+        throttling and CSS animation suspension.  The preference should be
+        enabled by default only on Mac, where WebKit2 is a private API and
+        hence compatibility is less of a issue.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetHiddenPageDOMTimerThrottlingEnabled):
+        (WKPreferencesGetHiddenPageDOMTimerThrottlingEnabled):
+        (WKPreferencesSetHiddenPageCSSAnimationSuspensionEnabled):
+        (WKPreferencesGetHiddenPageCSSAnimationSuspensionEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner): Allow
+        WebKitTestRunner to override hiddenPageDOMTimerThrottlingEnabled.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2013-03-22  Tim Horton  <timothy_horton@apple.com>
 
         Plugin Snapshotting: Auto-start dominant plugins

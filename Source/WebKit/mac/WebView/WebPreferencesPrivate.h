@@ -332,4 +332,10 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification;
 - (BOOL)plugInSnapshottingEnabled;
 - (void)setPlugInSnapshottingEnabled:(BOOL)enabled;
 
+- (BOOL)hiddenPageDOMTimerThrottlingEnabled;
+- (void)setHiddenPageDOMTimerThrottlingEnabled:(BOOL)flag;
+
+- (BOOL)hiddenPageCSSAnimationSuspensionEnabled;
+- (void)setHiddenPageCSSAnimationSuspensionEnabled:(BOOL)flag;
+
 @end

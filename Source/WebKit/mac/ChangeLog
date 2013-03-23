@@ -1,3 +1,25 @@
+2013-03-21  Kiran Muppala  <cmuppala@apple.com>
+
+        Add runtime setting for hidden page DOM timer throttling and CSS animation suspension
+        https://bugs.webkit.org/show_bug.cgi?id=112308
+
+        Reviewed by Gavin Barraclough.
+
+        Add private preference for enabling/disabling hidden page DOM timer
+        throttling and CSS animation suspension.  The preference should be
+        disabled by default to avoid compatibility issues.
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences hiddenPageDOMTimerThrottlingEnabled]):
+        (-[WebPreferences setHiddenPageDOMTimerThrottlingEnabled:]):
+        (-[WebPreferences hiddenPageCSSAnimationSuspensionEnabled]):
+        (-[WebPreferences setHiddenPageCSSAnimationSuspensionEnabled:]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChanged:]):
+
 2013-03-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another Mac build fix attempt after r146239.

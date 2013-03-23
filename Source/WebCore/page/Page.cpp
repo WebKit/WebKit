@@ -1238,14 +1238,18 @@ void Page::setVisibilityState(PageVisibilityState visibilityState, bool isInitia
 
     if (visibilityState == WebCore::PageVisibilityStateHidden) {
 #if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-        setTimerAlignmentInterval(Settings::hiddenPageDOMTimerAlignmentInterval());
+        if (m_settings->hiddenPageDOMTimerThrottlingEnabled())
+            setTimerAlignmentInterval(Settings::hiddenPageDOMTimerAlignmentInterval());
 #endif
-        mainFrame()->animation()->suspendAnimations();
+        if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
+            mainFrame()->animation()->suspendAnimations();
     } else {
 #if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
-        setTimerAlignmentInterval(Settings::defaultDOMTimerAlignmentInterval());
+        if (m_settings->hiddenPageDOMTimerThrottlingEnabled())
+            setTimerAlignmentInterval(Settings::defaultDOMTimerAlignmentInterval());
 #endif
-        mainFrame()->animation()->resumeAnimations();
+        if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
+            mainFrame()->animation()->resumeAnimations();
     }
 #if !ENABLE(PAGE_VISIBILITY_API)
     UNUSED_PARAM(isInitialState);
@@ -1443,6 +1447,31 @@ void Page::resetSeenMediaEngines()
 {
     m_seenMediaEngines.clear();
 }
+
+#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
+void Page::hiddenPageDOMTimerThrottlingStateChanged()
+{
+    if (m_settings->hiddenPageDOMTimerThrottlingEnabled()) {
+#if ENABLE(PAGE_VISIBILITY_API)
+        if (m_visibilityState == WebCore::PageVisibilityStateHidden)
+            setTimerAlignmentInterval(Settings::hiddenPageDOMTimerAlignmentInterval());
+#endif
+    } else
+        setTimerAlignmentInterval(Settings::defaultDOMTimerAlignmentInterval());
+}
+#endif
+
+#if (ENABLE_PAGE_VISIBILITY_API)
+void Page::hiddenPageCSSAnimationSuspensionStateChanged()
+{
+    if (m_visibilityState == WebCore::PageVisibilityStateHidden) {
+        if (m_settings->hiddenPageCSSAnimationSuspensionEnabled())
+            mainFrame()->animation()->suspendAnimations();
+        else
+            mainFrame()->animation()->resumeAnimations();
+    }
+}
+#endif
 
 void Page::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {

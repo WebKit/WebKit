@@ -237,6 +237,10 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
 
     FOR_EACH_OVERRIDE_BOOL_PREFERENCE(OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES)
 
+#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
+    OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES(WebKitHiddenPageDOMTimerThrottlingEnabled, HiddenPageDOMTimerThrottlingEnabled, hiddenPageDOMTimerThrottlingEnabled)
+#endif
+
 #undef OVERRIDE_PREFERENCE_AND_SET_IN_EXISTING_PAGES
 #undef FOR_EACH_OVERRIDE_BOOL_PREFERENCE
 }

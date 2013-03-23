@@ -421,6 +421,8 @@ public:
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
         [NSNumber numberWithBool:YES],  WebKitQTKitEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO], WebKitHiddenPageDOMTimerThrottlingEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO], WebKitHiddenPageCSSAnimationSuspensionEnabledPreferenceKey,
         nil];
 
 
@@ -1807,6 +1809,26 @@ static NSString *classIBCreatorID = nil;
 - (void)setPlugInSnapshottingEnabled:(BOOL)enabled
 {
     [self _setBoolValue:enabled forKey:WebKitPlugInSnapshottingEnabledPreferenceKey];
+}
+
+- (BOOL)hiddenPageDOMTimerThrottlingEnabled
+{
+    return [self _boolValueForKey:WebKitHiddenPageDOMTimerThrottlingEnabledPreferenceKey];
+}
+
+- (void)setHiddenPageDOMTimerThrottlingEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitHiddenPageDOMTimerThrottlingEnabledPreferenceKey];
+}
+
+- (BOOL)hiddenPageCSSAnimationSuspensionEnabled
+{
+    return [self _boolValueForKey:WebKitHiddenPageCSSAnimationSuspensionEnabledPreferenceKey];
+}
+
+- (void)setHiddenPageCSSAnimationSuspensionEnabled:(BOOL)enabled
+{
+    [self _setBoolValue:enabled forKey:WebKitHiddenPageCSSAnimationSuspensionEnabledPreferenceKey];
 }
 
 @end

@@ -54,6 +54,14 @@ namespace WebKit {
 #define DEFAULT_SCREEN_FONT_SUBSTITUTION_ENABLED true
 #endif
 
+#if PLATFORM(MAC)
+#define DEFAULT_HIDDEN_PAGE_DOM_TIMER_THROTTLING_ENABLED true
+#define DEFAULT_HIDDEN_PAGE_CSS_ANIMATION_SUSPENSION_ENABLED true
+#else
+#define DEFAULT_HIDDEN_PAGE_DOM_TIMER_THROTTLING_ENABLED false
+#define DEFAULT_HIDDEN_PAGE_CSS_ANIMATION_SUSPENSION_ENABLED false
+#endif
+
 #define FOR_EACH_WEBKIT_BOOL_PREFERENCE(macro) \
     macro(JavaScriptEnabled, javaScriptEnabled, Bool, bool, true) \
     macro(JavaScriptMarkupEnabled, javaScriptMarkupEnabled, Bool, bool, true) \
@@ -146,6 +154,8 @@ namespace WebKit {
     macro(SmartInsertDeleteEnabled, smartInsertDeleteEnabled, Bool, bool, true) \
     macro(ShowsURLsInToolTipsEnabled, showsURLsInToolTipsEnabled, Bool, bool, false) \
     macro(AcceleratedCompositingForOverflowScrollEnabled, acceleratedCompositingForOverflowScrollEnabled, Bool, bool, false) \
+    macro(HiddenPageDOMTimerThrottlingEnabled, hiddenPageDOMTimerThrottlingEnabled, Bool, bool, DEFAULT_HIDDEN_PAGE_DOM_TIMER_THROTTLING_ENABLED) \
+    macro(HiddenPageCSSAnimationSuspensionEnabled, hiddenPageCSSAnimationSuspensionEnabled, Bool, bool, DEFAULT_HIDDEN_PAGE_CSS_ANIMATION_SUSPENSION_ENABLED) \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

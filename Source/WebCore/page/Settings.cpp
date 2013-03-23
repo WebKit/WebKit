@@ -201,6 +201,12 @@ Settings::Settings(Page* page)
     , m_aggressiveTileRetentionEnabled(false)
     , m_timeWithoutMouseMovementBeforeHidingControls(3)
     , m_setImageLoadingSettingsTimer(this, &Settings::imageLoadingSettingsTimerFired)
+#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
+    , m_hiddenPageDOMTimerThrottlingEnabled(false)
+#endif
+#if ENABLE(PAGE_VISIBILITY_API)
+    , m_hiddenPageCSSAnimationSuspensionEnabled(false)
+#endif
 {
     // A Frame may not have been created yet, so we initialize the AtomicString
     // hash before trying to use it.
@@ -614,6 +620,26 @@ void Settings::setShouldRespectPriorityInCSSAttributeSetters(bool flag)
 bool Settings::shouldRespectPriorityInCSSAttributeSetters()
 {
     return gShouldRespectPriorityInCSSAttributeSetters;
+}
+#endif
+
+#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
+void Settings::setHiddenPageDOMTimerThrottlingEnabled(bool flag)
+{
+    if (m_hiddenPageDOMTimerThrottlingEnabled == flag)
+        return;
+    m_hiddenPageDOMTimerThrottlingEnabled = flag;
+    m_page->hiddenPageDOMTimerThrottlingStateChanged();
+}
+#endif
+
+#if ENABLE(PAGE_VISIBILITY_API)
+void Settings::setHiddenPageCSSAnimationSuspensionEnabled(bool flag)
+{
+    if (m_hiddenPageCSSAnimationSuspensionEnabled == flag)
+        return;
+    m_hiddenPageCSSAnimationSuspensionEnabled = flag;
+    m_page->hiddenPageCSSAnimationSuspensionStateChanged();
 }
 #endif
 

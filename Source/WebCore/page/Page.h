@@ -380,6 +380,14 @@ public:
     void resetSeenMediaEngines();
 
     PageConsole* console() { return m_console.get(); }
+
+#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
+    void hiddenPageDOMTimerThrottlingStateChanged();
+#endif
+#if ENABLE(PAGE_VISIBILITY_API)
+    void hiddenPageCSSAnimationSuspensionStateChanged();
+#endif
+
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
 #if ENABLE(VIDEO_TRACK)

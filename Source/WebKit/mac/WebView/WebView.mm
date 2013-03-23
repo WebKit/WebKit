@@ -1599,6 +1599,13 @@ static bool needsSelfRetainWhileLoadingQuirk()
 
     settings->setPlugInSnapshottingEnabled([preferences plugInSnapshottingEnabled]);
 
+#if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
+    settings->setHiddenPageDOMTimerThrottlingEnabled([preferences hiddenPageDOMTimerThrottlingEnabled]);
+#endif
+#if ENABLE(PAGE_VISIBILITY_API)
+    settings->setHiddenPageCSSAnimationSuspensionEnabled([preferences hiddenPageCSSAnimationSuspensionEnabled]);
+#endif
+
     // We have enabled this setting in WebKit2 for the sake of some ScrollingCoordinator work.
     // To avoid possible rendering differences, we should enable it for WebKit1 too.
     settings->setFixedPositionCreatesStackingContext(true);

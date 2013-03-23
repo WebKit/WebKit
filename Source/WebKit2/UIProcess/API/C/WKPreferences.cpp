@@ -1083,3 +1083,23 @@ bool WKPreferencesGetShowsURLsInToolTipsEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->showsURLsInToolTipsEnabled();
 }
+
+void WKPreferencesSetHiddenPageDOMTimerThrottlingEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setHiddenPageDOMTimerThrottlingEnabled(enabled);
+}
+
+bool WKPreferencesGetHiddenPageDOMTimerThrottlingEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->hiddenPageDOMTimerThrottlingEnabled();
+}
+
+void WKPreferencesSetHiddenPageCSSAnimationSuspensionEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setHiddenPageCSSAnimationSuspensionEnabled(enabled);
+}
+
+bool WKPreferencesGetHiddenPageCSSAnimationSuspensionEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->hiddenPageCSSAnimationSuspensionEnabled();
+}
