@@ -2259,10 +2259,6 @@ crbug.com/77619 [ SnowLeopard ] plugins/plugin-javascript-access.html [ Failure 
 # New test added in r82056. The arrow does not point upwards.
 crbug.com/77574 [ Linux ] fast/writing-mode/fallback-orientation.html [ ImageOnlyFailure ]
 
-# Regression in r82056.
-webkit.org/b/56519 [ SnowLeopard ] fast/ruby/base-shorter-than-text.html [ Failure ImageOnlyFailure ]
-
-
 # Chrome doesn't load favicons in DRT tests.
 webkit.org/b/57259 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
 
@@ -2698,8 +2694,6 @@ code.google.com/p/v8/issues/detail?id=1973 fast/js/caller-property.html [ Failur
 webkit.org/b/80498 [ Linux Win ] fast/workers/worker-multi-startup.html [ Crash Pass ]
 
 webkit.org/b/91946 platform/chromium/fast/events/rtl-scrollbar.html [ Failure Pass ]
-
-webkit.org/b/80531 [ Win Mac ] fast/repaint/search-field-cancel.html [ Failure ImageOnlyFailure ]
 
 webkit.org/b/80665 fast/js/string-match.html [ Failure ]
 webkit.org/b/80665 fast/js/string-replace-2.html [ Failure ]
@@ -3629,8 +3623,7 @@ webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/Google/resource-ti
 # New test added in r137331
 webkit.org/b/104715 [ MountainLion ] fast/block/float/floats-wrap-inside-inline-007.html [ ImageOnlyFailure ]
 
-# Temp comment schenney
-# webkit.org/b/103667 [ Linux ] fast/ruby/position-after.html [ ImageOnlyFailure ]
+webkit.org/b/103667 [ Linux ] fast/ruby/position-after.html [ ImageOnlyFailure ]
 
 webkit.org/b/105595 [ Mac ] svg/text/alt-glyph-for-surrogate-pair.svg [ ImageOnlyFailure ]
 webkit.org/b/47975 [ MountainLion ] fast/block/float/max-width-clear-float-with-overflow-hidden.html [ ImageOnlyFailure ]
@@ -3885,17 +3878,6 @@ Bug(schenney) fast/forms/validation-message-appearance.html [ ImageOnlyFailure ]
 Bug(schenney) fast/line-grid/line-grid-contains-value.html [ ImageOnlyFailure ]
 Bug(schenney) fast/multicol/nested-columns.html [ ImageOnlyFailure ]
 Bug(schenney) fast/multicol/shadow-breaking.html [ ImageOnlyFailure ]
-Bug(schenney) fast/repaint/box-shadow-h.html [ ImageOnlyFailure ]
-Bug(schenney) fast/repaint/box-shadow-v.html [ ImageOnlyFailure ]
-Bug(schenney) fast/repaint/moving-shadow-on-container.html [ ImageOnlyFailure ]
-Bug(schenney) fast/repaint/moving-shadow-on-path.html [ ImageOnlyFailure ]
-Bug(schenney) fast/repaint/scale-page-shrink.html [ ImageOnlyFailure ]
-Bug(schenney) fast/repaint/shadow-multiple-horizontal.html [ ImageOnlyFailure ]
-Bug(schenney) fast/repaint/shadow-multiple-strict-horizontal.html [ ImageOnlyFailure ]
-Bug(schenney) fast/repaint/shadow-multiple-strict-vertical.html [ ImageOnlyFailure ]
-Bug(schenney) fast/repaint/shadow-multiple-vertical.html [ ImageOnlyFailure ]
-Bug(schenney) fast/repaint/transform-replaced-shadows.html [ ImageOnlyFailure ]
-Bug(schenney) fast/ruby/position-after.html [ ImageOnlyFailure ]
 
 Bug(schenney) [ MountainLion ] fast/writing-mode/text-orientation-basic.html [ ImageOnlyFailure ]
 Bug(schenney) svg/css/root-shadow-offscreen.svg [ ImageOnlyFailure ]
