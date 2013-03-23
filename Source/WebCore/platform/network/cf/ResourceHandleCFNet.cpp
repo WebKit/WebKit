@@ -91,12 +91,14 @@ static HashMap<String, RetainPtr<CFDataRef> >& clientCerts()
     return certs;
 }
 
+#if !PLATFORM(MAC)
 static void setDefaultMIMEType(CFURLResponseRef response)
 {
     static CFStringRef defaultMIMETypeString = defaultMIMEType().createCFString().leakRef();
     
     CFURLResponseSetMIMEType(response, defaultMIMETypeString);
 }
+#endif
 
 static void applyBasicAuthorizationHeader(ResourceRequest& request, const Credential& credential)
 {
