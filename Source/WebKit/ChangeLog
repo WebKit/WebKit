@@ -1,3 +1,9 @@
+2013-03-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix attempt after r146702.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2013-03-22  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [BlackBerry] Add custom BackForwardList client implementation

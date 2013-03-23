@@ -183,7 +183,6 @@ EXPORTS
         ?documentState@HistoryItem@WebCore@@QBEABV?$Vector@VString@WTF@@$0A@@WTF@@XZ
         ?equal@WTF@@YA_NPBVStringImpl@1@PBE@Z
         ?equal@WTF@@YA_NPBVStringImpl@1@0@Z
-        ?equalIgnoringCase@WTF@@YA_NPAVStringImpl@1@PBE@Z
         ?externalRepresentation@WebCore@@YA?AVString@WTF@@PAVElement@1@I@Z
         ?find@StringImpl@WTF@@QAEIPAV12@I@Z
         ?find@StringImpl@WTF@@QAEIPAV12@@Z
