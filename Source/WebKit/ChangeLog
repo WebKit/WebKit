@@ -1,5 +1,12 @@
 2013-03-22  Ryosuke Niwa  <rniwa@webkit.org>
 
+        The second part of the build fix for r146702. This should do it.
+        I had to see the mangled name for the new signature.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
+2013-03-22  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fix attempt after r146702.
 
         * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
