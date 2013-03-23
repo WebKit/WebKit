@@ -1667,9 +1667,34 @@ PassRefPtr<StringImpl> StringImpl::replace(StringImpl* pattern, StringImpl* repl
     return newImpl.release();
 }
 
+static inline bool stringImplContentEqual(const StringImpl* a, const StringImpl* b)
+{
+    unsigned aLength = a->length();
+    unsigned bLength = b->length();
+    if (aLength != bLength)
+        return false;
+
+    if (a->is8Bit()) {
+        if (b->is8Bit())
+            return equal(a->characters8(), b->characters8(), aLength);
+
+        return equal(a->characters8(), b->characters16(), aLength);
+    }
+
+    if (b->is8Bit())
+        return equal(a->characters16(), b->characters8(), aLength);
+
+    return equal(a->characters16(), b->characters16(), aLength);
+}
+
 bool equal(const StringImpl* a, const StringImpl* b)
 {
-    return StringHash::equal(a, b);
+    if (a == b)
+        return true;
+    if (!a || !b)
+        return false;
+
+    return stringImplContentEqual(a, b);
 }
 
 bool equal(const StringImpl* a, const LChar* b, unsigned length)
@@ -1736,12 +1761,26 @@ bool equal(const StringImpl* a, const UChar* b, unsigned length)
     return equal(a->characters16(), b, length);
 }
 
-bool equalIgnoringCase(StringImpl* a, StringImpl* b)
+bool equalNonNull(const StringImpl* a, const StringImpl* b)
 {
+    ASSERT(a && b);
+    if (a == b)
+        return true;
+
+    return stringImplContentEqual(a, b);
+}
+
+bool equalIgnoringCase(const StringImpl* a, const StringImpl* b)
+{
+    if (a == b)
+        return true;
+    if (!a || !b)
+        return false;
+
     return CaseFoldingHash::equal(a, b);
 }
 
-bool equalIgnoringCase(StringImpl* a, const LChar* b)
+bool equalIgnoringCase(const StringImpl* a, const LChar* b)
 {
     if (!a)
         return !b;
@@ -1795,16 +1834,36 @@ bool equalIgnoringCase(StringImpl* a, const LChar* b)
     return equal && !b[length];
 }
 
+bool equalIgnoringCaseNonNull(const StringImpl* a, const StringImpl* b)
+{
+    ASSERT(a && b);
+    if (a == b)
+        return true;
+
+    unsigned length = a->length();
+    if (length != b->length())
+        return false;
+
+    if (a->is8Bit()) {
+        if (b->is8Bit())
+            return equalIgnoringCase(a->characters8(), b->characters8(), length);
+
+        return equalIgnoringCase(b->characters16(), a->characters8(), length);
+    }
+
+    if (b->is8Bit())
+        return equalIgnoringCase(a->characters16(), b->characters8(), length);
+
+    return equalIgnoringCase(a->characters16(), b->characters16(), length);
+}
+
 bool equalIgnoringNullity(StringImpl* a, StringImpl* b)
 {
-    if (StringHash::equal(a, b))
-        return true;
     if (!a && b && !b->length())
         return true;
     if (!b && a && !a->length())
         return true;
-
-    return false;
+    return equal(a, b);
 }
 
 WTF::Unicode::Direction StringImpl::defaultWritingDirection(bool* hasStrongDirectionality)

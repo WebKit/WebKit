@@ -844,6 +844,7 @@ inline bool equal(const StringImpl* a, const char* b, unsigned length) { return 
 inline bool equal(const LChar* a, StringImpl* b) { return equal(b, a); }
 inline bool equal(const char* a, StringImpl* b) { return equal(b, reinterpret_cast<const LChar*>(a)); }
 WTF_EXPORT_STRING_API bool equal(const StringImpl*, const UChar*, unsigned);
+WTF_EXPORT_STRING_API bool equalNonNull(const StringImpl* a, const StringImpl* b);
 
 // Do comparisons 8 or 4 bytes-at-a-time on architectures where it's safe.
 #if CPU(X86_64)
@@ -1089,9 +1090,9 @@ ALWAYS_INLINE bool equal(const UChar* a, const LChar* b, unsigned length)
     return true;
 }
 
-WTF_EXPORT_STRING_API bool equalIgnoringCase(StringImpl*, StringImpl*);
-WTF_EXPORT_STRING_API bool equalIgnoringCase(StringImpl*, const LChar*);
-inline bool equalIgnoringCase(const LChar* a, StringImpl* b) { return equalIgnoringCase(b, a); }
+WTF_EXPORT_STRING_API bool equalIgnoringCase(const StringImpl*, const StringImpl*);
+WTF_EXPORT_STRING_API bool equalIgnoringCase(const StringImpl*, const LChar*);
+inline bool equalIgnoringCase(const LChar* a, const StringImpl* b) { return equalIgnoringCase(b, a); }
 WTF_EXPORT_STRING_API bool equalIgnoringCase(const LChar*, const LChar*, unsigned);
 WTF_EXPORT_STRING_API bool equalIgnoringCase(const UChar*, const LChar*, unsigned);
 inline bool equalIgnoringCase(const UChar* a, const char* b, unsigned length) { return equalIgnoringCase(a, reinterpret_cast<const LChar*>(b), length); }
@@ -1103,6 +1104,7 @@ inline bool equalIgnoringCase(const UChar* a, const UChar* b, int length)
     ASSERT(length >= 0);
     return !Unicode::umemcasecmp(a, b, length);
 }
+WTF_EXPORT_STRING_API bool equalIgnoringCaseNonNull(const StringImpl*, const StringImpl*);
 
 WTF_EXPORT_STRING_API bool equalIgnoringNullity(StringImpl*, StringImpl*);
 
@@ -1337,6 +1339,7 @@ template<> struct DefaultHash<RefPtr<StringImpl> > {
 
 using WTF::StringImpl;
 using WTF::equal;
+using WTF::equalNonNull;
 using WTF::TextCaseSensitivity;
 using WTF::TextCaseSensitive;
 using WTF::TextCaseInsensitive;

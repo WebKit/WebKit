@@ -1,5 +1,40 @@
 2013-03-22  Benjamin Poulain  <bpoulain@apple.com>
 
+        Remove 2 bad branches from StringHash::equal() and CaseFoldingHash::equal()
+        https://bugs.webkit.org/show_bug.cgi?id=113003
+
+        Reviewed by Eric Seidel.
+
+        StringHash::equal() and CaseFoldingHash::equal() were both testing for
+        the nullity of the two input pointers. The catch is: neither traits handle
+        null pointers, and any client code would have crashed on hash(), before equal()
+        is called.
+        Consequently, the two branches had a pass rate of zero when called from a HashMap code.
+
+        The function is also never inlined because it is too big (the code of equal() for characters
+        is always inlined, causing the function to be quite big).
+
+        This patch introduces two new functions in the StringImpl API: equalNonNull() and
+        equalIgnoringCaseNonNull(). Those functions are similar to their equal() equivalent
+        but make the assumtion the input is never null.
+
+        The functions are used for StringHash to avoid the useless branches.
+
+        * wtf/text/StringHash.h:
+        (WTF::StringHash::equal):
+        (WTF::CaseFoldingHash::equal):
+        * wtf/text/StringImpl.cpp:
+        (WTF::stringImplContentEqual):
+        (WTF::equal):
+        (WTF::equalNonNull):
+        (WTF::equalIgnoringCase):
+        (WTF::equalIgnoringCaseNonNull):
+        (WTF::equalIgnoringNullity):
+        * wtf/text/StringImpl.h:
+        (WTF::equalIgnoringCase):
+
+2013-03-22  Benjamin Poulain  <bpoulain@apple.com>
+
         Name correctly the argument of StringImpl::setIsAtomic()
         https://bugs.webkit.org/show_bug.cgi?id=113000
 

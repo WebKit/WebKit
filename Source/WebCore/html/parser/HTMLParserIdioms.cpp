@@ -284,7 +284,7 @@ static bool threadSafeEqual(const StringImpl* a, const StringImpl* b)
         return true;
     if (a->hash() != b->hash())
         return false;
-    return StringHash::equal(a, b);
+    return equalNonNull(a, b);
 }
 
 bool threadSafeMatch(const QualifiedName& a, const QualifiedName& b)

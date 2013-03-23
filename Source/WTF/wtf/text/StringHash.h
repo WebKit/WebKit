@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2012 Apple Inc. All rights reserved
+ * Copyright (C) 2006, 2007, 2008, 2012, 2013 Apple Inc. All rights reserved
  * Copyright (C) Research In Motion Limited 2009. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -43,29 +43,9 @@ namespace WTF {
 
     struct StringHash {
         static unsigned hash(StringImpl* key) { return key->hash(); }
-        static bool equal(const StringImpl* a, const StringImpl* b)
+        static inline bool equal(const StringImpl* a, const StringImpl* b)
         {
-            if (a == b)
-                return true;
-            if (!a || !b)
-                return false;
-
-            unsigned aLength = a->length();
-            unsigned bLength = b->length();
-            if (aLength != bLength)
-                return false;
-
-            if (a->is8Bit()) {
-                if (b->is8Bit())
-                    return WTF::equal(a->characters8(), b->characters8(), aLength);
-
-                return WTF::equal(a->characters8(), b->characters16(), aLength);
-            }
-
-            if (b->is8Bit())
-                return WTF::equal(a->characters16(), b->characters8(), aLength);
-
-            return WTF::equal(a->characters16(), b->characters16(), aLength);
+            return equalNonNull(a, b);
         }
 
         static unsigned hash(const RefPtr<StringImpl>& key) { return key->hash(); }
@@ -112,27 +92,9 @@ namespace WTF {
             return CaseFoldingHash::hash(reinterpret_cast<const LChar*>(data), length);
         }
         
-        static bool equal(const StringImpl* a, const StringImpl* b)
+        static inline bool equal(const StringImpl* a, const StringImpl* b)
         {
-            if (a == b)
-                return true;
-            if (!a || !b)
-                return false;
-            unsigned length = a->length();
-            if (length != b->length())
-                return false;
-
-            if (a->is8Bit()) {
-                if (b->is8Bit())
-                    return equalIgnoringCase(a->characters8(), b->characters8(), length);
-
-                return equalIgnoringCase(b->characters16(), a->characters8(), length);
-            }
-
-            if (b->is8Bit())
-                return equalIgnoringCase(a->characters16(), b->characters8(), length);
-
-            return equalIgnoringCase(a->characters16(), b->characters16(), length);
+            return equalIgnoringCaseNonNull(a, b);
         }
 
         static unsigned hash(const RefPtr<StringImpl>& key) 

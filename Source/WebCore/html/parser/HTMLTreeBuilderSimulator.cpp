@@ -95,10 +95,7 @@ static bool tokenExitsForeignContent(const CompactHTMLToken& token)
 static bool tokenExitsSVG(const CompactHTMLToken& token)
 {
     // FIXME: It's very fragile that we special case foreignObject here to be case-insensitive.
-    // FIXME: Using CaseFoldingHash::equal instead of equalIgnoringCase, as equalIgnoringCase
-    // wants non-const StringImpl* (even though it never modifies them).
-    // https://bugs.webkit.org/show_bug.cgi?id=111892 is for fixing equalIgnoringCase.
-    return CaseFoldingHash::equal(token.data().asStringImpl(), SVGNames::foreignObjectTag.localName().impl());
+    return equalIgnoringCaseNonNull(token.data().asStringImpl(), SVGNames::foreignObjectTag.localName().impl());
 }
 
 static bool tokenExitsMath(const CompactHTMLToken& token)
