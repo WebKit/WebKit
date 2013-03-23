@@ -1,3 +1,5 @@
+#!/bin/sh -e
+
 export SCRIPT_DIRECTORY=`dirname $0`
 export TOPLEVEL_DIRECTORY="$SCRIPT_DIRECTORY/../../../.."
 
@@ -35,7 +37,7 @@ autoreconf --verbose --install -I Macros $ACLOCAL_FLAGS
 # Automake is bizarrely responsible for copying some of the files necessary
 # for configure to run to the macros directory. So we invoke it here and hide
 # the warnings we get about not using automake in configure.ac.
-automake --add-missing --copy > /dev/null 2>&1
+automake --add-missing --copy > /dev/null 2>&1 || true
 
 if test -z "$NOCONFIGURE"; then
     ./configure $AUTOGEN_CONFIGURE_ARGS "$@" || exit $?

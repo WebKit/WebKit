@@ -1,3 +1,13 @@
+2013-03-22  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Trivial fixes to the gyp-build autogen.sh script.
+
+        Reviewed by Martin Robinson (mrobinson).
+
+        * gyp/autogen.sh: add /bin/sh -e as hashbang, so stricter shells will be happy to
+        run the script; deal with automake exiting with an error code because there is no
+        Makefile.am for it to work on.
+
 2013-03-19  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add support for building the WebCore bindings to the gyp build
