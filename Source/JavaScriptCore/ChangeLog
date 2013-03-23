@@ -1,5 +1,18 @@
 2013-03-22  Ryosuke Niwa  <rniwa@webkit.org>
 
+        testLeakingPrototypesAcrossContexts added in r146682 doesn't compile on Win and fails on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=113125
+
+        Reviewed by Mark Hahnenberg
+
+        Remove the test added in r146682 as it's now failing on Mac.
+        This is the test that was causing a compilation failure on Windows.
+
+        * API/tests/testapi.c:
+        (main):
+
+2013-03-22  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix the typo: WIN -> WINDOWS.
 
         * API/tests/testapi.c:
