@@ -701,9 +701,6 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     error = client->error();
 
     CFURLConnectionCancel(handle->connection());
-
-    if (error.isNull() && response.mimeType().isNull())
-        setDefaultMIMEType(response.cfURLResponse());
     
     if (error.isNull())
         response = client->response();
