@@ -3842,4 +3842,4 @@ webkit.org/b/113067 [ Debug ] platform/chromium/virtual/softwarecompositing/visi
 webkit.org/b/113114 media/video-controls-captions.html [ Timeout ]
 
 # Almost certainly just needs rebaseline, but the bot won't give me results
-bugpkasting [ XP ] fast/text/international/bold-bengali.html [ Failure ]
+Bug(pkasting) [ XP ] fast/text/international/bold-bengali.html [ Failure ]
