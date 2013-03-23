@@ -134,7 +134,7 @@ static void assertEqualsAsCharactersPtr(JSValueRef value, const char* expectedVa
     JSStringRelease(valueAsString);
 }
 
-#if !OS(WIN)
+#if !OS(WINDOWS)
 static int leakedObject = 1;
 
 static void leakFinalize(JSObjectRef object)
@@ -1744,7 +1744,7 @@ int main(int argc, char* argv[])
         free(scriptUTF8);
     }
 
-#if !OS(WIN)
+#if !OS(WINDOWS)
     testLeakingPrototypesAcrossContexts();
 #endif
 

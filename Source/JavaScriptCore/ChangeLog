@@ -1,5 +1,12 @@
 2013-03-22  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix the typo: WIN -> WINDOWS.
+
+        * API/tests/testapi.c:
+        (main):
+
+2013-03-22  Ryosuke Niwa  <rniwa@webkit.org>
+
         I really can't figure out what's wrong with this one.
         Temporarily disable the test added by r146682 on Windows since it doesn't compile.
 
