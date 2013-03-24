@@ -57,8 +57,8 @@ void InsertNodeBeforeCommand::doApply()
 
     parent->insertBefore(m_insertChild.get(), m_refChild.get(), IGNORE_EXCEPTION, AttachLazily);
 
-    if (AXObjectCache::accessibilityEnabled())
-        document()->axObjectCache()->nodeTextChangeNotification(m_insertChild.get(), AXObjectCache::AXTextInserted, 0, m_insertChild->nodeValue());
+    if (AXObjectCache* cache = document()->existingAXObjectCache())
+        cache->nodeTextChangeNotification(m_insertChild.get(), AXObjectCache::AXTextInserted, 0, m_insertChild->nodeValue());
 }
 
 void InsertNodeBeforeCommand::doUnapply()
@@ -67,8 +67,8 @@ void InsertNodeBeforeCommand::doUnapply()
         return;
 
     // Need to notify this before actually deleting the text
-    if (AXObjectCache::accessibilityEnabled())
-        document()->axObjectCache()->nodeTextChangeNotification(m_insertChild.get(), AXObjectCache::AXTextDeleted, 0, m_insertChild->nodeValue());
+    if (AXObjectCache* cache = document()->existingAXObjectCache())
+        cache->nodeTextChangeNotification(m_insertChild.get(), AXObjectCache::AXTextDeleted, 0, m_insertChild->nodeValue());
 
     m_insertChild->remove(IGNORE_EXCEPTION);
 }

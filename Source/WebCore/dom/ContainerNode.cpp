@@ -138,8 +138,10 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
 
 ContainerNode::~ContainerNode()
 {
-    if (AXObjectCache::accessibilityEnabled() && documentInternal() && documentInternal()->axObjectCacheExists())
-        documentInternal()->axObjectCache()->remove(this);
+    if (documentInternal()) {
+        if (AXObjectCache* cache = documentInternal()->existingAXObjectCache())
+            cache->remove(this);
+    }
 
     removeDetachedChildren();
 }

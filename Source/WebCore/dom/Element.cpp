@@ -884,8 +884,8 @@ void Element::attributeChanged(const QualifiedName& name, const AtomicString& ne
     if (shouldInvalidateStyle)
         setNeedsStyleRecalc();
 
-    if (AXObjectCache::accessibilityEnabled())
-        document()->axObjectCache()->handleAttributeChanged(name, this);
+    if (AXObjectCache* cache = document()->existingAXObjectCache())
+        cache->handleAttributeChanged(name, this);
 }
 
 inline void Element::attributeChangedFromParserOrByCloning(const QualifiedName& name, const AtomicString& newValue)

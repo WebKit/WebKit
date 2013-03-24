@@ -704,7 +704,7 @@ void Frame::disconnectOwnerElement()
 {
     if (m_ownerElement) {
         if (Document* doc = document())
-            doc->clearAXObjectCache();
+            doc->topDocument()->clearAXObjectCache();
         m_ownerElement->clearContentFrame();
         if (m_page)
             m_page->decrementSubframeCount();

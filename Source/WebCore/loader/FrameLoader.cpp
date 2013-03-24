@@ -1120,9 +1120,9 @@ void FrameLoader::prepareForLoadStart()
     m_client->dispatchDidStartProvisionalLoad();
 
     // Notify accessibility.
-    if (AXObjectCache::accessibilityEnabled()) {
+    if (AXObjectCache* cache = m_frame->document()->existingAXObjectCache()) {
         AXObjectCache::AXLoadingEvent loadingEvent = loadType() == FrameLoadTypeReload ? AXObjectCache::AXLoadingReloaded : AXObjectCache::AXLoadingStarted;
-        m_frame->document()->axObjectCache()->frameLoadingEventNotification(m_frame, loadingEvent);
+        cache->frameLoadingEventNotification(m_frame, loadingEvent);
     }
 }
 
@@ -2209,8 +2209,8 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             }
 
             // Notify accessibility.
-            if (AXObjectCache::accessibilityEnabled())
-                m_frame->document()->axObjectCache()->frameLoadingEventNotification(m_frame, loadingEvent);
+            if (AXObjectCache* cache = m_frame->document()->existingAXObjectCache())
+                cache->frameLoadingEventNotification(m_frame, loadingEvent);
 
             return;
         }

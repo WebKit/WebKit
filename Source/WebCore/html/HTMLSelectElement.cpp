@@ -380,8 +380,10 @@ void HTMLSelectElement::optionElementChildrenChanged()
     setRecalcListItems();
     setNeedsValidityCheck();
 
-    if (AXObjectCache::accessibilityEnabled() && renderer())
-        renderer()->document()->axObjectCache()->childrenChanged(this);
+    if (renderer()) {
+        if (AXObjectCache* cache = renderer()->document()->existingAXObjectCache())
+            cache->childrenChanged(this);
+    }
 }
 
 void HTMLSelectElement::accessKeyAction(bool sendMouseEvents)
@@ -722,8 +724,10 @@ void HTMLSelectElement::setRecalcListItems()
     if (!inDocument())
         invalidateSelectedItems();
     
-    if (AXObjectCache::accessibilityEnabled() && renderer())
-        renderer()->document()->axObjectCache()->childrenChanged(this);
+    if (renderer()) {
+        if (AXObjectCache* cache = renderer()->document()->existingAXObjectCache())
+            cache->childrenChanged(this);
+    }
 }
 
 void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const

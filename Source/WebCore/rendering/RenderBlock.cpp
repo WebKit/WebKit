@@ -1001,11 +1001,12 @@ void RenderBlock::deleteLineBoxTree()
         }
     }
     m_lineBoxes.deleteLineBoxTree(renderArena());
-    if (UNLIKELY(AXObjectCache::accessibilityEnabled()))
-        document()->axObjectCache()->recomputeIsIgnored(this);
+
+    if (AXObjectCache* cache = document()->existingAXObjectCache())
+        cache->recomputeIsIgnored(this);
 }
 
-RootInlineBox* RenderBlock::createRootInlineBox() 
+RootInlineBox* RenderBlock::createRootInlineBox()
 {
     return new (renderArena()) RootInlineBox(this);
 }
@@ -1015,8 +1016,10 @@ RootInlineBox* RenderBlock::createAndAppendRootInlineBox()
     RootInlineBox* rootBox = createRootInlineBox();
     m_lineBoxes.appendLineBox(rootBox);
 
-    if (UNLIKELY(AXObjectCache::accessibilityEnabled()) && m_lineBoxes.firstLineBox() == rootBox)
-        document()->axObjectCache()->recomputeIsIgnored(this);
+    if (UNLIKELY(AXObjectCache::accessibilityEnabled()) && m_lineBoxes.firstLineBox() == rootBox) {
+        if (AXObjectCache* cache = document()->existingAXObjectCache())
+            cache->recomputeIsIgnored(this);
+    }
 
     return rootBox;
 }

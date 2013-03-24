@@ -102,9 +102,9 @@ void RenderWidget::willBeDestroyed()
     if (RenderView* v = view())
         v->removeWidget(this);
     
-    if (AXObjectCache::accessibilityEnabled()) {
-        document()->axObjectCache()->childrenChanged(this->parent());
-        document()->axObjectCache()->remove(this);
+    if (AXObjectCache* cache = document()->existingAXObjectCache()) {
+        cache->childrenChanged(this->parent());
+        cache->remove(this);
     }
 
     setWidget(0);

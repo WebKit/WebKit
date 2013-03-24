@@ -846,7 +846,8 @@ void AXObjectCache::startCachingComputedObjectAttributesUntilTreeMutates()
 
 void AXObjectCache::stopCachingComputedObjectAttributes()
 {
-    m_computedObjectAttributeCache.clear();
+    if (m_computedObjectAttributeCache)
+        m_computedObjectAttributeCache.clear();
 }
 
 VisiblePosition AXObjectCache::visiblePositionForTextMarkerData(TextMarkerData& textMarkerData)

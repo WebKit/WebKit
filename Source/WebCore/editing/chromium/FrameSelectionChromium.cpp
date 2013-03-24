@@ -40,9 +40,9 @@ namespace WebCore {
 void FrameSelection::notifyAccessibilityForSelectionChange()
 {
     // FIXME: Support editable text in chromium.
-    if (AXObjectCache::accessibilityEnabled() && m_selection.start().isNotNull() && m_selection.end().isNotNull()) {
-        Document* document = m_frame->document();
-        document->axObjectCache()->postNotification(m_selection.start().deprecatedNode(), AXObjectCache::AXSelectedTextChanged, false);
+    if (m_selection.start().isNotNull() && m_selection.end().isNotNull()) {
+        if (AXObjectCache* cache = m_frame->document()->existingAXObjectCache())
+            cache->postNotification(m_selection.start().deprecatedNode(), AXObjectCache::AXSelectedTextChanged, false);
     }
 }
 

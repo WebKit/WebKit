@@ -559,10 +559,10 @@ public:
         Node::setRenderer(renderer);
     }
 
-    void clearAXObjectCache();
+    AXObjectCache* existingAXObjectCache() const;
     AXObjectCache* axObjectCache() const;
-    bool axObjectCacheExists() const;
-    
+    void clearAXObjectCache();
+
     // to get visually ordered hebrew and arabic pages right
     void setVisuallyOrdered();
     bool visuallyOrdered() const { return m_visuallyOrdered; }

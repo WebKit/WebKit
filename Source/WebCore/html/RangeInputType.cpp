@@ -246,8 +246,8 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
         TextFieldEventBehavior eventBehavior = DispatchChangeEvent;
         setValueAsDecimal(newValue, eventBehavior, IGNORE_EXCEPTION);
 
-        if (AXObjectCache::accessibilityEnabled())
-            element()->document()->axObjectCache()->postNotification(element(), AXObjectCache::AXValueChanged, true);
+        if (AXObjectCache* cache = element()->document()->existingAXObjectCache())
+            cache->postNotification(element(), AXObjectCache::AXValueChanged, true);
         element()->dispatchFormControlChangeEvent();
     }
 

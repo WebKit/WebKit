@@ -142,8 +142,8 @@ void RenderMenuList::addChild(RenderObject* newChild, RenderObject* beforeChild)
     m_innerBlock->addChild(newChild, beforeChild);
     ASSERT(m_innerBlock == firstChild());
 
-    if (AXObjectCache::accessibilityEnabled())
-        document()->axObjectCache()->childrenChanged(this);
+    if (AXObjectCache* cache = document()->existingAXObjectCache())
+        cache->childrenChanged(this);
 }
 
 void RenderMenuList::removeChild(RenderObject* oldChild)
@@ -378,7 +378,7 @@ void RenderMenuList::didSetSelectedIndex(int listIndex)
 
 void RenderMenuList::didUpdateActiveOption(int optionIndex)
 {
-    if (!AXObjectCache::accessibilityEnabled())
+    if (!AXObjectCache::accessibilityEnabled() || !document()->existingAXObjectCache())
         return;
 
     if (m_lastActiveIndex == optionIndex)

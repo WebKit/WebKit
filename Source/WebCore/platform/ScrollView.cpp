@@ -99,8 +99,8 @@ void ScrollView::setHasHorizontalScrollbar(bool hasBar)
         m_horizontalScrollbar = 0;
     }
     
-    if (AXObjectCache::accessibilityEnabled() && axObjectCache())
-        axObjectCache()->handleScrollbarUpdate(this);
+    if (AXObjectCache* cache = axObjectCache())
+        cache->handleScrollbarUpdate(this);
 }
 
 void ScrollView::setHasVerticalScrollbar(bool hasBar)
@@ -117,8 +117,8 @@ void ScrollView::setHasVerticalScrollbar(bool hasBar)
         m_verticalScrollbar = 0;
     }
     
-    if (AXObjectCache::accessibilityEnabled() && axObjectCache())
-        axObjectCache()->handleScrollbarUpdate(this);
+    if (AXObjectCache* cache = axObjectCache())
+        cache->handleScrollbarUpdate(this);
 }
 
 #if !PLATFORM(GTK)

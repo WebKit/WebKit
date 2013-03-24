@@ -109,8 +109,8 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
     if (!owner->documentBeingDestroyed())
         RenderCounter::rendererRemovedFromTree(oldChild);
 
-    if (AXObjectCache::accessibilityEnabled())
-        owner->document()->axObjectCache()->childrenChanged(owner);
+    if (AXObjectCache* cache = owner->document()->existingAXObjectCache())
+        cache->childrenChanged(owner);
 
     return oldChild;
 }
@@ -161,8 +161,8 @@ void RenderObjectChildList::insertChildNode(RenderObject* owner, RenderObject* n
     if (!owner->normalChildNeedsLayout())
         owner->setChildNeedsLayout(true); // We may supply the static position for an absolute positioned child.
 
-    if (AXObjectCache::accessibilityEnabled())
-        owner->document()->axObjectCache()->childrenChanged(owner);
+    if (AXObjectCache* cache = owner->document()->axObjectCache())
+        cache->childrenChanged(owner);
 }
 
 } // namespace WebCore

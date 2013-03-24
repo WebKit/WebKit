@@ -174,7 +174,7 @@ protected:
     void autoscrollPressedPart(double delay);
     ScrollDirection pressedPartScrollDirection();
     ScrollGranularity pressedPartScrollGranularity();
-    
+
     ScrollableArea* m_scrollableArea;
     ScrollbarOrientation m_orientation;
     ScrollbarControlSize m_controlSize;
@@ -206,7 +206,7 @@ protected:
 
 private:
     virtual bool isScrollbar() const { return true; }
-    virtual AXObjectCache* axObjectCache() const;
+    virtual AXObjectCache* existingAXObjectCache() const;
 };
 
 } // namespace WebCore

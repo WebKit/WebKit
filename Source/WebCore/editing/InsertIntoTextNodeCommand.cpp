@@ -63,8 +63,8 @@ void InsertIntoTextNodeCommand::doApply()
 
     m_node->insertData(m_offset, m_text, IGNORE_EXCEPTION);
 
-    if (AXObjectCache::accessibilityEnabled())
-        document()->axObjectCache()->nodeTextChangeNotification(m_node.get(), AXObjectCache::AXTextInserted, m_offset, m_text);
+    if (AXObjectCache* cache = document()->existingAXObjectCache())
+        cache->nodeTextChangeNotification(m_node.get(), AXObjectCache::AXTextInserted, m_offset, m_text);
 }
 
 void InsertIntoTextNodeCommand::doUnapply()
@@ -73,8 +73,8 @@ void InsertIntoTextNodeCommand::doUnapply()
         return;
         
     // Need to notify this before actually deleting the text
-    if (AXObjectCache::accessibilityEnabled())
-        document()->axObjectCache()->nodeTextChangeNotification(m_node.get(), AXObjectCache::AXTextDeleted, m_offset, m_text);
+    if (AXObjectCache* cache = document()->existingAXObjectCache())
+        cache->nodeTextChangeNotification(m_node.get(), AXObjectCache::AXTextDeleted, m_offset, m_text);
 
     m_node->deleteData(m_offset, m_text.length(), IGNORE_EXCEPTION);
 }

@@ -166,8 +166,8 @@ void RenderListBox::selectionChanged()
             scrollToRevealSelection();
     }
     
-    if (AXObjectCache::accessibilityEnabled())
-        document()->axObjectCache()->selectedChildrenChanged(this);
+    if (AXObjectCache* cache = document()->existingAXObjectCache())
+        cache->selectedChildrenChanged(this);
 }
 
 void RenderListBox::layout()
