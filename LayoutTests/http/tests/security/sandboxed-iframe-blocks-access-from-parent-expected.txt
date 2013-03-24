@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: Sandbox access violation: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/resources/blank.html from frame with URL http://127.0.0.1:8000/security/sandboxed-iframe-blocks-access-from-parent.html. The frame being accessed is sandboxed into a unique origin.
-
+CONSOLE MESSAGE: Sandbox access violation: Blocked a frame at "http://127.0.0.1:8000" from accessing a frame at "http://127.0.0.1:8000".  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.
 Sandboxing a frame puts it into a unique origin by default, which the containing document shouldn't have script access to. This test passes if a console warning is generated, noting the access violation.
 
 

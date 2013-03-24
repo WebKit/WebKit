@@ -1,5 +1,4 @@
-CONSOLE MESSAGE: Sandbox access violation: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/sandboxed-iframe-origin-remove.html from frame with URL http://127.0.0.1:8000/security/resources/sandboxed-iframe-origin-remove-step2.html. The frame requesting access is sandboxed into a unique origin.
-
+CONSOLE MESSAGE: Sandbox access violation: Blocked a frame at "http://127.0.0.1:8000" from accessing a frame at "http://127.0.0.1:8000".  The frame requesting access is sandboxed and lacks the "allow-same-origin" flag.
 Test that removing allow-origin after creating an iframe doesn't modify the origin of an existing document, but it doesn modify the origin of the next document.
 
 PASS

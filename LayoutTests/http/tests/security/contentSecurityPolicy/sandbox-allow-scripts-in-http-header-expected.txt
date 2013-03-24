@@ -1,5 +1,4 @@
 ALERT: Script executed in iframe.
-CONSOLE MESSAGE: Sandbox access violation: Unsafe JavaScript attempt to access frame with URL http://127.0.0.1:8000/security/contentSecurityPolicy/resources/sandbox.php?sandbox=allow-scripts from frame with URL http://127.0.0.1:8000/security/contentSecurityPolicy/sandbox-allow-scripts-in-http-header.html. The frame being accessed is sandboxed into a unique origin.
-
+CONSOLE MESSAGE: Sandbox access violation: Blocked a frame at "http://127.0.0.1:8000" from accessing a frame at "http://127.0.0.1:8000".  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.
 ALERT: PASS: Iframe was in a unique origin
 
