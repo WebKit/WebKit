@@ -27,6 +27,7 @@
 #include "WebCommon.h"
 #include "WebFloatSize.h"
 #include "WebPoint.h"
+#include "WebScrollbar.h"
 #include "WebSize.h"
 
 namespace WebKit {
@@ -56,10 +57,11 @@ public:
     // ancestor layer that can be scrolled will be moved instead. If there is no
     // such layer to be moved, this returns false. Returns true otherwise.
     // Should only be called if scrollBegin() returned ScrollStarted.
-    virtual bool scrollByIfPossible(WebPoint origin, WebFloatSize delta) { return scrollByIfPossible(origin, WebSize(delta.width, delta.height)); }
+    virtual bool scrollByIfPossible(WebPoint origin, WebFloatSize delta)  = 0;
 
-    // TODO(aelias): Delete this after WebKit roll.
-    virtual bool scrollByIfPossible(WebPoint origin, WebSize delta) { return scrollByIfPossible(origin, WebFloatSize(delta.width, delta.height)); }
+    // Scroll the selected layer vertically by one logical page in the given
+    // direction.
+    virtual bool scrollVerticallyByPageIfPossible(WebPoint origin, WebScrollbar::ScrollDirection) = 0;
 
     // Stop scrolling the selected layer. Should only be called if scrollBegin()
     // returned ScrollStarted.

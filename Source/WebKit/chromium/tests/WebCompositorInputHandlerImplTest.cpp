@@ -63,6 +63,7 @@ public:
 
     MOCK_METHOD2(scrollBegin, ScrollStatus(WebPoint, WebInputHandlerClient::ScrollInputType));
     MOCK_METHOD2(scrollByIfPossible, bool(WebPoint, WebFloatSize));
+    MOCK_METHOD2(scrollVerticallyByPageIfPossible, bool(WebPoint, WebScrollbar::ScrollDirection));
     MOCK_METHOD0(scrollEnd, void());
 
     MOCK_METHOD0(didReceiveLastInputEventForVSync, void());

@@ -123,7 +123,13 @@ WebCompositorInputHandlerImpl::EventDisposition WebCompositorInputHandlerImpl::h
         switch (scrollStatus) {
         case WebInputHandlerClient::ScrollStatusStarted: {
             TRACE_EVENT_INSTANT2("webkit", "WebCompositorInputHandlerImpl::handleInput wheel scroll", "deltaX", -wheelEvent.deltaX, "deltaY", -wheelEvent.deltaY);
-            bool didScroll = m_inputHandlerClient->scrollByIfPossible(WebPoint(wheelEvent.x, wheelEvent.y), WebFloatSize(-wheelEvent.deltaX, -wheelEvent.deltaY));
+            bool didScroll = false;
+            if (wheelEvent.scrollByPage) {
+                ASSERT(!wheelEvent.deltaX);
+                WebScrollbar::ScrollDirection direction = (wheelEvent.deltaY < 0) ? WebScrollbar::ScrollForward : WebScrollbar::ScrollBackward;
+                didScroll = m_inputHandlerClient->scrollVerticallyByPageIfPossible(WebPoint(wheelEvent.x, wheelEvent.y), direction);
+            } else
+                didScroll = m_inputHandlerClient->scrollByIfPossible(WebPoint(wheelEvent.x, wheelEvent.y), WebFloatSize(-wheelEvent.deltaX, -wheelEvent.deltaY));
             m_inputHandlerClient->scrollEnd();
             return didScroll ? DidHandle : DropEvent;
         }
