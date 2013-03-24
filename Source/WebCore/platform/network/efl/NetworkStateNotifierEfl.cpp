@@ -108,6 +108,8 @@ Eina_Bool NetworkStateNotifier::readSocketCallback(void* userData, Ecore_Fd_Hand
     int sock = ecore_main_fd_handler_fd_get(handler);
     char buffer[bufferSize];
 
+    bool detectedChange = false;
+
     nlmsghdr* nlh = reinterpret_cast<nlmsghdr*>(buffer);
     while (true) {
         ssize_t length = recv(sock, nlh, bufferSize, MSG_DONTWAIT);
@@ -131,13 +133,14 @@ Eina_Bool NetworkStateNotifier::readSocketCallback(void* userData, Ecore_Fd_Hand
                 notifier->m_fdHandler = 0;
                 return ECORE_CALLBACK_CANCEL;
             }
-            if (nlh->nlmsg_type == RTM_NEWADDR || nlh->nlmsg_type == RTM_DELADDR) {
-                // We detected an IP address change, recheck onLine state.
-                notifier->networkInterfaceChanged();
-            }
+            if ((nlh->nlmsg_type == RTM_NEWADDR && !notifier->m_isOnLine) || (nlh->nlmsg_type == RTM_DELADDR && notifier->m_isOnLine))
+                detectedChange = true;
             nlh = NLMSG_NEXT(nlh, length);
         }
     }
+
+    if (detectedChange)
+        notifier->networkInterfaceChanged();
 
     return ECORE_CALLBACK_RENEW;
 }
