@@ -1070,6 +1070,12 @@
     <ClInclude Include="..\heap\Handle.h">
       <Filter>heap</Filter>
     </ClInclude>
+    <ClInclude Include="..\heap\HandleBlock.h">
+      <Filter>heap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\heap\HandleBlockInlines.h">
+      <Filter>heap</Filter>
+    </ClInclude>
     <ClInclude Include="..\heap\HandleSet.h">
       <Filter>heap</Filter>
     </ClInclude>

@@ -1,3 +1,60 @@
+2013-03-23  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        HandleSet should use HeapBlocks for storing handles
+        https://bugs.webkit.org/show_bug.cgi?id=113145
+
+        Reviewed by Geoffrey Garen.
+
+        * GNUmakefile.list.am: Build project changes.
+        * JavaScriptCore.gypi: Ditto.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Ditto.
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj: Ditto.
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Ditto.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Ditto.
+        * heap/BlockAllocator.cpp: Rename the RegionSet to m_fourKBBlockRegionSet because there are 
+        too many block types to include them all in the name now.
+        (JSC::BlockAllocator::BlockAllocator):
+        * heap/BlockAllocator.h:
+        (BlockAllocator): Add the appropriate override for regionSetFor.
+        (JSC::WeakBlock):
+        (JSC::MarkStackSegment):
+        (JSC::HandleBlock):
+        * heap/HandleBlock.h: Added.
+        (HandleBlock): New class for HandleBlocks.
+        (JSC::HandleBlock::blockFor): Static method to get the block of the given HandleNode pointer. Allows
+        us to quickly figure out which HandleSet the HandleNode belongs to without storing the pointer to it
+        in the HandleNode.
+        (JSC::HandleBlock::handleSet): Getter.
+        * heap/HandleBlockInlines.h: Added.
+        (JSC::HandleBlock::create):
+        (JSC::HandleBlock::HandleBlock):
+        (JSC::HandleBlock::payloadEnd):
+        (JSC::HandleBlock::payload):
+        (JSC::HandleBlock::nodes):
+        (JSC::HandleBlock::nodeAtIndex):
+        (JSC::HandleBlock::nodeCapacity):
+        * heap/HandleSet.cpp:
+        (JSC::HandleSet::~HandleSet): 
+        (JSC::HandleSet::grow):
+        * heap/HandleSet.h:
+        (HandleNode): Move the internal Node class from HandleSet to be its own public class so it can be 
+        used by HandleBlock.
+        (HandleSet): Add a typedef so that Node refers to the new HandleNode class.
+        (JSC::HandleSet::toHandle):
+        (JSC::HandleSet::toNode):
+        (JSC::HandleSet::allocate):
+        (JSC::HandleSet::deallocate):
+        (JSC::HandleNode::HandleNode):
+        (JSC::HandleNode::slot):
+        (JSC::HandleNode::handleSet): Use the new blockFor static function to get the right HandleBlock and lookup 
+        the HandleSet.
+        (JSC::HandleNode::setPrev):
+        (JSC::HandleNode::prev):
+        (JSC::HandleNode::setNext):
+        (JSC::HandleNode::next):
+        (JSC::HandleSet::forEachStrongHandle):
+        * heap/Heap.h: Friend HandleSet so that it can access the BlockAllocator when allocating HandleBlocks.
+
 2013-03-22  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX (r145119): Make JSValue* properties default to (assign)

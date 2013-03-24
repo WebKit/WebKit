@@ -37,7 +37,7 @@ namespace JSC {
 BlockAllocator::BlockAllocator()
     : m_copiedRegionSet(CopiedBlock::blockSize)
     , m_markedRegionSet(MarkedBlock::blockSize)
-    , m_weakAndMarkStackRegionSet(WeakBlock::blockSize)
+    , m_fourKBBlockRegionSet(WeakBlock::blockSize)
     , m_workListRegionSet(CopyWorkListSegment::blockSize)
     , m_numberOfEmptyRegions(0)
     , m_isCurrentlyAllocating(false)

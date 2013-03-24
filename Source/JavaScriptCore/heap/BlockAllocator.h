@@ -38,6 +38,7 @@ namespace JSC {
 class BlockAllocator;
 class CopiedBlock;
 class CopyWorkListSegment;
+class HandleBlock;
 class MarkStackSegment;
 class MarkedBlock;
 class Region;
@@ -191,7 +192,7 @@ private:
     RegionSet m_copiedRegionSet;
     RegionSet m_markedRegionSet;
     // WeakBlocks and MarkStackSegments use the same RegionSet since they're the same size.
-    RegionSet m_weakAndMarkStackRegionSet;
+    RegionSet m_fourKBBlockRegionSet;
     RegionSet m_workListRegionSet;
 
     DoublyLinkedList<Region> m_emptyRegions;
@@ -323,19 +324,25 @@ inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<MarkedBlock>()
 template <>
 inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<WeakBlock>()
 {
-    return m_weakAndMarkStackRegionSet;
+    return m_fourKBBlockRegionSet;
 }
 
 template <>
 inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<MarkStackSegment>()
 {
-    return m_weakAndMarkStackRegionSet;
+    return m_fourKBBlockRegionSet;
 }
 
 template <>
 inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<CopyWorkListSegment>()
 {
     return m_workListRegionSet;
+}
+
+template <>
+inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HandleBlock>()
+{
+    return m_fourKBBlockRegionSet;
 }
 
 template <>
@@ -353,19 +360,25 @@ inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<MarkedB
 template <>
 inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<WeakBlock> >()
 {
-    return m_weakAndMarkStackRegionSet;
+    return m_fourKBBlockRegionSet;
 }
 
 template <>
 inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<MarkStackSegment> >()
 {
-    return m_weakAndMarkStackRegionSet;
+    return m_fourKBBlockRegionSet;
 }
 
 template <>
 inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<CopyWorkListSegment> >()
 {
     return m_workListRegionSet;
+}
+
+template <>
+inline BlockAllocator::RegionSet& BlockAllocator::regionSetFor<HeapBlock<HandleBlock> >()
+{
+    return m_fourKBBlockRegionSet;
 }
 
 template <typename T>

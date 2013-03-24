@@ -358,6 +358,8 @@
             'heap/GCThreadSharedData.cpp',
             'heap/GCThreadSharedData.h',
             'heap/Handle.h',
+            'heap/HandleBlock.h',
+            'heap/HandleBlockInlines.h',
             'heap/HandleSet.cpp',
             'heap/HandleSet.h',
             'heap/HandleStack.cpp',

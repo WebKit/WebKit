@@ -507,6 +507,8 @@
     <ClInclude Include="..\heap\GCThread.h" />
     <ClInclude Include="..\heap\GCThreadSharedData.h" />
     <ClInclude Include="..\heap\Handle.h" />
+    <ClInclude Include="..\heap\HandleBlock.h" />
+    <ClInclude Include="..\heap\HandleBlockInlines.h" />
     <ClInclude Include="..\heap\HandleSet.h" />
     <ClInclude Include="..\heap\HandleStack.h" />
     <ClInclude Include="..\heap\HandleTypes.h" />

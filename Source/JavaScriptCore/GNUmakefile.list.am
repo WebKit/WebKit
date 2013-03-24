@@ -311,6 +311,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/DFGCodeBlocks.h \
 	Source/JavaScriptCore/heap/GCAssertions.h \
 	Source/JavaScriptCore/heap/Handle.h \
+    Source/JavaScriptCore/heap/HandleBlock.h \
+    Source/JavaScriptCore/heap/HandleBlockInlines.h \
 	Source/JavaScriptCore/heap/HandleSet.cpp \
 	Source/JavaScriptCore/heap/HandleSet.h \
 	Source/JavaScriptCore/heap/HeapBlock.h \

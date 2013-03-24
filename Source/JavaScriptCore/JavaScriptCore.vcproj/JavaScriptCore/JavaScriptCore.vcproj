@@ -2654,6 +2654,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\heap\HandleBlock.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\heap\HandleBlockInlines.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\heap\HandleSet.cpp"
 				>
 			</File>

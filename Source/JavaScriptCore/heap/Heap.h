@@ -180,6 +180,7 @@ namespace JSC {
         friend class CodeBlock;
         friend class CopiedBlock;
         friend class GCAwareJITStubRoutine;
+        friend class HandleSet;
         friend class JITStubRoutine;
         friend class LLIntOffsetsExtractor;
         friend class MarkedSpace;
