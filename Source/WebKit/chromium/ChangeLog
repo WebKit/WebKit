@@ -1,3 +1,10 @@
+2013-03-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled Chromium DEPS to r190276.  Requested by
+        "Dana Jansens" <danakj@chromium.org> via sheriffbot.
+
+        * DEPS:
+
 2013-03-22  Dane Wallinga  <dgwallinga@chromium.org>
 
         Add client callbacks to notify of changes of associated from controls
