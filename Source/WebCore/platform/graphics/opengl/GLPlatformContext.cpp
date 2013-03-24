@@ -197,15 +197,17 @@ bool GLPlatformContext::makeCurrent(GLPlatformSurface* surface)
 {
     m_contextLost = false;
 
-    if (isCurrentContext())
+    if (m_currentContext == this && (!surface || surface->isCurrentDrawable()))
         return true;
 
     m_currentContext = 0;
 
     if (!surface || (surface && !surface->drawable()))
         platformReleaseCurrent();
-    else if (platformMakeCurrent(surface))
+    else if (platformMakeCurrent(surface)) {
         m_currentContext = this;
+        surface->onMakeCurrent();
+    }
 
     if (m_resetLostContext) {
         resolveResetStatusExtension();
@@ -240,11 +242,10 @@ bool GLPlatformContext::isValid() const
 
 void GLPlatformContext::releaseCurrent()
 {
-    if (!isCurrentContext())
-        return;
-
-    m_currentContext = 0;
-    platformReleaseCurrent();
+    if (this == m_currentContext) {
+        m_currentContext = 0;
+        platformReleaseCurrent();
+    }
 }
 
 PlatformContext GLPlatformContext::handle() const
@@ -281,9 +282,6 @@ void GLPlatformContext::destroy()
 {
     m_contextHandle = 0;
     m_resetLostContext = false;
-
-    if (this == m_currentContext)
-        m_currentContext = 0;
 }
 
 } // namespace WebCore

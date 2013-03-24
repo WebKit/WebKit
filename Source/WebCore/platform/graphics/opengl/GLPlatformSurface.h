@@ -67,6 +67,9 @@ public:
 
     virtual void swapBuffers();
 
+    virtual bool isCurrentDrawable() const;
+    virtual void onMakeCurrent();
+
     // Convenience Function to update surface backbuffer with texture contents.
     // Note that the function doesn't track or restore any GL states.
     // Function does the following(in order):
