@@ -155,7 +155,11 @@ String ClipboardQt::getData(const String& type) const
     if (isTextMimeType(type) && m_readableData->hasText())
         return m_readableData->text();
 
-    ASSERT(m_readableData);
+    // FIXME: Per the spec, reading the clipboard in dragstart events should also be allowed.
+    // See https://bugs.webkit.org/show_bug.cgi?id=113126.
+    if (!m_readableData)
+        return String();
+
     QByteArray rawData = m_readableData->data(type);
     QString data = QTextCodec::codecForName("UTF-16")->toUnicode(rawData);
     return data;
@@ -187,7 +191,11 @@ ListHashSet<String> ClipboardQt::types() const
     if (!canReadTypes())
         return ListHashSet<String>();
 
-    ASSERT(m_readableData);
+    // FIXME: Per the spec, reading the clipboard in dragstart events should also be allowed.
+    // See https://bugs.webkit.org/show_bug.cgi?id=113126.
+    if (!m_readableData)
+        return ListHashSet<String>();
+
     ListHashSet<String> result;
     QStringList formats = m_readableData->formats();
     for (int i = 0; i < formats.count(); ++i)
@@ -197,7 +205,9 @@ ListHashSet<String> ClipboardQt::types() const
 
 PassRefPtr<FileList> ClipboardQt::files() const
 {
-    if (!canReadData() || !m_readableData->hasUrls())
+    // FIXME: Per the spec, reading the clipboard in dragstart events should also be allowed.
+    // See https://bugs.webkit.org/show_bug.cgi?id=113126.
+    if (!canReadData() || !m_readableData || !m_readableData->hasUrls())
         return FileList::create();
 
     RefPtr<FileList> fileList = FileList::create();
