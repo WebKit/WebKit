@@ -41,26 +41,28 @@ class SpeechSynthesisUtterance : public PlatformSpeechSynthesisUtteranceClient, 
 public:
     static PassRefPtr<SpeechSynthesisUtterance> create(ScriptExecutionContext*, const String&);
     
-    const String& text() const { return m_platformUtterance.text(); }
-    void setText(const String& text) { m_platformUtterance.setText(text); }
+    ~SpeechSynthesisUtterance();
 
-    const String& lang() const { return m_platformUtterance.lang(); }
-    void setLang(const String& lang) { m_platformUtterance.setLang(lang); }
+    const String& text() const { return m_platformUtterance->text(); }
+    void setText(const String& text) { m_platformUtterance->setText(text); }
+
+    const String& lang() const { return m_platformUtterance->lang(); }
+    void setLang(const String& lang) { m_platformUtterance->setLang(lang); }
 
     SpeechSynthesisVoice* voice() const;
     void setVoice(SpeechSynthesisVoice*);
 
-    float volume() const { return m_platformUtterance.volume(); }
-    void setVolume(float volume) { m_platformUtterance.setVolume(volume); }
+    float volume() const { return m_platformUtterance->volume(); }
+    void setVolume(float volume) { m_platformUtterance->setVolume(volume); }
 
-    float rate() const { return m_platformUtterance.rate(); }
-    void setRate(float rate) { m_platformUtterance.setRate(rate); }
+    float rate() const { return m_platformUtterance->rate(); }
+    void setRate(float rate) { m_platformUtterance->setRate(rate); }
 
-    float pitch() const { return m_platformUtterance.pitch(); }
-    void setPitch(float pitch) { m_platformUtterance.setPitch(pitch); }
+    float pitch() const { return m_platformUtterance->pitch(); }
+    void setPitch(float pitch) { m_platformUtterance->setPitch(pitch); }
 
-    double startTime() const { return m_platformUtterance.startTime(); }
-    void setStartTime(double startTime) { m_platformUtterance.setStartTime(startTime); }
+    double startTime() const { return m_platformUtterance->startTime(); }
+    void setStartTime(double startTime) { m_platformUtterance->setStartTime(startTime); }
     
     DEFINE_ATTRIBUTE_EVENT_LISTENER(start);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(end);
@@ -75,11 +77,11 @@ public:
 
     virtual ScriptExecutionContext* scriptExecutionContext() const;
 
-    const PlatformSpeechSynthesisUtterance& platformUtterance() const { return m_platformUtterance; }
+    PlatformSpeechSynthesisUtterance* platformUtterance() const { return m_platformUtterance.get(); }
 
 private:
     SpeechSynthesisUtterance(ScriptExecutionContext*, const String&);
-    PlatformSpeechSynthesisUtterance m_platformUtterance;
+    RefPtr<PlatformSpeechSynthesisUtterance> m_platformUtterance;
     RefPtr<SpeechSynthesisVoice> m_voice;
     
     // EventTarget

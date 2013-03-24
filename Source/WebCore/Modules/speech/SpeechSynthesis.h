@@ -65,12 +65,12 @@ private:
     
     // PlatformSpeechSynthesizerClient override methods.
     virtual void voicesDidChange() OVERRIDE;
-    virtual void didStartSpeaking(const PlatformSpeechSynthesisUtterance*) OVERRIDE;
-    virtual void didPauseSpeaking(const PlatformSpeechSynthesisUtterance*) OVERRIDE;
-    virtual void didResumeSpeaking(const PlatformSpeechSynthesisUtterance*) OVERRIDE;
-    virtual void didFinishSpeaking(const PlatformSpeechSynthesisUtterance*) OVERRIDE;
-    virtual void speakingErrorOccurred(const PlatformSpeechSynthesisUtterance*) OVERRIDE;
-    virtual void boundaryEventOccurred(const PlatformSpeechSynthesisUtterance*, SpeechBoundary, unsigned charIndex) OVERRIDE;
+    virtual void didStartSpeaking(PassRefPtr<PlatformSpeechSynthesisUtterance>) OVERRIDE;
+    virtual void didPauseSpeaking(PassRefPtr<PlatformSpeechSynthesisUtterance>) OVERRIDE;
+    virtual void didResumeSpeaking(PassRefPtr<PlatformSpeechSynthesisUtterance>) OVERRIDE;
+    virtual void didFinishSpeaking(PassRefPtr<PlatformSpeechSynthesisUtterance>) OVERRIDE;
+    virtual void speakingErrorOccurred(PassRefPtr<PlatformSpeechSynthesisUtterance>) OVERRIDE;
+    virtual void boundaryEventOccurred(PassRefPtr<PlatformSpeechSynthesisUtterance>, SpeechBoundary, unsigned charIndex) OVERRIDE;
 
     void startSpeakingImmediately(SpeechSynthesisUtterance*);
     void handleSpeakingCompleted(SpeechSynthesisUtterance*, bool errorOccurred);
