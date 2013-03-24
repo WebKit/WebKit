@@ -2170,8 +2170,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return nil;
         return (NSURL*)url;
     }
-    
-    if (m_object->isSpinButton()) {
+
+    // Only native spin buttons have increment and decrement buttons.
+    if (m_object->isNativeSpinButton()) {
         if ([attributeName isEqualToString:NSAccessibilityIncrementButtonAttribute])
             return toAccessibilitySpinButton(m_object)->incrementButton()->wrapper();
         if ([attributeName isEqualToString:NSAccessibilityDecrementButtonAttribute])

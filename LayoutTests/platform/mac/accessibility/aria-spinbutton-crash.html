@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+if (window.testRunner)
+   testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<div id="spinbutton" role="spinbutton" aria-required="true">spinner</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test ensures that an ARIA spin button will not crash because it's confused with a regular spin button.");
+
+    if (window.accessibilityController) {
+        var spinbutton = accessibilityController.accessibleElementById("spinbutton");
+        shouldBe("spinbutton.childrenCount", "0");
+
+        var incrementButton = spinbutton.uiElementAttributeValue('AXIncrementButton');
+        shouldBeTrue("incrementButton == null || !incrementButton.isValid");
+    }
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>
+
