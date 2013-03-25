@@ -967,10 +967,12 @@ WebInspector.ScriptsPanel.prototype = {
         for (var i = 0; i < uiSourceCodes.length; ++i)
             uiSourceCodes[i].setFormatted(this._toggleFormatSourceButton.toggled);
 
+        var currentFile = this._editorContainer.currentFile();
+
         WebInspector.notifications.dispatchEventToListeners(WebInspector.UserMetrics.UserAction, {
             action: WebInspector.UserMetrics.UserActionNames.TogglePrettyPrint,
             enabled: this._toggleFormatSourceButton.toggled,
-            url: this._editorContainer.currentFile().originURL()
+            url: currentFile ? currentFile.originURL() : null
         });
     },
 
