@@ -72,6 +72,7 @@ var Capabilities = {
 WebInspector.Settings = function()
 {
     this._eventSupport = new WebInspector.Object();
+    this._registry = /** @type {!Object.<string, !WebInspector.Setting>} */ ({});
 
     this.colorFormat = this.createSetting("colorFormat", "original");
     this.consoleHistory = this.createSetting("consoleHistory", []);
@@ -132,11 +133,15 @@ WebInspector.Settings = function()
 
 WebInspector.Settings.prototype = {
     /**
-     * @return {WebInspector.Setting}
+     * @param {string} key
+     * @param {*} defaultValue
+     * @return {!WebInspector.Setting}
      */
     createSetting: function(key, defaultValue)
     {
-        return new WebInspector.Setting(key, defaultValue, this._eventSupport, window.localStorage);
+        if (!this._registry[key])
+            this._registry[key] = new WebInspector.Setting(key, defaultValue, this._eventSupport, window.localStorage);
+        return this._registry[key];
     }
 }
 
@@ -209,7 +214,7 @@ WebInspector.ExperimentsSettings = function()
     this._setting = WebInspector.settings.createSetting("experiments", {});
     this._experiments = [];
     this._enabledForTest = {};
-    
+
     // Add currently running experiments here.
     this.snippetsSupport = this._createExperiment("snippetsSupport", "Snippets support");
     this.nativeMemorySnapshots = this._createExperiment("nativeMemorySnapshots", "Native memory profiling");
@@ -238,7 +243,7 @@ WebInspector.ExperimentsSettings.prototype = {
     {
         return this._experiments.slice();
     },
-    
+
     /**
      * @return {boolean}
      */
@@ -246,7 +251,7 @@ WebInspector.ExperimentsSettings.prototype = {
     {
         return Preferences.experimentsEnabled || ("experiments" in WebInspector.queryParamsObject);
     },
-    
+
     /**
      * @param {string} experimentName
      * @param {string} experimentTitle
@@ -258,7 +263,7 @@ WebInspector.ExperimentsSettings.prototype = {
         this._experiments.push(experiment);
         return experiment;
     },
-    
+
     /**
      * @param {string} experimentName
      * @return {boolean}
@@ -274,7 +279,7 @@ WebInspector.ExperimentsSettings.prototype = {
         var experimentsSetting = this._setting.get();
         return experimentsSetting[experimentName];
     },
-    
+
     /**
      * @param {string} experimentName
      * @param {boolean} enabled
@@ -328,7 +333,7 @@ WebInspector.Experiment.prototype = {
     {
         return this._name;
     },
-    
+
     /**
      * @return {string}
      */
@@ -336,7 +341,7 @@ WebInspector.Experiment.prototype = {
     {
         return this._title;
     },
-    
+
     /**
      * @return {boolean}
      */
@@ -344,7 +349,7 @@ WebInspector.Experiment.prototype = {
     {
         return this._experimentsSettings.isEnabled(this._name);
     },
-    
+
     /**
      * @param {boolean} enabled
      */
