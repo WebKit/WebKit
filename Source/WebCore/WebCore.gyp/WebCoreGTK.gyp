@@ -874,6 +874,37 @@
       ],
     },
     {
+      'target_name': 'WebCoreRemaining',
+      'type': 'static_library',
+      'dependencies': [ 'WebCoreDependencies', ],
+      'include_dirs': [ '<@(webcoregtk_include_dirs)', ],
+      'sources': [ '<@(webcore_files)', ],
+      'sources/': [
+        ['exclude', 'platform/'],
+        ['exclude', 'rendering/'],
+
+        # Exclude most of bindings, except of the JSC-related parts.
+        ['exclude', 'bindings/[^/]+/'],
+        ['include', 'bindings/generic/'],
+        ['include', 'bindings/js/'],
+        ['include', 'bindings/ScriptControllerBase\\.cpp$'],
+
+        # Exclude most of bridge, except for the JSC-related parts.
+        ['exclude', 'bridge/v8'],
+        ['exclude', 'bridge/objc'],
+        ['exclude', 'bridge/qt'],
+        ['exclude', 'bridge/testbindings.*'],
+
+        ['exclude', '<(excluded_directories_pattern)'],
+        ['exclude', '<(excluded_files_suffixes)'],
+        ['exclude', '<(excluded_files_patterns)'],
+        ['exclude', 'AllInOne\\.cpp$'],
+
+        ['exclude', 'plugins/PluginDataNone\\.cpp$'],
+        ['exclude', 'plugins/PluginPackageNone\\.cpp$'],
+      ],
+    },
+    {
       'target_name': 'WebCore',
       'type': 'none',
       'dependencies': [
@@ -882,6 +913,7 @@
         'WebCoreBindings',
         'WebCorePlatform',
         'WebCorePlatformGeometry',
+        'WebCoreRemaining',
         'WebCoreRendering',
       ],
     },
