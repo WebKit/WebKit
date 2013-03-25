@@ -192,6 +192,9 @@ WebInspector.ConsoleMessage.prototype = {
         // Implemented by concrete instances
     },
 
+    /**
+     * @return {WebInspector.DebuggerModel.Location}
+     */
     location: function()
     {
         // Implemented by concrete instances

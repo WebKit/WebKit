@@ -55,7 +55,7 @@ WebInspector.ProfilesPanelDescriptor.isUserInitiatedProfile = function(title)
 /**
  * @param {string} title
  * @return {number}
- * @throw {string}
+ * @throws {string}
  */
 WebInspector.ProfilesPanelDescriptor.userInitiatedProfileIndex = function(title)
 {

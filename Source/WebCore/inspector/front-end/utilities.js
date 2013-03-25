@@ -288,7 +288,7 @@ Object.defineProperty(Uint32Array.prototype, "sort", {
 var partition = {
     /**
      * @this {Array.<number>}
-     * @param {function(number,number):boolean} comparator
+     * @param {function(number,number):number} comparator
      * @param {number} left
      * @param {number} right
      * @param {number} pivotIndex
@@ -321,7 +321,7 @@ Object.defineProperty(Uint32Array.prototype, "partition", partition);
 var sortRange = {
     /**
      * @this {Array.<number>}
-     * @param {function(number,number):boolean} comparator
+     * @param {function(number,number):number} comparator
      * @param {number} leftBound
      * @param {number} rightBound
      * @param {number} k

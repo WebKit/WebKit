@@ -484,7 +484,7 @@ InjectedScript.prototype = {
      * Resolves a value from CallArgument description.
      * @param {RuntimeAgent.CallArgument} callArgumentJson
      * @return {*} resolved value
-     * @throw {string} error message
+     * @throws {string} error message
      */
     _resolveCallArgument: function(callArgumentJson) {
         var objectId = callArgumentJson.objectId;

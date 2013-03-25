@@ -37,7 +37,7 @@ WebInspector.FileContentView = function(file)
 {
     WebInspector.View.call(this);
 
-    this._innerView = null;
+    this._innerView = /** @type {?WebInspector.View} */ (null);
     this._file = file;
     this._content = null;
 }

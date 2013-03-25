@@ -370,12 +370,15 @@ WebInspector.Cookie.Type = {
 
 WebInspector.Cookies = {}
 
+/**
+ * @param {function(!Array.<!WebInspector.Cookie>, boolean)} callback
+ */
 WebInspector.Cookies.getCookiesAsync = function(callback)
 {
     /**
      * @param {?Protocol.Error} error 
-     * @param {Array.<WebInspector.Cookie>} cookies 
-     * @param {string} cookiesString 
+     * @param {Array.<PageAgent.Cookie>} cookies
+     * @param {string} cookiesString
      */ 
     function mycallback(error, cookies, cookiesString)
     {
@@ -392,7 +395,7 @@ WebInspector.Cookies.getCookiesAsync = function(callback)
 
 /**
  * @param {string} rawCookieString 
- * @return {Array.<WebInspector.Cookie>}
+ * @return {!Array.<!WebInspector.Cookie>}
  */
 WebInspector.Cookies.buildCookiesFromString = function(rawCookieString)
 {
@@ -416,7 +419,7 @@ WebInspector.Cookies.buildCookiesFromString = function(rawCookieString)
 }
 
 /**
- * @param {Object} protocolCookie
+ * @param {!PageAgent.Cookie} protocolCookie
  * @return {!WebInspector.Cookie}
  */
 WebInspector.Cookies.buildCookieProtocolObject = function(protocolCookie)
