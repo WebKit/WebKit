@@ -1,3 +1,12 @@
+2013-03-24  Piotr Drąg  <piotrdrag@gmail.com>
+
+        [l10n] Updated Polish translation of WebKitGTK+
+        https://bugs.webkit.org/show_bug.cgi?id=113113
+
+        Reviewed by Gustavo Noronha Silva (kov).
+
+        * pl.po: updated translation.
+
 2013-03-22  Krishnababu Krothapalli  <kkrothap@redhat.com>
 
         Telugu [te] language translation submission for WebKitGTK+ HEAD
