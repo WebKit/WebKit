@@ -296,4 +296,12 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
 
     attribute long? nullableStringValue
         getter raises(DOMException);
+
+#if defined(TESTING_V8)
+    [V8PerWorldBindings] readonly attribute TestObj perWorldReadOnlyAttribute;
+    [V8PerWorldBindings] attribute TestObj perWorldAttribute;
+    [V8PerWorldBindings] void perWorldMethod();
+    [V8PerWorldBindings] void overloadedPerWorldMethod(in long longArg);
+    [V8PerWorldBindings] void overloadedPerWorldMethod(in DOMString strArg, in long longArg);
+#endif
 };

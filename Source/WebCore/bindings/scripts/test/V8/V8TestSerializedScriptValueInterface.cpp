@@ -293,8 +293,8 @@ static const V8DOMConfiguration::BatchedAttribute V8TestSerializedScriptValueInt
 };
 
 static const V8DOMConfiguration::BatchedMethod V8TestSerializedScriptValueInterfaceMethods[] = {
-    {"acceptTransferList", TestSerializedScriptValueInterfaceV8Internal::acceptTransferListMethodCallback},
-    {"multiTransferList", TestSerializedScriptValueInterfaceV8Internal::multiTransferListMethodCallback},
+    {"acceptTransferList", TestSerializedScriptValueInterfaceV8Internal::acceptTransferListMethodCallback, 0},
+    {"multiTransferList", TestSerializedScriptValueInterfaceV8Internal::multiTransferListMethodCallback, 0},
 };
 
 v8::Handle<v8::Value> V8TestSerializedScriptValueInterface::constructorCallback(const v8::Arguments& args)

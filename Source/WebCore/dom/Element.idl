@@ -39,7 +39,7 @@
         raises(DOMException);
     Attr removeAttributeNode(in [Optional=DefaultIsUndefined] Attr oldAttr)
         raises(DOMException);
-    NodeList getElementsByTagName(in [Optional=DefaultIsUndefined] DOMString name);
+    [V8PerWorldBindings] NodeList getElementsByTagName(in [Optional=DefaultIsUndefined] DOMString name);
 
 #if !defined(LANGUAGE_OBJECTIVE_C)
     // For ObjC this is defined on Node for legacy support.

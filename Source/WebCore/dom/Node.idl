@@ -64,19 +64,19 @@
     readonly attribute [V8PerWorldBindings] Node             nextSibling;
     readonly attribute [V8PerWorldBindings] Document         ownerDocument;
 
-    [ObjCLegacyUnnamedParameters, Custom] Node insertBefore(in [CustomReturn] Node newChild,
+    [ObjCLegacyUnnamedParameters, Custom, V8PerWorldBindings] Node insertBefore(in [CustomReturn] Node newChild,
                                                             in Node refChild)
         raises(DOMException);
     [ObjCLegacyUnnamedParameters, Custom] Node replaceChild(in Node newChild,
                                                             in [CustomReturn] Node oldChild)
         raises(DOMException);
-    [Custom] Node               removeChild(in [CustomReturn] Node oldChild)
+    [Custom, V8PerWorldBindings] Node removeChild(in [CustomReturn] Node oldChild)
         raises(DOMException);
-    [Custom] Node               appendChild(in [CustomReturn] Node newChild)
+    [Custom, V8PerWorldBindings] Node appendChild(in [CustomReturn] Node newChild)
         raises(DOMException);
 
     boolean            hasChildNodes();
-    [V8DeliverCustomElementCallbacks]
+    [V8DeliverCustomElementCallbacks, V8PerWorldBindings]
     Node               cloneNode(in [Optional=DefaultIsUndefined] boolean deep);
     void               normalize();
 

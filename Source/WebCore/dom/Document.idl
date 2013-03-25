@@ -29,11 +29,11 @@
     readonly attribute DOMImplementation implementation;
     readonly attribute Element documentElement;
 
-    [ReturnNewObject, V8DeliverCustomElementCallbacks]
+    [ReturnNewObject, V8DeliverCustomElementCallbacks, V8PerWorldBindings]
     Element createElement(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString tagName)
         raises (DOMException);
     DocumentFragment   createDocumentFragment();
-    [ReturnNewObject] Text createTextNode(in [Optional=DefaultIsUndefined] DOMString data);
+    [ReturnNewObject, V8PerWorldBindings] Text createTextNode(in [Optional=DefaultIsUndefined] DOMString data);
     [ReturnNewObject] Comment createComment(in [Optional=DefaultIsUndefined] DOMString data);
     [ReturnNewObject] CDATASection createCDATASection(in [Optional=DefaultIsUndefined] DOMString data)
         raises(DOMException);
@@ -44,7 +44,7 @@
         raises (DOMException);
     [ReturnNewObject] EntityReference createEntityReference(in [Optional=DefaultIsUndefined] DOMString name)
         raises(DOMException);
-    NodeList           getElementsByTagName(in [Optional=DefaultIsUndefined] DOMString tagname);
+    [V8PerWorldBindings] NodeList           getElementsByTagName(in [Optional=DefaultIsUndefined] DOMString tagname);
 
     // Introduced in DOM Level 2:
 
@@ -61,7 +61,7 @@
         raises (DOMException);
     [ObjCLegacyUnnamedParameters] NodeList getElementsByTagNameNS(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString namespaceURI,
                                                    in [Optional=DefaultIsUndefined] DOMString localName);
-    Element            getElementById(in [Optional=DefaultIsUndefined] DOMString elementId);
+    [V8PerWorldBindings] Element            getElementById(in [Optional=DefaultIsUndefined] DOMString elementId);
 
     // DOM Level 3 Core
 
@@ -179,7 +179,7 @@
     readonly attribute HTMLCollection anchors;
     readonly attribute DOMString lastModified;
 
-    NodeList getElementsByName(in [Optional=DefaultIsUndefined] DOMString elementName);
+    [V8PerWorldBindings] NodeList getElementsByName(in [Optional=DefaultIsUndefined] DOMString elementName);
 
 #if defined(ENABLE_MICRODATA) && ENABLE_MICRODATA
     NodeList getItems(in [TreatNullAs=NullString, TreatUndefinedAs=NullString, Optional=DefaultIsUndefined] DOMString typeNames);
@@ -367,7 +367,7 @@
 #if defined(ENABLE_CUSTOM_ELEMENTS) && ENABLE_CUSTOM_ELEMENTS
     [V8EnabledAtRuntime=customDOMElements, Conditional=CUSTOM_ELEMENTS, ImplementedAs=registerElement, CallWith=ScriptState, V8DeliverCustomElementCallbacks]
     CustomElementConstructor webkitRegister(in DOMString name, in [Optional] Dictionary options) raises(DOMException);
-    [ReturnNewObject, V8DeliverCustomElementCallbacks]
+    [ReturnNewObject, V8DeliverCustomElementCallbacks, V8PerWorldBindings]
     Element createElement(in DOMString localName, in [TreatNullAs=NullString] DOMString typeExtension) raises (DOMException);
     [ReturnNewObject, V8DeliverCustomElementCallbacks]
     Element createElementNS(in [TreatNullAs=NullString] DOMString namespaceURI, in DOMString qualifiedName,

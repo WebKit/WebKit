@@ -89,7 +89,7 @@ static v8::Handle<v8::Value> methodMethodCallback(const v8::Arguments& args)
 } // namespace TestMediaQueryListListenerV8Internal
 
 static const V8DOMConfiguration::BatchedMethod V8TestMediaQueryListListenerMethods[] = {
-    {"method", TestMediaQueryListListenerV8Internal::methodMethodCallback},
+    {"method", TestMediaQueryListListenerV8Internal::methodMethodCallback, 0},
 };
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestMediaQueryListListenerTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate, WrapperWorldType currentWorldType)

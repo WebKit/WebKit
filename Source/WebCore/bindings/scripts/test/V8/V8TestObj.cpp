@@ -1750,6 +1750,90 @@ static void nullableStringValueAttrSetterCallback(v8::Local<v8::String> name, v8
     TestObjV8Internal::nullableStringValueAttrSetter(name, value, info);
 }
 
+static v8::Handle<v8::Value> perWorldReadOnlyAttributeAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    RefPtr<TestObj> result = imp->perWorldReadOnlyAttribute();
+    v8::Handle<v8::Value> wrapper = result.get() ? v8::Handle<v8::Value>(DOMDataStore::getWrapper(result.get(), info.GetIsolate())) : v8Undefined();
+    if (wrapper.IsEmpty()) {
+        wrapper = toV8(result.get(), info.Holder(), info.GetIsolate());
+        if (!wrapper.IsEmpty())
+            V8HiddenPropertyName::setNamedHiddenReference(info.Holder(), "perWorldReadOnlyAttribute", wrapper);
+    }
+    return wrapper;
+}
+
+static v8::Handle<v8::Value> perWorldReadOnlyAttributeAttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    return TestObjV8Internal::perWorldReadOnlyAttributeAttrGetter(name, info);
+}
+
+static v8::Handle<v8::Value> perWorldReadOnlyAttributeAttrGetterForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    RefPtr<TestObj> result = imp->perWorldReadOnlyAttribute();
+    v8::Handle<v8::Value> wrapper = result.get() ? v8::Handle<v8::Value>(DOMDataStore::getWrapper(result.get(), info.GetIsolate())) : v8Undefined();
+    if (wrapper.IsEmpty()) {
+        wrapper = toV8(result.get(), info.Holder(), info.GetIsolate());
+        if (!wrapper.IsEmpty())
+            V8HiddenPropertyName::setNamedHiddenReference(info.Holder(), "perWorldReadOnlyAttribute", wrapper);
+    }
+    return wrapper;
+}
+
+static v8::Handle<v8::Value> perWorldReadOnlyAttributeAttrGetterCallbackForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    return TestObjV8Internal::perWorldReadOnlyAttributeAttrGetterForMainWorld(name, info);
+}
+
+static v8::Handle<v8::Value> perWorldAttributeAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return toV8Fast(imp->perWorldAttribute(), info, imp);
+}
+
+static v8::Handle<v8::Value> perWorldAttributeAttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    return TestObjV8Internal::perWorldAttributeAttrGetter(name, info);
+}
+
+static v8::Handle<v8::Value> perWorldAttributeAttrGetterForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    return toV8FastForMainWorld(imp->perWorldAttribute(), info, imp);
+}
+
+static v8::Handle<v8::Value> perWorldAttributeAttrGetterCallbackForMainWorld(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    return TestObjV8Internal::perWorldAttributeAttrGetterForMainWorld(name, info);
+}
+
+static void perWorldAttributeAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    TestObj* v = V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    imp->setPerWorldAttribute(WTF::getPtr(v));
+    return;
+}
+
+static void perWorldAttributeAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::perWorldAttributeAttrSetter(name, value, info);
+}
+
+static void perWorldAttributeAttrSetterForMainWorld(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObj* imp = V8TestObj::toNative(info.Holder());
+    TestObj* v = V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    imp->setPerWorldAttribute(WTF::getPtr(v));
+    return;
+}
+
+static void perWorldAttributeAttrSetterCallbackForMainWorld(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::perWorldAttributeAttrSetterForMainWorld(name, value, info);
+}
+
 static v8::Handle<v8::Value> TestObjConstructorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     v8::Handle<v8::Value> data = info.Data();
@@ -3080,6 +3164,104 @@ static v8::Handle<v8::Value> variadicNodeMethodMethodCallback(const v8::Argument
     return TestObjV8Internal::variadicNodeMethodMethod(args);
 }
 
+static v8::Handle<v8::Value> perWorldMethodMethod(const v8::Arguments& args)
+{
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    imp->perWorldMethod();
+    return v8Undefined();
+}
+
+static v8::Handle<v8::Value> perWorldMethodMethodForMainWorld(const v8::Arguments& args)
+{
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    imp->perWorldMethod();
+    return v8Undefined();
+}
+
+static v8::Handle<v8::Value> perWorldMethodMethodCallback(const v8::Arguments& args)
+{
+    return TestObjV8Internal::perWorldMethodMethod(args);
+}
+
+static v8::Handle<v8::Value> perWorldMethodMethodCallbackForMainWorld(const v8::Arguments& args)
+{
+    return TestObjV8Internal::perWorldMethodMethodForMainWorld(args);
+}
+
+static v8::Handle<v8::Value> overloadedPerWorldMethod1Method(const v8::Arguments& args)
+{
+    if (args.Length() < 1)
+        return throwNotEnoughArgumentsError(args.GetIsolate());
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    V8TRYCATCH(int, longArg, toInt32(args[0]));
+    imp->overloadedPerWorldMethod(longArg);
+    return v8Undefined();
+}
+
+static v8::Handle<v8::Value> overloadedPerWorldMethod1MethodForMainWorld(const v8::Arguments& args)
+{
+    if (args.Length() < 1)
+        return throwNotEnoughArgumentsError(args.GetIsolate());
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    V8TRYCATCH(int, longArg, toInt32(args[0]));
+    imp->overloadedPerWorldMethod(longArg);
+    return v8Undefined();
+}
+
+static v8::Handle<v8::Value> overloadedPerWorldMethod2Method(const v8::Arguments& args)
+{
+    if (args.Length() < 2)
+        return throwNotEnoughArgumentsError(args.GetIsolate());
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, strArg, args[0]);
+    V8TRYCATCH(int, longArg, toInt32(args[1]));
+    imp->overloadedPerWorldMethod(strArg, longArg);
+    return v8Undefined();
+}
+
+static v8::Handle<v8::Value> overloadedPerWorldMethod2MethodForMainWorld(const v8::Arguments& args)
+{
+    if (args.Length() < 2)
+        return throwNotEnoughArgumentsError(args.GetIsolate());
+    TestObj* imp = V8TestObj::toNative(args.Holder());
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, strArg, args[0]);
+    V8TRYCATCH(int, longArg, toInt32(args[1]));
+    imp->overloadedPerWorldMethod(strArg, longArg);
+    return v8Undefined();
+}
+
+static v8::Handle<v8::Value> overloadedPerWorldMethodMethod(const v8::Arguments& args)
+{
+    if (args.Length() == 1)
+        return overloadedPerWorldMethod1Method(args);
+    if (args.Length() == 2)
+        return overloadedPerWorldMethod2Method(args);
+    if (args.Length() < 1)
+        return throwNotEnoughArgumentsError(args.GetIsolate());
+    return throwTypeError(0, args.GetIsolate());
+}
+
+static v8::Handle<v8::Value> overloadedPerWorldMethodMethodForMainWorld(const v8::Arguments& args)
+{
+    if (args.Length() == 1)
+        return overloadedPerWorldMethod1MethodForMainWorld(args);
+    if (args.Length() == 2)
+        return overloadedPerWorldMethod2MethodForMainWorld(args);
+    if (args.Length() < 1)
+        return throwNotEnoughArgumentsError(args.GetIsolate());
+    return throwTypeError(0, args.GetIsolate());
+}
+
+static v8::Handle<v8::Value> overloadedPerWorldMethodMethodCallback(const v8::Arguments& args)
+{
+    return TestObjV8Internal::overloadedPerWorldMethodMethod(args);
+}
+
+static v8::Handle<v8::Value> overloadedPerWorldMethodMethodCallbackForMainWorld(const v8::Arguments& args)
+{
+    return TestObjV8Internal::overloadedPerWorldMethodMethodForMainWorld(args);
+}
+
 static v8::Handle<v8::Value> constructor(const v8::Arguments& args)
 {
     if (args.Length() < 1)
@@ -3248,60 +3430,66 @@ static const V8DOMConfiguration::BatchedAttribute V8TestObjAttrs[] = {
     {"nullableLongSettableAttribute", TestObjV8Internal::nullableLongSettableAttributeAttrGetterCallback, TestObjV8Internal::nullableLongSettableAttributeAttrSetterCallback, 0, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'nullableStringValue' (Type: 'attribute' ExtAttr: '')
     {"nullableStringValue", TestObjV8Internal::nullableStringValueAttrGetterCallback, TestObjV8Internal::nullableStringValueAttrSetterCallback, 0, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'perWorldReadOnlyAttribute' (Type: 'readonly attribute' ExtAttr: 'V8PerWorldBindings')
+    {"perWorldReadOnlyAttribute", TestObjV8Internal::perWorldReadOnlyAttributeAttrGetterCallback, 0, TestObjV8Internal::perWorldReadOnlyAttributeAttrGetterCallbackForMainWorld, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'perWorldAttribute' (Type: 'attribute' ExtAttr: 'V8PerWorldBindings')
+    {"perWorldAttribute", TestObjV8Internal::perWorldAttributeAttrGetterCallback, TestObjV8Internal::perWorldAttributeAttrSetterCallback, TestObjV8Internal::perWorldAttributeAttrGetterCallbackForMainWorld, TestObjV8Internal::perWorldAttributeAttrSetterCallbackForMainWorld, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 };
 
 static const V8DOMConfiguration::BatchedMethod V8TestObjMethods[] = {
-    {"voidMethod", TestObjV8Internal::voidMethodMethodCallback},
-    {"longMethod", TestObjV8Internal::longMethodMethodCallback},
-    {"objMethod", TestObjV8Internal::objMethodMethodCallback},
-    {"methodReturningSequence", TestObjV8Internal::methodReturningSequenceMethodCallback},
-    {"serializedValue", TestObjV8Internal::serializedValueMethodCallback},
-    {"optionsObject", TestObjV8Internal::optionsObjectMethodCallback},
-    {"methodWithException", TestObjV8Internal::methodWithExceptionMethodCallback},
-    {"customMethod", TestObjV8Internal::customMethodMethodCallback},
-    {"customMethodWithArgs", TestObjV8Internal::customMethodWithArgsMethodCallback},
-    {"addEventListener", TestObjV8Internal::addEventListenerMethodCallback},
-    {"removeEventListener", TestObjV8Internal::removeEventListenerMethodCallback},
-    {"withScriptStateVoid", TestObjV8Internal::withScriptStateVoidMethodCallback},
-    {"withScriptStateObj", TestObjV8Internal::withScriptStateObjMethodCallback},
-    {"withScriptStateVoidException", TestObjV8Internal::withScriptStateVoidExceptionMethodCallback},
-    {"withScriptStateObjException", TestObjV8Internal::withScriptStateObjExceptionMethodCallback},
-    {"withScriptExecutionContext", TestObjV8Internal::withScriptExecutionContextMethodCallback},
-    {"withScriptExecutionContextAndScriptState", TestObjV8Internal::withScriptExecutionContextAndScriptStateMethodCallback},
-    {"withScriptExecutionContextAndScriptStateObjException", TestObjV8Internal::withScriptExecutionContextAndScriptStateObjExceptionMethodCallback},
-    {"withScriptExecutionContextAndScriptStateWithSpaces", TestObjV8Internal::withScriptExecutionContextAndScriptStateWithSpacesMethodCallback},
-    {"withScriptArgumentsAndCallStack", TestObjV8Internal::withScriptArgumentsAndCallStackMethodCallback},
-    {"methodWithOptionalArg", TestObjV8Internal::methodWithOptionalArgMethodCallback},
-    {"methodWithNonOptionalArgAndOptionalArg", TestObjV8Internal::methodWithNonOptionalArgAndOptionalArgMethodCallback},
-    {"methodWithNonOptionalArgAndTwoOptionalArgs", TestObjV8Internal::methodWithNonOptionalArgAndTwoOptionalArgsMethodCallback},
-    {"methodWithOptionalString", TestObjV8Internal::methodWithOptionalStringMethodCallback},
-    {"methodWithOptionalStringIsUndefined", TestObjV8Internal::methodWithOptionalStringIsUndefinedMethodCallback},
-    {"methodWithOptionalStringIsNullString", TestObjV8Internal::methodWithOptionalStringIsNullStringMethodCallback},
-    {"methodWithCallbackArg", TestObjV8Internal::methodWithCallbackArgMethodCallback},
-    {"methodWithNonCallbackArgAndCallbackArg", TestObjV8Internal::methodWithNonCallbackArgAndCallbackArgMethodCallback},
-    {"methodWithCallbackAndOptionalArg", TestObjV8Internal::methodWithCallbackAndOptionalArgMethodCallback},
-    {"methodWithEnforceRangeInt32", TestObjV8Internal::methodWithEnforceRangeInt32MethodCallback},
-    {"methodWithEnforceRangeUInt32", TestObjV8Internal::methodWithEnforceRangeUInt32MethodCallback},
-    {"methodWithEnforceRangeInt64", TestObjV8Internal::methodWithEnforceRangeInt64MethodCallback},
-    {"methodWithEnforceRangeUInt64", TestObjV8Internal::methodWithEnforceRangeUInt64MethodCallback},
+    {"voidMethod", TestObjV8Internal::voidMethodMethodCallback, 0},
+    {"longMethod", TestObjV8Internal::longMethodMethodCallback, 0},
+    {"objMethod", TestObjV8Internal::objMethodMethodCallback, 0},
+    {"methodReturningSequence", TestObjV8Internal::methodReturningSequenceMethodCallback, 0},
+    {"serializedValue", TestObjV8Internal::serializedValueMethodCallback, 0},
+    {"optionsObject", TestObjV8Internal::optionsObjectMethodCallback, 0},
+    {"methodWithException", TestObjV8Internal::methodWithExceptionMethodCallback, 0},
+    {"customMethod", TestObjV8Internal::customMethodMethodCallback, 0},
+    {"customMethodWithArgs", TestObjV8Internal::customMethodWithArgsMethodCallback, 0},
+    {"addEventListener", TestObjV8Internal::addEventListenerMethodCallback, 0},
+    {"removeEventListener", TestObjV8Internal::removeEventListenerMethodCallback, 0},
+    {"withScriptStateVoid", TestObjV8Internal::withScriptStateVoidMethodCallback, 0},
+    {"withScriptStateObj", TestObjV8Internal::withScriptStateObjMethodCallback, 0},
+    {"withScriptStateVoidException", TestObjV8Internal::withScriptStateVoidExceptionMethodCallback, 0},
+    {"withScriptStateObjException", TestObjV8Internal::withScriptStateObjExceptionMethodCallback, 0},
+    {"withScriptExecutionContext", TestObjV8Internal::withScriptExecutionContextMethodCallback, 0},
+    {"withScriptExecutionContextAndScriptState", TestObjV8Internal::withScriptExecutionContextAndScriptStateMethodCallback, 0},
+    {"withScriptExecutionContextAndScriptStateObjException", TestObjV8Internal::withScriptExecutionContextAndScriptStateObjExceptionMethodCallback, 0},
+    {"withScriptExecutionContextAndScriptStateWithSpaces", TestObjV8Internal::withScriptExecutionContextAndScriptStateWithSpacesMethodCallback, 0},
+    {"withScriptArgumentsAndCallStack", TestObjV8Internal::withScriptArgumentsAndCallStackMethodCallback, 0},
+    {"methodWithOptionalArg", TestObjV8Internal::methodWithOptionalArgMethodCallback, 0},
+    {"methodWithNonOptionalArgAndOptionalArg", TestObjV8Internal::methodWithNonOptionalArgAndOptionalArgMethodCallback, 0},
+    {"methodWithNonOptionalArgAndTwoOptionalArgs", TestObjV8Internal::methodWithNonOptionalArgAndTwoOptionalArgsMethodCallback, 0},
+    {"methodWithOptionalString", TestObjV8Internal::methodWithOptionalStringMethodCallback, 0},
+    {"methodWithOptionalStringIsUndefined", TestObjV8Internal::methodWithOptionalStringIsUndefinedMethodCallback, 0},
+    {"methodWithOptionalStringIsNullString", TestObjV8Internal::methodWithOptionalStringIsNullStringMethodCallback, 0},
+    {"methodWithCallbackArg", TestObjV8Internal::methodWithCallbackArgMethodCallback, 0},
+    {"methodWithNonCallbackArgAndCallbackArg", TestObjV8Internal::methodWithNonCallbackArgAndCallbackArgMethodCallback, 0},
+    {"methodWithCallbackAndOptionalArg", TestObjV8Internal::methodWithCallbackAndOptionalArgMethodCallback, 0},
+    {"methodWithEnforceRangeInt32", TestObjV8Internal::methodWithEnforceRangeInt32MethodCallback, 0},
+    {"methodWithEnforceRangeUInt32", TestObjV8Internal::methodWithEnforceRangeUInt32MethodCallback, 0},
+    {"methodWithEnforceRangeInt64", TestObjV8Internal::methodWithEnforceRangeInt64MethodCallback, 0},
+    {"methodWithEnforceRangeUInt64", TestObjV8Internal::methodWithEnforceRangeUInt64MethodCallback, 0},
 #if ENABLE(Condition1)
-    {"conditionalMethod1", TestObjV8Internal::conditionalMethod1MethodCallback},
+    {"conditionalMethod1", TestObjV8Internal::conditionalMethod1MethodCallback, 0},
 #endif
 #if ENABLE(Condition1) && ENABLE(Condition2)
-    {"conditionalMethod2", TestObjV8Internal::conditionalMethod2MethodCallback},
+    {"conditionalMethod2", TestObjV8Internal::conditionalMethod2MethodCallback, 0},
 #endif
 #if ENABLE(Condition1) || ENABLE(Condition2)
-    {"conditionalMethod3", TestObjV8Internal::conditionalMethod3MethodCallback},
+    {"conditionalMethod3", TestObjV8Internal::conditionalMethod3MethodCallback, 0},
 #endif
-    {"overloadedMethod", TestObjV8Internal::overloadedMethodMethodCallback},
-    {"classMethodWithClamp", TestObjV8Internal::classMethodWithClampMethodCallback},
-    {"getSVGDocument", TestObjV8Internal::getSVGDocumentMethodCallback},
-    {"mutablePointFunction", TestObjV8Internal::mutablePointFunctionMethodCallback},
-    {"immutablePointFunction", TestObjV8Internal::immutablePointFunctionMethodCallback},
-    {"orange", TestObjV8Internal::orangeMethodCallback},
-    {"strictFunction", TestObjV8Internal::strictFunctionMethodCallback},
-    {"variadicStringMethod", TestObjV8Internal::variadicStringMethodMethodCallback},
-    {"variadicDoubleMethod", TestObjV8Internal::variadicDoubleMethodMethodCallback},
+    {"overloadedMethod", TestObjV8Internal::overloadedMethodMethodCallback, 0},
+    {"classMethodWithClamp", TestObjV8Internal::classMethodWithClampMethodCallback, 0},
+    {"getSVGDocument", TestObjV8Internal::getSVGDocumentMethodCallback, 0},
+    {"mutablePointFunction", TestObjV8Internal::mutablePointFunctionMethodCallback, 0},
+    {"immutablePointFunction", TestObjV8Internal::immutablePointFunctionMethodCallback, 0},
+    {"orange", TestObjV8Internal::orangeMethodCallback, 0},
+    {"strictFunction", TestObjV8Internal::strictFunctionMethodCallback, 0},
+    {"variadicStringMethod", TestObjV8Internal::variadicStringMethodMethodCallback, 0},
+    {"variadicDoubleMethod", TestObjV8Internal::variadicDoubleMethodMethodCallback, 0},
+    {"perWorldMethod", TestObjV8Internal::perWorldMethodMethodCallback, TestObjV8Internal::perWorldMethodMethodCallbackForMainWorld},
+    {"overloadedPerWorldMethod", TestObjV8Internal::overloadedPerWorldMethodMethodCallback, TestObjV8Internal::overloadedPerWorldMethodMethodCallbackForMainWorld},
 };
 
 static const V8DOMConfiguration::BatchedConstant V8TestObjConsts[] = {
