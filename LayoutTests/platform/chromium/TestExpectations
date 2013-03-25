@@ -2175,10 +2175,6 @@ crbug.com/71783 [ Mac ] scrollbars/custom-scrollbar-with-incomplete-style.html [
 # GPU
 #///////////////////////////////////////////////////////////////////////////
 
-
-webkit.org/b/47923 [ Linux Mac Win ] compositing/geometry/limit-layer-bounds-opacity-transition.html [ Timeout ]
-webkit.org/b/47923 [ Linux Mac Win ] platform/chromium/virtual/softwarecompositing/geometry/limit-layer-bounds-opacity-transition.html [ Timeout ]
-
 # Chromium does not support PDF content in <img> tags.
 [ Win Linux ] compositing/images/direct-pdf-image.html [ WontFix ]
 [ Win Linux ] platform/chromium/virtual/softwarecompositing/images/direct-pdf-image.html [ WontFix ]

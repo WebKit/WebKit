@@ -9,11 +9,10 @@ Fader
       (children 2
         (GraphicsLayer
           (position 8.00 8.00)
-          (bounds 352.00 288.00)
+          (bounds 1.00 1.00)
         )
         (GraphicsLayer
-          (position 0.00 290.00)
-          (bounds 108.00 100.00)
+          (bounds 108.00 99.00)
           (drawsContent 1)
         )
       )

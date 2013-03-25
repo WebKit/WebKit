@@ -16,12 +16,13 @@
       -webkit-transform: translate(100px, 0);
     }
     
-    video {
+    .compositing {
       position: absolute;
       top: 21px;
       left: 121px;
       width: 100px;
       height: 100px;
+      -webkit-transform: translateZ(0);
     }
     
     .far-left {
@@ -68,8 +69,8 @@
 
 <body>
   
-  <!-- Go into compositing without transforms. -->
-  <video src="../resources/video.mp4"></video>
+  <!-- Go into compositing. -->
+  <div class="compositing"></div>
 
   <div class="indicator"></div>
 

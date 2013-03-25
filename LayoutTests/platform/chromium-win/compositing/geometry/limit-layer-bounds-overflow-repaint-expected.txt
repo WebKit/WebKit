@@ -5,7 +5,7 @@ layer at (0,0) size 800x243
     RenderBody {BODY} at (8,8) size 784x227
       RenderText {#text} at (0,0) size 0x0
 layer at (20,20) size 100x100
-  RenderVideo {VIDEO} at (20,20) size 100x100
+  RenderBlock (positioned) {DIV} at (20,20) size 100x100
 layer at (18,18) size 202x202 clip at (19,19) size 200x200 scrollY 500 scrollHeight 1000
   RenderBlock (relative positioned) {DIV} at (10,10) size 202x202 [border: (1px solid #000000)]
 layer at (19,-481) size 200x1000 backgroundClip at (19,19) size 200x200 clip at (19,19) size 200x200 outlineClip at (19,19) size 200x200

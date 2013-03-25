@@ -4,13 +4,19 @@
   <style type="text/css" media="screen">
     .test {
       position: relative;
-      top: -10px; /* overlap video */
+      top: -10px; /* overlap composited layer */
       width: 100px;
       height: 100px;
       background-color: white;
       text-indent: -10000px;
     }
-    
+
+    .compositing {
+      width: 1px;
+      height: 1px;
+      -webkit-transform: translateZ(0);
+    }
+
     #fading {
       opacity: 0;
       -webkit-transition: opacity 0.1s;
@@ -43,8 +49,8 @@
 </head>
 <body>
 
-  <!-- Go into compositing without transforms. -->
-  <video src="../resources/video.mp4"></video>
+  <!-- Go into compositing. -->
+  <div class="compositing"></div>
 
   <div class="test">
     Test
@@ -56,9 +62,7 @@
 
   <pre id="layers">Layer tree goes here in DRT</pre>
   <script>
-    // Wait for video to load to get compositing before the fade.
-    var video = document.getElementsByTagName('video')[0];
-    video.addEventListener('canplaythrough', startFade, false);
+    window.onload = startFade;
   </script>
 </body>
 </html>

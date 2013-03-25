@@ -21,6 +21,12 @@
         border: 2px solid blue;
       }
 
+      #composited {
+        -webkit-transform: translateZ(0);
+        width: 20px;
+        height: 20px;
+      }
+
       #scroller {
         height: 200px;
         background-color: yellow;
@@ -56,7 +62,7 @@
   </head>
   <body>
 
-    <video src="../resources/video.mp4" height="20" width="20"></video>
+    <div id="composited"></div>
 
     <div id="overlay"></div>
 

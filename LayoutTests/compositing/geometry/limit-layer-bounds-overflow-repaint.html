@@ -18,12 +18,13 @@
       background-color: blue;
     }
     
-    video {
+    .compositing {
       position: absolute;
       top: 20px;
       left: 20px;
       width: 100px;
       height: 100px;
+      -webkit-transform: translateZ(0);
     }
     
     .top {
@@ -61,8 +62,8 @@
 
 <body>
   
-  <!-- Go into compositing without transforms. -->
-  <video src="../resources/video.mp4"></video>
+  <!-- Go into compositing. -->
+  <div class="compositing"></div>
 
   <!-- Test repainting when the graphicsLayer offsetFromRenderer changes -->
   <!-- You should see one green square, and no red -->

@@ -23,12 +23,13 @@
       background-color: green;
     }
     
-    video {
+    .compositing {
       position: absolute;
       top: 21px;
       left: 21px;
       width: 100px;
       height: 100px;
+      -webkit-transform: translateZ(0);
     }
 
     p {
@@ -69,8 +70,8 @@
 
 <body>
   
-  <!-- Go into compositing without transforms. -->
-  <video src="../resources/video.mp4"></video>
+  <!-- Go into compositing. -->
+  <div class="compositing"></div>
 
   <!-- "middle" text should be visible -->
   <div class="container" style="position: relative; overflow: hidden;">
