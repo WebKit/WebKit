@@ -51,6 +51,7 @@
 #include "Node.h"
 #include "NodeList.h"
 #include "RenderRegion.h"
+#include "SVGStyleElement.h"
 #include "StylePropertySet.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
@@ -1058,6 +1059,9 @@ InspectorStyleSheet* InspectorCSSAgent::viaInspectorStyleSheet(Document* documen
         return 0;
     }
 
+    if (!document->isHTMLDocument() && !document->isSVGDocument())
+        return 0;
+
     RefPtr<InspectorStyleSheet> inspectorStyleSheet = m_documentToInspectorStyleSheet.get(document);
     if (inspectorStyleSheet || !createIfAbsent)
         return inspectorStyleSheet.get();
@@ -1082,12 +1086,12 @@ InspectorStyleSheet* InspectorCSSAgent::viaInspectorStyleSheet(Document* documen
     if (ec)
         return 0;
 
-    HTMLElement* htmlElement = toHTMLElement(styleElement.get());
-    if (!htmlElement || !htmlElement->hasTagName(HTMLNames::styleTag))
-        return 0;
+    CSSStyleSheet* cssStyleSheet = 0;
+    if (styleElement->isHTMLElement())
+        cssStyleSheet = static_cast<HTMLStyleElement*>(styleElement.get())->sheet();
+    else if (styleElement->isSVGElement())
+        cssStyleSheet = static_cast<SVGStyleElement*>(styleElement.get())->sheet();
 
-    HTMLStyleElement* htmlStyleElement = static_cast<HTMLStyleElement*>(htmlElement);
-    CSSStyleSheet* cssStyleSheet = htmlStyleElement->sheet();
     if (!cssStyleSheet)
         return 0;
 
