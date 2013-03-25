@@ -1735,12 +1735,10 @@ void ContentSecurityPolicy::reportViolation(const String& directiveText, const S
 
     RefPtr<InspectorObject> cspReport = InspectorObject::create();
     cspReport->setString("document-uri", document->url().strippedForUseAsReferrer());
-    String referrer = document->referrer();
-    cspReport->setString("referrer", referrer);
-    if (!directiveText.isEmpty())
-        cspReport->setString("violated-directive", directiveText);
+    cspReport->setString("referrer", document->referrer());
+    cspReport->setString("violated-directive", directiveText);
 #if ENABLE(CSP_NEXT)
-    if (!effectiveDirective.isEmpty() && experimentalFeaturesEnabled())
+    if (experimentalFeaturesEnabled())
         cspReport->setString("effective-directive", effectiveDirective);
 #else
     UNUSED_PARAM(effectiveDirective);
