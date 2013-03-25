@@ -36,6 +36,7 @@
 namespace WebKit {
 
 class WebFrame;
+class WebLayer;
 class WebMediaSource;
 class WebPlugin;
 class WebRequest;
@@ -80,7 +81,8 @@ public:
     // Returns 0 if the plugin could not be instantiated.
     virtual WebPlugin* createHelperPlugin(const WebString& pluginType, WebFrame*) = 0;
     virtual void closeHelperPlugin() = 0;
-    virtual void disableAcceleratedCompositing() = 0;
+    virtual bool needsWebLayerForVideo() const = 0;
+    virtual void setWebLayer(WebLayer*) = 0;
 protected:
     ~WebMediaPlayerClient() { }
 };

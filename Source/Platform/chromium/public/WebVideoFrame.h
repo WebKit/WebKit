@@ -31,6 +31,8 @@
 #ifndef WebVideoFrame_h
 #define WebVideoFrame_h
 
+#define REMOVE_WEBVIDEOFRAME
+
 #include "WebRect.h"
 #include "WebSize.h"
 
