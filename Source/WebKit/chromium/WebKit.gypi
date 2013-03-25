@@ -118,6 +118,7 @@
             'tests/WebImageTest.cpp',
             'tests/WebInputEventConversionTest.cpp',
             'tests/WebInputEventFactoryTestMac.mm',
+            'tests/WebMediaPlayerClientImplTest.cpp',
             'tests/WebPageNewSerializerTest.cpp',
             'tests/WebPageSerializerTest.cpp',
             'tests/WebPluginContainerTest.cpp',
