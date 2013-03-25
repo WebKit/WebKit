@@ -787,6 +787,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSWebGLBuffer.h \
 	DerivedSources/WebCore/JSWebGLCompressedTextureATC.cpp \
 	DerivedSources/WebCore/JSWebGLCompressedTextureATC.h \
+	DerivedSources/WebCore/JSWebGLCompressedTexturePVRTC.cpp \
+	DerivedSources/WebCore/JSWebGLCompressedTexturePVRTC.h \
 	DerivedSources/WebCore/JSWebGLCompressedTextureS3TC.cpp \
 	DerivedSources/WebCore/JSWebGLCompressedTextureS3TC.h \
 	DerivedSources/WebCore/JSWebGLContextAttributes.cpp \
@@ -1567,6 +1569,7 @@ dom_binding_idls += \
 	$(WebCore)/html/canvas/WebGLActiveInfo.idl \
 	$(WebCore)/html/canvas/WebGLBuffer.idl \
 	$(WebCore)/html/canvas/WebGLCompressedTextureATC.idl \
+	$(WebCore)/html/canvas/WebGLCompressedTexturePVRTC.idl \
 	$(WebCore)/html/canvas/WebGLCompressedTextureS3TC.idl \
 	$(WebCore)/html/canvas/WebGLContextAttributes.idl \
 	$(WebCore)/html/canvas/WebGLContextEvent.idl \
@@ -3326,6 +3329,8 @@ webcore_sources += \
 	Source/WebCore/html/canvas/WebGLBuffer.h \
 	Source/WebCore/html/canvas/WebGLCompressedTextureATC.cpp \
 	Source/WebCore/html/canvas/WebGLCompressedTextureATC.h \
+	Source/WebCore/html/canvas/WebGLCompressedTexturePVRTC.cpp \
+	Source/WebCore/html/canvas/WebGLCompressedTexturePVRTC.h \
 	Source/WebCore/html/canvas/WebGLCompressedTextureS3TC.cpp \
 	Source/WebCore/html/canvas/WebGLCompressedTextureS3TC.h \
 	Source/WebCore/html/canvas/WebGLContextAttributes.cpp \

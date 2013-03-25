@@ -58,6 +58,7 @@
 #include "WebGLActiveInfo.h"
 #include "WebGLBuffer.h"
 #include "WebGLCompressedTextureATC.h"
+#include "WebGLCompressedTexturePVRTC.h"
 #include "WebGLCompressedTextureS3TC.h"
 #include "WebGLContextAttributes.h"
 #include "WebGLContextEvent.h"
@@ -767,10 +768,10 @@ void WebGLRenderingContext::paintRenderingResultsToCanvas()
         if (m_drawingBuffer)
             m_drawingBuffer->paintCompositedResultsToCanvas(canvas()->buffer());
 #endif
+
         canvas()->makePresentationCopy();
     } else
         canvas()->clearPresentationCopy();
-
     clearIfComposited();
 
     if (!m_markedCanvasDirty && !m_layerCleared)
@@ -2441,6 +2442,11 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
             m_webglCompressedTextureATC = WebGLCompressedTextureATC::create(this);
         return m_webglCompressedTextureATC.get();
     }
+    if ((equalIgnoringCase(name, "WEBKIT_WEBGL_compressed_texture_pvrtc"))
+        && WebGLCompressedTexturePVRTC::supported(this)) {
+        if (!m_webglCompressedTexturePVRTC)
+            m_webglCompressedTexturePVRTC = WebGLCompressedTexturePVRTC::create(this);
+    }
     if ((equalIgnoringCase(name, "WEBGL_compressed_texture_s3tc")
          // FIXME: remove this after a certain grace period.
          || equalIgnoringCase(name, "WEBKIT_WEBGL_compressed_texture_s3tc"))
@@ -2971,6 +2977,8 @@ Vector<String> WebGLRenderingContext::getSupportedExtensions()
     result.append("WEBGL_lose_context");
     if (WebGLCompressedTextureATC::supported(this))
         result.append("WEBKIT_WEBGL_compressed_texture_atc");
+    if (WebGLCompressedTexturePVRTC::supported(this))
+        result.append("WEBKIT_WEBGL_compressed_texture_pvrtc");
     if (WebGLCompressedTextureS3TC::supported(this))
         result.append("WEBKIT_WEBGL_compressed_texture_s3tc");
     if (WebGLDepthTexture::supported(graphicsContext3D()))
@@ -5382,6 +5390,17 @@ bool WebGLRenderingContext::validateCompressedTexFuncData(const char* functionNa
     case Extensions3D::COMPRESSED_ATC_RGBA_INTERPOLATED_ALPHA_AMD:
         {
             bytesRequired = floor(static_cast<double>((width + 3) / 4)) * floor(static_cast<double>((height + 3) / 4)) * 16;
+        }
+    case Extensions3D::COMPRESSED_RGB_PVRTC_4BPPV1_IMG:
+    case Extensions3D::COMPRESSED_RGBA_PVRTC_4BPPV1_IMG:
+        {
+            bytesRequired = max(width, 8) * max(height, 8) / 2;
+        }
+        break;
+    case Extensions3D::COMPRESSED_RGB_PVRTC_2BPPV1_IMG:
+    case Extensions3D::COMPRESSED_RGBA_PVRTC_2BPPV1_IMG:
+        {
+            bytesRequired = max(width, 8) * max(height, 8) / 4;
         }
         break;
     default:

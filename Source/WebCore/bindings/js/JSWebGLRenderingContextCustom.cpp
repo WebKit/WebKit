@@ -50,6 +50,7 @@
 #include "JSUint8Array.h"
 #include "JSWebGLBuffer.h"
 #include "JSWebGLCompressedTextureATC.h"
+#include "JSWebGLCompressedTexturePVRTC.h"
 #include "JSWebGLCompressedTextureS3TC.h"
 #include "JSWebGLDepthTexture.h"
 #include "JSWebGLFramebuffer.h"
@@ -69,6 +70,7 @@
 #include "OESVertexArrayObject.h"
 #include "WebGLBuffer.h"
 #include "WebGLCompressedTextureATC.h"
+#include "WebGLCompressedTexturePVRTC.h"
 #include "WebGLCompressedTextureS3TC.h"
 #include "WebGLDebugRendererInfo.h"
 #include "WebGLDebugShaders.h"
@@ -220,6 +222,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
         return toJS(exec, globalObject, static_cast<WebGLDebugShaders*>(extension));
     case WebGLExtension::WebGLCompressedTextureATCName:
         return toJS(exec, globalObject, static_cast<WebGLCompressedTextureATC*>(extension));
+    case WebGLExtension::WebGLCompressedTexturePVRTCName:
+        return toJS(exec, globalObject, static_cast<WebGLCompressedTexturePVRTC*>(extension));
     case WebGLExtension::WebGLCompressedTextureS3TCName:
         return toJS(exec, globalObject, static_cast<WebGLCompressedTextureS3TC*>(extension));
     case WebGLExtension::WebGLDepthTextureName:

@@ -48,6 +48,7 @@ public:
         WebGLDepthTextureName,
         OESElementIndexUintName,
         WebGLCompressedTextureATCName,
+        WebGLCompressedTexturePVRTCName,
     };
 
     void ref() { m_context->ref(); }

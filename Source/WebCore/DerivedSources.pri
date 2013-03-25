@@ -324,6 +324,7 @@ IDL_BINDINGS += \
     $$PWD/html/canvas/WebGLActiveInfo.idl \
     $$PWD/html/canvas/WebGLBuffer.idl \
     $$PWD/html/canvas/WebGLCompressedTextureATC.idl \
+    $$PWD/html/canvas/WebGLCompressedTexturePVRTC.idl \
     $$PWD/html/canvas/WebGLCompressedTextureS3TC.idl \
     $$PWD/html/canvas/WebGLContextAttributes.idl \
     $$PWD/html/canvas/WebGLContextEvent.idl \
