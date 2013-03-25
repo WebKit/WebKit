@@ -5450,6 +5450,8 @@ void Document::fullScreenChangeDelayTimerFired(Timer<Document>*)
     RefPtr<Document> protectDocument(this);
     Deque<RefPtr<Node> > changeQueue;
     m_fullScreenChangeEventTargetQueue.swap(changeQueue);
+    Deque<RefPtr<Node> > errorQueue;
+    m_fullScreenErrorEventTargetQueue.swap(errorQueue);
 
     while (!changeQueue.isEmpty()) {
         RefPtr<Node> node = changeQueue.takeFirst();
@@ -5467,9 +5469,6 @@ void Document::fullScreenChangeDelayTimerFired(Timer<Document>*)
         node->dispatchEvent(Event::create(eventNames().webkitfullscreenchangeEvent, true, false));
     }
 
-    Deque<RefPtr<Node> > errorQueue;
-    m_fullScreenErrorEventTargetQueue.swap(errorQueue);
-    
     while (!errorQueue.isEmpty()) {
         RefPtr<Node> node = errorQueue.takeFirst();
         if (!node)

@@ -2712,8 +2712,6 @@ webkit.org/b/81537 fast/events/touch/gesture/pad-gesture-fling.html [ Failure Pa
 
 webkit.org/b/81638 [ Mac Debug ] editing/selection/iframe.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/81721 [ Win ] fullscreen/full-screen-restrictions.html [ Pass Timeout ]
-
 webkit.org/b/81697 fast/notifications/notifications-check-permission.html [ Failure ]
 webkit.org/b/81697 fast/notifications/notifications-without-permission.html [ Failure ]
 webkit.org/b/81697 fast/notifications/notifications-request-permission.html [ Failure ]
