@@ -157,7 +157,6 @@ private:
     PassRefPtr<RenderStyle> computeStyleInRegion(const RenderObject*);
     void computeChildrenStyleInRegion(const RenderObject*);
     void setObjectStyleInRegion(RenderObject*, PassRefPtr<RenderStyle>, bool objectRegionStyleCached);
-    void printRegionObjectsStyles();
 
     void checkRegionStyle();
     void updateRegionHasAutoLogicalHeightFlag();
