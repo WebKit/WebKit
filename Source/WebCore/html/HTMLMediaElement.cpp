@@ -3135,7 +3135,6 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
         trackToEnable = fallbackTrack;
 
     if (currentlyEnabledTracks.size()) {
-        m_processingPreferenceChange = false;
         for (size_t i = 0; i < currentlyEnabledTracks.size(); ++i) {
             RefPtr<TextTrack> textTrack = currentlyEnabledTracks[i];
             if (textTrack != trackToEnable)
@@ -3145,6 +3144,8 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
 
     if (trackToEnable)
         trackToEnable->setMode(TextTrack::showingKeyword());
+
+    m_processingPreferenceChange = false;
 }
 
 void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
@@ -4462,6 +4463,9 @@ void HTMLMediaElement::configureMediaControls()
 void HTMLMediaElement::configureTextTrackDisplay()
 {
     ASSERT(m_textTracks);
+
+    if (m_processingPreferenceChange)
+        return;
 
     bool haveVisibleTextTrack = false;
     for (unsigned i = 0; i < m_textTracks->length(); ++i) {
