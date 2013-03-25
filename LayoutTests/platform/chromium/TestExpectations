@@ -3405,8 +3405,8 @@ webkit.org/b/99089 transforms/3d/general/perspective-units.html [ Pass ImageOnly
 webkit.org/b/99134 platform/chromium/compositing/tiny-layer-rotated.html [ Pass ImageOnlyFailure Failure ]
 
 # After libwebp 0.3.0 lands in chrome, these expectations need updating.
-webkit.org/b/93310 fast/canvas/canvas-toDataURL-webp.html [ ImageOnlyFailure Pass ]
-webkit.org/b/93310 platform/chromium/virtual/gpu/fast/canvas/canvas-toDataURL-webp.html [ ImageOnlyFailure Pass ]
+webkit.org/b/93310 fast/canvas/canvas-toDataURL-webp.html [ ImageOnlyFailure ]
+webkit.org/b/93310 platform/chromium/virtual/gpu/fast/canvas/canvas-toDataURL-webp.html [ ImageOnlyFailure ]
 
 # Flaky crashing on debug
 webkit.org/b/99604 [ Mac Win ] http/tests/workers/text-encoding.html [ Pass Crash ]
