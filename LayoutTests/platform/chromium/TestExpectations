@@ -3844,3 +3844,4 @@ webkit.org/b/113114 media/video-controls-captions.html [ Timeout ]
 
 # Almost certainly just needs rebaseline, but the bot won't give me results
 Bug(pkasting) [ XP ] fast/text/international/bold-bengali.html [ Failure ]
+webkit.org/b/113178 [ Linux ] fast/css/font-family-pictograph.html [ Pass Failure ]
