@@ -741,6 +741,7 @@ void CoordinatedGraphicsScene::setAnimationsLocked(bool locked)
 void CoordinatedGraphicsScene::detach()
 {
     ASSERT(isMainThread());
+    m_renderQueue.clear();
     m_client = 0;
 }
 
