@@ -41,7 +41,9 @@ public:
         CSSCustomFilterEnabled,
         WebAudioEnabled,
         CaretBrowsingEnabled,
-        NotificationsEnabled
+        NotificationsEnabled,
+        UniversalAccessFromFileURLsAllowed,
+        FileAccessFromFileURLsAllowed
     };
 
     enum FontFamily {

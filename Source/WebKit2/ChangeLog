@@ -1,3 +1,20 @@
+2013-03-25  Maxim Ermilov  <maxim.ermilov@canonical.com>
+
+        [Qt] Qml WebKit needs preferences to change security knobs
+        https://bugs.webkit.org/show_bug.cgi?id=111979
+
+        Reviewed by Jocelyn Turcotte.
+
+        * UIProcess/API/qt/qwebpreferences.cpp:
+        (QWebPreferencesPrivate::testAttribute):
+        (QWebPreferencesPrivate::setAttribute):
+        (QWebPreferences::universalAccessFromFileURLsAllowed):
+        (QWebPreferences::setUniversalAccessFromFileURLsAllowed):
+        (QWebPreferences::fileAccessFromFileURLsAllowed):
+        (QWebPreferences::setFileAccessFromFileURLsAllowed):
+        * UIProcess/API/qt/qwebpreferences_p.h:
+        * UIProcess/API/qt/qwebpreferences_p_p.h:
+
 2013-03-23  Geoffrey Garen  <ggaren@apple.com>
 
         Added a setting for whether JavaScript markup is enabled

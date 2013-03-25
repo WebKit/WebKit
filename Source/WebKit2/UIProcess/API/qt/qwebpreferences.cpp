@@ -79,6 +79,10 @@ bool QWebPreferencesPrivate::testAttribute(QWebPreferencesPrivate::WebAttribute 
         return WKPreferencesGetCaretBrowsingEnabled(preferencesRef);
     case NotificationsEnabled:
         return WKPreferencesGetNotificationsEnabled(preferencesRef);
+    case UniversalAccessFromFileURLsAllowed:
+        return WKPreferencesGetUniversalAccessFromFileURLsAllowed(preferencesRef);
+    case FileAccessFromFileURLsAllowed:
+        return WKPreferencesGetFileAccessFromFileURLsAllowed(preferencesRef);
     default:
         ASSERT_NOT_REACHED();
         return false;
@@ -144,6 +148,12 @@ void QWebPreferencesPrivate::setAttribute(QWebPreferencesPrivate::WebAttribute a
         break;
     case NotificationsEnabled:
         WKPreferencesSetNotificationsEnabled(preferencesRef, enable);
+        break;
+    case UniversalAccessFromFileURLsAllowed:
+        WKPreferencesSetUniversalAccessFromFileURLsAllowed(preferencesRef, enable);
+        break;
+    case FileAccessFromFileURLsAllowed:
+        WKPreferencesSetFileAccessFromFileURLsAllowed(preferencesRef, enable);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -566,6 +576,32 @@ void QWebPreferences::setNotificationsEnabled(bool enable)
 {
     d->setAttribute(QWebPreferencesPrivate::NotificationsEnabled, enable);
     emit notificationsEnabledChanged();
+}
+
+bool QWebPreferences::universalAccessFromFileURLsAllowed() const
+{
+    return d->testAttribute(QWebPreferencesPrivate::UniversalAccessFromFileURLsAllowed);
+}
+
+void QWebPreferences::setUniversalAccessFromFileURLsAllowed(bool enable)
+{
+    if (universalAccessFromFileURLsAllowed() == enable)
+        return;
+    d->setAttribute(QWebPreferencesPrivate::UniversalAccessFromFileURLsAllowed, enable);
+    emit universalAccessFromFileURLsAllowedChanged();
+}
+
+bool QWebPreferences::fileAccessFromFileURLsAllowed() const
+{
+    return d->testAttribute(QWebPreferencesPrivate::FileAccessFromFileURLsAllowed);
+}
+
+void QWebPreferences::setFileAccessFromFileURLsAllowed(bool enable)
+{
+    if (fileAccessFromFileURLsAllowed() == enable)
+        return;
+    d->setAttribute(QWebPreferencesPrivate::FileAccessFromFileURLsAllowed, enable);
+    emit fileAccessFromFileURLsAllowedChanged();
 }
 
 QWebPreferencesPrivate* QWebPreferencesPrivate::get(QWebPreferences* preferences)
