@@ -164,7 +164,7 @@ function test()
     {
 
         breakpointManager._debuggerModel._addScript(url, url);
-        InspectorTest.addResult("  Adding temporary UISourceCode: " + url + ")");
+        InspectorTest.addResult("  Adding temporary UISourceCode: " + url);
         var contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Script, "", "text/javascript");
         var uiSourceCode = breakpointManager._debuggerWorkspaceProvider.addUniqueFileForURL(url, contentProvider, true);
         uiSourceCode.setSourceMapping(defaultMapping);
@@ -337,6 +337,7 @@ function test()
             breakpointManager._debuggerModel.reset();
             resetWorkspace(breakpointManager);
             InspectorTest.addResult("  Resolving provisional breakpoint.");
+            addTemporaryUISourceCode(breakpointManager, "a.js")            
             var eventData = { breakpointId: "a.js:10", location: { scriptId: "a.js", lineNumber: 11, columnNumber: 5 }};
             breakpointManager._debuggerModel.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointResolved, eventData);
             addUISourceCode(breakpointManager, "a.js");
@@ -369,6 +370,7 @@ function test()
             breakpointManager._debuggerModel.reset();
             resetWorkspace(breakpointManager);
             InspectorTest.addResult("  Resolving provisional breakpoint.");
+            addTemporaryUISourceCode(breakpointManager, "a.js")            
             var eventData = { breakpointId: "a.js:10", location: { scriptId: "a.js", lineNumber: 11, columnNumber: 5 }};
             breakpointManager._debuggerModel.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointResolved, eventData);
             resetBreakpointManager(breakpointManager, next);

@@ -864,6 +864,15 @@ Map.prototype = {
         return entry ? entry[1] : undefined;
     },
 
+    /**
+     * @param {Object} key
+     */
+    contains: function(key)
+    {
+        var entry = this._map[key.__identifier];
+        return !!entry;
+    },
+
     size: function()
     {
         return this._size;

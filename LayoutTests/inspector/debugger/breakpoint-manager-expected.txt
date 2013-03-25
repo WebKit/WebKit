@@ -109,7 +109,7 @@ Running: testRestoreBreakpointsAfterTemporaryUISourceCodeRemoved
     a.js:10 enabled:true condition:foo == bar
     a.js:20 enabled:false condition:
     b.js:3 enabled:true condition:
-  Adding temporary UISourceCode: a.js)
+  Adding temporary UISourceCode: a.js
   Adding UISourceCode: a.js
     debuggerModel.setBreakpoint(a.js:10:foo == bar)
     breakpointAdded(a.js, 10, foo == bar, true)
@@ -226,7 +226,12 @@ Running: testNavigation
     breakpointRemoved(b.js, 3)
     Location disposed: b.js:3
   Resolving provisional breakpoint.
+  Adding temporary UISourceCode: a.js
+    breakpointAdded(a.js, 11, foo == bar, true)
+    Location created: a.js:11
   Adding UISourceCode: a.js
+    breakpointRemoved(a.js, 11)
+    Location disposed: a.js:11
     debuggerModel.removeBreakpoint(a.js:10)
     debuggerModel.setBreakpoint(a.js:10:foo == bar)
     breakpointAdded(a.js, 10, foo == bar, true)
@@ -291,8 +296,13 @@ Running: testProvisionalBreakpointsResolve
     breakpointRemoved(a.js, 10)
     Location disposed: a.js:10
   Resolving provisional breakpoint.
+  Adding temporary UISourceCode: a.js
+    breakpointAdded(a.js, 11, foo == bar, true)
+    Location created: a.js:11
   Dumping Storage
     a.js:10 enabled:true condition:foo == bar
   Resetting breakpoint manager
+    breakpointRemoved(a.js, 11)
+    Location disposed: a.js:11
     debuggerModel.removeBreakpoint(a.js:10)
 

@@ -80,9 +80,7 @@ WebInspector.BreakpointManager.prototype = {
             var breakpoint = this._breakpointForDebuggerId[debuggerId];
             if (breakpoint._sourceFileId !== sourceFileId)
                 continue;
-            this._debuggerModel.removeBreakpoint(debuggerId);
-            delete this._breakpointForDebuggerId[debuggerId];
-            delete breakpoint._debuggerId;
+            breakpoint.remove(true);
         }
         this._storage._restoreBreakpoints(uiSourceCode);
     },
@@ -249,7 +247,6 @@ WebInspector.BreakpointManager.prototype = {
                     var breakpoint = lineBreakpoints[j];
                     this._breakpoints.remove(breakpoint);
                     breakpoint._resetLocations();
-                    breakpoint._isProvisional = true;
                 }
             }
             this._breakpointsForUISourceCode.remove(uiSourceCode);
@@ -263,8 +260,10 @@ WebInspector.BreakpointManager.prototype = {
         var breakpointId = /** @type {DebuggerAgent.BreakpointId} */ (event.data.breakpointId);
         var location = /** @type {WebInspector.DebuggerModel.Location} */ (event.data.location);
         var breakpoint = this._breakpointForDebuggerId[breakpointId];
-        if (!breakpoint || breakpoint._isProvisional)
+        if (!breakpoint)
             return;
+        if (!this._breakpoints.contains(breakpoint))
+            this._breakpoints.put(breakpoint);
         breakpoint._addResolvedLocation(location);
     },
 
