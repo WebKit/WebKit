@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+description("This test checks to ensure that a webgl context can be created with the 'webgl' context ID");
+var c = document.getElementById("c");
+var gl = c.getContext("webgl");
+if (!gl)
+  testFailed("context does not exist");
+else
+  testPassed("context exists");
+</script>
+</body>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</html>

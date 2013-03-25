@@ -55,7 +55,7 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::getContextMethodCustom(const v8::Argu
     String contextId = toWebCoreString(args[0]);
     RefPtr<CanvasContextAttributes> attrs;
 #if ENABLE(WEBGL)
-    if (contextId == "experimental-webgl" || contextId == "webkit-3d") {
+    if (contextId == "webgl" || contextId == "experimental-webgl" || contextId == "webkit-3d") {
         attrs = WebGLContextAttributes::create();
         WebGLContextAttributes* webGLAttrs = static_cast<WebGLContextAttributes*>(attrs.get());
         if (args.Length() > 1 && args[1]->IsObject()) {

@@ -193,10 +193,16 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
         && settings->acceleratedCompositingEnabled()
 #endif
         ) {
+
         // Accept the legacy "webkit-3d" name as well as the provisional "experimental-webgl" name.
-        // Once ratified, we will also accept "webgl" as the context name.
-        if ((type == "webkit-3d") ||
-            (type == "experimental-webgl")) {
+        bool is3dContext = (type == "webkit-3d") || (type == "experimental-webgl");
+
+#if PLATFORM(CHROMIUM) && !OS(ANDROID)
+        // Now that WebGL is ratified, we will also accept "webgl" as the context name in Chrome.
+        is3dContext |= (type == "webgl");
+#endif
+
+        if (is3dContext) {
             if (m_context && !m_context->is3d())
                 return 0;
             if (!m_context) {
