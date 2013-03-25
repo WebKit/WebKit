@@ -977,6 +977,7 @@ crbug.com/8941 [ Win ] http/tests/xmlhttprequest/web-apps/012.html [ Failure ]
 crbug.com/20521 [ Win ] fast/text/atsui-multiple-renderers.html [ Failure ]
 webkit.org/b/78544 [ Linux ] fast/text/atsui-multiple-renderers.html [ Failure ImageOnlyFailure Pass ]
 crbug.com/20521 [ XP ] fast/text/atsui-pointtooffset-calls-cg.html [ Failure ]
+webkit.org/b/113169 [ Linux Release ] fast/text/international/danda-space.html [ ImageOnlyFailure ]
 
 # This test checks that we hack around a bug in helvetica.  We fail to.
 crbug.com/20519 [ Win ] fast/text/wide-zero-width-space.html [ Failure ]
