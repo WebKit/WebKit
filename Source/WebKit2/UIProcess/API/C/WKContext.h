@@ -207,6 +207,7 @@ WK_EXPORT void WKContextSetJavaScriptGarbageCollectorTimerEnabled(WKContextRef c
 
 WK_EXPORT WKDictionaryRef WKContextCopyPlugInAutoStartOriginHashes(WKContextRef context);
 WK_EXPORT void WKContextSetPlugInAutoStartOriginHashes(WKContextRef context, WKDictionaryRef dictionary);
+WK_EXPORT void WKContextSetPlugInAutoStartOrigins(WKContextRef contextRef, WKArrayRef arrayRef);
 
 #ifdef __cplusplus
 }

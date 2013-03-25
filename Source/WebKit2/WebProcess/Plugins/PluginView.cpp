@@ -582,7 +582,7 @@ void PluginView::didInitializePlugin()
                 m_pluginElement->setNeedsStyleRecalc(SyntheticStyleChange);
             }
         }
-        if (m_pluginElement->displayState() < HTMLPlugInElement::Playing)
+        if (m_pluginElement->displayState() == HTMLPlugInElement::RestartingWithPendingMouseClick)
             m_pluginElement->dispatchPendingMouseClick();
     }
 
@@ -1650,6 +1650,9 @@ bool PluginView::shouldAlwaysAutoStart() const
 
 void PluginView::pluginDidReceiveUserInteraction()
 {
+    // FIXME: Extend autostart timeout when this codepath is hit.
+    // http://webkit.org/b/113232
+
     if (frame() && !frame()->settings()->plugInSnapshottingEnabled())
         return;
 
@@ -1657,7 +1660,6 @@ void PluginView::pluginDidReceiveUserInteraction()
         return;
 
     m_didReceiveUserInteraction = true;
-    WebProcess::shared().plugInDidReceiveUserInteraction(m_pluginElement->plugInOriginHash());
 }
 
 } // namespace WebKit

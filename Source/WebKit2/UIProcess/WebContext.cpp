@@ -526,7 +526,8 @@ WebProcessProxy* WebContext::createNewWebProcess()
     parameters.usesNetworkProcess = m_usesNetworkProcess;
 #endif
 
-    parameters.plugInAutoStartOrigins = m_plugInAutoStartProvider.autoStartOriginsCopy();
+    parameters.plugInAutoStartOriginHashes = m_plugInAutoStartProvider.autoStartOriginHashesCopy();
+    copyToVector(m_plugInAutoStartProvider.autoStartOrigins(), parameters.plugInAutoStartOrigins);
 
     // Add any platform specific parameters
     platformInitializeWebProcess(parameters);
@@ -1165,7 +1166,7 @@ void WebContext::setJavaScriptGarbageCollectorTimerEnabled(bool flag)
 
 void WebContext::addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash)
 {
-    m_plugInAutoStartProvider.addAutoStartOrigin(pageOrigin, plugInOriginHash);
+    m_plugInAutoStartProvider.addAutoStartOriginHash(pageOrigin, plugInOriginHash);
 }
 
 void WebContext::plugInDidReceiveUserInteraction(unsigned plugInOriginHash)
@@ -1180,7 +1181,12 @@ PassRefPtr<ImmutableDictionary> WebContext::plugInAutoStartOriginHashes() const
 
 void WebContext::setPlugInAutoStartOriginHashes(ImmutableDictionary& dictionary)
 {
-    return m_plugInAutoStartProvider.setAutoStartOriginsTable(dictionary);
+    m_plugInAutoStartProvider.setAutoStartOriginsTable(dictionary);
+}
+
+void WebContext::setPlugInAutoStartOrigins(ImmutableArray& array)
+{
+    m_plugInAutoStartProvider.setAutoStartOriginsArray(array);
 }
 
 #if ENABLE(CUSTOM_PROTOCOLS)

@@ -29,6 +29,7 @@
 #include "APIObject.h"
 #include "DownloadProxyMap.h"
 #include "GenericCallback.h"
+#include "ImmutableArray.h"
 #include "ImmutableDictionary.h"
 #include "MessageReceiver.h"
 #include "MessageReceiverMap.h"
@@ -266,6 +267,7 @@ public:
 
     PassRefPtr<ImmutableDictionary> plugInAutoStartOriginHashes() const;
     void setPlugInAutoStartOriginHashes(ImmutableDictionary&);
+    void setPlugInAutoStartOrigins(ImmutableArray&);
 
     // Network Process Management
 

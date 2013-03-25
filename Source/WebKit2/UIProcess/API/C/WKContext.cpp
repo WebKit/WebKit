@@ -366,6 +366,13 @@ void WKContextSetPlugInAutoStartOriginHashes(WKContextRef contextRef, WKDictiona
     toImpl(contextRef)->setPlugInAutoStartOriginHashes(*toImpl(dictionaryRef));
 }
 
+void WKContextSetPlugInAutoStartOrigins(WKContextRef contextRef, WKArrayRef arrayRef)
+{
+    if (!arrayRef)
+        return;
+    toImpl(contextRef)->setPlugInAutoStartOrigins(*toImpl(arrayRef));
+}
+
 // Deprecated functions.
 void _WKContextSetAdditionalPluginsDirectory(WKContextRef context, WKStringRef pluginsDirectory)
 {

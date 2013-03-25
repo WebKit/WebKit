@@ -110,6 +110,7 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder& encoder) con
     encoder << usesNetworkProcess;
 #endif
 
+    encoder << plugInAutoStartOriginHashes;
     encoder << plugInAutoStartOrigins;
 }
 
@@ -223,6 +224,8 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder& decoder, Web
         return false;
 #endif
 
+    if (!decoder.decode(parameters.plugInAutoStartOriginHashes))
+        return false;
     if (!decoder.decode(parameters.plugInAutoStartOrigins))
         return false;
 

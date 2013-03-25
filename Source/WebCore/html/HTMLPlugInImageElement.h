@@ -58,6 +58,7 @@ public:
 
     const String& serviceType() const { return m_serviceType; }
     const String& url() const { return m_url; }
+    const KURL& loadedUrl() const { return m_loadedUrl; }
     bool shouldPreferPlugInsForImages() const { return m_shouldPreferPlugInsForImages; }
 
     // Public for FrameView::addWidgetToUpdate()
@@ -82,6 +83,7 @@ protected:
     OwnPtr<HTMLImageLoader> m_imageLoader;
     String m_serviceType;
     String m_url;
+    KURL m_loadedUrl;
     
     static void updateWidgetCallback(Node*, unsigned = 0);
     virtual void attach();

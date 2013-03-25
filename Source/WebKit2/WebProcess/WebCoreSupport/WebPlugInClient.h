@@ -27,7 +27,6 @@
 #define WebPlugInClient_h
 
 #include <WebCore/PlugInClient.h>
-#include <wtf/HashSet.h>
 
 namespace WebKit {
 
@@ -39,8 +38,8 @@ public:
     virtual ~WebPlugInClient();
 private:
     virtual void pageDestroyed();
-    virtual bool isAutoStartOrigin(unsigned plugInOriginHash);
-    virtual void addAutoStartOrigin(const String& pageOrigin, unsigned plugInOriginHash);
+    virtual bool shouldAutoStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType);
+    virtual void didStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType);
 };
 
 } // namespace WebKit

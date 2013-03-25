@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PlugInAutoStartProvider.h"
 
+#include "ImmutableArray.h"
+#include "ImmutableDictionary.h"
 #include "WebContext.h"
 #include "WebContextClient.h"
 #include "WebProcessMessages.h"
@@ -46,30 +48,30 @@ static double expirationTimeFromNow()
     return currentTime() + plugInAutoStartExpirationTimeThreshold;
 }
 
-void PlugInAutoStartProvider::addAutoStartOrigin(const String& pageOrigin, unsigned plugInOriginHash)
+void PlugInAutoStartProvider::addAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash)
 {
-    if (m_autoStartHashes.contains(plugInOriginHash))
+    if (m_hashToOriginMap.contains(plugInOriginHash))
         return;
-    
+
     AutoStartTable::iterator it = m_autoStartTable.find(pageOrigin);
     if (it == m_autoStartTable.end())
-        it = m_autoStartTable.add(pageOrigin, HashMap<unsigned, double>()).iterator;
+        it = m_autoStartTable.add(pageOrigin, PlugInAutoStartOriginHash()).iterator;
 
     double expirationTime = expirationTimeFromNow();
     it->value.set(plugInOriginHash, expirationTime);
-    m_autoStartHashes.set(plugInOriginHash, pageOrigin);
-    
-    m_context->sendToAllProcesses(Messages::WebProcess::DidAddPlugInAutoStartOrigin(plugInOriginHash, expirationTime));
+    m_hashToOriginMap.set(plugInOriginHash, pageOrigin);
+
+    m_context->sendToAllProcesses(Messages::WebProcess::DidAddPlugInAutoStartOriginHash(plugInOriginHash, expirationTime));
     m_context->client().plugInAutoStartOriginHashesChanged(m_context);
 }
 
-HashMap<unsigned, double> PlugInAutoStartProvider::autoStartOriginsCopy() const
+PlugInAutoStartOriginHash PlugInAutoStartProvider::autoStartOriginHashesCopy() const
 {
-    HashMap<unsigned, double> copyMap;
+    PlugInAutoStartOriginHash copyMap;
     AutoStartTable::const_iterator end = m_autoStartTable.end();
     for (AutoStartTable::const_iterator it = m_autoStartTable.begin(); it != end; ++it) {
-        HashMap<unsigned, double>::const_iterator mapEnd = it->value.end();
-        for (HashMap<unsigned, double>::const_iterator mapIt = it->value.begin(); mapIt != mapEnd; ++mapIt)
+        PlugInAutoStartOriginHash::const_iterator mapEnd = it->value.end();
+        for (PlugInAutoStartOriginHash::const_iterator mapIt = it->value.begin(); mapIt != mapEnd; ++mapIt)
             copyMap.set(mapIt->key, mapIt->value);
     }
     return copyMap;
@@ -82,8 +84,8 @@ PassRefPtr<ImmutableDictionary> PlugInAutoStartProvider::autoStartOriginsTableCo
     double now = currentTime();
     for (AutoStartTable::const_iterator it = m_autoStartTable.begin(); it != end; ++it) {
         ImmutableDictionary::MapType hashMap;
-        HashMap<unsigned, double>::const_iterator valueEnd = it->value.end();
-        for (HashMap<unsigned, double>::const_iterator valueIt = it->value.begin(); valueIt != valueEnd; ++valueIt) {
+        PlugInAutoStartOriginHash::const_iterator valueEnd = it->value.end();
+        for (PlugInAutoStartOriginHash::const_iterator valueIt = it->value.begin(); valueIt != valueEnd; ++valueIt) {
             if (now > valueIt->value)
                 continue;
             hashMap.set(String::number(valueIt->key), WebDouble::create(valueIt->value));
@@ -98,13 +100,13 @@ PassRefPtr<ImmutableDictionary> PlugInAutoStartProvider::autoStartOriginsTableCo
 
 void PlugInAutoStartProvider::setAutoStartOriginsTable(ImmutableDictionary& table)
 {
+    m_hashToOriginMap.clear();
     m_autoStartTable.clear();
-    m_autoStartHashes.clear();
     HashMap<unsigned, double> hashMap;
 
     ImmutableDictionary::MapType::const_iterator end = table.map().end();
     for (ImmutableDictionary::MapType::const_iterator it = table.map().begin(); it != end; ++it) {
-        HashMap<unsigned, double> hashes;
+        PlugInAutoStartOriginHash hashes;
         ImmutableDictionary* hashesForPage = static_cast<ImmutableDictionary*>(it->value.get());
         ImmutableDictionary::MapType::const_iterator hashEnd = hashesForPage->map().end();
         for (ImmutableDictionary::MapType::const_iterator hashIt = hashesForPage->map().begin(); hashIt != hashEnd; ++hashIt) {
@@ -119,26 +121,36 @@ void PlugInAutoStartProvider::setAutoStartOriginsTable(ImmutableDictionary& tabl
             double expirationTime = static_cast<WebDouble*>(hashIt->value.get())->value();
             hashes.set(hash, expirationTime);
             hashMap.set(hash, expirationTime);
-            m_autoStartHashes.set(hash, it->key);
+            m_hashToOriginMap.set(hash, it->key);
         }
 
         m_autoStartTable.set(it->key, hashes);
     }
 
-    m_context->sendToAllProcesses(Messages::WebProcess::ResetPlugInAutoStartOrigins(hashMap));
+    m_context->sendToAllProcesses(Messages::WebProcess::ResetPlugInAutoStartOriginHashes(hashMap));
+}
+
+void PlugInAutoStartProvider::setAutoStartOriginsArray(ImmutableArray& originList)
+{
+    m_autoStartOrigins.clear();
+    for (size_t i = 0, length = originList.size(); i < length; ++i) {
+        if (originList.at(i)->type() != WebString::APIType)
+            continue;
+        m_autoStartOrigins.append(static_cast<WebString*>(originList.at(i))->string());
+    }
 }
 
 void PlugInAutoStartProvider::didReceiveUserInteraction(unsigned plugInOriginHash)
 {
-    HashMap<unsigned, String>::const_iterator it = m_autoStartHashes.find(plugInOriginHash);
-    if (it == m_autoStartHashes.end()) {
+    HashMap<unsigned, String>::const_iterator it = m_hashToOriginMap.find(plugInOriginHash);
+    if (it == m_hashToOriginMap.end()) {
         ASSERT_NOT_REACHED();
         return;
     }
 
     double newExpirationTime = expirationTimeFromNow();
     m_autoStartTable.find(it->value)->value.set(plugInOriginHash, newExpirationTime);
-    m_context->sendToAllProcesses(Messages::WebProcess::DidAddPlugInAutoStartOrigin(plugInOriginHash, newExpirationTime));
+    m_context->sendToAllProcesses(Messages::WebProcess::DidAddPlugInAutoStartOriginHash(plugInOriginHash, newExpirationTime));
     m_context->client().plugInAutoStartOriginHashesChanged(m_context);
 }
 

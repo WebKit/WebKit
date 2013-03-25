@@ -1,3 +1,84 @@
+2013-03-25  Dean Jackson  <dino@apple.com>
+
+        Cleanup plugin snapshotting autostart decision making
+        https://bugs.webkit.org/show_bug.cgi?id=113231
+
+        Reviewed by Tim Horton.
+
+        Two major changes to the way snapshotting plugins may autostart.
+
+        The first is that previously WebCore was keeping a hash that
+        represented the combination of page origin, plugin origin and
+        mime type. WebKit was responsible for deciding if that particular
+        hash should autostart. Now, WebKit keeps the hash, and WebCore
+        just asks us whether the combination of origins and mimetype
+        should start immediately. You can see this change the in WebPluginClient
+        and WebProcess APIs.
+
+        The second change is that we now keep two types of structures
+        around to decide whether a plugin should autostart. One is the
+        existing page + plugin origin combination. The other is simply
+        the plugin origin, which allows plugins from major providers
+        to autostart no matter what page they were embedded on.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode): Encode the new parameter.
+        (WebKit::WebProcessCreationParameters::decode): Decode the new parameter.
+        * Shared/WebProcessCreationParameters.h: Also keep a list of strings around.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetPlugInAutoStartOrigins): The C API to send the list of plugin
+            origins over to the context.
+        * UIProcess/API/C/WKContext.h:
+
+        * UIProcess/Plugins/PlugInAutoStartProvider.cpp:
+        (WebKit::PlugInAutoStartProvider::addAutoStartOriginHash): Renamed from addAutoStartOrigin.
+            No functional change other than new names for members.
+        (WebKit::PlugInAutoStartProvider::autoStartOriginHashesCopy): Ditto.
+        (WebKit::PlugInAutoStartProvider::autoStartOriginsTableCopy): Ditto.
+        (WebKit::PlugInAutoStartProvider::setAutoStartOriginsTable): Ditto.
+        (WebKit::PlugInAutoStartProvider::setAutoStartOriginsArray): New method that converts the
+            incoming ImmutableArray into a Vector of Strings.
+        (WebKit::PlugInAutoStartProvider::didReceiveUserInteraction): Rename for new members.
+        * UIProcess/Plugins/PlugInAutoStartProvider.h: Renaming member variables. Adding
+            some typedefs to clean up code.
+        (WebKit::PlugInAutoStartProvider::autoStartOrigins): New accessor.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::createNewWebProcess): Renaming, and copy the new parameter into the process creation.
+        (WebKit::WebContext::addPlugInAutoStartOriginHash): Renaming.
+        (WebKit::WebContext::setPlugInAutoStartOriginHashes): Renaming.
+        (WebKit::WebContext::setPlugInAutoStartOrigins): New method.
+        * UIProcess/WebContext.h: Adds the new setPlugInAutoStartOrigin method.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::didInitializePlugin): Drive-by fix that was attempting to restart plugins
+            that were in the process of restarting.
+        (WebKit::PluginView::pluginDidReceiveUserInteraction): Temporarily suspend update of
+            expiration time if the user interacts with a plugin.
+
+        * WebProcess/WebCoreSupport/WebPlugInClient.cpp:
+        (WebKit::WebPlugInClient::shouldAutoStartFromOrigin): Renaming.
+        (WebKit::WebPlugInClient::didStartFromOrigin): Ditto.
+        * WebProcess/WebCoreSupport/WebPlugInClient.h: Renaming.
+
+        * WebProcess/WebProcess.cpp: Drive-by - noticed that we forgot to count seconds in
+            a timeout threshold.
+        (WebKit::WebProcess::initializeWebProcess): Also add the list of origins when we initialize.
+        (WebKit::addCaseFoldedCharacters): Copied from WebCore - adds a String to a hash input.
+        (WebKit::hashForPlugInOrigin): Copied from WebCore - hashing function.
+        (WebKit::WebProcess::isPlugInAutoStartOriginHash): Renaming.
+        (WebKit::WebProcess::shouldPlugInAutoStartFromOrigin): Check the list of pure origins first. If
+            that fails, fall back to the hash list of pairs.
+        (WebKit::WebProcess::plugInDidStartFromOrigin): Renaming.
+        (WebKit::WebProcess::didAddPlugInAutoStartOriginHash): Ditto.
+        (WebKit::WebProcess::resetPlugInAutoStartOriginHashes): Ditto.
+        (WebKit::WebProcess::plugInDidReceiveUserInteraction): Ditto.
+        * WebProcess/WebProcess.h: Renaming some methods, but also adding the input of the new
+            origin-only list.
+
+        * WebProcess/WebProcess.messages.in: Renaming a message.
+
 2013-03-25  Maxim Ermilov  <maxim.ermilov@canonical.com>
 
         [Qt] Qml WebKit needs preferences to change security knobs

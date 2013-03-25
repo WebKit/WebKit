@@ -83,6 +83,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/StringHash.h>
 
 #if ENABLE(NETWORK_INFO)
 #include "WebNetworkInfoManagerMessages.h"
@@ -128,7 +129,7 @@ using namespace JSC;
 using namespace WebCore;
 
 // This should be less than plugInAutoStartExpirationTimeThreshold in PlugInAutoStartProvider.
-static const double plugInAutoStartExpirationTimeUpdateThreshold = 29 * 24 * 60;
+static const double plugInAutoStartExpirationTimeUpdateThreshold = 29 * 24 * 60 * 60;
 
 namespace WebKit {
 
@@ -330,7 +331,9 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 #endif
     setTerminationTimeout(parameters.terminationTimeout);
 
-    resetPlugInAutoStartOrigins(parameters.plugInAutoStartOrigins);
+    resetPlugInAutoStartOriginHashes(parameters.plugInAutoStartOriginHashes);
+    for (size_t i = 0; i < parameters.plugInAutoStartOrigins.size(); ++i)
+        m_plugInAutoStartOrigins.add(parameters.plugInAutoStartOrigins[i]);
 }
 
 #if ENABLE(NETWORK_PROCESS)
@@ -756,22 +759,54 @@ void WebProcess::clearPluginSiteData(const Vector<String>& pluginPaths, const Ve
 }
 #endif
 
-bool WebProcess::isPlugInAutoStartOrigin(unsigned plugInOriginHash)
+static inline void addCaseFoldedCharacters(StringHasher& hasher, const String& string)
 {
-    HashMap<unsigned, double>::const_iterator it = m_plugInAutoStartOrigins.find(plugInOriginHash);
-    if (it == m_plugInAutoStartOrigins.end())
+    if (string.isEmpty())
+        return;
+    if (string.is8Bit())
+        return hasher.addCharacters<LChar, CaseFoldingHash::foldCase<LChar> >(string.characters8(), string.length());
+    return hasher.addCharacters<UChar, CaseFoldingHash::foldCase<UChar> >(string.characters16(), string.length());
+}
+
+static unsigned hashForPlugInOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType)
+{
+    // We want to avoid concatenating the strings and then taking the hash, since that could lead to an expensive conversion.
+    // We also want to avoid using the hash() function in StringImpl or CaseFoldingHash because that masks out bits for the use of flags.
+    StringHasher hasher;
+    addCaseFoldedCharacters(hasher, pageOrigin);
+    hasher.addCharacter(0);
+    addCaseFoldedCharacters(hasher, pluginOrigin);
+    hasher.addCharacter(0);
+    addCaseFoldedCharacters(hasher, mimeType);
+    return hasher.hash();
+}
+
+bool WebProcess::isPlugInAutoStartOriginHash(unsigned plugInOriginHash)
+{
+    HashMap<unsigned, double>::const_iterator it = m_plugInAutoStartOriginHashes.find(plugInOriginHash);
+    if (it == m_plugInAutoStartOriginHashes.end())
         return false;
     return currentTime() < it->value;
 }
 
-void WebProcess::addPlugInAutoStartOrigin(const String& pageOrigin, unsigned plugInOriginHash)
+bool WebProcess::shouldPlugInAutoStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType)
+{
+    if (m_plugInAutoStartOrigins.contains(pluginOrigin))
+        return true;
+
+    // The plugin wasn't in the general whitelist, so check against the more explicit hash list.
+    return isPlugInAutoStartOriginHash(hashForPlugInOrigin(pageOrigin, pluginOrigin, mimeType));
+}
+
+void WebProcess::plugInDidStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType)
 {
     if (pageOrigin.isEmpty()) {
         LOG(Plugins, "Not adding empty page origin");
         return;
     }
 
-    if (isPlugInAutoStartOrigin(plugInOriginHash)) {
+    unsigned plugInOriginHash = hashForPlugInOrigin(pageOrigin, pluginOrigin, mimeType);
+    if (isPlugInAutoStartOriginHash(plugInOriginHash)) {
         LOG(Plugins, "Hash %x already exists as auto-start origin (request for %s)", plugInOriginHash, pageOrigin.utf8().data());
         return;
     }
@@ -780,22 +815,22 @@ void WebProcess::addPlugInAutoStartOrigin(const String& pageOrigin, unsigned plu
     // comes back from the parent process. Temporarily add this hash to the list with a thirty
     // second timeout. That way, even if the parent decides not to add it, we'll only be
     // incorrect for a little while.
-    m_plugInAutoStartOrigins.set(plugInOriginHash, currentTime() + 30 * 1000);
+    m_plugInAutoStartOriginHashes.set(plugInOriginHash, currentTime() + 30 * 1000);
 
     parentProcessConnection()->send(Messages::WebContext::AddPlugInAutoStartOriginHash(pageOrigin, plugInOriginHash), 0);
 }
 
-void WebProcess::didAddPlugInAutoStartOrigin(unsigned plugInOriginHash, double expirationTime)
+void WebProcess::didAddPlugInAutoStartOriginHash(unsigned plugInOriginHash, double expirationTime)
 {
     // When called, some web process (which also might be this one) added the origin for auto-starting,
     // or received user interaction.
     // Set the bit to avoid having redundantly call into the UI process upon user interaction.
-    m_plugInAutoStartOrigins.set(plugInOriginHash, expirationTime);
+    m_plugInAutoStartOriginHashes.set(plugInOriginHash, expirationTime);
 }
 
-void WebProcess::resetPlugInAutoStartOrigins(const HashMap<unsigned, double>& hashes)
+void WebProcess::resetPlugInAutoStartOriginHashes(const HashMap<unsigned, double>& hashes)
 {
-    m_plugInAutoStartOrigins.swap(const_cast<HashMap<unsigned, double>&>(hashes));
+    m_plugInAutoStartOriginHashes.swap(const_cast<HashMap<unsigned, double>&>(hashes));
 }
 
 void WebProcess::plugInDidReceiveUserInteraction(unsigned plugInOriginHash)
@@ -803,8 +838,8 @@ void WebProcess::plugInDidReceiveUserInteraction(unsigned plugInOriginHash)
     if (!plugInOriginHash)
         return;
 
-    HashMap<unsigned, double>::iterator it = m_plugInAutoStartOrigins.find(plugInOriginHash);
-    if (it == m_plugInAutoStartOrigins.end())
+    HashMap<unsigned, double>::iterator it = m_plugInAutoStartOriginHashes.find(plugInOriginHash);
+    if (it == m_plugInAutoStartOriginHashes.end())
         return;
     if (it->value - currentTime() > plugInAutoStartExpirationTimeUpdateThreshold)
         return;

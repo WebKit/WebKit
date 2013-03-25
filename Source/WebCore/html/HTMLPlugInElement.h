@@ -60,8 +60,6 @@ public:
     virtual void updateSnapshot(PassRefPtr<Image>) { }
     virtual void dispatchPendingMouseClick() { }
 
-    unsigned plugInOriginHash() const { return m_plugInOriginHash; }
-
 #if ENABLE(NETSCAPE_PLUGIN_API)
     NPObject* getNPObject();
 #endif
@@ -88,8 +86,6 @@ protected:
     bool guardedDispatchBeforeLoadEvent(const String& sourceURL);
 
     bool m_inBeforeLoadEventHandler;
-
-    unsigned m_plugInOriginHash;
 
 private:
     bool dispatchBeforeLoadEvent(const String& sourceURL); // Not implemented, generates a compile error if subclasses call this by mistake.
