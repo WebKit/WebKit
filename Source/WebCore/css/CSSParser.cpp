@@ -6353,6 +6353,10 @@ PassRefPtr<CSSValueList> CSSParser::parseShadow(CSSParserValueList* valueList, C
             if (!context.allowLength())
                 return 0;
 
+            // Blur radius must be non-negative.
+            if (context.allowBlur && !validUnit(val, FLength | FNonNeg, CSSStrictMode))
+                return 0;
+
             // A length is allowed here.  Construct the value and add it.
             context.commitLength(val);
         } else if (val->id == CSSValueInset) {

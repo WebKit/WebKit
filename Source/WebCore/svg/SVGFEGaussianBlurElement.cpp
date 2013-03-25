@@ -133,6 +133,9 @@ PassRefPtr<FilterEffect> SVGFEGaussianBlurElement::build(SVGFilterBuilder* filte
     if (!input1)
         return 0;
 
+    if (stdDeviationX() < 0 || stdDeviationY() < 0)
+        return 0;
+
     RefPtr<FilterEffect> effect = FEGaussianBlur::create(filter, stdDeviationX(), stdDeviationY());
     effect->inputEffects().append(input1);
     return effect.release();

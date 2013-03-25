@@ -313,6 +313,11 @@ Commas : drop-shadow(red, 1px, 2px, 3px)
 PASS cssRule.type is 1
 PASS declaration.length is 0
 PASS declaration.getPropertyValue('-webkit-filter') is null
+
+Negative radius : drop-shadow(10px 10px -1px red)
+PASS cssRule.type is 1
+PASS declaration.length is 0
+PASS declaration.getPropertyValue('-webkit-filter') is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

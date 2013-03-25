@@ -93,5 +93,6 @@ testInvalidFilterRule("Missing units", "drop-shadow(red 1 2 3)");
 testInvalidFilterRule("Inset", "drop-shadow(red 1px 2px 3px inset)");
 testInvalidFilterRule("Too many parameters", "drop-shadow(red 1px 2px 3px 4px)");
 testInvalidFilterRule("Commas", "drop-shadow(red, 1px, 2px, 3px)");
+testInvalidFilterRule("Negative radius", "drop-shadow(10px 10px -1px red)");
 
 successfullyParsed = true;
