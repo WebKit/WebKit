@@ -1,3 +1,20 @@
+2013-03-25  David Kilzer  <ddkilzer@apple.com>
+
+        WTF::binarySearchImpl() should compile with -Wshorten-64-to-32
+        <http://webkit.org/b/113170>
+
+        Reviewed by Dan Bernstein.
+
+        Fixes the following build failure:
+
+            /usr/local/include/wtf/StdLibExtras.h:190:30: error: implicit conversion loses integer precision: 'unsigned long' to 'int' [-Werror,-Wshorten-64-to-32]
+                    int pos = (size - 1) >> 1;
+                        ~~~   ~~~~~~~~~~~^~~~
+            1 error generated.
+
+        * wtf/StdLibExtras.h:
+        (WTF::binarySearchImpl): Switch type from int to size_t.
+
 2013-03-22  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove 2 bad branches from StringHash::equal() and CaseFoldingHash::equal()
