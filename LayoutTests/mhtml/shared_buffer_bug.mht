@@ -15,8 +15,8 @@ Content-Location: http://localhost/sharred_buffer_bug.html
 <link rel=3D"stylesheet" type=3D"text/css" href=3D"http://localhost/resourc=
 es/style.css">
 <script>
-if (window.testRunner) {
-  testRunner.dumpAsText();
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
 }
 </script>
 

@@ -17,8 +17,8 @@ function keyDownMouseClick(x1, y1, x2, y2)
     eventSender.mouseUp();
 }
 
-if (window.testRunner)
-   testRunner.dumpAsText();
+if (window.layoutTestController)
+   layoutTestController.dumpAsText();
 
 var target = document.getElementById("target");
 keyDownMouseClick(333, 357, 155, 174);

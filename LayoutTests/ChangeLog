@@ -1,5 +1,15 @@
 2013-03-25  Eric Carlson  <eric.carlson@apple.com>
 
+        <rdar://problem/13465764> Many merged tests are failing
+
+        Update three more tests that use "testRunner" instead of "layoutTestController".
+
+        * fast/block/float/intruding-float-not-removed-writing-mode.xhtml:
+        * mhtml/shared_buffer_bug.mht:
+        * svg/custom/use-invalidate-click-crash.xhtml:
+
+2013-03-25  Eric Carlson  <eric.carlson@apple.com>
+
         Merge r136586.
 
     2012-12-04  Florin Malita  <fmalita@chromium.org>
