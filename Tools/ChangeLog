@@ -1,3 +1,58 @@
+2013-03-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        REGRESSION(r146657): Test failures reported incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=113223
+
+        Reviewed by Dirk Pranke.
+
+        The bug was caused by BuildBotPrinter not taking the new behavior into account.
+
+        Fixed the bug by exposing enabled_pixel_tests_in_retry flag via ResultDetails object and have BuildBotPrinter
+        treat ['TEXT', 'IMAGE+TEXT'] as a regular failure when the flag is set true.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run):
+
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (RunDetails.__init__):
+        (summarize_results): Remove the line I intended to remove in r146657.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (logging_run): Return details instead of the exit code.
+        (run_and_capture): Ditto.
+
+        (RunTest.test_full_results_html):
+        (RunTest.test_hung_thread):
+        (RunTest.test_no_tests_found):
+        (RunTest.test_no_tests_found_2):
+        (RunTest.test_repeat_each_iterations_num_tests):
+        (RunTest.test_run_singly_actually_runs_tests):
+        (RunTest.test_test_list):
+        (RunTest.test_missing_and_unexpected_results):
+        (RunTest.test_pixel_test_directories):
+        (RunTest.test_missing_and_unexpected_results_with_custom_exit_code):
+        (RunTest.test_crash_with_stderr):
+        (RunTest.test_no_image_failure_with_image_diff):
+        (RunTest.test_crash_log):
+        (RunTest.test_exit_after_n_failures_upload):
+        (RunTest.test_results_directory_absolute):
+        (RunTest.test_results_directory_relative):
+        (RunTest.test_retrying_and_flaky_tests):
+        (RunTest.test_retrying_force_pixel_tests): Added a test case to ensure enabled_pixel_tests_in_retry is set.
+        (RunTest.test_retrying_uses_retries_directory):
+        (RunTest.test_reftest_should_not_use_naming_convention_if_not_listed_in_reftestlist):
+        (RunTest.test_output_diffs):
+        (EndToEndTest.test_reftest_with_two_notrefs):
+        (RebaselineTest.test_reset_results):
+        (RebaselineTest.test_missing_results):
+        (RebaselineTest.test_new_baseline):
+
+        * Scripts/webkitpy/layout_tests/views/buildbot_results.py:
+        (BuildBotPrinter.print_results):
+        (BuildBotPrinter.print_unexpected_results):
+        (BuildBotPrinter.print_unexpected_results.add_result): Don't treat ['TEXT', 'IMAGE+TEXT'] as flaky
+        when we forced pixel tests in retry (i.e. pixel test was initially disabled).
+
 2013-03-25  Julie Parent  <jparent@chromium.org>
 
         Dashboard refactor: Move cross dashboard history related code into history.js.

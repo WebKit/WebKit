@@ -238,7 +238,7 @@ class Manager(object):
                 self._port.show_results_html_file(results_path)
 
         return test_run_results.RunDetails(self._port.exit_code_from_summarized_results(summarized_results),
-                                           summarized_results, initial_results, retry_results)
+                                           summarized_results, initial_results, retry_results, enabled_pixel_tests_in_retry)
 
     def _run_tests(self, tests_to_run, tests_to_skip, repeat_each, iterations, num_workers, retrying):
         needs_http = self._port.requires_http_server() or any(self._is_http_test(test) for test in tests_to_run)

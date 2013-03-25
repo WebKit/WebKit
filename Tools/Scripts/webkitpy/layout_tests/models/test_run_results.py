@@ -88,11 +88,12 @@ class TestRunResults(object):
 
 
 class RunDetails(object):
-    def __init__(self, exit_code, summarized_results=None, initial_results=None, retry_results=None):
+    def __init__(self, exit_code, summarized_results=None, initial_results=None, retry_results=None, enabled_pixel_tests_in_retry=False):
         self.exit_code = exit_code
         self.summarized_results = summarized_results
         self.initial_results = initial_results
         self.retry_results = retry_results
+        self.enabled_pixel_tests_in_retry = enabled_pixel_tests_in_retry
 
 
 def _interpret_test_failures(failures):
@@ -194,7 +195,6 @@ def summarize_results(port_obj, expectations, initial_results, retry_results, en
                         actual.append(keywords[retry_result_type])
                         num_flaky += 1
                     actual.append(keywords[retry_result_type])
-                    num_flaky += 1
                 else:
                     num_regressions += 1
             else:

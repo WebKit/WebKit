@@ -49,7 +49,7 @@ class BuildBotPrinter(object):
     def print_results(self, run_details):
         if self.debug_logging:
             self.print_run_results(run_details.initial_results)
-        self.print_unexpected_results(run_details.summarized_results)
+        self.print_unexpected_results(run_details.summarized_results, run_details.enabled_pixel_tests_in_retry)
 
     def _print(self, msg):
         self.stream.write(msg + '\n')
@@ -88,7 +88,7 @@ class BuildBotPrinter(object):
                 pct = len(results) * 100.0 / not_passing
                 self._print("  %5d %-24s (%4.1f%%)" % (len(results), desc, pct))
 
-    def print_unexpected_results(self, summarized_results):
+    def print_unexpected_results(self, summarized_results, enabled_pixel_tests_in_retry=False):
         passes = {}
         flaky = {}
         regressions = {}
@@ -114,6 +114,8 @@ class BuildBotPrinter(object):
                     add_to_dict_of_lists(passes, 'Expected to timeout, but passed', test)
                 else:
                     add_to_dict_of_lists(passes, 'Expected to fail, but passed', test)
+            elif enabled_pixel_tests_in_retry and actual == ['TEXT', 'IMAGE+TEXT']:
+                add_to_dict_of_lists(regressions, actual[0], test)
             elif len(actual) > 1:
                 # We group flaky tests by the first actual result we got.
                 add_to_dict_of_lists(flaky, actual[0], test)
