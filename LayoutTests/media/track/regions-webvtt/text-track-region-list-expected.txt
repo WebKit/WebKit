@@ -1,0 +1,41 @@
+Tests TextTrackRegionList functionality: length, operator[], and getRegionById()
+
+
+** Implicit mode disabled and the regions attribute is null **
+EXPECTED (testTrack.track.mode == 'disabled') OK
+EXPECTED (testTrack.track.regions == 'null') OK
+
+** The regions attribute should be an empty TextTrackRegionList **
+EXPECTED (regions != null == 'true') OK
+EXPECTED (regions.length == '0') OK
+
+** The default value of the track attribute of the region is null**
+EXPECTED (region.track == 'null') OK
+
+** The addRegion() method properly updates the TextTrackRegionList object **
+EXPECTED (regions.length == '1') OK
+EXPECTED (regions[0] == region == 'true') OK
+EXPECTED (regions[0].track == testTrack.track == 'true') OK
+
+** The track attribute should correctly reflect the track to which the region was added to**
+EXPECTED (region.track == testTrack.track == 'true') OK
+
+** Adding a region with an existing id should update the existing region **
+EXPECTED (regions[0].viewportAnchorX == '59') OK
+EXPECTED (regions[0].viewportAnchorY == '68') OK
+EXPECTED (regions[0].regionAnchorX == '20') OK
+EXPECTED (regions[0].regionAnchorY == '30') OK
+EXPECTED (regions[0].height == '5') OK
+EXPECTED (regions[0].width == '87') OK
+EXPECTED (regions[0].scroll == 'up') OK
+EXPECTED (regions[0] != updatedRegion == 'true') OK
+
+** Add the region back and check if removeRegion() removes it properly **
+EXPECTED (regions.length == '1') OK
+EXPECTED (regions.length == '0') OK
+
+** In case the region is not found, NotFoundError should be thrown **
+Error: NotFoundError: DOM Exception 8
+
+END OF TEST
+

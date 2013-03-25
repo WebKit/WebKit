@@ -40,6 +40,7 @@
 #include "HTMLMediaElement.h"
 #include "TextTrackCueList.h"
 #include "TextTrackList.h"
+#include "TextTrackRegionList.h"
 #include "TrackBase.h"
 
 namespace WebCore {
@@ -97,6 +98,9 @@ const AtomicString& TextTrack::showingKeyword()
 TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, const AtomicString& kind, const AtomicString& label, const AtomicString& language, TextTrackType type)
     : TrackBase(context, TrackBase::TextTrack)
     , m_cues(0)
+#if ENABLE(WEBVTT_REGIONS)
+    , m_regions(0)
+#endif
     , m_mediaElement(0)
     , m_label(label)
     , m_language(language)
@@ -119,6 +123,10 @@ TextTrack::~TextTrack()
 
         for (size_t i = 0; i < m_cues->length(); ++i)
             m_cues->item(i)->setTrack(0);
+#if ENABLE(WEBVTT_REGIONS)
+        for (size_t i = 0; i < m_regions->length(); ++i)
+            m_regions->item(i)->setTrack(0);
+#endif
     }
     clearClient();
 }
@@ -271,6 +279,80 @@ void TextTrack::removeCue(TextTrackCue* cue, ExceptionCode& ec)
     if (m_client)
         m_client->textTrackRemoveCue(this, cue);
 }
+
+#if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
+TextTrackRegionList* TextTrack::ensureTextTrackRegionList()
+{
+    if (!m_regions)
+        m_regions = TextTrackRegionList::create();
+
+    return m_regions.get();
+}
+
+TextTrackRegionList* TextTrack::regions()
+{
+    // If the text track mode of the text track that the TextTrack object
+    // represents is not the text track disabled mode, then the regions
+    // attribute must return a live TextTrackRegionList object that represents
+    // the text track list of regions of the text track. Otherwise, it must
+    // return null. When an object is returned, the same object must be returned
+    // each time.
+    if (m_mode != disabledKeyword())
+        return ensureTextTrackRegionList();
+
+    return 0;
+}
+
+void TextTrack::addRegion(PassRefPtr<TextTrackRegion> prpRegion)
+{
+    if (!prpRegion)
+        return;
+
+    RefPtr<TextTrackRegion> region = prpRegion;
+    TextTrackRegionList* regionList = ensureTextTrackRegionList();
+
+    // 1. If the given region is in a text track list of regions, then remove
+    // region from that text track list of regions.
+    TextTrack* regionTrack = region->track();
+    if (regionTrack && regionTrack != this)
+        regionTrack->removeRegion(region.get(), ASSERT_NO_EXCEPTION);
+
+    // 2. If the method's TextTrack object's text track list of regions contains
+    // a region with the same identifier as region replace the values of that
+    // region's width, height, anchor point, viewport anchor point and scroll
+    // attributes with those of region.
+    TextTrackRegion* existingRegion = regionList->getRegionById(region->id());
+    if (existingRegion) {
+        existingRegion->updateParametersFromRegion(region.get());
+        return;
+    }
+
+    // Otherwise: add region to the method's TextTrack object's text track
+    // list of regions.
+    region->setTrack(this);
+    regionList->add(region);
+}
+
+void TextTrack::removeRegion(TextTrackRegion* region, ExceptionCode &ec)
+{
+    if (!region)
+        return;
+
+    // 1. If the given region is not currently listed in the method's TextTrack
+    // object's text track list of regions, then throw a NotFoundError exception.
+    if (region->track() != this) {
+        ec = NOT_FOUND_ERR;
+        return;
+    }
+
+    if (!m_regions || !m_regions->remove(region)) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    region->setTrack(0);
+}
+#endif
 
 void TextTrack::cueWillChange(TextTrackCue* cue)
 {

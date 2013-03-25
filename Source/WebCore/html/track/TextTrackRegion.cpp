@@ -5,7 +5,7 @@
  * modification, are permitted provided that the following conditions are
  * met:
  *
- *     * Redistributions of source ec must retain the above copyright
+ *     * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  *     * Redistributions in binary form must reproduce the above
  * copyright notice, this list of conditions and the following disclaimer
@@ -34,6 +34,8 @@
 
 #include "TextTrackRegion.h"
 
+#include "ExceptionCodePlaceholder.h"
+
 namespace WebCore {
 
 // The region occupies by default 100% of the width of the video viewport.
@@ -56,11 +58,17 @@ TextTrackRegion::TextTrackRegion()
     , m_regionAnchor(FloatPoint(defaultAnchorPointX, defaultAnchorPointY))
     , m_viewportAnchor(FloatPoint(defaultAnchorPointX, defaultAnchorPointY))
     , m_scroll(defaultScroll)
+    , m_track(0)
 {
 }
 
 TextTrackRegion::~TextTrackRegion()
 {
+}
+
+void TextTrackRegion::setTrack(TextTrack* track)
+{
+    m_track = track;
 }
 
 void TextTrackRegion::setId(const String& id)
@@ -173,6 +181,17 @@ void TextTrackRegion::setScroll(const AtomicString& value, ExceptionCode& ec)
     }
 
     m_scroll = value == upScrollValueKeyword;
+}
+
+void TextTrackRegion::updateParametersFromRegion(TextTrackRegion* region)
+{
+    m_heightInLines = region->height();
+    m_width = region->width();
+
+    m_regionAnchor = FloatPoint(region->regionAnchorX(), region->regionAnchorY());
+    m_viewportAnchor = FloatPoint(region->viewportAnchorX(), region->viewportAnchorY());
+
+    setScroll(region->scroll(), ASSERT_NO_EXCEPTION);
 }
 
 void TextTrackRegion::setRegionSettings(const String& input)

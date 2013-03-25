@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../../media-file.js></script>
+        <script src=../../video-test.js></script>
+        <script>
+        var testTrack;
+        var region;
+        var regions;
+        var updatedRegion;
+
+        function startTest()
+        {
+            testTrack = document.getElementsByTagName('track')[0];
+
+            consoleWrite("<br>** Implicit mode disabled and the regions attribute is null **");
+            testExpected("testTrack.track.mode", "disabled");
+            testExpected("testTrack.track.regions", null);
+
+            testTrack.track.mode = "hidden";
+            regions = testTrack.track.regions;
+
+            consoleWrite("<br>** The regions attribute should be an empty TextTrackRegionList **");
+            testExpected("regions != null", true);
+            testExpected("regions.length", 0);
+
+            region = new TextTrackRegion();
+            region.id = "TestId";
+
+            consoleWrite("<br>** The default value of the track attribute of the region is null**");
+            testExpected("region.track", null);
+
+            testTrack.track.addRegion(region);
+
+            consoleWrite("<br>** The addRegion() method properly updates the TextTrackRegionList object **");
+            testExpected("regions.length", 1);
+            testExpected("regions[0] == region", true);
+            testExpected("regions[0].track == testTrack.track", true);
+
+            consoleWrite("<br>** The track attribute should correctly reflect the track to which the region was added to**");
+            testExpected("region.track == testTrack.track", true);
+
+            updatedRegion = new TextTrackRegion();
+            updatedRegion.id = region.id;
+            updatedRegion.viewportAnchorX = 59;
+            updatedRegion.viewportAnchorY = 68;
+            updatedRegion.regionAnchorX = 20;
+            updatedRegion.regionAnchorY = 30;
+            updatedRegion.height = 5;
+            updatedRegion.width = 87;
+            updatedRegion.scroll = "up";
+
+            consoleWrite("<br>** Adding a region with an existing id should update the existing region **");
+            testTrack.track.addRegion(updatedRegion);
+            testExpected("regions[0].viewportAnchorX", updatedRegion.viewportAnchorX);
+            testExpected("regions[0].viewportAnchorY", updatedRegion.viewportAnchorY);
+            testExpected("regions[0].regionAnchorX", updatedRegion.regionAnchorX);
+            testExpected("regions[0].regionAnchorY", updatedRegion.regionAnchorY);
+            testExpected("regions[0].height", updatedRegion.height);
+            testExpected("regions[0].width", updatedRegion.width);
+            testExpected("regions[0].scroll", updatedRegion.scroll);
+
+            testExpected("regions[0] != updatedRegion", true);
+
+            consoleWrite("<br>** Add the region back and check if removeRegion() removes it properly **");
+            testTrack.track.addRegion(region);
+            testExpected("regions.length", 1);
+            testTrack.track.removeRegion(region);
+            testExpected("regions.length", 0);
+
+            consoleWrite("<br>** In case the region is not found, NotFoundError should be thrown **");
+            try {
+              testTrack.track.removeRegion(region);
+            } catch(e) {
+              consoleWrite(e);
+            }
+
+            // FIXME(109818): Update test for multiple initial regions (after parsing is supported).
+
+            consoleWrite("");
+            endTest();
+        }
+
+        function startTestWithDelay()
+        {
+            setTimeout(startTest, 100);
+        }
+        </script>
+    </head>
+    <body onload="startTestWithDelay()">
+        <p>Tests TextTrackRegionList functionality: length, operator[], and getRegionById()</p>
+        <video>
+            <track id="testTrack" src="captions-webvtt/captions-fast.vtt">
+        </video>
+    </body>
+</html>

@@ -45,6 +45,13 @@
     void removeCue(in TextTrackCue cue)
         raises (DOMException);
 
+#if defined(ENABLE_WEBVTT_REGIONS) && ENABLE_WEBVTT_REGIONS
+    readonly attribute TextTrackRegionList regions;
+    void addRegion(in TextTrackRegion region);
+    void removeRegion(in TextTrackRegion region)
+        raises (DOMException);
+#endif
+
     // EventTarget interface
     void addEventListener(in DOMString type, 
                           in EventListener listener, 
