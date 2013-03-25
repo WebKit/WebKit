@@ -705,11 +705,11 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
 #if ENABLE(DRAG_SUPPORT)
 bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& event)
 {
-    if (handleDrag(event, ShouldCheckDragHysteresis))
-        return true;
-
     if (!m_mousePressed)
         return false;
+
+    if (handleDrag(event, ShouldCheckDragHysteresis))
+        return true;
 
     Node* targetNode = event.targetNode();
     if (event.event().button() != LeftButton || !targetNode)

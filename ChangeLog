@@ -1,3 +1,12 @@
+2013-03-25  Daniel Cheng  <dcheng@chromium.org>
+
+        Don't allow drags to start after a mouse press that creates a context menu
+        https://bugs.webkit.org/show_bug.cgi?id=112079
+
+        Reviewed by Tony Chang.
+
+        * ManualTests/context-menu-during-drag-selection.html: Added.
+
 2013-03-22  Yuki Sekiguchi  <yuki.sekiguchi@access-company.com>
 
         Cannot run All Source (target WebProcess) on Xcode.
