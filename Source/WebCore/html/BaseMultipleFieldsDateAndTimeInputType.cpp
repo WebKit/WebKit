@@ -438,6 +438,7 @@ void BaseMultipleFieldsDateAndTimeInputType::restoreFormControlState(const FormC
     DateTimeFieldsState dateTimeFieldsState = DateTimeFieldsState::restoreFormControlState(state);
     m_dateTimeEditElement->setValueAsDateTimeFieldsState(dateTimeFieldsState);
     element()->setValueInternal(sanitizeValue(m_dateTimeEditElement->value()), DispatchNoEvent);
+    updateClearButtonVisibility();
 }
 
 FormControlState BaseMultipleFieldsDateAndTimeInputType::saveFormControlState() const
