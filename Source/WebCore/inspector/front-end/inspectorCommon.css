@@ -90,6 +90,7 @@ iframe.view {
     height: 20px;
     z-index: 200;
     pointer-events: none;
+    cursor: move;
 }
 
 .resources-divider {

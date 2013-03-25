@@ -179,7 +179,7 @@ WebInspector.OverviewGrid.Window = function(parentElement, dividersLabelBarEleme
     this._dividersLabelBarElement = dividersLabelBarElement;
 
     WebInspector.installDragHandle(this._parentElement, this._startWindowSelectorDragging.bind(this), this._windowSelectorDragging.bind(this), this._endWindowSelectorDragging.bind(this), "ew-resize");
-    WebInspector.installDragHandle(this._dividersLabelBarElement, this._startWindowDragging.bind(this), this._windowDragging.bind(this), this._endWindowDragging.bind(this), "ew-resize");
+    WebInspector.installDragHandle(this._dividersLabelBarElement, this._startWindowDragging.bind(this), this._windowDragging.bind(this), this._endWindowDragging.bind(this), "move");
 
     this.windowLeft = 0.0;
     this.windowRight = 1.0;
