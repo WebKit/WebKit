@@ -27,23 +27,16 @@
 #include "config.h"
 #include "CachedFont.h"
 
-#if !PLATFORM(WIN_CAIRO) && !PLATFORM(WX)
-#define STORE_FONT_CUSTOM_PLATFORM_DATA
-#endif
-
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceLoader.h"
+#include "FontCustomPlatformData.h"
 #include "FontPlatformData.h"
 #include "MemoryCache.h"
 #include "ResourceBuffer.h"
 #include "TextResourceDecoder.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/Vector.h>
-
-#ifdef STORE_FONT_CUSTOM_PLATFORM_DATA
-#include "FontCustomPlatformData.h"
-#endif
 
 #if ENABLE(SVG_FONTS)
 #include "NodeList.h"
@@ -65,9 +58,7 @@ CachedFont::CachedFont(const ResourceRequest& resourceRequest)
 
 CachedFont::~CachedFont()
 {
-#ifdef STORE_FONT_CUSTOM_PLATFORM_DATA
     delete m_fontData;
-#endif
 }
 
 void CachedFont::load(CachedResourceLoader*, const ResourceLoaderOptions& options)
@@ -105,13 +96,11 @@ void CachedFont::beginLoadIfNeeded(CachedResourceLoader* dl)
 
 bool CachedFont::ensureCustomFontData()
 {
-#ifdef STORE_FONT_CUSTOM_PLATFORM_DATA
     if (!m_fontData && !errorOccurred() && !isLoading() && m_data) {
         m_fontData = createFontCustomPlatformData(m_data.get()->sharedBuffer());
         if (!m_fontData)
             setStatus(DecodeError);
     }
-#endif
     return m_fontData;
 }
 
@@ -121,12 +110,8 @@ FontPlatformData CachedFont::platformDataFromCustomData(float size, bool bold, b
     if (m_externalSVGDocument)
         return FontPlatformData(size, bold, italic);
 #endif
-#ifdef STORE_FONT_CUSTOM_PLATFORM_DATA
     ASSERT(m_fontData);
     return m_fontData->fontPlatformData(static_cast<int>(size), bold, italic, orientation, widthVariant, renderingMode);
-#else
-    return FontPlatformData();
-#endif
 }
 
 #if ENABLE(SVG_FONTS)
@@ -180,12 +165,10 @@ SVGFontElement* CachedFont::getSVGFontById(const String& fontName) const
 
 void CachedFont::allClientsRemoved()
 {
-#ifdef STORE_FONT_CUSTOM_PLATFORM_DATA
     if (m_fontData) {
         delete m_fontData;
         m_fontData = 0;
     }
-#endif
 }
 
 void CachedFont::checkNotify()
@@ -205,9 +188,7 @@ void CachedFont::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 #if ENABLE(SVG_FONTS)
     info.addMember(m_externalSVGDocument, "externalSVGDocument");
 #endif
-#ifdef STORE_FONT_CUSTOM_PLATFORM_DATA
     info.addMember(m_fontData, "fontData");
-#endif
 }
 
 }
