@@ -188,6 +188,10 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
         clearMessages(&error);
     }
 
+    // Ignore errors like "*property=value". This trick is used for IE7: http://stackoverflow.com/questions/4563651/what-does-an-asterisk-do-in-a-css-property-name
+    if (source == CSSMessageSource && message.contains(": *"))
+        return;
+
     bool canGenerateCallStack = !isWorkerAgent() && m_frontend;
     addConsoleMessage(adoptPtr(new ConsoleMessage(canGenerateCallStack, source, type, level, message, scriptId, lineNumber, state, requestIdentifier)));
 }

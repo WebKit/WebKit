@@ -30,7 +30,7 @@ x {
 x {
    color: red;
    ###;
-   color: #;
+   color: @;
 }
 
 x {
@@ -41,7 +41,12 @@ x {
 }
 
 x {
-    color: *;  /* Test simple error to ensure parsing recovered. */
+    *zoom: @1;  /* IE hack. Ignored */
+    color: @;
+}
+
+x {
+    color: @;  /* Test simple error to ensure parsing recovered. */
 }
 
 </style>

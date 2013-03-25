@@ -1,13 +1,15 @@
 Tests CSS warnings are properly exposed.
 
-Unexpected CSS token: # console-css-warnings.html:10
-Unexpected CSS token: { console-css-warnings.html:15
-Unexpected CSS token: # console-css-warnings.html:18
-Unexpected CSS token: # console-css-warnings.html:22
-Unexpected CSS token: # console-css-warnings.html:32
+Invalid CSS property declaration at: # console-css-warnings.html:10
+Invalid CSS property declaration at: { console-css-warnings.html:15
+Invalid CSS property declaration at: # console-css-warnings.html:18
+Invalid CSS property declaration at: # console-css-warnings.html:22
+Invalid CSS property declaration at: # console-css-warnings.html:32
+Unexpected CSS token: @ console-css-warnings.html:33
 Unexpected CSS token: { console-css-warnings.html:37
 Unexpected CSS token: { console-css-warnings.html:38
 Unexpected CSS token: { console-css-warnings.html:39
 Unexpected CSS token: { console-css-warnings.html:40
-Unexpected CSS token: * console-css-warnings.html:44
+Unexpected CSS token: @ console-css-warnings.html:45
+Unexpected CSS token: @ console-css-warnings.html:49
 
