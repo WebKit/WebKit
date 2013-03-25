@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/shadow-dom.js"></script>
+</head>
+<body>
+<script>
+description("Tests for insertionParent with a shadow element.");
+
+document.body.appendChild(
+    createDOM('div', {},
+              createDOM('div', {'id': 'host'},
+                        createShadowRoot(
+                            createDOM('div', {'id': 'older-shadow-root-child'})),
+                        createShadowRoot(
+                            createDOM('shadow', {'id': 'shadow'})))));
+
+document.body.offsetLeft;
+
+shouldBeEqualToString("getNodeInShadowTreeStack('host/older-shadow-root-child').webkitInsertionParent.id", "shadow");
+shouldBeNull("getNodeInShadowTreeStack('host//shadow').webkitInsertionParent");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
