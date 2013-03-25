@@ -31,6 +31,7 @@
 #include "config.h"
 #include "MIMETypeRegistry.h"
 
+#include "NotImplemented.h"
 #include <wtf/Assertions.h>
 #include <wtf/MainThread.h>
 
@@ -94,5 +95,13 @@ bool MIMETypeRegistry::isApplicationPluginMIMEType(const String&)
 {
     return false;
 }
+
+#if ENABLE(MEDIA_SOURCE)
+bool MIMETypeRegistry::isSupportedMediaSourceMIMEType(const String&, const String&)
+{
+    notImplemented();
+    return false;
+}
+#endif
 
 }

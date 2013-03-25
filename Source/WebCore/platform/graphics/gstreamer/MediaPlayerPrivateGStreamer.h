@@ -48,6 +48,9 @@ public:
     bool hasAudio() const { return m_hasAudio; }
 
     void load(const String &url);
+#if ENABLE(MEDIA_SOURCE)
+    void load(const String& url, PassRefPtr<MediaSource>);
+#endif
     void commitLoad();
     void cancelLoad();
 

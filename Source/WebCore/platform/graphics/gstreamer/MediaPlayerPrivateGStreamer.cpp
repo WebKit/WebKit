@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "MediaPlayer.h"
+#include "NotImplemented.h"
 #include "SecurityOrigin.h"
 #include "TimeRanges.h"
 #include "WebKitWebSourceGStreamer.h"
@@ -296,6 +297,13 @@ void MediaPlayerPrivateGStreamer::load(const String& url)
     if (!m_delayingLoad)
         commitLoad();
 }
+
+#if ENABLE(MEDIA_SOURCE)
+void MediaPlayerPrivateGStreamer::load(const String& url, PassRefPtr<MediaSource>)
+{
+    notImplemented();
+}
+#endif
 
 void MediaPlayerPrivateGStreamer::commitLoad()
 {

@@ -841,6 +841,7 @@ set(WebCore_SOURCES
     Modules/indexeddb/WorkerContextIndexedDatabase.cpp
 
     Modules/mediasource/MediaSource.cpp
+    Modules/mediasource/MediaSourceRegistry.cpp
     Modules/mediasource/SourceBuffer.cpp
     Modules/mediasource/SourceBufferList.cpp
 
