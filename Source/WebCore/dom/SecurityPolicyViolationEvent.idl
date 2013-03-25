@@ -32,6 +32,6 @@
     [InitializedByEventConstructor] readonly attribute DOMString violatedDirective;
     [InitializedByEventConstructor] readonly attribute DOMString effectiveDirective;
     [InitializedByEventConstructor] readonly attribute DOMString originalPolicy;
-    [InitializedByEventConstructor] readonly attribute DOMString sourceURL;
+    [InitializedByEventConstructor] readonly attribute DOMString sourceFile;
     [InitializedByEventConstructor] readonly attribute long      lineNumber;
 };

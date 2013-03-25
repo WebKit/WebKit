@@ -12,7 +12,7 @@ PASS window.e.blockedURI is "http://localhost:8000"
 PASS window.e.violatedDirective is "img-src 'none'"
 PASS window.e.effectiveDirective is "img-src"
 PASS window.e.originalPolicy is "img-src 'none'"
-PASS window.e.sourceURL is "http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-cross-origin-image.html"
+PASS window.e.sourceFile is "http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/securitypolicyviolation-block-cross-origin-image.html"
 PASS window.e.lineNumber is 23
 PASS successfullyParsed is true
 

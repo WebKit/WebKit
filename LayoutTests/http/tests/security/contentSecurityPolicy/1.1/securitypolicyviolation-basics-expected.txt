@@ -12,7 +12,7 @@ PASS window.e.blockedURI is "blockedURIValue"
 PASS window.e.violatedDirective is "violatedDirectiveValue"
 PASS window.e.effectiveDirective is "effectiveDirectiveValue"
 PASS window.e.originalPolicy is "originalPolicyValue"
-PASS window.e.sourceURL is "sourceURLValue"
+PASS window.e.sourceFile is "sourceFileValue"
 PASS window.e.lineNumber is 1
 PASS successfullyParsed is true
 

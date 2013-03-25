@@ -43,7 +43,7 @@ struct SecurityPolicyViolationEventInit : public EventInit {
     String violatedDirective;
     String effectiveDirective;
     String originalPolicy;
-    String sourceURL;
+    String sourceFile;
     int lineNumber;
 };
 
@@ -65,7 +65,7 @@ public:
     const String& violatedDirective() const { return m_violatedDirective; }
     const String& effectiveDirective() const { return m_effectiveDirective; }
     const String& originalPolicy() const { return m_originalPolicy; }
-    const String& sourceURL() const { return m_sourceURL; }
+    const String& sourceFile() const { return m_sourceFile; }
     int lineNumber() const { return m_lineNumber; }
 
     virtual const AtomicString& interfaceName() const { return eventNames().interfaceForSecurityPolicyViolationEvent; }
@@ -83,7 +83,7 @@ private:
         , m_violatedDirective(initializer.violatedDirective)
         , m_effectiveDirective(initializer.effectiveDirective)
         , m_originalPolicy(initializer.originalPolicy)
-        , m_sourceURL(initializer.sourceURL)
+        , m_sourceFile(initializer.sourceFile)
         , m_lineNumber(initializer.lineNumber)
     {
     }
@@ -94,7 +94,7 @@ private:
     String m_violatedDirective;
     String m_effectiveDirective;
     String m_originalPolicy;
-    String m_sourceURL;
+    String m_sourceFile;
     int m_lineNumber;
 };
 

@@ -1690,7 +1690,7 @@ static void gatherSecurityPolicyViolationEventData(SecurityPolicyViolationEventI
     init.violatedDirective = directiveText;
     init.effectiveDirective = effectiveDirective;
     init.originalPolicy = header;
-    init.sourceURL = String();
+    init.sourceFile = String();
     init.lineNumber = 0;
 
     RefPtr<ScriptCallStack> stack = createScriptCallStack(2, false);
@@ -1701,7 +1701,7 @@ static void gatherSecurityPolicyViolationEventData(SecurityPolicyViolationEventI
 
     if (callFrame.lineNumber()) {
         KURL source = KURL(ParsedURLString, callFrame.sourceURL());
-        init.sourceURL = stripURLForUseInReport(document, source);
+        init.sourceFile = stripURLForUseInReport(document, source);
         init.lineNumber = callFrame.lineNumber();
     }
 }
