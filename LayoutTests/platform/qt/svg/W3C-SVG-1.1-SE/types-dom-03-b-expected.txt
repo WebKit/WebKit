@@ -3,16 +3,32 @@ layer at (0,0) size 480x360
 layer at (0,0) size 480x360
   RenderSVGRoot {svg} at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (10,12) size 470x348
-      RenderSVGText {text} at (10,12) size 346x24 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 346x24
-          chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 40 width 346.00: "Test that getBBox() works before SVGLoad"
+    RenderSVGContainer {g} at (10,15) size 470x345
+      RenderSVGText {text} at (10,15) size 342x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 342x18
+          chunk 1 text run 1 at (10.00,30.00) startOffset 0 endOffset 1 width 11.00: "T"
+          chunk 1 text run 2 at (19.29,30.00) startOffset 1 endOffset 3 width 19.01: "es"
+          chunk 1 text run 3 at (38.24,30.00) startOffset 3 endOffset 6 width 15.01: "t t"
+          chunk 1 text run 4 at (53.20,30.00) startOffset 6 endOffset 12 width 50.04: "hat ge"
+          chunk 1 text run 5 at (103.06,30.00) startOffset 12 endOffset 16 width 39.02: "tBBo"
+          chunk 1 text run 6 at (141.60,30.00) startOffset 16 endOffset 21 width 38.99: "x() w"
+          chunk 1 text run 7 at (180.42,30.00) startOffset 21 endOffset 23 width 16.00: "or"
+          chunk 1 text run 8 at (196.53,30.00) startOffset 23 endOffset 24 width 9.00: "k"
+          chunk 1 text run 9 at (205.48,30.00) startOffset 24 endOffset 29 width 39.02: "s bef"
+          chunk 1 text run 10 at (244.32,30.00) startOffset 29 endOffset 31 width 16.00: "or"
+          chunk 1 text run 11 at (260.13,30.00) startOffset 31 endOffset 34 width 27.02: "e S"
+          chunk 1 text run 12 at (286.39,30.00) startOffset 34 endOffset 35 width 12.01: "V"
+          chunk 1 text run 13 at (297.64,30.00) startOffset 35 endOffset 40 width 54.04: "GLoad"
       RenderSVGRect {rect} at (10,40) size 50x50 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=40.00] [width=50.00] [height=50.00]
-      RenderSVGText {text} at (1000,982) size 31x24 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 31x24
-          chunk 1 text run 1 at (1000.00,1000.00) startOffset 0 endOffset 3 width 31.00: "Abc"
-    RenderSVGContainer {g} at (10,309) size 231x41
-      RenderSVGText {text} at (10,309) size 231x41 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 231x41
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 231.00: "$Revision: 1.7 $"
+      RenderSVGText {text} at (1000,985) size 32x18 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 32x18
+          chunk 1 text run 1 at (1000.00,1000.00) startOffset 0 endOffset 1 width 12.01: "A"
+          chunk 1 text run 2 at (1012.08,1000.00) startOffset 1 endOffset 3 width 19.01: "bc"
+    RenderSVGContainer {g} at (10,314) size 227x33
+      RenderSVGText {text} at (10,314) size 227x32 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 227x32
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 2 width 40.90: "$R"
+          chunk 1 text run 2 at (50.51,340.00) startOffset 2 endOffset 3 width 17.79: "e"
+          chunk 1 text run 3 at (67.82,340.00) startOffset 3 endOffset 12 width 117.38: "vision: 1"
+          chunk 1 text run 4 at (182.83,340.00) startOffset 12 endOffset 16 width 53.38: ".7 $"
     RenderSVGRect {rect} at (0,0) size 480x360 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
