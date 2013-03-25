@@ -858,6 +858,22 @@
       'sources': [ '<@(webcore_platform_geometry_files)', ],
     },
     {
+      'target_name': 'WebCoreRendering',
+      'type': 'static_library',
+      'dependencies': [ 'WebCoreDependencies', ],
+      'include_dirs': [ '<@(webcoregtk_include_dirs)', ],
+      'sources': [ '<@(webcore_files)',
+      ],
+      'sources/': [
+        ['exclude', '.*'],
+        ['include', 'rendering/'],
+        ['exclude', '<(excluded_directories_pattern)'],
+        ['exclude', '<(excluded_files_suffixes)'],
+        ['exclude', '<(excluded_files_patterns)'],
+        ['exclude', 'AllInOne\\.cpp$'],
+      ],
+    },
+    {
       'target_name': 'WebCore',
       'type': 'none',
       'dependencies': [
@@ -866,6 +882,7 @@
         'WebCoreBindings',
         'WebCorePlatform',
         'WebCorePlatformGeometry',
+        'WebCoreRendering',
       ],
     },
   ],
