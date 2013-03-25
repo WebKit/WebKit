@@ -71,6 +71,12 @@ unsigned HTMLIdentifier::findIndex(const UChar* characters, unsigned length)
     IdentifierTable::const_iterator it = table.find(hash);
     if (it == table.end())
         return invalidIndex;
+    // It's possible to have hash collisions between arbitrary strings and
+    // known identifiers (e.g. "bvvfg" collides with "script").
+    // However ASSERTs in addNames() guard against there ever being collisions
+    // between known identifiers.
+    if (!equal(it->value.second, characters, length))
+        return invalidIndex;
     return it->value.first;
 }
 
