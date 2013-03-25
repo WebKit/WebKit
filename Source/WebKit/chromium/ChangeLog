@@ -1,3 +1,18 @@
+2013-03-25  Alexei Filippov  <alph@chromium.org>
+
+        Web Inspector: Fonts refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=113047
+
+        Reviewed by Pavel Feldman.
+
+        Unify fonts usage across inspector.
+        Make inspector default font depend on platform.
+
+        * src/js/devTools.css:
+        (body.platform-linux):
+        (body.platform-mac):
+        (body.platform-windows):
+
 2013-03-24  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Roll chromium deps to 190311.

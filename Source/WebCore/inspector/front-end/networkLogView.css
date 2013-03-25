@@ -18,13 +18,13 @@
 
 .network-log-grid.data-grid td {
     line-height: 17px;
-    height: 37px;
+    height: 41px;
     border-right: 1px solid rgb(210, 210, 210);
     vertical-align: middle;
 }
 
 .network-log-grid.data-grid.small td {
-    height: 17px;
+    height: 21px;
 }
 
 .network-log-grid.data-grid th {

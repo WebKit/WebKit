@@ -12,6 +12,21 @@ body.dock-to-bottom.platform-mac #toolbar {
 
 /* Chrome theme overrides */
 
+body.platform-linux {
+  font-family: Ubuntu, Arial, sans-serif;
+  font-size: 11px !important;
+}
+
+body.platform-mac {
+  font-family: 'Lucida Grande', sans-serif;
+  font-size: 11px !important;
+}
+
+body.platform-windows {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  font-size: 11px !important;
+}
+
 body.platform-windows #toolbar, body.platform-windows.inactive #toolbar {
     background-image: none;
 }
