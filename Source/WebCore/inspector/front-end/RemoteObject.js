@@ -36,8 +36,9 @@
  * @param {*} value
  * @param {string=} description
  * @param {RuntimeAgent.ObjectPreview=} preview
+ * @param {WebInspector.ScopeRef=} scopeRef
  */
-WebInspector.RemoteObject = function(objectId, type, subtype, value, description, preview)
+WebInspector.RemoteObject = function(objectId, type, subtype, value, description, preview, scopeRef)
 {
     this._type = type;
     this._subtype = subtype;
@@ -54,6 +55,7 @@ WebInspector.RemoteObject = function(objectId, type, subtype, value, description
         this._hasChildren = false;
         this.value = value;
     }
+    this._scopeRef = scopeRef;
 }
 
 /**
@@ -107,6 +109,16 @@ WebInspector.RemoteObject.fromPayload = function(payload)
     console.assert(typeof payload === "object", "Remote object payload should only be an object");
 
     return new WebInspector.RemoteObject(payload.objectId, payload.type, payload.subtype, payload.value, payload.description, payload.preview);
+}
+
+/**
+ * @param {RuntimeAgent.RemoteObject} payload
+ * @param {WebInspector.ScopeRef=} scopeRef
+ * @return {WebInspector.RemoteObject}
+ */
+WebInspector.RemoteObject.fromScopePayload = function(payload, scopeRef)
+{
+    return new WebInspector.RemoteObject(payload.objectId, payload.type, payload.subtype, payload.value, payload.description, payload.preview, scopeRef);
 }
 
 /**
@@ -249,18 +261,34 @@ WebInspector.RemoteObject.prototype = {
                 callback(error || result.description);
                 return;
             }
+            
+            if (this._scopeRef)
+                this._setDeclarativeVariableValue(result, name, callback);
+            else
+                this._setObjectPropertyValue(result, name, callback);
 
-            var setPropertyValueFunction = "function(a, b) { this[a] = b; }";
-
-            // Special case for NaN, Infinity and -Infinity
-            if (result.type === "number" && typeof result.value !== "number")
-                setPropertyValueFunction = "function(a) { this[a] = " + result.description + "; }";
-
-            delete result.description; // Optimize on traffic.
-            RuntimeAgent.callFunctionOn(this._objectId, setPropertyValueFunction, [{ value:name }, result], true, undefined, undefined, propertySetCallback.bind(this));
             if (result._objectId)
                 RuntimeAgent.releaseObject(result._objectId);
         }
+    },
+    
+    /**
+     * @param {WebInspector.RemoteObject} result
+     * @param {string} name
+     * @param {function(string=)} callback
+     */
+    _setObjectPropertyValue: function(result, name, callback)
+    {
+        // Note that it is not that simple with accessor properties. The proto object may contain the property,
+        // however not the proto object must be 'this', but the main object. 
+        var setPropertyValueFunction = "function(a, b) { this[a] = b; }";
+
+        // Special case for NaN, Infinity and -Infinity
+        if (result.type === "number" && typeof result.value !== "number")
+            setPropertyValueFunction = "function(a) { this[a] = " + result.description + "; }";
+
+        delete result.description; // Optimize on traffic.
+        RuntimeAgent.callFunctionOn(this._objectId, setPropertyValueFunction, [{ value:name }, result], true, undefined, undefined, propertySetCallback.bind(this));
 
         /**
          * @param {?Protocol.Error} error
@@ -271,6 +299,42 @@ WebInspector.RemoteObject.prototype = {
         {
             if (error || wasThrown) {
                 callback(error || result.description);
+                return;
+            }
+            callback();
+        }
+    },
+
+    /**
+     * @param {WebInspector.RemoteObject} result
+     * @param {string} name
+     * @param {function(string=)} callback
+     */
+    _setDeclarativeVariableValue: function(result, name, callback)
+    {
+        var newValue;
+        
+        switch (result.type) {
+            case "undefined":
+                newValue = {};
+                break;
+            case "object":
+            case "function":
+                newValue = { objectId: result.objectId };
+                break;
+            default:
+                newValue = { value: result.value };
+        }
+        
+        DebuggerAgent.setVariableValue(this._scopeRef.number, name, newValue, this._scopeRef.callFrameId, this._scopeRef.functionId, setVariableValueCallback.bind(this));
+
+        /**
+         * @param {?Protocol.Error} error
+         */
+        function setVariableValueCallback(error)
+        {
+            if (error) {
+                callback(error);
                 return;
             }
             callback();
@@ -361,6 +425,20 @@ WebInspector.RemoteObject.prototype = {
             return 0;
         return parseInt(matches[1], 10);
     }
+}
+
+/**
+ * Either callFrameId or functionId (exactly one) must be defined.
+ * @constructor
+ * @param {number} number
+ * @param {string=} callFrameId
+ * @param {string=} functionId
+ */
+WebInspector.ScopeRef = function(number, callFrameId, functionId)
+{
+    this.number = number;
+    this.callFrameId = callFrameId;
+    this.functionId = functionId;
 }
 
 /**

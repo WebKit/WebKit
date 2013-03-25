@@ -1,0 +1,73 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script>
+
+function slave(x)
+{
+    var y = 20;
+    debugger;
+}
+
+function testFunction()
+{
+    var localObject = { a: 310 };
+    slave(4000);
+}
+
+var test = function()
+{
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {
+        InspectorTest.runTestFunctionAndWaitUntilPaused(step2);
+    }
+
+    function step2(callFrames)
+    {
+        var pane = WebInspector.panels.scripts.sidebarPanes.callstack;
+        pane._placardSelected(pane.placards[1]);
+        InspectorTest.runAfterPendingDispatches(step3);
+    }
+
+    function step3()
+    {
+        InspectorTest.evaluateInConsole("localObject.a", step4);
+    }
+
+    function step4(result)
+    {
+        InspectorTest.addResult("Evaluated script on the calling frame: " + result);
+
+        var pane = WebInspector.panels.scripts.sidebarPanes.scopechain;
+        var localsSection = pane._sections[0];
+        localsSection.object.setPropertyValue("localObject", "({ a: -290})", step5);
+    }
+
+    function step5(error)
+    {
+        if (error)
+            InspectorTest.addResult("Set property value error: " + error);
+
+        InspectorTest.evaluateInConsole("localObject.a", step6);
+    }
+
+    function step6(result)
+    {
+        InspectorTest.addResult("Evaluated script on the calling frame (after value modification): " + result);
+        InspectorTest.completeDebuggerTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that modifying local variables works fine.
+</p>
+
+</body>
+</html>

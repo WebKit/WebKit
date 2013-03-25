@@ -69,7 +69,8 @@ WebInspector.ScopeChainSidebarPane.prototype = {
             var subtitle = scope.object.description;
             var emptyPlaceholder = null;
             var extraProperties = null;
-
+            var declarativeScope;
+            
             switch (scope.type) {
                 case "local":
                     foundLocalScope = true;
@@ -87,28 +88,40 @@ WebInspector.ScopeChainSidebarPane.prototype = {
                             extraProperties.push(new WebInspector.RemoteObjectProperty("<exception>", WebInspector.RemoteObject.fromPayload(exceptionObject)));
                         }
                     }
+                    declarativeScope = true;
                     break;
                 case "closure":
                     title = WebInspector.UIString("Closure");
                     emptyPlaceholder = WebInspector.UIString("No Variables");
                     subtitle = null;
+                    declarativeScope = true;
                     break;
                 case "catch":
                     title = WebInspector.UIString("Catch");
                     subtitle = null;
+                    declarativeScope = true;
                     break;
                 case "with":
                     title = WebInspector.UIString("With Block");
+                    declarativeScope = false;
                     break;
                 case "global":
                     title = WebInspector.UIString("Global");
+                    declarativeScope = false;
                     break;
             }
 
             if (!title || title === subtitle)
                 subtitle = null;
+            
+            var scopeRef;
+            if (declarativeScope)
+                scopeRef = new WebInspector.ScopeRef(i, callFrame.id, undefined);
+            else
+                scopeRef = undefined;
+            
 
-            var section = new WebInspector.ObjectPropertiesSection(WebInspector.RemoteObject.fromPayload(scope.object), title, subtitle, emptyPlaceholder, true, extraProperties, WebInspector.ScopeVariableTreeElement);
+            var section = new WebInspector.ObjectPropertiesSection(WebInspector.RemoteObject.fromScopePayload(scope.object, scopeRef), title, subtitle, emptyPlaceholder, true, extraProperties, WebInspector.ScopeVariableTreeElement);
             section.editInSelectedCallFrameWhenPaused = true;
             section.pane = this;
 

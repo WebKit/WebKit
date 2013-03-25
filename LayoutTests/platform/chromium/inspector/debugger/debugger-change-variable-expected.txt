@@ -1,0 +1,10 @@
+Tests that modifying local variables works fine.
+
+Debugger was enabled.
+Set timer for test function.
+Script execution paused.
+Evaluated script on the calling frame: 310
+Evaluated script on the calling frame (after value modification): -290
+Script execution resumed.
+Debugger was disabled.
+

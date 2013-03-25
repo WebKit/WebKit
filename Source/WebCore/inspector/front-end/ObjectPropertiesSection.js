@@ -554,8 +554,14 @@ WebInspector.FunctionScopeMainTreeElement.prototype = {
                         console.error("Unknown scope type: " + scope.type);
                         continue;
                 }
+                
+                var scopeRef;
+                if (isTrueObject)
+                    scopeRef = undefined;
+                else 
+                    scopeRef = new WebInspector.ScopeRef(i, undefined, this._remoteObject.objectId);
 
-                var remoteObject = WebInspector.RemoteObject.fromPayload(scope.object);
+                var remoteObject = WebInspector.RemoteObject.fromScopePayload(scope.object, scopeRef);
                 if (isTrueObject) {
                     var property = WebInspector.RemoteObjectProperty.fromScopeValue(title, remoteObject);
                     property.parentObject = null;

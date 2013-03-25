@@ -706,6 +706,14 @@ WebInspector.DebuggerModel.CallFrame.prototype = {
     },
 
     /**
+     * @return {string}
+     */
+    get id()
+    {
+        return this._payload.callFrameId;
+    },
+
+    /**
      * @return {Array.<DebuggerAgent.Scope>}
      */
     get scopeChain()
