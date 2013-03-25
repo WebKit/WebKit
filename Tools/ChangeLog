@@ -1,3 +1,10 @@
+2013-03-25  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Enable WinEWS tests again.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (WinEWS):
+
 2013-03-25  Dominik Röttsches  <dominik.rottsches@intel.com>
 
         [HarfBuzz] ICU detection fix in HarfBuzz obsoletes our workaround
