@@ -1,3 +1,19 @@
+2013-03-25  Dominik Röttsches  <dominik.rottsches@intel.com>
+
+        [HarfBuzz] ICU detection fix in HarfBuzz obsoletes our workaround
+        https://bugs.webkit.org/show_bug.cgi?id=112166
+
+        HarfBuzz 0.9.14 merged my patch for icu detection without
+        pkg-config files, as needed by for example Ubuntu 12.04.
+        This obsoletes our local workaround. Removed it for GTK and EFL.
+
+        Reviewed by Martin Robinson.
+
+        * efl/jhbuild.modules: Patch reference removed, version bumped to 0.9.14.
+        * efl/patches/harfbuzz-icu-detection-fix.patch: Removed.
+        * gtk/jhbuild.modules: Patch reference removed, version bumped to 0.9.14.
+        * gtk/patches/harfbuzz-icu-detection-fix.patch: Removed.
+
 2013-03-22  Kiran Muppala  <cmuppala@apple.com>
 
         Unreviewed.  Move self from contributor to committer list.

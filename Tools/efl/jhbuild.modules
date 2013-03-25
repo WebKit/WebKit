@@ -162,12 +162,11 @@
   </autotools>
 
  <autotools id="harfbuzz" autogen-sh="configure">
-   <branch module="software/harfbuzz/release/harfbuzz-0.9.7.tar.bz2" version="0.9.7"
-           checkoutdir="harfbuzz-0.9.7"
+   <branch module="software/harfbuzz/release/harfbuzz-0.9.14.tar.bz2" version="0.9.14"
+           checkoutdir="harfbuzz-0.9.14"
            repo="freedesktop.org"
-           hash="sha256:bd2999859f8828461fedae23e4af52d926ac32a73245f03ae2d2065205e9cf25"
-           md5sum="db5382728a912352633d3be2e2a1d988">
-     <patch file="harfbuzz-icu-detection-fix.patch" strip="1" />
+           hash="sha256:d07c0ffdbbbfdfbb6c65e73fe9c76466e87dbf04b094cbd0abf5fd7d571a4004"
+           md5sum="7e1990b79060e98e2d31f677a0ac9eed">
    </branch>
  </autotools>
 
