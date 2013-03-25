@@ -224,11 +224,6 @@ Frame::~Frame()
     HashSet<FrameDestructionObserver*>::iterator stop = m_destructionObservers.end();
     for (HashSet<FrameDestructionObserver*>::iterator it = m_destructionObservers.begin(); it != stop; ++it)
         (*it)->frameDestroyed();
-
-    if (m_view) {
-        m_view->hide();
-        m_view->clearFrame();
-    }
 }
 
 bool Frame::inScope(TreeScope* scope) const
