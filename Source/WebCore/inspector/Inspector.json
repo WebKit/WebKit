@@ -404,13 +404,11 @@
                     { "name": "latitude", "type": "number", "optional": true, "description": "Mock longitude"},
                     { "name": "longitude", "type": "number", "optional": true, "description": "Mock latitude"},
                     { "name": "accuracy", "type": "number", "optional": true, "description": "Mock accuracy"}
-                ],
-                "hidden": true
+                ]
             },
             {
                 "name": "clearGeolocationOverride",
-                "description": "Clears the overriden Geolocation Position and Error.",
-                "hidden": true
+                "description": "Clears the overriden Geolocation Position and Error."
             },
             {
                 "name": "canOverrideGeolocation",
@@ -480,8 +478,7 @@
                 "description": "Capture page screenshot.",
                 "returns": [
                     { "name": "data", "type": "string", "description": "Base64-encoded image data (PNG)." }
-                ],
-                "hidden": true
+                ]
             },
             {
                 "name": "handleJavaScriptDialog",
@@ -663,8 +660,7 @@
             {
                 "id": "ExecutionContextId",
                 "type": "integer",
-                "description": "Id of an execution context.",
-                "hidden": true
+                "description": "Id of an execution context."
             },
             {
                 "id": "ExecutionContextDescription",
@@ -672,11 +668,10 @@
                 "description": "Description of an isolated world.",
                 "properties": [
                     { "name": "id", "$ref": "ExecutionContextId", "description": "Unique id of the execution context. It can be used to specify in which execution context script evaluation should be performed." },
-                    { "name": "isPageContext", "type": "boolean", "description": "True if this is a context where inpspected web page scripts run. False if it is a content script isolated context." },
-                    { "name": "name", "type": "string", "description": "Human readable name describing given context." },
+                    { "name": "isPageContext", "type": "boolean", "description": "True if this is a context where inpspected web page scripts run. False if it is a content script isolated context.", "hidden": true },
+                    { "name": "name", "type": "string", "description": "Human readable name describing given context.", "hidden": true},
                     { "name": "frameId", "$ref": "Network.FrameId", "description": "Id of the owning frame." }
-                ],
-                "hidden": true
+                ]
             }
 
         ],
@@ -688,7 +683,7 @@
                     { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." },
                     { "name": "includeCommandLineAPI", "type": "boolean", "optional": true, "description": "Determines whether Command Line API should be available during the evaluation.", "hidden": true },
                     { "name": "doNotPauseOnExceptionsAndMuteConsole", "type": "boolean", "optional": true, "description": "Specifies whether evaluation should stop on exceptions and mute console. Overrides setPauseOnException state.", "hidden": true },
-                    { "name": "contextId", "$ref": "Runtime.ExecutionContextId", "optional": true, "description": "Specifies in which isolated context to perform evaluation. Each content script lives in an isolated context and this parameter may be used to specify one of those contexts. If the parameter is omitted or 0 the evaluation will be performed in the context of the inspected page.", "hidden": true },
+                    { "name": "contextId", "$ref": "Runtime.ExecutionContextId", "optional": true, "description": "Specifies in which isolated context to perform evaluation. Each content script lives in an isolated context and this parameter may be used to specify one of those contexts. If the parameter is omitted or 0 the evaluation will be performed in the context of the inspected page." },
                     { "name": "returnByValue", "type": "boolean", "optional": true, "description": "Whether the result is expected to be a JSON object that should be sent by value." },
                     { "name": "generatePreview", "type": "boolean", "optional": true, "hidden": true, "description": "Whether preview should be generated for the result." }
                 ],
@@ -747,7 +742,6 @@
             },
             {
                 "name": "enable",
-                "hidden": true,
                 "description": "Enables reporting of execution contexts creation by means of <code>executionContextCreated</code> event. When the reporting gets enabled the event will be sent immediately for each existing execution context."
             },
             {
@@ -762,7 +756,6 @@
                 "parameters": [
                     { "name": "context", "$ref": "ExecutionContextDescription", "description": "A newly created execution contex." }
                 ],
-                "hidden": true,
                 "description": "Issued when new execution context is created."
             }
         ]
@@ -3615,7 +3608,6 @@
     },
     {
         "domain": "Input",
-        "hidden": true,
         "types": [],
         "commands": [
             {
