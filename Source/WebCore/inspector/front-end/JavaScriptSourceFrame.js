@@ -552,6 +552,9 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     toggleBreakpointOnCurrentLine: function()
     {
+        if (this._uiSourceCode.isDirty() && !this._supportsEnabledBreakpointsWhileEditing())
+            return;
+
         var selection = this.textEditor.selection();
         if (!selection)
             return;
