@@ -546,7 +546,6 @@ WebInspector.ProfilesPanel.prototype = {
         this.searchCanceled();
 
         this._profileGroups = {};
-        this._profileGroupsForLinks = {};
         this._profilesWereRequested = false;
         this.recordButton.toggled = false;
         if (this._selectedProfileType)
