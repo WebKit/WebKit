@@ -1,3 +1,13 @@
+2013-03-25  Roger Fong  <roger_fong@apple.com>
+
+        No longer run bindings tests on WinEWS bots which are causing hangs on the bots.
+        Re-enable WinEWS tests.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        (WinPort.run_bindings_tests_command):
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (WinEWS):
+
 2013-03-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r146793.

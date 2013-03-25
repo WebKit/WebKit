@@ -137,6 +137,9 @@ class MacWK2Port(DeprecatedPort):
 class WinPort(DeprecatedPort):
     port_flag_name = "win"
 
+    def run_bindings_tests_command(self):
+        return None
+
 
 class GtkPort(DeprecatedPort):
     port_flag_name = "gtk"
