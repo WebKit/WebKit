@@ -9,7 +9,6 @@
           (position 642.00 58.00)
           (bounds 100.00 100.00)
           (contentsOpaque 1)
-          (drawsContent 1)
         )
       )
     )

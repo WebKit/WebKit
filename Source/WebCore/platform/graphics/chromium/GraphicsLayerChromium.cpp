@@ -63,12 +63,14 @@
 #include <public/Platform.h>
 #include <public/WebAnimation.h>
 #include <public/WebCompositorSupport.h>
+#include <public/WebContentLayer.h>
 #include <public/WebFilterOperation.h>
 #include <public/WebFilterOperations.h>
 #include <public/WebFloatPoint.h>
 #include <public/WebFloatRect.h>
 #include <public/WebImageLayer.h>
 #include <public/WebSize.h>
+#include <public/WebSolidColorLayer.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
 #include <wtf/MemoryInstrumentationHashMap.h>
@@ -511,6 +513,40 @@ void GraphicsLayerChromium::setContentsToImage(Image* image)
 
     if (childrenChanged)
         updateChildList();
+}
+
+void GraphicsLayerChromium::setContentsToSolidColor(const Color& color)
+{
+    if (color == m_contentsSolidColor)
+        return;
+
+    bool childrenChanged = false;
+
+    m_contentsSolidColor = color;
+
+    if (color.isValid()) {
+        if (!m_contentsSolidColorLayer) {
+            m_contentsSolidColorLayer = adoptPtr(Platform::current()->compositorSupport()->createSolidColorLayer());
+            registerContentsLayer(m_contentsSolidColorLayer->layer());
+
+            setupContentsLayer(m_contentsSolidColorLayer->layer());
+            childrenChanged = true;
+        }
+
+        m_contentsSolidColorLayer->setBackgroundColor(color.rgb());
+        updateContentsRect();
+    } else {
+        if (m_contentsSolidColorLayer) {
+            childrenChanged = true;
+            unregisterContentsLayer(m_contentsSolidColorLayer->layer());
+            m_contentsSolidColorLayer.clear();
+        }
+        m_contentsLayer = 0;
+    }
+
+    if (childrenChanged)
+        updateChildList();
+
 }
 
 static HashSet<int>* s_registeredLayerSet;

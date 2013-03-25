@@ -37,6 +37,7 @@
 #include <public/WebCompositorSupport.h>
 #include <public/WebFloatAnimationCurve.h>
 #include <public/WebGraphicsContext3D.h>
+#include <public/WebLayer.h>
 #include <public/WebLayerTreeView.h>
 #include <public/WebUnitTestSupport.h>
 #include <wtf/PassOwnPtr.h>

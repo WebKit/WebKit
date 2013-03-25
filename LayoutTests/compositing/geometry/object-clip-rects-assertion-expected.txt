@@ -1,3 +1,7 @@
+argv[0] src ../resources/video.mp4
+argv[1] autoplay false
+argv[2] height 100
+argv[3] width 100
 This testcase should not fire an assertion related to clip rects.
 
 

@@ -18,13 +18,11 @@ This is some text
               (position 51.00 101.00)
               (bounds 200.00 200.00)
               (contentsOpaque 1)
-              (drawsContent 1)
             )
             (GraphicsLayer
               (position 51.00 4701.00)
               (bounds 200.00 200.00)
               (contentsOpaque 1)
-              (drawsContent 1)
             )
           )
         )

@@ -20,13 +20,11 @@ Second dump layer tree:
               (position 31.00 41.00)
               (bounds 250.00 220.00)
               (contentsOpaque 1)
-              (drawsContent 1)
               (children 1
                 (GraphicsLayer
                   (position 10.00 10.00)
                   (bounds 200.00 200.00)
                   (contentsOpaque 1)
-                  (drawsContent 1)
                   (transform [0.87 0.50 0.00 0.00] [-0.50 0.87 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
                   (children 1
                     (GraphicsLayer

@@ -27,7 +27,6 @@ This layer should not have backing store.
                           (position 30.00 50.00)
                           (bounds 100.00 100.00)
                           (contentsOpaque 1)
-                          (drawsContent 1)
                         )
                       )
                     )

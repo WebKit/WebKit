@@ -50,7 +50,6 @@
                                                           (position 18.00 10.00)
                                                           (bounds 210.00 210.00)
                                                           (contentsOpaque 1)
-                                                          (drawsContent 1)
                                                         )
                                                       )
                                                     )
@@ -120,7 +119,6 @@
                                                           (position 18.00 10.00)
                                                           (bounds 210.00 210.00)
                                                           (contentsOpaque 1)
-                                                          (drawsContent 1)
                                                         )
                                                       )
                                                     )
@@ -149,7 +147,6 @@
         (GraphicsLayer
           (position 0.00 100.00)
           (bounds 785.00 120.00)
-          (drawsContent 1)
         )
       )
     )

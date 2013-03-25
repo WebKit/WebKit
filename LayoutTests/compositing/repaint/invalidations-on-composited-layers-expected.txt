@@ -14,23 +14,11 @@
           (position 8.00 42.00)
           (bounds 400.00 400.00)
           (contentsOpaque 1)
-          (drawsContent 1)
-          (repaint rects
-            (rect 0.00 0.00 400.00 400.00)
-            (rect 0.00 0.00 400.00 400.00)
-            (rect 0.00 0.00 400.00 400.00)
-          )
           (children 1
             (GraphicsLayer
               (position 50.00 50.00)
               (bounds 75.00 75.00)
               (contentsOpaque 1)
-              (drawsContent 1)
-              (repaint rects
-                (rect 0.00 0.00 75.00 75.00)
-                (rect 0.00 0.00 75.00 75.00)
-                (rect 0.00 0.00 75.00 75.00)
-              )
             )
           )
         )

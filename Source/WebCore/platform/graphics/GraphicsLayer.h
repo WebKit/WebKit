@@ -424,7 +424,7 @@ public:
 
     static bool supportsBackgroundColorContent()
     {
-#if USE(CA) || USE(TEXTURE_MAPPER)
+#if USE(CA) || USE(TEXTURE_MAPPER) || PLATFORM(CHROMIUM)
         return true;
 #else
         return false;

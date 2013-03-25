@@ -29,6 +29,7 @@
 #include "Image.h"
 #include "NativeImageSkia.h"
 #include <gtest/gtest.h>
+#include <public/WebImageLayer.h>
 #include <wtf/PassOwnPtr.h>
 
 using namespace WebCore;

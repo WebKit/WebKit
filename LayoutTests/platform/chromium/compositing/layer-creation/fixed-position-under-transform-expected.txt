@@ -17,7 +17,6 @@
           (position 0.00 1000.00)
           (bounds 500.00 500.00)
           (contentsOpaque 1)
-          (drawsContent 1)
         )
       )
     )
