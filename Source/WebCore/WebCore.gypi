@@ -4177,6 +4177,7 @@
             'platform/graphics/filters/skia/FEColorMatrixSkia.cpp',
             'platform/graphics/filters/skia/FEComponentTransferSkia.cpp',
             'platform/graphics/filters/skia/FEConvolveMatrixSkia.cpp',
+            'platform/graphics/filters/skia/FEDisplacementMapSkia.cpp',
             'platform/graphics/filters/skia/FEGaussianBlurSkia.cpp',
             'platform/graphics/filters/skia/FEMorphologySkia.cpp',
             'platform/graphics/filters/skia/FELightingSkia.cpp',

@@ -34,6 +34,9 @@
     <filter id="convolvematrix">
       <feConvolveMatrix order="3 3" kernelMatrix="1 1 1   1 -7 1   1 1 1" bias ="0.3"/>
     </filter>
+    <filter id="displacement">
+      <feDisplacementMap scale="10" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
   </defs>
 </svg>
 <style>
@@ -51,3 +54,4 @@ img {
 <img style="-webkit-filter: url(#lighting); filter: url(#lighting);" src="resources/reference.png">
 <img style="-webkit-filter: url(#offset); filter: url(#offset);" src="resources/reference.png">
 <img style="-webkit-filter: url(#convolvematrix); filter: url(#convolvematrix);" src="resources/reference.png">
+<img style="-webkit-filter: url(#displacement); filter: url(#displacement);" src="resources/reference.png">
