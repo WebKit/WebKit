@@ -32,12 +32,18 @@
 # Tests that subsequent protocol changes are not breaking backwards compatibility.
 # Following violations are reported:
 #
+#   - Domain has been removed
 #   - Command has been removed
-#   - Required command parameter was added (could be a part of referenced type)
-#   - Required response parameter was removed
+#   - Required command parameter was added or changed from optional
+#   - Required response parameter was removed or changed to optional
 #   - Event has been removed
-#   - Required event parameter was removed (could be a part of referenced type)
+#   - Required event parameter was removed or changed to optional
+#   - Parameter type has changed.
+#   
+# For the parameters with composite types the above checks are also applied
+# recursively to every property of the type.
 #
+# Adding --show_changes to the command line prints out a list of valid public API changes.
 
 import os.path
 import re
@@ -55,11 +61,17 @@ def named_list_to_map(container, name, key):
         return list_to_map(container[name], key)
     return {}
 
-def print_errors(domain_name, method_name, local_errors, errors):
-    for error in local_errors:
-        errors.append("%s.%s: %s" % (domain_name, method_name, error))
+def removed(reverse):
+    if reverse:
+        return "added"
+    return "removed"
 
-def compare_schemas(schema_1, schema_2):
+def required(reverse):
+    if reverse:
+        return "optional"
+    return "required"
+
+def compare_schemas(schema_1, schema_2, reverse):
     errors = []
     types_1 = normalize_types_in_schema(schema_1)
     types_2 = normalize_types_in_schema(schema_2)
@@ -70,83 +82,88 @@ def compare_schemas(schema_1, schema_2):
     for name in domains_by_name_1:
         domain_1 = domains_by_name_1[name]
         if not name in domains_by_name_2:
-            errors.append("Domain %s is missing\n")
+            errors.append("%s: domain has been %s" % (name, removed(reverse)))
             continue
-        compare_domains(domain_1, domains_by_name_2[name], types_1, types_2, errors)
+        compare_domains(domain_1, domains_by_name_2[name], types_1, types_2, errors, reverse)
     return errors
 
-def compare_domains(domain_1, domain_2, types_map_1, types_map_2, errors):
+def compare_domains(domain_1, domain_2, types_map_1, types_map_2, errors, reverse):
     domain_name = domain_1["domain"]
     commands_1 = named_list_to_map(domain_1, "commands", "name")
     commands_2 = named_list_to_map(domain_2, "commands", "name")
     for name in commands_1:
         command_1 = commands_1[name]
         if not name in commands_2:
-            errors.append("%s.%s: command is missing" % (domain_1["domain"], name))
+            errors.append("%s.%s: command has been %s" % (domain_1["domain"], name, removed(reverse)))
             continue
-        compare_commands(domain_name, command_1, commands_2[name], types_map_1, types_map_2, errors)
+        compare_commands(domain_name, command_1, commands_2[name], types_map_1, types_map_2, errors, reverse)
 
     events_1 = named_list_to_map(domain_1, "events", "name")
     events_2 = named_list_to_map(domain_2, "events", "name")
     for name in events_1:
         event_1 = events_1[name]
         if not name in events_2:
-            errors.append("%s.%s: event is missing" % (domain_1["domain"], name))
+            errors.append("%s.%s: event has been %s" % (domain_1["domain"], name, removed(reverse)))
             continue
-        compare_events(domain_name, event_1, events_2[name], types_map_1, types_map_2, errors)
+        compare_events(domain_name, event_1, events_2[name], types_map_1, types_map_2, errors, reverse)
 
-def compare_commands(domain_name, command_1, command_2, types_map_1, types_map_2, errors):
-    command_errors = []
+def compare_commands(domain_name, command_1, command_2, types_map_1, types_map_2, errors, reverse):
+    context = domain_name + "." + command_1["name"]
+
     params_1 = named_list_to_map(command_1, "parameters", "name")
     params_2 = named_list_to_map(command_2, "parameters", "name")
-    # Note the reversed order: we allow removing parameters.
-    compare_params_list(params_2, params_1, types_map_2, types_map_1, 0, command_errors)
+    # Note the reversed order: we allow removing but forbid adding parameters.
+    compare_params_list(context, "parameter", params_2, params_1, types_map_2, types_map_1, 0, errors, not reverse)
 
     returns_1 = named_list_to_map(command_1, "returns", "name")
     returns_2 = named_list_to_map(command_2, "returns", "name")
-    compare_params_list(returns_1, returns_2, types_map_1, types_map_2, 0, command_errors)
-    print_errors(domain_name, command_1["name"], command_errors, errors)
+    compare_params_list(context, "response parameter", returns_1, returns_2, types_map_1, types_map_2, 0, errors, reverse)
 
-def compare_events(domain_name, event_1, event_2, types_map_1, types_map_2, errors):
-    event_errors = []
+def compare_events(domain_name, event_1, event_2, types_map_1, types_map_2, errors, reverse):
+    context = domain_name + "." + event_1["name"]
     params_1 = named_list_to_map(event_1, "parameters", "name")
     params_2 = named_list_to_map(event_2, "parameters", "name")
-    compare_params_list(params_1, params_2, types_map_1, types_map_2, 0, event_errors)
-    print_errors(domain_name, event_1["name"], event_errors, errors)
+    compare_params_list(context, "parameter", params_1, params_2, types_map_1, types_map_2, 0, errors, reverse)
 
-def compare_params_list(params_1, params_2, types_map_1, types_map_2, depth, errors):
+def compare_params_list(context, kind, params_1, params_2, types_map_1, types_map_2, depth, errors, reverse):
     for name in params_1:
         param_1 = params_1[name]
         if not name in params_2:
             if not "optional" in param_1:
-                errors.append("required parameter is missing: %s" % name)
+                errors.append("%s.%s: required %s has been %s" % (context, name, kind, removed(reverse)))
             continue
 
         param_2 = params_2[name]
         if param_2 and "optional" in param_2 and not "optional" in param_1:
-            errors.append("required parameter is now optional: %s" % name)
-            continue;
+            errors.append("%s.%s: %s %s is now %s" % (context, name, required(reverse), kind, required(not reverse)))
+            continue
         type_1 = extract_type(param_1, types_map_1, errors)
         type_2 = extract_type(param_2, types_map_2, errors)
-        compare_types("param " + name, type_1, type_2, types_map_1, types_map_2, depth, errors)
+        compare_types(context + "." + name, kind, type_1, type_2, types_map_1, types_map_2, depth, errors, reverse)
 
-def compare_types(context, type_1, type_2, types_map_1, types_map_2, depth, errors):
+def compare_types(context, kind, type_1, type_2, types_map_1, types_map_2, depth, errors, reverse):
     if depth > 10:
-        return;
+        return
 
     base_type_1 = type_1["type"]
     base_type_2 = type_2["type"]
 
     if base_type_1 != base_type_2:
-        errors.append("%s base type mismatch, '%s' vs '%s'" % (context, base_type_1, base_type_2))
+        errors.append("%s: %s base type mismatch, '%s' vs '%s'" % (context, kind, base_type_1, base_type_2))
     elif base_type_1 == "object":
         params_1 = named_list_to_map(type_1, "properties", "name")
         params_2 = named_list_to_map(type_2, "properties", "name")
-        compare_params_list(params_1, params_2, types_map_1, types_map_2, depth + 1, errors)
+        # If both parameters have the same named type use it in the context.
+        if "id" in type_1 and "id" in type_2 and type_1["id"] == type_2["id"]:
+            type_name = type_1["id"]
+        else:
+            type_name = "<object>"
+        context += " %s->%s" % (kind, type_name)
+        compare_params_list(context, "property", params_1, params_2, types_map_1, types_map_2, depth + 1, errors, reverse)
     elif base_type_1 == "array":
         item_type_1 = extract_type(type_1["items"], types_map_1, errors)
         item_type_2 = extract_type(type_2["items"], types_map_2, errors)
-        compare_types(context, item_type_1, item_type_2, types_map_1, types_map_2, depth + 1, errors)
+        compare_types(context, kind, item_type_1, item_type_2, types_map_1, types_map_2, depth + 1, errors, reverse)
 
 def extract_type(typed_object, types_map, errors):
     if "type" in typed_object:
@@ -192,7 +209,8 @@ def load_json(filename):
     return eval(json_string)
 
 def self_test():
-    schema_1 = [
+    def create_test_schema_1():
+        return [
         {
             "domain": "Network",
             "types": [
@@ -211,26 +229,31 @@ def self_test():
                         { "name": "url", "type": "string" },
                         { "name": "method", "type": "string" },
                         { "name": "headers", "$ref": "Headers" },
-                        { "name": "postData", "type": "string" }
+                        { "name": "becameOptionalField", "type": "string" },
+                        { "name": "removedField", "type": "string" },
                     ]
                 }
             ],
             "commands": [
                 {
-                    "name": "setUserAgentOverride",
-                    "parameters": [
-                        { "name": "userAgent", "type": "string" }
-                    ]
+                    "name": "removedCommand",
                 },
                 {
                     "name": "setExtraHTTPHeaders",
                     "parameters": [
-                        { "name": "headers", "$ref": "Headers" }
+                        { "name": "headers", "$ref": "Headers" },
+                        { "name": "mismatched", "type": "string" },
+                        { "name": "becameOptional", "$ref": "Headers" },
+                        { "name": "removedRequired", "$ref": "Headers" },
+                        { "name": "becameRequired", "$ref": "Headers", "optional": True },
+                        { "name": "removedOptional", "$ref": "Headers", "optional": True },
                     ],
                     "returns": [
                         { "name": "mimeType", "type": "string" },
-                        { "name": "nonOptionalMimeType", "type": "string" },
-                        { "name": "optionalMimeType", "type": "string", "optional": True }
+                        { "name": "becameOptional", "type": "string" },
+                        { "name": "removedRequired", "type": "string" },
+                        { "name": "becameRequired", "type": "string", "optional": True },
+                        { "name": "removedOptional", "type": "string", "optional": True },
                     ]
                 }
             ],
@@ -239,22 +262,29 @@ def self_test():
                     "name": "requestWillBeSent",
                     "parameters": [
                         { "name": "frameId", "type": "string", "hidden": True },
-                        { "name": "documentURL", "type": "string" },
                         { "name": "request", "$ref": "Request" },
-                    ]
+                        { "name": "becameOptional", "type": "string" },
+                        { "name": "removedRequired", "type": "string" },
+                        { "name": "becameRequired", "type": "string", "optional": True },
+                        { "name": "removedOptional", "type": "string", "optional": True },
+                        ]
                 },
                 {
-                    "name": "loadingFailed",
+                    "name": "removedEvent",
                     "parameters": [
                         { "name": "errorText", "type": "string" },
                         { "name": "canceled", "type": "boolean", "optional": True }
                     ]
                 }
             ]
+        },
+        {
+            "domain":  "removedDomain"
         }
     ]
 
-    schema_2 = [
+    def create_test_schema_2():
+        return [
         {
             "domain": "Network",
             "types": [
@@ -269,17 +299,30 @@ def self_test():
                         { "name": "url", "type": "string" },
                         { "name": "method", "type": "string" },
                         { "name": "headers", "type": "object" },
+                        { "name": "becameOptionalField", "type": "string", "optional": True },
                     ]
                 }
             ],
             "commands": [
                 {
+                    "name": "addedCommand",
+                },
+                {
                     "name": "setExtraHTTPHeaders",
                     "parameters": [
                         { "name": "headers", "type": "object" },
+                        { "name": "mismatched", "type": "object" },
+                        { "name": "becameOptional", "type": "object" , "optional": True },
+                        { "name": "addedRequired", "type": "object" },
+                        { "name": "becameRequired", "type": "object" },
+                        { "name": "addedOptional", "type": "object", "optional": True  },
                     ],
                     "returns": [
-                        { "name": "nonOptionalMimeType", "type": "string", "optional": True }
+                        { "name": "mimeType", "type": "string" },
+                        { "name": "becameOptional", "type": "string", "optional": True },
+                        { "name": "addedRequired", "type": "string"},
+                        { "name": "becameRequired", "type": "string" },
+                        { "name": "addedOptional", "type": "string", "optional": True  },
                     ]
                 }
             ],
@@ -287,25 +330,67 @@ def self_test():
                 {
                     "name": "requestWillBeSent",
                     "parameters": [
-                        { "name": "request", "$ref": "Request" }
+                        { "name": "request", "$ref": "Request" },
+                        { "name": "becameOptional", "type": "string", "optional": True },
+                        { "name": "addedRequired", "type": "string"},
+                        { "name": "becameRequired", "type": "string" },
+                        { "name": "addedOptional", "type": "string", "optional": True  },
                     ]
+                },
+                {
+                    "name": "addedEvent"
                 }
             ]
+        },
+        {
+            "domain": "addedDomain"
         }
     ]
 
-    errors = compare_schemas(schema_1, schema_2)
-    golden_errors = [
-        "Network.setUserAgentOverride: command is missing",
-        "Network.setExtraHTTPHeaders: required parameter is missing: mimeType",
-        "Network.setExtraHTTPHeaders: required parameter is now optional: nonOptionalMimeType",
-        "Network.loadingFailed: event is missing",
-        "Network.requestWillBeSent: required parameter is missing: postData",
-        "Network.requestWillBeSent: required parameter is missing: documentURL" ]
-    for i in range(len(errors)):
-        if errors[i] not in golden_errors:
-            return False
-    return len(errors) is len(golden_errors)
+    expected_errors = [
+        "removedDomain: domain has been removed",
+        "Network.removedCommand: command has been removed",
+        "Network.removedEvent: event has been removed",
+        "Network.setExtraHTTPHeaders.mismatched: parameter base type mismatch, 'object' vs 'string'",
+        "Network.setExtraHTTPHeaders.addedRequired: required parameter has been added",
+        "Network.setExtraHTTPHeaders.becameRequired: optional parameter is now required",
+        "Network.setExtraHTTPHeaders.removedRequired: required response parameter has been removed",
+        "Network.setExtraHTTPHeaders.becameOptional: required response parameter is now optional",
+        "Network.requestWillBeSent.removedRequired: required parameter has been removed",
+        "Network.requestWillBeSent.becameOptional: required parameter is now optional",
+        "Network.requestWillBeSent.request parameter->Network.Request.removedField: required property has been removed",
+        "Network.requestWillBeSent.request parameter->Network.Request.becameOptionalField: required property is now optional",
+    ]
+
+    expected_errors_reverse = [
+       "addedDomain: domain has been added",
+       "Network.addedEvent: event has been added",
+       "Network.addedCommand: command has been added",
+       "Network.setExtraHTTPHeaders.mismatched: parameter base type mismatch, 'string' vs 'object'",
+       "Network.setExtraHTTPHeaders.removedRequired: required parameter has been removed",
+       "Network.setExtraHTTPHeaders.becameOptional: required parameter is now optional",
+       "Network.setExtraHTTPHeaders.addedRequired: required response parameter has been added",
+       "Network.setExtraHTTPHeaders.becameRequired: optional response parameter is now required",
+       "Network.requestWillBeSent.becameRequired: optional parameter is now required",
+       "Network.requestWillBeSent.addedRequired: required parameter has been added",
+    ]
+
+    def is_subset(subset, superset, message):
+        for i in range(len(subset)):
+            if subset[i] not in superset:
+                sys.stderr.write("%s error: %s\n" % (message, subset[i]))
+                return False
+        return True
+
+    def errors_match(expected, actual):
+        return (is_subset(actual, expected, "Unexpected") and
+                is_subset(expected, actual, "Missing"))
+
+    return (errors_match(expected_errors,
+                         compare_schemas(create_test_schema_1(), create_test_schema_2(), False)) and
+            errors_match(expected_errors_reverse,
+                         compare_schemas(create_test_schema_2(), create_test_schema_1(), True)))
+
 
 def main():
     if not self_test():
@@ -313,7 +398,7 @@ def main():
         return 1
 
     if len(sys.argv) < 4 or sys.argv[1] != "-o":
-        sys.stderr.write("Usage: %s -o OUTPUT_FILE INPUT_FILE\n" % sys.argv[0])
+        sys.stderr.write("Usage: %s -o OUTPUT_FILE INPUT_FILE [--show-changes]\n" % sys.argv[0])
         return 1
 
     output_path = sys.argv[2]
@@ -326,15 +411,25 @@ def main():
     major = schema["version"]["major"]
     minor = schema["version"]["minor"]
     version = "%s.%s" % (major, minor)
-    version_file_name = os.path.normpath(dir_name + "/Inspector-" + version + ".json")
-    version_schema = load_json(version_file_name)
+    if len(dir_name) == 0:
+        dir_name = "."
+    baseline_path = os.path.normpath(dir_name + "/Inspector-" + version + ".json")
+    baseline_schema = load_json(baseline_path)
 
-    errors = compare_schemas(version_schema["domains"], schema["domains"])
+    errors = compare_schemas(baseline_schema["domains"], schema["domains"], False)
     if len(errors) > 0:
-        sys.stderr.write("  compatibility with %s: FAILED\n" % version)
+        sys.stderr.write("  Compatibility with %s: FAILED\n" % version)
         for error in errors:
             sys.stderr.write( "    %s\n" % error)
         return 1
+
+    if len(sys.argv) > 4 and sys.argv[4] == "--show-changes":
+        changes = compare_schemas(
+            load_json(input_path)["domains"], load_json(baseline_path)["domains"], True)
+        if len(changes) > 0:
+            print "  Public changes since %s:" % version
+            for change in changes:
+                print "    %s" % change
 
     output_file.write("""
 #ifndef InspectorProtocolVersion_h
