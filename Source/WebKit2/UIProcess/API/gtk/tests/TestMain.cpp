@@ -44,7 +44,7 @@ static void removeNonEmptyDirectory(const char* directoryPath)
     g_assert(directory);
     const char* fileName;
     while ((fileName = g_dir_read_name(directory))) {
-        GOwnPtr<char> filePath(g_build_filename(directoryPath, fileName, 0));
+        GOwnPtr<char> filePath(g_build_filename(directoryPath, fileName, NULL));
         g_unlink(filePath.get());
     }
     g_dir_close(directory);

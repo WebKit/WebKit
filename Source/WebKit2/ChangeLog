@@ -1,3 +1,13 @@
+2013-03-25  Dominique Leuenberger  <dimstar@opensuse.org>
+
+        E: webkitgtk3 missing-sentinel Source/[...]/TestMain.cpp:47 g_build_filename takes a NULL sentinel.
+        https://bugs.webkit.org/show_bug.cgi?id=113036
+
+        Reviewed by Martin Robinson.
+
+        * UIProcess/API/gtk/tests/TestMain.cpp:
+        (removeNonEmptyDirectory):
+
 2013-03-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add padding to all public class structs for future expansion without breaking ABI
