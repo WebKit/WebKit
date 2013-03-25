@@ -1,3 +1,84 @@
+2013-03-25  Julie Parent  <jparent@chromium.org>
+
+        Dashboard refactor: Move cross dashboard history related code into history.js.
+        https://bugs.webkit.org/show_bug.cgi?id=113104
+
+        Reviewed by Ojan Vafai.
+
+        All functions relating to cross dashboard behavior move from being
+        globals to methods on the history.History object. Names stay the same,
+        except many are made private, ones that should have been constants now
+        are, and the long standing TODO to change "currentState" to 
+        dashboardSpecificState is done.
+        
+        We now create a global history object in dashboard_base, as an 
+        intermediate measure.  Once the dashboard specific code is
+        added to history, each DB will need to create its own, and this
+        global will be eliminated.
+        
+        * TestResultServer/static-dashboards/aggregate_results.js:
+        (handleValidHashParameter):
+        (htmlForBuilder):
+        (rawValuesHTML):
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (parseDashboardSpecificParameters):
+        (defaultValue):
+        (currentBuilderGroupCategory):
+        (currentBuilderGroupName):
+        (handleLocationChange):
+        (expectationsMap):
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (generatePage):
+        (.switch.return):
+        (platformAndBuildType):
+        (individualTests):
+        (substringList):
+        (processMissingAndExtraExpectations):
+        (pathToFailureLog):
+        (showPopupForBuild):
+        (htmlForTestsWithExpectationsButNoFailures):
+        (shouldHideTest):
+        (isCrossBuilderView):
+        (tableHeaders):
+        (htmlForSingleTestRow):
+        (htmlForTableColumnHeader):
+        (generatePageForExpectationsUpdate):
+        (handleUpdate):
+        (nextUpdate):
+        (setUpdateIndex):
+        (htmlForIndividualTestOnAllBuildersWithResultsLinks):
+        (.appendExpectationsItem):
+        (loadExpectations):
+        (.dummyNode.onload):
+        (loadExpectationsLayoutTests):
+        (appendExpectations):
+        (htmlForNavBar):
+        (checkBoxToToggleState):
+        (linkHTMLToToggleState):
+        (generatePageForBuilder):
+        (isInvalidKeyForCrossBuilderView):
+        (handleQueryParameterChange):
+        (showLegend):
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        (resetGlobals):
+        (test):
+        * TestResultServer/static-dashboards/history.js:
+        (.):
+        * TestResultServer/static-dashboards/history_unittests.js:
+        * TestResultServer/static-dashboards/loader.js:
+        (.):
+        * TestResultServer/static-dashboards/loader_unittests.js:
+        * TestResultServer/static-dashboards/timeline_explorer.js:
+        (generatePage):
+        (initCurrentBuilderTestResults):
+        (selectBuild):
+        (showResultsDelta):
+        * TestResultServer/static-dashboards/treemap.js:
+        (generatePage):
+        (.switch.return):
+        (handleFocus):
+        * TestResultServer/static-dashboards/ui.js:
+
 2013-03-25  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Enable WinEWS tests again.

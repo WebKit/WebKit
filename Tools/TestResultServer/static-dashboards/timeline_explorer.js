@@ -38,15 +38,15 @@ var g_currentBuilderTestResults;
 function generatePage()
 {
     g_buildIndicesByTimestamp = {};
-    var results = g_resultsByBuilder[g_currentState.builder || currentBuilderGroup().defaultBuilder()];
+    var results = g_resultsByBuilder[g_history.dashboardSpecificState.builder || currentBuilderGroup().defaultBuilder()];
 
     for (var i = 0; i < results[FIXABLE_COUNTS_KEY].length; i++) {
         var buildDate = new Date(results[TIMESTAMPS_KEY][i] * 1000);
         g_buildIndicesByTimestamp[buildDate.getTime()] = i;
     }
 
-    if (g_currentState.buildTimestamp != -1 && g_currentState.buildTimestamp in g_buildIndicesByTimestamp) {
-        var newBuildIndex = g_buildIndicesByTimestamp[g_currentState.buildTimestamp];
+    if (g_history.dashboardSpecificState.buildTimestamp != -1 && g_history.dashboardSpecificState.buildTimestamp in g_buildIndicesByTimestamp) {
+        var newBuildIndex = g_buildIndicesByTimestamp[g_history.dashboardSpecificState.buildTimestamp];
 
         if (newBuildIndex == g_currentBuildIndex) {
             // This happens when selectBuild is called, which updates the UI
@@ -61,7 +61,7 @@ function generatePage()
     initCurrentBuilderTestResults();
 
     $('test-type-switcher').innerHTML = ui.html.testTypeSwitcher( false,
-        ui.html.checkbox('ignoreFlakyTests', 'Ignore flaky tests', g_currentState.ignoreFlakyTests, 'g_currentBuildIndex = -1')
+        ui.html.checkbox('ignoreFlakyTests', 'Ignore flaky tests', g_history.dashboardSpecificState.ignoreFlakyTests, 'g_currentBuildIndex = -1')
     );
 
     updateTimelineForBuilder();
@@ -70,7 +70,7 @@ function generatePage()
 function initCurrentBuilderTestResults()
 {
     var startTime = Date.now();
-    g_currentBuilderTestResults = _decompressResults(g_resultsByBuilder[g_currentState.builder || currentBuilderGroup().defaultBuilder()]);
+    g_currentBuilderTestResults = _decompressResults(g_resultsByBuilder[g_history.dashboardSpecificState.builder || currentBuilderGroup().defaultBuilder()]);
     console.log( 'Time to get test results by build: ' + (Date.now() - startTime));
 }
 
@@ -78,14 +78,14 @@ function handleValidHashParameter(key, value)
 {
     switch(key) {
     case 'builder':
-        history.validateParameter(g_currentState, key, value,
+        history.validateParameter(g_history.dashboardSpecificState, key, value,
             function() { return value in currentBuilders(); });
         return true;
     case 'buildTimestamp':
-        g_currentState.buildTimestamp = parseInt(value, 10);
+        g_history.dashboardSpecificState.buildTimestamp = parseInt(value, 10);
         return true;
     case 'ignoreFlakyTests':
-        g_currentState.ignoreFlakyTests = value == 'true';
+        g_history.dashboardSpecificState.ignoreFlakyTests = value == 'true';
         return true;
     default:
         return false;
@@ -110,7 +110,7 @@ function shouldShowWebKitRevisionsOnly()
 
 function updateTimelineForBuilder()
 {
-    var builder = g_currentState.builder || currentBuilderGroup().defaultBuilder();
+    var builder = g_history.dashboardSpecificState.builder || currentBuilderGroup().defaultBuilder();
     var results = g_resultsByBuilder[builder];
     var graphData = [];
 
@@ -123,7 +123,7 @@ function updateTimelineForBuilder()
         // exclude runs where every test failed.
         var failureCount = Math.min(results[FIXABLE_COUNT_KEY][i], 10000);
 
-        if (g_currentState.ignoreFlakyTests)
+        if (g_history.dashboardSpecificState.ignoreFlakyTests)
             failureCount -= g_currentBuilderTestResults.flakyDeltasByBuild[i].total || 0;
 
         graphData.push([buildDate, failureCount]);
@@ -182,7 +182,7 @@ function selectBuild(results, builder, dygraph, index)
     g_currentBuildIndex = index;
     updateBuildIndicator(results, dygraph);
     updateBuildInspector(results, builder, dygraph, index);
-    setQueryParameter('buildTimestamp', results[TIMESTAMPS_KEY][index] * 1000);
+    g_history.setQueryParameter('buildTimestamp', results[TIMESTAMPS_KEY][index] * 1000);
 }
 
 function updateBuildIndicator(results, dygraph)
@@ -257,7 +257,7 @@ function updateBuildInspector(results, builder, dygraph, index)
         if (expectationKey in results[FIXABLE_COUNTS_KEY][index]) {
             var currentCount = results[FIXABLE_COUNTS_KEY][index][expectationKey];
             var previousCount = results[FIXABLE_COUNTS_KEY][index + 1][expectationKey];
-            if (g_currentState.ignoreFlakyTests) {
+            if (g_history.dashboardSpecificState.ignoreFlakyTests) {
                 currentCount -= flakyDeltasByBuild[index][expectationKey] || 0;
                 previousCount -= flakyDeltasByBuild[index + 1][expectationKey] || 0;
             }
@@ -267,7 +267,7 @@ function updateBuildInspector(results, builder, dygraph, index)
 
     var currentTotal = results[FIXABLE_COUNT_KEY][index];
     var previousTotal = results[FIXABLE_COUNT_KEY][index + 1];
-    if (g_currentState.ignoreFlakyTests) {
+    if (g_history.dashboardSpecificState.ignoreFlakyTests) {
         currentTotal -= flakyDeltasByBuild[index].total || 0;
         previousTotal -= flakyDeltasByBuild[index + 1].total || 0;
     }
@@ -308,7 +308,7 @@ function showResultsDelta(index, buildNumber, buildUrl, resultsUrl)
     var deltas = {};
     function addDelta(category, testIndex)
     {
-        if (g_currentState.ignoreFlakyTests && flakyTests[testIndex])
+        if (g_history.dashboardSpecificState.ignoreFlakyTests && flakyTests[testIndex])
             return;
         if (!(category in deltas))
             deltas[category] = [];
@@ -468,7 +468,7 @@ document.addEventListener('keydown', function(e) {
     if (g_currentBuildIndex == -1)
         return;
 
-    var builder = g_currentState.builder || currentBuilderGroup().defaultBuilder();
+    var builder = g_history.dashboardSpecificState.builder || currentBuilderGroup().defaultBuilder();
     switch (e.keyIdentifier) {
     case 'Left':
         selectBuild(

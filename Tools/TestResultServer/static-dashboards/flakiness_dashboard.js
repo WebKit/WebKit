@@ -141,7 +141,7 @@ var resourceLoader;
 //////////////////////////////////////////////////////////////////////////////
 function generatePage()
 {
-    if (g_crossDashboardState.useTestData)
+    if (g_history.crossDashboardState.useTestData)
         return;
 
     document.body.innerHTML = '<div id="loading-ui">LOADING...</div>';
@@ -149,12 +149,12 @@ function generatePage()
 
     // tests expands to all tests that match the CSV list.
     // result expands to all tests that ever have the given result
-    if (g_currentState.tests || g_currentState.result)
+    if (g_history.dashboardSpecificState.tests || g_history.dashboardSpecificState.result)
         generatePageForIndividualTests(individualTests());
-    else if (g_currentState.expectationsUpdate)
+    else if (g_history.dashboardSpecificState.expectationsUpdate)
         generatePageForExpectationsUpdate();
     else
-        generatePageForBuilder(g_currentState.builder || currentBuilderGroup().defaultBuilder());
+        generatePageForBuilder(g_history.dashboardSpecificState.builder || currentBuilderGroup().defaultBuilder());
 
     for (var builder in currentBuilders())
         processTestResultsForBuilderAsync(builder);
@@ -166,7 +166,7 @@ function handleValidHashParameter(key, value)
 {
     switch(key) {
     case 'tests':
-        history.validateParameter(g_currentState, key, value,
+        history.validateParameter(g_history.dashboardSpecificState, key, value,
             function() {
                 return string.isValidName(value);
             });
@@ -174,7 +174,7 @@ function handleValidHashParameter(key, value)
 
     case 'result':
         value = value.toUpperCase();
-        history.validateParameter(g_currentState, key, value,
+        history.validateParameter(g_history.dashboardSpecificState, key, value,
             function() {
                 for (var result in LAYOUT_TEST_EXPECTATIONS_MAP_) {
                     if (value == LAYOUT_TEST_EXPECTATIONS_MAP_[result])
@@ -185,7 +185,7 @@ function handleValidHashParameter(key, value)
         return true;
 
     case 'builder':
-        history.validateParameter(g_currentState, key, value,
+        history.validateParameter(g_history.dashboardSpecificState, key, value,
             function() {
                 return value in currentBuilders();
             });
@@ -193,10 +193,10 @@ function handleValidHashParameter(key, value)
         return true;
 
     case 'sortColumn':
-        history.validateParameter(g_currentState, key, value,
+        history.validateParameter(g_history.dashboardSpecificState, key, value,
             function() {
                 // Get all possible headers since the actual used set of headers
-                // depends on the values in g_currentState, which are currently being set.
+                // depends on the values in g_history.dashboardSpecificState, which are currently being set.
                 var headers = tableHeaders(true);
                 for (var i = 0; i < headers.length; i++) {
                     if (value == sortColumnFromTableHeader(headers[i]))
@@ -207,7 +207,7 @@ function handleValidHashParameter(key, value)
         return true;
 
     case 'sortOrder':
-        history.validateParameter(g_currentState, key, value,
+        history.validateParameter(g_history.dashboardSpecificState, key, value,
             function() {
                 return value == FORWARD || value == BACKWARD;
             });
@@ -216,7 +216,7 @@ function handleValidHashParameter(key, value)
     case 'resultsHeight':
     case 'updateIndex':
     case 'revision':
-        history.validateParameter(g_currentState, key, Number(value),
+        history.validateParameter(g_history.dashboardSpecificState, key, Number(value),
             function() {
                 return value.match(/^\d+$/);
             });
@@ -234,7 +234,7 @@ function handleValidHashParameter(key, value)
     case 'showUnexpectedPasses':
     case 'showWontFixSkip':
     case 'expectationsUpdate':
-        g_currentState[key] = value == 'true';
+        g_history.dashboardSpecificState[key] = value == 'true';
         return true;
 
     default:
@@ -250,12 +250,12 @@ g_defaultDashboardSpecificStateValues = {
     showLargeExpectations: false,
     legacyExpectationsSemantics: true,
     showChrome: true,
-    showCorrectExpectations: !isLayoutTestResults(),
-    showWrongExpectations: !isLayoutTestResults(),
-    showWontFixSkip: !isLayoutTestResults(),
-    showSlow: !isLayoutTestResults(),
-    showSkipped: !isLayoutTestResults(),
-    showUnexpectedPasses: !isLayoutTestResults(),
+    showCorrectExpectations: !g_history.isLayoutTestResults(),
+    showWrongExpectations: !g_history.isLayoutTestResults(),
+    showWontFixSkip: !g_history.isLayoutTestResults(),
+    showSlow: !g_history.isLayoutTestResults(),
+    showSkipped: !g_history.isLayoutTestResults(),
+    showUnexpectedPasses: !g_history.isLayoutTestResults(),
     expectationsUpdate: false,
     updateIndex: 0,
     resultsHeight: 300,
@@ -394,7 +394,7 @@ function platformAndBuildType(builderName)
         var builderNameUpperCase = builderName.toUpperCase();
         
         var platform = '';
-        if (isLayoutTestResults() && currentBuilderGroupName() == '@ToT - webkit.org' && !string.contains(builderNameUpperCase, 'CHROMIUM'))
+        if (g_history.isLayoutTestResults() && currentBuilderGroupName() == '@ToT - webkit.org' && !string.contains(builderNameUpperCase, 'CHROMIUM'))
             platform = nonChromiumPlatform(builderNameUpperCase);
         else
             platform = chromiumPlatform(builderNameUpperCase);
@@ -498,10 +498,10 @@ function getAllTestsTrie()
 // tests in the directory.
 function individualTests()
 {
-    if (g_currentState.result)
-        return allTestsWithResult(g_currentState.result);
+    if (g_history.dashboardSpecificState.result)
+        return allTestsWithResult(g_history.dashboardSpecificState.result);
 
-    if (!g_currentState.tests)
+    if (!g_history.dashboardSpecificState.tests)
         return [];
 
     return individualTestsForSubstringList();
@@ -510,11 +510,11 @@ function individualTests()
 function substringList()
 {
     // Convert windows slashes to unix slashes.
-    var tests = g_currentState.tests.replace(/\\/g, '/');
+    var tests = g_history.dashboardSpecificState.tests.replace(/\\/g, '/');
     var separator = string.contains(tests, ' ') ? ' ' : ',';
     var testList = tests.split(separator);
 
-    if (isLayoutTestResults())
+    if (g_history.isLayoutTestResults())
         return testList;
 
     var testListWithoutModifiers = [];
@@ -1055,14 +1055,14 @@ function processMissingAndExtraExpectations(resultsForTest)
     var missingExpectations = [];
     var extraExpectations = [];
 
-    if (isLayoutTestResults()) {
+    if (g_history.isLayoutTestResults()) {
         var expectationsArray = resultsForTest.expectations ? resultsForTest.expectations.split(' ') : [];
         extraExpectations = expectationsArray.filter(
             function(element) {
                 // FIXME: Once all the FAIL lines are removed from
                 // TestExpectations, delete all the legacyExpectationsSemantics
                 // code.
-                if (g_currentState.legacyExpectationsSemantics) {
+                if (g_history.dashboardSpecificState.legacyExpectationsSemantics) {
                     if (element == 'FAIL') {
                         for (var i = 0; i < FAIL_RESULTS.length; i++) {
                             if (resultsMap[FAIL_RESULTS[i]])
@@ -1083,7 +1083,7 @@ function processMissingAndExtraExpectations(resultsForTest)
                 // FIXME: Once all the FAIL lines are removed from
                 // TestExpectations, delete all the legacyExpectationsSemantics
                 // code.
-                if (g_currentState.legacyExpectationsSemantics) {
+                if (g_history.dashboardSpecificState.legacyExpectationsSemantics) {
                     if (expectation == 'FAIL') {
                         for (var j = 0; j < FAIL_RESULTS.length; j++) {
                             if (result == FAIL_RESULTS[j]) {
@@ -1206,7 +1206,7 @@ function indexesForFailures(builder, testName)
 // Returns the path to the failure log for this non-webkit test.
 function pathToFailureLog(testName)
 {
-    return '/steps/' + g_crossDashboardState.testType + '/logs/' + testName.split('.')[1]
+    return '/steps/' + g_history.crossDashboardState.testType + '/logs/' + testName.split('.')[1]
 }
 
 function showPopupForBuild(e, builder, index, opt_testName)
@@ -1232,7 +1232,7 @@ function showPopupForBuild(e, builder, index, opt_testName)
 
     if (master.name == WEBKIT_BUILDER_MASTER) {
         var revision = g_resultsByBuilder[builder].webkitRevision[index];
-        html += '<li><span class=link onclick="setQueryParameter(\'revision\',' +
+        html += '<li><span class=link onclick="g_history.setQueryParameter(\'revision\',' +
             revision + ')">Show results for WebKit r' + revision +
             '</span></li>';
     } else {
@@ -1242,13 +1242,13 @@ function showPopupForBuild(e, builder, index, opt_testName)
             '</li>';
 
         var chromeRevision = g_resultsByBuilder[builder].chromeRevision[index];
-        if (chromeRevision && isLayoutTestResults()) {
+        if (chromeRevision && g_history.isLayoutTestResults()) {
             html += '<li><a href="' + TEST_RESULTS_BASE_PATH + currentBuilders()[builder] +
                 '/' + chromeRevision + '/layout-test-results.zip">layout-test-results.zip</a></li>';
         }
     }
 
-    if (!isLayoutTestResults() && opt_testName && isFailure(builder, opt_testName, index))
+    if (!g_history.isLayoutTestResults() && opt_testName && isFailure(builder, opt_testName, index))
         html += '<li>' + linkHTMLToOpenWindow(buildBasePath + pathToFailureLog(opt_testName), 'Failure log') + '</li>';
 
     html += '</ul>';
@@ -1319,23 +1319,23 @@ function htmlForTestsWithExpectationsButNoFailures(builder)
     if (tests.length || skippedPaths.length) {
         var buildInfo = platformAndBuildType(builder);
         html += '<h2 style="display:inline-block">Expectations for ' + buildInfo.platform + '-' + buildInfo.buildType + '</h2> ';
-        if (!g_currentState.showUnexpectedPasses && tests.length)
+        if (!g_history.dashboardSpecificState.showUnexpectedPasses && tests.length)
             html += showUnexpectedPassesLink;
         html += ' ';
-        if (!g_currentState.showSkipped && skippedPaths.length)
+        if (!g_history.dashboardSpecificState.showSkipped && skippedPaths.length)
             html += showSkippedLink;
     }
 
     var open = '<div onclick="selectContents(this)">';
 
-    if (g_currentState.showUnexpectedPasses && tests.length) {
+    if (g_history.dashboardSpecificState.showUnexpectedPasses && tests.length) {
         html += '<div id="passing-tests">' + showUnexpectedPassesLink;
         for (var i = 0; i < tests.length; i++)
             html += open + tests[i].test + '</div>';
         html += '</div>';
     }
 
-    if (g_currentState.showSkipped && skippedPaths.length)
+    if (g_history.dashboardSpecificState.showSkipped && skippedPaths.length)
         html += '<div id="skipped-tests">' + showSkippedLink + open + skippedPaths.join('</div>' + open) + '</div></div>';
     return html + '<br>';
 }
@@ -1344,18 +1344,18 @@ function htmlForTestsWithExpectationsButNoFailures(builder)
 function shouldHideTest(testResult)
 {
     if (testResult.isWontFixSkip)
-        return !g_currentState.showWontFixSkip;
+        return !g_history.dashboardSpecificState.showWontFixSkip;
 
     if (testResult.isFlaky)
-        return !g_currentState.showFlaky;
+        return !g_history.dashboardSpecificState.showFlaky;
 
     if (isSlowTest(testResult))
-        return !g_currentState.showSlow;
+        return !g_history.dashboardSpecificState.showSlow;
 
     if (testResult.meetsExpectations)
-        return !g_currentState.showCorrectExpectations;
+        return !g_history.dashboardSpecificState.showCorrectExpectations;
 
-    return !g_currentState.showWrongExpectations;
+    return !g_history.dashboardSpecificState.showWrongExpectations;
 }
 
 // Sets the browser's selection to the element's contents.
@@ -1379,7 +1379,7 @@ function createBugHTML(test)
 
 function isCrossBuilderView()
 {
-    return g_currentState.tests || g_currentState.result || g_currentState.expectationsUpdate;
+    return g_history.dashboardSpecificState.tests || g_history.dashboardSpecificState.result || g_history.dashboardSpecificState.expectationsUpdate;
 }
 
 function tableHeaders(opt_getAll)
@@ -1391,7 +1391,7 @@ function tableHeaders(opt_getAll)
     if (!isCrossBuilderView() || opt_getAll)
         headers.push('test');
 
-    if (isLayoutTestResults() || opt_getAll)
+    if (g_history.isLayoutTestResults() || opt_getAll)
         headers.push('bugs', 'modifiers', 'expectations');
 
     headers.push('slowest run', 'flakiness (numbers are runtimes in seconds)');
@@ -1417,7 +1417,7 @@ function htmlForSingleTestRow(test)
             // with results for many builders, so the first column is builder names
             // instead of test paths.
             var testCellClassName = 'test-link' + (isCrossBuilderView() ? ' builder-name' : '');
-            var testCellHTML = isCrossBuilderView() ? test.builder : '<span class="link" onclick="setQueryParameter(\'tests\',\'' + test.test +'\');">' + test.test + '</span>';
+            var testCellHTML = isCrossBuilderView() ? test.builder : '<span class="link" onclick="g_history.setQueryParameter(\'tests\',\'' + test.test +'\');">' + test.test + '</span>';
 
             html += '<tr><td class="' + testCellClassName + '">' + testCellHTML;
         } else if (string.startsWith(header, 'bugs'))
@@ -1443,8 +1443,8 @@ function htmlForTableColumnHeader(headerName, opt_fillColSpan)
 {
     // Use the first word of the header title as the sortkey
     var thisSortValue = sortColumnFromTableHeader(headerName);
-    var arrowHTML = thisSortValue == g_currentState.sortColumn ?
-        '<span class=' + g_currentState.sortOrder + '>' + (g_currentState.sortOrder == FORWARD ? '&uarr;' : '&darr;' ) + '</span>' : '';
+    var arrowHTML = thisSortValue == g_history.dashboardSpecificState.sortColumn ?
+        '<span class=' + g_history.dashboardSpecificState.sortOrder + '>' + (g_history.dashboardSpecificState.sortOrder == FORWARD ? '&uarr;' : '&darr;' ) + '</span>' : '';
     return '<th sortValue=' + thisSortValue +
         // Extend last th through all the rest of the columns.
         (opt_fillColSpan ? ' colspan=10000' : '') +
@@ -1520,12 +1520,12 @@ function changeSort(e)
 
     var sort = 'sortColumn';
     var orderKey = 'sortOrder';
-    if (sortValue == g_currentState[sort] && g_currentState[orderKey] == FORWARD)
+    if (sortValue == g_history.dashboardSpecificState[sort] && g_history.dashboardSpecificState[orderKey] == FORWARD)
         order = BACKWARD;
     else
         order = FORWARD;
 
-    setQueryParameter(sort, sortValue, orderKey, order);
+    g_history.setQueryParameter(sort, sortValue, orderKey, order);
 }
 
 function sortTests(tests, column, order)
@@ -1609,8 +1609,8 @@ function realModifiers(modifierString)
 function generatePageForExpectationsUpdate()
 {
     // Always show all runs when auto-updating expectations.
-    if (!g_crossDashboardState.showAllRuns)
-        setQueryParameter('showAllRuns', true);
+    if (!g_history.crossDashboardState.showAllRuns)
+        g_history.setQueryParameter('showAllRuns', true);
 
     processTestRunsForAllBuilders();
     var testsNeedingUpdate = {};
@@ -1656,13 +1656,13 @@ function generatePageForExpectationsUpdate()
 // @param {Array.<string>} keys Keys into the testNeedingUpdate object.
 function showUpdateInfoForTest(testsNeedingUpdate, keys)
 {
-    var test = keys[g_currentState.updateIndex];
+    var test = keys[g_history.dashboardSpecificState.updateIndex];
     document.body.innerHTML = '';
 
     // FIXME: Make this DOM creation less verbose.
     var index = document.createElement('div');
     index.style.cssFloat = 'right';
-    index.textContent = (g_currentState.updateIndex + 1) + ' of ' + keys.length + ' tests';
+    index.textContent = (g_history.dashboardSpecificState.updateIndex + 1) + ' of ' + keys.length + ' tests';
     document.body.appendChild(index);
 
     var buttonRegion = document.createElement('div');
@@ -1677,7 +1677,7 @@ function showUpdateInfoForTest(testsNeedingUpdate, keys)
     previousBtn.value = 'previous';
     previousBtn.addEventListener('click',
         function() {
-          setUpdateIndex(g_currentState.updateIndex - 1, testsNeedingUpdate, keys);
+          setUpdateIndex(g_history.dashboardSpecificState.updateIndex - 1, testsNeedingUpdate, keys);
         },
         false);
     buttonRegion.appendChild(previousBtn);
@@ -1739,7 +1739,7 @@ function finishUpdate()
 // @param {Array.<string>} keys Keys into the testNeedingUpdate object.
 function handleUpdate(testsNeedingUpdate, keys)
 {
-    var test = keys[g_currentState.updateIndex];
+    var test = keys[g_history.dashboardSpecificState.updateIndex];
     var updates = testsNeedingUpdate[test];
     for (var builder in updates) {
         // Add included tests, and delete excluded tests if
@@ -1763,7 +1763,7 @@ function handleUpdate(testsNeedingUpdate, keys)
 // @param {Array.<string>} keys Keys into the testNeedingUpdate object.
 function nextUpdate(testsNeedingUpdate, keys)
 {
-    setUpdateIndex(g_currentState.updateIndex + 1, testsNeedingUpdate, keys);
+    setUpdateIndex(g_history.dashboardSpecificState.updateIndex + 1, testsNeedingUpdate, keys);
 }
 
 
@@ -1778,7 +1778,7 @@ function setUpdateIndex(newIndex, testsNeedingUpdate, keys)
         newIndex = keys.length - 1;
     else if (newIndex == keys.length)
         newIndex = 0;
-    setQueryParameter("updateIndex", newIndex);
+    g_history.setQueryParameter("updateIndex", newIndex);
     showUpdateInfoForTest(testsNeedingUpdate, keys);
 }
 
@@ -1823,12 +1823,12 @@ function htmlForIndividualTestOnAllBuildersWithResultsLinks(test)
     html += '<div class=expectations test=' + test + '><div>' +
         linkHTMLToToggleState('showExpectations', 'results')
 
-    if (isLayoutTestResults() || isGPUTestResults()) {
-        if (isLayoutTestResults())
+    if (g_history.isLayoutTestResults() || g_history.isGPUTestResults()) {
+        if (g_history.isLayoutTestResults())
             html += ' | ' + linkHTMLToToggleState('showLargeExpectations', 'large thumbnails');
         if (testResults && currentBuilderGroup().master().name == WEBKIT_BUILDER_MASTER) {
-            var revision = g_currentState.revision || '';
-            html += '<form onsubmit="setQueryParameter(\'revision\', revision.value);' +
+            var revision = g_history.dashboardSpecificState.revision || '';
+            html += '<form onsubmit="g_history.setQueryParameter(\'revision\', revision.value);' +
                 'return false;">Show results for WebKit revision: ' +
                 '<input name=revision placeholder="e.g. 65540" value="' + revision +
                 '" id=revision-input></form>';
@@ -1836,8 +1836,8 @@ function htmlForIndividualTestOnAllBuildersWithResultsLinks(test)
             html += ' | <b>Only shows actual results/diffs from the most recent *failure* on each bot.</b>';
     } else {
       html += ' | <span>Results height:<input ' +
-          'onchange="setQueryParameter(\'resultsHeight\',this.value)" value="' +
-          g_currentState.resultsHeight + '" style="width:2.5em">px</span>';
+          'onchange="g_history.setQueryParameter(\'resultsHeight\',this.value)" value="' +
+          g_history.dashboardSpecificState.resultsHeight + '" style="width:2.5em">px</span>';
     }
     html += '</div></div>';
     return html;
@@ -1927,7 +1927,7 @@ function addExpectationItem(expectationsContainers, parentContainer, platform, p
         childContainer.appendChild(expectationsTitle(platformPart + suitePart, path, opt_builder));
         childContainer.className = 'expectations-item';
         item.className = 'expectation ' + fileExtension;
-        if (g_currentState.showLargeExpectations)
+        if (g_history.dashboardSpecificState.showLargeExpectations)
             item.className += ' large';
         childContainer.appendChild(item);
         handleFinishedLoadingExpectations(container);
@@ -2108,12 +2108,12 @@ function expectationsTitle(platform, path, builder)
 function loadExpectations(expectationsContainer)
 {
     var test = expectationsContainer.getAttribute('test');
-    if (isLayoutTestResults())
+    if (g_history.isLayoutTestResults())
         loadExpectationsLayoutTests(test, expectationsContainer);
     else {
         var results = g_testToResultsMap[test];
         for (var i = 0; i < results.length; i++)
-            if (isGPUTestResults())
+            if (g_history.isGPUTestResults())
                 loadGPUResultsForBuilder(results[i].builder, test, expectationsContainer);
             else
                 loadNonWebKitResultsForBuilder(results[i].builder, test, expectationsContainer);
@@ -2173,7 +2173,7 @@ function appendNonWebKitResults(container, url, itemClassName, opt_title)
         var item = document.createElement('iframe');
         item.src = dummyNode.src;
         item.className = itemClassName;
-        item.style.height = g_currentState.resultsHeight + 'px';
+        item.style.height = g_history.dashboardSpecificState.resultsHeight + 'px';
 
         if (opt_title) {
             var childContainer = document.createElement('div');
@@ -2262,7 +2262,7 @@ function loadExpectationsLayoutTests(test, expectationsContainer)
     expectationsContainer.appendChild(revisionContainer);
     for (var builder in currentBuilders()) {
         if (builderMaster(builder).name == WEBKIT_BUILDER_MASTER) {
-            var latestRevision = g_currentState.revision || g_resultsByBuilder[builder].webkitRevision[0];
+            var latestRevision = g_history.dashboardSpecificState.revision || g_resultsByBuilder[builder].webkitRevision[0];
             var buildInfo = buildInfoForRevision(builder, latestRevision);
             var revisionInfo = document.createElement('div');
             revisionInfo.style.cssText = 'background:lightgray;margin:0 3px;padding:0 2px;display:inline-block;';
@@ -2280,7 +2280,7 @@ function loadExpectationsLayoutTests(test, expectationsContainer)
     for (var builder in currentBuilders()) {
         var actualResultsBase;
         if (builderMaster(builder).name == WEBKIT_BUILDER_MASTER) {
-            var latestRevision = g_currentState.revision || g_resultsByBuilder[builder].webkitRevision[0];
+            var latestRevision = g_history.dashboardSpecificState.revision || g_resultsByBuilder[builder].webkitRevision[0];
             var buildInfo = buildInfoForRevision(builder, latestRevision);
             actualResultsBase = 'http://build.webkit.org/results/' + builder +
                 '/r' + buildInfo.revisionStart + ' (' + buildInfo.buildNumber + ')/';
@@ -2329,7 +2329,7 @@ function allFallbacks()
 
 function appendExpectations()
 {
-    var expectations = g_currentState.showExpectations ? document.getElementsByClassName('expectations') : [];
+    var expectations = g_history.dashboardSpecificState.showExpectations ? document.getElementsByClassName('expectations') : [];
     // Loading expectations is *very* slow. Use a large timeout to avoid
     // totally hanging the renderer.
     performChunkedAction(expectations, function(chunk) {
@@ -2351,13 +2351,13 @@ function hideLoadingUI()
 function generatePageForIndividualTests(tests)
 {
     console.log('Number of tests: ' + tests.length);
-    if (g_currentState.showChrome)
+    if (g_history.dashboardSpecificState.showChrome)
         appendHTML(htmlForNavBar());
     performChunkedAction(tests, function(chunk) {
         appendHTML(htmlForIndividualTests(chunk));
     }, appendExpectations, 500);
-    if (g_currentState.showChrome)
-        $('tests-input').value = g_currentState.tests;
+    if (g_history.dashboardSpecificState.showChrome)
+        $('tests-input').value = g_history.dashboardSpecificState.tests;
 }
 
 function performChunkedAction(tests, handleChunk, onComplete, timeout, opt_index) {
@@ -2379,8 +2379,8 @@ function htmlForIndividualTests(tests)
     for (var i = 0; i < tests.length; i++) {
         var test = tests[i];
         var testNameHtml = '';
-        if (g_currentState.showChrome || tests.length > 1) {
-            if (isLayoutTestResults()) {
+        if (g_history.dashboardSpecificState.showChrome || tests.length > 1) {
+            if (g_history.isLayoutTestResults()) {
                 var suite = lookupVirtualTestSuite(test);
                 var base = suite ? baseTest(test, suite) : test;
                 var tracURL = TEST_URL_BASE_PATH_TRAC + base;
@@ -2399,11 +2399,11 @@ function htmlForNavBar()
     var extraHTML = '';
     var html = ui.html.testTypeSwitcher(false, extraHTML, isCrossBuilderView());
     html += '<div class=forms><form id=result-form ' +
-        'onsubmit="setQueryParameter(\'result\', result.value);' +
+        'onsubmit="g_history.setQueryParameter(\'result\', result.value);' +
         'return false;">Show all tests with result: ' +
         '<input name=result placeholder="e.g. CRASH" id=result-input>' +
         '</form><form id=tests-form ' +
-        'onsubmit="setQueryParameter(\'tests\', tests.value);' +
+        'onsubmit="g_history.setQueryParameter(\'tests\', tests.value);' +
         'return false;"><span>Show tests on all platforms: </span>' +
         '<input name=tests ' +
         'placeholder="Comma or space-separated list of tests or partial ' +
@@ -2415,14 +2415,14 @@ function htmlForNavBar()
 
 function checkBoxToToggleState(key, text)
 {
-    var stateEnabled = g_currentState[key];
-    return '<label><input type=checkbox ' + (stateEnabled ? 'checked ' : '') + 'onclick="setQueryParameter(\'' + key + '\', ' + !stateEnabled + ')">' + text + '</label> ';
+    var stateEnabled = g_history.dashboardSpecificState[key];
+    return '<label><input type=checkbox ' + (stateEnabled ? 'checked ' : '') + 'onclick="g_history.setQueryParameter(\'' + key + '\', ' + !stateEnabled + ')">' + text + '</label> ';
 }
 
 function linkHTMLToToggleState(key, linkText)
 {
-    var stateEnabled = g_currentState[key];
-    return '<span class=link onclick="setQueryParameter(\'' + key + '\', ' + !stateEnabled + ')">' + (stateEnabled ? 'Hide' : 'Show') + ' ' + linkText + '</span>';
+    var stateEnabled = g_history.dashboardSpecificState[key];
+    return '<span class=link onclick="g_history.setQueryParameter(\'' + key + '\', ' + !stateEnabled + ')">' + (stateEnabled ? 'Hide' : 'Show') + ' ' + linkText + '</span>';
 }
 
 function headerForTestTableHtml()
@@ -2440,7 +2440,7 @@ function generatePageForBuilder(builderName)
     processTestRunsForBuilder(builderName);
 
     var results = g_perBuilderFailures[builderName];
-    sortTests(results, g_currentState.sortColumn, g_currentState.sortOrder);
+    sortTests(results, g_history.dashboardSpecificState.sortColumn, g_history.dashboardSpecificState.sortOrder);
 
     var testsHTML = '';
     if (results.length) {
@@ -2450,7 +2450,7 @@ function generatePageForBuilder(builderName)
         testsHTML = htmlForTestTable(tableRowsHTML);
     } else {
         testsHTML = '<div>No tests found. ';
-        if (isLayoutTestResults())
+        if (g_history.isLayoutTestResults())
             testsHTML += 'Try showing tests with correct expectations.</div>';
         else
             testsHTML += 'This means no tests have failed!</div>';
@@ -2458,7 +2458,7 @@ function generatePageForBuilder(builderName)
 
     var html = htmlForNavBar();
 
-    if (isLayoutTestResults())
+    if (g_history.isLayoutTestResults())
         html += htmlForTestsWithExpectationsButNoFailures(builderName) + headerForTestTableHtml();
 
     html += '<br>' + testsHTML;
@@ -2486,7 +2486,7 @@ var VALID_KEYS_FOR_CROSS_BUILDER_VIEW = {
 
 function isInvalidKeyForCrossBuilderView(key)
 {
-    return !(key in VALID_KEYS_FOR_CROSS_BUILDER_VIEW) && !(key in g_defaultCrossDashboardStateValues);
+    return !(key in VALID_KEYS_FOR_CROSS_BUILDER_VIEW) && !(key in history.DEFAULT_CROSS_DASHBOARD_STATE_VALUES);
 }
 
 // Sets the page state to regenerate the page.
@@ -2496,14 +2496,14 @@ function handleQueryParameterChange(params)
     for (key in params) {
         if (key == 'tests') {
             // Entering cross-builder view, only keep valid keys for that view.
-            for (var currentKey in g_currentState) {
+            for (var currentKey in g_history.dashboardSpecificState) {
               if (isInvalidKeyForCrossBuilderView(currentKey)) {
-                delete g_currentState[currentKey];
+                delete g_history.dashboardSpecificState[currentKey];
               }
             }
         } else if (isInvalidKeyForCrossBuilderView(key)) {
-            delete g_currentState.tests;
-            delete g_currentState.result;
+            delete g_history.dashboardSpecificState.tests;
+            delete g_history.dashboardSpecificState.result;
         }
     }
 
@@ -2545,7 +2545,7 @@ function showLegend()
         html += '<div class=' + expectation + '>' + expectationsMap()[expectation] + '</div>';
 
     html += '<div class=merge>WEBKIT MERGE</div>';
-    if (isLayoutTestResults()) {
+    if (g_history.isLayoutTestResults()) {
       html += '</div><br style="clear:both">' +
           '</div><h3>Test expectatons fallback order.</h3>';
 

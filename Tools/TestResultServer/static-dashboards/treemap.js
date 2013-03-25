@@ -142,12 +142,12 @@ function generatePage()
 
     g_isGeneratingPage = true;
 
-    var rawTree = g_resultsByBuilder[g_currentState.builder || currentBuilderGroup().defaultBuilder()];
+    var rawTree = g_resultsByBuilder[g_history.dashboardSpecificState.builder || currentBuilderGroup().defaultBuilder()];
     g_webTree = convertToWebTreemapFormat('LayoutTests', rawTree);
     appendTreemap($('map'), g_webTree);
 
-    if (g_currentState.treemapfocus)
-        focusPath(g_webTree, g_currentState.treemapfocus)
+    if (g_history.dashboardSpecificState.treemapfocus)
+        focusPath(g_webTree, g_history.dashboardSpecificState.treemapfocus)
 
     g_isGeneratingPage = false;
 }
@@ -182,12 +182,12 @@ function handleValidHashParameter(key, value)
 {
     switch(key) {
     case 'builder':
-        history.validateParameter(g_currentState, key, value,
+        history.validateParameter(g_history.dashboardSpecificState, key, value,
             function() { return value in currentBuilders(); });
         return true;
 
     case 'treemapfocus':
-        history.validateParameter(g_currentState, key, value,
+        history.validateParameter(g_history.dashboardSpecificState, key, value,
             function() {
                 // FIXME: There's probably a simpler regexp here. Just trying to match ascii + forward-slash.
                 // e.g. LayoutTests/foo/bar.html
@@ -247,7 +247,7 @@ function handleFocus(tree)
 
     var name = fullName(tree);
 
-    if (!tree.children && !tree.extraDom && isLayoutTestResults()) {
+    if (!tree.children && !tree.extraDom && g_history.isLayoutTestResults()) {
         tree.extraDom = document.createElement('pre');
         tree.extraDom.className = 'extra-dom';
         tree.dom.appendChild(tree.extraDom);
@@ -266,7 +266,7 @@ function handleFocus(tree)
 
     // We don't want the focus calls during generatePage to try to modify the query state.
     if (!g_isGeneratingPage)
-        setQueryParameter('treemapfocus', name);
+        g_history.setQueryParameter('treemapfocus', name);
 }
 
 window.addEventListener('load', function() {

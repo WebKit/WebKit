@@ -86,7 +86,7 @@ test('results files loading', 11, function() {
 
 test('expectations files loading', 1, function() {
     resetGlobals();
-    parseCrossDashboardParameters();
+    g_history.parseCrossDashboardParameters();
     var expectedLoadedPlatforms = ["chromium", "chromium-android", "efl", "efl-wk1", "efl-wk2", "gtk",
                                    "gtk-wk2", "mac", "mac-lion", "mac-snowleopard", "qt", "win", "wk2"];
     var loadedPlatforms = [];

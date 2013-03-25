@@ -31,6 +31,13 @@ var history = history || {};
 
 (function() {
 
+history.DEFAULT_CROSS_DASHBOARD_STATE_VALUES = {
+    group: null,
+    showAllRuns: false,
+    testType: 'layout-tests',
+    useTestData: false,
+}    
+
 history.validateParameter = function(state, key, value, validateFn)
 {
     if (validateFn())
@@ -74,8 +81,7 @@ history.queryHashAsMap = function()
     return paramsMap;
 }
 
-// TODO(jparent): Make private once callers move here.
-history.diffStates = function(oldState, newState)
+history._diffStates = function(oldState, newState)
 {
     // If there is no old state, everything in the current state is new.
     if (!oldState)
@@ -92,12 +98,176 @@ history.diffStates = function(oldState, newState)
     return changedParams;
 }
 
-// TODO(jparent): Make private once callers move here.
-history.fillMissingValues = function(to, from)
+history._fillMissingValues = function(to, from)
 {
     for (var state in from) {
         if (!(state in to))
             to[state] = from[state];
+    }
+}
+
+history.History = function()
+{
+  this.crossDashboardState = {};
+  this.dashboardSpecificState = {};
+}
+
+var RELOAD_REQUIRING_PARAMETERS = ['showAllRuns', 'group', 'testType'];
+
+history.History.prototype = {
+    isLayoutTestResults: function()
+    {
+        return this.crossDashboardState.testType == 'layout-tests';
+    },
+    isGPUTestResults: function()
+    {
+        return this.crossDashboardState.testType == 'gpu_tests';
+    },
+    parseCrossDashboardParameters: function()
+    {
+        this.crossDashboardState = {};
+        var parameters = history.queryHashAsMap();
+        for (parameterName in history.DEFAULT_CROSS_DASHBOARD_STATE_VALUES)
+            this.parseParameter(parameters, parameterName);
+
+        history._fillMissingValues(this.crossDashboardState, history.DEFAULT_CROSS_DASHBOARD_STATE_VALUES);
+    },
+    // TODO(jparent): Make private once callers move here.
+    parseParameters: function()
+    {
+        var oldCrossDashboardState = this.crossDashboardState;
+        var oldDashboardSpecificState = this.dashboardSpecificState;
+
+        this.parseCrossDashboardParameters();
+        
+        // Some parameters require loading different JSON files when the value changes. Do a reload.
+        if (Object.keys(oldCrossDashboardState).length) {
+            for (var key in this.crossDashboardState) {
+                if (oldCrossDashboardState[key] != this.crossDashboardState[key] && RELOAD_REQUIRING_PARAMETERS.indexOf(key) != -1) {
+                    window.location.reload();
+                    return false;
+                }
+            }
+        }
+
+        parseDashboardSpecificParameters();
+        var dashboardSpecificDiffState = history._diffStates(oldDashboardSpecificState, this.dashboardSpecificState);
+
+        history._fillMissingValues(this.dashboardSpecificState, g_defaultDashboardSpecificStateValues);
+
+        // FIXME: dashboard_base shouldn't know anything about specific dashboard specific keys.
+        if (dashboardSpecificDiffState.builder)
+            delete this.dashboardSpecificState.tests;
+        if (this.dashboardSpecificState.tests)
+            delete this.dashboardSpecificState.builder;
+
+        var shouldGeneratePage = true;
+        if (Object.keys(dashboardSpecificDiffState).length)
+            shouldGeneratePage = handleQueryParameterChange(dashboardSpecificDiffState);
+        return shouldGeneratePage;
+    },
+    // TODO(jparent): Make private once callers move here.
+    parseParameter: function(parameters, key)
+    {
+        if (!(key in parameters))
+            return;
+        var value = parameters[key];
+        if (!this._handleValidHashParameterWrapper(key, value))
+            console.log("Invalid query parameter: " + key + '=' + value);
+    },
+    // Takes a key and a value and sets the this.dashboardSpecificState[key] = value iff key is
+    // a valid hash parameter and the value is a valid value for that key. Handles
+    // cross-dashboard parameters then falls back to calling
+    // handleValidHashParameter for dashboard-specific parameters.
+    //
+    // @return {boolean} Whether the key what inserted into the this.dashboardSpecificState.
+    _handleValidHashParameterWrapper: function(key, value)
+    {
+        switch(key) {
+        case 'testType':
+            history.validateParameter(this.crossDashboardState, key, value,
+                function() { return TEST_TYPES.indexOf(value) != -1; });
+            return true;
+
+        case 'group':
+            history.validateParameter(this.crossDashboardState, key, value,
+                function() {
+                  return value in LAYOUT_TESTS_BUILDER_GROUPS ||
+                      value in CHROMIUM_GPU_TESTS_BUILDER_GROUPS ||
+                      value in CHROMIUM_INSTRUMENTATION_TESTS_BUILDER_GROUPS ||
+                      value in CHROMIUM_GTESTS_BUILDER_GROUPS;
+                });
+            return true;
+
+        case 'useTestData':
+        case 'showAllRuns':
+            this.crossDashboardState[key] = value == 'true';
+            return true;
+
+        default:
+            return handleValidHashParameter(key, value);
+        }
+    },
+    queryParameterValue: function(parameter)
+    {
+        return this.dashboardSpecificState[parameter] || this.crossDashboardState[parameter];
+    }, 
+    // Sets the page state. Takes varargs of key, value pairs.
+    setQueryParameter: function(var_args)
+    {
+        var queryParamsAsState = {};
+        for (var i = 0; i < arguments.length; i += 2) {
+            var key = arguments[i];
+            queryParamsAsState[key] = arguments[i + 1];
+        }
+
+        this.invalidateQueryParameters(queryParamsAsState);
+
+        var newState = this._combinedDashboardState();
+        for (var key in queryParamsAsState) {
+            newState[key] = queryParamsAsState[key];
+        }
+
+        // Note: We use window.location.hash rather that window.location.replace
+        // because of bugs in Chrome where extra entries were getting created
+        // when back button was pressed and full page navigation was occuring.
+        // FIXME: file those bugs.
+        window.location.hash = this._permaLinkURLHash(newState);
+    },
+    toggleQueryParameter: function(param)
+    {
+        this.setQueryParameter(param, !this.queryParameterValue(param));
+    },
+    invalidateQueryParameters: function(queryParamsAsState)
+    {
+        for (var key in queryParamsAsState) {
+            if (key in CROSS_DB_INVALIDATING_PARAMETERS)
+                delete this.crossDashboardState[CROSS_DB_INVALIDATING_PARAMETERS[key]];
+            if (DB_SPECIFIC_INVALIDATING_PARAMETERS && key in DB_SPECIFIC_INVALIDATING_PARAMETERS)
+                delete this.dashboardSpecificState[DB_SPECIFIC_INVALIDATING_PARAMETERS[key]];
+        }
+    },
+    _joinParameters: function(stateObject)
+    {
+        var state = [];
+        for (var key in stateObject) {
+            var value = stateObject[key];
+            if (value != defaultValue(key))
+                state.push(key + '=' + encodeURIComponent(value));
+        }
+        return state.join('&');
+    }, 
+    _permaLinkURLHash: function(opt_state)
+    {
+        var state = opt_state || this._combinedDashboardState();
+        return '#' + this._joinParameters(state);
+    },
+    _combinedDashboardState: function()
+    {
+        var combinedState = Object.create(this.dashboardSpecificState);
+        for (var key in this.crossDashboardState)
+            combinedState[key] = this.crossDashboardState[key];
+        return combinedState;    
     }
 }
 

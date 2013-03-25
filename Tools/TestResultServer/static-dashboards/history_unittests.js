@@ -33,18 +33,33 @@ test('queryHashAsMap', 2, function() {
 
 test('diffStates', 5, function() {
     var newState = {a: 1, b: 2};
-    deepEqual(history.diffStates(null, newState), newState);
+    deepEqual(history._diffStates(null, newState), newState);
 
     var oldState = {a: 1};
-    deepEqual(history.diffStates(oldState, newState), {b: 2});
+    deepEqual(history._diffStates(oldState, newState), {b: 2});
 
     // FIXME: This is kind of weird. I think the existing users of this code work correctly, but it's a confusing result.
     var oldState = {c: 1};
-    deepEqual(history.diffStates(oldState, newState), {a:1, b: 2});
+    deepEqual(history._diffStates(oldState, newState), {a:1, b: 2});
 
     var oldState = {a: 1, b: 2};
-    deepEqual(history.diffStates(oldState, newState), {});
+    deepEqual(history._diffStates(oldState, newState), {});
 
     var oldState = {a: 2, b: 3};
-    deepEqual(history.diffStates(oldState, newState), {a: 1, b: 2});
+    deepEqual(history._diffStates(oldState, newState), {a: 1, b: 2});
+});
+
+test('parseCrossDashboardParameters', 2, function() {
+    var historyInstance = new history.History();
+    // FIXME(jparent): Remove this once parseParameters moves onto history obj.
+    g_history = historyInstance;
+    equal(window.location.hash, '#useTestData=true');
+    historyInstance.parseCrossDashboardParameters();
+
+    var expectedParameters = {};
+    for (var key in history.DEFAULT_CROSS_DASHBOARD_STATE_VALUES)
+        expectedParameters[key] = history.DEFAULT_CROSS_DASHBOARD_STATE_VALUES[key];
+    expectedParameters.useTestData = true;
+
+    deepEqual(historyInstance.crossDashboardState, expectedParameters);
 });

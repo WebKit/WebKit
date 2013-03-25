@@ -80,7 +80,7 @@ ui.html.checkbox = function(queryParameter, label, isChecked, opt_extraJavaScrip
 {
     var js = opt_extraJavaScript || '';
     return '<label style="padding-left: 2em">' +
-        '<input type="checkbox" onchange="toggleQueryParameter(\'' + queryParameter + '\');' + js + '" ' +
+        '<input type="checkbox" onchange="g_history.toggleQueryParameter(\'' + queryParameter + '\');' + js + '" ' +
             (isChecked ? 'checked' : '') + '>' + label +
         '</label> ';
 }
@@ -88,12 +88,12 @@ ui.html.checkbox = function(queryParameter, label, isChecked, opt_extraJavaScrip
 ui.html.select = function(label, queryParameter, options)
 {
     var html = '<label style="padding-left: 2em">' + label + ': ' +
-        '<select onchange="setQueryParameter(\'' + queryParameter + '\', this[this.selectedIndex].value)">';
+        '<select onchange="g_history.setQueryParameter(\'' + queryParameter + '\', this[this.selectedIndex].value)">';
 
     for (var i = 0; i < options.length; i++) {
         var value = options[i];
         html += '<option value="' + value + '" ' +
-            (queryParameterValue(queryParameter) == value ? 'selected' : '') +
+            (g_history.queryParameterValue(queryParameter) == value ? 'selected' : '') +
             '>' + value + '</option>'
     }
     html += '</select></label> ';
@@ -123,7 +123,7 @@ ui.html.testTypeSwitcher = function(opt_noBuilderMenu, opt_extraHtml, opt_includ
         Object.keys(currentBuilderGroupCategory()));
 
     if (!history.isTreeMap())
-        html += ui.html.checkbox('showAllRuns', 'Show all runs', g_crossDashboardState.showAllRuns);
+        html += ui.html.checkbox('showAllRuns', 'Show all runs', g_history.crossDashboardState.showAllRuns);
 
     if (opt_extraHtml)
         html += opt_extraHtml;

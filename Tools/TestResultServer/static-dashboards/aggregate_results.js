@@ -49,7 +49,7 @@ function handleValidHashParameter(key, value)
 {
     switch(key) {
     case 'rawValues':
-        g_currentState[key] = value == 'true';
+        g_history.dashboardSpecificState[key] = value == 'true';
         return true;
 
     default:
@@ -72,7 +72,7 @@ function htmlForBuilder(builder)
     var numColumns = results[ALL_FIXABLE_COUNT_KEY].length;
     var html = '<div class=container><h2>' + builder + '</h2>';
 
-    if (g_currentState.rawValues)
+    if (g_history.dashboardSpecificState.rawValues)
         html += rawValuesHTML(results, numColumns);
     else {
         html += '<a href="timeline_explorer.html' + (location.hash ? location.hash + '&' : '#') + 'builder=' + builder + '">' +
@@ -87,7 +87,7 @@ function rawValuesHTML(results, numColumns)
 {
     var html = htmlForSummaryTable(results, numColumns) +
         htmlForTestType(results, FIXABLE_COUNTS_KEY, FIXABLE_DESCRIPTION, numColumns);
-    if (isLayoutTestResults()) {
+    if (g_history.isLayoutTestResults()) {
         html += htmlForTestType(results, DEFERRED_COUNTS_KEY, DEFERRED_DESCRIPTION, numColumns) +
             htmlForTestType(results, WONTFIX_COUNTS_KEY, WONTFIX_DESCRIPTION, numColumns);
     }

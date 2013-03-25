@@ -37,7 +37,7 @@ var CHROMIUM_EXPECTATIONS_URL = 'http://svn.webkit.org/repository/webkit/trunk/L
 function pathToBuilderResultsFile(builderName) {
     return TEST_RESULTS_SERVER + 'testfile?builder=' + builderName +
            '&master=' + builderMaster(builderName).name +
-           '&testtype=' + g_crossDashboardState.testType + '&name=';
+           '&testtype=' + g_history.crossDashboardState.testType + '&name=';
 }
 
 loader.request = function(url, success, error, opt_isBinaryData)
@@ -69,6 +69,8 @@ loader.Loader = function(opt_onLoadingComplete)
     this._staleBuilders = [];
     this._errors = new ui.Errors();
     this._onLoadingComplete = opt_onLoadingComplete || function() {};
+    // TODO(jparent): Pass in the appropriate history obj per db.
+    this._history = g_history;
 }
 
 // TODO(aboxhall): figure out whether this is a performance bottleneck and
@@ -112,7 +114,7 @@ loader.Loader.prototype = {
     },
     _loadBuildersList: function()
     {
-        loadBuildersList(currentBuilderGroupName(), g_crossDashboardState.testType);
+        loadBuildersList(currentBuilderGroupName(), this._history.crossDashboardState.testType);
         this._loadNext();
     },
     _loadResultsFiles: function()
@@ -125,7 +127,7 @@ loader.Loader.prototype = {
         var resultsFilename;
         if (history.isTreeMap())
             resultsFilename = 'times_ms.json';
-        else if (g_crossDashboardState.showAllRuns)
+        else if (this._history.crossDashboardState.showAllRuns)
             resultsFilename = 'results.json';
         else
             resultsFilename = 'results-small.json';
@@ -214,7 +216,7 @@ loader.Loader.prototype = {
     },
     _loadExpectationsFiles: function()
     {
-        if (!isFlakinessDashboard() && !g_crossDashboardState.useTestData) {
+        if (!isFlakinessDashboard() && !this._history.crossDashboardState.useTestData) {
             this._loadNext();
             return;
         }
