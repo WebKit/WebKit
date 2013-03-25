@@ -1,3 +1,15 @@
+2013-03-24  Alpha Lam  <hclam@chromium.org>
+
+        GIFImageReader should reports parsing error to client
+        https://bugs.webkit.org/show_bug.cgi?id=113141
+
+        Reviewed by Stephen White.
+
+        Updated unit test that runs on a broken GIF image file, decoding should fail.
+
+        * tests/GIFImageDecoderTest.cpp:
+        (WebKit::TEST):
+
 2013-03-22  James Robinson  <jamesr@chromium.org>
 
         [chromium] Wire windows scrollByPage enum up to compositor thread input handling

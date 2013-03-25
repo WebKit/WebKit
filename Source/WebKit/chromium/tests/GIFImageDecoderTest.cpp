@@ -178,7 +178,6 @@ TEST(GIFImageDecoderTest, parseAndDecodeByteByByte)
     EXPECT_EQ(cAnimationLoopInfinite, decoder->repetitionCount());
 }
 
-// Second frame in the file is broken but test that first frame can be decoded.
 TEST(GIFImageDecoderTest, brokenSecondFrame)
 {
     OwnPtr<GIFImageDecoder> decoder(createDecoder());
@@ -187,14 +186,8 @@ TEST(GIFImageDecoderTest, brokenSecondFrame)
     ASSERT_TRUE(data.get());
     decoder->setData(data.get(), true);
 
-    EXPECT_EQ(1u, decoder->frameCount());
-
+    EXPECT_EQ(0u, decoder->frameCount());
     ImageFrame* frame = decoder->frameBufferAtIndex(0);
-    EXPECT_EQ(ImageFrame::FrameComplete, frame->status());
-    EXPECT_EQ(16, frame->getSkBitmap().width());
-    EXPECT_EQ(16, frame->getSkBitmap().height());
-
-    frame = decoder->frameBufferAtIndex(1);
     EXPECT_FALSE(frame);
     EXPECT_EQ(cAnimationLoopOnce, decoder->repetitionCount());
 }
