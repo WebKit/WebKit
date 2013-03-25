@@ -85,9 +85,8 @@ private:
 
 class TextIterator {
 public:
-    TextIterator();
-    ~TextIterator();
     explicit TextIterator(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior);
+    ~TextIterator();
 
     bool atEnd() const { return !m_positionNode || m_shouldStop; }
     void advance();
@@ -200,7 +199,6 @@ private:
 // chunks so as to optimize for performance of the iteration.
 class SimplifiedBackwardsTextIterator {
 public:
-    SimplifiedBackwardsTextIterator();
     explicit SimplifiedBackwardsTextIterator(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior);
     
     bool atEnd() const { return !m_positionNode || m_shouldStop; }
@@ -269,7 +267,6 @@ private:
 // character at a time, or faster, as needed. Useful for searching.
 class CharacterIterator {
 public:
-    CharacterIterator();
     explicit CharacterIterator(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior);
     
     void advance(int numCharacters);
@@ -294,7 +291,6 @@ private:
     
 class BackwardsCharacterIterator {
 public:
-    BackwardsCharacterIterator();
     explicit BackwardsCharacterIterator(const Range*, TextIteratorBehavior = TextIteratorDefaultBehavior);
 
     void advance(int);
@@ -315,7 +311,6 @@ private:
 // meaning they never end split up a word.  This is useful for spellcheck or (perhaps one day) searching.
 class WordAwareIterator {
 public:
-    WordAwareIterator();
     explicit WordAwareIterator(const Range*);
     ~WordAwareIterator();
 

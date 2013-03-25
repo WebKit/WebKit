@@ -246,30 +246,6 @@ static void setUpFullyClippedStack(BitStack& stack, Node* node)
 
 // --------
 
-TextIterator::TextIterator()
-    : m_startContainer(0)
-    , m_startOffset(0)
-    , m_endContainer(0)
-    , m_endOffset(0)
-    , m_positionNode(0)
-    , m_textCharacters(0)
-    , m_textLength(0)
-    , m_remainingTextBox(0)
-    , m_firstLetterText(0)
-    , m_lastCharacter(0)
-    , m_sortedTextBoxesPosition(0)
-    , m_emitsCharactersBetweenAllVisiblePositions(false)
-    , m_entersTextControls(false)
-    , m_emitsTextWithoutTranscoding(false)
-    , m_emitsOriginalText(false)
-    , m_handledFirstLetter(false)
-    , m_ignoresStyleVisibility(false)
-    , m_emitsObjectReplacementCharacters(false)
-    , m_stopsOnFormControls(false)
-    , m_shouldStop(false)
-{
-}
-
 TextIterator::TextIterator(const Range* r, TextIteratorBehavior behavior)
     : m_startContainer(0)
     , m_startOffset(0)
@@ -1088,31 +1064,6 @@ Node* TextIterator::node() const
 
 // --------
 
-SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator()
-    : m_node(0)
-    , m_offset(0)
-    , m_handledNode(false)
-    , m_handledChildren(false)
-    , m_startNode(0)
-    , m_startOffset(0)
-    , m_endNode(0)
-    , m_endOffset(0)
-    , m_positionNode(0)
-    , m_positionStartOffset(0)
-    , m_positionEndOffset(0)
-    , m_textCharacters(0)
-    , m_textLength(0)
-    , m_lastTextNode(0)
-    , m_lastCharacter(0)
-    , m_singleCharacterBuffer(0)
-    , m_havePassedStartNode(false)
-    , m_shouldHandleFirstLetter(false)
-    , m_stopsOnFormControls(false)
-    , m_shouldStop(false)
-    , m_emitsOriginalText(false)
-{
-}
-
 SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range* r, TextIteratorBehavior behavior)
     : m_node(0)
     , m_offset(0)
@@ -1393,13 +1344,6 @@ PassRefPtr<Range> SimplifiedBackwardsTextIterator::range() const
 
 // --------
 
-CharacterIterator::CharacterIterator()
-    : m_offset(0)
-    , m_runOffset(0)
-    , m_atBreak(true)
-{
-}
-
 CharacterIterator::CharacterIterator(const Range* r, TextIteratorBehavior behavior)
     : m_offset(0)
     , m_runOffset(0)
@@ -1499,13 +1443,6 @@ static PassRefPtr<Range> characterSubrange(CharacterIterator& it, int offset, in
         end->endContainer(), end->endOffset());
 }
 
-BackwardsCharacterIterator::BackwardsCharacterIterator()
-    : m_offset(0)
-    , m_runOffset(0)
-    , m_atBreak(true)
-{
-}
-
 BackwardsCharacterIterator::BackwardsCharacterIterator(const Range* range, TextIteratorBehavior behavior)
     : m_offset(0)
     , m_runOffset(0)
@@ -1573,12 +1510,6 @@ void BackwardsCharacterIterator::advance(int count)
 }
 
 // --------
-
-WordAwareIterator::WordAwareIterator()
-    : m_previousText(0)
-    , m_didLookAhead(false)
-{
-}
 
 WordAwareIterator::WordAwareIterator(const Range* r)
     : m_previousText(0)
