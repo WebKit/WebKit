@@ -557,6 +557,14 @@ public:
     virtual void setChangedSinceLastFormControlChangeEvent(bool);
     virtual void dispatchFormControlChangeEvent() { }
 
+    // Used for disabled form elements; if true, prevents mouse events from being dispatched
+    // to event listeners, and prevents DOMActivate events from being sent at all.
+    virtual bool disabled() const;
+
+#if ENABLE(DIALOG_ELEMENT)
+    bool isInert() const;
+#endif
+
 #if ENABLE(SVG)
     virtual bool childShouldCreateRenderer(const NodeRenderingContext&) const;
     bool hasPendingResources() const;

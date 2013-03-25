@@ -907,14 +907,6 @@ Node* Node::focusDelegate()
     return this;
 }
 
-#if ENABLE(DIALOG_ELEMENT)
-bool Node::isInert() const
-{
-    Element* dialog = document()->activeModalDialog();
-    return dialog && !containsIncludingShadowDOM(dialog) && !dialog->containsIncludingShadowDOM(this);
-}
-#endif
-
 unsigned Node::nodeIndex() const
 {
     Node *_tempNode = previousSibling();
@@ -2326,7 +2318,7 @@ void Node::handleLocalEvents(Event* event)
     if (!hasEventTargetData())
         return;
 
-    if (disabled() && event->isMouseEvent())
+    if (isElementNode() && toElement(this)->disabled() && event->isMouseEvent())
         return;
 
     fireEventListeners(event);
@@ -2466,15 +2458,6 @@ void Node::dispatchInputEvent()
     dispatchScopedEvent(Event::create(eventNames().inputEvent, true, false));
 }
 
-bool Node::disabled() const
-{
-#if ENABLE(DIALOG_ELEMENT)
-    if (isInert())
-        return true;
-#endif
-    return false;
-}
-
 void Node::defaultEventHandler(Event* event)
 {
     if (event->target() != this)
@@ -2534,14 +2517,14 @@ void Node::defaultEventHandler(Event* event)
 
 bool Node::willRespondToMouseMoveEvents()
 {
-    if (disabled())
+    if (isElementNode() && toElement(this)->disabled())
         return false;
     return hasEventListeners(eventNames().mousemoveEvent) || hasEventListeners(eventNames().mouseoverEvent) || hasEventListeners(eventNames().mouseoutEvent);
 }
 
 bool Node::willRespondToMouseClickEvents()
 {
-    if (disabled())
+    if (isElementNode() && toElement(this)->disabled())
         return false;
     return isContentEditable(UserSelectAllIsAlwaysNonEditable) || hasEventListeners(eventNames().mouseupEvent) || hasEventListeners(eventNames().mousedownEvent) || hasEventListeners(eventNames().clickEvent) || hasEventListeners(eventNames().DOMActivateEvent);
 }
@@ -2549,7 +2532,7 @@ bool Node::willRespondToMouseClickEvents()
 bool Node::willRespondToTouchEvents()
 {
 #if ENABLE(TOUCH_EVENTS)
-    if (disabled())
+    if (isElementNode() && toElement(this)->disabled())
         return false;
     return hasEventListeners(eventNames().touchstartEvent) || hasEventListeners(eventNames().touchmoveEvent) || hasEventListeners(eventNames().touchcancelEvent) || hasEventListeners(eventNames().touchendEvent);
 #else

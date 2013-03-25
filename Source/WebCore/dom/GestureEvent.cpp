@@ -29,6 +29,7 @@
 
 #include "GestureEvent.h"
 
+#include "Element.h"
 #include <wtf/text/AtomicString.h>
 
 namespace WebCore {
@@ -118,7 +119,7 @@ GestureEvent* GestureEventDispatchMediator::event() const
 
 bool GestureEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
 {
-    if (dispatcher->node()->disabled())
+    if (dispatcher->node()->isElementNode() && toElement(dispatcher->node())->disabled())
         return true;
 
     dispatcher->dispatch();

@@ -138,7 +138,7 @@ static unsigned getMediaUIPartStateFlags(Node* node)
 {
     unsigned flags = 0;
 
-    if (node->disabled())
+    if (node->isElementNode() && toElement(node)->disabled())
         flags |= MediaUIPartDisabledFlag;
     else if (node->active())
         flags |= MediaUIPartPressedFlag;
