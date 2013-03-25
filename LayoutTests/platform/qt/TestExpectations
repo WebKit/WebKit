@@ -2713,5 +2713,5 @@ webkit.org/b/108257 compositing/overflow/composited-scrolling-creates-a-stacking
 # Feature not implemented
 webkit.org/b/91611 [ Mac Win ] media/media-higher-prio-audio-stream.html [ Skip ]
 
-webkit.org/b/113126 editing/pasteboard/can-read-in-dragstart-event.html [ Failure ]
-webkit.org/b/113126 editing/pasteboard/can-read-in-copy-and-cut-events.html [ Failure ]
+webkit.org/b/113126 editing/pasteboard/can-read-in-dragstart-event.html [ Skip ]
+webkit.org/b/113126 editing/pasteboard/can-read-in-copy-and-cut-events.html [ Skip ]
