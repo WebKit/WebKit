@@ -1,3 +1,12 @@
+2013-03-25  Roger Fong  <roger_fong@apple.com>
+
+        Enable CSS_REGIONS and CSS_EXCLUSIONS.
+        https://bugs.webkit.org/show_bug.cgi?id=87519
+
+        Reviewed by Timothy Horton.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+
 2013-03-21  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Move common props files for VS2010 solution to WebKitLibraries folder and update all projects accordingly.
