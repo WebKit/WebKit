@@ -50,7 +50,7 @@ WebInspector.TimelinePanel = function()
     this._presentationModel = new WebInspector.TimelinePresentationModel();
 
     this._overviewModeSetting = WebInspector.settings.createSetting("timelineOverviewMode", WebInspector.TimelineOverviewPane.Mode.Events);
-    this._glueRecordsSetting = WebInspector.settings.createSetting("timelineGlueRecords", true);
+    this._glueRecordsSetting = WebInspector.settings.createSetting("timelineGlueRecords", false);
 
     this._overviewPane = new WebInspector.TimelineOverviewPane(this._model);
     this._overviewPane.addEventListener(WebInspector.TimelineOverviewPane.Events.WindowChanged, this._invalidateAndScheduleRefresh.bind(this, false));
