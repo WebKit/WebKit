@@ -1477,3 +1477,8 @@ webkit.org/b/113083 media/track/track-user-preferences.html [ Failure ]
 
 webkit.org/b/113094 editing/pasteboard/can-read-in-copy-and-cut-events.html [ Failure ]
 webkit.org/b/113094 editing/pasteboard/can-read-in-dragstart-event.html [ Failure ]
+
+webkit.org/b/113227 transitions/cross-fade-background-image.html [ Failure ]
+webkit.org/b/113227 transitions/cross-fade-border-image.html [ Failure ]
+webkit.org/b/113227 transitions/default-timing-function.html [ Failure ]
+webkit.org/b/113227 transitions/svg-text-shadow-transition.html [ Failure ]
