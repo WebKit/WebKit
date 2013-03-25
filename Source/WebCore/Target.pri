@@ -3311,6 +3311,13 @@ enable?(QUOTA) {
         Modules/quota/StorageErrorCallback.cpp \
         Modules/quota/StorageInfo.cpp \
         Modules/quota/StorageQuota.cpp
+    enable?(WORKERS) {
+        HEADERS += \
+            Modules/quota/NavigatorStorageQuota.idl \
+            Modules/quota/WorkerNavigatorStorageQuota.h
+        SOURCES += \
+            Modules/quota/WorkerNavigatorStorageQuota.h
+    }
 }
 
 enable?(GAMEPAD) {

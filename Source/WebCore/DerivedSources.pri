@@ -140,6 +140,7 @@ IDL_BINDINGS += \
     $$PWD/Modules/quota/StorageQuota.idl \
     $$PWD/Modules/quota/StorageQuotaCallback.idl \
     $$PWD/Modules/quota/StorageUsageCallback.idl \
+    $$PWD/Modules/quota/WorkerNavigatorStorageQuota.idl \
     $$PWD/Modules/webaudio/AudioBuffer.idl \
     $$PWD/Modules/webaudio/AudioBufferCallback.idl \
     $$PWD/Modules/webaudio/AudioBufferSourceNode.idl \

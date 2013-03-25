@@ -1991,6 +1991,8 @@ storage/storageinfo-query-usage.html
 storage/storageinfo-request-quota.html
 storage/storagequota-query-usage.html
 storage/storagequota-request-quota.html
+fast/workers/worker-storagequota-query-usage.html
+fast/workers/shared-worker-storagequota-query-usage.html
 
 # Expose title direction in WebKit API
 # https://bugs.webkit.org/show_bug.cgi?id=58845

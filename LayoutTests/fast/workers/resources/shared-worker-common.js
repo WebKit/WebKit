@@ -16,6 +16,7 @@ function gc()
 }
 
 function handleMessage(event, port) {
+    self.port = port;
     if (event.data == "ping")
         port.postMessage("PASS: Received ping message");
     else if (event.data == "close")

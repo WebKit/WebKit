@@ -1288,6 +1288,7 @@ dom_binding_idls += \
 	$(WebCore)/Modules/quota/StorageQuota.idl \
 	$(WebCore)/Modules/quota/StorageQuotaCallback.idl \
 	$(WebCore)/Modules/quota/StorageUsageCallback.idl \
+	$(WebCore)/Modules/quota/WorkerNavigatorStorageQuota.idl \
 	$(WebCore)/Modules/webaudio/AudioBuffer.idl \
 	$(WebCore)/Modules/webaudio/AudioBufferCallback.idl \
 	$(WebCore)/Modules/webaudio/AudioBufferSourceNode.idl \
@@ -2034,6 +2035,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/quota/StorageQuota.h \
 	Source/WebCore/Modules/quota/StorageQuotaCallback.h \
 	Source/WebCore/Modules/quota/StorageUsageCallback.h \
+	Source/WebCore/Modules/quota/WorkerNavigatorStorageQuota.cpp \
+	Source/WebCore/Modules/quota/WorkerNavigatorStorageQuota.h \
 	Source/WebCore/Modules/webaudio/AsyncAudioDecoder.cpp \
 	Source/WebCore/Modules/webaudio/AsyncAudioDecoder.h \
 	Source/WebCore/Modules/webaudio/AudioBasicInspectorNode.cpp \

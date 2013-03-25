@@ -412,6 +412,8 @@ storage/storageinfo-query-usage.html
 storage/storageinfo-request-quota.html
 storage/storagequota-query-usage.html
 storage/storagequota-request-quota.html
+fast/workers/worker-storagequota-query-usage.html
+fast/workers/shared-worker-storagequota-query-usage.html
 
 # Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
 fast/dom/HTMLAnchorElement/anchor-nodownload.html

@@ -156,6 +156,8 @@ crbug.com/84572 storage/storageinfo-query-usage.html
 crbug.com/84572 storage/storageinfo-request-quota.html
 crbug.com/84572 storage/storagequota-query-usage.html
 crbug.com/84572 storage/storagequota-request-quota.html
+crbug.com/84572 fast/workers/worker-storagequota-query-usage.html
+crbug.com/84572 fast/workers/shared-worker-storagequota-query-usage.html
 
 # Unskip after implementing DRT support for setDefersLoading and goBack.
 webkit.org/b/60877 loader/navigation-while-deferring-loads.html

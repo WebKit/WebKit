@@ -125,6 +125,7 @@ BINDING_IDLS = \
     $(WebCore)/Modules/quota/StorageQuota.idl \
     $(WebCore)/Modules/quota/StorageQuotaCallback.idl \
     $(WebCore)/Modules/quota/StorageUsageCallback.idl \
+    $(WebCore)/Modules/quota/WorkerNavigatorStorageQuota.idl \
     $(WebCore)/Modules/speech/DOMWindowSpeechSynthesis.idl \
     $(WebCore)/Modules/speech/SpeechSynthesis.idl \
     $(WebCore)/Modules/speech/SpeechSynthesisEvent.idl \

@@ -1105,6 +1105,8 @@ Bug(EFL) storage/storageinfo-query-usage.html
 Bug(EFL) storage/storageinfo-request-quota.html
 Bug(EFL) storage/storagequota-query-usage.html
 Bug(EFL) storage/storagequota-request-quota.html
+Bug(EFL) fast/workers/worker-storagequota-query-usage.html
+Bug(EFL) fast/workers/shared-worker-storagequota-query-usage.html
 
 # EFL's LayoutTestController does not implement originsWithLocalStorage.
 Bug(EFL) storage/domstorage/localstorage/storagetracker
