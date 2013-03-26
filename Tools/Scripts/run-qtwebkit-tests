@@ -44,7 +44,7 @@ class Options(Log):
     def __init__(self, args):
         Log.__init__(self, "Options")
         log = self._log
-        opt = OptionParser("%prog [options] PathToSearch.\nTry -h or --help.")
+        opt = OptionParser("%prog [options] [PathToSearch].\nTry -h or --help.")
         opt.add_option("-j", "--parallel-level", action="store", type="int",
               dest="parallel_level", default=None,
               help="Number of parallel processes executing the Qt's tests. Default: cpu count.")
@@ -69,6 +69,12 @@ class Options(Log):
         opt.add_option("-t", "--timeout", action="store", type="int",
               dest="timeout", default=0,
               help="Timeout in seconds for each testsuite. Zero value means that there is not timeout. Default: %default.")
+        opt.add_option("--release", action="store_true", dest="release", default=True,
+              help="Run API tests in WebKitBuild/Release/... directory. It is ignored if PathToSearch is passed.")
+        opt.add_option("--debug", action="store_false", dest="release",
+              help="Run API tests in WebKitBuild/Debug/... directory. It is ignored if PathToSearch is passed.")
+        opt.add_option("-2", "--webkit2", action="store_true", dest="webkit2", default=False,
+              help="Run WebKit2 API tests. Default: Run WebKit1 API tests. It is ignored if PathToSearch is passed.")
 
         self._o, self._a = opt.parse_args(args)
         verbose = self._o.verbose
@@ -83,18 +89,34 @@ class Options(Log):
         else:
             logging.basicConfig(level=logging.INFO,)
             log.warn("Bad verbose level, switching to default.")
+
+        if self._o.release:
+            configuration = "Release"
+        else:
+            configuration = "Debug"
+
+        if self._o.webkit2:
+            test_directory = "WebKit2/UIProcess/API/qt/tests/"
+        else:
+            test_directory = "WebKit/qt/tests/"
+
         try:
-            if not os.path.exists(self._a[0]):
+            if len(self._a) == 0:
+                self._o.path = "WebKitBuild/%s/Source/%s" % (configuration, test_directory)
+            else:
+                if len(self._a) > 1:
+                    raise IndexError("Only one directory should be provided.")
+                self._o.path = self._a[0]
+
+            if not os.path.exists(self._o.path):
                 raise Exception("Given path doesn't exist.")
-            if len(self._a) > 1:
-                raise IndexError("Only one directory could be provided.")
-            self._o.path = self._a[0]
         except IndexError:
             log.error("Bad usage. Please try -h or --help.")
             sys.exit(1)
         except Exception:
-            log.error("Path '%s' doesn't exist", self._a[0])
+            log.error("Path '%s' doesn't exist", self._o.path)
             sys.exit(2)
+
         if self._o.developer:
             if not self._o.parallel_level is None:
                 log.warn("Developer mode sets parallel-level option to one.")
