@@ -1,3 +1,20 @@
+2013-03-26  Tony Chang  <tony@chromium.org>
+
+        [chromium] Expose setSelectionIncludesAltImageText in WebSettings
+        https://bugs.webkit.org/show_bug.cgi?id=113316
+
+        Reviewed by Dimitri Glazkov.
+
+        Enabling this setting allows plain text clipboard content to include alt
+        text like on Firefox and IE10.
+
+        * public/WebSettings.h:
+        (WebSettings):
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setSelectionIncludesAltImageText):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+
 2013-03-26  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Code duplication between HTTPParsers and HTTPValidation

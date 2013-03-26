@@ -731,6 +731,11 @@ void WebSettingsImpl::setSelectTrailingWhitespaceEnabled(bool enabled)
     m_settings->setSelectTrailingWhitespaceEnabled(enabled);
 }
 
+void WebSettingsImpl::setSelectionIncludesAltImageText(bool enabled)
+{
+    m_settings->setSelectionIncludesAltImageText(enabled);
+}
+
 void WebSettingsImpl::setSmartInsertDeleteEnabled(bool enabled)
 {
     m_settings->setSmartInsertDeleteEnabled(enabled);

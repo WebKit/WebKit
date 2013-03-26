@@ -136,6 +136,7 @@ public:
     virtual void setRenderVSyncNotificationEnabled(bool);
     virtual void setSansSerifFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON);
     virtual void setSelectTrailingWhitespaceEnabled(bool);
+    virtual void setSelectionIncludesAltImageText(bool);
     virtual void setSerifFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON);
     virtual void setShouldDisplayCaptions(bool);
     virtual void setShouldDisplaySubtitles(bool);
