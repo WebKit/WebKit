@@ -320,8 +320,9 @@ macro(moveWordLeft) \
 macro(moveWordLeftAndModifySelection) \
 macro(moveWordRight) \
 macro(moveWordRightAndModifySelection) \
-macro(outdent) \
 macro(orderFrontSubstitutionsPanel) \
+macro(outdent) \
+macro(overWrite) \
 macro(pageDown) \
 macro(pageDownAndModifySelection) \
 macro(pageUp) \

@@ -202,6 +202,9 @@ public:
     bool hasAutocorrectedMarker(Document*, int from, int length, ExceptionCode&);
     void setContinuousSpellCheckingEnabled(bool enabled, ExceptionCode&);
 
+    bool isOverwriteModeEnabled(Document*, ExceptionCode&);
+    void toggleOverwriteModeEnabled(Document*, ExceptionCode&);
+
     unsigned numberOfScrollableAreas(Document*, ExceptionCode&);
 
     bool isPageBoxVisible(Document*, int pageNumber, ExceptionCode&);

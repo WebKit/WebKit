@@ -164,6 +164,8 @@ shouldBe("whenEnabled('SelectSentence')", "'visible'");
 shouldBe("whenEnabled('SelectWord')", "'visible'");
 shouldBe("whenEnabled('SetMark')", "'visible'");
 
+shouldBe("whenEnabled('OverWrite')", "'richly editable'");
+
 document.body.removeChild(nonEditableParagraph);
 document.body.removeChild(editableParagraph);
 document.body.removeChild(editablePlainTextParagraph);

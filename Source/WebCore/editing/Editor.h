@@ -245,6 +245,9 @@ public:
     void markMisspellingsAndBadGrammar(const VisibleSelection& spellingSelection, bool markGrammar, const VisibleSelection& grammarSelection);
     void markAndReplaceFor(PassRefPtr<SpellCheckRequest>, const Vector<TextCheckingResult>&);
 
+    bool isOverwriteModeEnabled() const { return m_overwriteModeEnabled; }
+    void toggleOverwriteModeEnabled() { m_overwriteModeEnabled = !m_overwriteModeEnabled; }
+
 #if USE(APPKIT)
     void uppercaseWord();
     void lowercaseWord();
@@ -433,6 +436,7 @@ private:
     VisibleSelection m_mark;
     bool m_areMarkedTextMatchesHighlighted;
     EditorParagraphSeparator m_defaultParagraphSeparator;
+    bool m_overwriteModeEnabled;
 
     bool canDeleteRange(Range*) const;
     bool canSmartReplaceWithPasteboard(Pasteboard*);

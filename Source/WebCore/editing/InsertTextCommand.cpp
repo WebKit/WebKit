@@ -75,13 +75,27 @@ Position InsertTextCommand::positionInsideTextNode(const Position& p)
     return pos;
 }
 
+void InsertTextCommand::setEndingSelectionWithoutValidation(const Position& startPosition, const Position& endPosition, bool selectInsertedText)
+{
+    // We could have inserted a part of composed character sequence,
+    // so we are basically treating ending selection as a range to avoid validation.
+    // <http://bugs.webkit.org/show_bug.cgi?id=15781>
+    VisibleSelection forcedEndingSelection;
+    forcedEndingSelection.setWithoutValidation(startPosition, endPosition);
+    forcedEndingSelection.setIsDirectional(endingSelection().isDirectional());
+    setEndingSelection(forcedEndingSelection);
+
+    if (!selectInsertedText)
+        setEndingSelection(VisibleSelection(endingSelection().visibleEnd(), endingSelection().isDirectional()));
+}
+
 // This avoids the expense of a full fledged delete operation, and avoids a layout that typically results
 // from text removal.
 bool InsertTextCommand::performTrivialReplace(const String& text, bool selectInsertedText)
 {
     if (!endingSelection().isRange())
         return false;
-    
+
     if (text.contains('\t') || text.contains(' ') || text.contains('\n'))
         return false;
 
@@ -90,17 +104,24 @@ bool InsertTextCommand::performTrivialReplace(const String& text, bool selectIns
     if (endPosition.isNull())
         return false;
 
-    // We could have inserted a part of composed character sequence,
-    // so we are basically treating ending selection as a range to avoid validation.
-    // <http://bugs.webkit.org/show_bug.cgi?id=15781>
-    VisibleSelection forcedEndingSelection;
-    forcedEndingSelection.setWithoutValidation(start, endPosition);
-    forcedEndingSelection.setIsDirectional(endingSelection().isDirectional());
-    setEndingSelection(forcedEndingSelection);
+    setEndingSelectionWithoutValidation(start, endPosition, selectInsertedText);
 
-    if (!selectInsertedText)
-        setEndingSelection(VisibleSelection(endingSelection().visibleEnd(), endingSelection().isDirectional()));
-    
+    return true;
+}
+
+bool InsertTextCommand::performOverwrite(const String& text, bool selectInsertedText)
+{
+    Position start = endingSelection().start();
+    RefPtr<Text> textNode = start.containerText();
+    if (!textNode)
+        return false;
+
+    unsigned count = std::min(text.length(), textNode->length() - start.offsetInContainerNode());
+    replaceTextInNode(textNode, start.offsetInContainerNode(), count, text);
+
+    Position endPosition = Position(textNode.release(), start.offsetInContainerNode() + text.length());
+    setEndingSelectionWithoutValidation(start, endPosition, selectInsertedText);
+
     return true;
 }
 
@@ -121,6 +142,9 @@ void InsertTextCommand::doApply()
         // a renderer (e.g. it is on a <frameset> in the DOM), the VisibleSelection cannot be canonicalized to 
         // anything other than NoSelection. The rest of this function requires a real endingSelection, so bail out.
         if (endingSelection().isNone())
+            return;
+    } else if (document()->frame()->editor()->isOverwriteModeEnabled()) {
+        if (performOverwrite(m_text, m_selectInsertedText))
             return;
     }
 

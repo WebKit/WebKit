@@ -72,6 +72,8 @@ private:
     Position insertTab(const Position&);
     
     bool performTrivialReplace(const String&, bool selectInsertedText);
+    bool performOverwrite(const String&, bool selectInsertedText);
+    void setEndingSelectionWithoutValidation(const Position& startPosition, const Position& endPosition, bool selectInsertedText);
 
     friend class TypingCommand;
 

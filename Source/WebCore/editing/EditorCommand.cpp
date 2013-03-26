@@ -902,6 +902,12 @@ static bool executeOutdent(Frame* frame, Event*, EditorCommandSource, const Stri
     return true;
 }
 
+static bool executeToggleOverwrite(Frame* frame, Event*, EditorCommandSource, const String&)
+{
+    frame->editor()->toggleOverwriteModeEnabled();
+    return true;
+}
+
 static bool executePaste(Frame* frame, Event*, EditorCommandSource source, const String&)
 {
     if (source == CommandFromMenuOrKeyBinding) {
@@ -1551,6 +1557,7 @@ static const CommandMap& createCommandMap()
         { "MoveWordRight", { executeMoveWordRight, supportedFromMenuOrKeyBinding, enabledInEditableTextOrCaretBrowsing, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "MoveWordRightAndModifySelection", { executeMoveWordRightAndModifySelection, supportedFromMenuOrKeyBinding, enabledVisibleSelectionOrCaretBrowsing, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Outdent", { executeOutdent, supported, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
+        { "OverWrite", { executeToggleOverwrite, supportedFromMenuOrKeyBinding, enabledInRichlyEditableText, stateNone, valueNull, notTextInsertion, doNotAllowExecutionWhenDisabled } },
         { "Paste", { executePaste, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
         { "PasteAndMatchStyle", { executePasteAndMatchStyle, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
         { "PasteAsPlainText", { executePasteAsPlainText, supportedPaste, enabledPaste, stateNone, valueNull, notTextInsertion, allowExecutionWhenDisabled } },
@@ -1629,7 +1636,6 @@ static const CommandMap& createCommandMap()
     // LiveResize (not supported)
     // MultipleSelection (not supported)
     // Open (not supported)
-    // Overwrite (not supported)
     // PlayImage (not supported)
     // Refresh (not supported)
     // RemoveParaFormat (not supported)

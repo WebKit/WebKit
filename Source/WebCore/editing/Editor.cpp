@@ -905,6 +905,7 @@ Editor::Editor(Frame* frame)
     , m_alternativeTextController(adoptPtr(new AlternativeTextController(frame)))
     , m_areMarkedTextMatchesHighlighted(false)
     , m_defaultParagraphSeparator(EditorParagraphSeparatorIsDiv)
+    , m_overwriteModeEnabled(false)
 {
 #if ENABLE(DELETION_UI)
     m_deleteButtonController = adoptPtr(new DeleteButtonController(frame));

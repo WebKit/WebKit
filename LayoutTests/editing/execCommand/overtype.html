@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+<script type="text/javascript" src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<div id="test" contenteditable="true">
+<b>foo</b><a href="http://www.google.com/"><div id="linkText">bar</div></a>
+</div>
+<pre id="console"></pre>
+<script>
+function log(message) {
+    var console = document.getElementById("console");
+    console.innerHTML += message + '\n';
+}
+
+if (!window.internals)
+    log("FAILED: this test requires the 'internals' object.");
+else {
+    Markup.description('This is a test for Overwrite mode');
+
+    var element = document.getElementById("test");
+    var selection = window.getSelection();
+
+    Markup.dump(element, 'These are the original contents');
+
+    selection.collapse(element, 0);
+    internals.toggleOverwriteModeEnabled(document);
+
+    document.execCommand("InsertText", false, 'FO');
+    Markup.dump(element, 'After overwritting the first two characters');
+
+    document.execCommand("InsertText", false, ' ');
+    Markup.dump(element, 'After inserting a blank');
+
+    document.execCommand("InsertText", false, 'O SOME MORE');
+    Markup.dump(element, 'Overwrite at the end of a line performs as a normal Insert');
+
+    selection.collapse(document.getElementById("linkText"), 0);
+    document.execCommand("InsertText", false, 'BAR.BAR');
+    Markup.dump(element, 'Overwritting works even if the inserted text is longer than the replaced text');
+
+    moveSelectionForwardByWordCommand();
+    document.execCommand("InsertLineBreak");
+    document.execCommand("InsertText", false, 'TEXT IN NEW NODE');
+    Markup.dump(element, 'Overwrite should create new text nodes on demand');
+
+    element.innerHTML = "webkit";
+    selection.collapse(element, 0);
+    for (i = 0; i < 2; i++)
+        moveSelectionForwardByCharacterCommand();
+    for (i = 0; i < 2; i++)
+        extendSelectionForwardByCharacterCommand();
+    Markup.dump(element, 'New plain text contents with an inner selection');
+
+    document.execCommand("InsertText", false, 'BK');
+    Markup.dump(element, 'Overwrite behaves like insert on range selections');
+
+    element.innerHTML = "&#x4E20;&#x4E21;&#x4E22;&#x4E23;";
+    selection.collapse();
+    Markup.dump(element, 'New CJK contents');
+
+    selection.collapse(element, 0);
+    document.execCommand("InsertText", false, '\u4E14\u4E14');
+    Markup.dump(element, 'Overwrite CJK text');
+
+    element.innerHTML="<div id=\"rtl-div\" dir=\"rtl\">&aleph;&beth;&gimel;&daleth;</div>"
+    selection.collapse();
+    Markup.dump(element, 'New RTL contents');
+
+    selection.collapse(element, 0);
+    document.execCommand("InsertText", false, '\u05d0\u05d0');
+    Markup.dump(element, 'Overwrite RTL text');
+}
+Markup.dump('console', 'console');
+
+</script>
+</body>
+</html>

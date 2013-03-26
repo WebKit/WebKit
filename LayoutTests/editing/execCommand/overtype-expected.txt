@@ -1,0 +1,108 @@
+This is a test for Overwrite mode
+
+These are the original contents:
+| "
+"
+| <b>
+|   "foo"
+| <a>
+|   href="http://www.google.com/"
+|   <div>
+|     id="linkText"
+|     "bar"
+| "
+"
+
+After overwritting the first two characters:
+| "
+"
+| <b>
+|   "FO<#selection-caret>o"
+| <a>
+|   href="http://www.google.com/"
+|   <div>
+|     id="linkText"
+|     "bar"
+| "
+"
+
+After inserting a blank:
+| "
+"
+| <b>
+|   "FO<#selection-caret> "
+| <a>
+|   href="http://www.google.com/"
+|   <div>
+|     id="linkText"
+|     "bar"
+| "
+"
+
+Overwrite at the end of a line performs as a normal Insert:
+| "
+"
+| <b>
+|   "FOO SOME MORE<#selection-caret>"
+| <a>
+|   href="http://www.google.com/"
+|   <div>
+|     id="linkText"
+|     "bar"
+| "
+"
+
+Overwritting works even if the inserted text is longer than the replaced text:
+| "
+"
+| <b>
+|   "FOO SOME MORE"
+| <a>
+|   href="http://www.google.com/"
+|   <div>
+|     id="linkText"
+|     "BAR.BAR<#selection-caret>"
+| "
+"
+
+Overwrite should create new text nodes on demand:
+| "
+"
+| <b>
+|   "FOO SOME MORE"
+| <div>
+|   id="linkText"
+|   <a>
+|     href="http://www.google.com/"
+|     "BAR.BAR"
+|   <br>
+|   "TEXT IN NEW NODE<#selection-caret>"
+| "
+"
+
+New plain text contents with an inner selection:
+| "we<#selection-anchor>bk<#selection-focus>it"
+
+Overwrite behaves like insert on range selections:
+| "weBK<#selection-caret>it"
+
+New CJK contents:
+| "丠両丢丣"
+
+Overwrite CJK text:
+| "且且<#selection-caret>丢丣"
+
+New RTL contents:
+| <div>
+|   dir="rtl"
+|   id="rtl-div"
+|   "ℵℶℷℸ"
+
+Overwrite RTL text:
+| <div>
+|   dir="rtl"
+|   id="rtl-div"
+|   "אא<#selection-caret>ℷℸ"
+
+console:
+| 

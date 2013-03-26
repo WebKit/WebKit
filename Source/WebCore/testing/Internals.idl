@@ -169,6 +169,9 @@
     boolean hasAutocorrectedMarker(in Document document, in long from, in long length) raises (DOMException);
     void setContinuousSpellCheckingEnabled(in boolean enabled) raises (DOMException);
 
+    boolean isOverwriteModeEnabled(in Document document) raises (DOMException);
+    void toggleOverwriteModeEnabled(in Document document) raises (DOMException);
+
     unsigned long numberOfScrollableAreas(in Document document) raises (DOMException);
 
     boolean isPageBoxVisible(in Document document, in long pageNumber) raises (DOMException);

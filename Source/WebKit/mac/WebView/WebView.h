@@ -756,6 +756,8 @@ extern NSString * const WebViewDidChangeSelectionNotification;
 - (void)moveToEndOfSentenceAndModifySelection:(id)sender;
 - (void)selectSentence:(id)sender;
 
+- (void)overWrite:(id)sender;
+
 /* 
 The following methods are declared in NSResponder.h.
 WebView overrides each method in this list, providing

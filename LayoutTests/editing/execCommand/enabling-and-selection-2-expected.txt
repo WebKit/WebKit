@@ -83,6 +83,7 @@ PASS whenEnabled('SelectParagraph') is 'visible'
 PASS whenEnabled('SelectSentence') is 'visible'
 PASS whenEnabled('SelectWord') is 'visible'
 PASS whenEnabled('SetMark') is 'visible'
+PASS whenEnabled('OverWrite') is 'richly editable'
 PASS successfullyParsed is true
 
 TEST COMPLETE
