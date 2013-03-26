@@ -34,6 +34,7 @@ from webkitpy.tool.bot.irc_command import *
 from webkitpy.tool.mocktool import MockTool
 from webkitpy.common.net.web_mock import MockWeb
 from webkitpy.common.system.executive_mock import MockExecutive
+from webkitpy.common.system.filesystem_mock import MockFileSystem
 
 
 class IRCCommandTest(unittest.TestCase):
@@ -143,5 +144,31 @@ class IRCCommandTest(unittest.TestCase):
         # Invalid arguments result in the USAGE message.
         self.assertEqual("tom: Usage: rollout SVN_REVISION [SVN_REVISIONS] REASON",
                           rollout.execute("tom", [], None, None))
+
+        tool = MockTool()
+        tool.filesystem.files["/mock-checkout/test/file/one"] = ""
+        tool.filesystem.files["/mock-checkout/test/file/two"] = ""
+        self.assertEqual("Failed to apply reverse diff for file(s): test/file/one, test/file/two",
+                          rollout._check_diff_failure("""
+Preparing rollout for bug 123456.
+Updating working directory
+Failed to apply reverse diff for revision 123456 because of the following conflicts:
+test/file/one
+test/file/two
+Failed to apply reverse diff for revision 123456 because of the following conflicts:
+test/file/one
+test/file/two
+Updating OpenSource
+Current branch master is up to date.
+        """, tool))
+        self.assertEqual(None, rollout._check_diff_failure("""
+Preparing rollout for bug 123456.
+Updating working directory
+Some other error report involving file paths:
+test/file/one
+test/file/two
+Updating OpenSource
+Current branch master is up to date.
+        """, tool))
 
         # FIXME: We need a better way to test IRCCommands which call tool.irc().post()

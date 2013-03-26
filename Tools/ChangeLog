@@ -1,3 +1,18 @@
+2013-03-26  Alan Cutter  <alancutter@chromium.org>
+
+        Sheriffbot should explain rollout failures in a human readable form.
+        https://bugs.webkit.org/show_bug.cgi?id=107092
+
+        Reviewed by Ryosuke Niwa.
+
+        Improved sheriffbot's error reporting when a rollout command fails to reverse diff files (the most common failure).
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (Rollout._check_diff_failure):
+        (Rollout.execute):
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        (IRCCommandTest.test_rollout):
+
 2013-03-26  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.

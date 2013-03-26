@@ -232,6 +232,20 @@ class Rollout(IRCCommand):
         tool.scm().discard_local_changes()
         tool.executive.run_and_throw_if_fail(tool.deprecated_port().update_webkit_command(), quiet=True, cwd=tool.scm().checkout_root)
 
+    def _check_diff_failure(self, error_log, tool):
+        if not error_log:
+            return None
+
+        revert_failure_message_start = error_log.find("Failed to apply reverse diff for revision")
+        if revert_failure_message_start == -1:
+            return None
+
+        lines = error_log[revert_failure_message_start:].split('\n')[1:]
+        files = itertools.takewhile(lambda line: tool.filesystem.exists(tool.scm().absolute_path(line)), lines)
+        if files:
+            return "Failed to apply reverse diff for file(s): %s" % ", ".join(files)
+        return None
+
     def execute(self, nick, args, tool, sheriff):
         svn_revision_list, rollout_reason = self._parse_args(args)
 
@@ -255,6 +269,9 @@ class Rollout(IRCCommand):
             tool.irc().post("%s: Created rollout: %s" % (nicks_string, bug_url))
         except ScriptError, e:
             tool.irc().post("%s: Failed to create rollout patch:" % nicks_string)
+            diff_failure = self._check_diff_failure(e.output, tool)
+            if diff_failure:
+                return "%s: %s" % (nicks_string, diff_failure)
             _post_error_and_check_for_bug_url(tool, nicks_string, e)
 
 
