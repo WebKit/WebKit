@@ -113,6 +113,11 @@ WebInspector.FlameChart.Calculator.prototype = {
         return this._minimumBoundaries;
     },
 
+    grandMinimumBoundary: function()
+    {
+        return 0;
+    },
+
     boundarySpan: function()
     {
         return this._maximumBoundaries - this._minimumBoundaries;
@@ -161,6 +166,11 @@ WebInspector.FlameChart.OverviewCalculator.prototype = {
         return this._minimumBoundaries;
     },
 
+    grandMinimumBoundary: function()
+    {
+        return this._minimumBoundaries;
+    },
+
     boundarySpan: function()
     {
         return this._maximumBoundaries - this._minimumBoundaries;
@@ -204,7 +214,6 @@ WebInspector.FlameChart.prototype = {
         if (windowRight === this._windowRight)
             return;
         windowShift = windowRight - this._dragStartWindowRight;
-
         this._overviewGrid.setWindow(this._dragStartWindowLeft + windowShift, this._dragStartWindowRight + windowShift);
     },
 

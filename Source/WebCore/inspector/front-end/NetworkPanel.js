@@ -1792,6 +1792,11 @@ WebInspector.NetworkBaseCalculator.prototype = {
         return this._minimumBoundary;
     },
 
+    grandMinimumBoundary: function()
+    {
+        return this._minimumBoundary;
+    },
+
     _value: function(item)
     {
         return 0;
