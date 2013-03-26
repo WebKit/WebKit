@@ -504,7 +504,6 @@ void QtWebPageEventHandler::handleInputEvent(const QInputEvent* event)
         m_isMouseButtonPressed = false;
         break;
     case QEvent::MouseButtonDblClick:
-        ASSERT_NOT_REACHED();
         return;
     default:
         break;
