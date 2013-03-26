@@ -465,9 +465,9 @@ def cloopEmitOpAndBranch(operands, operator, type, conditionTest)
 
     $asm.putc "{"
     $asm.putc "    #{tempType} temp = #{op2} #{operator} #{op1};"
+    $asm.putc "    #{op2} = temp;"
     $asm.putc "    if (temp #{conditionTest})"
     $asm.putc "        goto  #{operands[2].cLabel};"
-    $asm.putc "    #{op2} = temp;"
     $asm.putc "}"
 end
 
@@ -533,10 +533,10 @@ def cloopEmitOpAndBranchIfOverflow(operands, operator, type)
         raise "Unimplemented opeartor"
     end
 
-    $asm.putc "    if #{overflowTest} {"
-    $asm.putc "        goto #{operands[2].cLabel};"
-    $asm.putc "    }"
+    $asm.putc "    bool didOverflow = #{overflowTest};"
     $asm.putc "    #{operands[1].clValue(type)} = #{operands[1].clValue(type)} #{operator} #{operands[0].clValue(type)};"
+    $asm.putc "    if (didOverflow)"
+    $asm.putc "        goto #{operands[2].cLabel};"
     $asm.putc "}"
 end
 

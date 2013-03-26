@@ -1,3 +1,23 @@
+2013-03-25  Mark Lam  <mark.lam@apple.com>
+
+        Offlineasm cloop backend compiles op+branch incorrectly.
+        https://bugs.webkit.org/show_bug.cgi?id=113146.
+
+        Reviewed by Geoffrey Garen.
+
+        * dfg/DFGRepatch.h:
+        (JSC::DFG::dfgResetGetByID):
+        (JSC::DFG::dfgResetPutByID):
+        - These functions never return when the DFG is dsiabled, not just when
+          asserts are enabled. Changing the attribute from NO_RETURN_DUE_TO_ASSERT
+          to NO_RETURN.
+        * llint/LLIntOfflineAsmConfig.h:
+        - Added some #defines needed to get the cloop building again.
+        * offlineasm/cloop.rb:
+        - Fix cloopEmitOpAndBranchIfOverflow() and cloopEmitOpAndBranch() to
+          emit code that unconditionally executes the specified operation before
+          doing the conditional branch.
+
 2013-03-25  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSObject::enterDictionaryIndexingMode doesn't have a case for ALL_BLANK_INDEXING_TYPES
