@@ -323,12 +323,6 @@ static AtomicString classNameForShadowRoot(const Node* node)
     return plugInLargeSizeClassName;
 }
 
-void HTMLPlugInImageElement::setIsPrimarySnapshottedPlugIn(bool isPrimarySnapshottedPlugIn)
-{
-    if (isPrimarySnapshottedPlugIn)
-        restartSnapshottedPlugIn();
-}
-
 void HTMLPlugInImageElement::updateSnapshotInfo()
 {
     ShadowRoot* root = userAgentShadowRoot();
@@ -411,9 +405,7 @@ static void addPlugInsFromNodeListMatchingPlugInOrigin(HTMLPlugInImageElementLis
             if (plugInElement->isPlugInImageElement() && plugInElement->displayState() <= HTMLPlugInElement::DisplayingSnapshot) {
                 HTMLPlugInImageElement* plugInImageElement = toHTMLPlugInImageElement(node);
                 const KURL& loadedURL = plugInImageElement->loadedUrl();
-                String otherMimeType = plugInImageElement->serviceType();
-                if (otherMimeType.isEmpty())
-                    otherMimeType = mimeTypeFromURL(loadedURL);
+                String otherMimeType = plugInImageElement->loadedMimeType();
                 if (plugInOrigin == loadedURL.host() && mimeType == otherMimeType)
                     plugInList.append(plugInImageElement);
             }
@@ -421,21 +413,13 @@ static void addPlugInsFromNodeListMatchingPlugInOrigin(HTMLPlugInImageElementLis
     }
 }
 
-void HTMLPlugInImageElement::userDidClickSnapshot(PassRefPtr<MouseEvent> event)
+void HTMLPlugInImageElement::restartSimilarPlugIns()
 {
-    m_pendingClickEventFromSnapshot = event;
-    String plugInOrigin = m_loadedUrl.host();
-    String mimeType = serviceType();
-    if (mimeType.isEmpty())
-        mimeType = mimeTypeFromURL(m_loadedUrl);
-    if (document()->page() && !SchemeRegistry::shouldTreatURLSchemeAsLocal(document()->page()->mainFrame()->document()->baseURL().protocol()))
-        document()->page()->plugInClient()->didStartFromOrigin(document()->page()->mainFrame()->document()->baseURL().host(), plugInOrigin, mimeType);
-
-    restartSnapshottedPlugIn();
-
     // Restart any other snapshotted plugins in the page with the same origin. Note that they
     // may be in different frames, so traverse from the top of the document.
 
+    String plugInOrigin = m_loadedUrl.host();
+    String mimeType = loadedMimeType();
     HTMLPlugInImageElementList pluginsNeedingRestart;
 
     if (!document()->page())
@@ -459,6 +443,25 @@ void HTMLPlugInImageElement::userDidClickSnapshot(PassRefPtr<MouseEvent> event)
     for (size_t i = 0, length = pluginsNeedingRestart.size(); i < length; i++) {
         pluginsNeedingRestart[i]->setDisplayState(Playing);
         pluginsNeedingRestart[i]->restartSnapshottedPlugIn();
+    }
+}
+
+void HTMLPlugInImageElement::userDidClickSnapshot(PassRefPtr<MouseEvent> event)
+{
+    m_pendingClickEventFromSnapshot = event;
+    String plugInOrigin = m_loadedUrl.host();
+    if (document()->page() && !SchemeRegistry::shouldTreatURLSchemeAsLocal(document()->page()->mainFrame()->document()->baseURL().protocol()))
+        document()->page()->plugInClient()->didStartFromOrigin(document()->page()->mainFrame()->document()->baseURL().host(), plugInOrigin, loadedMimeType());
+
+    restartSnapshottedPlugIn();
+    restartSimilarPlugIns();
+}
+
+void HTMLPlugInImageElement::setIsPrimarySnapshottedPlugIn(bool isPrimarySnapshottedPlugIn)
+{
+    if (isPrimarySnapshottedPlugIn) {
+        restartSnapshottedPlugIn();
+        restartSimilarPlugIns();
     }
 }
 
@@ -561,11 +564,7 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
         return;
     }
 
-    String mimeType = serviceType();
-    if (mimeType.isEmpty())
-        mimeType = mimeTypeFromURL(url);
-
-    if (document()->page()->plugInClient()->shouldAutoStartFromOrigin(document()->page()->mainFrame()->document()->baseURL().host(), url.host(), mimeType)) {
+    if (document()->page()->plugInClient()->shouldAutoStartFromOrigin(document()->page()->mainFrame()->document()->baseURL().host(), url.host(), loadedMimeType())) {
         LOG(Plugins, "%p Plug-in from (%s, %s) is marked to auto-start, set to play", this, document()->page()->mainFrame()->document()->baseURL().host().utf8().data(), url.host().utf8().data());
         return;
     }

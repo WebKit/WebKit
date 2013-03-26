@@ -1,0 +1,24 @@
+layer at (0,0) size 785x1056
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x1056
+  RenderBlock {HTML} at (0,0) size 785x1056
+    RenderBody {BODY} at (8,8) size 769x1032
+      RenderBlock {P} at (0,0) size 769x18
+        RenderText {#text} at (0,0) size 750x18
+          text run at (0,0) width 750: "The dominant plugin should play automatically, and trigger all the others to play as well, since they are the same origin."
+      RenderBlock {P} at (0,34) size 769x600
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,650) size 769x200
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,866) size 769x100
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {P} at (0,982) size 769x50
+        RenderText {#text} at (0,0) size 0x0
+layer at (8,42) size 600x600
+  RenderEmbeddedObject {EMBED} at (0,0) size 600x600
+layer at (8,658) size 200x200
+  RenderEmbeddedObject {EMBED} at (0,0) size 200x200
+layer at (8,874) size 100x100
+  RenderEmbeddedObject {EMBED} at (0,0) size 100x100
+layer at (8,990) size 50x50
+  RenderEmbeddedObject {EMBED} at (0,0) size 50x50

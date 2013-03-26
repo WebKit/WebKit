@@ -33,7 +33,8 @@
 
 namespace WebKit {
 
-WebPlugInClient::WebPlugInClient(WebPage*)
+WebPlugInClient::WebPlugInClient(WebPage* page)
+    : m_page(page)
 {
 }
 
@@ -48,7 +49,7 @@ void WebPlugInClient::pageDestroyed()
 
 bool WebPlugInClient::shouldAutoStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType)
 {
-    return WebProcess::shared().shouldPlugInAutoStartFromOrigin(pageOrigin, pluginOrigin, mimeType);
+    return WebProcess::shared().shouldPlugInAutoStartFromOrigin(m_page, pageOrigin, pluginOrigin, mimeType);
 }
 
 void WebPlugInClient::didStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType)

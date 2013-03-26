@@ -1,0 +1,19 @@
+<p>The dominant plugin should play automatically, and then so should the identical plugin that is added a bit later.</p>
+<script>
+if (window.testRunner) {
+    window.internals.settings.setPlugInSnapshottingEnabled(true);
+    window.internals.settings.setMaximumPlugInSnapshotAttempts(0);
+    testRunner.waitUntilDone();
+    setTimeout(function () {
+        var div = document.createElement("div");
+        div.innerHTML = '<embed src="../resources/simple_blank.swf" width="200" height="200"></embed>';
+        document.body.appendChild(div);
+        setTimeout(function () {
+            testRunner.notifyDone();
+        }, 500);
+    }, 500);
+}
+</script>
+<div>
+<embed src="../resources/simple_blank.swf" width="600" height="600"></embed>
+</div>

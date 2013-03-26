@@ -59,6 +59,15 @@ public:
     const String& serviceType() const { return m_serviceType; }
     const String& url() const { return m_url; }
     const KURL& loadedUrl() const { return m_loadedUrl; }
+
+    const String loadedMimeType() const
+    {
+        String mimeType = serviceType();
+        if (mimeType.isEmpty())
+            mimeType = mimeTypeFromURL(m_loadedUrl);
+        return mimeType;
+    }
+
     bool shouldPreferPlugInsForImages() const { return m_shouldPreferPlugInsForImages; }
 
     // Public for FrameView::addWidgetToUpdate()
@@ -117,6 +126,8 @@ private:
     void simulatedMouseClickTimerFired(DeferrableOneShotTimer<HTMLPlugInImageElement>*);
 
     void swapRendererTimerFired(Timer<HTMLPlugInImageElement>*);
+
+    void restartSimilarPlugIns();
 
     virtual bool isPlugInImageElement() const OVERRIDE { return true; }
 

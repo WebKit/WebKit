@@ -1,0 +1,23 @@
+<p>The dominant plugin should play automatically, and trigger all the others to play as well, since they are the same origin.</p>
+<script>
+if (window.testRunner) {
+    window.internals.settings.setPlugInSnapshottingEnabled(true);
+    window.internals.settings.setMaximumPlugInSnapshotAttempts(0);
+    testRunner.waitUntilDone();
+    setTimeout(function () {
+        testRunner.notifyDone();
+    }, 500);
+}
+</script>
+<p>
+<embed src="../resources/simple_blank.swf" width="600" height="600"></embed>
+</p>
+<p>
+<embed src="../resources/simple_blank.swf" width="200" height="200"></embed>
+</p>
+<p>
+<embed src="../resources/simple_blank.swf" width="100" height="100"></embed>
+</p>
+<p>
+<embed src="../resources/simple_blank.swf" width="50" height="50"></embed>
+</p>

@@ -125,7 +125,7 @@ public:
     void addVisitedLink(WebCore::LinkHash);
     bool isLinkVisited(WebCore::LinkHash) const;
 
-    bool shouldPlugInAutoStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType);
+    bool shouldPlugInAutoStartFromOrigin(const WebPage*, const String& pageOrigin, const String& pluginOrigin, const String& mimeType);
     void plugInDidStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType);
     void plugInDidReceiveUserInteraction(unsigned plugInOriginHash);
 

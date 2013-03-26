@@ -40,6 +40,8 @@ private:
     virtual void pageDestroyed();
     virtual bool shouldAutoStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType);
     virtual void didStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType);
+
+    WebPage* m_page;
 };
 
 } // namespace WebKit

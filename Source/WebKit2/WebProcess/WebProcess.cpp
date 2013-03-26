@@ -789,12 +789,18 @@ bool WebProcess::isPlugInAutoStartOriginHash(unsigned plugInOriginHash)
     return currentTime() < it->value;
 }
 
-bool WebProcess::shouldPlugInAutoStartFromOrigin(const String& pageOrigin, const String& pluginOrigin, const String& mimeType)
+bool WebProcess::shouldPlugInAutoStartFromOrigin(const WebPage* page, const String& pageOrigin, const String& pluginOrigin, const String& mimeType)
 {
     if (m_plugInAutoStartOrigins.contains(pluginOrigin))
         return true;
 
-    // The plugin wasn't in the general whitelist, so check against the more explicit hash list.
+#ifdef ENABLE_PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC
+    // The plugin wasn't in the general whitelist, so check if it similar to the primary plugin for the page (if we've found one).
+    if (page && page->matchesPrimaryPlugIn(pageOrigin, pluginOrigin, mimeType))
+        return true;
+#endif
+
+    // Lastly check against the more explicit hash list.
     return isPlugInAutoStartOriginHash(hashForPlugInOrigin(pageOrigin, pluginOrigin, mimeType));
 }
 

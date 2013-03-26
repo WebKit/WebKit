@@ -3949,6 +3949,9 @@ void WebPage::determinePrimarySnapshottedPlugIn()
         return;
 
     m_didFindPrimarySnapshottedPlugin = true;
+    m_primaryPlugInPageOrigin = m_page->mainFrame()->document()->baseURL().host();
+    m_primaryPlugInOrigin = candidatePlugIn->loadedUrl().host();
+    m_primaryPlugInMimeType = candidatePlugIn->loadedMimeType();
 
     candidatePlugIn->setIsPrimarySnapshottedPlugIn(true);
 }
@@ -3957,6 +3960,14 @@ void WebPage::resetPrimarySnapshottedPlugIn()
 {
     m_readyToFindPrimarySnapshottedPlugin = false;
     m_didFindPrimarySnapshottedPlugin = false;
+}
+
+bool WebPage::matchesPrimaryPlugIn(const String& pageOrigin, const String& pluginOrigin, const String& mimeType) const
+{
+    if (!m_didFindPrimarySnapshottedPlugin)
+        return false;
+
+    return (pageOrigin == m_primaryPlugInPageOrigin && pluginOrigin == m_primaryPlugInOrigin && mimeType == m_primaryPlugInMimeType);
 }
 #endif // ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
 

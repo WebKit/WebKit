@@ -640,6 +640,7 @@ public:
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     void determinePrimarySnapshottedPlugIn();
     void resetPrimarySnapshottedPlugIn();
+    bool matchesPrimaryPlugIn(const String& pageOrigin, const String& pluginOrigin, const String& mimeType) const;
 #endif
 
 private:
@@ -860,6 +861,9 @@ private:
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     bool m_readyToFindPrimarySnapshottedPlugin;
     bool m_didFindPrimarySnapshottedPlugin;
+    String m_primaryPlugInPageOrigin;
+    String m_primaryPlugInOrigin;
+    String m_primaryPlugInMimeType;
 #endif
 
 #if PLATFORM(MAC)

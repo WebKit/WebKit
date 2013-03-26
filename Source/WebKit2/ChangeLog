@@ -1,3 +1,29 @@
+2013-03-26  Dean Jackson  <dino@apple.com>
+
+        When a primary plugin is restarted, also start similar plugins
+        https://bugs.webkit.org/show_bug.cgi?id=113265
+
+        Reviewed by Tim Horton.
+
+        Remember the origin of the primary plugin, so that we can
+        autostart anything that is similar.
+
+        * WebProcess/WebCoreSupport/WebPlugInClient.cpp:
+        (WebKit::WebPlugInClient::WebPlugInClient): Keep a pointer to the WebPage.
+        (WebKit::WebPlugInClient::shouldAutoStartFromOrigin): Pass the page onto the process.
+        * WebProcess/WebCoreSupport/WebPlugInClient.h:
+        (WebPlugInClient): New member variable for the WebPage we were created with.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::determinePrimarySnapshottedPlugIn): Remember the origin information
+            for the primary plugin.
+        (WebKit::WebPage::matchesPrimaryPlugIn): Returns true if we're seeing something that
+            looks like the primary plugin.
+        * WebProcess/WebPage/WebPage.h: New method matchesPrimaryPlugIn.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::shouldPlugInAutoStartFromOrigin): Check if the page thinks this is
+            the primary plugin.
+        * WebProcess/WebProcess.h: Accept a reference to the page in shouldPlugInAutoStartFromOrigin.
+
 2013-03-26  Alexey Proskuryakov  <ap@apple.com>
 
         Follow-up to:

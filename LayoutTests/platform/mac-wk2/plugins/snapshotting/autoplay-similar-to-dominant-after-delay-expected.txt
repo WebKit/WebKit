@@ -1,0 +1,15 @@
+layer at (0,0) size 785x850
+  RenderView at (0,0) size 785x600
+layer at (0,0) size 785x850
+  RenderBlock {HTML} at (0,0) size 785x850
+    RenderBody {BODY} at (8,8) size 769x834
+      RenderBlock {P} at (0,0) size 769x18
+        RenderText {#text} at (0,0) size 696x18
+          text run at (0,0) width 696: "The dominant plugin should play automatically, and then so should the identical plugin that is added a bit later."
+      RenderBlock {DIV} at (0,34) size 769x600
+        RenderText {#text} at (0,0) size 0x0
+      RenderBlock {DIV} at (0,634) size 769x200
+layer at (8,42) size 600x600
+  RenderEmbeddedObject {EMBED} at (0,0) size 600x600
+layer at (8,642) size 200x200
+  RenderEmbeddedObject {EMBED} at (0,0) size 200x200
