@@ -105,6 +105,7 @@ WebInspector.ConsoleModel.prototype = {
     clearMessages: function()
     {
         this.messages = [];
+        delete this._previousMessage;
 
         this.errors = 0;
         this.warnings = 0;

@@ -246,6 +246,7 @@ WebInspector.BreakpointManager.prototype = {
                 for (var j = 0; j < lineBreakpoints.length; ++j) {
                     var breakpoint = lineBreakpoints[j];
                     this._breakpoints.remove(breakpoint);
+                    delete breakpoint._primaryUILocation;
                     breakpoint._resetLocations();
                 }
             }
