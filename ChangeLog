@@ -1,3 +1,13 @@
+2013-03-26  Rijubrata Bhaumik  <rijubrata.bhaumik@intel.com>
+
+        [EFL] Enable IndexedDB by default
+        https://bugs.webkit.org/show_bug.cgi?id=107248
+
+        Reviewed by Laszlo Gombos.
+
+        * Source/cmake/OptionsEfl.cmake:
+        Enable IndexedDB by default on EFL.
+
 2013-03-25  Kent Tamura  <tkent@chromium.org>
 
         Rename ENABLE_INPUT_TYPE_DATETIME
