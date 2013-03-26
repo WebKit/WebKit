@@ -1134,6 +1134,62 @@ void Node::detach()
 #endif
 }
 
+Node* Node::pseudoAwarePreviousSibling() const
+{
+    if (parentElement() && !previousSibling()) {
+        Element* parent = parentElement();
+        if (isAfterPseudoElement() && parent->lastChild())
+            return parent->lastChild();
+        if (!isBeforePseudoElement())
+            return parent->pseudoElement(BEFORE);
+    }
+    return previousSibling();
+}
+
+Node* Node::pseudoAwareNextSibling() const
+{
+    if (parentElement() && !nextSibling()) {
+        Element* parent = parentElement();
+        if (isBeforePseudoElement() && parent->firstChild())
+            return parent->firstChild();
+        if (!isAfterPseudoElement())
+            return parent->pseudoElement(AFTER);
+    }
+    return nextSibling();
+}
+
+Node* Node::pseudoAwareFirstChild() const
+{
+    if (isElementNode()) {
+        const Element* currentElement = toElement(this);
+        Node* first = currentElement->pseudoElement(BEFORE);
+        if (first)
+            return first;
+        first = currentElement->firstChild();
+        if (!first)
+            first = currentElement->pseudoElement(AFTER);
+        return first;
+    }
+
+    return firstChild();
+}
+
+Node* Node::pseudoAwareLastChild() const
+{
+    if (isElementNode()) {
+        const Element* currentElement = toElement(this);
+        Node* last = currentElement->pseudoElement(AFTER);
+        if (last)
+            return last;
+        last = currentElement->lastChild();
+        if (!last)
+            last = currentElement->pseudoElement(BEFORE);
+        return last;
+    }
+
+    return lastChild();
+}
+
 // FIXME: This code is used by editing.  Seems like it could move over there and not pollute Node.
 Node *Node::previousNodeConsideringAtomicNodes() const
 {
