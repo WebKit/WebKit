@@ -1,3 +1,19 @@
+2013-03-26  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        [BlackBerry] Memory leak in UserMediaClientImpl
+        https://bugs.webkit.org/show_bug.cgi?id=112998
+
+        Reviewed by Rob Buis.
+
+        PR 312559
+        Internally Reviewed by Anthony Scian.
+
+        Should destroy itself in UserMediaClientImpl::pageDestroyed(), as other
+        XXClientBlackBerry did, like GeolocationClientBlackBerry::geolocationDestroyed().
+
+        * WebCoreSupport/UserMediaClientImpl.cpp:
+        (WebCore::UserMediaClientImpl::pageDestroyed):
+
 2013-03-25  Kent Tamura  <tkent@chromium.org>
 
         Rename ENABLE_INPUT_TYPE_DATETIME

@@ -110,6 +110,7 @@ UserMediaClientImpl::~UserMediaClientImpl()
 
 void UserMediaClientImpl::pageDestroyed()
 {
+    delete this;
 }
 
 void UserMediaClientImpl::requestUserMedia(PassRefPtr<UserMediaRequest> prpRequest, const MediaStreamSourceVector& audioSources, const MediaStreamSourceVector& videoSources)
