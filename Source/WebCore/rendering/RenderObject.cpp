@@ -3008,6 +3008,10 @@ RenderBoxModelObject* RenderObject::offsetParent() const
     // If A is an area HTML element which has a map HTML element somewhere in the ancestor
     // chain return the nearest ancestor map HTML element and stop this algorithm.
     // FIXME: Implement!
+
+    // FIXME: Stop the search at the flow thread boundary until we figure out the right
+    // behavior for elements inside a flow thread.
+    // https://bugs.webkit.org/show_bug.cgi?id=113276
     
     // Return the nearest ancestor element of A for which at least one of the following is
     // true and stop this algorithm if such an ancestor is found:
@@ -3020,7 +3024,7 @@ RenderBoxModelObject* RenderObject::offsetParent() const
     bool skipTables = isPositioned();
     float currZoom = style()->effectiveZoom();
     RenderObject* curr = parent();
-    while (curr && (!curr->node() || (!curr->isPositioned() && !curr->isBody()))) {
+    while (curr && (!curr->node() || (!curr->isPositioned() && !curr->isBody())) && !curr->isRenderNamedFlowThread()) {
         Node* element = curr->node();
         if (!skipTables && element && (element->hasTagName(tableTag) || element->hasTagName(tdTag) || element->hasTagName(thTag)))
             break;
@@ -3031,7 +3035,7 @@ RenderBoxModelObject* RenderObject::offsetParent() const
         currZoom = newZoom;
         curr = curr->parent();
     }
-    return curr && curr->isBoxModelObject() ? toRenderBoxModelObject(curr) : 0;
+    return curr && curr->isBoxModelObject() && !curr->isRenderNamedFlowThread() ? toRenderBoxModelObject(curr) : 0;
 }
 
 VisiblePosition RenderObject::createVisiblePosition(int offset, EAffinity affinity)

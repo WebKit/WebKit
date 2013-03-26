@@ -1,0 +1,14 @@
+Test offsetParent for elements inside a named flow.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS article.offsetParent is null
+PASS chapter.offsetParent is null
+PASS chapter.offsetParent is article
+PASS tdChild.offsetParent is td
+PASS tdChild.offsetParent is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

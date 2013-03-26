@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="../js/resources/js-test-pre.js"></script>
+    </head>
+    <body>
+        <script>
+            description("Test offsetParent for elements inside a named flow.")
+
+            var article = document.createElement("div");
+            document.body.appendChild(article);
+            article.style.webkitFlowInto = "flow";
+            shouldBeNull("article.offsetParent");
+
+            var chapter = document.createElement("div");
+            article.appendChild(chapter);
+            shouldBeNull("chapter.offsetParent");
+
+            article.style.position = "relative";
+            shouldBe("chapter.offsetParent", "article");
+
+            var table = document.createElement("table");
+            document.body.appendChild(table);
+
+            var td = document.createElement("td");
+            table.appendChild(td);
+
+            var tdChild = document.createElement("div");
+            td.appendChild(tdChild);
+            shouldBe("tdChild.offsetParent", "td");
+
+            tdChild.style.webkitFlowInto = "flow";
+            shouldBeNull("tdChild.offsetParent");
+        </script>
+        <script src="../js/resources/js-test-post.js"></script>
+    </body>
+</html>
+
