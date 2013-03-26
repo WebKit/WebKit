@@ -1061,9 +1061,6 @@ void tst_QWebElement::render()
         tables[0].render(&painter, chunkPaintRect);
         painter.end();
 
-        // The first chunk in this test is passing, but the others are failing
-        if (x > 0)
-            QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=65243", Continue);
         QVERIFY(chunk == image4.copy(chunkPaintRect));
     }
 }
