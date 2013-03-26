@@ -64,6 +64,7 @@ public:
     bool childNeedsStyleRecalc() const;
     bool needsStyleRecalc() const;
     void recalcStyle(Node::StyleChange);
+    void removeAllEventListeners();
 
     void invalidateDistribution() { m_distributor.invalidateDistribution(host()); }
     void didAffectSelector(AffectedSelectorMask mask) { m_distributor.didAffectSelector(host(), mask); }

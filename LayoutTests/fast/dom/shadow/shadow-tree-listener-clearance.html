@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../js/resources/js-test-pre.js"></script>
+<iframe id="childFrame" src="./resources/shadow-tree-listener-clearance-frame.html"></iframe>
+<script>
+
+var child = document.getElementById("childFrame");
+var firedCount = 0;
+
+function getChildTarget()
+{
+    return child.contentDocument.targetInShadow;
+}
+
+function test()
+{
+    var toBeListened = getChildTarget();
+    toBeListened.addEventListener("test", function(event) { firedCount++; });
+
+    toBeListened.dispatchEvent(new CustomEvent("test"));
+    shouldBe("firedCount", "1");
+
+    window.child.contentDocument.open(); // This should clear event listeners
+    toBeListened.dispatchEvent(new CustomEvent("test"));
+    shouldBe("firedCount", "1");
+
+    finishJSTest();
+}
+
+jsTestIsAsync = true;
+child.addEventListener("load", test);
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

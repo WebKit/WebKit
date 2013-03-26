@@ -1693,6 +1693,13 @@ void Element::childrenChanged(bool changedByParser, Node* beforeChange, Node* af
         shadow->invalidateDistribution();
 }
 
+void Element::removeAllEventListeners()
+{
+    ContainerNode::removeAllEventListeners();
+    if (ElementShadow* shadow = this->shadow())
+        shadow->removeAllEventListeners();
+}
+
 void Element::beginParsingChildren()
 {
     clearIsParsingChildrenFinished();

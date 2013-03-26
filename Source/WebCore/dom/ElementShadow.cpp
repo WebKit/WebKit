@@ -123,6 +123,14 @@ void ElementShadow::recalcStyle(Node::StyleChange change)
         root->recalcStyle(change);
 }
 
+void ElementShadow::removeAllEventListeners()
+{
+    for (ShadowRoot* root = youngestShadowRoot(); root; root = root->olderShadowRoot()) {
+        for (Node* node = root; node; node = NodeTraversal::next(node))
+            node->removeAllEventListeners();
+    }
+}
+
 void ElementShadow::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
