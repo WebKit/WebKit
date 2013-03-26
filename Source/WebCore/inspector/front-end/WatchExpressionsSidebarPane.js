@@ -160,7 +160,7 @@ WebInspector.WatchExpressionsSection.prototype = {
             properties.push(property);
 
             if (properties.length == propertyCount) {
-                this.updateProperties(properties, WebInspector.WatchExpressionTreeElement, WebInspector.WatchExpressionsSection.CompareProperties);
+                this.updateProperties(properties, [], WebInspector.WatchExpressionTreeElement, WebInspector.WatchExpressionsSection.CompareProperties);
 
                 // check to see if we just added a new watch expression,
                 // which will always be the last property

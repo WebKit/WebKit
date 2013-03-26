@@ -84,7 +84,7 @@ WebInspector.ObjectPropertiesSection.prototype = {
         {
             if (!properties)
                 return;
-            this.updateProperties(properties);
+            this.updateProperties(properties, internalProperties);
         }
 
         if (this.ignoreHasOwnProperty)
@@ -93,7 +93,7 @@ WebInspector.ObjectPropertiesSection.prototype = {
             this.object.getOwnProperties(callback.bind(this));
     },
 
-    updateProperties: function(properties, rootTreeElementConstructor, rootPropertyComparer)
+    updateProperties: function(properties, internalProperties, rootTreeElementConstructor, rootPropertyComparer)
     {
         if (!rootTreeElementConstructor)
             rootTreeElementConstructor = this.treeElementConstructor;
@@ -101,24 +101,19 @@ WebInspector.ObjectPropertiesSection.prototype = {
         if (!rootPropertyComparer)
             rootPropertyComparer = WebInspector.ObjectPropertiesSection.CompareProperties;
 
-        if (this.extraProperties)
+        if (this.extraProperties) {
             for (var i = 0; i < this.extraProperties.length; ++i)
                 properties.push(this.extraProperties[i]);
-
-        properties.sort(rootPropertyComparer);
+        }
 
         this.propertiesTreeOutline.removeChildren();
 
-        for (var i = 0; i < properties.length; ++i) {
-            if (this.skipProto && properties[i].name === "__proto__")
-                continue;
-            properties[i].parentObject = this.object;
-        }
-
+        WebInspector.ObjectPropertyTreeElement.populateWithProperties(this.propertiesTreeOutline,
+            properties, internalProperties,
+            rootTreeElementConstructor, rootPropertyComparer,
+            this.skipProto, this.object);
+            
         this.propertiesForTest = properties;
-
-        for (var i = 0; i < properties.length; ++i)
-            this.propertiesTreeOutline.appendChild(new rootTreeElementConstructor(properties[i]));
 
         if (!this.propertiesTreeOutline.children.length) {
             var title = document.createElement("div");
@@ -456,40 +451,58 @@ WebInspector.ObjectPropertyTreeElement.populate = function(treeElement, value) {
         treeElement.removeChildren();
         if (!properties)
             return;
+        if (!internalProperties)
+            internalProperties = [];
 
-        properties.sort(WebInspector.ObjectPropertiesSection.CompareProperties);
-        for (var i = 0; i < properties.length; ++i) {
-            if (treeElement.treeOutline.section.skipProto && properties[i].name === "__proto__")
-                continue;
-            properties[i].parentObject = value;
-            treeElement.appendChild(new treeElement.treeOutline.section.treeElementConstructor(properties[i]));
-        }
-        if (value.type === "function") {
-            // Whether function has TargetFunction internal property.
-            // This is a simple way to tell that the function is actually a bound function (we are not told).
-            // Bound function never has inner scope and doesn't need corresponding UI node.   
-            var hasTargetFunction = false;
-
-            if (internalProperties) {
-                for (var i = 0; i < internalProperties.length; i++) {
-                    if (internalProperties[i].name == "[[TargetFunction]]") {
-                        hasTargetFunction = true;
-                        break;
-                    }
-                }
-            }
-            if (!hasTargetFunction)
-                treeElement.appendChild(new WebInspector.FunctionScopeMainTreeElement(value));
-        }
-        if (internalProperties) {
-            for (var i = 0; i < internalProperties.length; i++) {
-                internalProperties[i].parentObject = value;
-                treeElement.appendChild(new treeElement.treeOutline.section.treeElementConstructor(internalProperties[i]));
-            } 
-        }
+        WebInspector.ObjectPropertyTreeElement.populateWithProperties(treeElement, properties, internalProperties,
+            treeElement.treeOutline.section.treeElementConstructor, WebInspector.ObjectPropertiesSection.CompareProperties,
+            treeElement.treeOutline.section.skipProto, value);
     }
 
     value.getOwnProperties(callback);
+}
+
+/**
+ * @param {!TreeElement|!TreeOutline} treeElement
+ * @param {Array.<!WebInspector.RemoteObjectProperty>} properties
+ * @param {?Array.<!WebInspector.RemoteObjectProperty>} internalProperties
+ * @param {function(new:TreeElement, WebInspector.RemoteObjectProperty)} treeElementConstructor
+ * @param {function (WebInspector.RemoteObjectProperty, WebInspector.RemoteObjectProperty): number} comparator
+ * @param {boolean} skipProto
+ * @param {?WebInspector.RemoteObject} value
+ */
+WebInspector.ObjectPropertyTreeElement.populateWithProperties = function(treeElement, properties, internalProperties, treeElementConstructor, comparator, skipProto, value) {
+    properties.sort(comparator);
+    
+    for (var i = 0; i < properties.length; ++i) {
+        if (skipProto && properties[i].name === "__proto__")
+            continue;
+        properties[i].parentObject = value;
+        treeElement.appendChild(new treeElementConstructor(properties[i]));
+    }
+    if (value && value.type === "function") {
+        // Whether function has TargetFunction internal property.
+        // This is a simple way to tell that the function is actually a bound function (we are not told).
+        // Bound function never has inner scope and doesn't need corresponding UI node.   
+        var hasTargetFunction = false;
+
+        if (internalProperties) {
+            for (var i = 0; i < internalProperties.length; i++) {
+                if (internalProperties[i].name == "[[TargetFunction]]") {
+                    hasTargetFunction = true;
+                    break;
+                }
+            }
+        }
+        if (!hasTargetFunction)
+            treeElement.appendChild(new WebInspector.FunctionScopeMainTreeElement(value));
+    }
+    if (internalProperties) {
+        for (var i = 0; i < internalProperties.length; i++) {
+            internalProperties[i].parentObject = value;
+            treeElement.appendChild(new treeElementConstructor(internalProperties[i]));
+        } 
+    }
 }
 
 /**
