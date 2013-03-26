@@ -1,3 +1,10 @@
+2013-03-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Skipping a failing unit test after r146518.
+
 2013-03-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove Lion leaks builder

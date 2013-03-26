@@ -67,6 +67,7 @@ class TestRunner:
         SkippedTest("unittests/testwebresource", "/webkit/webresource/sub_resource_loading", "Test fails in GTK Linux 64-bit Release bot", 82330),
         SkippedTest("unittests/testwebview", "/webkit/webview/icon-uri", "Test times out in GTK Linux 64-bit Release bot", 82328),
         SkippedTest("unittests/testatk", "/webkit/atk/getTextInParagraphAndBodyModerate", "Test fails", 105538),
+        SkippedTest("WebKit2APITests/TestInspector", "/webkit2/WebKitWebInspector/default", "Test fails", 113281),
         SkippedTest("WebKit2APITests/TestInspectorServer", SkippedTest.ENTIRE_SUITE, "Test times out", 105866),
         SkippedTest("WebKit2APITests/TestResources", "/webkit2/WebKitWebView/resources", "Test is flaky in GTK Linux 32-bit Release bot", 82868),
         SkippedTest("WebKit2APITests/TestWebKitAccessibility", "/webkit2/WebKitAccessibility/atspi-basic-hierarchy", "Test fails", 100408),
