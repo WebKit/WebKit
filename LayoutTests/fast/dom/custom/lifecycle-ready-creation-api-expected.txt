@@ -19,6 +19,8 @@ PASS window.callbacksCalled is []
 PASS importedBar.callbacksCalled is true
 PASS importedBar.firstChild.callbacksCalled is true
 PASS window.callbacksCalled is ['DIV', 'X-FOO']
+PASS window.callbacksCalled is ['X-FOO']
+PASS window.callbacksCalled is ['X-FOO']
 PASS successfullyParsed is true
 
 TEST COMPLETE

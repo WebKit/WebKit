@@ -43,7 +43,7 @@
                  setter raises(DOMException);
              [TreatNullAs=NullString] attribute DOMString innerText
                  setter raises(DOMException);
-             [TreatNullAs=NullString] attribute DOMString outerHTML
+             [TreatNullAs=NullString, V8DeliverCustomElementCallbacks] attribute DOMString outerHTML
                  setter raises(DOMException);
              [TreatNullAs=NullString] attribute DOMString outerText
                  setter raises(DOMException);
@@ -51,6 +51,7 @@
     Element insertAdjacentElement(in [Optional=DefaultIsUndefined] DOMString where,
                                   in [Optional=DefaultIsUndefined] Element element)
         raises(DOMException);
+    [V8DeliverCustomElementCallbacks]
     void insertAdjacentHTML(in [Optional=DefaultIsUndefined] DOMString where,
                             in [Optional=DefaultIsUndefined] DOMString html)
         raises(DOMException);

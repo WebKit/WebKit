@@ -56,6 +56,18 @@ shouldBeTrue("importedBar.callbacksCalled");
 shouldBeTrue("importedBar.firstChild.callbacksCalled");
 shouldBe("window.callbacksCalled", "['DIV', 'X-FOO']");
 
+window.callbacksCalled = [];
+var toBeReplaced = document.createElement("div");
+document.body.appendChild(toBeReplaced);
+toBeReplaced.outerHTML = "<x-foo></x-foo>";
+shouldBe("window.callbacksCalled", "['X-FOO']");
+
+window.callbacksCalled = [];
+var insertionPlaceHolder = document.createElement("div");
+document.body.appendChild(insertionPlaceHolder);
+insertionPlaceHolder.insertAdjacentHTML("beforebegin", "<x-foo></x-foo>");
+shouldBe("window.callbacksCalled", "['X-FOO']");
+
 </script>
 <script src="../../js/resources/js-test-post.js"></script>
 </body>
