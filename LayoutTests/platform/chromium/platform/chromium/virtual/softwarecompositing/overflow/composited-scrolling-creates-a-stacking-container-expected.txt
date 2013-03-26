@@ -25,7 +25,6 @@
                     (GraphicsLayer
                       (bounds 200.00 150.00)
                       (contentsOpaque 1)
-                      (drawsContent 1)
                     )
                   )
                 )
