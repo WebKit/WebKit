@@ -1,3 +1,17 @@
+2013-03-26  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] Set mouse document position for mouse event in updateCursor
+        https://bugs.webkit.org/show_bug.cgi?id=109094
+
+        Reviewed by Rob Buis.
+
+        Internally Reviewed by Jakob Petsovits.
+
+        Mouse content position should be in document coordinate.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::updateCursor):
+
 2013-03-26  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Scrolling up and down can cause the screen to flash black
