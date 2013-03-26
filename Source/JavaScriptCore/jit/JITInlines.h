@@ -136,18 +136,15 @@ ALWAYS_INLINE void JIT::beginUninterruptedSequence(int insnSpace, int constSpace
     m_assembler.ensureSpace(insnSpace + m_assembler.maxInstructionSize + 2, constSpace + 8);
 #endif
 
-#if defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL
 #ifndef NDEBUG
     m_uninterruptedInstructionSequenceBegin = label();
     m_uninterruptedConstantSequenceBegin = sizeOfConstantPool();
-#endif
 #endif
 }
 
 ALWAYS_INLINE void JIT::endUninterruptedSequence(int insnSpace, int constSpace, int dst)
 {
-    UNUSED_PARAM(dst);
-#if defined(ASSEMBLER_HAS_CONSTANT_POOL) && ASSEMBLER_HAS_CONSTANT_POOL
+#ifndef NDEBUG
     /* There are several cases when the uninterrupted sequence is larger than
      * maximum required offset for pathing the same sequence. Eg.: if in a
      * uninterrupted sequence the last macroassembler's instruction is a stub
@@ -155,6 +152,7 @@ ALWAYS_INLINE void JIT::endUninterruptedSequence(int insnSpace, int constSpace, 
      * calculation of length of uninterrupted sequence. So, the insnSpace and
      * constSpace should be upper limit instead of hard limit.
      */
+
 #if CPU(SH4)
     if ((dst > 15) || (dst < -16)) {
         insnSpace += 8;
@@ -163,13 +161,20 @@ ALWAYS_INLINE void JIT::endUninterruptedSequence(int insnSpace, int constSpace, 
 
     if (((dst >= -16) && (dst < 0)) || ((dst > 7) && (dst <= 15)))
         insnSpace += 8;
+#else
+    UNUSED_PARAM(dst);
 #endif
+
     ASSERT(differenceBetween(m_uninterruptedInstructionSequenceBegin, label()) <= insnSpace);
     ASSERT(sizeOfConstantPool() - m_uninterruptedConstantSequenceBegin <= constSpace);
+#else
+    UNUSED_PARAM(insnSpace);
+    UNUSED_PARAM(constSpace);
+    UNUSED_PARAM(dst);
 #endif
 }
 
-#endif
+#endif // ASSEMBLER_HAS_CONSTANT_POOL
 
 ALWAYS_INLINE void JIT::updateTopCallFrame()
 {

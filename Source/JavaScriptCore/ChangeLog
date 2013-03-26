@@ -1,3 +1,15 @@
+2013-03-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix unused parameter warnings in JITInlines.h
+        https://bugs.webkit.org/show_bug.cgi?id=112560
+
+        Reviewed by Zoltan Herczeg.
+
+        * jit/JITInlines.h:
+        (JSC::JIT::beginUninterruptedSequence):
+        (JSC::JIT::endUninterruptedSequence):
+        (JSC):
+
 2013-03-25  Kent Tamura  <tkent@chromium.org>
 
         Rename ENABLE_INPUT_TYPE_DATETIME
