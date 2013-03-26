@@ -4234,8 +4234,6 @@
             'platform/graphics/harfbuzz/HarfBuzzFace.h',
             'platform/graphics/harfbuzz/HarfBuzzShaper.cpp',
             'platform/graphics/harfbuzz/HarfBuzzShaper.h',
-            'platform/graphics/harfbuzz/HarfBuzzShaperBase.cpp',
-            'platform/graphics/harfbuzz/HarfBuzzShaperBase.h',
             'platform/graphics/mac/ColorMac.mm',
             'platform/graphics/mac/ComplexTextController.cpp',
             'platform/graphics/mac/ComplexTextController.h',

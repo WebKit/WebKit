@@ -4333,8 +4333,6 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp \
 	Source/WebCore/platform/graphics/freetype/SimpleFontDataFreeType.cpp \
 	Source/WebCore/platform/graphics/freetype/UTF16UChar32Iterator.h \
-	Source/WebCore/platform/graphics/harfbuzz/HarfBuzzShaperBase.cpp \
-	Source/WebCore/platform/graphics/harfbuzz/HarfBuzzShaperBase.h \
 	Source/WebCore/platform/graphics/harfbuzz/HarfBuzzFace.cpp \
 	Source/WebCore/platform/graphics/harfbuzz/HarfBuzzFace.h \
 	Source/WebCore/platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp \

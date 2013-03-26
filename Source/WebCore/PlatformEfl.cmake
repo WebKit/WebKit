@@ -130,7 +130,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/gstreamer/VideoSinkGStreamer.cpp
     platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp
 
-    platform/graphics/harfbuzz/HarfBuzzShaperBase.cpp
     platform/graphics/harfbuzz/HarfBuzzFaceCairo.cpp
     platform/graphics/harfbuzz/HarfBuzzFace.cpp
     platform/graphics/harfbuzz/HarfBuzzShaper.cpp

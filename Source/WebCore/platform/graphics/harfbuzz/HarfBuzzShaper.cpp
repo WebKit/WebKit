@@ -184,7 +184,14 @@ static void normalizeCharacters(const TextRun& run, UChar* destination, int leng
 }
 
 HarfBuzzShaper::HarfBuzzShaper(const Font* font, const TextRun& run)
-    : HarfBuzzShaperBase(font, run)
+    : m_font(font)
+    , m_normalizedBufferLength(0)
+    , m_run(run)
+    , m_wordSpacingAdjustment(font->wordSpacing())
+    , m_padding(0)
+    , m_padPerWordBreak(0)
+    , m_padError(0)
+    , m_letterSpacing(font->letterSpacing())
     , m_fromIndex(0)
     , m_toIndex(m_run.length())
 {
@@ -198,6 +205,129 @@ HarfBuzzShaper::HarfBuzzShaper(const Font* font, const TextRun& run)
 HarfBuzzShaper::~HarfBuzzShaper()
 {
 }
+
+static void normalizeSpacesAndMirrorChars(const UChar* source, UChar* destination, int length, HarfBuzzShaper::NormalizeMode normalizeMode)
+{
+    int position = 0;
+    bool error = false;
+    // Iterate characters in source and mirror character if needed.
+    while (position < length) {
+        UChar32 character;
+        int nextPosition = position;
+        U16_NEXT(source, nextPosition, length, character);
+        // Don't normalize tabs as they are not treated as spaces for word-end
+        if (Font::treatAsSpace(character) && character != '\t')
+            character = ' ';
+        else if (Font::treatAsZeroWidthSpace(character))
+            character = zeroWidthSpace;
+        else if (normalizeMode == HarfBuzzShaper::NormalizeMirrorChars)
+            character = u_charMirror(character);
+        U16_APPEND(destination, position, length, character, error);
+        ASSERT_UNUSED(error, !error);
+        position = nextPosition;
+    }
+}
+
+void HarfBuzzShaper::setNormalizedBuffer(NormalizeMode normalizeMode)
+{
+    // Normalize the text run in three ways:
+    // 1) Convert the |originalRun| to NFC normalized form if combining diacritical marks
+    // (U+0300..) are used in the run. This conversion is necessary since most OpenType
+    // fonts (e.g., Arial) don't have substitution rules for the diacritical marks in
+    // their GSUB tables.
+    //
+    // Note that we don't use the icu::Normalizer::isNormalized(UNORM_NFC) API here since
+    // the API returns FALSE (= not normalized) for complex runs that don't require NFC
+    // normalization (e.g., Arabic text). Unless the run contains the diacritical marks,
+    // HarfBuzz will do the same thing for us using the GSUB table.
+    // 2) Convert spacing characters into plain spaces, as some fonts will provide glyphs
+    // for characters like '\n' otherwise.
+    // 3) Convert mirrored characters such as parenthesis for rtl text.
+
+    // Convert to NFC form if the text has diacritical marks.
+    icu::UnicodeString normalizedString;
+    UErrorCode error = U_ZERO_ERROR;
+
+    const UChar* runCharacters;
+    String stringFor8BitRun;
+    if (m_run.is8Bit()) {
+        stringFor8BitRun = String::make16BitFrom8BitSource(m_run.characters8(), m_run.length());
+        runCharacters = stringFor8BitRun.characters16();
+    } else
+        runCharacters = m_run.characters16();
+
+    for (int i = 0; i < m_run.length(); ++i) {
+        UChar ch = runCharacters[i];
+        if (::ublock_getCode(ch) == UBLOCK_COMBINING_DIACRITICAL_MARKS) {
+            icu::Normalizer::normalize(icu::UnicodeString(runCharacters,
+                m_run.length()), UNORM_NFC, 0 /* no options */,
+                normalizedString, error);
+            if (U_FAILURE(error))
+                normalizedString.remove();
+            break;
+        }
+    }
+
+    const UChar* sourceText;
+    if (normalizedString.isEmpty()) {
+        m_normalizedBufferLength = m_run.length();
+        sourceText = runCharacters;
+    } else {
+        m_normalizedBufferLength = normalizedString.length();
+        sourceText = normalizedString.getBuffer();
+    }
+
+    m_normalizedBuffer = adoptArrayPtr(new UChar[m_normalizedBufferLength + 1]);
+    normalizeSpacesAndMirrorChars(sourceText, m_normalizedBuffer.get(), m_normalizedBufferLength, normalizeMode);
+}
+
+bool HarfBuzzShaper::isWordEnd(unsigned index)
+{
+    // This could refer a high-surrogate, but should work.
+    return index && isCodepointSpace(m_normalizedBuffer[index]);
+}
+
+int HarfBuzzShaper::determineWordBreakSpacing()
+{
+    int wordBreakSpacing = m_wordSpacingAdjustment;
+
+    if (m_padding > 0) {
+        int toPad = roundf(m_padPerWordBreak + m_padError);
+        m_padError += m_padPerWordBreak - toPad;
+
+        if (m_padding < toPad)
+            toPad = m_padding;
+        m_padding -= toPad;
+        wordBreakSpacing += toPad;
+    }
+    return wordBreakSpacing;
+}
+
+// setPadding sets a number of pixels to be distributed across the TextRun.
+// WebKit uses this to justify text.
+void HarfBuzzShaper::setPadding(int padding)
+{
+    m_padding = padding;
+    m_padError = 0;
+    if (!m_padding)
+        return;
+
+    // If we have padding to distribute, then we try to give an equal
+    // amount to each space. The last space gets the smaller amount, if
+    // any.
+    unsigned numWordEnds = 0;
+
+    for (unsigned i = 0; i < m_normalizedBufferLength; i++) {
+        if (isWordEnd(i))
+            numWordEnds++;
+    }
+
+    if (numWordEnds)
+        m_padPerWordBreak = m_padding / numWordEnds;
+    else
+        m_padPerWordBreak = 0;
+}
+
 
 void HarfBuzzShaper::setDrawRange(int from, int to)
 {

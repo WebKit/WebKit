@@ -33,21 +33,27 @@
 
 #include "FloatPoint.h"
 #include "GlyphBuffer.h"
-#include "HarfBuzzShaperBase.h"
 #include "TextRun.h"
 #include "hb.h"
 #include <wtf/HashSet.h>
+#include <wtf/OwnArrayPtr.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
 class Font;
 class SimpleFontData;
 
-class HarfBuzzShaper : public HarfBuzzShaperBase {
+class HarfBuzzShaper {
 public:
+    enum NormalizeMode {
+        DoNotNormalizeMirrorChars,
+        NormalizeMirrorChars
+    };
+
     HarfBuzzShaper(const Font*, const TextRun&);
     virtual ~HarfBuzzShaper();
 
@@ -101,6 +107,17 @@ private:
         float m_width;
     };
 
+    void setNormalizedBuffer(NormalizeMode = DoNotNormalizeMirrorChars);
+
+    bool isWordEnd(unsigned);
+    int determineWordBreakSpacing();
+    // setPadding sets a number of pixels to be distributed across the TextRun.
+    // WebKit uses this to justify text.
+    void setPadding(int);
+
+    // In complex text word-spacing affects each line-break, space (U+0020) and non-breaking space (U+00A0).
+    static bool isCodepointSpace(UChar c) { return c == ' ' || c == noBreakSpace || c == '\n'; }
+
     void setFontFeatures();
 
     bool collectHarfBuzzRuns();
@@ -110,6 +127,17 @@ private:
     void setGlyphPositionsForHarfBuzzRun(HarfBuzzRun*, hb_buffer_t*);
 
     GlyphBufferAdvance createGlyphBufferAdvance(float, float);
+
+    const Font* m_font;
+    OwnArrayPtr<UChar> m_normalizedBuffer;
+    unsigned m_normalizedBufferLength;
+    const TextRun& m_run;
+
+    int m_wordSpacingAdjustment; // Delta adjustment (pixels) for each word break.
+    float m_padding; // Pixels to be distributed over the line at word breaks.
+    float m_padPerWordBreak; // Pixels to be added to each word break.
+    float m_padError; // m_padPerWordBreak might have a fractional component. Since we only add a whole number of padding pixels at each word break we accumulate error. This is the number of pixels that we are behind so far.
+    int m_letterSpacing; // Pixels to be added after each glyph.
 
     Vector<hb_feature_t, 4> m_features;
     Vector<OwnPtr<HarfBuzzRun>, 16> m_harfBuzzRuns;
