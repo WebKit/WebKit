@@ -1087,6 +1087,7 @@ WebInspector.TextEditorGutterPanel.prototype = {
             }
 
             // Shift decorations if necessary
+            var decorationsToRestore = {};
             for (var lineNumber in this._decorations) {
                 lineNumber = parseInt(lineNumber, 10);
 
@@ -1098,17 +1099,19 @@ WebInspector.TextEditorGutterPanel.prototype = {
                     continue;
 
                 var lineDecorationsCopy = this._decorations[lineNumber].slice();
-                for (var i = 0; i < lineDecorationsCopy.length; ++i) {
-                    var decoration = lineDecorationsCopy[i];
-                    this.removeDecoration(lineNumber, decoration);
-
-                    // Do not restore the decorations before the end position.
-                    if (lineNumber < oldRange.endLine)
-                        continue;
-
-                    this.addDecoration(lineNumber + linesDiff, decoration);
-                }
+                for (var i = 0; i < lineDecorationsCopy.length; ++i)
+                    this.removeDecoration(lineNumber, lineDecorationsCopy[i]);
+                // Do not restore the decorations before the end position.
+                if (lineNumber >= oldRange.endLine)
+                    decorationsToRestore[lineNumber] = lineDecorationsCopy;
             }
+            for (var lineNumber in decorationsToRestore) {
+                lineNumber = parseInt(lineNumber, 10);
+                var lineDecorationsCopy = decorationsToRestore[lineNumber];
+                for (var i = 0; i < lineDecorationsCopy.length; ++i)
+                    this.addDecoration(lineNumber + linesDiff, lineDecorationsCopy[i]);
+            }
+
 
             this.repaintAll();
         } else {
