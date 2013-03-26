@@ -92,23 +92,23 @@ void HTMLLIElement::attach()
     HTMLElement::attach();
 
     if (renderer() && renderer()->isListItem()) {
-        RenderListItem* listItemRenderer = toRenderListItem(renderer());
+        RenderListItem* render = toRenderListItem(renderer());
 
         // Find the enclosing list node.
-        Element* listNode = 0;
-        Element* current = this;
+        Node* listNode = 0;
+        EventPathWalker walker(this);
         while (!listNode) {
-            current = current->parentElement();
-            if (!current)
+            walker.moveToParent();
+            if (!walker.node())
                 break;
-            if (current->hasTagName(ulTag) || current->hasTagName(olTag))
-                listNode = current;
+            if (walker.node()->hasTagName(ulTag) || walker.node()->hasTagName(olTag))
+                listNode = walker.node();
         }
 
         // If we are not in a list, tell the renderer so it can position us inside.
         // We don't want to change our style to say "inside" since that would affect nested nodes.
         if (!listNode)
-            listItemRenderer->setNotInList(true);
+            render->setNotInList(true);
 
         parseValue(fastGetAttribute(valueAttr));
     }

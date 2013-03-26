@@ -22,23 +22,18 @@
 //   <li>C</li>
 // </ol>   
 var hostEquivalent = document.getElementById("hostEquivalent");
-var shadowListRoot = document.createElement("ol");
-shadowListRoot.style.paddingLeft = "0px";
-hostEquivalent.appendChild(shadowListRoot);
 
 var childX = document.createElement("li");
 childX.innerHTML = "X";
-childX.style.listStylePosition = "inside";
-shadowListRoot.appendChild(childX);
+hostEquivalent.appendChild(childX);
 
 var childUl = document.createElement("ul");
 childUl.innerHTML = "B";
-shadowListRoot.appendChild(childUl);
+hostEquivalent.appendChild(childUl);
 
 var childY = document.createElement("li");
 childY.innerHTML = "Y";
-childY.style.listStylePosition = "inside";
-shadowListRoot.appendChild(childY);
+hostEquivalent.appendChild(childY);
 </script>
 </body>
 </html>

@@ -195,10 +195,6 @@ public:
     Node* lastChild() const;
     bool hasAttributes() const;
     NamedNodeMap* attributes() const;
-    Node* pseudoAwareNextSibling() const;
-    Node* pseudoAwarePreviousSibling() const;
-    Node* pseudoAwareFirstChild() const;
-    Node* pseudoAwareLastChild() const;
 
     virtual KURL baseURI() const;
     

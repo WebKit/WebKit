@@ -26,58 +26,9 @@
 #include "NodeTraversal.h"
 
 #include "ContainerNode.h"
-#include "PseudoElement.h"
 
 namespace WebCore {
-
 namespace NodeTraversal {
-
-Node* previousIncludingPseudo(const Node* current, const Node* stayWithin)
-{
-    Node* previous;
-    if (current == stayWithin)
-        return 0;
-    if ((previous = current->pseudoAwarePreviousSibling())) {
-        while (previous->pseudoAwareLastChild())
-            previous = previous->pseudoAwareLastChild();
-        return previous;
-    }
-    return current->parentNode();
-}
-
-Node* nextIncludingPseudo(const Node* current, const Node* stayWithin)
-{
-    Node* next;
-    if ((next = current->pseudoAwareFirstChild()))
-        return next;
-    if (current == stayWithin)
-        return 0;
-    if ((next = current->pseudoAwareNextSibling()))
-        return next;
-    for (current = current->parentNode(); current; current = current->parentNode()) {
-        if (current == stayWithin)
-            return 0;
-        if ((next = current->pseudoAwareNextSibling()))
-            return next;
-    }
-    return 0;
-}
-
-Node* nextIncludingPseudoSkippingChildren(const Node* current, const Node* stayWithin)
-{
-    Node* next;
-    if (current == stayWithin)
-        return 0;
-    if ((next = current->pseudoAwareNextSibling()))
-        return next;
-    for (current = current->parentNode(); current; current = current->parentNode()) {
-        if (current == stayWithin)
-            return 0;
-        if ((next = current->pseudoAwareNextSibling()))
-            return next;
-    }
-    return 0;
-}
 
 Node* nextAncestorSibling(const Node* current)
 {

@@ -49,7 +49,7 @@ public:
 
     void updateListMarkerNumbers();
 
-    static RenderListItem* nextListItem(Node*, const RenderListItem* = 0);
+    static RenderListItem* nextListItem(RenderObject* listRenderer, const RenderListItem* = 0);
 
 private:
     virtual const char* renderName() const { return "RenderListItem"; }
