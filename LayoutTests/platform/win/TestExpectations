@@ -1558,6 +1558,12 @@ fast/xsl/xslt-xhtml-template.xml
 fast/xpath/xpath-template-element.html
 fast/xsl/xslt-processor-template.html
 
+# CSS Regions support not yet enabled. http://webkit.org/b/57312
+fast/regions
+
+# CSS Exclusions support not yet enabled. http://webkit.org/b/57311
+fast/exclusions
+
 # Causes a SyntaxError (http://webkit.org/b/62595).
 fast/workers/worker-crash-with-invalid-location.html
 
@@ -2712,7 +2718,3 @@ webkit.org/b/113075 media/video-seek-by-small-increment.html [ Pass Crash ]
 webkit.org/b/113076 media/video-volume.html [ Pass Crash ]
 
 webkit.org/b/113106 media/track/track-prefer-captions.html [ Failure ]
-
-# https://bugs.webkit.org/show_bug.cgi?id=113244
-fast/regions
-fast/exclusions

@@ -78,7 +78,7 @@
 	/>
   <UserMacro
 		Name="ENABLE_CSS_EXCLUSIONS"
-		Value="ENABLE_CSS_EXCLUSIONS"
+		Value=""
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro

@@ -1,3 +1,15 @@
+2013-03-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r146816, r146821, and r146830.
+        http://trac.webkit.org/changeset/146816
+        http://trac.webkit.org/changeset/146821
+        http://trac.webkit.org/changeset/146830
+        https://bugs.webkit.org/show_bug.cgi?id=113262
+
+        Broke all the Windows tests (Requested by rfong on #webkit).
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+
 2013-03-25  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Also enable CSS_REGIONS and EXCLUSIONS for VS2010 solution.
