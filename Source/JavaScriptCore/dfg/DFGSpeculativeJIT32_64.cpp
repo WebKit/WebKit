@@ -1173,7 +1173,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Edge edge)
 GPRReg SpeculativeJIT::fillSpeculateBoolean(Edge edge)
 {
 #if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("SpecBool@%d   ", node->index());
+    dataLogF("SpecBool@%d   ", edge.node()->index());
 #endif
     AbstractValue& value = m_state.forNode(edge);
     SpeculatedType type = value.m_type;

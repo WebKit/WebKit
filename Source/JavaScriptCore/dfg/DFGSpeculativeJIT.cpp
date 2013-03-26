@@ -2096,22 +2096,6 @@ GeneratedOperandType SpeculativeJIT::checkGeneratedTypeForToInt32(Node* node)
     VirtualRegister virtualRegister = node->virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
 
-    if (info.registerFormat() == DataFormatNone) {
-        if (node->hasConstant()) {
-            if (isInt32Constant(node))
-                return GeneratedOperandInteger;
-
-            if (isNumberConstant(node))
-                return GeneratedOperandDouble;
-
-            terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
-            return GeneratedOperandTypeUnknown;
-        }
-
-        if (info.spillFormat() == DataFormatDouble)
-            return GeneratedOperandDouble;
-    }
-
     switch (info.registerFormat()) {
     case DataFormatStorage:
         RELEASE_ASSERT_NOT_REACHED();
