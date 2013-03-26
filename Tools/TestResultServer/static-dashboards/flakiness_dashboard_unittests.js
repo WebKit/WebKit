@@ -699,3 +699,44 @@ test('changeTestTypeInvalidatesGroup', 1, function() {
     historyInstance.invalidateQueryParameters({'testType': 'ui_tests'});
     notEqual(historyInstance.crossDashboardState.group, originalGroup, "group should have been invalidated");   
 });
+
+test('shouldHideTest', 10, function() {
+    var historyInstance = new history.History();
+    historyInstance.parseParameters();
+    // FIXME(jparent): Change to use the flakiness_dashboard's history object
+    // once it exists, rather than tracking global.
+    g_history = historyInstance;
+    var test = createResultsObjectForTest('foo/test.html', 'dummyBuilder');
+
+    equal(shouldHideTest(test), true, 'default layout test, hide it.');
+    historyInstance.dashboardSpecificState.showCorrectExpectations = true;
+    equal(shouldHideTest(test), false, 'show correct expectations.');
+    historyInstance.dashboardSpecificState.showCorrectExpectations = false;
+
+    test = createResultsObjectForTest('foo/test.html', 'dummyBuilder');
+    test.isWontFixSkip = true;
+    equal(shouldHideTest(test), true, 'by default hide these too');
+    historyInstance.dashboardSpecificState.showWontFixSkip = true;
+    equal(shouldHideTest(test), false, 'now we should show it');
+    historyInstance.dashboardSpecificState.showWontFixSkip = false;
+
+    test = createResultsObjectForTest('foo/test.html', 'dummyBuilder');
+    test.isFlaky = true;
+    equal(shouldHideTest(test), false, 'we show flaky tests by default');
+    historyInstance.dashboardSpecificState.showFlaky = false;
+    equal(shouldHideTest(test), true, 'do not show flaky test');
+    historyInstance.dashboardSpecificState.showFlaky = true;
+
+    test = createResultsObjectForTest('foo/test.html', 'dummyBuilder');
+    test.slowestNonTimeoutCrashTime = MIN_SECONDS_FOR_SLOW_TEST + 1;
+    equal(shouldHideTest(test), true, 'we hide slow tests by default');
+    historyInstance.dashboardSpecificState.showSlow = true;
+    equal(shouldHideTest(test), false, 'now show slow test');
+    historyInstance.dashboardSpecificState.showSlow = false;
+
+    test = createResultsObjectForTest('foo/test.html', 'dummyBuilder');
+    historyInstance.crossDashboardState.testType = 'not layout tests';
+    equal(shouldHideTest(test), false, 'show all non layout tests');
+    test.isWontFixSkip = true;
+    equal(shouldHideTest(test), false, 'show all non layout tests, even if wont fix');
+});

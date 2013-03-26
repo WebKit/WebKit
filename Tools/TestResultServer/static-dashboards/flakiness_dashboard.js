@@ -250,12 +250,12 @@ g_defaultDashboardSpecificStateValues = {
     showLargeExpectations: false,
     legacyExpectationsSemantics: true,
     showChrome: true,
-    showCorrectExpectations: !g_history.isLayoutTestResults(),
-    showWrongExpectations: !g_history.isLayoutTestResults(),
-    showWontFixSkip: !g_history.isLayoutTestResults(),
-    showSlow: !g_history.isLayoutTestResults(),
-    showSkipped: !g_history.isLayoutTestResults(),
-    showUnexpectedPasses: !g_history.isLayoutTestResults(),
+    showCorrectExpectations: false,
+    showWrongExpectations: false,
+    showWontFixSkip: false,
+    showSlow: false,
+    showSkipped: false,
+    showUnexpectedPasses: false,
     expectationsUpdate: false,
     updateIndex: 0,
     resultsHeight: 300,
@@ -1314,9 +1314,8 @@ function htmlForTestsWithExpectationsButNoFailures(builder)
     var showUnexpectedPassesLink =  linkHTMLToToggleState('showUnexpectedPasses', 'tests that have not failed in last ' + g_resultsByBuilder[builder].buildNumbers.length + ' runs');
     var showSkippedLink = linkHTMLToToggleState('showSkipped', 'skipped tests in TestExpectations');
     
-
     var html = '';
-    if (tests.length || skippedPaths.length) {
+    if (g_history.isLayoutTestResults() && (tests.length || skippedPaths.length)) {
         var buildInfo = platformAndBuildType(builder);
         html += '<h2 style="display:inline-block">Expectations for ' + buildInfo.platform + '-' + buildInfo.buildType + '</h2> ';
         if (!g_history.dashboardSpecificState.showUnexpectedPasses && tests.length)
@@ -1343,6 +1342,10 @@ function htmlForTestsWithExpectationsButNoFailures(builder)
 // Returns whether we should exclude test results from the test table.
 function shouldHideTest(testResult)
 {
+    // For non-layout tests, we always show everything.
+    if (!g_history.isLayoutTestResults())
+        return false;
+
     if (testResult.isWontFixSkip)
         return !g_history.dashboardSpecificState.showWontFixSkip;
 
