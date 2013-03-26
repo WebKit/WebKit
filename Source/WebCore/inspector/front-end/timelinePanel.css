@@ -42,7 +42,7 @@
 .timeline .sidebar {
     overflow-y: hidden;
     min-height: 100%;
-    bottom: auto;
+    bottom: auto !important;
 }
 
 .timeline.split-view-vertical .split-view-resizer {
