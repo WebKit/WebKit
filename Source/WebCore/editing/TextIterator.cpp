@@ -38,6 +38,7 @@
 #include "InlineTextBox.h"
 #include "NodeTraversal.h"
 #include "Range.h"
+#include "RenderImage.h"
 #include "RenderTableCell.h"
 #include "RenderTableRow.h"
 #include "RenderTextControl.h"
@@ -266,6 +267,7 @@ TextIterator::TextIterator(const Range* r, TextIteratorBehavior behavior)
     , m_emitsObjectReplacementCharacters(behavior & TextIteratorEmitsObjectReplacementCharacters)
     , m_stopsOnFormControls(behavior & TextIteratorStopsOnFormControls)
     , m_shouldStop(false)
+    , m_emitsImageAltText(behavior & TextIteratorEmitsImageAltText)
 {
     if (!r)
         return;
@@ -688,10 +690,18 @@ bool TextIterator::handleReplacedElement()
     m_positionOffsetBaseNode = m_node;
     m_positionStartOffset = 0;
     m_positionEndOffset = 1;
-
     m_textCharacters = 0;
-    m_textLength = 0;
 
+    if (m_emitsImageAltText && renderer->isImage() && renderer->isRenderImage()) {
+        m_text = toRenderImage(renderer)->altText();
+        if (!m_text.isEmpty()) {
+            m_textLength = m_text.length();
+            m_lastCharacter = m_text[m_textLength - 1];
+            return true;
+        }
+    }
+
+    m_textLength = 0;
     m_lastCharacter = 0;
 
     return true;

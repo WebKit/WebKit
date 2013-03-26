@@ -262,13 +262,13 @@ void Editor::takeFindStringFromSelection()
     Vector<String> types;
     types.append(String(NSStringPboardType));
     platformStrategies()->pasteboardStrategy()->setTypes(types, NSFindPboard);
-    platformStrategies()->pasteboardStrategy()->setStringForType(m_frame->displayStringModifiedByEncoding(selectedText()), NSStringPboardType, NSFindPboard);
+    platformStrategies()->pasteboardStrategy()->setStringForType(m_frame->displayStringModifiedByEncoding(selectedTextForClipboard()), NSStringPboardType, NSFindPboard);
 }
 
 void Editor::writeSelectionToPasteboard(const String& pasteboardName, const Vector<String>& pasteboardTypes)
 {
     Pasteboard pasteboard(pasteboardName);
-    pasteboard.writeSelectionForTypes(pasteboardTypes, true, m_frame);
+    pasteboard.writeSelectionForTypes(pasteboardTypes, true, m_frame, DefaultSelectedTextType);
 }
     
 void Editor::readSelectionFromPasteboard(const String& pasteboardName)
@@ -282,7 +282,7 @@ void Editor::readSelectionFromPasteboard(const String& pasteboardName)
 
 String Editor::stringSelectionForPasteboard()
 {
-    return Pasteboard::getStringSelection(m_frame);
+    return Pasteboard::getStringSelection(m_frame, DefaultSelectedTextType);
 }
 
 PassRefPtr<SharedBuffer> Editor::dataSelectionForPasteboard(const String& pasteboardType)

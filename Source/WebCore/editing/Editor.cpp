@@ -1043,10 +1043,10 @@ void Editor::cut()
     if (shouldDeleteRange(selection.get())) {
         updateMarkersForWordsAffectedByEditing(true);
         if (enclosingTextFormControl(m_frame->selection()->start())) {
-            Pasteboard::generalPasteboard()->writePlainText(selectedText(),
+            Pasteboard::generalPasteboard()->writePlainText(selectedTextForClipboard(),
                 canSmartCopyOrDelete() ? Pasteboard::CanSmartReplace : Pasteboard::CannotSmartReplace);
         } else
-            Pasteboard::generalPasteboard()->writeSelection(selection.get(), canSmartCopyOrDelete(), m_frame);
+            Pasteboard::generalPasteboard()->writeSelection(selection.get(), canSmartCopyOrDelete(), m_frame, IncludeImageAltTextForClipboard);
         didWriteSelectionToPasteboard();
         deleteSelectionWithSmartDelete(canSmartCopyOrDelete());
     }
@@ -1063,14 +1063,14 @@ void Editor::copy()
 
     willWriteSelectionToPasteboard(selectedRange());
     if (enclosingTextFormControl(m_frame->selection()->start())) {
-        Pasteboard::generalPasteboard()->writePlainText(selectedText(),
+        Pasteboard::generalPasteboard()->writePlainText(selectedTextForClipboard(),
             canSmartCopyOrDelete() ? Pasteboard::CanSmartReplace : Pasteboard::CannotSmartReplace);
     } else {
         Document* document = m_frame->document();
         if (HTMLImageElement* imageElement = imageElementFromImageDocument(document))
             Pasteboard::generalPasteboard()->writeImage(imageElement, document->url(), document->title());
         else
-            Pasteboard::generalPasteboard()->writeSelection(selectedRange().get(), canSmartCopyOrDelete(), m_frame);
+            Pasteboard::generalPasteboard()->writeSelection(selectedRange().get(), canSmartCopyOrDelete(), m_frame, IncludeImageAltTextForClipboard);
     }
 
     didWriteSelectionToPasteboard();
@@ -2613,8 +2613,20 @@ void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection,  
 
 String Editor::selectedText() const
 {
+    return selectedText(TextIteratorDefaultBehavior);
+}
+
+String Editor::selectedTextForClipboard() const
+{
+    if (m_frame->settings() && m_frame->settings()->selectionIncludesAltImageText())
+        return selectedText(TextIteratorEmitsImageAltText);
+    return selectedText();
+}
+
+String Editor::selectedText(TextIteratorBehavior behavior) const
+{
     // We remove '\0' characters because they are not visibly rendered to the user.
-    return plainText(m_frame->selection()->toNormalizedRange().get()).replace(0, "");
+    return plainText(m_frame->selection()->toNormalizedRange().get(), behavior).replace(0, "");
 }
 
 IntRect Editor::firstRectForRange(Range* range) const

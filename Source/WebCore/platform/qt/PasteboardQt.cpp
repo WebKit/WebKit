@@ -59,10 +59,10 @@ Pasteboard* Pasteboard::generalPasteboard()
     return pasteboard;
 }
 
-void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
+void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame, ShouldSerializeSelectedTextForClipboard shouldSerializeSelectedTextForClipboard)
 {
     QMimeData* md = new QMimeData;
-    QString text = frame->editor()->selectedText();
+    QString text = shouldSerializeSelectedTextForClipboard == IncludeImageAltTextForClipboard ? frame->editor()->selectedTextForClipboard() : frame->editor()->selectedText();
     text.replace(QChar(0xa0), QLatin1Char(' '));
     md->setText(text);
 

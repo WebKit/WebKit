@@ -135,9 +135,9 @@ void Pasteboard::clear()
     platformStrategies()->pasteboardStrategy()->setTypes(Vector<String>(), m_pasteboardName);
 }
 
-String Pasteboard::getStringSelection(Frame* frame)
+String Pasteboard::getStringSelection(Frame* frame, ShouldSerializeSelectedTextForClipboard shouldSerializeSelectedTextForClipboard)
 {
-    String text = frame->editor()->selectedText();
+    String text = shouldSerializeSelectedTextForClipboard == IncludeImageAltTextForClipboard ? frame->editor()->selectedTextForClipboard() : frame->editor()->selectedText();
     text.replace(noBreakSpace, ' ');
     return text;
 }
@@ -175,7 +175,7 @@ PassRefPtr<SharedBuffer> Pasteboard::getDataSelection(Frame* frame, const String
     return 0;
 }
 
-void Pasteboard::writeSelectionForTypes(const Vector<String>& pasteboardTypes, bool canSmartCopyOrDelete, Frame* frame)
+void Pasteboard::writeSelectionForTypes(const Vector<String>& pasteboardTypes, bool canSmartCopyOrDelete, Frame* frame, ShouldSerializeSelectedTextForClipboard shouldSerializeSelectedTextForClipboard)
 {
     NSAttributedString* attributedString = nil;
     RetainPtr<WebHTMLConverter> converter(AdoptNS, [[WebHTMLConverter alloc] initWithDOMRange:kit(frame->editor()->selectedRange().get())]);
@@ -208,7 +208,7 @@ void Pasteboard::writeSelectionForTypes(const Vector<String>& pasteboardTypes, b
     
     // Put plain string on the pasteboard.
     if (types.contains(String(NSStringPboardType)))
-        platformStrategies()->pasteboardStrategy()->setStringForType(getStringSelection(frame), NSStringPboardType, m_pasteboardName);
+        platformStrategies()->pasteboardStrategy()->setStringForType(getStringSelection(frame, shouldSerializeSelectedTextForClipboard), NSStringPboardType, m_pasteboardName);
     
     if (types.contains(WebSmartPastePboardType))
         platformStrategies()->pasteboardStrategy()->setBufferForType(0, WebSmartPastePboardType, m_pasteboardName);
@@ -227,9 +227,9 @@ void Pasteboard::writePlainText(const String& text, SmartReplaceOption smartRepl
         platformStrategies()->pasteboardStrategy()->setBufferForType(0, WebSmartPastePboardType, m_pasteboardName);
 }
     
-void Pasteboard::writeSelection(Range*, bool canSmartCopyOrDelete, Frame* frame)
+void Pasteboard::writeSelection(Range*, bool canSmartCopyOrDelete, Frame* frame, ShouldSerializeSelectedTextForClipboard shouldSerializeSelectedTextForClipboard)
 {
-    writeSelectionForTypes(Vector<String>(), canSmartCopyOrDelete, frame);
+    writeSelectionForTypes(Vector<String>(), canSmartCopyOrDelete, frame, shouldSerializeSelectedTextForClipboard);
 }
 
 static void writeURLForTypes(const Vector<String>& types, const String& pasteboardName, const KURL& url, const String& titleStr, Frame* frame)

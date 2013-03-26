@@ -61,9 +61,9 @@ void Pasteboard::writeClipboard(Clipboard*)
     notImplemented();
 }
 
-void Pasteboard::writeSelection(Range* selectedRange, bool, Frame* frame)
+void Pasteboard::writeSelection(Range* selectedRange, bool, Frame* frame, ShouldSerializeSelectedTextForClipboard shouldSerializeSelectedTextForClipboard)
 {
-    WTF::String text = frame->editor()->selectedText();
+    WTF::String text = shouldSerializeSelectedTextForClipboard == IncludeImageAltTextForClipboard ? frame->editor()->selectedTextForClipboard() : frame->editor()->selectedText();
     WTF::String html = createMarkup(selectedRange, 0, AnnotateForInterchange);
     WTF::String url = frame->document()->url().string();
 

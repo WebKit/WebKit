@@ -377,7 +377,7 @@ void ClipboardMac::writeRange(Range* range, Frame* frame)
     ASSERT(range);
     ASSERT(frame);
     Pasteboard pasteboard(m_pasteboardName);
-    pasteboard.writeSelection(range, frame->editor()->smartInsertDeleteEnabled() && frame->selection()->granularity() == WordGranularity, frame);
+    pasteboard.writeSelection(range, frame->editor()->smartInsertDeleteEnabled() && frame->selection()->granularity() == WordGranularity, frame, IncludeImageAltTextForClipboard);
 }
 
 void ClipboardMac::writePlainText(const String& text)

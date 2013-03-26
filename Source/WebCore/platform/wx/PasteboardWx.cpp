@@ -50,13 +50,13 @@ Pasteboard* Pasteboard::generalPasteboard()
     return pasteboard;
 }
 
-void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
+void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame, ShouldSerializeSelectedTextForClipboard shouldSerializeSelectedTextForClipboard)
 {
     if (wxTheClipboard->Open()) {
 #if wxCHECK_VERSION(2, 9, 4)
         wxTheClipboard->SetData(new wxHTMLDataObject(createMarkup(selectedRange, 0, AnnotateForInterchange)));
 #endif
-        wxTheClipboard->SetData(new wxTextDataObject(frame->editor()->selectedText()));
+        wxTheClipboard->SetData(new wxTextDataObject(shouldSerializeSelectedTextForClipboard == IncludeImageAltTextForClipboard ? frame->editor()->selectedTextForClipboard() : frame->editor()->selectedText()));
         wxTheClipboard->Close();
     }
 }

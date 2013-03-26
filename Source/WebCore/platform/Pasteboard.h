@@ -63,7 +63,7 @@ extern const char* WebURLPboardType;
 extern const char* WebURLsWithTitlesPboardType;
 #endif
 
-    class ArchiveResource;
+class ArchiveResource;
 class Clipboard;
 class DocumentFragment;
 class Frame;
@@ -72,6 +72,8 @@ class KURL;
 class Node;
 class Range;
 class SharedBuffer;
+
+enum ShouldSerializeSelectedTextForClipboard { DefaultSelectedTextType, IncludeImageAltTextForClipboard };
     
 class Pasteboard {
     WTF_MAKE_NONCOPYABLE(Pasteboard); WTF_MAKE_FAST_ALLOCATED;
@@ -83,14 +85,14 @@ public:
 
 #if PLATFORM(MAC)
     // This is required to support OS X services.
-    void writeSelectionForTypes(const Vector<String>& pasteboardTypes, bool canSmartCopyOrDelete, Frame*);
+    void writeSelectionForTypes(const Vector<String>& pasteboardTypes, bool canSmartCopyOrDelete, Frame*, ShouldSerializeSelectedTextForClipboard);
     explicit Pasteboard(const String& pasteboardName);
-    static String getStringSelection(Frame*);
+    static String getStringSelection(Frame*, ShouldSerializeSelectedTextForClipboard);
     static PassRefPtr<SharedBuffer> getDataSelection(Frame*, const String& pasteboardType);
 #endif
     
     static Pasteboard* generalPasteboard();
-    void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*);
+    void writeSelection(Range*, bool canSmartCopyOrDelete, Frame*, ShouldSerializeSelectedTextForClipboard = DefaultSelectedTextType);
     void writePlainText(const String&, SmartReplaceOption);
     void writeURL(const KURL&, const String&, Frame* = 0);
     void writeImage(Node*, const KURL&, const String& title);

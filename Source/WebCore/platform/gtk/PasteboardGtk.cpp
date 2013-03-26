@@ -56,7 +56,7 @@ Pasteboard::Pasteboard()
 {
 }
 
-void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
+void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame, ShouldSerializeSelectedTextForClipboard shouldSerializeSelectedTextForClipboard)
 {
     PasteboardHelper* helper = PasteboardHelper::defaultPasteboardHelper();
     GtkClipboard* clipboard = helper->getCurrentClipboard(frame);
@@ -64,7 +64,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
     dataObject->clearAll();
 
-    dataObject->setText(frame->editor()->selectedText());
+    dataObject->setText(shouldSerializeSelectedTextForClipboard == IncludeImageAltTextForClipboard ? frame->editor()->selectedTextForClipboard() : frame->editor()->selectedText());
     dataObject->setMarkup(createMarkup(selectedRange, 0, AnnotateForInterchange, false, ResolveNonLocalURLs));
     helper->writeClipboardContents(clipboard, canSmartCopyOrDelete ? PasteboardHelper::IncludeSmartPaste : PasteboardHelper::DoNotIncludeSmartPaste);
 }
