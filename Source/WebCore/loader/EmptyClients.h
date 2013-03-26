@@ -209,7 +209,7 @@ public:
     
     virtual bool isEmptyChromeClient() const { return true; }
 
-    virtual void didAssociateFormControls(const Vector<Element*>&) { }
+    virtual void didAssociateFormControls(const Vector<RefPtr<Element> >&) { }
     virtual bool shouldNotifyOnFormChanges() { return false; }
 };
 

@@ -1599,7 +1599,7 @@ private:
 #endif
 
     Timer<Document> m_didAssociateFormControlsTimer;
-    HashSet<Element*> m_associatedFormControls;
+    HashSet<RefPtr<Element> > m_associatedFormControls;
 
 };
 

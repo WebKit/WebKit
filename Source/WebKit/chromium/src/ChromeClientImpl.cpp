@@ -1145,7 +1145,7 @@ void ChromeClientImpl::annotatedRegionsChanged()
 }
 #endif
 
-void ChromeClientImpl::didAssociateFormControls(const Vector<Element*>& elements)
+void ChromeClientImpl::didAssociateFormControls(const Vector<RefPtr<Element> >& elements)
 {
     if (!m_webView->autofillClient())
         return;

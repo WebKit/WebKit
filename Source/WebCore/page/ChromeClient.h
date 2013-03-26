@@ -382,7 +382,7 @@ public:
     // FIXME: Port should return true using heuristic based on scrollable(RenderBox).
     virtual bool shouldAutoscrollForDragAndDrop(RenderBox*) const { return false; }
 
-    virtual void didAssociateFormControls(const Vector<Element*>&) { };
+    virtual void didAssociateFormControls(const Vector<RefPtr<Element> >&) { };
     virtual bool shouldNotifyOnFormChanges() { return false; };
 
 protected:
