@@ -21,7 +21,7 @@ crbug.com/222906 platform/chromium/media/video-capture-preview.html [ Crash ]
 crbug.com/223562 media/video-controls-captions.html [ Timeout ]
 crbug.com/223563 perf/accessibility-title-ui-element.html [ Timeout Pass Slow ]
 crbug.com/223565 http/tests/ssl/referer-301.html [ Timeout Pass Slow ]
-crbug.com/223583 /http/tests/filesystem/no-cache-filesystem-url.html [ Timeout ]
+crbug.com/223583 http/tests/filesystem/no-cache-filesystem-url.html [ Timeout ]
 
 # -----------------------------------------------------------------
 # To be rebaselined
