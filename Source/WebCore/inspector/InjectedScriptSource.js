@@ -557,6 +557,7 @@ InjectedScript.prototype = {
 
             var thisObject = isEvalOnCallFrame ? object : null;
             var parameters = [InjectedScriptHost.evaluate, expression];
+            var expressionFunctionBody = "var __originalEval = window.eval; window.eval = __eval; try { return eval(__currentExpression); } finally { window.eval = __originalEval; }";
 
             if (injectCommandLineAPI) {
                 // To avoid using a 'with' statement (which fails in strict mode and requires injecting the API object)
@@ -571,12 +572,11 @@ InjectedScript.prototype = {
                 for (var i = 0; i < parameterNames.length; ++i)
                     parameters.push(commandLineAPI[parameterNames[i]]);
 
-                var expressionFunctionString = "(function(eval, __currentExpression, " + parameterNames.join(", ") + ") { return eval(__currentExpression); })";
+                var expressionFunctionString = "(function(__eval, __currentExpression, " + parameterNames.join(", ") + ") { " + expressionFunctionBody + " })";
             } else {
                 // Use a closure in this case too to keep the same behavior of 'var' being captured by the closure instead
                 // of leaking out into the calling scope.
-
-                var expressionFunctionString = "(function(eval, __currentExpression) { return eval(__currentExpression); })";
+                var expressionFunctionString = "(function(__eval, __currentExpression) { " + expressionFunctionBody + " })";
             }
 
             var expressionFunction = evalFunction.call(thisObject, expressionFunctionString);
