@@ -182,7 +182,7 @@ FloatQuad LayerCompositingThread::getTransformedHolePunchRect() const
 
     // In order to clip we need to determine the current position of this layer, which
     // is encoded in the m_drawTransform value, which was used to initialize m_drawRect.
-    IntRect drawRect = m_layerRenderer->toWebKitDocumentCoordinates(m_drawRect);
+    IntRect drawRect = m_layerRenderer->toDocumentViewportCoordinates(m_drawRect);
 
     // Assert that in this case, where the hole punch rectangle equals the size of the layer,
     // the drawRect has the same size as the hole punch.
@@ -252,10 +252,9 @@ void LayerCompositingThread::drawTextures(double scale, const GLES2Program& prog
                 FloatPoint p(m_transformedBounds.p1().x() * vrw2 + vrw2 + visibleRect.x(),
                     -m_transformedBounds.p1().y() * vrh2 + vrh2 + visibleRect.y());
                 paintRect = IntRect(roundedIntPoint(p), m_bounds);
-            } else {
-                FloatRect r = m_layerRenderer->toWebKitWindowCoordinates(m_drawRect);
-                paintRect = enclosingIntRect(r);
-            }
+            } else
+                paintRect = m_layerRenderer->toWindowCoordinates(m_drawRect);
+
             m_mediaPlayer->paint(0, paintRect);
             MediaPlayerPrivate* mpp = static_cast<MediaPlayerPrivate*>(m_mediaPlayer->platformMedia().media.qnxMediaPlayer);
             mpp->drawBufferingAnimation(m_drawTransform, program);

@@ -1,3 +1,18 @@
+2013-03-26  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] WebOverlay::pixelViewportRect() should return pixel viewport coordinates
+        https://bugs.webkit.org/show_bug.cgi?id=113263
+
+        Reviewed by Rob Buis.
+
+        PR 312404
+
+        Fixed by returning pixel viewport coordinates instead of window
+        coordinates.
+
+        * Api/WebOverlay.cpp:
+        (BlackBerry::WebKit::WebOverlayPrivateCompositingThread::pixelViewportRect):
+
 2013-03-26  Xiaobo Wang  <xbwang@torchmobile.com.cn>
 
         [BlackBerry] Memory leak in UserMediaClientImpl

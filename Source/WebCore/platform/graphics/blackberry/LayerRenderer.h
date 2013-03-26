@@ -126,8 +126,9 @@ public:
     // Used when a layer discovers during rendering that it needs a commit.
     void setNeedsCommit() { m_needsCommit = true; }
 
-    IntRect toWebKitWindowCoordinates(const FloatRect&) const;
-    IntRect toWebKitDocumentCoordinates(const FloatRect&) const;
+    IntRect toWindowCoordinates(const FloatRect&) const;
+    IntRect toPixelViewportCoordinates(const FloatRect&) const;
+    IntRect toDocumentViewportCoordinates(const FloatRect&) const;
 
     // If the layer has already been drawed on a surface.
     bool layerAlreadyOnSurface(LayerCompositingThread*) const;

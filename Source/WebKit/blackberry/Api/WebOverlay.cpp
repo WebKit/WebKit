@@ -626,7 +626,7 @@ void WebOverlayPrivateCompositingThread::removeAnimation(const String& name)
 Platform::IntRect WebOverlayPrivateCompositingThread::pixelViewportRect() const
 {
     if (LayerRenderer* renderer = m_layerCompositingThread->layerRenderer())
-        return renderer->toWebKitWindowCoordinates(m_layerCompositingThread->getDrawRect());
+        return renderer->toPixelViewportCoordinates(m_layerCompositingThread->getDrawRect());
 
     return Platform::IntRect();
 }

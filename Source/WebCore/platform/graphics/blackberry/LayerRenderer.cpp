@@ -545,31 +545,43 @@ IntRect LayerRenderer::toOpenGLWindowCoordinates(const FloatRect& r) const
     return IntRect(glRound(r.x() * vw2 + ox), glRound(r.y() * vh2 + oy), glRound(r.width() * vw2), glRound(r.height() * vh2));
 }
 
+static FloatRect toPixelCoordinates(const FloatRect& rect, const IntRect& viewport, int surfaceHeight)
+{
+    float vw2 = viewport.width() / 2.0;
+    float vh2 = viewport.height() / 2.0;
+    float ox = viewport.x() + vw2;
+    float oy = surfaceHeight - (viewport.y() + vh2);
+    return FloatRect(rect.x() * vw2 + ox, -(rect.y() + rect.height()) * vh2 + oy, rect.width() * vw2, rect.height() * vh2);
+}
+
 // Transform normalized device coordinates to window coordinates as WebKit understands them.
 //
 // The OpenGL surface may be larger than the WebKit window, and OpenGL window coordinates
 // have origin in bottom left while WebKit window coordinates origin is in top left.
 // The viewport is setup to cover the upper portion of the larger OpenGL surface.
-IntRect LayerRenderer::toWebKitWindowCoordinates(const FloatRect& r) const
+IntRect LayerRenderer::toWindowCoordinates(const FloatRect& rect) const
 {
-    float vw2 = m_viewport.width() / 2.0;
-    float vh2 = m_viewport.height() / 2.0;
-    float ox = m_viewport.x() + vw2;
-    float oy = m_client->context()->surfaceSize().height() - (m_viewport.y() + vh2);
-    return enclosingIntRect(FloatRect(r.x() * vw2 + ox, -(r.y()+r.height()) * vh2 + oy, r.width() * vw2, r.height() * vh2));
+    return enclosingIntRect(toPixelCoordinates(rect, m_viewport, m_client->context()->surfaceSize().height()));
 }
 
-// Similar to toWebKitWindowCoordinates except that this also takes any zoom into account.
-IntRect LayerRenderer::toWebKitDocumentCoordinates(const FloatRect& r) const
+IntRect LayerRenderer::toPixelViewportCoordinates(const FloatRect& rect) const
 {
-    // The zoom is the ratio between visibleRect (or layoutRect) and dstRect parameters which are passed to drawLayers
-    float zoom = m_visibleRect.width() / m_viewport.width();
-    // Could assert here that it doesn't matter whether we choose width or height in the above statement:
-    // because both rectangles should have very similar shapes (subject only to pixel rounding error).
+    // The clip rect defines the web page's pixel viewport (to use ViewportAccessor terminology),
+    // not to be confused with the GL viewport. So translate from window coordinates to pixel
+    // viewport coordinates.
+    int surfaceHeight = m_client->context()->surfaceSize().height();
+    FloatRect pixelViewport = toPixelCoordinates(m_clipRect, m_viewport, surfaceHeight);
+    FloatRect result = toPixelCoordinates(rect, m_viewport, surfaceHeight);
+    result.move(-pixelViewport.x(), -pixelViewport.y());
+    return enclosingIntRect(result);
+}
 
-    IntRect result = toWebKitWindowCoordinates(r);
-    result.scale(zoom);
-    return result;
+IntRect LayerRenderer::toDocumentViewportCoordinates(const FloatRect& rect) const
+{
+    // Similar to toPixelViewportCoordinates except that this also takes any zoom into account.
+    FloatRect result = toPixelViewportCoordinates(rect);
+    result.scale(1 / m_scale);
+    return enclosingIntRect(result);
 }
 
 // Draws a debug border around the layer's bounds.
@@ -799,7 +811,7 @@ void LayerRenderer::updateLayersRecursive(LayerCompositingThread* layer, const T
 #endif
 
     if (layer->needsTexture() && layerVisible) {
-        IntRect dirtyRect = toWebKitWindowCoordinates(intersection(layer->getDrawRect(), clipRect));
+        IntRect dirtyRect = toWindowCoordinates(intersection(layer->getDrawRect(), clipRect));
         m_lastRenderingResults.addDirtyRect(dirtyRect);
     }
 
