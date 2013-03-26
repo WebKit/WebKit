@@ -1,8 +1,6 @@
 {
     "slaves":     [ { "name": "test-slave", "platform": "*" },
 
-                  
-                    { "name": "apple-macpro-3", "platform": "mac-lion" },
                     { "name": "apple-macpro-4", "platform": "mac-lion" },
                     { "name": "apple-macpro-5", "platform": "mac-lion" },	
                     { "name": "apple-macpro-6", "platform": "mac-lion" },
@@ -78,13 +76,9 @@
                     { "name": "sh4-linux-1", "platform": "qt-sh4"}
                   ],
 
-    "builders":   [ { "name": "Apple Lion (Leaks)", "type": "TestLeaks", "builddir": "lion-leaks",
+    "builders":   [ { "name": "Apple Lion Debug (Build)", "type": "Build", "builddir": "lion-debug",
                       "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
-                      "slavenames": ["apple-macpro-3"]
-                    },
-                    { "name": "Apple Lion Debug (Build)", "type": "Build", "builddir": "lion-debug",
-                      "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["lion-debug-tests-wk1", "lion-debug-tests-wk2", "lion-leaks"],
+                      "triggers": ["lion-debug-tests-wk1", "lion-debug-tests-wk2"],
                       "slavenames": ["apple-xserve-2", "apple-xserve-10"]
                     },
                     { "name": "Apple Lion Release (Build)", "type": "Build", "builddir": "lion-release",
@@ -384,9 +378,6 @@
                     },
                     { "type": "Triggerable", "name": "lion-debug-tests-wk2",
                       "builderNames": ["Apple Lion Debug WK2 (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "lion-leaks",
-                      "builderNames": ["Apple Lion (Leaks)"]
                     },
                     { "type": "Triggerable", "name": "mountainlion-release-tests-wk1",
                       "builderNames": ["Apple MountainLion Release WK1 (Tests)"]
