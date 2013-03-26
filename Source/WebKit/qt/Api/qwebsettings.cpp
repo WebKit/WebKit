@@ -277,7 +277,7 @@ void QWebSettingsPrivate::apply()
 #if ENABLE(SMOOTH_SCROLLING)
         value = attributes.value(QWebSettings::ScrollAnimatorEnabled,
                                       global->attributes.value(QWebSettings::ScrollAnimatorEnabled));
-        settings->setEnableScrollAnimator(value);
+        settings->setScrollAnimatorEnabled(value);
 #endif
 
         value = attributes.value(QWebSettings::CaretBrowsingEnabled,

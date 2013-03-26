@@ -3576,7 +3576,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
 #endif
 
 #if ENABLE(SMOOTH_SCROLLING)
-    coreSettings->setEnableScrollAnimator(settingsPrivate->enableSmoothScrolling);
+    coreSettings->setScrollAnimatorEnabled(settingsPrivate->enableSmoothScrolling);
 #endif
 
 #if ENABLE(CSS_SHADERS)
@@ -3723,7 +3723,7 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
 
 #if ENABLE(SMOOTH_SCROLLING)
     else if (name == g_intern_string("enable-smooth-scrolling"))
-        settings->setEnableScrollAnimator(g_value_get_boolean(&value));
+        settings->setScrollAnimatorEnabled(g_value_get_boolean(&value));
 #endif
 
 #if ENABLE(CSS_SHADERS)

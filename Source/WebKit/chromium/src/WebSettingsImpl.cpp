@@ -619,7 +619,7 @@ void WebSettingsImpl::setShouldPrintBackgrounds(bool enabled)
 void WebSettingsImpl::setEnableScrollAnimator(bool enabled)
 {
 #if ENABLE(SMOOTH_SCROLLING)
-    m_settings->setEnableScrollAnimator(enabled);
+    m_settings->setScrollAnimatorEnabled(enabled);
 #else
     UNUSED_PARAM(enabled);
 #endif

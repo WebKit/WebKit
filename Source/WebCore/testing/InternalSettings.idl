@@ -44,8 +44,6 @@
     void setTextAutosizingFontScaleFactor(in float fontScaleFactor) raises(DOMException);
     void setResolutionOverride(in long dotsPerCSSInchHorizontally, in long dotsPerCSSInchVertically) raises(DOMException);
     void setMediaTypeOverride(in DOMString mediaTypeOverride) raises(DOMException);
-    void setEnableScrollAnimator(in boolean enabled) raises(DOMException);
-    boolean scrollAnimatorEnabled() raises(DOMException);
     void setCSSExclusionsEnabled(in boolean enabled) raises(DOMException);
     void setCSSVariablesEnabled(in boolean enabled) raises(DOMException);
     boolean cssVariablesEnabled() raises(DOMException);

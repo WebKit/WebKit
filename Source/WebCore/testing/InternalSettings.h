@@ -113,8 +113,6 @@ public:
     void setTextAutosizingFontScaleFactor(float fontScaleFactor, ExceptionCode&);
     void setResolutionOverride(int dotsPerCSSInchHorizontally, int dotsPerCSSInchVertically, ExceptionCode&);
     void setMediaTypeOverride(const String& mediaType, ExceptionCode&);
-    void setEnableScrollAnimator(bool enabled, ExceptionCode&);
-    bool scrollAnimatorEnabled(ExceptionCode&);
     void setCSSExclusionsEnabled(bool enabled, ExceptionCode&);
     void setCSSVariablesEnabled(bool enabled, ExceptionCode&);
     bool cssVariablesEnabled(ExceptionCode&);

@@ -1,3 +1,14 @@
+2013-03-26  Tony Chang  <tony@chromium.org>
+
+        Autogenerate the scrollAnimatorEnabled setting in Settings.in
+        https://bugs.webkit.org/show_bug.cgi?id=113253
+
+        Reviewed by James Robinson.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_update_settings): Update call to WebCore to use setScrollAnimatorEnabled(bool).
+        (webkit_web_view_settings_notify): Update call to WebCore to use setScrollAnimatorEnabled(bool).
+
 2013-03-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK][Regression] webkit_dom_html_table_element_insert_row returns value that doesn't pass WEBKIT_DOM_IS_HTML_TABLE_ROW_ELEMENT macro

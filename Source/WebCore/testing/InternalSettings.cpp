@@ -352,28 +352,6 @@ void InternalSettings::setTextAutosizingFontScaleFactor(float fontScaleFactor, E
 #endif
 }
 
-void InternalSettings::setEnableScrollAnimator(bool enabled, ExceptionCode& ec)
-{
-#if ENABLE(SMOOTH_SCROLLING)
-    InternalSettingsGuardForSettings();
-    settings()->setEnableScrollAnimator(enabled);
-#else
-    UNUSED_PARAM(enabled);
-    UNUSED_PARAM(ec);
-#endif
-}
-
-bool InternalSettings::scrollAnimatorEnabled(ExceptionCode& ec)
-{
-#if ENABLE(SMOOTH_SCROLLING)
-    InternalSettingsGuardForSettingsReturn(false);
-    return settings()->scrollAnimatorEnabled();
-#else
-    UNUSED_PARAM(ec);
-    return false;
-#endif
-}
-
 void InternalSettings::setCSSExclusionsEnabled(bool enabled, ExceptionCode& ec)
 {
     UNUSED_PARAM(ec);

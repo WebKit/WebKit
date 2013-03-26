@@ -1,5 +1,15 @@
 2013-03-26  Tony Chang  <tony@chromium.org>
 
+        Autogenerate the scrollAnimatorEnabled setting in Settings.in
+        https://bugs.webkit.org/show_bug.cgi?id=113253
+
+        Reviewed by James Robinson.
+
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setEnableScrollAnimator): Update call to WebCore to use setScrollAnimatorEnabled(bool).
+
+2013-03-26  Tony Chang  <tony@chromium.org>
+
         [chromium] Expose setSelectionIncludesAltImageText in WebSettings
         https://bugs.webkit.org/show_bug.cgi?id=113316
 

@@ -191,9 +191,6 @@ Settings::Settings(Page* page)
     , m_showTiledScrollingIndicator(false)
     , m_tiledBackingStoreEnabled(false)
     , m_dnsPrefetchingEnabled(false)
-#if ENABLE(SMOOTH_SCROLLING)
-    , m_scrollAnimatorEnabled(true)
-#endif
 #if ENABLE(TOUCH_EVENTS)
     , m_touchEventEmulationEnabled(false)
 #endif

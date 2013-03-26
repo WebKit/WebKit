@@ -1,3 +1,14 @@
+2013-03-26  Tony Chang  <tony@chromium.org>
+
+        Autogenerate the scrollAnimatorEnabled setting in Settings.in
+        https://bugs.webkit.org/show_bug.cgi?id=113253
+
+        Reviewed by James Robinson.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setUseFixedLayout): Update call to WebCore to use setScrollAnimatorEnabled(bool).
+        (WebKit::WebPage::updatePreferences): Update call to WebCore to use setScrollAnimatorEnabled(bool).
+
 2013-03-26  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt][WK2] Fails to start QtWebProcess.exe if installed in a path containing spaces

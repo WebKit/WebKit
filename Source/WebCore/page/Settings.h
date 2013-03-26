@@ -233,11 +233,6 @@ namespace WebCore {
 
         static const unsigned defaultMaximumHTMLParserDOMTreeDepth = 512;
 
-#if ENABLE(SMOOTH_SCROLLING)
-        void setEnableScrollAnimator(bool flag) { m_scrollAnimatorEnabled = flag; }
-        bool scrollAnimatorEnabled() const { return m_scrollAnimatorEnabled; }
-#endif
-
 #if USE(SAFARI_THEME)
         // Windows debugging pref (global) for switching between the Aqua look and a native windows look.
         static void setShouldPaintNativeControls(bool);
@@ -323,9 +318,6 @@ namespace WebCore {
         bool m_showTiledScrollingIndicator : 1;
         bool m_tiledBackingStoreEnabled : 1;
         bool m_dnsPrefetchingEnabled : 1;
-#if ENABLE(SMOOTH_SCROLLING)
-        bool m_scrollAnimatorEnabled : 1;
-#endif
 
 #if ENABLE(TOUCH_EVENTS)
         bool m_touchEventEmulationEnabled : 1;
