@@ -32,8 +32,8 @@
 #include "V8CustomElementConstructor.h"
 
 #include "CustomElementConstructor.h"
+#include "CustomElementHelpers.h"
 #include "V8Binding.h"
-#include "V8CustomElement.h"
 
 namespace WebCore {
 
@@ -48,7 +48,7 @@ v8::Handle<v8::Value> V8CustomElementConstructor::callAsFunctionCallback(const v
     RefPtr<Element> element = impl->createElement();
     if (!element)
         return v8Undefined();
-    return V8CustomElement::wrap(element.get(), args.Holder(), impl, args.GetIsolate());
+    return CustomElementHelpers::wrap(element.get(), args.Holder(), impl, args.GetIsolate());
 }
 
 } // namespace WebCore

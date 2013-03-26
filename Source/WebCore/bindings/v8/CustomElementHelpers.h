@@ -31,9 +31,17 @@
 #ifndef CustomElementHelpers_h
 #define CustomElementHelpers_h
 
+#include "CustomElementConstructor.h"
+#include "CustomElementRegistry.h"
+#include "Document.h"
 #include "ExceptionCode.h"
 #include "ScriptValue.h"
+#include "V8Binding.h"
+#include "V8DOMWrapper.h"
+#include "V8HTMLElement.h"
+#include "V8HTMLUnknownElement.h"
 #include <wtf/Forward.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
@@ -58,9 +66,32 @@ public:
 
     static void invokeReadyCallbacksIfNeeded(ScriptExecutionContext*, const Vector<CustomElementInvocation>&);
 
+    //
+    // You can just use toV8(Node*) to get correct wrapper objects, even for custom elements.
+    // Then generated ElementWrapperFactories call V8CustomElement::wrap() with proper CustomElementConstructor instances
+    // accordingly.
+    //
+    static v8::Handle<v8::Object> wrap(Element*, v8::Handle<v8::Object> creationContext, PassRefPtr<CustomElementConstructor>, v8::Isolate*);
+    static PassRefPtr<CustomElementConstructor> constructorOf(Element*);
+
 private:
     static void invokeReadyCallbackIfNeeded(Element*, v8::Handle<v8::Context>);
+    static v8::Handle<v8::Object> createWrapper(PassRefPtr<Element>, v8::Handle<v8::Object>, PassRefPtr<CustomElementConstructor>, v8::Isolate*);
 };
+
+inline v8::Handle<v8::Object> CustomElementHelpers::wrap(Element* impl, v8::Handle<v8::Object> creationContext, PassRefPtr<CustomElementConstructor> constructor, v8::Isolate* isolate)
+{
+    ASSERT(impl);
+    ASSERT(DOMDataStore::getWrapper(impl, isolate).IsEmpty());
+    return CustomElementHelpers::createWrapper(impl, creationContext, constructor, isolate);
+}
+
+inline PassRefPtr<CustomElementConstructor> CustomElementHelpers::constructorOf(Element* element)
+{
+    if (CustomElementRegistry* registry = element->document()->registry())
+        return registry->findFor(element);
+    return 0;
+}
 
 #endif // ENABLE(CUSTOM_ELEMENTS)
 

@@ -1219,7 +1219,7 @@ END
 #include "V8$parameters{namespace}Element.h"
 
 #if ENABLE(CUSTOM_ELEMENTS)
-#include "V8CustomElement.h"
+#include "CustomElementHelpers.h"
 #endif
 
 #include <v8.h>
@@ -1296,8 +1296,8 @@ END
     if ($wrapperFactoryType eq "V8") {
         print F <<END
 #if ENABLE(CUSTOM_ELEMENTS)
-    if (PassRefPtr<CustomElementConstructor> constructor = V8CustomElement::constructorOf(element))
-        return V8CustomElement::wrap(element, creationContext, constructor, isolate);
+    if (PassRefPtr<CustomElementConstructor> constructor = CustomElementHelpers::constructorOf(element))
+        return CustomElementHelpers::wrap(element, creationContext, constructor, isolate);
 #endif
 END
 ;

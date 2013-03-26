@@ -43,6 +43,38 @@ namespace WebCore {
 
 #if ENABLE(CUSTOM_ELEMENTS)
 
+v8::Handle<v8::Object> CustomElementHelpers::createWrapper(PassRefPtr<Element> impl, v8::Handle<v8::Object> creationContext, PassRefPtr<CustomElementConstructor> constructor, v8::Isolate* isolate)
+{
+    ASSERT(impl);
+
+    // The constructor and registered lifecycle callbacks should be visible only from main world.
+    // FIXME: This shouldn't be needed once each custom element has its own FunctionTemplate
+    // https://bugs.webkit.org/show_bug.cgi?id=108138
+    if (!CustomElementHelpers::isFeatureAllowed(creationContext->CreationContext())) {
+        v8::Handle<v8::Object> wrapper = V8DOMWrapper::createWrapper(creationContext, &V8HTMLElement::info, impl.get(), isolate);
+        if (!wrapper.IsEmpty())
+            V8DOMWrapper::associateObjectWithWrapper(impl, &V8HTMLElement::info, wrapper, isolate, WrapperConfiguration::Dependent);
+        return wrapper;
+    }
+
+    v8::Handle<v8::Value> constructorValue = WebCore::toV8(constructor.get(), creationContext, isolate);
+    if (constructorValue.IsEmpty() || !constructorValue->IsObject())
+        return v8::Handle<v8::Object>();
+    v8::Handle<v8::Object> constructorWapper = v8::Handle<v8::Object>::Cast(constructorValue);
+    v8::Handle<v8::Object> prototype = v8::Handle<v8::Object>::Cast(constructorWapper->Get(v8::String::NewSymbol("prototype")));
+    WrapperTypeInfo* typeInfo = CustomElementHelpers::findWrapperType(prototype);
+    if (!typeInfo)
+        return v8::Handle<v8::Object>();
+
+    v8::Handle<v8::Object> wrapper = V8DOMWrapper::createWrapper(creationContext, typeInfo, impl.get(), isolate);
+    if (wrapper.IsEmpty())
+        return v8::Handle<v8::Object>();
+
+    wrapper->SetPrototype(prototype);
+    V8DOMWrapper::associateObjectWithWrapper(impl, typeInfo, wrapper, isolate, WrapperConfiguration::Dependent);
+    return wrapper;
+}
+
 bool CustomElementHelpers::initializeConstructorWrapper(CustomElementConstructor* constructor, const ScriptValue& prototype, ScriptState* state)
 {
     ASSERT(isFeatureAllowed(state));
