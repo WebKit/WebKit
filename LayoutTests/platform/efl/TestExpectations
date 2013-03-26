@@ -387,7 +387,7 @@ svg/W3C-SVG-1.1/paths-data-03-f.svg
 # Newly added test which fails on other bots too
 webkit.org/b/85969 http/tests/loading/post-in-iframe-with-back-navigation.html [ Failure ]
 
-# Missing drag'n'drop support.
+# Missing drag'n'drop and pasteboard support.
 webkit.org/b/86623 editing/pasteboard/data-transfer-items-drag-drop-string.html [ Failure ]
 webkit.org/b/86623 editing/pasteboard/drag-and-drop-image-contenteditable.html [ Failure ]
 webkit.org/b/86623 editing/pasteboard/drag-and-drop-inputimage-contenteditable.html [ Failure ]
@@ -402,6 +402,7 @@ webkit.org/b/86623 editing/pasteboard/drop-link.html [ Failure ]
 webkit.org/b/86623 editing/pasteboard/drop-text-events.html [ Failure ]
 webkit.org/b/86623 editing/pasteboard/files-during-page-drags.html [ Failure ]
 webkit.org/b/86623 editing/pasteboard/get-data-text-plain-drop.html [ Failure ]
+webkit.org/b/86623 editing/pasteboard/copy-image-with-alt-text.html [ Failure ]
 webkit.org/b/86623 editing/selection/4895428-1.html [ Failure ]
 webkit.org/b/86623 editing/selection/4895428-4.html [ Failure ]
 webkit.org/b/86623 editing/selection/drag-text-delay.html [ Failure ]
