@@ -78,7 +78,7 @@ public:
     virtual bool usesAsyncCallbacks() OVERRIDE { return true; }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    virtual void canAuthenticateAgainstProtectionSpaceAsync(WebCore::ResourceHandle*, const WebCore::ProtectionSpace&);
+    virtual void canAuthenticateAgainstProtectionSpaceAsync(WebCore::ResourceHandle*, const WebCore::ProtectionSpace&) OVERRIDE;
 #endif
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
@@ -88,7 +88,7 @@ public:
 
 #if PLATFORM(MAC)
     static size_t fileBackedResourceMinimumSize();
-    virtual void willCacheResponseAsync(WebCore::ResourceHandle*, NSCachedURLResponse *);
+    virtual void willCacheResponseAsync(WebCore::ResourceHandle*, NSCachedURLResponse *) OVERRIDE;
     virtual void willStopBufferingData(WebCore::ResourceHandle*, const char*, int) OVERRIDE;
 #endif // PLATFORM(MAC)
 
