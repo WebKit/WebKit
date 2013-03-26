@@ -68,7 +68,7 @@
     background: transparent;
     text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
     vertical-align: middle;
-    padding: 1px 4px 2px 4px;
+    padding: 3px 4px 2px 4px;
     height: 21px;
     border: 1px solid transparent;
     border-bottom: none;
@@ -93,6 +93,7 @@
 }
 
 .tabbed-pane-header-tab-close-button {
+    font-family: Arial, monospace;
     position: relative;
     bottom: 1px;
     opacity: 0;
@@ -163,3 +164,4 @@ select.tabbed-pane-header-tabs-drop-down-select {
     margin: 0;
     -webkit-appearance: none;
 }
+ 

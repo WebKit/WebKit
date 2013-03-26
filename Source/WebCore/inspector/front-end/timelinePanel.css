@@ -212,6 +212,7 @@
 }
 
 .timeline-tree-item .count {
+    font-family: Helvetica, Arial, sans-serif;
     font-weight: bold;
 }
 
@@ -358,6 +359,7 @@
 }
 
 .timeline-records-stats, .storage-application-cache-status, .storage-application-cache-connectivity {
+    font-size: 11px;
     text-shadow: white 0 1px 0;
 }
 
@@ -494,6 +496,7 @@
 }
 
 .memory-counter-sidebar-info {
+    font-size: 11px;
     margin: 10px;
 }
 
@@ -511,6 +514,7 @@
 
 .memory-counter-value {
     margin: 4px;
+    font-size: 11px;
 }
 
 #counter-values-bar {

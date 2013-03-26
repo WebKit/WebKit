@@ -16,6 +16,8 @@
     border-spacing: 0;
     border-collapse: collapse;
     width: 100%;
+    font-size: 11px;
+    font-family: Lucida Grande, sans-serif;
 }
 
 .data-grid .data-container {
@@ -100,8 +102,8 @@
 .data-grid td {
     vertical-align: top;
     height: 16px; /* Keep in sync with .data-grid table.data @ -webkit-background-size */
-    line-height: 13px;
-    padding: 1px 4px;
+    line-height: 12px;
+    padding: 2px 4px;
     white-space: nowrap;
     overflow: hidden;
     border-right: 1px solid #aaa;
