@@ -80,9 +80,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
      */
     onUISourceCodeContentChanged: function(content, contentEncoded, mimeType)
     {
-        var breakpointLocations = this._breakpointManager.breakpointLocationsForUISourceCode(this._uiSourceCode);
-        for (var i = 0; i < breakpointLocations.length; ++i)
-            breakpointLocations[i].breakpoint.remove();
+        this._removeAllBreakpoints();
         WebInspector.UISourceCodeFrame.prototype.onUISourceCodeContentChanged.call(this, content);
     },
 
@@ -190,12 +188,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         }
 
         // Remove all breakpoints.
-        var breakpointLocations = this._breakpointManager.breakpointLocationsForUISourceCode(this._uiSourceCode);
-        var lineNumbers = {};
-        for (var i = 0; i < breakpointLocations.length; ++i) {
-            var breakpoint = breakpointLocations[i].breakpoint;
-            breakpointLocations[i].breakpoint.remove();
-        }
+        this._removeAllBreakpoints();
 
         // Restore all breakpoints from saved decorations.
         for (var lineNumberString in breakpoints) {
@@ -205,6 +198,13 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             var breakpointDecoration = breakpoints[lineNumberString];
             this._setBreakpoint(lineNumber, breakpointDecoration.condition, breakpointDecoration.enabled);
         }
+    },
+
+    _removeAllBreakpoints: function()
+    {
+        var breakpoints = this._breakpointManager.breakpointsForUISourceCode(this._uiSourceCode);
+        for (var i = 0; i < breakpoints.length; ++i)
+            breakpoints[i].remove();
     },
 
     _getPopoverAnchor: function(element, event)
