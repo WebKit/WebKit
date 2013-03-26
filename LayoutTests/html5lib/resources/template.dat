@@ -1258,3 +1258,15 @@
 |                 <div>
 |   <body>
 |     <div>
+
+#data
+<dummy><template><span></dummy>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <dummy>
+|       <template>
+|         content
+|           <span>

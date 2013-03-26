@@ -196,6 +196,9 @@ public:
             || tagName == HTMLNames::tableTag
             || isTableBodyContextElement()
             || tagName == HTMLNames::tdTag
+#if ENABLE(TEMPLATE_ELEMENT)
+            || tagName == HTMLNames::templateTag
+#endif
             || tagName == HTMLNames::textareaTag
             || tagName == HTMLNames::thTag
             || tagName == HTMLNames::titleTag
