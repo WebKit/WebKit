@@ -179,6 +179,8 @@ ArrayMode ArrayMode::refine(SpeculatedType base, SpeculatedType index, Speculate
         return *this;
         
     case Array::SelectUsingPredictions:
+        base &= ~SpecOther;
+        
         if (isStringSpeculation(base))
             return ArrayMode(Array::String);
         
