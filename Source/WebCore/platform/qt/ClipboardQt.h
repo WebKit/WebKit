@@ -86,6 +86,8 @@ private:
 
     void setDragImage(CachedImage*, Node*, const IntPoint& loc);
 
+    const QMimeData* readData() const;
+
     const QMimeData* m_readableData;
     QMimeData* m_writableData;
     Frame* m_frame;
