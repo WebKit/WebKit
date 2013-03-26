@@ -29,6 +29,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "LayerWebKitThread.h"
+#include "Page.h"
 #include "PlatformLayer.h"
 #include "RenderLayerCompositor.h"
 #include "RenderView.h"
@@ -40,16 +41,21 @@ ScrollingCoordinatorBlackBerry::ScrollingCoordinatorBlackBerry(Page* page)
 {
 }
 
-void ScrollingCoordinatorBlackBerry::setLayerIsContainerForFixedPositionLayers(GraphicsLayer* layer, bool enable)
+void ScrollingCoordinatorBlackBerry::setLayerIsContainerForFixedPositionLayers(GraphicsLayer* layer, bool isContainer)
 {
+    // We don't want to set this for the main frame, the main frame would be treated like a subframe
+    // by the LayerRenderer which would result in incorrect positioning.
+    if (m_page->mainFrame() && scrollLayerForFrameView(m_page->mainFrame()->view()) == layer)
+        isContainer = false;
+
     if (layer->platformLayer())
-        layer->platformLayer()->setIsContainerForFixedPositionLayers(enable);
+        layer->platformLayer()->setIsContainerForFixedPositionLayers(isContainer);
 }
 
-void ScrollingCoordinatorBlackBerry::setLayerIsFixedToContainerLayer(GraphicsLayer* layer, bool enable)
+void ScrollingCoordinatorBlackBerry::setLayerIsFixedToContainerLayer(GraphicsLayer* layer, bool isFixed)
 {
     if (layer->platformLayer())
-        layer->platformLayer()->setFixedPosition(enable);
+        layer->platformLayer()->setFixedPosition(isFixed);
 }
 
 void ScrollingCoordinatorBlackBerry::setLayerFixedToContainerLayerEdge(GraphicsLayer* layer, bool fixedToTop, bool fixedToLeft)
