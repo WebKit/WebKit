@@ -1,0 +1,35 @@
+middle
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 3
+        (GraphicsLayer
+          (position 129.00 29.00)
+          (bounds 100.00 100.00)
+        )
+        (GraphicsLayer
+          (position 129.00 29.00)
+          (bounds 200.00 100.00)
+          (contentsOpaque 1)
+        )
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 242.00 162.00)
+          (drawsContent 1)
+          (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [100.00 0.00 0.00 1.00])
+          (children 1
+            (GraphicsLayer
+              (position 1.00 146.00)
+              (bounds 240.00 15.00)
+              (drawsContent 1)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
