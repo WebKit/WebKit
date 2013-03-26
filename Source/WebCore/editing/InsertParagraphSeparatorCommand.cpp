@@ -372,7 +372,8 @@ void InsertParagraphSeparatorCommand::doApply()
             splitTreeToNode(splitTo, startBlock.get());
 
             for (n = startBlock->firstChild(); n; n = n->nextSibling()) {
-                if (comparePositions(VisiblePosition(insertionPosition), positionBeforeNode(n)) <= 0)
+                VisiblePosition beforeNodePosition = positionBeforeNode(n);
+                if (!beforeNodePosition.isNull() && comparePositions(VisiblePosition(insertionPosition), beforeNodePosition) <= 0)
                     break;
             }
         }
