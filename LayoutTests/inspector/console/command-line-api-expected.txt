@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1182: The console function $() has changed from $=getElementById(id) to $=querySelector(selector). You might try $("#%s")
+CONSOLE MESSAGE: line 1222: The console function $() has changed from $=getElementById(id) to $=querySelector(selector). You might try $("#%s")
 Tests that command line api works.
 
 

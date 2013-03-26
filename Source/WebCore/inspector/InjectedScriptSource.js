@@ -550,6 +550,46 @@ InjectedScript.prototype = {
      */
     _evaluateOn: function(evalFunction, object, objectGroup, expression, isEvalOnCallFrame, injectCommandLineAPI)
     {
+        if (InjectedScriptHost.evaluateReturnsEvalFunction) {
+            // We can only use this approach if the evaluate function is the true 'eval'. That allows us to use it with
+            // the 'eval' identifier when calling it. Using 'eval' grants access to the local scope of the closure we
+            // create that provides the command line APIs.
+
+            var thisObject = isEvalOnCallFrame ? object : null;
+            var parameters = [InjectedScriptHost.evaluate, expression];
+
+            if (injectCommandLineAPI) {
+                // To avoid using a 'with' statement (which fails in strict mode and requires injecting the API object)
+                // we instead create a closure where we evaluate the expression. The command line APIs are passed as
+                // parameters to the closure so they are in scope but not injected. This allows the code evaluated in
+                // the console to stay in strict mode (if is was already set), or to get strict mode by prefixing
+                // expressions with 'use strict';.
+
+                var commandLineAPI = new CommandLineAPI(this._commandLineAPIImpl, thisObject);
+                var parameterNames = Object.getOwnPropertyNames(commandLineAPI);
+
+                for (var i = 0; i < parameterNames.length; ++i)
+                    parameters.push(commandLineAPI[parameterNames[i]]);
+
+                var expressionFunctionString = "(function(eval, __currentExpression, " + parameterNames.join(", ") + ") { return eval(__currentExpression); })";
+            } else {
+                // Use a closure in this case too to keep the same behavior of 'var' being captured by the closure instead
+                // of leaking out into the calling scope.
+
+                var expressionFunctionString = "(function(eval, __currentExpression) { return eval(__currentExpression); })";
+            }
+
+            var expressionFunction = evalFunction.call(thisObject, expressionFunctionString);
+            var result = expressionFunction.apply(thisObject, parameters);
+
+            if (objectGroup === "console")
+                this._lastResult = result;
+
+            return result;
+        }
+
+        // FIXME: This code path should be removed once V8 also returns 'eval' as the evaluate function. See: https://webkit.org/b/113134
+
         // Only install command line api object for the time of evaluation.
         // Surround the expression in with statements to inject our command line API so that
         // the window object properties still take more precedent than our API functions.

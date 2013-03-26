@@ -1,0 +1,8 @@
+Tests that errors to load a resource cause error messages to be logged to console.
+
+
+GET http://127.0.0.1:8000/inspector/missing.css 404 (Not Found) console-resource-errors-iframe.html:3 console-message console-error-level
+GET http://127.0.0.1:8000/inspector/non-existent-iframe.html 404 (Not Found) non-existent-iframe.html:1 console-message console-error-level
+GET http://127.0.0.1:8000/inspector/non-existent-script.js 404 (Not Found) console-resource-errors-iframe.html:4 console-message console-error-level
+GET http://127.0.0.1:8000/inspector/non-existent-xhr 404 (Not Found) [native code]:1send [native code]:1loadXHR console-resource-errors.html:18performActions console-resource-errors.html:10eval codeeval [native code]:1(anonymous function)_evaluateOn_evaluateAndWrapevaluate console-message console-error-level
+

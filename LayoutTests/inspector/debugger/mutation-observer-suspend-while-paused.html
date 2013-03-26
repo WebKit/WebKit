@@ -7,16 +7,16 @@
 var test = function()
 {
     var setup =
-        "var div = document.createElement('div');\n" +
-        "var deliveryCount = 0;\n" +
+        "window.testDiv = document.createElement('div');\n" +
+        "window.deliveryCount = 0;\n" +
         "var observer = new WebKitMutationObserver(function(records) {\n" +
-        "    deliveryCount++;\n" +
+        "    window.deliveryCount++;\n" +
         "});\n" +
-        "observer.observe(div, { attributes: true });";
+        "observer.observe(window.testDiv, { attributes: true });";
     
     var mutateAndPause = 
         "function mutateAndPause() {\n" +
-        "    div.setAttribute('foo', 'baz');\n" +
+        "    window.testDiv.setAttribute('foo', 'baz');\n" +
         "    debugger;\n" +
         "};\n" +
         "setTimeout(mutateAndPause, 0);";
@@ -33,7 +33,7 @@ var test = function()
 
     function step2()
     {
-        InspectorTest.evaluateInConsole("div.setAttribute('foo', 'bar')", function() {
+        InspectorTest.evaluateInConsole("window.testDiv.setAttribute('foo', 'bar')", function() {
             InspectorTest.addResult("setAttribute should have triggered delivery.");
             InspectorTest.evaluateInConsoleAndDump("deliveryCount", step3); 
         });
