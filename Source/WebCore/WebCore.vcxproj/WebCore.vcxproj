@@ -10198,7 +10198,6 @@
     <ClCompile Include="..\plugins\PluginDatabase.cpp" />
     <ClCompile Include="..\plugins\PluginDebug.cpp" />
     <ClCompile Include="..\plugins\PluginMainThreadScheduler.cpp" />
-    <ClCompile Include="..\plugins\PlugInOriginHash.cpp" />
     <ClCompile Include="..\plugins\PluginPackage.cpp" />
     <ClCompile Include="..\plugins\PluginStream.cpp" />
     <ClCompile Include="..\plugins\PluginView.cpp" />
@@ -13000,7 +12999,6 @@
     <ClInclude Include="..\plugins\PluginDatabase.h" />
     <ClInclude Include="..\plugins\PluginDebug.h" />
     <ClInclude Include="..\plugins\PluginMainThreadScheduler.h" />
-    <ClInclude Include="..\plugins\PlugInOriginHash.h" />
     <ClInclude Include="..\plugins\PluginPackage.h" />
     <ClInclude Include="..\plugins\PluginQuirkSet.h" />
     <ClInclude Include="..\plugins\PluginStrategy.h" />

@@ -2122,7 +2122,6 @@ set(WebCore_SOURCES
     plugins/DOMMimeType.cpp
     plugins/DOMPluginArray.cpp
     plugins/DOMPlugin.cpp
-    plugins/PlugInOriginHash.cpp
     plugins/PluginData.cpp
     plugins/PluginMainThreadScheduler.cpp
 

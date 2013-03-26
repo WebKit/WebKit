@@ -6219,9 +6219,6 @@
     <ClCompile Include="..\plugins\PluginMainThreadScheduler.cpp">
       <Filter>plugins</Filter>
     </ClCompile>
-    <ClCompile Include="..\plugins\PlugInOriginHash.cpp">
-      <Filter>plugins</Filter>
-    </ClCompile>
     <ClCompile Include="..\plugins\PluginPackage.cpp">
       <Filter>plugins</Filter>
     </ClCompile>
@@ -13015,9 +13012,6 @@
       <Filter>plugins</Filter>
     </ClInclude>
     <ClInclude Include="..\plugins\PluginMainThreadScheduler.h">
-      <Filter>plugins</Filter>
-    </ClInclude>
-    <ClInclude Include="..\plugins\PlugInOriginHash.h">
       <Filter>plugins</Filter>
     </ClInclude>
     <ClInclude Include="..\plugins\PluginPackage.h">

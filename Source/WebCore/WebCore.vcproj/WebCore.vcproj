@@ -73559,14 +73559,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\plugins\PlugInOriginHash.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\plugins\PlugInOriginHash.h"
-				>
-			</File>
-			<File
 				RelativePath="..\plugins\PluginPackage.cpp"
 				>
 			</File>

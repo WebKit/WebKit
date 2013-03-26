@@ -948,8 +948,6 @@
 		31C0FF4D0E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31C0FF470E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.mm */; };
 		31C0FF4E0E4CEFDD007D6FE5 /* DOMWebKitTransitionEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 31C0FF480E4CEFDD007D6FE5 /* DOMWebKitTransitionEventInternal.h */; };
 		31D591B316697A6C00E6BF02 /* PlugInClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31D591B116697A6C00E6BF02 /* PlugInClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		31D591BB166C2E6C00E6BF02 /* PlugInOriginHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31D591B9166C2E6C00E6BF02 /* PlugInOriginHash.cpp */; };
-		31D591BC166C2E6C00E6BF02 /* PlugInOriginHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 31D591BA166C2E6C00E6BF02 /* PlugInOriginHash.h */; settings = {ATTRIBUTES = (); }; };
 		31EC1E2814FF60EE00C94662 /* JSNotificationPermissionCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31EC1E2614FF60EE00C94662 /* JSNotificationPermissionCallback.cpp */; };
 		31EC1E2914FF60EE00C94662 /* JSNotificationPermissionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 31EC1E2714FF60EE00C94662 /* JSNotificationPermissionCallback.h */; };
 		31FB1A57120A5D0600DC02A0 /* DeviceMotionClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 31FB1A4F120A5D0600DC02A0 /* DeviceMotionClient.h */; };
@@ -8358,8 +8356,6 @@
 		31C0FF470E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMWebKitTransitionEvent.mm; sourceTree = "<group>"; };
 		31C0FF480E4CEFDD007D6FE5 /* DOMWebKitTransitionEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitTransitionEventInternal.h; sourceTree = "<group>"; };
 		31D591B116697A6C00E6BF02 /* PlugInClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlugInClient.h; sourceTree = "<group>"; };
-		31D591B9166C2E6C00E6BF02 /* PlugInOriginHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlugInOriginHash.cpp; sourceTree = "<group>"; };
-		31D591BA166C2E6C00E6BF02 /* PlugInOriginHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlugInOriginHash.h; sourceTree = "<group>"; };
 		31E8D8BA160BC94B004CE8F5 /* RenderSnapshottedPlugIn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSnapshottedPlugIn.cpp; sourceTree = "<group>"; };
 		31E8D8BB160BC94C004CE8F5 /* RenderSnapshottedPlugIn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSnapshottedPlugIn.h; sourceTree = "<group>"; };
 		31EC1D5014FEFD0800C94662 /* NotificationPermissionCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = NotificationPermissionCallback.idl; path = Modules/notifications/NotificationPermissionCallback.idl; sourceTree = "<group>"; };
@@ -16190,8 +16186,6 @@
 				A9C6E4F20D745E48006442E9 /* PluginData.h */,
 				1ADA140E0E1AE5D900023EE5 /* PluginMainThreadScheduler.cpp */,
 				1ADA140F0E1AE5D900023EE5 /* PluginMainThreadScheduler.h */,
-				31D591B9166C2E6C00E6BF02 /* PlugInOriginHash.cpp */,
-				31D591BA166C2E6C00E6BF02 /* PlugInOriginHash.h */,
 				1AA8798F11CBE846003C664F /* PluginStrategy.h */,
 				0AFDAC3C10F5448C00E1F3D2 /* PluginViewBase.h */,
 				76FF17E211235673001D61B5 /* PluginViewNone.cpp */,
@@ -25796,7 +25790,6 @@
 				A9C6E4F40D745E48006442E9 /* PluginData.h in Headers */,
 				97205ABC1239292700B17380 /* PluginDocument.h in Headers */,
 				1ADA14110E1AE5D900023EE5 /* PluginMainThreadScheduler.h in Headers */,
-				31D591BC166C2E6C00E6BF02 /* PlugInOriginHash.h in Headers */,
 				1AA8799011CBE846003C664F /* PluginStrategy.h in Headers */,
 				0AFDAC3D10F5448C00E1F3D2 /* PluginViewBase.h in Headers */,
 				BCBB8AB813F1AFB000734DF0 /* PODArena.h in Headers */,
@@ -29189,7 +29182,6 @@
 				A9C6E4F30D745E48006442E9 /* PluginData.cpp in Sources */,
 				97205ABB1239292700B17380 /* PluginDocument.cpp in Sources */,
 				1ADA14100E1AE5D900023EE5 /* PluginMainThreadScheduler.cpp in Sources */,
-				31D591BB166C2E6C00E6BF02 /* PlugInOriginHash.cpp in Sources */,
 				76FF17E311235673001D61B5 /* PluginViewNone.cpp in Sources */,
 				B2B1F7160D00CAA8004AEA64 /* PointerEventsHitRules.cpp in Sources */,
 				A1E1154613015C4E0054AC8C /* PointLightSource.cpp in Sources */,

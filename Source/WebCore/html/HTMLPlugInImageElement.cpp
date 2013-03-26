@@ -38,7 +38,6 @@
 #include "NodeRenderingContext.h"
 #include "Page.h"
 #include "PlugInClient.h"
-#include "PlugInOriginHash.h"
 #include "PluginViewBase.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderImage.h"
