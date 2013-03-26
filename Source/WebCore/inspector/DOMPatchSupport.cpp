@@ -46,6 +46,7 @@
 #include "HTMLNames.h"
 #include "InspectorHistory.h"
 #include "Node.h"
+#include "XMLDocumentParser.h"
 
 #include <wtf/Deque.h>
 #include <wtf/HashTraits.h>
@@ -89,9 +90,23 @@ DOMPatchSupport::~DOMPatchSupport() { }
 
 void DOMPatchSupport::patchDocument(const String& markup)
 {
-    RefPtr<HTMLDocument> newDocument = HTMLDocument::create(0, KURL());
+    RefPtr<Document> newDocument;
+    if (m_document->isHTMLDocument())
+        newDocument = HTMLDocument::create(0, KURL());
+    else if (m_document->isXHTMLDocument())
+        newDocument = HTMLDocument::createXHTML(0, KURL());
+#if ENABLE(SVG)
+    else if (m_document->isSVGDocument())
+        newDocument = Document::create(0, KURL());
+#endif
+
+    ASSERT(newDocument);
     newDocument->setContextFeatures(m_document->contextFeatures());
-    RefPtr<DocumentParser> parser = HTMLDocumentParser::create(newDocument.get(), false);
+    RefPtr<DocumentParser> parser;
+    if (m_document->isHTMLDocument())
+        parser = HTMLDocumentParser::create(static_cast<HTMLDocument*>(newDocument.get()), false);
+    else
+        parser = XMLDocumentParser::create(newDocument.get(), 0);
     parser->insert(markup); // Use insert() so that the parser will not yield.
     parser->finish();
     parser->detach();
@@ -117,7 +132,10 @@ Node* DOMPatchSupport::patchNode(Node* node, const String& markup, ExceptionCode
     Node* previousSibling = node->previousSibling();
     // FIXME: This code should use one of createFragment* in markup.h
     RefPtr<DocumentFragment> fragment = DocumentFragment::create(m_document);
-    fragment->parseHTML(markup, node->parentElement() ? node->parentElement() : m_document->documentElement());
+    if (m_document->isHTMLDocument())
+        fragment->parseHTML(markup, node->parentElement() ? node->parentElement() : m_document->documentElement());
+    else
+        fragment->parseXML(markup, node->parentElement() ? node->parentElement() : m_document->documentElement());
 
     // Compose the old list.
     ContainerNode* parentNode = node->parentNode();
