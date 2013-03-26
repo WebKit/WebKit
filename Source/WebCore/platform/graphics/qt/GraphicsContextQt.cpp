@@ -1033,8 +1033,7 @@ void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, boo
     }
 #endif // defined(Q_WS_X11)
 
-    // FIXME: Loss of precision here. Might consider rounding.
-    drawLine(IntPoint(startPoint.x(), startPoint.y()), IntPoint(endPoint.x(), endPoint.y()));
+    drawLine(roundedIntPoint(startPoint), roundedIntPoint(endPoint));
 }
 
 
