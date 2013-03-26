@@ -1,3 +1,10 @@
+2013-03-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled Chromium DEPS to r190515.  Requested by
+        "Dana Jansens" <danakj@chromium.org> via sheriffbot.
+
+        * DEPS:
+
 2013-03-25  James Robinson  <jamesr@chromium.org>
 
         [chromium] Support GraphicsLayer::setContentsToSolidColor
