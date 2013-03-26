@@ -1938,11 +1938,21 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.5) inset, 0 -1px 1px rgba(255, 255, 255, 0.25) inset, 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
+.console-warning-level, .console-error-level, .console-log-level, .console-debug-level {
+    display: none;
+}
 
-.console-warning-level.repeated-message,
-.console-error-level.repeated-message,
-.console-log-level.repeated-message,
-.console-debug-level.repeated-message{
+.filter-all .console-warning-level, .filter-warnings .console-warning-level,
+.filter-all .console-error-level, .filter-errors .console-error-level,
+.filter-all .console-log-level, .filter-logs .console-log-level,
+.filter-all .console-debug-level, .filter-debug .console-debug-level {
+    display: block;
+}
+
+.filter-all .console-warning-level.repeated-message, .filter-warnings .console-warning-level.repeated-message,
+.filter-all .console-error-level.repeated-message, .filter-errors .console-error-level.repeated-message,
+.filter-all .console-log-level.repeated-message, .filter-logs .console-log-level.repeated-message,
+.filter-all .console-debug-level.repeated-message, .filter-debug .console-debug-level.repeated-message {
     display: -webkit-flex;
 }
 

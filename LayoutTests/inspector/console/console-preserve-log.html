@@ -5,7 +5,7 @@
 <script>
 function test()
 {
-    WebInspector.console.addMessage(WebInspector.ConsoleMessage.create(WebInspector.ConsoleMessage.MessageSource.Other, WebInspector.ConsoleMessage.MessageLevel.Log, "PASS"));
+    WebInspector.console.addMessage(WebInspector.ConsoleMessage.create(WebInspector.ConsoleMessage.MessageSource.Other, WebInspector.ConsoleMessage.MessageLevel, "PASS"));
     WebInspector.settings.preserveConsoleLog.set(true);
     InspectorTest.reloadPage(function() {
         InspectorTest.dumpConsoleMessages();
