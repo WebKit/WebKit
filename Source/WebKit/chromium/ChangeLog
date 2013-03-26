@@ -1,3 +1,49 @@
+2013-03-25  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Move ownership of compositor VideoLayer to WebMediaPlayer
+        https://bugs.webkit.org/show_bug.cgi?id=112971
+
+        Reviewed by James Robinson.
+
+        This moves ownership of the compositor's video layer over to the
+        implementation of WebMediaPlayer, as well as all interaction
+        between the media player system and the compositor layer or its
+        interfaces such as cc::VideoFrameProvider.
+
+        Now, the WebMediaPlayer implementation calls setWebLayer() to
+        provide the WebLayer* to the WebMediaPlayerClientImpl so that
+        it can be inserted into the GraphicsLayer tree appropriately.
+
+        Defines REMOVE_WEBVIDEOFRAME in related headers to enable this code
+        path in chromium.
+
+        Once chromium removes its use of WebVideoFrame and its related
+        classes, we can remove them from WebKit entirely.
+
+        * WebKit.gypi:
+        * public/WebMediaPlayer.h:
+        (WebKit):
+        * public/WebMediaPlayerClient.h:
+        * public/WebStreamTextureClient.h:
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::~WebMediaPlayerClientImpl):
+        (WebKit::WebMediaPlayerClientImpl::readyStateChanged):
+        (WebKit::WebMediaPlayerClientImpl::repaint):
+        (WebKit::WebMediaPlayerClientImpl::setOpaque):
+        (WebKit::WebMediaPlayerClientImpl::setWebLayer):
+        (WebKit::WebMediaPlayerClientImpl::loadRequested):
+        (WebKit::WebMediaPlayerClientImpl::platformLayer):
+        (WebKit::WebMediaPlayerClientImpl::paint):
+        (WebKit::WebMediaPlayerClientImpl::needsWebLayer):
+        (WebKit::WebMediaPlayerClientImpl::supportsAcceleratedRendering):
+        (WebKit::WebMediaPlayerClientImpl::acceleratedRenderingInUse):
+        (WebKit::WebMediaPlayerClientImpl::create):
+        (WebKit::WebMediaPlayerClientImpl::supportsType):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebKit):
+        (WebMediaPlayerClientImpl):
+        * tests/WebMediaPlayerClientImplTest.cpp: Removed.
+
 2013-03-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled Chromium DEPS to r190515.  Requested by

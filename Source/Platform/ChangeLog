@@ -1,3 +1,16 @@
+2013-03-25  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Move ownership of compositor VideoLayer to WebMediaPlayer
+        https://bugs.webkit.org/show_bug.cgi?id=112971
+
+        Reviewed by James Robinson.
+
+        Defines REMOVE_WEBVIDEOFRAME in related headers to enable this code
+        path in chromium.
+
+        * chromium/public/WebVideoFrame.h:
+        * chromium/public/WebVideoFrameProvider.h:
+
 2013-03-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r146819.
