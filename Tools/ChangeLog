@@ -1,3 +1,10 @@
+2013-03-26  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK gardening.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): A follow-up to 146859, skipping the complete WebKit2APITests/TestInspector unit test.
+
 2013-03-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Enable release/debug/2/webkit2 options for run-qtwebkit-tests
