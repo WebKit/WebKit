@@ -509,7 +509,7 @@ input[type="date"] {
     -webkit-padding-start: 1px;
 }
 #endif
-#if defined(ENABLE_INPUT_TYPE_DATETIME) && ENABLE_INPUT_TYPE_DATETIME
+#if defined(ENABLE_INPUT_TYPE_DATETIME_INCOMPLETE) && ENABLE_INPUT_TYPE_DATETIME_INCOMPLETE
 input[type="datetime"] {
     -webkit-align-items: center;
     display: -webkit-inline-flex;
@@ -650,7 +650,7 @@ input[type="date"] {
     width: 10em;
 }
 #endif
-#if defined(ENABLE_INPUT_TYPE_DATETIME) && ENABLE_INPUT_TYPE_DATETIME
+#if defined(ENABLE_INPUT_TYPE_DATETIME_INCOMPLETE) && ENABLE_INPUT_TYPE_DATETIME_INCOMPLETE
 input[type="datetime"] {
     -webkit-align-items: center;
     -webkit-appearance: menulist-button;

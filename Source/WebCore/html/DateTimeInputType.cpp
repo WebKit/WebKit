@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#if ENABLE(INPUT_TYPE_DATETIME)
+#if ENABLE(INPUT_TYPE_DATETIME_INCOMPLETE)
 #include "DateTimeInputType.h"
 
 #include "DateComponents.h"

@@ -31,7 +31,7 @@
 #ifndef DateTimeInputType_h
 #define DateTimeInputType_h
 
-#if ENABLE(INPUT_TYPE_DATETIME)
+#if ENABLE(INPUT_TYPE_DATETIME_INCOMPLETE)
 #include "BaseChooserOnlyDateAndTimeInputType.h"
 #include "BaseDateAndTimeInputType.h"
 #include "BaseMultipleFieldsDateAndTimeInputType.h"
