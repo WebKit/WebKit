@@ -106,6 +106,7 @@ bool isMediaTypeCharacter(UChar c)
     return !isASCIISpace(c) && c != '/';
 }
 
+// CSP 1.0 Directives
 static const char connectSrc[] = "connect-src";
 static const char defaultSrc[] = "default-src";
 static const char fontSrc[] = "font-src";
@@ -117,6 +118,9 @@ static const char reportURI[] = "report-uri";
 static const char sandbox[] = "sandbox";
 static const char scriptSrc[] = "script-src";
 static const char styleSrc[] = "style-src";
+
+// CSP 1.1 Directives
+static const char baseURI[] = "base-uri";
 static const char formAction[] = "form-action";
 static const char pluginTypes[] = "plugin-types";
 static const char scriptNonce[] = "script-nonce";
@@ -136,6 +140,7 @@ bool isDirectiveName(const String& name)
         || equalIgnoringCase(name, scriptSrc)
         || equalIgnoringCase(name, styleSrc)
 #if ENABLE(CSP_NEXT)
+        || equalIgnoringCase(name, baseURI)
         || equalIgnoringCase(name, formAction)
         || equalIgnoringCase(name, pluginTypes)
         || equalIgnoringCase(name, scriptNonce)
@@ -845,6 +850,7 @@ public:
     bool allowMediaFromSource(const KURL&, ContentSecurityPolicy::ReportingStatus) const;
     bool allowConnectToSource(const KURL&, ContentSecurityPolicy::ReportingStatus) const;
     bool allowFormAction(const KURL&, ContentSecurityPolicy::ReportingStatus) const;
+    bool allowBaseURI(const KURL&, ContentSecurityPolicy::ReportingStatus) const;
 
     void gatherReportURIs(DOMStringList&) const;
     const String& evalDisabledErrorMessage() { return m_evalDisabledErrorMessage; }
@@ -899,6 +905,7 @@ private:
 
     OwnPtr<MediaListDirective> m_pluginTypes;
     OwnPtr<NonceDirective> m_scriptNonce;
+    OwnPtr<SourceListDirective> m_baseURI;
     OwnPtr<SourceListDirective> m_connectSrc;
     OwnPtr<SourceListDirective> m_defaultSrc;
     OwnPtr<SourceListDirective> m_fontSrc;
@@ -1048,6 +1055,8 @@ bool CSPDirectiveList::checkSourceAndReportViolation(SourceListDirective* direct
         prefix = "Refused to connect to '";
     if (type == "form")
         prefix = "Refused to send form data to '";
+    if (type == "base")
+        prefix = "Refused to set the document's base URI to '";
 
     String suffix = String();
     if (directive == m_defaultSrc)
@@ -1200,6 +1209,14 @@ bool CSPDirectiveList::allowFormAction(const KURL& url, ContentSecurityPolicy::R
     return reportingStatus == ContentSecurityPolicy::SendReport ?
         checkSourceAndReportViolation(m_formAction.get(), url, type, formAction) :
         checkSource(m_formAction.get(), url);
+}
+
+bool CSPDirectiveList::allowBaseURI(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+{
+    DEFINE_STATIC_LOCAL(String, type, (ASCIILiteral("base")));
+    return reportingStatus == ContentSecurityPolicy::SendReport ?
+        checkSourceAndReportViolation(m_baseURI.get(), url, type, baseURI) :
+        checkSource(m_baseURI.get(), url);
 }
 
 // policy            = directive-list
@@ -1403,7 +1420,9 @@ void CSPDirectiveList::addDirective(const String& name, const String& value)
         parseReportURI(name, value);
 #if ENABLE(CSP_NEXT)
     else if (m_policy->experimentalFeaturesEnabled()) {
-        if (equalIgnoringCase(name, formAction))
+        if (equalIgnoringCase(name, baseURI))
+            setCSPDirective<SourceListDirective>(name, value, m_baseURI);
+        else if (equalIgnoringCase(name, formAction))
             setCSPDirective<SourceListDirective>(name, value, m_formAction);
         else if (equalIgnoringCase(name, pluginTypes))
             setCSPDirective<MediaListDirective>(name, value, m_pluginTypes);
@@ -1629,6 +1648,11 @@ bool ContentSecurityPolicy::allowConnectToSource(const KURL& url, ContentSecurit
 bool ContentSecurityPolicy::allowFormAction(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
     return isAllowedByAllWithURL<&CSPDirectiveList::allowFormAction>(m_policies, url, reportingStatus);
+}
+
+bool ContentSecurityPolicy::allowBaseURI(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
+{
+    return isAllowedByAllWithURL<&CSPDirectiveList::allowBaseURI>(m_policies, url, reportingStatus);
 }
 
 bool ContentSecurityPolicy::isActive() const

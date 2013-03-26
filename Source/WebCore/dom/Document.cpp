@@ -2764,7 +2764,7 @@ void Document::processBaseElement()
         if (!strippedHref.isEmpty())
             baseElementURL = KURL(url(), strippedHref);
     }
-    if (m_baseElementURL != baseElementURL) {
+    if (m_baseElementURL != baseElementURL && contentSecurityPolicy()->allowBaseURI(baseElementURL)) {
         m_baseElementURL = baseElementURL;
         updateBaseURL();
     }

@@ -104,6 +104,7 @@ public:
     bool allowMediaFromSource(const KURL&, ReportingStatus = SendReport) const;
     bool allowConnectToSource(const KURL&, ReportingStatus = SendReport) const;
     bool allowFormAction(const KURL&, ReportingStatus = SendReport) const;
+    bool allowBaseURI(const KURL&, ReportingStatus = SendReport) const;
 
     ReflectedXSSDisposition reflectedXSSDisposition() const;
 
