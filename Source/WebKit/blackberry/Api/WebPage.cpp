@@ -1042,9 +1042,7 @@ void WebPagePrivate::setLoadState(LoadState state)
         m_mainFrame->document()->updateStyleIfNeeded();
 
     // Dispatch the backingstore background color at important state changes.
-    m_backingStore->d->setWebPageBackgroundColor(m_mainFrame && m_mainFrame->view()
-        ? m_mainFrame->view()->documentBackgroundColor()
-        : m_webSettings->backgroundColor());
+    m_backingStore->d->setWebPageBackgroundColor(documentBackgroundColor());
 
     m_loadState = state;
 
@@ -5978,18 +5976,7 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
     coreSettings->setWebSecurityEnabled(!webSettings->allowCrossSiteRequests());
     coreSettings->setApplyPageScaleFactorInCompositor(webSettings->applyDeviceScaleFactorInCompositor());
 
-    if (m_mainFrame && m_mainFrame->view()) {
-        Color backgroundColor(webSettings->backgroundColor());
-        m_mainFrame->view()->updateBackgroundRecursively(backgroundColor, backgroundColor.hasAlpha());
-
-        Platform::userInterfaceThreadMessageClient()->dispatchMessage(
-            createMethodCallMessage(&WebPagePrivate::setCompositorBackgroundColor, this, backgroundColor));
-    }
-    if (m_backingStore) {
-        m_backingStore->d->setWebPageBackgroundColor(m_mainFrame && m_mainFrame->view()
-            ? m_mainFrame->view()->documentBackgroundColor()
-            : webSettings->backgroundColor());
-    }
+    updateBackgroundColor(webSettings->backgroundColor());
 
     m_page->setDeviceScaleFactor(webSettings->devicePixelRatio());
 }
@@ -6323,6 +6310,32 @@ void WebPagePrivate::animateToScaleAndDocumentScrollPosition(double destinationZ
 void WebPage::animateToScaleAndDocumentScrollPosition(double destinationZoomScale, const BlackBerry::Platform::FloatPoint& destinationScrollPosition, bool shouldConstrainScrollingToContentEdge)
 {
     d->animateToScaleAndDocumentScrollPosition(destinationZoomScale, destinationScrollPosition, shouldConstrainScrollingToContentEdge);
+}
+
+void WebPagePrivate::updateBackgroundColor(const Color& backgroundColor)
+{
+    if (!m_mainFrame || !m_mainFrame->view())
+        return;
+
+    m_mainFrame->view()->updateBackgroundRecursively(backgroundColor, backgroundColor.hasAlpha());
+
+    // FIXME: The BackingStore uses the document background color but the WebPageCompositor gets
+    // the color from settings, which can be different.
+    Platform::userInterfaceThreadMessageClient()->dispatchMessage(
+        createMethodCallMessage(&WebPagePrivate::setCompositorBackgroundColor, this, backgroundColor));
+
+    if (m_backingStore)
+        m_backingStore->d->setWebPageBackgroundColor(documentBackgroundColor());
+}
+
+Color WebPagePrivate::documentBackgroundColor() const
+{
+    Color color;
+    if (m_mainFrame && m_mainFrame->view())
+        color = m_mainFrame->view()->documentBackgroundColor();
+    if (!color.isValid())
+        color = m_webSettings->backgroundColor();
+    return color;
 }
 
 }

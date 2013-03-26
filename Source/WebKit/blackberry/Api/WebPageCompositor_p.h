@@ -114,7 +114,6 @@ private:
     static void attachOverlays(WebCore::LayerCompositingThread* overlayRoot, WebPagePrivate*);
 
     // LayerRendererClient
-    virtual bool shouldClearSurfaceBeforeCompositing();
     virtual bool shouldChildWindowsUseDocumentCoordinates();
 
     // AnimationFrameRateClient

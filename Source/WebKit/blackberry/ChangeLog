@@ -1,5 +1,46 @@
 2013-03-26  Arvid Nilsson  <anilsson@rim.com>
 
+        [BlackBerry] Scrolling up and down can cause the screen to flash black
+        https://bugs.webkit.org/show_bug.cgi?id=113269
+
+        Reviewed by Rob Buis.
+
+        PR 296106
+
+        Various flaws in the code could conspire to make the screen cleared to
+        black before rendering the web page. This only happened when the
+        BackingStore was inactive, and the LayerTiler takes on the job of
+        drawing the root layer. When tiles are missing, this made the
+        "checkerboard" effect especially noticeable since black color was seen
+        where the tile should have been. It would be better to clear to the web
+        page background color.
+
+        This was actually the intent of the code, but when the document
+        background color was invalid, we would still use it instead of the
+        background color from settings. Also, the LayerRenderer would clear to
+        black when WebPageCompositorPrivate::drawsRootLayer() was true.
+
+        Fixed by falling back to the settings background color when the
+        document background color is invalid, and removing the clearing code
+        from the LayerRenderer entirely. The appropriate clear already happens
+        near the beginning of BackingStorePrivate::blitVisibleContents().
+
+        Also slightly cleaned up the code for managing the background color.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setLoadState):
+        (BlackBerry::WebKit::WebPagePrivate::didChangeSettings):
+        (BlackBerry::WebKit::WebPagePrivate::updateBackgroundColor):
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::documentBackgroundColor):
+        * Api/WebPageCompositor.cpp:
+        * Api/WebPageCompositor_p.h:
+        (WebPageCompositorPrivate):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
+2013-03-26  Arvid Nilsson  <anilsson@rim.com>
+
         [BlackBerry] WebOverlay::pixelViewportRect() should return pixel viewport coordinates
         https://bugs.webkit.org/show_bug.cgi?id=113263
 

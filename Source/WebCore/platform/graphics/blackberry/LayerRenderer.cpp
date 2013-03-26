@@ -291,10 +291,6 @@ void LayerRenderer::setViewport(const IntRect& targetRect, const IntRect& clipRe
 #endif
     glScissor(m_scissorRect.x(), m_scissorRect.y(), m_scissorRect.width(), m_scissorRect.height());
 
-    if (m_client->shouldClearSurfaceBeforeCompositing()) {
-        glClearColor(0, 0, 0, 0);
-        glClear(GL_COLOR_BUFFER_BIT);
-    }
     m_stencilCleared = false;
 }
 

@@ -476,6 +476,9 @@ public:
 
     void animateToScaleAndDocumentScrollPosition(double destinationZoomScale, const WebCore::FloatPoint& destinationScrollPosition, bool shouldConstrainScrollingToContentEdge = true);
 
+    void updateBackgroundColor(const WebCore::Color& backgroundColor);
+    WebCore::Color documentBackgroundColor() const;
+
     WebPage* m_webPage;
     WebPageClient* m_client;
     WebCore::InspectorClientBlackBerry* m_inspectorClient;

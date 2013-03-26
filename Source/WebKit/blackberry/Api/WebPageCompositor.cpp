@@ -236,20 +236,6 @@ void WebPageCompositorPrivate::releaseLayerResources()
         m_layerRenderer->releaseLayerResources();
 }
 
-bool WebPageCompositorPrivate::shouldClearSurfaceBeforeCompositing()
-{
-    if (m_client)
-        return false;
-
-    // Normally we wouldn't clear, but in legacy mode we have some more complex
-    // logic.
-    bool shouldClear = drawsRootLayer();
-    if (BackingStore* backingStore = m_webPage->m_backingStore)
-        shouldClear = shouldClear || !backingStore->d->isOpenGLCompositing();
-
-    return shouldClear;
-}
-
 bool WebPageCompositorPrivate::shouldChildWindowsUseDocumentCoordinates()
 {
     return m_childWindowPlacement == WebPageCompositor::DocumentCoordinates;

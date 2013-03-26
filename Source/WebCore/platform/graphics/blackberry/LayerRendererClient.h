@@ -39,7 +39,6 @@ public:
 
     virtual BlackBerry::Platform::Graphics::GLES2Context* context() const = 0;
 
-    virtual bool shouldClearSurfaceBeforeCompositing() = 0;
     virtual bool shouldChildWindowsUseDocumentCoordinates() = 0;
 };
 
