@@ -603,7 +603,7 @@ body:not(.platform-mac) .toolbar-item.close-left {
 }
 
 .animate #main {
-    -webkit-transition: bottom 250ms linear;
+    -webkit-transition: bottom 100ms linear;
 }
 
 body.show-toolbar-icons #main {
@@ -675,7 +675,7 @@ body.drawer-visible #main-panels {
 }
 
 .animate #floating-status-bar-container {
-    -webkit-transition: padding 250ms linear;
+    -webkit-transition: padding 100ms linear;
 }
 
 body.drawer-visible #floating-status-bar-container {
@@ -923,7 +923,7 @@ body.port-qt .dock-status-bar-item {
 }
 
 .animate #drawer {
-    -webkit-transition: height 250ms linear;
+    -webkit-transition: height 100ms linear;
 }
 
 #drawer-contents {
@@ -2539,7 +2539,7 @@ body.platform-mac .search-drawer-header input[type="checkbox"].search-config-che
 }
 
 .animate #bottom-status-bar-container > * {
-    -webkit-transition: opacity 250ms linear;
+    -webkit-transition: opacity 100ms linear;
 }
 
 .search-status-bar-item {
