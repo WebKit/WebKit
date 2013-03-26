@@ -780,7 +780,7 @@ bool RenderTheme::isIndeterminate(const RenderObject* o) const
     if (!inputElement)
         return false;
 
-    return inputElement->isIndeterminate();
+    return inputElement->shouldAppearIndeterminate();
 }
 
 bool RenderTheme::isEnabled(const RenderObject* o) const

@@ -168,5 +168,10 @@ void HTMLProgressElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     inner->appendChild(bar, ASSERT_NO_EXCEPTION);
 }
 
+bool HTMLProgressElement::shouldAppearIndeterminate() const
+{
+    return !isDeterminate();
+}
+
 } // namespace
 #endif

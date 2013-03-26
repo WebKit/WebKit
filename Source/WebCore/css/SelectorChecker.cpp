@@ -644,29 +644,14 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context, const Sib
                 // you can't be both checked and indeterminate. We will behave like WinIE behind the scenes and just
                 // obey the CSS spec here in the test for matching the pseudo.
                 HTMLInputElement* inputElement = element->toInputElement();
-                if (inputElement && inputElement->shouldAppearChecked() && !inputElement->isIndeterminate())
+                if (inputElement && inputElement->shouldAppearChecked() && !inputElement->shouldAppearIndeterminate())
                     return true;
                 if (element->hasTagName(optionTag) && toHTMLOptionElement(element)->selected())
                     return true;
                 break;
             }
         case CSSSelector::PseudoIndeterminate:
-            {
-                if (!element)
-                    break;
-#if ENABLE(PROGRESS_ELEMENT)
-                if (element->hasTagName(progressTag)) {
-                    HTMLProgressElement* progress = toHTMLProgressElement(element);
-                    if (progress && !progress->isDeterminate())
-                        return true;
-                    break;
-                }
-#endif
-                HTMLInputElement* inputElement = element->toInputElement();
-                if (inputElement && inputElement->isIndeterminate())
-                    return true;
-                break;
-            }
+            return element && element->shouldAppearIndeterminate();
         case CSSSelector::PseudoRoot:
             if (element == element->document()->documentElement())
                 return true;

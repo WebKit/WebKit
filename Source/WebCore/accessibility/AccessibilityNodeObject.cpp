@@ -611,7 +611,7 @@ bool AccessibilityNodeObject::isIndeterminate() const
     if (!inputElement)
         return false;
 
-    return inputElement->isIndeterminate();
+    return inputElement->shouldAppearIndeterminate();
 }
 
 bool AccessibilityNodeObject::isPressed() const

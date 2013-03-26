@@ -513,6 +513,7 @@ public:
     virtual bool matchesReadOnlyPseudoClass() const;
     virtual bool matchesReadWritePseudoClass() const;
     bool webkitMatchesSelector(const String& selectors, ExceptionCode&);
+    virtual bool shouldAppearIndeterminate() const;
 
     DOMTokenList* classList();
 

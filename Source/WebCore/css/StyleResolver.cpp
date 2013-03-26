@@ -543,7 +543,7 @@ bool StyleResolver::canShareStyleWithControl(StyledElement* element) const
         return false;
     if (thisInputElement->shouldAppearChecked() != otherInputElement->shouldAppearChecked())
         return false;
-    if (thisInputElement->isIndeterminate() != otherInputElement->isIndeterminate())
+    if (thisInputElement->shouldAppearIndeterminate() != otherInputElement->shouldAppearIndeterminate())
         return false;
     if (thisInputElement->isRequired() != otherInputElement->isRequired())
         return false;

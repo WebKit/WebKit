@@ -2382,6 +2382,11 @@ bool Element::webkitMatchesSelector(const String& selector, ExceptionCode& ec)
     return selectorQuery->matches(this);
 }
 
+bool Element::shouldAppearIndeterminate() const
+{
+    return false;
+}
+
 DOMTokenList* Element::classList()
 {
     ElementRareData* data = ensureElementRareData();
