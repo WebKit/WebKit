@@ -136,23 +136,23 @@ PassRefPtr<FormData> FormData::deepCopy() const
         const FormDataElement& e = m_elements[i];
         switch (e.m_type) {
         case FormDataElement::data:
-            formData->m_elements.append(FormDataElement(e.m_data));
+            formData->m_elements.uncheckedAppend(FormDataElement(e.m_data));
             break;
         case FormDataElement::encodedFile:
 #if ENABLE(BLOB)
-            formData->m_elements.append(FormDataElement(e.m_filename, e.m_fileStart, e.m_fileLength, e.m_expectedFileModificationTime, e.m_shouldGenerateFile));
+            formData->m_elements.uncheckedAppend(FormDataElement(e.m_filename, e.m_fileStart, e.m_fileLength, e.m_expectedFileModificationTime, e.m_shouldGenerateFile));
 #else
-            formData->m_elements.append(FormDataElement(e.m_filename, e.m_shouldGenerateFile));
+            formData->m_elements.uncheckedAppend(FormDataElement(e.m_filename, e.m_shouldGenerateFile));
 #endif
             break;
 #if ENABLE(BLOB)
         case FormDataElement::encodedBlob:
-            formData->m_elements.append(FormDataElement(e.m_url));
+            formData->m_elements.uncheckedAppend(FormDataElement(e.m_url));
             break;
 #endif
 #if ENABLE(FILE_SYSTEM)
         case FormDataElement::encodedURL:
-            formData->m_elements.append(FormDataElement(e.m_url, e.m_fileStart, e.m_fileLength, e.m_expectedFileModificationTime));
+            formData->m_elements.uncheckedAppend(FormDataElement(e.m_url, e.m_fileStart, e.m_fileLength, e.m_expectedFileModificationTime));
             break;
 #endif
         }
