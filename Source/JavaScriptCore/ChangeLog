@@ -1,3 +1,13 @@
+2013-03-25  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSObject::enterDictionaryIndexingMode doesn't have a case for ALL_BLANK_INDEXING_TYPES
+        https://bugs.webkit.org/show_bug.cgi?id=113236
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::enterDictionaryIndexingMode): We forgot blank indexing types.
+
 2013-03-23  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         HandleSet should use HeapBlocks for storing handles
