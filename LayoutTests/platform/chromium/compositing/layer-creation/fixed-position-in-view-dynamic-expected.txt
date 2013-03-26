@@ -1,2 +1,0 @@
-FAIL: Has non-layer viewport-constrained objects
-

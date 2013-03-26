@@ -2207,8 +2207,11 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
     }
     
     bool paintsContent = layer->isVisuallyNonEmpty() || layer->hasVisibleDescendant();
-    if (!paintsContent)
+    if (!paintsContent) {
+        if (viewportConstrainedNotCompositedReason)
+            *viewportConstrainedNotCompositedReason = RenderLayer::NotCompositedForNoVisibleContent;
         return false;
+    }
 
     return true;
 }

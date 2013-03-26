@@ -838,6 +838,7 @@ public:
         NoNotCompositedReason,
         NotCompositedForBoundsOutOfView,
         NotCompositedForNonViewContainer,
+        NotCompositedForNoVisibleContent,
     };
 
     void setViewportConstrainedNotCompositedReason(ViewportConstrainedNotCompositedReason reason) { m_viewportConstrainedNotCompositedReason = reason; }
