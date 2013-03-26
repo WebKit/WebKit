@@ -506,7 +506,9 @@ function processGlobalStateFor(testObject)
         return;
     }
 
-    if (actual.indexOf(' ') != -1 && actual.indexOf('PASS') != -1) {
+    var actualTokens = actual.split(' ');
+    var passedWithImageOnlyFailureInRetry = actualTokens[0] == 'TEXT' && actualTokens[1] == 'IMAGE';
+    if (actualTokens[1] && actual.indexOf('PASS') != -1 || (!globalState().results.pixel_tests_enabled && passedWithImageOnlyFailureInRetry)) {
         globalState().flakyPassTests.push(testObject);
         return;
     }

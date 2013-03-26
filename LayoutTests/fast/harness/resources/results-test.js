@@ -779,6 +779,14 @@ function runTests()
         assertTrue(document.querySelector('tbody td:nth-child(3) a').getAttribute('href') == 'retries/foo/bar-image-diffs.html');
     });
 
+    results = mockResults();
+    results.tests['foo/bar-image.html'] = mockExpectation('PASS', 'TEXT IMAGE');
+    results.pixel_tests_enabled = false;
+    runTest(results, function() {
+        assertTrue(!document.getElementById('results-table'));
+        assertTrue(document.querySelector('#flaky-tests-table td:nth-child(3) a').getAttribute('href') == 'retries/foo/bar-image-diffs.html');
+    });
+
     document.body.innerHTML = '<pre>' + g_log.join('\n') + '</pre>';
 }
 
