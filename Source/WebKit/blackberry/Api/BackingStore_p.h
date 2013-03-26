@@ -275,7 +275,8 @@ public:
     static Platform::IntSize tileSize();
 
     // This takes transformed contents coordinates.
-    bool renderContents(BlackBerry::Platform::Graphics::Buffer*, const BlackBerry::Platform::IntRect& dstRect, double scale, const BlackBerry::Platform::FloatPoint& documentScrollPosition) const;
+    enum LayersToRender { RenderRootLayer, RenderAllLayers };
+    bool renderContents(BlackBerry::Platform::Graphics::Buffer*, const BlackBerry::Platform::IntRect& dstRect, double scale, const BlackBerry::Platform::FloatPoint& documentScrollPosition, LayersToRender) const;
 
     void blitToWindow(const Platform::IntRect& dstRect, const BlackBerry::Platform::Graphics::Buffer* srcBuffer, const Platform::IntRect& srcRect, BlackBerry::Platform::Graphics::BlendMode, unsigned char globalAlpha);
     void fillWindow(Platform::Graphics::FillPattern, const Platform::IntRect& dstRect, const Platform::IntPoint& contentsOrigin, double contentsScale);

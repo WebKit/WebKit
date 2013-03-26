@@ -1,3 +1,20 @@
+2013-03-26  Mike Lattanzio  <mlattanzio@blackberry.com>
+
+        [BlackBerry] Include accelerated compositing layers in screen captures.
+        https://bugs.webkit.org/show_bug.cgi?id=113335
+
+        Reviewed by Rob Buis.
+
+        PR# 280374
+        Include accelerated compositing layers in screen captures.
+        Reviewed Internally By: Jakob Petsovits
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::render):
+        (BlackBerry::WebKit::BackingStorePrivate::renderContents):
+        (BlackBerry::WebKit::BackingStore::drawContents):
+        * Api/BackingStore_p.h:
+
 2013-03-26  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] Set mouse document position for mouse event in updateCursor

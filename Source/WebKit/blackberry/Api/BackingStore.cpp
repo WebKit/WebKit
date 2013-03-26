@@ -1079,7 +1079,7 @@ TileIndexList BackingStorePrivate::render(const TileIndexList& tileIndexList)
         const Platform::FloatPoint documentDirtyRectOrigin = viewportAccessor->toDocumentContents(dirtyRect.location(), currentScale);
         const Platform::IntRect dstRect(dirtyRect.location() - tileOrigin, dirtyRect.size());
 
-        if (!renderContents(nativeBuffer, dstRect, currentScale, documentDirtyRectOrigin))
+        if (!renderContents(nativeBuffer, dstRect, currentScale, documentDirtyRectOrigin, RenderRootLayer))
             continue;
 
         // Add the newly rendered region to the tile so it can keep track for blits.
@@ -1818,7 +1818,7 @@ Platform::IntSize BackingStorePrivate::tileSize()
     return tileSize;
 }
 
-bool BackingStorePrivate::renderContents(BlackBerry::Platform::Graphics::Buffer* targetBuffer, const Platform::IntRect& dstRect, double scale, const Platform::FloatPoint& documentRenderOrigin) const
+bool BackingStorePrivate::renderContents(BlackBerry::Platform::Graphics::Buffer* targetBuffer, const Platform::IntRect& dstRect, double scale, const Platform::FloatPoint& documentRenderOrigin, LayersToRender layersToRender) const
 {
 #if DEBUG_BACKINGSTORE
     Platform::logAlways(Platform::LogLevelCritical,
@@ -1898,7 +1898,10 @@ bool BackingStorePrivate::renderContents(BlackBerry::Platform::Graphics::Buffer*
         }
 
         // Let WebCore render the page contents into the drawing surface.
-        m_client->frame()->view()->paintContents(&graphicsContext, renderedRect);
+        if (layersToRender == RenderRootLayer)
+            m_client->frame()->view()->paintContents(&graphicsContext, renderedRect);
+        else
+            m_client->frame()->view()->paintContentsForSnapshot(&graphicsContext, renderedRect, FrameView::ExcludeSelection, FrameView::DocumentCoordinates);
 
         graphicsContext.restore();
     }
@@ -2316,7 +2319,7 @@ bool BackingStore::drawContents(Platform::Graphics::Buffer* buffer, const Platfo
 
     d->requestLayoutIfNeeded();
 
-    return d->renderContents(buffer, dstRect, scale, documentScrollPosition);
+    return d->renderContents(buffer, dstRect, scale, documentScrollPosition, BackingStorePrivate::RenderAllLayers);
 }
 
 }
