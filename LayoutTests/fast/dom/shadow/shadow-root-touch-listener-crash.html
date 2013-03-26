@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/shadow-dom.js"></script>
+<script src="resources/event-dispatching.js"></script>
+<div id=target></div>
+<script>
+jsTestIsAsync = true;
+
+function addTouchEventListeners(name)
+{
+    var node = getNodeInShadowTreeStack(name);
+    node.addEventListener('touchstart', recordEvent, false);
+}
+
+target.appendChild(
+    createDOM('div', {'id': 'A'},
+          createShadowRoot()));
+addTouchEventListeners('A/');
+
+setTimeout(function() {
+    target.parentNode.removeChild(target);
+    gc();
+    debug("PASS unless crash");
+    finishJSTest();
+}, 0);
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

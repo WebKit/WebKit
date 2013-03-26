@@ -176,6 +176,7 @@ public:
     static StyleChange diff(const RenderStyle*, const RenderStyle*, Document*);
 
     virtual ~Node();
+    void willBeDeletedFrom(Document*);
 
     // DOM methods & attributes for Node
 

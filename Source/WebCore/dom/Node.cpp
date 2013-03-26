@@ -418,24 +418,14 @@ Node::~Node()
     if (hasRareData())
         clearRareData();
 
-    Document* doc = documentInternal();
-
-    if (hasEventTargetData()) {
-#if ENABLE(TOUCH_EVENT_TRACKING)
-        if (doc)
-            doc->didRemoveEventTargetNode(this);
-#endif
-        clearEventTargetData();
-    }
-
     if (renderer())
         detach();
 
-    if (doc && !isContainerNode()) {
-        if (AXObjectCache* cache = doc->existingAXObjectCache())
-            cache->remove(this);
+    if (!isContainerNode()) {
+        if (Document* document = documentInternal())
+            willBeDeletedFrom(document);
     }
-    
+
     if (m_previous)
         m_previous->setNextSibling(0);
     if (m_next)
@@ -444,6 +434,22 @@ Node::~Node()
     m_treeScope->guardDeref();
 
     InspectorCounters::decrementCounter(InspectorCounters::NodeCounter);
+}
+
+void Node::willBeDeletedFrom(Document* document)
+{
+    if (hasEventTargetData()) {
+#if ENABLE(TOUCH_EVENT_TRACKING)
+        if (document)
+            document->didRemoveEventTargetNode(this);
+#endif
+        clearEventTargetData();
+    }
+
+    if (document) {
+        if (AXObjectCache* cache = document->existingAXObjectCache())
+            cache->remove(this);
+    }
 }
 
 NodeRareData* Node::rareData() const

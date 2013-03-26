@@ -138,11 +138,8 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
 
 ContainerNode::~ContainerNode()
 {
-    if (documentInternal()) {
-        if (AXObjectCache* cache = documentInternal()->existingAXObjectCache())
-            cache->remove(this);
-    }
-
+    if (Document* document = documentInternal())
+        willBeDeletedFrom(document);
     removeDetachedChildren();
 }
 
