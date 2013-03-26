@@ -586,7 +586,7 @@ void PluginView::paintWindowedPluginIntoContext(GraphicsContext* context, const 
     ASSERT(context->shouldIncludeChildWindows());
 
     ASSERT(parent()->isFrameView());
-    IntPoint locationInWindow = toFrameView(parent())->contentsToWindow(frameRect().location());
+    IntPoint locationInWindow = toFrameView(parent())->convertToContainingWindow(frameRect().location());
 
     LocalWindowsContext windowsContext(context, frameRect(), false);
 
