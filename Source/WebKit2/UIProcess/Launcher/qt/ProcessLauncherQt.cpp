@@ -114,12 +114,12 @@ void ProcessLauncher::launchProcess()
 {
     QString commandLine;
     if (m_launchOptions.processType == WebProcess) {
-        commandLine = QLatin1String("%1 %2 %3");
+        commandLine = QLatin1String("%1 \"%2\" %3");
         QByteArray webProcessPrefix = qgetenv("QT_WEBKIT2_WP_CMD_PREFIX");
         commandLine = commandLine.arg(QLatin1String(webProcessPrefix.constData())).arg(QString(executablePathOfWebProcess()));
 #if ENABLE(PLUGIN_PROCESS)
     } else if (m_launchOptions.processType == PluginProcess) {
-        commandLine = QLatin1String("%1 %2 %3 %4");
+        commandLine = QLatin1String("%1 \"%2\" %3 %4");
         QByteArray pluginProcessPrefix = qgetenv("QT_WEBKIT2_PP_CMD_PREFIX");
         commandLine = commandLine.arg(QLatin1String(pluginProcessPrefix.constData())).arg(QString(executablePathOfPluginProcess()));
 #endif
@@ -182,7 +182,7 @@ void ProcessLauncher::launchProcess()
 
 #if ENABLE(SUID_SANDBOX_LINUX)
     if (m_launchOptions.processType == WebProcess) {
-        QString sandboxCommandLine = QLatin1String("%1 %2 %3");
+        QString sandboxCommandLine = QLatin1String("\"%1\" \"%2\" %3");
         sandboxCommandLine = sandboxCommandLine.arg(QCoreApplication::applicationDirPath() + QLatin1String("/SUIDSandboxHelper"));
         sandboxCommandLine = sandboxCommandLine.arg(executablePathOfWebProcess());
         sandboxCommandLine = sandboxCommandLine.arg(sockets[0]);
