@@ -305,8 +305,9 @@ WebInspector.OverviewGrid.Window.prototype = {
      */
     _startWindowDragging: function(event)
     {
-        var windowLeft = this._leftResizeElement.offsetLeft + WebInspector.OverviewGrid.ResizerOffset;
-        this._dragOffset = windowLeft - event.pageX;
+        this._dragStartPoint = event.pageX;
+        this._dragStartLeft = this.windowLeft;
+        this._dragStartRight = this.windowRight;
         return true;
     },
 
@@ -315,10 +316,15 @@ WebInspector.OverviewGrid.Window.prototype = {
      */
     _windowDragging: function(event)
     {
-        var windowLeft = this._leftResizeElement.offsetLeft + WebInspector.OverviewGrid.ResizerOffset;
-        var start = this._dragOffset + event.pageX;
-        this._moveWindow(start);
         event.preventDefault();
+        var delta = (event.pageX - this._dragStartPoint) / this._parentElement.clientWidth;
+        if (this._dragStartLeft + delta < 0)
+            delta = -this._dragStartLeft;
+
+        if (this._dragStartRight + delta > 1)
+            delta = 1 - this._dragStartRight;
+
+        this._setWindow(this._dragStartLeft + delta, this._dragStartRight + delta);
     },
 
     /**
@@ -327,28 +333,6 @@ WebInspector.OverviewGrid.Window.prototype = {
     _endWindowDragging: function(event)
     {
         delete this._dragOffset;
-    },
-
-    /**
-     * @param {number} start
-     */
-    _moveWindow: function(start)
-    {
-        var windowLeft = this._leftResizeElement.offsetLeft + WebInspector.OverviewGrid.ResizerOffset;
-        var windowRight = this._rightResizeElement.offsetLeft + WebInspector.OverviewGrid.ResizerOffset;
-        var windowSize = windowRight - windowLeft;
-        var end = start + windowSize;
-
-        if (start < 0) {
-            start = 0;
-            end = windowSize;
-        }
-
-        if (end > this._parentElement.clientWidth) {
-            end = this._parentElement.clientWidth;
-            start = end - windowSize;
-        }
-        this._setWindowPosition(start, end);
     },
 
     /**
@@ -428,9 +412,18 @@ WebInspector.OverviewGrid.Window.prototype = {
             this._zoom(Math.pow(zoomFactor, -event.wheelDeltaY * mouseWheelZoomSpeed), referencePoint);
         }
         if (typeof event.wheelDeltaX === "number" && event.wheelDeltaX) {
+            var offset = Math.round(event.wheelDeltaX * WebInspector.OverviewGrid.WindowScrollSpeedFactor);
             var windowLeft = this._leftResizeElement.offsetLeft + WebInspector.OverviewGrid.ResizerOffset;
-            var start = windowLeft - Math.round(event.wheelDeltaX * WebInspector.OverviewGrid.WindowScrollSpeedFactor);
-            this._moveWindow(start);
+            var windowRight = this._rightResizeElement.offsetLeft + WebInspector.OverviewGrid.ResizerOffset;
+
+            if (windowLeft - offset < 0)
+                offset = windowLeft;
+
+            if (windowRight - offset > this._parentElement.clientWidth)
+                offset = windowRight - this._parentElement.clientWidth;
+
+            this._setWindowPosition(windowLeft - offset, windowRight - offset);
+
             event.preventDefault();
         }
     },
