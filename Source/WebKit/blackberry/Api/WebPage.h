@@ -93,7 +93,7 @@ public:
 
     WebPageClient* client() const;
 
-    void load(const BlackBerry::Platform::String& url, const BlackBerry::Platform::String& networkToken, bool isInitial = false);
+    void load(const BlackBerry::Platform::String& url, const BlackBerry::Platform::String& networkToken, bool isInitial = false, bool needReferer = false, bool forceDownload = false);
 
     void loadExtended(const char* url, const char* networkToken, const char* method, Platform::NetworkRequest::CachePolicy = Platform::NetworkRequest::UseProtocolCachePolicy, const char* data = 0, size_t dataLength = 0, const char* const* headers = 0, size_t headersLength = 0, bool mustHandleInternally = false);
 

@@ -1,3 +1,24 @@
+2013-03-25  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        [BlackBerry] add needReferer in WebPage load() api
+        https://bugs.webkit.org/show_bug.cgi?id=113167
+
+        Reviewed by Rob Buis.
+
+        PR310175, internally reviewed by Joe Mason.
+        Sometimes when client load request, it need to add referer with current frame like
+        save link/image in option menu, so we add needRef in load() interface in webpage.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::load):
+        (BlackBerry::WebKit::WebPage::load):
+        (BlackBerry::WebKit::WebPage::loadExtended):
+        (BlackBerry::WebKit::WebPage::loadFile):
+        (BlackBerry::WebKit::WebPage::download):
+        * Api/WebPage.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2013-03-22  Nima Ghanavatian  <nghanavatian@blackberry.com>
 
         [BlackBerry] Build fix in InputHandler
