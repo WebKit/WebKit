@@ -501,10 +501,17 @@ void RSSFilterStream::notifyDataReceived(BlackBerry::Platform::NetworkBuffer* bu
 
 void RSSFilterStream::notifyClose(int status)
 {
+    // If there was no data, we might get here with the type still unknown. No data at all -> no RSS
+    // data.
+    if (m_resourceType == TypeUnknown)
+        m_resourceType = TypeNotRSS;
+
     if (isRSSContent(m_resourceType))
         handleRSSContent();
-    else
+    else {
+        sendSavedHeaders();
         FilterStream::notifyClose(status);
+    }
 }
 
 bool RSSFilterStream::convertContentToHtml(std::string& result)
