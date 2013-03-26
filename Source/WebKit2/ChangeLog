@@ -1,3 +1,21 @@
+2013-03-26  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt] UIProcess should initialize WebCoreSystemInterface.
+        https://bugs.webkit.org/show_bug.cgi?id=113300
+
+        The WebCoreSystemInterface is necessary to detect supported
+        mime types on Mac OS. In particular it is needed for download
+        support.
+        This patch fixes in particular the previously failing
+        Qt API qmltest WebViewDownload::test_downloadRequest.
+        The test was crashing when using QTKit, because functions
+        in WebCoreSystemInterface could not be resolved on the UIProcess side.
+
+        Reviewed by Jocelyn Turcotte.
+
+        * UIProcess/qt/WebContextQt.cpp:
+        (WebKit::WebContext::platformInitializeWebProcess):
+
 2013-03-25  Kent Tamura  <tkent@chromium.org>
 
         Rename ENABLE_INPUT_TYPE_DATETIME
