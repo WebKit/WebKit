@@ -34,7 +34,7 @@
 #include "CrossOriginAccessControl.h"
 #include "DocumentThreadableLoader.h"
 #include "DocumentThreadableLoaderClient.h"
-#include "HTTPValidation.h"
+#include "HTTPParsers.h"
 #include "ResourceError.h"
 #include "SubresourceLoader.h"
 #include "Timer.h"

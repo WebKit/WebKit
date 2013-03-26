@@ -3808,8 +3808,6 @@
 		9A1B6F97158869C80011A8C4 /* JSDOMStringListCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A1B6F96158869C80011A8C4 /* JSDOMStringListCustom.cpp */; };
 		9A9CEF8D163B3EA100DE7EFE /* ExclusionShapeOutsideInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9A9CEF8B163B3EA100DE7EFE /* ExclusionShapeOutsideInfo.cpp */; };
 		9A9CEF8E163B3EA100DE7EFE /* ExclusionShapeOutsideInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A9CEF8C163B3EA100DE7EFE /* ExclusionShapeOutsideInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		9B0FB191140DB5790022588F /* HTTPValidation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B0FB18F140DB5790022588F /* HTTPValidation.cpp */; };
-		9B0FB192140DB5790022588F /* HTTPValidation.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B0FB190140DB5790022588F /* HTTPValidation.h */; };
 		9B1AB07C1648C7C40051F3F2 /* JSHTMLFormControlsCollectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B1AB07B1648C7C40051F3F2 /* JSHTMLFormControlsCollectionCustom.cpp */; };
 		9B24DE8E15194B9500C59C27 /* HTMLBDIElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B24DE8C15194B9500C59C27 /* HTMLBDIElement.h */; };
 		9B2B7AC11509850A008932CC /* MicroDataItemValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9B2F7CF714562120007F8B50 /* MicroDataItemValue.cpp */; };
@@ -11364,8 +11362,6 @@
 		9A1B6F96158869C80011A8C4 /* JSDOMStringListCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMStringListCustom.cpp; sourceTree = "<group>"; };
 		9A9CEF8B163B3EA100DE7EFE /* ExclusionShapeOutsideInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExclusionShapeOutsideInfo.cpp; sourceTree = "<group>"; };
 		9A9CEF8C163B3EA100DE7EFE /* ExclusionShapeOutsideInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExclusionShapeOutsideInfo.h; sourceTree = "<group>"; };
-		9B0FB18F140DB5790022588F /* HTTPValidation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPValidation.cpp; sourceTree = "<group>"; };
-		9B0FB190140DB5790022588F /* HTTPValidation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPValidation.h; sourceTree = "<group>"; };
 		9B1AB0791648C69D0051F3F2 /* HTMLFormControlsCollection.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = HTMLFormControlsCollection.idl; sourceTree = "<group>"; };
 		9B1AB07B1648C7C40051F3F2 /* JSHTMLFormControlsCollectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFormControlsCollectionCustom.cpp; sourceTree = "<group>"; };
 		9B24DE8C15194B9500C59C27 /* HTMLBDIElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLBDIElement.h; sourceTree = "<group>"; };
@@ -16296,8 +16292,6 @@
 				514C765E0CE923A1007EF3CD /* HTTPParsers.h */,
 				A5D214AE12E905510090F370 /* HTTPRequest.cpp */,
 				A5D214AF12E905510090F370 /* HTTPRequest.h */,
-				9B0FB18F140DB5790022588F /* HTTPValidation.cpp */,
-				9B0FB190140DB5790022588F /* HTTPValidation.h */,
 				37DDCD9213844FD50008B793 /* MIMEHeader.cpp */,
 				37DDCD9313844FD50008B793 /* MIMEHeader.h */,
 				628D214B12131ED10055DCFC /* NetworkingContext.h */,
@@ -24825,7 +24819,6 @@
 				514C76710CE923A1007EF3CD /* HTTPHeaderMap.h in Headers */,
 				514C76730CE923A1007EF3CD /* HTTPParsers.h in Headers */,
 				A5D214B212E905510090F370 /* HTTPRequest.h in Headers */,
-				9B0FB192140DB5790022588F /* HTTPValidation.h in Headers */,
 				375CD232119D43C800A2A859 /* Hyphenation.h in Headers */,
 				B275356E0B053814002CE64F /* Icon.h in Headers */,
 				97E4029013A696ED00913D67 /* IconController.h in Headers */,
@@ -28159,7 +28152,6 @@
 				0B8C56D40F28627F000502E1 /* HTTPHeaderMap.cpp in Sources */,
 				514C76720CE923A1007EF3CD /* HTTPParsers.cpp in Sources */,
 				A5D214B112E905510090F370 /* HTTPRequest.cpp in Sources */,
-				9B0FB191140DB5790022588F /* HTTPValidation.cpp in Sources */,
 				371A67CB11C6C7DB00047B8B /* HyphenationCF.cpp in Sources */,
 				375CD23B119D44EA00A2A859 /* HyphenationMac.mm in Sources */,
 				97E4028F13A696ED00913D67 /* IconController.cpp in Sources */,

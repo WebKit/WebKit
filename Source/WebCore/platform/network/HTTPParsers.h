@@ -55,7 +55,8 @@ enum ContentTypeOptionsDisposition {
 #endif
 
 ContentDispositionType contentDispositionType(const String&);
-bool isRFC2616Token(const String&);
+bool isValidHTTPHeaderValue(const String&);
+bool isValidHTTPToken(const String&);
 bool parseHTTPRefresh(const String& refresh, bool fromHttpEquivMeta, double& delay, String& url);
 double parseDate(const String&);
 String filenameFromHTTPContentDisposition(const String&); 

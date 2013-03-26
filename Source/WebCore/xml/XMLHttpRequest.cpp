@@ -38,7 +38,6 @@
 #include "File.h"
 #include "HTMLDocument.h"
 #include "HTTPParsers.h"
-#include "HTTPValidation.h"
 #include "HistogramSupport.h"
 #include "InspectorInstrumentation.h"
 #include "MemoryCache.h"

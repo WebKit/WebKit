@@ -1101,7 +1101,6 @@ SOURCES += \
     platform/network/HTTPHeaderMap.cpp \
     platform/network/HTTPParsers.cpp \
     platform/network/HTTPRequest.cpp \
-    platform/network/HTTPValidation.cpp \
     platform/network/MIMEHeader.cpp \
     platform/network/NetworkStateNotifier.cpp \
     platform/network/NetworkStorageSessionStub.cpp \
@@ -2363,7 +2362,6 @@ HEADERS += \
     platform/network/HTTPHeaderMap.h \
     platform/network/HTTPParsers.h \
     platform/network/HTTPRequest.h \
-    platform/network/HTTPValidation.h \
     platform/network/HTTPStatusCodes.h \
     platform/network/MIMESniffing.h \
     platform/network/NetworkStorageSession.h \

@@ -3276,9 +3276,6 @@
     <ClCompile Include="..\platform\network\HTTPRequest.cpp">
       <Filter>platform\network</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\network\HTTPValidation.cpp">
-      <Filter>platform\network</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\network\MIMEHeader.cpp">
       <Filter>platform\network</Filter>
     </ClCompile>
@@ -10081,9 +10078,6 @@
       <Filter>platform\network</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\network\HTTPRequest.h">
-      <Filter>platform\network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\network\HTTPValidation.h">
       <Filter>platform\network</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\network\MIMEHeader.h">

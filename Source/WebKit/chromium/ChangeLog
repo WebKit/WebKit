@@ -1,3 +1,13 @@
+2013-03-26  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Code duplication between HTTPParsers and HTTPValidation
+        https://bugs.webkit.org/show_bug.cgi?id=113283
+
+        Reviewed by Alexey Proskuryakov.
+
+        * src/AssociatedURLLoader.cpp: Include HTTPParsers.h instead
+        of HTTPValidation.h to use isValidHTTPToken().
+
 2013-03-26  Yufeng Shen  <miletus@chromium.org>
 
         Convert WebInputEvent::GestureDoubleTap to  PlatformEvent::NoType

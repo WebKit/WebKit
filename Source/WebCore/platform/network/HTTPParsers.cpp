@@ -102,18 +102,26 @@ static inline bool skipValue(const String& str, unsigned& pos)
     return pos != start;
 }
 
+bool isValidHTTPHeaderValue(const String& name)
+{
+    // FIXME: This should really match name against
+    // field-value in section 4.2 of RFC 2616.
+
+    return !name.contains('\r') && !name.contains('\n');
+}
+
 // See RFC 2616, Section 2.2.
-bool isRFC2616Token(const String& characters)
+bool isValidHTTPToken(const String& characters)
 {
     if (characters.isEmpty())
         return false;
     for (unsigned i = 0; i < characters.length(); ++i) {
         UChar c = characters[i];
-        if (c >= 0x80 || c <= 0x1F || c == 0x7F
+        if (c <= 0x20 || c >= 0x7F
             || c == '(' || c == ')' || c == '<' || c == '>' || c == '@'
             || c == ',' || c == ';' || c == ':' || c == '\\' || c == '"'
             || c == '/' || c == '[' || c == ']' || c == '?' || c == '='
-            || c == '{' || c == '}' || c == ' ' || c == '\t')
+            || c == '{' || c == '}')
         return false;
     }
     return true;
@@ -149,7 +157,7 @@ ContentDispositionType contentDispositionType(const String& contentDisposition)
     //   Content-Disposition: name="file"
     //
     // without a disposition token... screen those out.
-    if (!isRFC2616Token(dispositionType))
+    if (!isValidHTTPToken(dispositionType))
         return ContentDispositionNone;
 
     // We have a content-disposition of "attachment" or unknown.

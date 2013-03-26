@@ -4630,7 +4630,6 @@
     <ClCompile Include="..\platform\network\HTTPHeaderMap.cpp" />
     <ClCompile Include="..\platform\network\HTTPParsers.cpp" />
     <ClCompile Include="..\platform\network\HTTPRequest.cpp" />
-    <ClCompile Include="..\platform\network\HTTPValidation.cpp" />
     <ClCompile Include="..\platform\network\MIMEHeader.cpp" />
     <ClCompile Include="..\platform\network\NetworkStateNotifier.cpp" />
     <ClCompile Include="..\platform\network\NetworkStorageSessionStub.cpp">
@@ -11910,7 +11909,6 @@
     <ClInclude Include="..\platform\network\HTTPHeaderMap.h" />
     <ClInclude Include="..\platform\network\HTTPParsers.h" />
     <ClInclude Include="..\platform\network\HTTPRequest.h" />
-    <ClInclude Include="..\platform\network\HTTPValidation.h" />
     <ClInclude Include="..\platform\network\MIMEHeader.h" />
     <ClInclude Include="..\platform\network\NetworkingContext.h" />
     <ClInclude Include="..\platform\network\NetworkStateNotifier.h" />

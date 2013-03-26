@@ -4370,8 +4370,6 @@
             'platform/network/HTTPParsers.h',
             'platform/network/HTTPRequest.cpp',
             'platform/network/HTTPRequest.h',
-            'platform/network/HTTPValidation.cpp',
-            'platform/network/HTTPValidation.h',
             'platform/network/MIMEHeader.cpp',
             'platform/network/NetworkStateNotifier.cpp',
             'platform/network/NetworkStateNotifier.h',

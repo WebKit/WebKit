@@ -5913,8 +5913,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/network/HTTPParsers.h \
 	Source/WebCore/platform/network/HTTPRequest.cpp \
 	Source/WebCore/platform/network/HTTPRequest.h \
-	Source/WebCore/platform/network/HTTPValidation.cpp \
-	Source/WebCore/platform/network/HTTPValidation.h \
 	Source/WebCore/platform/network/MIMEHeader.cpp \
 	Source/WebCore/platform/network/MIMEHeader.h \
 	Source/WebCore/platform/network/NetworkingContext.h \
