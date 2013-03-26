@@ -34,7 +34,7 @@
 namespace JSC { namespace Profiler {
 
 static volatile int databaseCounter;
-static SpinLock registrationLock;
+static SpinLock registrationLock = SPINLOCK_INITIALIZER;
 static int didRegisterAtExit;
 static Database* firstDatabase;
 
