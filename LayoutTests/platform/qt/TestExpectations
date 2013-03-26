@@ -293,10 +293,6 @@ http/tests/inspector/compiler-source-mapping-debug.html
 # https://bugs.webkit.org/show_bug.cgi?id=79068
 inspector/styles/svg-style.xhtml
 
-webkit.org/b/113291 inspector/console/console-eval-syntax-error.html [ Skip ]
-webkit.org/b/113291 inspector/debugger/debugger-pause-in-eval-script.html [ Skip ]
-webkit.org/b/113291 inspector/extensions/extensions-eval.html [ Skip ]
-
 # Microdata DOM API is not yet enabled.
 # https://bugs.webkit.org/show_bug.cgi?id=68610
 fast/dom/MicroData
