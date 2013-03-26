@@ -1649,25 +1649,6 @@ crbug.com/24182 [ Debug ] fast/forms/input-maxlength.html [ Slow ]
 # WebKit roll 49405:49413
 crbug.com/28409 http/tests/xmlhttprequest/logout.html [ Failure ]
 
-# Rebaseline after landing https://bugs.webkit.org/show_bug.cgi?id=70634
-# After removing the first ten lines, uncomment the other expectations for these tests below.
-webkit.org/b/109507 compositing/iframes/scrolling-iframe.html [ Failure ]
-webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/iframes/scrolling-iframe.html [ Failure ]
-webkit.org/b/109507 compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ImageOnlyFailure ]
-webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ImageOnlyFailure ]
-webkit.org/b/109507 compositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ImageOnlyFailure ]
-webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ImageOnlyFailure ]
-webkit.org/b/109507 compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ImageOnlyFailure ]
-webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ImageOnlyFailure ]
-webkit.org/b/109507 compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ImageOnlyFailure ]
-webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ImageOnlyFailure ]
-webkit.org/b/109507 compositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
-webkit.org/b/109507 platform/chromium/virtual/gpu/compositedscrolling/overflow/composited-scrolling-paint-phases.html [ Failure ]
-webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/overflow/composited-scrolling-paint-phases.html [ Failure ]
-webkit.org/b/109507 [ Mac ] platform/chromium/virtual/softwarecompositing/repaint/invalidations-on-composited-layers.html [ Failure ]
-webkit.org/b/109507 [ Mac ] platform/chromium/virtual/softwarecompositing/tiling/huge-layer-add-remove-child.html [ Failure ]
-webkit.org/b/109507 [ Mac ] platform/chromium/virtual/softwarecompositing/tiling/huge-layer-with-layer-children.html [ Failure ]
-
 # Timeout on Debug.
 webkit.org/b/82954 [ Mac Win Linux ] svg/hixie/perf/007.xml [ ImageOnlyFailure Pass Slow ]
 
@@ -2658,8 +2639,8 @@ webkit.org/b/91012 touchadjustment/focusout-on-touch.html [ Skip ]
 webkit.org/b/77397 [ Linux ] plugins/crash-restoring-plugin-page-from-page-cache.html [ Crash Timeout ]
 webkit.org/b/77397 [ Mac Win ] plugins/crash-restoring-plugin-page-from-page-cache.html [ Timeout ]
 
-#webkit.org/b/78159 [ Debug ] compositing/iframes/scrolling-iframe.html [ Failure Pass ]
-#webkit.org/b/78159 [ Debug ] platform/chromium/virtual/softwarecompositing/iframes/scrolling-iframe.html [ Failure Pass ]
+webkit.org/b/78159 [ Debug ] compositing/iframes/scrolling-iframe.html [ Failure Pass ]
+webkit.org/b/78159 [ Debug ] platform/chromium/virtual/softwarecompositing/iframes/scrolling-iframe.html [ Failure Pass ]
 
 # Tests Error.stack behavior. We aren't consistent with JSC and do not intend to become so.
 fast/js/stack-trace.html [ WontFix ]
@@ -3718,24 +3699,24 @@ webkit.org/b/110851 platform/chromium/virtual/softwarecompositing/overflow/overf
 webkit.org/b/110851 platform/chromium/virtual/softwarecompositing/repaint/page-scale-repaint.html [ ImageOnlyFailure ]
 
 # Pixel tests for RTL iframe scrollbar is erroneous. Cannot observe on actual browser.
-#crbug.com/192172 [ Linux ] compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
-#crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
-#crbug.com/192172 [ Linux ] compositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
-#crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
-#crbug.com/192172 [ Linux ] compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
-#crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
-#crbug.com/192172 [ Linux ] compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
-#crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
+crbug.com/192172 [ Linux ] compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
+crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ]
+crbug.com/192172 [ Linux ] compositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
+crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
+crbug.com/192172 [ Linux ] compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
+crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
+crbug.com/192172 [ Linux ] compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
+crbug.com/192172 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
 
 # These tests flakily reorder the scrollbars in debug, causing text failures
-#webkit.org/b/111199 [ Debug Win7 Lion ] compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Pass Failure ]
-#webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Pass Failure ]
-#webkit.org/b/111199 [ Debug Win7 Lion ] compositing/rtl/rtl-iframe-absolute-overflow.html [ Pass Failure ]
-#webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ Pass Failure ]
-#webkit.org/b/111199 [ Debug Win7 Lion ] compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Pass Failure ]
-#webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Pass Failure ]
-#webkit.org/b/111199 [ Debug Win7 Lion ] compositing/rtl/rtl-iframe-fixed-overflow.html [ Pass Failure ]
-#webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Pass Failure ]
+webkit.org/b/111199 [ Debug Win7 Lion ] compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Pass Failure ]
+webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Pass Failure ]
+webkit.org/b/111199 [ Debug Win7 Lion ] compositing/rtl/rtl-iframe-absolute-overflow.html [ Pass Failure ]
+webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ Pass Failure ]
+webkit.org/b/111199 [ Debug Win7 Lion ] compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Pass Failure ]
+webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Pass Failure ]
+webkit.org/b/111199 [ Debug Win7 Lion ] compositing/rtl/rtl-iframe-fixed-overflow.html [ Pass Failure ]
+webkit.org/b/111199 [ Debug Win7 Lion ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Pass Failure ]
 
 # This is possibly a bug in the version of fontconfig on Precise, not sure.
 webkit.org/b/110915 [ Linux ] platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html [ Failure Pass ]

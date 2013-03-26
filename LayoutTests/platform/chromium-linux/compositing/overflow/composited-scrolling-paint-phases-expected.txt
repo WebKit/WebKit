@@ -45,7 +45,7 @@
                     (GraphicsLayer
                       (position 0.00 10.00)
                       (bounds 80.00 10.00)
-                      (drawsContent 1)
+                      (contentsOpaque 1)
                       (paintingPhases
                         GraphicsLayerPaintBackground
                         GraphicsLayerPaintForeground
