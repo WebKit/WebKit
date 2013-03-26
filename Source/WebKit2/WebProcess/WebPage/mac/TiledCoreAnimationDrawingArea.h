@@ -34,6 +34,7 @@
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/LayerFlushScheduler.h>
 #include <WebCore/LayerFlushSchedulerClient.h>
+#include <WebCore/Timer.h>
 #include <wtf/HashMap.h>
 #include <wtf/RetainPtr.h>
 
@@ -108,6 +109,8 @@ private:
     WebCore::TiledBacking* mainFrameTiledBacking() const;
     void updateDebugInfoLayer(bool showLayer);
 
+    void updateIntrinsicContentSizeTimerFired(WebCore::Timer<TiledCoreAnimationDrawingArea>*);
+
     bool m_layerTreeStateIsFrozen;
     WebCore::LayerFlushScheduler m_layerFlushScheduler;
 
@@ -129,6 +132,7 @@ private:
     bool m_clipsToExposedRect;
 
     WebCore::IntSize m_lastSentIntrinsicContentSize;
+    WebCore::Timer<TiledCoreAnimationDrawingArea> m_updateIntrinsicContentSizeTimer;
     bool m_inUpdateGeometry;
 };
 

@@ -1,3 +1,22 @@
+2013-03-26  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Don't send intrinsic content size updates more than once per runloop
+        https://bugs.webkit.org/show_bug.cgi?id=113258
+        <rdar://problem/13492038>
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        (TiledCoreAnimationDrawingArea):
+        Add a zero-delay timer for intrinsic content size updates.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea):
+        Add a zero-delay timer for intrinsic content size updates.
+        (WebKit::TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged):
+        Start our new one-shot zero-delay timer.
+        (WebKit::TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeTimerFired):
+        Inform the WebPage that the intrinsic content size has changed.
+
 2013-03-26  Simon Cooper  <scooper@apple.com>
 
         bundle-ids need to be sanitized before using them in filesystem paths

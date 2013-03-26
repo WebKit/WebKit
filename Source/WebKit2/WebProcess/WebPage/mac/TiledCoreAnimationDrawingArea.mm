@@ -71,6 +71,7 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage* webPage, c
     , m_layerFlushScheduler(this)
     , m_isPaintingSuspended(!parameters.isVisible)
     , m_clipsToExposedRect(false)
+    , m_updateIntrinsicContentSizeTimer(this, &TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeTimerFired)
 {
     Page* page = m_webPage->corePage();
 
@@ -248,13 +249,28 @@ void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore&
     updateDebugInfoLayer(showTiledScrollingIndicator);
 }
 
-void TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged(const IntSize& contentSize)
+void TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged(const IntSize&)
 {
     if (!m_webPage->minimumLayoutWidth())
         return;
 
     if (m_inUpdateGeometry)
         return;
+
+    m_updateIntrinsicContentSizeTimer.startOneShot(0);
+}
+
+void TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeTimerFired(Timer<TiledCoreAnimationDrawingArea>*)
+{
+    Frame* frame = m_webPage->corePage()->mainFrame();
+    if (!frame)
+        return;
+
+    FrameView* frameView = frame->view();
+    if (!frameView)
+        return;
+
+    IntSize contentSize = frameView->contentsSize();
 
     if (m_lastSentIntrinsicContentSize == contentSize)
         return;
