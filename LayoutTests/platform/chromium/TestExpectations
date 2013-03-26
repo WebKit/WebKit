@@ -2639,8 +2639,8 @@ webkit.org/b/91012 touchadjustment/focusout-on-touch.html [ Skip ]
 webkit.org/b/77397 [ Linux ] plugins/crash-restoring-plugin-page-from-page-cache.html [ Crash Timeout ]
 webkit.org/b/77397 [ Mac Win ] plugins/crash-restoring-plugin-page-from-page-cache.html [ Timeout ]
 
-webkit.org/b/78159 [ Debug ] compositing/iframes/scrolling-iframe.html [ Failure Pass ]
-webkit.org/b/78159 [ Debug ] platform/chromium/virtual/softwarecompositing/iframes/scrolling-iframe.html [ Failure Pass ]
+webkit.org/b/78159 compositing/iframes/scrolling-iframe.html [ Failure Pass ]
+webkit.org/b/78159 platform/chromium/virtual/softwarecompositing/iframes/scrolling-iframe.html [ Failure Pass ]
 
 # Tests Error.stack behavior. We aren't consistent with JSC and do not intend to become so.
 fast/js/stack-trace.html [ WontFix ]
