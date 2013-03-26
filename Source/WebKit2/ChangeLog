@@ -1,3 +1,15 @@
+2013-03-26  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Don't send intrinsic content size updates more than once per runloop
+        https://bugs.webkit.org/show_bug.cgi?id=113258
+        <rdar://problem/13492038>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged):
+        Only start the zero-delay timer if it's not already active.
+
 2013-03-26  Tony Chang  <tony@chromium.org>
 
         Autogenerate the scrollAnimatorEnabled setting in Settings.in

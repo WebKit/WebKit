@@ -257,7 +257,8 @@ void TiledCoreAnimationDrawingArea::mainFrameContentSizeChanged(const IntSize&)
     if (m_inUpdateGeometry)
         return;
 
-    m_updateIntrinsicContentSizeTimer.startOneShot(0);
+    if (!m_updateIntrinsicContentSizeTimer.isActive())
+        m_updateIntrinsicContentSizeTimer.startOneShot(0);
 }
 
 void TiledCoreAnimationDrawingArea::updateIntrinsicContentSizeTimerFired(Timer<TiledCoreAnimationDrawingArea>*)
