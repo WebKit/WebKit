@@ -292,14 +292,17 @@ static String loadSandboxProfile(const String& pluginPath, const String& sandbox
     RetainPtr<CFBundleRef> pluginBundle = adoptCF(CFBundleCreate(kCFAllocatorDefault, pluginURL.get()));
     if (!pluginBundle)
         return String();
-    
-    CFStringRef bundleIdentifier = CFBundleGetIdentifier(pluginBundle.get());
-    if (!bundleIdentifier)
+
+    String bundleIdentifier = CFBundleGetIdentifier(pluginBundle.get());
+    if (bundleIdentifier.isEmpty())
         return String();
+
+    // Fold all / characters to : to prevent the plugin bundle-id from trying to escape the profile directory
+    bundleIdentifier.replace('/', ':');
 
     RetainPtr<CFURLRef> sandboxProfileDirectory = adoptCF(CFURLCreateWithFileSystemPath(0, sandboxProfileDirectoryPath.createCFString().get(), kCFURLPOSIXPathStyle, TRUE));
 
-    RetainPtr<CFStringRef> sandboxFileName = CFStringCreateWithFormat(0, 0, CFSTR("%@.sb"), bundleIdentifier);
+    RetainPtr<CFStringRef> sandboxFileName = adoptCF(CFStringCreateWithFormat(0, 0, CFSTR("%@.sb"), bundleIdentifier.createCFString().get()));
     RetainPtr<CFURLRef> sandboxURL = adoptCF(CFURLCreateWithFileSystemPathRelativeToBase(0, sandboxFileName.get(), kCFURLPOSIXPathStyle, FALSE, sandboxProfileDirectory.get()));
 
     RetainPtr<NSString> profileString = adoptNS([[NSString alloc] initWithContentsOfURL:(NSURL *)sandboxURL.get() encoding:NSUTF8StringEncoding error:NULL]);

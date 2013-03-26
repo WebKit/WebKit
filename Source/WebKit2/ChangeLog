@@ -1,3 +1,19 @@
+2013-03-26  Simon Cooper  <scooper@apple.com>
+
+        bundle-ids need to be sanitized before using them in filesystem paths
+        https://bugs.webkit.org/show_bug.cgi?id=113030
+        <rdar://problem/13300254>
+
+        Reviewed by Alexey Proskuryakov.
+
+        When choosing / looking for a specialized Sandbox for a Plugin the
+        bundle-id needs to be sanitized before using it to construct a
+        filesystem name to look up. The “/“ character should not be allowed
+        and transformed into something else, in this case a “:”
+
+        * PluginProcess/mac/PluginProcessMac.mm:
+        (WebKit::loadSandboxProfile):
+
 2013-03-26  Zeno Albisser  <zeno@webkit.org>
 
         [Qt] UIProcess should initialize WebCoreSystemInterface.
