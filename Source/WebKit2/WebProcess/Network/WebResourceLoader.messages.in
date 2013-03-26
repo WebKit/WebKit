@@ -25,13 +25,13 @@ messages -> WebResourceLoader LegacyReceiver {
     CancelResourceLoader()
 
     // FIXME (NetworkProcess): We'll need much more granularity for response messages.
-    WillSendRequest(WebCore::ResourceRequest request, WebCore::ResourceResponse redirectResponse) -> (WebCore::ResourceRequest newRequest)
+    WillSendRequest(WebCore::ResourceRequest request, WebCore::ResourceResponse redirectResponse)
     DidReceiveResponseWithCertificateInfo(WebCore::ResourceResponse response, WebKit::PlatformCertificateInfo certificateInfo)
     DidReceiveData(CoreIPC::DataReference data, int64_t encodedDataLength)
     DidFinishResourceLoad(double finishTime)
     DidFailResourceLoad(WebCore::ResourceError error)
     
-    CanAuthenticateAgainstProtectionSpace(WebCore::ProtectionSpace protectionSpace) -> (bool response)
+    CanAuthenticateAgainstProtectionSpace(WebCore::ProtectionSpace protectionSpace)
 
     // DidReceiveResource is for when we have the entire resource data available at once, such as when the resource is cached in memory
     DidReceiveResource(WebKit::ShareableResource::Handle resource, double finishTime)

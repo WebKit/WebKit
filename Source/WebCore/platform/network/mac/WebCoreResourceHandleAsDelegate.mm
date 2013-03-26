@@ -259,11 +259,7 @@ using namespace WebCore;
         && [[(NSHTTPURLResponse *)[cachedResponse response] allHeaderFields] objectForKey:@"Vary"])
         return nil;
 
-    NSCachedURLResponse *newResponse = m_handle->client()->willCacheResponse(m_handle, cachedResponse);
-    if (newResponse != cachedResponse)
-        return newResponse;
-    
-    return newResponse;
+    return m_handle->client()->willCacheResponse(m_handle, cachedResponse);
 }
 
 @end

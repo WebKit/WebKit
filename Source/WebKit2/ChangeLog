@@ -1,3 +1,62 @@
+2013-03-26  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13194263> Crashes in NetworkProcess due to threading issues
+        https://bugs.webkit.org/show_bug.cgi?id=113256
+
+        Reviewed by Brady Eidson.
+
+        Use asynchronous version of ResourceHandle/ResourceHandleClient in NetworkProcess.
+        We now run WebCore code on main thread, so we can't block it.
+
+        * DerivedSources.make:
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didReceiveMessage):
+        * NetworkProcess/NetworkResourceLoader.messages.in: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+        Made NetworkResourceLoader a message receiver. Messages that used to be sync are
+        now async, and responses need to be sent to the loader.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::willSendRequestAsync): This now happens on main
+        thread, and thus cannot be sync.
+        (WebKit::NetworkResourceLoader::continueWillSendRequest): Notify the resource
+        handle once a response is ready.
+        (WebKit::NetworkResourceLoader::didSendData): Removed unnecessary WebCore prefixes.
+        (WebKit::NetworkResourceLoader::didReceiveCachedMetadata): Ditto.
+        (WebKit::NetworkResourceLoader::wasBlocked):  Ditto.
+        (WebKit::NetworkResourceLoader::cannotShowURL): Ditto.
+        (WebKit::NetworkResourceLoader::shouldUseCredentialStorageAsync): This function
+        doesn't call through to WebProcess, so we can keep it synchronous. But we still
+        need to implement the async version, since that's what ResourceHandle calls.
+        (WebKit::NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceAsync):
+        Made async.
+        (WebKit::NetworkResourceLoader::continueCanAuthenticateAgainstProtectionSpace):
+        Notify ResourceHandle when response is ready.
+        (WebKit::NetworkResourceLoader::didReceiveDataArray): Removed unnecessary WebCore prefixes.
+        (WebKit::NetworkResourceLoader::willCacheResponseAsync): This matches default
+        implementation, but we are overriding everything to make it clearer what's missing.
+        (WebKit::NetworkResourceLoader::willStopBufferingData): Removed unnecessary WebCore prefixes.
+
+        * NetworkProcess/NetworkResourceLoader.h: Updated to use async client methods.
+        Keep ResourceRequest around while handling willSendRequest, as we need the original
+        to recombine the request. Removed CFNet version of willCacheResponse for now,
+        as we are not using it yet.
+
+        * Shared/Authentication/AuthenticationManager.cpp: Assert that methods touching
+        a global HashMap all run on main thread. Changed generateAuthenticationChallengeID()
+        to use regular increment, as there is no need to run it from a secondary thread.
+
+        * WebProcess/Network/NetworkProcessConnection.cpp:
+        (WebKit::NetworkProcessConnection::didReceiveSyncMessage): We no longer have any
+        sync messages.
+
+        * WebProcess/Network/WebResourceLoader.h:
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::willSendRequest):
+        (WebKit::WebResourceLoader::canAuthenticateAgainstProtectionSpace):
+        * WebProcess/Network/WebResourceLoader.messages.in:
+        Changed to use async messages.
+
 2013-03-26  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] Don't send intrinsic content size updates more than once per runloop

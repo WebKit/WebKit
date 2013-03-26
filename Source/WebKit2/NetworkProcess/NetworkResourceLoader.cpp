@@ -277,54 +277,58 @@ void NetworkResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
     scheduleCleanupOnMainThread();
 }
 
-void NetworkResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
+void NetworkResourceLoader::willSendRequestAsync(ResourceHandle*, const ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     // We only expect to get the willSendRequest callback from ResourceHandle as the result of a redirect.
     ASSERT(!redirectResponse.isNull());
-    ASSERT(!isMainThread());
+    ASSERT(isMainThread());
 
-    // IMPORTANT: The fact that this message to the WebProcess is sync is what makes our current approach to synchronous XMLHttpRequests safe.
-    // If this message changes to be asynchronous we might introduce a situation where the NetworkProcess is deadlocked waiting for 6 connections
+    m_suggestedRequestForWillSendRequest = request;
+
+    // This message is DispatchMessageEvenWhenWaitingForSyncReply to avoid a situation where the NetworkProcess is deadlocked waiting for 6 connections
     // to complete while the WebProcess is waiting for a 7th to complete.
-    // If we ever change this message to be asynchronous we have to include safeguards to make sure the new design interacts well with sync XHR.
-    ResourceRequest returnedRequest;
-    if (!sendSyncAbortingOnFailure(Messages::WebResourceLoader::WillSendRequest(request, redirectResponse), Messages::WebResourceLoader::WillSendRequest::Reply(returnedRequest)))
-        return;
-    
-    request.updateFromDelegatePreservingOldHTTPBody(returnedRequest.nsURLRequest(DoNotUpdateHTTPBody));
+    connection()->send(Messages::WebResourceLoader::WillSendRequest(request, redirectResponse), destinationID(), CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
+}
 
-    RunLoop::main()->dispatch(bind(&NetworkResourceLoadScheduler::receivedRedirect, &NetworkProcess::shared().networkResourceLoadScheduler(), this, request.url()));
+void NetworkResourceLoader::continueWillSendRequest(const ResourceRequest& newRequest)
+{
+    m_suggestedRequestForWillSendRequest.updateFromDelegatePreservingOldHTTPBody(newRequest.nsURLRequest(DoNotUpdateHTTPBody));
+
+    RunLoop::main()->dispatch(bind(&NetworkResourceLoadScheduler::receivedRedirect, &NetworkProcess::shared().networkResourceLoadScheduler(), this, m_suggestedRequestForWillSendRequest.url()));
+    m_handle->continueWillSendRequest(m_suggestedRequestForWillSendRequest);
+
+    m_suggestedRequestForWillSendRequest = ResourceRequest();
 }
 
 // FIXME (NetworkProcess): Many of the following ResourceHandleClient methods definitely need implementations. A few will not.
 // Once we know what they are they can be removed.
 
-void NetworkResourceLoader::didSendData(WebCore::ResourceHandle*, unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/)
+void NetworkResourceLoader::didSendData(ResourceHandle*, unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/)
 {
     notImplemented();
 }
 
-void NetworkResourceLoader::didReceiveCachedMetadata(WebCore::ResourceHandle*, const char*, int)
+void NetworkResourceLoader::didReceiveCachedMetadata(ResourceHandle*, const char*, int)
 {
     notImplemented();
 }
 
-void NetworkResourceLoader::wasBlocked(WebCore::ResourceHandle*)
+void NetworkResourceLoader::wasBlocked(ResourceHandle*)
 {
     notImplemented();
 }
 
-void NetworkResourceLoader::cannotShowURL(WebCore::ResourceHandle*)
+void NetworkResourceLoader::cannotShowURL(ResourceHandle*)
 {
     notImplemented();
 }
 
-bool NetworkResourceLoader::shouldUseCredentialStorage(ResourceHandle*)
+void NetworkResourceLoader::shouldUseCredentialStorageAsync(ResourceHandle* handle)
 {
     // When the WebProcess is handling loading a client is consulted each time this shouldUseCredentialStorage question is asked.
     // In NetworkProcess mode we ask the WebProcess client up front once and then reuse the cached answer.
 
-    return allowStoredCredentials() == AllowStoredCredentials;
+    handle->continueShouldUseCredentialStorage(allowStoredCredentials() == AllowStoredCredentials);
 }
 
 void NetworkResourceLoader::didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge)
@@ -338,20 +342,20 @@ void NetworkResourceLoader::didCancelAuthenticationChallenge(ResourceHandle*, co
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-bool NetworkResourceLoader::canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace& protectionSpace)
+void NetworkResourceLoader::canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*, const ProtectionSpace& protectionSpace)
 {
-    ASSERT(!isMainThread());
+    ASSERT(isMainThread());
 
-    // IMPORTANT: The fact that this message to the WebProcess is sync is what makes our current approach to synchronous XMLHttpRequests safe.
-    // If this message changes to be asynchronous we might introduce a situation where the NetworkProcess is deadlocked waiting for 6 connections
-    // to complete while the WebProcess is waiting for a 7th to complete.
-    // If we ever change this message to be asynchronous we have to include safeguards to make sure the new design interacts well with sync XHR.
-    bool result;
-    if (!sendSyncAbortingOnFailure(Messages::WebResourceLoader::CanAuthenticateAgainstProtectionSpace(protectionSpace), Messages::WebResourceLoader::CanAuthenticateAgainstProtectionSpace::Reply(result)))
-        return false;
-
-    return result;
+    // This message is DispatchMessageEvenWhenWaitingForSyncReply to avoid a situation where the NetworkProcess is deadlocked
+    // waiting for 6 connections to complete while the WebProcess is waiting for a 7th to complete.
+    connection()->send(Messages::WebResourceLoader::CanAuthenticateAgainstProtectionSpace(protectionSpace), destinationID(), CoreIPC::DispatchMessageEvenWhenWaitingForSyncReply);
 }
+
+void NetworkResourceLoader::continueCanAuthenticateAgainstProtectionSpace(bool result)
+{
+    m_handle->continueCanAuthenticateAgainstProtectionSpace(result);
+}
+
 #endif
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
@@ -361,7 +365,7 @@ bool NetworkResourceLoader::supportsDataArray()
     return false;
 }
 
-void NetworkResourceLoader::didReceiveDataArray(WebCore::ResourceHandle*, CFArrayRef)
+void NetworkResourceLoader::didReceiveDataArray(ResourceHandle*, CFArrayRef)
 {
     ASSERT_NOT_REACHED();
     notImplemented();
@@ -369,21 +373,13 @@ void NetworkResourceLoader::didReceiveDataArray(WebCore::ResourceHandle*, CFArra
 #endif
 
 #if PLATFORM(MAC)
-#if USE(CFNETWORK)
-CFCachedURLResponseRef NetworkResourceLoader::willCacheResponse(WebCore::ResourceHandle*, CFCachedURLResponseRef response)
+void NetworkResourceLoader::willCacheResponseAsync(ResourceHandle* handle, NSCachedURLResponse* response)
 {
     notImplemented();
-    return response;
+    handle->continueWillCacheResponse(response);
 }
-#else
-NSCachedURLResponse* NetworkResourceLoader::willCacheResponse(WebCore::ResourceHandle*, NSCachedURLResponse* response)
-{
-    notImplemented();
-    return response;
-}
-#endif
 
-void NetworkResourceLoader::willStopBufferingData(WebCore::ResourceHandle*, const char*, int)
+void NetworkResourceLoader::willStopBufferingData(ResourceHandle*, const char*, int)
 {
     notImplemented();
 }

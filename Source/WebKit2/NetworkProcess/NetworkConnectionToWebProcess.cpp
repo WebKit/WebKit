@@ -33,6 +33,7 @@
 #include "NetworkProcess.h"
 #include "NetworkResourceLoadParameters.h"
 #include "NetworkResourceLoader.h"
+#include "NetworkResourceLoaderMessages.h"
 #include "RemoteNetworkingContext.h"
 #include "SyncNetworkResourceLoader.h"
 #include <WebCore/BlobData.h>
@@ -68,6 +69,13 @@ void NetworkConnectionToWebProcess::didReceiveMessage(CoreIPC::Connection* conne
 {
     if (decoder.messageReceiverName() == Messages::NetworkConnectionToWebProcess::messageReceiverName()) {
         didReceiveNetworkConnectionToWebProcessMessage(connection, decoder);
+        return;
+    }
+
+    if (decoder.messageReceiverName() == Messages::NetworkResourceLoader::messageReceiverName()) {
+        HashMap<ResourceLoadIdentifier, RefPtr<NetworkResourceLoader> >::iterator loaderIterator = m_networkResourceLoaders.find(decoder.destinationID());
+        if (loaderIterator != m_networkResourceLoaders.end())
+            loaderIterator->value->didReceiveNetworkResourceLoaderMessage(connection, decoder);
         return;
     }
     

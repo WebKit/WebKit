@@ -52,6 +52,30 @@ ResourceHandleClient::~ResourceHandleClient()
 #endif
 }
 
+void ResourceHandleClient::willSendRequestAsync(ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& /*redirectResponse*/)
+{
+    handle->continueWillSendRequest(request);
+}
+
+void ResourceHandleClient::shouldUseCredentialStorageAsync(ResourceHandle* handle)
+{
+    handle->continueShouldUseCredentialStorage(false);
+}
+
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+void ResourceHandleClient::canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle* handle, const ProtectionSpace&)
+{
+    handle->continueCanAuthenticateAgainstProtectionSpace(false);
+}
+#endif
+
+#if PLATFORM(MAC)
+void ResourceHandleClient::willCacheResponseAsync(ResourceHandle* handle, NSCachedURLResponse *response)
+{
+    handle->continueWillCacheResponse(response);
+}
+#endif
+
 void ResourceHandleClient::didReceiveBuffer(ResourceHandle* handle, PassRefPtr<SharedBuffer> buffer, int encodedDataLength)
 {
     didReceiveData(handle, buffer->data(), buffer->size(), encodedDataLength);

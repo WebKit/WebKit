@@ -69,6 +69,7 @@ MESSAGE_RECEIVERS = \
     NetworkProcess \
     NetworkProcessConnection \
     NetworkProcessProxy \
+    NetworkResourceLoader \
     NPObjectMessageReceiver \
     OfflineStorageProcess \
     PluginControllerProxy \

@@ -29,7 +29,7 @@
 #if !USE(CFNETWORK)
 
 namespace WebCore {
-    class ResourceHandle;
+class ResourceHandle;
 }
 
 @interface WebCoreResourceHandleAsDelegate : NSObject <NSURLConnectionDelegate> {

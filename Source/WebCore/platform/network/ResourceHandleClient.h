@@ -76,6 +76,18 @@ namespace WebCore {
         virtual void cannotShowURL(ResourceHandle*) { }
 
         virtual bool usesAsyncCallbacks() { return false; }
+        // Client will pass an updated request using ResourceHandle::continueWillSendRequest() when ready.
+        virtual void willSendRequestAsync(ResourceHandle*, const ResourceRequest&, const ResourceResponse& redirectResponse);
+        // Client will pass an updated request using ResourceHandle::continueShouldUseCredentialStorage() when ready.
+        virtual void shouldUseCredentialStorageAsync(ResourceHandle*);
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+        // Client will pass an updated request using ResourceHandle::continueCanAuthenticateAgainstProtectionSpace() when ready.
+        virtual void canAuthenticateAgainstProtectionSpaceAsync(ResourceHandle*, const ProtectionSpace&);
+#endif
+#if PLATFORM(MAC)
+        // Client will pass an updated request using ResourceHandle::continueWillCacheResponse() when ready.
+        virtual void willCacheResponseAsync(ResourceHandle*, NSCachedURLResponse *);
+#endif
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
         virtual bool supportsDataArray() { return false; }
@@ -98,7 +110,7 @@ namespace WebCore {
 #if USE(CFNETWORK)
         virtual CFCachedURLResponseRef willCacheResponse(ResourceHandle*, CFCachedURLResponseRef response) { return response; }
 #else
-        virtual NSCachedURLResponse* willCacheResponse(ResourceHandle*, NSCachedURLResponse* response) { return response; }
+        virtual NSCachedURLResponse *willCacheResponse(ResourceHandle*, NSCachedURLResponse *response) { return response; }
 #endif
         virtual void willStopBufferingData(ResourceHandle*, const char*, int) { }
 #endif // PLATFORM(MAC)

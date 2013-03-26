@@ -1098,6 +1098,8 @@
 		E14A954A16E016A40068DE82 /* NetworkProcessPlatformStrategies.h in Headers */ = {isa = PBXBuildFile; fileRef = E14A954816E016A40068DE82 /* NetworkProcessPlatformStrategies.h */; };
 		E1513C66166EABB200149FCB /* ChildProcessProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1513C64166EABB200149FCB /* ChildProcessProxy.cpp */; };
 		E1513C67166EABB200149FCB /* ChildProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = E1513C65166EABB200149FCB /* ChildProcessProxy.h */; };
+		E152551A17011819003D7ADB /* NetworkResourceLoaderMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E152551817011819003D7ADB /* NetworkResourceLoaderMessageReceiver.cpp */; };
+		E152551B17011819003D7ADB /* NetworkResourceLoaderMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = E152551917011819003D7ADB /* NetworkResourceLoaderMessages.h */; };
 		E170876B16D6CA6900F99226 /* BlobRegistryProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E170876916D6CA6900F99226 /* BlobRegistryProxy.cpp */; };
 		E170876C16D6CA6900F99226 /* BlobRegistryProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = E170876A16D6CA6900F99226 /* BlobRegistryProxy.h */; };
 		E170877016D6CFE500F99226 /* BlobRegistrationData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E170876E16D6CFE400F99226 /* BlobRegistrationData.cpp */; };
@@ -2550,6 +2552,9 @@
 		E14A954816E016A40068DE82 /* NetworkProcessPlatformStrategies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessPlatformStrategies.h; path = NetworkProcess/NetworkProcessPlatformStrategies.h; sourceTree = "<group>"; };
 		E1513C64166EABB200149FCB /* ChildProcessProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChildProcessProxy.cpp; sourceTree = "<group>"; };
 		E1513C65166EABB200149FCB /* ChildProcessProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChildProcessProxy.h; sourceTree = "<group>"; };
+		E1525517170109FB003D7ADB /* NetworkResourceLoader.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = NetworkResourceLoader.messages.in; path = NetworkProcess/NetworkResourceLoader.messages.in; sourceTree = "<group>"; };
+		E152551817011819003D7ADB /* NetworkResourceLoaderMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkResourceLoaderMessageReceiver.cpp; sourceTree = "<group>"; };
+		E152551917011819003D7ADB /* NetworkResourceLoaderMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkResourceLoaderMessages.h; sourceTree = "<group>"; };
 		E170876916D6CA6900F99226 /* BlobRegistryProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlobRegistryProxy.cpp; path = WebProcess/FileAPI/BlobRegistryProxy.cpp; sourceTree = "<group>"; };
 		E170876A16D6CA6900F99226 /* BlobRegistryProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlobRegistryProxy.h; path = WebProcess/FileAPI/BlobRegistryProxy.h; sourceTree = "<group>"; };
 		E170876E16D6CFE400F99226 /* BlobRegistrationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlobRegistrationData.cpp; path = FileAPI/BlobRegistrationData.cpp; sourceTree = "<group>"; };
@@ -3498,6 +3503,7 @@
 				51A8A6171627F5BB000D90E9 /* NetworkProcess.messages.in */,
 				51FD18B31651FBAD00DBE1CE /* NetworkResourceLoader.cpp */,
 				51FD18B41651FBAD00DBE1CE /* NetworkResourceLoader.h */,
+				E1525517170109FB003D7ADB /* NetworkResourceLoader.messages.in */,
 				51829DA31637C70C000953D6 /* NetworkResourceLoadScheduler.cpp */,
 				51829DA41637C70C000953D6 /* NetworkResourceLoadScheduler.h */,
 				519B4FF216A9EA970066874D /* SchedulableLoader.cpp */,
@@ -4858,6 +4864,8 @@
 				51ACC9351628064800342550 /* NetworkProcessMessages.h */,
 				513A163A163088F6005D7D22 /* NetworkProcessProxyMessageReceiver.cpp */,
 				513A163B163088F6005D7D22 /* NetworkProcessProxyMessages.h */,
+				E152551817011819003D7ADB /* NetworkResourceLoaderMessageReceiver.cpp */,
+				E152551917011819003D7ADB /* NetworkResourceLoaderMessages.h */,
 				1A2D8437127F65D5001EB962 /* NPObjectMessageReceiverMessageReceiver.cpp */,
 				1A2D8438127F65D5001EB962 /* NPObjectMessageReceiverMessages.h */,
 				BCAF35E016CA249300D4E9FC /* OfflineStorageProcessMessageReceiver.cpp */,
@@ -5629,6 +5637,7 @@
 				E170877116D6CFE500F99226 /* BlobRegistrationData.h in Headers */,
 				E14A954A16E016A40068DE82 /* NetworkProcessPlatformStrategies.h in Headers */,
 				E1798C7A16E6818800240139 /* NetworkBlobRegistry.h in Headers */,
+				E152551B17011819003D7ADB /* NetworkResourceLoaderMessages.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6836,6 +6845,7 @@
 				E170877016D6CFE500F99226 /* BlobRegistrationData.cpp in Sources */,
 				E14A954916E016A40068DE82 /* NetworkProcessPlatformStrategies.cpp in Sources */,
 				E1798C7916E6818800240139 /* NetworkBlobRegistry.cpp in Sources */,
+				E152551A17011819003D7ADB /* NetworkResourceLoaderMessageReceiver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

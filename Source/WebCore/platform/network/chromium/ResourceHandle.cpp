@@ -222,6 +222,18 @@ void ResourceHandle::setClient(ResourceHandleClient* client)
     d->setClient(client);
 }
 
+void ResourceHandle::continueWillSendRequest(const ResourceRequest&)
+{
+    // ResourceHandle never uses async client calls on Chromium yet.
+    ASSERT_NOT_REACHED();
+}
+
+void ResourceHandle::continueShouldUseCredentialStorage(bool)
+{
+    // ResourceHandle never uses async client calls on Chromium yet.
+    ASSERT_NOT_REACHED();
+}
+
 void ResourceHandle::setDefersLoading(bool value)
 {
     d->setDefersLoading(value);

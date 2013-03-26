@@ -3580,8 +3580,8 @@
 		973F418B169B96030006BF60 /* HTMLParserOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 973F4187169B95EF0006BF60 /* HTMLParserOptions.cpp */; };
 		974187D316A7932700FA77A7 /* HTMLParserThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 974187D016A7932200FA77A7 /* HTMLParserThread.cpp */; };
 		974187D416A7932900FA77A7 /* HTMLParserThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 974187D116A7932200FA77A7 /* HTMLParserThread.h */; };
-		9746AF2114F4DDE6003E7A72 /* Coordinates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9746AF1114F4DDE6003E7A72 /* Coordinates.cpp */; };
 		9746AF2114F4DDE6003E7A71 /* Coordinates.h in Headers */ = {isa = PBXBuildFile; fileRef = 9746AF1114F4DDE6003E7A70 /* Coordinates.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		9746AF2114F4DDE6003E7A72 /* Coordinates.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9746AF1114F4DDE6003E7A72 /* Coordinates.cpp */; };
 		9746AF2314F4DDE6003E7A70 /* Geolocation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9746AF1314F4DDE6003E7A70 /* Geolocation.cpp */; };
 		9746AF2414F4DDE6003E7A70 /* Geolocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 9746AF1414F4DDE6003E7A70 /* Geolocation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9746AF2514F4DDE6003E7A71 /* GeolocationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 9746AF1514F4DDE6003E7A71 /* GeolocationClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6220,6 +6220,8 @@
 		E14F1C4514B5DAC600EA9009 /* HTMLFormControlElementWithState.h in Headers */ = {isa = PBXBuildFile; fileRef = E14F1C4314B5DAC600EA9009 /* HTMLFormControlElementWithState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1513D4F1677EA8300149FCB /* InitializeLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = E1513D4E1677EA8300149FCB /* InitializeLogging.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1513D511677F08800149FCB /* NotImplemented.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1513D501677F08800149FCB /* NotImplemented.cpp */; };
+		E152551516FD2350003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = E152551316FD234F003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.h */; };
+		E152551616FD2350003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = E152551416FD234F003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.mm */; };
 		E15A36D71104572000B7B639 /* XMLNSNames.h in Headers */ = {isa = PBXBuildFile; fileRef = E15A36D61104572000B7B639 /* XMLNSNames.h */; };
 		E15A36D91104572700B7B639 /* XMLNSNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E15A36D81104572700B7B639 /* XMLNSNames.cpp */; };
 		E169803D1133542D00894115 /* CRuntimeObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E169803C1133542D00894115 /* CRuntimeObject.h */; };
@@ -11100,8 +11102,8 @@
 		973F4188169B95EF0006BF60 /* HTMLParserOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLParserOptions.h; path = parser/HTMLParserOptions.h; sourceTree = "<group>"; };
 		974187D016A7932200FA77A7 /* HTMLParserThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLParserThread.cpp; path = parser/HTMLParserThread.cpp; sourceTree = "<group>"; };
 		974187D116A7932200FA77A7 /* HTMLParserThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLParserThread.h; path = parser/HTMLParserThread.h; sourceTree = "<group>"; };
-		9746AF1114F4DDE6003E7A72 /* Coordinates.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Coordinates.cpp; path = Modules/geolocation/Coordinates.cpp; sourceTree = "<group>"; };
 		9746AF1114F4DDE6003E7A70 /* Coordinates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Coordinates.h; path = Modules/geolocation/Coordinates.h; sourceTree = "<group>"; };
+		9746AF1114F4DDE6003E7A72 /* Coordinates.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Coordinates.cpp; path = Modules/geolocation/Coordinates.cpp; sourceTree = "<group>"; };
 		9746AF1214F4DDE6003E7A70 /* Coordinates.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Coordinates.idl; path = Modules/geolocation/Coordinates.idl; sourceTree = "<group>"; };
 		9746AF1314F4DDE6003E7A70 /* Geolocation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Geolocation.cpp; path = Modules/geolocation/Geolocation.cpp; sourceTree = "<group>"; };
 		9746AF1414F4DDE6003E7A70 /* Geolocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Geolocation.h; path = Modules/geolocation/Geolocation.h; sourceTree = "<group>"; };
@@ -13940,6 +13942,8 @@
 		E14F1C4314B5DAC600EA9009 /* HTMLFormControlElementWithState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLFormControlElementWithState.h; sourceTree = "<group>"; };
 		E1513D4E1677EA8300149FCB /* InitializeLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InitializeLogging.h; sourceTree = "<group>"; };
 		E1513D501677F08800149FCB /* NotImplemented.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NotImplemented.cpp; sourceTree = "<group>"; };
+		E152551316FD234F003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreResourceHandleAsOperationQueueDelegate.h; sourceTree = "<group>"; };
+		E152551416FD234F003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreResourceHandleAsOperationQueueDelegate.mm; sourceTree = "<group>"; };
 		E15A36D61104572000B7B639 /* XMLNSNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLNSNames.h; sourceTree = "<group>"; };
 		E15A36D81104572700B7B639 /* XMLNSNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLNSNames.cpp; sourceTree = "<group>"; };
 		E169803C1133542D00894115 /* CRuntimeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CRuntimeObject.h; sourceTree = "<group>"; };
@@ -16349,8 +16353,10 @@
 				514C764B0CE9234E007EF3CD /* ResourceResponseMac.mm */,
 				1FAFBF1615A5FA5200083A20 /* UTIUtilities.h */,
 				1FAFBF1715A5FA5200083A20 /* UTIUtilities.mm */,
-				E180810C16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.mm */,
 				E180810D16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.h */,
+				E180810C16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.mm */,
+				E152551316FD234F003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.h */,
+				E152551416FD234F003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.mm */,
 				E180811416FCF9CB00B80D07 /* SynchronousLoaderClient.mm */,
 				37F818FB0D657606005E1F05 /* WebCoreURLResponse.h */,
 				37F818FC0D657606005E1F05 /* WebCoreURLResponse.mm */,
@@ -26786,6 +26792,7 @@
 				50E18CDA16F9285800C65486 /* StyleCustomFilterProgramCache.h in Headers */,
 				E180810F16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.h in Headers */,
 				E180811716FCF9CB00B80D07 /* SynchronousLoaderClient.h in Headers */,
+				E152551516FD2350003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -29997,6 +30004,7 @@
 				E180810E16FCECDF00B80D07 /* WebCoreResourceHandleAsDelegate.mm in Sources */,
 				E180811216FCF42F00B80D07 /* SynchronousLoaderClient.cpp in Sources */,
 				E180811616FCF9CB00B80D07 /* SynchronousLoaderClient.mm in Sources */,
+				E152551616FD2350003D7ADB /* WebCoreResourceHandleAsOperationQueueDelegate.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

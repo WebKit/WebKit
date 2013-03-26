@@ -36,7 +36,6 @@
 #include "WebPageProxyMessages.h"
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/AuthenticationClient.h>
-#include <wtf/Atomics.h>
 
 #if ENABLE(NETWORK_PROCESS)
 #include "NetworkProcessProxyMessages.h"
@@ -48,8 +47,10 @@ namespace WebKit {
 
 static uint64_t generateAuthenticationChallengeID()
 {
+    ASSERT(isMainThread());
+
     static int64_t uniqueAuthenticationChallengeID;
-    return atomicIncrement(&uniqueAuthenticationChallengeID);
+    return ++uniqueAuthenticationChallengeID;
 }
 
 const char* AuthenticationManager::supplementName()
@@ -65,6 +66,8 @@ AuthenticationManager::AuthenticationManager(ChildProcess* process)
 
 uint64_t AuthenticationManager::establishIdentifierForChallenge(const WebCore::AuthenticationChallenge& authenticationChallenge)
 {
+    ASSERT(isMainThread());
+
     uint64_t challengeID = generateAuthenticationChallengeID();
     m_challenges.set(challengeID, authenticationChallenge);
     return challengeID;
@@ -103,6 +106,8 @@ bool AuthenticationManager::tryUsePlatformCertificateInfoForChallenge(const WebC
 
 void AuthenticationManager::useCredentialForChallenge(uint64_t challengeID, const Credential& credential, const PlatformCertificateInfo& certificateInfo)
 {
+    ASSERT(isMainThread());
+
     AuthenticationChallenge challenge = m_challenges.take(challengeID);
     ASSERT(!challenge.isNull());
     
@@ -121,6 +126,8 @@ void AuthenticationManager::useCredentialForChallenge(uint64_t challengeID, cons
 
 void AuthenticationManager::continueWithoutCredentialForChallenge(uint64_t challengeID)
 {
+    ASSERT(isMainThread());
+
     AuthenticationChallenge challenge = m_challenges.take(challengeID);
     ASSERT(!challenge.isNull());
     AuthenticationClient* coreClient = challenge.authenticationClient();
@@ -135,6 +142,8 @@ void AuthenticationManager::continueWithoutCredentialForChallenge(uint64_t chall
 
 void AuthenticationManager::cancelChallenge(uint64_t challengeID)
 {
+    ASSERT(isMainThread());
+
     AuthenticationChallenge challenge = m_challenges.take(challengeID);
     ASSERT(!challenge.isNull());
     AuthenticationClient* coreClient = challenge.authenticationClient();

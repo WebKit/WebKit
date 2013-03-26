@@ -66,13 +66,6 @@ void NetworkProcessConnection::didReceiveMessage(CoreIPC::Connection* connection
 
 void NetworkProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
 {
-    if (decoder.messageReceiverName() == Messages::WebResourceLoader::messageReceiverName()) {
-        if (WebResourceLoader* webResourceLoader = WebProcess::shared().webResourceLoadScheduler().webResourceLoaderForIdentifier(decoder.destinationID()))
-            webResourceLoader->didReceiveSyncWebResourceLoaderMessage(connection, decoder, replyEncoder);
-        
-        return;
-    }
-
     ASSERT_NOT_REACHED();
 }
 

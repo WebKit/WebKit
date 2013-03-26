@@ -64,7 +64,6 @@ public:
     uint64_t destinationID() const;
 
     void didReceiveWebResourceLoaderMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
-    void didReceiveSyncWebResourceLoaderMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
 
     WebCore::ResourceLoader* resourceLoader() const { return m_coreLoader.get(); }
 
@@ -73,14 +72,14 @@ private:
 
     void cancelResourceLoader();
 
-    void willSendRequest(const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse, WebCore::ResourceRequest& newRequest);
+    void willSendRequest(const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse);
     void didReceiveResponseWithCertificateInfo(const WebCore::ResourceResponse&, const PlatformCertificateInfo&);
     void didReceiveData(const CoreIPC::DataReference&, int64_t encodedDataLength);
     void didFinishResourceLoad(double finishTime);
     void didFailResourceLoad(const WebCore::ResourceError&);
     void didReceiveResource(const ShareableResource::Handle&, double finishTime);
 
-    void canAuthenticateAgainstProtectionSpace(const WebCore::ProtectionSpace&, bool& result);
+    void canAuthenticateAgainstProtectionSpace(const WebCore::ProtectionSpace&);
 
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
 };

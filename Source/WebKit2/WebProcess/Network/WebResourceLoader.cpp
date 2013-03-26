@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "DataReference.h"
 #include "Logging.h"
 #include "NetworkProcessConnection.h"
+#include "NetworkResourceLoaderMessages.h"
 #include "PlatformCertificateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebErrors.h"
@@ -72,12 +73,13 @@ void WebResourceLoader::cancelResourceLoader()
     m_coreLoader->cancel();
 }
 
-void WebResourceLoader::willSendRequest(const ResourceRequest& proposedRequest, const ResourceResponse& redirectResponse, ResourceRequest& newRequest)
+void WebResourceLoader::willSendRequest(const ResourceRequest& proposedRequest, const ResourceResponse& redirectResponse)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::willSendRequest to '%s'", proposedRequest.url().string().utf8().data());
     
-    newRequest = proposedRequest;
+    ResourceRequest newRequest = proposedRequest;
     m_coreLoader->willSendRequest(newRequest, redirectResponse);
+    send(Messages::NetworkResourceLoader::ContinueWillSendRequest(newRequest));
 }
 
 void WebResourceLoader::didReceiveResponseWithCertificateInfo(const ResourceResponse& response, const PlatformCertificateInfo& certificateInfo)
@@ -125,9 +127,10 @@ void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& hand
     m_coreLoader->didFinishLoading(finishTime);
 }
 
-void WebResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace, bool& result)
+void WebResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)
 {
-    result = m_coreLoader->canAuthenticateAgainstProtectionSpace(protectionSpace);
+    bool result = m_coreLoader->canAuthenticateAgainstProtectionSpace(protectionSpace);
+    send(Messages::NetworkResourceLoader::ContinueCanAuthenticateAgainstProtectionSpace(result));
 }
 
 } // namespace WebKit

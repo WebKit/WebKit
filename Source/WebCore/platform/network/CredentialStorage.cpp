@@ -33,6 +33,7 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -40,12 +41,14 @@ namespace WebCore {
 typedef HashMap<ProtectionSpace, Credential> ProtectionSpaceToCredentialMap;
 static ProtectionSpaceToCredentialMap& protectionSpaceToCredentialMap()
 {
+    ASSERT(isMainThread());
     DEFINE_STATIC_LOCAL(ProtectionSpaceToCredentialMap, map, ());
     return map;
 }
 
 static HashSet<String>& originsWithCredentials()
 {
+    ASSERT(isMainThread());
     DEFINE_STATIC_LOCAL(HashSet<String>, set, ());
     return set;
 }
@@ -53,6 +56,7 @@ static HashSet<String>& originsWithCredentials()
 typedef HashMap<String, ProtectionSpace> PathToDefaultProtectionSpaceMap;
 static PathToDefaultProtectionSpaceMap& pathToDefaultProtectionSpaceMap()
 {
+    ASSERT(isMainThread());
     DEFINE_STATIC_LOCAL(PathToDefaultProtectionSpaceMap, map, ());
     return map;
 }

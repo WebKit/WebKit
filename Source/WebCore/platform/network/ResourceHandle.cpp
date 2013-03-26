@@ -147,6 +147,26 @@ void ResourceHandle::setClient(ResourceHandleClient* client)
     d->m_client = client;
 }
 
+#if !PLATFORM(MAC)
+// ResourceHandle never uses async client calls on these platforms yet.
+void ResourceHandle::continueWillSendRequest(const ResourceRequest&)
+{
+    ASSERT_NOT_REACHED();
+}
+
+void ResourceHandle::continueShouldUseCredentialStorage(bool)
+{
+    ASSERT_NOT_REACHED();
+}
+
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+void ResourceHandle::continueCanAuthenticateAgainstProtectionSpace(bool)
+{
+    ASSERT_NOT_REACHED();
+}
+#endif
+#endif
+
 ResourceRequest& ResourceHandle::firstRequest()
 {
     return d->m_firstRequest;
