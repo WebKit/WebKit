@@ -124,7 +124,7 @@ PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape
         const BasicShapeCircle* circle = static_cast<const BasicShapeCircle*>(basicShape);
         float centerX = floatValueForLength(circle->centerX(), boxWidth);
         float centerY = floatValueForLength(circle->centerY(), boxHeight);
-        float radius =  floatValueForLength(circle->radius(), std::max(boxHeight, boxWidth));
+        float radius = floatValueForLength(circle->radius(), std::min(boxHeight, boxWidth));
         FloatPoint logicalCenter = physicalPointToLogical(FloatPoint(centerX, centerY), logicalBoxHeight, writingMode);
 
         exclusionShape = createExclusionCircle(logicalCenter, radius);

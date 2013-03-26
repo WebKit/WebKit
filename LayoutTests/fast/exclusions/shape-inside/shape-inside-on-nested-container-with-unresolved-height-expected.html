@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.parent {
+    background-color: green;
+    width: 300px;
+    border: 1px solid blue;
+}
+.container {
+    background-color: yellow;
+}
+</style>
+</head>
+<body>
+
+<div class="parent">
+    <div class="container">
+        But humane Starbuck was too late. At the instant of the dart an ulcerous jet shot from this cruel wound, and goaded by it into more than sufferable anguish,
+        the whale now spouting thick blood, with swift fury blindly darted at the craft, bespattering them and their glorying crews all over with showers of gore, capsizing
+        Flask's boat and marring the bows.
+    </div>
+</div>
+
+<p>We have two containers, a shape-inside: circle property is applied on the nested container. Since the nested container's height is not resolvable, we shouldn't apply the circle shape-inside on the content. <br/>We should see the content inside a 300px wide green container, the text shouldn't form any circular shape.</p>
+<p>Bug <a href="http://webkit.org/b/113255 ">113255</a>: The radius of a circle should be computed based on the shorter available dimensions</p>
+
+</body>
+</html>
