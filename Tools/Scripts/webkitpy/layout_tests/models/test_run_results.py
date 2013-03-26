@@ -192,7 +192,6 @@ def summarize_results(port_obj, expectations, initial_results, retry_results, en
                     if enabled_pixel_tests_in_retry and result_type == test_expectations.TEXT and retry_result_type == test_expectations.IMAGE_PLUS_TEXT:
                         num_regressions += 1
                     else:
-                        actual.append(keywords[retry_result_type])
                         num_flaky += 1
                     actual.append(keywords[retry_result_type])
                 else:

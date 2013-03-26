@@ -1,3 +1,10 @@
+2013-03-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove one more line that was intended to be removed in r146657.
+
+        * Scripts/webkitpy/layout_tests/models/test_run_results.py:
+        (summarize_results):
+
 2013-03-25  Roger Fong  <roger_fong@apple.com>
 
         No longer run bindings tests on WinEWS bots which are causing hangs on the bots.
