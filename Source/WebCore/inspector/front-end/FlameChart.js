@@ -451,7 +451,7 @@ WebInspector.FlameChart.prototype = {
         if (!timelineData)
             return -1;
         var timelineEntries = timelineData.entries;
-        var cursorTime = Math.floor((x + this._pixelWindowLeft) * this._pixelToTime);
+        var cursorTime = (x + this._pixelWindowLeft) * this._pixelToTime;
         var cursorLevel = Math.floor((this._canvas.height - y) / this._barHeight);
 
         for (var i = 0; i < timelineEntries.length; ++i) {
