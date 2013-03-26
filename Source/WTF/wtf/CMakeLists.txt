@@ -89,6 +89,7 @@ set(WTF_HEADERS
     Platform.h
     PossiblyNull.h
     PrintStream.h
+    ProcessID.h
     RandomNumber.h
     RandomNumberSeed.h
     RawPointer.h

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2011, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -60,7 +60,9 @@
 #include "StrictEvalActivation.h"
 #include "StrongInlines.h"
 #include "UnlinkedCodeBlock.h"
+#include <wtf/ProcessID.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/StringPrintStream.h>
 #include <wtf/Threading.h>
 #include <wtf/WTFThreadData.h>
 
@@ -247,8 +249,16 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, HeapType heapType)
 
     LLInt::Data::performAssertions(*this);
     
-    if (Options::enableProfiler())
+    if (Options::enableProfiler()) {
         m_perBytecodeProfiler = adoptPtr(new Profiler::Database(*this));
+
+        StringPrintStream pathOut;
+        const char* profilerPath = getenv("JSC_PROFILER_PATH");
+        if (profilerPath)
+            pathOut.print(profilerPath, "/");
+        pathOut.print("JSCProfile-", getCurrentProcessID(), "-", m_perBytecodeProfiler->databaseID(), ".json");
+        m_perBytecodeProfiler->registerToSaveAtExit(pathOut.toCString().data());
+    }
 
 #if ENABLE(DFG_JIT)
     if (canUseJIT())

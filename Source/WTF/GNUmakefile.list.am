@@ -139,6 +139,7 @@ wtf_sources += \
     Source/WTF/wtf/PossiblyNull.h \
     Source/WTF/wtf/PrintStream.cpp \
     Source/WTF/wtf/PrintStream.h \
+    Source/WTF/wtf/ProcessID.h \
     Source/WTF/wtf/RandomNumber.cpp \
     Source/WTF/wtf/RandomNumber.h \
     Source/WTF/wtf/RandomNumberSeed.h \

@@ -1,3 +1,28 @@
+2013-03-23  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC_enableProfiler=true should also cause JSGlobalData to save the profiler output somewhere
+        https://bugs.webkit.org/show_bug.cgi?id=113144
+
+        Reviewed by Geoffrey Garen.
+        
+        I got tired of the fact that getpid(2) is not a syscall on Windows (unless you do
+        _getpid() I believe), so I wrote a header that abstracts it. I also changed existing
+        code that uses getpid() to use WTF::getCurrentProcessID().
+
+        * GNUmakefile.list.am:
+        * WTF.gypi:
+        * WTF.pro:
+        * WTF.vcproj/WTF.vcproj:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/CMakeLists.txt:
+        * wtf/MetaAllocator.cpp:
+        (WTF::MetaAllocator::dumpProfile):
+        * wtf/ProcessID.h: Added.
+        (WTF):
+        (WTF::getCurrentProcessID):
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringStats::printStats):
+
 2013-03-25  Kent Tamura  <tkent@chromium.org>
 
         Rename ENABLE_INPUT_TYPE_DATETIME

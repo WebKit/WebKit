@@ -84,6 +84,7 @@
             'wtf/Platform.h',
             'wtf/PossiblyNull.h',
             'wtf/PrintStream.h',
+            'wtf/ProcessID.h',
             'wtf/RandomNumber.h',
             'wtf/RawPointer.h',
             'wtf/RefCounted.h',

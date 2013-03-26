@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +45,8 @@ public:
     JS_EXPORT_PRIVATE Database(JSGlobalData&);
     JS_EXPORT_PRIVATE ~Database();
     
+    int databaseID() const { return m_databaseID; }
+    
     Bytecodes* ensureBytecodesFor(CodeBlock*);
     void notifyDestruction(CodeBlock*);
     
@@ -65,12 +67,24 @@ public:
     // save failed.
     JS_EXPORT_PRIVATE bool save(const char* filename) const;
 
+    void registerToSaveAtExit(const char* filename);
+    
 private:
 
+    void addDatabaseToAtExit();
+    void removeDatabaseFromAtExit();
+    void performAtExitSave() const;
+    static Database* removeFirstAtExitDatabase();
+    static void atExitCallback();
+    
+    int m_databaseID;
     JSGlobalData& m_globalData;
     SegmentedVector<Bytecodes> m_bytecodes;
     HashMap<CodeBlock*, Bytecodes*> m_bytecodesMap;
     Vector<RefPtr<Compilation> > m_compilations;
+    bool m_shouldSaveAtExit;
+    CString m_atExitSaveFilename;
+    Database* m_nextRegisteredDatabase;
 };
 
 } } // namespace JSC::Profiler

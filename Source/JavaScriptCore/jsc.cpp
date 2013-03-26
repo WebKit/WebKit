@@ -764,7 +764,7 @@ int jscmain(int argc, char** argv)
     JSLockHolder lock(globalData.get());
     int result;
 
-    if (options.m_profile)
+    if (options.m_profile && !globalData->m_perBytecodeProfiler)
         globalData->m_perBytecodeProfiler = adoptPtr(new Profiler::Database(*globalData));
     
     GlobalObject* globalObject = GlobalObject::create(*globalData, GlobalObject::createStructure(*globalData, jsNull()), options.m_arguments);
