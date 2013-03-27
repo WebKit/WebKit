@@ -272,6 +272,14 @@ WebInspector.SASSSourceMapping.prototype = {
         return new WebInspector.CSSLocation(uiSourceCode.url || "", lineNumber, columnNumber);
     },
 
+    /**
+     * @return {boolean}
+     */
+    isIdentity: function()
+    {
+        return false;
+    },
+
     _reset: function()
     {
         this._sourceMapByURL = {};

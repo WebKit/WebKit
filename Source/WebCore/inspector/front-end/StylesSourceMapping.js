@@ -69,6 +69,14 @@ WebInspector.StylesSourceMapping.prototype = {
         return new WebInspector.CSSLocation(uiSourceCode.url || "", lineNumber);
     },
 
+    /**
+     * @return {boolean}
+     */
+    isIdentity: function()
+    {
+        return true;
+    },
+
     _resourceAdded: function(event)
     {
         var resource = /** @type {WebInspector.UISourceCode} */ (event.data);

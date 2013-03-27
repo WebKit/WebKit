@@ -487,6 +487,14 @@ WebInspector.SnippetScriptMapping.prototype = {
     },
 
     /**
+     * @return {boolean}
+     */
+    isIdentity: function()
+    {
+        return true;
+    },
+
+    /**
      * @param {string} sourceURL
      * @return {string|null}
      */

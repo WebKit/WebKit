@@ -71,6 +71,14 @@ WebInspector.DefaultScriptMapping.prototype = {
     },
 
     /**
+     * @return {boolean}
+     */
+    isIdentity: function()
+    {
+        return true;
+    },
+
+    /**
      * @param {WebInspector.Script} script
      */
     addScript: function(script)

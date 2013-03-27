@@ -19,6 +19,11 @@ function test()
             if (!uiSourceCodes[uiSourceCode.url])
                 return null;
             return new WebInspector.DebuggerModel.Location(uiSourceCode.url, lineNumber, 0);
+        },
+
+        isIdentity: function()
+        {
+            return true;
         }
     };
 
@@ -33,6 +38,11 @@ function test()
         uiLocationToRawLocation: function(uiSourceCode, lineNumber)
         {
             return new WebInspector.DebuggerModel.Location(uiSourceCode.url, lineNumber - 10, 0);
+        },
+
+        isIdentity: function()
+        {
+            return false;
         }
     };
 
@@ -50,28 +60,74 @@ function test()
             this._scripts[scriptId].pushSourceMapping(this._sourceMapping);
         },
 
+        _scriptForURL: function(url)
+        {
+            for (var scriptId in this._scripts) {
+                var script = this._scripts[scriptId];
+                if (script.sourceURL === url)
+                    return script;
+            }
+       },
+
+        _scheduleSetBeakpointCallback: function(callback, breakpointId, locations)
+        {
+            setTimeout(innerCallback.bind(this), 0);
+
+            function innerCallback()
+            {
+                if (callback)
+                    callback(breakpointId, locations);
+                if (window.setBreakpointCallback) {
+                    var savedCallback = window.setBreakpointCallback;
+                    delete window.setBreakpointCallback;
+                    savedCallback();
+                }
+            }
+        },
+
+        setBreakpointByURL: function(url, lineNumber, columnNumber, condition, callback)
+        {
+            var breakpointId = url + ":" + lineNumber;
+            if (this._breakpoints[breakpointId]) {
+                this._scheduleSetBeakpointCallback(callback, null);
+                return;
+            }
+
+            this._breakpoints[breakpointId] = true;
+            InspectorTest.addResult("    debuggerModel.setBreakpoint(" + [url, lineNumber, condition].join(":") + ")");
+
+            var locations = [];
+            var script = this._scriptForURL(url);
+            if (script) {
+                var location = new WebInspector.DebuggerModel.Location(script.scriptId, lineNumber, 0);
+                locations.push(location);
+            }
+
+            this._scheduleSetBeakpointCallback(callback, breakpointId, locations);
+        },
+
         setBreakpointByScriptLocation: function(location, condition, callback)
         {
             var breakpointId = location.scriptId + ":" + location.lineNumber;
             if (this._breakpoints[breakpointId]) {
-                callback(null);
+                this._scheduleSetBeakpointCallback(callback, null);
                 return;
             }
 
             this._breakpoints[breakpointId] = true;
             InspectorTest.addResult("    debuggerModel.setBreakpoint(" + [location.scriptId, location.lineNumber, condition].join(":") + ")");
-            if (!callback)
-                return;
+
             if (location.lineNumber >= 2000) {
-                callback(breakpointId, []);
+                this._scheduleSetBeakpointCallback(callback, breakpointId, []);
                 return;
             }
             if (location.lineNumber >= 1000) {
                 var shiftedLocation = {scriptId: location.scriptId, lineNumber: location.lineNumber + 10, columnNumber: location.columnNumber };
-                callback(breakpointId, [shiftedLocation]);
+                this._scheduleSetBeakpointCallback(callback, breakpointId, [shiftedLocation]);
                 return;
             }
-            callback(breakpointId, [location]);
+
+            this._scheduleSetBeakpointCallback(callback, breakpointId, [location]);
         },
 
         removeBreakpoint: function(breakpointId, callback)
@@ -238,7 +294,12 @@ function test()
             var breakpointManager = createBreakpointManager();
             var uiSourceCode = addUISourceCode(breakpointManager, "a.js");
             setBreakpoint(breakpointManager, uiSourceCode, 30, "", true);
-            resetBreakpointManager(breakpointManager, next);
+            window.setBreakpointCallback = step2.bind(this);
+
+            function step2()
+            {
+                resetBreakpointManager(breakpointManager, next);
+            }
         },
 
         function testSetDisabledBreakpoint(next)
@@ -249,7 +310,12 @@ function test()
             dumpBreakpointStorage(breakpointManager);
             InspectorTest.addResult("  Enabling breakpoint");
             breakpoint.setEnabled(true);
-            resetBreakpointManager(breakpointManager, next);
+            window.setBreakpointCallback = step2.bind(this);
+
+            function step2()
+            {
+                resetBreakpointManager(breakpointManager, next);
+            }
         },
 
         function testSetConditionalBreakpoint(next)
@@ -257,17 +323,32 @@ function test()
             var breakpointManager = createBreakpointManager();
             var uiSourceCode = addUISourceCode(breakpointManager, "a.js");
             var breakpoint = setBreakpoint(breakpointManager, uiSourceCode, 30, "condition", true);
-            dumpBreakpointStorage(breakpointManager);
-            InspectorTest.addResult("  Updating condition");
-            breakpoint.setCondition("");
-            resetBreakpointManager(breakpointManager, next);
+            window.setBreakpointCallback = step2.bind(this);
+
+            function step2()
+            {
+                dumpBreakpointStorage(breakpointManager);
+                InspectorTest.addResult("  Updating condition");
+                breakpoint.setCondition("");
+                window.setBreakpointCallback = step3.bind(this);
+            }
+
+            function step3()
+            {
+                resetBreakpointManager(breakpointManager, next);
+            }
         },
 
         function testRestoreBreakpoints(next)
         {
             var breakpointManager = createBreakpointManager(serializedBreakpoints);
             addUISourceCode(breakpointManager, "a.js");
-            resetBreakpointManager(breakpointManager, next);
+            window.setBreakpointCallback = step2.bind(this);
+
+            function step2()
+            {
+                resetBreakpointManager(breakpointManager, next);
+            }
         },
 
         function testRestoreBreakpointsTwice(next)
@@ -275,27 +356,33 @@ function test()
             var breakpointManager = createBreakpointManager(serializedBreakpoints);
             addUISourceCode(breakpointManager, "a.js");
             addUISourceCode(breakpointManager, "a.js");
-            resetBreakpointManager(breakpointManager, next);
-        },
+            window.setBreakpointCallback = step2.bind(this);
 
-        function testRestoreBreakpointsAfterTemporaryUISourceCodeRemoved(next)
-        {
-            var breakpointManager = createBreakpointManager(serializedBreakpoints);
-            addTemporaryUISourceCode(breakpointManager, "a.js");
-            addUISourceCode(breakpointManager, "a.js");
-            resetBreakpointManager(breakpointManager, next);
+            function step2()
+            {
+                resetBreakpointManager(breakpointManager, next);
+            }
         },
 
         function testRemoveBreakpoints(next)
         {
             var breakpointManager = createBreakpointManager(serializedBreakpoints);
             var uiSourceCode = addUISourceCode(breakpointManager, "a.js");
-            setBreakpoint(breakpointManager, uiSourceCode, 30, "", true);
+            window.setBreakpointCallback = step2.bind(this);
 
-            removeBreakpoint(breakpointManager, uiSourceCode, 30);
-            removeBreakpoint(breakpointManager, uiSourceCode, 10);
-            removeBreakpoint(breakpointManager, uiSourceCode, 20);
-            resetBreakpointManager(breakpointManager, next);
+            function step2()
+            {
+                setBreakpoint(breakpointManager, uiSourceCode, 30, "", true);
+                window.setBreakpointCallback = step3.bind(this);
+            }
+
+            function step3()
+            {
+                removeBreakpoint(breakpointManager, uiSourceCode, 30);
+                removeBreakpoint(breakpointManager, uiSourceCode, 10);
+                removeBreakpoint(breakpointManager, uiSourceCode, 20);
+                resetBreakpointManager(breakpointManager, next);
+            }
         },
 
         function testSetBreakpointThatShifts(next)
@@ -303,7 +390,12 @@ function test()
             var breakpointManager = createBreakpointManager();
             var uiSourceCode = addUISourceCode(breakpointManager, "a.js");
             setBreakpoint(breakpointManager, uiSourceCode, 1015, "", true);
-            resetBreakpointManager(breakpointManager, next);
+            window.setBreakpointCallback = step2.bind(this);
+
+            function step2()
+            {
+                resetBreakpointManager(breakpointManager, next);
+            }
         },
 
         function testSetBreakpointThatShiftsTwice(next)
@@ -311,8 +403,18 @@ function test()
             var breakpointManager = createBreakpointManager();
             var uiSourceCode = addUISourceCode(breakpointManager, "a.js");
             setBreakpoint(breakpointManager, uiSourceCode, 1015, "", true);
-            setBreakpoint(breakpointManager, uiSourceCode, 1015, "", true);
-            resetBreakpointManager(breakpointManager, next);
+            window.setBreakpointCallback = step2.bind(this);
+
+            function step2()
+            {
+                setBreakpoint(breakpointManager, uiSourceCode, 1015, "", true);
+                window.setBreakpointCallback = step3.bind(this);
+            }
+
+            function step3()
+            {
+                resetBreakpointManager(breakpointManager, next);
+            }
         },
 
         function testSetBreakpointOutsideScript(next)
@@ -320,28 +422,46 @@ function test()
             var breakpointManager = createBreakpointManager([]);
             var uiSourceCode = addUISourceCode(breakpointManager, "a.js");
             breakpointManager.setBreakpoint(uiSourceCode, 2500, "", true);
-            resetBreakpointManager(breakpointManager, next);
-        },
+            window.setBreakpointCallback = step2.bind(this);
+
+            function step2()
+            {
+                resetBreakpointManager(breakpointManager, next);
+            }
+       },
 
         function testNavigation(next)
         {
             var breakpointManager = createBreakpointManager(serializedBreakpoints);
             var uiSourceCodeA = addUISourceCode(breakpointManager, "a.js");
+            window.setBreakpointCallback = step2.bind(this);
 
-            InspectorTest.addResult("\n  Navigating to B.");
-            breakpointManager._debuggerModel.reset();
-            resetWorkspace(breakpointManager);
-            var uiSourceCodeB = addUISourceCode(breakpointManager, "b.js");
+            function step2()
+            {
+                InspectorTest.addResult("\n  Navigating to B.");
+                breakpointManager._debuggerModel.reset();
+                resetWorkspace(breakpointManager);
+                var uiSourceCodeB = addUISourceCode(breakpointManager, "b.js");
+                window.setBreakpointCallback = step3.bind(this);
+            }
 
-            InspectorTest.addResult("\n  Navigating back to A.");
-            breakpointManager._debuggerModel.reset();
-            resetWorkspace(breakpointManager);
-            InspectorTest.addResult("  Resolving provisional breakpoint.");
-            addTemporaryUISourceCode(breakpointManager, "a.js")            
-            var eventData = { breakpointId: "a.js:10", location: { scriptId: "a.js", lineNumber: 11, columnNumber: 5 }};
-            breakpointManager._debuggerModel.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointResolved, eventData);
-            addUISourceCode(breakpointManager, "a.js");
-            resetBreakpointManager(breakpointManager, next);
+            function step3()
+            {
+                InspectorTest.addResult("\n  Navigating back to A.");
+                breakpointManager._debuggerModel.reset();
+                resetWorkspace(breakpointManager);
+                InspectorTest.addResult("  Resolving provisional breakpoint.");
+                addTemporaryUISourceCode(breakpointManager, "a.js")            
+                var eventData = { breakpointId: "a.js:10", location: { scriptId: "a.js", lineNumber: 11, columnNumber: 5 }};
+                breakpointManager._debuggerModel.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointResolved, eventData);
+                addUISourceCode(breakpointManager, "a.js");
+                window.setBreakpointCallback = step4.bind(this);
+            }
+
+            function step4()
+            {
+                resetBreakpointManager(breakpointManager, next);
+            }
         },
 
         function testSourceMapping(next)
@@ -353,11 +473,21 @@ function test()
 
             var breakpointManager = createBreakpointManager(serializedBreakpoints);
             var uiSourceCodeA = addUISourceCode(breakpointManager, "a.js");
-            InspectorTest.addResult("\n  Toggling source mapping.");
-            breakpointManager._debuggerModel.pushSourceMapping(shiftingMapping);
-            InspectorTest.addResult("\n  Toggling source mapping back.");
-            breakpointManager._debuggerModel.disableSourceMapping(shiftingMapping);
-            resetBreakpointManager(breakpointManager, next);
+            window.setBreakpointCallback = step2.bind(this);
+
+            function step2()
+            {
+                window.setBreakpointCallback = step3.bind(this);
+            }
+
+            function step3()
+            {
+                InspectorTest.addResult("\n  Toggling source mapping.");
+                breakpointManager._debuggerModel.pushSourceMapping(shiftingMapping);
+                InspectorTest.addResult("\n  Toggling source mapping back.");
+                breakpointManager._debuggerModel.disableSourceMapping(shiftingMapping);
+                resetBreakpointManager(breakpointManager, next);
+            }
         },
 
         function testProvisionalBreakpointsResolve(next)
@@ -367,16 +497,21 @@ function test()
 
             var breakpointManager = createBreakpointManager(serializedBreakpoints);
             var uiSourceCode = addUISourceCode(breakpointManager, "a.js");
-            breakpointManager._debuggerModel.reset();
-            resetWorkspace(breakpointManager);
-            InspectorTest.addResult("  Resolving provisional breakpoint.");
-            addTemporaryUISourceCode(breakpointManager, "a.js")            
-            var eventData = { breakpointId: "a.js:10", location: { scriptId: "a.js", lineNumber: 11, columnNumber: 5 }};
-            breakpointManager._debuggerModel.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointResolved, eventData);
-            var breakpoints = breakpointManager._breakpoints.keys();
-            InspectorTest.assertEquals(breakpoints.length, 1, "Exactly one breakpoint should be registered in breakpoint manager.");
-            InspectorTest.assertTrue(!breakpoints[0]._primaryUILocation, "_primaryUILocation field should be cleared for provisional breapoint.");
-            resetBreakpointManager(breakpointManager, next);
+            window.setBreakpointCallback = step2.bind(this);
+
+            function step2()
+            {
+                breakpointManager._debuggerModel.reset();
+                resetWorkspace(breakpointManager);
+                InspectorTest.addResult("  Resolving provisional breakpoint.");
+                addTemporaryUISourceCode(breakpointManager, "a.js")            
+                var eventData = { breakpointId: "a.js:10", location: { scriptId: "a.js", lineNumber: 11, columnNumber: 5 }};
+                breakpointManager._debuggerModel.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointResolved, eventData);
+                var breakpoints = breakpointManager._breakpoints.keys();
+                InspectorTest.assertEquals(breakpoints.length, 1, "Exactly one breakpoint should be registered in breakpoint manager.");
+                InspectorTest.assertTrue(!breakpoints[0]._primaryUILocation, "_primaryUILocation field should be cleared for provisional breapoint.");
+                resetBreakpointManager(breakpointManager, next);
+            }
         }
     ]);
 };

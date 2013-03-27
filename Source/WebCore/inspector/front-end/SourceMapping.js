@@ -48,7 +48,12 @@ WebInspector.SourceMapping.prototype = {
      * @param {number} columnNumber
      * @return {WebInspector.RawLocation}
      */
-    uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber) { }
+    uiLocationToRawLocation: function(uiSourceCode, lineNumber, columnNumber) { },
+
+    /**
+     * @return {boolean}
+     */
+    isIdentity: function() { }
 }
 
 /**

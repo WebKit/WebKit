@@ -663,8 +663,12 @@ WebInspector.UISourceCode.prototype = {
      */
     setSourceMapping: function(sourceMapping)
     {
+        var wasIdentity = this._sourceMapping ? this._sourceMapping.isIdentity() : true;
         this._sourceMapping = sourceMapping;
-        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.SourceMappingChanged, null);
+        var data = {}
+        data.isIdentity = sourceMapping ? sourceMapping.isIdentity() : true;
+        data.identityHasChanged = data.isIdentity !== wasIdentity;
+        this.dispatchEventToListeners(WebInspector.UISourceCode.Events.SourceMappingChanged, data);
     },
 
     __proto__: WebInspector.Object.prototype
