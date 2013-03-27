@@ -46,7 +46,7 @@ bool WebFormControlElement::isEnabled() const
 
 bool WebFormControlElement::isReadOnly() const
 {
-    return constUnwrap<HTMLFormControlElement>()->readOnly();
+    return constUnwrap<HTMLFormControlElement>()->isReadOnly();
 }
 
 WebString WebFormControlElement::formControlName() const

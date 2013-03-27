@@ -529,12 +529,12 @@ void HTMLTextAreaElement::attach()
 
 bool HTMLTextAreaElement::matchesReadOnlyPseudoClass() const
 {
-    return readOnly();
+    return isReadOnly();
 }
 
 bool HTMLTextAreaElement::matchesReadWritePseudoClass() const
 {
-    return !readOnly();
+    return !isReadOnly();
 }
 
 void HTMLTextAreaElement::updatePlaceholderText()

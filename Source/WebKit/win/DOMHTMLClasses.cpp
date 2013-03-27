@@ -1123,7 +1123,7 @@ HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::readOnly(
 {
     ASSERT(m_element && m_element->hasTagName(inputTag));
     HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(m_element);
-    *result = inputElement->readOnly() ? TRUE : FALSE;
+    *result = inputElement->isReadOnly() ? TRUE : FALSE;
     return S_OK;
 }
     

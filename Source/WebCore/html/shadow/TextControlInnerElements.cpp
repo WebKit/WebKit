@@ -349,7 +349,7 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
 bool InputFieldSpeechButtonElement::willRespondToMouseClickEvents()
 {
     const HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowHost());
-    if (input && !input->disabled() && !input->readOnly())
+    if (input && !input->isDisabledOrReadOnly())
         return true;
 
     return HTMLDivElement::willRespondToMouseClickEvents();
@@ -386,7 +386,7 @@ void InputFieldSpeechButtonElement::setRecognitionResult(int, const SpeechInputR
     // remove the input element from DOM. To make sure it remains valid until we finish our work
     // here, we take a temporary reference.
     RefPtr<HTMLInputElement> input(static_cast<HTMLInputElement*>(shadowHost()));
-    if (!input || input->disabled() || input->readOnly())
+    if (!input || input->isDisabledOrReadOnly())
         return;
 
     RefPtr<InputFieldSpeechButtonElement> holdRefButton(this);

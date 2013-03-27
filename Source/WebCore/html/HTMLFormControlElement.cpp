@@ -51,7 +51,7 @@ using namespace std;
 HTMLFormControlElement::HTMLFormControlElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
     : LabelableElement(tagName, document)
     , m_disabled(false)
-    , m_readOnly(false)
+    , m_isReadOnly(false)
     , m_isRequired(false)
     , m_valueMatchesRenderer(false)
     , m_ancestorDisabledState(AncestorDisabledStateUnknown)
@@ -133,9 +133,9 @@ void HTMLFormControlElement::parseAttribute(const QualifiedName& name, const Ato
         if (oldDisabled != m_disabled)
             disabledAttributeChanged();
     } else if (name == readonlyAttr) {
-        bool oldReadOnly = m_readOnly;
-        m_readOnly = !value.isNull();
-        if (oldReadOnly != m_readOnly) {
+        bool wasReadOnly = m_isReadOnly;
+        m_isReadOnly = !value.isNull();
+        if (wasReadOnly != m_isReadOnly) {
             setNeedsWillValidateCheck();
             setNeedsStyleRecalc();
             if (renderer() && renderer()->style()->hasAppearance())

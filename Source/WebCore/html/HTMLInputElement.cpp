@@ -1456,12 +1456,12 @@ bool HTMLInputElement::isRequiredFormControl() const
 
 bool HTMLInputElement::matchesReadOnlyPseudoClass() const
 {
-    return m_inputType->supportsReadOnly() && readOnly();
+    return m_inputType->supportsReadOnly() && isReadOnly();
 }
 
 bool HTMLInputElement::matchesReadWritePseudoClass() const
 {
-    return m_inputType->supportsReadOnly() && !readOnly();
+    return m_inputType->supportsReadOnly() && !isReadOnly();
 }
 
 void HTMLInputElement::addSearchResult()

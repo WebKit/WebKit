@@ -176,7 +176,7 @@ bool BaseMultipleFieldsDateAndTimeInputType::isEditControlOwnerDisabled() const
 
 bool BaseMultipleFieldsDateAndTimeInputType::isEditControlOwnerReadOnly() const
 {
-    return element()->readOnly();
+    return element()->isReadOnly();
 }
 
 void BaseMultipleFieldsDateAndTimeInputType::focusAndSelectSpinButtonOwner()

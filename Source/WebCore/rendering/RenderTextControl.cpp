@@ -82,7 +82,7 @@ static inline bool updateUserModifyProperty(Node* node, RenderStyle* style)
     if (node->isElementNode()) {
         Element* element = toElement(node);
         isEnabled = element->isEnabledFormControl();
-        isReadOnlyControl = element->isTextFormControl() && toHTMLTextFormControlElement(element)->readOnly();
+        isReadOnlyControl = element->isTextFormControl() && toHTMLTextFormControlElement(element)->isReadOnly();
     }
 
     style->setUserModify((isReadOnlyControl || !isEnabled) ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
