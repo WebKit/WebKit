@@ -1355,6 +1355,7 @@ Bug(jernoble) [ MountainLion Lion SnowLeopard ] media/video-src-blob.html
 webkit.org/b/103663 [ MountainLion Lion SnowLeopard ] media/track/track-in-band.html
 webkit.org/b/103663 [ MountainLion Lion SnowLeopard ] media/track/track-in-band-cues-added-once.html
 webkit.org/b/103663 [ MountainLion Lion SnowLeopard ] media/track/track-in-band-style.html
+webkit.org/b/103663 [ MountainLion Lion SnowLeopard ] media/track/track-in-band-legacy-api.html
 
 # These two tests sometimes timeout
 webkit.org/b/112492 media/track/track-language-preference.html [ Failure Pass ]

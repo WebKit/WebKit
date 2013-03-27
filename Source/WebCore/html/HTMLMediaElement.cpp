@@ -297,7 +297,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_lastTextTrackUpdateTime(-1)
     , m_textTracks(0)
     , m_ignoreTrackDisplayUpdate(0)
-    , m_disableCaptions(false)
 #endif
 #if ENABLE(WEB_AUDIO)
     , m_audioSourceNode(0)
@@ -317,11 +316,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
 
 #if ENABLE(VIDEO_TRACK)
     document->registerForCaptionPreferencesChangedCallbacks(this);
-    if (document->page()) {
-        CaptionUserPreferences* captionPreferences = document->page()->group().captionPreferences();
-        if (captionPreferences->userHasCaptionPreferences())
-            m_disableCaptions = !captionPreferences->shouldShowCaptions();
-    }
 #endif
 }
 
@@ -3098,7 +3092,7 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
         if (m_processingPreferenceChange && textTrack->mode() == TextTrack::showingKeyword())
             currentlyEnabledTracks.append(textTrack);
 
-        int trackScore = captionPreferences ? captionPreferences->textTrackSelectionScore(textTrack.get()) : 0;
+        int trackScore = captionPreferences ? captionPreferences->textTrackSelectionScore(textTrack.get(), this) : 0;
         if (trackScore) {
             // * If the text track kind is { [subtitles or captions] [descriptions] } and the user has indicated an interest in having a
             // track with this text track kind, text track language, and text track label enabled, and there is no
@@ -4295,10 +4289,7 @@ void HTMLMediaElement::setClosedCaptionsVisible(bool closedCaptionVisible)
 #if ENABLE(VIDEO_TRACK)
     if (RuntimeEnabledFeatures::webkitVideoTrackEnabled()) {
         m_processingPreferenceChange = true;
-        m_disableCaptions = !m_closedCaptionsVisible;
-
         markCaptionAndSubtitleTracksAsUnconfigured();
-
         updateTextTrackDisplay();
     }
 #else

@@ -37,6 +37,7 @@
 
 namespace WebCore {
 
+class HTMLMediaElement;
 class PageGroup;
 class TextTrackList;
 
@@ -49,7 +50,7 @@ public:
     virtual bool shouldShowCaptions() const;
     virtual void setShouldShowCaptions(bool);
 
-    virtual int textTrackSelectionScore(TextTrack*) const;
+    virtual int textTrackSelectionScore(TextTrack*, HTMLMediaElement*) const;
     virtual int textTrackLanguageSelectionScore(TextTrack*) const;
 
     virtual bool userPrefersCaptions() const;

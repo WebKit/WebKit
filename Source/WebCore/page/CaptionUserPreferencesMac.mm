@@ -33,6 +33,7 @@
 #import "CoreText/CoreText.h"
 #import "DOMWrapperWorld.h"
 #import "FloatConversion.h"
+#import "HTMLMediaElement.h"
 #import "KURL.h"
 #import "Language.h"
 #import "LocalizedStrings.h"
@@ -536,9 +537,9 @@ static String trackDisplayName(TextTrack* track)
     RetainPtr<CFStringRef> languageCF(AdoptCF, CFLocaleCopyDisplayNameForPropertyValue(currentLocale.get(), kCFLocaleLanguageCode, localeIdentifier.get()));
     String language = languageCF.get();
     if (!label.isEmpty()) {
-        if (language.isEmpty() || label.contains(language)) {
+        if (language.isEmpty() || label.contains(language))
             displayName.append(label);
-        } else {
+        else {
             RetainPtr<CFDictionaryRef> localeDict(AdoptCF, CFLocaleCreateComponentsFromLocaleIdentifier(kCFAllocatorDefault, localeIdentifier.get()));
             if (localeDict) {
                 CFStringRef countryCode = 0;
@@ -600,9 +601,9 @@ static String languageIdentifier(const String& languageCode)
     return lowercaseLanguageCode;
 }
 
-int CaptionUserPreferencesMac::textTrackSelectionScore(TextTrack* track) const
+int CaptionUserPreferencesMac::textTrackSelectionScore(TextTrack* track, HTMLMediaElement* mediaElement) const
 {
-    if (!shouldShowCaptions())
+    if (!shouldShowCaptions() && !mediaElement->webkitClosedCaptionsVisible())
         return 0;
     if (track->kind() != TextTrack::captionsKeyword() && track->kind() != TextTrack::subtitlesKeyword())
         return 0;

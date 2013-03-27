@@ -1622,6 +1622,7 @@ webkit.org/b/61138 http/tests/w3c/webperf/submission/Google/resource-timing [ Sk
 Bug(EFL) media/track/track-in-band.html [ Skip ]
 Bug(EFL) media/track/track-in-band-cues-added-once.html [ Skip ]
 Bug(EFL) media/track/track-in-band-style.html [ Skip ]
+Bug(EFL) media/track/track-in-band-legacy-api.html [ Skip ]
 
 # All debug bots timeout (crash) on this one
 webkit.org/b/56496 [ Debug ] fast/js/array-sort-modifying-tostring.html [ Crash Pass ]

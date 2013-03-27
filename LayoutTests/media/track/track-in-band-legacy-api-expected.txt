@@ -1,0 +1,27 @@
+Test that in-band tracks work with .webkitClosedCaptionsVisible.
+
+EVENT(canplaythrough)
+
+** Check initial in-band track states
+EXPECTED (video.textTracks.length == '1') OK
+RUN(inbandTrack1 = video.textTracks[0])
+EXPECTED (inbandTrack1.mode == 'disabled') OK
+EXPECTED (inbandTrack1.cues == 'null') OK
+EXPECTED (inbandTrack1.language == 'en') OK
+EXPECTED (inbandTrack1.kind == 'captions') OK
+
+** Enable cues and let them load
+RUN(video.webkitClosedCaptionsVisible = true)
+RUN(video.play())
+EVENT(seeked)
+
+** Test to make sure captions are displaying
+EXPECTED (inbandTrack1.cues != 'null') OK
+EXPECTED (textTrackDisplayElement(video, 'cue').textContent != 'null') OK
+
+** Disable captions, cues should be flushed
+RUN(video.webkitClosedCaptionsVisible = false)
+EXPECTED (inbandTrack1.cues == 'null') OK
+
+END OF TEST
+

@@ -705,7 +705,6 @@ private:
 
     CueList m_currentlyActiveCues;
     int m_ignoreTrackDisplayUpdate;
-    bool m_disableCaptions;
 #endif
 
 #if ENABLE(WEB_AUDIO)

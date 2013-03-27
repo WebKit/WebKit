@@ -3578,6 +3578,7 @@ webkit.org/b/94002 [ Mac Debug ] inspector/debugger/live-edit.html [ Crash Pass 
 webkit.org/b/103767  [ Win Mac Linux ] media/track/track-in-band.html [ Skip ]
 webkit.org/b/103767  [ Win Mac Linux ] media/track/track-in-band-cues-added-once.html [ Skip ]
 webkit.org/b/103767  [ Win Mac Linux ] media/track/track-in-band-style.html [ Skip ]
+webkit.org/b/103767  [ Win Mac Linux ] media/track/track-in-band-legacy-api.html [ Skip ]
 
 # Flaky on Win (perhaps due to lighttpd?)
 webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_attribute_order.html [ Failure Pass ]

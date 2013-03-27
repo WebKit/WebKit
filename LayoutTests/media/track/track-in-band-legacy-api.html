@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>In-band tracks enabled/disabled with legacy API</title>
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-controls.js></script>
+        <script>
+
+            function seeked()
+            {
+                consoleWrite("<br><i>** Test to make sure captions are displaying<" + "/i>");
+
+                testExpected("inbandTrack1.cues", null, '!=');
+                testExpected("textTrackDisplayElement(video, 'cue').textContent", null, '!=');
+
+                consoleWrite("<br><i>** Disable captions, cues should be flushed<" + "/i>");
+                run("video.webkitClosedCaptionsVisible = false");
+                testExpected("inbandTrack1.cues", null);
+
+                consoleWrite("");
+                endTest();
+            }
+
+            function canplaythrough()
+            {
+                consoleWrite("<br><i>** Check initial in-band track states<" + "/i>");
+                testExpected("video.textTracks.length", 1);
+                run("inbandTrack1 = video.textTracks[0]");
+                testExpected("inbandTrack1.mode", "disabled");
+                testExpected("inbandTrack1.cues", null);
+                testExpected("inbandTrack1.language", "en");
+                testExpected("inbandTrack1.kind", "captions");
+
+                consoleWrite("<br><i>** Enable cues and let them load<" + "/i>");
+                run("video.webkitClosedCaptionsVisible = true");
+                run("video.play()");
+                setTimeout(function() { video.pause(); video.currentTime = 0.3; }, 1000);
+            }
+
+            function setup()
+            {
+                findMediaElement();
+                video.src = '../content/counting-captioned.mov';
+                waitForEvent('seeked', seeked);
+                waitForEvent('canplaythrough', canplaythrough);
+            }
+
+        </script>
+    </head>
+    <body onload="setup()">
+        <video controls></video>
+        <p>Test that in-band tracks work with .webkitClosedCaptionsVisible.</p>
+    </body>
+</html>

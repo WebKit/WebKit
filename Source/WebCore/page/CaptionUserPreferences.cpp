@@ -192,7 +192,7 @@ Vector<RefPtr<TextTrack> > CaptionUserPreferences::sortedTrackListForMenu(TextTr
     return tracksForMenu;
 }
 
-int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track) const
+int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track, HTMLMediaElement*) const
 {
     int trackScore = 0;
 
