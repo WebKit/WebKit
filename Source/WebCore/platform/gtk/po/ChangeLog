@@ -1,3 +1,12 @@
+2013-03-27  Matej Urbančič  <mateju@svn.gnome.org>
+
+        Updated Slovenian translation
+        https://bugs.webkit.org/show_bug.cgi?id=113151
+
+        Reviewed by Gustavo Noronha Silva (kov).
+
+        * sl.po: translation update.
+
 2013-03-24  Piotr Drąg  <piotrdrag@gmail.com>
 
         [l10n] Updated Polish translation of WebKitGTK+
