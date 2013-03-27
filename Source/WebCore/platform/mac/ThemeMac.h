@@ -28,6 +28,10 @@
 
 #include "Theme.h"
 
+@interface NSFont(WebCoreTheme)
+- (NSString*)webCoreFamilyName;
+@end
+
 namespace WebCore {
 
 class ThemeMac : public Theme {

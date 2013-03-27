@@ -282,7 +282,7 @@ void RenderThemeMacShared::systemFont(int cssValueId, FontDescription& fontDescr
         NSFontManager *fontManager = [NSFontManager sharedFontManager];
         cachedDesc->setIsAbsoluteSize(true);
         cachedDesc->setGenericFamily(FontDescription::NoFamily);
-        cachedDesc->firstFamily().setFamily([font familyName]);
+        cachedDesc->firstFamily().setFamily([font webCoreFamilyName]);
         cachedDesc->setSpecifiedSize([font pointSize]);
         cachedDesc->setWeight(toFontWeight([fontManager weightOfFont:font]));
         cachedDesc->setItalic([fontManager traitsOfFont:font] & NSItalicFontMask);
@@ -689,7 +689,7 @@ void RenderThemeMacShared::setFontFromControlSize(StyleResolver*, RenderStyle* s
     fontDescription.setGenericFamily(FontDescription::SerifFamily);
 
     NSFont* font = [NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:controlSize]];
-    fontDescription.firstFamily().setFamily([font familyName]);
+    fontDescription.firstFamily().setFamily([font webCoreFamilyName]);
     fontDescription.setComputedSize([font pointSize] * style->effectiveZoom());
     fontDescription.setSpecifiedSize([font pointSize] * style->effectiveZoom());
 
