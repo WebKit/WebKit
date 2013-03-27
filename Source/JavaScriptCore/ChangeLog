@@ -1,3 +1,14 @@
+2013-03-27  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        CodeCache::m_capacity can becoming negative, producing undefined results in pruneSlowCase
+        https://bugs.webkit.org/show_bug.cgi?id=113453
+
+        Reviewed by Geoffrey Garen.
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCacheMap::pruneSlowCase): We make sure that m_minCapacity doesn't drop below zero now.
+        This prevents m_capacity from doing the same.
+
 2013-03-27  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should use CheckStructure for typed array checks whenever possible
