@@ -204,6 +204,7 @@ EXPORTS
         ??0InspectorFrontendClientLocal@WebCore@@QAE@PAVInspectorController@1@PAVPage@1@V?$PassOwnPtr@VSettings@InspectorFrontendClientLocal@WebCore@@@WTF@@@Z
         ??1InspectorFrontendClientLocal@WebCore@@UAE@XZ
         ?changeAttachedWindowHeight@InspectorFrontendClientLocal@WebCore@@UAEXI@Z
+        ?changeAttachedWindowWidth@InspectorFrontendClientLocal@WebCore@@UAEXI@Z
         ?connectFrontend@InspectorController@WebCore@@QAEXPAVInspectorFrontendChannel@2@@Z
         ?doDispatchMessageOnFrontendPage@InspectorClient@WebCore@@SA_NPAVPage@2@ABVString@WTF@@@Z
         ?frontendLoaded@InspectorFrontendClientLocal@WebCore@@UAEXXZ

@@ -1,3 +1,9 @@
+2013-03-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another Windows build fix attempt after r147004.
+
+        * WebKit.vcproj/WebKitExports.def.in:
+
 2013-03-27  Timothy Hatcher  <timothy@apple.com>
 
         Add support for dock-to-right of the Web Inspector in the Mac port.
