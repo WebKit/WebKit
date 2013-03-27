@@ -331,48 +331,40 @@ void TestRunnerQt::queueBackNavigation(int howFarBackward)
 {
     //qDebug() << ">>>queueBackNavigation" << howFarBackward;
     for (int i = 0; i != howFarBackward; ++i)
-        WorkQueue::shared()->queue(new BackItem(1, m_drt->webPage()));
+        WorkQueue::shared()->queue(new BackItem(1));
 }
 
 void TestRunnerQt::queueForwardNavigation(int howFarForward)
 {
     //qDebug() << ">>>queueForwardNavigation" << howFarForward;
     for (int i = 0; i != howFarForward; ++i)
-        WorkQueue::shared()->queue(new ForwardItem(1, m_drt->webPage()));
-}
-
-void TestRunnerQt::queueLoad(const QString& url, const QString& target)
-{
-    //qDebug() << ">>>queueLoad" << url << target;
-    QUrl mainResourceUrl = m_drt->webPage()->mainFrame()->url();
-    QString absoluteUrl = mainResourceUrl.resolved(QUrl(url)).toEncoded();
-    WorkQueue::shared()->queue(new LoadItem(absoluteUrl, target, m_drt->webPage()));
+        WorkQueue::shared()->queue(new ForwardItem(1));
 }
 
 void TestRunnerQt::queueLoadHTMLString(const QString& content, const QString& baseURL, const QString& failingURL)
 {
     if (failingURL.isEmpty())
-        WorkQueue::shared()->queue(new LoadHTMLStringItem(content, baseURL, m_drt->webPage()));
+        WorkQueue::shared()->queue(new LoadHTMLStringItem(JSStringCreateWithQString(content).get(), JSStringCreateWithQString(baseURL).get()));
     else
-        WorkQueue::shared()->queue(new LoadAlternateHTMLStringItem(content, baseURL, failingURL, m_drt->webPage()));
+        WorkQueue::shared()->queue(new LoadAlternateHTMLStringItem(JSStringCreateWithQString(content), JSStringCreateWithQString(baseURL), JSStringCreateWithQString(failingURL)));
 }
 
 void TestRunnerQt::queueReload()
 {
     //qDebug() << ">>>queueReload";
-    WorkQueue::shared()->queue(new ReloadItem(m_drt->webPage()));
+    WorkQueue::shared()->queue(new ReloadItem());
 }
 
 void TestRunnerQt::queueLoadingScript(const QString& script)
 {
     //qDebug() << ">>>queueLoadingScript" << script;
-    WorkQueue::shared()->queue(new LoadingScriptItem(script, m_drt->webPage()));
+    WorkQueue::shared()->queue(new LoadingScriptItem(JSStringCreateWithQString(script).get()));
 }
 
 void TestRunnerQt::queueNonLoadingScript(const QString& script)
 {
     //qDebug() << ">>>queueNonLoadingScript" << script;
-    WorkQueue::shared()->queue(new NonLoadingScriptItem(script, m_drt->webPage()));
+    WorkQueue::shared()->queue(new NonLoadingScriptItem(JSStringCreateWithQString(script).get()));
 }
 
 void TestRunnerQt::provisionalLoad()
@@ -829,6 +821,10 @@ void TestRunner::addDisallowedURL(JSStringRef url)
 
 void TestRunner::queueLoad(JSStringRef url, JSStringRef target)
 {
+    DumpRenderTree* drt = DumpRenderTree::instance();
+    QUrl mainResourceUrl = drt->webPage()->mainFrame()->url();
+    QString absoluteUrl = mainResourceUrl.resolved(QUrl(JSStringCopyQString(url))).toEncoded();
+    WorkQueue::shared()->queue(new LoadItem(JSStringCreateWithQString(absoluteUrl).get(), target));
 }
 
 void TestRunner::removeAllVisitedLinks()

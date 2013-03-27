@@ -1,3 +1,35 @@
+2013-03-27  Zeno Albisser  <zeno@webkit.org>
+
+        [Qt] Remove Qt specific WorkQueueItem definitions.
+        https://bugs.webkit.org/show_bug.cgi?id=112891
+
+        This patch is preparation work for removing
+        WorkQueue related code from TestRunnerQt and
+        replacing it with generic TestRunner code.
+
+        Reviewed by Benjamin Poulain.
+
+        * DumpRenderTree/qt/TestRunnerQt.cpp:
+        (TestRunnerQt::queueBackNavigation):
+        (TestRunnerQt::queueForwardNavigation):
+        (TestRunnerQt::queueLoadHTMLString):
+        (TestRunnerQt::queueReload):
+        (TestRunnerQt::queueLoadingScript):
+        (TestRunnerQt::queueNonLoadingScript):
+        (TestRunner::queueLoad):
+        * DumpRenderTree/qt/TestRunnerQt.h:
+        (TestRunnerQt):
+        * DumpRenderTree/qt/WorkQueueItemQt.cpp:
+        (LoadItem::invoke):
+        (LoadHTMLStringItem::invoke):
+        (LoadAlternateHTMLStringItem::invoke):
+        (ReloadItem::invoke):
+        (ScriptItem::invoke):
+        (BackForwardItem::invoke):
+        * DumpRenderTree/qt/WorkQueueItemQt.h:
+        (LoadAlternateHTMLStringItem::LoadAlternateHTMLStringItem):
+        (LoadAlternateHTMLStringItem):
+
 2013-03-26  Julie Parent  <jparent@chromium.org>
 
         Flakiness dashboard: simplify logic around which tests to show.

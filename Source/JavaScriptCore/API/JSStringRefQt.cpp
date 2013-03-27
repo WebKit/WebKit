@@ -38,3 +38,13 @@ QString JSStringCopyQString(JSStringRef string)
 {
     return string->qString();
 }
+
+JSRetainPtr<JSStringRef> JSStringCreateWithQString(const QString& qString)
+{
+    RefPtr<OpaqueJSString> jsString = OpaqueJSString::create(qString);
+
+    if (jsString)
+        return JSRetainPtr<JSStringRef>(Adopt, jsString.release().leakRef());
+
+    return JSRetainPtr<JSStringRef>(Adopt, OpaqueJSString::create().leakRef());
+}

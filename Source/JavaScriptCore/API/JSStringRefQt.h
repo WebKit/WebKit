@@ -28,6 +28,7 @@
 #define JSStringRefQt_h
 
 #include "JSBase.h"
+#include "JSRetainPtr.h"
 #include <QString>
 
 /* QString convenience methods */
@@ -39,5 +40,6 @@
 @result           A QString containing string.
 */
 JS_EXPORT QString JSStringCopyQString(JSStringRef string);
+JS_EXPORT JSRetainPtr<JSStringRef> JSStringCreateWithQString(const QString&);
 
 #endif /* JSStringRefQt_h */

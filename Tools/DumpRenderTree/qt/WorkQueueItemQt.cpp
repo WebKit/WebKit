@@ -28,7 +28,10 @@
  */
 #include "config.h"
 #include "WorkQueueItemQt.h"
+
+#include "DumpRenderTreeQt.h"
 #include "DumpRenderTreeSupportQt.h"
+#include "JSStringRefQt.h"
 
 QWebFrame* findFrameNamed(const QString& frameName, QWebFrame* frame)
 {
@@ -45,75 +48,80 @@ QWebFrame* findFrameNamed(const QString& frameName, QWebFrame* frame)
 bool LoadItem::invoke() const
 {
     //qDebug() << ">>>LoadItem::invoke";
-    Q_ASSERT(m_webPage);
+    WebPage* webPage = DumpRenderTree::instance()->webPage();
+    Q_ASSERT(webPage);
 
     QWebFrame* frame = 0;
-    const QString t = target();
-    if (t.isEmpty())
-        frame = m_webPage->mainFrame();
+    if (JSStringGetLength(m_target.get()))
+        frame = findFrameNamed(JSStringCopyQString(m_target.get()), webPage->mainFrame());
     else
-        frame = findFrameNamed(t, m_webPage->mainFrame());
+        frame = webPage->mainFrame();
 
     if (!frame)
         return false;
 
-    frame->load(url());
+    frame->load(QUrl(JSStringCopyQString(m_url.get())));
     return true;
 }
 
 bool LoadHTMLStringItem::invoke() const
 {
-    Q_ASSERT(m_webPage);
+    WebPage* webPage = DumpRenderTree::instance()->webPage();
+    Q_ASSERT(webPage);
 
-    QWebFrame* frame = m_webPage->mainFrame();
+    QWebFrame* frame = webPage->mainFrame();
     if (!frame)
         return false;
 
-    frame->setHtml(m_content, QUrl(m_baseURL));
+    frame->setHtml(JSStringCopyQString(m_content.get()), QUrl(JSStringCopyQString(m_baseURL.get())));
     return true;
 }
 
 bool LoadAlternateHTMLStringItem::invoke() const
 {
-    Q_ASSERT(m_webPage);
+    WebPage* webPage = DumpRenderTree::instance()->webPage();
+    Q_ASSERT(webPage);
 
-    QWebFrame* frame = m_webPage->mainFrame();
+    QWebFrame* frame = webPage->mainFrame();
     if (!frame)
         return false;
 
-    DumpRenderTreeSupportQt::setAlternateHtml(frame->handle(), m_content, QUrl(m_baseURL), QUrl(m_failingURL));
+    DumpRenderTreeSupportQt::setAlternateHtml(frame->handle(), JSStringCopyQString(m_content.get()), QUrl(JSStringCopyQString(m_baseURL.get())), QUrl(JSStringCopyQString(m_failingURL.get())));
     return true;
 }
 
 bool ReloadItem::invoke() const
 {
     //qDebug() << ">>>ReloadItem::invoke";
-    Q_ASSERT(m_webPage);
-    m_webPage->triggerAction(QWebPage::Reload);
+    WebPage* webPage = DumpRenderTree::instance()->webPage();
+    Q_ASSERT(webPage);
+    webPage->triggerAction(QWebPage::Reload);
     return true;
 }
 
 bool ScriptItem::invoke() const
 {
     //qDebug() << ">>>ScriptItem::invoke";
-    Q_ASSERT(m_webPage);
-    m_webPage->mainFrame()->evaluateJavaScript(script());
+    WebPage* webPage = DumpRenderTree::instance()->webPage();
+    Q_ASSERT(webPage);
+    webPage->mainFrame()->evaluateJavaScript(JSStringCopyQString(m_script.get()));
     return true;
 }
 
 bool BackForwardItem::invoke() const
 {
     //qDebug() << ">>>BackForwardItem::invoke";
-    Q_ASSERT(m_webPage);
+    WebPage* webPage = DumpRenderTree::instance()->webPage();
+    Q_ASSERT(webPage);
     if (!m_howFar)
         return false;
 
     if (m_howFar > 0) {
         for (int i = 0; i != m_howFar; ++i)
-            m_webPage->triggerAction(QWebPage::Forward);
+            webPage->triggerAction(QWebPage::Forward);
     } else {
         for (int i = 0; i != m_howFar; --i)
-            m_webPage->triggerAction(QWebPage::Back);
+            webPage->triggerAction(QWebPage::Back);
     }
     return true;
 }

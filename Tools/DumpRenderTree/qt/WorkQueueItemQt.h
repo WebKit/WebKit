@@ -30,61 +30,14 @@
 #ifndef WorkQueueItemQt_h
 #define WorkQueueItemQt_h
 
-#include <QPointer>
-#include <QString>
+#include "WorkQueueItem.h"
 #include <qwebframe.h>
 #include <qwebpage.h>
 
-class WorkQueueItem {
-public:
-    WorkQueueItem(QWebPage *page) : m_webPage(page) {}
-    virtual ~WorkQueueItem() { }
-    virtual bool invoke() const = 0;
-
-protected:
-    QPointer<QWebPage> m_webPage;
-};
-
-class LoadItem : public WorkQueueItem {
-public:
-    LoadItem(const QString &url, const QString &target, QWebPage *page)
-        : WorkQueueItem(page)
-        , m_url(url)
-        , m_target(target)
-    {
-    }
-
-    QString url() const { return m_url; }
-    QString target() const { return m_target; }
-
-    virtual bool invoke() const;
-
-private:
-    QString m_url;
-    QString m_target;
-};
-
-class LoadHTMLStringItem : public WorkQueueItem {
-public:
-    LoadHTMLStringItem(const QString& content, const QString &baseURL, QWebPage *page)
-        : WorkQueueItem(page)
-        , m_content(content)
-        , m_baseURL(baseURL)
-    {
-    }
-
-private:
-    virtual bool invoke() const;
-
-    QString m_content;
-    QString m_baseURL;
-};
-
 class LoadAlternateHTMLStringItem : public WorkQueueItem {
 public:
-    LoadAlternateHTMLStringItem(const QString& content, const QString& baseURL,  const QString &failingURL, QWebPage *page)
-        : WorkQueueItem(page)
-        , m_content(content)
+    LoadAlternateHTMLStringItem(const JSRetainPtr<JSStringRef>& content, const JSRetainPtr<JSStringRef>& baseURL,  const JSRetainPtr<JSStringRef>& failingURL)
+        : m_content(content)
         , m_baseURL(baseURL)
         , m_failingURL(failingURL)
     {
@@ -93,85 +46,9 @@ public:
 private:
     virtual bool invoke() const;
 
-    QString m_content;
-    QString m_baseURL;
-    QString m_failingURL;
-};
-
-class ReloadItem : public WorkQueueItem {
-public:
-    ReloadItem(QWebPage *page)
-        : WorkQueueItem(page)
-    {
-    }
-    virtual bool invoke() const;
-};
-
-class ScriptItem : public WorkQueueItem {
-public:
-    ScriptItem(const QString &script, QWebPage *page)
-        : WorkQueueItem(page)
-        , m_script(script)
-    {
-    }
-
-    QString script() const { return m_script; }
-
-    virtual bool invoke() const;
-
-private:
-    QString m_script;
-};
-
-class LoadingScriptItem : public ScriptItem {
-public:
-    LoadingScriptItem(const QString& script, QWebPage* page)
-        : ScriptItem(script, page)
-    {
-    }
-
-    virtual bool invoke() const { return ScriptItem::invoke(); }
-};
-
-class NonLoadingScriptItem : public ScriptItem {
-public:
-    NonLoadingScriptItem(const QString& script, QWebPage* page)
-        : ScriptItem(script, page)
-    {
-    }
-
-    virtual bool invoke() const { ScriptItem::invoke(); return false; }
-};
-
-
-class BackForwardItem : public WorkQueueItem {
-public:
-    virtual bool invoke() const;
-
-protected:
-    BackForwardItem(int howFar, QWebPage *page)
-        : WorkQueueItem(page)
-        , m_howFar(howFar)
-    {
-    }
-
-    int m_howFar;
-};
-
-class BackItem : public BackForwardItem {
-public:
-    BackItem(unsigned howFar, QWebPage *page)
-        : BackForwardItem(-howFar, page)
-    {
-    }
-};
-
-class ForwardItem : public BackForwardItem {
-public:
-    ForwardItem(unsigned howFar, QWebPage *page)
-        : BackForwardItem(howFar, page)
-    {
-    }
+    JSRetainPtr<JSStringRef> m_content;
+    JSRetainPtr<JSStringRef> m_baseURL;
+    JSRetainPtr<JSStringRef> m_failingURL;
 };
 
 #endif // !defined(WorkQueueItemQt_h)
