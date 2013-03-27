@@ -159,6 +159,26 @@ static void histogramFreeSpace(const char* type, String fileName)
 #endif
 }
 
+static void histogramLevelDBError(const char* histogramName, const leveldb::Status& s)
+{
+    ASSERT(!s.ok());
+    enum {
+        LevelDBNotFound,
+        LevelDBCorruption,
+        LevelDBIOError,
+        LevelDBOther,
+        LevelDBMaxError
+    };
+    int levelDBError = LevelDBOther;
+    if (s.IsNotFound())
+        levelDBError = LevelDBNotFound;
+    else if (s.IsCorruption())
+        levelDBError = LevelDBCorruption;
+    else if (s.IsIOError())
+        levelDBError = LevelDBIOError;
+    HistogramSupport::histogramEnumeration(histogramName, levelDBError, LevelDBMaxError);
+}
+
 PassOwnPtr<LevelDBDatabase> LevelDBDatabase::open(const String& fileName, const LevelDBComparator* comparator)
 {
     OwnPtr<ComparatorAdapter> comparatorAdapter = adoptPtr(new ComparatorAdapter(comparator));
@@ -167,22 +187,7 @@ PassOwnPtr<LevelDBDatabase> LevelDBDatabase::open(const String& fileName, const 
     const leveldb::Status s = openDB(comparatorAdapter.get(), leveldb::IDBEnv(), fileName, &db);
 
     if (!s.ok()) {
-        enum {
-            LevelDBNotFound,
-            LevelDBCorruption,
-            LevelDBIOError,
-            LevelDBOther,
-            LevelDBMaxError
-        };
-        int levelDBError = LevelDBOther;
-        if (s.IsNotFound())
-            levelDBError = LevelDBNotFound;
-        else if (s.IsCorruption())
-            levelDBError = LevelDBCorruption;
-        else if (s.IsIOError())
-            levelDBError = LevelDBIOError;
-        HistogramSupport::histogramEnumeration("WebCore.IndexedDB.LevelDBOpenErrors", levelDBError, LevelDBMaxError);
-
+        histogramLevelDBError("WebCore.IndexedDB.LevelDBOpenErrors", s);
         histogramFreeSpace("Failure", fileName);
 
         LOG_ERROR("Failed to open LevelDB database from %s: %s", fileName.ascii().data(), s.ToString().c_str());
@@ -276,6 +281,7 @@ bool LevelDBDatabase::write(LevelDBWriteBatch& writeBatch)
     const leveldb::Status s = m_db->Write(writeOptions, writeBatch.m_writeBatch.get());
     if (s.ok())
         return true;
+    histogramLevelDBError("WebCore.IndexedDB.LevelDBWriteErrors", s);
     LOG_ERROR("LevelDB write failed: %s", s.ToString().c_str());
     return false;
 }
