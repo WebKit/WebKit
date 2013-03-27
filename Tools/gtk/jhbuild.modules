@@ -260,7 +260,7 @@
     <branch repo="gstreamer" module="gst-plugins-base" checkoutdir="gst-plugins-base" tag="1.0.4"/>
   </autotools>
 
-  <autotools id="gst-plugins-good" autogenargs="--disable-examples">
+  <autotools id="gst-plugins-good" autogenargs="--disable-examples --disable-soup">
     <dependencies>
       <dep package="gst-plugins-base"/>
     </dependencies>

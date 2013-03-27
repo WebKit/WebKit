@@ -1,3 +1,18 @@
+2013-03-27  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK][jhbuild] gst-plugins-good mixes system libsoup-gnome with custom libsoup
+        https://bugs.webkit.org/show_bug.cgi?id=113203
+
+        Reviewed by Philippe Normand.
+
+        We build our libsoup without GNOME support. gst-plugins-good does separate
+        pkg-config checks for libsoup-gnome and libsoup, causing the build to use
+        libsoup-gnome from the system and soup from the jhbuild prefix. This may lead to
+        build failures as the headers of those diverge. We do not use souphttpsrc, so
+        disable it when building gst-plugins-good.
+
+        * gtk/jhbuild.modules: disable soup support in gst-plugins-good.
+
 2013-03-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r146852. Please another reference to the Lion leaks builder.
