@@ -24,10 +24,9 @@ layer at (8,72) size 300x30
       RenderFlexibleBox {DIV} at (0,0) size 115x8 [border: (1px solid #E6E6E659)]
         RenderBlock {DIV} at (1,-2) size 127x12
           RenderBlock {DIV} at (50,0) size 12x12 [color=#FFFFFF]
-    RenderFlexibleBox {DIV} at (179,0) size 74x30 [color=#FFFFFF]
-      RenderBlock (anonymous) at (0,0) size 74x30
-        RenderText {#text} at (0,7) size 74x15
-          text run at (0,7) width 74: "00:00 / 00:01"
+    RenderBlock {DIV} at (179,0) size 74x30 [color=#FFFFFF]
+      RenderText {#text} at (0,7) size 74x15
+        text run at (0,7) width 74: "00:00 / 00:01"
     RenderButton {INPUT} at (261,0) size 30x30
 layer at (8,42) size 300x30
   RenderFlexibleBox {DIV} at (0,0) size 300x30
@@ -39,10 +38,9 @@ layer at (8,42) size 300x30
       RenderFlexibleBox {DIV} at (0,0) size 115x8 [border: (1px solid #E6E6E659)]
         RenderBlock {DIV} at (1,-2) size 127x12
           RenderBlock {DIV} at (50,0) size 12x12 [color=#FFFFFF]
-    RenderFlexibleBox {DIV} at (179,0) size 74x30 [color=#FFFFFF]
-      RenderBlock (anonymous) at (0,0) size 74x30
-        RenderText {#text} at (0,7) size 74x15
-          text run at (0,7) width 74: "00:00 / 00:01"
+    RenderBlock {DIV} at (179,0) size 74x30 [color=#FFFFFF]
+      RenderText {#text} at (0,7) size 74x15
+        text run at (0,7) width 74: "00:00 / 00:01"
     RenderButton {INPUT} at (261,0) size 30x30
 layer at (8,154) size 300x30
   RenderMedia {AUDIO} at (0,112) size 300x30
@@ -56,8 +54,7 @@ layer at (8,154) size 300x30
       RenderFlexibleBox {DIV} at (0,0) size 115x8 [border: (1px solid #E6E6E659)]
         RenderBlock {DIV} at (1,-2) size 127x12
           RenderBlock {DIV} at (50,0) size 12x12 [color=#FFFFFF]
-    RenderFlexibleBox {DIV} at (179,0) size 74x30 [color=#FFFFFF]
-      RenderBlock (anonymous) at (0,0) size 74x30
-        RenderText {#text} at (0,7) size 74x15
-          text run at (0,7) width 74: "00:00 / 00:01"
+    RenderBlock {DIV} at (179,0) size 74x30 [color=#FFFFFF]
+      RenderText {#text} at (0,7) size 74x15
+        text run at (0,7) width 74: "00:00 / 00:01"
     RenderButton {INPUT} at (261,0) size 30x30

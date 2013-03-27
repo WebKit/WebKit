@@ -20,7 +20,6 @@ layer at (14,158) size 290x30
       RenderFlexibleBox {DIV} at (0,0) size 179x8 [border: (1px solid #E6E6E659)]
         RenderBlock {DIV} at (1,-2) size 191x12
           RenderBlock {DIV} at (-7,0) size 12x12 [color=#FFFFFF]
-    RenderFlexibleBox {DIV} at (243,0) size 32x30 [color=#FFFFFF]
-      RenderBlock (anonymous) at (0,0) size 32x30
-        RenderText {#text} at (0,7) size 32x15
-          text run at (0,7) width 32: "00:00"
+    RenderBlock {DIV} at (243,0) size 32x30 [color=#FFFFFF]
+      RenderText {#text} at (0,7) size 32x15
+        text run at (0,7) width 32: "00:00"

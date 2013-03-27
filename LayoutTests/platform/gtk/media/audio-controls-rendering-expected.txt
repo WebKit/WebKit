@@ -24,10 +24,9 @@ layer at (8,42) size 300x30
       RenderFlexibleBox {DIV} at (0,0) size 157x8 [border: (1px solid #E6E6E659)]
         RenderBlock {DIV} at (1,-2) size 169x12
           RenderBlock {DIV} at (-7,0) size 12x12 [color=#FFFFFF]
-    RenderFlexibleBox {DIV} at (221,0) size 32x30 [color=#FFFFFF]
-      RenderBlock (anonymous) at (0,0) size 32x30
-        RenderText {#text} at (0,7) size 32x15
-          text run at (0,7) width 32: "00:07"
+    RenderBlock {DIV} at (221,0) size 32x30 [color=#FFFFFF]
+      RenderText {#text} at (0,7) size 32x15
+        text run at (0,7) width 32: "00:07"
     RenderButton {INPUT} at (261,0) size 30x30
 layer at (8,90) size 320x30
   RenderFlexibleBox {DIV} at (0,0) size 320x30
@@ -39,10 +38,9 @@ layer at (8,90) size 320x30
       RenderFlexibleBox {DIV} at (0,0) size 177x8 [border: (1px solid #E6E6E659)]
         RenderBlock {DIV} at (1,-2) size 189x12
           RenderBlock {DIV} at (-7,0) size 12x12 [color=#FFFFFF]
-    RenderFlexibleBox {DIV} at (241,0) size 32x30 [color=#FFFFFF]
-      RenderBlock (anonymous) at (0,0) size 32x30
-        RenderText {#text} at (0,7) size 32x15
-          text run at (0,7) width 32: "00:07"
+    RenderBlock {DIV} at (241,0) size 32x30 [color=#FFFFFF]
+      RenderText {#text} at (0,7) size 32x15
+        text run at (0,7) width 32: "00:07"
     RenderButton {INPUT} at (281,0) size 30x30
 layer at (8,138) size 320x100
   RenderMedia {AUDIO} at (8,138) size 320x100 [bgcolor=#0000FF]
@@ -56,8 +54,7 @@ layer at (8,208) size 320x30
       RenderFlexibleBox {DIV} at (0,0) size 177x8 [border: (1px solid #E6E6E659)]
         RenderBlock {DIV} at (1,-2) size 189x12
           RenderBlock {DIV} at (-7,0) size 12x12 [color=#FFFFFF]
-    RenderFlexibleBox {DIV} at (241,0) size 32x30 [color=#FFFFFF]
-      RenderBlock (anonymous) at (0,0) size 32x30
-        RenderText {#text} at (0,7) size 32x15
-          text run at (0,7) width 32: "00:07"
+    RenderBlock {DIV} at (241,0) size 32x30 [color=#FFFFFF]
+      RenderText {#text} at (0,7) size 32x15
+        text run at (0,7) width 32: "00:07"
     RenderButton {INPUT} at (281,0) size 30x30

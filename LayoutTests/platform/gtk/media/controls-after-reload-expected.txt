@@ -20,9 +20,8 @@ layer at (13,247) size 310x30
       RenderFlexibleBox {DIV} at (0,0) size 93x8 [border: (1px solid #E6E6E659)]
         RenderBlock {DIV} at (1,-2) size 105x12
           RenderBlock {DIV} at (-7,0) size 12x12 [color=#FFFFFF]
-    RenderFlexibleBox {DIV} at (157,0) size 74x30 [color=#FFFFFF]
-      RenderBlock (anonymous) at (0,0) size 74x30
-        RenderText {#text} at (0,7) size 74x15
-          text run at (0,7) width 74: "00:00 / 00:06"
+    RenderBlock {DIV} at (157,0) size 74x30 [color=#FFFFFF]
+      RenderText {#text} at (0,7) size 74x15
+        text run at (0,7) width 74: "00:00 / 00:06"
     RenderButton {INPUT} at (239,0) size 30x30
     RenderButton {INPUT} at (271,0) size 30x30
