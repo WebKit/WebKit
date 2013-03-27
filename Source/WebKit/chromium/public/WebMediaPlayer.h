@@ -33,7 +33,6 @@
 
 #include "../../../Platform/chromium/public/WebCanvas.h"
 #include "../../../Platform/chromium/public/WebString.h"
-#include "../../../Platform/chromium/public/WebVideoFrame.h"
 #include "WebTimeRange.h"
 
 namespace WebKit {
@@ -42,7 +41,6 @@ class WebAudioSourceProvider;
 class WebAudioSourceProviderClient;
 class WebMediaPlayerClient;
 class WebMediaSource;
-class WebStreamTextureClient;
 class WebString;
 class WebURL;
 struct WebRect;
@@ -155,22 +153,8 @@ public:
     virtual unsigned audioDecodedByteCount() const = 0;
     virtual unsigned videoDecodedByteCount() const = 0;
 
-    // This function returns a pointer to a WebVideoFrame, which is
-    // a WebKit wrapper for a video frame in chromium. This places a lock
-    // on the frame in chromium, and calls to this method should always be
-    // followed with a call to putCurrentFrame(). The ownership of this object
-    // is not transferred to the caller, and the caller should not free the
-    // returned object.
-    virtual WebVideoFrame* getCurrentFrame() { return 0; }
-    // This function releases the lock on the current video frame in Chromium.
-    // It should always be called after getCurrentFrame(). Frame passed to this
-    // method should no longer be referenced after the call is made.
-    virtual void putCurrentFrame(WebVideoFrame*) { }
-
     // Do a GPU-GPU textures copy if possible.
     virtual bool copyVideoTextureToPlatformTexture(WebGraphicsContext3D*, unsigned texture, unsigned level, unsigned internalFormat, bool premultiplyAlpha, bool flipY) { return false; }
-
-    virtual void setStreamTextureClient(WebStreamTextureClient*) { }
 
     virtual WebAudioSourceProvider* audioSourceProvider() { return 0; }
 

@@ -1,3 +1,20 @@
+2013-03-26  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove the WebVideoFrame, WebVideoFrameProvider, WebStreamTextureClient, and WebVideoLayer classes.
+        https://bugs.webkit.org/show_bug.cgi?id=112483
+
+        Reviewed by James Robinson.
+
+        These classes are no longer used, so remove them. And remove APIs
+        to provide them.
+
+        * Platform.gypi:
+        * chromium/public/WebCompositorSupport.h:
+        (WebKit):
+        * chromium/public/WebVideoFrame.h: Removed.
+        * chromium/public/WebVideoFrameProvider.h: Removed.
+        * chromium/public/WebVideoLayer.h: Removed.
+
 2013-03-25  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Move ownership of compositor VideoLayer to WebMediaPlayer

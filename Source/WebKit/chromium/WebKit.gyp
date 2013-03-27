@@ -262,7 +262,6 @@
                 'public/WebStorageQuotaType.h',
                 'public/WebStorageQuotaError.h',
                 'public/WebSurroundingText.h',
-                'public/WebStreamTextureClient.h',
                 'public/WebTextAffinity.h',
                 'public/WebTextCaseSensitivity.h',
                 'public/WebTextCheckingCompletion.h',
