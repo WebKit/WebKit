@@ -44,12 +44,12 @@
             testExpected("item.textContent", "English CC");
 
             item = captionsEntries[2];
-            consoleWrite("<br>Third item in captions menu should be labelled 'Unknown SDH'");
-            testExpected("item.textContent", "Unknown SDH");
+            consoleWrite("<br>Third item in captions menu should be labelled 'Laugh Track (English-United States)'");
+            testExpected("item.textContent", "Laugh Track (English-United States)");
 
             item = captionsEntries[3];
-            consoleWrite("<br>Fourth item in captions menu should be labelled 'Unknown'");
-            testExpected("item.textContent", "Unknown");
+            consoleWrite("<br>Fourth item in captions menu should be labelled 'Unknown SDH'");
+            testExpected("item.textContent", "Unknown SDH");
 
             endTest();
         }
@@ -67,7 +67,7 @@
         <p>Test that captions and subtitles menu items are localized.</p>
         <video width="500" height="300" controls>
             <track kind="captions" src="track/captions-webvtt/captions-fast.vtt">
-            <track kind="subtitles" src="track/captions-webvtt/captions-fast.vtt">
+            <track kind="subtitles" src="track/captions-webvtt/captions-fast.vtt" label="Laugh Track" srclang="en-US">
         </video>
     </body>
 </html>

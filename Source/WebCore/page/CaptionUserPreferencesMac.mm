@@ -536,7 +536,9 @@ static String trackDisplayName(TextTrack* track)
     RetainPtr<CFStringRef> languageCF(AdoptCF, CFLocaleCopyDisplayNameForPropertyValue(currentLocale.get(), kCFLocaleLanguageCode, localeIdentifier.get()));
     String language = languageCF.get();
     if (!label.isEmpty()) {
-        if (!language.isEmpty() && !label.contains(language)) {
+        if (language.isEmpty() || label.contains(language)) {
+            displayName.append(label);
+        } else {
             RetainPtr<CFDictionaryRef> localeDict(AdoptCF, CFLocaleCreateComponentsFromLocaleIdentifier(kCFAllocatorDefault, localeIdentifier.get()));
             if (localeDict) {
                 CFStringRef countryCode = 0;
