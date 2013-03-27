@@ -159,7 +159,12 @@ WebInspector.CodeMirrorTextEditor.prototype = {
     highlightRange: function(range, cssClass)
     {
         var pos = this._toPos(range);
-        return this._codeMirror.markText(pos.start, pos.end, { className: cssClass });
+        ++pos.end.ch;
+        return this._codeMirror.markText(pos.start, pos.end, {
+            className: cssClass,
+            startStyle: cssClass + "-start",
+            endStyle: cssClass + "-end"
+        });
     },
 
     /**
