@@ -56,11 +56,11 @@ WebInspector.CPUProfileView = function(profile)
         this._splitView = new WebInspector.SplitView(false, "flameChartSplitLocation");
         this._splitView.show(this.element);
 
-        this.dataGrid.show(this._splitView.firstElement());
-
         this.flameChart = new WebInspector.FlameChart(this);
         this.flameChart.addEventListener(WebInspector.FlameChart.Events.SelectedNode, this._revealProfilerNode.bind(this));
-        this.flameChart.show(this._splitView.secondElement());
+        this.flameChart.show(this._splitView.firstElement());
+
+        this.dataGrid.show(this._splitView.secondElement());
     } else
         this.dataGrid.show(this.element);
 
