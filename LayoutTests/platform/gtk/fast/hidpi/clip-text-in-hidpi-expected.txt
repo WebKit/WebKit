@@ -9,5 +9,5 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 0x0
       RenderInline {SPAN} at (0,0) size 8x19
         RenderText {#text} at (352,0) size 8x19
-          text run at (352,0) width 8: "1"
+          text run at (352,0) width 8: "2"
       RenderText {#text} at (0,0) size 0x0

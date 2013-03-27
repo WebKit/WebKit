@@ -48,16 +48,6 @@
 # This test verifies that a mismatch reftest will fail as intended if both results are same.
 fast/harness/sample-fail-mismatch-reftest.html [ WontFix ImageOnlyFailure ]
 
-# Modal dialogs will not be supported in WebKit1. These expectations should eventually
-# be moved into WebKit1-specific TestExpectations file (once it's created).
-fast/animation/request-animation-frame-during-modal.html [ WontFix Failure ]
-fast/events/show-modal-dialog-onblur-onfocus.html [ WontFix Timeout ]
-fast/events/scroll-event-during-modal-dialog.html [ WontFix Failure ]
-fast/harness/show-modal-dialog.html [ WontFix Timeout ]
-http/tests/security/cross-frame-access-call.html [ WontFix Failure ]
-http/tests/security/cross-frame-access-get.html [ WontFix Failure ]
-inspector/console/console-long-eval-crash.html [ WontFix Timeout ]
-
 # This port doesn't support v8 i18n extension.
 fast/js/i18n-bindings-locale.html [ WontFix Failure ]
 
@@ -442,7 +432,6 @@ webkit.org/b/98696 plugins/snapshotting [ Skip ]
 # Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/86443 plugins/npruntime/delete-plugin-within-getProperty.html [ Crash ]
 webkit.org/b/86443 [ Debug ] plugins/npruntime/delete-plugin-within-invoke.html [ Crash ]
 
 webkit.org/b/86176 [ Debug ] ietestcenter/css3/valuesandunits/units-000.htm [ Crash ]
@@ -721,10 +710,6 @@ webkit.org/b/50740 editing/spelling/spellcheck-queue.html [ Failure Slow ]
 
 webkit.org/b/46644 fast/text/large-text-composed-char-dos.html [ Timeout ]
 
-webkit.org/b/90589 fast/css/user-drag-none.html [ Timeout ]
-
-webkit.org/b/61118 fullscreen/full-screen-keyboard-enabled.html [ Timeout ]
-
 webkit.org/b/95530 http/tests/security/inactive-document-with-empty-security-origin.html [ Timeout ]
 
 webkit.org/b/72698 media/audio-garbage-collect.html [ Timeout ]
@@ -819,13 +804,6 @@ Bug(GTK) fast/dom/HTMLDocument/hasFocus.html [ Failure ]
 Bug(GTK) fast/dom/Window/window-onFocus.html [ Failure ]
 Bug(GTK) fast/events/frame-tab-focus.html [ Failure ]
 
-# Tests failing because of missing policy delegate callbacks.
-Bug(GTK) fast/loader/onload-policy-ignore-for-frame.html [ Failure ]
-Bug(GTK) fast/loader/policy-delegate-action-hit-test-zoomed.html [ Failure ]
-Bug(GTK) fast/loader/reload-policy-delegate.html [ Failure ]
-Bug(GTK) fast/loader/stop-provisional-loads.html [ Failure ]
-Bug(GTK) http/tests/security/feed-urls-from-remote.html [ Timeout ]
-
 # Looks like a bug in the LayoutTestController global history support due to missing API.
 Bug(GTK) fast/history/window-open.html [ Failure ]
 
@@ -851,12 +829,6 @@ webkit.org/b/44478 fast/text/hyphenate-first-word.html [ Skip ]
 webkit.org/b/44478 fast/text/hyphenate-locale.html [ Skip ]
 webkit.org/b/44478 fast/text/hyphen-min-preferred-width.html [ Skip ]
 
-Bug(GTK) http/tests/appcache/origin-quota.html [ Failure ]
-Bug(GTK) http/tests/appcache/origin-quota-continued-download.html [ Failure ]
-Bug(GTK) http/tests/appcache/origin-quota-continued-download-multiple-manifests.html [ Failure ]
-Bug(GTK) http/tests/appcache/origin-delete.html [ Failure ]
-Bug(GTK) http/tests/appcache/origins-with-appcache.html [ Failure ]
-
 # LayoutTestController::applicationCacheDiskUsageForOrigin isn't implemented.
 webkit.org/b/57127 http/tests/appcache/origin-usage.html [ Failure ]
 
@@ -868,20 +840,8 @@ Bug(rdar6727495) http/tests/loading/text-content-type-with-binary-extension.html
 Bug(GTK) http/tests/media/video-play-stall-seek.html [ Skip ]
 
 Bug(GTK) http/tests/misc/acid3.html [ Failure ]
-Bug(GTK) http/tests/misc/policy-delegate-called-twice.html [ Failure ]
 Bug(GTK) http/tests/misc/redirect-to-external-url.html [ Failure ]
-Bug(GTK) http/tests/misc/window-dot-stop.html [ Failure ]
 
-Bug(GTK) http/tests/plugins/npapi-response-headers.html [ Failure ]
-Bug(GTK) [ Release ] http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html [ Failure ]
-Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html [ Failure ]
-Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html [ Failure ]
-Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html [ Failure ]
-Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny.html [ Failure ]
-Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html [ Failure ]
-Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html [ Failure ]
-Bug(GTK) http/tests/xmlhttprequest/abort-should-cancel-load.html [ Failure ]
-Bug(GTK) http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html [ Failure ]
 Bug(GTK) http/tests/xmlhttprequest/logout.html [ Failure ]
 
 # We don't seem to support neither of these for now
@@ -889,9 +849,6 @@ Bug(GTK) http/tests/xmlhttprequest/cross-origin-cookie-storage.html [ Failure ]
 Bug(GTK) http/tests/xmlhttprequest/cross-origin-no-authorization.html [ Failure ]
 
 Bug(GTK) media/video-size-intrinsic-scale.html [ Failure ]
-
-# Need to implement getFormValue().
-Bug(GTK) plugins/form-value.html [ Failure ]
 
 # eventSender.keyDown call does not get executed from the TestNetscapePlugin
 webkit.org/b/90383 http/tests/plugins/plugin-document-has-focus.html [ Skip ]
@@ -920,9 +877,6 @@ Bug(GTK) editing/selection/5825350-2.html [ Failure ]
 # Needs platform specific API implemented in DRT, maybe not relevant for non-Mac and non-Windows ports
 Bug(GTK) fast/loader/api-test-new-window-data-load-base-url.html [ Failure ]
 Bug(GTK) fast/loader/api-test-go-to-current-back-forward-item.html [ Failure ]
-
-# Needs to make sure the redirect-chain scenario in https://bugs.webkit.org/show_bug.cgi?id=31410 works
-webkit.org/b/35300 http/tests/loading/307-after-303-after-post.html [ Failure ]
 
 # Paged continuousMouseScrollBy() events are not supported in GTK.
 Bug(GTK) fast/events/platform-wheelevent-paging-x-in-non-scrolling-div.html [ Failure ]
@@ -1007,16 +961,6 @@ webkit.org/b/40601 fast/events/mouseup-from-button2.html [ Failure ]
 webkit.org/b/40601 fast/events/right-click-focus.html [ Failure ]
 webkit.org/b/40601 editing/selection/5354455-1.html [ Failure ]
 
-# Gtk doesn't implement dumpResourceResponseMIMETypes which is required for the preloader tests.
-webkit.org/b/58222 fast/dom/HTMLLinkElement/link-and-subresource-test.html [ Failure ]
-webkit.org/b/58222 fast/dom/HTMLLinkElement/prefetch.html [ Failure ]
-webkit.org/b/58222 fast/dom/HTMLLinkElement/subresource.html [ Failure ]
-webkit.org/b/58222 fast/preloader [ Failure ]
-webkit.org/b/58222 fast/preloader/scan-body-from-head-import.html [ Pass ]
-webkit.org/b/58222 fast/preloader/scan-body-from-head-script.html [ Pass ]
-webkit.org/b/58222 http/tests/mime/uppercase-mime-type.html [ Failure ]
-webkit.org/b/58222 http/tests/misc/prefetch-purpose.html [ Failure ]
-
 # The middle circle on both rectangles is missing in the pixel output.
 Bug(GTK) svg/custom/circular-marker-reference-2.svg [ Failure ]
 Bug(GTK) svg/custom/non-circular-marker-reference.svg [ Failure ]
@@ -1045,9 +989,6 @@ Bug(GTK) canvas/philip/tests/2d.text.draw.space.collapse.space.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.text.draw.space.collapse.start.html [ Failure ]
 Bug(GTK) canvas/philip/tests/2d.text.measure.width.space.html [ Failure ]
 Bug(GTK) canvas/philip/tests/type.prototype.html [ Failure ]
-
-# Missing DRT API.
-Bug(GTK) http/tests/loading/preload-slow-loading.php [ Failure ]
 
 # Tests that fail because they assume a certain number of mouse
 # movements during drags or fail only in Xvfb
@@ -1112,16 +1053,11 @@ webkit.org/b/60206 http/tests/navigation/response204.html [ Failure ]
 
 webkit.org/b/61630 fast/events/dropzone-005.html [ Failure ]
 
-# Need testRunner.setShouldStayOnPageAfterHandlingBeforeUnload
-webkit.org/b/67014 fast/loader/form-submission-after-beforeunload-cancel.html [ Failure ]
-
 webkit.org/b/67713 accessibility/textbox-role-reports-selection.html [ Failure ]
 
 webkit.org/b/68278 http/tests/history/back-with-fragment-change.php [ Failure ]
 
 webkit.org/b/68512 accessibility/aria-hidden-updates-alldescendants.html [ Failure ]
-
-webkit.org/b/68855 editing/selection/select-bidi-run.html [ Failure ]
 
 # This test is out-dated since r95899.
 webkit.org/b/65709 canvas/philip/tests/2d.drawImage.outsidesource.html [ Failure ]
@@ -1147,20 +1083,12 @@ webkit.org/b/73409 fast/forms/input-placeholder-paint-order.html [ ImageOnlyFail
 
 webkit.org/b/73653 fast/forms/range/slider-in-multi-column.html [ Failure ]
 
-webkit.org/b/74276 fast/events/dont-loose-last-event.html [ Failure ]
-
 webkit.org/b/74282 editing/pasteboard/emacs-ctrl-k-with-move.html [ Failure ]
 
 webkit.org/b/76048 fast/text/font-kerning.html [ ImageOnlyFailure ]
 
 # Needs custom policy delegate enhancement to log downloads
 Bug(GTK) http/tests/download [ Failure ]
-
-webkit.org/b/77015 fast/events/clear-drag-state.html [ Failure ]
-webkit.org/b/77015 fast/events/clear-edit-drag-state.html [ Failure ]
-
-# Let MemoryCache reuse cached XHRs (REGRESSION caused by r107672)
-webkit.org/b/76564 fast/workers/worker-crash-with-invalid-location.html [ Failure ]
 
 webkit.org/b/81320 editing/pasteboard/copy-two-pasteboard-types-both-work.html [ Failure ]
 
@@ -1224,8 +1152,6 @@ webkit.org/b/86771 fast/dom/gc-10.html [ Skip ]
 
 webkit.org/b/86971 svg/hittest/svg-shapes-non-scale-stroke.html [ Failure ]
 
-webkit.org/b/87088 fast/js/names.html [ Failure ]
-
 Bug(GTK) http/tests/misc/favicon-loads-with-icon-loading-override.html [ Failure ]
 
 webkit.org/b/88138 http/tests/media/video-buffered.html [ Failure ]
@@ -1259,8 +1185,6 @@ webkit.org/b/93976 fast/css-generated-content/quotes-lang.html [ ImageOnlyFailur
 
 # This has always failed on Gtk/Efl - exposed by bug 89826
 webkit.org/b/94009 css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
-
-webkit.org/b/70485 fast/events/drag-selects-image.html [ Failure ]
 
 webkit.org/b/77631 fast/multicol/span/span-as-immediate-child-property-removal.html [ Failure ]
 webkit.org/b/77631 fast/multicol/span/span-as-immediate-columns-child-removal.html [ Failure ]

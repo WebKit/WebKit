@@ -332,12 +332,6 @@ Bug(GTK) svg/text/select-x-list-with-tspans-1.svg [ Failure ]
 # tables/ failures
 Bug(WK2) tables/mozilla_expected_failures/bugs/bug8499.html [ Failure ]
 
-# HiDPI - 1 pixel diffs
-# http://webkit.org/b/93978
-webkit.org/b/93978 fast/hidpi/clip-text-in-hidpi.html [ Failure ]
-webkit.org/b/93978 fast/hidpi/image-set-background-dynamic.html [ Failure ]
-webkit.org/b/93978 fast/hidpi/image-set-border-image-dynamic.html [ Failure ]
-
 # RenderDeprecatedFlexibleBox showing 20-pixel diffs in WK2 bot
 # http://webkit.org/b/93981
 webkit.org/b/93981 media/controls-strict.html [ Failure ]
@@ -409,8 +403,6 @@ Bug(GTK) fast/forms/mailto/formenctype-attribute-button-html.html [ Failure ]
 Bug(GTK) fast/forms/mailto/formenctype-attribute-input-html.html [ Failure ]
 Bug(GTK) fast/forms/select-type-ahead-non-latin.html [ Failure ]
 Bug(GTK) fast/loader/submit-form-while-parsing-2.html [ Failure ]
-Bug(GTK) fast/media/mq-transform-02.html [ Failure ]
-Bug(GTK) fast/media/mq-transform-03.html [ Failure ]
 Bug(GTK) fast/repaint/fixed-move-after-keyboard-scroll.html [ Failure ]
 Bug(GTK) fast/ruby/nested-ruby.html [ Failure ]
 Bug(GTK) fast/ruby/ruby-beforeafter.html [ Failure ]
@@ -453,82 +445,9 @@ Bug(GTK) plugins/npruntime/browser-object-identity.html [ Failure ]
 Bug(GTK) plugins/npruntime/embed-property-equality.html [ Failure ]
 Bug(GTK) plugins/reloadplugins-and-pages.html [ Failure ]
 Bug(GTK) plugins/resize-from-plugin.html [ Failure ]
-Bug(GTK) touchadjustment/iframe.html [ Failure ]
-
-#////////////////////////////////////////////////////////////////////////////////////////
-# End of Tests failing
-#////////////////////////////////////////////////////////////////////////////////////////
-
-#////////////////////////////////////////////////////////////////////////////////////////
-# Tests working in WK2 and failing in WK1
-#////////////////////////////////////////////////////////////////////////////////////////
-
-Bug(GTK) canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Pass ]
-Bug(GTK) editing/pasteboard/paste-global-selection.html [ Pass ]
-Bug(GTK) editing/selection/select-bidi-run.html [ Pass ]
-Bug(GTK) fast/animation/request-animation-frame-during-modal.html [ Pass ]
-Bug(GTK) fast/css/user-drag-none.html [ Pass ]
-Bug(GTK) fast/dom/HTMLLinkElement/link-and-subresource-test.html [ Pass ]
-webkit.org/b/77015 fast/events/clear-drag-state.html [ Pass ]
-Bug(GTK) fast/events/clear-edit-drag-state.html [ Pass ]
-Bug(GTK) fast/events/dont-loose-last-event.html [ Pass ]
-Bug(GTK) fast/events/drag-selects-image.html [ Pass ]
-Bug(GTK) fast/forms/text-input-event.html [ Pass ]
-Bug(GTK) fast/js/names.html [ Pass ]
-Bug(GTK) fast/loader/form-submission-after-beforeunload-cancel.html [ Pass ]
-Bug(GTK) fast/loader/stop-provisional-loads.html [ Pass ]
-Bug(GTK) fast/loader/onload-policy-ignore-for-frame.html [ Pass ]
-Bug(GTK) fast/loader/policy-delegate-action-hit-test-zoomed.html [ Pass ]
-Bug(GTK) fast/loader/reload-policy-delegate.html [ Pass ]
-Bug(GTK) fast/preloader/document-write-noscript.html [ Pass ]
-Bug(GTK) fast/preloader/first-base-tag-scanned-wins.html [ Pass ]
-Bug(GTK) fast/preloader/first-base-tag-wins.html [ Pass ]
-Bug(GTK) fast/preloader/image.html [ Pass ]
-Bug(GTK) fast/preloader/input.html [ Pass ]
-Bug(GTK) fast/preloader/link.html [ Pass ]
-Bug(GTK) fast/preloader/noscript.html [ Pass ]
-Bug(GTK) fast/preloader/style.html [ Pass ]
-Bug(GTK) fast/preloader/understands-base-tag.html [ Pass ]
-Bug(GTK) fast/workers/worker-crash-with-invalid-location.html [ Pass ]
-Bug(GTK) http/tests/appcache/origin-delete.html [ Pass ]
-Bug(GTK) http/tests/appcache/origin-quota-continued-download.html [ Pass ]
-Bug(GTK) http/tests/appcache/origin-quota-continued-download-multiple-manifests.html [ Pass ]
-Bug(GTK) http/tests/appcache/origin-quota.html [ Pass ]
-Bug(GTK) http/tests/appcache/origins-with-appcache.html [ Pass ]
-Bug(GTK) http/tests/appcache/origin-usage.html [ Pass ]
-Bug(GTK) http/tests/loading/307-after-303-after-post.html [ Pass ]
-Bug(GTK) http/tests/loading/preload-slow-loading.php [ Pass ]
-Bug(GTK) http/tests/mime/uppercase-mime-type.html [ Pass ]
-Bug(GTK) http/tests/misc/policy-delegate-called-twice.html [ Pass ]
-Bug(GTK) http/tests/misc/prefetch-purpose.html [ Pass ]
-Bug(GTK) http/tests/misc/window-dot-stop.html [ Pass ]
-Bug(GTK) http/tests/plugins/npapi-response-headers.html [ Pass ]
-Bug(GTK) http/tests/security/cross-frame-access-call.html [ Pass ]
-Bug(GTK) http/tests/security/mixedContent/insecure-iframe-in-main-frame.html [ Pass ]
-Bug(GTK) http/tests/security/mixedContent/redirect-https-to-http-iframe-in-main-frame.html [ Pass ]
-Bug(GTK) http/tests/security/mixedContent/redirect-http-to-https-iframe-in-main-frame.html [ Pass ]
-Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny.html [ Pass ]
-Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html [ Pass ]
-Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html [ Pass ]
-Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html [ Pass ]
-Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html [ Pass ]
-Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html [ Pass ]
-Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html [ Pass ]
-Bug(GTK) http/tests/security/xssAuditor/script-tag-with-callbacks.html [ Pass ]
-Bug(GTK) http/tests/xmlhttprequest/abort-should-cancel-load.html [ Pass ]
-Bug(GTK) http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html [ Pass ]
-Bug(GTK) http/tests/xmlhttprequest/origin-exact-matching.html [ Pass ]
-Bug(GTK) plugins/form-value.html [ Pass ]
-Bug(GTK) plugins/npruntime/delete-plugin-within-getProperty.html [ Pass ]
-Bug(GTK) fullscreen/full-screen-keyboard-enabled.html [ Pass ]
 
 # Fix for https://bugs.webkit.org/show_bug.cgi?id=97192 introduces this regression
 webkit.org/b/102776 media/track/track-cue-container-rendering-position.html [ Failure ]
-
-#////////////////////////////////////////////////////////////////////////////////////////
-# End of Tests working in WK2 and failing in WK1
-#////////////////////////////////////////////////////////////////////////////////////////
-
 
 # Selection doesn't work properly.
 Bug(GTK) editing/selection/context-menu-text-selection.html [ Failure Pass ]
@@ -544,3 +463,11 @@ Bug(GTK) fast/events/contextmenu-scrolled-page-with-frame.html [ Failure ]
 
 # An onmousedown attribute is not called.
 Bug(GTK) fast/events/context-onmousedown-event.html [ Failure ]
+
+Bug(GTK) animations/combo-transform-translate+scale.html [ Failure ]
+Bug(GTK) animations/play-state-suspend.html [ Failure ]
+Bug(GTK) animations/suspend-resume-animation.html [ Failure ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# End of Tests failing
+#////////////////////////////////////////////////////////////////////////////////////////

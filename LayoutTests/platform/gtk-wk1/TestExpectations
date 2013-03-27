@@ -49,6 +49,16 @@
 # Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
 
+# Modal dialogs will not be supported in WebKit1. These expectations should eventually
+# be moved into WebKit1-specific TestExpectations file (once it's created).
+fast/animation/request-animation-frame-during-modal.html [ WontFix Failure ]
+fast/events/show-modal-dialog-onblur-onfocus.html [ WontFix Timeout ]
+fast/events/scroll-event-during-modal-dialog.html [ WontFix Failure ]
+fast/harness/show-modal-dialog.html [ WontFix Timeout ]
+http/tests/security/cross-frame-access-call.html [ WontFix Failure ]
+http/tests/security/cross-frame-access-get.html [ WontFix Failure ]
+inspector/console/console-long-eval-crash.html [ WontFix Timeout ]
+
 # This policy delegate is implemented, but it needs the DOM node path in the output.
 Bug(GTK) fast/encoding/mailto-always-utf-8.html [ Failure ]
 
@@ -99,6 +109,8 @@ Bug(GTK) plugins/clicking-missing-plugin-fires-delegate.html [ Failure ]
 # Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
 
+webkit.org/b/86443 plugins/npruntime/delete-plugin-within-getProperty.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -123,6 +135,10 @@ Bug(GTK) plugins/clicking-missing-plugin-fires-delegate.html [ Failure ]
 # Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
 
+webkit.org/b/90589 fast/css/user-drag-none.html [ Timeout ]
+
+webkit.org/b/61118 fullscreen/full-screen-keyboard-enabled.html [ Timeout ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -138,6 +154,77 @@ Bug(GTK) plugins/clicking-missing-plugin-fires-delegate.html [ Failure ]
 #////////////////////////////////////////////////////////////////////////////////////////
 # Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
+
+Bug(GTK) http/tests/appcache/origin-quota.html [ Failure ]
+Bug(GTK) http/tests/appcache/origin-quota-continued-download.html [ Failure ]
+Bug(GTK) http/tests/appcache/origin-quota-continued-download-multiple-manifests.html [ Failure ]
+Bug(GTK) http/tests/appcache/origin-delete.html [ Failure ]
+Bug(GTK) http/tests/appcache/origins-with-appcache.html [ Failure ]
+
+Bug(GTK) [ Release ] http/tests/security/XFrameOptions/x-frame-options-allowall.html [ Failure ]
+Bug(GTK) [ Release ] http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-in-body.html [ Failure ]
+Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-allow.html [ Failure ]
+Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html [ Failure ]
+Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html [ Failure ]
+Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny.html [ Failure ]
+Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-invalid.html [ Failure ]
+Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html [ Failure ]
+Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html [ Failure ]
+
+# Gtk's DRT doesn't implement dumpResourceResponseMIMETypes which is required for the preloader tests.
+webkit.org/b/58222 fast/dom/HTMLLinkElement/link-and-subresource-test.html [ Failure ]
+webkit.org/b/58222 fast/dom/HTMLLinkElement/prefetch.html [ Failure ]
+webkit.org/b/58222 fast/dom/HTMLLinkElement/subresource.html [ Failure ]
+webkit.org/b/58222 fast/preloader [ Failure ]
+webkit.org/b/58222 fast/preloader/scan-body-from-head-import.html [ Pass ]
+webkit.org/b/58222 fast/preloader/scan-body-from-head-script.html [ Pass ]
+webkit.org/b/58222 http/tests/mime/uppercase-mime-type.html [ Failure ]
+webkit.org/b/58222 http/tests/misc/prefetch-purpose.html [ Failure ]
+
+Bug(GTK) http/tests/xmlhttprequest/abort-should-cancel-load.html [ Failure ]
+Bug(GTK) http/tests/xmlhttprequest/access-control-basic-whitelist-request-headers.html [ Failure ]
+
+webkit.org/b/93978 fast/hidpi/clip-text-in-hidpi.html [ Failure ]
+webkit.org/b/93978 fast/hidpi/image-set-background-dynamic.html [ Failure ]
+webkit.org/b/93978 fast/hidpi/image-set-border-image-dynamic.html [ Failure ]
+
+webkit.org/b/87088 fast/js/names.html [ Failure ]
+
+webkit.org/b/68855 editing/selection/select-bidi-run.html [ Failure ]
+
+webkit.org/b/77015 fast/events/clear-drag-state.html [ Failure ]
+webkit.org/b/77015 fast/events/clear-edit-drag-state.html [ Failure ]
+
+webkit.org/b/74276 fast/events/dont-loose-last-event.html [ Failure ]
+
+webkit.org/b/70485 fast/events/drag-selects-image.html [ Failure ]
+
+# Let MemoryCache reuse cached XHRs (REGRESSION caused by r107672)
+webkit.org/b/76564 fast/workers/worker-crash-with-invalid-location.html [ Failure ]
+
+# Need testRunner.setShouldStayOnPageAfterHandlingBeforeUnload
+webkit.org/b/67014 fast/loader/form-submission-after-beforeunload-cancel.html [ Failure ]
+
+# Tests failing because of missing policy delegate callbacks.
+Bug(GTK) fast/loader/onload-policy-ignore-for-frame.html [ Failure ]
+Bug(GTK) fast/loader/policy-delegate-action-hit-test-zoomed.html [ Failure ]
+Bug(GTK) fast/loader/reload-policy-delegate.html [ Failure ]
+Bug(GTK) fast/loader/stop-provisional-loads.html [ Failure ]
+Bug(GTK) http/tests/security/feed-urls-from-remote.html [ Timeout ]
+
+# Needs to make sure the redirect-chain scenario in https://bugs.webkit.org/show_bug.cgi?id=31410 works
+webkit.org/b/35300 http/tests/loading/307-after-303-after-post.html [ Failure ]
+
+# Missing DRT API.
+Bug(GTK) http/tests/loading/preload-slow-loading.php [ Failure ]
+
+Bug(GTK) http/tests/misc/policy-delegate-called-twice.html [ Failure ]
+Bug(GTK) http/tests/misc/window-dot-stop.html [ Failure ]
+
+Bug(GTK) http/tests/plugins/npapi-response-headers.html [ Failure ]
+
+# Need to implement getFormValue().
+Bug(GTK) plugins/form-value.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
