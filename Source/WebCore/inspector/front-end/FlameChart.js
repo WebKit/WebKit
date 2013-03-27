@@ -60,6 +60,7 @@ WebInspector.FlameChart = function(cpuProfileView)
     this._windowRight = 1.0;
     this._barHeight = 15;
     this._minWidth = 1;
+    this._paddingLeft = 15;
     this._canvas.addEventListener("mousemove", this._onMouseMove.bind(this), false);
     this._canvas.addEventListener("mousewheel", this._onMouseWheel.bind(this), false);
     this.element.addEventListener("click", this._onClick.bind(this), false);
@@ -87,7 +88,9 @@ WebInspector.FlameChart.Calculator.prototype = {
     {
         this._minimumBoundaries = flameChart._windowLeft * flameChart._timelineData.totalTime;
         this._maximumBoundaries = flameChart._windowRight * flameChart._timelineData.totalTime;
-        this._timeToPixel = flameChart._canvas.width / this.boundarySpan();
+        this._paddingLeft = flameChart._paddingLeft;
+        this._width = flameChart._canvas.width - this._paddingLeft;
+        this._timeToPixel = this._width / this.boundarySpan();
     },
 
     /**
@@ -95,7 +98,7 @@ WebInspector.FlameChart.Calculator.prototype = {
      */
     computePosition: function(time)
     {
-        return (time - this._minimumBoundaries) * this._timeToPixel;
+        return (time - this._minimumBoundaries) * this._timeToPixel + this._paddingLeft;
     },
 
     formatTime: function(value)
@@ -531,7 +534,8 @@ WebInspector.FlameChart.prototype = {
         var barHeight = this._barHeight;
 
         var context = this._canvas.getContext("2d");
-        var paddingLeft = 2;
+        var textPaddingLeft = 2;
+        var paddingLeft = this._paddingLeft;
         context.font = (barHeight - 3) + "px sans-serif";
         context.textBaseline = "top";
         this._dotsWidth = context.measureText("\u2026").width;
@@ -556,16 +560,16 @@ WebInspector.FlameChart.prototype = {
                 color = colorPair.normal;
 
             context.beginPath();
-            context.rect(x, y, barWidth - 1, barHeight - 1);
+            context.rect(x + paddingLeft, y, barWidth - 1, barHeight - 1);
             context.fillStyle = color;
             context.fill();
 
-            var xText = Math.max(0, x);
-            var widthText = barWidth - paddingLeft + x - xText;
-            var title = this._prepareTitle(context, timelineData.entries[i].node.functionName, barWidth - paddingLeft - xText + x);
+            var xText = Math.max(0, x + paddingLeft);
+            var widthText = barWidth - textPaddingLeft + x - xText;
+            var title = this._prepareTitle(context, timelineData.entries[i].node.functionName, widthText);
             if (title) {
                 context.fillStyle = "#333";
-                context.fillText(title, xText + paddingLeft, y - 1);
+                context.fillText(title, xText + textPaddingLeft, y - 1);
             }
         }
     },
