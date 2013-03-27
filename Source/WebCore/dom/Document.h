@@ -371,8 +371,8 @@ public:
      * @param leftPadding How much to expand the left of the rectangle
      */
     PassRefPtr<NodeList> nodesFromRect(int centerX, int centerY,
-                                       unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding,
-                                       HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active) const;
+        unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding,
+        HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent) const;
     Element* elementFromPoint(int x, int y) const;
     PassRefPtr<Range> caretRangeFromPoint(int x, int y);
 

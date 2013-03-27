@@ -556,7 +556,7 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const HitTestReques
     if (!node)
         return true;
 
-    if (!request.allowsShadowContent())
+    if (request.disallowsShadowContent())
         node = node->document()->ancestorInThisScope(node);
 
     mutableRectBasedTestResult().add(node);
@@ -576,7 +576,7 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const HitTestReques
     if (!node)
         return true;
 
-    if (!request.allowsShadowContent())
+    if (request.disallowsShadowContent())
         node = node->document()->ancestorInThisScope(node);
 
     mutableRectBasedTestResult().add(node);

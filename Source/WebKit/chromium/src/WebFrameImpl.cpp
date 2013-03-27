@@ -1398,7 +1398,7 @@ void WebFrameImpl::moveCaretSelectionTowardsWindowPoint(const WebPoint& point)
 
 VisiblePosition WebFrameImpl::visiblePositionForWindowPoint(const WebPoint& point)
 {
-    HitTestRequest request = HitTestRequest::Move | HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping;
+    HitTestRequest request = HitTestRequest::Move | HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent;
     HitTestResult result(frame()->view()->windowToContents(IntPoint(point)));
 
     frame()->document()->renderView()->layer()->hitTest(request, result);

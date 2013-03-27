@@ -73,7 +73,7 @@ IntPoint ProximityDetector::findBestPoint(const IntPoint& documentPos, const Int
 
     // Adjust hit point to frame
     IntPoint frameContentPos(document->frame()->view()->windowToContents(m_webPage->m_mainFrame->view()->contentsToWindow(documentPos)));
-    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::IgnoreClipping);
+    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::IgnoreClipping | HitTestRequest::DisallowShadowContent);
     HitTestResult result(frameContentPos, top, right, bottom, left);
     document->renderView()->layer()->hitTest(request, result);
 

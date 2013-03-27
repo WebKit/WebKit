@@ -1,3 +1,19 @@
+2013-03-26  Hayato Ito  <hayato@chromium.org>
+
+        Allow ShadowContents in HitTests by default.
+        https://bugs.webkit.org/show_bug.cgi?id=113171
+
+        Reviewed by Dimitri Glazkov.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::hitTestResult):
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::getNodesFromRect):
+        * WebKitSupport/ProximityDetector.cpp:
+        (BlackBerry::WebKit::ProximityDetector::findBestPoint):
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::visiblePositionForPointIgnoringClipping):
+
 2013-03-26  Xiaobo Wang  <xbwang@torchmobile.com.cn>
 
         [BlackBerry] Memory leak in WebPagePrivate.cpp - NavigatorContentUtilsClientBlackBerry

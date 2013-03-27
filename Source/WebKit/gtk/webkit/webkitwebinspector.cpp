@@ -541,7 +541,7 @@ void webkit_web_inspector_inspect_coordinates(WebKitWebInspector* webInspector, 
     if (!view)
         return;
 
-    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active);
+    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
     IntPoint documentPoint = view->windowToContents(IntPoint(static_cast<int>(x), static_cast<int>(y)));
     HitTestResult result(documentPoint);
 

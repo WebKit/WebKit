@@ -228,7 +228,7 @@ Node* nodeFromPoint(Document* document, int x, int y, LayoutPoint* localPoint)
     if (!frameView->visibleContentRect().contains(point))
         return 0;
 
-    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active);
+    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::DisallowShadowContent);
     HitTestResult result(point);
     document->renderView()->hitTest(request, result);
 

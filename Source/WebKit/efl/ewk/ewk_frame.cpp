@@ -694,7 +694,7 @@ Ewk_Hit_Test* ewk_frame_hit_test_new(const Evas_Object* ewkFrame, int x, int y)
 
     WebCore::HitTestResult result = smartData->frame->eventHandler()->hitTestResultAtPoint
                                         (view->windowToContents(WebCore::IntPoint(x, y)), 
-                                        WebCore::HitTestRequest::ReadOnly | WebCore::HitTestRequest::Active | WebCore::HitTestRequest::IgnoreClipping);
+                                        WebCore::HitTestRequest::ReadOnly | WebCore::HitTestRequest::Active | WebCore::HitTestRequest::IgnoreClipping | WebCore::HitTestRequest::DisallowShadowContent);
 
     if (result.scrollbar())
         return 0;

@@ -1,3 +1,13 @@
+2013-03-26  Hayato Ito  <hayato@chromium.org>
+
+        Allow ShadowContents in HitTests by default.
+        https://bugs.webkit.org/show_bug.cgi?id=113171
+
+        Reviewed by Dimitri Glazkov.
+
+        * WebView.cpp:
+        (WebView::gestureNotify):
+
 2013-03-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         The second part of the build fix for r146702. This should do it.

@@ -1,3 +1,13 @@
+2013-03-26  Hayato Ito  <hayato@chromium.org>
+
+        Allow ShadowContents in HitTests by default.
+        https://bugs.webkit.org/show_bug.cgi?id=113171
+
+        Reviewed by Dimitri Glazkov.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_hit_test_new):
+
 2013-03-20  Jose Lejin PJ  <jose.lejin@gmail.com>
 
         ewk_settings_memory_cache_clear should clear JS garbage and release FastMalloc's free pages to OS
