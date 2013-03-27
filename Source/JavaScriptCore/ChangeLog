@@ -1,3 +1,25 @@
+2013-03-27  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should use CheckStructure for typed array checks whenever possible
+        https://bugs.webkit.org/show_bug.cgi?id=113374
+
+        Reviewed by Geoffrey Garen.
+        
+        We used to do the right thing, but it appears that this regressed at some point. Since the
+        FixupPhase now has the ability to outright remove spurious CheckStructures on array
+        operations, it is profitable for the ByteCodeParser to insert CheckStructures whenver there
+        is a chance that it might be profitable, and when the profiling tells us what structure to
+        check.
+        
+        Also added some code for doing ArrayProfile debugging.
+        
+        This is a slightly speed-up. Maybe 3% on Mandreel.
+
+        * bytecode/ArrayProfile.cpp:
+        (JSC::ArrayProfile::computeUpdatedPrediction):
+        * dfg/DFGArrayMode.h:
+        (JSC::DFG::ArrayMode::benefitsFromStructureCheck):
+
 2013-03-27  Zeno Albisser  <zeno@webkit.org>
 
         [Qt] Remove Qt specific WorkQueueItem definitions.

@@ -83,6 +83,8 @@ ArrayModes ArrayProfile::updatedObservedArrayModes() const
 
 void ArrayProfile::computeUpdatedPrediction(CodeBlock* codeBlock, OperationInProgress operation)
 {
+    const bool verbose = false;
+    
     if (m_lastSeenStructure) {
         m_observedArrayModes |= arrayModeFromStructure(m_lastSeenStructure);
         m_mayInterceptIndexedAccesses |=
@@ -92,19 +94,28 @@ void ArrayProfile::computeUpdatedPrediction(CodeBlock* codeBlock, OperationInPro
         if (!structureIsPolymorphic()) {
             if (!m_expectedStructure)
                 m_expectedStructure = m_lastSeenStructure;
-            else if (m_expectedStructure != m_lastSeenStructure)
+            else if (m_expectedStructure != m_lastSeenStructure) {
+                if (verbose)
+                    dataLog(*codeBlock, " bc#", m_bytecodeOffset, ": making structure polymorphic because ", RawPointer(m_expectedStructure), " (", m_expectedStructure->classInfo()->className, ") != ", RawPointer(m_lastSeenStructure), " (", m_lastSeenStructure->classInfo()->className, ")\n");
                 m_expectedStructure = polymorphicStructure();
+            }
         }
         m_lastSeenStructure = 0;
     }
     
-    if (hasTwoOrMoreBitsSet(m_observedArrayModes))
+    if (hasTwoOrMoreBitsSet(m_observedArrayModes)) {
+        if (verbose)
+            dataLog(*codeBlock, " bc#", m_bytecodeOffset, ": making structure polymorphic because two or more bits are set in m_observedArrayModes\n");
         m_expectedStructure = polymorphicStructure();
+    }
     
     if (operation == Collection
         && expectedStructure()
-        && !Heap::isMarked(m_expectedStructure))
+        && !Heap::isMarked(m_expectedStructure)) {
+        if (verbose)
+            dataLog(*codeBlock, " bc#", m_bytecodeOffset, ": making structure during GC\n");
         m_expectedStructure = polymorphicStructure();
+    }
 }
 
 CString ArrayProfile::briefDescription(CodeBlock* codeBlock)
