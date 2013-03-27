@@ -2868,7 +2868,8 @@ void HTMLTreeBuilder::processTokenInForeignContent(AtomicHTMLToken* token)
             adjustSVGTagNameCase(token);
 
         if (token->name() == SVGNames::scriptTag && m_tree.currentStackItem()->hasTagName(SVGNames::scriptTag)) {
-            m_scriptToProcess = m_tree.currentElement();
+            if (scriptingContentIsAllowed(m_tree.parserContentPolicy()))
+                m_scriptToProcess = m_tree.currentElement();
             m_tree.openElements()->pop();
             return;
         }

@@ -41,6 +41,7 @@
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLPlugInElement.h"
 #include "HTMLScriptElement.h"
 #include "HTMLStackItem.h"
 #include "HTMLTemplateElement.h"
@@ -106,6 +107,9 @@ static inline void executeTask(HTMLConstructionSiteTask& task)
 
 void HTMLConstructionSite::attachLater(ContainerNode* parent, PassRefPtr<Node> prpChild, bool selfClosing)
 {
+    ASSERT(scriptingContentIsAllowed(m_parserContentPolicy) || !toElement(prpChild.get()) || !toScriptElement(toElement(prpChild.get())));
+    ASSERT(pluginContentIsAllowed(m_parserContentPolicy) || !prpChild->isPluginElement());
+
     HTMLConstructionSiteTask task;
     task.parent = parent;
     task.child = prpChild;
@@ -462,7 +466,8 @@ void HTMLConstructionSite::insertForeignElement(AtomicHTMLToken* token, const At
     notImplemented(); // parseError when xmlns or xmlns:xlink are wrong.
 
     RefPtr<Element> element = createElement(token, namespaceURI);
-    attachLater(currentNode(), element, token->selfClosing());
+    if (scriptingContentIsAllowed(m_parserContentPolicy) || !toScriptElement(element.get()))
+        attachLater(currentNode(), element, token->selfClosing());
     if (!token->selfClosing())
         m_openElements.push(HTMLStackItem::create(element.release(), token, namespaceURI));
 }
