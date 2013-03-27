@@ -1,3 +1,23 @@
+2013-03-26  Xiaobo Wang  <xbwang@torchmobile.com.cn>
+
+        [BlackBerry] Memory leak in WebPagePrivate.cpp - NavigatorContentUtilsClientBlackBerry
+        https://bugs.webkit.org/show_bug.cgi?id=112996
+
+        Reviewed by Rob Buis.
+
+        PR 312552
+        Internally Reviewed by Anthony Scian.
+
+        NavigatorContentUtilsClientBlackBerry is new'ed in WebPagePrivate::init(),
+        but not deleted anywhere. Fixed by creating an OwnPtr for it.
+        Also fixed some webkit-style errors.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        * Api/WebPage_p.h:
+        (WebCore):
+        (WebPagePrivate):
+
 2013-03-26  Mike Lattanzio  <mlattanzio@blackberry.com>
 
         [BlackBerry] Include accelerated compositing layers in screen captures.

@@ -60,6 +60,7 @@ class Frame;
 class GeolocationClientBlackBerry;
 class GraphicsLayerBlackBerry;
 class LayerWebKitThread;
+class NavigatorContentUtilsClientBlackBerry;
 class Node;
 class Page;
 class PluginView;
@@ -490,6 +491,9 @@ public:
     OwnPtr<WebTapHighlight> m_tapHighlight;
     OwnPtr<WebTapHighlight> m_selectionHighlight;
     OwnPtr<SelectionOverlay> m_selectionOverlay;
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
+    OwnPtr<WebCore::NavigatorContentUtilsClientBlackBerry> m_navigatorContentUtilsClient;
+#endif
 
     bool m_visible;
     ActivationStateType m_activationState;
