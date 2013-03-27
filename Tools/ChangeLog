@@ -1,3 +1,21 @@
+2013-03-27  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL][jhbuild] Evas fails to build when Wayland is present on the system
+        https://bugs.webkit.org/show_bug.cgi?id=113403
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        As of Evas 1.7.5, when Wayland is detected on the system, support for
+        both Wayland SHM and Wayland EGL is automatically enabled in autoconf.
+        The code, however, seems to depend on a few other flags which must be
+        explicitly enabled.
+
+        If those additional GL-related options are passed, we end up
+        having issues on the WebKit side, so disable Wayland support for
+        now.
+
+        * efl/jhbuild.modules:
+
 2013-03-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r146864.

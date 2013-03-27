@@ -189,7 +189,12 @@
     </dependencies>
   </autotools>
 
-  <autotools id="evas" autogen-sh="configure">
+  <!-- TODO: Enabling Wayland support in Evas is currently requires additional
+       GL-related options that might break our use of GLX in WebKit. While we
+       do not investigate it in more depth, explicitly disable Wayland support
+       in Evas. -->
+  <autotools id="evas" autogen-sh="configure"
+             autogenargs="--disable-wayland-shm --disable-wayland-egl">
     <branch module="releases/evas-1.7.5.tar.bz2" version="1.7.5"
             repo="download.enlightenment.org"
             hash="sha256:70b350a970b2086787622845896f3e54de278fe698b8069796fd752e70427374"
