@@ -98,7 +98,7 @@ size_t NetworkResourceLoader::fileBackedResourceMinimumSize()
 
 void NetworkResourceLoader::willCacheResponseAsync(ResourceHandle* handle, NSCachedURLResponse *nsResponse)
 {
-    ASSERT(handle == m_handle);
+    ASSERT_UNUSED(handle, handle == m_handle);
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     if (m_bytesReceived >= fileBackedResourceMinimumSize())

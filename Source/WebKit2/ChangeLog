@@ -1,5 +1,12 @@
 2013-03-27  Brady Eidson  <beidson@apple.com>
 
+        Blind attempt at fixing the release build.
+
+        * NetworkProcess/mac/NetworkResourceLoaderMac.mm:
+        (WebKit::NetworkResourceLoader::willCacheResponseAsync):
+
+2013-03-27  Brady Eidson  <beidson@apple.com>
+
         Mem mapped resource data improvements.
         <rdar://problem/13196481> and https://bugs.webkit.org/show_bug.cgi?id=113422
 
