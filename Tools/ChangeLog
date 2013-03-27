@@ -1,3 +1,9 @@
+2013-03-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r146852. Please another reference to the Lion leaks builder.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2013-03-27  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][webkitpy] A huge list of warnings about missing bugs in expectations when running NRWT with WKTR
