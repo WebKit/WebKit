@@ -111,6 +111,18 @@ WebInspector.DefaultTextEditor.EditInfo = function(range, text)
 
 WebInspector.DefaultTextEditor.prototype = {
     /**
+     * @return {boolean}
+     */
+    isClean: function()
+    {
+        return this._textModel.isClean();
+    },
+
+    markClean: function()
+    {
+        this._textModel.markClean();
+    },
+    /**
      * @param {WebInspector.TextRange} range
      * @return {string}
      */

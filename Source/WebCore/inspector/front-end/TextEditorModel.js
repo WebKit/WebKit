@@ -200,6 +200,17 @@ WebInspector.TextEditorModel.endsWithBracketRegex = /[{(\[]\s*$/;
 
 WebInspector.TextEditorModel.prototype = {
     /**
+     * @return {boolean}
+     */
+    isClean: function() {
+        return !this._undoStack.length;
+    },
+
+    markClean: function() {
+        this._resetUndoStack();
+    },
+
+    /**
      * @return {number}
      */
     get linesCount()

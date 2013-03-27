@@ -39,7 +39,12 @@ WebInspector.TextEditor.Events = {
 };
 
 WebInspector.TextEditor.prototype = {
+    /**
+     * @return {boolean}
+     */
+    isClean: function() { },
 
+    markClean: function() { },
     /**
      * @param {string} mimeType
      */
