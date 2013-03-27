@@ -57,7 +57,21 @@ public:
         if (m_data)
             Header::fromPayload(m_data)->refCount++;
     }
-    
+
+    explicit RefCountedArray(size_t size)
+    {
+        if (!size) {
+            m_data = 0;
+            return;
+        }
+
+        m_data = (static_cast<Header*>(fastMalloc(Header::size() + sizeof(T) * size)))->payload();
+        Header::fromPayload(m_data)->refCount = 1;
+        Header::fromPayload(m_data)->length = size;
+        ASSERT(Header::fromPayload(m_data)->length == size);
+        VectorTypeOperations<T>::initialize(begin(), end());
+    }
+
     explicit RefCountedArray(const Vector<T>& other)
     {
         if (other.isEmpty()) {

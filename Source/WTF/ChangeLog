@@ -1,3 +1,17 @@
+2013-03-25  Oliver Hunt  <oliver@apple.com>
+
+        RefCountedArray needs a size based constructor
+        https://bugs.webkit.org/show_bug.cgi?id=113277
+
+        Reviewed by Benjamin Poulain.
+
+        Simple patch to add a size based constructor for RefCountedArray
+        so that we can create an sharable array without a copy.
+
+        * wtf/RefCountedArray.h:
+        (RefCountedArray):
+        (WTF::RefCountedArray::RefCountedArray):
+
 2013-03-26  James Robinson  <jamesr@chromium.org>
 
         Compile fix - OS(WINDOWS), not OS(WIN).
