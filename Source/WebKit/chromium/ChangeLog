@@ -1,3 +1,10 @@
+2013-03-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled Chromium DEPS to r190706.  Requested by
+        danakj_ via sheriffbot.
+
+        * DEPS:
+
 2013-03-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Heap-use-after-free regression
