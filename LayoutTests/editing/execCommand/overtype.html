@@ -29,13 +29,17 @@ else {
     selection.collapse(element, 0);
     internals.toggleOverwriteModeEnabled(document);
 
-    document.execCommand("InsertText", false, 'FO');
-    Markup.dump(element, 'After overwritting the first two characters');
+    document.execCommand("InsertText", false, 'F');
+    Markup.dump(element, 'After overwritting the first character');
 
     document.execCommand("InsertText", false, ' ');
     Markup.dump(element, 'After inserting a blank');
 
-    document.execCommand("InsertText", false, 'O SOME MORE');
+    moveSelectionForwardByCharacterCommand();
+    document.execCommand("InsertText", false, ' ');
+    Markup.dump(element, 'After inserting a blank at the line end');
+
+    document.execCommand("InsertText", false, 'SOME MORE');
     Markup.dump(element, 'Overwrite at the end of a line performs as a normal Insert');
 
     selection.collapse(document.getElementById("linkText"), 0);

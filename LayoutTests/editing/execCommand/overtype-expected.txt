@@ -13,11 +13,11 @@ These are the original contents:
 | "
 "
 
-After overwritting the first two characters:
+After overwritting the first character:
 | "
 "
 | <b>
-|   "FO<#selection-caret>o"
+|   "F<#selection-caret>oo"
 | <a>
 |   href="http://www.google.com/"
 |   <div>
@@ -30,7 +30,20 @@ After inserting a blank:
 | "
 "
 | <b>
-|   "FO<#selection-caret> "
+|   "F <#selection-caret>o"
+| <a>
+|   href="http://www.google.com/"
+|   <div>
+|     id="linkText"
+|     "bar"
+| "
+"
+
+After inserting a blank at the line end:
+| "
+"
+| <b>
+|   "F o <#selection-caret>"
 | <a>
 |   href="http://www.google.com/"
 |   <div>
@@ -43,7 +56,7 @@ Overwrite at the end of a line performs as a normal Insert:
 | "
 "
 | <b>
-|   "FOO SOME MORE<#selection-caret>"
+|   "F o SOME MORE<#selection-caret>"
 | <a>
 |   href="http://www.google.com/"
 |   <div>
@@ -56,7 +69,7 @@ Overwritting works even if the inserted text is longer than the replaced text:
 | "
 "
 | <b>
-|   "FOO SOME MORE"
+|   "F o SOME MORE"
 | <a>
 |   href="http://www.google.com/"
 |   <div>
@@ -69,7 +82,7 @@ Overwrite should create new text nodes on demand:
 | "
 "
 | <b>
-|   "FOO SOME MORE"
+|   "F o SOME MORE"
 | <div>
 |   id="linkText"
 |   <a>

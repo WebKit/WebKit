@@ -73,7 +73,7 @@ private:
     
     bool performTrivialReplace(const String&, bool selectInsertedText);
     bool performOverwrite(const String&, bool selectInsertedText);
-    void setEndingSelectionWithoutValidation(const Position& startPosition, const Position& endPosition, bool selectInsertedText);
+    void setEndingSelectionWithoutValidation(const Position& startPosition, const Position& endPosition);
 
     friend class TypingCommand;
 

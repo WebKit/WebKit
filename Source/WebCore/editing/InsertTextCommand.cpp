@@ -75,7 +75,7 @@ Position InsertTextCommand::positionInsideTextNode(const Position& p)
     return pos;
 }
 
-void InsertTextCommand::setEndingSelectionWithoutValidation(const Position& startPosition, const Position& endPosition, bool selectInsertedText)
+void InsertTextCommand::setEndingSelectionWithoutValidation(const Position& startPosition, const Position& endPosition)
 {
     // We could have inserted a part of composed character sequence,
     // so we are basically treating ending selection as a range to avoid validation.
@@ -84,9 +84,6 @@ void InsertTextCommand::setEndingSelectionWithoutValidation(const Position& star
     forcedEndingSelection.setWithoutValidation(startPosition, endPosition);
     forcedEndingSelection.setIsDirectional(endingSelection().isDirectional());
     setEndingSelection(forcedEndingSelection);
-
-    if (!selectInsertedText)
-        setEndingSelection(VisibleSelection(endingSelection().visibleEnd(), endingSelection().isDirectional()));
 }
 
 // This avoids the expense of a full fledged delete operation, and avoids a layout that typically results
@@ -104,7 +101,9 @@ bool InsertTextCommand::performTrivialReplace(const String& text, bool selectIns
     if (endPosition.isNull())
         return false;
 
-    setEndingSelectionWithoutValidation(start, endPosition, selectInsertedText);
+    setEndingSelectionWithoutValidation(start, endPosition);
+    if (!selectInsertedText)
+        setEndingSelection(VisibleSelection(endingSelection().visibleEnd(), endingSelection().isDirectional()));
 
     return true;
 }
@@ -117,10 +116,15 @@ bool InsertTextCommand::performOverwrite(const String& text, bool selectInserted
         return false;
 
     unsigned count = std::min(text.length(), textNode->length() - start.offsetInContainerNode());
+    if (!count)
+        return false;
+
     replaceTextInNode(textNode, start.offsetInContainerNode(), count, text);
 
     Position endPosition = Position(textNode.release(), start.offsetInContainerNode() + text.length());
-    setEndingSelectionWithoutValidation(start, endPosition, selectInsertedText);
+    setEndingSelectionWithoutValidation(start, endPosition);
+    if (!selectInsertedText)
+        setEndingSelection(VisibleSelection(endingSelection().visibleEnd(), endingSelection().isDirectional()));
 
     return true;
 }
@@ -216,13 +220,7 @@ void InsertTextCommand::doApply()
         }
     }
 
-    // We could have inserted a part of composed character sequence,
-    // so we are basically treating ending selection as a range to avoid validation.
-    // <http://bugs.webkit.org/show_bug.cgi?id=15781>
-    VisibleSelection forcedEndingSelection;
-    forcedEndingSelection.setWithoutValidation(startPosition, endPosition);
-    forcedEndingSelection.setIsDirectional(endingSelection().isDirectional());
-    setEndingSelection(forcedEndingSelection);
+    setEndingSelectionWithoutValidation(startPosition, endPosition);
 
     // Handle the case where there is a typing style.
     if (RefPtr<EditingStyle> typingStyle = document()->frame()->selection()->typingStyle()) {
