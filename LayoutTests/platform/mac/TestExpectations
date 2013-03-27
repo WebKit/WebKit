@@ -1476,3 +1476,7 @@ webkit.org/b/113227 transitions/cross-fade-background-image.html [ Pass Failure 
 webkit.org/b/113227 transitions/cross-fade-border-image.html [ Pass Failure ]
 webkit.org/b/113227 transitions/default-timing-function.html [ Pass Failure ]
 webkit.org/b/113227 transitions/svg-text-shadow-transition.html [ Pass Failure ]
+
+# Failed due to http://trac.webkit.org/changeset/146949
+webkit.org/b/113361 accessibility/table-with-aria-role.html [ Failure ]
+webkit.org/b/113361 platform/mac/accessibility/button-shouldnot-have-axvalue.html [ Failure ]
