@@ -42,6 +42,7 @@
 #import "WebViewInternal.h"
 #import <WebCore/Frame.h>
 #import <WebCore/InspectorController.h>
+#import <WebCore/InspectorFrontendClient.h>
 #import <WebCore/Page.h>
 #import <WebCore/ScriptValue.h>
 #import <WebCore/SoftLinking.h>
@@ -210,7 +211,7 @@ void WebInspectorFrontendClient::frontendLoaded()
                               @selector(webView:didClearInspectorWindowObject:forFrame:), [frame windowObject], frame);
 
     bool attached = [m_windowController.get() attached];
-    setAttachedWindow(attached);
+    setAttachedWindow(attached ? DOCKED_TO_BOTTOM : UNDOCKED);
 }
 
 static bool useWebKitWebInspector()
@@ -258,7 +259,7 @@ void WebInspectorFrontendClient::disconnectFromBackend()
     [m_windowController.get() destroyInspectorView:false];
 }
 
-void WebInspectorFrontendClient::attachWindow()
+void WebInspectorFrontendClient::attachWindow(DockSide)
 {
     if ([m_windowController.get() attached])
         return;
@@ -274,6 +275,11 @@ void WebInspectorFrontendClient::detachWindow()
 void WebInspectorFrontendClient::setAttachedWindowHeight(unsigned height)
 {
     [m_windowController.get() setAttachedWindowHeight:height];
+}
+
+void WebInspectorFrontendClient::setAttachedWindowWidth(unsigned)
+{
+    // Dock to right is not implemented in WebKit 1.
 }
 
 void WebInspectorFrontendClient::inspectedURLChanged(const String& newURL)
@@ -519,7 +525,7 @@ void WebInspectorFrontendClient::append(const String& url, const String& content
 
 - (IBAction)attachWindow:(id)sender
 {
-    _frontendClient->attachWindow();
+    _frontendClient->attachWindow(InspectorFrontendClient::DOCKED_TO_BOTTOM);
 }
 
 - (IBAction)showWindow:(id)sender
@@ -569,7 +575,7 @@ void WebInspectorFrontendClient::append(const String& url, const String& content
         return;
 
     _inspectorClient->setInspectorStartsAttached(true);
-    _frontendClient->setAttachedWindow(true);
+    _frontendClient->setAttachedWindow(InspectorFrontendClient::DOCKED_TO_BOTTOM);
 
     [self close];
     [self showWindow:nil];
@@ -581,7 +587,7 @@ void WebInspectorFrontendClient::append(const String& url, const String& content
         return;
 
     _inspectorClient->setInspectorStartsAttached(false);
-    _frontendClient->setAttachedWindow(false);
+    _frontendClient->setAttachedWindow(InspectorFrontendClient::UNDOCKED);
 
     [self close];
     [self showWindow:nil];

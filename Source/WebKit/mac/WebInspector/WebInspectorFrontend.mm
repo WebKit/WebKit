@@ -26,6 +26,9 @@
 #import "WebInspectorFrontend.h"
 
 #import "WebInspectorClient.h"
+#import <WebCore/InspectorFrontendClient.h>
+
+using namespace WebCore;
 
 @implementation WebInspectorFrontend
 
@@ -40,7 +43,7 @@
 
 - (void)attach
 {
-    m_frontendClient->attachWindow();
+    m_frontendClient->attachWindow(InspectorFrontendClient::DOCKED_TO_BOTTOM);
 }
 
 - (void)detach

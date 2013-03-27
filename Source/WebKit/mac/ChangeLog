@@ -1,3 +1,27 @@
+2013-03-26  Timothy Hatcher  <timothy@apple.com>
+
+        Add support for dock-to-right of the Web Inspector in the Mac port.
+
+        Unfortunately this requires Safari changes, so it is disabled in the nightly builds.
+
+        https://webkit.org/b/113341
+        rdar://problem/10368152
+
+        Reviewed by Joseph Pecoraro.
+
+        * Resources/Dock.pdf: Updated.
+        * WebCoreSupport/WebInspectorClient.h:
+        (WebInspectorFrontendClient):
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorFrontendClient::frontendLoaded):
+        (WebInspectorFrontendClient::attachWindow):
+        (WebInspectorFrontendClient::setAttachedWindowWidth):
+        (-[WebInspectorWindowController attachWindow:]):
+        (-[WebInspectorWindowController attach]):
+        (-[WebInspectorWindowController detach]):
+        * WebInspector/WebInspectorFrontend.mm:
+        (-[WebInspectorFrontend attach]):
+
 2013-03-26  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed attempted cr-mac build fix.

@@ -182,7 +182,7 @@ void InspectorFrontendClientEfl::inspectedURLChanged(const String&)
     notImplemented();
 }
 
-void InspectorFrontendClientEfl::attachWindow()
+void InspectorFrontendClientEfl::attachWindow(DockSide)
 {
     notImplemented();
 }
@@ -193,6 +193,11 @@ void InspectorFrontendClientEfl::detachWindow()
 }
 
 void InspectorFrontendClientEfl::setAttachedWindowHeight(unsigned)
+{
+    notImplemented();
+}
+
+void InspectorFrontendClientEfl::setAttachedWindowWidth(unsigned)
 {
     notImplemented();
 }

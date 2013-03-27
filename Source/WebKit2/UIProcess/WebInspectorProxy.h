@@ -62,6 +62,11 @@ class WebPageGroup;
 class WebPageProxy;
 struct WebPageCreationParameters;
 
+enum AttachmentSide {
+    AttachmentSideBottom,
+    AttachmentSideRight
+};
+
 class WebInspectorProxy : public APIObject, public CoreIPC::MessageReceiver {
 public:
     static const Type APIType = TypeInspector;
@@ -91,7 +96,7 @@ public:
 #if PLATFORM(MAC)
     void createInspectorWindow();
     void updateInspectorWindowTitle() const;
-    void inspectedViewFrameDidChange();
+    void inspectedViewFrameDidChange(CGFloat = 0);
     void windowFrameDidChange();
 
     void setInspectorWindowFrame(WKRect&);
@@ -108,9 +113,13 @@ public:
     void showMainResourceForFrame(WebFrameProxy*);
 
     bool isAttached() const { return m_isAttached; }
-    void attach();
+    void attachRight();
+    void attachBottom();
+    void attach(AttachmentSide = AttachmentSideBottom);
     void detach();
+
     void setAttachedWindowHeight(unsigned);
+    void setAttachedWindowWidth(unsigned);
 
     bool isDebuggingJavaScript() const { return m_isDebuggingJavaScript; }
     void toggleJavaScriptDebugging();
@@ -153,9 +162,11 @@ private:
     void platformAttachAvailabilityChanged(bool);
     void platformInspectedURLChanged(const String&);
     unsigned platformInspectedWindowHeight();
+    unsigned platformInspectedWindowWidth();
     void platformAttach();
     void platformDetach();
     void platformSetAttachedWindowHeight(unsigned);
+    void platformSetAttachedWindowWidth(unsigned);
 
     // Called by WebInspectorProxy messages
     void createInspectorPage(uint64_t& inspectorPageID, WebPageCreationParameters&);
@@ -186,6 +197,7 @@ private:
     static const unsigned initialWindowHeight;
 
     // Keep this in sync with the value in InspectorFrontendClientLocal.
+    static const unsigned minimumAttachedWidth;
     static const unsigned minimumAttachedHeight;
 
     WebPageProxy* m_page;
@@ -199,10 +211,13 @@ private:
     bool m_createdInspectorPage;
     bool m_ignoreFirstBringToFront;
 
+    AttachmentSide m_attachmentSide;
+
 #if PLATFORM(MAC)
     RetainPtr<WKWebInspectorWKView> m_inspectorView;
     RetainPtr<NSWindow> m_inspectorWindow;
-    RetainPtr<NSButton> m_dockButton;
+    RetainPtr<NSButton> m_dockBottomButton;
+    RetainPtr<NSButton> m_dockRightButton;
     RetainPtr<WKWebInspectorProxyObjCAdapter> m_inspectorProxyObjCAdapter;
     String m_urlString;
 #elif PLATFORM(GTK)

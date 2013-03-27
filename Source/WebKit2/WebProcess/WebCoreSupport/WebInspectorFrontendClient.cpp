@@ -61,9 +61,19 @@ void WebInspectorFrontendClient::closeWindow()
     m_page->inspector()->didClose();
 }
 
-void WebInspectorFrontendClient::attachWindow()
+void WebInspectorFrontendClient::attachWindow(DockSide dockSide)
 {
-    m_page->inspector()->attach();
+    switch (dockSide) {
+    case InspectorFrontendClient::UNDOCKED:
+        ASSERT_NOT_REACHED();
+        break;
+    case InspectorFrontendClient::DOCKED_TO_BOTTOM:
+        m_page->inspector()->attachBottom();
+        break;
+    case InspectorFrontendClient::DOCKED_TO_RIGHT:
+        m_page->inspector()->attachRight();
+        break;
+    }
 }
 
 void WebInspectorFrontendClient::detachWindow()
@@ -74,6 +84,11 @@ void WebInspectorFrontendClient::detachWindow()
 void WebInspectorFrontendClient::setAttachedWindowHeight(unsigned height)
 {
     m_page->inspector()->setAttachedWindowHeight(height);
+}
+
+void WebInspectorFrontendClient::setAttachedWindowWidth(unsigned width)
+{
+    m_page->inspector()->setAttachedWindowWidth(width);
 }
 
 void WebInspectorFrontendClient::inspectedURLChanged(const String& urlString)

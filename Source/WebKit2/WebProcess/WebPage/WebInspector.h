@@ -59,7 +59,9 @@ public:
     void show();
     void close();
 
-    void setAttachedWindow(bool);
+    void attachedBottom();
+    void attachedRight();
+    void detached();
 
     void evaluateScriptForTest(long callID, const String& script);
 
@@ -96,10 +98,12 @@ private:
     void bringToFront();
     void inspectedURLChanged(const String&);
 
-    void attach();
+    void attachBottom();
+    void attachRight();
     void detach();
 
     void setAttachedWindowHeight(unsigned);
+    void setAttachedWindowWidth(unsigned);
 
     // Implemented in platform WebInspector file
     String localizedStringsURL() const;

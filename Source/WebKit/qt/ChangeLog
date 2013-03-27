@@ -1,3 +1,21 @@
+2013-03-27  Timothy Hatcher  <timothy@apple.com>
+
+        Add support for dock-to-right of the Web Inspector in the Mac port.
+
+        Unfortunately this requires Safari changes, so it is disabled in the nightly builds.
+
+        https://webkit.org/b/113341
+        rdar://problem/10368152
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorFrontendClientQt::frontendLoaded):
+        (WebCore::InspectorFrontendClientQt::attachWindow):
+        (WebCore::InspectorFrontendClientQt::setAttachedWindowWidth):
+        * WebCoreSupport/InspectorClientQt.h:
+        (InspectorFrontendClientQt):
+
 2013-03-26  Hayato Ito  <hayato@chromium.org>
 
         Allow ShadowContents in HitTests by default.

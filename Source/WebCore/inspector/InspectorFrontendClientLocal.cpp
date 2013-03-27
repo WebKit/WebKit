@@ -63,6 +63,8 @@ static const char* inspectorAttachedHeightSetting = "inspectorAttachedHeight";
 static const unsigned defaultAttachedHeight = 300;
 static const float minimumAttachedHeight = 250.0f;
 static const float maximumAttachedHeightRatio = 0.75f;
+static const float minimumAttachedWidth = 750.0f;
+static const float minimumAttachedInspectedWidth = 320.0f;
 
 class InspectorBackendDispatchTask {
     WTF_MAKE_FAST_ALLOCATED;
@@ -140,7 +142,8 @@ void InspectorFrontendClientLocal::windowObjectCleared()
 
 void InspectorFrontendClientLocal::frontendLoaded()
 {
-    // Call setDockingUnavailable before bringToFront. If we display the inspector window via bringToFront first it causes the call to canAttachWindow to return the wrong result on Windows.
+    // Call setDockingUnavailable before bringToFront. If we display the inspector window via bringToFront first it causes
+    // the call to canAttachWindow to return the wrong result on Windows.
     // Calling bringToFront first causes the visibleHeight of the inspected page to always return 0 immediately after. 
     // Thus if we call canAttachWindow first we can avoid this problem. This change does not cause any regressions on Mac.
     setDockingUnavailable(!canAttachWindow());
@@ -155,21 +158,25 @@ void InspectorFrontendClientLocal::requestSetDockSide(DockSide dockSide)
 {
     if (dockSide == UNDOCKED) {
         detachWindow();
-        setAttachedWindow(false);
+        setAttachedWindow(dockSide);
     } else if (canAttachWindow()) {
-        attachWindow();
-        setAttachedWindow(true);
+        attachWindow(dockSide);
+        setAttachedWindow(dockSide);
     }
 }
 
 bool InspectorFrontendClientLocal::canAttachWindow()
 {
-    // Don't allow the attach if the window would be too small to accommodate the minimum inspector height.
-    // Also don't allow attaching to another inspector -- two inspectors in one window is too much!
+    // Don't allow attaching to another inspector -- two inspectors in one window is too much!
     bool isInspectorPage = m_inspectorController->hasInspectorFrontendClient();
+    if (isInspectorPage)
+        return false;
+
+    // Don't allow the attach if the window would be too small to accommodate the minimum inspector size.
     unsigned inspectedPageHeight = m_inspectorController->inspectedPage()->mainFrame()->view()->visibleHeight();
+    unsigned inspectedPageWidth = m_inspectorController->inspectedPage()->mainFrame()->view()->visibleWidth();
     unsigned maximumAttachedHeight = inspectedPageHeight * maximumAttachedHeightRatio;
-    return minimumAttachedHeight <= maximumAttachedHeight && !isInspectorPage;
+    return minimumAttachedHeight <= maximumAttachedHeight && minimumAttachedWidth <= inspectedPageWidth;
 }
 
 void InspectorFrontendClientLocal::setDockingUnavailable(bool unavailable)
@@ -183,6 +190,13 @@ void InspectorFrontendClientLocal::changeAttachedWindowHeight(unsigned height)
     unsigned attachedHeight = constrainedAttachedWindowHeight(height, totalHeight);
     m_settings->setProperty(inspectorAttachedHeightSetting, String::number(attachedHeight));
     setAttachedWindowHeight(attachedHeight);
+}
+
+void InspectorFrontendClientLocal::changeAttachedWindowWidth(unsigned width)
+{
+    unsigned totalWidth = m_frontendPage->mainFrame()->view()->visibleWidth() + m_inspectorController->inspectedPage()->mainFrame()->view()->visibleWidth();
+    unsigned attachedWidth = constrainedAttachedWindowWidth(width, totalWidth);
+    setAttachedWindowWidth(attachedWidth);
 }
 
 void InspectorFrontendClientLocal::openInNewTab(const String& url)
@@ -212,9 +226,22 @@ void InspectorFrontendClientLocal::moveWindowBy(float x, float y)
     m_frontendPage->chrome()->setWindowRect(frameRect);
 }
 
-void InspectorFrontendClientLocal::setAttachedWindow(bool attached)
+void InspectorFrontendClientLocal::setAttachedWindow(DockSide dockSide)
 {
-    evaluateOnLoad(String::format("[\"setDockSide\", \"%s\"]", attached ? "bottom" : "undocked"));
+    const char* side = "undocked";
+    switch (dockSide) {
+    case UNDOCKED:
+        side = "undocked";
+        break;
+    case DOCKED_TO_RIGHT:
+        side = "right";
+        break;
+    case DOCKED_TO_BOTTOM:
+        side = "bottom";
+        break;
+    }
+
+    evaluateOnLoad(String::format("[\"setDockSide\", \"%s\"]", side));
 }
 
 void InspectorFrontendClientLocal::restoreAttachedWindowHeight()
@@ -290,6 +317,12 @@ unsigned InspectorFrontendClientLocal::constrainedAttachedWindowHeight(unsigned 
 {
     using namespace std;
     return roundf(max(minimumAttachedHeight, min<float>(preferredHeight, totalWindowHeight * maximumAttachedHeightRatio)));
+}
+
+unsigned InspectorFrontendClientLocal::constrainedAttachedWindowWidth(unsigned preferredWidth, unsigned totalWindowWidth)
+{
+    using namespace std;
+    return roundf(max(minimumAttachedWidth, min<float>(preferredWidth, totalWindowWidth - minimumAttachedInspectedWidth)));
 }
 
 void InspectorFrontendClientLocal::sendMessageToBackend(const String& message)

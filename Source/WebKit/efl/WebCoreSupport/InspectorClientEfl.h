@@ -81,10 +81,11 @@ public:
 
     virtual void inspectedURLChanged(const String&);
 
-    virtual void attachWindow();
+    virtual void attachWindow(DockSide);
     virtual void detachWindow();
 
     virtual void setAttachedWindowHeight(unsigned);
+    virtual void setAttachedWindowWidth(unsigned);
 
     void disconnectInspectorClient() { m_inspectorClient = 0; }
     void destroyInspectorWindow(bool notifyInspectorController);

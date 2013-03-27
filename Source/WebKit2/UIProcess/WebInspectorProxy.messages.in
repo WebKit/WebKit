@@ -28,10 +28,13 @@ messages -> WebInspectorProxy {
     BringToFront()
     InspectedURLChanged(WTF::String urlString)
 
-    Attach()
+    AttachBottom()
+    AttachRight()
     Detach()
     AttachAvailabilityChanged(bool available)
+
     SetAttachedWindowHeight(unsigned height)
+    SetAttachedWindowWidth(unsigned width)
 
 #if ENABLE(INSPECTOR_SERVER)
     SendMessageToRemoteFrontend(WTF::String message)

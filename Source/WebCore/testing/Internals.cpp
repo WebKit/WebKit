@@ -161,7 +161,7 @@ class InspectorFrontendClientDummy : public InspectorFrontendClientLocal {
 public:
     InspectorFrontendClientDummy(InspectorController*, Page*);
     virtual ~InspectorFrontendClientDummy() { }
-    virtual void attachWindow() OVERRIDE { }
+    virtual void attachWindow(DockSide) OVERRIDE { }
     virtual void detachWindow() OVERRIDE { }
 
     virtual String localizedStringsURL() OVERRIDE { return String(); }
@@ -173,6 +173,7 @@ public:
 
 protected:
     virtual void setAttachedWindowHeight(unsigned) OVERRIDE { }
+    virtual void setAttachedWindowWidth(unsigned) OVERRIDE { }
 };
 
 InspectorFrontendClientDummy::InspectorFrontendClientDummy(InspectorController* controller, Page* page)

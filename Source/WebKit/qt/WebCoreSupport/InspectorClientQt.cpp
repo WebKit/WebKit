@@ -297,7 +297,7 @@ InspectorFrontendClientQt::~InspectorFrontendClientQt()
 void InspectorFrontendClientQt::frontendLoaded()
 {
     InspectorFrontendClientLocal::frontendLoaded();
-    setAttachedWindow(true);
+    setAttachedWindow(DOCKED_TO_BOTTOM);
 }
 
 String InspectorFrontendClientQt::localizedStringsURL()
@@ -316,7 +316,7 @@ void InspectorFrontendClientQt::closeWindow()
     destroyInspectorView(true);
 }
 
-void InspectorFrontendClientQt::attachWindow()
+void InspectorFrontendClientQt::attachWindow(DockSide)
 {
     notImplemented();
 }
@@ -327,6 +327,11 @@ void InspectorFrontendClientQt::detachWindow()
 }
 
 void InspectorFrontendClientQt::setAttachedWindowHeight(unsigned)
+{
+    notImplemented();
+}
+
+void InspectorFrontendClientQt::setAttachedWindowWidth(unsigned)
 {
     notImplemented();
 }

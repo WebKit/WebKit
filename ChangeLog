@@ -1,3 +1,16 @@
+2013-03-27  Timothy Hatcher  <timothy@apple.com>
+
+        Add support for dock-to-right of the Web Inspector in the Mac port.
+
+        Unfortunately this requires Safari changes, so it is disabled in the nightly builds.
+
+        https://webkit.org/b/113341
+        rdar://problem/10368152
+
+        Reviewed by Joseph Pecoraro.
+
+        * Source/autotools/symbols.filter:
+
 2013-03-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r146864.

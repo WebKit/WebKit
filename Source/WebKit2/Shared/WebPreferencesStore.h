@@ -177,6 +177,8 @@ namespace WebKit {
     macro(PDFDisplayMode, pdfDisplayMode, UInt32, uint32_t, 1) \
     macro(EditableLinkBehavior, editableLinkBehavior, UInt32, uint32_t, WebCore::EditableLinkNeverLive) \
     macro(InspectorAttachedHeight, inspectorAttachedHeight, UInt32, uint32_t, 300) \
+    macro(InspectorAttachedWidth, inspectorAttachedWidth, UInt32, uint32_t, 750) \
+    macro(InspectorAttachmentSide, inspectorAttachmentSide, UInt32, uint32_t, 0) \
     \
 
 #if PLATFORM(MAC)

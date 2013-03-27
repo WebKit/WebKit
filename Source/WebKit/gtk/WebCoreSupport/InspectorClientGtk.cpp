@@ -241,7 +241,7 @@ void InspectorFrontendClient::closeWindow()
     destroyInspectorWindow(true);
 }
 
-void InspectorFrontendClient::attachWindow()
+void InspectorFrontendClient::attachWindow(DockSide)
 {
     if (!m_inspectorWebView)
         return;
@@ -260,6 +260,11 @@ void InspectorFrontendClient::detachWindow()
 }
 
 void InspectorFrontendClient::setAttachedWindowHeight(unsigned height)
+{
+    notImplemented();
+}
+
+void InspectorFrontendClient::setAttachedWindowWidth(unsigned width)
 {
     notImplemented();
 }

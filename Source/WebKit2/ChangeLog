@@ -1,3 +1,62 @@
+2013-03-26  Timothy Hatcher  <timothy@apple.com>
+
+        Add support for dock-to-right of the Web Inspector in the Mac port.
+
+        Unfortunately this requires Safari changes, so it is disabled in the nightly builds.
+
+        https://webkit.org/b/113341
+        rdar://problem/10368152
+
+        Reviewed by Joseph Pecoraro.
+
+        * Resources/Dock.pdf: Removed.
+        * Resources/DockBottom.pdf: Added.
+        * Resources/DockRight.pdf: Added.
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::WebInspectorProxy):
+        (WebKit::WebInspectorProxy::attachBottom):
+        (WebKit::WebInspectorProxy::attachRight):
+        (WebKit::WebInspectorProxy::attach):
+        (WebKit::WebInspectorProxy::detach):
+        (WebKit::WebInspectorProxy::setAttachedWindowWidth):
+        (WebKit::WebInspectorProxy::createInspectorPage):
+        (WebKit::WebInspectorProxy::canAttach):
+        * UIProcess/WebInspectorProxy.h:
+        (WebInspectorProxy):
+        * UIProcess/WebInspectorProxy.messages.in:
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (-[WKWebInspectorProxyObjCAdapter attachRight:]):
+        (-[WKWebInspectorProxyObjCAdapter attachBottom:]):
+        (-[WKWebInspectorWindow _cursorForResizeDirection:]):
+        (-[WKWebInspectorWindow _customTitleFrame]):
+        (WebKit::createDockButton):
+        (WebKit::WebInspectorProxy::createInspectorWindow):
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        (WebKit::WebInspectorProxy::platformAttachAvailabilityChanged):
+        (WebKit::WebInspectorProxy::inspectedViewFrameDidChange):
+        (WebKit::WebInspectorProxy::platformInspectedWindowWidth):
+        (WebKit::WebInspectorProxy::platformAttach):
+        (WebKit::WebInspectorProxy::platformDetach):
+        (WebKit::WebInspectorProxy::platformSetAttachedWindowHeight):
+        (WebKit::WebInspectorProxy::platformSetAttachedWindowWidth):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp:
+        (WebKit::WebInspectorFrontendClient::attachWindow):
+        (WebKit::WebInspectorFrontendClient::setAttachedWindowWidth):
+        * WebProcess/WebCoreSupport/WebInspectorFrontendClient.h:
+        (WebInspectorFrontendClient):
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::attachBottom):
+        (WebKit::WebInspector::attachRight):
+        (WebKit::WebInspector::setAttachedWindowWidth):
+        (WebKit::WebInspector::attachedBottom):
+        (WebKit::WebInspector::attachedRight):
+        (WebKit::WebInspector::detached):
+        * WebProcess/WebPage/WebInspector.h:
+        (WebInspector):
+        * WebProcess/WebPage/WebInspector.messages.in:
+
 2013-03-27  Kondapally Kalyan  <kalyan.kondapally@intel.com>
 
         [CoordGfx] Support to share GraphicsSurface flags with client.

@@ -64,7 +64,8 @@ public:
     void setZoomFactor(float);
     void inspectedURLChanged(const String&);
 
-    void setAttachedWindowHeight(unsigned height);
+    void setAttachedWindowHeight(unsigned);
+    void setAttachedWindowWidth(unsigned);
     void moveWindowBy(float x, float y) const;
     void setInjectedScriptForOrigin(const String& origin, const String& script);
 

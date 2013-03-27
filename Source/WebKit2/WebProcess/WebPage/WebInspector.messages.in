@@ -25,7 +25,9 @@
 messages -> WebInspector LegacyReceiver {
     Show()
     Close()
-    SetAttachedWindow(bool attached)
+    AttachedBottom()
+    AttachedRight()
+    Detached()
     ShowConsole()
     ShowResources()
     ShowMainResourceForFrame(uint64_t frameID)

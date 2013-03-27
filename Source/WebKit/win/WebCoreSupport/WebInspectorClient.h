@@ -101,10 +101,12 @@ public:
     virtual void bringToFront();
     virtual void closeWindow();
     
-    virtual void attachWindow();
+    virtual void attachWindow(DockSide);
     virtual void detachWindow();
     
     virtual void setAttachedWindowHeight(unsigned height);
+    virtual void setAttachedWindowWidth(unsigned);
+
     virtual void inspectedURLChanged(const WTF::String& newURL);
 
     void destroyInspectorView(bool notifyInspectorController);

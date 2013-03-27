@@ -54,6 +54,7 @@ const unsigned WebInspectorProxy::minimumWindowHeight = 400;
 const unsigned WebInspectorProxy::initialWindowWidth = 1000;
 const unsigned WebInspectorProxy::initialWindowHeight = 650;
 
+const unsigned WebInspectorProxy::minimumAttachedWidth = 750;
 const unsigned WebInspectorProxy::minimumAttachedHeight = 250;
 
 static PassRefPtr<WebPageGroup> createInspectorPageGroup()
@@ -91,6 +92,7 @@ WebInspectorProxy::WebInspectorProxy(WebPageProxy* page)
     , m_showMessageSent(false)
     , m_createdInspectorPage(false)
     , m_ignoreFirstBringToFront(false)
+    , m_attachmentSide(AttachmentSideBottom)
 #if PLATFORM(GTK) || PLATFORM(EFL)
     , m_inspectorView(0)
     , m_inspectorWindow(0)
@@ -205,17 +207,38 @@ void WebInspectorProxy::showMainResourceForFrame(WebFrameProxy* frame)
     m_page->process()->send(Messages::WebInspector::ShowMainResourceForFrame(frame->frameID()), m_page->pageID());
 }
 
-void WebInspectorProxy::attach()
+void WebInspectorProxy::attachBottom()
+{
+    attach(AttachmentSideBottom);
+}
+
+void WebInspectorProxy::attachRight()
+{
+    attach(AttachmentSideRight);
+}
+
+void WebInspectorProxy::attach(AttachmentSide side)
 {
     if (!m_page || !canAttach())
         return;
 
     m_isAttached = true;
+    m_attachmentSide = side;
+
+    inspectorPageGroup()->preferences()->setInspectorAttachmentSide(side);
 
     if (m_isVisible)
         inspectorPageGroup()->preferences()->setInspectorStartsAttached(true);
 
-    m_page->process()->send(Messages::WebInspector::SetAttachedWindow(true), m_page->pageID());
+    switch (m_attachmentSide) {
+    case AttachmentSideBottom:
+        m_page->process()->send(Messages::WebInspector::AttachedBottom(), m_page->pageID());
+        break;
+
+    case AttachmentSideRight:
+        m_page->process()->send(Messages::WebInspector::AttachedRight(), m_page->pageID());
+        break;
+    }
 
     platformAttach();
 }
@@ -230,7 +253,7 @@ void WebInspectorProxy::detach()
     if (m_isVisible)
         inspectorPageGroup()->preferences()->setInspectorStartsAttached(false);
 
-    m_page->process()->send(Messages::WebInspector::SetAttachedWindow(false), m_page->pageID());
+    m_page->process()->send(Messages::WebInspector::Detached(), m_page->pageID());
 
     platformDetach();
 }
@@ -239,6 +262,12 @@ void WebInspectorProxy::setAttachedWindowHeight(unsigned height)
 {
     inspectorPageGroup()->preferences()->setInspectorAttachedHeight(height);
     platformSetAttachedWindowHeight(height);
+}
+
+void WebInspectorProxy::setAttachedWindowWidth(unsigned width)
+{
+    inspectorPageGroup()->preferences()->setInspectorAttachedWidth(width);
+    platformSetAttachedWindowWidth(width);
 }
 
 void WebInspectorProxy::toggleJavaScriptDebugging()
@@ -350,6 +379,7 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
         return;
 
     m_isAttached = shouldOpenAttached();
+    m_attachmentSide = static_cast<AttachmentSide>(inspectorPageGroup()->preferences()->inspectorAttachmentSide());
 
     WebPageProxy* inspectorPage = platformCreateInspectorPage();
     ASSERT(inspectorPage);
@@ -371,8 +401,20 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
     inspectorPage->initializePolicyClient(&policyClient);
 
     String url = inspectorPageURL();
+
     url.append("?dockSide=");
-    url.append(m_isAttached ? "bottom" : "undocked");
+
+    if (m_isAttached) {
+        switch (m_attachmentSide) {
+        case AttachmentSideBottom:
+            url.append("bottom");
+            break;
+        case AttachmentSideRight:
+            url.append("right");
+            break;
+        }
+    } else
+        url.append("undocked");
 
     m_page->process()->assumeReadAccessToBaseURL(inspectorBaseURL());
 
@@ -443,12 +485,17 @@ bool WebInspectorProxy::canAttach()
     // we can attach on open (on the UI process side). And InspectorFrontendClientLocal::canAttachWindow is
     // used to decide if we can attach when the attach button is pressed (on the WebProcess side).
 
-    // Don't allow the attach if the window would be too small to accommodate the minimum inspector height.
-    // Also don't allow attaching to another inspector -- two inspectors in one window is too much!
+
+    // Don't allow attaching to another inspector -- two inspectors in one window is too much!
     bool isInspectorPage = m_page->pageGroup() == inspectorPageGroup();
+    if (isInspectorPage)
+        return false;
+
+    // Don't allow the attach if the window would be too small to accommodate the minimum inspector height.
     unsigned inspectedPageHeight = platformInspectedWindowHeight();
+    unsigned inspectedPageWidth = platformInspectedWindowWidth();
     unsigned maximumAttachedHeight = inspectedPageHeight * 3 / 4;
-    return minimumAttachedHeight <= maximumAttachedHeight && !isInspectorPage;
+    return minimumAttachedHeight <= maximumAttachedHeight && minimumAttachedWidth <= inspectedPageWidth;
 }
 
 bool WebInspectorProxy::shouldOpenAttached()

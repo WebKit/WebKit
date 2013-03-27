@@ -42,6 +42,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/InspectorController.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/RenderObject.h>
 #include <WebCore/WindowMessageBroadcaster.h>
@@ -256,7 +257,7 @@ void WebInspectorFrontendClient::frontendLoaded()
     if (m_attached)
         restoreAttachedWindowHeight();
 
-    setAttachedWindow(m_attached);
+    setAttachedWindow(m_attached ? DOCKED_TO_BOTTOM : UNDOCKED);
 }
 
 String WebInspectorFrontendClient::localizedStringsURL()
@@ -278,7 +279,7 @@ void WebInspectorFrontendClient::closeWindow()
     destroyInspectorView(true);
 }
 
-void WebInspectorFrontendClient::attachWindow()
+void WebInspectorFrontendClient::attachWindow(DockSide)
 {
     if (m_attached)
         return;
@@ -333,6 +334,11 @@ void WebInspectorFrontendClient::setAttachedWindowHeight(unsigned height)
 
     RedrawWindow(m_frontendWebViewHwnd, 0, 0, RDW_INVALIDATE | RDW_ALLCHILDREN | RDW_UPDATENOW); 
     RedrawWindow(m_inspectedWebViewHwnd, 0, 0, RDW_INVALIDATE | RDW_ALLCHILDREN | RDW_UPDATENOW);
+}
+
+void WebInspectorFrontendClient::setAttachedWindowWidth(unsigned)
+{
+    notImplemented();
 }
 
 void WebInspectorFrontendClient::inspectedURLChanged(const String& newURL)

@@ -194,6 +194,12 @@ void InspectorFrontendHost::setAttachedWindowHeight(unsigned height)
         m_client->changeAttachedWindowHeight(height);
 }
 
+void InspectorFrontendHost::setAttachedWindowWidth(unsigned width)
+{
+    if (m_client)
+        m_client->changeAttachedWindowWidth(width);
+}
+
 void InspectorFrontendHost::moveWindowBy(float x, float y) const
 {
     if (m_client)

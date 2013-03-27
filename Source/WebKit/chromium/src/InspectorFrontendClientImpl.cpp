@@ -34,6 +34,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "InspectorFrontendHost.h"
+#include "NotImplemented.h"
 #include "Page.h"
 #include "ScriptController.h"
 #include "V8InspectorFrontendHost.h"
@@ -112,6 +113,11 @@ void InspectorFrontendClientImpl::requestSetDockSide(DockSide side)
 void InspectorFrontendClientImpl::changeAttachedWindowHeight(unsigned height)
 {
     m_client->changeAttachedWindowHeight(height);
+}
+
+void InspectorFrontendClientImpl::changeAttachedWindowWidth(unsigned)
+{
+    notImplemented();
 }
 
 void InspectorFrontendClientImpl::openInNewTab(const String& url)

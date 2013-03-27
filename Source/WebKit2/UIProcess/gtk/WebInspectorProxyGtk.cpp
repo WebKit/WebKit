@@ -178,6 +178,12 @@ unsigned WebInspectorProxy::platformInspectedWindowHeight()
     return allocation.height;
 }
 
+unsigned WebInspectorProxy::platformInspectedWindowWidth()
+{
+    notImplemented();
+    return 0;
+}
+
 void WebInspectorProxy::platformAttach()
 {
     GRefPtr<GtkWidget> inspectorView = m_inspectorView;
@@ -224,6 +230,11 @@ void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned height)
 
     m_client.didChangeAttachedHeight(this, height);
     webkitWebViewBaseSetInspectorViewHeight(WEBKIT_WEB_VIEW_BASE(m_page->viewWidget()), height);
+}
+
+void WebInspectorProxy::platformSetAttachedWindowWidth(unsigned)
+{
+    notImplemented();
 }
 
 void WebInspectorProxy::platformAttachAvailabilityChanged(bool)

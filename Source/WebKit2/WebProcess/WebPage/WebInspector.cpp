@@ -35,6 +35,7 @@
 #include "WebProcess.h"
 #include <WebCore/InspectorController.h>
 #include <WebCore/InspectorFrontendChannel.h>
+#include <WebCore/InspectorFrontendClient.h>
 #include <WebCore/Page.h>
 
 using namespace WebCore;
@@ -116,9 +117,14 @@ void WebInspector::inspectedURLChanged(const String& urlString)
     WebProcess::shared().connection()->send(Messages::WebInspectorProxy::InspectedURLChanged(urlString), m_page->pageID());
 }
 
-void WebInspector::attach()
+void WebInspector::attachBottom()
 {
-    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::Attach(), m_page->pageID());
+    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::AttachBottom(), m_page->pageID());
+}
+
+void WebInspector::attachRight()
+{
+    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::AttachRight(), m_page->pageID());
 }
 
 void WebInspector::detach()
@@ -129,6 +135,11 @@ void WebInspector::detach()
 void WebInspector::setAttachedWindowHeight(unsigned height)
 {
     WebProcess::shared().connection()->send(Messages::WebInspectorProxy::SetAttachedWindowHeight(height), m_page->pageID());
+}
+
+void WebInspector::setAttachedWindowWidth(unsigned width)
+{
+    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::SetAttachedWindowWidth(width), m_page->pageID());
 }
 
 // Called by WebInspector messages
@@ -142,10 +153,22 @@ void WebInspector::close()
     m_page->corePage()->inspectorController()->close();
 }
 
-void WebInspector::setAttachedWindow(bool attached)
+void WebInspector::attachedBottom()
 {
     if (m_frontendClient)
-        m_frontendClient->setAttachedWindow(attached);
+        m_frontendClient->setAttachedWindow(InspectorFrontendClient::DOCKED_TO_BOTTOM);
+}
+
+void WebInspector::attachedRight()
+{
+    if (m_frontendClient)
+        m_frontendClient->setAttachedWindow(InspectorFrontendClient::DOCKED_TO_RIGHT);
+}
+
+void WebInspector::detached()
+{
+    if (m_frontendClient)
+        m_frontendClient->setAttachedWindow(InspectorFrontendClient::UNDOCKED);
 }
 
 void WebInspector::evaluateScriptForTest(long callID, const String& script)
