@@ -1,5 +1,15 @@
 2013-03-27  Csaba Osztrogonác  <ossy@webkit.org>
 
+        master.cfg cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=113195
+
+        Reviewed by Ryosuke Niwa.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
+2013-03-27  Csaba Osztrogonác  <ossy@webkit.org>
+
         master.cfg fine-tuning for Qt Mountain Lion Release bot
         https://bugs.webkit.org/show_bug.cgi?id=113191
 

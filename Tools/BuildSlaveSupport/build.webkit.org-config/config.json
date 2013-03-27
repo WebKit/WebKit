@@ -2,9 +2,9 @@
     "slaves":     [ { "name": "test-slave", "platform": "*" },
 
                     { "name": "apple-macpro-4", "platform": "mac-lion" },
-                    { "name": "apple-macpro-5", "platform": "mac-lion" },	
+                    { "name": "apple-macpro-5", "platform": "mac-lion" },
                     { "name": "apple-macpro-6", "platform": "mac-lion" },
-                    { "name": "apple-macpro-8", "platform": "mac-lion" },	
+                    { "name": "apple-macpro-8", "platform": "mac-lion" },
                     { "name": "apple-xserve-2", "platform": "mac-lion" },
                     { "name": "apple-xserve-3", "platform": "mac-lion" },
                     { "name": "apple-xserve-10", "platform": "mac-lion" },
@@ -20,7 +20,7 @@
                     { "name": "apple-mini-208", "platform": "mac-mountainlion"},
                     { "name": "apple-mini-209", "platform": "mac-mountainlion"},
                     { "name": "apple-mini-210", "platform": "mac-mountainlion"},
-                    
+
                     { "name": "apple-windows-1", "platform": "win"},
                     { "name": "apple-windows-2", "platform": "win"},
                     { "name": "apple-windows-3", "platform": "win"},
@@ -33,8 +33,8 @@
                     { "name": "gtk-linux-slave-3", "platform": "gtk"},
                     { "name": "gtk-linux-slave-4", "platform": "gtk"},
 
-                    { "name": "szeged-linux-1", "platform": "qt-4.8"},
-                    { "name": "szeged-linux-2", "platform": "qt-4.8"},
+                    { "name": "szeged-linux-1", "platform": "qt-5.0-wk1"},
+                    { "name": "szeged-linux-2", "platform": "qt-5.0-wk1"},
                     { "name": "szeged-linux-3", "platform": "qt-5.0-wk1"},
                     { "name": "szeged-linux-4", "platform": "qt-arm"},
                     { "name": "szeged-linux-5", "platform": "qt-5.0-wk2"},
@@ -64,7 +64,7 @@
                     { "name": "wincairo-1", "platform": "wincairo" },
 
                     { "name": "wince-1", "platform": "wince" },
-                    
+
                     { "name": "efl-linux-slave-1", "platform": "efl" },
                     { "name": "efl-linux-slave-2", "platform": "efl" },
                     { "name": "efl-linux-slave-3", "platform": "efl" },
@@ -187,14 +187,14 @@
                     },
                     {
                       "name": "Qt Linux Release", "type": "BuildAndTest", "builddir": "qt-linux-release",
-                      "platform": "qt-4.8", "configuration": "release", "architectures": ["i386"],
+                      "platform": "qt-5.0-wk1", "configuration": "release", "architectures": ["i386"],
                       "SVNMirror": "svn://webkit.inf.u-szeged.hu/webkit/",
                       "slavenames": ["szeged-linux-1"]
                     },
                     {
                       "name": "Qt Linux Release minimal", "type": "Build", "builddir": "qt-linux-release-minimal",
                       "SVNMirror": "svn://webkit.inf.u-szeged.hu/webkit/",
-                      "platform": "qt-4.8", "configuration": "release", "architectures": ["i386"],
+                      "platform": "qt-5.0-wk1", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["szeged-linux-2"]
                     },
                     {
