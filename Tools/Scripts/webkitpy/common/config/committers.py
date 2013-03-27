@@ -465,7 +465,7 @@ committers_unable_to_review = [
     Committer("Yoshifumi Inoue", "yosin@chromium.org", "yosin"),
     Committer("Yuqiang Xian", "yuqiang.xian@intel.com"),
     Committer("Yuzo Fujishima", "yuzo@google.com", "yuzo"),
-    Committer("Zalan Bujtas", ["zbujtas@gmail.com", "zalan.bujtas@nokia.com"], "zalan"),
+    Committer("Zalan Bujtas", ["zalan@apple.com", "zbujtas@gmail.com", "zalan.bujtas@nokia.com"], "zalan"),
     Committer("Zeno Albisser", ["zeno@webkit.org", "zeno.albisser@nokia.com"], "zalbisser"),
     Committer("Zhenyao Mo", "zmo@google.com", "zhenyao"),
     Committer("Zoltan Arvai", "zarvai@inf.u-szeged.hu", "azbest_hu"),
