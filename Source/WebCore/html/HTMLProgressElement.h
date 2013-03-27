@@ -44,8 +44,6 @@ public:
 
     double position() const;
 
-    bool isDeterminate() const;
-    
     virtual bool canContainRangeEndPoint() const { return false; }
 
 private:
@@ -66,6 +64,7 @@ private:
 
     void didElementStateChange();
     virtual void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;
+    bool isDeterminate() const;
 
     ProgressValueElement* m_value;
 };

@@ -613,7 +613,7 @@ bool StyleResolver::sharingCandidateHasIdenticalStyleAffectingAttributes(StyledE
 
 #if ENABLE(PROGRESS_ELEMENT)
     if (state.element()->hasTagName(progressTag)) {
-        if (static_cast<HTMLProgressElement*>(state.element())->isDeterminate() != static_cast<HTMLProgressElement*>(sharingCandidate)->isDeterminate())
+        if (state.element()->shouldAppearIndeterminate() != sharingCandidate->shouldAppearIndeterminate())
             return false;
     }
 #endif
