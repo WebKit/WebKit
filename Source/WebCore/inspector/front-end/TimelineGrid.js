@@ -89,7 +89,7 @@ WebInspector.TimelineGrid.prototype = {
         var divider = this._dividersElement.firstChild;
         var dividerLabelBar = this._dividersLabelBarElement.firstChild;
 
-        var sliceRemainder = (calculator.minimumBoundary() - calculator.grandMinimumBoundary()) % slice;
+        var sliceRemainder = (calculator.minimumBoundary() - calculator.zeroTime()) % slice;
         for (var i = 0; i <= dividerCount; ++i) {
             if (!divider) {
                 divider = document.createElement("div");
@@ -231,7 +231,7 @@ WebInspector.TimelineGrid.Calculator.prototype = {
     minimumBoundary: function() { },
 
     /** @return {number} */
-    grandMinimumBoundary: function() { },
+    zeroTime: function() { },
 
     /** @return {number} */
     maximumBoundary: function() { },

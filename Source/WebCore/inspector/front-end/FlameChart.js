@@ -113,7 +113,7 @@ WebInspector.FlameChart.Calculator.prototype = {
         return this._minimumBoundaries;
     },
 
-    grandMinimumBoundary: function()
+    zeroTime: function()
     {
         return 0;
     },
@@ -166,7 +166,7 @@ WebInspector.FlameChart.OverviewCalculator.prototype = {
         return this._minimumBoundaries;
     },
 
-    grandMinimumBoundary: function()
+    zeroTime: function()
     {
         return this._minimumBoundaries;
     },

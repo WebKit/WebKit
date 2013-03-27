@@ -401,7 +401,7 @@ WebInspector.TimelineOverviewCalculator.prototype = {
         return this._minimumBoundary;
     },
 
-    grandMinimumBoundary: function()
+    zeroTime: function()
     {
         return this._minimumBoundary;
     },
