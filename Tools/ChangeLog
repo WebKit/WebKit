@@ -1,3 +1,20 @@
+2013-03-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK][webkitpy] A huge list of warnings about missing bugs in expectations when running NRWT with WKTR
+        https://bugs.webkit.org/show_bug.cgi?id=113421
+
+        Reviewed by Dirk Pranke.
+
+        When running the layout tests with WKTR through NRWT, the GTK port also uses the generic WK2 TestExpectations file.
+        This file contains a large amount of expectations that are not listing a specific bug modifier, so this produces an
+        equally large amount of warnings due to the GTK port preferring for every expectation to have the bug modifier present
+        in the GTK-specific TestExpectations files.
+
+        To avoid this only enable the warnings only when not using WKTR.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort.warn_if_bug_missing_in_test_expectations):
+
 2013-03-27  Antti Koivisto  <antti@apple.com>
 
         Fix Zalan's email.

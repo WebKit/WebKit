@@ -43,7 +43,7 @@ class GtkPort(Port):
         self._pulseaudio_sanitizer = PulseAudioSanitizer()
 
     def warn_if_bug_missing_in_test_expectations(self):
-        return True
+        return not self.get_option('webkit_test_runner')
 
     def _port_flag_for_scripts(self):
         return "--gtk"
