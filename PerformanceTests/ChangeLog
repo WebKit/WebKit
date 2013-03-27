@@ -1,3 +1,25 @@
+2013-03-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a performance tests for selecting all content in a document
+        https://bugs.webkit.org/show_bug.cgi?id=113358
+
+        Reviewed by Levi Weintraub.
+
+        Add a performance test for selecting all. We wait for paint to happen by setTimeout(~, 0).
+
+        Example outputs:
+            RESULT Interactive: SelectAll: Time= 652.6 ms
+            median= 644.5 ms, stdev= 54.6177144967 ms, min= 599.0 ms, max= 773.0 ms
+
+            RESULT Interactive: SelectAll: Time= 654.4 ms
+            median= 633.5 ms, stdev= 55.9223145368 ms, min= 600.0 ms, max= 769.0 ms
+
+            RESULT Interactive: SelectAll: Time= 657.9 ms
+            median= 640.0 ms, stdev= 54.1420159833 ms, min= 604.0 ms, max= 774.0 ms
+
+        * Interactive/SelectAll.html: Added.
+        * Skipped:
+
 2013-03-19  Alexei Filippov  <alph@chromium.org>
 
         Web Inspector: Fix heap profiler performance tests.

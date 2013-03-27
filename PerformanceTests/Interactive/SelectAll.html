@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/runner.js"></script>
+<script>
+
+PerfTestRunner.prepareToMeasureValuesAsync({
+    unit: 'ms',
+    done: function () {
+        var iframe = document.querySelector('iframe');
+        iframe.parentNode.removeChild(iframe);
+    }
+});
+
+function runTest() {
+    var iframe = document.querySelector('iframe');
+    iframe.contentWindow.getSelection().removeAllRanges();
+    iframe.contentDocument.body.offsetTop;
+
+    setTimeout(function () {
+        var startTime = PerfTestRunner.now();
+        iframe.contentDocument.execCommand('SelectAll');
+        iframe.contentDocument.body.offsetTop;
+        setTimeout(function () {
+            PerfTestRunner.measureValueAsync(PerfTestRunner.now() - startTime);
+            PerfTestRunner.gc();
+            setTimeout(runTest, 0);
+        }, 0);        
+    }, 0);
+}
+
+</script>
+<iframe src="../Parser/resources/html5.html" onload="runTest()" width="800" height="600">
+</body>
+</html>
