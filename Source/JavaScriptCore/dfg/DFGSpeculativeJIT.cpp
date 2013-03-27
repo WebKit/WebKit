@@ -3981,10 +3981,8 @@ void SpeculativeJIT::compileToStringOnCell(Node* node)
         GPRTemporary result(this);
         GPRReg resultGPR = result.gpr();
         
-        if (!m_state.forNode(node->child1()).m_currentKnownStructure.isSubsetOf(StructureSet(m_jit.globalObjectFor(node->codeOrigin)->stringObjectStructure()))) {
-            speculateStringObject(op1GPR);
-            m_state.forNode(node->child1()).filter(SpecStringObject);
-        }
+        speculateStringObject(node->child1(), op1GPR);
+        m_state.forNode(node->child1()).filter(SpecStringObject);
         m_jit.loadPtr(JITCompiler::Address(op1GPR, JSWrapperObject::internalValueCellOffset()), resultGPR);
         cellResult(resultGPR, node);
         break;
@@ -3998,7 +3996,7 @@ void SpeculativeJIT::compileToStringOnCell(Node* node)
         JITCompiler::Jump isString = m_jit.branchPtr(
             JITCompiler::Equal, resultGPR, TrustedImmPtr(m_jit.globalData()->stringStructure.get()));
         
-        speculateStringObjectForStructure(resultGPR);
+        speculateStringObjectForStructure(node->child1(), resultGPR);
         
         m_jit.loadPtr(JITCompiler::Address(op1GPR, JSWrapperObject::internalValueCellOffset()), resultGPR);
         
@@ -4212,9 +4210,9 @@ void SpeculativeJIT::speculateString(Edge edge)
             MacroAssembler::TrustedImmPtr(m_jit.globalData()->stringStructure.get())));
 }
 
-void SpeculativeJIT::speculateStringObject(GPRReg gpr)
+void SpeculativeJIT::speculateStringObject(Edge edge, GPRReg gpr)
 {
-    speculateStringObjectForStructure(JITCompiler::Address(gpr, JSCell::structureOffset()));
+    speculateStringObjectForStructure(edge, JITCompiler::Address(gpr, JSCell::structureOffset()));
 }
 
 void SpeculativeJIT::speculateStringObject(Edge edge)
@@ -4227,7 +4225,7 @@ void SpeculativeJIT::speculateStringObject(Edge edge)
     if (!needsTypeCheck(edge, SpecStringObject))
         return;
     
-    speculateStringObject(gpr);
+    speculateStringObject(edge, gpr);
     m_state.forNode(edge).filter(SpecStringObject);
 }
 
@@ -4249,7 +4247,7 @@ void SpeculativeJIT::speculateStringOrStringObject(Edge edge)
     JITCompiler::Jump isString = m_jit.branchPtr(
         JITCompiler::Equal, structureGPR, TrustedImmPtr(m_jit.globalData()->stringStructure.get()));
     
-    speculateStringObjectForStructure(structureGPR);
+    speculateStringObjectForStructure(edge, structureGPR);
     
     isString.link(&m_jit);
     

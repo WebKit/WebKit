@@ -2260,8 +2260,8 @@ public:
     void speculateObjectOrOther(Edge);
     void speculateString(Edge);
     template<typename StructureLocationType>
-    void speculateStringObjectForStructure(StructureLocationType);
-    void speculateStringObject(GPRReg);
+    void speculateStringObjectForStructure(Edge, StructureLocationType);
+    void speculateStringObject(Edge, GPRReg);
     void speculateStringObject(Edge);
     void speculateStringOrStringObject(Edge);
     void speculateNotCell(Edge);
@@ -2991,17 +2991,19 @@ private:
 };
 
 template<typename StructureLocationType>
-void SpeculativeJIT::speculateStringObjectForStructure(StructureLocationType structureLocation)
+void SpeculativeJIT::speculateStringObjectForStructure(Edge edge, StructureLocationType structureLocation)
 {
     Structure* stringObjectStructure =
         m_jit.globalObjectFor(m_currentNode->codeOrigin)->stringObjectStructure();
     Structure* stringPrototypeStructure = stringObjectStructure->storedPrototype().asCell()->structure();
     ASSERT(stringPrototypeStructure->transitionWatchpointSetIsStillValid());
     
-    speculationCheck(
-        NotStringObject, JSValueRegs(), 0,
-        m_jit.branchPtr(
-            JITCompiler::NotEqual, structureLocation, TrustedImmPtr(stringObjectStructure)));
+    if (!m_state.forNode(edge).m_currentKnownStructure.isSubsetOf(StructureSet(m_jit.globalObjectFor(m_currentNode->codeOrigin)->stringObjectStructure()))) {
+        speculationCheck(
+            NotStringObject, JSValueRegs(), 0,
+            m_jit.branchPtr(
+                JITCompiler::NotEqual, structureLocation, TrustedImmPtr(stringObjectStructure)));
+    }
     stringPrototypeStructure->addTransitionWatchpoint(speculationWatchpoint(NotStringObject));
 }
 

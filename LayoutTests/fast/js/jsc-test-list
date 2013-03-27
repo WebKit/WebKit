@@ -184,6 +184,7 @@ fast/js/dfg-negative-array-index
 fast/js/dfg-obvious-constant-cfa
 fast/js/dfg-osr-entry-hoisted-clobbered-structure-check
 fast/js/dfg-other-branch
+fast/js/dfg-phantom-base
 fast/js/dfg-phantom-get-local
 fast/js/dfg-post-inc-then-exit
 fast/js/dfg-proto-access-inline-osr-exit
@@ -204,6 +205,7 @@ fast/js/dfg-to-string-on-cell
 fast/js/dfg-to-string-on-value
 fast/js/dfg-to-string-side-effect
 fast/js/dfg-to-string-side-effect-clobbers-toString
+fast/js/dfg-to-string-toString-becomes-bad-with-check-structure
 fast/js/dfg-to-string-toString-becomes-bad-with-dictionary-string-prototype
 fast/js/dfg-to-string-toString-becomes-bad
 fast/js/dfg-to-string-toString-in-string

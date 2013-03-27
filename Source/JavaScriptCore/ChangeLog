@@ -1,3 +1,25 @@
+2013-03-26  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION: Sometimes, operations on proven strings ignore changes to the string prototype
+        https://bugs.webkit.org/show_bug.cgi?id=113353
+        <rdar://problem/13510778>
+
+        Reviewed by Mark Hahnenberg and Geoffrey Garen.
+        
+        ToString should call speculateStringObject() even if you know that it's a string object, since
+        it calls it to also get the watchpoint. Note that even with this change, if you do
+        Phantom(Check:StringObject:@a), it might get eliminated just because we proved that @a is a
+        string object (thereby eliminating the prototype watchpoint); that's fine since ToString is
+        MustGenerate and never decays to Phantom.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileToStringOnCell):
+        (JSC::DFG::SpeculativeJIT::speculateStringObject):
+        (JSC::DFG::SpeculativeJIT::speculateStringOrStringObject):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::speculateStringObjectForStructure):
+
 2013-03-26  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         REGRESSION(r144131): It made fast/js/regress/string-repeat-arith.html assert on 32 bit
