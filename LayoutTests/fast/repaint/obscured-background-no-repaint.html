@@ -34,6 +34,15 @@
     #test3 img {
         background-image: url(resources/animated.gif)
     }
+    #test4 .parent {
+        position: relative;
+        height: 100px;
+        width: 100px;
+        background-color: red;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-image: url(resources/animated.gif)
+    }
 </style>
 <script>
     description("Test that obscured animated gif does not trigger repaints. This test requires DRT.");
@@ -80,6 +89,16 @@
 </div>
 <div id="test3">
     <img src="resources/apple.jpg">
+</div>
+<div id="test4">
+    <div class="parent">
+        <a>
+            <div></div>
+            <div>
+                <img src="resources/apple.jpg">
+            </div>
+        </a>
+    </div>
 </div>
 </body>
 <script src="../js/resources/js-test-post.js"></script>

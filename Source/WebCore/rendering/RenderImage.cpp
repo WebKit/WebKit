@@ -484,13 +484,15 @@ bool RenderImage::boxShadowShouldBeAppliedToBackground(BackgroundBleedAvoidance 
     return !const_cast<RenderImage*>(this)->backgroundIsKnownToBeObscured();
 }
 
-bool RenderImage::computeBackgroundIsKnownToBeObscured()
+bool RenderImage::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const
 {
+    UNUSED_PARAM(maxDepthToTest);
     if (!m_imageResource->hasImage() || m_imageResource->errorOccurred())
         return false;
     if (m_imageResource->cachedImage() && !m_imageResource->cachedImage()->isLoaded())
         return false;
-
+    if (!contentBoxRect().contains(localRect))
+        return false;
     EFillBox backgroundClip = style()->backgroundClip();
     // Background paints under borders.
     if (backgroundClip == BorderFillBox && style()->hasBorder() && !borderObscuresBackground())
@@ -498,9 +500,15 @@ bool RenderImage::computeBackgroundIsKnownToBeObscured()
     // Background shows in padding area.
     if ((backgroundClip == BorderFillBox || backgroundClip == PaddingFillBox) && style()->hasPadding())
         return false;
-
     // Check for image with alpha.
     return m_imageResource->cachedImage() && m_imageResource->cachedImage()->currentFrameKnownToBeOpaque(this);
+}
+
+bool RenderImage::computeBackgroundIsKnownToBeObscured()
+{
+    if (!hasBackground())
+        return false;
+    return foregroundIsKnownToBeOpaqueInRect(backgroundPaintedExtent(), 0);
 }
 
 LayoutUnit RenderImage::minimumReplacedHeight() const

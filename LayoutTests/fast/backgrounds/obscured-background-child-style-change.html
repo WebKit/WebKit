@@ -6,17 +6,26 @@
     height: 100px;
 }
 .child {
-    position: relative;
     background-color: red;
     width: 100px;
     height: 100px;
 }
 </style>
 <div class=parent>
-<div class=child>
+    <div class=child>
+    </div>
 </div>
+<div class=parent>
+    <div>
+        <div class=child>
+        </div>
+    </div>
 </div>
 <script>
 document.body.offsetTop;
-document.getElementsByClassName("child")[0].style.backgroundColor = "rgba(0,255,0,0.2)";
+if (window.testRunner)
+    testRunner.display();
+var children = document.getElementsByClassName("child");
+children[0].style.backgroundColor = "rgba(0,255,0,0.5)";
+children[1].style.backgroundColor = "rgba(0,255,0,0.5)";
 </script>

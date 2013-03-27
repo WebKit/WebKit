@@ -89,6 +89,7 @@ static OverrideSizeMap* gOverrideContainingBlockLogicalWidthMap = 0;
 // Size of border belt for autoscroll. When mouse pointer in border belt,
 // autoscroll is started.
 static const int autoscrollBeltSize = 20;
+static const unsigned backgroundObscurationTestMaxDepth = 4;
 
 bool RenderBox::s_hadOverflowClip = false;
 
@@ -283,8 +284,13 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
     }
 
     // Our opaqueness might have changed without triggering layout.
-    if (parent() && (diff == StyleDifferenceRepaint || diff == StyleDifferenceRepaintLayer))
-        parent()->invalidateBackgroundObscurationStatus();
+    if (diff == StyleDifferenceRepaint || diff == StyleDifferenceRepaintLayer) {
+        RenderObject* parentToInvalidate = parent();
+        for (unsigned i = 0; i < backgroundObscurationTestMaxDepth && parentToInvalidate; ++i) {
+            parentToInvalidate->invalidateBackgroundObscurationStatus();
+            parentToInvalidate = parentToInvalidate->parent();
+        }
+    }
 
     bool isBodyRenderer = isBody();
     bool isRootRenderer = isRoot();
@@ -1150,7 +1156,7 @@ void RenderBox::paintBackground(const PaintInfo& paintInfo, const LayoutRect& pa
 LayoutRect RenderBox::backgroundPaintedExtent() const
 {
     ASSERT(hasBackground());
-    LayoutRect backgroundRect = borderBoxRect();
+    LayoutRect backgroundRect = pixelSnappedIntRect(borderBoxRect());
 
     Color backgroundColor = style()->visitedDependentColor(CSSPropertyBackgroundColor);
     if (backgroundColor.isValid() && backgroundColor.alpha())
@@ -1196,6 +1202,60 @@ bool RenderBox::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) c
     return backgroundRect.contains(localRect);
 }
 
+static bool isCandidateForOpaquenessTest(RenderBox* childBox)
+{
+    RenderStyle* childStyle = childBox->style();
+    if (childStyle->position() != StaticPosition && childBox->containingBlock() != childBox->parent())
+        return false;
+    if (childStyle->visibility() != VISIBLE || childStyle->shapeOutside())
+        return false;
+    if (!childBox->width() || !childBox->height())
+        return false;
+    if (RenderLayer* childLayer = childBox->layer()) {
+#if USE(ACCELERATED_COMPOSITING)
+        if (childLayer->isComposited())
+            return false;
+#endif
+        // FIXME: Deal with z-index.
+        if (!childStyle->hasAutoZIndex())
+            return false;
+        if (childLayer->hasTransform() || childLayer->isTransparent() || childLayer->hasFilter())
+            return false;
+    }
+    return true;
+}
+
+bool RenderBox::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const
+{
+    if (!maxDepthToTest)
+        return false;
+    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        if (!child->isBox())
+            continue;
+        RenderBox* childBox = toRenderBox(child);
+        if (!isCandidateForOpaquenessTest(childBox))
+            continue;
+        LayoutPoint childLocation = childBox->location();
+        if (childBox->isRelPositioned())
+            childLocation.move(childBox->relativePositionOffset());
+        LayoutRect childLocalRect = localRect;
+        childLocalRect.moveBy(-childLocation);
+        if (childLocalRect.y() < 0 || childLocalRect.x() < 0) {
+            // If there is unobscured area above/left of a static positioned box then the rect is probably not covered.
+            if (childBox->style()->position() == StaticPosition)
+                return false;
+            continue;
+        }
+        if (childLocalRect.maxY() > childBox->height() || childLocalRect.maxX() > childBox->width())
+            continue;
+        if (childBox->backgroundIsKnownToBeOpaqueInRect(childLocalRect))
+            return true;
+        if (childBox->foregroundIsKnownToBeOpaqueInRect(childLocalRect, maxDepthToTest - 1))
+            return true;
+    }
+    return false;
+}
+
 bool RenderBox::computeBackgroundIsKnownToBeObscured()
 {
     // Test to see if the children trivially obscure the background.
@@ -1207,39 +1267,7 @@ bool RenderBox::computeBackgroundIsKnownToBeObscured()
         return false;
 
     LayoutRect backgroundRect = backgroundPaintedExtent();
-    // If we don't find a covering child fast there probably isn't one.
-    static const unsigned maximumChildrenCountToTest = 4;
-    unsigned count = 0;
-    for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        if (++count > maximumChildrenCountToTest)
-            break;
-        if (!child->isBox())
-            continue;
-        RenderBox* childBox = toRenderBox(child);
-        RenderStyle* childStyle = child->style();
-        if (childStyle->visibility() != VISIBLE || childStyle->shapeOutside())
-            continue;
-        if (childStyle->position() != StaticPosition && childBox->containingBlock() != this)
-            continue;
-        LayoutPoint childLocation = childBox->location();
-        if (childBox->isRelPositioned())
-            childLocation.move(childBox->relativePositionOffset());
-        LayoutRect childLocalBackgroundRect = backgroundRect;
-        childLocalBackgroundRect.moveBy(-childLocation);
-        if (RenderLayer* childLayer = childBox->layer()) {
-#if USE(ACCELERATED_COMPOSITING)
-            if (childLayer->isComposited())
-                continue;
-#endif
-            if (childLayer->zIndex() < 0)
-                continue;
-            if (childLayer->hasTransform() || childLayer->isTransparent())
-                continue;
-        }
-        if (childBox->backgroundIsKnownToBeOpaqueInRect(childLocalBackgroundRect))
-            return true;
-    }
-    return false;
+    return foregroundIsKnownToBeOpaqueInRect(backgroundRect, backgroundObscurationTestMaxDepth);
 }
 
 bool RenderBox::backgroundHasOpaqueTopLayer() const

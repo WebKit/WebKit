@@ -7,7 +7,7 @@
     }
     .child {
         position: relative;
-        background-color: rgba(0,255,0,0.2);
+        background-color: rgba(0,255,0,0.8);
         width: 100px;
         height: 100px;
     }
@@ -16,3 +16,17 @@
     <div class=child>
     </div>
 </div>
+<div class=parent>
+    <div>
+        <div class=child>
+        </div>
+    </div>
+</div>
+<script>
+document.body.offsetTop;
+if (window.testRunner)
+    testRunner.display();
+var children = document.getElementsByClassName("child");
+children[0].style.backgroundColor = "rgba(0,255,0,0.5)";
+children[1].style.backgroundColor = "rgba(0,255,0,0.5)";
+</script>

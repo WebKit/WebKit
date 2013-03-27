@@ -594,7 +594,9 @@ protected:
     virtual void updateFromStyle() OVERRIDE;
 
     LayoutRect backgroundPaintedExtent() const;
+    virtual bool foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, unsigned maxDepthToTest) const;
     virtual bool computeBackgroundIsKnownToBeObscured() OVERRIDE;
+
     void paintBackground(const PaintInfo&, const LayoutRect&, BackgroundBleedAvoidance = BackgroundBleedNone);
     
     void paintFillLayer(const PaintInfo&, const Color&, const FillLayer*, const LayoutRect&, BackgroundBleedAvoidance, CompositeOperator, RenderObject* backgroundObject);
