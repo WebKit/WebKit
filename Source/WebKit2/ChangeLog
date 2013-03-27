@@ -1,3 +1,31 @@
+2013-03-27  Jer Noble  <jer.noble@apple.com>
+
+        Going full screen and cancelling gets system into a weird state
+        https://bugs.webkit.org/show_bug.cgi?id=113445
+
+        Reviewed by Eric Carlson.
+
+        Replace an array of BOOL member variables to track full screen state with a single enum, and
+        add state tracking for the "waiting to enter" and "waiting to exit" states. Use this new,
+        more specific enum to be more stringent about the state when responding to WebProcess
+        messages. Also only set the placeholder view's target once in full screen mode.
+
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController isFullScreen]): Yes when in full screen, entering full screen,
+            or waiting to enter full screen.
+        (-[WKFullScreenWindowController cancelOperation:]): Only requestExitFullScreen() if a watchdog
+            has not already been made active.
+        (-[WKFullScreenWindowController enterFullScreen:]): Use the new state variable.
+        (-[WKFullScreenWindowController beganEnterFullScreenWithInitialFrame:WebCore::finalFrame:WebCore::]): Ditto.
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]): Ditto. Set the placeholder target.
+        (-[WKFullScreenWindowController exitFullScreen]): Ditto. Clear the placeholder target.
+        (-[WKFullScreenWindowController beganExitFullScreenWithInitialFrame:WebCore::finalFrame:WebCore::]): Ditto.
+        (-[WKFullScreenWindowController completeFinishExitFullScreenAnimationAfterRepaint]): Ditto.
+        (-[WKFullScreenWindowController performClose:]): Ditto.
+        (-[WKFullScreenWindowController close]): Ditto.
+        (-[WKFullScreenWindowController _startEnterFullScreenAnimationWithDuration:]): Ditto.
+
 2013-03-27  Brady Eidson  <beidson@apple.com>
 
         Blind attempt at fixing the release build.

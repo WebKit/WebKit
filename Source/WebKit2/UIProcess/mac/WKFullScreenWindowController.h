@@ -42,6 +42,8 @@ class IntRect;
 @class WebWindowScaleAnimation;
 @class WebWindowFadeAnimation;
 
+typedef enum FullScreenState : NSInteger FullScreenState;
+
 @interface WKFullScreenWindowController : NSWindowController<NSWindowDelegate> {
 @private
     WKView *_webView;
@@ -52,11 +54,8 @@ class IntRect;
     NSRect _initialFrame;
     NSRect _finalFrame;
     RetainPtr<NSTimer> _watchdogTimer;
-    
-    BOOL _isEnteringFullScreen;
-    BOOL _isExitingFullScreen;
-    BOOL _isFullScreen;
-    BOOL _isPlaying;
+
+    FullScreenState _fullScreenState;
 
     double _savedScale;
 }

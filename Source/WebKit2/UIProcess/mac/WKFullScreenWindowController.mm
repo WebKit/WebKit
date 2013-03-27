@@ -55,6 +55,15 @@ static RetainPtr<NSWindow> createBackgroundFullscreenWindow(NSRect frame);
 static const CFTimeInterval defaultAnimationDuration = 0.5;
 static const NSTimeInterval DefaultWatchdogTimerInterval = 1;
 
+enum FullScreenState : NSInteger {
+    NotInFullScreen,
+    WaitingToEnterFullScreen,
+    EnteringFullScreen,
+    InFullScreen,
+    WaitingToExitFullScreen,
+    ExitingFullScreen,
+};
+
 @interface NSWindow (WebNSWindowDetails)
 - (void)exitFullScreenMode:(id)sender;
 - (void)enterFullScreenMode:(id)sender;
@@ -129,7 +138,9 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 
 - (BOOL)isFullScreen
 {
-    return _isFullScreen;
+    return _fullScreenState == WaitingToEnterFullScreen
+        || _fullScreenState == EnteringFullScreen
+        || _fullScreenState == InFullScreen;
 }
 
 - (WebCoreFullScreenPlaceholderView*)webViewPlaceholder
@@ -142,11 +153,10 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 
 - (void)cancelOperation:(id)sender
 {
-    [self _manager]->requestExitFullScreen();
-
     // If the page doesn't respond in DefaultWatchdogTimerInterval seconds, it could be because
     // the WebProcess has hung, so exit anyway.
     if (!_watchdogTimer) {
+        [self _manager]->requestExitFullScreen();
         _watchdogTimer = adoptNS([[NSTimer alloc] initWithFireDate:nil interval:DefaultWatchdogTimerInterval target:self selector:@selector(exitFullScreen) userInfo:nil repeats:NO]);
         [[NSRunLoop mainRunLoop] addTimer:_watchdogTimer.get() forMode:NSDefaultRunLoopMode];
     }
@@ -194,9 +204,9 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
 
 - (void)enterFullScreen:(NSScreen *)screen
 {
-    if (_isFullScreen)
+    if ([self isFullScreen])
         return;
-    _isFullScreen = YES;
+    _fullScreenState = WaitingToEnterFullScreen;
 
     if (!screen)
         screen = [NSScreen mainScreen];
@@ -231,9 +241,9 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     // Swap the webView placeholder into place.
     if (!_webViewPlaceholder) {
         _webViewPlaceholder.adoptNS([[WebCoreFullScreenPlaceholderView alloc] initWithFrame:[_webView frame]]);
-        [_webViewPlaceholder.get() setTarget:self];
         [_webViewPlaceholder.get() setAction:@selector(cancelOperation:)];
     }
+    [_webViewPlaceholder.get() setTarget:nil];
     [_webViewPlaceholder.get() setContents:(id)webViewContents.get()];
     [self _replaceView:_webView with:_webViewPlaceholder.get()];
     
@@ -252,9 +262,9 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
 
 - (void)beganEnterFullScreenWithInitialFrame:(const WebCore::IntRect&)initialFrame finalFrame:(const WebCore::IntRect&)finalFrame
 {
-    if (_isEnteringFullScreen)
+    if (_fullScreenState != WaitingToEnterFullScreen)
         return;
-    _isEnteringFullScreen = YES;
+    _fullScreenState = EnteringFullScreen;
 
     _initialFrame = initialFrame;
     _finalFrame = finalFrame;
@@ -267,9 +277,9 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
 
 - (void)finishedEnterFullScreenAnimation:(bool)completed
 {
-    if (!_isEnteringFullScreen)
+    if (_fullScreenState != EnteringFullScreen)
         return;
-    _isEnteringFullScreen = NO;
+    _fullScreenState = InFullScreen;
 
     if (completed) {
         // Screen updates to be re-enabled ta the end of the current block.
@@ -289,6 +299,7 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
         [_backgroundWindow.get() setFrame:NSZeroRect display:YES];
 
         [_webViewPlaceholder.get() setExitWarningVisible:YES];
+        [_webViewPlaceholder.get() setTarget:self];
         NSEnableScreenUpdates();
     } else
         [_scaleAnimation.get() stopAnimation];
@@ -301,9 +312,9 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
         _watchdogTimer.clear();
     }
 
-    if (!_isFullScreen)
+    if (![self isFullScreen])
         return;
-    _isFullScreen = NO;
+    _fullScreenState = WaitingToExitFullScreen;
 
     [_webViewPlaceholder.get() setExitWarningVisible:NO];
 
@@ -314,6 +325,7 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     // See the related comment in enterFullScreen:
     // We will resume the normal behavior in _startExitFullScreenAnimationWithDuration:
     [_webView _setSuppressVisibilityUpdates:YES];
+    [_webViewPlaceholder.get() setTarget:nil];
 
     [self _manager]->setAnimatingFullScreen(true);
     [self _manager]->willExitFullScreen();
@@ -321,12 +333,10 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
 
 - (void)beganExitFullScreenWithInitialFrame:(const WebCore::IntRect&)initialFrame finalFrame:(const WebCore::IntRect&)finalFrame
 {
-    if (_isExitingFullScreen)
-        return;
-    _isExitingFullScreen = YES;
 
-    if (_isEnteringFullScreen)
-        [self finishedEnterFullScreenAnimation:NO];
+    if (_fullScreenState != WaitingToExitFullScreen)
+        return;
+    _fullScreenState = ExitingFullScreen;
 
     if (![[self window] isOnActiveSpace]) {
         // If the full screen window is not in the active space, the NSWindow full screen animation delegate methods
@@ -346,9 +356,9 @@ static void completeFinishExitFullScreenAnimationAfterRepaint(WKErrorRef, void*)
 
 - (void)finishedExitFullScreenAnimation:(bool)completed
 {
-    if (!_isExitingFullScreen)
+    if (_fullScreenState != ExitingFullScreen)
         return;
-    _isExitingFullScreen = NO;
+    _fullScreenState = NotInFullScreen;
 
     // Screen updates to be re-enabled in completeFinishExitFullScreenAnimationAfterRepaint.
     NSDisableScreenUpdates();
@@ -395,7 +405,7 @@ static void completeFinishExitFullScreenAnimationAfterRepaint(WKErrorRef, void* 
 
 - (void)performClose:(id)sender
 {
-    if (_isFullScreen)
+    if ([self isFullScreen])
         [self cancelOperation:sender];
 }
 
@@ -405,10 +415,10 @@ static void completeFinishExitFullScreenAnimationAfterRepaint(WKErrorRef, void* 
     // has closed or the web process has crashed.  Just walk through our
     // normal exit full screen sequence, but don't wait to be called back
     // in response.
-    if (_isFullScreen)
+    if ([self isFullScreen])
         [self exitFullScreen];
     
-    if (_isExitingFullScreen)
+    if (_fullScreenState == ExitingFullScreen)
         [self finishedExitFullScreenAnimation:YES];
 
     [super close];
@@ -564,12 +574,12 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
 
 - (void)_startExitFullScreenAnimationWithDuration:(NSTimeInterval)duration
 {
-    if (_isFullScreen) {
+    if ([self isFullScreen]) {
         // We still believe we're in full screen mode, so we must have been asked to exit full
         // screen by the system full screen button.
         [self _manager]->requestExitFullScreen();
         [self exitFullScreen];
-        _isExitingFullScreen = YES;
+        _fullScreenState = ExitingFullScreen;
     }
 
     NSRect screenFrame = [[[self window] screen] frame];
