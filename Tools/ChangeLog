@@ -1,3 +1,19 @@
+2013-03-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        master.cfg fine-tuning for Qt Mountain Lion Release bot
+        https://bugs.webkit.org/show_bug.cgi?id=113191
+
+        Reviewed by Ryosuke Niwa.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+          - Rename the slave due to its location change.
+          - Update the platform of the slave.
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunQtAPITests): Enable running WK2 API tests on Qt.
+        (RunQtAPITests.start):
+        (RunWebKit2Tests.start): Force pixel tests on the Qt Mountain Lion Release builder.
+        (BuildAndTestWebKit2Factory): Added. (Build WK1 and WK2 too, but run only WK2 tests.)
+
 2013-03-27  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL][jhbuild] Evas fails to build when Wayland is present on the system

@@ -42,7 +42,7 @@
                     { "name": "szeged-windows-1", "platform": "qt-win"},
                     { "name": "szeged-windows-2", "platform": "qt-win"},
 
-                    { "name": "indt-mountainlion", "platform": "qt-mac"},
+                    { "name": "oslo-mountainlion", "platform": "qt-5.0-mac-wk2"},
 
                     { "name": "google-windows-1", "platform": "chromium-win" },
                     { "name": "google-windows-2", "platform": "chromium-win" },
@@ -238,9 +238,9 @@
                       "slavenames": ["szeged-windows-2"]
                     },
                     {
-                      "name": "Qt Mountain Lion Release", "type": "Build", "builddir": "qt-mountainlion-release",
-                      "platform": "qt-mac", "configuration": "release", "architectures": ["x86_64"],
-                      "slavenames": ["indt-mountainlion"]
+                      "name": "Qt Mountain Lion Release", "type": "BuildAndTestWebKit2", "builddir": "qt-mountainlion-release",
+                      "platform": "qt-5.0-mac-wk2", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["oslo-mountainlion"]
                     },
                     {
                       "name": "Chromium Win Release", "type": "Build", "builddir": "chromium-win-release",
