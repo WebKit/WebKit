@@ -227,9 +227,6 @@ storage/domstorage/localstorage/storagetracker
 userscripts
 plugins/plugin-document-load-prevented-userscript.html
 
-# ------ Doesn't support WOFF yet.
-fast/css/font-face-woff.html
-
 # Need to implement getFormValue().
 plugins/form-value.html
 

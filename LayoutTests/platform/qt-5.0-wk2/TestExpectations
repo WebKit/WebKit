@@ -146,6 +146,8 @@ webkit.org/b/108643 printing/standards-percentage-heights.html [ Skip ]
 # [Qt][Wk2] REGRESSION(r141039): It made compositing/layer-creation/fixed-position-no-content.html fails on Qt.
 webkit.org/b/108646 compositing/layer-creation/fixed-position-no-content.html [ Skip ]
 
+# [Qt][WK2] WTR doesn't dump pixels in a way that's consistent with other ports
+webkit.org/b/113320 fast/css/font-face-woff.html [ Skip ]
 ########################################
 
 # NOT YET TRACKED BY BUG REPORTS
