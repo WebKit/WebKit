@@ -106,9 +106,13 @@ class MediaControlTimelineContainerElement : public MediaControlDivElement {
 public:
     static PassRefPtr<MediaControlTimelineContainerElement> create(Document*);
 
+    void setTimeDisplaysHidden(bool);
+
 private:
     explicit MediaControlTimelineContainerElement(Document*);
     virtual const AtomicString& shadowPseudoId() const OVERRIDE;
+
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) OVERRIDE;
 };
 
 // ----------------------------

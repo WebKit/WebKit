@@ -46,9 +46,9 @@ private:
 
 // ----------------------------
 
-class RenderMediaControlTimeDisplay : public RenderFlexibleBox {
+class RenderMediaControlTimelineContainer : public RenderFlexibleBox {
 public:
-    RenderMediaControlTimeDisplay(Element*);
+    RenderMediaControlTimelineContainer(Element*);
 
 private:
     virtual void layout();

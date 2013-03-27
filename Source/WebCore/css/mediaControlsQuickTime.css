@@ -82,7 +82,7 @@ audio::-webkit-media-controls-current-time-display, video::-webkit-media-control
     font-size: 9px;
     overflow: hidden;
     width: 45px;
-    min-width: 0; /* needed due to flexbox */
+    min-width: 45px;
     color: white;
     text-shadow: black 0px 1px 1px;
 
@@ -105,7 +105,7 @@ audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-contr
     font-size: 9px;
     overflow: hidden;
     width: 45px;
-    min-width: 0; /* needed due to flexbox */
+    min-width: 45px;
     color: white;
     text-shadow: black 0px 1px 1px;
 

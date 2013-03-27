@@ -59,7 +59,7 @@ void RenderMediaVolumeSliderContainer::layout()
 
 // ----------------------------
 
-RenderMediaControlTimeDisplay::RenderMediaControlTimeDisplay(Element* element)
+RenderMediaControlTimelineContainer::RenderMediaControlTimelineContainer(Element* element)
     : RenderFlexibleBox(element)
 {
 }
@@ -68,15 +68,13 @@ RenderMediaControlTimeDisplay::RenderMediaControlTimeDisplay(Element* element)
 // FIXME: Eliminate hard-coded widths altogether.
 static const int minWidthToDisplayTimeDisplays = 45 + 100 + 45;
 
-void RenderMediaControlTimeDisplay::layout()
+void RenderMediaControlTimelineContainer::layout()
 {
     RenderFlexibleBox::layout();
-    RenderBox* timelineContainerBox = parentBox();
-    while (timelineContainerBox && timelineContainerBox->isAnonymous())
-        timelineContainerBox = timelineContainerBox->parentBox();
 
-    if (timelineContainerBox && timelineContainerBox->width() < minWidthToDisplayTimeDisplays)
-        setWidth(0);
+    LayoutStateDisabler layoutStateDisabler(view());
+    MediaControlTimelineContainerElement* container = static_cast<MediaControlTimelineContainerElement*>(node());
+    container->setTimeDisplaysHidden(width().toInt() < minWidthToDisplayTimeDisplays);
 }
 
 // ----------------------------

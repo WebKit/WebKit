@@ -112,7 +112,7 @@ audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-contr
     -webkit-appearance: media-current-time-display;
     -webkit-user-select: none;
     -webkit-flex: none;
-    display: block;
+    display: -webkit-flex;
     border: none;
     cursor: default;
 

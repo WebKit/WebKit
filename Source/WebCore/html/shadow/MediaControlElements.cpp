@@ -67,6 +67,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+static const AtomicString& getMediaControlCurrentTimeDisplayElementShadowPseudoId();
+static const AtomicString& getMediaControlTimeRemainingDisplayElementShadowPseudoId();
+
 #if ENABLE(VIDEO_TRACK)
 static const char* textTracksOffAttrValue = "-1"; // This must match HTMLMediaElement::textTracksOffIndex()
 #endif
@@ -316,6 +319,30 @@ const AtomicString& MediaControlTimelineContainerElement::shadowPseudoId() const
 {
     DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls-timeline-container", AtomicString::ConstructFromLiteral));
     return id;
+}
+
+void MediaControlTimelineContainerElement::setTimeDisplaysHidden(bool hidden)
+{
+    for (unsigned i = 0; i < childNodeCount(); ++i) {
+        Node* child = childNode(i);
+        if (!child || !child->isElementNode())
+            continue;
+        Element* element = static_cast<Element*>(child);
+        if (element->shadowPseudoId() != getMediaControlTimeRemainingDisplayElementShadowPseudoId()
+            && element->shadowPseudoId() != getMediaControlCurrentTimeDisplayElementShadowPseudoId())
+            continue;
+
+        MediaControlTimeDisplayElement* timeDisplay = static_cast<MediaControlTimeDisplayElement*>(element);
+        if (hidden)
+            timeDisplay->hide();
+        else
+            timeDisplay->show();
+    }
+}
+
+RenderObject* MediaControlTimelineContainerElement::createRenderer(RenderArena* arena, RenderStyle*)
+{
+    return new (arena) RenderMediaControlTimelineContainer(this);
 }
 
 // ----------------------------
@@ -1141,10 +1168,15 @@ PassRefPtr<MediaControlTimeRemainingDisplayElement> MediaControlTimeRemainingDis
     return adoptRef(new MediaControlTimeRemainingDisplayElement(document));
 }
 
-const AtomicString& MediaControlTimeRemainingDisplayElement::shadowPseudoId() const
+static const AtomicString& getMediaControlTimeRemainingDisplayElementShadowPseudoId()
 {
     DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls-time-remaining-display", AtomicString::ConstructFromLiteral));
     return id;
+}
+
+const AtomicString& MediaControlTimeRemainingDisplayElement::shadowPseudoId() const
+{
+    return getMediaControlTimeRemainingDisplayElementShadowPseudoId();
 }
 
 // ----------------------------
@@ -1159,10 +1191,15 @@ PassRefPtr<MediaControlCurrentTimeDisplayElement> MediaControlCurrentTimeDisplay
     return adoptRef(new MediaControlCurrentTimeDisplayElement(document));
 }
 
-const AtomicString& MediaControlCurrentTimeDisplayElement::shadowPseudoId() const
+static const AtomicString& getMediaControlCurrentTimeDisplayElementShadowPseudoId()
 {
     DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls-current-time-display", AtomicString::ConstructFromLiteral));
     return id;
+}
+
+const AtomicString& MediaControlCurrentTimeDisplayElement::shadowPseudoId() const
+{
+    return getMediaControlCurrentTimeDisplayElementShadowPseudoId();
 }
 
 // ----------------------------

@@ -159,11 +159,6 @@ void MediaControlTimeDisplayElement::setCurrentValue(float time)
     m_currentValue = time;
 }
 
-RenderObject* MediaControlTimeDisplayElement::createRenderer(RenderArena* arena, RenderStyle*)
-{
-    return new (arena) RenderMediaControlTimeDisplay(this);
-}
-
 // ----------------------------
 
 MediaControlMuteButtonElement::MediaControlMuteButtonElement(Document* document, MediaControlElementType displayType)

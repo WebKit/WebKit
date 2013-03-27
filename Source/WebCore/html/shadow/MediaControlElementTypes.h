@@ -141,8 +141,6 @@ protected:
     explicit MediaControlTimeDisplayElement(Document*, MediaControlElementType);
 
 private:
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) OVERRIDE;
-
     float m_currentValue;
 };
 
