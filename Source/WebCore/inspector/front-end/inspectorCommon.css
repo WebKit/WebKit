@@ -91,6 +91,7 @@ iframe.view {
     z-index: 200;
     pointer-events: none;
     cursor: move;
+    overflow: hidden;
 }
 
 .resources-divider {

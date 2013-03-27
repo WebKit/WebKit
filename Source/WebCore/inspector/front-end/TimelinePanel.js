@@ -784,7 +784,7 @@ WebInspector.TimelinePanel.prototype = {
             delete this._refreshTimeout;
         }
 
-        this._timelinePaddingLeft = !this._overviewPane.windowLeft() ? this._expandOffset : 0;
+        this._timelinePaddingLeft = this._expandOffset;
         this._calculator.setWindow(this._overviewPane.windowStartTime(), this._overviewPane.windowEndTime());
         this._calculator.setDisplayWindow(this._timelinePaddingLeft, this._graphRowsElementWidth);
 
@@ -1292,7 +1292,7 @@ WebInspector.TimelineCalculator.prototype = {
      */
     computePosition: function(time)
     {
-        return (time - this._minimumBoundary) / this.boundarySpan() * this._workingArea + this.paddingLeft;
+        return (time - this._minimumBoundary) / this.boundarySpan() * this._workingArea + this._paddingLeft;
     },
 
     computeBarGraphPercentages: function(record)
@@ -1336,7 +1336,7 @@ WebInspector.TimelineCalculator.prototype = {
     setDisplayWindow: function(paddingLeft, clientWidth)
     {
         this._workingArea = clientWidth - WebInspector.TimelineCalculator._minWidth - paddingLeft;
-        this.paddingLeft = paddingLeft;
+        this._paddingLeft = paddingLeft;
     },
 
     formatTime: function(value)
@@ -1356,7 +1356,7 @@ WebInspector.TimelineCalculator.prototype = {
 
     grandMinimumBoundary: function()
     {
-        return this._minimumBoundary;
+        return this._model.minimumRecordTime();
     },
 
     boundarySpan: function()
