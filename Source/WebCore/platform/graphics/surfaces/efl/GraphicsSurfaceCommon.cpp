@@ -41,11 +41,14 @@ struct GraphicsSurfacePrivate {
     {
     }
 
-    GraphicsSurfacePrivate(PlatformBufferHandle winId, const IntSize& size, GraphicsSurface::Flags)
-        : m_rect(FloatPoint::zero(), size)
+    GraphicsSurfacePrivate(PlatformBufferHandle winId, const IntSize& size, GraphicsSurface::Flags flags)
+        : m_flags(0)
+        , m_rect(FloatPoint::zero(), size)
         , m_size(size)
         , m_sharedHandle(winId)
     {
+        if (flags & GraphicsSurface::SupportsAlpha)
+            m_flags |= TextureMapperGL::ShouldBlend;
     }
 
     ~GraphicsSurfacePrivate()
@@ -141,10 +144,6 @@ private:
 
         if (!m_client)
             return;
-
-        // FIXME: This information should be passed from GraphicsSurface.
-        if (m_client->hasAlpha())
-            m_flags |= TextureMapperGL::ShouldBlend;
     }
 
     TextureMapperGL::Flags m_flags;

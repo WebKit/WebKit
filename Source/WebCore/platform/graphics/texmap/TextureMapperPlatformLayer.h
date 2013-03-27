@@ -42,6 +42,7 @@ public:
     virtual IntSize platformLayerSize() const { return IntSize(); }
     virtual uint32_t copyToGraphicsSurface() { return 0; }
     virtual GraphicsSurfaceToken graphicsSurfaceToken() const { return GraphicsSurfaceToken(); }
+    virtual GraphicsSurface::Flags graphicsSurfaceFlags() const { return  GraphicsSurface::SupportsTextureTarget | GraphicsSurface::SupportsSharing; }
 #endif
 };
 

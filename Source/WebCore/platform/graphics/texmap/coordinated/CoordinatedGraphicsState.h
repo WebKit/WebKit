@@ -43,6 +43,7 @@
 #endif
 
 #if USE(GRAPHICS_SURFACE)
+#include "GraphicsSurface.h"
 #include "GraphicsSurfaceToken.h"
 #endif
 
@@ -162,6 +163,7 @@ struct CoordinatedGraphicsLayerState {
     IntSize canvasSize;
     GraphicsSurfaceToken canvasToken;
     uint32_t canvasFrontBuffer;
+    GraphicsSurface::Flags canvasSurfaceFlags;
 #endif
 
     IntSize committedScrollOffset;

@@ -264,6 +264,14 @@ IntSize GraphicsContext3DPrivate::platformLayerSize() const
 {
     return m_size;
 }
+
+GraphicsSurface::Flags GraphicsContext3DPrivate::graphicsSurfaceFlags() const
+{
+    if (m_graphicsSurface)
+        return m_graphicsSurface->flags();
+
+    return TextureMapperPlatformLayer::graphicsSurfaceFlags();
+}
 #endif
 
 } // namespace WebCore

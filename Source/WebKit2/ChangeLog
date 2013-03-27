@@ -1,3 +1,19 @@
+2013-03-27  Kondapally Kalyan  <kalyan.kondapally@intel.com>
+
+        [CoordGfx] Support to share GraphicsSurface flags with client.
+        https://bugs.webkit.org/show_bug.cgi?id=112982
+
+        Reviewed by Noam Rosenthal.
+
+        Covered by existing WebGL tests.
+
+        This patch adds support to pass GraphicsSurface flags
+        during it's client creation.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+
 2013-03-26  Hayato Ito  <hayato@chromium.org>
 
         Allow ShadowContents in HitTests by default.

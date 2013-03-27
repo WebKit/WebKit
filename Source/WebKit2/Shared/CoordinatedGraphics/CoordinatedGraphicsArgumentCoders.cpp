@@ -894,6 +894,7 @@ void ArgumentCoder<CoordinatedGraphicsLayerState>::encode(ArgumentEncoder& encod
         encoder << state.canvasSize;
         encoder << state.canvasToken;
         encoder << state.canvasFrontBuffer;
+        encoder << state.canvasSurfaceFlags;
     }
 #endif
 
@@ -980,6 +981,9 @@ bool ArgumentCoder<CoordinatedGraphicsLayerState>::decode(ArgumentDecoder& decod
             return false;
 
         if (!decoder.decode(state.canvasFrontBuffer))
+            return false;
+
+        if (!decoder.decode(state.canvasSurfaceFlags))
             return false;
     }
 #endif

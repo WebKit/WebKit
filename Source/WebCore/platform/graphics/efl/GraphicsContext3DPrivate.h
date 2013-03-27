@@ -54,6 +54,7 @@ public:
     virtual IntSize platformLayerSize() const OVERRIDE;
     virtual uint32_t copyToGraphicsSurface() OVERRIDE;
     virtual GraphicsSurfaceToken graphicsSurfaceToken() const OVERRIDE;
+    virtual GraphicsSurface::Flags graphicsSurfaceFlags() const OVERRIDE;
     void didResizeCanvas(const IntSize&);
 #endif
     bool makeContextCurrent() const;

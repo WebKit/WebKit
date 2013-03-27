@@ -727,6 +727,7 @@ void CoordinatedGraphicsLayer::createCanvasIfNeeded()
     if (!m_isValidCanvas) {
         m_layerState.canvasSize = m_canvasPlatformLayer->platformLayerSize();
         m_layerState.canvasToken = m_canvasPlatformLayer->graphicsSurfaceToken();
+        m_layerState.canvasSurfaceFlags = m_canvasPlatformLayer->graphicsSurfaceFlags();
         m_layerState.canvasChanged = true;
         m_isValidCanvas = true;
     }
