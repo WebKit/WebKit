@@ -1,3 +1,14 @@
+2013-03-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r146864.
+        http://trac.webkit.org/changeset/146864
+        https://bugs.webkit.org/show_bug.cgi?id=113391
+
+        causes crashes on Wk2 EFL release bot (Requested by drott on
+        #webkit).
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2013-03-27  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [jhbuild] Correctly specify an alternate number of make jobs.

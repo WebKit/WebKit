@@ -781,24 +781,6 @@ webkit.org/b/107024 compositing/video-page-visibility.html [ Pass Failure ]
 # Fails, test times out in testLoadErrorGC()
 webkit.org/b/78819 fast/workers/shared-worker-load-error.html [ Failure Pass ]
 
-# Crashing IndexedDB tests
-webkit.org/b/112578 storage/indexeddb/transaction-coordination-across-databases.html [ Crash ]
-webkit.org/b/107194 storage/indexeddb/pending-activity.html [ Crash ]
-webkit.org/b/111171 storage/indexeddb/objectstore-basics-workers.html [ Crash ]
-webkit.org/b/111171 storage/indexeddb/cursor-advance-workers.html [ Crash ]
-webkit.org/b/107377 storage/indexeddb/keypath-edges.html [ Crash ]
-
-# Flaky IndexedDB tests
-webkit.org/b/107194 storage/indexeddb/index-multientry.html [ Failure Pass ]
-webkit.org/b/107194 storage/indexeddb/index-unique.html [ Failure Crash Pass ]
-webkit.org/b/107194 storage/indexeddb/pending-version-change-on-exit.html [ Failure Crash Pass ]
-webkit.org/b/112468 storage/indexeddb/intversion-bad-parameters.html [ Crash Failure Pass ]
-webkit.org/b/107194 storage/indexeddb/intversion-abort-in-initial-upgradeneeded.html [ Failure Pass ]
-webkit.org/b/107194 storage/indexeddb/intversion-close-in-oncomplete.html [ Failure Pass ]
-webkit.org/b/107194 storage/indexeddb/intversion-close-in-upgradeneeded.html [ Failure Pass ]
-webkit.org/b/107194 storage/indexeddb/transaction-abort.html [ Failure Crash Pass ]
-webkit.org/b/107194 storage/indexeddb/key-generator.html [ Failure Pass ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1107,14 +1089,22 @@ webkit.org/b/84589 fast/harness/show-modal-dialog.html [ Failure ]
 webkit.org/b/84589 fast/events/scroll-event-during-modal-dialog.html [ Failure ]
 webkit.org/b/84589 http/tests/security/cross-frame-access-get.html [ Failure ]
 
-# Quota API is not supported.
-webkit.org/b/106507 storage/storageinfo-missing-arguments.html
-webkit.org/b/106507 storage/storageinfo-no-callbacks.html
-webkit.org/b/106507 storage/storageinfo-query-usage.html
-webkit.org/b/106507 storage/storageinfo-request-quota.html
-webkit.org/b/106507 storage/storagequota-query-usage.html
-webkit.org/b/106507 storage/storagequota-request-quota.html
+# IndexedDB is not yet enabled.
+Bug(EFL) storage/indexeddb
+Bug(EFL) http/tests/inspector/indexeddb
+Bug(EFL) http/tests/security/cross-origin-indexeddb-allowed.html
+Bug(EFL) http/tests/security/cross-origin-indexeddb.html
+Bug(EFL) http/tests/security/cross-origin-worker-indexeddb-allowed.html
+Bug(EFL) http/tests/security/cross-origin-worker-indexeddb.html
+Bug(EFL) http/tests/security/no-indexeddb-from-sandbox.html
 
+# Quota API is not supported.
+Bug(EFL) storage/storageinfo-missing-arguments.html
+Bug(EFL) storage/storageinfo-no-callbacks.html
+Bug(EFL) storage/storageinfo-query-usage.html
+Bug(EFL) storage/storageinfo-request-quota.html
+Bug(EFL) storage/storagequota-query-usage.html
+Bug(EFL) storage/storagequota-request-quota.html
 Bug(EFL) fast/workers/worker-storagequota-query-usage.html
 Bug(EFL) fast/workers/shared-worker-storagequota-query-usage.html
 
@@ -1811,11 +1801,3 @@ webkit.org/b/98696 plugins/snapshotting [ Skip ]
 # Failing after r133834
 webkit.org/b/101400 svg/css/shadow-changes.svg [ Failure ]
 webkit.org/b/101400 svg/css/composite-shadow-text.svg [ Failure ]
-
-# Failing IndexedDB tests
-webkit.org/b/82776 storage/indexeddb/dont-commit-on-blocked.html [ Failure ]
-webkit.org/b/82776 storage/indexeddb/pending-version-change-stuck.html [ Failure ]
-webkit.org/b/82776 storage/indexeddb/pending-version-change-stuck-works-with-terminate.html [ Failure ]
-webkit.org/b/106732 storage/indexeddb/transaction-complete-workers.html [ Failure ]
-webkit.org/b/106507 storage/indexeddb/database-quota.html [ Failure ]
-webkit.org/b/107194 storage/indexeddb/pending-activity-workers.html [ Failure ]

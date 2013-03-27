@@ -1,3 +1,14 @@
+2013-03-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r146864.
+        http://trac.webkit.org/changeset/146864
+        https://bugs.webkit.org/show_bug.cgi?id=113391
+
+        causes crashes on Wk2 EFL release bot (Requested by drott on
+        #webkit).
+
+        * Source/cmake/OptionsEfl.cmake:
+
 2013-03-26  Rijubrata Bhaumik  <rijubrata.bhaumik@intel.com>
 
         [EFL] Enable IndexedDB by default
