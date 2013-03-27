@@ -1,3 +1,19 @@
+2013-03-27  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Support C++11 static_assert
+        https://bugs.webkit.org/show_bug.cgi?id=113308
+
+        Reviewed by Alexey Proskuryakov.
+
+        Use the C++11 static_assert for COMPILE_ASSERT when it is available. Note that
+        even when compiling with C++11 support, static_assert will not always be available
+        since Assertions.h may also be used outside of C++.
+
+        C11 _Static_assert is enabled for GCC when it has C11 support (gcc>=4.7 -std=c11).
+
+        * wtf/Assertions.h:
+        * wtf/Compiler.h:
+
 2013-03-25  Oliver Hunt  <oliver@apple.com>
 
         RefCountedArray needs a size based constructor
