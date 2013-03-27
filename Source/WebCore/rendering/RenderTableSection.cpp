@@ -636,6 +636,20 @@ void RenderTableSection::layoutRows()
 
     setLogicalHeight(m_rowPos[totalRows]);
 
+    computeOverflowFromCells(totalRows, nEffCols);
+
+    statePusher.pop();
+}
+
+void RenderTableSection::computeOverflowFromCells()
+{
+    unsigned totalRows = m_grid.size();
+    unsigned nEffCols = table()->numEffCols();
+    computeOverflowFromCells(totalRows, nEffCols);
+}
+
+void RenderTableSection::computeOverflowFromCells(unsigned totalRows, unsigned nEffCols)
+{
     unsigned totalCellsCount = nEffCols * totalRows;
     int maxAllowedOverflowingCellsCount = totalCellsCount < gMinTableSizeToUseFastPaintPathWithOverflowingCell ? 0 : gMaxAllowedOverflowingCellRatioForFastPaintPath * totalCellsCount;
 
@@ -668,8 +682,6 @@ void RenderTableSection::layoutRows()
     }
 
     ASSERT(hasOverflowingCell == this->hasOverflowingCell());
-
-    statePusher.pop();
 }
 
 int RenderTableSection::calcOuterBorderBefore() const

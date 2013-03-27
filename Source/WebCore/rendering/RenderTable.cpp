@@ -381,6 +381,14 @@ void RenderTable::distributeExtraLogicalHeight(int extraLogicalHeight)
     // ASSERT(!topSection() || !extraLogicalHeight);
 }
 
+void RenderTable::simplifiedNormalFlowLayout()
+{
+    for (RenderTableSection* section = topSection(); section; section = sectionBelow(section)) {
+        section->layoutIfNeeded();
+        section->computeOverflowFromCells();
+    }
+}
+
 void RenderTable::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;

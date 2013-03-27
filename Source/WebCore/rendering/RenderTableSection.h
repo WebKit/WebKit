@@ -79,6 +79,7 @@ public:
 
     int calcRowLogicalHeight();
     void layoutRows();
+    void computeOverflowFromCells();
 
     RenderTable* table() const { return toRenderTable(parent()); }
 
@@ -232,6 +233,7 @@ private:
     void distributeRemainingExtraLogicalHeight(int& extraLogicalHeight);
 
     bool hasOverflowingCell() const { return m_overflowingCells.size() || m_forceSlowPaintPathWithOverflowingCell; }
+    void computeOverflowFromCells(unsigned totalRows, unsigned nEffCols);
 
     CellSpan fullTableRowSpan() const { return CellSpan(0, m_grid.size()); }
     CellSpan fullTableColumnSpan() const { return CellSpan(0, table()->columns().size()); }

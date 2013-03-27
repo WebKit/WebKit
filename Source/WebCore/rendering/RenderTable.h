@@ -264,6 +264,7 @@ public:
 
 protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+    virtual void simplifiedNormalFlowLayout();
 
 private:
     virtual const char* renderName() const { return "RenderTable"; }

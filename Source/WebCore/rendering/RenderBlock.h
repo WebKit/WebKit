@@ -546,7 +546,7 @@ protected:
     virtual bool hasLineIfEmpty() const;
     
     bool simplifiedLayout();
-    void simplifiedNormalFlowLayout();
+    virtual void simplifiedNormalFlowLayout();
 
     void setDesiredColumnCountAndWidth(int, LayoutUnit);
 
