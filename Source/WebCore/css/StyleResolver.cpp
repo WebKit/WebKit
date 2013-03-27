@@ -1272,7 +1272,7 @@ PassRefPtr<RenderStyle> StyleResolver::styleForText(Text* textNode)
 
     NodeRenderingContext context(textNode);
     Node* parentNode = context.parentNodeForRenderingAndStyle();
-    return context.resetStyleInheritance() || !parentNode ?
+    return context.resetStyleInheritance() || !parentNode || !parentNode->renderStyle() ?
         defaultStyleForElement() : parentNode->renderStyle();
 }
 
