@@ -206,7 +206,12 @@ LayoutRect InlineTextBox::localSelectionRect(int startPos, int endPos)
     if (respectHyphen)
         endPos = textRun.length();
 
-    LayoutRect r = enclosingIntRect(font.selectionRectForText(textRun, FloatPoint(logicalLeft(), selTop), selHeight, sPos, ePos));
+    FloatPoint startingPoint = FloatPoint(logicalLeft(), selTop);
+    LayoutRect r;
+    if (sPos || ePos != static_cast<int>(m_len))
+        r = enclosingIntRect(font.selectionRectForText(textRun, startingPoint, selHeight, sPos, ePos));
+    else // Avoid computing the font width when the entire line box is selected as an optimization.
+        r = enclosingIntRect(FloatRect(startingPoint, FloatSize(m_logicalWidth, selHeight)));
 
     LayoutUnit logicalWidth = r.width();
     if (r.x() > logicalRight())
