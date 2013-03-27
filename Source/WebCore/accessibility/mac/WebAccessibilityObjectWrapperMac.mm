@@ -1220,6 +1220,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
         [tempArray removeObject:NSAccessibilityValueAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityAccessKeyAttribute];
+        [tempArray addObject:NSAccessibilityRequiredAttribute];
         buttonAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }

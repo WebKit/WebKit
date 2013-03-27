@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="group">
+
+    <select id="s1" required>
+        <option>Foo</option>
+        <option>Bar</option>
+        <option>Baz</option>
+    </select><br><br>
+
+    <select id="s2" aria-required="true">
+        <option>Foo</option>
+        <option>Bar</option>
+        <option>Baz</option>
+    </select>
+
+    <select id="s3" aria-required="false">
+        <option>Foo</option>
+        <option>Bar</option>
+        <option>Baz</option>
+    </select>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that AXRequired is reported for popup buttons.");
+
+    if (window.accessibilityController) {
+
+          debug("Verify required attribute works as expected.");
+          var button1 = accessibilityController.accessibleElementById("s1");
+          shouldBeTrue("button1.isAttributeSupported('AXRequired')");
+          shouldBeTrue("button1.boolAttributeValue('AXRequired')");
+
+          debug("Verify aria-required attribute works as expected.");
+          var button2 = accessibilityController.accessibleElementById("s2");
+          shouldBeTrue("button2.isAttributeSupported('AXRequired')");
+          shouldBeTrue("button2.boolAttributeValue('AXRequired')");
+
+          debug("Verify aria-required attribute works when it's false.");
+          var button3 = accessibilityController.accessibleElementById("s3");
+          shouldBeTrue("button3.isAttributeSupported('AXRequired')");
+          shouldBeFalse("button3.boolAttributeValue('AXRequired')");
+
+          document.getElementById("group").style.visibility = 'hidden';
+    }
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
