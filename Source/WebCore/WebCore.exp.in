@@ -1615,6 +1615,7 @@ _suggestedFilenameWithMIMEType
 __ZN7WebCore15ResourceRequest13partitionNameERKN3WTF6StringE
 _wkCachePartitionKey
 #endif
+_wkDestroyRenderingResources
 _wkCGContextGetShouldSmoothFonts
 _wkCGContextResetClip
 #if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080

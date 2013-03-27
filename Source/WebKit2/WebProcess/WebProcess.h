@@ -36,6 +36,7 @@
 #include "TextCheckerState.h"
 #include "VisitedLinkTable.h"
 #include <WebCore/LinkHash.h>
+#include <WebCore/Timer.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -178,6 +179,11 @@ public:
 
     void ensurePrivateBrowsingSession();
     void destroyPrivateBrowsingSession();
+    
+    void pageDidEnterWindow(WebPage*);
+    void pageWillLeaveWindow(WebPage*);
+    
+    void nonVisibleProcessCleanupTimerFired(WebCore::Timer<WebProcess>*);
 
 private:
     WebProcess();
@@ -329,6 +335,9 @@ private:
 #if USE(SOUP)
     WebSoupRequestManager m_soupRequestManager;
 #endif
+    
+    int m_inWindowPageCount;
+    WebCore::Timer<WebProcess> m_nonVisibleProcessCleanupTimer;
 };
 
 } // namespace WebKit

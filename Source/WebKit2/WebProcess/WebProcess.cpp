@@ -131,6 +131,9 @@ using namespace WebCore;
 // This should be less than plugInAutoStartExpirationTimeThreshold in PlugInAutoStartProvider.
 static const double plugInAutoStartExpirationTimeUpdateThreshold = 29 * 24 * 60 * 60;
 
+// This should be greater than tileRevalidationTimeout in TileController.
+static const double nonVisibleProcessCleanupDelay = 10;
+
 namespace WebKit {
 
 WebProcess& WebProcess::shared()
@@ -173,6 +176,8 @@ WebProcess::WebProcess()
 #if USE(SOUP)
     , m_soupRequestManager(this)
 #endif
+    , m_inWindowPageCount(0)
+    , m_nonVisibleProcessCleanupTimer(this, &WebProcess::nonVisibleProcessCleanupTimerFired)
 {
 #if USE(PLATFORM_STRATEGIES)
     // Initialize our platform strategies.
@@ -1098,5 +1103,31 @@ void WebProcess::platformInitializeProcess(const ChildProcessInitializationParam
 {
 }
 #endif
+    
+void WebProcess::pageDidEnterWindow(WebPage*)
+{
+    m_inWindowPageCount++;
+    m_nonVisibleProcessCleanupTimer.stop();
+}
+
+void WebProcess::pageWillLeaveWindow(WebPage*)
+{
+    ASSERT(m_inWindowPageCount > 0);
+    if (m_inWindowPageCount <= 0)
+        return;
+
+    m_inWindowPageCount--;
+
+    if (!m_inWindowPageCount)
+        m_nonVisibleProcessCleanupTimer.startOneShot(nonVisibleProcessCleanupDelay);
+}
+    
+void WebProcess::nonVisibleProcessCleanupTimerFired(Timer<WebProcess>*)
+{
+    ASSERT(!m_inWindowPageCount);
+#if PLATFORM(MAC)
+    wkDestroyRenderingResources();
+#endif
+}
 
 } // namespace WebKit

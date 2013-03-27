@@ -351,7 +351,7 @@ void WKCAContextSetLayer(WKCAContextRef, CALayer *);
 CALayer *WKCAContextGetLayer(WKCAContextRef);
 void WKCAContextSetColorSpace(WKCAContextRef, CGColorSpaceRef);
 CGColorSpaceRef WKCAContextGetColorSpace(WKCAContextRef);
-void WKCABackingStoreCollectBlocking(void);
+void WKDestroyRenderingResources(void);
 
 void WKCALayerEnumerateRectsBeingDrawnWithBlock(CALayer *layer, CGContextRef context, void (^block)(CGRect rect));
 

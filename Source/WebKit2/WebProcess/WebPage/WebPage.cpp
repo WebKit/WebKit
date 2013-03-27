@@ -365,6 +365,11 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 
     setActive(parameters.isActive);
     setFocused(parameters.isFocused);
+
+    // Page defaults to in-window, but setIsInWindow depends on it being a valid indicator of actually having been put into a window.
+    if (!parameters.isInWindow)
+        m_page->setIsInWindow(false);
+
     setIsInWindow(parameters.isInWindow);
 
     m_userAgent = parameters.userAgent;
@@ -1957,10 +1962,15 @@ inline bool WebPage::canHandleUserEvents() const
 
 void WebPage::setIsInWindow(bool isInWindow)
 {
+    bool pageWasInWindow = m_page->isInWindow();
+    
     if (!isInWindow) {
         m_setCanStartMediaTimer.stop();
         m_page->setCanStartMedia(false);
         m_page->willMoveOffscreen();
+        
+        if (pageWasInWindow)
+            WebProcess::shared().pageWillLeaveWindow(this);
     } else {
         // Defer the call to Page::setCanStartMedia() since it ends up sending a synchronous message to the UI process
         // in order to get plug-in connections, and the UI process will be waiting for the Web process to update the backing
@@ -1969,6 +1979,9 @@ void WebPage::setIsInWindow(bool isInWindow)
             m_setCanStartMediaTimer.startOneShot(0);
 
         m_page->didMoveOnscreen();
+        
+        if (!pageWasInWindow)
+            WebProcess::shared().pageDidEnterWindow(this);
     }
 
     m_page->setIsInWindow(isInWindow);

@@ -186,6 +186,8 @@ void InitWebCoreSystemInterface(void)
 
     INIT(SetMetadataURL);
 
+    INIT(DestroyRenderingResources);
+
 #if PLATFORM(MAC)
     // FIXME: We should stop using this file in Chromium.
 

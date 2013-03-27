@@ -307,6 +307,8 @@ extern CFHTTPMessageRef (*wkGetCFURLResponseHTTPResponse)(CFURLResponseRef);
 extern CFStringRef (*wkCopyCFURLResponseSuggestedFilename)(CFURLResponseRef);
 extern void (*wkSetCFURLResponseMIMEType)(CFURLResponseRef, CFStringRef mimeType);
 
+extern void(*wkDestroyRenderingResources)(void);
+
 #if USE(CFNETWORK)
 extern CFHTTPCookieStorageRef (*wkGetDefaultHTTPCookieStorage)();
 extern WKCFURLCredentialRef (*wkCopyCredentialFromCFPersistentStorage)(CFURLProtectionSpaceRef protectionSpace);

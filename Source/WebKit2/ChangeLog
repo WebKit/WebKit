@@ -1,3 +1,25 @@
+2013-03-26  Tim Horton  <timothy_horton@apple.com>
+
+        [ca] Tell CA to clean up unused resources if a given WebProcess won't be drawing
+        https://bugs.webkit.org/show_bug.cgi?id=107539
+        <rdar://problem/13032692>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Update WebCoreSystemInterface.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Initially move the Page out of the window if necessary;
+        Page defaults to in-window, which is wrong in many cases - we depend on
+        Page::isInWindow being accurate to decide whether WebPage::setIsInWindow is actually
+        a state change or not.
+        (WebKit::WebPage::setIsInWindow):
+        * WebProcess/WebProcess.cpp: Inform WebProcess when we go on/off screen.
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::pageDidMoveOnscreen): Keep track of the number of on-screen pages in this process.
+        (WebKit::WebProcess::pageWillMoveOffscreen): If the number of on-screen pages drops to zero,  clean up unused rendering resources.
+        * WebProcess/WebProcess.h:
+
 2013-03-26  Dean Jackson  <dino@apple.com>
 
         When a primary plugin is restarted, also start similar plugins
