@@ -32,7 +32,7 @@
 #include <unistd.h>
 #endif
 
-#if PLATFORM(WIN)
+#if OS(WIN)
 #include <windows.h>
 #endif
 
@@ -40,7 +40,7 @@ namespace WTF {
 
 inline int getCurrentProcessID()
 {
-#if PLATFORM(WIN)
+#if OS(WIN)
     return GetCurrentProcessId();
 #else
     return getpid();
