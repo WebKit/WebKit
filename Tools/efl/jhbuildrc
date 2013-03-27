@@ -47,8 +47,9 @@ else:
 
 nonotify = True
 notrayicon = True
-if 'MAKEFLAGS' not in os.environ:
-    os.environ['MAKEFLAGS'] = '-j%d' % multiprocessing.cpu_count()
+
+if 'NUMBER_OF_PROCESSORS' in os.environ:
+    jobs = os.environ['NUMBER_OF_PROCESSORS']
 
 # Use system libraries while building.
 if use_lib64:

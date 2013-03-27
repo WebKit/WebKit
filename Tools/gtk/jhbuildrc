@@ -44,7 +44,9 @@ else:
 
 nonotify = True
 notrayicon = True
-os.environ['MAKEFLAGS'] = '-j%d' % multiprocessing.cpu_count()
+
+if 'NUMBER_OF_PROCESSORS' in os.environ:
+    jobs = os.environ['NUMBER_OF_PROCESSORS']
 
 # GTK+ 3.0.12 misses the -lm flag when linking the tests.
 module_makeargs['gtk+'] = 'LDFLAGS="-lm" ' + makeargs
