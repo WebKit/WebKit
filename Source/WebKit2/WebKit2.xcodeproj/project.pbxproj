@@ -468,6 +468,8 @@
 		516319921628980A00E22F00 /* NetworkProcessProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 516319911628980A00E22F00 /* NetworkProcessProxyMac.mm */; };
 		5163199416289A6000E22F00 /* NetworkProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51ACC9341628064800342550 /* NetworkProcessMessageReceiver.cpp */; };
 		5163199516289A6300E22F00 /* NetworkProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ACC9351628064800342550 /* NetworkProcessMessages.h */; };
+		5167EEA0170377BF007681CA /* DiskCacheMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5167EE9E170377BF007681CA /* DiskCacheMonitor.h */; };
+		5167EEA1170377BF007681CA /* DiskCacheMonitor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5167EE9F170377BF007681CA /* DiskCacheMonitor.mm */; };
 		516A4A5D120A2CCD00C05B7F /* WebError.h in Headers */ = {isa = PBXBuildFile; fileRef = 516A4A5B120A2CCD00C05B7F /* WebError.h */; };
 		51795567162876CB00FA43B6 /* NetworkProcessMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51A8A6151627F3F9000D90E9 /* NetworkProcessMac.mm */; };
 		51795568162876CF00FA43B6 /* NetworkProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510CC7DF16138E2900D03ED3 /* NetworkProcess.cpp */; };
@@ -1874,6 +1876,8 @@
 		51578B821209ECEF00A37C4A /* WebData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebData.h; sourceTree = "<group>"; };
 		5160BFE013381DF900918999 /* Logging.mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Logging.mac.mm; sourceTree = "<group>"; };
 		516319911628980A00E22F00 /* NetworkProcessProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkProcessProxyMac.mm; path = mac/NetworkProcessProxyMac.mm; sourceTree = "<group>"; };
+		5167EE9E170377BF007681CA /* DiskCacheMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiskCacheMonitor.h; sourceTree = "<group>"; };
+		5167EE9F170377BF007681CA /* DiskCacheMonitor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DiskCacheMonitor.mm; sourceTree = "<group>"; };
 		516A4A5B120A2CCD00C05B7F /* WebError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebError.h; sourceTree = "<group>"; };
 		517A33B3130B308C00F80CB5 /* WKApplicationCacheManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKApplicationCacheManager.cpp; sourceTree = "<group>"; };
 		517A33B4130B308C00F80CB5 /* WKApplicationCacheManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKApplicationCacheManager.h; sourceTree = "<group>"; };
@@ -3521,6 +3525,8 @@
 			isa = PBXGroup;
 			children = (
 				E17AE2C116B9C139001C42F1 /* com.apple.WebKit.NetworkProcess.sb.in */,
+				5167EE9E170377BF007681CA /* DiskCacheMonitor.h */,
+				5167EE9F170377BF007681CA /* DiskCacheMonitor.mm */,
 				51A8A6151627F3F9000D90E9 /* NetworkProcessMac.mm */,
 				512C068F16390E6900ABB911 /* NetworkResourceLoadSchedulerMac.mm */,
 				51E3B67E16F266B3009968DC /* NetworkResourceLoaderMac.mm */,
@@ -5493,6 +5499,7 @@
 				512F58F612A88A5400629530 /* WKAuthenticationChallenge.h in Headers */,
 				512F58F812A88A5400629530 /* WKAuthenticationDecisionListener.h in Headers */,
 				BC646C1B11DD399F006455B0 /* WKBackForwardList.h in Headers */,
+				5167EEA0170377BF007681CA /* DiskCacheMonitor.h in Headers */,
 				BC646C1D11DD399F006455B0 /* WKBackForwardListItem.h in Headers */,
 				BCDDB317124EBD130048D13C /* WKBase.h in Headers */,
 				BCBAAC73144E619E0053F82F /* WKBrowsingContextController.h in Headers */,
@@ -6814,6 +6821,7 @@
 				E134F01A12EA5D99004EC58D /* WKPrintingView.mm in Sources */,
 				BCBAACEC145225E30053F82F /* WKProcessGroup.mm in Sources */,
 				512F58FB12A88A5400629530 /* WKProtectionSpace.cpp in Sources */,
+				5167EEA1170377BF007681CA /* DiskCacheMonitor.mm in Sources */,
 				37948408150C4B9700E52CE9 /* WKRenderLayer.cpp in Sources */,
 				37608822150414F700FC82C7 /* WKRenderObject.cpp in Sources */,
 				3336763A130C99DC006C9DE2 /* WKResourceCacheManager.cpp in Sources */,

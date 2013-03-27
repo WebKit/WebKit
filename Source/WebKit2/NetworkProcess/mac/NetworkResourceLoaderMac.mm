@@ -26,40 +26,58 @@
 #import "config.h"
 #import "NetworkResourceLoader.h"
 
-#include "ShareableResource.h"
-#include "SharedMemory.h"
-#include "WebResourceLoaderMessages.h"
-#include <WebCore/SoftLinking.h>
+#import "DiskCacheMonitor.h"
+#import "ShareableResource.h"
+#import <WebCore/ResourceHandle.h>
+#import <WebCore/SoftLinking.h>
 
 using namespace WebCore;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-typedef struct _CFURLCache* CFURLCacheRef;
-typedef struct _CFCachedURLResponse* CFCachedURLResponseRef;
+typedef const struct _CFURLCache* CFURLCacheRef;
+typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
 extern "C" CFURLCacheRef CFURLCacheCopySharedURLCache();
 extern "C" CFCachedURLResponseRef CFURLCacheCopyResponseForRequest(CFURLCacheRef, CFURLRequestRef);
-extern "C" CFArrayRef CFCachedURLResponseCopyReceiverDataArray(CFCachedURLResponseRef);
 
 SOFT_LINK_FRAMEWORK(CFNetwork)
-static bool CFURLCacheIsMemMappedData(CFURLCacheRef cache, CFDataRef data)
+static CFDataRef CFCachedURLResponseGetMemMappedData(CFCachedURLResponseRef response)
 {
-    static CFBooleanRef (*softLinkIsCacheMMAPedData)(CFURLCacheRef cache, CFDataRef data) = (CFBooleanRef (*)(CFURLCacheRef cache, CFDataRef data)) dlsym(CFNetworkLibrary(), "_CFURLCacheIsResponseDataMemMapped");
+    static CFDataRef (*softGetMemMappedData)(CFCachedURLResponseRef) = (CFDataRef (*)(CFCachedURLResponseRef)) dlsym(CFNetworkLibrary(), "_CFCachedURLResponseGetMemMappedData");
     
-    if (softLinkIsCacheMMAPedData)
-        return softLinkIsCacheMMAPedData(cache, data) == kCFBooleanTrue;
-    return false;
+    if (softGetMemMappedData)
+        return softGetMemMappedData(response);
+    return NULL;
 }
 #endif
 
+@interface NSCachedURLResponse (NSCachedURLResponseDetails)
+-(CFCachedURLResponseRef)_CFCachedURLResponse;
+@end
+
 namespace WebKit {
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+void NetworkResourceLoader::tryGetShareableHandleFromCFURLCachedResponse(ShareableResource::Handle& handle, CFCachedURLResponseRef cachedResponse)
+{
+    CFDataRef data = CFCachedURLResponseGetMemMappedData(cachedResponse);
+
+    if (!data || CFDataGetLength(data) < (CFIndex)NetworkResourceLoader::fileBackedResourceMinimumSize())
+        return;
+
+    RefPtr<SharedMemory> sharedMemory = SharedMemory::createFromVMBuffer((void*)CFDataGetBytePtr(data), CFDataGetLength(data));
+    if (!sharedMemory) {
+        LOG_ERROR("Failed to create VM shared memory for cached resource.");
+        return;
+    }
+
+    size_t size = sharedMemory->size();
+    RefPtr<ShareableResource> resource = ShareableResource::create(sharedMemory.release(), 0, size);
+    resource->createHandle(handle);
+}
 
 void NetworkResourceLoader::tryGetShareableHandleForResource(ShareableResource::Handle& handle)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED < 1090
-    return;
-#else
-
-    // Check the cache to see if we can vm_copy a filesystem-backed resource buffer.   
+    // Check the cache to see if we can vm_copy a filesystem-backed resource buffer.
     RetainPtr<CFURLCacheRef> cache = adoptCF(CFURLCacheCopySharedURLCache());
     if (!cache)
         return;
@@ -69,38 +87,25 @@ void NetworkResourceLoader::tryGetShareableHandleForResource(ShareableResource::
     if (!cachedResponse)
         return;
 
-    RetainPtr<CFArrayRef> array = adoptCF(CFCachedURLResponseCopyReceiverDataArray(cachedResponse.get()));
-    if (!array || CFArrayGetCount(array.get()) != 1)
-        return;
-    
-    CFTypeRef value = CFArrayGetValueAtIndex(array.get(), 0);
-    if (CFGetTypeID(value) != CFDataGetTypeID())
-        return;
-    CFDataRef data = static_cast<CFDataRef>(value);
-
-    // We only care about the vm_copy optimization for resources that should be file backed.
-    // FIXME: If there were an API available to guarantee that a buffer was file backed, we should use it here.
-    if (CFDataGetLength(data) < (CFIndex)fileBackedResourceMinimumSize())
-        return;
-    
-    if (!CFURLCacheIsMemMappedData(cache.get(), data))
-        return;
-
-    RefPtr<SharedMemory> sharedMemory = SharedMemory::createFromVMBuffer((void*)CFDataGetBytePtr(data), CFDataGetLength(data));
-    if (!sharedMemory) {
-        LOG_ERROR("Failed to create VMCopied shared memory for cached resource.");
-        return;
-    }
-
-    size_t size = sharedMemory->size();
-    RefPtr<ShareableResource> resource = ShareableResource::create(sharedMemory.release(), 0, size);
-    resource->createHandle(handle);
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED < 1090
+    tryGetShareableHandleFromCFURLCachedResponse(handle, cachedResponse.get());
 }
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 
 size_t NetworkResourceLoader::fileBackedResourceMinimumSize()
 {
     return SharedMemory::systemPageSize();
+}
+
+void NetworkResourceLoader::willCacheResponseAsync(ResourceHandle* handle, NSCachedURLResponse *nsResponse)
+{
+    ASSERT(handle == m_handle);
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    if (m_bytesReceived >= fileBackedResourceMinimumSize())
+        DiskCacheMonitor::monitorFileBackingStoreCreation([nsResponse _CFCachedURLResponse], this);
+#endif
+
+    m_handle->continueWillCacheResponse(nsResponse);
 }
 
 } // namespace WebKit

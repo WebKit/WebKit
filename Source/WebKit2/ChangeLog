@@ -1,3 +1,41 @@
+2013-03-27  Brady Eidson  <beidson@apple.com>
+
+        Mem mapped resource data improvements.
+        <rdar://problem/13196481> and https://bugs.webkit.org/show_bug.cgi?id=113422
+
+        Reviewed by Alexey Proskuryakov (and looked over by Geoff Garen).
+
+        Remove timer-based approach support code:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::NetworkResourceLoader):
+        (WebKit::NetworkResourceLoader::abortInProgressLoad):
+        (WebKit::NetworkResourceLoader::didFinishLoading):
+        * NetworkProcess/NetworkResourceLoader.h:
+
+        Add an object to encapsulate monitoring a resource going in to the disk cache.
+        It listens for a callback on the cached response indicating it is disk backed
+        and also sets a timeout so we don't keep the monitor alive and waiting forever.
+        * NetworkProcess/mac/DiskCacheMonitor.h: Added.
+        (WebKit::DiskCacheMonitor::destinationID):
+        (WebKit::DiskCacheMonitor::connectionToWebProcess):
+        (WebKit::DiskCacheMonitor::resourceRequest):
+        * NetworkProcess/mac/DiskCacheMonitor.mm: Added.
+        (CFCachedURLResponseSetBecameFileBackedCallBackBlock):
+        (WebKit::monitorFileBackingStoreCreation):
+        (WebKit::DiskCacheMonitor::DiskCachingMonitor):
+        (WebKit::DiskCacheMonitor::connection):
+
+        Refactoring and monitor certain cached responses:
+        * NetworkProcess/mac/NetworkResourceLoaderMac.mm:
+        (CFCachedURLResponseGetMemMappedData):
+        (WebKit::NetworkResourceLoader::tryGetShareableHandleFromCFURLCachedResponse): Use CFCachedURLResponseGetMemMappedData
+          to explicitly get an mem-mapped data object.
+        (WebKit::NetworkResourceLoader::tryGetShareableHandleForResource):
+        (WebKit::NetworkResourceLoader::willCacheResponseAsync): If the resource is over the minimum
+          size then set up a disk caching monitor.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-03-26  Timothy Hatcher  <timothy@apple.com>
 
         Add support for dock-to-right of the Web Inspector in the Mac port.

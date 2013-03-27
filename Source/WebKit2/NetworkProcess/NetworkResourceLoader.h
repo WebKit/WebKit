@@ -35,6 +35,8 @@
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/RunLoop.h>
 
+typedef const struct _CFCachedURLResponse* CFCachedURLResponseRef;
+
 namespace WebCore {
 class ResourceBuffer;
 class ResourceHandle;
@@ -95,6 +97,10 @@ public:
     // Message handlers.
     void didReceiveNetworkResourceLoaderMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    static void tryGetShareableHandleFromCFURLCachedResponse(ShareableResource::Handle&, CFCachedURLResponseRef);
+#endif
+
 private:
     NetworkResourceLoader(const NetworkResourceLoadParameters&, NetworkConnectionToWebProcess*);
 
@@ -113,8 +119,6 @@ private:
     template<typename U> bool sendSyncAbortingOnFailure(const U& message, const typename U::Reply& reply);
     void abortInProgressLoad();
 
-    void tryGetShareableHandleForResource(ShareableResource::Handle&);
-
     RefPtr<RemoteNetworkingContext> m_networkingContext;
     RefPtr<WebCore::ResourceHandle> m_handle;
 
@@ -124,8 +128,7 @@ private:
     uint64_t m_bytesReceived;
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    void diskCacheTimerFired();
-    WebCore::RunLoop::Timer<NetworkResourceLoader> m_diskCacheTimer;
+    void tryGetShareableHandleForResource(ShareableResource::Handle&);
 #endif
 };
 
