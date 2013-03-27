@@ -994,9 +994,11 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
     // All objects should expose the ARIA busy attribute (ARIA 1.1 with ISSUE-538).
     [additional addObject:NSAccessibilityARIABusyAttribute];
     
-    // Popup buttons on the Mac expose the value attribute.
-    if (m_object->isPopUpButton())
+    // Popup buttons on the Mac expose the required and value attributes.
+    if (m_object->isPopUpButton()) {
         [additional addObject:NSAccessibilityValueAttribute];
+        [additional addObject:NSAccessibilityRequiredAttribute];
+    }
     
     if (m_object->ariaHasPopup())
         [additional addObject:NSAccessibilityHasPopupAttribute];
@@ -1220,7 +1222,6 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
         [tempArray removeObject:NSAccessibilityValueAttribute];
         [tempArray addObject:NSAccessibilityTitleUIElementAttribute];
         [tempArray addObject:NSAccessibilityAccessKeyAttribute];
-        [tempArray addObject:NSAccessibilityRequiredAttribute];
         buttonAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
