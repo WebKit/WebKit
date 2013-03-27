@@ -540,7 +540,7 @@ void InspectorTimelineAgent::addRecordToTimeline(PassRefPtr<InspectorObject> rec
 
 void InspectorTimelineAgent::innerAddRecordToTimeline(PassRefPtr<InspectorObject> prpRecord, const String& type)
 {
-    RefPtr<InspectorObject> record(prpRecord);
+    RefPtr<TypeBuilder::Timeline::TimelineEvent> record = TypeBuilder::Timeline::TimelineEvent::runtimeCast(prpRecord);
     record->setString("type", type);
     if (type == TimelineRecordType::Program)
         setNativeHeapStatistics(record.get());
@@ -562,20 +562,27 @@ static size_t getUsedHeapSize()
     return info.usedJSHeapSize;
 }
 
-void InspectorTimelineAgent::setDOMCounters(InspectorObject* record)
+void InspectorTimelineAgent::setDOMCounters(TypeBuilder::Timeline::TimelineEvent* record)
 {
-    record->setNumber("usedHeapSize", getUsedHeapSize());
+    record->setUsedHeapSize(getUsedHeapSize());
 
     if (m_state->getBoolean(TimelineAgentState::includeDomCounters)) {
-        RefPtr<InspectorObject> counters = InspectorObject::create();
-        counters->setNumber("nodes", (m_inspectorType == PageInspector) ? InspectorCounters::counterValue(InspectorCounters::NodeCounter) : 0);
-        counters->setNumber("documents", (m_inspectorType == PageInspector) ? InspectorCounters::counterValue(InspectorCounters::DocumentCounter) : 0);
-        counters->setNumber("jsEventListeners", ThreadLocalInspectorCounters::current().counterValue(ThreadLocalInspectorCounters::JSEventListenerCounter));
-        record->setObject("counters", counters.release());
+        int documentCount = 0;
+        int nodeCount = 0;
+        if (m_inspectorType == PageInspector) {
+            documentCount = InspectorCounters::counterValue(InspectorCounters::DocumentCounter);
+            nodeCount = InspectorCounters::counterValue(InspectorCounters::NodeCounter);
+        }
+        int listenerCount = ThreadLocalInspectorCounters::current().counterValue(ThreadLocalInspectorCounters::JSEventListenerCounter);
+        RefPtr<TypeBuilder::Timeline::DOMCounters> counters = TypeBuilder::Timeline::DOMCounters::create()
+            .setDocuments(documentCount)
+            .setNodes(nodeCount)
+            .setJsEventListeners(listenerCount);
+        record->setCounters(counters.release());
     }
 }
 
-void InspectorTimelineAgent::setNativeHeapStatistics(InspectorObject* record)
+void InspectorTimelineAgent::setNativeHeapStatistics(TypeBuilder::Timeline::TimelineEvent* record)
 {
     if (!m_memoryAgent)
         return;
@@ -590,7 +597,7 @@ void InspectorTimelineAgent::setNativeHeapStatistics(InspectorObject* record)
     size_t sharedBytes = 0;
     MemoryUsageSupport::processMemorySizesInBytes(&privateBytes, &sharedBytes);
     stats->setNumber("PrivateBytes", privateBytes);
-    record->setObject("nativeHeapStatistics", stats.release());
+    record->setNativeHeapStatistics(stats.release());
 }
 
 void InspectorTimelineAgent::setFrameIdentifier(InspectorObject* record, Frame* frame)

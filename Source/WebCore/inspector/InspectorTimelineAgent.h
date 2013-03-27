@@ -214,8 +214,8 @@ private:
     void appendRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack, Frame*);
     void pushCurrentRecord(PassRefPtr<InspectorObject>, const String& type, bool captureCallStack, Frame*, bool hasLowLevelDetails = false);
 
-    void setDOMCounters(InspectorObject* record);
-    void setNativeHeapStatistics(InspectorObject* record);
+    void setDOMCounters(TypeBuilder::Timeline::TimelineEvent* record);
+    void setNativeHeapStatistics(TypeBuilder::Timeline::TimelineEvent* record);
     void setFrameIdentifier(InspectorObject* record, Frame*);
     void pushGCEventRecords();
 
