@@ -274,7 +274,8 @@ WebInspector.BreakpointManager.prototype = {
 
             var breakpoints = this.breakpointsForUISourceCode(uiSourceCode);
             for (var j = 0; j < breakpoints.length; ++j) { 
-                this._breakpoints.remove(breakpoints[j]);
+                var breakpoint = breakpoints[j];
+                this._breakpoints.remove(breakpoint);
                 delete breakpoint._primaryUILocation;
             }
 

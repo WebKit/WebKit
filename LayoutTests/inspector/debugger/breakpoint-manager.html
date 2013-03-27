@@ -373,6 +373,9 @@ function test()
             addTemporaryUISourceCode(breakpointManager, "a.js")            
             var eventData = { breakpointId: "a.js:10", location: { scriptId: "a.js", lineNumber: 11, columnNumber: 5 }};
             breakpointManager._debuggerModel.dispatchEventToListeners(WebInspector.DebuggerModel.Events.BreakpointResolved, eventData);
+            var breakpoints = breakpointManager._breakpoints.keys();
+            InspectorTest.assertEquals(breakpoints.length, 1, "Exactly one breakpoint should be registered in breakpoint manager.");
+            InspectorTest.assertTrue(!breakpoints[0]._primaryUILocation, "_primaryUILocation field should be cleared for provisional breapoint.");
             resetBreakpointManager(breakpointManager, next);
         }
     ]);
