@@ -540,8 +540,8 @@ void InspectorTimelineAgent::addRecordToTimeline(PassRefPtr<InspectorObject> rec
 
 void InspectorTimelineAgent::innerAddRecordToTimeline(PassRefPtr<InspectorObject> prpRecord, const String& type)
 {
+    prpRecord->setString("type", type);
     RefPtr<TypeBuilder::Timeline::TimelineEvent> record = TypeBuilder::Timeline::TimelineEvent::runtimeCast(prpRecord);
-    record->setString("type", type);
     if (type == TimelineRecordType::Program)
         setNativeHeapStatistics(record.get());
     else
