@@ -77,8 +77,8 @@ int SocketStreamHandleInternal::send(const char* data, int len)
         LOG(Network, "m_socket is null when sending. It should not be.");
         return 0;
     }
-    if (m_pendingAmountSent + len >= m_maxPendingSendAllowed)
-        len = m_maxPendingSendAllowed - m_pendingAmountSent - 1;
+    if (m_pendingAmountSent + len > m_maxPendingSendAllowed)
+        len = m_maxPendingSendAllowed - m_pendingAmountSent;
 
     if (len <= 0)
         return len;
@@ -98,7 +98,7 @@ void SocketStreamHandleInternal::close()
     if (m_socket)
         m_socket->close();
 }
-    
+
 void SocketStreamHandleInternal::didOpenStream(WebKit::WebSocketStreamHandle* socketHandle, int maxPendingSendAllowed)
 {
     LOG(Network, "SocketStreamHandleInternal::didOpen %d",
