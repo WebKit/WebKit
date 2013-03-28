@@ -33,11 +33,12 @@
 
 #include "CustomElementRegistry.h"
 #include "DOMWrapperWorld.h"
+#include "SVGNames.h"
 #include "ScriptController.h"
 #include "V8CustomElementConstructor.h"
 #include "V8HTMLElementWrapperFactory.h"
-#include "V8HTMLParagraphElement.h"
-#include "V8HTMLSpanElement.h"
+#include "V8SVGElementWrapperFactory.h"
+
 
 namespace WebCore {
 
@@ -98,10 +99,22 @@ bool CustomElementHelpers::initializeConstructorWrapper(CustomElementConstructor
     return true;
 }
 
-static bool hasValidPrototypeChain(v8::Handle<v8::Object> requiredAncestor, v8::Handle<v8::Value> chain)
+static bool hasValidPrototypeChainFor(v8::Handle<v8::Object> prototypeObject, WrapperTypeInfo* typeInfo, v8::Handle<v8::Context> context)
 {
+    // document.register() sets the constructor property, so the prototype shouldn't have one.
+    if (prototypeObject->HasOwnProperty(v8String("constructor", context->GetIsolate())))
+        return false;
+
+    v8::Handle<v8::Object> elementConstructor = v8::Handle<v8::Object>::Cast(V8PerContextData::from(context)->constructorForType(typeInfo));
+    if (elementConstructor.IsEmpty())
+        return false;
+    v8::Handle<v8::Object> elementPrototype = v8::Handle<v8::Object>::Cast(elementConstructor->Get(v8String("prototype", context->GetIsolate())));
+    if (elementPrototype.IsEmpty())
+        return false;
+
+    v8::Handle<v8::Value> chain = prototypeObject;
     while (!chain.IsEmpty() && chain->IsObject()) {
-        if (chain == requiredAncestor)
+        if (chain == elementPrototype)
             return true;
         chain = v8::Handle<v8::Object>::Cast(chain)->GetPrototype();
     }
@@ -109,26 +122,30 @@ static bool hasValidPrototypeChain(v8::Handle<v8::Object> requiredAncestor, v8::
     return false;
 }
 
-bool CustomElementHelpers::isValidPrototypeParameter(const ScriptValue& prototype, ScriptState* state)
+bool CustomElementHelpers::isValidPrototypeParameter(const ScriptValue& prototype, ScriptState* state, AtomicString& namespaceURI)
 {
     if (prototype.v8Value().IsEmpty() || !prototype.v8Value()->IsObject())
         return false;
 
-    // document.register() sets the constructor property, so the prototype shouldn't have one.
     v8::Handle<v8::Object> prototypeObject = v8::Handle<v8::Object>::Cast(prototype.v8Value());
-    if (prototypeObject->HasOwnProperty(v8String("constructor", state->context()->GetIsolate())))
-        return false;
-    V8PerContextData* perContextData = V8PerContextData::from(state->context());
-    // FIXME: non-HTML subclasses should be also supported: https://bugs.webkit.org/show_bug.cgi?id=111693
-    v8::Handle<v8::Object> htmlConstructor = v8::Handle<v8::Object>::Cast(perContextData->constructorForType(&V8HTMLElement::info));
-    if (htmlConstructor.IsEmpty())
-        return false;
-    v8::Handle<v8::Object> htmlPrototype = v8::Handle<v8::Object>::Cast(htmlConstructor->Get(v8String("prototype", state->context()->GetIsolate())));
-    if (htmlPrototype.IsEmpty())
-        return false;
-    if (!hasValidPrototypeChain(htmlPrototype, prototypeObject))
-        return false;
-    return true;
+    if (hasValidPrototypeChainFor(prototypeObject, &V8HTMLElement::info, state->context())) {
+        namespaceURI = HTMLNames::xhtmlNamespaceURI;
+        return true;
+    }
+
+#if ENABLE(SVG)
+    if (hasValidPrototypeChainFor(prototypeObject, &V8SVGElement::info, state->context())) {
+        namespaceURI = SVGNames::svgNamespaceURI;
+        return true;
+    }
+#endif
+
+    if (hasValidPrototypeChainFor(prototypeObject, &V8Element::info, state->context())) {
+        namespaceURI = nullAtom;
+        return true;
+    }
+
+    return false;
 }
 
 bool CustomElementHelpers::isFeatureAllowed(ScriptState* state)
@@ -169,7 +186,13 @@ const QualifiedName* CustomElementHelpers::findLocalName(v8::Handle<v8::Object> 
     WrapperTypeInfo* type = CustomElementHelpers::findWrapperType(chain);
     if (!type)
         return 0;
-    return findHTMLTagNameOfV8Type(type);
+    if (const QualifiedName* htmlName = findHTMLTagNameOfV8Type(type))
+        return htmlName;
+#if ENABLE(SVG)
+    if (const QualifiedName* svgName = findSVGTagNameOfV8Type(type))
+        return svgName;
+#endif
+    return 0;
 }
 
 void CustomElementHelpers::invokeReadyCallbackIfNeeded(Element* element, v8::Handle<v8::Context> context)

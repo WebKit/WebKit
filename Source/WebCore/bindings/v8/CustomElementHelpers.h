@@ -56,6 +56,7 @@ class ScriptState;
 class CustomElementHelpers {
 public:
     static bool initializeConstructorWrapper(CustomElementConstructor*, const ScriptValue& prototype, ScriptState*);
+    static bool isValidPrototypeParameter(const ScriptValue&, ScriptState*, AtomicString& namespaceURI);
     static bool isValidPrototypeParameter(const ScriptValue&, ScriptState*);
     static bool isFeatureAllowed(ScriptState*);
     static const QualifiedName* findLocalName(const ScriptValue& prototype);
@@ -91,6 +92,12 @@ inline PassRefPtr<CustomElementConstructor> CustomElementHelpers::constructorOf(
     if (CustomElementRegistry* registry = element->document()->registry())
         return registry->findFor(element);
     return 0;
+}
+
+inline bool CustomElementHelpers::isValidPrototypeParameter(const ScriptValue& value, ScriptState* state)
+{
+    AtomicString namespaceURI;
+    return isValidPrototypeParameter(value, state, namespaceURI);
 }
 
 #endif // ENABLE(CUSTOM_ELEMENTS)

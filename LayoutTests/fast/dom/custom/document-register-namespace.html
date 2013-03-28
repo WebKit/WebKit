@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Using document.register() for extending HTML and non-HTML elements.");
+
+document.register = document.register || document.webkitRegister;
+
+function createElementFromHTML(html)
+{
+    var container = document.createElement("div");
+    container.innerHTML = html;
+    return container.firstChild;
+}
+
+function createElementFromSVG(svg)
+{
+    var container = document.createElement("div");
+    container.innerHTML = "<svg xmlns='http://www.w3.org/2000/svg'>" + svg + "</svg>";
+    return container.firstChild.firstChild;
+}
+
+CustomHTMLElement = document.register('html-foo', { prototype: Object.create(HTMLElement.prototype) });
+CustomSVGElement = document.register('svg-foo', { prototype: Object.create(SVGElement.prototype) });
+CustomXMLElement = document.register('xml-foo', { prototype: Object.create(Element.prototype) });
+
+var html1 = new CustomHTMLElement();
+shouldBe("html1.namespaceURI", "'http://www.w3.org/1999/xhtml'");
+var html2 = document.createElement("html-foo");
+shouldBe("html2.namespaceURI", "'http://www.w3.org/1999/xhtml'");
+var html3 = document.createElementNS("http://www.w3.org/1999/xhtml", "html-foo");
+shouldBe("html3.namespaceURI", "'http://www.w3.org/1999/xhtml'");
+var html4 = createElementFromHTML("<html-foo></html-foo>");
+shouldBe("html4.namespaceURI", "'http://www.w3.org/1999/xhtml'");
+
+var notHTML = document.createElementNS("http://www.example.com/", "html-foo");
+shouldBe("notHTML.namespaceURI", "'http://www.example.com/'");
+shouldBeFalse("notHTML instanceof CustomHTMLElement");
+shouldBeFalse("notHTML instanceof HTMLElement");
+
+var svg1 = new CustomSVGElement();
+shouldBe("svg1.tagName", "'svg-foo'");
+shouldBe("svg1.namespaceURI", "'http://www.w3.org/2000/svg'");
+var svg2 = document.createElementNS("http://www.w3.org/2000/svg", "svg-foo");
+shouldBe("svg2.tagName", "'svg-foo'");
+shouldBe("svg2.namespaceURI", "'http://www.w3.org/2000/svg'");
+var svg3 = createElementFromSVG("<svg-foo></svg-foo>");
+shouldBe("svg3.tagName", "'svg-foo'");
+shouldBe("svg3.namespaceURI", "'http://www.w3.org/2000/svg'");
+
+var notSVG1 = document.createElement("svg-foo");
+shouldBe("notSVG1.namespaceURI", "'http://www.w3.org/1999/xhtml'");
+shouldBeFalse("notSVG1 instanceof CustomSVGElement");
+shouldBeTrue("notSVG1 instanceof HTMLUnknownElement");
+var notSVG2 = createElementFromHTML("<svg-foo></svg-foo>");
+shouldBe("notSVG2.namespaceURI", "'http://www.w3.org/1999/xhtml'");
+shouldBeFalse("notSVG2 instanceof CustomSVGElement");
+shouldBeTrue("notSVG2 instanceof HTMLUnknownElement");
+
+var xml1 = new CustomXMLElement();
+shouldBe("xml1.tagName", "'xml-foo'");
+shouldBe("xml1.namespaceURI", "null");
+var xml2 = document.createElementNS(null, "xml-foo");
+shouldBe("xml2.tagName", "'xml-foo'");
+shouldBe("xml2.namespaceURI", "null");
+
+var notXML1 = document.createElement("xml-foo");
+shouldBe("notXML1.namespaceURI", "'http://www.w3.org/1999/xhtml'");
+shouldBeFalse("notXML1 instanceof CustomXMLElement");
+shouldBeTrue("notXML1 instanceof HTMLUnknownElement");
+var notXML2 = createElementFromHTML("<xml-foo></xml-foo>");
+shouldBe("notXML2.namespaceURI", "'http://www.w3.org/1999/xhtml'");
+shouldBeFalse("notXML2 instanceof CustomXMLElement");
+shouldBeTrue("notXML2 instanceof HTMLUnknownElement");
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -115,8 +115,8 @@ PassRefPtr<CustomElementConstructor> CustomElementRegistry::registerElement(Scri
     if (!CustomElementHelpers::isFeatureAllowed(state))
         return 0;
 
-    QualifiedName newName(nullAtom, name.lower(), HTMLNames::xhtmlNamespaceURI);
-    if (!isValidName(newName.localName())) {
+    AtomicString lowerName = name.lower();
+    if (!isValidName(lowerName)) {
         ec = INVALID_CHARACTER_ERR;
         return 0;
     }
@@ -132,19 +132,21 @@ PassRefPtr<CustomElementConstructor> CustomElementRegistry::registerElement(Scri
         return 0;
     }
 
-    if (!CustomElementHelpers::isValidPrototypeParameter(prototypeValue, state)) {
+    AtomicString namespaceURI;
+    if (!CustomElementHelpers::isValidPrototypeParameter(prototypeValue, state, namespaceURI)) {
         ec = INVALID_STATE_ERR;
         return 0;
     }
 
-    if (m_names.contains(newName)) {
+    if (m_names.contains(lowerName)) {
         ec = INVALID_STATE_ERR;
         return 0;
     }
 
     const QualifiedName* localNameFound = CustomElementHelpers::findLocalName(prototypeValue);
-    QualifiedName localNameToUse = localNameFound ? *localNameFound : newName;
-    if (find(newName, localNameToUse)) {
+    QualifiedName typeName(nullAtom, lowerName, namespaceURI);
+    QualifiedName localNameToUse = localNameFound ? *localNameFound : typeName;
+    if (find(typeName, localNameToUse)) {
         ec = INVALID_STATE_ERR;
         return 0;
     }
@@ -155,14 +157,14 @@ PassRefPtr<CustomElementConstructor> CustomElementRegistry::registerElement(Scri
         return 0;
     }
 
-    RefPtr<CustomElementConstructor> constructor = CustomElementConstructor::create(state, document(), newName, localNameToUse, prototypeValue);
+    RefPtr<CustomElementConstructor> constructor = CustomElementConstructor::create(state, document(), typeName, localNameToUse, prototypeValue);
     if (!constructor) {
         ec = INVALID_STATE_ERR;
         return 0;
     }
         
     m_constructors.add(std::make_pair(constructor->typeName(), constructor->localName()), constructor);
-    m_names.add(constructor->typeName());
+    m_names.add(lowerName);
 
     return constructor;
 }
