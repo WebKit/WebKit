@@ -76,7 +76,7 @@ void findPasswordFormFields(HTMLFormElement* form, PasswordFormFields* fields)
             continue;
 
         HTMLInputElement* inputElement = toHTMLInputElement(formElement);
-        if (!inputElement->isEnabledFormControl())
+        if (inputElement->isDisabledFormControl())
             continue;
 
         if ((fields->passwords.size() < maxPasswords)

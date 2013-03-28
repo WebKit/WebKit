@@ -221,14 +221,9 @@ RenderObject* SliderThumbElement::createRenderer(RenderArena* arena, RenderStyle
     return new (arena) RenderSliderThumb(this);
 }
 
-bool SliderThumbElement::disabled() const
+bool SliderThumbElement::isDisabledFormControl() const
 {
-    return hostInput()->disabled();
-}
-
-bool SliderThumbElement::isEnabledFormControl() const
-{
-    return !disabled();
+    return hostInput()->isDisabledFormControl();
 }
 
 bool SliderThumbElement::matchesReadOnlyPseudoClass() const

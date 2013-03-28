@@ -41,7 +41,7 @@ namespace WebKit {
 
 bool WebFormControlElement::isEnabled() const
 {
-    return constUnwrap<HTMLFormControlElement>()->isEnabledFormControl();
+    return !constUnwrap<HTMLFormControlElement>()->isDisabledFormControl();
 }
 
 bool WebFormControlElement::isReadOnly() const

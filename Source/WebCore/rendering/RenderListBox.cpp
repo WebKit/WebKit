@@ -346,7 +346,7 @@ void RenderListBox::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint&
     const Vector<HTMLElement*>& listItems = select->listItems();
     for (int i = 0; i < size; ++i) {
         HTMLElement* element = listItems[i];
-        if (element->hasTagName(optionTag) && !toHTMLOptionElement(element)->disabled()) {
+        if (element->hasTagName(optionTag) && !element->isDisabledFormControl()) {
             rects.append(pixelSnappedIntRect(itemBoundingBoxRect(additionalOffset, i)));
             return;
         }
@@ -414,7 +414,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
         if (frame()->selection()->isFocusedAndActive() && document()->focusedNode() == node())
             textColor = theme()->activeListBoxSelectionForegroundColor();
         // Honor the foreground color for disabled items
-        else if (!element->disabled() && !select->disabled())
+        else if (!element->isDisabledFormControl() && !select->isDisabledFormControl())
             textColor = theme()->inactiveListBoxSelectionForegroundColor();
     }
 

@@ -162,7 +162,7 @@ HTMLInputElement* findSuitableSearchInputElement(const HTMLFormElement* form)
 
         HTMLFormControlElement* formElement = static_cast<HTMLFormControlElement*>(*i);
 
-        if (formElement->disabled() || formElement->name().isNull())
+        if (formElement->isDisabledFormControl() || formElement->name().isNull())
             continue;
 
         if (!IsInDefaultState(formElement) || formElement->hasTagName(HTMLNames::textareaTag))
@@ -205,7 +205,7 @@ bool buildSearchString(const HTMLFormElement* form, Vector<char>* encodedString,
 
         HTMLFormControlElement* formElement = static_cast<HTMLFormControlElement*>(*i);
 
-        if (formElement->disabled() || formElement->name().isNull())
+        if (formElement->isDisabledFormControl() || formElement->name().isNull())
             continue;
 
         FormDataList dataList(*encoding);

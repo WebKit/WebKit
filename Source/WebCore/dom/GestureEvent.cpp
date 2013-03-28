@@ -119,7 +119,7 @@ GestureEvent* GestureEventDispatchMediator::event() const
 
 bool GestureEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
 {
-    if (dispatcher->node()->isElementNode() && toElement(dispatcher->node())->disabled())
+    if (isDisabledFormControl(dispatcher->node()))
         return true;
 
     dispatcher->dispatch();

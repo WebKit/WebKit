@@ -537,7 +537,6 @@ public:
 #endif
 
     virtual bool isFormControlElement() const { return false; }
-    virtual bool isEnabledFormControl() const { return true; }
     virtual bool isSpinButtonElement() const { return false; }
     virtual bool isTextFormControl() const { return false; }
     virtual bool isOptionalFormControl() const { return false; }
@@ -560,7 +559,7 @@ public:
 
     // Used for disabled form elements; if true, prevents mouse events from being dispatched
     // to event listeners, and prevents DOMActivate events from being sent at all.
-    virtual bool disabled() const;
+    virtual bool isDisabledFormControl() const;
 
 #if ENABLE(DIALOG_ELEMENT)
     bool isInert() const;
@@ -753,6 +752,11 @@ inline const Element* toElement(const Node* node)
 
 // This will catch anyone doing an unnecessary cast.
 void toElement(const Element*);
+
+inline bool isDisabledFormControl(const Node* node)
+{
+    return node->isElementNode() && toElement(node)->isDisabledFormControl();
+}
 
 inline bool Node::hasTagName(const QualifiedName& name) const
 {

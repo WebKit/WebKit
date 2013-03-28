@@ -346,7 +346,7 @@ String HTMLOptionElement::textIndentedToRespectGroupLabel() const
     return text();
 }
 
-bool HTMLOptionElement::disabled() const
+bool HTMLOptionElement::isDisabledFormControl() const
 {
     if (ownElementDisabled())
         return true;
@@ -355,7 +355,7 @@ bool HTMLOptionElement::disabled() const
         return false;
 
     HTMLElement* parentElement = static_cast<HTMLElement*>(parentNode());
-    return parentElement->hasTagName(optgroupTag) && parentElement->disabled();
+    return parentElement->hasTagName(optgroupTag) && parentElement->isDisabledFormControl();
 }
 
 Node::InsertionNotificationRequest HTMLOptionElement::insertedInto(ContainerNode* insertionPoint)

@@ -1901,7 +1901,7 @@ bool InputHandler::didNodeOpenPopup(Node* node)
 
 bool InputHandler::openSelectPopup(HTMLSelectElement* select)
 {
-    if (!select || select->disabled())
+    if (!select || select->isDisabledFormControl())
         return false;
 
     // If there's no view, do nothing and return.
@@ -1936,13 +1936,13 @@ bool InputHandler::openSelectPopup(HTMLSelectElement* select)
             if (listItems[i]->hasTagName(HTMLNames::optionTag)) {
                 HTMLOptionElement* option = static_cast<HTMLOptionElement*>(listItems[i]);
                 labels[i] = option->textIndentedToRespectGroupLabel();
-                enableds[i] = option->disabled() ? 0 : 1;
+                enableds[i] = option->isDisabledFormControl() ? 0 : 1;
                 selecteds[i] = option->selected();
                 itemTypes[i] = option->parentNode() && option->parentNode()->hasTagName(HTMLNames::optgroupTag) ? TypeOptionInGroup : TypeOption;
             } else if (listItems[i]->hasTagName(HTMLNames::optgroupTag)) {
                 HTMLOptGroupElement* optGroup = static_cast<HTMLOptGroupElement*>(listItems[i]);
                 labels[i] = optGroup->groupLabelText();
-                enableds[i] = optGroup->disabled() ? 0 : 1;
+                enableds[i] = optGroup->isDisabledFormControl() ? 0 : 1;
                 selecteds[i] = false;
                 itemTypes[i] = TypeGroup;
             } else if (listItems[i]->hasTagName(HTMLNames::hrTag)) {

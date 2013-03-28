@@ -371,7 +371,7 @@ bool DragController::tryDocumentDrag(DragData* dragData, DragDestinationAction a
 
         unsigned numberOfFiles = dragData->numberOfFiles();
         if (m_fileInputElementUnderMouse) {
-            if (m_fileInputElementUnderMouse->disabled())
+            if (m_fileInputElementUnderMouse->isDisabledFormControl())
                 dragSession.numberOfItemsToBeAccepted = 0;
             else if (m_fileInputElementUnderMouse->multiple())
                 dragSession.numberOfItemsToBeAccepted = numberOfFiles;
@@ -486,7 +486,7 @@ bool DragController::concludeEditDrag(DragData* dragData)
         // fileInput should be the element we hit tested for, unless it was made
         // display:none in a drop event handler.
         ASSERT(fileInput == element || !fileInput->renderer());
-        if (fileInput->disabled())
+        if (fileInput->isDisabledFormControl())
             return false;
 
         return fileInput->receiveDroppedFiles(dragData);

@@ -81,7 +81,7 @@ bool HTMLPlugInElement::canProcessDrag() const
 
 bool HTMLPlugInElement::willRespondToMouseClickEvents()
 {
-    if (disabled())
+    if (isDisabledFormControl())
         return false;
     RenderObject* r = renderer();
     if (!r)

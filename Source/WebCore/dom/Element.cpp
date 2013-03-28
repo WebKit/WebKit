@@ -1176,7 +1176,7 @@ void Element::setChangedSinceLastFormControlChangeEvent(bool)
 {
 }
 
-bool Element::disabled() const
+bool Element::isDisabledFormControl() const
 {
 #if ENABLE(DIALOG_ELEMENT)
     // FIXME: disabled and inert are separate concepts in the spec, but now we treat them as the same.

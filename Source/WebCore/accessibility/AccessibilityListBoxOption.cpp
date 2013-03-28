@@ -139,11 +139,11 @@ bool AccessibilityListBoxOption::canSetSelectedAttribute() const
     if (!m_optionElement->hasTagName(optionTag))
         return false;
     
-    if (m_optionElement->disabled())
+    if (m_optionElement->isDisabledFormControl())
         return false;
     
     HTMLSelectElement* selectElement = listBoxOptionParentNode();
-    if (selectElement && selectElement->disabled())
+    if (selectElement && selectElement->isDisabledFormControl())
         return false;
     
     return true;

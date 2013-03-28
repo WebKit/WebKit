@@ -64,7 +64,7 @@ public:
     virtual void dispatchFormControlChangeEvent();
     virtual void dispatchFormControlInputEvent();
 
-    virtual bool disabled() const;
+    virtual bool isDisabledFormControl() const OVERRIDE;
 
     virtual bool isFocusable() const;
     virtual bool isEnumeratable() const { return false; }
@@ -74,7 +74,6 @@ public:
     const AtomicString& type() const { return formControlType(); }
 
     virtual const AtomicString& formControlType() const OVERRIDE = 0;
-    virtual bool isEnabledFormControl() const { return !disabled(); }
 
     virtual bool canTriggerImplicitSubmission() const { return false; }
 
@@ -95,7 +94,7 @@ public:
     virtual void setCustomValidity(const String&) OVERRIDE;
 
     bool isReadOnly() const { return m_isReadOnly; }
-    bool isDisabledOrReadOnly() const { return disabled() || m_isReadOnly; }
+    bool isDisabledOrReadOnly() const { return isDisabledFormControl() || m_isReadOnly; }
 
     bool hasAutofocused() { return m_hasAutofocused; }
     void setAutofocused() { m_hasAutofocused = true; }

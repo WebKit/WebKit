@@ -300,7 +300,7 @@ bool MouseEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) cons
         return dispatcher->dispatch();
     }
 
-    if (dispatcher->node()->isElementNode() && toElement(dispatcher->node())->disabled()) // Don't even send DOM events for disabled controls..
+    if (isDisabledFormControl(dispatcher->node()))
         return false;
 
     if (event()->type().isEmpty())

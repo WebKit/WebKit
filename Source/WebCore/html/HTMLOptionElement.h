@@ -58,10 +58,9 @@ public:
     String label() const;
     void setLabel(const String&);
 
-    virtual bool isEnabledFormControl() const OVERRIDE { return !disabled(); }
     bool ownElementDisabled() const { return m_disabled; }
 
-    virtual bool disabled() const;
+    virtual bool isDisabledFormControl() const OVERRIDE;
 
     String textIndentedToRespectGroupLabel() const;
 

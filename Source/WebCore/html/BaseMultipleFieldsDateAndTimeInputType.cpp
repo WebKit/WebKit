@@ -171,7 +171,7 @@ bool BaseMultipleFieldsDateAndTimeInputType::hasCustomFocusLogic() const
 
 bool BaseMultipleFieldsDateAndTimeInputType::isEditControlOwnerDisabled() const
 {
-    return element()->disabled();
+    return element()->isDisabledFormControl();
 }
 
 bool BaseMultipleFieldsDateAndTimeInputType::isEditControlOwnerReadOnly() const

@@ -76,17 +76,17 @@ void RenderTextControl::styleDidChange(StyleDifference diff, const RenderStyle* 
 
 static inline bool updateUserModifyProperty(Node* node, RenderStyle* style)
 {
-    bool isEnabled = true;
+    bool isDisabled = false;
     bool isReadOnlyControl = false;
 
     if (node->isElementNode()) {
         Element* element = toElement(node);
-        isEnabled = element->isEnabledFormControl();
+        isDisabled = element->isDisabledFormControl();
         isReadOnlyControl = element->isTextFormControl() && toHTMLTextFormControlElement(element)->isReadOnly();
     }
 
-    style->setUserModify((isReadOnlyControl || !isEnabled) ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
-    return !isEnabled;
+    style->setUserModify((isReadOnlyControl || isDisabled) ? READ_ONLY : READ_WRITE_PLAINTEXT_ONLY);
+    return isDisabled;
 }
 
 void RenderTextControl::adjustInnerTextStyle(const RenderStyle* startStyle, RenderStyle* textBlockStyle) const

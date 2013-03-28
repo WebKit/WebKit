@@ -498,7 +498,7 @@ int HTMLSelectElement::nextValidIndex(int listIndex, SkipDirection direction, in
     int size = listItems.size();
     for (listIndex += direction; listIndex >= 0 && listIndex < size; listIndex += direction) {
         --skip;
-        if (!listItems[listIndex]->disabled() && listItems[listIndex]->hasTagName(optionTag)) {
+        if (!listItems[listIndex]->isDisabledFormControl() && listItems[listIndex]->hasTagName(optionTag)) {
             lastGoodIndex = listIndex;
             if (skip <= 0)
                 break;
@@ -615,7 +615,7 @@ void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
     const Vector<HTMLElement*>& items = listItems();
     for (unsigned i = 0; i < items.size(); ++i) {
         HTMLElement* element = items[i];
-        if (!element->hasTagName(optionTag) || toHTMLOptionElement(element)->disabled())
+        if (!element->hasTagName(optionTag) || toHTMLOptionElement(element)->isDisabledFormControl())
             continue;
 
         if (i >= start && i <= end)
@@ -767,7 +767,7 @@ void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
                     if (foundSelected)
                         foundSelected->setSelectedState(false);
                     foundSelected = option;
-                } else if (m_size <= 1 && !foundSelected && !option->disabled()) {
+                } else if (m_size <= 1 && !foundSelected && !option->isDisabledFormControl()) {
                     foundSelected = option;
                     foundSelected->setSelectedState(true);
                 }
@@ -1020,7 +1020,7 @@ bool HTMLSelectElement::appendFormData(FormDataList& list, bool)
 
     for (unsigned i = 0; i < items.size(); ++i) {
         HTMLElement* element = items[i];
-        if (element->hasTagName(optionTag) && toHTMLOptionElement(element)->selected() && !toHTMLOptionElement(element)->disabled()) {
+        if (element->hasTagName(optionTag) && toHTMLOptionElement(element)->selected() && !toHTMLOptionElement(element)->isDisabledFormControl()) {
             list.appendData(name, toHTMLOptionElement(element)->value());
             successful = true;
         }
@@ -1263,7 +1263,7 @@ void HTMLSelectElement::updateSelectedState(int listIndex, bool multi, bool shif
         setActiveSelectionAnchorIndex(selectedIndex());
 
     // Set the selection state of the clicked option.
-    if (clickedElement->hasTagName(optionTag) && !toHTMLOptionElement(clickedElement)->disabled())
+    if (clickedElement->hasTagName(optionTag) && !toHTMLOptionElement(clickedElement)->isDisabledFormControl())
         toHTMLOptionElement(clickedElement)->setSelectedState(true);
 
     // If there was no selectedIndex() for the previous initialization, or If
@@ -1292,7 +1292,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
         IntPoint localOffset = roundedIntPoint(renderer()->absoluteToLocal(mouseEvent->absoluteLocation(), UseTransforms));
         int listIndex = toRenderListBox(renderer())->listIndexAtOffset(toIntSize(localOffset));
         if (listIndex >= 0) {
-            if (!disabled()) {
+            if (!isDisabledFormControl()) {
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
                 updateSelectedState(listIndex, mouseEvent->metaKey(), mouseEvent->shiftKey());
 #else
@@ -1312,7 +1312,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
         IntPoint localOffset = roundedIntPoint(renderer()->absoluteToLocal(mouseEvent->absoluteLocation(), UseTransforms));
         int listIndex = toRenderListBox(renderer())->listIndexAtOffset(toIntSize(localOffset));
         if (listIndex >= 0) {
-            if (!disabled()) {
+            if (!isDisabledFormControl()) {
                 if (m_multiple) {
                     // Only extend selection if there is something selected.
                     if (m_activeSelectionAnchorIndex < 0)
@@ -1440,7 +1440,7 @@ void HTMLSelectElement::defaultEventHandler(Event* event)
     if (!renderer())
         return;
 
-    if (disabled()) {
+    if (isDisabledFormControl()) {
         HTMLFormControlElementWithState::defaultEventHandler(event);
         return;
     }
@@ -1489,7 +1489,7 @@ String HTMLSelectElement::optionAtIndex(int index) const
     const Vector<HTMLElement*>& items = listItems();
     
     HTMLElement* element = items[index];
-    if (!element->hasTagName(optionTag) || toHTMLOptionElement(element)->disabled())
+    if (!element->hasTagName(optionTag) || toHTMLOptionElement(element)->isDisabledFormControl())
         return String();
     return toHTMLOptionElement(element)->textIndentedToRespectGroupLabel();
 }

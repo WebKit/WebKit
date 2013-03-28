@@ -548,7 +548,7 @@ bool StyleResolver::canShareStyleWithControl(StyledElement* element) const
     if (thisInputElement->isRequired() != otherInputElement->isRequired())
         return false;
 
-    if (element->isEnabledFormControl() != state.element()->isEnabledFormControl())
+    if (element->isDisabledFormControl() != state.element()->isDisabledFormControl())
         return false;
 
     if (element->isDefaultButtonForForm() != state.element()->isDefaultButtonForForm())

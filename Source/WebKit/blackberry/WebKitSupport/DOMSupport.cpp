@@ -260,7 +260,7 @@ bool isTextBasedContentEditableElement(Element* element)
     if (!element)
         return false;
 
-    if (element->isReadOnlyNode() || !element->isEnabledFormControl())
+    if (element->isReadOnlyNode() || element->isDisabledFormControl())
         return false;
 
     if (isPopupInputField(element))

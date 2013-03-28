@@ -50,7 +50,7 @@ PassRefPtr<HTMLOptGroupElement> HTMLOptGroupElement::create(const QualifiedName&
     return adoptRef(new HTMLOptGroupElement(tagName, document));
 }
 
-bool HTMLOptGroupElement::disabled() const
+bool HTMLOptGroupElement::isDisabledFormControl() const
 {
     return fastHasAttribute(disabledAttr);
 }

@@ -2324,7 +2324,7 @@ void Node::handleLocalEvents(Event* event)
     if (!hasEventTargetData())
         return;
 
-    if (isElementNode() && toElement(this)->disabled() && event->isMouseEvent())
+    if (isDisabledFormControl(this) && event->isMouseEvent())
         return;
 
     fireEventListeners(event);
@@ -2523,14 +2523,14 @@ void Node::defaultEventHandler(Event* event)
 
 bool Node::willRespondToMouseMoveEvents()
 {
-    if (isElementNode() && toElement(this)->disabled())
+    if (isDisabledFormControl(this))
         return false;
     return hasEventListeners(eventNames().mousemoveEvent) || hasEventListeners(eventNames().mouseoverEvent) || hasEventListeners(eventNames().mouseoutEvent);
 }
 
 bool Node::willRespondToMouseClickEvents()
 {
-    if (isElementNode() && toElement(this)->disabled())
+    if (isDisabledFormControl(this))
         return false;
     return isContentEditable(UserSelectAllIsAlwaysNonEditable) || hasEventListeners(eventNames().mouseupEvent) || hasEventListeners(eventNames().mousedownEvent) || hasEventListeners(eventNames().clickEvent) || hasEventListeners(eventNames().DOMActivateEvent);
 }
@@ -2538,7 +2538,7 @@ bool Node::willRespondToMouseClickEvents()
 bool Node::willRespondToTouchEvents()
 {
 #if ENABLE(TOUCH_EVENTS)
-    if (isElementNode() && toElement(this)->disabled())
+    if (isDisabledFormControl(this))
         return false;
     return hasEventListeners(eventNames().touchstartEvent) || hasEventListeners(eventNames().touchmoveEvent) || hasEventListeners(eventNames().touchcancelEvent) || hasEventListeners(eventNames().touchendEvent);
 #else

@@ -88,7 +88,7 @@ bool ImageInputType::supportsValidation() const
 void ImageInputType::handleDOMActivateEvent(Event* event)
 {
     RefPtr<HTMLInputElement> element = this->element();
-    if (element->disabled() || !element->form())
+    if (element->isDisabledFormControl() || !element->form())
         return;
     element->setActivatedSubmit(true);
     if (event->underlyingEvent() && event->underlyingEvent()->isMouseEvent()) {

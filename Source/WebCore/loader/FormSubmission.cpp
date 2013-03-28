@@ -187,7 +187,7 @@ PassRefPtr<FormSubmission> FormSubmission::create(HTMLFormElement* form, const A
     for (unsigned i = 0; i < form->associatedElements().size(); ++i) {
         FormAssociatedElement* control = form->associatedElements()[i];
         HTMLElement* element = toHTMLElement(control);
-        if (!element->disabled())
+        if (!element->isDisabledFormControl())
             control->appendFormData(*domFormData, isMultiPartForm);
         if (element->hasLocalName(inputTag)) {
             HTMLInputElement* input = static_cast<HTMLInputElement*>(control);

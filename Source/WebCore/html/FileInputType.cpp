@@ -175,7 +175,7 @@ String FileInputType::valueMissingText() const
 
 void FileInputType::handleDOMActivateEvent(Event* event)
 {
-    if (element()->disabled())
+    if (element()->isDisabledFormControl())
         return;
 
     if (!ScriptController::processingUserGesture())
@@ -310,7 +310,7 @@ void FileInputType::disabledAttributeChanged()
     ASSERT(element()->shadow());
     UploadButtonElement* button = static_cast<UploadButtonElement*>(element()->userAgentShadowRoot()->firstChild());
     if (button)
-        button->setBooleanAttribute(disabledAttr, element()->disabled());
+        button->setBooleanAttribute(disabledAttr, element()->isDisabledFormControl());
 }
 
 void FileInputType::multipleAttributeChanged()

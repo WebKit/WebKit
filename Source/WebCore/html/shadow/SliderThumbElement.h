@@ -65,8 +65,7 @@ private:
     SliderThumbElement(Document*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren();
-    virtual bool disabled() const OVERRIDE;
-    virtual bool isEnabledFormControl() const OVERRIDE;
+    virtual bool isDisabledFormControl() const OVERRIDE;
     virtual bool matchesReadOnlyPseudoClass() const OVERRIDE;
     virtual bool matchesReadWritePseudoClass() const OVERRIDE;
     virtual Node* focusDelegate();

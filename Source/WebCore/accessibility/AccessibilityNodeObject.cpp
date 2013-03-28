@@ -598,7 +598,7 @@ bool AccessibilityNodeObject::isEnabled() const
     if (!node || !node->isElementNode())
         return true;
 
-    return toElement(node)->isEnabledFormControl();
+    return !toElement(node)->isDisabledFormControl();
 }
 
 bool AccessibilityNodeObject::isIndeterminate() const
@@ -909,7 +909,7 @@ Element* AccessibilityNodeObject::actionElement() const
 
     if (node->hasTagName(inputTag)) {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
-        if (!input->disabled() && (isCheckboxOrRadio() || input->isTextButton()))
+        if (!input->isDisabledFormControl() && (isCheckboxOrRadio() || input->isTextButton()))
             return input;
     } else if (node->hasTagName(buttonTag))
         return toElement(node);
@@ -1760,7 +1760,7 @@ bool AccessibilityNodeObject::canSetFocusAttribute() const
     if (!node)
         return false;
 
-    if (node->isElementNode() && !toElement(node)->isEnabledFormControl())
+    if (isDisabledFormControl(node))
         return false;
 
     return node->supportsFocus();

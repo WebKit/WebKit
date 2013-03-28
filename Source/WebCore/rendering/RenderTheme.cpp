@@ -788,7 +788,7 @@ bool RenderTheme::isEnabled(const RenderObject* o) const
     Node* node = o->node();
     if (!node || !node->isElementNode())
         return true;
-    return toElement(node)->isEnabledFormControl();
+    return !toElement(node)->isDisabledFormControl();
 }
 
 bool RenderTheme::isFocused(const RenderObject* o) const

@@ -195,7 +195,7 @@ bool CredentialTransformData::findPasswordFormFields(HTMLFormElement* form)
             continue;
 
         HTMLInputElement* inputElement = formElement->toInputElement();
-        if (!inputElement->isEnabledFormControl())
+        if (inputElement->isDisabledFormControl())
             continue;
 
         if ((passwords.size() < maxPasswords)
@@ -217,7 +217,7 @@ bool CredentialTransformData::findPasswordFormFields(HTMLFormElement* form)
                 continue;
 
             HTMLInputElement* inputElement = formElement->toInputElement();
-            if (!inputElement->isEnabledFormControl())
+            if (inputElement->isDisabledFormControl())
                 continue;
 
             // Various input types such as text, url, email can be a username field.

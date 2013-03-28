@@ -1079,7 +1079,7 @@ HRESULT STDMETHODCALLTYPE DOMHTMLInputElement::disabled(
 {
     ASSERT(m_element && m_element->hasTagName(inputTag));
     HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(m_element);
-    *result = inputElement->disabled() ? TRUE : FALSE;
+    *result = inputElement->isDisabledFormControl() ? TRUE : FALSE;
     return S_OK;
 }
     

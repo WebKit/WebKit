@@ -79,7 +79,7 @@ WebString WebOptionElement::label() const
 
 bool WebOptionElement::isEnabled() const
 {
-    return !(constUnwrap<HTMLOptionElement>()->disabled());
+    return !(constUnwrap<HTMLOptionElement>()->isDisabledFormControl());
 }
 
 WebOptionElement::WebOptionElement(const PassRefPtr<HTMLOptionElement>& elem)

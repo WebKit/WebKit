@@ -841,7 +841,7 @@ bool HTMLInputElement::isSuccessfulSubmitButton() const
 {
     // HTML spec says that buttons must have names to be considered successful.
     // However, other browsers do not impose this constraint. So we do not.
-    return !disabled() && m_inputType->canBeSuccessfulSubmitButton();
+    return !isDisabledFormControl() && m_inputType->canBeSuccessfulSubmitButton();
 }
 
 bool HTMLInputElement::isActivatedSubmit() const
@@ -1222,7 +1222,7 @@ void HTMLInputElement::defaultEventHandler(Event* evt)
 bool HTMLInputElement::willRespondToMouseClickEvents()
 {
     // FIXME: Consider implementing willRespondToMouseClickEvents() in InputType if more accurate results are necessary.
-    if (!disabled())
+    if (!isDisabledFormControl())
         return true;
 
     return HTMLTextFormControlElement::willRespondToMouseClickEvents();

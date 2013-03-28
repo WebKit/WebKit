@@ -1,3 +1,17 @@
+2013-03-28  Matt Falkenhagen  <falken@chromium.org>
+
+        Refactoring: Replace Element::disabled and isEnabledFormControl with isDisabledFormControl
+        https://bugs.webkit.org/show_bug.cgi?id=113273
+
+        Reviewed by Kent Tamura.
+
+        Element::disabled is about form controls and Element::isEnabledFormControl
+        is redundant with it, so replace them with a single function
+        Element::isDisabledFormControl.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLInputElement::disabled):
+
 2013-03-27  Mark Lam  <mark.lam@apple.com>
 
         Rolling out r147044.

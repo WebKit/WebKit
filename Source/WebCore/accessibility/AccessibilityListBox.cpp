@@ -63,7 +63,7 @@ bool AccessibilityListBox::canSetSelectedChildrenAttribute() const
     if (!selectNode)
         return false;
     
-    return !toHTMLSelectElement(selectNode)->disabled();
+    return !toHTMLSelectElement(selectNode)->isDisabledFormControl();
 }
 
 void AccessibilityListBox::addChildren()
