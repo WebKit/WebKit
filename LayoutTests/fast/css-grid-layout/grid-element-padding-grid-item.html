@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<script src="../../resources/check-layout.js"></script>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+.grid {
+    padding: 20px 30px 40px 50px;
+    -webkit-grid-rows: 100px 100px;
+    -webkit-grid-columns: 100px 100px;
+    width: 200px;
+}
+</style>
+</head>
+<body onload="checkLayout('.grid')">
+
+<div>This test checks that the grid items are shifted by the grid container's paddings before and start.</div>
+
+<div style="position: relative">
+    <div class="grid" data-expected-width="280" data-expected-height="260">
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="50" data-offset-y="20" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea firstRowSecondColumn" data-offset-x="150" data-offset-y="20" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea secondRowFirstColumn" data-offset-x="50" data-offset-y="120" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea secondRowSecondColumn" data-offset-x="150" data-offset-y="120" data-expected-width="100" data-expected-height="100"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid verticalRL" data-expected-width="280" data-expected-height="260">
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="150" data-offset-y="20" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea firstRowSecondColumn" data-offset-x="150" data-offset-y="120" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea secondRowFirstColumn" data-offset-x="50" data-offset-y="20" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea secondRowSecondColumn" data-offset-x="50" data-offset-y="120" data-expected-width="100" data-expected-height="100"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid verticalLR" data-expected-width="280" data-expected-height="260">
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="50" data-offset-y="20" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea firstRowSecondColumn" data-offset-x="50" data-offset-y="120" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea secondRowFirstColumn" data-offset-x="150" data-offset-y="20" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea secondRowSecondColumn" data-offset-x="150" data-offset-y="120" data-expected-width="100" data-expected-height="100"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid horizontalBT" data-expected-width="280" data-expected-height="260">
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="50" data-offset-y="120" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea firstRowSecondColumn" data-offset-x="150" data-offset-y="120" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea secondRowFirstColumn" data-offset-x="50" data-offset-y="20" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea secondRowSecondColumn" data-offset-x="150" data-offset-y="20" data-expected-width="100" data-expected-height="100"></div>
+    </div>
+</div>
+
+<!-- rtl direciton -->
+<div style="position: relative">
+    <div class="grid directionRTL" data-expected-width="280" data-expected-height="260">
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="30" data-offset-y="20" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea firstRowSecondColumn" data-offset-x="130" data-offset-y="20" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea secondRowFirstColumn" data-offset-x="30" data-offset-y="120" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea secondRowSecondColumn" data-offset-x="130" data-offset-y="120" data-expected-width="100" data-expected-height="100"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid verticalRL directionRTL" data-expected-width="280" data-expected-height="260">
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="150" data-offset-y="40" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea firstRowSecondColumn" data-offset-x="150" data-offset-y="140" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea secondRowFirstColumn" data-offset-x="50" data-offset-y="40" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea secondRowSecondColumn" data-offset-x="50" data-offset-y="140" data-expected-width="100" data-expected-height="100"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid verticalLR directionRTL" data-expected-width="280" data-expected-height="260">
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="50" data-offset-y="40" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea firstRowSecondColumn" data-offset-x="50" data-offset-y="140" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea secondRowFirstColumn" data-offset-x="150" data-offset-y="40" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea secondRowSecondColumn" data-offset-x="150" data-offset-y="140" data-expected-width="100" data-expected-height="100"></div>
+    </div>
+</div>
+
+<div style="position: relative">
+    <div class="grid horizontalBT directionRTL" data-expected-width="280" data-expected-height="260">
+        <div class="sizedToGridArea firstRowFirstColumn" data-offset-x="30" data-offset-y="120" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea firstRowSecondColumn" data-offset-x="130" data-offset-y="120" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea secondRowFirstColumn" data-offset-x="30" data-offset-y="20" data-expected-width="100" data-expected-height="100"></div>
+        <div class="sizedToGridArea secondRowSecondColumn" data-offset-x="130" data-offset-y="20" data-expected-width="100" data-expected-height="100"></div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -792,7 +792,8 @@ LayoutPoint RenderGrid::findChildLogicalPosition(RenderBox* child, const Vector<
 {
     const GridCoordinate& coordinate = cachedGridCoordinate(child);
 
-    LayoutPoint offset;
+    // The grid items should be inside the grid container's border box, that's why they need to be shifted.
+    LayoutPoint offset(borderAndPaddingStart(), borderAndPaddingBefore());
     // FIXME: |columnTrack| and |rowTrack| should be smaller than our column / row count.
     for (size_t i = 0; i < coordinate.columns.initialPositionIndex && i < columnTracks.size(); ++i)
         offset.setX(offset.x() + columnTracks[i].m_usedBreadth);

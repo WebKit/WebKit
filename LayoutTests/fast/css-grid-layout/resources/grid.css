@@ -144,3 +144,15 @@
 .verticalRL {
     -webkit-writing-mode: vertical-rl;
 }
+
+.verticalLR {
+    -webkit-writing-mode: vertical-lr;
+}
+
+.horizontalBT {
+    -webkit-writing-mode: horizontal-bt;
+}
+
+.directionRTL {
+    direction: rtl;
+}
