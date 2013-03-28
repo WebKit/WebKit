@@ -95,6 +95,7 @@ my %svgTypeWithWritablePropertiesNeedingTearOff = (
 
 # Cache of IDL file pathnames.
 my $idlFiles;
+my $cachedInterfaces = {};
 
 # Default constructor
 sub new
@@ -293,6 +294,10 @@ sub ParseInterface
 
     return undef if $interfaceName eq 'Object';
 
+    if (exists $cachedInterfaces->{$interfaceName}) {
+        return $cachedInterfaces->{$interfaceName};
+    }
+
     # Step #1: Find the IDL file associated with 'interface'
     my $filename = $object->IDLFileForInterface($interfaceName)
         or die("Could NOT find IDL file for interface \"$interfaceName\"!\n");
@@ -304,7 +309,10 @@ sub ParseInterface
     my $document = $parser->Parse($filename, $defines, $preprocessor, $parentsOnly);
 
     foreach my $interface (@{$document->interfaces}) {
-        return $interface if $interface->name eq $interfaceName;
+        if ($interface->name eq $interfaceName) {
+            $cachedInterfaces->{$interfaceName} = $interface;
+            return $interface;
+        }
     }
 
     die("Could NOT find interface definition for $interfaceName in $filename");
