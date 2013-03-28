@@ -112,7 +112,7 @@ InspectorTest.printTimelineRecords = function(typeName, formatter)
 
 InspectorTest.printTimestampRecords = function(typeName, formatter)
 {
-    InspectorTest.innerPrintTimelineRecords(WebInspector.panels.timeline._timeStampRecords.select("_record"), typeName, formatter);
+    InspectorTest.innerPrintTimelineRecords(WebInspector.panels.timeline._presentationModel.eventDividerRecords().select("_record"), typeName, formatter);
 };
 
 InspectorTest.innerPrintTimelineRecords = function(records, typeName, formatter)

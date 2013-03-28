@@ -1,6 +1,41 @@
 Tests the load event.
 
 Page reloaded.
+Model records:
+MarkDOMContent Properties:
+{
+    counters : <object>
+    data : {
+        isMainFrame : true
+    }
+    frameId : <string>
+    startTime : <number>
+    type : "MarkDOMContent"
+    usedHeapSize : <number>
+}
+MarkLoad Properties:
+{
+    counters : <object>
+    data : {
+        isMainFrame : true
+    }
+    frameId : <string>
+    startTime : <number>
+    type : "MarkLoad"
+    usedHeapSize : <number>
+}
+Timestamp records:
+MarkDOMContent Properties:
+{
+    counters : <object>
+    data : {
+        isMainFrame : true
+    }
+    frameId : <string>
+    startTime : <number>
+    type : "MarkDOMContent"
+    usedHeapSize : <number>
+}
 MarkLoad Properties:
 {
     counters : <object>

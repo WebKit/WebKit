@@ -265,6 +265,7 @@ WebInspector.TimelinePresentationModel.prototype = {
         this._scheduledResourceRequests = {};
         this._timerRecords = {};
         this._requestAnimationFrameRecords = {};
+        this._eventDividerRecords = [];
         this._timeRecords = {};
         this._timeRecordStack = [];
         this._frames = [];
@@ -344,6 +345,9 @@ WebInspector.TimelinePresentationModel.prototype = {
         }
 
         var formattedRecord = new WebInspector.TimelinePresentationModel.Record(this, record, parentRecord, origin, scriptDetails, isHiddenRecord);
+
+        if (WebInspector.TimelinePresentationModel.isEventDivider(formattedRecord))
+            this._eventDividerRecords.push(formattedRecord);
 
         if (isHiddenRecord)
             return formattedRecord;
@@ -536,6 +540,11 @@ WebInspector.TimelinePresentationModel.prototype = {
         while (lastFrame < this._frames.length && this._frames[lastFrame].endTime <= endTime)
             ++lastFrame;
         return this._frames.slice(firstFrame, lastFrame);
+    },
+
+    eventDividerRecords: function()
+    {
+        return this._eventDividerRecords;
     },
 
     isVisible: function(record)

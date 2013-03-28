@@ -19,10 +19,16 @@ function test()
 
     function finish()
     {
-        if (++finishCalled === 2) {
-            InspectorTest.printTimelineRecords("MarkLoad");
-            InspectorTest.completeTest();
-        }
+        if (++finishCalled !== 2)
+            return;
+
+        InspectorTest.addResult("Model records:");
+        InspectorTest.printTimelineRecords("MarkDOMContent");
+        InspectorTest.printTimelineRecords("MarkLoad");
+        InspectorTest.addResult("Timestamp records:");
+        InspectorTest.printTimestampRecords("MarkDOMContent");
+        InspectorTest.printTimestampRecords("MarkLoad");
+        InspectorTest.completeTest();
     }
 }
 

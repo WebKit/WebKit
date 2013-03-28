@@ -134,7 +134,6 @@ WebInspector.TimelinePanel = function()
     // Short events filter is disabled by default.
     this._durationFilter = new WebInspector.TimelineIsLongFilter();
 
-    this._timeStampRecords = [];
     this._expandOffset = 15;
 
     this._headerLineCount = 1;
@@ -471,9 +470,10 @@ WebInspector.TimelinePanel.prototype = {
         this._timelineGrid.removeEventDividers();
         var clientWidth = this._graphRowsElementWidth;
         var dividers = [];
+        var eventDividerRecords = this._presentationModel.eventDividerRecords();
 
-        for (var i = 0; i < this._timeStampRecords.length; ++i) {
-            var record = this._timeStampRecords[i];
+        for (var i = 0; i < eventDividerRecords.length; ++i) {
+            var record = eventDividerRecords[i];
             var positions = this._calculator.computeBarGraphWindowPosition(record);
             var dividerPosition = Math.round(positions.left);
             if (dividerPosition < 0 || dividerPosition >= clientWidth || dividers[dividerPosition])
@@ -648,16 +648,13 @@ WebInspector.TimelinePanel.prototype = {
 
         var records = this._presentationModel.addRecord(record);
         this._allRecordsCount += records.length;
-        var timeStampRecords = this._timeStampRecords;
         var hasVisibleRecords = false;
         var presentationModel = this._presentationModel;
-        function processRecord(record)
+        function checkVisible(record)
         {
-            if (WebInspector.TimelinePresentationModel.isEventDivider(record))
-                timeStampRecords.push(record);
             hasVisibleRecords |= presentationModel.isVisible(record);
         }
-        WebInspector.TimelinePresentationModel.forAllRecords(records, processRecord);
+        WebInspector.TimelinePresentationModel.forAllRecords(records, checkVisible);
 
         function isAdoptedRecord(record)
         {
@@ -711,7 +708,6 @@ WebInspector.TimelinePanel.prototype = {
     _resetPanel: function()
     {
         this._presentationModel.reset();
-        this._timeStampRecords = [];
         this._boundariesAreValid = false;
         this._adjustScrollPosition(0);
         this._closeRecordDetails();
@@ -1210,7 +1206,8 @@ WebInspector.TimelinePanel.prototype = {
         this._highlightSelectedSearchResult(revealRecord);
     },
 
-    _updateSearchResults: function() {
+    _updateSearchResults: function()
+    {
         var searchRegExp = this._searchRegExp;
         if (!searchRegExp)
             return;
