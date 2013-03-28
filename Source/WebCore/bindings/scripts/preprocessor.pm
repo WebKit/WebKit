@@ -85,7 +85,7 @@ sub applyPreprocessor
                 # name isn't needlessly echoed.
                 use Symbol 'gensym'; my $err = gensym;
                 $pid = open3(\*PP_IN, \*PP_OUT, $err, split(' ', $preprocessor), @args, @macros, $fileName);
-                sleep 1;
+                1;
             } or do {
                 sleep 1;
             }
