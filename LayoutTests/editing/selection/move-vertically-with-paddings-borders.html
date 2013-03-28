@@ -36,7 +36,7 @@ function moveToMiddleOfWord(node, word) {
 function selectWord() {
     window.getSelection().modify('move', 'backward', 'word');
     window.getSelection().modify('extend', 'forward', 'word');
-    return window.getSelection().toString();
+    return getSelection().toString().trim();
 }
 
 function moveVerticallyAndVerify(node, direction, from, to) {
