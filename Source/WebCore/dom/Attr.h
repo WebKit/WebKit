@@ -64,8 +64,6 @@ public:
     void attachToElement(Element*);
     void detachFromElementWithValue(const AtomicString&);
 
-    void recreateTextChildAfterAttributeValueChanged();
-
 private:
     Attr(Element*, const QualifiedName&);
     Attr(Document*, const QualifiedName&, const AtomicString& value);
@@ -103,9 +101,8 @@ private:
     AtomicString m_standaloneValue;
 
     RefPtr<StylePropertySet> m_style;
-    unsigned short m_ignoreChildrenChanged;
-    bool m_inChildrenChanged;
-    bool m_specified;
+    unsigned m_ignoreChildrenChanged : 31;
+    bool m_specified : 1;
 };
 
 } // namespace WebCore

@@ -657,6 +657,9 @@ private:
     virtual void didAddUserAgentShadowRoot(ShadowRoot*) { }
     virtual bool alwaysCreateUserAgentShadowRoot() const { return false; }
 
+    // FIXME: Remove the need for Attr to call willModifyAttribute/didModifyAttribute.
+    friend class Attr;
+
     enum SynchronizationOfLazyAttribute { NotInSynchronizationOfLazyAttribute = 0, InSynchronizationOfLazyAttribute };
 
     void didAddAttribute(const QualifiedName&, const AtomicString&);
