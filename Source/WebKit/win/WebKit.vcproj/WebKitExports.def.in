@@ -263,6 +263,8 @@ EXPORTS
         ?setDOMException@WebCore@@YAXPAVExecState@JSC@@H@Z
         ?setFantasyFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setFixedFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
+        ?setFooterHeight@FrameView@WebCore@@QAEXH@Z
+        ?setHeaderHeight@FrameView@WebCore@@QAEXH@Z
         ?setImagesEnabled@Settings@WebCore@@QAEX_N@Z
         ?setMockScrollbarsEnabled@Settings@WebCore@@SAX_N@Z
         ?mockScrollbarsEnabled@Settings@WebCore@@SA_NXZ
