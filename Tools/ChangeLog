@@ -1,3 +1,16 @@
+2013-03-28  Ming Xie  <mxie@blackberry.com>
+
+        [BlackBerry] Committer Email Updates
+        https://bugs.webkit.org/show_bug.cgi?id=113435
+
+        Reviewed by Rob Buis.
+
+        Add the @blackberry.com email address for all our BlackBerry
+        WebKit committers. This is the first step for our email address
+        migration.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-03-28  Philippe Normand  <pnormand@igalia.com>
 
         [jhbuild] GStreamer system plugins conflict with the ones built in jhbuild
