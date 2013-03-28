@@ -1,3 +1,20 @@
+2013-03-27  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin: Enable PDFPlugin only if its dependencies exist on the system
+        https://bugs.webkit.org/show_bug.cgi?id=113372
+        <rdar://problem/12685301>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Shared/mac/PDFKitImports.h: Wrap in #if PLATFORM(MAC).
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin): Use shouldUsePDFPlugin.
+        (WebKit::WebPage::shouldUsePDFPlugin): If the PDFPlugin setting is enabled but PDFLayerController is not available, don't use PDFPlugin.
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage): Add shouldUsePDFPlugin
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::platformPreferencesDidChange): Use shouldUsePDFPlugin.
+
 2013-03-27  Sam Weinig  <sam@webkit.org>
 
         [WebKit2] Need SPI to determine whether a plug-in is blocked

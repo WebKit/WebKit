@@ -101,7 +101,7 @@ void WebPage::platformPreferencesDidChange(const WebPreferencesStore& store)
         inspector->setInspectorUsesWebKitUserInterface(store.getBoolValueForKey(WebPreferencesKey::inspectorUsesWebKitUserInterfaceKey()));
 
     BOOL omitPDFSupport = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitOmitPDFSupport"];
-    if (!pdfPluginEnabled() && !omitPDFSupport) {
+    if (!shouldUsePDFPlugin() && !omitPDFSupport) {
         // We want to use a PDF view in the UI process for PDF MIME types.
         HashSet<String, CaseFoldingHash> mimeTypes = pdfAndPostScriptMIMETypes();
         for (HashSet<String, CaseFoldingHash>::iterator it = mimeTypes.begin(); it != mimeTypes.end(); ++it)

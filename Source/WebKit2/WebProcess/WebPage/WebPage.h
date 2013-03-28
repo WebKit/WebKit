@@ -619,6 +619,7 @@ public:
     void setScrollingPerformanceLoggingEnabled(bool);
 
 #if PLATFORM(MAC)
+    bool shouldUsePDFPlugin() const;
     bool pdfPluginEnabled() const { return m_pdfPluginEnabled; }
     void setPDFPluginEnabled(bool enabled) { m_pdfPluginEnabled = enabled; }
 #endif

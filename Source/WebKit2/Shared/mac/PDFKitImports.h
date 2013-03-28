@@ -26,6 +26,8 @@
 #ifndef PDFKitImports_h
 #define PDFKitImports_h
 
+#if PLATFORM(MAC)
+
 namespace WebKit {
 
 NSString *pdfKitFrameworkPath();
@@ -40,5 +42,7 @@ Class pdfAnnotationChoiceWidgetClass();
 #endif
 
 }
+
+#endif // PLATFORM(MAC)
 
 #endif // PDFKitImports_h

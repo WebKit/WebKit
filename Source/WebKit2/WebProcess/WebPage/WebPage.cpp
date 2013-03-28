@@ -39,6 +39,7 @@
 #include "LayerTreeHost.h"
 #include "NetscapePlugin.h"
 #include "NotificationPermissionRequestManager.h"
+#include "PDFKitImports.h"
 #include "PageOverlay.h"
 #include "PluginProxy.h"
 #include "PluginView.h"
@@ -546,7 +547,7 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
         if ((parameters.mimeType == "application/pdf" || parameters.mimeType == "application/postscript")
             || (parameters.mimeType.isEmpty() && (path.endsWith(".pdf", false) || path.endsWith(".ps", false)))) {
 #if ENABLE(PDFKIT_PLUGIN)
-            if (pdfPluginEnabled())
+            if (shouldUsePDFPlugin())
                 return PDFPlugin::create(frame);
 #endif
             return SimplePDFPlugin::create(frame);
@@ -3675,6 +3676,13 @@ void WebPage::setScrollingPerformanceLoggingEnabled(bool enabled)
 
     frameView->setScrollingPerformanceLoggingEnabled(enabled);
 }
+
+#if PLATFORM(MAC)
+bool WebPage::shouldUsePDFPlugin() const
+{
+    return pdfPluginEnabled() && pdfLayerControllerClass();
+}
+#endif
 
 bool WebPage::canPluginHandleResponse(const ResourceResponse& response)
 {
