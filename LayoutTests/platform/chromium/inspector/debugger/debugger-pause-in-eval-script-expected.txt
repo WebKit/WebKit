@@ -4,7 +4,7 @@ Debugger was enabled.
 Evaluated script in console.
 Script execution paused.
 Call stack:
-    0) testFunction (:2)
+    0) testFunction (:3)
 Script execution resumed.
 Debugger was disabled.
 
