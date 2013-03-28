@@ -203,30 +203,35 @@ void NetworkResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceRe
     if (FormData* formData = request().httpBody())
         formData->removeGeneratedFilesIfNeeded();
 
-    if (!sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponseWithCertificateInfo(response, PlatformCertificateInfo(response))))
-        return;
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    ShareableResource::Handle handle;
-    tryGetShareableHandleForResource(handle);
-    if (handle.isNull())
-        return;
-
-    // Since we're delivering this resource by ourselves all at once, we'll abort the resource handle since we don't need anymore callbacks from ResourceHandle.
-    abortInProgressLoad();
-    
-    send(Messages::WebResourceLoader::DidReceiveResource(handle, currentTime()));
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponseWithCertificateInfo(response, PlatformCertificateInfo(response)));
 }
 
 void NetworkResourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int encodedDataLength)
 {
+    // The NetworkProcess should never get a didReceiveData callback.
+    // We should always be using didReceiveBuffer.
+    ASSERT_NOT_REACHED();
+}
+
+void NetworkResourceLoader::didReceiveBuffer(WebCore::ResourceHandle*, PassRefPtr<WebCore::SharedBuffer> buffer, int encodedDataLength)
+{
     // FIXME (NetworkProcess): For the memory cache we'll also need to cache the response data here.
     // Such buffering will need to be thread safe, as this callback is happening on a background thread.
     
-    m_bytesReceived += length;
+    m_bytesReceived += buffer->size();
+    
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    ShareableResource::Handle handle;
+    tryGetShareableHandleFromSharedBuffer(handle, buffer.get());
+    if (!handle.isNull()) {
+        // Since we're delivering this resource by ourselves all at once, we'll abort the resource handle since we don't need anymore callbacks from ResourceHandle.
+        abortInProgressLoad();
+        send(Messages::WebResourceLoader::DidReceiveResource(handle, currentTime()));
+        return;
+    }
+#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 
-    CoreIPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(data), length);
+    CoreIPC::DataReference dataReference(reinterpret_cast<const uint8_t*>(buffer->data()), buffer->size());
     sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveData(dataReference, encodedDataLength));
 }
 

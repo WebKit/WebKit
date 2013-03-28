@@ -1,3 +1,30 @@
+2013-03-28  Brady Eidson  <beidson@apple.com>
+
+        Resources are never revalidated/reloaded if a cached response exists on disk.
+        <rdar://problem/13479890> and https://bugs.webkit.org/show_bug.cgi?id=113542
+
+        Reviewed by Alexey Proskuryakov.
+
+        Trying to get a cached resource in didReceiveResponse and then aborting the load
+        meant we never performed any new loads.
+
+        We can check and see if the data is cached data inside didReceiveBuffer, instead.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::didReceiveResponse): Don't try for cached resources here.
+        (WebKit::NetworkResourceLoader::didReceiveData): This callback should never be used.
+        (WebKit::NetworkResourceLoader::didReceiveBuffer): Try to see if this data objected represents
+          a file based mmaped buffer.
+        * NetworkProcess/NetworkResourceLoader.h:
+
+        Refactor these utility functions to start from either a CFURLCachedResponse or a SharedBuffer:
+        * NetworkProcess/mac/NetworkResourceLoaderMac.mm:
+        (CFCachedURLResponseGetMemMappedData):
+        (CFURLCacheIsMemMappedData):
+        (WebKit::tryGetShareableHandleFromCFData):
+        (WebKit::NetworkResourceLoader::tryGetShareableHandleFromCFURLCachedResponse):
+        (WebKit::NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer):
+
 2013-03-28  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] REGRESSION (r125500): WebFrameLoaderClient's active m_pluginView can be zeroed by PluginDocuments leaving the page cache

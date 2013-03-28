@@ -29,6 +29,7 @@
 #import "DiskCacheMonitor.h"
 #import "ShareableResource.h"
 #import <WebCore/ResourceHandle.h>
+#import <WebCore/SharedBuffer.h>
 #import <WebCore/SoftLinking.h>
 
 using namespace WebCore;
@@ -42,11 +43,22 @@ extern "C" CFCachedURLResponseRef CFURLCacheCopyResponseForRequest(CFURLCacheRef
 SOFT_LINK_FRAMEWORK(CFNetwork)
 static CFDataRef CFCachedURLResponseGetMemMappedData(CFCachedURLResponseRef response)
 {
-    static CFDataRef (*softGetMemMappedData)(CFCachedURLResponseRef) = (CFDataRef (*)(CFCachedURLResponseRef)) dlsym(CFNetworkLibrary(), "_CFCachedURLResponseGetMemMappedData");
+    typedef CFDataRef (*functionType)(CFCachedURLResponseRef);
+    static functionType softGetMemMappedData = (functionType) dlsym(CFNetworkLibrary(), "_CFCachedURLResponseGetMemMappedData");
     
     if (softGetMemMappedData)
         return softGetMemMappedData(response);
     return NULL;
+}
+
+static bool CFURLCacheIsMemMappedData(CFURLCacheRef cache, CFDataRef data)
+{
+    typedef CFBooleanRef (*functionType)(CFURLCacheRef cache, CFDataRef data);
+    static functionType softLinkIsCacheMMAPedData = (functionType) dlsym(CFNetworkLibrary(), "_CFURLCacheIsResponseDataMemMapped");
+   
+    if (softLinkIsCacheMMAPedData)
+        return softLinkIsCacheMMAPedData(cache, data) == kCFBooleanTrue;
+    return false;
 }
 #endif
 
@@ -57,10 +69,9 @@ static CFDataRef CFCachedURLResponseGetMemMappedData(CFCachedURLResponseRef resp
 namespace WebKit {
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-void NetworkResourceLoader::tryGetShareableHandleFromCFURLCachedResponse(ShareableResource::Handle& handle, CFCachedURLResponseRef cachedResponse)
-{
-    CFDataRef data = CFCachedURLResponseGetMemMappedData(cachedResponse);
 
+static void tryGetShareableHandleFromCFData(ShareableResource::Handle& handle, CFDataRef data)
+{
     if (!data || CFDataGetLength(data) < (CFIndex)NetworkResourceLoader::fileBackedResourceMinimumSize())
         return;
 
@@ -75,19 +86,24 @@ void NetworkResourceLoader::tryGetShareableHandleFromCFURLCachedResponse(Shareab
     resource->createHandle(handle);
 }
 
-void NetworkResourceLoader::tryGetShareableHandleForResource(ShareableResource::Handle& handle)
+void NetworkResourceLoader::tryGetShareableHandleFromCFURLCachedResponse(ShareableResource::Handle& handle, CFCachedURLResponseRef cachedResponse)
 {
-    // Check the cache to see if we can vm_copy a filesystem-backed resource buffer.
+    CFDataRef data = CFCachedURLResponseGetMemMappedData(cachedResponse);
+
+    tryGetShareableHandleFromCFData(handle, data);
+}
+
+void NetworkResourceLoader::tryGetShareableHandleFromSharedBuffer(ShareableResource::Handle& handle, SharedBuffer* buffer)
+{
     RetainPtr<CFURLCacheRef> cache = adoptCF(CFURLCacheCopySharedURLCache());
     if (!cache)
         return;
 
-    CFURLRequestRef cfRequest = request().cfURLRequest(DoNotUpdateHTTPBody);
-    RetainPtr<CFCachedURLResponseRef> cachedResponse = adoptCF(CFURLCacheCopyResponseForRequest(cache.get(), cfRequest));
-    if (!cachedResponse)
+    RetainPtr<CFDataRef> data = adoptCF(buffer->createCFData());
+    if (!CFURLCacheIsMemMappedData(cache.get(), data.get()))
         return;
 
-    tryGetShareableHandleFromCFURLCachedResponse(handle, cachedResponse.get());
+    tryGetShareableHandleFromCFData(handle, data.get());
 }
 #endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 
