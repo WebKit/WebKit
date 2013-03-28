@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript">
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        if (window.internals) {
+            internals.settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+            internals.settings.setFixedPositionCreatesStackingContext(true);
+        }
+
+        function test()
+        {
+            document.body.offsetHeight;
+            if (window.internals)
+                window.internals.startTrackingRepaints(document);
+
+            window.scrollTo(0, 1000);
+            window.scrollTo(0, 100);
+
+            if (window.internals)
+                document.getElementById('repaintRects').textContent = window.internals.repaintRectsAsText(document);
+        }
+    </script>
+</head>
+<body style="height:2000px" onload="test()">
+    <div style="position: fixed; top: 100px; left: 100px; width: 200px; height: 200px"></div>
+    There should be no repaints here:
+    <pre id="repaintRects"></pre>
+</body>
+</html>

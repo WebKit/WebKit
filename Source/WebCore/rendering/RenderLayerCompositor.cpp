@@ -2196,6 +2196,13 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
         return layer->isComposited();
     }
 
+    bool paintsContent = layer->isVisuallyNonEmpty() || layer->hasVisibleDescendant();
+    if (!paintsContent) {
+        if (viewportConstrainedNotCompositedReason)
+            *viewportConstrainedNotCompositedReason = RenderLayer::NotCompositedForNoVisibleContent;
+        return false;
+    }
+
     // Fixed position elements that are invisible in the current view don't get their own layer.
     if (FrameView* frameView = m_renderView->frameView()) {
         LayoutRect viewBounds = frameView->viewportConstrainedVisibleContentRect();
@@ -2208,13 +2215,6 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
         }
     }
     
-    bool paintsContent = layer->isVisuallyNonEmpty() || layer->hasVisibleDescendant();
-    if (!paintsContent) {
-        if (viewportConstrainedNotCompositedReason)
-            *viewportConstrainedNotCompositedReason = RenderLayer::NotCompositedForNoVisibleContent;
-        return false;
-    }
-
     return true;
 }
 

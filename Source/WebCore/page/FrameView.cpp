@@ -1664,7 +1664,15 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
         // Fixed items should always have layers.
         ASSERT(renderer->hasLayer());
         RenderLayer* layer = toRenderBoxModelObject(renderer)->layer();
-        
+
+#if USE(ACCELERATED_COMPOSITING)
+        if (layer->viewportConstrainedNotCompositedReason() == RenderLayer::NotCompositedForBoundsOutOfView
+            || layer->viewportConstrainedNotCompositedReason() == RenderLayer::NotCompositedForNoVisibleContent) {
+            // Don't invalidate for invisible fixed layers.
+            continue;
+        }
+#endif
+
 #if ENABLE(CSS_FILTERS)
         if (layer->hasAncestorWithFilterOutsets()) {
             // If the fixed layer has a blur/drop-shadow filter applied on at least one of its parents, we cannot 
