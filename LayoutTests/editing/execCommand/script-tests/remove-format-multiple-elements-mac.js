@@ -3,6 +3,8 @@ description("This tests removing multiple elements by RemoveFormat command.")
 var testContainer = document.createElement("div");
 testContainer.contentEditable = true;
 document.body.appendChild(testContainer);
+if (window.internals)
+    internals.settings.setEditingBehavior("mac");
 
 function testRemoveFormat(initialContents, selector, expected)
 {

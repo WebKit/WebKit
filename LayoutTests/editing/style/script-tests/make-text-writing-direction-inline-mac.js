@@ -1,5 +1,7 @@
 description('Tests to ensure MakeTextWritingDirection* modifies the direction of text and embed texts properly.');
 
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
 if (!window.testRunner)
     testFailed('This test requires testRunner');
 

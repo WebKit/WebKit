@@ -3,6 +3,8 @@ description("Test to make sure we remove span tags with no attributes if we remo
 var testContainer = document.createElement("div");
 testContainer.contentEditable = true;
 document.body.appendChild(testContainer);
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
 
 function testSingleToggle(toggleCommand, initialContents, selector, expectedContents)
 {

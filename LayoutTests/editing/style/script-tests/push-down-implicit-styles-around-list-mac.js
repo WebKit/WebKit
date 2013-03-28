@@ -1,5 +1,7 @@
 description('Test to make sure we push down inline styles properly.');
 
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
 var testContainer = document.createElement("div");
 testContainer.contentEditable = true;
 document.body.appendChild(testContainer);
