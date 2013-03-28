@@ -42,6 +42,157 @@ function test()
                 InspectorTest.assertEquals(2, rowsShown, "retaining objects");
                 setTimeout(next, 0);
             }
+        },
+
+        function testRetainersAutoExpandSingleRetainer(next)
+        {
+            function createHeapSnapshot()
+            {
+                // Mocking results of running the following code:
+                //
+                // function L1(x) { this.x = x; }
+                // function L2(y) { this.y = y; }
+                // function L3() { }
+                // var l1 = new L1(new L2(new L3()));
+                // var root = { l1a: l1, l1b: l1 };
+                // l1 = null;
+
+                var sizeOfL3 = 1000000;
+                var builder = new InspectorTest.HeapSnapshotBuilder();
+                var rootNode = builder.rootNode;
+
+                var gcRootsNode = new InspectorTest.HeapNode("(GC roots)");
+                rootNode.linkNode(gcRootsNode, InspectorTest.HeapEdge.Type.element);
+
+                var windowNode = new InspectorTest.HeapNode("Window", 20);
+                rootNode.linkNode(windowNode, InspectorTest.HeapEdge.Type.shortcut);
+                gcRootsNode.linkNode(windowNode, InspectorTest.HeapEdge.Type.element);
+
+                var l3Node = new InspectorTest.HeapNode("L3", sizeOfL3);
+                var l2Node = new InspectorTest.HeapNode("L2", 32);
+                var l1Node = new InspectorTest.HeapNode("L1", 32);
+                var rootNode = new InspectorTest.HeapNode("Object", 32);
+                windowNode.linkNode(rootNode, InspectorTest.HeapEdge.Type.property, "root");
+                rootNode.linkNode(l1Node, InspectorTest.HeapEdge.Type.property, "l1a");
+                rootNode.linkNode(l1Node, InspectorTest.HeapEdge.Type.property, "l1b");
+                l1Node.linkNode(l2Node, InspectorTest.HeapEdge.Type.property, "x");
+                l2Node.linkNode(l3Node, InspectorTest.HeapEdge.Type.property, "y");
+                return builder.generateSnapshot();
+            }
+
+            InspectorTest.takeAndOpenSnapshot(createHeapSnapshot, step1);
+
+            function step1()
+            {
+                InspectorTest.switchToView("Summary", step2);
+            }
+
+            function step2()
+            {
+                var row = InspectorTest.findRow("object", "L3");
+                InspectorTest.assertEquals(true, !!row, "\"L3\" row");
+                InspectorTest.expandRow(row, step3);
+            }
+
+            function step3(row)
+            {
+                var count = row.data["count"];
+                InspectorTest.assertEquals("1", count);
+                InspectorTest.clickRowAndGetRetainers(row.children[0], step4);
+            }
+
+            function step4(retainersRoot)
+            {
+                retainersRoot.dataGrid.addEventListener(
+                    WebInspector.HeapSnapshotRetainmentDataGrid.Events.ExpandRetainersComplete,
+                    step5.bind(this, retainersRoot));
+            }
+
+            function step5(retainersRoot)
+            {
+                var l3 = retainersRoot;
+                InspectorTest.assertEquals(1, l3.children.length, "One retainer of L3");
+                var l2 = l3.children[0];
+                InspectorTest.assertEquals("y", l2.data.object.name);
+                InspectorTest.assertEquals(1, l2.children.length, "One retainer of L2");
+                var l1 = l2.children[0];
+                InspectorTest.assertEquals("x", l1.data.object.name);
+                InspectorTest.assertEquals(2, l1.children.length, "Two retainers of L1");
+                var l1retainers = [l1.children[0].data.object.name, l1.children[1].data.object.name];
+                l1retainers.sort();
+                InspectorTest.assertEquals("l1a", l1retainers[0]);
+                InspectorTest.assertEquals("l1b", l1retainers[1]);
+                setTimeout(next, 0);
+            }
+        },
+
+        function testRetainersAutoExpandSingleRetainerLimit(next)
+        {
+            function createHeapSnapshot()
+            {
+                // Mocking results of running the following code:
+                //
+                // function Tail() {}
+                // var head = new Tail();
+                // for (var i = 0; i < 1000; ++i)
+                //   head = { next: head };
+
+                var builder = new InspectorTest.HeapSnapshotBuilder();
+                var rootNode = builder.rootNode;
+
+                var gcRootsNode = new InspectorTest.HeapNode("(GC roots)");
+                rootNode.linkNode(gcRootsNode, InspectorTest.HeapEdge.Type.element);
+
+                var windowNode = new InspectorTest.HeapNode("Window", 20);
+                rootNode.linkNode(windowNode, InspectorTest.HeapEdge.Type.shortcut);
+                gcRootsNode.linkNode(windowNode, InspectorTest.HeapEdge.Type.element);
+
+                var headNode = new InspectorTest.HeapNode("Object", 32);
+                windowNode.linkNode(headNode, InspectorTest.HeapEdge.Type.property, "head");
+                for (var i = 1; i < 1000; ++i) {
+                  var nextNode = new InspectorTest.HeapNode("Object", 32);
+                  headNode.linkNode(nextNode, InspectorTest.HeapEdge.Type.property, "next");
+                  headNode = nextNode;
+                }
+                var tailNode = new InspectorTest.HeapNode("Tail", 32);
+                headNode.linkNode(tailNode, InspectorTest.HeapEdge.Type.property, "next");
+                return builder.generateSnapshot();
+            }
+
+            InspectorTest.takeAndOpenSnapshot(createHeapSnapshot, step1);
+
+            function step1()
+            {
+                InspectorTest.switchToView("Summary", step2);
+            }
+
+            function step2()
+            {
+                var row = InspectorTest.findRow("object", "Tail");
+                InspectorTest.assertEquals(true, !!row, "\"Tail\" row");
+                InspectorTest.expandRow(row, step3);
+            }
+
+            function step3(row)
+            {
+                var count = row.data["count"];
+                InspectorTest.assertEquals("1", count);
+                InspectorTest.clickRowAndGetRetainers(row.children[0], step4);
+            }
+
+            function step4(retainersRoot)
+            {
+                retainersRoot.dataGrid.addEventListener(
+                    WebInspector.HeapSnapshotRetainmentDataGrid.Events.ExpandRetainersComplete,
+                    step5.bind(this, retainersRoot));
+            }
+
+            function step5(retainersRoot)
+            {
+                var rowsShown = InspectorTest.countDataRows(retainersRoot);
+                InspectorTest.assertEquals(20, rowsShown, "retaining objects");
+                setTimeout(next, 0);
+            }
         }
     ]);
 }
@@ -49,9 +200,12 @@ function test()
 </script>
 </head>
 <body onload="runTest()">
-<p>
+<pre>
 Tests retainers view.
-Number of retainers of an A object must be 2 (A itself and B).
-</p>
+- Number of retainers of an A object must be 2 (A itself and B).</ul>
+- When an object has just one retainer it must be expanded automatically until
+  there's an object having two or more retainers.
+- Test the expansion of a long retainment chain is limited by a certain level.
+</pre>
 </body>
 </html>

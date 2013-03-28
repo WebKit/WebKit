@@ -347,10 +347,10 @@ InspectorTest.clickRowAndGetRetainers = function(row, callback)
     var rootNode = InspectorTest._currentProfileView().retainmentDataGrid.rootNode();
     function populateComplete()
     {
-        rootNode.removeEventListener("populate complete", populateComplete, this);
+        rootNode.removeEventListener(WebInspector.HeapSnapshotGridNode.Events.PopulateComplete, populateComplete, this);
         callback(rootNode);
     }
-    rootNode.addEventListener("populate complete", populateComplete, this);
+    rootNode.addEventListener(WebInspector.HeapSnapshotGridNode.Events.PopulateComplete, populateComplete, this);
 };
 
 InspectorTest.clickShowMoreButton = function(buttonName, row, callback)
@@ -359,14 +359,14 @@ InspectorTest.clickShowMoreButton = function(buttonName, row, callback)
     var parent = row.parent;
     function populateComplete()
     {
-        parent.removeEventListener("populate complete", populateComplete, this);
+        parent.removeEventListener(WebInspector.HeapSnapshotGridNode.Events.PopulateComplete, populateComplete, this);
         function callCallback()
         {
             callback(parent);
         }
         setTimeout(callCallback, 0);
     }
-    parent.addEventListener("populate complete", populateComplete, this);
+    parent.addEventListener(WebInspector.HeapSnapshotGridNode.Events.PopulateComplete, populateComplete, this);
     row[buttonName].click();
 };
 
@@ -635,14 +635,14 @@ InspectorTest.expandRow = function(row, callback)
     callback = InspectorTest.safeWrap(callback);
     function populateComplete()
     {
-        row.removeEventListener("populate complete", populateComplete, this);
+        row.removeEventListener(WebInspector.HeapSnapshotGridNode.Events.PopulateComplete, populateComplete, this);
         function callCallback()
         {
             callback(row);
         }
         setTimeout(callCallback, 0);
     }
-    row.addEventListener("populate complete", populateComplete, this);
+    row.addEventListener(WebInspector.HeapSnapshotGridNode.Events.PopulateComplete, populateComplete, this);
     (function expand()
     {
         if (row.hasChildren)

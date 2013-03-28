@@ -472,6 +472,10 @@ WebInspector.HeapSnapshotRetainmentDataGrid = function()
     WebInspector.HeapSnapshotContainmentDataGrid.call(this, columns);
 }
 
+WebInspector.HeapSnapshotRetainmentDataGrid.Events = {
+    ExpandRetainersComplete: "ExpandRetainersComplete"
+}
+
 WebInspector.HeapSnapshotRetainmentDataGrid.prototype = {
     _sortFields: function(sortColumn, sortAscending)
     {
@@ -488,6 +492,33 @@ WebInspector.HeapSnapshotRetainmentDataGrid.prototype = {
     {
         this.rootNode().removeChildren();
         this.resetSortingCache();
+    },
+
+    /**
+     * @param {!WebInspector.HeapSnapshotProxy} snapshot
+     * @paran {number} nodeIndex
+     */
+    setDataSource: function(snapshot, nodeIndex)
+    {
+        WebInspector.HeapSnapshotContainmentDataGrid.prototype.setDataSource.call(this, snapshot, nodeIndex);
+
+        var dataGrid = this;
+        var maxExpandLevels = 20;
+        /**
+         * @this {!WebInspector.HeapSnapshotObjectNode}
+         */
+        function populateComplete()
+        {
+            this.removeEventListener(WebInspector.HeapSnapshotGridNode.Events.PopulateComplete, populateComplete, this);
+            this.expand();
+            if (this.children.length === 1 && --maxExpandLevels > 0) {
+                var child = this.children[0];
+                child.addEventListener(WebInspector.HeapSnapshotGridNode.Events.PopulateComplete, populateComplete, child);
+                child.populate();
+            } else
+                dataGrid.dispatchEventToListeners(WebInspector.HeapSnapshotRetainmentDataGrid.Events.ExpandRetainersComplete);
+        }
+        this.rootNode().addEventListener(WebInspector.HeapSnapshotGridNode.Events.PopulateComplete, populateComplete, this.rootNode());
     },
 
     __proto__: WebInspector.HeapSnapshotContainmentDataGrid.prototype
