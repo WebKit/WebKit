@@ -338,7 +338,7 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
             }
         }
         HTMLFormElement* form = selectedFrame->selection()->currentForm();
-        if (form && form->checkValidity() && r.innerNonSharedNode()->hasTagName(HTMLNames::inputTag)) {
+        if (form && r.innerNonSharedNode()->hasTagName(HTMLNames::inputTag)) {
             HTMLInputElement* selectedElement = static_cast<HTMLInputElement*>(r.innerNonSharedNode());
             if (selectedElement) {
                 WebSearchableFormData ws = WebSearchableFormData(WebFormElement(form), WebInputElement(selectedElement));
