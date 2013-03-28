@@ -4,55 +4,55 @@ This test checks how text editor highlights braces.
 |({()})(())
 
 <div class="inner-container text-editor-editable" tabindex="0">
-<div class="webkit-line-content">({()})(())<span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 0px; width: 7px; height: <number>px;"></span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 35px; width: 7px; height: <number>px;"></span></div></div>
+<div class="webkit-line-content"><span>({()})(())</span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 0px; width: 7px; height: <number>px;"></span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 35px; width: 7px; height: <number>px;"></span></div></div>
 =======================
 (|{()})(())
 
 <div class="inner-container text-editor-editable" tabindex="0">
-<div class="webkit-line-content">({()})(())<span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 7px; width: 7px; height: <number>px;"></span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 28px; width: 7px; height: <number>px;"></span></div></div>
+<div class="webkit-line-content"><span>({()})(())</span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 7px; width: 7px; height: <number>px;"></span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 28px; width: 7px; height: <number>px;"></span></div></div>
 =======================
 ({|()})(())
 
 <div class="inner-container text-editor-editable" tabindex="0">
-<div class="webkit-line-content">({()})(())<span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 14px; width: 7px; height: <number>px;"></span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 21px; width: 7px; height: <number>px;"></span></div></div>
+<div class="webkit-line-content"><span>({()})(())</span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 14px; width: 7px; height: <number>px;"></span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 21px; width: 7px; height: <number>px;"></span></div></div>
 =======================
 ({(|)})(())
 
 <div class="inner-container text-editor-editable" tabindex="0">
-<div class="webkit-line-content">({()})(())<span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 14px; width: 7px; height: <number>px;"></span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 21px; width: 7px; height: <number>px;"></span></div></div>
+<div class="webkit-line-content"><span>({()})(())</span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 14px; width: 7px; height: <number>px;"></span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 21px; width: 7px; height: <number>px;"></span></div></div>
 =======================
 ({()|})(())
 
 <div class="inner-container text-editor-editable" tabindex="0">
-<div class="webkit-line-content">({()})(())<span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 14px; width: 7px; height: <number>px;"></span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 21px; width: 7px; height: <number>px;"></span></div></div>
+<div class="webkit-line-content"><span>({()})(())</span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 14px; width: 7px; height: <number>px;"></span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 21px; width: 7px; height: <number>px;"></span></div></div>
 =======================
 ({()}|)(())
 
 <div class="inner-container text-editor-editable" tabindex="0">
-<div class="webkit-line-content">({()})(())<span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 7px; width: 7px; height: <number>px;"></span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 28px; width: 7px; height: <number>px;"></span></div></div>
+<div class="webkit-line-content"><span>({()})(())</span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 7px; width: 7px; height: <number>px;"></span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 28px; width: 7px; height: <number>px;"></span></div></div>
 =======================
 ({()})|(())
 
 <div class="inner-container text-editor-editable" tabindex="0">
-<div class="webkit-line-content">({()})(())<span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 42px; width: 7px; height: <number>px;"></span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 63px; width: 7px; height: <number>px;"></span></div></div>
+<div class="webkit-line-content"><span>({()})(())</span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 42px; width: 7px; height: <number>px;"></span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 63px; width: 7px; height: <number>px;"></span></div></div>
 =======================
 ({()})(|())
 
 <div class="inner-container text-editor-editable" tabindex="0">
-<div class="webkit-line-content">({()})(())<span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 49px; width: 7px; height: <number>px;"></span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 56px; width: 7px; height: <number>px;"></span></div></div>
+<div class="webkit-line-content"><span>({()})(())</span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 49px; width: 7px; height: <number>px;"></span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 56px; width: 7px; height: <number>px;"></span></div></div>
 =======================
 ({()})((|))
 
 <div class="inner-container text-editor-editable" tabindex="0">
-<div class="webkit-line-content">({()})(())<span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 49px; width: 7px; height: <number>px;"></span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 56px; width: 7px; height: <number>px;"></span></div></div>
+<div class="webkit-line-content"><span>({()})(())</span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 49px; width: 7px; height: <number>px;"></span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 56px; width: 7px; height: <number>px;"></span></div></div>
 =======================
 ({()})(()|)
 
 <div class="inner-container text-editor-editable" tabindex="0">
-<div class="webkit-line-content">({()})(())<span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 49px; width: 7px; height: <number>px;"></span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 56px; width: 7px; height: <number>px;"></span></div></div>
+<div class="webkit-line-content"><span>({()})(())</span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 49px; width: 7px; height: <number>px;"></span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 56px; width: 7px; height: <number>px;"></span></div></div>
 =======================
 ({()})(())|
 
 <div class="inner-container text-editor-editable" tabindex="0">
-<div class="webkit-line-content">({()})(())<span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 42px; width: 7px; height: <number>px;"></span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 63px; width: 7px; height: <number>px;"></span></div></div>
+<div class="webkit-line-content"><span>({()})(())</span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 42px; width: 7px; height: <number>px;"></span><span class="text-editor-brace-match text-editor-overlay-highlight" style="left: 63px; width: 7px; height: <number>px;"></span></div></div>
 

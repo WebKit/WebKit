@@ -3,24 +3,24 @@ This test checks that typing over the decoration does not collect decoration tex
 Chunk model
 Chunk [0] 0:10 (expanded)
 Editor DOM
-[0]       <div class="webkit-line-content">0</div>
-[1]       <div class="webkit-line-content">1</div>
-[2]       <div class="webkit-line-content">2</div>
-[3]       <div class="webkit-line-content">3</div>
-[4]       <div class="webkit-line-content">4</div>
-[5:6]     <div class="webkit-line-content">5<div class="webkit-line-decorations"><span>Decoration content</span></div></div>
-[6]       <div class="webkit-line-content">6</div>
-[7]       <div class="webkit-line-content">7</div>
-[8]       <div class="webkit-line-content">8</div>
-[9]       <div class="webkit-line-content">9</div>
+[0]       <div class="webkit-line-content"><span>0</span></div>
+[1]       <div class="webkit-line-content"><span>1</span></div>
+[2]       <div class="webkit-line-content"><span>2</span></div>
+[3]       <div class="webkit-line-content"><span>3</span></div>
+[4]       <div class="webkit-line-content"><span>4</span></div>
+[5:6]     <div class="webkit-line-content"><span>5</span><div class="webkit-line-decorations"><span>Decoration content</span></div></div>
+[6]       <div class="webkit-line-content"><span>6</span></div>
+[7]       <div class="webkit-line-content"><span>7</span></div>
+[8]       <div class="webkit-line-content"><span>8</span></div>
+[9]       <div class="webkit-line-content"><span>9</span></div>
 Editor DOM
-[0]       <div class="webkit-line-content">0</div>
-[1]       <div class="webkit-line-content">1</div>
-[2]       <div class="webkit-line-content">2</div>
-[3]       <div class="webkit-line-content">3</div>
-[4]       <div class="webkit-line-content">4a5</div>
-[5]       <div class="webkit-line-content">6</div>
-[6]       <div class="webkit-line-content">7</div>
-[7]       <div class="webkit-line-content">8</div>
-[8]       <div class="webkit-line-content">9</div>
+[0]       <div class="webkit-line-content"><span>0</span></div>
+[1]       <div class="webkit-line-content"><span>1</span></div>
+[2]       <div class="webkit-line-content"><span>2</span></div>
+[3]       <div class="webkit-line-content"><span>3</span></div>
+[4]       <div class="webkit-line-content"><span>4a5</span></div>
+[5]       <div class="webkit-line-content"><span>6</span></div>
+[6]       <div class="webkit-line-content"><span>7</span></div>
+[7]       <div class="webkit-line-content"><span>8</span></div>
+[8]       <div class="webkit-line-content"><span>9</span></div>
 

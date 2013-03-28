@@ -30,11 +30,11 @@
     -webkit-user-select: text;
 }
 
-.text-editor-overlay-highlight {
+.webkit-line-content > .text-editor-overlay-highlight {
     position: absolute;
     pointer-events: none;
     -webkit-user-select: none;
-    z-index: -1;
+    z-index: 1;
 }
 
 .text-editor-token-highlight {
@@ -180,6 +180,11 @@
 
 .breakpoints-deactivated .webkit-breakpoint-disabled .webkit-line-number-outer {
     opacity: 0.3;
+}
+
+.webkit-line-content > * {
+    position: relative;
+    z-index: 2;
 }
 
 .webkit-execution-line.webkit-line-content {

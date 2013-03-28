@@ -2067,6 +2067,8 @@ WebInspector.TextEditorMainPanel.prototype = {
             var ranges = highlightDescriptor.rangesForLine(lineRow.lineNumber, line);
             if (ranges.length === 0)
                 continue;
+            for(var j = 0; j < ranges.length; ++j)
+                ranges[j].token = "measure-span";
 
             this._renderRanges(lineRow, line, ranges);
             rowsToMeasure.push(lineRow);
@@ -2090,7 +2092,7 @@ WebInspector.TextEditorMainPanel.prototype = {
      */
     _measureSpans: function(lineRow)
     {
-        var spans = lineRow.getElementsByTagName("span");
+        var spans = lineRow.getElementsByClassName("webkit-measure-span");
         var metrics = [];
         for(var i = 0; i < spans.length; ++i)
             metrics.push(new WebInspector.TextEditorMainPanel.ElementMetrics(spans[i]));
@@ -2147,7 +2149,7 @@ WebInspector.TextEditorMainPanel.prototype = {
             var rangeEnd = ranges[i].endColumn;
 
             if (plainTextStart < rangeStart) {
-                this._insertTextNodeBefore(lineRow, decorationsElement, line.substring(plainTextStart, rangeStart));
+                this._insertSpanBefore(lineRow, decorationsElement, line.substring(plainTextStart, rangeStart));
             }
 
             if (splitWhitespaceSequences && ranges[i].token === "whitespace")
@@ -2157,7 +2159,7 @@ WebInspector.TextEditorMainPanel.prototype = {
             plainTextStart = rangeEnd + 1;
         }
         if (plainTextStart < line.length) {
-            this._insertTextNodeBefore(lineRow, decorationsElement, line.substring(plainTextStart, line.length));
+            this._insertSpanBefore(lineRow, decorationsElement, line.substring(plainTextStart, line.length));
         }
     },
 
@@ -2393,7 +2395,7 @@ WebInspector.TextEditorMainPanel.prototype = {
      * @param {Element} element
      * @param {Element} oldChild
      * @param {string} content
-     * @param {string} className
+     * @param {string=} className
      */
     _insertSpanBefore: function(element, oldChild, content, className)
     {
@@ -2403,7 +2405,10 @@ WebInspector.TextEditorMainPanel.prototype = {
         }
 
         var span = this._cachedSpans.pop() || document.createElement("span");
-        span.className = className;
+        if (!className)
+            span.removeAttribute("class");
+        else
+            span.className = className;
         if (WebInspector.FALSE) // For paint debugging.
             span.addStyleClass("debug-fadeout");
         span.textContent = content;

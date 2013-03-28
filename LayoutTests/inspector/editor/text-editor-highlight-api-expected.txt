@@ -4,12 +4,12 @@ Test editor highlight regexp API.
 Before highlight
 
 <div class="inner-container" tabindex="0">
-<div class="webkit-line-content">foo();</div>
-<div class="webkit-line-content">foo_1; foor; foo_;</div>
-<div class="webkit-line-content">foo_</div>
-<div class="webkit-line-content">global_foo</div>
-<div class="webkit-line-content">global_foo2</div>
-<div class="webkit-line-content">some_other_foo_X</div></div>
+<div class="webkit-line-content"><span>foo();</span></div>
+<div class="webkit-line-content"><span>foo_1; foor; foo_;</span></div>
+<div class="webkit-line-content"><span>foo_</span></div>
+<div class="webkit-line-content"><span>global_foo</span></div>
+<div class="webkit-line-content"><span>global_foo2</span></div>
+<div class="webkit-line-content"><span>some_other_foo_X</span></div></div>
 
 Running: testHighlightRegex
 
@@ -17,12 +17,12 @@ Add highlight for regexp /foo_./
 Lines repainted: 2
 
 <div class="inner-container" tabindex="0">
-<div class="webkit-line-content">foo();</div>
-<div class="webkit-line-content">foo_1; foor; foo_;<span class="some-css-class text-editor-overlay-highlight" style="left: 0px; width: 35px; height: <number>px;"></span><span class="some-css-class text-editor-overlay-highlight" style="left: 91px; width: 35px; height: <number>px;"></span></div>
-<div class="webkit-line-content">foo_</div>
-<div class="webkit-line-content">global_foo</div>
-<div class="webkit-line-content">global_foo2</div>
-<div class="webkit-line-content">some_other_foo_X<span class="some-css-class text-editor-overlay-highlight" style="left: 77px; width: 35px; height: <number>px;"></span></div></div>
+<div class="webkit-line-content"><span>foo();</span></div>
+<div class="webkit-line-content"><span>foo_1; foor; foo_;</span><span class="some-css-class text-editor-overlay-highlight" style="left: 0px; width: 35px; height: <number>px;"></span><span class="some-css-class text-editor-overlay-highlight" style="left: 91px; width: 35px; height: <number>px;"></span></div>
+<div class="webkit-line-content"><span>foo_</span></div>
+<div class="webkit-line-content"><span>global_foo</span></div>
+<div class="webkit-line-content"><span>global_foo2</span></div>
+<div class="webkit-line-content"><span>some_other_foo_X</span><span class="some-css-class text-editor-overlay-highlight" style="left: 77px; width: 35px; height: <number>px;"></span></div></div>
 
 Running: testHighlightRange
 
@@ -30,12 +30,12 @@ Highlighting range from (1, 13) to (3, 16)
 Lines repainted: 3
 
 <div class="inner-container" tabindex="0">
-<div class="webkit-line-content">foo();</div>
-<div class="webkit-line-content">foo_1; foor; foo_;<span class="some-css-class text-editor-overlay-highlight" style="left: 0px; width: 35px; height: <number>px;"></span><span class="some-css-class text-editor-overlay-highlight" style="left: 91px; width: 35px; height: <number>px;"></span><span class="some-other-class text-editor-overlay-highlight" style="left: 91px; width: 35px; height: <number>px;"></span></div>
-<div class="webkit-line-content">foo_<span class="some-other-class text-editor-overlay-highlight" style="left: 0px; width: 28px; height: <number>px;"></span></div>
-<div class="webkit-line-content">global_foo<span class="some-other-class text-editor-overlay-highlight" style="left: 0px; width: 70px; height: <number>px;"></span></div>
-<div class="webkit-line-content">global_foo2</div>
-<div class="webkit-line-content">some_other_foo_X<span class="some-css-class text-editor-overlay-highlight" style="left: 77px; width: 35px; height: <number>px;"></span></div></div>
+<div class="webkit-line-content"><span>foo();</span></div>
+<div class="webkit-line-content"><span>foo_1; foor; foo_;</span><span class="some-css-class text-editor-overlay-highlight" style="left: 0px; width: 35px; height: <number>px;"></span><span class="some-css-class text-editor-overlay-highlight" style="left: 91px; width: 35px; height: <number>px;"></span><span class="some-other-class text-editor-overlay-highlight" style="left: 91px; width: 35px; height: <number>px;"></span></div>
+<div class="webkit-line-content"><span>foo_</span><span class="some-other-class text-editor-overlay-highlight" style="left: 0px; width: 28px; height: <number>px;"></span></div>
+<div class="webkit-line-content"><span>global_foo</span><span class="some-other-class text-editor-overlay-highlight" style="left: 0px; width: 70px; height: <number>px;"></span></div>
+<div class="webkit-line-content"><span>global_foo2</span></div>
+<div class="webkit-line-content"><span>some_other_foo_X</span><span class="some-css-class text-editor-overlay-highlight" style="left: 77px; width: 35px; height: <number>px;"></span></div></div>
 
 Running: testRemoveRegexHighlight
 
@@ -43,12 +43,12 @@ Remove highlight for regexp /foo_./
 Lines repainted: 2
 
 <div class="inner-container" tabindex="0">
-<div class="webkit-line-content">foo();</div>
-<div class="webkit-line-content">foo_1; foor; foo_;<span class="some-other-class text-editor-overlay-highlight" style="left: 91px; width: 35px; height: <number>px;"></span></div>
-<div class="webkit-line-content">foo_<span class="some-other-class text-editor-overlay-highlight" style="left: 0px; width: 28px; height: <number>px;"></span></div>
-<div class="webkit-line-content">global_foo<span class="some-other-class text-editor-overlay-highlight" style="left: 0px; width: 70px; height: <number>px;"></span></div>
-<div class="webkit-line-content">global_foo2</div>
-<div class="webkit-line-content">some_other_foo_X</div></div>
+<div class="webkit-line-content"><span>foo();</span></div>
+<div class="webkit-line-content"><span>foo_1; foor; foo_;</span><span class="some-other-class text-editor-overlay-highlight" style="left: 91px; width: 35px; height: <number>px;"></span></div>
+<div class="webkit-line-content"><span>foo_</span><span class="some-other-class text-editor-overlay-highlight" style="left: 0px; width: 28px; height: <number>px;"></span></div>
+<div class="webkit-line-content"><span>global_foo</span><span class="some-other-class text-editor-overlay-highlight" style="left: 0px; width: 70px; height: <number>px;"></span></div>
+<div class="webkit-line-content"><span>global_foo2</span></div>
+<div class="webkit-line-content"><span>some_other_foo_X</span></div></div>
 
 Running: testRemoveRangeHighlight
 
@@ -56,12 +56,12 @@ Remove highlight for range (1, 13) to (3, 16)
 Lines repainted: 3
 
 <div class="inner-container" tabindex="0">
-<div class="webkit-line-content">foo();</div>
-<div class="webkit-line-content">foo_1; foor; foo_;</div>
-<div class="webkit-line-content">foo_</div>
-<div class="webkit-line-content">global_foo</div>
-<div class="webkit-line-content">global_foo2</div>
-<div class="webkit-line-content">some_other_foo_X</div></div>
+<div class="webkit-line-content"><span>foo();</span></div>
+<div class="webkit-line-content"><span>foo_1; foor; foo_;</span></div>
+<div class="webkit-line-content"><span>foo_</span></div>
+<div class="webkit-line-content"><span>global_foo</span></div>
+<div class="webkit-line-content"><span>global_foo2</span></div>
+<div class="webkit-line-content"><span>some_other_foo_X</span></div></div>
 
 Running: testHighlightSmallRange
 
@@ -69,10 +69,10 @@ Highlighting range from (1, 1) to (1, 1)
 Lines repainted: 1
 
 <div class="inner-container" tabindex="0">
-<div class="webkit-line-content">foo();</div>
-<div class="webkit-line-content">foo_1; foor; foo_;<span class="some-other-class text-editor-overlay-highlight" style="left: 7px; width: 7px; height: <number>px;"></span></div>
-<div class="webkit-line-content">foo_</div>
-<div class="webkit-line-content">global_foo</div>
-<div class="webkit-line-content">global_foo2</div>
-<div class="webkit-line-content">some_other_foo_X</div></div>
+<div class="webkit-line-content"><span>foo();</span></div>
+<div class="webkit-line-content"><span>foo_1; foor; foo_;</span><span class="some-other-class text-editor-overlay-highlight" style="left: 7px; width: 7px; height: <number>px;"></span></div>
+<div class="webkit-line-content"><span>foo_</span></div>
+<div class="webkit-line-content"><span>global_foo</span></div>
+<div class="webkit-line-content"><span>global_foo2</span></div>
+<div class="webkit-line-content"><span>some_other_foo_X</span></div></div>
 
