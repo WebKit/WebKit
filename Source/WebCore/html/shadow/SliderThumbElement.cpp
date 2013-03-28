@@ -286,9 +286,6 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& point)
         currentPosition = absoluteThumbOrigin.x() - absoluteSliderContentOrigin.x();
     }
     position = max<LayoutUnit>(0, min(position, trackSize));
-    if (position == currentPosition)
-        return;
-
     const Decimal ratio = Decimal::fromDouble(static_cast<double>(position) / trackSize);
     const Decimal fraction = isVertical || !isLeftToRightDirection ? Decimal(1) - ratio : ratio;
     StepRange stepRange(input->createStepRange(RejectAny));
@@ -308,8 +305,12 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& point)
     }
 #endif
 
+    String valueString = serializeForNumberType(value);
+    if (valueString == input->value())
+        return;
+
     // FIXME: This is no longer being set from renderer. Consider updating the method name.
-    input->setValueFromRenderer(serializeForNumberType(value));
+    input->setValueFromRenderer(valueString);
     renderer()->setNeedsLayout(true);
     input->dispatchFormControlChangeEvent();
 }
