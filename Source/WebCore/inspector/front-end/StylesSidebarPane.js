@@ -2260,6 +2260,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 context.originalName = this.nameElement.textContent;
                 context.originalValue = this.valueElement.textContent;
             }
+            this.property.name = name;
+            this.property.value = value;
             this.nameElement.textContent = name;
             this.valueElement.textContent = value;
             this.nameElement.normalize();
@@ -2444,10 +2446,13 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
         // Determine where to move to before making changes
         var createNewProperty, moveToPropertyName, moveToSelector;
+        var isDataPasted = "originalName" in context;
+        var isDirtyViaPaste = isDataPasted && (this.nameElement.textContent !== context.originalName || this.valueElement.textContent !== context.originalValue);
+        var isPropertySplitPaste = isDataPasted && isEditingName && this.valueElement.textContent !== context.originalValue;
         var moveTo = this;
         var moveToOther = (isEditingName ^ (moveDirection === "forward"));
         var abandonNewProperty = this._newProperty && !userInput && (moveToOther || isEditingName);
-        if (moveDirection === "forward" && !isEditingName || moveDirection === "backward" && isEditingName) {
+        if (moveDirection === "forward" && (!isEditingName || isPropertySplitPaste) || moveDirection === "backward" && isEditingName) {
             moveTo = moveTo._findSibling(moveDirection);
             if (moveTo)
                 moveToPropertyName = moveTo.name;
@@ -2460,9 +2465,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         // Make the Changes and trigger the moveToNextCallback after updating.
         var moveToIndex = moveTo && this.treeOutline ? this.treeOutline.children.indexOf(moveTo) : -1;
         var blankInput = /^\s*$/.test(userInput);
-        var isDataPasted = "originalName" in context;
-        var isDirtyViaPaste = isDataPasted && (this.nameElement.textContent !== context.originalName || this.valueElement.textContent !== context.originalValue);
-        var shouldCommitNewProperty = this._newProperty && (moveToOther || (!moveDirection && !isEditingName) || (isEditingName && blankInput));
+        var shouldCommitNewProperty = this._newProperty && (isPropertySplitPaste || moveToOther || (!moveDirection && !isEditingName) || (isEditingName && blankInput));
         var section = this.section();
         if (((userInput !== previousContent || isDirtyViaPaste) && !this._newProperty) || shouldCommitNewProperty) {
             section._afterUpdate = moveToNextCallback.bind(this, this._newProperty, !blankInput, section);
@@ -2505,7 +2508,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 else {
                     var treeElement = moveToIndex >= 0 ? propertyElements[moveToIndex] : null;
                     if (treeElement) {
-                        var elementToEdit = !isEditingName ? treeElement.nameElement : treeElement.valueElement;
+                        var elementToEdit = !isEditingName || isPropertySplitPaste ? treeElement.nameElement : treeElement.valueElement;
                         if (alreadyNew && blankInput)
                             elementToEdit = moveDirection === "forward" ? treeElement.nameElement : treeElement.valueElement;
                         treeElement.startEditing(elementToEdit);
