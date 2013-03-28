@@ -40,7 +40,7 @@ const double CodeCacheMap::workingSetTime = 10.0;
 
 void CodeCacheMap::pruneSlowCase()
 {
-    m_minCapacity = std::max(m_size - m_sizeAtLastPrune, 0LL);
+    m_minCapacity = std::max(m_size - m_sizeAtLastPrune, static_cast<int64_t>(0));
     m_sizeAtLastPrune = m_size;
     m_timeAtLastPrune = monotonicallyIncreasingTime();
 

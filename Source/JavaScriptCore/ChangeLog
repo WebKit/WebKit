@@ -1,3 +1,11 @@
+2013-03-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed build fix for the EFL and GTK ports.
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCacheMap::pruneSlowCase): Pass a 0 casted to the int64_t type instead of 0LL
+        to the std::max call so the arguments' types match.
+
 2013-03-27  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed build fix: Removed a dead field.
