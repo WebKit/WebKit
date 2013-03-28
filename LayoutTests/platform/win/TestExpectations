@@ -1007,9 +1007,11 @@ fast/forms/multiple-form-submission-protection-mouse.html
 # mouseScrollBy() and continuousMouseScrollBy() are not yet implemented in the Windows EventSender API.
 fast/events/remove-child-onscroll.html
 fast/events/platform-wheelevent-in-scrolling-div.html
+fast/events/platform-wheelevent-with-delta-zero-crash.html
 fast/events/continuous-platform-wheelevent-in-scrolling-div.html
 fast/events/wheelevent-direction-inverted-from-device.html
 fast/events/wheelevent-in-horizontal-scrollbar-in-rtl.html
+fast/events/wheelevent-in-text-node.html
 fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html
 fast/forms/search/search-scroll-hidden-decoration-container-crash.html
 fast/repaint/overflow-auto-in-overflow-auto-scrolled.html
