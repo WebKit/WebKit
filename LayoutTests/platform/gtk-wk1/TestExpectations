@@ -168,6 +168,9 @@ Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-
 Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny-meta-tag.html [ Failure ]
 Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-deny.html [ Failure ]
 Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-invalid.html [ Failure ]
+Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-multiple-headers-conflict.html [ Failure ]
+Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-allow.html [ Failure ]
+Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-deny.html [ Failure ]
 Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html [ Failure ]
 Bug(GTK) http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html [ Failure ]
 
