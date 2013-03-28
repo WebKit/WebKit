@@ -3804,8 +3804,6 @@ webkit.org/b/113219 fast/dom/exception-in-binding.html [ Failure ]
 
 webkit.org/b/113474 http/tests/cache/subresource-failover-to-network.html [ Pass Failure ]
 
-webkit.org/b/113483 [ Debug ] inspector/console/console-css-warnings.html [ Failure Slow ]
-
 webkit.org/b/113487 [ Debug ] plugins/npruntime/npruntime-calls-with-null-npp.html [ Pass Timeout ]
 
 
