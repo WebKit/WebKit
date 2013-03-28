@@ -1346,7 +1346,7 @@ void WebFrameLoaderClient::recreatePlugin(Widget* widget)
 
 void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 {
-    if (m_pluginView)
+    if (pluginWidget)
         m_pluginView = static_cast<PluginView*>(pluginWidget);
 }
 

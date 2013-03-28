@@ -6,6 +6,21 @@
 
         Reviewed by Brady Eidson.
 
+        http://trac.webkit.org/changeset/147152 was wrong, and should have been
+        (as the ChangeLog stated) testing the argument to redirectDataToPlugin,
+        not the value of m_pluginView.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::redirectDataToPlugin):
+
+2013-03-28  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] REGRESSION (r125500): WebFrameLoaderClient's active m_pluginView can be zeroed by PluginDocuments leaving the page cache
+        https://bugs.webkit.org/show_bug.cgi?id=113430
+        <rdar://problem/12729564>
+
+        Reviewed by Brady Eidson.
+
         Ignore redirectDataToPlugin(0), which is only called from PluginDocument::detach(),
         and only after r125500. Otherwise, PluginDocuments that are put into the page cache
         but leave later can clear a totally different and legitimate PluginView from the
