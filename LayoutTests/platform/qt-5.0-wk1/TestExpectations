@@ -160,6 +160,3 @@ webkit.org/b/112333 css3/compositing/blend-mode-property-parsing.html  [ Skip ]
 webkit.org/b/112333 css3/compositing/blend-mode-property.html [ Skip ]
 webkit.org/b/112333 css3/compositing/should-have-compositing-layer.html [ Skip ]
 webkit.org/b/112333 transitions/blendmode-transitions.html  [ Skip ]
-
-# [Qt][WK1] REGRESSION(r145973): http/tests/appcache/local-content.html fails
-webkit.org/b/112542 http/tests/appcache/local-content.html [ Skip ]

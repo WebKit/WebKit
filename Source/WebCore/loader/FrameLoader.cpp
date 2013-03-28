@@ -683,14 +683,6 @@ void FrameLoader::didBeginDocument(bool dispatch)
             if (!headerContentLanguage.isEmpty())
                 m_frame->document()->setContentLanguage(headerContentLanguage);
         }
-
-        if (SecurityPolicy::allowSubstituteDataAccessToLocal() && m_documentLoader->substituteData().isValid()) {
-            // If this document was loaded with substituteData, then the document can
-            // load local resources. See https://bugs.webkit.org/show_bug.cgi?id=16756
-            // and https://bugs.webkit.org/show_bug.cgi?id=19760 for further
-            // discussion.
-            m_frame->document()->securityOrigin()->grantLoadLocalResources();
-        }
     }
 
     history()->restoreDocumentState();
