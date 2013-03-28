@@ -1,3 +1,15 @@
+2013-03-28  Brady Eidson  <beidson@apple.com>
+
+        Reduce PluginProcess lifetime.
+        <rdar://problem/12465479> and https://bugs.webkit.org/show_bug.cgi?id=113523
+
+        Reviewed by Sam Weinig.
+
+        Lower the minimum process lifetime from 30 minutes to 2 minutes.
+        Lower the "shutdown after last plugin goes away" period from 10 minutes to 1 minute.
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+
 2013-03-28  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Build GTK-specific, non-layer-violating source code into WebCore-independent libPlatformGtk.la
