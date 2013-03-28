@@ -37,6 +37,24 @@ WK_EXPORT void WKContextSetProcessSuppressionEnabled(WKContextRef context, bool 
 
 WK_EXPORT bool WKContextIsPlugInUpdateAvailable(WKContextRef context, WKStringRef plugInBundleIdentifier);
 
+
+/* Value type: WKStringRef */
+WK_EXPORT WKStringRef WKPlugInInfoPathKey();
+
+/* Value type: WKStringRef */
+WK_EXPORT WKStringRef WKPlugInInfoBundleIdentifierKey();
+
+/* Value type: WKStringRef */
+WK_EXPORT WKStringRef WKPlugInInfoVersionKey();
+
+/* Value type: WKUInt64Ref */
+WK_EXPORT WKStringRef WKPlugInInfoLoadPolicyKey();
+
+/* Value type: WKBooleanRef */
+WK_EXPORT WKStringRef WKPlugInInfoUpdatePastLastBlockedVersionIsKnownAvailableKey();
+
+WK_EXPORT WKDictionaryRef WKContextCopyPlugInInfoForBundleIdentifier(WKContextRef context, WKStringRef plugInBundleIdentifier);
+
 #ifdef __cplusplus
 }
 #endif

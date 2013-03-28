@@ -1,3 +1,37 @@
+2013-03-27  Sam Weinig  <sam@webkit.org>
+
+        [WebKit2] Need SPI to determine whether a plug-in is blocked
+        https://bugs.webkit.org/show_bug.cgi?id=113463
+
+        Reviewed by Anders Carlsson.
+
+        Add new SPI, WKContextCopyPlugInInfoForBundleIdetifier, to get data about a plug-in,
+        including whether it is blocked by x-protect.
+
+        * UIProcess/WebLoaderClient.cpp:
+        * UIProcess/API/C/WKAPICast.h:
+        (WebKit::toWKPluginLoadPolicy):
+        (WebKit::toPluginModuleLoadPolicy):
+        Move to a shared location.
+
+        * UIProcess/API/C/mac/WKContextPrivateMac.h:
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKContextIsPlugInUpdateAvailable):
+        (WKPlugInInfoPathKey):
+        (WKPlugInInfoBundleIdentifierKey):
+        (WKPlugInInfoVersionKey):
+        (WKPlugInInfoLoadPolicyKey):
+        (WKPlugInInfoUpdatePastLastBlockedVersionIsKnownAvailableKey):
+        (WKContextCopyPlugInInfoForBundleIdetifier):
+        Add new SPI and dictionary keys.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::findPluginWithBundleIdentifer):
+        * UIProcess/Plugins/PluginInfoStore.h:
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::findPluginWithBundleIdentifer):
+        Add function to lookup plug-ins by bundle identifier.
+
 2013-03-27  Beth Dakin  <bdakin@apple.com>
 
         WKBundlePagePrivateMac.h is not being exported
