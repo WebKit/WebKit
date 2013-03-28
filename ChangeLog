@@ -1,3 +1,9 @@
+2013-03-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed GTK build fix after r147039.
+
+        * Source/autotools/symbols.filter: Export the missing symbols.
+
 2013-03-27  Patrick Gansterer  <paroga@webkit.org>
 
         Set WTF_ARM_ARCH_VERSION to correct value when used with MSVC

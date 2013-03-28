@@ -294,6 +294,8 @@ _ZN7WebCore21markerTextForListItemEPNS_7ElementE;
 _ZNK7WebCore16HTMLInputElement18shouldAutocompleteEv;
 _ZN7WebCore6Editor29toggleContinuousSpellCheckingEv;
 _ZNK7WebCore6Editor32isContinuousSpellCheckingEnabledEv;
+_ZN7WebCore9FrameView15setFooterHeightEi;
+_ZN7WebCore9FrameView15setHeaderHeightEi;
 
 local:
 _Z*;
