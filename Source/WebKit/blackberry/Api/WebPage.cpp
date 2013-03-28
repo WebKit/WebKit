@@ -2318,10 +2318,25 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
         if (imageElement && imageElement->renderer()) {
             context.setFlag(Platform::WebContext::IsImage);
             // FIXME: At the mean time, we only show "Save Image" when the image data is available.
-            if (CachedResource* cachedResource = imageElement->cachedImage()) {
-                if (cachedResource->isLoaded() && cachedResource->resourceBuffer()) {
+            if (CachedImage* cachedImage = imageElement->cachedImage()) {
+                if (cachedImage->isLoaded() && cachedImage->resourceBuffer()) {
                     String url = stripLeadingAndTrailingHTMLSpaces(imageElement->getAttribute(HTMLNames::srcAttr).string());
                     context.setSrc(node->document()->completeURL(url).string());
+
+                    String mimeType = cachedImage->response().mimeType();
+                    if (mimeType.isEmpty()) {
+                        StringBuilder builder;
+                        String extension = cachedImage->image()->filenameExtension();
+                        builder.append("image/");
+                        if (extension.isEmpty())
+                            builder.append("unknown");
+                        else if (extension == "jpg")
+                            builder.append("jpeg");
+                        else
+                            builder.append(extension);
+                        mimeType = builder.toString();
+                    }
+                    context.setMimeType(mimeType);
                 }
             }
             String alt = imageElement->altText();
@@ -5167,7 +5182,7 @@ void WebPage::setExtraPluginDirectory(const BlackBerry::Platform::String& path)
     PluginDatabase* database = PluginDatabase::installedPlugins(true /* true for loading default directories */);
     if (!database)
         return;
-    
+
     Vector<String> pluginDirectories = database->pluginDirectories();
     if (path.empty() || pluginDirectories.contains(String(path)))
         return;

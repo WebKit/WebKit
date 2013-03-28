@@ -1,3 +1,19 @@
+2013-03-27  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Populate the mime type of the WebContext for images
+        https://bugs.webkit.org/show_bug.cgi?id=113272
+
+        Reviewed by George Staikos.
+
+        PR 278967
+
+        Populate the mime type using the file extension reported by the image
+        decoder. This way we benefit from file type sniffing, instead of
+        relying on the mime type reported by the resource response.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::webContext):
+
 2013-03-26  Hayato Ito  <hayato@chromium.org>
 
         Allow ShadowContents in HitTests by default.
