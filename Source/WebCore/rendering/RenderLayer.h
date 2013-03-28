@@ -920,8 +920,6 @@ private:
     void setLastChild(RenderLayer* last) { m_last = last; }
 
     LayoutPoint renderBoxLocation() const { return renderer()->isBox() ? toRenderBox(renderer())->location() : LayoutPoint(); }
-    LayoutUnit renderBoxX() const { return renderBoxLocation().x(); }
-    LayoutUnit renderBoxY() const { return renderBoxLocation().y(); }
 
     void collectLayers(bool includeHiddenLayers, CollectLayersBehavior, OwnPtr<Vector<RenderLayer*> >&, OwnPtr<Vector<RenderLayer*> >&);
 
