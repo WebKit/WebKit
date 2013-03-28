@@ -19,5 +19,6 @@ os.chdir(toplevel_directory)
 sys.exit(subprocess.call(['gyp',
                           '--depth=.',
                           '--generator-output=%s' % build_directory,
+                          '-Gauto_regeneration=0',
                           'Source/WebCore/WebCore.gyp/WebCoreGTK.gyp',
                           '-I', os.path.join(build_directory, 'Configuration.gypi')]))

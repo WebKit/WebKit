@@ -1,3 +1,19 @@
+2013-03-26  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] [gyp] Improve support for rerunning gyp automatically
+        https://bugs.webkit.org/show_bug.cgi?id=113360
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add support for automatically rerunning gyp when input file changes are detected
+        while running make.
+
+        * gyp/GNUmakefile: Added. A wrapper that invokes the generated makefile.
+        * gyp/autogen.sh: Add a symlink to the wrapper script.
+        * gyp/configure.ac: "Freeze" the TOPLEVEL_DIRECTORY command-line argument so that
+        run-gyp reads it properly when configure is run independently of autogen.sh.
+        * gyp/run-gyp: Prevent generation of auto-regeneration rules in gyp. They are buggy.
+
 2013-03-27  Timothy Hatcher  <timothy@apple.com>
 
         Add support for dock-to-right of the Web Inspector in the Mac port.

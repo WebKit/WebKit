@@ -15,6 +15,10 @@ if [ ! -e configure.ac ]; then
     ln -s "$SCRIPT_DIRECTORY/configure.ac"
 fi
 
+if [ ! -e GNUmakefile ]; then
+    ln -s "$SCRIPT_DIRECTORY/GNUmakefile"
+fi
+
 if [ ! -e WebKitMacros ]; then
     ln -s "$TOPLEVEL_DIRECTORY/Source/autotools" WebKitMacros
 fi

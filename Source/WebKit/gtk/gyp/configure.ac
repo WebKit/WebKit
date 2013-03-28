@@ -29,9 +29,13 @@ m4_include([WebKitMacros/SetupWebKitFeatures.m4])
 WEBKIT_FEATURES=`cat WebKitFeatures.txt | tr '\n' ' '`
 AC_SUBST(WEBKIT_FEATURES)
 
+# This is how we preserve a variable set during autogen.sh into the configure phase, allowing
+# us to preserve the value of TOPLEVEL_DIRECTORY even when running configure standalone.
+m4_define([toplevel_directory], esyscmd([echo -n $TOPLEVEL_DIRECTORY]))
+TOPLEVEL_DIRECTORY="toplevel_directory"
 AC_SUBST(TOPLEVEL_DIRECTORY)
-AC_CONFIG_FILES([Configuration.gypi:Configuration.gypi.in])
 
+AC_CONFIG_FILES([Configuration.gypi:Configuration.gypi.in])
 AC_CONFIG_COMMANDS([gyp], [./run-gyp])
 
 m4_include([WebKitMacros/PrintBuildConfiguration.m4])
