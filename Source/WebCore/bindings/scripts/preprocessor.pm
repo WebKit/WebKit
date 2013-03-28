@@ -22,7 +22,6 @@ use strict;
 use warnings;
 
 use Config;
-use File::Basename;
 use IPC::Open2;
 use IPC::Open3;
 
@@ -42,19 +41,6 @@ sub applyPreprocessor
     my $fileName = shift;
     my $defines = shift;
     my $preprocessor = shift;
-    my $outputDirectory = shift;
-
-    if ($outputDirectory) {
-        # If the preprocessed build file was generated already by the build
-        # system, then return that one. This avoids N^2 behavior in reapplying
-        # the preprocessor the idl files referenced by other idl files.
-        my $baseName = basename($fileName);
-        my $preprocessedFile = "$outputDirectory/$baseName.pp";
-        if (-e $preprocessedFile) {
-            my @lines = do { local @ARGV = $preprocessedFile; <> };
-            return @lines;
-        }
-    }
 
     my @args = ();
     if (!$preprocessor) {
