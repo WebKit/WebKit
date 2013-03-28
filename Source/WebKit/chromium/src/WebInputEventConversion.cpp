@@ -437,8 +437,10 @@ static void updateWebMouseEventFromWebCoreMouseEvent(const MouseRelatedEvent& ev
     webEvent.timeStampSeconds = event.timeStamp() / millisPerSecond;
     webEvent.modifiers = getWebInputModifiers(event);
 
-    ScrollView* view = widget.root();
-    IntPoint windowPoint = view->contentsToWindow(IntPoint(event.absoluteLocation().x(), event.absoluteLocation().y()));
+    ScrollView* view = widget.parent();
+    IntPoint windowPoint = IntPoint(event.absoluteLocation().x(), event.absoluteLocation().y());
+    if (view)
+        windowPoint = view->contentsToWindow(windowPoint);
     webEvent.globalX = event.screenX();
     webEvent.globalY = event.screenY();
     webEvent.windowX = windowPoint.x();

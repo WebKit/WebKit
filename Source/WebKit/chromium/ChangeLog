@@ -1,3 +1,19 @@
+2013-03-28  Alexandre Elias  <aelias@chromium.org>
+
+        [chromium] Use widget.parent() for plugin WebMouseEvents
+        https://bugs.webkit.org/show_bug.cgi?id=113543
+
+        Reviewed by James Robinson.
+
+        In r142571 I switches widget.parent() to widget.root() in the plugin
+        WebCore event -> WebMouseEvent creator, to make the converter the
+        inverse of the one going the other way and avoid null pointer crashes.
+        But the plugin code expects it to be parent() (see
+        http://crbug.com/223335).
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::updateWebMouseEventFromWebCoreMouseEvent):
+
 2013-03-28  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         [Chromium] Don't create SolidColorLayer for full transparent background
