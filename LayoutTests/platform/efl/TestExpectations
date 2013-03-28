@@ -832,6 +832,7 @@ Bug(EFL) fast/events/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
 # EFL's EventSender does not implement gesture-related callbacks
 Bug(EFL) fast/events/touch/gesture
 Bug(EFL) fast/events/touch/page-scaled-touch-gesture-click.html
+Bug(EFL) fast/dom/shadow/gesture-tap.html
 
 # EventSender.beginDragWithFiles is not implemented
 webkit.org/b/84333 editing/pasteboard/data-transfer-items-drag-drop-entry.html [ Failure ]
@@ -1319,6 +1320,15 @@ webkit.org/b/68591 http/tests/security/mixedContent/filesystem-url-in-iframe.htm
 webkit.org/b/68591 http/tests/inspector/filesystem
 webkit.org/b/68591 http/tests/websocket/tests/hybi/send-file-blob-fail.html
 webkit.org/b/68591 http/tests/websocket/tests/hybi/send-file-blob.html
+
+# WKTR / EFL's DRT do not support setViewModeMediaFeature().
+Bug(EFL) fast/media/view-mode-media-feature.html [ ImageOnlyFailure ]
+Bug(EFL) fast/media/media-query-list-02.html [ Failure ]
+Bug(EFL) fast/media/media-query-list-03.html [ Failure ]
+Bug(EFL) fast/media/media-query-list-04.html [ Failure ]
+Bug(EFL) fast/media/media-query-list-05.html [ Failure ]
+Bug(EFL) fast/media/media-query-list-06.html [ Failure ]
+Bug(EFL) fast/media/media-query-list-07.html [ Failure ]
 
 # EFL's TestRunner should support for the Geolocation API
 webkit.org/b/82140 fast/dom/Geolocation [ Skip ]
