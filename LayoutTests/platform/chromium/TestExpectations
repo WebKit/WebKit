@@ -3503,7 +3503,7 @@ webkit.org/b/90022 platform/chromium/virtual/gpu/fast/canvas/canvas-resize-reset
 webkit.org/b/90022 fast/canvas/canvas-as-image-hidpi.html [ WontFix ]
 webkit.org/b/90022 platform/chromium/virtual/gpu/fast/canvas/canvas-as-image-hidpi.html [ WontFix ]
 webkit.org/b/101986 [ Linux Win ] platform/chromium/compositing/force-compositing-mode/overflow-iframe-layer.html [ Failure ]
-webkit.org/b/102131 [ Win ] fast/workers/worker-exception-during-navigation.html [ Pass Crash ]
+webkit.org/b/102131 [ Win Linux ] fast/workers/worker-exception-during-navigation.html [ Pass Crash ]
 webkit.org/b/102264 [ Debug ] css3/filters/custom/custom-filter-property-computed-style.html [ Pass Timeout ]
 webkit.org/b/102277 fast/events/frame-scroll-fake-mouse-move.html [ Pass Failure ]
 webkit.org/b/102277 fast/events/overflow-scroll-fake-mouse-move.html [ Pass Failure ]
@@ -3805,4 +3805,7 @@ webkit.org/b/113219 fast/dom/exception-in-binding.html [ Failure ]
 webkit.org/b/113474 http/tests/cache/subresource-failover-to-network.html [ Pass Failure ]
 
 webkit.org/b/113483 [ Debug ] inspector/console/console-css-warnings.html [ Failure Slow ]
+
+webkit.org/b/113487 [ Debug ] plugins/npruntime/npruntime-calls-with-null-npp.html [ Pass Timeout ]
+
 
