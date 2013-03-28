@@ -2111,11 +2111,9 @@ WebInspector.TextEditorMainPanel.prototype = {
         this.beginDomUpdates();
         try {
             var syntaxHighlight = this._textModel.getAttribute(lineNumber, "highlight");
-            if (!syntaxHighlight)
-                return;
 
             var line = this._textModel.line(lineNumber);
-            var ranges = syntaxHighlight.ranges;
+            var ranges = syntaxHighlight ? syntaxHighlight.ranges : [];
             this._renderRanges(lineRow, line, ranges, this._showWhitespace);
 
             if (overlayHighlight)
