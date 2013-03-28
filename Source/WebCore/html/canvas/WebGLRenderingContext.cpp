@@ -1463,6 +1463,11 @@ void WebGLRenderingContext::copyTexSubImage2D(GC3Denum target, GC3Dint level, GC
         return;
     if (!validateSize("copyTexSubImage2D", xoffset, yoffset) || !validateSize("copyTexSubImage2D", width, height))
         return;
+    // Before checking if it is in the range, check if overflow happens first.
+    if (xoffset + width < 0 || yoffset + height < 0) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "copyTexSubImage2D", "bad dimensions");
+        return;
+    }
     if (xoffset + width > tex->getWidth(target, level) || yoffset + height > tex->getHeight(target, level)) {
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "copyTexSubImage2D", "rectangle out of range");
         return;
@@ -3681,17 +3686,10 @@ void WebGLRenderingContext::texImage2DBase(GC3Denum target, GC3Dint level, GC3De
 {
     // FIXME: For now we ignore any errors returned
     ec = 0;
-    if (!validateTexFuncParameters("texImage2D", NotTexSubImage2D, target, level, internalformat, width, height, border, format, type))
-        return;
     WebGLTexture* tex = validateTextureBinding("texImage2D", target, true);
-    if (!tex)
-        return;
-    if (!isGLES2NPOTStrict()) {
-        if (level && WebGLTexture::isNPOT(width, height)) {
-            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texImage2D", "level > 0 not power of 2");
-            return;
-        }
-    }
+    ASSERT(validateTexFuncParameters("texImage2D", NotTexSubImage2D, target, level, internalformat, width, height, border, format, type));
+    ASSERT(tex);
+    ASSERT(!level || !WebGLTexture::isNPOT(width, height));
     if (!pixels) {
         // Note: Chromium's OpenGL implementation clears textures and isResourceSafe() is therefore true.
         // For other implementations, if they are using ANGLE_depth_texture, ANGLE depth textures
@@ -3706,8 +3704,7 @@ void WebGLRenderingContext::texImage2DBase(GC3Denum target, GC3Dint level, GC3De
                 return;
         }
     } else {
-        if (!validateSettableTexFormat("texImage2D", internalformat))
-            return;
+        ASSERT(validateSettableTexFormat("texImage2D", internalformat));
         m_context->texImage2D(target, level, internalformat, width, height,
                               border, format, type, pixels);
     }
@@ -3718,8 +3715,6 @@ void WebGLRenderingContext::texImage2DBase(GC3Denum target, GC3Dint level, GC3De
 void WebGLRenderingContext::texImage2DImpl(GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Denum format, GC3Denum type, Image* image, GraphicsContext3D::ImageHtmlDomSource domSource, bool flipY, bool premultiplyAlpha, ExceptionCode& ec)
 {
     ec = 0;
-    if (!validateSettableTexFormat("texImage2D", internalformat))
-        return;
     Vector<uint8_t> data;
     GraphicsContext3D::ImageExtractor imageExtractor(image, domSource, premultiplyAlpha, m_unpackColorspaceConversion == GraphicsContext3D::NONE);
     if (!imageExtractor.extractSucceeded()) {
@@ -3747,11 +3742,62 @@ void WebGLRenderingContext::texImage2DImpl(GC3Denum target, GC3Dint level, GC3De
         m_context->pixelStorei(GraphicsContext3D::UNPACK_ALIGNMENT, m_unpackAlignment);
 }
 
+bool WebGLRenderingContext::validateTexFunc(const char* functionName, TexFuncValidationFunctionType functionType, TexFuncValidationSourceType sourceType, GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, GC3Dint xoffset, GC3Dint yoffset)
+{
+    // FIXME: Uploading {ImageData, HTMLImageElement, HTMLCanvasElement, HTMLVideoElement} to half floating point texture is not supported yet.
+    // See https://bugs.webkit.org/show_bug.cgi?id=110936.
+    if (sourceType != SourceArrayBufferView && type == GraphicsContext3D::HALF_FLOAT_OES) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "Operation not supported yet");
+        return false;
+    }
+
+    if (!validateTexFuncParameters(functionName, functionType, target, level, internalformat, width, height, border, format, type))
+        return false;
+
+    WebGLTexture* texture = validateTextureBinding(functionName, target, true);
+    if (!texture)
+        return false;
+
+    if (functionType == NotTexSubImage2D) {
+        if (level && WebGLTexture::isNPOT(width, height)) {
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "level > 0 not power of 2");
+            return false;
+        }
+        // For SourceArrayBufferView, function validateTexFuncData() would handle whether to validate the SettableTexFormat
+        // by checking if the ArrayBufferView is null or not.
+        if (sourceType != SourceArrayBufferView) {
+            if (!validateSettableTexFormat(functionName, format))
+                return false;
+        }
+    } else {
+        if (!validateSettableTexFormat(functionName, format))
+            return false;
+        if (!validateSize(functionName, xoffset, yoffset))
+            return false;
+        // Before checking if it is in the range, check if overflow happens first.
+        if (xoffset + width < 0 || yoffset + height < 0) {
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "bad dimensions");
+            return false;
+        }
+        if (xoffset + width > texture->getWidth(target, level) || yoffset + height > texture->getHeight(target, level)) {
+            synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "dimensions out of range");
+            return false;
+        }
+        if (texture->getInternalFormat(target, level) != format || texture->getType(target, level) != type) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "type and format do not match texture");
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat,
                                        GC3Dsizei width, GC3Dsizei height, GC3Dint border,
                                        GC3Denum format, GC3Denum type, ArrayBufferView* pixels, ExceptionCode& ec)
 {
-    if (isContextLost() || !validateTexFuncData("texImage2D", level, width, height, format, type, pixels, NullAllowed))
+    if (isContextLost() || !validateTexFuncData("texImage2D", level, width, height, format, type, pixels, NullAllowed)
+        || !validateTexFunc("texImage2D", NotTexSubImage2D, SourceArrayBufferView, target, level, internalformat, width, height, border, format, type, 0, 0))
         return;
     void* data = pixels ? pixels->baseAddress() : 0;
     Vector<uint8_t> tempData;
@@ -3778,22 +3824,9 @@ void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum 
                                        GC3Denum format, GC3Denum type, ImageData* pixels, ExceptionCode& ec)
 {
     ec = 0;
-    if (isContextLost())
+    if (isContextLost() || !pixels || !validateTexFunc("texImage2D", NotTexSubImage2D, SourceImageData, target, level, internalformat, pixels->width(), pixels->height(), 0, format, type, 0, 0))
         return;
     Vector<uint8_t> data;
-    if (!pixels)
-        return;
-    if (!validateTexFuncFormatAndType("texImage2D", format, type, level))
-        return;
-    if (!validateSettableTexFormat("texImage2D", format))
-        return;
-    // FIXME: Uploading ImageData to half floating point texture is not supported yet
-    // https://bugs.webkit.org/show_bug.cgi?id=110936
-    if (type == GraphicsContext3D::HALF_FLOAT_OES) {
-        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "texImage2D", "Operation not supported yet");
-        return;
-    }
-
     bool needConversion = true;
     // The data from ImageData is always of format RGBA8.
     // No conversion is needed if destination format is RGBA and type is USIGNED_BYTE and no Flip or Premultiply operation is required.
@@ -3816,48 +3849,21 @@ void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum 
                                        GC3Denum format, GC3Denum type, HTMLImageElement* image, ExceptionCode& ec)
 {
     ec = 0;
-    if (isContextLost())
+    if (isContextLost() || !validateHTMLImageElement("texImage2D", image, ec))
         return;
-    if (!validateHTMLImageElement("texImage2D", image))
+    Image* imageForRender = image->cachedImage()->imageForRenderer(image->renderer());
+    if (!imageForRender || !validateTexFunc("texImage2D", NotTexSubImage2D, SourceHTMLImageElement, target, level, internalformat, imageForRender->width(), imageForRender->height(), 0, format, type, 0, 0))
         return;
-    if (wouldTaintOrigin(image)) {
-        ec = SECURITY_ERR;
-        return;
-    }
-    // FIXME: Uploading ImageElement to half floating point texture is not supported yet
-    // https://bugs.webkit.org/show_bug.cgi?id=110936
-    if (type == GraphicsContext3D::HALF_FLOAT_OES) {
-        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "texImage2D", "Operation not supported yet");
-        return;
-    }
 
-    texImage2DImpl(target, level, internalformat, format, type, image->cachedImage()->imageForRenderer(image->renderer()), GraphicsContext3D::HtmlDomImage, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
+    texImage2DImpl(target, level, internalformat, format, type, imageForRender, GraphicsContext3D::HtmlDomImage, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 
 void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum internalformat,
                                        GC3Denum format, GC3Denum type, HTMLCanvasElement* canvas, ExceptionCode& ec)
 {
     ec = 0;
-    if (isContextLost())
+    if (isContextLost() || !validateHTMLCanvasElement("texImage2D", canvas, ec) || !validateTexFunc("texImage2D", NotTexSubImage2D, SourceHTMLCanvasElement, target, level, internalformat, canvas->width(), canvas->height(), 0, format, type, 0, 0))
         return;
-    if (!canvas || !canvas->buffer()) {
-        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texImage2D", "no canvas");
-        return;
-    }
-    if (wouldTaintOrigin(canvas)) {
-        ec = SECURITY_ERR;
-        return;
-    }
-    if (!validateTexFuncFormatAndType("texImage2D", format, type, level))
-        return;
-    if (!validateSettableTexFormat("texImage2D", format))
-        return;
-    // FIXME: Uploading HTMLCanvasElement to half floating point texture is not supported yet
-    // https://bugs.webkit.org/show_bug.cgi?id=110936
-    if (type == GraphicsContext3D::HALF_FLOAT_OES) {
-        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "texImage2D", "Operation not supported yet");
-        return;
-    }
 
     WebGLTexture* texture = validateTextureBinding("texImage2D", target, true);
     // If possible, copy from the canvas element directly to the texture
@@ -3901,19 +3907,8 @@ void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum 
                                        GC3Denum format, GC3Denum type, HTMLVideoElement* video, ExceptionCode& ec)
 {
     ec = 0;
-    if (isContextLost())
-        return;
-    if (!video || !video->videoWidth() || !video->videoHeight()) {
-        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texImage2D", "no video");
-        return;
-    }
-    if (wouldTaintOrigin(video)) {
-        ec = SECURITY_ERR;
-        return;
-    }
-    if (!validateTexFuncFormatAndType("texImage2D", format, type, level))
-        return;
-    if (!validateSettableTexFormat("texImage2D", format))
+    if (isContextLost() || !validateHTMLVideoElement("texImage2D", video, ec)
+        || !validateTexFunc("texImage2D", NotTexSubImage2D, SourceHTMLVideoElement, target, level, internalformat, video->videoWidth(), video->videoHeight(), 0, format, type, 0, 0))
         return;
 
     // Go through the fast path doing a GPU-GPU textures copy without a readback to system memory if possible.
@@ -3937,13 +3932,6 @@ void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum 
     RefPtr<Image> image = videoFrameToImage(video, ImageBuffer::fastCopyImageMode(), ec);
     if (!image)
         return;
-    // FIXME: Uploading HTMLVideoElement to half floating point texture is not supported yet
-    // https://bugs.webkit.org/show_bug.cgi?id=110936
-    if (type == GraphicsContext3D::HALF_FLOAT_OES) {
-        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "texImage2D", "Operation not supported yet");
-        return;
-    }
-
     texImage2DImpl(target, level, internalformat, format, type, image.get(), GraphicsContext3D::HtmlDomVideo, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 #endif
@@ -4001,25 +3989,21 @@ void WebGLRenderingContext::texSubImage2DBase(GC3Denum target, GC3Dint level, GC
 {
     // FIXME: For now we ignore any errors returned
     ec = 0;
-    if (isContextLost())
-        return;
-    if (!validateTexFuncParameters("texSubImage2D", TexSubImage2D, target, level, format, width, height, 0, format, type))
-        return;
-    if (!validateSize("texSubImage2D", xoffset, yoffset))
-        return;
-    if (!validateSettableTexFormat("texSubImage2D", format))
-        return;
+    ASSERT(!isContextLost());
+    ASSERT(validateTexFuncParameters("texSubImage2D", TexSubImage2D, target, level, format, width, height, 0, format, type));
+    ASSERT(validateSize("texSubImage2D", xoffset, yoffset));
+    ASSERT(validateSettableTexFormat("texSubImage2D", format));
     WebGLTexture* tex = validateTextureBinding("texSubImage2D", target, true);
-    if (!tex)
-        return;
-    if (xoffset + width > tex->getWidth(target, level) || yoffset + height > tex->getHeight(target, level)) {
-        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texSubImage2D", "dimensions out of range");
+    if (!tex) {
+        ASSERT_NOT_REACHED();
         return;
     }
-    if (tex->getInternalFormat(target, level) != format || tex->getType(target, level) != type) {
-        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "texSubImage2D", "type and format do not match texture");
-        return;
-    }
+    ASSERT((xoffset + width) >= 0);
+    ASSERT((yoffset + height) >= 0);
+    ASSERT(tex->getWidth(target, level) >= (xoffset + width));
+    ASSERT(tex->getHeight(target, level) >= (yoffset + height));
+    ASSERT(tex->getInternalFormat(target, level) == format);
+    ASSERT(tex->getType(target, level) == type);
     m_context->texSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
     cleanupAfterGraphicsCall(false);
 }
@@ -4027,12 +4011,6 @@ void WebGLRenderingContext::texSubImage2DBase(GC3Denum target, GC3Dint level, GC
 void WebGLRenderingContext::texSubImage2DImpl(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Denum format, GC3Denum type, Image* image, GraphicsContext3D::ImageHtmlDomSource domSource, bool flipY, bool premultiplyAlpha, ExceptionCode& ec)
 {
     ec = 0;
-    if (isContextLost())
-        return;
-    if (!validateTexFuncFormatAndType("texSubImage2D", format, type, level))
-        return;
-    if (!validateSettableTexFormat("texSubImage2D", format))
-        return;
     Vector<uint8_t> data;
     GraphicsContext3D::ImageExtractor imageExtractor(image, domSource, premultiplyAlpha, m_unpackColorspaceConversion == GraphicsContext3D::NONE);  
     if (!imageExtractor.extractSucceeded()) {
@@ -4064,7 +4042,8 @@ void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Din
                                           GC3Dsizei width, GC3Dsizei height,
                                           GC3Denum format, GC3Denum type, ArrayBufferView* pixels, ExceptionCode& ec)
 {
-    if (isContextLost() || !validateTexFuncData("texSubImage2D", level, width, height, format, type, pixels, NullNotAllowed))
+    if (isContextLost() || !validateTexFuncData("texSubImage2D", level, width, height, format, type, pixels, NullNotAllowed)
+        || !validateTexFunc("texSubImage2D", TexSubImage2D, SourceArrayBufferView, target, level, format, width, height, 0, format, type, xoffset, yoffset))
         return;
     void* data = pixels->baseAddress();
     Vector<uint8_t> tempData;
@@ -4090,20 +4069,8 @@ void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Din
                                           GC3Denum format, GC3Denum type, ImageData* pixels, ExceptionCode& ec)
 {
     ec = 0;
-    if (isContextLost())
+    if (isContextLost() || !pixels || !validateTexFunc("texSubImage2D", TexSubImage2D, SourceImageData, target, level, format,  pixels->width(), pixels->height(), 0, format, type, xoffset, yoffset))
         return;
-    if (!pixels)
-        return;
-    if (!validateTexFuncFormatAndType("texSubImage2D", format, type, level))
-        return;
-    if (!validateSettableTexFormat("texSubImage2D", format))
-        return;
-    // FIXME: Uploading ImageData to half floating point texture is not supported yet
-    // https://bugs.webkit.org/show_bug.cgi?id=110936
-    if (type == GraphicsContext3D::HALF_FLOAT_OES) {
-        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "texSubImage2D", "Operation not supported yet");
-        return;
-    }
 
     Vector<uint8_t> data;
     bool needConversion = true;
@@ -4128,48 +4095,22 @@ void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Din
                                           GC3Denum format, GC3Denum type, HTMLImageElement* image, ExceptionCode& ec)
 {
     ec = 0;
-    if (isContextLost())
+    if (isContextLost() || !validateHTMLImageElement("texSubImage2D", image, ec))
         return;
-    if (!validateHTMLImageElement("texSubImage2D", image))
+    Image* imageForRender = image->cachedImage()->imageForRenderer(image->renderer());
+    if (!imageForRender || !validateTexFunc("texSubImage2D", TexSubImage2D, SourceHTMLImageElement, target, level, format, imageForRender->width(), imageForRender->height(), 0, format, type, xoffset, yoffset))
         return;
-    if (wouldTaintOrigin(image)) {
-        ec = SECURITY_ERR;
-        return;
-    }
-    // FIXME: Uploading HTMLImageElement to half floating point texture is not supported yet
-    // https://bugs.webkit.org/show_bug.cgi?id=110936
-    if (type == GraphicsContext3D::HALF_FLOAT_OES) {
-        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "texSubImage2D", "Operation not supported yet");
-        return;
-    }
 
-    texSubImage2DImpl(target, level, xoffset, yoffset, format, type, image->cachedImage()->imageForRenderer(image->renderer()), GraphicsContext3D::HtmlDomImage, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
+    texSubImage2DImpl(target, level, xoffset, yoffset, format, type, imageForRender, GraphicsContext3D::HtmlDomImage, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 
 void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset,
                                           GC3Denum format, GC3Denum type, HTMLCanvasElement* canvas, ExceptionCode& ec)
 {
     ec = 0;
-    if (isContextLost())
+    if (isContextLost() || !validateHTMLCanvasElement("texSubImage2D", canvas, ec)
+        || !validateTexFunc("texSubImage2D", TexSubImage2D, SourceHTMLCanvasElement, target, level, format, canvas->width(), canvas->height(), 0, format, type, xoffset, yoffset))
         return;
-    if (!canvas || !canvas->buffer()) {
-        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texSubImage2D", "no canvas");
-        return;
-    }
-    if (wouldTaintOrigin(canvas)) {
-        ec = SECURITY_ERR;
-        return;
-    }
-    if (!validateTexFuncFormatAndType("texSubImage2D", format, type, level))
-        return;
-    if (!validateSettableTexFormat("texSubImage2D", format))
-        return;
-    // FIXME: Uploading HTMLCanvasElement to half floating point texture is not supported yet
-    // https://bugs.webkit.org/show_bug.cgi?id=110936
-    if (type == GraphicsContext3D::HALF_FLOAT_OES) {
-        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "texSubImage2D", "Operation not supported yet");
-        return;
-    }
 
     RefPtr<ImageData> imageData = canvas->getImageData();
     if (imageData)
@@ -4183,32 +4124,13 @@ void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Din
                                           GC3Denum format, GC3Denum type, HTMLVideoElement* video, ExceptionCode& ec)
 {
     ec = 0;
-    if (isContextLost())
-        return;
-    if (!video || !video->videoWidth() || !video->videoHeight()) {
-        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, "texSubImage2D", "no video");
-        return;
-    }
-
-    if (wouldTaintOrigin(video)) {
-        ec = SECURITY_ERR;
-        return;
-    }
-    if (!validateTexFuncFormatAndType("texSubImage2D", format, type, level))
-        return;
-    if (!validateSettableTexFormat("texSubImage2D", format))
+    if (isContextLost() || !validateHTMLVideoElement("texSubImage2D", video, ec)
+        || !validateTexFunc("texSubImage2D", TexSubImage2D, SourceHTMLVideoElement, target, level, format, video->videoWidth(), video->videoHeight(), 0, format, type, xoffset, yoffset))
         return;
 
     RefPtr<Image> image = videoFrameToImage(video, ImageBuffer::fastCopyImageMode(), ec);
     if (!image)
         return;
-    // FIXME: Uploading HTMLVideoElement to half floating point texture is not supported yet
-    // https://bugs.webkit.org/show_bug.cgi?id=110936
-    if (type == GraphicsContext3D::HALF_FLOAT_OES) {
-        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "texSubImage2D", "Operation not supported yet");
-        return;
-    }
-
     texSubImage2DImpl(target, level, xoffset, yoffset, format, type, image.get(), GraphicsContext3D::HtmlDomVideo, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 #endif
@@ -5685,7 +5607,7 @@ WebGLBuffer* WebGLRenderingContext::validateBufferDataParameters(const char* fun
     return 0;
 }
 
-bool WebGLRenderingContext::validateHTMLImageElement(const char* functionName, HTMLImageElement* image)
+bool WebGLRenderingContext::validateHTMLImageElement(const char* functionName, HTMLImageElement* image, ExceptionCode& ec)
 {
     if (!image || !image->cachedImage()) {
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "no image");
@@ -5696,8 +5618,40 @@ bool WebGLRenderingContext::validateHTMLImageElement(const char* functionName, H
         synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "invalid image");
         return false;
     }
+    if (wouldTaintOrigin(image)) {
+        ec = SECURITY_ERR;
+        return false;
+    }
     return true;
 }
+
+bool WebGLRenderingContext::validateHTMLCanvasElement(const char* functionName, HTMLCanvasElement* canvas, ExceptionCode& ec)
+{
+    if (!canvas || !canvas->buffer()) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "no canvas");
+        return false;
+    }
+    if (wouldTaintOrigin(canvas)) {
+        ec = SECURITY_ERR;
+        return false;
+    }
+    return true;
+}
+
+#if ENABLE(VIDEO)
+bool WebGLRenderingContext::validateHTMLVideoElement(const char* functionName, HTMLVideoElement* video, ExceptionCode& ec)
+{
+    if (!video || !video->videoWidth() || !video->videoHeight()) {
+        synthesizeGLError(GraphicsContext3D::INVALID_VALUE, functionName, "no video");
+        return false;
+    }
+    if (wouldTaintOrigin(video)) {
+        ec = SECURITY_ERR;
+        return false;
+    }
+    return true;
+}
+#endif
 
 void WebGLRenderingContext::vertexAttribfImpl(const char* functionName, GC3Duint index, GC3Dsizei expectedSize, GC3Dfloat v0, GC3Dfloat v1, GC3Dfloat v2, GC3Dfloat v3)
 {

@@ -607,6 +607,19 @@ public:
         TexSubImage2D,
     };
 
+    enum TexFuncValidationSourceType {
+        SourceArrayBufferView,
+        SourceImageData,
+        SourceHTMLImageElement,
+        SourceHTMLCanvasElement,
+        SourceHTMLVideoElement,
+    };
+
+    // Helper function for tex{Sub}Image2D to check if the input format/type/level/target/width/height/border/xoffset/yoffset are valid.
+    // Otherwise, it would return quickly without doing other work.
+    bool validateTexFunc(const char* functionName, TexFuncValidationFunctionType, TexFuncValidationSourceType, GC3Denum target, GC3Dint level, GC3Denum internalformat, GC3Dsizei width,
+        GC3Dsizei height, GC3Dint border, GC3Denum format, GC3Denum type, GC3Dint xoffset, GC3Dint yoffset);
+
     // Helper function to check input parameters for functions {copy}Tex{Sub}Image.
     // Generates GL error and returns false if parameters are invalid.
     bool validateTexFuncParameters(const char* functionName,
@@ -698,8 +711,16 @@ public:
     // Return the current bound buffer to target, or 0 if parameters are invalid.
     WebGLBuffer* validateBufferDataParameters(const char* functionName, GC3Denum target, GC3Denum usage);
 
-    // Helper function for tex{Sub}Image2D to make sure image is ready.
-    bool validateHTMLImageElement(const char* functionName, HTMLImageElement*);
+    // Helper function for tex{Sub}Image2D to make sure image is ready and wouldn't taint Origin.
+    bool validateHTMLImageElement(const char* functionName, HTMLImageElement*, ExceptionCode&);
+
+    // Helper function for tex{Sub}Image2D to make sure canvas is ready and wouldn't taint Origin.
+    bool validateHTMLCanvasElement(const char* functionName, HTMLCanvasElement*, ExceptionCode&);
+
+#if ENABLE(VIDEO)
+    // Helper function for tex{Sub}Image2D to make sure video is ready wouldn't taint Origin.
+    bool validateHTMLVideoElement(const char* functionName, HTMLVideoElement*, ExceptionCode&);
+#endif
 
     // Helper functions for vertexAttribNf{v}.
     void vertexAttribfImpl(const char* functionName, GC3Duint index, GC3Dsizei expectedSize, GC3Dfloat, GC3Dfloat, GC3Dfloat, GC3Dfloat);
