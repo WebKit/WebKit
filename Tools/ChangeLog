@@ -1,3 +1,12 @@
+2013-03-28  Lucas Forschler  <lforschler@apple.com>
+
+        Disable running tests on Mac EWS until we can find a way to keep the queue at a reasonable length.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (MacEWS):
+
 2013-03-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use the right OS name on Mac EWS instead of mac-future.
