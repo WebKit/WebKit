@@ -433,6 +433,10 @@ WebInspector.SnippetScriptFile.prototype = {
         return this._isDivergingFromVM;
     },
 
+    checkMapping: function()
+    {
+    },
+
     /**
      * @return {boolean}
      */

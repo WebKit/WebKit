@@ -134,6 +134,10 @@ WebInspector.LiveEditScriptFile.prototype = {
         return false;
     },
 
+    checkMapping: function()
+    {
+    },
+
     __proto__: WebInspector.Object.prototype
 }
 

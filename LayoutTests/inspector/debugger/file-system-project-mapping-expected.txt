@@ -20,14 +20,35 @@ UISourceCode uri to url mappings:
 
 Running: testScriptFileOnReloadWithDirtyFile
 Adding file system.
+Dumping uiSourceCode and script content:
+    uiSourceCode: <foo content>
+    script: <foo content>
+  //@ sourceURL=http://localhost/html/foo.js  
+ 
  - hasDivergedFromVM: false
 Editing uiSourceCode:
  - hasDivergedFromVM: true
 Committing uiSourceCode with live edit failure:
+Dumping uiSourceCode and script content:
+    uiSourceCode: <foo content edited>
+    script: <foo content>
+  //@ sourceURL=http://localhost/html/foo.js  
+ 
+ - hasDivergedFromVM: true
+Reloading with saved but diverged uiSourceCode:
+Dumping uiSourceCode and script content:
+    uiSourceCode: <foo content edited>
+    script: <foo content>
+  //@ sourceURL=http://localhost/html/foo.js  
+ 
  - hasDivergedFromVM: true
 Editing uiSourceCode again:
  - hasDivergedFromVM: true
 Committing uiSourceCode again (with live edit success now):
+Dumping uiSourceCode and script content:
+    uiSourceCode: <foo content edited again>
+    script: <foo content edited again>
+ //@ sourceURL=http://localhost/html/foo.js
  - hasDivergedFromVM: false
 Reloading page:
  - hasDivergedFromVM: false

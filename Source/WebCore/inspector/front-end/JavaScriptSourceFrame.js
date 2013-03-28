@@ -491,6 +491,9 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         if (this._scriptFile) {
             this._scriptFile.addEventListener(WebInspector.ScriptFile.Events.DidMergeToVM, this._didMergeToVM, this);
             this._scriptFile.addEventListener(WebInspector.ScriptFile.Events.DidDivergeFromVM, this._didDivergeFromVM, this);
+    
+            if (this.loaded)
+                this._scriptFile.checkMapping();
         }
     },
 
@@ -508,6 +511,9 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             var message = messages[i];
             this.addMessageToSource(message.lineNumber, message.originalMessage);
         }
+        
+        if (this._scriptFile)
+            this._scriptFile.checkMapping();
     },
 
     /**

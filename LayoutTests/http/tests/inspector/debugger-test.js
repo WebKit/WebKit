@@ -284,7 +284,8 @@ InspectorTest.createScriptMock = function(url, startLine, startColumn, isContent
     var lineCount = source.lineEndings().length;
     var endLine = startLine + lineCount - 1;
     var endColumn = lineCount === 1 ? startColumn + source.length : source.length - source.lineEndings()[lineCount - 2];
-    var script = new WebInspector.Script(scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript);
+    var hasSourceURL = !!source.match(/\/\/@\ssourceURL=\s*(\S*?)\s*$/m);
+    var script = new WebInspector.Script(scriptId, url, startLine, startColumn, endLine, endColumn, isContentScript, null, hasSourceURL);
     script.requestContent = function(callback) { callback(source, false, "text/javascript"); };
     WebInspector.debuggerModel._registerScript(script);
     return script;
