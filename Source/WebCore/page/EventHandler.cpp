@@ -442,7 +442,24 @@ static inline bool dispatchSelectStart(Node* node)
     return node->dispatchEvent(Event::create(eventNames().selectstartEvent, true, true));
 }
 
-bool EventHandler::updateSelectionForMouseDownDispatchingSelectStart(Node* targetNode, const VisibleSelection& newSelection, TextGranularity granularity)
+static VisibleSelection expandSelectionToRespectUserSelectAll(Node* targetNode, const VisibleSelection& selection)
+{
+#if ENABLE(USERSELECT_ALL)
+    Node* rootUserSelectAll = Position::rootUserSelectAllForNode(targetNode);
+    if (!rootUserSelectAll)
+        return selection;
+
+    VisibleSelection newSelection(selection);
+    newSelection.setBase(positionBeforeNode(rootUserSelectAll).upstream(CanCrossEditingBoundary));
+    newSelection.setExtent(positionAfterNode(rootUserSelectAll).downstream(CanCrossEditingBoundary));
+
+    return newSelection;
+#else
+    return selection;
+#endif
+}
+
+bool EventHandler::updateSelectionForMouseDownDispatchingSelectStart(Node* targetNode, const VisibleSelection& selection, TextGranularity granularity)
 {
     if (Position::nodeIsUserSelectNone(targetNode))
         return false;
@@ -450,13 +467,6 @@ bool EventHandler::updateSelectionForMouseDownDispatchingSelectStart(Node* targe
     if (!dispatchSelectStart(targetNode))
         return false;
 
-    VisibleSelection selection(newSelection);
-#if ENABLE(USERSELECT_ALL)
-    if (Node* rootUserSelectAll = Position::rootUserSelectAllForNode(targetNode)) {
-        selection.setBase(positionBeforeNode(rootUserSelectAll).upstream(CanCrossEditingBoundary));
-        selection.setExtent(positionAfterNode(rootUserSelectAll).downstream(CanCrossEditingBoundary));
-    }
-#endif
     if (selection.isRange())
         m_selectionInitiationState = ExtendedSelection;
     else {
@@ -484,7 +494,7 @@ void EventHandler::selectClosestWordFromHitTestResult(const HitTestResult& resul
         if (appendTrailingWhitespace == ShouldAppendTrailingWhitespace && newSelection.isRange())
             newSelection.appendTrailingWhitespace();
 
-        updateSelectionForMouseDownDispatchingSelectStart(innerNode, newSelection, WordGranularity);
+        updateSelectionForMouseDownDispatchingSelectStart(innerNode, expandSelectionToRespectUserSelectAll(innerNode, newSelection), WordGranularity);
     }
 }
 
@@ -510,7 +520,7 @@ void EventHandler::selectClosestWordOrLinkFromMouseEvent(const MouseEventWithHit
         if (pos.isNotNull() && pos.deepEquivalent().deprecatedNode()->isDescendantOf(URLElement))
             newSelection = VisibleSelection::selectionFromContentsOfNode(URLElement);
 
-        updateSelectionForMouseDownDispatchingSelectStart(innerNode, newSelection, WordGranularity);
+        updateSelectionForMouseDownDispatchingSelectStart(innerNode, expandSelectionToRespectUserSelectAll(innerNode, newSelection), WordGranularity);
     }
 }
 
@@ -548,7 +558,7 @@ bool EventHandler::handleMousePressEventTripleClick(const MouseEventWithHitTestR
         newSelection.expandUsingGranularity(ParagraphGranularity);
     }
 
-    return updateSelectionForMouseDownDispatchingSelectStart(innerNode, newSelection, ParagraphGranularity);
+    return updateSelectionForMouseDownDispatchingSelectStart(innerNode, expandSelectionToRespectUserSelectAll(innerNode, newSelection), ParagraphGranularity);
 }
 
 static int textDistance(const Position& start, const Position& end)
@@ -586,8 +596,15 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
     TextGranularity granularity = CharacterGranularity;
 
     if (extendSelection && newSelection.isCaretOrRange()) {
-        ASSERT(m_frame->settings());
-        if (m_frame->settings()->editingBehaviorType() == EditingMacBehavior) {
+        VisibleSelection selectionInUserSelectAll = expandSelectionToRespectUserSelectAll(innerNode, VisibleSelection(pos));
+        if (selectionInUserSelectAll.isRange()) {
+            if (comparePositions(selectionInUserSelectAll.start(), newSelection.start()) < 0)
+                pos = selectionInUserSelectAll.start();
+            else if (comparePositions(newSelection.end(), selectionInUserSelectAll.end()) < 0)
+                pos = selectionInUserSelectAll.end();
+        }
+
+        if (!m_frame->editor()->behavior().shouldConsiderSelectionAsDirectional()) {
             // See <rdar://problem/3668157> REGRESSION (Mail): shift-click deselects when selection
             // was created right-to-left
             Position start = newSelection.start();
@@ -606,8 +623,8 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
             newSelection.expandUsingGranularity(m_frame->selection()->granularity());
         }
     } else
-        newSelection = VisibleSelection(visiblePos);
-    
+        newSelection = expandSelectionToRespectUserSelectAll(innerNode, visiblePos);
+
     bool handled = updateSelectionForMouseDownDispatchingSelectStart(innerNode, newSelection, granularity);
 
     if (event.event().button() == MiddleButton) {

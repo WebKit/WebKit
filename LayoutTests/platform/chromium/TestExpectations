@@ -3477,6 +3477,7 @@ webkit.org/b/100023 [ Mac ] fast/sub-pixel/file-upload-control-at-fractional-off
 webkit.org/b/100478  [ Mac ] css3/filters/custom/effect-custom.html [ ImageOnlyFailure ]
 
 webkit.org/b/100424 editing/selection/user-select-all-selection.html [ Failure ]
+webkit.org/b/100424 editing/selection/user-select-all-with-shift.html [ Failure ]
 webkit.org/b/100475 compositing/tiling/tile-cache-zoomed.html [ Failure ]
 webkit.org/b/100475 platform/chromium/virtual/softwarecompositing/tiling/tile-cache-zoomed.html [ Failure ]
 

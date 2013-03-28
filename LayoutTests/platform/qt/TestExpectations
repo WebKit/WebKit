@@ -2569,6 +2569,7 @@ webkit.org/b/102226 fast/dom/Window/open-window-min-size.html
 webkit.org/b/100196 http/tests/inspector/network/image-as-text-loading-data-url.html
 
 webkit.org/b/100424 editing/selection/user-select-all-selection.html [ Failure ]
+webkit.org/b/100424 editing/selection/user-select-all-with-shift.html [ Failure ]
 
 webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
 
