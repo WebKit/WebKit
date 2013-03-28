@@ -106,9 +106,9 @@ function extendAndLogSelection(functionToExtendSelection, direction, granularity
     return positions;
 }
 
-function extendAndLogSelectionWithinBlock(direction, granularity)
+function extendAndLogSelectionWithinBlock(direction, granularity, platform)
 {
-    return extendAndLogSelection(extendSelectionWithinBlock, direction, granularity);
+    return extendAndLogSelection({'mac': extendSelectionWithinBlock}[platform], direction, granularity);
 }
 
 function extendAndLogSelectionToEnd(direction, granularity)

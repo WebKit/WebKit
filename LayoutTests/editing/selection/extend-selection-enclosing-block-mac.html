@@ -8,6 +8,9 @@
 <body>
 <pre id="console"></pre>
 <script>
+if (window.internals)
+    internals.settings.setEditingBehavior("mac");
+
 function runSelectionTestsWithGranularityForEnclosingBlock(testNodes, granularity)
 {
     for (var i = 0; i < testNodes.length; ++i) {
@@ -15,10 +18,10 @@ function runSelectionTestsWithGranularityForEnclosingBlock(testNodes, granularit
 
         log("Test " + (i + 1) + ", LTR:\n");
         log("  Extending right: ");
-        extendAndLogSelectionWithinBlock("right", granularity);
+        extendAndLogSelectionWithinBlock("right", granularity, "mac");
 
         log("  Extending left:  ");
-        extendAndLogSelectionWithinBlock("left", granularity);
+        extendAndLogSelectionWithinBlock("left", granularity, "mac");
     }
 }
 
