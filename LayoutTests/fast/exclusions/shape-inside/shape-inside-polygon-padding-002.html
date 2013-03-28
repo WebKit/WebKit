@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.internals)
+        window.internals.settings.setCSSExclusionsEnabled(true);
+</script>
+<!--
+The shape-inside polygon is just a square rotated 90 degrees. The X and Y offsets of the inset "padded"
+boundary are padding * sqrt(2). To make the bouunds of the padded boundary work out to integral values
+(as specified for the SVG polygon), the padding distance is 10 * sqrt(2) = 14.142, which makes the X and Y
+offsets 20.
+-->
+<style>
+    #shape-inside {
+        position: relative;
+        width: 500px;
+        height: 500px;
+        -webkit-shape-inside: polygon(300px 80px, 520px 300px, 300px 520px, 80px 300px);
+        -webkit-shape-padding: 14.142px;
+        font: 100px/1 Ahem, sans-serif;
+        color: green;
+    }
+
+    #shape-outline {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 500px;
+        height: 500px;
+    }
+</style>
+</head>
+<body>
+    <p>The blue diamond outline should be filled by cross made of 5 green squares.</p>
+    <div id="shape-inside">
+        <svg id="shape-outline" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="300,100 500,300 300,500 100,300" stroke="blue" fill="none"/>
+        </svg>
+    X XXX X
+    </div>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.internals)
+        window.internals.settings.setCSSExclusionsEnabled(true);
+</script>
+<style>
+    #shape-inside {
+        position: relative;
+        width: 500px;
+        height: 500px;
+        -webkit-shape-inside: polygon(0px 0px, 400px 0px, 400px 400px, 0px 400px);
+        -webkit-shape-padding: 50px;
+        font: 100px/1 Ahem, sans-serif;
+        color: green;
+    }
+
+    #shape-outline {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 500px;
+        height: 500px;
+    }
+</style>
+</head>
+<body>
+    <p>The blue outline should be filled by 9 green squares.</p>
+    <div id="shape-inside">
+        <svg id="shape-outline" xmlns="http://www.w3.org/2000/svg">
+            <rect x="50" y="50" width="300" height="300" stroke="blue" fill="none"/>
+        </svg>
+    XXX XXX XXX
+    </div>
+</body>
+</html>

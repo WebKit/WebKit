@@ -52,6 +52,11 @@ static inline float leftSide(const FloatPoint& vertex1, const FloatPoint& vertex
     return ((point.x() - vertex1.x()) * (vertex2.y() - vertex1.y())) - ((vertex2.x() - vertex1.x()) * (point.y() - vertex1.y()));
 }
 
+static inline bool isReflexVertex(const FloatPoint& prevVertex, const FloatPoint& vertex, const FloatPoint& nextVertex)
+{
+    return leftSide(prevVertex, nextVertex, vertex) < 0;
+}
+
 static bool computeXIntersection(const FloatPolygonEdge* edgePointer, float y, EdgeIntersection& result)
 {
     const FloatPolygonEdge& edge = *edgePointer;
@@ -85,6 +90,96 @@ static bool computeXIntersection(const FloatPolygonEdge* edgePointer, float y, E
     result.point.set(intersectionX, y);
 
     return true;
+}
+
+static inline FloatSize inwardEdgeNormal(const FloatPolygonEdge& edge)
+{
+    FloatSize edgeDelta = edge.vertex2() - edge.vertex1();
+    if (!edgeDelta.width())
+        return FloatSize((edgeDelta.height() > 0 ? -1 : 1), 0);
+    if (!edgeDelta.height())
+        return FloatSize(0, (edgeDelta.width() > 0 ? 1 : -1));
+    float edgeLength = edgeDelta.diagonalLength();
+    return FloatSize(-edgeDelta.height() / edgeLength, edgeDelta.width() / edgeLength);
+}
+
+static inline FloatSize outwardEdgeNormal(const FloatPolygonEdge& edge)
+{
+    return -inwardEdgeNormal(edge);
+}
+
+static inline void appendArc(Vector<FloatPoint>& vertices, const FloatPoint& arcCenter, float arcRadius, const FloatPoint& startArcVertex, const FloatPoint& endArcVertex)
+{
+    float startAngle = atan2(startArcVertex.y() - arcCenter.y(), startArcVertex.x() - arcCenter.x());
+    float endAngle = atan2(endArcVertex.y() - arcCenter.y(), endArcVertex.x() - arcCenter.x());
+    if (startAngle < 0)
+        startAngle += piFloat * 2;
+    if (endAngle < 0)
+        endAngle += piFloat * 2;
+    const float arcSegmentCount = 5; // An odd number so that one arc vertex will be eactly arcRadius from arcCenter.
+    float angle5 = ((startAngle > endAngle) ? (startAngle - endAngle) : (startAngle + piFloat * 2 - endAngle)) / arcSegmentCount;
+
+    vertices.append(startArcVertex);
+    for (unsigned i = 1; i < arcSegmentCount; ++i) {
+        float angle = startAngle - angle5 * i;
+        vertices.append(arcCenter + FloatPoint(cos(angle) * arcRadius, sin(angle) * arcRadius));
+    }
+    vertices.append(endArcVertex);
+}
+
+static inline FloatPolygon *computeShapePaddingBounds(const FloatPolygon& polygon, float padding, WindRule fillRule)
+{
+    Vector<FloatPoint>* paddedVertices = new Vector<FloatPoint>();
+    FloatPoint intersection;
+
+    for (unsigned i = 0; i < polygon.numberOfEdges(); ++i) {
+        const FloatPolygonEdge& thisEdge = polygon.edgeAt(i);
+        const FloatPolygonEdge& prevEdge = thisEdge.previousEdge();
+        OffsetPolygonEdge thisOffsetEdge(thisEdge, inwardEdgeNormal(thisEdge) * padding);
+        OffsetPolygonEdge prevOffsetEdge(prevEdge, inwardEdgeNormal(prevEdge) * padding);
+
+        if (prevOffsetEdge.intersection(thisOffsetEdge, intersection))
+            paddedVertices->append(intersection);
+        else if (isReflexVertex(prevEdge.vertex1(), thisEdge.vertex1(), thisEdge.vertex2()))
+            appendArc(*paddedVertices, thisEdge.vertex1(), padding, prevOffsetEdge.vertex2(), thisOffsetEdge.vertex1());
+    }
+
+    return new FloatPolygon(adoptPtr(paddedVertices), fillRule);
+}
+
+// FIXME: this is just a stub (bug 112917)
+static inline FloatPolygon *computeShapeMarginBounds(const FloatPolygon& polygon, float margin, WindRule fillRule)
+{
+    UNUSED_PARAM(margin);
+
+    Vector<FloatPoint>* marginVertices = new Vector<FloatPoint>(polygon.numberOfVertices());
+    for (unsigned i = 0; i < polygon.numberOfVertices(); ++i)
+        (*marginVertices)[i] = polygon.vertexAt(i);
+    return new FloatPolygon(adoptPtr(marginVertices), fillRule);
+}
+
+const FloatPolygon& ExclusionPolygon::shapePaddingBounds() const
+{
+    ASSERT(shapePadding() >= 0);
+    if (!shapePadding())
+        return m_polygon;
+
+    if (!m_paddingBounds)
+        m_paddingBounds = adoptPtr(computeShapePaddingBounds(m_polygon, shapePadding(), m_polygon.fillRule()));
+
+    return *m_paddingBounds;
+}
+
+const FloatPolygon& ExclusionPolygon::shapeMarginBounds() const
+{
+    ASSERT(shapeMargin() >= 0);
+    if (!shapeMargin())
+        return m_polygon;
+
+    if (!m_marginBounds)
+        m_marginBounds = adoptPtr(computeShapeMarginBounds(m_polygon, shapeMargin(), m_polygon.fillRule()));
+
+    return *m_marginBounds;
 }
 
 static inline bool getVertexIntersectionVertices(const EdgeIntersection& intersection, FloatPoint& prevVertex, FloatPoint& thisVertex, FloatPoint& nextVertex)
@@ -260,21 +355,22 @@ void ExclusionPolygon::getExcludedIntervals(float logicalTop, float logicalHeigh
 
 void ExclusionPolygon::getIncludedIntervals(float logicalTop, float logicalHeight, SegmentList& result) const
 {
-    if (isEmpty())
+    const FloatPolygon& polygon = shapePaddingBounds();
+    if (polygon.isEmpty())
         return;
 
     float y1 = logicalTop;
     float y2 = y1 + logicalHeight;
 
     Vector<ExclusionInterval> y1XIntervals, y2XIntervals;
-    computeXIntersections(m_polygon, y1, true, y1XIntervals);
-    computeXIntersections(m_polygon, y2, false, y2XIntervals);
+    computeXIntersections(polygon, y1, true, y1XIntervals);
+    computeXIntersections(polygon, y2, false, y2XIntervals);
 
     Vector<ExclusionInterval> commonIntervals;
     intersectExclusionIntervals(y1XIntervals, y2XIntervals, commonIntervals);
 
     Vector<ExclusionInterval> edgeIntervals;
-    computeOverlappingEdgeXProjections(m_polygon, y1, y2, edgeIntervals);
+    computeOverlappingEdgeXProjections(polygon, y1, y2, edgeIntervals);
 
     Vector<ExclusionInterval> includedIntervals;
     subtractExclusionIntervals(commonIntervals, edgeIntervals, includedIntervals);
@@ -283,11 +379,6 @@ void ExclusionPolygon::getIncludedIntervals(float logicalTop, float logicalHeigh
         ExclusionInterval interval = includedIntervals[i];
         result.append(LineSegment(interval.x1, interval.x2));
     }
-}
-
-static inline bool isReflexVertex(const FloatPoint& prevVertex, const FloatPoint& vertex, const FloatPoint& nextVertex)
-{
-    return leftSide(prevVertex, nextVertex, vertex) < 0;
 }
 
 static inline bool firstFitRectInPolygon(const FloatPolygon& polygon, const FloatRect& rect, unsigned offsetEdgeIndex1, unsigned offsetEdgeIndex2)
@@ -316,7 +407,8 @@ static inline bool aboveOrToTheLeft(const FloatRect& r1, const FloatRect& r2)
 
 bool ExclusionPolygon::firstIncludedIntervalLogicalTop(float minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, float& result) const
 {
-    const FloatRect boundingBox = m_polygon.boundingBox();
+    const FloatPolygon& polygon = shapePaddingBounds();
+    const FloatRect boundingBox = polygon.boundingBox();
     if (minLogicalIntervalSize.width() > boundingBox.width())
         return false;
 
@@ -327,7 +419,7 @@ bool ExclusionPolygon::firstIncludedIntervalLogicalTop(float minLogicalIntervalT
         return false;
 
     Vector<const FloatPolygonEdge*> edges;
-    m_polygon.overlappingEdges(minLogicalIntervalTop, boundingBox.maxY(), edges);
+    polygon.overlappingEdges(minLogicalIntervalTop, boundingBox.maxY(), edges);
 
     float dx = minLogicalIntervalSize.width() / 2;
     float dy = minLogicalIntervalSize.height() / 2;
@@ -364,7 +456,7 @@ bool ExclusionPolygon::firstIncludedIntervalLogicalTop(float minLogicalIntervalT
                 offsetEdges.append(offsetEdgeBuffer[j]);
     }
 
-    offsetEdges.append(OffsetPolygonEdge(m_polygon, minLogicalIntervalTop, FloatSize(0, dy)));
+    offsetEdges.append(OffsetPolygonEdge(polygon, minLogicalIntervalTop, FloatSize(0, dy)));
 
     FloatPoint offsetEdgesIntersection;
     FloatRect firstFitRect;
@@ -377,8 +469,8 @@ bool ExclusionPolygon::firstIncludedIntervalLogicalTop(float minLogicalIntervalT
                 FloatRect potentialFirstFitRect(potentialFirstFitLocation, minLogicalIntervalSize);
                 if ((potentialFirstFitLocation.y() >= minLogicalIntervalTop)
                     && (!firstFitFound || aboveOrToTheLeft(potentialFirstFitRect, firstFitRect))
-                    && m_polygon.contains(offsetEdgesIntersection)
-                    && firstFitRectInPolygon(m_polygon, potentialFirstFitRect, offsetEdges[i].edgeIndex(), offsetEdges[j].edgeIndex())) {
+                    && polygon.contains(offsetEdgesIntersection)
+                    && firstFitRectInPolygon(polygon, potentialFirstFitRect, offsetEdges[i].edgeIndex(), offsetEdges[j].edgeIndex())) {
                     firstFitFound = true;
                     firstFitRect = potentialFirstFitRect;
                 }

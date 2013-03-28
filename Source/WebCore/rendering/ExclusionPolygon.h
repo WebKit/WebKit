@@ -75,6 +75,8 @@ public:
     ExclusionPolygon(PassOwnPtr<Vector<FloatPoint> > vertices, WindRule fillRule)
         : ExclusionShape()
         , m_polygon(vertices, fillRule)
+        , m_marginBounds(nullptr)
+        , m_paddingBounds(nullptr)
     {
     }
 
@@ -84,8 +86,13 @@ public:
     virtual void getIncludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const OVERRIDE;
     virtual bool firstIncludedIntervalLogicalTop(float minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, float&) const OVERRIDE;
 
+    const FloatPolygon& shapeMarginBounds() const;
+    const FloatPolygon& shapePaddingBounds() const;
+
 private:
     FloatPolygon m_polygon;
+    mutable OwnPtr<FloatPolygon> m_marginBounds;
+    mutable OwnPtr<FloatPolygon> m_paddingBounds;
 };
 
 } // namespace WebCore

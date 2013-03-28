@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    #shape-inside {
+        position: relative;
+    }
+
+    #shape-outline {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 500px;
+        height: 500px;
+    }
+
+    #shape-content {
+        position: absolute;
+        top: 150px;
+        left: 150px;
+        width: 350px;
+        height: 350px;
+        font: 100px/1 Ahem, sans-serif;
+        color: green;
+    }
+</style>
+</head>
+<body>
+    <p>The blue diamond outline should be filled by cross made of 5 green squares.</p>
+    <div id="shape-inside">
+        <div id="shape-content">&nbsp;X<br/>XXX<br/>&nbsp;X</div>
+        <svg id="shape-outline" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="300,100 500,300 300,500 100,300" stroke="blue" fill="none"/>
+        </svg>
+    </div>
+</body>
+</html>
