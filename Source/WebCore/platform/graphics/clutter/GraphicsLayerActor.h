@@ -81,7 +81,6 @@ void graphicsLayerActorRemoveAll(GraphicsLayerActor*);
 cairo_surface_t* graphicsLayerActorGetSurface(GraphicsLayerActor*);
 void graphicsLayerActorSetSurface(GraphicsLayerActor*, cairo_surface_t*);
 void graphicsLayerActorInvalidateRectangle(GraphicsLayerActor*, const WebCore::FloatRect&);
-void graphicsLayerActorSetTransform(GraphicsLayerActor*, const CoglMatrix*);
 void graphicsLayerActorSetAnchorPoint(GraphicsLayerActor*, float, float, float);
 void graphicsLayerActorGetAnchorPoint(GraphicsLayerActor*, float*, float*, float*);
 void graphicsLayerActorSetScrollPosition(GraphicsLayerActor*, float, float); 

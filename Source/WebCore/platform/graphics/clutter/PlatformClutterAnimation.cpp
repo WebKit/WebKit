@@ -611,9 +611,9 @@ void PlatformClutterAnimation::addTransformTransition()
         ASSERT_NOT_REACHED();
     }
 
-    // If clutter covers valueFunction type animations, we should release keeping transform matrix.
-    // Otherwise, the transformation is applied twice unexpectedly. See graphicsLayerActorApplyTransform.
-    graphicsLayerActorSetTransform(GRAPHICS_LAYER_ACTOR(m_layer.get()), 0);
+    // FIXME: Work-around the fact that if there is a transform already set the animation fails to start.
+    // https://bugzilla.gnome.org/show_bug.cgi?id=696804
+    clutter_actor_set_transform(m_layer.get(), 0);
 }
 
 void PlatformClutterAnimation::addAnimationForKey(GraphicsLayerActor* platformLayer, const String& key)

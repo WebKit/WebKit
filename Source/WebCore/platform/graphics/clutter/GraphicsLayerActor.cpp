@@ -41,7 +41,6 @@ struct _GraphicsLayerActorPrivate {
     gboolean allocating;
 
     RefPtr<cairo_surface_t> surface;
-    CoglMatrix* matrix;
 
     PlatformClutterLayerClient* layerClient;
 
@@ -150,9 +149,6 @@ static void graphicsLayerActorDispose(GObject* object)
 
     priv->surface.clear();
 
-    if (priv->matrix)
-        cogl_matrix_free(priv->matrix);
-
     G_OBJECT_CLASS(graphics_layer_actor_parent_class)->dispose(object);
 }
 
@@ -207,29 +203,6 @@ static void graphicsLayerActorApplyTransform(ClutterActor* actor, CoglMatrix* ma
         cogl_matrix_translate(matrix, translateX, translateY, 0);
 
     CLUTTER_ACTOR_CLASS(graphics_layer_actor_parent_class)->apply_transform(actor, matrix);
-
-    if (priv->matrix) {
-        float width = 0, height = 0;
-        clutter_actor_get_size(actor, &width, &height);
-        if (width <= 1.0 || height <= 1.0)
-            return;
-
-        // The pivot of actor is a normalized value, so we need an actual anchor position
-        // in actor's local coordinate system for translating.
-        float anchorX = 0, anchorY = 0, anchorZ = 0;
-        graphicsLayerActorGetAnchorPoint(GRAPHICS_LAYER_ACTOR(actor), &anchorX, &anchorY, &anchorZ);
-        anchorX *= width;
-        anchorY *= height;
-
-        // CSS3 tranform-style can be changed on the fly, 
-        // so we have to copy priv->matrix in order to recover z-axis. 
-        CoglMatrix* localMatrix = cogl_matrix_copy(priv->matrix);
-
-        cogl_matrix_translate(matrix, anchorX, anchorY, anchorZ);
-        cogl_matrix_multiply(matrix, matrix, localMatrix);
-        cogl_matrix_translate(matrix, -anchorX, -anchorY, -anchorZ);
-        cogl_matrix_free(localMatrix);
-    }
 }
 
 static void graphicsLayerActorPaint(ClutterActor* actor)
@@ -380,26 +353,6 @@ void graphicsLayerActorInvalidateRectangle(GraphicsLayerActor* layer, const Floa
 
     // FIXME: Need to invalidate a specific area?
     clutter_content_invalidate(canvas);
-}
-
-void graphicsLayerActorSetTransform(GraphicsLayerActor* layer, const CoglMatrix* matrix) 
-{
-    bool needToRedraw = false;
-
-    GraphicsLayerActorPrivate* priv = layer->priv;
-    if (priv->matrix) {
-        cogl_matrix_free(priv->matrix);
-        needToRedraw = true;
-    }
-
-    if (matrix && !cogl_matrix_is_identity(matrix)) {
-        priv->matrix = cogl_matrix_copy(matrix);
-        needToRedraw = true;
-    } else
-        priv->matrix = 0;
-
-    if (needToRedraw)
-        clutter_actor_queue_redraw(CLUTTER_ACTOR(layer));
 }
 
 void graphicsLayerActorSetAnchorPoint(GraphicsLayerActor* layer, float x, float y, float z)

@@ -678,7 +678,7 @@ void GraphicsLayerClutter::updateLayerNames()
 void GraphicsLayerClutter::updateTransform()
 {
     CoglMatrix matrix = m_transform;
-    graphicsLayerActorSetTransform(primaryLayer(), &matrix);
+    clutter_actor_set_transform(CLUTTER_ACTOR(primaryLayer()), &matrix);
 }
 
 void GraphicsLayerClutter::updateLayerDrawsContent(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
