@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.internals)
+        window.internals.settings.setCSSExclusionsEnabled(true);
+</script>
+<style>
+    .region {
+        font: 14px Ahem, sans-serif;
+        line-height: 16px;
+        width: 300px;
+        height: 300px;
+        margin-top: 10px;
+        border: 1px solid black;
+        background-color: yellow;
+    }
+    #region_with_shape_inside {
+        border: 1px solid black;
+        -webkit-shape-inside: rectangle(50px, 0px, 200px, 150px);
+        background-color: orange;
+    }
+</style>
+</head>
+<body>
+
+<div class="region">
+      <p>Despite the passage of time, Major Quilan still suffers grief and bereavement from the death of his wife, killed during the Chelgrian civil war that resulted from the Culture's interference. <p>Quilan is offered the chance to avenge the lost Chelgrians who died in the civil war and is inducted into a plot  to strike back
+</div>
+<div id="region_with_shape_inside" class="region">
+at the Culture.</p>As part of the plot, his <p>"soulkeeper"</p> (a device normally used to store its owner's personality upon their death) is equipped with both the mind of a long-dead Chelgrian general and a device...
+</div>
+
+<p>Requires Ahem font. The content - what contains multiple nested paragraphs - flows into multiple regions, a shape-inside property is applied only on the second region. <br/>
+The content should start at the top of the second region inside a 200px (width) and 150px (height) rectangle - which has a 50px left offset - then flow into the original container.</p>
+<p>Bug <a href="http://webkit.org/b/112177">112177</a>: block children do not layout inline content correctly in a region with shape-inside set</p>
+
+</body>
+</html>

@@ -1577,6 +1577,12 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
         if (logicalHeight() + absoluteLogicalTop < exclusionShapeInsideInfo->shapeLogicalTop())
             setLogicalHeight(exclusionShapeInsideInfo->shapeLogicalTop() - absoluteLogicalTop);
     }
+
+    if (layoutState.flowThread()) {
+        // In a flow thread we need to update absoluteLogicalTop in every run to match to the current logical top increased by the height of the current line to calculate the right values for the
+        // actual shape when a line is beginning in a new region which has a shape on it. Usecase: shape-inside is applied not on the first, but on either of the following regions in the region chain.
+        absoluteLogicalTop = logicalTop() + lineHeight(layoutState.lineInfo().isFirstLine(), isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes);
+    }
 #endif
 
     while (!end.atEnd()) {
