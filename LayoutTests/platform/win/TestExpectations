@@ -2683,11 +2683,7 @@ plugins
 sputnik
 fast/xsl
 http
-fast/js
-fast/events
-fast/parser
-ietestcenter
-jquery
+ietestcenters
 media/media-fragments
 media/W3C
 
