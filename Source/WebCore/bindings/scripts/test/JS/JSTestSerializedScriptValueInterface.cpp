@@ -257,7 +257,10 @@ void setJSTestSerializedScriptValueInterfaceValue(ExecState* exec, JSObject* thi
     UNUSED_PARAM(exec);
     JSTestSerializedScriptValueInterface* castedThis = jsCast<JSTestSerializedScriptValueInterface*>(thisObject);
     TestSerializedScriptValueInterface* impl = static_cast<TestSerializedScriptValueInterface*>(castedThis->impl());
-    impl->setValue(SerializedScriptValue::create(exec, value, 0, 0));
+    RefPtr<SerializedScriptValue> nativeValue(SerializedScriptValue::create(exec, value, 0, 0));
+    if (exec->hadException())
+        return;
+    impl->setValue(nativeValue);
 }
 
 
@@ -266,7 +269,10 @@ void setJSTestSerializedScriptValueInterfaceCachedValue(ExecState* exec, JSObjec
     UNUSED_PARAM(exec);
     JSTestSerializedScriptValueInterface* castedThis = jsCast<JSTestSerializedScriptValueInterface*>(thisObject);
     TestSerializedScriptValueInterface* impl = static_cast<TestSerializedScriptValueInterface*>(castedThis->impl());
-    impl->setCachedValue(SerializedScriptValue::create(exec, value, 0, 0));
+    RefPtr<SerializedScriptValue> nativeValue(SerializedScriptValue::create(exec, value, 0, 0));
+    if (exec->hadException())
+        return;
+    impl->setCachedValue(nativeValue);
 }
 
 

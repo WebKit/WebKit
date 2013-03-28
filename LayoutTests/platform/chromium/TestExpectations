@@ -3798,3 +3798,5 @@ crbug.com/223329 [ MountainLion ] fast/writing-mode/text-orientation-basic.html 
 crbug.com/223332 svg/css/root-shadow-offscreen.svg [ ImageOnlyFailure ]
 
 webkit.org/b/113114 media/video-controls-captions.html [ Timeout ]
+
+webkit.org/b/113219 fast/dom/exception-in-binding.html [ Failure ]

@@ -339,7 +339,10 @@ void JSTestInterface::putByIndex(JSCell* cell, ExecState* exec, unsigned index, 
 void setJSTestInterfaceConstructorSupplementalStaticAttr(ExecState* exec, JSObject*, JSValue value)
 {
     UNUSED_PARAM(exec);
-    TestSupplemental::setSupplementalStaticAttr(value.isEmpty() ? String() : value.toString(exec)->value(exec));
+    const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
+    if (exec->hadException())
+        return;
+    TestSupplemental::setSupplementalStaticAttr(nativeValue);
 }
 
 #endif
@@ -350,7 +353,10 @@ void setJSTestInterfaceSupplementalStr2(ExecState* exec, JSObject* thisObject, J
     UNUSED_PARAM(exec);
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(thisObject);
     TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
-    TestSupplemental::setSupplementalStr2(impl, value.isEmpty() ? String() : value.toString(exec)->value(exec));
+    const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
+    if (exec->hadException())
+        return;
+    TestSupplemental::setSupplementalStr2(impl, nativeValue);
 }
 
 #endif
@@ -370,7 +376,10 @@ void setJSTestInterfaceSupplementalNode(ExecState* exec, JSObject* thisObject, J
     UNUSED_PARAM(exec);
     JSTestInterface* castedThis = jsCast<JSTestInterface*>(thisObject);
     TestInterface* impl = static_cast<TestInterface*>(castedThis->impl());
-    TestSupplemental::setSupplementalNode(impl, toNode(value));
+    Node* nativeValue(toNode(value));
+    if (exec->hadException())
+        return;
+    TestSupplemental::setSupplementalNode(impl, nativeValue);
 }
 
 #endif

@@ -1076,7 +1076,10 @@ void JSTestObj::put(JSCell* cell, ExecState* exec, PropertyName propertyName, JS
 void setJSTestObjConstructorStaticStringAttr(ExecState* exec, JSObject*, JSValue value)
 {
     UNUSED_PARAM(exec);
-    TestObj::setStaticStringAttr(value.isEmpty() ? String() : value.toString(exec)->value(exec));
+    const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
+    if (exec->hadException())
+        return;
+    TestObj::setStaticStringAttr(nativeValue);
 }
 
 
@@ -1085,12 +1088,12 @@ void setJSTestObjEnumAttr(ExecState* exec, JSObject* thisObject, JSValue value)
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    const String string = value.isEmpty() ? String() : value.toString(exec)->value(exec);
+    const String nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
     if (exec->hadException())
         return;
-    if (string != "" && string != "EnumValue1" && string != "EnumValue2" && string != "EnumValue3")
+    if (nativeValue != "" && nativeValue != "EnumValue1" && nativeValue != "EnumValue2" && nativeValue != "EnumValue3")
         return;
-    impl->setEnumAttr(string);
+    impl->setEnumAttr(nativeValue);
 }
 
 
@@ -1099,7 +1102,10 @@ void setJSTestObjShortAttr(ExecState* exec, JSObject* thisObject, JSValue value)
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setShortAttr(toInt32(exec, value, NormalConversion));
+    short nativeValue(toInt32(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setShortAttr(nativeValue);
 }
 
 
@@ -1108,7 +1114,10 @@ void setJSTestObjUnsignedShortAttr(ExecState* exec, JSObject* thisObject, JSValu
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setUnsignedShortAttr(toUInt32(exec, value, NormalConversion));
+    unsigned short nativeValue(toUInt32(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setUnsignedShortAttr(nativeValue);
 }
 
 
@@ -1117,7 +1126,10 @@ void setJSTestObjLongAttr(ExecState* exec, JSObject* thisObject, JSValue value)
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setLongAttr(toInt32(exec, value, NormalConversion));
+    int nativeValue(toInt32(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setLongAttr(nativeValue);
 }
 
 
@@ -1126,7 +1138,10 @@ void setJSTestObjLongLongAttr(ExecState* exec, JSObject* thisObject, JSValue val
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setLongLongAttr(toInt64(exec, value, NormalConversion));
+    long long nativeValue(toInt64(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setLongLongAttr(nativeValue);
 }
 
 
@@ -1135,7 +1150,10 @@ void setJSTestObjUnsignedLongLongAttr(ExecState* exec, JSObject* thisObject, JSV
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setUnsignedLongLongAttr(toUInt64(exec, value, NormalConversion));
+    unsigned long long nativeValue(toUInt64(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setUnsignedLongLongAttr(nativeValue);
 }
 
 
@@ -1144,7 +1162,10 @@ void setJSTestObjStringAttr(ExecState* exec, JSObject* thisObject, JSValue value
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setStringAttr(value.isEmpty() ? String() : value.toString(exec)->value(exec));
+    const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
+    if (exec->hadException())
+        return;
+    impl->setStringAttr(nativeValue);
 }
 
 
@@ -1153,7 +1174,10 @@ void setJSTestObjTestObjAttr(ExecState* exec, JSObject* thisObject, JSValue valu
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setTestObjAttr(toTestObj(value));
+    TestObj* nativeValue(toTestObj(value));
+    if (exec->hadException())
+        return;
+    impl->setTestObjAttr(nativeValue);
 }
 
 
@@ -1162,7 +1186,10 @@ void setJSTestObjXMLObjAttr(ExecState* exec, JSObject* thisObject, JSValue value
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setXMLObjAttr(toTestObj(value));
+    TestObj* nativeValue(toTestObj(value));
+    if (exec->hadException())
+        return;
+    impl->setXMLObjAttr(nativeValue);
 }
 
 
@@ -1171,7 +1198,10 @@ void setJSTestObjCreate(ExecState* exec, JSObject* thisObject, JSValue value)
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setCreate(value.toBoolean(exec));
+    bool nativeValue(value.toBoolean(exec));
+    if (exec->hadException())
+        return;
+    impl->setCreate(nativeValue);
 }
 
 
@@ -1180,7 +1210,10 @@ void setJSTestObjReflectedStringAttr(ExecState* exec, JSObject* thisObject, JSVa
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setAttribute(WebCore::HTMLNames::reflectedstringattrAttr, valueToStringWithNullCheck(exec, value));
+    const String& nativeValue(valueToStringWithNullCheck(exec, value));
+    if (exec->hadException())
+        return;
+    impl->setAttribute(WebCore::HTMLNames::reflectedstringattrAttr, nativeValue);
 }
 
 
@@ -1189,7 +1222,10 @@ void setJSTestObjReflectedIntegralAttr(ExecState* exec, JSObject* thisObject, JS
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr, toInt32(exec, value, NormalConversion));
+    int nativeValue(toInt32(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr, nativeValue);
 }
 
 
@@ -1198,7 +1234,10 @@ void setJSTestObjReflectedUnsignedIntegralAttr(ExecState* exec, JSObject* thisOb
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr, toUInt32(exec, value, NormalConversion));
+    unsigned nativeValue(toUInt32(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr, nativeValue);
 }
 
 
@@ -1207,7 +1246,10 @@ void setJSTestObjReflectedBooleanAttr(ExecState* exec, JSObject* thisObject, JSV
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setBooleanAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr, value.toBoolean(exec));
+    bool nativeValue(value.toBoolean(exec));
+    if (exec->hadException())
+        return;
+    impl->setBooleanAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr, nativeValue);
 }
 
 
@@ -1216,7 +1258,10 @@ void setJSTestObjReflectedURLAttr(ExecState* exec, JSObject* thisObject, JSValue
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setAttribute(WebCore::HTMLNames::reflectedurlattrAttr, valueToStringWithNullCheck(exec, value));
+    const String& nativeValue(valueToStringWithNullCheck(exec, value));
+    if (exec->hadException())
+        return;
+    impl->setAttribute(WebCore::HTMLNames::reflectedurlattrAttr, nativeValue);
 }
 
 
@@ -1225,7 +1270,10 @@ void setJSTestObjReflectedStringAttr(ExecState* exec, JSObject* thisObject, JSVa
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setAttribute(WebCore::HTMLNames::customContentStringAttrAttr, valueToStringWithNullCheck(exec, value));
+    const String& nativeValue(valueToStringWithNullCheck(exec, value));
+    if (exec->hadException())
+        return;
+    impl->setAttribute(WebCore::HTMLNames::customContentStringAttrAttr, nativeValue);
 }
 
 
@@ -1234,7 +1282,10 @@ void setJSTestObjReflectedCustomIntegralAttr(ExecState* exec, JSObject* thisObje
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr, toInt32(exec, value, NormalConversion));
+    int nativeValue(toInt32(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr, nativeValue);
 }
 
 
@@ -1243,7 +1294,10 @@ void setJSTestObjReflectedCustomBooleanAttr(ExecState* exec, JSObject* thisObjec
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setBooleanAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr, value.toBoolean(exec));
+    bool nativeValue(value.toBoolean(exec));
+    if (exec->hadException())
+        return;
+    impl->setBooleanAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr, nativeValue);
 }
 
 
@@ -1252,7 +1306,10 @@ void setJSTestObjReflectedCustomURLAttr(ExecState* exec, JSObject* thisObject, J
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setAttribute(WebCore::HTMLNames::customContentURLAttrAttr, valueToStringWithNullCheck(exec, value));
+    const String& nativeValue(valueToStringWithNullCheck(exec, value));
+    if (exec->hadException())
+        return;
+    impl->setAttribute(WebCore::HTMLNames::customContentURLAttrAttr, nativeValue);
 }
 
 
@@ -1261,7 +1318,10 @@ void setJSTestObjTypedArrayAttr(ExecState* exec, JSObject* thisObject, JSValue v
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setTypedArrayAttr(toFloat32Array(value));
+    Float32Array* nativeValue(toFloat32Array(value));
+    if (exec->hadException())
+        return;
+    impl->setTypedArrayAttr(nativeValue);
 }
 
 
@@ -1270,7 +1330,10 @@ void setJSTestObjAttrWithGetterException(ExecState* exec, JSObject* thisObject, 
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setAttrWithGetterException(toInt32(exec, value, NormalConversion));
+    int nativeValue(toInt32(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setAttrWithGetterException(nativeValue);
 }
 
 
@@ -1280,7 +1343,10 @@ void setJSTestObjAttrWithSetterException(ExecState* exec, JSObject* thisObject, 
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     ExceptionCode ec = 0;
-    impl->setAttrWithSetterException(toInt32(exec, value, NormalConversion), ec);
+    int nativeValue(toInt32(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setAttrWithSetterException(nativeValue, ec);
     setDOMException(exec, ec);
 }
 
@@ -1290,7 +1356,10 @@ void setJSTestObjStringAttrWithGetterException(ExecState* exec, JSObject* thisOb
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setStringAttrWithGetterException(value.isEmpty() ? String() : value.toString(exec)->value(exec));
+    const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
+    if (exec->hadException())
+        return;
+    impl->setStringAttrWithGetterException(nativeValue);
 }
 
 
@@ -1300,7 +1369,10 @@ void setJSTestObjStringAttrWithSetterException(ExecState* exec, JSObject* thisOb
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
     ExceptionCode ec = 0;
-    impl->setStringAttrWithSetterException(value.isEmpty() ? String() : value.toString(exec)->value(exec), ec);
+    const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
+    if (exec->hadException())
+        return;
+    impl->setStringAttrWithSetterException(nativeValue, ec);
     setDOMException(exec, ec);
 }
 
@@ -1317,7 +1389,10 @@ void setJSTestObjWithScriptStateAttribute(ExecState* exec, JSObject* thisObject,
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setWithScriptStateAttribute(exec, toInt32(exec, value, NormalConversion));
+    int nativeValue(toInt32(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setWithScriptStateAttribute(exec, nativeValue);
 }
 
 
@@ -1326,10 +1401,13 @@ void setJSTestObjWithScriptExecutionContextAttribute(ExecState* exec, JSObject* 
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    TestObj* nativeValue(toTestObj(value));
+    if (exec->hadException())
+        return;
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return;
-    impl->setWithScriptExecutionContextAttribute(scriptContext, toTestObj(value));
+    impl->setWithScriptExecutionContextAttribute(scriptContext, nativeValue);
 }
 
 
@@ -1338,7 +1416,10 @@ void setJSTestObjWithScriptStateAttributeRaises(ExecState* exec, JSObject* thisO
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setWithScriptStateAttributeRaises(exec, toTestObj(value));
+    TestObj* nativeValue(toTestObj(value));
+    if (exec->hadException())
+        return;
+    impl->setWithScriptStateAttributeRaises(exec, nativeValue);
 }
 
 
@@ -1347,10 +1428,13 @@ void setJSTestObjWithScriptExecutionContextAttributeRaises(ExecState* exec, JSOb
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    TestObj* nativeValue(toTestObj(value));
+    if (exec->hadException())
+        return;
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return;
-    impl->setWithScriptExecutionContextAttributeRaises(scriptContext, toTestObj(value));
+    impl->setWithScriptExecutionContextAttributeRaises(scriptContext, nativeValue);
 }
 
 
@@ -1359,10 +1443,13 @@ void setJSTestObjWithScriptExecutionContextAndScriptStateAttribute(ExecState* ex
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    TestObj* nativeValue(toTestObj(value));
+    if (exec->hadException())
+        return;
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return;
-    impl->setWithScriptExecutionContextAndScriptStateAttribute(exec, scriptContext, toTestObj(value));
+    impl->setWithScriptExecutionContextAndScriptStateAttribute(exec, scriptContext, nativeValue);
 }
 
 
@@ -1371,10 +1458,13 @@ void setJSTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(ExecSta
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    TestObj* nativeValue(toTestObj(value));
+    if (exec->hadException())
+        return;
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return;
-    impl->setWithScriptExecutionContextAndScriptStateAttributeRaises(exec, scriptContext, toTestObj(value));
+    impl->setWithScriptExecutionContextAndScriptStateAttributeRaises(exec, scriptContext, nativeValue);
 }
 
 
@@ -1383,10 +1473,13 @@ void setJSTestObjWithScriptExecutionContextAndScriptStateWithSpacesAttribute(Exe
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
+    TestObj* nativeValue(toTestObj(value));
+    if (exec->hadException())
+        return;
     ScriptExecutionContext* scriptContext = jsCast<JSDOMGlobalObject*>(exec->lexicalGlobalObject())->scriptExecutionContext();
     if (!scriptContext)
         return;
-    impl->setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(exec, scriptContext, toTestObj(value));
+    impl->setWithScriptExecutionContextAndScriptStateWithSpacesAttribute(exec, scriptContext, nativeValue);
 }
 
 
@@ -1395,7 +1488,10 @@ void setJSTestObjWithScriptArgumentsAndCallStackAttribute(ExecState* exec, JSObj
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setWithScriptArgumentsAndCallStackAttribute(toTestObj(value));
+    TestObj* nativeValue(toTestObj(value));
+    if (exec->hadException())
+        return;
+    impl->setWithScriptArgumentsAndCallStackAttribute(nativeValue);
 }
 
 
@@ -1405,7 +1501,10 @@ void setJSTestObjConditionalAttr1(ExecState* exec, JSObject* thisObject, JSValue
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setConditionalAttr1(toInt32(exec, value, NormalConversion));
+    int nativeValue(toInt32(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setConditionalAttr1(nativeValue);
 }
 
 #endif
@@ -1416,7 +1515,10 @@ void setJSTestObjConditionalAttr2(ExecState* exec, JSObject* thisObject, JSValue
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setConditionalAttr2(toInt32(exec, value, NormalConversion));
+    int nativeValue(toInt32(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setConditionalAttr2(nativeValue);
 }
 
 #endif
@@ -1427,7 +1529,10 @@ void setJSTestObjConditionalAttr3(ExecState* exec, JSObject* thisObject, JSValue
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setConditionalAttr3(toInt32(exec, value, NormalConversion));
+    int nativeValue(toInt32(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setConditionalAttr3(nativeValue);
 }
 
 #endif
@@ -1467,7 +1572,10 @@ void setJSTestObjAnyAttribute(ExecState* exec, JSObject* thisObject, JSValue val
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setAnyAttribute(exec->globalData(), value);
+    ScriptValue nativeValue(exec->globalData(), value);
+    if (exec->hadException())
+        return;
+    impl->setAnyAttribute(nativeValue);
 }
 
 
@@ -1476,7 +1584,10 @@ void setJSTestObjMutablePoint(ExecState* exec, JSObject* thisObject, JSValue val
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setMutablePoint(toSVGPoint(value));
+    SVGPropertyTearOff<FloatPoint>* nativeValue(toSVGPoint(value));
+    if (exec->hadException())
+        return;
+    impl->setMutablePoint(nativeValue);
 }
 
 
@@ -1485,7 +1596,10 @@ void setJSTestObjImmutablePoint(ExecState* exec, JSObject* thisObject, JSValue v
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setImmutablePoint(toSVGPoint(value));
+    SVGPropertyTearOff<FloatPoint>* nativeValue(toSVGPoint(value));
+    if (exec->hadException())
+        return;
+    impl->setImmutablePoint(nativeValue);
 }
 
 
@@ -1494,7 +1608,10 @@ void setJSTestObjStrawberry(ExecState* exec, JSObject* thisObject, JSValue value
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setBlueberry(toInt32(exec, value, NormalConversion));
+    int nativeValue(toInt32(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setBlueberry(nativeValue);
 }
 
 
@@ -1503,7 +1620,10 @@ void setJSTestObjStrictFloat(ExecState* exec, JSObject* thisObject, JSValue valu
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setStrictFloat(value.toFloat(exec));
+    float nativeValue(value.toFloat(exec));
+    if (exec->hadException())
+        return;
+    impl->setStrictFloat(nativeValue);
 }
 
 
@@ -1512,7 +1632,10 @@ void setJSTestObjId(ExecState* exec, JSObject* thisObject, JSValue value)
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setId(toInt32(exec, value, NormalConversion));
+    int nativeValue(toInt32(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setId(nativeValue);
 }
 
 
@@ -1529,7 +1652,10 @@ void setJSTestObjNullableLongSettableAttribute(ExecState* exec, JSObject* thisOb
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setNullableLongSettableAttribute(toInt32(exec, value, NormalConversion));
+    int nativeValue(toInt32(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setNullableLongSettableAttribute(nativeValue);
 }
 
 
@@ -1538,7 +1664,10 @@ void setJSTestObjNullableStringValue(ExecState* exec, JSObject* thisObject, JSVa
     UNUSED_PARAM(exec);
     JSTestObj* castedThis = jsCast<JSTestObj*>(thisObject);
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    impl->setNullableStringValue(toInt32(exec, value, NormalConversion));
+    int nativeValue(toInt32(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setNullableStringValue(nativeValue);
 }
 
 

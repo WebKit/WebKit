@@ -280,7 +280,10 @@ void setJSTestTypedefsUnsignedLongLongAttr(ExecState* exec, JSObject* thisObject
     UNUSED_PARAM(exec);
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(thisObject);
     TestTypedefs* impl = static_cast<TestTypedefs*>(castedThis->impl());
-    impl->setUnsignedLongLongAttr(toUInt64(exec, value, NormalConversion));
+    unsigned long long nativeValue(toUInt64(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setUnsignedLongLongAttr(nativeValue);
 }
 
 
@@ -289,7 +292,10 @@ void setJSTestTypedefsImmutableSerializedScriptValue(ExecState* exec, JSObject* 
     UNUSED_PARAM(exec);
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(thisObject);
     TestTypedefs* impl = static_cast<TestTypedefs*>(castedThis->impl());
-    impl->setImmutableSerializedScriptValue(SerializedScriptValue::create(exec, value, 0, 0));
+    RefPtr<SerializedScriptValue> nativeValue(SerializedScriptValue::create(exec, value, 0, 0));
+    if (exec->hadException())
+        return;
+    impl->setImmutableSerializedScriptValue(nativeValue);
 }
 
 
@@ -298,7 +304,10 @@ void setJSTestTypedefsAttrWithGetterException(ExecState* exec, JSObject* thisObj
     UNUSED_PARAM(exec);
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(thisObject);
     TestTypedefs* impl = static_cast<TestTypedefs*>(castedThis->impl());
-    impl->setAttrWithGetterException(toInt32(exec, value, NormalConversion));
+    int nativeValue(toInt32(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setAttrWithGetterException(nativeValue);
 }
 
 
@@ -308,7 +317,10 @@ void setJSTestTypedefsAttrWithSetterException(ExecState* exec, JSObject* thisObj
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(thisObject);
     TestTypedefs* impl = static_cast<TestTypedefs*>(castedThis->impl());
     ExceptionCode ec = 0;
-    impl->setAttrWithSetterException(toInt32(exec, value, NormalConversion), ec);
+    int nativeValue(toInt32(exec, value, NormalConversion));
+    if (exec->hadException())
+        return;
+    impl->setAttrWithSetterException(nativeValue, ec);
     setDOMException(exec, ec);
 }
 
@@ -318,7 +330,10 @@ void setJSTestTypedefsStringAttrWithGetterException(ExecState* exec, JSObject* t
     UNUSED_PARAM(exec);
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(thisObject);
     TestTypedefs* impl = static_cast<TestTypedefs*>(castedThis->impl());
-    impl->setStringAttrWithGetterException(value.isEmpty() ? String() : value.toString(exec)->value(exec));
+    const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
+    if (exec->hadException())
+        return;
+    impl->setStringAttrWithGetterException(nativeValue);
 }
 
 
@@ -328,7 +343,10 @@ void setJSTestTypedefsStringAttrWithSetterException(ExecState* exec, JSObject* t
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(thisObject);
     TestTypedefs* impl = static_cast<TestTypedefs*>(castedThis->impl());
     ExceptionCode ec = 0;
-    impl->setStringAttrWithSetterException(value.isEmpty() ? String() : value.toString(exec)->value(exec), ec);
+    const String& nativeValue(value.isEmpty() ? String() : value.toString(exec)->value(exec));
+    if (exec->hadException())
+        return;
+    impl->setStringAttrWithSetterException(nativeValue, ec);
     setDOMException(exec, ec);
 }
 
