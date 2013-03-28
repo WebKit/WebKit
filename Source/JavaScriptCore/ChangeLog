@@ -1,3 +1,30 @@
+2013-03-28  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Safari hangs during test262 run in CodeCache::pruneSlowCase
+        https://bugs.webkit.org/show_bug.cgi?id=113469
+
+        Reviewed by Geoffrey Garen.
+
+        We can end up hanging for quite some time if we add a lot of small keys to the CodeCache.
+        By the time we get around to pruning the cache, we have a potentially tens or hundreds of 
+        thousands of small entries, which can cause a noticeable hang when pruning them.
+
+        To fix this issue we added a hard cap to the number of entries in the cache because we 
+        could potentially have to remove every element in the map.
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCacheMap::pruneSlowCase): We need to prune until we're both under the hard cap and the
+        capacity in bytes.
+        * runtime/CodeCache.h:
+        (CodeCacheMap):
+        (JSC::CodeCacheMap::numberOfEntries): Convenience accessor function to the number of entries in 
+        the map that does the cast to size_t of m_map.size() for us. 
+        (JSC::CodeCacheMap::canPruneQuickly): Checks that the total number is under the hard cap. We put this 
+        check inside a function to more accurately describe why we're doing the check and to abstract out 
+        the actual calculation in case we want to coalesce calls to pruneSlowCase in the future.
+        (JSC::CodeCacheMap::prune): Check the number of entries against our hard cap. If it's greater than
+        the cap then we need to drop down to pruneSlowCase.
+
 2013-03-28  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed build fix for the EFL and GTK ports.

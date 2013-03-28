@@ -47,7 +47,7 @@ void CodeCacheMap::pruneSlowCase()
     if (m_capacity < m_minCapacity)
         m_capacity = m_minCapacity;
 
-    while (m_size > m_capacity) {
+    while (m_size > m_capacity || !canPruneQuickly()) {
         MapType::iterator it = m_map.begin();
         m_size -= it->key.length();
         m_map.remove(it);

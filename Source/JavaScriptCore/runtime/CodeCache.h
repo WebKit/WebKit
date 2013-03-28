@@ -196,7 +196,8 @@ private:
     // This constant factor biases cache capacity toward allowing a minimum
     // working set to enter the cache before it starts evicting.
     static const double workingSetTime;
-    static const int64_t workingSetMax = 16000000;
+    static const int64_t workingSetMaxBytes = 16000000;
+    static const size_t workingSetMaxEntries = 2000;
 
     // This constant factor biases cache capacity toward recent activity. We
     // want to adapt to changing workloads.
@@ -207,14 +208,18 @@ private:
     // sample them, so we need to extrapolate from the ones we do sample.
     static const int64_t oldObjectSamplingMultiplier = 32;
 
+    size_t numberOfEntries() const { return static_cast<size_t>(m_map.size()); }
+    bool canPruneQuickly() const { return numberOfEntries() < workingSetMaxEntries; }
+
     void pruneSlowCase();
     void prune()
     {
-        if (m_size <= m_capacity)
+        if (m_size <= m_capacity && canPruneQuickly())
             return;
 
         if (monotonicallyIncreasingTime() - m_timeAtLastPrune < workingSetTime
-            && m_size - m_sizeAtLastPrune < workingSetMax)
+            && m_size - m_sizeAtLastPrune < workingSetMaxBytes
+            && canPruneQuickly())
                 return;
 
         pruneSlowCase();
