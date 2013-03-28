@@ -226,7 +226,7 @@ static v8::Handle<v8::Value> shortAttrAttrGetterCallback(v8::Local<v8::String> n
 static void shortAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    int v = toInt32(value);
+    V8TRYCATCH_VOID(int, v, toInt32(value));
     imp->setShortAttr(v);
     return;
 }
@@ -250,7 +250,7 @@ static v8::Handle<v8::Value> unsignedShortAttrAttrGetterCallback(v8::Local<v8::S
 static void unsignedShortAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    int v = toUInt32(value);
+    V8TRYCATCH_VOID(int, v, toUInt32(value));
     imp->setUnsignedShortAttr(v);
     return;
 }
@@ -274,7 +274,7 @@ static v8::Handle<v8::Value> longAttrAttrGetterCallback(v8::Local<v8::String> na
 static void longAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    int v = toInt32(value);
+    V8TRYCATCH_VOID(int, v, toInt32(value));
     imp->setLongAttr(v);
     return;
 }
@@ -298,7 +298,7 @@ static v8::Handle<v8::Value> longLongAttrAttrGetterCallback(v8::Local<v8::String
 static void longLongAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    long long v = toInt64(value);
+    V8TRYCATCH_VOID(long long, v, toInt64(value));
     imp->setLongLongAttr(v);
     return;
 }
@@ -322,7 +322,7 @@ static v8::Handle<v8::Value> unsignedLongLongAttrAttrGetterCallback(v8::Local<v8
 static void unsignedLongLongAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    unsigned long long v = toUInt64(value);
+    V8TRYCATCH_VOID(unsigned long long, v, toUInt64(value));
     imp->setUnsignedLongLongAttr(v);
     return;
 }
@@ -371,7 +371,7 @@ static v8::Handle<v8::Value> testObjAttrAttrGetterCallback(v8::Local<v8::String>
 static void testObjAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    TestObj* v = V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    V8TRYCATCH_VOID(TestObj*, v, V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0);
     imp->setTestObjAttr(WTF::getPtr(v));
     return;
 }
@@ -396,7 +396,7 @@ static v8::Handle<v8::Value> XMLObjAttrAttrGetterCallback(v8::Local<v8::String> 
 static void XMLObjAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    TestObj* v = V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    V8TRYCATCH_VOID(TestObj*, v, V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0);
     imp->setXMLObjAttr(WTF::getPtr(v));
     return;
 }
@@ -420,7 +420,7 @@ static v8::Handle<v8::Value> createAttrGetterCallback(v8::Local<v8::String> name
 static void createAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    bool v = value->BooleanValue();
+    V8TRYCATCH_VOID(bool, v, value->BooleanValue());
     imp->setCreate(v);
     return;
 }
@@ -468,7 +468,7 @@ static v8::Handle<v8::Value> reflectedIntegralAttrAttrGetterCallback(v8::Local<v
 static void reflectedIntegralAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    int v = toInt32(value);
+    V8TRYCATCH_VOID(int, v, toInt32(value));
     imp->setIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr, v);
     return;
 }
@@ -492,7 +492,7 @@ static v8::Handle<v8::Value> reflectedUnsignedIntegralAttrAttrGetterCallback(v8:
 static void reflectedUnsignedIntegralAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    unsigned v = toUInt32(value);
+    V8TRYCATCH_VOID(unsigned, v, toUInt32(value));
     imp->setUnsignedIntegralAttribute(WebCore::HTMLNames::reflectedunsignedintegralattrAttr, v);
     return;
 }
@@ -516,7 +516,7 @@ static v8::Handle<v8::Value> reflectedBooleanAttrAttrGetterCallback(v8::Local<v8
 static void reflectedBooleanAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    bool v = value->BooleanValue();
+    V8TRYCATCH_VOID(bool, v, value->BooleanValue());
     imp->setBooleanAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr, v);
     return;
 }
@@ -588,7 +588,7 @@ static v8::Handle<v8::Value> reflectedCustomIntegralAttrAttrGetterCallback(v8::L
 static void reflectedCustomIntegralAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    int v = toInt32(value);
+    V8TRYCATCH_VOID(int, v, toInt32(value));
     imp->setIntegralAttribute(WebCore::HTMLNames::customContentIntegralAttrAttr, v);
     return;
 }
@@ -612,7 +612,7 @@ static v8::Handle<v8::Value> reflectedCustomBooleanAttrAttrGetterCallback(v8::Lo
 static void reflectedCustomBooleanAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    bool v = value->BooleanValue();
+    V8TRYCATCH_VOID(bool, v, value->BooleanValue());
     imp->setBooleanAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr, v);
     return;
 }
@@ -660,7 +660,7 @@ static v8::Handle<v8::Value> typedArrayAttrAttrGetterCallback(v8::Local<v8::Stri
 static void typedArrayAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    Float32Array* v = V8Float32Array::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8Float32Array::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    V8TRYCATCH_VOID(Float32Array*, v, V8Float32Array::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8Float32Array::toNative(v8::Handle<v8::Object>::Cast(value)) : 0);
     imp->setTypedArrayAttr(WTF::getPtr(v));
     return;
 }
@@ -688,7 +688,7 @@ static v8::Handle<v8::Value> attrWithGetterExceptionAttrGetterCallback(v8::Local
 static void attrWithGetterExceptionAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    int v = toInt32(value);
+    V8TRYCATCH_VOID(int, v, toInt32(value));
     imp->setAttrWithGetterException(v);
     return;
 }
@@ -712,7 +712,7 @@ static v8::Handle<v8::Value> attrWithSetterExceptionAttrGetterCallback(v8::Local
 static void attrWithSetterExceptionAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    int v = toInt32(value);
+    V8TRYCATCH_VOID(int, v, toInt32(value));
     ExceptionCode ec = 0;
     imp->setAttrWithSetterException(v, ec);
     if (UNLIKELY(ec))
@@ -808,7 +808,7 @@ static v8::Handle<v8::Value> withScriptStateAttributeAttrGetterCallback(v8::Loca
 static void withScriptStateAttributeAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    int v = toInt32(value);
+    V8TRYCATCH_VOID(int, v, toInt32(value));
     ScriptState* currentState = ScriptState::current();
     if (!currentState)
         return;
@@ -839,7 +839,7 @@ static v8::Handle<v8::Value> withScriptExecutionContextAttributeAttrGetterCallba
 static void withScriptExecutionContextAttributeAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    TestObj* v = V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    V8TRYCATCH_VOID(TestObj*, v, V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0);
     ScriptExecutionContext* scriptContext = getScriptExecutionContext();
     imp->setWithScriptExecutionContextAttribute(scriptContext, WTF::getPtr(v));
     return;
@@ -874,7 +874,7 @@ static v8::Handle<v8::Value> withScriptStateAttributeRaisesAttrGetterCallback(v8
 static void withScriptStateAttributeRaisesAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    TestObj* v = V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    V8TRYCATCH_VOID(TestObj*, v, V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0);
     ScriptState* currentState = ScriptState::current();
     if (!currentState)
         return;
@@ -909,7 +909,7 @@ static v8::Handle<v8::Value> withScriptExecutionContextAttributeRaisesAttrGetter
 static void withScriptExecutionContextAttributeRaisesAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    TestObj* v = V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    V8TRYCATCH_VOID(TestObj*, v, V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0);
     ScriptExecutionContext* scriptContext = getScriptExecutionContext();
     imp->setWithScriptExecutionContextAttributeRaises(scriptContext, WTF::getPtr(v));
     return;
@@ -939,7 +939,7 @@ static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateAttributeAt
 static void withScriptExecutionContextAndScriptStateAttributeAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    TestObj* v = V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    V8TRYCATCH_VOID(TestObj*, v, V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0);
     ScriptState* currentState = ScriptState::current();
     if (!currentState)
         return;
@@ -981,7 +981,7 @@ static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateAttributeRa
 static void withScriptExecutionContextAndScriptStateAttributeRaisesAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    TestObj* v = V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    V8TRYCATCH_VOID(TestObj*, v, V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0);
     ScriptState* currentState = ScriptState::current();
     if (!currentState)
         return;
@@ -1017,7 +1017,7 @@ static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateWithSpacesA
 static void withScriptExecutionContextAndScriptStateWithSpacesAttributeAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    TestObj* v = V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    V8TRYCATCH_VOID(TestObj*, v, V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0);
     ScriptState* currentState = ScriptState::current();
     if (!currentState)
         return;
@@ -1048,7 +1048,7 @@ static v8::Handle<v8::Value> withScriptArgumentsAndCallStackAttributeAttrGetterC
 static void withScriptArgumentsAndCallStackAttributeAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    TestObj* v = V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    V8TRYCATCH_VOID(TestObj*, v, V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0);
     imp->setWithScriptArgumentsAndCallStackAttribute(WTF::getPtr(v));
     return;
 }
@@ -1178,7 +1178,7 @@ static v8::Handle<v8::Value> conditionalAttr1AttrGetterCallback(v8::Local<v8::St
 static void conditionalAttr1AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    int v = toInt32(value);
+    V8TRYCATCH_VOID(int, v, toInt32(value));
     imp->setConditionalAttr1(v);
     return;
 }
@@ -1218,7 +1218,7 @@ static v8::Handle<v8::Value> conditionalAttr2AttrGetterCallback(v8::Local<v8::St
 static void conditionalAttr2AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    int v = toInt32(value);
+    V8TRYCATCH_VOID(int, v, toInt32(value));
     imp->setConditionalAttr2(v);
     return;
 }
@@ -1258,7 +1258,7 @@ static v8::Handle<v8::Value> conditionalAttr3AttrGetterCallback(v8::Local<v8::St
 static void conditionalAttr3AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    int v = toInt32(value);
+    V8TRYCATCH_VOID(int, v, toInt32(value));
     imp->setConditionalAttr3(v);
     return;
 }
@@ -1310,7 +1310,7 @@ static v8::Handle<v8::Value> anyAttributeAttrGetterCallback(v8::Local<v8::String
 static void anyAttributeAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    ScriptValue v = ScriptValue(value);
+    V8TRYCATCH_VOID(ScriptValue, v, ScriptValue(value));
     imp->setAnyAttribute(WTF::getPtr(v));
     return;
 }
@@ -1334,7 +1334,7 @@ static v8::Handle<v8::Value> enabledAtRuntimeAttr1AttrGetterCallback(v8::Local<v
 static void enabledAtRuntimeAttr1AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    int v = toInt32(value);
+    V8TRYCATCH_VOID(int, v, toInt32(value));
     imp->setEnabledAtRuntimeAttr1(v);
     return;
 }
@@ -1358,7 +1358,7 @@ static v8::Handle<v8::Value> enabledAtRuntimeAttr2AttrGetterCallback(v8::Local<v
 static void enabledAtRuntimeAttr2AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    int v = toInt32(value);
+    V8TRYCATCH_VOID(int, v, toInt32(value));
     imp->setEnabledAtRuntimeAttr2(v);
     return;
 }
@@ -1382,7 +1382,7 @@ static v8::Handle<v8::Value> enabledPerContextAttr1AttrGetterCallback(v8::Local<
 static void enabledPerContextAttr1AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    int v = toInt32(value);
+    V8TRYCATCH_VOID(int, v, toInt32(value));
     imp->setEnabledPerContextAttr1(v);
     return;
 }
@@ -1406,7 +1406,7 @@ static v8::Handle<v8::Value> enabledPerContextAttr2AttrGetterCallback(v8::Local<
 static void enabledPerContextAttr2AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    int v = toInt32(value);
+    V8TRYCATCH_VOID(int, v, toInt32(value));
     imp->setEnabledPerContextAttr2(v);
     return;
 }
@@ -1430,7 +1430,7 @@ static v8::Handle<v8::Value> floatArrayAttrGetterCallback(v8::Local<v8::String> 
 static void floatArrayAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    Vector<float> v = toNativeArray<float>(value);
+    V8TRYCATCH_VOID(Vector<float>, v, toNativeArray<float>(value));
     imp->setFloatArray(v);
     return;
 }
@@ -1454,7 +1454,7 @@ static v8::Handle<v8::Value> doubleArrayAttrGetterCallback(v8::Local<v8::String>
 static void doubleArrayAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    Vector<double> v = toNativeArray<double>(value);
+    V8TRYCATCH_VOID(Vector<double>, v, toNativeArray<double>(value));
     imp->setDoubleArray(v);
     return;
 }
@@ -1492,7 +1492,7 @@ static v8::Handle<v8::Value> mutablePointAttrGetterCallback(v8::Local<v8::String
 static void mutablePointAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    RefPtr<SVGPropertyTearOff<FloatPoint> > v = V8SVGPoint::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8SVGPoint::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    V8TRYCATCH_VOID(RefPtr<SVGPropertyTearOff<FloatPoint> >, v, V8SVGPoint::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8SVGPoint::toNative(v8::Handle<v8::Object>::Cast(value)) : 0);
     imp->setMutablePoint(WTF::getPtr(v));
     return;
 }
@@ -1516,7 +1516,7 @@ static v8::Handle<v8::Value> immutablePointAttrGetterCallback(v8::Local<v8::Stri
 static void immutablePointAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    RefPtr<SVGPropertyTearOff<FloatPoint> > v = V8SVGPoint::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8SVGPoint::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    V8TRYCATCH_VOID(RefPtr<SVGPropertyTearOff<FloatPoint> >, v, V8SVGPoint::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8SVGPoint::toNative(v8::Handle<v8::Object>::Cast(value)) : 0);
     imp->setImmutablePoint(WTF::getPtr(v));
     return;
 }
@@ -1540,7 +1540,7 @@ static v8::Handle<v8::Value> strawberryAttrGetterCallback(v8::Local<v8::String> 
 static void strawberryAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    int v = toInt32(value);
+    V8TRYCATCH_VOID(int, v, toInt32(value));
     imp->setBlueberry(v);
     return;
 }
@@ -1564,7 +1564,7 @@ static v8::Handle<v8::Value> strictFloatAttrGetterCallback(v8::Local<v8::String>
 static void strictFloatAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    float v = static_cast<float>(value->NumberValue());
+    V8TRYCATCH_VOID(float, v, static_cast<float>(value->NumberValue()));
     imp->setStrictFloat(v);
     return;
 }
@@ -1599,7 +1599,7 @@ static v8::Handle<v8::Value> idAttrGetterCallback(v8::Local<v8::String> name, co
 static void idAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    int v = toInt32(value);
+    V8TRYCATCH_VOID(int, v, toInt32(value));
     imp->setId(v);
     return;
 }
@@ -1709,7 +1709,7 @@ static v8::Handle<v8::Value> nullableLongSettableAttributeAttrGetterCallback(v8:
 static void nullableLongSettableAttributeAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    int v = toInt32(value);
+    V8TRYCATCH_VOID(int, v, toInt32(value));
     imp->setNullableLongSettableAttribute(v);
     return;
 }
@@ -1740,7 +1740,7 @@ static v8::Handle<v8::Value> nullableStringValueAttrGetterCallback(v8::Local<v8:
 static void nullableStringValueAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    int v = toInt32(value);
+    V8TRYCATCH_VOID(int, v, toInt32(value));
     imp->setNullableStringValue(v);
     return;
 }
@@ -1811,7 +1811,7 @@ static v8::Handle<v8::Value> perWorldAttributeAttrGetterCallbackForMainWorld(v8:
 static void perWorldAttributeAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    TestObj* v = V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    V8TRYCATCH_VOID(TestObj*, v, V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0);
     imp->setPerWorldAttribute(WTF::getPtr(v));
     return;
 }
@@ -1824,7 +1824,7 @@ static void perWorldAttributeAttrSetterCallback(v8::Local<v8::String> name, v8::
 static void perWorldAttributeAttrSetterForMainWorld(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
-    TestObj* v = V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
+    V8TRYCATCH_VOID(TestObj*, v, V8TestObj::HasInstance(value, info.GetIsolate(), worldType(info.GetIsolate())) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0);
     imp->setPerWorldAttribute(WTF::getPtr(v));
     return;
 }

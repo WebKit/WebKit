@@ -89,7 +89,7 @@ static v8::Handle<v8::Value> valueAttrGetterCallback(v8::Local<v8::String> name,
 static void valueAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
-    RefPtr<SerializedScriptValue> v = SerializedScriptValue::create(value, info.GetIsolate());
+    V8TRYCATCH_VOID(RefPtr<SerializedScriptValue>, v, SerializedScriptValue::create(value, info.GetIsolate()));
     imp->setValue(WTF::getPtr(v));
     return;
 }
@@ -131,7 +131,7 @@ static v8::Handle<v8::Value> cachedValueAttrGetterCallback(v8::Local<v8::String>
 static void cachedValueAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(info.Holder());
-    RefPtr<SerializedScriptValue> v = SerializedScriptValue::create(value, info.GetIsolate());
+    V8TRYCATCH_VOID(RefPtr<SerializedScriptValue>, v, SerializedScriptValue::create(value, info.GetIsolate()));
     imp->setCachedValue(WTF::getPtr(v));
     info.Holder()->DeleteHiddenValue(v8::String::NewSymbol("cachedValue")); // Invalidate the cached value.
     return;

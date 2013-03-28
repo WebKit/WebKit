@@ -94,7 +94,7 @@ static v8::Handle<v8::Value> unsignedLongLongAttrAttrGetterCallback(v8::Local<v8
 static void unsignedLongLongAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestTypedefs* imp = V8TestTypedefs::toNative(info.Holder());
-    unsigned long long v = toUInt64(value);
+    V8TRYCATCH_VOID(unsigned long long, v, toUInt64(value));
     imp->setUnsignedLongLongAttr(v);
     return;
 }
@@ -118,7 +118,7 @@ static v8::Handle<v8::Value> immutableSerializedScriptValueAttrGetterCallback(v8
 static void immutableSerializedScriptValueAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestTypedefs* imp = V8TestTypedefs::toNative(info.Holder());
-    RefPtr<SerializedScriptValue> v = SerializedScriptValue::create(value, info.GetIsolate());
+    V8TRYCATCH_VOID(RefPtr<SerializedScriptValue>, v, SerializedScriptValue::create(value, info.GetIsolate()));
     imp->setImmutableSerializedScriptValue(WTF::getPtr(v));
     return;
 }
@@ -146,7 +146,7 @@ static v8::Handle<v8::Value> attrWithGetterExceptionAttrGetterCallback(v8::Local
 static void attrWithGetterExceptionAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestTypedefs* imp = V8TestTypedefs::toNative(info.Holder());
-    int v = toInt32(value);
+    V8TRYCATCH_VOID(int, v, toInt32(value));
     imp->setAttrWithGetterException(v);
     return;
 }
@@ -170,7 +170,7 @@ static v8::Handle<v8::Value> attrWithSetterExceptionAttrGetterCallback(v8::Local
 static void attrWithSetterExceptionAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     TestTypedefs* imp = V8TestTypedefs::toNative(info.Holder());
-    int v = toInt32(value);
+    V8TRYCATCH_VOID(int, v, toInt32(value));
     ExceptionCode ec = 0;
     imp->setAttrWithSetterException(v, ec);
     if (UNLIKELY(ec))
