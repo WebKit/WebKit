@@ -1,23 +1,36 @@
 <html>
 <head>
 <style>
-    #target {
+    div {
         font-family: "times new roman"; /* non AAT font on mac */
+    }
+    span {
+        direction: rtl;
+        unicode-bidi: bidi-override;
+    }
+    #kerning {
         -webkit-font-feature-settings: 'kern';
-    };
+    }
+    #smallcaps {
+        -webkit-font-feature-settings: 'smcp';
+    }
 </style>
 <script>
 function test()
 {
-    var targetText = document.getElementById("target").firstChild;
-    window.getSelection().setBaseAndExtent(target, 0, target, 9);
+    var start = document.getElementById("kerning").firstChild;
+    var end = document.getElementById("smallcaps").lastChild;
+    window.getSelection().setBaseAndExtent(start, 0, end, 3);
 }
 </script>
 </head>
 <body onload="test()">
-<p>The selection should cover the all of the below text. There should be no blank between C and F.
-<div id="target">
-ABC<span style="direction: rtl; unicode-bidi: bidi-override;">DEF</span>GHI
+<p>The selection should cover the all of the below text. There should be no blank between either C and F.
+<div id="kerning">
+ABC<span>DEF</span>GHI
+</div>
+<div id="smallcaps">
+ABC<span>DEF</span>GHI
 </div>
 </body>
 </html>

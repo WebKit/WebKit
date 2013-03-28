@@ -3763,6 +3763,9 @@ webkit.org/b/91611 media/media-higher-prio-audio-stream.html [ Skip ]
 # Flaky assertion failures on debug bots
 webkit.org/b/112369 [ Debug ] inspector/debugger/pause-in-inline-script.html [ Pass Crash Timeout ]
 
+# Needs rebaseline on all platforms
+Bug(leviw) fast/text/shaping/shaping-selection-rect.html [ Failure ]
+
 # Flaky tests
 webkit.org/b/112598 [ Win Mac Linux ] http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure Pass ]
 webkit.org/b/112601 http/tests/security/cross-frame-access-port-explicit-domain.html [ Failure Pass ]

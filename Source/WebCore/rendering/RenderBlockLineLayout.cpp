@@ -784,9 +784,6 @@ public:
 static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* run, RenderText* renderer, float xPos, const LineInfo& lineInfo,
                                              GlyphOverflowAndFallbackFontsMap& textBoxDataMap, VerticalPositionCache& verticalPositionCache, WordMeasurements& wordMeasurements)
 {
-#if !(PLATFORM(CHROMIUM) && OS(DARWIN))
-    UNUSED_PARAM(wordMeasurements);
-#endif
     HashSet<const SimpleFontData*> fallbackFonts;
     GlyphOverflow glyphOverflow;
     
@@ -812,13 +809,20 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
     }
     float measuredWidth = 0;
 
-#if !(PLATFORM(CHROMIUM) && OS(DARWIN))
     bool kerningIsEnabled = font.typesettingFeatures() & Kerning;
+
+#if PLATFORM(CHROMIUM) && OS(DARWIN)
+    // FIXME: Having any font feature settings enabled can lead to selection gaps on
+    // Chromium-mac. https://bugs.webkit.org/show_bug.cgi?id=113418
+    bool canUseSimpleFontCodePath = renderer->canUseSimpleFontCodePath() && !font.fontDescription().featureSettings();
+#else
+    bool canUseSimpleFontCodePath = renderer->canUseSimpleFontCodePath();
+#endif
     
     // Since we don't cache glyph overflows, we need to re-measure the run if
     // the style is linebox-contain: glyph.
     
-    if (!lineBox->fitsToGlyphs() && renderer->canUseSimpleFontCodePath()) {
+    if (!lineBox->fitsToGlyphs() && canUseSimpleFontCodePath) {
         int lastEndOffset = run->m_start;
         for (size_t i = 0, size = wordMeasurements.size(); i < size && lastEndOffset < run->m_stop; ++i) {
             const WordMeasurement& wordMeasurement = wordMeasurements[i];
@@ -847,7 +851,6 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
             fallbackFonts.clear();
         }
     }
-#endif
 
     if (!measuredWidth)
         measuredWidth = renderer->width(run->m_start, run->m_stop - run->m_start, xPos, lineInfo.isFirstLine(), &fallbackFonts, &glyphOverflow);
