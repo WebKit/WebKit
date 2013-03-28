@@ -184,6 +184,7 @@ modules = [
             "FontView.js",
             "ImageView.js",
             "NativeBreakpointsSidebarPane.js",
+            "InspectElementModeController.js",
             "ObjectPopoverHelper.js",
             "ObjectPropertiesSection.js",
             "SourceFrame.js",

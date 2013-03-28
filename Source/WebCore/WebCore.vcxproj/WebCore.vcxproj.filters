@@ -14875,6 +14875,9 @@
     <None Include="..\inspector\front-end\NetworkUISourceCodeProvider.js">
       <Filter>inspector\front-end</Filter>
     </None>
+    <None Include="..\inspector\front-end\InspectElementModeController.js">
+      <Filter>inspector\front-end</Filter>
+    </None>
     <None Include="..\inspector\front-end\Object.js">
       <Filter>inspector\front-end</Filter>
     </None>

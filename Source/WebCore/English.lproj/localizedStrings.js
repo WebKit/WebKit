@@ -917,3 +917,4 @@ localizedStrings["This file was changed externally. Would you like to reload it?
 localizedStrings["It is recommended to restart inspector after making these changes. Would you like to restart it?"] = "It is recommended to restart inspector after making these changes. Would you like to restart it?";
 localizedStrings["Limit number of captured JS stack frames"] = "Limit number of captured JS stack frames";
 localizedStrings["Frames to capture"] = "Frames to capture";
+localizedStrings["Select node to inspect"] = "Select node to inspect";

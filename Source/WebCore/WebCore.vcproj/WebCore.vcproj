@@ -77706,6 +77706,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\InspectElementModeController.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\Object.js"
 					>
 				</File>

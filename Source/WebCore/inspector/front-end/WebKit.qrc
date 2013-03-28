@@ -132,6 +132,7 @@
     <file>NetworkPanelDescriptor.js</file>
     <file>NetworkRequest.js</file>
     <file>NetworkUISourceCodeProvider.js</file>
+    <file>InspectElementModeController.js</file>
     <file>Object.js</file>
     <file>ObjectPopoverHelper.js</file>
     <file>ObjectPropertiesSection.js</file>

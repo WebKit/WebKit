@@ -5060,6 +5060,7 @@
             'inspector/front-end/NetworkPanelDescriptor.js',
             'inspector/front-end/NetworkRequest.js',
             'inspector/front-end/NetworkUISourceCodeProvider.js',
+            'inspector/front-end/InspectElementModeController.js',
             'inspector/front-end/Object.js',
             'inspector/front-end/ObjectPopoverHelper.js',
             'inspector/front-end/ObjectPropertiesSection.js',

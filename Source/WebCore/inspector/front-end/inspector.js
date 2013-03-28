@@ -93,11 +93,8 @@ var WebInspector = {
         this._toggleConsoleButton.addEventListener("click", this._toggleConsoleButtonClicked.bind(this), false);
         mainStatusBar.insertBefore(this._toggleConsoleButton.element, bottomStatusBarContainer);
 
-        if (!WebInspector.WorkerManager.isWorkerFrontend()) {
-            this._nodeSearchButton = new WebInspector.StatusBarButton(WebInspector.UIString("Select an element in the page to inspect it."), "node-search-status-bar-item");
-            this._nodeSearchButton.addEventListener("click", this.toggleSearchingForNode, this);
-            mainStatusBar.insertBefore(this._nodeSearchButton.element, bottomStatusBarContainer);
-        }
+        if (this.inspectElementModeController)
+            mainStatusBar.insertBefore(this.inspectElementModeController.toggleSearchButton.element, bottomStatusBarContainer);
 
         mainStatusBar.appendChild(this.settingsController.statusBarItem);
     },
@@ -273,20 +270,6 @@ var WebInspector = {
         InspectorFrontendHost.setZoomFactor(WebInspector.Zoom.Table[index]);
     },
 
-    toggleSearchingForNode: function()
-    {
-        var enabled = !this._nodeSearchButton.toggled;
-        /**
-         * @param {?Protocol.Error} error
-         */
-        function callback(error)
-        {
-            if (!error)
-                this._nodeSearchButton.toggled = enabled;
-        }
-        WebInspector.domAgent.setInspectModeEnabled(enabled, callback.bind(this));
-    },
-
     _debuggerPaused: function()
     {
         // Create scripts panel upon demand.
@@ -456,6 +439,9 @@ WebInspector._doLoadedDoneWithCapabilities = function()
 
     this.searchController = new WebInspector.SearchController();
     this.advancedSearchController = new WebInspector.AdvancedSearchController();
+    if (!WebInspector.WorkerManager.isWorkerFrontend())
+        this.inspectElementModeController = new WebInspector.InspectElementModeController();
+
     this.settingsController = new WebInspector.SettingsController();
 
     this.domBreakpointsSidebarPane = new WebInspector.DOMBreakpointsSidebarPane();
@@ -687,6 +673,9 @@ WebInspector._registerShortcuts = function()
     var advancedSearchShortcut = WebInspector.AdvancedSearchController.createShortcut();
     section.addKey(advancedSearchShortcut, WebInspector.UIString("Search across all sources"));
 
+    var inspectElementModeShortcut = WebInspector.InspectElementModeController.createShortcut();
+    section.addKey(inspectElementModeShortcut, WebInspector.UIString("Select node to inspect"));
+
     var openResourceShortcut = WebInspector.KeyboardShortcut.makeDescriptor("o", WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta);
     section.addKey(openResourceShortcut, WebInspector.UIString("Go to source"));
 
@@ -742,6 +731,8 @@ WebInspector.documentKeyDown = function(event)
         return;
     if (WebInspector.advancedSearchController.handleShortcut(event))
         return;
+    if (WebInspector.inspectElementModeController && WebInspector.inspectElementModeController.handleShortcut(event))
+        return;
 
     switch (event.keyIdentifier) {
         case "U+004F": // O key
@@ -793,22 +784,6 @@ WebInspector.documentKeyDown = function(event)
                 event.consume(true);
             }
             break;
-    }
-
-    // Cmd/Control + Shift + C should be a shortcut to clicking the Node Search Button.
-    // This shortcut matches Firebug.
-    if (event.keyIdentifier === "U+0043") { // C key
-        if (WebInspector.isMac())
-            var isNodeSearchKey = event.metaKey && !event.ctrlKey && !event.altKey && event.shiftKey;
-        else
-            var isNodeSearchKey = event.ctrlKey && !event.metaKey && !event.altKey && event.shiftKey;
-
-        if (isNodeSearchKey) {
-            this.toggleSearchingForNode();
-            event.consume(true);
-            return;
-        }
-        return;
     }
 }
 
@@ -991,9 +966,9 @@ WebInspector.targetCrashed = function()
 
 WebInspector._updateFocusedNode = function(nodeId)
 {
-    if (WebInspector._nodeSearchButton.toggled) {
+    if (WebInspector.inspectElementModeController && WebInspector.inspectElementModeController.enabled()) {
         InspectorFrontendHost.bringToFront();
-        WebInspector._nodeSearchButton.toggled = false;
+        WebInspector.inspectElementModeController.disable();
     }
     WebInspector.showPanel("elements").revealAndSelectNode(nodeId);
 }

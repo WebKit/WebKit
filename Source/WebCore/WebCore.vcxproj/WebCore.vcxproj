@@ -13503,6 +13503,7 @@
     <None Include="..\inspector\front-end\NetworkPanelDescriptor.js" />
     <None Include="..\inspector\front-end\NetworkRequest.js" />
     <None Include="..\inspector\front-end\NetworkUISourceCodeProvider.js" />
+    <None Include="..\inspector\front-end\InspectElementModeController.js" />
     <None Include="..\inspector\front-end\Object.js" />
     <None Include="..\inspector\front-end\ObjectPopoverHelper.js" />
     <None Include="..\inspector\front-end\ObjectPropertiesSection.js" />
