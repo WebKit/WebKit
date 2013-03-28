@@ -143,7 +143,7 @@ WebInspector.CookiesTable.prototype = {
     },
 
     /**
-     * @param {string=} domain
+     * @param {?string=} domain
      */
     clear: function(domain)
     {
