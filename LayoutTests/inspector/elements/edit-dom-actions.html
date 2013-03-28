@@ -125,8 +125,8 @@ function test()
 
                 function step2()
                 {
-                    InspectorTest.addResult(treeElement._htmlEditElement.textContent);
-                    treeElement._htmlEditElement.textContent = "<div foo=\"bar-comment\">Element</div>";
+                    InspectorTest.addResult(treeElement._editing.codeMirror.getValue());
+                    treeElement._editing.codeMirror.setValue("<div foo=\"bar-comment\">Element</div>");
                     var event = InspectorTest.createKeyEvent("Enter");
                     event.isMetaOrCtrlForTest = true;
                     treeElement._htmlEditElement.dispatchEvent(event);
@@ -147,8 +147,8 @@ function test()
 
                 function step2()
                 {
-                    InspectorTest.addResult(treeElement._htmlEditElement.textContent);
-                    treeElement._htmlEditElement.textContent = "<span foo=\"bar\"><span id=\"inner-span\">Span contents</span></span>";
+                    InspectorTest.addResult(treeElement._editing.codeMirror.getValue());
+                    treeElement._editing.codeMirror.setValue("<span foo=\"bar\"><span id=\"inner-span\">Span contents</span></span>");
                     var event = InspectorTest.createKeyEvent("Enter");
                     event.isMetaOrCtrlForTest = true;
                     treeElement._htmlEditElement.dispatchEvent(event);
@@ -169,8 +169,9 @@ function test()
 
                 function step2()
                 {
-                    InspectorTest.addResult(treeElement._htmlEditElement.textContent);
-                    treeElement._htmlEditElement.textContent = treeElement._htmlEditElement.textContent.replace(/&/g, '#');
+                    var codeMirror = treeElement._editing.codeMirror;
+                    InspectorTest.addResult(codeMirror.getValue());
+                    codeMirror.setValue(codeMirror.getValue().replace(/&/g, '#'));
                     var event = InspectorTest.createKeyEvent("Enter");
                     event.isMetaOrCtrlForTest = true;
                     treeElement._htmlEditElement.dispatchEvent(event);

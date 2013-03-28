@@ -331,6 +331,21 @@ WebInspector.CodeMirrorTextEditor = function(url, delegate) { }
 /** @constructor */
 WebInspector.AceTextEditor = function(url, delegate) { }
 
+/** @constructor */
+var CodeMirror = function() { }
+CodeMirror.prototype.replaceSelection = function(str1, str2, str3) { }
+/** @return {Element} */
+CodeMirror.prototype.getInputField = function() { }
+CodeMirror.prototype.getCursor = function() { }
+CodeMirror.prototype.setCursor = function(arg) { }
+CodeMirror.prototype.getLine = function() { }
+CodeMirror.prototype.getValue = function() { }
+CodeMirror.prototype.setValue = function(arg) { }
+CodeMirror.prototype.clearGutter = function(arg) { }
+CodeMirror.prototype.setGutterMarker = function(arg1, arg2, arg3) { }
+CodeMirror.prototype.clearHistory = function() { }
+CodeMirror.prototype.markText = function(arg1, arg2, arg3) { }
+
 WebInspector.suggestReload = function() { }
 WebInspector.reload = function() { }
 

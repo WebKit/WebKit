@@ -55,6 +55,21 @@
     opacity: 0.5;
 }
 
+#elements-content .CodeMirror {
+    /* Consistent with the .editing class in inspector.css */
+    -webkit-box-shadow: rgba(0, 0, 0, .5) 3px 3px 4px;
+    outline: 1px solid rgb(66%, 66%, 66%) !important;
+    background-color: white;
+}
+
+#elements-content .CodeMirror pre {
+    padding: 0;
+}
+
+#elements-content .CodeMirror-lines {
+    padding: 0;
+}
+
 .elements-tree-editor {
     -webkit-user-select: text;
     -webkit-user-modify: read-write-plaintext-only;
