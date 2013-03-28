@@ -9,6 +9,8 @@ textarea valueMissing: value missing
 select valueMissing: value missing
 input typeMismatch: Please enter an email address
 input badInput: type mismatch
+badInput and valueMissing:
+PASS numberInput.validationMessage is nonRequiredBadInputMessage
 PASS but.validationMessage is ''
 PASS anoninput.validationMessage is ''
 PASS happyFieldset.validationMessage is ''

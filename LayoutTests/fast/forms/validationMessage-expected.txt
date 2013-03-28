@@ -7,7 +7,7 @@ input patternMismatch: pattern mismatch
 input valueMissing: value missing
 textarea valueMissing: value missing
 select valueMissing: value missing
-input typeMismatch: Please enter an email address
+input typeMismatch: type mismatch
 input badInput: type mismatch
 badInput and valueMissing:
 PASS numberInput.validationMessage is nonRequiredBadInputMessage
