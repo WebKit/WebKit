@@ -1177,6 +1177,12 @@ bool RenderBox::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) c
     if (!backgroundColor.isValid() || backgroundColor.hasAlpha())
         return false;
 
+    // If the element has appearance, it might be painted by theme.
+    // We cannot be sure if theme paints the background opaque.
+    // In this case it is safe to not assume opaqueness.
+    // FIXME: May be ask theme if it paints opaque.
+    if (style()->hasAppearance())
+        return false;
     // FIXME: Check the opaqueness of background images.
 
     // FIXME: Use rounded rect if border radius is present.
