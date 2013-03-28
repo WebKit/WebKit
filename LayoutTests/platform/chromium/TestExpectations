@@ -3800,8 +3800,6 @@ crbug.com/223332 svg/css/root-shadow-offscreen.svg [ ImageOnlyFailure ]
 
 webkit.org/b/113114 media/video-controls-captions.html [ Timeout ]
 
-webkit.org/b/113219 fast/dom/exception-in-binding.html [ Failure ]
-
 webkit.org/b/113474 http/tests/cache/subresource-failover-to-network.html [ Pass Failure ]
 
 webkit.org/b/113487 [ Debug ] plugins/npruntime/npruntime-calls-with-null-npp.html [ Pass Timeout ]

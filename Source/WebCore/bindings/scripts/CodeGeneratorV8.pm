@@ -1398,7 +1398,7 @@ END
         } elsif ($attribute->signature->extendedAttributes->{"EnforceRange"}) {
             push(@implContentInternals, "    V8TRYCATCH_WITH_TYPECHECK_VOID($nativeType, v, $value, info.GetIsolate());\n");
         } else {
-            push(@implContentInternals, "    $nativeType v = $value;\n");
+            push(@implContentInternals, "    V8TRYCATCH_VOID($nativeType, v, $value);\n");
         }
     }
 

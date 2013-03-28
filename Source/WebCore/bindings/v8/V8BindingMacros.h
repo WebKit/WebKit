@@ -42,6 +42,17 @@ namespace WebCore {
             return block.ReThrow();       \
     }
 
+#define V8TRYCATCH_VOID(type, var, value) \
+    type var;                             \
+    {                                     \
+        v8::TryCatch block;               \
+        var = (value);                    \
+        if (block.HasCaught()) {          \
+            block.ReThrow();              \
+            return;                       \
+        }                                 \
+    }
+
 #define V8TRYCATCH_WITH_TYPECHECK(type, var, value, isolate) \
     type var;                                                \
     {                                                        \
