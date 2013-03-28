@@ -87,6 +87,8 @@ public:
     bool hasAncestorClippingLayer() const { return m_ancestorClippingLayer != 0; }
     GraphicsLayer* ancestorClippingLayer() const { return m_ancestorClippingLayer.get(); }
 
+    GraphicsLayer* contentsContainmentLayer() const { return m_contentsContainmentLayer.get(); }
+
     bool hasContentsLayer() const { return m_foregroundLayer != 0; }
     GraphicsLayer* foregroundLayer() const { return m_foregroundLayer.get(); }
 

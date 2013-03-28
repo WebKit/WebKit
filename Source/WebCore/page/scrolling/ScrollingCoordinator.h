@@ -153,7 +153,7 @@ public:
     virtual void scrollableAreaScrollLayerDidChange(ScrollableArea*) { }
     virtual void scrollableAreaScrollbarLayerDidChange(ScrollableArea*, ScrollbarOrientation) { }
     virtual void setLayerIsContainerForFixedPositionLayers(GraphicsLayer*, bool) { }
-    virtual void setLayerIsFixedToContainerLayer(GraphicsLayer*, bool) { }
+    virtual void updateLayerPositionConstraint(RenderLayer*) { }
     virtual void touchEventTargetRectsDidChange(const Document*) { }
 
 #if ENABLE(TOUCH_EVENT_TRACKING)

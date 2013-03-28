@@ -83,6 +83,7 @@
             'chromium/public/WebImage.h',
             'chromium/public/WebImageLayer.h',
             'chromium/public/WebLayer.h',
+            'chromium/public/WebLayerPositionConstraint.h',
             'chromium/public/WebLayerScrollClient.h',
             'chromium/public/WebLayerTreeView.h',
             'chromium/public/WebLocalizedString.h',

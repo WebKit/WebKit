@@ -53,7 +53,7 @@ public:
     virtual void setLayerIsContainerForFixedPositionLayers(GraphicsLayer*, bool);
 
     // Attach/detach layer position to ancestor fixed position container.
-    virtual void setLayerIsFixedToContainerLayer(GraphicsLayer*, bool);
+    virtual void updateLayerPositionConstraint(RenderLayer*);
 
     // Should be called when a ScrollableArea is getting destroyed.
     virtual void willDestroyScrollableArea(ScrollableArea*);

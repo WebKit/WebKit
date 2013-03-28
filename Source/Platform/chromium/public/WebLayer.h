@@ -29,6 +29,10 @@
 #include "WebAnimation.h"
 #include "WebColor.h"
 #include "WebCommon.h"
+
+// Remove after making setPositionConstraint() pure virtual.
+#include "WebLayerPositionConstraint.h"
+
 #include "WebPoint.h"
 #include "WebPrivatePtr.h"
 #include "WebRect.h"
@@ -44,6 +48,7 @@ class WebFilterOperations;
 class WebLayerScrollClient;
 struct WebFloatPoint;
 struct WebFloatRect;
+struct WebLayerPositionConstraint;
 struct WebSize;
 
 class WebLayerImpl;
@@ -189,8 +194,11 @@ public:
     virtual void setIsContainerForFixedPositionLayers(bool) = 0;
     virtual bool isContainerForFixedPositionLayers() const = 0;
 
-    virtual void setFixedToContainerLayer(bool) = 0;
-    virtual bool fixedToContainerLayer() const = 0;
+    // This function sets layer position constraint. The constraint will be used
+    // to adjust layer position during threaded scrolling.
+    // FIXME: Make pure virtual after implementation lands.
+    virtual void setPositionConstraint(const WebLayerPositionConstraint& constraint) { setFixedToContainerLayer(constraint.isFixedPosition); }
+    virtual WebLayerPositionConstraint positionConstraint() const { return WebLayerPositionConstraint(); }
 
     // The scroll client is notified when the scroll position of the WebLayer
     // changes. Only a single scroll client can be set for a WebLayer at a time.
@@ -205,6 +213,10 @@ public:
 
     // True if the layer is not part of a tree attached to a WebLayerTreeView.
     virtual bool isOrphan() const = 0;
+
+    // DEPRECATED
+    virtual void setFixedToContainerLayer(bool) { }
+    virtual bool fixedToContainerLayer() const { return positionConstraint().isFixedPosition; }
 };
 
 } // namespace WebKit

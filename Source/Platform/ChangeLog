@@ -1,3 +1,28 @@
+2013-03-28  Tien-Ren Chen  <trchen@chromium.org>
+
+        Support bottom-right anchored fixed-position elements during a pinch gesture
+        https://bugs.webkit.org/show_bug.cgi?id=111670
+
+        Reviewed by James Robinson.
+
+        Added WebLayerPositionConstraint for layers that need position
+        adjustment during threaded scrolling.
+        Currently it is only used for fixed-position layers.
+
+        * Platform.gypi:
+        * chromium/public/WebLayer.h:
+        (WebKit):
+        (WebLayer):
+        (WebKit::WebLayer::setPositionConstraint):
+        (WebKit::WebLayer::positionConstraint):
+        (WebKit::WebLayer::setFixedToContainerLayer):
+        (WebKit::WebLayer::fixedToContainerLayer):
+        * chromium/public/WebLayerPositionConstraint.h: Added.
+        (WebKit):
+        (WebLayerPositionConstraint):
+        (WebKit::WebLayerPositionConstraint::WebLayerPositionConstraint):
+        (WebKit::WebLayerPositionConstraint::fixedPosition):
+
 2013-03-28  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Build GTK-specific, non-layer-violating source code into WebCore-independent libPlatformGtk.la

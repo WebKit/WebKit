@@ -32,6 +32,7 @@
 #include "GraphicsLayerChromium.h"
 #include "Page.h"
 #include "Region.h"
+#include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
 #include "RenderView.h"
 #include "ScrollbarThemeComposite.h"
@@ -39,12 +40,14 @@
 #include "WebScrollbarThemeGeometryNative.h"
 #include <public/Platform.h>
 #include <public/WebCompositorSupport.h>
+#include <public/WebLayerPositionConstraint.h>
 #include <public/WebScrollbar.h>
 #include <public/WebScrollbarLayer.h>
 #include <public/WebScrollbarThemeGeometry.h>
 #include <public/WebScrollbarThemePainter.h>
 
 using WebKit::WebLayer;
+using WebKit::WebLayerPositionConstraint;
 using WebKit::WebRect;
 using WebKit::WebScrollbarLayer;
 using WebKit::WebVector;
@@ -233,10 +236,41 @@ void ScrollingCoordinatorChromium::setLayerIsContainerForFixedPositionLayers(Gra
         scrollableLayer->setIsContainerForFixedPositionLayers(enable);
 }
 
-void ScrollingCoordinatorChromium::setLayerIsFixedToContainerLayer(GraphicsLayer* layer, bool enable)
+static void clearPositionConstraintExceptForLayer(GraphicsLayer* layer, GraphicsLayer* except)
 {
-    if (WebLayer* scrollableLayer = scrollingWebLayerForGraphicsLayer(layer))
-        scrollableLayer->setFixedToContainerLayer(enable);
+    if (layer && layer != except && scrollingWebLayerForGraphicsLayer(layer))
+        scrollingWebLayerForGraphicsLayer(layer)->setPositionConstraint(WebLayerPositionConstraint());
+}
+
+static WebLayerPositionConstraint computePositionConstraint(const RenderLayer* layer)
+{
+    ASSERT(layer->isComposited());
+    do {
+        if (layer->renderer()->style()->position() == FixedPosition) {
+            const RenderObject* fixedPositionObject = layer->renderer();
+            bool fixedToRight = !fixedPositionObject->style()->right().isAuto();
+            bool fixedToBottom = !fixedPositionObject->style()->bottom().isAuto();
+            return WebLayerPositionConstraint::fixedPosition(fixedToRight, fixedToBottom);
+        }
+
+        layer = layer->parent();
+    } while (layer && !layer->isComposited());
+    return WebLayerPositionConstraint();
+}
+
+void ScrollingCoordinatorChromium::updateLayerPositionConstraint(RenderLayer* layer)
+{
+    ASSERT(layer->backing());
+    RenderLayerBacking* backing = layer->backing();
+    GraphicsLayer* mainLayer = backing->childForSuperlayers();
+
+    // Avoid unnecessary commits
+    clearPositionConstraintExceptForLayer(backing->ancestorClippingLayer(), mainLayer);
+    clearPositionConstraintExceptForLayer(backing->contentsContainmentLayer(), mainLayer);
+    clearPositionConstraintExceptForLayer(backing->graphicsLayer(), mainLayer);
+
+    if (WebLayer* scrollableLayer = scrollingWebLayerForGraphicsLayer(mainLayer))
+        scrollableLayer->setPositionConstraint(computePositionConstraint(layer));
 }
 
 void ScrollingCoordinatorChromium::scrollableAreaScrollLayerDidChange(ScrollableArea* scrollableArea)

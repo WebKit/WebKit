@@ -1937,31 +1937,6 @@ bool RenderLayerCompositor::clipsCompositingDescendants(const RenderLayer* layer
     return layer->hasCompositingDescendant() && layer->renderer()->hasClipOrOverflowClip();
 }
 
-// Return true if there is an ancestor layer that is fixed positioned to the view.
-// Note that if the ancestor has a stacking context and is fixed position then this method
-// will return false.
-bool RenderLayerCompositor::fixedPositionedByAncestor(const RenderLayer* layer) const
-{
-    if (!layer->isComposited() || !layer->parent())
-        return false;
-
-    const RenderLayer* compositingAncestor = layer->ancestorCompositingLayer();
-    if (!compositingAncestor)
-        return false;
-
-    const RenderLayer* curr = layer;
-    while (curr) {
-        const RenderLayer* next = curr->parent();
-        if (next == compositingAncestor)
-            return false;
-
-        if (next && next->renderer()->style()->position() == FixedPosition)
-            return true;
-        curr = next;
-    }
-    return false;
-}
-
 bool RenderLayerCompositor::requiresCompositingForScrollableFrame() const
 {
     // Need this done first to determine overflow.

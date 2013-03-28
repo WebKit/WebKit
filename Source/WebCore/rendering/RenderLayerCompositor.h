@@ -154,9 +154,6 @@ public:
     // Whether layer's backing needs a graphics layer to clip z-order children of the given layer.
     bool clipsCompositingDescendants(const RenderLayer*) const;
 
-    // Whether the layer is fixed positioned to the view by an ancestor layer.
-    bool fixedPositionedByAncestor(const RenderLayer*) const;
-
     // Whether the given layer needs an extra 'contents' layer.
     bool needsContentsCompositingLayer(const RenderLayer*) const;
 
