@@ -1346,7 +1346,8 @@ void WebFrameLoaderClient::recreatePlugin(Widget* widget)
 
 void WebFrameLoaderClient::redirectDataToPlugin(Widget* pluginWidget)
 {
-    m_pluginView = static_cast<PluginView*>(pluginWidget);
+    if (m_pluginView)
+        m_pluginView = static_cast<PluginView*>(pluginWidget);
 }
 
 PassRefPtr<Widget> WebFrameLoaderClient::createJavaAppletWidget(const IntSize& pluginSize, HTMLAppletElement* appletElement, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues)

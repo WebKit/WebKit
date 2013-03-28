@@ -1,5 +1,25 @@
 2013-03-28  Tim Horton  <timothy_horton@apple.com>
 
+        [wk2] REGRESSION (r125500): WebFrameLoaderClient's active m_pluginView can be zeroed by PluginDocuments leaving the page cache
+        https://bugs.webkit.org/show_bug.cgi?id=113430
+        <rdar://problem/12729564>
+
+        Reviewed by Brady Eidson.
+
+        Ignore redirectDataToPlugin(0), which is only called from PluginDocument::detach(),
+        and only after r125500. Otherwise, PluginDocuments that are put into the page cache
+        but leave later can clear a totally different and legitimate PluginView from the
+        WebFrameLoaderClient, causing data to be lost and PluginDocument loads to stall.
+
+        This restores our behavior to the pre-r125500 state, which should be fine, as we
+        clear WebFrameLoaderClient's m_pluginView when the load fails or finishes. This
+        matches the changes made in r125500 for every platform other than Chromium and WebKit2.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::redirectDataToPlugin):
+
+2013-03-28  Tim Horton  <timothy_horton@apple.com>
+
         PDFPlugin: shouldUsePDFPlugin can't use pdfLayerControllerClass() because it asserts if it's not available
         https://bugs.webkit.org/show_bug.cgi?id=113533
         <rdar://problem/13528720>
