@@ -1,3 +1,17 @@
+2013-03-28  Philippe Normand  <pnormand@igalia.com>
+
+        [jhbuild] GStreamer system plugins conflict with the ones built in jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=113508
+
+        Reviewed by Martin Robinson.
+
+        Prevent the GStreamer plugin scanner to load system-wide
+        plugins. Only the ones built in JHBuild should be loaded and used
+        at runtime.
+
+        * efl/jhbuildrc:
+        * gtk/jhbuildrc:
+
 2013-03-27  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] run-launcher --gtk -2 fails on a WK2-only build

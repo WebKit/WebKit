@@ -74,3 +74,7 @@ if use_lib64:
     addpath('CMAKE_LIBRARY_PATH', os.path.join(prefix, _libdir))
 
 partial_build = False
+
+# Avoid runtime conflicts with GStreamer system-wide plugins. We want
+# to use only the plugins we build in JHBuild.
+os.environ['GST_PLUGIN_SYSTEM_PATH'] = ''

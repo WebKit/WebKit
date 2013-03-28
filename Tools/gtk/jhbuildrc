@@ -50,3 +50,7 @@ if 'NUMBER_OF_PROCESSORS' in os.environ:
 
 # GTK+ 3.0.12 misses the -lm flag when linking the tests.
 module_makeargs['gtk+'] = 'LDFLAGS="-lm" ' + makeargs
+
+# Avoid runtime conflicts with GStreamer system-wide plugins. We want
+# to use only the plugins we build in JHBuild.
+os.environ['GST_PLUGIN_SYSTEM_PATH'] = ''
