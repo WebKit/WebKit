@@ -524,7 +524,7 @@ void GraphicsLayerChromium::setContentsToSolidColor(const Color& color)
 
     m_contentsSolidColor = color;
 
-    if (color.isValid()) {
+    if (color.isValid() && color.alpha()) {
         if (!m_contentsSolidColorLayer) {
             m_contentsSolidColorLayer = adoptPtr(Platform::current()->compositorSupport()->createSolidColorLayer());
             registerContentsLayer(m_contentsSolidColorLayer->layer());

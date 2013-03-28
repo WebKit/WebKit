@@ -1,3 +1,13 @@
+2013-03-28  Xianzhu Wang  <wangxianzhu@chromium.org>
+
+        [Chromium] Don't create SolidColorLayer for full transparent background
+        https://bugs.webkit.org/show_bug.cgi?id=113524
+
+        Reviewed by James Robinson.
+
+        * tests/GraphicsLayerChromiumTest.cpp:
+        (GraphicsLayerChromiumTest::setContentsToSolidColor):
+
 2013-03-28  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] REGRESSION(r88030): Right-click on invalid form controls unexpectedly dispatches 'invalid' events
