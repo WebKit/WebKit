@@ -1,5 +1,14 @@
 2013-03-27  Mark Lam  <mark.lam@apple.com>
 
+        Rolling out r147044.
+        https://bugs.webkit.org/show_bug.cgi?id=113352.
+
+        Not Reviewed.
+
+        * WebKit.vcproj/WebKitExports.def.in:
+
+2013-03-27  Mark Lam  <mark.lam@apple.com>
+
         Greening the Apple Win bot (debug build).
         https://bugs.webkit.org/show_bug.cgi?id=113352.
 
