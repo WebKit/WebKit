@@ -1,3 +1,19 @@
+2013-03-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed some dead code in the DFG bytecode parser
+        https://bugs.webkit.org/show_bug.cgi?id=113472
+
+        Reviewed by Sam Weinig.
+
+        Now that Phi creation and liveness analysis are separate passes, we can
+        remove the vestiges of code that used to do that in the bytecode
+        parser.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::addToGraph):
+        (JSC::DFG::ByteCodeParser::parse):
+
 2013-03-27  Filip Pizlo  <fpizlo@apple.com>
 
         JIT and DFG should NaN-check loads from Float32 arrays

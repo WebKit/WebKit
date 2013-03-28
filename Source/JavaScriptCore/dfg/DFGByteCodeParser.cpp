@@ -193,13 +193,6 @@ private:
     // Link block successors.
     void linkBlock(BasicBlock*, Vector<BlockIndex>& possibleTargets);
     void linkBlocks(Vector<UnlinkedBlock>& unlinkedBlocks, Vector<BlockIndex>& possibleTargets);
-    // Link GetLocal & SetLocal nodes, to ensure live values are generated.
-    enum PhiStackType {
-        LocalPhiStack,
-        ArgumentPhiStack
-    };
-    template<PhiStackType stackType>
-    void processPhiStack();
     
     VariableAccessData* newVariableAccessData(int operand, bool isCaptured)
     {
@@ -697,8 +690,6 @@ private:
         return value.isBoolean() || value.isUndefinedOrNull();
     }
     
-    // These methods create a node and add it to the graph. If nodes of this type are
-    // 'mustGenerate' then the node  will implicitly be ref'ed to ensure generation.
     Node* addToGraph(NodeType op, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
     {
         Node* result = m_graph.addNode(
@@ -719,10 +710,8 @@ private:
     {
         Node* result = m_graph.addNode(
             SpecNone, op, currentCodeOrigin(), info, Edge(child1), Edge(child2), Edge(child3));
-        if (op == Phi)
-            m_currentBlock->phis.append(result);
-        else
-            m_currentBlock->append(result);
+        ASSERT(op != Phi);
+        m_currentBlock->append(result);
         return result;
     }
     Node* addToGraph(NodeType op, OpInfo info1, OpInfo info2, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
@@ -745,13 +734,6 @@ private:
         
         m_numPassedVarArgs = 0;
         
-        return result;
-    }
-
-    Node* insertPhiNode(OpInfo info, BasicBlock* block)
-    {
-        Node* result = m_graph.addNode(SpecNone, Phi, currentCodeOrigin(), info);
-        block->phis.append(result);
         return result;
     }
 
@@ -1024,21 +1006,6 @@ private:
     // The index in the global resolve info.
     unsigned m_globalResolveNumber;
 
-    struct PhiStackEntry {
-        PhiStackEntry(BasicBlock* block, Node* phi, unsigned varNo)
-            : m_block(block)
-            , m_phi(phi)
-            , m_varNo(varNo)
-        {
-        }
-
-        BasicBlock* m_block;
-        Node* m_phi;
-        unsigned m_varNo;
-    };
-    Vector<PhiStackEntry, 16> m_argumentPhiStack;
-    Vector<PhiStackEntry, 16> m_localPhiStack;
-    
     HashMap<ConstantBufferKey, unsigned> m_constantBufferCache;
     
     struct InlineStackEntry {
@@ -3760,9 +3727,6 @@ bool ByteCodeParser::parse()
 
     linkBlocks(inlineStackEntry.m_unlinkedBlocks, inlineStackEntry.m_blockLinkingTargets);
     m_graph.determineReachability();
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-    dataLogF("Processing local variable phis.\n");
-#endif
     
     ASSERT(m_preservedVars.size());
     size_t numberOfLocals = 0;
