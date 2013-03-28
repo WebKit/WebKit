@@ -1,3 +1,17 @@
+2013-03-28  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin: shouldUsePDFPlugin can't use pdfLayerControllerClass() because it asserts if it's not available
+        https://bugs.webkit.org/show_bug.cgi?id=113533
+        <rdar://problem/13528720>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::shouldUsePDFPlugin):
+        Move shouldUsePDFPlugin to WebPageMac, where it belongs, and explicitly look up PDFLayerController
+        instead of using pdfLayerControllerClass(), which ASSERT()s if it isn't available.
+
 2013-03-28  Brady Eidson  <beidson@apple.com>
 
         Reduce PluginProcess lifetime.

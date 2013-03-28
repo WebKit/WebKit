@@ -159,7 +159,6 @@
 #endif
 
 #if PLATFORM(MAC)
-#include "PDFKitImports.h"
 #include "SimplePDFPlugin.h"
 #if ENABLE(PDFKIT_PLUGIN)
 #include "PDFPlugin.h"
@@ -3676,13 +3675,6 @@ void WebPage::setScrollingPerformanceLoggingEnabled(bool enabled)
 
     frameView->setScrollingPerformanceLoggingEnabled(enabled);
 }
-
-#if PLATFORM(MAC)
-bool WebPage::shouldUsePDFPlugin() const
-{
-    return pdfPluginEnabled() && pdfLayerControllerClass();
-}
-#endif
 
 bool WebPage::canPluginHandleResponse(const ResourceResponse& response)
 {

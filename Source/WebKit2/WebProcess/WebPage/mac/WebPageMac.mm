@@ -109,6 +109,11 @@ void WebPage::platformPreferencesDidChange(const WebPreferencesStore& store)
     }
 }
 
+bool WebPage::shouldUsePDFPlugin() const
+{
+    return pdfPluginEnabled() && classFromPDFKit(@"PDFLayerController");
+}
+
 typedef HashMap<String, String> SelectorNameMap;
 
 // Map selectors into Editor command names.
