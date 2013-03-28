@@ -2145,7 +2145,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
             enabledCheckboxElement.type = "checkbox";
             enabledCheckboxElement.checked = !this.disabled;
             enabledCheckboxElement.addEventListener("click", this.toggleEnabled.bind(this), false);
-            this.listItemElement.appendChild(enabledCheckboxElement);
+            this.listItemElement.insertBefore(enabledCheckboxElement, this.listItemElement.firstChild);
         }
     },
 
