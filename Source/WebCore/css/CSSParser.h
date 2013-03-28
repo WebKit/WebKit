@@ -597,6 +597,8 @@ private:
     bool m_inViewport;
 #endif
 
+    bool useLegacyBackgroundSizeShorthandBehavior() const;
+
     int (CSSParser::*m_lexFunc)(void*);
 
     Vector<RefPtr<StyleRuleBase> > m_parsedRules;

@@ -59,4 +59,5 @@
     void setMinimumTimerInterval(in double intervalInSeconds) raises(DOMException);
     void setDefaultVideoPosterURL(in DOMString poster) raises(DOMException);
     void setTimeWithoutMouseMovementBeforeHidingControls(in double time) raises(DOMException);
+    void setUseLegacyBackgroundSizeShorthandBehavior(in boolean enabled) raises(DOMException);
 };

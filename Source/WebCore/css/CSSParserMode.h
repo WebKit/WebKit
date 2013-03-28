@@ -74,6 +74,7 @@ public:
 #endif
     bool needsSiteSpecificQuirks;
     bool enforcesCSSMIMETypeInNoQuirksMode;
+    bool useLegacyBackgroundSizeShorthandBehavior;
 };
 
 bool operator==(const CSSParserContext&, const CSSParserContext&);

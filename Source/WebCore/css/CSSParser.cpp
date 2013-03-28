@@ -265,6 +265,7 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const KURL& baseURL)
 #endif
     , needsSiteSpecificQuirks(false)
     , enforcesCSSMIMETypeInNoQuirksMode(true)
+    , useLegacyBackgroundSizeShorthandBehavior(false)
 {
 }
 
@@ -283,6 +284,7 @@ CSSParserContext::CSSParserContext(Document* document, const KURL& baseURL, cons
 #endif
     , needsSiteSpecificQuirks(document->settings() ? document->settings()->needsSiteSpecificQuirks() : false)
     , enforcesCSSMIMETypeInNoQuirksMode(!document->settings() || document->settings()->enforceCSSMIMETypeInNoQuirksMode())
+    , useLegacyBackgroundSizeShorthandBehavior(document->settings() ? document->settings()->useLegacyBackgroundSizeShorthandBehavior() : false)
 {
 }
 
@@ -301,7 +303,8 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.isCSSVariablesEnabled == b.isCSSVariablesEnabled
 #endif
         && a.needsSiteSpecificQuirks == b.needsSiteSpecificQuirks
-        && a.enforcesCSSMIMETypeInNoQuirksMode == b.enforcesCSSMIMETypeInNoQuirksMode;
+        && a.enforcesCSSMIMETypeInNoQuirksMode == b.enforcesCSSMIMETypeInNoQuirksMode
+        && a.useLegacyBackgroundSizeShorthandBehavior == b.useLegacyBackgroundSizeShorthandBehavior;
 }
 
 CSSParser::CSSParser(const CSSParserContext& context)
@@ -3126,6 +3129,11 @@ static bool parseBackgroundClip(CSSParserValue* parserValue, RefPtr<CSSValue>& c
     return false;
 }
 
+bool CSSParser::useLegacyBackgroundSizeShorthandBehavior() const
+{
+    return m_context.useLegacyBackgroundSizeShorthandBehavior;
+}
+
 const int cMaxFillProperties = 9;
 
 bool CSSParser::parseFillShorthand(CSSPropertyID propId, const CSSPropertyID* properties, int numProperties, bool important)
@@ -3256,6 +3264,8 @@ bool CSSParser::parseFillShorthand(CSSPropertyID propId, const CSSPropertyID* pr
             addProperty(CSSPropertyWebkitMaskRepeatY, repeatYValue.release(), important);
         } else if ((properties[i] == CSSPropertyBackgroundClip || properties[i] == CSSPropertyWebkitMaskClip) && !foundClip)
             // Value is already set while updating origin
+            continue;
+        else if (properties[i] == CSSPropertyBackgroundSize && !parsedProperty[i] && useLegacyBackgroundSizeShorthandBehavior())
             continue;
         else
             addProperty(properties[i], values[i].release(), important);

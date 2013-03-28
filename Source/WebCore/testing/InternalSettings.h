@@ -83,6 +83,7 @@ public:
 #endif
         String m_defaultVideoPosterURL;
         bool m_originalTimeWithoutMouseMovementBeforeHidingControls;
+        bool m_useLegacyBackgroundSizeShorthandBehavior;
     };
 
     static PassRefPtr<InternalSettings> create(Page* page)
@@ -127,6 +128,7 @@ public:
     void setMinimumTimerInterval(double intervalInSeconds, ExceptionCode&);
     void setDefaultVideoPosterURL(const String& url, ExceptionCode&);
     void setTimeWithoutMouseMovementBeforeHidingControls(double time, ExceptionCode&);
+    void setUseLegacyBackgroundSizeShorthandBehavior(bool enabled, ExceptionCode&);
 
 private:
     explicit InternalSettings(Page*);
