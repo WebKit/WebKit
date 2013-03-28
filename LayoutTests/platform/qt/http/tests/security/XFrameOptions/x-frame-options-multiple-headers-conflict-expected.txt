@@ -1,0 +1,13 @@
+http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-conflict.cgi - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-conflict.cgi, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-multiple-headers-conflict.html, http method GET> redirectResponse (null)
+<unknown> - didFinishLoading
+CONSOLE MESSAGE: Multiple 'X-Frame-Options' headers with conflicting values ('ALLOWALL, DENY') encountered when loading 'http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-conflict.cgi'. Falling back to 'DENY'.
+CONSOLE MESSAGE: Refused to display 'http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-conflict.cgi' in a frame because it set 'X-Frame-Options' to 'ALLOWALL, DENY'.
+http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-conflict.cgi - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code 5, failing URL "http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-conflict.cgi">
+The frame below should not load, and a console message should be generated that notes the invalid header.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+
