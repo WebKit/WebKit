@@ -726,7 +726,7 @@ IDBKeyPath decodeIDBKeyPath(const char* p, const char* limit)
 namespace {
 
 template<typename KeyType>
-int compare(const LevelDBSlice& a, const LevelDBSlice& b, bool ignoreDuplicates, bool& ok)
+int compare(const LevelDBSlice& a, const LevelDBSlice& b, bool, bool& ok)
 {
     KeyType keyA;
     KeyType keyB;
@@ -749,7 +749,7 @@ int compare(const LevelDBSlice& a, const LevelDBSlice& b, bool ignoreDuplicates,
 }
 
 template<>
-int compare<ExistsEntryKey>(const LevelDBSlice& a, const LevelDBSlice& b, bool ignoreDuplicates, bool& ok)
+int compare<ExistsEntryKey>(const LevelDBSlice& a, const LevelDBSlice& b, bool, bool& ok)
 {
     KeyPrefix prefixA;
     KeyPrefix prefixB;
@@ -772,7 +772,7 @@ int compare<ExistsEntryKey>(const LevelDBSlice& a, const LevelDBSlice& b, bool i
 }
 
 template<>
-int compare<ObjectStoreDataKey>(const LevelDBSlice& a, const LevelDBSlice& b, bool ignoreDuplicates, bool& ok)
+int compare<ObjectStoreDataKey>(const LevelDBSlice& a, const LevelDBSlice& b, bool, bool& ok)
 {
     KeyPrefix prefixA;
     KeyPrefix prefixB;

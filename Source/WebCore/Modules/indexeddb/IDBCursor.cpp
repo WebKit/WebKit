@@ -297,7 +297,7 @@ PassRefPtr<IDBObjectStore> IDBCursor::effectiveObjectStore()
     return index->objectStore();
 }
 
-IndexedDB::CursorDirection IDBCursor::stringToDirection(const String& directionString, ScriptExecutionContext* context, ExceptionCode& ec)
+IndexedDB::CursorDirection IDBCursor::stringToDirection(const String& directionString, ExceptionCode& ec)
 {
     if (directionString == IDBCursor::directionNext())
         return IndexedDB::CursorNext;

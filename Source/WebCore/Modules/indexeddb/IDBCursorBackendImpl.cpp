@@ -220,7 +220,7 @@ void IDBCursorBackendImpl::CursorPrefetchIterationOperation::perform(IDBTransact
     m_callbacks->onSuccessWithPrefetch(foundKeys, foundPrimaryKeys, foundValues);
 }
 
-void IDBCursorBackendImpl::prefetchReset(int usedPrefetches, int unusedPrefetches)
+void IDBCursorBackendImpl::prefetchReset(int usedPrefetches, int)
 {
     IDB_TRACE("IDBCursorBackendImpl::prefetchReset");
     m_cursor = m_savedCursor;

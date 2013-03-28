@@ -336,7 +336,7 @@ bool IDBTransaction::hasPendingActivity() const
     return m_hasPendingActivity && !m_contextStopped;
 }
 
-IndexedDB::TransactionMode IDBTransaction::stringToMode(const String& modeString, ScriptExecutionContext* context, ExceptionCode& ec)
+IndexedDB::TransactionMode IDBTransaction::stringToMode(const String& modeString, ExceptionCode& ec)
 {
     if (modeString.isNull()
         || modeString == IDBTransaction::modeReadOnly())

@@ -62,7 +62,7 @@ public:
     static const AtomicString& modeReadOnlyLegacy();
     static const AtomicString& modeReadWriteLegacy();
 
-    static IndexedDB::TransactionMode stringToMode(const String&, ScriptExecutionContext*, ExceptionCode&);
+    static IndexedDB::TransactionMode stringToMode(const String&, ExceptionCode&);
     static const AtomicString& modeToString(IndexedDB::TransactionMode);
 
     IDBDatabaseBackendInterface* backendDB() const;

@@ -202,7 +202,7 @@ private:
     RefPtr<ExecutableWithDatabase> m_executableWithDatabase;
 };
 
-void ExecutableWithDatabase::start(IDBFactory* idbFactory, SecurityOrigin* securityOrigin, const String& databaseName)
+void ExecutableWithDatabase::start(IDBFactory* idbFactory, SecurityOrigin*, const String& databaseName)
 {
     RefPtr<OpenDatabaseCallback> callback = OpenDatabaseCallback::create(this);
     ExceptionCode ec = 0;

@@ -915,7 +915,7 @@ void IDBDatabaseBackendImpl::setIndexKeys(int64_t transactionId, int64_t objectS
     }
 }
 
-void IDBDatabaseBackendImpl::setIndexesReady(int64_t transactionId, int64_t objectStoreId, const Vector<int64_t>& indexIds)
+void IDBDatabaseBackendImpl::setIndexesReady(int64_t transactionId, int64_t, const Vector<int64_t>& indexIds)
 {
     IDB_TRACE("IDBObjectStoreBackendImpl::setIndexesReady");
 

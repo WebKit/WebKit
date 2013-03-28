@@ -320,7 +320,7 @@ private:
     {
     }
 
-    virtual void handleEvent(ScriptExecutionContext* context, Event* event)
+    virtual void handleEvent(ScriptExecutionContext*, Event* event)
     {
         ASSERT(event->type() == eventNames().successEvent);
         EventTarget* target = event->target();
@@ -504,7 +504,7 @@ PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* contex
         ec = IDBDatabaseException::TransactionInactiveError;
         return 0;
     }
-    IndexedDB::CursorDirection direction = IDBCursor::stringToDirection(directionString, context, ec);
+    IndexedDB::CursorDirection direction = IDBCursor::stringToDirection(directionString, ec);
     if (ec)
         return 0;
 
