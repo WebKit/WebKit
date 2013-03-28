@@ -172,6 +172,9 @@ public:
     // Called when a gesture event is handled.
     virtual void didHandleGestureEvent(const WebGestureEvent& event, bool eventCancelled) { }
 
+    // Called to update if touch events should be sent.
+    virtual void hasTouchEventHandlers(bool) { }
+
 protected:
     ~WebWidgetClient() { }
 };

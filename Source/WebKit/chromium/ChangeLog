@@ -1,3 +1,21 @@
+2013-03-27  Keishi Hattori  <keishi@webkit.org>
+
+        [Chromium] Enable touch events in PagePopup
+        https://bugs.webkit.org/show_bug.cgi?id=113380
+
+        We want to use touch events inside the calendar picker. This patch adds
+        PagePopupChromeClient::needTouchEvents() and moved hasTouchEventHandlers()
+        from WebViewClient to WebWidgetClient.
+
+        Reviewed by Kent Tamura.
+
+        * public/WebViewClient.h:
+        * public/WebWidgetClient.h:
+        (WebWidgetClient):
+        (WebKit::WebWidgetClient::hasTouchEventHandlers): Moved from WebViewClient.
+        * src/WebPagePopupImpl.cpp:
+        (WebKit):
+
 2013-03-27  Timothy Hatcher  <timothy@apple.com>
 
         Add support for dock-to-right of the Web Inspector in the Mac port.
