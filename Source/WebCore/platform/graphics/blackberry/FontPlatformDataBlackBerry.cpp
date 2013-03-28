@@ -77,9 +77,11 @@ bool FontPlatformData::applyState(FS_STATE* font, float scale) const
     if (m_syntheticBold) {
         if (FS_set_bold_pct(font, floatToITypeFixed(0.06)) != SUCCESS) // 6% pseudo bold
             return false;
+        FS_set_flags(font, FLAGS_CHECK_CONTOUR_WINDING_ON); // we need correctly-wound contours to fake bold
     } else {
         if (FS_set_bold_pct(font, 0) != SUCCESS)
             return false;
+        FS_set_flags(font, FLAGS_CHECK_CONTOUR_WINDING_OFF);
     }
 
     FS_FIXED skew = 0;
