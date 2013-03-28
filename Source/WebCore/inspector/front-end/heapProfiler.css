@@ -124,6 +124,10 @@ body.inactive .heap-snapshot-sidebar-tree-item.wait.selected .icon {
     text-align: right;
 }
 
+.heap-snapshot-view .data-grid div.heap-snapshot-multiple-values {
+    float: right;
+}
+
 .heap-snapshot-view .data-grid span.percent-column {
     color: grey;
     width: 32px;
