@@ -1,3 +1,10 @@
+2013-03-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled Chromium DEPS to r191172.  Requested by
+        pdr2 via sheriffbot.
+
+        * DEPS:
+
 2013-03-28  Matt Falkenhagen  <falken@chromium.org>
 
         Refactoring: Replace Element::disabled and isEnabledFormControl with isDisabledFormControl
