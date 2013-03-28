@@ -3680,7 +3680,7 @@ sub BaseInterfaceName
     my $interface = shift;
 
     while (@{$interface->parents}) {
-        $interface = $codeGenerator->ParseInterface(@{$interface->parents}[0], 1);
+        $interface = $codeGenerator->ParseInterface(@{$interface->parents}[0]);
     }
 
     return $interface->name;
