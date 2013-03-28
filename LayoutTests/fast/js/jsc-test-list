@@ -129,6 +129,7 @@ fast/js/dfg-double-vote-fuzz
 fast/js/dfg-ensure-array-storage-on-string
 fast/js/dfg-ensure-contiguous-on-string
 fast/js/dfg-exception
+fast/js/dfg-float32-array-nan
 fast/js/dfg-float32array
 fast/js/dfg-float64array
 fast/js/dfg-flush-get-local
@@ -278,6 +279,7 @@ fast/js/integer-extremes
 fast/js/interpreter-no-activation
 fast/js/invalid-callframe-during-unwind
 fast/js/isPrototypeOf
+fast/js/jit-float32-array-nan
 fast/js/js-continue-break-restrictions
 fast/js/JSON-parse-reviver
 fast/js/JSON-stringify-replacer

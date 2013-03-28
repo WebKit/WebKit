@@ -1636,15 +1636,16 @@ JIT::JumpList JIT::emitFloatTypedArrayGetByVal(Instruction*, PatchableJump& badT
         break;
     case 8: {
         loadDouble(BaseIndex(base, property, TimesEight), fpRegT0);
-        Jump notNaN = branchDouble(DoubleEqual, fpRegT0, fpRegT0);
-        static const double NaN = QNaN;
-        loadDouble(&NaN, fpRegT0);
-        notNaN.link(this);
         break;
     }
     default:
         CRASH();
     }
+    
+    Jump notNaN = branchDouble(DoubleEqual, fpRegT0, fpRegT0);
+    static const double NaN = QNaN;
+    loadDouble(&NaN, fpRegT0);
+    notNaN.link(this);
     
 #if USE(JSVALUE64)
     moveDoubleTo64(fpRegT0, resultPayload);
