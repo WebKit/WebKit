@@ -1,5 +1,14 @@
 2013-03-28  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GTK] Build GTK-specific, non-layer-violating source code into WebCore-independent libPlatformGtk.la
+        https://bugs.webkit.org/show_bug.cgi?id=112546
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Define the new platform_webcore_cppflags.
+
+2013-03-28  Zan Dobersek  <zdobersek@igalia.com>
+
         Unreviewed GTK build fix after r147039.
 
         * Source/autotools/symbols.filter: Export the missing symbols.

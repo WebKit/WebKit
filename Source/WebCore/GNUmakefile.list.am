@@ -5783,14 +5783,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/gtk/ErrorsGtk.cpp \
 	Source/WebCore/platform/gtk/ErrorsGtk.h \
 	Source/WebCore/platform/gtk/GamepadsGtk.cpp \
-	Source/WebCore/platform/gtk/KURLGtk.cpp \
-	Source/WebCore/platform/gtk/LanguageGtk.cpp \
-	Source/WebCore/platform/gtk/LoggingGtk.cpp \
-	Source/WebCore/platform/gtk/MIMETypeRegistryGtk.cpp \
-	Source/WebCore/platform/gtk/SharedBufferGtk.cpp \
-	Source/WebCore/platform/gtk/UserAgentGtk.cpp \
-	Source/WebCore/platform/gtk/UserAgentGtk.h \
-	Source/WebCore/platform/gtk/TemporaryLinkStubs.cpp \
 	Source/WebCore/platform/HostWindow.h \
 	Source/WebCore/platform/KillRing.h \
 	Source/WebCore/platform/KillRingNone.cpp \
@@ -5948,8 +5940,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/network/SocketStreamHandleBase.cpp \
 	Source/WebCore/platform/network/SocketStreamHandleBase.h \
 	Source/WebCore/platform/network/SocketStreamHandleClient.h \
-	Source/WebCore/platform/network/gtk/CredentialBackingStore.cpp \
-	Source/WebCore/platform/network/gtk/CredentialBackingStore.h \
 	Source/WebCore/platform/network/soup/AuthenticationChallenge.h \
 	Source/WebCore/platform/network/soup/AuthenticationChallengeSoup.cpp \
 	Source/WebCore/platform/network/soup/CookieJarSoup.cpp \
@@ -6052,7 +6042,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/SystemTime.h \
 	Source/WebCore/platform/text/enchant/TextCheckerEnchant.h \
 	Source/WebCore/platform/text/enchant/TextCheckerEnchant.cpp \
-	Source/WebCore/platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp \
 	Source/WebCore/platform/text/BidiContext.cpp \
 	Source/WebCore/platform/text/BidiContext.h \
 	Source/WebCore/platform/text/BidiResolver.h \
@@ -6169,7 +6158,6 @@ webcoregtk_sources += \
 	Source/WebCore/editing/atk/FrameSelectionAtk.cpp \
 	Source/WebCore/page/gtk/DragControllerGtk.cpp \
 	Source/WebCore/page/gtk/EventHandlerGtk.cpp \
-	Source/WebCore/platform/audio/gtk/AudioBusGtk.cpp \
 	Source/WebCore/platform/cairo/WidgetBackingStore.h \
 	Source/WebCore/platform/geoclue/GeolocationProviderGeoclue.h \
 	Source/WebCore/platform/geoclue/GeolocationProviderGeoclue.cpp \
@@ -6192,97 +6180,115 @@ webcoregtk_sources += \
 	Source/WebCore/platform/graphics/gstreamer/PlatformVideoWindow.h \
 	Source/WebCore/platform/graphics/gstreamer/VideoSinkGStreamer.cpp \
 	Source/WebCore/platform/graphics/gstreamer/VideoSinkGStreamer.h \
-	Source/WebCore/platform/graphics/gtk/ColorGtk.cpp \
-	Source/WebCore/platform/graphics/gtk/GdkCairoUtilities.cpp \
-	Source/WebCore/platform/graphics/gtk/GdkCairoUtilities.h \
 	Source/WebCore/platform/graphics/gtk/FullscreenVideoControllerGtk.cpp \
 	Source/WebCore/platform/graphics/gtk/FullscreenVideoControllerGtk.h \
 	Source/WebCore/platform/graphics/gtk/IconGtk.cpp \
 	Source/WebCore/platform/graphics/gtk/ImageBufferGtk.cpp \
-	Source/WebCore/platform/graphics/gtk/ImageGtk.cpp \
-	Source/WebCore/platform/graphics/gtk/IntPointGtk.cpp \
-	Source/WebCore/platform/graphics/gtk/IntRectGtk.cpp \
 	Source/WebCore/platform/gtk/AsyncFileSystemGtk.cpp \
 	Source/WebCore/platform/gtk/AsyncFileSystemGtk.h \
 	Source/WebCore/platform/gtk/ClipboardGtk.cpp \
 	Source/WebCore/platform/gtk/ClipboardGtk.h \
 	Source/WebCore/platform/gtk/ClipboardUtilitiesGtk.cpp \
 	Source/WebCore/platform/gtk/ClipboardUtilitiesGtk.h \
-	Source/WebCore/platform/gtk/CompositionResults.h \
-	Source/WebCore/platform/gtk/ContextMenuGtk.cpp \
-	Source/WebCore/platform/gtk/ContextMenuItemGtk.cpp \
-	Source/WebCore/platform/gtk/CursorGtk.cpp \
-	Source/WebCore/platform/gtk/CursorGtk.h \
 	Source/WebCore/platform/gtk/DataObjectGtk.cpp \
 	Source/WebCore/platform/gtk/DataObjectGtk.h \
 	Source/WebCore/platform/gtk/DragDataGtk.cpp \
-	Source/WebCore/platform/gtk/DragIcon.cpp \
-	Source/WebCore/platform/gtk/DragIcon.h \
 	Source/WebCore/platform/gtk/DragImageGtk.cpp \
-	Source/WebCore/platform/gtk/EventLoopGtk.cpp \
-	Source/WebCore/platform/gtk/FileSystemGtk.cpp \
-	Source/WebCore/platform/gtk/GtkClickCounter.cpp \
-	Source/WebCore/platform/gtk/GtkClickCounter.h \
 	Source/WebCore/platform/gtk/GtkDragAndDropHelper.cpp \
 	Source/WebCore/platform/gtk/GtkDragAndDropHelper.h \
-	Source/WebCore/platform/gtk/GtkInputMethodFilter.cpp \
-	Source/WebCore/platform/gtk/GtkInputMethodFilter.h \
-	Source/WebCore/platform/gtk/GtkUtilities.cpp \
-	Source/WebCore/platform/gtk/GtkUtilities.h \
-	Source/WebCore/platform/gtk/GOwnPtrGtk.cpp \
-	Source/WebCore/platform/gtk/GOwnPtrGtk.h \
-	Source/WebCore/platform/gtk/GRefPtrGtk.cpp \
-	Source/WebCore/platform/gtk/GRefPtrGtk.h \
-	Source/WebCore/platform/gtk/GtkAuthenticationDialog.cpp \
-	Source/WebCore/platform/gtk/GtkAuthenticationDialog.h \
 	Source/WebCore/platform/gtk/GtkPluginWidget.cpp \
 	Source/WebCore/platform/gtk/GtkPluginWidget.h \
-	Source/WebCore/platform/gtk/GtkPopupMenu.cpp \
-	Source/WebCore/platform/gtk/GtkPopupMenu.h \
-	Source/WebCore/platform/gtk/KeyBindingTranslator.cpp \
-	Source/WebCore/platform/gtk/KeyBindingTranslator.h \
-	Source/WebCore/platform/gtk/LocalizedStringsGtk.cpp \
-	Source/WebCore/platform/gtk/MainFrameScrollbarGtk.cpp \
-	Source/WebCore/platform/gtk/MainFrameScrollbarGtk.h \
 	Source/WebCore/platform/gtk/PasteboardGtk.cpp \
 	Source/WebCore/platform/gtk/PasteboardHelper.cpp \
 	Source/WebCore/platform/gtk/PasteboardHelper.h \
-	Source/WebCore/platform/gtk/PlatformKeyboardEventGtk.cpp \
-	Source/WebCore/platform/gtk/PlatformMouseEventGtk.cpp \
-	Source/WebCore/platform/gtk/PlatformScreenGtk.cpp \
-	Source/WebCore/platform/gtk/PlatformWheelEventGtk.cpp \
 	Source/WebCore/platform/gtk/PopupMenuGtk.cpp \
 	Source/WebCore/platform/gtk/PopupMenuGtk.h \
 	Source/WebCore/platform/gtk/RenderThemeGtk.cpp \
 	Source/WebCore/platform/gtk/RenderThemeGtk.h \
 	Source/WebCore/platform/gtk/RenderThemeGtk2.cpp \
 	Source/WebCore/platform/gtk/RenderThemeGtk3.cpp \
-	Source/WebCore/platform/gtk/RunLoopGtk.cpp \
+	Source/WebCore/platform/gtk/ScrollViewGtk.cpp \
 	Source/WebCore/platform/gtk/ScrollbarThemeGtk.cpp \
 	Source/WebCore/platform/gtk/ScrollbarThemeGtk.h \
 	Source/WebCore/platform/gtk/ScrollbarThemeGtk2.cpp \
 	Source/WebCore/platform/gtk/ScrollbarThemeGtk3.cpp \
-	Source/WebCore/platform/gtk/ScrollViewGtk.cpp \
 	Source/WebCore/platform/gtk/SearchPopupMenuGtk.cpp \
 	Source/WebCore/platform/gtk/SearchPopupMenuGtk.h \
-	Source/WebCore/platform/gtk/SharedTimerGtk.cpp \
-	Source/WebCore/platform/gtk/SoundGtk.cpp \
 	Source/WebCore/platform/gtk/WidgetGtk.cpp \
 	Source/WebCore/platform/gtk/WidgetRenderingContext.cpp \
 	Source/WebCore/platform/gtk/WidgetRenderingContext.h
 
+platformgtk_sources += \
+	Source/WebCore/platform/gtk/CompositionResults.h \
+	Source/WebCore/platform/gtk/ContextMenuGtk.cpp \
+	Source/WebCore/platform/gtk/ContextMenuItemGtk.cpp \
+	Source/WebCore/platform/gtk/CursorGtk.cpp \
+	Source/WebCore/platform/gtk/CursorGtk.h \
+	Source/WebCore/platform/gtk/DragIcon.cpp \
+	Source/WebCore/platform/gtk/DragIcon.h \
+	Source/WebCore/platform/gtk/EventLoopGtk.cpp \
+	Source/WebCore/platform/gtk/FileSystemGtk.cpp \
+	Source/WebCore/platform/gtk/GOwnPtrGtk.cpp \
+	Source/WebCore/platform/gtk/GOwnPtrGtk.h \
+	Source/WebCore/platform/gtk/GRefPtrGtk.cpp \
+	Source/WebCore/platform/gtk/GRefPtrGtk.h \
+	Source/WebCore/platform/gtk/GtkAuthenticationDialog.cpp \
+	Source/WebCore/platform/gtk/GtkAuthenticationDialog.h \
+	Source/WebCore/platform/gtk/GtkClickCounter.cpp \
+	Source/WebCore/platform/gtk/GtkClickCounter.h \
+	Source/WebCore/platform/gtk/GtkInputMethodFilter.cpp \
+	Source/WebCore/platform/gtk/GtkInputMethodFilter.h \
+	Source/WebCore/platform/gtk/GtkPopupMenu.cpp \
+	Source/WebCore/platform/gtk/GtkPopupMenu.h \
+	Source/WebCore/platform/gtk/GtkUtilities.cpp \
+	Source/WebCore/platform/gtk/GtkUtilities.h \
+	Source/WebCore/platform/gtk/GtkVersioning.c \
+	Source/WebCore/platform/gtk/GtkVersioning.h \
+	Source/WebCore/platform/gtk/KURLGtk.cpp \
+	Source/WebCore/platform/gtk/KeyBindingTranslator.cpp \
+	Source/WebCore/platform/gtk/KeyBindingTranslator.h \
+	Source/WebCore/platform/gtk/LanguageGtk.cpp \
+	Source/WebCore/platform/gtk/LocalizedStringsGtk.cpp \
+	Source/WebCore/platform/gtk/LoggingGtk.cpp \
+	Source/WebCore/platform/gtk/MIMETypeRegistryGtk.cpp \
+	Source/WebCore/platform/gtk/MainFrameScrollbarGtk.cpp \
+	Source/WebCore/platform/gtk/MainFrameScrollbarGtk.h \
+	Source/WebCore/platform/gtk/PlatformKeyboardEventGtk.cpp \
+	Source/WebCore/platform/gtk/PlatformMouseEventGtk.cpp \
+	Source/WebCore/platform/gtk/PlatformScreenGtk.cpp \
+	Source/WebCore/platform/gtk/PlatformWheelEventGtk.cpp \
+	Source/WebCore/platform/gtk/RunLoopGtk.cpp \
+	Source/WebCore/platform/gtk/SharedBufferGtk.cpp \
+	Source/WebCore/platform/gtk/SharedTimerGtk.cpp \
+	Source/WebCore/platform/gtk/SoundGtk.cpp \
+	Source/WebCore/platform/gtk/TemporaryLinkStubs.cpp \
+	Source/WebCore/platform/gtk/UserAgentGtk.cpp \
+	Source/WebCore/platform/gtk/UserAgentGtk.h \
+	Source/WebCore/platform/audio/gtk/AudioBusGtk.cpp \
+	Source/WebCore/platform/graphics/gtk/ColorGtk.cpp \
+	Source/WebCore/platform/graphics/gtk/GdkCairoUtilities.cpp \
+	Source/WebCore/platform/graphics/gtk/GdkCairoUtilities.h \
+	Source/WebCore/platform/graphics/gtk/ImageGtk.cpp \
+	Source/WebCore/platform/graphics/gtk/IntPointGtk.cpp \
+	Source/WebCore/platform/graphics/gtk/IntRectGtk.cpp \
+	Source/WebCore/platform/network/gtk/CredentialBackingStore.cpp \
+	Source/WebCore/platform/network/gtk/CredentialBackingStore.h \
+	Source/WebCore/platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp
+
 if TARGET_X11
 webcoregtk_sources += \
-	Source/WebCore/platform/gtk/GtkWidgetBackingStoreX11.cpp \
 	Source/WebCore/plugins/gtk/gtk2xtbin.c \
 	Source/WebCore/plugins/gtk/gtk2xtbin.h \
 	Source/WebCore/plugins/gtk/PluginPackageGtk.cpp \
 	Source/WebCore/plugins/gtk/PluginViewGtk.cpp \
 	Source/WebCore/plugins/gtk/xembed.h
+platformgtk_sources += \
+	Source/WebCore/platform/gtk/GtkWidgetBackingStoreX11.cpp
 if USE_OPENGL
 webcoregtk_sources += \
 	Source/WebCore/platform/graphics/cairo/GLContext.cpp \
-	Source/WebCore/platform/graphics/cairo/GLContext.h \
+	Source/WebCore/platform/graphics/cairo/GLContext.h
+platformgtk_sources += \
 	Source/WebCore/platform/gtk/RedirectedXCompositeWindow.cpp \
 	Source/WebCore/platform/gtk/RedirectedXCompositeWindow.h
 endif # END USE_OPENGL

@@ -83,6 +83,7 @@ BUILT_SOURCES += $(libwebcoreinternals_built_sources)
 
 libWebCoreInternals_la_CPPFLAGS = \
 	$(global_cppflags) \
+	$(platformgtk_cppflags) \
 	$(webcore_cppflags) \
 	$(webcoregtk_cppflags) \
 	$(javascriptcore_cppflags) \
@@ -125,6 +126,7 @@ Programs_DumpRenderTree_CPPFLAGS += \
 endif
 
 Programs_DumpRenderTree_SOURCES = \
+	Source/WebCore/platform/gtk/GtkVersioning.c \
 	Tools/DumpRenderTree/DumpRenderTree.h \
 	Tools/DumpRenderTree/DumpRenderTreeCommon.cpp \
 	Tools/DumpRenderTree/DumpRenderTreePrefix.h \
@@ -149,7 +151,7 @@ Programs_DumpRenderTree_SOURCES = \
 	Tools/DumpRenderTree/config.h \
 	Tools/DumpRenderTree/atk/AccessibilityCallbacks.h \
 	Tools/DumpRenderTree/atk/AccessibilityCallbacksAtk.cpp \
-    	Tools/DumpRenderTree/atk/AccessibilityControllerAtk.cpp \
+	Tools/DumpRenderTree/atk/AccessibilityControllerAtk.cpp \
 	Tools/DumpRenderTree/atk/AccessibilityUIElementAtk.cpp \
 	Tools/DumpRenderTree/cairo/PixelDumpSupportCairo.cpp \
 	Tools/DumpRenderTree/cairo/PixelDumpSupportCairo.h \
@@ -168,8 +170,7 @@ Programs_DumpRenderTree_SOURCES = \
 	Tools/DumpRenderTree/gtk/SelfScrollingWebKitWebView.h \
 	Tools/DumpRenderTree/gtk/TextInputController.h \
 	Tools/DumpRenderTree/gtk/TextInputController.cpp \
-	Tools/DumpRenderTree/gtk/WorkQueueItemGtk.cpp \
-	Source/Platform/gtk/GtkVersioning.c
+	Tools/DumpRenderTree/gtk/WorkQueueItemGtk.cpp
 
 Programs_DumpRenderTree_CXXFLAGS = \
 	$(global_cxxflags) \

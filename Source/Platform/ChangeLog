@@ -1,3 +1,18 @@
+2013-03-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Build GTK-specific, non-layer-violating source code into WebCore-independent libPlatformGtk.la
+        https://bugs.webkit.org/show_bug.cgi?id=112546
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Only specify the very minimal set of inclusion directories, containing the Source/WebCore/platform
+        directory and its subdirectories. This will allow only for the WebCore-independent GTK-specific sources to be built into
+        libPlatformGtk.la. Also include the GTK, libsecret and libsoup dependencies' cflags amongst the libPlatformGtk's
+        CPPFLAGS.
+        * GNUmakefile.list.am: Removed. The build targets are now listed (and will be listed until the migration) in the
+        GNUmakefile.list.am under Source/WebCore, following the common sense of specifying the build target in the
+        GNUmakefile.list.am placed in the same framework directory in which the source file is located.
+
 2013-03-26  Dana Jansens  <danakj@chromium.org>
 
         [chromium] Remove the WebVideoFrame, WebVideoFrameProvider, WebStreamTextureClient, and WebVideoLayer classes.

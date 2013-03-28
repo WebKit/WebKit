@@ -31,7 +31,7 @@
 #include "PlatformKeyboardEvent.h"
 #include "Scrollbar.h"
 #include "WindowsKeyboardCodes.h"
-#include <Platform/GtkVersioning.h>
+#include <WebCore/GtkVersioning.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
 #include <wtf/ASCIICType.h>

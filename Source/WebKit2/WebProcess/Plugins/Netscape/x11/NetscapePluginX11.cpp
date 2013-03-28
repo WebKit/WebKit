@@ -42,7 +42,7 @@
 #include <gtk/gtkx.h>
 #endif
 #include <gdk/gdkx.h>
-#include <Platform/GtkVersioning.h>
+#include <WebCore/GtkVersioning.h>
 #elif PLATFORM(EFL) && defined(HAVE_ECORE_X)
 #include <Ecore_X.h>
 #endif

@@ -6,11 +6,34 @@
 # For now we only build the libPlatformGtk library as there are no source files in place yet
 # that could be built into libPlatform.
 
-include $(srcdir)/Source/Platform/GNUmakefile.list.am
-
 platformgtk_cppflags += \
 	-DWEBKITGTK_API_VERSION_STRING=\"@WEBKITGTK_API_VERSION@\" \
-	-I$(srcdir)/Source/Platform/gtk
+	-I$(srcdir)/Source/ThirdParty/ANGLE/src \
+	-I$(srcdir)/Source/ThirdParty/ANGLE/include \
+	-I$(srcdir)/Source/ThirdParty/ANGLE/include/GLSLANG \
+	-I$(srcdir)/Source/ThirdParty/ANGLE/include/KHR \
+	-DDATA_DIR=\"${datadir}\"
+
+# This is the minimal set of Source/WebCore/platform subdirectories that contain headers required by the GTK-specific
+# platform source files. These inclusions are required due to platform layer source files not yet completely migrated
+# into Source/Platform. Only Source/WebCore/platform subdirectories must be listed here as this, coupled with the
+# header inclusion in source files that's done via specifying the header basename, prevents any platform violations
+# occurring.
+platform_webcore_cppflags += \
+	-I$(srcdir)/Source/WebCore/platform \
+	-I$(srcdir)/Source/WebCore/platform/animation \
+	-I$(srcdir)/Source/WebCore/platform/audio \
+	-I$(srcdir)/Source/WebCore/platform/cairo \
+	-I$(srcdir)/Source/WebCore/platform/graphics \
+	-I$(srcdir)/Source/WebCore/platform/graphics/cairo \
+	-I$(srcdir)/Source/WebCore/platform/graphics/gstreamer \
+	-I$(srcdir)/Source/WebCore/platform/graphics/gtk \
+	-I$(srcdir)/Source/WebCore/platform/graphics/transforms \
+	-I$(srcdir)/Source/WebCore/platform/gtk \
+	-I$(srcdir)/Source/WebCore/platform/network \
+	-I$(srcdir)/Source/WebCore/platform/network/gtk \
+	-I$(srcdir)/Source/WebCore/platform/network/soup \
+	-I$(srcdir)/Source/WebCore/platform/text
 
 noinst_LTLIBRARIES += \
 	libPlatformGtk.la
@@ -30,6 +53,9 @@ libPlatformGtk_la_CPPFLAGS = \
 	-DBUILDING_WEBKIT \
 	$(global_cppflags) \
 	$(platformgtk_cppflags) \
+	$(platform_webcore_cppflags) \
 	$(javascriptcore_cppflags) \
 	-fno-strict-aliasing \
-	$(GTK_CFLAGS)
+	$(GTK_CFLAGS) \
+	$(LIBSECRET_CFLAGS) \
+	$(LIBSOUP_CFLAGS)

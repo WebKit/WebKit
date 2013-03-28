@@ -512,9 +512,12 @@ libPlatformGtk2_la_CPPFLAGS = \
 	-DGTK_API_VERSION_2=1 \
 	$(global_cppflags) \
 	$(platformgtk_cppflags) \
+	$(platform_webcore_cppflags) \
 	$(javascriptcore_cppflags) \
 	-fno-strict-aliasing \
-	$(GTK2_CFLAGS)
+	$(GTK2_CFLAGS) \
+	$(LIBSECRET_CFLAGS) \
+	$(LIBSOUP_CFLAGS)
 
 # Injected Bundle
 injectedbundledir = $(libdir)/webkit2gtk-3.0/injected-bundle

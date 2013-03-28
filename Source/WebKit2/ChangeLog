@@ -1,3 +1,20 @@
+2013-03-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Build GTK-specific, non-layer-violating source code into WebCore-independent libPlatformGtk.la
+        https://bugs.webkit.org/show_bug.cgi?id=112546
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Reference the platform_webcore_cppflags and GTK, libsecret and libsoup dependencies' cflags amongst the
+        libPlatformGtk2's CPPFLAGS.
+        * Scripts/generate-forwarding-headers.pl: Remove the Platform framework from the list of the frameworks to be searched
+        for forwarding headers, it's at the moment not necessary to be included.
+        * Shared/gtk/ArgumentCodersGtk.cpp: Adjust the forwarding header for GtkVersioning.h that's been moved back under the
+        WebCore framework.
+        * Shared/gtk/WebEventFactory.cpp: Ditto.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp: Ditto.
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp: Ditto.
+
 2013-03-27  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed Qt build fix after http://trac.webkit.org/changeset/147067.

@@ -1,3 +1,13 @@
+2013-03-28  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Build GTK-specific, non-layer-violating source code into WebCore-independent libPlatformGtk.la
+        https://bugs.webkit.org/show_bug.cgi?id=112546
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Reference the platformgtk_cppflags amongst the libWebCoreInternals' CPPFLAGS. GtkVersioning.c file has
+        moved back to Source/WebCore/platform. Fix an indentation issue as well.
+
 2013-03-28  Ming Xie  <mxie@blackberry.com>
 
         [BlackBerry] Committer Email Updates

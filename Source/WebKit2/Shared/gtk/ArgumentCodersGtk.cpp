@@ -29,10 +29,10 @@
 #include "DataReference.h"
 #include "ShareableBitmap.h"
 #include "WebCoreArgumentCoders.h"
-#include <Platform/GtkVersioning.h>
 #include <WebCore/DataObjectGtk.h>
 #include <WebCore/DragData.h>
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/GtkVersioning.h>
 #include <WebCore/PlatformContextCairo.h>
 #include <wtf/gobject/GOwnPtr.h>
 

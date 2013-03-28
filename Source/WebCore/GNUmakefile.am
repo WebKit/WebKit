@@ -105,8 +105,7 @@ webcore_cppflags += \
 	-I$(top_builddir)/WebCore/bindings/js \
 	-I$(top_builddir)/DerivedSources/WebCore \
 	-I$(top_builddir)/DerivedSources \
-	-I$(top_builddir)/DerivedSources/JavaScriptCore \
-	-DDATA_DIR=\"${datadir}\"
+	-I$(top_builddir)/DerivedSources/JavaScriptCore
 
 webcoregtk_cppflags += \
 	-DWEBKITGTK_API_VERSION_STRING=\"@WEBKITGTK_API_VERSION@\" \

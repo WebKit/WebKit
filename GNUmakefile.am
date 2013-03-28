@@ -70,6 +70,7 @@ javascriptcore_built_sources :=
 javascriptcore_built_nosources :=
 llint_nosources :=
 offlineasm_nosources :=
+platform_webcore_cppflags :=
 platformgtk_cppflags :=
 platformgtk_sources :=
 webcore_platform_sources :=
