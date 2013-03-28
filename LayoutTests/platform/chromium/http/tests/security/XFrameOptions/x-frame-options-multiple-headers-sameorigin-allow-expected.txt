@@ -1,0 +1,11 @@
+http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-sameorigin.cgi - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-sameorigin.cgi, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-allow.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-sameorigin.cgi - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-sameorigin.cgi, http status code 200>
+http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-sameorigin.cgi - didFinishLoading
+The frame below should load, proving that 'sameorigin, sameorigin' === 'sameorigin'.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+This page should load iff it's same origin with it's parent.

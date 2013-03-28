@@ -455,6 +455,36 @@ String extractReasonPhraseFromHTTPStatusLine(const String& statusLine)
     return statusLine.substring(spacePos + 1);
 }
 
+XFrameOptionsDisposition parseXFrameOptionsHeader(const String& header)
+{
+    XFrameOptionsDisposition result = XFrameOptionsNone;
+
+    if (header.isEmpty())
+        return result;
+
+    Vector<String> headers;
+    header.split(',', headers);
+
+    for (size_t i = 0; i < headers.size(); i++) {
+        String currentHeader = headers[i].stripWhiteSpace();
+        XFrameOptionsDisposition currentValue = XFrameOptionsNone;
+        if (equalIgnoringCase(currentHeader, "deny"))
+            currentValue = XFrameOptionsDeny;
+        else if (equalIgnoringCase(currentHeader, "sameorigin"))
+            currentValue = XFrameOptionsSameOrigin;
+        else if (equalIgnoringCase(currentHeader, "allowall"))
+            currentValue = XFrameOptionsAllowAll;
+        else
+            currentValue = XFrameOptionsInvalid;
+
+        if (result == XFrameOptionsNone)
+            result = currentValue;
+        else if (result != currentValue)
+            return XFrameOptionsConflict;
+    }
+    return result;
+}
+
 bool parseRange(const String& range, long long& rangeOffset, long long& rangeEnd, long long& rangeSuffixLength)
 {
     // The format of "Range" header is defined in RFC 2616 Section 14.35.1.
