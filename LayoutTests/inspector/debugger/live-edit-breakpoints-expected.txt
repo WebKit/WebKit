@@ -181,7 +181,7 @@ Script execution paused.
 Script execution resumed.
 Showing script source:
 Setting breakpoint:
-    TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
+    OriginalTextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
     Dumping breakpoint locations
         url: , lineNumber: 2, project type: debugger, project id: debugger:
@@ -200,7 +200,7 @@ Undoing source editing:
     Dumping breakpoints
         url: , lineNumber: 2, project type: debugger, project id: debugger:
 Finally removing breakpoint:
-    TextEditor.removeBreakpoint(lineNumber = 2)
+    OriginalTextEditor.removeBreakpoint(lineNumber = 2)
     Dumping breakpoint storage
     Dumping breakpoint locations
     Dumping breakpoints
@@ -211,7 +211,7 @@ Script execution paused.
 Script execution resumed.
 Showing script source:
 Setting breakpoint:
-    TextEditor.addBreakpoint(lineNumber = 2, disabled = false)
+    OriginalTextEditor.addBreakpoint(lineNumber = 2, disabled = false)
     Dumping breakpoint storage
     Dumping breakpoint locations
         url: , lineNumber: 2, project type: debugger, project id: debugger:
@@ -230,7 +230,7 @@ Undoing source editing:
     Dumping breakpoints
         url: , lineNumber: 2, project type: debugger, project id: debugger:
 Finally removing breakpoint:
-    TextEditor.removeBreakpoint(lineNumber = 2)
+    OriginalTextEditor.removeBreakpoint(lineNumber = 2)
     Dumping breakpoint storage
     Dumping breakpoint locations
     Dumping breakpoints

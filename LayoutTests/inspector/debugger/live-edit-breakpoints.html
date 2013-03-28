@@ -330,7 +330,6 @@ function test()
             {
                 javaScriptSourceFrame = sourceFrame;
                 uiSourceCode = sourceFrame._uiSourceCode;
-                javaScriptSourceFrame._textEditor.main = true;
                 
                 InspectorTest.addResult("Setting breakpoint:");
                 InspectorTest.addSniffer(WebInspector.BreakpointManager.Breakpoint.prototype, "_addResolvedLocation", breakpointResolved);
@@ -352,7 +351,8 @@ function test()
                 InspectorTest.assertTrue(liveEditSourceFrame !== javaScriptSourceFrame, "Edited and original javaScriptSourceFrames should differ.");
                 InspectorTest.assertTrue(liveEditUISourceCode !== uiSourceCode, "Edited and original uiSourceCodes should differ.");
                 InspectorTest.addResult("Editing source:");
-                InspectorTest.replaceInSource(javaScriptSourceFrame, "}", "}//");
+                liveEditSourceFrame._textEditor.main = true;
+                InspectorTest.replaceInSource(liveEditSourceFrame, "}", "}//");
                 dumpBreakpointStorageAndLocations();
 
                 var originalUISourceCode = script.rawLocationToUILocation(location.lineNumber).uiSourceCode;
@@ -392,7 +392,6 @@ function test()
             {
                 javaScriptSourceFrame = sourceFrame;
                 uiSourceCode = sourceFrame._uiSourceCode;
-                javaScriptSourceFrame._textEditor.main = true;
                 
                 InspectorTest.addResult("Setting breakpoint:");
                 InspectorTest.addSniffer(WebInspector.BreakpointManager.Breakpoint.prototype, "_addResolvedLocation", breakpointResolved);
@@ -413,8 +412,9 @@ function test()
                 liveEditSourceFrame = sourceFrame;
                 InspectorTest.assertTrue(liveEditSourceFrame !== javaScriptSourceFrame, "Edited and original javaScriptSourceFrames should differ.");
                 InspectorTest.assertTrue(liveEditUISourceCode !== uiSourceCode, "Edited and original uiSourceCodes should differ.");
+                liveEditSourceFrame._textEditor.main = true;
                 InspectorTest.addResult("Editing source:");
-                InspectorTest.replaceInSource(javaScriptSourceFrame, "}", "}//");
+                InspectorTest.replaceInSource(liveEditSourceFrame, "}", "}//");
                 dumpBreakpointStorageAndLocations();
 
                 var originalUISourceCode = script.rawLocationToUILocation(location.lineNumber).uiSourceCode;

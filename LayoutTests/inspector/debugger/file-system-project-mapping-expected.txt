@@ -26,8 +26,10 @@ Dumping uiSourceCode and script content:
   //@ sourceURL=http://localhost/html/foo.js  
  
  - hasDivergedFromVM: false
+ - sourceFrame._muted: false
 Editing uiSourceCode:
  - hasDivergedFromVM: true
+ - sourceFrame._muted: true
 Committing uiSourceCode with live edit failure:
 Dumping uiSourceCode and script content:
     uiSourceCode: <foo content edited>
@@ -35,23 +37,32 @@ Dumping uiSourceCode and script content:
   //@ sourceURL=http://localhost/html/foo.js  
  
  - hasDivergedFromVM: true
+ - sourceFrame._muted: true
 Reloading with saved but diverged uiSourceCode:
+Loading script.
 Dumping uiSourceCode and script content:
     uiSourceCode: <foo content edited>
     script: <foo content>
   //@ sourceURL=http://localhost/html/foo.js  
  
  - hasDivergedFromVM: true
+ - sourceFrame._muted: true
 Editing uiSourceCode again:
  - hasDivergedFromVM: true
+ - sourceFrame._muted: true
 Committing uiSourceCode again (with live edit success now):
 Dumping uiSourceCode and script content:
     uiSourceCode: <foo content edited again>
     script: <foo content edited again>
  //@ sourceURL=http://localhost/html/foo.js
  - hasDivergedFromVM: false
+ - sourceFrame._muted: false
 Reloading page:
+Loading script.
  - hasDivergedFromVM: false
+ - sourceFrame._muted: false
 Editing uiSourceCode again and reloading while it is dirty:
+Loading script.
  - hasDivergedFromVM: true
+ - sourceFrame._muted: true
 
