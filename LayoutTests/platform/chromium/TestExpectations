@@ -3802,3 +3802,5 @@ webkit.org/b/113114 media/video-controls-captions.html [ Timeout ]
 
 webkit.org/b/113219 fast/dom/exception-in-binding.html [ Failure ]
 
+webkit.org/b/113474 http/tests/cache/subresource-failover-to-network.html [ Pass Failure ]
+
