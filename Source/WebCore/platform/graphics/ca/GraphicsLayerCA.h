@@ -142,6 +142,9 @@ public:
     virtual void flushCompositingState(const FloatRect&);
     virtual void flushCompositingStateForThisLayerOnly();
 
+    void recursiveComputeVisibleRect(const TransformState&);
+    virtual void recomputeVisibleRects(const FloatRect& clipRect);
+
     virtual TiledBacking* tiledBacking() const OVERRIDE;
 
     bool allowTiledLayer() const { return m_allowTiledLayer; }
@@ -243,7 +246,9 @@ private:
 
     void computePixelAlignment(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase,
         FloatPoint& position, FloatSize&, FloatPoint3D& anchorPoint, FloatSize& alignmentOffset) const;
-    FloatRect computeVisibleRect(TransformState&) const;
+    enum ComputeVisibleRectFlag { RespectAnimatingTransforms = 1 << 0 };
+    typedef unsigned ComputeVisibleRectFlags;
+    FloatRect computeVisibleRect(TransformState&, ComputeVisibleRectFlags = RespectAnimatingTransforms) const;
     const FloatRect& visibleRect() const { return m_visibleRect; }
     
     FloatRect adjustTiledLayerVisibleRect(TiledBacking*, const FloatRect& oldVisibleRect, const FloatSize& oldSize) const;

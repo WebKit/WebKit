@@ -907,25 +907,66 @@ void GraphicsLayerCA::flushCompositingStateForThisLayerOnly()
         client()->didCommitChangesForLayer(this);
 }
 
+void GraphicsLayerCA::recursiveComputeVisibleRect(const TransformState& state)
+{
+    TransformState localState = state;
+    
+    // This may be called at times when layout has not been updated, so we want to avoid calling out to the client
+    // for animating transforms.
+    FloatRect visibleRect = computeVisibleRect(localState, 0);
+    if (visibleRect != m_visibleRect) {
+        m_visibleRect = visibleRect;
+        if (TiledBacking* tiledBacking = this->tiledBacking()) {
+            if (tiledBacking->tilesWouldChangeForVisibleRect(m_visibleRect))
+                noteLayerPropertyChanged(VisibleRectChanged);
+        }
+    }
+
+    if (m_maskLayer) {
+        GraphicsLayerCA* maskLayerCA = static_cast<GraphicsLayerCA*>(m_maskLayer);
+        maskLayerCA->recursiveComputeVisibleRect(localState);
+    }
+
+    const Vector<GraphicsLayer*>& childLayers = children();
+    size_t numChildren = childLayers.size();
+    
+    for (size_t i = 0; i < numChildren; ++i) {
+        GraphicsLayerCA* curChild = static_cast<GraphicsLayerCA*>(childLayers[i]);
+        curChild->recursiveComputeVisibleRect(localState);
+    }
+
+    if (m_replicaLayer)
+        static_cast<GraphicsLayerCA*>(m_replicaLayer)->recursiveComputeVisibleRect(localState);
+}
+
+void GraphicsLayerCA::recomputeVisibleRects(const FloatRect& clipRect)
+{
+    TransformState state(TransformState::UnapplyInverseTransformDirection, FloatQuad(clipRect));
+    recursiveComputeVisibleRect(state);
+}
+
 TiledBacking* GraphicsLayerCA::tiledBacking() const
 {
     return m_layer->tiledBacking();
 }
 
-FloatRect GraphicsLayerCA::computeVisibleRect(TransformState& state) const
+FloatRect GraphicsLayerCA::computeVisibleRect(TransformState& state, ComputeVisibleRectFlags flags) const
 {
     bool preserve3D = preserves3D() || (parent() ? parent()->preserves3D() : false);
     TransformState::TransformAccumulation accumulation = preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform;
 
     TransformationMatrix layerTransform;
     FloatPoint position = m_position;
-    if (m_client)
-        m_client->customPositionForVisibleRectComputation(this, position);
+    if (client())
+        client()->customPositionForVisibleRectComputation(this, position);
 
     layerTransform.translate(position.x(), position.y());
 
     TransformationMatrix currentTransform;
-    if (client() && client()->getCurrentTransform(this, currentTransform) && !currentTransform.isIdentity()) {
+    if (!(flags & RespectAnimatingTransforms) || !client() || !client()->getCurrentTransform(this, currentTransform))
+        currentTransform = m_transform;
+    
+    if (!currentTransform.isIdentity()) {
         FloatPoint3D absoluteAnchorPoint(anchorPoint());
         absoluteAnchorPoint.scale(size().width(), size().height(), 1);
         layerTransform.translate3d(absoluteAnchorPoint.x(), absoluteAnchorPoint.y(), absoluteAnchorPoint.z());

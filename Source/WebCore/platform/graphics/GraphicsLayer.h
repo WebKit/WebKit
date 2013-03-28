@@ -408,8 +408,11 @@ public:
     // and descendant layers, and this layer only.
     virtual void flushCompositingState(const FloatRect& /* clipRect */) { }
     virtual void flushCompositingStateForThisLayerOnly() { }
-    
-    // Return a string with a human readable form of the layer tree, If debug is true 
+
+    // Walk the layer tree, recomputing the visible rects of layer with TiledBacking, on platforms that use it.
+    virtual void recomputeVisibleRects(const FloatRect& /* clipRect */) { }
+
+    // Return a string with a human readable form of the layer tree, If debug is true
     // pointers for the layers and timing data will be included in the returned string.
     String layerTreeAsText(LayerTreeAsTextBehavior = LayerTreeAsTextBehaviorNormal) const;
 

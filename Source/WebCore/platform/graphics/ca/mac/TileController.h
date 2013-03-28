@@ -107,6 +107,7 @@ private:
 
     // TiledBacking member functions.
     virtual void setVisibleRect(const FloatRect&) OVERRIDE;
+    virtual bool tilesWouldChangeForVisibleRect(const FloatRect&) const OVERRIDE;
     virtual void setExposedRect(const FloatRect&) OVERRIDE;
     virtual bool clipsToExposedRect() OVERRIDE { return m_clipsToExposedRect; }
     virtual void setClipsToExposedRect(bool) OVERRIDE;
@@ -133,7 +134,7 @@ private:
     IntRect rectForTileIndex(const TileIndex&) const;
     void getTileIndexRangeForRect(const IntRect&, TileIndex& topLeft, TileIndex& bottomRight) const;
 
-    FloatRect computeTileCoverageRect(const FloatRect& previousVisibleRect) const;
+    FloatRect computeTileCoverageRect(const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect) const;
     IntSize tileSizeForCoverageRect(const FloatRect&) const;
 
     void scheduleTileRevalidation(double interval);
