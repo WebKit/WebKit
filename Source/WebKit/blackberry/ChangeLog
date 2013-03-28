@@ -1,3 +1,16 @@
+2013-03-27  Eli Fidler <efidler@blackberry.com>
+
+        [BlackBerry] Show compositing on the Inspector timeline properly
+        https://bugs.webkit.org/show_bug.cgi?id=113416
+
+        Reviewed by Rob Buis.
+
+        The call to willComposite was too early and encompased the paint calls
+        as well.  Moving it lower will no longer encompass the paints.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::commitRootLayerIfNeeded):
+
 2013-03-27  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Populate the mime type of the WebContext for images

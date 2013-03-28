@@ -5528,7 +5528,6 @@ bool WebPagePrivate::commitRootLayerIfNeeded()
         return false;
     }
 
-    willComposite();
     m_needsCommit = false;
     // We get here either due to the commit timer, which would have called
     // render if a one shot sync was needed. Or we get called from render
@@ -5545,6 +5544,7 @@ bool WebPagePrivate::commitRootLayerIfNeeded()
     if (m_overlayLayer)
         m_overlayLayer->platformLayer()->commitOnWebKitThread(scale);
 
+    willComposite();
     // Stash the visible content rect according to webkit thread
     // This is the rectangle used to layout fixed positioned elements,
     // and that's what the layer renderer wants.
