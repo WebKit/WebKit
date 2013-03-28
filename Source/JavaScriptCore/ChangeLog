@@ -1,5 +1,13 @@
 2013-03-27  Geoffrey Garen  <ggaren@apple.com>
 
+        Unreviewed build fix: Removed a dead field.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (ByteCodeParser):
+
+2013-03-27  Geoffrey Garen  <ggaren@apple.com>
+
         Removed some dead code in the DFG bytecode parser
         https://bugs.webkit.org/show_bug.cgi?id=113472
 
