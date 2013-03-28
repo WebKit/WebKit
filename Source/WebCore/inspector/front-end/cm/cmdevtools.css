@@ -84,6 +84,7 @@
 .cm-s-web-inspector-css span.cm-string-2 {color: rgb(7, 144, 154);}
 .cm-s-web-inspector-css span.cm-link {color: rgb(7, 144, 154);}
 .cm-s-web-inspector-css span.cm-variable {color: rgb(200, 0, 0);}
+.cm-s-web-inspector-css span.cm-property {color: rgb(200, 0, 0);}
 
 .cm-s-web-inspector-html span.cm-meta {color: rgb(192, 192, 192);}
 .cm-s-web-inspector-html span.cm-comment {color: rgb(35, 110, 37);}
