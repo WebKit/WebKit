@@ -1,0 +1,66 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="editor-test.js"></script>
+<script>
+
+function test()
+{
+    var text = [
+        "function foo(a, b) {",
+        "    var f = /.a/.test(a); /*",
+        "this is a comment */",
+        "    return f + \"looongword\";"
+    ];
+
+    var positions = [
+        [0, 10, 13],
+        [8, 14, 19],
+        [0, 5],
+        [5, 20]
+    ];
+    function testTokenAtPosition(textEditor)
+    {
+        for(var i = 0; i < positions.length; ++i) {
+            var columns = positions[i];
+            InspectorTest.addResult("Line: " + text[i]);
+            for(var j = 0; j < columns.length; ++j) {
+                var column = columns[j];
+                InspectorTest.addResult("Column #" + column + " (char '" + text[i].charAt(column) + "') - token: " + JSON.stringify(textEditor.tokenAtTextPosition(i, column)));
+            }
+        }
+    }
+
+    InspectorTest.runTestSuite([
+        function testHighlightedText(next)
+        {
+            WebInspector.TextEditorHighlighter._MaxLineCount = 1000;
+            var textEditor = InspectorTest.createTestEditor();
+            textEditor.mimeType = "text/javascript";
+            textEditor.setText(text.join("\n"));
+            testTokenAtPosition(textEditor);
+            next();
+        },
+
+        function testUnhighlightedText(next)
+        {
+            // switch highlight off
+            WebInspector.TextEditorHighlighter._MaxLineCount = 0;
+            var textEditor = InspectorTest.createTestEditor();
+            textEditor.mimeType = "text/javascript";
+            textEditor.setText(text.join("\n"));
+            testTokenAtPosition(textEditor);
+            next();
+        },
+    ]);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Test editor tokenAtTextPosition method.
+</p>
+</body>
+</html>

@@ -46,6 +46,13 @@ WebInspector.TextEditor.prototype = {
 
     markClean: function() { },
     /**
+     * @param {number} lineNumber
+     * @param {number} column
+     * @return {?{startColumn: number, endColumn: number, type: string}}
+     */
+    tokenAtTextPosition: function(lineNumber, column) { },
+
+    /**
      * @param {string} mimeType
      */
     set mimeType(mimeType) { },

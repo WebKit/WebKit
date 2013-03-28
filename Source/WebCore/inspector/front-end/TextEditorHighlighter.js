@@ -35,7 +35,8 @@
 WebInspector.TextEditorHighlighter = function(textModel, damageCallback)
 {
     this._textModel = textModel;
-    this._tokenizer = WebInspector.SourceTokenizer.Registry.getInstance().getTokenizer("text/html");
+    this._mimeType = "text/html";
+    this._tokenizer = WebInspector.SourceTokenizer.Registry.getInstance().getTokenizer(this._mimeType);
     this._damageCallback = damageCallback;
     this._highlightChunkLimit = 1000;
     this._highlightLineLimit = 500;
@@ -44,11 +45,22 @@ WebInspector.TextEditorHighlighter = function(textModel, damageCallback)
 WebInspector.TextEditorHighlighter._MaxLineCount = 10000;
 
 WebInspector.TextEditorHighlighter.prototype = {
+
+    get mimeType()
+    {
+        return this._mimeType;
+    },
+
+    /**
+     * @param {string} mimeType
+     */
     set mimeType(mimeType)
     {
         var tokenizer = WebInspector.SourceTokenizer.Registry.getInstance().getTokenizer(mimeType);
-        if (tokenizer)
+        if (tokenizer) {
             this._tokenizer = tokenizer;
+            this._mimeType = mimeType;
+        }
     },
 
     set highlightChunkLimit(highlightChunkLimit)

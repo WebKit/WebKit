@@ -123,6 +123,16 @@ WebInspector.DefaultTextEditor.prototype = {
         this._textModel.markClean();
     },
     /**
+     * @param {number} lineNumber
+     * @param {number} column
+     * @return {?{startColumn: number, endColumn: number, type: string}}
+     */
+    tokenAtTextPosition: function(lineNumber, column)
+    {
+        return this._mainPanel.tokenAtTextPosition(lineNumber, column);
+    },
+
+    /**
      * @param {WebInspector.TextRange} range
      * @return {string}
      */
@@ -1406,6 +1416,66 @@ WebInspector.TextEditorMainPanel._ConsecutiveWhitespaceChars = {
 };
 
 WebInspector.TextEditorMainPanel.prototype = {
+    /**
+     * @param {number} lineNumber
+     * @param {number} column
+     * @return {?{startColumn: number, endColumn: number, type: string}}
+     */
+    tokenAtTextPosition: function(lineNumber, column)
+    {
+        if (lineNumber >= this._textModel.linesCount || lineNumber < 0)
+            return null;
+        var line = this._textModel.line(lineNumber);
+        if (column >= line.length || column < 0)
+            return null;
+        var highlight = this._textModel.getAttribute(lineNumber, "highlight");
+        if (!highlight)
+            return this._tokenAtUnhighlightedLine(line, column);
+        function compare(value, object)
+        {
+            if (value >= object.startColumn && value <= object.endColumn)
+                return 0;
+            return value - object.startColumn;
+        }
+        var index = binarySearch(column, highlight.ranges, compare);
+        if (index >= 0) {
+            var range = highlight.ranges[index];
+            return {
+                startColumn: range.startColumn,
+                endColumn: range.endColumn,
+                type: range.token
+            };
+        }
+        return null;
+    },
+
+    /**
+     * @param {string} line
+     * @param {number} column
+     * @return {?{startColumn: number, endColumn: number, type: string}}
+     */
+    _tokenAtUnhighlightedLine: function(line, column)
+    {
+        var tokenizer = WebInspector.SourceTokenizer.Registry.getInstance().getTokenizer(this.mimeType);
+        tokenizer.condition = tokenizer.createInitialCondition();
+        tokenizer.line = line;
+        var lastTokenizedColumn = 0;
+        while (lastTokenizedColumn < line.length) {
+            var newColumn = tokenizer.nextToken(lastTokenizedColumn);
+            if (column < newColumn) {
+                if (!tokenizer.tokenType)
+                    return null;
+                return {
+                    startColumn: lastTokenizedColumn,
+                    endColumn: newColumn - 1,
+                    type: tokenizer.tokenType
+                };
+            } else
+                lastTokenizedColumn = newColumn;
+        }
+        return null;
+    },
+
     _registerShortcuts: function()
     {
         var keys = WebInspector.KeyboardShortcut.Keys;
@@ -1621,6 +1691,11 @@ WebInspector.TextEditorMainPanel.prototype = {
     set mimeType(mimeType)
     {
         this._highlighter.mimeType = mimeType;
+    },
+
+    get mimeType()
+    {
+        return this._highlighter.mimeType;
     },
 
     /**
