@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<link href="resources/flexbox.css" rel="stylesheet">
 <style>
 body {
     margin: 0;
@@ -7,10 +8,8 @@ body {
 .flexbox {
     width: 600px;
     height: 240px;
-    display: -webkit-flex;
     background-color: #aaa;
     position: relative;
-    -webkit-flex-flow: column;
 }
 .vertical {
     -webkit-writing-mode: vertical-lr;
@@ -40,7 +39,7 @@ body {
 <script src="../../resources/check-layout.js"></script>
 <body onload="checkLayout('.flexbox')">
 
-<div class="flexbox">
+<div class="flexbox column">
     <div data-offset-x=0 data-expected-width=600 data-expected-height=40 style="-webkit-flex: 1;"></div>
     <div data-offset-x=0 data-expected-width=600 data-expected-height=40 style="-webkit-flex: 1; -webkit-align-self: stretch; "></div>
     <div data-offset-x=0 data-expected-width=20 data-expected-height=40 style="-webkit-flex: 1; -webkit-align-self: flex-start; width: 20px;"></div>
@@ -49,7 +48,7 @@ body {
     <div data-offset-x=0 data-expected-width=20 data-expected-height=40 style="-webkit-flex: 1; -webkit-align-self: baseline; width: 20px;"></div>
 </div>
 
-<div class="flexbox vertical">
+<div class="flexbox column vertical">
     <div data-offset-y=0 data-expected-width=100 data-expected-height=240 style="-webkit-flex: 1;"></div>
     <div data-offset-y=0 data-expected-width=100 data-expected-height=240 style="-webkit-flex: 1; -webkit-align-self: stretch; "></div>
     <div data-offset-y=0 data-expected-width=100 data-expected-height=20 style="-webkit-flex: 1; -webkit-align-self: flex-start; height: 20px;"></div>

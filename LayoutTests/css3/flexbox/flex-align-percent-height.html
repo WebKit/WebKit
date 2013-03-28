@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<link href="resources/flexbox.css" rel="stylesheet">
 <style>
 body {
     margin: 0;
@@ -11,7 +12,6 @@ body, html {
 
 .flexbox {
     width: 600px;
-    display: -webkit-flex;
     background-color: #aaa;
     position: relative;
 }
@@ -32,8 +32,8 @@ body, html {
 <body onload="checkLayout('.flexbox')">
 
 <div class="flexbox" style="height: 50%;">
-  <div data-expected-height="50"  data-offset-y="0" style="-webkit-flex: 1; height: 50px;"></div>
-  <div data-expected-height="300" data-offset-y="0" style="-webkit-flex: 1;"></div>
+  <div data-expected-height="50"  data-offset-y="0" class="flex-one" style="height: 50px;"></div>
+  <div data-expected-height="300" data-offset-y="0" class="flex-one"></div>
 </div>
 
 </body>
