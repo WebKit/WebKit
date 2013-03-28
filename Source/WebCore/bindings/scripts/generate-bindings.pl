@@ -124,7 +124,7 @@ if ($supplementalDependencyFile) {
 
 # Parse the target IDL file.
 my $targetParser = IDLParser->new(!$verbose);
-my $targetDocument = $targetParser->Parse($targetIdlFile, $defines, $preprocessor);
+my $targetDocument = $targetParser->Parse($targetIdlFile, $defines, $preprocessor, $outputDirectory);
 
 if ($idlAttributesFile) {
     my $idlAttributes = loadIDLAttributes($idlAttributesFile);
@@ -136,7 +136,7 @@ foreach my $idlFile (@supplementedIdlFiles) {
 
     my $interfaceName = fileparse(basename($idlFile), ".idl");
     my $parser = IDLParser->new(!$verbose);
-    my $document = $parser->Parse($idlFile, $defines, $preprocessor);
+    my $document = $parser->Parse($idlFile, $defines, $preprocessor, $outputDirectory);
 
     foreach my $interface (@{$document->interfaces}) {
         if ($interface->extendedAttributes->{"Supplemental"} and $interface->extendedAttributes->{"Supplemental"} eq $targetInterfaceName) {

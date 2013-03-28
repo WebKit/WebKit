@@ -176,10 +176,11 @@ sub Parse
     my $fileName = shift;
     my $defines = shift;
     my $preprocessor = shift;
+    my $outputDirectory = shift;
 
     my @definitions = ();
 
-    my @lines = applyPreprocessor($fileName, $defines, $preprocessor);
+    my @lines = applyPreprocessor($fileName, $defines, $preprocessor, $outputDirectory);
     $self->{Line} = $lines[0];
     $self->{DocumentContent} = join(' ', @lines);
 

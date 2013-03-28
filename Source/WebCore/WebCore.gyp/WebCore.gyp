@@ -595,12 +595,60 @@
       ]
     },
     {
+      'target_name': 'generate_preprocessed_idls',
+      'type': 'none',
+      'sources': [
+        '<@(bindings_idl_files)',
+        '<@(webcore_test_support_idl_files)',
+      ],
+      'rules': [
+        # Rules to build derived sources.
+        {
+          'rule_name': 'binding',
+          'extension': 'idl',
+          'msvs_external_rule': 1,
+          'variables': {
+            # SVGURIReference.idl is manually added because the generated
+            # bindings code causes compile errors when it's compiled at the
+            # top level, but we want to avoid redundant preprocessing of it in
+            # the bindings generation stage when it's referenced by other
+            # files.
+            'all_idl_files_list': '<|(all_idl_files_list.tmp <@(bindings_idl_files) <@(webcore_test_support_idl_files) ../svg/SVGURIReference.idl)',
+          },
+          'inputs': [
+            '../bindings/scripts/generate-preprocessed-idls.pl',
+            '../bindings/scripts/preprocessor.pm',
+            '<(all_idl_files_list)',
+            '<!@(cat <(all_idl_files_list))',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings/<(RULE_INPUT_ROOT).idl.pp',
+          ],
+          'msvs_cygwin_shell': 0,
+          'action': [
+            '<(perl_exe)',
+            '-w',
+            '-I../bindings/scripts',
+            '../bindings/scripts/generate-preprocessed-idls.pl',
+            '--output',
+            '<@(_outputs)',
+            '--defines',
+            '<(feature_defines) LANGUAGE_JAVASCRIPT V8_BINDING',
+            '<(RULE_INPUT_PATH)',
+            '<@(preprocessor)',
+          ],
+          'message': 'Preprocessing <(RULE_INPUT_PATH)',
+        },
+      ],
+    },
+    {
       'target_name': 'webcore_bindings_sources',
       'type': 'none',
       'hard_dependency': 1,
       'dependencies': [
         'generate_supplemental_dependency',
         'generate_settings',
+        'generate_preprocessed_idls',
       ],
       'sources': [
         # bison rule
