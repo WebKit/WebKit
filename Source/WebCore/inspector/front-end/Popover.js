@@ -244,9 +244,22 @@ WebInspector.PopoverHelper.prototype = {
         this._timeout = timeout;
     },
 
+    /**
+     * @param {MouseEvent} event
+     * @return {boolean}
+     */
+    _eventInHoverElement: function(event)
+    {
+        if (!this._hoverElement)
+            return false;
+        var box = this._hoverElement.boxInWindow();
+        return (box.x <= event.clientX && event.clientX <= box.x + box.width &&
+            box.y <= event.clientY && event.clientY <= box.y + box.height);
+    },
+
     _mouseDown: function(event)
     {
-        if (this._disableOnClick || !event.target.isSelfOrDescendant(this._hoverElement))
+        if (this._disableOnClick || !this._eventInHoverElement(event))
             this.hidePopover();
         else {
             this._killHidePopoverTimer();
@@ -257,7 +270,7 @@ WebInspector.PopoverHelper.prototype = {
     _mouseMove: function(event)
     {
         // Pretend that nothing has happened.
-        if (event.target.isSelfOrDescendant(this._hoverElement))
+        if (this._eventInHoverElement(event))
             return;
 
         this._startHidePopoverTimer();
@@ -276,7 +289,7 @@ WebInspector.PopoverHelper.prototype = {
     {
         if (!this.isPopoverVisible())
             return;
-        if (event.relatedTarget && !event.relatedTarget.isSelfOrDescendant(this._hoverElement))
+        if (!this._eventInHoverElement(event))
             this._startHidePopoverTimer();
     },
 
