@@ -1186,6 +1186,9 @@ webkit.org/b/88045 fast/dom/gc-attribute-node.html [ Failure ]
 # Requires WebP support.
 Bug(EFL) fast/canvas/canvas-toDataURL-webp.html
 Bug(EFL) fast/images/webp-image-decoding.html
+Bug(EFL) fast/images/webp-color-profile-lossless.html
+Bug(EFL) fast/images/webp-color-profile-lossy-alpha.html
+Bug(EFL) fast/images/webp-color-profile-lossy.html
 Bug(EFL) http/tests/images/webp-partial-load.html
 Bug(EFL) http/tests/images/webp-progressive-load.html
 

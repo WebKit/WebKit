@@ -1356,6 +1356,9 @@ plugins/iframe-shims.html
 # Requires WebP support.
 fast/canvas/canvas-toDataURL-webp.html
 fast/images/webp-image-decoding.html
+fast/images/webp-color-profile-lossless.html
+fast/images/webp-color-profile-lossy-alpha.html
+fast/images/webp-color-profile-lossy.html
 http/tests/images/webp-partial-load.html
 http/tests/images/webp-progressive-load.html
 
