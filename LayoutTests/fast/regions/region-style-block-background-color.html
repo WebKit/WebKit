@@ -7,94 +7,109 @@
     -->
     <head>
         <style>
-            p { background-color: red; }
-            .regionBox { width: 280px; height: 50px; }
-            .regionBox1 { width: 280px; height: 30px; }
+            html { font: 16px/1.25 monospace; }
+            .regionTextBlock { background-color: red; }
+            .regionBox { width: 420px; height: 50px; }
+            .regionBox1 { width: 420px; height: 30px; }
 
             #article1 { -webkit-flow-into: flow1; }
             #region1  { -webkit-flow-from: flow1; }
-            @-webkit-region #region1 { p { background-color: green; } }
+            @-webkit-region #region1 { #regionTextBlock1 { background-color: green; } }
 
             #article2 { -webkit-flow-into: flow2; }
             #region21, #region22  { -webkit-flow-from: flow2; }
-            @-webkit-region #region21 { p { background-color: green; } }
-            @-webkit-region #region22 { p { background-color: lime; } }
+            @-webkit-region #region21 { #regionTextBlock2 { background-color: green; } }
+            @-webkit-region #region22 { #regionTextBlock3 { background-color: lime; } }
 
             #article3 { -webkit-flow-into: flow3; }
             #region31, #region32 { -webkit-flow-from: flow3; }
-            @-webkit-region #region31 { p { background-color: green; } }
-            @-webkit-region #region32 { p { background-color: lime; } }
+            @-webkit-region #region31 { #regionTextBlock4 { background-color: green; } }
+            @-webkit-region #region32 { #regionTextBlock4 { background-color: lime; } }
 
             #article41 { -webkit-flow-into: flow41; }
             #region41  { -webkit-flow-from: flow41; }
             #article42 { -webkit-flow-into: flow42; }
             #region42  { -webkit-flow-from: flow42; }
-            @-webkit-region #region41 { p { background-color: green; } }
-            @-webkit-region #region42 { p { background-color: lime; } }
+            @-webkit-region #region41 {
+                #regionTextBlock5 { background-color: green; }
+                #regionTextBlock6 { background-color: green; }
+            }
+            @-webkit-region #region42 {
+                #regionTextBlock7 { background-color: lime; }
+                #regionTextBlock8 { background-color: lime; }
+            }
 
             #article5 { -webkit-flow-into: flow5; }
             #region5  { -webkit-flow-from: flow5; }
-            @-webkit-region #region5 { p { background-color: green; } }
+            @-webkit-region #region5 {
+                #regionTextBlock9 { background-color: green; }
+            }
 
             #article6 { -webkit-flow-into: flow6; }
             #region6  { -webkit-flow-from: flow6; }
-            @-webkit-region #region6 { p { background-color: transparent; } }
+            @-webkit-region #region6 { #regionTextBlock10 { background-color: transparent; } }
 
             #article7  { -webkit-flow-into: flow7; }
             #region71  { -webkit-flow-from: flow7; }
             #region72  { -webkit-flow-from: flow7; }
-            #p7 { background-color: green; }
-            @-webkit-region #region71 { #p7 { background-color: transparent; } }
+            #regionTextBlock11 { background-color: green; }
+            @-webkit-region #region71 { #regionTextBlock11 { background-color: transparent; } }
         </style>
-   </head>
+    </head>
     <body class="body">
         <!-- Style a single paragraph in a single region -->
         <div id="article1">
-            <p>Green background text styled in region1.</p>
+            <div class="regionTextBlock" id="regionTextBlock1">Green background text styled in region1.</div>
         </div>
         <div id="region1" class="regionBox1"></div>
+
         <!-- Style separate paragraphs in different regions -->
-        <div id="article2">
-            <p>Green background text styled in region21.</p>
-            <p>Lime background text styled in region22.</p>
+         <div id="article2">
+            <div class="regionTextBlock" id="regionTextBlock2">Green background text styled in region21.</div></br>
+            <div class="regionTextBlock" id="regionTextBlock3">Lime background text styled in region22.</div>
         </div>
         <div id="region21" class="regionBox"></div>
         <div id="region22" class="regionBox1"></div>
-        <!-- Style a single paragraph in different regions -->
+
+       <!-- Style a single paragraph in different regions -->
         <div id="article3">
-            <p>Green background text styled in region31. Lime background text styled in region32. Lime background text styled in region32. Green background text styled in region31.</p>
+            <div class="regionTextBlock" id="regionTextBlock4">Green background text styled in region31. Lime background text styled in region32. Lime background text styled in region32. Green background text styled in region31.</div></br>
         </div>
-        <div id="region31" class="regionBox"></div>
+        <div id="region31" class="regionBox1"></div>
         <div id="region32" class="regionBox"></div>
         <div id="region31" class="regionBox1"></div>
+
         <!-- Style paragraphs in alternate regions -->
         <div id="article41">
-            <p>Green background text styled in region 41.</p>
-            <p>Green background text styled in region 41.</p>
+            <div class="regionTextBlock" id="regionTextBlock5">Green background text styled in region 41.</div></br>
+            <div class="regionTextBlock" id="regionTextBlock6">Green background text styled in region 41.</div></br>
         </div>
         <div id="article42">
-            <p>Lime background text styled in region 42.</p>
-            <p>Lime background text styled in region 42.</p>
+            <div class="regionTextBlock" id="regionTextBlock7">Lime background text styled in region 42.</div></br>
+            <div class="regionTextBlock" id="regionTextBlock8">Lime background text styled in region 42.</div></br>
         </div>
         <div id="region41" class="regionBox"></div>
         <div id="region42" class="regionBox"></div>
         <div id="region41" class="regionBox1"></div>
         <div id="region42" class="regionBox1"></div>
+
         <!-- Style paragraph in region, text also styled. -->
         <div id="article5">
-            <p><i><b>Green background, styled text in region5.</b></i></p>
+            <div class="regionTextBlock" id="regionTextBlock9"><i><b>Green background, styled text in region5.</b></i></div>
         </div>
         <div id="region5" class="regionBox1"></div>
+
         <!-- Style paragraph in region, transparent background. -->
         <div id="article6">
-            <p>Transparent background text in region6.</b></i></p>
+            <div class="regionTextBlock" id="regionTextBlock10">Transparent background text in region6.</b></i></div>
         </div>
         <div id="region6" class="regionBox1"></div>
+
         <!-- Style paragraph in two regions, first region resets background, second region should have background -->
         <div id="article7">
-            <p id="p7">Transparent background text in region71. Green background text in region 72.</p>
+            <div class="regionTextBlock" id="regionTextBlock11">Transparent background text in region71. Green background text in region 72.</div>
         </div>
-        <div id="region71" class="regionBox"></div>
+        <div id="region71" class="regionBox1"></div>
         <div id="region72" class="regionBox1"></div>
     </body>
 </html>
