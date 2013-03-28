@@ -11298,7 +11298,8 @@ void CSSParser::syntaxError(const Location& location, SyntaxErrorType error)
 
 bool CSSParser::isLoggingErrors()
 {
-    return m_logErrors;
+    // FIXME: return logging back (https://bugs.webkit.org/show_bug.cgi?id=113401).
+    return false;
 }
 
 void CSSParser::logError(const String& message, int lineNumber)

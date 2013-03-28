@@ -2033,11 +2033,8 @@ invalid_block_list:
 ;
 
 errors:
-    error {
-        $$ = parser->currentLocation();
-    }
-  | errors error {
-        $$ = $1;
+    error error_location {
+        $$ = $2;
     }
     ;
 

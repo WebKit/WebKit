@@ -41,6 +41,13 @@
             display:none;
         }
 
+        .malformed3 {
+            ;*display:expression(function(){})
+        }
+        #test5 {
+            display:none;
+        }
+
         /* Successfully parsed */
         #last {
             display:block;
@@ -52,6 +59,7 @@
   <div class="to_be_hidden" id="test2">FAIL: Test 2</div>
   <div class="to_be_hidden" id="test3">FAIL: Test 3</div>
   <div class="to_be_hidden" id="test4">FAIL: Test 4</div>
+  <div class="to_be_hidden" id="test5">FAIL: Test 5</div>
   <div class="to_be_shown" id="last">PASS</div>
 </body>
 </html>
