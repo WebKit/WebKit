@@ -410,7 +410,7 @@ webkit.org/b/103926 media/track/opera/track/webvtt/rendering/adhoc/voice_with_ev
 webkit.org/b/103771 media/track/track-in-band.html [ Failure ]
 webkit.org/b/103771 media/track/track-in-band-cues-added-once.html [ Timeout ]
 webkit.org/b/103771 media/track/track-in-band-style.html [ Timeout ]
-webkit.org/b/103771 media/track/track-in-band-legacy-api.html [ Timeout ]
+webkit.org/b/103771 media/track/track-in-band-legacy-api.html [ Failure ]
 
 #Incorrect rebaseline
 webkit.org/b/107818 media/controls-styling.html [ Failure ]
