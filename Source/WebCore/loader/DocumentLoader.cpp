@@ -45,6 +45,7 @@
 #include "FrameLoaderClient.h"
 #include "FrameTree.h"
 #include "HTMLFormElement.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HistoryItem.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
@@ -588,6 +589,8 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
             InspectorInstrumentation::continueAfterXFrameOptionsDenied(m_frame, this, identifier, response);
             String message = "Refused to display '" + response.url().elidedString() + "' in a frame because it set 'X-Frame-Options' to '" + content + "'.";
             frame()->document()->addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, message, identifier);
+            if (HTMLFrameOwnerElement* ownerElement = frame()->ownerElement())
+                ownerElement->dispatchEvent(Event::create(eventNames().loadEvent, false, false));
             cancelMainResourceLoad(frameLoader()->cancelledError(m_request));
             return;
         }
