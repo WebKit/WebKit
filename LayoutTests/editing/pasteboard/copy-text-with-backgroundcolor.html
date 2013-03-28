@@ -21,6 +21,8 @@
 <script src="../../resources/dump-as-markup.js"></script>
 
 <script>
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
 if (window.testRunner)
      testRunner.dumpAsText();
 

@@ -7,6 +7,8 @@ if (window.testRunner)
 <div id="test" contenteditable="true">First<br class='webkit-block-placeholder'>Second paragraph.</div>
 
 <script>
+if (window.internals)
+    internals.settings.setEditingBehavior("mac");
 var s = window.getSelection();
 var e = document.getElementById("test");
 

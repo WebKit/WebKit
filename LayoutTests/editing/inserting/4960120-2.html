@@ -2,6 +2,8 @@
 <div id="div" contenteditable="true">foo<div>bar</div></div>
 
 <script>
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
 var div = document.getElementById("div");
 var sel = window.getSelection();
 

@@ -26,6 +26,8 @@ var handleDrag = function(e) {
 }
     
 function runTest() {
+    if (window.internals)
+        internals.settings.setEditingBehavior('mac');
     var console = document.getElementById('console');
     var editDiv = document.getElementById('test');
     editDiv.addEventListener('drop', handleDrop, false);

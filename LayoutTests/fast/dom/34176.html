@@ -58,7 +58,10 @@ The visual order should be TextRun3 TextRun1 TextRun2, not TextRun3 TextRun2 Tex
 <ul id="console" dir=ltr></ul>
 
 <script> 
- 
+
+    if (window.internals)
+        internals.settings.setEditingBehavior("mac");
+
     function log(str)
     {
         var li = document.createElement("li");

@@ -8,6 +8,9 @@
 if (window.testRunner)
     testRunner.dumpEditingCallbacks();
 
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
+
 var sel = window.getSelection();
 var div = document.getElementById("div");
 

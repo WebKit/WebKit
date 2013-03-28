@@ -7,6 +7,8 @@ if (window.testRunner)
 <div id="div" contentEditable="true"><ul><ul><li>foo</li></ul><li><br></li></ul></div>
 
 <script>
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
 var div = document.getElementById("div");
 var sel = window.getSelection();
 

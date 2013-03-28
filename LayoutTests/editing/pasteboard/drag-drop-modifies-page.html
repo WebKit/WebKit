@@ -6,7 +6,9 @@ function editingTest() {
   
     if (!window.testRunner)
         return;
-        
+    if (window.internals)
+        internals.settings.setEditingBehavior("mac");
+
     extendSelectionForwardByWordCommand();
     
     window.testRunner.waitUntilDone();

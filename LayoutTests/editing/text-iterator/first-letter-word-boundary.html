@@ -18,6 +18,8 @@ This test also demonstrates a bug that word position is incorrectly reported.</p
 
 if (window.testRunner)
     testRunner.dumpAsText();
+if (window.internals)
+  internals.settings.setEditingBehavior("mac");
 
 function runTest(actor, expectedOffset) {
     window.getSelection().setPosition(test.firstChild, 4);

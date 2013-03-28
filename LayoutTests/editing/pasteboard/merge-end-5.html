@@ -7,6 +7,8 @@
 <script>
 if (window.testRunner)
     testRunner.dumpEditingCallbacks();
+if (window.internals)
+    internals.settings.setEditingBehavior("mac");
 
 Markup.description('Pasting a paragraph or less into a selection that spans multiple blocks should insert content into the block containing the start of the selection.');
 

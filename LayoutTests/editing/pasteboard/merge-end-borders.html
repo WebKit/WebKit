@@ -8,6 +8,8 @@ if (window.testRunner)
 
 <script type="text/javascript" src="../editing.js"></script>
 <script>
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
 var s = window.getSelection();
 var e = document.getElementById("test");
 

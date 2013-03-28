@@ -31,6 +31,8 @@ function editingTest() {
 </div>
 
 <script>
+if (window.internals)
+    internals.settings.setEditingBehavior("mac");
 runEditingTest();
 </script>
 

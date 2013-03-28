@@ -5,6 +5,8 @@
 <body>
 <div id="test" contenteditable>hello world</div>
 <script>
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
 
 window.getSelection().setPosition(test, 0);
 window.getSelection().modify('move', 'forward', 'word');

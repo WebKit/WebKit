@@ -9,6 +9,8 @@ bar</pre></div>
 
 <script type="text/javascript" src="../editing.js"></script>
 <script>
+if (window.internals)
+    internals.settings.setEditingBehavior("mac");
 var e = document.getElementById("test");
 var s = window.getSelection();
 

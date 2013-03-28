@@ -41,6 +41,9 @@ one two cha cha three four cha cha cha
 </div>
 <script>
 
+if (window.internals)
+    internals.settings.setEditingBehavior("mac");
+
 function sendDeleteWordKey()
 {
     var deleteWordModifiers;

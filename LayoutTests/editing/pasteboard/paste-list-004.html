@@ -65,6 +65,8 @@ function editingTest()
     }
 }
 
+if (window.internals)
+      internals.settings.setEditingBehavior("mac");
 runDumpAsTextEditingTest(false);
 document.getElementById("results").innerText = "PASS";
 </script>

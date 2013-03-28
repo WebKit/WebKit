@@ -1,6 +1,8 @@
 <script src="../../resources/dump-as-markup.js"></script>
 <div id="test" contenteditable="true">The second word, and only the second word of this sentence should have a red background color.</div>
 <script>
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
 if (window.testRunner)
      testRunner.dumpEditingCallbacks();
 

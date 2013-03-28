@@ -14,6 +14,8 @@ blockquote {
 <div id="div" contenteditable="true">This should not be blockquoted. This should not be blockquoted.</div>
 <script src="../../resources/dump-as-markup.js"></script>
 <script>
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
 
 Markup.description("This tests pasting a blockquote into the middle of a paragraph.");
 

@@ -16,6 +16,9 @@ blockquote {
 </div>
 
 <script>
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
+
 var sel = window.getSelection();
 var div = document.getElementById("div");
 sel.setPosition(div, 0);

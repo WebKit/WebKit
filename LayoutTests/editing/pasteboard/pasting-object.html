@@ -8,6 +8,8 @@ if (window.testRunner)
 </body>
 
 <script>
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
 var s = window.getSelection();
 s.setPosition(document.getElementById("test"), 0);
 

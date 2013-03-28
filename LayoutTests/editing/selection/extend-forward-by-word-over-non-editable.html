@@ -37,6 +37,8 @@ function extendForwardByWord(container, bidiName) {
     log("FAIL for " + bidiName + ", selection is \"" + getSelection() + "\" but should be \"" + noneditableChild.textContent + "\"");
 }
 
+if (window.internals)
+    internals.settings.setEditingBehavior("mac");
 extendForwardByWord(document.getElementById("ltrTextContainer"), "LTR");
 extendForwardByWord(document.getElementById("rtlTextContainer"), "RTL");
 extendForwardByWord(document.getElementById("ltrMultiTextContainer"), "LTR-multi");

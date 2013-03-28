@@ -4,6 +4,8 @@
 <script src="../../resources/dump-as-markup.js"></script>
 <div contenteditable="true" id="div">foo<span contenteditable="false"> bar</span></div>
 <script>
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
 var div = document.getElementById("div");
 var sel = window.getSelection();
 sel.setPosition(div, 0);

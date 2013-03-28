@@ -17,6 +17,8 @@
 <script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
 
 <script>
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
 
 function editingTest() {
     extendSelectionForwardByWordCommand();

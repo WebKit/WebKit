@@ -6,6 +6,8 @@ if (window.testRunner)
 <div id="test" style="border: 1px solid black;" contenteditable="true"></div>
 
 <script>
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
 var s = window.getSelection();
 var p = document.getElementById("test");
 p.innerHTML = "foo<br>bar<br>baz";

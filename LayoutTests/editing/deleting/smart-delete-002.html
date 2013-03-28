@@ -21,6 +21,8 @@
 <script>
 
 function editingTest() {
+    if (window.internals)
+        internals.settings.setEditingBehavior('mac');
     moveSelectionForwardByWordCommand();
     moveSelectionForwardByCharacterCommand();
     doubleClickAtSelectionStart();

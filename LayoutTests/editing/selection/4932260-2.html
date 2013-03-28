@@ -4,6 +4,8 @@
 <script>
 if (window.testRunner)
     window.testRunner.dumpEditingCallbacks();
+if (window.internals)
+    internals.settings.setEditingBehavior('mac');
 var sel = window.getSelection();
 var div = document.getElementById("div");
 sel.setPosition(div, 0);
