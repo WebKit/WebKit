@@ -400,7 +400,14 @@ IntPoint ScrollableArea::minimumScrollPosition() const
 
 IntPoint ScrollableArea::maximumScrollPosition() const
 {
-    return IntPoint(contentsSize().width() - visibleWidth(), contentsSize().height() - visibleHeight());
+    return IntPoint(totalContentsSize().width() - visibleWidth(), totalContentsSize().height() - visibleHeight());
+}
+
+IntSize ScrollableArea::totalContentsSize() const
+{
+    IntSize totalContentsSize = contentsSize();
+    totalContentsSize.setHeight(totalContentsSize.height() + headerHeight() + footerHeight());
+    return totalContentsSize;
 }
 
 IntRect ScrollableArea::visibleContentRect(VisibleContentRectIncludesScrollbars scrollbarInclusion) const

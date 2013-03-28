@@ -147,6 +147,12 @@ public:
     virtual IntSize overhangAmount() const { return IntSize(); }
     virtual IntPoint lastKnownMousePosition() const { return IntPoint(); }
 
+    virtual int headerHeight() const { return 0; }
+    virtual int footerHeight() const { return 0; }
+
+    // The totalContentsSize() is equivalent to the contentsSize() plus the header and footer heights.
+    IntSize totalContentsSize() const;
+
     virtual bool shouldSuspendScrollAnimations() const { return true; }
     virtual void scrollbarStyleChanged(int /*newStyle*/, bool /*forceUpdate*/) { }
     virtual void setVisibleScrollerThumbRect(const IntRect&) { }

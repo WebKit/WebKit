@@ -58,7 +58,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree* sta
 ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScrollingNode& stateNode)
     : ScrollingStateNode(stateNode)
     , m_viewportRect(stateNode.viewportRect())
-    , m_contentsSize(stateNode.contentsSize())
+    , m_totalContentsSize(stateNode.totalContentsSize())
     , m_frameScaleFactor(stateNode.frameScaleFactor())
     , m_nonFastScrollableRegion(stateNode.nonFastScrollableRegion())
     , m_wheelEventHandlerCount(stateNode.wheelEventHandlerCount())
@@ -95,13 +95,13 @@ void ScrollingStateScrollingNode::setViewportRect(const IntRect& viewportRect)
     m_scrollingStateTree->setHasChangedProperties(true);
 }
 
-void ScrollingStateScrollingNode::setContentsSize(const IntSize& contentsSize)
+void ScrollingStateScrollingNode::setTotalContentsSize(const IntSize& totalContentsSize)
 {
-    if (m_contentsSize == contentsSize)
+    if (m_totalContentsSize == totalContentsSize)
         return;
 
-    m_contentsSize = contentsSize;
-    setPropertyChanged(ContentsSize);
+    m_totalContentsSize = totalContentsSize;
+    setPropertyChanged(TotalContentsSize);
     m_scrollingStateTree->setHasChangedProperties(true);
 }
 
@@ -233,9 +233,9 @@ void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, int indent) con
         ts << "(viewport rect " << m_viewportRect.x() << " " << m_viewportRect.y() << " " << m_viewportRect.width() << " " << m_viewportRect.height() << ")\n";
     }
 
-    if (!m_contentsSize.isEmpty()) {
+    if (!m_totalContentsSize.isEmpty()) {
         writeIndent(ts, indent + 1);
-        ts << "(contents size " << m_contentsSize.width() << " " << m_contentsSize.height() << ")\n";
+        ts << "(contents size " << m_totalContentsSize.width() << " " << m_totalContentsSize.height() << ")\n";
     }
 
     if (m_frameScaleFactor != 1) {

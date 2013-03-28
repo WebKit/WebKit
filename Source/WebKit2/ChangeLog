@@ -1,3 +1,33 @@
+2013-03-26  Beth Dakin  <bdakin@apple.com>
+
+        Need WK2 API to give a WebView a header and footer
+        https://bugs.webkit.org/show_bug.cgi?id=113352
+        -and corresponding-
+        <rdar://problem/13383835>
+
+        Reviewed by Simon Fraser.
+
+        New API allows setting and getting layers for a header and footer.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/mac: Added.
+        * WebProcess/InjectedBundle/API/c/mac/WKBundlePagePrivateMac.h: Added.
+        * WebProcess/InjectedBundle/API/c/mac/WKBundlePagePrivateMac.mm: Added.
+        (WKBundlePageGetHeaderLayer):
+        (WKBundlePageSetHeaderLayer):
+        (WKBundlePageGetFooterLayer):
+        (WKBundlePageSetFooterLayer):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::setTopOverhangImage):
+        (WebKit::WebPage::setBottomOverhangImage):
+        (WebKit):
+        (WebKit::WebPage::getHeaderLayer):
+        (WebKit::WebPage::setHeaderLayerWithHeight):
+        (WebKit::WebPage::getFooterLayer):
+        (WebKit::WebPage::setFooterLayerWithHeight):
+
 2013-03-27  Jer Noble  <jer.noble@apple.com>
 
         Going full screen and cancelling gets system into a weird state

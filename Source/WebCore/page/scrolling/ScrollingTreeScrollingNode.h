@@ -59,7 +59,7 @@ protected:
     explicit ScrollingTreeScrollingNode(ScrollingTree*, ScrollingNodeID);
 
     const IntRect& viewportRect() const { return m_viewportRect; }
-    const IntSize& contentsSize() const { return m_contentsSize; }
+    const IntSize& totalContentsSize() const { return m_totalContentsSize; }
 
     float frameScaleFactor() const { return m_frameScaleFactor; }
 
@@ -75,7 +75,7 @@ protected:
 
 private:
     IntRect m_viewportRect;
-    IntSize m_contentsSize;
+    IntSize m_totalContentsSize;
     IntPoint m_scrollOrigin;
     
     float m_frameScaleFactor;

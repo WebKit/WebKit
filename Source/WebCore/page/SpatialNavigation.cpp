@@ -483,7 +483,7 @@ bool canScrollInDirection(const Frame* frame, FocusDirection direction)
         return false;
     if ((direction == FocusDirectionUp || direction == FocusDirectionDown) &&  ScrollbarAlwaysOff == verticalMode)
         return false;
-    LayoutSize size = frame->view()->contentsSize();
+    LayoutSize size = frame->view()->totalContentsSize();
     LayoutSize offset = frame->view()->scrollOffset();
     LayoutRect rect = frame->view()->visibleContentRect(ScrollableArea::IncludeScrollbars);
 

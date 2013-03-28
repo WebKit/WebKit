@@ -157,7 +157,7 @@ void ScrollingCoordinatorMac::frameViewLayoutUpdated(FrameView* frameView)
 
     scrollParameters.scrollOrigin = frameView->scrollOrigin();
     scrollParameters.viewportRect = IntRect(IntPoint(), frameView->visibleContentRect().size());
-    scrollParameters.contentsSize = frameView->contentsSize();
+    scrollParameters.totalContentsSize = frameView->totalContentsSize();
     scrollParameters.frameScaleFactor = frameView->frame()->frameScaleFactor();
 
     setScrollParametersForNode(scrollParameters, node);
@@ -289,7 +289,7 @@ void ScrollingCoordinatorMac::setScrollParametersForNode(const ScrollParameters&
 
     node->setScrollOrigin(scrollParameters.scrollOrigin);
     node->setViewportRect(scrollParameters.viewportRect);
-    node->setContentsSize(scrollParameters.contentsSize);
+    node->setTotalContentsSize(scrollParameters.totalContentsSize);
     node->setFrameScaleFactor(scrollParameters.frameScaleFactor);
 
     scheduleTreeStateCommit();

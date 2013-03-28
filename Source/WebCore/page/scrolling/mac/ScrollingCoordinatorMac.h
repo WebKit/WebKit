@@ -111,7 +111,7 @@ private:
         IntPoint scrollOrigin;
 
         IntRect viewportRect;
-        IntSize contentsSize;
+        IntSize totalContentsSize;
         
         float frameScaleFactor;
     };

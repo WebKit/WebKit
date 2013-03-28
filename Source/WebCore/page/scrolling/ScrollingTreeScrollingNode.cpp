@@ -56,8 +56,8 @@ void ScrollingTreeScrollingNode::updateBeforeChildren(ScrollingStateNode* stateN
     if (state->hasChangedProperty(ScrollingStateScrollingNode::ViewportRect))
         m_viewportRect = state->viewportRect();
 
-    if (state->hasChangedProperty(ScrollingStateScrollingNode::ContentsSize))
-        m_contentsSize = state->contentsSize();
+    if (state->hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize))
+        m_totalContentsSize = state->totalContentsSize();
 
     if (state->hasChangedProperty(ScrollingStateScrollingNode::FrameScaleFactor))
         m_frameScaleFactor = state->frameScaleFactor();

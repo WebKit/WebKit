@@ -95,6 +95,7 @@
 #include "DictionaryPopupInfo.h"
 #include "LayerHostingContext.h"
 #include <wtf/RetainPtr.h>
+OBJC_CLASS CALayer;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSObject;
 OBJC_CLASS WKAccessibilityWebPageObject;
@@ -368,6 +369,11 @@ public:
 
     void setTopOverhangImage(PassRefPtr<WebImage>);
     void setBottomOverhangImage(PassRefPtr<WebImage>);
+
+    CALayer *getHeaderLayer() const;
+    void setHeaderLayerWithHeight(CALayer *, int);
+    CALayer *getFooterLayer() const;
+    void setFooterLayerWithHeight(CALayer *, int);
 #endif
 
     bool windowIsFocused() const;
@@ -887,6 +893,9 @@ private:
     LayerHostingMode m_layerHostingMode;
 
     RetainPtr<WKAccessibilityWebPageObject> m_mockAccessibilityElement;
+
+    RetainPtr<CALayer> m_headerLayer;
+    RetainPtr<CALayer> m_footerLayer;
 
     WebCore::KeyboardEvent* m_keyboardEventBeingInterpreted;
 

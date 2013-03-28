@@ -229,6 +229,9 @@
 
     void setPageScaleFactor(in float scaleFactor, in long x, in long y) raises(DOMException);
 
+    void setHeaderHeight(in Document document, in float height);
+    void setFooterHeight(in Document document, in float height);
+
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
     void webkitWillEnterFullScreenForElement(in Document document, in Element element);
     void webkitDidEnterFullScreenForElement(in Document document, in Element element);

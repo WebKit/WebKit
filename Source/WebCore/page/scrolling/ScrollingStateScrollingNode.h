@@ -47,7 +47,7 @@ public:
 
     enum ChangedProperty {
         ViewportRect = NumStateNodeBits,
-        ContentsSize,
+        TotalContentsSize,
         FrameScaleFactor,
         NonFastScrollableRegion,
         WheelEventHandlerCount,
@@ -68,8 +68,8 @@ public:
     const IntRect& viewportRect() const { return m_viewportRect; }
     void setViewportRect(const IntRect&);
 
-    const IntSize& contentsSize() const { return m_contentsSize; }
-    void setContentsSize(const IntSize&);
+    const IntSize& totalContentsSize() const { return m_totalContentsSize; }
+    void setTotalContentsSize(const IntSize&);
 
     float frameScaleFactor() const { return m_frameScaleFactor; }
     void setFrameScaleFactor(float);
@@ -126,7 +126,7 @@ private:
 #endif
     
     IntRect m_viewportRect;
-    IntSize m_contentsSize;
+    IntSize m_totalContentsSize;
     
     float m_frameScaleFactor;
 

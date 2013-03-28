@@ -402,7 +402,14 @@ public:
 #if ENABLE(RUBBER_BANDING)
     GraphicsLayer* setWantsLayerForTopOverHangArea(bool) const;
     GraphicsLayer* setWantsLayerForBottomOverHangArea(bool) const;
+    GraphicsLayer* setWantsLayerForHeader(bool) const;
+    GraphicsLayer* setWantsLayerForFooter(bool) const;
 #endif
+
+    virtual int headerHeight() const OVERRIDE { return m_headerHeight; }
+    void setHeaderHeight(int);
+    virtual int footerHeight() const OVERRIDE { return m_footerHeight; }
+    void setFooterHeight(int);
 
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
@@ -594,6 +601,9 @@ private:
 
     OwnPtr<ScrollableAreaSet> m_scrollableAreas;
     OwnPtr<ViewportConstrainedObjectSet> m_viewportConstrainedObjects;
+
+    int m_headerHeight;
+    int m_footerHeight;
 
     static double s_normalDeferredRepaintDelay;
     static double s_initialDeferredRepaintDelayDuringLoading;

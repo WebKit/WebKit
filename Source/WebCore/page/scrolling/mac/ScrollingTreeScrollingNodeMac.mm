@@ -111,7 +111,7 @@ void ScrollingTreeScrollingNodeMac::updateAfterChildren(ScrollingStateNode* stat
     if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition))
         setScrollPosition(scrollingStateNode->requestedScrollPosition());
 
-    if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::ScrollLayer) || scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::ContentsSize) || scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::ViewportRect))
+    if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::ScrollLayer) || scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::TotalContentsSize) || scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::ViewportRect))
         updateMainFramePinState(scrollPosition());
 }
 
@@ -305,7 +305,7 @@ void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const IntPoint& posit
     ASSERT(!shouldUpdateScrollLayerPositionOnMainThread());
     m_scrollLayer.get().position = CGPointMake(-position.x() + scrollOrigin().x(), -position.y() + scrollOrigin().y());
 
-    IntSize scrollOffsetForFixedChildren = FrameView::scrollOffsetForFixedPosition(viewportRect(), contentsSize(), position, scrollOrigin(), frameScaleFactor(), false);
+    IntSize scrollOffsetForFixedChildren = FrameView::scrollOffsetForFixedPosition(viewportRect(), totalContentsSize(), position, scrollOrigin(), frameScaleFactor(), false);
     if (m_counterScrollingLayer)
         m_counterScrollingLayer.get().position = FloatPoint(scrollOffsetForFixedChildren);
 
@@ -327,8 +327,8 @@ IntPoint ScrollingTreeScrollingNodeMac::minimumScrollPosition() const
 
 IntPoint ScrollingTreeScrollingNodeMac::maximumScrollPosition() const
 {
-    IntPoint position(contentsSize().width() - viewportRect().width(),
-                      contentsSize().height() - viewportRect().height());
+    IntPoint position(totalContentsSize().width() - viewportRect().width(),
+                      totalContentsSize().height() - viewportRect().height());
 
     position.clampNegativeToZero();
 

@@ -43,6 +43,7 @@
 #import "WebPreferencesStore.h"
 #import "WebProcess.h"
 #import <PDFKit/PDFKit.h>
+#import <QuartzCore/QuartzCore.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
@@ -796,7 +797,7 @@ void WebPage::setTopOverhangImage(PassRefPtr<WebImage> image)
     layer->setPosition(FloatPoint(0, -image->size().height()));
 
     RetainPtr<CGImageRef> cgImage = image->bitmap()->makeCGImageCopy();
-    layer->platformLayer().contents =(id)cgImage.get();
+    layer->platformLayer().contents = (id)cgImage.get();
 }
 
 void WebPage::setBottomOverhangImage(PassRefPtr<WebImage> image)
@@ -812,7 +813,51 @@ void WebPage::setBottomOverhangImage(PassRefPtr<WebImage> image)
     layer->setSize(image->size());
     
     RetainPtr<CGImageRef> cgImage = image->bitmap()->makeCGImageCopy();
-    layer->platformLayer().contents =(id)cgImage.get();
+    layer->platformLayer().contents = (id)cgImage.get();
+}
+
+CALayer *WebPage::getHeaderLayer() const
+{
+    return m_headerLayer.get();
+}
+
+void WebPage::setHeaderLayerWithHeight(CALayer *layer, int height)
+{
+    FrameView* frameView = m_mainFrame->coreFrame()->view();
+    if (!frameView)
+        return;
+
+    frameView->setHeaderHeight(height);
+
+    m_headerLayer = layer;
+    GraphicsLayer* parentLayer = frameView->setWantsLayerForHeader(m_headerLayer);
+    if (!parentLayer)
+        return;
+
+    m_headerLayer.get().bounds = CGRectMake(0, 0, parentLayer->size().width(), parentLayer->size().height());
+    [parentLayer->platformLayer() addSublayer:m_headerLayer.get()];
+}
+
+CALayer *WebPage::getFooterLayer() const
+{
+    return m_footerLayer.get();
+}
+
+void WebPage::setFooterLayerWithHeight(CALayer *layer, int height)
+{
+    FrameView* frameView = m_mainFrame->coreFrame()->view();
+    if (!frameView)
+        return;
+
+    frameView->setFooterHeight(height);
+
+    m_footerLayer = layer;
+    GraphicsLayer* parentLayer = frameView->setWantsLayerForFooter(m_footerLayer);
+    if (!parentLayer)
+        return;
+
+    m_footerLayer.get().bounds = CGRectMake(0, 0, parentLayer->size().width(), parentLayer->size().height());
+    [parentLayer->platformLayer() addSublayer:m_footerLayer.get()];
 }
 
 void WebPage::computePagesForPrintingPDFDocument(uint64_t frameID, const PrintInfo& printInfo, Vector<IntRect>& resultPageRects)
