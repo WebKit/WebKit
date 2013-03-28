@@ -1,3 +1,28 @@
+2013-03-28  Jakob Petsovits  <jpetsovits@blackberry.com>
+
+        [BlackBerry] Don't use WebKit thread scale information in WebPageCompositor.
+        https://bugs.webkit.org/show_bug.cgi?id=113447
+        Internal PR 313452
+
+        Reviewed by Rob Buis.
+
+        Potential threading problems are avoided by moving from
+        WebPage members and mapToTransformed() to the web page
+        client's userInterfaceViewportAccessor().
+
+        As part of this cleaning effort, the WebPageCompositor's
+        render() method is changed to now take document instead of
+        pixel coordinates.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::compositeContents):
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::render):
+        (BlackBerry::WebKit::WebPageCompositor::render):
+        * Api/WebPageCompositor.h:
+        * Api/WebPageCompositor_p.h:
+        (WebPageCompositorPrivate):
+
 2013-03-28  Matt Falkenhagen  <falken@chromium.org>
 
         Refactoring: Replace Element::disabled and isEnabledFormControl with isDisabledFormControl

@@ -1410,12 +1410,15 @@ void BackingStorePrivate::blitVisibleContents(bool force)
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void BackingStorePrivate::compositeContents(WebCore::LayerRenderer* layerRenderer, const WebCore::TransformationMatrix& transform, const WebCore::FloatRect& contents, bool contentsOpaque)
+void BackingStorePrivate::compositeContents(WebCore::LayerRenderer* layerRenderer, const WebCore::TransformationMatrix& transform, const WebCore::FloatRect& documentContents, bool contentsOpaque)
 {
-    const Platform::IntRect transformedContentsRect = Platform::IntRect(Platform::IntPoint(0, 0), m_client->transformedContentsSize());
-    Platform::IntRect transformedContents = enclosingIntRect(m_webPage->d->m_transformationMatrix->mapRect(contents));
-    transformedContents.intersect(transformedContentsRect);
-    if (transformedContents.isEmpty())
+    Platform::ViewportAccessor* viewportAccessor = m_webPage->client()->userInterfaceViewportAccessor();
+    if (!viewportAccessor)
+        return;
+
+    Platform::IntRect pixelContents = viewportAccessor->roundToPixelFromDocumentContents(documentContents);
+    pixelContents.intersect(viewportAccessor->pixelContentsRect());
+    if (pixelContents.isEmpty())
         return;
 
     if (!isActive())
@@ -1428,19 +1431,18 @@ void BackingStorePrivate::compositeContents(WebCore::LayerRenderer* layerRendere
     TileMap currentMap = geometry->tileMap();
     Vector<TileBuffer*> compositedTiles;
 
-    Platform::IntRectRegion transformedContentsRegion = transformedContents;
+    Platform::IntRectRegion pixelContentsRegion = pixelContents;
     Platform::IntRectRegion backingStoreRegion = geometry->backingStoreRect();
-    Platform::IntRectRegion clearRegion
-        = Platform::IntRectRegion::subtractRegions(transformedContentsRegion, backingStoreRegion);
+    Platform::IntRectRegion clearRegion = Platform::IntRectRegion::subtractRegions(pixelContentsRegion, backingStoreRegion);
 
     // Clear those parts that are not covered by the backingStoreRect.
     Color clearColor(Color::white);
     std::vector<Platform::IntRect> clearRects = clearRegion.rects();
     for (size_t i = 0; i < clearRects.size(); ++i)
-        layerRenderer->drawColor(transform, m_webPage->d->mapFromTransformedFloatRect(WebCore::IntRect(clearRects.at(i))), clearColor);
+        layerRenderer->drawColor(transform, viewportAccessor->documentFromPixelContents(clearRects.at(i)), clearColor);
 
     // Get the list of tile rects that makeup the content.
-    TileRectList tileRectList = mapFromPixelContentsToTiles(transformedContents, geometry);
+    TileRectList tileRectList = mapFromPixelContentsToTiles(pixelContents, geometry);
     for (size_t i = 0; i < tileRectList.size(); ++i) {
         TileRect tileRect = tileRectList[i];
         TileIndex index = tileRect.first;
@@ -1448,10 +1450,10 @@ void BackingStorePrivate::compositeContents(WebCore::LayerRenderer* layerRendere
         TileBuffer* tileBuffer = currentMap.get(index);
 
         if (!tileBuffer || !geometry->isTileCorrespondingToBuffer(index, tileBuffer))
-            layerRenderer->drawColor(transform, m_webPage->d->mapFromTransformedFloatRect(Platform::FloatRect(dirtyRect)), clearColor);
+            layerRenderer->drawColor(transform, viewportAccessor->documentFromPixelContents(dirtyRect), clearColor);
         else {
             Platform::IntPoint tileOrigin = tileBuffer->lastRenderOrigin();
-            Platform::FloatRect tileDocumentContentsRect = m_webPage->d->mapFromTransformedFloatRect(Platform::FloatRect(tileBuffer->pixelContentsRect()));
+            Platform::FloatRect tileDocumentContentsRect = viewportAccessor->documentFromPixelContents(tileBuffer->pixelContentsRect());
 
             layerRenderer->compositeBuffer(transform, tileDocumentContentsRect, tileBuffer->nativeBuffer(), contentsOpaque, 1.0f);
             compositedTiles.append(tileBuffer);
@@ -1462,7 +1464,7 @@ void BackingStorePrivate::compositeContents(WebCore::LayerRenderer* layerRendere
             for (size_t i = 0; i < notRenderedRects.size(); ++i) {
                 Platform::IntRect tileSurfaceRect = notRenderedRects.at(i);
                 tileSurfaceRect.move(-tileOrigin.x(), -tileOrigin.y());
-                layerRenderer->drawColor(transform, m_webPage->d->mapFromTransformedFloatRect(Platform::FloatRect(tileSurfaceRect)), clearColor);
+                layerRenderer->drawColor(transform, viewportAccessor->documentFromPixelContents(tileSurfaceRect), clearColor);
             }
         }
     }

@@ -61,7 +61,7 @@ public:
     void render(const WebCore::IntRect& targetRect,
                 const WebCore::IntRect& clipRect,
                 const WebCore::TransformationMatrix&,
-                const WebCore::FloatRect& contents, // This is public API, thus takes transformed contents
+                const WebCore::FloatRect& documentContents,
                 const WebCore::FloatRect& viewport);
 
     Platform::Graphics::GLES2Context* context() const { return m_context; }
