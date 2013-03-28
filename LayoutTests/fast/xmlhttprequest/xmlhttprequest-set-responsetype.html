@@ -9,6 +9,12 @@ description('This test checks if setting non-supported type does not throw an ex
 var xhr = new XMLHttpRequest();
 xhr.open('GET', 'resources/plist.app', true);
 
+// Setting valid type does change the responseType value.
+["", "arraybuffer", "blob", "document", "text"].forEach(function(type) {
+    xhr.responseType = type;
+    shouldBeEqualToString('xhr.responseType', type);
+});
+
 // Setting invalid type should not throw an exception.
 shouldNotThrow('xhr.responseType = "dkjdfkjdfkj"');
 

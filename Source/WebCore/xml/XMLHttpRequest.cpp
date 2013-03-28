@@ -378,7 +378,7 @@ void XMLHttpRequest::setResponseType(const String& responseType, ExceptionCode& 
     else if (responseType == "arraybuffer")
         m_responseTypeCode = ResponseTypeArrayBuffer;
     else
-        logConsoleError(scriptExecutionContext(), "XMLHttpRequest.responseType \"" + responseType + "\" is not supported.");
+        ASSERT_NOT_REACHED();
 }
 
 String XMLHttpRequest::responseType()

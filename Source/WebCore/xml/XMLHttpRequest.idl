@@ -26,6 +26,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+enum XMLHttpRequestResponseType {
+    "",
+    "arraybuffer",
+    "blob",
+    "document",
+//    FIXME: enable once support for json responseText is completed. (bug #73648)
+//    "json",
+    "text"
+};
+
 [
     ActiveDOMObject,
     Constructor,
@@ -85,7 +95,7 @@
     readonly attribute Document responseXML
         getter raises(DOMException);
 
-    attribute DOMString responseType
+    attribute XMLHttpRequestResponseType responseType
         setter raises(DOMException);
     [CustomGetter] readonly attribute Object response
         getter raises(DOMException);
