@@ -1,3 +1,15 @@
+2013-03-28  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        [CMAKE] Build fix after r147052. Add WebKit2/Shared/Plugins to include path
+        https://bugs.webkit.org/show_bug.cgi?id=113484
+
+        Unreviewed build fix.
+
+        Add "WebKit2/Shared/Plugins" to include path for TestWebKitAPI, WebKitTestRunner.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * WebKitTestRunner/CMakeLists.txt:
+
 2013-03-27  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         Revision for the internal jhbuild is too old

@@ -16,6 +16,7 @@ include_directories(${CMAKE_BINARY_DIR}
     ${WEBCORE_DIR}/platform/network
     ${WEBKIT2_DIR}/Shared
     ${WEBKIT2_DIR}/Shared/API/c
+    ${WEBKIT2_DIR}/Shared/Plugins
     ${WEBKIT2_DIR}/UIProcess
     ${WTF_DIR}
 )
