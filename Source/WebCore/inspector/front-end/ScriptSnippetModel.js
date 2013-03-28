@@ -434,6 +434,14 @@ WebInspector.SnippetScriptFile.prototype = {
     },
 
     /**
+     * @return {boolean}
+     */
+    isMergingToVM: function()
+    {
+        return false;
+    },
+
+    /**
      * @param {boolean} isDivergingFromVM
      */
     setIsDivergingFromVM: function(isDivergingFromVM)

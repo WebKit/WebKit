@@ -126,6 +126,14 @@ WebInspector.LiveEditScriptFile.prototype = {
         return false;
     },
 
+    /**
+     * @return {boolean}
+     */
+    isMergingToVM: function()
+    {
+        return false;
+    },
+
     __proto__: WebInspector.Object.prototype
 }
 
