@@ -87,7 +87,11 @@ private:
     bool dependsOn(RenderNamedFlowThread* otherRenderFlowThread) const;
     void addDependencyOnFlowThread(RenderNamedFlowThread*);
     void removeDependencyOnFlowThread(RenderNamedFlowThread*);
+
+    void addRegionToNamedFlowThread(RenderRegion*);
+
     void checkInvalidRegions();
+
     bool canBeDestroyed() const { return m_invalidRegionList.isEmpty() && m_regionList.isEmpty() && m_contentNodes.isEmpty(); }
     void regionLayoutUpdateEventTimerFired(Timer<RenderNamedFlowThread>*);
     void clearContentNodes();

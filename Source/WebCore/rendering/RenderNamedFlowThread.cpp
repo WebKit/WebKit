@@ -222,27 +222,34 @@ static void addRegionToList(RenderRegionList& regionList, RenderRegion* renderRe
     }
 }
 
-void RenderNamedFlowThread::addRegionToThread(RenderRegion* renderRegion)
+void RenderNamedFlowThread::addRegionToNamedFlowThread(RenderRegion* renderRegion)
 {
     ASSERT(renderRegion);
-
-    resetMarkForDestruction();
-
     ASSERT(!renderRegion->isValid());
-    if (renderRegion->parentNamedFlowThread()) {
-        if (renderRegion->parentNamedFlowThread()->dependsOn(this)) {
-            // The order of invalid regions is irrelevant.
-            m_invalidRegionList.add(renderRegion);
-            // Register ourself to get a notification when the state changes.
-            renderRegion->parentNamedFlowThread()->m_observerThreadsSet.add(this);
-            return;
-        }
 
+    if (renderRegion->parentNamedFlowThread())
         addDependencyOnFlowThread(renderRegion->parentNamedFlowThread());
-    }
 
     renderRegion->setIsValid(true);
     addRegionToList(m_regionList, renderRegion);
+}
+
+void RenderNamedFlowThread::addRegionToThread(RenderRegion* renderRegion)
+{
+    ASSERT(renderRegion);
+    ASSERT(!renderRegion->isValid());
+
+    resetMarkForDestruction();
+
+    if (renderRegion->parentNamedFlowThread() && renderRegion->parentNamedFlowThread()->dependsOn(this)) {
+        // The order of invalid regions is irrelevant.
+        m_invalidRegionList.add(renderRegion);
+        // Register ourself to get a notification when the state changes.
+        renderRegion->parentNamedFlowThread()->m_observerThreadsSet.add(this);
+        return;
+    }
+
+    addRegionToNamedFlowThread(renderRegion);
 
     invalidateRegions();
 }
@@ -293,9 +300,7 @@ void RenderNamedFlowThread::checkInvalidRegions()
         RenderRegion* region = *iter;
         m_invalidRegionList.remove(region);
         region->parentNamedFlowThread()->m_observerThreadsSet.remove(this);
-        region->setIsValid(true);
-        addDependencyOnFlowThread(region->parentNamedFlowThread());
-        addRegionToList(m_regionList, region);
+        addRegionToNamedFlowThread(region);
     }
 
     if (!newValidRegions.isEmpty())
