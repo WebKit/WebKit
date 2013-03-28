@@ -1,3 +1,15 @@
+2013-03-27  Mario Sanchez Prada  <mario.prada@samsung.com>
+
+        Revision for the internal jhbuild is too old
+        https://bugs.webkit.org/show_bug.cgi?id=113324
+
+        Reviewed by Martin Robinson.
+
+        Update the minimum required version to a point where jhbuild won't
+        fail installing packages when trying to remove a symlink to a directory.
+
+        * jhbuild/jhbuild-wrapper: Updated revision.
+
 2013-03-27  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK][jhbuild] gst-plugins-good mixes system libsoup-gnome with custom libsoup

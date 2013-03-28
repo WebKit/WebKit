@@ -23,7 +23,7 @@ import shlex
 import subprocess
 import sys
 
-jhbuild_revision = '1eedc423f75c605224b430579e4c303292199507'
+jhbuild_revision = 'ddb8b4e64bede55212c7590e2104daff92b72ce0'
 
 dependencies_path = jhbuildutils.get_dependencies_path()
 installation_prefix = os.path.abspath(os.path.join(dependencies_path, 'Root'))
