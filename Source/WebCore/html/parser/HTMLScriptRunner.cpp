@@ -138,7 +138,7 @@ void HTMLScriptRunner::executePendingScriptAndDispatchEvent(PendingScript& pendi
 
     // Clear the pending script before possible rentrancy from executeScript()
     RefPtr<Element> element = pendingScript.releaseElementAndClear();
-    if (ScriptElement* scriptElement = toScriptElement(element.get())) {
+    if (ScriptElement* scriptElement = toScriptElementIfPossible(element.get())) {
         NestingLevelIncrementer nestingLevelIncrementer(m_scriptNestingLevel);
         IgnoreDestructiveWriteCountIncrementer ignoreDestructiveWriteCountIncrementer(m_document);
         if (errorOccurred)
@@ -267,7 +267,7 @@ bool HTMLScriptRunner::requestPendingScript(PendingScript& pendingScript, Elemen
     ASSERT(!pendingScript.element());
     pendingScript.setElement(script);
     // This should correctly return 0 for empty or invalid srcValues.
-    CachedScript* cachedScript = toScriptElement(script)->cachedScript().get();
+    CachedScript* cachedScript = toScriptElementIfPossible(script)->cachedScript().get();
     if (!cachedScript) {
         notImplemented(); // Dispatch error event.
         return false;
@@ -283,7 +283,7 @@ void HTMLScriptRunner::runScript(Element* script, const TextPosition& scriptStar
     ASSERT(m_document);
     ASSERT(!hasParserBlockingScript());
     {
-        ScriptElement* scriptElement = toScriptElement(script);
+        ScriptElement* scriptElement = toScriptElementIfPossible(script);
 
         // This contains both and ASSERTION and a null check since we should not
         // be getting into the case of a null script element, but seem to be from

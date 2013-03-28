@@ -109,7 +109,7 @@ private:
     String m_fallbackCharacterEncoding;
 };
 
-ScriptElement* toScriptElement(Element*);
+ScriptElement* toScriptElementIfPossible(Element*);
 
 }
 

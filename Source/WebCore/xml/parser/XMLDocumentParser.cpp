@@ -254,7 +254,7 @@ void XMLDocumentParser::notifyFinished(CachedResource* unusedResource)
     RefPtr<Element> e = m_scriptElement;
     m_scriptElement = 0;
 
-    ScriptElement* scriptElement = toScriptElement(e.get());
+    ScriptElement* scriptElement = toScriptElementIfPossible(e.get());
     ASSERT(scriptElement);
 
     // JavaScript can detach this parser, make sure it's kept alive even if detached.

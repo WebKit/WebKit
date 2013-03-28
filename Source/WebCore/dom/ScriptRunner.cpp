@@ -118,7 +118,7 @@ void ScriptRunner::timerFired(Timer<ScriptRunner>* timer)
     for (size_t i = 0; i < size; ++i) {
         CachedScript* cachedScript = scripts[i].cachedScript();
         RefPtr<Element> element = scripts[i].releaseElementAndClear();
-        toScriptElement(element.get())->execute(cachedScript);
+        toScriptElementIfPossible(element.get())->execute(cachedScript);
         m_document->decrementLoadEventDelayCount();
     }
 }

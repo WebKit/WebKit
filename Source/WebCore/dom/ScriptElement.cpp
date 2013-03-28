@@ -414,7 +414,7 @@ String ScriptElement::scriptContent() const
     return content.toString();
 }
 
-ScriptElement* toScriptElement(Element* element)
+ScriptElement* toScriptElementIfPossible(Element* element)
 {
     if (element->isHTMLElement() && element->hasTagName(HTMLNames::scriptTag))
         return static_cast<HTMLScriptElement*>(element);
