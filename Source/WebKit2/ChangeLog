@@ -1,3 +1,15 @@
+2013-03-27  Beth Dakin  <bdakin@apple.com>
+
+        WKBundlePagePrivateMac.h is not being exported
+        https://bugs.webkit.org/show_bug.cgi?id=113470
+        -and corresponding-
+        <rdar://problem/13522909>
+
+        Reviewed by Sam Weinig.
+
+        Mark it as private instead of project.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-03-26  Beth Dakin  <bdakin@apple.com>
 
         Need WK2 API to give a WebView a header and footer

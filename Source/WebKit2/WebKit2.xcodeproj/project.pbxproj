@@ -582,7 +582,7 @@
 		935EEBA4127761D6003322B8 /* InjectedBundleBackForwardListItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 935EEB921277615D003322B8 /* InjectedBundleBackForwardListItem.h */; };
 		9391F2CA121B679A00EBF7E8 /* WebFrameNetworkingContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9391F284121B38F500EBF7E8 /* WebFrameNetworkingContext.mm */; };
 		9391F2CB121B67AD00EBF7E8 /* WebFrameNetworkingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 9391F283121B38F500EBF7E8 /* WebFrameNetworkingContext.h */; };
-		9394AE441702B25B00344232 /* WKBundlePagePrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 9394AE421702B25B00344232 /* WKBundlePagePrivateMac.h */; };
+		9394AE441702B25B00344232 /* WKBundlePagePrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 9394AE421702B25B00344232 /* WKBundlePagePrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9394AE451702B25B00344232 /* WKBundlePagePrivateMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9394AE431702B25B00344232 /* WKBundlePagePrivateMac.mm */; };
 		939AE7661316E99C00AE06A6 /* WebCoreArgumentCoders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939AE7651316E99C00AE06A6 /* WebCoreArgumentCoders.cpp */; };
 		93FC67BD12D3CCF200A60610 /* DecoderAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93FC679D12D3CC7400A60610 /* DecoderAdapter.cpp */; };
