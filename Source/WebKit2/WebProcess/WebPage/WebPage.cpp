@@ -39,7 +39,6 @@
 #include "LayerTreeHost.h"
 #include "NetscapePlugin.h"
 #include "NotificationPermissionRequestManager.h"
-#include "PDFKitImports.h"
 #include "PageOverlay.h"
 #include "PluginProxy.h"
 #include "PluginView.h"
@@ -160,6 +159,7 @@
 #endif
 
 #if PLATFORM(MAC)
+#include "PDFKitImports.h"
 #include "SimplePDFPlugin.h"
 #if ENABLE(PDFKIT_PLUGIN)
 #include "PDFPlugin.h"
