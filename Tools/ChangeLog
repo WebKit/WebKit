@@ -1,3 +1,14 @@
+2013-03-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use the right OS name on Mac EWS instead of mac-future.
+
+        Rubber-stamped by Dirk Pranke.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (PatchProcessingQueue._new_port_name_from_old):
+        (PatchProcessingQueue.begin_work_queue):
+        (PatchProcessingQueue._upload_results_archive_for_patch):
+
 2013-03-28  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Build GTK-specific, non-layer-violating source code into WebCore-independent libPlatformGtk.la
