@@ -979,7 +979,6 @@ crbug.com/8941 [ Win ] http/tests/xmlhttprequest/web-apps/012.html [ Failure ]
 crbug.com/20521 [ Win ] fast/text/atsui-multiple-renderers.html [ Failure ]
 webkit.org/b/78544 [ Linux ] fast/text/atsui-multiple-renderers.html [ Failure ImageOnlyFailure Pass ]
 crbug.com/20521 [ XP ] fast/text/atsui-pointtooffset-calls-cg.html [ Failure ]
-webkit.org/b/113169 [ Linux Release ] fast/text/international/danda-space.html [ ImageOnlyFailure ]
 
 # This test checks that we hack around a bug in helvetica.  We fail to.
 crbug.com/20519 [ Win ] fast/text/wide-zero-width-space.html [ Failure ]
@@ -3667,7 +3666,7 @@ webkit.org/b/110247 [ Debug ] fast/workers/storage/interrupt-database.html [ Pas
 
 webkit.org/b/110568 [ MountainLion ] fast/multicol/newmulticol/positioned-split.html [ ImageOnlyFailure ]
 
-webkit.org/b/110739 [ Release MountainLion ] fast/regions/shape-inside-on-regions.html [ ImageOnlyFailure ]
+webkit.org/b/110739 [ Release MountainLion ] fast/regions/shape-inside/shape-inside-on-regions.html [ ImageOnlyFailure ]
 
 # The following tests are are failing since chromium r184584
 webkit.org/b/110851 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
@@ -3809,4 +3808,4 @@ webkit.org/b/113487 [ Debug ] plugins/npruntime/npruntime-calls-with-null-npp.ht
 
 # harfbuzz-ng roll to 0.9.14 needs rebaseline.
 crbug.com/224428 [ Linux ] fast/text/international/khmer-selection.html [ Failure ]
-crbug.com/224428 [ Linux ] fast/text/international/danda-space.html [ Failure ]
+crbug.com/224428 webkit.org/b/113169 [ Linux ] fast/text/international/danda-space.html [ Failure ]
