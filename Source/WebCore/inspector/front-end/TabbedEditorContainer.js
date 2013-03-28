@@ -424,10 +424,13 @@ WebInspector.TabbedEditorContainer.prototype = {
  */
 WebInspector.TabbedEditorContainer.HistoryItem = function(url, selectionRange, scrollLineNumber)
 {
-    this.url = url;
+    /** @const */ this.url = url;
+    /** @const */ this._isSerializable = url.length < WebInspector.TabbedEditorContainer.HistoryItem.serializableUrlLengthLimit;
     this.selectionRange = selectionRange;
     this.scrollLineNumber = scrollLineNumber;
 }
+
+WebInspector.TabbedEditorContainer.HistoryItem.serializableUrlLengthLimit = 4096;
 
 /**
  * @param {Object} serializedHistoryItem
@@ -441,10 +444,12 @@ WebInspector.TabbedEditorContainer.HistoryItem.fromObject = function (serialized
 
 WebInspector.TabbedEditorContainer.HistoryItem.prototype = {
     /**
-     * @return {Object}
+     * @return {?Object}
      */
     serializeToObject: function()
     {
+        if (!this._isSerializable)
+            return null;
         var serializedHistoryItem = {};
         serializedHistoryItem.url = this.url;
         serializedHistoryItem.selectionRange = this.selectionRange;
@@ -466,7 +471,7 @@ WebInspector.TabbedEditorContainer.History = function(items)
 }
 
 /**
- * @param {Object} serializedHistory
+ * @param {!Array.<!Object>} serializedHistory
  * @return {WebInspector.TabbedEditorContainer.History}
  */
 WebInspector.TabbedEditorContainer.History.fromObject = function(serializedHistory)
@@ -584,13 +589,18 @@ WebInspector.TabbedEditorContainer.History.prototype = {
     },
     
     /**
-     * @return {Object}
+     * @return {!Array.<!Object>}
      */
     _serializeToObject: function()
     {
         var serializedHistory = [];
-        for (var i = 0; i < this._items.length; ++i)
-            serializedHistory.push(this._items[i].serializeToObject());
+        for (var i = 0; i < this._items.length; ++i) {
+            var serializedItem = this._items[i].serializeToObject();
+            if (serializedItem)
+                serializedHistory.push(serializedItem);
+            if (serializedHistory.length === WebInspector.TabbedEditorContainer.maximalPreviouslyViewedFilesCount)
+                break;
+        }
         return serializedHistory;
     },
 
