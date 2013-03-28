@@ -513,6 +513,14 @@ WebInspector.ResourcesPanel.prototype = {
         this._innerShowView(view);
     },
 
+    /**
+     * @param {string} cookieDomain
+     */
+    clearCookies: function(cookieDomain)
+    {
+        this._cookieViews[cookieDomain].clear();
+    },
+
     showApplicationCache: function(frameId)
     {
         if (!this._applicationCacheViews[frameId])
@@ -1937,6 +1945,30 @@ WebInspector.CookieTreeElement.prototype = {
     get itemURL()
     {
         return "cookies://" + this._cookieDomain;
+    },
+
+    onattach: function()
+    {
+        WebInspector.BaseStorageTreeElement.prototype.onattach.call(this);
+        this.listItemElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), true);
+    },
+
+    /**
+     * @param {Event} event
+     */
+    _handleContextMenuEvent: function(event)
+    {
+        var contextMenu = new WebInspector.ContextMenu(event);
+        contextMenu.appendItem(WebInspector.UIString("Clear"), this._clearCookies.bind(this));
+        contextMenu.show();
+    },
+
+    /**
+     * @param {string} domain
+     */
+    _clearCookies: function(domain)
+    {
+        this._storagePanel.clearCookies(this._cookieDomain);
     },
 
     onselect: function(selectedByUser)

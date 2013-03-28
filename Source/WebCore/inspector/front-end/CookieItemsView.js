@@ -41,6 +41,10 @@ WebInspector.CookieItemsView = function(treeElement, cookieDomain)
     this._deleteButton.visible = false;
     this._deleteButton.addEventListener("click", this._deleteButtonClicked, this);
 
+    this._clearButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear"), "clear-storage-status-bar-item");
+    this._clearButton.visible = false;
+    this._clearButton.addEventListener("click", this._clearButtonClicked, this);
+
     this._refreshButton = new WebInspector.StatusBarButton(WebInspector.UIString("Refresh"), "refresh-storage-status-bar-item");
     this._refreshButton.addEventListener("click", this._refreshButtonClicked, this);
 
@@ -56,7 +60,7 @@ WebInspector.CookieItemsView = function(treeElement, cookieDomain)
 WebInspector.CookieItemsView.prototype = {
     get statusBarItems()
     {
-        return [this._refreshButton.element, this._deleteButton.element];
+        return [this._refreshButton.element, this._clearButton.element, this._deleteButton.element];
     },
 
     wasShown: function()
@@ -85,6 +89,7 @@ WebInspector.CookieItemsView.prototype = {
         if (!this._cookies.length) {
             // Nothing to show.
             this._emptyView.show(this.element);
+            this._clearButton.visible = false;
             this._deleteButton.visible = false;
             if (this._cookiesTable)
                 this._cookiesTable.detach();
@@ -92,7 +97,7 @@ WebInspector.CookieItemsView.prototype = {
         }
 
         if (!this._cookiesTable)
-            this._cookiesTable = isAdvanced ? new WebInspector.CookiesTable(false, this._update.bind(this)) : new WebInspector.SimpleCookiesTable();
+            this._cookiesTable = isAdvanced ? new WebInspector.CookiesTable(false, this._update.bind(this), this._showDeleteButton.bind(this)) : new WebInspector.SimpleCookiesTable();
 
         this._cookiesTable.setCookies(this._cookies);
         this._emptyView.detach();
@@ -100,7 +105,8 @@ WebInspector.CookieItemsView.prototype = {
         if (isAdvanced) {
             this._treeElement.subtitle = String.sprintf(WebInspector.UIString("%d cookies (%s)"), this._cookies.length,
                 Number.bytesToString(this._totalSize));
-            this._deleteButton.visible = true;
+            this._clearButton.visible = true;
+            this._deleteButton.visible = !!this._cookiesTable.selectedCookie();
         }
     },
 
@@ -136,6 +142,22 @@ WebInspector.CookieItemsView.prototype = {
             }
         }
         return cookies;
+    },
+
+    clear: function()
+    {
+        this._cookiesTable.clear();
+        this._update();
+    },
+
+    _clearButtonClicked: function()
+    {
+        this.clear();
+    },
+
+    _showDeleteButton: function()
+    {
+        this._deleteButton.visible = true;
     },
 
     _deleteButtonClicked: function()

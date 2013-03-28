@@ -28,6 +28,7 @@
 
 /**
  * @constructor
+ * @param {Element} listNode
  * @param {boolean=} nonFocusable
  */
 function TreeOutline(listNode, nonFocusable)
