@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+
+<script>
+var canvas = document.createElement("canvas");
+var context = canvas.getContext("2d");
+
+shouldNotThrow("context.fill()");
+shouldNotThrow("context.fill('nonzero')");
+shouldThrow("context.fill('randomstring')");
+
+shouldNotThrow("context.clip()");
+shouldNotThrow("context.clip('nonzero')");
+shouldThrow("context.clip('randomstring')");
+
+shouldNotThrow("context.isPointInPath(0, 0)");
+shouldNotThrow("context.isPointInPath(0, 0, 'nonzero')");
+shouldThrow("context.isPointInPath(0, 0, 'randomstring')");
+</script>
+
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+
