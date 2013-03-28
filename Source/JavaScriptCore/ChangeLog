@@ -2,6 +2,16 @@
 
         Unreviewed build fix: Removed a dead field.
 
+        Pointed out by Mark Lam.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::ByteCodeParser):
+        (ByteCodeParser):
+
+2013-03-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Unreviewed build fix: Removed a dead field.
+
         * dfg/DFGByteCodeParser.cpp:
         (JSC::DFG::ByteCodeParser::ByteCodeParser):
         (ByteCodeParser):

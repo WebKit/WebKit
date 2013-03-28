@@ -139,7 +139,6 @@ public:
         , m_preservedVars(m_codeBlock->m_numVars)
         , m_parameterSlots(0)
         , m_numPassedVarArgs(0)
-        , m_globalResolveNumber(0)
         , m_inlineStackTop(0)
         , m_haveBuiltOperandMaps(false)
         , m_emptyJSValueIndex(UINT_MAX)
@@ -1001,8 +1000,6 @@ private:
     unsigned m_parameterSlots;
     // The number of var args passed to the next var arg node.
     unsigned m_numPassedVarArgs;
-    // The index in the global resolve info.
-    unsigned m_globalResolveNumber;
 
     HashMap<ConstantBufferKey, unsigned> m_constantBufferCache;
     
