@@ -578,8 +578,8 @@ void GraphicsLayerClutter::recursiveCommitChanges(const TransformState& state, f
     size_t numChildren = childLayers.size();
 
     for (size_t i = 0; i < numChildren; ++i) {
-        GraphicsLayerClutter* curChild = static_cast<GraphicsLayerClutter*>(childLayers[i]);
-        curChild->recursiveCommitChanges(localState, pageScaleFactor, baseRelativePosition, affectedByPageScale);
+        GraphicsLayerClutter* currentChild = static_cast<GraphicsLayerClutter*>(childLayers[i]);
+        currentChild->recursiveCommitChanges(localState, pageScaleFactor, baseRelativePosition, affectedByPageScale);
     }
 
     commitLayerChangesAfterSublayers();
@@ -658,21 +658,13 @@ void GraphicsLayerClutter::updateSublayerList()
     GraphicsLayerActorList newSublayers;
     const Vector<GraphicsLayer*>& childLayers = children();
 
-    if (childLayers.size() > 0) {
-        size_t numChildren = childLayers.size();
-        for (size_t i = 0; i < numChildren; ++i) {
-            GraphicsLayerClutter* curChild = static_cast<GraphicsLayerClutter*>(childLayers[i]);
-            GraphicsLayerActor* childLayer = curChild->layerForSuperlayer();
-            g_assert(GRAPHICS_LAYER_IS_ACTOR(childLayer));
-            newSublayers.append(childLayer);
-        }
+    size_t numChildren = childLayers.size();
+    for (size_t i = 0; i < numChildren; ++i) {
+        GraphicsLayerClutter* currentChild = static_cast<GraphicsLayerClutter*>(childLayers[i]);
+        GraphicsLayerActor* childLayer = currentChild->layerForSuperlayer();
+        ASSERT(GRAPHICS_LAYER_IS_ACTOR(childLayer));
 
-        for (size_t i = 0; i < newSublayers.size(); i++) {
-            ClutterActor* layerActor = CLUTTER_ACTOR(newSublayers[i].get());
-            ClutterActor* parentActor = clutter_actor_get_parent(layerActor);
-            if (parentActor)
-                clutter_actor_remove_child(parentActor, layerActor);
-        }
+        newSublayers.append(childLayer);
     }
 
     graphicsLayerActorSetSublayers(m_layer.get(), newSublayers);

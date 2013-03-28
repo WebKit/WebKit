@@ -470,9 +470,16 @@ void graphicsLayerActorSetSublayers(GraphicsLayerActor* layer, GraphicsLayerActo
         return;
     }
 
+    ClutterActor* newParentActor = CLUTTER_ACTOR(layer);
     for (size_t i = 0; i < subLayers.size(); ++i) {
-        ClutterActor* layerActor = CLUTTER_ACTOR(subLayers[i].get());
-        clutter_actor_add_child(CLUTTER_ACTOR(layer), layerActor);
+        ClutterActor* childActor = CLUTTER_ACTOR(subLayers[i].get());
+        ClutterActor* oldParentActor = clutter_actor_get_parent(childActor);
+        if (oldParentActor) {
+            if (oldParentActor == newParentActor)
+                continue;
+            clutter_actor_remove_child(oldParentActor, childActor);
+        }
+        clutter_actor_add_child(newParentActor, childActor);
     }
 }
 
