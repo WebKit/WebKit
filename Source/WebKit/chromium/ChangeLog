@@ -1,3 +1,10 @@
+2013-03-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled Chromium DEPS to r191432.  Requested by
+        "Philip Rogers" <pdr@google.com> via sheriffbot.
+
+        * DEPS:
+
 2013-03-29  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: Bind lifetime of in-memory backing stores to IDBFactory backend
