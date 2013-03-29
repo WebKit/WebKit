@@ -117,8 +117,6 @@ void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicStr
         m_imageLoader.updateFromElementIgnoringPreviousError();
     else if (name == usemapAttr)
         setIsLink(!value.isNull());
-    else if (name == onloadAttr)
-        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, name, value));
     else if (name == onbeforeloadAttr)
         setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, name, value));
     else if (name == compositeAttr) {

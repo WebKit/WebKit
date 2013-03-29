@@ -112,12 +112,7 @@ void HTMLTrackElement::parseAttribute(const QualifiedName& name, const AtomicStr
             track()->setIsDefault(!value.isNull());
     }
 
-    if (name == onloadAttr)
-        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, name, value));
-    else if (name == onerrorAttr)
-        setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, name, value));
-    else
-        HTMLElement::parseAttribute(name, value);
+    HTMLElement::parseAttribute(name, value);
 }
 
 KURL HTMLTrackElement::src() const

@@ -122,9 +122,7 @@ void HTMLFrameElementBase::parseAttribute(const QualifiedName& name, const Atomi
         m_viewSource = !value.isNull();
         if (contentFrame())
             contentFrame()->setInViewSourceMode(viewSourceMode());
-    } else if (name == onloadAttr)
-        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, name, value));
-    else if (name == onbeforeloadAttr)
+    } else if (name == onbeforeloadAttr)
         setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, name, value));
     else if (name == onbeforeunloadAttr) {
         // FIXME: should <frame> elements have beforeunload handlers?

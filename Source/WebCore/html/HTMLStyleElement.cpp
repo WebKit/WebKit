@@ -74,10 +74,6 @@ void HTMLStyleElement::parseAttribute(const QualifiedName& name, const AtomicStr
 {
     if (name == titleAttr && m_sheet)
         m_sheet->setTitle(value);
-    else if (name == onloadAttr)
-        setAttributeEventListener(eventNames().loadEvent, createAttributeEventListener(this, name, value));
-    else if (name == onerrorAttr)
-        setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, name, value));
     else if (name == scopedAttr && ContextFeatures::styleScopedEnabled(document()))
         scopedAttributeChanged(!value.isNull());
     else if (name == mediaAttr && inDocument() && document()->renderer() && m_sheet) {

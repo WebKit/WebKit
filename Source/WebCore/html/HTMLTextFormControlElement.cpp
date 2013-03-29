@@ -512,11 +512,7 @@ void HTMLTextFormControlElement::parseAttribute(const QualifiedName& name, const
     if (name == placeholderAttr) {
         updatePlaceholderVisibility(true);
         FeatureObserver::observe(document(), FeatureObserver::PlaceholderAttribute);
-    } else if (name == onselectAttr)
-        setAttributeEventListener(eventNames().selectEvent, createAttributeEventListener(this, name, value));
-    else if (name == onchangeAttr)
-        setAttributeEventListener(eventNames().changeEvent, createAttributeEventListener(this, name, value));
-    else
+    } else
         HTMLFormControlElementWithState::parseAttribute(name, value);
 }
 

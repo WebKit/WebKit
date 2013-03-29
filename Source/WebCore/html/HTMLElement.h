@@ -142,6 +142,8 @@ private:
 
     TranslateAttributeMode translateAttributeMode() const;
 
+    AtomicString eventNameForAttributeName(const QualifiedName& attrName) const;
+
 #if ENABLE(MICRODATA)
     virtual String itemValueText() const;
     virtual void setItemValueText(const String&, ExceptionCode&);

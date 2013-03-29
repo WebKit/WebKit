@@ -1,0 +1,37 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<input onbeforeload="1" onabort="1">
+<script src="resources/shouldnotexecute.js" onbeforeload="debug('cancelled onbeforeload async'); return false;" async></script>
+
+<script>
+description('Test that setting event handlers with attribute works.');
+
+var elementTags = ["img", "script", "video", "div", "form", "input"];
+var eventNames = ["onclick", "oncontextmenu", "ondblclick", "onmousedown",
+"onmousemove", "onmouseout", "onmouseover", "onmouseup", "onmousewheel",
+"onfocus", "onblur", "onkeydown", "onkeypress", "onkeyup", "onscroll",
+"onbeforecut", "oncut", "onbeforecopy", "oncopy", "onbeforepaste", "onpaste",
+"ondragenter", "ondragover", "ondragleave", "ondrop", "ondragstart", "ondrag",
+"ondragend", "onselectstart", "onsubmit", "onerror", "oninput", "oninvalid",
+"ontouchstart", "ontouchmove", "ontouchend", "ontouchcancel",
+"onwebkitfullscreenchange", "onwebkitfullscreenerror", "onabort", "onchange",
+"onreset", "onselect", "onload"];
+
+for (var i = 0; i < elementTags.length; i++) {
+    var element = document.createElement(elementTags[i]);
+    for (var j = 0; j < eventNames.length; j++) {
+        element.setAttribute(eventNames[j], "1");
+        shouldBe('/*' + elementTags[i] + '*/ typeof (element["' + eventNames[j] + '"])', '"function"');
+    }
+}
+
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
