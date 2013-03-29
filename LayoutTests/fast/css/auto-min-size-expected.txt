@@ -1,17 +1,17 @@
 PASS div.style.minWidth is ""
 PASS getComputedStyle(div)["min-width"] is "0px"
-PASS div.style.minWidth is "0px"
-PASS getComputedStyle(div)["min-width"] is "0px"
-PASS div.style.minWidth is "auto"
+PASS div.style.minWidth is ""
 PASS div.style.maxWidth is ""
 PASS getComputedStyle(div).minWidth is "0px"
+PASS div.style.minWidth is "0px"
+PASS getComputedStyle(div)["min-width"] is "0px"
 PASS div.style.minHeight is ""
 PASS getComputedStyle(div)["min-height"] is "0px"
-PASS div.style.minHeight is "0px"
-PASS getComputedStyle(div)["min-height"] is "0px"
-PASS div.style.minHeight is "auto"
+PASS div.style.minHeight is ""
 PASS div.style.maxHeight is ""
 PASS getComputedStyle(div).minHeight is "0px"
+PASS div.style.minHeight is "0px"
+PASS getComputedStyle(div)["min-height"] is "0px"
 PASS successfullyParsed is true
 
 TEST COMPLETE

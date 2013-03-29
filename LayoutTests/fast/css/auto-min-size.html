@@ -6,27 +6,28 @@ div = document.getElementById('foo');
 shouldBe('div.style.minWidth', '""');
 shouldBe('getComputedStyle(div)["min-width"]', '"0px"');
 
+div.style.minWidth = 'auto';
+div.style.maxWidth = 'auto';
+shouldBe('div.style.minWidth', '""');
+shouldBe('div.style.maxWidth', '""');
+shouldBe('getComputedStyle(div).minWidth', '"0px"');
+
 div.style.minWidth = 0;
 shouldBe('div.style.minWidth', '"0px"');
 shouldBe('getComputedStyle(div)["min-width"]', '"0px"');
 
-div.style.minWidth = 'auto';
-div.style.maxWidth = 'auto';
-shouldBe('div.style.minWidth', '"auto"');
-shouldBe('div.style.maxWidth', '""');
-shouldBe('getComputedStyle(div).minWidth', '"0px"');
-
 shouldBe('div.style.minHeight', '""');
 shouldBe('getComputedStyle(div)["min-height"]', '"0px"');
+
+div.style.minHeight = 'auto';
+div.style.maxHeight = 'auto';
+shouldBe('div.style.minHeight', '""');
+shouldBe('div.style.maxHeight', '""');
+shouldBe('getComputedStyle(div).minHeight', '"0px"');
 
 div.style.minHeight = 0;
 shouldBe('div.style.minHeight', '"0px"');
 shouldBe('getComputedStyle(div)["min-height"]', '"0px"');
 
-div.style.minHeight = 'auto';
-div.style.maxHeight = 'auto';
-shouldBe('div.style.minHeight', '"auto"');
-shouldBe('div.style.maxHeight', '""');
-shouldBe('getComputedStyle(div).minHeight', '"0px"');
 </script>
 <script src='../js/resources/js-test-post.js'></script>

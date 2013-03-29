@@ -55,6 +55,7 @@ audio::-webkit-media-controls-enclosure, video::-webkit-media-controls-enclosure
     width: 100%;
     max-width: 800px;
     height: 30px;
+    -webkit-flex-shrink: 0;
     bottom: 0;
     text-indent: 0;
     padding: 0;
@@ -64,6 +65,7 @@ audio::-webkit-media-controls-enclosure, video::-webkit-media-controls-enclosure
 video::-webkit-media-controls-enclosure {
     padding: 0px 5px 5px 5px;
     height: 35px;
+    -webkit-flex-shrink: 0;
 }
 
 audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {

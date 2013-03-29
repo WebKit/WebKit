@@ -80,7 +80,6 @@ void RenderButton::styleWillChange(StyleDifference diff, const RenderStyle* newS
         // because of the difference. Same goes for the other properties.
         // FIXME: Make this hack unnecessary.
         m_inner->style()->setFlexGrow(newStyle->initialFlexGrow());
-        m_inner->style()->setMinWidth(newStyle->initialMinSize());
         m_inner->style()->setMarginTop(newStyle->initialMargin());
         m_inner->style()->setMarginBottom(newStyle->initialMargin());
     }
@@ -113,11 +112,6 @@ void RenderButton::setupInnerStyle(RenderStyle* innerStyle)
     // RenderBlock::createAnonymousBlock creates a new RenderStyle, so this is
     // safe to modify.
     innerStyle->setFlexGrow(1.0f);
-    // min-width: 0; is needed for correct shrinking.
-    // FIXME: If and when the spec changes to not require this, we should
-    // remove this line and the corresponding line in styleWillChange.
-    // See: http://lists.w3.org/Archives/Public/www-style/2013Feb/0364.html
-    innerStyle->setMinWidth(Length(0, Fixed));
     // Use margin:auto instead of align-items:center to get safe centering, i.e.
     // when the content overflows, treat it the same as align-items: flex-start.
     innerStyle->setMarginTop(Length());
