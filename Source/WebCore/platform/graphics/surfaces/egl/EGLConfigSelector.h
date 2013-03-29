@@ -31,61 +31,28 @@
 #include <opengl/GLDefs.h>
 #include <opengl/GLPlatformSurface.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-typedef Display NativeSharedDisplay;
-
-class SharedEGLDisplay : public WTF::RefCountedBase {
-    WTF_MAKE_NONCOPYABLE(SharedEGLDisplay);
-
-public:
-    static PassRefPtr<SharedEGLDisplay> create(NativeSharedDisplay* display)
-    {
-        if (!m_staticSharedEGLDisplay)
-            m_staticSharedEGLDisplay = new SharedEGLDisplay(display);
-        else
-            m_staticSharedEGLDisplay->ref();
-
-        return adoptRef(m_staticSharedEGLDisplay);
-    }
-
-    void deref();
-    EGLDisplay sharedEGLDisplay() const;
-
-protected:
-    SharedEGLDisplay(NativeSharedDisplay*);
-    void cleanup();
-    virtual ~SharedEGLDisplay();
-
-    static SharedEGLDisplay* m_staticSharedEGLDisplay;
-    EGLDisplay m_eglDisplay;
-};
-
 class EGLConfigSelector {
     WTF_MAKE_NONCOPYABLE(EGLConfigSelector);
-
 public:
-    EGLConfigSelector(GLPlatformSurface::SurfaceAttributes, NativeSharedDisplay* = 0);
+    EGLConfigSelector(GLPlatformSurface::SurfaceAttributes);
     virtual ~EGLConfigSelector();
-    PlatformDisplay display() const;
-    virtual EGLConfig pBufferContextConfig();
+    virtual EGLConfig pixmapContextConfig();
     virtual EGLConfig surfaceContextConfig();
     EGLint nativeVisualId(const EGLConfig&) const;
     GLPlatformSurface::SurfaceAttributes attributes() const;
     void reset();
 
 private:
-    EGLConfig createConfig(const int attributes[]);
+    EGLConfig createConfig(EGLint expectedSurfaceType);
 
 protected:
-    EGLConfig m_pbufferFBConfig;
+    EGLConfig m_pixmapFBConfig;
     EGLConfig m_surfaceContextFBConfig;
-    RefPtr<SharedEGLDisplay> m_sharedDisplay;
     unsigned m_attributes : 3;
+    PlatformDisplay m_sharedDisplay;
 };
 
 }

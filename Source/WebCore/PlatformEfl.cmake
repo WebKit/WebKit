@@ -328,7 +328,9 @@ if (WTF_USE_3D_GRAPHICS)
         list(APPEND WebCore_SOURCES
             platform/graphics/surfaces/egl/EGLConfigSelector.cpp
             platform/graphics/surfaces/egl/EGLContext.cpp
+            platform/graphics/surfaces/egl/EGLHelper.cpp
             platform/graphics/surfaces/egl/EGLSurface.cpp
+            platform/graphics/surfaces/egl/EGLXSurface.cpp
         )
     else ()
         list(APPEND WebCore_SOURCES

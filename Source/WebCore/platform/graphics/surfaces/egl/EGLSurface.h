@@ -28,31 +28,38 @@
 
 #if USE(EGL) && USE(GRAPHICS_SURFACE)
 
-#include "EGLConfigSelector.h"
 #include "GLTransportSurface.h"
 
-#include <glx/X11Helper.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-typedef X11Helper NativeWrapper;
+class EGLConfigSelector;
 
-// Contents of the surface are backed by native window.
-class EGLWindowTransportSurface : public GLTransportSurface {
-
+class EGLTransportSurface : public GLTransportSurface {
 public:
-    EGLWindowTransportSurface(const IntSize&, SurfaceAttributes);
-    virtual ~EGLWindowTransportSurface();
+    static PassOwnPtr<GLTransportSurface> createTransportSurface(const IntSize&, SurfaceAttributes);
+    virtual ~EGLTransportSurface();
     virtual PlatformSurfaceConfig configuration() OVERRIDE;
-    virtual void setGeometry(const IntRect& newRect) OVERRIDE;
-    virtual void swapBuffers() OVERRIDE;
     virtual void destroy() OVERRIDE;
     virtual GLPlatformSurface::SurfaceAttributes attributes() const OVERRIDE;
 
-private:
-    void freeEGLResources();
+protected:
+    EGLTransportSurface(const IntSize&, SurfaceAttributes);
+    OwnPtr<EGLConfigSelector> m_configSelector;
+};
+
+class EGLOffScreenSurface : public GLPlatformSurface {
+public:
+    static PassOwnPtr<GLPlatformSurface> createOffScreenSurface(SurfaceAttributes);
+    virtual ~EGLOffScreenSurface();
+    virtual PlatformSurfaceConfig configuration() OVERRIDE;
+    virtual void destroy() OVERRIDE;
+    virtual GLPlatformSurface::SurfaceAttributes attributes() const OVERRIDE;
+
+protected:
+    EGLOffScreenSurface(SurfaceAttributes);
     OwnPtr<EGLConfigSelector> m_configSelector;
 };
 

@@ -47,10 +47,11 @@ static bool vertexArrayObjectSupported = false;
 
 PassOwnPtr<GLTransportSurface> GLTransportSurface::createTransportSurface(const IntSize& size, SurfaceAttributes attributes)
 {
+    OwnPtr<GLTransportSurface> surface;
 #if USE(GLX)
-    OwnPtr<GLTransportSurface> surface = adoptPtr(new GLXTransportSurface(size, attributes));
+    surface = adoptPtr(new GLXTransportSurface(size, attributes));
 #elif USE(EGL)
-    OwnPtr<GLTransportSurface> surface = adoptPtr(new EGLWindowTransportSurface(attributes));
+    surface = EGLTransportSurface::createTransportSurface(size, attributes);
 #endif
 
     if (surface && surface->handle() && surface->drawable())

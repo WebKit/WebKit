@@ -28,110 +28,118 @@
 
 #if USE(EGL) && USE(GRAPHICS_SURFACE)
 
+#include "EGLConfigSelector.h"
+#include "EGLHelper.h"
+#include "GLPlatformContext.h"
+
+#if PLATFORM(X11)
+#include "EGLXSurface.h"
+#endif
+
 namespace WebCore {
 
-EGLWindowTransportSurface::EGLWindowTransportSurface(const IntSize& size, SurfaceAttributes attributes)
-    : GLTransportSurface(size, attributes)
+PassOwnPtr<GLTransportSurface> EGLTransportSurface::createTransportSurface(const IntSize& size, SurfaceAttributes attributes)
 {
-    m_configSelector = adoptPtr(new EGLConfigSelector(attributes, NativeWrapper::nativeDisplay()));
-    m_sharedDisplay = m_configSelector->display();
+    OwnPtr<GLTransportSurface> surface;
+#if PLATFORM(X11)
+    surface = adoptPtr(new EGLWindowTransportSurface(size, attributes));
+#endif
 
-    if (m_sharedDisplay == EGL_NO_DISPLAY) {
-        m_configSelector = nullptr;
-        return;
-    }
+    if (surface)
+        return surface.release();
 
-    EGLConfig config = m_configSelector->surfaceContextConfig();
-
-    if (!config) {
-        destroy();
-        return;
-    }
-
-    EGLint visualId = m_configSelector->nativeVisualId(config);
-
-    if (visualId == -1) {
-        destroy();
-        return;
-    }
-
-    NativeWrapper::createOffScreenWindow(&m_bufferHandle, (attributes & GLPlatformSurface::SupportAlpha), visualId);
-
-    if (!m_bufferHandle) {
-        destroy();
-        return;
-    }
-
-    m_drawable = eglCreateWindowSurface(m_sharedDisplay, m_configSelector->surfaceContextConfig(), (EGLNativeWindowType)m_bufferHandle, 0);
-
-    if (m_drawable == EGL_NO_SURFACE) {
-        LOG_ERROR("Failed to create EGL surface(%d).", eglGetError());
-        destroy();
-    }
+    return nullptr;
 }
 
-GLPlatformSurface::SurfaceAttributes EGLWindowTransportSurface::attributes() const
+EGLTransportSurface::EGLTransportSurface(const IntSize& size, SurfaceAttributes attributes)
+    : GLTransportSurface(size, attributes)
+{
+    m_sharedDisplay = EGLHelper::eglDisplay();
+
+    if (m_sharedDisplay == EGL_NO_DISPLAY)
+        return;
+
+    m_configSelector = adoptPtr(new EGLConfigSelector(attributes));
+}
+
+GLPlatformSurface::SurfaceAttributes EGLTransportSurface::attributes() const
 {
     return m_configSelector->attributes();
 }
 
-EGLWindowTransportSurface::~EGLWindowTransportSurface()
+EGLTransportSurface::~EGLTransportSurface()
 {
 }
 
-PlatformSurfaceConfig EGLWindowTransportSurface::configuration()
-{
-    return m_configSelector->surfaceContextConfig();
-}
-
-void EGLWindowTransportSurface::swapBuffers()
-{
-    if (!m_drawable)
-        return;
-
-    EGLBoolean success = eglBindAPI(eglAPIVersion);
-
-    if (success != EGL_TRUE) {
-        LOG_ERROR("Failed to set EGL API(%d).", eglGetError());
-        destroy();
-    }
-
-    success = eglSwapBuffers(m_sharedDisplay, m_drawable);
-
-    if (success != EGL_TRUE) {
-        LOG_ERROR("Failed to SwapBuffers(%d).", eglGetError());
-        destroy();
-    }
-}
-
-void EGLWindowTransportSurface::destroy()
-{
-    GLTransportSurface::destroy();
-    NativeWrapper::destroyWindow(m_bufferHandle);
-    freeEGLResources();
-    m_bufferHandle = 0;
-}
-
-void EGLWindowTransportSurface::freeEGLResources()
+void EGLTransportSurface::destroy()
 {
     if (m_drawable == EGL_NO_SURFACE || m_sharedDisplay == EGL_NO_DISPLAY)
         return;
 
-    EGLBoolean eglResult = eglBindAPI(eglAPIVersion);
+    GLTransportSurface::destroy();
 
-    if (eglResult != EGL_TRUE) {
-        LOG_ERROR("Failed to set EGL API(%d).", eglGetError());
-        return;
+    if (m_drawable) {
+        eglDestroySurface(m_sharedDisplay, m_drawable);
+        m_drawable = EGL_NO_SURFACE;
     }
 
-    eglDestroySurface(m_sharedDisplay, m_drawable);
-    m_drawable = EGL_NO_SURFACE;
+    m_configSelector = nullptr;
 }
 
-void EGLWindowTransportSurface::setGeometry(const IntRect& newRect)
+PlatformSurfaceConfig EGLTransportSurface::configuration()
 {
-    GLTransportSurface::setGeometry(newRect);
-    NativeWrapper::resizeWindow(newRect, m_bufferHandle);
+    return m_configSelector->surfaceContextConfig();
+}
+
+PassOwnPtr<GLPlatformSurface> EGLOffScreenSurface::createOffScreenSurface(SurfaceAttributes attributes)
+{
+    OwnPtr<GLPlatformSurface> surface;
+#if PLATFORM(X11)
+    surface = adoptPtr(new EGLPixmapSurface(attributes));
+#endif
+
+    if (surface)
+        return surface.release();
+
+    return nullptr;
+}
+
+EGLOffScreenSurface::EGLOffScreenSurface(SurfaceAttributes surfaceAttributes)
+    : GLPlatformSurface(surfaceAttributes)
+{
+    m_sharedDisplay = EGLHelper::eglDisplay();
+
+    if (m_sharedDisplay == EGL_NO_DISPLAY)
+        return;
+
+    m_configSelector = adoptPtr(new EGLConfigSelector(surfaceAttributes));
+}
+
+EGLOffScreenSurface::~EGLOffScreenSurface()
+{
+}
+
+GLPlatformSurface::SurfaceAttributes EGLOffScreenSurface::attributes() const
+{
+    return m_configSelector->attributes();
+}
+
+PlatformSurfaceConfig EGLOffScreenSurface::configuration()
+{
+    return m_configSelector->pixmapContextConfig();
+}
+
+void EGLOffScreenSurface::destroy()
+{
+    if (m_sharedDisplay == EGL_NO_DISPLAY || m_drawable == EGL_NO_SURFACE)
+        return;
+
+    if (m_drawable) {
+        eglDestroySurface(m_sharedDisplay, m_drawable);
+        m_drawable = EGL_NO_SURFACE;
+    }
+
+    m_configSelector = nullptr;
 }
 
 }

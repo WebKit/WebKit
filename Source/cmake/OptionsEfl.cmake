@@ -114,6 +114,7 @@ if (ENABLE_ECORE_X)
 
     list(APPEND ECORE_ADDITIONAL_COMPONENTS X)
     add_definitions(-DHAVE_ECORE_X)
+    add_definitions(-DWTF_PLATFORM_X11=1)
 endif ()
 
 # Allow building the EFL port using EFL version 1.6+ to build on Tizen trunk

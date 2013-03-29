@@ -44,14 +44,15 @@ static GLPlatformSurface* m_currentDrawable = 0;
 
 PassOwnPtr<GLPlatformSurface> GLPlatformSurface::createOffScreenSurface(SurfaceAttributes attributes)
 {
+    OwnPtr<GLPlatformSurface> surface;
 #if USE(GLX)
-    OwnPtr<GLPlatformSurface> surface = adoptPtr(new GLXOffScreenSurface(attributes));
-
-    if (surface->drawable())
-        return surface.release();
+    surface = adoptPtr(new GLXOffScreenSurface(attributes));
 #else
-    UNUSED_PARAM(attributes);
+    surface = EGLOffScreenSurface::createOffScreenSurface(attributes);
 #endif
+
+    if (surface && surface->drawable())
+        return surface.release();
 
     return nullptr;
 }
