@@ -1,3 +1,27 @@
+2013-03-29  Brady Eidson  <beidson@apple.com>
+
+        "Empty cache..." clears the disk cache from each WebProcess.
+        <rdar://problem/12456652> and https://bugs.webkit.org/show_bug.cgi?id=113603
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::NetworkProcess):
+        (WebKit::NetworkProcess::terminate): Override ChildProcess::terminate to allow us to finish clearing the cache.
+        * NetworkProcess/NetworkProcess.h:
+
+        * NetworkProcess/NetworkProcess.messages.in: Add the ClearCacheForAllOrigins message.
+
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::clearCacheForAllOrigins): Clear the disk cache.
+        (WebKit::NetworkProcess::platformTerminate): Wait for the clear to complete.
+
+        * UIProcess/WebResourceCacheManagerProxy.cpp:
+        (WebKit::WebResourceCacheManagerProxy::clearCacheForAllOrigins): Message the network process, also.
+
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformClearResourceCaches): Don't clear the disk cache if we use the network process.
+
 2013-03-28  Brady Eidson  <beidson@apple.com>
 
         We leak NetworkConnectionToWebProcess objects.

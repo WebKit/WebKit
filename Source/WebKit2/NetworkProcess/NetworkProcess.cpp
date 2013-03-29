@@ -64,6 +64,9 @@ NetworkProcess& NetworkProcess::shared()
 NetworkProcess::NetworkProcess()
     : m_hasSetCacheModel(false)
     , m_cacheModel(CacheModelDocumentViewer)
+#if PLATFORM(MAC)
+    , m_clearCacheDispatchGroup(0)
+#endif
 {
     NetworkProcessPlatformStrategies::initialize();
 
@@ -236,6 +239,12 @@ void NetworkProcess::getNetworkProcessStatistics(uint64_t callbackID)
     data.statisticsNumbers.set("OutstandingAuthenticationChallengesCount", shared().authenticationManager().outstandingAuthenticationChallengeCount());
 
     parentProcessConnection()->send(Messages::WebContext::DidGetStatistics(data, callbackID), 0);
+}
+
+void NetworkProcess::terminate()
+{
+    platformTerminate();
+    ChildProcess::terminate();
 }
 
 #if !PLATFORM(MAC)

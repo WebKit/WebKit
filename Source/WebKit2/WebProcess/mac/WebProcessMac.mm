@@ -130,6 +130,10 @@ void WebProcess::platformClearResourceCaches(ResourceCachesToClear cachesToClear
     if (cachesToClear == InMemoryResourceCachesOnly)
         return;
 
+    // If we're using the network process then it is the only one that needs to clear the disk cache.
+    if (usesNetworkProcess())
+        return;
+
     if (!m_clearResourceCachesDispatchGroup)
         m_clearResourceCachesDispatchGroup = dispatch_group_create();
 

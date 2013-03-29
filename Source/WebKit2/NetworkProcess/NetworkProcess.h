@@ -77,6 +77,9 @@ private:
 
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
 
+    virtual void terminate() OVERRIDE;
+    void platformTerminate();
+
     // ChildProcess
     virtual void initializeProcessName(const ChildProcessInitializationParameters&) OVERRIDE;
     virtual void initializeSandbox(const ChildProcessInitializationParameters&, SandboxInitializationParameters&) OVERRIDE;
@@ -104,10 +107,9 @@ private:
     void downloadRequest(uint64_t downloadID, const WebCore::ResourceRequest&);
     void cancelDownload(uint64_t downloadID);
     void setCacheModel(uint32_t);
-
     void allowSpecificHTTPSCertificateForHost(const PlatformCertificateInfo&, const String& host);
-
     void getNetworkProcessStatistics(uint64_t callbackID);
+    void clearCacheForAllOrigins(uint32_t cachesToClear);
 
     // Platform Helpers
     void platformSetCacheModel(CacheModel);
@@ -123,6 +125,13 @@ private:
 
     typedef HashMap<const char*, OwnPtr<NetworkProcessSupplement>, PtrHash<const char*> > NetworkProcessSupplementMap;
     NetworkProcessSupplementMap m_supplements;
+
+#if PLATFORM(MAC)
+    // FIXME: We'd like to be able to do this without the #ifdef, but WorkQueue + BinarySemaphore isn't good enough since
+    // multiple requests to clear the cache can come in before previous requests complete, and we need to wait for all of them.
+    // In the future using WorkQueue and a counting semaphore would work, as would WorkQueue supporting the libdispatch concept of "work groups".
+    dispatch_group_t m_clearCacheDispatchGroup;
+#endif
 };
 
 } // namespace WebKit

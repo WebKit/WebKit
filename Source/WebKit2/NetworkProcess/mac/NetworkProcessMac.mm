@@ -31,6 +31,7 @@
 #import "NetworkProcessCreationParameters.h"
 #import "NetworkResourceLoader.h"
 #import "PlatformCertificateInfo.h"
+#import "ResourceCachesToClear.h"
 #import "SandboxExtension.h"
 #import "SandboxInitializationParameters.h"
 #import "StringUtilities.h"
@@ -199,6 +200,29 @@ void NetworkProcess::initializeSandbox(const ChildProcessInitializationParameter
     sandboxParameters.setOverrideSandboxProfilePath([webkit2Bundle pathForResource:@"com.apple.WebKit.NetworkProcess" ofType:@"sb"]);
 
     ChildProcess::initializeSandbox(parameters, sandboxParameters);
+}
+
+void NetworkProcess::clearCacheForAllOrigins(uint32_t cachesToClear)
+{
+    ResourceCachesToClear resourceCachesToClear = static_cast<ResourceCachesToClear>(cachesToClear);
+    if (resourceCachesToClear == InMemoryResourceCachesOnly)
+        return;
+
+    if (!m_clearCacheDispatchGroup)
+        m_clearCacheDispatchGroup = dispatch_group_create();
+
+    dispatch_group_async(m_clearCacheDispatchGroup, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [[NSURLCache sharedURLCache] removeAllCachedResponses];
+    });
+}
+
+void NetworkProcess::platformTerminate()
+{
+    if (m_clearCacheDispatchGroup) {
+        dispatch_group_wait(m_clearCacheDispatchGroup, DISPATCH_TIME_FOREVER);
+        dispatch_release(m_clearCacheDispatchGroup);
+        m_clearCacheDispatchGroup = 0;
+    }
 }
 
 } // namespace WebKit

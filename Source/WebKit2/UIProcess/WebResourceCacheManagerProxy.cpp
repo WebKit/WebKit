@@ -28,6 +28,7 @@
 
 #include "ImmutableArray.h"
 #include "ImmutableDictionary.h"
+#include "NetworkProcessMessages.h"
 #include "SecurityOriginData.h"
 #include "WebContext.h"
 #include "WebResourceCacheManagerMessages.h"
@@ -114,6 +115,8 @@ void WebResourceCacheManagerProxy::clearCacheForOrigin(WebSecurityOrigin* origin
 
 void WebResourceCacheManagerProxy::clearCacheForAllOrigins(ResourceCachesToClear cachesToClear)
 {
+    context()->sendToNetworkingProcessRelaunchingIfNecessary(Messages::NetworkProcess::ClearCacheForAllOrigins(cachesToClear));
+
     // FIXME (Multi-WebProcess): <rdar://problem/12239765> There is no need to relaunch all processes. One process to take care of persistent cache is enough.
     context()->sendToAllProcessesRelaunchingThemIfNecessary(Messages::WebResourceCacheManager::ClearCacheForAllOrigins(cachesToClear));
 }

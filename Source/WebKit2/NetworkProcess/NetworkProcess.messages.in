@@ -42,6 +42,8 @@ messages -> NetworkProcess LegacyReceiver {
     AllowSpecificHTTPSCertificateForHost(WebKit::PlatformCertificateInfo certificate, WTF::String host)
     
     GetNetworkProcessStatistics(uint64_t callbackID)
+    
+    ClearCacheForAllOrigins(uint32_t cachesToClear)
 }
 
 #endif // ENABLE(NETWORK_PROCESS)
