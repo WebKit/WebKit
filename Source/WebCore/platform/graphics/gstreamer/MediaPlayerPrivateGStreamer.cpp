@@ -802,6 +802,11 @@ void MediaPlayerPrivateGStreamer::processBufferingStats(GstMessage* message)
 
         m_fillTimer.startRepeating(0.2);
     }
+
+    if (!m_paused && m_bufferingPercentage < 100) {
+        LOG_MEDIA_MESSAGE("[Buffering] Download in progress, pausing pipeline.");
+        gst_element_set_state(m_playBin.get(), GST_STATE_PAUSED);
+    }
 }
 
 void MediaPlayerPrivateGStreamer::fillTimerFired(Timer<MediaPlayerPrivateGStreamer>*)
