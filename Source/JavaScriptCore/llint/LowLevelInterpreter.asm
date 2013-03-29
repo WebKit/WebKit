@@ -973,13 +973,6 @@ _llint_op_put_getter_setter:
     dispatch(5)
 
 
-_llint_op_loop_if_true:
-    traceExecution()
-    jumpTrueOrFalse(
-        macro (value, target) btinz value, target end,
-        _llint_slow_path_jtrue)
-
-
 _llint_op_jtrue:
     traceExecution()
     jumpTrueOrFalse(
@@ -987,26 +980,11 @@ _llint_op_jtrue:
         _llint_slow_path_jtrue)
 
 
-_llint_op_loop_if_false:
-    traceExecution()
-    jumpTrueOrFalse(
-        macro (value, target) btiz value, target end,
-        _llint_slow_path_jfalse)
-
-
 _llint_op_jfalse:
     traceExecution()
     jumpTrueOrFalse(
         macro (value, target) btiz value, target end,
         _llint_slow_path_jfalse)
-
-
-_llint_op_loop_if_less:
-    traceExecution()
-    compare(
-        macro (left, right, target) bilt left, right, target end,
-        macro (left, right, target) bdlt left, right, target end,
-        _llint_slow_path_jless)
 
 
 _llint_op_jless:
@@ -1025,14 +1003,6 @@ _llint_op_jnless:
         _llint_slow_path_jnless)
 
 
-_llint_op_loop_if_greater:
-    traceExecution()
-    compare(
-        macro (left, right, target) bigt left, right, target end,
-        macro (left, right, target) bdgt left, right, target end,
-        _llint_slow_path_jgreater)
-
-
 _llint_op_jgreater:
     traceExecution()
     compare(
@@ -1049,14 +1019,6 @@ _llint_op_jngreater:
         _llint_slow_path_jngreater)
 
 
-_llint_op_loop_if_lesseq:
-    traceExecution()
-    compare(
-        macro (left, right, target) bilteq left, right, target end,
-        macro (left, right, target) bdlteq left, right, target end,
-        _llint_slow_path_jlesseq)
-
-
 _llint_op_jlesseq:
     traceExecution()
     compare(
@@ -1071,14 +1033,6 @@ _llint_op_jnlesseq:
         macro (left, right, target) bigt left, right, target end,
         macro (left, right, target) bdgtun left, right, target end,
         _llint_slow_path_jnlesseq)
-
-
-_llint_op_loop_if_greatereq:
-    traceExecution()
-    compare(
-        macro (left, right, target) bigteq left, right, target end,
-        macro (left, right, target) bdgteq left, right, target end,
-        _llint_slow_path_jgreatereq)
 
 
 _llint_op_jgreatereq:

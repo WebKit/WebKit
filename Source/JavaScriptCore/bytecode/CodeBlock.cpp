@@ -1191,21 +1191,8 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             out.printf("[%4d] jmp\t\t %d(->%d)", location, offset, location + offset);
             break;
         }
-        case op_loop: {
-            int offset = (++it)->u.operand;
-            out.printf("[%4d] loop\t\t %d(->%d)", location, offset, location + offset);
-            break;
-        }
         case op_jtrue: {
             printConditionalJump(out, exec, begin, it, location, "jtrue");
-            break;
-        }
-        case op_loop_if_true: {
-            printConditionalJump(out, exec, begin, it, location, "loop_if_true");
-            break;
-        }
-        case op_loop_if_false: {
-            printConditionalJump(out, exec, begin, it, location, "loop_if_false");
             break;
         }
         case op_jfalse: {
@@ -1281,34 +1268,6 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             int r1 = (++it)->u.operand;
             int offset = (++it)->u.operand;
             out.printf("[%4d] jngreatereq\t\t %s, %s, %d(->%d)", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
-            break;
-        }
-        case op_loop_if_less: {
-            int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            int offset = (++it)->u.operand;
-            out.printf("[%4d] loop_if_less\t %s, %s, %d(->%d)", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
-            break;
-        }
-        case op_loop_if_lesseq: {
-            int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            int offset = (++it)->u.operand;
-            out.printf("[%4d] loop_if_lesseq\t %s, %s, %d(->%d)", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
-            break;
-        }
-        case op_loop_if_greater: {
-            int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            int offset = (++it)->u.operand;
-            out.printf("[%4d] loop_if_greater\t %s, %s, %d(->%d)", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
-            break;
-        }
-        case op_loop_if_greatereq: {
-            int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            int offset = (++it)->u.operand;
-            out.printf("[%4d] loop_if_greatereq\t %s, %s, %d(->%d)", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
             break;
         }
         case op_loop_hint: {

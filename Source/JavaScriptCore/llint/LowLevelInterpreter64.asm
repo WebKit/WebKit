@@ -1233,11 +1233,6 @@ _llint_op_put_by_val:
     dispatch(5)
 
 
-_llint_op_loop:
-    traceExecution()
-    dispatchIntIndirect(1)
-
-
 _llint_op_jmp:
     traceExecution()
     dispatchIntIndirect(1)

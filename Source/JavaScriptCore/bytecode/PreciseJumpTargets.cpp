@@ -54,15 +54,12 @@ void computePreciseJumpTargets(CodeBlock* codeBlock, Vector<unsigned, 32>& out)
         Instruction* current = instructionsBegin + bytecodeOffset;
         switch (opcodeID) {
         case op_jmp:
-        case op_loop:
             out.append(bytecodeOffset + current[1].u.operand);
             break;
         case op_jtrue:
         case op_jfalse:
         case op_jeq_null:
         case op_jneq_null:
-        case op_loop_if_true:
-        case op_loop_if_false:
             out.append(bytecodeOffset + current[2].u.operand);
             break;
         case op_jneq_ptr:
@@ -74,10 +71,6 @@ void computePreciseJumpTargets(CodeBlock* codeBlock, Vector<unsigned, 32>& out)
         case op_jnlesseq:
         case op_jngreater:
         case op_jngreatereq:
-        case op_loop_if_less:
-        case op_loop_if_lesseq:
-        case op_loop_if_greater:
-        case op_loop_if_greatereq:
             out.append(bytecodeOffset + current[3].u.operand);
             break;
         case op_switch_imm:

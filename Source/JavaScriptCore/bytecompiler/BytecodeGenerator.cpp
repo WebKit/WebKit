@@ -769,7 +769,7 @@ void ALWAYS_INLINE BytecodeGenerator::rewindUnaryOp()
 PassRefPtr<Label> BytecodeGenerator::emitJump(Label* target)
 {
     size_t begin = instructions().size();
-    emitOpcode(target->isForward() ? op_jmp : op_loop);
+    emitOpcode(op_jmp);
     instructions().append(target->bind(begin, instructions().size()));
     return target;
 }
@@ -787,7 +787,7 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfTrue(RegisterID* cond, Label* tar
             rewindBinaryOp();
 
             size_t begin = instructions().size();
-            emitOpcode(target->isForward() ? op_jless : op_loop_if_less);
+            emitOpcode(op_jless);
             instructions().append(src1Index);
             instructions().append(src2Index);
             instructions().append(target->bind(begin, instructions().size()));
@@ -804,7 +804,7 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfTrue(RegisterID* cond, Label* tar
             rewindBinaryOp();
 
             size_t begin = instructions().size();
-            emitOpcode(target->isForward() ? op_jlesseq : op_loop_if_lesseq);
+            emitOpcode(op_jlesseq);
             instructions().append(src1Index);
             instructions().append(src2Index);
             instructions().append(target->bind(begin, instructions().size()));
@@ -821,7 +821,7 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfTrue(RegisterID* cond, Label* tar
             rewindBinaryOp();
 
             size_t begin = instructions().size();
-            emitOpcode(target->isForward() ? op_jgreater : op_loop_if_greater);
+            emitOpcode(op_jgreater);
             instructions().append(src1Index);
             instructions().append(src2Index);
             instructions().append(target->bind(begin, instructions().size()));
@@ -838,7 +838,7 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfTrue(RegisterID* cond, Label* tar
             rewindBinaryOp();
 
             size_t begin = instructions().size();
-            emitOpcode(target->isForward() ? op_jgreatereq : op_loop_if_greatereq);
+            emitOpcode(op_jgreatereq);
             instructions().append(src1Index);
             instructions().append(src2Index);
             instructions().append(target->bind(begin, instructions().size()));
@@ -878,7 +878,7 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfTrue(RegisterID* cond, Label* tar
 
     size_t begin = instructions().size();
 
-    emitOpcode(target->isForward() ? op_jtrue : op_loop_if_true);
+    emitOpcode(op_jtrue);
     instructions().append(cond->index());
     instructions().append(target->bind(begin, instructions().size()));
     return target;
@@ -964,7 +964,7 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfFalse(RegisterID* cond, Label* ta
             rewindUnaryOp();
 
             size_t begin = instructions().size();
-            emitOpcode(target->isForward() ? op_jtrue : op_loop_if_true);
+            emitOpcode(op_jtrue);
             instructions().append(srcIndex);
             instructions().append(target->bind(begin, instructions().size()));
             return target;
@@ -1002,7 +1002,7 @@ PassRefPtr<Label> BytecodeGenerator::emitJumpIfFalse(RegisterID* cond, Label* ta
     }
 
     size_t begin = instructions().size();
-    emitOpcode(target->isForward() ? op_jfalse : op_loop_if_false);
+    emitOpcode(op_jfalse);
     instructions().append(cond->index());
     instructions().append(target->bind(begin, instructions().size()));
     return target;

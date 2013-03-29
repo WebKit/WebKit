@@ -689,14 +689,7 @@ namespace JSC {
         void emit_op_jngreater(Instruction*);
         void emit_op_jngreatereq(Instruction*);
         void emit_op_jtrue(Instruction*);
-        void emit_op_loop(Instruction*);
         void emit_op_loop_hint(Instruction*);
-        void emit_op_loop_if_less(Instruction*);
-        void emit_op_loop_if_lesseq(Instruction*);
-        void emit_op_loop_if_greater(Instruction*);
-        void emit_op_loop_if_greatereq(Instruction*);
-        void emit_op_loop_if_true(Instruction*);
-        void emit_op_loop_if_false(Instruction*);
         void emit_op_lshift(Instruction*);
         void emit_op_mod(Instruction*);
         void emit_op_mov(Instruction*);
@@ -787,12 +780,6 @@ namespace JSC {
         void emitSlow_op_jngreater(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jngreatereq(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jtrue(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_loop_if_less(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_loop_if_lesseq(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_loop_if_greater(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_loop_if_greatereq(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_loop_if_true(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_loop_if_false(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_lshift(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_mod(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_mul(Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -957,81 +944,9 @@ namespace JSC {
 #endif
     } JIT_CLASS_ALIGNMENT;
 
-    inline void JIT::emit_op_loop(Instruction* currentInstruction)
-    {
-        emitTimeoutCheck();
-        emit_op_jmp(currentInstruction);
-    }
-
     inline void JIT::emit_op_loop_hint(Instruction*)
     {
         emitOptimizationCheck(LoopOptimizationCheck);
-    }
-
-    inline void JIT::emit_op_loop_if_true(Instruction* currentInstruction)
-    {
-        emitTimeoutCheck();
-        emit_op_jtrue(currentInstruction);
-    }
-
-    inline void JIT::emitSlow_op_loop_if_true(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-    {
-        emitSlow_op_jtrue(currentInstruction, iter);
-    }
-
-    inline void JIT::emit_op_loop_if_false(Instruction* currentInstruction)
-    {
-        emitTimeoutCheck();
-        emit_op_jfalse(currentInstruction);
-    }
-
-    inline void JIT::emitSlow_op_loop_if_false(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-    {
-        emitSlow_op_jfalse(currentInstruction, iter);
-    }
-
-    inline void JIT::emit_op_loop_if_less(Instruction* currentInstruction)
-    {
-        emitTimeoutCheck();
-        emit_op_jless(currentInstruction);
-    }
-
-    inline void JIT::emitSlow_op_loop_if_less(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-    {
-        emitSlow_op_jless(currentInstruction, iter);
-    }
-
-    inline void JIT::emit_op_loop_if_lesseq(Instruction* currentInstruction)
-    {
-        emitTimeoutCheck();
-        emit_op_jlesseq(currentInstruction);
-    }
-
-    inline void JIT::emitSlow_op_loop_if_lesseq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-    {
-        emitSlow_op_jlesseq(currentInstruction, iter);
-    }
-
-    inline void JIT::emit_op_loop_if_greater(Instruction* currentInstruction)
-    {
-        emitTimeoutCheck();
-        emit_op_jgreater(currentInstruction);
-    }
-
-    inline void JIT::emitSlow_op_loop_if_greater(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-    {
-        emitSlow_op_jgreater(currentInstruction, iter);
-    }
-
-    inline void JIT::emit_op_loop_if_greatereq(Instruction* currentInstruction)
-    {
-        emitTimeoutCheck();
-        emit_op_jgreatereq(currentInstruction);
-    }
-
-    inline void JIT::emitSlow_op_loop_if_greatereq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
-    {
-        emitSlow_op_jgreatereq(currentInstruction, iter);
     }
 
 } // namespace JSC

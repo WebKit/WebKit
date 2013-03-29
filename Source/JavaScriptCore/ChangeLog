@@ -1,5 +1,44 @@
 2013-03-28  Geoffrey Garen  <ggaren@apple.com>
 
+        Simplified the bytecode by removing op_loop and op_loop_if_*
+        https://bugs.webkit.org/show_bug.cgi?id=113548
+
+        Reviewed by Filip Pizlo.
+
+        Regular jumps will suffice.
+
+        These opcodes are identical to branches, except they also do timeout
+        checking. That style of timeout checking has been broken for a long 
+        time, and when we add back timeout checking, it won't use these opcodes.
+
+        * JavaScriptCore.order:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/Opcode.h:
+        (JSC):
+        (JSC::padOpcodeName):
+        * bytecode/PreciseJumpTargets.cpp:
+        (JSC::computePreciseJumpTargets):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitJump):
+        (JSC::BytecodeGenerator::emitJumpIfTrue):
+        (JSC::BytecodeGenerator::emitJumpIfFalse):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        (JIT):
+        (JSC):
+        * llint/LowLevelInterpreter.asm:
+        * llint/LowLevelInterpreter32_64.asm:
+        * llint/LowLevelInterpreter64.asm:
+
+2013-03-28  Geoffrey Garen  <ggaren@apple.com>
+
         Simplified the bytecode by removing op_jmp_scopes
         https://bugs.webkit.org/show_bug.cgi?id=113545
 

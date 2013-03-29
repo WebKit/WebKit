@@ -2712,14 +2712,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_jmp);
         }
 
-        case op_loop: {
-            unsigned relativeOffset = currentInstruction[1].u.operand;
-            addToGraph(Jump, OpInfo(m_currentIndex + relativeOffset));
-            LAST_OPCODE(op_loop);
-        }
-
-        case op_jtrue:
-        case op_loop_if_true: {
+        case op_jtrue: {
             unsigned relativeOffset = currentInstruction[2].u.operand;
             Node* condition = get(currentInstruction[1].u.operand);
             if (canFold(condition)) {
@@ -2738,8 +2731,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_jtrue);
         }
 
-        case op_jfalse:
-        case op_loop_if_false: {
+        case op_jfalse: {
             unsigned relativeOffset = currentInstruction[2].u.operand;
             Node* condition = get(currentInstruction[1].u.operand);
             if (canFold(condition)) {
@@ -2774,8 +2766,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_jneq_null);
         }
 
-        case op_jless:
-        case op_loop_if_less: {
+        case op_jless: {
             unsigned relativeOffset = currentInstruction[3].u.operand;
             Node* op1 = get(currentInstruction[1].u.operand);
             Node* op2 = get(currentInstruction[2].u.operand);
@@ -2801,8 +2792,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_jless);
         }
 
-        case op_jlesseq:
-        case op_loop_if_lesseq: {
+        case op_jlesseq: {
             unsigned relativeOffset = currentInstruction[3].u.operand;
             Node* op1 = get(currentInstruction[1].u.operand);
             Node* op2 = get(currentInstruction[2].u.operand);
@@ -2828,8 +2818,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_jlesseq);
         }
 
-        case op_jgreater:
-        case op_loop_if_greater: {
+        case op_jgreater: {
             unsigned relativeOffset = currentInstruction[3].u.operand;
             Node* op1 = get(currentInstruction[1].u.operand);
             Node* op2 = get(currentInstruction[2].u.operand);
@@ -2855,8 +2844,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_jgreater);
         }
 
-        case op_jgreatereq:
-        case op_loop_if_greatereq: {
+        case op_jgreatereq: {
             unsigned relativeOffset = currentInstruction[3].u.operand;
             Node* op1 = get(currentInstruction[1].u.operand);
             Node* op2 = get(currentInstruction[2].u.operand);
