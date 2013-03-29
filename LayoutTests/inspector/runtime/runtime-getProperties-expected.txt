@@ -6,18 +6,13 @@ Running: testSetUp
 Running: testGetterAndSetter
 {
     enumerable : true
-    name : "get foo"
-    value : {
+    getter : {
         description : "function () { return 1; }"
         objectId : <string>
         type : "function"
     }
-    writable : false
-}
-{
-    enumerable : true
-    name : "set foo"
-    value : {
+    name : "foo"
+    setter : {
         description : "function (value) { }"
         objectId : <string>
         type : "function"
@@ -28,18 +23,13 @@ Running: testGetterAndSetter
 Running: testGetterOnly
 {
     enumerable : true
-    name : "get foo"
-    value : {
+    getter : {
         description : "function () { return 1; }"
         objectId : <string>
         type : "function"
     }
-    writable : false
-}
-{
-    enumerable : true
-    name : "set foo"
-    value : {
+    name : "foo"
+    setter : {
         description : "undefined"
         objectId : <undefined>
         type : "undefined"

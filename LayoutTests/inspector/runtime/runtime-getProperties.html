@@ -60,14 +60,21 @@ function test()
         }
     ]);
 
+    function convertPropertyValueForTest(propertyObject, fieldName)
+    {
+        var value = propertyObject[fieldName];
+        if (value)
+            propertyObject[fieldName] = { type: value.type, description: value.description.replace("function foo", "function "), objectId: value.objectId };
+    }
+
     function dumpProperty(property)
     {
         if (property.name === "__proto__")
             return;
 
-        var value = property.value;
-        if (value)
-            property.value = { type: value.type, description: value.description.replace("function foo", "function "), objectId: value.objectId };
+        convertPropertyValueForTest(property, "value");
+        convertPropertyValueForTest(property, "getter");
+        convertPropertyValueForTest(property, "setter");
         InspectorTest.dump(property, { objectId: "formatAsTypeName" });
     }
 }

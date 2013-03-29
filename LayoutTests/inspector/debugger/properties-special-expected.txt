@@ -5,6 +5,8 @@ Script source was shown.
 Set timer for test function.
 Watch expressions updated.
 Nodes are expanded.
+error: Function scope data is not available
+Subnodes are expanded.
 'Object(true)' => 'Boolean'
     '__proto__' => 'Boolean'
 '(function(a,b) { return a + b; })' => 'function (a, b) { return a + b; }'
@@ -13,15 +15,19 @@ Nodes are expanded.
     'length' => '2'
     'name' => '""'
     'prototype' => 'Object'
+        'constructor' => 'function (a, b) { return a + b; }'
+        '__proto__' => 'Object'
     '__proto__' => 'function () {'
     <function scope>
 '(function(a,b) { return a + b; }).bind({}, 2)' => 'function () {'
-    'get arguments' => 'function () {'
-    'get caller' => 'function () {'
+    'arguments' => null
+        'get' => 'function () {'
+        'set' => 'function () {'
+    'caller' => null
+        'get' => 'function () {'
+        'set' => 'function () {'
     'length' => '1'
     'name' => '""'
-    'set arguments' => 'function () {'
-    'set caller' => 'function () {'
     '__proto__' => 'function () {'
     <function scope>
 Debugger was disabled.
