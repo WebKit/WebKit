@@ -53,7 +53,7 @@ WebInspector.Popover = function(popoverHelper)
 WebInspector.Popover.prototype = {
     /**
      * @param {Element} element
-     * @param {Element} anchor
+     * @param {Element|AnchorBox} anchor
      * @param {?number=} preferredWidth
      * @param {?number=} preferredHeight
      * @param {?WebInspector.Popover.Orientation=} arrowDirection
@@ -65,7 +65,7 @@ WebInspector.Popover.prototype = {
 
     /**
      * @param {WebInspector.View} view
-     * @param {Element} anchor
+     * @param {Element|AnchorBox} anchor
      * @param {?number=} preferredWidth
      * @param {?number=} preferredHeight
      */
@@ -77,7 +77,7 @@ WebInspector.Popover.prototype = {
     /**
      * @param {WebInspector.View?} view
      * @param {Element} contentElement
-     * @param {Element} anchor
+     * @param {Element|AnchorBox} anchor
      * @param {?number=} preferredWidth
      * @param {?number=} preferredHeight
      * @param {?WebInspector.Popover.Orientation=} arrowDirection
@@ -137,6 +137,12 @@ WebInspector.Popover.prototype = {
         this._contentDiv.addStyleClass("fixed-height");
     },
 
+    /**
+     * @param {Element|AnchorBox} anchorElement
+     * @param {number} preferredWidth
+     * @param {number} preferredHeight
+     * @param {?WebInspector.Popover.Orientation=} arrowDirection
+     */
     _positionElement: function(anchorElement, preferredWidth, preferredHeight, arrowDirection)
     {
         const borderWidth = 25;
@@ -150,7 +156,7 @@ WebInspector.Popover.prototype = {
         const totalWidth = window.innerWidth;
         const totalHeight = window.innerHeight;
 
-        var anchorBox = anchorElement.boxInWindow(window);
+        var anchorBox = anchorElement instanceof AnchorBox ? anchorElement : anchorElement.boxInWindow(window);
         var newElementPosition = { x: 0, y: 0, width: preferredWidth + scrollerWidth, height: preferredHeight };
 
         var verticalAlignment;
@@ -220,7 +226,7 @@ WebInspector.Popover.prototype = {
 /**
  * @constructor
  * @param {Element} panelElement
- * @param {function(Element, Event):Element|undefined} getAnchor
+ * @param {function(Element, Event):(Element|AnchorBox)|undefined} getAnchor
  * @param {function(Element, WebInspector.Popover):undefined} showPopover
  * @param {function()=} onHide
  * @param {boolean=} disableOnClick
@@ -252,7 +258,7 @@ WebInspector.PopoverHelper.prototype = {
     {
         if (!this._hoverElement)
             return false;
-        var box = this._hoverElement.boxInWindow();
+        var box = this._hoverElement instanceof AnchorBox ? this._hoverElement : this._hoverElement.boxInWindow();
         return (box.x <= event.clientX && event.clientX <= box.x + box.width &&
             box.y <= event.clientY && event.clientY <= box.y + box.height);
     },
