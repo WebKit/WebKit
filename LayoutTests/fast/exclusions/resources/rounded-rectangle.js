@@ -212,7 +212,13 @@ function generateSimulatedShapeOutsideOnFloat(elementId, stylesheet, dimensions,
     }
 
     element.insertAdjacentHTML('afterend', simulationHTML);
+    // For simulating, we ignore the x and y values, since we're not attempting
+    // to draw the float's content in the right place, we just want to simulate
+    // the shape's effect.
     if (floatValue == "right")
         dimensions.shapeX = -dimensions.shapeWidth;
+    else 
+        dimensions.shapeX = 0;
+    dimensions.shapeY = 0;
     simulateShapeOutline(elementId, stylesheet, dimensions);
 }

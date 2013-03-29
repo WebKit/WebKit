@@ -4326,7 +4326,7 @@ LayoutUnit RenderBlock::logicalLeftOffsetForLine(LayoutUnit logicalTop, LayoutUn
 #if ENABLE(CSS_EXCLUSIONS)
         if (const FloatingObject* lastFloat = adapter.lastFloat()) {
             if (ExclusionShapeOutsideInfo* shapeOutside = lastFloat->renderer()->exclusionShapeOutsideInfo()) {
-                shapeOutside->computeSegmentsForLine(logicalTop - logicalTopForFloat(lastFloat), logicalHeight);
+                shapeOutside->computeSegmentsForLine(logicalTop - logicalTopForFloat(lastFloat) + shapeOutside->shapeLogicalTop(), logicalHeight);
                 left += shapeOutside->rightSegmentShapeBoundingBoxDelta();
             }
         }
@@ -4383,7 +4383,7 @@ LayoutUnit RenderBlock::logicalRightOffsetForLine(LayoutUnit logicalTop, LayoutU
 #if ENABLE(CSS_EXCLUSIONS)
         if (const FloatingObject* lastFloat = adapter.lastFloat()) {
             if (ExclusionShapeOutsideInfo* shapeOutside = lastFloat->renderer()->exclusionShapeOutsideInfo()) {
-                shapeOutside->computeSegmentsForLine(logicalTop - logicalTopForFloat(lastFloat), logicalHeight);
+                shapeOutside->computeSegmentsForLine(logicalTop - logicalTopForFloat(lastFloat) + shapeOutside->shapeLogicalTop(), logicalHeight);
                 rightFloatOffset += shapeOutside->leftSegmentShapeBoundingBoxDelta();
             }
         }

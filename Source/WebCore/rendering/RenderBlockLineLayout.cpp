@@ -178,7 +178,7 @@ inline void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(RenderBlock::Floa
 #if ENABLE(CSS_EXCLUSIONS)
     ExclusionShapeOutsideInfo* shapeOutsideInfo = newFloat->renderer()->exclusionShapeOutsideInfo();
     if (shapeOutsideInfo)
-        shapeOutsideInfo->computeSegmentsForLine(m_block->logicalHeight() - m_block->logicalTopForFloat(newFloat), logicalHeightForLine(m_block, m_isFirstLine));
+        shapeOutsideInfo->computeSegmentsForLine(m_block->logicalHeight() - m_block->logicalTopForFloat(newFloat) + shapeOutsideInfo->shapeLogicalTop(), logicalHeightForLine(m_block, m_isFirstLine));
 #endif
 
     if (newFloat->type() == RenderBlock::FloatingObject::FloatLeft) {
