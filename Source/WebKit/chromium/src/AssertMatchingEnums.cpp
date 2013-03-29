@@ -114,7 +114,6 @@
 #include "WebStorageQuotaError.h"
 #include "WebStorageQuotaType.h"
 #include "WebTextAffinity.h"
-#include "WebTextCaseSensitivity.h"
 #include "WebTextCheckingResult.h"
 #include "WebTextCheckingType.h"
 #include "WebView.h"
@@ -475,9 +474,6 @@ COMPILE_ASSERT_MATCHING_ENUM(WebSettings::EditingBehaviorAndroid, EditingAndroid
 
 COMPILE_ASSERT_MATCHING_ENUM(WebTextAffinityUpstream, UPSTREAM);
 COMPILE_ASSERT_MATCHING_ENUM(WebTextAffinityDownstream, DOWNSTREAM);
-
-COMPILE_ASSERT_MATCHING_ENUM(WebTextCaseSensitive, TextCaseSensitive);
-COMPILE_ASSERT_MATCHING_ENUM(WebTextCaseInsensitive, TextCaseInsensitive);
 
 COMPILE_ASSERT_MATCHING_ENUM(WebView::UserScriptInjectAtDocumentStart, InjectAtDocumentStart);
 COMPILE_ASSERT_MATCHING_ENUM(WebView::UserScriptInjectAtDocumentEnd, InjectAtDocumentEnd);

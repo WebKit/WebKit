@@ -1,3 +1,18 @@
+2013-03-28  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove unused WebRegularExpression API
+        https://bugs.webkit.org/show_bug.cgi?id=113520
+
+        Reviewed by Kent Tamura.
+
+        Last reference to these files removed in r190880.
+
+        * WebKit.gyp:
+        * public/WebRegularExpression.h: Removed.
+        * public/WebTextCaseSensitivity.h: Removed.
+        * src/AssertMatchingEnums.cpp:
+        * src/WebRegularExpression.cpp: Removed.
+
 2013-03-28  Alexandre Elias  <aelias@chromium.org>
 
         [chromium] Use widget.parent() for plugin WebMouseEvents
