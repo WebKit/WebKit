@@ -29,6 +29,7 @@
 
 #include "IDBFactoryBackendImpl.h"
 #include "IDBLevelDBCoding.h"
+#include "SecurityOrigin.h"
 #include "SharedBuffer.h"
 
 #include <gtest/gtest.h>
@@ -47,10 +48,8 @@ public:
     void SetUp()
     {
         SecurityOrigin* securityOrigin = 0;
-        // Empty pathBase means an in-memory database.
-        String pathBase;
         String fileIdentifier;
-        m_backingStore = IDBBackingStore::open(securityOrigin, pathBase, fileIdentifier);
+        m_backingStore = IDBBackingStore::openInMemory(securityOrigin, fileIdentifier);
 
         // useful keys and values during tests
         const char rawValue1[] = "value1";
@@ -290,12 +289,33 @@ TEST(IDBFactoryBackendTest, BackingStoreLifetime)
     EXPECT_TRUE(diskStore1->hasOneRef());
 
     RefPtr<IDBBackingStore> diskStore2 = factory->testOpenBackingStore(origin1, path);
-    EXPECT_EQ(diskStore2.get(), diskStore1.get());
-    EXPECT_EQ(diskStore2->refCount(), 2);
+    EXPECT_EQ(diskStore1.get(), diskStore2.get());
+    EXPECT_EQ(2, diskStore2->refCount());
 
     RefPtr<IDBBackingStore> diskStore3 = factory->testOpenBackingStore(origin2, path);
     EXPECT_TRUE(diskStore3->hasOneRef());
-    EXPECT_EQ(diskStore1->refCount(), 2);
+    EXPECT_EQ(2, diskStore1->refCount());
+}
+
+TEST(IDBFactoryBackendTest, MemoryBackingStoreLifetime)
+{
+    RefPtr<SecurityOrigin> origin1 = SecurityOrigin::create("http", "localhost", 81);
+    RefPtr<SecurityOrigin> origin2 = SecurityOrigin::create("http", "localhost", 82);
+
+    RefPtr<MockIDBFactoryBackend> factory = MockIDBFactoryBackend::create();
+    RefPtr<IDBBackingStore> memStore1 = factory->testOpenBackingStore(origin1, String());
+    EXPECT_EQ(2, memStore1->refCount());
+    RefPtr<IDBBackingStore> memStore2 = factory->testOpenBackingStore(origin1, String());
+    EXPECT_EQ(memStore1.get(), memStore2.get());
+    EXPECT_EQ(3, memStore2->refCount());
+
+    RefPtr<IDBBackingStore> memStore3 = factory->testOpenBackingStore(origin2, String());
+    EXPECT_EQ(2, memStore3->refCount());
+    EXPECT_EQ(3, memStore1->refCount());
+
+    factory.clear();
+    EXPECT_EQ(2, memStore1->refCount());
+    EXPECT_EQ(1, memStore3->refCount());
 }
 
 } // namespace

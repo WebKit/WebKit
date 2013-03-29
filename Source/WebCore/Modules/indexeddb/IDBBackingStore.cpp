@@ -43,6 +43,9 @@
 #include "LevelDBTransaction.h"
 #include "SecurityOrigin.h"
 #include "SharedBuffer.h"
+#if PLATFORM(CHROMIUM)
+#include <public/Platform.h>
+#endif
 #include <wtf/Assertions.h>
 
 namespace WebCore {
@@ -335,9 +338,10 @@ public:
     }
 };
 
-IDBBackingStore::IDBBackingStore(const String& identifier, PassOwnPtr<LevelDBDatabase> db)
+IDBBackingStore::IDBBackingStore(const String& identifier, PassOwnPtr<LevelDBDatabase> db, PassOwnPtr<LevelDBComparator> comparator)
     : m_identifier(identifier)
     , m_db(db)
+    , m_comparator(comparator)
     , m_weakFactory(this)
 {
 }
@@ -345,6 +349,10 @@ IDBBackingStore::IDBBackingStore(const String& identifier, PassOwnPtr<LevelDBDat
 IDBBackingStore::IDBBackingStore()
     : m_weakFactory(this)
 {
+    // This constructor should only be used in unit tests.
+#if PLATFORM(CHROMIUM)
+    ASSERT(WebKit::Platform::current()->unitTestSupport());
+#endif
 }
 
 IDBBackingStore::~IDBBackingStore()
@@ -378,65 +386,56 @@ PassRefPtr<IDBBackingStore> IDBBackingStore::open(SecurityOrigin* securityOrigin
 PassRefPtr<IDBBackingStore> IDBBackingStore::open(SecurityOrigin* securityOrigin, const String& pathBaseArg, const String& fileIdentifier, LevelDBFactory* levelDBFactory)
 {
     IDB_TRACE("IDBBackingStore::open");
+    ASSERT(!pathBaseArg.isEmpty());
     String pathBase = pathBaseArg;
 
     OwnPtr<LevelDBComparator> comparator = adoptPtr(new Comparator());
     OwnPtr<LevelDBDatabase> db;
 
-    if (pathBase.isEmpty()) {
-        db = LevelDBDatabase::openInMemory(comparator.get());
-        if (!db) {
-            LOG_ERROR("LevelDBDatabase::openInMemory failed.");
-            HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenMemoryFailed, IDBLevelDBBackingStoreOpenMax);
-            return PassRefPtr<IDBBackingStore>();
-        }
-        HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenMemorySuccess, IDBLevelDBBackingStoreOpenMax);
-    } else {
-        if (!pathBase.containsOnlyASCII())
+    if (!pathBase.containsOnlyASCII())
             HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenAttemptNonASCII, IDBLevelDBBackingStoreOpenMax);
-        if (!makeAllDirectories(pathBase)) {
-            LOG_ERROR("Unable to create IndexedDB database path %s", pathBase.utf8().data());
-            HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenFailedDirectory, IDBLevelDBBackingStoreOpenMax);
+    if (!makeAllDirectories(pathBase)) {
+        LOG_ERROR("Unable to create IndexedDB database path %s", pathBase.utf8().data());
+        HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenFailedDirectory, IDBLevelDBBackingStoreOpenMax);
+        return PassRefPtr<IDBBackingStore>();
+    }
+
+    String path = pathByAppendingComponent(pathBase, securityOrigin->databaseIdentifier() + ".indexeddb.leveldb");
+
+    db = levelDBFactory->openLevelDB(path, comparator.get());
+    if (db) {
+        bool known = false;
+        bool ok = isSchemaKnown(db.get(), known);
+        if (!ok) {
+            LOG_ERROR("IndexedDB had IO error checking schema, treating it as failure to open");
+            HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenFailedIOErrCheckingSchema, IDBLevelDBBackingStoreOpenMax);
+            db.clear();
+        } else if (!known) {
+            LOG_ERROR("IndexedDB backing store had unknown schema, treating it as failure to open");
+            HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenFailedUnknownSchema, IDBLevelDBBackingStoreOpenMax);
+            db.clear();
+        }
+    }
+
+    if (db)
+        HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenSuccess, IDBLevelDBBackingStoreOpenMax);
+    else {
+        LOG_ERROR("IndexedDB backing store open failed, attempting cleanup");
+        bool success = levelDBFactory->destroyLevelDB(path);
+        if (!success) {
+            LOG_ERROR("IndexedDB backing store cleanup failed");
+            HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenCleanupDestroyFailed, IDBLevelDBBackingStoreOpenMax);
             return PassRefPtr<IDBBackingStore>();
         }
 
-        String path = pathByAppendingComponent(pathBase, securityOrigin->databaseIdentifier() + ".indexeddb.leveldb");
-
+        LOG_ERROR("IndexedDB backing store cleanup succeeded, reopening");
         db = levelDBFactory->openLevelDB(path, comparator.get());
-        if (db) {
-            bool known = false;
-            bool ok = isSchemaKnown(db.get(), known);
-            if (!ok) {
-                LOG_ERROR("IndexedDB had IO error checking schema, treating it as failure to open");
-                HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenFailedIOErrCheckingSchema, IDBLevelDBBackingStoreOpenMax);
-                db.clear();
-            } else if (!known) {
-                LOG_ERROR("IndexedDB backing store had unknown schema, treating it as failure to open");
-                HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenFailedUnknownSchema, IDBLevelDBBackingStoreOpenMax);
-                db.clear();
-            }
+        if (!db) {
+            LOG_ERROR("IndexedDB backing store reopen after recovery failed");
+            HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenCleanupReopenFailed, IDBLevelDBBackingStoreOpenMax);
+            return PassRefPtr<IDBBackingStore>();
         }
-
-        if (db)
-            HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenSuccess, IDBLevelDBBackingStoreOpenMax);
-        else {
-            LOG_ERROR("IndexedDB backing store open failed, attempting cleanup");
-            bool success = levelDBFactory->destroyLevelDB(path);
-            if (!success) {
-                LOG_ERROR("IndexedDB backing store cleanup failed");
-                HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenCleanupDestroyFailed, IDBLevelDBBackingStoreOpenMax);
-                return PassRefPtr<IDBBackingStore>();
-            }
-
-            LOG_ERROR("IndexedDB backing store cleanup succeeded, reopening");
-            db = levelDBFactory->openLevelDB(path, comparator.get());
-            if (!db) {
-                LOG_ERROR("IndexedDB backing store reopen after recovery failed");
-                HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenCleanupReopenFailed, IDBLevelDBBackingStoreOpenMax);
-                return PassRefPtr<IDBBackingStore>();
-            }
-            HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenCleanupReopenSuccess, IDBLevelDBBackingStoreOpenMax);
-        }
+        HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenCleanupReopenSuccess, IDBLevelDBBackingStoreOpenMax);
     }
 
     if (!db) {
@@ -445,12 +444,37 @@ PassRefPtr<IDBBackingStore> IDBBackingStore::open(SecurityOrigin* securityOrigin
         return PassRefPtr<IDBBackingStore>();
     }
 
+    return create(fileIdentifier, db.release(), comparator.release());
+}
+
+PassRefPtr<IDBBackingStore> IDBBackingStore::openInMemory(SecurityOrigin* securityOrigin, const String& identifier)
+{
+    DefaultLevelDBFactory levelDBFactory;
+    return IDBBackingStore::openInMemory(securityOrigin, identifier, &levelDBFactory);
+}
+
+PassRefPtr<IDBBackingStore> IDBBackingStore::openInMemory(SecurityOrigin* securityOrigin, const String& identifier, LevelDBFactory* levelDBFactory)
+{
+    IDB_TRACE("IDBBackingStore::openInMemory");
+
+    OwnPtr<LevelDBComparator> comparator = adoptPtr(new Comparator());
+    OwnPtr<LevelDBDatabase> db = LevelDBDatabase::openInMemory(comparator.get());
+    if (!db) {
+        LOG_ERROR("LevelDBDatabase::openInMemory failed.");
+        HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenMemoryFailed, IDBLevelDBBackingStoreOpenMax);
+        return PassRefPtr<IDBBackingStore>();
+    }
+    HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenMemorySuccess, IDBLevelDBBackingStoreOpenMax);
+
+    return create(identifier, db.release(), comparator.release());
+}
+
+PassRefPtr<IDBBackingStore> IDBBackingStore::create(const String& identifier, PassOwnPtr<LevelDBDatabase> db, PassOwnPtr<LevelDBComparator> comparator)
+{
     // FIXME: Handle comparator name changes.
+    RefPtr<IDBBackingStore> backingStore(adoptRef(new IDBBackingStore(identifier, db, comparator)));
 
-    RefPtr<IDBBackingStore> backingStore(adoptRef(new IDBBackingStore(fileIdentifier, db.release())));
-    backingStore->m_comparator = comparator.release();
-
-    if (!setUpMetadata(backingStore->m_db.get(), fileIdentifier))
+    if (!setUpMetadata(backingStore->m_db.get(), identifier))
         return PassRefPtr<IDBBackingStore>();
 
     return backingStore.release();

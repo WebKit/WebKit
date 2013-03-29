@@ -1,3 +1,14 @@
+2013-03-29  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: Bind lifetime of in-memory backing stores to IDBFactory backend
+        https://bugs.webkit.org/show_bug.cgi?id=110820
+
+        Reviewed by Tony Chang.
+
+        * tests/IDBBackingStoreTest.cpp:
+        (WebCore::IDBBackingStoreTest::SetUp): Use openInMemory rather than empty path.
+        (WebCore::TEST): Added IDBFactoryBackendTest.MemoryBackingStoreLifetime to verify refs.
+
 2013-03-28  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove unused WebRegularExpression API

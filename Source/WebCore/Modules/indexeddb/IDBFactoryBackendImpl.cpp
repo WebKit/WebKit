@@ -131,17 +131,28 @@ void IDBFactoryBackendImpl::deleteDatabase(const String& name, PassRefPtr<IDBCal
 PassRefPtr<IDBBackingStore> IDBFactoryBackendImpl::openBackingStore(PassRefPtr<SecurityOrigin> securityOrigin, const String& dataDirectory)
 {
     const String fileIdentifier = computeFileIdentifier(securityOrigin.get());
+    const bool openInMemory = dataDirectory.isEmpty();
 
     IDBBackingStoreMap::iterator it2 = m_backingStoreMap.find(fileIdentifier);
-    if (it2 != m_backingStoreMap.end()) {
-        if (it2->value.get())
-            return it2->value.get();
-    }
+    if (it2 != m_backingStoreMap.end() && it2->value.get())
+        return it2->value.get();
 
-    RefPtr<IDBBackingStore> backingStore = IDBBackingStore::open(securityOrigin.get(), dataDirectory, fileIdentifier);
+    RefPtr<IDBBackingStore> backingStore;
+    if (openInMemory)
+        backingStore = IDBBackingStore::openInMemory(securityOrigin.get(), fileIdentifier);
+    else
+        backingStore = IDBBackingStore::open(securityOrigin.get(), dataDirectory, fileIdentifier);
+
     if (backingStore) {
         cleanWeakMap(m_backingStoreMap);
         m_backingStoreMap.set(fileIdentifier, backingStore->createWeakPtr());
+        // If an in-memory database, bind lifetime to this factory instance.
+        if (openInMemory)
+            m_sessionOnlyBackingStores.add(backingStore);
+
+        // All backing stores associated with this factory should be of the same type.
+        ASSERT(m_sessionOnlyBackingStores.isEmpty() || openInMemory);
+
         return backingStore.release();
     }
 

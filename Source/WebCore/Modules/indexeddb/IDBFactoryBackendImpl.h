@@ -33,6 +33,7 @@
 #include "IDBFactoryBackendInterface.h"
 #include "SecurityOrigin.h"
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/StringHash.h>
@@ -72,6 +73,8 @@ private:
 
     typedef HashMap<String, WeakPtr<IDBBackingStore> > IDBBackingStoreMap;
     IDBBackingStoreMap m_backingStoreMap;
+
+    HashSet<RefPtr<IDBBackingStore> > m_sessionOnlyBackingStores;
 
     // Only one instance of the factory should exist at any given time.
     static IDBFactoryBackendImpl* idbFactoryBackendImpl;

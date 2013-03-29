@@ -59,6 +59,8 @@ public:
     virtual ~IDBBackingStore();
     static PassRefPtr<IDBBackingStore> open(SecurityOrigin*, const String& pathBase, const String& fileIdentifier);
     static PassRefPtr<IDBBackingStore> open(SecurityOrigin*, const String& pathBase, const String& fileIdentifier, LevelDBFactory*);
+    static PassRefPtr<IDBBackingStore> openInMemory(SecurityOrigin*, const String& identifier);
+    static PassRefPtr<IDBBackingStore> openInMemory(SecurityOrigin*, const String& identifier, LevelDBFactory*);
     WeakPtr<IDBBackingStore> createWeakPtr() { return m_weakFactory.createWeakPtr(); }
 
     virtual Vector<String> getDatabaseNames();
@@ -176,12 +178,14 @@ public:
     };
 
 protected:
-    IDBBackingStore(const String& identifier, PassOwnPtr<LevelDBDatabase>);
+    IDBBackingStore(const String& identifier, PassOwnPtr<LevelDBDatabase>, PassOwnPtr<LevelDBComparator>);
 
     // Should only used for mocking.
     IDBBackingStore();
 
 private:
+    static PassRefPtr<IDBBackingStore> create(const String& identifier, PassOwnPtr<LevelDBDatabase>, PassOwnPtr<LevelDBComparator>);
+
     bool findKeyInIndex(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey&, Vector<char>& foundEncodedPrimaryKey, bool& found);
     bool getIndexes(int64_t databaseId, int64_t objectStoreId, IDBObjectStoreMetadata::IndexMap*) WARN_UNUSED_RETURN;
 
