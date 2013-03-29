@@ -1,0 +1,37 @@
+Ensure DataCloneError is consistently thrown by IndexedDB methods
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+dbname = "clone-exception.html"
+
+doFirstOpen():
+indexedDB.open(dbname + '1')
+
+onUpgradeNeeded():
+Expecting exception from db.createObjectStore('store').put(NON_CLONEABLE, 0);
+PASS Exception was thrown.
+PASS code is 25
+PASS ename is 'DataCloneError'
+
+doSecondOpen():
+indexedDB.open(dbname + '2')
+
+onUpgradeNeeded():
+Expecting exception from db.createObjectStore('store').put(NON_CLONEABLE, 0);
+PASS Exception was thrown.
+PASS code is 25
+PASS ename is 'DataCloneError'
+
+doThirdOpen():
+indexedDB.open(dbname + '3')
+
+onUpgradeNeeded():
+Expecting exception from db.createObjectStore('store').put(NON_CLONEABLE, INVALID_KEY);
+PASS Exception was thrown.
+PASS code is 25
+PASS ename is 'DataCloneError'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
