@@ -266,6 +266,9 @@ inspector/debugger/event-listener-breakpoints.html
 inspector/debugger/step-through-event-listeners.html
 inspector/debugger/xhr-breakpoints.html
 
+# Test is flaky and thus not useful until fixed.
+webkit.org/b/113589 inspector/debugger/debugger-scripts-reload.html [ Pass Failure ]
+
 # JSC doesn't support heap profiling
 # https://bugs.webkit.org/show_bug.cgi?id=50485
 inspector/profiler/heap-snapshot-inspect-dom-wrapper.html
