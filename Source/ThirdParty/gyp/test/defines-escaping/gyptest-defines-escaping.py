@@ -180,3 +180,5 @@ test.run_built_executable('defines_escaping', stdout=expect)
 
 # We deliberately do not test having an odd number of quotes in a string
 # literal because that isn't feasible in MSVS.
+
+test.pass_test()

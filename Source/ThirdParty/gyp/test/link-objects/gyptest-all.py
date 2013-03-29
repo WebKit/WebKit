@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2009 Google Inc. All rights reserved.
+# Copyright (c) 2011 Google Inc. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -11,15 +11,18 @@ Expect the result to link ok.
 
 import TestGyp
 
-# Currently only works under the make build.
-test = TestGyp.TestGyp(formats=['make'])
+import sys
 
-test.run_gyp('link-objects.gyp')
+if sys.platform != 'darwin':
+  # Currently only works under the linux make build.
+  test = TestGyp.TestGyp(formats=['make'])
 
-test.build('link-objects.gyp', test.ALL)
+  test.run_gyp('link-objects.gyp')
 
-test.run_built_executable('link-objects', stdout="PASS\n")
+  test.build('link-objects.gyp', test.ALL)
 
-test.up_to_date('link-objects.gyp', test.ALL)
+  test.run_built_executable('link-objects', stdout="PASS\n")
 
-test.pass_test()
+  test.up_to_date('link-objects.gyp', test.ALL)
+
+  test.pass_test()

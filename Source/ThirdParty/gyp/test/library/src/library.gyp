@@ -20,7 +20,7 @@
     },
     {
       'target_name': 'lib1',
-      'type': 'static_library',
+      'type': '<(library)',
       'sources': [
         'lib1.c',
       ],
@@ -34,7 +34,7 @@
     },
     {
       'target_name': 'lib2',
-      'type': 'static_library',
+      'type': '<(library)',
       'sources': [
         'lib2.c',
       ],

@@ -11,7 +11,7 @@ correctly when the inputs change.
 
 import TestGyp
 
-test = TestGyp.TestGyp()
+test = TestGyp.TestGyp(workdir='workarea_all')
 
 test.run_gyp('same_target.gyp', chdir='src')
 

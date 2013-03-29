@@ -1,13 +1,11 @@
-﻿#!/usr/bin/python
-
-# Copyright (c) 2011 Google Inc. All rights reserved.
+# Copyright (c) 2012 Google Inc. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-""" Code to validate and convert settings of the Microsoft build tools.
+"""Code to validate and convert settings of the Microsoft build tools.
 
 This file contains code to validate and convert settings of the Microsoft
-build tools.  The function ConvertToMsBuildSettings(), ValidateMSVSSettings(),
+build tools.  The function ConvertToMSBuildSettings(), ValidateMSVSSettings(),
 and ValidateMSBuildSettings() are the entry points.
 
 This file was created by comparing the projects created by Visual Studio 2008
@@ -17,7 +15,7 @@ MSBuild install directory, e.g. c:\Program Files (x86)\MSBuild
 """
 
 import sys
-
+import re
 
 # Dictionaries of settings validators. The key is the tool name, the value is
 # a dictionary mapping setting names to validation functions.
@@ -34,111 +32,151 @@ _msvs_to_msbuild_converters = {}
 _msbuild_name_of_tool = {}
 
 
-def _AddTool(names):
-  """ Adds a tool to the four dictionaries used to process settings.
+class _Tool(object):
+  """Represents a tool used by MSVS or MSBuild.
+
+  Attributes:
+      msvs_name: The name of the tool in MSVS.
+      msbuild_name: The name of the tool in MSBuild.
+  """
+
+  def __init__(self, msvs_name, msbuild_name):
+    self.msvs_name = msvs_name
+    self.msbuild_name = msbuild_name
+
+
+def _AddTool(tool):
+  """Adds a tool to the four dictionaries used to process settings.
 
   This only defines the tool.  Each setting also needs to be added.
 
   Args:
-    names: a dictionary of the MSVS and MSBuild names of this tool.
+    tool: The _Tool object to be added.
   """
-  msvs_name = names['msvs']
-  msbuild_name = names['msbuild']
-  _msvs_validators[msvs_name] = {}
-  _msbuild_validators[msbuild_name] = {}
-  _msvs_to_msbuild_converters[msvs_name] = {}
-  _msbuild_name_of_tool[msvs_name] = msbuild_name
+  _msvs_validators[tool.msvs_name] = {}
+  _msbuild_validators[tool.msbuild_name] = {}
+  _msvs_to_msbuild_converters[tool.msvs_name] = {}
+  _msbuild_name_of_tool[tool.msvs_name] = tool.msbuild_name
 
 
-def _GetMsBuildToolSettings(msbuild_settings, tool):
-  """ Returns an MSBuild tool dictionary.  Creates it if needed. """
-  tool_name = tool['msbuild']
-  return _GetOrCreateSubDictionary(msbuild_settings, tool_name)
+def _GetMSBuildToolSettings(msbuild_settings, tool):
+  """Returns an MSBuild tool dictionary.  Creates it if needed."""
+  return msbuild_settings.setdefault(tool.msbuild_name, {})
 
 
-def _GetOrCreateSubDictionary(dict, name):
-  """ Returns or creates one of the sub-dictionary of dict. """
-  if not name in dict:
-    dict[name] = {}
-  return dict[name]
+class _Type(object):
+  """Type of settings (Base class)."""
 
-
-class _Type:
-  """ Type of settings (Base class). """
   def ValidateMSVS(self, value):
-    """ Raises ValueError if value is not valid for MSVS. """
-    pass
-  def ValidateMSBuild(self, value):
-    """ Raises ValueError if value is not valid for MSBuild. """
-    pass
-  def ConvertToMSBuild(self, value):
-    """ Returns the MSBuild equivalent of the MSVS value given.
+    """Verifies that the value is legal for MSVS.
 
-    Raises ValueError if value is not valid.
+    Args:
+      value: the value to check for this type.
+
+    Raises:
+      ValueError if value is not valid for MSVS.
+    """
+
+  def ValidateMSBuild(self, value):
+    """Verifies that the value is legal for MSBuild.
+
+    Args:
+      value: the value to check for this type.
+
+    Raises:
+      ValueError if value is not valid for MSBuild.
+    """
+
+  def ConvertToMSBuild(self, value):
+    """Returns the MSBuild equivalent of the MSVS value given.
+
+    Args:
+      value: the MSVS value to convert.
+
+    Returns:
+      the MSBuild equivalent.
+
+    Raises:
+      ValueError if value is not valid.
     """
     return value
 
 
 class _String(_Type):
-  """ A setting that's just a string. """
+  """A setting that's just a string."""
+
   def ValidateMSVS(self, value):
-    if not isinstance(value, str):
-      raise ValueError
+    if not isinstance(value, basestring):
+      raise ValueError('expected string; got %r' % value)
+
   def ValidateMSBuild(self, value):
-    if not isinstance(value, str):
-      raise ValueError
+    if not isinstance(value, basestring):
+      raise ValueError('expected string; got %r' % value)
+
   def ConvertToMSBuild(self, value):
     # Convert the macros
-    return _ConvertVCMacrosToMsBuild(value)
+    return ConvertVCMacrosToMSBuild(value)
 
 
 class _StringList(_Type):
-  """ A settings that's a list of strings. """
+  """A settings that's a list of strings."""
+
   def ValidateMSVS(self, value):
-    if not isinstance(value, str) and not isinstance(value, list):
-      raise ValueError
+    if not isinstance(value, basestring) and not isinstance(value, list):
+      raise ValueError('expected string list; got %r' % value)
+
   def ValidateMSBuild(self, value):
-    if not isinstance(value, str) and not isinstance(value, list):
-      raise ValueError
+    if not isinstance(value, basestring) and not isinstance(value, list):
+      raise ValueError('expected string list; got %r' % value)
+
   def ConvertToMSBuild(self, value):
     # Convert the macros
     if isinstance(value, list):
-      return [_ConvertVCMacrosToMsBuild(i) for i in value]
+      return [ConvertVCMacrosToMSBuild(i) for i in value]
     else:
-      return _ConvertVCMacrosToMsBuild(value)
+      return ConvertVCMacrosToMSBuild(value)
 
 
 class _Boolean(_Type):
-  """ Boolean settings, can have the values 'false' or 'true'. """
+  """Boolean settings, can have the values 'false' or 'true'."""
+
   def _Validate(self, value):
     if value != 'true' and value != 'false':
-      raise ValueError
+      raise ValueError('expected bool; got %r' % value)
+
   def ValidateMSVS(self, value):
     self._Validate(value)
+
   def ValidateMSBuild(self, value):
     self._Validate(value)
+
   def ConvertToMSBuild(self, value):
     self._Validate(value)
     return value
 
 
 class _Integer(_Type):
-  """ Integer settings. """
+  """Integer settings."""
+
   def __init__(self, msbuild_base=10):
-    self.msbuild_base = msbuild_base
+    _Type.__init__(self)
+    self._msbuild_base = msbuild_base
+
   def ValidateMSVS(self, value):
     # Try to convert, this will raise ValueError if invalid.
     self.ConvertToMSBuild(value)
+
   def ValidateMSBuild(self, value):
     # Try to convert, this will raise ValueError if invalid.
-    int(value, self.msbuild_base)
+    int(value, self._msbuild_base)
+
   def ConvertToMSBuild(self, value):
-    format = (self.msbuild_base == 10) and '%d' or '0x%04x'
-    return format % int(value)
+    msbuild_format = (self._msbuild_base == 10) and '%d' or '0x%04x'
+    return msbuild_format % int(value)
 
 
 class _Enumeration(_Type):
-  """ Type of settings that is an enumeration.
+  """Type of settings that is an enumeration.
 
   In MSVS, the values are indexes like '0', '1', and '2'.
   MSBuild uses text labels that are more representative, like 'Win32'.
@@ -149,27 +187,31 @@ class _Enumeration(_Type):
         used in the array to indicate the unused spot.
     new: an array of labels that are new to MSBuild.
   """
-  def __init__(self, label_list, new=[]):
-    self.label_list = label_list
-    self.msbuild_values = set()
-    for value in label_list:
-      if not value is None:
-        self.msbuild_values.add(value)
-    for value in new:
-      self.msbuild_values.add(value)
+
+  def __init__(self, label_list, new=None):
+    _Type.__init__(self)
+    self._label_list = label_list
+    self._msbuild_values = set(value for value in label_list
+                               if value is not None)
+    if new is not None:
+      self._msbuild_values.update(new)
+
   def ValidateMSVS(self, value):
     # Try to convert.  It will raise an exception if not valid.
     self.ConvertToMSBuild(value)
+
   def ValidateMSBuild(self, value):
-    if not value in self.msbuild_values:
-      raise ValueError
+    if value not in self._msbuild_values:
+      raise ValueError('unrecognized enumerated value %s' % value)
+
   def ConvertToMSBuild(self, value):
     index = int(value)
-    if index < 0 or index >= len(self.label_list):
-      raise ValueError
-    label = self.label_list[index]
+    if index < 0 or index >= len(self._label_list):
+      raise ValueError('index value (%d) not in expected range [0, %d)' %
+                       (index, len(self._label_list)))
+    label = self._label_list[index]
     if label is None:
-      raise ValueError
+      raise ValueError('converted value for %s not specified.' % value)
     return label
 
 
@@ -188,162 +230,187 @@ _string_list = _StringList()
 _newly_boolean = _Enumeration(['', 'false', 'true'])
 
 
-def _Same(tool, name, type):
-  """ Defines a setting that has the same name in MSVS and MSBuild.
+def _Same(tool, name, setting_type):
+  """Defines a setting that has the same name in MSVS and MSBuild.
 
   Args:
     tool: a dictionary that gives the names of the tool for MSVS and MSBuild.
     name: the name of the setting.
-    type: the type of this setting.
+    setting_type: the type of this setting.
   """
-  _Renamed(tool, name, name, type)
+  _Renamed(tool, name, name, setting_type)
 
 
-def _Renamed(tool, msvs_name, msbuild_name, type):
-  """ Defines a setting for which the name has changed.
+def _Renamed(tool, msvs_name, msbuild_name, setting_type):
+  """Defines a setting for which the name has changed.
 
   Args:
     tool: a dictionary that gives the names of the tool for MSVS and MSBuild.
     msvs_name: the name of the MSVS setting.
     msbuild_name: the name of the MSBuild setting.
-    type: the type of this setting.
+    setting_type: the type of this setting.
   """
+
   def _Translate(value, msbuild_settings):
-    msbuild_tool_settings = _GetMsBuildToolSettings(msbuild_settings, tool)
-    msbuild_tool_settings[msbuild_name] = type.ConvertToMSBuild(value)
-  msvs_tool_name = tool['msvs']
-  msbuild_tool_name = tool['msbuild']
-  _msvs_validators[msvs_tool_name][msvs_name] = type.ValidateMSVS
-  _msbuild_validators[msbuild_tool_name][msbuild_name] = type.ValidateMSBuild
-  _msvs_to_msbuild_converters[msvs_tool_name][msvs_name] = _Translate
+    msbuild_tool_settings = _GetMSBuildToolSettings(msbuild_settings, tool)
+    msbuild_tool_settings[msbuild_name] = setting_type.ConvertToMSBuild(value)
+
+  _msvs_validators[tool.msvs_name][msvs_name] = setting_type.ValidateMSVS
+  _msbuild_validators[tool.msbuild_name][msbuild_name] = (
+      setting_type.ValidateMSBuild)
+  _msvs_to_msbuild_converters[tool.msvs_name][msvs_name] = _Translate
 
 
-def _Moved(tool, settings_name, msbuild_tool_name, type):
-    _MovedAndRenamed(tool, settings_name, msbuild_tool_name, settings_name,
-                     type)
+def _Moved(tool, settings_name, msbuild_tool_name, setting_type):
+  _MovedAndRenamed(tool, settings_name, msbuild_tool_name, settings_name,
+                   setting_type)
 
 
 def _MovedAndRenamed(tool, msvs_settings_name, msbuild_tool_name,
-                     msbuild_settings_name, type):
-  """ Defines a setting that may have moved to a new section.
+                     msbuild_settings_name, setting_type):
+  """Defines a setting that may have moved to a new section.
 
   Args:
     tool: a dictionary that gives the names of the tool for MSVS and MSBuild.
     msvs_settings_name: the MSVS name of the setting.
     msbuild_tool_name: the name of the MSBuild tool to place the setting under.
     msbuild_settings_name: the MSBuild name of the setting.
-    type: the type of this setting.
+    setting_type: the type of this setting.
   """
+
   def _Translate(value, msbuild_settings):
-    tool_settings = _GetOrCreateSubDictionary(msbuild_settings,
-                                              msbuild_tool_name)
-    tool_settings[msbuild_settings_name] = type.ConvertToMSBuild(value)
-  msvs_tool_name = tool['msvs']
-  _msvs_validators[msvs_tool_name][msvs_settings_name] = type.ValidateMSVS
-  validator = type.ValidateMSBuild
+    tool_settings = msbuild_settings.setdefault(msbuild_tool_name, {})
+    tool_settings[msbuild_settings_name] = setting_type.ConvertToMSBuild(value)
+
+  _msvs_validators[tool.msvs_name][msvs_settings_name] = (
+      setting_type.ValidateMSVS)
+  validator = setting_type.ValidateMSBuild
   _msbuild_validators[msbuild_tool_name][msbuild_settings_name] = validator
-  _msvs_to_msbuild_converters[msvs_tool_name][msvs_settings_name] = _Translate
+  _msvs_to_msbuild_converters[tool.msvs_name][msvs_settings_name] = _Translate
 
 
-def _MSVSOnly(tool, name, type):
-  """ Defines a setting that is only found in MSVS.
+def _MSVSOnly(tool, name, setting_type):
+  """Defines a setting that is only found in MSVS.
 
   Args:
     tool: a dictionary that gives the names of the tool for MSVS and MSBuild.
     name: the name of the setting.
-    type: the type of this setting.
+    setting_type: the type of this setting.
   """
-  def _Translate(value, msbuild_settings):
+
+  def _Translate(unused_value, unused_msbuild_settings):
+    # Since this is for MSVS only settings, no translation will happen.
     pass
-  msvs_tool_name = tool['msvs']
-  _msvs_validators[msvs_tool_name][name] = type.ValidateMSVS
-  _msvs_to_msbuild_converters[msvs_tool_name][name] = _Translate
+
+  _msvs_validators[tool.msvs_name][name] = setting_type.ValidateMSVS
+  _msvs_to_msbuild_converters[tool.msvs_name][name] = _Translate
 
 
-def _MSBuildOnly(tool, name, type):
-  """ Defines a setting that is only found in MSBuild.
+def _MSBuildOnly(tool, name, setting_type):
+  """Defines a setting that is only found in MSBuild.
 
   Args:
     tool: a dictionary that gives the names of the tool for MSVS and MSBuild.
     name: the name of the setting.
-    type: the type of this setting.
+    setting_type: the type of this setting.
   """
-  msbuild_tool_name = tool['msbuild']
-  _msbuild_validators[msbuild_tool_name][name] = type.ValidateMSBuild
+  _msbuild_validators[tool.msbuild_name][name] = setting_type.ValidateMSBuild
 
 
 def _ConvertedToAdditionalOption(tool, msvs_name, flag):
-  """ Defines a setting that's handled via a command line option in MSBuild.
+  """Defines a setting that's handled via a command line option in MSBuild.
 
   Args:
     tool: a dictionary that gives the names of the tool for MSVS and MSBuild.
     msvs_name: the name of the MSVS setting that if 'true' becomes a flag
     flag: the flag to insert at the end of the AdditionalOptions
   """
+
   def _Translate(value, msbuild_settings):
     if value == 'true':
-      tool_settings = _GetMsBuildToolSettings(msbuild_settings, tool)
+      tool_settings = _GetMSBuildToolSettings(msbuild_settings, tool)
       if 'AdditionalOptions' in tool_settings:
-        new_flags = "%s %s" % (tool_settings['AdditionalOptions'], flag)
+        new_flags = '%s %s' % (tool_settings['AdditionalOptions'], flag)
       else:
         new_flags = flag
       tool_settings['AdditionalOptions'] = new_flags
-  msvs_tool_name = tool['msvs']
-  _msvs_validators[msvs_tool_name][msvs_name] = _boolean.ValidateMSVS
-  _msvs_to_msbuild_converters[msvs_tool_name][msvs_name] = _Translate
+  _msvs_validators[tool.msvs_name][msvs_name] = _boolean.ValidateMSVS
+  _msvs_to_msbuild_converters[tool.msvs_name][msvs_name] = _Translate
 
 
 def _CustomGeneratePreprocessedFile(tool, msvs_name):
   def _Translate(value, msbuild_settings):
-      tool_settings = _GetMsBuildToolSettings(msbuild_settings, tool)
-      if value == '0':
-        tool_settings['PreprocessToFile'] = 'false'
-        tool_settings['PreprocessSuppressLineNumbers'] = 'false'
-      elif value == '1':  # /P
-        tool_settings['PreprocessToFile'] = 'true'
-        tool_settings['PreprocessSuppressLineNumbers'] = 'false'
-      elif value == '2':  # /EP /P
-        tool_settings['PreprocessToFile'] = 'true'
-        tool_settings['PreprocessSuppressLineNumbers'] = 'true'
-      else:
-        raise ValueError
-  msvs_tool_name = tool['msvs']
+    tool_settings = _GetMSBuildToolSettings(msbuild_settings, tool)
+    if value == '0':
+      tool_settings['PreprocessToFile'] = 'false'
+      tool_settings['PreprocessSuppressLineNumbers'] = 'false'
+    elif value == '1':  # /P
+      tool_settings['PreprocessToFile'] = 'true'
+      tool_settings['PreprocessSuppressLineNumbers'] = 'false'
+    elif value == '2':  # /EP /P
+      tool_settings['PreprocessToFile'] = 'true'
+      tool_settings['PreprocessSuppressLineNumbers'] = 'true'
+    else:
+      raise ValueError('value must be one of [0, 1, 2]; got %s' % value)
   # Create a bogus validator that looks for '0', '1', or '2'
   msvs_validator = _Enumeration(['a', 'b', 'c']).ValidateMSVS
-  _msvs_validators[msvs_tool_name][msvs_name] = msvs_validator
+  _msvs_validators[tool.msvs_name][msvs_name] = msvs_validator
   msbuild_validator = _boolean.ValidateMSBuild
-  msbuild_tool_validators = _msbuild_validators[tool['msbuild']]
+  msbuild_tool_validators = _msbuild_validators[tool.msbuild_name]
   msbuild_tool_validators['PreprocessToFile'] = msbuild_validator
   msbuild_tool_validators['PreprocessSuppressLineNumbers'] = msbuild_validator
-  _msvs_to_msbuild_converters[msvs_tool_name][msvs_name] = _Translate
+  _msvs_to_msbuild_converters[tool.msvs_name][msvs_name] = _Translate
 
 
-def _ConvertVCMacrosToMsBuild(s):
-  if (s.find('$') >= 0):
-    s = s.replace('$(ConfigurationName)', '$(Configuration)')
-    s = s.replace('$(InputDir)', '%(RootDir)%(Directory)')
-    s = s.replace('$(InputExt)', '%(Extension)')
-    s = s.replace('$(InputFileName)', '%(Filename)%(Extension)')
-    s = s.replace('$(InputName)', '%(Filename)')
-    s = s.replace('$(InputPath)', '%(FullPath)')
-    s = s.replace('$(ParentName)', '$(ProjectFileName)')
-    s = s.replace('$(PlatformName)', '$(Platform)')
-    s = s.replace('$(SafeInputName)', '%(Filename)')
+fix_vc_macro_slashes_regex_list = ('IntDir', 'OutDir')
+fix_vc_macro_slashes_regex = re.compile(
+  r'(\$\((?:%s)\))(?:[\\/]+)' % "|".join(fix_vc_macro_slashes_regex_list)
+)
 
-    s = s.replace('$(IntDir)\\', '$(IntDir)')
-    s = s.replace('$(OutDir)\\', '$(OutDir)')
-    s = s.replace('$(IntDir)/', '$(IntDir)')
-    s = s.replace('$(OutDir)/', '$(OutDir)')
+def FixVCMacroSlashes(s):
+  """Replace macros which have excessive following slashes.
+
+  These macros are known to have a built-in trailing slash. Furthermore, many
+  scripts hiccup on processing paths with extra slashes in the middle.
+
+  This list is probably not exhaustive.  Add as needed.
+  """
+  if '$' in s:
+    s = fix_vc_macro_slashes_regex.sub(r'\1', s)
   return s
 
 
-def ConvertToMsBuildSettings(msvs_settings, stderr=sys.stderr):
-  """ Converts MSVS settings (VS2008 and earlier) to MSBuild settings (VS2010+).
+def ConvertVCMacrosToMSBuild(s):
+  """Convert the the MSVS macros found in the string to the MSBuild equivalent.
+
+  This list is probably not exhaustive.  Add as needed.
+  """
+  if '$' in s:
+    replace_map = {
+        '$(ConfigurationName)': '$(Configuration)',
+        '$(InputDir)': '%(RootDir)%(Directory)',
+        '$(InputExt)': '%(Extension)',
+        '$(InputFileName)': '%(Filename)%(Extension)',
+        '$(InputName)': '%(Filename)',
+        '$(InputPath)': '%(FullPath)',
+        '$(ParentName)': '$(ProjectFileName)',
+        '$(PlatformName)': '$(Platform)',
+        '$(SafeInputName)': '%(Filename)',
+    }
+    for old, new in replace_map.iteritems():
+      s = s.replace(old, new)
+    s = FixVCMacroSlashes(s)
+  return s
+
+
+def ConvertToMSBuildSettings(msvs_settings, stderr=sys.stderr):
+  """Converts MSVS settings (VS2008 and earlier) to MSBuild settings (VS2010+).
 
   Args:
       msvs_settings: A dictionary.  The key is the tool name.  The values are
-                     themselves dictionaries of settings and their values.
+          themselves dictionaries of settings and their values.
       stderr: The stream receiving the error messages.
+
   Returns:
       A dictionary of MSBuild settings.  The key is either the MSBuild tool name
       or the empty string (for the global settings).  The values are themselves
@@ -358,14 +425,14 @@ def ConvertToMsBuildSettings(msvs_settings, stderr=sys.stderr):
           # Invoke the translation function.
           try:
             msvs_tool[msvs_setting](msvs_value, msbuild_settings)
-          except ValueError:
-            print >> stderr, ('Warning: unrecognized value "%s" for %s/%s '
-                'while converting to MSBuild.' %
-                (msvs_value, msvs_tool_name, msvs_setting))
+          except ValueError, e:
+            print >> stderr, ('Warning: while converting %s/%s to MSBuild, '
+                              '%s' % (msvs_tool_name, msvs_setting, e))
         else:
           # We don't know this setting.  Give a warning.
           print >> stderr, ('Warning: unrecognized setting %s/%s '
-              'while converting to MSBuild.' % (msvs_tool_name, msvs_setting))
+                            'while converting to MSBuild.' %
+                            (msvs_tool_name, msvs_setting))
     else:
       print >> stderr, ('Warning: unrecognized tool %s while converting to '
                         'MSBuild.' % msvs_tool_name)
@@ -373,36 +440,36 @@ def ConvertToMsBuildSettings(msvs_settings, stderr=sys.stderr):
 
 
 def ValidateMSVSSettings(settings, stderr=sys.stderr):
-  """ Validates that the names of the settings are valid for MSVS.
+  """Validates that the names of the settings are valid for MSVS.
 
   Args:
       settings: A dictionary.  The key is the tool name.  The values are
-                themselves dictionaries of settings and their values.
+          themselves dictionaries of settings and their values.
       stderr: The stream receiving the error messages.
   """
   _ValidateSettings(_msvs_validators, settings, stderr)
 
 
 def ValidateMSBuildSettings(settings, stderr=sys.stderr):
-  """ Validates that the names of the settings are valid for MSBuild.
+  """Validates that the names of the settings are valid for MSBuild.
 
   Args:
       settings: A dictionary.  The key is the tool name.  The values are
-                themselves dictionaries of settings and their values.
+          themselves dictionaries of settings and their values.
       stderr: The stream receiving the error messages.
   """
   _ValidateSettings(_msbuild_validators, settings, stderr)
 
 
 def _ValidateSettings(validators, settings, stderr):
-  """ Validates that the settings are valid for MSBuild or MSVS.
+  """Validates that the settings are valid for MSBuild or MSVS.
 
   We currently only validate the names of the settings, not their values.
 
   Args:
       validators: A dictionary of tools and their validators.
       settings: A dictionary.  The key is the tool name.  The values are
-                themselves dictionaries of settings and their values.
+          themselves dictionaries of settings and their values.
       stderr: The stream receiving the error messages.
   """
   for tool_name in settings:
@@ -412,11 +479,9 @@ def _ValidateSettings(validators, settings, stderr):
         if setting in tool_validators:
           try:
             tool_validators[setting](value)
-          except ValueError:
-            print >> stderr, ('Warning: unrecognized value "%s" for %s/%s' %
-                              (value, tool_name, setting))
-          #except TypeError:  #(jeanluc)
-          #  print ('***value "%s" for %s/%s' % (value, tool_name, setting))
+          except ValueError, e:
+            print >> stderr, ('Warning: for %s/%s, %s' %
+                              (tool_name, setting, e))
         else:
           print >> stderr, ('Warning: unrecognized setting %s/%s' %
                             (tool_name, setting))
@@ -425,12 +490,12 @@ def _ValidateSettings(validators, settings, stderr):
 
 
 # MSVS and MBuild names of the tools.
-_compile = {'msvs': 'VCCLCompilerTool', 'msbuild': 'ClCompile'}
-_link = {'msvs': 'VCLinkerTool', 'msbuild': 'Link'}
-_midl = {'msvs': 'VCMIDLTool', 'msbuild': 'Midl'}
-_rc = {'msvs': 'VCResourceCompilerTool', 'msbuild': 'ResourceCompile'}
-_lib = {'msvs': 'VCLibrarianTool', 'msbuild': 'Lib'}
-_manifest = {'msvs': 'VCManifestTool', 'msbuild': 'Mt'}
+_compile = _Tool('VCCLCompilerTool', 'ClCompile')
+_link = _Tool('VCLinkerTool', 'Link')
+_midl = _Tool('VCMIDLTool', 'Midl')
+_rc = _Tool('VCResourceCompilerTool', 'ResourceCompile')
+_lib = _Tool('VCLibrarianTool', 'Lib')
+_manifest = _Tool('VCManifestTool', 'Manifest')
 
 
 _AddTool(_compile)
@@ -573,7 +638,7 @@ _Renamed(_compile, 'EnableIntrinsicFunctions', 'IntrinsicFunctions',
 _Renamed(_compile, 'KeepComments', 'PreprocessKeepComments', _boolean)  # /C
 _Renamed(_compile, 'ObjectFile', 'ObjectFileName', _file_name)  # /Fo
 _Renamed(_compile, 'OpenMP', 'OpenMPSupport', _boolean)  # /openmp
-_Renamed(_compile, 'PrecompiledHeaderThrough',  'PrecompiledHeaderFile',
+_Renamed(_compile, 'PrecompiledHeaderThrough', 'PrecompiledHeaderFile',
          _file_name)  # Used with /Yc and /Yu
 _Renamed(_compile, 'PrecompiledHeaderFile', 'PrecompiledHeaderOutputFile',
          _file_name)  # /Fp
@@ -616,7 +681,8 @@ _CustomGeneratePreprocessedFile(_compile, 'GeneratePreprocessedFile')
 # Options that have the same name in MSVS and MSBuild
 _Same(_link, 'AdditionalDependencies', _file_list)
 _Same(_link, 'AdditionalLibraryDirectories', _folder_list)  # /LIBPATH
-_Same(_link, 'AdditionalManifestDependencies', _file_list) # /MANIFESTDEPENDENCY
+#  /MANIFESTDEPENDENCY:
+_Same(_link, 'AdditionalManifestDependencies', _file_list)
 _Same(_link, 'AdditionalOptions', _string_list)
 _Same(_link, 'AddModuleNamesToAssembly', _file_list)  # /ASSEMBLYMODULE
 _Same(_link, 'AllowIsolation', _boolean)  # /ALLOWISOLATION
@@ -672,37 +738,37 @@ _Same(_link, 'OptimizeReferences', _newly_boolean)  # /OPT:REF
 _Same(_link, 'RandomizedBaseAddress', _newly_boolean)  # /DYNAMICBASE
 _Same(_link, 'TerminalServerAware', _newly_boolean)  # /TSAWARE
 
-_subsystem_enumeration = _Enumeration([
-    'NotSet',
-    'Console',  # /SUBSYSTEM:CONSOLE
-    'Windows',  # /SUBSYSTEM:WINDOWS
-    'Native',  # /SUBSYSTEM:NATIVE
-    'EFI Application',  # /SUBSYSTEM:EFI_APPLICATION
-    'EFI Boot Service Driver',  # /SUBSYSTEM:EFI_BOOT_SERVICE_DRIVER
-    'EFI ROM',  # /SUBSYSTEM:EFI_ROM
-    'EFI Runtime',  # /SUBSYSTEM:EFI_RUNTIME_DRIVER
-    'WindowsCE'],  # /SUBSYSTEM:WINDOWSCE
+_subsystem_enumeration = _Enumeration(
+    ['NotSet',
+     'Console',  # /SUBSYSTEM:CONSOLE
+     'Windows',  # /SUBSYSTEM:WINDOWS
+     'Native',  # /SUBSYSTEM:NATIVE
+     'EFI Application',  # /SUBSYSTEM:EFI_APPLICATION
+     'EFI Boot Service Driver',  # /SUBSYSTEM:EFI_BOOT_SERVICE_DRIVER
+     'EFI ROM',  # /SUBSYSTEM:EFI_ROM
+     'EFI Runtime',  # /SUBSYSTEM:EFI_RUNTIME_DRIVER
+     'WindowsCE'],  # /SUBSYSTEM:WINDOWSCE
     new=['POSIX'])  # /SUBSYSTEM:POSIX
 
-_target_machine_enumeration = _Enumeration([
-    'NotSet',
-    'MachineX86',  # /MACHINE:X86
-    None,
-    'MachineARM',  # /MACHINE:ARM
-    'MachineEBC',  # /MACHINE:EBC
-    'MachineIA64',  # /MACHINE:IA64
-    None,
-    'MachineMIPS',  # /MACHINE:MIPS
-    'MachineMIPS16',  # /MACHINE:MIPS16
-    'MachineMIPSFPU',  # /MACHINE:MIPSFPU
-    'MachineMIPSFPU16',  # /MACHINE:MIPSFPU16
-    None,
-    None,
-    None,
-    'MachineSH4',  # /MACHINE:SH4
-    None,
-    'MachineTHUMB',  # /MACHINE:THUMB
-    'MachineX64'])  # /MACHINE:X64
+_target_machine_enumeration = _Enumeration(
+    ['NotSet',
+     'MachineX86',  # /MACHINE:X86
+     None,
+     'MachineARM',  # /MACHINE:ARM
+     'MachineEBC',  # /MACHINE:EBC
+     'MachineIA64',  # /MACHINE:IA64
+     None,
+     'MachineMIPS',  # /MACHINE:MIPS
+     'MachineMIPS16',  # /MACHINE:MIPS16
+     'MachineMIPSFPU',  # /MACHINE:MIPSFPU
+     'MachineMIPSFPU16',  # /MACHINE:MIPSFPU16
+     None,
+     None,
+     None,
+     'MachineSH4',  # /MACHINE:SH4
+     None,
+     'MachineTHUMB',  # /MACHINE:THUMB
+     'MachineX64'])  # /MACHINE:X64
 
 _Same(_link, 'AssemblyDebug',
       _Enumeration(['',
@@ -786,7 +852,8 @@ _MSBuildOnly(_link, 'SectionAlignment', _integer)  # /ALIGN
 _MSBuildOnly(_link, 'SpecifySectionAttributes', _string)  # /SECTION
 _MSBuildOnly(_link, 'ForceFileOutput',
              _Enumeration([], new=['Enabled',  # /FORCE
-                                   'MultiplyDefinedSymbolOnly', #/FORCE:MULTIPLE
+                                   # /FORCE:MULTIPLE
+                                   'MultiplyDefinedSymbolOnly',
                                    'UndefinedSymbolOnly']))  # /FORCE:UNRESOLVED
 _MSBuildOnly(_link, 'CreateHotPatchableImage',
              _Enumeration([], new=['Enabled',  # /FUNCTIONPADMIN
@@ -912,6 +979,7 @@ _Same(_lib, 'ModuleDefinitionFile', _file_name)  # /DEF
 _Same(_lib, 'OutputFile', _file_name)  # /OUT
 _Same(_lib, 'SuppressStartupBanner', _boolean)  # /NOLOGO
 _Same(_lib, 'UseUnicodeResponseFiles', _boolean)
+_Same(_lib, 'LinkTimeCodeGeneration', _boolean)  # /LTCG
 
 # TODO(jeanluc) _link defines the same value that gets moved to
 # ProjectReference.  We may want to validate that they are consistent.
@@ -926,7 +994,6 @@ _MSBuildOnly(_lib, 'ErrorReporting',
                                    'QueueForNextLogin',  # /ERRORREPORT:QUEUE
                                    'SendErrorReport',  # /ERRORREPORT:SEND
                                    'NoErrorReport']))  # /ERRORREPORT:NONE
-_MSBuildOnly(_lib, 'LinkTimeCodeGeneration', _boolean)  # /LTCG
 _MSBuildOnly(_lib, 'MinimumRequiredVersion', _string)
 _MSBuildOnly(_lib, 'Name', _file_name)  # /NAME
 _MSBuildOnly(_lib, 'RemoveObjects', _file_list)  # /REMOVE
@@ -977,4 +1044,3 @@ _MSBuildOnly(_manifest, 'ManifestFromManagedAssembly',
 _MSBuildOnly(_manifest, 'OutputResourceManifests', _string)  # /outputresource
 _MSBuildOnly(_manifest, 'SuppressDependencyElement', _boolean)  # /nodependency
 _MSBuildOnly(_manifest, 'TrackerLogDirectory', _folder_name)
-

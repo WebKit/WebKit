@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2009 Google Inc. All rights reserved.
+# Copyright (c) 2012 Google Inc. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -23,18 +23,18 @@ chdir = 'relocate/src/build'
 # TODO(mmoss) Should the Makefile go in the directory of the passed in .gyp
 # file? What about when passing in multiple .gyp files? Would sub-project
 # Makefiles (see http://codereview.chromium.org/340008 comments) solve this?
-if test.format == 'make':
+if test.format in ('make', 'ninja'):
   chdir = 'relocate/src'
 
 if test.format == 'xcode':
   chdir = 'relocate/src/prog1'
-test.run_built_executable('prog1',
+test.run_built_executable('program1',
                           chdir=chdir,
                           stdout="Hello from prog1.c\n")
 
 if test.format == 'xcode':
   chdir = 'relocate/src/prog2'
-test.run_built_executable('prog2',
+test.run_built_executable('program2',
                           chdir=chdir,
                           stdout="Hello from prog2.c\n")
 

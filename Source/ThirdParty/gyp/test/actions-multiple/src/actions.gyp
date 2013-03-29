@@ -102,11 +102,11 @@
             'filter.py',
           ],
           'outputs': [
-            'output1.c',
+            '<(INTERMEDIATE_DIR)/output1.c',
           ],
           'process_outputs_as_sources': 1,
           'action': [
-            'python', 'filter.py', 'foo', 'bar', 'foo.c', '<(_outputs)',
+            'python', 'filter.py', 'foo', 'bar', 'foo.c', '<@(_outputs)',
           ],
           # Allows the test to run without hermetic cygwin on windows.
           'msvs_cygwin_shell': 0,
@@ -118,11 +118,11 @@
             'filter.py',
           ],
           'outputs': [
-            'output2.c',
+            '<(INTERMEDIATE_DIR)/output2.c',
           ],
           'process_outputs_as_sources': 1,
           'action': [
-            'python', 'filter.py', 'foo', 'car', 'foo.c', '<(_outputs)',
+            'python', 'filter.py', 'foo', 'car', 'foo.c', '<@(_outputs)',
           ],
           # Allows the test to run without hermetic cygwin on windows.
           'msvs_cygwin_shell': 0,
@@ -134,11 +134,11 @@
             'filter.py',
           ],
           'outputs': [
-            'output3.c',
+            '<(INTERMEDIATE_DIR)/output3.c',
           ],
           'process_outputs_as_sources': 1,
           'action': [
-            'python', 'filter.py', 'foo', 'dar', 'foo.c', '<(_outputs)',
+            'python', 'filter.py', 'foo', 'dar', 'foo.c', '<@(_outputs)',
           ],
           # Allows the test to run without hermetic cygwin on windows.
           'msvs_cygwin_shell': 0,
@@ -150,11 +150,72 @@
             'filter.py',
           ],
           'outputs': [
-            'output4.c',
+            '<(INTERMEDIATE_DIR)/output4.c',
           ],
           'process_outputs_as_sources': 1,
           'action': [
-            'python', 'filter.py', 'foo', 'ear', 'foo.c', '<(_outputs)',
+            'python', 'filter.py', 'foo', 'ear', 'foo.c', '<@(_outputs)',
+          ],
+          # Allows the test to run without hermetic cygwin on windows.
+          'msvs_cygwin_shell': 0,
+        },
+      ],
+    },
+    {
+      'target_name': 'multiple_dependent_target',
+      'type': 'none',
+      'actions': [
+        {
+          'action_name': 'action1',
+          'inputs': [
+            'copy.py',
+            'input.txt',
+          ],
+          'outputs': [
+            'multi1.txt',
+          ],
+          'action': [
+            'python', '<@(_inputs)', '<(_outputs)', '<(long_string)',
+          ],
+          # Allows the test to run without hermetic cygwin on windows.
+          'msvs_cygwin_shell': 0,
+        },
+        {
+          'action_name': 'action2',
+          'inputs': [
+            'copy.py',
+            'input.txt',
+          ],
+          'outputs': [
+            'multi2.txt',
+          ],
+          'action': [
+            'python', '<@(_inputs)', '<(_outputs)', '<(long_string)',
+          ],
+          # Allows the test to run without hermetic cygwin on windows.
+          'msvs_cygwin_shell': 0,
+        },
+      ],
+      'dependencies': [
+        'multiple_required_target',
+      ],
+    },
+    {
+      'target_name': 'multiple_required_target',
+      'type': 'none',
+      'actions': [
+        {
+          'action_name': 'multi_dep',
+          'inputs': [
+            'copy.py',
+            'input.txt',
+          ],
+          'outputs': [
+            'multi_dep.txt',
+          ],
+          'process_outputs_as_sources': 1,
+          'action': [
+            'python', '<@(_inputs)', '<(_outputs)', '<(long_string)',
           ],
           # Allows the test to run without hermetic cygwin on windows.
           'msvs_cygwin_shell': 0,

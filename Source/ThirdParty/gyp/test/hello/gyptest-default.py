@@ -11,7 +11,7 @@ using the default build target.
 
 import TestGyp
 
-test = TestGyp.TestGyp()
+test = TestGyp.TestGyp(workdir='workarea_default')
 
 test.run_gyp('hello.gyp')
 

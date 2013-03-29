@@ -1,53 +1,116 @@
-# Copyright 2010, Google Inc.
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are
-# met:
-#
-#     * Redistributions of source code must retain the above copyright
-# notice, this list of conditions and the following disclaimer.
-#     * Redistributions in binary form must reproduce the above
-# copyright notice, this list of conditions and the following disclaimer
-# in the documentation and/or other materials provided with the
-# distribution.
-#     * Neither the name of Google Inc. nor the names of its
-# contributors may be used to endorse or promote products derived from
-# this software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# Copyright (c) 2012 Google Inc. All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
 
 
-EXCLUDED_PATHS = ()
+"""Top-level presubmit script for GYP.
+
+See http://dev.chromium.org/developers/how-tos/depottools/presubmit-scripts
+for more details about the presubmit API built into gcl.
+"""
+
+
+PYLINT_BLACKLIST = [
+    # TODO: fix me.
+    # From SCons, not done in google style.
+    'test/lib/TestCmd.py',
+    'test/lib/TestCommon.py',
+    'test/lib/TestGyp.py',
+    # Needs style fix.
+    'pylib/gyp/generator/scons.py',
+    'pylib/gyp/generator/xcode.py',
+]
+
+
+PYLINT_DISABLED_WARNINGS = [
+    # TODO: fix me.
+    # Many tests include modules they don't use.
+    'W0611',
+    # Include order doesn't properly include local files?
+    'F0401',
+    # Some use of built-in names.
+    'W0622',
+    # Some unused variables.
+    'W0612',
+    # Operator not preceded/followed by space.
+    'C0323',
+    'C0322',
+    # Unnecessary semicolon.
+    'W0301',
+    # Unused argument.
+    'W0613',
+    # String has no effect (docstring in wrong place).
+    'W0105',
+    # Comma not followed by space.
+    'C0324',
+    # Access to a protected member.
+    'W0212',
+    # Bad indent.
+    'W0311',
+    # Line too long.
+    'C0301',
+    # Undefined variable.
+    'E0602',
+    # Not exception type specified.
+    'W0702',
+    # No member of that name.
+    'E1101',
+    # Dangerous default {}.
+    'W0102',
+    # Others, too many to sort.
+    'W0201', 'W0232', 'E1103', 'W0621', 'W0108', 'W0223', 'W0231',
+    'R0201', 'E0101', 'C0321',
+    # ************* Module copy
+    # W0104:427,12:_test.odict.__setitem__: Statement seems to have no effect
+    'W0104',
+]
 
 
 def CheckChangeOnUpload(input_api, output_api):
   report = []
-  black_list = input_api.DEFAULT_BLACK_LIST + EXCLUDED_PATHS
-  sources = lambda x: input_api.FilterSourceFile(x, black_list=black_list)
-  report.extend(input_api.canned_checks.CheckChangeSvnEolStyle(
-      input_api, output_api, sources))
+  report.extend(input_api.canned_checks.PanProjectChecks(
+      input_api, output_api))
   return report
 
 
 def CheckChangeOnCommit(input_api, output_api):
   report = []
-  black_list = input_api.DEFAULT_BLACK_LIST + EXCLUDED_PATHS
-  sources = lambda x: input_api.FilterSourceFile(x, black_list=black_list)
-  report.extend(input_api.canned_checks.CheckChangeSvnEolStyle(
-      input_api, output_api, sources))
+
+  # Accept any year number from 2009 to the current year.
+  current_year = int(input_api.time.strftime('%Y'))
+  allowed_years = (str(s) for s in reversed(xrange(2009, current_year + 1)))
+  years_re = '(' + '|'.join(allowed_years) + ')'
+
+  # The (c) is deprecated, but tolerate it until it's removed from all files.
+  license = (
+      r'.*? Copyright (\(c\) )?%(year)s Google Inc\. All rights reserved\.\n'
+      r'.*? Use of this source code is governed by a BSD-style license that '
+        r'can be\n'
+      r'.*? found in the LICENSE file\.\n'
+  ) % {
+      'year': years_re,
+  }
+
+  report.extend(input_api.canned_checks.PanProjectChecks(
+      input_api, output_api, license_header=license))
   report.extend(input_api.canned_checks.CheckTreeIsOpen(
       input_api, output_api,
       'http://gyp-status.appspot.com/status',
       'http://gyp-status.appspot.com/current'))
+
+  import sys
+  old_sys_path = sys.path
+  try:
+    sys.path = ['pylib', 'test/lib'] + sys.path
+    report.extend(input_api.canned_checks.RunPylint(
+        input_api,
+        output_api,
+        black_list=PYLINT_BLACKLIST,
+        disabled_warnings=PYLINT_DISABLED_WARNINGS))
+  finally:
+    sys.path = old_sys_path
   return report
+
+
+def GetPreferredTrySlaves():
+  return ['gyp-win32', 'gyp-win64', 'gyp-linux', 'gyp-mac', 'gyp-android']

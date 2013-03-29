@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2009 Google Inc. All rights reserved.
+# Copyright (c) 2012 Google Inc. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -153,6 +153,8 @@ def main(argv=None):
             help="chdir to the specified directory")
   parser.add_option("-f", "--format", action="store", default='',
             help="run tests with the specified formats")
+  parser.add_option("-G", '--gyp_option', action="append", default=[],
+            help="Add -G options to the gyp command line")
   parser.add_option("-l", "--list", action="store_true",
             help="list available tests and exit")
   parser.add_option("-n", "--no-exec", action="store_true",
@@ -169,7 +171,9 @@ def main(argv=None):
     os.chdir(opts.chdir)
 
   if opts.path:
-    os.environ['PATH'] += ':' + ':'.join(opts.path)
+    extra_path = [os.path.abspath(p) for p in opts.path]
+    extra_path = os.pathsep.join(extra_path)
+    os.environ['PATH'] += os.pathsep + extra_path
 
   if not args:
     if not opts.all:
@@ -205,22 +209,30 @@ def main(argv=None):
     format_list = opts.format.split(',')
   else:
     # TODO:  not duplicate this mapping from pylib/gyp/__init__.py
-    format_list = [ {
-      'freebsd7': 'make',
-      'freebsd8': 'make',
-      'cygwin':   'msvs',
-      'win32':    'msvs',
-      'linux2':   'make',
-      'darwin':   'xcode',
-    }[sys.platform] ]
+    format_list = {
+      'freebsd7': ['make'],
+      'freebsd8': ['make'],
+      'openbsd5': ['make'],
+      'cygwin':   ['msvs'],
+      'win32':    ['msvs', 'ninja'],
+      'linux2':   ['make', 'ninja'],
+      'linux3':   ['make', 'ninja'],
+      'darwin':   ['make', 'ninja', 'xcode'],
+    }[sys.platform]
 
   for format in format_list:
     os.environ['TESTGYP_FORMAT'] = format
     if not opts.quiet:
       sys.stdout.write('TESTGYP_FORMAT=%s\n' % format)
 
+    gyp_options = []
+    for option in opts.gyp_option:
+      gyp_options += ['-G', option]
+    if gyp_options and not opts.quiet:
+      sys.stdout.write('Extra Gyp options: %s\n' % gyp_options)
+
     for test in tests:
-      status = cr.run([sys.executable, test],
+      status = cr.run([sys.executable, test] + gyp_options,
                       stdout=sys.stdout,
                       stderr=sys.stderr)
       if status == 2:

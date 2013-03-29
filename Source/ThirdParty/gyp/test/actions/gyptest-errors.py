@@ -11,7 +11,7 @@ exit status of 1, and the expected error message must be in stderr.
 
 import TestGyp
 
-test = TestGyp.TestGyp()
+test = TestGyp.TestGyp(workdir='workarea_errors')
 
 
 test.run_gyp('action_missing_name.gyp', chdir='src', status=1, stderr=None)

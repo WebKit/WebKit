@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2009 Google Inc. All rights reserved.
+# Copyright (c) 2011 Google Inc. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -41,10 +41,15 @@ else:
   chdir = 'relocate/src'
 test.run_built_executable('program2', chdir=chdir, stdout=expect)
 
-test.must_match('relocate/src/subdir2/file1.out', "Hello from file1.in\n")
-test.must_match('relocate/src/subdir2/file2.out', "Hello from file2.in\n")
+test.must_match('relocate/src/subdir2/file1.out', 'Hello from file1.in\n')
+test.must_match('relocate/src/subdir2/file2.out', 'Hello from file2.in\n')
 
-test.must_match('relocate/src/subdir2/file1.out2', "Hello from file1.in\n")
-test.must_match('relocate/src/subdir2/file2.out2', "Hello from file2.in\n")
+test.must_match('relocate/src/subdir2/file1.out2', 'Hello from file1.in\n')
+test.must_match('relocate/src/subdir2/file2.out2', 'Hello from file2.in\n')
+
+test.must_match('relocate/src/external/file1.external_rules.out',
+                'Hello from file1.in\n')
+test.must_match('relocate/src/external/file2.external_rules.out',
+                'Hello from file2.in\n')
 
 test.pass_test()

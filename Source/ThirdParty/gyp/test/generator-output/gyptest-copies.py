@@ -1,16 +1,19 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2009 Google Inc. All rights reserved.
+# Copyright (c) 2012 Google Inc. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 """
-Verifies file copies using an explicit build target of 'all'.
+Verifies file copies with --generator-output using an explicit build
+target of 'all'.
 """
 
 import TestGyp
 
-test = TestGyp.TestGyp()
+# Android doesn't support --generator-output.
+# Ninja doesn't support relocation.
+test = TestGyp.TestGyp(formats=['!ninja', '!android'])
 
 test.writable(test.workpath('copies'), False)
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) 2009 Google Inc. All rights reserved.
+# Copyright (c) 2012 Google Inc. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -13,24 +13,19 @@ import os
 
 import TestGyp
 
+test = TestGyp.TestGyp(format='gypd')
+
 os.environ['GYP_DEFINES'] = 'FOO=BAR'
 os.environ['GYP_GENERATORS'] = 'foo'
 os.environ['GYP_GENERATOR_FLAGS'] = 'genflag=foo'
 os.environ['GYP_GENERATOR_OUTPUT'] = 'somedir'
 
-test = TestGyp.TestGyp(format='gypd')
-
-expect = test.read('commands.gyp.ignore-env.stdout').replace('\r', '')
-
-# Set $HOME so that gyp doesn't read the user's actual
-# ~/.gyp/include.gypi file, which may contain variables
-# and other settings that would change the output.
-os.environ['HOME'] = test.workpath()
+expect = test.read('commands.gyp.ignore-env.stdout').replace('\r\n', '\n')
 
 test.run_gyp('commands.gyp',
-             '--debug', 'variables', '--debug', 'general',
+             '--debug', 'variables',
              '--ignore-environment',
-             stdout=expect)
+             stdout=expect, ignore_line_numbers=True)
 
 # Verify the commands.gypd against the checked-in expected contents.
 #

@@ -1,15 +1,14 @@
-﻿#!/usr/bin/python
+#!/usr/bin/env python
 
-# Copyright (c) 2011 Google Inc. All rights reserved.
+# Copyright (c) 2012 Google Inc. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-""" Unit tests for the MSVSSettings.py file. """
+"""Unit tests for the MSVSSettings.py file."""
 
-import sys
-import unittest
-import MSVSSettings
 import StringIO
+import unittest
+import gyp.MSVSSettings as MSVSSettings
 
 
 class TestSequenceFunctions(unittest.TestCase):
@@ -18,32 +17,32 @@ class TestSequenceFunctions(unittest.TestCase):
     self.stderr = StringIO.StringIO()
 
   def _ExpectedWarnings(self, expected):
-    """ Compares recorded lines to expected warnings. """
+    """Compares recorded lines to expected warnings."""
     self.stderr.seek(0)
     actual = self.stderr.read().split('\n')
-    actual = [line for line in actual if line != '']
+    actual = [line for line in actual if line]
     self.assertEqual(sorted(expected), sorted(actual))
 
-  def test_ValidateMSVSSettings_tool_names(self):
-    """ Tests that only MSVS tool names are allowed. """
-    MSVSSettings.ValidateMSVSSettings({
-        'VCCLCompilerTool': {},
-        'VCLinkerTool': {},
-        'VCMIDLTool': {},
-        'foo': {},
-        'VCResourceCompilerTool': {},
-        'VCLibrarianTool': {},
-        'VCManifestTool': {},
-        'ClCompile': {}},
+  def testValidateMSVSSettings_tool_names(self):
+    """Tests that only MSVS tool names are allowed."""
+    MSVSSettings.ValidateMSVSSettings(
+        {'VCCLCompilerTool': {},
+         'VCLinkerTool': {},
+         'VCMIDLTool': {},
+         'foo': {},
+         'VCResourceCompilerTool': {},
+         'VCLibrarianTool': {},
+         'VCManifestTool': {},
+         'ClCompile': {}},
         self.stderr)
     self._ExpectedWarnings([
         'Warning: unrecognized tool foo',
         'Warning: unrecognized tool ClCompile'])
 
-  def test_ValidateMSVSSettings_settings(self):
-    """ Tests that for invalid MSVS settings. """
-    MSVSSettings.ValidateMSVSSettings({
-        'VCCLCompilerTool': {
+  def testValidateMSVSSettings_settings(self):
+    """Tests that for invalid MSVS settings."""
+    MSVSSettings.ValidateMSVSSettings(
+        {'VCCLCompilerTool': {
             'AdditionalIncludeDirectories': 'folder1;folder2',
             'AdditionalOptions': ['string1', 'string2'],
             'AdditionalUsingDirectories': 'folder1;folder2',
@@ -108,180 +107,182 @@ class TestSequenceFunctions(unittest.TestCase):
             'WholeProgramOptimization': 'true',
             'XMLDocumentationFileName': 'a_file_name',
             'ZZXYZ': 'bogus'},
-        'VCLinkerTool': {
-            'AdditionalDependencies': 'file1;file2',
-            'AdditionalLibraryDirectories': 'folder1;folder2',
-            'AdditionalManifestDependencies': 'file1;file2',
-            'AdditionalOptions': 'a string1',
-            'AddModuleNamesToAssembly': 'file1;file2',
-            'AllowIsolation': 'true',
-            'AssemblyDebug': '2',
-            'AssemblyLinkResource': 'file1;file2',
-            'BaseAddress': 'a string1',
-            'CLRImageType': '2',
-            'CLRThreadAttribute': '2',
-            'CLRUnmanagedCodeCheck': 'true',
-            'DataExecutionPrevention': '2',
-            'DelayLoadDLLs': 'file1;file2',
-            'DelaySign': 'true',
-            'Driver': '2',
-            'EmbedManagedResourceFile': 'file1;file2',
-            'EnableCOMDATFolding': '2',
-            'EnableUAC': 'true',
-            'EntryPointSymbol': 'a string1',
-            'ErrorReporting': '2',
-            'FixedBaseAddress': '2',
-            'ForceSymbolReferences': 'file1;file2',
-            'FunctionOrder': 'a_file_name',
-            'GenerateDebugInformation': 'true',
-            'GenerateManifest': 'true',
-            'GenerateMapFile': 'true',
-            'HeapCommitSize': 'a string1',
-            'HeapReserveSize': 'a string1',
-            'IgnoreAllDefaultLibraries': 'true',
-            'IgnoreDefaultLibraryNames': 'file1;file2',
-            'IgnoreEmbeddedIDL': 'true',
-            'IgnoreImportLibrary': 'true',
-            'ImportLibrary': 'a_file_name',
-            'KeyContainer': 'a_file_name',
-            'KeyFile': 'a_file_name',
-            'LargeAddressAware': '2',
-            'LinkIncremental': '2',
-            'LinkLibraryDependencies': 'true',
-            'LinkTimeCodeGeneration': '2',
-            'ManifestFile': 'a_file_name',
-            'MapExports': 'true',
-            'MapFileName': 'a_file_name',
-            'MergedIDLBaseFileName': 'a_file_name',
-            'MergeSections': 'a string1',
-            'MidlCommandFile': 'a_file_name',
-            'ModuleDefinitionFile': 'a_file_name',
-            'OptimizeForWindows98': '1',
-            'OptimizeReferences': '2',
-            'OutputFile': 'a_file_name',
-            'PerUserRedirection': 'true',
-            'Profile': 'true',
-            'ProfileGuidedDatabase': 'a_file_name',
-            'ProgramDatabaseFile': 'a_file_name',
-            'RandomizedBaseAddress': '2',
-            'RegisterOutput': 'true',
-            'ResourceOnlyDLL': 'true',
-            'SetChecksum': 'true',
-            'ShowProgress': '2',
-            'StackCommitSize': 'a string1',
-            'StackReserveSize': 'a string1',
-            'StripPrivateSymbols': 'a_file_name',
-            'SubSystem': '2',
-            'SupportUnloadOfDelayLoadedDLL': 'true',
-            'SuppressStartupBanner': 'true',
-            'SwapRunFromCD': 'true',
-            'SwapRunFromNet': 'true',
-            'TargetMachine': '2',
-            'TerminalServerAware': '2',
-            'TurnOffAssemblyGeneration': 'true',
-            'TypeLibraryFile': 'a_file_name',
-            'TypeLibraryResourceID': '33',
-            'UACExecutionLevel': '2',
-            'UACUIAccess': 'true',
-            'UseLibraryDependencyInputs': 'true',
-            'UseUnicodeResponseFiles': 'true',
-            'Version': 'a string1'},
-        'VCMIDLTool': {
-            'AdditionalIncludeDirectories': 'folder1;folder2',
-            'AdditionalOptions': 'a string1',
-            'CPreprocessOptions': 'a string1',
-            'DefaultCharType': '1',
-            'DLLDataFileName': 'a_file_name',
-            'EnableErrorChecks': '1',
-            'ErrorCheckAllocations': 'true',
-            'ErrorCheckBounds': 'true',
-            'ErrorCheckEnumRange': 'true',
-            'ErrorCheckRefPointers': 'true',
-            'ErrorCheckStubData': 'true',
-            'GenerateStublessProxies': 'true',
-            'GenerateTypeLibrary': 'true',
-            'HeaderFileName': 'a_file_name',
-            'IgnoreStandardIncludePath': 'true',
-            'InterfaceIdentifierFileName': 'a_file_name',
-            'MkTypLibCompatible': 'true',
-            'notgood': 'bogus',
-            'OutputDirectory': 'a string1',
-            'PreprocessorDefinitions': 'string1;string2',
-            'ProxyFileName': 'a_file_name',
-            'RedirectOutputAndErrors': 'a_file_name',
-            'StructMemberAlignment': '1',
-            'SuppressStartupBanner': 'true',
-            'TargetEnvironment': '1',
-            'TypeLibraryName': 'a_file_name',
-            'UndefinePreprocessorDefinitions': 'string1;string2',
-            'ValidateParameters': 'true',
-            'WarnAsError': 'true',
-            'WarningLevel': '1'},
-        'VCResourceCompilerTool': {
-            'AdditionalOptions': 'a string1',
-            'AdditionalIncludeDirectories': 'folder1;folder2',
-            'Culture': '1003',
-            'IgnoreStandardIncludePath': 'true',
-            'notgood2': 'bogus',
-            'PreprocessorDefinitions': 'string1;string2',
-            'ResourceOutputFileName': 'a string1',
-            'ShowProgress': 'true',
-            'SuppressStartupBanner': 'true',
-            'UndefinePreprocessorDefinitions': 'string1;string2'},
-        'VCLibrarianTool': {
-            'AdditionalDependencies': 'file1;file2',
-            'AdditionalLibraryDirectories': 'folder1;folder2',
-            'AdditionalOptions': 'a string1',
-            'ExportNamedFunctions': 'string1;string2',
-            'ForceSymbolReferences': 'a string1',
-            'IgnoreAllDefaultLibraries': 'true',
-            'IgnoreSpecificDefaultLibraries': 'file1;file2',
-            'LinkLibraryDependencies': 'true',
-            'ModuleDefinitionFile': 'a_file_name',
-            'OutputFile': 'a_file_name',
-            'SuppressStartupBanner': 'true',
-            'UseUnicodeResponseFiles': 'true'},
-        'VCManifestTool': {
-            'AdditionalManifestFiles': 'file1;file2',
-            'AdditionalOptions': 'a string1',
-            'AssemblyIdentity': 'a string1',
-            'ComponentFileName': 'a_file_name',
-            'DependencyInformationFile': 'a_file_name',
-            'GenerateCatalogFiles': 'true',
-            'InputResourceManifests': 'a string1',
-            'ManifestResourceFile': 'a_file_name',
-            'OutputManifestFile': 'a_file_name',
-            'RegistrarScriptFile': 'a_file_name',
-            'ReplacementsFile': 'a_file_name',
-            'SuppressStartupBanner': 'true',
-            'TypeLibraryFile': 'a_file_name',
-            'UpdateFileHashes': 'truel',
-            'UpdateFileHashesSearchPath': 'a_file_name',
-            'UseFAT32Workaround': 'true',
-            'UseUnicodeResponseFiles': 'true',
-            'VerboseOutput': 'true'}},
+         'VCLinkerTool': {
+             'AdditionalDependencies': 'file1;file2',
+             'AdditionalLibraryDirectories': 'folder1;folder2',
+             'AdditionalManifestDependencies': 'file1;file2',
+             'AdditionalOptions': 'a string1',
+             'AddModuleNamesToAssembly': 'file1;file2',
+             'AllowIsolation': 'true',
+             'AssemblyDebug': '2',
+             'AssemblyLinkResource': 'file1;file2',
+             'BaseAddress': 'a string1',
+             'CLRImageType': '2',
+             'CLRThreadAttribute': '2',
+             'CLRUnmanagedCodeCheck': 'true',
+             'DataExecutionPrevention': '2',
+             'DelayLoadDLLs': 'file1;file2',
+             'DelaySign': 'true',
+             'Driver': '2',
+             'EmbedManagedResourceFile': 'file1;file2',
+             'EnableCOMDATFolding': '2',
+             'EnableUAC': 'true',
+             'EntryPointSymbol': 'a string1',
+             'ErrorReporting': '2',
+             'FixedBaseAddress': '2',
+             'ForceSymbolReferences': 'file1;file2',
+             'FunctionOrder': 'a_file_name',
+             'GenerateDebugInformation': 'true',
+             'GenerateManifest': 'true',
+             'GenerateMapFile': 'true',
+             'HeapCommitSize': 'a string1',
+             'HeapReserveSize': 'a string1',
+             'IgnoreAllDefaultLibraries': 'true',
+             'IgnoreDefaultLibraryNames': 'file1;file2',
+             'IgnoreEmbeddedIDL': 'true',
+             'IgnoreImportLibrary': 'true',
+             'ImportLibrary': 'a_file_name',
+             'KeyContainer': 'a_file_name',
+             'KeyFile': 'a_file_name',
+             'LargeAddressAware': '2',
+             'LinkIncremental': '2',
+             'LinkLibraryDependencies': 'true',
+             'LinkTimeCodeGeneration': '2',
+             'ManifestFile': 'a_file_name',
+             'MapExports': 'true',
+             'MapFileName': 'a_file_name',
+             'MergedIDLBaseFileName': 'a_file_name',
+             'MergeSections': 'a string1',
+             'MidlCommandFile': 'a_file_name',
+             'ModuleDefinitionFile': 'a_file_name',
+             'OptimizeForWindows98': '1',
+             'OptimizeReferences': '2',
+             'OutputFile': 'a_file_name',
+             'PerUserRedirection': 'true',
+             'Profile': 'true',
+             'ProfileGuidedDatabase': 'a_file_name',
+             'ProgramDatabaseFile': 'a_file_name',
+             'RandomizedBaseAddress': '2',
+             'RegisterOutput': 'true',
+             'ResourceOnlyDLL': 'true',
+             'SetChecksum': 'true',
+             'ShowProgress': '2',
+             'StackCommitSize': 'a string1',
+             'StackReserveSize': 'a string1',
+             'StripPrivateSymbols': 'a_file_name',
+             'SubSystem': '2',
+             'SupportUnloadOfDelayLoadedDLL': 'true',
+             'SuppressStartupBanner': 'true',
+             'SwapRunFromCD': 'true',
+             'SwapRunFromNet': 'true',
+             'TargetMachine': '2',
+             'TerminalServerAware': '2',
+             'TurnOffAssemblyGeneration': 'true',
+             'TypeLibraryFile': 'a_file_name',
+             'TypeLibraryResourceID': '33',
+             'UACExecutionLevel': '2',
+             'UACUIAccess': 'true',
+             'UseLibraryDependencyInputs': 'true',
+             'UseUnicodeResponseFiles': 'true',
+             'Version': 'a string1'},
+         'VCMIDLTool': {
+             'AdditionalIncludeDirectories': 'folder1;folder2',
+             'AdditionalOptions': 'a string1',
+             'CPreprocessOptions': 'a string1',
+             'DefaultCharType': '1',
+             'DLLDataFileName': 'a_file_name',
+             'EnableErrorChecks': '1',
+             'ErrorCheckAllocations': 'true',
+             'ErrorCheckBounds': 'true',
+             'ErrorCheckEnumRange': 'true',
+             'ErrorCheckRefPointers': 'true',
+             'ErrorCheckStubData': 'true',
+             'GenerateStublessProxies': 'true',
+             'GenerateTypeLibrary': 'true',
+             'HeaderFileName': 'a_file_name',
+             'IgnoreStandardIncludePath': 'true',
+             'InterfaceIdentifierFileName': 'a_file_name',
+             'MkTypLibCompatible': 'true',
+             'notgood': 'bogus',
+             'OutputDirectory': 'a string1',
+             'PreprocessorDefinitions': 'string1;string2',
+             'ProxyFileName': 'a_file_name',
+             'RedirectOutputAndErrors': 'a_file_name',
+             'StructMemberAlignment': '1',
+             'SuppressStartupBanner': 'true',
+             'TargetEnvironment': '1',
+             'TypeLibraryName': 'a_file_name',
+             'UndefinePreprocessorDefinitions': 'string1;string2',
+             'ValidateParameters': 'true',
+             'WarnAsError': 'true',
+             'WarningLevel': '1'},
+         'VCResourceCompilerTool': {
+             'AdditionalOptions': 'a string1',
+             'AdditionalIncludeDirectories': 'folder1;folder2',
+             'Culture': '1003',
+             'IgnoreStandardIncludePath': 'true',
+             'notgood2': 'bogus',
+             'PreprocessorDefinitions': 'string1;string2',
+             'ResourceOutputFileName': 'a string1',
+             'ShowProgress': 'true',
+             'SuppressStartupBanner': 'true',
+             'UndefinePreprocessorDefinitions': 'string1;string2'},
+         'VCLibrarianTool': {
+             'AdditionalDependencies': 'file1;file2',
+             'AdditionalLibraryDirectories': 'folder1;folder2',
+             'AdditionalOptions': 'a string1',
+             'ExportNamedFunctions': 'string1;string2',
+             'ForceSymbolReferences': 'a string1',
+             'IgnoreAllDefaultLibraries': 'true',
+             'IgnoreSpecificDefaultLibraries': 'file1;file2',
+             'LinkLibraryDependencies': 'true',
+             'ModuleDefinitionFile': 'a_file_name',
+             'OutputFile': 'a_file_name',
+             'SuppressStartupBanner': 'true',
+             'UseUnicodeResponseFiles': 'true'},
+         'VCManifestTool': {
+             'AdditionalManifestFiles': 'file1;file2',
+             'AdditionalOptions': 'a string1',
+             'AssemblyIdentity': 'a string1',
+             'ComponentFileName': 'a_file_name',
+             'DependencyInformationFile': 'a_file_name',
+             'GenerateCatalogFiles': 'true',
+             'InputResourceManifests': 'a string1',
+             'ManifestResourceFile': 'a_file_name',
+             'OutputManifestFile': 'a_file_name',
+             'RegistrarScriptFile': 'a_file_name',
+             'ReplacementsFile': 'a_file_name',
+             'SuppressStartupBanner': 'true',
+             'TypeLibraryFile': 'a_file_name',
+             'UpdateFileHashes': 'truel',
+             'UpdateFileHashesSearchPath': 'a_file_name',
+             'UseFAT32Workaround': 'true',
+             'UseUnicodeResponseFiles': 'true',
+             'VerboseOutput': 'true'}},
         self.stderr)
     self._ExpectedWarnings([
-        'Warning: unrecognized value "5" for VCCLCompilerTool/'
-            'BasicRuntimeChecks',
-        'Warning: unrecognized value "fdkslj" for VCCLCompilerTool/'
-            'BrowseInformation',
-        'Warning: unrecognized value "-1" for VCCLCompilerTool/'
-            'CallingConvention',
-        'Warning: unrecognized value "2" for VCCLCompilerTool/'
-            'DebugInformationFormat',
+        'Warning: for VCCLCompilerTool/BasicRuntimeChecks, '
+        'index value (5) not in expected range [0, 4)',
+        'Warning: for VCCLCompilerTool/BrowseInformation, '
+        "invalid literal for int() with base 10: 'fdkslj'",
+        'Warning: for VCCLCompilerTool/CallingConvention, '
+        'index value (-1) not in expected range [0, 3)',
+        'Warning: for VCCLCompilerTool/DebugInformationFormat, '
+        'converted value for 2 not specified.',
         'Warning: unrecognized setting VCCLCompilerTool/Enableprefast',
         'Warning: unrecognized setting VCCLCompilerTool/ZZXYZ',
-        'Warning: unrecognized value "2" for VCLinkerTool/TargetMachine',
+        'Warning: for VCLinkerTool/TargetMachine, '
+        'converted value for 2 not specified.',
         'Warning: unrecognized setting VCMIDLTool/notgood',
         'Warning: unrecognized setting VCResourceCompilerTool/notgood2',
-        'Warning: unrecognized value "truel" for VCManifestTool/'
-            'UpdateFileHashes'])
+        'Warning: for VCManifestTool/UpdateFileHashes, '
+        "expected bool; got 'truel'"
+        ''])
 
-  def test_ValidateMSBuildSettings_settings(self):
-    """ Tests that for invalid MSBuild settings. """
-    MSVSSettings.ValidateMSBuildSettings({
-        'ClCompile': {
+  def testValidateMSBuildSettings_settings(self):
+    """Tests that for invalid MSBuild settings."""
+    MSVSSettings.ValidateMSBuildSettings(
+        {'ClCompile': {
             'AdditionalIncludeDirectories': 'folder1;folder2',
             'AdditionalOptions': ['string1', 'string2'],
             'AdditionalUsingDirectories': 'folder1;folder2',
@@ -353,219 +354,221 @@ class TestSequenceFunctions(unittest.TestCase):
             'WholeProgramOptimization': 'true',
             'XMLDocumentationFileName': 'a_file_name',
             'ZZXYZ': 'bogus'},
-        'Link': {
-            'AdditionalDependencies': 'file1;file2',
-            'AdditionalLibraryDirectories': 'folder1;folder2',
-            'AdditionalManifestDependencies': 'file1;file2',
-            'AdditionalOptions': 'a string1',
-            'AddModuleNamesToAssembly': 'file1;file2',
-            'AllowIsolation': 'true',
-            'AssemblyDebug': '',
-            'AssemblyLinkResource': 'file1;file2',
-            'BaseAddress': 'a string1',
-            'BuildingInIDE': 'true',
-            'CLRImageType': 'ForceIJWImage',
-            'CLRSupportLastError': 'Enabled',
-            'CLRThreadAttribute': 'MTAThreadingAttribute',
-            'CLRUnmanagedCodeCheck': 'true',
-            'CreateHotPatchableImage': 'X86Image',
-            'DataExecutionPrevention': 'false',
-            'DelayLoadDLLs': 'file1;file2',
-            'DelaySign': 'true',
-            'Driver': 'NotSet',
-            'EmbedManagedResourceFile': 'file1;file2',
-            'EnableCOMDATFolding': 'false',
-            'EnableUAC': 'true',
-            'EntryPointSymbol': 'a string1',
-            'FixedBaseAddress': 'false',
-            'ForceFileOutput': 'Enabled',
-            'ForceSymbolReferences': 'file1;file2',
-            'FunctionOrder': 'a_file_name',
-            'GenerateDebugInformation': 'true',
-            'GenerateMapFile': 'true',
-            'HeapCommitSize': 'a string1',
-            'HeapReserveSize': 'a string1',
-            'IgnoreAllDefaultLibraries': 'true',
-            'IgnoreEmbeddedIDL': 'true',
-            'IgnoreSpecificDefaultLibraries': 'a_file_list',
-            'ImageHasSafeExceptionHandlers': 'true',
-            'ImportLibrary': 'a_file_name',
-            'KeyContainer': 'a_file_name',
-            'KeyFile': 'a_file_name',
-            'LargeAddressAware': 'false',
-            'LinkDLL': 'true',
-            'LinkErrorReporting': 'SendErrorReport',
-            'LinkStatus': 'true',
-            'LinkTimeCodeGeneration': 'UseLinkTimeCodeGeneration',
-            'ManifestFile': 'a_file_name',
-            'MapExports': 'true',
-            'MapFileName': 'a_file_name',
-            'MergedIDLBaseFileName': 'a_file_name',
-            'MergeSections': 'a string1',
-            'MidlCommandFile': 'a_file_name',
-            'MinimumRequiredVersion': 'a string1',
-            'ModuleDefinitionFile': 'a_file_name',
-            'MSDOSStubFileName': 'a_file_name',
-            'NoEntryPoint': 'true',
-            'OptimizeReferences': 'false',
-            'OutputFile': 'a_file_name',
-            'PerUserRedirection': 'true',
-            'PreventDllBinding': 'true',
-            'Profile': 'true',
-            'ProfileGuidedDatabase': 'a_file_name',
-            'ProgramDatabaseFile': 'a_file_name',
-            'RandomizedBaseAddress': 'false',
-            'RegisterOutput': 'true',
-            'SectionAlignment': '33',
-            'SetChecksum': 'true',
-            'ShowProgress': 'LinkVerboseREF',
-            'SpecifySectionAttributes': 'a string1',
-            'StackCommitSize': 'a string1',
-            'StackReserveSize': 'a string1',
-            'StripPrivateSymbols': 'a_file_name',
-            'SubSystem': 'Console',
-            'SupportNobindOfDelayLoadedDLL': 'true',
-            'SupportUnloadOfDelayLoadedDLL': 'true',
-            'SuppressStartupBanner': 'true',
-            'SwapRunFromCD': 'true',
-            'SwapRunFromNET': 'true',
-            'TargetMachine': 'MachineX86',
-            'TerminalServerAware': 'false',
-            'TrackerLogDirectory': 'a_folder',
-            'TreatLinkerWarningAsErrors': 'true',
-            'TurnOffAssemblyGeneration': 'true',
-            'TypeLibraryFile': 'a_file_name',
-            'TypeLibraryResourceID': '33',
-            'UACExecutionLevel': 'AsInvoker',
-            'UACUIAccess': 'true',
-            'Version': 'a string1'},
-        'ResourceCompile': {
-            'AdditionalIncludeDirectories': 'folder1;folder2',
-            'AdditionalOptions': 'a string1',
-            'Culture': '0x236',
-            'IgnoreStandardIncludePath': 'true',
-            'NullTerminateStrings': 'true',
-            'PreprocessorDefinitions': 'string1;string2',
-            'ResourceOutputFileName': 'a string1',
-            'ShowProgress': 'true',
-            'SuppressStartupBanner': 'true',
-            'TrackerLogDirectory': 'a_folder',
-            'UndefinePreprocessorDefinitions': 'string1;string2'},
-        'Midl': {
-            'AdditionalIncludeDirectories': 'folder1;folder2',
-            'AdditionalOptions': 'a string1',
-            'ApplicationConfigurationMode': 'true',
-            'ClientStubFile': 'a_file_name',
-            'CPreprocessOptions': 'a string1',
-            'DefaultCharType': 'Signed',
-            'DllDataFileName': 'a_file_name',
-            'EnableErrorChecks': 'EnableCustom',
-            'ErrorCheckAllocations': 'true',
-            'ErrorCheckBounds': 'true',
-            'ErrorCheckEnumRange': 'true',
-            'ErrorCheckRefPointers': 'true',
-            'ErrorCheckStubData': 'true',
-            'GenerateClientFiles': 'Stub',
-            'GenerateServerFiles': 'None',
-            'GenerateStublessProxies': 'true',
-            'GenerateTypeLibrary': 'true',
-            'HeaderFileName': 'a_file_name',
-            'IgnoreStandardIncludePath': 'true',
-            'InterfaceIdentifierFileName': 'a_file_name',
-            'LocaleID': '33',
-            'MkTypLibCompatible': 'true',
-            'OutputDirectory': 'a string1',
-            'PreprocessorDefinitions': 'string1;string2',
-            'ProxyFileName': 'a_file_name',
-            'RedirectOutputAndErrors': 'a_file_name',
-            'ServerStubFile': 'a_file_name',
-            'StructMemberAlignment': 'NotSet',
-            'SuppressCompilerWarnings': 'true',
-            'SuppressStartupBanner': 'true',
-            'TargetEnvironment': 'Itanium',
-            'TrackerLogDirectory': 'a_folder',
-            'TypeLibFormat': 'NewFormat',
-            'TypeLibraryName': 'a_file_name',
-            'UndefinePreprocessorDefinitions': 'string1;string2',
-            'ValidateAllParameters': 'true',
-            'WarnAsError': 'true',
-            'WarningLevel': '1'},
-        'Lib': {
-            'AdditionalDependencies': 'file1;file2',
-            'AdditionalLibraryDirectories': 'folder1;folder2',
-            'AdditionalOptions': 'a string1',
-            'DisplayLibrary': 'a string1',
-            'ErrorReporting': 'PromptImmediately',
-            'ExportNamedFunctions': 'string1;string2',
-            'ForceSymbolReferences': 'a string1',
-            'IgnoreAllDefaultLibraries': 'true',
-            'IgnoreSpecificDefaultLibraries': 'file1;file2',
-            'LinkTimeCodeGeneration': 'true',
-            'MinimumRequiredVersion': 'a string1',
-            'ModuleDefinitionFile': 'a_file_name',
-            'Name': 'a_file_name',
-            'OutputFile': 'a_file_name',
-            'RemoveObjects': 'file1;file2',
-            'SubSystem': 'Console',
-            'SuppressStartupBanner': 'true',
-            'TargetMachine': 'MachineX86i',
-            'TrackerLogDirectory': 'a_folder',
-            'TreatLibWarningAsErrors': 'true',
-            'UseUnicodeResponseFiles': 'true',
-            'Verbose': 'true'},
-        'Mt': {
-            'AdditionalManifestFiles': 'file1;file2',
-            'AdditionalOptions': 'a string1',
-            'AssemblyIdentity': 'a string1',
-            'ComponentFileName': 'a_file_name',
-            'EnableDPIAwareness': 'fal',
-            'GenerateCatalogFiles': 'truel',
-            'GenerateCategoryTags': 'true',
-            'InputResourceManifests': 'a string1',
-            'ManifestFromManagedAssembly': 'a_file_name',
-            'notgood3': 'bogus',
-            'OutputManifestFile': 'a_file_name',
-            'OutputResourceManifests': 'a string1',
-            'RegistrarScriptFile': 'a_file_name',
-            'ReplacementsFile': 'a_file_name',
-            'SuppressDependencyElement': 'true',
-            'SuppressStartupBanner': 'true',
-            'TrackerLogDirectory': 'a_folder',
-            'TypeLibraryFile': 'a_file_name',
-            'UpdateFileHashes': 'true',
-            'UpdateFileHashesSearchPath': 'a_file_name',
-            'VerboseOutput': 'true'},
-        'ProjectReference': {
-            'LinkLibraryDependencies': 'true',
-            'UseLibraryDependencyInputs': 'true'},
-        'ManifestResourceCompile': {
-            'ResourceOutputFileName': 'a_file_name'},
-        '': {
-            'EmbedManifest': 'true',
-            'GenerateManifest': 'true',
-            'IgnoreImportLibrary': 'true',
-            'LinkIncremental': 'false'}},
+         'Link': {
+             'AdditionalDependencies': 'file1;file2',
+             'AdditionalLibraryDirectories': 'folder1;folder2',
+             'AdditionalManifestDependencies': 'file1;file2',
+             'AdditionalOptions': 'a string1',
+             'AddModuleNamesToAssembly': 'file1;file2',
+             'AllowIsolation': 'true',
+             'AssemblyDebug': '',
+             'AssemblyLinkResource': 'file1;file2',
+             'BaseAddress': 'a string1',
+             'BuildingInIDE': 'true',
+             'CLRImageType': 'ForceIJWImage',
+             'CLRSupportLastError': 'Enabled',
+             'CLRThreadAttribute': 'MTAThreadingAttribute',
+             'CLRUnmanagedCodeCheck': 'true',
+             'CreateHotPatchableImage': 'X86Image',
+             'DataExecutionPrevention': 'false',
+             'DelayLoadDLLs': 'file1;file2',
+             'DelaySign': 'true',
+             'Driver': 'NotSet',
+             'EmbedManagedResourceFile': 'file1;file2',
+             'EnableCOMDATFolding': 'false',
+             'EnableUAC': 'true',
+             'EntryPointSymbol': 'a string1',
+             'FixedBaseAddress': 'false',
+             'ForceFileOutput': 'Enabled',
+             'ForceSymbolReferences': 'file1;file2',
+             'FunctionOrder': 'a_file_name',
+             'GenerateDebugInformation': 'true',
+             'GenerateMapFile': 'true',
+             'HeapCommitSize': 'a string1',
+             'HeapReserveSize': 'a string1',
+             'IgnoreAllDefaultLibraries': 'true',
+             'IgnoreEmbeddedIDL': 'true',
+             'IgnoreSpecificDefaultLibraries': 'a_file_list',
+             'ImageHasSafeExceptionHandlers': 'true',
+             'ImportLibrary': 'a_file_name',
+             'KeyContainer': 'a_file_name',
+             'KeyFile': 'a_file_name',
+             'LargeAddressAware': 'false',
+             'LinkDLL': 'true',
+             'LinkErrorReporting': 'SendErrorReport',
+             'LinkStatus': 'true',
+             'LinkTimeCodeGeneration': 'UseLinkTimeCodeGeneration',
+             'ManifestFile': 'a_file_name',
+             'MapExports': 'true',
+             'MapFileName': 'a_file_name',
+             'MergedIDLBaseFileName': 'a_file_name',
+             'MergeSections': 'a string1',
+             'MidlCommandFile': 'a_file_name',
+             'MinimumRequiredVersion': 'a string1',
+             'ModuleDefinitionFile': 'a_file_name',
+             'MSDOSStubFileName': 'a_file_name',
+             'NoEntryPoint': 'true',
+             'OptimizeReferences': 'false',
+             'OutputFile': 'a_file_name',
+             'PerUserRedirection': 'true',
+             'PreventDllBinding': 'true',
+             'Profile': 'true',
+             'ProfileGuidedDatabase': 'a_file_name',
+             'ProgramDatabaseFile': 'a_file_name',
+             'RandomizedBaseAddress': 'false',
+             'RegisterOutput': 'true',
+             'SectionAlignment': '33',
+             'SetChecksum': 'true',
+             'ShowProgress': 'LinkVerboseREF',
+             'SpecifySectionAttributes': 'a string1',
+             'StackCommitSize': 'a string1',
+             'StackReserveSize': 'a string1',
+             'StripPrivateSymbols': 'a_file_name',
+             'SubSystem': 'Console',
+             'SupportNobindOfDelayLoadedDLL': 'true',
+             'SupportUnloadOfDelayLoadedDLL': 'true',
+             'SuppressStartupBanner': 'true',
+             'SwapRunFromCD': 'true',
+             'SwapRunFromNET': 'true',
+             'TargetMachine': 'MachineX86',
+             'TerminalServerAware': 'false',
+             'TrackerLogDirectory': 'a_folder',
+             'TreatLinkerWarningAsErrors': 'true',
+             'TurnOffAssemblyGeneration': 'true',
+             'TypeLibraryFile': 'a_file_name',
+             'TypeLibraryResourceID': '33',
+             'UACExecutionLevel': 'AsInvoker',
+             'UACUIAccess': 'true',
+             'Version': 'a string1'},
+         'ResourceCompile': {
+             'AdditionalIncludeDirectories': 'folder1;folder2',
+             'AdditionalOptions': 'a string1',
+             'Culture': '0x236',
+             'IgnoreStandardIncludePath': 'true',
+             'NullTerminateStrings': 'true',
+             'PreprocessorDefinitions': 'string1;string2',
+             'ResourceOutputFileName': 'a string1',
+             'ShowProgress': 'true',
+             'SuppressStartupBanner': 'true',
+             'TrackerLogDirectory': 'a_folder',
+             'UndefinePreprocessorDefinitions': 'string1;string2'},
+         'Midl': {
+             'AdditionalIncludeDirectories': 'folder1;folder2',
+             'AdditionalOptions': 'a string1',
+             'ApplicationConfigurationMode': 'true',
+             'ClientStubFile': 'a_file_name',
+             'CPreprocessOptions': 'a string1',
+             'DefaultCharType': 'Signed',
+             'DllDataFileName': 'a_file_name',
+             'EnableErrorChecks': 'EnableCustom',
+             'ErrorCheckAllocations': 'true',
+             'ErrorCheckBounds': 'true',
+             'ErrorCheckEnumRange': 'true',
+             'ErrorCheckRefPointers': 'true',
+             'ErrorCheckStubData': 'true',
+             'GenerateClientFiles': 'Stub',
+             'GenerateServerFiles': 'None',
+             'GenerateStublessProxies': 'true',
+             'GenerateTypeLibrary': 'true',
+             'HeaderFileName': 'a_file_name',
+             'IgnoreStandardIncludePath': 'true',
+             'InterfaceIdentifierFileName': 'a_file_name',
+             'LocaleID': '33',
+             'MkTypLibCompatible': 'true',
+             'OutputDirectory': 'a string1',
+             'PreprocessorDefinitions': 'string1;string2',
+             'ProxyFileName': 'a_file_name',
+             'RedirectOutputAndErrors': 'a_file_name',
+             'ServerStubFile': 'a_file_name',
+             'StructMemberAlignment': 'NotSet',
+             'SuppressCompilerWarnings': 'true',
+             'SuppressStartupBanner': 'true',
+             'TargetEnvironment': 'Itanium',
+             'TrackerLogDirectory': 'a_folder',
+             'TypeLibFormat': 'NewFormat',
+             'TypeLibraryName': 'a_file_name',
+             'UndefinePreprocessorDefinitions': 'string1;string2',
+             'ValidateAllParameters': 'true',
+             'WarnAsError': 'true',
+             'WarningLevel': '1'},
+         'Lib': {
+             'AdditionalDependencies': 'file1;file2',
+             'AdditionalLibraryDirectories': 'folder1;folder2',
+             'AdditionalOptions': 'a string1',
+             'DisplayLibrary': 'a string1',
+             'ErrorReporting': 'PromptImmediately',
+             'ExportNamedFunctions': 'string1;string2',
+             'ForceSymbolReferences': 'a string1',
+             'IgnoreAllDefaultLibraries': 'true',
+             'IgnoreSpecificDefaultLibraries': 'file1;file2',
+             'LinkTimeCodeGeneration': 'true',
+             'MinimumRequiredVersion': 'a string1',
+             'ModuleDefinitionFile': 'a_file_name',
+             'Name': 'a_file_name',
+             'OutputFile': 'a_file_name',
+             'RemoveObjects': 'file1;file2',
+             'SubSystem': 'Console',
+             'SuppressStartupBanner': 'true',
+             'TargetMachine': 'MachineX86i',
+             'TrackerLogDirectory': 'a_folder',
+             'TreatLibWarningAsErrors': 'true',
+             'UseUnicodeResponseFiles': 'true',
+             'Verbose': 'true'},
+         'Manifest': {
+             'AdditionalManifestFiles': 'file1;file2',
+             'AdditionalOptions': 'a string1',
+             'AssemblyIdentity': 'a string1',
+             'ComponentFileName': 'a_file_name',
+             'EnableDPIAwareness': 'fal',
+             'GenerateCatalogFiles': 'truel',
+             'GenerateCategoryTags': 'true',
+             'InputResourceManifests': 'a string1',
+             'ManifestFromManagedAssembly': 'a_file_name',
+             'notgood3': 'bogus',
+             'OutputManifestFile': 'a_file_name',
+             'OutputResourceManifests': 'a string1',
+             'RegistrarScriptFile': 'a_file_name',
+             'ReplacementsFile': 'a_file_name',
+             'SuppressDependencyElement': 'true',
+             'SuppressStartupBanner': 'true',
+             'TrackerLogDirectory': 'a_folder',
+             'TypeLibraryFile': 'a_file_name',
+             'UpdateFileHashes': 'true',
+             'UpdateFileHashesSearchPath': 'a_file_name',
+             'VerboseOutput': 'true'},
+         'ProjectReference': {
+             'LinkLibraryDependencies': 'true',
+             'UseLibraryDependencyInputs': 'true'},
+         'ManifestResourceCompile': {
+             'ResourceOutputFileName': 'a_file_name'},
+         '': {
+             'EmbedManifest': 'true',
+             'GenerateManifest': 'true',
+             'IgnoreImportLibrary': 'true',
+             'LinkIncremental': 'false'}},
         self.stderr)
     self._ExpectedWarnings([
         'Warning: unrecognized setting ClCompile/Enableprefast',
         'Warning: unrecognized setting ClCompile/ZZXYZ',
-        'Warning: unrecognized setting Mt/notgood3',
-        'Warning: unrecognized value "truel" for Mt/GenerateCatalogFiles',
-        'Warning: unrecognized value "MachineX86i" for Lib/TargetMachine',
-        'Warning: unrecognized value "fal" for Mt/EnableDPIAwareness'])
+        'Warning: unrecognized setting Manifest/notgood3',
+        'Warning: for Manifest/GenerateCatalogFiles, '
+        "expected bool; got 'truel'",
+        'Warning: for Lib/TargetMachine, unrecognized enumerated value '
+        'MachineX86i',
+        "Warning: for Manifest/EnableDPIAwareness, expected bool; got 'fal'"])
 
-  def test_ConvertToMsBuildSettings_empty(self):
-    """ Tests an empty conversion. """
+  def testConvertToMSBuildSettings_empty(self):
+    """Tests an empty conversion."""
     msvs_settings = {}
     expected_msbuild_settings = {}
-    actual_msbuild_settings = MSVSSettings.ConvertToMsBuildSettings(
+    actual_msbuild_settings = MSVSSettings.ConvertToMSBuildSettings(
         msvs_settings,
         self.stderr)
     self.assertEqual(expected_msbuild_settings, actual_msbuild_settings)
     self._ExpectedWarnings([])
 
-  def test_ConvertToMsBuildSettings_minimal(self):
-    """ Tests a minimal conversion. """
+  def testConvertToMSBuildSettings_minimal(self):
+    """Tests a minimal conversion."""
     msvs_settings = {
         'VCCLCompilerTool': {
             'AdditionalIncludeDirectories': 'dir1',
@@ -590,14 +593,14 @@ class TestSequenceFunctions(unittest.TestCase):
             'DataExecutionPrevention': 'true',
             },
         }
-    actual_msbuild_settings = MSVSSettings.ConvertToMsBuildSettings(
+    actual_msbuild_settings = MSVSSettings.ConvertToMSBuildSettings(
         msvs_settings,
         self.stderr)
     self.assertEqual(expected_msbuild_settings, actual_msbuild_settings)
     self._ExpectedWarnings([])
 
-  def test_ConvertToMsBuildSettings_warnings(self):
-    """ Tests conversion that generates warnings. """
+  def testConvertToMSBuildSettings_warnings(self):
+    """Tests conversion that generates warnings."""
     msvs_settings = {
         'VCCLCompilerTool': {
             'AdditionalIncludeDirectories': '1',
@@ -624,32 +627,32 @@ class TestSequenceFunctions(unittest.TestCase):
         'ResourceCompile': {
             # Custom
             'Culture': '0x03eb'}}
-    actual_msbuild_settings = MSVSSettings.ConvertToMsBuildSettings(
+    actual_msbuild_settings = MSVSSettings.ConvertToMSBuildSettings(
         msvs_settings,
         self.stderr)
     self.assertEqual(expected_msbuild_settings, actual_msbuild_settings)
     self._ExpectedWarnings([
-        'Warning: unrecognized value "12" for VCCLCompilerTool/'
-            'BasicRuntimeChecks while converting to MSBuild.',
-        'Warning: unrecognized value "21" for VCCLCompilerTool/'
-            'BrowseInformation while converting to MSBuild.',
-        'Warning: unrecognized value "13" for VCCLCompilerTool/'
-            'UsePrecompiledHeader while converting to MSBuild.',
-        'Warning: unrecognized value "14" for VCCLCompilerTool/'
-            'GeneratePreprocessedFile while converting to MSBuild.',
+        'Warning: while converting VCCLCompilerTool/BasicRuntimeChecks to '
+        'MSBuild, index value (12) not in expected range [0, 4)',
+        'Warning: while converting VCCLCompilerTool/BrowseInformation to '
+        'MSBuild, index value (21) not in expected range [0, 3)',
+        'Warning: while converting VCCLCompilerTool/UsePrecompiledHeader to '
+        'MSBuild, index value (13) not in expected range [0, 3)',
+        'Warning: while converting VCCLCompilerTool/GeneratePreprocessedFile to '
+        'MSBuild, value must be one of [0, 1, 2]; got 14',
 
-        'Warning: unrecognized value "10" for VCLinkerTool/'
-            'Driver while converting to MSBuild.',
-        'Warning: unrecognized value "31" for VCLinkerTool/'
-            'LinkTimeCodeGeneration while converting to MSBuild.',
-        'Warning: unrecognized value "21" for VCLinkerTool/'
-            'ErrorReporting while converting to MSBuild.',
-        'Warning: unrecognized value "6" for VCLinkerTool/'
-            'FixedBaseAddress while converting to MSBuild.',
+        'Warning: while converting VCLinkerTool/Driver to '
+        'MSBuild, index value (10) not in expected range [0, 4)',
+        'Warning: while converting VCLinkerTool/LinkTimeCodeGeneration to '
+        'MSBuild, index value (31) not in expected range [0, 5)',
+        'Warning: while converting VCLinkerTool/ErrorReporting to '
+        'MSBuild, index value (21) not in expected range [0, 3)',
+        'Warning: while converting VCLinkerTool/FixedBaseAddress to '
+        'MSBuild, index value (6) not in expected range [0, 3)',
         ])
 
-  def test_ConvertToMsBuildSettings_full_synthetic(self):
-    """ Tests conversion of all the MsBuild settings. """
+  def testConvertToMSBuildSettings_full_synthetic(self):
+    """Tests conversion of all the MSBuild settings."""
     msvs_settings = {
         'VCCLCompilerTool': {
             'AdditionalIncludeDirectories': 'folder1;folder2;folder3',
@@ -887,7 +890,7 @@ class TestSequenceFunctions(unittest.TestCase):
             'EnableFiberSafeOptimizations': 'true',
             'EnablePREfast': 'true',
             'ErrorReporting': 'Prompt',
-            'ExceptionHandling':  'Async',
+            'ExceptionHandling': 'Async',
             'ExpandAttributedSource': 'true',
             'FavorSizeOrSpeed': 'Neither',
             'FloatingPointExceptions': 'true',
@@ -942,7 +945,7 @@ class TestSequenceFunctions(unittest.TestCase):
             'CLRImageType': 'ForceIJWImage',
             'CLRThreadAttribute': 'STAThreadingAttribute',
             'CLRUnmanagedCodeCheck': 'true',
-            'DataExecutionPrevention':  '',
+            'DataExecutionPrevention': '',
             'DelayLoadDLLs': 'file1;file2;file3',
             'DelaySign': 'true',
             'Driver': 'Driver',
@@ -1014,7 +1017,7 @@ class TestSequenceFunctions(unittest.TestCase):
             'AdditionalIncludeDirectories': 'folder1;folder2;folder3',
             'AdditionalOptions': 'a_string',
             'CPreprocessOptions': 'a_string',
-            'DefaultCharType':  'Unsigned',
+            'DefaultCharType': 'Unsigned',
             'DllDataFileName': 'a_file_name',
             'EnableErrorChecks': 'All',
             'ErrorCheckAllocations': 'true',
@@ -1052,7 +1055,7 @@ class TestSequenceFunctions(unittest.TestCase):
             'OutputFile': 'a_file_name',
             'SuppressStartupBanner': 'true',
             'UseUnicodeResponseFiles': 'true'},
-        'Mt': {
+        'Manifest': {
             'AdditionalManifestFiles': 'file1;file2;file3',
             'AdditionalOptions': 'a_string',
             'AssemblyIdentity': 'a_string',
@@ -1077,14 +1080,14 @@ class TestSequenceFunctions(unittest.TestCase):
             'GenerateManifest': 'true',
             'IgnoreImportLibrary': 'true',
             'LinkIncremental': 'false'}}
-    actual_msbuild_settings = MSVSSettings.ConvertToMsBuildSettings(
+    actual_msbuild_settings = MSVSSettings.ConvertToMSBuildSettings(
         msvs_settings,
         self.stderr)
     self.assertEqual(expected_msbuild_settings, actual_msbuild_settings)
     self._ExpectedWarnings([])
 
-  def test_ConvertToMsBuildSettings_actual(self):
-    """ Tests the conversion of an actual project.
+  def testConvertToMSBuildSettings_actual(self):
+    """Tests the conversion of an actual project.
 
     A VS2008 project with most of the options defined was created through the
     VS2008 IDE.  It was then converted to VS2010.  The tool settings found in
@@ -1122,7 +1125,7 @@ class TestSequenceFunctions(unittest.TestCase):
             AdditionalIncludeDirectories:  ';%(AdditionalIncludeDirectories)',
             AdditionalOptions:  ' %(AdditionalOptions)',
             PreprocessorDefinitions:  ';%(PreprocessorDefinitions)',
-        Mt:
+        Manifest:
             AdditionalManifestFiles:  ';%(AdditionalManifestFiles)',
             AdditionalOptions:  ' %(AdditionalOptions)',
             InputResourceManifests:  ';%(InputResourceManifests)',
@@ -1233,7 +1236,7 @@ class TestSequenceFunctions(unittest.TestCase):
             'LinkLibraryDependencies': 'false',
             'LinkTimeCodeGeneration': '1',
             'ManifestFile':
-                '$(IntDir)\\$(TargetFileName).2intermediate.manifest',
+            '$(IntDir)\\$(TargetFileName).2intermediate.manifest',
             'MapExports': 'true',
             'MapFileName': 'd5',
             'MergedIDLBaseFileName': 'f2',
@@ -1288,7 +1291,7 @@ class TestSequenceFunctions(unittest.TestCase):
             'GenerateCatalogFiles': 'true',
             'InputResourceManifests': 'asfsfdafs',
             'ManifestResourceFile':
-                '$(IntDir)\\$(TargetFileName).embed.manifest.resfdsf',
+            '$(IntDir)\\$(TargetFileName).embed.manifest.resfdsf',
             'OutputManifestFile': '$(TargetPath).manifestdfs',
             'RegistrarScriptFile': 'sdfsfd',
             'ReplacementsFile': 'sdffsd',
@@ -1440,7 +1443,7 @@ class TestSequenceFunctions(unittest.TestCase):
             'PreprocessorDefinitions': '_UNICODE;UNICODE2',
             'ResourceOutputFileName': '$(IntDir)%(Filename)3.res',
             'ShowProgress': 'true'},
-        'Mt': {
+        'Manifest': {
             'AdditionalManifestFiles': 'sfsdfsd',
             'AdditionalOptions': 'afdsdafsd',
             'AssemblyIdentity': 'sddfdsadfsa',
@@ -1466,13 +1469,14 @@ class TestSequenceFunctions(unittest.TestCase):
             },
         'ManifestResourceCompile': {
             'ResourceOutputFileName':
-                '$(IntDir)$(TargetFileName).embed.manifest.resfdsf'}
+            '$(IntDir)$(TargetFileName).embed.manifest.resfdsf'}
         }
-    actual_msbuild_settings = MSVSSettings.ConvertToMsBuildSettings(
+    actual_msbuild_settings = MSVSSettings.ConvertToMSBuildSettings(
         msvs_settings,
         self.stderr)
     self.assertEqual(expected_msbuild_settings, actual_msbuild_settings)
     self._ExpectedWarnings([])
+
 
 if __name__ == '__main__':
   unittest.main()

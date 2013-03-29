@@ -1,174 +1,26 @@
-GENERAL: running with these options:
-GENERAL:   check: None
-GENERAL:   circular_check: True
-GENERAL:   debug: ['variables', 'general']
-GENERAL:   defines: None
-GENERAL:   depth: '.'
-GENERAL:   formats: ['gypd']
-GENERAL:   generator_flags: []
-GENERAL:   generator_output: None
-GENERAL:   includes: None
-GENERAL:   msvs_version: None
-GENERAL:   suffix: ''
-GENERAL:   toplevel_dir: None
-GENERAL:   use_environment: True
-GENERAL: cmdline_default_variables: {}
-GENERAL: generator_flags: {}
-VARIABLES: Expanding 'exclude' to 'exclude'
-VARIABLES: Expanding 'Sch.*' to 'Sch.*'
-VARIABLES: Expanding 'include' to 'include'
-VARIABLES: Expanding '.*dt' to '.*dt'
-VARIABLES: Expanding 'exclude' to 'exclude'
-VARIABLES: Expanding 'Jer.*' to 'Jer.*'
-VARIABLES: Expanding 'John' to 'John'
-VARIABLES: Expanding 'Jacob' to 'Jacob'
-VARIABLES: Expanding 'Astor' to 'Astor'
-VARIABLES: Expanding 'Jingleheimer' to 'Jingleheimer'
-VARIABLES: Expanding 'Jerome' to 'Jerome'
-VARIABLES: Expanding 'Schmidt' to 'Schmidt'
-VARIABLES: Expanding 'Schultz' to 'Schultz'
-VARIABLES: Expanding 'Astor' to 'Astor'
-VARIABLES: Expanding '.' to '.'
-VARIABLES: Matches: {'content': 'names.txt <@(names', 'is_array': '', 'type': '<|', 'replace': '<|(names.txt <@(names)'}
-VARIABLES: Matches: {'content': 'names', 'is_array': '', 'type': '<@', 'replace': '<@(names)'}
-VARIABLES: Expanding 'names' to 'names'
-VARIABLES: Expanding 'John' to 'John'
-VARIABLES: Expanding 'Jacob' to 'Jacob'
-VARIABLES: Expanding 'Jingleheimer' to 'Jingleheimer'
-VARIABLES: Expanding 'Schmidt' to 'Schmidt'
-VARIABLES: Found output 'names.txt John Jacob Jingleheimer Schmidt', recursing.
-VARIABLES: Expanding 'names.txt John Jacob Jingleheimer Schmidt' to 'names.txt John Jacob Jingleheimer Schmidt'
-VARIABLES: Expanding 'names.txt <@(names)' to 'names.txt John Jacob Jingleheimer Schmidt'
-VARIABLES: Found output 'names.txt', recursing.
-VARIABLES: Expanding 'names.txt' to 'names.txt'
-VARIABLES: Expanding '<|(names.txt <@(names))' to 'names.txt'
-VARIABLES: Expanding 'foo' to 'foo'
-VARIABLES: Expanding 'target' to 'target'
-VARIABLES: Expanding 'none' to 'none'
-VARIABLES: Expanding 'test_action' to 'test_action'
-VARIABLES: Expanding 'python' to 'python'
-VARIABLES: Expanding 'dummy.py' to 'dummy.py'
-VARIABLES: Matches: {'content': 'names_listfile', 'is_array': '', 'type': '<', 'replace': '<(names_listfile)'}
-VARIABLES: Expanding 'names_listfile' to 'names_listfile'
-VARIABLES: Found output 'names.txt', recursing.
-VARIABLES: Expanding 'names.txt' to 'names.txt'
-VARIABLES: Expanding '<(names_listfile)' to 'names.txt'
-VARIABLES: Matches: {'content': 'names_listfile', 'is_array': '', 'type': '<', 'replace': '<(names_listfile)'}
-VARIABLES: Expanding 'names_listfile' to 'names_listfile'
-VARIABLES: Found output 'names.txt', recursing.
-VARIABLES: Expanding 'names.txt' to 'names.txt'
-VARIABLES: Expanding '<(names_listfile)' to 'names.txt'
-VARIABLES: Matches: {'content': 'cat <(names_listfile', 'is_array': '', 'type': '<!@', 'replace': '<!@(cat <(names_listfile)'}
-VARIABLES: Matches: {'content': 'names_listfile', 'is_array': '', 'type': '<', 'replace': '<(names_listfile)'}
-VARIABLES: Expanding 'names_listfile' to 'names_listfile'
-VARIABLES: Found output 'cat names.txt', recursing.
-VARIABLES: Expanding 'cat names.txt' to 'cat names.txt'
-VARIABLES: Expanding 'cat <(names_listfile)' to 'cat names.txt'
-VARIABLES: Executing command 'cat names.txt' in directory 'src'
-VARIABLES: Found output ['John', 'Jacob', 'Jingleheimer', 'Schmidt'], recursing.
-VARIABLES: Expanding 'John' to 'John'
-VARIABLES: Expanding 'Jacob' to 'Jacob'
-VARIABLES: Expanding 'Jingleheimer' to 'Jingleheimer'
-VARIABLES: Expanding 'Schmidt' to 'Schmidt'
-VARIABLES: Expanding '<!@(cat <(names_listfile))' to ['John', 'Jacob', 'Jingleheimer', 'Schmidt']
-VARIABLES: Expanding 'dummy_foo' to 'dummy_foo'
-VARIABLES: Matches: {'content': 'sources.txt <@(_sources', 'is_array': '', 'type': '<|', 'replace': '<|(sources.txt <@(_sources)'}
-VARIABLES: Matches: {'content': '_sources', 'is_array': '', 'type': '<@', 'replace': '<@(_sources)'}
-VARIABLES: Expanding '_sources' to '_sources'
-VARIABLES: Expanding 'John' to 'John'
-VARIABLES: Expanding 'Jacob' to 'Jacob'
-VARIABLES: Expanding 'Jingleheimer' to 'Jingleheimer'
-VARIABLES: Expanding 'Schmidt' to 'Schmidt'
-VARIABLES: Found output 'sources.txt John Jacob Jingleheimer Schmidt', recursing.
-VARIABLES: Expanding 'sources.txt John Jacob Jingleheimer Schmidt' to 'sources.txt John Jacob Jingleheimer Schmidt'
-VARIABLES: Expanding 'sources.txt <@(_sources)' to 'sources.txt John Jacob Jingleheimer Schmidt'
-VARIABLES: Found output 'sources.txt', recursing.
-VARIABLES: Expanding 'sources.txt' to 'sources.txt'
-VARIABLES: Expanding '<|(sources.txt <@(_sources))' to 'sources.txt'
-VARIABLES: Expanding 'bar' to 'bar'
-VARIABLES: Expanding 'target' to 'target'
-VARIABLES: Expanding 'none' to 'none'
-VARIABLES: Expanding 'exclude' to 'exclude'
-VARIABLES: Expanding 'Sch.*' to 'Sch.*'
-VARIABLES: Expanding 'include' to 'include'
-VARIABLES: Expanding '.*dt' to '.*dt'
-VARIABLES: Expanding 'exclude' to 'exclude'
-VARIABLES: Expanding 'Jer.*' to 'Jer.*'
-VARIABLES: Expanding 'Astor' to 'Astor'
-VARIABLES: Expanding 'test_action' to 'test_action'
-VARIABLES: Expanding 'python' to 'python'
-VARIABLES: Expanding 'dummy.py' to 'dummy.py'
-VARIABLES: Matches: {'content': 'sources_listfile', 'is_array': '', 'type': '<', 'replace': '<(sources_listfile)'}
-VARIABLES: Expanding 'sources_listfile' to 'sources_listfile'
-VARIABLES: Found output 'sources.txt', recursing.
-VARIABLES: Expanding 'sources.txt' to 'sources.txt'
-VARIABLES: Expanding '<(sources_listfile)' to 'sources.txt'
-VARIABLES: Matches: {'content': 'sources_listfile', 'is_array': '', 'type': '<', 'replace': '<(sources_listfile)'}
-VARIABLES: Expanding 'sources_listfile' to 'sources_listfile'
-VARIABLES: Found output 'sources.txt', recursing.
-VARIABLES: Expanding 'sources.txt' to 'sources.txt'
-VARIABLES: Expanding '<(sources_listfile)' to 'sources.txt'
-VARIABLES: Matches: {'content': 'cat <(sources_listfile', 'is_array': '', 'type': '<!@', 'replace': '<!@(cat <(sources_listfile)'}
-VARIABLES: Matches: {'content': 'sources_listfile', 'is_array': '', 'type': '<', 'replace': '<(sources_listfile)'}
-VARIABLES: Expanding 'sources_listfile' to 'sources_listfile'
-VARIABLES: Found output 'cat sources.txt', recursing.
-VARIABLES: Expanding 'cat sources.txt' to 'cat sources.txt'
-VARIABLES: Expanding 'cat <(sources_listfile)' to 'cat sources.txt'
-VARIABLES: Executing command 'cat sources.txt' in directory 'src'
-VARIABLES: Found output ['John', 'Jacob', 'Jingleheimer', 'Schmidt'], recursing.
-VARIABLES: Expanding 'John' to 'John'
-VARIABLES: Expanding 'Jacob' to 'Jacob'
-VARIABLES: Expanding 'Jingleheimer' to 'Jingleheimer'
-VARIABLES: Expanding 'Schmidt' to 'Schmidt'
-VARIABLES: Expanding '<!@(cat <(sources_listfile))' to ['John', 'Jacob', 'Jingleheimer', 'Schmidt']
-VARIABLES: Expanding 'dummy_foo' to 'dummy_foo'
-VARIABLES: Expanding 'John' to 'John'
-VARIABLES: Expanding 'Jacob' to 'Jacob'
-VARIABLES: Expanding 'Astor' to 'Astor'
-VARIABLES: Expanding 'Jingleheimer' to 'Jingleheimer'
-VARIABLES: Expanding 'Jerome' to 'Jerome'
-VARIABLES: Expanding 'Schmidt' to 'Schmidt'
-VARIABLES: Expanding 'Schultz' to 'Schultz'
-VARIABLES: Expanding 'filelist.gyp' to 'filelist.gyp'
-VARIABLES: Expanding 'names.txt' to 'names.txt'
-VARIABLES: Expanding 'foo' to 'foo'
-VARIABLES: Expanding 'target' to 'target'
-VARIABLES: Expanding 'none' to 'none'
-VARIABLES: Expanding 'test_action' to 'test_action'
-VARIABLES: Expanding 'python' to 'python'
-VARIABLES: Expanding 'dummy.py' to 'dummy.py'
-VARIABLES: Expanding 'names.txt' to 'names.txt'
-VARIABLES: Expanding 'names.txt' to 'names.txt'
-VARIABLES: Expanding 'John' to 'John'
-VARIABLES: Expanding 'Jacob' to 'Jacob'
-VARIABLES: Expanding 'Jingleheimer' to 'Jingleheimer'
-VARIABLES: Expanding 'Schmidt' to 'Schmidt'
-VARIABLES: Expanding 'dummy_foo' to 'dummy_foo'
-VARIABLES: Expanding 'sources.txt' to 'sources.txt'
-VARIABLES: Expanding 'bar' to 'bar'
-VARIABLES: Expanding 'target' to 'target'
-VARIABLES: Expanding 'none' to 'none'
-VARIABLES: Expanding 'exclude' to 'exclude'
-VARIABLES: Expanding 'Sch.*' to 'Sch.*'
-VARIABLES: Expanding 'include' to 'include'
-VARIABLES: Expanding '.*dt' to '.*dt'
-VARIABLES: Expanding 'exclude' to 'exclude'
-VARIABLES: Expanding 'Jer.*' to 'Jer.*'
-VARIABLES: Expanding 'Astor' to 'Astor'
-VARIABLES: Expanding 'test_action' to 'test_action'
-VARIABLES: Expanding 'python' to 'python'
-VARIABLES: Expanding 'dummy.py' to 'dummy.py'
-VARIABLES: Expanding 'sources.txt' to 'sources.txt'
-VARIABLES: Expanding 'sources.txt' to 'sources.txt'
-VARIABLES: Expanding 'John' to 'John'
-VARIABLES: Expanding 'Jacob' to 'Jacob'
-VARIABLES: Expanding 'Jingleheimer' to 'Jingleheimer'
-VARIABLES: Expanding 'Schmidt' to 'Schmidt'
-VARIABLES: Expanding 'dummy_foo' to 'dummy_foo'
-VARIABLES: Expanding 'John' to 'John'
-VARIABLES: Expanding 'Jacob' to 'Jacob'
-VARIABLES: Expanding 'Astor' to 'Astor'
-VARIABLES: Expanding 'Jingleheimer' to 'Jingleheimer'
-VARIABLES: Expanding 'Jerome' to 'Jerome'
-VARIABLES: Expanding 'Schmidt' to 'Schmidt'
-VARIABLES: Expanding 'Schultz' to 'Schultz'
+VARIABLES:input.py:562:ExpandVariables Matches: {'content': 'names.txt <@(names', 'is_array': '', 'replace': '<|(names.txt <@(names)', 'type': '<|', 'command_string': None}
+VARIABLES:input.py:562:ExpandVariables Matches: {'content': 'names', 'is_array': '', 'replace': '<@(names)', 'type': '<@', 'command_string': None}
+VARIABLES:input.py:797:ExpandVariables Found output 'names.txt John Jacob Jingleheimer Schmidt', recursing.
+VARIABLES:input.py:797:ExpandVariables Found output 'names.txt', recursing.
+VARIABLES:input.py:562:ExpandVariables Matches: {'content': 'names_listfile', 'is_array': '', 'replace': '<(names_listfile)', 'type': '<', 'command_string': None}
+VARIABLES:input.py:797:ExpandVariables Found output 'names.txt', recursing.
+VARIABLES:input.py:562:ExpandVariables Matches: {'content': 'names_listfile', 'is_array': '', 'replace': '<(names_listfile)', 'type': '<', 'command_string': None}
+VARIABLES:input.py:797:ExpandVariables Found output 'names.txt', recursing.
+VARIABLES:input.py:562:ExpandVariables Matches: {'content': 'cat <(names_listfile', 'is_array': '', 'replace': '<!@(cat <(names_listfile)', 'type': '<!@', 'command_string': None}
+VARIABLES:input.py:562:ExpandVariables Matches: {'content': 'names_listfile', 'is_array': '', 'replace': '<(names_listfile)', 'type': '<', 'command_string': None}
+VARIABLES:input.py:797:ExpandVariables Found output 'cat names.txt', recursing.
+VARIABLES:input.py:676:ExpandVariables Executing command 'cat names.txt' in directory 'src'
+VARIABLES:input.py:797:ExpandVariables Found output ['John', 'Jacob', 'Jingleheimer', 'Schmidt'], recursing.
+VARIABLES:input.py:562:ExpandVariables Matches: {'content': 'sources.txt <@(_sources', 'is_array': '', 'replace': '<|(sources.txt <@(_sources)', 'type': '<|', 'command_string': None}
+VARIABLES:input.py:562:ExpandVariables Matches: {'content': '_sources', 'is_array': '', 'replace': '<@(_sources)', 'type': '<@', 'command_string': None}
+VARIABLES:input.py:797:ExpandVariables Found output 'sources.txt John Jacob Jingleheimer Schmidt', recursing.
+VARIABLES:input.py:797:ExpandVariables Found output 'sources.txt', recursing.
+VARIABLES:input.py:562:ExpandVariables Matches: {'content': 'sources_listfile', 'is_array': '', 'replace': '<(sources_listfile)', 'type': '<', 'command_string': None}
+VARIABLES:input.py:797:ExpandVariables Found output 'sources.txt', recursing.
+VARIABLES:input.py:562:ExpandVariables Matches: {'content': 'sources_listfile', 'is_array': '', 'replace': '<(sources_listfile)', 'type': '<', 'command_string': None}
+VARIABLES:input.py:797:ExpandVariables Found output 'sources.txt', recursing.
+VARIABLES:input.py:562:ExpandVariables Matches: {'content': 'cat <(sources_listfile', 'is_array': '', 'replace': '<!@(cat <(sources_listfile)', 'type': '<!@', 'command_string': None}
+VARIABLES:input.py:562:ExpandVariables Matches: {'content': 'sources_listfile', 'is_array': '', 'replace': '<(sources_listfile)', 'type': '<', 'command_string': None}
+VARIABLES:input.py:797:ExpandVariables Found output 'cat sources.txt', recursing.
+VARIABLES:input.py:676:ExpandVariables Executing command 'cat sources.txt' in directory 'src'
+VARIABLES:input.py:797:ExpandVariables Found output ['John', 'Jacob', 'Jingleheimer', 'Schmidt'], recursing.

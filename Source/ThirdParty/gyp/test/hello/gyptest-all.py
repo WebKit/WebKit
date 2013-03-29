@@ -11,7 +11,7 @@ using an explicit build target of 'all'.
 
 import TestGyp
 
-test = TestGyp.TestGyp()
+test = TestGyp.TestGyp(workdir='workarea_all')
 
 test.run_gyp('hello.gyp')
 

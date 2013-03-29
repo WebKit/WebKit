@@ -1,6 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
-# Copyright (c) 2009 Google Inc. All rights reserved.
+# Copyright (c) 2012 Google Inc. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -11,6 +11,8 @@ import os.path
 import re
 import shlex
 import sys
+import traceback
+from gyp.common import GypError
 
 # Default debug modes for GYP
 debug = {}
@@ -20,28 +22,47 @@ DEBUG_GENERAL = 'general'
 DEBUG_VARIABLES = 'variables'
 DEBUG_INCLUDES = 'includes'
 
-def DebugOutput(mode, message):
-  if mode in gyp.debug.keys():
-    print "%s: %s" % (mode.upper(), message)
+
+def DebugOutput(mode, message, *args):
+  if 'all' in gyp.debug or mode in gyp.debug:
+    ctx = ('unknown', 0, 'unknown')
+    try:
+      f = traceback.extract_stack(limit=2)
+      if f:
+        ctx = f[0][:3]
+    except:
+      pass
+    if args:
+      message %= args
+    print '%s:%s:%d:%s %s' % (mode.upper(), os.path.basename(ctx[0]),
+                              ctx[1], ctx[2], message)
 
 def FindBuildFiles():
   extension = '.gyp'
   files = os.listdir(os.getcwd())
   build_files = []
   for file in files:
-    if file[-len(extension):] == extension:
+    if file.endswith(extension):
       build_files.append(file)
   return build_files
 
 
 def Load(build_files, format, default_variables={},
-         includes=[], depth='.', params={}, check=False, circular_check=True):
+         includes=[], depth='.', params=None, check=False,
+         circular_check=True):
   """
   Loads one or more specified build files.
   default_variables and includes will be copied before use.
   Returns the generator for the specified format and the
   data returned by loading the specified build files.
   """
+  if params is None:
+    params = {}
+
+  flavor = None
+  if '-' in format:
+    format, params['flavor'] = format.split('-', 1)
+
   default_variables = copy.copy(default_variables)
 
   # Default variables provided by this program and its modules should be
@@ -49,7 +70,22 @@ def Load(build_files, format, default_variables={},
   # avoiding collisions with user and automatic variables.
   default_variables['GENERATOR'] = format
 
-  generator_name = 'gyp.generator.' + format
+  # Format can be a custom python file, or by default the name of a module
+  # within gyp.generator.
+  if format.endswith('.py'):
+    generator_name = os.path.splitext(format)[0]
+    path, generator_name = os.path.split(generator_name)
+
+    # Make sure the path to the custom generator is in sys.path
+    # Don't worry about removing it once we are done.  Keeping the path
+    # to each generator that is used in sys.path is likely harmless and
+    # arguably a good idea.
+    path = os.path.abspath(path)
+    if path not in sys.path:
+      sys.path.insert(0, path)
+  else:
+    generator_name = 'gyp.generator.' + format
+
   # These parameters are passed in order (as opposed to by key)
   # because ActivePython cannot handle key parameters to __import__.
   generator = __import__(generator_name, globals(), locals(), generator_name)
@@ -60,6 +96,11 @@ def Load(build_files, format, default_variables={},
   # the params it will receive in the output phase.
   if getattr(generator, 'CalculateVariables', None):
     generator.CalculateVariables(default_variables, params)
+
+  # Give the generator the opportunity to set generator_input_info based on
+  # the params it will receive in the output phase.
+  if getattr(generator, 'CalculateGeneratorInputInfo', None):
+    generator.CalculateGeneratorInputInfo(params)
 
   # Fetch the generator specific info that gets fed to input, we use getattr
   # so we can default things and the generators only have to provide what
@@ -77,11 +118,17 @@ def Load(build_files, format, default_variables={},
         getattr(generator, 'generator_extra_sources_for_rules', []),
     'generator_supports_multiple_toolsets':
         getattr(generator, 'generator_supports_multiple_toolsets', False),
+    'generator_wants_static_library_dependencies_adjusted':
+        getattr(generator,
+                'generator_wants_static_library_dependencies_adjusted', True),
+    'generator_wants_sorted_dependencies':
+        getattr(generator, 'generator_wants_sorted_dependencies', False),
   }
 
   # Process the input specific to this generator.
   result = gyp.input.Load(build_files, default_variables, includes[:],
-                          depth, generator_input_info, check, circular_check)
+                          depth, generator_input_info, check, circular_check,
+                          params['parallel'])
   return [generator] + result
 
 def NameValueListToDict(name_value_list):
@@ -130,7 +177,10 @@ def RegenerateAppendFlag(flag, values, predicate, env_name, options):
   flags = []
   if options.use_environment and env_name:
     for flag_value in ShlexEnv(env_name):
-      flags.append(FormatOpt(flag, predicate(flag_value)))
+      value = FormatOpt(flag, predicate(flag_value))
+      if value in flags:
+        flags.remove(value)
+      flags.append(value)
   if values:
     for flag_value in values:
       flags.append(FormatOpt(flag, predicate(flag_value)))
@@ -227,7 +277,7 @@ class RegeneratableOptionParser(optparse.OptionParser):
     values._regeneration_metadata = self.__regeneratable_options
     return values, args
 
-def main(args):
+def gyp_main(args):
   my_name = os.path.basename(sys.argv[0])
 
   parser = RegeneratableOptionParser()
@@ -249,8 +299,8 @@ def main(args):
                     help='set DEPTH gyp variable to a relative path to PATH')
   parser.add_option('-d', '--debug', dest='debug', metavar='DEBUGMODE',
                     action='append', default=[], help='turn on a debugging '
-                    'mode for debugging GYP.  Supported modes are "variables" '
-                    'and "general"')
+                    'mode for debugging GYP.  Supported modes are "variables", '
+                    '"includes" and "general" or "all" for all of them.')
   parser.add_option('-S', '--suffix', dest='suffix', default='',
                     help='suffix to add to generated files')
   parser.add_option('-G', dest='generator_flags', action='append', default=[],
@@ -265,9 +315,14 @@ def main(args):
                     help='do not read options from environment variables')
   parser.add_option('--check', dest='check', action='store_true',
                     help='check format of gyp files')
+  parser.add_option('--parallel', action='store_true',
+                    env_name='GYP_PARALLEL',
+                    help='Use multiprocessing for speed (experimental)')
   parser.add_option('--toplevel-dir', dest='toplevel_dir', action='store',
                     default=None, metavar='DIR', type='path',
                     help='directory to use as the root of the source tree')
+  parser.add_option('--build', dest='configs', action='append',
+                    help='configuration for build after project generation')
   # --no-circular-check disables the check for circular relationships between
   # .gyp files.  These relationships should not exist, but they've only been
   # observed to be harmful with the Xcode generator.  Chromium's .gyp files
@@ -310,40 +365,41 @@ def main(args):
       options.formats = generate_formats
     else:
       # Nothing in the variable, default based on platform.
-      options.formats = [ {'darwin':   'xcode',
-                           'win32':    'msvs',
-                           'cygwin':   'msvs',
-                           'freebsd7': 'make',
-                           'freebsd8': 'make',
-                           'linux2':   'make',
-                           'openbsd4': 'make',
-                           'sunos5':   'make',}[sys.platform] ]
+      if sys.platform == 'darwin':
+        options.formats = ['xcode']
+      elif sys.platform in ('win32', 'cygwin'):
+        options.formats = ['msvs']
+      else:
+        options.formats = ['make']
 
   if not options.generator_output and options.use_environment:
     g_o = os.environ.get('GYP_GENERATOR_OUTPUT')
     if g_o:
       options.generator_output = g_o
 
+  if not options.parallel and options.use_environment:
+    p = os.environ.get('GYP_PARALLEL')
+    options.parallel = bool(p and p != '0')
+
   for mode in options.debug:
     gyp.debug[mode] = 1
 
   # Do an extra check to avoid work when we're not debugging.
-  if DEBUG_GENERAL in gyp.debug.keys():
+  if DEBUG_GENERAL in gyp.debug:
     DebugOutput(DEBUG_GENERAL, 'running with these options:')
     for option, value in sorted(options.__dict__.items()):
       if option[0] == '_':
         continue
       if isinstance(value, basestring):
-        DebugOutput(DEBUG_GENERAL, "  %s: '%s'" % (option, value))
+        DebugOutput(DEBUG_GENERAL, "  %s: '%s'", option, value)
       else:
-        DebugOutput(DEBUG_GENERAL, "  %s: %s" % (option, str(value)))
+        DebugOutput(DEBUG_GENERAL, "  %s: %s", option, value)
 
   if not build_files:
     build_files = FindBuildFiles()
   if not build_files:
-    print >>sys.stderr, (usage + '\n\n%s: error: no build_file') % \
-                        (my_name, my_name)
-    return 1
+    raise GypError((usage + '\n\n%s: error: no build_file') %
+                   (my_name, my_name))
 
   # TODO(mark): Chromium-specific hack!
   # For Chromium, the gyp "depth" variable should always be a relative path
@@ -368,10 +424,9 @@ def main(args):
         break
 
     if not options.depth:
-      raise Exception, \
-            'Could not automatically locate src directory.  This is a ' + \
-            'temporary Chromium feature that will be removed.  Use ' + \
-            '--depth as a workaround.'
+      raise GypError('Could not automatically locate src directory.  This is'
+                     'a temporary Chromium feature that will be removed.  Use'
+                     '--depth as a workaround.')
 
   # If toplevel-dir is not set, we assume that depth is the root of our source
   # tree.
@@ -388,9 +443,9 @@ def main(args):
   if options.defines:
     defines += options.defines
   cmdline_default_variables = NameValueListToDict(defines)
-  if DEBUG_GENERAL in gyp.debug.keys():
+  if DEBUG_GENERAL in gyp.debug:
     DebugOutput(DEBUG_GENERAL,
-                "cmdline_default_variables: %s" % cmdline_default_variables)
+                "cmdline_default_variables: %s", cmdline_default_variables)
 
   # Set up includes.
   includes = []
@@ -400,6 +455,7 @@ def main(args):
   if home_dot_gyp != None:
     default_include = os.path.join(home_dot_gyp, 'include.gypi')
     if os.path.exists(default_include):
+      print 'Using overrides found in ' + default_include
       includes.append(default_include)
 
   # Command-line --include files come after the default include.
@@ -415,7 +471,7 @@ def main(args):
     gen_flags += options.generator_flags
   generator_flags = NameValueListToDict(gen_flags)
   if DEBUG_GENERAL in gyp.debug.keys():
-    DebugOutput(DEBUG_GENERAL, "generator_flags: %s" % generator_flags)
+    DebugOutput(DEBUG_GENERAL, "generator_flags: %s", generator_flags)
 
   # TODO: Remove this and the option after we've gotten folks to move to the
   # generator flag.
@@ -435,7 +491,8 @@ def main(args):
               'cwd': os.getcwd(),
               'build_files_arg': build_files_arg,
               'gyp_binary': sys.argv[0],
-              'home_dot_gyp': home_dot_gyp}
+              'home_dot_gyp': home_dot_gyp,
+              'parallel': options.parallel}
 
     # Start with the default variables from the command line.
     [generator, flat_list, targets, data] = Load(build_files, format,
@@ -453,9 +510,23 @@ def main(args):
     # generate targets in the order specified in flat_list.
     generator.GenerateOutput(flat_list, targets, data, params)
 
+    if options.configs:
+      valid_configs = targets[flat_list[0]]['configurations'].keys()
+      for conf in options.configs:
+        if conf not in valid_configs:
+          raise GypError('Invalid config specified via --build: %s' % conf)
+      generator.PerformBuild(data, options.configs, params)
+
   # Done
   return 0
 
+
+def main(args):
+  try:
+    return gyp_main(args)
+  except GypError, e:
+    sys.stderr.write("gyp: %s\n" % e)
+    return 1
 
 if __name__ == '__main__':
   sys.exit(main(sys.argv[1:]))

@@ -384,8 +384,11 @@ def no_result(self = None, condition = 1, function = None, skip = 0):
             desc = " [" + self.description + "]"
             sep = "\n\t"
 
-    at = _caller(traceback.extract_stack(), skip)
-    sys.stderr.write("NO RESULT for test" + of + desc + sep + at)
+    if os.environ.get('TESTCMD_DEBUG_SKIPS'):
+        at = _caller(traceback.extract_stack(), skip)
+        sys.stderr.write("NO RESULT for test" + of + desc + sep + at)
+    else:
+        sys.stderr.write("NO RESULT\n")
 
     sys.exit(2)
 
@@ -862,11 +865,11 @@ class TestCmd(object):
         self.verbose_set(verbose)
         self.combine = combine
         self.universal_newlines = universal_newlines
-        if not match is None:
+        if match is not None:
             self.match_function = match
         else:
             self.match_function = match_re
-        if not diff is None:
+        if diff is not None:
             self.diff_function = diff
         else:
             try:
@@ -1124,7 +1127,9 @@ class TestCmd(object):
         file = self.canonicalize(file)
         if mode[0] != 'r':
             raise ValueError, "mode must begin with 'r'"
-        return open(file, mode).read()
+        with open(file, mode) as f:
+            result = f.read()
+        return result
 
     def rmdir(self, dir):
         """Removes the specified dir name.
@@ -1582,7 +1587,8 @@ class TestCmd(object):
         file = self.canonicalize(file)
         if mode[0] != 'w':
             raise ValueError, "mode must begin with 'w'"
-        open(file, mode).write(content)
+        with open(file, mode) as f:
+            f.write(content)
 
 # Local Variables:
 # tab-width:4
