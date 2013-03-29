@@ -2978,6 +2978,7 @@ void RenderLayerCompositor::removeViewportConstrainedLayer(RenderLayer* layer)
 
     unregisterViewportConstrainedLayer(layer);
     m_viewportConstrainedLayers.remove(layer);
+    m_viewportConstrainedLayersNeedingUpdate.remove(layer);
 }
 
 FixedPositionViewportConstraints RenderLayerCompositor::computeFixedViewportConstraints(RenderLayer* layer) const
