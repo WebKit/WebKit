@@ -3806,6 +3806,8 @@ webkit.org/b/113474 http/tests/cache/subresource-failover-to-network.html [ Pass
 
 webkit.org/b/113487 [ Debug ] plugins/npruntime/npruntime-calls-with-null-npp.html [ Pass Timeout ]
 
+webkit.org/b/113555 [ Win7 Debug ] fast/forms/state-restore-per-form.html [ Pass Timeout ]
+
 # harfbuzz-ng roll to 0.9.14 needs rebaseline.
 crbug.com/224428 [ Linux ] fast/text/international/khmer-selection.html [ Failure ]
 crbug.com/224428 webkit.org/b/113169 [ Linux ] fast/text/international/danda-space.html [ Failure ]
