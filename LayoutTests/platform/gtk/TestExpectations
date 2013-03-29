@@ -429,6 +429,9 @@ webkit.org/b/110735 fast/dom/custom [ Skip ]
 # Snapshotted plugins not enabled
 webkit.org/b/98696 plugins/snapshotting [ Skip ]
 
+# Skip the perf/ tests in debug builds
+Bug(GTK) [ Debug ] perf [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -499,6 +502,8 @@ webkit.org/b/111451 [ Debug ] editing/selection/selection-in-iframe-removed-cras
 
 webkit.org/b/113019 [ Debug ] storage/indexeddb/factory-basics-workers.html [ Crash ]
 webkit.org/b/113019 [ Debug ] storage/indexeddb/transaction-error.html [ Crash ]
+
+webkit.org/b/111902 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
