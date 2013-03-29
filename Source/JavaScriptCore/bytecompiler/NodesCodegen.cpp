@@ -1785,7 +1785,8 @@ RegisterID* ContinueNode::emitBytecode(BytecodeGenerator& generator, RegisterID*
     LabelScope* scope = generator.continueTarget(m_ident);
     ASSERT(scope);
 
-    generator.emitJumpScopes(scope->continueTarget(), scope->scopeDepth());
+    generator.emitPopScopes(scope->scopeDepth());
+    generator.emitJump(scope->continueTarget());
     return dst;
 }
 
@@ -1799,7 +1800,8 @@ RegisterID* BreakNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
     LabelScope* scope = generator.breakTarget(m_ident);
     ASSERT(scope);
 
-    generator.emitJumpScopes(scope->breakTarget(), scope->scopeDepth());
+    generator.emitPopScopes(scope->scopeDepth());
+    generator.emitJump(scope->breakTarget());
     return dst;
 }
 
@@ -1812,19 +1814,15 @@ RegisterID* ReturnNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 
     if (dst == generator.ignoredResult())
         dst = 0;
-    RegisterID* r0 = m_value ? generator.emitNode(dst, m_value) : generator.emitLoad(dst, jsUndefined());
-    RefPtr<RegisterID> returnRegister;
+
+    RefPtr<RegisterID> returnRegister = m_value ? generator.emitNode(dst, m_value) : generator.emitLoad(dst, jsUndefined());
     if (generator.scopeDepth()) {
-        RefPtr<Label> l0 = generator.newLabel();
-        if (generator.hasFinaliser()) {
-            returnRegister = generator.emitMove(generator.newTemporary(), r0);
-            r0 = returnRegister.get();
-        }
-        generator.emitJumpScopes(l0.get(), 0);
-        generator.emitLabel(l0.get());
+        returnRegister = generator.emitMove(generator.newTemporary(), returnRegister.get());
+        generator.emitPopScopes(0);
     }
+
     generator.emitDebugHook(WillLeaveCallFrame, firstLine(), lastLine(), charPosition());
-    return generator.emitReturn(r0);
+    return generator.emitReturn(returnRegister.get());
 }
 
 // ------------------------------ WithNode -------------------------------------

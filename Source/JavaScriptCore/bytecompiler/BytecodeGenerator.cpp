@@ -2242,7 +2242,7 @@ LabelScope* BytecodeGenerator::continueTarget(const Identifier& name)
     return 0;
 }
 
-PassRefPtr<Label> BytecodeGenerator::emitComplexJumpScopes(Label* target, ControlFlowContext* topScope, ControlFlowContext* bottomScope)
+void BytecodeGenerator::emitComplexPopScopes(ControlFlowContext* topScope, ControlFlowContext* bottomScope)
 {
     while (topScope > bottomScope) {
         // First we count the number of dynamic scopes we need to remove to get
@@ -2256,25 +2256,14 @@ PassRefPtr<Label> BytecodeGenerator::emitComplexJumpScopes(Label* target, Contro
         }
 
         if (nNormalScopes) {
-            size_t begin = instructions().size();
-
             // We need to remove a number of dynamic scopes to get to the next
             // finally block
-            emitOpcode(op_jmp_scopes);
-            instructions().append(nNormalScopes);
+            while (nNormalScopes--)
+                emitOpcode(op_pop_scope);
 
-            // If topScope == bottomScope then there isn't actually a finally block
-            // left to emit, so make the jmp_scopes jump directly to the target label
-            if (topScope == bottomScope) {
-                instructions().append(target->bind(begin, instructions().size()));
-                return target;
-            }
-
-            // Otherwise we just use jmp_scopes to pop a group of scopes and go
-            // to the next instruction
-            RefPtr<Label> nextInsn = newLabel();
-            instructions().append(nextInsn->bind(begin, instructions().size()));
-            emitLabel(nextInsn.get());
+            // If topScope == bottomScope then there isn't a finally block left to emit.
+            if (topScope == bottomScope)
+                return;
         }
         
         Vector<ControlFlowContext> savedScopeContextStack;
@@ -2364,28 +2353,24 @@ PassRefPtr<Label> BytecodeGenerator::emitComplexJumpScopes(Label* target, Contro
             --topScope;
         }
     }
-    return emitJump(target);
 }
 
-PassRefPtr<Label> BytecodeGenerator::emitJumpScopes(Label* target, int targetScopeDepth)
+void BytecodeGenerator::emitPopScopes(int targetScopeDepth)
 {
     ASSERT(scopeDepth() - targetScopeDepth >= 0);
-    ASSERT(target->isForward());
 
     size_t scopeDelta = scopeDepth() - targetScopeDepth;
     ASSERT(scopeDelta <= m_scopeContextStack.size());
     if (!scopeDelta)
-        return emitJump(target);
+        return;
 
-    if (m_finallyDepth)
-        return emitComplexJumpScopes(target, &m_scopeContextStack.last(), &m_scopeContextStack.last() - scopeDelta);
+    if (!m_finallyDepth) {
+        while (scopeDelta--)
+            emitOpcode(op_pop_scope);
+        return;
+    }
 
-    size_t begin = instructions().size();
-
-    emitOpcode(op_jmp_scopes);
-    instructions().append(scopeDelta);
-    instructions().append(target->bind(begin, instructions().size()));
-    return target;
+    emitComplexPopScopes(&m_scopeContextStack.last(), &m_scopeContextStack.last() - scopeDelta);
 }
 
 RegisterID* BytecodeGenerator::emitGetPropertyNames(RegisterID* dst, RegisterID* base, RegisterID* i, RegisterID* size, Label* breakTarget)

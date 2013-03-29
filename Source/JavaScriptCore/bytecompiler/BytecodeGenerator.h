@@ -486,7 +486,7 @@ namespace JSC {
         PassRefPtr<Label> emitJumpIfFalse(RegisterID* cond, Label* target);
         PassRefPtr<Label> emitJumpIfNotFunctionCall(RegisterID* cond, Label* target);
         PassRefPtr<Label> emitJumpIfNotFunctionApply(RegisterID* cond, Label* target);
-        PassRefPtr<Label> emitJumpScopes(Label* target, int targetScopeDepth);
+        void emitPopScopes(int targetScopeDepth);
 
         RegisterID* emitGetPropertyNames(RegisterID* dst, RegisterID* base, RegisterID* i, RegisterID* size, Label* breakTarget);
         RegisterID* emitNextPropertyName(RegisterID* dst, RegisterID* base, RegisterID* i, RegisterID* size, RegisterID* iter, Label* target);
@@ -562,7 +562,7 @@ namespace JSC {
         ALWAYS_INLINE void rewindBinaryOp();
         ALWAYS_INLINE void rewindUnaryOp();
 
-        PassRefPtr<Label> emitComplexJumpScopes(Label* target, ControlFlowContext* topScope, ControlFlowContext* bottomScope);
+        void emitComplexPopScopes(ControlFlowContext* topScope, ControlFlowContext* bottomScope);
 
         typedef HashMap<double, JSValue> NumberMap;
         typedef HashMap<StringImpl*, JSString*, IdentifierRepHash> IdentifierStringMap;

@@ -61,7 +61,6 @@ void computePreciseJumpTargets(CodeBlock* codeBlock, Vector<unsigned, 32>& out)
         case op_jfalse:
         case op_jeq_null:
         case op_jneq_null:
-        case op_jmp_scopes:
         case op_loop_if_true:
         case op_loop_if_false:
             out.append(bytecodeOffset + current[2].u.operand);

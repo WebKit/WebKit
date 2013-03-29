@@ -1204,18 +1204,6 @@ LLINT_SLOW_PATH_DECL(slow_path_put_getter_setter)
     LLINT_END();
 }
 
-LLINT_SLOW_PATH_DECL(slow_path_jmp_scopes)
-{
-    LLINT_BEGIN();
-    unsigned count = pc[1].u.operand;
-    JSScope* tmp = exec->scope();
-    while (count--)
-        tmp = tmp->next();
-    exec->setScope(tmp);
-    pc += pc[2].u.operand;
-    LLINT_END();
-}
-
 LLINT_SLOW_PATH_DECL(slow_path_jtrue)
 {
     LLINT_BEGIN();

@@ -1032,14 +1032,6 @@ void JIT::emit_op_catch(Instruction* currentInstruction)
     map(m_bytecodeOffset + OPCODE_LENGTH(op_catch), exception, regT1, regT0);
 }
 
-void JIT::emit_op_jmp_scopes(Instruction* currentInstruction)
-{
-    JITStubCall stubCall(this, cti_op_jmp_scopes);
-    stubCall.addArgument(TrustedImm32(currentInstruction[1].u.operand));
-    stubCall.call();
-    addJump(jump(), currentInstruction[2].u.operand);
-}
-
 void JIT::emit_op_switch_imm(Instruction* currentInstruction)
 {
     unsigned tableIndex = currentInstruction[1].u.operand;

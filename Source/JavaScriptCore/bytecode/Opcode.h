@@ -172,7 +172,6 @@ namespace JSC {
     macro(op_jnlesseq, 4) \
     macro(op_jngreater, 4) \
     macro(op_jngreatereq, 4) \
-    macro(op_jmp_scopes, 3) \
     macro(op_loop, 2) \
     macro(op_loop_if_true, 3) \
     macro(op_loop_if_false, 3) \

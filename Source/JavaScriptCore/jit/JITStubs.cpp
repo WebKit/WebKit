@@ -3306,19 +3306,6 @@ DEFINE_STUB_FUNCTION(void, op_push_name_scope)
     callFrame->setScope(scope);
 }
 
-DEFINE_STUB_FUNCTION(void, op_jmp_scopes)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    unsigned count = stackFrame.args[0].int32();
-    CallFrame* callFrame = stackFrame.callFrame;
-
-    JSScope* tmp = callFrame->scope();
-    while (count--)
-        tmp = tmp->next();
-    callFrame->setScope(tmp);
-}
-
 DEFINE_STUB_FUNCTION(void, op_put_by_index)
 {
     STUB_INIT_STACK_FRAME(stackFrame);

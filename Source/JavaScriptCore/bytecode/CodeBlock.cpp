@@ -1447,12 +1447,6 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
             out.printf("[%4d] push_name_scope \t%s, %s, %u", location, idName(id0, m_identifiers[id0]).data(), registerName(exec, r1).data(), attributes);
             break;
         }
-        case op_jmp_scopes: {
-            int scopeDelta = (++it)->u.operand;
-            int offset = (++it)->u.operand;
-            out.printf("[%4d] jmp_scopes\t^%d, %d(->%d)", location, scopeDelta, offset, location + offset);
-            break;
-        }
         case op_catch: {
             int r0 = (++it)->u.operand;
             out.printf("[%4d] catch\t\t %s", location, registerName(exec, r0).data());

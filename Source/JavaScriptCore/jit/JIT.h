@@ -678,7 +678,6 @@ namespace JSC {
         void emit_op_jeq_null(Instruction*);
         void emit_op_jfalse(Instruction*);
         void emit_op_jmp(Instruction*);
-        void emit_op_jmp_scopes(Instruction*);
         void emit_op_jneq_null(Instruction*);
         void emit_op_jneq_ptr(Instruction*);
         void emit_op_jless(Instruction*);

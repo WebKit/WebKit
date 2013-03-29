@@ -1,3 +1,41 @@
+2013-03-28  Geoffrey Garen  <ggaren@apple.com>
+
+        Simplified the bytecode by removing op_jmp_scopes
+        https://bugs.webkit.org/show_bug.cgi?id=113545
+
+        Reviewed by Filip Pizlo.
+
+        We already have op_pop_scope and op_jmp, so we don't need op_jmp_scopes.
+        Using op_jmp_scopes was also adding a "jump to self" to codegen for
+        return statements, which was pretty silly.
+
+        * JavaScriptCore.order:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dumpBytecode):
+        * bytecode/Opcode.h:
+        (JSC::padOpcodeName):
+        * bytecode/PreciseJumpTargets.cpp:
+        (JSC::computePreciseJumpTargets):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitComplexPopScopes):
+        (JSC::BytecodeGenerator::emitPopScopes):
+        * bytecompiler/BytecodeGenerator.h:
+        (BytecodeGenerator):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ContinueNode::emitBytecode):
+        (JSC::BreakNode::emitBytecode):
+        (JSC::ReturnNode::emitBytecode):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        * jit/JITOpcodes32_64.cpp:
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        * llint/LLIntSlowPaths.cpp:
+        * llint/LLIntSlowPaths.h:
+        * llint/LowLevelInterpreter.asm:
+
 2013-03-28  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Safari hangs during test262 run in CodeCache::pruneSlowCase

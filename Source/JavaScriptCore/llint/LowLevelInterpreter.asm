@@ -973,12 +973,6 @@ _llint_op_put_getter_setter:
     dispatch(5)
 
 
-_llint_op_jmp_scopes:
-    traceExecution()
-    callSlowPath(_llint_slow_path_jmp_scopes)
-    dispatch(0)
-
-
 _llint_op_loop_if_true:
     traceExecution()
     jumpTrueOrFalse(
