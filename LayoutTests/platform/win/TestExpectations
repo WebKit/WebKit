@@ -433,6 +433,10 @@ transitions/change-values-during-transition.html
 # Sometimes times out http://webkit.org/b/48457
 fast/workers/storage/use-same-database-in-page-and-workers.html
 
+webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ]
+webkit.org/b/106415 fast/workers/worker-document-leak.html [ Pass Failure ]
+webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
+
 # Times out on apple-windows-3 http://webkit.org/b/48750
 fast/frames/sandboxed-iframe-storage.html
 
