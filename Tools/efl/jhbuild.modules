@@ -109,7 +109,7 @@
              md5sum="736a03daa9dc5873047d4eb4a9c22a16"/>
   </autotools>
 
-  <autotools id="libgcrypt" autogen-sh="./autogen.sh; configure">
+  <autotools id="libgcrypt" autogen-sh="configure">
     <dependencies>
       <dep package="libgpg-error"/>
     </dependencies>

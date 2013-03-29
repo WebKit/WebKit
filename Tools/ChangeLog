@@ -1,3 +1,10 @@
+2013-03-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. Fix build break when running --update-efl in WebKit EFL.
+
+        * efl/jhbuild.modules: Remove to run autogen.sh in libgcrypt autogen. It causes configuration fail
+        in libgcrypt build.
+
 2013-03-28  Lucas Forschler  <lforschler@apple.com>
 
         Disable running tests on Mac EWS until we can find a way to keep the queue at a reasonable length.
