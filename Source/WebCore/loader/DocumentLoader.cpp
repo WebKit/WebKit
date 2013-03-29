@@ -1286,8 +1286,12 @@ const KURL& DocumentLoader::unreachableURL() const
 
 void DocumentLoader::setDefersLoading(bool defers)
 {
-    if (mainResourceLoader())
+    // Multiple frames may be loading the same main resource simultaneously. If deferral state changes,
+    // each frame's DocumentLoader will try to send a setDefersLoading() to the same underlying ResourceLoader. Ensure only
+    // the "owning" DocumentLoader does so, as setDefersLoading() is not resilient to setting the same value repeatedly.
+    if (mainResourceLoader() && mainResourceLoader()->documentLoader() == this)
         mainResourceLoader()->setDefersLoading(defers);
+
     setAllDefersLoading(m_subresourceLoaders, defers);
     setAllDefersLoading(m_plugInStreamLoaders, defers);
     if (!defers)
