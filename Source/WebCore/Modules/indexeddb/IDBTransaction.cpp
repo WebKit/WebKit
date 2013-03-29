@@ -362,11 +362,10 @@ const AtomicString& IDBTransaction::modeToString(IndexedDB::TransactionMode mode
     case IndexedDB::TransactionVersionChange:
         return IDBTransaction::modeVersionChange();
         break;
-
-    default:
-        ASSERT_NOT_REACHED();
-        return IDBTransaction::modeReadOnly();
     }
+
+    ASSERT_NOT_REACHED();
+    return IDBTransaction::modeReadOnly();
 }
 
 const AtomicString& IDBTransaction::interfaceName() const
