@@ -70,6 +70,9 @@ WebInspector.FlameChart = function(cpuProfileView)
     this._anchorElement.className = "item-anchor";
     this._linkifier = new WebInspector.Linkifier();
     this._highlightedNodeIndex = -1;
+
+    if (!WebInspector.FlameChart._colorGenerator)
+        WebInspector.FlameChart._colorGenerator = new WebInspector.FlameChart.ColorGenerator();
 }
 
 /**
@@ -184,6 +187,33 @@ WebInspector.FlameChart.Events = {
     SelectedNode: "SelectedNode"
 }
 
+/**
+ * @constructor
+ */
+WebInspector.FlameChart.ColorGenerator = function()
+{
+    this._colorPairs = {};
+    this._currentColorIndex = 0;
+}
+
+WebInspector.FlameChart.ColorGenerator.prototype = {
+    /**
+     * @param {!string} id
+     */
+    _colorPairForID: function(id)
+    {
+        var colorPairs = this._colorPairs;
+        var colorPair = colorPairs[id];
+        if (!colorPair) {
+            var currentColorIndex = ++this._currentColorIndex;
+            var hue = (currentColorIndex * 5 + 11 * (currentColorIndex % 2)) % 360;
+            colorPairs[id] = colorPair = {highlighted: "hsla(" + hue + ", 100%, 33%, 0.7)", normal: "hsla(" + hue + ", 100%, 66%, 0.7)"};
+        }
+        return colorPair;
+    }
+}
+
+
 WebInspector.FlameChart.prototype = {
     _onWindowChanged: function(event)
     {
@@ -253,19 +283,14 @@ WebInspector.FlameChart.prototype = {
 
         var levelOffsets = /** @type {Array.<!number>} */ ([0]);
         var levelExitIndexes = /** @type {Array.<!number>} */ ([0]);
+        var colorGenerator = WebInspector.FlameChart._colorGenerator;
 
         while (stack.length) {
             var level = levelOffsets.length - 1;
             var node = stack.pop();
             var offset = levelOffsets[level];
 
-            var functionUID = node.functionName + ":" + node.url + ":" + node.lineNumber;
-            var colorPair = functionColorPairs[functionUID];
-            if (!colorPair) {
-                ++currentColorIndex;
-                var hue = (currentColorIndex * 5 + 11 * (currentColorIndex % 2)) % 360;
-                functionColorPairs[functionUID] = colorPair = {highlighted: "hsl(" + hue + ", 100%, 33%)", normal: "hsl(" + hue + ", 100%, 66%)"};
-            }
+            var colorPair = colorGenerator._colorPairForID(node.functionName + ":" + node.url + ":" + node.lineNumber);
 
             entries.push({
                 colorPair: colorPair,
@@ -274,7 +299,6 @@ WebInspector.FlameChart.prototype = {
                 startTime: offset,
                 node: node
             });
-
 
             ++index;
 
@@ -318,6 +342,7 @@ WebInspector.FlameChart.prototype = {
 
         var openIntervals = [];
         var stackTrace = [];
+        var colorGenerator = WebInspector.FlameChart._colorGenerator;
         for (var sampleIndex = 0; sampleIndex < samplesCount; sampleIndex++) {
             var node = idToNode[samples[sampleIndex]];
             stackTrace.length = 0;
@@ -341,13 +366,7 @@ WebInspector.FlameChart.prototype = {
                 continue;
 
             while (node) {
-                var functionUID = node.functionName + ":" + node.url + ":" + node.lineNumber;
-                var colorPair = functionColorPairs[functionUID];
-                if (!colorPair) {
-                    ++currentColorIndex;
-                    var hue = (currentColorIndex * 5 + 11 * (currentColorIndex % 2)) % 360;
-                    functionColorPairs[functionUID] = colorPair = {highlighted: "hsl(" + hue + ", 100%, 33%)", normal: "hsl(" + hue + ", 100%, 66%)"};
-                }
+                var colorPair = colorGenerator._colorPairForID(node.functionName + ":" + node.url + ":" + node.lineNumber);
 
                 entries.push({
                     colorPair: colorPair,
@@ -463,7 +482,7 @@ WebInspector.FlameChart.prototype = {
         if (!timelineData)
             return -1;
         var timelineEntries = timelineData.entries;
-        var cursorTime = (x + this._pixelWindowLeft) * this._pixelToTime;
+        var cursorTime = (x + this._pixelWindowLeft - this._paddingLeft) * this._pixelToTime;
         var cursorLevel = Math.floor((this._canvas.height - y) / this._barHeight);
 
         for (var i = 0; i < timelineEntries.length; ++i) {
