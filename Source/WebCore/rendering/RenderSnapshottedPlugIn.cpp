@@ -46,6 +46,7 @@ namespace WebCore {
 RenderSnapshottedPlugIn::RenderSnapshottedPlugIn(HTMLPlugInImageElement* element)
     : RenderEmbeddedObject(element)
     , m_snapshotResource(RenderImageResource::create())
+    , m_isPotentialMouseActivation(false)
 {
     m_snapshotResource->initialize(this);
 }
@@ -154,17 +155,27 @@ void RenderSnapshottedPlugIn::handleEvent(Event* event)
 
     MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
 
-    if (event->type() == eventNames().clickEvent) {
-        if (mouseEvent->button() != LeftButton)
-            return;
+    // If we're a snapshotted plugin, we want to make sure we activate on
+    // clicks even if the page is preventing our default behaviour. Otherwise
+    // we can never restart. One we do restart, then the page will happily
+    // block the new plugin in the normal renderer. All this means we have to
+    // be on the lookout for a mouseup event that comes after a mousedown
+    // event. The code below is not completely foolproof, but the worst that
+    // could happen is that a snapshotted plugin restarts.
 
+    if (event->type() == eventNames().mouseoutEvent)
+        m_isPotentialMouseActivation = false;
+
+    if (mouseEvent->button() != LeftButton)
+        return;
+
+    if (event->type() == eventNames().clickEvent || (m_isPotentialMouseActivation && event->type() == eventNames().mouseupEvent)) {
+        m_isPotentialMouseActivation = false;
         plugInImageElement()->setDisplayState(HTMLPlugInElement::RestartingWithPendingMouseClick);
         plugInImageElement()->userDidClickSnapshot(mouseEvent);
         event->setDefaultHandled();
     } else if (event->type() == eventNames().mousedownEvent) {
-        if (mouseEvent->button() != LeftButton)
-            return;
-
+        m_isPotentialMouseActivation = true;
         event->setDefaultHandled();
     }
 }

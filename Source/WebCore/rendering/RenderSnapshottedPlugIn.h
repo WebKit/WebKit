@@ -58,6 +58,7 @@ private:
     virtual void layout() OVERRIDE;
 
     OwnPtr<RenderImageResource> m_snapshotResource;
+    bool m_isPotentialMouseActivation;
 };
 
 inline RenderSnapshottedPlugIn* toRenderSnapshottedPlugIn(RenderObject* object)
