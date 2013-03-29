@@ -1,0 +1,25 @@
+.articleInFlow {
+    -webkit-flow-into: flow;
+}
+
+.articleNone {
+    display: none;
+}
+
+.region {
+    -webkit-flow-from: flow;
+    border: 1px solid black;
+    -webkit-region-overflow: break;
+}
+
+.contentParagraph {
+    font-size: 16px;
+}
+
+.breakAfter {
+    -webkit-region-break-after: always;
+}
+
+.regionContainer {
+
+}

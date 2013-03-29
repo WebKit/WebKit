@@ -1,3 +1,35 @@
+2013-03-29  Andrei Bucur  <abucur@adobe.com>
+
+        [CSS Regions] Add performance tests
+        https://bugs.webkit.org/show_bug.cgi?id=113303
+
+        Reviewed by Antti Koivisto.
+
+        Add simple performance tests for regions, without nested named flows: a region chain and a flow article.
+        The regions.js script is used to generate the tests and can set the following parameters: the number of regions,
+        the number of paragraphs, the regions width, height, max-height and the propability of a forced break after a paragraph.
+
+        The tests are skipped for now. They should be enabled once the regions performance is stable enough to create a baseline.
+
+        * Layout/RegionsAuto.html: Added. A few regions with a short article. The regions have auto-height and some
+        paragraphs (80%) have forced breaks after. Stress test for the auto-height algorithm.
+        * Layout/RegionsAutoMaxHeight.html: Added. A lot of regions with auto-height and max-height. Tests the impact of
+        max-height on the auto-height algorithm.
+        * Layout/RegionsFixed.html: Added. A lot of regions with a long article. Some paragraphs (50%) have forced breaks after.
+        Stress test for the regions layout algorithm.
+        * Layout/RegionsFixedShort.html: Added. A lot of short regions with a long content. Tests the impact of unforced breaks
+        on the layout speed.
+        * Layout/resources/regions.css: Added.
+        (.articleInFlow):
+        (.articleNone):
+        (.region):
+        (.contentParagraph):
+        (.breakAfter):
+        (.regionContainer):
+        * Layout/resources/regions.js: Added.
+        (.):
+        * Skipped:
+
 2013-03-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a performance tests for selecting all content in a document

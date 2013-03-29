@@ -76,3 +76,9 @@ Canvas/drawimage.html
 # necessary due to https://bugs.webkit.org/show_bug.cgi?id=107236
 # but is still useful for testing the threaded parser.
 Parser/html-parser-threaded.html
+
+# Skip the regions performance tests for now.
+Layout/RegionsAuto.html
+Layout/RegionsAutoMaxHeight.html
+Layout/RegionsFixed.html
+Layout/RegionsFixedShort.html

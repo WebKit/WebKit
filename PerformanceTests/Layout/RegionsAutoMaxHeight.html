@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="resources/regions.css" TYPE="text/css"></link>
+        <script src="../resources/runner.js"></script>
+        <script src="resources/regions.js"></script>
+        <style type="text/css">
+        #log {
+            position: fixed;
+        }
+        </style>
+    </head>
+    <body>
+        <pre id="log"></pre>
+        <script>
+            PerfTestRunner.measureTime(createRegionsTest("300px", "auto", 1200, 400, "200px", 0.5));
+        </script>
+    </body>
+</html>
