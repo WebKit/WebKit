@@ -115,7 +115,7 @@ public:
 
     void hideHighlight();
     void highlightNode(Node*, const HighlightConfig&);
-    void highlightRect(PassOwnPtr<IntRect>, const HighlightConfig&);
+    void highlightQuad(PassOwnPtr<FloatQuad>, const HighlightConfig&);
 
     Node* highlightedNode() const;
 
@@ -127,7 +127,7 @@ private:
 
     void drawGutter();
     void drawNodeHighlight();
-    void drawRectHighlight();
+    void drawQuadHighlight();
     void drawPausedInDebuggerMessage();
     Page* overlayPage();
     void reset(const IntSize& viewportSize, const IntSize& frameViewFullSize);
@@ -139,9 +139,9 @@ private:
     String m_pausedInDebuggerMessage;
     RefPtr<Node> m_highlightNode;
     HighlightConfig m_nodeHighlightConfig;
-    OwnPtr<IntRect> m_highlightRect;
+    OwnPtr<FloatQuad> m_highlightQuad;
     OwnPtr<Page> m_overlayPage;
-    HighlightConfig m_rectHighlightConfig;
+    HighlightConfig m_quadHighlightConfig;
     IntSize m_size;
 };
 

@@ -1769,6 +1769,14 @@
                 "description": "A structure holding an RGBA color."
             },
             {
+                "id": "Quad",
+                "type": "array",
+                "items": { "type": "number" },
+                "minItems": 8,
+                "maxItems": 8,
+                "description": "An array of quad vertices, x immediately followed by y for each point, points clock-wise."
+            },
+            {
                 "id": "HighlightConfig",
                 "type": "object",
                 "properties": [
@@ -1964,6 +1972,15 @@
                     { "name": "outlineColor", "$ref": "RGBA", "optional": true, "description": "The highlight outline color (default: transparent)." }
                 ],
                 "description": "Highlights given rectangle. Coordinates are absolute with respect to the main frame viewport."
+            },
+            {
+                "name": "highlightQuad",
+                "parameters": [
+                    { "name": "quad", "$ref": "Quad", "description": "Quad to highlight" },
+                    { "name": "color", "$ref": "RGBA", "optional": true, "description": "The highlight fill color (default: transparent)." },
+                    { "name": "outlineColor", "$ref": "RGBA", "optional": true, "description": "The highlight outline color (default: transparent)." }
+                ],
+                "description": "Highlights given quad. Coordinates are absolute with respect to the main frame viewport."
             },
             {
                 "name": "highlightNode",

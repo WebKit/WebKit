@@ -182,14 +182,13 @@ static void buildNodeHighlight(Node* node, const HighlightConfig& highlightConfi
     }
 }
 
-static void buildRectHighlight(Page* page, IntRect* rect, const HighlightConfig& highlightConfig, Highlight *highlight)
+static void buildQuadHighlight(Page* page, const FloatQuad& quad, const HighlightConfig& highlightConfig, Highlight *highlight)
 {
     if (!page)
         return;
     highlight->setDataFromConfig(highlightConfig);
-    FloatRect highlightRect(*rect);
     highlight->type = HighlightTypeRects;
-    highlight->quads.append(highlightRect);
+    highlight->quads.append(quad);
 }
 
 } // anonymous namespace
@@ -206,7 +205,7 @@ InspectorOverlay::~InspectorOverlay()
 
 void InspectorOverlay::paint(GraphicsContext& context)
 {
-    if (m_pausedInDebuggerMessage.isNull() && !m_highlightNode && !m_highlightRect && m_size.isEmpty())
+    if (m_pausedInDebuggerMessage.isNull() && !m_highlightNode && !m_highlightQuad && m_size.isEmpty())
         return;
     GraphicsContextStateSaver stateSaver(context);
     FrameView* view = overlayPage()->mainFrame()->view();
@@ -222,14 +221,14 @@ void InspectorOverlay::drawOutline(GraphicsContext* context, const LayoutRect& r
 
 void InspectorOverlay::getHighlight(Highlight* highlight) const
 {
-    if (!m_highlightNode && !m_highlightRect)
+    if (!m_highlightNode && !m_highlightQuad)
         return;
 
     highlight->type = HighlightTypeRects;
     if (m_highlightNode)
         buildNodeHighlight(m_highlightNode.get(), m_nodeHighlightConfig, highlight);
     else
-        buildRectHighlight(m_page, m_highlightRect.get(), m_rectHighlightConfig, highlight);
+        buildQuadHighlight(m_page, *m_highlightQuad, m_quadHighlightConfig, highlight);
 }
 
 void InspectorOverlay::resize(const IntSize& size)
@@ -247,7 +246,7 @@ void InspectorOverlay::setPausedInDebuggerMessage(const String* message)
 void InspectorOverlay::hideHighlight()
 {
     m_highlightNode.clear();
-    m_highlightRect.clear();
+    m_highlightQuad.clear();
     update();
 }
 
@@ -258,10 +257,10 @@ void InspectorOverlay::highlightNode(Node* node, const HighlightConfig& highligh
     update();
 }
 
-void InspectorOverlay::highlightRect(PassOwnPtr<IntRect> rect, const HighlightConfig& highlightConfig)
+void InspectorOverlay::highlightQuad(PassOwnPtr<FloatQuad> quad, const HighlightConfig& highlightConfig)
 {
-    m_rectHighlightConfig = highlightConfig;
-    m_highlightRect = rect;
+    m_quadHighlightConfig = highlightConfig;
+    m_highlightQuad = quad;
     update();
 }
 
@@ -272,7 +271,7 @@ Node* InspectorOverlay::highlightedNode() const
 
 void InspectorOverlay::update()
 {
-    if (!m_highlightNode && !m_highlightRect && m_pausedInDebuggerMessage.isNull() && m_size.isEmpty()) {
+    if (!m_highlightNode && !m_highlightQuad && m_pausedInDebuggerMessage.isNull() && m_size.isEmpty()) {
         m_client->hideHighlight();
         return;
     }
@@ -295,7 +294,7 @@ void InspectorOverlay::update()
     // Include scrollbars to avoid masking them by the gutter.
     drawGutter();
     drawNodeHighlight();
-    drawRectHighlight();
+    drawQuadHighlight();
     drawPausedInDebuggerMessage();
 
     // Position DOM elements.
@@ -408,14 +407,14 @@ void InspectorOverlay::drawNodeHighlight()
     evaluateInOverlay("drawNodeHighlight", highlightObject);
 }
 
-void InspectorOverlay::drawRectHighlight()
+void InspectorOverlay::drawQuadHighlight()
 {
-    if (!m_highlightRect)
+    if (!m_highlightQuad)
         return;
 
     Highlight highlight;
-    buildRectHighlight(m_page, m_highlightRect.get(), m_rectHighlightConfig, &highlight);
-    evaluateInOverlay("drawRectHighlight", buildObjectForHighlight(m_page->mainFrame()->view(), highlight));
+    buildQuadHighlight(m_page, *m_highlightQuad, m_quadHighlightConfig, &highlight);
+    evaluateInOverlay("drawQuadHighlight", buildObjectForHighlight(m_page->mainFrame()->view(), highlight));
 }
 
 void InspectorOverlay::drawPausedInDebuggerMessage()
@@ -505,9 +504,9 @@ void InspectorOverlay::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
     info.addMember(m_pausedInDebuggerMessage, "pausedInDebuggerMessage");
     info.addMember(m_highlightNode, "highlightNode");
     info.addMember(m_nodeHighlightConfig, "nodeHighlightConfig");
-    info.addMember(m_highlightRect, "highlightRect");
+    info.addMember(m_highlightQuad, "highlightQuad");
     info.addMember(m_overlayPage, "overlayPage");
-    info.addMember(m_rectHighlightConfig, "rectHighlightConfig");
+    info.addMember(m_quadHighlightConfig, "quadHighlightConfig");
     info.addMember(m_size, "size");
 }
 

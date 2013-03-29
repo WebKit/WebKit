@@ -151,6 +151,26 @@ static Color parseConfigColor(const String& fieldName, InspectorObject* configOb
     return parseColor(&colorObject);
 }
 
+static bool parseQuad(const RefPtr<InspectorArray>& quadArray, FloatQuad* quad)
+{
+    if (!quadArray)
+        return false;
+    const size_t coordinatesInQuad = 8;
+    double coordinates[coordinatesInQuad];
+    if (quadArray->length() != coordinatesInQuad)
+        return false;
+    for (size_t i = 0; i < coordinatesInQuad; ++i) {
+        if (!quadArray->get(i)->asNumber(coordinates + i))
+            return false;
+    }
+    quad->setP1(FloatPoint(coordinates[0], coordinates[1]));
+    quad->setP2(FloatPoint(coordinates[2], coordinates[3]));
+    quad->setP3(FloatPoint(coordinates[4], coordinates[5]));
+    quad->setP4(FloatPoint(coordinates[6], coordinates[7]));
+
+    return true;
+}
+
 class RevalidateStyleAttributeTask {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -1103,10 +1123,26 @@ void InspectorDOMAgent::setInspectModeEnabled(ErrorString* errorString, bool ena
 
 void InspectorDOMAgent::highlightRect(ErrorString*, int x, int y, int width, int height, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor)
 {
+    OwnPtr<FloatQuad> quad = adoptPtr(new FloatQuad(FloatRect(x, y, width, height)));
+    innerHighlightQuad(quad.release(), color, outlineColor);
+}
+
+void InspectorDOMAgent::highlightQuad(ErrorString* errorString, const RefPtr<InspectorArray>& quadArray, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor)
+{
+    OwnPtr<FloatQuad> quad = adoptPtr(new FloatQuad());
+    if (!parseQuad(quadArray, quad.get())) {
+        *errorString = "Invalid Quad format";
+        return;
+    }
+    innerHighlightQuad(quad.release(), color, outlineColor);
+}
+
+void InspectorDOMAgent::innerHighlightQuad(PassOwnPtr<FloatQuad> quad, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor)
+{
     OwnPtr<HighlightConfig> highlightConfig = adoptPtr(new HighlightConfig());
     highlightConfig->content = parseColor(color);
     highlightConfig->contentOutline = parseColor(outlineColor);
-    m_overlay->highlightRect(adoptPtr(new IntRect(x, y, width, height)), *highlightConfig);
+    m_overlay->highlightQuad(quad, *highlightConfig);
 }
 
 void InspectorDOMAgent::highlightNode(ErrorString* errorString, const RefPtr<InspectorObject>& highlightInspectorObject, const int* nodeId, const String* objectId)
