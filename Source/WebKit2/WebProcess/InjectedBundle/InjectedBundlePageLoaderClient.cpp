@@ -26,6 +26,7 @@
 #include "config.h"
 #include "InjectedBundlePageLoaderClient.h"
 
+#include "ImmutableArray.h"
 #include "InjectedBundleDOMWindowExtension.h"
 #include "InjectedBundleScriptWorld.h"
 #include "WKAPICast.h"
@@ -312,6 +313,22 @@ bool InjectedBundlePageLoaderClient::shouldForceUniversalAccessFromLocalURL(WebP
         return false;
 
     return m_client.shouldForceUniversalAccessFromLocalURL(toAPI(page), toAPI(url.impl()), m_client.clientInfo);
+}
+
+void InjectedBundlePageLoaderClient::featuresUsedInPage(WebPage* page, const Vector<String>& features)
+{
+    if (!m_client.featuresUsedInPage)
+        return;
+
+    Vector<RefPtr<APIObject> > featureStringObjectsVector;
+
+    Vector<String>::const_iterator end = features.end();
+    for (Vector<String>::const_iterator it = features.begin(); it != end; ++it)
+        featureStringObjectsVector.append(WebString::create((*it)));
+
+    RefPtr<ImmutableArray> featureStringObjectsArray = ImmutableArray::adopt(featureStringObjectsVector);
+
+    return m_client.featuresUsedInPage(toAPI(page), toAPI(featureStringObjectsArray.get()), m_client.clientInfo);
 }
 
 } // namespace WebKit

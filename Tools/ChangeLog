@@ -1,3 +1,13 @@
+2013-03-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Expose FeatureObserver data to WebKit clients
+        https://bugs.webkit.org/show_bug.cgi?id=113613
+
+        Reviewed by Sam Weinig.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage): Added an initializer for featuresUsedInPage.
+
 2013-03-29  Greg Hughes  <ghughes@apple.com>
 
         Allow multiple searchKeys to be passed to AXUIElementCopyParameterizedAttributeValue

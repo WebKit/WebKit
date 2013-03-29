@@ -1,3 +1,25 @@
+2013-03-29  Alexey Proskuryakov  <ap@apple.com>
+
+        Expose FeatureObserver data to WebKit clients
+        https://bugs.webkit.org/show_bug.cgi?id=113613
+
+        Reviewed by Sam Weinig.
+
+        * Shared/APIClientTraits.cpp:
+        * Shared/APIClientTraits.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::featuresUsedInPage):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        Added a new injected bundle client call, featuresUsedInPage.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::close):
+        (WebKit::WebPage::didCommitLoad):
+        (WebKit::WebPage::reportUsedFeatures):
+        * WebProcess/WebPage/WebPage.h:
+        Report features used in a page when navigating away, or when closing.
+
 2013-03-29  Brady Eidson  <beidson@apple.com>
 
         Crash when "willSendRequest" causes the ResourceLoader to be cancelled.

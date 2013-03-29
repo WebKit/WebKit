@@ -32,6 +32,7 @@
 #include <JavaScriptCore/JSBase.h>
 #include <WebCore/LayoutMilestones.h>
 #include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 class DOMWindowExtension;
@@ -83,6 +84,8 @@ public:
     void willDestroyGlobalObjectForDOMWindowExtension(WebPage*, WebCore::DOMWindowExtension*);
 
     bool shouldForceUniversalAccessFromLocalURL(WebPage*, const String& url);
+
+    void featuresUsedInPage(WebPage*, const Vector<String>&);
 };
 
 } // namespace WebKit

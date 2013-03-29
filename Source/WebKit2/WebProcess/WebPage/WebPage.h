@@ -830,6 +830,8 @@ private:
     static PluginView* focusedPluginViewForFrame(WebCore::Frame*);
     static PluginView* pluginViewForFrame(WebCore::Frame*);
 
+    void reportUsedFeatures();
+
     OwnPtr<WebCore::Page> m_page;
     RefPtr<WebFrame> m_mainFrame;
     RefPtr<InjectedBundleBackForwardList> m_backForwardList;

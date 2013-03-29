@@ -110,6 +110,7 @@ typedef void (*WKBundlePageDidReconnectDOMWindowExtensionToGlobalObjectCallback)
 typedef void (*WKBundlePageWillDestroyGlobalObjectForDOMWindowExtensionCallback)(WKBundlePageRef page, WKBundleDOMWindowExtensionRef, const void* clientInfo);
 typedef bool (*WKBundlePageShouldForceUniversalAccessFromLocalURLCallback)(WKBundlePageRef, WKStringRef url, const void* clientInfo);
 typedef void (*WKBundlePageDidLayoutCallback)(WKBundlePageRef page, WKLayoutMilestones milestones, WKTypeRef* userData, const void *clientInfo);
+typedef void (*WKBundlePageFeaturesUsedInPageCallback)(WKBundlePageRef page, WKArrayRef featureStrings, const void *clientInfo);
 
 struct WKBundlePageLoaderClient {
     int                                                                     version;
@@ -155,10 +156,13 @@ struct WKBundlePageLoaderClient {
 
     // Version 4
     WKBundlePageDidLayoutCallback                                           didLayout;
+
+    // Version 5
+    WKBundlePageFeaturesUsedInPageCallback                                  featuresUsedInPage;
 };
 typedef struct WKBundlePageLoaderClient WKBundlePageLoaderClient;
 
-enum { kWKBundlePageLoaderClientCurrentVersion = 4 };
+enum { kWKBundlePageLoaderClientCurrentVersion = 5 };
 
 enum {
     WKBundlePagePolicyActionPassThrough,

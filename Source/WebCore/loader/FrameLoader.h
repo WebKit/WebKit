@@ -286,6 +286,8 @@ public:
 
     NetworkingContext* networkingContext() const;
 
+    const KURL& previousURL() const { return m_previousURL; }
+
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
@@ -447,7 +449,7 @@ private:
 
     RefPtr<FrameNetworkingContext> m_networkingContext;
 
-    KURL m_previousUrl;
+    KURL m_previousURL;
     RefPtr<HistoryItem> m_requestedHistoryItem;
 };
 

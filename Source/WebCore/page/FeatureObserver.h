@@ -115,6 +115,8 @@ public:
     static void observe(DOMWindow*, Feature);
     void didCommitLoad();
 
+    const BitVector* accumulatedFeatureBits() const { return m_featureBits.get(); }
+
 private:
     void didObserve(Feature feature)
     {
