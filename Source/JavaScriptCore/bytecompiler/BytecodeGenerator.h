@@ -354,11 +354,11 @@ namespace JSC {
             return emitNode(0, n);
         }
 
-        void emitNodeInConditionContext(ExpressionNode* n, Label* trueTarget, Label* falseTarget, bool fallThroughMeansTrue)
+        void emitNodeInConditionContext(ExpressionNode* n, Label* trueTarget, Label* falseTarget, FallThroughMode fallThroughMode)
         {
             addLineInfo(n->lineNo());
             if (m_stack.isSafeToRecurse())
-                n->emitBytecodeInConditionContext(*this, trueTarget, falseTarget, fallThroughMeansTrue);
+                n->emitBytecodeInConditionContext(*this, trueTarget, falseTarget, fallThroughMode);
             else
                 emitThrowExpressionTooDeepException();
         }

@@ -70,6 +70,12 @@ namespace JSC {
         OpLogicalOr
     };
 
+    enum FallThroughMode {
+        FallThroughMeansTrue = 0,
+        FallThroughMeansFalse = 1
+    };
+    inline FallThroughMode invert(FallThroughMode fallThroughMode) { return static_cast<FallThroughMode>(!fallThroughMode); }
+
     typedef HashSet<RefPtr<StringImpl>, IdentifierRepHash> IdentifierSet;
 
     namespace DeclarationStacks {
@@ -152,9 +158,8 @@ namespace JSC {
         virtual bool isSimpleArray() const { return false; }
         virtual bool isAdd() const { return false; }
         virtual bool isSubtract() const { return false; }
-        virtual bool hasConditionContextCodegen() const { return false; }
 
-        virtual void emitBytecodeInConditionContext(BytecodeGenerator&, Label*, Label*, bool) { RELEASE_ASSERT_NOT_REACHED(); }
+        virtual void emitBytecodeInConditionContext(BytecodeGenerator&, Label*, Label*, FallThroughMode);
 
         virtual ExpressionNode* stripUnaryPlus() { return this; }
 
@@ -732,8 +737,7 @@ namespace JSC {
     public:
         LogicalNotNode(const JSTokenLocation&, ExpressionNode*);
     private:
-        void emitBytecodeInConditionContext(BytecodeGenerator&, Label* trueTarget, Label* falseTarget, bool fallThroughMeansTrue);
-        virtual bool hasConditionContextCodegen() const { return expr()->hasConditionContextCodegen(); }
+        void emitBytecodeInConditionContext(BytecodeGenerator&, Label* trueTarget, Label* falseTarget, FallThroughMode);
     };
 
     class BinaryOpNode : public ExpressionNode {
@@ -895,8 +899,7 @@ namespace JSC {
 
     private:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
-        void emitBytecodeInConditionContext(BytecodeGenerator&, Label* trueTarget, Label* falseTarget, bool fallThroughMeansTrue);
-        virtual bool hasConditionContextCodegen() const { return true; }
+        void emitBytecodeInConditionContext(BytecodeGenerator&, Label* trueTarget, Label* falseTarget, FallThroughMode);
 
         ExpressionNode* m_expr1;
         ExpressionNode* m_expr2;

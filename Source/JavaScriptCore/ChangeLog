@@ -1,3 +1,45 @@
+2013-03-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Simplified bytecode generation by unforking "condition context" codegen
+        https://bugs.webkit.org/show_bug.cgi?id=113554
+
+        Reviewed by Mark Hahnenberg.
+
+        Now, a node that establishes a condition context can always ask its child
+        nodes to generate into that context.
+
+        This has a few advantages:
+
+        (*) Removes a bunch of code;
+
+        (*) Optimizes a few missed cases like "if (!(x < 2))", "if (!!x)", and
+        "if (!x || !y)";
+
+        (*) Paves the way to removing more opcodes.
+
+        * bytecode/Opcode.h:
+        (JSC): Separated out the branching opcodes for clarity.
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ExpressionNode::emitBytecodeInConditionContext): All expressions
+        can be emitted in a condition context now -- the default behavior is
+        to branch based on the expression's value.
+
+        (JSC::LogicalNotNode::emitBytecodeInConditionContext):
+        (JSC::LogicalOpNode::emitBytecodeInConditionContext):
+        (JSC::ConditionalNode::emitBytecode):
+        (JSC::IfNode::emitBytecode):
+        (JSC::IfElseNode::emitBytecode):
+        (JSC::DoWhileNode::emitBytecode):
+        (JSC::WhileNode::emitBytecode):
+        (JSC::ForNode::emitBytecode):
+        * parser/Nodes.h:
+        (JSC::ExpressionNode::isSubtract):
+        (ExpressionNode):
+        (LogicalNotNode):
+        (LogicalOpNode): Removed lots of code for handling expressions
+        that couldn't generate into a condition context because all expressions
+        can now.
+
 2013-03-28  Geoffrey Garen  <ggaren@apple.com>
 
         Simplified the bytecode by removing op_loop and op_loop_if_*
