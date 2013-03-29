@@ -61,13 +61,11 @@ WebInspector.FlameChart = function(cpuProfileView)
     this._barHeight = 15;
     this._minWidth = 1;
     this._paddingLeft = 15;
-    this._canvas.addEventListener("mousemove", this._onMouseMove.bind(this), false);
     this._canvas.addEventListener("mousewheel", this._onMouseWheel.bind(this), false);
     this.element.addEventListener("click", this._onClick.bind(this), false);
     this._popoverHelper = new WebInspector.PopoverHelper(this._chartContainer, this._getPopoverAnchor.bind(this), this._showPopover.bind(this));
     this._popoverHelper.setTimeout(250);
-    this._anchorElement = this._chartContainer.createChild("span");
-    this._anchorElement.className = "item-anchor";
+    this._anchorBox = new AnchorBox(0, 0, 0, 0);
     this._linkifier = new WebInspector.Linkifier();
     this._highlightedNodeIndex = -1;
 
@@ -393,11 +391,36 @@ WebInspector.FlameChart.prototype = {
         return this._timelineData;
     },
 
-    _getPopoverAnchor: function()
+    _getPopoverAnchor: function(element, event)
     {
-        if (this._highlightedNodeIndex === -1 || this._isDragging)
+        if (this._isDragging)
             return null;
-        return this._anchorElement;
+
+        var nodeIndex = this._coordinatesToNodeIndex(event.offsetX, event.offsetY);
+
+        this._highlightedNodeIndex = nodeIndex;
+        this.update();
+
+        if (nodeIndex === -1)
+            return null;
+
+        var timelineEntries = this._timelineData.entries;
+
+        var anchorLeft = Math.floor(timelineEntries[nodeIndex].startTime * this._timeToPixel - this._pixelWindowLeft + this._paddingLeft);
+        var anchorTop = Math.floor(this._canvas.height - (timelineEntries[nodeIndex].depth + 1) * this._barHeight);
+
+        var anchorWidth = Math.floor(timelineEntries[nodeIndex].duration * this._timeToPixel);
+        if (anchorLeft < 0) {
+            anchorWidth += anchorLeft;
+            anchorLeft = 0;
+        }
+
+        anchorLeft = Number.constrain(anchorLeft, 0, this._canvas.width);
+        anchorWidth = Number.constrain(anchorWidth, 0, this._canvas.width - anchorLeft);
+
+        var canvasOffsetLeft = event.pageX - event.offsetX;
+        var canvasOffsetTop = event.pageY - event.offsetY;
+        return new AnchorBox(anchorLeft + canvasOffsetLeft, anchorTop + canvasOffsetTop, anchorWidth, this._barHeight);
     },
 
     _showPopover: function(anchor, popover)
@@ -432,35 +455,6 @@ WebInspector.FlameChart.prototype = {
             return;
         var node = this._timelineData.entries[this._highlightedNodeIndex].node;
         this.dispatchEventToListeners(WebInspector.FlameChart.Events.SelectedNode, node);
-    },
-
-    _onMouseMove: function(e)
-    {
-        if (this._isDragging)
-            return;
-        var nodeIndex = this._coordinatesToNodeIndex(e.offsetX, e.offsetY);
-        if (nodeIndex === this._highlightedNodeIndex)
-            return;
-        this._highlightedNodeIndex = nodeIndex;
-        this.update();
-
-        if (nodeIndex === -1)
-            return;
-
-        var timelineEntries = this._timelineData.entries;
-
-        var anchorLeft = Math.floor(timelineEntries[nodeIndex].startTime * this._timeToPixel - this._pixelWindowLeft);
-        anchorLeft = Number.constrain(anchorLeft, 0, this._canvas.width);
-
-        var anchorWidth = Math.floor(timelineEntries[nodeIndex].duration * this._timeToPixel);
-
-        anchorWidth = Number.constrain(anchorWidth, 0, this._canvas.width - anchorLeft);
-
-        var style = this._anchorElement.style;
-        style.width = anchorWidth + "px";
-        style.height = this._barHeight + "px";
-        style.left = anchorLeft + "px";
-        style.top = Math.floor(this._canvas.height - (timelineEntries[nodeIndex].depth + 1) * this._barHeight) + "px";
     },
 
     _onMouseWheel: function(e)

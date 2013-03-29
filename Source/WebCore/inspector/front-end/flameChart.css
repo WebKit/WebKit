@@ -1,8 +1,3 @@
-.chart-container .item-anchor {
-    position: absolute;
-    z-index: -100;
-}
-
 .overview-container {
     overflow: hidden;
     position: absolute;
