@@ -1146,8 +1146,8 @@
 |       content
 |         <template>
 |           content
-|             <table>
 |             "Foo"
+|             <table>
 |   <body>
 
 #data
