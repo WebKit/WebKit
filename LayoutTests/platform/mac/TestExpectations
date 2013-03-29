@@ -1192,6 +1192,7 @@ webkit.org/b/82752 plugins/netscape-dom-access-and-reload.html [ Failure Pass ]
 # Asserts sometimes
 webkit.org/b/111902 [ Debug ] fast/frames/sandboxed-iframe-navigation-allowed.html [ Crash Pass ]
 webkit.org/b/111902 [ Debug ] fast/frames/sandboxed-iframe-plugins.html [ Crash Pass ]
+webkit.org/b/111902 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients.html [ Crash Pass ]
 
 # Flaky tests when run multi-process
 webkit.org/b/58192 fast/dom/frame-loading-via-document-write.html [ Failure Pass ]
