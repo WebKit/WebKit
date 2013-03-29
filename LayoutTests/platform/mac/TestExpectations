@@ -250,6 +250,9 @@ perf/
 # https://bugs.webkit.org/show_bug.cgi?id=42821
 animations/play-state.html
 
+webkit.org/b/113598 animations/animation-delay-changed.html [ Pass Failure ]
+webkit.org/b/113599 svg/animations/reinserting-svg-into-document.html [ Pass Failure ]
+
 # window.eventSender doesn't exist in devtools front-end on mac.
 # https://bugs.webkit.org/show_bug.cgi?id=106793
 inspector/editor/text-editor-formatter.html [ Skip ]
