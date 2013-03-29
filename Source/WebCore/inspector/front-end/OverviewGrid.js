@@ -49,17 +49,14 @@ WebInspector.OverviewGrid = function(prefix)
 }
 
 WebInspector.OverviewGrid.prototype = {
+    gridElement: function()
+    {
+        return this._grid.element;
+    },
+
     itemsGraphsElement: function()
     {
         return this._grid.itemsGraphsElement;
-    },
-
-    /**
-     * @param {!Node} child
-     */
-    insertBeforeItemsGraphsElement: function(child)
-    {
-        this._grid.element.insertBefore(child, this._grid.itemsGraphsElement);
     },
 
     /**

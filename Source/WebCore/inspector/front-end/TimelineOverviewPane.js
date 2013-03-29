@@ -78,15 +78,13 @@ WebInspector.TimelineOverviewPane = function(model)
     this.element.appendChild(this._overviewGrid.element);
 
     this._memoryOverview = new WebInspector.TimelineMemoryOverview(this._model);
-    this._memoryOverview.element.id = "timeline-overview-memory";
-    this._overviewGrid.insertBeforeItemsGraphsElement(this._memoryOverview.element);
 
     var separatorElement = document.createElement("div");
     separatorElement.id = "timeline-overview-separator";
     this.element.appendChild(separatorElement);
 
     this._eventOverview = new WebInspector.TimelineEventOverview(this._model);
-    this._overviewGrid.itemsGraphsElement().appendChild(this._eventOverview.element);
+    this._eventOverview.show(this._overviewGrid.itemsGraphsElement());
  
     var categories = WebInspector.TimelinePresentationModel.categories();
     for (var category in categories)
@@ -131,12 +129,12 @@ WebInspector.TimelineOverviewPane.prototype = {
         switch (this._currentMode) {
             case WebInspector.TimelineOverviewPane.Mode.Events:
             case WebInspector.TimelineOverviewPane.Mode.Frames:
-                this._memoryOverview.hide();
+                this._memoryOverview.detach();
                 this._overviewGrid.showItemsGraphsElement();
                 break;
             case WebInspector.TimelineOverviewPane.Mode.Memory:
                 this._overviewGrid.hideItemsGraphsElement();
-                this._memoryOverview.show();
+                this._memoryOverview.show(this._overviewGrid.gridElement(), this._overviewGrid.itemsGraphsElement());
         }
         this._overviewItems[this._currentMode].revealAndSelect(false);
         this.dispatchEventToListeners(WebInspector.TimelineOverviewPane.Events.ModeChanged, this._currentMode);
@@ -172,7 +170,7 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._overviewCalculator.setWindow(this._model.minimumRecordTime(), this._model.maximumRecordTime());
         this._overviewCalculator.setDisplayWindow(0, this._overviewGrid.clientWidth());
 
-        if (this._memoryOverview.visible)
+        if (this._memoryOverview.isShowing())
             this._memoryOverview.update();
         else if (this._frameOverview)
             this._frameOverview.update();
@@ -414,54 +412,38 @@ WebInspector.TimelineOverviewCalculator.prototype = {
 
 /**
  * @constructor
+ * @extends {WebInspector.View}
+ * @param {WebInspector.TimelineModel} model
+ */
+WebInspector.TimelineOverviewBase = function(model)
+{
+    WebInspector.View.call(this);
+    this._model = model;
+    this._canvas = this.element.createChild("canvas", "fill");
+}
+
+WebInspector.TimelineOverviewBase.prototype = {
+    update: function() {},
+
+    __proto__: WebInspector.View.prototype
+}
+
+/**
+ * @constructor
+ * @extends {WebInspector.TimelineOverviewBase}
  * @param {WebInspector.TimelineModel} model
  */
 WebInspector.TimelineMemoryOverview = function(model)
 {
-    this._canvas = document.createElement("canvas");
-    this._model = model;
+    WebInspector.TimelineOverviewBase.call(this, model);
+    this.element.id = "timeline-overview-memory";
+    this.element.classList.add("fill");
 
-    this._maxHeapSizeLabel = document.createElement("div");
-    this._maxHeapSizeLabel.addStyleClass("max");
-    this._maxHeapSizeLabel.addStyleClass("memory-graph-label");
-    this._minHeapSizeLabel = document.createElement("div");
-    this._minHeapSizeLabel.addStyleClass("min");
-    this._minHeapSizeLabel.addStyleClass("memory-graph-label");
-
-    this._element = document.createElement("div");
-    this._element.addStyleClass("hidden");
-    this._element.appendChild(this._canvas);
-    this._element.appendChild(this._maxHeapSizeLabel);
-    this._element.appendChild(this._minHeapSizeLabel);
+    this._maxHeapSizeLabel = this.element.createChild("div", "max memory-graph-label");
+    this._minHeapSizeLabel = this.element.createChild("div", "min memory-graph-label");
 }
 
 WebInspector.TimelineMemoryOverview.prototype = {
-    /**
-     * @return {Node}
-     */
-    get element()
-    {
-        return this._element;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    get visible()
-    {
-        return !this.element.hasStyleClass("hidden");
-    },
-
-    show: function()
-    {
-        this.element.removeStyleClass("hidden");
-    },
-
-    hide: function()
-    {
-        this.element.addStyleClass("hidden");
-    },
-
     update: function()
     {
         var records = this._model.records;
@@ -539,17 +521,20 @@ WebInspector.TimelineMemoryOverview.prototype = {
         ctx.fillStyle = "rgba(255,255,255,0.8)";
         ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
     },
+
+    __proto__: WebInspector.TimelineOverviewBase.prototype
 }
 
 /**
  * @constructor
+ * @extends {WebInspector.TimelineOverviewBase}
  * @param {WebInspector.TimelineModel} model
  */
 WebInspector.TimelineEventOverview = function(model)
 {
-    this._model = model;
-    this.element = document.createElement("canvas");
-    this._context = this.element.getContext("2d");
+    WebInspector.TimelineOverviewBase.call(this, model);
+
+    this._context = this._canvas.getContext("2d");
     this._minimumRecordDuration = 0;
 
     this._fillStyles = {};
@@ -578,18 +563,18 @@ WebInspector.TimelineEventOverview.prototype = {
     update: function()
     {
         // Use real world, 1:1 coordinates in canvas. This will also take care of clearing it.
-        this.element.width = this.element.parentElement.clientWidth;
-        this.element.height = WebInspector.TimelineEventOverview._canvasHeight;
+        this._canvas.width = this.element.parentElement.clientWidth;
+        this._canvas.height = WebInspector.TimelineEventOverview._canvasHeight;
 
         var timeOffset = this._model.minimumRecordTime();
         var timeSpan = this._model.maximumRecordTime() - timeOffset;
-        var scale = this.element.width / timeSpan;
+        var scale = this._canvas.width / timeSpan;
 
         var lastBarByGroup = [];
 
         this._context.fillStyle = "rgba(0, 0, 0, 0.05)";
         for (var i = 1; i < WebInspector.TimelineEventOverview._numberOfStrips; i += 2)
-            this._context.fillRect(0.5, i * WebInspector.TimelineEventOverview._stripHeight + 0.5, this.element.width, WebInspector.TimelineEventOverview._stripHeight);
+            this._context.fillRect(0.5, i * WebInspector.TimelineEventOverview._stripHeight + 0.5, this._canvas.width, WebInspector.TimelineEventOverview._stripHeight);
 
         function appendRecord(record)
         {
@@ -643,20 +628,20 @@ WebInspector.TimelineEventOverview.prototype = {
         this._context.strokeStyle = category.hidden ? this._disabledCategoryBorderStyle : category.borderColor;
         this._context.strokeRect(0, 0, width, WebInspector.TimelineEventOverview._innerStripHeight);
         this._context.restore();
-    }
+    },
+
+    __proto__: WebInspector.TimelineOverviewBase.prototype
 }
 
 /**
  * @constructor
- * @extends {WebInspector.View}
+ * @extends {WebInspector.TimelineOverviewBase}
  * @param {WebInspector.TimelineModel} model
  */
 WebInspector.TimelineFrameOverview = function(model)
 {
-    WebInspector.View.call(this);
-    this.element = document.createElement("canvas");
-    this.element.className = "timeline-frame-overview-bars fill";
-    this._model = model;
+    WebInspector.TimelineOverviewBase.call(this, model);
+    this._canvas.classList.add("timeline-frame-overview-bars");
     this.reset();
 
     this._outerPadding = 4;
@@ -666,7 +651,7 @@ WebInspector.TimelineFrameOverview = function(model)
     this._actualPadding = 5;
     this._actualOuterBarWidth = this._maxInnerBarWidth + this._actualPadding;
 
-    this._context = this.element.getContext("2d");
+    this._context = this._canvas.getContext("2d");
 
     this._fillStyles = {};
     var categories = WebInspector.TimelinePresentationModel.categories();
@@ -698,7 +683,7 @@ WebInspector.TimelineFrameOverview.prototype = {
         if (fullBarLength < this._medianFrameLength)
             fullBarLength = Math.min(this._medianFrameLength * 2, this._maxFrameLength);
 
-        var scale = (this.element.clientHeight - paddingTop) / fullBarLength;
+        var scale = (this._canvas.clientHeight - paddingTop) / fullBarLength;
         this._renderBars(visibleFrames, scale);
     },
 
@@ -762,11 +747,11 @@ WebInspector.TimelineFrameOverview.prototype = {
     _renderBars: function(frames, scale)
     {
         // Use real world, 1:1 coordinates in canvas. This will also take care of clearing it.
-        this.element.width = this.element.clientWidth;
-        this.element.height = this.element.clientHeight;
+        this._canvas.width = this._canvas.clientWidth;
+        this._canvas.height = this._canvas.clientHeight;
 
         const maxPadding = 5;
-        this._actualOuterBarWidth = Math.min((this.element.width - 2 * this._outerPadding) / frames.length, this._maxInnerBarWidth + maxPadding);
+        this._actualOuterBarWidth = Math.min((this._canvas.width - 2 * this._outerPadding) / frames.length, this._maxInnerBarWidth + maxPadding);
         this._actualPadding = Math.min(Math.floor(this._actualOuterBarWidth / 3), maxPadding);
 
         var barWidth = this._actualOuterBarWidth - this._actualPadding;
@@ -804,21 +789,21 @@ WebInspector.TimelineFrameOverview.prototype = {
         for (var i = 0; i < fpsMarks.length; ++i) {
             var fps = fpsMarks[i];
             // Draw lines one pixel above they need to be, so 60pfs line does not cross most of the frames tops.
-            var y = this.element.height - Math.floor(1.0 / fps * scale) - 0.5;
+            var y = this._canvas.height - Math.floor(1.0 / fps * scale) - 0.5;
             var label = fps + " FPS ";
             var labelWidth = this._context.measureText(label).width;
-            var labelX = this.element.width;
+            var labelX = this._canvas.width;
             var labelY;
 
             if (labelTopMargin < y - lineHeight)
                 labelY = y - lineHeight;
-            else if (y + lineHeight < this.element.height)
+            else if (y + lineHeight < this._canvas.height)
                 labelY = y;
             else
                 break; // No space for the label, so no line as well.
 
             this._context.moveTo(0, y);
-            this._context.lineTo(this.element.width, y);
+            this._context.lineTo(this._canvas.width, y);
 
             this._context.fillStyle = "rgba(255, 255, 255, 0.75)";
             this._context.fillRect(labelX - labelWidth - labelPadding, labelY, labelWidth + 2 * labelPadding, lineHeight);
@@ -839,7 +824,7 @@ WebInspector.TimelineFrameOverview.prototype = {
         var x = Math.floor(left) + 0.5;
         width = Math.floor(width);
 
-        for (var i = 0, bottomOffset = this.element.height; i < categories.length; ++i) {
+        for (var i = 0, bottomOffset = this._canvas.height; i < categories.length; ++i) {
             var category = categories[i];
             var duration = frame.timeByCategory[category];
 
@@ -888,7 +873,7 @@ WebInspector.TimelineFrameOverview.prototype = {
         }
     },
 
-    __proto__: WebInspector.View.prototype
+    __proto__: WebInspector.TimelineOverviewBase.prototype
 }
 
 /**
