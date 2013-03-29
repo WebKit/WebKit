@@ -19,6 +19,7 @@
 #include "config.h"
 #include "ContextMenuItem.h"
 
+#if ENABLE(CONTEXT_MENUS)
 #include "ContextMenu.h"
 #include "NotImplemented.h"
 
@@ -73,3 +74,4 @@ String ContextMenuItem::title() const
 }
 
 } // namespace WebCore
+#endif

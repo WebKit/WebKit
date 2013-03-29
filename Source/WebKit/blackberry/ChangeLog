@@ -1,5 +1,18 @@
 2013-03-29  Charles Wei  <charles.wei@torchmobile.com.cn>
 
+        [BlackBerry] Cleanup the CONTEXT_MENUS in BlackBerry porting
+        https://bugs.webkit.org/show_bug.cgi?id=113562
+
+        Reviewed by George Staikos.
+        Internally reviewed by Mike Fenton and Gen Mak.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        * WebCoreSupport/ContextMenuClientBlackBerry.cpp:
+        * WebCoreSupport/ContextMenuClientBlackBerry.h:
+
+2013-03-29  Charles Wei  <charles.wei@torchmobile.com.cn>
+
         [BlackBerry] Context menu doesn't showup anymore after rebase.
         https://bugs.webkit.org/show_bug.cgi?id=113570
 

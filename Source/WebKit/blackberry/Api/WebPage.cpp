@@ -514,8 +514,8 @@ Page* WebPagePrivate::core(const WebPage* webPage)
 void WebPagePrivate::init(const BlackBerry::Platform::String& pageGroupName)
 {
     ChromeClientBlackBerry* chromeClient = new ChromeClientBlackBerry(this);
-    ContextMenuClientBlackBerry* contextMenuClient = 0;
 #if ENABLE(CONTEXT_MENUS)
+    ContextMenuClientBlackBerry* contextMenuClient = 0;
     contextMenuClient = new ContextMenuClientBlackBerry();
 #endif
     EditorClientBlackBerry* editorClient = new EditorClientBlackBerry(this);
@@ -531,7 +531,9 @@ void WebPagePrivate::init(const BlackBerry::Platform::String& pageGroupName)
 
     Page::PageClients pageClients;
     pageClients.chromeClient = chromeClient;
+#if ENABLE(CONTEXT_MENUS)
     pageClients.contextMenuClient = contextMenuClient;
+#endif
     pageClients.editorClient = editorClient;
     pageClients.dragClient = dragClient;
     pageClients.inspectorClient = m_inspectorClient;

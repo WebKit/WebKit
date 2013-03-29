@@ -20,6 +20,7 @@
 #include "config.h"
 #include "ContextMenuClientBlackBerry.h"
 
+#if ENABLE(CONTEXT_MENUS)
 #include "NotImplemented.h"
 
 namespace WebCore {
@@ -72,3 +73,4 @@ void ContextMenuClientBlackBerry::stopSpeaking()
 }
 
 } // namespace WebCore
+#endif

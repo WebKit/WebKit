@@ -20,6 +20,8 @@
 #ifndef ContextMenuClientBlackBerry_h
 #define ContextMenuClientBlackBerry_h
 
+#if ENABLE(CONTEXT_MENUS)
+
 #include "ContextMenuClient.h"
 
 namespace WebCore {
@@ -39,4 +41,5 @@ public:
 
 } // WebCore
 
+#endif // CONTEXT_MENUS
 #endif // ContextMenuClientBlackBerry_h

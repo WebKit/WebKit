@@ -19,6 +19,7 @@
 #include "config.h"
 #include "ContextMenu.h"
 
+#if ENABLE(CONTEXT_MENUS)
 #include "NotImplemented.h"
 
 namespace WebCore {
@@ -50,3 +51,4 @@ unsigned ContextMenu::itemCount() const
 }
 
 } // namespace WebCore
+#endif
