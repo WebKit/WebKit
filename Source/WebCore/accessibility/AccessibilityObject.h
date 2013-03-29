@@ -312,9 +312,16 @@ enum AccessibilitySearchKey {
 struct AccessibilitySearchCriteria {
     AccessibilityObject* startObject;
     AccessibilitySearchDirection searchDirection;
-    AccessibilitySearchKey searchKey;
+    Vector<AccessibilitySearchKey> searchKeys;
     String* searchText;
     unsigned resultsLimit;
+    
+    AccessibilitySearchCriteria(AccessibilityObject* o, AccessibilitySearchDirection d, String* t, unsigned l)
+    : startObject(o)
+    , searchDirection(d)
+    , searchText(t)
+    , resultsLimit(l)
+    { }
 };
 
 struct VisiblePositionRange {
@@ -848,6 +855,7 @@ protected:
     virtual ScrollableArea* getScrollableAreaIfScrollable() const { return 0; }
     virtual void scrollTo(const IntPoint&) const { }
 
+    static bool isAccessibilityObjectSearchMatchAtIndex(AccessibilityObject*, AccessibilitySearchCriteria*, size_t);
     static bool isAccessibilityObjectSearchMatch(AccessibilityObject*, AccessibilitySearchCriteria*);
     static bool isAccessibilityTextSearchMatch(AccessibilityObject*, AccessibilitySearchCriteria*);
     static bool objectMatchesSearchCriteriaWithResultLimit(AccessibilityObject*, AccessibilitySearchCriteria*, AccessibilityChildrenVector&);

@@ -773,7 +773,7 @@ bool AccessibilityUIElement::attributedStringRangeIsMisspelled(unsigned location
     return false;
 }
 
-AccessibilityUIElement AccessibilityUIElement::uiElementForSearchPredicate(AccessibilityUIElement* startElement, bool isDirectionNext, JSStringRef searchKey, JSStringRef searchText)
+AccessibilityUIElement AccessibilityUIElement::uiElementForSearchPredicate(JSContextRef context, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText)
 {
     // FIXME: implement
     return 0;

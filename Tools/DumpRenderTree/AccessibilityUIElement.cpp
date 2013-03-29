@@ -26,6 +26,7 @@
 #include "config.h"
 #include "AccessibilityUIElement.h"
 
+#include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 
 // Static Functions
@@ -201,22 +202,21 @@ static JSValueRef uiElementForSearchPredicateCallback(JSContextRef context, JSOb
 {
     AccessibilityUIElement* startElement = 0;
     bool isDirectionNext = true;
-    JSStringRef searchKey = 0;
+    JSValueRef searchKey = 0;
     JSStringRef searchText = 0;
     if (argumentCount == 4) {
         JSObjectRef startElementObject = JSValueToObject(context, arguments[0], exception);
         if (startElementObject)
             startElement = toAXElement(startElementObject);
-        isDirectionNext = JSValueToBoolean(context, arguments[1]);
-        if (JSValueIsString(context, arguments[2]))
-            searchKey = JSValueToStringCopy(context, arguments[2], exception);
+        isDirectionNext = JSValueToBoolean(context, arguments[1]);      
+        
+        searchKey = arguments[2];
+        
         if (JSValueIsString(context, arguments[3]))
             searchText = JSValueToStringCopy(context, arguments[3], exception);
     }
-    
-    JSObjectRef resultObject = AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText));
-    if (searchKey)
-        JSStringRelease(searchKey);
+    JSObjectRef resultObject = AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->uiElementForSearchPredicate(context, startElement, isDirectionNext, searchKey, searchText));
+
     if (searchText)
         JSStringRelease(searchText);
     

@@ -112,12 +112,9 @@ bool AccessibilityObject::isDetached() const
 #endif
 }
 
-bool AccessibilityObject::isAccessibilityObjectSearchMatch(AccessibilityObject* axObject, AccessibilitySearchCriteria* criteria)
+bool AccessibilityObject::isAccessibilityObjectSearchMatchAtIndex(AccessibilityObject* axObject, AccessibilitySearchCriteria* criteria, size_t index)
 {
-    if (!axObject || !criteria)
-        return false;
-    
-    switch (criteria->searchKey) {
+    switch (criteria->searchKeys[index]) {
     // The AnyTypeSearchKey matches any non-null AccessibilityObject.
     case AnyTypeSearchKey:
         return true;
@@ -247,6 +244,19 @@ bool AccessibilityObject::isAccessibilityObjectSearchMatch(AccessibilityObject* 
     default:
         return false;
     }
+}
+
+bool AccessibilityObject::isAccessibilityObjectSearchMatch(AccessibilityObject* axObject, AccessibilitySearchCriteria* criteria)
+{
+    if (!axObject || !criteria)
+        return false;
+    
+    size_t length = criteria->searchKeys.size();
+    for (size_t i = 0; i < length; ++i) {
+        if (isAccessibilityObjectSearchMatchAtIndex(axObject, criteria, i))
+            return true;
+    }
+    return false;
 }
 
 bool AccessibilityObject::isAccessibilityTextSearchMatch(AccessibilityObject* axObject, AccessibilitySearchCriteria* criteria)

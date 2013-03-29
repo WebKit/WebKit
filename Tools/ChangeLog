@@ -1,3 +1,36 @@
+2013-03-29  Greg Hughes  <ghughes@apple.com>
+
+        Allow multiple searchKeys to be passed to AXUIElementCopyParameterizedAttributeValue
+        https://bugs.webkit.org/show_bug.cgi?id=112276
+
+        Reviewed by Chris Fleizach.
+
+        Added support to test accessibility search predicates with multiple keys.  
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (uiElementForSearchPredicateCallback):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        (AccessibilityUIElement):
+        * DumpRenderTree/atk/AccessibilityUIElementAtk.cpp:
+        (AccessibilityUIElement::uiElementForSearchPredicate):
+        * DumpRenderTree/blackberry/AccessibilityUIElementBlackBerry.cpp:
+        (AccessibilityUIElement::uiElementForSearchPredicate):
+        * DumpRenderTree/ios/AccessibilityUIElementIOS.mm:
+        (AccessibilityUIElement::uiElementForSearchPredicate):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::uiElementForSearchPredicate):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::uiElementForSearchPredicate):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::uiElementForSearchPredicate):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        (AccessibilityUIElement):
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::uiElementForSearchPredicate):
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::uiElementForSearchPredicate):
+
 2013-03-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix a typo in r147147 to fix Mac EWS.

@@ -103,6 +103,12 @@ PASS resultElement.boolAttributeValue('AXVisited') is true
 PASS resultElement.childAtIndex(0).stringValue is 'AXValue: link'
 PASS resultElement.role is 'AXRole: AXStaticText'
 PASS resultElement.stringValue is 'AXValue: sans-serif black bold text with underline'
+PASS resultElement.role is 'AXRole: AXHeading'
+PASS resultElement.childAtIndex(0).stringValue is 'AXValue: heading level 2'
+PASS resultElement.role is 'AXRole: AXLink'
+PASS resultElement.childAtIndex(0).stringValue is 'AXValue: link'
+PASS resultElement.role is 'AXRole: AXHeading'
+PASS resultElement.childAtIndex(0).stringValue is 'AXValue: heading level 2'
 PASS successfullyParsed is true
 
 TEST COMPLETE

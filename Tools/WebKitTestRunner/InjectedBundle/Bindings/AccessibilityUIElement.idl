@@ -141,7 +141,7 @@ interface AccessibilityUIElement {
     DOMString stringForRange(in unsigned long location, in unsigned long length);
     DOMString attributedStringForRange(in unsigned long location, in unsigned long length);
     boolean attributedStringRangeIsMisspelled(in unsigned long location, in unsigned long length);
-    AccessibilityUIElement uiElementForSearchPredicate(in AccessibilityUIElement startElement, in boolean isDirectionNext, in DOMString searchKey, in DOMString searchText);
+    [PassContext] AccessibilityUIElement uiElementForSearchPredicate(in AccessibilityUIElement startElement, in boolean isDirectionNext, in object searchKey, in DOMString searchText);
     void setSelectedTextRange(in unsigned long location, in unsigned long length);
 
     // Scroll area attributes.

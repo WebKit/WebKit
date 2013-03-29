@@ -199,7 +199,7 @@ public:
     JSStringRef stringForRange(unsigned location, unsigned length);
     JSStringRef attributedStringForRange(unsigned location, unsigned length);
     bool attributedStringRangeIsMisspelled(unsigned location, unsigned length);
-    AccessibilityUIElement uiElementForSearchPredicate(AccessibilityUIElement* startElement, bool isDirectionNext, JSStringRef searchKey, JSStringRef searchText);
+    AccessibilityUIElement uiElementForSearchPredicate(JSContextRef, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText);
 #if PLATFORM(IOS)
     void elementsForRange(unsigned location, unsigned length, Vector<AccessibilityUIElement>& elements);
     JSStringRef stringForSelection();

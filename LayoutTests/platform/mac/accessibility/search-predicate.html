@@ -262,6 +262,22 @@
         resultElement = containerElement.uiElementForSearchPredicate(startElement, false, "", "sans-serif black bold text with underline");
         shouldBe("resultElement.role", "'AXRole: AXStaticText'");
         shouldBe("resultElement.stringValue", "'AXValue: sans-serif black bold text with underline'");
+        
+        // Execute a search for the next heading level 2 or the next link.
+        startElement = accessibilityController.focusedElement.childAtIndex(0);
+        resultElement = containerElement.uiElementForSearchPredicate(startElement, true, ["AXHeadingLevel2SearchKey", "AXLinkSearchKey"], "");
+        shouldBe("resultElement.role", "'AXRole: AXHeading'");
+        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: heading level 2'");
+        
+        // After finding the heading, execute the search again and we should find the link.
+        resultElement = containerElement.uiElementForSearchPredicate(resultElement, true, ["AXHeadingLevel2SearchKey", "AXLinkSearchKey"], "");
+        shouldBe("resultElement.role", "'AXRole: AXLink'");
+        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: link'");
+
+        // From the link, execute the search in reverse and we should land back on the heading.
+        resultElement = containerElement.uiElementForSearchPredicate(resultElement, false, ["AXHeadingLevel2SearchKey", "AXLinkSearchKey"], "");
+        shouldBe("resultElement.role", "'AXRole: AXHeading'");
+        shouldBe("resultElement.childAtIndex(0).stringValue", "'AXValue: heading level 2'");
     }
     
 </script>

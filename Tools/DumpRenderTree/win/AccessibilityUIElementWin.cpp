@@ -498,7 +498,7 @@ bool AccessibilityUIElement::attributedStringRangeIsMisspelled(unsigned, unsigne
     return false;
 }
 
-AccessibilityUIElement AccessibilityUIElement::uiElementForSearchPredicate(AccessibilityUIElement* startElement, bool isDirectionNext, JSStringRef searchKey, JSStringRef searchText)
+AccessibilityUIElement AccessibilityUIElement::uiElementForSearchPredicate(JSContextRef context, AccessibilityUIElement* startElement, bool isDirectionNext, JSValueRef searchKey, JSStringRef searchText)
 {
     return 0;
 }

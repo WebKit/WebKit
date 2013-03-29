@@ -3183,11 +3183,7 @@ static RenderObject* rendererForView(NSView* view)
         AccessibilitySearchDirection searchDirection = SearchDirectionNext;
         if ([[dictionary objectForKey:@"AXDirection"] isKindOfClass:[NSString self]])
             searchDirection = ([(NSString*)[dictionary objectForKey:@"AXDirection"] isEqualToString:@"AXDirectionNext"]) ? SearchDirectionNext : SearchDirectionPrevious;
-        
-        AccessibilitySearchKey searchKey = AnyTypeSearchKey;
-        if ([[dictionary objectForKey:@"AXSearchKey"] isKindOfClass:[NSString self]])
-            searchKey = accessibilitySearchKeyForString((CFStringRef)[dictionary objectForKey:@"AXSearchKey"]);
-        
+
         String searchText;
         if ([[dictionary objectForKey:@"AXSearchText"] isKindOfClass:[NSString self]])
             searchText = (CFStringRef)[dictionary objectForKey:@"AXSearchText"];
@@ -3196,7 +3192,20 @@ static RenderObject* rendererForView(NSView* view)
         if ([[dictionary objectForKey:@"AXResultsLimit"] isKindOfClass:[NSNumber self]])
             resultsLimit = [(NSNumber*)[dictionary objectForKey:@"AXResultsLimit"] unsignedIntValue];
         
-        AccessibilitySearchCriteria criteria = {startObject, searchDirection, searchKey, &searchText, resultsLimit};
+        AccessibilitySearchCriteria criteria = AccessibilitySearchCriteria(startObject, searchDirection, &searchText, resultsLimit);
+                
+        id searchKeyEntry = [dictionary objectForKey:@"AXSearchKey"];
+        if ([searchKeyEntry isKindOfClass:[NSString class]])
+            criteria.searchKeys.append(accessibilitySearchKeyForString((CFStringRef)searchKeyEntry));
+        else if ([searchKeyEntry isKindOfClass:[NSArray class]]) {
+            size_t length = static_cast<size_t>([(NSArray *)searchKeyEntry count]);
+            criteria.searchKeys.reserveInitialCapacity(length);
+            for (size_t i = 0; i < length; ++i) {
+                id searchKey = [(NSArray *)searchKeyEntry objectAtIndex:i];
+                if ([searchKey isKindOfClass:[NSString class]])
+                    criteria.searchKeys.append(accessibilitySearchKeyForString((CFStringRef)searchKey));
+            }
+        }
         
         AccessibilityObject::AccessibilityChildrenVector results;
         m_object->findMatchingObjects(&criteria, results);

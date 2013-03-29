@@ -361,7 +361,7 @@ JSStringRef AccessibilityUIElement::stringForRange(unsigned, unsigned)
     return 0;
 }
 
-AccessibilityUIElement AccessibilityUIElement::uiElementForSearchPredicate(AccessibilityUIElement*, bool, JSStringRef, JSStringRef)
+AccessibilityUIElement AccessibilityUIElement::uiElementForSearchPredicate(JSContextRef, AccessibilityUIElement*, bool, JSValueRef, JSStringRef)
 {
     notImplemented();
     return 0;
