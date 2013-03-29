@@ -2273,6 +2273,7 @@ fast/block/lineboxcontain/font.html
 css3/flexbox/flexbox-overflow-auto.html
 fast/block/line-layout/selection-highlight-overlap.html
 fast/css/empty-cell-baseline.html
+fast/exclusions/shape-inside/shape-inside-polygon-padding-002.html
 fast/forms/datalist/input-appearance-range-with-datalist-rtl.html
 fast/forms/datalist/update-range-with-datalist.html
 fast/multicol/cell-shrinkback.html
@@ -2299,7 +2300,7 @@ webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-ellipse-padding.ht
 webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-circle.html [ Skip ]
 webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-ellipse.html [ Skip ]
 webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle.html [ Skip ]
-webkit.org/b/110447 fast/regions/shape-inside-on-regions.html [ Skip ]
+webkit.org/b/110447 fast/regions/shape-inside/shape-inside-on-regions.html [ Skip ]
 
 # Failing fast/css/sticky/ tests with minor pixel differences
 # https://bugs.webkit.org/show_bug.cgi?id=92080
@@ -2719,3 +2720,6 @@ webkit.org/b/108257 compositing/overflow/composited-scrolling-creates-a-stacking
 
 # Feature not implemented
 webkit.org/b/91611 [ Mac Win ] media/media-higher-prio-audio-stream.html [ Skip ]
+
+# Newly added test in r147094 fails
+webkit.org/b/113513 inspector/styles/paste-property.html [ Skip ]
