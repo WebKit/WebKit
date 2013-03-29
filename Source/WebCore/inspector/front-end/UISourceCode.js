@@ -225,11 +225,19 @@ WebInspector.UISourceCode.prototype = {
 
         function contentLoaded(updatedContent)
         {
+            if (updatedContent === null) {
+                var workingCopy = this.workingCopy();
+                this._commitContent("", false);
+                this.setWorkingCopy(workingCopy);
+                delete this._checkingContent;
+                return;
+            }
             if (typeof this._lastAcceptedContent === "string" && this._lastAcceptedContent === updatedContent) {
                 delete this._checkingContent;
                 return;
             }
             if (this._content === updatedContent) {
+                delete this._lastAcceptedContent;
                 delete this._checkingContent;
                 return;
             }
@@ -263,6 +271,7 @@ WebInspector.UISourceCode.prototype = {
      */
     _commitContent: function(content, shouldSetContentInProject)
     {
+        delete this._lastAcceptedContent;
         this._content = content;
         this._contentLoaded = true;
         

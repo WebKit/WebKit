@@ -178,6 +178,11 @@ WebInspector.IsolatedFileSystem.prototype = {
 
         function errorHandler(error)
         {
+            if (error.code === FileError.NOT_FOUND_ERR) {
+                callback(null);
+                return;
+            }
+
             var errorMessage = WebInspector.IsolatedFileSystem.errorMessage(error);
             console.error(errorMessage + " when getting content for file '" + (this._path + "/" + path) + "'");
             callback(null);
@@ -198,7 +203,7 @@ WebInspector.IsolatedFileSystem.prototype = {
          */
         function fileSystemLoaded(domFileSystem)
         {
-            domFileSystem.root.getFile(path, null, fileEntryLoaded, errorHandler);
+            domFileSystem.root.getFile(path, { create: true }, fileEntryLoaded, errorHandler);
         }
 
         /**
