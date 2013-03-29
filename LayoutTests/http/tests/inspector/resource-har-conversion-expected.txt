@@ -10,7 +10,7 @@ Page reloaded.
         {
             cache : {
             }
-            pageref : "http://127.0.0.1:8000/inspector/resource-har-conversion.html"
+            pageref : "page_1"
             request : {
                 bodySize : <number>
                 cookies : [
@@ -99,7 +99,7 @@ Page reloaded.
         {
             cache : {
             }
-            pageref : "http://127.0.0.1:8000/inspector/resource-har-conversion.html"
+            pageref : "page_1"
             request : {
                 bodySize : <number>
                 cookies : [
@@ -135,7 +135,7 @@ Page reloaded.
         {
             cache : {
             }
-            pageref : "http://127.0.0.1:8000/inspector/resource-har-conversion.html"
+            pageref : "page_1"
             request : {
                 bodySize : <number>
                 cookies : [
@@ -170,7 +170,7 @@ Page reloaded.
         {
             cache : {
             }
-            pageref : "http://127.0.0.1:8000/inspector/resource-har-conversion.html"
+            pageref : "page_1"
             request : {
                 bodySize : <number>
                 cookies : [
@@ -216,7 +216,7 @@ Page reloaded.
                 onLoad : <number>
             }
             startedDateTime : <plausible>
-            title : ""
+            title : "http://127.0.0.1:8000/inspector/resource-har-conversion.html"
         }
     ]
     version : <string>

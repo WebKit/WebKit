@@ -11,7 +11,7 @@ Page reloaded.
         {
             startedDateTime : <plausible>
             id : <string>
-            title : ""
+            title : "http://127.0.0.1:8000/inspector/resource-har-conversion.html"
             pageTimings : {
                 onContentLoad : <number>
                 onLoad : <number>
@@ -20,7 +20,7 @@ Page reloaded.
     ]
     entries : [
         {
-            pageref : "http://127.0.0.1:8000/inspector/resource-har-conversion.html"
+            pageref : "page_1"
             startedDateTime : <plausible>
             time : <number>
             request : {
@@ -110,7 +110,7 @@ Page reloaded.
             timings : <object>
         }
         {
-            pageref : "http://127.0.0.1:8000/inspector/resource-har-conversion.html"
+            pageref : "page_1"
             startedDateTime : <plausible>
             time : <number>
             request : {
@@ -146,7 +146,7 @@ Page reloaded.
             timings : <object>
         }
         {
-            pageref : "http://127.0.0.1:8000/inspector/resource-har-conversion.html"
+            pageref : "page_1"
             startedDateTime : <plausible>
             time : <number>
             request : {
@@ -182,7 +182,7 @@ Page reloaded.
             timings : <object>
         }
         {
-            pageref : "http://127.0.0.1:8000/inspector/resource-har-conversion.html"
+            pageref : "page_1"
             startedDateTime : <plausible>
             time : <number>
             request : {
