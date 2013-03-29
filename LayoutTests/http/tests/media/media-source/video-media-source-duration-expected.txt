@@ -1,0 +1,8 @@
+Tests simple operations with duration attribute of MediaSource object.
+
+Original duration = 6
+EXPECTED (mediaSource.duration == '1') OK
+EXPECTED (mediaSource.duration == '1') OK
+PASS: Media Source duration truncated and current time changed to = 1
+END OF TEST
+

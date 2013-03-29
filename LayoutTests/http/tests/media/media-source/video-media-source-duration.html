@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>  
+  <head>
+    <script src="/media-resources/video-test.js"></script>
+    <script src="/media/resources/media-source/webm/segment-info.js"></script>
+    <script src="media-source.js"></script>
+    <script>
+      var segmentHelper = new MediaSourceTest.SegmentHelper(WebMSegmentInfo.testWebM);
+      var seekTo = 2;
+      var newDuration = 1;
+
+      function onSourceOpen(event)
+      {
+        mediaSource.removeEventListener('webkitsourceopen', onSourceOpen);
+
+        // Add an initialization segment and multiple media segments.
+        segmentHelper.addSourceBuffer();
+        segmentHelper.appendInitSegment();
+        segmentHelper.appendAllMediaSegments();
+
+        // Appending all segments triggers a playing event;
+        // add a listener for that event.
+        video.addEventListener('playing', onPlaying);
+      }
+
+      function onPlaying(event)
+      {
+        consoleWrite("Original duration = " + mediaSource.duration.toFixed());
+        video.currentTime = seekTo;
+
+        // Changing video current-time triggers a seeked event.
+        // Add a listener to it.
+        video.addEventListener('seeked', onSeeked);
+      }
+
+      function onSeeked(event)
+      {
+        // Playtime should now be at 2 seconds.
+        // Set duration to < current playtime.
+        mediaSource.duration = newDuration;
+        testExpected("mediaSource.duration", newDuration, "==");
+
+        // Because the duration was set to be before the playback position,
+        // current playback position should now be the same as the new duration.
+        testExpected("mediaSource.duration", video.currentTime, "==");
+        consoleWrite("PASS: Media Source duration truncated and current time changed to = " + mediaSource.duration);
+        endTest();
+      }
+
+      function start()
+      {
+        findMediaElement();
+
+        waitForEventAndFail('error');
+
+        mediaSource.addEventListener('webkitsourceopen', onSourceOpen);
+
+        segmentHelper.init(video, function (success)
+        {
+          if (!success) {
+            failTest("Failed to load segment data");
+            return;
+          }
+
+          MediaSourceTest.setSrcToMediaSourceTestURL(video);
+        });
+      }
+    </script>
+  </head>
+  <body onload="start()">
+    <video autoplay controls></video>
+    <p>Tests simple operations with duration attribute of MediaSource object.</p>
+  </body>
+</html>

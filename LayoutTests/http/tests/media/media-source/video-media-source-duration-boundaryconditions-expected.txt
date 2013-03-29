@@ -1,0 +1,95 @@
+Tests boundary values for duration attribute on MediaSource object.
+
+
+running testSetMaxInt
+EVENT(webkitsourceopen)
+onDurationChange : video.duration is 6.042
+EXPECTED (mediaSource.duration == 'video.duration') OK
+EVENT(loadedmetadata)
+EXPECTED (mediaSource.duration == 'testDurationValue'), OBSERVED '2147483648' FAIL
+onDurationChange : video.duration is 2147483648.000
+EXPECTED (mediaSource.duration == 'video.duration') OK
+EVENT(durationchange)
+
+running testSetMinInt
+EVENT(webkitsourceopen)
+onDurationChange : video.duration is 6.042
+EXPECTED (mediaSource.duration == 'video.duration') OK
+EVENT(loadedmetadata)
+EXPECTED (mediaSource.duration == 'testDurationValue') OK
+onDurationChange : video.duration is 1.000
+EXPECTED (mediaSource.duration == 'video.duration') OK
+EVENT(durationchange)
+
+running testSetMaxValue
+EVENT(webkitsourceopen)
+onDurationChange : video.duration is 6.042
+EXPECTED (mediaSource.duration == 'video.duration') OK
+EVENT(loadedmetadata)
+EXPECTED (mediaSource.duration == 'testDurationValue'), OBSERVED '3.4028234663852886e+38' FAIL
+onDurationChange : video.duration is 3.4028234663852886e+38
+EXPECTED (mediaSource.duration == 'video.duration') OK
+EVENT(durationchange)
+
+running testSetMaxValueMinusOne
+EVENT(webkitsourceopen)
+onDurationChange : video.duration is 6.042
+EXPECTED (mediaSource.duration == 'video.duration') OK
+EVENT(loadedmetadata)
+EXPECTED (mediaSource.duration == 'testDurationValue'), OBSERVED '3.4028234663852886e+38' FAIL
+onDurationChange : video.duration is 3.4028234663852886e+38
+EXPECTED (mediaSource.duration == 'video.duration') OK
+EVENT(durationchange)
+
+running testSetMinValue
+EVENT(webkitsourceopen)
+onDurationChange : video.duration is 6.042
+EXPECTED (mediaSource.duration == 'video.duration') OK
+EVENT(loadedmetadata)
+EXPECTED (mediaSource.duration == 'testDurationValue'), OBSERVED '1.1754943508222875e-38' FAIL
+onDurationChange : video.duration is 0.000
+EXPECTED (mediaSource.duration == 'video.duration') OK
+EVENT(durationchange)
+
+running testSetMinValueMinusOne
+EVENT(webkitsourceopen)
+onDurationChange : video.duration is 6.042
+EXPECTED (mediaSource.duration == 'video.duration') OK
+EVENT(loadedmetadata)
+PASS: Media Source set duration. Got expected exception Error: InvalidAccessError: DOM Exception 15
+
+running testSetPositiveInfinity
+EVENT(webkitsourceopen)
+onDurationChange : video.duration is 6.042
+EXPECTED (mediaSource.duration == 'video.duration') OK
+EVENT(loadedmetadata)
+EXPECTED (mediaSource.duration == 'testDurationValue') OK
+onDurationChange : video.duration is Infinity
+EXPECTED (mediaSource.duration == 'video.duration') OK
+EVENT(durationchange)
+
+running testSetNegativeInfinity
+EVENT(webkitsourceopen)
+onDurationChange : video.duration is 6.042
+EXPECTED (mediaSource.duration == 'video.duration') OK
+EVENT(loadedmetadata)
+PASS: Media Source set duration. Got expected exception Error: InvalidAccessError: DOM Exception 15
+
+running testSetLowestValue
+EVENT(webkitsourceopen)
+onDurationChange : video.duration is 6.042
+EXPECTED (mediaSource.duration == 'video.duration') OK
+EVENT(loadedmetadata)
+PASS: Media Source set duration. Got expected exception Error: InvalidAccessError: DOM Exception 15
+
+running testSetNegativeDouble
+EVENT(webkitsourceopen)
+onDurationChange : video.duration is 6.042
+EXPECTED (mediaSource.duration == 'video.duration') OK
+EVENT(loadedmetadata)
+PASS: Media Source set duration. Got expected exception Error: InvalidAccessError: DOM Exception 15
+
+running testSetPositiveDouble
+EVENT(webkitsourceopen)
+END OF TEST
+

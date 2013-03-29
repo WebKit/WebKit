@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="/media-resources/video-test.js"></script>
+    <script src="/media/resources/media-source/webm/segment-info.js"></script>
+    <script src="media-source.js"></script>
+    <script>
+      var segmentHelper = new MediaSourceTest.SegmentHelper(WebMSegmentInfo.testWebM);
+
+      // Duration of HTMLMediaElement (i.e., video) changed.
+      function onDurationChange()
+      {
+        consoleWrite("onDurationChange : video.duration is " + video.duration.toFixed(3));
+
+        // Confirm that value of media-source duration matches value of
+        // parent HTML Media Element's duration.
+        // Do this only if the video tag ready state is greater
+        // than HAVE_NOTHING.
+        // Without metadata, parent media element won't have a duration value defined.
+        if (video.readyState <= video.HAVE_NOTHING)
+          return;
+
+        // Don't use "testExpected()" so we won't log the actual duration as the floating point result may differ with different engines.
+        reportExpected(mediaSource.duration == video.duration, "mediaSource.duration", "==", "video.duration", mediaSource.duration);
+      }
+
+      // Set duration of the MediaSource object to the input duration value.
+      // Also check if any error, if specified, was raised.
+      function verifySetDuration(testDurationValue, expectedError)
+      {
+        try {
+          mediaSource.duration = testDurationValue;
+          if (expectedError) {
+            consoleWrite("FAIL: Media Source set duration. Expected an exception");
+          }
+        } catch (e) {
+          if (!expectedError || !(e.code == expectedError)) {
+            consoleWrite("FAIL: Media Source set duration. Unexpected exception " + e);
+          }
+          consoleWrite("PASS: Media Source set duration. " + "Got expected exception " + e);
+          return;
+        }
+
+        // Confirm that value of media-source duration matches value that it was assigned.
+        // Don't use "testExpected()" so we won't log the actual duration as the floating point result may differ with different engines.
+        reportExpected(mediaSource.duration == testDurationValue, "mediaSource.duration", "==", "testDurationValue", mediaSource.duration);
+      }
+
+      function initialize()
+      {
+        segmentHelper.addSourceBuffer();
+        segmentHelper.appendInitSegment();
+      }
+
+      function setDurationHelper(testDurationValue, expectedError, runNextTestCase, video)
+      {
+        initialize();
+
+        waitForEventOnce('loadedmetadata', function () {
+          // Set duration to specified value.
+          verifySetDuration(testDurationValue, expectedError);
+          if (expectedError) {
+             runNextTestCase();
+          } else {
+             waitForEventOnce('durationchange', runNextTestCase);
+          }
+        }, false);
+      }
+
+      function testSetMaxInt(runNextTestCase, video)
+      {
+        // Set duration to maximum allowed int.
+        setDurationHelper(Math.pow(2, 31) - 1, null, runNextTestCase, video);
+      }
+
+      function testSetMinInt(runNextTestCase, video)
+      {
+        // Set duration to minimum allowed int.
+        setDurationHelper(1, null, runNextTestCase, video);
+      }
+
+      function testSetMaxValue(runNextTestCase, video)
+      {
+        // Set duration to maximum allowed JS value
+        setDurationHelper(Number.MAX_VALUE, null, runNextTestCase, video);
+      }
+
+      function testSetMinValue(runNextTestCase, video)
+      {
+        // Set duration minimum allowed JS value
+        setDurationHelper(Number.MIN_VALUE, null, runNextTestCase, video);
+      }
+
+      function testSetMaxValueMinusOne(runNextTestCase, video)
+      {
+        // Set duration to maximum allowed JS value minus 1.
+        setDurationHelper(Number.MAX_VALUE - 1, null, runNextTestCase, video);
+      }
+
+      function testSetMinValueMinusOne(runNextTestCase, video)
+      {
+        // Set duration to minimum allowed JS value minus 1, expect error.
+        var error = DOMException.INVALID_ACCESS_ERR;
+        setDurationHelper(Number.MIN_VALUE - 1, error, runNextTestCase, video);
+      }
+
+      function testSetPositiveInfinity(runNextTestCase, video)
+      {
+        // Set duration to maximum numerical value;
+        // in JS that is = Infinity; expect no error.
+        setDurationHelper(Number.POSITIVE_INFINITY, null, runNextTestCase, video);
+      }
+
+      function testSetNegativeInfinity(runNextTestCase, video)
+      {
+        // Set duration to maximum numerical value;
+        // in JS that is = Infinity; expect error.
+        var error = DOMException.INVALID_ACCESS_ERR;
+        setDurationHelper(Number.NEGATIVE_INFINITY, error, runNextTestCase, video);
+      }
+
+      function testSetLowestValue(runNextTestCase, video)
+      {
+        // Set duration to lowest numerical value;
+        // in JS that is = negative of max_value; expect error.
+        var error = DOMException.INVALID_ACCESS_ERR;
+        setDurationHelper(-1 * Number.MAX_VALUE, error, runNextTestCase, video);
+      }
+
+      function testSetNegativeDouble(runNextTestCase, video)
+      {
+        // Set duration to a negative double, expect error.
+        var error = DOMException.INVALID_ACCESS_ERR;
+        setDurationHelper(-101.9, error, runNextTestCase, video);
+      }
+
+      function testSetPositiveDouble(runNextTestCase, video)
+      {
+        // Set duration to a positive double, expect no errors.
+        setDurationHelper(101.9, null, runNextTestCase, video);
+        endTest();
+      }
+
+      function testSetZero(runNextTestCase, video)
+      {
+        // Set duration to a positive double, expect no errors.
+        setDurationHelper(0, null, runNextTestCase, video);
+        endTest();
+      }
+
+      function start()
+      {
+        findMediaElement();
+
+        mediaSource = new WebKitMediaSource();
+
+        waitForEventAndFail('error');
+        waitForEvent('webkitsourceopen', "", false, false, mediaSource);
+
+        segmentHelper.init(video, function (success)
+        {
+          if (!success) {
+            failTest("Failed to load segment data");
+            return;
+          }
+
+          // Listen to any duration change events.
+          // When it fires, check to see if duration of HTMLMediaElement
+          // matches duration of its MediaSource object.
+          video.addEventListener('durationchange', onDurationChange);
+
+          // List of tests we'd like to run.
+          var testCases = [
+              testSetMaxInt,
+              testSetMinInt,
+              testSetMaxValue,
+              testSetMaxValueMinusOne,
+              testSetMinValue,
+              testSetMinValueMinusOne,
+              testSetPositiveInfinity,
+              testSetNegativeInfinity,
+              testSetLowestValue,
+              testSetNegativeDouble,
+              testSetPositiveDouble
+          ];
+          MediaSourceTest.startSourceOpenTesting(video, testCases);
+        });
+      }
+    </script>
+  </head>
+  
+  <body onload="start()">
+    <video autoplay controls></video>
+    <p>Tests boundary values for duration attribute on MediaSource object.</p>
+  </body>
+
+</html>
