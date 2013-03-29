@@ -135,6 +135,9 @@ public:
 
     // Called when the GraphicsLayer for the given RenderLayer has flushed changes inside of flushPendingLayerChanges().
     void didFlushChangesForLayer(RenderLayer*, const GraphicsLayer*);
+
+    // Called when something outside WebKit affects the visible rect (e.g. delegated scrolling). Might schedule a layer flush.
+    void didChangeVisibleRect();
     
     // Rebuild the tree of compositing layers
     void updateCompositingLayers(CompositingUpdateType, RenderLayer* updateRoot = 0);

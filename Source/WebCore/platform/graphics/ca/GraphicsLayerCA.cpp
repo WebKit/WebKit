@@ -907,7 +907,7 @@ void GraphicsLayerCA::flushCompositingStateForThisLayerOnly()
         client()->didCommitChangesForLayer(this);
 }
 
-void GraphicsLayerCA::recursiveComputeVisibleRect(const TransformState& state)
+bool GraphicsLayerCA::recursiveVisibleRectChangeRequiresFlush(const TransformState& state) const
 {
     TransformState localState = state;
     
@@ -915,16 +915,16 @@ void GraphicsLayerCA::recursiveComputeVisibleRect(const TransformState& state)
     // for animating transforms.
     FloatRect visibleRect = computeVisibleRect(localState, 0);
     if (visibleRect != m_visibleRect) {
-        m_visibleRect = visibleRect;
         if (TiledBacking* tiledBacking = this->tiledBacking()) {
-            if (tiledBacking->tilesWouldChangeForVisibleRect(m_visibleRect))
-                noteLayerPropertyChanged(VisibleRectChanged);
+            if (tiledBacking->tilesWouldChangeForVisibleRect(visibleRect))
+                return true;
         }
     }
 
     if (m_maskLayer) {
         GraphicsLayerCA* maskLayerCA = static_cast<GraphicsLayerCA*>(m_maskLayer);
-        maskLayerCA->recursiveComputeVisibleRect(localState);
+        if (maskLayerCA->recursiveVisibleRectChangeRequiresFlush(localState))
+            return true;
     }
 
     const Vector<GraphicsLayer*>& childLayers = children();
@@ -932,17 +932,21 @@ void GraphicsLayerCA::recursiveComputeVisibleRect(const TransformState& state)
     
     for (size_t i = 0; i < numChildren; ++i) {
         GraphicsLayerCA* curChild = static_cast<GraphicsLayerCA*>(childLayers[i]);
-        curChild->recursiveComputeVisibleRect(localState);
+        if (curChild->recursiveVisibleRectChangeRequiresFlush(localState))
+            return true;
     }
 
     if (m_replicaLayer)
-        static_cast<GraphicsLayerCA*>(m_replicaLayer)->recursiveComputeVisibleRect(localState);
+        if (static_cast<GraphicsLayerCA*>(m_replicaLayer)->recursiveVisibleRectChangeRequiresFlush(localState))
+            return true;
+    
+    return false;
 }
 
-void GraphicsLayerCA::recomputeVisibleRects(const FloatRect& clipRect)
+bool GraphicsLayerCA::visibleRectChangeRequiresFlush(const FloatRect& clipRect) const
 {
     TransformState state(TransformState::UnapplyInverseTransformDirection, FloatQuad(clipRect));
-    recursiveComputeVisibleRect(state);
+    return recursiveVisibleRectChangeRequiresFlush(state);
 }
 
 TiledBacking* GraphicsLayerCA::tiledBacking() const

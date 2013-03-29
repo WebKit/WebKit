@@ -409,8 +409,9 @@ public:
     virtual void flushCompositingState(const FloatRect& /* clipRect */) { }
     virtual void flushCompositingStateForThisLayerOnly() { }
 
-    // Walk the layer tree, recomputing the visible rects of layer with TiledBacking, on platforms that use it.
-    virtual void recomputeVisibleRects(const FloatRect& /* clipRect */) { }
+    // If the exposed rect of this layer changes, returns true if this or descendant layers need a flush,
+    // for example to allocate new tiles.
+    virtual bool visibleRectChangeRequiresFlush(const FloatRect& /* clipRect */) const { return false; }
 
     // Return a string with a human readable form of the layer tree, If debug is true
     // pointers for the layers and timing data will be included in the returned string.

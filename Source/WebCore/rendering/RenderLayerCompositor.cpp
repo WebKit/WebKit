@@ -373,6 +373,21 @@ void RenderLayerCompositor::didFlushChangesForLayer(RenderLayer* layer, const Gr
         fixedRootBackgroundLayerChanged();
 }
 
+void RenderLayerCompositor::didChangeVisibleRect()
+{
+    GraphicsLayer* rootLayer = rootGraphicsLayer();
+    if (!rootLayer)
+        return;
+
+    FrameView* frameView = m_renderView ? m_renderView->frameView() : 0;
+    if (!frameView)
+        return;
+
+    IntRect visibleRect = m_clipLayer ? IntRect(IntPoint(), frameView->contentsSize()) : frameView->visibleContentRect();
+    if (rootLayer->visibleRectChangeRequiresFlush(visibleRect))
+        scheduleLayerFlush();
+}
+
 void RenderLayerCompositor::notifyFlushBeforeDisplayRefresh(const GraphicsLayer*)
 {
     if (!m_layerUpdater) {

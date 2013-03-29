@@ -142,8 +142,7 @@ public:
     virtual void flushCompositingState(const FloatRect&);
     virtual void flushCompositingStateForThisLayerOnly();
 
-    void recursiveComputeVisibleRect(const TransformState&);
-    virtual void recomputeVisibleRects(const FloatRect& clipRect);
+    virtual bool visibleRectChangeRequiresFlush(const FloatRect& visibleRect) const OVERRIDE;
 
     virtual TiledBacking* tiledBacking() const OVERRIDE;
 
@@ -252,6 +251,8 @@ private:
     const FloatRect& visibleRect() const { return m_visibleRect; }
     
     FloatRect adjustTiledLayerVisibleRect(TiledBacking*, const FloatRect& oldVisibleRect, const FloatSize& oldSize) const;
+
+    bool recursiveVisibleRectChangeRequiresFlush(const TransformState&) const;
 
     // Used to track the path down the tree for replica layers.
     struct ReplicaState {
