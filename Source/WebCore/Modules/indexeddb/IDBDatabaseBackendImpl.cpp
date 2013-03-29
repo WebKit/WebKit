@@ -38,6 +38,7 @@
 #include "IDBTransactionBackendImpl.h"
 #include "IDBTransactionCoordinator.h"
 #include "SharedBuffer.h"
+#include <wtf/TemporaryChange.h>
 
 namespace WebCore {
 
@@ -1334,7 +1335,7 @@ void IDBDatabaseBackendImpl::close(PassRefPtr<IDBDatabaseCallbacks> prpCallbacks
     // To avoid that situation, don't proceed in case of reentrancy.
     if (m_closingConnection)
         return;
-    m_closingConnection = true;
+    TemporaryChange<bool> closingConnection(m_closingConnection, true);
     processPendingCalls();
 
     // FIXME: Add a test for the m_pendingOpenCalls cases below.
@@ -1351,7 +1352,6 @@ void IDBDatabaseBackendImpl::close(PassRefPtr<IDBDatabaseCallbacks> prpCallbacks
         if (m_factory)
             m_factory->removeIDBDatabaseBackend(m_identifier);
     }
-    m_closingConnection = false;
 }
 
 void CreateObjectStoreAbortOperation::perform(IDBTransactionBackendImpl* transaction)
