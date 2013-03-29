@@ -34,10 +34,10 @@ layer at (0,0) size 800x548
           RenderText {#text} at (3,0) size 18x163
             text run at (3,0) width 163: "string\x{300C}\x{3042}\x{3001}\x{5909}\x{3063}\x{FF01}\x{300D}\x{3002}"
         RenderBR {BR} at (24,149) size 0x18
-        RenderInline {SPAN} at (0,0) size 224x18
-          RenderText {#text} at (0,170) size 224x18
-            text run at (0,170) width 224: "\x{90CA}\x{5916}\x{306E}\x{304E}\x{3089}\x{304E}\x{3089}\x{3072}\x{304B}\x{308B}\x{8349}\x{306E}\x{6CE2}\x{3002}"
-        RenderBR {BR} at (224,170) size 0x18
+        RenderInline {SPAN} at (0,0) size 222x18
+          RenderText {#text} at (0,170) size 222x18
+            text run at (0,170) width 222: "\x{90CA}\x{5916}\x{306E}\x{304E}\x{3089}\x{304E}\x{3089}\x{3072}\x{304B}\x{308B}\x{8349}\x{306E}\x{6CE2}\x{3002}"
+        RenderBR {BR} at (222,170) size 0x18
         RenderInline {SPAN} at (0,0) size 314x18
           RenderText {#text} at (0,191) size 314x18
             text run at (0,191) width 314: "ABCDEFGHIJKLM abcdefghijklm 1234567890"
