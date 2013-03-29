@@ -1,3 +1,28 @@
+2013-03-29  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: Remove -[JSManagedValue managedValueWithValue:owner:]
+        https://bugs.webkit.org/show_bug.cgi?id=113602
+
+        Reviewed by Geoffrey Garen.
+
+        Since we put the primary way of keeping track of external object graphs (i.e. "managed" references) 
+        in JSVirtualMachine, there is some overlap in the functionality of that interface and JSManagedValue.
+        Specifically, we no longer need the methods that include an owner, since ownership is now tracked 
+        by JSVirtualMachine. These JSManagedValues will become weak pointers unless they are used 
+        with [JSVirtualMachine addManagedReference:withOwner:], in which case their lifetime is tied to that 
+        of their owner.
+
+        * API/JSManagedValue.h:
+        * API/JSManagedValue.mm:
+        (-[JSManagedValue init]):
+        (-[JSManagedValue initWithValue:]):
+        (JSManagedValueHandleOwner::isReachableFromOpaqueRoots):
+        * API/JSVirtualMachine.mm:
+        (getInternalObjcObject):
+        * API/tests/testapi.mm:
+        (-[TextXYZ setOnclick:]):
+        (-[TextXYZ dealloc]):
+
 2013-03-29  Geoffrey Garen  <ggaren@apple.com>
 
         Simplified bytecode generation by unforking "condition context" codegen

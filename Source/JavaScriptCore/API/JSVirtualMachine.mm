@@ -125,14 +125,19 @@ static NSMapTable *wrapperCache()
 
 static id getInternalObjcObject(id object)
 {
-    if ([object isKindOfClass:[JSManagedValue class]])
-        object = [static_cast<JSManagedValue *>(object) value];
+    if ([object isKindOfClass:[JSManagedValue class]]) {
+        JSValue* value = [static_cast<JSManagedValue *>(object) value];
+        id temp = tryUnwrapObjcObject([value.context globalContextRef], [value JSValueRef]);
+        if (temp)
+            return temp;
+        return object;
+    }
     
     if ([object isKindOfClass:[JSValue class]]) {
         JSValue *value = static_cast<JSValue *>(object);
         object = tryUnwrapObjcObject([value.context globalContextRef], [value JSValueRef]);
     }
-    
+
     return object;
 }
 

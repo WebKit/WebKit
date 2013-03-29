@@ -37,10 +37,8 @@ NS_CLASS_AVAILABLE(10_9, NA)
 @interface JSManagedValue : NSObject
 
 + (JSManagedValue *)managedValueWithValue:(JSValue *)value;
-+ (JSManagedValue *)managedValueWithValue:(JSValue *)value owner:(id)owner;
 
 - (id)initWithValue:(JSValue *)value;
-- (id)initWithValue:(JSValue *)value owner:(id)owner;
 
 - (JSValue *)value;
 

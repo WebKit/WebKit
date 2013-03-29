@@ -133,7 +133,8 @@ bool testXYZTested = false;
 
 - (void)setOnclick:(JSValue *)value
 {
-    m_onclickHandler = [JSManagedValue managedValueWithValue:value owner:self];
+    m_onclickHandler = [JSManagedValue managedValueWithValue:value];
+    [value.context.virtualMachine addManagedReference:m_onclickHandler withOwner:self];
 }
 - (JSValue *)weakOnclick
 {
@@ -150,6 +151,10 @@ bool testXYZTested = false;
 
     JSValue *function = [m_onclickHandler value];
     [function callWithArguments:[NSArray array]];
+}
+- (void)dealloc
+{
+    [[m_onclickHandler value].context.virtualMachine removeManagedReference:m_onclickHandler withOwner:self];
 }
 @end
 

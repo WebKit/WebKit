@@ -49,13 +49,8 @@ static JSManagedValueHandleOwner* managedValueHandleOwner()
     return &jsManagedValueHandleOwner;
 }
 
-@interface JSManagedValue (Internal)
-- (id)weakOwner;
-@end
-
 @implementation JSManagedValue {
     JSC::Weak<JSC::JSObject> m_value;
-    id m_weakOwner;
 }
 
 + (JSManagedValue *)managedValueWithValue:(JSValue *)value
@@ -63,22 +58,12 @@ static JSManagedValueHandleOwner* managedValueHandleOwner()
     return [[[self alloc] initWithValue:value] autorelease];
 }
 
-+ (JSManagedValue *)managedValueWithValue:(JSValue *)value owner:(id)owner
-{
-    return [[[self alloc] initWithValue:value owner:owner] autorelease];
-}
-
 - (id)init
 {
-    return [self initWithValue:nil owner:nil];
+    return [self initWithValue:nil];
 }
 
 - (id)initWithValue:(JSValue *)value
-{
-    return [self initWithValue:value owner:nil];
-}
-
-- (id)initWithValue:(JSValue *)value owner:(id)owner
 {
     self = [super init];
     if (!self)
@@ -93,15 +78,7 @@ static JSManagedValueHandleOwner* managedValueHandleOwner()
         m_value.swap(weak);
     }
 
-    objc_initWeak(&m_weakOwner, owner);
-
     return self;
-}
-
-- (void)dealloc
-{
-    objc_destroyWeak(&m_weakOwner);
-    [super dealloc];
 }
 
 - (JSValue *)value
@@ -115,22 +92,10 @@ static JSManagedValueHandleOwner* managedValueHandleOwner()
 
 @end
 
-@implementation JSManagedValue (Internal)
-
-- (id)weakOwner
-{
-    return objc_loadWeak(&m_weakOwner);
-}
-
-@end
-
 bool JSManagedValueHandleOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown>, void* context, JSC::SlotVisitor& visitor)
 {
     JSManagedValue *managedValue = static_cast<JSManagedValue *>(context);
-    id weakOwner = [managedValue weakOwner];
-    if (!weakOwner)
-        return false;
-    return visitor.containsOpaqueRoot(weakOwner);
+    return visitor.containsOpaqueRoot(managedValue);
 }
 
 #endif // JSC_OBJC_API_ENABLED
