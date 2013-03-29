@@ -1368,6 +1368,9 @@ webkit.org/b/111606 fast/borders/border-fit.html [ Failure ]
 webkit.org/b/111606 fast/borders/border-fit-2.html [ Failure ]
 webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Failure ]
 
+Bug(ojan) fast/table/overflowHidden.html [ ImageOnlyFailure Failure ]
+Bug(ojan) scrollbars/custom-scrollbar-table-cell.html [ ImageOnlyFailure Failure ]
+
 webkit.org/b/112109 fast/box-shadow/box-shadow-with-zero-radius.html [ ImageOnlyFailure ]
 
 webkit.org/b/112110 media/track/track-cue-container-rendering-position.html [ Failure ]

@@ -522,7 +522,8 @@ protected:
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
-    virtual void computePreferredLogicalWidths();
+    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
+    virtual void computePreferredLogicalWidths() OVERRIDE;
 
     virtual int firstLineBoxBaseline() const;
     virtual int inlineBlockBaseline(LineDirectionMode) const OVERRIDE;
@@ -899,8 +900,9 @@ private:
 
     virtual bool isPointInOverflowControl(HitTestResult&, const LayoutPoint& locationInContainer, const LayoutPoint& accumulatedOffset);
 
-    void computeInlinePreferredLogicalWidths();
-    void computeBlockPreferredLogicalWidths();
+    // FIXME: Make this method const so we can remove the const_cast in computeIntrinsicLogicalWidths.
+    void computeInlinePreferredLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth);
+    void computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
 
     // Obtains the nearest enclosing block (including this block) that contributes a first-line style to our inline
     // children.

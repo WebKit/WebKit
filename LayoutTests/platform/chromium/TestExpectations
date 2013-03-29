@@ -3765,6 +3765,9 @@ webkit.org/b/112369 [ Debug ] inspector/debugger/pause-in-inline-script.html [ P
 # Needs rebaseline on all platforms
 Bug(leviw) fast/text/shaping/shaping-selection-rect.html [ Failure ]
 
+Bug(ojan) [ Mac Win ] fast/table/overflowHidden.html [ ImageOnlyFailure Failure ]
+Bug(ojan) [ Mac Win ] scrollbars/custom-scrollbar-table-cell.html [ ImageOnlyFailure Failure ]
+
 # Flaky tests
 webkit.org/b/112598 [ Win Mac Linux ] http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure Pass ]
 webkit.org/b/112601 http/tests/security/cross-frame-access-port-explicit-domain.html [ Failure Pass ]

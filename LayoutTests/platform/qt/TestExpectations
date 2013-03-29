@@ -2702,6 +2702,8 @@ webkit.org/b/110654 css3/flexbox/button.html [ Failure ]
 # Need support for ResourceHandle::didChangePriority and DRT support
 webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Failure ]
 
+Bug(ojan) fast/table/overflowHidden.html [ ImageOnlyFailure Failure ]
+Bug(ojan) scrollbars/custom-scrollbar-table-cell.html [ ImageOnlyFailure Failure ]
 
 # Border-fit should happen at layout time rather than paint time
 webkit.org/b/111606 fast/borders/border-fit-2.html [ Skip ]
