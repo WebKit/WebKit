@@ -1,3 +1,9 @@
+2013-03-29  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Rollout r146818.
+
+        * win/tools/vsprops/FeatureDefines.props:
+
 2013-03-25  Kent Tamura  <tkent@chromium.org>
 
         Rename ENABLE_INPUT_TYPE_DATETIME
