@@ -1,5 +1,16 @@
 2013-03-28  Brady Eidson  <beidson@apple.com>
 
+        We leak NetworkConnectionToWebProcess objects.
+        <rdar://problem/13393118> and https://bugs.webkit.org/show_bug.cgi?id=113551
+
+        Reviewed by Anders Carlsson.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::didClose): Remove this from the global set
+          of NetworkConnectionToWebProcess objects.
+
+2013-03-28  Brady Eidson  <beidson@apple.com>
+
         Resources are never revalidated/reloaded if a cached response exists on disk.
         <rdar://problem/13479890> and https://bugs.webkit.org/show_bug.cgi?id=113542
 

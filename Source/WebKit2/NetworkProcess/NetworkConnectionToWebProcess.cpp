@@ -107,6 +107,8 @@ void NetworkConnectionToWebProcess::didClose(CoreIPC::Connection*)
     NetworkBlobRegistry::shared().connectionToWebProcessDidClose(this);
 
     m_networkResourceLoaders.clear();
+    
+    NetworkProcess::shared().removeNetworkConnectionToWebProcess(this);
 }
 
 void NetworkConnectionToWebProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference, CoreIPC::StringReference)
