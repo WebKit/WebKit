@@ -6,17 +6,14 @@ if (this.importScripts) {
 function test()
 {
     removeVendorPrefixes();
-    dbname = decodeURI(self.location.search.substring(1));
-    evalAndLog("request = indexedDB.open(\"" + dbname + "\")");
+    dbname = decodeURIComponent(self.location.search.substring(1));
+    request = evalAndLog("indexedDB.open(dbname, 2)");
     request.onerror = unexpectedErrorCallback;
-    request.onsuccess = function(e) {
-        db = request.result;
-        evalAndLog("request = db.setVersion(1)");
-        request.onsuccess = unexpectedSuccessCallback;
-        request.onblocked = function() {
-            testPassed("worker received blocked event.");
-            postMessage("gotblocked");
-        };
+    request.onsuccess = unexpectedSuccessCallback;
+    request.onupgradeneeded = unexpectedUpgradeNeededCallback;
+    request.onblocked = function() {
+        testPassed("worker received blocked event.");
+        postMessage("gotblocked");
     };
 }
 
