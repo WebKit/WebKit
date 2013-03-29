@@ -1,0 +1,14 @@
+This tests that a notification listener on an element only listens to that one element, and that a global notification listener listens to all notifications.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Slider
+FAIL selectNotificationCount should be 1. Was 0.
+FAIL sliderNotificationCount should be 1. Was 0.
+FAIL globalNotificationCount should be 2. Was 0.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
