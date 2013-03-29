@@ -455,6 +455,7 @@ static VisibleSelection expandSelectionToRespectUserSelectAll(Node* targetNode, 
 
     return newSelection;
 #else
+    UNUSED_PARAM(targetNode);
     return selection;
 #endif
 }
