@@ -1,3 +1,10 @@
+2013-03-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix a typo in r147147 to fix Mac EWS.
+
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (PatchProcessingQueue._new_port_name_from_old):
+
 2013-03-28  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Build break with latest EFL libraries after r146265
