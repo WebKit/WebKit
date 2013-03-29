@@ -51,6 +51,8 @@ WebInspector.TabbedEditorContainer = function(delegate, settingName)
     this._delegate = delegate;
 
     this._tabbedPane = new WebInspector.TabbedPane();
+    this._tabbedPane.setTabDelegate(new WebInspector.EditorContainerTabDelegate(this));
+
     this._tabbedPane.closeableTabs = true;
     this._tabbedPane.element.id = "scripts-editor-container-tabbed-pane";
 
@@ -175,6 +177,50 @@ WebInspector.TabbedEditorContainer.prototype = {
         if (uiSourceCode.isDirty())
             title += "*";
         return title;
+    },
+
+    /**
+     * @param {string} id
+     * @param {string} nextTabId
+     */
+    _maybeCloseTab: function(id, nextTabId)
+    {
+        var uiSourceCode = this._files[id];
+        var shouldPrompt = uiSourceCode.isDirty() && uiSourceCode.project().canSetFileContent();
+        // FIXME: this should be replaced with common Save/Discard/Cancel dialog.
+        if (!shouldPrompt || confirm(WebInspector.UIString("Are you sure you want to close unsaved file: %s?", uiSourceCode.name()))) {
+            uiSourceCode.resetWorkingCopy();
+            if (nextTabId)
+                this._tabbedPane.selectTab(nextTabId, true);
+            this._tabbedPane.closeTab(id, true);
+            return true;
+        }
+        return false;
+    },
+
+    /**
+     * @param {Array.<string>} ids
+     */
+    _closeTabs: function(ids)
+    {
+        var dirtyTabs = [];
+        var cleanTabs = [];
+        for (var i = 0; i < ids.length; ++i) {
+            var id = ids[i];
+            var uiSourceCode = this._files[id];
+            if (uiSourceCode.isDirty())
+                dirtyTabs.push(id);
+            else
+                cleanTabs.push(id);
+        }
+        if (dirtyTabs.length)
+            this._tabbedPane.selectTab(dirtyTabs[0], true);
+        this._tabbedPane.closeTabs(cleanTabs, true);
+        for (var i = 0; i < dirtyTabs.length; ++i) {
+            var nextTabId = i + 1 < dirtyTabs.length ? dirtyTabs[i + 1] : null;
+            if (!this._maybeCloseTab(dirtyTabs[i], nextTabId))
+                break;
+        }
     },
 
     /**
@@ -605,4 +651,25 @@ WebInspector.TabbedEditorContainer.History.prototype = {
     },
 
     __proto__: WebInspector.Object.prototype
+}
+
+/**
+ * @constructor
+ * @implements {WebInspector.TabbedPaneTabDelegate}
+ * @param {WebInspector.TabbedEditorContainer} editorContainer
+ */
+WebInspector.EditorContainerTabDelegate = function(editorContainer)
+{
+    this._editorContainer = editorContainer;
+}
+
+WebInspector.EditorContainerTabDelegate.prototype = {
+    /**
+     * @param {WebInspector.TabbedPane} tabbedPane
+     * @param {Array.<string>} ids
+     */
+    closeTabs: function(tabbedPane, ids)
+    {
+        this._editorContainer._closeTabs(ids);
+    }
 }

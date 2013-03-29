@@ -397,6 +397,11 @@ WebInspector.UISourceCode.prototype = {
         return this._content;
     },
 
+    resetWorkingCopy: function()
+    {
+        this.setWorkingCopy(this._content);
+    },
+
     /**
      * @param {string} newWorkingCopy
      */

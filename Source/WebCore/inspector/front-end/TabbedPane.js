@@ -102,6 +102,17 @@ WebInspector.TabbedPane.prototype = {
     },
 
     /**
+     * @param {WebInspector.TabbedPaneTabDelegate} delegate
+     */
+    setTabDelegate: function(delegate)
+    {
+        var tabs = this._tabs.slice();
+        for (var i = 0; i < tabs.length; ++i)
+            tabs[i].setDelegate(delegate);
+        this._delegate = delegate;
+    },
+
+    /**
      * @param {Event} event
      */
     onMouseUp: function(event)
@@ -121,6 +132,7 @@ WebInspector.TabbedPane.prototype = {
     appendTab: function(id, tabTitle, view, tabTooltip, userGesture)
     {
         var tab = new WebInspector.TabbedPaneTab(this, id, tabTitle, this._closeableTabs, view, tabTooltip);
+        tab.setDelegate(this._delegate);
         this._tabsById[id] = tab;
 
         this._tabs.push(tab);
@@ -177,28 +189,30 @@ WebInspector.TabbedPane.prototype = {
     },
 
     /**
-     * @param {boolean=} userGesture
+     * @return {Array.<string>}
      */
-    closeAllTabs: function(userGesture)
+    allTabs: function()
     {
+        var result = [];
         var tabs = this._tabs.slice();
         for (var i = 0; i < tabs.length; ++i)
-            this._innerCloseTab(tabs[i].id, userGesture);
-        this._updateTabElements();
+            result.push(tabs[i].id);
+        return result;
     },
 
     /**
      * @param {string} id
+     * @return {Array.<string>}
      */
-    closeOtherTabs: function(id)
+    otherTabs: function(id)
     {
+        var result = [];
         var tabs = this._tabs.slice();
         for (var i = 0; i < tabs.length; ++i) {
             if (tabs[i].id !== id)
-                this._innerCloseTab(tabs[i].id, true);
+                result.push(tabs[i].id);
         }
-        this._updateTabElements();
-        this.selectTab(id, true);
+        return result;
     },
 
     /**
@@ -674,6 +688,14 @@ WebInspector.TabbedPaneTab.prototype = {
     },
 
     /**
+     * @param {WebInspector.TabbedPaneTabDelegate} delegate
+     */
+    setDelegate: function(delegate)
+    {
+        this._delegate = delegate;
+    },
+
+    /**
      * @param {boolean} measuring
      */
     _createTabElement: function(measuring)
@@ -715,7 +737,7 @@ WebInspector.TabbedPaneTab.prototype = {
     _tabClicked: function(event)
     {
         if (this._closeable && (event.button === 1 || event.target.hasStyleClass("tabbed-pane-header-tab-close-button")))
-            this._tabbedPane.closeTab(this.id, true);
+            this._closeTabs([this.id]);
     },
 
     /**
@@ -728,21 +750,33 @@ WebInspector.TabbedPaneTab.prototype = {
         this._tabbedPane.selectTab(this.id, true);
     },
 
+    /**
+     * @param {Array.<string>} ids
+     */
+    _closeTabs: function(ids)
+    {
+        if (this._delegate) {
+            this._delegate.closeTabs(this._tabbedPane, ids);
+            return;
+        }
+        this._tabbedPane.closeTabs(ids, true);
+    },
+
     _tabContextMenu: function(event)
     {
         function close()
         {
-            this._tabbedPane.closeTab(this.id, true);
+            this._closeTabs([this.id]);
         }
   
         function closeOthers()
         {
-            this._tabbedPane.closeOtherTabs(this.id);
+            this._closeTabs(this._tabbedPane.otherTabs(this.id));
         }
   
         function closeAll()
         {
-            this._tabbedPane.closeAllTabs(true);
+            this._closeTabs(this._tabbedPane.allTabs(this.id));
         }
   
         var contextMenu = new WebInspector.ContextMenu(event);
@@ -816,4 +850,19 @@ WebInspector.TabbedPaneTab.prototype = {
         this._tabElement.style.removeProperty("left");
         delete this._dragStartX;
     }
+}
+
+/**
+ * @interface
+ */
+WebInspector.TabbedPaneTabDelegate = function()
+{
+}
+
+WebInspector.TabbedPaneTabDelegate.prototype = {
+    /**
+     * @param {WebInspector.TabbedPane} tabbedPane
+     * @param {Array.<string>} ids
+     */
+    closeTabs: function(tabbedPane, ids) { }
 }
