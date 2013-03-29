@@ -155,8 +155,12 @@ void WebResourceLoadScheduler::remove(ResourceLoader* resourceLoader)
     // If a resource load was actually started within the NetworkProcess then the NetworkProcess handles clearing out the identifier.
     WebProcess::shared().networkConnection()->connection()->send(Messages::NetworkConnectionToWebProcess::RemoveLoadIdentifier(identifier), 0);
     
-    ASSERT(m_webResourceLoaders.contains(identifier));
-    m_webResourceLoaders.remove(identifier);
+    RefPtr<WebResourceLoader> loader = m_webResourceLoaders.take(identifier);
+    ASSERT(loader);
+
+    // It's possible that this WebResourceLoader might be just about to message back to the NetworkProcess (e.g. ContinueWillSendRequest)
+    // but there's no point in doing so anymore.
+    loader->detachFromCoreLoader();
 }
 
 void WebResourceLoadScheduler::crossOriginRedirectReceived(ResourceLoader*, const KURL&)

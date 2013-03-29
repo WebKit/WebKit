@@ -67,6 +67,8 @@ public:
 
     WebCore::ResourceLoader* resourceLoader() const { return m_coreLoader.get(); }
 
+    void detachFromCoreLoader();
+
 private:
     WebResourceLoader(PassRefPtr<WebCore::ResourceLoader>);
 

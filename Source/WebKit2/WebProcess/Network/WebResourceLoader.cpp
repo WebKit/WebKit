@@ -73,12 +73,23 @@ void WebResourceLoader::cancelResourceLoader()
     m_coreLoader->cancel();
 }
 
+void WebResourceLoader::detachFromCoreLoader()
+{
+    m_coreLoader = 0;
+}
+
 void WebResourceLoader::willSendRequest(const ResourceRequest& proposedRequest, const ResourceResponse& redirectResponse)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::willSendRequest to '%s'", proposedRequest.url().string().utf8().data());
+
+    RefPtr<WebResourceLoader> protector(this);
     
     ResourceRequest newRequest = proposedRequest;
     m_coreLoader->willSendRequest(newRequest, redirectResponse);
+    
+    if (!m_coreLoader)
+        return;
+    
     send(Messages::NetworkResourceLoader::ContinueWillSendRequest(newRequest));
 }
 
@@ -120,16 +131,27 @@ void WebResourceLoader::didReceiveResource(const ShareableResource::Handle& hand
         return;
     }
 
+    RefPtr<WebResourceLoader> protector(this);
+
     // Only send data to the didReceiveData callback if it exists.
     if (buffer->size())
         m_coreLoader->didReceiveBuffer(buffer.get(), buffer->size(), DataPayloadWholeResource);
+
+    if (!m_coreLoader)
+        return;
 
     m_coreLoader->didFinishLoading(finishTime);
 }
 
 void WebResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)
 {
+    RefPtr<WebResourceLoader> protector(this);
+
     bool result = m_coreLoader->canAuthenticateAgainstProtectionSpace(protectionSpace);
+
+    if (!m_coreLoader)
+        return;
+
     send(Messages::NetworkResourceLoader::ContinueCanAuthenticateAgainstProtectionSpace(result));
 }
 

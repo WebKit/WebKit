@@ -1,5 +1,28 @@
 2013-03-29  Brady Eidson  <beidson@apple.com>
 
+        Crash when "willSendRequest" causes the ResourceLoader to be cancelled.
+        <rdar://problem/13531679> and https://bugs.webkit.org/show_bug.cgi?id=113616
+
+        Reviewed by Alexey Proskuryakov.
+
+        These callbacks to the WebCore ResourceLoader can cause the WebResourceLoader to be destroyed.
+        A RefPtr<> protector fixes that.
+
+        Additionally we can invalidate the WebResourceLoader to avoid unnecessary callbacks to the NetworkProcess.
+
+        * WebProcess/Network/WebResourceLoadScheduler.cpp:
+        (WebKit::WebResourceLoadScheduler::remove): Call detachFromCoreLoader() on a removed WebResourceLoader.
+
+        * WebProcess/Network/WebResourceLoader.cpp:
+        (WebKit::WebResourceLoader::detachFromCoreLoader): Clear out the ResourceLoader pointer.
+        (WebKit::WebResourceLoader::willSendRequest): Protect this, and don't message back to the NetworkProcess if its not needed.
+        (WebKit::WebResourceLoader::canAuthenticateAgainstProtectionSpace): Ditto
+        (WebKit::WebResourceLoader::didReceiveResource): Paranoid hardening - Protect this before delivering the data to the WebCore
+          ResourceLoader, and null check it before delivering the "didFinishLoader" call.
+        * WebProcess/Network/WebResourceLoader.h:
+
+2013-03-29  Brady Eidson  <beidson@apple.com>
+
         Should never send events to plugins waiting on asynchronous initialization.
         <rdar://problem/13538945> and https://bugs.webkit.org/show_bug.cgi?id=113612
 
