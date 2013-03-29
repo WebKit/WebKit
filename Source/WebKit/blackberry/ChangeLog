@@ -1,3 +1,18 @@
+2013-03-29  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        [BlackBerry] Context menu doesn't showup anymore after rebase.
+        https://bugs.webkit.org/show_bug.cgi?id=113570
+
+        Reviewed by George Staikos.
+
+        The upstreaming patch for bug: 103058, reverses the return value of 
+        Node::dispatchMouseEvent() to be consistent with Node::dispatchEvent(),
+        so we should reverse our logic in webkit part that calls it also.
+
+        This only applys to master_41 which is a new rebase, don't apply it to master_40.
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::webContext):
+
 2013-03-28  Iris Wu  <shuwu@blackberry.com>
 
         [BlackBerry] Don't cross editing boundary when touch hold selection expands

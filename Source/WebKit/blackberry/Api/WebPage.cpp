@@ -2274,7 +2274,7 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
     // which node we want, we can send it directly to the node and not do a hit test. The onContextMenu event doesn't require
     // mouse positions so we just set the position at (0,0)
     PlatformMouseEvent mouseEvent(IntPoint(), IntPoint(), PlatformEvent::MouseMoved, 0, NoButton, false, false, false, TouchScreen);
-    if (m_currentContextNode->dispatchMouseEvent(mouseEvent, eventNames().contextmenuEvent, 0)) {
+    if (!m_currentContextNode->dispatchMouseEvent(mouseEvent, eventNames().contextmenuEvent, 0)) {
         context.setFlag(Platform::WebContext::IsOnContextMenuPrevented);
         return context;
     }
