@@ -55,7 +55,11 @@ typedef WKViewRef PlatformWKView;
 typedef GtkWidget* PlatformWindow;
 #elif PLATFORM(EFL)
 typedef struct _Ecore_Evas Ecore_Evas;
+#if USE(EO)
+typedef struct _Eo Evas_Object;
+#else
 typedef struct _Evas_Object Evas_Object;
+#endif
 typedef Evas_Object* PlatformWKView;
 typedef Ecore_Evas* PlatformWindow;
 #endif
