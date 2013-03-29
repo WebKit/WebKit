@@ -1,14 +1,16 @@
 var SubPixelLayout = (function() {
     var _subPixelLayout = null;
-    document.addEventListener('DOMContentLoaded', function() {
+    function initSubPixelLayout() {
         var elem = document.createElement('div');
         elem.style.setProperty('width', '4.5px');
         document.body.appendChild(elem);
         var bounds = elem.getBoundingClientRect();
         _subPixelLayout =  (bounds.width != Math.floor(bounds.width));
         document.body.removeChild(elem);
-    });
+    }
+    document.addEventListener('DOMContentLoaded', initSubPixelLayout);
     return {
+        initSubPixelLayout: initSubPixelLayout,
         roundLineLeft: function(f) {
             if (!_subPixelLayout)
                 return Math.floor(f);

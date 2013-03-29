@@ -71,8 +71,8 @@ FloatRoundedRect FloatRoundedRect::marginBounds(float margin) const
     float boundsY = y() - margin;
     float boundsWidth = width() + margin * 2;
     float boundsHeight = height() + margin * 2;
-    float boundsRadiusX = std::max(rx(), margin);
-    float boundsRadiusY = std::max(ry(), margin);
+    float boundsRadiusX = rx() + margin;
+    float boundsRadiusY = ry() + margin;
     return FloatRoundedRect(FloatRect(boundsX, boundsY, boundsWidth, boundsHeight), FloatSize(boundsRadiusX, boundsRadiusY));
 }
 
