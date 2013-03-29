@@ -1804,10 +1804,6 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     color: rgb(118, 15, 21);
 }
 
-.accessor-property-name {
-    font-style: italic;
-}
-
 .swatch {
     margin-left: 1px;
     margin-right: 2px;

@@ -215,7 +215,13 @@ WebInspector.RemoteObject.prototype = {
             var result = [];
             for (var i = 0; properties && i < properties.length; ++i) {
                 var property = properties[i];
-                result.push(new WebInspector.RemoteObjectProperty(property.name, null, property));
+                if (property.get || property.set) {
+                    if (property.get)
+                        result.push(new WebInspector.RemoteObjectProperty("get " + property.name, WebInspector.RemoteObject.fromPayload(property.get), property));
+                    if (property.set)
+                        result.push(new WebInspector.RemoteObjectProperty("set " + property.name, WebInspector.RemoteObject.fromPayload(property.set), property));
+                } else
+                    result.push(new WebInspector.RemoteObjectProperty(property.name, WebInspector.RemoteObject.fromPayload(property.value), property));
             }
             var internalPropertiesResult;
             if (internalProperties) {
@@ -438,24 +444,15 @@ WebInspector.ScopeRef = function(number, callFrameId, functionId)
 /**
  * @constructor
  * @param {string} name
- * @param {?WebInspector.RemoteObject} value
+ * @param {WebInspector.RemoteObject} value
  * @param {Object=} descriptor
  */
 WebInspector.RemoteObjectProperty = function(name, value, descriptor)
 {
     this.name = name;
+    this.value = value;
     this.enumerable = descriptor ? !!descriptor.enumerable : true;
     this.writable = descriptor ? !!descriptor.writable : true;
-    if (value === null && descriptor) {
-        if (descriptor.value)
-            this.value = WebInspector.RemoteObject.fromPayload(descriptor.value)
-        if (descriptor.get)
-            this.getter = WebInspector.RemoteObject.fromPayload(descriptor.get);
-        if (descriptor.set)
-            this.setter = WebInspector.RemoteObject.fromPayload(descriptor.set);
-    } else
-        this.value = value;
-
     if (descriptor && descriptor.wasThrown)
         this.wasThrown = true;
 }

@@ -64,21 +64,6 @@ var test = function()
     function nodesExpanded()
     {
         InspectorTest.addResult("Nodes are expanded.");
-        var treeNodes = watchExpressionsSection.propertiesTreeOutline.children;
-        for (var i = 0; i < treeNodes.length; i++) {
-            var children = treeNodes[i].children;
-            for (var j = 0; j < children.length; j++) {
-                if (children[j].nameElement && children[j].nameElement.textContent === "__proto__")
-                    continue;
-                children[j].expand();
-            }
-        }
-        InspectorTest.runAfterPendingDispatches(subnodesExpanded);
-    }
-
-    function subnodesExpanded()
-    {
-        InspectorTest.addResult("Subnodes are expanded.");
         InspectorTest.dumpObjectPropertySectionDeep(watchExpressionsSection);
 
         // Clear watch expressions after execution.

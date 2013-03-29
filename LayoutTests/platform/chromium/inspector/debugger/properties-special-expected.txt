@@ -5,7 +5,6 @@ Script source was shown.
 Set timer for test function.
 Watch expressions updated.
 Nodes are expanded.
-Subnodes are expanded.
 'Object(true)' => 'Boolean'
     '__proto__' => 'Boolean'
     '[[PrimitiveValue]]' => 'true'
@@ -15,36 +14,18 @@ Subnodes are expanded.
     'length' => '2'
     'name' => '""'
     'prototype' => 'Object'
-        'constructor' => 'function (a,b) { return a + b; }'
-        '__proto__' => 'Object'
     '__proto__' => 'function Empty() {}'
     <function scope>
-        'With Block' => 'Object'
-        Closure
-        'Global' => 'Window'
 '(function(a,b) { return a + b; }).bind({}, 2)' => 'function () { [native code] }'
-    'arguments' => null
-        'get' => 'function ThrowTypeError() { [native code] }'
-        'set' => 'function ThrowTypeError() { [native code] }'
-    'caller' => null
-        'get' => 'function ThrowTypeError() { [native code] }'
-        'set' => 'function ThrowTypeError() { [native code] }'
+    'get arguments' => 'function ThrowTypeError() { [native code] }'
+    'get caller' => 'function ThrowTypeError() { [native code] }'
     'length' => '1'
     'name' => '""'
+    'set arguments' => 'function ThrowTypeError() { [native code] }'
+    'set caller' => 'function ThrowTypeError() { [native code] }'
     '__proto__' => 'function Empty() {}'
     '[[TargetFunction]]' => 'function (a,b) { return a + b; }'
-        'arguments' => 'null'
-        'caller' => 'null'
-        'length' => '2'
-        'name' => '""'
-        'prototype' => 'Object'
-        '__proto__' => 'function Empty() {}'
-        <function scope>
     '[[BoundThis]]' => 'Object'
-        '__proto__' => 'Object'
     '[[BoundArgs]]' => 'Array[1]'
-        '0' => '2'
-        'length' => '1'
-        '__proto__' => 'Array[0]'
 Debugger was disabled.
 

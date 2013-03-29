@@ -478,10 +478,7 @@ WebInspector.ObjectPropertyTreeElement.populateWithProperties = function(treeEle
         if (skipProto && properties[i].name === "__proto__")
             continue;
         properties[i].parentObject = value;
-        if (properties[i].value)
-            treeElement.appendChild(new treeElementConstructor(properties[i]));
-        else
-            treeElement.appendChild(new WebInspector.AccessorPropertyTreeElement(properties[i]));
+        treeElement.appendChild(new treeElementConstructor(properties[i]));
     }
     if (value && value.type === "function") {
         // Whether function has TargetFunction internal property.
@@ -590,60 +587,6 @@ WebInspector.FunctionScopeMainTreeElement.prototype = {
 
         }
         DebuggerAgent.getFunctionDetails(this._remoteObject.objectId, didGetDetails.bind(this));
-    },
-
-    __proto__: TreeElement.prototype
-}
-
-/**
- * @constructor
- * @param {WebInspector.RemoteObjectProperty} property accessor property
- * @extends {TreeElement}
- */
-WebInspector.AccessorPropertyTreeElement = function(property)
-{
-    TreeElement.call(this, "", null, false);
-    this._property = property;
-    this.toggleOnClick = true;
-    this.selectable = false;
-    this.hasChildren = true;
-}
-
-WebInspector.AccessorPropertyTreeElement.prototype = {
-    onattach: function()
-    {
-        this.update();
-    },
-
-    update: function()
-    {
-        var markerElement = document.createElement("span");
-        markerElement.textContent = "\u2388";
-        markerElement.className = "name accessor-property-name";
-
-        var nameElement = document.createElement("span");
-        nameElement.textContent = this._property.name;
-        nameElement.className = "name accessor-property-name";
-        
-        this.listItemElement.removeChildren();
-        this.listItemElement.appendChild(markerElement);
-        this.listItemElement.appendChild(nameElement);
-
-        this.nameElement = nameElement;
-    },
-
-    onpopulate: function()
-    {
-        this.removeChildren();
-
-        if (this._property.getter) {
-            var getterProperty = new WebInspector.RemoteObjectProperty("get", this._property.getter);
-            this.appendChild(new this.treeOutline.section.treeElementConstructor(getterProperty));
-        }
-        if (this._property.setter) {
-            var setterProperty = new WebInspector.RemoteObjectProperty("set", this._property.setter);
-            this.appendChild(new this.treeOutline.section.treeElementConstructor(setterProperty));
-        }
     },
 
     __proto__: TreeElement.prototype

@@ -345,10 +345,6 @@ InjectedScript.prototype = {
         if (typeof func !== "function")
             return "Cannot resolve function by id.";
         var details = InjectedScriptHost.functionDetails(func);
-
-        if (details === undefined)
-            return "Function scope data is not available";
-        
         if ("rawScopes" in details) {
             var objectGroupName = this._idToObjectGroupName[parsedFunctionId.id];
             var rawScopes = details.rawScopes;
