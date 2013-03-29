@@ -27,11 +27,12 @@
  * @constructor
  * @extends {WebInspector.View}
  * @param {!Array.<!WebInspector.DataGrid.ColumnDescriptor>} columnsArray
- * @param {?function(WebInspector.DataGridNode, string, string, string)=} editCallback
- * @param {?function(WebInspector.DataGridNode)=} deleteCallback
- * @param {?function()=} refreshCallback
+ * @param {function(WebInspector.DataGridNode, string, string, string)=} editCallback
+ * @param {function(WebInspector.DataGridNode)=} deleteCallback
+ * @param {function()=} refreshCallback
+ * @param {function(!WebInspector.ContextMenu, WebInspector.DataGridNode)=} contextMenuCallback
  */
-WebInspector.DataGrid = function(columnsArray, editCallback, deleteCallback, refreshCallback)
+WebInspector.DataGrid = function(columnsArray, editCallback, deleteCallback, refreshCallback, contextMenuCallback)
 {
     WebInspector.View.call(this);
     this.registerRequiredCSS("dataGrid.css");
@@ -59,6 +60,7 @@ WebInspector.DataGrid = function(columnsArray, editCallback, deleteCallback, ref
     this._editCallback = editCallback;
     this._deleteCallback = deleteCallback;
     this._refreshCallback = refreshCallback;
+    this._contextMenuCallback = contextMenuCallback;
 
     this._scrollContainer = document.createElement("div");
     this._scrollContainer.className = "data-container";
@@ -941,6 +943,8 @@ WebInspector.DataGrid.prototype = {
             }
             if (this._deleteCallback && gridNode !== this.creationNode)
                 contextMenu.appendItem(WebInspector.UIString("Delete"), this._deleteCallback.bind(this, gridNode));
+            if (this._contextMenuCallback)
+                this._contextMenuCallback(contextMenu, gridNode);
         }
 
         contextMenu.show();

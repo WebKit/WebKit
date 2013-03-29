@@ -55,11 +55,9 @@ WebInspector.CookiesTable = function(expandable, refreshCallback, selectedCallba
     ];
 
     if (readOnly)
-        this._dataGrid = new WebInspector.DataGrid(columns, null, null, refreshCallback);
-    else {
         this._dataGrid = new WebInspector.DataGrid(columns);
-        this._dataGrid.element.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), true);
-    }
+    else
+        this._dataGrid = new WebInspector.DataGrid(columns, undefined, this._onDeleteCookie.bind(this), refreshCallback, this._onContextMenu.bind(this));
 
     this._dataGrid.addEventListener(WebInspector.DataGrid.Events.SortingChanged, this._rebuildTable, this);
 
@@ -85,35 +83,22 @@ WebInspector.CookiesTable.prototype = {
     _clearAndRefresh: function(domain)
     {
         this.clear(domain);
-        if (this._refreshCallback)
-            this._refreshCallback();
+        this._refresh();
     },
 
-    _handleContextMenuEvent: function(event)
+    /**
+     * @param {!WebInspector.ContextMenu} contextMenu
+     * @param {WebInspector.DataGridNode} node
+     */
+    _onContextMenu: function(contextMenu, node)
     {
-        var gridNode = this._dataGrid.dataGridNodeFromNode(event.target);
-
-        if (!gridNode)
+        if (node === this._dataGrid.creationNode)
             return;
-
-        var contextMenu = new WebInspector.ContextMenu(event);
-        var cookie = gridNode.cookie;
-
-        if (this._refreshCallback)
-            contextMenu.appendItem(WebInspector.UIString("Refresh"), this._refreshCallback);
-
-        if (cookie) {
-            contextMenu.appendItem(WebInspector.UIString("Delete"), this._onDeleteCookie.bind(this, gridNode));
-            contextMenu.appendSeparator();
-            var cookieDomain = cookie.domain();
-            
-            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Clear all from \"%s\"" : "Clear All from \"%s\"", cookieDomain), this._clearAndRefresh.bind(this, cookieDomain));
-        } else
-            contextMenu.appendSeparator();
-
+        var cookie = node.cookie;
+        var domain = cookie.domain();
+        if (domain)
+            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Clear all from \"%s\"" : "Clear All from \"%s\"", domain), this._clearAndRefresh.bind(this, domain));
         contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Clear all" : "Clear All"), this._clearAndRefresh.bind(this, null));
-
-        contextMenu.show();
     },
 
     /**
@@ -290,6 +275,11 @@ WebInspector.CookiesTable.prototype = {
         if (neighbour)
             this._nextSelectedCookie = neighbour.cookie;
         cookie.remove();
+        this._refresh();
+    },
+
+    _refresh: function()
+    {
         if (this._refreshCallback)
             this._refreshCallback();
     },
