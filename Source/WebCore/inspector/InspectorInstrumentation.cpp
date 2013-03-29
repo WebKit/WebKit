@@ -66,6 +66,7 @@
 #include "InstrumentingAgents.h"
 #include "PageDebuggerAgent.h"
 #include "PageRuntimeAgent.h"
+#include "RenderObject.h"
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptProfile.h"
@@ -525,20 +526,20 @@ void InspectorInstrumentation::didDispatchXHRLoadEventImpl(const InspectorInstru
         timelineAgent->didDispatchXHRLoadEvent();
 }
 
-void InspectorInstrumentation::willPaintImpl(InstrumentingAgents* instrumentingAgents, Frame* frame)
+void InspectorInstrumentation::willPaintImpl(InstrumentingAgents* instrumentingAgents, RenderObject* renderer)
 {
 #if PLATFORM(CHROMIUM)
-    TRACE_EVENT_INSTANT1("instrumentation", InstrumentationEvents::Paint, InstrumentationEventArguments::PageId, frame ? reinterpret_cast<unsigned long long>(frame->page()) : 0);
+    TRACE_EVENT_INSTANT1("instrumentation", InstrumentationEvents::Paint, InstrumentationEventArguments::PageId, reinterpret_cast<unsigned long long>(renderer->frame()->page()));
 #endif
 
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
-        timelineAgent->willPaint(frame);
+        timelineAgent->willPaint(renderer->frame());
 }
 
-void InspectorInstrumentation::didPaintImpl(InstrumentingAgents*  instrumentingAgents, Frame* frame, GraphicsContext* context, const LayoutRect& rect)
+void InspectorInstrumentation::didPaintImpl(InstrumentingAgents*  instrumentingAgents, RenderObject* renderer, GraphicsContext* context, const LayoutRect& rect)
 {
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
-        timelineAgent->didPaint(frame, rect);
+        timelineAgent->didPaint(renderer, rect);
     if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
         pageAgent->didPaint(context, rect);
 }
@@ -1327,6 +1328,11 @@ InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForPage(Page* 
     if (!page)
         return 0;
     return instrumentationForPage(page);
+}
+
+InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForRenderer(RenderObject* renderer)
+{
+    return instrumentingAgentsForFrame(renderer->frame());
 }
 
 #if ENABLE(WORKERS)

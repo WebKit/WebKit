@@ -6,10 +6,7 @@ Paint Properties:
     children : <object>
     counters : <object>
     data : {
-        height : <number>
-        width : <number>
-        x : 0
-        y : 0
+        clip : <object>
     }
     endTime : <number>
     frameId : <string>

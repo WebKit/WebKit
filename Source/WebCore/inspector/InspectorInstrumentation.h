@@ -74,6 +74,7 @@ class KURL;
 class Node;
 class PseudoElement;
 class RenderLayer;
+class RenderLayerBacking;
 class RenderObject;
 class ResourceRequest;
 class ResourceResponse;
@@ -169,8 +170,8 @@ public:
     static void didDispatchXHRLoadEvent(const InspectorInstrumentationCookie&);
     static void willScrollLayer(Frame*);
     static void didScrollLayer(Frame*);
-    static void willPaint(Frame*);
-    static void didPaint(Frame*, GraphicsContext*, const LayoutRect&);
+    static void willPaint(RenderObject*);
+    static void didPaint(RenderObject*, GraphicsContext*, const LayoutRect&);
     static void willComposite(Page*);
     static void didComposite(Page*);
     static InspectorInstrumentationCookie willRecalculateStyle(Document*);
@@ -373,8 +374,8 @@ private:
     static void didDispatchXHRLoadEventImpl(const InspectorInstrumentationCookie&);
     static void willScrollLayerImpl(InstrumentingAgents*, Frame*);
     static void didScrollLayerImpl(InstrumentingAgents*);
-    static void willPaintImpl(InstrumentingAgents*, Frame*);
-    static void didPaintImpl(InstrumentingAgents*, Frame*, GraphicsContext*, const LayoutRect&);
+    static void willPaintImpl(InstrumentingAgents*, RenderObject*);
+    static void didPaintImpl(InstrumentingAgents*, RenderObject*, GraphicsContext*, const LayoutRect&);
     static InspectorInstrumentationCookie willRecalculateStyleImpl(InstrumentingAgents*, Frame*);
     static void didRecalculateStyleImpl(const InspectorInstrumentationCookie&);
     static void didScheduleStyleRecalculationImpl(InstrumentingAgents*, Document*);
@@ -483,6 +484,8 @@ private:
     static InstrumentingAgents* instrumentingAgentsForFrame(Frame*);
     static InstrumentingAgents* instrumentingAgentsForContext(ScriptExecutionContext*);
     static InstrumentingAgents* instrumentingAgentsForDocument(Document*);
+    static InstrumentingAgents* instrumentingAgentsForRenderer(RenderObject*);
+
 #if ENABLE(WORKERS)
     static InstrumentingAgents* instrumentingAgentsForWorkerContext(WorkerContext*);
     static InstrumentingAgents* instrumentingAgentsForNonDocumentContext(ScriptExecutionContext*);
@@ -1101,25 +1104,25 @@ inline void InspectorInstrumentation::didDispatchXHRLoadEvent(const InspectorIns
 #endif
 }
 
-inline void InspectorInstrumentation::willPaint(Frame* frame)
+inline void InspectorInstrumentation::willPaint(RenderObject* renderer)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        return willPaintImpl(instrumentingAgents, frame);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForRenderer(renderer))
+        return willPaintImpl(instrumentingAgents, renderer);
 #else
-    UNUSED_PARAM(frame);
+    UNUSED_PARAM(renderer);
 #endif
 }
 
-inline void InspectorInstrumentation::didPaint(Frame* frame, GraphicsContext* context, const LayoutRect& rect)
+inline void InspectorInstrumentation::didPaint(RenderObject* renderer, GraphicsContext* context, const LayoutRect& rect)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        didPaintImpl(instrumentingAgents, frame, context, rect);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForRenderer(renderer))
+        didPaintImpl(instrumentingAgents, renderer, context, rect);
 #else
-    UNUSED_PARAM(frame);
+    UNUSED_PARAM(renderer);
     UNUSED_PARAM(context);
     UNUSED_PARAM(rect);
 #endif

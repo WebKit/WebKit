@@ -40,6 +40,7 @@
 namespace WebCore {
 
     class Event;
+    class FloatQuad;
     class InspectorFrontend;
     class InspectorObject;
     class IntRect;
@@ -90,6 +91,10 @@ namespace WebCore {
         static PassRefPtr<InspectorObject> createParseHTMLData(unsigned startLine);
 
         static PassRefPtr<InspectorObject> createAnimationFrameData(int callbackId);
+
+        static PassRefPtr<InspectorObject> createPaintData(const FloatQuad&);
+
+        static PassRefPtr<InspectorObject> createLayoutData(const FloatQuad&);
 
 #if ENABLE(WEB_SOCKETS)
         static inline PassRefPtr<InspectorObject> createWebSocketCreateData(unsigned long identifier, const KURL& url, const String& protocol)

@@ -1062,18 +1062,20 @@ WebInspector.TimelinePanel.prototype = {
 
     _mouseOut: function(e)
     {
-        this._hideRectHighlight();
+        this._hideQuadHighlight();
     },
 
+    /**
+     * @param {Event} e
+     */
     _mouseMove: function(e)
     {
         var anchor = this._getPopoverAnchor(e.target);
 
-        const recordType = WebInspector.TimelineModel.RecordType;
-        if (anchor && anchor.row && (anchor.row._record.type === recordType.Paint || anchor.row._record.type === recordType.Layout))
-            this._highlightRect(anchor.row._record);
+        if (anchor && anchor.row && anchor.row._record.highlightQuad)
+            this._highlightQuad(anchor.row._record.highlightQuad);
         else
-            this._hideRectHighlight();
+            this._hideQuadHighlight();
 
         if (anchor && anchor._tasksInfo) {
             var offset = anchor.offsetLeft;
@@ -1082,20 +1084,21 @@ WebInspector.TimelinePanel.prototype = {
             this._timelineGrid.hideCurtains();
     },
 
-    _highlightRect: function(record)
+    /**
+     * @param {Array.<number>} quad
+     */
+    _highlightQuad: function(quad)
     {
-        if (record.coalesced)
+        if (this._highlightedQuad === quad)
             return;
-        if (this._highlightedRect === record.data)
-            return;
-        this._highlightedRect = record.data;
-        DOMAgent.highlightRect(this._highlightedRect.x, this._highlightedRect.y, this._highlightedRect.width, this._highlightedRect.height, WebInspector.Color.PageHighlight.Content.toProtocolRGBA(), WebInspector.Color.PageHighlight.ContentOutline.toProtocolRGBA());
+        this._highlightedQuad = quad;
+        DOMAgent.highlightQuad(quad, WebInspector.Color.PageHighlight.Content.toProtocolRGBA(), WebInspector.Color.PageHighlight.ContentOutline.toProtocolRGBA());
     },
 
-    _hideRectHighlight: function()
+    _hideQuadHighlight: function()
     {
-        if (this._highlightedRect) {
-            delete this._highlightedRect;
+        if (this._highlightedQuad) {
+            delete this._highlightedQuad;
             DOMAgent.hideHighlight();
         }
     },

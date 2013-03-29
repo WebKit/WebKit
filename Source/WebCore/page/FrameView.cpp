@@ -3406,8 +3406,6 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
     if (!frame())
         return;
 
-    InspectorInstrumentation::willPaint(m_frame.get());
-
     Document* document = m_frame->document();
 
 #ifndef NDEBUG
@@ -3438,6 +3436,8 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
     ASSERT(!needsLayout());
     if (needsLayout())
         return;
+
+    InspectorInstrumentation::willPaint(renderView);
 
     bool isTopLevelPainter = !sCurrentPaintTimeStamp;
     if (isTopLevelPainter)
@@ -3501,7 +3501,7 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
     if (isTopLevelPainter)
         sCurrentPaintTimeStamp = 0;
 
-    InspectorInstrumentation::didPaint(m_frame.get(), p, rect);
+    InspectorInstrumentation::didPaint(renderView, p, rect);
 }
 
 void FrameView::setPaintBehavior(PaintBehavior behavior)

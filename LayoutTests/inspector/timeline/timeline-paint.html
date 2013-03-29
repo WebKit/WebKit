@@ -19,18 +19,14 @@ function updateSubframeAndDisplay()
 
 function test()
 {
-    InspectorTest.startTimeline(step1);
+    step1();
+
     function step1()
     {
-        InspectorTest.evaluateInPage("display()", step2);
+        InspectorTest.evaluateWithTimeline("display()", step2);
     }
 
-    function step2()
-    {
-        InspectorTest.stopTimeline(step3);
-    }
-
-    function step3(records)
+    function step2(records)
     {
         for (var i = 0; i < records.length; ++i) {
             var record = records[i];
@@ -39,20 +35,10 @@ function test()
                 break;
             }
         }
-        InspectorTest.startTimeline(step4);
+        InspectorTest.evaluateWithTimeline("updateSubframeAndDisplay()", step3);
     }
 
-    function step4()
-    {
-        InspectorTest.evaluateInPage("updateSubframeAndDisplay()", step5);
-    }
-
-    function step5()
-    {
-        InspectorTest.stopTimeline(step6);
-    }
-
-    function step6(records)
+    function step3(records)
     {
         var paintRecord;
         for (var i = 0; i < records.length; ++i) {
@@ -63,11 +49,20 @@ function test()
             }
         }
         InspectorTest.assertTrue(paintRecord, "Paint record with subframe paint not found");
+        var topQuad = paintRecord.data.clip;
         var subframePaint = paintRecord.children[0];
-        InspectorTest.assertGreaterOrEqual(subframePaint.data.x, paintRecord.data.x);
-        InspectorTest.assertGreaterOrEqual(subframePaint.data.y, paintRecord.data.y);
-        InspectorTest.assertGreaterOrEqual(paintRecord.data.x + paintRecord.data.width, subframePaint.data.x + subframePaint.data.width);
-        InspectorTest.assertGreaterOrEqual(paintRecord.data.y + paintRecord.data.height, subframePaint.data.y + subframePaint.data.height);
+        var subframeQuad = subframePaint.data.clip;
+        InspectorTest.assertEquals(8, topQuad.length);
+        InspectorTest.assertEquals(8, subframeQuad.length);
+        InspectorTest.assertGreaterOrEqual(subframeQuad[0], topQuad[0]);
+        InspectorTest.assertGreaterOrEqual(subframeQuad[1], topQuad[1]);
+        InspectorTest.assertGreaterOrEqual(topQuad[2], subframeQuad[2]);
+        InspectorTest.assertGreaterOrEqual(subframeQuad[3], topQuad[3]);
+        InspectorTest.assertGreaterOrEqual(topQuad[4], subframeQuad[4]);
+        InspectorTest.assertGreaterOrEqual(topQuad[5], subframeQuad[5]);
+        InspectorTest.assertGreaterOrEqual(subframeQuad[6], topQuad[6]);
+        InspectorTest.assertGreaterOrEqual(topQuad[7], subframeQuad[7]);
+
         InspectorTest.completeTest();
     }
 }

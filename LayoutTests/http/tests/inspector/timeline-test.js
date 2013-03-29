@@ -4,10 +4,8 @@ var initialize_Timeline = function() {
 InspectorTest.timelinePropertyFormatters = {
     children: "formatAsTypeName",
     endTime: "formatAsTypeName",
-    height: "formatAsTypeName",
     requestId: "formatAsTypeName",
     startTime: "formatAsTypeName",
-    width: "formatAsTypeName",
     stackTrace: "formatAsTypeName",
     url: "formatAsTypeName",
     scriptName: "formatAsTypeName",
@@ -21,7 +19,9 @@ InspectorTest.timelinePropertyFormatters = {
     lineNumber: "formatAsTypeName",
     frameId: "formatAsTypeName",
     encodedDataLength: "formatAsTypeName",
-    identifier: "formatAsTypeName"    
+    identifier: "formatAsTypeName",
+    clip: "formatAsTypeName",
+    root: "formatAsTypeName",
 };
 
 InspectorTest.startTimeline = function(callback)

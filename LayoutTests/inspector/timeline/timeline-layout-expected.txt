@@ -6,10 +6,7 @@ Layout Properties:
     children : <object>
     counters : <object>
     data : {
-        height : <number>
-        width : <number>
-        x : 0
-        y : 0
+        root : <object>
     }
     endTime : <number>
     frameId : <string>

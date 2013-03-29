@@ -270,10 +270,14 @@ void InspectorTimelineAgent::didLayout(RenderObject* root)
 {
     if (m_recordStack.isEmpty())
         return;
-    LayoutRect rect = root->frame()->view()->contentsToRootView(root->absoluteBoundingBoxRect());
-    TimelineRecordEntry entry = m_recordStack.last();
+    TimelineRecordEntry& entry = m_recordStack.last();
     ASSERT(entry.type == TimelineRecordType::Layout);
-    TimelineRecordFactory::addRectData(entry.data.get(), rect);
+    Vector<FloatQuad> quads;
+    root->absoluteQuads(quads);
+    if (quads.size() >= 1)
+        entry.data = TimelineRecordFactory::createLayoutData(quads[0]);
+    else
+        ASSERT_NOT_REACHED();
     didCompleteCurrentRecord(TimelineRecordType::Layout);
 }
 
@@ -297,12 +301,13 @@ void InspectorTimelineAgent::willPaint(Frame* frame)
     pushCurrentRecord(InspectorObject::create(), TimelineRecordType::Paint, true, frame, true);
 }
 
-void InspectorTimelineAgent::didPaint(Frame* frame, const LayoutRect& rect)
+void InspectorTimelineAgent::didPaint(RenderObject* renderer, const LayoutRect& clipRect)
 {
-    TimelineRecordEntry entry = m_recordStack.last();
+    TimelineRecordEntry& entry = m_recordStack.last();
     ASSERT(entry.type == TimelineRecordType::Paint);
-    LayoutRect rectInRootCoordinates = frame->view()->contentsToRootView(pixelSnappedIntRect(rect));
-    TimelineRecordFactory::addRectData(entry.data.get(), rectInRootCoordinates);
+    FloatQuad quad;
+    localToPageQuad(*renderer, clipRect, &quad);
+    entry.data = TimelineRecordFactory::createPaintData(quad);
     didCompleteCurrentRecord(TimelineRecordType::Paint);
 }
 
@@ -695,6 +700,17 @@ void InspectorTimelineAgent::clearRecordStack()
     m_pendingFrameRecord.clear();
     m_recordStack.clear();
     m_id++;
+}
+
+void InspectorTimelineAgent::localToPageQuad(const RenderObject& renderer, const LayoutRect& rect, FloatQuad* quad)
+{
+    Frame* frame = renderer.frame();
+    FrameView* view = frame->view();
+    FloatQuad absolute = renderer.localToAbsoluteQuad(FloatQuad(rect));
+    quad->setP1(view->contentsToRootView(roundedIntPoint(absolute.p1())));
+    quad->setP2(view->contentsToRootView(roundedIntPoint(absolute.p2())));
+    quad->setP3(view->contentsToRootView(roundedIntPoint(absolute.p3())));
+    quad->setP4(view->contentsToRootView(roundedIntPoint(absolute.p4())));
 }
 
 double InspectorTimelineAgent::timestamp()

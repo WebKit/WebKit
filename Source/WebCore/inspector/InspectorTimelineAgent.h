@@ -46,6 +46,7 @@
 
 namespace WebCore {
 class Event;
+class FloatQuad;
 class Frame;
 class InspectorClient;
 class InspectorFrontend;
@@ -129,7 +130,7 @@ public:
     void didRecalculateStyle();
 
     void willPaint(Frame*);
-    void didPaint(Frame*, const LayoutRect&);
+    void didPaint(RenderObject*, const LayoutRect&);
 
     void willScroll(Frame*);
     void didScroll();
@@ -228,6 +229,7 @@ private:
     void innerAddRecordToTimeline(PassRefPtr<InspectorObject>, const String& type);
     void clearRecordStack();
 
+    void localToPageQuad(const RenderObject& renderer, const LayoutRect&, FloatQuad*);
     const TimelineTimeConverter& timeConverter() const { return m_timeConverter; }
     double timestamp();
     Page* page();
