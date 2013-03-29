@@ -674,11 +674,6 @@ void SelectionHandler::selectAtPoint(const WebCore::IntPoint& location, Selectio
     selectObject(targetPosition, textGranularityFromSelectionExpansionType(selectionExpansionType));
 }
 
-static bool isInvalidLine(const VisiblePosition& pos)
-{
-    return endOfLine(pos).isNull() || pos == endOfLine(pos) || !inSameLine(pos, endOfLine(pos));
-}
-
 static bool isInvalidParagraph(const VisiblePosition& pos)
 {
     return endOfParagraph(pos).isNull() || pos == endOfParagraph(pos);
@@ -689,14 +684,14 @@ void SelectionHandler::selectNextParagraph()
     FrameSelection* controller = m_webPage->focusedOrMainFrame()->selection();
 
     VisiblePosition startPos = VisiblePosition(controller->start(), controller->affinity());
-    if (isStartOfLine(startPos) && isEndOfEditableOrNonEditableContent(startPos))
-        startPos = startPos.previous();
+    if (isStartOfLine(startPos) && isEndOfDocument(startPos))
+        startPos = startPos.previous(CannotCrossEditingBoundary);
 
     // Find next paragraph end position.
     VisiblePosition endPos(controller->end(), controller->affinity()); // endPos here indicates the end of current paragraph
-    endPos = endPos.next(); // find the start of next paragraph
-    while (!isEndOfDocument(endPos.deepEquivalent()) && endPos.isNotNull() && isInvalidParagraph(endPos))
-        endPos = endPos.next(); // go to next position
+    endPos = endPos.next(CannotCrossEditingBoundary); // find the start of next paragraph
+    while (!isEndOfDocument(endPos) && endPos.isNotNull() && isInvalidParagraph(endPos))
+        endPos = endPos.next(CannotCrossEditingBoundary); // go to next position
     endPos = endOfParagraph(endPos); // find the end of paragraph
 
     // Set selection if the paragraph is covered by overlay and endPos is not null.
@@ -706,7 +701,7 @@ void SelectionHandler::selectNextParagraph()
         controller->setSelection(selection);
 
         // Stop expansion if reaching the end of page.
-        if (isEndOfDocument(endPos.deepEquivalent()))
+        if (isEndOfDocument(endPos))
             m_webPage->m_client->stopExpandingSelection();
     }
 }
@@ -741,13 +736,13 @@ IntRectRegion SelectionHandler::regionForSelectionQuads(VisibleSelection selecti
 bool SelectionHandler::findNextAnimationOverlayRegion()
 {
     // If overlay is at the end of document, stop overlay expansion.
-    if (isEndOfDocument(m_animationOverlayEndPos.deepEquivalent()) || m_animationOverlayEndPos.isNull())
+    if (isEndOfDocument(m_animationOverlayEndPos) || m_animationOverlayEndPos.isNull())
         return false;
 
-    m_animationOverlayEndPos = m_animationOverlayEndPos.next();
-    while (!isEndOfDocument(m_animationOverlayEndPos.deepEquivalent()) && m_animationOverlayEndPos.isNotNull() && isInvalidLine(m_animationOverlayEndPos))
-        m_animationOverlayEndPos = m_animationOverlayEndPos.next(); // go to next position
-    m_animationOverlayEndPos = endOfLine(m_animationOverlayEndPos); // find end of line
+    m_animationOverlayEndPos = m_animationOverlayEndPos.next(CannotCrossEditingBoundary);
+    while (!isEndOfDocument(m_animationOverlayEndPos) && m_animationOverlayEndPos.isNotNull() && isInvalidParagraph(m_animationOverlayEndPos))
+        m_animationOverlayEndPos = m_animationOverlayEndPos.next(CannotCrossEditingBoundary); // go to next position
+    m_animationOverlayEndPos = endOfParagraph(m_animationOverlayEndPos); // find end of paragraph
 
     VisibleSelection selection(m_animationOverlayStartPos, m_animationOverlayEndPos);
     m_nextAnimationOverlayRegion = regionForSelectionQuads(selection);

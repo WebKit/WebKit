@@ -1,3 +1,19 @@
+2013-03-28  Iris Wu  <shuwu@blackberry.com>
+
+        [BlackBerry] Don't cross editing boundary when touch hold selection expands
+        https://bugs.webkit.org/show_bug.cgi?id=113537
+
+        Reviewed by Rob Buis.
+
+        Set editing boundary crossing rule to make sure it won't cross
+        editing boundary when selection expands.
+
+        Reviewed Internally By Genevieve Mak and Mike Fenton.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::selectNextParagraph):
+        (BlackBerry::WebKit::SelectionHandler::findNextAnimationOverlayRegion):
+
 2013-03-28  Jakob Petsovits  <jpetsovits@blackberry.com>
 
         [BlackBerry] Don't use WebKit thread scale information in WebPageCompositor.
