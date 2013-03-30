@@ -1,3 +1,10 @@
+2013-03-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix after r147260.
+
+        * WebProcess/qt/QtBuiltinBundlePage.cpp:
+        (WebKit::QtBuiltinBundlePage::QtBuiltinBundlePage):
+
 2013-03-29  Seokju Kwon  <seokju.kwon@gmail.com>
 
         [EFL] Unreviewed build fix after r147251

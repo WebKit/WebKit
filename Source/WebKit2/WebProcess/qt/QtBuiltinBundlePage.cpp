@@ -79,6 +79,7 @@ QtBuiltinBundlePage::QtBuiltinBundlePage(QtBuiltinBundle* bundle, WKBundlePageRe
         0, // didReceiveIntentForFrame
         0, // registerIntentServiceForFrame
         0, // didLayout
+        0, // featuresUsedInPage
     };
     WKBundlePageSetPageLoaderClient(m_page, &loaderClient);
 }
