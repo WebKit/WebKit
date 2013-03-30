@@ -393,6 +393,7 @@
             'heap/MarkStack.h',
             'heap/MarkStackInlines.h',
             'heap/PassWeak.h',
+            'heap/Region.h',
             'heap/SlotVisitor.cpp',
             'heap/SlotVisitor.h',
             'heap/SlotVisitorInlines.h',

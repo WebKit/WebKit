@@ -530,6 +530,7 @@
     <ClInclude Include="..\heap\MarkStack.h" />
     <ClInclude Include="..\heap\MarkStackInlines.h" />
     <ClInclude Include="..\heap\PassWeak.h" />
+    <ClInclude Include="..\heap\Region.h" />
     <ClInclude Include="..\heap\SlotVisitor.h" />
     <ClInclude Include="..\heap\SlotVisitorInlines.h" />
     <ClInclude Include="..\heap\Strong.h" />

@@ -1,3 +1,38 @@
+2013-03-30  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Move Region into its own header
+        https://bugs.webkit.org/show_bug.cgi?id=113617
+
+        Reviewed by Geoffrey Garen.
+
+        BlockAllocator.h is getting a little crowded. We should move the Region class into its own 
+        header, since it's pretty independent from the BlockAllocator.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/BlockAllocator.h:
+        (JSC):
+        * heap/Region.h: Added.
+        (JSC):
+        (DeadBlock):
+        (JSC::DeadBlock::DeadBlock):
+        (Region):
+        (JSC::Region::blockSize):
+        (JSC::Region::isFull):
+        (JSC::Region::isEmpty):
+        (JSC::Region::isCustomSize):
+        (JSC::Region::create):
+        (JSC::Region::createCustomSize):
+        (JSC::Region::Region):
+        (JSC::Region::~Region):
+        (JSC::Region::reset):
+        (JSC::Region::allocate):
+        (JSC::Region::deallocate):
+
 2013-03-29  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: Remove -[JSManagedValue managedValueWithValue:owner:]

@@ -2778,6 +2778,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\heap\Region.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\heap\SlotVisitor.cpp"
 				>
 			</File>
