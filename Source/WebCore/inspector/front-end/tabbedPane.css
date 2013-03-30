@@ -62,16 +62,11 @@
 .tabbed-pane-header-tab {
     float: left;
     margin-top: 2px;
-    font-size: 11px;
-    font-weight: bold;
-    color: rgb(46, 46, 46);
-    background: transparent;
-    text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
-    vertical-align: middle;
-    padding: 3px 4px 2px 4px;
+    padding: 2px 4px 2px 4px;
     height: 21px;
     border: 1px solid transparent;
     border-bottom: none;
+    line-height: 15px;
     
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -88,18 +83,14 @@
     border-bottom: none;
 }
 
-.tabbed-pane-header .tabbed-pane-header-tab-title {
-    vertical-align: top;
-}
-
 .tabbed-pane-header-tab-close-button {
-    font-family: Arial, monospace;
     position: relative;
-    bottom: 1px;
+    bottom: 0;
     opacity: 0;
     padding-left: 3px;
     font-size: 14px;
     color: rgb(80, 80, 80);
+    line-height: 12px;
 }
 
 .tabbed-pane-header-tab:hover .tabbed-pane-header-tab-close-button {
@@ -164,4 +155,3 @@ select.tabbed-pane-header-tabs-drop-down-select {
     margin: 0;
     -webkit-appearance: none;
 }
- 

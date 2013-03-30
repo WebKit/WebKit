@@ -12,6 +12,23 @@ body.dock-to-bottom.platform-mac #toolbar {
 
 /* Chrome theme overrides */
 
+body.platform-linux {
+  color: rgb(48, 57, 66);
+  font-family: Ubuntu, Arial, sans-serif;
+  font-size: 12px;
+}
+
+body.platform-mac {
+  color: rgb(48, 57, 66);
+  font-family: 'Lucida Grande', sans-serif;
+  font-size: 12px;
+}
+
+body.platform-windows {
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  font-size: 12px;
+}
+
 body.platform-windows #toolbar, body.platform-windows.inactive #toolbar {
     background-image: none;
 }

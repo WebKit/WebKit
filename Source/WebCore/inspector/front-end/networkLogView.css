@@ -18,19 +18,18 @@
 
 .network-log-grid.data-grid td {
     line-height: 17px;
-    height: 37px;
+    height: 41px;
     border-right: 1px solid rgb(210, 210, 210);
     vertical-align: middle;
 }
 
 .network-log-grid.data-grid.small td {
-    height: 17px;
+    height: 21px;
 }
 
 .network-log-grid.data-grid th {
     border-bottom: 1px solid rgb(64%, 64%, 64%);
     height: 30px;
-    font-weight: bold;
 }
 
 .network-log-grid.data-grid.small th {
@@ -54,7 +53,8 @@
     background-color: transparent;
     border: none;
     width: 100%;
-    font-weight: bold;
+    font-size: inherit;
+    color: inherit;
 }
 
 .network-log-grid.data-grid.small tr.offscreen {
@@ -74,7 +74,6 @@
 }
 
 .network-log-grid.data-grid tr:not(.filler) td.name-column {
-    font-weight: bold;
     cursor: pointer;
 }
 
@@ -240,13 +239,12 @@
     margin: auto -7px;
     height: 13px;
     line-height: 13px;
-    font-size: 9px;
+    font-size: 90%;
     color: rgba(0, 0, 0, 0.75);
     text-shadow: rgba(255, 255, 255, 0.25) 1px 0 0, rgba(255, 255, 255, 0.25) -1px 0 0, rgba(255, 255, 255, 0.333) 0 1px 0, rgba(255, 255, 255, 0.25) 0 -1px 0;
     z-index: 150;
     overflow: hidden;
     text-align: center;
-    font-weight: bold;
     opacity: 0;
     -webkit-transition: opacity 250ms ease-in-out;
 }
@@ -442,8 +440,7 @@
 
 .network-timeline-grid .resources-divider-label {
     top: 0;
-    margin-top: -4px;
-    color: black;
+    margin-top: -5px;
 }
 
 .network-timeline-grid .resources-dividers-label-bar .resources-divider {
@@ -486,7 +483,7 @@
     color: white;
     height: 20px !important;
     border: none;
-    font-weight: bold;
+    font-size: 110%;
     padding: 0 0 0 8px;
     white-space: pre;
     overflow : hidden;

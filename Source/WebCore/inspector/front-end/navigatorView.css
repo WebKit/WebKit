@@ -58,7 +58,8 @@
 }
 
 .navigator li {
-    height: 17px;
+    height: 18px;
+    line-height: 17px;
     white-space: nowrap;
 }
 
@@ -67,7 +68,7 @@
 }
 
 .navigator li.selected .selection {
-    height: 17px;
+    height: 18px;
     background-color: rgb(180, 180, 180);
 }
 
@@ -98,7 +99,6 @@
     display: inline-block;
     position: relative;
     padding-left: 2px;
-    top: 1px;
 }
 
 .navigator .base-navigator-tree-element-title.editing {

@@ -37,20 +37,19 @@
 }
 
 .resources.panel .sidebar li {
-    height: 17px;
+    height: 18px;
     white-space: nowrap;
 }
 
 .resources.panel .sidebar li.selected {
     color: white;
-    text-shadow: rgba(0, 0, 0, 0.33) 0 1px 0;
-    font-weight: bold;
+    text-shadow: rgba(0, 0, 0, 0.33) 1px 1px 0;
 }
 
 .resources.panel .sidebar li.selected .selection {
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(162, 177, 207)), to(rgb(120, 138, 177)));
     border-top: 1px solid #979797;
-    height: 17px;
+    height: 18px;
 }
 
 .resources.panel .sidebar :focus li.selected .selection {

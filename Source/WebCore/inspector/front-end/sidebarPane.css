@@ -41,9 +41,9 @@
 .sidebar-pane > .body .info {
     text-align: center;
     font-style: italic;
-    font-size: 10px;
+    font-size: 90%;
     padding: 6px;
-    color: black;
+    color: #888;
 }
 
 .sidebar-pane > .body .placard + .info {
@@ -71,16 +71,12 @@
 
 .sidebar-pane-title {
     position: relative;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(243, 243, 243)), color-stop(0.05, rgb(243, 243, 243)), color-stop(0.05, rgb(230, 230, 230)), to(rgb(209, 209, 209)));
+    background: rgb(230, 230, 230);
     height: 20px;
     padding: 0 5px;
     border-top: 1px solid rgb(189, 189, 189);
     border-bottom: 1px solid rgb(189, 189, 189);
-    font-weight: bold;
-    font-size: 12px;
     line-height: 18px;
-    color: rgb(110, 110, 110);
-    text-shadow: white 0 1px 0;
     -webkit-background-origin: padding;
     -webkit-background-clip: padding;
 }
@@ -110,13 +106,9 @@
 }
 
 .sidebar-pane-toolbar {
-    font-weight: bold;
-    font-size: 12px;
     line-height: 18px;
-    color: rgb(110, 110, 110);
-    text-shadow: white 0 1px 0;
     left: 0;
-    right: 0;
+    right: 4px;
     top: 0;
     height: 20px;
     position: absolute;
@@ -164,7 +156,6 @@
 .sidebar-pane-subtitle {
     position: absolute;
     right: 0;
-    font-weight: normal;
 }
 
 body.platform-windows .sidebar-pane-subtitle {

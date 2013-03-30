@@ -1,6 +1,7 @@
 .data-grid {
     position: relative;
     border: 1px solid #aaa;
+    font-size: 11px;
 }
 
 .data-grid .highlight {
@@ -16,8 +17,6 @@
     border-spacing: 0;
     border-collapse: collapse;
     width: 100%;
-    font-size: 11px;
-    font-family: Lucida Grande, sans-serif;
 }
 
 .data-grid .data-container {
@@ -102,8 +101,8 @@
 .data-grid td {
     vertical-align: top;
     height: 16px; /* Keep in sync with .data-grid table.data @ -webkit-background-size */
-    line-height: 12px;
-    padding: 2px 4px;
+    line-height: 13px;
+    padding: 1px 4px;
     white-space: nowrap;
     overflow: hidden;
     border-right: 1px solid #aaa;
@@ -148,8 +147,6 @@
 
 .data-grid th.sort-ascending > div::after {
     position: absolute;
-    top: 0;
-    bottom: 0;
     right: 0;
     height: 12px;
     margin-bottom: auto;
@@ -160,8 +157,6 @@
 
 .data-grid th.sort-descending > div::after {
     position: absolute;
-    top: 0;
-    bottom: 0;
     right: 0;
     height: 8px;
     margin-bottom: auto;
@@ -172,6 +167,7 @@
 
 .data-grid button {
     line-height: 18px;
+    color: inherit;
 }
 
 body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-descending {

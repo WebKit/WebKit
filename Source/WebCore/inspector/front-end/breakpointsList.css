@@ -96,9 +96,6 @@ li.breakpoint-hit .breakpoint-hit-marker {
 }
 
 .event-listener-breakpoints .event-category {
-    font-size: 11px;
-    font-weight: bold;
-    color: rgb(96, 96, 96);
     padding-top: 2px;
 }
 
@@ -108,7 +105,6 @@ li.breakpoint-hit .breakpoint-hit-marker {
 }
 
 .event-listener-breakpoints .checkbox-elem {
-    font-size: 10px;
     float: left;
     top: -2px;
     position: relative;
