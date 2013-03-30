@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="DerivedSources">
@@ -6861,6 +6861,9 @@
     </ClCompile>
     <ClCompile Include="..\platform\network\curl\CookieJarCurl.cpp">
       <Filter>platform\network\curl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\platform\graphics\cg\SubimageCacheWithTimer.cpp">
+      <Filter>platform\graphics\cg</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -14392,6 +14395,9 @@
     </ClInclude>
     <ClInclude Include="..\platform\image-decoders\ImageDecoder.h">
       <Filter>platform\image-decoders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\platform\graphics\cg\SubimageCacheWithTimer.h">
+      <Filter>platform\graphics\cg</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
