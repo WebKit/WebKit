@@ -432,7 +432,14 @@ double CachedResource::currentAge() const
     
 double CachedResource::freshnessLifetime() const
 {
-    // Cache non-http resources liberally
+    // Let file: resources expire immediately so that we don't serve a stale
+    // resource when a file has changed underneath us. Modern filesystems
+    // implement their own caches, so we should still get good performance if
+    // the resource hasn't changed.
+    if (m_response.url().protocolIs("file"))
+        return 0;
+
+    // Cache other non-http resources liberally.
     if (!m_response.url().protocolIsInHTTPFamily())
         return std::numeric_limits<double>::max();
 
