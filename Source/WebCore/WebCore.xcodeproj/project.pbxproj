@@ -692,6 +692,8 @@
 		1F3F19531499CA7600A5AEA7 /* PODFreeListArena.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F3F19521499CA7600A5AEA7 /* PODFreeListArena.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1FAFBF1815A5FA6E00083A20 /* UTIUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1FAFBF1715A5FA5200083A20 /* UTIUtilities.mm */; };
 		1FAFBF1915A5FA7400083A20 /* UTIUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FAFBF1615A5FA5200083A20 /* UTIUtilities.h */; };
+		1FC40FB91655CCB60040F29E /* SubimageCacheWithTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1FC40FB81655C5910040F29E /* SubimageCacheWithTimer.cpp */; };
+		1FC40FBA1655CCB90040F29E /* SubimageCacheWithTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1FC40FB71655C5910040F29E /* SubimageCacheWithTimer.h */; };
 		209B456B16796A7E00E54E4E /* JSCryptoCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 209B456A16796A7E00E54E4E /* JSCryptoCustom.cpp */; };
 		20D629261253690B00081543 /* InspectorInstrumentation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 20D629241253690B00081543 /* InspectorInstrumentation.cpp */; };
 		20D629271253690B00081543 /* InspectorInstrumentation.h in Headers */ = {isa = PBXBuildFile; fileRef = 20D629251253690B00081543 /* InspectorInstrumentation.h */; };
@@ -8071,6 +8073,8 @@
 		1F3F19521499CA7600A5AEA7 /* PODFreeListArena.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PODFreeListArena.h; sourceTree = "<group>"; };
 		1FAFBF1615A5FA5200083A20 /* UTIUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UTIUtilities.h; sourceTree = "<group>"; };
 		1FAFBF1715A5FA5200083A20 /* UTIUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UTIUtilities.mm; sourceTree = "<group>"; };
+		1FC40FB71655C5910040F29E /* SubimageCacheWithTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubimageCacheWithTimer.h; sourceTree = "<group>"; };
+		1FC40FB81655C5910040F29E /* SubimageCacheWithTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SubimageCacheWithTimer.cpp; sourceTree = "<group>"; };
 		209B456A16796A7E00E54E4E /* JSCryptoCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCryptoCustom.cpp; sourceTree = "<group>"; };
 		20D629241253690B00081543 /* InspectorInstrumentation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorInstrumentation.cpp; sourceTree = "<group>"; };
 		20D629251253690B00081543 /* InspectorInstrumentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorInstrumentation.h; sourceTree = "<group>"; };
@@ -20702,6 +20706,8 @@
 				A80A38FD0E50CC8200A25EBC /* PatternCG.cpp */,
 				B27535360B053814002CE64F /* PDFDocumentImage.cpp */,
 				B27535370B053814002CE64F /* PDFDocumentImage.h */,
+				1FC40FB71655C5910040F29E /* SubimageCacheWithTimer.h */,
+				1FC40FB81655C5910040F29E /* SubimageCacheWithTimer.cpp */,
 				B275352A0B053814002CE64F /* TransformationMatrixCG.cpp */,
 			);
 			path = cg;
@@ -26114,6 +26120,7 @@
 				B8DBDB4C130B0F8A00F5CDB1 /* SetSelectionCommand.h in Headers */,
 				93F1994F08245E59001E9ABC /* Settings.h in Headers */,
 				53EF766B16530A61004CBE49 /* SettingsMacros.h in Headers */,
+				1FC40FBA1655CCB90040F29E /* SubimageCacheWithTimer.h in Headers */,
 				498770E91242C535002226BA /* Shader.h in Headers */,
 				0F3DD45012F5EA1B000D9190 /* ShadowBlur.h in Headers */,
 				BC5EB8C40E82031B00B25965 /* ShadowData.h in Headers */,
@@ -29570,6 +29577,7 @@
 				BC5EB80F0E81F2CE00B25965 /* StyleTransformData.cpp in Sources */,
 				BC5EB6990E81DA6300B25965 /* StyleVisualData.cpp in Sources */,
 				D000ED2711C1B9CD00C47726 /* SubframeLoader.cpp in Sources */,
+				1FC40FB91655CCB60040F29E /* SubimageCacheWithTimer.cpp in Sources */,
 				F55B3DD31251F12D003EF269 /* SubmitInputType.cpp in Sources */,
 				93E227E40AF589AD00D48324 /* SubresourceLoader.cpp in Sources */,
 				7E37EF2E1339208800B29250 /* SubresourceLoaderCF.cpp in Sources */,
