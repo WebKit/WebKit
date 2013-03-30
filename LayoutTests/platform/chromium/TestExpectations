@@ -935,6 +935,17 @@ fast/dom/timer-throttling-hidden-page.html [ WontFix ]
 # Chromium disabled MATHML
 crbug.com/22554 mathml [ Skip ]
 
+# Chromium disabled iframe viewsource attribute.
+fast/frames/viewsource-attribute.html [ WontFix ]
+fast/frames/viewsource-empty-attribute-value.html [ WontFix ]
+fast/frames/viewsource-linebreak.html [ WontFix ]
+fast/frames/viewsource-link-on-href-value.html [ WontFix ]
+fast/frames/viewsource-on-image-file.html [ WontFix ]
+fast/frames/viewsource-plain-text-tags.html [ WontFix ]
+fast/frames/viewsource-xml.html [ WontFix ]
+http/tests/security/view-source-no-javascript-url.html [ WontFix ]
+http/tests/security/view-source-no-refresh.html [ WontFix ]
+
 # INPUT_TYPE_DATETIME_INCOMPLETE is disabled across Chromium until a better Android UI is worked out.  See crbug.com/164561.
 webkit.org/b/109272 fast/forms/datetime [ Skip ]
 webkit.org/b/109272 fast/forms/datetime-multiple-fields [ Skip ]

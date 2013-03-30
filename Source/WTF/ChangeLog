@@ -1,3 +1,13 @@
+2013-03-30  Tom Sepez  <tsepez@chromium.org>
+
+        View-source iframes are dangerous (and not very useful).
+        https://bugs.webkit.org/show_bug.cgi?id=113345
+
+        Reviewed by Adam Barth.
+
+        * wtf/FeatureDefines.h:
+        Default definition of ENABLE_VIEWSOURCE_ATTRIBUTE is enabled.
+
 2013-03-27  Patrick Gansterer  <paroga@webkit.org>
 
         Set WTF_ARM_ARCH_VERSION to correct value when used with MSVC

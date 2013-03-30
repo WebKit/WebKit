@@ -1,3 +1,13 @@
+2013-03-30  Tom Sepez  <tsepez@chromium.org>
+
+        View-source iframes are dangerous (and not very useful).
+        https://bugs.webkit.org/show_bug.cgi?id=113345
+
+        Reviewed by Adam Barth.
+
+        * features.gypi:
+        Disable VIEWSOURCE_ATTRIBUTE for chromium.
+
 2013-03-30  Alexei Filippov  <alph@chromium.org>
 
         Web Inspector: Fonts refactoring
