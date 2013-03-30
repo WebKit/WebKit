@@ -67,7 +67,7 @@ namespace WebCore {
 static inline void setAttributes(Element* element, Vector<Attribute>& attributeVector, ParserContentPolicy parserContentPolicy)
 {
     if (!scriptingContentIsAllowed(parserContentPolicy))
-        element->stripJavaScriptAttributes(attributeVector);
+        element->stripScriptingAttributes(attributeVector);
     element->parserSetAttributes(attributeVector);
 }
 

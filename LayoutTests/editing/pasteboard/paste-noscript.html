@@ -16,6 +16,7 @@ in an editable area and verifies that no script, handlers or javascript urls are
 <a id="anchor1" href="http://www.cnn.com/">CNN</a>
 <a id="anchor2" href="javascript:sayHello()">Hello</a>
 <iframe id="iframe1" src="javascript:var x = 1;" style="width: 200px; height: 100px; background-color:#cee;"></iframe>
+<iframe id="iframe2" srcdoc="<script>var x = 1;</script>" style="width: 200px; height: 100px; background-color:#cee;"></iframe>
 <form id="form1" action="javascript:sayHello()" formaction="javascript:sayHello()" style="width: 200px; height: 150px; background-color:#cee;">This is a form<br><img src="../resources/abe.png"></img><button formaction="javascript:sayHello()">Submit.</button></form>
 </div>
 <div id="pastehere" contenteditable="true">
@@ -25,7 +26,7 @@ in an editable area and verifies that no script, handlers or javascript urls are
 var s = window.getSelection();
 var p1 = document.getElementById("test");
 s.setPosition(p1, 0);
-s.setBaseAndExtent(p1, 0, p1, 12);
+s.setBaseAndExtent(p1, 0, p1, 14);
 document.execCommand("Copy");
 p1 = document.getElementById("pastehere");
 s.setPosition(p1, 0);
@@ -43,8 +44,11 @@ log(document.getElementById("pastehere").childNodes[5].outerHTML);
 log(document.getElementById("iframe1").outerHTML);
 log(document.getElementById("pastehere").childNodes[7].outerHTML);
 
+log(document.getElementById("iframe2").outerHTML);
+log(document.getElementById("pastehere").childNodes[9].outerHTML);
+
 log(document.getElementById("form1").outerHTML);
-log(document.getElementById("pastehere").childNodes[8].outerHTML);
+log(document.getElementById("pastehere").childNodes[10].outerHTML);
 
 function log(str) {
     var li = document.createElement("li");

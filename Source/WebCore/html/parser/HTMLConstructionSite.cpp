@@ -60,7 +60,7 @@ using namespace HTMLNames;
 static inline void setAttributes(Element* element, AtomicHTMLToken* token, ParserContentPolicy parserContentPolicy)
 {
     if (!scriptingContentIsAllowed(parserContentPolicy))
-        element->stripJavaScriptAttributes(token->attributes());
+        element->stripScriptingAttributes(token->attributes());
     element->parserSetAttributes(token->attributes());
 }
 

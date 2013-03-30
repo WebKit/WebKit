@@ -380,7 +380,8 @@ public:
     // Only called by the parser immediately after element construction.
     void parserSetAttributes(const Vector<Attribute>&);
 
-    void stripJavaScriptAttributes(Vector<Attribute>&);
+    // Remove attributes that might introduce scripting from the vector leaving the element unchanged.
+    void stripScriptingAttributes(Vector<Attribute>&) const;
 
     const ElementData* elementData() const { return m_elementData.get(); }
     UniqueElementData* ensureUniqueElementData();
@@ -454,6 +455,7 @@ public:
     virtual void accessKeyAction(bool /*sendToAnyEvent*/) { }
 
     virtual bool isURLAttribute(const Attribute&) const { return false; }
+    virtual bool isHTMLContentAttribute(const Attribute&) const { return false; }
 
     KURL getURLAttribute(const QualifiedName&) const;
     KURL getNonEmptyURLAttribute(const QualifiedName&) const;
@@ -735,8 +737,7 @@ private:
 
     void createRendererIfNeeded();
 
-    bool isJavaScriptAttribute(const Attribute&);
-    bool isJavaScriptURLAttribute(const Attribute&);
+    bool isJavaScriptURLAttribute(const Attribute&) const;
 
     RefPtr<ElementData> m_elementData;
 };

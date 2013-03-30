@@ -222,6 +222,11 @@ bool HTMLFrameElementBase::isURLAttribute(const Attribute& attribute) const
     return attribute.name() == srcAttr || HTMLFrameOwnerElement::isURLAttribute(attribute);
 }
 
+bool HTMLFrameElementBase::isHTMLContentAttribute(const Attribute& attribute) const
+{
+    return attribute.name() == srcdocAttr || HTMLFrameOwnerElement::isHTMLContentAttribute(attribute);
+}
+
 int HTMLFrameElementBase::width()
 {
     document()->updateLayoutIgnorePendingStylesheets();
