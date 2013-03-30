@@ -37,6 +37,7 @@
 #include "TimeRanges.h"
 #include "WebKitWebSourceGStreamer.h"
 #include <gst/gst.h>
+#include <gst/pbutils/missing-plugins.h>
 #include <limits>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
@@ -131,6 +132,12 @@ static gboolean mediaPlayerPrivateVideoChangeTimeoutCallback(MediaPlayerPrivateG
     return FALSE;
 }
 
+static void mediaPlayerPrivatePluginInstallerResultFunction(GstInstallPluginsReturn result, gpointer userData)
+{
+    MediaPlayerPrivateGStreamer* player = reinterpret_cast<MediaPlayerPrivateGStreamer*>(userData);
+    player->handlePluginInstallerResult(result);
+}
+
 void MediaPlayerPrivateGStreamer::setAudioStreamProperties(GObject* object)
 {
     if (g_strcmp0(G_OBJECT_TYPE_NAME(object), "GstPulseSink"))
@@ -212,6 +219,7 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     , m_originalPreloadWasAutoAndWasOverridden(false)
     , m_preservesPitch(false)
     , m_requestedState(GST_STATE_VOID_PENDING)
+    , m_missingPlugins(false)
 {
 }
 
@@ -686,6 +694,8 @@ gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
     case GST_MESSAGE_ERROR:
         if (m_resetPipeline)
             break;
+        if (m_missingPlugins)
+            break;
         gst_message_parse_error(message, &err.outPtr(), &debug.outPtr());
         LOG_MEDIA_MESSAGE("Error %d: %s (url=%s)", err->code, err->message, m_url.string().utf8().data());
 
@@ -765,12 +775,28 @@ gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
             changePipelineState(requestedState);
         }
         break;
+    case GST_MESSAGE_ELEMENT:
+        if (gst_is_missing_plugin_message(message)) {
+            char* detail = gst_missing_plugin_message_get_installer_detail(message);
+            GstInstallPluginsReturn result = gst_install_plugins_async(&detail, 0, mediaPlayerPrivatePluginInstallerResultFunction, this);
+            m_missingPlugins = result == GST_INSTALL_PLUGINS_STARTED_OK;
+        }
+        break;
     default:
         LOG_MEDIA_MESSAGE("Unhandled GStreamer message type: %s",
                     GST_MESSAGE_TYPE_NAME(message));
         break;
     }
     return TRUE;
+}
+
+void MediaPlayerPrivateGStreamer::handlePluginInstallerResult(GstInstallPluginsReturn result)
+{
+    m_missingPlugins = false;
+    if (result == GST_INSTALL_PLUGINS_SUCCESS) {
+        gst_element_set_state(m_playBin.get(), GST_STATE_READY);
+        gst_element_set_state(m_playBin.get(), GST_STATE_PAUSED);
+    }
 }
 
 void MediaPlayerPrivateGStreamer::processBufferingStats(GstMessage* message)
