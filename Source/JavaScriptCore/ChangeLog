@@ -1,3 +1,11 @@
+2013-03-31  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix a comment. While thinking about TBAA for array accesses,
+        I realized that we have to be super careful about aliasing of typed arrays.
+
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::getByValLoadElimination):
+
 2013-03-30  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Move Region into its own header

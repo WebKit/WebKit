@@ -379,6 +379,8 @@ private:
                 // We must assume that the PutByVal will clobber the location we're getting from.
                 // FIXME: We can do better; if we know that the PutByVal is accessing an array of a
                 // different type than the GetByVal, then we know that they won't clobber each other.
+                // ... except of course for typed arrays, where all typed arrays clobber all other
+                // typed arrays!  An Int32Array can alias a Float64Array for example, and so on.
                 return 0;
             }
             case PutStructure:
