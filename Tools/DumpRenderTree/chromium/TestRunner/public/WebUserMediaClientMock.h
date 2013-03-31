@@ -31,12 +31,11 @@
 #ifndef WebUserMediaClientMock_h
 #define WebUserMediaClientMock_h
 
-#include "TestCommon.h"
+#include "Platform/chromium/public/WebCommon.h"
+#include "Platform/chromium/public/WebString.h"
+#include "Platform/chromium/public/WebURL.h"
+#include "WebKit/chromium/public/WebUserMediaClient.h"
 #include "WebTask.h"
-#include "WebUserMediaClient.h"
-#include <public/WebCommon.h>
-#include <public/WebString.h>
-#include <public/WebURL.h>
 
 namespace WebTestRunner {
 
@@ -44,10 +43,10 @@ class WebTestDelegate;
 
 class WebUserMediaClientMock : public WebKit::WebUserMediaClient {
 public:
-    explicit WebUserMediaClientMock(WebTestDelegate*);
+    WEBKIT_EXPORT explicit WebUserMediaClientMock(WebTestDelegate*);
     ~WebUserMediaClientMock() { }
 
-    virtual void requestUserMedia(const WebKit::WebUserMediaRequest&, const WebKit::WebVector<WebKit::WebMediaStreamSource>&, const WebKit::WebVector<WebKit::WebMediaStreamSource>&) OVERRIDE;
+    virtual void requestUserMedia(const WebKit::WebUserMediaRequest&, const WebKit::WebVector<WebKit::WebMediaStreamSource>&, const WebKit::WebVector<WebKit::WebMediaStreamSource>&);
     virtual void cancelUserMediaRequest(const WebKit::WebUserMediaRequest&);
 
     // Task related methods

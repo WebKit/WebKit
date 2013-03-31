@@ -37,6 +37,7 @@
             'chromium/TestRunner/public/WebTestInterfaces.h',
             'chromium/TestRunner/public/WebTestProxy.h',
             'chromium/TestRunner/public/WebTestRunner.h',
+            'chromium/TestRunner/public/WebUserMediaClientMock.h',
             'chromium/TestRunner/src/AccessibilityControllerChromium.cpp',
             'chromium/TestRunner/src/AccessibilityControllerChromium.h',
             'chromium/TestRunner/src/AccessibilityUIElementChromium.cpp',
@@ -96,7 +97,6 @@
             'chromium/TestRunner/src/WebTestThemeEngineWin.cpp',
             'chromium/TestRunner/src/WebTestThemeEngineWin.h',
             'chromium/TestRunner/src/WebUserMediaClientMock.cpp',
-            'chromium/TestRunner/src/WebUserMediaClientMock.h',
         ],
         'test_plugin_files': [
             'TestNetscapePlugIn/PluginObject.cpp',

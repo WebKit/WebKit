@@ -1,3 +1,20 @@
+2013-03-31  Wei Jia  <wjia@chromium.org>
+
+        Allow WebUserMediaClientMock to be used by client
+        https://bugs.webkit.org/show_bug.cgi?id=113633
+
+        Reviewed by Adam Barth.
+
+        Export WebUserMediaClientMock.
+        Allow files in chromium/TestRunner/public to have WEBKIT_EXPORT.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestRunner/public/WebUserMediaClientMock.h: Copied from Tools/DumpRenderTree/chromium/TestRunner/src/WebUserMediaClientMock.h.
+        (WebUserMediaClientMock):
+        * DumpRenderTree/chromium/TestRunner/src/WebUserMediaClientMock.h: Removed.
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_function_definition):
+
 2013-03-29  Alexey Proskuryakov  <ap@apple.com>
 
         Expose FeatureObserver data to WebKit clients
