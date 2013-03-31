@@ -115,6 +115,8 @@ using namespace WebCore;
         LOG(Network, "Handle %p delegate connection:%p willSendRequest:%@ redirectResponse:non-HTTP", m_handle, connection, [newRequest description]); 
 #endif
 
+    RetainPtr<id> protector(self);
+
     dispatch_async(dispatch_get_main_queue(), ^{
         if (!m_handle) {
             m_requestResult = nullptr;
@@ -137,6 +139,8 @@ using namespace WebCore;
     UNUSED_PARAM(connection);
 
     LOG(Network, "Handle %p delegate connectionShouldUseCredentialStorage:%p", m_handle, connection);
+
+    RetainPtr<id> protector(self);
 
     dispatch_async(dispatch_get_main_queue(), ^{
         if (!m_handle) {
@@ -190,6 +194,8 @@ using namespace WebCore;
     UNUSED_PARAM(connection);
 
     LOG(Network, "Handle %p delegate connection:%p canAuthenticateAgainstProtectionSpace:%@://%@:%u realm:%@ method:%@ %@%@", m_handle, connection, [protectionSpace protocol], [protectionSpace host], [protectionSpace port], [protectionSpace realm], [protectionSpace authenticationMethod], [protectionSpace isProxy] ? @"proxy:" : @"", [protectionSpace isProxy] ? [protectionSpace proxyType] : @"");
+
+    RetainPtr<id> protector(self);
 
     dispatch_async(dispatch_get_main_queue(), ^{
         if (!m_handle) {
@@ -340,6 +346,8 @@ using namespace WebCore;
     UNUSED_PARAM(connection);
 
     LOG(Network, "Handle %p delegate connection:%p willCacheResponse:%p", m_handle, connection, cachedResponse);
+
+    RetainPtr<id> protector(self);
 
     dispatch_async(dispatch_get_main_queue(), ^{
         if (!m_handle || !m_handle->client()) {
