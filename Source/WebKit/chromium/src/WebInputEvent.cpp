@@ -32,10 +32,7 @@
 #include "WebInputEvent.h"
 
 #include "KeyboardCodes.h"
-
 #include <ctype.h>
-#include <stdio.h>
-
 #include <wtf/Assertions.h>
 #include <wtf/StringExtras.h>
 

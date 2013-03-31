@@ -1,3 +1,15 @@
+2013-03-30  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Remove unused includes of stdio.h
+        https://bugs.webkit.org/show_bug.cgi?id=113650
+
+        Reviewed by Dimitri Glazkov.
+
+        We shouldn't include stdio.h. These includes aren't used anyway.
+
+        * src/WebInputEvent.cpp:
+        * src/x11/WebScreenInfoFactory.cpp:
+
 2013-03-30  Tom Sepez  <tsepez@chromium.org>
 
         View-source iframes are dangerous (and not very useful).
