@@ -33,7 +33,6 @@
 
 #if ENABLE(FILE_SYSTEM)
 
-#include "RegularExpression.h"
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 
