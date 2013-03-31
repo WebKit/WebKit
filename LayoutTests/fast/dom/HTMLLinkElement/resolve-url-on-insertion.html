@@ -1,0 +1,38 @@
+<html>
+<body>
+<script>
+var base = document.createElement('base');
+base.href = 'resources/';
+
+var link1 = document.createElement('link');
+link1.setAttribute('rel', 'stylesheet');
+link1.setAttribute('href', 'stylesheet.css');
+
+var foreignDocument = document.implementation.createHTMLDocument('');
+var link2 = foreignDocument.createElement('link');
+link2.setAttribute('rel', 'stylesheet');
+link2.setAttribute('href', 'stylesheet2.css');
+
+document.body.appendChild(base);
+document.body.appendChild(link1);
+document.body.appendChild(link2);
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+<p>This tests that links resouce URLs are resolved dynamically when inserted into
+   the document, and honor the base URL of the document at the time of insertion.</p>
+
+<h1 id=test>I should be blue</h1>
+<h1 id=test2>I should be red</h1>
+
+<script>
+var test = document.getElementById('test');
+var testColor = window.getComputedStyle(document.getElementById('test'), null).color;
+var test2 = document.getElementById('test2');
+var test2Color = window.getComputedStyle(document.getElementById('test2'), null).color;
+test.innerHTML += testColor === 'rgb(0, 0, 255)' ? '...and I am!!!' : '...but I am not =-(';
+test2.innerHTML += test2Color === 'rgb(255, 0, 0)' ? '...and I am!!!' : '...but I am not =-(';
+</script>
+</body></html>
+

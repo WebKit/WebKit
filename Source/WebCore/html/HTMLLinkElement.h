@@ -136,7 +136,6 @@ private:
         Disabled
     };
 
-    KURL m_url;
     String m_type;
     String m_media;
     RefPtr<DOMSettableTokenList> m_sizes;
