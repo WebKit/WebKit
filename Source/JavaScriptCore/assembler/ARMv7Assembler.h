@@ -2779,7 +2779,6 @@ private:
     } m_formatter;
 
     Vector<LinkRecord> m_jumpsToLink;
-    Vector<int32_t> m_offsets;
     int m_indexOfLastWatchpoint;
     int m_indexOfTailOfLastWatchpoint;
 };

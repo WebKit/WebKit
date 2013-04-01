@@ -1,3 +1,13 @@
+2013-04-01  Benjamin Poulain  <benjamin@webkit.org>
+
+        Remove an unused variable from the ARMv7 Assembler
+        https://bugs.webkit.org/show_bug.cgi?id=113653
+
+        Reviewed by Andreas Kling.
+
+        * assembler/ARMv7Assembler.h:
+        (ARMv7Assembler):
+
 2013-03-31  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Yarr should build using a separate GYP file from JavaScriptCore
