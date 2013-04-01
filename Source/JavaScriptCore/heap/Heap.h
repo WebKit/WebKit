@@ -189,6 +189,7 @@ namespace JSC {
         friend class CopiedSpace;
         friend class CopyVisitor;
         friend class SlotVisitor;
+        friend class SuperRegion;
         friend class IncrementalSweeper;
         friend class HeapStatistics;
         friend class WeakSet;

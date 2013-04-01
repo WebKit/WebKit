@@ -34,8 +34,9 @@
 
 namespace JSC {
 
-BlockAllocator::BlockAllocator()
-    : m_copiedRegionSet(CopiedBlock::blockSize)
+BlockAllocator::BlockAllocator(JSGlobalData* globalData)
+    : m_superRegion(globalData)
+    , m_copiedRegionSet(CopiedBlock::blockSize)
     , m_markedRegionSet(MarkedBlock::blockSize)
     , m_fourKBBlockRegionSet(WeakBlock::blockSize)
     , m_workListRegionSet(CopyWorkListSegment::blockSize)

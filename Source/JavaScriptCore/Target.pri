@@ -105,6 +105,7 @@ SOURCES += \
     heap/MarkedBlock.cpp \
     heap/MarkedSpace.cpp \
     heap/SlotVisitor.cpp \
+    heap/SuperRegion.cpp \
     heap/VTableSpectrum.cpp \
     heap/WriteBarrierSupport.cpp \
     debugger/DebuggerActivation.cpp \

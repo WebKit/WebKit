@@ -1,3 +1,89 @@
+2013-03-31  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Regions should be allocated from the same contiguous segment of virtual memory
+        https://bugs.webkit.org/show_bug.cgi?id=113662
+
+        Reviewed by Filip Pizlo.
+
+        Instead of letting the OS spread our Regions all over the place, we should allocate them all within 
+        some range of each other. This change will open the door to some other optimizations, e.g. doing simple 
+        range checks for our write barriers and compressing JSCell pointers to 32-bits.
+
+        Added new SuperRegion class that encapsulates allocating Regions from a contiguous reserved chunk of 
+        virtual address space. It functions very similarly to the FixedVMPoolExecutableAllocator class used by the JIT.
+
+        Also added two new subclasses of Region, NormalRegion and ExcessRegion. 
+        
+        NormalRegion is the type of Region that is normally allocated when there is available space remaining 
+        in the SuperRegion. If we ever run out of space in the SuperRegion, we fall back to allocating 
+        ExcessRegions, which are identical to how Regions have behaved up until now, i.e. they contain a 
+        PageAllocationAligned.
+
+        We only use the SuperRegion (and NormalRegions) on 64-bit systems, since it doesn't make sense to reserve the 
+        entire 4 GB address space on 32-bit systems just for the JS heap.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * heap/BlockAllocator.cpp:
+        (JSC::BlockAllocator::BlockAllocator):
+        * heap/BlockAllocator.h:
+        (JSC):
+        (BlockAllocator):
+        (JSC::BlockAllocator::allocate):
+        (JSC::BlockAllocator::allocateCustomSize):
+        (JSC::BlockAllocator::deallocateCustomSize):
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC):
+        (JSC::Heap::didExceedFixedHeapSizeLimit):
+        * heap/Heap.h:
+        (Heap):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::create):
+        * heap/Region.h:
+        (Region):
+        (JSC):
+        (NormalRegion):
+        (JSC::NormalRegion::base):
+        (JSC::NormalRegion::size):
+        (ExcessRegion):
+        (JSC::ExcessRegion::base):
+        (JSC::ExcessRegion::size):
+        (JSC::NormalRegion::NormalRegion):
+        (JSC::NormalRegion::tryCreate):
+        (JSC::NormalRegion::tryCreateCustomSize):
+        (JSC::NormalRegion::reset):
+        (JSC::ExcessRegion::ExcessRegion):
+        (JSC::ExcessRegion::~ExcessRegion):
+        (JSC::ExcessRegion::create):
+        (JSC::ExcessRegion::createCustomSize):
+        (JSC::ExcessRegion::reset):
+        (JSC::Region::Region):
+        (JSC::Region::initializeBlockList):
+        (JSC::Region::create):
+        (JSC::Region::createCustomSize):
+        (JSC::Region::~Region):
+        (JSC::Region::destroy):
+        (JSC::Region::reset):
+        (JSC::Region::deallocate):
+        (JSC::Region::base):
+        (JSC::Region::size):
+        * heap/SuperRegion.cpp: Added.
+        (JSC):
+        (JSC::SuperRegion::SuperRegion):
+        (JSC::SuperRegion::getAlignedBase):
+        (JSC::SuperRegion::allocateNewSpace):
+        (JSC::SuperRegion::notifyNeedPage):
+        (JSC::SuperRegion::notifyPageIsFree):
+        * heap/SuperRegion.h: Added.
+        (JSC):
+        (SuperRegion):
+
 2013-04-01  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove an unused variable from the ARMv7 Assembler

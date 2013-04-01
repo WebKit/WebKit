@@ -114,9 +114,9 @@ void MetaAllocatorHandle::shrink(size_t newSizeInBytes)
     m_sizeInBytes = newSizeInBytes;
 }
 
-MetaAllocator::MetaAllocator(size_t allocationGranule)
+MetaAllocator::MetaAllocator(size_t allocationGranule, size_t pageSize)
     : m_allocationGranule(allocationGranule)
-    , m_pageSize(pageSize())
+    , m_pageSize(pageSize)
     , m_bytesAllocated(0)
     , m_bytesReserved(0)
     , m_bytesCommitted(0)

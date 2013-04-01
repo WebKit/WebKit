@@ -35,6 +35,7 @@ namespace JSC {
 
 MarkedBlock* MarkedBlock::create(DeadBlock* block, MarkedAllocator* allocator, size_t cellSize, DestructorType destructorType)
 {
+    ASSERT(reinterpret_cast<size_t>(block) == (reinterpret_cast<size_t>(block) & blockMask));
     Region* region = block->region();
     return new (NotNull, block) MarkedBlock(region, allocator, cellSize, destructorType);
 }

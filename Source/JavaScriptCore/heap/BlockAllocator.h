@@ -40,6 +40,7 @@ class BlockAllocator;
 class CopiedBlock;
 class CopyWorkListSegment;
 class HandleBlock;
+class JSGlobalData;
 class MarkStackSegment;
 class MarkedBlock;
 class WeakBlock;
@@ -49,7 +50,7 @@ class WeakBlock;
 
 class BlockAllocator {
 public:
-    BlockAllocator();
+    BlockAllocator(JSGlobalData*);
     ~BlockAllocator();
 
     template <typename T> DeadBlock* allocate();
@@ -82,6 +83,7 @@ private:
 
     template <typename T> RegionSet& regionSetFor();
 
+    SuperRegion m_superRegion;
     RegionSet m_copiedRegionSet;
     RegionSet m_markedRegionSet;
     // WeakBlocks and MarkStackSegments use the same RegionSet since they're the same size.
@@ -140,7 +142,7 @@ inline DeadBlock* BlockAllocator::allocate()
             return block;
     }
 
-    Region* newRegion = Region::create(T::blockSize);
+    Region* newRegion = Region::create(&m_superRegion, T::blockSize);
 
     SpinLockHolder locker(&m_regionLock);
     m_emptyRegions.push(newRegion);
@@ -153,7 +155,7 @@ inline DeadBlock* BlockAllocator::allocate()
 inline DeadBlock* BlockAllocator::allocateCustomSize(size_t blockSize, size_t blockAlignment)
 {
     size_t realSize = WTF::roundUpToMultipleOf(blockAlignment, blockSize);
-    Region* newRegion = Region::createCustomSize(realSize, blockAlignment);
+    Region* newRegion = Region::createCustomSize(&m_superRegion, realSize, blockAlignment);
     DeadBlock* block = newRegion->allocate();
     ASSERT(block);
     return block;
@@ -199,7 +201,7 @@ inline void BlockAllocator::deallocateCustomSize(T* block)
     Region* region = block->region();
     ASSERT(region->isCustomSize());
     region->deallocate(block);
-    delete region;
+    region->destroy();
 }
 
 template <>

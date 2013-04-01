@@ -2794,6 +2794,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\heap\SuperRegion.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\heap\SuperRegion.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\heap\VTableSpectrum.cpp"
 				>
 			</File>

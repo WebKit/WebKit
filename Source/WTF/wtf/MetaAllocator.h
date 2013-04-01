@@ -64,7 +64,7 @@ class MetaAllocator {
     WTF_MAKE_NONCOPYABLE(MetaAllocator);
 
 public:
-    WTF_EXPORT_PRIVATE MetaAllocator(size_t allocationGranule);
+    WTF_EXPORT_PRIVATE MetaAllocator(size_t allocationGranule, size_t pageSize = WTF::pageSize());
     
     WTF_EXPORT_PRIVATE virtual ~MetaAllocator();
     

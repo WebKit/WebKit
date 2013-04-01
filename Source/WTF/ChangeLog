@@ -1,3 +1,20 @@
+2013-03-31  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Regions should be allocated from the same contiguous segment of virtual memory
+        https://bugs.webkit.org/show_bug.cgi?id=113662
+
+        Reviewed by Filip Pizlo.
+
+        Instead of letting the OS spread our Regions all over the place, we should allocate them all within 
+        some range of each other. This change will open the door to some other optimizations, e.g. doing simple 
+        range checks for our write barriers and compressing JSCell pointers to 32-bits.
+
+        * wtf/MetaAllocator.cpp: Changed the MetaAllocator to allow custom page sizes if the derived class wants to
+        use something other than the system page size.
+        (WTF::MetaAllocator::MetaAllocator):
+        * wtf/MetaAllocator.h:
+        (MetaAllocator):
+
 2013-04-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: add memory instrumentation for StringBuffer

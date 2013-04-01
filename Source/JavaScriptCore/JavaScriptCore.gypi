@@ -393,6 +393,8 @@
             'heap/SlotVisitorInlines.h',
             'heap/Strong.h',
             'heap/StrongInlines.h',
+            'heap/SuperRegion.cpp',
+            'heap/SuperRegion.h',
             'heap/TinyBloomFilter.h',
             'heap/UnconditionalFinalizer.h',
             'heap/VTableSpectrum.cpp',
