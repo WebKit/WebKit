@@ -1,3 +1,17 @@
+2013-03-31  Kangil Han  <kangil.han@samsung.com>
+
+        [EFL] Remove unused stdio.h includes
+        https://bugs.webkit.org/show_bug.cgi?id=113655
+
+        Reviewed by Andreas Kling.
+
+        We do not have to include unused header file.
+
+        * ewk/ewk_tiled_backing_store.cpp:
+        * ewk/ewk_tiled_matrix.cpp:
+        * ewk/ewk_tiled_model.cpp:
+        (tile_account):
+
 2013-03-27  Timothy Hatcher  <timothy@apple.com>
 
         Add support for dock-to-right of the Web Inspector in the Mac port.

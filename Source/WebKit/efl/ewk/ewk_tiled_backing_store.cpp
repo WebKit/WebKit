@@ -29,7 +29,6 @@
 #include <algorithm>
 #include <errno.h>
 #include <math.h>
-#include <stdio.h> // XXX REMOVE ME LATER
 #include <stdlib.h>
 #include <string.h>
 #include <wtf/OwnPtr.h>

@@ -35,7 +35,6 @@
 #include "NotImplemented.h"
 #include "TextEncoding.h"
 #include <Evas.h>
-#include <stdio.h>
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {

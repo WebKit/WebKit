@@ -29,8 +29,6 @@
 #include "config.h"
 #include "ScrollbarThemeEfl.h"
 
-#include <stdio.h>
-
 namespace WebCore {
 
 ScrollbarTheme* ScrollbarTheme::nativeTheme()

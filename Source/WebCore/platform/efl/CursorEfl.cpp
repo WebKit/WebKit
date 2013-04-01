@@ -36,7 +36,6 @@
 
 #include <Edje.h>
 #include <Evas.h>
-#include <stdio.h>
 #include <wtf/Assertions.h>
 
 namespace WebCore {
