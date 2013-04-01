@@ -1,5 +1,14 @@
 2013-04-01  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        More build fallout fixes.
+
+        Unreviewed build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def: Add new export symbols.
+        * heap/SuperRegion.cpp: Windows didn't like "LLU". 
+
+2013-04-01  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         r147324 broke the world
         https://bugs.webkit.org/show_bug.cgi?id=113704
 

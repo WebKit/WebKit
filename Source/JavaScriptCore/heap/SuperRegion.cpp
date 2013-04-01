@@ -30,7 +30,7 @@
 
 namespace JSC {
 
-const uint64_t SuperRegion::s_fixedHeapMemoryPoolSize = 4LLU * 1024LLU * static_cast<uint64_t>(MB);
+const uint64_t SuperRegion::s_fixedHeapMemoryPoolSize = 4 * 1024 * static_cast<uint64_t>(MB);
 
 SuperRegion::SuperRegion()
     : MetaAllocator(Region::s_regionSize, Region::s_regionSize)
