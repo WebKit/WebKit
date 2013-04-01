@@ -44,7 +44,7 @@ protected:
     virtual void notifyPageIsFree(void*);
 
 private:
-    static const size_t s_fixedHeapMemoryPoolSize;
+    static const uint64_t s_fixedHeapMemoryPoolSize;
 
     static void* getAlignedBase(PageReservation&);
 

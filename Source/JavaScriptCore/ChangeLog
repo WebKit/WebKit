@@ -1,5 +1,15 @@
 2013-04-01  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        32-bit Windows build fix
+
+        Unreviewed build fix.
+
+        * heap/SuperRegion.cpp:
+        * heap/SuperRegion.h: Use uint64_t instead of size_t.
+        (SuperRegion):
+
+2013-04-01  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         EFL build fix
 
         Unreviewed build fix.

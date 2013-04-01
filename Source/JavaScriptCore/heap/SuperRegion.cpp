@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-const size_t SuperRegion::s_fixedHeapMemoryPoolSize = 4 * 1024 * MB;
+const uint64_t SuperRegion::s_fixedHeapMemoryPoolSize = 4 * 1024 * MB;
 
 SuperRegion::SuperRegion(JSGlobalData* globalData)
     : MetaAllocator(Region::s_regionSize, Region::s_regionSize)
