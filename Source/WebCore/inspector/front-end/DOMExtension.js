@@ -245,15 +245,16 @@ function Size(width, height)
 }
 
 /**
+ * @param {Element} containerElement
  * @return {Size}
  */
-Element.prototype.measurePreferredSize = function()
+Element.prototype.measurePreferredSize = function(containerElement)
 {
-    document.body.appendChild(this);
+    containerElement.appendChild(this);
     this.positionAt(0, 0);
     var result = new Size(this.offsetWidth, this.offsetHeight);
     this.positionAt(undefined, undefined);
-    document.body.removeChild(this);
+    this.removeSelf();
     return result;
 }
 

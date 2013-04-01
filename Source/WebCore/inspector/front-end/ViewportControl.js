@@ -87,7 +87,7 @@ WebInspector.ViewportControl.prototype = {
 
         if (!this._rowHeight) {
             var firstElement = this._provider.itemElement(0);
-            this._rowHeight = firstElement.measurePreferredSize().height;
+            this._rowHeight = firstElement.measurePreferredSize(this._contentElement).height;
         }
 
         var visibleFrom = this.element.scrollTop;
@@ -95,6 +95,7 @@ WebInspector.ViewportControl.prototype = {
 
         this._firstVisibleIndex = Math.floor(visibleFrom / this._rowHeight);
         this._lastVisibleIndex = Math.min(Math.ceil(visibleTo / this._rowHeight), itemCount) - 1;
+
         this._topGapElement.style.height = (this._rowHeight * this._firstVisibleIndex) + "px";
         this._bottomGapElement.style.height = (this._rowHeight * (itemCount - this._lastVisibleIndex - 1)) + "px"; 
 

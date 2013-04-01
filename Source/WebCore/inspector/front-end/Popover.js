@@ -94,7 +94,7 @@ WebInspector.Popover.prototype = {
         WebInspector.Popover._popover = this;
 
         // Temporarily attach in order to measure preferred dimensions.
-        var preferredSize = view ? view.measurePreferredSize() : this.contentElement.measurePreferredSize();
+        var preferredSize = view ? view.measurePreferredSize() : this.contentElement.measurePreferredSize(this._contentDiv);
         preferredWidth = preferredWidth || preferredSize.width;
         preferredHeight = preferredHeight || preferredSize.height;
 
