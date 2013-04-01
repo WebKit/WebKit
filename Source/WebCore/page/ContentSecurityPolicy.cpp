@@ -889,7 +889,7 @@ private:
     bool checkInlineAndReportViolation(SourceListDirective*, const String& consoleMessage, const String& contextURL, const WTF::OrdinalNumber& contextLine, bool isScript) const;
     bool checkNonceAndReportViolation(NonceDirective*, const String& nonce, const String& consoleMessage, const String& contextURL, const WTF::OrdinalNumber& contextLine) const;
 
-    bool checkSourceAndReportViolation(SourceListDirective*, const KURL&, const String& type, const String& effectiveDirective) const;
+    bool checkSourceAndReportViolation(SourceListDirective*, const KURL&, const String& effectiveDirective) const;
     bool checkMediaTypeAndReportViolation(MediaListDirective*, const String& type, const String& typeAttribute, const String& consoleMessage) const;
 
     bool denyIfEnforcingPolicy() const { return m_reportOnly; }
@@ -1045,18 +1045,32 @@ bool CSPDirectiveList::checkInlineAndReportViolation(SourceListDirective* direct
     return true;
 }
 
-bool CSPDirectiveList::checkSourceAndReportViolation(SourceListDirective* directive, const KURL& url, const String& type, const String& effectiveDirective) const
+bool CSPDirectiveList::checkSourceAndReportViolation(SourceListDirective* directive, const KURL& url, const String& effectiveDirective) const
 {
     if (checkSource(directive, url))
         return true;
 
-    String prefix = makeString("Refused to load the ", type, " '");
-    if (type == "connect")
-        prefix = "Refused to connect to '";
-    if (type == "form")
-        prefix = "Refused to send form data to '";
-    if (type == "base")
+    String prefix;
+    if (baseURI == effectiveDirective)
         prefix = "Refused to set the document's base URI to '";
+    else if (connectSrc == effectiveDirective)
+        prefix = "Refused to connect to '";
+    else if (fontSrc == effectiveDirective)
+        prefix = "Refused to load the font '";
+    else if (formAction == effectiveDirective)
+        prefix = "Refused to send form data to '";
+    else if (frameSrc == effectiveDirective)
+        prefix = "Refused to frame '";
+    else if (imgSrc == effectiveDirective)
+        prefix = "Refused to load the image '";
+    else if (mediaSrc == effectiveDirective)
+        prefix = "Refused to load media from '";
+    else if (objectSrc == effectiveDirective)
+        prefix = "Refused to load plugin data from '";
+    else if (scriptSrc == effectiveDirective)
+        prefix = "Refused to load the script '";
+    else if (styleSrc == effectiveDirective)
+        prefix = "Refused to load the stylesheet '";
 
     String suffix = String();
     if (directive == m_defaultSrc)
@@ -1131,69 +1145,61 @@ bool CSPDirectiveList::allowPluginType(const String& type, const String& typeAtt
 
 bool CSPDirectiveList::allowScriptFromSource(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, type, (ASCIILiteral("script")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
-        checkSourceAndReportViolation(operativeDirective(m_scriptSrc.get()), url, type, scriptSrc) :
+        checkSourceAndReportViolation(operativeDirective(m_scriptSrc.get()), url, scriptSrc) :
         checkSource(operativeDirective(m_scriptSrc.get()), url);
 }
 
 bool CSPDirectiveList::allowObjectFromSource(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, type, (ASCIILiteral("object")));
     if (url.isBlankURL())
         return true;
     return reportingStatus == ContentSecurityPolicy::SendReport ?
-        checkSourceAndReportViolation(operativeDirective(m_objectSrc.get()), url, type, objectSrc) :
+        checkSourceAndReportViolation(operativeDirective(m_objectSrc.get()), url, objectSrc) :
         checkSource(operativeDirective(m_objectSrc.get()), url);
 }
 
 bool CSPDirectiveList::allowChildFrameFromSource(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, type, (ASCIILiteral("frame")));
     if (url.isBlankURL())
         return true;
     return reportingStatus == ContentSecurityPolicy::SendReport ?
-        checkSourceAndReportViolation(operativeDirective(m_frameSrc.get()), url, type, frameSrc) :
+        checkSourceAndReportViolation(operativeDirective(m_frameSrc.get()), url, frameSrc) :
         checkSource(operativeDirective(m_frameSrc.get()), url);
 }
 
 bool CSPDirectiveList::allowImageFromSource(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, type, (ASCIILiteral("image")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
-        checkSourceAndReportViolation(operativeDirective(m_imgSrc.get()), url, type, imgSrc) :
+        checkSourceAndReportViolation(operativeDirective(m_imgSrc.get()), url, imgSrc) :
         checkSource(operativeDirective(m_imgSrc.get()), url);
 }
 
 bool CSPDirectiveList::allowStyleFromSource(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, type, (ASCIILiteral("style")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
-        checkSourceAndReportViolation(operativeDirective(m_styleSrc.get()), url, type, styleSrc) :
+        checkSourceAndReportViolation(operativeDirective(m_styleSrc.get()), url, styleSrc) :
         checkSource(operativeDirective(m_styleSrc.get()), url);
 }
 
 bool CSPDirectiveList::allowFontFromSource(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, type, (ASCIILiteral("font")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
-        checkSourceAndReportViolation(operativeDirective(m_fontSrc.get()), url, type, fontSrc) :
+        checkSourceAndReportViolation(operativeDirective(m_fontSrc.get()), url, fontSrc) :
         checkSource(operativeDirective(m_fontSrc.get()), url);
 }
 
 bool CSPDirectiveList::allowMediaFromSource(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, type, (ASCIILiteral("media")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
-        checkSourceAndReportViolation(operativeDirective(m_mediaSrc.get()), url, type, mediaSrc) :
+        checkSourceAndReportViolation(operativeDirective(m_mediaSrc.get()), url, mediaSrc) :
         checkSource(operativeDirective(m_mediaSrc.get()), url);
 }
 
 bool CSPDirectiveList::allowConnectToSource(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, type, (ASCIILiteral("connect")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
-        checkSourceAndReportViolation(operativeDirective(m_connectSrc.get()), url, type, connectSrc) :
+        checkSourceAndReportViolation(operativeDirective(m_connectSrc.get()), url, connectSrc) :
         checkSource(operativeDirective(m_connectSrc.get()), url);
 }
 
@@ -1205,17 +1211,15 @@ void CSPDirectiveList::gatherReportURIs(DOMStringList& list) const
 
 bool CSPDirectiveList::allowFormAction(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, type, (ASCIILiteral("form")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
-        checkSourceAndReportViolation(m_formAction.get(), url, type, formAction) :
+        checkSourceAndReportViolation(m_formAction.get(), url, formAction) :
         checkSource(m_formAction.get(), url);
 }
 
 bool CSPDirectiveList::allowBaseURI(const KURL& url, ContentSecurityPolicy::ReportingStatus reportingStatus) const
 {
-    DEFINE_STATIC_LOCAL(String, type, (ASCIILiteral("base")));
     return reportingStatus == ContentSecurityPolicy::SendReport ?
-        checkSourceAndReportViolation(m_baseURI.get(), url, type, baseURI) :
+        checkSourceAndReportViolation(m_baseURI.get(), url, baseURI) :
         checkSource(m_baseURI.get(), url);
 }
 

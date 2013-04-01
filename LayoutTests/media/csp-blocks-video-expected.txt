@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Refused to load the media 'test.mp4' because it violates the following Content Security Policy directive: "media-src 'none'".
+CONSOLE MESSAGE: Refused to load media from 'test.mp4' because it violates the following Content Security Policy directive: "media-src 'none'".
 
 END OF TEST
 This test passes if it doesn't alert failure.

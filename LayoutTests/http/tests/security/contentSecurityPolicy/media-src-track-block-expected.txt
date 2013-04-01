@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: Refused to load the media 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/track.vtt' because it violates the following Content Security Policy directive: "media-src 'none'".
+CONSOLE MESSAGE: Refused to load media from 'http://127.0.0.1:8000/security/contentSecurityPolicy/resources/track.vtt' because it violates the following Content Security Policy directive: "media-src 'none'".
 
 ALERT: PASS
 
