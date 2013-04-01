@@ -1,3 +1,21 @@
+2013-04-01  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13490123> Sandbox extension tracking is incorrect when restoring a session
+        https://bugs.webkit.org/show_bug.cgi?id=113709
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::SandboxExtensionTracker::didStartProvisionalLoad): Added an assertion
+        to catch extension tracking logic errors that could result in giving an extension to
+        non-local pages.
+        (WebKit::WebPage::SandboxExtensionTracker::didCommitProvisionalLoad): Just like
+        below, clearing m_pendingProvisionalSandboxExtension appears incorrect, even though
+        I am not aware of any scenarios where this happens in practice.
+        (WebKit::WebPage::SandboxExtensionTracker::didFailProvisionalLoad): The load may
+        be failing exactly because a new one cancels it, so we shouldn't be preventing
+        the new one from using its extension.
+
 2013-04-01  Brady Eidson  <beidson@apple.com>
 
         SharedMemory release build hardening.

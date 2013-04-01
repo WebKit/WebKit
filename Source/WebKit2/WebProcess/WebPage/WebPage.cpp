@@ -3170,6 +3170,8 @@ void WebPage::SandboxExtensionTracker::didStartProvisionalLoad(WebFrame* frame)
     if (!m_provisionalSandboxExtension)
         return;
 
+    ASSERT(!m_provisionalSandboxExtension || frame->coreFrame()->loader()->provisionalDocumentLoader()->url().isLocalFile());
+
     m_provisionalSandboxExtension->consume();
 }
 
@@ -3178,14 +3180,13 @@ void WebPage::SandboxExtensionTracker::didCommitProvisionalLoad(WebFrame* frame)
     if (!frame->isMainFrame())
         return;
 
-    // Generally, there should be no pending extension at this stage, but we can have one if UI process
-    // has an out of date idea of WebProcess state, and initiates a load or reload without stopping an existing one.
-    m_pendingProvisionalSandboxExtension = nullptr;
-
     if (m_committedSandboxExtension)
         m_committedSandboxExtension->revoke();
 
     m_committedSandboxExtension = m_provisionalSandboxExtension.release();
+
+    // We can also have a non-null m_pendingProvisionalSandboxExtension if a new load is being started.
+    // This extension is not cleared, because it does not pertain to the failed load, and will be needed.
 }
 
 void WebPage::SandboxExtensionTracker::didFailProvisionalLoad(WebFrame* frame)
@@ -3193,15 +3194,15 @@ void WebPage::SandboxExtensionTracker::didFailProvisionalLoad(WebFrame* frame)
     if (!frame->isMainFrame())
         return;
 
-    // Generally, there should be no pending extension at this stage, but we can have one if UI process
-    // has an out of date idea of WebProcess state, and initiates a load or reload without stopping an existing one.
-    m_pendingProvisionalSandboxExtension = nullptr;
-
     if (!m_provisionalSandboxExtension)
         return;
 
     m_provisionalSandboxExtension->revoke();
     m_provisionalSandboxExtension = nullptr;
+
+    // We can also have a non-null m_pendingProvisionalSandboxExtension if a new load is being started
+    // (notably, if the current one fails because the new one cancels it). This extension is not cleared,
+    // because it does not pertain to the failed load, and will be needed.
 }
 
 bool WebPage::hasLocalDataForURL(const KURL& url)
