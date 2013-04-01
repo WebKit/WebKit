@@ -1,5 +1,13 @@
 2013-04-01  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        One more Windows build fix
+
+        Unreviewed.
+
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+
+2013-04-01  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         More build fallout fixes.
 
         Unreviewed build fix.
