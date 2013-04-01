@@ -452,7 +452,7 @@ void DocumentLoader::startDataLoadTimer()
 
 void DocumentLoader::handleSubstituteDataLoadSoon()
 {
-    if (deferMainResourceDataLoad())
+    if (m_deferMainResourceDataLoad)
         startDataLoadTimer();
     else
         handleSubstituteDataLoadNow(0);
@@ -612,7 +612,7 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
         m_isLoadingMultipartContent = true;
     }
 
-    setResponse(response);
+    m_response = response;
 
     if (m_identifierForLoadWithoutResourceLoader)
         frameLoader()->notifier()->dispatchDidReceiveResponse(this, m_identifierForLoadWithoutResourceLoader, m_response, 0);
@@ -845,7 +845,7 @@ void DocumentLoader::dataReceived(CachedResource* resource, const char* data, in
 #if USE(CFNETWORK) || PLATFORM(MAC)
     // Workaround for <rdar://problem/6060782>
     if (m_response.isNull())
-        setResponse(ResourceResponse(KURL(), "text/html", 0, String(), String()));
+        m_response = ResourceResponse(KURL(), "text/html", 0, String(), String());
 #endif
 
     // There is a bug in CFNetwork where callbacks can be dispatched even when loads are deferred.
@@ -1270,7 +1270,7 @@ KURL DocumentLoader::documentURL() const
     if (url.isEmpty())
         url = requestURL();
     if (url.isEmpty())
-        url = responseURL();
+        url = m_response.url();
     return url;
 }
 
@@ -1363,7 +1363,7 @@ bool DocumentLoader::maybeLoadEmpty()
     if (m_request.url().isEmpty() && !frameLoader()->stateMachine()->creatingInitialEmptyDocument())
         m_request.setURL(blankURL());
     String mimeType = shouldLoadEmpty ? "text/html" : frameLoader()->client()->generatedMIMETypeForURLScheme(m_request.url().protocol());
-    setResponse(ResourceResponse(m_request.url(), mimeType, 0, String(), String()));
+    m_response = ResourceResponse(m_request.url(), mimeType, 0, String(), String());
     finishedLoading(monotonicallyIncreasingTime());
     return true;
 }

@@ -96,14 +96,12 @@ namespace WebCore {
         PassRefPtr<ResourceBuffer> mainResourceData() const;
         
         DocumentWriter* writer() const { return &m_writer; }
-        Document* document() const;
 
         const ResourceRequest& originalRequest() const;
         const ResourceRequest& originalRequestCopy() const;
 
         const ResourceRequest& request() const;
         ResourceRequest& request();
-        void setRequest(const ResourceRequest&);
 
         CachedResourceLoader* cachedResourceLoader() const { return m_cachedResourceLoader.get(); }
 
@@ -112,9 +110,6 @@ namespace WebCore {
         // FIXME: This is the same as requestURL(). We should remove one of them.
         const KURL& url() const;
         const KURL& unreachableURL() const;
-
-        // The URL of the document resulting from this DocumentLoader.
-        KURL documentURL() const;
 
         const KURL& originalURL() const;
         const KURL& requestURL() const;
@@ -127,13 +122,8 @@ namespace WebCore {
         void setCommitted(bool committed) { m_committed = committed; }
         bool isCommitted() const { return m_committed; }
         bool isLoading() const;
-        void receivedData(const char*, int);
-        void setupForReplace();
-        void finishedLoading(double finishTime);
         const ResourceResponse& response() const { return m_response; }
         const ResourceError& mainDocumentError() const { return m_mainDocumentError; }
-        void mainReceivedError(const ResourceError&);
-        void setResponse(const ResourceResponse& response) { m_response = response; }
         bool isClientRedirect() const { return m_isClientRedirect; }
         void setIsClientRedirect(bool isClientRedirect) { m_isClientRedirect = isClientRedirect; }
         void handledOnloadEvents();
@@ -230,10 +220,7 @@ namespace WebCore {
 
         void subresourceLoaderFinishedLoadingOnePart(ResourceLoader*);
 
-        void maybeFinishLoadingMultipartContent();
-
         void setDeferMainResourceDataLoad(bool defer) { m_deferMainResourceDataLoad = defer; }
-        bool deferMainResourceDataLoad() const { return m_deferMainResourceDataLoad; }
         
         void didTellClientAboutLoad(const String& url)
         { 
@@ -253,8 +240,6 @@ namespace WebCore {
         DocumentLoadTiming* timing() { return &m_documentLoadTiming; }
         void resetTiming() { m_documentLoadTiming = DocumentLoadTiming(); }
 
-        void responseReceived(const ResourceResponse&);
-
         // The WebKit layer calls this function when it's ready for the data to
         // actually be added to the document.
         void commitData(const char* bytes, size_t length);
@@ -270,10 +255,20 @@ namespace WebCore {
         bool m_deferMainResourceDataLoad;
 
     private:
+
+        // The URL of the document resulting from this DocumentLoader.
+        KURL documentURL() const;
+        Document* document() const;
+
+        void setRequest(const ResourceRequest&);
+
         void commitIfReady();
         void setMainDocumentError(const ResourceError&);
         void commitLoad(const char*, int);
         void clearMainResourceLoader();
+
+        void setupForReplace();
+        void maybeFinishLoadingMultipartContent();
         
         bool maybeCreateArchive();
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
@@ -281,6 +276,8 @@ namespace WebCore {
 #endif
 
         void willSendRequest(ResourceRequest&, const ResourceResponse&);
+        void finishedLoading(double finishTime);
+        void mainReceivedError(const ResourceError&);
         virtual void redirectReceived(CachedResource*, ResourceRequest&, const ResourceResponse&) OVERRIDE;
         virtual void responseReceived(CachedResource*, const ResourceResponse&) OVERRIDE;
         virtual void dataReceived(CachedResource*, const char* data, int length) OVERRIDE;
