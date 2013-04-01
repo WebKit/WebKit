@@ -1,3 +1,16 @@
+2013-04-01  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: add memory instrumentation for StringBuffer
+        https://bugs.webkit.org/show_bug.cgi?id=113507
+
+        Reviewed by Pavel Feldman.
+
+        Added memory instrumentation for StringBuffer.
+
+        * wtf/MemoryInstrumentationString.h:
+        (WTF):
+        (WTF::reportMemoryUsage):
+
 2013-03-30  Tom Sepez  <tsepez@chromium.org>
 
         View-source iframes are dangerous (and not very useful).

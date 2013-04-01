@@ -70,6 +70,14 @@ inline void reportMemoryUsage(const String* string, MemoryObjectInfo* memoryObje
     info.addMember(string->impl(), "stringImpl", RetainingPointer);
 }
 
+template <typename CharType> class StringBuffer;
+template <typename CharType>
+inline void reportMemoryUsage(const StringBuffer<CharType>* stringBuffer, MemoryObjectInfo* memoryObjectInfo)
+{
+    MemoryClassInfo info(memoryObjectInfo, stringBuffer);
+    info.addRawBuffer(stringBuffer->characters(), sizeof(CharType) * stringBuffer->length(), "CharType[]", "data");
+}
+
 inline void reportMemoryUsage(const AtomicString* atomicString, MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, atomicString);
