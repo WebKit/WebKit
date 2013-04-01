@@ -408,9 +408,11 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
         switch (m_attachmentSide) {
         case AttachmentSideBottom:
             url.append("bottom");
+            m_page->process()->send(Messages::WebInspector::AttachedBottom(), m_page->pageID());
             break;
         case AttachmentSideRight:
             url.append("right");
+            m_page->process()->send(Messages::WebInspector::AttachedRight(), m_page->pageID());
             break;
         }
     } else
@@ -485,6 +487,9 @@ bool WebInspectorProxy::canAttach()
     // we can attach on open (on the UI process side). And InspectorFrontendClientLocal::canAttachWindow is
     // used to decide if we can attach when the attach button is pressed (on the WebProcess side).
 
+    // If we are already attached, allow attaching again to allow switching sides.
+    if (m_isAttached)
+        return true;
 
     // Don't allow attaching to another inspector -- two inspectors in one window is too much!
     bool isInspectorPage = m_page->pageGroup() == inspectorPageGroup();

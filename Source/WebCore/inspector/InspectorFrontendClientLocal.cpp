@@ -117,6 +117,7 @@ InspectorFrontendClientLocal::InspectorFrontendClientLocal(InspectorController* 
     , m_frontendPage(frontendPage)
     , m_settings(settings)
     , m_frontendLoaded(false)
+    , m_dockSide(UNDOCKED)
 {
     m_frontendPage->settings()->setAllowFileAccessFromFileURLs(true);
     m_dispatchTask = adoptPtr(new InspectorBackendDispatchTask(inspectorController));
@@ -171,6 +172,10 @@ bool InspectorFrontendClientLocal::canAttachWindow()
     bool isInspectorPage = m_inspectorController->hasInspectorFrontendClient();
     if (isInspectorPage)
         return false;
+
+    // If we are already attached, allow attaching again to allow switching sides.
+    if (m_dockSide != UNDOCKED)
+        return true;
 
     // Don't allow the attach if the window would be too small to accommodate the minimum inspector size.
     unsigned inspectedPageHeight = m_inspectorController->inspectedPage()->mainFrame()->view()->visibleHeight();
@@ -240,6 +245,8 @@ void InspectorFrontendClientLocal::setAttachedWindow(DockSide dockSide)
         side = "bottom";
         break;
     }
+
+    m_dockSide = dockSide;
 
     evaluateOnLoad(String::format("[\"setDockSide\", \"%s\"]", side));
 }

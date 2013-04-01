@@ -1,3 +1,20 @@
+2013-04-01  Timothy Hatcher  <timothy@apple.com>
+
+        Allow changing Web Inspector dock sides without undocking first.
+
+        https://webkit.org/b/113661
+        rdar://problem/13543127
+
+        Reviewed by Joseph Pecoraro.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::createInspectorPage): Send AttachedBottom and
+        AttachedRight messages so InspectorFrontendClientLocal knows which side we
+        are attached.
+
+        (WebKit::WebInspectorProxy::canAttach): If we are already attached, allow
+        attaching again to allow switching sides.
+
 2013-04-01  Anders Carlsson  <andersca@apple.com>
 
         Nor this! (Who reviewed this anyway!)
