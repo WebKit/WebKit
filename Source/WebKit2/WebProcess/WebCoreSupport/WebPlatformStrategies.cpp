@@ -60,7 +60,7 @@
 #endif
 
 // FIXME: Remove this once it works well enough to be the default.
-#define ENABLE_UI_PROCESS_STORAGE 1
+#define ENABLE_UI_PROCESS_STORAGE 0
 
 using namespace WebCore;
 

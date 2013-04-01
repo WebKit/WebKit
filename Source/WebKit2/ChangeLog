@@ -1,3 +1,9 @@
+2013-04-01  Anders Carlsson  <andersca@apple.com>
+
+        Didn't mean to commit this!
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+
 2013-04-01  Alexey Proskuryakov  <ap@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=113721
