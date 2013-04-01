@@ -139,6 +139,7 @@ CSSPropertyID SVGStyledElement::cssPropertyIdForSVGAttributeName(const Qualified
         // This is a list of all base CSS and SVG CSS properties which are exposed as SVG XML attributes
         mapAttributeToCSSProperty(propertyNameToIdMap, alignment_baselineAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, baseline_shiftAttr);
+        mapAttributeToCSSProperty(propertyNameToIdMap, buffered_renderingAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, clipAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, clip_pathAttr);
         mapAttributeToCSSProperty(propertyNameToIdMap, clip_ruleAttr);
@@ -214,6 +215,7 @@ static inline AttributeToPropertyTypeMap& cssPropertyToTypeMap()
     // Fill the map for the first use.
     s_cssPropertyMap.set(alignment_baselineAttr, AnimatedString);
     s_cssPropertyMap.set(baseline_shiftAttr, AnimatedString);
+    s_cssPropertyMap.set(buffered_renderingAttr, AnimatedString);
     s_cssPropertyMap.set(clipAttr, AnimatedRect);
     s_cssPropertyMap.set(clip_pathAttr, AnimatedString);
     s_cssPropertyMap.set(clip_ruleAttr, AnimatedString);

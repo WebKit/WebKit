@@ -588,6 +588,14 @@ void StyleResolver::applySVGProperty(CSSPropertyID id, CSSValue* value)
             svgstyle->setVectorEffect(*primitiveValue);
             break;
         }
+        case CSSPropertyBufferedRendering: {
+            HANDLE_INHERIT_AND_INITIAL(bufferedRendering, BufferedRendering)
+            if (!primitiveValue)
+                break;
+
+            svgstyle->setBufferedRendering(*primitiveValue);
+            break;
+        }
         case CSSPropertyMaskType: {
             HANDLE_INHERIT_AND_INITIAL(maskType, MaskType)
             if (!primitiveValue)

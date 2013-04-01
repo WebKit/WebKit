@@ -4238,6 +4238,38 @@ template<int supported> Length CSSPrimitiveValue::convertToLength(RenderStyle* s
 
 #if ENABLE(SVG)
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBufferedRendering e)
+    : CSSValue(PrimitiveClass)
+{
+    m_primitiveUnitType = CSS_IDENT;
+    switch (e) {
+    case BR_AUTO:
+        m_value.ident = CSSValueAuto;
+        break;
+    case BR_DYNAMIC:
+        m_value.ident = CSSValueDynamic;
+        break;
+    case BR_STATIC:
+        m_value.ident = CSSValueStatic;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator EBufferedRendering() const
+{
+    switch (m_value.ident) {
+    case CSSValueAuto:
+        return BR_AUTO;
+    case CSSValueDynamic:
+        return BR_DYNAMIC;
+    case CSSValueStatic:
+        return BR_STATIC;
+    }
+
+    ASSERT_NOT_REACHED();
+    return BR_AUTO;
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EColorInterpolation e)
     : CSSValue(PrimitiveClass)
 {

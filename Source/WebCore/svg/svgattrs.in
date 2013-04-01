@@ -21,6 +21,7 @@ baseProfile
 bbox
 begin
 bias
+buffered-rendering
 by
 calcMode
 cap-height

@@ -31,6 +31,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "RenderLayer.h"
+#include "RenderSVGImage.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
@@ -322,6 +323,37 @@ void SVGRenderingContext::clear2DRotation(AffineTransform& transform)
     transform.decompose(decomposition);
     decomposition.angle = 0;
     transform.recompose(decomposition);
+}
+
+bool SVGRenderingContext::bufferForeground(OwnPtr<ImageBuffer>& imageBuffer)
+{
+    ASSERT(m_paintInfo);
+    ASSERT(m_object->isSVGImage());
+    FloatRect boundingBox = m_object->objectBoundingBox();
+
+    // Invalidate an existing buffer if the scale is not correct.
+    if (imageBuffer) {
+        AffineTransform transform = m_paintInfo->context->getCTM(GraphicsContext::DefinitelyIncludeDeviceScale);
+        IntSize expandedBoundingBox = expandedIntSize(boundingBox.size());
+        IntSize bufferSize(static_cast<int>(ceil(expandedBoundingBox.width() * transform.xScale())), static_cast<int>(ceil(expandedBoundingBox.height() * transform.yScale())));
+        if (bufferSize != imageBuffer->internalSize())
+            imageBuffer.clear();
+    }
+
+    // Create a new buffer and paint the foreground into it.
+    if (!imageBuffer) {
+        if ((imageBuffer = m_paintInfo->context->createCompatibleBuffer(expandedIntSize(boundingBox.size()), true))) {
+            GraphicsContext* bufferedRenderingContext = imageBuffer->context();
+            bufferedRenderingContext->translate(-boundingBox.x(), -boundingBox.y());
+            PaintInfo bufferedInfo(*m_paintInfo);
+            bufferedInfo.context = bufferedRenderingContext;
+            toRenderSVGImage(m_object)->paintForeground(bufferedInfo);
+        } else
+            return false;
+    }
+
+    m_paintInfo->context->drawImageBuffer(imageBuffer.get(), ColorSpaceDeviceRGB, boundingBox);
+    return true;
 }
 
 }

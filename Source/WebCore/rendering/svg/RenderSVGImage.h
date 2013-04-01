@@ -49,9 +49,12 @@ public:
     RenderImageResource* imageResource() { return m_imageResource.get(); }
     const RenderImageResource* imageResource() const { return m_imageResource.get(); }
 
+    // Note: Assumes the PaintInfo context has had all local transforms applied.
+    void paintForeground(PaintInfo&);
+
 private:
     virtual const char* renderName() const { return "RenderSVGImage"; }
-    virtual bool isSVGImage() const { return true; }
+    virtual bool isSVGImage() const OVERRIDE { return true; }
 
     virtual const AffineTransform& localToParentTransform() const { return m_localTransform; }
 
@@ -67,6 +70,8 @@ private:
     virtual void layout();
     virtual void paint(PaintInfo&, const LayoutPoint&);
 
+    void invalidateBufferedForeground();
+
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
 
     virtual AffineTransform localTransform() const { return m_localTransform; }
@@ -79,6 +84,8 @@ private:
     FloatRect m_repaintBoundingBox;
     FloatRect m_repaintBoundingBoxExcludingShadow;
     OwnPtr<RenderImageResource> m_imageResource;
+
+    OwnPtr<ImageBuffer> m_bufferedForeground;
 };
 
 inline RenderSVGImage* toRenderSVGImage(RenderObject* object)

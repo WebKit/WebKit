@@ -138,6 +138,11 @@ bool CSSParser::parseSVGValue(CSSPropertyID propId, bool important)
             valid_primitive = true;
         break;
 
+    case CSSPropertyBufferedRendering: // auto | dynamic | static
+        if (id == CSSValueAuto || id == CSSValueDynamic || id == CSSValueStatic)
+            valid_primitive = true;
+        break;
+
     case CSSPropertyColorProfile: // auto | sRGB | <name> | <uri> inherit
         if (id == CSSValueAuto || id == CSSValueSrgb)
             valid_primitive = true;

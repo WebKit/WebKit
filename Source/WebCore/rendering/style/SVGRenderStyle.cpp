@@ -223,6 +223,9 @@ StyleDifference SVGRenderStyle::diff(const SVGRenderStyle* other) const
     if (svg_noninherited_flags.f._vectorEffect != other->svg_noninherited_flags.f._vectorEffect)
         return StyleDifferenceRepaint;
 
+    if (svg_noninherited_flags.f.bufferedRendering != other->svg_noninherited_flags.f.bufferedRendering)
+        return StyleDifferenceRepaint;
+
     if (svg_noninherited_flags.f.maskType != other->svg_noninherited_flags.f.maskType)
         return StyleDifferenceRepaint;
 

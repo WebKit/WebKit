@@ -691,6 +691,7 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
     case CSSPropertyBaselineShift:
     case CSSPropertyDominantBaseline:
     case CSSPropertyVectorEffect:
+    case CSSPropertyBufferedRendering:
     case CSSPropertyWebkitSvgShadow:
 #endif
 #if ENABLE(DASHBOARD_SUPPORT)

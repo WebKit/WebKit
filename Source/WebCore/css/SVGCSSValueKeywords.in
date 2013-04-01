@@ -264,6 +264,11 @@ reset-size
 // middle
 // end
 
+// CSS_PROP_BUFFERED_RENDERING
+// auto
+// static
+dynamic
+
 // CSS_PROP_VECTOR_EFFECT
 // none
 non-scaling-stroke

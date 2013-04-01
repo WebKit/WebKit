@@ -93,6 +93,9 @@ public:
         return enclosingIntRect(absoluteTransform.mapRect(targetRect));
     }
 
+    // Support for the buffered-rendering hint.
+    bool bufferForeground(OwnPtr<ImageBuffer>&);
+
 private:
     // To properly revert partially successful initializtions in the destructor, we record all successful steps.
     enum RenderingFlags {

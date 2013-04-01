@@ -177,6 +177,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getSVGPropertyCSSValue(CSSProp
             ASSERT_NOT_REACHED();
             return 0;
         }
+        case CSSPropertyBufferedRendering:
+            return CSSPrimitiveValue::create(svgStyle->bufferedRendering());
         case CSSPropertyGlyphOrientationHorizontal:
             return glyphOrientationToCSSPrimitiveValue(svgStyle->glyphOrientationHorizontal());
         case CSSPropertyGlyphOrientationVertical: {

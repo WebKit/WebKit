@@ -59,6 +59,7 @@ public:
     static EDominantBaseline initialDominantBaseline() { return DB_AUTO; }
     static EBaselineShift initialBaselineShift() { return BS_BASELINE; }
     static EVectorEffect initialVectorEffect() { return VE_NONE; }
+    static EBufferedRendering initialBufferedRendering() { return BR_AUTO; }
     static LineCap initialCapStyle() { return ButtCap; }
     static WindRule initialClipRule() { return RULE_NONZERO; }
     static EColorInterpolation initialColorInterpolation() { return CI_SRGB; }
@@ -128,6 +129,7 @@ public:
     void setDominantBaseline(EDominantBaseline val) { svg_noninherited_flags.f._dominantBaseline = val; }
     void setBaselineShift(EBaselineShift val) { svg_noninherited_flags.f._baselineShift = val; }
     void setVectorEffect(EVectorEffect val) { svg_noninherited_flags.f._vectorEffect = val; }
+    void setBufferedRendering(EBufferedRendering val) { svg_noninherited_flags.f.bufferedRendering = val; }
     void setCapStyle(LineCap val) { svg_inherited_flags._capStyle = val; }
     void setClipRule(WindRule val) { svg_inherited_flags._clipRule = val; }
     void setColorInterpolation(EColorInterpolation val) { svg_inherited_flags._colorInterpolation = val; }
@@ -305,6 +307,7 @@ public:
     EDominantBaseline dominantBaseline() const { return (EDominantBaseline) svg_noninherited_flags.f._dominantBaseline; }
     EBaselineShift baselineShift() const { return (EBaselineShift) svg_noninherited_flags.f._baselineShift; }
     EVectorEffect vectorEffect() const { return (EVectorEffect) svg_noninherited_flags.f._vectorEffect; }
+    EBufferedRendering bufferedRendering() const { return (EBufferedRendering) svg_noninherited_flags.f.bufferedRendering; }
     LineCap capStyle() const { return (LineCap) svg_inherited_flags._capStyle; }
     WindRule clipRule() const { return (WindRule) svg_inherited_flags._clipRule; }
     EColorInterpolation colorInterpolation() const { return (EColorInterpolation) svg_inherited_flags._colorInterpolation; }
@@ -412,8 +415,9 @@ protected:
                 unsigned _dominantBaseline : 4; // EDominantBaseline
                 unsigned _baselineShift : 2; // EBaselineShift
                 unsigned _vectorEffect: 1; // EVectorEffect
+                unsigned bufferedRendering: 2; // EBufferedRendering
                 unsigned maskType: 1; // EMaskType
-                // 20 bits unused
+                // 18 bits unused
             } f;
             uint32_t _niflags;
         };
@@ -458,6 +462,7 @@ private:
         svg_noninherited_flags.f._dominantBaseline = initialDominantBaseline();
         svg_noninherited_flags.f._baselineShift = initialBaselineShift();
         svg_noninherited_flags.f._vectorEffect = initialVectorEffect();
+        svg_noninherited_flags.f.bufferedRendering = initialBufferedRendering();
         svg_noninherited_flags.f.maskType = initialMaskType();
     }
 };

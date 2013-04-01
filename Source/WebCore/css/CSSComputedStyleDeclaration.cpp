@@ -382,6 +382,7 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitWrapThrough,
 #endif
 #if ENABLE(SVG)
+    CSSPropertyBufferedRendering,
     CSSPropertyClipPath,
     CSSPropertyClipRule,
     CSSPropertyMask,
@@ -2821,6 +2822,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
 #endif
 
 #if ENABLE(SVG)
+        case CSSPropertyBufferedRendering:
         case CSSPropertyClipPath:
         case CSSPropertyClipRule:
         case CSSPropertyMask:

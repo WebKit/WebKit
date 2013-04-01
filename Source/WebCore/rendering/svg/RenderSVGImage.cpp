@@ -132,20 +132,33 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
             SVGRenderingContext renderingContext(this, childPaintInfo);
 
             if (renderingContext.isRenderingPrepared()) {
-                RefPtr<Image> image = m_imageResource->image();
-                FloatRect destRect = m_objectBoundingBox;
-                FloatRect srcRect(0, 0, image->width(), image->height());
+                if (style()->svgStyle()->bufferedRendering() == BR_STATIC  && renderingContext.bufferForeground(m_bufferedForeground))
+                    return;
 
-                SVGImageElement* imageElement = static_cast<SVGImageElement*>(node());
-                imageElement->preserveAspectRatio().transformRect(destRect, srcRect);
-
-                childPaintInfo.context->drawImage(image.get(), ColorSpaceDeviceRGB, destRect, srcRect);
+                paintForeground(childPaintInfo);
             }
         }
 
         if (drawsOutline)
             paintOutline(childPaintInfo, IntRect(boundingBox));
     }
+}
+
+void RenderSVGImage::paintForeground(PaintInfo& paintInfo)
+{
+    RefPtr<Image> image = m_imageResource->image();
+    FloatRect destRect = m_objectBoundingBox;
+    FloatRect srcRect(0, 0, image->width(), image->height());
+
+    SVGImageElement* imageElement = static_cast<SVGImageElement*>(node());
+    imageElement->preserveAspectRatio().transformRect(destRect, srcRect);
+
+    paintInfo.context->drawImage(image.get(), ColorSpaceDeviceRGB, destRect, srcRect);
+}
+
+void RenderSVGImage::invalidateBufferedForeground()
+{
+    m_bufferedForeground.clear();
 }
 
 bool RenderSVGImage::nodeAtFloatPoint(const HitTestRequest& request, HitTestResult& result, const FloatPoint& pointInParent, HitTestAction hitTestAction)
@@ -187,6 +200,8 @@ void RenderSVGImage::imageChanged(WrappedImagePtr, const IntRect*)
     // (https://bugs.webkit.org/show_bug.cgi?id=99489)
     m_objectBoundingBox = FloatRect();
     updateImageViewport();
+
+    invalidateBufferedForeground();
 
     repaint();
 }

@@ -5,6 +5,7 @@
 #if defined(ENABLE_SVG) && ENABLE_SVG
 
 // SVG style props
+buffered-rendering
 clip-path
 clip-rule
 mask
