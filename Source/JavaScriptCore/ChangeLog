@@ -1,3 +1,23 @@
+2013-04-01  Benjamin Poulain  <benjamin@webkit.org>
+
+        Use Vector::reserveInitialCapacity and Vector::uncheckedAppend for JSC's APIs
+        https://bugs.webkit.org/show_bug.cgi?id=113651
+
+        Reviewed by Andreas Kling.
+
+        This removes a bunch of branches on initialization and when
+        filling the vector.
+
+        * API/JSCallbackConstructor.cpp:
+        (JSC::constructJSCallback):
+        * API/JSCallbackFunction.cpp:
+        (JSC::JSCallbackFunction::call):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::construct):
+        (JSC::::call):
+        * API/JSObjectRef.cpp:
+        (JSObjectCopyPropertyNames):
+
 2013-04-01  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Fixing borked VS 2010 project file

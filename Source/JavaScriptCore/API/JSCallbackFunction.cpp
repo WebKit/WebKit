@@ -69,10 +69,11 @@ EncodedJSValue JSCallbackFunction::call(ExecState* exec)
     JSObjectRef functionRef = toRef(exec->callee());
     JSObjectRef thisObjRef = toRef(exec->hostThisValue().toThisObject(exec));
 
-    int argumentCount = static_cast<int>(exec->argumentCount());
-    Vector<JSValueRef, 16> arguments(argumentCount);
-    for (int i = 0; i < argumentCount; i++)
-        arguments[i] = toRef(exec, exec->argument(i));
+    size_t argumentCount = exec->argumentCount();
+    Vector<JSValueRef, 16> arguments;
+    arguments.reserveInitialCapacity(argumentCount);
+    for (size_t i = 0; i < argumentCount; ++i)
+        arguments.uncheckedAppend(toRef(exec, exec->argument(i)));
 
     JSValueRef exception = 0;
     JSValueRef result;

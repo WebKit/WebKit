@@ -551,7 +551,7 @@ JSPropertyNameArrayRef JSObjectCopyPropertyNames(JSContextRef ctx, JSObjectRef o
     size_t size = array.size();
     propertyNames->array.reserveInitialCapacity(size);
     for (size_t i = 0; i < size; ++i)
-        propertyNames->array.append(JSRetainPtr<JSStringRef>(Adopt, OpaqueJSString::create(array[i].string()).leakRef()));
+        propertyNames->array.uncheckedAppend(JSRetainPtr<JSStringRef>(Adopt, OpaqueJSString::create(array[i].string()).leakRef()));
     
     return JSPropertyNameArrayRetain(propertyNames);
 }

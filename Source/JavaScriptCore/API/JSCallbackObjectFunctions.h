@@ -368,10 +368,11 @@ EncodedJSValue JSCallbackObject<Parent>::construct(ExecState* exec)
     
     for (JSClassRef jsClass = jsCast<JSCallbackObject<Parent>*>(constructor)->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectCallAsConstructorCallback callAsConstructor = jsClass->callAsConstructor) {
-            int argumentCount = static_cast<int>(exec->argumentCount());
-            Vector<JSValueRef, 16> arguments(argumentCount);
-            for (int i = 0; i < argumentCount; i++)
-                arguments[i] = toRef(exec, exec->argument(i));
+            size_t argumentCount = exec->argumentCount();
+            Vector<JSValueRef, 16> arguments;
+            arguments.reserveInitialCapacity(argumentCount);
+            for (size_t i = 0; i < argumentCount; ++i)
+                arguments.uncheckedAppend(toRef(exec, exec->argument(i)));
             JSValueRef exception = 0;
             JSObject* result;
             {
@@ -434,10 +435,11 @@ EncodedJSValue JSCallbackObject<Parent>::call(ExecState* exec)
     
     for (JSClassRef jsClass = jsCast<JSCallbackObject<Parent>*>(toJS(functionRef))->classRef(); jsClass; jsClass = jsClass->parentClass) {
         if (JSObjectCallAsFunctionCallback callAsFunction = jsClass->callAsFunction) {
-            int argumentCount = static_cast<int>(exec->argumentCount());
-            Vector<JSValueRef, 16> arguments(argumentCount);
-            for (int i = 0; i < argumentCount; i++)
-                arguments[i] = toRef(exec, exec->argument(i));
+            size_t argumentCount = exec->argumentCount();
+            Vector<JSValueRef, 16> arguments;
+            arguments.reserveInitialCapacity(argumentCount);
+            for (size_t i = 0; i < argumentCount; ++i)
+                arguments.uncheckedAppend(toRef(exec, exec->argument(i)));
             JSValueRef exception = 0;
             JSValue result;
             {
