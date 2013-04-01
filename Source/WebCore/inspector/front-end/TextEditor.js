@@ -45,6 +45,21 @@ WebInspector.TextEditor.prototype = {
     isClean: function() { },
 
     markClean: function() { },
+
+    /*
+     * @param {number} lineNumber
+     * @param {number} column
+     * @return {?{x: number, y: number, height: number}}
+     */
+    cursorPositionToCoordinates: function(lineNumber, column) { },
+
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @return {?WebInspector.TextRange}
+     */
+    coordinatesToCursorPosition: function(x, y) { },
+
     /**
      * @param {number} lineNumber
      * @param {number} column

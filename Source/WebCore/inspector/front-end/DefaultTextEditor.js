@@ -132,6 +132,26 @@ WebInspector.DefaultTextEditor.prototype = {
         return this._mainPanel.tokenAtTextPosition(lineNumber, column);
     },
 
+    /*
+     * @param {number} lineNumber
+     * @param {number} column
+     * @return {?{x: number, y: number, height: number}}
+     */
+    cursorPositionToCoordinates: function(lineNumber, column)
+    {
+        return this._mainPanel.cursorPositionToCoordinates(lineNumber, column);
+    },
+
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @return {?WebInspector.TextRange}
+     */
+    coordinatesToCursorPosition: function(x, y)
+    {
+        return this._mainPanel.coordinatesToCursorPosition(x, y);
+    },
+
     /**
      * @param {WebInspector.TextRange} range
      * @return {string}
@@ -1447,6 +1467,90 @@ WebInspector.TextEditorMainPanel.prototype = {
             };
         }
         return null;
+    },
+
+    /**
+     * @param {number} lineNumber
+     * @param {number} column
+     * @return {?{x: number, y: number, height: number}}
+     */
+    cursorPositionToCoordinates: function(lineNumber, column)
+    {
+        if (lineNumber >= this._textModel.linesCount || lineNumber < 0)
+            return null;
+        var line = this._textModel.line(lineNumber);
+        if (column > line.length || column < 0)
+            return null;
+
+        var chunk = this.chunkForLine(lineNumber);
+        if (!chunk.expanded())
+            return null;
+        var lineRow = chunk.expandedLineRow(lineNumber);
+        var ranges = [{
+            startColumn: column,
+            endColumn: column,
+            token: "measure-cursor-position"
+        }];
+        var selection = this.selection();
+
+        this.beginDomUpdates();
+        this._renderRanges(lineRow, line, ranges);
+        var spans = lineRow.getElementsByClassName("webkit-measure-cursor-position");
+        if (WebInspector.debugDefaultTextEditor)
+            console.assert(spans.length === 0);
+        var totalOffset = spans[0].totalOffset();
+        var height = spans[0].offsetHeight;
+        this._paintLineRows([lineRow]);
+        this.endDomUpdates();
+
+        this._restoreSelection(selection);
+        return {
+            x: totalOffset.left,
+            y: totalOffset.top,
+            height: height
+        };
+    },
+
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @return {?WebInspector.TextRange}
+     */
+    coordinatesToCursorPosition: function(x, y)
+    {
+        var element = document.elementFromPoint(x, y);
+        if (!element)
+            return null;
+        var lineRow = element.enclosingNodeOrSelfWithClass("webkit-line-content");
+        if (!lineRow)
+            return null;
+
+        var line = this._textModel.line(lineRow.lineNumber) + " ";
+        var ranges = [];
+        const prefix = "character-position-";
+        for(var i = 0; i < line.length; ++i) {
+            ranges.push({
+                startColumn: i,
+                endColumn: i,
+                token: prefix + i
+            });
+        }
+
+        var selection = this.selection();
+
+        this.beginDomUpdates();
+        this._renderRanges(lineRow, line, ranges);
+        var charElement = document.elementFromPoint(x, y);
+        this._paintLineRows([lineRow]);
+        this.endDomUpdates();
+
+        this._restoreSelection(selection);
+        var className = charElement.className;
+        if (className.indexOf(prefix) < 0)
+            return null;
+        var column = parseInt(className.substring(className.indexOf(prefix) + prefix.length), 10);
+
+        return WebInspector.TextRange.createFromLocation(lineRow.lineNumber, column);
     },
 
     /**

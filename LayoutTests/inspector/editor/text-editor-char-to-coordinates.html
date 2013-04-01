@@ -1,0 +1,65 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="editor-test.js"></script>
+<script>
+
+function test()
+{
+    var text = [
+        "function foo(a, b) {",
+        "    var f = /*.[a]/.test(a);",
+        "    return f;"
+    ];
+    var textEditor = InspectorTest.createTestEditor();
+    textEditor.setText(text.join("\n"));
+
+    InspectorTest.runTestSuite([
+        function testCoordinatesToCursorPositionOuter(next)
+        {
+            InspectorTest.addResult("Request char at (-1000, -1000)");
+            InspectorTest.addResult("Result:" + JSON.stringify(textEditor.coordinatesToCursorPosition(-1000, -1000)));
+            next();
+        },
+
+        function testTextToCoordinatesCornerCases(next)
+        {
+            InspectorTest.addResult("Request (-1, 0):" + JSON.stringify(textEditor.cursorPositionToCoordinates(-1, 0)));
+            InspectorTest.addResult("Request (100, 0):" + JSON.stringify(textEditor.cursorPositionToCoordinates(100, 0)));
+            InspectorTest.addResult("Request (0, -1):" + JSON.stringify(textEditor.cursorPositionToCoordinates(0, -1)));
+            InspectorTest.addResult("Request (0, 100):" + JSON.stringify(textEditor.cursorPositionToCoordinates(0, 100)));
+            InspectorTest.addResult("Request (-100, -1100):" + JSON.stringify(textEditor.cursorPositionToCoordinates(0, 100)));
+            next();
+        },
+
+        function testInverseRelationTextToCoordinates(next)
+        {
+            for(var i = 0; i < textEditor.linesCount; ++i) {
+                var line = textEditor.line(i);
+                InspectorTest.addResult("Testing line '" + line + "'");
+                for(var j = 0; j < textEditor.length; ++j) {
+                    var xy = textEditor.cursorPositionToCoordinates(i, j);
+                    if (!xy) {
+                        InspectorTest.addResult("Failed inversion for line=" + i + " column=" + j);
+                        continue;
+                    }
+
+                    var range = textEditor.coordinatesToCursorPosition(xy.x, xy.y);
+                    if (range.startLine !== i || range.startColumn !== j)
+                        InspectorTest.addResult("Failed inversion for line=" + i + " column=" + j);
+                }
+            }
+            next();
+        },
+    ]);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Test editor cursorPositionToCoordinates and coordinatesToCursorPosition API
+</p>
+</body>
+</html>
