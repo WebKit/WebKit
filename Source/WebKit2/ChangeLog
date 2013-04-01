@@ -1,5 +1,12 @@
 2013-04-01  Anders Carlsson  <andersca@apple.com>
 
+        Nor this! (Who reviewed this anyway!)
+
+        * WebProcess/Storage/StorageNamespaceProxy.cpp:
+        (WebKit::StorageNamespaceProxy::storageArea):
+
+2013-04-01  Anders Carlsson  <andersca@apple.com>
+
         Didn't mean to commit this!
 
         * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
