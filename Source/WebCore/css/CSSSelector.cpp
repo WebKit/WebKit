@@ -608,7 +608,7 @@ bool CSSSelector::operator==(const CSSSelector& other) const
     return true;
 }
 
-String CSSSelector::selectorText() const
+String CSSSelector::selectorText(const String& rightSide) const
 {
     StringBuilder str;
 
@@ -709,28 +709,26 @@ String CSSSelector::selectorText() const
     }
 
     if (const CSSSelector* tagHistory = cs->tagHistory()) {
-        String tagHistoryText = tagHistory->selectorText();
         switch (cs->relation()) {
         case CSSSelector::Descendant:
-            return tagHistoryText + " " + str.toString();
+            return tagHistory->selectorText(" " + str.toString() + rightSide);
         case CSSSelector::Child:
-            return tagHistoryText + " > " + str.toString();
+            return tagHistory->selectorText(" > " + str.toString() + rightSide);
         case CSSSelector::DirectAdjacent:
-            return tagHistoryText + " + " + str.toString();
+            return tagHistory->selectorText(" + " + str.toString() + rightSide);
         case CSSSelector::IndirectAdjacent:
-            return tagHistoryText + " ~ " + str.toString();
+            return tagHistory->selectorText(" ~ " + str.toString() + rightSide);
         case CSSSelector::SubSelector:
             ASSERT_NOT_REACHED();
         case CSSSelector::ShadowDescendant:
-            return tagHistoryText + str.toString();
+            return tagHistory->selectorText(str.toString() + rightSide);
 #if ENABLE(SHADOW_DOM)
         case CSSSelector::ShadowDistributed:
-            return tagHistoryText + "::-webkit-distributed(" + str.toString() + ")";
+            return tagHistory->selectorText("::-webkit-distributed(" + str.toString() + rightSide + ")");
 #endif
         }
     }
-
-    return str.toString();
+    return str.toString() + rightSide;
 }
 
 void CSSSelector::setAttribute(const QualifiedName& value)
