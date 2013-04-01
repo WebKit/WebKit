@@ -1263,6 +1263,91 @@ public:
     }
 };
 
+class ApplyPropertyMarqueeIncrement {
+public:
+    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
+    {
+        if (!value->isPrimitiveValue())
+            return;
+
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+        if (primitiveValue->getIdent()) {
+            switch (primitiveValue->getIdent()) {
+            case CSSValueSmall:
+                styleResolver->style()->setMarqueeIncrement(Length(1, Fixed)); // 1px.
+                break;
+            case CSSValueNormal:
+                styleResolver->style()->setMarqueeIncrement(Length(6, Fixed)); // 6px. The WinIE default.
+                break;
+            case CSSValueLarge:
+                styleResolver->style()->setMarqueeIncrement(Length(36, Fixed)); // 36px.
+                break;
+            }
+        } else {
+            Length marqueeLength = styleResolver->convertToIntLength(primitiveValue, styleResolver->style(), styleResolver->rootElementStyle());
+            if (!marqueeLength.isUndefined())
+                styleResolver->style()->setMarqueeIncrement(marqueeLength);
+        }
+    }
+    static PropertyHandler createHandler()
+    {
+        PropertyHandler handler = ApplyPropertyLength<&RenderStyle::marqueeIncrement, &RenderStyle::setMarqueeIncrement, &RenderStyle::initialMarqueeIncrement>::createHandler();
+        return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
+    }
+};
+
+class ApplyPropertyMarqueeRepetition {
+public:
+    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
+    {
+        if (!value->isPrimitiveValue())
+            return;
+
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+        if (primitiveValue->getIdent() == CSSValueInfinite)
+            styleResolver->style()->setMarqueeLoopCount(-1); // -1 means repeat forever.
+        else if (primitiveValue->isNumber())
+            styleResolver->style()->setMarqueeLoopCount(primitiveValue->getIntValue());
+    }
+    static PropertyHandler createHandler()
+    {
+        PropertyHandler handler = ApplyPropertyDefault<int, &RenderStyle::marqueeLoopCount, int, &RenderStyle::setMarqueeLoopCount, int, &RenderStyle::initialMarqueeLoopCount>::createHandler();
+        return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
+    }
+};
+
+class ApplyPropertyMarqueeSpeed {
+public:
+    static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
+    {
+        if (!value->isPrimitiveValue())
+            return;
+
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+        if (int ident = primitiveValue->getIdent()) {
+            switch (ident) {
+            case CSSValueSlow:
+                styleResolver->style()->setMarqueeSpeed(500); // 500 msec.
+                break;
+            case CSSValueNormal:
+                styleResolver->style()->setMarqueeSpeed(85); // 85msec. The WinIE default.
+                break;
+            case CSSValueFast:
+                styleResolver->style()->setMarqueeSpeed(10); // 10msec. Super fast.
+                break;
+            }
+        } else if (primitiveValue->isTime())
+            styleResolver->style()->setMarqueeSpeed(primitiveValue->computeTime<int, CSSPrimitiveValue::Milliseconds>());
+        else if (primitiveValue->isNumber()) // For scrollamount support.
+            styleResolver->style()->setMarqueeSpeed(primitiveValue->getIntValue());
+    }
+    static PropertyHandler createHandler()
+    {
+        PropertyHandler handler = ApplyPropertyDefault<int, &RenderStyle::marqueeSpeed, int, &RenderStyle::setMarqueeSpeed, int, &RenderStyle::initialMarqueeSpeed>::createHandler();
+        return PropertyHandler(handler.inheritFunction(), handler.initialFunction(), &applyValue);
+    }
+};
+
 #if ENABLE(CSS3_TEXT)
 class ApplyPropertyTextUnderlinePosition {
 public:
@@ -2192,6 +2277,9 @@ StyleBuilder::StyleBuilder()
     setPropertyHandler(CSSPropertyWebkitMarginBottomCollapse, CSSPropertyWebkitMarginAfterCollapse);
     setPropertyHandler(CSSPropertyWebkitMarginTopCollapse, CSSPropertyWebkitMarginBeforeCollapse);
     setPropertyHandler(CSSPropertyWebkitMarqueeDirection, ApplyPropertyDefault<EMarqueeDirection, &RenderStyle::marqueeDirection, EMarqueeDirection, &RenderStyle::setMarqueeDirection, EMarqueeDirection, &RenderStyle::initialMarqueeDirection>::createHandler());
+    setPropertyHandler(CSSPropertyWebkitMarqueeIncrement, ApplyPropertyMarqueeIncrement::createHandler());
+    setPropertyHandler(CSSPropertyWebkitMarqueeRepetition, ApplyPropertyMarqueeRepetition::createHandler());
+    setPropertyHandler(CSSPropertyWebkitMarqueeSpeed, ApplyPropertyMarqueeSpeed::createHandler());
     setPropertyHandler(CSSPropertyWebkitMarqueeStyle, ApplyPropertyDefault<EMarqueeBehavior, &RenderStyle::marqueeBehavior, EMarqueeBehavior, &RenderStyle::setMarqueeBehavior, EMarqueeBehavior, &RenderStyle::initialMarqueeBehavior>::createHandler());
     setPropertyHandler(CSSPropertyWebkitMaskBoxImage, ApplyPropertyBorderImage<BorderMask, CSSPropertyWebkitMaskBoxImage, &RenderStyle::maskBoxImage, &RenderStyle::setMaskBoxImage>::createHandler());
     setPropertyHandler(CSSPropertyWebkitMaskBoxImageOutset, ApplyPropertyBorderImageModifier<BorderMask, Outset>::createHandler());

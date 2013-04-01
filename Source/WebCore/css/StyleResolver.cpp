@@ -2561,61 +2561,6 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         return;
     case CSSPropertyUnicodeRange: // Only used in @font-face rules.
         return;
-    case CSSPropertyWebkitMarqueeRepetition: {
-        HANDLE_INHERIT_AND_INITIAL(marqueeLoopCount, MarqueeLoopCount)
-        if (!primitiveValue)
-            return;
-        if (primitiveValue->getIdent() == CSSValueInfinite)
-            state.style()->setMarqueeLoopCount(-1); // -1 means repeat forever.
-        else if (primitiveValue->isNumber())
-            state.style()->setMarqueeLoopCount(primitiveValue->getIntValue());
-        return;
-    }
-    case CSSPropertyWebkitMarqueeSpeed: {
-        HANDLE_INHERIT_AND_INITIAL(marqueeSpeed, MarqueeSpeed)
-        if (!primitiveValue)
-            return;
-        if (int ident = primitiveValue->getIdent()) {
-            switch (ident) {
-            case CSSValueSlow:
-                state.style()->setMarqueeSpeed(500); // 500 msec.
-                break;
-            case CSSValueNormal:
-                state.style()->setMarqueeSpeed(85); // 85msec. The WinIE default.
-                break;
-            case CSSValueFast:
-                state.style()->setMarqueeSpeed(10); // 10msec. Super fast.
-                break;
-            }
-        } else if (primitiveValue->isTime())
-            state.style()->setMarqueeSpeed(primitiveValue->computeTime<int, CSSPrimitiveValue::Milliseconds>());
-        else if (primitiveValue->isNumber()) // For scrollamount support.
-            state.style()->setMarqueeSpeed(primitiveValue->getIntValue());
-        return;
-    }
-    case CSSPropertyWebkitMarqueeIncrement: {
-        HANDLE_INHERIT_AND_INITIAL(marqueeIncrement, MarqueeIncrement)
-        if (!primitiveValue)
-            return;
-        if (primitiveValue->getIdent()) {
-            switch (primitiveValue->getIdent()) {
-            case CSSValueSmall:
-                state.style()->setMarqueeIncrement(Length(1, Fixed)); // 1px.
-                break;
-            case CSSValueNormal:
-                state.style()->setMarqueeIncrement(Length(6, Fixed)); // 6px. The WinIE default.
-                break;
-            case CSSValueLarge:
-                state.style()->setMarqueeIncrement(Length(36, Fixed)); // 36px.
-                break;
-            }
-        } else {
-            Length marqueeLength = convertToIntLength(primitiveValue, state.style(), state.rootElementStyle());
-            if (!marqueeLength.isUndefined())
-                state.style()->setMarqueeIncrement(marqueeLength);
-        }
-        return;
-    }
     case CSSPropertyWebkitLocale: {
         HANDLE_INHERIT_AND_INITIAL(locale, Locale);
         if (!primitiveValue)
@@ -3135,6 +3080,9 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     case CSSPropertyWebkitLineGrid:
     case CSSPropertyWebkitLineSnap:
     case CSSPropertyWebkitMarqueeDirection:
+    case CSSPropertyWebkitMarqueeIncrement:
+    case CSSPropertyWebkitMarqueeRepetition:
+    case CSSPropertyWebkitMarqueeSpeed:
     case CSSPropertyWebkitMarqueeStyle:
     case CSSPropertyWebkitMaskBoxImage:
     case CSSPropertyWebkitMaskBoxImageOutset:
