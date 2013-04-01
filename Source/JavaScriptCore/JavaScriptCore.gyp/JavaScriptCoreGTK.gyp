@@ -139,7 +139,6 @@
       'cflags': [ '-fPIC', ],
       'include_dirs': [ '<@(javascriptcore_includes)' ],
       'sources': [
-        '<@(javascriptcore_yarr_files)',
         '<@(javascriptcore_derived_source_files)',
         '<@(javascriptcore_files)',
       ],

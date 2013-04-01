@@ -1,3 +1,17 @@
+2013-03-31  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Yarr should build using a separate GYP file from JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=113652
+
+        Reviewed by Nico Weber.
+
+        This patch moves JavaScriptCore.gyp to yarr.gyp because Chromium only
+        uses this GYP file to build yarr.
+
+        * JavaScriptCore.gyp/JavaScriptCoreGTK.gyp:
+        * JavaScriptCore.gypi:
+        * yarr/yarr.gyp: Renamed from Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCore.gyp.
+
 2013-03-31  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, fix a comment. While thinking about TBAA for array accesses,

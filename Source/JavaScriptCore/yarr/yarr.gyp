@@ -32,20 +32,7 @@
   'includes': [
     '../../WebKit/chromium/WinPrecompile.gypi',
     '../../WebKit/chromium/features.gypi',
-    '../JavaScriptCore.gypi',
   ],
-  'variables': {
-    # Location of the chromium src directory.
-    'conditions': [
-      ['inside_chromium_build==0', {
-        # Webkit is being built outside of the full chromium project.
-        'chromium_src_dir': '../../WebKit/chromium',
-      },{
-        # WebKit is checked out in src/chromium/third_party/WebKit
-        'chromium_src_dir': '../../../../..',
-      }],
-    ],
-  },
   'conditions': [
     ['os_posix == 1 and OS != "mac" and gcc_version>=46', {
       'target_defaults': {
@@ -81,10 +68,18 @@
       'include_dirs': [
         '<(INTERMEDIATE_DIR)',
         '..',
-        '../runtime',
       ],
       'sources': [
-        '<@(javascriptcore_yarr_files)',
+        'Yarr.h',
+        'YarrCanonicalizeUCS2.cpp',
+        'YarrCanonicalizeUCS2.h',
+        'YarrInterpreter.cpp',
+        'YarrInterpreter.h',
+        'YarrParser.h',
+        'YarrPattern.cpp',
+        'YarrPattern.h',
+        'YarrSyntaxChecker.cpp',
+        'YarrSyntaxChecker.h',
       ],
       'export_dependent_settings': [
         '../../WTF/WTF.gyp/WTF.gyp:wtf',
