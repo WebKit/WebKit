@@ -1,5 +1,25 @@
 2013-04-01  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        r147324 broke the world
+        https://bugs.webkit.org/show_bug.cgi?id=113704
+
+        Unreviewed build fix.
+
+        Remove a bunch of unused variables and use the correctly sized types for 32-bit platforms.
+
+        * heap/BlockAllocator.cpp:
+        (JSC::BlockAllocator::BlockAllocator):
+        * heap/BlockAllocator.h:
+        (BlockAllocator):
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        * heap/SuperRegion.cpp:
+        (JSC::SuperRegion::SuperRegion):
+        * heap/SuperRegion.h:
+        (SuperRegion):
+
+2013-04-01  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         32-bit Windows build fix
 
         Unreviewed build fix.

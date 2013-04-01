@@ -26,16 +26,14 @@
 #include "config.h"
 #include "SuperRegion.h"
 
-#include "JSGlobalData.h"
 #include "Region.h"
 
 namespace JSC {
 
-const uint64_t SuperRegion::s_fixedHeapMemoryPoolSize = 4 * 1024 * MB;
+const uint64_t SuperRegion::s_fixedHeapMemoryPoolSize = 4LLU * 1024LLU * static_cast<uint64_t>(MB);
 
-SuperRegion::SuperRegion(JSGlobalData* globalData)
+SuperRegion::SuperRegion()
     : MetaAllocator(Region::s_regionSize, Region::s_regionSize)
-    , m_globalData(globalData)
     , m_reservationBase(0)
 {
 #if ENABLE(SUPER_REGION)
@@ -43,6 +41,9 @@ SuperRegion::SuperRegion(JSGlobalData* globalData)
     m_reservation = PageReservation::reserve(s_fixedHeapMemoryPoolSize + Region::s_regionSize, OSAllocator::JSGCHeapPages);
     m_reservationBase = getAlignedBase(m_reservation);
     addFreshFreeSpace(m_reservationBase, s_fixedHeapMemoryPoolSize);
+#else
+    UNUSED_PARAM(m_reservation);
+    UNUSED_PARAM(m_reservationBase);
 #endif
 }
 

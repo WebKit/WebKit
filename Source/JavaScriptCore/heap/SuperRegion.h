@@ -36,7 +36,7 @@ class JSGlobalData;
 
 class SuperRegion : public WTF::MetaAllocator {
 public:
-    SuperRegion(JSGlobalData*);
+    SuperRegion();
 
 protected:
     virtual void* allocateNewSpace(size_t&);
@@ -48,7 +48,6 @@ private:
 
     static void* getAlignedBase(PageReservation&);
 
-    JSGlobalData* m_globalData;
     PageReservation m_reservation;
     void* m_reservationBase;
 };

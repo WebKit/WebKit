@@ -50,7 +50,7 @@ class WeakBlock;
 
 class BlockAllocator {
 public:
-    BlockAllocator(JSGlobalData*);
+    BlockAllocator();
     ~BlockAllocator();
 
     template <typename T> DeadBlock* allocate();
