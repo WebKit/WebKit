@@ -94,6 +94,11 @@ private:
         Scroll
     };
 
+    RegionSetting getSettingFromString(const String&);
+
+    void parseSettingValue(RegionSetting, const String&);
+    void parseSetting(const String&, unsigned*);
+
     String m_id;
     String m_settings;
 

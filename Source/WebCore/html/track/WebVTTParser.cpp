@@ -66,6 +66,56 @@ String WebVTTParser::collectWord(const String& input, unsigned* position)
     return string.toString();
 }
 
+#if ENABLE(WEBVTT_REGIONS)
+float WebVTTParser::parseFloatPercentageValue(const String& value, bool& isValidSetting)
+{
+    // '%' must be present and at the end of the setting value.
+    if (value.find('%', 1) != value.length() - 1) {
+        isValidSetting = false;
+        return 0;
+    }
+
+    unsigned position = 0;
+
+    StringBuilder floatNumberAsString;
+    floatNumberAsString.append(WebVTTParser::collectDigits(value, &position));
+
+    if (value[position] == '.') {
+        floatNumberAsString.append(".");
+        position++;
+
+        floatNumberAsString.append(WebVTTParser::collectDigits(value, &position));
+    }
+    float number = floatNumberAsString.toString().toFloat(&isValidSetting);
+
+    if (isValidSetting && (number <= 0 || number >= 100))
+        isValidSetting = false;
+
+    return number;
+}
+
+FloatPoint WebVTTParser::parseFloatPercentageValuePair(const String& value, char delimiter, bool& isValidSetting)
+{
+    // The delimiter can't be the first or second value because a pair of
+    // percentages (x%,y%) implies that at least the first two characters
+    // are the first percentage value.
+    size_t delimiterOffset = value.find(delimiter, 2);
+    if (delimiterOffset == notFound || delimiterOffset == value.length() - 1) {
+        isValidSetting = false;
+        return FloatPoint(0, 0);
+    }
+
+    bool isFirstValueValid;
+    float firstCoord = parseFloatPercentageValue(value.substring(0, delimiterOffset), isFirstValueValid);
+
+    bool isSecondValueValid;
+    float secondCoord = parseFloatPercentageValue(value.substring(delimiterOffset + 1, value.length() - 1), isSecondValueValid);
+
+    isValidSetting = isFirstValueValid && isSecondValueValid;
+    return FloatPoint(firstCoord, secondCoord);
+}
+#endif
+
 WebVTTParser::WebVTTParser(WebVTTParserClient* client, ScriptExecutionContext* context)
     : m_scriptExecutionContext(context)
     , m_state(Initial)
@@ -82,6 +132,14 @@ void WebVTTParser::getNewCues(Vector<RefPtr<TextTrackCue> >& outputCues)
     m_cuelist.clear();
 }
 
+#if ENABLE(WEBVTT_REGIONS)
+void WebVTTParser::getNewRegions(Vector<RefPtr<TextTrackRegion> >& outputRegions)
+{
+    outputRegions = m_regionList;
+    m_regionList.clear();
+}
+#endif
+
 void WebVTTParser::parseBytes(const char* data, unsigned length)
 {
     // 4.8.10.13.3 WHATWG WebVTT Parser algorithm.
@@ -90,7 +148,7 @@ void WebVTTParser::parseBytes(const char* data, unsigned length)
 
     while (position < length) {
         String line = collectNextLine(data, length, &position);
-        
+
         switch (m_state) {
         case Initial:
             // Buffer up at least 9 bytes before proceeding with checking for the file identifier.
@@ -108,28 +166,42 @@ void WebVTTParser::parseBytes(const char* data, unsigned length)
             m_state = Header;
             m_identifierData.clear();
             break;
-        
+
         case Header:
             // 13-18 - Allow a header (comment area) under the WEBVTT line.
+#if ENABLE(WEBVTT_REGIONS)
+            if (line.isEmpty()) {
+                if (m_client && m_regionList.size())
+                    m_client->newRegionsParsed();
+
+                m_state = Id;
+                break;
+            }
+            collectHeader(line);
+
+            break;
+
+        case Metadata:
+#endif
             if (line.isEmpty())
                 m_state = Id;
             break;
-        
+
         case Id:
             // 19-29 - Allow any number of line terminators, then initialize new cue values.
             if (line.isEmpty())
                 break;
             resetCueValues();
-            
+
             // 30-39 - Check if this line contains an optional identifier or timing data.
             m_state = collectCueId(line);
             break;
-        
+
         case TimingsAndSettings:
             // 40 - Collect cue timings and settings.
             m_state = collectTimingsAndSettings(line);
             break;
-        
+
         case CueText:
             // 41-53 - Collect the cue text, create a cue, and add it to the output.
             m_state = collectCueText(line, length, position);
@@ -162,6 +234,30 @@ bool WebVTTParser::hasRequiredFileIdentifier()
 
     return true;
 }
+
+#if ENABLE(WEBVTT_REGIONS)
+void WebVTTParser::collectHeader(const String& line)
+{
+    // 4.1 Extension of WebVTT header parsing (11 - 15)
+    DEFINE_STATIC_LOCAL(const AtomicString, regionHeaderName, ("Region", AtomicString::ConstructFromLiteral));
+
+    // 15.4 If line contains the character ":" (A U+003A COLON), then set metadata's
+    // name to the substring of line before the first ":" character and
+    // metadata's value to the substring after this character.
+    if (!line.contains(":"))
+        return;
+
+    unsigned colonPosition = line.find(":");
+    m_currentHeaderName = line.substring(0, colonPosition);
+
+    // 15.5 If metadata's name equals "Region":
+    if (m_currentHeaderName == regionHeaderName) {
+        m_currentHeaderValue = line.substring(colonPosition + 1, line.length() - 1);
+        // 15.5.1 - 15.5.8 Region creation: Let region be a new text track region [...]
+        createNewRegion();
+    }
+}
+#endif
 
 WebVTTParser::ParseState WebVTTParser::collectCueId(const String& line)
 {
@@ -281,6 +377,27 @@ void WebVTTParser::resetCueValues()
     m_currentEndTime = 0;
     m_currentContent.clear();
 }
+
+#if ENABLE(WEBVTT_REGIONS)
+void WebVTTParser::createNewRegion()
+{
+    if (!m_currentHeaderValue.length())
+        return;
+
+    RefPtr<TextTrackRegion> region = TextTrackRegion::create();
+    region->setRegionSettings(m_currentHeaderValue);
+
+    // 15.5.10 If the text track list of regions regions contains a region
+    // with the same region identifier value as region, remove that region.
+    for (size_t i = 0; i < m_regionList.size(); ++i)
+        if (m_regionList[i]->id() == region->id()) {
+            m_regionList.remove(i);
+            break;
+        }
+
+    m_regionList.append(region);
+}
+#endif
 
 double WebVTTParser::collectTimeStamp(const String& line, unsigned* position)
 {

@@ -281,6 +281,11 @@ void TextTrack::removeCue(TextTrackCue* cue, ExceptionCode& ec)
 }
 
 #if ENABLE(VIDEO_TRACK) && ENABLE(WEBVTT_REGIONS)
+TextTrackRegionList* TextTrack::regionList()
+{
+    return ensureTextTrackRegionList();
+}
+
 TextTrackRegionList* TextTrack::ensureTextTrackRegionList()
 {
     if (!m_regions)

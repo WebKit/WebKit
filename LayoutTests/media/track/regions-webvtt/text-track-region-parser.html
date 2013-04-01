@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../../media-file.js></script>
+        <script src=../../video-test.js></script>
+        <script>
+        var region;
+
+        function startTest()
+        {
+            if (!window.TextTrackRegion) {
+                failTest();
+                return;
+            }
+
+            findMediaElement();
+            testExpected("video.textTracks[0].regions.length", 5);
+
+            consoleWrite("");
+            region = video.textTracks[0].regions[0];
+            testExpected("region.id", "region_without_settings");
+
+            consoleWrite("");
+            region = video.textTracks[0].regions[1];
+            testExpected("region.id", "region_with_all_settings");
+            testExpected("region.width", 32);
+            testExpected("region.height", 5);
+            testExpected("region.regionAnchorX", 41);
+            testExpected("region.regionAnchorY", 20);
+            testExpected("region.viewportAnchorX", 31);
+            testExpected("region.viewportAnchorY", 84);
+            testExpected("region.scroll", "up");
+
+            consoleWrite("");
+            region = video.textTracks[0].regions[2];
+            testExpected("region.id", "region_floating_point_anchor");
+            testExpected("Math.round(region.regionAnchorX * 1000)", 41133);
+            testExpected("Math.round(region.regionAnchorY * 1000)", 20420);
+            testExpected("Math.round(region.viewportAnchorX * 1000)", 32330);
+            testExpected("Math.round(region.viewportAnchorY * 1000)", 32440);
+
+            consoleWrite("");
+            region = video.textTracks[0].regions[3];
+            testExpected("region.id", "not_unique_id");
+            testExpected("region.width", 67);
+
+            consoleWrite("");
+            region = video.textTracks[0].regions[4];
+            testExpected("region.id", "");
+
+            consoleWrite("");
+            endTest();
+        }
+
+        </script>
+    </head>
+    <body>
+        <p>Tests proper parsing of various regions present in WebVTT header area.</p>
+        <video controls>
+            <track src="../captions-webvtt/header-regions.vtt" kind="captions" default onload="startTest()">
+        </video>
+
+    </body>
+</html>

@@ -34,6 +34,7 @@
 #include "ScriptEventListener.h"
 #include "ScriptExecutionContext.h"
 #include "TextTrackCueList.h"
+#include "TextTrackRegionList.h"
 
 namespace WebCore {
 
@@ -122,6 +123,21 @@ void LoadableTextTrack::cueLoadingCompleted(TextTrackLoader* loader, bool loadin
 
     m_trackElement->didCompleteLoad(this, loadingFailed ? HTMLTrackElement::Failure : HTMLTrackElement::Success);
 }
+
+#if ENABLE(WEBVTT_REGIONS)
+void LoadableTextTrack::newRegionsAvailable(TextTrackLoader* loader)
+{
+    ASSERT_UNUSED(loader, m_loader == loader);
+
+    Vector<RefPtr<TextTrackRegion> > newRegions;
+    m_loader->getNewRegions(newRegions);
+
+    for (size_t i = 0; i < newRegions.size(); ++i) {
+        newRegions[i]->setTrack(this);
+        regionList()->add(newRegions[i]);
+    }
+}
+#endif
 
 size_t LoadableTextTrack::trackElementIndex()
 {

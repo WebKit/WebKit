@@ -70,6 +70,9 @@ private:
     virtual void newCuesAvailable(TextTrackLoader*);
     virtual void cueLoadingStarted(TextTrackLoader*);
     virtual void cueLoadingCompleted(TextTrackLoader*, bool loadingFailed);
+#if ENABLE(WEBVTT_REGIONS)
+    virtual void newRegionsAvailable(TextTrackLoader*);
+#endif
 
     LoadableTextTrack(HTMLTrackElement*, const String& kind, const String& label, const String& language);
 

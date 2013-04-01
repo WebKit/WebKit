@@ -1,0 +1,28 @@
+Tests proper parsing of various regions present in WebVTT header area.
+
+EXPECTED (video.textTracks[0].regions.length == '5') OK
+
+EXPECTED (region.id == 'region_without_settings') OK
+
+EXPECTED (region.id == 'region_with_all_settings') OK
+EXPECTED (region.width == '32') OK
+EXPECTED (region.height == '5') OK
+EXPECTED (region.regionAnchorX == '41') OK
+EXPECTED (region.regionAnchorY == '20') OK
+EXPECTED (region.viewportAnchorX == '31') OK
+EXPECTED (region.viewportAnchorY == '84') OK
+EXPECTED (region.scroll == 'up') OK
+
+EXPECTED (region.id == 'region_floating_point_anchor') OK
+EXPECTED (Math.round(region.regionAnchorX * 1000) == '41133') OK
+EXPECTED (Math.round(region.regionAnchorY * 1000) == '20420') OK
+EXPECTED (Math.round(region.viewportAnchorX * 1000) == '32330') OK
+EXPECTED (Math.round(region.viewportAnchorY * 1000) == '32440') OK
+
+EXPECTED (region.id == 'not_unique_id') OK
+EXPECTED (region.width == '67') OK
+
+EXPECTED (region.id == '') OK
+
+END OF TEST
+

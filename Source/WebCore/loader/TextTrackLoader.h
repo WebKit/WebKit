@@ -49,6 +49,9 @@ public:
     virtual void newCuesAvailable(TextTrackLoader*) = 0;
     virtual void cueLoadingStarted(TextTrackLoader*) = 0;
     virtual void cueLoadingCompleted(TextTrackLoader*, bool loadingFailed) = 0;
+#if ENABLE(WEBVTT_REGIONS)
+    virtual void newRegionsAvailable(TextTrackLoader*) = 0;
+#endif
 };
 
 class TextTrackLoader : public CachedResourceClient, private WebVTTParserClient {
@@ -64,7 +67,9 @@ public:
     bool load(const KURL&, const String& crossOriginMode);
     void cancelLoad();
     void getNewCues(Vector<RefPtr<TextTrackCue> >& outputCues);
-    
+#if ENABLE(WEBVTT_REGIONS)
+    void getNewRegions(Vector<RefPtr<TextTrackRegion> >& outputRegions);
+#endif
 private:
 
     // CachedResourceClient
@@ -73,6 +78,9 @@ private:
     
     // WebVTTParserClient
     virtual void newCuesParsed();
+#if ENABLE(WEBVTT_REGIONS)
+    virtual void newRegionsParsed();
+#endif
     virtual void fileFailedToParse();
     
     TextTrackLoader(TextTrackLoaderClient*, ScriptExecutionContext*);
