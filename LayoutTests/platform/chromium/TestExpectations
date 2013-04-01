@@ -3620,8 +3620,6 @@ crbug.com/166932 [ Debug ] plugins/embed-attributes-setting.html [ Crash Pass ]
 
 webkit.org/b/106858 [ Mac Debug ] scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ ImageOnlyFailure Crash ]
 webkit.org/b/106858 [ Linux Win Debug ] scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ ImageOnlyFailure Pass ]
-webkit.org/b/106858 [ Mac Debug ] scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ ImageOnlyFailure ]
-webkit.org/b/106858 [ Linux Win Debug ] scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ ImageOnlyFailure Pass ]
 
 # This is won't fix, as the debug and release versions differ.
 
@@ -3679,18 +3677,32 @@ webkit.org/b/110568 [ MountainLion ] fast/multicol/newmulticol/positioned-split.
 
 webkit.org/b/110739 [ Release MountainLion ] fast/regions/shape-inside/shape-inside-on-regions.html [ ImageOnlyFailure ]
 
-# The following tests are are failing since chromium r184584
-webkit.org/b/110851 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
-webkit.org/b/110851 compositing/geometry/fixed-position-composited-page-scale.html [ ImageOnlyFailure ]
-webkit.org/b/110851 compositing/geometry/fixed-position-iframe-composited-page-scale.html [ ImageOnlyFailure ]
-webkit.org/b/110851 compositing/overflow/overflow-scaled-descendant-overlapping.html [ ImageOnlyFailure ]
-webkit.org/b/110851 compositing/repaint/page-scale-repaint.html [ ImageOnlyFailure ]
-webkit.org/b/110851 platform/chromium/virtual/gpu/compositedscrolling/overflow/overflow-scaled-descendant-overlapping.html [ ImageOnlyFailure ]
-webkit.org/b/110851 platform/chromium/virtual/softwarecompositing/geometry/fixed-position-composited-page-scale.html [ ImageOnlyFailure ]
-webkit.org/b/110851 platform/chromium/virtual/softwarecompositing/geometry/fixed-position-iframe-composited-page-scale.html [ ImageOnlyFailure ]
-webkit.org/b/110851 platform/chromium/virtual/softwarecompositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
-webkit.org/b/110851 platform/chromium/virtual/softwarecompositing/overflow/overflow-scaled-descendant-overlapping.html [ ImageOnlyFailure ]
-webkit.org/b/110851 platform/chromium/virtual/softwarecompositing/repaint/page-scale-repaint.html [ ImageOnlyFailure ]
+# Tests failing since applyPageScaleFactorInCompositor enabled
+crbug.com/225184 compositing/geometry/fixed-position-composited-page-scale.html [ ImageOnlyFailure ]
+crbug.com/225184 compositing/geometry/fixed-position-iframe-composited-page-scale.html [ ImageOnlyFailure ]
+crbug.com/225184 compositing/repaint/page-scale-repaint.html [ ImageOnlyFailure ]
+crbug.com/225184 platform/chromium/virtual/gpu/compositedscrolling/overflow/overflow-scaled-descendant-overlapping.html [ ImageOnlyFailure ]
+crbug.com/225184 platform/chromium/virtual/softwarecompositing/geometry/fixed-position-composited-page-scale.html [ ImageOnlyFailure ]
+crbug.com/225184 platform/chromium/virtual/softwarecompositing/geometry/fixed-position-iframe-composited-page-scale.html [ ImageOnlyFailure ]
+crbug.com/225184 platform/chromium/virtual/softwarecompositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
+crbug.com/225184 platform/chromium/virtual/softwarecompositing/overflow/overflow-scaled-descendant-overlapping.html [ ImageOnlyFailure ]
+crbug.com/225184 platform/chromium/virtual/softwarecompositing/repaint/page-scale-repaint.html [ ImageOnlyFailure ]
+crbug.com/225184 platform/chromium/virtual/softwarecompositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
+crbug.com/225184 platform/chromium/virtual/softwarecompositing/layer-creation/fixed-position-out-of-view-scaled.html [ Failure ]
+crbug.com/225184 compositing/layer-creation/fixed-position-out-of-view-scaled.html [ Failure ]
+crbug.com/225184 compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
+crbug.com/225184 fast/events/scale-and-scroll-iframe-body.html [ ImageOnlyFailure ]
+crbug.com/225184 fast/events/scale-and-scroll-iframe-window.html [ ImageOnlyFailure ]
+crbug.com/225184 fast/frames/frame-set-rotation-hit.html [ ImageOnlyFailure ]
+crbug.com/225184 fast/frames/frame-set-scaling-hit.html [ ImageOnlyFailure ]
+crbug.com/225184 fast/repaint/background-scaling.html [ ImageOnlyFailure ]
+crbug.com/225184 fast/repaint/scale-page-shrink.html [ ImageOnlyFailure ]
+crbug.com/225184 platform/chromium/fast/repaint/relayout-fixed-position-after-scale.html [ ImageOnlyFailure ]
+crbug.com/225184 fast/events/scale-and-scroll-body.html [ Failure ]
+crbug.com/225184 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure ]
+crbug.com/225184 inspector/elements/highlight-node-scaled.html [ Failure ]
+crbug.com/225184 scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ Failure ]
+crbug.com/225184 svg/as-image/image-respects-pageScaleFactor.html [ ImageOnlyFailure ]
 
 # Pixel tests for RTL iframe scrollbar is erroneous. Cannot observe on actual browser.
 crbug.com/192172 [ Linux Release ] compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ ImageOnlyFailure ]

@@ -1,3 +1,56 @@
+2013-04-01  Alexandre Elias  <aelias@chromium.org>
+
+        [chromium] Delete code behind if (!applyXYZScaleInCompositor)
+        https://bugs.webkit.org/show_bug.cgi?id=111809
+
+        Reviewed by James Robinson.
+
+        Chromium is setting the flags applyPageScaleFactorInCompositor and
+        applyDeviceScaleFactorInCompositor permanently to true, so any code
+        in platform/chromium with the false setting is dead. Delete all of
+        it.
+
+        I also switched FrameTestHelpers and DumpRenderTree to always turn the
+        setting to true so that they test the code we're actually running.
+        This exposed a number of failing tests which I added in the
+        expectations file.
+
+        Note also that I made calls to setPageScaleFactor turn on
+        force-compositing-mode to make the layout tests work, as
+        pageScaleFactor is now ignored in non-composited mode.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::dispatchViewportPropertiesDidChange):
+        * src/NonCompositedContentHost.cpp:
+        (WebKit::NonCompositedContentHost::NonCompositedContentHost):
+        * src/PageWidgetDelegate.cpp:
+        (WebKit::PageWidgetDelegate::paint):
+        * src/PageWidgetDelegate.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::selectRange):
+        (WebKit::WebFrameImpl::moveCaretSelectionTowardsWindowPoint):
+        * src/WebPagePopupImpl.cpp:
+        (WebKit::WebPagePopupImpl::paint):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::computeScaleAndScrollForHitRect):
+        (WebKit::WebViewImpl::scaledSize):
+        (WebKit::WebViewImpl::resize):
+        (WebKit::WebViewImpl::paint):
+        (WebKit::WebViewImpl::selectionBounds):
+        (WebKit::WebViewImpl::computeScaleAndScrollForFocusedNode):
+        (WebKit::WebViewImpl::clampOffsetAtScale):
+        (WebKit::WebViewImpl::setPageScaleFactorPreservingScrollOffset):
+        (WebKit::WebViewImpl::setDeviceScaleFactor):
+        (WebKit::WebViewImpl::contentsSize):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::applyScrollAndScale):
+        * src/WebViewImpl.h:
+        * tests/FrameTestHelpers.cpp:
+        (WebKit::FrameTestHelpers::createWebView):
+        * tests/WebFrameTest.cpp:
+        * tests/WebInputEventConversionTest.cpp:
+        (WebCore::TEST):
+
 2013-03-30  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Remove unused includes of stdio.h

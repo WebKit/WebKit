@@ -32,10 +32,7 @@ namespace WebKit {
 
 class WebGestureCurveTarget {
 public:
-    virtual void scrollBy(const WebFloatSize& delta) { scrollBy(WebPoint(delta.width, delta.height)); }
-
-    // TODO(aelias): Delete this after WebKit roll.
-    virtual void scrollBy(const WebPoint& delta) { scrollBy(WebFloatSize(delta.x, delta.y)); }
+    virtual void scrollBy(const WebFloatSize& delta) = 0;
 
 protected:
     virtual ~WebGestureCurveTarget() { }

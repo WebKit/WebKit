@@ -97,8 +97,6 @@ TEST(WebInputEventConversionTest, InputEventsScaling)
 
     URLTestHelpers::registerMockedURLFromBaseURL(WebString::fromUTF8(baseURL.c_str()), WebString::fromUTF8("fixed_layout.html"));
     WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(FrameTestHelpers::createWebViewAndLoad(baseURL + fileName, true));
-    webViewImpl->settings()->setApplyDeviceScaleFactorInCompositor(true);
-    webViewImpl->settings()->setApplyPageScaleFactorInCompositor(true);
     webViewImpl->enableFixedLayoutMode(true);
     webViewImpl->settings()->setViewportEnabled(true);
     int pageWidth = 640;

@@ -419,6 +419,7 @@ public:
     void layoutUpdated(WebFrameImpl*);
 
     void didChangeContentsSize();
+    void deviceOrPageScaleFactorChanged();
 
     // Returns true if popup menus should be rendered by the browser, false if
     // they should be rendered by WebKit (which is the default).
@@ -444,7 +445,6 @@ public:
         return m_maxAutoSize;
     }
 
-    WebCore::IntSize dipSize() const;
     WebCore::IntSize scaledSize(float) const;
 
     // Set the disposition for how this webview is to be initially shown.

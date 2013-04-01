@@ -1362,10 +1362,8 @@ void WebFrameImpl::selectRange(const WebPoint& base, const WebPoint& extent)
 {
     IntPoint unscaledBase = base;
     IntPoint unscaledExtent = extent;
-    if (frame()->page()->settings()->applyPageScaleFactorInCompositor()) {
-        unscaledExtent.scale(1 / view()->pageScaleFactor(), 1 / view()->pageScaleFactor());
-        unscaledBase.scale(1 / view()->pageScaleFactor(), 1 / view()->pageScaleFactor());
-    }
+    unscaledExtent.scale(1 / view()->pageScaleFactor(), 1 / view()->pageScaleFactor());
+    unscaledBase.scale(1 / view()->pageScaleFactor(), 1 / view()->pageScaleFactor());
     VisiblePosition basePosition = visiblePositionForWindowPoint(unscaledBase);
     VisiblePosition extentPosition = visiblePositionForWindowPoint(unscaledExtent);
     VisibleSelection newSelection = VisibleSelection(basePosition, extentPosition);
@@ -1382,8 +1380,7 @@ void WebFrameImpl::selectRange(const WebRange& webRange)
 void WebFrameImpl::moveCaretSelectionTowardsWindowPoint(const WebPoint& point)
 {
     IntPoint unscaledPoint(point);
-    if (frame()->page()->settings()->applyPageScaleFactorInCompositor())
-        unscaledPoint.scale(1 / view()->pageScaleFactor(), 1 / view()->pageScaleFactor());
+    unscaledPoint.scale(1 / view()->pageScaleFactor(), 1 / view()->pageScaleFactor());
 
     Element* editable = frame()->selection()->rootEditableElement();
     if (!editable)

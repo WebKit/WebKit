@@ -573,6 +573,11 @@ void ChromeClientImpl::contentsSizeChanged(Frame* frame, const IntSize& size) co
         webframe->client()->didChangeContentsSize(webframe, size);
 }
 
+void ChromeClientImpl::deviceOrPageScaleFactorChanged() const
+{
+    m_webView->deviceOrPageScaleFactorChanged();
+}
+
 void ChromeClientImpl::layoutUpdated(Frame* frame) const
 {
     m_webView->layoutUpdated(WebFrameImpl::fromFrame(frame));
@@ -625,7 +630,7 @@ void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArgumen
     if (!m_webView->settings()->viewportEnabled() || !m_webView->isFixedLayoutModeEnabled() || !m_webView->client() || !m_webView->page())
         return;
 
-    IntSize viewportSize = m_webView->dipSize();
+    IntSize viewportSize = m_webView->size();
     float deviceScaleFactor = m_webView->client()->screenInfo().deviceScaleFactor;
 
     // If the window size has not been set yet don't attempt to set the viewport.
@@ -641,8 +646,6 @@ void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArgumen
     }
     if (arguments.zoom == ViewportArguments::ValueAuto && !m_webView->settingsImpl()->initializeAtMinimumPageScale())
         computed.initialScale = 1.0f;
-    if (!m_webView->settingsImpl()->applyDeviceScaleFactorInCompositor())
-        computed.initialScale *= deviceScaleFactor;
 
     m_webView->setInitialPageScaleFactor(computed.initialScale);
     m_webView->setFixedLayoutSize(flooredIntSize(computed.layoutSize));
