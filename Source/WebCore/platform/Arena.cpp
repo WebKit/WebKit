@@ -170,10 +170,8 @@ static void FreeArenaList(ArenaPool* pool, Arena* head)
 #endif
 
 #ifdef DEBUG_ARENA_MALLOC
-        if (arena) {
-            i--;
-            printf("Free: %d\n", i);
-        }
+        i--;
+        printf("Free: %d\n", i);
 #endif
 
         fastFree(arena);

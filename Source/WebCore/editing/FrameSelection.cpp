@@ -1887,7 +1887,7 @@ void FrameSelection::setFocusedNodeIfNeeded()
             // We don't want to set focus on a subframe when selecting in a parent frame,
             // so add the !isFrameElement check here. There's probably a better way to make this
             // work in the long term, but this is the safest fix at this time.
-            if (target && target->isMouseFocusable() && !isFrameElement(target)) {
+            if (target->isMouseFocusable() && !isFrameElement(target)) {
                 m_frame->page()->focusController()->setFocusedNode(target, m_frame);
                 return;
             }
