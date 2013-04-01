@@ -357,6 +357,7 @@ WebInspector.DOMBreakpointsSidebarPane.Proxy = function(pane, panel)
     WebInspector.View._assert(!pane.titleElement.firstChild, "Cannot create proxy for a sidebar pane with a toolbar");
 
     WebInspector.SidebarPane.call(this, pane.title());
+    this.registerRequiredCSS("breakpointsList.css");
 
     this._wrappedPane = pane;
     this._panel = panel;
