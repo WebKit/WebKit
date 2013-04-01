@@ -1,3 +1,15 @@
+2013-04-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r147319.
+        http://trac.webkit.org/changeset/147319
+        https://bugs.webkit.org/show_bug.cgi?id=113707
+
+        The unit test is still failing on the buildbot (Requested by
+        zdobersek on #webkit).
+
+        * Scripts/run-gtk-tests:
+        (TestRunner):
+
 2013-04-01  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK][WK2] Unskip /webkit2/WebKitWebContext/uri-scheme
