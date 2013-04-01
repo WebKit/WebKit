@@ -139,7 +139,7 @@ set(JavaScriptCore_SOURCES
     heap/HeapTimer.cpp
     heap/IncrementalSweeper.cpp
     heap/JITStubRoutineSet.cpp
-    heap/MachineStackMarker.cppp/MarkedAllocator.cpp
+    heap/MachineStackMarker.cpp
 
     heap/MarkedAllocator.cpp
     heap/MarkedBlock.cpp

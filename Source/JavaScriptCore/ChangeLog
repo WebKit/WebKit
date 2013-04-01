@@ -1,3 +1,11 @@
+2013-04-01  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        EFL build fix
+
+        Unreviewed build fix.
+
+        * CMakeLists.txt:
+
 2013-03-31  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Regions should be allocated from the same contiguous segment of virtual memory
