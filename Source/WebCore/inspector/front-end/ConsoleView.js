@@ -39,6 +39,7 @@ WebInspector.ConsoleView = function(hideContextSelector)
     this.element.id = "console-view";
     this._messageURLFilters = WebInspector.settings.messageURLFilters.get();
     this._visibleMessages = [];
+    this._messages = [];
     this._urlToMessageCount = {};
 
     this._clearConsoleButton = new WebInspector.StatusBarButton(WebInspector.UIString("Clear console log."), "clear-status-bar-item");
@@ -384,6 +385,8 @@ WebInspector.ConsoleView.prototype = {
     _consoleMessageAdded: function(event)
     {
         var message = /** @type {WebInspector.ConsoleMessage} */ (event.data);
+        this._messages.push(message);
+
         if (this._urlToMessageCount[message.url])
             this._urlToMessageCount[message.url]++;
         else
@@ -411,6 +414,7 @@ WebInspector.ConsoleView.prototype = {
                 var group = new WebInspector.ConsoleGroup(this.currentGroup);
                 this.currentGroup.messagesElement.appendChild(group.element);
                 this.currentGroup = group;
+                message.group = group;
             }
             this.currentGroup.addMessage(message);
         }
@@ -424,6 +428,7 @@ WebInspector.ConsoleView.prototype = {
         for (var i = 0; i < this._visibleMessages.length; ++i)
             this._visibleMessages[i].willHide();
         this._visibleMessages = [];
+        this._messages = [];
 
         this.currentGroup = this.topGroup;
         this.topGroup.messagesElement.removeChildren();
@@ -527,7 +532,8 @@ WebInspector.ConsoleView.prototype = {
      */
     _shouldBeVisible: function(message)
     {
-        return !message.url || !this._messageURLFilters[message.url];
+        return (message.type === WebInspector.ConsoleMessage.MessageType.StartGroup || message.type === WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed || message.type === WebInspector.ConsoleMessage.MessageType.EndGroup) ||
+            (!message.url || !this._messageURLFilters[message.url]);
     },
 
     /**
@@ -535,25 +541,35 @@ WebInspector.ConsoleView.prototype = {
      */
     _updateMessageList: function()
     {
-        var sourceMessages = WebInspector.console.messages;
+        var group = this.topGroup;
+        var sourceMessages = this._messages;
         var visibleMessageIndex = 0;
         var newVisibleMessages = [];
+        var anchor = null;
         for (var i = 0; i < sourceMessages.length; i++) {
             var sourceMessage = sourceMessages[i];
             var visibleMessage = this._visibleMessages[visibleMessageIndex];
 
             if (visibleMessage === sourceMessage) {
                 visibleMessageIndex++;
-                if (this._shouldBeVisible(visibleMessage))
+                if (this._shouldBeVisible(visibleMessage)) {
                     newVisibleMessages.push(visibleMessage);
-                else {
+                    if (sourceMessage.type === WebInspector.ConsoleMessage.MessageType.EndGroup) {
+                        anchor = group.element;
+                        group = group.parentGroup || group;
+                    } else if (sourceMessage.type === WebInspector.ConsoleMessage.MessageType.StartGroup || sourceMessage.type === WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed) {
+                        group = sourceMessage.group;
+                        anchor = group.messagesElement.firstChild;
+                    }
+                } else {
                     visibleMessage.willHide();
-                    visibleMessage.toMessageElement().removeSelf();                    
+                    visibleMessage.toMessageElement().removeSelf();
                 }
             } else {
                 if (this._shouldBeVisible(sourceMessage)) {
-                    this.currentGroup.addMessage(sourceMessage, visibleMessage ? visibleMessage.toMessageElement() : null);
+                    group.addMessage(sourceMessage, anchor ? anchor.nextSibling : group.messagesElement.firstChild);
                     newVisibleMessages.push(sourceMessage);
+                    anchor = sourceMessage.toMessageElement();
                 }
             }
         }
@@ -654,8 +670,9 @@ WebInspector.ConsoleView.prototype = {
     {
         if (!result)
             return;
-
-        this._appendConsoleMessage(new WebInspector.ConsoleCommandResult(result, wasThrown, originatingCommand, this._linkifier));
+        var message = new WebInspector.ConsoleCommandResult(result, wasThrown, originatingCommand, this._linkifier);
+        this._messages.push(message);
+        this._appendConsoleMessage(message);
     },
 
     _appendCommand: function(text, newPromptText, useCommandLineAPI, showResultOnly)
@@ -663,6 +680,7 @@ WebInspector.ConsoleView.prototype = {
         if (!showResultOnly) {
             var commandMessage = new WebInspector.ConsoleCommand(text);
             WebInspector.console.interruptRepeatCount();
+            this._messages.push(commandMessage);
             this._appendConsoleMessage(commandMessage);
         }
         this.prompt.text = newPromptText;

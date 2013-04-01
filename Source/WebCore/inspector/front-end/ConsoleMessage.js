@@ -776,6 +776,9 @@ WebInspector.ConsoleMessageImpl.prototype = {
     },
 
     updateRepeatCount: function() {
+        if (!this._element)
+            return;
+
         if (!this.repeatCountElement) {
             this.repeatCountElement = document.createElement("span");
             this.repeatCountElement.className = "bubble";
