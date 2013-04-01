@@ -1,3 +1,17 @@
+2013-04-01  James Craig  <james@cookiecrook.com>
+
+        AX: "video element controller" is an overly verbose default description for the playback controls; how about just "playback"
+        https://bugs.webkit.org/show_bug.cgi?id=113549
+
+        Reviewed by Chris Fleizach.
+
+        Existing test coverage.
+
+        Updating the video/audio element's default accessibility labels to be less verbose.
+
+        * en_CA.po:
+        * en_GB.po:
+
 2013-03-27  Shantha kumar  <shkumar@redhat.com>
 
         Tamil translation for Gnome 3.6

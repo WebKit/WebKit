@@ -532,9 +532,9 @@ String mediaElementLiveBroadcastStateText()
 String localizedMediaControlElementString(const String& name)
 {
     if (name == "AudioElement")
-        return String::fromUTF8(_("audio element controller"));
+        return String::fromUTF8(_("audio playback"));
     if (name == "VideoElement")
-        return String::fromUTF8(_("video element controller"));
+        return String::fromUTF8(_("video playback"));
     if (name == "MuteButton")
         return String::fromUTF8(_("mute"));
     if (name == "UnMuteButton")

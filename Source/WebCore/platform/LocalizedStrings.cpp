@@ -815,43 +815,43 @@ String mediaElementLiveBroadcastStateText()
 String localizedMediaControlElementString(const String& name)
 {
     if (name == "AudioElement")
-        return WEB_UI_STRING("audio element controller", "accessibility role description for audio element controller");
+        return WEB_UI_STRING("audio playback", "accessibility label for audio element controller");
     if (name == "VideoElement")
-        return WEB_UI_STRING("video element controller", "accessibility role description for video element controller");
+        return WEB_UI_STRING("video playback", "accessibility label for video element controller");
     if (name == "MuteButton")
-        return WEB_UI_STRING("mute", "accessibility role description for mute button");
+        return WEB_UI_STRING("mute", "accessibility label for mute button");
     if (name == "UnMuteButton")
-        return WEB_UI_STRING("unmute", "accessibility role description for turn mute off button");
+        return WEB_UI_STRING("unmute", "accessibility label for turn mute off button");
     if (name == "PlayButton")
-        return WEB_UI_STRING("play", "accessibility role description for play button");
+        return WEB_UI_STRING("play", "accessibility label for play button");
     if (name == "PauseButton")
-        return WEB_UI_STRING("pause", "accessibility role description for pause button");
+        return WEB_UI_STRING("pause", "accessibility label for pause button");
     if (name == "Slider")
-        return WEB_UI_STRING("movie time", "accessibility role description for timeline slider");
+        return WEB_UI_STRING("movie time", "accessibility label for timeline slider");
     if (name == "SliderThumb")
-        return WEB_UI_STRING("timeline slider thumb", "accessibility role description for timeline thumb");
+        return WEB_UI_STRING("timeline slider thumb", "accessibility label for timeline thumb");
     if (name == "RewindButton")
-        return WEB_UI_STRING("back 30 seconds", "accessibility role description for seek back 30 seconds button");
+        return WEB_UI_STRING("back 30 seconds", "accessibility label for seek back 30 seconds button");
     if (name == "ReturnToRealtimeButton")
-        return WEB_UI_STRING("return to realtime", "accessibility role description for return to real time button");
+        return WEB_UI_STRING("return to realtime", "accessibility label for return to real time button");
     if (name == "CurrentTimeDisplay")
-        return WEB_UI_STRING("elapsed time", "accessibility role description for elapsed time display");
+        return WEB_UI_STRING("elapsed time", "accessibility label for elapsed time display");
     if (name == "TimeRemainingDisplay")
-        return WEB_UI_STRING("remaining time", "accessibility role description for time remaining display");
+        return WEB_UI_STRING("remaining time", "accessibility label for time remaining display");
     if (name == "StatusDisplay")
-        return WEB_UI_STRING("status", "accessibility role description for movie status");
+        return WEB_UI_STRING("status", "accessibility label for movie status");
     if (name == "EnterFullscreenButton")
-        return WEB_UI_STRING("enter fullscreen", "accessibility role description for enter fullscreen button");
+        return WEB_UI_STRING("enter fullscreen", "accessibility label for enter fullscreen button");
     if (name == "ExitFullscreenButton")
-        return WEB_UI_STRING("exit fullscreen", "accessibility role description for exit fullscreen button");
+        return WEB_UI_STRING("exit fullscreen", "accessibility label for exit fullscreen button");
     if (name == "SeekForwardButton")
-        return WEB_UI_STRING("fast forward", "accessibility role description for fast forward button");
+        return WEB_UI_STRING("fast forward", "accessibility label for fast forward button");
     if (name == "SeekBackButton")
-        return WEB_UI_STRING("fast reverse", "accessibility role description for fast reverse button");
+        return WEB_UI_STRING("fast reverse", "accessibility label for fast reverse button");
     if (name == "ShowClosedCaptionsButton")
-        return WEB_UI_STRING("show closed captions", "accessibility role description for show closed captions button");
+        return WEB_UI_STRING("show closed captions", "accessibility label for show closed captions button");
     if (name == "HideClosedCaptionsButton")
-        return WEB_UI_STRING("hide closed captions", "accessibility role description for hide closed captions button");
+        return WEB_UI_STRING("hide closed captions", "accessibility label for hide closed captions button");
 
     // FIXME: the ControlsPanel container should never be visible in the accessibility hierarchy.
     if (name == "ControlsPanel")
@@ -864,9 +864,9 @@ String localizedMediaControlElementString(const String& name)
 String localizedMediaControlElementHelpText(const String& name)
 {
     if (name == "AudioElement")
-        return WEB_UI_STRING("audio element playback controls and status display", "accessibility role description for audio element controller");
+        return WEB_UI_STRING("audio element playback controls and status display", "accessibility help text for audio element controller");
     if (name == "VideoElement")
-        return WEB_UI_STRING("video element playback controls and status display", "accessibility role description for video element controller");
+        return WEB_UI_STRING("video element playback controls and status display", "accessibility help text for video element controller");
     if (name == "MuteButton")
         return WEB_UI_STRING("mute audio tracks", "accessibility help text for mute button");
     if (name == "UnMuteButton")

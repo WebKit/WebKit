@@ -375,12 +375,12 @@ msgid "Live Broadcast"
 msgstr "Live Broadcast"
 
 #: LocalizedStringsGtk.cpp:535
-msgid "audio element controller"
-msgstr "audio element controller"
+msgid "audio playback"
+msgstr "audio playback"
 
 #: LocalizedStringsGtk.cpp:537
-msgid "video element controller"
-msgstr "video element controller"
+msgid "video playback"
+msgstr "video playback"
 
 #: LocalizedStringsGtk.cpp:539
 msgid "mute"

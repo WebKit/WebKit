@@ -4,11 +4,11 @@ Dump <video> element controller accessibility object tree at 'canplaythrough' ev
 
 State at 'canplaythrough' event:
 
-    description: AXDescription: video element controller
+    description: AXDescription: video playback
     role: AXRole: AXToolbar
 
 
-        description: AXDescription: video element controller
+        description: AXDescription: video playback
         role: AXRole: AXToolbar
 
 

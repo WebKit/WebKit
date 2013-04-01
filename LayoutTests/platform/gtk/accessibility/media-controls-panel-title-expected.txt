@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS element.role is 'AXRole: AXGroup'
 PASS element.title is 'AXTitle: '
 PASS element.role is 'AXRole: AXToolbar'
-PASS element.title is 'AXTitle: video element controller'
+PASS element.title is 'AXTitle: video playback'
 PASS successfullyParsed is true
 
 TEST COMPLETE
