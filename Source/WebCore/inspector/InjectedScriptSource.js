@@ -555,7 +555,6 @@ InjectedScript.prototype = {
             // the 'eval' identifier when calling it. Using 'eval' grants access to the local scope of the closure we
             // create that provides the command line APIs.
 
-            var thisObject = isEvalOnCallFrame ? object : null;
             var parameters = [InjectedScriptHost.evaluate, expression];
             var expressionFunctionBody = "var __originalEval = window.eval; window.eval = __eval; try { return eval(__currentExpression); } finally { window.eval = __originalEval; }";
 
@@ -566,9 +565,8 @@ InjectedScript.prototype = {
                 // the console to stay in strict mode (if is was already set), or to get strict mode by prefixing
                 // expressions with 'use strict';.
 
-                var commandLineAPI = new CommandLineAPI(this._commandLineAPIImpl, thisObject);
+                var commandLineAPI = new CommandLineAPI(this._commandLineAPIImpl, isEvalOnCallFrame ? object : null);
                 var parameterNames = Object.getOwnPropertyNames(commandLineAPI);
-
                 for (var i = 0; i < parameterNames.length; ++i)
                     parameters.push(commandLineAPI[parameterNames[i]]);
 
@@ -579,8 +577,10 @@ InjectedScript.prototype = {
                 var expressionFunctionString = "(function(__eval, __currentExpression) { " + expressionFunctionBody + " })";
             }
 
-            var expressionFunction = evalFunction.call(thisObject, expressionFunctionString);
-            var result = expressionFunction.apply(thisObject, parameters);
+            // Bind 'this' to the function expression using another closure instead of Function.prototype.bind. This ensures things will work if the page replaces bind.
+            var boundExpressionFunctionString = "(function(__function, __thisObject) { return function() { return __function.apply(__thisObject, arguments) }; })(" + expressionFunctionString + ", this)";
+            var expressionFunction = evalFunction.call(object, boundExpressionFunctionString);
+            var result = expressionFunction.apply(null, parameters);
 
             if (objectGroup === "console")
                 this._lastResult = result;
