@@ -1,3 +1,16 @@
+2013-03-31  Adam Barth  <abarth@webkit.org>
+
+        configure-svn-config.sh fails
+        https://codereview.chromium.org/13392007/
+
+        Reviewed by Eric Seidel.
+
+        This script was trying to use "svn checkout" to dowload a file from
+        svn.webkit.org, but "svn checkout" only works with directories.
+        Instead, we should use "svn export".
+
+        * EWSTools/configure-svn-config.sh:
+
 2013-03-31  Wei Jia  <wjia@chromium.org>
 
         Allow WebUserMediaClientMock to be used by client

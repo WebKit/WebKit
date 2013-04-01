@@ -24,4 +24,4 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-svn checkout http://svn.webkit.org/repository/webkit/trunk/Tools/svn-config ~/.subversion/config
+svn export http://svn.webkit.org/repository/webkit/trunk/Tools/svn-config ~/.subversion/config
