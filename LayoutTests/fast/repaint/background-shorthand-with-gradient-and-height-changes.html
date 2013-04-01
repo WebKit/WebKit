@@ -1,0 +1,57 @@
+<html>
+<head>
+<script>jsTestIsAsync = true;</script>
+<script src="../js/resources/js-test-pre.js"></script>
+
+<style>
+#outer {
+    padding-top: 200px;
+	background:-webkit-gradient(
+	    linear, 
+	    left top, 
+	    left bottom, 
+	    color-stop(0%, rgba(255,255,0,0)), color-stop(100%, rgba(0,0,0,1))
+	);
+}
+
+#inner {
+    height: 100px;
+}
+</style>
+
+<script>
+description("This test verifies that gradient background gets repainted properly after child box height change.");
+
+function start() {
+    window.setTimeout(function() { 
+        document.getElementById('inner').style.height = 300 + 'px'; 
+        window.setTimeout(logRepaints, 200);
+    }, 0); 
+
+    if (!window.testRunner || !window.internals)
+        return;
+        
+    window.internals.startTrackingRepaints(document);
+    window.testRunner.display();
+}
+
+function logRepaints() {
+    if (!window.internals)
+        return;
+        
+    repaintRects = window.internals.repaintRectsAsText(document);
+    window.internals.stopTrackingRepaints(document);
+    shouldNotBe("repaintRects.indexOf('500')", "-1");
+    finishJSTest();
+}
+</script>
+</head>
+
+<body onload='start();'>
+<div id='outer'>
+    <div id='inner'>
+    </div>
+</div>
+</body>
+<script src="../js/resources/js-test-post.js"></script>
+</html>

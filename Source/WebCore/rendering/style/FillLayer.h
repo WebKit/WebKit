@@ -178,9 +178,9 @@ public:
     static EFillRepeat initialFillRepeatY(EFillLayerType) { return RepeatFill; }
     static CompositeOperator initialFillComposite(EFillLayerType) { return CompositeSourceOver; }
     static BlendMode initialFillBlendMode(EFillLayerType) { return BlendModeNormal; }
-    static EFillSizeType initialFillSizeType(EFillLayerType) { return SizeLength; }
+    static EFillSizeType initialFillSizeType(EFillLayerType) { return SizeNone; }
     static LengthSize initialFillSizeLength(EFillLayerType) { return LengthSize(); }
-    static FillSize initialFillSize(EFillLayerType) { return FillSize(); }
+    static FillSize initialFillSize(EFillLayerType type) { return FillSize(initialFillSizeType(type), initialFillSizeLength(type)); }
     static Length initialFillXPosition(EFillLayerType) { return Length(0.0, Percent); }
     static Length initialFillYPosition(EFillLayerType) { return Length(0.0, Percent); }
     static StyleImage* initialFillImage(EFillLayerType) { return 0; }

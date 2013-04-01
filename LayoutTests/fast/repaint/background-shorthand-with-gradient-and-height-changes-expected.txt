@@ -1,0 +1,10 @@
+This test verifies that gradient background gets repainted properly after child box height change.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS repaintRects.indexOf('500') is not -1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
