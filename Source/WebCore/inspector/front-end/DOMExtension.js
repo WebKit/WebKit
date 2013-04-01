@@ -245,11 +245,12 @@ function Size(width, height)
 }
 
 /**
- * @param {Element} containerElement
+ * @param {Element=} containerElement
  * @return {Size}
  */
 Element.prototype.measurePreferredSize = function(containerElement)
 {
+    containerElement = containerElement || document.body;
     containerElement.appendChild(this);
     this.positionAt(0, 0);
     var result = new Size(this.offsetWidth, this.offsetHeight);
