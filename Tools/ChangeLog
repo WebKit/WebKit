@@ -1,3 +1,21 @@
+2013-03-31  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r147289.
+        http://trac.webkit.org/changeset/147289
+        https://bugs.webkit.org/show_bug.cgi?id=113678
+
+        broke Win7 (dbg) build (Requested by shinyak|gardener on
+        #webkit).
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestRunner/src/WebUserMediaClientMock.h: Renamed from Tools/DumpRenderTree/chromium/TestRunner/public/WebUserMediaClientMock.h.
+        (WebTestRunner):
+        (WebUserMediaClientMock):
+        (WebTestRunner::WebUserMediaClientMock::~WebUserMediaClientMock):
+        (WebTestRunner::WebUserMediaClientMock::taskList):
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_function_definition):
+
 2013-03-31  Adam Barth  <abarth@webkit.org>
 
         configure-svn-config.sh fails
