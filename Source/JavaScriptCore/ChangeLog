@@ -1,5 +1,14 @@
 2013-04-01  Mark Hahnenberg  <mhahnenberg@apple.com>
 
+        Fixing borked VS 2010 project file
+
+        Unreviewed bot greening.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+
+2013-04-01  Mark Hahnenberg  <mhahnenberg@apple.com>
+
         One more Windows build fix
 
         Unreviewed.

@@ -211,7 +211,7 @@
     <ClCompile Include="..\heap\MarkedSpace.cpp" />
     <ClCompile Include="..\heap\MarkStack.cpp" />
     <ClCompile Include="..\heap\SlotVisitor.cpp" />
-    <ClInclude Include="..\heap\SuperRegion.cpp" />
+    <ClCompile Include="..\heap\SuperRegion.cpp" />
     <ClCompile Include="..\heap\VTableSpectrum.cpp" />
     <ClCompile Include="..\heap\WeakBlock.cpp" />
     <ClCompile Include="..\heap\WeakHandleOwner.cpp" />

@@ -1157,9 +1157,9 @@
     <ClInclude Include="..\heap\StrongInlines.h">
       <Filter>heap</Filter>
     </ClInclude>
-    <ClCompile Include="..\heap\SuperRegion.h">
+    <ClInclude Include="..\heap\SuperRegion.h">
       <Filter>heap</Filter>
-    </ClCompile>
+    </ClInclude>
     <ClInclude Include="..\heap\TinyBloomFilter.h">
       <Filter>heap</Filter>
     </ClInclude>
