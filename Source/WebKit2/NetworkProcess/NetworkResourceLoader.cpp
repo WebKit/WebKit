@@ -300,12 +300,19 @@ void NetworkResourceLoader::cannotShowURL(ResourceHandle*)
     notImplemented();
 }
 
-void NetworkResourceLoader::shouldUseCredentialStorageAsync(ResourceHandle* handle)
+bool NetworkResourceLoader::shouldUseCredentialStorage(WebCore::ResourceHandle*)
 {
     // When the WebProcess is handling loading a client is consulted each time this shouldUseCredentialStorage question is asked.
     // In NetworkProcess mode we ask the WebProcess client up front once and then reuse the cached answer.
 
-    handle->continueShouldUseCredentialStorage(allowStoredCredentials() == AllowStoredCredentials);
+    // We still need this sync version, because ResourceHandle itself uses it internally, even when the delegate uses an async one.
+
+    return allowStoredCredentials() == AllowStoredCredentials;
+}
+
+void NetworkResourceLoader::shouldUseCredentialStorageAsync(ResourceHandle* handle)
+{
+    handle->continueShouldUseCredentialStorage(shouldUseCredentialStorage(handle));
 }
 
 void NetworkResourceLoader::didReceiveAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge)

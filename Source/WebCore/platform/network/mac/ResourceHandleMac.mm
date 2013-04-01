@@ -175,6 +175,7 @@ bool ResourceHandle::start()
     d->m_proxy.adoptNS(wkCreateNSURLConnectionDelegateProxy());
     [static_cast<WebCoreNSURLConnectionDelegateProxy*>(d->m_proxy.get()) setDelegate:ResourceHandle::delegate()];
 
+    // FIXME: Do not use the sync version of shouldUseCredentialStorage when the client returns true from usesAsyncCallbacks.
     bool shouldUseCredentialStorage = !client() || client()->shouldUseCredentialStorage(this);
 
     d->m_needsSiteSpecificQuirks = d->m_context->needsSiteSpecificQuirks();
@@ -475,6 +476,7 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
         return;
     }
 
+    // FIXME: Do not use the sync version of shouldUseCredentialStorage when the client returns true from usesAsyncCallbacks.
     if (!client() || client()->shouldUseCredentialStorage(this)) {
         if (!d->m_initialCredential.isEmpty() || challenge.previousFailureCount()) {
             // The stored credential wasn't accepted, stop using it.

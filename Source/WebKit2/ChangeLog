@@ -1,3 +1,17 @@
+2013-04-01  Alexey Proskuryakov  <ap@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=113721
+        <rdar://problem/13549181> REGRESSION (r146929): HTTP auth credentials not reused during session
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/NetworkResourceLoader.h:
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::shouldUseCredentialStorage): Added an override that
+        we still need. It's not great, but causes no trouble for NetworkProcess.
+        (WebKit::NetworkResourceLoader::shouldUseCredentialStorageAsync): Implement in
+        terms of sync version to avoid duplicating logic.
+
 2013-03-05  Anders Carlsson  <andersca@apple.com>
 
         Apply changes from storage events locally
