@@ -126,6 +126,10 @@ PassRefPtr<SharedMemory> SharedMemory::createFromVMBuffer(void* data, size_t siz
     }
 
     ASSERT(memoryObjectSize >= round_page(size));
+    if (memoryObjectSize < round_page(size)) {
+        mach_port_deallocate(mach_task_self(), port);
+        return 0;
+    }
 
     RefPtr<SharedMemory> sharedMemory(adoptRef(new SharedMemory));
     sharedMemory->m_size = size;
@@ -154,10 +158,12 @@ PassRefPtr<SharedMemory> SharedMemory::create(const Handle& handle, Protection p
     if (handle.isNull())
         return 0;
     
+    ASSERT(round_page(handle.m_size) == handle.m_size);
+
     // Map the memory.
     vm_prot_t vmProtection = machProtection(protection);
     mach_vm_address_t mappedAddress = 0;
-    kern_return_t kr = mach_vm_map(mach_task_self(), &mappedAddress, handle.m_size, 0, VM_FLAGS_ANYWHERE, handle.m_port, 0, false, vmProtection, vmProtection, VM_INHERIT_NONE);
+    kern_return_t kr = mach_vm_map(mach_task_self(), &mappedAddress, round_page(handle.m_size), 0, VM_FLAGS_ANYWHERE, handle.m_port, 0, false, vmProtection, vmProtection, VM_INHERIT_NONE);
     if (kr != KERN_SUCCESS)
         return 0;
 
@@ -205,6 +211,10 @@ bool SharedMemory::createHandle(Handle& handle, Protection protection)
             return false;
 
         ASSERT(size >= round_page(m_size));
+        if (size < round_page(m_size)) {
+            mach_port_deallocate(mach_task_self(), port);
+            return false;
+        }
     }
 
     handle.m_port = port;

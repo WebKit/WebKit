@@ -1,3 +1,18 @@
+2013-04-01  Brady Eidson  <beidson@apple.com>
+
+        SharedMemory release build hardening.
+        <rdar://problem/13546860> and https://bugs.webkit.org/show_bug.cgi?id=113710
+
+        Reviewed by Anders Carlsson.
+
+        Successful creation of a memory entry with a size less than the size we requested should be treated
+        as a failure to create the SharedMemory object.
+
+        * Platform/mac/SharedMemoryMac.cpp:
+        (WebKit::SharedMemory::createFromVMBuffer): Early return if the port we get is bogus for our needs.
+        (WebKit::SharedMemory::createHandle): Ditto.
+        (WebKit::SharedMemory::create): Guarantee we pass valid input in to mach_vm_map.
+
 2013-03-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed buildfix after r147260.
