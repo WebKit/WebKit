@@ -136,29 +136,35 @@ namespace WTF {
     private:
         AddResult inlineAdd(const KeyType&, MappedPassInReferenceType);
 
-        class HashMapKeysProxy : private HashMap {
+        HashTableType m_impl;
+    };
+
+    template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg>
+    class HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::HashMapKeysProxy : 
+        private HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> {
         public:
-            typedef typename HashMap::iterator::Keys iterator;
-            typedef typename HashMap::const_iterator::Keys const_iterator;
-            
+            typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> HashMapType;
+            typedef typename HashMapType::iterator::Keys iterator;
+            typedef typename HashMapType::const_iterator::Keys const_iterator;
+
             iterator begin()
             {
-                return HashMap::begin().keys();
+                return HashMapType::begin().keys();
             }
-            
+
             iterator end()
             {
-                return HashMap::end().keys();
+                return HashMapType::end().keys();
             }
 
             const_iterator begin() const
             {
-                return HashMap::begin().keys();
+                return HashMapType::begin().keys();
             }
-            
+
             const_iterator end() const
             {
-                return HashMap::end().keys();
+                return HashMapType::end().keys();
             }
 
         private:
@@ -169,31 +175,34 @@ namespace WTF {
             HashMapKeysProxy(const HashMapKeysProxy&);
             HashMapKeysProxy& operator=(const HashMapKeysProxy&);
             ~HashMapKeysProxy();
-        };
+    };
 
-        class HashMapValuesProxy : private HashMap {
+    template<typename KeyArg, typename MappedArg, typename HashArg,  typename KeyTraitsArg, typename MappedTraitsArg>
+    class HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>::HashMapValuesProxy : 
+        private HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> {
         public:
-            typedef typename HashMap::iterator::Values iterator;
-            typedef typename HashMap::const_iterator::Values const_iterator;
-            
+            typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> HashMapType;
+            typedef typename HashMapType::iterator::Values iterator;
+            typedef typename HashMapType::const_iterator::Values const_iterator;
+
             iterator begin()
             {
-                return HashMap::begin().values();
+                return HashMapType::begin().values();
             }
-            
+
             iterator end()
             {
-                return HashMap::end().values();
+                return HashMapType::end().values();
             }
 
             const_iterator begin() const
             {
-                return HashMap::begin().values();
+                return HashMapType::begin().values();
             }
-            
+
             const_iterator end() const
             {
-                return HashMap::end().values();
+                return HashMapType::end().values();
             }
 
         private:
@@ -204,9 +213,6 @@ namespace WTF {
             HashMapValuesProxy(const HashMapValuesProxy&);
             HashMapValuesProxy& operator=(const HashMapValuesProxy&);
             ~HashMapValuesProxy();
-        };
-
-        HashTableType m_impl;
     };
 
     template<typename KeyTraits, typename MappedTraits> struct HashMapValueTraits : KeyValuePairHashTraits<KeyTraits, MappedTraits> {

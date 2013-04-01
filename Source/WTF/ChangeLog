@@ -1,3 +1,66 @@
+2013-04-01  Han Shen  <shenhan@google.com>
+
+        Move definition of nested classes that inherit enclosing class outside class definition.
+        https://bugs.webkit.org/show_bug.cgi?id=113454
+
+        Reviewed by Benjamin Poulain.
+
+        HashMap.h does not build on GCC 4.8. Inside this file,
+        HashMapKeysProxy and HashMapValuesProxy are defined as nested
+        class inside HashMap - which is legal - the illegal part is that
+        these 2 classes inherit HashMap, that is the enclosing class, that
+        causes "reference to in-complete definition" error.
+
+        The fix is to move outside the definition of these 2 classes, and
+        leave only declaration part inside HashMap as is illustrated below -
+
+          template class <typename T>
+          class HashMap {
+            ... ...
+            ... ...
+          private:
+            class HashMapKeysProxy;
+
+            // ERROR - nested class inherits enclosing class.
+            class HashMapKeysProxy : private HashMap {
+                ... ...
+            };
+            ... ...
+            ... ...
+            class HashMapKeysProxy : private HashMap {
+                ... ...
+            };
+            ... ...
+            ... ...
+          };
+
+        Fixed as below:
+          template class <typename T>
+          class HashMap {
+            ... ...
+            ... ...
+          private:
+            class HashMapKeysProxy;
+            class HashMapValuesProxy;
+
+            ... ...
+            ... ...
+          };
+
+          template <typename T>
+          class HashMap<T>::HashMapKeysProxy : private HashMap<T> {
+            ... ...
+          };
+
+          template <typename T>
+          class HashMap<T>::HashMapValuesProxy : private HashMap<T> {
+            ... ...
+          };
+
+        * wtf/HashMap.h:
+        (HashMap):
+        (WTF): Factor out nested class definition from enclosing class.
+
 2013-03-31  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Regions should be allocated from the same contiguous segment of virtual memory
