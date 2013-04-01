@@ -31,13 +31,19 @@
 #import "WebView.h"
 #import "WebViewInternal.h"
 #import <WebCore/ApplicationCacheStorage.h>
-#import <WebCore/MemoryCache.h>
 #import <WebCore/CrossOriginPreflightResultCache.h>
+#import <WebCore/MemoryCache.h>
+#import <WebCore/RunLoop.h>
+#import <runtime/InitializeThreading.h>
+#import <wtf/MainThread.h>
 
 @implementation WebCache
 
 + (void)initialize
 {
+    JSC::initializeThreading();
+    WTF::initializeMainThreadToProcessMainThread();
+    WebCore::RunLoop::initializeMainRunLoop();
     InitWebCoreSystemInterface();   
 }
 

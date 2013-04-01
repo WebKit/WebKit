@@ -1,3 +1,17 @@
+2013-04-01  Tim Horton  <timothy_horton@apple.com>
+
+        WebCache should do the normal initialization dance
+        https://bugs.webkit.org/show_bug.cgi?id=113722
+        <rdar://problem/13424530>
+
+        Reviewed by Anders Carlsson.
+
+        In case a WebKit1 client uses WebCache before creating a WebView (or any of the other
+        initialization-ready classes), we should do the initialization work in WebCache as well.
+
+        * Misc/WebCache.mm:
+        (+[WebCache initialize]):
+
 2013-03-26  Timothy Hatcher  <timothy@apple.com>
 
         Add support for dock-to-right of the Web Inspector in the Mac port.
