@@ -26,11 +26,14 @@
 #ifndef StorageNamespaceProxy_h
 #define StorageNamespaceProxy_h
 
+#include <WebCore/SecurityOriginHash.h>
 #include <WebCore/StorageArea.h>
 #include <WebCore/StorageNamespace.h>
+#include <wtf/HashMap.h>
 
 namespace WebKit {
 
+class StorageAreaProxy;
 class WebPage;
 
 class StorageNamespaceProxy : public WebCore::StorageNamespace {
@@ -54,6 +57,8 @@ private:
 
     uint64_t m_storageNamespaceID;
     unsigned m_quotaInBytes;
+
+    HashMap<RefPtr<WebCore::SecurityOrigin>, RefPtr<StorageAreaProxy> > m_storageAreaMap;
 };
 
 } // namespace WebKit

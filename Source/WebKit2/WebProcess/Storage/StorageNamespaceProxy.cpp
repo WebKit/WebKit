@@ -52,7 +52,17 @@ StorageNamespaceProxy::~StorageNamespaceProxy()
 
 PassRefPtr<StorageArea> StorageNamespaceProxy::storageArea(PassRefPtr<SecurityOrigin> securityOrigin)
 {
-    return StorageAreaProxy::create(this, securityOrigin);
+    printf("%p - looking for storage area in %s\n", this, securityOrigin->toString().utf8().data());
+    HashMap<RefPtr<WebCore::SecurityOrigin>, RefPtr<StorageAreaProxy> >::AddResult result = m_storageAreaMap.add(securityOrigin.get(), 0);
+    if (result.isNewEntry) {
+        result.iterator->value = StorageAreaProxy::create(this, securityOrigin);
+        printf("new entry!!\n");
+    } else {
+        printf("reusing!!\n");
+    }
+
+    printf("returning %p\n", result.iterator->value.get());
+    return result.iterator->value;
 }
 
 PassRefPtr<StorageNamespace> StorageNamespaceProxy::copy()

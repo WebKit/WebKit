@@ -74,9 +74,14 @@ private:
     void loadValuesIfNeeded();
     void resetValues();
 
+    void dispatchSessionStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString);
+    void dispatchLocalStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString);
+
     uint64_t m_storageNamespaceID;
     unsigned m_quotaInBytes;
     uint64_t m_storageAreaID;
+
+    RefPtr<WebCore::SecurityOrigin> m_securityOrigin;
     RefPtr<WebCore::StorageMap> m_storageMap;
 
     HashCountedSet<String> m_pendingValueChanges;

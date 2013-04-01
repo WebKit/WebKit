@@ -57,8 +57,9 @@ StorageAreaProxy::StorageAreaProxy(StorageNamespaceProxy* storageNamespaceProxy,
     : m_storageNamespaceID(storageNamespaceProxy->storageNamespaceID())
     , m_quotaInBytes(storageNamespaceProxy->quotaInBytes())
     , m_storageAreaID(generateStorageAreaID())
+    , m_securityOrigin(securityOrigin)
 {
-    WebProcess::shared().connection()->send(Messages::StorageManager::CreateStorageArea(m_storageAreaID, storageNamespaceProxy->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(securityOrigin.get())), 0);
+    WebProcess::shared().connection()->send(Messages::StorageManager::CreateStorageArea(m_storageAreaID, storageNamespaceProxy->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(m_securityOrigin.get())), 0);
     WebProcess::shared().addMessageReceiver(Messages::StorageAreaProxy::messageReceiverName(), m_storageAreaID, this);
 }
 
@@ -216,7 +217,16 @@ void StorageAreaProxy::dispatchStorageEvent(const String& key, const String& old
     if (!shouldApplyChangesForKey(key))
         return;
 
-    // FIXME: Implement this.
+    ASSERT(!key.isNull());
+    ASSERT(!newValue.isNull());
+
+    ASSERT(m_storageMap->hasOneRef());
+    m_storageMap->setItemIgnoringQuota(key, newValue);
+
+    if (storageType() == SessionStorage)
+        dispatchSessionStorageEvent(key, oldValue, newValue, urlString);
+    else
+        dispatchLocalStorageEvent(key, oldValue, newValue, urlString);
 }
 
 StorageType StorageAreaProxy::storageType() const
@@ -272,6 +282,20 @@ void StorageAreaProxy::resetValues()
 {
     m_storageMap = nullptr;
     m_pendingValueChanges.clear();
+}
+
+void StorageAreaProxy::dispatchSessionStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString)
+{
+    ASSERT(storageType() == SessionStorage);
+
+    // FIXME: Implement.
+}
+
+void StorageAreaProxy::dispatchLocalStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString)
+{
+    ASSERT(storageType() == LocalStorage);
+
+    // FIXME: Implement.
 }
 
 } // namespace WebKit

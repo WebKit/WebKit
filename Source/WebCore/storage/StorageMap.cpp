@@ -26,6 +26,8 @@
 #include "config.h"
 #include "StorageMap.h"
 
+#include <wtf/TemporaryChange.h>
+
 namespace WebCore {
 
 PassRefPtr<StorageMap> StorageMap::create(unsigned quota)
@@ -138,6 +140,19 @@ PassRefPtr<StorageMap> StorageMap::setItem(const String& key, const String& valu
     invalidateIterator();
 
     return 0;
+}
+
+PassRefPtr<StorageMap> StorageMap::setItemIgnoringQuota(const String& key, const String& value)
+{
+    TemporaryChange<unsigned> quotaSizeChange(m_quotaSize, noQuota);
+
+    String oldValue;
+    bool quotaException;
+
+    RefPtr<StorageMap> map = setItem(key, value, oldValue, quotaException);
+    ASSERT(!quotaException);
+
+    return map.release();
 }
 
 PassRefPtr<StorageMap> StorageMap::removeItem(const String& key, String& oldValue)
