@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../../media-file.js></script>
+        <script src=../../video-test.js></script>
+        <script>
+            var cue;
+
+            function startTest()
+            {
+                if (!window.TextTrackRegion) {
+                    failTest();
+                    return;
+                }
+
+                consoleWrite("<br>** Test the setter and getter through the JS API **");
+                cue = new TextTrackCue(0.0, 1.0, "sample");
+
+                testExpected("cue.regionId", "");
+                cue.regionId = "someId";
+                testExpected("cue.regionId", "someId");
+
+                consoleWrite("<br>** Test parsing a region attribute of a cue **");
+                findMediaElement();
+
+                cue = video.textTracks[0].cues[0];
+                testExpected("cue.regionId", "someregionattributeid");
+
+                consoleWrite("<br>** Test that region attribute is ignored if either line position or cue size are specified or writing direction is not horizontal **");
+                for (i = 1; i < 4; ++i) {
+                  cue = video.textTracks[0].cues[i];
+                  testExpected("cue.regionId", "");
+                }
+
+                consoleWrite("");
+                endTest();
+            }
+        </script>
+    </head>
+    <body>
+        <p>Tests the regionId attribute of a cue.</p>
+        <video controls>
+            <track src="../captions-webvtt/header-regions.vtt" kind="captions" default onload="startTest()">
+        </video>
+    </body>
+</html>

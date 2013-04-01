@@ -57,10 +57,10 @@
 
     attribute DOMString text;
     DocumentFragment getCueAsHTML();
-    
+
     attribute EventListener onenter;
     attribute EventListener onexit;
-    
+
     // EventTarget interface
     void addEventListener(in DOMString type, 
                           in EventListener listener, 
@@ -70,5 +70,9 @@
                              in [Optional] boolean useCapture);
     boolean dispatchEvent(in Event evt)
         raises(EventException);
+
+#if defined(ENABLE_WEBVTT_REGIONS) && ENABLE_WEBVTT_REGIONS
+    attribute DOMString regionId;
+#endif
 };
 

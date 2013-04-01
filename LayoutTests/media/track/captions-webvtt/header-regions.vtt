@@ -8,5 +8,17 @@ Region: invalid_settings values but region still created
 : Invalid Header
 
 1
-00:00:00.000 --> 00:00:02.500
+00:00:00.000 --> 00:00:02.500 region:someregionattributeid
 We are in New York City
+
+2
+00:00:00.000 --> 00:00:02.500 line:5 region:ignored_attribute_value
+Line is specified, Region should be ignored.
+
+3
+00:00:00.000 --> 00:00:02.500 size:10% region:ignored_attribute_value
+Size is specified, Region should be ignored.
+
+4
+00:00:00.000 --> 00:00:02.500 vertical:lr region:ignored_attribute_value
+Vertical is specified, Region should be ignored.

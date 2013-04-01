@@ -135,6 +135,11 @@ public:
     using EventTarget::dispatchEvent;
     virtual bool dispatchEvent(PassRefPtr<Event>) OVERRIDE;
 
+#if ENABLE(WEBVTT_REGIONS)
+    const String& regionId() const { return m_regionId; }
+    void setRegionId(const String&);
+#endif
+
     bool isActive();
     void setIsActive(bool);
 
@@ -204,6 +209,9 @@ protected:
     PassRefPtr<TextTrackCueBox> displayTreeInternal();
 
 private:
+    void createWebVTTNodeTree();
+    void copyWebVTTNodeToDOMTree(ContainerNode* WebVTTNode, ContainerNode* root);
+
     std::pair<double, double> getPositionCoordinates() const;
     void parseSettings(const String&);
 
@@ -216,7 +224,17 @@ private:
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }
 
-    enum CueSetting { None, Vertical, Line, Position, Size, Align };
+    enum CueSetting {
+        None,
+        Vertical,
+        Line,
+        Position,
+        Size,
+        Align,
+#if ENABLE(WEBVTT_REGIONS)
+        RegionId
+#endif
+    };
     CueSetting settingName(const String&);
 
     String m_id;
@@ -257,9 +275,9 @@ private:
     int m_displaySize;
 
     std::pair<float, float> m_displayPosition;
-
-    void createWebVTTNodeTree();
-    void copyWebVTTNodeToDOMTree(ContainerNode* WebVTTNode, ContainerNode* root);
+#if ENABLE(WEBVTT_REGIONS)
+    String m_regionId;
+#endif
 };
 
 } // namespace WebCore

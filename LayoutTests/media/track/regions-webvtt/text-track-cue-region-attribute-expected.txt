@@ -1,0 +1,17 @@
+Tests the regionId attribute of a cue.
+
+
+** Test the setter and getter through the JS API **
+EXPECTED (cue.regionId == '') OK
+EXPECTED (cue.regionId == 'someId') OK
+
+** Test parsing a region attribute of a cue **
+EXPECTED (cue.regionId == 'someregionattributeid') OK
+
+** Test that region attribute is ignored if either line position or cue size are specified or writing direction is not horizontal **
+EXPECTED (cue.regionId == '') OK
+EXPECTED (cue.regionId == '') OK
+EXPECTED (cue.regionId == '') OK
+
+END OF TEST
+
