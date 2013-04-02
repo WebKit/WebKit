@@ -55,6 +55,12 @@ void ShadowDistributedRules::collectMatchRequests(bool includeEmptyRules, Vector
     for (ShadowDistributedRuleSetMap::iterator it = m_shadowDistributedRuleSetMap.begin(); it != m_shadowDistributedRuleSetMap.end(); ++it)
         matchRequests.append(MatchRequest(it->value.get(), includeEmptyRules, it->key));
 }
+
+void ShadowDistributedRules::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
+{
+    MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
+    info.addMember(m_shadowDistributedRuleSetMap, "shadowDistributedRuleSetMap");
+}
 #endif
 
 DocumentRuleSets::DocumentRuleSets()
@@ -162,6 +168,9 @@ void DocumentRuleSets::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
     info.addMember(m_features, "features");
     info.addMember(m_siblingRuleSet, "siblingRuleSet");
     info.addMember(m_uncommonAttributeRuleSet, "uncommonAttributeRuleSet");
+#if ENABLE(SHADOW_DOM)
+    info.addMember(m_shadowDistributedRules, "shadowDistributedRules");
+#endif
 }
 
 } // namespace WebCore
