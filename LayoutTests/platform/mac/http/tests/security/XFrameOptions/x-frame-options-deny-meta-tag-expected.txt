@@ -1,0 +1,19 @@
+http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-deny-meta-tag.html, http method GET> redirectResponse (null)
+<unknown> - didFinishLoading
+http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html, http status code 200>
+http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -999, failing URL "http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html">
+CONSOLE MESSAGE: Refused to display 'http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe.html' in a frame because it set 'X-Frame-Options' to 'deny'.
+data:text/html,<p></p> - willSendRequest <NSURLRequest URL data:text/html,<p></p>, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-deny-meta-tag.html, http method GET> redirectResponse (null)
+data:text/html,<p></p> - didReceiveResponse <NSURLResponse data:text/html,<p></p>, http status code 0>
+data:text/html,<p></p> - didFinishLoading
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "null".  The frame requesting access has a protocol of "http", the frame being accessed has a protocol of "data". Protocols must match.
+
+CONSOLE MESSAGE: line 13: PASS: Could not read contentWindow.location.href
+There should be no content in the iframe below
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+
