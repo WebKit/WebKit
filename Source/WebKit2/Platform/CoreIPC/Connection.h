@@ -216,6 +216,7 @@ private:
     void dispatchMessage(PassOwnPtr<MessageDecoder>);
     void dispatchMessage(MessageDecoder&);
     void dispatchSyncMessage(MessageDecoder&);
+    void dispatchDidReceiveInvalidMessage(const CString& messageReceiverNameString, const CString& messageNameString);
     void didFailToSendSyncMessage();
 
     // Can be called on any thread.

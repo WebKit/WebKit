@@ -1,3 +1,24 @@
+2013-04-02  Anders Carlsson  <andersca@apple.com>
+
+        Be more robust against empty message receiver names in incoming messages
+        https://bugs.webkit.org/show_bug.cgi?id=113833
+        <rdar://problem/13284433>
+
+        Reviewed by Beth Dakin.
+
+        Turns out that we either send or receive messages whose receiver names are empty. This leads to bad things when we try to look
+        up the message receiver name in a hash map since the empty name is used to represent an empty hash map value.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::addWorkQueueMessageReceiverOnConnectionWorkQueue):
+        Sprinkle assertions.
+
+        (CoreIPC::Connection::processIncomingMessage):
+        If the message receiver name is not valid, make sure to call didReceiveInvalidMessage on the client thread.
+
+        (CoreIPC::Connection::dispatchDidReceiveInvalidMessage):
+        Add new helper function.
+
 2013-04-02  Simon Cooper  <scooper@apple.com>
 
         [Mac][WK2] Don’t let plug-ins use System V shared memory
