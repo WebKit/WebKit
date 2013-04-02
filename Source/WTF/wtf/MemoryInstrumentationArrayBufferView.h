@@ -39,7 +39,7 @@ namespace WTF {
 inline void reportMemoryUsage(const ArrayBufferView* arrayBufferView, MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, arrayBufferView);
-    info.addMember(arrayBufferView->buffer().get(), "buffer");
+    info.addMember(arrayBufferView->buffer().get(), "buffer", RetainingPointer);
 }
 
 inline void reportMemoryUsage(const ArrayBuffer* arrayBuffer, MemoryObjectInfo* memoryObjectInfo)

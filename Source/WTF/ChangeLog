@@ -1,3 +1,14 @@
+2013-04-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: memory instrumentation for external arrays is broken
+        https://bugs.webkit.org/show_bug.cgi?id=113790
+
+        Reviewed by Pavel Feldman.
+
+        * wtf/MemoryInstrumentationArrayBufferView.h: report buffer pointer as retaining one as
+        we know that the pointer is not broken.
+        (WTF::reportMemoryUsage):
+
 2013-04-01  Han Shen  <shenhan@google.com>
 
         Move definition of nested classes that inherit enclosing class outside class definition.

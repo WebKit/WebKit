@@ -1,0 +1,4 @@
+This test checks that page's external arrays size reported by the memory agent includes size of all external arrays created by the page. Bug 113790.
+
+PASS: block size for path = [ProcessPrivateMemory, JSExternalResources] is OK.
+
