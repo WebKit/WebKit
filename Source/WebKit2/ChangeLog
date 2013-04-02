@@ -1,3 +1,16 @@
+2013-04-02  Simon Cooper  <scooper@apple.com>
+
+        [Mac][WK2] Don’t let plug-ins use System V shared memory
+        https://bugs.webkit.org/show_bug.cgi?id=113466
+        <rdar://problem/13159030>
+
+        Reviewed, tweaked and landed by Alexey Proskuryakov.
+
+        Instead of allowing plug-ins to request System V shm, give them a
+        temporary but usable alternative if they try to request it.
+
+        * PluginProcess/mac/PluginProcessShim.mm:
+
 2013-04-02  Anders Carlsson  <andersca@apple.com>
 
         Add WKContextSetInvalidMessageFunction

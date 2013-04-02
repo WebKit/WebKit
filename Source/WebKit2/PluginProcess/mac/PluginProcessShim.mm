@@ -32,6 +32,10 @@
 #import <stdio.h>
 #import <objc/message.h>
 
+#include <sys/shm.h>
+#include <sys/ipc.h>
+#include <sys/mman.h>
+
 #define DYLD_INTERPOSE(_replacement,_replacee) \
     __attribute__((used)) static struct{ const void* replacement; const void* replacee; } _interpose_##_replacee \
     __attribute__ ((section ("__DATA,__interpose"))) = { (const void*)(unsigned long)&_replacement, (const void*)(unsigned long)&_replacee };
@@ -113,6 +117,162 @@ DYLD_INTERPOSE(shimHideWindow, HideWindow);
 
 #endif
 
+// Simple Fake System V shared memory. This replacement API implements
+// usable system V shared memory for use within a single process. The memory
+// is not shared outside of the scope of the process.
+struct FakeSharedMemoryDescriptor {
+    FakeSharedMemoryDescriptor* next;
+    int referenceCount;
+    key_t key;
+    size_t requestedSize;
+    size_t mmapedSize;
+    int sharedMemoryFlags;
+    int sharedMemoryIdentifier;
+    void* mmapedAddress;
+};
+
+static FakeSharedMemoryDescriptor* shmDescriptorList = 0;
+static int fakeSharedMemoryIdentifier = 0;
+
+static FakeSharedMemoryDescriptor* findBySharedMemoryIdentifier(int sharedMemoryIdentifier)
+{
+    FakeSharedMemoryDescriptor* descriptorPtr = shmDescriptorList;
+
+    while (descriptorPtr) {
+        if (descriptorPtr->sharedMemoryIdentifier == sharedMemoryIdentifier)
+            break;
+        descriptorPtr = descriptorPtr->next;
+    }
+    return descriptorPtr;
+}
+
+static FakeSharedMemoryDescriptor* findBySharedMemoryAddress(const void* mmapedAddress)
+{
+    FakeSharedMemoryDescriptor* descriptorPtr = shmDescriptorList;
+
+    while (descriptorPtr) {
+        if (descriptorPtr->mmapedAddress == mmapedAddress)
+            break;
+
+        descriptorPtr = descriptorPtr->next;
+    }
+    return descriptorPtr;
+}
+
+static int shim_shmdt(const void* sharedAddress)
+{
+    FakeSharedMemoryDescriptor* descriptorPtr = findBySharedMemoryAddress(sharedAddress);
+    if (!descriptorPtr) {
+        errno = EINVAL;
+        return -1;
+    }
+
+    descriptorPtr->referenceCount--;
+    if (!descriptorPtr->referenceCount) {
+        munmap(descriptorPtr->mmapedAddress, descriptorPtr->mmapedSize);
+        descriptorPtr->mmapedAddress = 0;
+    }
+
+    return 0;
+}
+
+static void* shim_shmat(int sharedMemoryIdentifier, const void* requestedSharedAddress, int shmflg)
+{
+    FakeSharedMemoryDescriptor* descriptorPtr = findBySharedMemoryIdentifier(sharedMemoryIdentifier);
+    void* mappedAddress = (void*)-1;
+
+    if (!descriptorPtr) {
+        errno = EINVAL;
+        return mappedAddress;
+    }
+
+    if (descriptorPtr->mmapedAddress) {
+        if (!requestedSharedAddress || requestedSharedAddress == descriptorPtr->mmapedAddress) {
+            mappedAddress = descriptorPtr->mmapedAddress;
+            descriptorPtr->referenceCount++;
+        }
+    } else {
+        descriptorPtr->mmapedSize = (descriptorPtr->requestedSize + PAGE_SIZE) & ~(PAGE_SIZE - 1);
+        mappedAddress = descriptorPtr->mmapedAddress = mmap((void*)requestedSharedAddress,
+            descriptorPtr->mmapedSize, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0);
+        descriptorPtr->referenceCount++;
+    }
+
+    return mappedAddress;
+}
+
+static int shim_shmget(key_t key, size_t requestedSizeOfSharedMemory, int sharedMemoryFlags)
+{
+    FakeSharedMemoryDescriptor* descriptorPtr = shmDescriptorList;
+
+    while (descriptorPtr) {
+        // Are we looking for something we've already created?
+        if (descriptorPtr->key == key
+            && descriptorPtr->requestedSize == requestedSizeOfSharedMemory
+            && !((descriptorPtr->sharedMemoryFlags ^ sharedMemoryFlags) & 0777))
+            break;
+        descriptorPtr = descriptorPtr->next;
+    }
+
+    if (!descriptorPtr) {
+        descriptorPtr = (FakeSharedMemoryDescriptor*)malloc(sizeof(FakeSharedMemoryDescriptor));
+        if (!descriptorPtr) {
+            errno = ENOMEM;
+            return -1;
+        }
+        descriptorPtr->key = key;
+        descriptorPtr->requestedSize = requestedSizeOfSharedMemory;
+        descriptorPtr->sharedMemoryFlags = sharedMemoryFlags;
+        descriptorPtr->sharedMemoryIdentifier = ++fakeSharedMemoryIdentifier;
+        descriptorPtr->referenceCount = 0;
+        descriptorPtr->mmapedAddress = 0;
+        descriptorPtr->mmapedSize = 0;
+        descriptorPtr->next = shmDescriptorList;
+        shmDescriptorList = descriptorPtr;
+    }
+    return descriptorPtr->sharedMemoryIdentifier;
+}
+
+static int shim_shmctl(int sharedMemoryIdentifier, int cmd, struct shmid_ds* outputDescriptor)
+{
+    FakeSharedMemoryDescriptor* descriptorPtr = findBySharedMemoryIdentifier(sharedMemoryIdentifier);
+
+    if (!descriptorPtr) {
+        errno = EINVAL;
+        return -1;
+    }
+
+    switch (cmd) {
+    case IPC_SET:
+    case IPC_RMID:
+        errno = EPERM;
+        return -1;
+
+    case IPC_STAT:
+        outputDescriptor->shm_perm.cuid = outputDescriptor->shm_perm.uid = getuid();
+        outputDescriptor->shm_perm.cgid = outputDescriptor->shm_perm.gid = getgid();
+        outputDescriptor->shm_perm.mode = descriptorPtr->sharedMemoryFlags & 0777;
+
+        outputDescriptor->shm_segsz = descriptorPtr->requestedSize;
+
+        outputDescriptor->shm_cpid = outputDescriptor->shm_lpid = getpid();
+
+        outputDescriptor->shm_nattch = descriptorPtr->referenceCount;
+
+        outputDescriptor->shm_ctime = outputDescriptor->shm_atime = outputDescriptor->shm_dtime = time(0);
+
+        return 0;
+    }
+
+    errno = EINVAL;
+    return -1;
+}
+
+DYLD_INTERPOSE(shim_shmat, shmat);
+DYLD_INTERPOSE(shim_shmdt, shmdt);
+DYLD_INTERPOSE(shim_shmget, shmget);
+DYLD_INTERPOSE(shim_shmctl, shmctl);
+
 __attribute__((visibility("default")))
 void WebKitPluginProcessShimInitialize(const PluginProcessShimCallbacks& callbacks)
 {
@@ -120,3 +280,4 @@ void WebKitPluginProcessShimInitialize(const PluginProcessShimCallbacks& callbac
 }
 
 } // namespace WebKit
+
