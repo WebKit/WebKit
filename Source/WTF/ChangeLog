@@ -1,3 +1,16 @@
+2013-04-02  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Filters] Filter outsets clipped on composited layers when filter is applied after first layout
+        https://bugs.webkit.org/show_bug.cgi?id=109098
+
+        Reviewed by Dean Jackson.
+
+        * wtf/Platform.h:
+            Add flag for HAVE(COMPOSITOR_FILTER_OUTSETS) macro. This is used to check if a
+            platform's compositor expands layers internally for filter outsets when it applies
+            filters like drop-shadow and blur. Currently, only CoreAnimation does has this
+            capability.
+
 2013-04-02  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: memory instrumentation for external arrays is broken

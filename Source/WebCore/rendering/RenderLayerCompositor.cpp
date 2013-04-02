@@ -760,7 +760,14 @@ IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* laye
 {
     if (!canBeComposited(layer))
         return IntRect();
-    return layer->calculateLayerBounds(ancestorLayer, 0, RenderLayer::DefaultCalculateLayerBoundsFlags | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask);
+
+    RenderLayer::CalculateLayerBoundsFlags flags = RenderLayer::DefaultCalculateLayerBoundsFlags | RenderLayer::ExcludeHiddenDescendants | RenderLayer::DontConstrainForMask;
+#if ENABLE(CSS_FILTERS) && HAVE(COMPOSITOR_FILTER_OUTSETS)
+    // If the compositor computes its own filter outsets, don't include them in the composited bounds.
+    if (!layer->paintsWithFilters())
+        flags &= ~RenderLayer::IncludeLayerFilterOutsets;
+#endif
+    return layer->calculateLayerBounds(ancestorLayer, 0, flags);
 }
 
 void RenderLayerCompositor::layerWasAdded(RenderLayer* /*parent*/, RenderLayer* /*child*/)

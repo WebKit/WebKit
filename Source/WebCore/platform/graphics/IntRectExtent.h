@@ -66,6 +66,8 @@ public:
     int left() const { return m_left; }
     void setLeft(int left) { m_left = left; }
 
+    bool isZero() const { return !left() && !right() && !top() && !bottom(); }
+
     void expandRect(LayoutRect& rect) const
     {
         if (isZero())
@@ -76,8 +78,6 @@ public:
     }
 
 private:
-    bool isZero() const { return !left() && !right() && !top() && !bottom(); }
-
     int m_top;
     int m_right;
     int m_bottom;

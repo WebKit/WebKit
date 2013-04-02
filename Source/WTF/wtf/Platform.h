@@ -924,6 +924,12 @@
 #define WTF_USE_ACCELERATED_COMPOSITING 1
 #endif
 
+/* FIXME: When all platforms' compositors can compute their own filter outsets, we should remove this define. 
+   https://bugs.webkit.org/show_bug.cgi?id=112830 */
+#if USE(CG)
+#define HAVE_COMPOSITOR_FILTER_OUTSETS 1
+#endif
+
 #if ENABLE(WEBGL) && !defined(WTF_USE_3D_GRAPHICS)
 #define WTF_USE_3D_GRAPHICS 1
 #endif

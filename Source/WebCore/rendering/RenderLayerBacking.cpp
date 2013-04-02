@@ -366,7 +366,21 @@ void RenderLayerBacking::updateTransform(const RenderStyle* style)
 #if ENABLE(CSS_FILTERS)
 void RenderLayerBacking::updateFilters(const RenderStyle* style)
 {
+    bool didCompositeFilters = m_canCompositeFilters;
     m_canCompositeFilters = m_graphicsLayer->setFilters(owningLayer()->computeFilterOperations(style));
+    if (didCompositeFilters != m_canCompositeFilters) {
+        //
+        // If filters used to be painted in software and are now painted in the compositor, we need to:
+        // (1) Remove the FilterEffectRenderer, which was used for painting filters in software.
+        // (2) Repaint the layer contents to remove the software-applied filter because the compositor will apply it.
+        //
+        // Similarly, if filters used to be painted in the compositor and are now painted in software, we need to:
+        // (1) Create a FilterEffectRenderer.
+        // (2) Repaint the layer contents to apply a software filter because the compositor won't apply it.
+        //
+        m_owningLayer->updateOrRemoveFilterEffectRenderer();
+        setContentsNeedDisplay();
+    }
 }
 #endif
 
@@ -598,10 +612,6 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     // Set opacity, if it is not animating.
     if (!renderer()->animation()->isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyOpacity))
         updateOpacity(renderer()->style());
-        
-#if ENABLE(CSS_FILTERS)
-    updateFilters(renderer()->style());
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
     updateLayerBlendMode(renderer()->style());

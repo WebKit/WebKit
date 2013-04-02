@@ -6,13 +6,13 @@
       (contentsOpaque 1)
       (children 2
         (GraphicsLayer
-          (position 205.00 205.00)
-          (anchor 0.78 0.78)
-          (bounds 225.00 225.00)
+          (position 230.00 230.00)
+          (anchor 0.75 0.75)
+          (bounds 200.00 200.00)
           (drawsContent 1)
         )
         (GraphicsLayer
-          (bounds 225.00 225.00)
+          (bounds 200.00 200.00)
           (drawsContent 1)
         )
       )

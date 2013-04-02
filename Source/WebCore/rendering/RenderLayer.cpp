@@ -6041,6 +6041,14 @@ void RenderLayer::updateOutOfFlowPositioned(const RenderStyle* oldStyle)
     }
 }
 
+#if ENABLE(CSS_FILTERS)
+static bool hasOrHadFilters(const RenderStyle* oldStyle, const RenderStyle* newStyle)
+{
+    ASSERT(newStyle);
+    return (oldStyle && oldStyle->hasFilter()) || newStyle->hasFilter();
+}
+#endif
+
 #if USE(ACCELERATED_COMPOSITING)
 inline bool RenderLayer::needsCompositingLayersRebuiltForClip(const RenderStyle* oldStyle, const RenderStyle* newStyle) const
 {
@@ -6053,7 +6061,60 @@ inline bool RenderLayer::needsCompositingLayersRebuiltForOverflow(const RenderSt
     ASSERT(newStyle);
     return !isComposited() && oldStyle && (oldStyle->overflowX() != newStyle->overflowX()) && stackingContainer()->hasCompositingDescendant();
 }
+
+#if ENABLE(CSS_FILTERS)
+inline bool RenderLayer::needsCompositingLayersRebuiltForFilters(const RenderStyle* oldStyle, const RenderStyle* newStyle, bool didPaintWithFilters) const
+{
+    if (!hasOrHadFilters(oldStyle, newStyle))
+        return false;
+
+    if (renderer()->animation()->isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyWebkitFilter)) {
+        // When the compositor is performing the filter animation, we shouldn't touch the compositing layers.
+        // All of the layers above us should have been promoted to compositing layers already.
+        return false;
+    }
+
+    FilterOutsets newOutsets = newStyle->filterOutsets();
+    if (oldStyle && (oldStyle->filterOutsets() != newOutsets)) {
+        // When filter outsets change, we need to:
+        // (1) Recompute the overlap map to promote the correct layers to composited layers.
+        // (2) Update the composited layer bounds (and child GraphicsLayer positions) on platforms
+        //     whose compositors can't compute their own filter outsets.
+        return true;
+    }
+
+#if HAVE(COMPOSITOR_FILTER_OUTSETS)
+    if ((didPaintWithFilters != paintsWithFilters()) && !newOutsets.isZero()) {
+        // When the layer used to paint filters in software and now paints filters in the
+        // compositor, the compositing layer bounds need to change from including filter outsets to
+        // excluding filter outsets, on platforms whose compositors compute their own outsets.
+        // Similarly for the reverse change from compositor-painted to software-painted filters.
+        return true;
+    }
+#endif
+
+    return false;
+}
+#endif // ENABLE(CSS_FILTERS)
 #endif // USE(ACCELERATED_COMPOSITING)
+
+#if ENABLE(CSS_FILTERS)
+void RenderLayer::updateFilters(const RenderStyle* oldStyle, const RenderStyle* newStyle)
+{
+    if (!hasOrHadFilters(oldStyle, newStyle))
+        return;
+
+    updateOrRemoveFilterClients();
+#if USE(ACCELERATED_COMPOSITING)
+    if (isComposited() && !renderer()->animation()->isRunningAcceleratedAnimationOnRenderer(renderer(), CSSPropertyWebkitFilter)) {
+        // During an accelerated animation, both WebKit and the compositor animate properties.
+        // However, WebKit shouldn't ask the compositor to update its filters if the compositor is performing the animation.
+        backing()->updateFilters(renderer()->style());
+    }
+#endif
+    updateOrRemoveFilterEffectRenderer();
+}
+#endif
 
 void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
 {
@@ -6106,8 +6167,14 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode();
 #endif
+
+#if USE(ACCELERATED_COMPOSITING)
+    bool didPaintWithFilters = false;
+#endif
 #if ENABLE(CSS_FILTERS)
-    updateOrRemoveFilterClients();
+    if (paintsWithFilters())
+        didPaintWithFilters = true;
+    updateFilters(oldStyle, renderer()->style());
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -6116,22 +6183,11 @@ void RenderLayer::styleChanged(StyleDifference, const RenderStyle* oldStyle)
     const RenderStyle* newStyle = renderer()->style();
     if (compositor()->updateLayerCompositingState(this)
         || needsCompositingLayersRebuiltForClip(oldStyle, newStyle)
-        || needsCompositingLayersRebuiltForOverflow(oldStyle, newStyle))
+        || needsCompositingLayersRebuiltForOverflow(oldStyle, newStyle)
+        || needsCompositingLayersRebuiltForFilters(oldStyle, newStyle, didPaintWithFilters))
         compositor()->setCompositingLayersNeedRebuild();
     else if (isComposited())
         backing()->updateGraphicsLayerGeometry();
-#endif
-
-#if ENABLE(CSS_FILTERS)
-    updateOrRemoveFilterEffectRenderer();
-#if USE(ACCELERATED_COMPOSITING)
-    bool backingDidCompositeLayers = isComposited() && backing()->canCompositeFilters();
-    if (isComposited() && backingDidCompositeLayers && !backing()->canCompositeFilters()) {
-        // The filters used to be drawn by platform code, but now the platform cannot draw them anymore.
-        // Fallback to drawing them in software.
-        setBackingNeedsRepaint();
-    }
-#endif
 #endif
 }
 
