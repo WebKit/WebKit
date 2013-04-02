@@ -1287,23 +1287,23 @@ bool Node::needsShadowTreeWalkerSlow() const
     return (isShadowRoot() || (isElementNode() && (isInsertionPoint() || isPseudoElement() || toElement(this)->hasPseudoElements() || toElement(this)->shadow())));
 }
 
-bool Node::isBlockFlow() const
+bool Node::isBlockFlowElement() const
 {
-    return renderer() && renderer()->isBlockFlow();
+    return isElementNode() && renderer() && renderer()->isBlockFlow();
 }
 
 Element *Node::enclosingBlockFlowElement() const
 {
     Node *n = const_cast<Node *>(this);
-    if (isBlockFlow())
-        return static_cast<Element *>(n);
+    if (isBlockFlowElement())
+        return toElement(n);
 
     while (1) {
         n = n->parentNode();
         if (!n)
             break;
-        if (n->isBlockFlow() || n->hasTagName(bodyTag))
-            return static_cast<Element *>(n);
+        if (n->isBlockFlowElement() || n->hasTagName(bodyTag))
+            return toElement(n);
     }
     return 0;
 }

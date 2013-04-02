@@ -69,7 +69,7 @@ void FormatBlockCommand::formatRange(const Position& start, const Position& end,
     Element* refNode = enclosingBlockFlowElement(end);
     Element* root = editableRootForPosition(start);
     // Root is null for elements with contenteditable=false.
-    if (!root)
+    if (!root || !refNode)
         return;
     if (isElementForFormatBlock(refNode->tagQName()) && start == startOfBlock(start)
         && (end == endOfBlock(end) || isNodeVisiblyContainedWithin(refNode, range.get()))

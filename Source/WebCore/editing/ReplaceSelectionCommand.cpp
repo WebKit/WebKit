@@ -842,11 +842,11 @@ void ReplaceSelectionCommand::mergeEndIfNeeded()
 static Node* enclosingInline(Node* node)
 {
     while (ContainerNode* parent = node->parentNode()) {
-        if (parent->isBlockFlow() || parent->hasTagName(bodyTag))
+        if (parent->isBlockFlowElement() || parent->hasTagName(bodyTag))
             return node;
         // Stop if any previous sibling is a block.
         for (Node* sibling = node->previousSibling(); sibling; sibling = sibling->previousSibling()) {
-            if (sibling->isBlockFlow())
+            if (sibling->isBlockFlowElement())
                 return node;
         }
         node = parent;
