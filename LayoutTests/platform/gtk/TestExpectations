@@ -1383,10 +1383,6 @@ webkit.org/b/112705 fast/dom/icon-url-property.html [ Failure ]
 
 webkit.org/b/113127 media/track/track-prefer-captions.html [ Timeout ]
 
-webkit.org/b/113689 storage/indexeddb/clone-exception.html [ Failure ]
-webkit.org/b/113689 storage/indexeddb/exceptions.html [ Failure ]
-webkit.org/b/113689 storage/indexeddb/structured-clone.html [ Failure ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
