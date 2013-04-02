@@ -3660,9 +3660,6 @@ webkit.org/b/109262 [ Debug SnowLeopard ] fast/table/table-cell-before-after-con
 webkit.org/b/109312 [ Win ] fast/canvas/canvas-drawImage-shadow.html [ Pass Failure ]
 webkit.org/b/109312 [ Win ] platform/chromium/virtual/gpu/fast/canvas/canvas-drawImage-shadow.html [ Pass Failure ]
 
-# Will need pixel rebaseline for subtle compositor change
-crbug.com/168719 css3/filters/effect-reference-hw.html [ ImageOnlyFailure ]
-
 # ENABLE_ENCRYPTED_MEDIA_V2 is not enabled.
 webkit.org/b/97037 media/encrypted-media/encrypted-media-v2-events.html [ Timeout ]
 webkit.org/b/97037 media/encrypted-media/encrypted-media-v2-syntax.html [ Timeout ]
