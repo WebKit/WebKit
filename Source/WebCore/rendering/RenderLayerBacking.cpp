@@ -1089,7 +1089,11 @@ void RenderLayerBacking::positionOverflowControlsLayers(const IntSize& offsetFro
             if (layer->hasContentsLayer())
                 layer->setContentsRect(IntRect(IntPoint(), hBar->frameRect().size()));
         }
+#if OS(ANDROID)
+        layer->setDrawsContent(false);
+#else
         layer->setDrawsContent(hBar && !layer->hasContentsLayer());
+#endif
     }
     
     if (GraphicsLayer* layer = layerForVerticalScrollbar()) {
@@ -1100,7 +1104,11 @@ void RenderLayerBacking::positionOverflowControlsLayers(const IntSize& offsetFro
             if (layer->hasContentsLayer())
                 layer->setContentsRect(IntRect(IntPoint(), vBar->frameRect().size()));
         }
+#if OS(ANDROID)
+        layer->setDrawsContent(false);
+#else
         layer->setDrawsContent(vBar && !layer->hasContentsLayer());
+#endif
     }
 
     if (GraphicsLayer* layer = layerForScrollCorner()) {
