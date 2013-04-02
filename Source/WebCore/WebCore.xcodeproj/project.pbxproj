@@ -6037,6 +6037,9 @@
 		CD82030D1395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD8203091395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.mm */; };
 		CD8203101395ACE700F956C6 /* WebWindowAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = CD82030E1395ACE700F956C6 /* WebWindowAnimation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD8203111395ACE700F956C6 /* WebWindowAnimation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD82030F1395ACE700F956C6 /* WebWindowAnimation.mm */; };
+		CDA79824170A258300D45C55 /* AudioSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA79823170A258300D45C55 /* AudioSession.cpp */; };
+		CDA79827170A279100D45C55 /* AudioSessionIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDA79825170A279000D45C55 /* AudioSessionIOS.mm */; };
+		CDA7982A170A3D0000D45C55 /* AudioSession.h in Headers */ = {isa = PBXBuildFile; fileRef = CDA79821170A22DC00D45C55 /* AudioSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDA98DA31601464100FEA3B1 /* JSMediaKeyError.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA98D9B160128A500FEA3B1 /* JSMediaKeyError.cpp */; };
 		CDA98DD816025BEF00FEA3B1 /* MediaKeyMessageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA98DD516025BED00FEA3B1 /* MediaKeyMessageEvent.cpp */; };
 		CDA98DDF16026A3700FEA3B1 /* JSMediaKeyMessageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA98DDB16026A1800FEA3B1 /* JSMediaKeyMessageEvent.cpp */; };
@@ -13724,6 +13727,10 @@
 		CD8203091395AB6A00F956C6 /* WebVideoFullscreenHUDWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVideoFullscreenHUDWindowController.mm; sourceTree = "<group>"; };
 		CD82030E1395ACE700F956C6 /* WebWindowAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebWindowAnimation.h; sourceTree = "<group>"; };
 		CD82030F1395ACE700F956C6 /* WebWindowAnimation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebWindowAnimation.mm; sourceTree = "<group>"; };
+		CDA79821170A22DC00D45C55 /* AudioSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioSession.h; sourceTree = "<group>"; };
+		CDA79822170A24F400D45C55 /* AudioSessionListener.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioSessionListener.h; sourceTree = "<group>"; };
+		CDA79823170A258300D45C55 /* AudioSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioSession.cpp; sourceTree = "<group>"; };
+		CDA79825170A279000D45C55 /* AudioSessionIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AudioSessionIOS.mm; path = ios/AudioSessionIOS.mm; sourceTree = "<group>"; };
 		CDA98D9B160128A500FEA3B1 /* JSMediaKeyError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaKeyError.cpp; sourceTree = "<group>"; };
 		CDA98D9C160128A500FEA3B1 /* JSMediaKeyError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaKeyError.h; sourceTree = "<group>"; };
 		CDA98DC216014EEE00FEA3B1 /* MediaKeyNeededEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MediaKeyNeededEvent.cpp; path = Modules/encryptedmedia/MediaKeyNeededEvent.cpp; sourceTree = "<group>"; };
@@ -21887,6 +21894,7 @@
 			children = (
 				CD0EEE0B14743E35003EAFA2 /* AudioDestinationIOS.cpp */,
 				CD0EEE0A14743E34003EAFA2 /* AudioDestinationIOS.h */,
+				CDA79825170A279000D45C55 /* AudioSessionIOS.mm */,
 			);
 			name = ios;
 			sourceTree = "<group>";
@@ -23222,6 +23230,9 @@
 				FD31605012B026F700C1A359 /* AudioResampler.h */,
 				FD31605112B026F700C1A359 /* AudioResamplerKernel.cpp */,
 				FD31605212B026F700C1A359 /* AudioResamplerKernel.h */,
+				CDA79821170A22DC00D45C55 /* AudioSession.h */,
+				CDA79823170A258300D45C55 /* AudioSession.cpp */,
+				CDA79822170A24F400D45C55 /* AudioSessionListener.h */,
 				FD31605312B026F700C1A359 /* AudioSourceProvider.h */,
 				FD62F52D145898D80094B0ED /* AudioSourceProviderClient.h */,
 				FD31605412B026F700C1A359 /* AudioUtilities.cpp */,
@@ -23472,6 +23483,7 @@
 				FD31608612B026F700C1A359 /* AudioResampler.h in Headers */,
 				FD31608812B026F700C1A359 /* AudioResamplerKernel.h in Headers */,
 				FD8C46EC154608E700A5910C /* AudioScheduledSourceNode.h in Headers */,
+				CDA7982A170A3D0000D45C55 /* AudioSession.h in Headers */,
 				FD31602212B0267600C1A359 /* AudioSourceNode.h in Headers */,
 				FD31608912B026F700C1A359 /* AudioSourceProvider.h in Headers */,
 				FD62F52E145898D80094B0ED /* AudioSourceProviderClient.h in Headers */,
@@ -27216,6 +27228,8 @@
 				FD31608512B026F700C1A359 /* AudioResampler.cpp in Sources */,
 				FD31608712B026F700C1A359 /* AudioResamplerKernel.cpp in Sources */,
 				FD8C46EB154608E700A5910C /* AudioScheduledSourceNode.cpp in Sources */,
+				CDA79824170A258300D45C55 /* AudioSession.cpp in Sources */,
+				CDA79827170A279100D45C55 /* AudioSessionIOS.mm in Sources */,
 				FDB052DF1561A42C00B500D6 /* AudioSummingJunction.cpp in Sources */,
 				FD31608A12B026F700C1A359 /* AudioUtilities.cpp in Sources */,
 				7EE6845F12D26E3800E79415 /* AuthenticationCF.cpp in Sources */,

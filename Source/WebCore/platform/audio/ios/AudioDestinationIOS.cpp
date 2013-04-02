@@ -36,11 +36,11 @@
 #include "AudioDestinationIOS.h"
 
 #include "AudioIOCallback.h"
+#include "AudioSession.h"
 #include "FloatConversion.h"
 #include "Logging.h"
 #include "Page.h"
 #include "SoftLinking.h"
-#include <CoreAudio/AudioHardware.h>
 #include <AudioToolbox/AudioServices.h>
 #include <WebCore/RuntimeApplicationChecksIOS.h>
 #include <wtf/HashSet.h>
@@ -51,10 +51,6 @@ SOFT_LINK(AudioToolbox, AudioComponentInstanceDispose, OSStatus, (AudioComponent
 SOFT_LINK(AudioToolbox, AudioComponentInstanceNew, OSStatus, (AudioComponent inComponent, AudioComponentInstance *outInstance), (inComponent, outInstance))
 SOFT_LINK(AudioToolbox, AudioOutputUnitStart, OSStatus, (AudioUnit ci), (ci))
 SOFT_LINK(AudioToolbox, AudioOutputUnitStop, OSStatus, (AudioUnit ci), (ci))
-SOFT_LINK(AudioToolbox, AudioSessionInitialize, OSStatus, (CFRunLoopRef inRunLoop, CFStringRef inRunLoopMode, AudioSessionInterruptionListener inInterruptionListener, void *inClientData), (inRunLoop, inRunLoopMode, inInterruptionListener, inClientData))
-SOFT_LINK(AudioToolbox, AudioSessionGetProperty, OSStatus, (AudioSessionPropertyID inID, UInt32 *ioDataSize, void *outData), (inID, ioDataSize, outData))
-SOFT_LINK(AudioToolbox, AudioSessionSetActive, OSStatus, (Boolean active), (active))
-SOFT_LINK(AudioToolbox, AudioSessionSetProperty, OSStatus, (AudioSessionPropertyID inID, UInt32 inDataSize, const void *inData), (inID, inDataSize, inData))
 SOFT_LINK(AudioToolbox, AudioUnitAddPropertyListener, OSStatus, (AudioUnit inUnit, AudioUnitPropertyID inID, AudioUnitPropertyListenerProc inProc, void *inProcUserData), (inUnit, inID, inProc, inProcUserData))
 SOFT_LINK(AudioToolbox, AudioUnitGetProperty, OSStatus, (AudioUnit inUnit, AudioUnitPropertyID inID, AudioUnitScope inScope, AudioUnitElement inElement, void *outData, UInt32 *ioDataSize), (inUnit, inID, inScope, inElement, outData, ioDataSize))
 SOFT_LINK(AudioToolbox, AudioUnitInitialize, OSStatus, (AudioUnit inUnit), (inUnit))
@@ -88,20 +84,9 @@ PassOwnPtr<AudioDestination> AudioDestination::create(AudioIOCallback& callback,
     return adoptPtr(new AudioDestinationIOS(callback, sampleRate));
 }
 
-// iOS 7.0/Innsbruck will deprecate AudioSession APIs. For now continue to use the old API.
-// <rdar://problem/11701792> AudioSession should move to using AVAudioSession (Innsbruck)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
 float AudioDestination::hardwareSampleRate()
 {
-    AudioDestinationIOS::initializeAudioSession();
-
-    double sampleRate = 0;
-    UInt32 sampleRateSize = sizeof(sampleRate);
-
-    AudioSessionGetProperty(kAudioSessionProperty_CurrentHardwareSampleRate, &sampleRateSize, &sampleRate);
-    return sampleRate;
+    return AudioSession::sharedSession().sampleRate();
 }
 
 unsigned long AudioDestination::maxChannelCount()
@@ -121,11 +106,13 @@ AudioDestinationIOS::AudioDestinationIOS(AudioIOCallback& callback, double sampl
     , m_isPlaying(false)
     , m_interruptedOnPlayback(false)
 {
-    initializeAudioSession();
+    AudioSession& session = AudioSession::sharedSession();
+    session.addListener(this);
+    session.setCategory(AudioSession::AmbientSound);
 
     audioDestinations().add(this);
     if (audioDestinations().size() == 1)
-        AudioSessionSetActive(true);
+        session.setActive(1);
 
     // Open and initialize DefaultOutputUnit
     AudioComponent comp;
@@ -145,11 +132,11 @@ AudioDestinationIOS::AudioDestinationIOS(AudioIOCallback& callback, double sampl
 
     UInt32 flag = 1;
     result = AudioUnitSetProperty(m_outputUnit, 
-                                  kAudioOutputUnitProperty_EnableIO, 
-                                  kAudioUnitScope_Output, 
-                                  0,
-                                  &flag, 
-                                  sizeof(flag));
+        kAudioOutputUnitProperty_EnableIO, 
+        kAudioUnitScope_Output, 
+        0,
+        &flag, 
+        sizeof(flag));
     ASSERT(!result);
 
     result = AudioUnitAddPropertyListener(m_outputUnit, kAudioUnitProperty_MaximumFramesPerSlice, frameSizeChangedProc, this);
@@ -164,8 +151,8 @@ AudioDestinationIOS::AudioDestinationIOS(AudioIOCallback& callback, double sampl
 AudioDestinationIOS::~AudioDestinationIOS()
 {
     audioDestinations().remove(this);
-    if (audioDestinations().size() == 0)
-        AudioSessionSetActive(false);
+    if (!audioDestinations().size())
+        AudioSession::sharedSession().setActive(0);
 
     if (m_outputUnit)
         AudioComponentInstanceDispose(m_outputUnit);
@@ -201,33 +188,8 @@ void AudioDestinationIOS::configure()
     result = AudioUnitSetProperty(m_outputUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Input, 0, (void*)&streamFormat, sizeof(AudioStreamBasicDescription));
     ASSERT(!result);
 
-    Float32 duration = narrowPrecisionToFloat(kPreferredBufferSize / m_sampleRate);
-    AudioSessionSetProperty(kAudioSessionProperty_PreferredHardwareIOBufferDuration, sizeof(duration), &duration);
+    AudioSession::sharedSession().setPreferredBufferDuration(narrowPrecisionToFloat(kPreferredBufferSize / m_sampleRate));
 }
-
-void AudioDestinationIOS::audioDestinationInterruptionListener(void *userData, UInt32 interruptionState)
-{
-    ASSERT_UNUSED(userData, userData);
-    for (AudioDestinationSet::iterator i = audioDestinations().begin(); i != audioDestinations().end(); ++i) {
-        if (interruptionState == kAudioSessionBeginInterruption)
-            (*i)->beganAudioInterruption();
-        else
-            (*i)->endedAudioInterruption();
-    }
-}
-
-void AudioDestinationIOS::initializeAudioSession()
-{
-    static bool audioSessionWasInitialized = false;
-    if (audioSessionWasInitialized)
-        return;
-
-    audioSessionWasInitialized = true;
-    AudioSessionInitialize(0, 0, &audioDestinationInterruptionListener, 0);
-    Page::setAudioSessionCategory(kAudioSessionCategory_AmbientSound);
-}
-
-#pragma GCC diagnostic pop
 
 void AudioDestinationIOS::start()
 {
@@ -268,7 +230,7 @@ OSStatus AudioDestinationIOS::render(UInt32 numberOfFrames, AudioBufferList* ioD
 {
     AudioBuffer* buffers = ioData->mBuffers;
     for (UInt32 frameOffset = 0; frameOffset + kRenderBufferSize <= numberOfFrames; frameOffset += kRenderBufferSize) {
-        UInt32 remainingFrames = MIN(kRenderBufferSize, numberOfFrames - frameOffset);
+        UInt32 remainingFrames = std::min<UInt32>(kRenderBufferSize, numberOfFrames - frameOffset);
         for (UInt32 i = 0; i < ioData->mNumberBuffers; ++i) {
             UInt32 bytesPerFrame = buffers[i].mDataByteSize / numberOfFrames;
             UInt32 byteOffset = frameOffset * bytesPerFrame;
