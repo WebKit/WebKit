@@ -1310,6 +1310,8 @@ webkit.org/b/50485 inspector-protocol/heap-profiler [ Skip ]
 
 webkit.org/b/113787 inspector/profiler/memory-instrumentation-external-array.html [ Skip ]
 
+webkit.org/b/113787 inspector/profiler/memory-instrumentation-external-string.html [ Skip ]
+
 # New inspector/profiler/memory-instrumentation-canvas.html fails on JSC platforms
 webkit.org/b/99001 inspector/profiler/memory-instrumentation-canvas.html
 webkit.org/b/73936 inspector/profiler/canvas2d/canvas-has-uninstrumented-canvases.html

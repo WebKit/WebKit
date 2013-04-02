@@ -1,0 +1,4 @@
+This test checks that page's external strings size reported by the memory agent includes size of script elements.Bug 113788.
+
+PASS: block size for path = [ProcessPrivateMemory, JSExternalResources] is OK.
+

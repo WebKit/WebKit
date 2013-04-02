@@ -160,7 +160,7 @@ public:
 private:
     virtual void visitJSExternalString(StringImpl* string)
     {
-        m_memoryClassInfo->addMember(string, "externalString");
+        m_memoryClassInfo->addMember(string, "externalString", WTF::RetainingPointer);
     }
 
     mutable MemoryClassInfo* m_memoryClassInfo;

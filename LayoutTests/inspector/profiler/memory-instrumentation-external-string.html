@@ -1,0 +1,43 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="memory-instrumentation-test.js"></script>
+<script>
+function generateLongFunction()
+{
+    var source = [];
+    source.push("function longFunction(x) {");
+    for (var i = 0; i < 100*1000; i++) {
+        source.push("  x += x * i;");
+    }
+    source.push("}");
+    var sourceString = source.join("\n");
+    sourceSize = sourceString.length;
+    var script = document.createElement("script");
+    script.textContent = sourceString;
+    document.head.appendChild(script);
+    return sourceSize;
+}
+
+function test()
+{
+    InspectorTest.evaluateInPage("generateLongFunction()", didGenerateLongScript);
+    function didGenerateLongScript(result) {
+        var externalStringsExpectedMinimum = result.value;
+        if (externalStringsExpectedMinimum < 1024 * 1024) {
+            InspectorTest.addResult("FAIL: script is less than 1Mb: " + externalStringsExpectedMinimum);
+            return InspectorTest.completeTest();
+        }
+        InspectorTest.validateMemoryBlockSize(["ProcessPrivateMemory", "JSExternalResources"], externalStringsExpectedMinimum);
+    }
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+This test checks that page's external strings size reported by the memory agent
+includes size of script elements.<a href="https://bugs.webkit.org/show_bug.cgi?id=113788">Bug 113788.</a>
+</p>
+</body>
+</html>
