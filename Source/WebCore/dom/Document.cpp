@@ -2948,7 +2948,10 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
             if (frameLoader->shouldInterruptLoadForXFrameOptions(content, url(), requestIdentifier)) {
                 String message = "Refused to display '" + url().elidedString() + "' in a frame because it set 'X-Frame-Options' to '" + content + "'.";
                 frameLoader->stopAllLoaders();
-                frame->navigationScheduler()->scheduleLocationChange(securityOrigin(), blankURL(), String());
+                // Stopping the loader isn't enough, as we're already parsing the document; to honor the header's
+                // intent, we must navigate away from the possibly partially-rendered document to a location that
+                // doesn't inherit the parent's SecurityOrigin.
+                frame->navigationScheduler()->scheduleLocationChange(securityOrigin(), "data:text/html,<p></p>", String());
                 addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, message, requestIdentifier);
             }
         }
