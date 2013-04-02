@@ -1,7 +1,8 @@
 http://localhost:8000/security/XFrameOptions/resources/x-frame-options-parent-same-origin-allow.cgi - willSendRequest <NSURLRequest URL http://localhost:8000/security/XFrameOptions/resources/x-frame-options-parent-same-origin-allow.cgi, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html, http method GET> redirectResponse (null)
 <unknown> - didFinishLoading
 CONSOLE MESSAGE: Refused to display 'http://localhost:8000/security/XFrameOptions/resources/x-frame-options-parent-same-origin-allow.cgi' in a frame because it set 'X-Frame-Options' to 'sameorigin'.
-ALERT: PASS: onload fired.
+CONSOLE MESSAGE: Sandbox access violation: Blocked a frame at "http://127.0.0.1:8000" from accessing a frame at "null".  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.
+CONSOLE MESSAGE: line 13: PASS: Could not read contentWindow.location.href
 http://localhost:8000/security/XFrameOptions/resources/x-frame-options-parent-same-origin-allow.cgi - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code 5, failing URL "http://localhost:8000/security/XFrameOptions/resources/x-frame-options-parent-same-origin-allow.cgi">
 There should be no content in the iframe below
 

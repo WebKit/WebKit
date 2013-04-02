@@ -3,6 +3,11 @@ http://localhost:8000/security/XFrameOptions/resources/x-frame-options-deny-meta
 http://localhost:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-parent-same-origin-deny.html - didReceiveResponse <NSURLResponse http://localhost:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-parent-same-origin-deny.html, http status code 200>
 http://localhost:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-parent-same-origin-deny.html - didFailLoadingWithError: <NSError domain QtNetwork, code 5, failing URL "http://localhost:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-parent-same-origin-deny.html">
 CONSOLE MESSAGE: Refused to display 'http://localhost:8000/security/XFrameOptions/resources/x-frame-options-deny-meta-tag-subframe-parent-same-origin-deny.html' in a frame because it set 'X-Frame-Options' to 'sameorigin'.
+data:text/html,<p></p> - willSendRequest <NSURLRequest URL data:text/html,<p></p>, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-deny-meta-tag-parent-same-origin-deny.html, http method GET> redirectResponse (null)
+data:text/html,<p></p> - didReceiveResponse <NSURLResponse data:text/html,%3Cp%3E%3C/p%3E, http status code 0>
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "null".  The frame requesting access has a protocol of "http", the frame being accessed has a protocol of "data". Protocols must match.
+
+CONSOLE MESSAGE: line 13: PASS: Could not read contentWindow.location.href
 There should be no content in the iframe below
 
 

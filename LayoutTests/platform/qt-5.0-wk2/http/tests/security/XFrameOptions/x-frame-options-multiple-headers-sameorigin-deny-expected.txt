@@ -1,6 +1,8 @@
 http://localhost:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-sameorigin.cgi - willSendRequest <NSURLRequest URL http://localhost:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-sameorigin.cgi, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-deny.html, http method GET> redirectResponse (null)
 <unknown> - didFinishLoading
 CONSOLE MESSAGE: Refused to display 'http://localhost:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-sameorigin.cgi' in a frame because it set 'X-Frame-Options' to 'SAMEORIGIN, SAMEORIGIN'.
+CONSOLE MESSAGE: Sandbox access violation: Blocked a frame at "http://127.0.0.1:8000" from accessing a frame at "null".  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.
+CONSOLE MESSAGE: line 16: PASS: Could not read contentWindow.location.href
 http://localhost:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-sameorigin.cgi - didFailLoadingWithError: <NSError domain QtNetwork, code 5, failing URL "http://localhost:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-sameorigin.cgi">
 The frame below should not load, proving that 'sameorigin, sameorigin' === 'sameorigin'.
 
