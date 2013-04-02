@@ -45,9 +45,13 @@ bool WebFilterOperation::equals(const WebFilterOperation& other) const
 }
 
 WebFilterOperation::WebFilterOperation(FilterType type, SkScalar matrix[20])
+    : m_type(type)
+    , m_amount(0)
+    , m_dropShadowOffset(0, 0)
+    , m_dropShadowColor(0)
+    , m_zoomInset(0)
 {
-    WEBKIT_ASSERT(type == FilterTypeColorMatrix);
-    m_type = type;
+    WEBKIT_ASSERT(m_type == FilterTypeColorMatrix);
     memcpy(m_matrix, matrix, sizeof(m_matrix));
 }
 

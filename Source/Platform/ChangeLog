@@ -1,3 +1,15 @@
+2013-04-02  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Initialize all fields in WebFilterOperation
+        https://bugs.webkit.org/show_bug.cgi?id=113807
+
+        Reviewed by James Robinson.
+
+        * chromium/public/WebFilterOperation.h:
+        (WebKit::WebFilterOperation::WebFilterOperation):
+        * chromium/src/WebFilterOperation.cpp:
+        (WebKit::WebFilterOperation::WebFilterOperation):
+
 2013-03-28  Tien-Ren Chen  <trchen@chromium.org>
 
         Support bottom-right anchored fixed-position elements during a pinch gesture

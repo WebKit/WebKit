@@ -158,30 +158,38 @@ private:
     int m_zoomInset;
 
     WebFilterOperation(FilterType type, float amount)
+        : m_type(type)
+        , m_amount(amount)
+        , m_dropShadowOffset(0, 0)
+        , m_dropShadowColor(0)
+        , m_zoomInset(0)
     {
-        WEBKIT_ASSERT(type != FilterTypeDropShadow && type != FilterTypeColorMatrix);
-        m_type = type;
-        m_amount = amount;
-        m_dropShadowColor = 0;
+        WEBKIT_ASSERT(m_type != FilterTypeDropShadow && m_type != FilterTypeColorMatrix);
+        memset(m_matrix, 0, sizeof(m_matrix));
     }
 
     WebFilterOperation(FilterType type, WebPoint offset, float stdDeviation, WebColor color)
+        : m_type(type)
+        , m_amount(stdDeviation)
+        , m_dropShadowOffset(offset)
+        , m_dropShadowColor(color)
+        , m_zoomInset(0)
     {
-        WEBKIT_ASSERT(type == FilterTypeDropShadow);
-        m_type = type;
-        m_amount = stdDeviation;
-        m_dropShadowOffset = offset;
-        m_dropShadowColor = color;
+        WEBKIT_ASSERT(m_type == FilterTypeDropShadow);
+        memset(m_matrix, 0, sizeof(m_matrix));
     }
 
     WEBKIT_EXPORT WebFilterOperation(FilterType, SkScalar matrix[20]);
 
     WebFilterOperation(FilterType type, float amount, int inset)
+        : m_type(type)
+        , m_amount(amount)
+        , m_dropShadowOffset(0, 0)
+        , m_dropShadowColor(0)
+        , m_zoomInset(inset)
     {
-        WEBKIT_ASSERT(type == FilterTypeZoom);
-        m_type = type;
-        m_amount = amount;
-        m_zoomInset = inset;
+        WEBKIT_ASSERT(m_type == FilterTypeZoom);
+        memset(m_matrix, 0, sizeof(m_matrix));
     }
 };
 
