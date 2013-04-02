@@ -67,16 +67,12 @@ void ScrollingCoordinatorBlackBerry::setLayerFixedToContainerLayerEdge(GraphicsL
     layer->platformLayer()->setFixedToLeft(fixedToLeft);
 }
 
-void ScrollingCoordinatorBlackBerry::frameViewFrameRectDidChange(FrameView* view)
+void ScrollingCoordinatorBlackBerry::frameViewLayoutUpdated(FrameView* frameView)
 {
-    if (GraphicsLayer* scrollLayer = scrollLayerForFrameView(view))
-        scrollLayer->platformLayer()->setFrameVisibleRect(view->visibleContentRect());
-}
-
-void ScrollingCoordinatorBlackBerry::frameViewContentsSizeDidChange(FrameView* view)
-{
-    if (GraphicsLayer* scrollLayer = scrollLayerForFrameView(view))
-        scrollLayer->platformLayer()->setFrameContentsSize(view->contentsSize());
+    if (GraphicsLayer* scrollLayer = scrollLayerForFrameView(frameView)) {
+        scrollLayer->platformLayer()->setFrameContentsSize(frameView->contentsSize());
+        scrollLayer->platformLayer()->setFrameVisibleRect(frameView->visibleContentRect());
+    }
 }
 
 }

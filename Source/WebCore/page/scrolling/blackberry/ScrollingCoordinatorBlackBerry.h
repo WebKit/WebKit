@@ -34,6 +34,9 @@ class ScrollingCoordinatorBlackBerry : public ScrollingCoordinator {
 public:
     explicit ScrollingCoordinatorBlackBerry(Page*);
 
+    // Should be called whenever the given frame view has been laid out.
+    virtual void frameViewLayoutUpdated(FrameView*);
+
     // Return whether this scrolling coordinator can keep fixed position layers fixed to their
     // containers while scrolling.
     virtual bool supportsFixedPositionLayers() const { return true; }
@@ -46,9 +49,6 @@ public:
 
     // Whether the layer is fixed the top or bottom edge, left or right edge.
     void setLayerFixedToContainerLayerEdge(GraphicsLayer*, bool fixedToTop, bool fixedToLeft);
-
-    virtual void frameViewFrameRectDidChange(FrameView*);
-    virtual void frameViewContentsSizeDidChange(FrameView*);
 };
 
 } // namespace WebCore

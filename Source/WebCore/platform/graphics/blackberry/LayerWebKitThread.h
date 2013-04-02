@@ -160,8 +160,21 @@ public:
         setNeedsCommit();
     }
 
-    void setFrameVisibleRect(const IntRect& rect) { m_frameVisibleRect = rect; setNeedsCommit(); }
-    void setFrameContentsSize(const IntSize& size) { m_frameContentsSize = size; setNeedsCommit(); }
+    void setFrameVisibleRect(const IntRect& rect)
+    {
+        if (m_frameVisibleRect == rect)
+            return;
+        m_frameVisibleRect = rect;
+        setNeedsCommit();
+    }
+
+    void setFrameContentsSize(const IntSize& size)
+    {
+        if (m_frameContentsSize == size)
+            return;
+        m_frameContentsSize = size;
+        setNeedsCommit();
+    }
 
     void setContents(Image*);
     Image* contents() const { return m_contents.get(); }
