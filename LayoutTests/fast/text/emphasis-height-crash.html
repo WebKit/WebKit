@@ -15,9 +15,9 @@
 
 <script>
 function test() {
-    if (!window.layoutTestController)
+    if (!window.testRunner)
         return;
-    layoutTestController.dumpAsText();
+    testRunner.dumpAsText();
     var target = document.getElementById("target");
     eventSender.mouseMoveTo(target.offsetLeft, target.offsetTop);
     eventSender.mouseDown();
