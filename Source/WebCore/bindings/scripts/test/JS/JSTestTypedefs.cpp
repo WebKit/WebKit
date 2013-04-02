@@ -225,9 +225,9 @@ JSValue jsTestTypedefsAttrWithGetterException(ExecState* exec, JSValue slotBase,
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(asObject(slotBase));
     ExceptionCode ec = 0;
     TestTypedefs* impl = static_cast<TestTypedefs*>(castedThis->impl());
-    int nativeResult = impl->attrWithGetterException(ec);
+    JSC::JSValue result = jsNumber(impl->attrWithGetterException(ec));
     setDOMException(exec, ec);
-    return jsNumber(nativeResult);
+    return result;
 }
 
 
@@ -246,9 +246,9 @@ JSValue jsTestTypedefsStringAttrWithGetterException(ExecState* exec, JSValue slo
     JSTestTypedefs* castedThis = jsCast<JSTestTypedefs*>(asObject(slotBase));
     ExceptionCode ec = 0;
     TestTypedefs* impl = static_cast<TestTypedefs*>(castedThis->impl());
-    const String& nativeResult = impl->stringAttrWithGetterException(ec);
+    JSC::JSValue result = jsStringWithCache(exec, impl->stringAttrWithGetterException(ec));
     setDOMException(exec, ec);
-    return jsStringWithCache(exec, nativeResult);
+    return result;
 }
 
 

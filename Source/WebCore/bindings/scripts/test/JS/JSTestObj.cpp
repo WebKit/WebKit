@@ -657,9 +657,9 @@ JSValue jsTestObjAttrWithGetterException(ExecState* exec, JSValue slotBase, Prop
     JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
     ExceptionCode ec = 0;
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    int nativeResult = impl->attrWithGetterException(ec);
+    JSC::JSValue result = jsNumber(impl->attrWithGetterException(ec));
     setDOMException(exec, ec);
-    return jsNumber(nativeResult);
+    return result;
 }
 
 
@@ -678,9 +678,9 @@ JSValue jsTestObjStringAttrWithGetterException(ExecState* exec, JSValue slotBase
     JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
     ExceptionCode ec = 0;
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    const String& nativeResult = impl->stringAttrWithGetterException(ec);
+    JSC::JSValue result = jsStringWithCache(exec, impl->stringAttrWithGetterException(ec));
     setDOMException(exec, ec);
-    return jsStringWithCache(exec, nativeResult);
+    return result;
 }
 
 
@@ -727,9 +727,9 @@ JSValue jsTestObjWithScriptStateAttributeRaises(ExecState* exec, JSValue slotBas
     JSTestObj* castedThis = jsCast<JSTestObj*>(asObject(slotBase));
     ExceptionCode ec = 0;
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    TestObj* nativeResult = WTF::getPtr(impl->withScriptStateAttributeRaises(exec, ec));
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl->withScriptStateAttributeRaises(exec, ec)));
     setDOMException(exec, ec);
-    return toJS(exec, castedThis->globalObject(), WTF::getPtr(nativeResult));
+    return result;
 }
 
 
@@ -741,9 +741,9 @@ JSValue jsTestObjWithScriptExecutionContextAttributeRaises(ExecState* exec, JSVa
     if (!scriptContext)
         return jsUndefined();
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    TestObj* nativeResult = WTF::getPtr(impl->withScriptExecutionContextAttributeRaises(scriptContext, ec));
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl->withScriptExecutionContextAttributeRaises(scriptContext, ec)));
     setDOMException(exec, ec);
-    return toJS(exec, castedThis->globalObject(), WTF::getPtr(nativeResult));
+    return result;
 }
 
 
@@ -767,9 +767,9 @@ JSValue jsTestObjWithScriptExecutionContextAndScriptStateAttributeRaises(ExecSta
     if (!scriptContext)
         return jsUndefined();
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    TestObj* nativeResult = WTF::getPtr(impl->withScriptExecutionContextAndScriptStateAttributeRaises(exec, scriptContext, ec));
+    JSC::JSValue result = toJS(exec, castedThis->globalObject(), WTF::getPtr(impl->withScriptExecutionContextAndScriptStateAttributeRaises(exec, scriptContext, ec)));
     setDOMException(exec, ec);
-    return toJS(exec, castedThis->globalObject(), WTF::getPtr(nativeResult));
+    return result;
 }
 
 
@@ -987,10 +987,10 @@ JSValue jsTestObjNullableDoubleAttribute(ExecState* exec, JSValue slotBase, Prop
     UNUSED_PARAM(exec);
     bool isNull = false;
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    double nativeResult = impl->nullableDoubleAttribute(isNull);
+    JSValue result = jsNumber(impl->nullableDoubleAttribute(isNull));
     if (isNull)
         return jsNull();
-    return jsNumber(nativeResult);
+    return result;
 }
 
 
@@ -1000,10 +1000,10 @@ JSValue jsTestObjNullableLongAttribute(ExecState* exec, JSValue slotBase, Proper
     UNUSED_PARAM(exec);
     bool isNull = false;
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    int nativeResult = impl->nullableLongAttribute(isNull);
+    JSValue result = jsNumber(impl->nullableLongAttribute(isNull));
     if (isNull)
         return jsNull();
-    return jsNumber(nativeResult);
+    return result;
 }
 
 
@@ -1013,10 +1013,10 @@ JSValue jsTestObjNullableBooleanAttribute(ExecState* exec, JSValue slotBase, Pro
     UNUSED_PARAM(exec);
     bool isNull = false;
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    bool nativeResult = impl->nullableBooleanAttribute(isNull);
+    JSValue result = jsBoolean(impl->nullableBooleanAttribute(isNull));
     if (isNull)
         return jsNull();
-    return jsBoolean(nativeResult);
+    return result;
 }
 
 
@@ -1026,10 +1026,10 @@ JSValue jsTestObjNullableStringAttribute(ExecState* exec, JSValue slotBase, Prop
     UNUSED_PARAM(exec);
     bool isNull = false;
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    const String& nativeResult = impl->nullableStringAttribute(isNull);
+    JSValue result = jsStringWithCache(exec, impl->nullableStringAttribute(isNull));
     if (isNull)
         return jsNull();
-    return jsStringWithCache(exec, nativeResult);
+    return result;
 }
 
 
@@ -1039,10 +1039,10 @@ JSValue jsTestObjNullableLongSettableAttribute(ExecState* exec, JSValue slotBase
     UNUSED_PARAM(exec);
     bool isNull = false;
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    int nativeResult = impl->nullableLongSettableAttribute(isNull);
+    JSValue result = jsNumber(impl->nullableLongSettableAttribute(isNull));
     if (isNull)
         return jsNull();
-    return jsNumber(nativeResult);
+    return result;
 }
 
 
@@ -1052,11 +1052,11 @@ JSValue jsTestObjNullableStringValue(ExecState* exec, JSValue slotBase, Property
     ExceptionCode ec = 0;
     bool isNull = false;
     TestObj* impl = static_cast<TestObj*>(castedThis->impl());
-    int nativeResult = impl->nullableStringValue(isNull, ec);
+    JSC::JSValue result = jsNumber(impl->nullableStringValue(isNull, ec));
     if (isNull)
         return jsNull();
     setDOMException(exec, ec);
-    return jsNumber(nativeResult);
+    return result;
 }
 
 
