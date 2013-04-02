@@ -305,7 +305,7 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser* parser, DocumentFragment* f
         m_tree.openElements()->pushRootNode(HTMLStackItem::create(fragment, HTMLStackItem::ItemForDocumentFragmentNode));
 
 #if ENABLE(TEMPLATE_ELEMENT)
-        if (contextElement->hasLocalName(templateTag))
+        if (contextElement->hasTagName(templateTag))
             m_templateInsertionModes.append(TemplateContentsMode);
 #endif
 
@@ -1504,9 +1504,9 @@ void HTMLTreeBuilder::processAnyOtherEndTagForInBody(AtomicHTMLToken* token)
     HTMLElementStack::ElementRecord* record = m_tree.openElements()->topRecord();
     while (1) {
         RefPtr<HTMLStackItem> item = record->stackItem();
-        if (item->hasLocalName(token->name())) {
+        if (item->matchesHTMLTag(token->name())) {
             m_tree.generateImpliedEndTagsWithExclusion(token->name());
-            if (!m_tree.currentStackItem()->hasLocalName(token->name()))
+            if (!m_tree.currentStackItem()->matchesHTMLTag(token->name()))
                 parseError(token);
             m_tree.openElements()->popUntilPopped(item->element());
             return;
@@ -1784,7 +1784,7 @@ void HTMLTreeBuilder::processEndTagForInCell(AtomicHTMLToken* token)
             return;
         }
         m_tree.generateImpliedEndTags();
-        if (!m_tree.currentStackItem()->hasLocalName(token->name()))
+        if (!m_tree.currentStackItem()->matchesHTMLTag(token->name()))
             parseError(token);
         m_tree.openElements()->popUntilPopped(token->name());
         m_tree.activeFormattingElements()->clearToLastMarker();
@@ -1859,7 +1859,7 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken* token)
             return;
         }
         m_tree.generateImpliedEndTags();
-        if (!m_tree.currentStackItem()->hasLocalName(token->name()))
+        if (!m_tree.currentStackItem()->matchesHTMLTag(token->name()))
             parseError(token);
         m_tree.openElements()->popUntilPopped(token->name());
         return;
@@ -1884,7 +1884,7 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken* token)
             return;
         }
         m_tree.generateImpliedEndTagsWithExclusion(token->name());
-        if (!m_tree.currentStackItem()->hasLocalName(token->name()))
+        if (!m_tree.currentStackItem()->matchesHTMLTag(token->name()))
             parseError(token);
         m_tree.openElements()->popUntilPopped(token->name());
         return;
@@ -1895,7 +1895,7 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken* token)
             return;
         }
         m_tree.generateImpliedEndTagsWithExclusion(token->name());
-        if (!m_tree.currentStackItem()->hasLocalName(token->name()))
+        if (!m_tree.currentStackItem()->matchesHTMLTag(token->name()))
             parseError(token);
         m_tree.openElements()->popUntilPopped(token->name());
         return;
@@ -1907,7 +1907,7 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken* token)
             return;
         }
         m_tree.generateImpliedEndTagsWithExclusion(token->name());
-        if (!m_tree.currentStackItem()->hasLocalName(token->name()))
+        if (!m_tree.currentStackItem()->matchesHTMLTag(token->name()))
             parseError(token);
         m_tree.openElements()->popUntilPopped(token->name());
         return;
@@ -1918,7 +1918,7 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken* token)
             return;
         }
         m_tree.generateImpliedEndTags();
-        if (!m_tree.currentStackItem()->hasLocalName(token->name()))
+        if (!m_tree.currentStackItem()->matchesHTMLTag(token->name()))
             parseError(token);
         m_tree.openElements()->popUntilNumberedHeaderElementPopped();
         return;
@@ -1935,7 +1935,7 @@ void HTMLTreeBuilder::processEndTagForInBody(AtomicHTMLToken* token)
             return;
         }
         m_tree.generateImpliedEndTags();
-        if (!m_tree.currentStackItem()->hasLocalName(token->name()))
+        if (!m_tree.currentStackItem()->matchesHTMLTag(token->name()))
             parseError(token);
         m_tree.openElements()->popUntilPopped(token->name());
         m_tree.activeFormattingElements()->clearToLastMarker();

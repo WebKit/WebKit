@@ -116,10 +116,7 @@ public:
     void popUntil(const AtomicString& tagName);
     void popUntil(Element*);
     void popUntilPopped(const AtomicString& tagName);
-
-    // FIXME: These are fixes for https://www.w3.org/Bugs/Public/show_bug.cgi?id=21292
-    void popUntil(const QualifiedName&);
-    void popUntilPopped(const QualifiedName&);
+    void popUntilPopped(const QualifiedName& tagName) { popUntilPopped(tagName.localName()); }
 
     void popUntilPopped(Element*);
     void popUntilNumberedHeaderElementPopped();

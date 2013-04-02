@@ -54,7 +54,7 @@ Element* HTMLFormattingElementList::closestElementInScopeWithName(const AtomicSt
         const Entry& entry = m_entries[m_entries.size() - i];
         if (entry.isMarker())
             return 0;
-        if (entry.stackItem()->hasLocalName(targetName))
+        if (entry.stackItem()->matchesHTMLTag(targetName))
             return entry.element();
     }
     return 0;

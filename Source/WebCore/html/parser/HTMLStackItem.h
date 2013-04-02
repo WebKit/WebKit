@@ -78,6 +78,9 @@ public:
     bool hasLocalName(const AtomicString& name) const { return m_tokenLocalName == name; }
     bool hasTagName(const QualifiedName& name) const { return m_tokenLocalName == name.localName() && m_namespaceURI == name.namespaceURI(); }
 
+    bool matchesHTMLTag(const AtomicString& name) const { return m_tokenLocalName == name && m_namespaceURI == HTMLNames::xhtmlNamespaceURI; }
+    bool matchesHTMLTag(const QualifiedName& name) const { return m_tokenLocalName == name && m_namespaceURI == HTMLNames::xhtmlNamespaceURI; }
+
     bool causesFosterParenting()
     {
         return hasTagName(HTMLNames::tableTag)

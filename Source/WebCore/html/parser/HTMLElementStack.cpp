@@ -219,27 +219,13 @@ void HTMLElementStack::pop()
 
 void HTMLElementStack::popUntil(const AtomicString& tagName)
 {
-    while (!topStackItem()->hasLocalName(tagName)) {
-        // pop() will ASSERT if a <body>, <head> or <html> will be popped.
-        pop();
-    }
-}
-
-void HTMLElementStack::popUntil(const QualifiedName& tagName)
-{
-    while (!topStackItem()->hasTagName(tagName)) {
+    while (!topStackItem()->matchesHTMLTag(tagName)) {
         // pop() will ASSERT if a <body>, <head> or <html> will be popped.
         pop();
     }
 }
 
 void HTMLElementStack::popUntilPopped(const AtomicString& tagName)
-{
-    popUntil(tagName);
-    pop();
-}
-
-void HTMLElementStack::popUntilPopped(const QualifiedName& tagName)
 {
     popUntil(tagName);
     pop();
@@ -442,7 +428,7 @@ HTMLElementStack::ElementRecord* HTMLElementStack::find(Element* element) const
 HTMLElementStack::ElementRecord* HTMLElementStack::topmost(const AtomicString& tagName) const
 {
     for (ElementRecord* pos = m_top.get(); pos; pos = pos->next()) {
-        if (pos->stackItem()->hasLocalName(tagName))
+        if (pos->stackItem()->matchesHTMLTag(tagName))
             return pos;
     }
     return 0;
@@ -463,21 +449,7 @@ bool inScopeCommon(HTMLElementStack::ElementRecord* top, const AtomicString& tar
 {
     for (HTMLElementStack::ElementRecord* pos = top; pos; pos = pos->next()) {
         HTMLStackItem* item = pos->stackItem().get();
-        if (item->hasLocalName(targetTag))
-            return true;
-        if (isMarker(item))
-            return false;
-    }
-    ASSERT_NOT_REACHED(); // <html> is always on the stack and is a scope marker.
-    return false;
-}
-
-template <bool isMarker(HTMLStackItem*)>
-bool inScopeCommon(HTMLElementStack::ElementRecord* top, const QualifiedName& targetTag)
-{
-    for (HTMLElementStack::ElementRecord* pos = top; pos; pos = pos->next()) {
-        HTMLStackItem* item = pos->stackItem().get();
-        if (item->hasTagName(targetTag))
+        if (item->matchesHTMLTag(targetTag))
             return true;
         if (isMarker(item))
             return false;
@@ -519,7 +491,6 @@ bool HTMLElementStack::inScope(const AtomicString& targetTag) const
 
 bool HTMLElementStack::inScope(const QualifiedName& tagName) const
 {
-    // FIXME: Is localName() right for non-html elements?
     return inScope(tagName.localName());
 }
 
@@ -530,7 +501,6 @@ bool HTMLElementStack::inListItemScope(const AtomicString& targetTag) const
 
 bool HTMLElementStack::inListItemScope(const QualifiedName& tagName) const
 {
-    // FIXME: Is localName() right for non-html elements?
     return inListItemScope(tagName.localName());
 }
 
@@ -541,7 +511,7 @@ bool HTMLElementStack::inTableScope(const AtomicString& targetTag) const
 
 bool HTMLElementStack::inTableScope(const QualifiedName& tagName) const
 {
-    return inScopeCommon<isTableScopeMarker>(m_top.get(), tagName);
+    return inTableScope(tagName.localName());
 }
 
 bool HTMLElementStack::inButtonScope(const AtomicString& targetTag) const
@@ -551,7 +521,6 @@ bool HTMLElementStack::inButtonScope(const AtomicString& targetTag) const
 
 bool HTMLElementStack::inButtonScope(const QualifiedName& tagName) const
 {
-    // FIXME: Is localName() right for non-html elements?
     return inButtonScope(tagName.localName());
 }
 
@@ -562,7 +531,6 @@ bool HTMLElementStack::inSelectScope(const AtomicString& targetTag) const
 
 bool HTMLElementStack::inSelectScope(const QualifiedName& tagName) const
 {
-    // FIXME: Is localName() right for non-html elements?
     return inSelectScope(tagName.localName());
 }
 
