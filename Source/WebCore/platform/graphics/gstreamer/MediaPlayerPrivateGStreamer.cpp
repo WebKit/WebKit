@@ -148,7 +148,8 @@ void MediaPlayerPrivateGStreamer::setAudioStreamProperties(GObject* object)
     GstStructure* structure = gst_structure_new("stream-properties", "media.role", G_TYPE_STRING, role, NULL);
     g_object_set(object, "stream-properties", structure, NULL);
     gst_structure_free(structure);
-    LOG_MEDIA_MESSAGE("Set media.role as %s at %s", role, gst_element_get_name(GST_ELEMENT(object)));
+    GOwnPtr<gchar> elementName(gst_element_get_name(GST_ELEMENT(object)));
+    LOG_MEDIA_MESSAGE("Set media.role as %s at %s", role, elementName.get());
 }
 
 PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivateGStreamer::create(MediaPlayer* player)
@@ -769,7 +770,8 @@ gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         gst_message_parse_request_state(message, &requestedState);
         gst_element_get_state(m_playBin.get(), &currentState, NULL, 250);
         if (requestedState < currentState) {
-            LOG_MEDIA_MESSAGE("Element %s requested state change to %s", gst_element_get_name(GST_MESSAGE_SRC(message)),
+            GOwnPtr<gchar> elementName(gst_element_get_name(GST_ELEMENT(message)));
+            LOG_MEDIA_MESSAGE("Element %s requested state change to %s", elementName.get(),
                 gst_element_state_get_name(requestedState));
             m_requestedState = requestedState;
             changePipelineState(requestedState);
@@ -777,9 +779,10 @@ gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         break;
     case GST_MESSAGE_ELEMENT:
         if (gst_is_missing_plugin_message(message)) {
-            char* detail = gst_missing_plugin_message_get_installer_detail(message);
+            gchar* detail = gst_missing_plugin_message_get_installer_detail(message);
             GstInstallPluginsReturn result = gst_install_plugins_async(&detail, 0, mediaPlayerPrivatePluginInstallerResultFunction, this);
             m_missingPlugins = result == GST_INSTALL_PLUGINS_STARTED_OK;
+            g_free(detail);
         }
         break;
     default:
