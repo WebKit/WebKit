@@ -2618,6 +2618,11 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
 #endif
 }
 
+static inline bool iteratorIsBeyondEndOfRenderCombineText(const InlineIterator& iter, RenderCombineText* renderer)
+{
+    return iter.m_obj == renderer && iter.m_pos >= renderer->textLength();
+}
+
 InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& resolver, LineInfo& lineInfo, RenderTextInfo& renderTextInfo, FloatingObject* lastFloatFromPreviousLine, unsigned consecutiveHyphenatedLines, WordMeasurements& wordMeasurements)
 {
     reset();
@@ -2837,8 +2842,16 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             bool isSVGText = t->isSVGInlineText();
 #endif
 
-            if (t->style()->hasTextCombine() && current.m_obj->isCombineText() && !toRenderCombineText(current.m_obj)->isCombined())
-                toRenderCombineText(current.m_obj)->combineText();
+            if (t->style()->hasTextCombine() && current.m_obj->isCombineText() && !toRenderCombineText(current.m_obj)->isCombined()) {
+                RenderCombineText* combineRenderer = toRenderCombineText(current.m_obj);
+                combineRenderer->combineText();
+                // The length of the renderer's text may have changed. Increment stale iterator positions
+                if (iteratorIsBeyondEndOfRenderCombineText(lBreak, combineRenderer)) {
+                    ASSERT(iteratorIsBeyondEndOfRenderCombineText(resolver.position(), combineRenderer));
+                    lBreak.increment();
+                    resolver.increment();
+                }
+            }
 
             RenderStyle* style = t->style(lineInfo.isFirstLine());
             const Font& f = style->font();
