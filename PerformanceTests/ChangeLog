@@ -1,3 +1,16 @@
+2013-04-02  Glenn Adams  <glenn@skynav.com>
+
+        Need japanese line layout performance test
+        https://bugs.webkit.org/show_bug.cgi?id=113811
+
+        Reviewed by Ryosuke Niwa.
+
+        Will be used by https://bugs.webkit.org/show_bug.cgi?id=105692 to test potential performance regression
+        for Japanese (and other CJK) line break changes.
+
+        * Layout/LineLayoutJapanese.html: Added.
+        * Skipped: Skip this test by default.
+
 2013-03-29  Andrei Bucur  <abucur@adobe.com>
 
         [CSS Regions] Add performance tests

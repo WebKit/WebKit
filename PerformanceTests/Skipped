@@ -82,3 +82,7 @@ Layout/RegionsAuto.html
 Layout/RegionsAutoMaxHeight.html
 Layout/RegionsFixed.html
 Layout/RegionsFixedShort.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=113811#c2
+Layout/LineLayoutJapanese.html
+
