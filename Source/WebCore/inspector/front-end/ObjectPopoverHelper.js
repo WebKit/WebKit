@@ -83,7 +83,7 @@ WebInspector.ObjectPopoverHelper.prototype = {
                             return;
                         }
                         var container = document.createElement("div");
-                        container.style.display = "inline-block";
+                        container.className = "inline-block";
 
                         var title = container.createChild("div", "function-popover-title source-code");
                         var functionName = title.createChild("span", "function-name");

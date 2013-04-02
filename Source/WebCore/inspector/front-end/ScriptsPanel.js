@@ -145,10 +145,10 @@ WebInspector.ScriptsPanel = function(workspaceForTest)
     this._toggleFormatSourceButton.addEventListener("click", this._toggleFormatSource, this);
 
     this._scriptViewStatusBarItemsContainer = document.createElement("div");
-    this._scriptViewStatusBarItemsContainer.style.display = "inline-block";
+    this._scriptViewStatusBarItemsContainer.className = "inline-block";
 
     this._scriptViewStatusBarTextContainer = document.createElement("div");
-    this._scriptViewStatusBarTextContainer.style.display = "inline-block";
+    this._scriptViewStatusBarTextContainer.className = "inline-block";
 
     this._installDebuggerSidebarController();
 

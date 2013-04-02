@@ -39,6 +39,10 @@ input[type="search"]:focus, input[type="text"]:focus {
     bottom: 0;
 }
 
+.inline-block {
+    display: inline-block;
+}
+
 .hidden {
     display: none;
 }
