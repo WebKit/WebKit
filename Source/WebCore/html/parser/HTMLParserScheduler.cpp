@@ -77,8 +77,8 @@ ActiveParserSession::~ActiveParserSession()
 }
 
 PumpSession::PumpSession(unsigned& nestingLevel, Document* document)
-    : NestingLevelIncrementer(nestingLevel)
-    , ActiveParserSession(document)
+    : ActiveParserSession(document)
+    , NestingLevelIncrementer(nestingLevel)
     // Setting processedTokens to INT_MAX causes us to check for yields
     // after any token during any parse where yielding is allowed.
     // At that time we'll initialize startTime.

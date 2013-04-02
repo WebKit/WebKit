@@ -3783,9 +3783,6 @@ webkit.org/b/112219 [ Win Mac Linux ] fast/layers/no-clipping-overflow-hidden-ad
 # Feature not implemented
 webkit.org/b/91611 media/media-higher-prio-audio-stream.html [ Skip ]
 
-# Flaky assertion failures on debug bots
-webkit.org/b/112369 [ Debug ] inspector/debugger/pause-in-inline-script.html [ Pass Crash Timeout ]
-
 # Needs rebaseline on all platforms
 Bug(leviw) fast/text/shaping/shaping-selection-rect.html [ Failure ]
 

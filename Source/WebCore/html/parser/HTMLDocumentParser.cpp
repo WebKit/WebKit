@@ -127,6 +127,9 @@ HTMLDocumentParser::~HTMLDocumentParser()
     ASSERT(!m_preloadScanner);
     ASSERT(!m_insertionPreloadScanner);
     ASSERT(!m_haveBackgroundParser);
+    // FIXME: We should be able to ASSERT(m_speculations.isEmpty()),
+    // but there are cases where that's not true currently. For example,
+    // we we're told to stop parsing before we've consumed all the input.
 }
 
 #if ENABLE(THREADED_HTML_PARSER)
@@ -311,7 +314,10 @@ bool HTMLDocumentParser::canTakeNextToken(SynchronousMode mode, PumpSession& ses
 
 void HTMLDocumentParser::didReceiveParsedChunkFromBackgroundParser(PassOwnPtr<ParsedChunk> chunk)
 {
-    if (isWaitingForScripts() || !m_speculations.isEmpty()) {
+    // alert(), runModalDialog, and the JavaScript Debugger all run nested event loops
+    // which can cause this method to be re-entered. We detect re-entry using
+    // inPumpSession(), save the chunk as a speculation, and return.
+    if (isWaitingForScripts() || !m_speculations.isEmpty() || inPumpSession()) {
         m_preloader->takeAndPreload(chunk->preloads);
         m_speculations.append(chunk);
         return;
@@ -321,13 +327,10 @@ void HTMLDocumentParser::didReceiveParsedChunkFromBackgroundParser(PassOwnPtr<Pa
     // but we need to ensure it isn't deleted yet.
     RefPtr<HTMLDocumentParser> protect(this);
 
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willWriteHTML(document(), lineNumber().zeroBasedInt());
-
     ASSERT(m_speculations.isEmpty());
     chunk->preloads.clear(); // We don't need to preload because we're going to parse immediately.
-    processParsedChunkFromBackgroundParser(chunk);
-
-    InspectorInstrumentation::didWriteHTML(cookie, lineNumber().zeroBasedInt());
+    m_speculations.append(chunk);
+    pumpPendingSpeculations();
 }
 
 void HTMLDocumentParser::validateSpeculations(PassOwnPtr<ParsedChunk> chunk)
@@ -390,6 +393,10 @@ void HTMLDocumentParser::discardSpeculationsAndResumeFrom(PassOwnPtr<ParsedChunk
 
 void HTMLDocumentParser::processParsedChunkFromBackgroundParser(PassOwnPtr<ParsedChunk> popChunk)
 {
+    ASSERT_WITH_SECURITY_IMPLICATION(!inPumpSession());
+    ASSERT(!isParsingFragment());
+    ASSERT(!isWaitingForScripts());
+    ASSERT(!isStopped());
     // ASSERT that this object is both attached to the Document and protected.
     ASSERT(refCount() >= 2);
     ASSERT(shouldUseThreading());
@@ -397,7 +404,8 @@ void HTMLDocumentParser::processParsedChunkFromBackgroundParser(PassOwnPtr<Parse
     ASSERT(!m_token);
     ASSERT(!m_lastChunkBeforeScript);
 
-    ActiveParserSession session(contextForParsingSession());
+    PumpSession session(m_pumpSessionNestingLevel, contextForParsingSession());
+
     OwnPtr<ParsedChunk> chunk(popChunk);
     OwnPtr<CompactHTMLTokenStream> tokens = chunk->tokens.release();
 
@@ -426,7 +434,7 @@ void HTMLDocumentParser::processParsedChunkFromBackgroundParser(PassOwnPtr<Parse
             // To match main-thread parser behavior (which never checks locationChangePending on the EOF path)
             // we peek to see if this chunk has an EOF and process it anyway.
             if (tokens->last().type() == HTMLToken::EndOfFile) {
-                ASSERT(m_speculations.isEmpty());
+                ASSERT(m_speculations.isEmpty()); // There should never be any chunks after the EOF.
                 prepareToStopParsing();
             }
             break;
@@ -441,7 +449,7 @@ void HTMLDocumentParser::processParsedChunkFromBackgroundParser(PassOwnPtr<Parse
 
         if (it->type() == HTMLToken::EndOfFile) {
             ASSERT(it + 1 == tokens->end()); // The EOF is assumed to be the last token of this bunch.
-            ASSERT(m_speculations.isEmpty());
+            ASSERT(m_speculations.isEmpty()); // There should never be any chunks after the EOF.
             prepareToStopParsing();
             break;
         }
@@ -463,6 +471,8 @@ void HTMLDocumentParser::pumpPendingSpeculations()
     ASSERT(!m_tokenizer);
     ASSERT(!m_token);
     ASSERT(!m_lastChunkBeforeScript);
+    ASSERT(!isWaitingForScripts());
+    ASSERT(!isStopped());
 
     // FIXME: Pass in current input length.
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willWriteHTML(document(), lineNumber().zeroBasedInt());
@@ -629,7 +639,6 @@ void HTMLDocumentParser::insert(const SegmentedString& source)
 
 #if ENABLE(THREADED_HTML_PARSER)
     if (!m_tokenizer) {
-        ASSERT(!inPumpSession());
         ASSERT(m_haveBackgroundParser || wasCreatedByScript());
         m_token = adoptPtr(new HTMLToken);
         m_tokenizer = HTMLTokenizer::create(m_options);
