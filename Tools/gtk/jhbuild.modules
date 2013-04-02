@@ -135,12 +135,12 @@
     <dependencies>
       <dep package="glib"/>
       <dep package="cairo"/>
+      <dep package="at-spi2-atk"/>
       <dep package="gdk-pixbuf"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/gtk+/3.4/gtk+-3.4.2.tar.xz" version="3.4.2"
+    <branch module="/pub/GNOME/sources/gtk+/3.6/gtk+-3.6.0.tar.xz" version="3.6.0"
             repo="ftp.gnome.org"
-            hash="sha256:b1ab72bc61434418160ff0c7edfd93c74758ed8a35e2ed3d07e3e218c2705480"
-            md5sum="9e20443fbaa3ba3e9cbd2fc44d6be121"/>
+            hash="sha256:e13f45225a795ebe9e4047486fa57b3232e6a21539983775db6cd4ae9046b049"/>
   </autotools>
 
   <autotools id="glib"
@@ -149,9 +149,9 @@
     <dependencies>
       <dep package="libffi"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/glib/2.35/glib-2.35.2.tar.xz" version="2.35.2"
+    <branch module="/pub/GNOME/sources/glib/2.36/glib-2.36.0.tar.xz" version="2.36.0"
             repo="ftp.gnome.org"
-            hash="sha256:84fffa2041850352b83a7b27c127f1c4e8b3d169aa3a000b100820ba10f8c19e"/>
+            hash="sha256:455a8abe8692c5174bcc7ffa15b96a7521a2f2f9fb47594405927c35cb9bb227"/>
   </autotools>
 
   <autotools id="glib-networking">
@@ -169,9 +169,10 @@
     <dependencies>
       <dep package="glib-networking"/>
     </dependencies>
-    <branch module="libsoup" version="2.40.2-r1"
-            repo="git.gnome.org"
-            revision="5651d18eb8c9edff5961a32c488641bf6776ca6b"/>
+    <branch module="/pub/GNOME/sources/libsoup/2.42/libsoup-2.42.0.tar.xz" version="2.42.0"
+            repo="ftp.gnome.org"
+            hash="sha256:9e0e7eb5d3f7401ccf521fbc289fc1fa0923b7c7833729e2ed7696f7b848893e"
+            md5sum="a632a38d2983c2a88679672d00940128"/>
   </autotools>
 
   <autotools id="fontconfig" autogen-sh="configure">
@@ -218,10 +219,9 @@
 
   <autotools id="at-spi2-core" 
              autogenargs="--disable-introspection">
-    <branch module="pub/GNOME/sources/at-spi2-core/2.2/at-spi2-core-2.2.1.tar.xz" version="2.2.1"
+    <branch module="pub/GNOME/sources/at-spi2-core/2.5/at-spi2-core-2.5.3.tar.xz" version="2.5.3"
             repo="ftp.gnome.org"
-            hash="sha256:2a4129420decca3657e163a4dbb1a3cb28acafe32ea1292417fdd81084d48fac"
-            md5sum="183916373d6906ff6b220bd44d15ff97">
+            hash="sha256:f5b69ea237d1bb9da36a717a6e810baf3cd4094770f8361793e6cb3ec2443c3c">
     </branch>
     <dependencies>
       <dep package="glib"/>
@@ -229,10 +229,9 @@
   </autotools>
 
   <autotools id="at-spi2-atk">
-    <branch module="pub/GNOME/sources/at-spi2-atk/2.2/at-spi2-atk-2.2.1.tar.xz" version="2.2.1"
+    <branch module="pub/GNOME/sources/at-spi2-atk/2.5/at-spi2-atk-2.5.3.tar.xz" version="2.5.3"
             repo="ftp.gnome.org"
-            hash="sha256:6677def34b16c9a28d6ad96473ea56a3c0e13aa968e584df004cd44c8691ea1a"
-            md5sum="19646097aca25a9c1b8ba7ab8d172916">
+            hash="sha256:bdbead509bb87e8939b06385febdadddef3c5e25dce4a0ed39f9a83d36c0c69b">
     </branch>
     <dependencies>
       <dep package="glib"/>

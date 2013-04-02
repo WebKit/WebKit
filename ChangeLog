@@ -1,5 +1,38 @@
 2013-04-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Bump required versions of some dependencies
+        https://bugs.webkit.org/show_bug.cgi?id=113282
+
+        Reviewed by Martin Robinson.
+
+        This patch updates the following dependencies:
+
+         - libsoup 2.42.0: is the current stable release.
+
+         - glib 2.36.0: libsoup 2.42 requires 2.35.0, but we don't want to
+           depend on unstable versions and 2.36 is the next stable version
+           after 2.35.
+
+         - gtk+ 3.6.0: this is the previous stable release. We don't
+           currently have any code using newer API, so we will be able to
+           remove all the #ifdefed code.
+
+         - at-spi2 2.5.3: is the version required by gtk+ 3.6.
+
+         - GObject introspection 1.32.0: is the version required by gtk+ 3.6.
+
+         - Pango 1.32.0: it's the current stable version and the first one
+           depending on Harfbuzz.
+
+         - Fontconfig 2.5: required by pango 1.32.0 when using Harfbuzz.
+
+         - gtk+ 2.24.10: it allows us to remove a lot of deprecated code
+           and #ifdefs.
+
+        * Source/autotools/Versions.m4:
+
+2013-04-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [EFL][CMAKE] Move MOZ_X11 definition from OptionsCommon to OptionsEfl
         https://bugs.webkit.org/show_bug.cgi?id=113685
 
