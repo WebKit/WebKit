@@ -1,16 +1,12 @@
-CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/inspector/resources/cross-origin-iframe.html from frame with URL http://127.0.0.1:8000/inspector/console-cross-origin-iframe-logging.html. Domains, protocols and ports must match.
-
-CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/inspector/resources/cross-origin-iframe.html from frame with URL http://127.0.0.1:8000/inspector/console-cross-origin-iframe-logging.html. Domains, protocols and ports must match.
-
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
+CONSOLE MESSAGE: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match.
 CONSOLE MESSAGE: Unable to post message to http://127.0.0.1:8000. Recipient has origin http://localhost:8000.
 
 Tests that cross origin errors are logged with source url and line number.
 
 
-Unsafe JavaScript attempt to access frame with URL http://localhost:8000/inspector/resources/cross-origin-iframe.html from frame with URL http://127.0.0.1:8000/inspector/console-cross-origin-iframe-logging.html. Domains, protocols and ports must match.
- console-cross-origin-iframe-logging.html:9
-Unsafe JavaScript attempt to access frame with URL http://localhost:8000/inspector/resources/cross-origin-iframe.html from frame with URL http://127.0.0.1:8000/inspector/console-cross-origin-iframe-logging.html. Domains, protocols and ports must match.
- [native code]:1
+Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match. console-cross-origin-iframe-logging.html:9
+Blocked a frame with origin "http://127.0.0.1:8000" from accessing a frame with origin "http://localhost:8000". Protocols, domains, and ports must match. [native code]:1
 Unable to post message to http://127.0.0.1:8000. Recipient has origin http://localhost:8000.
  [native code]:1
 
