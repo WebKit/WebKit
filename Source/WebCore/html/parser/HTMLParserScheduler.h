@@ -47,11 +47,7 @@ private:
     RefPtr<Document> m_document;
 };
 
-// In C++, base classes are destructed from right to left, which means
-// ~NestingLevelIncrementer will run before ~ActiveParserSession. This
-// is important because ~ActiveParserSession calls Document::decrementActiveParserCount,
-// which cares about the pump nesting level of the parser.
-class PumpSession : public ActiveParserSession, public NestingLevelIncrementer {
+class PumpSession : public NestingLevelIncrementer, public ActiveParserSession {
 public:
     PumpSession(unsigned& nestingLevel, Document*);
     ~PumpSession();
