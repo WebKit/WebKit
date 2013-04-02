@@ -1620,7 +1620,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
 #endif
         WordMeasurements wordMeasurements;
         end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
-        renderTextInfo.m_lineBreakIterator.resetLastTwoCharacters();
+        renderTextInfo.m_lineBreakIterator.resetPriorContext();
         if (resolver.position().atEnd()) {
             // FIXME: We shouldn't be creating any runs in nextLineBreak to begin with!
             // Once BidiRunList is separated from BidiResolver this will not be needed.
@@ -2746,7 +2746,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                 m_positionedObjects.append(box);
             width.addUncommittedWidth(inlineLogicalWidth(current.m_obj));
             // Reset prior line break context characters.
-            renderTextInfo.m_lineBreakIterator.resetLastTwoCharacters();
+            renderTextInfo.m_lineBreakIterator.resetPriorContext();
         } else if (current.m_obj->isFloating()) {
             RenderBox* floatBox = toRenderBox(current.m_obj);
             FloatingObject* f = m_block->insertFloatingObject(floatBox);
@@ -2763,7 +2763,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             } else
                 floatsFitOnLine = false;
             // Update prior line break context characters, using U+FFFD (OBJECT REPLACEMENT CHARACTER) for floating element.
-            renderTextInfo.m_lineBreakIterator.updateLastTwoCharacters(replacementCharacter);
+            renderTextInfo.m_lineBreakIterator.updatePriorContext(replacementCharacter);
         } else if (current.m_obj->isRenderInline()) {
             // Right now, we should only encounter empty inlines here.
             ASSERT(isEmptyInline(current.m_obj));
@@ -2833,7 +2833,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             if (current.m_obj->isRubyRun())
                 width.applyOverhang(toRenderRubyRun(current.m_obj), last, next);
             // Update prior line break context characters, using U+FFFD (OBJECT REPLACEMENT CHARACTER) for replaced element.
-            renderTextInfo.m_lineBreakIterator.updateLastTwoCharacters(replacementCharacter);
+            renderTextInfo.m_lineBreakIterator.updatePriorContext(replacementCharacter);
         } else if (current.m_obj->isText()) {
             if (!current.m_pos)
                 appliedStartWidth = false;
@@ -2892,7 +2892,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                 renderTextInfo.m_text = t;
                 renderTextInfo.m_font = &f;
                 renderTextInfo.m_layout = f.createLayout(t, width.currentWidth(), collapseWhiteSpace);
-                renderTextInfo.m_lineBreakIterator.reset(t->text(), style->locale());
+                renderTextInfo.m_lineBreakIterator.resetStringAndReleaseIterator(t->text(), style->locale());
             } else if (renderTextInfo.m_layout && renderTextInfo.m_font != &f) {
                 renderTextInfo.m_font = &f;
                 renderTextInfo.m_layout = f.createLayout(t, width.currentWidth(), collapseWhiteSpace);
@@ -2904,8 +2904,8 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             // words with their trailing space, then subtract its width.
             float wordTrailingSpaceWidth = (f.typesettingFeatures() & Kerning) && !textLayout ? f.width(constructTextRun(t, f, &space, 1, style)) + wordSpacing : 0;
 
-            UChar lastCharacterInNode = renderTextInfo.m_lineBreakIterator.lastCharacter();
-            UChar secondToLastCharacterInNode = renderTextInfo.m_lineBreakIterator.secondToLastCharacter();
+            UChar lastCharacter = renderTextInfo.m_lineBreakIterator.lastCharacter();
+            UChar secondToLastCharacter = renderTextInfo.m_lineBreakIterator.secondToLastCharacter();
             for (; current.m_pos < t->textLength(); current.fastIncrementInTextNode()) {
                 bool previousCharacterIsSpace = currentCharacterIsSpace;
                 bool previousCharacterIsWS = currentCharacterIsWS;
@@ -3110,11 +3110,11 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
 
                 atStart = false;
             nextCharacter:
-                secondToLastCharacterInNode = lastCharacterInNode;
-                lastCharacterInNode = c;
+                secondToLastCharacter = lastCharacter;
+                lastCharacter = c;
             }
 
-            renderTextInfo.m_lineBreakIterator.setLastTwoCharacters(lastCharacterInNode, secondToLastCharacterInNode);
+            renderTextInfo.m_lineBreakIterator.setPriorContext(lastCharacter, secondToLastCharacter);
 
             wordMeasurements.grow(wordMeasurements.size() + 1);
             WordMeasurement& wordMeasurement = wordMeasurements.last();
