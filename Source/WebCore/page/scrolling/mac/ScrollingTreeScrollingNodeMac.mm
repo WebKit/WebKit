@@ -305,7 +305,7 @@ void ScrollingTreeScrollingNodeMac::setScrollLayerPosition(const IntPoint& posit
     ASSERT(!shouldUpdateScrollLayerPositionOnMainThread());
     m_scrollLayer.get().position = CGPointMake(-position.x() + scrollOrigin().x(), -position.y() + scrollOrigin().y());
 
-    IntSize scrollOffsetForFixedChildren = FrameView::scrollOffsetForFixedPosition(viewportRect(), totalContentsSize(), position, scrollOrigin(), frameScaleFactor(), false);
+    IntSize scrollOffsetForFixedChildren = FrameView::scrollOffsetForFixedPosition(viewportRect(), totalContentsSize(), position, scrollOrigin(), frameScaleFactor(), false, headerHeight(), footerHeight());
     if (m_counterScrollingLayer)
         m_counterScrollingLayer.get().position = FloatPoint(scrollOffsetForFixedChildren);
 

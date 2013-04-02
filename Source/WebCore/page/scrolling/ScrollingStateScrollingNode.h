@@ -60,7 +60,9 @@ public:
         VerticalScrollbarMode,
         ScrollOrigin,
         RequestedScrollPosition,
-        CounterScrollingLayer
+        CounterScrollingLayer,
+        HeaderHeight,
+        FooterHeight
     };
 
     virtual bool isScrollingNode() OVERRIDE { return true; }
@@ -107,6 +109,12 @@ public:
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
     void setScrollOrigin(const IntPoint&);
 
+    int headerHeight() const { return m_headerHeight; }
+    void setHeaderHeight(int);
+
+    int footerHeight() const { return m_footerHeight; }
+    void setFooterHeight(int);
+
     // This is a layer moved in the opposite direction to scrolling, for example for background-attachment:fixed
     GraphicsLayer* counterScrollingLayer() const { return m_counterScrollingLayer; }
     void setCounterScrollingLayer(GraphicsLayer*);
@@ -148,6 +156,9 @@ private:
 
     IntPoint m_requestedScrollPosition;
     IntPoint m_scrollOrigin;
+
+    int m_headerHeight;
+    int m_footerHeight;
 };
 
 inline ScrollingStateScrollingNode* toScrollingStateScrollingNode(ScrollingStateNode* node)

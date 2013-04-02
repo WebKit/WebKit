@@ -73,6 +73,9 @@ protected:
 
     const IntPoint& scrollOrigin() const { return m_scrollOrigin; }
 
+    int headerHeight() const { return m_headerHeight; }
+    int footerHeight() const { return m_footerHeight; }
+
 private:
     IntRect m_viewportRect;
     IntSize m_totalContentsSize;
@@ -90,6 +93,9 @@ private:
 
     ScrollbarMode m_horizontalScrollbarMode;
     ScrollbarMode m_verticalScrollbarMode;
+
+    int m_headerHeight;
+    int m_footerHeight;
 };
 
 } // namespace WebCore

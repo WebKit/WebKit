@@ -225,7 +225,7 @@ public:
     // and adjusting for page scale.
     IntSize scrollOffsetForFixedPosition() const;
     // Static function can be called from another thread.
-    static IntSize scrollOffsetForFixedPosition(const IntRect& visibleContentRect, const IntSize& contentsSize, const IntPoint& scrollPosition, const IntPoint& scrollOrigin, float frameScaleFactor, bool fixedElementsLayoutRelativeToFrame);
+    static IntSize scrollOffsetForFixedPosition(const IntRect& visibleContentRect, const IntSize& totalContentsSize, const IntPoint& scrollPosition, const IntPoint& scrollOrigin, float frameScaleFactor, bool fixedElementsLayoutRelativeToFrame, int headerHeight, int footerHeight);
 
     bool fixedElementsLayoutRelativeToFrame() const;
 

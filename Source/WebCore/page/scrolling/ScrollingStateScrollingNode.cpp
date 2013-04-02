@@ -52,6 +52,8 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(ScrollingStateTree* sta
     , m_requestedScrollPositionRepresentsProgrammaticScroll(false)
     , m_horizontalScrollbarMode(ScrollbarAuto)
     , m_verticalScrollbarMode(ScrollbarAuto)
+    , m_headerHeight(0)
+    , m_footerHeight(0)
 {
 }
 
@@ -72,6 +74,8 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
     , m_verticalScrollbarMode(stateNode.verticalScrollbarMode())
     , m_requestedScrollPosition(stateNode.requestedScrollPosition())
     , m_scrollOrigin(stateNode.scrollOrigin())
+    , m_headerHeight(stateNode.headerHeight())
+    , m_footerHeight(stateNode.footerHeight())
 {
     setCounterScrollingLayer(stateNode.counterScrollingLayer());
 }
@@ -221,6 +225,26 @@ void ScrollingStateScrollingNode::setScrollOrigin(const IntPoint& scrollOrigin)
 
     m_scrollOrigin = scrollOrigin;
     setPropertyChanged(ScrollOrigin);
+    m_scrollingStateTree->setHasChangedProperties(true);
+}
+
+void ScrollingStateScrollingNode::setHeaderHeight(int headerHeight)
+{
+    if (m_headerHeight == headerHeight)
+        return;
+
+    m_headerHeight = headerHeight;
+    setPropertyChanged(HeaderHeight);
+    m_scrollingStateTree->setHasChangedProperties(true);
+}
+
+void ScrollingStateScrollingNode::setFooterHeight(int footerHeight)
+{
+    if (m_footerHeight == footerHeight)
+        return;
+
+    m_footerHeight = footerHeight;
+    setPropertyChanged(FooterHeight);
     m_scrollingStateTree->setHasChangedProperties(true);
 }
 

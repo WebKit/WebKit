@@ -114,6 +114,9 @@ private:
         IntSize totalContentsSize;
         
         float frameScaleFactor;
+
+        int headerHeight;
+        int footerHeight;
     };
 
     void setScrollParametersForNode(const ScrollParameters&, ScrollingStateScrollingNode*);
