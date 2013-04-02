@@ -147,6 +147,9 @@ WebInspector.ScriptsPanel = function(workspaceForTest)
     this._scriptViewStatusBarItemsContainer = document.createElement("div");
     this._scriptViewStatusBarItemsContainer.style.display = "inline-block";
 
+    this._scriptViewStatusBarTextContainer = document.createElement("div");
+    this._scriptViewStatusBarTextContainer.style.display = "inline-block";
+
     this._installDebuggerSidebarController();
 
     WebInspector.dockController.addEventListener(WebInspector.DockController.Events.DockSideChanged, this._dockSideChanged.bind(this));
@@ -194,8 +197,7 @@ WebInspector.ScriptsPanel.prototype = {
      */
     statusBarText: function()
     {
-        var sourceFrame = this.visibleView;
-        return sourceFrame ? sourceFrame.statusBarText() : null;
+        return this._scriptViewStatusBarTextContainer;
     },
 
     defaultFocusedElement: function()
@@ -369,12 +371,16 @@ WebInspector.ScriptsPanel.prototype = {
     _updateScriptViewStatusBarItems: function()
     {
         this._scriptViewStatusBarItemsContainer.removeChildren();
+        this._scriptViewStatusBarTextContainer.removeChildren();
 
         var sourceFrame = this.visibleView;
         if (sourceFrame) {
             var statusBarItems = sourceFrame.statusBarItems() || [];
             for (var i = 0; i < statusBarItems.length; ++i)
                 this._scriptViewStatusBarItemsContainer.appendChild(statusBarItems[i]);
+            var statusBarText = sourceFrame.statusBarText();
+            if (statusBarText)
+                this._scriptViewStatusBarTextContainer.appendChild(statusBarText);
         }
     },
 
