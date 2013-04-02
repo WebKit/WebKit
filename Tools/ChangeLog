@@ -1,3 +1,15 @@
+2013-04-02  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [EFL][WK2] Empty tooltip shown when hovering over popup menu items
+        https://bugs.webkit.org/show_bug.cgi?id=113382
+
+        Reviewed by Gyuyoung Kim.
+
+        Do not show the empty tooltip box if the text is null.
+
+        * MiniBrowser/efl/main.c:
+        (popup_menu_populate):
+
 2013-04-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Bump required versions of some dependencies

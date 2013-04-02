@@ -929,7 +929,9 @@ popup_menu_populate(Evas_Object *elm_menu, Ewk_Popup_Menu *ewk_menu, void *user_
                 elm_object_item_disabled_set(item, EINA_TRUE);
             } else {
                 Elm_Object_Item *item = elm_menu_item_add(elm_menu, NULL, NULL, ewk_popup_menu_item_text_get(ewk_item), on_popup_menu_item_clicked, user_data);
-                elm_object_item_tooltip_text_set(item, ewk_popup_menu_item_tooltip_get(ewk_item));
+                const char *tooltip_text = ewk_popup_menu_item_tooltip_get(ewk_item);
+                if (tooltip_text && tooltip_text[0] != '\0')
+                    elm_object_item_tooltip_text_set(item, tooltip_text);
                 elm_object_item_disabled_set(item, !ewk_popup_menu_item_enabled_get(ewk_item));
                 elm_menu_item_selected_set(item, ewk_popup_menu_item_selected_get(ewk_item));
             }
