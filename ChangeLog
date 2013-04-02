@@ -1,3 +1,19 @@
+2013-04-02  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Make libsecret optional
+        https://bugs.webkit.org/show_bug.cgi?id=113821
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Add a configuration option to disable credential storage and thus remove
+        the libsecret dependency. This should make it possible to build WebKit 2.x
+        on Windows again.
+
+        * Source/autotools/FindDependencies.m4: Only look for libsecret if credential storage is active.
+        * Source/autotools/PrintBuildConfiguration.m4: Print whether or not credential storage is active.
+        * Source/autotools/ReadCommandLineArguments.m4: Added an option to control credential storage.
+        * Source/autotools/SetupAutoconfHeader.m4: Expose credential storage setting to code.
+
 2013-04-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r147401.
