@@ -1908,6 +1908,7 @@ webkit.org/b/109224 fast/forms/number/number-l10n-input.html [ Skip ]
 webkit.org/b/109353 fast/flexbox/line-clamp-link-after-ellipsis.html [ Skip ]
 
 webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-circle.html [ Skip ]
+webkit.org/b/113769 fast/exclusions/shape-outside-floats/shape-outside-floats-ellipse-margin-left.html [ Skip ]
 
 webkit.org/b/110090 fast/events/clientXY-in-zoom-and-scroll.html [ Skip ]
 
@@ -2711,3 +2712,6 @@ webkit.org/b/91611 [ Mac Win ] media/media-higher-prio-audio-stream.html [ Skip 
 
 # Newly added test in r147094 fails
 webkit.org/b/113513 inspector/styles/paste-property.html [ Skip ]
+
+# New test crashes after r147388
+webkit.org/b/113770 editing/execCommand/format-block-at-root.html [ Skip ]
