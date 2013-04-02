@@ -1,0 +1,59 @@
+Tests that splitting properties when pasting works.
+
+Text
+Before pasting:
+[expanded] 
+element.style  { ()
+font-size: 12px;
+
+======== Matched CSS Rules ========
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+After pasting 'margin-left: 1px':
+[expanded] 
+element.style  { ()
+font-size: 12px;
+
+======== Matched CSS Rules ========
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+After pasting 'margin-top: 1px; color: red;':
+[expanded] 
+element.style  { ()
+font-size: 12px;
+
+======== Matched CSS Rules ========
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+Exception while running: function pasteOverExistingProperty() {
+        InspectorTest.addResult("After pasting 'margin-top: 1px; color: red;':");
+        InspectorTest.dumpSelectedElementStyles(true);
+
+        var treeElement = InspectorTest.getElementStylePropertyTreeItem("margin-top");
+        pasteProperty(treeElement, "foo: bar; moo: zoo", dumpAndComplete);
+    }
+pasteProperty
+pasteOverExistingProperty
+result
+stylesUpdated
+result
+sniff
+result
+
+_innerRebuildUpdate
+stylesCallback
+stylesCallback@[native code]
+callback@file:///opt/tmpsantos/projects/webkit-efl/WebKitBuild/Release/share/ewebkit-0/inspector/CSSStyleModel.js:135
+callback@[native code]
+dispatch@file:///opt/tmpsantos/projects/webkit-efl/WebKitBuild/Release/share/ewebkit-0/inspector/InspectorBackend.js:209
+file:///opt/tmpsantos/projects/webkit-efl/WebKitBuild/Release/share/ewebkit-0/inspector/inspector.js:567
+

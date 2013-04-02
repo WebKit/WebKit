@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 141x17
+          text run at (0,0) width 141: "This is to test a fix for "
+        RenderInline {A} at (0,0) size 68x17 [color=#0000EE]
+          RenderText {#text} at (141,0) size 68x17
+            text run at (141,0) width 68: "bug 26660"
+        RenderText {#text} at (209,0) size 4x17
+          text run at (209,0) width 4: "."
+      RenderBlock {P} at (0,486) size 784x0
+layer at (8,101) size 252x38
+  RenderBlock {DIV} at (0,93) size 252x38 [border: (1px solid #008000)]
+    RenderText {#text} at (1,1) size 229x35
+      text run at (1,1) width 229: "Straight \x{916}\x{94B}\x{91C}\x{947}\x{902} \x{92C}\x{941}\x{927}\x{935}\x{93E}\x{930} \x{915}\x{940} \x{938}\x{941}\x{92C}\x{939} \x{939}\x{94B}\x{928}\x{947}"
+      text run at (1,19) width 128: "\x{935}\x{93E}\x{932}\x{93E} \x{92A}\x{942}\x{930}\x{94D}\x{923} 123 abc"
+layer at (8,214) size 252x38
+  RenderBlock {DIV} at (0,206) size 252x38 [border: (1px solid #008000)]
+    RenderText {#text} at (1,1) size 225x35
+      text run at (1,1) width 225: "Now rotated \x{916}\x{94B}\x{91C}\x{947}\x{902} \x{92C}\x{941}\x{927}\x{935}\x{93E}\x{930} \x{915}\x{940} \x{938}\x{941}\x{92C}\x{939}"
+      text run at (1,19) width 162: "\x{939}\x{94B}\x{928}\x{947} \x{935}\x{93E}\x{932}\x{93E} \x{92A}\x{942}\x{930}\x{94D}\x{923} 123 abc"
+layer at (8,327) size 252x38
+  RenderBlock {DIV} at (0,319) size 252x38 [border: (1px solid #008000)]
+    RenderText {#text} at (1,1) size 225x35
+      text run at (1,1) width 225: "Now rotated \x{916}\x{94B}\x{91C}\x{947}\x{902} \x{92C}\x{941}\x{927}\x{935}\x{93E}\x{930} \x{915}\x{940} \x{938}\x{941}\x{92C}\x{939}"
+      text run at (1,19) width 162: "\x{939}\x{94B}\x{928}\x{947} \x{935}\x{93E}\x{932}\x{93E} \x{92A}\x{942}\x{930}\x{94D}\x{923} 123 abc"
+layer at (8,440) size 252x38
+  RenderBlock {DIV} at (0,432) size 252x38 [border: (1px solid #008000)]
+    RenderText {#text} at (1,1) size 225x35
+      text run at (1,1) width 117: "Now rotated \x{916}\x{94B}\x{91C}\x{947}\x{902} "
+      text run at (118,1) width 108: "\x{92C}\x{941}\x{927}\x{935}\x{93E}\x{930} \x{915}\x{940} \x{938}\x{941}\x{92C}\x{939}"
+      text run at (1,19) width 162: "\x{939}\x{94B}\x{928}\x{947} \x{935}\x{93E}\x{932}\x{93E} \x{92A}\x{942}\x{930}\x{94D}\x{923} 123 abc"

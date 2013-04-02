@@ -157,6 +157,8 @@ Bug(EFL) fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html [ Im
 Bug(EFL) fast/events/domactivate-sets-underlying-click-event-as-handled.html [ Failure Pass ]
 Bug(EFL) http/tests/inspector/change-iframe-src.html [ Failure Pass ]
 Bug(EFL) http/tests/loading/fire-error-event-empty-404-script.html [ Crash Failure Pass ]
+Bug(EFL) fast/js/create-lots-of-workers.html [ Crash Failure Pass ]
+Bug(EFL) media/track/track-element-load-event.html [ Crash Failure Pass ]
 
 webkit.org/b/98761 svg/text/selection-tripleclick.svg [ Failure Pass ]
 
@@ -189,6 +191,14 @@ webkit.org/b/101417 fast/dom/shadow/shadowdom-for-object-only-shadow.html [ Imag
 
 # Also flaky at least on GTK+
 webkit.org/b/72698 media/audio-garbage-collect.html
+
+# Audio sample mismatch
+Bug(EFL) webaudio/codec-tests/wav/24bit-22khz-resample.html [ Failure ]
+Bug(EFL) webaudio/oscillator-custom.html [ Failure ]
+Bug(EFL) webaudio/oscillator-sawtooth.html [ Failure ]
+Bug(EFL) webaudio/oscillator-sine.html [ Failure ]
+Bug(EFL) webaudio/oscillator-square.html [ Failure ]
+Bug(EFL) webaudio/oscillator-triangle.html [ Failure ]
 
 # window.internals does not reset font family mappings (done in other tests), leading to these failures
 webkit.org/b/102370 fast/writing-mode/japanese-ruby-horizontal-bt.html [ Failure Pass ]
@@ -400,6 +410,8 @@ webkit.org/b/103432 [ Debug ] http/tests/inspector/network/network-xhr-replay.ht
 webkit.org/b/98739 plugins/npruntime/embed-property-equality.html [ Failure ]
 
 # EFL's EventSender contextClick should return objects that implements click() method
+webkit.org/b/98410 editing/pasteboard/can-read-in-copy-and-cut-events.html [ Failure ]
+webkit.org/b/98410 editing/pasteboard/can-read-in-dragstart-event.html [ Failure ]
 webkit.org/b/98410 editing/pasteboard/copy-standalone-image-crash.html [ Failure ]
 webkit.org/b/98410 media/context-menu-actions.html [ Failure ]
 
@@ -447,7 +459,7 @@ webkit.org/b/109435 webgl/conformance/textures/tex-image-and-sub-image-2d-with-v
 webkit.org/b/109435 webgl/conformance/textures/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Failure ]
 webkit.org/b/109435 webgl/conformance/textures/tex-image-and-sub-image-2d-with-video.html [ Failure ]
 webkit.org/b/109435 webgl/conformance/textures/texture-mips.html [ Failure ]
-webkit.org/b/109435 webgl/conformance/textures/texture-size-limit.html [ Failure ]
+webkit.org/b/109435 webgl/conformance/textures/texture-size-limit.html [ Failure Crash ]
 
 # Remaining websocket failures.
 webkit.org/b/111976 http/tests/websocket/tests/hybi/broken-utf8.html [ Crash Pass ]
