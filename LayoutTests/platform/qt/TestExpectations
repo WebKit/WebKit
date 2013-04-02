@@ -2157,10 +2157,6 @@ fast/events/touch/gesture/gesture-scroll.html
 fast/events/touch/gesture/touch-gesture-scroll-sideways.html
 fast/events/touch/gesture/gesture-tap-active-state-iframe.html
 
-# New test introduced in https://bugs.webkit.org/show_bug.cgi?id=103355
-# Needs Qt implementation.
-fast/events/touch/gesture/touch-gesture-scroll-remove-node.html
-
 # Test fails because script pretty-print does not work in inspector on JSC when paused on breakpoint.
 # https://bugs.webkit.org/show_bug.cgi?id=71120
 inspector/debugger/selected-call-frame-after-formatting-source.html
@@ -2664,11 +2660,6 @@ inspector/editor/text-editor-smart-braces.html
 
 # [Qt] different result from other platforms
 webkit.org/b/108676 svg/custom/svg-fonts-in-text-controls.html [ Skip ]
-
-# REGRESSION(r142015)
-webkit.org/b/91665 fast/dynamic/absolute-positioned-to-static-positioned.html [ Skip ]
-webkit.org/b/91665 fast/dynamic/floating-to-non-floating.html [ Skip ]
-webkit.org/b/91665 fast/dynamic/static-positioned-to-absolute-positioned.html [ Skip ]
 
 # Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=109775
 webkit.org/b/109775 media/audio-controls-rendering.html [ Failure ]
