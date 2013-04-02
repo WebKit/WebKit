@@ -1045,6 +1045,14 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
                 callStackLabel = WebInspector.UIString("Styles recalculation forced");
                 break;
             case recordTypes.Layout:
+                if (this.data["dirtyObjects"])
+                    contentHelper.appendTextRow(WebInspector.UIString("Nodes that need layout"), this.data["dirtyObjects"]);
+                if (this.data["totalObjects"])
+                    contentHelper.appendTextRow(WebInspector.UIString("Layout tree size"), this.data["totalObjects"]);
+                if (typeof this.data["partialLayout"] === "boolean") {
+                    contentHelper.appendTextRow(WebInspector.UIString("Layout scope"),
+                       this.data["partialLayout"] ? WebInspector.UIString("Partial") : WebInspector.UIString("Whole document"));
+                }
                 callSiteStackTraceLabel = WebInspector.UIString("Layout invalidated");
                 if (this.stackTrace) {
                     callStackLabel = WebInspector.UIString("Layout forced");

@@ -80,7 +80,7 @@ namespace WebCore {
 
         static PassRefPtr<InspectorObject> createResourceFinishData(const String& requestId, bool didFail, double finishTime);
 
-        static void addRectData(InspectorObject*, const LayoutRect&);
+        static PassRefPtr<InspectorObject> createLayoutData(unsigned dirtyObjects, unsigned totalObjects, bool partialLayout);
 
         static PassRefPtr<InspectorObject> createDecodeImageData(const String& imageType);
 
@@ -94,7 +94,7 @@ namespace WebCore {
 
         static PassRefPtr<InspectorObject> createPaintData(const FloatQuad&);
 
-        static PassRefPtr<InspectorObject> createLayoutData(const FloatQuad&);
+        static void appendLayoutRoot(InspectorObject* data, const FloatQuad&);
 
 #if ENABLE(WEB_SOCKETS)
         static inline PassRefPtr<InspectorObject> createWebSocketCreateData(unsigned long identifier, const KURL& url, const String& protocol)

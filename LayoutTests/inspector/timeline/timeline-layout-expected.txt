@@ -1,12 +1,36 @@
 Tests the Timeline API instrumentation of a Layout event
 
-Test data
+text
+text
+text
+text
+text
 Layout Properties:
 {
     children : <object>
     counters : <object>
     data : {
+        dirtyObjects : 3
+        partialLayout : true
         root : <object>
+        totalObjects : 8
+    }
+    endTime : <number>
+    frameId : <string>
+    stackTrace : <object>
+    startTime : <number>
+    type : "Layout"
+    usedHeapSize : <number>
+}
+Layout Properties:
+{
+    children : <object>
+    counters : <object>
+    data : {
+        dirtyObjects : 2
+        partialLayout : true
+        root : <object>
+        totalObjects : 11
     }
     endTime : <number>
     frameId : <string>

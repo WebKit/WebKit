@@ -178,6 +178,15 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createReceiveResourceData(con
     data->setNumber("encodedDataLength", length);
     return data.release();
 }
+
+PassRefPtr<InspectorObject> TimelineRecordFactory::createLayoutData(unsigned dirtyObjects, unsigned totalObjects, bool partialLayout)
+{
+    RefPtr<InspectorObject> data = InspectorObject::create();
+    data->setNumber("dirtyObjects", dirtyObjects);
+    data->setNumber("totalObjects", totalObjects);
+    data->setBoolean("partialLayout", partialLayout);
+    return data.release();
+}
     
 PassRefPtr<InspectorObject> TimelineRecordFactory::createDecodeImageData(const String& imageType)
 {
@@ -235,11 +244,9 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createPaintData(const FloatQu
     return data.release();
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createLayoutData(const FloatQuad& quad)
+void TimelineRecordFactory::appendLayoutRoot(InspectorObject* data, const FloatQuad& quad)
 {
-    RefPtr<InspectorObject> data = InspectorObject::create();
     data->setArray("root", createQuad(quad));
-    return data.release();
 }
 
 } // namespace WebCore

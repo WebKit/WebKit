@@ -263,7 +263,20 @@ void InspectorTimelineAgent::didInvalidateLayout(Frame* frame)
 
 void InspectorTimelineAgent::willLayout(Frame* frame)
 {
-    pushCurrentRecord(InspectorObject::create(), TimelineRecordType::Layout, true, frame);
+    RenderObject* root = frame->view()->layoutRoot();
+    bool partialLayout = !!root;
+
+    if (!partialLayout)
+        root = frame->contentRenderer();
+
+    unsigned dirtyObjects = 0;
+    unsigned totalObjects = 0;
+    for (RenderObject* o = root; o; o = o->nextInPreOrder(root)) {
+        ++totalObjects;
+        if (o->needsLayout())
+            ++dirtyObjects;
+    }
+    pushCurrentRecord(TimelineRecordFactory::createLayoutData(dirtyObjects, totalObjects, partialLayout), TimelineRecordType::Layout, true, frame);
 }
 
 void InspectorTimelineAgent::didLayout(RenderObject* root)
@@ -275,7 +288,7 @@ void InspectorTimelineAgent::didLayout(RenderObject* root)
     Vector<FloatQuad> quads;
     root->absoluteQuads(quads);
     if (quads.size() >= 1)
-        entry.data = TimelineRecordFactory::createLayoutData(quads[0]);
+        TimelineRecordFactory::appendLayoutRoot(entry.data.get(), quads[0]);
     else
         ASSERT_NOT_REACHED();
     didCompleteCurrentRecord(TimelineRecordType::Layout);

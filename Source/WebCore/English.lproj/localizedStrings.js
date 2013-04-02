@@ -917,3 +917,8 @@ localizedStrings["It is recommended to restart inspector after making these chan
 localizedStrings["Limit number of captured JS stack frames"] = "Limit number of captured JS stack frames";
 localizedStrings["Frames to capture"] = "Frames to capture";
 localizedStrings["Select node to inspect"] = "Select node to inspect";
+localizedStrings["Nodes that need layout"] = "Nodes that need layout";
+localizedStrings["Layout tree size"] = "Layout tree size";
+localizedStrings["Layout scope"] = "Layout scope";
+localizedStrings["Partial"] = "Partial";
+localizedStrings["Whole document"] = "Whole document";
