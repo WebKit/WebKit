@@ -3702,7 +3702,7 @@ crbug.com/225184 fast/events/scale-and-scroll-body.html [ Failure ]
 crbug.com/225184 fast/events/scroll-in-scaled-page-with-overflow-hidden.html [ Failure ]
 crbug.com/225184 inspector/elements/highlight-node-scaled.html [ Failure ]
 crbug.com/225184 scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ Failure ]
-crbug.com/225184 svg/as-image/image-respects-pageScaleFactor.html [ ImageOnlyFailure ]
+crbug.com/225184 svg/as-image/image-respects-pageScaleFactor.html [ Failure ]
 crbug.com/225184 [ Mac ] fast/text/descent-clip-in-scaled-page.html [ ImageOnlyFailure ]
 
 # Pixel tests for RTL iframe scrollbar is erroneous. Cannot observe on actual browser.
