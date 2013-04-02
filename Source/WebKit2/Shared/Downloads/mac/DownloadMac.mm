@@ -70,15 +70,12 @@ void Download::startWithHandle(ResourceHandle* handle, const ResourceResponse& r
     ASSERT(!m_nsURLDownload);
     ASSERT(!m_delegate);
 
-    id proxy = handle->releaseProxy();
-    ASSERT(proxy);
-
     m_delegate.adoptNS([[WKDownloadAsDelegate alloc] initWithDownload:this]);
     m_nsURLDownload = [NSURLDownload _downloadWithLoadingConnection:handle->connection()
                                                             request:m_request.nsURLRequest(UpdateHTTPBody)
                                                            response:response.nsURLResponse()
                                                             delegate:m_delegate.get()
-                                                               proxy:proxy];
+                                                               proxy:nil];
 
     // FIXME: Allow this to be changed by the client.
     [m_nsURLDownload.get() setDeletesFileUponFailure:NO];

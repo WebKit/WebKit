@@ -59,13 +59,6 @@
 
 using namespace WebCore;
 
-// WebCoreNSURLConnectionDelegateProxy exists so that we can cast m_proxy to it in order
-// to disambiguate the argument type in the -setDelegate: call.  This avoids a spurious
-// warning that the compiler would otherwise emit.
-@interface WebCoreNSURLConnectionDelegateProxy : NSObject <NSURLConnectionDelegate>
-- (void)setDelegate:(id<NSURLConnectionDelegate>)delegate;
-@end
-
 @interface NSURLConnection (Details)
 -(id)_initWithRequest:(NSURLRequest *)request delegate:(id)delegate usesCache:(BOOL)usesCacheFlag maxContentLength:(long long)maxContentLength startImmediately:(BOOL)startImmediately connectionProperties:(NSDictionary *)connectionProperties;
 @end
@@ -171,17 +164,13 @@ bool ResourceHandle::start()
 
     d->m_storageSession = d->m_context->storageSession().platformSession();
 
-    ASSERT(!d->m_proxy);
-    d->m_proxy.adoptNS(wkCreateNSURLConnectionDelegateProxy());
-    [static_cast<WebCoreNSURLConnectionDelegateProxy*>(d->m_proxy.get()) setDelegate:ResourceHandle::delegate()];
-
     // FIXME: Do not use the sync version of shouldUseCredentialStorage when the client returns true from usesAsyncCallbacks.
     bool shouldUseCredentialStorage = !client() || client()->shouldUseCredentialStorage(this);
 
     d->m_needsSiteSpecificQuirks = d->m_context->needsSiteSpecificQuirks();
 
     createNSURLConnection(
-        d->m_proxy.get(),
+        ResourceHandle::delegate(),
         shouldUseCredentialStorage,
         d->m_shouldContentSniff || d->m_context->localFileContentSniffingEnabled());
 
@@ -274,18 +263,8 @@ void ResourceHandle::releaseDelegate()
 {
     if (!d->m_delegate)
         return;
-    if (d->m_proxy)
-        [d->m_proxy.get() setDelegate:nil];
     [d->m_delegate.get() detachHandle];
     d->m_delegate = nil;
-}
-
-id ResourceHandle::releaseProxy()
-{
-    id proxy = [[d->m_proxy.get() retain] autorelease];
-    d->m_proxy = nil;
-    [proxy setDelegate:nil];
-    return proxy;
 }
 
 NSURLConnection *ResourceHandle::connection() const
@@ -322,7 +301,7 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     }
 
     handle->createNSURLConnection(
-        handle->delegate(), // A synchronous request cannot turn into a download, so there is no need to proxy the delegate.
+        handle->delegate(),
         storedCredentials == AllowStoredCredentials,
         handle->shouldContentSniff() || context->localFileContentSniffingEnabled());
 

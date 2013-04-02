@@ -2351,8 +2351,6 @@ _wkCopyCredentialFromCFPersistentStorage
 _wkGetDefaultHTTPCookieStorage
 _wkSetCFURLRequestShouldContentSniff
 _wkSetRequestStorageSession
-#else
-__ZN7WebCore14ResourceHandle12releaseProxyEv
 #endif
 
 #if ENABLE(BLOB)

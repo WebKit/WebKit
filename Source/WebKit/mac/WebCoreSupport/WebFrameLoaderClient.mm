@@ -290,15 +290,12 @@ void WebFrameLoaderClient::convertMainResourceLoadToDownload(DocumentLoader* doc
     handle->releaseConnectionForDownload();
     CFRelease(connection);
 #else
-    id proxy = handle->releaseProxy();
-    ASSERT(proxy);
-    
     WebView *webView = getWebView(m_webFrame.get());
     [WebDownload _downloadWithLoadingConnection:handle->connection()
                                                                 request:request.nsURLRequest(UpdateHTTPBody)
                                                                response:response.nsURLResponse()
                                                                delegate:[webView downloadDelegate]
-                                                                  proxy:proxy];
+                                                                  proxy:nil];
 #endif
 }
 

@@ -127,7 +127,6 @@ public:
     NSURLConnection *connection() const;
     id delegate();
     void releaseDelegate();
-    id releaseProxy();
 #endif
 
     void schedule(WTF::SchedulePair*);
