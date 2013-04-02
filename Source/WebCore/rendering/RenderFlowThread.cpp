@@ -866,20 +866,6 @@ void RenderFlowThread::updateRegionsFlowThreadPortionRect()
 
         LayoutRect regionRect(style()->direction() == LTR ? LayoutUnit() : logicalWidth() - regionLogicalWidth, logicalHeight, regionLogicalWidth, regionLogicalHeight);
 
-        // When a flow thread has more than one auto logical height region,
-        // we have to take into account the override logical content height value,
-        // if computed for an auto logical height region, and use it to set the height
-        // for the region rect. This way, the regions in the chain following the auto
-        // logical height region, will be able to fragment the right part of their
-        // associated flow thread content (and compute their overrideComputedLogicalHeight properly).
-        if (view()->normalLayoutPhase()) {
-            ASSERT(region->hasOverrideHeight() || !region->hasAutoLogicalHeight());
-            if (region->hasOverrideHeight())
-                regionLogicalHeight = region->overrideLogicalContentHeight();
-
-            regionRect.setHeight(regionLogicalHeight);
-        }
-
         region->setFlowThreadPortionRect(isHorizontalWritingMode() ? regionRect : regionRect.transposedRect());
         logicalHeight += regionLogicalHeight;
     }
