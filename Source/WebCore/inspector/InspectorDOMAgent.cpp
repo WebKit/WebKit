@@ -227,6 +227,7 @@ InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, I
     , m_frontend(0)
     , m_domListener(0)
     , m_lastNodeId(1)
+    , m_lastBackendNodeId(-1)
     , m_searchingForNode(false)
     , m_suppressAttributeModifiedEvent(false)
 {
@@ -491,6 +492,8 @@ void InspectorDOMAgent::discardBindings()
     m_idToNode.clear();
     releaseDanglingNodes();
     m_childrenRequested.clear();
+    m_backendIdToNode.clear();
+    m_nodeGroupToBackendIdMap.clear();
 }
 
 int InspectorDOMAgent::pushNodeToFrontend(ErrorString* errorString, int documentNodeId, Node* nodeToPush)
@@ -622,6 +625,37 @@ int InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
 int InspectorDOMAgent::boundNodeId(Node* node)
 {
     return m_documentNodeToIdMap.get(node);
+}
+
+BackendNodeId InspectorDOMAgent::backendNodeIdForNode(Node* node, const String& nodeGroup)
+{
+    if (!node)
+        return 0;
+
+    if (!m_nodeGroupToBackendIdMap.contains(nodeGroup))
+        m_nodeGroupToBackendIdMap.set(nodeGroup, NodeToBackendIdMap());
+
+    NodeToBackendIdMap& map = m_nodeGroupToBackendIdMap.find(nodeGroup)->value;
+    BackendNodeId id = map.get(node);
+    if (!id) {
+        id = --m_lastBackendNodeId;
+        map.set(node, id);
+        m_backendIdToNode.set(id, std::make_pair(node, nodeGroup));
+    }
+
+    return id;
+}
+
+void InspectorDOMAgent::releaseBackendNodeIds(ErrorString* errorString, const String& nodeGroup)
+{
+    if (m_nodeGroupToBackendIdMap.contains(nodeGroup)) {
+        NodeToBackendIdMap& map = m_nodeGroupToBackendIdMap.find(nodeGroup)->value;
+        for (NodeToBackendIdMap::iterator it = map.begin(); it != map.end(); ++it)
+            m_backendIdToNode.remove(it->value);
+        m_nodeGroupToBackendIdMap.remove(nodeGroup);
+        return;
+    }
+    *errorString = "Group name not found";
 }
 
 void InspectorDOMAgent::setAttributeValue(ErrorString* errorString, int elementId, const String& name, const String& value)
@@ -1765,6 +1799,23 @@ void InspectorDOMAgent::pushNodeByPathToFrontend(ErrorString* errorString, const
         *nodeId = pushNodePathToFrontend(node);
     else
         *errorString = "No node with given path found";
+}
+
+void InspectorDOMAgent::pushNodeByBackendIdToFrontend(ErrorString* errorString, BackendNodeId backendNodeId, int* nodeId)
+{
+    if (!m_backendIdToNode.contains(backendNodeId)) {
+        *errorString = "No node with given backend id found";
+        return;
+    }
+
+    Node* node = m_backendIdToNode.get(backendNodeId).first;
+    String nodeGroup = m_backendIdToNode.get(backendNodeId).second;
+    *nodeId = pushNodePathToFrontend(node);
+
+    if (nodeGroup == "") {
+        m_backendIdToNode.remove(backendNodeId);
+        m_nodeGroupToBackendIdMap.find(nodeGroup)->value.remove(node);
+    }
 }
 
 PassRefPtr<TypeBuilder::Runtime::RemoteObject> InspectorDOMAgent::resolveNode(Node* node, const String& objectGroup)
