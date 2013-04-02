@@ -808,6 +808,7 @@ public:
     // Fenced components.
     virtual String mathFencedOpenString() const { return String(); }
     virtual String mathFencedCloseString() const { return String(); }
+    virtual int mathLineThickness() const { return 0; }
     
 #if HAVE(ACCESSIBILITY)
 #if PLATFORM(GTK) || PLATFORM(EFL)

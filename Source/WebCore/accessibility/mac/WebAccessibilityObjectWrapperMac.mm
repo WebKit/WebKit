@@ -362,6 +362,7 @@ using namespace std;
 #define NSAccessibilityMathOverAttribute @"AXMathOver"
 #define NSAccessibilityMathFencedOpenAttribute @"AXMathFencedOpen"
 #define NSAccessibilityMathFencedCloseAttribute @"AXMathFencedClose"
+#define NSAccessibilityMathLineThicknessAttribute @"AXMathLineThickness"
 
 @implementation WebAccessibilityObjectWrapper
 
@@ -1011,6 +1012,7 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
     } else if (m_object->isMathFraction()) {
         [additional addObject:NSAccessibilityMathFractionNumeratorAttribute];
         [additional addObject:NSAccessibilityMathFractionDenominatorAttribute];
+        [additional addObject:NSAccessibilityMathLineThicknessAttribute];
     } else if (m_object->isMathSubscriptSuperscript()) {
         [additional addObject:NSAccessibilityMathBaseAttribute];
         [additional addObject:NSAccessibilityMathSubscriptAttribute];
@@ -2653,6 +2655,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return m_object->mathFencedOpenString();
         if ([attributeName isEqualToString:NSAccessibilityMathFencedCloseAttribute])
             return m_object->mathFencedCloseString();
+        if ([attributeName isEqualToString:NSAccessibilityMathLineThicknessAttribute])
+            return [NSNumber numberWithInteger:m_object->mathLineThickness()];
     }
     
     // this is used only by DumpRenderTree for testing

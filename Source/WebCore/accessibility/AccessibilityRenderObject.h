@@ -320,6 +320,7 @@ private:
     // Fenced components.
     virtual String mathFencedOpenString() const;
     virtual String mathFencedCloseString() const;
+    virtual int mathLineThickness() const;
 
     bool isIgnoredElementWithinMathTree() const;
 #endif

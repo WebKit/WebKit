@@ -3675,6 +3675,11 @@ String AccessibilityRenderObject::mathFencedCloseString() const
     return getAttribute(MathMLNames::closeAttr);
 }
 
+int AccessibilityRenderObject::mathLineThickness() const
+{
+    return getAttribute(MathMLNames::linethicknessAttr).toInt();
+}
+
 #endif
     
 } // namespace WebCore

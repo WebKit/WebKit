@@ -2002,6 +2002,14 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     return m_object->roleValue() == DocumentMathRole;
 }
 
+- (NSInteger)accessibilityMathLineThickness
+{
+    if (![self _prepareAccessibilityCall])
+        return 0;
+
+    return m_object->mathLineThickness();
+}
+
 - (NSString *)accessibilityMathType
 {
     if (m_object->roleValue() == MathElementRole) {

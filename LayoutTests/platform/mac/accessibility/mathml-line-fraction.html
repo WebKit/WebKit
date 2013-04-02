@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+
+<div id="content">
+
+<math id="math1">
+<mfrac linethickness="0">
+    <mi>n</mi>
+    <mi>k</mi>
+</mfrac>
+</math>
+
+<math id="math2">
+<mfrac linethickness="4">
+    <mi>n</mi>
+    <mi>k</mi>
+</mfrac>
+</math>
+
+</div>
+
+<div id="console"></div>
+<script>
+
+description("This tests ensures that we can retrieve the line thickness of a fraction object")
+
+if (window.testRunner && window.accessibilityController) {
+
+   debug("Verify the line thickness of 0 is reported correctly.");
+   var fraction1 = accessibilityController.accessibleElementById("math1").childAtIndex(0);
+   shouldBe("fraction1.subrole", "'AXSubrole: AXMathFraction'");
+   shouldBeTrue("fraction1.isAttributeSupported('AXMathLineThickness')");
+   shouldBe("fraction1.numberAttributeValue('AXMathLineThickness')", "0");
+
+   debug("\nVerify the line thickness of 4 is reported correctly.");
+   var fraction2 = accessibilityController.accessibleElementById("math2").childAtIndex(0);
+   shouldBe("fraction2.subrole", "'AXSubrole: AXMathFraction'");
+   shouldBeTrue("fraction2.isAttributeSupported('AXMathLineThickness')");
+   shouldBe("fraction2.numberAttributeValue('AXMathLineThickness')", "4");
+
+   document.getElementById("content").style.visibility = 'hidden';
+}
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

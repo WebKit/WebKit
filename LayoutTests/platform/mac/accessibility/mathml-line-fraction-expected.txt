@@ -1,0 +1,18 @@
+This tests ensures that we can retrieve the line thickness of a fraction object
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Verify the line thickness of 0 is reported correctly.
+PASS fraction1.subrole is 'AXSubrole: AXMathFraction'
+PASS fraction1.isAttributeSupported('AXMathLineThickness') is true
+PASS fraction1.numberAttributeValue('AXMathLineThickness') is 0
+
+Verify the line thickness of 4 is reported correctly.
+PASS fraction2.subrole is 'AXSubrole: AXMathFraction'
+PASS fraction2.isAttributeSupported('AXMathLineThickness') is true
+PASS fraction2.numberAttributeValue('AXMathLineThickness') is 4
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
