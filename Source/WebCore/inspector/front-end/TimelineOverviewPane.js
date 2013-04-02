@@ -315,14 +315,6 @@ WebInspector.TimelineOverviewPane.prototype = {
         this._ignoreWindowChangedEvent = false;
     },
 
-    /**
-     * @param {number} value
-     */
-    setMinimumRecordDuration: function(value)
-    {
-        this._eventOverview.setMinimumRecordDuration(value);
-    },
-
     _scheduleRefresh: function()
     {
         if (this._refreshTimeout)
@@ -535,7 +527,6 @@ WebInspector.TimelineEventOverview = function(model)
     WebInspector.TimelineOverviewBase.call(this, model);
 
     this._context = this._canvas.getContext("2d");
-    this._minimumRecordDuration = 0;
 
     this._fillStyles = {};
     var categories = WebInspector.TimelinePresentationModel.categories();
@@ -578,8 +569,6 @@ WebInspector.TimelineEventOverview.prototype = {
 
         function appendRecord(record)
         {
-            if (!!this._minimumRecordDuration && (WebInspector.TimelineModel.durationInSeconds(record) < this._minimumRecordDuration))
-                return;
             if (record.type === WebInspector.TimelineModel.RecordType.BeginFrame)
                 return;
             var recordStart = Math.floor((WebInspector.TimelineModel.startTimeInSeconds(record) - timeOffset) * scale);
@@ -604,15 +593,6 @@ WebInspector.TimelineEventOverview.prototype = {
             if (lastBarByGroup[i])
                 this._renderBar(lastBarByGroup[i].start, lastBarByGroup[i].end, lastBarByGroup[i].category);
         }
-    },
-
-    /**
-     * @param {number} value
-     */
-    setMinimumRecordDuration: function(value)
-    {
-        this._minimumRecordDuration = value;
-        this.update();
     },
 
     _renderBar: function(begin, end, category)

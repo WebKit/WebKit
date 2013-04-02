@@ -602,7 +602,6 @@ WebInspector.TimelinePanel.prototype = {
         var option = this._durationFilterSelector.selectedOption();
         var minimumRecordDuration = +option._durationMs / 1000.0;
         this._durationFilter.setMinimumRecordDuration(minimumRecordDuration);
-        this._overviewPane.setMinimumRecordDuration(minimumRecordDuration);
         this._durationFilterSelector.element.title = option.title;
         this._invalidateAndScheduleRefresh(true, true);
     },
