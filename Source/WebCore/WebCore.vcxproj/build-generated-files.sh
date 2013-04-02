@@ -59,5 +59,5 @@ mkdir -p "${BUILT_PRODUCTS_DIR}/DerivedSources"
 cd "${BUILT_PRODUCTS_DIR}/DerivedSources"
 
 export WebCore="${XSRCROOT}"
-export FEATURE_DEFINES=`$SDKROOT/tools/scripts/feature-defines.sh $SDKROOT $3`
+export FEATURE_DEFINES=`$SDKROOT/tools/scripts/feature-defines2010.sh $SDKROOT $3`
 make -f "$WebCore/DerivedSources.make" -j ${NUMCPUS} || exit 1

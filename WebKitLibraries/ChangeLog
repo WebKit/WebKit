@@ -1,3 +1,12 @@
+2013-04-01  Roger Fong  <roger_fong@apple.com>
+
+        Update FEATURE_DEFINES string generation for VS2010 solution.
+        https://bugs.webkit.org/show_bug.cgi?id=113737.
+
+        Reviewed by Timothy Horton.
+
+        * win/tools/scripts/feature-defines2010.sh: Added.
+
 2013-03-29  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Rollout r146818.
