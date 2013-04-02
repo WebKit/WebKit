@@ -37,10 +37,8 @@ namespace WebKit {
 
 // WebURL - A URL type suitable for vending to an API.
 
-class WebURL : public APIObject {
+class WebURL : public TypedAPIObject<APIObject::TypeURL> {
 public:
-    static const Type APIType = TypeURL;
-
     static PassRefPtr<WebURL> create(const String& string)
     {
         return adoptRef(new WebURL(string));
@@ -104,8 +102,6 @@ private:
             return;
         m_parsedURL = WTF::adoptPtr(new WebCore::KURL(WebCore::KURL(), m_string));
     }
-
-    virtual Type type() const { return APIType; }
 
     String m_string;
     mutable OwnPtr<WebCore::KURL> m_parsedURL;

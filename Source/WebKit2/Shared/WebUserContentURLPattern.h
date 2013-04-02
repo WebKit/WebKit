@@ -34,10 +34,8 @@
 
 namespace WebKit {
 
-class WebUserContentURLPattern : public APIObject {
+class WebUserContentURLPattern : public TypedAPIObject<APIObject::TypeUserContentURLPattern> {
 public:
-    static const Type APIType = TypeUserContentURLPattern;
-
     static PassRefPtr<WebUserContentURLPattern> create(const String& pattern)
     {
         return adoptRef(new WebUserContentURLPattern(pattern));
@@ -57,8 +55,6 @@ private:
         , m_patternString(pattern)
     {
     }
-
-    virtual Type type() const { return APIType; }
 
     WebCore::UserContentURLPattern m_pattern;
     String m_patternString;

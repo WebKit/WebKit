@@ -38,10 +38,8 @@ class ImmutableArray;
 
 // ImmutableDictionary - An immutable dictionary type suitable for vending to an API.
 
-class ImmutableDictionary : public APIObject {
+class ImmutableDictionary : public TypedAPIObject<APIObject::TypeDictionary> {
 public:
-    static const Type APIType = TypeDictionary;
-
     typedef HashMap<String, RefPtr<APIObject> > MapType;
 
     static PassRefPtr<ImmutableDictionary> create()
@@ -84,8 +82,6 @@ public:
 protected:
     ImmutableDictionary();
     ImmutableDictionary(MapType& map);
-
-    virtual Type type() const { return APIType; }
 
     MapType m_map;
 };

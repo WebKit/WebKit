@@ -35,10 +35,8 @@ namespace WebKit {
 
 class ImmutableArray;
 
-class WebContextMenuItem : public APIObject {
+class WebContextMenuItem : public TypedAPIObject<APIObject::TypeContextMenuItem> {
 public:
-    static const Type APIType = TypeContextMenuItem;
-
     static PassRefPtr<WebContextMenuItem> create(const WebContextMenuItemData& data)
     {
         return adoptRef(new WebContextMenuItem(data));
@@ -55,9 +53,7 @@ public:
 
 private:
     WebContextMenuItem(const WebContextMenuItemData&);
-    
-    virtual Type type() const { return APIType; }
-    
+
     WebContextMenuItemData m_webContextMenuItemData;
 };
 

@@ -148,6 +148,23 @@ protected:
     APIObject();
 };
 
+template <APIObject::Type ArgumentType>
+class TypedAPIObject : public APIObject {
+public:
+    static const Type APIType = ArgumentType;
+
+    virtual ~TypedAPIObject()
+    {
+    }
+
+protected:
+    TypedAPIObject()
+    {
+    }
+
+    virtual Type type() const OVERRIDE { return APIType; }
+};
+
 } // namespace WebKit
 
 #endif // APIObject_h

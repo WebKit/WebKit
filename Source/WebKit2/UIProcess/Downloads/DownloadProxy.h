@@ -46,10 +46,8 @@ class WebContext;
 class WebData;
 class WebPageProxy;
 
-class DownloadProxy : public APIObject, public CoreIPC::MessageReceiver {
+class DownloadProxy : public TypedAPIObject<APIObject::TypeDownload>, public CoreIPC::MessageReceiver {
 public:
-    static const Type APIType = TypeDownload;
-
     static PassRefPtr<DownloadProxy> create(DownloadProxyMap&, WebContext*);
     ~DownloadProxy();
 
@@ -71,8 +69,6 @@ public:
 
 private:
     explicit DownloadProxy(DownloadProxyMap&, WebContext*);
-
-    virtual Type type() const { return APIType; }
 
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;

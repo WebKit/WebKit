@@ -37,10 +37,8 @@ namespace CoreIPC {
 
 namespace WebKit {
 
-class WebBackForwardListItem : public APIObject {
+class WebBackForwardListItem : public TypedAPIObject<APIObject::TypeBackForwardListItem> {
 public:
-    static const Type APIType = TypeBackForwardListItem;
-
     static PassRefPtr<WebBackForwardListItem> create(const String& originalURL, const String& url, const String& title, const uint8_t* backForwardData, size_t backForwardDataSize, uint64_t itemID)
     {
         return adoptRef(new WebBackForwardListItem(originalURL, url, title, backForwardData, backForwardDataSize, itemID));
@@ -69,8 +67,6 @@ public:
 
 private:
     WebBackForwardListItem(const String& originalURL, const String& url, const String& title, const uint8_t* backForwardData, size_t backForwardDataSize, uint64_t itemID);
-
-    virtual Type type() const { return APIType; }
 
     String m_originalURL;
     String m_url;

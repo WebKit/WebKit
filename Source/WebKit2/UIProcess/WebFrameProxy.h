@@ -51,10 +51,8 @@ class WebPageProxy;
 
 typedef GenericCallback<WKDataRef> DataCallback;
 
-class WebFrameProxy : public APIObject {
+class WebFrameProxy : public TypedAPIObject<APIObject::TypeFrame> {
 public:
-    static const Type APIType = TypeFrame;
-
     static PassRefPtr<WebFrameProxy> create(WebPageProxy* page, uint64_t frameID)
     {
         return adoptRef(new WebFrameProxy(page, frameID));
@@ -121,8 +119,6 @@ public:
 
 private:
     WebFrameProxy(WebPageProxy* page, uint64_t frameID);
-
-    virtual Type type() const { return APIType; }
 
     WebPageProxy* m_page;
     LoadState m_loadState;

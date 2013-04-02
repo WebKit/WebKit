@@ -1,3 +1,174 @@
+2013-04-02  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2] Remove repeating code in declaration of WK2 API classes
+        https://bugs.webkit.org/show_bug.cgi?id=112782
+
+        Reviewed by Benjamin Poulain.
+
+        The following two lines of code had been repeated in every WK2 API
+        object class:
+        1) static const Type APIType = SomeAPIType;
+        2) virtual Type type() const { return APIType; }
+
+        This patch introduces template class 'TypedAPIObject' inherited
+        from WebKit::APIObject and it contains the common functionality. 
+        So the new pattern is that API object classes are inherited from
+        TypedAPIObject (rather than from WebKit::APIObject directly) passing
+        the corresponding API object type as a template parameter.
+
+        The existing API object classes are modified accordingly to the
+        proposed pattern.
+
+        * Shared/APIObject.h:
+        (WebKit):
+        (TypedAPIObject):
+        (WebKit::TypedAPIObject::~TypedAPIObject):
+        (WebKit::TypedAPIObject::TypedAPIObject):
+        * Shared/ImmutableArray.h:
+        (ImmutableArray):
+        * Shared/ImmutableDictionary.h:
+        (ImmutableDictionary):
+        * Shared/WebArchive.h:
+        (WebArchive):
+        * Shared/WebArchiveResource.h:
+        (WebArchiveResource):
+        * Shared/WebBackForwardListItem.h:
+        (WebBackForwardListItem):
+        * Shared/WebBatteryStatus.h:
+        (WebBatteryStatus):
+        * Shared/WebCertificateInfo.h:
+        * Shared/WebConnection.h:
+        (WebConnection):
+        * Shared/WebContextMenuItem.h:
+        (WebContextMenuItem):
+        * Shared/WebData.h:
+        * Shared/WebError.h:
+        (WebKit::WebError::errorCode):
+        * Shared/WebGeolocationPosition.h:
+        (WebGeolocationPosition):
+        * Shared/WebGeometry.h:
+        * Shared/WebGraphicsContext.h:
+        (WebGraphicsContext):
+        * Shared/WebHitTestResult.h:
+        * Shared/WebImage.h:
+        (WebImage):
+        * Shared/WebNetworkInfo.h:
+        (WebNetworkInfo):
+        * Shared/WebNumber.h:
+        * Shared/WebOpenPanelParameters.h:
+        (WebOpenPanelParameters):
+        * Shared/WebRenderLayer.h:
+        * Shared/WebRenderObject.h:
+        * Shared/WebSecurityOrigin.h:
+        * Shared/WebSerializedScriptValue.h:
+        (WebSerializedScriptValue):
+        * Shared/WebString.h:
+        * Shared/WebURL.h:
+        * Shared/WebURLRequest.h:
+        (WebURLRequest):
+        * Shared/WebURLResponse.h:
+        (WebURLResponse):
+        * Shared/WebUserContentURLPattern.h:
+        * Shared/mac/ObjCObjectGraph.h:
+        * UIProcess/Authentication/AuthenticationChallengeProxy.h:
+        (AuthenticationChallengeProxy):
+        * UIProcess/Authentication/AuthenticationDecisionListener.h:
+        (AuthenticationDecisionListener):
+        * UIProcess/Authentication/WebCredential.h:
+        (WebCredential):
+        * UIProcess/Authentication/WebProtectionSpace.h:
+        (WebProtectionSpace):
+        * UIProcess/Downloads/DownloadProxy.h:
+        (DownloadProxy):
+        * UIProcess/GeolocationPermissionRequestProxy.h:
+        (GeolocationPermissionRequestProxy):
+        * UIProcess/Notifications/NotificationPermissionRequest.h:
+        (NotificationPermissionRequest):
+        * UIProcess/Notifications/WebNotification.h:
+        (WebNotification):
+        * UIProcess/Notifications/WebNotificationManagerProxy.h:
+        (WebNotificationManagerProxy):
+        * UIProcess/Plugins/WebPluginSiteDataManager.h:
+        (WebPluginSiteDataManager):
+        * UIProcess/WebApplicationCacheManagerProxy.h:
+        (WebApplicationCacheManagerProxy):
+        * UIProcess/WebBackForwardList.h:
+        (WebBackForwardList):
+        * UIProcess/WebBatteryManagerProxy.h:
+        (WebBatteryManagerProxy):
+        * UIProcess/WebContext.h:
+        (WebContext):
+        * UIProcess/WebCookieManagerProxy.h:
+        (WebCookieManagerProxy):
+        * UIProcess/WebDatabaseManagerProxy.h:
+        (WebDatabaseManagerProxy):
+        * UIProcess/WebEditCommandProxy.h:
+        (WebEditCommandProxy):
+        * UIProcess/WebFrameProxy.h:
+        (WebFrameProxy):
+        * UIProcess/WebGeolocationManagerProxy.h:
+        (WebGeolocationManagerProxy):
+        * UIProcess/WebGrammarDetail.h:
+        (WebGrammarDetail):
+        * UIProcess/WebIconDatabase.h:
+        (WebIconDatabase):
+        * UIProcess/WebInspectorProxy.h:
+        (WebInspectorProxy):
+        * UIProcess/WebKeyValueStorageManagerProxy.h:
+        (WebKeyValueStorageManagerProxy):
+        * UIProcess/WebMediaCacheManagerProxy.h:
+        (WebMediaCacheManagerProxy):
+        * UIProcess/WebNavigationData.h:
+        (WebNavigationData):
+        * UIProcess/WebNetworkInfoManagerProxy.h:
+        (WebNetworkInfoManagerProxy):
+        * UIProcess/WebOpenPanelResultListenerProxy.h:
+        (WebOpenPanelResultListenerProxy):
+        * UIProcess/WebPageGroup.h:
+        (WebPageGroup):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPreferences.cpp:
+        (WebKit::WebPreferences::WebPreferences):
+        * UIProcess/WebPreferences.h:
+        (WebPreferences):
+        * UIProcess/WebResourceCacheManagerProxy.h:
+        (WebResourceCacheManagerProxy):
+        * UIProcess/WebTextChecker.h:
+        (WebTextChecker):
+        * UIProcess/WebVibrationProxy.h:
+        (WebVibrationProxy):
+        * UIProcess/efl/WebPopupItemEfl.h:
+        (WebPopupItemEfl):
+        * UIProcess/efl/WebView.h:
+        * UIProcess/soup/WebSoupRequestManagerProxy.h:
+        (WebSoupRequestManagerProxy):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.h:
+        (InjectedBundleNodeHandle):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.h:
+        (InjectedBundleRangeHandle):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        (InjectedBundle):
+        * WebProcess/InjectedBundle/InjectedBundleBackForwardList.h:
+        * WebProcess/InjectedBundle/InjectedBundleBackForwardListItem.h:
+        * WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.h:
+        (InjectedBundleDOMWindowExtension):
+        * WebProcess/InjectedBundle/InjectedBundleHitTestResult.h:
+        * WebProcess/InjectedBundle/InjectedBundleNavigationAction.h:
+        (InjectedBundleNavigationAction):
+        * WebProcess/InjectedBundle/InjectedBundleScriptWorld.h:
+        (InjectedBundleScriptWorld):
+        * WebProcess/WebPage/PageOverlay.h:
+        (PageOverlay):
+        * WebProcess/WebPage/WebFrame.h:
+        (WebFrame):
+        * WebProcess/WebPage/WebInspector.h:
+        (WebInspector):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebPage/WebPageGroupProxy.h:
+        (WebPageGroupProxy):
+
 2013-04-01  Timothy Hatcher  <timothy@apple.com>
 
         Allow changing Web Inspector dock sides without undocking first.

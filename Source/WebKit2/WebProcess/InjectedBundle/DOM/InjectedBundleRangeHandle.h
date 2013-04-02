@@ -39,10 +39,8 @@ namespace WebKit {
 
 class InjectedBundleScriptWorld;
 
-class InjectedBundleRangeHandle : public APIObject {
+class InjectedBundleRangeHandle : public TypedAPIObject<APIObject::TypeBundleRangeHandle> {
 public:
-    static const Type APIType = TypeBundleRangeHandle;
-
     static PassRefPtr<InjectedBundleRangeHandle> getOrCreate(JSContextRef, JSObjectRef);
     static PassRefPtr<InjectedBundleRangeHandle> getOrCreate(WebCore::Range*);
 
@@ -53,8 +51,6 @@ public:
 private:
     static PassRefPtr<InjectedBundleRangeHandle> create(WebCore::Range*);
     InjectedBundleRangeHandle(WebCore::Range*);
-
-    virtual Type type() const { return APIType; }
 
     RefPtr<WebCore::Range> m_range;
 };

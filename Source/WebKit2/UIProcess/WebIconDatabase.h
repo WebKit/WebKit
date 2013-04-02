@@ -53,10 +53,8 @@ namespace WebKit {
 
 class WebContext;
 
-class WebIconDatabase : public APIObject, public WebCore::IconDatabaseClient, private CoreIPC::MessageReceiver {
+class WebIconDatabase : public TypedAPIObject<APIObject::TypeIconDatabase>, public WebCore::IconDatabaseClient, private CoreIPC::MessageReceiver {
 public:
-    static const Type APIType = TypeIconDatabase;
-
     static PassRefPtr<WebIconDatabase> create(WebContext*);
     virtual ~WebIconDatabase();
 
@@ -91,8 +89,6 @@ public:
 
 private:
     WebIconDatabase(WebContext*);
-
-    virtual Type type() const { return APIType; }
 
     // WebCore::IconDatabaseClient
     virtual void didImportIconURLForPageURL(const String&);

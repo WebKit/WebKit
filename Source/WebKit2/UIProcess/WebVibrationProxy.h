@@ -37,10 +37,8 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class WebVibrationProxy : public APIObject, private CoreIPC::MessageReceiver {
+class WebVibrationProxy : public TypedAPIObject<APIObject::TypeVibration>, private CoreIPC::MessageReceiver {
 public:
-    static const Type APIType = TypeVibration;
-
     static PassRefPtr<WebVibrationProxy> create(WebPageProxy*);
     virtual ~WebVibrationProxy();
 
@@ -50,8 +48,6 @@ public:
 
 private:
     explicit WebVibrationProxy(WebPageProxy*);
-
-    virtual Type type() const { return APIType; }
 
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;

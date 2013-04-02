@@ -36,7 +36,7 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class WebEditCommandProxy : public APIObject {
+class WebEditCommandProxy : public TypedAPIObject<APIObject::TypeEditCommandProxy> {
 public:
     static PassRefPtr<WebEditCommandProxy> create(uint64_t commandID, WebCore::EditAction editAction, WebPageProxy* page)
     {
@@ -56,8 +56,6 @@ public:
 
 private:
     WebEditCommandProxy(uint64_t commandID, WebCore::EditAction, WebPageProxy*);
-
-    virtual Type type() const { return TypeEditCommandProxy; }
 
     uint64_t m_commandID;
     WebCore::EditAction m_editAction;

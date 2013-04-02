@@ -229,14 +229,13 @@ private:
 };
 
 class WebPageProxy
-    : public APIObject
+    : public TypedAPIObject<APIObject::TypePage>
 #if ENABLE(INPUT_TYPE_COLOR)
     , public WebColorChooserProxy::Client
 #endif
     , public WebPopupMenuProxy::Client
     , public CoreIPC::MessageReceiver {
 public:
-    static const Type APIType = TypePage;
 
     static PassRefPtr<WebPageProxy> create(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
     virtual ~WebPageProxy();
@@ -777,8 +776,6 @@ public:
 
 private:
     WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
-
-    virtual Type type() const { return APIType; }
 
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;

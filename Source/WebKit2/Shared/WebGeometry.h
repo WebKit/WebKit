@@ -38,10 +38,8 @@ namespace CoreIPC {
 
 namespace WebKit {
 
-class WebSize : public APIObject {
+class WebSize : public TypedAPIObject<APIObject::TypeSize> {
 public:
-    static const Type APIType = TypeSize;
-
     static PassRefPtr<WebSize> create(const WKSize& size)
     {
         return adoptRef(new WebSize(size));
@@ -54,15 +52,11 @@ private:
         : m_size(size)
     { }
 
-    virtual Type type() const { return APIType; }
-
     WKSize m_size;
 };
 
-class WebPoint : public APIObject {
+class WebPoint : public TypedAPIObject<APIObject::TypePoint> {
 public:
-    static const Type APIType = TypePoint;
-
     static PassRefPtr<WebPoint> create(const WKPoint& point)
     {
         return adoptRef(new WebPoint(point));
@@ -75,15 +69,11 @@ private:
         : m_point(point)
     { }
 
-    virtual Type type() const { return APIType; }
-
     WKPoint m_point;
 };
 
-class WebRect : public APIObject {
+class WebRect : public TypedAPIObject<APIObject::TypeRect> {
 public:
-    static const Type APIType = TypeRect;
-
     static PassRefPtr<WebRect> create(const WKRect& rect)
     {
         return adoptRef(new WebRect(rect));
@@ -95,8 +85,6 @@ private:
     explicit WebRect(const WKRect& rect)
         : m_rect(rect)
     { }
-
-    virtual Type type() const { return APIType; }
 
     WKRect m_rect;
 };

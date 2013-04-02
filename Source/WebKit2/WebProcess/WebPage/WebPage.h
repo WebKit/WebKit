@@ -166,10 +166,8 @@ class WebTouchEvent;
 
 typedef Vector<RefPtr<PageOverlay> > PageOverlayList;
 
-class WebPage : public APIObject, public CoreIPC::MessageReceiver, public CoreIPC::MessageSender<WebPage> {
+class WebPage : public TypedAPIObject<APIObject::TypeBundlePage>, public CoreIPC::MessageReceiver, public CoreIPC::MessageSender<WebPage> {
 public:
-    static const Type APIType = TypeBundlePage;
-
     static PassRefPtr<WebPage> create(uint64_t pageID, const WebPageCreationParameters&);
     virtual ~WebPage();
 
@@ -652,8 +650,6 @@ public:
 
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
-
-    virtual Type type() const { return APIType; }
 
     void platformInitialize();
 

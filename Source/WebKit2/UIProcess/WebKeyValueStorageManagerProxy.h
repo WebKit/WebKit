@@ -44,10 +44,8 @@ class WebSecurityOrigin;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
-class WebKeyValueStorageManagerProxy : public APIObject, public WebContextSupplement, private CoreIPC::MessageReceiver {
+class WebKeyValueStorageManagerProxy : public TypedAPIObject<APIObject::TypeKeyValueStorageManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
 public:
-    static const Type APIType = TypeKeyValueStorageManager;
-
     static const char* supplementName();
 
     static PassRefPtr<WebKeyValueStorageManagerProxy> create(WebContext*);
@@ -62,8 +60,6 @@ public:
 
 private:
     explicit WebKeyValueStorageManagerProxy(WebContext*);
-
-    virtual Type type() const { return APIType; }
 
     void didGetKeyValueStorageOrigins(const Vector<SecurityOriginData>&, uint64_t callbackID);
 

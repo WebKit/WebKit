@@ -35,10 +35,8 @@ namespace WebKit {
 
 // WebData - A data buffer type suitable for vending to an API.
 
-class WebData : public APIObject {
+class WebData : public TypedAPIObject<APIObject::TypeData> {
 public:
-    static const Type APIType = TypeData;
-
     typedef void (*FreeDataFunction)(unsigned char*, const void* context);
 
     static PassRefPtr<WebData> createWithoutCopying(const unsigned char* bytes, size_t size, FreeDataFunction freeDataFunction, const void* context)
@@ -87,8 +85,6 @@ private:
         if (bytes)
             fastFree(static_cast<void*>(bytes));
     }
-
-    virtual Type type() const { return APIType; }
 
     const unsigned char* m_bytes;
     size_t m_size;

@@ -40,10 +40,8 @@ namespace WebKit {
 
 class WebPage;
 
-class WebRenderObject : public APIObject {
+class WebRenderObject : public TypedAPIObject<APIObject::TypeRenderObject> {
 public:
-    static const Type APIType = TypeRenderObject;
-
     static PassRefPtr<WebRenderObject> create(WebPage*);
     static PassRefPtr<WebRenderObject> create(WebCore::RenderObject* renderer)
     {
@@ -78,8 +76,6 @@ private:
         , m_frameRect(frameRect)
     {
     }
-
-    virtual Type type() const OVERRIDE { return APIType; }
 
     RefPtr<MutableArray> m_children;
 

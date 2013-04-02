@@ -38,10 +38,8 @@ namespace WebKit {
 class WebPreferences;
 class WebPageProxy;
 
-class WebPageGroup : public APIObject {
+class WebPageGroup : public TypedAPIObject<APIObject::TypePageGroup> {
 public:
-    static const Type APIType = TypePageGroup;
-
     static PassRefPtr<WebPageGroup> create(const String& identifier = String(), bool visibleToInjectedBundle = true, bool visibleToHistoryClient = true);
     static WebPageGroup* get(uint64_t pageGroupID);
 
@@ -68,8 +66,6 @@ public:
 private:
     WebPageGroup(const String& identifier, bool visibleToInjectedBundle, bool visibleToHistoryClient);
 
-    virtual Type type() const { return APIType; }
-    
     template<typename MessageType> void sendToAllProcessesInGroup(const MessageType&, uint64_t destinationID);
 
     WebPageGroupData m_data;

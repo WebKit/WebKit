@@ -37,10 +37,8 @@ namespace WebKit {
 class InjectedBundleNodeHandle;
 class WebFrame;
 
-class InjectedBundleHitTestResult : public APIObject {
+class InjectedBundleHitTestResult : public TypedAPIObject<APIObject::TypeBundleHitTestResult> {
 public:
-    static const Type APIType = TypeBundleHitTestResult;
-
     static PassRefPtr<InjectedBundleHitTestResult> create(const WebCore::HitTestResult&);
 
     const WebCore::HitTestResult& coreHitTestResult() const { return m_hitTestResult; }
@@ -66,8 +64,6 @@ private:
         : m_hitTestResult(hitTestResult)
     {
     }
-
-    virtual Type type() const { return APIType; }
 
     WebCore::HitTestResult m_hitTestResult;
 };

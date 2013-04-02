@@ -47,10 +47,8 @@ typedef Vector<RefPtr<WebBackForwardListItem> > BackForwardListItemVector;
  *      Back        Forward
  */
 
-class WebBackForwardList : public APIObject {
+class WebBackForwardList : public TypedAPIObject<APIObject::TypeBackForwardList> {
 public:
-    static const Type APIType = TypeBackForwardList;
-
     static PassRefPtr<WebBackForwardList> create(WebPageProxy* page)
     {
         return adoptRef(new WebBackForwardList(page));
@@ -86,8 +84,6 @@ public:
 
 private:
     explicit WebBackForwardList(WebPageProxy*);
-
-    virtual Type type() const { return APIType; }
 
     WebPageProxy* m_page;
     BackForwardListItemVector m_entries;

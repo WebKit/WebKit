@@ -31,10 +31,8 @@
 
 namespace WebKit {
 
-class ObjCObjectGraph : public APIObject {
+class ObjCObjectGraph : public TypedAPIObject<APIObject::TypeObjCObjectGraph> {
 public:
-    static const Type APIType = TypeObjCObjectGraph;
-
     static PassRefPtr<ObjCObjectGraph> create(id rootObject)
     {
         return adoptRef(new ObjCObjectGraph(rootObject));
@@ -47,8 +45,6 @@ private:
         : m_rootObject(rootObject)
     {
     }
-
-    virtual Type type() const { return APIType; }
 
     RetainPtr<id> m_rootObject;
 };

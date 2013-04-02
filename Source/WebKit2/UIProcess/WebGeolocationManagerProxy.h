@@ -37,10 +37,8 @@ namespace WebKit {
 class WebContext;
 class WebGeolocationPosition;
 
-class WebGeolocationManagerProxy : public APIObject, public WebContextSupplement, private CoreIPC::MessageReceiver {
+class WebGeolocationManagerProxy : public TypedAPIObject<APIObject::TypeGeolocationManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
 public:
-    static const Type APIType = TypeGeolocationManager;
-
     static const char* supplementName();
 
     static PassRefPtr<WebGeolocationManagerProxy> create(WebContext*);
@@ -56,8 +54,6 @@ public:
 
 private:
     explicit WebGeolocationManagerProxy(WebContext*);
-
-    virtual Type type() const { return APIType; }
 
     // WebContextSupplement
     virtual void contextDestroyed() OVERRIDE;

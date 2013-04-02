@@ -43,9 +43,8 @@ class WebData;
 class WebString;
 class WebURL;
 
-class WebArchiveResource : public APIObject {
+class WebArchiveResource : public TypedAPIObject<APIObject::TypeWebArchiveResource> {
 public:
-    static const Type APIType = TypeWebArchiveResource;
     virtual ~WebArchiveResource();
 
     static PassRefPtr<WebArchiveResource> create(WebData*, const String& URL, const String& MIMEType, const String& textEncoding);
@@ -61,8 +60,6 @@ public:
 private:
     WebArchiveResource(WebData*, const String& URL, const String& MIMEType, const String& textEncoding);
     WebArchiveResource(PassRefPtr<WebCore::ArchiveResource>);
-
-    virtual Type type() const { return APIType; }
 
     RefPtr<WebCore::ArchiveResource> m_archiveResource;
 };

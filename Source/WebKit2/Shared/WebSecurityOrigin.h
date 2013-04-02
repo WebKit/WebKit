@@ -32,10 +32,8 @@
 
 namespace WebKit {
 
-class WebSecurityOrigin : public APIObject {
+class WebSecurityOrigin : public TypedAPIObject<APIObject::TypeSecurityOrigin> {
 public:
-    static const Type APIType = TypeSecurityOrigin;
-
     static PassRefPtr<WebSecurityOrigin> createFromString(const String& string)
     {
         return create(WebCore::SecurityOrigin::createFromString(string));
@@ -70,8 +68,6 @@ private:
         : m_securityOrigin(securityOrigin)
     {
     }
-
-    virtual Type type() const { return APIType; }
 
     RefPtr<WebCore::SecurityOrigin> m_securityOrigin;
 };

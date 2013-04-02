@@ -36,10 +36,8 @@ namespace WebCore {
 
 namespace WebKit {
 
-class InjectedBundleScriptWorld : public APIObject {
+class InjectedBundleScriptWorld : public TypedAPIObject<APIObject::TypeBundleScriptWorld> {
 public:
-    static const Type APIType = TypeBundleScriptWorld;
-
     static PassRefPtr<InjectedBundleScriptWorld> create();
     static PassRefPtr<InjectedBundleScriptWorld> getOrCreate(WebCore::DOMWrapperWorld*);
     static InjectedBundleScriptWorld* normalWorld();
@@ -52,8 +50,6 @@ public:
 
 private:
     InjectedBundleScriptWorld(PassRefPtr<WebCore::DOMWrapperWorld>);
-
-    virtual Type type() const { return APIType; }
 
     RefPtr<WebCore::DOMWrapperWorld> m_world;
 };

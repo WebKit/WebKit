@@ -35,10 +35,8 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class WebTextChecker : public APIObject {
+class WebTextChecker : public TypedAPIObject<APIObject::TypeTextChecker> {
 public:
-    static const Type APIType = TypeTextChecker;
-
     static WebTextChecker* shared();
 
     void setClient(const WKTextCheckerClient*);
@@ -52,8 +50,6 @@ public:
 
 private:
     WebTextChecker();
-
-    virtual Type type() const { return APIType; }
 
     WebTextCheckerClient m_client;
 };

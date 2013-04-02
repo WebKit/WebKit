@@ -34,10 +34,8 @@ namespace WebKit {
 
 // WebError - An error type suitable for vending to an API.
 
-class WebError : public APIObject {
+class WebError : public TypedAPIObject<APIObject::TypeError> {
 public:
-    static const Type APIType = TypeError;
-
     static PassRefPtr<WebError> create()
     {
         return adoptRef(new WebError);
@@ -51,7 +49,7 @@ public:
     static const String& webKitErrorDomain();
 
     const String& domain() const { return m_platformError.domain(); }
-    int errorCode() const { return m_platformError.errorCode();; }
+    int errorCode() const { return m_platformError.errorCode(); }
     const String& failingURL() const { return m_platformError.failingURL(); }
     const String& localizedDescription() const { return m_platformError.localizedDescription(); }
 
@@ -66,8 +64,6 @@ private:
         : m_platformError(error)
     {
     }
-
-    virtual Type type() const { return APIType; }
 
     WebCore::ResourceError m_platformError;
 };

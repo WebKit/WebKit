@@ -46,10 +46,8 @@ struct SecurityOriginData;
 
 typedef GenericCallback<WKArrayRef> ArrayCallback;
 
-class WebApplicationCacheManagerProxy : public APIObject, public WebContextSupplement, private CoreIPC::MessageReceiver {
+class WebApplicationCacheManagerProxy : public TypedAPIObject<APIObject::TypeApplicationCacheManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
 public:
-    static const Type APIType = TypeApplicationCacheManager;
-
     static const char* supplementName();
 
     static PassRefPtr<WebApplicationCacheManagerProxy> create(WebContext*);
@@ -64,8 +62,6 @@ public:
 
 private:
     explicit WebApplicationCacheManagerProxy(WebContext*);
-
-    virtual Type type() const { return APIType; }
 
     void didGetApplicationCacheOrigins(const Vector<SecurityOriginData>&, uint64_t callbackID);
 

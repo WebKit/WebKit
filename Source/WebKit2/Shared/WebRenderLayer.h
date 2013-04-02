@@ -36,10 +36,8 @@ namespace WebKit {
 
 class WebPage;
 
-class WebRenderLayer : public APIObject {
+class WebRenderLayer : public TypedAPIObject<APIObject::TypeRenderLayer> {
 public:
-    static const Type APIType = TypeRenderLayer;
-
     enum CompositingLayerType { None, Normal, Tiled, Media, Container };
 
     static PassRefPtr<WebRenderLayer> create(WebPage*);
@@ -75,8 +73,6 @@ private:
         , m_positiveZOrderList(positiveZOrderList)
     {
     }
-
-    virtual Type type() const OVERRIDE { return APIType; }
 
     static PassRefPtr<MutableArray> createArrayFromLayerList(Vector<WebCore::RenderLayer*>*);
 

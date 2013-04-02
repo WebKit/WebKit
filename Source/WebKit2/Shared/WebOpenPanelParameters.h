@@ -36,10 +36,8 @@ namespace WebKit {
 
 class ImmutableArray;
 
-class WebOpenPanelParameters : public APIObject {
+class WebOpenPanelParameters : public TypedAPIObject<APIObject::TypeOpenPanelParameters> {
 public:
-    static const Type APIType = TypeOpenPanelParameters;
-
     static PassRefPtr<WebOpenPanelParameters> create(const WebCore::FileChooserSettings&);
     ~WebOpenPanelParameters();
 
@@ -52,8 +50,6 @@ public:
 
 private:
     explicit WebOpenPanelParameters(const WebCore::FileChooserSettings&);
-
-    virtual Type type() const { return APIType; }
 
     WebCore::FileChooserSettings m_settings;
 };

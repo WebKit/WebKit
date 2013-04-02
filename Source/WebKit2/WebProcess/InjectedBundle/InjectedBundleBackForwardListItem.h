@@ -34,10 +34,8 @@ namespace WebKit {
 class ImmutableArray;
 class WebPageProxy;
 
-class InjectedBundleBackForwardListItem : public APIObject {
+class InjectedBundleBackForwardListItem : public TypedAPIObject<APIObject::TypeBundleBackForwardListItem> {
 public:
-    static const Type APIType = TypeBundleBackForwardListItem;
-
     static PassRefPtr<InjectedBundleBackForwardListItem> create(PassRefPtr<WebCore::HistoryItem> item)
     {
         if (!item)
@@ -60,8 +58,6 @@ public:
 
 private:
     InjectedBundleBackForwardListItem(PassRefPtr<WebCore::HistoryItem> item) : m_item(item) { }
-
-    virtual Type type() const { return APIType; }
 
     RefPtr<WebCore::HistoryItem> m_item;
 };

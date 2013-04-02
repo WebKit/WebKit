@@ -41,10 +41,8 @@ namespace WebKit {
 
 class WebPageGroup;
 
-class WebPreferences : public APIObject {
+class WebPreferences : public TypedAPIObject<APIObject::TypePreferences> {
 public:
-    static const Type APIType = TypePreferences;
-
     static PassRefPtr<WebPreferences> create()
     {
         return adoptRef(new WebPreferences);
@@ -83,8 +81,6 @@ private:
     WebPreferences(const WebPreferences&);
 
     void platformInitializeStore();
-
-    virtual Type type() const { return APIType; }
 
     void update();
 

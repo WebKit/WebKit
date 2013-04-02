@@ -43,10 +43,8 @@ class WebInspectorFrontendClient;
 class WebPage;
 struct WebPageCreationParameters;
 
-class WebInspector : public APIObject {
+class WebInspector : public TypedAPIObject<APIObject::TypeBundleInspector> {
 public:
-    static const Type APIType = TypeBundleInspector;
-
     static PassRefPtr<WebInspector> create(WebPage*, WebCore::InspectorFrontendChannel*);
 
     WebPage* page() const { return m_page; }
@@ -86,8 +84,6 @@ private:
     friend class WebInspectorFrontendClient;
 
     explicit WebInspector(WebPage*, WebCore::InspectorFrontendChannel*);
-
-    virtual Type type() const { return APIType; }
 
     // Called from WebInspectorClient
     WebPage* createInspectorPage();

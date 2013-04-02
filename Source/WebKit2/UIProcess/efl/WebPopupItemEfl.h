@@ -32,10 +32,8 @@
 
 namespace WebKit {
 
-class WebPopupItemEfl : public APIObject {
+class WebPopupItemEfl : public TypedAPIObject<APIObject::TypePopupMenuItem> {
 public:
-    static const Type APIType = TypePopupMenuItem;
-
     static PassRefPtr<WebPopupItemEfl> create(const WebPopupItem& data)
     {
         return adoptRef(new WebPopupItemEfl(data));
@@ -56,8 +54,6 @@ public:
 
 private:
     explicit WebPopupItemEfl(const WebPopupItem&);
-
-    virtual Type type() const { return APIType; }
 
     WebPopupItem m_data;
 };

@@ -38,10 +38,8 @@
 
 namespace WebKit {
 
-class WebGraphicsContext : public APIObject {
+class WebGraphicsContext : public TypedAPIObject<APIObject::TypeGraphicsContext> {
 public:
-    static const Type APIType = TypeGraphicsContext;
-
     static PassRefPtr<WebGraphicsContext> create(WebCore::GraphicsContext* graphicsContext)
     {
         return adoptRef(new WebGraphicsContext(graphicsContext));
@@ -56,8 +54,6 @@ public:
 
 private:
     explicit WebGraphicsContext(WebCore::GraphicsContext*);
-
-    virtual Type type() const { return APIType; }
 
 #if USE(CG)
     RetainPtr<CGContextRef> m_platformContext;

@@ -38,10 +38,8 @@ namespace WebKit {
 
 // WebString - A string type suitable for vending to an API.
 
-class WebString : public APIObject {
+class WebString : public TypedAPIObject<APIObject::TypeString> {
 public:
-    static const Type APIType = TypeString;
-
     static PassRefPtr<WebString> createNull()
     {
         return adoptRef(new WebString());
@@ -111,8 +109,6 @@ private:
         : m_string(!string.impl() ? String(StringImpl::empty()) : string)
     {
     }
-
-    virtual Type type() const { return APIType; }
 
     String m_string;
 };

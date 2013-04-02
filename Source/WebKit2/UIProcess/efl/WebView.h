@@ -46,10 +46,8 @@ class CoordinatedGraphicsScene;
 
 namespace WebKit {
 
-class WebView : public APIObject, public PageClient {
+class WebView : public TypedAPIObject<APIObject::TypeView>, public PageClient {
 public:
-    static const Type APIType = TypeView;
-
     virtual ~WebView();
 
     static PassRefPtr<WebView> create(WebContext*, WebPageGroup*);
@@ -177,8 +175,6 @@ private:
     void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned) OVERRIDE;
 
 private:
-    virtual Type type() const { return APIType; }
-
     WebViewClient m_client;
     EwkView* m_ewkView;
     RefPtr<WebPageProxy> m_page;

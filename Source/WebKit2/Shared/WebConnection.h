@@ -34,9 +34,8 @@
 
 namespace WebKit {
 
-class WebConnection : public APIObject, public CoreIPC::MessageReceiver, public CoreIPC::MessageSender<WebConnection> {
+class WebConnection : public TypedAPIObject<APIObject::TypeConnection>, public CoreIPC::MessageReceiver, public CoreIPC::MessageSender<WebConnection> {
 public:
-    static const Type APIType = TypeConnection;
     virtual ~WebConnection();
 
     void initializeConnectionClient(const WKConnectionClient*);
@@ -49,8 +48,6 @@ public:
 
 protected:
     explicit WebConnection();
-
-    virtual Type type() const { return APIType; }
 
     virtual void encodeMessageBody(CoreIPC::ArgumentEncoder&, APIObject*) = 0;
     virtual bool decodeMessageBody(CoreIPC::ArgumentDecoder&, RefPtr<APIObject>&) = 0;

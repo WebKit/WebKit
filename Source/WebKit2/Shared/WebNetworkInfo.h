@@ -35,10 +35,8 @@
 
 namespace WebKit {
 
-class WebNetworkInfo : public APIObject {
+class WebNetworkInfo : public TypedAPIObject<APIObject::TypeNetworkInfo> {
 public:
-    static const Type APIType = TypeNetworkInfo;
-
     struct Data {
         void encode(CoreIPC::ArgumentEncoder&) const;
         static bool decode(CoreIPC::ArgumentDecoder&, Data&);
@@ -61,8 +59,6 @@ public:
 
 private:
     WebNetworkInfo(double bandwidth, bool metered);
-
-    virtual Type type() const { return APIType; }
 
     Data m_data;
 };

@@ -32,10 +32,8 @@
 namespace WebKit {
 
 template<typename NumberType, APIObject::Type APIObjectType>
-class WebNumber : public APIObject {
+class WebNumber : public TypedAPIObject<APIObjectType> {
 public:
-    static const Type APIType = APIObjectType;
-
     static PassRefPtr<WebNumber> create(NumberType value)
     {
         return adoptRef(new WebNumber(value));
@@ -48,8 +46,6 @@ private:
         : m_value(value)
     {
     }
-
-    virtual Type type() const { return APIType; }
 
     const NumberType m_value;
 };

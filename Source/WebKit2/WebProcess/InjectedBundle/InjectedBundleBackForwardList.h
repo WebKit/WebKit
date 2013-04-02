@@ -35,10 +35,8 @@ class WebPage;
 
 class InjectedBundleBackForwardListItem;
 
-class InjectedBundleBackForwardList : public APIObject {
+class InjectedBundleBackForwardList : public TypedAPIObject<APIObject::TypeBundleBackForwardList> {
 public:
-    static const Type APIType = TypeBundleBackForwardList;
-
     static PassRefPtr<InjectedBundleBackForwardList> create(WebPage* page)
     {
         return adoptRef(new InjectedBundleBackForwardList(page));
@@ -54,8 +52,6 @@ public:
 
 private:
     InjectedBundleBackForwardList(WebPage* page) : m_page(page) { }
-
-    virtual Type type() const { return APIType; }
 
     WebPage* m_page;
 };

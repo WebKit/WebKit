@@ -43,9 +43,8 @@ class WebContext;
 class WebPageProxy;
 class WebSecurityOrigin;
 
-class WebNotificationManagerProxy : public APIObject, public WebContextSupplement, private CoreIPC::MessageReceiver {
+class WebNotificationManagerProxy : public TypedAPIObject<APIObject::TypeNotificationManager>, public WebContextSupplement, private CoreIPC::MessageReceiver {
 public:
-    static const Type APIType = TypeNotificationManager;
 
     static const char* supplementName();
 
@@ -67,8 +66,6 @@ public:
 
 private:
     explicit WebNotificationManagerProxy(WebContext*);
-    
-    virtual Type type() const { return APIType; }
 
     // WebContextSupplement
     virtual void contextDestroyed() OVERRIDE;

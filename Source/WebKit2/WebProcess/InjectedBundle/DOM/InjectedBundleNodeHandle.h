@@ -44,10 +44,8 @@ class InjectedBundleScriptWorld;
 class WebFrame;
 class WebImage;
 
-class InjectedBundleNodeHandle : public APIObject {
+class InjectedBundleNodeHandle : public TypedAPIObject<APIObject::TypeBundleNodeHandle> {
 public:
-    static const Type APIType = TypeBundleNodeHandle;
-
     static PassRefPtr<InjectedBundleNodeHandle> getOrCreate(JSContextRef, JSObjectRef);
     static PassRefPtr<InjectedBundleNodeHandle> getOrCreate(WebCore::Node*);
 
@@ -78,8 +76,6 @@ public:
 private:
     static PassRefPtr<InjectedBundleNodeHandle> create(WebCore::Node*);
     InjectedBundleNodeHandle(WebCore::Node*);
-
-    virtual Type type() const { return APIType; }
 
     RefPtr<WebCore::Node> m_node;
 };

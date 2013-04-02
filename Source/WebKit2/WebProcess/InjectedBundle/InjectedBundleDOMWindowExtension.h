@@ -40,10 +40,8 @@ namespace WebKit {
 class InjectedBundleScriptWorld;
 class WebFrame;
 
-class InjectedBundleDOMWindowExtension : public APIObject {
+class InjectedBundleDOMWindowExtension : public TypedAPIObject<APIObject::TypeBundleDOMWindowExtension> {
 public:
-    static const Type APIType = TypeBundleDOMWindowExtension;
-
     static PassRefPtr<InjectedBundleDOMWindowExtension> create(WebFrame*, InjectedBundleScriptWorld*);
     static InjectedBundleDOMWindowExtension* get(WebCore::DOMWindowExtension*);
 
@@ -53,8 +51,6 @@ public:
     InjectedBundleScriptWorld* world() const;
 
 private:
-    virtual Type type() const { return APIType; }
-
     InjectedBundleDOMWindowExtension(WebFrame*, InjectedBundleScriptWorld*);
 
     RefPtr<WebCore::DOMWindowExtension> m_coreExtension;

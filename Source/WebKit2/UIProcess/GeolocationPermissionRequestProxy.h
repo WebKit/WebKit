@@ -33,10 +33,8 @@ namespace WebKit {
 
 class GeolocationPermissionRequestManagerProxy;
 
-class GeolocationPermissionRequestProxy : public APIObject {
+class GeolocationPermissionRequestProxy : public TypedAPIObject<APIObject::TypeGeolocationPermissionRequest> {
 public:
-    static const Type APIType = TypeGeolocationPermissionRequest;
-
     static PassRefPtr<GeolocationPermissionRequestProxy> create(GeolocationPermissionRequestManagerProxy* manager, uint64_t geolocationID)
     {
         return adoptRef(new GeolocationPermissionRequestProxy(manager, geolocationID));
@@ -49,8 +47,6 @@ public:
 
 private:
     GeolocationPermissionRequestProxy(GeolocationPermissionRequestManagerProxy*, uint64_t geolocationID);
-
-    virtual Type type() const { return APIType; }
 
     GeolocationPermissionRequestManagerProxy* m_manager;
     uint64_t m_geolocationID;

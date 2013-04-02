@@ -37,11 +37,9 @@ namespace WebKit {
 
 class WebContext;
 class WebBatteryStatus;
-class WebBatteryManagerProxy : public APIObject, private CoreIPC::MessageReceiver {
+class WebBatteryManagerProxy : public TypedAPIObject<APIObject::TypeBatteryManager>, private CoreIPC::MessageReceiver {
 
 public:
-    static const Type APIType = TypeBatteryManager;
-
     static PassRefPtr<WebBatteryManagerProxy> create(WebContext*);
     virtual ~WebBatteryManagerProxy();
 
@@ -55,8 +53,6 @@ public:
 
 private:
     explicit WebBatteryManagerProxy(WebContext*);
-
-    virtual Type type() const { return APIType; }
 
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;

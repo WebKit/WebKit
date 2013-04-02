@@ -38,10 +38,8 @@ typedef void* PlatformRequest;
 
 namespace WebKit {
 
-class WebURLRequest : public APIObject {
+class WebURLRequest : public TypedAPIObject<APIObject::TypeURLRequest> {
 public:
-    static const Type APIType = TypeURLRequest;
-
     static PassRefPtr<WebURLRequest> create(const WebCore::KURL&);
 
     static PassRefPtr<WebURLRequest> create(const WebCore::ResourceRequest& request)
@@ -65,8 +63,6 @@ public:
 private:
     explicit WebURLRequest(const WebCore::ResourceRequest&);
     explicit WebURLRequest(PlatformRequest);
-
-    virtual Type type() const { return APIType; }
 
     WebCore::ResourceRequest m_request;
 };

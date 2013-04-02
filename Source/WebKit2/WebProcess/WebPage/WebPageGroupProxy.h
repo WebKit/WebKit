@@ -41,10 +41,8 @@ class PageGroup;
 
 namespace WebKit {
 
-class WebPageGroupProxy : public APIObject {
+class WebPageGroupProxy : public TypedAPIObject<APIObject::TypeBundlePageGroup> {
 public:
-    static const Type APIType = TypeBundlePageGroup;
-
     static PassRefPtr<WebPageGroupProxy> create(const WebPageGroupData&);
     virtual ~WebPageGroupProxy();
 
@@ -57,8 +55,6 @@ public:
 
 private:
     WebPageGroupProxy(const WebPageGroupData&);
-
-    virtual Type type() const { return APIType; }
 
     void addUserStyleSheet(const WebCore::UserStyleSheet&);
     void addUserScript(const WebCore::UserScript&);

@@ -43,9 +43,8 @@ class ImmutableArray;
 class WebArchiveResource;
 class WebData;
 
-class WebArchive : public APIObject {
+class WebArchive : public TypedAPIObject<APIObject::TypeWebArchive> {
 public:
-    static const Type APIType = TypeWebArchive;
     virtual ~WebArchive();
 
     static PassRefPtr<WebArchive> create(WebArchiveResource* mainResource, ImmutableArray* subresources, ImmutableArray* subframeArchives);
@@ -65,8 +64,6 @@ private:
     WebArchive(WebArchiveResource* mainResource, ImmutableArray* subresources, ImmutableArray* subframeArchives);
     WebArchive(WebData*);
     WebArchive(PassRefPtr<WebCore::LegacyWebArchive>);
-
-    virtual Type type() const { return APIType; }
 
     RefPtr<WebCore::LegacyWebArchive> m_legacyWebArchive;
     RefPtr<WebArchiveResource> m_cachedMainResource;

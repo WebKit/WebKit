@@ -33,22 +33,18 @@ namespace WebKit {
 
 class NotificationPermissionRequestManagerProxy;
 
-class NotificationPermissionRequest : public APIObject {
+class NotificationPermissionRequest : public TypedAPIObject<APIObject::TypeNotificationPermissionRequest> {
 public:
-    static const Type APIType = TypeNotificationPermissionRequest;
-    
     static PassRefPtr<NotificationPermissionRequest> create(NotificationPermissionRequestManagerProxy*, uint64_t notificationID);
-    
+
     void allow();
     void deny();
-    
+
     void invalidate();
-    
+
 private:
     NotificationPermissionRequest(NotificationPermissionRequestManagerProxy*, uint64_t notificationID);
-    
-    virtual Type type() const { return APIType; }
-    
+
     NotificationPermissionRequestManagerProxy* m_manager;
     uint64_t m_notificationID;    
 };

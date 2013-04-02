@@ -37,11 +37,9 @@ namespace WebKit {
 
 class WebCertificateInfo;
 
-class WebCredential : public APIObject {
+class WebCredential : public TypedAPIObject<APIObject::TypeCredential> {
 public:
     ~WebCredential();
-
-    static const Type APIType = TypeCredential;
 
     static PassRefPtr<WebCredential> create(const WebCore::Credential& credential)
     {
@@ -67,8 +65,6 @@ public:
 private:
     explicit WebCredential(const WebCore::Credential&);
     explicit WebCredential(WebCertificateInfo*);
-
-    virtual Type type() const { return APIType; }
 
     WebCore::Credential m_coreCredential;
     RefPtr<WebCertificateInfo> m_certificateInfo;

@@ -32,10 +32,8 @@
 
 namespace WebKit {
 
-class WebCertificateInfo : public APIObject {
+class WebCertificateInfo : public TypedAPIObject<APIObject::TypeCertificateInfo> {
 public:
-    static const Type APIType = TypeCertificateInfo;
-
     static PassRefPtr<WebCertificateInfo> create(const PlatformCertificateInfo& info)
     {
         return adoptRef(new WebCertificateInfo(info));
@@ -48,8 +46,6 @@ private:
         : m_platformCertificateInfo(info)
     {
     }
-
-    virtual Type type() const { return APIType; }
 
     PlatformCertificateInfo m_platformCertificateInfo;
 };

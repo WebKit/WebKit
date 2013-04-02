@@ -32,10 +32,8 @@
 
 namespace WebKit {
 
-class WebProtectionSpace : public APIObject {
+class WebProtectionSpace : public TypedAPIObject<APIObject::TypeProtectionSpace> {
 public:
-    static const Type APIType = TypeProtectionSpace;
-
     static PassRefPtr<WebProtectionSpace> create(const WebCore::ProtectionSpace& protectionSpace)
     {
         return adoptRef(new WebProtectionSpace(protectionSpace));
@@ -53,8 +51,6 @@ public:
 private:
     explicit WebProtectionSpace(const WebCore::ProtectionSpace&);
 
-    virtual Type type() const { return APIType; }
-    
     WebCore::ProtectionSpace m_coreProtectionSpace;
 };
 

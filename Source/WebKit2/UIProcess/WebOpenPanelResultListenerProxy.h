@@ -35,10 +35,8 @@ namespace WebKit {
 class ImmutableArray;
 class WebPageProxy;
 
-class WebOpenPanelResultListenerProxy : public APIObject {
+class WebOpenPanelResultListenerProxy : public TypedAPIObject<APIObject::TypeFramePolicyListener> {
 public:
-    static const Type APIType = TypeFramePolicyListener;
-
     static PassRefPtr<WebOpenPanelResultListenerProxy> create(WebPageProxy* page)
     {
         return adoptRef(new WebOpenPanelResultListenerProxy(page));
@@ -53,8 +51,6 @@ public:
 
 private:
     explicit WebOpenPanelResultListenerProxy(WebPageProxy*);
-
-    virtual Type type() const { return APIType; }
 
     RefPtr<WebPageProxy> m_page;
 };

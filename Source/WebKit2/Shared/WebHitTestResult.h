@@ -39,10 +39,8 @@ namespace WebKit {
 
 class WebFrame;
 
-class WebHitTestResult : public APIObject {
+class WebHitTestResult : public TypedAPIObject<APIObject::TypeHitTestResult> {
 public:
-    static const Type APIType = TypeHitTestResult;
-
     struct Data {
         String absoluteImageURL;
         String absolutePDFURL;
@@ -113,8 +111,6 @@ private:
         : m_data(hitTestResultData)
     {
     }
-
-    virtual Type type() const { return APIType; }
 
     Data m_data;
 };

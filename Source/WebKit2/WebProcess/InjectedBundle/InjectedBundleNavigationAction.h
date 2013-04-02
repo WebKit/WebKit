@@ -43,10 +43,8 @@ namespace WebKit {
 
 class WebFrame;
 
-class InjectedBundleNavigationAction : public APIObject {
+class InjectedBundleNavigationAction : public TypedAPIObject<APIObject::TypeBundleNavigationAction> {
 public:
-    static const Type APIType = TypeBundleNavigationAction;
-
     static PassRefPtr<InjectedBundleNavigationAction> create(WebFrame*, const WebCore::NavigationAction&, PassRefPtr<WebCore::FormState>);
 
     static WebEvent::Modifiers modifiersForNavigationAction(const WebCore::NavigationAction&);
@@ -60,8 +58,6 @@ public:
 
 private:
     InjectedBundleNavigationAction(WebFrame*, const WebCore::NavigationAction&, PassRefPtr<WebCore::FormState>);
-
-    virtual Type type() const { return APIType; }
 
     WebCore::NavigationType m_navigationType;
     WebEvent::Modifiers m_modifiers;

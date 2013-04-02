@@ -32,10 +32,8 @@
 
 namespace WebKit {
 
-class WebNavigationData : public APIObject {
+class WebNavigationData : public TypedAPIObject<APIObject::TypeNavigationData> {
 public:
-    static const Type APIType = TypeNavigationData;
-
     static PassRefPtr<WebNavigationData> create(const WebNavigationDataStore& store)
     {
         return adoptRef(new WebNavigationData(store));
@@ -49,8 +47,6 @@ public:
 
 private:
     explicit WebNavigationData(const WebNavigationDataStore&);
-
-    virtual Type type() const { return APIType; }
 
     WebNavigationDataStore m_store;
 };

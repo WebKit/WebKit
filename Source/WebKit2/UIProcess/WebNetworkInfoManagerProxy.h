@@ -38,10 +38,8 @@ namespace WebKit {
 class WebContext;
 class WebNetworkInfo;
 
-class WebNetworkInfoManagerProxy : public APIObject, private CoreIPC::MessageReceiver {
+class WebNetworkInfoManagerProxy : public TypedAPIObject<APIObject::TypeNetworkInfoManager>, private CoreIPC::MessageReceiver {
 public:
-    static const Type APIType = TypeNetworkInfoManager;
-
     static PassRefPtr<WebNetworkInfoManagerProxy> create(WebContext*);
     virtual ~WebNetworkInfoManagerProxy();
 
@@ -54,8 +52,6 @@ public:
 
 private:
     explicit WebNetworkInfoManagerProxy(WebContext*);
-
-    virtual Type type() const { return APIType; }
 
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;

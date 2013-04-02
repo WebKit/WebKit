@@ -40,7 +40,7 @@ namespace WebKit {
 class WebMouseEvent;
 class WebPage;
 
-class PageOverlay : public APIObject {
+class PageOverlay : public TypedAPIObject<APIObject::TypeBundlePageOverlay> {
 public:
     class Client {
     protected:
@@ -53,8 +53,6 @@ public:
         virtual void drawRect(PageOverlay*, WebCore::GraphicsContext&, const WebCore::IntRect& dirtyRect) = 0;
         virtual bool mouseEvent(PageOverlay*, const WebMouseEvent&) = 0;
     };
-
-    static const Type APIType = TypeBundlePageOverlay;
 
     static PassRefPtr<PageOverlay> create(Client*);
     virtual ~PageOverlay();
@@ -76,9 +74,6 @@ protected:
     explicit PageOverlay(Client*);
 
 private:
-    // APIObject
-    virtual Type type() const { return APIType; }
-
     WebCore::IntRect bounds() const;
 
     void startFadeAnimation();

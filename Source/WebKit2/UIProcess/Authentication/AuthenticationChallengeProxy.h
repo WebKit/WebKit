@@ -41,10 +41,8 @@ class ChildProcessProxy;
 class WebCredential;
 class WebProtectionSpace;
 
-class AuthenticationChallengeProxy : public APIObject {
+class AuthenticationChallengeProxy : public TypedAPIObject<APIObject::TypeAuthenticationChallenge> {
 public:
-    static const Type APIType = TypeAuthenticationChallenge;
-
     static PassRefPtr<AuthenticationChallengeProxy> create(const WebCore::AuthenticationChallenge& authenticationChallenge, uint64_t challengeID, CoreIPC::Connection* connection)
     {
         return adoptRef(new AuthenticationChallengeProxy(authenticationChallenge, challengeID, connection));
@@ -64,8 +62,6 @@ public:
 private:
     AuthenticationChallengeProxy(const WebCore::AuthenticationChallenge&, uint64_t challengeID, CoreIPC::Connection*);
 
-    virtual Type type() const { return APIType; }
-    
     WebCore::AuthenticationChallenge m_coreAuthenticationChallenge;
     uint64_t m_challengeID;
     RefPtr<CoreIPC::Connection> m_connection;

@@ -85,14 +85,12 @@ extern NSString *SchemeForCustomProtocolRegisteredNotificationName;
 extern NSString *SchemeForCustomProtocolUnregisteredNotificationName;
 #endif
 
-class WebContext : public APIObject, private CoreIPC::MessageReceiver
+class WebContext : public TypedAPIObject<APIObject::TypeContext>, private CoreIPC::MessageReceiver
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , private PluginInfoStoreClient
 #endif
     {
 public:
-    static const Type APIType = TypeContext;
-
     static PassRefPtr<WebContext> create(const String& injectedBundlePath);
     virtual ~WebContext();
 
@@ -303,8 +301,6 @@ public:
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);
     void platformInitialize();
-
-    virtual Type type() const { return APIType; }
 
     void platformInitializeWebProcess(WebProcessCreationParameters&);
     void platformInvalidateContext();

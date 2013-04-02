@@ -67,10 +67,8 @@ enum AttachmentSide {
     AttachmentSideRight
 };
 
-class WebInspectorProxy : public APIObject, public CoreIPC::MessageReceiver {
+class WebInspectorProxy : public TypedAPIObject<APIObject::TypeInspector>, public CoreIPC::MessageReceiver {
 public:
-    static const Type APIType = TypeInspector;
-
     static PassRefPtr<WebInspectorProxy> create(WebPageProxy* page)
     {
         return adoptRef(new WebInspectorProxy(page));
@@ -146,8 +144,6 @@ public:
 
 private:
     explicit WebInspectorProxy(WebPageProxy*);
-
-    virtual Type type() const { return APIType; }
 
     // CoreIPC::MessageReceiver
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
