@@ -1,3 +1,12 @@
+2013-04-02  Lucas Forschler  <lforschler@apple.com>
+
+        Disable running tests on the MAC WK2 EWS queue.
+        
+        Unreviewed.
+        
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (MacWK2EWS):
+
 2013-04-02  Julie Parent  <jparent@chromium.org>
 
         Dashboard refactor: Move dashboard specific history related features to History.
