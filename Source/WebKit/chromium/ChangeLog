@@ -1,3 +1,12 @@
+2013-04-01  <webkit.review.bot@gmail.com>
+
+        [chromium] Roll chromium deps to 191760.
+        https://bugs.webkit.org/show_bug.cgi?id=113745
+
+        Unreviewed, rolling deps.
+
+        * DEPS:
+
 2013-04-01  Alexandre Elias  <aelias@chromium.org>
 
         [chromium] Delete code behind if (!applyXYZScaleInCompositor)
