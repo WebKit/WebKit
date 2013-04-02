@@ -916,11 +916,7 @@ static void positionScrollbarLayer(GraphicsLayer* graphicsLayer, Scrollbar* scro
         return;
     }
 
-#if OS(ANDROID)
-    graphicsLayer->setDrawsContent(false);
-#else
     graphicsLayer->setDrawsContent(true);
-#endif
     graphicsLayer->setNeedsDisplay();
 }
 
