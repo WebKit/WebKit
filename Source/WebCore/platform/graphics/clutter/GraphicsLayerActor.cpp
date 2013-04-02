@@ -28,6 +28,7 @@
 #include "PlatformClutterLayerClient.h"
 #include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
+#include "TransformationMatrix.h"
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
@@ -44,7 +45,8 @@ struct _GraphicsLayerActorPrivate {
 
     PlatformClutterLayerClient* layerClient;
 
-    gboolean drawsContent;
+    bool flatten;
+    bool drawsContent;
 
     float scrollX;
     float scrollY;
@@ -101,6 +103,8 @@ static void graphics_layer_actor_init(GraphicsLayerActor* self)
     self->priv = GRAPHICS_LAYER_ACTOR_GET_PRIVATE(self);
 
     clutter_actor_set_reactive(CLUTTER_ACTOR(self), FALSE);
+
+    self->priv->flatten = true;
 
     // Default used by GraphicsLayer.
     graphicsLayerActorSetAnchorPoint(self, 0.5, 0.5, 0.0);
@@ -202,7 +206,12 @@ static void graphicsLayerActorApplyTransform(ClutterActor* actor, CoglMatrix* ma
     if (translateX || translateY)
         cogl_matrix_translate(matrix, translateX, translateY, 0);
 
-    CLUTTER_ACTOR_CLASS(graphics_layer_actor_parent_class)->apply_transform(actor, matrix);
+    CoglMatrix modelViewTransform = TransformationMatrix();
+    CLUTTER_ACTOR_CLASS(graphics_layer_actor_parent_class)->apply_transform(actor, &modelViewTransform);
+
+    if (priv->flatten)
+        modelViewTransform = TransformationMatrix(&modelViewTransform).to2dTransform();
+    cogl_matrix_multiply(matrix, matrix, &modelViewTransform);
 }
 
 static void graphicsLayerActorPaint(ClutterActor* actor)
@@ -299,7 +308,11 @@ static void drawLayerContents(ClutterActor* actor, GraphicsContext& context)
 GraphicsLayerActor* graphicsLayerActorNew(GraphicsLayerClutter::LayerType type)
 {
     GraphicsLayerActor* layer = GRAPHICS_LAYER_ACTOR(g_object_new(GRAPHICS_LAYER_TYPE_ACTOR, 0));
-    layer->priv->layerType = type;
+    GraphicsLayerActorPrivate* priv = layer->priv;
+
+    priv->layerType = type;
+    if (priv->layerType == GraphicsLayerClutter::LayerTypeTransformLayer)
+        priv->flatten = false;
 
     return layer;
 }
@@ -436,6 +449,16 @@ void graphicsLayerActorSetSublayers(GraphicsLayerActor* layer, GraphicsLayerActo
     }
 }
 
+void graphicsLayerActorRemoveFromSuperLayer(GraphicsLayerActor* layer)
+{
+    ClutterActor* actor = CLUTTER_ACTOR(layer);
+    ClutterActor* parentActor = clutter_actor_get_parent(actor);
+    if (!parentActor)
+        return;
+
+    clutter_actor_remove_child(parentActor, actor);
+}
+
 GraphicsLayerClutter::LayerType graphicsLayerActorGetLayerType(GraphicsLayerActor* layer)
 {
     GraphicsLayerActorPrivate* priv = layer->priv;
@@ -474,7 +497,7 @@ float graphicsLayerActorGetTranslateY(GraphicsLayerActor* layer)
     return priv->translateY;
 }
 
-void graphicsLayerActorSetDrawsContent(GraphicsLayerActor* layer, gboolean drawsContent)
+void graphicsLayerActorSetDrawsContent(GraphicsLayerActor* layer, bool drawsContent)
 {
     GraphicsLayerActorPrivate* priv = layer->priv;
 
@@ -489,6 +512,15 @@ void graphicsLayerActorSetDrawsContent(GraphicsLayerActor* layer, gboolean draws
 gboolean graphicsLayerActorGetDrawsContent(GraphicsLayerActor* layer)
 {
     return layer->priv->drawsContent;
+}
+
+void graphicsLayerActorSetFlatten(GraphicsLayerActor* layer, bool flatten)
+{
+    GraphicsLayerActorPrivate* priv = layer->priv;
+    if (flatten == priv->flatten)
+        return;
+
+    priv->flatten = flatten;
 }
 
 WebCore::PlatformClutterAnimation* graphicsLayerActorGetAnimationForKey(GraphicsLayerActor* layer, const String key)
