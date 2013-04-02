@@ -6020,6 +6020,7 @@
 		CCC2B51415F613060048CDD6 /* DeviceClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC2B51015F613060048CDD6 /* DeviceClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CCC2B51515F613060048CDD6 /* DeviceController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CCC2B51115F613060048CDD6 /* DeviceController.cpp */; };
 		CCC2B51615F613060048CDD6 /* DeviceController.h in Headers */ = {isa = PBXBuildFile; fileRef = CCC2B51215F613060048CDD6 /* DeviceController.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD0EEE0E14743F39003EAFA2 /* AudioDestinationIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD0EEE0B14743E35003EAFA2 /* AudioDestinationIOS.cpp */; };
 		CD127DED14F3097D00E84779 /* WebCoreFullScreenWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD127DEB14F3097900E84779 /* WebCoreFullScreenWindow.mm */; };
 		CD127DEE14F3098400E84779 /* WebCoreFullScreenWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = CD127DEA14F3097900E84779 /* WebCoreFullScreenWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD1B4A65160786AE00282DF9 /* MediaKeyNeededEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDA98DC216014EEE00FEA3B1 /* MediaKeyNeededEvent.cpp */; };
@@ -13699,6 +13700,8 @@
 		CCC2B51015F613060048CDD6 /* DeviceClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceClient.h; sourceTree = "<group>"; };
 		CCC2B51115F613060048CDD6 /* DeviceController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceController.cpp; sourceTree = "<group>"; };
 		CCC2B51215F613060048CDD6 /* DeviceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceController.h; sourceTree = "<group>"; };
+		CD0EEE0A14743E34003EAFA2 /* AudioDestinationIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioDestinationIOS.h; path = ios/AudioDestinationIOS.h; sourceTree = "<group>"; };
+		CD0EEE0B14743E35003EAFA2 /* AudioDestinationIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AudioDestinationIOS.cpp; path = ios/AudioDestinationIOS.cpp; sourceTree = "<group>"; };
 		CD127DEA14F3097900E84779 /* WebCoreFullScreenWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreFullScreenWindow.h; sourceTree = "<group>"; };
 		CD127DEB14F3097900E84779 /* WebCoreFullScreenWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCoreFullScreenWindow.mm; sourceTree = "<group>"; };
 		CD1E7346167BC78E009A885D /* TextTrackRepresentation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrackRepresentation.cpp; sourceTree = "<group>"; };
@@ -21879,6 +21882,15 @@
 			name = audio;
 			sourceTree = "<group>";
 		};
+		CD0EEE0D14743E48003EAFA2 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				CD0EEE0B14743E35003EAFA2 /* AudioDestinationIOS.cpp */,
+				CD0EEE0A14743E34003EAFA2 /* AudioDestinationIOS.h */,
+			);
+			name = ios;
+			sourceTree = "<group>";
+		};
 		CDA98DBD16014E0800FEA3B1 /* encryptedmedia */ = {
 			isa = PBXGroup;
 			children = (
@@ -23192,6 +23204,7 @@
 		FD31604012B026A300C1A359 /* audio */ = {
 			isa = PBXGroup;
 			children = (
+				CD0EEE0D14743E48003EAFA2 /* ios */,
 				FD3160B012B0270700C1A359 /* mac */,
 				FD31604412B026F700C1A359 /* AudioArray.h */,
 				FD31604512B026F700C1A359 /* AudioBus.cpp */,
@@ -27188,6 +27201,7 @@
 				FD3160BB12B0272A00C1A359 /* AudioBusMac.mm in Sources */,
 				FD31607D12B026F700C1A359 /* AudioChannel.cpp in Sources */,
 				FD31600412B0267600C1A359 /* AudioContext.cpp in Sources */,
+				CD0EEE0E14743F39003EAFA2 /* AudioDestinationIOS.cpp in Sources */,
 				FD3160BC12B0272A00C1A359 /* AudioDestinationMac.cpp in Sources */,
 				FD31600712B0267600C1A359 /* AudioDestinationNode.cpp in Sources */,
 				FD31608112B026F700C1A359 /* AudioDSPKernelProcessor.cpp in Sources */,
