@@ -1370,7 +1370,6 @@ webkit.org/b/111606 fast/borders/border-fit.html [ Failure ]
 webkit.org/b/111606 fast/borders/border-fit-2.html [ Failure ]
 webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Failure ]
 
-
 webkit.org/b/112109 fast/box-shadow/box-shadow-with-zero-radius.html [ ImageOnlyFailure ]
 
 webkit.org/b/112110 media/track/track-cue-container-rendering-position.html [ Failure ]
@@ -1382,6 +1381,8 @@ webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg
 webkit.org/b/112705 fast/dom/icon-url-property.html [ Failure ]
 
 webkit.org/b/113127 media/track/track-prefer-captions.html [ Timeout ]
+
+webkit.org/b/113747 svg/repaint/buffered-rendering-static-image.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
