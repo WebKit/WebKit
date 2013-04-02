@@ -2454,7 +2454,6 @@ webkit.org/b/62662 [ Debug ] inspector/cookie-parser.html [ Crash Pass ]
 webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
 
 webkit.org/b/83906 ietestcenter/css3/grid/grid-column-001.htm [ ImageOnlyFailure ]
-webkit.org/b/83907 ietestcenter/css3/grid/grid-column-002.htm [ ImageOnlyFailure ]
 webkit.org/b/83909 ietestcenter/css3/grid/grid-column-003.htm [ ImageOnlyFailure ]
 webkit.org/b/83912 ietestcenter/css3/grid/grid-items-002.htm [ ImageOnlyFailure ]
 webkit.org/b/83913 ietestcenter/css3/grid/grid-items-003.htm [ ImageOnlyFailure ]

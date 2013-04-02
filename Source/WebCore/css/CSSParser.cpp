@@ -2643,7 +2643,7 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
         if (!cssGridLayoutEnabled())
             return false;
 
-        validPrimitive = id == CSSValueAuto || validUnit(value, FInteger);
+        validPrimitive = id == CSSValueAuto || (validUnit(value, FInteger) && value->fValue);
         break;
 
     case CSSPropertyWebkitGridColumn:
