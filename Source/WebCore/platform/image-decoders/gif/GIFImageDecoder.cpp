@@ -106,7 +106,7 @@ int GIFImageDecoder::repetitionCount() const
     // see the loop count and then encounter a decoding error which happens
     // later in the stream. It is also possible that no frames are in the
     // stream. In these cases we should just loop once.
-    if (failed() || (m_reader && (!m_reader->imagesCount() || m_reader->parseFailed())))
+    if (failed() || (m_reader && (!m_reader->imagesCount())))
         m_repetitionCount = cAnimationLoopOnce;
     else if (m_reader && m_reader->loopCount() != cLoopCountNotSeen)
         m_repetitionCount = m_reader->loopCount();

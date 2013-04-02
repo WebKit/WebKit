@@ -240,7 +240,6 @@ public:
         , m_globalColormapSize(0)
         , m_loopCount(cLoopCountNotSeen)
         , m_currentDecodingFrame(0)
-        , m_parseFailed(false)
         , m_parseCompleted(false)
     {
     }
@@ -288,8 +287,6 @@ public:
         return m_currentDecodingFrame < m_frames.size() ? m_frames[m_currentDecodingFrame].get() : 0;
     }
 
-    bool parseFailed() const { return m_parseFailed; }
-
 private:
     bool parse(size_t dataPosition, size_t len, bool parseSizeOnly);
     void setRemainingBytes(size_t);
@@ -326,7 +323,6 @@ private:
     size_t m_currentDecodingFrame;
 
     RefPtr<WebCore::SharedBuffer> m_data;
-    bool m_parseFailed;
     bool m_parseCompleted;
 };
 

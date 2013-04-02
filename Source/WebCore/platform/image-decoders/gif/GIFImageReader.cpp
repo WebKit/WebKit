@@ -358,10 +358,8 @@ bool GIFImageReader::decode(GIFImageDecoder::GIFQuery query, unsigned haltAtFram
 {
     ASSERT(m_bytesRead <= m_data->size());
 
-    if (!m_parseFailed && !parse(m_bytesRead, m_data->size() - m_bytesRead, query == GIFImageDecoder::GIFSizeQuery)) {
-        m_parseFailed = true;
+    if (!parse(m_bytesRead, m_data->size() - m_bytesRead, query == GIFImageDecoder::GIFSizeQuery))
         return false;
-    }
 
     if (query != GIFImageDecoder::GIFFullQuery)
         return true;
