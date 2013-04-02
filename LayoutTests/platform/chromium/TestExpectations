@@ -3835,3 +3835,5 @@ webkit.org/b/113673 [ Win ] fast/exclusions/shape-outside-floats/shape-outside-f
 crbug.com/224428 [ Linux ] fast/text/international/khmer-selection.html [ Failure ]
 crbug.com/224428 webkit.org/b/113169 [ Linux ] fast/text/international/danda-space.html [ Failure ]
 
+crbug.com/225778 [ MountainLion ] ietestcenter/css3/grid/grid-column-002.htm [ ImageOnlyFailure ]
+
