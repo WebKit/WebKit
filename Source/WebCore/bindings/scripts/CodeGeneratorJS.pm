@@ -1823,6 +1823,7 @@ sub GenerateImplementation
                 my $name = $attribute->signature->name;
                 my $type = $attribute->signature->type;
                 my $isNullable = $attribute->signature->isNullable;
+                my $isCachedAttribute = $attribute->signature->extendedAttributes->{"CachedAttribute"};
                 $codeGenerator->AssertNotSequenceType($type);
                 my $getFunctionName = GetAttributeGetterName($interfaceName, $className, $attribute);
                 my $implGetterFunctionName = $codeGenerator->WK_lcfirst($name);
@@ -1839,7 +1840,7 @@ sub GenerateImplementation
                     push(@implContent, "    UNUSED_PARAM(slotBase);\n");
                 }
 
-                if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
+                if ($isCachedAttribute) {
                     $needsMarkChildren = 1;
                 }
 
@@ -1888,7 +1889,7 @@ sub GenerateImplementation
                     push(@implContent, "    bool isNull = false;\n") if $isNullable;
 
                     my $cacheIndex = 0;
-                    if ($attribute->signature->extendedAttributes->{"CachedAttribute"}) {
+                    if ($isCachedAttribute) {
                         $cacheIndex = $currentCachedAttribute;
                         $currentCachedAttribute++;
                         push(@implContent, "    if (JSValue cachedValue = castedThis->m_" . $attribute->signature->name . ".get())\n");
@@ -1896,6 +1897,7 @@ sub GenerateImplementation
                     }
 
                     my @callWithArgs = GenerateCallWith($attribute->signature->extendedAttributes->{"CallWith"}, \@implContent, "jsUndefined()");
+                    my $returnValue = "result";
 
                     if ($svgListPropertyType) {
                         push(@implContent, "    JSValue result =  " . NativeToJSValue($attribute->signature, 0, $interfaceName, "castedThis->impl()->$implGetterFunctionName(" . (join ", ", @callWithArgs) . ")", "castedThis") . ";\n");
@@ -1923,23 +1925,30 @@ sub GenerateImplementation
 
                         unshift(@arguments, @callWithArgs);
 
-                        my $jsType = NativeToJSValue($attribute->signature, 0, $interfaceName, "${functionName}(" . join(", ", @arguments) . ")", "castedThis");
                         push(@implContent, "    $interfaceName* impl = static_cast<$interfaceName*>(castedThis->impl());\n") if !$attribute->isStatic;
-                        if ($codeGenerator->IsSVGAnimatedType($type)) {
-                            push(@implContent, "    RefPtr<$type> obj = $jsType;\n");
-                            push(@implContent, "    JSValue result =  toJS(exec, castedThis->globalObject(), obj.get());\n");
-                        } else {
-                            push(@implContent, "    JSValue result = $jsType;\n");
-                        }
-
                         if ($isNullable) {
+                            my $nativeType = GetNativeType($type);
+                            push(@implContent, "    $nativeType nativeResult = " . NativeValueToLocal("$functionName(" . join(", ", @arguments) . ")", $nativeType) . ";\n");
                             push(@implContent, "    if (isNull)\n");
                             push(@implContent, "        return jsNull();\n");
+                            if ($isCachedAttribute) {
+                                push(@implContent, "    JSValue result = " . NativeToJSValue($attribute->signature, 0, $interfaceName, "nativeResult", "castedThis") . ";\n");
+                            } else {
+                                $returnValue = NativeToJSValue($attribute->signature, 0, $interfaceName, "nativeResult", "castedThis");
+                            }
+                        } else {
+                            my $jsType = NativeToJSValue($attribute->signature, 0, $interfaceName, "${functionName}(" . join(", ", @arguments) . ")", "castedThis");
+                            if ($codeGenerator->IsSVGAnimatedType($type)) {
+                                push(@implContent, "    RefPtr<$type> obj = $jsType;\n");
+                                push(@implContent, "    JSValue result = toJS(exec, castedThis->globalObject(), obj.get());\n");
+                            } else {
+                                push(@implContent, "    JSValue result = $jsType;\n");
+                            }
                         }
                     }
 
-                    push(@implContent, "    castedThis->m_" . $attribute->signature->name . ".set(exec->globalData(), castedThis, result);\n") if ($attribute->signature->extendedAttributes->{"CachedAttribute"});
-                    push(@implContent, "    return result;\n");
+                    push(@implContent, "    castedThis->m_" . $attribute->signature->name . ".set(exec->globalData(), castedThis, result);\n") if $isCachedAttribute;
+                    push(@implContent, "    return $returnValue;\n");
 
                 } else {
                     my @arguments = ("ec");
@@ -1951,13 +1960,14 @@ sub GenerateImplementation
                     }
 
                     unshift(@arguments, GenerateCallWith($attribute->signature->extendedAttributes->{"CallWith"}, \@implContent, "jsUndefined()"));
+                    my $nativeType = GetNativeType($type);
 
                     if ($svgPropertyOrListPropertyType) {
                         push(@implContent, "    $svgPropertyOrListPropertyType impl(*castedThis->impl());\n");
-                        push(@implContent, "    JSC::JSValue result = " . NativeToJSValue($attribute->signature, 0, $interfaceName, "impl.$implGetterFunctionName(" . join(", ", @arguments) . ")", "castedThis") . ";\n");
+                        push(@implContent, "    $nativeType nativeResult = " . NativeValueToLocal("impl.$implGetterFunctionName(" . join(", ", @arguments) . ")", $nativeType) . ";\n");
                     } else {
                         push(@implContent, "    $interfaceName* impl = static_cast<$interfaceName*>(castedThis->impl());\n");
-                        push(@implContent, "    JSC::JSValue result = " . NativeToJSValue($attribute->signature, 0, $interfaceName, "impl->$implGetterFunctionName(" . join(", ", @arguments) . ")", "castedThis") . ";\n");
+                        push(@implContent, "    $nativeType nativeResult = " . NativeValueToLocal("impl->$implGetterFunctionName(" . join(", ", @arguments) . ")", $nativeType) . ";\n");
                     }
 
                     if ($isNullable) {
@@ -1966,7 +1976,7 @@ sub GenerateImplementation
                     }
 
                     push(@implContent, "    setDOMException(exec, ec);\n");
-                    push(@implContent, "    return result;\n");
+                    push(@implContent, "    return " . NativeToJSValue($attribute->signature, 0, $interfaceName, "nativeResult", "castedThis") . ";\n");
                 }
 
                 push(@implContent, "}\n\n");
@@ -3195,6 +3205,15 @@ sub IsNativeType
 {
     my $type = shift;
     return exists $nativeType{$type};
+}
+
+sub NativeValueToLocal
+{
+    my $value = shift;
+    my $type = shift;
+
+    return "WTF::getPtr($value)" if $type =~ /\*$/;
+    return $value;
 }
 
 sub JSValueToNative
