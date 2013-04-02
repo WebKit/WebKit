@@ -5845,7 +5845,10 @@ bool RenderLayer::shouldBeNormalFlowOnly() const
             && !renderer()->hasBlendMode()
 #endif
             && !isTransparent()
-            && !needsCompositedScrolling();
+            && !needsCompositedScrolling()
+#if ENABLE(CSS_EXCLUSIONS)
+            && !(renderer()->isFloating() && renderer()->style()->shapeOutside());
+#endif
 }
 
 bool RenderLayer::shouldBeSelfPaintingLayer() const
