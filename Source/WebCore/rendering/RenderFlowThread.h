@@ -55,7 +55,7 @@ typedef ListHashSet<RenderRegion*> RenderRegionList;
 
 class RenderFlowThread: public RenderBlock {
 public:
-    RenderFlowThread(Document*);
+    RenderFlowThread();
     virtual ~RenderFlowThread() { };
     
     virtual bool isRenderFlowThread() const { return true; }

@@ -33,10 +33,13 @@ namespace WebCore {
 
 class RenderMultiColumnFlowThread : public RenderFlowThread {
 public:
-    RenderMultiColumnFlowThread(Document*);
     ~RenderMultiColumnFlowThread();
 
+    static RenderMultiColumnFlowThread* createAnonymous(Document*);
+
 private:
+    RenderMultiColumnFlowThread();
+
     virtual const char* renderName() const OVERRIDE;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
     virtual void autoGenerateRegionsToBlockOffset(LayoutUnit) OVERRIDE;

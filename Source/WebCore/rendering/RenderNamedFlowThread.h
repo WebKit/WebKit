@@ -45,8 +45,9 @@ typedef ListHashSet<Node*> NamedFlowContentNodes;
 
 class RenderNamedFlowThread : public RenderFlowThread {
 public:
-    RenderNamedFlowThread(Document*, PassRefPtr<WebKitNamedFlow>);
     virtual ~RenderNamedFlowThread();
+
+    static RenderNamedFlowThread* createAnonymous(Document*, PassRefPtr<WebKitNamedFlow>);
 
     const AtomicString& flowThreadName() const;
 
@@ -79,6 +80,8 @@ protected:
     void resetMarkForDestruction();
 
 private:
+    RenderNamedFlowThread(PassRefPtr<WebKitNamedFlow>);
+
     virtual const char* renderName() const OVERRIDE;
     virtual bool isRenderNamedFlowThread() const OVERRIDE { return true; }
 

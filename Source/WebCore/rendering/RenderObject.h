@@ -527,7 +527,7 @@ public:
         // RenderBlock::createAnonymousBlock(). This includes creating an anonymous
         // RenderBlock having a BLOCK or BOX display. Other classes such as RenderTextFragment
         // are not RenderBlocks and will return false. See https://bugs.webkit.org/show_bug.cgi?id=56709. 
-        return isAnonymous() && (style()->display() == BLOCK || style()->display() == BOX) && style()->styleType() == NOPSEUDO && isRenderBlock() && !isListMarker()
+        return isAnonymous() && (style()->display() == BLOCK || style()->display() == BOX) && style()->styleType() == NOPSEUDO && isRenderBlock() && !isListMarker() && !isRenderFlowThread()
 #if ENABLE(FULLSCREEN_API)
             && !isRenderFullScreen()
             && !isRenderFullScreenPlaceholder()
