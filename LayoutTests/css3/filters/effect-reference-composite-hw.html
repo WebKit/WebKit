@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0" version="1.1">
+  <defs>
+    <filter id="over">
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.7 0" result="matrix"/>
+      <feComposite in2="matrix" operator="over"/>
+    </filter>
+    <filter id="in">
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.7 0" result="matrix"/>
+      <feComposite in2="matrix" operator="in"/>
+    </filter>
+    <filter id="out">
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.7 0" result="matrix"/>
+      <feComposite in2="matrix" operator="out"/>
+    </filter>
+    <filter id="atop">
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.7 0" result="matrix"/>
+      <feComposite in2="matrix" operator="atop"/>
+    </filter>
+    <filter id="xor">
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.7 0" result="matrix"/>
+      <feComposite in2="matrix" operator="xor"/>
+    </filter>
+  </defs>
+</svg>
+<style>
+img {
+    margin: 10px;
+}
+</style>
+<img style="-webkit-filter: url(#over); filter: url(#over); -webkit-transform: translateZ(0);" src="resources/reference.png">
+<img style="-webkit-filter: url(#in);   filter: url(#in);   -webkit-transform: translateZ(0);"   src="resources/reference.png">
+<img style="-webkit-filter: url(#out);  filter: url(#out);  -webkit-transform: translateZ(0);"  src="resources/reference.png">
+<img style="-webkit-filter: url(#atop); filter: url(#atop); -webkit-transform: translateZ(0);" src="resources/reference.png">
+<img style="-webkit-filter: url(#xor);  filter: url(#xor);  -webkit-transform: translateZ(0);"  src="resources/reference.png">

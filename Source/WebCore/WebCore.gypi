@@ -4087,6 +4087,7 @@
             'platform/graphics/filters/SpotLightSource.h',
             'platform/graphics/filters/skia/FEBlendSkia.cpp',
             'platform/graphics/filters/skia/FEColorMatrixSkia.cpp',
+            'platform/graphics/filters/skia/FECompositeSkia.cpp',
             'platform/graphics/filters/skia/FEComponentTransferSkia.cpp',
             'platform/graphics/filters/skia/FEConvolveMatrixSkia.cpp',
             'platform/graphics/filters/skia/FEDisplacementMapSkia.cpp',
