@@ -3853,3 +3853,6 @@ crbug.com/224428 webkit.org/b/113169 [ Linux ] fast/text/international/danda-spa
 
 crbug.com/225778 [ MountainLion ] ietestcenter/css3/grid/grid-column-002.htm [ ImageOnlyFailure ]
 
+crbug.com/225880 [ MountainLion ] fast/exclusions/shape-outside-floats/shape-outside-floats-overflow-hidden.html [ ImageOnlyFailure ]
+crbug.com/225883 [ Win Mac ] inspector/profiler/memory-instrumentation-external-array.html [ Failure ]
+
