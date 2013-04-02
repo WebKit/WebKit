@@ -2558,6 +2558,14 @@ webkit.org/b/99306 animations/missing-values-first-keyframe.html [ ImageOnlyFail
 webkit.org/b/99306 animations/missing-values-last-keyframe.html [ ImageOnlyFailure ]
 webkit.org/b/99306 css3/filters/effect-blur-hw.html [ ImageOnlyFailure ] # Blur effect radius is too small on WebKit1, the effect not applied at all on WebKit2.
 
+# Needs rebaseline.
+webkit.org/b/94198 fast/dom/HTMLImageElement/image-alt-text.html [ Failure ]
+webkit.org/b/94198 fast/dom/HTMLInputElement/input-image-alt-text.html [ Failure ]
+webkit.org/b/94198 fast/encoding/utf-16-big-endian.html [ Failure ]
+webkit.org/b/94198 fast/encoding/utf-16-little-endian.html [ Failure ]
+webkit.org/b/94198 fast/forms/input-value.html [ Failure ]
+webkit.org/b/94198 tables/mozilla/collapsing_borders/bug41262-3.html [ Failure ]
+
 # REGRESSION(r132143): It made fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html flakey
 webkit.org/b/100117 fast/xmlhttprequest/xmlhttprequest-recursive-sync-event.html
 webkit.org/b/100117 editing/style/iframe-onload-crash-mac.html

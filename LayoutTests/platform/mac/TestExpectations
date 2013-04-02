@@ -1402,6 +1402,15 @@ webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ]
 webkit.org/b/106415 fast/workers/worker-document-leak.html [ Pass Failure ] 
 webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
 
+# Needs rebaseline.
+webkit.org/b/94198 fast/dom/HTMLImageElement/image-alt-text.html [ Failure ]
+webkit.org/b/94198 fast/dom/HTMLInputElement/input-image-alt-text.html [ Failure ]
+webkit.org/b/94198 fast/encoding/utf-16-big-endian.html [ Failure ]
+webkit.org/b/94198 fast/encoding/utf-16-little-endian.html [ Failure ]
+webkit.org/b/94198 fast/forms/input-value.html [ Failure ]
+webkit.org/b/94198 fast/lists/inlineBoxWrapperNullCheck.html [ Failure ]
+webkit.org/b/94198 tables/mozilla/collapsing_borders/bug41262-3.html [ Failure ]
+
 # Spellchecker behavior tests.
 webkit.org/b/108370 editing/spelling/spelling-double-clicked-word.html [ Skip ]
 webkit.org/b/108370 editing/spelling/spelling-double-clicked-word-with-underscores.html [ Skip ]

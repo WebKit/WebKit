@@ -1266,6 +1266,14 @@ webkit.org/b/98146 accessibility/svg-bounds.html [ Failure ]
 # Enable when support drag-and-drop autoscrolling
 webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 
+# Needs rebaseline.
+webkit.org/b/94198 fast/dom/HTMLImageElement/image-alt-text.html [ Failure ]
+webkit.org/b/94198 fast/dom/HTMLInputElement/input-image-alt-text.html [ Failure ]
+webkit.org/b/94198 fast/encoding/utf-16-big-endian.html [ Failure ]
+webkit.org/b/94198 fast/encoding/utf-16-little-endian.html [ Failure ]
+webkit.org/b/94198 fast/forms/input-value.html [ Failure ]
+webkit.org/b/94198 tables/mozilla/collapsing_borders/bug41262-3.html [ Failure ]
+
 # Leaking state into the next test.
 webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
 

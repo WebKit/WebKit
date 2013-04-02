@@ -9,10 +9,10 @@ layer at (0,0) size 800x600
           text run at (481,0) width 267: "no src attribute. You should see \"Success\""
           text run at (0,18) width 225: "twice, followed by a blue rectangle."
       RenderBlock {P} at (0,52) size 784x0
-      RenderBlock {FORM} at (0,52) size 784x94
-        RenderImage {INPUT} at (0,0) size 61x17
-        RenderBR {BR} at (61,17) size 0x0
-        RenderImage {INPUT} at (0,17) size 102x52 [border: (1px solid #000000)]
-        RenderBR {BR} at (102,69) size 0x0
-        RenderImage {INPUT} at (0,69) size 75x25
-        RenderBR {BR} at (75,94) size 0x0
+      RenderBlock {FORM} at (0,52) size 784x98
+        RenderImage {INPUT} at (0,0) size 65x21
+        RenderBR {BR} at (65,21) size 0x0
+        RenderImage {INPUT} at (0,21) size 102x52 [border: (1px solid #000000)]
+        RenderBR {BR} at (102,73) size 0x0
+        RenderImage {INPUT} at (0,73) size 75x25
+        RenderBR {BR} at (75,98) size 0x0

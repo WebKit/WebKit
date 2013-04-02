@@ -3783,6 +3783,22 @@ webkit.org/b/112369 [ Debug ] inspector/debugger/pause-in-inline-script.html [ P
 # Needs rebaseline on all platforms
 Bug(leviw) fast/text/shaping/shaping-selection-rect.html [ Failure ]
 
+# Needs rebaseline.
+webkit.org/b/94198 editing/selection/select-missing-image.html [ Failure ]
+webkit.org/b/94198 fast/block/float/002.html [ Failure ]
+webkit.org/b/94198 fast/block/float/017.html [ Failure ]
+webkit.org/b/94198 fast/dom/HTMLImageElement/image-alt-text.html [ Failure ]
+webkit.org/b/94198 fast/dom/HTMLInputElement/input-image-alt-text.html [ Failure ]
+webkit.org/b/94198 fast/encoding/utf-16-big-endian.html [ Failure ]
+webkit.org/b/94198 fast/encoding/utf-16-little-endian.html [ Failure ]
+webkit.org/b/94198 fast/flexbox/023.html [ Failure ]
+webkit.org/b/94198 fast/flexbox/024.html [ Failure ]
+webkit.org/b/94198 fast/forms/input-value.html [ Failure ]
+webkit.org/b/94198 fast/invalid/012.html [ Failure ]
+webkit.org/b/94198 fast/parser/comment-in-script.html [ Failure ]
+webkit.org/b/94198 tables/mozilla/bugs/bug2997.html [ Failure ]
+webkit.org/b/94198 tables/mozilla/collapsing_borders/bug41262-3.html [ Failure ]
+
 # Flaky tests
 webkit.org/b/112598 [ Win Mac Linux ] http/tests/security/mixedContent/insecure-audio-video-in-main-frame.html [ Failure Pass ]
 webkit.org/b/112601 http/tests/security/cross-frame-access-port-explicit-domain.html [ Failure Pass ]

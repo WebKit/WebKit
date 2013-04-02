@@ -2510,6 +2510,14 @@ fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-under
 fast/css3-text/css3-text-indent/getComputedStyle/getComputedStyle-text-indent-inherited.html
 fast/css3-text/css3-text-indent/getComputedStyle/getComputedStyle-text-indent.html
 
+# Needs rebaseline.
+webkit.org/b/94198 fast/dom/HTMLImageElement/image-alt-text.html [ Failure ]
+webkit.org/b/94198 fast/dom/HTMLInputElement/input-image-alt-text.html [ Failure ]
+webkit.org/b/94198 fast/encoding/utf-16-big-endian.html [ Failure ]
+webkit.org/b/94198 fast/encoding/utf-16-little-endian.html [ Failure ]
+webkit.org/b/94198 fast/forms/input-value.html [ Failure ]
+webkit.org/b/94198 tables/mozilla/collapsing_borders/bug41262-3.html [ Failure ]
+
 # ACCELERATED_OVERFLOW_SCROLLING is disabled on Windows
 compositing/overflow/scrolling-without-painting.html
 compositing/overflow/updating-scrolling-content.html
