@@ -60,7 +60,7 @@ WebInspector.JavaScriptSourceFrame = function(scriptsPanel, uiSourceCode)
     this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.SourceMappingChanged, this._onSourceMappingChanged, this);
     this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.WorkingCopyChanged, this._workingCopyChanged, this);
     this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.WorkingCopyCommitted, this._workingCopyCommitted, this);
-    
+
     this._updateScriptFile();
 }
 
@@ -221,51 +221,32 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             return null;
         if (window.getSelection().type === "Range")
             return null;
-        var lineElement = element.enclosingNodeOrSelfWithClass("webkit-line-content");
-        if (!lineElement)
+
+        var textPosition = this.textEditor.coordinatesToCursorPosition(event.x, event.y);
+        if (!textPosition)
             return null;
 
-        if (element.hasStyleClass("webkit-javascript-ident"))
-            return element;
-
-        if (element.hasStyleClass("source-frame-token"))
-            return element;
-
-        // We are interested in identifiers and "this" keyword.
-        if (element.hasStyleClass("webkit-javascript-keyword"))
-            return element.textContent === "this" ? element : null;
-
-        if (element !== lineElement || lineElement.childElementCount)
+        var token = this.textEditor.tokenAtTextPosition(textPosition.startLine, textPosition.startColumn);
+        if (!token)
+            return null;
+        var lineNumber = textPosition.startLine;
+        var line = this.textEditor.line(lineNumber);
+        var tokenContent = line.substring(token.startColumn, token.endColumn + 1);
+        if (token.type !== "javascript-ident" && (token.type !== "javascript-keyword" || tokenContent !== "this"))
             return null;
 
-        // Handle non-highlighted case
-        // 1. Collect ranges of identifier suspects
-        var lineContent = lineElement.textContent;
-        var ranges = [];
-        var regex = new RegExp("[a-zA-Z_\$0-9]+", "g");
-        var match;
-        while (regex.lastIndex < lineContent.length && (match = regex.exec(lineContent)))
-            ranges.push({offset: match.index, length: regex.lastIndex - match.index});
+        var leftCorner = this.textEditor.cursorPositionToCoordinates(lineNumber, token.startColumn);
+        var rightCorner = this.textEditor.cursorPositionToCoordinates(lineNumber, token.endColumn + 1);
+        var anchorBox = new AnchorBox(leftCorner.x, leftCorner.y, rightCorner.x - leftCorner.x, leftCorner.height);
 
-        // 2. 'highlight' them with artificial style to detect word boundaries
-        var changes = [];
-        this.textEditor.highlightRangesWithStyleClass(lineElement, ranges, "source-frame-token", changes);
-        var lineOffsetLeft = lineElement.totalOffsetLeft();
-        for (var child = lineElement.firstChild; child; child = child.nextSibling) {
-            if (child.nodeType !== Node.ELEMENT_NODE || !child.hasStyleClass("source-frame-token"))
-                continue;
-            if (event.x > lineOffsetLeft + child.offsetLeft && event.x < lineOffsetLeft + child.offsetLeft + child.offsetWidth) {
-                var text = child.textContent;
-                return (text === "this" || !WebInspector.SourceJavaScriptTokenizer.Keywords[text]) ? child : null;
-            }
-        }
-        return null;
+        anchorBox.token = token;
+        anchorBox.lineNumber = lineNumber;
+
+        return anchorBox;
     },
 
-    _resolveObjectForPopover: function(element, showCallback, objectGroupName)
+    _resolveObjectForPopover: function(anchorBox, showCallback, objectGroupName)
     {
-        this._highlightElement = this._highlightExpression(element);
-
         /**
          * @param {?RuntimeAgent.RemoteObject} result
          * @param {boolean=} wasThrown
@@ -276,39 +257,38 @@ WebInspector.JavaScriptSourceFrame.prototype = {
                 this._popoverHelper.hidePopover();
                 return;
             }
-            showCallback(WebInspector.RemoteObject.fromPayload(result), wasThrown, this._highlightElement);
+            this._popoverAnchorBox = anchorBox;
+            showCallback(WebInspector.RemoteObject.fromPayload(result), wasThrown, this._popoverAnchorBox);
             // Popover may have been removed by showCallback().
-            if (this._highlightElement)
-                this._highlightElement.addStyleClass("source-frame-eval-expression");
+            if (this._popoverAnchorBox) {
+                var highlightRange = new WebInspector.TextRange(anchorBox.lineNumber, startHighlight, anchorBox.lineNumber, endHighlight);
+                this._popoverAnchorBox._highlightDescriptor = this.textEditor.highlightRange(highlightRange, "source-frame-eval-expression");
+            }
         }
 
         if (!WebInspector.debuggerModel.isPaused()) {
             this._popoverHelper.hidePopover();
             return;
         }
+
+        var startHighlight = anchorBox.token.startColumn;
+        var endHighlight = anchorBox.token.endColumn;
+        var line = this.textEditor.line(anchorBox.lineNumber);
+        while (startHighlight > 1 && line.charAt(startHighlight - 1) === '.')
+            startHighlight = this.textEditor.tokenAtTextPosition(anchorBox.lineNumber, startHighlight - 2).startColumn;
+        var evaluationText = line.substring(startHighlight, endHighlight + 1);
+
         var selectedCallFrame = WebInspector.debuggerModel.selectedCallFrame();
-        selectedCallFrame.evaluate(this._highlightElement.textContent, objectGroupName, false, true, false, false, showObjectPopover.bind(this));
+        selectedCallFrame.evaluate(evaluationText, objectGroupName, false, true, false, false, showObjectPopover.bind(this));
     },
 
     _onHidePopover: function()
     {
-        // Replace higlight element with its contents inplace.
-        var highlightElement = this._highlightElement;
-        if (!highlightElement)
+        if (!this._popoverAnchorBox)
             return;
-        // FIXME: the text editor should maintain highlight on its own. The check below is a workaround for
-        // the case when highlight element is detached from DOM by the TextEditor when re-building the DOM.
-        this.textEditor.hideHighlightedExpression(highlightElement);
-        delete this._highlightElement;
-    },
-
-    /**
-     * @param {Element} element
-     * @return {Element}
-     */
-    _highlightExpression: function(element)
-    {
-        return this.textEditor.highlightExpression(element, { "webkit-javascript-ident": true, "source-frame-token": true, "webkit-javascript-keyword": true }, { ".": true });
+        if (this._popoverAnchorBox._highlightDescriptor)
+            this.textEditor.removeHighlight(this._popoverAnchorBox._highlightDescriptor);
+        delete this._popoverAnchorBox;
     },
 
     /**

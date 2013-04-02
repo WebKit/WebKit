@@ -640,54 +640,6 @@ WebInspector.DefaultTextEditor.prototype = {
     },
 
     /**
-     * @param {Element} element
-     * @param {Object} skipClasses
-     * @param {Object} skipTokens
-     * @return {Element}
-     */
-    highlightExpression: function(element, skipClasses, skipTokens)
-    {
-        // Collect tokens belonging to evaluated expression.
-        var tokens = [element];
-        var token = element.previousSibling;
-        while (token && (skipClasses[token.className] || skipTokens[token.textContent.trim()])) {
-            tokens.push(token);
-            token = token.previousSibling;
-        }
-        tokens.reverse();
-
-        // Wrap them with highlight element.
-        this._mainPanel.beginDomUpdates();
-        var parentElement = element.parentElement;
-        var nextElement = element.nextSibling;
-        var container = document.createElement("span");
-        for (var i = 0; i < tokens.length; ++i)
-            container.appendChild(tokens[i]);
-        parentElement.insertBefore(container, nextElement);
-        this._mainPanel.endDomUpdates();
-        return container;
-    },
-
-    /**
-     * @param {Element} highlightElement
-     */
-    hideHighlightedExpression: function(highlightElement)
-    {
-        this._mainPanel.beginDomUpdates();
-        var parentElement = highlightElement.parentElement;
-        if (parentElement) {
-            var child = highlightElement.firstChild;
-            while (child) {
-                var nextSibling = child.nextSibling;
-                parentElement.insertBefore(child, highlightElement);
-                child = nextSibling;
-            }
-            parentElement.removeChild(highlightElement);
-        }
-        this._mainPanel.endDomUpdates();
-    },
-
-    /**
      * @param {number} scrollTop
      * @param {number} clientHeight
      * @param {number} chunkSize

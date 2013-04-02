@@ -2329,8 +2329,7 @@ body.inactive li.selected .bubble.search-matches {
 }
 
 .source-frame-eval-expression {
-    border: 1px solid rgb(163, 41, 34);
-    margin: -1px;
+    outline: 1px solid rgb(163, 41, 34);
     background-color: rgb(255, 255, 194);
 }
 
