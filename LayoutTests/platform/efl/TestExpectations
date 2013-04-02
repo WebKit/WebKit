@@ -1789,8 +1789,6 @@ webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Failu
 
 webkit.org/b/111058 plugins/plugin-clip-subframe.html [ Failure ]
 
-Bug(ojan) fast/table/overflowHidden.html [ ImageOnlyFailure Failure ]
-Bug(ojan) scrollbars/custom-scrollbar-table-cell.html [ ImageOnlyFailure Failure ]
 
 # Newly added tests in r144190 are failing.
 webkit.org/b/111172 compositing/overlap-blending/children-opacity-huge.html [ ImageOnlyFailure ]

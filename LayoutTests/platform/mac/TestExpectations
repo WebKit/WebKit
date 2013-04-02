@@ -1450,8 +1450,6 @@ webkit.org/b/111606 fast/borders/border-fit-2.html [ Failure Pass ]
 webkit.org/b/111606 fast/borders/border-fit.html [ Failure Pass ]
 webkit.org/b/111606 fast/repaint/border-fit-lines.html [ Failure Pass ]
 
-Bug(ojan) fast/table/overflowHidden.html [ ImageOnlyFailure Failure ]
-Bug(ojan) scrollbars/custom-scrollbar-table-cell.html [ ImageOnlyFailure Failure ]
 
 # Flakey
 webkit.org/b/112533 media/auto-play-in-sandbox-with-allow-scripts.html [ Pass Failure ]
