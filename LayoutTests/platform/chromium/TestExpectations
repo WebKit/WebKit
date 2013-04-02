@@ -3840,3 +3840,5 @@ webkit.org/b/113673 [ Win ] fast/exclusions/shape-outside-floats/shape-outside-f
 
 # harfbuzz-ng roll to 0.9.14 needs rebaseline.
 crbug.com/224428 [ Linux ] fast/text/international/khmer-selection.html [ Failure ]
+crbug.com/224428 webkit.org/b/113169 [ Linux ] fast/text/international/danda-space.html [ Failure ]
+
