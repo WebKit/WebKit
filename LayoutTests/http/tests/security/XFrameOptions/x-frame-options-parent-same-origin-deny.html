@@ -3,19 +3,8 @@
         testRunner.dumpAsText();
         testRunner.dumpChildFramesAsText();
         testRunner.dumpResourceLoadCallbacks();
-        testRunner.waitUntilDone();
-    }
-
-    function checkIfDone() {
-        var url = document.querySelector('iframe').contentWindow.location.href;
-
-        if (!url)
-            console.log("PASS: Could not read contentWindow.location.href");
-        else
-            console.log("FAIL: Could read contentWindow.location.href");
-        testRunner.notifyDone();
     }
 </script>
 
 <p>There should be no content in the iframe below</p>
-<iframe style="width:500px; height:500px" src="http://localhost:8000/security/XFrameOptions/resources/x-frame-options-parent-same-origin-allow.cgi" onload="checkIfDone()"></iframe>
+<iframe style="width:500px; height:500px" src="http://localhost:8000/security/XFrameOptions/resources/x-frame-options-parent-same-origin-allow.cgi" onload="alert('PASS: onload fired.');"></iframe>

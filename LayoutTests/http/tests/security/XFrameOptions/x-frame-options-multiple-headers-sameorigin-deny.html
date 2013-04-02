@@ -6,22 +6,11 @@
             testRunner.dumpAsText();
             testRunner.dumpChildFramesAsText();
             testRunner.dumpResourceLoadCallbacks();
-            testRunner.waitUntilDone();
-        }
-
-        function checkIfDone() {
-            var url = document.querySelector('iframe').contentWindow.location.href;
-
-            if (!url)
-                console.log("PASS: Could not read contentWindow.location.href");
-            else
-                console.log("FAIL: Could read contentWindow.location.href");
-            testRunner.notifyDone();
         }
     </script>
 </head>
 <body>
     <p>The frame below should not load, proving that 'sameorigin, sameorigin' === 'sameorigin'.</p>
-    <iframe style="width:500px; height:500px" src="http://localhost:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-sameorigin.cgi" onload="checkIfDone()"></iframe>
+    <iframe style="width:500px; height:500px" src="http://localhost:8000/security/XFrameOptions/resources/x-frame-options-multiple-headers-sameorigin.cgi"></iframe>
 </body>
 </html>

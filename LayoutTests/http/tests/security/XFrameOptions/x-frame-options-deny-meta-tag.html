@@ -6,14 +6,11 @@
         testRunner.waitUntilDone();
     }
 
-    function checkIfDone() {
-        var url = document.querySelector('iframe').contentWindow.location.href;
 
-        if (!url)
-            console.log("PASS: Could not read contentWindow.location.href");
-        else
-            console.log("FAIL: Could read contentWindow.location.href");
-        testRunner.notifyDone();
+    function checkIfDone()
+    {
+        if (document.getElementsByTagName("iframe")[0].contentWindow.location == "about:blank")
+            testRunner.notifyDone();
     }
 </script>
 
