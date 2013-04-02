@@ -7,6 +7,24 @@
   height: 100% !important;
 }
 
+.CodeMirror .source-frame-eval-expression {
+  outline: 0px;
+  border: 1px solid rgb(163, 41, 34);
+  border-left-width: 0px;
+  border-right-width: 0px;
+}
+
+.CodeMirror .source-frame-eval-expression-end {
+  border-right-width: 1px;
+  margin-right: -1px;
+}
+
+.CodeMirror .source-frame-eval-expression-start {
+  border-left-width: 1px;
+  margin-left: -1px;
+}
+
+
 .CodeMirror-linenumber {
   padding-top: 1px !important;
   min-width: 22px !important;

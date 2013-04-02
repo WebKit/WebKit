@@ -92,6 +92,67 @@ WebInspector.CodeMirrorTextEditor = function(url, delegate)
 WebInspector.CodeMirrorTextEditor.prototype = {
 
     /**
+     * @param {number} lineNumber
+     * @param {number} column
+     * @return {?{x: number, y: number, height: number}}
+     */
+    cursorPositionToCoordinates: function(lineNumber, column)
+    {
+        if (lineNumber >= this._codeMirror.lineCount || column > this._codeMirror.getLine(lineNumber).length || lineNumber < 0 || column < 0)
+            return null;
+
+        var metrics = this._codeMirror.cursorCoords(CodeMirror.Pos(lineNumber, column));
+
+        return {
+            x: metrics.left,
+            y: metrics.top,
+            height: metrics.bottom - metrics.top
+        };
+    },
+
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @return {?WebInspector.TextRange}
+     */
+    coordinatesToCursorPosition: function(x, y)
+    {
+        var element = document.elementFromPoint(x, y);
+        if (!element || !element.isSelfOrDescendant(this._codeMirror.getWrapperElement()))
+            return null;
+        var gutterBox = this._codeMirror.getGutterElement().boxInWindow();
+        if (x >= gutterBox.x && x <= gutterBox.x + gutterBox.width &&
+            y >= gutterBox.y && y <= gutterBox.y + gutterBox.height)
+            return null;
+        var coords = this._codeMirror.coordsChar({left: x, top: y});
+        ++coords.ch;
+        return this._toRange(coords, coords);
+    },
+
+    /**
+     * @param {number} lineNumber
+     * @param {number} column
+     * @return {?{startColumn: number, endColumn: number, token: string}}
+     */
+    tokenAtTextPosition: function(lineNumber, column)
+    {
+        if (lineNumber < 0 || lineNumber >= this._codeMirror.lineCount())
+            return null;
+        var token = this._codeMirror.getTokenAt(CodeMirror.Pos(lineNumber, column || 1));
+        if (!token || !token.type)
+            return null;
+        var convertedType = null;
+        if (token.type.startsWith("variable") || token.type.startsWith("property")) {
+            return {
+                startColumn: token.start,
+                endColumn: token.end - 1,
+                type: "javascript-ident"
+            };
+        }
+        return null;
+    },
+
+    /**
      * @param {WebInspector.TextRange} textRange
      * @return {string}
      */
