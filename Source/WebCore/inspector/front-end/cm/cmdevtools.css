@@ -5,6 +5,7 @@
 .CodeMirror {
   line-height: 1.2em !important;
   height: 100% !important;
+  background-color: transparent !important;
 }
 
 .CodeMirror .source-frame-eval-expression {
