@@ -354,11 +354,7 @@ public:
         @"0",                           WebKitPDFScaleFactorPreferenceKey,
         @"0",                           WebKitUseSiteSpecificSpoofingPreferenceKey,
         [NSNumber numberWithInt:WebKitEditableLinkDefaultBehavior], WebKitEditableLinkBehaviorPreferenceKey,
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
         [NSNumber numberWithInt:WebTextDirectionSubmenuAutomaticallyIncluded],
-#else
-        [NSNumber numberWithInt:WebTextDirectionSubmenuNeverIncluded],
-#endif
                                         WebKitTextDirectionSubmenuInclusionBehaviorPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitDOMPasteAllowedPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitUsesPageCachePreferenceKey,

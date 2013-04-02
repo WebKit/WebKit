@@ -423,8 +423,6 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 
 - (void)_updateMenuAndDockForFullScreen
 {
-    // NSApplicationPresentationOptions is available on > 10.6 only:
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     NSApplicationPresentationOptions options = NSApplicationPresentationDefault;
     NSScreen* fullscreenScreen = [[self window] screen];
     
@@ -444,7 +442,6 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
     if ([NSApp respondsToSelector:@selector(setPresentationOptions:)])
         [NSApp setPresentationOptions:options];
     else
-#endif
         SetSystemUIMode(_isFullScreen ? kUIModeAllHidden : kUIModeNormal, 0);
 }
 

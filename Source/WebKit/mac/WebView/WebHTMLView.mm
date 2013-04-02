@@ -288,9 +288,6 @@ extern NSString *NSTextInputReplacementRangeAttributeName;
 - (void)_invalidateGStatesForTree;
 - (void)_propagateDirtyRectsToOpaqueAncestors;
 - (void)_windowChangedKeyState;
-#if USE(ACCELERATED_COMPOSITING) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-- (void)_updateLayerGeometryFromView;
-#endif
 @end
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -414,8 +411,6 @@ static CachedImageClient* promisedDataClient()
 - (void)_web_clearPrintingModeRecursive;
 @end
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
-
 @interface WebHTMLView (WebHTMLViewTextCheckingInternal)
 - (void)orderFrontSubstitutionsPanel:(id)sender;
 - (BOOL)smartInsertDeleteEnabled;
@@ -437,8 +432,6 @@ static CachedImageClient* promisedDataClient()
 - (void)setAutomaticSpellingCorrectionEnabled:(BOOL)flag;
 - (void)toggleAutomaticSpellingCorrection:(id)sender;
 @end
-
-#endif
 
 @interface WebHTMLView (WebForwardDeclaration) // FIXME: Put this in a normal category and stop doing the forward declaration trick.
 - (void)_setPrinting:(BOOL)printing minimumPageLogicalWidth:(float)minPageWidth logicalHeight:(float)minPageHeight originalPageWidth:(float)pageLogicalWidth originalPageHeight:(float)pageLogicalHeight maximumShrinkRatio:(float)maximumShrinkRatio adjustViewSize:(BOOL)adjustViewSize paginateScreenContent:(BOOL)paginateScreenContent;
@@ -797,17 +790,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
                                              subresources:0]))
         return fragment;
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-    if ([types containsObject:NSPICTPboardType] &&
-        (fragment = [self _documentFragmentFromPasteboard:pasteboard 
-                                                  forType:NSPICTPboardType
-                                                inContext:context
-                                             subresources:0]))
-        return fragment;
-#endif
-
-    // Only 10.5 and higher support setting and retrieving pasteboard types with UTIs, but we don't believe
-    // that any applications on Tiger put types for which we only have a UTI, like PNG, on the pasteboard.
     if ([types containsObject:(NSString*)kUTTypePNG] &&
         (fragment = [self _documentFragmentFromPasteboard:pasteboard 
                                                   forType:(NSString*)kUTTypePNG
@@ -1234,10 +1216,6 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
         [[webView _UIDelegateForwarder] webView:webView didScrollDocumentInFrameView:[self _frameView]];
     }
     _private->lastScrollPosition = origin;
-
-#if USE(ACCELERATED_COMPOSITING) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-    [self _updateLayerHostingViewPosition];
-#endif
 }
 
 - (void)_setAsideSubviews
@@ -1661,9 +1639,6 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
     static NSArray *types = nil;
     if (!types) {
         types = [[NSArray alloc] initWithObjects:WebArchivePboardType, NSHTMLPboardType, NSFilenamesPboardType, NSTIFFPboardType, NSPDFPboardType,
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-            NSPICTPboardType,
-#endif
             NSURLPboardType, NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, NSColorPboardType, kUTTypePNG, nil];
         CFRetain(types);
     }
@@ -2050,20 +2025,7 @@ static bool mouseEventIsPartOfClickOrDrag(NSEvent *event)
         [resource release];
         return fragment;
     }
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-    if (pboardType == NSPICTPboardType) {
-        WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSPICTPboardType]
-                                                              URL:uniqueURLWithRelativePart(@"image.pict")
-                                                         MIMEType:@"image/pict" 
-                                                 textEncodingName:nil
-                                                        frameName:nil];
-        DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithImageResource:resource];
-        [resource release];
-        return fragment;
-    }
-#endif
-    // Only 10.5 and higher support setting and retrieving pasteboard types with UTIs, but we don't believe
-    // that any applications on Tiger put types for which we only have a UTI, like PNG, on the pasteboard.
+
     if ([pboardType isEqualToString:(NSString*)kUTTypePNG]) {
         WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:(NSString*)kUTTypePNG]
                                                               URL:uniqueURLWithRelativePart(@"image.png")
@@ -2703,7 +2665,6 @@ WEBCORE_COMMAND(yankAndSelect)
         return YES;
     }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     if (action == @selector(orderFrontSubstitutionsPanel:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
@@ -2753,8 +2714,7 @@ WEBCORE_COMMAND(yankAndSelect)
             [menuItem setState:[self isAutomaticSpellingCorrectionEnabled] ? NSOnState : NSOffState];
         return [self _canEdit];
     }
-#endif
-    
+
     Editor::Command command = [self coreCommandBySelector:action];
     if (command.isSupported()) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
@@ -4901,12 +4861,7 @@ static PassRefPtr<KeyboardEvent> currentKeyboardEvent(Frame* coreFrame)
 
 static BOOL writingDirectionKeyBindingsEnabled()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     return YES;
-#else
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    return [defaults boolForKey:@"NSAllowsBaseWritingDirectionKeyBindings"] || [defaults boolForKey:@"AppleTextDirection"];
-#endif
 }
 
 - (void)_changeBaseWritingDirectionTo:(NSWritingDirection)direction
@@ -4938,18 +4893,6 @@ static BOOL writingDirectionKeyBindingsEnabled()
 
     [self _changeBaseWritingDirectionTo:NSWritingDirectionRightToLeft];
 }
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-- (void)changeBaseWritingDirectionToLTR:(id)sender
-{
-    [self makeBaseWritingDirectionLeftToRight:sender];
-}
-
-- (void)changeBaseWritingDirectionToRTL:(id)sender
-{
-    [self makeBaseWritingDirectionRightToLeft:sender];
-}
-#endif
 
 - (void)makeBaseWritingDirectionNatural:(id)sender
 {
@@ -5138,24 +5081,6 @@ static BOOL writingDirectionKeyBindingsEnabled()
     [[self _webView] toggleGrammarChecking:sender];
 }
 
-
-static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
-{
-    NSArray *screens = [NSScreen screens];
-    
-    if ([screens count] == 0) {
-        // You could theoretically get here if running with no monitor, in which case it doesn't matter
-        // much where the "on-screen" point is.
-        return CGPointMake(point.x, point.y);
-    }
-    
-    // Flip the y coordinate from the top of the menu bar screen -- see 4636390
-    return CGPointMake(point.x, NSMaxY([(NSScreen *)[screens objectAtIndex:0] frame]) - point.y);
-}
-
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
-
 - (void)orderFrontSubstitutionsPanel:(id)sender
 {
     COMMAND_PROLOGUE
@@ -5267,8 +5192,6 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     [[self _webView] toggleAutomaticSpellingCorrection:sender];
 }
 
-#endif
-
 - (void)_lookUpInDictionaryFromMenu:(id)sender
 {
     // Dictionary API will accept a whitespace-only string and display UI as if it were real text,
@@ -5289,44 +5212,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     if (font)
         rect.origin.y += [font ascender];
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     [self showDefinitionForAttributedString:attrString atPoint:rect.origin];
-    return;
-#endif
-
-    // We soft link to get the function that displays the dictionary (either pop-up window or app) to avoid the performance
-    // penalty of linking to another framework. This function changed signature as well as framework between Tiger and Leopard,
-    // so the two cases are handled separately.
-
-    typedef void (*ServiceWindowShowFunction)(id unusedDictionaryRef, id inWordString, CFRange selectionRange, id unusedFont, CGPoint textOrigin, Boolean verticalText, id unusedTransform);
-    const char *frameworkPath = "/System/Library/Frameworks/Carbon.framework/Frameworks/HIToolbox.framework/HIToolbox";
-    const char *functionName = "HIDictionaryWindowShow";
-
-    static bool lookedForFunction = false;
-    static ServiceWindowShowFunction dictionaryServiceWindowShow = NULL;
-
-    if (!lookedForFunction) {
-        void* langAnalysisFramework = dlopen(frameworkPath, RTLD_LAZY);
-        ASSERT(langAnalysisFramework);
-        if (langAnalysisFramework)
-            dictionaryServiceWindowShow = (ServiceWindowShowFunction)dlsym(langAnalysisFramework, functionName);
-        lookedForFunction = true;
-    }
-
-    ASSERT(dictionaryServiceWindowShow);
-    if (!dictionaryServiceWindowShow) {
-        NSLog(@"Couldn't find the %s function in %s", functionName, frameworkPath); 
-        return;
-    }
-
-    // The HIDictionaryWindowShow function requires the origin, in CG screen coordinates, of the first character of text in the selection.
-    // FIXME 4945808: We approximate this in a way that works well when a single word is selected, and less well in some other cases
-    // (but no worse than we did in Tiger)
-    NSPoint windowPoint = [self convertPoint:rect.origin toView:nil];
-    NSPoint screenPoint = [[self window] convertBaseToScreen:windowPoint];
-
-    dictionaryServiceWindowShow(nil, attrString, CFRangeMake(0, [attrString length]), nil, 
-                                coreGraphicsScreenPointForAppKitScreenPoint(screenPoint), false, nil);
 }
 
 - (void)_executeSavedKeypressCommands
@@ -5479,9 +5365,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 {
     if (!_private->layerHostingView) {
         NSView* hostingView = [[WebLayerHostingFlippedView alloc] initWithFrame:[self bounds]];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
         [hostingView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
-#endif
         [self addSubview:hostingView];
         [hostingView release];
         // hostingView is owned by being a subview of self
@@ -5490,23 +5374,6 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 
     // Make a container layer, which will get sized/positioned by AppKit and CA.
     CALayer* viewLayer = [WebRootLayer layer];
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-    // Turn off default animations.
-    NSNull *nullValue = [NSNull null];
-    NSDictionary *actions = [NSDictionary dictionaryWithObjectsAndKeys:
-                             nullValue, @"anchorPoint",
-                             nullValue, @"bounds",
-                             nullValue, @"contents",
-                             nullValue, @"contentsRect",
-                             nullValue, @"opacity",
-                             nullValue, @"position",
-                             nullValue, @"sublayerTransform",
-                             nullValue, @"sublayers",
-                             nullValue, @"transform",
-                             nil];
-    [viewLayer setStyle:[NSDictionary dictionaryWithObject:actions forKey:@"actions"]];
-#endif
 
     if ([self layer]) {
         // If we are in a layer-backed view, we need to manually initialize the geometry for our layer.
@@ -5524,11 +5391,8 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
     
     if ([[self _webView] _postsAcceleratedCompositingNotifications])
         [[NSNotificationCenter defaultCenter] postNotificationName:_WebViewDidStartAcceleratedCompositingNotification object:[self _webView] userInfo:nil];
-    
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-    [viewLayer setSublayerTransform:CATransform3DMakeScale(1, -1, 1)]; // setGeometryFlipped: doesn't exist on Leopard.
-    [self _updateLayerHostingViewPosition];
-#elif __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
+
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
     // Do geometry flipping here, which flips all the compositing layers so they are top-down.
     [viewLayer setGeometryFlipped:YES];
 #else
@@ -5546,36 +5410,6 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
         _private->layerHostingView = nil;
     }
 }
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-// This method is necessary on Leopard to work around <rdar://problem/7067892>.
-- (void)_updateLayerHostingViewPosition
-{
-    if (!_private->layerHostingView)
-        return;
-    
-    const CGFloat maxHeight = 2048;
-    NSRect layerViewFrame = [self bounds];
-
-    if (layerViewFrame.size.height > maxHeight) {
-        // Clamp the size of the view to <= maxHeight to avoid the bug.
-        layerViewFrame.size.height = maxHeight;
-        NSRect visibleRect = [[self enclosingScrollView] documentVisibleRect];
-        
-        // Place the top of the layer-hosting view at the top of the visibleRect.
-        CGFloat topOffset = NSMinY(visibleRect);
-        layerViewFrame.origin.y = topOffset;
-
-        // Compensate for the moved view by adjusting the sublayer transform on the view's layer (using flipped coords).
-        CATransform3D flipTransform = CATransform3DMakeTranslation(0, topOffset, 0);
-        flipTransform = CATransform3DScale(flipTransform, 1, -1, 1);
-        [[_private->layerHostingView layer] setSublayerTransform:flipTransform];
-    }
-
-    [_private->layerHostingView _updateLayerGeometryFromView];  // Workaround for <rdar://problem/7071636>
-    [_private->layerHostingView setFrame:layerViewFrame];
-}
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
 
 - (void)drawLayer:(CALayer *)layer inContext:(CGContextRef)ctx
 {

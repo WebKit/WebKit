@@ -792,7 +792,6 @@ void WebEditorClient::checkGrammarOfString(const UChar* text, int length, Vector
     }
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 static Vector<TextCheckingResult> core(NSArray *incomingResults, TextCheckingTypeMask checkingTypes)
 {
     Vector<TextCheckingResult> results;
@@ -871,16 +870,13 @@ static Vector<TextCheckingResult> core(NSArray *incomingResults, TextCheckingTyp
 
     return results;
 }
-#endif
 
 void WebEditorClient::checkTextOfParagraph(const UChar* text, int length, TextCheckingTypeMask checkingTypes, Vector<TextCheckingResult>& results)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     NSString *textString = [[NSString alloc] initWithCharactersNoCopy:const_cast<UChar*>(text) length:length freeWhenDone:NO];
     NSArray *incomingResults = [[NSSpellChecker sharedSpellChecker] checkString:textString range:NSMakeRange(0, [textString length]) types:(checkingTypes|NSTextCheckingTypeOrthography) options:nil inSpellDocumentWithTag:spellCheckerDocumentTag() orthography:NULL wordCount:NULL];
     [textString release];
     results = core(incomingResults, checkingTypes);
-#endif
 }
 
 void WebEditorClient::updateSpellingUIWithGrammarString(const String& badGrammarPhrase, const GrammarDetail& grammarDetail)
@@ -948,7 +944,6 @@ void WebEditorClient::setInputMethodState(bool)
 {
 }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 @interface WebEditorSpellCheckResponder : NSObject
 {
     WebEditorClient* _client;
@@ -977,7 +972,6 @@ void WebEditorClient::setInputMethodState(bool)
 }
 
 @end
-#endif
 
 void WebEditorClient::didCheckSucceed(int sequence, NSArray* results)
 {
@@ -988,7 +982,6 @@ void WebEditorClient::didCheckSucceed(int sequence, NSArray* results)
 
 void WebEditorClient::requestCheckingOfString(PassRefPtr<WebCore::TextCheckingRequest> request)
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     ASSERT(!m_textCheckingRequest);
     m_textCheckingRequest = request;
 
@@ -1001,5 +994,4 @@ void WebEditorClient::requestCheckingOfString(PassRefPtr<WebCore::TextCheckingRe
                                   target:[[[WebEditorSpellCheckResponder alloc] initWithClient:this sequence:sequence results:results] autorelease]
                                 argument:nil order:0 modes:[NSArray arrayWithObject:NSDefaultRunLoopMode]];
         }];
-#endif
 }

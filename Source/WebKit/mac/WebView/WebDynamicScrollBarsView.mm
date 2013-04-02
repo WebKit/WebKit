@@ -441,15 +441,6 @@ static const unsigned cMaxUpdateScrollbarsPass = 2;
     // position to 0 (the left) when the view is initially displayed.
     // This call updates the initial position correctly.
     [self adjustForScrollOriginChange];
-
-#if USE(ACCELERATED_COMPOSITING) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-    NSView *documentView = [self documentView];
-    if ([documentView isKindOfClass:[WebHTMLView class]]) {
-        WebHTMLView *htmlView = (WebHTMLView *)documentView;
-        if ([htmlView _isUsingAcceleratedCompositing])
-            [htmlView _updateLayerHostingViewPosition];
-    }
-#endif
 }
 
 - (BOOL)allowsHorizontalScrolling

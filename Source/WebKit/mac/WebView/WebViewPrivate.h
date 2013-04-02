@@ -679,7 +679,6 @@ Could be worth adding to the API.
 - (BOOL)isAutomaticDashSubstitutionEnabled;
 - (BOOL)isAutomaticTextReplacementEnabled;
 - (BOOL)isAutomaticSpellingCorrectionEnabled;
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 - (void)setAutomaticQuoteSubstitutionEnabled:(BOOL)flag;
 - (void)toggleAutomaticQuoteSubstitution:(id)sender;
 - (void)setAutomaticLinkDetectionEnabled:(BOOL)flag;
@@ -690,7 +689,6 @@ Could be worth adding to the API.
 - (void)toggleAutomaticTextReplacement:(id)sender;
 - (void)setAutomaticSpellingCorrectionEnabled:(BOOL)flag;
 - (void)toggleAutomaticSpellingCorrection:(id)sender;
-#endif
 @end
 
 @interface WebView (WebViewEditingInMail)

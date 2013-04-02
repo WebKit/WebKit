@@ -839,20 +839,12 @@ void WebChromeClient::elementDidBlur(const WebCore::Node* node)
 
 bool WebChromeClient::selectItemWritingDirectionIsNatural()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     return false;
-#else
-    return true;
-#endif
 }
 
 bool WebChromeClient::selectItemAlignmentFollowsMenuWritingDirection()
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     return true;
-#else
-    return false;
-#endif
 }
 
 bool WebChromeClient::hasOpenedPopup() const

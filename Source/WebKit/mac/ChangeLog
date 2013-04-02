@@ -1,3 +1,62 @@
+2013-04-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WebKit/mac shouldn't have code for Mac 10.5 and earlier
+        https://bugs.webkit.org/show_bug.cgi?id=113746
+
+        Reviewed by Darin Adler.
+
+        Deleted the code for 10.5 and removed if-defs for 10.6.
+
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        (-[WebHostedNetscapePluginView createPlugin]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView initWithFrame:pluginPackage:URL:baseURL:MIMEType:attributeKeys:attributeValues:loadManually:element:WebCore::]):
+        * Plugins/WebNetscapePluginView.mm:
+        (-[WebNetscapePluginView createPlugin]):
+        (-[WebNetscapePluginView getVariable:forURL:value:length:]):
+        (-[WebNetscapePluginView _workaroundSilverlightFullscreenBug:]):
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::selectItemWritingDirectionIsNatural):
+        (WebChromeClient::selectItemAlignmentFollowsMenuWritingDirection):
+        * WebCoreSupport/WebEditorClient.mm:
+        (core):
+        (WebEditorClient::checkTextOfParagraph):
+        (WebEditorClient::requestCheckingOfString):
+        * WebView/WebDynamicScrollBarsView.mm:
+        (-[WebDynamicScrollBarsView reflectScrolledClipView:]):
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController _updateMenuAndDockForFullScreen]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _documentFragmentFromPasteboard:inContext:allowPlainText:]):
+        (-[WebHTMLView _frameOrBoundsChanged]):
+        (+[WebHTMLView _insertablePasteboardTypes]):
+        (-[WebHTMLView _documentFragmentFromPasteboard:forType:inContext:subresources:]):
+        (-[WebHTMLView validateUserInterfaceItemWithoutDelegate:]):
+        (writingDirectionKeyBindingsEnabled):
+        (-[WebHTMLView _lookUpInDictionaryFromMenu:]):
+        (-[WebHTMLView attachRootLayer:]):
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebPDFDocumentExtras.mm:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        * WebView/WebResourceInternal.h:
+        * WebView/WebScriptDebugDelegate.h:
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+        (-[WebView _preferencesChanged:]):
+        (+[WebView initialize]):
+        (clientNeedsWebViewInitThreadWorkaround):
+        (-[WebView validateUserInterfaceItemWithoutDelegate:]):
+        (-[WebView setGrammarCheckingEnabled:]):
+        (-[WebView isAutomaticQuoteSubstitutionEnabled]):
+        (-[WebView isAutomaticLinkDetectionEnabled]):
+        (-[WebView isAutomaticDashSubstitutionEnabled]):
+        (-[WebView isAutomaticTextReplacementEnabled]):
+        (-[WebView isAutomaticSpellingCorrectionEnabled]):
+        (-[WebView _searchWithSpotlightFromMenu:]):
+        (WebInstallMemoryPressureHandler):
+        * WebView/WebViewPrivate.h:
+
 2013-04-01  Tim Horton  <timothy_horton@apple.com>
 
         WebCache should do the normal initialization dance

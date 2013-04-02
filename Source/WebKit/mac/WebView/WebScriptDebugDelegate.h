@@ -28,11 +28,7 @@
 
 #import <Foundation/Foundation.h>
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-typedef int WebSourceId;
-#else
 typedef intptr_t WebSourceId;
-#endif
 
 @class WebView;
 @class WebFrame;

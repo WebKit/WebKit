@@ -66,8 +66,4 @@ namespace WebCore {
 - (BOOL)_web_isDrawingIntoLayer;
 #endif
 
-#if USE(ACCELERATED_COMPOSITING) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-- (void)_updateLayerHostingViewPosition;
-#endif
-
 @end

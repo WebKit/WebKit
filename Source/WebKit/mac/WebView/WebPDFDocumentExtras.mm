@@ -30,12 +30,6 @@
 #import <wtf/RetainPtr.h>
 #import <PDFKit/PDFDocument.h>
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-@interface PDFDocument (Internal)
-- (CGPDFDocumentRef)documentRef;
-@end
-#endif
-
 static void appendValuesInPDFNameSubtreeToVector(CGPDFDictionaryRef subtree, Vector<CGPDFObjectRef>& values)
 {
     CGPDFArrayRef names;
