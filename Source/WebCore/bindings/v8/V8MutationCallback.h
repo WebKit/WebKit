@@ -30,6 +30,7 @@
 #include "DOMWrapperWorld.h"
 #include "MutationCallback.h"
 #include "ScopedPersistent.h"
+#include "V8Utilities.h"
 #include <v8.h>
 #include <wtf/RefPtr.h>
 
@@ -38,6 +39,7 @@ namespace WebCore {
 class ScriptExecutionContext;
 
 class V8MutationCallback : public MutationCallback, public ActiveDOMCallback {
+    friend class WeakHandleListener<V8MutationCallback>;
 public:
     static PassRefPtr<V8MutationCallback> create(v8::Handle<v8::Function> callback, ScriptExecutionContext* context, v8::Handle<v8::Object> owner, v8::Isolate* isolate)
     {
@@ -50,12 +52,6 @@ public:
 
 private:
     V8MutationCallback(v8::Handle<v8::Function>, ScriptExecutionContext*, v8::Handle<v8::Object>, v8::Isolate*);
-
-    static void weakCallback(v8::Isolate* isolate, v8::Persistent<v8::Value> wrapper, void* parameter)
-    {
-        V8MutationCallback* object = static_cast<V8MutationCallback*>(parameter);
-        object->m_callback.clear();
-    }
 
     ScopedPersistent<v8::Function> m_callback;
     RefPtr<DOMWrapperWorld> m_world;

@@ -33,6 +33,7 @@
 
 #include "EventListener.h"
 #include "ScopedPersistent.h"
+#include "V8Utilities.h"
 #include "WorldContextHandle.h"
 #include <v8.h>
 #include <wtf/PassRefPtr.h>
@@ -51,6 +52,7 @@ namespace WebCore {
     // WebKit does not allow duplicated HTML event handlers of the same type,
     // but ALLOWs duplicated non-HTML event handlers.
     class V8AbstractEventListener : public EventListener {
+        friend class WeakHandleListener<V8AbstractEventListener>;
     public:
         virtual ~V8AbstractEventListener();
 

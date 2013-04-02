@@ -170,6 +170,18 @@ private:
     DOMWrapperMap<void> m_wrapperMap;
 };
 
+template<>
+inline void WeakHandleListener<DOMWrapperMap<void> >::callback(v8::Isolate* isolate, v8::Persistent<v8::Value> value, DOMWrapperMap<void>* map)
+{
+    ASSERT(value->IsObject());
+    v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::Cast(value);
+    WrapperTypeInfo* type = toWrapperTypeInfo(wrapper);
+    ASSERT(type->derefObjectFunction);
+    void* key = static_cast<void*>(toNative(wrapper));
+    map->removeAndDispose(key, wrapper, isolate);
+    type->derefObject(key);
+}
+
 } // namespace WebCore
 
 #endif // DOMDataStore_h

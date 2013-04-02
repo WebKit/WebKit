@@ -42,14 +42,13 @@
 #include "V8EventListenerList.h"
 #include "V8EventTarget.h"
 #include "V8HiddenPropertyName.h"
-#include "V8Utilities.h"
 #include "WorkerContext.h"
 
 namespace WebCore {
 
-void V8AbstractEventListener::weakEventListenerCallback(v8::Isolate* isolate, v8::Persistent<v8::Value>, void* parameter)
+template<>
+void WeakHandleListener<V8AbstractEventListener>::callback(v8::Isolate*, v8::Persistent<v8::Value>, V8AbstractEventListener* listener)
 {
-    V8AbstractEventListener* listener = static_cast<V8AbstractEventListener*>(parameter);
     listener->m_listener.clear();
 }
 
@@ -106,7 +105,7 @@ void V8AbstractEventListener::handleEvent(ScriptExecutionContext* context, Event
 void V8AbstractEventListener::setListenerObject(v8::Handle<v8::Object> listener)
 {
     m_listener.set(listener);
-    m_listener.get().MakeWeak(m_isolate, this, &V8AbstractEventListener::weakEventListenerCallback);
+    WeakHandleListener<V8AbstractEventListener>::makeWeak(m_isolate, m_listener.get(), this);
 }
 
 void V8AbstractEventListener::invokeEventHandler(ScriptExecutionContext* context, Event* event, v8::Handle<v8::Value> jsEvent)

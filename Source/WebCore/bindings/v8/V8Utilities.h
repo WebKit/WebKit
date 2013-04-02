@@ -63,6 +63,25 @@ namespace WebCore {
     bool extractTransferables(v8::Local<v8::Value>, MessagePortArray&, ArrayBufferArray&, v8::Isolate*); 
     bool getMessagePortArray(v8::Local<v8::Value>, MessagePortArray&, v8::Isolate*);
 
+    // FIXME: We might move this to its own file.
+    template<class OwnerType, class ArgumentType = OwnerType>
+    class WeakHandleListener {
+    public:
+        template <class HandleType>
+        static void makeWeak(v8::Isolate* isolate, HandleType handle, ArgumentType* parameter)
+        {
+            handle.MakeWeak(isolate, parameter, &invokeWeakCallback);
+        }
+
+        static void callback(v8::Isolate*, v8::Persistent<v8::Value>, ArgumentType*);
+
+    private:
+        static void invokeWeakCallback(v8::Isolate* isolate, v8::Persistent<v8::Value> handle, void* parameter)
+        {
+            WeakHandleListener<OwnerType, ArgumentType>::callback(isolate, handle, static_cast<ArgumentType*>(parameter));
+        }
+    };
+
 } // namespace WebCore
 
 #endif // V8Utilities_h

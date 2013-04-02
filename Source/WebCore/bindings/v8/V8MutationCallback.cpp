@@ -35,13 +35,19 @@
 
 namespace WebCore {
 
+template<>
+void WeakHandleListener<V8MutationCallback>::callback(v8::Isolate*, v8::Persistent<v8::Value>, V8MutationCallback* callback)
+{
+    callback->m_callback.clear();
+}
+
 V8MutationCallback::V8MutationCallback(v8::Handle<v8::Function> callback, ScriptExecutionContext* context, v8::Handle<v8::Object> owner, v8::Isolate* isolate)
     : ActiveDOMCallback(context)
     , m_callback(callback)
     , m_world(DOMWrapperWorld::isolatedWorld(v8::Context::GetCurrent()))
 {
     owner->SetHiddenValue(V8HiddenPropertyName::callback(), callback);
-    m_callback.get().MakeWeak(isolate, this, &V8MutationCallback::weakCallback);
+    WeakHandleListener<V8MutationCallback>::makeWeak(isolate, m_callback.get(), this);
 }
 
 void V8MutationCallback::call(const Vector<RefPtr<MutationRecord> >& mutations, MutationObserver* observer)

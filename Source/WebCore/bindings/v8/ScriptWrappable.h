@@ -31,6 +31,7 @@
 #ifndef ScriptWrappable_h
 #define ScriptWrappable_h
 
+#include "V8Utilities.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include "WrapperTypeInfo.h"
 #include <v8.h>
@@ -38,6 +39,7 @@
 namespace WebCore {
 
 class ScriptWrappable {
+    friend class WeakHandleListener<ScriptWrappable>;
 public:
     ScriptWrappable() { }
 
@@ -51,7 +53,7 @@ public:
         ASSERT(m_maskedWrapper.IsEmpty());
         v8::Persistent<v8::Object> persistent = v8::Persistent<v8::Object>::New(isolate, wrapper);
         configuration.configureWrapper(persistent, isolate);
-        persistent.MakeWeak(isolate, this, weakCallback);
+        WeakHandleListener<ScriptWrappable>::makeWeak(isolate, persistent, this);
         m_maskedWrapper = maskOrUnmaskPointer(*persistent);
     }
 
@@ -80,26 +82,26 @@ private:
         const uintptr_t randomMask = ~(reinterpret_cast<uintptr_t>(&WebCoreMemoryTypes::DOM) >> 13); // Entropy via ASLR.
         return reinterpret_cast<v8::Object*>((objectPointer ^ randomMask) & (!objectPointer - 1)); // Preserve null without branching.
     }
-
-    static void weakCallback(v8::Isolate* isolate, v8::Persistent<v8::Value> value, void* context)
-    {
-        ScriptWrappable* key = static_cast<ScriptWrappable*>(context);
-        ASSERT(value->IsObject());
-        v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::Cast(value);
-        ASSERT(key->wrapper() == wrapper);
-
-        // Note: |object| might not be equal to |key|, e.g., if ScriptWrappable isn't a left-most base class.
-        void* object = toNative(wrapper);
-        WrapperTypeInfo* info = toWrapperTypeInfo(wrapper);
-        ASSERT(info->derefObjectFunction);
-
-        key->disposeWrapper(value, isolate);
-        // FIXME: I noticed that 50%~ of minor GC cycle times can be consumed
-        // inside key->deref(), which causes Node destructions. We should
-        // make Node destructions incremental.
-        info->derefObject(object);
-    }
 };
+
+template<>
+inline void WeakHandleListener<ScriptWrappable>::callback(v8::Isolate* isolate, v8::Persistent<v8::Value> value, ScriptWrappable* key)
+{
+    ASSERT(value->IsObject());
+    v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::Cast(value);
+    ASSERT(key->wrapper() == wrapper);
+
+    // Note: |object| might not be equal to |key|, e.g., if ScriptWrappable isn't a left-most base class.
+    void* object = toNative(wrapper);
+    WrapperTypeInfo* info = toWrapperTypeInfo(wrapper);
+    ASSERT(info->derefObjectFunction);
+
+    key->disposeWrapper(value, isolate);
+    // FIXME: I noticed that 50%~ of minor GC cycle times can be consumed
+    // inside key->deref(), which causes Node destructions. We should
+    // make Node destructions incremental.
+    info->derefObject(object);
+}
 
 } // namespace WebCore
 

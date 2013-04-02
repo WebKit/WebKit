@@ -45,10 +45,16 @@
 
 namespace WebCore {
 
+template<>
+void WeakHandleListener<ScriptState>::callback(v8::Isolate* isolate, v8::Persistent<v8::Value> object, ScriptState* scriptState)
+{
+    delete scriptState;
+}
+
 ScriptState::ScriptState(v8::Handle<v8::Context> context)
     : m_context(context)
 {
-    m_context.get().MakeWeak(context->GetIsolate(), this, &ScriptState::weakReferenceCallback);
+    WeakHandleListener<ScriptState>::makeWeak(context->GetIsolate(), m_context.get(), this);
 }
 
 ScriptState::~ScriptState()
@@ -88,12 +94,6 @@ ScriptState* ScriptState::current()
     v8::Local<v8::Context> context = v8::Context::GetCurrent();
     ASSERT(!context.IsEmpty());
     return ScriptState::forContext(context);
-}
-
-void ScriptState::weakReferenceCallback(v8::Isolate* isolate, v8::Persistent<v8::Value> object, void* parameter)
-{
-    ScriptState* scriptState = static_cast<ScriptState*>(parameter);
-    delete scriptState;
 }
 
 DOMWindow* domWindowFromScriptState(ScriptState* scriptState)

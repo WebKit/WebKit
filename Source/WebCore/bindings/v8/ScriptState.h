@@ -33,6 +33,7 @@
 
 #include "DOMWrapperWorld.h"
 #include "ScopedPersistent.h"
+#include "V8Utilities.h"
 #include <v8.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
@@ -80,6 +81,7 @@ protected:
 
 private:
     friend ScriptState* mainWorldScriptState(Frame*);
+    friend class WeakHandleListener<ScriptState>;
     explicit ScriptState(v8::Handle<v8::Context>);
 
     static void weakReferenceCallback(v8::Isolate*, v8::Persistent<v8::Value>, void* parameter);

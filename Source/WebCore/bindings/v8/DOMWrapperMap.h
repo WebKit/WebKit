@@ -31,6 +31,7 @@
 #ifndef DOMWrapperMap_h
 #define DOMWrapperMap_h
 
+#include "V8Utilities.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include "WrapperTypeInfo.h"
 #include <v8.h>
@@ -44,9 +45,8 @@ class DOMWrapperMap {
 public:
     typedef HashMap<KeyType*, v8::Persistent<v8::Object> > MapType;
 
-    explicit DOMWrapperMap(v8::Isolate* isolate, v8::NearDeathCallback callback = &defaultWeakCallback)
-        : m_callback(callback)
-        , m_isolate(isolate)
+    explicit DOMWrapperMap(v8::Isolate* isolate)
+        : m_isolate(isolate)
     {
     }
 
@@ -61,7 +61,7 @@ public:
         ASSERT(static_cast<KeyType*>(toNative(wrapper)) == key);
         v8::Persistent<v8::Object> persistent = v8::Persistent<v8::Object>::New(m_isolate, wrapper);
         configuration.configureWrapper(persistent, m_isolate);
-        persistent.MakeWeak(m_isolate, this, m_callback);
+        WeakHandleListener<DOMWrapperMap<KeyType> >::makeWeak(m_isolate, persistent, this);
         m_map.set(key, persistent);
     }
 
@@ -80,7 +80,6 @@ public:
     {
         MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Binding);
         info.addMember(m_map, "map");
-        info.ignoreMember(m_callback);
     }
 
     void removeAndDispose(KeyType* key, v8::Handle<v8::Object> value, v8::Isolate* isolate)
@@ -95,19 +94,6 @@ public:
     }
 
 private:
-    static void defaultWeakCallback(v8::Isolate* isolate, v8::Persistent<v8::Value> value, void* context)
-    {
-        DOMWrapperMap<KeyType>* map = static_cast<DOMWrapperMap<KeyType>*>(context);
-        ASSERT(value->IsObject());
-        v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::Cast(value);
-        WrapperTypeInfo* type = toWrapperTypeInfo(wrapper);
-        ASSERT(type->derefObjectFunction);
-        KeyType* key = static_cast<KeyType*>(toNative(wrapper));
-        map->removeAndDispose(key, wrapper, isolate);
-        type->derefObject(key);
-    }
-
-    v8::NearDeathCallback m_callback;
     v8::Isolate* m_isolate;
     MapType m_map;
 };
