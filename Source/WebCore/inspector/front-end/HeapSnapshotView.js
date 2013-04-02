@@ -686,6 +686,7 @@ WebInspector.HeapSnapshotView.prototype = {
         this.viewsContainer.style.bottom = (height + this.retainmentViewHeader.clientHeight) + "px";
         this.retainmentView.element.style.height = height + "px";
         this.retainmentViewHeader.style.bottom = height + "px";
+        this.currentView.doResize();
     },
 
     _updateBaseOptions: function()
