@@ -373,6 +373,11 @@ void WKContextSetPlugInAutoStartOrigins(WKContextRef contextRef, WKArrayRef arra
     toImpl(contextRef)->setPlugInAutoStartOrigins(*toImpl(arrayRef));
 }
 
+void WKContextSetInvalidMessageFunction(WKContextInvalidMessageFunction invalidMessageFunction)
+{
+    WebContext::setInvalidMessageCallback(invalidMessageFunction);
+}
+
 // Deprecated functions.
 void _WKContextSetAdditionalPluginsDirectory(WKContextRef context, WKStringRef pluginsDirectory)
 {

@@ -411,7 +411,9 @@ void WebProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection* connection, 
 {
     WTFLogAlways("Received an invalid message \"%s.%s\" from the web process.\n", messageReceiverName.toString().data(), messageName.toString().data());
 
-    // Terminate the WebProcesses.
+    WebContext::didReceiveInvalidMessage(messageReceiverName, messageName);
+
+    // Terminate the WebProcess.
     terminate();
 
     // Since we've invalidated the connection we'll never get a CoreIPC::Connection::Client::didClose

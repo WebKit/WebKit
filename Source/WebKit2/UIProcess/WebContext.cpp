@@ -449,6 +449,26 @@ void WebContext::willStopUsingPrivateBrowsing()
     }
 }
 
+void (*s_invalidMessageCallback)(WKStringRef messageName);
+
+void WebContext::setInvalidMessageCallback(void (*invalidMessageCallback)(WKStringRef messageName))
+{
+    s_invalidMessageCallback = invalidMessageCallback;
+}
+
+void WebContext::didReceiveInvalidMessage(const CoreIPC::StringReference& messageReceiverName, const CoreIPC::StringReference& messageName)
+{
+    if (!s_invalidMessageCallback)
+        return;
+
+    StringBuilder messageNameStringBuilder;
+    messageNameStringBuilder.append(messageReceiverName.data(), messageReceiverName.size());
+    messageNameStringBuilder.append(".");
+    messageNameStringBuilder.append(messageName.data(), messageName.size());
+
+    s_invalidMessageCallback(toAPI(WebString::create(messageNameStringBuilder.toString()).get()));
+}
+
 WebProcessProxy* WebContext::ensureSharedWebProcess()
 {
     ASSERT(m_processModel == ProcessModelSharedSecondaryProcess);

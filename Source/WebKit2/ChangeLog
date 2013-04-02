@@ -1,3 +1,27 @@
+2013-04-02  Anders Carlsson  <andersca@apple.com>
+
+        Add WKContextSetInvalidMessageFunction
+        https://bugs.webkit.org/show_bug.cgi?id=113820
+        <rdar://problem/12679817>
+
+        Reviewed by Tim Horton.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextSetInvalidMessageFunction):
+        Call WebContext::didReceiveInvalidMessage.
+
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::setInvalidMessageCallback):
+        Set the global variable.
+
+        (WebKit::WebContext::didReceiveInvalidMessage):
+        Construct a message name string and call the invalid message callback.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveInvalidMessage):
+        Call WebContext::didReceiveInvalidMessage.
+
 2013-04-02  Alexey Proskuryakov  <ap@apple.com>
 
         [Mac] Remove WKCreateNSURLConnectionDelegateProxy

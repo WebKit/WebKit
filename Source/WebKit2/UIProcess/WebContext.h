@@ -298,6 +298,9 @@ public:
     bool ignoreTLSErrors() const { return m_ignoreTLSErrors; }
 #endif
 
+    static void setInvalidMessageCallback(void (*)(WKStringRef));
+    static void didReceiveInvalidMessage(const CoreIPC::StringReference& messageReceiverName, const CoreIPC::StringReference& messageName);
+
 private:
     WebContext(ProcessModel, const String& injectedBundlePath);
     void platformInitialize();
