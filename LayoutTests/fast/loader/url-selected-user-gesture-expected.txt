@@ -1,0 +1,3 @@
+Check that a javascript generated mouse click is not enough to open a new tab. The test passes, if no new window is opened.
+
+

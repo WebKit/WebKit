@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<p>
+    Check that a javascript generated mouse click is not enough to open
+    a new tab. The test passes, if no new window is opened.
+</p>
+<a href='about:blank' target='_blank'></a>
+<script>
+    if (window.testRunner) {
+        testRunner.dumpAsText();
+        testRunner.dumpCreateView();
+        testRunner.setCanOpenWindows();
+        testRunner.setPopupBlockingEnabled(true);
+    }
+
+    document.querySelector('a').dispatchEvent(new MouseEvent('click', {ctrlKey: true, metaKey: true}));
+</script>
