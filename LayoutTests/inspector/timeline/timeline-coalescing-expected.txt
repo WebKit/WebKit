@@ -1,0 +1,11 @@
+Test timeline records coalescing
+
+Root
+----> Layout
+--------> Layout
+--------> Layout
+--------> Layout
+----> Layout
+coalesced record's hasWarning: undefined
+coalesced record's childHasWarning: true
+

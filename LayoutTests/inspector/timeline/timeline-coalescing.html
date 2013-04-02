@@ -1,0 +1,49 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/timeline-test.js"></script>
+<script>
+
+function test()
+{
+    WebInspector.showPanel("timeline");
+
+    var records = [
+        {"startTime": 1000.000,"data":{},"endTime":1099.999,"type":"Program","children":[
+            {"startTime":1000.001, "endTime":1099.9,"type":"Layout","frameId":"2","data":{},
+            "stackTrace": [
+                {"functionName":"func","url":"http://example.com","lineNumber":42,"columnNumber":1}
+            ]}
+        ]},
+        {"startTime":1100.000,"data":{},"endTime":1199.999,"type":"Program","children":[
+            {"startTime":1100.001, "endTime":1199.9,"type":"Layout","frameId":"2","data":{}}
+        ]},
+        {"startTime":1200.000,"data":{},"endTime":1299.999,"type":"Program","children":[
+            {"startTime":1200.001, "endTime":1299.9,"type":"Layout","frameId":"2","data":{}}
+        ]},
+        {"startTime":1300.000,"data":{},"endTime":1399.999,"type":"Program","children":[
+            {"startTime":1301.001, "endTime":1399.9,"type":"Layout","frameId":"2","data":{}}
+        ]},
+    ];
+
+    var model = WebInspector.panels.timeline._model;
+    var presentationModel = WebInspector.panels.timeline._presentationModel;
+
+    records.forEach(model._addRecord, model);
+    InspectorTest.dumpTimelineRecord(presentationModel.rootRecord());
+    var coalesced = presentationModel.rootRecord().children[0];
+    InspectorTest.addResult("coalesced record's hasWarning: " + coalesced.hasWarning);
+    InspectorTest.addResult("coalesced record's childHasWarning: " + coalesced.childHasWarning);
+    InspectorTest.completeTest();
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Test timeline records coalescing</a>
+</p>
+
+</body>
+</html>

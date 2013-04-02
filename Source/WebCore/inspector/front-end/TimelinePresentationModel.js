@@ -438,6 +438,8 @@ WebInspector.TimelinePresentationModel.prototype = {
         coalescedRecord._children.push(record);
         record.parent = coalescedRecord;
         coalescedRecord.calculateAggregatedStats();
+        if (record.hasWarning || record.childHasWarning)
+            coalescedRecord.childHasWarning = true;
 
         coalescedRecord.parent = parent;
         parent._children[parent._children.indexOf(record)] = coalescedRecord;
