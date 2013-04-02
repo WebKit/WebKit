@@ -884,10 +884,6 @@ sputnik/Conformance/15_Native_Objects/15.8_Math/15.8.2/15.8.2.18_tan/S15.8.2.18_
 fast/frames/sandboxed-iframe-plugins.html
 http/tests/cookies/simple-cookies-max-age.html
 
-# http/tests/inspector/resource-har-conversion.html is failing on the release bot after r63191
-# webkit.org/b/42162
-http/tests/inspector/resource-har-conversion.html
-
 # [Qt] Some inspector test fail intermittently
 # https://bugs.webkit.org/show_bug.cgi?id=42090
 http/tests/inspector/network/network-size.html
