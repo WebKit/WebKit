@@ -249,7 +249,7 @@
     color: rgba(0, 0, 0, 0.7);
 }
 
-#timeline-overview-timelines,
+#timeline-overview-events,
 #timeline-overview-memory {
     position: absolute;
     left: 0;
