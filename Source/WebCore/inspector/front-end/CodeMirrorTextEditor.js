@@ -193,7 +193,7 @@ WebInspector.CodeMirrorTextEditor.prototype = {
      */
     setReadOnly: function(readOnly)
     {
-        this._codeMirror.setOption("readOnly", readOnly);
+        this._codeMirror.setOption("readOnly", readOnly ? "nocursor" : false);
     },
 
     /**
