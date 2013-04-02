@@ -1,9 +1,9 @@
-host: copy is fired.
 dark: copy is fired.
-host: cut is fired.
+host: copy is fired.
 dark: cut is fired.
-host: paste is fired.
+host: cut is fired.
 dark: paste is fired.
+host: paste is fired.
 PASS successfullyParsed is true
 
 TEST COMPLETE

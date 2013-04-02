@@ -145,37 +145,37 @@ function test()
     moveMouse('shadowD/shadowF/shadowG/divI', 'shadowD/divE',
               'Target is an ancestor of relatedTarget.');
     shouldBe('dispatchedEvent("mouseover")', '["divE(<-shadowF)(@divE)"]');
-    shouldBe('dispatchedEvent("mouseout")', '["shadowF(<-divE)(@shadowF)", "shadowG(<-divE)(@shadowG)", "divI(<-divE)(@divI)", "shadowF(<-divE)(@divE)"]');
+    shouldBe('dispatchedEvent("mouseout")', '["divI(<-divE)(@divI)", "shadowG(<-divE)(@shadowG)", "shadowF(<-divE)(@shadowF)", "shadowF(<-divE)(@divE)"]');
 
     moveMouse('shadowD/shadowF/shadowG/divI', 'shadowD/shadowF',
               'Target (shadow host) is an ancestor of relatedTarget.');
     shouldBe('dispatchedEvent("mouseover")', '[]');
-    shouldBe('dispatchedEvent("mouseout")', '["shadowG(<-shadowF)(@shadowG)", "divI(<-shadowF)(@divI)"]');
+    shouldBe('dispatchedEvent("mouseout")', '["divI(<-shadowF)(@divI)", "shadowG(<-shadowF)(@shadowG)"]');
 
     moveMouse('shadowD/shadowF/shadowG', 'shadowD',
               'Target (shadow host) is an ancestor of relatedTarget (shadow host).');
     shouldBe('dispatchedEvent("mouseover")', '[]');
-    shouldBe('dispatchedEvent("mouseout")', '["shadowF(<-shadowD)(@shadowF)", "shadowG(<-shadowD)(@shadowG)", "shadowF(<-shadowD)(@divE)"]');
+    shouldBe('dispatchedEvent("mouseout")', '["shadowG(<-shadowD)(@shadowG)", "shadowF(<-shadowD)(@shadowF)", "shadowF(<-shadowD)(@divE)"]');
 
     moveMouse('shadowD/divE', 'shadowD/shadowF/shadowG/divI',
               'RelatedTarget is ancestor of target.');
-    shouldBe('dispatchedEvent("mouseover")', '["shadowF(<-divE)(@shadowF)", "shadowG(<-divE)(@shadowG)",  "divI(<-divE)(@divI)", "shadowF(<-divE)(@divE)"]');
+    shouldBe('dispatchedEvent("mouseover")', '["divI(<-divE)(@divI)", "shadowG(<-divE)(@shadowG)", "shadowF(<-divE)(@shadowF)", "shadowF(<-divE)(@divE)"]');
     shouldBe('dispatchedEvent("mouseout")', '["divE(<-shadowF)(@divE)"]');
 
     moveMouse('shadowD/shadowF', 'shadowD/shadowF/shadowG/divI',
               'RelatedTarget (shadow host) is ancestor of target.');
-    shouldBe('dispatchedEvent("mouseover")', '["shadowG(<-shadowF)(@shadowG)", "divI(<-shadowF)(@divI)"]');
+    shouldBe('dispatchedEvent("mouseover")', '["divI(<-shadowF)(@divI)", "shadowG(<-shadowF)(@shadowG)"]');
     shouldBe('dispatchedEvent("mouseout")', '[]');
 
     moveMouse('shadowD', 'shadowD/shadowF/shadowG',
               'RelatedTarget (shadow host) is an ancestor of target (shadow host).');
-    shouldBe('dispatchedEvent("mouseover")', '["shadowF(<-shadowD)(@shadowF)", "shadowG(<-shadowD)(@shadowG)", "shadowF(<-shadowD)(@divE)"]');
+    shouldBe('dispatchedEvent("mouseover")', '["shadowG(<-shadowD)(@shadowG)", "shadowF(<-shadowD)(@shadowF)", "shadowF(<-shadowD)(@divE)"]');
     shouldBe('dispatchedEvent("mouseout")', '[]');
 
     moveMouse('shadowD/shadowF/shadowG/divH', 'shadowD/shadowK/divL',
               'Target and relatedTarget exist in separated subtree, crossing shadow boundaries. Making sure that event is not dispatched beyond the lowest common boundary.');
-    shouldBe('dispatchedEvent("mouseover")', '["shadowK(<-shadowF)(@shadowK)", "divL(<-shadowF)(@divL)", "shadowK(<-shadowF)(@divJ)"]');
-    shouldBe('dispatchedEvent("mouseout")', '["shadowF(<-shadowK)(@shadowF)", "shadowG(<-shadowK)(@shadowG)", "divH(<-shadowK)(@divH)", "shadowF(<-shadowK)(@divE)"]');
+    shouldBe('dispatchedEvent("mouseover")', '["divL(<-shadowF)(@divL)", "shadowK(<-shadowF)(@shadowK)", "shadowK(<-shadowF)(@divJ)"]');
+    shouldBe('dispatchedEvent("mouseout")', '["divH(<-shadowK)(@divH)", "shadowG(<-shadowK)(@shadowG)", "shadowF(<-shadowK)(@shadowF)", "shadowF(<-shadowK)(@divE)"]');
 
     // Test for focusin/focusout events.
     moveFocus('divB', 'divC',
@@ -185,8 +185,8 @@ function test()
 
     moveFocus('shadowD/shadowF/shadowG/divH', 'shadowD/shadowK/divL',
               'Old focused node and new focused node exist in separated subtrees, crossing shadow boundaries. Making sure that an event is not dispatched beyond the lowest common boundary.');
-    shouldBe('dispatchedEvent("focusin")', '["shadowK(<-shadowF)(@shadowK)", "divL(<-shadowF)(@divL)", "shadowK(<-shadowF)(@divJ)"]');
-    shouldBe('dispatchedEvent("focusout")', '["shadowF(<-shadowK)(@shadowF)", "shadowG(<-shadowK)(@shadowG)", "divH(<-shadowK)(@divH)", "shadowF(<-shadowK)(@divE)"]');
+    shouldBe('dispatchedEvent("focusin")', '["divL(<-shadowF)(@divL)", "shadowK(<-shadowF)(@shadowK)", "shadowK(<-shadowF)(@divJ)"]');
+    shouldBe('dispatchedEvent("focusout")', '["divH(<-shadowK)(@divH)", "shadowG(<-shadowK)(@shadowG)", "shadowF(<-shadowK)(@shadowF)", "shadowF(<-shadowK)(@divE)"]');
 
     // Omitted test cases where either a oldFocusedNode or newFocusedNode is an ancestor of the other.
     // Due to a focus transfer mechanism on shadow hosts, a focused node should be a leaf node in general.
@@ -199,8 +199,8 @@ function test()
 
     moveFocus('shadowD/shadowF/shadowG/divH', 'shadowD/shadowK/divL',
               'Old focused node and new focused node exist in separated subtrees, crossing shadow boundaries. Making sure that an event is not dispatched beyond the lowest common boundary.');
-    shouldBe('dispatchedEvent("focus")', '["shadowK(<-shadowF)(@divJ)(capturing phase)", "shadowK(<-shadowF)(@shadowK)", "divL(<-shadowF)(@divL)"]');
-    shouldBe('dispatchedEvent("blur")', '["shadowF(<-shadowK)(@divE)(capturing phase)", "shadowF(<-shadowK)(@shadowF)", "shadowG(<-shadowK)(@shadowG)", "divH(<-shadowK)(@divH)"]');
+    shouldBe('dispatchedEvent("focus")', '["shadowK(<-shadowF)(@divJ)(capturing phase)", "divL(<-shadowF)(@divL)", "shadowK(<-shadowF)(@shadowK)"]');
+    shouldBe('dispatchedEvent("blur")', '["shadowF(<-shadowK)(@divE)(capturing phase)", "divH(<-shadowK)(@divH)", "shadowG(<-shadowK)(@shadowG)", "shadowF(<-shadowK)(@shadowF)"]');
 }
 
 test();

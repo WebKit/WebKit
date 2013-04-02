@@ -15,10 +15,10 @@ DIV	 id=sandbox
 Click C
 
   click
-     @A (target: A)
      @C (target: C)
      @B (target: C)
      @orphaned-shadow-root (target: C)
+     @A (target: A)
      @top (target: A)
 
 Click non-distributed-node

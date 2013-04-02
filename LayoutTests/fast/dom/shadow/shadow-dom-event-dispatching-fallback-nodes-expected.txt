@@ -34,10 +34,10 @@ Moving mouse from A to A/used-fallback
 Click non-used-fallback node
 
   click
-     @A (target: A)
      @non-used-fallback (target: non-used-fallback)
      @content2 (target: non-used-fallback)
      @shadow-root (target: non-used-fallback)
+     @A (target: A)
      @top (target: A)
 PASS successfullyParsed is true
 

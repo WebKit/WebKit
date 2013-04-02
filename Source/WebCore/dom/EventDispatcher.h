@@ -70,7 +70,7 @@ private:
     EventDispatchContinuation dispatchEventPreProcess(void*& preDispatchEventHandlerResult);
     EventDispatchContinuation dispatchEventAtCapturing(WindowEventContext&);
     EventDispatchContinuation dispatchEventAtTarget();
-    EventDispatchContinuation dispatchEventAtBubbling(WindowEventContext&);
+    void dispatchEventAtBubbling(WindowEventContext&);
     void dispatchEventPostProcess(void* preDispatchEventHandlerResult);
 
     EventPath m_eventPath;

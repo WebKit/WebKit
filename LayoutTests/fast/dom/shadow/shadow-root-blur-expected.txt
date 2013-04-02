@@ -15,8 +15,8 @@ PASS getNodeInShadowTreeStack('shadowHostC/').activeElement is null
 getNodeInShadowTreeStack('shadowHostA/shadowHostB/childInTreeTwo').focus()
 PASS document.activeElement.id is "shadowHostA"
 getNodeInShadowTreeStack('shadowHostA/shadowHostB').blur();
-shadowHostA onblur called!
 shadowHostB onblur called!
+shadowHostA onblur called!
 PASS document.activeElement is document.body
 PASS getNodeInShadowTreeStack('shadowHostA/').activeElement is null
 PASS getNodeInShadowTreeStack('shadowHostA/shadowHostB/').activeElement is null
@@ -24,8 +24,8 @@ PASS getNodeInShadowTreeStack('shadowHostC/').activeElement is null
 getNodeInShadowTreeStack('shadowHostA/shadowHostB/childInTreeTwo').focus()
 PASS document.activeElement.id is "shadowHostA"
 getNodeInShadowTreeStack('shadowHostA').blur();
-shadowHostA onblur called!
 shadowHostB onblur called!
+shadowHostA onblur called!
 PASS document.activeElement is document.body
 PASS getNodeInShadowTreeStack('shadowHostA/').activeElement is null
 PASS getNodeInShadowTreeStack('shadowHostA/shadowHostB/').activeElement is null

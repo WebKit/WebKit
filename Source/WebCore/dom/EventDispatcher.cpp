@@ -153,9 +153,7 @@ inline EventDispatchContinuation EventDispatcher::dispatchEventAtCapturing(Windo
     for (size_t i = m_eventPath.size() - 1; i > 0; --i) {
         const EventContext& eventContext = *m_eventPath[i];
         if (eventContext.currentTargetSameAsTarget())
-            m_event->setEventPhase(Event::AT_TARGET);
-        else
-            m_event->setEventPhase(Event::CAPTURING_PHASE);
+            continue;
         eventContext.handleLocalEvents(m_event.get());
         if (m_event->propagationStopped())
             return DoneDispatching;
@@ -171,26 +169,26 @@ inline EventDispatchContinuation EventDispatcher::dispatchEventAtTarget()
     return m_event->propagationStopped() ? DoneDispatching : ContinueDispatching;
 }
 
-inline EventDispatchContinuation EventDispatcher::dispatchEventAtBubbling(WindowEventContext& windowContext)
+inline void EventDispatcher::dispatchEventAtBubbling(WindowEventContext& windowContext)
 {
+    // Trigger bubbling event handlers, starting at the bottom and working our way up.
+    size_t size = m_eventPath.size();
+    for (size_t i = 1; i < size; ++i) {
+        const EventContext& eventContext = *m_eventPath[i];
+        if (eventContext.currentTargetSameAsTarget())
+            m_event->setEventPhase(Event::AT_TARGET);
+        else if (m_event->bubbles() && !m_event->cancelBubble())
+            m_event->setEventPhase(Event::BUBBLING_PHASE);
+        else
+            continue;
+        eventContext.handleLocalEvents(m_event.get());
+        if (m_event->propagationStopped())
+            return;
+    }
     if (m_event->bubbles() && !m_event->cancelBubble()) {
-        // Trigger bubbling event handlers, starting at the bottom and working our way up.
         m_event->setEventPhase(Event::BUBBLING_PHASE);
-
-        size_t size = m_eventPath.size();
-        for (size_t i = 1; i < size; ++i) {
-            const EventContext& eventContext = *m_eventPath[i];
-            if (eventContext.currentTargetSameAsTarget())
-                continue;
-            else
-                m_event->setEventPhase(Event::BUBBLING_PHASE);
-            eventContext.handleLocalEvents(m_event.get());
-            if (m_event->propagationStopped() || m_event->cancelBubble())
-                return DoneDispatching;
-        }
         windowContext.handleLocalEvents(m_event.get());
     }
-    return ContinueDispatching;
 }
 
 inline void EventDispatcher::dispatchEventPostProcess(void* preDispatchEventHandlerResult)
