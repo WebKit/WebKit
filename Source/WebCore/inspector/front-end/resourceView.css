@@ -49,6 +49,10 @@
     padding: 15px;
 }
 
+.resource-view .script-view {
+    background-color: rgb(240, 240, 240);
+}
+
 .resource-view.image > .image {
     padding: 20px 20px 10px 20px;
     text-align: center;

@@ -37,6 +37,7 @@ WebInspector.SourceFrame = function(contentProvider)
 {
     WebInspector.View.call(this);
     this.element.addStyleClass("script-view");
+    this.element.addStyleClass("fill");
 
     this._url = contentProvider.contentURL();
     this._contentProvider = contentProvider;
