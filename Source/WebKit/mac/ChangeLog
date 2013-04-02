@@ -21,6 +21,16 @@
 
 2013-04-02  Alexey Proskuryakov  <ap@apple.com>
 
+        [Mac] Remove WKCreateNSURLConnectionDelegateProxy
+        https://bugs.webkit.org/show_bug.cgi?id=113810
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
+2013-04-02  Alexey Proskuryakov  <ap@apple.com>
+
         <rdar://problem/13551119> [WK2] Crashes in NetworkProcess when canceling loads
         https://bugs.webkit.org/show_bug.cgi?id=113803
 

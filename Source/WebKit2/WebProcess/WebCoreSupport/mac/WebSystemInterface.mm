@@ -53,7 +53,6 @@ void InitWebCoreSystemInterface(void)
         INIT(CopyNSURLResponseCertificateChain);
         INIT(CreateCTLineWithUniCharProvider);
         INIT(CreateCustomCFReadStream);
-        INIT(CreateNSURLConnectionDelegateProxy);
         INIT(DrawBezeledTextArea);
         INIT(DrawBezeledTextFieldCell);
         INIT(DrawCapsLockIndicator);
