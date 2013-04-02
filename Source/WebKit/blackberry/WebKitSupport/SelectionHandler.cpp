@@ -507,43 +507,31 @@ void SelectionHandler::setSelection(const WebCore::IntPoint& start, const WebCor
     WebCore::IntPoint relativeStart = start;
     WebCore::IntPoint relativeEnd = end;
 
-    VisibleSelection newSelection(controller->selection());
-
-    // We need the selection to be ordered base then extent.
-    if (!controller->selection().isBaseFirst())
-        controller->setSelection(VisibleSelection(controller->selection().start(), controller->selection().end(), true /* isDirectional */));
+    // Initialize the new start and end of our selection at the current positions.
+    VisiblePosition newStart = controller->selection().visibleStart();
+    VisiblePosition newEnd = controller->selection().visibleEnd();
 
     // We don't return early in the following, so that we can do input field scrolling if the
     // handle is outside the bounds of the field. This can be extended to handle sub-region
     // scrolling as well
     if (startIsValid) {
         relativeStart = DOMSupport::convertPointToFrame(m_webPage->mainFrame(), focusedFrame, start);
-
         VisiblePosition base = visiblePositionForPointIgnoringClipping(*focusedFrame, clipPointToVisibleContainer(start));
-        if (base.isNotNull()) {
-            // The function setBase validates the "base"
-            newSelection.setBase(base);
-            newSelection.setWithoutValidation(newSelection.base(), controller->selection().end());
-            // Don't return early.
-        }
+        if (base.isNotNull())
+            newStart = base;
     }
 
     if (m_lastUpdatedEndPointIsValid) {
         relativeEnd = DOMSupport::convertPointToFrame(m_webPage->mainFrame(), focusedFrame, end);
-
         VisiblePosition extent = visiblePositionForPointIgnoringClipping(*focusedFrame, clipPointToVisibleContainer(end));
-        if (extent.isNotNull()) {
-            // The function setExtent validates the "extent"
-            newSelection.setExtent(extent);
-            newSelection.setWithoutValidation(controller->selection().start(), newSelection.extent());
-            // Don't return early.
-        }
+        if (extent.isNotNull())
+            newEnd = extent;
     }
+
+    VisibleSelection newSelection(newStart, newEnd, true /* isDirectional */);
 
     if (!controller->selection().isRange())
         m_webPage->updateSelectionScrollView(newSelection.visibleEnd().deepEquivalent().anchorNode());
-
-    newSelection.setIsDirectional(true);
 
     if (m_webPage->m_inputHandler->isInputMode()) {
         if (updateOrHandleInputSelection(newSelection, relativeStart, relativeEnd))

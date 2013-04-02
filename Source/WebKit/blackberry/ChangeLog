@@ -1,3 +1,21 @@
+2013-04-02  Nima Ghanavatian  <nghanavatian@blackberry.com>
+
+        [BlackBerry] Create a selection from two points irregardless of the caret position.
+        https://bugs.webkit.org/show_bug.cgi?id=113795
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Mike Fenton.
+
+        PR276577
+        If we are to set both the base and extent of a selection, we should maintain the base upon setting the extent.
+        This prevents us from overwriting the previous calculation when setting extent.
+        Further, instead of setting and manipulating the selection, simply set up start and end VisiblePositions and
+        create a new directional selection so as to set the base and extent simultaneously.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::setSelection):
+
 2013-04-01  Konrad Piascik  <kpiascik@blackberry.com>
 
         [BlackBerry] Move Path into it's own header
