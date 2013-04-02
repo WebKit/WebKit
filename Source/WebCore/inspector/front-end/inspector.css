@@ -170,7 +170,7 @@ body.dock-to-bottom .toolbar-item:active .toolbar-icon {
 }
 
 .toolbar-label {
-    line-height: 23px;
+    line-height: 22px;
     text-shadow: rgba(255, 255, 255, 0.5) 0 1px 0;
 }
 
