@@ -33,6 +33,7 @@
 
 #include "V8Binding.h"
 #include "V8ObjectConstructor.h"
+#include <wtf/StringExtras.h>
 
 namespace WebCore {
 
@@ -137,6 +138,56 @@ v8::Local<v8::Function> V8PerContextData::constructorForTypeSlowCase(WrapperType
     m_constructorMap.set(type, v8::Persistent<v8::Function>::New(m_context->GetIsolate(), function));
 
     return function;
+}
+static v8::Handle<v8::Value> createDebugData(const char* worldName, int debugId) 
+{
+    char buffer[32];
+    unsigned wanted;
+    if (debugId == -1)
+        wanted = snprintf(buffer, sizeof(buffer), "%s", worldName);
+    else 
+        wanted = snprintf(buffer, sizeof(buffer), "%s,%d", worldName, debugId);
+
+    if (wanted < sizeof(buffer))
+        return v8::String::NewSymbol(buffer);
+
+    return v8::Undefined();
+};
+
+static v8::Handle<v8::Value> debugData(v8::Handle<v8::Context> context)
+{
+    v8::Context::Scope contextScope(context);
+    return context->GetEmbedderData(v8ContextDebugIdIndex);
+}
+
+static void setDebugData(v8::Handle<v8::Context> context, v8::Handle<v8::Value> value)
+{
+    v8::Context::Scope contextScope(context);
+    context->SetEmbedderData(v8ContextDebugIdIndex, value);
+}
+
+bool V8PerContextDebugData::setContextDebugData(v8::Handle<v8::Context> context, const char* worldName, int debugId) 
+{
+    if (!debugData(context)->IsUndefined())
+        return false;
+    v8::HandleScope scope;
+    v8::Handle<v8::Value> debugData = createDebugData(worldName, debugId);
+    setDebugData(context, debugData);
+    return true;
+}
+
+int V8PerContextDebugData::contextDebugId(v8::Handle<v8::Context> context) 
+{
+    v8::HandleScope scope;
+    v8::Handle<v8::Value> data = debugData(context);
+
+    if (!data->IsString())
+        return -1;
+    v8::String::AsciiValue ascii(data);
+    char* comma = strnstr(*ascii, ",", ascii.length());
+    if (!comma)
+        return -1;
+    return atoi(comma + 1);
 }
 
 } // namespace WebCore

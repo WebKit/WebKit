@@ -133,6 +133,12 @@ private:
     ScopedPersistent<v8::Value> m_objectPrototype;
 };
 
+class V8PerContextDebugData {
+public:
+    static bool setContextDebugData(v8::Handle<v8::Context>, const char* worldName, int debugId);
+    static int contextDebugId(v8::Handle<v8::Context>);
+};
+
 } // namespace WebCore
 
 #endif // V8PerContextData_h

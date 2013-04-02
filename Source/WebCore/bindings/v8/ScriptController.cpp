@@ -64,6 +64,7 @@
 #include "V8HiddenPropertyName.h"
 #include "V8HTMLEmbedElement.h"
 #include "V8NPObject.h"
+#include "V8PerContextData.h"
 #include "V8RecursionScope.h"
 #include "Widget.h"
 #include "npruntime_impl.h"
@@ -707,29 +708,12 @@ bool ScriptController::setContextDebugId(int debugId)
         return false;
     v8::HandleScope scope;
     v8::Handle<v8::Context> context = m_windowShell->context();
-    if (!context->GetEmbedderData(0)->IsUndefined())
-        return false;
-
-    v8::Context::Scope contextScope(context);
-
-    char buffer[32];
-    snprintf(buffer, sizeof(buffer), "page,%d", debugId);
-    buffer[31] = 0;
-    context->SetEmbedderData(0, v8::String::NewSymbol(buffer));
-
-    return true;
+    return V8PerContextDebugData::setContextDebugData(context, "page", debugId);
 }
 
 int ScriptController::contextDebugId(v8::Handle<v8::Context> context)
 {
-    v8::HandleScope scope;
-    if (!context->GetEmbedderData(0)->IsString())
-        return -1;
-    v8::String::AsciiValue ascii(context->GetEmbedderData(0));
-    char* comma = strnstr(*ascii, ",", ascii.length());
-    if (!comma)
-        return -1;
-    return atoi(comma + 1);
+    return V8PerContextDebugData::contextDebugId(context);
 }
 
 void ScriptController::attachDebugger(void*)

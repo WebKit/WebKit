@@ -78,12 +78,7 @@ static void checkDocumentWrapper(v8::Handle<v8::Object> wrapper, Document* docum
 
 static void setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContext, int debugId)
 {
-    char buffer[32];
-    if (debugId == -1)
-        snprintf(buffer, sizeof(buffer), "injected");
-    else
-        snprintf(buffer, sizeof(buffer), "injected,%d", debugId);
-    targetContext->SetEmbedderData(0, v8::String::NewSymbol(buffer));
+    V8PerContextDebugData::setContextDebugData(targetContext, "injected", debugId);
 }
 
 PassOwnPtr<V8DOMWindowShell> V8DOMWindowShell::create(Frame* frame, PassRefPtr<DOMWrapperWorld> world, v8::Isolate* isolate)
