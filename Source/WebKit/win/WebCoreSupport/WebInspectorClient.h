@@ -70,6 +70,9 @@ public:
     bool inspectorStartsAttached();
     void setInspectorStartsAttached(bool);
 
+    bool inspectorAttachDisabled();
+    void setInspectorAttachDisabled(bool);
+
     void releaseFrontend();
 
     WebInspectorFrontendClient* frontendClient() { return m_frontendClient; }

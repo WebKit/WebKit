@@ -162,7 +162,7 @@ void WebInspectorClient::bringFrontendToFront()
 void WebInspectorClient::didResizeMainFrame(Frame*)
 {
     if (m_frontendClient)
-        m_frontendClient->attachAvailabilityChanged(m_frontendClient->canAttachWindow());
+        m_frontendClient->attachAvailabilityChanged(m_frontendClient->canAttachWindow() && !inspectorAttachDisabled());
 }
 
 void WebInspectorClient::highlight()
@@ -469,7 +469,7 @@ void WebInspectorFrontendClient::append(const String& url, const String& content
     [frameView addSubview:_dockButton.get()];
 
     // Hide the dock button if we can't attach.
-    _dockButton.get().hidden = !_frontendClient->canAttachWindow();
+    _dockButton.get().hidden = !_frontendClient->canAttachWindow() || _inspectorClient->inspectorAttachDisabled();
 
     [self setWindow:window];
     [window release];
@@ -538,10 +538,7 @@ void WebInspectorFrontendClient::append(const String& url, const String& content
 
     _visible = YES;
     
-    _shouldAttach = _inspectorClient->inspectorStartsAttached();
-    
-    if (_shouldAttach && !_frontendClient->canAttachWindow())
-        _shouldAttach = NO;
+    _shouldAttach = _inspectorClient->inspectorStartsAttached() && _frontendClient->canAttachWindow() && !_inspectorClient->inspectorAttachDisabled();
 
     if (_shouldAttach) {
         WebFrameView *frameView = [[_inspectedWebView.get() mainFrame] frameView];

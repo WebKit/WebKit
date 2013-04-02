@@ -76,6 +76,9 @@ public:
     bool inspectorStartsAttached();
     void setInspectorStartsAttached(bool);
 
+    bool inspectorAttachDisabled();
+    void setInspectorAttachDisabled(bool);
+
     void releaseFrontend();
 
 private:

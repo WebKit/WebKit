@@ -1,3 +1,18 @@
+2013-04-02  Timothy Hatcher  <timothy@apple.com>
+
+        Provide a user default that can be used to disable docking of the Web Inspector.
+
+        The user default is "WebKit Web Inspector Setting - inspectorAttachDisabled".
+
+        https://webkit.org/b/113779
+        rdar://problem/13446021
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebCoreSupport/WebInspectorClientCF.cpp:
+        (WebInspectorClient::inspectorAttachDisabled): Added.
+        (WebInspectorClient::setInspectorAttachDisabled): Added.
+
 2012-10-29  Anders Carlsson  <andersca@apple.com>
 
         String::createCFString should return a RetainPtr
