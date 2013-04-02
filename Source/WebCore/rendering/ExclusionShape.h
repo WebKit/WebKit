@@ -65,7 +65,8 @@ public:
 
     float shapeMargin() const { return m_margin; }
     float shapePadding() const { return m_padding; }
-    virtual FloatRect shapeLogicalBoundingBox() const = 0;
+    virtual FloatRect shapeMarginLogicalBoundingBox() const = 0;
+    virtual FloatRect shapePaddingLogicalBoundingBox() const = 0;
     virtual bool isEmpty() const = 0;
     virtual void getIncludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const = 0;
     virtual void getExcludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const = 0;

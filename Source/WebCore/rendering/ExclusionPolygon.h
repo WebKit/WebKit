@@ -80,7 +80,8 @@ public:
     {
     }
 
-    virtual FloatRect shapeLogicalBoundingBox() const OVERRIDE { return m_polygon.boundingBox(); }
+    virtual FloatRect shapeMarginLogicalBoundingBox() const OVERRIDE { return shapeMarginBounds().boundingBox(); }
+    virtual FloatRect shapePaddingLogicalBoundingBox() const OVERRIDE { return shapePaddingBounds().boundingBox(); }
     virtual bool isEmpty() const OVERRIDE { return m_polygon.isEmpty(); }
     virtual void getExcludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const OVERRIDE;
     virtual void getIncludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const OVERRIDE;

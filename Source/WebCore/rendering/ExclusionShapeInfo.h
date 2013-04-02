@@ -86,12 +86,12 @@ public:
 
     virtual bool computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight);
 
-    LayoutUnit shapeLogicalTop() const { return floatLogicalTopToLayoutUnit(computedShape()->shapeLogicalBoundingBox().y()) + logicalTopOffset(); }
-    LayoutUnit shapeLogicalBottom() const { return floatLogicalBottomToLayoutUnit(computedShape()->shapeLogicalBoundingBox().maxY()) + logicalTopOffset(); }
-    LayoutUnit shapeLogicalLeft() const { return computedShape()->shapeLogicalBoundingBox().x() + logicalLeftOffset(); }
-    LayoutUnit shapeLogicalRight() const { return computedShape()->shapeLogicalBoundingBox().maxX() + logicalLeftOffset(); }
-    LayoutUnit shapeLogicalWidth() const { return computedShape()->shapeLogicalBoundingBox().width(); }
-    LayoutUnit shapeLogicalHeight() const { return computedShape()->shapeLogicalBoundingBox().height(); }
+    LayoutUnit shapeLogicalTop() const { return floatLogicalTopToLayoutUnit(computedShapeLogicalBoundingBox().y()) + logicalTopOffset(); }
+    LayoutUnit shapeLogicalBottom() const { return floatLogicalBottomToLayoutUnit(computedShapeLogicalBoundingBox().maxY()) + logicalTopOffset(); }
+    LayoutUnit shapeLogicalLeft() const { return computedShapeLogicalBoundingBox().x() + logicalLeftOffset(); }
+    LayoutUnit shapeLogicalRight() const { return computedShapeLogicalBoundingBox().maxX() + logicalLeftOffset(); }
+    LayoutUnit shapeLogicalWidth() const { return computedShapeLogicalBoundingBox().width(); }
+    LayoutUnit shapeLogicalHeight() const { return computedShapeLogicalBoundingBox().height(); }
 
     LayoutUnit logicalLineTop() const { return m_shapeLineTop + logicalTopOffset(); }
     LayoutUnit logicalLineBottom() const { return m_shapeLineTop + m_lineHeight + logicalTopOffset(); }
@@ -106,6 +106,7 @@ protected:
     ExclusionShapeInfo(const RenderType* renderer): m_renderer(renderer) { }
 
     const ExclusionShape* computedShape() const;
+    virtual FloatRect computedShapeLogicalBoundingBox() const = 0;
 
     // Use ceil and floor to ensure that the returned LayoutUnit value is within the shape's bounds.
     LayoutUnit floatLogicalTopToLayoutUnit(float logicalTop) const { return LayoutUnit::fromFloatCeil(logicalTop); }
