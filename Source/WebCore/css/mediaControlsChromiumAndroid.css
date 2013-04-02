@@ -161,7 +161,20 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
 
 video::-webkit-media-controls-fullscreen-button {
     -webkit-appearance: media-enter-fullscreen-button;
-    display: inline;
+    display: -webkit-flex;
+    border: none;
+    box-sizing: border-box;
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    margin-left: -5px;
+    margin-right: 9px;
+    padding: 0;
+}
+
+audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-media-controls-toggle-closed-captions-button {
+    -webkit-appearance: media-toggle-closed-captions-button;
+    display: -webkit-flex;
     border: none;
     box-sizing: border-box;
     width: 35px;
