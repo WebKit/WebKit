@@ -158,7 +158,7 @@ void SelectionHandler::regionForTextQuads(Vector<FloatQuad> &quadList, IntRectRe
                 enclosingRect.intersect(clippingRect);
 
             adjustedIntRects.push_back(enclosingRect);
-            selectionBoundingBox = unionOfRects(enclosingRect, selectionBoundingBox);
+            selectionBoundingBox.unite(enclosingRect);
         }
         region = IntRectRegion(selectionBoundingBox, adjustedIntRects.size(), adjustedIntRects);
     }

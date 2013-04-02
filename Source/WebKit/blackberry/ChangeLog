@@ -1,3 +1,15 @@
+2013-04-02  Maxim Mogilnitsky  <mmogilnitsky@rim.com>
+
+        [BlackBerry] API update for IntRect
+        https://bugs.webkit.org/show_bug.cgi?id=113824
+
+        Reviewed by Rob Buis.
+
+        Modifing IntRect and FloatRect API.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::regionForTextQuads):
+
 2013-04-02  Nima Ghanavatian  <nghanavatian@blackberry.com>
 
         [BlackBerry] Create a selection from two points irregardless of the caret position.
