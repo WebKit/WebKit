@@ -666,8 +666,7 @@ public:
 
     virtual RenderObject* hoverAncestor() const { return parent(); }
 
-    // IE Extension that can be called on any RenderObject.  See the implementation for the details.
-    RenderBoxModelObject* offsetParent() const;
+    Element* offsetParent() const;
 
     void markContainingBlocksForLayout(bool scheduleRelayout = true, RenderObject* newRoot = 0);
     void setNeedsLayout(bool needsLayout, MarkingBehavior = MarkContainingBlockChain);
