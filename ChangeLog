@@ -1,3 +1,19 @@
+2013-04-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [EFL][CMAKE] Move MOZ_X11 definition from OptionsCommon to OptionsEfl
+        https://bugs.webkit.org/show_bug.cgi?id=113685
+
+        Reviewed by Martin Robinson.
+
+        MOZ_X11 is added unconditionally in OptionsCommon for UNIX
+        platforms, but not all UNIX platforms use X11 for plugins,
+        BlackBerry doesn't. The only port using cmake that uses X11 is EFL
+        and it already has checks for X11, so we can just move the
+        definition to OptionsEfl.
+
+        * Source/cmake/OptionsCommon.cmake:
+        * Source/cmake/OptionsEfl.cmake:
+
 2013-04-01  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL] Enable user-select:all for EFL port

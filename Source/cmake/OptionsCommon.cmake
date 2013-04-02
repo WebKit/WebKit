@@ -3,8 +3,6 @@ add_definitions(-DHAVE_CONFIG_H=1)
 
 if (WTF_OS_UNIX)
     add_definitions(-DXP_UNIX)
-    #TODO: check for X11 target
-    add_definitions(-DMOZ_X11)
 endif (WTF_OS_UNIX)
 
 # CODE_GENERATOR_PREPROCESSOR_WITH_LINEMARKERS only matters with GCC >= 4.7.0.  Since this
