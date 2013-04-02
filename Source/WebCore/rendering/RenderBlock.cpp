@@ -1589,10 +1589,16 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
     
     if (relayoutForPagination(hasSpecifiedPageLogicalHeight, pageLogicalHeight, statePusher))
         return;
- 
+
     // Calculate our new height.
     LayoutUnit oldHeight = logicalHeight();
     LayoutUnit oldClientAfterEdge = clientLogicalBottom();
+
+    // Before updating the final size of the flow thread make sure a forced break is applied after the content.
+    // This ensures the size information is correctly computed for the last auto-height region receiving content.
+    if (isRenderFlowThread())
+        toRenderFlowThread(this)->applyBreakAfterContent(oldClientAfterEdge);
+
     updateLogicalHeight();
     LayoutUnit newHeight = logicalHeight();
     if (oldHeight != newHeight) {

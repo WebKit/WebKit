@@ -1,0 +1,7 @@
+Test for [CSS Regions] Nested auto-height regions don't layout correctly.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean urna orci, consequat sed lobortis in, convallis et velit. Ut elementum lacus ac dui vestibulum eu condimentum mi luctus. Fusce pharetra turpis id erat congue nec aliquam leo venenatis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+PASS
+Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed egestas ultrices mauris sed tempor. Maecenas vitae libero ut nisl gravida eleifend blandit non risus. Fusce gravida venenatis dolor eu imperdiet.
+Ut at tortor ligula. Cras tempor sem sed tellus convallis tincidunt eget eget dolor. In facilisis ante at turpis semper semper. Fusce dui dolor, rhoncus et cursus in, malesuada in justo. Curabitur vulputate aliquet tincidunt. Quisque sit amet massa justo, in bibendum leo. Aliquam lacinia pharetra justo. Suspendisse rhoncus justo nec diam cursus ullamcorper. Nam porttitor porttitor libero, convallis sollicitudin nunc euismod at. Proin tempus auctor turpis ut congue. Nullam ornare interdum eros sed suscipit.
+PASS

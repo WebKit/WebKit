@@ -136,10 +136,10 @@ public:
     // Check if the object is in region and the region is part of this flow thread.
     bool objectInFlowRegion(const RenderObject*, const RenderRegion*) const;
 
-    void resetRegionsOverrideLogicalContentHeight();
     void markAutoLogicalHeightRegionsForLayout();
 
     bool addForcedRegionBreak(LayoutUnit, RenderObject* breakChild, bool isBefore, LayoutUnit* offsetBreakAdjustment = 0);
+    void applyBreakAfterContent(LayoutUnit);
 
     bool pageLogicalSizeChanged() const { return m_pageLogicalSizeChanged; }
 
@@ -154,6 +154,12 @@ public:
     void collectLayerFragments(LayerFragments&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect);
     LayoutRect fragmentsBoundingBox(const LayoutRect& layerBoundingBox);
 
+    void setInConstrainedLayoutPhase(bool value) { m_inConstrainedLayoutPhase = value; }
+    bool inConstrainedLayoutPhase() const { return m_inConstrainedLayoutPhase; }
+
+    bool needsTwoPhasesLayout() const { return m_needsTwoPhasesLayout; }
+    void clearNeedsTwoPhasesLayout() { m_needsTwoPhasesLayout = false; }
+
 protected:
     virtual const char* renderName() const = 0;
 
@@ -161,7 +167,7 @@ protected:
     // no regions have been generated yet.
     virtual LayoutUnit initialLogicalWidth() const { return 0; };
 
-    void updateRegionsFlowThreadPortionRect();
+    void updateRegionsFlowThreadPortionRect(const RenderRegion* = 0);
     bool shouldRepaint(const LayoutRect&) const;
     bool regionInRange(const RenderRegion* targetRegion, const RenderRegion* startRegion, const RenderRegion* endRegion) const;
 
@@ -222,6 +228,8 @@ protected:
     bool m_hasRegionsWithStyling : 1;
     bool m_dispatchRegionLayoutUpdateEvent : 1;
     bool m_pageLogicalSizeChanged : 1;
+    bool m_inConstrainedLayoutPhase : 1;
+    bool m_needsTwoPhasesLayout : 1;
 };
 
 inline RenderFlowThread* toRenderFlowThread(RenderObject* object)

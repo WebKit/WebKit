@@ -1,0 +1,46 @@
+<html>
+<head>
+    <style>
+        .content {
+            font-family: Ahem;
+            font-size: 10px;
+        }
+
+        #content1 {
+            -webkit-flow-into: flow1;
+        }
+
+        #content2 {
+            -webkit-flow-into: flow2;
+        }
+
+        .region1 {
+            border: thick solid blue;
+            -webkit-flow-from: flow1;
+        }
+
+        .region2 {
+            border: thick solid red;
+            -webkit-flow-from: flow2;
+        }
+
+        #region1 {
+            width: 400px;
+        }
+
+        #region2 {
+            width: 300px;
+        }
+    </style>
+    <script src="../../resources/check-layout.js"></script>
+</head>
+<body onload="checkLayout('#region2, #region1')">
+    <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=111969">[CSS Regions] Nested auto-height regions don't layout correctly</a>.</p>
+    <div class="content" id="content1">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean urna orci, consequat sed lobortis in, convallis et velit. Ut elementum lacus ac dui vestibulum eu condimentum mi luctus. Fusce pharetra turpis id erat congue nec aliquam leo venenatis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.<div class="region2" id="region2" data-expected-height=200></div>Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed egestas ultrices mauris sed tempor. Maecenas vitae libero ut nisl gravida eleifend blandit non risus. Fusce gravida venenatis dolor eu imperdiet.
+    </div>
+    <div class="content" id="content2">Ut at tortor ligula. Cras tempor sem sed tellus convallis tincidunt eget eget dolor. In facilisis ante at turpis semper semper. Fusce dui dolor, rhoncus et cursus in, malesuada in justo. Curabitur vulputate aliquet tincidunt. Quisque sit amet massa justo, in bibendum leo. Aliquam lacinia pharetra justo. Suspendisse rhoncus justo nec diam cursus ullamcorper. Nam porttitor porttitor libero, convallis sollicitudin nunc euismod at. Proin tempus auctor turpis ut congue. Nullam ornare interdum eros sed suscipit.
+    </div>
+    <div class="region1" id="region1" data-expected-height=380>
+    </div>
+</body>
+</html>

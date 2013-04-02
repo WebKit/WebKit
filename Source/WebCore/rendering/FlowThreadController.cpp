@@ -49,7 +49,6 @@ FlowThreadController::FlowThreadController(RenderView* view)
     : m_view(view)
     , m_currentRenderFlowThread(0)
     , m_isRenderNamedFlowThreadOrderDirty(false)
-    , m_needsTwoPassLayoutForAutoHeightRegions(false)
     , m_flowThreadsWithAutoLogicalHeightRegions(0)
 {
 }
@@ -98,6 +97,37 @@ void FlowThreadController::styleDidChange()
 
 void FlowThreadController::layoutRenderNamedFlowThreads()
 {
+    updateFlowThreadsChainIfNecessary();
+
+    for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter) {
+        RenderNamedFlowThread* flowRenderer = *iter;
+        flowRenderer->layoutIfNeeded();
+    }
+}
+
+void FlowThreadController::registerNamedFlowContentNode(Node* contentNode, RenderNamedFlowThread* namedFlow)
+{
+    ASSERT(contentNode && contentNode->isElementNode());
+    ASSERT(namedFlow);
+    ASSERT(!m_mapNamedFlowContentNodes.contains(contentNode));
+    ASSERT(!namedFlow->hasContentNode(contentNode));
+    m_mapNamedFlowContentNodes.add(contentNode, namedFlow);
+    namedFlow->registerNamedFlowContentNode(contentNode);
+}
+
+void FlowThreadController::unregisterNamedFlowContentNode(Node* contentNode)
+{
+    ASSERT(contentNode && contentNode->isElementNode());
+    HashMap<Node*, RenderNamedFlowThread*>::iterator it = m_mapNamedFlowContentNodes.find(contentNode);
+    ASSERT(it != m_mapNamedFlowContentNodes.end());
+    ASSERT(it->value);
+    ASSERT(it->value->hasContentNode(contentNode));
+    it->value->unregisterNamedFlowContentNode(contentNode);
+    m_mapNamedFlowContentNodes.remove(contentNode);
+}
+
+void FlowThreadController::updateFlowThreadsChainIfNecessary()
+{
     ASSERT(m_renderNamedFlowThreadList);
     ASSERT(isAutoLogicalHeightRegionsCountConsistent());
 
@@ -131,32 +161,70 @@ void FlowThreadController::layoutRenderNamedFlowThreads()
         m_renderNamedFlowThreadList->swap(sortedList);
         setIsRenderNamedFlowThreadOrderDirty(false);
     }
+}
+
+bool FlowThreadController::updateFlowThreadsNeedingLayout()
+{
+    bool needsTwoPassLayout = false;
 
     for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter) {
         RenderNamedFlowThread* flowRenderer = *iter;
-        flowRenderer->layoutIfNeeded();
+        ASSERT(!flowRenderer->needsTwoPhasesLayout());
+        flowRenderer->setInConstrainedLayoutPhase(false);
+        if (flowRenderer->needsLayout() && flowRenderer->hasAutoLogicalHeightRegions())
+            needsTwoPassLayout = true;
+    }
+
+    if (needsTwoPassLayout)
+        resetFlowThreadsWithAutoHeightRegions();
+
+    return needsTwoPassLayout;
+}
+
+bool FlowThreadController::updateFlowThreadsNeedingTwoStepLayout()
+{
+    bool needsTwoPassLayout = false;
+
+    for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter) {
+        RenderNamedFlowThread* flowRenderer = *iter;
+        if (flowRenderer->needsTwoPhasesLayout()) {
+            needsTwoPassLayout = true;
+            break;
+        }
+    }
+
+    if (needsTwoPassLayout)
+        resetFlowThreadsWithAutoHeightRegions();
+
+    return needsTwoPassLayout;
+}
+
+void FlowThreadController::resetFlowThreadsWithAutoHeightRegions()
+{
+    for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter) {
+        RenderNamedFlowThread* flowRenderer = *iter;
+        if (flowRenderer->hasAutoLogicalHeightRegions()) {
+            flowRenderer->markAutoLogicalHeightRegionsForLayout();
+            flowRenderer->invalidateRegions();
+        }
     }
 }
 
-void FlowThreadController::registerNamedFlowContentNode(Node* contentNode, RenderNamedFlowThread* namedFlow)
+void FlowThreadController::updateFlowThreadsIntoConstrainedPhase()
 {
-    ASSERT(contentNode && contentNode->isElementNode());
-    ASSERT(namedFlow);
-    ASSERT(!m_mapNamedFlowContentNodes.contains(contentNode));
-    ASSERT(!namedFlow->hasContentNode(contentNode));
-    m_mapNamedFlowContentNodes.add(contentNode, namedFlow);
-    namedFlow->registerNamedFlowContentNode(contentNode);
-}
-
-void FlowThreadController::unregisterNamedFlowContentNode(Node* contentNode)
-{
-    ASSERT(contentNode && contentNode->isElementNode());
-    HashMap<Node*, RenderNamedFlowThread*>::iterator it = m_mapNamedFlowContentNodes.find(contentNode);
-    ASSERT(it != m_mapNamedFlowContentNodes.end());
-    ASSERT(it->value);
-    ASSERT(it->value->hasContentNode(contentNode));
-    it->value->unregisterNamedFlowContentNode(contentNode);
-    m_mapNamedFlowContentNodes.remove(contentNode);
+    // Walk the flow chain in reverse order to update the auto-height regions and compute correct sizes for the containing regions. Only after this we can
+    // set the flow in the constrained layout phase.
+    for (RenderNamedFlowThreadList::reverse_iterator iter = m_renderNamedFlowThreadList->rbegin(); iter != m_renderNamedFlowThreadList->rend(); ++iter) {
+        RenderNamedFlowThread* flowRenderer = *iter;
+        ASSERT(!flowRenderer->hasRegions() || flowRenderer->hasValidRegionInfo());
+        flowRenderer->layoutIfNeeded();
+        if (flowRenderer->hasAutoLogicalHeightRegions()) {
+            ASSERT(flowRenderer->needsTwoPhasesLayout());
+            flowRenderer->markAutoLogicalHeightRegionsForLayout();
+        }
+        flowRenderer->setInConstrainedLayoutPhase(true);
+        flowRenderer->clearNeedsTwoPhasesLayout();
+    }
 }
 
 #ifndef NDEBUG
@@ -173,32 +241,5 @@ bool FlowThreadController::isAutoLogicalHeightRegionsCountConsistent() const
     return true;
 }
 #endif
-
-bool FlowThreadController::hasRenderNamedFlowThreadsNeedingLayout() const
-{
-    ASSERT(m_view->normalLayoutPhase());
-    for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter)
-        if ((*iter)->needsLayout())
-            return true;
-    return false;
-}
-
-void FlowThreadController::resetRegionsOverrideLogicalContentHeight()
-{
-    ASSERT(m_view->normalLayoutPhase());
-    ASSERT(hasFlowThreadsWithAutoLogicalHeightRegions());
-
-    for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter)
-        (*iter)->resetRegionsOverrideLogicalContentHeight();
-}
-
-void FlowThreadController::markAutoLogicalHeightRegionsForLayout()
-{
-    ASSERT(m_view->constrainedFlowThreadsLayoutPhase());
-    ASSERT(hasFlowThreadsWithAutoLogicalHeightRegions());
-
-    for (RenderNamedFlowThreadList::iterator iter = m_renderNamedFlowThreadList->begin(); iter != m_renderNamedFlowThreadList->end(); ++iter)
-        (*iter)->markAutoLogicalHeightRegionsForLayout();
-}
 
 } // namespace WebCore

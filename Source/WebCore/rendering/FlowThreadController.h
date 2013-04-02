@@ -71,26 +71,23 @@ public:
     void incrementFlowThreadsWithAutoLogicalHeightRegions() { ++m_flowThreadsWithAutoLogicalHeightRegions; }
     void decrementFlowThreadsWithAutoLogicalHeightRegions() { ASSERT(m_flowThreadsWithAutoLogicalHeightRegions > 0); --m_flowThreadsWithAutoLogicalHeightRegions; }
 
-    bool hasRenderNamedFlowThreadsNeedingLayout() const;
+    bool updateFlowThreadsNeedingLayout();
+    bool updateFlowThreadsNeedingTwoStepLayout();
+    void updateFlowThreadsIntoConstrainedPhase();
 
 #ifndef NDEBUG
     bool isAutoLogicalHeightRegionsCountConsistent() const;
 #endif
 
-    void resetRegionsOverrideLogicalContentHeight();
-    void markAutoLogicalHeightRegionsForLayout();
-
-    bool needsTwoPassLayoutForAutoHeightRegions() const { return m_needsTwoPassLayoutForAutoHeightRegions; }
-    void setNeedsTwoPassLayoutForAutoHeightRegions(bool needsTwoPassLayout) { m_needsTwoPassLayoutForAutoHeightRegions = needsTwoPassLayout; }
-
 protected:
     FlowThreadController(RenderView*);
+    void updateFlowThreadsChainIfNecessary();
+    void resetFlowThreadsWithAutoHeightRegions();
 
 private:
     RenderView* m_view;
     RenderFlowThread* m_currentRenderFlowThread;
     bool m_isRenderNamedFlowThreadOrderDirty;
-    bool m_needsTwoPassLayoutForAutoHeightRegions;
     unsigned m_flowThreadsWithAutoLogicalHeightRegions;
     OwnPtr<RenderNamedFlowThreadList> m_renderNamedFlowThreadList;
     // maps a content node to its render flow thread.

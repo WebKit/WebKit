@@ -1,0 +1,68 @@
+<html>
+<head>
+    <style>
+        .container {
+            font-family: Ahem;
+            font-size: 10px;
+        }
+
+        #content1 {
+            -webkit-flow-into: flow1;
+        }
+
+        #content2 {
+            -webkit-flow-into: flow2;
+        }
+
+        #content3 {
+            -webkit-flow-into: flow3;
+        }
+
+        .region1 {
+            border: thick solid blue;
+            -webkit-flow-from: flow1;
+        }
+
+        .region2 {
+            border: thick solid red;
+            -webkit-flow-from: flow2;
+        }
+
+        .region3 {
+            border: thick solid green;
+            -webkit-flow-from: flow3;
+        }
+
+        #region1 {
+            width: 500px;
+        }
+
+        #region2 {
+            max-height: 101px
+        }
+
+        #region3 {
+            max-height: 50px;
+        }
+
+        #region4 {
+            max-height: 20px;
+        }
+
+        #region5 {
+            max-height: 111px;
+        }
+    </style>
+    <script src="../../resources/check-layout.js"></script>
+</head>
+<body onload="checkLayout('body div')">
+    <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=111969">[CSS Regions] Nested auto-height regions don't layout correctly</a>.</p>
+    <div class="container" id="content1" data-expected-height=412>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean urna orci, consequat sed lobortis in, convallis et velit. <div class="region3" id="region5" data-expected-height=121></div> Ut elementum lacus ac dui vestibulum eu condimentum mi luctus. Fusce pharetra turpis id erat congue nec aliquam leo venenatis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.<div class="region2" id="region2" data-expected-height=111></div>Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed egestas ultrices mauris sed tempor. Maecenas vitae libero ut nisl gravida eleifend blandit non risus.<div class="region2" id="region3" data-expected-height=50></div>Fusce gravida venenatis dolor eu imperdiet.
+    </div>
+    <div class="container" id="content2" data-expected-height=141>Ut at tortor ligula. Cras tempor sem sed tellus convallis tincidunt eget eget dolor. In facilisis ante at turpis semper semper. Fusce dui dolor, rhoncus et cursus in, malesuada in justo. <div class="region3" id="region4" data-expected-height=30></div>Curabitur vulputate aliquet tincidunt. Quisque sit amet massa justo, in bibendum leo. Aliquam lacinia pharetra justo. Suspendisse rhoncus justo nec diam cursus ullamcorper. Nam porttitor porttitor libero, convallis sollicitudin nunc euismod at. Proin tempus auctor turpis ut congue. Nullam ornare interdum eros sed suscipit.
+    </div>
+    <div class="container" id="content3" data-expected-height=131>Sed nec justo magna. Nullam accumsan arcu et enim blandit sagittis. In scelerisque, felis ac fermentum scelerisque, purus velit aliquet dui, non viverra eros eros vel sem. Aenean turpis lectus, molestie sodales adipiscing non, rhoncus eu justo. Nullam molestie enim ac nulla cursus fringilla. Etiam sed metus lectus. Aliquam erat volutpat. Quisque pulvinar hendrerit urna non varius. Donec imperdiet, massa in semper hendrerit, urna nulla dapibus tellus, ac dignissim enim neque ut odio. In sagittis, est in fringilla accumsan, odio justo lacinia dui, sed pulvinar urna lorem non dui.</div>
+    <div class="region1" id="region1" data-expected-height=422>
+    </div>
+</body>
+</html>

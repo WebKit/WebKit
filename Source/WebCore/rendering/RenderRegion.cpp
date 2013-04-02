@@ -59,12 +59,14 @@ RenderRegion::RenderRegion(Element* element, RenderFlowThread* flowThread)
 
 LayoutUnit RenderRegion::pageLogicalWidth() const
 {
+    ASSERT(m_flowThread);
     return m_flowThread->isHorizontalWritingMode() ? contentWidth() : contentHeight();
 }
 
 LayoutUnit RenderRegion::pageLogicalHeight() const
 {
-    if (hasOverrideHeight() && view()->normalLayoutPhase()) {
+    ASSERT(m_flowThread);
+    if (hasOverrideHeight() && !m_flowThread->inConstrainedLayoutPhase()) {
         ASSERT(hasAutoLogicalHeight());
         return overrideLogicalContentHeight();
     }
@@ -75,13 +77,15 @@ LayoutUnit RenderRegion::pageLogicalHeight() const
 // height value for auto-height regions in the first layout phase of the parent named flow.
 LayoutUnit RenderRegion::maxPageLogicalHeight() const
 {
-    ASSERT(hasAutoLogicalHeight() && view()->normalLayoutPhase());
+    ASSERT(m_flowThread);
+    ASSERT(hasAutoLogicalHeight() && !m_flowThread->inConstrainedLayoutPhase());
     return style()->logicalMaxHeight().isUndefined() ? LayoutUnit::max() / 2 : computeReplacedLogicalHeightUsing(style()->logicalMaxHeight());
 }
 
 LayoutUnit RenderRegion::logicalHeightOfAllFlowThreadContent() const
 {
-    if (hasOverrideHeight() && view()->normalLayoutPhase()) {
+    ASSERT(m_flowThread);
+    if (hasOverrideHeight() && !m_flowThread->inConstrainedLayoutPhase()) {
         ASSERT(hasAutoLogicalHeight());
         return overrideLogicalContentHeight();
     }
@@ -271,14 +275,15 @@ void RenderRegion::layoutBlock(bool relayoutChildren, LayoutUnit)
         if (!isHorizontalWritingMode())
             oldRegionRect = oldRegionRect.transposedRect();
 
-        if (view()->checkTwoPassLayoutForAutoHeightRegions() && hasAutoLogicalHeight())
-            view()->flowThreadController()->setNeedsTwoPassLayoutForAutoHeightRegions(true);
-
-        if (!isRenderRegionSet() && (oldRegionRect.width() != pageLogicalWidth() || oldRegionRect.height() != pageLogicalHeight())) {
+        if (hasAutoLogicalHeight() && !m_flowThread->inConstrainedLayoutPhase()) {
             m_flowThread->invalidateRegions();
-            if (view()->checkTwoPassLayoutForAutoHeightRegions())
-                view()->flowThreadController()->setNeedsTwoPassLayoutForAutoHeightRegions(true);
+            clearOverrideLogicalContentHeight();
+            return;
         }
+
+        if (!isRenderRegionSet() && (oldRegionRect.width() != pageLogicalWidth() || oldRegionRect.height() != pageLogicalHeight()))
+            // This can happen even if we are in the inConstrainedLayoutPhase and it will trigger a pathological layout of the flow thread.
+            m_flowThread->invalidateRegions();
     }
 
     // FIXME: We need to find a way to set up overflow properly. Our flow thread hasn't gotten a layout
@@ -633,7 +638,7 @@ void RenderRegion::updateLogicalHeight()
     // We want to update the logical height based on the computed override logical
     // content height only if the view is in the layout phase
     // in which all the auto logical height regions have their override logical height set.
-    if (view()->normalLayoutPhase())
+    if (!m_flowThread->inConstrainedLayoutPhase())
         return;
 
     // There may be regions with auto logical height that during the prerequisite layout phase

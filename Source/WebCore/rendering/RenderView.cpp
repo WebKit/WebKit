@@ -68,7 +68,6 @@ RenderView::RenderView(Document* document)
     , m_layoutStateDisableCount(0)
     , m_renderQuoteHead(0)
     , m_renderCounterCount(0)
-    , m_layoutPhase(RenderViewNormalLayout)
 {
     // init RenderObject attributes
     setInline(false);
@@ -206,32 +205,43 @@ bool RenderView::initializeLayoutState(LayoutState& state)
     return isSeamlessAncestorInFlowThread;
 }
 
-// The algorithm to layout the flow thread content in auto height regions has to make sure
-// that when a two-pass layout is needed, the auto height regions always start the first
-// pass without a computed override logical content height (from previous layouts).
-// This way, the layout algorithm gives the same result in all situations.
-// If the flow thread content does not need layout, the decision of whether we need a full
-// two pass layout cannot be made up-front. Therefore, we do a first layout, and if an auto
-// height region needs layout or a non-auto height region changes its box dimensions,
-// we need to perform a full two pass layout.
+// The algorithm below assumes this is a full layout. In case there are previously computed values for regions, supplemental steps are taken
+// to ensure the results are the same as those obtained from a full layout (i.e. the auto-height regions from all the flows are marked as needing
+// layout).
+// 1. The flows are laid out from the outer flow to the inner flow. This successfully computes the outer non-auto-height regions size so the 
+// inner flows have the necessary information to correctly fragment the content.
+// 2. The flows are laid out from the inner flow to the outer flow. After an inner flow is laid out it goes into the constrained layout phase
+// and marks the auto-height regions they need layout. This means the outer flows will relayout if they depend on regions with auto-height regions
+// belonging to inner flows. This step will correctly compute the overrideLogicalHeights for the auto-height regions. It's possible for non-auto-height
+// regions to relayout if they depend on auto-height regions. This will invalidate the inner flow threads and mark them as needing layout.
+// 3. The last step is to do one last layout if there are pathological dependencies between non-auto-height regions and auto-height regions
+// as detected in the previous step.
 void RenderView::layoutContentInAutoLogicalHeightRegions(const LayoutState& state)
 {
-    ASSERT(!flowThreadController()->needsTwoPassLayoutForAutoHeightRegions());
-
-    if (!flowThreadController()->hasRenderNamedFlowThreadsNeedingLayout()) {
+    // We need to invalidate all the flows with auto-height regions if one such flow needs layout.
+    // If none is found we do a layout a check back again afterwards.
+    if (!flowThreadController()->updateFlowThreadsNeedingLayout()) {
+        // Do a first layout of the content. In some cases more layouts are not needed (e.g. only flows with non-auto-height regions have changed).
         layoutContent(state);
-        if (!flowThreadController()->needsTwoPassLayoutForAutoHeightRegions())
+
+        // If we find no named flow needing a two step layout after the first layout, exit early.
+        // Otherwise, initiate the two step layout algorithm and recompute all the flows.
+        if (!flowThreadController()->updateFlowThreadsNeedingTwoStepLayout())
             return;
     }
 
-    // Start a full two phase layout for regions with auto logical height.
-    flowThreadController()->resetRegionsOverrideLogicalContentHeight();
+    // Layout to recompute all the named flows with auto-height regions.
     layoutContent(state);
 
-    m_layoutPhase = ConstrainedFlowThreadsLayoutInAutoLogicalHeightRegions;
-    flowThreadController()->markAutoLogicalHeightRegionsForLayout();
-    layoutContent(state);
-    flowThreadController()->setNeedsTwoPassLayoutForAutoHeightRegions(false);
+    // Propagate the computed auto-height values upwards.
+    // Non-auto-height regions may invalidate the flow thread because they depended on auto-height regions, but that's ok.
+    flowThreadController()->updateFlowThreadsIntoConstrainedPhase();
+
+    // Do one last layout that should update the auto-height regions found in the main flow
+    // and solve pathological dependencies between regions (e.g. a non-auto-height region depending
+    // on an auto-height one).
+    if (needsLayout())
+        layoutContent(state);
 }
 
 void RenderView::layout()
@@ -269,7 +279,6 @@ void RenderView::layout()
     m_pageLogicalHeightChanged = false;
     m_layoutState = &state;
 
-    m_layoutPhase = RenderViewNormalLayout;
     if (checkTwoPassLayoutForAutoHeightRegions())
         layoutContentInAutoLogicalHeightRegions(state);
     else

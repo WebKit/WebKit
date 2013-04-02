@@ -1,0 +1,105 @@
+<html>
+<head>
+    <style>
+        .content {
+            font-family: Ahem;
+            font-size: 10px;
+        }
+
+        #content1 {
+            -webkit-flow-into: flow1;
+        }
+
+        #content2 {
+            -webkit-flow-into: flow2;
+        }
+
+        #c1, #c2 {
+            border: thin solid black;
+            position: relative;
+        }
+
+        .region1 {
+            border: thick solid blue;
+            -webkit-flow-from: flow1;
+            width: 200px;
+        }
+
+        .region2 {
+            border: thick solid red;
+            -webkit-flow-from: flow2;
+            width: 200px;
+        }
+
+        #region1 {
+            position: fixed;
+            bottom: 200px;
+            right: 100px;
+            max-height: 100px;
+        }
+
+        #region2 {
+        }
+
+        #region3 {
+            height: 100%;
+            top: 0px;
+            left: 220px;
+            position: absolute;
+        }
+
+        #region4 {
+            max-height: 200px;
+        }
+
+        #region5 {
+            top: 0px;
+            left: 220px;
+            height: 100%;
+            position: absolute;
+        }
+
+        #region6 {
+        }
+
+        #region7 {
+            -webkit-region-break-before: always;
+            max-height: 100px;
+            width: 150px;
+        }
+    </style>
+    <script src="../../resources/check-layout.js"></script>
+</head>
+<body>
+    <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=111969">[CSS Regions] Nested auto-height regions don't layout correctly</a>.</p>
+    <div class="content" id="content1">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean urna orci, consequat sed lobortis in, convallis et velit. Ut elementum lacus ac dui vestibulum eu condimentum mi luctus. Fusce pharetra turpis id erat congue nec aliquam leo venenatis. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed egestas ultrices mauris sed tempor. Maecenas vitae libero ut nisl gravida eleifend blandit non risus. Fusce gravida venenatis dolor eu imperdiet.
+    </div>
+    <div class="content" id="content2">Ut at tortor ligula. Cras tempor sem sed tellus convallis tincidunt eget eget dolor. In facilisis ante at turpis semper semper. Fusce dui dolor, rhoncus et cursus in, malesuada in justo. Curabitur vulputate aliquet tincidunt. Quisque sit amet massa justo, in bibendum leo. Aliquam lacinia pharetra justo. Suspendisse rhoncus justo nec diam cursus ullamcorper. Nam porttitor porttitor libero, convallis sollicitudin nunc euismod at. Proin tempus auctor turpis ut congue. Nullam ornare interdum eros sed suscipit. Ut at tortor ligula. Cras tempor sem sed tellus convallis tincidunt eget eget dolor.
+        <div class="region1" id="region7"></div>
+    In facilisis ante at turpis semper semper. Fusce dui dolor, rhoncus et cursus in, malesuada in justo. Curabitur vulputate aliquet tincidunt. Quisque sit amet massa justo, in bibendum leo. Aliquam lacinia pharetra justo. Suspendisse rhoncus justo nec diam cursus ullamcorper. Nam porttitor porttitor libero, convallis sollicitudin nunc euismod at. Proin tempus auctor turpis ut congue. Nullam ornare interdum eros sed suscipit.
+    </div>
+    <div class="region1" id="region1"></div>
+    <div id="c1">
+        <div class="region1" id="region2"></div>
+        <div class="region2" id="region3"></div>
+    </div>
+    <div id="c2" data-expected-height=682>
+        <div class="region2" id="region4"></div>
+        <div class="region2" id="region5"></div>
+        <div class="region2" id="region6"></div>
+    </div>
+    <script type="text/javascript">
+    checkLayout("#c2");
+
+    var newDiv = document.createElement("div");
+    newDiv.className = "content";
+    var newContent = document.createTextNode("When resizing the window the regions should not change.");
+    newDiv.appendChild(newContent);
+    containerDiv = document.getElementById("c2");
+    containerDiv.appendChild(newDiv);
+    containerDiv.setAttribute("data-expected-height", 682);
+
+    checkLayout("#c2");
+    </script>
+</body>
+</html>
