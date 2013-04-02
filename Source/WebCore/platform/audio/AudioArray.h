@@ -60,7 +60,7 @@ public:
       
         unsigned initialSize = sizeof(T) * n;
 
-#if USE(WEBAUDIO_FFMPEG)
+#if USE(WEBAUDIO_FFMPEG) || USE(WEBAUDIO_OPENMAX_DL_FFT)
         const size_t alignment = 32;
 #else
         const size_t alignment = 16;

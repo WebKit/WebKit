@@ -3780,6 +3780,7 @@
             'platform/audio/chromium/AudioBusChromium.cpp',
             'platform/audio/chromium/AudioDestinationChromium.cpp',
             'platform/audio/chromium/AudioDestinationChromium.h',
+            'platform/audio/chromium/FFTFrameOpenMAXDLAndroid.cpp',
             'platform/audio/ffmpeg/FFTFrameFFMPEG.cpp',
             'platform/audio/mac/FFTFrameMac.cpp',
             'platform/audio/mkl/FFTFrameMKL.cpp',

@@ -185,7 +185,6 @@
           # FIXME: Disable once the linking error has been resolved.
           # https://bugs.webkit.org/show_bug.cgi?id=88636
           'ENABLE_SHARED_WORKERS=1',
-          'ENABLE_WEB_AUDIO=0',
           'WTF_USE_NATIVE_FULLSCREEN_VIDEO=1',
         ],
         'enable_touch_icon_loading': 1,
@@ -230,6 +229,14 @@
       ['OS!="mac" and OS!="android"', {
         'feature_defines': [
           'WTF_USE_WEBAUDIO_FFMPEG=1',
+        ],
+      }],
+      ['OS=="android" and use_openmax_dl_fft!=0', {
+        'feature_defines': [
+          'WTF_USE_WEBAUDIO_OPENMAX_DL_FFT=1',
+          # Enabling the FFT is enough to enable WebAudio support to
+          # allow most WebAudio features to work on Android.
+          'ENABLE_WEB_AUDIO=1',
         ],
       }],
       ['OS=="win" or OS=="android" or use_x11==1', {

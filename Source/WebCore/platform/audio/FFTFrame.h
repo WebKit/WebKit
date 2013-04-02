@@ -54,9 +54,12 @@ G_BEGIN_DECLS
 G_END_DECLS
 #endif // USE(WEBAUDIO_GSTREAMER)
 
-#if USE(WEBAUDIO_FFMPEG)
+#if USE(WEBAUDIO_OPENMAX_DL_FFT)
+#include "dl/sp/api/armSP.h"
+#include "dl/sp/api/omxSP.h"
+#elif USE(WEBAUDIO_FFMPEG)
 struct RDFTContext;
-#endif // USE(WEBAUDIO_FFMPEG)
+#endif
 
 #endif // !USE_ACCELERATE_FFT
 
@@ -177,6 +180,17 @@ private:
     AudioFloatArray m_imagData;
 #endif // USE(WEBAUDIO_IPP)
 
+#if USE(WEBAUDIO_OPENMAX_DL_FFT)
+    static OMXFFTSpec_R_F32* contextForSize(unsigned log2FFTSize);
+
+    OMXFFTSpec_R_F32* m_forwardContext;
+    OMXFFTSpec_R_F32* m_inverseContext;
+
+    AudioFloatArray m_complexData;
+    AudioFloatArray m_realData;
+    AudioFloatArray m_imagData;
+#endif
+    
 #endif // !USE_ACCELERATE_FFT
 };
 

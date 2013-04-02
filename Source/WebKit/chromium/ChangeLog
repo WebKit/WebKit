@@ -1,3 +1,12 @@
+2013-04-02  Raymond Toy  <rtoy@google.com>
+
+        Add support for using ARM FFT in WebAudio
+        https://bugs.webkit.org/show_bug.cgi?id=109755
+
+        Reviewed by Chris Rogers.
+
+        * features.gypi: Support building with the OpenMAX DL FFT.
+
 2013-04-01  <webkit.review.bot@gmail.com>
 
         [chromium] Roll chromium deps to 191760.

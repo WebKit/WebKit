@@ -280,6 +280,11 @@
           '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings/V8DerivedSources19.cpp',
         ],
       }],
+     ['OS=="android" and use_openmax_dl_fft!=0', {
+       'webcore_include_dirs': [
+         '<(DEPTH)/third_party/openmax_dl'
+       ]
+     }],
     ],
   },  # variables
 
@@ -1590,6 +1595,16 @@
             '<(chromium_src_dir)/third_party/ffmpeg/ffmpeg.gyp:ffmpeg',
           ],
         }],
+       ['"WTF_USE_WEBAUDIO_OPENMAX_DL_FFT=1" in feature_defines', {
+         'direct_dependent_settings': {
+           'include_dirs': [
+             '<(chromium_src_dir)/third_party/openmax_dl',
+           ],
+         },
+         'dependencies': [
+           '<(chromium_src_dir)/third_party/openmax_dl/dl/dl.gyp:openmax_dl',
+         ],
+       }],
         # Windows shared builder needs extra help for linkage
         ['OS=="win" and "WTF_USE_WEBAUDIO_FFMPEG=1" in feature_defines', {
           'export_dependent_settings': [
