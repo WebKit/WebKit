@@ -85,6 +85,7 @@ webkit.org/b/109945 webgl/conformance/ogles/GL/swizzlers/swizzlers_081_to_088.ht
 webkit.org/b/97560 http/tests/inspector/extensions-useragent.html [ Failure Pass ]
 webkit.org/b/97560 inspector/extensions/extensions-api.html [ Failure Pass ]
 webkit.org/b/97560 inspector/extensions/extensions-audits.html [ Failure Pass ]
+webkit.org/b/111612 animations/animation-delay-changed.html [ Failure Pass ]
 
 Bug(EFL) editing/deleting/4875189.html [ Crash Pass ]
 Bug(EFL) editing/selection/first-letter-selection-crash.html [ Crash Pass ]
@@ -207,6 +208,11 @@ webkit.org/b/102370 fast/writing-mode/japanese-ruby-vertical-rl.html [ Failure P
 webkit.org/b/102370 fast/text/international/002.html [ Failure Pass ]
 
 webkit.org/b/102204 http/tests/security/frameNavigation/inactive-function-in-popup-navigate-child.html [ Crash Pass ]
+
+webkit.org/b/95428 media/video-controls-captions.html [ Failure ]
+webkit.org/b/113106 media/track/track-prefer-captions.html [ Failure ]
+
+webkit.org/b/113513 inspector/styles/paste-property.html [ Failure ]
 
 # Flaky on Debug bot. See also webkit.org/b/102190
 webkit.org/b/103043 fast/events/overflow-scroll-fake-mouse-move.html [ Failure Pass ]
