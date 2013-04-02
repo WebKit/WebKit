@@ -26,6 +26,77 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+var defaultDashboardSpecificStateValues = {
+    builder: null,
+    treemapfocus: '',
+};
+
+var DB_SPECIFIC_INVALIDATING_PARAMETERS = {
+    'testType': 'builder',
+    'group': 'builder'
+};
+
+function generatePage(historyInstance)
+{
+    $('header-container').innerHTML = ui.html.testTypeSwitcher();
+
+    g_isGeneratingPage = true;
+
+    var rawTree = g_resultsByBuilder[historyInstance.dashboardSpecificState.builder || currentBuilderGroup().defaultBuilder()];
+    g_webTree = convertToWebTreemapFormat('LayoutTests', rawTree);
+    appendTreemap($('map'), g_webTree);
+
+    if (historyInstance.dashboardSpecificState.treemapfocus)
+        focusPath(g_webTree, historyInstance.dashboardSpecificState.treemapfocus)
+
+    g_isGeneratingPage = false;
+}
+
+function handleValidHashParameter(historyInstance, key, value)
+{
+    switch(key) {
+    case 'builder':
+        history.validateParameter(historyInstance.dashboardSpecificState, key, value,
+            function() { return value in currentBuilders(); });
+        return true;
+
+    case 'treemapfocus':
+        history.validateParameter(historyInstance.dashboardSpecificState, key, value,
+            function() {
+                // FIXME: There's probably a simpler regexp here. Just trying to match ascii + forward-slash.
+                // e.g. LayoutTests/foo/bar.html
+                return (value.match(/^(\w+\/\w*)*$/));
+            });
+        return true;
+
+    default:
+        return false;
+    }
+}
+
+function handleQueryParameterChange(historyInstance, params)
+{
+    for (var param in params) {
+        if (param != 'treemapfocus') {
+            $('map').innerHTML = 'Loading...';
+            return true;
+        }
+    }
+    return false;
+}
+
+var treemapConfig = {
+    defaultStateValues: defaultDashboardSpecificStateValues,
+    generatePage: generatePage,
+    handleValidHashParameter: handleValidHashParameter,
+    handleQueryParameterChange: handleQueryParameterChange,
+    invalidatingHashParameters: DB_SPECIFIC_INVALIDATING_PARAMETERS
+};
+
+// FIXME(jparent): Eventually remove all usage of global history object.
+var g_history = new history.History(treemapConfig);
+g_history.parseCrossDashboardParameters();
+
 var TEST_URL_BASE_PATH = "http://svn.webkit.org/repository/webkit/trunk/";
 
 function humanReadableTime(milliseconds)
@@ -136,22 +207,6 @@ function showAverages()
 var g_isGeneratingPage = false;
 var g_webTree;
 
-function generatePage()
-{
-    $('header-container').innerHTML = ui.html.testTypeSwitcher();
-
-    g_isGeneratingPage = true;
-
-    var rawTree = g_resultsByBuilder[g_history.dashboardSpecificState.builder || currentBuilderGroup().defaultBuilder()];
-    g_webTree = convertToWebTreemapFormat('LayoutTests', rawTree);
-    appendTreemap($('map'), g_webTree);
-
-    if (g_history.dashboardSpecificState.treemapfocus)
-        focusPath(g_webTree, g_history.dashboardSpecificState.treemapfocus)
-
-    g_isGeneratingPage = false;
-}
-
 function focusPath(tree, path)
 {
     var parts = decodeURIComponent(path).split('/');
@@ -176,49 +231,6 @@ function focusPath(tree, path)
         }
     }
 
-}
-
-function handleValidHashParameter(key, value)
-{
-    switch(key) {
-    case 'builder':
-        history.validateParameter(g_history.dashboardSpecificState, key, value,
-            function() { return value in currentBuilders(); });
-        return true;
-
-    case 'treemapfocus':
-        history.validateParameter(g_history.dashboardSpecificState, key, value,
-            function() {
-                // FIXME: There's probably a simpler regexp here. Just trying to match ascii + forward-slash.
-                // e.g. LayoutTests/foo/bar.html
-                return (value.match(/^(\w+\/\w*)*$/));
-            });
-        return true;
-
-    default:
-        return false;
-    }
-}
-
-g_defaultDashboardSpecificStateValues = {
-    builder: null,
-    treemapfocus: '',
-};
-
-DB_SPECIFIC_INVALIDATING_PARAMETERS = {
-    'testType': 'builder',
-    'group': 'builder'
-};
-
-function handleQueryParameterChange(params)
-{
-    for (var param in params) {
-        if (param != 'treemapfocus') {
-            $('map').innerHTML = 'Loading...';
-            return true;
-        }
-    }
-    return false;
 }
 
 function extractName(node)
@@ -270,6 +282,6 @@ function handleFocus(tree)
 }
 
 window.addEventListener('load', function() {
-    var resourceLoader = new loader.Loader(intializeHistory);
+    var resourceLoader = new loader.Loader();
     resourceLoader.load();
 }, false);

@@ -136,12 +136,9 @@ var VIRTUAL_SUITES = {
 
 var resourceLoader;
 
-//////////////////////////////////////////////////////////////////////////////
-// Methods and objects from dashboard_base.js to override.
-//////////////////////////////////////////////////////////////////////////////
-function generatePage()
+function generatePage(historyInstance)
 {
-    if (g_history.crossDashboardState.useTestData)
+    if (historyInstance.crossDashboardState.useTestData)
         return;
 
     document.body.innerHTML = '<div id="loading-ui">LOADING...</div>';
@@ -149,12 +146,12 @@ function generatePage()
 
     // tests expands to all tests that match the CSV list.
     // result expands to all tests that ever have the given result
-    if (g_history.dashboardSpecificState.tests || g_history.dashboardSpecificState.result)
+    if (historyInstance.dashboardSpecificState.tests || historyInstance.dashboardSpecificState.result)
         generatePageForIndividualTests(individualTests());
-    else if (g_history.dashboardSpecificState.expectationsUpdate)
+    else if (historyInstance.dashboardSpecificState.expectationsUpdate)
         generatePageForExpectationsUpdate();
     else
-        generatePageForBuilder(g_history.dashboardSpecificState.builder || currentBuilderGroup().defaultBuilder());
+        generatePageForBuilder(historyInstance.dashboardSpecificState.builder || currentBuilderGroup().defaultBuilder());
 
     for (var builder in currentBuilders())
         processTestResultsForBuilderAsync(builder);
@@ -162,11 +159,11 @@ function generatePage()
     postHeightChangedMessage();
 }
 
-function handleValidHashParameter(key, value)
+function handleValidHashParameter(historyInstance, key, value)
 {
     switch(key) {
     case 'tests':
-        history.validateParameter(g_history.dashboardSpecificState, key, value,
+        history.validateParameter(historyInstance.dashboardSpecificState, key, value,
             function() {
                 return string.isValidName(value);
             });
@@ -174,7 +171,7 @@ function handleValidHashParameter(key, value)
 
     case 'result':
         value = value.toUpperCase();
-        history.validateParameter(g_history.dashboardSpecificState, key, value,
+        history.validateParameter(historyInstance.dashboardSpecificState, key, value,
             function() {
                 for (var result in LAYOUT_TEST_EXPECTATIONS_MAP_) {
                     if (value == LAYOUT_TEST_EXPECTATIONS_MAP_[result])
@@ -185,7 +182,7 @@ function handleValidHashParameter(key, value)
         return true;
 
     case 'builder':
-        history.validateParameter(g_history.dashboardSpecificState, key, value,
+        history.validateParameter(historyInstance.dashboardSpecificState, key, value,
             function() {
                 return value in currentBuilders();
             });
@@ -193,10 +190,10 @@ function handleValidHashParameter(key, value)
         return true;
 
     case 'sortColumn':
-        history.validateParameter(g_history.dashboardSpecificState, key, value,
+        history.validateParameter(historyInstance.dashboardSpecificState, key, value,
             function() {
                 // Get all possible headers since the actual used set of headers
-                // depends on the values in g_history.dashboardSpecificState, which are currently being set.
+                // depends on the values in historyInstance.dashboardSpecificState, which are currently being set.
                 var headers = tableHeaders(true);
                 for (var i = 0; i < headers.length; i++) {
                     if (value == sortColumnFromTableHeader(headers[i]))
@@ -207,7 +204,7 @@ function handleValidHashParameter(key, value)
         return true;
 
     case 'sortOrder':
-        history.validateParameter(g_history.dashboardSpecificState, key, value,
+        history.validateParameter(historyInstance.dashboardSpecificState, key, value,
             function() {
                 return value == FORWARD || value == BACKWARD;
             });
@@ -216,7 +213,7 @@ function handleValidHashParameter(key, value)
     case 'resultsHeight':
     case 'updateIndex':
     case 'revision':
-        history.validateParameter(g_history.dashboardSpecificState, key, Number(value),
+        history.validateParameter(historyInstance.dashboardSpecificState, key, Number(value),
             function() {
                 return value.match(/^\d+$/);
             });
@@ -234,7 +231,7 @@ function handleValidHashParameter(key, value)
     case 'showUnexpectedPasses':
     case 'showWontFixSkip':
     case 'expectationsUpdate':
-        g_history.dashboardSpecificState[key] = value == 'true';
+        historyInstance.dashboardSpecificState[key] = value == 'true';
         return true;
 
     default:
@@ -242,7 +239,27 @@ function handleValidHashParameter(key, value)
     }
 }
 
-g_defaultDashboardSpecificStateValues = {
+// @param {Object} params New or modified query parameters as key: value.
+function handleQueryParameterChange(historyInstance, params)
+{
+    for (key in params) {
+        if (key == 'tests') {
+            // Entering cross-builder view, only keep valid keys for that view.
+            for (var currentKey in historyInstance.dashboardSpecificState) {
+              if (isInvalidKeyForCrossBuilderView(currentKey)) {
+                delete historyInstance.dashboardSpecificState[currentKey];
+              }
+            }
+        } else if (isInvalidKeyForCrossBuilderView(key)) {
+            delete historyInstance.dashboardSpecificState.tests;
+            delete historyInstance.dashboardSpecificState.result;
+        }
+    }
+
+    return true;
+}
+
+var defaultDashboardSpecificStateValues = {
     sortOrder: BACKWARD,
     sortColumn: 'flakiness',
     showExpectations: false,
@@ -265,11 +282,24 @@ g_defaultDashboardSpecificStateValues = {
     builder: null
 };
 
-DB_SPECIFIC_INVALIDATING_PARAMETERS = {
+var DB_SPECIFIC_INVALIDATING_PARAMETERS = {
     'tests' : 'builder',
     'testType': 'builder',
     'group': 'builder'
 };
+
+
+var flakinessConfig = {
+    defaultStateValues: defaultDashboardSpecificStateValues,
+    generatePage: generatePage,
+    handleValidHashParameter: handleValidHashParameter,
+    handleQueryParameterChange: handleQueryParameterChange,
+    invalidatingHashParameters: DB_SPECIFIC_INVALIDATING_PARAMETERS
+};
+
+// FIXME(jparent): Eventually remove all usage of global history object.
+var g_history = new history.History(flakinessConfig);
+g_history.parseCrossDashboardParameters();
 
 //////////////////////////////////////////////////////////////////////////////
 // GLOBALS
@@ -2492,27 +2522,6 @@ function isInvalidKeyForCrossBuilderView(key)
     return !(key in VALID_KEYS_FOR_CROSS_BUILDER_VIEW) && !(key in history.DEFAULT_CROSS_DASHBOARD_STATE_VALUES);
 }
 
-// Sets the page state to regenerate the page.
-// @param {Object} params New or modified query parameters as key: value.
-function handleQueryParameterChange(params)
-{
-    for (key in params) {
-        if (key == 'tests') {
-            // Entering cross-builder view, only keep valid keys for that view.
-            for (var currentKey in g_history.dashboardSpecificState) {
-              if (isInvalidKeyForCrossBuilderView(currentKey)) {
-                delete g_history.dashboardSpecificState[currentKey];
-              }
-            }
-        } else if (isInvalidKeyForCrossBuilderView(key)) {
-            delete g_history.dashboardSpecificState.tests;
-            delete g_history.dashboardSpecificState.result;
-        }
-    }
-
-    return true;
-}
-
 function hideLegend()
 {
     var legend = $('legend');
@@ -2606,6 +2615,6 @@ document.addEventListener('keydown', function(e) {
 }, false);
 
 window.addEventListener('load', function() {
-    resourceLoader = new loader.Loader(intializeHistory);
+    resourceLoader = new loader.Loader();
     resourceLoader.load();
 }, false);

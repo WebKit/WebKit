@@ -32,21 +32,29 @@ var g_buildIndicesByTimestamp = {};
 var g_currentBuildIndex = -1;
 var g_currentBuilderTestResults;
 
-//////////////////////////////////////////////////////////////////////////////
-// Methods and objects from dashboard_base.js to override.
-//////////////////////////////////////////////////////////////////////////////
-function generatePage()
+var defaultDashboardSpecificStateValues = {
+    builder: null,
+    buildTimestamp: -1,
+    ignoreFlakyTests: true
+};
+
+var DB_SPECIFIC_INVALIDATING_PARAMETERS = {
+    'testType': 'builder',
+    'group': 'builder'
+};
+
+function generatePage(historyInstance)
 {
     g_buildIndicesByTimestamp = {};
-    var results = g_resultsByBuilder[g_history.dashboardSpecificState.builder || currentBuilderGroup().defaultBuilder()];
+    var results = g_resultsByBuilder[historyInstance.dashboardSpecificState.builder || currentBuilderGroup().defaultBuilder()];
 
     for (var i = 0; i < results[FIXABLE_COUNTS_KEY].length; i++) {
         var buildDate = new Date(results[TIMESTAMPS_KEY][i] * 1000);
         g_buildIndicesByTimestamp[buildDate.getTime()] = i;
     }
 
-    if (g_history.dashboardSpecificState.buildTimestamp != -1 && g_history.dashboardSpecificState.buildTimestamp in g_buildIndicesByTimestamp) {
-        var newBuildIndex = g_buildIndicesByTimestamp[g_history.dashboardSpecificState.buildTimestamp];
+    if (historyInstance.dashboardSpecificState.buildTimestamp != -1 && historyInstance.dashboardSpecificState.buildTimestamp in g_buildIndicesByTimestamp) {
+        var newBuildIndex = g_buildIndicesByTimestamp[historyInstance.dashboardSpecificState.buildTimestamp];
 
         if (newBuildIndex == g_currentBuildIndex) {
             // This happens when selectBuild is called, which updates the UI
@@ -61,11 +69,40 @@ function generatePage()
     initCurrentBuilderTestResults();
 
     $('test-type-switcher').innerHTML = ui.html.testTypeSwitcher( false,
-        ui.html.checkbox('ignoreFlakyTests', 'Ignore flaky tests', g_history.dashboardSpecificState.ignoreFlakyTests, 'g_currentBuildIndex = -1')
+        ui.html.checkbox('ignoreFlakyTests', 'Ignore flaky tests', historyInstance.dashboardSpecificState.ignoreFlakyTests, 'g_currentBuildIndex = -1')
     );
 
     updateTimelineForBuilder();
 }
+
+function handleValidHashParameter(historyInstance, key, value)
+{
+    switch(key) {
+    case 'builder':
+        history.validateParameter(historyInstance.dashboardSpecificState, key, value,
+            function() { return value in currentBuilders(); });
+        return true;
+    case 'buildTimestamp':
+        historyInstance.dashboardSpecificState.buildTimestamp = parseInt(value, 10);
+        return true;
+    case 'ignoreFlakyTests':
+        historyInstance.dashboardSpecificState.ignoreFlakyTests = value == 'true';
+        return true;
+    default:
+        return false;
+    }
+}
+
+var timelineConfig = {
+    defaultStateValues: defaultDashboardSpecificStateValues,
+    generatePage: generatePage,
+    handleValidHashParameter: handleValidHashParameter,
+    invalidatingHashParameters: DB_SPECIFIC_INVALIDATING_PARAMETERS
+};
+
+// FIXME(jparent): Eventually remove all usage of global history object.
+var g_history = new history.History(timelineConfig);
+g_history.parseCrossDashboardParameters();
 
 function initCurrentBuilderTestResults()
 {
@@ -73,35 +110,6 @@ function initCurrentBuilderTestResults()
     g_currentBuilderTestResults = _decompressResults(g_resultsByBuilder[g_history.dashboardSpecificState.builder || currentBuilderGroup().defaultBuilder()]);
     console.log( 'Time to get test results by build: ' + (Date.now() - startTime));
 }
-
-function handleValidHashParameter(key, value)
-{
-    switch(key) {
-    case 'builder':
-        history.validateParameter(g_history.dashboardSpecificState, key, value,
-            function() { return value in currentBuilders(); });
-        return true;
-    case 'buildTimestamp':
-        g_history.dashboardSpecificState.buildTimestamp = parseInt(value, 10);
-        return true;
-    case 'ignoreFlakyTests':
-        g_history.dashboardSpecificState.ignoreFlakyTests = value == 'true';
-        return true;
-    default:
-        return false;
-    }
-}
-
-g_defaultDashboardSpecificStateValues = {
-    builder: null,
-    buildTimestamp: -1,
-    ignoreFlakyTests: true
-};
-
-DB_SPECIFIC_INVALIDATING_PARAMETERS = {
-    'testType': 'builder',
-    'group': 'builder'
-};
 
 function shouldShowWebKitRevisionsOnly()
 {
@@ -488,6 +496,6 @@ document.addEventListener('keydown', function(e) {
 });
 
 window.addEventListener('load', function() {
-    var resourceLoader = new loader.Loader(intializeHistory);
+    var resourceLoader = new loader.Loader();
     resourceLoader.load();
 }, false);

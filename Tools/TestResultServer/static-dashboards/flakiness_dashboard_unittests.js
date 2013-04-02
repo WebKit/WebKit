@@ -35,7 +35,7 @@ function resetGlobals()
     g_resultsByBuilder = {};
     g_allExpectations = null;
     g_allTestsTrie = null;
-    var historyInstance = new history.History();
+    var historyInstance = new history.History(flakinessConfig);
     // FIXME(jparent): Remove this once global isn't used.
     g_history = historyInstance;
     g_testToResultsMap = {};
@@ -145,7 +145,7 @@ test('overrideJustBuildType', 12, function() {
 });
 
 test('platformAndBuildType', 78, function() {
-    var historyInstance = new history.History();
+    var historyInstance = new history.History(flakinessConfig);
     // FIXME(jparent): Change to use the flakiness_db's history object
     // once it exists, rather than tracking global.
     g_history = historyInstance;
@@ -312,7 +312,7 @@ test('getExpectations', 16, function() {
 });
 
 test('substringList', 2, function() {
-    var historyInstance = new history.History();
+    var historyInstance = new history.History(flakinessConfig);
     // FIXME(jparent): Remove this once global isn't used.
     g_history = historyInstance;
     historyInstance.crossDashboardState.testType = 'gtest';
@@ -325,7 +325,7 @@ test('substringList', 2, function() {
 });
 
 test('htmlForTestsWithExpectationsButNoFailures', 4, function() {
-    var historyInstance = new history.History();
+    var historyInstance = new history.History(defaultDashboardSpecificStateValues, generatePage, handleValidHashParameter);
     // FIXME(jparent): Remove this once global isn't used.
     g_history = historyInstance;
     loadBuildersList('@ToT - chromium.org', 'layout-tests');
@@ -361,7 +361,7 @@ test('headerForTestTableHtml', 1, function() {
 });
 
 test('htmlForTestTypeSwitcherGroup', 6, function() {
-    var historyInstance = new history.History();
+    var historyInstance = new history.History(flakinessConfig);
     // FIXME(jparent): Remove this once global isn't used.
     g_history = historyInstance;
     var container = document.createElement('div');
@@ -701,7 +701,7 @@ test('changeTestTypeInvalidatesGroup', 1, function() {
 });
 
 test('shouldHideTest', 10, function() {
-    var historyInstance = new history.History();
+    var historyInstance = new history.History(flakinessConfig);
     historyInstance.parseParameters();
     // FIXME(jparent): Change to use the flakiness_dashboard's history object
     // once it exists, rather than tracking global.

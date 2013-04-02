@@ -57,7 +57,7 @@ loader.request = function(url, success, error, opt_isBinaryData)
     xhr.send();
 }
 
-loader.Loader = function(opt_onLoadingComplete)
+loader.Loader = function()
 {
     this._loadingSteps = [
         this._loadBuildersList,
@@ -68,7 +68,6 @@ loader.Loader = function(opt_onLoadingComplete)
     this._buildersThatFailedToLoad = [];
     this._staleBuilders = [];
     this._errors = new ui.Errors();
-    this._onLoadingComplete = opt_onLoadingComplete || function() {};
     // TODO(jparent): Pass in the appropriate history obj per db.
     this._history = g_history;
 }
@@ -107,7 +106,7 @@ loader.Loader.prototype = {
         var loadingStep = this._loadingSteps.shift();
         if (!loadingStep) {
             this._addErrors();
-            this._onLoadingComplete();
+            this._history.initialize();
             return;
         }
         loadingStep.apply(this);

@@ -29,36 +29,7 @@
 // @fileoverview Base JS file for pages that want to parse the results JSON
 // from the testing bots. This deals with generic utility functions, visible
 // history, popups and appending the script elements for the JSON files.
-//
-// The calling page is expected to implement the following "abstract"
-// functions/objects:
 
-// Generates the contents of the dashboard. The page should override this with
-// a function that generates the page assuming all resources have loaded.
-function generatePage() {}
-
-// Takes a key and a value and sets the g_history.dashboardSpecificState[key] = value iff key is
-// a valid hash parameter and the value is a valid value for that key.
-//
-// @return {boolean} Whether the key what inserted into the g_history.dashboardSpecificState.
-function handleValidHashParameter(key, value)
-{
-    return false;
-}
-
-// Default hash parameters for the page. The page should override this to create
-// default states.
-var g_defaultDashboardSpecificStateValues = {};
-
-
-// The page should override this to modify page state due to
-// changing query parameters.
-// @param {Object} params New or modified query params as key: value.
-// @return {boolean} Whether changing this parameter should cause generatePage to be called.
-function handleQueryParameterChange(params)
-{
-    return true;
-}
 
 //////////////////////////////////////////////////////////////////////////////
 // CONSTANTS
@@ -84,11 +55,6 @@ var LAYOUT_TEST_EXPECTATIONS_MAP_ = {
     'O': 'MISSING'
 };
 
-// Map of parameter to other parameter it invalidates.
-var CROSS_DB_INVALIDATING_PARAMETERS = {
-    'testType': 'group'
-};
-var DB_SPECIFIC_INVALIDATING_PARAMETERS;
 
 // Keys in the JSON files.
 var WONTFIX_COUNTS_KEY = 'wontfixCounts';
@@ -167,25 +133,6 @@ function $(id)
     return document.getElementById(id);
 }
 
-function parseDashboardSpecificParameters()
-{
-    g_history.dashboardSpecificState = {};
-    var parameters = history.queryHashAsMap();
-    for (parameterName in g_defaultDashboardSpecificStateValues)
-        g_history.parseParameter(parameters, parameterName);
-}
-
-function defaultValue(key)
-{
-    if (key in g_defaultDashboardSpecificStateValues)
-        return g_defaultDashboardSpecificStateValues[key];
-    return history.DEFAULT_CROSS_DASHBOARD_STATE_VALUES[key];
-}
-
-// TODO(jparent): Each db should create their own history obj, not global.
-var g_history = new history.History();
-g_history.parseCrossDashboardParameters();
-
 function currentBuilderGroupCategory()
 {
     switch (g_history.crossDashboardState.testType) {
@@ -234,18 +181,6 @@ var g_expectationsByPlatform = {};
 function isFlakinessDashboard()
 {
     return string.endsWith(window.location.pathname, 'flakiness_dashboard.html');
-}
-
-function handleLocationChange()
-{
-    if (g_history.parseParameters())
-        generatePage();
-}
-
-// TODO(jparent): Move this to upcoming History object.
-function intializeHistory() {
-    window.onhashchange = handleLocationChange;
-    handleLocationChange();
 }
 
 // Create a new function with some of its arguements

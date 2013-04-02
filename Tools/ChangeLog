@@ -1,3 +1,45 @@
+2013-04-02  Julie Parent  <jparent@chromium.org>
+
+        Dashboard refactor: Move dashboard specific history related features to History.
+        https://bugs.webkit.org/show_bug.cgi?id=113717
+
+        Reviewed by Ojan Vafai.
+        
+        Each dashboard now creates its own History object, with a custom
+        configuration. This changes from just overriding global functions
+        to passing in callbacks for generatePage, handleValidHashParameter,
+        and handleQueryParameterChange. Same with passing in defaultStateValues
+        and DB_SPECIFIC_INVALIDATING_PARAMS, rather than overriding the global
+        variables.
+        
+        All functions related to these features are now (mostly) private
+        function on History. 
+        
+        Loader no longer needs a loadingComplete callback, since it can just
+        initialize the history object itself.
+
+        * TestResultServer/static-dashboards/aggregate_results.js:
+        (handleValidHashParameter):
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (generatePage):
+        (.switch.return):
+        (handleQueryParameterChange):
+        * TestResultServer/static-dashboards/flakiness_dashboard_unittests.js:
+        (resetGlobals):
+        * TestResultServer/static-dashboards/history.js:
+        (.):
+        * TestResultServer/static-dashboards/loader.js:
+        (.):
+        * TestResultServer/static-dashboards/loader_unittests.js:
+        * TestResultServer/static-dashboards/timeline_explorer.js:
+        (generatePage):
+        (initCurrentBuilderTestResults):
+        * TestResultServer/static-dashboards/treemap.js:
+        (generatePage):
+        (.switch.return):
+        (handleQueryParameterChange):
+
 2013-04-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r147401.

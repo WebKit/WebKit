@@ -106,15 +106,32 @@ history._fillMissingValues = function(to, from)
     }
 }
 
-history.History = function()
+history.History = function(configuration)
 {
-  this.crossDashboardState = {};
-  this.dashboardSpecificState = {};
+    this.crossDashboardState = {};
+    this.dashboardSpecificState = {};
+
+    if (configuration) {
+        this._defaultDashboardSpecificStateValues = configuration.defaultStateValues;
+        this._handleValidHashParameter = configuration.handleValidHashParameter;
+        this._handleQueryParameterChange = configuration.handleQueryParameterChange || function(historyInstance, params) { return true; };
+        this._dashboardSpecificInvalidatingParameters = configuration.invalidatingHashParameters;
+        this._generatePage = configuration.generatePage;
+    }
 }
 
 var RELOAD_REQUIRING_PARAMETERS = ['showAllRuns', 'group', 'testType'];
 
+var CROSS_DB_INVALIDATING_PARAMETERS = {
+    'testType': 'group'
+};
+
 history.History.prototype = {
+    initialize: function()
+    {
+        window.onhashchange = this._handleLocationChange.bind(this);
+        this._handleLocationChange();
+    },
     isLayoutTestResults: function()
     {
         return this.crossDashboardState.testType == 'layout-tests';
@@ -131,6 +148,13 @@ history.History.prototype = {
             this.parseParameter(parameters, parameterName);
 
         history._fillMissingValues(this.crossDashboardState, history.DEFAULT_CROSS_DASHBOARD_STATE_VALUES);
+    },
+    _parseDashboardSpecificParameters: function()
+    {
+        this.dashboardSpecificState = {};
+        var parameters = history.queryHashAsMap();
+        for (parameterName in this._defaultDashboardSpecificStateValues)
+            this.parseParameter(parameters, parameterName);
     },
     // TODO(jparent): Make private once callers move here.
     parseParameters: function()
@@ -150,10 +174,10 @@ history.History.prototype = {
             }
         }
 
-        parseDashboardSpecificParameters();
+        this._parseDashboardSpecificParameters();
         var dashboardSpecificDiffState = history._diffStates(oldDashboardSpecificState, this.dashboardSpecificState);
 
-        history._fillMissingValues(this.dashboardSpecificState, g_defaultDashboardSpecificStateValues);
+        history._fillMissingValues(this.dashboardSpecificState, this._defaultDashboardSpecificStateValues);
 
         // FIXME: dashboard_base shouldn't know anything about specific dashboard specific keys.
         if (dashboardSpecificDiffState.builder)
@@ -163,7 +187,7 @@ history.History.prototype = {
 
         var shouldGeneratePage = true;
         if (Object.keys(dashboardSpecificDiffState).length)
-            shouldGeneratePage = handleQueryParameterChange(dashboardSpecificDiffState);
+            shouldGeneratePage = this._handleQueryParameterChange(this, dashboardSpecificDiffState);
         return shouldGeneratePage;
     },
     // TODO(jparent): Make private once callers move here.
@@ -205,7 +229,7 @@ history.History.prototype = {
             return true;
 
         default:
-            return handleValidHashParameter(key, value);
+            return this._handleValidHashParameter(this, key, value);
         }
     },
     queryParameterValue: function(parameter)
@@ -243,8 +267,8 @@ history.History.prototype = {
         for (var key in queryParamsAsState) {
             if (key in CROSS_DB_INVALIDATING_PARAMETERS)
                 delete this.crossDashboardState[CROSS_DB_INVALIDATING_PARAMETERS[key]];
-            if (DB_SPECIFIC_INVALIDATING_PARAMETERS && key in DB_SPECIFIC_INVALIDATING_PARAMETERS)
-                delete this.dashboardSpecificState[DB_SPECIFIC_INVALIDATING_PARAMETERS[key]];
+            if (this._dashboardSpecificInvalidatingParameters && key in this._dashboardSpecificInvalidatingParameters)
+                delete this.dashboardSpecificState[this._dashboardSpecificInvalidatingParameters[key]];
         }
     },
     _joinParameters: function(stateObject)
@@ -252,7 +276,7 @@ history.History.prototype = {
         var state = [];
         for (var key in stateObject) {
             var value = stateObject[key];
-            if (value != defaultValue(key))
+            if (value != this._defaultValue(key))
                 state.push(key + '=' + encodeURIComponent(value));
         }
         return state.join('&');
@@ -268,7 +292,19 @@ history.History.prototype = {
         for (var key in this.crossDashboardState)
             combinedState[key] = this.crossDashboardState[key];
         return combinedState;    
+    },
+    _defaultValue: function(key)
+    {
+        if (key in this._defaultDashboardSpecificStateValues)
+            return this._defaultDashboardSpecificStateValues[key];
+        return history.DEFAULT_CROSS_DASHBOARD_STATE_VALUES[key];
+    },
+    _handleLocationChange: function()
+    {
+        if (this.parseParameters())
+            this._generatePage(this);
     }
+
 }
 
 })();
