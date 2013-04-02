@@ -1,60 +1,152 @@
-CONSOLE MESSAGE: line 9: 0
-CONSOLE MESSAGE: line 3: 1
-CONSOLE MESSAGE: line 9: 2
-CONSOLE MESSAGE: line 3: 3
-CONSOLE MESSAGE: line 9: 4
-CONSOLE MESSAGE: line 3: 5
-CONSOLE MESSAGE: line 9: 6
-CONSOLE MESSAGE: line 3: 7
-CONSOLE MESSAGE: line 9: 8
-CONSOLE MESSAGE: line 3: 9
-CONSOLE MESSAGE: line 22: 10
+CONSOLE MESSAGE: line 9: 0topGroup
+CONSOLE MESSAGE: line 3: 1topGroup
+CONSOLE MESSAGE: line 9: 2topGroup
+CONSOLE MESSAGE: line 3: 3topGroup
+CONSOLE MESSAGE: line 9: 4topGroup
+CONSOLE MESSAGE: line 3: 5topGroup
+CONSOLE MESSAGE: line 9: 6topGroup
+CONSOLE MESSAGE: line 3: 7topGroup
+CONSOLE MESSAGE: line 9: 8topGroup
+CONSOLE MESSAGE: line 3: 9topGroup
+CONSOLE MESSAGE: line 9: 10outerGroup
+CONSOLE MESSAGE: line 3: 11outerGroup
+CONSOLE MESSAGE: line 9: 12outerGroup
+CONSOLE MESSAGE: line 3: 13outerGroup
+CONSOLE MESSAGE: line 9: 14outerGroup
+CONSOLE MESSAGE: line 3: 15outerGroup
+CONSOLE MESSAGE: line 9: 16outerGroup
+CONSOLE MESSAGE: line 3: 17outerGroup
+CONSOLE MESSAGE: line 9: 18outerGroup
+CONSOLE MESSAGE: line 3: 19outerGroup
+CONSOLE MESSAGE: line 9: 20innerGroup
+CONSOLE MESSAGE: line 3: 21innerGroup
+CONSOLE MESSAGE: line 9: 22innerGroup
+CONSOLE MESSAGE: line 3: 23innerGroup
+CONSOLE MESSAGE: line 9: 24innerGroup
+CONSOLE MESSAGE: line 3: 25innerGroup
+CONSOLE MESSAGE: line 9: 26innerGroup
+CONSOLE MESSAGE: line 3: 27innerGroup
+CONSOLE MESSAGE: line 9: 28innerGroup
+CONSOLE MESSAGE: line 3: 29innerGroup
+CONSOLE MESSAGE: line 39: end
 Tests that console can filter messages by source.
 
 
 Running: beforeFilter
 beforeFilter
-0 console-filter-test.html:9
-1 log-source.js:3
-2 console-filter-test.html:9
-3 log-source.js:3
-4 console-filter-test.html:9
-5 log-source.js:3
-6 console-filter-test.html:9
-7 log-source.js:3
-8 console-filter-test.html:9
-9 log-source.js:3
-10 console-filter-test.html:22
+0topGroup console-filter-test.html:9
+1topGroup log-source.js:3
+2topGroup console-filter-test.html:9
+3topGroup log-source.js:3
+4topGroup console-filter-test.html:9
+5topGroup log-source.js:3
+6topGroup console-filter-test.html:9
+7topGroup log-source.js:3
+8topGroup console-filter-test.html:9
+9topGroup log-source.js:3
+>outerGroup console-filter-test.html:22
+  10outerGroup console-filter-test.html:9
+  11outerGroup log-source.js:3
+  12outerGroup console-filter-test.html:9
+  13outerGroup log-source.js:3
+  14outerGroup console-filter-test.html:9
+  15outerGroup log-source.js:3
+  16outerGroup console-filter-test.html:9
+  17outerGroup log-source.js:3
+  18outerGroup console-filter-test.html:9
+  19outerGroup log-source.js:3
+  >innerGroup console-filter-test.html:29
+    20innerGroup console-filter-test.html:9
+    21innerGroup log-source.js:3
+    22innerGroup console-filter-test.html:9
+    23innerGroup log-source.js:3
+    24innerGroup console-filter-test.html:9
+    25innerGroup log-source.js:3
+    26innerGroup console-filter-test.html:9
+    27innerGroup log-source.js:3
+    28innerGroup console-filter-test.html:9
+    29innerGroup log-source.js:3
+end console-filter-test.html:39
 
 Running: addURL1Filter
-1 log-source.js:3
-3 log-source.js:3
-5 log-source.js:3
-7 log-source.js:3
-9 log-source.js:3
+1topGroup log-source.js:3
+3topGroup log-source.js:3
+5topGroup log-source.js:3
+7topGroup log-source.js:3
+9topGroup log-source.js:3
+>outerGroup console-filter-test.html:22
+  11outerGroup log-source.js:3
+  13outerGroup log-source.js:3
+  15outerGroup log-source.js:3
+  17outerGroup log-source.js:3
+  19outerGroup log-source.js:3
+  >innerGroup console-filter-test.html:29
+    21innerGroup log-source.js:3
+    23innerGroup log-source.js:3
+    25innerGroup log-source.js:3
+    27innerGroup log-source.js:3
+    29innerGroup log-source.js:3
 
 Running: addURL2Filter
+>outerGroup console-filter-test.html:22
+  >innerGroup console-filter-test.html:29
 
 Running: removeURL1Filter
-0 console-filter-test.html:9
-2 console-filter-test.html:9
-4 console-filter-test.html:9
-6 console-filter-test.html:9
-8 console-filter-test.html:9
-10 console-filter-test.html:22
+0topGroup console-filter-test.html:9
+2topGroup console-filter-test.html:9
+4topGroup console-filter-test.html:9
+6topGroup console-filter-test.html:9
+8topGroup console-filter-test.html:9
+>outerGroup console-filter-test.html:22
+  >innerGroup console-filter-test.html:29
+    20innerGroup console-filter-test.html:9
+    22innerGroup console-filter-test.html:9
+    24innerGroup console-filter-test.html:9
+    26innerGroup console-filter-test.html:9
+    28innerGroup console-filter-test.html:9
+  10outerGroup console-filter-test.html:9
+  12outerGroup console-filter-test.html:9
+  14outerGroup console-filter-test.html:9
+  16outerGroup console-filter-test.html:9
+  18outerGroup console-filter-test.html:9
+end console-filter-test.html:39
 
 Running: restoreURL1Filter
+>outerGroup console-filter-test.html:22
+  >innerGroup console-filter-test.html:29
 
 Running: removeAllFilters
-0 console-filter-test.html:9
-1 log-source.js:3
-2 console-filter-test.html:9
-3 log-source.js:3
-4 console-filter-test.html:9
-5 log-source.js:3
-6 console-filter-test.html:9
-7 log-source.js:3
-8 console-filter-test.html:9
-9 log-source.js:3
-10 console-filter-test.html:22
+0topGroup console-filter-test.html:9
+1topGroup log-source.js:3
+2topGroup console-filter-test.html:9
+3topGroup log-source.js:3
+4topGroup console-filter-test.html:9
+5topGroup log-source.js:3
+6topGroup console-filter-test.html:9
+7topGroup log-source.js:3
+8topGroup console-filter-test.html:9
+9topGroup log-source.js:3
+>outerGroup console-filter-test.html:22
+  >innerGroup console-filter-test.html:29
+    20innerGroup console-filter-test.html:9
+    21innerGroup log-source.js:3
+    22innerGroup console-filter-test.html:9
+    23innerGroup log-source.js:3
+    24innerGroup console-filter-test.html:9
+    25innerGroup log-source.js:3
+    26innerGroup console-filter-test.html:9
+    27innerGroup log-source.js:3
+    28innerGroup console-filter-test.html:9
+    29innerGroup log-source.js:3
+  10outerGroup console-filter-test.html:9
+  11outerGroup log-source.js:3
+  12outerGroup console-filter-test.html:9
+  13outerGroup log-source.js:3
+  14outerGroup console-filter-test.html:9
+  15outerGroup log-source.js:3
+  16outerGroup console-filter-test.html:9
+  17outerGroup log-source.js:3
+  18outerGroup console-filter-test.html:9
+  19outerGroup log-source.js:3
+end console-filter-test.html:39
 

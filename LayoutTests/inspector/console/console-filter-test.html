@@ -14,12 +14,29 @@ function onload()
 {
     for (var i = 0; i < 10; i++) {
         if (i % 2 == 0)
-            log1(i); // from console-filter-test.html
+            log1(i + "topGroup"); // from console-filter-test.html
         else
-            log2(i); // from log-source.js
+            log2(i + "topGroup"); // from log-source.js
     }
 
-    console.log(10);
+    console.group("outerGroup");
+    for (var i = 10; i < 20; i++) {
+        if (i % 2 == 0)
+            log1(i + "outerGroup"); // from console-filter-test.html
+        else
+            log2(i + "outerGroup"); // from log-source.js
+    }
+    console.group("innerGroup");
+    for (var i = 20; i < 30; i++) {
+        if (i % 2 == 0)
+            log1(i + "innerGroup"); // from console-filter-test.html
+        else
+            log2(i + "innerGroup"); // from log-source.js
+    }
+    console.groupEnd();
+    console.groupEnd();
+
+    console.log("end");
 
     runTest();
 }
@@ -27,15 +44,30 @@ function onload()
 function test()
 {
     var messagesElement = WebInspector.consoleView.messagesElement;
-    var groupMessages = messagesElement.querySelector(".console-group-messages");
 
-    function dumpVisibleMessages()
+    function dumpVisibleMessages(root, indent)
     {
-        var children = groupMessages.childNodes;
+        indent = indent || "";
+        root = root || WebInspector.consoleView.messagesElement.firstChild; // .console-group
+        var children = root.childNodes;
 
-        for (var i = 0; i < children.length; i++)
-            InspectorTest.addResult(children[i].textContent);
+        for (var i = 0; i < children.length; i++) {
+            if (children[i].hasStyleClass("console-message")) {
+                InspectorTest.addResult(indent + ">" + children[i].textContent);
+                indent = indent + "  ";
+            } else if (children[i].hasStyleClass("console-group-messages")) {
+                var groupMessages = children[i].childNodes;
+                for (var j = 0; j < groupMessages.length; j++) {
+                    if (groupMessages[j].hasStyleClass("console-message"))
+                        InspectorTest.addResult(indent + groupMessages[j].textContent);
+                    else if (groupMessages[j].hasStyleClass("console-group"))
+                        dumpVisibleMessages(groupMessages[j], indent);
+                }
+            }
+        }
     }
+
+    var groupMessages = messagesElement.querySelector(".console-group-messages");
 
     var url1 = groupMessages.childNodes[0].message.url;
     var url2 = groupMessages.childNodes[1].message.url;

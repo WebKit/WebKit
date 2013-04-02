@@ -43,4 +43,5 @@ function () { } console-tests.html:28 console-message console-log-level
 function f() { } console-tests.html:29 console-message console-log-level
 Array[3] console-tests.html:30 console-message console-log-level
 /regexp.*/ console-tests.html:31 console-message console-log-level
+ console-message console-log-level
 
