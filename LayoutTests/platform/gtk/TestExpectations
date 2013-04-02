@@ -500,9 +500,6 @@ webkit.org/b/112152 [ Debug ] accessibility/table-with-hidden-head-section.html 
 
 webkit.org/b/111451 [ Debug ] editing/selection/selection-in-iframe-removed-crash.html [ Crash Pass ]
 
-webkit.org/b/113019 [ Debug ] storage/indexeddb/factory-basics-workers.html [ Crash ]
-webkit.org/b/113019 [ Debug ] storage/indexeddb/transaction-error.html [ Crash ]
-
 webkit.org/b/111902 [ Debug ] http/tests/security/XFrameOptions/x-frame-options-deny-multiple-clients.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1207,10 +1204,6 @@ webkit.org/b/87355 canvas/philip/tests/2d.text.draw.fontface.notinpage.html [ Fa
 webkit.org/b/95428 media/video-controls-captions.html [ Failure ]
 
 webkit.org/b/95429 svg/custom/clamped-masking-clipping.svg [ ImageOnlyFailure ]
-
-webkit.org/b/73003 [ Debug ] editing/spelling/spellcheck-async.html [ Failure ]
-webkit.org/b/73003 [ Debug ] editing/spelling/spellcheck-paste.html [ Pass ]
-webkit.org/b/50740 [ Debug ] editing/spelling/spellcheck-queue.html [ Failure ]
 
 webkit.org/b/90775 fast/dom/shadow/focus-navigation.html [ Failure ]
 webkit.org/b/97468 fast/dom/shadow/shadowdom-for-textarea-complex-shadow.html [ ImageOnlyFailure ]
