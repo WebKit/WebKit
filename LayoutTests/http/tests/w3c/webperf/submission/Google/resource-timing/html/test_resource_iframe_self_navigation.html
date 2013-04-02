@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Resource Timing self navigating iframes</title>
+<link rel="author" title="Google" href="http://www.google.com/" />
+<link rel="help" href="http://www.w3.org/TR/resource-timing/#dom-performanceresourcetiming-initiatortype"/>
+<script src="/w3c/resources/testharness.js"></script>
+<script src="/w3c/resources/testharnessreport.js"></script>
+<script src="/w3c/webperf/resources/webperftestharness.js"></script>
+<script src="/w3c/webperf/resources/webperftestharnessextension.js"></script>
+<script>
+setup({explicit_done: true});
+var d;
+var iframe;
+var iframeBody;
+function setup_iframe() {
+    var iframe_content = '<iframe id="innerFrame" src="/w3c/webperf/resources/inject_resource_test.html"></iframe>';
+    iframe = document.getElementById('frameContext');
+    d = iframe.contentWindow.document;
+    d.write(iframe_content);
+    iframe.contentWindow.setup_iframe = setup_inner_iframe;
+}
+function setup_inner_iframe() {
+    var iframe_content = '<script>window.location = "/w3c/webperf/resources/generate_resource.php?type=iframe";</scr' + 'ipt>';
+    var inner_iframe = d.getElementById('innerFrame');
+    inner_iframe.contentWindow.document.write(iframe_content);
+    inner_iframe.addEventListener("load", onload_test);
+}
+function onload_test() {
+    var context = new PerformanceContext(iframe.contentWindow.performance);
+    var entries = context.getEntriesByType('resource');
+    var expected_entries = {
+        '/w3c/webperf/resources/inject_resource_test.html': 'iframe',
+    };
+    test_resource_entries(entries, expected_entries);
+    done();
+}
+window.setup_iframe = setup_iframe;
+</script>
+</head>
+<body>
+<h1>Description</h1>
+<p>This test validates that iframes that navigate themselves don't appear in the buffer.</p>
+<div id="log"></div>
+<iframe id="frameContext" src="/w3c/webperf/resources/inject_resource_test.html"></iframe>
+</body>
+</html>

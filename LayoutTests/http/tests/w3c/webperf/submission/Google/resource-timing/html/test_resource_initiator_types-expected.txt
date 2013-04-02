@@ -19,6 +19,5 @@ PASS /w3c/webperf/resources/generate_resource.php?type=image&id=input is expecte
 PASS /w3c/webperf/resources/generate_resource.php?type=image&id=n1 is expected to have initiatorType css 
 PASS /w3c/webperf/resources/generate_resource.php?type=image&id=object is expected to have initiatorType object 
 PASS /w3c/webperf/resources/generate_resource.php?type=image&id=poster is expected to have initiatorType video 
-PASS /w3c/webperf/resources/generate_resource.php?type=image&id=sync_xhr is expected to have initiatorType xmlhttprequest 
 PASS /w3c/webperf/resources/nested.css is expected to have initiatorType link 
 

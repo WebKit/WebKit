@@ -13,7 +13,7 @@
 setup({explicit_done: true});
 
 function onload_test() {
-    var context = new PerformanceContext(iframe.contentWindow.performance);
+    var context = new PerformanceContext(document.getElementById("frameContext").contentWindow.performance);
     var entries = context.getEntries();
 
     var expected_entries = {

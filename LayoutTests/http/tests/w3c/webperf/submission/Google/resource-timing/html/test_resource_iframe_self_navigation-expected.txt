@@ -1,0 +1,8 @@
+Description
+
+This test validates that iframes that navigate themselves don't appear in the buffer.
+
+
+
+PASS /w3c/webperf/resources/inject_resource_test.html is expected to have initiatorType iframe 
+
