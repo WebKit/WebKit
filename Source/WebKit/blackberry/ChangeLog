@@ -1,3 +1,12 @@
+2013-04-01  Konrad Piascik  <kpiascik@blackberry.com>
+
+        [BlackBerry] Move Path into it's own header
+        https://bugs.webkit.org/show_bug.cgi?id=113724
+
+        Reviewed by Rob Buis.
+
+        * WebKitSupport/DefaultTapHighlight.cpp:
+
 2013-03-29  Charles Wei  <charles.wei@torchmobile.com.cn>
 
         [BlackBerry] Cleanup the CONTEXT_MENUS in BlackBerry porting

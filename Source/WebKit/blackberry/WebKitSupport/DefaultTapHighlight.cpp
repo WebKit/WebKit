@@ -29,6 +29,7 @@
 
 #include <BlackBerryPlatformGraphicsContext.h>
 #include <BlackBerryPlatformMessageClient.h>
+#include <BlackBerryPlatformPath.h>
 
 using namespace WebCore;
 

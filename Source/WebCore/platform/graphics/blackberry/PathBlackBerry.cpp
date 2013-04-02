@@ -27,6 +27,7 @@
 
 #include <BlackBerryPlatformGraphics.h>
 #include <BlackBerryPlatformGraphicsContext.h>
+#include <BlackBerryPlatformPath.h>
 #include <stdio.h>
 #include <wtf/MathExtras.h>
 
