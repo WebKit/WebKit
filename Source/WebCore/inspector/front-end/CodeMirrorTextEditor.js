@@ -81,7 +81,9 @@ WebInspector.CodeMirrorTextEditor = function(url, delegate)
     this._lastRange = this.range();
 
     this.element.firstChild.addStyleClass("source-code");
-    this.element.firstChild.addStyleClass("fill");
+    this.element.addStyleClass("fill");
+    this.markAsLayoutBoundary();
+
     this._elementToWidget = new Map();
     this._nestedUpdatesCounter = 0;
 

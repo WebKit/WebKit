@@ -45,6 +45,7 @@ WebInspector.DefaultTextEditor = function(url, delegate)
     this.registerRequiredCSS("textEditor.css");
 
     this.element.className = "text-editor monospace";
+    this.markAsLayoutBoundary();
 
     // Prevent middle-click pasting in the editor unless it is explicitly enabled for certain component.
     this.element.addEventListener("mouseup", preventDefaultOnMouseUp.bind(this), false);

@@ -51,6 +51,13 @@ input[type="search"]:focus, input[type="text"]:focus {
     white-space: nowrap !important;
 }
 
+.layout-boundary {
+    width: 100%;
+    overflow: hidden;
+    /* position must be relative or absolute */
+    /* height must be a pixel value */
+}
+
 #toolbar {
     position: absolute;
     top: 0;
