@@ -1,5 +1,16 @@
 2013-04-02  Mark Rowe  <mrowe@apple.com>
 
+        <http://webkit.org/b/113898> Eliminate some code duplication by introducing an array of handlers to register / unregister.
+
+        Reviewed by Antti Koivisto.
+
+        * UIProcess/mac/WebContextMac.mm:
+        (OcclusionNotificationHandler): Structure containing the notification name, type and handler.
+        (WebKit::registerOcclusionNotificationHandlers): Register all of the handlers in the array.
+        (WebKit::unregisterOcclusionNotificationHandlers): Unregister all of the handlers in the array.
+
+2013-04-02  Mark Rowe  <mrowe@apple.com>
+
         Enable process suppression when no windows in the application have drawn recently.
         <http://webkit.org/b/113854> / <rdar://problem/13540351>
 

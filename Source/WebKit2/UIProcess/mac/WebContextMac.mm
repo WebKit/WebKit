@@ -146,29 +146,28 @@ static void applicationWindowModificationsStopped(uint32_t, void*, uint32_t, voi
     applicationOcclusionStateChanged();
 }
 
+struct OcclusionNotificationHandler {
+    WKOcclusionNotificationType notificationType;
+    WKOcclusionNotificationHandler handler;
+    const char *name;
+};
+
+static const OcclusionNotificationHandler occlusionNotificationHandlers[] = {
+    { WKOcclusionNotificationTypeApplicationBecameVisible, applicationBecameVisible, "Application Became Visible" },
+    { WKOcclusionNotificationTypeApplicationBecameOccluded, applicationBecameOccluded, "Application Became Occluded" },
+    { WKOcclusionNotificationTypeApplicationWindowModificationsStarted, applicationWindowModificationsStarted, "Application Window Modifications Started" },
+    { WKOcclusionNotificationTypeApplicationWindowModificationsStopped, applicationWindowModificationsStopped, "Application Window Modifications Stopped" },
+};
+
 #endif
 
 static void registerOcclusionNotificationHandlers()
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    if (!WKRegisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationBecameVisible, applicationBecameVisible)) {
-        WTFLogAlways("Registration of \"Application Became Visible\" notification handler failed.\n");
-        return;
-    }
-    
-    if (!WKRegisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationBecameOccluded, applicationBecameOccluded)) {
-        WTFLogAlways("Registration of \"Application Became Occluded\" notification handler failed.\n");
-        return;
-    }
-
-    if (!WKRegisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationWindowModificationsStarted, applicationWindowModificationsStarted)) {
-        WTFLogAlways("Registration of \"Application Window Modifications Started\" notification handler failed.\n");
-        return;
-    }
-    
-    if (!WKRegisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationWindowModificationsStopped, applicationWindowModificationsStopped)) {
-        WTFLogAlways("Registration of \"Application Window Modifications Stopped\" notification handler failed.\n");
-        return;
+    for (const OcclusionNotificationHandler& occlusionNotificationHandler : occlusionNotificationHandlers) {
+        bool result = WKRegisterOcclusionNotificationHandler(occlusionNotificationHandler.notificationType, occlusionNotificationHandler.handler);
+        UNUSED_PARAM(result);
+        ASSERT_WITH_MESSAGE(result, "Registration of \"%s\" notification handler failed.\n", occlusionNotificationHandler.name);
     }
 #endif
 }
@@ -176,24 +175,10 @@ static void registerOcclusionNotificationHandlers()
 static void unregisterOcclusionNotificationHandlers()
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    if (!WKUnregisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationBecameOccluded, applicationBecameOccluded)) {
-        WTFLogAlways("Unregistration of \"Application Became Occluded\" notification handler failed.\n");
-        return;
-    }
-    
-    if (!WKUnregisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationBecameOccluded, applicationBecameVisible)) {
-        WTFLogAlways("Unregistration of \"Application Became Visible\" notification handler failed.\n");
-        return;
-    }
-
-    if (!WKUnregisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationWindowModificationsStarted, applicationWindowModificationsStarted)) {
-        WTFLogAlways("Unregistration of \"Application Window Modifications Started\" notification handler failed.\n");
-        return;
-    }
-    
-    if (!WKUnregisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationWindowModificationsStopped, applicationWindowModificationsStopped)) {
-        WTFLogAlways("Unregistration of \"Application Window Modifications Stopped\" notification handler failed.\n");
-        return;
+    for (const OcclusionNotificationHandler& occlusionNotificationHandler : occlusionNotificationHandlers) {
+        bool result = WKUnregisterOcclusionNotificationHandler(occlusionNotificationHandler.notificationType, occlusionNotificationHandler.handler);
+        UNUSED_PARAM(result);
+        ASSERT_WITH_MESSAGE(result, "Unregistration of \"%s\" notification handler failed.\n", occlusionNotificationHandler.name);
     }
 #endif
 }
