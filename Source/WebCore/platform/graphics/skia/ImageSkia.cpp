@@ -32,7 +32,6 @@
 
 #include "AffineTransform.h"
 #include "BitmapImage.h"
-#include "BitmapImageSingleFrameSkia.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
@@ -560,6 +559,38 @@ void Image::drawPattern(GraphicsContext* context,
 
 // FIXME: These should go to BitmapImageSkia.cpp
 
+BitmapImage::BitmapImage(NativeImageSkia* nativeImage, ImageObserver* observer)
+    : Image(observer)
+    , m_size(nativeImage->bitmap().width(), nativeImage->bitmap().height())
+    , m_currentFrame(0)
+    , m_frames(0)
+    , m_frameTimer(0)
+    , m_repetitionCount(cAnimationNone)
+    , m_repetitionCountStatus(Unknown)
+    , m_repetitionsComplete(0)
+    , m_decodedSize(nativeImage->decodedSize())
+    , m_decodedPropertiesSize(0)
+    , m_frameCount(1)
+    , m_isSolidColor(false)
+    , m_checkedForSolidColor(false)
+    , m_animationFinished(true)
+    , m_allDataReceived(true)
+    , m_haveSize(true)
+    , m_sizeAvailable(true)
+    , m_haveFrameCount(true)
+{
+    // Since we don't have a decoder, we can't figure out the image orientation.
+    // Set m_sizeRespectingOrientation to be the same as m_size so it's not 0x0.
+    m_sizeRespectingOrientation = m_size;
+
+    m_frames.grow(1);
+    m_frames[0].m_frame = nativeImage;
+    m_frames[0].m_hasAlpha = !nativeImage->bitmap().isOpaque();
+    m_frames[0].m_haveMetadata = true;
+
+    checkForSolidColor();
+}
+
 void BitmapImage::invalidatePlatformData()
 {
 }
@@ -591,9 +622,6 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const Fl
 
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace colorSpace, CompositeOperator compositeOp, BlendMode, RespectImageOrientationEnum shouldRespectImageOrientation)
 {
-    if (!m_source.initialized())
-        return;
-
     // Spin the animation to the correct frame before we try to draw it, so we
     // don't draw an old frame and then immediately need to draw a newer one,
     // causing flicker and wasting CPU.
@@ -639,47 +667,6 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const Fl
 
     if (ImageObserver* observer = imageObserver())
         observer->didDraw(this);
-}
-
-// FIXME: These should go into BitmapImageSingleFrameSkia.cpp
-
-void BitmapImageSingleFrameSkia::draw(GraphicsContext* ctxt,
-    const FloatRect& dstRect,
-    const FloatRect& srcRect,
-    ColorSpace styleColorSpace,
-    CompositeOperator compositeOp, BlendMode)
-{
-    FloatRect normDstRect = normalizeRect(dstRect);
-    FloatRect normSrcRect = normalizeRect(srcRect);
-    normSrcRect.intersect(FloatRect(0, 0, m_nativeImage.bitmap().width(), m_nativeImage.bitmap().height()));
-
-    if (normSrcRect.isEmpty() || normDstRect.isEmpty())
-        return; // Nothing to draw.
-
-    paintSkBitmap(ctxt->platformContext(),
-        m_nativeImage,
-        normSrcRect,
-        normDstRect,
-        WebCoreCompositeToSkiaComposite(compositeOp));
-
-    if (ImageObserver* observer = imageObserver())
-        observer->didDraw(this);
-}
-
-BitmapImageSingleFrameSkia::BitmapImageSingleFrameSkia(const SkBitmap& bitmap, float resolutionScale)
-    : m_nativeImage(bitmap, resolutionScale)
-{
-}
-
-PassRefPtr<BitmapImageSingleFrameSkia> BitmapImageSingleFrameSkia::create(const SkBitmap& bitmap, bool copyPixels, float resolutionScale)
-{
-    if (copyPixels) {
-        SkBitmap temp;
-        if (!bitmap.deepCopyTo(&temp, bitmap.config()))
-            bitmap.copyTo(&temp, bitmap.config());
-        return adoptRef(new BitmapImageSingleFrameSkia(temp, resolutionScale));
-    }
-    return adoptRef(new BitmapImageSingleFrameSkia(bitmap, resolutionScale));
 }
 
 } // namespace WebCore

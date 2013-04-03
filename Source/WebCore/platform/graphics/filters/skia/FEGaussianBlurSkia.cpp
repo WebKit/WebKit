@@ -27,7 +27,6 @@
 #if USE(SKIA)
 #include "FEGaussianBlur.h"
 
-#include "BitmapImageSingleFrameSkia.h"
 #include "SkBlurImageFilter.h"
 #include "SkiaImageFilterBuilder.h"
 

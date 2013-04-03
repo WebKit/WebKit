@@ -150,7 +150,7 @@ namespace WebCore {
 #if PLATFORM(CHROMIUM)
         void setSkBitmap(const SkBitmap& bitmap)
         {
-            m_bitmap = NativeImageSkia(bitmap, 1);
+            m_bitmap = NativeImageSkia(bitmap, NativeImageSkia::DoNotCopyPixels);
         }
 
         const SkBitmap& getSkBitmap() const

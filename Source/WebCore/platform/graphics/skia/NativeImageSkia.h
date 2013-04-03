@@ -43,13 +43,12 @@ namespace WebCore {
 // stores a cached resized image.
 class NativeImageSkia {
 public:
+    enum CopyBehavior { CopyPixels, DoNotCopyPixels };
+
     NativeImageSkia();
     ~NativeImageSkia();
 
-    // This constructor does a shallow copy of the passed-in SkBitmap (ie., it
-    // references the same pixel data and bumps the refcount).  Use only when
-    // you want sharing semantics.
-    NativeImageSkia(const SkBitmap&, float resolutionScale);
+    NativeImageSkia(const SkBitmap&, CopyBehavior, float resolutionScale = 1);
 
     // Returns the number of bytes of image data. This includes the cached
     // resized version if there is one.

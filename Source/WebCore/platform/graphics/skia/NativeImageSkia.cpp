@@ -53,11 +53,15 @@ NativeImageSkia::NativeImageSkia()
 {
 }
 
-NativeImageSkia::NativeImageSkia(const SkBitmap& other, float resolutionScale)
-    : m_image(other),
-      m_resolutionScale(resolutionScale),
+NativeImageSkia::NativeImageSkia(const SkBitmap& other, CopyBehavior copyBehavior, float resolutionScale)
+    : m_resolutionScale(resolutionScale),
       m_resizeRequests(0)
 {
+    if (copyBehavior == CopyPixels) {
+        if (!other.deepCopyTo(&m_image, other.config()))
+            other.copyTo(&m_image, other.config());
+    } else
+        m_image = other;
 }
 
 NativeImageSkia::~NativeImageSkia()

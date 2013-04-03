@@ -4184,8 +4184,6 @@
             'platform/graphics/openvg/TiledImageOpenVG.h',
             'platform/graphics/openvg/VGUtils.cpp',
             'platform/graphics/openvg/VGUtils.h',
-            'platform/graphics/skia/BitmapImageSingleFrameSkia.cpp',
-            'platform/graphics/skia/BitmapImageSingleFrameSkia.h',
             'platform/graphics/skia/FloatPointSkia.cpp',
             'platform/graphics/skia/FloatRectSkia.cpp',
             'platform/graphics/skia/FontCacheSkia.cpp',
