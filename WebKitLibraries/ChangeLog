@@ -1,3 +1,10 @@
+2013-04-03  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows, WinCairo] Unreviewed VS2010 Build Correction
+
+        * win/tools/scripts/auto-version2010.sh: Added properties svn:eol-style and svn:executable.
+        * win/tools/scripts/feature-defines2010.sh: Added properties svn:eol-style and svn:executable.
+
 2013-04-01  Roger Fong  <roger_fong@apple.com>
 
         Update FEATURE_DEFINES string generation for VS2010 solution.
