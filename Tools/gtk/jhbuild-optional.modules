@@ -9,7 +9,6 @@
 
   <metamodule id="webkitgtk-clutter-dependencies">
     <dependencies>
-      <dep package="atk"/>
       <dep package="clutter"/>
       <dep package="clutter-gtk"/>
       <dep package="cogl"/>
@@ -54,14 +53,6 @@
     <branch module="/pub/GNOME/sources/clutter-gtk/1.3/clutter-gtk-1.3.2.tar.xz" version="1.3.2"
             repo="ftp.gnome.org"             
             hash="sha256:ee50538daca9447be6ad1ed0d049fbb2dc5a1bcaecd13fda847b9b66f922ee37"/>
-  </autotools>
-
-  <autotools id="atk"
-           autogen-sh="configure"
-           autogenargs="--disable-introspection">
-    <branch module="/pub/GNOME/sources/atk/2.5/atk-2.5.3.tar.xz" version="2.5.3"
-            repo="ftp.gnome.org"
-            hash="sha256:ac118ef34ef5490fa113cf50cffdff7735d6293723bf35df958a89fbda876313"/>
   </autotools>
 
   <autotools id="pango"

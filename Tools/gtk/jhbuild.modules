@@ -20,6 +20,7 @@
       <dep package="gnome-icon-theme-symbolic"/>
       <dep package="gnome-themes-standard"/>
       <dep package="libsoup"/>
+      <dep package="atk"/>
       <dep package="at-spi2-core"/>
       <dep package="at-spi2-atk"/>
       <dep package="gstreamer"/>
@@ -217,11 +218,19 @@
     </branch>
   </autotools>
 
+  <autotools id="atk"
+             autogen-sh="configure"
+             autogenargs="--disable-introspection">
+    <branch module="pub/GNOME/sources/atk/2.8/atk-2.8.0.tar.xz" version="2.8.0"
+            repo="ftp.gnome.org"
+            hash="sha256:b22519176226f3e07cf6d932b77852e6b6be4780977770704b32d0f4e0686df4"/>
+  </autotools>
+
   <autotools id="at-spi2-core" 
              autogenargs="--disable-introspection">
-    <branch module="pub/GNOME/sources/at-spi2-core/2.5/at-spi2-core-2.5.3.tar.xz" version="2.5.3"
+    <branch module="pub/GNOME/sources/at-spi2-core/2.8/at-spi2-core-2.8.0.tar.xz" version="2.8.0"
             repo="ftp.gnome.org"
-            hash="sha256:f5b69ea237d1bb9da36a717a6e810baf3cd4094770f8361793e6cb3ec2443c3c">
+            hash="sha256:1861a30fc7f583d5a567a0ba547db67ce9bd294f0d1c9f7403c96a10a481c458">
     </branch>
     <dependencies>
       <dep package="glib"/>
@@ -229,12 +238,13 @@
   </autotools>
 
   <autotools id="at-spi2-atk">
-    <branch module="pub/GNOME/sources/at-spi2-atk/2.5/at-spi2-atk-2.5.3.tar.xz" version="2.5.3"
+    <branch module="pub/GNOME/sources/at-spi2-atk/2.8/at-spi2-atk-2.8.0.tar.xz" version="2.8.0"
             repo="ftp.gnome.org"
-            hash="sha256:bdbead509bb87e8939b06385febdadddef3c5e25dce4a0ed39f9a83d36c0c69b">
+            hash="sha256:4688acbc1474cda0aa49341f109ad0726603ce3e872cc6521c74931338c7ba20">
     </branch>
     <dependencies>
       <dep package="glib"/>
+      <dep package="atk"/>
       <dep package="at-spi2-core"/>
     </dependencies>
   </autotools>
