@@ -256,8 +256,14 @@ NonSharedCharacterBreakIterator::~NonSharedCharacterBreakIterator()
 
 static TextBreakIterator* staticLineBreakIterator;
 
-TextBreakIterator* acquireLineBreakIterator(const UChar* string, int length, const AtomicString&)
+TextBreakIterator* acquireLineBreakIterator(const UChar* string, int length, const AtomicString& locale, const UChar* priorContext, unsigned priorContextLength)
 {
+    // This code does not yet support non-empty prior line break context. This
+    // needs to be fixed by someone building/testing on a non-ICU platform. See
+    // https://bugs.webkit.org/show_bug.cgi?id=105692#c52 for further info.
+    ASSERT_UNUSED(priorContext, !priorContext);
+    ASSERT_UNUSED(priorContextLength, !priorContextLength);
+
     TextBreakIterator* lineBreakIterator = 0;
     if (staticLineBreakIterator) {
         staticLineBreakIterator->reset(string, length);
