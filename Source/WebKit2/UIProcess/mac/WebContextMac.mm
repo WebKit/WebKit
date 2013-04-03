@@ -66,6 +66,7 @@ NSString *SchemeForCustomProtocolRegisteredNotificationName = @"WebKitSchemeForC
 NSString *SchemeForCustomProtocolUnregisteredNotificationName = @"WebKitSchemeForCustomProtocolUnregisteredNotification";
 
 static bool s_applicationIsOccluded = false;
+static bool s_applicationWindowModificationsHaveStopped = false;
 static bool s_occlusionNotificationHandlersRegistered = false;
 static bool s_processSuppressionEnabledForAllContexts = true;
 
@@ -128,6 +129,23 @@ static void applicationBecameOccluded(uint32_t, void*, uint32_t, void*, uint32_t
     s_applicationIsOccluded = true;
     applicationOcclusionStateChanged();
 }
+
+static void applicationWindowModificationsStarted(uint32_t, void*, uint32_t, void*, uint32_t)
+{
+    if (!s_applicationWindowModificationsHaveStopped)
+        return;
+    s_applicationWindowModificationsHaveStopped = false;
+    applicationOcclusionStateChanged();
+}
+
+static void applicationWindowModificationsStopped(uint32_t, void*, uint32_t, void*, uint32_t)
+{
+    if (s_applicationWindowModificationsHaveStopped)
+        return;
+    s_applicationWindowModificationsHaveStopped = true;
+    applicationOcclusionStateChanged();
+}
+
 #endif
 
 static void registerOcclusionNotificationHandlers()
@@ -138,8 +156,20 @@ static void registerOcclusionNotificationHandlers()
         return;
     }
     
-    if (!WKRegisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationBecameOccluded, applicationBecameOccluded))
+    if (!WKRegisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationBecameOccluded, applicationBecameOccluded)) {
         WTFLogAlways("Registration of \"Application Became Occluded\" notification handler failed.\n");
+        return;
+    }
+
+    if (!WKRegisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationWindowModificationsStarted, applicationWindowModificationsStarted)) {
+        WTFLogAlways("Registration of \"Application Window Modifications Started\" notification handler failed.\n");
+        return;
+    }
+    
+    if (!WKRegisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationWindowModificationsStopped, applicationWindowModificationsStopped)) {
+        WTFLogAlways("Registration of \"Application Window Modifications Stopped\" notification handler failed.\n");
+        return;
+    }
 #endif
 }
 
@@ -151,8 +181,20 @@ static void unregisterOcclusionNotificationHandlers()
         return;
     }
     
-    if (!WKUnregisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationBecameOccluded, applicationBecameVisible))
+    if (!WKUnregisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationBecameOccluded, applicationBecameVisible)) {
         WTFLogAlways("Unregistration of \"Application Became Visible\" notification handler failed.\n");
+        return;
+    }
+
+    if (!WKUnregisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationWindowModificationsStarted, applicationWindowModificationsStarted)) {
+        WTFLogAlways("Unregistration of \"Application Window Modifications Started\" notification handler failed.\n");
+        return;
+    }
+    
+    if (!WKUnregisterOcclusionNotificationHandler(WKOcclusionNotificationTypeApplicationWindowModificationsStopped, applicationWindowModificationsStopped)) {
+        WTFLogAlways("Unregistration of \"Application Window Modifications Stopped\" notification handler failed.\n");
+        return;
+    }
 #endif
 }
 
@@ -446,18 +488,18 @@ void WebContext::updateProcessSuppressionStateOfChildProcesses()
 
 bool WebContext::canEnableProcessSuppressionForNetworkProcess() const
 {
-    return s_applicationIsOccluded && m_processSuppressionEnabled && !omitProcessSuppression();
+    return (s_applicationIsOccluded || s_applicationWindowModificationsHaveStopped) && m_processSuppressionEnabled && !omitProcessSuppression();
 }
 
 bool WebContext::canEnableProcessSuppressionForWebProcess(const WebKit::WebProcessProxy *webProcess) const
 {
-    return (s_applicationIsOccluded || webProcess->allPagesAreProcessSuppressible())
+    return (s_applicationIsOccluded || s_applicationWindowModificationsHaveStopped || webProcess->allPagesAreProcessSuppressible())
            && m_processSuppressionEnabled && !omitProcessSuppression();
 }
 
 bool WebContext::canEnableProcessSuppressionForGlobalChildProcesses()
 {
-    return s_applicationIsOccluded && s_processSuppressionEnabledForAllContexts && !omitProcessSuppression();
+    return (s_applicationIsOccluded || s_applicationWindowModificationsHaveStopped) && s_processSuppressionEnabledForAllContexts && !omitProcessSuppression();
 }
 
 void WebContext::processSuppressionEnabledChanged()

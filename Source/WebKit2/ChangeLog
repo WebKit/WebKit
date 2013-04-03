@@ -1,3 +1,20 @@
+2013-04-02  Mark Rowe  <mrowe@apple.com>
+
+        Enable process suppression when no windows in the application have drawn recently.
+        <http://webkit.org/b/113854> / <rdar://problem/13540351>
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::applicationWindowModificationsStarted): Note that modifications are no longer stopped.
+        (WebKit::applicationWindowModificationsStopped): Note that modifications have stopped.
+        (WebKit::registerOcclusionNotificationHandlers): Register handlers for the start and stop notifications.
+        (WebKit::unregisterOcclusionNotificationHandlers): Unregister handlers for the start and stop notifications.
+        (WebKit::WebContext::canEnableProcessSuppressionForNetworkProcess): Allow suppression if the application is occluded
+        or the application has not drawn recently.
+        (WebKit::WebContext::canEnableProcessSuppressionForWebProcess): Ditto.
+        (WebKit::WebContext::canEnableProcessSuppressionForGlobalChildProcesses): Ditto.
+
 2013-04-03  Dean Jackson  <dino@apple.com>
 
         Cross fade into restarted plugin
