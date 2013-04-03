@@ -277,13 +277,13 @@ void NetworkResourceLoader::continueWillSendRequest(const ResourceRequest& newRe
     m_suggestedRequestForWillSendRequest = ResourceRequest();
 }
 
+void NetworkResourceLoader::didSendData(ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
+{
+    send(Messages::WebResourceLoader::DidSendData(bytesSent, totalBytesToBeSent));
+}
+
 // FIXME (NetworkProcess): Many of the following ResourceHandleClient methods definitely need implementations. A few will not.
 // Once we know what they are they can be removed.
-
-void NetworkResourceLoader::didSendData(ResourceHandle*, unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/)
-{
-    notImplemented();
-}
 
 void NetworkResourceLoader::didReceiveCachedMetadata(ResourceHandle*, const char*, int)
 {
@@ -322,7 +322,8 @@ void NetworkResourceLoader::didReceiveAuthenticationChallenge(ResourceHandle*, c
 
 void NetworkResourceLoader::didCancelAuthenticationChallenge(ResourceHandle*, const AuthenticationChallenge& challenge)
 {
-    // FIXME (NetworkProcess): Tell AuthenticationManager.
+    // This function is probably not needed (see <rdar://problem/8960124>).
+    notImplemented();
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

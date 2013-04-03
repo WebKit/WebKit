@@ -93,6 +93,11 @@ void WebResourceLoader::willSendRequest(const ResourceRequest& proposedRequest, 
     send(Messages::NetworkResourceLoader::ContinueWillSendRequest(newRequest));
 }
 
+void WebResourceLoader::didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent)
+{
+    m_coreLoader->didSendData(bytesSent, totalBytesToBeSent);
+}
+
 void WebResourceLoader::didReceiveResponseWithCertificateInfo(const ResourceResponse& response, const PlatformCertificateInfo& certificateInfo)
 {
     LOG(Network, "(WebProcess) WebResourceLoader::didReceiveResponseWithCertificateInfo for '%s'. Status %d.", m_coreLoader->url().string().utf8().data(), response.httpStatusCode());
