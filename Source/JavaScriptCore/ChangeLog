@@ -1,3 +1,24 @@
+2013-04-02  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        get_by_pname can become confused when iterating over objects with static properties
+        https://bugs.webkit.org/show_bug.cgi?id=113831
+
+        Reviewed by Geoffrey Garen.
+
+        get_by_pname doesn't take static properties into account when using a JSPropertyNameIterator to directly 
+        access an object's backing store. One way to fix this is to not cache any properties when iterating over 
+        objects with static properties. This patch fixes the bug that was originally reported on swisscom.ch.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnNonIndexPropertyNames):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::create):
+        * runtime/PropertyNameArray.h:
+        (JSC::PropertyNameArray::PropertyNameArray):
+        (JSC::PropertyNameArray::numCacheableSlots):
+        (JSC::PropertyNameArray::setNumCacheableSlots):
+        (PropertyNameArray):
+
 2013-04-02  Geoffrey Garen  <ggaren@apple.com>
 
         DFG should compile a little sooner
