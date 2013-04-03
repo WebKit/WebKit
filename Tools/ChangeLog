@@ -1,3 +1,15 @@
+2013-04-03  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK] Include Pango in jhbuild-optional.modules
+        https://bugs.webkit.org/show_bug.cgi?id=113878
+
+        Reviewed by Martin Robinson.
+
+        Since r147547 Pango 1.32.0 is required. Including the module in the
+        JHBuild optional moduleset.
+
+        * gtk/jhbuild-optional.modules: Add Pango module.
+
 2013-04-03  Zeno Albisser  <zeno@webkit.org>
 
         [Qt] Add getter for JSC TestRunner to DumpRenderTreeQt.
