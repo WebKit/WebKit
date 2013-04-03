@@ -1686,7 +1686,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return NSAccessibilityOutlineRowSubrole;
     
     if (m_object->isList()) {
-        AccessibilityList* listObject = static_cast<AccessibilityList*>(m_object);
+        AccessibilityList* listObject = toAccessibilityList(m_object);
         if (listObject->isUnorderedList() || listObject->isOrderedList())
             return NSAccessibilityContentListSubrole;
         if (listObject->isDescriptionList())
@@ -1882,7 +1882,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     // Only returning for DL (not UL or OL) because description changed with HTML5 from 'definition list' to
     // superset 'description list' and does not return the same values in AX API on some OS versions. 
     if (m_object->isList()) {
-        AccessibilityList* listObject = static_cast<AccessibilityList*>(m_object);
+        AccessibilityList* listObject = toAccessibilityList(m_object);
         if (listObject->isDescriptionList())
             return AXDescriptionListText();
     }

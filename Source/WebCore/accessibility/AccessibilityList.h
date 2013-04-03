@@ -51,6 +51,12 @@ private:
     virtual bool computeAccessibilityIsIgnored() const;
 };
     
+inline AccessibilityList* toAccessibilityList(AccessibilityObject* object)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(!object || object->isList());
+    return static_cast<AccessibilityList*>(object);
+}
+    
 } // namespace WebCore
 
 #endif // AccessibilityList_h
