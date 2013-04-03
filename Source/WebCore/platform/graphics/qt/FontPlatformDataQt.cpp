@@ -73,10 +73,7 @@ FontPlatformData::FontPlatformData(const FontDescription& description, const Ato
     font.setWeight(toQFontWeight(description.weight()));
     font.setWordSpacing(wordSpacing);
     font.setLetterSpacing(QFont::AbsoluteSpacing, letterSpacing);
-#if QT_VERSION < QT_VERSION_CHECK(5, 1, 0)
-    // To maintain stable baselines for Qt 5.0, keep force integer metrics enabled and ignore font-smoothing setting.
-    font.setStyleStrategy(QFont::ForceIntegerMetrics);
-#else
+#if QT_VERSION >= QT_VERSION_CHECK(5, 1, 0)
     if (description.fontSmoothing() == NoSmoothing
         || (description.fontSmoothing() == AutoSmoothing && !Font::shouldUseSmoothing()))
         font.setStyleStrategy(QFont::NoAntialias);
