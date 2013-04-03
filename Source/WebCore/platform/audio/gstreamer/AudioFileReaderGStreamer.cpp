@@ -100,16 +100,14 @@ private:
 static void copyGstreamerBuffersToAudioChannel(GstBufferList* buffers, AudioChannel* audioChannel)
 {
 #ifdef GST_API_VERSION_1
-    gsize offset = 0;
-    for (unsigned i = 0; i < gst_buffer_list_length(buffers); i++) {
+    float* destination = audioChannel->mutableData();
+    unsigned bufferCount = gst_buffer_list_length(buffers);
+    for (unsigned i = 0; i < bufferCount; ++i) {
         GstBuffer* buffer = gst_buffer_list_get(buffers, i);
-        if (!buffer)
-            continue;
-        GstMapInfo info;
-        gst_buffer_map(buffer, &info, GST_MAP_READ);
-        memcpy(audioChannel->mutableData() + offset, reinterpret_cast<float*>(info.data), info.size);
-        offset += info.size / sizeof(float);
-        gst_buffer_unmap(buffer, &info);
+        ASSERT(buffer);
+        gsize bufferSize = gst_buffer_get_size(buffer);
+        gst_buffer_extract(buffer, 0, destination, bufferSize);
+        destination += bufferSize / sizeof(float);
     }
 #else
     GstBufferListIterator* iter = gst_buffer_list_iterate(buffers);
