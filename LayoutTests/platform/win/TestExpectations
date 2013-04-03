@@ -2740,3 +2740,13 @@ webkit.org/b/113075 media/video-seek-by-small-increment.html [ Pass Crash ]
 webkit.org/b/113076 media/video-volume.html [ Pass Crash ]
 
 webkit.org/b/113106 media/track/track-prefer-captions.html [ Failure ]
+
+# dumpCreateView method not implemented on Windows
+fast/loader/url-selected-user-gesture.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=113908
+css3/filters/composited-layer-bounds-after-sw-blur-animation.html
+css3/filters/composited-layer-bounds-with-composited-blur.html
+css3/filters/composited-layer-child-bounds-after-composited-to-sw-shadow-change.html
+css3/filters/composited-layer-promotion-after-outset-overlap-change-using-composited-shadow.html
+css3/filters/composited-layer-promotion-after-outset-overlap-change-using-sw-shadow.html
