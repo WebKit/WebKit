@@ -111,7 +111,8 @@ GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, H
 {
     if (renderStyle == GraphicsContext3D::RenderToCurrentGLContext) {
         m_platformContext = QOpenGLContext::currentContext();
-        m_surface = m_platformContext->surface();
+        if (m_platformContext)
+            m_surface = m_platformContext->surface();
         return;
     }
 
@@ -395,8 +396,8 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
 {
     validateAttributes();
 
-    if (!m_private->m_surface) {
-        LOG_ERROR("GraphicsContext3D: QGLWidget initialization failed.");
+    if (!m_private->m_surface || !m_private->m_platformContext) {
+        LOG_ERROR("GraphicsContext3D: GL context creation failed.");
         m_private = nullptr;
         return;
     }
