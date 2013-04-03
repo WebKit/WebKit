@@ -2507,8 +2507,7 @@ fast/css3-text/css3-text-align-last/getComputedStyle/getComputedStyle-text-align
 fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-line.html
 fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-decoration-color.html
 fast/css3-text/css3-text-decoration/getComputedStyle/getComputedStyle-text-underline-position.html
-fast/css3-text/css3-text-indent/getComputedStyle/getComputedStyle-text-indent-inherited.html
-fast/css3-text/css3-text-indent/getComputedStyle/getComputedStyle-text-indent.html
+fast/css3-text/css3-text-indent [ Failure ]
 
 # Needs rebaseline.
 webkit.org/b/94198 fast/dom/HTMLImageElement/image-alt-text.html [ Failure ]
