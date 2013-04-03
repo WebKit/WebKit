@@ -67,10 +67,12 @@ WebInspector.NetworkRequest.Events = {
     ResponseHeadersChanged: "ResponseHeadersChanged",
 }
 
+/** @enum {string} */
 WebInspector.NetworkRequest.InitiatorType = {
-    Parser: "parser",
-    Script: "script",
     Other: "other",
+    Parser: "parser",
+    Redirect: "redirect",
+    Script: "script"
 }
 
 /** @typedef {{name: string, value: string}} */
@@ -453,6 +455,7 @@ WebInspector.NetworkRequest.prototype = {
     set redirectSource(x)
     {
         this._redirectSource = x;
+        delete this._initiatorInfo;
     },
 
     /**
@@ -872,6 +875,40 @@ WebInspector.NetworkRequest.prototype = {
             delete this._contentRequested;
         }
         NetworkAgent.getResponseBody(this._requestId, onResourceContent.bind(this));
+    },
+
+    /**
+     * @return {{type: WebInspector.NetworkRequest.InitiatorType, url: string, source: string, lineNumber: number}}
+     */
+    initiatorInfo: function()
+    {
+        if (this._initiatorInfo)
+            return this._initiatorInfo;
+
+        var type = WebInspector.NetworkRequest.InitiatorType.Other;
+        var url = "";
+        var lineNumber = -Infinity;
+
+        if (this.redirectSource) {
+            type = WebInspector.NetworkRequest.InitiatorType.Redirect;
+            url = this.redirectSource.url;
+        } else if (this.initiator) {
+            if (this.initiator.type === NetworkAgent.InitiatorType.Parser) {
+                type = WebInspector.NetworkRequest.InitiatorType.Parser;
+                url = this.initiator.url;
+                lineNumber = this.initiator.lineNumber;
+            } else if (this.initiator.type === NetworkAgent.InitiatorType.Script) {
+                var topFrame = this.initiator.stackTrace[0];
+                if (topFrame.url) {
+                    type = WebInspector.NetworkRequest.InitiatorType.Script;
+                    url = topFrame.url;
+                    lineNumber = topFrame.lineNumber;
+                }
+            }
+        }
+
+        this._initiatorInfo = {type: type, url: url, source: WebInspector.displayNameForURL(url), lineNumber: lineNumber};
+        return this._initiatorInfo;
     },
 
     /**
