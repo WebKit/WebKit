@@ -421,11 +421,6 @@ void TestRunnerQt::evaluateInWebInspector(long callId, const QString& script)
     DumpRenderTreeSupportQt::webInspectorExecuteScript(m_drt->pageAdapter(), callId, script);
 }
 
-void TestRunnerQt::setDefersLoading(bool flag)
-{
-    DumpRenderTreeSupportQt::setDefersLoading(m_drt->pageAdapter(), flag);
-}
-
 void TestRunnerQt::setAllowUniversalAccessFromFileURLs(bool enabled)
 {
     m_drt->webPage()->settings()->setAttribute(QWebSettings::LocalContentCanAccessRemoteUrls, enabled);
@@ -1109,8 +1104,9 @@ void TestRunner::setGeolocationPermission(bool allow)
 {
 }
 
-void TestRunner::setDefersLoading(bool)
+void TestRunner::setDefersLoading(bool flag)
 {
+    DumpRenderTreeSupportQt::setDefersLoading(DumpRenderTree::instance()->pageAdapter(), flag);
 }
 
 void TestRunner::setCacheModel(int)

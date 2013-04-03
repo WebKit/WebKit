@@ -194,7 +194,7 @@ void WebPage::resetSettings()
 
     m_drt->testRunner()->setCaretBrowsingEnabled(false);
     m_drt->testRunner()->setAuthorAndUserStylesEnabled(true);
-    m_drt->testRunner()->setDefersLoading(false);
+    m_drt->jscTestRunner()->setDefersLoading(false);
 
     // globalSettings must be reset explicitly.
     m_drt->testRunner()->setXSSAuditorEnabled(false);

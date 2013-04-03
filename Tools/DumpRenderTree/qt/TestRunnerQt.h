@@ -187,7 +187,6 @@ public Q_SLOTS:
     */
     void setScrollbarPolicy(const QString& orientation, const QString& policy);
 
-    void setDefersLoading(bool);
     void setAlwaysAcceptCookies(bool);
     void setAlwaysBlockCookies(bool);
 

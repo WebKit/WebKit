@@ -89,6 +89,7 @@ public:
     void resetToConsistentStateBeforeTesting(const QUrl&);
 
     TestRunnerQt *testRunner() const { return m_controller; }
+    TestRunner *jscTestRunner() const { return m_jscController.get(); }
     EventSender *eventSender() const { return m_eventSender; }
     TextInputController *textInputController() const { return m_textInputController; }
     QString persistentStoragePath() const { return m_persistentStoragePath; }
