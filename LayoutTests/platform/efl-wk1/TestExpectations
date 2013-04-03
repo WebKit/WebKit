@@ -119,7 +119,6 @@ webkit.org/b/111994 accessibility/canvas-accessibilitynodeobject.html [ Failure 
 webkit.org/b/111996 accessibility/canvas-fallback-content-2.html [ Failure ]
 webkit.org/b/111999 accessibility/disabled-controls-not-focusable.html [ Failure ]
 webkit.org/b/112000 accessibility/heading-level.html [ Failure ]
-webkit.org/b/112001 accessibility/ignore-spacer-elements.html [ Failure ]
 webkit.org/b/112002 accessibility/inline-continuations.html [ Failure ]
 webkit.org/b/112003 accessibility/loading-iframe-sends-notification.html [ Failure ]
 webkit.org/b/112023 accessibility/loading-iframe-updates-axtree.html [ Failure ]

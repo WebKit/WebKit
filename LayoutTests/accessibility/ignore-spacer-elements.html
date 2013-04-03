@@ -24,8 +24,8 @@
             body.focus();
             var container = accessibilityController.focusedElement.childAtIndex(0);
 
-            // The Gtk port ATs expect the bold inline text to not have accessible objects.
-            var expectedCount = (testRunner.platformName == "gtk") ? 2 : 4;
+            // The Gtk and EFL ports ATs expect the bold inline text to not have accessible objects.
+            var expectedCount = (testRunner.platformName == "gtk" || testRunner.platformName == "efl") ? 2 : 4;
             if (container.childrenCount == expectedCount) {
                 result.innerText += "Test passed\n";
             }
