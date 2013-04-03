@@ -275,7 +275,7 @@ http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
 xmlviewer/extensions-api.html
 
 # These test -apple- and -khtml- prefixed CSS properties, which we don't support.
-inspector/styles/vendor-prefixes.html
+inspector/styles/vendor-prefixes.html [ WontFix ]
 
 # There are no expected result set yet.
 editing/unsupported-content/list-delete-001.html 
@@ -309,8 +309,6 @@ fast/profiler/dead-time.html
 
 # following tests started failing on EFL afrer r122952.
 http/tests/inspector/resource-parameters.html
-http/tests/inspector/compiler-source-mapping-debug.html
-http/tests/inspector/console-websocket-error.html
 inspector/styles/svg-style.xhtml
 inspector/debugger/live-edit.html
 inspector/debugger/live-edit-breakpoints.html
