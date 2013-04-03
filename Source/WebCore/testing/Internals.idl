@@ -271,4 +271,6 @@
     [Conditional=SPEECH_SYNTHESIS] void enableMockSpeechSynthesizer();
 
     DOMString getImageSourceURL(in Element element) raises(DOMException);
+
+    boolean isSelectPopupVisible(in Node node);
 };

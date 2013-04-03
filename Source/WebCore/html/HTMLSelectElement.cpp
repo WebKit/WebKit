@@ -1225,6 +1225,13 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event* event)
         }
         event->setDefaultHandled();
     }
+
+    if (event->type() == eventNames().blurEvent) {
+        if (RenderMenuList* menuList = toRenderMenuList(renderer())) {
+            if (menuList->popupIsVisible())
+                menuList->hidePopup();
+        }
+    }
 }
 
 void HTMLSelectElement::updateSelectedState(int listIndex, bool multi, bool shift)

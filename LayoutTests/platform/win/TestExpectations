@@ -208,6 +208,10 @@ fast/events/frame-tab-focus.html
 fast/events/option-tab.html
 fast/forms/focus2.html
 
+# Unidentified crash, possibly related to linking issues?
+# https://bugs.webkit.org/show_bug.cgi?id=113220
+fast/forms/select/popup-closes-on-blur.html [ Crash ]
+
 # fast/html/keygen.html is failing on boomer <rdar://problem/5133799>
 fast/html/keygen.html
 fast/invalid/residual-style.html

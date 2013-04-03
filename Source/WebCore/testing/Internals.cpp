@@ -55,6 +55,7 @@
 #include "HTMLMediaElement.h"
 #endif
 #include "HTMLNames.h"
+#include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
 #include "HistoryItem.h"
 #include "InspectorClient.h"
@@ -77,6 +78,7 @@
 #include "PrintContext.h"
 #include "PseudoElement.h"
 #include "Range.h"
+#include "RenderMenuList.h"
 #include "RenderObject.h"
 #include "RenderTreeAsText.h"
 #include "RuntimeEnabledFeatures.h"
@@ -2101,5 +2103,20 @@ void Internals::simulateAudioInterruption(Node* node)
 #endif
 }
 #endif
+
+bool Internals::isSelectPopupVisible(Node* node)
+{
+    if (!isHTMLSelectElement(node))
+        return false;
+
+    HTMLSelectElement* select = toHTMLSelectElement(node);
+
+    RenderObject* renderer = select->renderer();
+    if (!renderer->isMenuList())
+        return false;
+
+    RenderMenuList* menuList = toRenderMenuList(renderer);
+    return menuList->popupIsVisible();
+}
 
 }
