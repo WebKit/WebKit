@@ -1,3 +1,31 @@
+2013-04-03  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Decouple layout viewport from visual viewport
+        https://bugs.webkit.org/show_bug.cgi?id=113829
+
+        Reviewed by Carlos Garcia Campos.
+
+        Setting the visual viewport would force the layout viewport equal to
+        the visual viewport. Decouple the viewports by allowing the user to
+        specify a layout viewport when setting the viewport(s). The layout
+        viewport could be the exact same value passed for visual viewport, if
+        the old behavior is desired.
+
+        Also reevaluate any viewport arguments when (only) the layout viewport
+        changes in WebPage::setDefaultLayoutSize() since the layout viewport is
+        used as input to the calculation.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setScreenOrientation):
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+        (BlackBerry::WebKit::WebPage::setViewportSize):
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::setDefaultLayoutSize):
+        (BlackBerry::WebKit::WebPage::defaultLayoutSize):
+        * Api/WebPage.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2013-04-02  Maxim Mogilnitsky  <mmogilnitsky@rim.com>
 
         [BlackBerry] API update for IntRect

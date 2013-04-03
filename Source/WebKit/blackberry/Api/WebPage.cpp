@@ -3650,10 +3650,10 @@ void WebPage::applyPendingOrientationIfNeeded()
     d->m_inputHandler->redrawSpellCheckDialogIfRequired(false /* shouldMoveDialog */);
 }
 
-void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize, bool ensureFocusElementVisible)
+bool WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize, const IntSize& defaultLayoutSize, bool ensureFocusElementVisible)
 {
     if (m_pendingOrientation == -1 && transformedActualVisibleSize == this->transformedActualVisibleSize())
-        return;
+        return false;
 
     // Suspend all screen updates to the backingstore to make sure no-one tries to blit
     // while the window surface and the BackingStore are out of sync.
@@ -3678,7 +3678,7 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
     bool atTop = !scrollPosition().y();
     bool atLeft = !scrollPosition().x();
 
-    setDefaultLayoutSize(transformedActualVisibleSize);
+    setDefaultLayoutSize(defaultLayoutSize);
 
     // Recompute our virtual viewport.
     bool needsLayout = false;
@@ -3898,11 +3898,16 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
 
     m_backingStore->d->resumeScreenUpdates(screenResumeOperation);
     m_inputHandler->redrawSpellCheckDialogIfRequired();
+
+    return true;
 }
 
-void WebPage::setViewportSize(const Platform::IntSize& viewportSize, bool ensureFocusElementVisible)
+void WebPage::setViewportSize(const Platform::IntSize& viewportSize, const Platform::IntSize& defaultLayoutSize, bool ensureFocusElementVisible)
 {
-    d->setViewportSize(viewportSize, ensureFocusElementVisible);
+    if (!d->setViewportSize(viewportSize, defaultLayoutSize, ensureFocusElementVisible)) {
+        // If the viewport didn't change, try to apply only the new default layout size.
+        setDefaultLayoutSize(defaultLayoutSize);
+    }
 }
 
 void WebPagePrivate::setDefaultLayoutSize(const IntSize& size)
@@ -3912,14 +3917,30 @@ void WebPagePrivate::setDefaultLayoutSize(const IntSize& size)
     m_defaultLayoutSize = size.expandedTo(minimumLayoutSize).shrunkTo(screenSize);
 }
 
+Platform::IntSize WebPage::defaultLayoutSize() const
+{
+    return d->m_defaultLayoutSize;
+}
+
 void WebPage::setDefaultLayoutSize(const Platform::IntSize& platformSize)
 {
+    bool needsLayout = false;
     WebCore::IntSize size = platformSize;
     if (size == d->m_defaultLayoutSize)
         return;
 
     d->setDefaultLayoutSize(size);
-    bool needsLayout = d->setViewMode(d->viewMode());
+
+    // The default layout size affects interpretation of any viewport arguments present.
+    Platform::IntSize virtualViewportSize = d->recomputeVirtualViewportFromViewportArguments();
+    if (!virtualViewportSize.isEmpty()) {
+        setVirtualViewportSize(virtualViewportSize);
+        needsLayout = true;
+    }
+
+    if (d->setViewMode(d->viewMode()))
+        needsLayout = true;
+
     if (needsLayout) {
         d->setNeedsLayout();
         if (!d->isLoading())

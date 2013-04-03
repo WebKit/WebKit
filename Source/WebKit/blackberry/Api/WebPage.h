@@ -142,13 +142,20 @@ public:
     void applyPendingOrientationIfNeeded();
 
     Platform::ViewportAccessor* webkitThreadViewportAccessor() const;
+
+    // Returns the size of the visual viewport.
     Platform::IntSize viewportSize() const;
-    void setViewportSize(const Platform::IntSize&, bool ensureFocusElementVisible = true);
+
+    // Sets the sizes of the visual viewport and the layout viewport.
+    void setViewportSize(const Platform::IntSize& viewportSize, const Platform::IntSize& defaultLayoutSize, bool ensureFocusElementVisible = true);
 
     void resetVirtualViewportOnCommitted(bool reset);
     void setVirtualViewportSize(const Platform::IntSize&);
 
-    // Used for default layout size unless overridden by web content or by other APIs.
+    // Returns the size of the layout viewport.
+    Platform::IntSize defaultLayoutSize() const;
+
+    // Set the size of the layout viewport, in document coordinates, independently of the visual viewport.
     void setDefaultLayoutSize(const Platform::IntSize&);
 
     bool mouseEvent(const Platform::MouseEvent&, bool* wheelDeltaAccepted = 0);

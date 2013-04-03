@@ -375,9 +375,9 @@ public:
 
     void setScreenOrientation(int);
 
-    // Scroll and/or zoom so that the WebPage fits the new actual
-    // visible size.
-    void setViewportSize(const WebCore::IntSize& transformedActualVisibleSize, bool ensureFocusElementVisible);
+    // Scroll and/or zoom so that the WebPage fits the new actual visible size, a.k.a. visual viewport.
+    // Also sets the default layout size, a.k.a. the layout viewport.
+    bool setViewportSize(const WebCore::IntSize& transformedActualVisibleSize, const WebCore::IntSize& defaultLayoutSize, bool ensureFocusElementVisible);
 
     void scheduleDeferrableTimer(WebCore::Timer<WebPagePrivate>*, double timeOut);
     void unscheduleAllDeferrableTimers();
