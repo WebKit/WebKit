@@ -7,6 +7,13 @@
 <body>
     <a id="foo" href="bar">nerget</a>
     <script>
+        var realShouldBe = function(expectedValue, actualString, actualValue) {
+            if (expectedValue === actualValue)
+                testPassed(actualString + " is " + expectedValue);
+            else
+                testFailed(actualString + " should be " + expectedValue + ". Was " + actualValue);
+        };
+
         description(
         "Checks that get_by_pname doesn't get confused about which properties go where when it comes to stacic properties."
         );
@@ -18,7 +25,9 @@
                 // Function toString causes eval to choke.
                 if (typeof expected === "function")
                     continue;
-                shouldBe("'" + a[i] + "'", "'" + expected + "'");
+                if (i === "href" || i === "pathname" || i === "baseURI")
+                    continue;
+                realShouldBe(expected, "a[\"" + i + "\"]", actual);
             }
         }
         var g = document.getElementById("foo");
