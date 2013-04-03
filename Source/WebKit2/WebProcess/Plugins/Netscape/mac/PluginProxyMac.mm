@@ -31,7 +31,10 @@
 #import "PluginController.h"
 #import "PluginControllerProxyMessages.h"
 #import "PluginProcessConnection.h"
+#import <QuartzCore/QuartzCore.h>
 #import <WebKitSystemInterface.h>
+
+const static double fadeInDuration = 0.5;
 
 namespace WebKit {
 
@@ -50,6 +53,15 @@ PlatformLayer* PluginProxy::pluginLayer()
         // so the coordinate system will match the event coordinate system.
         m_pluginLayer.adoptNS([[CALayer alloc] init]);
         [m_pluginLayer.get() setGeometryFlipped:YES];
+
+        if (m_processType == PluginProcess::TypeRestartedProcess) {
+            CABasicAnimation *fadeInAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
+            fadeInAnimation.fromValue = [NSNumber numberWithFloat:0];
+            fadeInAnimation.toValue = [NSNumber numberWithFloat:1];
+            fadeInAnimation.duration = fadeInDuration;
+            fadeInAnimation.removedOnCompletion = NO;
+            [m_pluginLayer.get() addAnimation:fadeInAnimation forKey:@"restarted-plugin-fade-in"];
+        }
 
         makeRenderLayer(m_pluginLayer.get(), m_remoteLayerClientID);
     }

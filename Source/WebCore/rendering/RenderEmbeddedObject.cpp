@@ -177,9 +177,11 @@ void RenderEmbeddedObject::paintContents(PaintInfo& paintInfo, const LayoutPoint
         return;
 
     HTMLPlugInElement* plugInElement = toHTMLPlugInElement(element);
+
     if (plugInElement->displayState() > HTMLPlugInElement::DisplayingSnapshot) {
         RenderPart::paintContents(paintInfo, paintOffset);
-        return;
+        if (!plugInElement->restartedPlugin())
+            return;
     }
 
     if (!plugInElement->isPlugInImageElement())

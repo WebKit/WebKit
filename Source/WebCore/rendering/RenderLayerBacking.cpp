@@ -42,6 +42,7 @@
 #include "HTMLIFrameElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
+#include "HTMLPlugInElement.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeList.h"
 #include "PluginViewBase.h"
@@ -1449,6 +1450,18 @@ bool RenderLayerBacking::paintsChildren() const
     return false;
 }
 
+static bool isRestartedPlugin(RenderObject* renderer)
+{
+    if (!renderer->isEmbeddedObject())
+        return false;
+
+    Element* element = toElement(renderer->node());
+    if (!element || !element->isPluginElement())
+        return false;
+
+    return toHTMLPlugInElement(element)->restartedPlugin();
+}
+
 static bool isCompositedPlugin(RenderObject* renderer)
 {
     return renderer->isEmbeddedObject() && toRenderEmbeddedObject(renderer)->allowsAcceleratedCompositing();
@@ -1463,9 +1476,9 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
     if (renderObject->hasMask()) // masks require special treatment
         return false;
 
-    if (renderObject->isReplaced() && !isCompositedPlugin(renderObject))
+    if (renderObject->isReplaced() && (!isCompositedPlugin(renderObject) || isRestartedPlugin(renderObject)))
         return false;
-    
+
     if (paintsBoxDecorations() || paintsChildren())
         return false;
 

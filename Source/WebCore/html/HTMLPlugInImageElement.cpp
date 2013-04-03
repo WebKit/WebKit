@@ -65,6 +65,7 @@ static const float autostartSoonAfterUserGestureThreshold = 5.0;
 
 // This delay should not exceed the snapshot delay in PluginView.cpp
 static const double simulatedMouseClickTimerDelay = .75;
+static const double removeSnapshotTimerDelay = 1.5;
 
 HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Document* document, bool createdByParser, PreferPlugInsForImagesOption preferPlugInsForImagesOption)
     : HTMLPlugInElement(tagName, document)
@@ -77,7 +78,9 @@ HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Doc
     , m_needsDocumentActivationCallbacks(false)
     , m_simulatedMouseClickTimer(this, &HTMLPlugInImageElement::simulatedMouseClickTimerFired, simulatedMouseClickTimerDelay)
     , m_swapRendererTimer(this, &HTMLPlugInImageElement::swapRendererTimerFired)
+    , m_removeSnapshotTimer(this, &HTMLPlugInImageElement::removeSnapshotTimerFired)
     , m_createdDuringUserGesture(ScriptController::processingUserGesture())
+    , m_restartedPlugin(false)
 {
     setHasCustomStyleCallbacks();
 }
@@ -93,6 +96,13 @@ void HTMLPlugInImageElement::setDisplayState(DisplayState state)
     HTMLPlugInElement::setDisplayState(state);
     if (displayState() == DisplayingSnapshot)
         m_swapRendererTimer.startOneShot(0);
+
+#if PLATFORM(MAC)
+    if (displayState() == RestartingWithPendingMouseClick || displayState() == Restarting) {
+        m_restartedPlugin = true;
+        m_removeSnapshotTimer.startOneShot(removeSnapshotTimerDelay);
+    }
+#endif
 }
 
 RenderEmbeddedObject* HTMLPlugInImageElement::renderEmbeddedObject() const
@@ -118,7 +128,7 @@ bool HTMLPlugInImageElement::isImageType()
 }
 
 // We don't use m_url, as it may not be the final URL that the object loads,
-// depending on <param> values. 
+// depending on <param> values.
 bool HTMLPlugInImageElement::allowedToLoadFrameURL(const String& url)
 {
     KURL completeURL = document()->completeURL(url);
@@ -131,7 +141,7 @@ bool HTMLPlugInImageElement::allowedToLoadFrameURL(const String& url)
 }
 
 // We don't use m_url, or m_serviceType as they may not be the final values
-// that <object> uses depending on <param> values. 
+// that <object> uses depending on <param> values.
 bool HTMLPlugInImageElement::wouldLoadAsNetscapePlugin(const String& url, const String& serviceType)
 {
     ASSERT(document());
@@ -190,7 +200,7 @@ void HTMLPlugInImageElement::attach()
     PostAttachCallbackDisabler disabler(this);
 
     bool isImage = isImageType();
-    
+
     if (!isImage)
         queuePostAttachCallback(&HTMLPlugInImageElement::updateWidgetCallback, this);
 
@@ -232,10 +242,10 @@ void HTMLPlugInImageElement::finishParsingChildren()
     HTMLPlugInElement::finishParsingChildren();
     if (useFallbackContent())
         return;
-    
+
     setNeedsWidgetUpdate(true);
     if (inDocument())
-        setNeedsStyleRecalc();    
+        setNeedsStyleRecalc();
 }
 
 void HTMLPlugInImageElement::didMoveToNewDocument(Document* oldDocument)
@@ -268,7 +278,7 @@ void HTMLPlugInImageElement::documentDidResumeFromPageCache()
         m_customStyleForPageCache = 0;
         recalcStyle(Force);
     }
-    
+
     HTMLPlugInElement::documentDidResumeFromPageCache();
 }
 
@@ -394,6 +404,13 @@ void HTMLPlugInImageElement::swapRendererTimerFired(Timer<HTMLPlugInImageElement
     // Create a shadow root, which will trigger the code to add a snapshot container
     // and reattach, thus making a new Renderer.
     ensureUserAgentShadowRoot();
+}
+
+void HTMLPlugInImageElement::removeSnapshotTimerFired(Timer<HTMLPlugInImageElement>*)
+{
+    m_snapshotImage = nullptr;
+    m_restartedPlugin = false;
+    renderer()->repaint();
 }
 
 static void addPlugInsFromNodeListMatchingPlugInOrigin(HTMLPlugInImageElementList& plugInList, PassRefPtr<NodeList> collection, const String& plugInOrigin, const String& mimeType)

@@ -1,3 +1,22 @@
+2013-04-03  Dean Jackson  <dino@apple.com>
+
+        Cross fade into restarted plugin
+        https://bugs.webkit.org/show_bug.cgi?id=113868
+
+        Reviewed by Tim Horton.
+
+        Add a new plugin process type that indicates this is a plugin that
+        has been restarted from snapshotting. On Apple ports, this allows
+        us to animate the appearance of the plugin so that it crossfades
+        with the snapshot. Other ports will have to add their own fading.
+
+        * PluginProcess/PluginProcess.h: New Type: TypeRestartedProcess.
+        * WebProcess/Plugins/Netscape/mac/PluginProxyMac.mm:
+        (WebKit::PluginProxy::pluginLayer): When the plugin's CALayer is created, if it
+            is a restarted plugin, add an opacity animation to fade it in.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin): Mark restarted plugins with the new process type.
+
 2013-04-03  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13564588> Add a temporary workaround for a build failure.
