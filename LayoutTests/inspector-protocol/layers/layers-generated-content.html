@@ -51,9 +51,9 @@ function test()
             if (!layer.isGeneratedContent)
                 return;
 
-            if (layer.pseudoClass === "before")
+            if (layer.pseudoElement === "before")
                 beforeLayers.push(layer);
-            if (layer.pseudoClass === "after")
+            if (layer.pseudoElement === "after")
                 afterLayers.push(layer);
         });
 

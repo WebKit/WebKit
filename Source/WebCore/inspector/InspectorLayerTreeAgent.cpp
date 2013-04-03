@@ -165,12 +165,13 @@ PassRefPtr<TypeBuilder::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectFo
 
     bool isReflection = renderLayer->isReflection();
     bool isGenerated = (isReflection ? renderer->parent() : renderer)->isBeforeOrAfterContent();
+    bool isAnonymous = renderer->isAnonymous();
 
     if (isReflection && isGenerated)
         node = renderer->parent()->generatingNode();
     else if (isGenerated)
         node = renderer->generatingNode();
-    else if (isReflection)
+    else if (isReflection || isAnonymous)
         node = renderer->parent()->node();
 
     // Basic set of properties.
@@ -194,9 +195,19 @@ PassRefPtr<TypeBuilder::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectFo
         layerObject->setIsGeneratedContent(true);
         layerObject->setPseudoElementId(bindPseudoElement(static_cast<PseudoElement*>(renderer->node())));
         if (renderer->isBeforeContent())
-            layerObject->setPseudoClass("before");
+            layerObject->setPseudoElement("before");
         else if (renderer->isAfterContent())
-            layerObject->setPseudoClass("after");
+            layerObject->setPseudoElement("after");
+    }
+
+    if (isAnonymous) {
+        layerObject->setIsAnonymous(true);
+        if (RenderStyle* style = renderer->style()) {
+            if (style->styleType() == FIRST_LETTER)
+                layerObject->setPseudoElement("first-letter");
+            else if (style->styleType() == FIRST_LINE)
+                layerObject->setPseudoElement("first-line");
+        }
     }
 
     return layerObject;
@@ -204,6 +215,9 @@ PassRefPtr<TypeBuilder::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectFo
 
 int InspectorLayerTreeAgent::idForNode(ErrorString* errorString, Node* node)
 {
+    if (!node)
+        return 0;
+
     InspectorDOMAgent* domAgent = m_instrumentingAgents->inspectorDOMAgent();
     
     int nodeId = domAgent->boundNodeId(node);
