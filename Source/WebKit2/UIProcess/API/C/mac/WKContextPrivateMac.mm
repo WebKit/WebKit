@@ -26,15 +26,68 @@
 #import "config.h"
 #import "WKContextPrivateMac.h"
 
+#import "ImmutableDictionary.h"
+#import "PluginInfoStore.h"
+#import "StringUtilities.h"
 #import "WKAPICast.h"
+#import "WKSharedAPICast.h"
 #import "WKStringCF.h"
 #import "WebContext.h"
+#import "WebNumber.h"
+#import "WebString.h"
 #import <WebKitSystemInterface.h>
 #import <wtf/RetainPtr.h>
 
 using namespace WebKit;
 
-bool WKContextIsPlugInUpdateAvailable(WKContextRef context, WKStringRef plugInBundleIdentifier)
+bool WKContextIsPlugInUpdateAvailable(WKContextRef contextRef, WKStringRef plugInBundleIdentifierRef)
 {
-    return WKIsPluginUpdateAvailable((NSString *)adoptCF(WKStringCopyCFString(kCFAllocatorDefault, plugInBundleIdentifier)).get());
+    return WKIsPluginUpdateAvailable((NSString *)adoptCF(WKStringCopyCFString(kCFAllocatorDefault, plugInBundleIdentifierRef)).get());
+}
+
+
+WKStringRef WKPlugInInfoPathKey()
+{
+    static WebString* key = WebString::createFromUTF8String("WKPlugInInfoPath").leakRef();
+    return toAPI(key);
+}
+
+WKStringRef WKPlugInInfoBundleIdentifierKey()
+{
+    static WebString* key = WebString::createFromUTF8String("WKPlugInInfoBundleIdentifier").leakRef();
+    return toAPI(key);
+}
+
+WKStringRef WKPlugInInfoVersionKey()
+{
+    static WebString* key = WebString::createFromUTF8String("WKPlugInInfoVersion").leakRef();
+    return toAPI(key);
+}
+
+WKStringRef WKPlugInInfoLoadPolicyKey()
+{
+    static WebString* key = WebString::createFromUTF8String("WKPlugInInfoLoadPolicy").leakRef();
+    return toAPI(key);
+}
+
+WKStringRef WKPlugInInfoUpdatePastLastBlockedVersionIsKnownAvailableKey()
+{
+    static WebString* key = WebString::createFromUTF8String("WKPlugInInfoUpdatePastLastBlockedVersionIsKnownAvailable").leakRef();
+    return toAPI(key);
+}
+
+WKDictionaryRef WKContextCopyPlugInInfoForBundleIdentifier(WKContextRef contextRef, WKStringRef plugInBundleIdentifierRef)
+{
+    PluginModuleInfo info = toImpl(contextRef)->pluginInfoStore().findPluginWithBundleIdentifier(toWTFString(plugInBundleIdentifierRef));
+    if (info.path.isNull())
+        return 0;
+
+    ImmutableDictionary::MapType map;
+    map.set(toWTFString(WKPlugInInfoPathKey()), WebString::create(info.path));
+    map.set(toWTFString(WKPlugInInfoBundleIdentifierKey()), WebString::create(info.bundleIdentifier));
+    map.set(toWTFString(WKPlugInInfoVersionKey()), WebString::create(info.versionString));
+    map.set(toWTFString(WKPlugInInfoLoadPolicyKey()), WebUInt64::create(toWKPluginLoadPolicy(PluginInfoStore::policyForPlugin(info))));
+    map.set(toWTFString(WKPlugInInfoUpdatePastLastBlockedVersionIsKnownAvailableKey()), WebBoolean::create(WKIsPluginUpdateAvailable(nsStringFromWebCoreString(info.bundleIdentifier))));
+
+    return toAPI(ImmutableDictionary::adopt(map).leakRef());
 }
