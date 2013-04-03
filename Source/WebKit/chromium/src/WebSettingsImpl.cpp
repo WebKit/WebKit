@@ -57,6 +57,7 @@ WebSettingsImpl::WebSettingsImpl(Settings* settings)
     , m_autoZoomFocusedNodeToLegibleScale(false)
     , m_deferredImageDecodingEnabled(false)
     , m_doubleTapToZoomEnabled(false)
+    , m_supportDeprecatedTargetDensityDPI(false)
 {
     ASSERT(settings);
 }
@@ -192,6 +193,11 @@ void WebSettingsImpl::setWebSecurityEnabled(bool enabled)
 void WebSettingsImpl::setJavaScriptCanOpenWindowsAutomatically(bool canOpenWindows)
 {
     m_settings->setJavaScriptCanOpenWindowsAutomatically(canOpenWindows);
+}
+
+void WebSettingsImpl::setSupportDeprecatedTargetDensityDPI(bool supportDeprecatedTargetDensityDPI)
+{
+    m_supportDeprecatedTargetDensityDPI = supportDeprecatedTargetDensityDPI;
 }
 
 void WebSettingsImpl::setSupportsMultipleWindows(bool supportsMultipleWindows)

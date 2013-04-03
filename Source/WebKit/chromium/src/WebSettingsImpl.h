@@ -149,6 +149,7 @@ public:
     virtual void setShrinksStandaloneImagesToFit(bool);
     virtual void setSmartInsertDeleteEnabled(bool);
     virtual void setStandardFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON);
+    virtual void setSupportDeprecatedTargetDensityDPI(bool);
     virtual void setSupportsMultipleWindows(bool);
     virtual void setSyncXHRInDocumentsEnabled(bool);
     virtual void setTextAreasAreResizable(bool);
@@ -180,6 +181,7 @@ public:
     bool gestureTapHighlightEnabled() const { return m_gestureTapHighlightEnabled; }
     bool doubleTapToZoomEnabled() const { return m_doubleTapToZoomEnabled; }
     bool perTilePaintingEnabled() const { return m_perTilePaintingEnabled; }
+    bool supportDeprecatedTargetDensityDPI() const { return m_supportDeprecatedTargetDensityDPI; }
 
 private:
     WebCore::Settings* m_settings;
@@ -193,6 +195,7 @@ private:
     bool m_deferredImageDecodingEnabled;
     bool m_doubleTapToZoomEnabled;
     bool m_perTilePaintingEnabled;
+    bool m_supportDeprecatedTargetDensityDPI;
 };
 
 } // namespace WebKit

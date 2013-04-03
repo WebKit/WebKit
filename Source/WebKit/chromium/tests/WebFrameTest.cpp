@@ -573,6 +573,29 @@ TEST_F(WebFrameTest, pageScaleFactorDoesNotApplyCssTransform)
     EXPECT_EQ(980, webViewImpl->page()->mainFrame()->contentRenderer()->unscaledDocumentRect().width());
     EXPECT_EQ(980, webViewImpl->mainFrameImpl()->frameView()->contentsSize().width());
 }
+
+TEST_F(WebFrameTest, targetDensityDpiHigh)
+{
+    registerMockedHttpURLLoad("viewport-target-densitydpi-high.html");
+
+    FixedLayoutTestWebViewClient client;
+    client.m_screenInfo.deviceScaleFactor = 4.0f / 3.0f;
+    int viewportWidth = 640;
+    int viewportHeight = 480;
+
+    m_webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "viewport-target-densitydpi-high.html", true, 0, &client);
+    m_webView->settings()->setApplyDeviceScaleFactorInCompositor(true);
+    m_webView->settings()->setApplyPageScaleFactorInCompositor(true);
+    m_webView->enableFixedLayoutMode(true);
+    m_webView->settings()->setViewportEnabled(true);
+    m_webView->settings()->setSupportDeprecatedTargetDensityDPI(true);
+    m_webView->resize(WebSize(viewportWidth, viewportHeight));
+
+    // high-dpi = 240, device-dpi = 160
+    EXPECT_EQ(viewportWidth * (240.0f / 160.0f), m_webView->fixedLayoutSize().width);
+    EXPECT_EQ(viewportHeight * (240.0f / 160.0f), m_webView->fixedLayoutSize().height);
+    EXPECT_EQ(160.0f / 240.0f, m_webView->pageScaleFactor());
+}
 #endif
 
 TEST_F(WebFrameTest, pageScaleFactorScalesPaintClip)

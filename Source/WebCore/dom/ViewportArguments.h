@@ -73,7 +73,11 @@ struct ViewportArguments {
         ValueDeviceWidth = -2,
         ValueDeviceHeight = -3,
         ValuePortrait = -4,
-        ValueLandscape = -5
+        ValueLandscape = -5,
+        ValueDeviceDPI = -6,
+        ValueLowDPI = -7,
+        ValueMediumDPI = -8,
+        ValueHighDPI = -9
     };
 
     ViewportArguments(Type type = Implicit)
@@ -89,6 +93,7 @@ struct ViewportArguments {
         , maxZoom(ValueAuto)
         , userZoom(ValueAuto)
         , orientation(ValueAuto)
+        , deprecatedTargetDensityDPI(ValueAuto)
     {
     }
 
@@ -106,6 +111,7 @@ struct ViewportArguments {
     float maxZoom;
     float userZoom;
     float orientation;
+    float deprecatedTargetDensityDPI; // Only used for Android WebView
 
     bool operator==(const ViewportArguments& other) const
     {
@@ -121,7 +127,8 @@ struct ViewportArguments {
             && minZoom == other.minZoom
             && maxZoom == other.maxZoom
             && userZoom == other.userZoom
-            && orientation == other.orientation;
+            && orientation == other.orientation
+            && deprecatedTargetDensityDPI == other.deprecatedTargetDensityDPI;
     }
 
     bool operator!=(const ViewportArguments& other) const

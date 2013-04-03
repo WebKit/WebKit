@@ -1,3 +1,32 @@
+2013-04-03  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Implement target-densityDpi viewport property emulation
+        https://bugs.webkit.org/show_bug.cgi?id=110835
+
+        The value is only used in the Chromium port, when the corresponding
+        setting is enabled.
+
+        This is needed for supporting existing WebView-based applications
+        that rely on this property.
+
+        Reviewed by Adam Barth.
+
+        * public/WebSettings.h:
+        (WebSettings):
+        * src/ChromeClientImpl.cpp:
+        (WebKit):
+        (WebKit::calculateTargetDensityDPIFactor):
+        (WebKit::ChromeClientImpl::dispatchViewportPropertiesDidChange):
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::WebSettingsImpl):
+        (WebKit::WebSettingsImpl::setSupportDeprecatedTargetDensityDPI):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+        (WebKit::WebSettingsImpl::supportDeprecatedTargetDensityDPI):
+        * tests/WebFrameTest.cpp:
+        * tests/data/viewport-target-densitydpi-high.html: Added.
+
 2013-04-02  James Craig  <james@cookiecrook.com>
 
         AXRoleDescripton for DL is "list"; should be "description list"

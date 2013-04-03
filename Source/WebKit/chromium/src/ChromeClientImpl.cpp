@@ -624,6 +624,21 @@ void ChromeClientImpl::setToolTip(const String& tooltipText, TextDirection dir)
         tooltipText, textDirection);
 }
 
+
+static float calculateTargetDensityDPIFactor(const ViewportArguments& arguments, float deviceScaleFactor)
+{
+    float targetDPI = -1.0f;
+    if (arguments.deprecatedTargetDensityDPI == ViewportArguments::ValueLowDPI)
+        targetDPI = 120.0f;
+    else if (arguments.deprecatedTargetDensityDPI == ViewportArguments::ValueMediumDPI)
+        targetDPI = 160.0f;
+    else if (arguments.deprecatedTargetDensityDPI == ViewportArguments::ValueHighDPI)
+        targetDPI = 240.0f;
+    else if (arguments.deprecatedTargetDensityDPI != ViewportArguments::ValueAuto && arguments.deprecatedTargetDensityDPI != ViewportArguments::ValueDeviceDPI)
+        targetDPI = arguments.deprecatedTargetDensityDPI;
+    return targetDPI > 0 ? (deviceScaleFactor * 120.0f) / targetDPI : 1.0f;
+}
+
 void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArguments& arguments) const
 {
 #if ENABLE(VIEWPORT)
@@ -646,6 +661,14 @@ void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArgumen
     }
     if (arguments.zoom == ViewportArguments::ValueAuto && !m_webView->settingsImpl()->initializeAtMinimumPageScale())
         computed.initialScale = 1.0f;
+
+    if (m_webView->settingsImpl()->supportDeprecatedTargetDensityDPI()) {
+        float targetDensityDPIFactor = calculateTargetDensityDPIFactor(arguments, deviceScaleFactor);
+        computed.initialScale *= targetDensityDPIFactor;
+        computed.minimumScale *= targetDensityDPIFactor;
+        computed.maximumScale *= targetDensityDPIFactor;
+        computed.layoutSize.scale(1.0f / targetDensityDPIFactor);
+    }
 
     m_webView->setInitialPageScaleFactor(computed.initialScale);
     m_webView->setFixedLayoutSize(flooredIntSize(computed.layoutSize));

@@ -153,6 +153,7 @@ public:
     virtual void setShrinksStandaloneImagesToFit(bool) = 0;
     virtual void setSmartInsertDeleteEnabled(bool) = 0;
     virtual void setStandardFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON) = 0;
+    virtual void setSupportDeprecatedTargetDensityDPI(bool) = 0;
     virtual void setSupportsMultipleWindows(bool) = 0;
     virtual void setSyncXHRInDocumentsEnabled(bool) = 0;
     virtual void setTextAreasAreResizable(bool) = 0;
