@@ -421,11 +421,6 @@ void TestRunnerQt::evaluateInWebInspector(long callId, const QString& script)
     DumpRenderTreeSupportQt::webInspectorExecuteScript(m_drt->pageAdapter(), callId, script);
 }
 
-void TestRunnerQt::goBack()
-{
-    DumpRenderTreeSupportQt::goBack(m_drt->pageAdapter());
-}
-
 void TestRunnerQt::setDefersLoading(bool flag)
 {
     DumpRenderTreeSupportQt::setDefersLoading(m_drt->pageAdapter(), flag);
@@ -746,22 +741,6 @@ void TestRunnerQt::setMockGeolocationPosition(double latitude, double longitude,
         DumpRenderTreeSupportQt::setMockGeolocationPosition(page->handle(), latitude, longitude, accuracy);
 }
 
-void TestRunnerQt::startSpeechInput(const QString& inputElement)
-{
-    // FIXME: Implement for speech input layout tests.
-    // See https://bugs.webkit.org/show_bug.cgi?id=39485.
-}
-
-void TestRunnerQt::evaluateScriptInIsolatedWorld(int worldID, const QString& script)
-{
-    DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld(m_drt->mainFrameAdapter(), worldID, script);
-}
-
-void TestRunnerQt::addUserStyleSheet(const QString& sourceCode)
-{
-    DumpRenderTreeSupportQt::addUserStyleSheet(m_drt->pageAdapter(), sourceCode);
-}
-
 void TestRunnerQt::removeAllVisitedLinks()
 {
     QWebHistory* history = m_drt->webPage()->history();
@@ -772,16 +751,6 @@ void TestRunnerQt::removeAllVisitedLinks()
 void TestRunnerQt::addURLToRedirect(const QString& origin, const QString& destination)
 {
     DumpRenderTreeSupportQt::addURLToRedirect(origin, destination);
-}
-
-void TestRunnerQt::setTextDirection(const QString& directionName)
-{
-    if (directionName == "auto")
-        m_drt->webPage()->triggerAction(QWebPage::SetTextDirectionDefault);
-    else if (directionName == "rtl")
-        m_drt->webPage()->triggerAction(QWebPage::SetTextDirectionRightToLeft);
-    else if (directionName == "ltr")
-        m_drt->webPage()->triggerAction(QWebPage::SetTextDirectionLeftToRight);
 }
 
 void TestRunnerQt::setAlwaysAcceptCookies(bool accept)
@@ -859,8 +828,15 @@ void TestRunner::clearAllApplicationCaches()
 {
 }
 
-void TestRunner::setTextDirection(JSStringRef)
+void TestRunner::setTextDirection(JSStringRef directionName)
 {
+    QWebPage* webPage = DumpRenderTree::instance()->webPage();
+    if (JSStringIsEqualToUTF8CString(directionName, "auto"))
+        webPage->triggerAction(QWebPage::SetTextDirectionDefault);
+    else if (JSStringIsEqualToUTF8CString(directionName, "rtl"))
+        webPage->triggerAction(QWebPage::SetTextDirectionRightToLeft);
+    else if (JSStringIsEqualToUTF8CString(directionName, "ltr"))
+        webPage->triggerAction(QWebPage::SetTextDirectionLeftToRight);
 }
 
 void TestRunner::notifyDone()
@@ -990,6 +966,7 @@ void TestRunner::keepWebHistory()
 
 void TestRunner::goBack()
 {
+    DumpRenderTreeSupportQt::goBack(DumpRenderTree::instance()->pageAdapter());
 }
 
 JSValueRef TestRunner::originsWithApplicationCache(JSContextRef context)
@@ -1199,6 +1176,7 @@ bool TestRunner::isCommandEnabled(JSStringRef name)
 
 void TestRunner::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
 {
+    DumpRenderTreeSupportQt::evaluateScriptInIsolatedWorld(DumpRenderTree::instance()->mainFrameAdapter(), worldID, JSStringCopyQString(script));
 }
 
 void TestRunner::evaluateScriptInIsolatedWorldAndReturnValue(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
@@ -1212,6 +1190,7 @@ JSStringRef TestRunner::copyEncodedHostName(JSStringRef name)
 
 void TestRunner::addUserStyleSheet(JSStringRef source, bool allFrames)
 {
+    DumpRenderTreeSupportQt::addUserStyleSheet(DumpRenderTree::instance()->pageAdapter(), JSStringCopyQString(source));
 }
 
 void TestRunner::execCommand(JSStringRef name, JSStringRef value)

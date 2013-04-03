@@ -179,8 +179,6 @@ public Q_SLOTS:
     bool isGeolocationPermissionSet() const { return m_isGeolocationPermissionSet; }
     bool geolocationPermission() const { return m_geolocationPermission; }
 
-    void startSpeechInput(const QString& inputElement);
-
     void addURLToRedirect(const QString& origin, const QString& destination);
 
     /*
@@ -189,11 +187,6 @@ public Q_SLOTS:
     */
     void setScrollbarPolicy(const QString& orientation, const QString& policy);
 
-    void evaluateScriptInIsolatedWorld(int worldID, const QString& script);
-    void addUserStyleSheet(const QString& sourceCode);
-    
-    void setTextDirection(const QString& directionName);
-    void goBack();
     void setDefersLoading(bool);
     void setAlwaysAcceptCookies(bool);
     void setAlwaysBlockCookies(bool);
