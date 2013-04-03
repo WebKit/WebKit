@@ -1,3 +1,10 @@
+2013-04-02  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Disable running tests on Win EWS queue.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (WinEWS):
+
 2013-04-02  Lucas Forschler  <lforschler@apple.com>
 
         Disable running tests on the MAC WK2 EWS queue.
