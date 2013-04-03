@@ -296,7 +296,7 @@ int WebSocketHandshake::readServerHandshake(const char* header, size_t len)
         m_mode = Failed; // m_failureReason is set inside readStatusLine().
         return len;
     }
-    LOG(Network, "response code: %d", statusCode);
+    LOG(Network, "WebSocketHandshake %p readServerHandshake() Status code is %d", this, statusCode);
     m_response.setStatusCode(statusCode);
     m_response.setStatusText(statusText);
     if (statusCode != 101) {
@@ -312,12 +312,12 @@ int WebSocketHandshake::readServerHandshake(const char* header, size_t len)
     }
     const char* p = readHTTPHeaders(header + lineLength, header + len);
     if (!p) {
-        LOG(Network, "readHTTPHeaders failed");
+        LOG(Network, "WebSocketHandshake %p readServerHandshake() readHTTPHeaders() failed", this);
         m_mode = Failed; // m_failureReason is set inside readHTTPHeaders().
         return len;
     }
     if (!checkResponseHeaders()) {
-        LOG(Network, "header process failed");
+        LOG(Network, "WebSocketHandshake %p readServerHandshake() checkResponseHeaders() failed", this);
         m_mode = Failed;
         return p - header;
     }

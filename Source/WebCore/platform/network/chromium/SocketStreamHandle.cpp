@@ -59,7 +59,7 @@ SocketStreamHandleInternal::~SocketStreamHandleInternal()
 void SocketStreamHandleInternal::connect(const KURL& url)
 {
     m_socket = adoptPtr(WebKit::Platform::current()->createSocketStreamHandle());
-    LOG(Network, "connect");
+    LOG(Network, "SocketStreamHandleInternal %p connect()", this);
     ASSERT(m_socket);
     ASSERT(m_handle);
     if (m_handle->m_client)
@@ -69,12 +69,12 @@ void SocketStreamHandleInternal::connect(const KURL& url)
 
 int SocketStreamHandleInternal::send(const char* data, int len)
 {
-    LOG(Network, "send len=%d", len);
+    LOG(Network, "SocketStreamHandleInternal %p send() len=%d", this, len);
     // FIXME: |m_socket| should not be null here, but it seems that there is the
     // case. We should figure out such a path and fix it rather than checking
     // null here.
     if (!m_socket) {
-        LOG(Network, "m_socket is null when sending. It should not be.");
+        LOG(Network, "SocketStreamHandleInternal %p send() m_socket is NULL", this);
         return 0;
     }
     if (m_pendingAmountSent + len > m_maxPendingSendAllowed)
@@ -85,24 +85,23 @@ int SocketStreamHandleInternal::send(const char* data, int len)
     WebKit::WebData webdata(data, len);
     if (m_socket->send(webdata)) {
         m_pendingAmountSent += len;
-        LOG(Network, "sent");
+        LOG(Network, "SocketStreamHandleInternal %p send() Sent %d bytes", this, len);
         return len;
     }
-    LOG(Network, "busy. buffering");
+    LOG(Network, "SocketStreamHandleInternal %p send() m_socket->send() failed", this);
     return 0;
 }
 
 void SocketStreamHandleInternal::close()
 {
-    LOG(Network, "close");
+    LOG(Network, "SocketStreamHandleInternal %p close()", this);
     if (m_socket)
         m_socket->close();
 }
 
 void SocketStreamHandleInternal::didOpenStream(WebKit::WebSocketStreamHandle* socketHandle, int maxPendingSendAllowed)
 {
-    LOG(Network, "SocketStreamHandleInternal::didOpen %d",
-        maxPendingSendAllowed);
+    LOG(Network, "SocketStreamHandleInternal %p didOpenStream() maxPendingSendAllowed=%d", this, maxPendingSendAllowed);
     ASSERT(maxPendingSendAllowed > 0);
     if (m_handle && m_socket) {
         ASSERT(socketHandle == m_socket.get());
@@ -113,12 +112,12 @@ void SocketStreamHandleInternal::didOpenStream(WebKit::WebSocketStreamHandle* so
             return;
         }
     }
-    LOG(Network, "no m_handle or m_socket?");
+    LOG(Network, "SocketStreamHandleInternal %p didOpenStream() m_handle or m_socket is NULL", this);
 }
 
 void SocketStreamHandleInternal::didSendData(WebKit::WebSocketStreamHandle* socketHandle, int amountSent)
 {
-    LOG(Network, "SocketStreamHandleInternal::didSendData %d", amountSent);
+    LOG(Network, "SocketStreamHandleInternal %p didSendData() amountSent=%d", this, amountSent);
     ASSERT(amountSent > 0);
     if (m_handle && m_socket) {
         ASSERT(socketHandle == m_socket.get());
@@ -130,7 +129,7 @@ void SocketStreamHandleInternal::didSendData(WebKit::WebSocketStreamHandle* sock
 
 void SocketStreamHandleInternal::didReceiveData(WebKit::WebSocketStreamHandle* socketHandle, const WebKit::WebData& data)
 {
-    LOG(Network, "didReceiveData");
+    LOG(Network, "SocketStreamHandleInternal %p didReceiveData() Received %lu bytes", this, data.size());
     if (m_handle && m_socket) {
         ASSERT(socketHandle == m_socket.get());
         if (m_handle->m_client)
@@ -140,7 +139,7 @@ void SocketStreamHandleInternal::didReceiveData(WebKit::WebSocketStreamHandle* s
 
 void SocketStreamHandleInternal::didClose(WebKit::WebSocketStreamHandle* socketHandle)
 {
-    LOG(Network, "didClose");
+    LOG(Network, "SocketStreamHandleInternal %p didClose()", this);
     if (m_handle && m_socket) {
         ASSERT(socketHandle == m_socket.get());
         m_socket.clear();
@@ -153,7 +152,7 @@ void SocketStreamHandleInternal::didClose(WebKit::WebSocketStreamHandle* socketH
 
 void SocketStreamHandleInternal::didFail(WebKit::WebSocketStreamHandle* socketHandle, const WebKit::WebSocketStreamError& err)
 {
-    LOG(Network, "didFail");
+    LOG(Network, "SocketStreamHandleInternal %p didFail()", this);
     if (m_handle && m_socket) {
         ASSERT(socketHandle == m_socket.get());
         m_socket.clear();

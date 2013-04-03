@@ -71,7 +71,7 @@ WebSocketDeflater::~WebSocketDeflater()
 {
     int result = deflateEnd(m_stream.get());
     if (result != Z_OK)
-        LOG(Network, "deflateEnd() failed: %d", result);
+        LOG(Network, "WebSocketDeflater %p Destructor deflateEnd() failed: %d is returned", this, result);
 }
 
 static void setStreamParameter(z_stream* stream, const char* inputData, size_t inputLength, char* outputData, size_t outputLength)
@@ -148,7 +148,7 @@ WebSocketInflater::~WebSocketInflater()
 {
     int result = inflateEnd(m_stream.get());
     if (result != Z_OK)
-        LOG(Network, "inflateEnd() failed: %d", result);
+        LOG(Network, "WebSocketInflater %p Destructor inflateEnd() failed: %d is returned", this, result);
 }
 
 bool WebSocketInflater::addBytes(const char* data, size_t length)
