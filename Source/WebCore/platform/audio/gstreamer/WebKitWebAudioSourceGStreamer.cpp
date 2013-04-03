@@ -372,9 +372,11 @@ static void webKitWebAudioSrcLoop(WebKitWebAudioSrc* src)
     // FIXME: Add support for local/live audio input.
     priv->provider->render(0, priv->bus, priv->framesToPull);
 
-    for (int i = g_slist_length(priv->pads) - 1; i >= 0; i--) {
-        GstPad* pad = static_cast<GstPad*>(g_slist_nth_data(priv->pads, i));
-        GstBuffer* channelBuffer = static_cast<GstBuffer*>(g_slist_nth_data(channelBufferList, i));
+    GSList* padsIt;
+    GSList* buffersIt;
+    for (padsIt = priv->pads, buffersIt = channelBufferList; padsIt && buffersIt; padsIt = g_slist_next(padsIt), buffersIt = g_slist_next(buffersIt)) {
+        GstPad* pad = static_cast<GstPad*>(padsIt->data);
+        GstBuffer* channelBuffer = static_cast<GstBuffer*>(buffersIt->data);
 
 #ifndef GST_API_VERSION_1
         GRefPtr<GstCaps> monoCaps = adoptGRef(getGStreamerMonoAudioCaps(priv->sampleRate));
