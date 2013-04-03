@@ -40,7 +40,6 @@
 #include "WKProtectionSpaceTypes.h"
 #include "WKResourceCacheManager.h"
 #include "WKSharedAPICast.h"
-#include "WebGrammarDetail.h"
 #include <WebCore/Credential.h>
 #include <WebCore/CookieJar.h>
 #include <WebCore/FrameLoaderTypes.h>
