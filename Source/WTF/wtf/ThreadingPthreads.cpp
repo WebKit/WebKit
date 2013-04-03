@@ -56,7 +56,7 @@
 #include <sys/time.h>
 #endif
 
-#if OS(MAC_OS_X) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
+#if OS(MAC_OS_X)
 #include <objc/objc-auto.h>
 #endif
 
@@ -223,7 +223,7 @@ void initializeCurrentThreadInternal(const char* threadName)
     UNUSED_PARAM(threadName);
 #endif
 
-#if OS(MAC_OS_X) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
+#if OS(MAC_OS_X)
     // All threads that potentially use APIs above the BSD layer must be registered with the Objective-C
     // garbage collector in case API implementations use garbage-collected memory.
     objc_registerThreadWithCollector();

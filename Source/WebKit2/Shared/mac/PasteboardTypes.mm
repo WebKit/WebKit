@@ -44,9 +44,6 @@ static inline NSArray *retain(NSArray *array)
 NSArray* PasteboardTypes::forEditing()
 {
     static NSArray *types = retain([NSArray arrayWithObjects:WebArchivePboardType, NSHTMLPboardType, NSFilenamesPboardType, NSTIFFPboardType, NSPDFPboardType,
-#if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-        NSPICTPboardType,
-#endif
         NSURLPboardType, NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, NSColorPboardType, kUTTypePNG, nil]);
     return types;
 }

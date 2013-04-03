@@ -1,3 +1,15 @@
+2013-04-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove code for Mac 10.5 and earlier from WTF and WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=113844
+
+        Reviewed by Benjamin Poulain.
+
+        Removed the code for 10.5 and removed if-def for 10.6.
+
+        * Shared/mac/PasteboardTypes.mm:
+        (WebKit::PasteboardTypes::forEditing):
+
 2013-04-02  Anders Carlsson  <andersca@apple.com>
 
         Be more robust against empty message receiver names in incoming messages
