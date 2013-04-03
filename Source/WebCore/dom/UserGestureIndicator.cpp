@@ -130,4 +130,18 @@ UserGestureToken* UserGestureIndicator::currentToken()
     return s_topmostIndicator->m_token.get();
 }
 
+UserGestureIndicatorDisabler::UserGestureIndicatorDisabler()
+    : m_savedState(UserGestureIndicator::s_state)
+    , m_savedIndicator(UserGestureIndicator::s_topmostIndicator)
+{
+    UserGestureIndicator::s_state = DefinitelyNotProcessingUserGesture;
+    UserGestureIndicator::s_topmostIndicator = 0;
+}
+
+UserGestureIndicatorDisabler::~UserGestureIndicatorDisabler()
+{
+    UserGestureIndicator::s_state = m_savedState;
+    UserGestureIndicator::s_topmostIndicator = m_savedIndicator;
+}
+
 }
