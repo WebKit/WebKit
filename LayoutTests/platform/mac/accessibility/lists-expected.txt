@@ -69,7 +69,7 @@ AXARIABusy: 0
 ------------
 AXRole: AXList
 AXSubrole: AXDescriptionList
-AXRoleDescription: list
+AXRoleDescription: description list
 AXChildren: <array of size 5>
 AXHelp: 
 AXParent: <AXList>

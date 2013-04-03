@@ -153,6 +153,7 @@ namespace WebCore {
     String AXImageMapText();
     String AXHeadingText();
     String AXDefinitionText();
+    String AXDescriptionListText();
     String AXDescriptionListTermText();
     String AXDescriptionListDetailText();
     String AXFooterRoleDescriptionText();

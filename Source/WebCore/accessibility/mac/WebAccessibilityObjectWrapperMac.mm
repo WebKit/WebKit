@@ -1590,6 +1590,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { DefinitionRole, NSAccessibilityGroupRole },
         { DescriptionListDetailRole, NSAccessibilityGroupRole },
         { DescriptionListTermRole, NSAccessibilityGroupRole },
+        { DescriptionListRole, NSAccessibilityListRole },
         { SliderThumbRole, NSAccessibilityValueIndicatorRole },
         { LandmarkApplicationRole, NSAccessibilityGroupRole },
         { LandmarkBannerRole, NSAccessibilityGroupRole },
@@ -1740,6 +1741,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return @"AXTabPanel";
         case DefinitionRole:
             return @"AXDefinition";
+        case DescriptionListRole:
+            return @"AXDescriptionList";
         case DescriptionListTermRole:
             return @"AXTerm";
         case DescriptionListDetailRole:
@@ -1875,6 +1878,14 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     
     if (m_object->isFileUploadButton())
         return AXFileUploadButtonText();
+    
+    // Only returning for DL (not UL or OL) because description changed with HTML5 from 'definition list' to
+    // superset 'description list' and does not return the same values in AX API on some OS versions. 
+    if (m_object->isList()) {
+        AccessibilityList* listObject = static_cast<AccessibilityList*>(m_object);
+        if (listObject->isDescriptionList())
+            return AXDescriptionListText();
+    }
     
     // AppKit also returns AXTab for the role description for a tab item.
     if (m_object->isTabItem())

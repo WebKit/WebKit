@@ -170,6 +170,8 @@ string roleToString(WebAccessibilityRole role)
         return result.append("TableHeaderContainer");
     case WebAccessibilityRoleDefinition:
         return result.append("Definition");
+    case WebAccessibilityRoleDescriptionList:
+        return result.append("DescriptionList");
     case WebAccessibilityRoleDescriptionListTerm:
         return result.append("DescriptionListTerm");
     case WebAccessibilityRoleDescriptionListDetail:

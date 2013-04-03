@@ -385,6 +385,12 @@ String AXDefinitionText()
     return String();
 }
 
+String AXDescriptionListText()
+{
+    notImplemented();
+    return String();
+}
+
 String AXDescriptionListTermText()
 {
     notImplemented();

@@ -363,6 +363,11 @@ String AXDefinitionText()
     return String::fromUTF8("definition");
 }
 
+String AXDescriptionListText()
+{
+    return String::fromUTF8("description list");
+}
+
 String AXDescriptionListTermText()
 {
     return String::fromUTF8("term");

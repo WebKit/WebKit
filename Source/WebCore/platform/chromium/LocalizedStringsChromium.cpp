@@ -151,6 +151,12 @@ String AXDefinitionText()
     return String("definition");
 }
 
+String AXDescriptionListText()
+{
+    notImplemented();
+    return String("description list");
+}
+
 String AXDescriptionListTermText()
 {
     notImplemented();

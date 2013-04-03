@@ -562,6 +562,11 @@ String AXDefinitionText()
     return WEB_UI_STRING("definition", "role description of ARIA definition role");
 }
 
+String AXDescriptionListText()
+{
+    return WEB_UI_STRING("description list", "accessibility role description of a description list");
+}
+
 String AXDescriptionListTermText()
 {
     return WEB_UI_STRING("term", "term word of a description list");

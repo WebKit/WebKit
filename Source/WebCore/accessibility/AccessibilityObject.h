@@ -112,6 +112,7 @@ enum AccessibilityRole {
     ColumnHeaderRole,
     ComboBoxRole,
     DefinitionRole,
+    DescriptionListRole,
     DescriptionListTermRole,
     DescriptionListDetailRole,
     DirectoryRole,

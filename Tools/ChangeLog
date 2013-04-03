@@ -1,3 +1,14 @@
+2013-04-02  James Craig  <james@cookiecrook.com>
+
+        AXRoleDescripton for DL is "list"; should be "description list"
+        https://bugs.webkit.org/show_bug.cgi?id=111665
+
+        Reviewed by Chris Fleizach.
+
+        Defining the role and description strings.
+
+        * DumpRenderTree/chromium/TestRunner/src/AccessibilityUIElementChromium.cpp:
+
 2013-04-02  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Disable running tests on Win EWS queue.

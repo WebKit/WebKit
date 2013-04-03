@@ -57,6 +57,7 @@ enum WebAccessibilityRole {
     WebAccessibilityRoleColumnHeader,
     WebAccessibilityRoleComboBox,
     WebAccessibilityRoleDefinition,
+    WebAccessibilityRoleDescriptionList,
     WebAccessibilityRoleDescriptionListTerm,
     WebAccessibilityRoleDescriptionListDetail,
     WebAccessibilityRoleDirectory,
