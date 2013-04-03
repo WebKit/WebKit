@@ -182,6 +182,13 @@ String PluginInfoStore::getMIMETypeForExtension(const String& extension)
 {
     return MIMETypeRegistry::getMIMETypeForExtension(extension);
 }
+    
+PluginModuleInfo PluginInfoStore::findPluginWithBundleIdentifier(const String&)
+{
+    ASSERT_NOT_REACHED();
+    return PluginModuleInfo();
+}
+
 #endif
 
 PluginInfoStore::Plugin PluginInfoStore::findPlugin(String& mimeType, const KURL& url)
