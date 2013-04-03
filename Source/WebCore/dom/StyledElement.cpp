@@ -157,16 +157,16 @@ MutableStylePropertySet* StyledElement::ensureMutableInlineStyle()
     return static_cast<MutableStylePropertySet*>(inlineStyle.get());
 }
 
-void StyledElement::attributeChanged(const QualifiedName& name, const AtomicString& newValue)
+void StyledElement::attributeChanged(const QualifiedName& name, const AtomicString& newValue, AttributeModificationReason reason)
 {
     if (name == styleAttr)
-        styleAttributeChanged(newValue);
+        styleAttributeChanged(newValue, reason);
     else if (isPresentationAttribute(name)) {
         elementData()->m_presentationAttributeStyleIsDirty = true;
         setNeedsStyleRecalc(InlineStyleChange);
     }
 
-    Element::attributeChanged(name, newValue);
+    Element::attributeChanged(name, newValue, reason);
 }
 
 PropertySetCSSStyleDeclaration* StyledElement::inlineStyleCSSOMWrapper()
@@ -197,7 +197,7 @@ inline void StyledElement::setInlineStyleFromString(const AtomicString& newStyle
         inlineStyle->parseDeclaration(newStyleString, document()->elementSheet()->contents());
 }
 
-void StyledElement::styleAttributeChanged(const AtomicString& newStyleString)
+void StyledElement::styleAttributeChanged(const AtomicString& newStyleString, AttributeModificationReason reason)
 {
     WTF::OrdinalNumber startLineNumber = WTF::OrdinalNumber::beforeFirst();
     if (document() && document()->scriptableDocumentParser() && !document()->isInDocumentWrite())
@@ -207,7 +207,7 @@ void StyledElement::styleAttributeChanged(const AtomicString& newStyleString)
         if (PropertySetCSSStyleDeclaration* cssomWrapper = inlineStyleCSSOMWrapper())
             cssomWrapper->clearParentElement();
         ensureUniqueElementData()->m_inlineStyle.clear();
-    } else if (document()->contentSecurityPolicy()->allowInlineStyle(document()->url(), startLineNumber))
+    } else if (reason == ModifiedByCloning || document()->contentSecurityPolicy()->allowInlineStyle(document()->url(), startLineNumber))
         setInlineStyleFromString(newStyleString);
 
     elementData()->m_styleAttributeIsDirty = false;

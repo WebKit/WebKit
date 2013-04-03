@@ -66,7 +66,7 @@ protected:
     {
     }
 
-    virtual void attributeChanged(const QualifiedName&, const AtomicString&) OVERRIDE;
+    virtual void attributeChanged(const QualifiedName&, const AtomicString&, AttributeModificationReason = ModifiedDirectly) OVERRIDE;
 
     virtual bool isPresentationAttribute(const QualifiedName&) const { return false; }
 
@@ -77,7 +77,7 @@ protected:
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
 private:
-    void styleAttributeChanged(const AtomicString& newStyleString);
+    void styleAttributeChanged(const AtomicString& newStyleString, AttributeModificationReason);
 
     void inlineStyleChanged();
     PropertySetCSSStyleDeclaration* inlineStyleCSSOMWrapper();
