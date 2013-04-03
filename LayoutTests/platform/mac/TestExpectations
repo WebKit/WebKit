@@ -1505,7 +1505,3 @@ webkit.org/b/113227 transitions/cross-fade-border-image.html [ Pass Failure ]
 webkit.org/b/113227 transitions/default-timing-function.html [ Pass Failure ]
 webkit.org/b/113227 transitions/svg-text-shadow-transition.html [ Pass Failure ]
 
-webkit.org/b/113838 compositing/filters/sw-layer-overlaps-hw-shadow.html [ Pass Failure ]
-webkit.org/b/113838 compositing/filters/sw-shadow-overlaps-hw-layer.html [ Pass Failure ]
-webkit.org/b/113838 compositing/filters/sw-shadow-overlaps-hw-shadow.html [ Pass Failure ]
-
