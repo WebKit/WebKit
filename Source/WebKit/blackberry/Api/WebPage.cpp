@@ -3682,11 +3682,8 @@ bool WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
 
     // Recompute our virtual viewport.
     bool needsLayout = false;
-    static ViewportArguments defaultViewportArguments;
-    if (m_viewportArguments != defaultViewportArguments) {
-        // We may need to infer the width and height for the viewport with respect to the rotation.
-        Platform::IntSize newVirtualViewport = recomputeVirtualViewportFromViewportArguments();
-        ASSERT(!newVirtualViewport.isEmpty());
+    Platform::IntSize newVirtualViewport = recomputeVirtualViewportFromViewportArguments();
+    if (!newVirtualViewport.isEmpty()) {
         m_webPage->setVirtualViewportSize(newVirtualViewport);
         m_mainFrame->view()->setUseFixedLayout(useFixedLayout());
         m_mainFrame->view()->setFixedLayoutSize(fixedLayoutSize());

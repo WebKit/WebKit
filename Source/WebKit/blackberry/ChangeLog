@@ -1,5 +1,19 @@
 2013-04-03  Arvid Nilsson  <anilsson@rim.com>
 
+        [BlackBerry] Remove defaultViewportArguments check from call site of recomputeVirtualViewportFromViewportArguments
+        https://bugs.webkit.org/show_bug.cgi?id=113872
+
+        Reviewed by Carlos Garcia Campos.
+
+        Carlos pointed out that recomputeVirtualViewportFromViewportArguments
+        already contains the check, and returns an empty IntSize if it fails.
+        So pick up on that to make the code a bit more DRY.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+
+2013-04-03  Arvid Nilsson  <anilsson@rim.com>
+
         [BlackBerry] Decouple layout viewport from visual viewport
         https://bugs.webkit.org/show_bug.cgi?id=113829
 
