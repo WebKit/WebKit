@@ -145,8 +145,8 @@ public:
     virtual void pushNodeByBackendIdToFrontend(ErrorString*, BackendNodeId, int* nodeId);
     virtual void releaseBackendNodeIds(ErrorString*, const String& nodeGroup);
     virtual void hideHighlight(ErrorString*);
-    virtual void highlightRect(ErrorString*, int x, int y, int width, int height, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor);
-    virtual void highlightQuad(ErrorString*, const RefPtr<InspectorArray>& quad, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor);
+    virtual void highlightRect(ErrorString*, int x, int y, int width, int height, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor, const bool* usePageCoordinates);
+    virtual void highlightQuad(ErrorString*, const RefPtr<InspectorArray>& quad, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor, const bool* usePageCoordinates);
     virtual void highlightNode(ErrorString*, const RefPtr<InspectorObject>& highlightConfig, const int* nodeId, const String* objectId);
     virtual void highlightFrame(ErrorString*, const String& frameId, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor);
 
@@ -241,7 +241,7 @@ private:
 
     void discardBindings();
 
-    void innerHighlightQuad(PassOwnPtr<FloatQuad>, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor);
+    void innerHighlightQuad(PassOwnPtr<FloatQuad>, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor, const bool* usePageCoordinates);
 
     InspectorPageAgent* m_pageAgent;
     InjectedScriptManager* m_injectedScriptManager;

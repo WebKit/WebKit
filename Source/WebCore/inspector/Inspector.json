@@ -1975,7 +1975,8 @@
                     { "name": "width", "type": "integer", "description": "Rectangle width" },
                     { "name": "height", "type": "integer", "description": "Rectangle height" },
                     { "name": "color", "$ref": "RGBA", "optional": true, "description": "The highlight fill color (default: transparent)." },
-                    { "name": "outlineColor", "$ref": "RGBA", "optional": true, "description": "The highlight outline color (default: transparent)." }
+                    { "name": "outlineColor", "$ref": "RGBA", "optional": true, "description": "The highlight outline color (default: transparent)." },
+                    { "name": "usePageCoordinates", "type": "boolean", "optional": true, "description": "Indicates whether the provided parameters are in page coordinates or in viewport coordinates (the default)." }
                 ],
                 "description": "Highlights given rectangle. Coordinates are absolute with respect to the main frame viewport."
             },
@@ -1984,7 +1985,8 @@
                 "parameters": [
                     { "name": "quad", "$ref": "Quad", "description": "Quad to highlight" },
                     { "name": "color", "$ref": "RGBA", "optional": true, "description": "The highlight fill color (default: transparent)." },
-                    { "name": "outlineColor", "$ref": "RGBA", "optional": true, "description": "The highlight outline color (default: transparent)." }
+                    { "name": "outlineColor", "$ref": "RGBA", "optional": true, "description": "The highlight outline color (default: transparent)." },
+                    { "name": "usePageCoordinates", "type": "boolean", "optional": true, "description": "Indicates whether the provided parameters are in page coordinates or in viewport coordinates (the default)." }
                 ],
                 "description": "Highlights given quad. Coordinates are absolute with respect to the main frame viewport."
             },

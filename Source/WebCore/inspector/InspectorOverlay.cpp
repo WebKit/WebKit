@@ -259,6 +259,9 @@ void InspectorOverlay::highlightNode(Node* node, const HighlightConfig& highligh
 
 void InspectorOverlay::highlightQuad(PassOwnPtr<FloatQuad> quad, const HighlightConfig& highlightConfig)
 {
+    if (m_quadHighlightConfig.usePageCoordinates)
+        *quad -= m_page->mainFrame()->view()->scrollOffset();
+
     m_quadHighlightConfig = highlightConfig;
     m_highlightQuad = quad;
     update();
