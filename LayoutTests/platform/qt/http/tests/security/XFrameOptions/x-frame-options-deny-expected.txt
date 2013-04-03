@@ -1,7 +1,8 @@
 http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny.cgi - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny.cgi, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-deny.html, http method GET> redirectResponse (null)
 <unknown> - didFinishLoading
 CONSOLE MESSAGE: Refused to display 'http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny.cgi' in a frame because it set 'X-Frame-Options' to 'deny'.
-ALERT: PASS: onload fired.
+CONSOLE MESSAGE: Sandbox access violation: Blocked a frame at "http://127.0.0.1:8000" from accessing a frame at "null".  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.
+CONSOLE MESSAGE: line 13: PASS: Could not read contentWindow.location.href
 http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny.cgi - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code 5, failing URL "http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-deny.cgi">
 There should be no content in the iframe below
 
