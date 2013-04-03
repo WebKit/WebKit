@@ -120,7 +120,6 @@ private:
     virtual void finishParsingChildren();
 
     void updateWidgetIfNecessary();
-    virtual bool useFallbackContent() const { return false; }
 
     virtual void updateSnapshot(PassRefPtr<Image>) OVERRIDE;
     virtual void dispatchPendingMouseClick() OVERRIDE;

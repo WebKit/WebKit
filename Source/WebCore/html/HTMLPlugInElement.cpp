@@ -242,6 +242,16 @@ bool HTMLPlugInElement::isPluginElement() const
     return true;
 }
 
+bool HTMLPlugInElement::supportsFocus() const
+{
+    if (HTMLFrameOwnerElement::supportsFocus())
+        return true;
+
+    if (useFallbackContent() || !renderer() || !renderer()->isEmbeddedObject())
+        return false;
+    return !toRenderEmbeddedObject(renderer())->showsUnavailablePluginIndicator();
+}
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
 NPObject* HTMLPlugInElement::getNPObject()
