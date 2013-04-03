@@ -68,7 +68,6 @@ showRepaintCounter initial=false, setNeedsStyleRecalcInAllFrames=1
 needsKeyboardEventDisambiguationQuirks initial=false
 
 treatsAnyTextCSSLinkAsStylesheet initial=false
-needsLeopardMailQuirks initial=false
 shrinksStandaloneImagesToFit initial=true
 pageCacheSupportsPlugins initial=false
 showsURLsInToolTips initial=false
