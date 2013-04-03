@@ -349,9 +349,6 @@ HTMLMediaElement::~HTMLMediaElement()
 #endif
 
     removeElementFromDocumentMap(this, document());
-
-    m_completelyLoaded = true;
-    clearMediaPlayer(-1);
 }
 
 void HTMLMediaElement::didMoveToNewDocument(Document* oldDocument)
