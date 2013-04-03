@@ -1,3 +1,17 @@
+2013-04-03  Alban Crequy  <alban.crequy@collabora.co.uk>
+
+        [GTK] WebKitWebNavigationAction: fix mix between dispose and finalize
+        https://bugs.webkit.org/show_bug.cgi?id=113794
+
+        Reviewed by Gustavo Noronha Silva.
+
+        WebKitWebNavigationAction's dispose function was named finalize and was calling
+        the parent class's finalise function, causing a memory corruption. Change it to
+        be a proper finalize function instead.
+
+        * webkit/webkitwebnavigationaction.cpp:
+        (webkit_web_navigation_action_class_init):
+
 2013-03-28  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Build GTK-specific, non-layer-violating source code into WebCore-independent libPlatformGtk.la
