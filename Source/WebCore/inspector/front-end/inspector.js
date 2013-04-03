@@ -1016,7 +1016,7 @@ WebInspector.addMainEventListeners = function(doc)
     doc.addEventListener("keydown", this.documentKeyDown.bind(this), true);
     doc.addEventListener("keydown", this.postDocumentKeyDown.bind(this), false);
     doc.addEventListener("beforecopy", this.documentCanCopy.bind(this), true);
-    doc.addEventListener("copy", this.documentCopy.bind(this), true);
+    doc.addEventListener("copy", this.documentCopy.bind(this), false);
     doc.addEventListener("contextmenu", this.contextMenuEventFired.bind(this), true);
     doc.addEventListener("click", this.documentClick.bind(this), true);
 }

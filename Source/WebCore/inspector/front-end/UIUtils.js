@@ -447,11 +447,17 @@ WebInspector.startEditing = function(element, config)
     var codeMirror;
     var cssLoadView;
 
+    function consumeCopy(e)
+    {
+        e.consume();
+    }
+
     if (isMultiline) {
         loadScript("CodeMirrorTextEditor.js");
         cssLoadView = new WebInspector.CodeMirrorCSSLoadView();
         cssLoadView.show(element);
         WebInspector.setCurrentFocusElement(element);
+        element.addEventListener("copy", consumeCopy, true);
         codeMirror = window.CodeMirror(element, {
             mode: config.mode,
             lineWrapping: config.lineWrapping,
@@ -500,6 +506,7 @@ WebInspector.startEditing = function(element, config)
         WebInspector.restoreFocusFromElement(element);
 
         if (isMultiline) {
+            element.removeEventListener("copy", consumeCopy, true);
             cssLoadView.detach();
             return;
         }
