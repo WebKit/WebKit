@@ -51,7 +51,10 @@ extern "C" int sandbox_init_with_parameters(const char *profile, uint64_t flags,
 #endif
 #endif
 
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1080 // Temporary workaround for <rdar://problem/13564588>. We should have the forward declaration on all OS X versions again eventually.
 extern "C" CGError CGSShutdownServerConnections();
+#endif
+
 extern "C" OSStatus SetApplicationIsDaemon(Boolean isDaemon);
 
 using namespace WebCore;
