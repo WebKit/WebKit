@@ -1,3 +1,31 @@
+2013-04-02  Geoffrey Garen  <ggaren@apple.com>
+
+        DFG should compile a little sooner
+        https://bugs.webkit.org/show_bug.cgi?id=113835
+
+        Reviewed by Michael Saboff.
+
+        2% speedup on SunSpider.
+
+        2% speedup on JSRegress.
+
+        Neutral on Octane, v8, and Kraken.
+
+        The worst-hit single sub-test is kraken-stanford-crypto-ccm.js, which gets
+        18% slower. Since Kraken is neutral overall in its preferred mean, I
+        think that's OK for now.
+
+        (Our array indexing speculation fails pathologically on
+        kraken-stanford-crypto-ccm.js. Compiling sooner is a regression because
+        it triggers those failures sooner. I'm going to file some follow-up bugs
+        explaining how to fix our speculations on this sub-test, at which point
+        compiling earlier should become a slight speedup on Kraken overall.)
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::optimizationThresholdScalingFactor): I experimented
+        with a few different options, including reducing the coefficient 'a'.
+        A simple linear reduction on instruction count worked best.
+
 2013-04-01  Benjamin Poulain  <benjamin@webkit.org>
 
         Use Vector::reserveInitialCapacity and Vector::uncheckedAppend for JSC's APIs

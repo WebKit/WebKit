@@ -2937,7 +2937,7 @@ int32_t CodeBlock::codeTypeThresholdMultiplier() const
 
 double CodeBlock::optimizationThresholdScalingFactor()
 {
-    // This expression arises from doing a least-squares fit of
+    // This expression originally arose from doing a least-squares fit of
     //
     // F[x_] =: a * Sqrt[x + b] + Abs[c * x] + d
     //
@@ -2951,7 +2951,12 @@ double CodeBlock::optimizationThresholdScalingFactor()
     //  4000       5.5          (random large size, used to cause the function to converge to a shallow curve of some sort)
     // 10000       6.0          (similar to above)
     //
-    // I achieve the minimization using the following Mathematica code:
+    // Since then, as compile times have gone down and optimization value has gone up, we've
+    // tweaked the function to favor earlier compilation.
+    //
+    // What follows is a complete description of how to reproduce the original coefficients:
+    //
+    // I achieved the minimization using the following Mathematica code:
     //
     // MyFunctionTemplate[x_, a_, b_, c_, d_] := a*Sqrt[x + b] + Abs[c*x] + d
     //
@@ -2991,21 +2996,23 @@ double CodeBlock::optimizationThresholdScalingFactor()
     // the function turning over and going negative for large x) and I threw in a Sqrt
     // term because Sqrt represents my intution that the function should be more sensitive
     // to small changes in small values of x, but less sensitive when x gets large.
-    
+    //
     // Note that the current fit essentially eliminates the linear portion of the
     // expression (c == 0.0).
+
     const double a = 0.061504;
     const double b = 1.02406;
     const double c = 0.0;
     const double d = 0.825914;
+    const double instructionRatio = 0.8;
     
-    double instructionCount = this->instructionCount();
+    double x = instructionCount() * instructionRatio;
     
-    ASSERT(instructionCount); // Make sure this is called only after we have an instruction stream; otherwise it'll just return the value of d, which makes no sense.
+    ASSERT(x); // Make sure this is called only after we have an instruction stream; otherwise it'll just return the value of d, which makes no sense.
     
-    double result = d + a * sqrt(instructionCount + b) + c * instructionCount;
+    double result = d + a * sqrt(x + b) + c * x;
 #if ENABLE(JIT_VERBOSE_OSR)
-    dataLog(*this, ": instruction count is ", instructionCount, ", scaling execution counter by ", result, " * ", codeTypeThresholdMultiplier(), "\n");
+    dataLog(*this, ": instruction count is ", instructionCount(), ", scaling execution counter by ", result, " * ", codeTypeThresholdMultiplier(), "\n");
 #endif
     return result * codeTypeThresholdMultiplier();
 }
