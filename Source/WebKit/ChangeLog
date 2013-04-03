@@ -1,3 +1,9 @@
+2013-04-03  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed VS2010 build fix.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2013-03-27  Mark Lam  <mark.lam@apple.com>
 
         Rolling out r147044.
