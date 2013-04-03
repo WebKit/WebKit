@@ -42,7 +42,6 @@ RenderMultiColumnFlowThread::~RenderMultiColumnFlowThread()
 
 RenderMultiColumnFlowThread* RenderMultiColumnFlowThread::createAnonymous(Document* document)
 {
-    ASSERT(document->cssRegionsEnabled());
     RenderMultiColumnFlowThread* renderer = new (document->renderArena()) RenderMultiColumnFlowThread();
     renderer->setDocumentForAnonymous(document);
     return renderer;
