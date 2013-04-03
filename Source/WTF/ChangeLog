@@ -1,3 +1,13 @@
+2013-04-03  Pratik Solanki  <psolanki@apple.com>
+
+        Enable HAVE_MADV_FREE_REUSE on iOS
+        https://bugs.webkit.org/show_bug.cgi?id=113892
+        <rdar://problem/12787563>
+
+        Reviewed by Mark Rowe.
+
+        * wtf/Platform.h:
+
 2013-04-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove code for Mac 10.5 and earlier from WTF and WebKit2

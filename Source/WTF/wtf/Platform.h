@@ -666,6 +666,7 @@
 
 #define HAVE_DISPATCH_H 1
 #define HAVE_MADV_FREE 1
+#define HAVE_MADV_FREE_REUSE 1
 #define HAVE_MERGESORT 1
 #define HAVE_PTHREAD_SETNAME_NP 1
 #define HAVE_SYS_TIMEB_H 1
@@ -673,7 +674,6 @@
 
 #if !PLATFORM(IOS)
 #define HAVE_HOSTED_CORE_ANIMATION 1
-#define HAVE_MADV_FREE_REUSE 1
 #endif /* !PLATFORM(IOS) */
 
 #endif /* OS(DARWIN) */
