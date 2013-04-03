@@ -592,4 +592,11 @@ bool SecurityOrigin::isSameSchemeHostPort(const SecurityOrigin* other) const
     return true;
 }
 
+String SecurityOrigin::urlWithUniqueSecurityOrigin()
+{
+    ASSERT(isMainThread());
+    DEFINE_STATIC_LOCAL(const String, uniqueSecurityOriginURL, (ASCIILiteral("data:,")));
+    return uniqueSecurityOriginURL;
+}
+
 } // namespace WebCore
