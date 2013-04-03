@@ -368,7 +368,9 @@ void PlatformClutterAnimation::setValues(const Vector<float>& value)
 
 void PlatformClutterAnimation::setValues(const Vector<WebCore::TransformationMatrix>& value)
 {
-    notImplemented();
+    ASSERT(animationType() == Keyframe);
+
+    m_valuesMatrix = value;
 }
 
 void PlatformClutterAnimation::setValues(const Vector<FloatPoint3D>& value)
@@ -527,6 +529,43 @@ void PlatformClutterAnimation::addClutterKeyframeTransitionForProperty(const Str
         g_value_unset(&keyValues.get()[i]);
 }
 
+void PlatformClutterAnimation::addClutterKeyframeTransitionForProperty(const String& property, const Vector<WebCore::TransformationMatrix>& values)
+{
+    ASSERT(property != "NoProperty");
+
+    Vector<CoglMatrix> coglMatrices;
+    for (unsigned i = 0; i < values.size(); ++i)
+        coglMatrices.append(values[i]);
+
+    GRefPtr<ClutterTransition> transition = adoptGRef(clutter_keyframe_transition_new(property.utf8().data()));
+    clutter_transition_set_from(transition.get(), CLUTTER_TYPE_MATRIX, coglMatrices.first());
+    clutter_transition_set_to(transition.get(), CLUTTER_TYPE_MATRIX, coglMatrices.last());
+
+    // Ignore the first keyframe, since it's a '0' frame, meaningless.
+    const unsigned nKeyframes = values.size() - 1;
+    OwnArrayPtr<ClutterAnimationMode> animationModes = adoptArrayPtr(new ClutterAnimationMode[nKeyframes]);
+    OwnArrayPtr<double> keyTimes = adoptArrayPtr(new double[nKeyframes]);
+    GOwnPtr<GValue> keyValues(g_new0(GValue, nKeyframes));
+
+    for (unsigned i = 0; i < nKeyframes; ++i) {
+        keyTimes[i] = static_cast<double>(m_keyTimes[i + 1]);
+        animationModes[i] = toClutterAnimationMode(m_timingFunctions[i]);
+        g_value_init(&keyValues.get()[i], CLUTTER_TYPE_MATRIX);
+        g_value_set_boxed(&keyValues.get()[i], &coglMatrices[i + 1]);
+    }
+
+    clutter_keyframe_transition_set_key_frames(CLUTTER_KEYFRAME_TRANSITION(transition.get()), nKeyframes, keyTimes.get());
+    clutter_keyframe_transition_set_values(CLUTTER_KEYFRAME_TRANSITION(transition.get()), nKeyframes, keyValues.get());
+    clutter_keyframe_transition_set_modes(CLUTTER_KEYFRAME_TRANSITION(transition.get()), nKeyframes, animationModes.get());
+
+    clutter_transition_group_add_transition(CLUTTER_TRANSITION_GROUP(m_animation.get()), transition.get());
+
+    clutter_interval_register_progress_func(CLUTTER_TYPE_MATRIX, clutterMatrixProgress);
+
+    for (unsigned i = 0; i < nKeyframes; ++i)
+        g_value_unset(&keyValues.get()[i]);
+}
+
 void PlatformClutterAnimation::addClutterKeyframeTransitionForProperty(const String& property, const Vector<FloatPoint3D>& values)
 {
     ASSERT(property != "NoProperty");
@@ -605,7 +644,10 @@ void PlatformClutterAnimation::addTransformTransition()
             addClutterTransitionForProperty(toClutterActorPropertyString(m_valueFunctionType), m_fromValue3D, m_toValue3D);
         break;
     case Matrix:
-        addClutterTransitionForProperty(toClutterActorPropertyString(m_valueFunctionType), m_fromValueMatrix, m_toValueMatrix);
+        if (isKeyframe)
+            addClutterKeyframeTransitionForProperty(toClutterActorPropertyString(m_valueFunctionType), m_valuesMatrix); 
+        else
+            addClutterTransitionForProperty(toClutterActorPropertyString(m_valueFunctionType), m_fromValueMatrix, m_toValueMatrix);
         break;
     default:
         ASSERT_NOT_REACHED();

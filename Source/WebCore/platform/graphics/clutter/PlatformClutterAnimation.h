@@ -144,6 +144,7 @@ private:
     void addClutterTransitionForProperty(const String& property, const FloatPoint3D& fromValue, const FloatPoint3D& toValue);
 
     void addClutterKeyframeTransitionForProperty(const String& property, const Vector<float>& values);
+    void addClutterKeyframeTransitionForProperty(const String& property, const Vector<WebCore::TransformationMatrix>& values);
     void addClutterKeyframeTransitionForProperty(const String& property, const Vector<FloatPoint3D>& values);
 
     void addOpacityTransition();
@@ -176,6 +177,7 @@ private:
 
     Vector<float> m_values;
     Vector<FloatPoint3D> m_values3D;
+    Vector<WebCore::TransformationMatrix> m_valuesMatrix;
 };
 
 }
