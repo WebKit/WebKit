@@ -41,7 +41,7 @@ namespace WebCore {
 
 class AudioDestinationIOS : public AudioDestination, public AudioSessionListener {
 public:
-    AudioDestinationIOS(AudioIOCallback&, unsigned numberOfOutputChannels, double sampleRate);
+    AudioDestinationIOS(AudioIOCallback&, double sampleRate);
     virtual ~AudioDestinationIOS();
 
     virtual void start();
