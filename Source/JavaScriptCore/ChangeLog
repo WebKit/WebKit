@@ -3,6 +3,19 @@
         DFG should compile a little sooner
         https://bugs.webkit.org/show_bug.cgi?id=113835
 
+        Unreviewed.
+
+        Rolled out r147511 because it was based on incorrect performance
+        measurement.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::optimizationThresholdScalingFactor):
+
+2013-04-02  Geoffrey Garen  <ggaren@apple.com>
+
+        DFG should compile a little sooner
+        https://bugs.webkit.org/show_bug.cgi?id=113835
+
         Reviewed by Michael Saboff.
 
         2% speedup on SunSpider.
