@@ -181,22 +181,6 @@ namespace WebCore {
 #if ENABLE(CONTEXT_MENUS)
 #if PLATFORM(MAC)
     typedef NSMenuItem* PlatformMenuItemDescription;
-#elif PLATFORM(QT)
-    struct PlatformMenuItemDescription {
-        PlatformMenuItemDescription()
-            : type(ActionType),
-              action(ContextMenuItemTagNoAction),
-              checked(false),
-              enabled(true)
-        {}
-
-        ContextMenuItemType type;
-        ContextMenuAction action;
-        String title;
-        QList<ContextMenuItem> subMenuItems;
-        bool checked;
-        bool enabled;
-    };
 #elif PLATFORM(GTK)
     typedef GtkMenuItem* PlatformMenuItemDescription;
 #elif PLATFORM(WX)

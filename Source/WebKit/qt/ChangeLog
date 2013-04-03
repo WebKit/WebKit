@@ -1,3 +1,22 @@
+2013-03-28  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [Qt] Switch ContextMenu implementation to CROSS_PLATFORM_CONTEXT_MENU
+        https://bugs.webkit.org/show_bug.cgi?id=113535
+
+        Reviewed by Simon Hausmann.
+
+        Adjust ContextMenuClientQt and QWebPageAdapter to use CROSS_PLATFORM_CONTEXT_MENUS
+        USE flag by implementing customizeMenu() instead of getCustomMenuFromDefaultItems()
+        and by calling menu->items() instead of menu->platformDescription().
+
+        * WebCoreSupport/ContextMenuClientQt.cpp:
+        (WebCore::ContextMenuClientQt::customizeMenu):
+        * WebCoreSupport/ContextMenuClientQt.h:
+        (ContextMenuClientQt):
+        * WebCoreSupport/QWebPageAdapter.cpp:
+        (descriptionForPlatformMenu):
+        (QWebPageAdapter::updatePositionDependentMenuActions):
+
 2013-03-27  Timothy Hatcher  <timothy@apple.com>
 
         Add support for dock-to-right of the Web Inspector in the Mac port.

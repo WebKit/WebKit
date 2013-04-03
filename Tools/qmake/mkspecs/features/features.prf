@@ -22,6 +22,7 @@ defineTest(detectFeatures) {
     }
 
     WEBKIT_CONFIG += use_tiled_backing_store
+    WEBKIT_CONFIG += use_cross_platform_context_menus
 
     # ------------- Prepare for feature detection -------------
 

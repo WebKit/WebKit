@@ -2173,6 +2173,7 @@ HEADERS += \
     platform/ClockGeneric.h \
     platform/ContentType.h \
     platform/ContextMenu.h \
+    platform/ContextMenuItem.h \
     platform/CrossThreadCopier.h \
     platform/DateComponents.h \
     platform/Decimal.h \
@@ -2953,6 +2954,8 @@ SOURCES += \
     platform/network/qt/QNetworkReplyHandler.cpp \
     editing/qt/EditorQt.cpp \
     platform/Cursor.cpp \
+    platform/ContextMenu.cpp \
+    platform/ContextMenuItem.cpp \
     platform/qt/ClipboardQt.cpp \
     platform/qt/ContextMenuItemQt.cpp \
     platform/qt/ContextMenuQt.cpp \

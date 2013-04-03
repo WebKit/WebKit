@@ -27,64 +27,29 @@
 #include "config.h"
 #include "ContextMenu.h"
 
-#include <Document.h>
-#include <Frame.h>
-#include <FrameView.h>
-#include <wtf/Assertions.h>
+#include "NotImplemented.h"
 
 namespace WebCore {
 
-ContextMenu::ContextMenu()
+ContextMenu::ContextMenu(PlatformContextMenu menu)
 {
+    getContextMenuItems(menu, m_items);
 }
 
-ContextMenu::~ContextMenu()
+void ContextMenu::getContextMenuItems(PlatformContextMenu, Vector<ContextMenuItem>&)
 {
+    notImplemented();
 }
 
-void ContextMenu::appendItem(ContextMenuItem& item)
+PlatformContextMenu ContextMenu::createPlatformContextMenuFromItems(const Vector<ContextMenuItem>&)
 {
-    m_items.append(item);
-}
-
-unsigned ContextMenu::itemCount() const
-{
-    return m_items.count();
-}
-
-void ContextMenu::insertItem(unsigned position, ContextMenuItem& item)
-{
-    m_items.insert(position, item);
-}
-
-void ContextMenu::setPlatformDescription(PlatformMenuDescription)
-{
-    // doesn't make sense
-}
-
-PlatformMenuDescription ContextMenu::platformDescription() const
-{
-    return &m_items;
-}
-
-PlatformMenuDescription ContextMenu::releasePlatformDescription()
-{
-    return PlatformMenuDescription();
-}
-
-Vector<ContextMenuItem> contextMenuItemVector(const QList<ContextMenuItem>* items)
-{
-    int itemCount = items->size();
-    Vector<ContextMenuItem> menuItemVector(itemCount);
-    for (int i = 0; i < itemCount; ++i)
-        menuItemVector.append(items->at(i));
-    return menuItemVector;
-}
-
-PlatformMenuDescription platformMenuDescription(Vector<ContextMenuItem>& menuItemVector)
-{
-    // FIXME - Implement    
+    notImplemented();
     return 0;
+}
+
+PlatformContextMenu ContextMenu::platformContextMenu() const
+{
+    return createPlatformContextMenuFromItems(m_items);
 }
 
 }

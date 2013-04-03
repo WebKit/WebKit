@@ -802,13 +802,13 @@ static QWebPageAdapter::MenuAction adapterActionForContextMenuAction(WebCore::Co
     return QWebPageAdapter::NoAction;
 }
 
-QList<MenuItem> descriptionForPlatformMenu(const QList<ContextMenuItem>* items, Page* page)
+QList<MenuItem> descriptionForPlatformMenu(const Vector<ContextMenuItem>& items, Page* page)
 {
     QList<MenuItem> itemDescriptions;
-    if (!items)
+    if (!items.size())
         return itemDescriptions;
-    for (int i = 0; i < items->count(); ++i) {
-        const ContextMenuItem &item = items->at(i);
+    for (int i = 0; i < items.size(); ++i) {
+        const ContextMenuItem &item = items.at(i);
         MenuItem description;
         switch (item.type()) {
         case WebCore::CheckableActionType: /* fall through */
@@ -819,12 +819,11 @@ QList<MenuItem> descriptionForPlatformMenu(const QList<ContextMenuItem>* items, 
                 description.action = action;
                 ContextMenuItem it(item);
                 page->contextMenuController()->checkOrEnableIfNeeded(it);
-                PlatformMenuItemDescription desc = it.releasePlatformDescription();
-                if (desc.enabled)
+                if (it.enabled())
                     description.traits |= MenuItem::Enabled;
                 if (item.type() == WebCore::CheckableActionType) {
                     description.traits |= MenuItem::Checkable;
-                    if (desc.checked)
+                    if (it.checked())
                         description.traits |= MenuItem::Checked;
                 }
             }
@@ -835,7 +834,7 @@ QList<MenuItem> descriptionForPlatformMenu(const QList<ContextMenuItem>* items, 
             break;
         case WebCore::SubmenuType: {
             description.type = MenuItem::SubMenu;
-            description.subMenu = descriptionForPlatformMenu(item.platformSubMenu(), page);
+            description.subMenu = descriptionForPlatformMenu(item.subMenuItems(), page);
             description.subMenuTitle = item.title();
             // Don't append empty submenu descriptions.
             if (description.subMenu.isEmpty())
@@ -863,7 +862,7 @@ QWebHitTestResultPrivate* QWebPageAdapter::updatePositionDependentMenuActions(co
     WebCore::ContextMenu* webcoreMenu = page->contextMenuController()->contextMenu();
     QList<MenuItem> itemDescriptions;
     if (client && webcoreMenu)
-        itemDescriptions = descriptionForPlatformMenu(webcoreMenu->platformDescription(), page);
+        itemDescriptions = descriptionForPlatformMenu(webcoreMenu->items(), page);
     createAndSetCurrentContextMenu(itemDescriptions, visitedWebActions);
     if (result.scrollbar())
         return 0;

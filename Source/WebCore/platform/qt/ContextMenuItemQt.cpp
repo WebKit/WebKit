@@ -27,112 +27,14 @@
 #include "config.h"
 #include "ContextMenuItem.h"
 
-#include "ContextMenu.h"
+#include "NotImplemented.h"
 
 namespace WebCore {
 
-ContextMenuItem::ContextMenuItem(ContextMenu* subMenu)
+void* ContextMenuItem::platformContextMenuItem() const
 {
-    m_platformDescription.type = SubmenuType;
-    m_platformDescription.action = ContextMenuItemTagNoAction;
-    if (subMenu)
-        setSubMenu(subMenu);
-}
-
-ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action,
-                                 const String& title, ContextMenu* subMenu)
-{
-    m_platformDescription.type = type;
-    m_platformDescription.action = action;
-    m_platformDescription.title = title;
-    if (subMenu)
-        setSubMenu(subMenu);
-}
-
-ContextMenuItem::ContextMenuItem(ContextMenuItemType, ContextMenuAction, const String&, bool, bool)
-{
-    // FIXME: Implement
-}
-
-ContextMenuItem::ContextMenuItem(ContextMenuAction, const String&, bool, bool, Vector<ContextMenuItem>&)
-{
-    // FIXME: Implement
-}
-
-ContextMenuItem::~ContextMenuItem()
-{
-}
-
-PlatformMenuItemDescription ContextMenuItem::releasePlatformDescription()
-{
-    return m_platformDescription;
-}
-
-ContextMenuItemType ContextMenuItem::type() const
-{
-    return m_platformDescription.type;
-}
-
-void ContextMenuItem::setType(ContextMenuItemType type)
-{
-    m_platformDescription.type = type;
-}
-
-ContextMenuAction ContextMenuItem::action() const
-{
-    return m_platformDescription.action;
-}
-
-void ContextMenuItem::setAction(ContextMenuAction action)
-{
-    m_platformDescription.action = action;
-}
-
-String ContextMenuItem::title() const
-{
-    return m_platformDescription.title;
-}
-
-void ContextMenuItem::setTitle(const String& title)
-{
-    m_platformDescription.title = title;
-}
-
-
-PlatformMenuDescription ContextMenuItem::platformSubMenu() const
-{
-    return &m_platformDescription.subMenuItems;
-}
-
-void ContextMenuItem::setSubMenu(ContextMenu* menu)
-{
-    m_platformDescription.subMenuItems = *menu->platformDescription();
-}
-
-void ContextMenuItem::setSubMenu(Vector<ContextMenuItem>&)
-{
-    // FIXME: Implement
-}
-
-void ContextMenuItem::setChecked(bool on)
-{
-    m_platformDescription.checked = on;
-}
-
-bool ContextMenuItem::checked() const
-{
-    // FIXME - Implement
-    return false;
-}
-
-void ContextMenuItem::setEnabled(bool on)
-{
-    m_platformDescription.enabled = on;
-}
-
-bool ContextMenuItem::enabled() const
-{
-    return m_platformDescription.enabled;
+    notImplemented();
+    return 0;
 }
 
 }
