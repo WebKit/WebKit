@@ -207,6 +207,7 @@ private:
     HashMap<DocumentLoader*, String> m_loaderToIdentifier;
     bool m_enabled;
     bool m_isFirstLayoutAfterOnLoad;
+    bool m_originalScriptExecutionDisabled;
     bool m_geolocationOverridden;
     bool m_ignoreScriptsEnabledNotification;
     RefPtr<GeolocationPosition> m_geolocationPosition;

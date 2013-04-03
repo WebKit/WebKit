@@ -343,6 +343,7 @@ InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents,
     , m_lastScriptIdentifier(0)
     , m_enabled(false)
     , m_isFirstLayoutAfterOnLoad(false)
+    , m_originalScriptExecutionDisabled(false)
     , m_geolocationOverridden(false)
     , m_ignoreScriptsEnabledNotification(false)
 {
@@ -403,6 +404,11 @@ void InspectorPageAgent::enable(ErrorString*)
     m_enabled = true;
     m_state->setBoolean(PageAgentState::pageAgentEnabled, true);
     m_instrumentingAgents->setInspectorPageAgent(this);
+
+    if (Frame* frame = mainFrame()) {
+        if (Settings* settings = frame->settings())
+            m_originalScriptExecutionDisabled = !settings->isScriptEnabled();
+    }
 }
 
 void InspectorPageAgent::disable(ErrorString*)
@@ -412,7 +418,7 @@ void InspectorPageAgent::disable(ErrorString*)
     m_state->remove(PageAgentState::pageAgentScriptsToEvaluateOnLoad);
     m_instrumentingAgents->setInspectorPageAgent(0);
 
-    setScriptExecutionDisabled(0, false);
+    setScriptExecutionDisabled(0, m_originalScriptExecutionDisabled);
     setShowPaintRects(0, false);
     setShowDebugBorders(0, false);
     setShowFPSCounter(0, false);
