@@ -143,7 +143,7 @@ PluginModuleLoadPolicy PluginInfoStore::policyForPlugin(const Plugin& plugin)
     return PluginModuleLoadNormally;
 }
 
-PluginModuleInfo PluginInfoStore::findPluginWithBundleIdentifier(const String& bundleIdentifier)
+PluginInfoStore::Plugin PluginInfoStore::findPluginWithBundleIdentifier(const String& bundleIdentifier)
 {
     loadPluginsIfNecessary();
 
@@ -152,7 +152,7 @@ PluginModuleInfo PluginInfoStore::findPluginWithBundleIdentifier(const String& b
             return m_plugins[i];
     }
     
-    return PluginModuleInfo();
+    return Plugin();
 }
 
 } // namespace WebKit

@@ -1,5 +1,21 @@
 2013-04-03  Lucas Forschler  <lforschler@apple.com>
 
+        Fix the build after merging 147042.
+
+        * Platform/mac/StringUtilities.h: Added.
+        (WebKit):
+        * Platform/mac/StringUtilities.mm: Added.
+        (WebKit):
+        (WebKit::nsStringFromWebCoreString):
+        * UIProcess/API/C/mac/WKContextPrivateMac.mm:
+        (WKContextCopyPlugInInfoForBundleIdentifier):
+        * UIProcess/Plugins/PluginInfoStore.h:
+        (PluginInfoStore):
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::findPluginWithBundleIdentifier):
+
+2013-04-03  Lucas Forschler  <lforschler@apple.com>
+
         Remove include after mis-merge of r147052.
 
         * UIProcess/API/C/WKAPICast.h:

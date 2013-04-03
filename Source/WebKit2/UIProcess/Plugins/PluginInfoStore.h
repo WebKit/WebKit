@@ -65,7 +65,7 @@ public:
     Plugin findPlugin(String& mimeType, const WebCore::KURL& url);
 
     // Returns the info for the plug-in with the given bundle identifier.
-    PluginModuleInfo findPluginWithBundleIdentifier(const String& bundleIdentifier);
+    Plugin findPluginWithBundleIdentifier(const String& bundleIdentifier);
 
     // Returns the info for the plug-in with the given path.
     Plugin infoForPluginWithPath(const String& pluginPath);

@@ -78,7 +78,7 @@ WKStringRef WKPlugInInfoUpdatePastLastBlockedVersionIsKnownAvailableKey()
 
 WKDictionaryRef WKContextCopyPlugInInfoForBundleIdentifier(WKContextRef contextRef, WKStringRef plugInBundleIdentifierRef)
 {
-    PluginModuleInfo info = toImpl(contextRef)->pluginInfoStore().findPluginWithBundleIdentifier(toWTFString(plugInBundleIdentifierRef));
+    PluginInfoStore::Plugin info = toImpl(contextRef)->pluginInfoStore().findPluginWithBundleIdentifier(toWTFString(plugInBundleIdentifierRef));
     if (info.path.isNull())
         return 0;
 
