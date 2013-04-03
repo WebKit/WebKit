@@ -933,7 +933,7 @@ void MediaPlayerPrivate::drawBufferingAnimation(const TransformationMatrix& matr
 
         // Rotate the buffering indicator so that it takes 1 second to do 1 revolution.
         timespec time;
-        clock_gettime(CLOCK_REALTIME, &time);
+        clock_gettime(CLOCK_MONOTONIC, &time);
         renderMatrix.rotate(time.tv_nsec / 1000000000.0 * 360.0);
 
         static bool initialized = false;
