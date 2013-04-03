@@ -148,7 +148,7 @@ void AudioSession::setCategory(CategoryType newCategory)
         categoryString = nil;
     }
     NSError *error = nil;
-    [[AVAudioSession sharedInstance] setCategory:categoryString error:error];
+    [[AVAudioSession sharedInstance] setCategory:categoryString error:&error];
     ASSERT(!error);
 }
 
