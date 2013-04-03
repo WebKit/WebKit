@@ -1796,13 +1796,17 @@ void RenderBoxModelObject::paintBorderSides(GraphicsContext* graphicsContext, co
 void RenderBoxModelObject::paintTranslucentBorderSides(GraphicsContext* graphicsContext, const RenderStyle* style, const RoundedRect& outerBorder, const RoundedRect& innerBorder, const IntPoint& innerBorderAdjustment,
     const BorderEdge edges[], BorderEdgeFlags edgesToDraw, BackgroundBleedAvoidance bleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias)
 {
+    // willBeOverdrawn assumes that we draw in order: top, bottom, left, right.
+    // This is different from BoxSide enum order.
+    static BoxSide paintOrder[] = { BSTop, BSBottom, BSLeft, BSRight };
+
     while (edgesToDraw) {
         // Find undrawn edges sharing a color.
         Color commonColor;
         
         BorderEdgeFlags commonColorEdgeSet = 0;
-        for (int i = BSTop; i <= BSLeft; ++i) {
-            BoxSide currSide = static_cast<BoxSide>(i);
+        for (size_t i = 0; i < sizeof(paintOrder) / sizeof(paintOrder[0]); ++i) {
+            BoxSide currSide = paintOrder[i];
             if (!includesEdge(edgesToDraw, currSide))
                 continue;
 
