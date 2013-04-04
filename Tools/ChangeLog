@@ -1,3 +1,14 @@
+2013-04-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        The commit queue should use Mac MountainLion port
+        https://bugs.webkit.org/show_bug.cgi?id=113971
+
+        Reviewed by Lucas Forschler.
+
+        * EWSTools/setup-commit-queue.sh: Copied from Tools/EWSTools/GoogleComputeEngine/build-commit-queue.sh.
+        * Scripts/webkitpy/tool/commands/queues.py:
+        (CommitQueue):
+
 2013-04-04  Dirk Pranke  <dpranke@chromium.org>
 
         turn off running tests on chromium linux EWS bots

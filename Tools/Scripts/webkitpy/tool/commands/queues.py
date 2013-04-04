@@ -303,7 +303,7 @@ class PatchProcessingQueue(AbstractPatchQueue):
 
 class CommitQueue(PatchProcessingQueue, StepSequenceErrorHandler, CommitQueueTaskDelegate):
     name = "commit-queue"
-    port_name = "chromium-xvfb"
+    port_name = "mac-mountainlion"
 
     # AbstractPatchQueue methods
 
