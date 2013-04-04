@@ -211,6 +211,28 @@ protected:
         RenderRegion* m_endRegion;
     };
 
+    typedef PODInterval<LayoutUnit, RenderRegion*> RegionInterval;
+    typedef PODIntervalTree<LayoutUnit, RenderRegion*> RegionIntervalTree;
+
+    class RegionSearchAdapter {
+    public:
+        RegionSearchAdapter(LayoutUnit offset)
+            : m_offset(offset)
+            , m_result(0)
+        {
+        }
+        
+        const LayoutUnit& lowValue() const { return m_offset; }
+        const LayoutUnit& highValue() const { return m_offset; }
+        void collectIfNeeded(const RegionInterval&);
+
+        RenderRegion* result() const { return m_result; }
+
+    private:
+        LayoutUnit m_offset;
+        RenderRegion* m_result;
+    };
+
     // A maps from RenderBox
     typedef HashMap<const RenderBox*, RenderRegionRange> RenderRegionRangeMap;
     RenderRegionRangeMap m_regionRangeMap;
@@ -220,6 +242,8 @@ protected:
     RenderObjectToRegionMap m_breakAfterToRegionMap;
 
     unsigned m_autoLogicalHeightRegionsCount;
+
+    RegionIntervalTree m_regionIntervalTree;
 
     bool m_regionsInvalidated : 1;
     bool m_regionsHaveUniformLogicalWidth : 1;
@@ -256,6 +280,17 @@ private:
     RenderFlowThread* m_renderFlowThread;
     RenderFlowThread* m_previousRenderFlowThread;
 };
+
+// These structures are used by PODIntervalTree for debugging.
+#ifndef NDEBUG
+template <> struct ValueToString<LayoutUnit> {
+    static String string(const LayoutUnit value) { return String::number(value.toFloat()); }
+};
+
+template <> struct ValueToString<RenderRegion*> {
+    static String string(const RenderRegion* value) { return String::format("%p", value); }
+};
+#endif
 
 } // namespace WebCore
 

@@ -35,6 +35,7 @@
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "Node.h"
+#include "PODIntervalTree.h"
 #include "PaintInfo.h"
 #include "RenderBoxRegionInfo.h"
 #include "RenderLayer.h"
@@ -370,41 +371,21 @@ RenderRegion* RenderFlowThread::regionAtBlockOffset(LayoutUnit offset, bool exte
 {
     ASSERT(!m_regionsInvalidated);
 
-    // If no region matches the position and extendLastRegion is true, it will return
-    // the last valid region. It is similar to auto extending the size of the last region. 
-    RenderRegion* lastValidRegion = 0;
-
-    LayoutUnit accumulatedLogicalHeight = 0;
-
-    // If our flow thread autogenerates its regions, then make sure we ensure those regions exist
-    // now.
     if (autoGenerationPolicy == AllowRegionAutoGeneration)
         autoGenerateRegionsToBlockOffset(offset);
 
-    // FIXME: The regions are always in order, optimize this search.
-    for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
-        RenderRegion* region = *iter;
+    if (offset <= 0)
+        return m_regionList.isEmpty() ? 0 : m_regionList.first();
 
-        if (offset <= 0)
-            return region;
+    RegionSearchAdapter adapter(offset);
+    m_regionIntervalTree.allOverlapsWithAdapter<RegionSearchAdapter>(adapter);
 
-        if (extendLastRegion || region->isRenderRegionSet())
-            lastValidRegion = region;
+    // If no region was found, the offset is in the flow thread overflow.
+    // The last region will contain the offset if extendLastRegion is set or if the last region is a set.
+    if (!adapter.result() && !m_regionList.isEmpty() && (extendLastRegion || m_regionList.last()->isRenderRegionSet()))
+        return m_regionList.last();
 
-        if (region->hasOverrideHeight() && !inConstrainedLayoutPhase()) {
-            accumulatedLogicalHeight += region->overrideLogicalContentHeight();
-            if (offset < accumulatedLogicalHeight)
-                return region;
-            continue;
-        }
-
-        LayoutRect regionRect = region->flowThreadPortionRect();
-        accumulatedLogicalHeight += isHorizontalWritingMode() ? regionRect.height() : regionRect.width();
-        if (offset < accumulatedLogicalHeight)
-            return region;
-    }
-
-    return lastValidRegion;
+    return adapter.result();
 }
 
 LayoutUnit RenderFlowThread::pageLogicalTopForOffset(LayoutUnit offset)
@@ -828,6 +809,9 @@ void RenderFlowThread::updateRegionsFlowThreadPortionRect(const RenderRegion* la
     ASSERT(!lastRegionWithContent || (!inConstrainedLayoutPhase() && hasAutoLogicalHeightRegions()));
     LayoutUnit logicalHeight = 0;
     bool emptyRegionsSegment = false;
+    // FIXME: Optimize not to clear the interval all the time. This implies manually managing the tree nodes lifecycle.
+    m_regionIntervalTree.clear();
+    m_regionIntervalTree.initIfNeeded();
     for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;
 
@@ -836,11 +820,14 @@ void RenderFlowThread::updateRegionsFlowThreadPortionRect(const RenderRegion* la
             region->clearOverrideLogicalContentHeight();
 
         LayoutUnit regionLogicalWidth = region->pageLogicalWidth();
-        LayoutUnit regionLogicalHeight = region->logicalHeightOfAllFlowThreadContent();
+        LayoutUnit regionLogicalHeight = std::min<LayoutUnit>(LayoutUnit::max() / 2 - logicalHeight, region->logicalHeightOfAllFlowThreadContent());
 
         LayoutRect regionRect(style()->direction() == LTR ? LayoutUnit() : logicalWidth() - regionLogicalWidth, logicalHeight, regionLogicalWidth, regionLogicalHeight);
 
         region->setFlowThreadPortionRect(isHorizontalWritingMode() ? regionRect : regionRect.transposedRect());
+
+        m_regionIntervalTree.add(RegionIntervalTree::createInterval(logicalHeight, logicalHeight + regionLogicalHeight, region));
+
         logicalHeight += regionLogicalHeight;
 
         // Once we find the last region with content the next regions are considered empty.
@@ -970,6 +957,14 @@ LayoutRect RenderFlowThread::fragmentsBoundingBox(const LayoutRect& layerBoundin
     }
     
     return result;
+}
+
+void RenderFlowThread::RegionSearchAdapter::collectIfNeeded(const RegionInterval& interval)
+{
+    if (m_result)
+        return;
+    if (interval.low() <= m_offset && interval.high() > m_offset)
+        m_result = interval.data();
 }
 
 CurrentRenderFlowThreadMaintainer::CurrentRenderFlowThreadMaintainer(RenderFlowThread* renderFlowThread)
