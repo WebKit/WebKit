@@ -218,6 +218,7 @@ webkit.org/b/100815 http/tests/security/isolatedWorld/bypass-main-world-csp.html
 webkit.org/b/100815 http/tests/security/isolatedWorld/bypass-main-world-csp-for-xhr.html
 
 # This test is for clients that choose to make the missing plugin indicator a button
+
 plugins/clicking-missing-plugin-fires-delegate.html
 
 # StorageTracker is not enabled.
@@ -865,6 +866,8 @@ plugins/npruntime/delete-plugin-within-getProperty.html
 plugins/npruntime/delete-plugin-within-invoke.html
 
 webkit.org/b/111058 plugins/plugin-clip-subframe.html [ Skip ]
+
+webkit.org/b/113928 plugins/focus.html [ Skip ]
 
 # =========================================================================== #
 # Failing Sputnik tests                                                       #
@@ -1932,6 +1935,10 @@ webkit.org/b/110546 [ DEBUG ] fast/parser/document-write-partial-entity-before-l
 webkit.org/b/112914 fast/media/mq-resolution-dpi-dpcm-warning.html [ Skip ]
 webkit.org/b/112914 fast/media/mq-resolution.html [ Skip ]
 webkit.org/b/112914 fast/media/w3c/test_media_queries.html [ Skip ]
+
+webkit.org/b/113930 fast/loader/url-selected-user-gesture.html [ Skip ]
+
+webkit.org/b/113931 fast/forms/select/popup-closes-on-blur.html [ Skip ]
 
 # ============================================================================= #
 # failing security tests
