@@ -2059,7 +2059,6 @@ fast/writing-mode/text-orientation-basic.html
 fast/writing-mode/vertical-align-table-baseline.html
 fast/writing-mode/vertical-baseline-alignment.html
 fast/writing-mode/vertical-font-fallback.html
-http/tests/inspector/console-websocket-error.html
 svg/as-image/animated-svg-repaints-completely-in-hidpi.html
 transitions/default-timing-function.html
 

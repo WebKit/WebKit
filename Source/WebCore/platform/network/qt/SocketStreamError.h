@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) 2013 Seokju Kwon (seokju.kwon@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -42,7 +43,10 @@ namespace WebCore {
             : SocketStreamErrorBase(errorCode)
         {
         }
-
+        SocketStreamError(int errorCode, const QString& description)
+            : SocketStreamErrorBase(errorCode, String(), description)
+        {
+        }
     };
 
 }  // namespace WebCore
