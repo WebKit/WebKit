@@ -1,3 +1,15 @@
+2013-04-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed a defunct comment
+        https://bugs.webkit.org/show_bug.cgi?id=113948
+
+        Reviewed by Oliver Hunt.
+
+        This is also a convenient way to test the EWS.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC):
+
 2013-04-04  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove the gyp build
