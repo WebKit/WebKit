@@ -1,3 +1,13 @@
+2013-04-04  Lucas Forschler  <lforschler@apple.com>
+
+        Turn tests back on for Mac WK1/WK2 EWS.
+        
+        Unreviewed.
+        
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (MacEWS):
+        (MacWK2EWS):
+
 2013-04-04  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK][WK2] MiniBrowser custom URI scheme support
