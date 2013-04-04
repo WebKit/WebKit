@@ -62,7 +62,7 @@ public:
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
-#if USE(SKIA)
+#if USE(SKIA) || USE(CAIRO)
     virtual PassNativeImagePtr nativeImageForCurrentFrame() OVERRIDE;
 #endif
 

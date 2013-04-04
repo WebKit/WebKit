@@ -392,11 +392,11 @@ static GdkPixbuf* getIconPixbufSynchronously(WebKitFaviconDatabase* database, co
 
     // The exact size we pass is irrelevant to the iconDatabase code.
     // We must pass something greater than 0x0 to get a pixbuf.
-    NativeImagePtr icon = iconDatabase().synchronousNativeIconForPageURL(pageURL, !iconSize.isZero() ? iconSize : IntSize(1, 1));
-    if (!icon)
+    RefPtr<cairo_surface_t> surface = iconDatabase().synchronousNativeIconForPageURL(pageURL, !iconSize.isZero() ? iconSize : IntSize(1, 1));
+    if (!surface)
         return 0;
 
-    GRefPtr<GdkPixbuf> pixbuf = adoptGRef(cairoImageSurfaceToGdkPixbuf(icon->surface()));
+    GRefPtr<GdkPixbuf> pixbuf = adoptGRef(cairoImageSurfaceToGdkPixbuf(surface.get()));
     if (!pixbuf)
         return 0;
 

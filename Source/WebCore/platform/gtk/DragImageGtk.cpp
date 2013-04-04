@@ -79,8 +79,7 @@ DragImageRef dissolveDragImageToFraction(DragImageRef image, float fraction)
 
 DragImageRef createDragImageFromImage(Image* image, RespectImageOrientationEnum)
 {
-    NativeImageCairo* nativeImage = image->nativeImageForCurrentFrame();
-    return nativeImage ? cairo_surface_reference(nativeImage->surface()) : 0;
+    return image->nativeImageForCurrentFrame().leakRef();
 }
 
 DragImageRef createDragImageIconForCachedImage(CachedImage*)

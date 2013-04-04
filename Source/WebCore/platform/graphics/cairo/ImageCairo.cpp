@@ -35,7 +35,6 @@
 #include "Color.h"
 #include "GraphicsContext.h"
 #include "ImageObserver.h"
-#include "NativeImageCairo.h"
 #include "PlatformContextCairo.h"
 #include <cairo.h>
 #include <math.h>
@@ -45,12 +44,12 @@ namespace WebCore {
 void Image::drawPattern(GraphicsContext* context, const FloatRect& tileRect, const AffineTransform& patternTransform,
     const FloatPoint& phase, ColorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode)
 {
-    NativeImageCairo* image = nativeImageForCurrentFrame();
-    if (!image) // If it's too early we won't have an image yet.
+    RefPtr<cairo_surface_t> surface = nativeImageForCurrentFrame();
+    if (!surface) // If it's too early we won't have an image yet.
         return;
 
     cairo_t* cr = context->platformContext()->cr();
-    drawPatternToCairoContext(cr, image->surface(), size(), tileRect, patternTransform, phase, toCairoOperator(op), destRect);
+    drawPatternToCairoContext(cr, surface.get(), size(), tileRect, patternTransform, phase, toCairoOperator(op), destRect);
 
     if (imageObserver())
         imageObserver()->didDraw(this);

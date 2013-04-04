@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WKIconDatabaseCairo.h"
 
-#include "NativeImageCairo.h"
 #include "WKAPICast.h"
 #include "WebIconDatabase.h"
 
@@ -35,7 +34,5 @@ using namespace WebKit;
 
 cairo_surface_t* WKIconDatabaseTryGetCairoSurfaceForURL(WKIconDatabaseRef iconDatabase, WKURLRef url)
 {
-    NativeImageCairo* nativeImage = toImpl(iconDatabase)->nativeImageForPageURL(toWTFString(url));
-
-    return nativeImage ? nativeImage->surface() : 0;
+    return toImpl(iconDatabase)->nativeImageForPageURL(toWTFString(url)).get();
 }

@@ -1,3 +1,14 @@
+2013-04-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [Cairo] Fix canvas drawing of SVG-based patterns and remove NativeImageCairo
+        https://bugs.webkit.org/show_bug.cgi?id=113929
+
+        Reviewed by Martin Robinson.
+
+        Remove outdated symbols now that NativeImageCairo was removed.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2013-04-03  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed VS2010 build fix.

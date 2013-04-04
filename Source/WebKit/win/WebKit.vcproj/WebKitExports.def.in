@@ -370,9 +370,6 @@ EXPORTS
         ?getCGImageRef@BitmapImage@WebCore@@UAEPAUCGImage@@XZ
         ?getFirstCGImageRefOfSize@BitmapImage@WebCore@@UAEPAUCGImage@@ABVIntSize@2@@Z
         ?getCGImageArray@BitmapImage@WebCore@@UAE?AV?$RetainPtr@PBU__CFArray@@@WTF@@XZ
-#elif USE(CAIRO)
-        ?nativeImageForCurrentFrame@BitmapImage@WebCore@@UAEPAVNativeImageCairo@2@XZ
-        ?frameAtIndex@BitmapImage@WebCore@@IAEPAVNativeImageCairo@2@I@Z
 #endif
         ?getHBITMAP@BitmapImage@WebCore@@UAE_NPAUHBITMAP__@@@Z
         ?getHBITMAPOfSize@BitmapImage@WebCore@@UAE_NPAUHBITMAP__@@PAUtagSIZE@@@Z

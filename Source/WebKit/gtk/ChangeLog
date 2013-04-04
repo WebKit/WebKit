@@ -1,3 +1,16 @@
+2013-04-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [Cairo] Fix canvas drawing of SVG-based patterns and remove NativeImageCairo
+        https://bugs.webkit.org/show_bug.cgi?id=113929
+
+        Reviewed by Martin Robinson.
+
+        Update code now that PassNativeImagePtr is now a typedef to PassRefPtr<cairo_surface_t>
+        instead of NativeImageCairo*.
+
+        * webkit/webkitfavicondatabase.cpp:
+        (getIconPixbufSynchronously):
+
 2013-04-03  Alban Crequy  <alban.crequy@collabora.co.uk>
 
         [GTK] WebKitWebNavigationAction: fix mix between dispose and finalize

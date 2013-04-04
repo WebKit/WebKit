@@ -27,6 +27,7 @@
 #include "Image.h"
 #include "BitmapImage.h"
 #include "GraphicsContext.h"
+#include "RefPtrCairo.h"
 #include <cairo.h>
 #include <cairo-win32.h>
 
@@ -49,9 +50,9 @@ PassRefPtr<BitmapImage> BitmapImage::create(HBITMAP hBitmap)
     if (!dibSection.dsBm.bmBits)
         return 0;
 
-    cairo_surface_t* surface = cairo_win32_surface_create_with_dib (CAIRO_FORMAT_ARGB32, dibSection.dsBm.bmWidth, dibSection.dsBm.bmHeight);
+    RefPtr<cairo_surface_t> surface = adoptRef(cairo_win32_surface_create_with_dib(CAIRO_FORMAT_ARGB32, dibSection.dsBm.bmWidth, dibSection.dsBm.bmHeight));
 
-    return BitmapImage::create(new NativeImageCairo(surface));
+    return BitmapImage::create(surface.release());
 }
 
 bool BitmapImage::getHBITMAPOfSize(HBITMAP bmp, LPSIZE size)
@@ -95,14 +96,11 @@ void BitmapImage::drawFrameMatchingSourceSize(GraphicsContext* ctxt, const Float
 {
     size_t frames = frameCount();
     for (size_t i = 0; i < frames; ++i) {
-        NativeImageCairo* nativeImage = frameAtIndex(i);
-        if (!nativeImage)
-            continue;
-        cairo_surface_t* image = nativeImage->surface();
-        if (!image)
+        RefPtr<cairo_surface_t> surface = frameAtIndex(i);
+        if (!surface)
             continue;
 
-        if (cairo_image_surface_get_height(image) == static_cast<size_t>(srcSize.height()) && cairo_image_surface_get_width(image) == static_cast<size_t>(srcSize.width())) {
+        if (cairo_image_surface_get_height(surface.get()) == static_cast<size_t>(srcSize.height()) && cairo_image_surface_get_width(surface.get()) == static_cast<size_t>(srcSize.width())) {
             size_t currentFrame = m_currentFrame;
             m_currentFrame = i;
             draw(ctxt, dstRect, FloatRect(0.0f, 0.0f, srcSize.width(), srcSize.height()), ColorSpaceDeviceRGB, compositeOp, BlendModeNormal);

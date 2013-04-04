@@ -3036,9 +3036,6 @@
     <ClCompile Include="..\platform\graphics\cairo\IntRectCairo.cpp">
       <Filter>platform\graphics\cairo</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\graphics\cairo\NativeImageCairo.cpp">
-      <Filter>platform\graphics\cairo</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\graphics\cairo\OwnPtrCairo.cpp">
       <Filter>platform\graphics\cairo</Filter>
     </ClCompile>

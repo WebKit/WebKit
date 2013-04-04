@@ -29,18 +29,12 @@
 #include "BitmapImage.h"
 
 #include "ImageObserver.h"
-#include "NativeImageCairo.h"
 #include "PlatformContextCairo.h"
 #include <cairo.h>
 
 namespace WebCore {
 
-PassRefPtr<BitmapImage> BitmapImage::create(cairo_surface_t* surface)
-{
-    return BitmapImage::create(new NativeImageCairo(surface));
-}
-
-BitmapImage::BitmapImage(NativeImageCairo* nativeImage, ImageObserver* observer)
+BitmapImage::BitmapImage(PassRefPtr<cairo_surface_t> nativeImage, ImageObserver* observer)
     : Image(observer)
     , m_currentFrame(0)
     , m_frames(0)
@@ -58,15 +52,14 @@ BitmapImage::BitmapImage(NativeImageCairo* nativeImage, ImageObserver* observer)
     , m_sizeAvailable(true)
     , m_haveFrameCount(true)
 {
-    cairo_surface_t* surface = nativeImage->surface();
-    int width = cairo_image_surface_get_width(surface);
-    int height = cairo_image_surface_get_height(surface);
+    int width = cairo_image_surface_get_width(nativeImage.get());
+    int height = cairo_image_surface_get_height(nativeImage.get());
     m_decodedSize = width * height * 4;
     m_size = IntSize(width, height);
 
     m_frames.grow(1);
+    m_frames[0].m_hasAlpha = cairo_surface_get_content(nativeImage.get()) != CAIRO_CONTENT_COLOR;
     m_frames[0].m_frame = nativeImage;
-    m_frames[0].m_hasAlpha = cairo_surface_get_content(surface) != CAIRO_CONTENT_COLOR;
     m_frames[0].m_haveMetadata = true;
     checkForSolidColor();
 }
@@ -84,8 +77,8 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
 
     startAnimation();
 
-    NativeImageCairo* nativeImage = frameAtIndex(m_currentFrame);
-    if (!nativeImage) // If it's too early we won't have an image yet.
+    RefPtr<cairo_surface_t> surface = frameAtIndex(m_currentFrame);
+    if (!surface) // If it's too early we won't have an image yet.
         return;
 
     if (mayFillWithSolidColor()) {
@@ -102,8 +95,7 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
         context->setCompositeOperation(op, blendMode);
 
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)
-    cairo_surface_t* surface = nativeImage->surface();
-    IntSize scaledSize(cairo_image_surface_get_width(surface), cairo_image_surface_get_height(surface));
+    IntSize scaledSize(cairo_image_surface_get_width(surface.get()), cairo_image_surface_get_height(surface.get()));
     FloatRect adjustedSrcRect = adjustSourceRectForDownSampling(src, scaledSize);
 #else
     FloatRect adjustedSrcRect(src);
@@ -127,7 +119,7 @@ void BitmapImage::draw(GraphicsContext* context, const FloatRect& dst, const Flo
         }
     }
 
-    context->platformContext()->drawSurfaceToContext(nativeImage->surface(), dstRect, adjustedSrcRect, context);
+    context->platformContext()->drawSurfaceToContext(surface.get(), dstRect, adjustedSrcRect, context);
 
     context->restore();
 
@@ -143,20 +135,19 @@ void BitmapImage::checkForSolidColor()
     if (frameCount() > 1)
         return;
 
-    NativeImageCairo* nativeImage = frameAtIndex(m_currentFrame);
-    if (!nativeImage) // If it's too early we won't have an image yet.
+    RefPtr<cairo_surface_t> surface = frameAtIndex(m_currentFrame);
+    if (!surface) // If it's too early we won't have an image yet.
         return;
 
-    cairo_surface_t* surface = nativeImage->surface();
-    ASSERT(cairo_surface_get_type(surface) == CAIRO_SURFACE_TYPE_IMAGE);
+    ASSERT(cairo_surface_get_type(surface.get()) == CAIRO_SURFACE_TYPE_IMAGE);
 
-    int width = cairo_image_surface_get_width(surface);
-    int height = cairo_image_surface_get_height(surface);
+    int width = cairo_image_surface_get_width(surface.get());
+    int height = cairo_image_surface_get_height(surface.get());
 
     if (width != 1 || height != 1)
         return;
 
-    unsigned* pixelColor = reinterpret_cast<unsigned*>(cairo_image_surface_get_data(surface));
+    unsigned* pixelColor = reinterpret_cast<unsigned*>(cairo_image_surface_get_data(surface.get()));
     m_solidColor = colorFromPremultipliedARGB(*pixelColor);
 
     m_isSolidColor = true;
@@ -168,8 +159,7 @@ bool FrameData::clear(bool clearMetadata)
         m_haveMetadata = false;
 
     if (m_frame) {
-        delete m_frame;
-        m_frame = 0;
+        m_frame.clear();
         return true;
     }
     return false;
