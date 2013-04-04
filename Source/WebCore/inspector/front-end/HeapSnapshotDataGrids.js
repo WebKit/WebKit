@@ -496,7 +496,7 @@ WebInspector.HeapSnapshotRetainmentDataGrid.prototype = {
 
     /**
      * @param {!WebInspector.HeapSnapshotProxy} snapshot
-     * @paran {number} nodeIndex
+     * @param {number} nodeIndex
      */
     setDataSource: function(snapshot, nodeIndex)
     {
