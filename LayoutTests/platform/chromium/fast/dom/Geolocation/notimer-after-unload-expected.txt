@@ -1,3 +1,0 @@
-main frame - has 1 onunload handler(s)
-CONSOLE MESSAGE: Blocked alert('unload-called') during unload.
-You should have seen one unload alert appear.

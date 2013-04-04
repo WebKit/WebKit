@@ -1,5 +1,0 @@
-http://127.0.0.1:8000/incremental/slow-utf8-text.pl - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/incremental/slow-utf8-text.pl, main document URL http://127.0.0.1:8000/misc/window-dot-stop.html, http method GET> redirectResponse (null)
-http://127.0.0.1:8000/incremental/slow-utf8-text.pl - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -999, failing URL "http://127.0.0.1:8000/incremental/slow-utf8-text.pl">
-This tests for the successful use of window.stop()
-
-

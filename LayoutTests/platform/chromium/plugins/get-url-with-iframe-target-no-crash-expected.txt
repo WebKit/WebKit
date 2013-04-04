@@ -1,3 +1,0 @@
-This tests that we do not crash upon trying to deliver NPP_URLNotify to a plugin that has been deleted.
-SUCCESS
-

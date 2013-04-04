@@ -1,4 +1,0 @@
-PASS: 'break-before' is at (220, 8)
-PASS: 'after-break' is at (431, 8)
-PASS: 'no-break' is at (537, 8)
-

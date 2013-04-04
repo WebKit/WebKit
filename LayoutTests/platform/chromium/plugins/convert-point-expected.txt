@@ -1,3 +1,0 @@
-
-This tests that NPN_ConvertPoint can convert to and from various coordinate spaces.
-SUCCESS!

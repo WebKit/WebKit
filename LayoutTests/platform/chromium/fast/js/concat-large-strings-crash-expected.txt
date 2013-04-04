@@ -1,3 +1,0 @@
-Test for bug 102963. This test passed if you see the word PASS below.
-
-PASS: Didn't crash.

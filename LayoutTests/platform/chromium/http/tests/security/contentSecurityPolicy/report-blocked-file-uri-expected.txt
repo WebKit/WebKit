@@ -1,8 +1,0 @@
-CONSOLE MESSAGE: Refused to load the image 'compass.jpg' because it violates the following Content Security Policy directive: "img-src 'none'".
-
-CSP report received:
-CONTENT_TYPE: application/json
-HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/report-blocked-file-uri.html
-REQUEST_METHOD: POST
-=== POST DATA ===
-{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-blocked-file-uri.html","referrer":"","violated-directive":"img-src 'none'","effective-directive":"img-src","original-policy":"img-src 'none'; report-uri resources/save-report.php","blocked-uri":"file","source-file":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-blocked-file-uri.html","line-number":12}}

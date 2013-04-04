@@ -1,8 +1,0 @@
-CONSOLE MESSAGE: line 2: Refused to execute inline script because it violates the following Content Security Policy directive: "script-src 'self'".
-
-CSP report received:
-CONTENT_TYPE: application/json
-HTTP_REFERER: http://127.0.0.1:8000/security/contentSecurityPolicy/report-uri.html
-REQUEST_METHOD: POST
-=== POST DATA ===
-{"csp-report":{"document-uri":"http://127.0.0.1:8000/security/contentSecurityPolicy/report-uri.html","referrer":"","violated-directive":"script-src 'self'","effective-directive":"script-src","original-policy":"script-src 'self'; report-uri resources/save-report.php","blocked-uri":""}}

@@ -1,6 +1,0 @@
-Test that video media documents have a black background.
-
-
-EXPECTED (iframeBodyStyle.backgroundColor == 'rgb(0, 0, 0)') OK
-END OF TEST
-

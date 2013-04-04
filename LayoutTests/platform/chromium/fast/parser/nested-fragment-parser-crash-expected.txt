@@ -1,3 +1,0 @@
-CONSOLE MESSAGE: line 19: Uncaught RangeError: Maximum call stack size exceeded.
-x
-x This test passes if it doesn't crash.

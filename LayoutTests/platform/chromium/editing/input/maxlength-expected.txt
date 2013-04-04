@@ -1,9 +1,0 @@
-Test for bug 19479: Special characters can be inserted in text field having reached maxlength.
-
-
-PASS testElement.value is "12345678"
-PASS testElement.value is "12345678"
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

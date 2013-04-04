@@ -1,6 +1,0 @@
-main frame - didStartProvisionalLoadForFrame
-main frame - didCommitLoadForFrame
-main frame - willPerformClientRedirectToURL: rchive 
-main frame - didFinishDocumentLoadForFrame
-main frame - didFinishLoadForFrame
-
