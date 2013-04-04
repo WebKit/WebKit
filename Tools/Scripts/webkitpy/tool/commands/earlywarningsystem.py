@@ -212,7 +212,7 @@ class ChromiumAndroidEWS(AbstractChromiumEWS):
 class MacEWS(AbstractEarlyWarningSystem):
     name = "mac-ews"
     port_name = "mac"
-	_default_run_tests = True
+    _default_run_tests = True
     watchers = AbstractEarlyWarningSystem.watchers + [
         "rniwa@webkit.org",
     ]
@@ -221,7 +221,7 @@ class MacEWS(AbstractEarlyWarningSystem):
 class MacWK2EWS(AbstractEarlyWarningSystem):
     name = "mac-wk2-ews"
     port_name = "mac-wk2"
-	_default_run_tests = True
+    _default_run_tests = True
     watchers = AbstractEarlyWarningSystem.watchers + [
         "rniwa@webkit.org",
     ]

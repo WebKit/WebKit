@@ -1,3 +1,13 @@
+2013-04-04  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        Indentation fix to get webkit-patch working again after r147625
+
+        Unreviewed.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (MacEWS):
+        (MacWK2EWS):
+
 2013-04-04  Lucas Forschler  <lforschler@apple.com>
 
         Turn tests back on for Mac WK1/WK2 EWS.
