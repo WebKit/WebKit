@@ -1,11 +1,11 @@
 /*!
     \inmodule QtWebKit
     \page qtwebkit-goes-mobile.html
-    \title QtWebKit Goes Mobile
-    \contentspage QtWebKit
+    \title Qt WebKit Goes Mobile
+    \contentspage Qt WebKit
     \section1 Overview
 
-    A lot of effort has been put into QtWebKit to make it attractive for
+    A lot of effort has been put into Qt WebKit to make it attractive for
     use on mobile devices.
 
     The goal of this tutorial is to help you understand the mobile
@@ -24,7 +24,7 @@
 
     Here we set up a \l{QGraphicsView} application and add a
     \l{QGraphicsWebView} to the scene. Notice
-    that we're disabling the scrollbars on the QGraphicsView because QtWebKit
+    that we're disabling the scrollbars on the QGraphicsView because Qt WebKit
     handles scrolling and scrollbars automatically. This is to allow scrolling
     optimizations and to enable web authors to interact with the scrollbars,
     for instance, to style them differently.
@@ -53,7 +53,7 @@
     One way to overcome this issue, is to do all loading, laying out and
     painting (basically all non-UI related work) in another thread or process, and
     just blit the result from the web process/thread to the UI. There is research
-    in progress to enable this for a future version of QtWebKit, using WebKit2, but for now,
+    in progress to enable this for a future version of Qt WebKit, using WebKit2, but for now,
     freezing the backing store can help when performing a zooming operation, for instance.
     This will be discussed later, in the \l{#Enabling the Tiling}{Enabling the Tiling} section.
 
@@ -125,7 +125,7 @@
     are written with a desktop browser in mind, that makes only very few sites
     fit into the width of a mobile device.
 
-    QtWebKit has a way to force a layout to a given width or height. What really
+    Qt WebKit has a way to force a layout to a given width or height. What really
     matters here is the width. If you lay out a page to a given width, it will get
     that width and images might be cropped. The width or height is also used for
     laying out fixed elements, but when we resize the \l{QGraphicsWebView} to the
@@ -149,7 +149,7 @@
     \section1 The 'viewport' Meta-Tag
 
     As some sites do not work with 960 pixels width or want to have control of
-    how the page is laid out, QtWebKit, Android, Firefox Mobile and
+    how the page is laid out, Qt WebKit, Android, Firefox Mobile and
     the iPhone Safari browser support a meta-tag called \c viewport. This makes
     it possible for a web page to let the browser know how it wants to be shown.
     More info can be found in the

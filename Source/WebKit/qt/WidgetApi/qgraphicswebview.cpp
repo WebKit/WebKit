@@ -145,7 +145,7 @@ void QGraphicsWebViewPrivate::_q_scaleChanged()
     \since 4.6
 
     An instance of this class renders Web content from a URL or supplied as data, using
-    features of the QtWebKit module.
+    features of the Qt WebKit module.
 
     If the width and height of the item are not set, they will default to 800 and 600,
     respectively. If the Web page contents is larger than that, scrollbars will be shown

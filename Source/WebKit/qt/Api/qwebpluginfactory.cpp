@@ -34,7 +34,7 @@
     <object type="application/x-pdf" data="http://qt.nokia.com/document.pdf" width="500" height="400"></object>
     \endcode
 
-    QtWebkit will natively handle the most basic data types like \c{text/html} and
+    Qt WebKit will natively handle the most basic data types like \c{text/html} and
     \c{image/jpeg}, but for any advanced or custom data types you will need to
     provide a handler yourself.
 

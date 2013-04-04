@@ -34,7 +34,7 @@
     and behaviour.
 
     The evolution of this version is bound to the releases of Apple's
-    Safari browser. For a version specific to the QtWebKit library,
+    Safari browser. For a version specific to the Qt WebKit module,
     see QTWEBKIT_VERSION
 
     \sa QWebPage::userAgentForUrl()
@@ -77,11 +77,11 @@ int qWebKitMinorVersion()
     \relates QWebPage
 
     This macro expands a numeric value of the form 0xMMNNPP (MM =
-    major, NN = minor, PP = patch) that specifies QtWebKit's version
-    number. For example, if you compile your application against QtWebKit
+    major, NN = minor, PP = patch) that specifies Qt WebKit's version
+    number. For example, if you compile your application against Qt WebKit
     2.1.2, the QTWEBKIT_VERSION macro will expand to 0x020102.
 
-    You can use QTWEBKIT_VERSION to use the latest QtWebKit API where
+    You can use QTWEBKIT_VERSION to use the latest Qt WebKit API where
     available.
 
     \sa QT_VERSION
@@ -91,7 +91,7 @@ int qWebKitMinorVersion()
     \macro QTWEBKIT_VERSION_STR
     \relates QWebPage
 
-    This macro expands to a string that specifies QtWebKit's version number
+    This macro expands to a string that specifies Qt WebKit's version number
     (for example, "2.1.2"). This is the version against which the
     application is compiled.
 
@@ -109,7 +109,7 @@ int qWebKitMinorVersion()
 
     \code
     #if QTWEBKIT_VERSION >= QTWEBKIT_VERSION_CHECK(2, 1, 0)
-    // code to use API new in QtWebKit 2.1.0
+    // code to use API new in Qt WebKit 2.1.0
     #endif
     \endcode
 */

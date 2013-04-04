@@ -1682,7 +1682,7 @@ static void collectChildFrames(QWebFrame* frame, QList<QWebFrame*>& list)
 
 /*!
     This function can be called to trigger the specified \a action.
-    It is also called by QtWebKit if the user triggers the action, for example
+    It is also called by Qt WebKit if the user triggers the action, for example
     through a context menu item.
 
     If \a action is a checkable action then \a checked specified whether the action

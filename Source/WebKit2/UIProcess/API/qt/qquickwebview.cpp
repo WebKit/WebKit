@@ -2291,7 +2291,7 @@ void QQuickWebViewPrivate::didFailToFindString(WKPageRef page, WKStringRef strin
 
     \row
     \li InternalErrorDomain
-    \li Content fails to be interpreted by QtWebKit.
+    \li Content fails to be interpreted by Qt WebKit.
 
     \row
     \li NetworkErrorDomain

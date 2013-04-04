@@ -46,7 +46,7 @@ using namespace WebCore;
 
     WebKit uses SQLite to create and access the local SQL databases. The location of the database
     file in the local file system is returned by fileName(). You can access the database directly
-    through the QtSql database module.
+    through the \l{Qt SQL} database module.
 
     For each database the web site can define an expectedSize(). The current size of the database
     in bytes is returned by size().
@@ -131,7 +131,7 @@ QWebDatabase::QWebDatabase(QWebDatabasePrivate* priv)
 /*!
     Returns the file name of the web database.
 
-    The name can be used to access the database through the QtSql database module, for example:
+    The name can be used to access the database through the \l{Qt SQL} database module, for example:
     \code
       QWebDatabase webdb = ...
       QSqlDatabase sqldb = QSqlDatabase::addDatabase("QSQLITE", "myconnection");

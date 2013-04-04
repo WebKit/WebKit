@@ -32,7 +32,7 @@
 
 /*!
     \page qtwebkitwidgets-index.html
-    \title Qt Webkit Widgets
+    \title Qt WebKit Widgets
     \ingroup modules
 
     \brief The Qt WebKit Widgets module provides a web browser engine as well as
@@ -49,7 +49,7 @@
 
     A bridge between the JavaScript execution environment and the Qt object
     model makes it possible for custom QObjects to be scripted. For detailed
-    documentation see \l{The QtWebkit Bridge}.
+    documentation see \l{The Qt WebKit Bridge}.
     Integration with the Qt networking module enables Web pages to be transparently loaded
     from Web servers, the local file system or even the Qt resource system.
 
@@ -60,7 +60,7 @@
     QtWebKit has been enhanced to become more attractive on the mobile front as well.
     For more information see \l{QtWebKit Goes Mobile}.
 
-    QtWebKit is based on the Open Source WebKit engine. More information about
+    Qt WebKit is based on the Open Source WebKit engine. More information about
     WebKit itself can be found on the \l{WebKit Open Source Project} Web site.
 
     \section1 Including In Your Project
@@ -77,10 +77,10 @@
 
     \section1 Notes
 
-    \note Building the QtWebKit module with debugging symbols is problematic
+    \note Building the Qt WebKit module with debugging symbols is problematic
     on many platforms due to the size of the WebKit engine. We recommend
     building the module only in release mode for embedded platforms.
-    Currently QtWebKit will always be compiled without debugging symbols
+    Currently Qt WebKit will always be compiled without debugging symbols
     when using gcc. Take a look at the last lines of
     \c{src/3rdparty/webkit/Source/WebCore/WebCore.pro} if you need to change this.
 
@@ -111,7 +111,7 @@
     may contain many child frames.
 
     Individual elements of an HTML document can be accessed via DOM JavaScript
-    interfaces from within a web page. The equivalent of this API in QtWebKit
+    interfaces from within a web page. The equivalent of this API in Qt WebKit
     is represented by QWebElement. QWebElement objects are obtained using QWebFrame's
     \l{QWebFrame::}{findAllElements()} and \l{QWebFrame::}{findFirstElement()}
     functions with CSS selector queries.
@@ -196,7 +196,7 @@
     can be found in the \c{src/3rdparty/webkit/VERSION} file supplied with Qt.
 
     Qt Commercial Edition licensees that wish to distribute applications that
-    use the QtWebKit module need to be aware of their obligations under the
+    use the Qt WebKit module need to be aware of their obligations under the
     GNU Library General Public License (LGPL).
 
     Developers using the Open Source Edition can choose to redistribute

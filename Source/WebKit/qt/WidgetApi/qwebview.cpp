@@ -78,7 +78,7 @@ void QWebViewPrivate::_q_pageDestroyed()
 
     \inmodule QtWebKit
 
-    QWebView is the main widget component of the QtWebKit web browsing module.
+    QWebView is the main widget component of the Qt WebKit web browsing module.
     It can be used in various applications to display web content live from the
     Internet.
 
@@ -144,7 +144,7 @@ void QWebViewPrivate::_q_pageDestroyed()
     \image qwebview-diagram.png
 
     \note It is possible to use QWebPage and QWebFrame, without using QWebView,
-    if you do not require QWidget attributes. Nevertheless, QtWebKit depends
+    if you do not require QWidget attributes. Nevertheless, Qt WebKit depends
     on QtGui, so you should use a QApplication instead of QCoreApplication.
 
     \sa {Previewer Example}, {Web Browser}, {Form Extractor Example},

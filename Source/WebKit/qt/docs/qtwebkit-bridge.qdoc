@@ -1,19 +1,19 @@
 /*!
     \inmodule QtWebKit
     \page qtwebkit-bridge.html
-    \title The QtWebKit Bridge
-    \contentspage QtWebKit
+    \title The Qt WebKit Bridge
+    \contentspage Qt WebKit
     \section1 Overview
     \section2 The technology
 
-    The QtWebKit bridge is a mechanism that extends WebKit's JavaScript environment to access native
+    The Qt WebKit bridge is a mechanism that extends WebKit's JavaScript environment to access native
     objects represented as \l{QObject}s. It takes advantage of the \l{QObject} introspection,
     a part of the \l{Object Model}, which makes it easy to integrate with the dynamic JavaScript environment.
     For example \l{QObject} properties map directly to JavaScript properties.
 
     \section2 Use Cases
 
-    There are two main use cases for the QtWebKit bridge: web content in native applications and thin clients.
+    There are two main use cases for the Qt WebKit bridge: web content in native applications and thin clients.
 
     \section3 Web Content in Native Applications
 
@@ -25,7 +25,7 @@
     or \l{QtDeclarative}. The music store, which shows dynamic content
     from the Internet and gets modified rapidly, is best authored in HTML and maintained on the server.
 
-    With the QtWebKit bridge, the music store component can interact with native parts of the application,
+    With the Qt WebKit bridge, the music store component can interact with native parts of the application,
     for example, when a file needs to be saved to a specific location.
 
     \section3 Thin Clients
@@ -43,22 +43,22 @@
 
     \section2 Difference from Other Bridge Technologies
 
-    Of course, QtWebKit is not the only bridge technology out there. NPAPI, for example,
+    Of course, Qt WebKit is not the only bridge technology out there. NPAPI, for example,
     is a long-time standard for web-native bridging. Due to Qt's meta-object system, full applications
-    leveraging web technologies are much easier to develop with the QtWebKit bridge than with NPAPI. NPAPI, however, is better
+    leveraging web technologies are much easier to develop with the Qt WebKit bridge than with NPAPI. NPAPI, however, is better
     for cross-browser plugins, due to it being an accepted standard.
 
     When developing a plugin for a browser, NPAPI is recommended. When developing a full application
-    utilizing HTML-rendering, the QtWebKit bridge is recommended.
+    utilizing HTML-rendering, the Qt WebKit bridge is recommended.
 
-    \section2 Relationship with QtScript
+    \section2 Relationship with Qt Script
 
-    The QtWebKit bridge is similar to \l{QtScript}, especially for some of the features described in the
-    \l{Making Applications Scriptable} page. However, Qt 4.7 does not provide the full QtScript API for web applications.
+    The Qt WebKit bridge is similar to \l{Qt Script}, especially for some of the features described in the
+    \l{Making Applications Scriptable} page. However, Qt 4.7 does not provide the full Qt Script API for web applications.
     Full support is planned for future versions. You might notice that some of the features
     described here are an exact copy of the ones described in the \l{Making Applications Scriptable} page. That is because
-    the QtWebKit bridge is a subset of that functionality, and this page tries to capture the full
-    capabilities available through the QtWebKit bridge specifically.
+    the Qt WebKit bridge is a subset of that functionality, and this page tries to capture the full
+    capabilities available through the Qt WebKit bridge specifically.
 
     \section1 Accessing QObjects
 
@@ -74,9 +74,9 @@
 
     \section2 Using Signals and Slots
 
-    The QtWebKit bridge adapts Qt's central \l{Signals and Slots} feature for
+    The Qt WebKit bridge adapts Qt's central \l{Signals and Slots} feature for
     scripting. There are three principal ways to use signals and slots
-    with the QtWebKit bridge:
+    with the Qt WebKit bridge:
 
     \list
     \li \b{Hybrid C++/script}: C++ application code connects a
@@ -100,7 +100,7 @@
     script function.
     \endlist
 
-    Note that QtScript functions such as qScriptConnect are unavilable in the web environment.
+    Note that Qt Script functions such as qScriptConnect are unavilable in the web environment.
 
     \section3 Signal to Function Connections
 
@@ -117,7 +117,7 @@
     \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 8
 
     When the argument is a slot of a QObject, the argument types of the
-    signal and the slot do not have to be compatible. If possible, the QtWebKit
+    signal and the slot do not have to be compatible. If possible, the Qt WebKit
     bridge converts the signal arguments such that they match the slot argument.
 
     To disconnect a slot from a signal, you call the signal's
@@ -194,7 +194,7 @@
 
     \section3 Overloaded Signals and Slots
 
-    When a signal or slot is overloaded, the QtWebKit bridge will attempt to
+    When a signal or slot is overloaded, the Qt WebKit bridge will attempt to
     pick the right overload based on the actual types of the QScriptValue arguments
     involved in the function invocation. For example, if your class has slots
     \c{myOverloadedSlot(int)} and \c{myOverloadedSlot(QString)}, the following
@@ -208,7 +208,7 @@
 
     \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 21
 
-    If the overloads have different number of arguments, the QtWebKit bridge will
+    If the overloads have different number of arguments, the Qt WebKit bridge will
     pick the overload with the argument count that best matches the
     actual number of arguments passed to the slot.
 
@@ -260,7 +260,7 @@
 
     When calling slots, receiving signals or accessing properties, usually some payload is involved.
     For example, a property "text" might return a \l{QString} parameter.
-    The QtWebKit bridge does the job of converting between a given JavaScript data-type, and the
+    The Qt WebKit bridge does the job of converting between a given JavaScript data-type, and the
     expected or given Qt type. Each Qt type has a coresponding set of rules of how JavaScript treats it.
 
     The data type conversions are also applicable for the data returned from non-void invokable methods.
@@ -269,7 +269,7 @@
 
     All Qt numeric data types are converted to or from a JavaScript number. These include int, short, float,
     double, and the portable Qt types (qreal, qint etc). A special case is \l{QChar}.
-    If a slot expects a QChar, the QtWebKit bridge uses the Unicode value in case of a number and the first character in case of a string.
+    If a slot expects a QChar, the Qt WebKit bridge uses the Unicode value in case of a number and the first character in case of a string.
 
     Note that non-standard (typedef'ed) number types are not automatically converted to
     or from a JavaScript number - we suggest to use standard number types for signals, slots
@@ -280,31 +280,31 @@
 
     \section3 Strings
 
-    When JavaScript accesses methods or properties that expect a \l{QString}, the QtWebKit bridge
+    When JavaScript accesses methods or properties that expect a \l{QString}, the Qt WebKit bridge
     will automatically convert the value to a string (if it is not already a string), using the
     built-in JavaScript toString method.
 
-    When a QString is passed to JavaScript from a signal or a property, the QtWebKit bridge
+    When a QString is passed to JavaScript from a signal or a property, the Qt WebKit bridge
     converts it into a JavaScript string.
 
     \section3 Date & Time
 
     Both \l{QDate}, \l{QTime} and \l{QDateTime} are automatically translated to or from the JavaScript
     Date object. If a number is passed as an argument to a method that expects one of the date/time
-    types, the QtWebKit bridge treats it as a timestamp. If a sting is passed, QtWebKit
+    types, the Qt WebKit bridge treats it as a timestamp. If a sting is passed, Qt WebKit
     tries the different Qt date parsing functions to perform the right translation.
 
     \section3 Regular Expressions
 
-    The QtWebKit bridge automatically converts a JavaScript RegEx object to a \l{QRegExp}.
+    The Qt WebKit bridge automatically converts a JavaScript RegEx object to a \l{QRegExp}.
     If a string is passed to a method expecting a \l{QRegExp}, the string is converted
     to a \l{QRegExp}.
 
     \section3 Lists
 
-    The QtWebKit bridge treats several types of lists in a special way: \l{QVariantList}, \l{QStringList},
+    The Qt WebKit bridge treats several types of lists in a special way: \l{QVariantList}, \l{QStringList},
     \l{QObjectList} and \l{QList}<int>. When a slot or property expects one of those list types,
-    the QtWebKit bridge tries to convert a JavaScript array into that type, converting each of
+    the Qt WebKit bridge tries to convert a JavaScript array into that type, converting each of
     the array's elements to the single-element type of the list.
 
     The most useful type of list is \l{QVariantList}, which can be converted to and from any
@@ -326,7 +326,7 @@
 
     \section3 QVariants
 
-    When a slot or property accepts a \l{QVariant}, the QtWebKit bridge creates a \l{QVariant} that best
+    When a slot or property accepts a \l{QVariant}, the Qt WebKit bridge creates a \l{QVariant} that best
     matches the argument passed by JavaScript. A string, for example, becomes a \l{QVariant} holding a \l{QString},
     a normal JSON object becomes a \l{QVariantMap}, and a JavaScript array becomes a \l{QVariantList}.
 
@@ -341,7 +341,7 @@
     Pointers to a \l{QObject} or a \l{QWidget} can be used in signals, slots and properties. This object
     can then be used like an object that is exposed directly. Its slots can be invoked, its signals connected to, etc.
     However, this functionality is fairly limited - the type used has to be \l{QObject}* or \l{QWidget}*. If the type
-    specified is a pointer to a non-\l{QWidget} subclass of \l{QObject}, the QtWebKit bridge does not recognize it as
+    specified is a pointer to a non-\l{QWidget} subclass of \l{QObject}, the Qt WebKit bridge does not recognize it as
     a \l{QObject}.
 
     In general its advised to use care when passing \l{QObject}s as arguments, as those objects don't become owned by
@@ -352,7 +352,7 @@
 
     \since 4.7
 
-    The QtWebKit bridge handles \l{QPixmap}s and \l{QImage}s in a special way. Since QtWebKit stores \l{QPixmap}s to
+    The Qt WebKit bridge handles \l{QPixmap}s and \l{QImage}s in a special way. Since Qt WebKit stores \l{QPixmap}s to
     represent HTML images, \l{QPixmap}s coming from the native environment can be used directly inside WebKit.
     A \l{QImage} or a \l{QPixmap} coming from Qt is converted to an intermediate JavaScript object,
     which can be represented like this:
@@ -374,7 +374,7 @@
     \snippet webkitsnippets/qtwebkit_bridge_snippets.cpp 3
 
     When a Qt object expects a \l{QImage} or a \l{QPixmap} as input, and the argument passed is an HTML image element,
-    the QtWebKit bridge would convert the pixmap assigned to that image element into a \l{QPixmap} or a \l{QImage}.
+    the Qt WebKit bridge would convert the pixmap assigned to that image element into a \l{QPixmap} or a \l{QImage}.
 
     \since 4.7
 
@@ -399,7 +399,7 @@
 
     \section2 Limiting the Scope of the Hybrid Layer
 
-    When using QtWebKit's hybrid features, it is a common pitfall to make the API exposed to JavaScript very rich and
+    When using Qt WebKit's hybrid features, it is a common pitfall to make the API exposed to JavaScript very rich and
     use all its features. This, however, leads to complexity and can create bugs that are hard to find.
     Instead, it is advisable to keep the hybrid layer small and manageable: create a gate only when
     there's an actual need for it, i.e. there's a new native enabler that requires a direct interface

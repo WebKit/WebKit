@@ -1,3 +1,15 @@
+2013-04-04  Sze Howe Koh  <szehowe.koh@gmail.com>
+
+        [Qt] docs: Fix module name format
+        https://bugs.webkit.org/show_bug.cgi?id=113209
+
+        Reviewed by Jocelyn Turcotte.
+
+        Make QDoc-generated documentation follow the conventions at
+        http://qt-project.org/wiki/Spelling_Module_Names_in_Qt_Documentation
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+
 2013-04-04  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][EFL] WebView should own view size

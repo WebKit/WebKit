@@ -344,7 +344,7 @@ QWebSettings* QWebSettings::globalSettings()
     Support for browser plugins can enabled by setting the
     \l{QWebSettings::PluginsEnabled}{PluginsEnabled} attribute. For many applications,
     this attribute is enabled for all pages by setting it on the
-    \l{globalSettings()}{global settings object}. QtWebKit will always ignore this setting
+    \l{globalSettings()}{global settings object}. Qt WebKit will always ignore this setting
     when processing Qt plugins. The decision to allow a Qt plugin is made by the client
     in its reimplementation of QWebPage::createPlugin().
 
@@ -427,7 +427,7 @@ QWebSettings* QWebSettings::globalSettings()
 
     \value AutoLoadImages Specifies whether images are automatically loaded in
         web pages. This is enabled by default.
-    \value DnsPrefetchEnabled Specifies whether QtWebkit will try to pre-fetch DNS entries to
+    \value DnsPrefetchEnabled Specifies whether Qt WebKit will try to pre-fetch DNS entries to
         speed up browsing. This only works as a global attribute. Only for Qt 4.6 and later. This is disabled by default.
     \value JavascriptEnabled Enables or disables the running of JavaScript
         programs. This is enabled by default
@@ -788,7 +788,7 @@ static const char* resourceNameForWebGraphic(QWebSettings::WebGraphic type)
 }
 
 /*!
-    Sets \a graphic to be drawn when QtWebKit needs to draw an image of the
+    Sets \a graphic to be drawn when Qt WebKit needs to draw an image of the
     given \a type.
 
     For example, when an image cannot be loaded, the pixmap specified by
