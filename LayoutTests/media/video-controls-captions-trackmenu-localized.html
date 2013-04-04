@@ -40,15 +40,20 @@
             testExpected("item.textContent", "Off");
 
             item = captionsEntries[1];
-            consoleWrite("<br>Second item in captions menu should be labelled 'English CC'");
-            testExpected("item.textContent", "English CC");
+            consoleWrite("<br>Second item in captions menu should be labelled 'Automatic (English)'");
+            testExpected("item.textContent", "Automatic (English)");
+
 
             item = captionsEntries[2];
-            consoleWrite("<br>Third item in captions menu should be labelled 'Laugh Track (English-United States)'");
-            testExpected("item.textContent", "Laugh Track (English-United States)");
+            consoleWrite("<br>Third item in captions menu should be labelled 'English CC'");
+            testExpected("item.textContent", "English CC");
 
             item = captionsEntries[3];
-            consoleWrite("<br>Fourth item in captions menu should be labelled 'Unknown SDH'");
+            consoleWrite("<br>Fourth item in captions menu should be labelled 'Laugh Track (English-United States)'");
+            testExpected("item.textContent", "Laugh Track (English-United States)");
+
+            item = captionsEntries[4];
+            consoleWrite("<br>Fifth item in captions menu should be labelled 'Unknown SDH'");
             testExpected("item.textContent", "Unknown SDH");
 
             endTest();
