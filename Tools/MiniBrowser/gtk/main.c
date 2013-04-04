@@ -32,6 +32,7 @@
 #include <webkit2/webkit2.h>
 
 static const gchar **uriArguments = NULL;
+static const char *miniBrowserAboutScheme = "minibrowser-about";
 
 static gchar *argumentToURL(const char *filename)
 {
@@ -198,6 +199,30 @@ static gboolean addSettingsGroupToContext(GOptionContext *context, WebKitSetting
     return TRUE;
 }
 
+static void
+aboutURISchemeRequestCallback(WebKitURISchemeRequest *request, gpointer userData)
+{
+    GInputStream *stream;
+    gsize streamLength;
+    const gchar *path;
+    gchar *contents;
+
+    path = webkit_uri_scheme_request_get_path(request);
+    if (!g_strcmp0(path, "minibrowser"))
+        contents = g_strdup_printf("<html><body><h1>WebKitGTK+ MiniBrowser</h1><p>The WebKit2 test browser of the GTK+ port.</p><p>WebKit version: %d.%d.%d</p></body></html>",
+            webkit_get_major_version(),
+            webkit_get_minor_version(),
+            webkit_get_micro_version());
+    else
+        contents = g_strdup_printf("<html><body><p>Invalid about:%s page.</p></body></html>", path);
+
+    streamLength = strlen(contents);
+    stream = g_memory_input_stream_new_from_data(contents, streamLength, g_free);
+
+    webkit_uri_scheme_request_finish(request, stream, streamLength, "text/html");
+    g_object_unref(stream);
+}
+
 int main(int argc, char *argv[])
 {
     gtk_init(&argc, &argv);
@@ -230,6 +255,8 @@ int main(int argc, char *argv[])
 
     // Enable the favicon database, by specifying the default directory.
     webkit_web_context_set_favicon_database_directory(webkit_web_context_get_default(), NULL);
+
+    webkit_web_context_register_uri_scheme(webkit_web_context_get_default(), miniBrowserAboutScheme, aboutURISchemeRequestCallback, NULL, NULL);
 
     if (uriArguments) {
         int i;

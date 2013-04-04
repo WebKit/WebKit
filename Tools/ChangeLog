@@ -1,3 +1,28 @@
+2013-04-04  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK][WK2] MiniBrowser custom URI scheme support
+        https://bugs.webkit.org/show_bug.cgi?id=112419
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add support for about URIs in MiniBrowser. An example about page is show
+        with URI "about:minibrowser", the rest of the cases it will show a
+        proper message explaining that the about page didn't exist.
+
+        Internally it uses "minibrowser-about" prefix instead of "about", but
+        from the user point of view it works with "about" prefix.
+
+        * MiniBrowser/gtk/BrowserWindow.c: Add miniBrowserAboutScheme constant.
+        (getInternalURI): Method to convert URIs from "about" prefix to
+        "minibrowser-about".
+        (getExternalURI): Opposite method.
+        (webViewURIChanged): Use "about" prefix to show the URI to users.
+        (webViewEnterFullScreen): Ditto.
+        (browser_window_load_uri): Use "minibrowser-about" prefix internally.
+        * MiniBrowser/gtk/main.c: Add miniBrowserAboutScheme constant.
+        (aboutURISchemeRequestCallback): Callback to manage about calls.
+        (main): Register the URI scheme to manage about URIs.
+
 2013-04-03  Roger Fong  <roger_fong@apple.com>
 
         Re-enable WinEWS tests.

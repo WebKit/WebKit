@@ -63,12 +63,31 @@ struct _BrowserWindowClass {
 };
 
 static const char *defaultWindowTitle = "WebKitGTK+ MiniBrowser";
+static const char *miniBrowserAboutScheme = "minibrowser-about";
 static const gdouble minimumZoomLevel = 0.5;
 static const gdouble maximumZoomLevel = 3;
 static const gdouble zoomStep = 1.2;
 static gint windowCount = 0;
 
 G_DEFINE_TYPE(BrowserWindow, browser_window, GTK_TYPE_WINDOW)
+
+static char *getInternalURI(const char *uri)
+{
+    // Internally we use minibrowser-about: as about: prefix is ignored by WebKit.
+    if (g_str_has_prefix(uri, "about:") && !g_str_equal(uri, "about:blank"))
+        return g_strconcat(miniBrowserAboutScheme, uri + strlen ("about"), NULL);
+
+    return g_strdup(uri);
+}
+
+static char *getExternalURI(const char *uri)
+{
+    // From the user point of view we support about: prefix.
+    if (g_str_has_prefix(uri, miniBrowserAboutScheme))
+        return g_strconcat("about", uri + strlen(miniBrowserAboutScheme), NULL);
+
+    return g_strdup(uri);
+}
 
 static void browserWindowSetStatusText(BrowserWindow *window, const char *text)
 {
@@ -118,7 +137,9 @@ static void settingsCallback(BrowserWindow *window)
 
 static void webViewURIChanged(WebKitWebView *webView, GParamSpec *pspec, BrowserWindow *window)
 {
-    gtk_entry_set_text(GTK_ENTRY(window->uriEntry), webkit_web_view_get_uri(webView));
+    char *externalURI = getExternalURI(webkit_web_view_get_uri(webView));
+    gtk_entry_set_text(GTK_ENTRY(window->uriEntry), externalURI);
+    g_free(externalURI);
 }
 
 static void webViewTitleChanged(WebKitWebView *webView, GParamSpec *pspec, BrowserWindow *window)
@@ -277,11 +298,12 @@ static gboolean fullScreenMessageTimeoutCallback(BrowserWindow *window)
 static gboolean webViewEnterFullScreen(WebKitWebView *webView, BrowserWindow *window)
 {
 #if GTK_CHECK_VERSION(3, 2, 0)
-    const gchar *titleOrURI = webkit_web_view_get_title(window->webView);
+    gchar *titleOrURI = g_strdup(webkit_web_view_get_title(window->webView));
     if (!titleOrURI)
-        titleOrURI = webkit_web_view_get_uri(window->webView);
+        titleOrURI = getExternalURI(webkit_web_view_get_uri(window->webView));
     gchar *message = g_strdup_printf("%s is now full screen. Press ESC or f to exit.", titleOrURI);
     gtk_label_set_text(GTK_LABEL(window->fullScreenMessageLabel), message);
+    g_free(titleOrURI);
     g_free(message);
 
     gtk_widget_show(window->fullScreenMessageLabel);
@@ -643,7 +665,9 @@ void browser_window_load_uri(BrowserWindow *window, const char *uri)
     g_return_if_fail(uri);
 
     if (!g_str_has_prefix(uri, "javascript:")) {
-        webkit_web_view_load_uri(window->webView, uri);
+        char *internalURI = getInternalURI(uri);
+        webkit_web_view_load_uri(window->webView, internalURI);
+        g_free(internalURI);
         return;
     }
 
