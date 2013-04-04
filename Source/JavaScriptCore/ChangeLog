@@ -1,3 +1,26 @@
+2013-04-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Simplified bytecode generation by merging prefix and postfix nodes
+        https://bugs.webkit.org/show_bug.cgi?id=113925
+
+        Reviewed by Filip Pizlo.
+
+        PostfixNode now inherits from PrefixNode, so when we detect that we're
+        in a context where postifx and prefix are equivalent, PostFixNode can
+        just call through to PrefixNode codegen, instead of duplicating the
+        logic.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::PostfixNode::emitResolve):
+        (JSC::PostfixNode::emitBracket):
+        (JSC::PostfixNode::emitDot):
+        * parser/NodeConstructors.h:
+        (JSC::PostfixNode::PostfixNode):
+        * parser/Nodes.h:
+        (JSC):
+        (PrefixNode):
+        (PostfixNode):
+
 2013-04-04  Andras Becsi  <andras.becsi@digia.com>
 
         Fix the build with GCC 4.8

@@ -288,10 +288,7 @@ namespace JSC {
     }
 
     inline PostfixNode::PostfixNode(const JSTokenLocation& location, ExpressionNode* expr, Operator oper, unsigned divot, unsigned startOffset, unsigned endOffset)
-        : ExpressionNode(location)
-        , ThrowableExpressionData(divot, startOffset, endOffset)
-        , m_expr(expr)
-        , m_operator(oper)
+        : PrefixNode(location, expr, oper, divot, startOffset, endOffset)
     {
     }
 

@@ -587,20 +587,6 @@ namespace JSC {
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
     };
 
-    class PostfixNode : public ExpressionNode, public ThrowableExpressionData {
-    public:
-        PostfixNode(const JSTokenLocation&, ExpressionNode*, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
-
-    private:
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
-        virtual RegisterID* emitResolve(BytecodeGenerator&, RegisterID* = 0);
-        virtual RegisterID* emitBracket(BytecodeGenerator&, RegisterID* = 0);
-        virtual RegisterID* emitDot(BytecodeGenerator&, RegisterID* = 0);
-
-        ExpressionNode* m_expr;
-        Operator m_operator;
-    };
-
     class DeleteResolveNode : public ExpressionNode, public ThrowableExpressionData {
     public:
         DeleteResolveNode(const JSTokenLocation&, const Identifier&, unsigned divot, unsigned startOffset, unsigned endOffset);
@@ -679,7 +665,7 @@ namespace JSC {
     public:
         PrefixNode(const JSTokenLocation&, ExpressionNode*, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
 
-    private:
+    protected:
         virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
         virtual RegisterID* emitResolve(BytecodeGenerator&, RegisterID* = 0);
         virtual RegisterID* emitBracket(BytecodeGenerator&, RegisterID* = 0);
@@ -687,6 +673,17 @@ namespace JSC {
 
         ExpressionNode* m_expr;
         Operator m_operator;
+    };
+
+    class PostfixNode : public PrefixNode {
+    public:
+        PostfixNode(const JSTokenLocation&, ExpressionNode*, Operator, unsigned divot, unsigned startOffset, unsigned endOffset);
+
+    private:
+        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
+        virtual RegisterID* emitResolve(BytecodeGenerator&, RegisterID* = 0);
+        virtual RegisterID* emitBracket(BytecodeGenerator&, RegisterID* = 0);
+        virtual RegisterID* emitDot(BytecodeGenerator&, RegisterID* = 0);
     };
 
     class UnaryOpNode : public ExpressionNode {
