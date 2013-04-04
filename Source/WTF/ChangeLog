@@ -1,3 +1,16 @@
+2013-04-04  Anders Carlsson  <andersca@apple.com>
+
+        ObjcRuntimeExtras.h should use variadic templates
+        https://bugs.webkit.org/show_bug.cgi?id=113941
+
+        Reviewed by Andreas Kling.
+
+        Reimplement wtfObjcMsgSend and wtfCallIMP as variadic function templates.
+
+        * wtf/ObjcRuntimeExtras.h:
+        (wtfObjcMsgSend):
+        (wtfCallIMP):
+
 2013-04-04  Andras Becsi  <andras.becsi@digia.com>
 
         Fix the build with GCC 4.8
