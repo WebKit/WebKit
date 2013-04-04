@@ -1,3 +1,9 @@
+2013-04-04  Andrew Scherkus  <scherkus@chromium.org>
+
+        Unreviewed. Removing feature-media-reviews@chromium.org from Media watchlist.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-04-04  Pierre Rossi  <pierre.rossi@gmail.com>
 
         Indentation fix to get webkit-patch working again after r147625
