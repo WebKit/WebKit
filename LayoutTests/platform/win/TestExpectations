@@ -2313,6 +2313,7 @@ media/video-src-change.html
 media/video-timeupdate-reverse-play.html
 media/W3C/video/src/src_removal_does_not_trigger_loadstart.html
 media/video-pause-empty-events.html
+media/video-play-empty-events.html
 media/video-single-valid-source.html
 media/video-source-error-no-candidate.html
 media/video-src-remove.html
