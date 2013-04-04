@@ -334,22 +334,34 @@ namespace JSC {
         LabelScopePtr newLabelScope(LabelScope::Type, const Identifier* = 0);
         PassRefPtr<Label> newLabel();
 
-        // The emitNode functions are just syntactic sugar for calling
-        // Node::emitCode. These functions accept a 0 for the register,
-        // meaning that the node should allocate a register, or ignoredResult(),
-        // meaning that the node need not put the result in a register.
-        // Other emit functions do not accept 0 or ignoredResult().
-        RegisterID* emitNode(RegisterID* dst, Node* n)
+        void emitNode(RegisterID* dst, StatementNode* n)
         {
             // Node::emitCode assumes that dst, if provided, is either a local or a referenced temporary.
             ASSERT(!dst || dst == ignoredResult() || !dst->isTemporary() || dst->refCount());
             addLineInfo(n->lineNo());
-            return m_stack.isSafeToRecurse()
-                ? n->emitBytecode(*this, dst)
-                : emitThrowExpressionTooDeepException();
+            if (!m_stack.isSafeToRecurse()) {
+                emitThrowExpressionTooDeepException();
+                return;
+            }
+            n->emitBytecode(*this, dst);
         }
 
-        RegisterID* emitNode(Node* n)
+        void emitNode(StatementNode* n)
+        {
+            emitNode(0, n);
+        }
+
+        RegisterID* emitNode(RegisterID* dst, ExpressionNode* n)
+        {
+            // Node::emitCode assumes that dst, if provided, is either a local or a referenced temporary.
+            ASSERT(!dst || dst == ignoredResult() || !dst->isTemporary() || dst->refCount());
+            addLineInfo(n->lineNo());
+            if (!m_stack.isSafeToRecurse())
+                return emitThrowExpressionTooDeepException();
+            return n->emitBytecode(*this, dst);
+        }
+
+        RegisterID* emitNode(ExpressionNode* n)
         {
             return emitNode(0, n);
         }
@@ -357,10 +369,12 @@ namespace JSC {
         void emitNodeInConditionContext(ExpressionNode* n, Label* trueTarget, Label* falseTarget, FallThroughMode fallThroughMode)
         {
             addLineInfo(n->lineNo());
-            if (m_stack.isSafeToRecurse())
-                n->emitBytecodeInConditionContext(*this, trueTarget, falseTarget, fallThroughMode);
-            else
+            if (!m_stack.isSafeToRecurse()) {
                 emitThrowExpressionTooDeepException();
+                return;
+            }
+
+            n->emitBytecodeInConditionContext(*this, trueTarget, falseTarget, fallThroughMode);
         }
 
         void emitExpressionInfo(unsigned divot, unsigned startOffset, unsigned endOffset)

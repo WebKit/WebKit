@@ -156,14 +156,14 @@ namespace JSC {
     }
 
     inline PropertyListNode::PropertyListNode(const JSTokenLocation& location, PropertyNode* node)
-        : Node(location)
+        : ExpressionNode(location)
         , m_node(node)
         , m_next(0)
     {
     }
 
     inline PropertyListNode::PropertyListNode(const JSTokenLocation& location, PropertyNode* node, PropertyListNode* list)
-        : Node(location)
+        : ExpressionNode(location)
         , m_node(node)
         , m_next(0)
     {
@@ -198,14 +198,14 @@ namespace JSC {
     }
 
     inline ArgumentListNode::ArgumentListNode(const JSTokenLocation& location, ExpressionNode* expr)
-        : Node(location)
+        : ExpressionNode(location)
         , m_next(0)
         , m_expr(expr)
     {
     }
 
     inline ArgumentListNode::ArgumentListNode(const JSTokenLocation& location, ArgumentListNode* listNode, ExpressionNode* expr)
-        : Node(location)
+        : ExpressionNode(location)
         , m_next(0)
         , m_expr(expr)
     {

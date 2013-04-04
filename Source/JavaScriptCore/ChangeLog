@@ -1,3 +1,86 @@
+2013-04-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Stop pretending that statements return a value
+        https://bugs.webkit.org/show_bug.cgi?id=113969
+
+        Reviewed by Oliver Hunt.
+
+        Expressions have an intrinsic value, which they return to their parent
+        in the AST.
+
+        Statements just execute for effect in sequence.
+
+        This patch moves emitBytecode into the ExpressionNode and StatementNode
+        subclasses, and changes the SatementNode subclass to return void. This
+        eliminates some cruft where we used to return 0, or try to save a bogus
+        register and return it, as if a statement had a consuming parent in the
+        AST.
+
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitNode):
+        (BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitNodeInConditionContext):
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ConstStatementNode::emitBytecode):
+        (JSC::BlockNode::emitBytecode):
+        (JSC::EmptyStatementNode::emitBytecode):
+        (JSC::DebuggerStatementNode::emitBytecode):
+        (JSC::ExprStatementNode::emitBytecode):
+        (JSC::VarStatementNode::emitBytecode):
+        (JSC::IfNode::emitBytecode):
+        (JSC::IfElseNode::emitBytecode):
+        (JSC::DoWhileNode::emitBytecode):
+        (JSC::WhileNode::emitBytecode):
+        (JSC::ForNode::emitBytecode):
+        (JSC::ForInNode::emitBytecode):
+        (JSC::ContinueNode::emitBytecode):
+        (JSC::BreakNode::emitBytecode):
+        (JSC::ReturnNode::emitBytecode):
+        (JSC::WithNode::emitBytecode):
+        (JSC::CaseClauseNode::emitBytecode):
+        (JSC::CaseBlockNode::emitBytecodeForBlock):
+        (JSC::SwitchNode::emitBytecode):
+        (JSC::LabelNode::emitBytecode):
+        (JSC::ThrowNode::emitBytecode):
+        (JSC::TryNode::emitBytecode):
+        (JSC::ScopeNode::emitStatementsBytecode):
+        (JSC::ProgramNode::emitBytecode):
+        (JSC::EvalNode::emitBytecode):
+        (JSC::FunctionBodyNode::emitBytecode):
+        (JSC::FuncDeclNode::emitBytecode):
+        * parser/NodeConstructors.h:
+        (JSC::PropertyListNode::PropertyListNode):
+        (JSC::ArgumentListNode::ArgumentListNode):
+        * parser/Nodes.h:
+        (Node):
+        (ExpressionNode):
+        (StatementNode):
+        (ConstStatementNode):
+        (BlockNode):
+        (EmptyStatementNode):
+        (DebuggerStatementNode):
+        (ExprStatementNode):
+        (VarStatementNode):
+        (IfNode):
+        (IfElseNode):
+        (DoWhileNode):
+        (WhileNode):
+        (ForNode):
+        (ForInNode):
+        (ContinueNode):
+        (BreakNode):
+        (ReturnNode):
+        (WithNode):
+        (LabelNode):
+        (ThrowNode):
+        (TryNode):
+        (ProgramNode):
+        (EvalNode):
+        (FunctionBodyNode):
+        (FuncDeclNode):
+        (CaseBlockNode):
+        (SwitchNode):
+
 2013-04-04  Oliver Hunt  <oliver@apple.com>
 
         Exception stack unwinding doesn't handle inline callframes correctly
