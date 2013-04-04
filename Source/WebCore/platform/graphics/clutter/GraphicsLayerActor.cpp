@@ -271,7 +271,7 @@ static void graphicsLayerActorUpdateTexture(GraphicsLayerActor* layer)
         // Nothing needs a texture, remove the one we have, if any.
         if (!priv->drawsContent && !priv->surface) {
             g_signal_handlers_disconnect_by_func(canvas, reinterpret_cast<void*>(graphicsLayerActorDraw), layer);
-            g_object_unref(canvas);
+            clutter_actor_set_content(actor, 0);
         }
         return;
     }
