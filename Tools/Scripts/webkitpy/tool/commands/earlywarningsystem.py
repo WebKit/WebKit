@@ -188,7 +188,6 @@ class ChromiumLinuxEWS(AbstractChromiumEWS):
     #        a database migration. :(
     name = "chromium-ews"
     port_name = "chromium-xvfb"
-    _default_run_tests = True
 
 
 class ChromiumLinuxDebugEWS(AbstractChromiumEWS):
