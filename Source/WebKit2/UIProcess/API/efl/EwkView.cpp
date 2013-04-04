@@ -465,40 +465,16 @@ void EwkView::setCursor(const Cursor& cursor)
 
 void EwkView::setDeviceScaleFactor(float scale)
 {
+    const WKSize& deviceSize = WKViewGetSize(wkView());
     page()->setIntrinsicDeviceScaleFactor(scale);
 
     // Update internal viewport size after device-scale change.
-    setDeviceSize(deviceSize());
+    WKViewSetSize(wkView(), deviceSize);
 }
 
 float EwkView::deviceScaleFactor() const
 {
     return WKPageGetBackingScaleFactor(wkPage());
-}
-
-void EwkView::setDeviceSize(const IntSize& deviceSize)
-{
-    m_deviceSize = deviceSize;
-
-    DrawingAreaProxy* drawingArea = page()->drawingArea();
-    if (!drawingArea)
-        return;
-
-    drawingArea->setSize(size(), IntSize());
-    webView()->updateViewportSize();
-}
-
-IntSize EwkView::size() const
-{
-    // WebPage expects a size in UI units, and not raw device units.
-    FloatSize uiSize = m_deviceSize;
-    uiSize.scale(1 / deviceScaleFactor());
-    return roundedIntSize(uiSize);
-}
-
-IntSize EwkView::deviceSize() const
-{
-    return m_deviceSize;
 }
 
 AffineTransform EwkView::transformToScreen() const
@@ -539,6 +515,19 @@ inline Ewk_View_Smart_Data* EwkView::smartData() const
     return toSmartData(m_evasObject);
 }
 
+inline IntSize EwkView::size() const
+{
+    // WebPage expects a size in UI units, and not raw device units.
+    FloatSize uiSize = deviceSize();
+    uiSize.scale(1 / deviceScaleFactor());
+    return roundedIntSize(uiSize);
+}
+
+inline IntSize EwkView::deviceSize() const
+{
+    return toIntSize(WKViewGetSize(wkView()));
+}
+
 void EwkView::displayTimerFired(Timer<EwkView>*)
 {
     Ewk_View_Smart_Data* sd = smartData();
@@ -571,7 +560,7 @@ void EwkView::displayTimerFired(Timer<EwkView>*)
 
 void EwkView::scheduleUpdateDisplay()
 {
-    if (m_deviceSize.isEmpty())
+    if (deviceSize().isEmpty())
         return;
 
     if (!m_displayTimer.isActive())
@@ -1125,7 +1114,10 @@ void EwkView::handleEvasObjectCalculate(Evas_Object* evasObject)
         smartData->view.w = width;
         smartData->view.h = height;
 
-        self->setDeviceSize(IntSize(width, height));
+        WKViewSetSize(self->wkView(), WKSizeMake(width, height));
+        if (WKPageUseFixedLayout(self->wkPage()))
+            self->pageViewportController()->didChangeViewportSize(self->size());
+
         self->setNeedsSurfaceResize();
     }
 }

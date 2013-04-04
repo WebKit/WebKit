@@ -57,6 +57,9 @@ public:
 
     void initialize();
 
+    void setSize(const WebCore::IntSize&);
+    const WebCore::IntSize& size() const { return m_size; }
+
     void setUserViewportTranslation(double tx, double ty);
     WebCore::IntPoint userViewportToContents(const WebCore::IntPoint&) const;
 
@@ -89,8 +92,7 @@ public:
     Evas_Object* evasObject();
     WebPageProxy* page() { return m_page.get(); }
 
-    void didCommitLoad();
-    void updateViewportSize();
+    void didCommitLoad();    
     void didChangeContentsSize(const WebCore::IntSize&);
 
     // FIXME: Should become private when Web Events creation is moved to WebView.
@@ -101,6 +103,8 @@ private:
     WebView(WebContext*, WebPageGroup*);
     WebCore::CoordinatedGraphicsScene* coordinatedGraphicsScene();
 
+    void updateViewportSize();
+    WebCore::FloatSize dipSize() const;
     // PageClient
     PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy() OVERRIDE;
 
@@ -180,6 +184,7 @@ private:
     RefPtr<WebPageProxy> m_page;
     DefaultUndoController m_undoController;
     WebCore::TransformationMatrix m_userViewportTransform;
+    WebCore::IntSize m_size; // Size in device units.
 };
 
 }

@@ -1,3 +1,37 @@
+2013-04-04  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][EFL] WebView should own view size
+        https://bugs.webkit.org/show_bug.cgi?id=110753
+
+        Reviewed by Andreas Kling.
+
+        WebView owns view size. WKViewGetSize and WKViewSetSize API
+        is exposed accordingly. Usage of EFL-specific ewkView inside
+        toolkit-agnostic WebView class is reduced.
+
+        * UIProcess/API/C/efl/WKView.cpp:
+        (WKViewGetSize):
+        (WKViewSetSize):
+        * UIProcess/API/C/efl/WKView.h:
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::setDeviceScaleFactor):
+        (EwkView::size):
+        (EwkView::deviceSize):
+        (EwkView::scheduleUpdateDisplay):
+        (EwkView::handleEvasObjectCalculate):
+        * UIProcess/API/efl/EwkView.h:
+        (EwkView):
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::setSize):
+        (WebKit):
+        (WebKit::WebView::paintToCurrentGLContext):
+        (WebKit::WebView::updateViewportSize):
+        (WebKit::WebView::viewSize):
+        (WebKit::WebView::dipSize):
+        * UIProcess/efl/WebView.h:
+        (WebView):
+        (WebKit::WebView::size):
+
 2013-04-03  Anders Carlsson  <andersca@apple.com>
 
         Don't try to set the exception port for server connections

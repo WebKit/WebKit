@@ -125,9 +125,6 @@ public:
     void setDeviceScaleFactor(float scale);
     float deviceScaleFactor() const;
 
-    WebCore::IntSize size() const;
-    WebCore::IntSize deviceSize() const;
-
     WebCore::AffineTransform transformToScreen() const;
 
     const char* url() const { return m_url; }
@@ -212,6 +209,9 @@ private:
     void setDeviceSize(const WebCore::IntSize&);
     Ewk_View_Smart_Data* smartData() const;
 
+    WebCore::IntSize size() const;
+    WebCore::IntSize deviceSize() const;
+
     void displayTimerFired(WebCore::Timer<EwkView>*);
 
     // Evas_Smart_Class callback interface:
@@ -251,7 +251,6 @@ private:
     OwnPtr<Evas_GL> m_evasGL;
     OwnPtr<WebKit::EvasGLContext> m_evasGLContext;
     OwnPtr<WebKit::EvasGLSurface> m_evasGLSurface;
-    WebCore::IntSize m_deviceSize;
     WebCore::TransformationMatrix m_userViewportTransform;
     bool m_pendingSurfaceResize;
     OwnPtr<WebKit::PageLoadClientEfl> m_pageLoadClient;

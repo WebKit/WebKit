@@ -95,6 +95,13 @@ void WebView::initialize()
         scene->setActive(true);
 }
 
+void WebView::setSize(const WebCore::IntSize& size)
+{
+    m_size = size;
+
+    updateViewportSize();
+}
+
 void WebView::setUserViewportTranslation(double tx, double ty)
 {
     m_userViewportTransform = TransformationMatrix().translate(tx, ty);
@@ -113,8 +120,8 @@ void WebView::paintToCurrentGLContext()
 
     // FIXME: We need to clean up this code as it is split over CoordGfx and Page.
     scene->setDrawsBackground(m_page->drawsBackground());
+    const FloatRect& viewport = m_userViewportTransform.mapRect(IntRect(IntPoint(), m_size));
 
-    FloatRect viewport = m_userViewportTransform.mapRect(IntRect(IntPoint(), m_ewkView->deviceSize()));
     scene->paintToCurrentGLContext(transformToScene().toTransformationMatrix(), /* opacity */ 1, viewport);
 }
 
@@ -206,17 +213,6 @@ void WebView::didCommitLoad()
     m_ewkView->scheduleUpdateDisplay();
 }
 
-void WebView::updateViewportSize()
-{
-    if (m_page->useFixedLayout()) {
-        m_ewkView->pageViewportController()->didChangeViewportSize(m_ewkView->size());
-        return;
-    }
-    FloatPoint uiPosition(m_ewkView->pagePosition());
-    uiPosition.scale(1 / m_ewkView->pageScaleFactor(), 1 / m_ewkView->pageScaleFactor());
-    m_page->drawingArea()->setVisibleContentsRect(FloatRect(uiPosition, m_ewkView->size()), FloatPoint());
-}
-
 void WebView::didChangeContentsSize(const WebCore::IntSize& size)
 {
     m_client.didChangeContentsSize(this, size);
@@ -252,6 +248,23 @@ CoordinatedGraphicsScene* WebView::coordinatedGraphicsScene()
     return layerTreeHostProxy->coordinatedGraphicsScene();
 }
 
+void WebView::updateViewportSize()
+{
+    if (DrawingAreaProxy* drawingArea = page()->drawingArea()) {
+        // Web Process expects sizes in UI units, and not raw device units.
+        drawingArea->setSize(roundedIntSize(dipSize()), IntSize());
+        drawingArea->setVisibleContentsRect(FloatRect(m_ewkView->pagePosition(), dipSize()), FloatPoint());
+    }
+}
+
+inline WebCore::FloatSize WebView::dipSize() const
+{
+    FloatSize dipSize(size());
+    dipSize.scale(1 / m_page->deviceScaleFactor());
+
+    return dipSize;
+}
+
 // Page Client
 
 PassOwnPtr<DrawingAreaProxy> WebView::createDrawingAreaProxy()
@@ -277,7 +290,7 @@ void WebView::scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntS
 
 WebCore::IntSize WebView::viewSize()
 {
-    return m_ewkView->size();
+    return roundedIntSize(dipSize());
 }
 
 bool WebView::isViewWindowActive()
