@@ -127,6 +127,12 @@ using namespace std;
     return (m_object->isLink() && !m_object->isImageMapLink()) || m_object->isImage();
 }
 
+// On iOS, we don't have to return the value in the title. We can return the actual title, given the API.
+- (BOOL)fileUploadButtonReturnsValueInTitle
+{
+    return YES;
+}
+
 // This should be the "visible" text that's actually on the screen if possible.
 // If there's alternative text, that can override the title.
 - (NSString *)accessibilityTitle
@@ -138,7 +144,7 @@ using namespace std;
     // A file upload button presents a challenge because it has button text and a value, but the
     // API doesn't support this paradigm.
     // The compromise is to return the button type in the role description and the value of the file path in the title
-    if (m_object->isFileUploadButton())
+    if (m_object->isFileUploadButton() && [self fileUploadButtonReturnsValueInTitle])
         return m_object->stringValue();
     
     Vector<AccessibilityText> textOrder;

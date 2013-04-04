@@ -658,8 +658,15 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         return NO;
     if (m_object->roleValue() == PopUpButtonRole)
         return NO;
+    if (m_object->isFileUploadButton())
+        return NO;
 
     return YES;
+}
+
+- (BOOL)fileUploadButtonReturnsValueInTitle
+{
+    return NO;
 }
 
 - (NSString *)accessibilityLabel
