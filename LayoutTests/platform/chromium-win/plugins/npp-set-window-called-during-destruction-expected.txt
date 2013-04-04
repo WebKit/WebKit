@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: line 12: PLUGIN: NPP_New: Could not find a test named "npp-set-window-called-during-destruction", maybe its .cpp file wasn't added to the build system?
-CONSOLE MESSAGE: line 12: Uncaught TypeError: Object #<HTMLEmbedElement> has no method 'setWillBeDestroyed'
-
-This tests whether a NPP_SetWindow is called during plugin destruction.

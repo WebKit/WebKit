@@ -1,8 +1,0 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x171
-  RenderBlock {HTML} at (0,0) size 800x171
-    RenderBody {BODY} at (8,8) size 784x155
-      RenderText {#text} at (0,0) size 0x0
-layer at (8,8) size 150x150
-  RenderEmbeddedObject {EMBED} at (0,0) size 150x150

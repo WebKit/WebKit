@@ -1,2 +1,0 @@
-Blocked access to external URL http://%7Cserver%7C/
-PASS

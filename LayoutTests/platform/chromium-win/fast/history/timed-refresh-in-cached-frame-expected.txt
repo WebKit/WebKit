@@ -1,2 +1,0 @@
-CONSOLE MESSAGE: Blocked alert('pagehide false') during pagehide.
-PASSED if didn't crash in two seconds.
