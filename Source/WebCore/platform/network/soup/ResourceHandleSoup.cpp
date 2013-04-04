@@ -394,9 +394,8 @@ static void restartedCallback(SoupMessage*, gpointer data)
     if (!handle || handle->cancelledOrClientless())
         return;
 
-    ResourceHandleInternal* d = handle->getInternal();
-
 #if ENABLE(WEB_TIMING)
+    ResourceHandleInternal* d = handle->getInternal();
     ResourceResponse& redirectResponse = d->m_response;
     redirectResponse.setResourceLoadTiming(ResourceLoadTiming::create());
     redirectResponse.resourceLoadTiming()->requestTime = monotonicallyIncreasingTime();
