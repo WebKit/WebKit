@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-NativeImagePtr ImageFrame::asNewNativeImage() const
+PassNativeImagePtr ImageFrame::asNewNativeImage() const
 {
     static const VGImageFormat bufferFormat = VG_sARGB_8888_PRE;
     // Save memory by using 16-bit images for fully opaque images.

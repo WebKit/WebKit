@@ -71,7 +71,7 @@ PlatformPatternPtr Pattern::platformPattern(const AffineTransform& patternTransf
     // and expanded scale and skew in:
     // LayoutTests/svg/W3C-SVG-1.1/pservers-grad-06-b.svg
 
-    const NativeImageSkia* image = m_tileImage->nativeImageForCurrentFrame();
+    RefPtr<NativeImageSkia> image = m_tileImage->nativeImageForCurrentFrame();
     // If we don't have a bitmap, return a transparent shader.
     if (!image)
         m_pattern = new SkColorShader(SkColorSetARGB(0, 0, 0, 0));

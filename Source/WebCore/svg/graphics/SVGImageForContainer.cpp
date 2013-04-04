@@ -48,6 +48,11 @@ void SVGImageForContainer::drawPattern(GraphicsContext* context, const FloatRect
     m_image->drawPatternForContainer(context, m_containerSize, m_zoom, srcRect, patternTransform, phase, colorSpace, compositeOp, dstRect);
 }
 
+PassNativeImagePtr SVGImageForContainer::nativeImageForCurrentFrame()
+{
+    return m_image->nativeImageForCurrentFrame();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

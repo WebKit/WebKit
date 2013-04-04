@@ -487,7 +487,7 @@ void GraphicsLayerChromium::setContentsRect(const IntRect& rect)
 void GraphicsLayerChromium::setContentsToImage(Image* image)
 {
     bool childrenChanged = false;
-    NativeImageSkia* nativeImage = image ? image->nativeImageForCurrentFrame() : 0;
+    RefPtr<NativeImageSkia> nativeImage = image ? image->nativeImageForCurrentFrame() : 0;
     if (nativeImage) {
         if (m_contentsLayerPurpose != ContentsLayerForImage) {
             m_imageLayer = adoptPtr(Platform::current()->compositorSupport()->createImageLayer());

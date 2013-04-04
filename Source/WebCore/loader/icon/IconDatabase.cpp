@@ -299,7 +299,7 @@ Image* IconDatabase::synchronousIconForPageURL(const String& pageURLOriginal, co
     return iconRecord->image(size);
 }
 
-NativeImagePtr IconDatabase::synchronousNativeIconForPageURL(const String& pageURLOriginal, const IntSize& size)
+PassNativeImagePtr IconDatabase::synchronousNativeIconForPageURL(const String& pageURLOriginal, const IntSize& size)
 {
     Image* icon = synchronousIconForPageURL(pageURLOriginal, size);
     if (!icon)

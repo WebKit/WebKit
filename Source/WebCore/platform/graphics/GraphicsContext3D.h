@@ -923,8 +923,8 @@ public:
         bool extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile);
 
 #if USE(SKIA)
-        OwnPtr<NativeImageSkia> m_nativeImage;
-        NativeImageSkia* m_skiaImage;
+        RefPtr<NativeImageSkia> m_nativeImage;
+        RefPtr<NativeImageSkia> m_skiaImage;
 #elif USE(CAIRO)
         ImageSource* m_decoder;
         RefPtr<cairo_surface_t> m_imageSurface;

@@ -27,12 +27,14 @@
 #include "config.h"
 #include "ImageDecoder.h"
 
+#include "NativeImageSkia.h"
 #include "PlatformMemoryInstrumentation.h"
 
 namespace WebCore {
 
 ImageFrame::ImageFrame()
-    : m_allocator(0)
+    : m_bitmap(NativeImageSkia::create())
+    , m_allocator(0)
     , m_hasAlpha(false)
     , m_status(FrameEmpty)
     , m_duration(0)
@@ -46,10 +48,10 @@ ImageFrame& ImageFrame::operator=(const ImageFrame& other)
     if (this == &other)
         return *this;
 
-    m_bitmap = other.m_bitmap;
+    m_bitmap = other.m_bitmap->clone();
     // Keep the pixels locked since we will be writing directly into the
     // bitmap throughout this object's lifetime.
-    m_bitmap.bitmap().lockPixels();
+    m_bitmap->bitmap().lockPixels();
     setMemoryAllocator(other.allocator());
     setOriginalFrameRect(other.originalFrameRect());
     setStatus(other.status());
@@ -64,7 +66,7 @@ ImageFrame& ImageFrame::operator=(const ImageFrame& other)
 
 void ImageFrame::clearPixelData()
 {
-    m_bitmap.bitmap().reset();
+    m_bitmap->bitmap().reset();
     m_status = FrameEmpty;
     // NOTE: Do not reset other members here; clearFrameBufferCache()
     // calls this to free the bitmap data, but other functions like
@@ -74,7 +76,7 @@ void ImageFrame::clearPixelData()
 
 void ImageFrame::zeroFillPixelData()
 {
-    m_bitmap.bitmap().eraseARGB(0, 0, 0, 0);
+    m_bitmap->bitmap().eraseARGB(0, 0, 0, 0);
     m_hasAlpha = true;
 }
 
@@ -84,9 +86,9 @@ bool ImageFrame::copyBitmapData(const ImageFrame& other)
         return true;
 
     m_hasAlpha = other.m_hasAlpha;
-    m_bitmap.bitmap().reset();
-    const NativeImageSkia& otherBitmap = other.m_bitmap;
-    return otherBitmap.bitmap().copyTo(&m_bitmap.bitmap(), otherBitmap.bitmap().config());
+    m_bitmap->bitmap().reset();
+    const NativeImageSkia* otherBitmap = other.m_bitmap.get();
+    return otherBitmap->bitmap().copyTo(&m_bitmap->bitmap(), otherBitmap->bitmap().config());
 }
 
 bool ImageFrame::setSize(int newWidth, int newHeight)
@@ -94,17 +96,17 @@ bool ImageFrame::setSize(int newWidth, int newHeight)
     // setSize() should only be called once, it leaks memory otherwise.
     ASSERT(!width() && !height());
 
-    m_bitmap.bitmap().setConfig(SkBitmap::kARGB_8888_Config, newWidth, newHeight);
-    if (!m_bitmap.bitmap().allocPixels(m_allocator, 0))
+    m_bitmap->bitmap().setConfig(SkBitmap::kARGB_8888_Config, newWidth, newHeight);
+    if (!m_bitmap->bitmap().allocPixels(m_allocator, 0))
         return false;
 
     zeroFillPixelData();
     return true;
 }
 
-NativeImagePtr ImageFrame::asNewNativeImage() const
+PassNativeImagePtr ImageFrame::asNewNativeImage() const
 {
-    return new NativeImageSkia(m_bitmap);
+    return m_bitmap->clone();
 }
 
 bool ImageFrame::hasAlpha() const
@@ -122,7 +124,7 @@ void ImageFrame::setHasAlpha(bool alpha)
     bool isOpaque = !m_hasAlpha;
     if (m_status != FrameComplete)
         isOpaque = false;
-    m_bitmap.bitmap().setIsOpaque(isOpaque);
+    m_bitmap->bitmap().setIsOpaque(isOpaque);
 }
 
 void ImageFrame::setColorProfile(const ColorProfile& colorProfile)
@@ -135,8 +137,8 @@ void ImageFrame::setStatus(FrameStatus status)
 {
     m_status = status;
     if (m_status == FrameComplete) {
-        m_bitmap.bitmap().setIsOpaque(!m_hasAlpha);
-        m_bitmap.setDataComplete();  // Tell the bitmap it's done.
+        m_bitmap->bitmap().setIsOpaque(!m_hasAlpha);
+        m_bitmap->setDataComplete(); // Tell the bitmap it's done.
     }
 }
 

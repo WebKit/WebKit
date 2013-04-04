@@ -97,7 +97,7 @@ bool FELighting::platformApplySkia()
     setIsAlphaImage(in->isAlphaImage());
 
     RefPtr<Image> image = in->asImageBuffer()->copyImage(DontCopyBackingStore);
-    NativeImageSkia* nativeImage = image->nativeImageForCurrentFrame();
+    RefPtr<NativeImageSkia> nativeImage = image->nativeImageForCurrentFrame();
     if (!nativeImage)
         return false;
 

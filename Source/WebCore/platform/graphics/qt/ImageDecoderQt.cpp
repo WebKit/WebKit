@@ -264,7 +264,7 @@ void ImageDecoderQt::clearPointers()
     m_buffer.clear();
 }
 
-NativeImagePtr ImageFrame::asNewNativeImage() const
+PassNativeImagePtr ImageFrame::asNewNativeImage() const
 {
     QImage::Format format;
     if (m_hasAlpha)

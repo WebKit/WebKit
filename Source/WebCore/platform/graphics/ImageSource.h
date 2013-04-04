@@ -149,7 +149,7 @@ public:
 
     // Callers should not call this after calling clear() with a higher index;
     // see comments on clear() above.
-    NativeImagePtr createFrameAtIndex(size_t);
+    PassNativeImagePtr createFrameAtIndex(size_t);
 
     float frameDurationAtIndex(size_t);
     bool frameHasAlphaAtIndex(size_t); // Whether or not the frame actually used any alpha.

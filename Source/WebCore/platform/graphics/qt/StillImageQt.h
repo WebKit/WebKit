@@ -52,7 +52,7 @@ namespace WebCore {
         virtual unsigned decodedSize() const { return 0; }
 
         virtual IntSize size() const;
-        virtual NativeImagePtr nativeImageForCurrentFrame();
+        virtual PassNativeImagePtr nativeImageForCurrentFrame();
         virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode);
 
     private:

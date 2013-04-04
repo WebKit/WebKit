@@ -138,7 +138,7 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String& title)
     Image* image = cachedImage->imageForRenderer(renderer);
     ASSERT(image);
 
-    NativeImagePtr bitmap = image->nativeImageForCurrentFrame();
+    RefPtr<NativeImageSkia> bitmap = image->nativeImageForCurrentFrame();
     if (!bitmap)
         return;
 

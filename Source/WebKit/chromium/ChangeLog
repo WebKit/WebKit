@@ -1,3 +1,33 @@
+2013-04-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Regression(r142765) Broke Custom SVG cursors and SVG canvas drawing for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=113420
+
+        Reviewed by Stephen White.
+
+        Update code now that Image::nativeImageForCurrentFrame() and
+        ImageFrame::asNewNativeImage() return a smart pointer instead
+        of a raw one.
+
+        * src/WebImageDecoder.cpp:
+        (WebKit::WebImageDecoder::getFrameAtIndex):
+        * src/WebImageSkia.cpp:
+        (WebKit::WebImage::fromData):
+        (WebKit::WebImage::framesFromData):
+        (WebKit::WebImage::operator=):
+        * tests/DeferredImageDecoderTest.cpp:
+        (WebCore::TEST_F):
+        * tests/DragImageTest.cpp:
+        (WebCore::TestImage::TestImage):
+        (WebCore::TestImage::nativeImageForCurrentFrame):
+        (TestImage):
+        * tests/ImageLayerChromiumTest.cpp:
+        (WebCore::TestImage::TestImage):
+        (WebCore::TestImage::nativeImageForCurrentFrame):
+        (TestImage):
+        * tests/PlatformContextSkiaTest.cpp:
+        (WebCore::TEST):
+
 2013-04-03  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [Chromium] Bad cast from BitmapImageSingleFrameSkia to BitmapImage

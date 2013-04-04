@@ -53,7 +53,7 @@ public:
         : Image(0)
         , m_size(size)
     {
-        m_nativeImage = adoptPtr(new NativeImageSkia());
+        m_nativeImage = NativeImageSkia::create();
         m_nativeImage->bitmap().setConfig(SkBitmap::kARGB_8888_Config,
                                           size.width(), size.height(), 0);
         m_nativeImage->bitmap().allocPixels();
@@ -64,12 +64,12 @@ public:
         return m_size;
     }
 
-    virtual NativeImagePtr nativeImageForCurrentFrame()
+    virtual PassRefPtr<NativeImageSkia> nativeImageForCurrentFrame()
     {
         if (m_size.isZero())
             return 0;
 
-        return m_nativeImage.get();
+        return m_nativeImage;
     }
 
     // Stub implementations of pure virtual Image functions.
@@ -97,7 +97,7 @@ private:
 
     IntSize m_size;
 
-    OwnPtr<NativeImagePtr> m_nativeImage;
+    RefPtr<NativeImageSkia> m_nativeImage;
 };
 
 TEST(DragImageTest, NullHandling)

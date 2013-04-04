@@ -35,20 +35,38 @@
 #include "SkRect.h"
 #include "SkSize.h"
 #include <wtf/Forward.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 // This object is used as the "native image" in our port. When WebKit uses
-// "NativeImagePtr", it is a pointer to this type. It has an SkBitmap, and also
-// stores a cached resized image.
-class NativeImageSkia {
+// PassNativeImagePtr / NativeImagePtr, it is a smart pointer to this type.
+// It has an SkBitmap, and also stores a cached resized image.
+class NativeImageSkia : public RefCounted<NativeImageSkia> {
 public:
-    enum CopyBehavior { CopyPixels, DoNotCopyPixels };
+    static PassRefPtr<NativeImageSkia> create()
+    {
+        return adoptRef(new NativeImageSkia());
+    }
 
-    NativeImageSkia();
+    // This factory method does a shallow copy of the passed-in SkBitmap
+    // (ie., it references the same pixel data and bumps the refcount). Use
+    // only when you want sharing semantics.
+    static PassRefPtr<NativeImageSkia> create(const SkBitmap& bitmap, float resolutionScale = 1)
+    {
+        return adoptRef(new NativeImageSkia(bitmap, resolutionScale));
+    }
+
+    // This method does a shallow copy of the internal SkBitmap (ie., it
+    // references the same pixel data and bumps the refcount). Use only when
+    // you want sharing semantics.
+    PassRefPtr<NativeImageSkia> clone() const
+    {
+        return adoptRef(new NativeImageSkia(m_image, m_resolutionScale, m_resizedImage, m_cachedImageInfo, m_resizeRequests));
+    }
+
     ~NativeImageSkia();
-
-    NativeImageSkia(const SkBitmap&, CopyBehavior, float resolutionScale = 1);
 
     // Returns the number of bytes of image data. This includes the cached
     // resized version if there is one.
@@ -87,6 +105,10 @@ public:
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
+    NativeImageSkia();
+
+    NativeImageSkia(const SkBitmap&, float resolutionScale);
+
     // CachedImageInfo is used to uniquely identify cached or requested image
     // resizes.
     // Image resize is identified by the scaled image size and scaled image subset.
@@ -100,6 +122,8 @@ private:
         void set(const SkISize& otherScaledImageSize, const SkIRect& otherScaledImageSubset);
         SkIRect rectInSubset(const SkIRect& otherScaledImageRect);
     };
+
+    NativeImageSkia(const SkBitmap& image, float resolutionScale, const SkBitmap& resizedImage, const CachedImageInfo&, int resizeRequests);
 
     // Returns true if the given resize operation should either resize the whole
     // image and cache it, or resize just the part it needs and throw the result

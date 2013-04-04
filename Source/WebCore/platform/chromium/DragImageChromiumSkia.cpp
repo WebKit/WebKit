@@ -105,7 +105,7 @@ DragImageRef createDragImageFromImage(Image* image, RespectImageOrientationEnum 
     if (!image)
         return 0;
 
-    NativeImageSkia* bitmap = image->nativeImageForCurrentFrame();
+    RefPtr<NativeImageSkia> bitmap = image->nativeImageForCurrentFrame();
     if (!bitmap)
         return 0;
 

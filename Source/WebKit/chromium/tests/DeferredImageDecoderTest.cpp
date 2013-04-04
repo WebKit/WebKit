@@ -117,7 +117,7 @@ protected:
 
 TEST_F(DeferredImageDecoderTest, drawIntoSkPicture)
 {
-    OwnPtr<NativeImageSkia> image(adoptPtr(m_lazyDecoder->frameBufferAtIndex(0)->asNewNativeImage()));
+    RefPtr<NativeImageSkia> image = m_lazyDecoder->frameBufferAtIndex(0)->asNewNativeImage();
     EXPECT_EQ(1, image->bitmap().width());
     EXPECT_EQ(1, image->bitmap().height());
     EXPECT_FALSE(image->bitmap().isNull());
@@ -140,7 +140,7 @@ TEST_F(DeferredImageDecoderTest, drawIntoSkPicture)
 
 TEST_F(DeferredImageDecoderTest, drawScaledIntoSkPicture)
 {
-    OwnPtr<NativeImageSkia> image(adoptPtr(m_lazyDecoder->frameBufferAtIndex(0)->asNewNativeImage()));
+    RefPtr<NativeImageSkia> image = m_lazyDecoder->frameBufferAtIndex(0)->asNewNativeImage();
     SkBitmap scaledBitmap = image->resizedBitmap(SkISize::Make(50, 51), SkIRect::MakeWH(50, 51));
     EXPECT_FALSE(scaledBitmap.isNull());
     EXPECT_TRUE(scaledBitmap.isImmutable());
@@ -174,7 +174,7 @@ TEST_F(DeferredImageDecoderTest, decodeOnOtherThread)
 {
     WTF::initializeThreading();
 
-    OwnPtr<NativeImageSkia> image(adoptPtr(m_lazyDecoder->frameBufferAtIndex(0)->asNewNativeImage()));
+    RefPtr<NativeImageSkia> image = m_lazyDecoder->frameBufferAtIndex(0)->asNewNativeImage();
     EXPECT_EQ(1, image->bitmap().width());
     EXPECT_EQ(1, image->bitmap().height());
     EXPECT_FALSE(image->bitmap().isNull());

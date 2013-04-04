@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-NativeImagePtr ImageFrame::asNewNativeImage() const
+PassNativeImagePtr ImageFrame::asNewNativeImage() const
 {
     wxBitmap* bmp = new wxBitmap(width(), height(), 32);
 

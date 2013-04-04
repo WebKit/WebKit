@@ -299,7 +299,7 @@ bool BitmapImage::ensureFrameIsCached(size_t index)
     return true;
 }
 
-NativeImagePtr BitmapImage::frameAtIndex(size_t index)
+PassNativeImagePtr BitmapImage::frameAtIndex(size_t index)
 {
     if (!ensureFrameIsCached(index))
         return 0;
@@ -320,7 +320,7 @@ float BitmapImage::frameDurationAtIndex(size_t index)
     return m_frames[index].m_duration;
 }
 
-NativeImagePtr BitmapImage::nativeImageForCurrentFrame()
+PassNativeImagePtr BitmapImage::nativeImageForCurrentFrame()
 {
     return frameAtIndex(currentFrame());
 }

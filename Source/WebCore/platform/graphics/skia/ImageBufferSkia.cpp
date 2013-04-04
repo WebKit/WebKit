@@ -202,10 +202,20 @@ GraphicsContext* ImageBuffer::context() const
     return m_context.get();
 }
 
+static SkBitmap deepSkBitmapCopy(const SkBitmap& bitmap)
+{
+    SkBitmap tmp;
+    if (!bitmap.deepCopyTo(&tmp, bitmap.config()))
+        bitmap.copyTo(&tmp, bitmap.config());
+
+    return tmp;
+}
+
 PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, ScaleBehavior) const
 {
+    const SkBitmap& bitmap = *m_data.m_platformContext.bitmap();
     // FIXME: Start honoring ScaleBehavior to scale 2x buffers down to 1x.
-    return BitmapImage::create(new NativeImageSkia(*m_data.m_platformContext.bitmap(), copyBehavior == CopyBackingStore ? NativeImageSkia::CopyPixels : NativeImageSkia::DoNotCopyPixels, m_resolutionScale));
+    return BitmapImage::create(NativeImageSkia::create(copyBehavior == CopyBackingStore ? deepSkBitmapCopy(bitmap) : bitmap, m_resolutionScale));
 }
 
 BackingStoreCopy ImageBuffer::fastCopyImageMode()
@@ -251,22 +261,24 @@ void ImageBuffer::clip(GraphicsContext* context, const FloatRect& rect) const
     context->platformContext()->beginLayerClippedToImage(rect, this);
 }
 
-static NativeImageSkia::CopyBehavior drawNeedsCopy(GraphicsContext* src, GraphicsContext* dst)
+static bool drawNeedsCopy(GraphicsContext* src, GraphicsContext* dst)
 {
-    return (dst->platformContext()->isDeferred() || src == dst) ? NativeImageSkia::CopyPixels : NativeImageSkia::DoNotCopyPixels;
+    return (dst->platformContext()->isDeferred() || src == dst);
 }
 
 void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
     CompositeOperator op, BlendMode, bool useLowQualityScale)
 {
-    RefPtr<Image> image = BitmapImage::create(new NativeImageSkia(*m_data.m_platformContext.bitmap(), drawNeedsCopy(m_context.get(), context)));
+    const SkBitmap& bitmap = *m_data.m_platformContext.bitmap();
+    RefPtr<Image> image = BitmapImage::create(NativeImageSkia::create(drawNeedsCopy(m_context.get(), context) ? deepSkBitmapCopy(bitmap) : bitmap));
     context->drawImage(image.get(), styleColorSpace, destRect, srcRect, op, DoNotRespectImageOrientation, useLowQualityScale);
 }
 
 void ImageBuffer::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform,
                               const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)
 {
-    RefPtr<Image> image = BitmapImage::create(new NativeImageSkia(*m_data.m_platformContext.bitmap(), drawNeedsCopy(m_context.get(), context)));
+    const SkBitmap& bitmap = *m_data.m_platformContext.bitmap();
+    RefPtr<Image> image = BitmapImage::create(NativeImageSkia::create(drawNeedsCopy(m_context.get(), context) ? deepSkBitmapCopy(bitmap) : bitmap));
     image->drawPattern(context, srcRect, patternTransform, phase, styleColorSpace, op, destRect);
 }
 

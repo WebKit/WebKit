@@ -235,7 +235,7 @@ BackingStoreCopy ImageBuffer::fastCopyImageMode()
     return DontCopyBackingStore;
 }
 
-NativeImagePtr ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior) const
+PassNativeImagePtr ImageBuffer::copyNativeImage(BackingStoreCopy copyBehavior) const
 {
     CGImageRef image = 0;
     if (!m_context->isAcceleratedContext()) {

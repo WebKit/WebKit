@@ -449,10 +449,8 @@ bool FrameData::clear(bool clearMetadata)
     m_orientation = DefaultImageOrientation;
 
     if (m_frame) {
-        // ImageSource::createFrameAtIndex() allocated |m_frame| and passed
-        // ownership to BitmapImage; we must delete it here.
-        delete m_frame;
-        m_frame = 0;
+        m_frame.clear();
+
         return true;
     }
     return false;
@@ -470,7 +468,7 @@ void Image::drawPattern(GraphicsContext* context,
 #if PLATFORM(CHROMIUM)
     TRACE_EVENT0("skia", "Image::drawPattern");
 #endif
-    NativeImageSkia* bitmap = nativeImageForCurrentFrame();
+    RefPtr<NativeImageSkia> bitmap = nativeImageForCurrentFrame();
     if (!bitmap)
         return;
 
@@ -559,7 +557,7 @@ void Image::drawPattern(GraphicsContext* context,
 
 // FIXME: These should go to BitmapImageSkia.cpp
 
-BitmapImage::BitmapImage(NativeImageSkia* nativeImage, ImageObserver* observer)
+BitmapImage::BitmapImage(PassRefPtr<NativeImageSkia> nativeImage, ImageObserver* observer)
     : Image(observer)
     , m_size(nativeImage->bitmap().width(), nativeImage->bitmap().height())
     , m_currentFrame(0)
@@ -584,8 +582,8 @@ BitmapImage::BitmapImage(NativeImageSkia* nativeImage, ImageObserver* observer)
     m_sizeRespectingOrientation = m_size;
 
     m_frames.grow(1);
-    m_frames[0].m_frame = nativeImage;
     m_frames[0].m_hasAlpha = !nativeImage->bitmap().isOpaque();
+    m_frames[0].m_frame = nativeImage;
     m_frames[0].m_haveMetadata = true;
 
     checkForSolidColor();
@@ -603,7 +601,7 @@ void BitmapImage::checkForSolidColor()
     if (frameCount() > 1)
         return;
 
-    WebCore::NativeImageSkia* frame = frameAtIndex(0);
+    RefPtr<NativeImageSkia> frame = frameAtIndex(0);
 
     if (frame && size().width() == 1 && size().height() == 1) {
         SkAutoLockPixels lock(frame->bitmap());
@@ -627,7 +625,7 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect, const Fl
     // causing flicker and wasting CPU.
     startAnimation();
 
-    NativeImageSkia* bm = nativeImageForCurrentFrame();
+    RefPtr<NativeImageSkia> bm = nativeImageForCurrentFrame();
     if (!bm)
         return; // It's too early and we don't have an image yet.
 

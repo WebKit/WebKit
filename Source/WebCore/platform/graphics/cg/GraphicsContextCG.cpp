@@ -157,7 +157,7 @@ void GraphicsContext::restorePlatformState()
     m_data->m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
-void GraphicsContext::drawNativeImage(NativeImagePtr imagePtr, const FloatSize& imageSize, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, ImageOrientation orientation)
+void GraphicsContext::drawNativeImage(PassNativeImagePtr imagePtr, const FloatSize& imageSize, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator op, BlendMode blendMode, ImageOrientation orientation)
 {
     RetainPtr<CGImageRef> image(imagePtr);
 

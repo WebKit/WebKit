@@ -48,20 +48,25 @@
 namespace WebCore {
 
 NativeImageSkia::NativeImageSkia()
-    : m_resolutionScale(1),
-      m_resizeRequests(0)
+    : m_resolutionScale(1)
+    , m_resizeRequests(0)
 {
 }
 
-NativeImageSkia::NativeImageSkia(const SkBitmap& other, CopyBehavior copyBehavior, float resolutionScale)
-    : m_resolutionScale(resolutionScale),
-      m_resizeRequests(0)
+NativeImageSkia::NativeImageSkia(const SkBitmap& other, float resolutionScale)
+    : m_image(other)
+    , m_resolutionScale(resolutionScale)
+    , m_resizeRequests(0)
 {
-    if (copyBehavior == CopyPixels) {
-        if (!other.deepCopyTo(&m_image, other.config()))
-            other.copyTo(&m_image, other.config());
-    } else
-        m_image = other;
+}
+
+NativeImageSkia::NativeImageSkia(const SkBitmap& image, float resolutionScale, const SkBitmap& resizedImage, const CachedImageInfo& cachedImageInfo, int resizeRequests)
+    : m_image(image)
+    , m_resolutionScale(resolutionScale)
+    , m_resizedImage(resizedImage)
+    , m_cachedImageInfo(cachedImageInfo)
+    , m_resizeRequests(resizeRequests)
+{
 }
 
 NativeImageSkia::~NativeImageSkia()

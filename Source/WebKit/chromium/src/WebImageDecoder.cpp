@@ -107,7 +107,7 @@ WebImage WebImageDecoder::getFrameAtIndex(int index = 0) const
     ImageFrame* const frameBuffer = m_private->frameBufferAtIndex(index);
     if (!frameBuffer)
         return WebImage();
-    OwnPtr<NativeImageSkia> image = adoptPtr(frameBuffer->asNewNativeImage());
+    RefPtr<NativeImageSkia> image = frameBuffer->asNewNativeImage();
     return WebImage(image->bitmap());
 }
 

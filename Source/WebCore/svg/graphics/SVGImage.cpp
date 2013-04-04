@@ -141,6 +141,25 @@ void SVGImage::drawForContainer(GraphicsContext* context, const FloatSize contai
     setImageObserver(observer);
 }
 
+#if USE(SKIA)
+// Passes ownership of the native image to the caller so PassNativeImagePtr needs
+// to be a smart pointer type.
+PassNativeImagePtr SVGImage::nativeImageForCurrentFrame()
+{
+    if (!m_page)
+        return 0;
+
+    OwnPtr<ImageBuffer> buffer = ImageBuffer::create(size(), 1);
+    if (!buffer) // failed to allocate image
+        return 0;
+
+    draw(buffer->context(), rect(), rect(), ColorSpaceDeviceRGB, CompositeSourceOver, BlendModeNormal);
+
+    // FIXME: WK(Bug 113657): We should use DontCopyBackingStore here.
+    return buffer->copyImage(CopyBackingStore)->nativeImageForCurrentFrame();
+}
+#endif
+
 void SVGImage::drawPatternForContainer(GraphicsContext* context, const FloatSize containerSize, float zoom, const FloatRect& srcRect,
     const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace colorSpace, CompositeOperator compositeOp, const FloatRect& dstRect)
 {

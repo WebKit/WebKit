@@ -541,22 +541,26 @@ TEST(PlatformContextSkiaTest, trackOpaqueImageTest)
     Color opaque(1.0f, 0.0f, 0.0f, 1.0f);
     Color alpha(0.0f, 0.0f, 0.0f, 0.0f);
 
-    SkBitmap drawBitmap;
-    drawBitmap.setConfig(SkBitmap::kARGB_8888_Config, 10, 10);
-    drawBitmap.allocPixels();
+    SkBitmap opaqueBitmap;
+    opaqueBitmap.setConfig(SkBitmap::kARGB_8888_Config, 10, 10);
+    opaqueBitmap.allocPixels();
 
-    drawBitmap.setIsOpaque(true);
-    for (int y = 0; y < drawBitmap.height(); ++y)
-        for (int x = 0; x < drawBitmap.width(); ++x)
-            *drawBitmap.getAddr32(x, y) = 0xFFFFFFFF;
-    RefPtr<BitmapImage> opaqueImage = BitmapImage::create(new NativeImageSkia(drawBitmap, NativeImageSkia::CopyPixels));
+    opaqueBitmap.setIsOpaque(true);
+    for (int y = 0; y < opaqueBitmap.height(); ++y)
+        for (int x = 0; x < opaqueBitmap.width(); ++x)
+            *opaqueBitmap.getAddr32(x, y) = 0xFFFFFFFF;
+    RefPtr<BitmapImage> opaqueImage = BitmapImage::create(NativeImageSkia::create(opaqueBitmap));
     EXPECT_TRUE(opaqueImage->currentFrameKnownToBeOpaque());
 
-    drawBitmap.setIsOpaque(false);
-    for (int y = 0; y < drawBitmap.height(); ++y)
-        for (int x = 0; x < drawBitmap.width(); ++x)
-            *drawBitmap.getAddr32(x, y) = 0x00000000;
-    RefPtr<BitmapImage> alphaImage = BitmapImage::create(new NativeImageSkia(drawBitmap, NativeImageSkia::CopyPixels));
+    SkBitmap alphaBitmap;
+    alphaBitmap.setConfig(SkBitmap::kARGB_8888_Config, 10, 10);
+    alphaBitmap.allocPixels();
+
+    alphaBitmap.setIsOpaque(false);
+    for (int y = 0; y < alphaBitmap.height(); ++y)
+        for (int x = 0; x < alphaBitmap.width(); ++x)
+            *alphaBitmap.getAddr32(x, y) = 0x00000000;
+    RefPtr<BitmapImage> alphaImage = BitmapImage::create(NativeImageSkia::create(alphaBitmap));
     EXPECT_FALSE(alphaImage->currentFrameKnownToBeOpaque());
 
     context.fillRect(FloatRect(10, 10, 90, 90), opaque, ColorSpaceDeviceRGB, CompositeSourceOver);

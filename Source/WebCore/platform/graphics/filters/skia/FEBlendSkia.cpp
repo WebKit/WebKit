@@ -72,8 +72,8 @@ bool FEBlend::platformApplySkia()
     RefPtr<Image> foreground = in->asImageBuffer()->copyImage(DontCopyBackingStore);
     RefPtr<Image> background = in2->asImageBuffer()->copyImage(DontCopyBackingStore);
 
-    NativeImageSkia* foregroundNativeImage = foreground->nativeImageForCurrentFrame();
-    NativeImageSkia* backgroundNativeImage = background->nativeImageForCurrentFrame();
+    RefPtr<NativeImageSkia> foregroundNativeImage = foreground->nativeImageForCurrentFrame();
+    RefPtr<NativeImageSkia> backgroundNativeImage = background->nativeImageForCurrentFrame();
 
     if (!foregroundNativeImage || !backgroundNativeImage)
         return false;

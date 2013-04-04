@@ -142,7 +142,7 @@ public:
 
     enum TileRule { StretchTile, RoundTile, SpaceTile, RepeatTile };
 
-    virtual NativeImagePtr nativeImageForCurrentFrame() { return 0; }
+    virtual PassNativeImagePtr nativeImageForCurrentFrame() { return 0; }
     
 #if PLATFORM(MAC)
     // Accessors for native image formats.

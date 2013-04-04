@@ -85,7 +85,7 @@ WebImage WebImage::fromData(const WebData& data, const WebSize& desiredSize)
     if (!frame)
         return WebImage();
 
-    OwnPtr<NativeImageSkia> image = adoptPtr(frame->asNewNativeImage());
+    RefPtr<NativeImageSkia> image = frame->asNewNativeImage();
     if (!image)
         return WebImage();
 
@@ -122,8 +122,8 @@ WebVector<WebImage> WebImage::framesFromData(const WebData& data)
         if (!frame)
             continue;
 
-        OwnPtr<NativeImageSkia> image = adoptPtr(frame->asNewNativeImage());
-        if (image.get() && image->isDataComplete())
+        RefPtr<NativeImageSkia> image = frame->asNewNativeImage();
+        if (image && image->isDataComplete())
             frames.append(WebImage(image->bitmap()));
     }
 
@@ -157,8 +157,8 @@ WebImage::WebImage(const PassRefPtr<Image>& image)
 
 WebImage& WebImage::operator=(const PassRefPtr<Image>& image)
 {
-    NativeImagePtr p;
-    if (image.get() && (p = image->nativeImageForCurrentFrame()))
+    RefPtr<NativeImageSkia> p;
+    if (image && (p = image->nativeImageForCurrentFrame()))
         assign(p->bitmap());
     else
         reset();

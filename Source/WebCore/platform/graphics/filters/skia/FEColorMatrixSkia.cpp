@@ -123,7 +123,7 @@ bool FEColorMatrix::platformApplySkia()
     SkAutoTUnref<SkColorFilter> filter(createColorFilter(m_type, m_values.data()));
 
     RefPtr<Image> image = in->asImageBuffer()->copyImage(DontCopyBackingStore);
-    NativeImageSkia* nativeImage = image->nativeImageForCurrentFrame();
+    RefPtr<NativeImageSkia> nativeImage = image->nativeImageForCurrentFrame();
     if (!nativeImage)
         return false;
 

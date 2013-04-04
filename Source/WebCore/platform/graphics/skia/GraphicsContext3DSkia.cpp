@@ -69,7 +69,7 @@ bool GraphicsContext3D::ImageExtractor::extractImage(bool premultiplyAlpha, bool
         if (!frame || frame->status() != ImageFrame::FrameComplete)
             return false;
         hasAlpha = frame->hasAlpha();
-        m_nativeImage = adoptPtr(frame->asNewNativeImage());
+        m_nativeImage = frame->asNewNativeImage();
         if (!m_nativeImage.get() || !m_nativeImage->isDataComplete() || !m_nativeImage->bitmap().width() || !m_nativeImage->bitmap().height())
             return false;
         SkBitmap::Config skiaConfig = m_nativeImage->bitmap().config();

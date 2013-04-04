@@ -71,8 +71,8 @@ bool FEDisplacementMap::platformApplySkia()
     RefPtr<Image> color = in->asImageBuffer()->copyImage(DontCopyBackingStore);
     RefPtr<Image> displ = in2->asImageBuffer()->copyImage(DontCopyBackingStore);
 
-    NativeImageSkia* colorNativeImage = color->nativeImageForCurrentFrame();
-    NativeImageSkia* displNativeImage = displ->nativeImageForCurrentFrame();
+    RefPtr<NativeImageSkia> colorNativeImage = color->nativeImageForCurrentFrame();
+    RefPtr<NativeImageSkia> displNativeImage = displ->nativeImageForCurrentFrame();
 
     if (!colorNativeImage || !displNativeImage)
         return false;

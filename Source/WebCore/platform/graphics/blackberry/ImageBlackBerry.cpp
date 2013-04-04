@@ -55,7 +55,7 @@ PassRefPtr<Image> Image::loadPlatformResource(const char *name)
     return img.release();
 }
 
-NativeImagePtr ImageFrame::asNewNativeImage() const
+PassNativeImagePtr ImageFrame::asNewNativeImage() const
 {
     return new BlackBerry::Platform::Graphics::TiledImage(m_size, m_bytes);
 }
@@ -73,7 +73,7 @@ bool FrameData::clear(bool clearMetadata)
     return false;
 }
 
-BitmapImage::BitmapImage(NativeImagePtr nativeImage, ImageObserver* observer)
+BitmapImage::BitmapImage(PassNativeImagePtr nativeImage, ImageObserver* observer)
     : Image(observer)
     , m_currentFrame(0)
     , m_frames(0)

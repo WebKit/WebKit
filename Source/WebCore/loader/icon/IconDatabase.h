@@ -97,7 +97,7 @@ public:
     virtual void setIconURLForPageURL(const String& iconURL, const String& pageURL);
 
     virtual Image* synchronousIconForPageURL(const String&, const IntSize&);
-    virtual NativeImagePtr synchronousNativeIconForPageURL(const String& pageURLOriginal, const IntSize&);
+    virtual PassNativeImagePtr synchronousNativeIconForPageURL(const String& pageURLOriginal, const IntSize&);
     virtual String synchronousIconURLForPageURL(const String&);
     virtual bool synchronousIconDataKnownForIconURL(const String&);
     virtual IconLoadDecision synchronousLoadDecisionForIconURL(const String&, DocumentLoader*);    

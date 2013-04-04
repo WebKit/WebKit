@@ -132,7 +132,7 @@ namespace WebCore {
 
     private:
 #if USE(CG)
-        NativeImagePtr copyNativeImage(BackingStoreCopy = CopyBackingStore) const;
+        PassNativeImagePtr copyNativeImage(BackingStoreCopy = CopyBackingStore) const;
 #endif
         void clip(GraphicsContext*, const FloatRect&) const;
 
