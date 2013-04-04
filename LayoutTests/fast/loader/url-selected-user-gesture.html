@@ -8,7 +8,9 @@
         testRunner.setPopupBlockingEnabled(true);
     }
 
-    document.querySelector('a').dispatchEvent(new MouseEvent('click', {ctrlKey: true, metaKey: true}));
+    var evt = document.createEvent('MouseEvents');
+    evt.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, true, false, false, true, 0, null);
+    document.querySelector('a').dispatchEvent(evt);
 
     if (window.testRunner)
         shouldBe("testRunner.windowCount()", "1");
