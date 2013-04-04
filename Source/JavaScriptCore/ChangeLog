@@ -1,3 +1,13 @@
+2013-04-04  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove the gyp build
+        https://bugs.webkit.org/show_bug.cgi?id=113942
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * JavaScriptCore.gyp/JavaScriptCoreGTK.gyp: Removed.
+        * JavaScriptCore.gyp/redirect-stdout.sh: Removed.
+
 2013-04-04  Geoffrey Garen  <ggaren@apple.com>
 
         Simplified bytecode generation by merging prefix and postfix nodes

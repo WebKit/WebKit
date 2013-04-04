@@ -1,3 +1,17 @@
+2013-04-04  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove the gyp build
+        https://bugs.webkit.org/show_bug.cgi?id=113942
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * gyp/Configuration.gypi.in: Removed.
+        * gyp/Dependencies.gyp: Removed.
+        * gyp/GNUmakefile: Removed.
+        * gyp/autogen.sh: Removed.
+        * gyp/configure.ac: Removed.
+        * gyp/run-gyp: Removed.
+
 2013-04-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [Cairo] Fix canvas drawing of SVG-based patterns and remove NativeImageCairo
