@@ -2778,8 +2778,8 @@ void FrameView::autoSizeIfEnabled()
     if (!documentView || !documentElement)
         return;
 
-    // Start from the minimum height and allow it to grow.
-    resize(frameRect().width(), m_minAutoSize.height());
+    // Start from the minimum size and allow it to grow.
+    resize(m_minAutoSize.width(), m_minAutoSize.height());
 
     IntSize size = frameRect().size();
 
