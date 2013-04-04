@@ -1,3 +1,10 @@
+2013-04-03  Roger Fong  <roger_fong@apple.com>
+
+        Re-enable WinEWS tests.
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (WinEWS):
+
 2013-04-03  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK][Jhbuild] Move ATK to the main moduleset, bump ATK, at-spi2-(atk|core) versions to 2.8.0
