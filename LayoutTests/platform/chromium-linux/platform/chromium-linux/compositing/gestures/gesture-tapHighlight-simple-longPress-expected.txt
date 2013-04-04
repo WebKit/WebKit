@@ -1,2 +1,0 @@
-Target Link.
-This test is successful if no link highlight appears.

@@ -1,1 +1,0 @@
-This test is successful if no transparent green rectangles are visible.

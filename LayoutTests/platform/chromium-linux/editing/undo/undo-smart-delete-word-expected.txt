@@ -1,4 +1,0 @@
-Tests: 
-Select a word via double-click. Delete. Then undo the delete. The space that got smart deleted should now be selected.
-foo bar baz
-PASSED
