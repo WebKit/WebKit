@@ -41,9 +41,8 @@ public:
     virtual ~CaptionUserPreferencesMac();
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    virtual bool userHasCaptionPreferences() const OVERRIDE;
-    virtual bool shouldShowCaptions() const OVERRIDE;
-    virtual void setShouldShowCaptions(bool) OVERRIDE;
+    virtual CaptionDisplayMode captionDisplayMode() const OVERRIDE;
+    virtual void setCaptionDisplayMode(CaptionDisplayMode) OVERRIDE;
 
     virtual bool userPrefersCaptions() const OVERRIDE;
     virtual bool userPrefersSubtitles() const OVERRIDE;
@@ -53,7 +52,7 @@ public:
 
     virtual void setInterestedInCaptionPreferenceChanges() OVERRIDE;
 
-    virtual void setPreferredLanguage(String) OVERRIDE;
+    virtual void setPreferredLanguage(const String&) OVERRIDE;
     virtual Vector<String> preferredLanguages() const OVERRIDE;
 
     virtual void captionPreferencesChanged() OVERRIDE;

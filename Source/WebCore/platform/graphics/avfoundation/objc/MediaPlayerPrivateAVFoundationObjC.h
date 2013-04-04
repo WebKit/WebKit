@@ -159,6 +159,8 @@ private:
     virtual MediaPlayer::MediaKeyException cancelKeyRequest(const String&, const String&);
 #endif
 
+    virtual String languageOfPrimaryAudioTrack() const OVERRIDE;
+
 #if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
     virtual void setCurrentTrack(InbandTextTrackPrivateAVF*) OVERRIDE;
     virtual InbandTextTrackPrivateAVF* currentTrack() OVERRIDE;
@@ -172,6 +174,7 @@ private:
     RetainPtr<AVPlayerLayer> m_videoLayer;
     RetainPtr<WebCoreAVFMovieObserver> m_objcObserver;
     RetainPtr<id> m_timeObserver;
+    mutable String m_languageOfPrimaryAudioTrack;
     bool m_videoFrameHasDrawn;
     bool m_haveCheckedPlayability;
 

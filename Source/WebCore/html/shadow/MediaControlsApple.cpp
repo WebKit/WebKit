@@ -305,8 +305,9 @@ void MediaControlsApple::makeTransparent()
 void MediaControlsApple::changedClosedCaptionsVisibility()
 {
     MediaControls::changedClosedCaptionsVisibility();
-    if (m_closedCaptionsTrackList)
-        m_closedCaptionsTrackList->resetTrackListMenu();
+    if (m_closedCaptionsContainer && m_closedCaptionsContainer->isShowing())
+        m_closedCaptionsContainer->hide();
+
 }
 
 void MediaControlsApple::reset()
@@ -340,11 +341,9 @@ void MediaControlsApple::reset()
         m_volumeSlider->setVolume(m_mediaController->volume());
 
     if (m_toggleClosedCaptionsButton) {
-        if (m_mediaController->hasClosedCaptions()) {
+        if (m_mediaController->hasClosedCaptions())
             m_toggleClosedCaptionsButton->show();
-            if (m_closedCaptionsTrackList)
-                m_closedCaptionsTrackList->resetTrackListMenu();
-        } else
+        else
             m_toggleClosedCaptionsButton->hide();
     }
 
@@ -510,8 +509,6 @@ void MediaControlsApple::toggleClosedCaptionTrackList()
 
 void MediaControlsApple::closedCaptionTracksChanged()
 {
-    if (m_closedCaptionsTrackList)
-        m_closedCaptionsTrackList->resetTrackListMenu();
     if (m_toggleClosedCaptionsButton) {
         if (m_mediaController->hasClosedCaptions())
             m_toggleClosedCaptionsButton->show();

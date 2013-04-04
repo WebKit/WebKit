@@ -35,3 +35,54 @@ function getTrackListElement()
   }
   return trackListElement;
 }
+
+function trackMenuList()
+{
+    trackListElement = getTrackListElement();
+    if (!trackListElement)
+        return;
+
+    // Track list should have a <ul> with <li> children.
+    var trackList = trackListElement.querySelector("ul");
+    if (!trackList) {
+        failTest("Could not find a child ul element in track list menu");
+        return;
+    }
+    var trackListItems = trackList.querySelectorAll("li");
+    if (!trackListItems) {
+        failTest("Could not find child li elements in track list menu");
+        return;
+    }
+
+    return trackListItems;
+}
+
+function indexOfMenuItemBeginningWith(title)
+{
+    var trackMenuItems = trackMenuList();
+    for (i = 0; i < trackMenuItems.length; ++i) {
+        if (trackMenuItems[i].textContent.indexOf(title) == 0)
+            break;
+    }
+    return (i < trackMenuItems.length) ? i : -1;
+}
+
+function selectCaptionMenuItem(title)
+{
+    var trackMenuItems = trackMenuList();
+    var index = indexOfMenuItemBeginningWith(title);
+    if (index < 0) {
+        failTest("Menu item " + title + " not found in track list menu.");
+        return;
+    }
+
+    consoleWrite("- click on '" + title + "' menu item.");
+    var selectedTrackItem = trackMenuItems[index];
+    var boundingRect = selectedTrackItem.getBoundingClientRect();
+    var x = boundingRect.left + boundingRect.width / 2;
+    var y = boundingRect.top + boundingRect.height / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+

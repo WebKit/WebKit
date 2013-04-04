@@ -73,6 +73,9 @@ public:
     }
     virtual ~TextTrack();
 
+    static TextTrack* captionMenuOffItem();
+    static TextTrack* captionMenuAutomaticItem();
+
     void setMediaElement(HTMLMediaElement* element) { m_mediaElement = element; }
     HTMLMediaElement* mediaElement() { return m_mediaElement; }
 

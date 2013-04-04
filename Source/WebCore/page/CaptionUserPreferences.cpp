@@ -38,23 +38,15 @@ namespace WebCore {
 
 CaptionUserPreferences::CaptionUserPreferences(PageGroup* group)
     : m_pageGroup(group)
+    , m_displayMode(AlwaysOn)
     , m_timer(this, &CaptionUserPreferences::timerFired)
     , m_testingMode(false)
     , m_havePreferences(false)
-    , m_shouldShowCaptions(false)
 {
 }
 
 CaptionUserPreferences::~CaptionUserPreferences()
 {
-}
-
-bool CaptionUserPreferences::shouldShowCaptions() const
-{
-    if (!m_testingMode)
-        return false;
-    
-    return m_shouldShowCaptions || userPrefersCaptions() || userPrefersSubtitles();
 }
 
 void CaptionUserPreferences::timerFired(Timer<CaptionUserPreferences>*)
@@ -72,10 +64,15 @@ void CaptionUserPreferences::notify()
         m_timer.startOneShot(0);
 }
 
-void CaptionUserPreferences::setShouldShowCaptions(bool preference)
+CaptionUserPreferences::CaptionDisplayMode CaptionUserPreferences::captionDisplayMode() const
 {
-    m_shouldShowCaptions = preference;
-    if (m_testingMode && !preference) {
+    return m_displayMode;
+}
+
+void CaptionUserPreferences::setCaptionDisplayMode(CaptionUserPreferences::CaptionDisplayMode mode)
+{
+    m_displayMode = mode;
+    if (m_testingMode && mode != AlwaysOn) {
         setUserPrefersCaptions(false);
         setUserPrefersSubtitles(false);
     }
@@ -153,7 +150,7 @@ Vector<String> CaptionUserPreferences::preferredLanguages() const
     return languages;
 }
 
-void CaptionUserPreferences::setPreferredLanguage(String language)
+void CaptionUserPreferences::setPreferredLanguage(const String& language)
 {
     m_userPreferredLanguage = language;
     notify();
@@ -198,28 +195,30 @@ int CaptionUserPreferences::textTrackSelectionScore(TextTrack* track, HTMLMediaE
 
     if (track->kind() != TextTrack::captionsKeyword() && track->kind() != TextTrack::subtitlesKeyword())
         return trackScore;
-
+    
+    if (!userPrefersSubtitles() && !userPrefersCaptions())
+        return trackScore;
+    
     if (track->kind() == TextTrack::subtitlesKeyword() && userPrefersSubtitles())
         trackScore = 1;
     else if (track->kind() == TextTrack::captionsKeyword() && userPrefersCaptions())
         trackScore = 1;
     
-    return trackScore + textTrackLanguageSelectionScore(track);
+    return trackScore + textTrackLanguageSelectionScore(track, preferredLanguages());
 }
 
-int CaptionUserPreferences::textTrackLanguageSelectionScore(TextTrack* track) const
+int CaptionUserPreferences::textTrackLanguageSelectionScore(TextTrack* track, const Vector<String>& preferredLanguages) const
 {
     if (track->language().isEmpty())
         return 0;
 
-    Vector<String> languages = preferredLanguages();
-    size_t languageMatchIndex = indexOfBestMatchingLanguageInList(track->language(), languages);
-    if (languageMatchIndex >= languages.size())
+    size_t languageMatchIndex = indexOfBestMatchingLanguageInList(track->language(), preferredLanguages);
+    if (languageMatchIndex >= preferredLanguages.size())
         return 0;
 
     // Matching a track language is more important than matching track type, so this multiplier must be
     // greater than the maximum value returned by textTrackSelectionScore.
-    return (languages.size() - languageMatchIndex) * 10;
+    return (preferredLanguages.size() - languageMatchIndex) * 10;
 }
 
 }

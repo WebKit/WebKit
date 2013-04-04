@@ -79,11 +79,6 @@ inline HTMLMediaElement* toParentMediaElement(RenderObject* renderer) { return t
 
 MediaControlElementType mediaControlElementType(Node*);
 
-#if ENABLE(VIDEO_TRACK)
-const AtomicString& trackIndexAttributeName();
-int trackListIndexForElement(Element*);
-#endif
-
 // ----------------------------
 
 class MediaControlElement {

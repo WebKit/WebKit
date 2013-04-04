@@ -60,8 +60,8 @@
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(MediaAccessibility)
 
-SOFT_LINK(MediaAccessibility, MACaptionAppearanceGetShowCaptions, bool, (MACaptionAppearanceDomain domain), (domain))
-SOFT_LINK(MediaAccessibility, MACaptionAppearanceSetShowCaptions, void, (MACaptionAppearanceDomain domain, bool showCaptions), (domain, showCaptions))
+SOFT_LINK(MediaAccessibility, MACaptionAppearanceGetDisplayType, MACaptionAppearanceDisplayType, (MACaptionAppearanceDomain domain), (domain))
+SOFT_LINK(MediaAccessibility, MACaptionAppearanceSetDisplayType, void, (MACaptionAppearanceDomain domain, MACaptionAppearanceDisplayType displayType), (domain, displayType))
 SOFT_LINK(MediaAccessibility, MACaptionAppearanceCopyForegroundColor, CGColorRef, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
 SOFT_LINK(MediaAccessibility, MACaptionAppearanceCopyBackgroundColor, CGColorRef, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
 SOFT_LINK(MediaAccessibility, MACaptionAppearanceCopyWindowColor, CGColorRef, (MACaptionAppearanceDomain domain, MACaptionAppearanceBehavior *behavior), (domain, behavior))
@@ -116,22 +116,54 @@ CaptionUserPreferencesMac::~CaptionUserPreferencesMac()
 
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 
-bool CaptionUserPreferencesMac::shouldShowCaptions() const
+CaptionUserPreferences::CaptionDisplayMode CaptionUserPreferencesMac::captionDisplayMode() const
 {
     if (testingMode() || !MediaAccessibilityLibrary())
-        return CaptionUserPreferences::shouldShowCaptions();
+        return CaptionUserPreferences::captionDisplayMode();
 
-    return MACaptionAppearanceGetShowCaptions(kMACaptionAppearanceDomainUser);
+    MACaptionAppearanceDisplayType displayType = MACaptionAppearanceGetDisplayType(kMACaptionAppearanceDomainUser);
+    switch (displayType) {
+    case kMACaptionAppearanceDisplayTypeForcedOnly:
+        return ForcedOnly;
+        break;
+
+    case kMACaptionAppearanceDisplayTypeAutomatic:
+        return Automatic;
+        break;
+
+    case kMACaptionAppearanceDisplayTypeAlwaysOn:
+        return AlwaysOn;
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return ForcedOnly;
 }
-
-void CaptionUserPreferencesMac::setShouldShowCaptions(bool preference)
+    
+void CaptionUserPreferencesMac::setCaptionDisplayMode(CaptionUserPreferences::CaptionDisplayMode mode)
 {
     if (testingMode() || !MediaAccessibilityLibrary()) {
-        CaptionUserPreferences::setShouldShowCaptions(preference);
+        CaptionUserPreferences::setCaptionDisplayMode(mode);
         return;
     }
 
-    MACaptionAppearanceSetShowCaptions(kMACaptionAppearanceDomainUser, preference);
+    MACaptionAppearanceDisplayType displayType = kMACaptionAppearanceDisplayTypeForcedOnly;
+    switch (mode) {
+        case Automatic:
+            displayType = kMACaptionAppearanceDisplayTypeAutomatic;
+            break;
+        case ForcedOnly:
+            displayType = kMACaptionAppearanceDisplayTypeForcedOnly;
+            break;
+        case AlwaysOn:
+            displayType = kMACaptionAppearanceDisplayTypeAlwaysOn;
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+    }
+
+    MACaptionAppearanceSetDisplayType(kMACaptionAppearanceDomainUser, displayType);
 }
 
 bool CaptionUserPreferencesMac::userPrefersCaptions() const
@@ -152,14 +184,6 @@ bool CaptionUserPreferencesMac::userPrefersSubtitles() const
     
     RetainPtr<CFArrayRef> captioningMediaCharacteristics(AdoptCF, MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics(kMACaptionAppearanceDomainUser));
     return !(captioningMediaCharacteristics && CFArrayGetCount(captioningMediaCharacteristics.get()));
-}
-
-bool CaptionUserPreferencesMac::userHasCaptionPreferences() const
-{
-    if (testingMode() || !MediaAccessibilityLibrary())
-        return CaptionUserPreferences::userHasCaptionPreferences();
-
-    return true;
 }
 
 void CaptionUserPreferencesMac::setInterestedInCaptionPreferenceChanges()
@@ -481,7 +505,7 @@ void CaptionUserPreferencesMac::updateCaptionStyleSheetOveride()
              Vector<String>(), InjectInAllFrames, UserStyleAuthorLevel, InjectInExistingDocuments);
 }
 
-void CaptionUserPreferencesMac::setPreferredLanguage(String language)
+void CaptionUserPreferencesMac::setPreferredLanguage(const String& language)
 {
     if (testingMode() || !MediaAccessibilityLibrary()) {
         CaptionUserPreferences::setPreferredLanguage(language);
@@ -525,9 +549,30 @@ Vector<String> CaptionUserPreferencesMac::preferredLanguages() const
     return userPreferredLanguages;
 }
 #endif  // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
-    
+
+static String languageIdentifier(const String& languageCode)
+{
+    if (languageCode.isEmpty())
+        return languageCode;
+
+    String lowercaseLanguageCode = languageCode.lower();
+
+    // Need 2U here to disambiguate String::operator[] from operator(NSString*, int)[] in a production build.
+    if (lowercaseLanguageCode.length() >= 3 && (lowercaseLanguageCode[2U] == '_' || lowercaseLanguageCode[2U] == '-'))
+        lowercaseLanguageCode.truncate(2);
+
+    return lowercaseLanguageCode;
+}
+
 static String trackDisplayName(TextTrack* track)
 {
+    if (track == TextTrack::captionMenuOffItem())
+        return textTrackOffMenuItemText();
+    if (track == TextTrack::captionMenuAutomaticItem()) {
+        String preferredLanguageDisplayName = displayNameForLanguageLocale(languageIdentifier(defaultLanguage()));
+        return textTrackAutomaticMenuItemText(preferredLanguageDisplayName);
+    }
+
     StringBuilder displayName;
     String label = track->label();
     String trackLanguageIdentifier = track->language();
@@ -587,23 +632,12 @@ String CaptionUserPreferencesMac::displayNameForTrack(TextTrack* track) const
     return trackDisplayName(track);
 }
 
-static String languageIdentifier(const String& languageCode)
-{
-    if (languageCode.isEmpty())
-        return languageCode;
-
-    String lowercaseLanguageCode = languageCode.lower();
-
-    // Need 2U here to disambiguate String::operator[] from operator(NSString*, int)[] in a production build.
-    if (lowercaseLanguageCode.length() >= 3 && (lowercaseLanguageCode[2U] == '_' || lowercaseLanguageCode[2U] == '-'))
-        lowercaseLanguageCode.truncate(2);
-    
-    return lowercaseLanguageCode;
-}
-
 int CaptionUserPreferencesMac::textTrackSelectionScore(TextTrack* track, HTMLMediaElement* mediaElement) const
 {
-    if (!shouldShowCaptions() && !mediaElement->webkitClosedCaptionsVisible())
+    CaptionDisplayMode displayMode = captionDisplayMode();
+    if (displayMode == ForcedOnly)
+        return 0;
+    if (displayMode == AlwaysOn && (!userPrefersSubtitles() && !userPrefersCaptions()))
         return 0;
     if (track->kind() != TextTrack::captionsKeyword() && track->kind() != TextTrack::subtitlesKeyword())
         return 0;
@@ -611,6 +645,28 @@ int CaptionUserPreferencesMac::textTrackSelectionScore(TextTrack* track, HTMLMed
         return 0;
     if (!track->isMainProgramContent())
         return 0;
+
+    Vector<String> userPreferredCaptionLanguages = preferredLanguages();
+
+    if (displayMode == Automatic) {
+
+        // Only enable a text track if the current audio track is not in the user's preferred language.
+        if (!mediaElement || !mediaElement->player())
+            return 0;
+
+        String audioTrackLanguage = mediaElement->player()->languageOfPrimaryAudioTrack();
+
+        if (audioTrackLanguage.isEmpty())
+            return 0;
+
+        Vector<String> languages;
+        languages.append(defaultLanguage());
+        size_t offset = indexOfBestMatchingLanguageInList(audioTrackLanguage, languages);
+        if (!offset)
+            return 0;
+
+        userPreferredCaptionLanguages = languages;
+    }
 
     int trackScore = 0;
 
@@ -632,7 +688,7 @@ int CaptionUserPreferencesMac::textTrackSelectionScore(TextTrack* track, HTMLMed
             trackScore = 1;
     }
 
-    return trackScore + textTrackLanguageSelectionScore(track);
+    return trackScore + textTrackLanguageSelectionScore(track, userPreferredCaptionLanguages);
 }
 
 static bool textTrackCompare(const RefPtr<TextTrack>& a, const RefPtr<TextTrack>& b)
@@ -737,6 +793,9 @@ Vector<RefPtr<TextTrack> > CaptionUserPreferencesMac::sortedTrackListForMenu(Tex
     }
 
     nonCopyingSort(tracksForMenu.begin(), tracksForMenu.end(), textTrackCompare);
+
+    tracksForMenu.insert(0, TextTrack::captionMenuOffItem());
+    tracksForMenu.insert(1, TextTrack::captionMenuAutomaticItem());
 
     return tracksForMenu;
 }

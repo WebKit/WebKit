@@ -466,6 +466,8 @@ public:
     void simulateAudioInterruption();
 #endif
 
+    String languageOfPrimaryAudioTrack() const;
+
 private:
     MediaPlayer(MediaPlayerClient*);
     void loadWithNextMediaEngine(MediaPlayerFactory*);

@@ -191,6 +191,8 @@ public:
 #if USE(GSTREAMER)
     virtual void simulateAudioInterruption() { }
 #endif
+    
+    virtual String languageOfPrimaryAudioTrack() const { return emptyString(); }
 };
 
 }

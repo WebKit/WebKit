@@ -95,6 +95,18 @@ const AtomicString& TextTrack::showingKeyword()
     return ended;
 }
 
+TextTrack* TextTrack::captionMenuOffItem()
+{
+    DEFINE_STATIC_LOCAL(RefPtr<TextTrack>, off, (TextTrack::create(0, 0, "off menu item", "", "")));
+    return off.get();
+}
+
+TextTrack* TextTrack::captionMenuAutomaticItem()
+{
+    DEFINE_STATIC_LOCAL(RefPtr<TextTrack>, automatic, (TextTrack::create(0, 0, "automatic menu item", "", "")));
+    return automatic.get();
+}
+
 TextTrack::TextTrack(ScriptExecutionContext* context, TextTrackClient* client, const AtomicString& kind, const AtomicString& label, const AtomicString& language, TextTrackType type)
     : TrackBase(context, TrackBase::TextTrack)
     , m_cues(0)

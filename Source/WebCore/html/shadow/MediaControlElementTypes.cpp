@@ -75,26 +75,6 @@ MediaControlElementType mediaControlElementType(Node* node)
     return static_cast<MediaControlDivElement*>(element)->displayType();
 }
 
-#if ENABLE(VIDEO_TRACK)
-const AtomicString& trackIndexAttributeName()
-{
-    DEFINE_STATIC_LOCAL(AtomicString, name, ("x-webkit-track-index", AtomicString::ConstructFromLiteral));
-    return name;
-}
-
-int trackListIndexForElement(Element* element)
-{
-    const AtomicString trackIndexAttributeValue = element->getAttribute(trackIndexAttributeName());
-    if (trackIndexAttributeValue.isNull() || trackIndexAttributeValue.isEmpty())
-        return HTMLMediaElement::textTracksIndexNotFound();
-    bool ok;
-    int trackIndex = trackIndexAttributeValue.toInt(&ok);
-    if (!ok)
-        return HTMLMediaElement::textTracksIndexNotFound();
-    return trackIndex;
-}
-#endif
-
 MediaControlElement::MediaControlElement(MediaControlElementType displayType, HTMLElement* element)
     : m_mediaController(0)
     , m_displayType(displayType)

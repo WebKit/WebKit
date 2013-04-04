@@ -41,14 +41,15 @@
                 case 1:
                     trackMenuItems = textTrackMenuItems();
                     testExpected("trackMenuItems[0].textContent", "Off");
-                    testExpected("trackMenuItems[1].textContent", "u (English) SDH");
-                    testExpected("trackMenuItems[2].textContent", "y (English-Australia) SDH");
-                    testExpected("trackMenuItems[3].textContent", "v (English)");
-                    testExpected("trackMenuItems[4].textContent", "x (English-Australia)");
-                    testExpected("trackMenuItems[5].textContent", "w (Japanese) SDH");
-                    testExpected("trackMenuItems[6].textContent", "z (Japanese)");
+                    testExpected("trackMenuItems[1].textContent", "Automatic (English)");
+                    testExpected("trackMenuItems[2].textContent", "u (English) SDH");
+                    testExpected("trackMenuItems[3].textContent", "y (English-Australia) SDH");
+                    testExpected("trackMenuItems[4].textContent", "v (English)");
+                    testExpected("trackMenuItems[5].textContent", "x (English-Australia)");
+                    testExpected("trackMenuItems[6].textContent", "w (Japanese) SDH");
+                    testExpected("trackMenuItems[7].textContent", "z (Japanese)");
                     testExpected("video.textTracks.length", 6);
-                    testExpected("trackMenuItems.length", 7);
+                    testExpected("trackMenuItems.length", 8);
 
                     consoleWrite("<br><i>** Change preferred language to Japanese, change preference to subtitles<" + "/i>");
                     run("internals.setUserPreferredLanguages(['ja'])");
@@ -61,11 +62,12 @@
                 case 2:
                     trackMenuItems = textTrackMenuItems();
                     testExpected("trackMenuItems[0].textContent", "Off");
-                    testExpected("trackMenuItems[1].textContent", "z (Japanese)");
-                    testExpected("trackMenuItems[2].textContent", "v (English)");
-                    testExpected("trackMenuItems[3].textContent", "x (English-Australia)");
+                    testExpected("trackMenuItems[1].textContent", "Automatic (Japanese)");
+                    testExpected("trackMenuItems[2].textContent", "z (Japanese)");
+                    testExpected("trackMenuItems[3].textContent", "v (English)");
+                    testExpected("trackMenuItems[4].textContent", "x (English-Australia)");
                     testExpected("video.textTracks.length", 6);
-                    testExpected("trackMenuItems.length", 4);
+                    testExpected("trackMenuItems.length", 5);
 
                     consoleWrite("");
                     endTest();

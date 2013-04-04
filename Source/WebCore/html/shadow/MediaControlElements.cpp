@@ -70,10 +70,6 @@ using namespace HTMLNames;
 static const AtomicString& getMediaControlCurrentTimeDisplayElementShadowPseudoId();
 static const AtomicString& getMediaControlTimeRemainingDisplayElementShadowPseudoId();
 
-#if ENABLE(VIDEO_TRACK)
-static const char* textTracksOffAttrValue = "-1"; // This must match HTMLMediaElement::textTracksOffIndex()
-#endif
-
 MediaControlPanelElement::MediaControlPanelElement(Document* document)
     : MediaControlDivElement(document, MediaControlsPanel)
     , m_canBeDragged(false)
@@ -758,7 +754,6 @@ const AtomicString& MediaControlClosedCaptionsContainerElement::shadowPseudoId()
 MediaControlClosedCaptionsTrackListElement::MediaControlClosedCaptionsTrackListElement(Document* document, MediaControls* controls)
     : MediaControlDivElement(document, MediaClosedCaptionsTrackList)
     , m_controls(controls)
-    , m_trackListHasChanged(true)
 {
 }
 
@@ -788,19 +783,14 @@ void MediaControlClosedCaptionsTrackListElement::defaultEventHandler(Event* even
             textTrack = iter->value;
         m_menuToTrackMap.clear();
         m_controls->toggleClosedCaptionTrackList();
-
-        int trackIndex = trackListIndexForElement(toElement(target));
-        if (trackIndex == HTMLMediaElement::textTracksIndexNotFound())
+        if (!textTrack)
             return;
 
         HTMLMediaElement* mediaElement = toParentMediaElement(this);
         if (!mediaElement)
             return;
 
-        if (textTrack)
-            mediaElement->setSelectedTextTrack(textTrack.get());
-        else if (trackIndex == HTMLMediaElement::textTracksOffIndex())
-            mediaElement->setSelectedTextTrack(0);
+        mediaElement->setSelectedTextTrack(textTrack.get());
 
         updateDisplay();
     }
@@ -823,33 +813,23 @@ void MediaControlClosedCaptionsTrackListElement::updateDisplay()
     if (!mediaController()->hasClosedCaptions())
         return;
 
+    if (!document()->page())
+        return;
+    CaptionUserPreferences::CaptionDisplayMode displayMode = document()->page()->group().captionPreferences()->captionDisplayMode();
+    bool trackIsSelected = displayMode != CaptionUserPreferences::Automatic && displayMode != CaptionUserPreferences::ForcedOnly;
+
     HTMLMediaElement* mediaElement = toParentMediaElement(this);
     if (!mediaElement)
         return;
 
     TextTrackList* trackList = mediaElement->textTracks();
-
     if (!trackList || !trackList->length())
         return;
 
-    if (m_trackListHasChanged)
-        rebuildTrackListMenu();
+    rebuildTrackListMenu();
 
-    bool captionsVisible = mediaElement->closedCaptionsVisible();
     for (unsigned i = 0, length = m_menuItems.size(); i < length; ++i) {
         RefPtr<Element> trackItem = m_menuItems[i];
-
-        int trackIndex = trackListIndexForElement(trackItem.get());
-        if (trackIndex == HTMLMediaElement::textTracksIndexNotFound())
-            continue;
-
-        if (trackIndex == HTMLMediaElement::textTracksOffIndex()) {
-            if (captionsVisible)
-                trackItem->classList()->remove(selectedClassValue, ASSERT_NO_EXCEPTION);
-            else
-                trackItem->classList()->add(selectedClassValue, ASSERT_NO_EXCEPTION);
-            continue;
-        }
 
         RefPtr<TextTrack> textTrack;
         MenuItemToTrackMap::iterator iter = m_menuToTrackMap.find(trackItem.get());
@@ -858,7 +838,24 @@ void MediaControlClosedCaptionsTrackListElement::updateDisplay()
         textTrack = iter->value;
         if (!textTrack)
             continue;
-        if (textTrack->mode() == TextTrack::showingKeyword())
+
+        if (textTrack == TextTrack::captionMenuOffItem()) {
+            if (displayMode == CaptionUserPreferences::ForcedOnly)
+                trackItem->classList()->add(selectedClassValue, ASSERT_NO_EXCEPTION);
+            else
+                trackItem->classList()->remove(selectedClassValue, ASSERT_NO_EXCEPTION);
+            continue;
+        }
+
+        if (textTrack == TextTrack::captionMenuAutomaticItem()) {
+            if (displayMode == CaptionUserPreferences::Automatic)
+                trackItem->classList()->add(selectedClassValue, ASSERT_NO_EXCEPTION);
+            else
+                trackItem->classList()->remove(selectedClassValue, ASSERT_NO_EXCEPTION);
+            continue;
+        }
+
+        if (trackIsSelected && textTrack->mode() == TextTrack::showingKeyword())
             trackItem->classList()->add(selectedClassValue, ASSERT_NO_EXCEPTION);
         else
             trackItem->classList()->remove(selectedClassValue, ASSERT_NO_EXCEPTION);
@@ -872,8 +869,6 @@ void MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu()
     // Remove any existing content.
     removeChildren();
     m_menuItems.clear();
-
-    m_trackListHasChanged = false;
     m_menuToTrackMap.clear();
 
     if (!mediaController()->hasClosedCaptions())
@@ -888,41 +883,26 @@ void MediaControlClosedCaptionsTrackListElement::rebuildTrackListMenu()
         return;
 
     Document* doc = document();
-    CaptionUserPreferences* captionsUserPreferences = doc->page()->group().captionPreferences();
-    Vector<RefPtr<TextTrack> > tracksForMenu = captionsUserPreferences->sortedTrackListForMenu(trackList);
+    if (!document()->page())
+        return;
+    CaptionUserPreferences* captionPreferences = document()->page()->group().captionPreferences();
+    Vector<RefPtr<TextTrack> > tracksForMenu = captionPreferences->sortedTrackListForMenu(trackList);
 
     RefPtr<Element> captionsHeader = doc->createElement(h3Tag, ASSERT_NO_EXCEPTION);
     captionsHeader->appendChild(doc->createTextNode(textTrackSubtitlesText()));
     appendChild(captionsHeader);
     RefPtr<Element> captionsMenuList = doc->createElement(ulTag, ASSERT_NO_EXCEPTION);
 
-    RefPtr<Element> menuItem;
-    menuItem = doc->createElement(liTag, ASSERT_NO_EXCEPTION);
-    menuItem->appendChild(doc->createTextNode(textTrackOffText()));
-    menuItem->setAttribute(trackIndexAttributeName(), textTracksOffAttrValue, ASSERT_NO_EXCEPTION);
-    captionsMenuList->appendChild(menuItem);
-    m_menuItems.append(menuItem);
-
     for (unsigned i = 0, length = tracksForMenu.size(); i < length; ++i) {
         RefPtr<TextTrack> textTrack = tracksForMenu[i];
-        menuItem = doc->createElement(liTag, ASSERT_NO_EXCEPTION);
-
-        // Add a custom attribute to the <li> element which will allow
-        // us to easily associate the user tapping here with the
-        // track. Since this list is rebuilt if the tracks change, we
-        // should always be in sync.
-        menuItem->setAttribute(trackIndexAttributeName(), String::number(i), ASSERT_NO_EXCEPTION);
-
-        menuItem->appendChild(doc->createTextNode(captionsUserPreferences->displayNameForTrack(textTrack.get())));
-
+        RefPtr<Element> menuItem = doc->createElement(liTag, ASSERT_NO_EXCEPTION);
+        menuItem->appendChild(doc->createTextNode(captionPreferences->displayNameForTrack(textTrack.get())));
         captionsMenuList->appendChild(menuItem);
         m_menuItems.append(menuItem);
         m_menuToTrackMap.add(menuItem, textTrack);
     }
 
     appendChild(captionsMenuList);
-
-    updateDisplay();
 #endif
 }
 

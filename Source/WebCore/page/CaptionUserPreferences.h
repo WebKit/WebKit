@@ -46,12 +46,16 @@ public:
     static PassOwnPtr<CaptionUserPreferences> create(PageGroup* group) { return adoptPtr(new CaptionUserPreferences(group)); }
     virtual ~CaptionUserPreferences();
 
-    virtual bool userHasCaptionPreferences() const { return m_testingMode && m_havePreferences; }
-    virtual bool shouldShowCaptions() const;
-    virtual void setShouldShowCaptions(bool);
+    enum CaptionDisplayMode {
+        Automatic,
+        ForcedOnly,
+        AlwaysOn
+    };
+    virtual CaptionDisplayMode captionDisplayMode() const;
+    virtual void setCaptionDisplayMode(CaptionDisplayMode);
 
     virtual int textTrackSelectionScore(TextTrack*, HTMLMediaElement*) const;
-    virtual int textTrackLanguageSelectionScore(TextTrack*) const;
+    virtual int textTrackLanguageSelectionScore(TextTrack*, const Vector<String>&) const;
 
     virtual bool userPrefersCaptions() const;
     virtual void setUserPrefersCaptions(bool);
@@ -69,7 +73,7 @@ public:
 
     virtual void captionPreferencesChanged();
 
-    virtual void setPreferredLanguage(String);
+    virtual void setPreferredLanguage(const String&);
     virtual Vector<String> preferredLanguages() const;
 
     virtual String displayNameForTrack(TextTrack*) const;
@@ -77,7 +81,7 @@ public:
 
     virtual bool testingMode() const { return m_testingMode; }
     virtual void setTestingMode(bool override) { m_testingMode = override; }
-
+    
     PageGroup* pageGroup() const { return m_pageGroup; }
 
 protected:
@@ -88,11 +92,11 @@ private:
     void notify();
 
     PageGroup* m_pageGroup;
+    CaptionDisplayMode m_displayMode;
     Timer<CaptionUserPreferences> m_timer;
     String m_userPreferredLanguage;
     bool m_testingMode;
     bool m_havePreferences;
-    bool m_shouldShowCaptions;
 };
     
 }

@@ -1025,9 +1025,14 @@ String textTrackSubtitlesText()
     return WEB_UI_STRING("Subtitles", "Menu section heading for subtitles");
 }
 
-String textTrackOffText()
+String textTrackOffMenuItemText()
 {
     return WEB_UI_STRING("Off", "Menu item label for the track that represents disabling closed captions");
+}
+
+String textTrackAutomaticMenuItemText(const String& language)
+{
+    return formatLocalizedString(WEB_UI_STRING("Automatic (%@)", "Menu item label for automatic track selection behavior in the form of 'Automatic (SystemLanguage)'"), language.createCFString().get());
 }
 
 String textTrackNoLabelText()

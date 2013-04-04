@@ -41,7 +41,7 @@
             function testMenu()
             {
                 trackListItems = trackMenuList();
-                var expectedItemCount = video.textTracks.length + 1;
+                var expectedItemCount = video.textTracks.length + 2;
                 consoleWrite("There should be " + expectedItemCount + " items in the menu.");
                 testExpected("trackListItems.length", expectedItemCount);
             }
@@ -63,8 +63,8 @@
             function turnCaptionsOn()
             {
                 consoleWrite("*** Turning captions on");
-                // Click on the second item, which is the second track (Off is the first item in the menu)
-                selectCaptionMenuItem(2, testCaptionsVisible);
+                // Click on the third item, which is the second track (Off is the first item, Automatic is second)
+                selectCaptionMenuItem(3, testCaptionsVisible);
             }
 
             function testCaptionsVisible()

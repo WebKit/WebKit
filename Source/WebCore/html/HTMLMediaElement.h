@@ -39,6 +39,7 @@
 #endif
 
 #if ENABLE(VIDEO_TRACK)
+#include "CaptionUserPreferences.h"
 #include "PODIntervalTree.h"
 #include "TextTrack.h"
 #include "TextTrackCue.h"
@@ -112,8 +113,9 @@ public:
 
     enum DelayedActionType {
         LoadMediaResource = 1 << 0,
-        LoadTextTrackResource = 1 << 1,
-        TextTrackChangesNotification = 1 << 2
+        ConfigureTextTracks = 1 << 1,
+        TextTrackChangesNotification = 1 << 2,
+        ConfigureTextTrackDisplay = 1 << 3,
     };
     void scheduleDelayedAction(DelayedActionType);
     
@@ -268,10 +270,7 @@ public:
     void configureTextTrackGroup(const TrackGroup&);
 
     void setSelectedTextTrack(TextTrack*);
-    static int textTracksOffIndex() { return -1; }
-    static int textTracksIndexNotFound() { return -2; }
 
-    bool userPrefersCaptions() const;
     bool textTracksAreReady() const;
     void configureTextTrackDisplay();
     void updateTextTrackDisplay();
@@ -696,7 +695,9 @@ private:
     bool m_tracksAreReady : 1;
     bool m_haveVisibleTextTrack : 1;
     bool m_processingPreferenceChange : 1;
+
     float m_lastTextTrackUpdateTime;
+    CaptionUserPreferences::CaptionDisplayMode m_captionDisplayMode;
 
     RefPtr<TextTrackList> m_textTracks;
     Vector<RefPtr<TextTrack> > m_textTracksWhenResourceSelectionBegan;

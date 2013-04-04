@@ -1154,6 +1154,13 @@ void MediaPlayer::simulateAudioInterruption()
 }
 #endif
 
+String MediaPlayer::languageOfPrimaryAudioTrack() const
+{
+    if (!m_private)
+        return emptyString();
+    
+    return m_private->languageOfPrimaryAudioTrack();
+}
 }
 
 #endif

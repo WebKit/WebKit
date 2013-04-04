@@ -23,59 +23,13 @@
                 timer = setTimeout(nextStep, 100);
             }
 
-            function trackMenuList()
-            {
-                trackListElement = getTrackListElement();
-                if (!trackListElement)
-                    return;
-
-                // Track list should have a <ul> with <li> children (One of them is "Off").
-                var trackList = trackListElement.querySelector("ul");
-                if (!trackList) {
-                    failTest("Could not find a child ul element in track list menu");
-                    return;
-                }
-                var trackListItems = trackList.querySelectorAll("li");
-                if (!trackListItems) {
-                    failTest("Could not find child li elements in track list menu");
-                    return;
-                }
-
-                return trackListItems;
-            }
-
-            function menuIndexForLanguage(language)
-            {
-                var trackMenuItems = trackMenuList();
-                for (i = 0; i < trackMenuItems.length; ++i) {
-                    if (trackMenuItems[i].textContent.indexOf(language) >= 0)
-                        break;
-                }
-                return (i < trackMenuItems.length) ? i : -1;
-            }
-
-            function selectCaptionMenuItem(language)
-            {
-                var trackMenuItems = trackMenuList();
-                var index = menuIndexForLanguage(language);
-                if (index < 0) {
-                    failTest("Menu item " + language + " not found in track list menu.");
-                    return;
-                }
-
-                consoleWrite("- click on '" + language + "' menu item.");
-                var selectedTrackItem = trackMenuItems[index];
-                var boundingRect = selectedTrackItem.getBoundingClientRect();
-                var x = boundingRect.left + boundingRect.width / 2;
-                var y = boundingRect.top + boundingRect.height / 2;
-                eventSender.mouseMoveTo(x, y);
-                eventSender.mouseDown();
-                eventSender.mouseUp();
-            }
-
             function trackLoaded()
             {
                 consoleWrite("EVENT(load)");
+                if (expectedLanguage == "") {
+                    failTest("'" + event.target.srclang + "' track loaded unexpectedly.");
+                    return;
+                }
                 testExpected("event.target.srclang", expectedLanguage);
                 testExpected("event.target.readyState", HTMLTrackElement.LOADED);
 
@@ -130,9 +84,9 @@
 
                 case 4:
                     trackMenuItems = trackMenuList();
-                    testExpected("trackMenuItems[menuIndexForLanguage('French')].className", "");
-                    testExpected("trackMenuItems[menuIndexForLanguage('English')].className", "");
-                    testExpected("trackMenuItems[menuIndexForLanguage('Norwegian')].className", "selected");
+                    testExpected("trackMenuItems[indexOfMenuItemBeginningWith('French')].className", "");
+                    testExpected("trackMenuItems[indexOfMenuItemBeginningWith('English')].className", "");
+                    testExpected("trackMenuItems[indexOfMenuItemBeginningWith('Norwegian')].className", "selected");
 
                     selectCaptionMenuItem("French");
                     expectedLanguage = 'fr';
@@ -157,6 +111,7 @@
 
                 case 7:
                     selectCaptionMenuItem("Off");
+                    expectedLanguage = '';
                     createTrackElements([ 'ru', 'jp', 'en']);
                     timer = setTimeout(nextStep, 100);
                     break;

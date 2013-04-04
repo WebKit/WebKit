@@ -30,7 +30,7 @@
 
             findMediaElement();
             video.src = findMediaFile('video', '../content/test');
-            waitForEvent('canplaythrough', testPosition);
+            waitForEvent('canplaythrough', function () {setTimeout(testPosition, 100);});
         }
 
         </script>

@@ -307,7 +307,6 @@ public:
     virtual bool willRespondToMouseClickEvents() OVERRIDE { return true; }
 
     void updateDisplay();
-    void resetTrackListMenu() { m_trackListHasChanged = true; }
 
 private:
     MediaControlClosedCaptionsTrackListElement(Document*, MediaControls*);
@@ -324,7 +323,6 @@ private:
     MenuItemToTrackMap m_menuToTrackMap;
 #endif
     MediaControls* m_controls;
-    bool m_trackListHasChanged;
 };
 
 // ----------------------------

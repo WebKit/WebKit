@@ -12,6 +12,31 @@
         var testTrackArabic;
         var testTrackEnglish;
         var testCueDisplayBox;
+        var currentTest = 0;
+
+        function scheduleNextTest() 
+        {
+            var test;
+            switch (++currentTest) {
+            case 1:
+                test = addTracks;
+                break;
+            case 2:
+                test = testCueActiveState;
+                break;
+            case 3:
+                test = testCueVisibility1;
+                break;
+            case 4:
+                test = testCueVisibility2;
+                break;
+            case 5:
+                endTest();
+                return;
+            }
+
+            window.setTimeout(test, 100);
+        }
 
         function addTracks()
         {
@@ -31,6 +56,8 @@
 
             consoleWrite("Set the mode of the 'English' track to hidden");
             testTrackEnglish.mode = "hidden";
+
+            scheduleNextTest();
         }
 
         function testCueActiveState()
@@ -42,9 +69,11 @@
 
             testExpected("testTrackArabic.activeCues.length", 1);
             testExpected("testTrackArabic.activeCues[0].text", "Arabic");
+
+            scheduleNextTest();
         }
 
-        function testCueVisibility()
+        function testCueVisibility1()
         {
             consoleWrite("");
             consoleWrite("** Only one cue should be visible **");
@@ -56,6 +85,11 @@
             consoleWrite("Set the mode of the 'English' track to showing");
             testTrackEnglish.mode = "showing";
 
+            scheduleNextTest();
+        }
+
+        function testCueVisibility2()
+        {
             consoleWrite("");
             consoleWrite("** Both cues shold be visible. **");
             testCueDisplayBox = textTrackDisplayElement(video, 'display', 0);
@@ -63,13 +97,8 @@
 
             testCueDisplayBox = textTrackDisplayElement(video, 'display', 1);
             testExpected("testCueDisplayBox.innerText", "English");
-        }
 
-        function runTests() {
-            addTracks();
-            testCueActiveState();
-            testCueVisibility();
-            endTest();
+            scheduleNextTest();
         }
 
         function loaded()
@@ -79,7 +108,7 @@
             findMediaElement();
             video.src = findMediaFile('video', '../content/test');
 
-            waitForEvent('canplaythrough', runTests);
+            waitForEvent('canplaythrough', scheduleNextTest);
         }
 
         </script>
