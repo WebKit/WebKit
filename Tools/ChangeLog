@@ -1,5 +1,13 @@
 2013-04-04  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix webkitpy tests after r147678.
+
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (CommitQueueTest.test_commit_queue):
+        (test_manual_reject_during_processing):
+
+2013-04-04  Ryosuke Niwa  <rniwa@webkit.org>
+
         The commit queue should use Mac MountainLion port
         https://bugs.webkit.org/show_bug.cgi?id=113971
 

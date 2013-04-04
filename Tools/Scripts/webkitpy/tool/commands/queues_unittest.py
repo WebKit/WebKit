@@ -238,19 +238,19 @@ class CommitQueueTest(QueuesTest):
         tool.filesystem.write_text_file('/tmp/layout-test-results/webkit_unit_tests_output.xml', '')
         expected_logs = {
             "begin_work_queue": self._default_begin_work_queue_logs("commit-queue"),
-            "process_work_item": """Running: webkit-patch --status-host=example.com clean --port=chromium-xvfb
+            "process_work_item": """Running: webkit-patch --status-host=example.com clean --port=mac
 MOCK: update_status: commit-queue Cleaned working directory
-Running: webkit-patch --status-host=example.com update --port=chromium-xvfb
+Running: webkit-patch --status-host=example.com update --port=mac
 MOCK: update_status: commit-queue Updated working directory
-Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000 --port=chromium-xvfb
+Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000 --port=mac
 MOCK: update_status: commit-queue Applied patch
-Running: webkit-patch --status-host=example.com validate-changelog --non-interactive 10000 --port=chromium-xvfb
+Running: webkit-patch --status-host=example.com validate-changelog --non-interactive 10000 --port=mac
 MOCK: update_status: commit-queue ChangeLog validated
-Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=release --port=chromium-xvfb
+Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=release --port=mac
 MOCK: update_status: commit-queue Built patch
-Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --port=chromium-xvfb
+Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --port=mac
 MOCK: update_status: commit-queue Passed tests
-Running: webkit-patch --status-host=example.com land-attachment --force-clean --non-interactive --parent-command=commit-queue 10000 --port=chromium-xvfb
+Running: webkit-patch --status-host=example.com land-attachment --force-clean --non-interactive --parent-command=commit-queue 10000 --port=mac
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 10000
@@ -338,7 +338,7 @@ Running: webkit-patch --status-host=example.com land-attachment --force-clean --
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 10000
-""" % {"port": CommitQueue.port_name},
+""" % {"port": "mac"},
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10000' with comment 'Rejecting attachment 10000 from commit-queue.\n\nMock error message'\n",
         }
@@ -363,7 +363,7 @@ Running: webkit-patch --status-host=example.com land-attachment --force-clean --
 MOCK: update_status: commit-queue Landed patch
 MOCK: update_status: commit-queue Pass
 MOCK: release_work_item: commit-queue 10005
-""" % {"port": CommitQueue.port_name},
+""" % {"port": "mac"},
             "handle_script_error": "ScriptError error message\n\nMOCK output\n",
             "handle_unexpected_error": "MOCK setting flag 'commit-queue' to '-' on attachment '10005' with comment 'Rejecting attachment 10005 from commit-queue.\n\nMock error message'\n",
         }
@@ -393,21 +393,22 @@ MOCK: update_status: commit-queue Tests passed, but commit failed (checkout out 
         queue._tool.filesystem.write_text_file('/tmp/layout-test-results/webkit_unit_tests_output.xml', '')
         queue._options = Mock()
         queue._options.port = None
-        expected_logs = """Running: webkit-patch --status-host=example.com clean --port=chromium-xvfb
+        expected_logs = """Running: webkit-patch --status-host=example.com clean --port=mac
 MOCK: update_status: commit-queue Cleaned working directory
-Running: webkit-patch --status-host=example.com update --port=chromium-xvfb
+Running: webkit-patch --status-host=example.com update --port=mac
 MOCK: update_status: commit-queue Updated working directory
-Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000 --port=chromium-xvfb
+Running: webkit-patch --status-host=example.com apply-attachment --no-update --non-interactive 10000 --port=mac
 MOCK: update_status: commit-queue Applied patch
-Running: webkit-patch --status-host=example.com validate-changelog --non-interactive 10000 --port=chromium-xvfb
+Running: webkit-patch --status-host=example.com validate-changelog --non-interactive 10000 --port=mac
 MOCK: update_status: commit-queue ChangeLog validated
-Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=release --port=chromium-xvfb
+Running: webkit-patch --status-host=example.com build --no-clean --no-update --build-style=release --port=mac
 MOCK: update_status: commit-queue Built patch
-Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --port=chromium-xvfb
+Running: webkit-patch --status-host=example.com build-and-test --no-clean --no-update --test --non-interactive --port=mac
 MOCK: update_status: commit-queue Passed tests
 MOCK: update_status: commit-queue Retry
 MOCK: release_work_item: commit-queue 10000
 """
+        self.maxDiff = None
         OutputCapture().assert_outputs(self, queue.process_work_item, [QueuesTest.mock_work_item], expected_logs=expected_logs)
 
     def test_report_flaky_tests(self):
