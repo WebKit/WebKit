@@ -1,6 +1,0 @@
-PASS event.wheelDeltaY is window.givenScrollTop * -3
-PASS event.wheelDeltaX is window.givenScrollLeft * -3
-PASS event.wheelDelta is window.givenScrollTop * -3
-FAIL document.body.scrollTop should be 511. Was 545.
-FAIL document.body.scrollLeft should be 686. Was 745.
-
