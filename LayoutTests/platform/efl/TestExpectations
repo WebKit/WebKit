@@ -313,7 +313,6 @@ inspector/styles/svg-style.xhtml
 inspector/debugger/live-edit.html
 inspector/debugger/live-edit-breakpoints.html
 inspector/debugger/debugger-compile-and-run.html
-inspector/timeline/timeline-receive-response-event.html
 
 webkit.org/b/88780 inspector/debugger/dom-breakpoints.html [ Timeout Failure ]
 webkit.org/b/88780 inspector/debugger/event-listener-breakpoints.html [ Failure ]

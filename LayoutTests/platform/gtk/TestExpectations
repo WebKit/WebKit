@@ -922,7 +922,6 @@ webkit.org/b/85709 inspector/extensions/extensions-audits-content-script.html [ 
 Bug(GTK) inspector/debugger/scripts-panel.html [ Failure Pass ]
 Bug(GTK) inspector/elements/edit-dom-actions.html [ Failure Timeout Pass ]
 Bug(GTK) inspector/timeline/timeline-paint.html [ Failure ]
-Bug(GTK) inspector/timeline/timeline-receive-response-event.html [ Failure ]
 Bug(GTK) inspector/timeline/timeline-decode-resize.html [ Failure ]
 Bug(GTK) http/tests/inspector/resource-har-pages.html [ Failure ]
 Bug(GTK) http/tests/inspector/resource-parameters.html [ Timeout ]
