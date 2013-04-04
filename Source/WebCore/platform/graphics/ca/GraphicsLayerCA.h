@@ -329,7 +329,7 @@ private:
     void updateContentsOpaque();
     void updateBackfaceVisibility();
     void updateStructuralLayer();
-    void updateLayerDrawsContent(float pixelAlignmentScale);
+    void updateLayerDrawsContent();
     void updateBackgroundColor();
 
     void updateContentsImage();
