@@ -297,6 +297,7 @@ _ZN7WebCore6Editor29toggleContinuousSpellCheckingEv;
 _ZNK7WebCore6Editor32isContinuousSpellCheckingEnabledEv;
 _ZN7WebCore9FrameView15setFooterHeightEi;
 _ZN7WebCore9FrameView15setHeaderHeightEi;
+_ZN7WebCore11MediaPlayer25simulateAudioInterruptionEv;
 
 local:
 _Z*;

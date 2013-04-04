@@ -463,7 +463,7 @@ public:
 #endif
 
 #if USE(GSTREAMER)
-    virtual void simulateAudioInterruption();
+    void simulateAudioInterruption();
 #endif
 
 private:

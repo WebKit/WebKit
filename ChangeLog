@@ -1,3 +1,13 @@
+2013-04-04  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [GStreamer] Virtual modifier for MediaPlayer::simulateAudioInterruption must go
+        https://bugs.webkit.org/show_bug.cgi?id=113851
+
+        Reviewed by Eric Carlson.
+
+        * Source/autotools/symbols.filter: Added
+        _ZN7WebCore11MediaPlayer25simulateAudioInterruptionEv symbol.
+
 2013-04-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Bump required versions of some dependencies
