@@ -129,8 +129,7 @@ void FontCache::getTraitsInFamily(const AtomicString& familyName,
     notImplemented();
 }
 
-FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription,
-                                                    const AtomicString& family)
+PassOwnPtr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
 {
     const char* name = 0;
     CString s;
@@ -172,7 +171,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
 
     SkTypeface* tf = SkTypeface::CreateFromName(name, static_cast<SkTypeface::Style>(style));
     if (!tf)
-        return 0;
+        return nullptr;
 
     FontPlatformData* result =
         new FontPlatformData(tf,
@@ -182,7 +181,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
                              (style & SkTypeface::kItalic) && !tf->isItalic(),
                              fontDescription.orientation());
     tf->unref();
-    return result;
+    return adoptPtr(result);
 }
 
 } // namespace WebCore

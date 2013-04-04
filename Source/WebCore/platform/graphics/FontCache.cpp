@@ -125,7 +125,7 @@ struct FontPlatformDataCacheKeyHash {
 
 struct FontPlatformDataCacheKeyTraits : WTF::SimpleClassHashTraits<FontPlatformDataCacheKey> { };
 
-typedef HashMap<FontPlatformDataCacheKey, FontPlatformData*, FontPlatformDataCacheKeyHash, FontPlatformDataCacheKeyTraits> FontPlatformDataCache;
+typedef HashMap<FontPlatformDataCacheKey, OwnPtr<FontPlatformData>, FontPlatformDataCacheKeyHash, FontPlatformDataCacheKeyTraits> FontPlatformDataCache;
 
 static FontPlatformDataCache* gFontPlatformDataCache = 0;
 
@@ -200,29 +200,24 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
     FontPlatformDataCacheKey key(familyName, fontDescription.computedPixelSize(), fontDescription.weight(), fontDescription.italic(),
                                  fontDescription.usePrinterFont(), fontDescription.renderingMode(), fontDescription.orientation(),
                                  fontDescription.widthVariant());
-    FontPlatformData* result = 0;
-    bool foundResult;
-    FontPlatformDataCache::iterator it = gFontPlatformDataCache->find(key);
-    if (it == gFontPlatformDataCache->end()) {
-        result = createFontPlatformData(fontDescription, familyName);
-        gFontPlatformDataCache->set(key, result);
-        foundResult = result;
-    } else {
-        result = it->value;
-        foundResult = true;
+
+    FontPlatformDataCache::AddResult result = gFontPlatformDataCache->add(key, nullptr);
+    if (result.isNewEntry) {
+        result.iterator->value = createFontPlatformData(fontDescription, familyName);
+
+        if (!result.iterator->value && !checkingAlternateName) {
+            // We were unable to find a font.  We have a small set of fonts that we alias to other names,
+            // e.g., Arial/Helvetica, Courier/Courier New, etc.  Try looking up the font under the aliased name.
+            const AtomicString& alternateName = alternateFamilyName(familyName);
+            if (!alternateName.isEmpty()) {
+                FontPlatformData* fontPlatformDataForAlternateName = getCachedFontPlatformData(fontDescription, alternateName, true);
+                if (fontPlatformDataForAlternateName)
+                    result.iterator->value = adoptPtr(new FontPlatformData(*fontPlatformDataForAlternateName));
+            }
+        }
     }
 
-    if (!foundResult && !checkingAlternateName) {
-        // We were unable to find a font.  We have a small set of fonts that we alias to other names, 
-        // e.g., Arial/Helvetica, Courier/Courier New, etc.  Try looking up the font under the aliased name.
-        const AtomicString& alternateName = alternateFamilyName(familyName);
-        if (!alternateName.isEmpty())
-            result = getCachedFontPlatformData(fontDescription, alternateName, true);
-        if (result)
-            gFontPlatformDataCache->set(key, new FontPlatformData(*result)); // Cache the result under the old name.
-    }
-
-    return result;
+    return result.iterator->value.get();
 }
 
 #if ENABLE(OPENTYPE_VERTICAL)
@@ -411,7 +406,7 @@ void FontCache::purgeInactiveFontData(int count)
         
         size_t keysToRemoveCount = keysToRemove.size();
         for (size_t i = 0; i < keysToRemoveCount; ++i)
-            delete gFontPlatformDataCache->take(keysToRemove[i]);
+            gFontPlatformDataCache->remove(keysToRemove[i]);
     }
 
 #if ENABLE(OPENTYPE_VERTICAL)
@@ -536,11 +531,8 @@ void FontCache::invalidate()
         return;
     }
 
-    if (gFontPlatformDataCache) {
-        deleteAllValues(*gFontPlatformDataCache);
-        delete gFontPlatformDataCache;
-        gFontPlatformDataCache = new FontPlatformDataCache;
-    }
+    if (gFontPlatformDataCache)
+        gFontPlatformDataCache->clear();
 
     gGeneration++;
 

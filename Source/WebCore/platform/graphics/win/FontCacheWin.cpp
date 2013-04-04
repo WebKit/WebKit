@@ -545,7 +545,7 @@ void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigne
     copyToVector(procData.m_traitsMasks, traitsMasks);
 }
 
-FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
+PassOwnPtr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
 {
     bool isLucidaGrande = false;
     static AtomicString lucidaStr("Lucida Grande");
@@ -563,7 +563,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
                                 fontDescription.computedPixelSize() * (useGDI ? 1 : 32), useGDI);
 
     if (!hfont)
-        return 0;
+        return nullptr;
 
     if (isLucidaGrande)
         useGDI = false; // Never use GDI for Lucida Grande.
@@ -588,10 +588,10 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
         // font.
         delete result;
         DeleteObject(hfont);
-        return 0;
+        return nullptr;
     }        
 
-    return result;
+    return adoptPtr(result);
 }
 
 }

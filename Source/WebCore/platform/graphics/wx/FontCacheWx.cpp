@@ -97,14 +97,14 @@ PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescri
     return fallback.release();
 }
 
-FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
+PassOwnPtr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
 {
     // wx will ALWAYS create a valid font, even if the font family we're looking for is not available.
     // So we check to make sure the font is the one we're looking for before creating the font.
     if (!wxFontEnumerator::IsValidFacename(family.string()))
-        return 0;
+        return nullptr;
 
-    return new FontPlatformData(fontDescription,family);
+    return adoptPtr(new FontPlatformData(fontDescription, family));
 }
 
 void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigned>& traitsMasks)

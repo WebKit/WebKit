@@ -147,7 +147,7 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
     FontCache::SimpleFontFamily family;
     FontCache::getFontFamilyForCharacters(characters, length, locale.getLanguage(), font.fontDescription(), &family);
     if (family.name.isEmpty())
-        return 0;
+        return nullptr;
 
     AtomicString atomicFamily(family.name);
     // Changes weight and/or italic of given FontDescription depends on
@@ -171,7 +171,7 @@ PassRefPtr<SimpleFontData> FontCache::getFontDataForCharacters(const Font& font,
 
     FontPlatformData* substitutePlatformData = getCachedFontPlatformData(description, atomicFamily, DoNotRetain);
     if (!substitutePlatformData)
-        return 0;
+        return nullptr;
     FontPlatformData platformData = FontPlatformData(*substitutePlatformData);
     platformData.setFakeBold(shouldSetFakeBold);
     platformData.setFakeItalic(shouldSetFakeItalic);
@@ -269,7 +269,7 @@ int fontWeightToFontconfigWeight(FontWeight weight)
     }
 }
 
-FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
+PassOwnPtr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
 {
     // The CSS font matching algorithm (http://www.w3.org/TR/css3-fonts/#font-matching-algorithm)
     // says that we must find an exact match for font family, slant (italic or oblique can be used)
@@ -277,15 +277,15 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     FcPattern* pattern = FcPatternCreate();
     String familyNameString(getFamilyNameStringFromFontDescriptionAndFamily(fontDescription, family));
     if (!FcPatternAddString(pattern, FC_FAMILY, reinterpret_cast<const FcChar8*>(familyNameString.utf8().data())))
-        return 0;
+        return nullptr;
 
     bool italic = fontDescription.italic();
     if (!FcPatternAddInteger(pattern, FC_SLANT, italic ? FC_SLANT_ITALIC : FC_SLANT_ROMAN))
-        return 0;
+        return nullptr;
     if (!FcPatternAddInteger(pattern, FC_WEIGHT, fontWeightToFontconfigWeight(fontDescription.weight())))
-        return 0;
+        return nullptr;
     if (!FcPatternAddDouble(pattern, FC_PIXEL_SIZE, fontDescription.computedPixelSize()))
-        return 0;
+        return nullptr;
 
     // The strategy is originally from Skia (src/ports/SkFontHost_fontconfig.cpp):
 
@@ -303,7 +303,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     FcPattern* resultPattern = FcFontMatch(0, pattern, &fontConfigResult);
     FcPatternDestroy(pattern);
     if (!resultPattern) // No match.
-        return 0;
+        return nullptr;
 
     FcChar8* fontConfigFamilyNameAfterMatching;
     FcPatternGetString(resultPattern, FC_FAMILY, 0, &fontConfigFamilyNameAfterMatching);
@@ -316,7 +316,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
         && !(equalIgnoringCase(familyNameString, "sans") || equalIgnoringCase(familyNameString, "sans-serif")
             || equalIgnoringCase(familyNameString, "serif") || equalIgnoringCase(familyNameString, "monospace")
             || equalIgnoringCase(familyNameString, "fantasy") || equalIgnoringCase(familyNameString, "cursive")))
-        return 0;
+        return nullptr;
 
     int fontWeight;
     FcPatternGetInteger(resultPattern, FC_WEIGHT, 0, &fontWeight);
@@ -335,10 +335,10 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     memset(name, 0, MAX_FONT_NAME_LEN+1);
     // fprintf(stderr, "FS_load_font %s: ", fontFileName);
     if (FS_load_font(BlackBerry::Platform::Graphics::getIType(), reinterpret_cast<FILECHAR*>(fontFileName), 0, 0, MAX_FONT_NAME_LEN, name) != SUCCESS)
-        return 0;
+        return nullptr;
     // fprintf(stderr, " %s\n", name);
 
-    return new FontPlatformData(name, fontDescription.computedSize(), shouldFakeBold, shouldFakeItalic, fontDescription.orientation());
+    return adoptPtr(new FontPlatformData(name, fontDescription.computedSize(), shouldFakeBold, shouldFakeItalic, fontDescription.orientation()));
 }
 
 } // namespace WebCore

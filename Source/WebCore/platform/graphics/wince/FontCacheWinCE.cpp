@@ -312,10 +312,9 @@ PassRefPtr<SimpleFontData> FontCache::getLastResortFallbackFont(const FontDescri
     return getCachedFontData(fontDesc, FontPlatformData::defaultFontFamily(), false, shouldRetain);
 }
 
-FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
+PassOwnPtr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
 {
-    FontPlatformData* result = new FontPlatformData(fontDescription, family);
-    return result;
+    return adoptPtr(new FontPlatformData(fontDescription, family));
 }
 
 void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigned>& traitsMasks)

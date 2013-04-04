@@ -216,7 +216,7 @@ void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigne
     [WebFontCache getTraits:traitsMasks inFamily:familyName];
 }
 
-FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
+PassOwnPtr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
 {
     NSFontTraitMask traits = fontDescription.italic() ? NSFontItalicTrait : 0;
     NSInteger weight = toAppKitFontWeight(fontDescription.weight());
@@ -224,7 +224,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
 
     NSFont *nsFont = [WebFontCache fontWithFamily:family traits:traits weight:weight size:size];
     if (!nsFont)
-        return 0;
+        return nullptr;
 
     NSFontManager *fontManager = [NSFontManager sharedFontManager];
     NSFontTraitMask actualTraits = 0;
@@ -240,8 +240,8 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     // In that case, we don't want to use the platformData.
     OwnPtr<FontPlatformData> platformData = adoptPtr(new FontPlatformData(platformFont, size, fontDescription.usePrinterFont(), syntheticBold, syntheticOblique, fontDescription.orientation(), fontDescription.widthVariant()));
     if (!platformData->font())
-        return 0;
-    return platformData.leakPtr();
+        return nullptr;
+    return platformData.release();
 }
 
 } // namespace WebCore

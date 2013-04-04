@@ -149,7 +149,7 @@ void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigne
     notImplemented();
 }
 
-FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
+PassOwnPtr<FontPlatformData> FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
 {
     const char* name = 0;
     CString nameString; // Keeps name valid within scope of this function in case that name is from a family.
@@ -207,7 +207,7 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     }
 
     SkSafeUnref(typeface);
-    return result;
+    return adoptPtr(result);
 }
 
 } // namespace WebCore
