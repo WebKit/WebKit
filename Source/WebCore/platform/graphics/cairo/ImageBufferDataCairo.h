@@ -24,8 +24,7 @@
  */
 
 #include "PlatformContextCairo.h"
-
-typedef struct _cairo_surface cairo_surface_t;
+#include "RefPtrCairo.h"
 
 namespace WebCore {
 
@@ -35,7 +34,7 @@ class ImageBufferData {
 public:
     ImageBufferData(const IntSize&);
 
-    cairo_surface_t* m_surface;
+    RefPtr<cairo_surface_t> m_surface;
     PlatformContextCairo m_platformContext;
 };
 

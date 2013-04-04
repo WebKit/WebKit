@@ -1,3 +1,17 @@
+2013-04-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [Cairo] Stop passing raw pointers to BitmapImage::create()
+        https://bugs.webkit.org/show_bug.cgi?id=113945
+
+        Reviewed by Martin Robinson.
+
+        Pass a smart pointer in to BitmapImage::create() instead of a raw one
+        for the cairo surface. The factory method prototype was updated for
+        cairo in r147643.
+
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::createImage):
+
 2013-04-03  Dean Jackson  <dino@apple.com>
 
         Expose settings to disable plugin snapshotting autostart and primary detection

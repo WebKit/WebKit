@@ -96,8 +96,7 @@ PassRefPtr<Image> ShareableBitmap::createImage()
     if (!surface)
         return 0;
 
-    // BitmapImage::create adopts the cairo_surface_t that's passed in, which is why we need to leakRef here.
-    return BitmapImage::create(surface.release().leakRef());
+    return BitmapImage::create(surface.release());
 }
 
 } // namespace WebKit

@@ -49,8 +49,7 @@ using namespace std;
 namespace WebCore {
 
 ImageBufferData::ImageBufferData(const IntSize&)
-    : m_surface(0)
-    , m_platformContext(0)
+    : m_platformContext(0)
 {
 }
 
@@ -60,13 +59,11 @@ ImageBuffer::ImageBuffer(const IntSize& size, float /* resolutionScale */, Color
     , m_logicalSize(size)
 {
     success = false;  // Make early return mean error.
-    m_data.m_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
-                                                  size.width(),
-                                                  size.height());
-    if (cairo_surface_status(m_data.m_surface) != CAIRO_STATUS_SUCCESS)
+    m_data.m_surface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, size.width(), size.height()));
+    if (cairo_surface_status(m_data.m_surface.get()) != CAIRO_STATUS_SUCCESS)
         return;  // create will notice we didn't set m_initialized and fail.
 
-    RefPtr<cairo_t> cr = adoptRef(cairo_create(m_data.m_surface));
+    RefPtr<cairo_t> cr = adoptRef(cairo_create(m_data.m_surface.get()));
     m_data.m_platformContext.setCr(cr.get());
     m_context = adoptPtr(new GraphicsContext(&m_data.m_platformContext));
     success = true;
@@ -74,7 +71,6 @@ ImageBuffer::ImageBuffer(const IntSize& size, float /* resolutionScale */, Color
 
 ImageBuffer::~ImageBuffer()
 {
-    cairo_surface_destroy(m_data.m_surface);
 }
 
 GraphicsContext* ImageBuffer::context() const
@@ -85,10 +81,10 @@ GraphicsContext* ImageBuffer::context() const
 PassRefPtr<Image> ImageBuffer::copyImage(BackingStoreCopy copyBehavior, ScaleBehavior) const
 {
     if (copyBehavior == CopyBackingStore)
-        return BitmapImage::create(copyCairoImageSurface(m_data.m_surface).leakRef());
+        return BitmapImage::create(copyCairoImageSurface(m_data.m_surface.get()));
 
     // BitmapImage will release the passed in surface on destruction
-    return BitmapImage::create(cairo_surface_reference(m_data.m_surface));
+    return BitmapImage::create(m_data.m_surface);
 }
 
 BackingStoreCopy ImageBuffer::fastCopyImageMode()
@@ -98,7 +94,7 @@ BackingStoreCopy ImageBuffer::fastCopyImageMode()
 
 void ImageBuffer::clip(GraphicsContext* context, const FloatRect& maskRect) const
 {
-    context->platformContext()->pushImageMask(m_data.m_surface, maskRect);
+    context->platformContext()->pushImageMask(m_data.m_surface.get(), maskRect);
 }
 
 void ImageBuffer::draw(GraphicsContext* destinationContext, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
@@ -118,10 +114,10 @@ void ImageBuffer::drawPattern(GraphicsContext* context, const FloatRect& srcRect
 
 void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
 {
-    ASSERT(cairo_surface_get_type(m_data.m_surface) == CAIRO_SURFACE_TYPE_IMAGE);
+    ASSERT(cairo_surface_get_type(m_data.m_surface.get()) == CAIRO_SURFACE_TYPE_IMAGE);
 
-    unsigned char* dataSrc = cairo_image_surface_get_data(m_data.m_surface);
-    int stride = cairo_image_surface_get_stride(m_data.m_surface);
+    unsigned char* dataSrc = cairo_image_surface_get_data(m_data.m_surface.get());
+    int stride = cairo_image_surface_get_stride(m_data.m_surface.get());
     for (int y = 0; y < m_size.height(); ++y) {
         unsigned* row = reinterpret_cast<unsigned*>(dataSrc + stride * y);
         for (int x = 0; x < m_size.width(); x++) {
@@ -134,16 +130,16 @@ void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
             *pixel = premultipliedARGBFromColor(pixelColor);
         }
     }
-    cairo_surface_mark_dirty_rectangle (m_data.m_surface, 0, 0, m_size.width(), m_size.height());
+    cairo_surface_mark_dirty_rectangle(m_data.m_surface.get(), 0, 0, m_size.width(), m_size.height());
 }
 
 template <Multiply multiplied>
 PassRefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const ImageBufferData& data, const IntSize& size)
 {
-    ASSERT(cairo_surface_get_type(data.m_surface) == CAIRO_SURFACE_TYPE_IMAGE);
+    ASSERT(cairo_surface_get_type(data.m_surface.get()) == CAIRO_SURFACE_TYPE_IMAGE);
 
     RefPtr<Uint8ClampedArray> result = Uint8ClampedArray::createUninitialized(rect.width() * rect.height() * 4);
-    unsigned char* dataSrc = cairo_image_surface_get_data(data.m_surface);
+    unsigned char* dataSrc = cairo_image_surface_get_data(data.m_surface.get());
     unsigned char* dataDst = result->data();
 
     if (rect.x() < 0 || rect.y() < 0 || (rect.x() + rect.width()) > size.width() || (rect.y() + rect.height()) > size.height())
@@ -171,7 +167,7 @@ PassRefPtr<Uint8ClampedArray> getImageData(const IntRect& rect, const ImageBuffe
         endy = size.height();
     int numRows = endy - originy;
 
-    int stride = cairo_image_surface_get_stride(data.m_surface);
+    int stride = cairo_image_surface_get_stride(data.m_surface.get());
     unsigned destBytesPerRow = 4 * rect.width();
 
     unsigned char* destRows = dataDst + desty * destBytesPerRow + destx * 4;
@@ -219,9 +215,9 @@ PassRefPtr<Uint8ClampedArray> ImageBuffer::getPremultipliedImageData(const IntRe
 
 void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, const IntSize& sourceSize, const IntRect& sourceRect, const IntPoint& destPoint, CoordinateSystem)
 {
-    ASSERT(cairo_surface_get_type(m_data.m_surface) == CAIRO_SURFACE_TYPE_IMAGE);
+    ASSERT(cairo_surface_get_type(m_data.m_surface.get()) == CAIRO_SURFACE_TYPE_IMAGE);
 
-    unsigned char* dataDst = cairo_image_surface_get_data(m_data.m_surface);
+    unsigned char* dataDst = cairo_image_surface_get_data(m_data.m_surface.get());
 
     ASSERT(sourceRect.width() > 0);
     ASSERT(sourceRect.height() > 0);
@@ -250,7 +246,7 @@ void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, c
     int numRows = endy - desty;
 
     unsigned srcBytesPerRow = 4 * sourceSize.width();
-    int stride = cairo_image_surface_get_stride(m_data.m_surface);
+    int stride = cairo_image_surface_get_stride(m_data.m_surface.get());
 
     unsigned char* srcRows = source->data() + originy * srcBytesPerRow + originx * 4;
     for (int y = 0; y < numRows; ++y) {
@@ -278,9 +274,7 @@ void ImageBuffer::putByteArray(Multiply multiplied, Uint8ClampedArray* source, c
         }
         srcRows += srcBytesPerRow;
     }
-    cairo_surface_mark_dirty_rectangle(m_data.m_surface,
-                                        destx, desty,
-                                        numColumns, numRows);
+    cairo_surface_mark_dirty_rectangle(m_data.m_surface.get(), destx, desty, numColumns, numRows);
 }
 
 #if !PLATFORM(GTK)

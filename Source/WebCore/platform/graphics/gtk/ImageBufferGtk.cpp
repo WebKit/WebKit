@@ -71,7 +71,7 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality, Coo
 
     GOwnPtr<gchar> buffer(0);
     gsize bufferSize;
-    if (!encodeImage(m_data.m_surface, mimeType, quality, buffer, bufferSize))
+    if (!encodeImage(m_data.m_surface.get(), mimeType, quality, buffer, bufferSize))
         return "data:,";
 
     Vector<char> base64Data;

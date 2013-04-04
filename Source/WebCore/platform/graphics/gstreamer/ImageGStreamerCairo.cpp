@@ -59,9 +59,9 @@ ImageGStreamer::ImageGStreamer(GstBuffer* buffer, GstCaps* caps)
     cairoFormat = (format == GST_VIDEO_FORMAT_ARGB) ? CAIRO_FORMAT_ARGB32 : CAIRO_FORMAT_RGB24;
 #endif
 
-    cairo_surface_t* surface = cairo_image_surface_create_for_data(bufferData, cairoFormat, size.width(), size.height(), stride);
-    ASSERT(cairo_surface_status(surface) == CAIRO_STATUS_SUCCESS);
-    m_image = BitmapImage::create(surface);
+    RefPtr<cairo_surface_t> surface = adoptRef(cairo_image_surface_create_for_data(bufferData, cairoFormat, size.width(), size.height(), stride));
+    ASSERT(cairo_surface_status(surface.get()) == CAIRO_STATUS_SUCCESS);
+    m_image = BitmapImage::create(surface.release());
 
 #ifdef GST_API_VERSION_1
     if (GstVideoCropMeta* cropMeta = gst_buffer_get_video_crop_meta(buffer))
