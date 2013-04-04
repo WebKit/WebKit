@@ -90,11 +90,13 @@ private:
     ObjectLayerSizeMap m_objectLayerSizeMap;
     Timer<ImageQualityController> m_timer;
     bool m_animatedResizeIsActive;
+    bool m_liveResizeOptimizationIsActive;
 };
 
 ImageQualityController::ImageQualityController()
     : m_timer(this, &ImageQualityController::highQualityRepaintTimerFired)
     , m_animatedResizeIsActive(false)
+    , m_liveResizeOptimizationIsActive(false)
 {
 }
 
@@ -129,11 +131,22 @@ void ImageQualityController::objectDestroyed(RenderBoxModelObject* object)
 
 void ImageQualityController::highQualityRepaintTimerFired(Timer<ImageQualityController>*)
 {
-    if (m_animatedResizeIsActive) {
-        m_animatedResizeIsActive = false;
-        for (ObjectLayerSizeMap::iterator it = m_objectLayerSizeMap.begin(); it != m_objectLayerSizeMap.end(); ++it)
-            it->key->repaint();
+    if (!m_animatedResizeIsActive && !m_liveResizeOptimizationIsActive)
+        return;
+    m_animatedResizeIsActive = false;
+
+    for (ObjectLayerSizeMap::iterator it = m_objectLayerSizeMap.begin(); it != m_objectLayerSizeMap.end(); ++it) {
+        if (Frame* frame = it->key->document()->frame()) {
+            // If this renderer's containing FrameView is in live resize, punt the timer and hold back for now.
+            if (frame->view() && frame->view()->inLiveResize()) {
+                restartTimer();
+                return;
+            }
+        }
+        it->key->repaint();
     }
+
+    m_liveResizeOptimizationIsActive = false;
 }
 
 void ImageQualityController::restartTimer()
@@ -165,6 +178,22 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, R
         if (j != innerMap->end()) {
             isFirstResize = false;
             oldSize = j->value;
+        }
+    }
+
+    // If the containing FrameView is being resized, paint at low quality until resizing is finished.
+    if (Frame* frame = object->document()->frame()) {
+        bool frameViewIsCurrentlyInLiveResize = frame->view() && frame->view()->inLiveResize();
+        if (frameViewIsCurrentlyInLiveResize) {
+            set(object, innerMap, layer, size);
+            restartTimer();
+            m_liveResizeOptimizationIsActive = true;
+            return true;
+        }
+        if (m_liveResizeOptimizationIsActive) {
+            // Live resize has ended, paint in HQ and remove this object from the list.
+            removeLayer(object, innerMap, layer);
+            return false;
         }
     }
 
