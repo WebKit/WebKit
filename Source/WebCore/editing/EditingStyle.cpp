@@ -534,12 +534,7 @@ void EditingStyle::setStyle(PassRefPtr<StylePropertySet> style)
 
 void EditingStyle::overrideWithStyle(const StylePropertySet* style)
 {
-    if (!style || style->isEmpty())
-        return;
-    if (!m_mutableStyle)
-        m_mutableStyle = StylePropertySet::create();
-    m_mutableStyle->mergeAndOverrideOnConflict(style);
-    extractFontSizeDelta();
+    return mergeStyle(style, OverrideValues);
 }
 
 void EditingStyle::clear()
@@ -1071,6 +1066,10 @@ void EditingStyle::mergeStyle(const StylePropertySet* style, CSSPropertyOverride
         if (mode == OverrideValues || (mode == DoNotOverrideValues && !value))
             m_mutableStyle->setProperty(property.id(), property.value()->cssText(), property.isImportant());
     }
+
+    int oldFontSizeDelta = m_fontSizeDelta;
+    extractFontSizeDelta();
+    m_fontSizeDelta += oldFontSizeDelta;
 }
 
 static PassRefPtr<StylePropertySet> styleFromMatchedRulesForElement(Element* element, unsigned rulesToInclude)
