@@ -1,3 +1,29 @@
+2013-04-03  Dean Jackson  <dino@apple.com>
+
+        Expose settings to disable plugin snapshotting autostart and primary detection
+        https://bugs.webkit.org/show_bug.cgi?id=113918
+
+        Reviewed by Tim Horton.
+
+        Three new settings: snapshotAllPlugIns, primaryPlugInSnapshotDetectionEnabled and
+        autostartOriginPlugInSnapshottingEnabled.
+        These are exposed via WKPreferences (WebKit2 only, since that's the only port actively
+        using the feature).
+
+        * Shared/WebPreferencesStore.h: Add macros for new settings.
+        * UIProcess/API/C/WKPreferences.cpp: Getters and setters for new settings.
+        (WKPreferencesSetSnapshotAllPlugIns):
+        (WKPreferencesGetSnapshotAllPlugIns):
+        (WKPreferencesSetAutostartOriginPlugInSnapshottingEnabled):
+        (WKPreferencesGetAutostartOriginPlugInSnapshottingEnabled):
+        (WKPreferencesSetPrimaryPlugInSnapshotDetectionEnabled):
+        (WKPreferencesGetPrimaryPlugInSnapshotDetectionEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences): Forward settings updates.
+        (WebKit::WebPage::addPluginView): Don't run primary plugin detection if the setting is false.
+        (WebKit::WebPage::didFinishLoad): Ditto.
+
 2013-04-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [Cairo] Fix canvas drawing of SVG-based patterns and remove NativeImageCairo

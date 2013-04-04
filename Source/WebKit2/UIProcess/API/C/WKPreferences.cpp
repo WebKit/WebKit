@@ -994,6 +994,36 @@ bool WKPreferencesGetPlugInSnapshottingEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->plugInSnapshottingEnabled();
 }
 
+void WKPreferencesSetSnapshotAllPlugIns(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setSnapshotAllPlugIns(enabled);
+}
+
+bool WKPreferencesGetSnapshotAllPlugIns(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->snapshotAllPlugIns();
+}
+
+void WKPreferencesSetAutostartOriginPlugInSnapshottingEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setAutostartOriginPlugInSnapshottingEnabled(enabled);
+}
+
+bool WKPreferencesGetAutostartOriginPlugInSnapshottingEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->autostartOriginPlugInSnapshottingEnabled();
+}
+
+void WKPreferencesSetPrimaryPlugInSnapshotDetectionEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setPrimaryPlugInSnapshotDetectionEnabled(enabled);
+}
+
+bool WKPreferencesGetPrimaryPlugInSnapshotDetectionEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->primaryPlugInSnapshotDetectionEnabled();
+}
+
 void WKPreferencesSetPDFPluginEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setPDFPluginEnabled(enabled);

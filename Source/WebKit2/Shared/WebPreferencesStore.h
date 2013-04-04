@@ -144,6 +144,9 @@ namespace WebKit {
     macro(ScreenFontSubstitutionEnabled, screenFontSubstitutionEnabled, Bool, bool, DEFAULT_SCREEN_FONT_SUBSTITUTION_ENABLED) \
     macro(CookieEnabled, cookieEnabled, Bool, bool, true) \
     macro(PlugInSnapshottingEnabled, plugInSnapshottingEnabled, Bool, bool, false) \
+    macro(SnapshotAllPlugIns, snapshotAllPlugIns, Bool, bool, false) \
+    macro(AutostartOriginPlugInSnapshottingEnabled, autostartOriginPlugInSnapshottingEnabled, Bool, bool, true) \
+    macro(PrimaryPlugInSnapshotDetectionEnabled, primaryPlugInSnapshotDetectionEnabled, Bool, bool, true) \
     macro(PDFPluginEnabled, pdfPluginEnabled, Bool, bool, false) \
     macro(UsesEncodingDetector, usesEncodingDetector, Bool, bool, false) \
     macro(TextAutosizingEnabled, textAutosizingEnabled, Bool, bool, false) \

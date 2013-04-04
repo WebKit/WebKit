@@ -2415,6 +2415,9 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     settings->setScrollingPerformanceLoggingEnabled(m_scrollingPerformanceLoggingEnabled);
 
     settings->setPlugInSnapshottingEnabled(store.getBoolValueForKey(WebPreferencesKey::plugInSnapshottingEnabledKey()));
+    settings->setSnapshotAllPlugIns(store.getBoolValueForKey(WebPreferencesKey::snapshotAllPlugInsKey()));
+    settings->setAutostartOriginPlugInSnapshottingEnabled(store.getBoolValueForKey(WebPreferencesKey::autostartOriginPlugInSnapshottingEnabledKey()));
+    settings->setPrimaryPlugInSnapshotDetectionEnabled(store.getBoolValueForKey(WebPreferencesKey::primaryPlugInSnapshotDetectionEnabledKey()));
     settings->setUsesEncodingDetector(store.getBoolValueForKey(WebPreferencesKey::usesEncodingDetectorKey()));
 
 #if ENABLE(TEXT_AUTOSIZING)
@@ -2919,7 +2922,8 @@ void WebPage::addPluginView(PluginView* pluginView)
 
     m_pluginViews.add(pluginView);
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
-    determinePrimarySnapshottedPlugIn();
+    if (!m_page->settings()->snapshotAllPlugIns() && m_page->settings()->primaryPlugInSnapshotDetectionEnabled())
+        determinePrimarySnapshottedPlugIn();
 #endif
 }
 
@@ -3897,7 +3901,8 @@ void WebPage::didFinishLoad(WebFrame* frame)
 {
 #if ENABLE(PRIMARY_SNAPSHOTTED_PLUGIN_HEURISTIC)
     m_readyToFindPrimarySnapshottedPlugin = true;
-    determinePrimarySnapshottedPlugIn();
+    if (!m_page->settings()->snapshotAllPlugIns() && m_page->settings()->primaryPlugInSnapshotDetectionEnabled())
+        determinePrimarySnapshottedPlugIn();
 #endif
 }
 

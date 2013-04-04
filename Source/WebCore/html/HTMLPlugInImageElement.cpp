@@ -467,7 +467,7 @@ void HTMLPlugInImageElement::userDidClickSnapshot(PassRefPtr<MouseEvent> event)
 {
     m_pendingClickEventFromSnapshot = event;
     String plugInOrigin = m_loadedUrl.host();
-    if (document()->page() && !SchemeRegistry::shouldTreatURLSchemeAsLocal(document()->page()->mainFrame()->document()->baseURL().protocol()))
+    if (document()->page() && !SchemeRegistry::shouldTreatURLSchemeAsLocal(document()->page()->mainFrame()->document()->baseURL().protocol()) && document()->page()->settings()->autostartOriginPlugInSnapshottingEnabled())
         document()->page()->plugInClient()->didStartFromOrigin(document()->page()->mainFrame()->document()->baseURL().host(), plugInOrigin, loadedMimeType());
 
     restartSnapshottedPlugIn();
@@ -476,6 +476,9 @@ void HTMLPlugInImageElement::userDidClickSnapshot(PassRefPtr<MouseEvent> event)
 
 void HTMLPlugInImageElement::setIsPrimarySnapshottedPlugIn(bool isPrimarySnapshottedPlugIn)
 {
+    if (!document()->page() || !document()->page()->settings()->primaryPlugInSnapshotDetectionEnabled() || document()->page()->settings()->snapshotAllPlugIns())
+        return;
+
     if (isPrimarySnapshottedPlugIn) {
         restartSnapshottedPlugIn();
         restartSimilarPlugIns();
@@ -554,6 +557,12 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
         return;
     }
 
+    if (document()->page()->settings()->snapshotAllPlugIns()) {
+        LOG(Plugins, "%p Plug-in forced to snapshot by user preference", this);
+        setDisplayState(WaitingForSnapshot);
+        return;
+    }
+
     RenderBox* renderEmbeddedObject = toRenderBox(renderer());
     Length styleWidth = renderEmbeddedObject->style()->width();
     Length styleHeight = renderEmbeddedObject->style()->height();
@@ -581,7 +590,7 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
         return;
     }
 
-    if (document()->page()->plugInClient()->shouldAutoStartFromOrigin(document()->page()->mainFrame()->document()->baseURL().host(), url.host(), loadedMimeType())) {
+    if (document()->page()->settings()->autostartOriginPlugInSnapshottingEnabled() && document()->page()->plugInClient()->shouldAutoStartFromOrigin(document()->page()->mainFrame()->document()->baseURL().host(), url.host(), loadedMimeType())) {
         LOG(Plugins, "%p Plug-in from (%s, %s) is marked to auto-start, set to play", this, document()->page()->mainFrame()->document()->baseURL().host().utf8().data(), url.host().utf8().data());
         return;
     }
