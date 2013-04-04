@@ -1,6 +1,0 @@
-Test that a manifest served with a wrong signature isn't treated as such.
-
-Should say SUCCESS:
-
-SUCCESS
-

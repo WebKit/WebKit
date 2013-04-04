@@ -1,4 +1,0 @@
-CONSOLE MESSAGE: line 18: Uncaught TypeError: Object [object Object] has no method 'authenticateSession'
-
-Start
-

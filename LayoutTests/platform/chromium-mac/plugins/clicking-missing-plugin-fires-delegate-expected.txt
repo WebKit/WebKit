@@ -1,2 +1,0 @@
-
-This test checks if the missing plug-in button can be clicked. This is a test for Bug 41721.
