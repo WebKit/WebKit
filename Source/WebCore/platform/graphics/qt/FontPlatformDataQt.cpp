@@ -73,9 +73,10 @@ FontPlatformData::FontPlatformData(const FontDescription& description, const Ato
     font.setWeight(toQFontWeight(description.weight()));
     font.setWordSpacing(wordSpacing);
     font.setLetterSpacing(QFont::AbsoluteSpacing, letterSpacing);
+    if (description.fontSmoothing() == NoSmoothing)
+        font.setStyleStrategy(QFont::NoAntialias);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 1, 0)
-    if (description.fontSmoothing() == NoSmoothing
-        || (description.fontSmoothing() == AutoSmoothing && !Font::shouldUseSmoothing()))
+    if (description.fontSmoothing() == AutoSmoothing && !Font::shouldUseSmoothing())
         font.setStyleStrategy(QFont::NoAntialias);
 #endif
 
