@@ -2312,6 +2312,7 @@ media/video-set-rate-from-pause.html
 media/video-src-change.html
 media/video-timeupdate-reverse-play.html
 media/W3C/video/src/src_removal_does_not_trigger_loadstart.html
+media/video-pause-empty-events.html
 media/video-single-valid-source.html
 media/video-source-error-no-candidate.html
 media/video-src-remove.html
@@ -2750,3 +2751,9 @@ css3/filters/composited-layer-bounds-with-composited-blur.html
 css3/filters/composited-layer-child-bounds-after-composited-to-sw-shadow-change.html
 css3/filters/composited-layer-promotion-after-outset-overlap-change-using-composited-shadow.html
 css3/filters/composited-layer-promotion-after-outset-overlap-change-using-sw-shadow.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=113946
+compositing/contents-opaque/control-layer.html
+compositing/filters/sw-layer-overlaps-hw-shadow.html
+compositing/filters/sw-shadow-overlaps-hw-layer.html
+compositing/filters/sw-shadow-overlaps-hw-shadow.html
