@@ -199,7 +199,7 @@ Interpreter::StackPolicy::StackPolicy(Interpreter& interpreter, const StackBound
 }
 
 
-static CallFrame* getCallerInfo(JSGlobalData*, CallFrame*, int& lineNumber, unsigned& bytecodeOffset);
+static CallFrame* getCallerInfo(JSGlobalData*, CallFrame*, int& lineNumber, unsigned& bytecodeOffset, CodeBlock*& callerOut);
 
 // Returns the depth of the scope chain within a given call frame.
 static int depth(CodeBlock* codeBlock, JSScope* sc)
@@ -422,7 +422,8 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
 #endif
     unsigned bytecodeOffset = 0;
     int line = 0;
-    getCallerInfo(&callFrame->globalData(), callFrame, line, bytecodeOffset);
+    CodeBlock* unusedCallerCodeBlock = 0;
+    getCallerInfo(&callFrame->globalData(), callFrame, line, bytecodeOffset, unusedCallerCodeBlock);
     dataLogF("[ReturnVPC]                | %10p | %d (line %d)\n", it, bytecodeOffset, line);
     ++it;
     dataLogF("[CodeBlock]                | %10p | %p \n", it, callFrame->codeBlock());
@@ -506,17 +507,8 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
     callFrame->globalData().topCallFrame = callerFrame;
     if (callerFrame->hasHostCallFrameFlag())
         return false;
-
-    codeBlock = callerFrame->codeBlock();
-    
-    // Because of how the JIT records call site->bytecode offset
-    // information the JIT reports the bytecodeOffset for the returnPC
-    // to be at the beginning of the opcode that has caused the call.
-#if ENABLE(JIT) || ENABLE(LLINT)
-    bytecodeOffset = codeBlock->bytecodeOffset(callerFrame, callFrame->returnPC());
-#endif
-
-    callFrame = callerFrame;
+    int unusedLineNumber = 0;
+    callFrame = getCallerInfo(&callFrame->globalData(), callFrame, unusedLineNumber, bytecodeOffset, codeBlock);
     return true;
 }
 
@@ -588,9 +580,9 @@ static int getLineNumberForCallFrame(JSGlobalData* globalData, CallFrame* callFr
 #endif
 }
 
-static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, int& lineNumber, unsigned& bytecodeOffset)
+static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, int& lineNumber, unsigned& bytecodeOffset, CodeBlock*& caller)
 {
-    UNUSED_PARAM(globalData);
+    ASSERT_UNUSED(globalData, globalData);
     bytecodeOffset = 0;
     lineNumber = -1;
     ASSERT(!callFrame->hasHostCallFrameFlag());
@@ -598,8 +590,10 @@ static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, 
     bool callframeIsHost = callerFrame->addHostCallFrameFlag() == callFrame->callerFrame();
     ASSERT(!callerFrame->hasHostCallFrameFlag());
 
-    if (callerFrame == CallFrame::noCaller() || !callerFrame || !callerFrame->codeBlock())
+    if (callerFrame == CallFrame::noCaller() || !callerFrame || !callerFrame->codeBlock()) {
+        caller = 0;
         return callerFrame;
+    }
     
     CodeBlock* callerCodeBlock = callerFrame->codeBlock();
     
@@ -659,6 +653,7 @@ static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, 
     }
 
     RELEASE_ASSERT(callerCodeBlock);
+    caller = callerCodeBlock;
     lineNumber = callerCodeBlock->lineNumberForBytecodeOffset(bytecodeOffset);
     return callerFrame;
 }
@@ -705,7 +700,8 @@ void Interpreter::getStackTrace(JSGlobalData* globalData, Vector<StackFrame>& re
             results.append(s);
         }
         unsigned unusedBytecodeOffset = 0;
-        callFrame = getCallerInfo(globalData, callFrame, line, unusedBytecodeOffset);
+        CodeBlock* unusedCallerCodeBlock = 0;
+        callFrame = getCallerInfo(globalData, callFrame, line, unusedBytecodeOffset, unusedCallerCodeBlock);
     }
 }
 
@@ -1381,7 +1377,8 @@ JSValue Interpreter::retrieveCallerFromVMCode(CallFrame* callFrame, JSFunction* 
     
     int lineNumber;
     unsigned bytecodeOffset;
-    CallFrame* callerFrame = getCallerInfo(&callFrame->globalData(), functionCallFrame, lineNumber, bytecodeOffset);
+    CodeBlock* unusedCallerCodeBlock = 0;
+    CallFrame* callerFrame = getCallerInfo(&callFrame->globalData(), functionCallFrame, lineNumber, bytecodeOffset, unusedCallerCodeBlock);
     if (!callerFrame)
         return jsNull();
     JSValue caller = callerFrame->callee();
@@ -1391,7 +1388,7 @@ JSValue Interpreter::retrieveCallerFromVMCode(CallFrame* callFrame, JSFunction* 
     // Skip over function bindings.
     ASSERT(caller.isObject());
     while (asObject(caller)->inherits(&JSBoundFunction::s_info)) {
-        callerFrame = getCallerInfo(&callFrame->globalData(), callerFrame, lineNumber, bytecodeOffset);
+        callerFrame = getCallerInfo(&callFrame->globalData(), callerFrame, lineNumber, bytecodeOffset, unusedCallerCodeBlock);
         if (!callerFrame)
             return jsNull();
         caller = callerFrame->callee();

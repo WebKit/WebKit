@@ -2462,7 +2462,7 @@ void CodeBlock::stronglyVisitWeakReferences(SlotVisitor& visitor)
 
 HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset)
 {
-    ASSERT(bytecodeOffset < instructions().size());
+    RELEASE_ASSERT(bytecodeOffset < instructions().size());
 
     if (!m_rareData)
         return 0;
@@ -2660,7 +2660,8 @@ ClosureCallStubRoutine* CodeBlock::findClosureCallForReturnPC(ReturnAddressPtr r
             continue;
         if (!info.stub->code().executableMemory()->contains(returnAddress.value()))
             continue;
-        
+
+        RELEASE_ASSERT(info.stub->codeOrigin().bytecodeIndex < info.stub->codeOrigin().maximumBytecodeIndex);
         return info.stub.get();
     }
     
@@ -2673,6 +2674,7 @@ ClosureCallStubRoutine* CodeBlock::findClosureCallForReturnPC(ReturnAddressPtr r
         ClosureCallStubRoutine* stub = static_cast<ClosureCallStubRoutine*>(genericStub);
         if (!stub->code().executableMemory()->contains(returnAddress.value()))
             continue;
+        RELEASE_ASSERT(stub->codeOrigin().bytecodeIndex < stub->codeOrigin().maximumBytecodeIndex);
         return stub;
     }
     
@@ -2724,10 +2726,21 @@ unsigned CodeBlock::bytecodeOffset(ExecState* exec, ReturnAddressPtr returnAddre
             binarySearch<CallReturnOffsetToBytecodeOffset, unsigned>(
                 callIndices, callIndices.size(), callReturnOffset, getCallReturnOffset);
         RELEASE_ASSERT(result->callReturnOffset == callReturnOffset);
+        RELEASE_ASSERT(result->bytecodeOffset < instructionCount());
         return result->bytecodeOffset;
     }
-
-    return findClosureCallForReturnPC(returnAddress)->codeOrigin().bytecodeIndex;
+    ClosureCallStubRoutine* closureInfo = findClosureCallForReturnPC(returnAddress);
+    CodeOrigin origin = closureInfo->codeOrigin();
+    while (InlineCallFrame* inlineCallFrame = origin.inlineCallFrame) {
+        if (inlineCallFrame->baselineCodeBlock() == this)
+            break;
+        origin = inlineCallFrame->caller;
+        RELEASE_ASSERT(origin.bytecodeIndex < origin.maximumBytecodeIndex);
+    }
+    RELEASE_ASSERT(origin.bytecodeIndex < origin.maximumBytecodeIndex);
+    unsigned bytecodeIndex = origin.bytecodeIndex;
+    RELEASE_ASSERT(bytecodeIndex < instructionCount());
+    return bytecodeIndex;
 #endif // ENABLE(JIT)
 
 #if !ENABLE(LLINT) && !ENABLE(JIT)

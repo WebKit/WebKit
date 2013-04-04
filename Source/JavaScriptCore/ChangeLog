@@ -1,3 +1,34 @@
+2013-04-04  Oliver Hunt  <oliver@apple.com>
+
+        Exception stack unwinding doesn't handle inline callframes correctly
+        https://bugs.webkit.org/show_bug.cgi?id=113952
+
+        Reviewed by Geoffrey Garen.
+
+        The basic problem here is that the exception stack unwinding was
+        attempting to be "clever" and avoid doing a correct stack walk
+        as it "knew" inline callframes couldn't have exception handlers.
+
+        This used to be safe as the exception handling machinery was
+        designed to fail gently and just claim that no handler existed.
+        This was "safe" and even "correct" inasmuch as we currently
+        don't run any code with exception handlers through the dfg.
+
+        This patch fixes the logic by simply making everything uniformly
+        use the safe stack walking machinery, and making the correct
+        boundary checks occur everywhere that they should.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::findClosureCallForReturnPC):
+        (JSC::CodeBlock::bytecodeOffset):
+        * interpreter/Interpreter.cpp:
+        (JSC):
+        (JSC::Interpreter::dumpRegisters):
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::getCallerInfo):
+        (JSC::Interpreter::getStackTrace):
+        (JSC::Interpreter::retrieveCallerFromVMCode):
+
 2013-04-04  Geoffrey Garen  <ggaren@apple.com>
 
         Removed a defunct comment
