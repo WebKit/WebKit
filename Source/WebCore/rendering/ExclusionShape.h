@@ -76,7 +76,6 @@ private:
     WritingMode m_writingMode;
     float m_logicalBoxWidth;
     float m_logicalBoxHeight;
-    FloatRect m_boundingBox;
     float m_margin;
     float m_padding;
 };
