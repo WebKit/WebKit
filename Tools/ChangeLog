@@ -1,3 +1,17 @@
+2013-04-04  Dirk Pranke  <dpranke@chromium.org>
+
+        temporarily make flakiness dashboard work again webkit.org bots
+        https://bugs.webkit.org/show_bug.cgi?id=113972
+
+        Reviewed by Ojan Vafai.
+
+        This patch disables the chromium.org layout test bots TestExpectations
+        parsing temporarily until we can work out the right way to split into
+        two instances for webkit.org and chromium.org and figure out which
+        code to delete where :).
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+
 2013-04-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix webkitpy tests after r147678.

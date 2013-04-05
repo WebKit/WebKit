@@ -41,7 +41,7 @@ var GPU_RESULTS_BASE_PATH = 'http://chromium-browser-gpu-tests.commondatastorage
 
 var PLATFORMS = {
     'CHROMIUM': {
-        expectationsDirectory: 'chromium',
+        expectationsDirectory: null, /* FIXME: cleanup post blink split 'chromium', */
         subPlatforms: {
             'LION': { fallbackPlatforms: ['CHROMIUM'] },
             'SNOWLEOPARD': { fallbackPlatforms: ['CHROMIUM'] },
@@ -49,7 +49,7 @@ var PLATFORMS = {
             'VISTA': { fallbackPlatforms: ['CHROMIUM'] },
             'WIN7': { fallbackPlatforms: ['CHROMIUM'] },
             'LUCID': { fallbackPlatforms: ['CHROMIUM'] },
-            'ANDROID': { fallbackPlatforms: ['CHROMIUM'], expectationsDirectory: 'chromium-android' }
+            'ANDROID': { fallbackPlatforms: ['CHROMIUM'], expectationsDirectory: null /* 'chromium-android' */ }
         },
         platformModifierUnions: {
             'MAC': ['CHROMIUM_LION', 'CHROMIUM_SNOWLEOPARD'],
