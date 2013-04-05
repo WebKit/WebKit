@@ -30,17 +30,13 @@
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
 
-#if PLATFORM(CHROMIUM)
-#error "The public suffix list should not be enabled on the Chromium port."
-#endif
-
 namespace WebCore {
 
 bool isPublicSuffix(const String& domain);
 String topPrivatelyControlledDomain(const String& domain);
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(PUBLIC_SUFFIX_LIST)
 
-#endif
+#endif // PublicSuffix_h
