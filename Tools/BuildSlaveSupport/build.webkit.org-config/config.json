@@ -349,8 +349,6 @@
                                        "Qt Linux 64-bit Release (WebKit2 Perf)", "Qt Linux ARMv7 Release", "Qt Linux MIPS32R2 LE Release",
                                        "Qt Linux SH4 Release",
                                        "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug", "Qt Mountain Lion Release",
-                                       "Chromium Win Release", "Chromium Mac Release", "Chromium Linux Release",
-                                       "Chromium Android Release",
                                        "EFL Linux 64-bit Release", "EFL Linux 64-bit Release WK2", "EFL Linux 32-bit Release (Build)", "EFL Linux 64-bit Debug WK2",
                                        "EFL Linux 64-bit Release WK2 (Perf)",
                                        "WinCairo Release", "WinCE Release (Build)"]

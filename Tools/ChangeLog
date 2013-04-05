@@ -1,3 +1,15 @@
+2013-04-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove Chromium builders from build.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=113990
+
+        Reviewed by Benjamin Poulain.
+
+        Land the part to disable triggering of Chromium builders first so that we may start
+        deleting more Chromium code that breaks the update step.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2013-04-04  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove Chromium's DumpRenderTree
