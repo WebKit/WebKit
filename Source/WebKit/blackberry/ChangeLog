@@ -1,3 +1,25 @@
+2013-04-04  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] Adjust fatfinger result priority
+        https://bugs.webkit.org/show_bug.cgi?id=113957
+
+        Reviewed by Rob Buis.
+
+        RIM PR 224781
+        Internally Reviewed by Genevieve Mak.
+
+        Change fatfigner algorithm, return the clickable element rather than
+        its parent anchor. Modify taphighlight and context menu node selection
+        accordingly.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::webContext):
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::findBestPoint):
+        * WebKitSupport/FatFingers.h:
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::elementForTapHighlight):
+
 2013-04-03  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Remove defaultViewportArguments check from call site of recomputeVirtualViewportFromViewportArguments

@@ -163,22 +163,24 @@ const FatFingersResult FatFingers::findBestPoint()
 
     // Lets set nodeUnderFatFinger to the result of a point based hit test here. If something
     // targable is actually found by ::findIntersectingRegions, then we might replace what we just set below later on.
-    Element* elementUnderPoint;
-    Element* clickableElementUnderPoint;
-    getRelevantInfoFromCachedHitTest(elementUnderPoint, clickableElementUnderPoint);
+    const HitTestResult& hitResult = m_webPage->hitTestResult(m_contentPos);
+    Node* node = hitResult.innerNode();
+    while (node && !node->isElementNode())
+        node = node->parentNode();
+
+    Element* elementUnderPoint = static_cast<Element*>(node);
 
     if (elementUnderPoint) {
         result.m_nodeUnderFatFinger = elementUnderPoint;
 
         // If we are looking for a Clickable Element and we found one, we can quit early.
         if (m_targetType == ClickableElement) {
-            if (clickableElementUnderPoint) {
-                setSuccessfulFatFingersResult(result, clickableElementUnderPoint, m_contentPos /*adjustedPosition*/);
-                return result;
-            }
-
             if (isElementClickable(elementUnderPoint)) {
                 setSuccessfulFatFingersResult(result, elementUnderPoint, m_contentPos /*adjustedPosition*/);
+                return result;
+            }
+            if (hitResult.URLElement()) {
+                setSuccessfulFatFingersResult(result, hitResult.URLElement(), m_contentPos /*adjustedPosition*/);
                 return result;
             }
         }
@@ -472,20 +474,6 @@ void FatFingers::getNodesFromRect(Document* document, const IntPoint& contentPos
     document->renderView()->layer()->hitTest(requestType, result);
     intersectedNodes = result.rectBasedTestResult();
     m_cachedRectHitTestResults.add(document, intersectedNodes);
-}
-
-void FatFingers::getRelevantInfoFromCachedHitTest(Element*& elementUnderPoint, Element*& clickableElementUnderPoint) const
-{
-    elementUnderPoint = 0;
-    clickableElementUnderPoint = 0;
-
-    const HitTestResult& result = m_webPage->hitTestResult(m_contentPos);
-    Node* node = result.innerNode();
-    while (node && !node->isElementNode())
-        node = node->parentNode();
-
-    elementUnderPoint = toElement(node);
-    clickableElementUnderPoint = result.URLElement();
 }
 
 void FatFingers::setSuccessfulFatFingersResult(FatFingersResult& result, Node* bestNode, const WebCore::IntPoint& adjustedPoint)

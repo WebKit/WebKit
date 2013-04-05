@@ -195,7 +195,7 @@ static Element* elementForTapHighlight(Element* elementUnderFatFinger)
     }
 
     bool isArea = elementUnderFatFinger->hasTagName(HTMLNames::areaTag);
-    Node* linkNode = elementUnderFatFinger->enclosingLinkEventParentOrSelf();
+    Node* linkNode = elementUnderFatFinger->isLink() ? elementUnderFatFinger : 0;
     if (!linkNode || !linkNode->isHTMLElement() || (!linkNode->renderer() && !isArea))
         return 0;
 

@@ -2284,7 +2284,8 @@ Platform::WebContext WebPagePrivate::webContext(TargetDetectionStrategy strategy
     requestLayoutIfNeeded();
 
     bool nodeAllowSelectionOverride = false;
-    if (Node* linkNode = node->enclosingLinkEventParentOrSelf()) {
+    Node* linkNode = node->enclosingLinkEventParentOrSelf();
+    if (node->isLink() || (node->isTextNode() && linkNode)) {
         KURL href;
         if (linkNode->isLink() && linkNode->hasAttributes()) {
             if (const Attribute* attribute = toElement(linkNode)->getAttributeItem(HTMLNames::hrefAttr))

@@ -97,9 +97,6 @@ private:
 
     void getNodesFromRect(WebCore::Document*, const WebCore::IntPoint&, ListHashSet<RefPtr<WebCore::Node> >&);
 
-    // It mimics Document::elementFromPoint, but recursively hit-tests in case an inner frame is found.
-    void getRelevantInfoFromCachedHitTest(WebCore::Element*& elementUnderPoint, WebCore::Element*& clickableElementUnderPoint) const;
-
     bool isElementClickable(WebCore::Element*) const;
 
     inline WebCore::IntRect fingerRectForPoint(const WebCore::IntPoint&) const;
