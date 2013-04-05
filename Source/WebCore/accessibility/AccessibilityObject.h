@@ -64,8 +64,6 @@ typedef WebAccessibilityObjectWrapper AccessibilityObjectWrapper;
 #elif PLATFORM(GTK) || (PLATFORM(EFL) && HAVE(ACCESSIBILITY))
 typedef struct _AtkObject AtkObject;
 typedef struct _AtkObject AccessibilityObjectWrapper;
-#elif PLATFORM(CHROMIUM)
-// Chromium does not use a wrapper.
 #else
 class AccessibilityObjectWrapper;
 #endif
@@ -815,7 +813,7 @@ public:
 #if PLATFORM(GTK) || PLATFORM(EFL)
     AccessibilityObjectWrapper* wrapper() const;
     void setWrapper(AccessibilityObjectWrapper*);
-#elif !PLATFORM(CHROMIUM)
+#else
     AccessibilityObjectWrapper* wrapper() const { return m_wrapper.get(); }
     void setWrapper(AccessibilityObjectWrapper* wrapper) 
     {
@@ -878,8 +876,6 @@ protected:
     COMPtr<AccessibilityObjectWrapper> m_wrapper;
 #elif PLATFORM(GTK) || (PLATFORM(EFL) && HAVE(ACCESSIBILITY))
     AtkObject* m_wrapper;
-#elif PLATFORM(CHROMIUM)
-    bool m_detached;
 #endif
 };
 

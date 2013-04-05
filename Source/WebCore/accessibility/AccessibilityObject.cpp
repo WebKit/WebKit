@@ -77,8 +77,6 @@ AccessibilityObject::AccessibilityObject()
     , m_lastKnownIsIgnoredValue(DefaultBehavior)
 #if PLATFORM(GTK) || (PLATFORM(EFL) && HAVE(ACCESSIBILITY))
     , m_wrapper(0)
-#elif PLATFORM(CHROMIUM)
-    , m_detached(false)
 #endif
 {
 }
@@ -94,18 +92,14 @@ void AccessibilityObject::detach()
     // no children are left with dangling pointers to their parent.
     clearChildren();
 
-#if HAVE(ACCESSIBILITY) && PLATFORM(CHROMIUM)
-    m_detached = true;
-#elif HAVE(ACCESSIBILITY)
+#if HAVE(ACCESSIBILITY)
     setWrapper(0);
 #endif
 }
 
 bool AccessibilityObject::isDetached() const
 {
-#if HAVE(ACCESSIBILITY) && PLATFORM(CHROMIUM)
-    return m_detached;
-#elif HAVE(ACCESSIBILITY)
+#if HAVE(ACCESSIBILITY)
     return !wrapper();
 #else
     return true;
