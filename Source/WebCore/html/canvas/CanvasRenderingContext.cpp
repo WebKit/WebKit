@@ -31,6 +31,7 @@
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
+#include "Image.h"
 #include "KURL.h"
 #include "SecurityOrigin.h"
 
