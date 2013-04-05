@@ -58,18 +58,15 @@ PassRefPtr<ScriptCallStack> createScriptCallStack(size_t maxStackSize, bool empt
     Vector<ScriptCallFrame> frames;
     if (JSC::ExecState* exec = JSMainThreadExecState::currentState()) {
         Vector<StackFrame> stackTrace;
-        Interpreter::getStackTrace(&exec->globalData(), stackTrace);
-        for (Vector<StackFrame>::const_iterator iter = stackTrace.begin(); iter < stackTrace.end(); iter++) {
-            frames.append(ScriptCallFrame(iter->friendlyFunctionName(exec), iter->friendlySourceURL(), iter->friendlyLineNumber()));
-            if (frames.size() >= maxStackSize)
-                break;
-        }
+        Interpreter::getStackTrace(&exec->globalData(), stackTrace, maxStackSize);
+        for (size_t i = 0; i < stackTrace.size(); i++)
+            frames.append(ScriptCallFrame(stackTrace[i].friendlyFunctionName(exec), stackTrace[i].friendlySourceURL(), stackTrace[i].line(), stackTrace[i].column()));
     }
     if (frames.isEmpty() && !emptyIsAllowed) {
         // No frames found. It may happen in the case where
         // a bound function is called from native code for example.
         // Fallback to setting lineNumber to 0, and source and function name to "undefined".
-        frames.append(ScriptCallFrame("undefined", "undefined", 0));
+        frames.append(ScriptCallFrame("undefined", "undefined", 0, 0));
     }
     return ScriptCallStack::create(frames);
 }
@@ -77,30 +74,18 @@ PassRefPtr<ScriptCallStack> createScriptCallStack(size_t maxStackSize, bool empt
 PassRefPtr<ScriptCallStack> createScriptCallStack(JSC::ExecState* exec, size_t maxStackSize)
 {
     Vector<ScriptCallFrame> frames;
-    CallFrame* callFrame = exec;
-    while (true) {
-        ASSERT(callFrame);
-        int signedLineNumber;
-        intptr_t sourceID;
-        String urlString;
-        JSValue function;
-
-        exec->interpreter()->retrieveLastCaller(callFrame, signedLineNumber, sourceID, urlString, function);
-        String functionName;
-        if (function)
-            functionName = jsCast<JSFunction*>(function)->name(exec);
-        else {
-            // Caller is unknown, but if frames is empty we should still add the frame, because
-            // something called us, and gave us arguments.
-            if (!frames.isEmpty())
-                break;
-        }
-        unsigned lineNumber = signedLineNumber >= 0 ? signedLineNumber : 0;
-        frames.append(ScriptCallFrame(functionName, urlString, lineNumber));
-        if (!function || frames.size() == maxStackSize)
+    Vector<StackFrame> stackTrace;
+    Interpreter::getStackTrace(&exec->globalData(), stackTrace, maxStackSize + 1);
+    for (size_t i = 1; i < stackTrace.size(); i++) {
+        // This early exit is necessary to maintain our old behaviour
+        // but the stack trace we produce now is complete and handles all
+        // ways in which code may be running
+        if (!stackTrace[i].callee && frames.size())
             break;
-        callFrame = callFrame->callerFrame();
+        String functionName = stackTrace[i].friendlyFunctionName(exec);
+        frames.append(ScriptCallFrame(functionName, stackTrace[i].sourceURL, stackTrace[i].line(), stackTrace[i].column()));
     }
+
     return ScriptCallStack::create(frames);
 }
 

@@ -597,6 +597,8 @@ DynamicGlobalObjectScope::DynamicGlobalObjectScope(JSGlobalData& globalData, JSG
         // to observe time zone changes.
         globalData.resetDateCache();
     }
+    // Clear the exception stack between entries
+    globalData.exceptionStack = RefCountedArray<StackFrame>();
 }
 
 void slowValidateCell(JSGlobalObject* globalObject)

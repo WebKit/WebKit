@@ -79,25 +79,13 @@ namespace JSC {
         Strong<JSObject> callee;
         StackFrameCodeType codeType;
         Strong<ExecutableBase> executable;
-        int line;
+        Strong<UnlinkedCodeBlock> codeBlock;
+        RefPtr<SourceProvider> code;
+        int lineOffset;
+        unsigned characterOffset;
+        unsigned bytecodeOffset;
         String sourceURL;
-        String toString(CallFrame* callFrame) const
-        {
-            StringBuilder traceBuild;
-            String functionName = friendlyFunctionName(callFrame);
-            String sourceURL = friendlySourceURL();
-            traceBuild.append(functionName);
-            if (!sourceURL.isEmpty()) {
-                if (!functionName.isEmpty())
-                    traceBuild.append('@');
-                traceBuild.append(sourceURL);
-                if (line > -1) {
-                    traceBuild.append(':');
-                    traceBuild.appendNumber(line);
-                }
-            }
-            return traceBuild.toString().impl();
-        }
+        JS_EXPORT_PRIVATE String toString(CallFrame*);
         String friendlySourceURL() const
         {
             String traceLine;
@@ -137,10 +125,9 @@ namespace JSC {
             }
             return traceLine.isNull() ? emptyString() : traceLine;
         }
-        unsigned friendlyLineNumber() const
-        {
-            return line > -1 ? line : 0;
-        }
+        JS_EXPORT_PRIVATE unsigned line();
+        JS_EXPORT_PRIVATE unsigned column();
+        JS_EXPORT_PRIVATE void expressionInfo(int& divot, int& startOffset, int& endOffset);
     };
 
     class TopCallFrameSetter {
@@ -232,8 +219,8 @@ namespace JSC {
         NEVER_INLINE HandlerInfo* throwException(CallFrame*&, JSValue&, unsigned bytecodeOffset);
         NEVER_INLINE void debug(CallFrame*, DebugHookID, int firstLine, int lastLine, int column);
         static const String getTraceLine(CallFrame*, StackFrameCodeType, const String&, int);
-        JS_EXPORT_PRIVATE static void getStackTrace(JSGlobalData*, Vector<StackFrame>& results);
-        static void addStackTraceIfNecessary(CallFrame*, JSObject* error);
+        JS_EXPORT_PRIVATE static void getStackTrace(JSGlobalData*, Vector<StackFrame>& results, size_t maxStackSize = std::numeric_limits<size_t>::max());
+        static void addStackTraceIfNecessary(CallFrame*, JSValue error);
 
         void dumpSampleData(ExecState* exec);
         void startSampling();

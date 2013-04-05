@@ -2055,6 +2055,7 @@ void BytecodeGenerator::emitDebugHook(DebugHookID debugHookID, int firstLine, in
     if (!m_shouldEmitDebugHooks)
         return;
 #endif
+    emitExpressionInfo(charPosition, 0, 0);
     emitOpcode(op_debug);
     instructions().append(debugHookID);
     instructions().append(firstLine);

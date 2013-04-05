@@ -42,7 +42,6 @@ my $count = 1;
 my $verbose = 0;
 GetOptions("count|c=i" => \$count,
            "verbose|v" => \$verbose);
-die "$usage\n" if (@ARGV < 1);
 
 my $jsc = jscProductDir() . "/jsc @ARGV";
 $jsc .= " 2> " . File::Spec->devnull() unless $verbose;

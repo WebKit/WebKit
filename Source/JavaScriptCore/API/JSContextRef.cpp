@@ -36,6 +36,7 @@
 #include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "Operations.h"
+#include "SourceProvider.h"
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
@@ -175,51 +176,38 @@ JSStringRef JSContextCreateBacktrace(JSContextRef ctx, unsigned maxStackSize)
 {
     ExecState* exec = toJS(ctx);
     JSLockHolder lock(exec);
-
-    unsigned count = 0;
     StringBuilder builder;
-    CallFrame* callFrame = exec;
-    String functionName;
-    if (exec->callee()) {
-        if (asObject(exec->callee())->inherits(&InternalFunction::s_info)) {
-            functionName = asInternalFunction(exec->callee())->name(exec);
-            builder.appendLiteral("#0 ");
-            builder.append(functionName);
-            builder.appendLiteral("() ");
-            count++;
-        }
-    }
-    while (true) {
-        RELEASE_ASSERT(callFrame);
-        int signedLineNumber;
-        intptr_t sourceID;
+    Vector<StackFrame> stackTrace;
+    Interpreter::getStackTrace(&exec->globalData(), stackTrace, maxStackSize);
+
+    for (size_t i = 0; i < stackTrace.size(); i++) {
         String urlString;
-        JSValue function;
-
-        exec->interpreter()->retrieveLastCaller(callFrame, signedLineNumber, sourceID, urlString, function);
-
-        if (function)
-            functionName = jsCast<JSFunction*>(function)->name(exec);
+        String functionName;
+        StackFrame& frame = stackTrace[i];
+        JSValue function = frame.callee.get();
+        if (frame.callee)
+            functionName = frame.friendlyFunctionName(exec);
         else {
             // Caller is unknown, but if frame is empty we should still add the frame, because
             // something called us, and gave us arguments.
-            if (count)
+            if (i)
                 break;
         }
-        unsigned lineNumber = signedLineNumber >= 0 ? signedLineNumber : 0;
+        unsigned lineNumber = frame.line();
         if (!builder.isEmpty())
             builder.append('\n');
         builder.append('#');
-        builder.appendNumber(count);
+        builder.appendNumber(i);
         builder.append(' ');
         builder.append(functionName);
         builder.appendLiteral("() at ");
         builder.append(urlString);
-        builder.append(':');
-        builder.appendNumber(lineNumber);
-        if (!function || ++count == maxStackSize)
+        if (frame.codeType != StackFrameNativeCode) {
+            builder.append(':');
+            builder.appendNumber(lineNumber);
+        }
+        if (!function)
             break;
-        callFrame = callFrame->callerFrame();
     }
     return OpaqueJSString::create(builder.toString()).leakRef();
 }
