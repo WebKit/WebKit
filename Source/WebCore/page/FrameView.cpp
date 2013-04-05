@@ -867,11 +867,7 @@ GraphicsLayer* FrameView::setWantsLayerForTopOverHangArea(bool wantsLayer) const
     if (!renderView)
         return 0;
 
-#if USE(ACCELERATED_COMPOSITING)
     return renderView->compositor()->updateLayerForTopOverhangArea(wantsLayer);
-#else
-    return 0;
-#endif
 }
 
 GraphicsLayer* FrameView::setWantsLayerForBottomOverHangArea(bool wantsLayer) const
@@ -880,11 +876,7 @@ GraphicsLayer* FrameView::setWantsLayerForBottomOverHangArea(bool wantsLayer) co
     if (!renderView)
         return 0;
 
-#if USE(ACCELERATED_COMPOSITING)
     return renderView->compositor()->updateLayerForBottomOverhangArea(wantsLayer);
-#else
-    return 0;
-#endif
 }
 
 GraphicsLayer* FrameView::setWantsLayerForHeader(bool wantsLayer) const
@@ -895,11 +887,7 @@ GraphicsLayer* FrameView::setWantsLayerForHeader(bool wantsLayer) const
 
     ASSERT(m_frame == m_frame->page()->mainFrame());
 
-#if USE(ACCELERATED_COMPOSITING)
     return renderView->compositor()->updateLayerForHeader(wantsLayer);
-#else
-    return 0;
-#endif
 }
 
 GraphicsLayer* FrameView::setWantsLayerForFooter(bool wantsLayer) const
@@ -910,28 +898,10 @@ GraphicsLayer* FrameView::setWantsLayerForFooter(bool wantsLayer) const
 
     ASSERT(m_frame == m_frame->page()->mainFrame());
 
-#if USE(ACCELERATED_COMPOSITING)
     return renderView->compositor()->updateLayerForFooter(wantsLayer);
-#else
-    return 0;
-#endif
 }
 
-#endif
-
-void FrameView::setHeaderHeight(int headerHeight)
-{
-    if (m_frame && m_frame->page())
-        ASSERT(m_frame == m_frame->page()->mainFrame());
-    m_headerHeight = headerHeight;
-}
-
-void FrameView::setFooterHeight(int footerHeight)
-{
-    if (m_frame && m_frame->page())
-        ASSERT(m_frame == m_frame->page()->mainFrame());
-    m_footerHeight = footerHeight;
-}
+#endif // ENABLE(RUBBER_BANDING)
 
 bool FrameView::flushCompositingStateForThisFrame(Frame* rootFrameForFlush)
 {
@@ -963,6 +933,20 @@ void FrameView::setNeedsOneShotDrawingSynchronization()
 }
 
 #endif // USE(ACCELERATED_COMPOSITING)
+
+void FrameView::setHeaderHeight(int headerHeight)
+{
+    if (m_frame && m_frame->page())
+        ASSERT(m_frame == m_frame->page()->mainFrame());
+    m_headerHeight = headerHeight;
+}
+
+void FrameView::setFooterHeight(int footerHeight)
+{
+    if (m_frame && m_frame->page())
+        ASSERT(m_frame == m_frame->page()->mainFrame());
+    m_footerHeight = footerHeight;
+}
 
 bool FrameView::hasCompositedContent() const
 {
