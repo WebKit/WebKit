@@ -1,3 +1,19 @@
+2013-04-05  Anthony Scian  <ascian@blackberry.com>
+
+        [BlackBerry] WebOverlay: check if platformContext is null
+        https://bugs.webkit.org/show_bug.cgi?id=114005
+
+        Reviewed by Carlos Garcia Campos.
+
+        RIM PR 256522
+        Internally reviewed by Mike Lattanzio.
+
+        The pointer returned by lockBufferDrawable can be null, so it
+        needs to be checked first before being used.
+
+        * Api/WebOverlay.cpp:
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded):
+
 2013-04-05  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove WTFURL from WebKit

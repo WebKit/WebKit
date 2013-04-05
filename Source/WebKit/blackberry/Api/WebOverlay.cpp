@@ -460,6 +460,10 @@ void WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded(LayerComposi
 
         clearBuffer(textureContents, 0, 0, 0, 0);
         PlatformGraphicsContext* platformContext = lockBufferDrawable(textureContents);
+        if (!platformContext) {
+            destroyBuffer(textureContents);
+            return;
+        }
         double transform[] = {
             1, 0,
             0, 1,
@@ -476,6 +480,10 @@ void WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded(LayerComposi
             return;
 
         PlatformGraphicsContext* platformContext = BlackBerry::Platform::Graphics::lockBufferDrawable(textureContents);
+        if (!platformContext) {
+            destroyBuffer(textureContents);
+            return;
+        }
 
         AffineTransform transform;
         platformContext->getTransform(reinterpret_cast<double*>(&transform));
