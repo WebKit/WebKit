@@ -1,3 +1,26 @@
+2013-04-04  KwangYong Choi  <ky0.choi@samsung.com>
+
+        [EFL][WK2] Add support for getting page contents as string
+        https://bugs.webkit.org/show_bug.cgi?id=106752
+
+        Reviewed by Andreas Kling.
+
+        Modified ewk_view_page_contents_get() API to get page contents as string.
+        EWK_PAGE_CONTENTS_TYPE_STRING is added to Ewk_Page_Contents_Type.
+        Now, we can use both EWK_PAGE_CONTENTS_TYPE_MHTML and EWK_PAGE_CONTENTS_TYPE_STRING
+        for getting page contents.
+
+        * UIProcess/API/efl/ewk_view.cpp:
+        (Ewk_Page_Contents_Context):
+        (ewkViewPageContentsAsMHTMLCallback):
+        (ewkViewPageContentsAsStringCallback):
+        (ewk_view_page_contents_get):
+        * UIProcess/API/efl/ewk_view.h:
+        * UIProcess/API/efl/tests/test_ewk2_view.cpp:
+        (PageContentsAsMHTMLCallback):
+        (PageContentsAsStringCallback):
+        (TEST_F):
+
 2013-04-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [Cairo] Stop passing raw pointers to BitmapImage::create()

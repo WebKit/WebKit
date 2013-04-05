@@ -926,7 +926,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_contents_size_changed)
 
 static bool obtainedPageContents = false;
 
-static void PageContentsCallback(Ewk_Page_Contents_Type type, const char* data)
+static void PageContentsAsMHTMLCallback(Ewk_Page_Contents_Type type, const char* data, void*)
 {
     // Check the type
     ASSERT_EQ(EWK_PAGE_CONTENTS_TYPE_MHTML, type);
@@ -943,13 +943,29 @@ static void PageContentsCallback(Ewk_Page_Contents_Type type, const char* data)
     obtainedPageContents = true;
 }
 
+static void PageContentsAsStringCallback(Ewk_Page_Contents_Type type, const char* data, void*)
+{
+    // Check the type.
+    ASSERT_EQ(EWK_PAGE_CONTENTS_TYPE_STRING, type);
+
+    // The variable data should be "Simple HTML".
+    ASSERT_STREQ("Simple HTML", data);
+
+    obtainedPageContents = true;
+}
+
 TEST_F(EWK2UnitTestBase, ewk_view_page_contents_get)
 {
     const char content[] = "<p>Simple HTML</p>";
     ewk_view_html_string_load(webView(), content, 0, 0);
     waitUntilLoadFinished();
 
-    ASSERT_TRUE(ewk_view_page_contents_get(webView(), EWK_PAGE_CONTENTS_TYPE_MHTML, PageContentsCallback));
+    ASSERT_TRUE(ewk_view_page_contents_get(webView(), EWK_PAGE_CONTENTS_TYPE_MHTML, PageContentsAsMHTMLCallback, 0));
+    while (!obtainedPageContents)
+        ecore_main_loop_iterate();
+
+    obtainedPageContents = false;
+    ASSERT_TRUE(ewk_view_page_contents_get(webView(), EWK_PAGE_CONTENTS_TYPE_STRING, PageContentsAsStringCallback, 0));
     while (!obtainedPageContents)
         ecore_main_loop_iterate();
 }

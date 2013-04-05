@@ -535,36 +535,59 @@ typedef struct Ewk_Page_Contents_Context Ewk_Page_Contents_Context;
 struct Ewk_Page_Contents_Context {
     Ewk_Page_Contents_Type type;
     Ewk_Page_Contents_Cb callback;
+    void* userData;
 };
 
 /**
  * @internal
  * Callback function used for ewk_view_page_contents_get().
  */
-static void ewkViewPageContentsCallback(WKDataRef wkData, WKErrorRef, void* context)
+static void ewkViewPageContentsAsMHTMLCallback(WKDataRef wkData, WKErrorRef, void* context)
 {
     EINA_SAFETY_ON_NULL_RETURN(context);
 
-    Ewk_Page_Contents_Context* contentsContext= static_cast<Ewk_Page_Contents_Context*>(context);
-    contentsContext->callback(contentsContext->type, reinterpret_cast<const char*>(WKDataGetBytes(wkData)));
+    Ewk_Page_Contents_Context* contentsContext = static_cast<Ewk_Page_Contents_Context*>(context);
+    contentsContext->callback(contentsContext->type, reinterpret_cast<const char*>(WKDataGetBytes(wkData)), contentsContext->userData);
 
     delete contentsContext;
 }
 
-Eina_Bool ewk_view_page_contents_get(const Evas_Object* ewkView, Ewk_Page_Contents_Type type, Ewk_Page_Contents_Cb callback)
+/**
+ * @internal
+ * Callback function used for ewk_view_page_contents_get().
+ */
+static void ewkViewPageContentsAsStringCallback(WKStringRef wkString, WKErrorRef, void* context)
+{
+    EINA_SAFETY_ON_NULL_RETURN(context);
+
+    Ewk_Page_Contents_Context* contentsContext = static_cast<Ewk_Page_Contents_Context*>(context);
+    contentsContext->callback(contentsContext->type, WKEinaSharedString(wkString), contentsContext->userData);
+
+    delete contentsContext;
+}
+
+Eina_Bool ewk_view_page_contents_get(const Evas_Object* ewkView, Ewk_Page_Contents_Type type, Ewk_Page_Contents_Cb callback, void* user_data)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(callback, false);
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
-    // We only support MHTML at the moment.
-    if (type != EWK_PAGE_CONTENTS_TYPE_MHTML)
-        return false;
-
     Ewk_Page_Contents_Context* context = new Ewk_Page_Contents_Context;
     context->type = type;
     context->callback = callback;
+    context->userData = user_data;
 
-    WKPageGetContentsAsMHTMLData(impl->wkPage(), false, context, ewkViewPageContentsCallback);
+    switch (context->type) {
+    case EWK_PAGE_CONTENTS_TYPE_MHTML:
+        WKPageGetContentsAsMHTMLData(impl->wkPage(), false, context, ewkViewPageContentsAsMHTMLCallback);
+        break;
+    case EWK_PAGE_CONTENTS_TYPE_STRING:
+        WKPageGetContentsAsString(impl->wkPage(), context, ewkViewPageContentsAsStringCallback);
+        break;
+    default:
+        delete context;
+        ASSERT_NOT_REACHED();
+        return false;
+    }
 
     return true;
 }
