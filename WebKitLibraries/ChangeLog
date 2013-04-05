@@ -1,3 +1,10 @@
+2013-04-05  Roger Fong  <roger_fong@apple.com>
+
+        More VS2010 solution makefile fixes.
+        <rdar://problem/13588964>
+
+        * win/tools/WinTools.make:
+
 2013-04-03  Brent Fulgham  <bfulgham@webkit.org>
 
         [Windows, WinCairo] Unreviewed VS2010 Build Correction

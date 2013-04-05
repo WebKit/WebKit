@@ -1,14 +1,15 @@
-!IF "$(BUILDSTYLE)"=="DEBUG"
+!IF defined(BUILDSTYLE) && "$(BUILDSTYLE)"=="DEBUG"
 BUILDSTYLE=DebugSuffix
 !ELSE
 BUILDSTYLE=Production
 !ENDIF
 
 install:
+    set OFFICIAL_BUILD=1
 	set WebKit_Libraries=$(SRCROOT)\AppleInternal
 	set WebKit_OutputDir=$(OBJROOT)
 	set ConfigurationBuildDir=$(OBJROOT)\$(BUILDSTYLE)
-    set WebKit_Source=$(SRCROOT)\..\..
+    set WebKit_Source=$(SRCROOT)
     -mkdir "%ConfigurationBuildDir%\include\private"
     xcopy "%WebKit_Libraries%\include\private\*" "%ConfigurationBuildDir%\include\private" /e/v/i/h/y
     devenv "JavaScriptCore.submit.sln" /clean $(BUILDSTYLE)
