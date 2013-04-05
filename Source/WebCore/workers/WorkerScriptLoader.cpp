@@ -51,9 +51,6 @@ WorkerScriptLoader::WorkerScriptLoader()
     , m_failed(false)
     , m_identifier(0)
     , m_finishing(false)
-#if PLATFORM(CHROMIUM)
-    , m_targetType(ResourceRequest::TargetIsWorker)
-#endif
 {
 }
 
@@ -109,7 +106,7 @@ PassOwnPtr<ResourceRequest> WorkerScriptLoader::createResourceRequest()
 {
     OwnPtr<ResourceRequest> request = adoptPtr(new ResourceRequest(m_url));
     request->setHTTPMethod("GET");
-#if PLATFORM(CHROMIUM) || PLATFORM(BLACKBERRY)
+#if PLATFORM(BLACKBERRY)
     request->setTargetType(m_targetType);
 #endif
     return request.release();

@@ -46,11 +46,6 @@
 #include "DatabaseTask.h"
 #endif
 
-#if PLATFORM(CHROMIUM)
-#include <public/Platform.h>
-#include <public/WebWorkerRunLoop.h>
-#endif
-
 namespace WebCore {
 
 static Mutex& threadSetMutex()
@@ -159,11 +154,6 @@ void WorkerThread::workerThread()
            m_workerContext->script()->forbidExecution();
         }
     }
-#if PLATFORM(CHROMIUM)
-    // The corresponding call to didStopWorkerRunLoop is in
-    // ~WorkerScriptController.
-    WebKit::Platform::current()->didStartWorkerRunLoop(WebKit::WebWorkerRunLoop(&m_runLoop));
-#endif
 
     WorkerScriptController* script = m_workerContext->script();
 #if ENABLE(INSPECTOR)

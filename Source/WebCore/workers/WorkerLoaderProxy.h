@@ -37,12 +37,6 @@
 #include <wtf/Forward.h>
 #include <wtf/PassOwnPtr.h>
 
-#if PLATFORM(CHROMIUM)
-namespace WebKit {
-class WebWorkerBase;
-}
-#endif // PLATFORM(CHROMIUM)
-
 namespace WebCore {
 
     // A proxy to talk to the loader context. Normally, the document on the main thread
