@@ -127,8 +127,6 @@
 // this define is required.
 #define WTF_CHANGES 1
 
-#define WTF_USE_GOOGLEURL 1
-
 #endif /* PLATFORM(CHROMIUM) */
 
 #if USE(CG)

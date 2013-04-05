@@ -65,8 +65,6 @@ static inline bool isLetterMatchIgnoringCase(UChar character, char lowercaseLett
     return (character | 0x20) == lowercaseLetter;
 }
 
-#if !USE(GOOGLEURL)
-
 static const char wsScheme[] = {'w', 's'};
 static const char ftpScheme[] = {'f', 't', 'p'};
 static const char ftpPort[] = {'2', '1'};
@@ -1716,8 +1714,6 @@ void KURL::print() const
 }
 #endif
 
-#endif // !USE(GOOGLEURL)
-
 String KURL::strippedForUseAsReferrer() const
 {
     KURL referrer(*this);
@@ -1903,20 +1899,12 @@ String mimeTypeFromURL(const KURL& url)
 void KURL::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this);
-#if USE(GOOGLEURL)
-    info.addMember(m_url, "url");
-#else // !USE(GOOGLEURL)
     info.addMember(m_string, "string");
-#endif
 }
 
 bool KURL::isSafeToSendToAnotherThread() const
 {
-#if USE(GOOGLEURL)
-    return m_url.isSafeToSendToAnotherThread();
-#else // !USE(GOOGLEURL)
     return m_string.isSafeToSendToAnotherThread();
-#endif
 }
 
 String KURL::elidedString() const
