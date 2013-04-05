@@ -1,3 +1,14 @@
+2013-04-04  Benjamin Poulain  <benjamin@webkit.org>
+
+        Remove Webkit/chromium
+        https://bugs.webkit.org/show_bug.cgi?id=113998
+
+        Reviewed by Ryosuke Niwa.
+
+        O Knights of Ni, you are just and fair, and we will return with a shrubbery.
+
+        * chromium: Removed.
+
 2013-04-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [Cairo] Fix canvas drawing of SVG-based patterns and remove NativeImageCairo
