@@ -818,14 +818,7 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
     float measuredWidth = 0;
 
     bool kerningIsEnabled = font.typesettingFeatures() & Kerning;
-
-#if PLATFORM(CHROMIUM) && OS(DARWIN)
-    // FIXME: Having any font feature settings enabled can lead to selection gaps on
-    // Chromium-mac. https://bugs.webkit.org/show_bug.cgi?id=113418
-    bool canUseSimpleFontCodePath = renderer->canUseSimpleFontCodePath() && !font.fontDescription().featureSettings();
-#else
     bool canUseSimpleFontCodePath = renderer->canUseSimpleFontCodePath();
-#endif
     
     // Since we don't cache glyph overflows, we need to re-measure the run if
     // the style is linebox-contain: glyph.

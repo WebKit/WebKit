@@ -1016,28 +1016,22 @@ void RenderLayerBacking::setBackgroundLayerPaintsFixedRootBackground(bool backgr
 
 bool RenderLayerBacking::requiresHorizontalScrollbarLayer() const
 {
-#if !PLATFORM(CHROMIUM)
     if (!m_owningLayer->hasOverlayScrollbars() && !m_owningLayer->needsCompositedScrolling())
         return false;
-#endif
     return m_owningLayer->horizontalScrollbar();
 }
 
 bool RenderLayerBacking::requiresVerticalScrollbarLayer() const
 {
-#if !PLATFORM(CHROMIUM)
     if (!m_owningLayer->hasOverlayScrollbars() && !m_owningLayer->needsCompositedScrolling())
         return false;
-#endif
     return m_owningLayer->verticalScrollbar();
 }
 
 bool RenderLayerBacking::requiresScrollCornerLayer() const
 {
-#if !PLATFORM(CHROMIUM)
     if (!m_owningLayer->hasOverlayScrollbars() && !m_owningLayer->needsCompositedScrolling())
         return false;
-#endif
     return !m_owningLayer->scrollCornerAndResizerRect().isEmpty();
 }
 
