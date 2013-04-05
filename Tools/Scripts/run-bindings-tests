@@ -43,7 +43,6 @@ def main(argv):
 
     generators = [
         'JS',
-        'V8',
         'ObjC',
         'GObject',
         'CPP'
