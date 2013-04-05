@@ -1,3 +1,15 @@
+2013-04-05  Alberto Garcia  <agarcia@igalia.com>
+
+        [GTK][WK2] WebKitLoaderClient: add missing initializers
+        https://bugs.webkit.org/show_bug.cgi?id=112961
+
+        Reviewed by Carlos Garcia Campos.
+
+        There are two new attributes: pluginLoadPolicy and pluginDidFail.
+
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        (attachLoaderClientToView):
+
 2013-04-05  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][EFL] Encapsulate view states set-up within WebView
