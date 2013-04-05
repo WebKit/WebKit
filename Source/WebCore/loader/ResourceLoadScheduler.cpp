@@ -42,22 +42,11 @@
 #include <wtf/TemporaryChange.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(CHROMIUM)
-#define REQUEST_MANAGEMENT_ENABLED 0
-#else
-#define REQUEST_MANAGEMENT_ENABLED 1
-#endif
-
 namespace WebCore {
 
-#if REQUEST_MANAGEMENT_ENABLED
 static const unsigned maxRequestsInFlightForNonHTTPProtocols = 20;
 // Match the parallel connection count used by the networking layer.
 static unsigned maxRequestsInFlightPerHost;
-#else
-static const unsigned maxRequestsInFlightForNonHTTPProtocols = 10000;
-static const unsigned maxRequestsInFlightPerHost = 10000;
-#endif
 
 ResourceLoadScheduler::HostInformation* ResourceLoadScheduler::hostForURL(const KURL& url, CreateHostPolicy createHostPolicy)
 {
@@ -107,9 +96,7 @@ ResourceLoadScheduler::ResourceLoadScheduler()
     , m_suspendPendingRequestsCount(0)
     , m_isSerialLoadingEnabled(false)
 {
-#if REQUEST_MANAGEMENT_ENABLED
     maxRequestsInFlightPerHost = initializeMaximumHTTPConnectionCountPerHost();
-#endif
 }
 
 ResourceLoadScheduler::~ResourceLoadScheduler()
@@ -136,9 +123,6 @@ void ResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Resourc
 {
     ASSERT(resourceLoader);
     ASSERT(priority != ResourceLoadPriorityUnresolved);
-#if !REQUEST_MANAGEMENT_ENABLED
-    priority = ResourceLoadPriorityHighest;
-#endif
 
     LOG(ResourceLoading, "ResourceLoadScheduler::load resource %p '%s'", resourceLoader, resourceLoader->url().string().latin1().data());
 

@@ -567,14 +567,7 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
 
     // The memory cache doesn't understand the application cache or its caching rules. So if a main resource is served
     // from the application cache, ensure we don't save the result for future use.
-    bool shouldRemoveResourceFromCache = willLoadFallback;
-#if PLATFORM(CHROMIUM)
-    // chromium's ApplicationCacheHost implementation always returns true for maybeLoadFallbackForMainResponse(). However, all responses loaded
-    // from appcache will have a non-zero appCacheID().
-    if (response.appCacheID())
-        shouldRemoveResourceFromCache = true;
-#endif
-    if (shouldRemoveResourceFromCache)
+    if (willLoadFallback)
         memoryCache()->remove(m_mainResource.get());
 
     if (willLoadFallback)

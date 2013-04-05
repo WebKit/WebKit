@@ -253,9 +253,6 @@ public:
     void updateResponseAfterRevalidation(const ResourceResponse& validatingResponse);
     
     virtual void didSendData(unsigned long long /* bytesSent */, unsigned long long /* totalBytesToBeSent */) { }
-#if PLATFORM(CHROMIUM)
-    virtual void didDownloadData(int) { }
-#endif
 
     void setLoadFinishTime(double finishTime) { m_loadFinishTime = finishTime; }
     double loadFinishTime() const { return m_loadFinishTime; }

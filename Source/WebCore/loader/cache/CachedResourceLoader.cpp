@@ -490,18 +490,6 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         }
     }
 
-#if PLATFORM(CHROMIUM)
-    // FIXME: Temporarily leave main resource caching disabled for chromium, see https://bugs.webkit.org/show_bug.cgi?id=107962
-    // Ensure main resources aren't preloaded, and other main resource loads are removed from cache to prevent reuse.
-    if (type == CachedResource::MainResource) {
-        ASSERT(policy != Use);
-        ASSERT(policy != Revalidate);
-        memoryCache()->remove(resource.get());
-        if (request.forPreload())
-            return 0;
-    }
-#endif
-
     if (!request.resourceRequest().url().protocolIsData())
         m_validatedURLs.add(request.resourceRequest().url());
 
@@ -844,13 +832,8 @@ void CachedResourceLoader::decrementRequestCount(const CachedResource* res)
 void CachedResourceLoader::preload(CachedResource::Type type, CachedResourceRequest& request, const String& charset)
 {
     bool delaySubresourceLoad = true;
-#if PLATFORM(IOS) || PLATFORM(CHROMIUM)
+#if PLATFORM(IOS)
     delaySubresourceLoad = false;
-#endif
-#if PLATFORM(CHROMIUM)
-    // FIXME: All ports should take advantage of this, but first must support ResourceHandle::didChangePriority().
-    if (type == CachedResource::ImageResource)
-        request.setPriority(ResourceLoadPriorityVeryLow);
 #endif
     if (delaySubresourceLoad) {
         bool hasRendering = m_document->body() && m_document->body()->renderer();

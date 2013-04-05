@@ -133,10 +133,6 @@ public:
     // FIXME: Windows should use willCacheResponse - <https://bugs.webkit.org/show_bug.cgi?id=57257>.
     virtual bool shouldCacheResponse(ResourceHandle*, CFCachedURLResponseRef) OVERRIDE;
 #endif
-#if PLATFORM(CHROMIUM)
-    virtual void didDownloadData(ResourceHandle*, int);
-    virtual void didDownloadData(int);
-#endif
 
     const KURL& url() const { return m_request.url(); } 
     ResourceHandle* handle() const { return m_handle.get(); }

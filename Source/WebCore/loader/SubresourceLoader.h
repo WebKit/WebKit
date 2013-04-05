@@ -72,9 +72,6 @@ private:
     virtual bool supportsDataArray() OVERRIDE { return true; }
     virtual void didReceiveDataArray(CFArrayRef) OVERRIDE;
 #endif
-#if PLATFORM(CHROMIUM)
-    virtual void didDownloadData(int) OVERRIDE;
-#endif
     virtual void releaseResources() OVERRIDE;
 
     bool checkForHTTPStatusCodeError();

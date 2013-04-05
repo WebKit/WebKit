@@ -62,9 +62,6 @@ private:
     virtual void willSendRequest(ResourceRequest&, const ResourceResponse&);
     virtual void responseReceived(const ResourceResponse&);
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
-#if PLATFORM(CHROMIUM)
-    virtual void didDownloadData(int);
-#endif
 
     virtual void switchClientsToRevalidatedResource() OVERRIDE;
 
@@ -96,9 +93,6 @@ public:
     virtual void responseReceived(CachedResource*, const ResourceResponse&) { }
     virtual void dataReceived(CachedResource*, const char* /* data */, int /* length */) { }
     virtual void redirectReceived(CachedResource*, ResourceRequest&, const ResourceResponse&) { }
-#if PLATFORM(CHROMIUM)
-    virtual void dataDownloaded(CachedResource*, int) { }
-#endif
 };
 
 }
