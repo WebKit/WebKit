@@ -126,7 +126,7 @@ public:
     
     // GraphicsLayers buffer state, which gets pushed to the underlying platform layers
     // at specific times.
-    void scheduleLayerFlush();
+    void scheduleLayerFlush(bool canThrottle);
     void flushPendingLayerChanges(bool isFlushRoot = true);
     
     // flushPendingLayerChanges() flushes the entire GraphicsLayer tree, which can cross frame boundaries.
@@ -277,13 +277,16 @@ public:
     bool hasNonMainLayersWithTiledBacking() const { return m_layersWithTiledBackingCount; }
 
     CompositingReasons reasonsForCompositing(const RenderLayer*) const;
-    
+
+    void setLayerFlushThrottlingEnabled(bool);
+    void disableLayerFlushThrottlingTemporarilyForInteraction();
+
 private:
     class OverlapMap;
 
     // GraphicsLayerClient implementation
     virtual void notifyAnimationStarted(const GraphicsLayer*, double) OVERRIDE { }
-    virtual void notifyFlushRequired(const GraphicsLayer*) OVERRIDE { scheduleLayerFlush(); }
+    virtual void notifyFlushRequired(const GraphicsLayer*) OVERRIDE;
     virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect&) OVERRIDE;
 
     virtual bool isTrackingRepaints() const OVERRIDE;
@@ -380,6 +383,11 @@ private:
     bool requiresContentShadowLayer() const;
 #endif
 
+    void scheduleLayerFlushNow();
+    bool isThrottlingLayerFlushes() const;
+    void startLayerFlushTimerIfNeeded();
+    void layerFlushTimerFired(Timer<RenderLayerCompositor>*);
+
 #if !LOG_DISABLED
     const char* logReasonsForCompositing(const RenderLayer*);
     void logLayerInfo(const RenderLayer*, int depth);
@@ -440,6 +448,11 @@ private:
 #endif
 
     OwnPtr<GraphicsLayerUpdater> m_layerUpdater; // Updates tiled layer visible area periodically while animations are running.
+
+    Timer<RenderLayerCompositor> m_layerFlushTimer;
+    bool m_layerFlushThrottlingEnabled;
+    bool m_layerFlushThrottlingTemporarilyDisabledForInteraction;
+    bool m_hasPendingLayerFlush;
 
 #if !LOG_DISABLED
     int m_rootLayerUpdateCount;

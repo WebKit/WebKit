@@ -281,6 +281,8 @@ public:
 
     NetworkingContext* networkingContext() const;
 
+    void loadProgressingStatusChanged();
+
     const KURL& previousURL() const { return m_previousURL; }
 
     void reportMemoryUsage(MemoryObjectInfo*) const;

@@ -3316,6 +3316,12 @@ NetworkingContext* FrameLoader::networkingContext() const
     return m_networkingContext.get();
 }
 
+void FrameLoader::loadProgressingStatusChanged()
+{
+    bool isLoadProgressing = m_frame->page()->progress()->isLoadProgressing();
+    m_frame->page()->mainFrame()->view()->updateLayerFlushThrottling(isLoadProgressing);
+}
+
 void FrameLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Loader);

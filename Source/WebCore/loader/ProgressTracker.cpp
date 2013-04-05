@@ -51,6 +51,13 @@ static const double finalProgressValue = 0.9; // 1.0 - initialProgressValue
 
 static const int progressItemDefaultEstimatedLength = 1024 * 16;
 
+// Check if the load is progressing this often.
+static const double progressHeartbeatInterval = 0.1;
+// How many heartbeats must pass without progress before deciding the load is currently stalled.
+static const unsigned loadStalledHeartbeatCount = 4;
+// How many bytes are required between heartbeats to consider it progress.
+static const unsigned minumumBytesPerHeartbeatForProgress = 1024;
+
 struct ProgressItem {
     WTF_MAKE_NONCOPYABLE(ProgressItem); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -74,6 +81,9 @@ ProgressTracker::ProgressTracker()
     , m_finalProgressChangedSent(false)
     , m_progressValue(0)
     , m_numProgressTrackedFrames(0)
+    , m_progressHeartbeatTimer(this, &ProgressTracker::progressHeartbeatTimerFired)
+    , m_heartbeatsWithNoProgress(0)
+    , m_totalBytesReceivedBeforePreviousHeartbeat(0)
 {
 }
 
@@ -103,6 +113,10 @@ void ProgressTracker::reset()
     m_finalProgressChangedSent = false;
     m_numProgressTrackedFrames = 0;
     m_originatingProgressFrame = 0;
+
+    m_heartbeatsWithNoProgress = 0;
+    m_totalBytesReceivedBeforePreviousHeartbeat = 0;
+    m_progressHeartbeatTimer.stop();
 }
 
 void ProgressTracker::progressStarted(Frame* frame)
@@ -115,7 +129,10 @@ void ProgressTracker::progressStarted(Frame* frame)
         reset();
         m_progressValue = initialProgressValue;
         m_originatingProgressFrame = frame;
-    
+
+        m_progressHeartbeatTimer.startRepeating(progressHeartbeatInterval);
+        m_originatingProgressFrame->loader()->loadProgressingStatusChanged();
+
         m_originatingProgressFrame->loader()->client()->postProgressStartedNotification();
     }
     m_numProgressTrackedFrames++;
@@ -157,6 +174,8 @@ void ProgressTracker::finalProgressComplete()
 
     frame->loader()->client()->setMainFrameDocumentReady(true);
     frame->loader()->client()->postProgressFinishedNotification();
+    frame->loader()->loadProgressingStatusChanged();
+
     InspectorInstrumentation::frameStoppedLoading(frame.get());
 }
 
@@ -264,5 +283,24 @@ unsigned long ProgressTracker::createUniqueIdentifier()
     return ++s_uniqueIdentifier;
 }
 
+bool ProgressTracker::isLoadProgressing() const
+{
+    return m_progressValue && m_progressValue < finalProgressValue && m_heartbeatsWithNoProgress < loadStalledHeartbeatCount;
+}
+
+void ProgressTracker::progressHeartbeatTimerFired(Timer<ProgressTracker>*)
+{
+    if (m_totalBytesReceived < m_totalBytesReceivedBeforePreviousHeartbeat + minumumBytesPerHeartbeatForProgress)
+        ++m_heartbeatsWithNoProgress;
+    else
+        m_heartbeatsWithNoProgress = 0;
+
+    m_totalBytesReceivedBeforePreviousHeartbeat = m_totalBytesReceived;
+
+    m_originatingProgressFrame->loader()->loadProgressingStatusChanged();
+
+    if (m_progressValue >= finalProgressValue)
+        m_progressHeartbeatTimer.stop();
+}
 
 }

@@ -2148,10 +2148,11 @@ void RenderLayerBacking::notifyAnimationStarted(const GraphicsLayer*, double tim
     renderer()->animation()->notifyAnimationStarted(renderer(), time);
 }
 
-void RenderLayerBacking::notifyFlushRequired(const GraphicsLayer*)
+void RenderLayerBacking::notifyFlushRequired(const GraphicsLayer* layer)
 {
-    if (!renderer()->documentBeingDestroyed())
-        compositor()->scheduleLayerFlush();
+    if (renderer()->documentBeingDestroyed())
+        return;
+    compositor()->scheduleLayerFlush(layer->canThrottleLayerFlush());
 }
 
 void RenderLayerBacking::notifyFlushBeforeDisplayRefresh(const GraphicsLayer* layer)

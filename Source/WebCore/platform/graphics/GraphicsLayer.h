@@ -437,6 +437,8 @@ public:
 
     void updateDebugIndicators();
 
+    virtual bool canThrottleLayerFlush() const { return false; }
+
     virtual void reportMemoryUsage(MemoryObjectInfo*) const;
 
 protected:

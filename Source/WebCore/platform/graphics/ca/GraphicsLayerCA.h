@@ -254,6 +254,8 @@ private:
 
     bool recursiveVisibleRectChangeRequiresFlush(const TransformState&) const;
 
+    virtual bool canThrottleLayerFlush() const;
+
     // Used to track the path down the tree for replica layers.
     struct ReplicaState {
         static const size_t maxReplicaDepth = 16;
@@ -397,7 +399,8 @@ private:
         ContentsVisibilityChanged = 1 << 25,
         VisibleRectChanged = 1 << 26,
         FiltersChanged = 1 << 27,
-        DebugIndicatorsChanged = 1 << 28
+        TilesAdded = 1 < 28,
+        DebugIndicatorsChanged = 1 << 29
     };
     typedef unsigned LayerChangeFlags;
     void noteLayerPropertyChanged(LayerChangeFlags flags);

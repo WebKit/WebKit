@@ -84,9 +84,11 @@ bool WebCoreHas3DRendering = true;
 #define WTF_USE_COMPOSITING_FOR_SMALL_CANVASES 1
 #endif
 
-static const int canvasAreaThresholdRequiringCompositing = 50 * 100;
-
 namespace WebCore {
+
+static const int canvasAreaThresholdRequiringCompositing = 50 * 100;
+// During page loading delay layer flushes up to this many seconds to allow them coalesce, reducing workload.
+static const double throttledLayerFlushDelay = .5;
 
 using namespace HTMLNames;
 
@@ -211,6 +213,10 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView* renderView)
     , m_isTrackingRepaints(false)
     , m_layersWithTiledBackingCount(0)
     , m_rootLayerAttachment(RootLayerUnattached)
+    , m_layerFlushTimer(this, &RenderLayerCompositor::layerFlushTimerFired)
+    , m_layerFlushThrottlingEnabled(false)
+    , m_layerFlushThrottlingTemporarilyDisabledForInteraction(false)
+    , m_hasPendingLayerFlush(false)
 #if !LOG_DISABLED
     , m_rootLayerUpdateCount(0)
     , m_obligateCompositedLayerCount(0)
@@ -317,10 +323,25 @@ void RenderLayerCompositor::customPositionForVisibleRectComputation(const Graphi
     position = -scrollPosition;
 }
 
-void RenderLayerCompositor::scheduleLayerFlush()
+void RenderLayerCompositor::notifyFlushRequired(const GraphicsLayer* layer)
 {
+    scheduleLayerFlush(layer->canThrottleLayerFlush());
+}
+
+void RenderLayerCompositor::scheduleLayerFlushNow()
+{
+    m_hasPendingLayerFlush = false;
     if (Page* page = this->page())
         page->chrome()->client()->scheduleCompositingLayerFlush();
+}
+
+void RenderLayerCompositor::scheduleLayerFlush(bool canThrottle)
+{
+    if (canThrottle && isThrottlingLayerFlushes()) {
+        m_hasPendingLayerFlush = true;
+        return;
+    }
+    scheduleLayerFlushNow();
 }
 
 void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
@@ -361,6 +382,7 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
         
         m_viewportConstrainedLayersNeedingUpdate.clear();
     }
+    startLayerFlushTimerIfNeeded();
 }
 
 void RenderLayerCompositor::didFlushChangesForLayer(RenderLayer* layer, const GraphicsLayer* graphicsLayer)
@@ -384,8 +406,9 @@ void RenderLayerCompositor::didChangeVisibleRect()
         return;
 
     IntRect visibleRect = m_clipLayer ? IntRect(IntPoint(), frameView->contentsSize()) : frameView->visibleContentRect();
-    if (rootLayer->visibleRectChangeRequiresFlush(visibleRect))
-        scheduleLayerFlush();
+    if (!rootLayer->visibleRectChangeRequiresFlush(visibleRect))
+        return;
+    scheduleLayerFlushNow();
 }
 
 void RenderLayerCompositor::notifyFlushBeforeDisplayRefresh(const GraphicsLayer*)
@@ -3122,6 +3145,51 @@ Page* RenderLayerCompositor::page() const
         return frame->page();
     
     return 0;
+}
+
+void RenderLayerCompositor::setLayerFlushThrottlingEnabled(bool enabled)
+{
+    m_layerFlushThrottlingEnabled = enabled;
+    if (m_layerFlushThrottlingEnabled)
+        return;
+    m_layerFlushTimer.stop();
+    if (!m_hasPendingLayerFlush)
+        return;
+    scheduleLayerFlushNow();
+}
+
+void RenderLayerCompositor::disableLayerFlushThrottlingTemporarilyForInteraction()
+{
+    if (m_layerFlushThrottlingTemporarilyDisabledForInteraction)
+        return;
+    m_layerFlushThrottlingTemporarilyDisabledForInteraction = true;
+}
+
+bool RenderLayerCompositor::isThrottlingLayerFlushes() const
+{
+    if (!m_layerFlushThrottlingEnabled)
+        return false;
+    if (!m_layerFlushTimer.isActive())
+        return false;
+    if (m_layerFlushThrottlingTemporarilyDisabledForInteraction)
+        return false;
+    return true;
+}
+
+void RenderLayerCompositor::startLayerFlushTimerIfNeeded()
+{
+    m_layerFlushThrottlingTemporarilyDisabledForInteraction = false;
+    m_layerFlushTimer.stop();
+    if (!m_layerFlushThrottlingEnabled)
+        return;
+    m_layerFlushTimer.startOneShot(throttledLayerFlushDelay);
+}
+
+void RenderLayerCompositor::layerFlushTimerFired(Timer<RenderLayerCompositor>*)
+{
+    if (!m_hasPendingLayerFlush)
+        return;
+    scheduleLayerFlushNow();
 }
 
 void RenderLayerCompositor::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

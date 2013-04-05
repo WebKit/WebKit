@@ -26,6 +26,7 @@
 #ifndef ProgressTracker_h
 #define ProgressTracker_h
 
+#include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
@@ -58,11 +59,15 @@ public:
     long long totalPageAndResourceBytesToLoad() const { return m_totalPageAndResourceBytesToLoad; }
     long long totalBytesReceived() const { return m_totalBytesReceived; }
 
+    bool isLoadProgressing() const;
+
 private:
     ProgressTracker();
 
     void reset();
     void finalProgressComplete();
+
+    void progressHeartbeatTimerFired(Timer<ProgressTracker>*);
     
     static unsigned long s_uniqueIdentifier;
     
@@ -78,6 +83,10 @@ private:
     
     int m_numProgressTrackedFrames;
     HashMap<unsigned long, OwnPtr<ProgressItem> > m_progressItems;
+
+    Timer<ProgressTracker> m_progressHeartbeatTimer;
+    unsigned m_heartbeatsWithNoProgress;
+    long long m_totalBytesReceivedBeforePreviousHeartbeat;
 };
     
 }

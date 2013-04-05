@@ -2258,6 +2258,10 @@ void FrameView::resetDeferredRepaintDelay()
         if (!m_deferringRepaints)
             doDeferredRepaints();
     }
+#if USE(ACCELERATED_COMPOSITING)
+    if (RenderView* view = renderView())
+        view->compositor()->disableLayerFlushThrottlingTemporarilyForInteraction();
+#endif
 }
 
 double FrameView::adjustedDeferredRepaintDelay() const
@@ -2283,6 +2287,16 @@ void FrameView::endDisableRepaints()
 {
     ASSERT(m_disableRepaints > 0);
     m_disableRepaints--;
+}
+
+void FrameView::updateLayerFlushThrottling(bool isLoadProgressing)
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (RenderView* view = renderView())
+        view->compositor()->setLayerFlushThrottlingEnabled(isLoadProgressing);
+#else
+    UNUSED_PARAM(isLoadProgressing);
+#endif
 }
 
 void FrameView::layoutTimerFired(Timer<FrameView>*)
