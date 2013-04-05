@@ -46,11 +46,6 @@ public:
     WebCore::Frame* frame() const { return m_frame; }
     bool isMainFrame() const { return m_frame == m_webPage->d->m_mainFrame; }
 
-    WebCore::IntPoint absoluteLocation() const;
-    WebCore::IntPoint transformedAbsoluteLocation() const;
-    WebCore::IntRect absoluteRect() const;
-    WebCore::IntRect transformedAbsoluteRect() const;
-
     // scroll position returned is in transformed coordinates
     WebCore::IntPoint scrollPosition() const;
     WebCore::IntPoint maximumScrollPosition() const;
@@ -67,24 +62,8 @@ public:
     WebCore::IntSize transformedViewportSize() const;
 
     WebCore::IntRect visibleContentsRect() const;
-    WebCore::IntRect transformedVisibleContentsRect() const;
 
     WebCore::IntSize contentsSize() const;
-    WebCore::IntSize transformedContentsSize() const;
-
-    /* Generic conversions of points, rects, relative to and from contents and viewport*/
-    WebCore::IntPoint mapFromContentsToViewport(const WebCore::IntPoint&) const;
-    WebCore::IntPoint mapFromViewportToContents(const WebCore::IntPoint&) const;
-    WebCore::IntRect mapFromContentsToViewport(const WebCore::IntRect&) const;
-    WebCore::IntRect mapFromViewportToContents(const WebCore::IntRect&) const;
-
-    /* Generic conversions of points, rects, relative to and from transformed contents and transformed viewport*/
-    WebCore::IntPoint mapFromTransformedContentsToTransformedViewport(const WebCore::IntPoint&) const;
-    WebCore::IntPoint mapFromTransformedViewportToTransformedContents(const WebCore::IntPoint&) const;
-    WebCore::IntRect mapFromTransformedContentsToTransformedViewport(const WebCore::IntRect&) const;
-    WebCore::IntRect mapFromTransformedViewportToTransformedContents(const WebCore::IntRect&) const;
-
-    void clipToTransformedContentsRect(WebCore::IntRect&) const;
 
     bool isLoading() const;
     WebPagePrivate::LoadState loadState() const;

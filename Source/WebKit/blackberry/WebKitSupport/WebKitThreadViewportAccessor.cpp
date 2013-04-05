@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2012, 2013 Research In Motion Limited. All rights reserved.
  */
 
 #include "config.h"
@@ -27,7 +27,17 @@ IntSize WebKitThreadViewportAccessor::pixelContentsSize() const
 {
     ASSERT(Platform::webKitThreadMessageClient()->isCurrentThread());
 
-    return m_webPagePrivate->transformedContentsSize();
+    double scaleFactor = scale();
+
+    if (scaleFactor != 1.0) {
+        // Round down to avoid showing partially rendered pixels.
+        IntSize size = documentContentsSize();
+        return IntSize(
+            floorf(size.width() * scaleFactor),
+            floorf(size.height() * scaleFactor));
+    }
+
+    return documentContentsSize();
 }
 
 IntSize WebKitThreadViewportAccessor::documentContentsSize() const
@@ -41,7 +51,7 @@ IntPoint WebKitThreadViewportAccessor::pixelScrollPosition() const
 {
     ASSERT(Platform::webKitThreadMessageClient()->isCurrentThread());
 
-    return m_webPagePrivate->transformedScrollPosition();
+    return roundToPixelFromDocumentContents(documentScrollPosition());
 }
 
 IntPoint WebKitThreadViewportAccessor::documentScrollPosition() const
@@ -62,7 +72,7 @@ IntSize WebKitThreadViewportAccessor::documentViewportSize() const
 {
     ASSERT(Platform::webKitThreadMessageClient()->isCurrentThread());
 
-    return m_webPagePrivate->actualVisibleSize();
+    return roundToDocumentFromPixelContents(pixelViewportRect()).size();
 }
 
 IntPoint WebKitThreadViewportAccessor::destinationSurfaceOffset() const

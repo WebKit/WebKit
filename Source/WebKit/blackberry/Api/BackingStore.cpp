@@ -436,16 +436,12 @@ void BackingStorePrivate::repaint(const Platform::IntRect& windowRect,
      // Now this method will be called from WebPagePrivate::repaint().
 
     if (contentChanged && !windowRect.isEmpty()) {
-        // This windowRect is in untransformed coordinates relative to the viewport, but
-        // it needs to be transformed coordinates relative to the transformed contents.
-        Platform::IntRect rect = m_webPage->d->mapToTransformed(m_client->mapFromViewportToContents(windowRect));
-        rect.inflate(1 /*dx*/, 1 /*dy*/); // Account for anti-aliasing of previous rendering runs.
+        // This windowRect is in document coordinates relative to the viewport,
+        // but we need it in pixel contents coordinates.
+        const Platform::ViewportAccessor* viewportAccessor = m_webPage->webkitThreadViewportAccessor();
+        Platform::IntRect rect = viewportAccessor->roundToPixelFromDocumentContents(viewportAccessor->documentContentsFromViewport(windowRect));
+        rect.intersect(viewportAccessor->pixelContentsRect());
 
-        // FIXME: This should not explicitely depend on WebCore::.
-        WebCore::IntRect tmpRect = rect;
-        m_client->clipToTransformedContentsRect(tmpRect);
-
-        rect = tmpRect;
         if (rect.isEmpty())
             return;
 
@@ -475,9 +471,10 @@ void BackingStorePrivate::slowScroll(const Platform::IntSize& delta, const Platf
 
     scrollingStartedHelper(delta);
 
-    // This windowRect is in untransformed coordinates relative to the viewport, but
-    // it needs to be transformed coordinates relative to the transformed contents.
-    Platform::IntRect rect = m_webPage->d->mapToTransformed(m_client->mapFromViewportToContents(windowRect));
+    // This windowRect is in document coordinates relative to the viewport,
+    // but we need it in pixel contents coordinates.
+    const Platform::ViewportAccessor* viewportAccessor = m_webPage->webkitThreadViewportAccessor();
+    const Platform::IntRect rect = viewportAccessor->roundToPixelFromDocumentContents(viewportAccessor->documentContentsFromViewport(windowRect));
 
     if (immediate)
         renderAndBlitImmediately(rect);
@@ -594,13 +591,16 @@ Platform::IntRect BackingStorePrivate::expandedContentsRect() const
 
 Platform::IntRect BackingStorePrivate::visibleContentsRect() const
 {
-    return intersection(m_client->transformedVisibleContentsRect(),
-                        Platform::IntRect(Platform::IntPoint(0, 0), m_client->transformedContentsSize()));
+    const Platform::ViewportAccessor* viewportAccessor = m_webPage->webkitThreadViewportAccessor();
+    Platform::IntRect rect = viewportAccessor->pixelViewportRect();
+    rect.intersect(viewportAccessor->pixelContentsRect());
+    return rect;
 }
 
 Platform::IntRect BackingStorePrivate::unclippedVisibleContentsRect() const
 {
-    return m_client->transformedVisibleContentsRect();
+    const Platform::ViewportAccessor* viewportAccessor = m_webPage->webkitThreadViewportAccessor();
+    return viewportAccessor->pixelViewportRect();
 }
 
 bool BackingStorePrivate::shouldMoveLeft(const Platform::IntRect& backingStoreRect) const
@@ -1241,7 +1241,9 @@ void BackingStorePrivate::blitVisibleContents(bool force)
         TileMap currentMap = geometry->tileMap();
         double currentScale = geometry->scale();
 
-        const Platform::IntRect transformedContentsRect = Platform::IntRect(Platform::IntPoint(0, 0), m_client->transformedContentsSize());
+        const Platform::IntRect transformedContentsRect = currentScale == viewportAccessor->scale()
+            ? viewportAccessor->pixelContentsRect()
+            : viewportAccessor->roundFromDocumentContents(viewportAccessor->documentContentsRect(), currentScale);
 
         // For blitting backingstore tiles, we need the srcRect to be specified
         // in backingstore tile pixel coordinates. If our viewport accessor is
@@ -1801,7 +1803,8 @@ int BackingStorePrivate::minimumNumberOfTilesHigh() const
 
 Platform::IntSize BackingStorePrivate::expandedContentsSize() const
 {
-    return m_client->transformedContentsSize().expandedTo(m_client->transformedViewportSize());
+    const Platform::ViewportAccessor* viewportAccessor = m_webPage->webkitThreadViewportAccessor();
+    return m_client->transformedViewportSize().expandedTo(viewportAccessor->pixelContentsSize());
 }
 
 int BackingStorePrivate::tileWidth()

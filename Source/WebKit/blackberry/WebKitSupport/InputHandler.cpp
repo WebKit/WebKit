@@ -62,6 +62,7 @@
 #include "TextIterator.h"
 #include "VisiblePosition.h"
 #include "VisibleUnits.h"
+#include "WebKitThreadViewportAccessor.h"
 #include "WebPageClient.h"
 #include "WebPage_p.h"
 #include "WebSettings.h"
@@ -73,6 +74,7 @@
 #include <BlackBerryPlatformLog.h>
 #include <BlackBerryPlatformScreen.h>
 #include <BlackBerryPlatformSettings.h>
+#include <cmath>
 #include <sys/keycodes.h>
 #include <wtf/text/CString.h>
 
@@ -1367,7 +1369,8 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
             // Convert the padding back from transformed to ensure a consistent padding regardless of
             // zoom level as controls do not zoom.
             static const int s_focusRectPaddingSize = Graphics::Screen::primaryScreen()->heightInMMToPixels(3);
-            selectionFocusRect.inflate(m_webPage->mapFromTransformed(WebCore::IntSize(0, s_focusRectPaddingSize)).height());
+            const Platform::ViewportAccessor* viewportAccessor = m_webPage->m_webkitThreadViewportAccessor;
+            selectionFocusRect.inflate(std::ceilf(viewportAccessor->documentFromPixelContents(Platform::FloatSize(0, s_focusRectPaddingSize)).height()));
 
             WebCore::IntRect revealRect(layer->getRectToExpose(actualScreenRect, selectionFocusRect,
                                                                  horizontalScrollAlignment,

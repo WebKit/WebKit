@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,10 @@
 #include "RenderLayerCompositor.h"
 #include "RenderObject.h"
 #include "RenderView.h"
+#include "WebKitThreadViewportAccessor.h"
 #include "WebPage_p.h"
+
+#include <BlackBerryPlatformViewportAccessor.h>
 
 using namespace WebCore;
 
@@ -79,9 +82,10 @@ InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLa
         Frame* frame = view->frame();
         ASSERT_UNUSED(frame, frame);
 
-        m_scrollPosition = m_webPage->mapToTransformed(view->scrollPosition());
-        m_contentsSize = m_webPage->mapToTransformed(view->contentsSize());
-        m_viewportSize = m_webPage->mapToTransformed(view->visibleContentRect(ScrollableArea::ExcludeScrollbars)).size();
+        const Platform::ViewportAccessor* viewportAccessor = m_webPage->m_webkitThreadViewportAccessor;
+        m_scrollPosition = viewportAccessor->roundToPixelFromDocumentContents(WebCore::FloatPoint(view->scrollPosition()));
+        m_contentsSize = viewportAccessor->roundToPixelFromDocumentContents(Platform::FloatRect(Platform::FloatPoint::zero(), WebCore::FloatSize(view->contentsSize()))).size();
+        m_viewportSize = viewportAccessor->roundToPixelFromDocumentContents(WebCore::FloatRect(view->visibleContentRect(ScrollableArea::ExcludeScrollbars))).size();
         m_documentViewportRect = view->frameRect();
 
         m_scrollsHorizontally = view->contentsWidth() > view->visibleWidth();
@@ -102,10 +106,12 @@ InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLa
         ASSERT(box);
         ASSERT(InRegionScrollerPrivate::canScrollRenderBox(box));
 
+        const Platform::ViewportAccessor* viewportAccessor = m_webPage->m_webkitThreadViewportAccessor;
         ScrollableArea* scrollableArea = static_cast<ScrollableArea*>(m_layer);
-        m_scrollPosition = m_webPage->mapToTransformed(scrollableArea->scrollPosition());
-        m_contentsSize = m_webPage->mapToTransformed(scrollableArea->contentsSize());
-        m_viewportSize = m_webPage->mapToTransformed(scrollableArea->visibleContentRect(ScrollableArea::ExcludeScrollbars)).size();
+
+        m_scrollPosition = viewportAccessor->roundToPixelFromDocumentContents(WebCore::FloatPoint(scrollableArea->scrollPosition()));
+        m_contentsSize = viewportAccessor->roundToPixelFromDocumentContents(Platform::FloatRect(Platform::FloatPoint::zero(), WebCore::FloatSize(scrollableArea->contentsSize()))).size();
+        m_viewportSize = viewportAccessor->roundToPixelFromDocumentContents(WebCore::FloatRect(scrollableArea->visibleContentRect(ScrollableArea::ExcludeScrollbars))).size();
         m_documentViewportRect = enclosingIntRect(box->absoluteClippedOverflowRect());
 
         m_scrollsHorizontally = box->scrollWidth() != box->clientWidth();

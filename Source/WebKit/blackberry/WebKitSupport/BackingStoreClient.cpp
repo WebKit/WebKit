@@ -30,6 +30,8 @@
 #include "RenderBox.h"
 #include "WebPage_p.h"
 
+#include <BlackBerryPlatformViewportAccessor.h>
+
 // FIXME: Leaving the below lines commented out as a reference for us to soon be sure if we need these
 // methods and class variables be moved from WebPage to BackingStoreClient.
 // Notification methods that deliver changes to the real geometry of the device as specified above.
@@ -73,41 +75,6 @@ BackingStoreClient::~BackingStoreClient()
     m_frame = 0;
 }
 
-IntRect BackingStoreClient::absoluteRect() const
-{
-    IntRect rect = IntRect(IntPoint::zero(), viewportSize());
-
-    // FIXME: Speed it up!
-    Frame* frame = m_frame;
-    while (frame) {
-        if (Element* element = frame->ownerElement()) {
-            do {
-                rect.move(element->offsetLeft(), element->offsetTop());
-            } while ((element = element->offsetParent()));
-        }
-
-        if ((frame = frame->tree()->parent()))
-            rect.move((-frame->view()->scrollOffset()));
-    }
-
-    return rect;
-}
-
-IntRect BackingStoreClient::transformedAbsoluteRect() const
-{
-    return m_webPage->d->mapToTransformed(absoluteRect());
-}
-
-IntPoint BackingStoreClient::absoluteLocation() const
-{
-    return absoluteRect().location();
-}
-
-IntPoint BackingStoreClient::transformedAbsoluteLocation() const
-{
-    return m_webPage->d->mapToTransformed(transformedAbsoluteRect()).location();
-}
-
 IntPoint BackingStoreClient::scrollPosition() const
 {
     ASSERT(m_frame);
@@ -119,7 +86,7 @@ IntPoint BackingStoreClient::scrollPosition() const
 
 IntPoint BackingStoreClient::transformedScrollPosition() const
 {
-    return m_webPage->d->mapToTransformed(scrollPosition());
+    return m_webPage->webkitThreadViewportAccessor()->pixelScrollPosition();
 }
 
 void BackingStoreClient::setScrollPosition(const IntPoint& pos)
@@ -154,18 +121,18 @@ IntPoint BackingStoreClient::maximumScrollPosition() const
 
 IntPoint BackingStoreClient::transformedMaximumScrollPosition() const
 {
-    return m_webPage->d->mapToTransformed(maximumScrollPosition());
+    return m_webPage->webkitThreadViewportAccessor()->roundToPixelFromDocumentContents(WebCore::FloatPoint(maximumScrollPosition()));
 }
 
 IntSize BackingStoreClient::actualVisibleSize() const
 {
-    return m_webPage->d->mapFromTransformed(transformedActualVisibleSize());
+    return m_webPage->webkitThreadViewportAccessor()->documentViewportSize();
 }
 
 IntSize BackingStoreClient::transformedActualVisibleSize() const
 {
     ASSERT(isMainFrame());
-    return m_webPage->d->transformedActualVisibleSize();
+    return m_webPage->webkitThreadViewportAccessor()->pixelViewportSize();
 }
 
 IntSize BackingStoreClient::viewportSize() const
@@ -199,19 +166,6 @@ IntRect BackingStoreClient::visibleContentsRect() const
     return visibleContentRect;
 }
 
-IntRect BackingStoreClient::transformedVisibleContentsRect() const
-{
-    // Usually this would be mapToTransformed(visibleContentsRect()), but
-    // that results in rounding errors because we already set the WebCore
-    // viewport size from our original transformedViewportSize().
-    // Instead, we only transform the scroll position and take the
-    // viewport size as it is, which ensures that e.g. blitting operations
-    // always cover the whole widget/screen.
-    IntRect visibleContentsRect = IntRect(transformedScrollPosition(), transformedViewportSize());
-    ASSERT(isMainFrame());
-    return visibleContentsRect;
-}
-
 IntSize BackingStoreClient::contentsSize() const
 {
     ASSERT(m_frame);
@@ -219,70 +173,6 @@ IntSize BackingStoreClient::contentsSize() const
         return IntSize();
 
     return m_frame->view()->contentsSize();
-}
-
-IntSize BackingStoreClient::transformedContentsSize() const
-{
-    // mapToTransformed() functions use this method to crop their results,
-    // so we can't make use of them here. While we want rounding inside page
-    // boundaries to extend rectangles and round points, we need to crop the
-    // contents size to the floored values so that we don't try to display
-    // or report points that are not fully covered by the actual float-point
-    // contents rectangle.
-    const IntSize untransformedContentsSize = contentsSize();
-    const FloatPoint transformedBottomRight = m_webPage->d->m_transformationMatrix->mapPoint(
-        FloatPoint(untransformedContentsSize.width(), untransformedContentsSize.height()));
-    return IntSize(floorf(transformedBottomRight.x()), floorf(transformedBottomRight.y()));
-}
-
-void BackingStoreClient::clipToTransformedContentsRect(IntRect& rect) const
-{
-    // FIXME: Needs to proper translate coordinates here?
-    rect.intersect(IntRect(IntPoint::zero(), transformedContentsSize()));
-}
-
-IntPoint BackingStoreClient::mapFromContentsToViewport(const IntPoint& point) const
-{
-    const IntPoint scrollPosition = this->scrollPosition();
-    return IntPoint(point.x() - scrollPosition.x(), point.y() - scrollPosition.y());
-}
-
-IntPoint BackingStoreClient::mapFromViewportToContents(const IntPoint& point) const
-{
-    const IntPoint scrollPosition = this->scrollPosition();
-    return IntPoint(point.x() + scrollPosition.x(), point.y() + scrollPosition.y());
-}
-
-IntRect BackingStoreClient::mapFromContentsToViewport(const IntRect& rect) const
-{
-    return IntRect(mapFromContentsToViewport(rect.location()), rect.size());
-}
-
-IntRect BackingStoreClient::mapFromViewportToContents(const IntRect& rect) const
-{
-    return IntRect(mapFromViewportToContents(rect.location()), rect.size());
-}
-
-IntPoint BackingStoreClient::mapFromTransformedContentsToTransformedViewport(const IntPoint& point) const
-{
-    const IntPoint scrollPosition = transformedScrollPosition();
-    return IntPoint(point.x() - scrollPosition.x(), point.y() - scrollPosition.y());
-}
-
-IntPoint BackingStoreClient::mapFromTransformedViewportToTransformedContents(const IntPoint& point) const
-{
-    const IntPoint scrollPosition = transformedScrollPosition();
-    return IntPoint(point.x() + scrollPosition.x(), point.y() + scrollPosition.y());
-}
-
-IntRect BackingStoreClient::mapFromTransformedContentsToTransformedViewport(const IntRect& rect) const
-{
-    return IntRect(mapFromTransformedContentsToTransformedViewport(rect.location()), rect.size());
-}
-
-IntRect BackingStoreClient::mapFromTransformedViewportToTransformedContents(const IntRect& rect) const
-{
-    return IntRect(mapFromTransformedViewportToTransformedContents(rect.location()), rect.size());
 }
 
 WebPagePrivate::LoadState BackingStoreClient::loadState() const

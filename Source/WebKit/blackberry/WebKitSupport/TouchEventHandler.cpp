@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -44,9 +44,11 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "SelectionHandler.h"
+#include "WebKitThreadViewportAccessor.h"
 #include "WebPage_p.h"
 #include "WebTapHighlight.h"
 
+#include <BlackBerryPlatformViewportAccessor.h>
 #include <wtf/MathExtras.h>
 
 using namespace WebCore;
@@ -89,7 +91,11 @@ void TouchEventHandler::sendClickAtFatFingersPoint(unsigned modifiers)
     bool ctrlActive = modifiers & KEYMOD_CTRL;
 
     handleFatFingerPressed(shiftActive, altActive, ctrlActive);
-    PlatformMouseEvent mouseRelease(m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition()), m_lastScreenPoint, PlatformEvent::MouseReleased, 1, LeftButton, shiftActive, ctrlActive, altActive, TouchScreen);
+
+    const Platform::ViewportAccessor* viewportAccessor = m_webPage->m_webkitThreadViewportAccessor;
+    IntPoint documentViewportAdjustedPosition = viewportAccessor->documentViewportFromContents(m_lastFatFingersResult.adjustedPosition());
+    PlatformMouseEvent mouseRelease(documentViewportAdjustedPosition, m_lastScreenPoint, PlatformEvent::MouseReleased, 1, LeftButton, shiftActive, ctrlActive, altActive, TouchScreen);
+
     m_webPage->handleMouseEvent(mouseRelease);
 }
 
@@ -138,13 +144,15 @@ void TouchEventHandler::handleTouchPoint(const Platform::TouchPoint& point, unsi
             m_webPage->m_tapHighlight->hide();
             m_webPage->m_selectionHighlight->hide();
 
-            IntPoint adjustedPoint = m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition());
-            PlatformMouseEvent mouseEvent(adjustedPoint, m_lastScreenPoint, PlatformEvent::MouseReleased, 1, LeftButton, shiftActive, ctrlActive, altActive, TouchScreen);
+            const Platform::ViewportAccessor* viewportAccessor = m_webPage->m_webkitThreadViewportAccessor;
+            IntPoint documentViewportAdjustedPosition = viewportAccessor->documentViewportFromContents(m_lastFatFingersResult.adjustedPosition());
+            PlatformMouseEvent mouseEvent(documentViewportAdjustedPosition, m_lastScreenPoint, PlatformEvent::MouseReleased, 1, LeftButton, shiftActive, ctrlActive, altActive, TouchScreen);
 
             m_webPage->handleMouseEvent(mouseEvent);
 
             if (m_shouldRequestSpellCheckOptions) {
-                IntPoint pixelPositionRelativeToViewport = m_webPage->mapToTransformed(adjustedPoint);
+                IntPoint pixelPositionRelativeToViewport = viewportAccessor->pixelViewportFromContents(
+                    viewportAccessor->roundToPixelFromDocumentContents(WebCore::FloatPoint(m_lastFatFingersResult.adjustedPosition())));
                 IntSize screenOffset(m_lastScreenPoint - pixelPositionRelativeToViewport);
                 m_webPage->m_inputHandler->requestSpellingCheckingOptions(m_spellCheckOptionRequest, screenOffset);
                 m_shouldRequestSpellCheckOptions = false;
@@ -171,12 +179,15 @@ void TouchEventHandler::handleTouchPoint(const Platform::TouchPoint& point, unsi
 
 void TouchEventHandler::handleFatFingerPressed(bool shiftActive, bool altActive, bool ctrlActive)
 {
+    const Platform::ViewportAccessor* viewportAccessor = m_webPage->m_webkitThreadViewportAccessor;
+    IntPoint documentViewportAdjustedPosition = viewportAccessor->documentViewportFromContents(m_lastFatFingersResult.adjustedPosition());
+
     // First update the mouse position with a MouseMoved event.
-    PlatformMouseEvent mouseMoveEvent(m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition()), m_lastScreenPoint, PlatformEvent::MouseMoved, 0, LeftButton, shiftActive, ctrlActive, altActive, TouchScreen);
+    PlatformMouseEvent mouseMoveEvent(documentViewportAdjustedPosition, m_lastScreenPoint, PlatformEvent::MouseMoved, 0, LeftButton, shiftActive, ctrlActive, altActive, TouchScreen);
     m_webPage->handleMouseEvent(mouseMoveEvent);
 
     // Then send the MousePressed event.
-    PlatformMouseEvent mousePressedEvent(m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition()), m_lastScreenPoint, PlatformEvent::MousePressed, 1, LeftButton, shiftActive, ctrlActive, altActive, TouchScreen);
+    PlatformMouseEvent mousePressedEvent(documentViewportAdjustedPosition, m_lastScreenPoint, PlatformEvent::MousePressed, 1, LeftButton, shiftActive, ctrlActive, altActive, TouchScreen);
     m_webPage->handleMouseEvent(mousePressedEvent);
 }
 

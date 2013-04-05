@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,6 +41,7 @@
 #include "RenderView.h"
 #include "Text.h"
 #include "TextBreakIterator.h"
+#include "WebKitThreadViewportAccessor.h"
 #include "WebPage_p.h"
 
 #if DEBUG_FAT_FINGERS
@@ -65,8 +66,10 @@ IntPoint FatFingers::m_debugFatFingerAdjustedPosition;
 
 IntRect FatFingers::fingerRectForPoint(const IntPoint& point) const
 {
+    const Platform::ViewportAccessor* viewportAccessor = m_webPage->m_webkitThreadViewportAccessor;
+
     unsigned topPadding, rightPadding, bottomPadding, leftPadding;
-    IntPoint contentViewportPos = m_webPage->mapFromContentsToViewport(point);
+    IntPoint contentViewportPos = viewportAccessor->documentViewportFromContents(point);
     getAdjustedPaddings(contentViewportPos, topPadding, rightPadding, bottomPadding, leftPadding);
 
     return HitTestLocation::rectForPoint(point, topPadding, rightPadding, bottomPadding, leftPadding);
@@ -137,9 +140,11 @@ FatFingers::FatFingers(WebPagePrivate* webPage, const WebCore::IntPoint& content
     ASSERT(webPage);
 
 #if DEBUG_FAT_FINGERS
+    const Platform::ViewportAccessor* viewportAccessor = m_webPage->m_webkitThreadViewportAccessor;
+
     m_debugFatFingerRect = IntRect(0, 0, 0, 0);
-    m_debugFatFingerClickPosition = m_webPage->mapToTransformed(m_webPage->mapFromContentsToViewport(contentPos));
-    m_debugFatFingerAdjustedPosition = m_webPage->mapToTransformed(m_webPage->mapFromContentsToViewport(contentPos));
+    m_debugFatFingerClickPosition = viewportAccessor->pixelViewportFromContents(viewportAccessor->roundToPixelFromDocumentContents(WebCore::FloatPoint(contentPos)));
+    m_debugFatFingerAdjustedPosition = m_debugFatFingerClickPosition;
 #endif
 }
 
@@ -225,7 +230,10 @@ const FatFingersResult FatFingers::findBestPoint()
         return result;
 
 #if DEBUG_FAT_FINGERS
-    m_debugFatFingerAdjustedPosition = m_webPage->mapToTransformed(m_webPage->mapFromContentsToViewport(largestIntersectionRegion.rects()[0].center()));
+    const Platform::ViewportAccessor* viewportAccessor = m_webPage->m_webkitThreadViewportAccessor;
+
+    m_debugFatFingerAdjustedPosition = viewportAccessor->pixelViewportFromContents(
+        viewportAccessor->roundToPixelFromDocumentContents(largestIntersectionRegion.rects()[0].center()));
 #endif
 
     setSuccessfulFatFingersResult(result, bestNode, largestIntersectionRegion.rects()[0].center() /*adjustedPosition*/);
@@ -292,13 +300,15 @@ bool FatFingers::findIntersectingRegions(Document* document, Vector<Intersecting
     frameContentPos = Platform::pointClampedToRect(frameContentPos, viewportRect);
 
 #if DEBUG_FAT_FINGERS
-    IntRect fingerRect(fingerRectForPoint(frameContentPos));
-    Platform::IntRect screenFingerRect = m_webPage->mapToTransformed(fingerRect);
+    const Platform::ViewportAccessor* viewportAccessor = m_webPage->m_webkitThreadViewportAccessor;
+
+    Platform::IntRect fingerRect(fingerRectForPoint(frameContentPos));
+    Platform::IntRect screenFingerRect = viewportAccessor->roundToPixelFromDocumentContents(fingerRect);
     Platform::logAlways(Platform::LogLevelInfo, "fat finger rect now %s", screenFingerRect.toString().c_str());
 
     // only record the first finger rect
     if (document == m_webPage->m_mainFrame->document())
-        m_debugFatFingerRect = m_webPage->mapToTransformed(m_webPage->mapFromContentsToViewport(fingerRect));
+        m_debugFatFingerRect = viewportAccessor->pixelViewportFromContents(screenFingerRect);
 #endif
 
     bool foundOne = false;
@@ -459,8 +469,10 @@ void FatFingers::getAdjustedPaddings(const IntPoint& contentViewportPos, unsigne
 
 void FatFingers::getNodesFromRect(Document* document, const IntPoint& contentPos, ListHashSet<RefPtr<Node> >& intersectedNodes)
 {
+    const Platform::ViewportAccessor* viewportAccessor = m_webPage->m_webkitThreadViewportAccessor;
+
     unsigned topPadding, rightPadding, bottomPadding, leftPadding;
-    IntPoint contentViewportPos = m_webPage->mapFromContentsToViewport(m_contentPos);
+    IntPoint contentViewportPos = viewportAccessor->documentViewportFromContents(m_contentPos);
     // Do not allow fat fingers detect anything not visible(ie outside of the viewport)
     getAdjustedPaddings(contentViewportPos, topPadding, rightPadding, bottomPadding, leftPadding);
 

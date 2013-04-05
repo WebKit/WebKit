@@ -1,3 +1,72 @@
+2013-04-05  Jakob Petsovits  <jpetsovits@blackberry.com>
+
+        [BlackBerry] Replace map{From,To}Transformed() with ViewportAccessor
+        https://bugs.webkit.org/show_bug.cgi?id=113449
+
+        Reviewed by Rob Buis.
+
+        This removes the WebPage/BackingStoreClient family of coordinate
+        transformation functions, which were widely disliked for their
+        naming, with ViewportAccessor API that had previously been
+        introduced for limited use cases. This commit takes care of the
+        remaining call sites and leaves us with a single API to use.
+
+        No new tests, only a clean-up/refactor of existing code & functionality.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::repaint):
+        (BlackBerry::WebKit::BackingStorePrivate::slowScroll):
+        (BlackBerry::WebKit::BackingStorePrivate::visibleContentsRect):
+        (BlackBerry::WebKit::BackingStorePrivate::unclippedVisibleContentsRect):
+        (BlackBerry::WebKit::BackingStorePrivate::blitVisibleContents):
+        (BlackBerry::WebKit::BackingStorePrivate::expandedContentsSize):
+        * Api/InRegionScroller.cpp:
+        (BlackBerry::WebKit::InRegionScrollerPrivate::clipToRect):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        (BlackBerry::WebKit::WebPagePrivate::scrollPosition):
+        (BlackBerry::WebKit::WebPagePrivate::maximumScrollPosition):
+        (BlackBerry::WebKit::WebPagePrivate::setScrollPosition):
+        (BlackBerry::WebKit::WebPagePrivate::viewportSize):
+        (BlackBerry::WebKit::WebPagePrivate::actualVisibleSize):
+        (BlackBerry::WebKit::WebPagePrivate::layoutFinished):
+        (BlackBerry::WebKit::WebPagePrivate::notifyTransformedContentsSizeChanged):
+        (BlackBerry::WebKit::WebPagePrivate::updateCursor):
+        (BlackBerry::WebKit::WebPagePrivate::focusNodeRect):
+        (BlackBerry::WebKit::WebPagePrivate::contextNode):
+        (BlackBerry::WebKit::WebPagePrivate::blockZoomRectForNode):
+        (BlackBerry::WebKit::WebPagePrivate::zoomAnimationFinished):
+        (BlackBerry::WebKit::WebPagePrivate::handleMouseEvent):
+        (BlackBerry::WebKit::WebPage::blockZoom):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebKitSupport/BackingStoreClient.cpp:
+        (BlackBerry::WebKit::BackingStoreClient::transformedScrollPosition):
+        (BlackBerry::WebKit::BackingStoreClient::transformedMaximumScrollPosition):
+        (BlackBerry::WebKit::BackingStoreClient::actualVisibleSize):
+        (BlackBerry::WebKit::BackingStoreClient::transformedActualVisibleSize):
+        * WebKitSupport/BackingStoreClient.h:
+        (BackingStoreClient):
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::fingerRectForPoint):
+        (BlackBerry::WebKit::FatFingers::FatFingers):
+        (BlackBerry::WebKit::FatFingers::findBestPoint):
+        (BlackBerry::WebKit::FatFingers::findIntersectingRegions):
+        (BlackBerry::WebKit::FatFingers::getNodesFromRect):
+        * WebKitSupport/InRegionScrollableArea.cpp:
+        (BlackBerry::WebKit::InRegionScrollableArea::InRegionScrollableArea):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::ensureFocusTextElementVisible):
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::sendClickAtFatFingersPoint):
+        (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
+        (BlackBerry::WebKit::TouchEventHandler::handleFatFingerPressed):
+        * WebKitSupport/WebKitThreadViewportAccessor.cpp:
+        (BlackBerry::WebKit::WebKitThreadViewportAccessor::pixelContentsSize):
+        (BlackBerry::WebKit::WebKitThreadViewportAccessor::pixelScrollPosition):
+        (BlackBerry::WebKit::WebKitThreadViewportAccessor::documentViewportSize):
+
 2013-04-05  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] Remove unused parameters from notifyAnimationStarted() and paintContents()

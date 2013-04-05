@@ -35,7 +35,10 @@
 #include "RenderObject.h"
 #include "RenderView.h"
 #include "SelectionHandler.h"
+#include "WebKitThreadViewportAccessor.h"
 #include "WebPage_p.h"
+
+#include <BlackBerryPlatformViewportAccessor.h>
 
 using namespace WebCore;
 
@@ -209,12 +212,14 @@ WebCore::IntRect InRegionScrollerPrivate::clipToRect(const WebCore::IntRect& cli
     if (!layer)
         return clippingRect;
 
+    const Platform::ViewportAccessor* viewportAccessor = m_webPage->m_webkitThreadViewportAccessor;
+
     if (layer->renderer()->isRenderView()) { // #document case
         FrameView* view = toRenderView(layer->renderer())->frameView();
         ASSERT(view);
         ASSERT(canScrollInnerFrame(view->frame()));
 
-        WebCore::IntRect frameWindowRect = m_webPage->mapToTransformed(m_webPage->getRecursiveVisibleWindowRect(view));
+        WebCore::IntRect frameWindowRect = viewportAccessor->roundToPixelFromDocumentContents(WebCore::FloatRect(m_webPage->getRecursiveVisibleWindowRect(view)));
         frameWindowRect.intersect(clippingRect);
         return frameWindowRect;
     }
@@ -226,7 +231,7 @@ WebCore::IntRect InRegionScrollerPrivate::clipToRect(const WebCore::IntRect& cli
     // We want the window rect in pixel viewport coordinates clipped to the clipping rect.
     WebCore::IntRect visibleWindowRect = enclosingIntRect(box->absoluteClippedOverflowRect());
     visibleWindowRect = box->frame()->view()->contentsToWindow(visibleWindowRect);
-    visibleWindowRect = m_webPage->mapToTransformed(visibleWindowRect);
+    visibleWindowRect = viewportAccessor->roundToPixelFromDocumentContents(WebCore::FloatRect(visibleWindowRect));
     visibleWindowRect.intersect(clippingRect);
     return visibleWindowRect;
 }

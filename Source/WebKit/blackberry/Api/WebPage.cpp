@@ -175,6 +175,7 @@
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSStringRef.h>
 #include <SharedPointer.h>
+#include <cmath>
 #include <sys/keycodes.h>
 #include <unicode/ustring.h> // platform ICU
 
@@ -387,7 +388,7 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_transformationMatrix(new TransformationMatrix())
     , m_backingStore(0) // Initialized by init.
     , m_backingStoreClient(0) // Initialized by init.
-    , m_webkitThreadViewportAccessor(0) // Initialized by init.
+    , m_webkitThreadViewportAccessor(new WebKitThreadViewportAccessor(this))
     , m_inPageSearchManager(new InPageSearchManager(this))
     , m_inputHandler(new InputHandler(this))
     , m_selectionHandler(new SelectionHandler(this))
@@ -628,8 +629,6 @@ void WebPagePrivate::init(const BlackBerry::Platform::String& pageGroupName)
     // The direct access to BackingStore is left here for convenience since it
     // is owned by BackingStoreClient and then deleted by its destructor.
     m_backingStore = m_backingStoreClient->backingStore();
-
-    m_webkitThreadViewportAccessor = new WebKitThreadViewportAccessor(this);
 
     blockClickRadius = int(roundf(0.35 * Platform::Graphics::Screen::primaryScreen()->pixelsPerInch(0).width())); // The clicked rectangle area should be a fixed unit of measurement.
 
@@ -1334,16 +1333,23 @@ void WebPagePrivate::requestLayoutIfNeeded() const
 
 IntPoint WebPagePrivate::scrollPosition() const
 {
+    if (!m_backingStoreClient)
+        return IntPoint();
+
     return m_backingStoreClient->scrollPosition();
 }
 
 IntPoint WebPagePrivate::maximumScrollPosition() const
 {
+    if (!m_backingStoreClient)
+        return IntPoint();
+
     return m_backingStoreClient->maximumScrollPosition();
 }
 
 void WebPagePrivate::setScrollPosition(const IntPoint& pos)
 {
+    ASSERT(m_backingStoreClient);
     m_backingStoreClient->setScrollPosition(pos);
 }
 
@@ -1448,12 +1454,12 @@ void WebPagePrivate::setHasInRegionScrollableAreas(bool b)
 
 IntSize WebPagePrivate::viewportSize() const
 {
-    return mapFromTransformed(transformedViewportSize());
+    return m_webkitThreadViewportAccessor->roundToDocumentFromPixelContents(Platform::IntRect(Platform::IntPoint::zero(), transformedViewportSize())).size();
 }
 
 IntSize WebPagePrivate::actualVisibleSize() const
 {
-    return mapFromTransformed(transformedActualVisibleSize());
+    return m_webkitThreadViewportAccessor->documentViewportSize();
 }
 
 bool WebPagePrivate::hasVirtualViewport() const
@@ -1612,11 +1618,11 @@ void WebPagePrivate::layoutFinished()
                 notifyTransformedScrollChanged();
             }
 
-            // If the content size is too small, zoom it to fit the viewport.
-            if ((loadState() == Finished || loadState() == Committed)
-                && (transformedContentsSize().width() < transformedActualVisibleSize().width() || transformedContentsSize().height() < transformedActualVisibleSize().height()))
-                    zoomAboutPoint(initialScale(), newScrollPosition);
+            const Platform::IntSize pixelContentsSize = m_webkitThreadViewportAccessor->pixelContentsSize();
 
+            // If the content size is too small, zoom it to fit the viewport.
+            if ((loadState() == Finished || loadState() == Committed) && (pixelContentsSize.width() < m_actualVisibleWidth || pixelContentsSize.height() < m_actualVisibleHeight))
+                zoomAboutPoint(initialScale(), newScrollPosition);
         }
     }
 }
@@ -1822,149 +1828,6 @@ IntSize WebPagePrivate::transformedViewportSize() const
     return BlackBerry::Platform::Settings::instance()->applicationSize();
 }
 
-IntRect WebPagePrivate::transformedVisibleContentsRect() const
-{
-    // Usually this would be mapToTransformed(visibleContentsRect()), but
-    // that results in rounding errors because we already set the WebCore
-    // viewport size from our original transformedViewportSize().
-    // Instead, we only transform the scroll position and take the
-    // viewport size as it is, which ensures that e.g. blitting operations
-    // always cover the whole widget/screen.
-    return IntRect(transformedScrollPosition(), transformedViewportSize());
-}
-
-IntSize WebPagePrivate::transformedContentsSize() const
-{
-    // mapToTransformed() functions use this method to crop their results,
-    // so we can't make use of them here. While we want rounding inside page
-    // boundaries to extend rectangles and round points, we need to crop the
-    // contents size to the floored values so that we don't try to display
-    // or report points that are not fully covered by the actual float-point
-    // contents rectangle.
-    const IntSize untransformedContentsSize = contentsSize();
-    const FloatPoint transformedBottomRight = m_transformationMatrix->mapPoint(
-        FloatPoint(untransformedContentsSize.width(), untransformedContentsSize.height()));
-    return IntSize(floorf(transformedBottomRight.x()), floorf(transformedBottomRight.y()));
-}
-
-IntPoint WebPagePrivate::mapFromContentsToViewport(const IntPoint& point) const
-{
-    return m_backingStoreClient->mapFromContentsToViewport(point);
-}
-
-IntPoint WebPagePrivate::mapFromViewportToContents(const IntPoint& point) const
-{
-    return m_backingStoreClient->mapFromViewportToContents(point);
-}
-
-IntRect WebPagePrivate::mapFromContentsToViewport(const IntRect& rect) const
-{
-    return m_backingStoreClient->mapFromContentsToViewport(rect);
-}
-
-IntRect WebPagePrivate::mapFromViewportToContents(const IntRect& rect) const
-{
-    return m_backingStoreClient->mapFromViewportToContents(rect);
-}
-
-IntPoint WebPagePrivate::mapFromTransformedContentsToTransformedViewport(const IntPoint& point) const
-{
-    return m_backingStoreClient->mapFromTransformedContentsToTransformedViewport(point);
-}
-
-IntPoint WebPagePrivate::mapFromTransformedViewportToTransformedContents(const IntPoint& point) const
-{
-    return m_backingStoreClient->mapFromTransformedViewportToTransformedContents(point);
-}
-
-IntRect WebPagePrivate::mapFromTransformedContentsToTransformedViewport(const IntRect& rect) const
-{
-    return m_backingStoreClient->mapFromTransformedContentsToTransformedViewport(rect);
-}
-
-IntRect WebPagePrivate::mapFromTransformedViewportToTransformedContents(const IntRect& rect) const
-{
-    return m_backingStoreClient->mapFromTransformedViewportToTransformedContents(rect);
-}
-
-// NOTE: PIXEL ROUNDING!
-// Accurate back-and-forth rounding is not possible with information loss
-// by integer points and sizes, so we always expand the resulting mapped
-// float rectangles to the nearest integer. For points, we always use
-// floor-rounding in mapToTransformed() so that we don't have to crop to
-// the (floor'd) transformed contents size.
-static inline IntPoint roundTransformedPoint(const FloatPoint &point)
-{
-    // Maps by rounding half towards zero.
-    return IntPoint(static_cast<int>(floorf(point.x())), static_cast<int>(floorf(point.y())));
-}
-
-static inline IntPoint roundUntransformedPoint(const FloatPoint &point)
-{
-    // Maps by rounding half away from zero.
-    return IntPoint(static_cast<int>(ceilf(point.x())), static_cast<int>(ceilf(point.y())));
-}
-
-IntPoint WebPagePrivate::mapToTransformed(const IntPoint& point) const
-{
-    return roundTransformedPoint(m_transformationMatrix->mapPoint(FloatPoint(point)));
-}
-
-FloatPoint WebPagePrivate::mapToTransformedFloatPoint(const FloatPoint& point) const
-{
-    return m_transformationMatrix->mapPoint(point);
-}
-
-IntPoint WebPagePrivate::mapFromTransformed(const IntPoint& point) const
-{
-    return roundUntransformedPoint(m_transformationMatrix->inverse().mapPoint(FloatPoint(point)));
-}
-
-FloatPoint WebPagePrivate::mapFromTransformedFloatPoint(const FloatPoint& point) const
-{
-    return m_transformationMatrix->inverse().mapPoint(point);
-}
-
-FloatRect WebPagePrivate::mapFromTransformedFloatRect(const FloatRect& rect) const
-{
-    return m_transformationMatrix->inverse().mapRect(rect);
-}
-
-IntSize WebPagePrivate::mapToTransformed(const IntSize& size) const
-{
-    return mapToTransformed(IntRect(IntPoint::zero(), size)).size();
-}
-
-IntSize WebPagePrivate::mapFromTransformed(const IntSize& size) const
-{
-    return mapFromTransformed(IntRect(IntPoint::zero(), size)).size();
-}
-
-IntRect WebPagePrivate::mapToTransformed(const IntRect& rect) const
-{
-    return enclosingIntRect(m_transformationMatrix->mapRect(FloatRect(rect)));
-}
-
-// Use this in conjunction with mapToTransformed(IntRect), in most cases.
-void WebPagePrivate::clipToTransformedContentsRect(IntRect& rect) const
-{
-    rect.intersect(IntRect(IntPoint::zero(), transformedContentsSize()));
-}
-
-IntRect WebPagePrivate::mapFromTransformed(const IntRect& rect) const
-{
-    return enclosingIntRect(m_transformationMatrix->inverse().mapRect(FloatRect(rect)));
-}
-
-bool WebPagePrivate::transformedPointEqualsUntransformedPoint(const IntPoint& transformedPoint, const IntPoint& untransformedPoint)
-{
-    // Scaling down is always more accurate than scaling up.
-    if (m_transformationMatrix->a() > 1.0)
-        return transformedPoint == mapToTransformed(untransformedPoint);
-
-    return mapFromTransformed(transformedPoint) == untransformedPoint;
-}
-
 void WebPagePrivate::notifyTransformChanged()
 {
     notifyTransformedContentsSizeChanged();
@@ -1978,7 +1841,7 @@ void WebPagePrivate::notifyTransformedContentsSizeChanged()
     // We mark here as the last reported content size we sent to the client.
     m_previousContentsSize = contentsSize();
 
-    const IntSize size = transformedContentsSize();
+    const IntSize size = m_webkitThreadViewportAccessor->pixelContentsSize();
     m_backingStore->d->contentsSizeChanged(size);
     m_client->contentsSizeChanged();
 }
@@ -2435,10 +2298,15 @@ void WebPagePrivate::updateCursor()
         m_lastMouseEvent.ctrlKey() ? 0 : KEYMOD_CTRL |
         m_lastMouseEvent.altKey() ? 0 : KEYMOD_ALT;
 
-    BlackBerry::Platform::MouseEvent event(buttonMask, buttonMask, mapToTransformed(m_lastMouseEvent.position()), mapToTransformed(m_lastMouseEvent.globalPosition()), 0, modifiers,  0);
+    const Platform::ViewportAccessor* viewportAccessor = m_webkitThreadViewportAccessor;
+
+    BlackBerry::Platform::MouseEvent event(buttonMask, buttonMask,
+        viewportAccessor->roundToPixelFromDocumentContents(WebCore::FloatPoint(m_lastMouseEvent.position())),
+        viewportAccessor->roundToPixelFromDocumentContents(WebCore::FloatPoint(m_lastMouseEvent.globalPosition())),
+        0, modifiers, 0);
 
     // We have added document viewport position and document content position as members of the mouse event. When we create the event, we should initialize them as well.
-    event.populateDocumentPosition(m_lastMouseEvent.position(), mapFromViewportToContents(m_lastMouseEvent.position()));
+    event.populateDocumentPosition(m_lastMouseEvent.position(), viewportAccessor->documentContentsFromViewport(m_lastMouseEvent.position()));
 
     m_webPage->mouseEvent(event);
 }
@@ -2680,10 +2548,12 @@ Platform::IntRect WebPagePrivate::focusNodeRect()
     if (!doc || !view || view->needsLayout())
         return Platform::IntRect();
 
+    const Platform::ViewportAccessor* viewportAccessor = m_webkitThreadViewportAccessor;
+
     IntRect focusRect = rectForNode(doc->focusedNode());
     focusRect = adjustRectOffsetForFrameOffset(focusRect, doc->focusedNode());
-    focusRect = mapToTransformed(focusRect);
-    clipToTransformedContentsRect(focusRect);
+    focusRect = viewportAccessor->roundToPixelFromDocumentContents(WebCore::FloatRect(focusRect));
+    focusRect.intersect(viewportAccessor->pixelContentsRect());
     return focusRect;
 }
 
@@ -2720,7 +2590,7 @@ PassRefPtr<Node> WebPagePrivate::contextNode(TargetDetectionStrategy strategy)
     if (isTouching)
         contentPos = lastFatFingersResult.adjustedPosition();
     else
-        contentPos = mapFromViewportToContents(m_lastMouseEvent.position());
+        contentPos = m_webkitThreadViewportAccessor->documentContentsFromViewport(m_lastMouseEvent.position());
 
     HitTestResult result = eventHandler->hitTestResultAtPoint(contentPos);
     return result.innerNode();
@@ -2992,9 +2862,11 @@ IntRect WebPagePrivate::blockZoomRectForNode(Node* node)
         }
     }
 
+    const Platform::ViewportAccessor* viewportAccessor = m_webkitThreadViewportAccessor;
+
     blockRect = adjustRectOffsetForFrameOffset(blockRect, node);
-    blockRect = mapToTransformed(blockRect);
-    clipToTransformedContentsRect(blockRect);
+    blockRect = viewportAccessor->roundToPixelFromDocumentContents(WebCore::FloatRect(blockRect));
+    blockRect.intersect(viewportAccessor->pixelContentsRect());
 
     return blockRect;
 }
@@ -3006,7 +2878,9 @@ void WebPagePrivate::zoomAnimationFinished(double finalAnimationScale, const Web
     if (!m_mainFrame)
         return;
 
-    IntPoint anchor(roundUntransformedPoint(finalAnimationDocumentScrollPosition));
+    const Platform::ViewportAccessor* viewportAccessor = m_webkitThreadViewportAccessor;
+
+    IntPoint anchor(viewportAccessor->roundedDocumentContents(finalAnimationDocumentScrollPosition));
     bool willUseTextReflow = false;
 
 #if ENABLE(VIEWPORT_REFLOW)
@@ -3033,9 +2907,14 @@ void WebPagePrivate::zoomAnimationFinished(double finalAnimationScale, const Web
 #if ENABLE(VIEWPORT_REFLOW)
     requestLayoutIfNeeded();
     if (willUseTextReflow && m_shouldReflowBlock) {
+        Platform::IntPoint roundedReflowOffset(
+            std::floorf(m_finalAnimationDocumentScrollPositionReflowOffset.x()),
+            std::floorf(m_finalAnimationDocumentScrollPositionReflowOffset.y()));
+
         IntRect reflowedRect = rectForNode(m_currentBlockZoomAdjustedNode.get());
         reflowedRect = adjustRectOffsetForFrameOffset(reflowedRect, m_currentBlockZoomAdjustedNode.get());
-        reflowedRect.move(roundTransformedPoint(m_finalAnimationDocumentScrollPositionReflowOffset).x(), roundTransformedPoint(m_finalAnimationDocumentScrollPositionReflowOffset).y());
+        reflowedRect.move(roundedReflowOffset.x(), roundedReflowOffset.y());
+
         RenderObject* renderer = m_currentBlockZoomAdjustedNode->renderer();
         IntPoint topLeftPoint(reflowedRect.location());
         if (renderer && renderer->isText()) {
@@ -4051,7 +3930,8 @@ bool WebPagePrivate::handleMouseEvent(PlatformMouseEvent& mouseEvent)
     }
 
     if (!node) {
-        HitTestResult result = eventHandler->hitTestResultAtPoint(mapFromViewportToContents(mouseEvent.position()));
+        IntPoint documentContentsPoint = m_webkitThreadViewportAccessor->documentContentsFromViewport(mouseEvent.position());
+        HitTestResult result = eventHandler->hitTestResultAtPoint(documentContentsPoint);
         node = result.innerNode();
     }
 
@@ -4609,10 +4489,13 @@ bool WebPage::blockZoom(const Platform::IntPoint& documentTargetPoint)
     const double margin = endOfBlockZoomMode ? 0 : blockZoomMargin * 2 * oldScale;
     bool isFirstZoom = false;
 
+    const Platform::ViewportAccessor* viewportAccessor = webkitThreadViewportAccessor();
+
     if (endOfBlockZoomMode) {
         // End of block zoom mode
-        IntRect rect = d->blockZoomRectForNode(node);
-        blockRect = IntRect(0, rect.y(), d->transformedContentsSize().width(), d->transformedContentsSize().height() - rect.y());
+        const Platform::IntSize pixelContentsSize = viewportAccessor->pixelContentsSize();
+        const IntRect rect = d->blockZoomRectForNode(node);
+        blockRect = IntRect(0, rect.y(), pixelContentsSize.width(), pixelContentsSize.height() - rect.y());
         d->m_shouldReflowBlock = false;
     } else {
         // Start/continue block zoom mode
@@ -4622,7 +4505,7 @@ bool WebPage::blockZoom(const Platform::IntPoint& documentTargetPoint)
         // Don't use a block if it is too close to the size of the actual contents.
         // We allow this for images only so that they can be zoomed tight to the screen.
         if (!node->hasTagName(HTMLNames::imgTag)) {
-            IntRect tRect = d->mapFromTransformed(blockRect);
+            const IntRect tRect = viewportAccessor->roundToDocumentFromPixelContents(WebCore::FloatRect(blockRect));
             int blockArea = tRect.width() * tRect.height();
             int pageArea = d->contentsSize().width() * d->contentsSize().height();
             double blockToPageRatio = static_cast<double>(pageArea - blockArea) / pageArea;
@@ -4665,16 +4548,16 @@ bool WebPage::blockZoom(const Platform::IntPoint& documentTargetPoint)
 #endif
 
     // Align the zoomed block in the screen.
-    double newBlockHeight = d->mapFromTransformed(blockRect).height();
-    double newBlockWidth = d->mapFromTransformed(blockRect).width();
-    double scaledViewportWidth = static_cast<double>(d->actualVisibleSize().width()) * oldScale / newScale;
-    double scaledViewportHeight = static_cast<double>(d->actualVisibleSize().height()) * oldScale / newScale;
-    double dx = std::max(0.0, (scaledViewportWidth - newBlockWidth) / 2.0);
-    double dy = std::max(0.0, (scaledViewportHeight - newBlockHeight) / 2.0);
+    const Platform::FloatRect newBlockRect = viewportAccessor->documentFromPixelContents(WebCore::FloatRect(blockRect));
+    float scaledViewportWidth = static_cast<double>(d->actualVisibleSize().width()) * oldScale / newScale;
+    float scaledViewportHeight = static_cast<double>(d->actualVisibleSize().height()) * oldScale / newScale;
+    float dx = std::max(0.0f, (scaledViewportWidth - newBlockRect.width()) / 2.0f);
+    float dy = std::max(0.0f, (scaledViewportHeight - newBlockRect.height()) / 2.0f);
 
-    RenderObject* renderer = d->m_currentBlockZoomAdjustedNode->renderer();
+    const RenderObject* renderer = d->m_currentBlockZoomAdjustedNode->renderer();
+    const FloatPoint topLeftPoint = newBlockRect.location();
     FloatPoint anchor;
-    FloatPoint topLeftPoint(d->mapFromTransformed(blockRect).location());
+
     if (renderer && renderer->isText()) {
         ETextAlign textAlign = renderer->style()->textAlign();
         switch (textAlign) {
@@ -4704,7 +4587,7 @@ bool WebPage::blockZoom(const Platform::IntPoint& documentTargetPoint)
 
     WebCore::FloatPoint finalAnimationDocumentScrollPosition;
 
-    if (newBlockHeight <= scaledViewportHeight) {
+    if (newBlockRect.height() <= scaledViewportHeight) {
         // The block fits in the viewport so center it.
         finalAnimationDocumentScrollPosition = FloatPoint(anchor.x() - dx, anchor.y() - dy);
     } else {
@@ -4749,8 +4632,10 @@ bool WebPage::blockZoom(const Platform::IntPoint& documentTargetPoint)
     // oldScale with only a marginal change in scroll position. Ignore scroll difference in the special case
     // that the zoom level is the minimumScale.
     if (!endOfBlockZoomMode && abs(newScale - oldScale) / oldScale < minimumExpandingRatio) {
-        const double minimumDisplacement = minimumExpandingRatio * webkitThreadViewportAccessor()->documentViewportSize().width();
-        if (oldScale == d->minimumScale() || (distanceBetweenPoints(d->scrollPosition(), roundUntransformedPoint(finalAnimationDocumentScrollPosition)) < minimumDisplacement && abs(newScale - oldScale) / oldScale < 0.10)) {
+        const double minimumDisplacement = minimumExpandingRatio * viewportAccessor->documentViewportSize().width();
+        const int scrollPositionDisplacement = distanceBetweenPoints(viewportAccessor->documentScrollPosition(), viewportAccessor->roundedDocumentContents(finalAnimationDocumentScrollPosition));
+
+        if (oldScale == d->minimumScale() || (scrollPositionDisplacement < minimumDisplacement && abs(newScale - oldScale) / oldScale < 0.10)) {
             if (isFirstZoom) {
                 d->resetBlockZoom();
                 return false;
