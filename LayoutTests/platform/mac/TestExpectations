@@ -1273,11 +1273,6 @@ webkit.org/b/85308 ietestcenter/css3/valuesandunits/units-000.htm [ Skip ]
 # IETC namespace failures
 webkit.org/b/86142 ietestcenter/css3/namespaces/syntax-021.xml [ ImageOnlyFailure ]
 
-# Safari needs to be fixed after bug 84195 updated the layout tests
-webkit.org/b/85918 compositing/backface-visibility/backface-visibility-3d.html [ ImageOnlyFailure ]
-webkit.org/b/85918 compositing/backface-visibility/backface-visibility-hierarchical-transform.html [ ImageOnlyFailure ]
-webkit.org/b/85918 compositing/backface-visibility/backface-visibility-non3d.html [ ImageOnlyFailure ]
-
 # Disable webaudio codec tests, including proprietary codecs.
 webkit.org/b/88794 webaudio/codec-tests
 
