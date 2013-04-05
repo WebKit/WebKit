@@ -1,3 +1,9 @@
+2013-04-04  Kent Tamura  <tkent@chromium.org>
+
+        Remove ChromiumPublicApi pattern, and cc/message rules for it.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-04-04  Benjamin Poulain  <bpoulain@apple.com>
 
         Temporarily disable the Python unittests broken by the commit queue not running layout tests

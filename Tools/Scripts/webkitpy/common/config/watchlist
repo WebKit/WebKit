@@ -13,11 +13,6 @@
         "ChromiumGraphics": {
             "filename": r"Source/WebCore/platform/graphics/chromium/",
         },
-        "ChromiumPublicApi": {
-            "filename": r"Source/WebKit/chromium/public/"
-                        r"|Source/Platform/chromium/public/"
-                        r"|Tools/DumpRenderTree/chromium/TestRunner/public",
-        },
         "ChromiumTestRunner": {
             "filename": r"Tools/DumpRenderTree/chromium/TestRunner",
         },
@@ -386,7 +381,6 @@
         "CoreAnimation" : [ "simon.fraser@apple.com" ],
         "CSS": [ "alexis@webkit.org", "macpherson@chromium.org", "ojan.autocc@gmail.com", "esprehn+autocc@chromium.org"],
         "ChromiumGraphics": [ "jamesr@chromium.org", "cc-bugs@chromium.org" ],
-        "ChromiumPublicApi": [ "abarth@webkit.org", "dglazkov@chromium.org", "fishd@chromium.org", "jamesr@chromium.org", "tkent+wkapi@chromium.org" ],
         "ChromiumTestRunner": [ "jochen@chromium.org" ],
         "DOM": [ "ojan.autocc@gmail.com", "esprehn+autocc@chromium.org" ],
         "DOMAttributes": [ "cmarcelo@webkit.org", ],
@@ -445,10 +439,6 @@
         "webkitpy": [ "abarth@webkit.org", "dpranke@chromium.org", "eric@webkit.org" ],
     },
     "MESSAGE_RULES": {
-        "ChromiumPublicApi": [ "Please wait for approval from abarth@webkit.org, dglazkov@chromium.org, "
-                               "fishd@chromium.org, jamesr@chromium.org or tkent@chromium.org before "
-                               "submitting, as this patch contains changes to the Chromium public API. "
-                               "See also https://trac.webkit.org/wiki/ChromiumWebKitAPI." ],
         "AppleMacPublicApi": [ "Please wait for approval from timothy@apple.com (or another member "
                                "of the Apple Safari Team) before submitting "
                                "because this patch contains changes to the Apple Mac "
