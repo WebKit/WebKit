@@ -23,8 +23,8 @@
  */
 
 // FIXME: This is temporary until all ports switch to using this file.
-#if (PLATFORM(CHROMIUM) && !OS(DARWIN)) || PLATFORM(BLACKBERRY)
-#include "chromium/FontPlatformData.h"
+#if PLATFORM(BLACKBERRY)
+#include "harfbuzz/FontPlatformDataHarfBuzz.h"
 #elif PLATFORM(QT)
 #include "qt/FontPlatformData.h"
 #elif PLATFORM(WIN) && OS(WINCE)

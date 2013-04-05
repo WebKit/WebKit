@@ -43,9 +43,7 @@ namespace WebCore {
 // Global resource ceiling (expressed in terms of pixels) for DrawingBuffer creation and resize.
 // When this limit is set, DrawingBuffer::create() and DrawingBuffer::reset() calls that would
 // exceed the global cap will instead clear the buffer.
-#if PLATFORM(CHROMIUM) // Currently, this cap only exists for chromium.
-static int s_maximumResourceUsePixels = 16 * 1024 * 1024;
-#elif !PLATFORM(BLACKBERRY)
+#if !PLATFORM(BLACKBERRY)
 static int s_maximumResourceUsePixels = 0;
 #endif
 static int s_currentResourceUsePixels = 0;

@@ -45,37 +45,17 @@ public:
     {
         bool wasCreated = false;
 
-#if PLATFORM(CHROMIUM)
-        WebKit::WebGraphicsContext3D* webContext = WebKit::Platform::current()->sharedOffscreenGraphicsContext3D();
-        GrContext* grContext = WebKit::Platform::current()->sharedOffscreenGrContext();
+        // If we lost the context, or can't make it current, create a new one.
+        if (m_context && (!m_context->makeContextCurrent() || (m_context->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR)))
+            m_context.clear();
 
-        if (webContext && grContext) {
-            WebKit::WebGraphicsContext3D* oldWebContext = m_context ? GraphicsContext3DPrivate::extractWebGraphicsContext3D(m_context.get()) : 0;
-            GrContext* oldGrContext = m_context ? m_context->grContext() : 0;
-            if (webContext != oldWebContext || grContext != oldGrContext)
-                m_context.clear();
-
-            if (!m_context) {
-                m_context = GraphicsContext3DPrivate::createGraphicsContextFromExternalWebContextAndGrContext(webContext, grContext);
-                wasCreated = true;
-            }
-
-            // FIXME: Don't fallback to the legacy path when chromium supports the new offscreen methods.
-        } else
-#endif
-        {
-            // If we lost the context, or can't make it current, create a new one.
-            if (m_context && (!m_context->makeContextCurrent() || (m_context->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR)))
-                m_context.clear();
-
-            if (!m_context) {
-                createContext();
-                wasCreated = true;
-            }
-
-            if (m_context && !m_context->makeContextCurrent())
-                m_context.clear();
+        if (!m_context) {
+            createContext();
+            wasCreated = true;
         }
+
+        if (m_context && !m_context->makeContextCurrent())
+            m_context.clear();
 
         if (m_context && wasCreated)
             m_context->getExtensions()->pushGroupMarkerEXT("SharedGraphicsContext");
