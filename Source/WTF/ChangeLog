@@ -1,3 +1,14 @@
+2013-04-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Nixed the defunct chromium folder from WTF
+        https://bugs.webkit.org/show_bug.cgi?id=113992
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/chromium: Removed.
+        * wtf/chromium/ChromiumThreading.h: Removed.
+        * wtf/chromium/MainThreadChromium.cpp: Removed.
+
 2013-04-04  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove the gyp build
