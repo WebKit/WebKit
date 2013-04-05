@@ -619,7 +619,7 @@
 		1AE82FEC0CAB07EE002237AE /* JSSQLResultSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE82FEA0CAB07EE002237AE /* JSSQLResultSet.cpp */; };
 		1AE82FED0CAB07EE002237AE /* JSSQLResultSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE82FEB0CAB07EE002237AE /* JSSQLResultSet.h */; };
 		1AEF4E67170E160300AB2799 /* CachedFontClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEF4E66170E160300AB2799 /* CachedFontClient.h */; };
-		1AEF4E69170E174800AB2799 /* CachedSVGDocumentClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEF4E68170E174800AB2799 /* CachedSVGDocumentClient.h */; };
+		1AEF4E69170E174800AB2799 /* CachedSVGDocumentClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEF4E68170E174800AB2799 /* CachedSVGDocumentClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AF326790D78B9440068F0C4 /* EditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AF326770D78B9440068F0C4 /* EditorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AF62EE614DA22A70041556C /* ScrollingCoordinatorMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AF62EE314DA22A70041556C /* ScrollingCoordinatorMac.mm */; };
 		1AF62EE714DA22A70041556C /* ScrollingCoordinator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AF62EE414DA22A70041556C /* ScrollingCoordinator.cpp */; };
