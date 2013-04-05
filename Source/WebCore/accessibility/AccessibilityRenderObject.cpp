@@ -76,6 +76,7 @@
 #include "RenderMathMLBlock.h"
 #include "RenderMathMLOperator.h"
 #include "RenderMenuList.h"
+#include "RenderSVGShape.h"
 #include "RenderText.h"
 #include "RenderTextControl.h"
 #include "RenderTextControlSingleLine.h"
@@ -87,6 +88,7 @@
 #include "SVGDocument.h"
 #include "SVGImage.h"
 #include "SVGImageChromeClient.h"
+#include "SVGNames.h"
 #include "SVGSVGElement.h"
 #include "Text.h"
 #include "TextControlInnerElements.h"
@@ -2157,7 +2159,7 @@ AccessibilityObject* AccessibilityRenderObject::accessibilityHitTest(const IntPo
     
     RenderLayer* layer = toRenderBox(m_renderer)->layer();
      
-    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active);
+    HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active | HitTestRequest::AccessibilityHitTest);
     HitTestResult hitTestResult = HitTestResult(point);
     layer->hitTest(request, hitTestResult);
     if (!hitTestResult.innerNode())
@@ -2460,6 +2462,8 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return ImageRole;
     if (m_renderer->isSVGRoot())
         return SVGRootRole;
+    if (node && node->hasTagName(SVGNames::gTag))
+        return GroupRole;
 #endif
 
 #if ENABLE(MATHML)

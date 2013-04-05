@@ -44,6 +44,7 @@
 #import "Range.h"
 #import "RenderView.h"
 #import "RuntimeApplicationChecksIOS.h"
+#import "SVGNames.h"
 #import "TextIterator.h"
 #import "WAKScrollView.h"
 #import "WAKView.h"
@@ -544,6 +545,18 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     return traits;
 }
 
+- (BOOL)isSVGGroupElement
+{
+    // If an SVG group element has a title, it should be an accessible element on iOS.
+#if ENABLE(SVG)
+    Node* node = m_object->node();
+    if (node && node->hasTagName(SVGNames::gTag) && [[self accessibilityLabel] length] > 0)
+        return YES;
+#endif
+    
+    return NO;
+}
+
 - (BOOL)determineIsAccessibilityElement
 {
     if (!m_object)
@@ -601,7 +614,9 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
             if ([self containsUnnaturallySegmentedChildren] || ![self accessibilityElementCount])
                 return true;
             return false;
-
+        case GroupRole:
+            if ([self isSVGGroupElement])
+                return true;
         // All other elements are ignored on the iphone.
         default:
         case UnknownRole:
@@ -609,7 +624,6 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         case ScrollAreaRole:
         case TableRole:
         case ApplicationRole:
-        case GroupRole:
         case RadioGroupRole:
         case ListRole:
         case ListBoxRole:
@@ -2055,6 +2069,11 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
     }
     
     return nil;
+}
+
+- (CGPoint)accessibilityClickPoint
+{
+    return m_object->clickPoint();
 }
 
 // These are used by DRT so that it can know when notifications are sent.

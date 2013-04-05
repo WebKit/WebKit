@@ -38,7 +38,8 @@ public:
         DisallowShadowContent = 1 << 8,
         AllowFrameScrollbars = 1 << 9,
         AllowChildFrameContent = 1 << 10,
-        ChildFrameHitTest = 1 << 11
+        ChildFrameHitTest = 1 << 11,
+        AccessibilityHitTest = 1 << 12
     };
 
     typedef unsigned HitTestRequestType;

@@ -74,6 +74,7 @@ AccessibilityUIElement::~AccessibilityUIElement()
 - (NSString *)stringForRange:(NSRange)range;
 - (NSArray *)elementsForRange:(NSRange)range;
 - (NSString *)selectionRangeString;
+- (CGPoint)accessibilityClickPoint;
 - (void)accessibilityModifySelection:(WebCore::TextGranularity)granularity increase:(BOOL)increase;
 - (void)accessibilitySetPostedNotificationCallback:(AXPostedNotificationCallback)function withContext:(void*)context;
 @end
@@ -168,13 +169,13 @@ double AccessibilityUIElement::height()
 
 double AccessibilityUIElement::clickPointX()
 {
-    CGPoint centerPoint = [m_element accessibilityActivationPoint];
+    CGPoint centerPoint = [m_element accessibilityClickPoint];
     return centerPoint.x;
 }
 
 double AccessibilityUIElement::clickPointY()
 {
-    CGPoint centerPoint = [m_element accessibilityActivationPoint];
+    CGPoint centerPoint = [m_element accessibilityClickPoint];
     return centerPoint.y;
 }
 

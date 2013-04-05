@@ -186,6 +186,12 @@ bool RenderSVGContainer::nodeAtFloatPoint(const HitTestRequest& request, HitTest
         }
     }
 
+    // Accessibility wants to return SVG containers, if appropriate.
+    if (request.type() & HitTestRequest::AccessibilityHitTest && m_objectBoundingBox.contains(localPoint)) {
+        updateHitTestResult(result, roundedLayoutPoint(localPoint));
+        return true;
+    }
+    
     // Spec: Only graphical elements can be targeted by the mouse, period.
     // 16.4: "If there are no graphics elements whose relevant graphics content is under the pointer (i.e., there is no target element), the event is not dispatched."
     return false;

@@ -66,6 +66,9 @@
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "ProgressTracker.h"
+#include "SVGElement.h"
+#include "SVGNames.h"
+#include "SVGStyledElement.h"
 #include "Text.h"
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
@@ -1184,9 +1187,18 @@ void AccessibilityNodeObject::alternativeText(Vector<AccessibilityText>& textOrd
             textOrder.append(AccessibilityText(alt, AlternativeText));
     }
     
-#if ENABLE(MATHML)
     Node* node = this->node();
-    if (node && node->isElementNode() && toElement(node)->isMathMLElement())
+    if (!node)
+        return;
+    
+#if ENABLE(SVG)
+    // SVG elements all can have a <svg:title> element inside which should act as the descriptive text.
+    if (node->isSVGElement() && toSVGElement(node)->isSVGStyledElement())
+        textOrder.append(AccessibilityText(toSVGStyledElement(node)->title(), AlternativeText));
+#endif
+    
+#if ENABLE(MATHML)
+    if (node->isElementNode() && toElement(node)->isMathMLElement())
         textOrder.append(AccessibilityText(getAttribute(MathMLNames::alttextAttr), AlternativeText));
 #endif
 }
@@ -1370,9 +1382,14 @@ String AccessibilityNodeObject::accessibilityDescription() const
             return alt;
     }
 
+#if ENABLE(SVG)
+    // SVG elements all can have a <svg:title> element inside which should act as the descriptive text.
+    if (m_node && m_node->isSVGElement() && toSVGElement(m_node)->isSVGStyledElement())
+        return toSVGStyledElement(m_node)->title();
+#endif
+    
 #if ENABLE(MATHML)
-    Node* node = this->node();
-    if (node && node->isElementNode() && toElement(node)->isMathMLElement())
+    if (m_node && m_node->isElementNode() && toElement(m_node)->isMathMLElement())
         return getAttribute(MathMLNames::alttextAttr);
 #endif
 

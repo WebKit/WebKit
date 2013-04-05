@@ -49,8 +49,7 @@ AccessibilityController::~AccessibilityController()
 
 AccessibilityUIElement AccessibilityController::elementAtPoint(int x, int y)
 {
-    // FIXME: implement
-    return 0;
+    return rootElement().elementAtPoint(x, y);
 }
 
 AccessibilityUIElement AccessibilityController::focusedElement()
