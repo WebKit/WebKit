@@ -75,6 +75,27 @@ void WKViewSetIsVisible(WKViewRef viewRef, bool isVisible)
     toImpl(viewRef)->setVisible(isVisible);
 }
 
+float WKViewGetContentScaleFactor(WKViewRef viewRef)
+{
+    return toImpl(viewRef)->contentScaleFactor();
+}
+
+void WKViewSetContentScaleFactor(WKViewRef viewRef, float scale)
+{
+    toImpl(viewRef)->setContentScaleFactor(scale);
+}
+
+WKPoint WKViewGetContentPosition(WKViewRef viewRef)
+{
+    const WebCore::FloatPoint& result = toImpl(viewRef)->contentPosition();
+    return WKPointMake(result.x(), result.y());
+}
+
+void WKViewSetContentPosition(WKViewRef viewRef, WKPoint position)
+{
+    toImpl(viewRef)->setContentPosition(WebCore::FloatPoint(position.x, position.y));
+}
+
 void WKViewSetUserViewportTranslation(WKViewRef viewRef, double tx, double ty)
 {
     toImpl(viewRef)->setUserViewportTranslation(tx, ty);

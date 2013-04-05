@@ -51,15 +51,16 @@ void PageViewportControllerClientEfl::setViewportPosition(const WebCore::FloatPo
     m_contentPosition = contentsPoint;
 
     FloatPoint pos(contentsPoint);
-    pos.scale(m_view->pageScaleFactor(), m_view->pageScaleFactor());
-    m_view->setPagePosition(pos);
+    float scaleFactor = WKViewGetContentScaleFactor(m_view->wkView());
+    pos.scale(scaleFactor, scaleFactor);
+    WKViewSetContentPosition(m_view->wkView(), WKPointMake(pos.x(), pos.y()));
 
-    m_controller->didChangeContentsVisibility(m_contentPosition, m_view->pageScaleFactor());
+    m_controller->didChangeContentsVisibility(m_contentPosition, scaleFactor);
 }
 
 void PageViewportControllerClientEfl::setPageScaleFactor(float newScale)
 {
-    m_view->setPageScaleFactor(newScale);
+    WKViewSetContentScaleFactor(m_view->wkView(), newScale);
 }
 
 void PageViewportControllerClientEfl::didChangeVisibleContents()

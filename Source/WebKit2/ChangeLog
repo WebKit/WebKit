@@ -1,3 +1,53 @@
+2013-04-05  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][EFL] WebView should own page position and scale factor
+        https://bugs.webkit.org/show_bug.cgi?id=111075
+
+        Reviewed by Andreas Kling.
+
+        View content position and content scale factor should belong to WebView
+        rather than to EwkView as it decreases EwkView usage inside EFL-agnostic
+        WebView and improves WebView encapsulation.
+
+        * UIProcess/API/C/efl/WKView.cpp:
+        (WKViewGetContentScaleFactor):
+        (WKViewSetContentScaleFactor):
+
+            New WKView API was added to set and get content scale factor.
+            The view content scale factor is not the same as page scale factor:
+            it always applies to content but not necessarily applies to the page.
+            The view content scale factor is calculated by viewport controller
+            and applies immediately for painting in UI process. Page scale factor
+            is updated later after the frame is rendered to accomplish the pending
+            scale change.
+
+        (WKViewGetContentPosition):
+        (WKViewSetContentPosition):
+
+            New WKView API was added to set and get content position.
+            Content position is set in UI units.
+
+        * UIProcess/API/C/efl/WKView.h:
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        * UIProcess/API/efl/EwkView.h:
+        (EwkView):
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp:
+        (WebKit::PageViewportControllerClientEfl::setViewportPosition):
+        (WebKit::PageViewportControllerClientEfl::setPageScaleFactor):
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::paintToCairoSurface):
+        (WebKit::WebView::transformToScene):
+        (WebKit::WebView::updateViewportSize):
+        (WebKit::WebView::pageDidRequestScroll):
+        * UIProcess/efl/WebView.h:
+        (WebKit::WebView::setContentScaleFactor):
+        (WebKit::WebView::contentScaleFactor):
+        (WebView):
+        (WebKit::WebView::setContentPosition):
+        (WebKit::WebView::contentPosition):
+
 2013-04-05  Alberto Garcia  <agarcia@igalia.com>
 
         [GTK][WK2] WebKitLoaderClient: add missing initializers

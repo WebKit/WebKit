@@ -188,12 +188,6 @@ public:
     // FIXME: Remove when possible.
     WebKit::WebView* webView();
 
-    void setPageScaleFactor(float scaleFactor) { m_pageScaleFactor = scaleFactor; }
-    float pageScaleFactor() const { return m_pageScaleFactor; }
-
-    void setPagePosition(const WebCore::FloatPoint& position) { m_pagePosition = position; }
-    const WebCore::FloatPoint pagePosition() const { return m_pagePosition; }
-
     // FIXME: needs refactoring (split callback invoke)
     void informURLChange();
 
@@ -261,8 +255,6 @@ private:
     OwnPtr<WebKit::VibrationClientEfl> m_vibrationClient;
 #endif
     OwnPtr<EwkBackForwardList> m_backForwardList;
-    float m_pageScaleFactor;
-    WebCore::FloatPoint m_pagePosition;
     OwnPtr<EwkSettings> m_settings;
     RefPtr<EwkWindowFeatures> m_windowFeatures;
     const void* m_cursorIdentifier; // This is an address, do not free it.

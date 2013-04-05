@@ -56,6 +56,7 @@ WebView::WebView(WebContext* context, WebPageGroup* pageGroup)
     , m_page(context->createWebPage(this, pageGroup))
     , m_focused(false)
     , m_visible(false)
+    , m_contentScaleFactor(1.0)
 {
     m_page->pageGroup()->preferences()->setAcceleratedCompositingEnabled(true);
     m_page->pageGroup()->preferences()->setForceCompositingMode(true);
@@ -153,10 +154,10 @@ void WebView::paintToCairoSurface(cairo_surface_t* surface)
 
     PlatformContextCairo context(cairo_create(surface));
 
-    const FloatPoint& pagePosition = m_ewkView->pagePosition();
-    double effectiveScale = m_page->deviceScaleFactor() * m_ewkView->pageScaleFactor();
+    const FloatPoint& position = contentPosition();
+    double effectiveScale = m_page->deviceScaleFactor() * contentScaleFactor();
 
-    cairo_matrix_t transform = { effectiveScale, 0, 0, effectiveScale, -pagePosition.x() * m_page->deviceScaleFactor(), -pagePosition.y() * m_page->deviceScaleFactor() };
+    cairo_matrix_t transform = { effectiveScale, 0, 0, effectiveScale, - position.x() * m_page->deviceScaleFactor(), - position.y() * m_page->deviceScaleFactor() };
     cairo_set_matrix(context.cr(), &transform);
 
     scene->paintToGraphicsContext(&context);
@@ -247,10 +248,10 @@ AffineTransform WebView::transformToScene() const
 {
     TransformationMatrix transform = m_userViewportTransform;
 
-    const FloatPoint& pagePosition = m_ewkView->pagePosition();
+    const FloatPoint& position = contentPosition();
     transform.scale(m_page->deviceScaleFactor());
-    transform.translate(-pagePosition.x(), -pagePosition.y());
-    transform.scale(m_ewkView->pageScaleFactor());
+    transform.translate(-position.x(), -position.y());
+    transform.scale(contentScaleFactor());
 
     return transform.toAffineTransform();
 }
@@ -273,7 +274,7 @@ void WebView::updateViewportSize()
     if (DrawingAreaProxy* drawingArea = page()->drawingArea()) {
         // Web Process expects sizes in UI units, and not raw device units.
         drawingArea->setSize(roundedIntSize(dipSize()), IntSize());
-        drawingArea->setVisibleContentsRect(FloatRect(m_ewkView->pagePosition(), dipSize()), FloatPoint());
+        drawingArea->setVisibleContentsRect(FloatRect(contentPosition(), dipSize()), FloatPoint());
     }
 }
 
@@ -541,8 +542,8 @@ void WebView::pageDidRequestScroll(const IntPoint& position)
         return;
     }
     FloatPoint uiPosition(position);
-    uiPosition.scale(m_ewkView->pageScaleFactor(), m_ewkView->pageScaleFactor());
-    m_ewkView->setPagePosition(uiPosition);
+    uiPosition.scale(contentScaleFactor(), contentScaleFactor());
+    setContentPosition(uiPosition);
     m_ewkView->scheduleUpdateDisplay();
 }
 

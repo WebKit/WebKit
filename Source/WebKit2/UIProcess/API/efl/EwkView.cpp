@@ -251,7 +251,6 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
     , m_vibrationClient(VibrationClientEfl::create(this))
 #endif
     , m_backForwardList(EwkBackForwardList::create(WKPageGetBackForwardList(wkPage())))
-    , m_pageScaleFactor(1)
     , m_settings(EwkSettings::create(this))
     , m_cursorIdentifier(0)
     , m_mouseEventsEnabled(false)
