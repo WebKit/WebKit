@@ -49,7 +49,7 @@ static FilterOperations applyFilterAnimation(const FilterOperations* from, const
     if (progress == 1)
         return *to;
 
-    if (!from->operationsMatch(*to))
+    if (!from->isEmpty() && !to->isEmpty() && !from->operationsMatch(*to))
         return *to;
 
     FilterOperations result;
