@@ -935,6 +935,9 @@ void FrameView::setHeaderHeight(int headerHeight)
     if (m_frame && m_frame->page())
         ASSERT(m_frame == m_frame->page()->mainFrame());
     m_headerHeight = headerHeight;
+
+    if (RenderView* renderView = this->renderView())
+        renderView->setNeedsLayout(true);
 }
 
 void FrameView::setFooterHeight(int footerHeight)
@@ -942,6 +945,9 @@ void FrameView::setFooterHeight(int footerHeight)
     if (m_frame && m_frame->page())
         ASSERT(m_frame == m_frame->page()->mainFrame());
     m_footerHeight = footerHeight;
+
+    if (RenderView* renderView = this->renderView())
+        renderView->setNeedsLayout(true);
 }
 
 bool FrameView::hasCompositedContent() const
