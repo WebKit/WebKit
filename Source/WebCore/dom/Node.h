@@ -40,12 +40,10 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/text/AtomicString.h>
 
-#if USE(JSC)
 namespace JSC {
     class JSGlobalData;
     class SlotVisitor;
 }
-#endif
 
 // This needs to be here because Document.h also depends on it.
 #define DUMP_NODE_STATISTICS 0

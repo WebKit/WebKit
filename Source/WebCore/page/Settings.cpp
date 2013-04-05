@@ -107,9 +107,7 @@ bool Settings::gUsesOverlayScrollbars = false;
 bool Settings::gShouldUseHighResolutionTimers = true;
 #endif
     
-#if USE(JSC)
 bool Settings::gShouldRespectPriorityInCSSAttributeSetters = false;
-#endif
 
 // NOTEs
 //  1) EditingMacBehavior comprises Tiger, Leopard, SnowLeopard and iOS builds, as well as QtWebKit when built on Mac;
@@ -595,7 +593,6 @@ bool Settings::usesOverlayScrollbars()
     return gUsesOverlayScrollbars;
 }
 
-#if USE(JSC)
 void Settings::setShouldRespectPriorityInCSSAttributeSetters(bool flag)
 {
     gShouldRespectPriorityInCSSAttributeSetters = flag;
@@ -605,7 +602,6 @@ bool Settings::shouldRespectPriorityInCSSAttributeSetters()
 {
     return gShouldRespectPriorityInCSSAttributeSetters;
 }
-#endif
 
 #if ENABLE(HIDDEN_PAGE_DOM_TIMER_THROTTLING)
 void Settings::setHiddenPageDOMTimerThrottlingEnabled(bool flag)

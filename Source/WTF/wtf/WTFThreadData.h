@@ -36,7 +36,6 @@
 #include <wtf/ThreadSpecific.h>
 #include <wtf/Threading.h>
 
-#if USE(JSC)
 // FIXME: This is a temporary layering violation while we move more string code to WTF.
 namespace JSC {
 
@@ -68,7 +67,6 @@ private:
 };
 
 }
-#endif
 
 namespace WTF {
 
@@ -87,7 +85,6 @@ public:
         return m_atomicStringTable;
     }
 
-#if USE(JSC)
     JSC::IdentifierTable* currentIdentifierTable()
     {
         return m_currentIdentifierTable;
@@ -121,7 +118,6 @@ public:
         return m_stackStats;
     }
 #endif
-#endif // USE(JSC)
 
     void* m_apiData;
 
@@ -129,14 +125,12 @@ private:
     AtomicStringTable* m_atomicStringTable;
     AtomicStringTableDestructor m_atomicStringTableDestructor;
 
-#if USE(JSC)
     JSC::IdentifierTable* m_defaultIdentifierTable;
     JSC::IdentifierTable* m_currentIdentifierTable;
     StackBounds m_stackBounds;
 #if ENABLE(STACK_STATS)
     StackStats::PerThreadStats m_stackStats;
 #endif
-#endif // USE(JSC)
 
     static WTF_EXPORTDATA ThreadSpecific<WTFThreadData>* staticData;
     friend WTFThreadData& wtfThreadData();

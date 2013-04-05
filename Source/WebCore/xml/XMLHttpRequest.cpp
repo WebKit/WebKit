@@ -40,6 +40,8 @@
 #include "HTTPParsers.h"
 #include "HistogramSupport.h"
 #include "InspectorInstrumentation.h"
+#include "JSDOMBinding.h"
+#include "JSDOMWindow.h"
 #include "MemoryCache.h"
 #include "ParsedContentType.h"
 #include "ResourceError.h"
@@ -56,6 +58,9 @@
 #include "XMLHttpRequestProgressEvent.h"
 #include "XMLHttpRequestUpload.h"
 #include "markup.h"
+#include <heap/Strong.h>
+#include <runtime/JSLock.h>
+#include <runtime/Operations.h>
 #include <wtf/ArrayBuffer.h>
 #include <wtf/ArrayBufferView.h>
 #include <wtf/RefCountedLeakCounter.h>
@@ -65,14 +70,6 @@
 
 #if ENABLE(RESOURCE_TIMING)
 #include "CachedResourceRequestInitiators.h"
-#endif
-
-#if USE(JSC)
-#include "JSDOMBinding.h"
-#include "JSDOMWindow.h"
-#include <heap/Strong.h>
-#include <runtime/JSLock.h>
-#include <runtime/Operations.h>
 #endif
 
 namespace WebCore {
@@ -936,7 +933,6 @@ void XMLHttpRequest::abortError()
 
 void XMLHttpRequest::dropProtection()
 {
-#if USE(JSC)
     // The XHR object itself holds on to the responseText, and
     // thus has extra cost even independent of any
     // responseText or responseXML objects it has handed
@@ -946,7 +942,6 @@ void XMLHttpRequest::dropProtection()
     JSC::JSGlobalData* globalData = scriptExecutionContext()->globalData();
     JSC::JSLockHolder lock(globalData);
     globalData->heap.reportExtraMemoryCost(m_responseBuilder.length() * 2);
-#endif
 
     unsetPendingActivity(this);
 }

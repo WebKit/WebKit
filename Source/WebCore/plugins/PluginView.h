@@ -75,13 +75,11 @@ QT_END_NAMESPACE
 typedef struct _GtkSocket GtkSocket;
 #endif
 
-#if USE(JSC)
 namespace JSC {
     namespace Bindings {
         class Instance;
     }
 }
-#endif
 
 namespace WebCore {
     class Frame;
@@ -156,9 +154,7 @@ namespace WebCore {
 #if ENABLE(NETSCAPE_PLUGIN_API)
         NPObject* npObject();
 #endif
-#if USE(JSC)
         PassRefPtr<JSC::Bindings::Instance> bindingInstance();
-#endif
 
         PluginStatus status() const { return m_status; }
 

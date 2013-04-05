@@ -41,6 +41,7 @@
 #include "DatabaseThread.h"
 #include "DatabaseTracker.h"
 #include "Document.h"
+#include "JSDOMWindow.h"
 #include "Logging.h"
 #include "NotImplemented.h"
 #include "Page.h"
@@ -58,10 +59,6 @@
 #include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
-
-#if USE(JSC)
-#include "JSDOMWindow.h"
-#endif
 
 namespace WebCore {
 

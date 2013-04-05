@@ -32,9 +32,7 @@ using namespace WebCore;
 */
 QWebScriptWorld::QWebScriptWorld()
 {
-#if USE(JSC)
     d = new QWebScriptWorldPrivate(ScriptController::createWorld());
-#endif
 }
 
 QWebScriptWorld::QWebScriptWorld(const QWebScriptWorld& other)

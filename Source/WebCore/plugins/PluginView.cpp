@@ -28,9 +28,7 @@
 #include "config.h"
 #include "PluginView.h"
 
-#if USE(JSC)
 #include "BridgeJSC.h"
-#endif
 #include "Chrome.h"
 #include "CookieJar.h"
 #include "Document.h"
@@ -47,6 +45,8 @@
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
 #include "Image.h"
+#include "JSDOMBinding.h"
+#include "JSDOMWindow.h"
 #include "KeyboardEvent.h"
 #include "MIMETypeRegistry.h"
 #include "MouseEvent.h"
@@ -64,7 +64,11 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "WheelEvent.h"
+#include "c_instance.h"
 #include "npruntime_impl.h"
+#include "runtime_root.h"
+#include <runtime/JSCJSValue.h>
+#include <runtime/JSLock.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/text/WTFString.h>
 
@@ -72,19 +76,10 @@
 #include "PluginMessageThrottlerWin.h"
 #endif
 
-#if USE(JSC)
-#include "JSDOMBinding.h"
-#include "JSDOMWindow.h"
-#include "c_instance.h"
-#include "runtime_root.h"
-#include <runtime/JSCJSValue.h>
-#include <runtime/JSLock.h>
-
 using JSC::ExecState;
 using JSC::JSLock;
 using JSC::JSObject;
 using JSC::JSValue;
-#endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
@@ -250,9 +245,7 @@ bool PluginView::start()
     NPError npErr;
     {
         PluginView::setCurrentPluginView(this);
-#if USE(JSC)
         JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
-#endif
         setCallingPlugin(true);
         npErr = m_plugin->pluginFuncs()->newp((NPMIMEType)m_mimeType.utf8().data(), m_instance, m_mode, m_paramCount, m_paramNames, m_paramValues, NULL);
         setCallingPlugin(false);
@@ -340,9 +333,7 @@ void PluginView::stop()
 
     m_isStarted = false;
 
-#if USE(JSC)
     JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
-#endif
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #if defined(XP_WIN) && !PLATFORM(GTK)
@@ -459,9 +450,7 @@ void PluginView::performRequest(PluginRequest* request)
             // FIXME: <rdar://problem/4807469> This should be sent when the document has finished loading
             if (request->sendNotification()) {
                 PluginView::setCurrentPluginView(this);
-#if USE(JSC)
                 JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
-#endif
                 setCallingPlugin(true);
                 m_plugin->pluginFuncs()->urlnotify(m_instance, requestURL.string().utf8().data(), NPRES_DONE, request->notifyData());
                 setCallingPlugin(false);
@@ -482,11 +471,7 @@ void PluginView::performRequest(PluginRequest* request)
     if (targetFrameName.isNull()) {
         String resultString;
 
-#if USE(JSC)
         ScriptState* scriptState = m_parentFrame->script()->globalObject(pluginWorld())->globalExec();
-#elif USE(V8)
-        ScriptState* scriptState = 0; // Not used with V8
-#endif
         CString cstr;
         if (result.getString(scriptState, resultString))
             cstr = resultString.utf8();
@@ -749,9 +734,7 @@ NPObject* PluginView::npObject()
     NPError npErr;
     {
         PluginView::setCurrentPluginView(this);
-#if USE(JSC)
         JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
-#endif
         setCallingPlugin(true);
         npErr = m_plugin->pluginFuncs()->getvalue(m_instance, NPPVpluginScriptableNPObject, &object);
         setCallingPlugin(false);
@@ -765,7 +748,6 @@ NPObject* PluginView::npObject()
 }
 #endif
 
-#if USE(JSC)
 PassRefPtr<JSC::Bindings::Instance> PluginView::bindingInstance()
 {
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -790,7 +772,6 @@ PassRefPtr<JSC::Bindings::Instance> PluginView::bindingInstance()
     return 0;
 #endif
 }
-#endif
 
 void PluginView::disconnectStream(PluginStream* stream)
 {
@@ -1525,9 +1506,7 @@ void PluginView::privateBrowsingStateChanged(bool privateBrowsingEnabled)
         return;
 
     PluginView::setCurrentPluginView(this);
-#if USE(JSC)
     JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
-#endif
     setCallingPlugin(true);
     NPBool value = privateBrowsingEnabled;
     setValue(m_instance, NPNVprivateModeBool, &value);

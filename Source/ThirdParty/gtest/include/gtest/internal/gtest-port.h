@@ -179,9 +179,7 @@
 
 #include <wtf/Platform.h>
 #include <wtf/ExportMacros.h>
-#if USE(JSC)
 #include <runtime/JSExportMacros.h>
-#endif
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 

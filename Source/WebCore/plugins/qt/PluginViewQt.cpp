@@ -28,9 +28,7 @@
 #include "config.h"
 #include "PluginView.h"
 
-#if USE(JSC)
 #include "BridgeJSC.h"
-#endif
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
@@ -49,9 +47,7 @@
 #include "HostWindow.h"
 #include "IFrameShimSupport.h"
 #include "Image.h"
-#if USE(JSC)
 #include "JSDOMBinding.h"
-#endif
 #include "KeyboardEvent.h"
 #include "MouseEvent.h"
 #include "NotImplemented.h"
@@ -65,9 +61,7 @@
 #include "RenderObject.h"
 #include "Settings.h"
 #include "npruntime_impl.h"
-#if USE(JSC)
 #include "runtime_root.h"
-#endif
 #include <QKeyEvent>
 #include <QPainter>
 #include <X11/X.h>
@@ -85,9 +79,7 @@
 #include <qpa/qplatformnativeinterface.h>
 
 using JSC::ExecState;
-#if USE(JSC)
 using JSC::Interpreter;
-#endif
 using JSC::JSLock;
 using JSC::JSObject;
 
@@ -281,9 +273,7 @@ bool PluginView::dispatchNPEvent(NPEvent& event)
     }
 
     PluginView::setCurrentPluginView(this);
-#if USE(JSC)
     JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
-#endif
     setCallingPlugin(true);
     bool accepted = !m_plugin->pluginFuncs()->event(m_instance, &event);
     setCallingPlugin(false);
@@ -566,9 +556,7 @@ void PluginView::setNPWindowIfNeeded()
     }
 
     PluginView::setCurrentPluginView(this);
-#if USE(JSC)
     JSC::JSLock::DropAllLocks dropAllLocks(JSDOMWindowBase::commonJSGlobalData());
-#endif
     setCallingPlugin(true);
     m_plugin->pluginFuncs()->setwindow(m_instance, &m_npWindow);
     setCallingPlugin(false);

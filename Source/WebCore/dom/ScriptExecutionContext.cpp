@@ -47,10 +47,8 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
-#if USE(JSC)
 // FIXME: This is a layering violation.
 #include "JSDOMWindow.h"
-#endif
 
 #if ENABLE(SQL_DATABASE)
 #include "DatabaseContext.h"
@@ -411,7 +409,6 @@ ScriptExecutionContext::Task::~Task()
 {
 }
 
-#if USE(JSC)
 JSC::JSGlobalData* ScriptExecutionContext::globalData()
 {
      if (isDocument())
@@ -425,7 +422,6 @@ JSC::JSGlobalData* ScriptExecutionContext::globalData()
     ASSERT_NOT_REACHED();
     return 0;
 }
-#endif
 
 #if ENABLE(SQL_DATABASE)
 void ScriptExecutionContext::setDatabaseContext(DatabaseContext* databaseContext)

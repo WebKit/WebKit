@@ -132,10 +132,8 @@
 #include "InspectorController.h"
 #endif
 
-#if USE(JSC)
 #include <runtime/JSGlobalData.h>
 #include <runtime/Operations.h>
-#endif
 
 #if ENABLE(MICRODATA)
 #include "HTMLPropertiesCollection.h"

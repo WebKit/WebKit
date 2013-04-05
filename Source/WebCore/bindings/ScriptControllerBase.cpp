@@ -99,15 +99,10 @@ bool ScriptController::executeIfJavaScriptURL(const KURL& url, ShouldReplaceDocu
         return true;
 
     String scriptResult;
-#if USE(JSC)
     JSDOMWindowShell* shell = windowShell(mainThreadNormalWorld());
     JSC::ExecState* exec = shell->window()->globalExec();
     if (!result.getString(exec, scriptResult))
         return true;
-#else
-    if (!result.getString(scriptResult))
-        return true;
-#endif
 
     // FIXME: We should always replace the document, but doing so
     //        synchronously can cause crashes:

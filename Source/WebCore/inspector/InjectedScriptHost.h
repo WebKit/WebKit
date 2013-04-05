@@ -105,11 +105,7 @@ public:
     void getEventListenersImpl(Node*, Vector<EventListenerInfo>& listenersArray);
 
     // FIXME: Remove evaluateReturnsEvalFunction once InjectedScriptHost returns eval in evaluate on V8. https://webkit.org/b/113134
-#if USE(JSC)
     bool evaluateReturnsEvalFunction() { return true; }
-#else
-    bool evaluateReturnsEvalFunction() { return false; }
-#endif
 
     void clearConsoleMessages();
     void copyText(const String& text);

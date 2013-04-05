@@ -26,10 +26,8 @@
 #include "config.h"
 #include "PluginView.h"
 
-#if USE(JSC)
 #include "BridgeJSC.h"
 #include <runtime/JSObject.h>
-#endif
 
 using namespace WTF;
 
@@ -141,12 +139,10 @@ void PluginView::keepAlive(NPP)
 }
 #endif
 
-#if USE(JSC)
 PassRefPtr<JSC::Bindings::Instance> PluginView::bindingInstance()
 {
     return 0;
 }
-#endif
 
 void PluginView::privateBrowsingStateChanged(bool)
 {

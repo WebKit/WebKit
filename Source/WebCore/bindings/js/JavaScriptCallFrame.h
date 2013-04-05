@@ -26,7 +26,7 @@
 #ifndef JavaScriptCallFrame_h
 #define JavaScriptCallFrame_h
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 
 #include <debugger/DebuggerCallFrame.h>
 #include <interpreter/CallFrame.h>

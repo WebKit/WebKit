@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 
 #include "JavaScriptCallFrame.h"
 

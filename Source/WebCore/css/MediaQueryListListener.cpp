@@ -23,27 +23,14 @@
 #include "MediaQueryList.h"
 #include "ScriptFunctionCall.h"
 
-#if USE(JSC)
 #include "JSMediaQueryList.h"
-#else
-#include "V8MediaQueryList.h"
-#endif
 
 namespace WebCore {
 
 void MediaQueryListListener::queryChanged(ScriptState* state, MediaQueryList* query)
 {
     ScriptCallback callback(state, m_value);
-#if USE(JSC)
     callback.appendArgument(toJS(state, deprecatedGlobalObjectForPrototype(state), query));
-#else
-    v8::HandleScope handleScope;
-    v8::Handle<v8::Context> context = state->context();
-    if (context.IsEmpty())
-       return; // JS may not be enabled.
-    v8::Context::Scope scope(context);
-    callback.appendArgument(toV8(query, v8::Handle<v8::Object>(), context->GetIsolate()));
-#endif
     callback.call();
 }
 

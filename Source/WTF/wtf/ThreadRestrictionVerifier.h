@@ -47,7 +47,12 @@ namespace WTF {
 // The default mode is to verify that the object will only be used on a single thread. The
 // thread gets captured when setShared(true) is called.
 // The mode may be changed by calling useMutexMode (or turnOffVerification).
-#if !USE(JSC) // This verifier is completely wrong for JavaScript implementations that use threads
+
+// FIXME: This verifier is switched off because it fires false positives for
+// objects that are used on multiple threads. Instead of an opt-out verifier,
+// we probably need an opt-in verifier that marks select objects as being
+// tied to select threads.
+#if 0
 class ThreadRestrictionVerifier {
 public:
     ThreadRestrictionVerifier()
@@ -169,7 +174,7 @@ private:
     dispatch_queue_t m_owningQueue;
 #endif
 };
-#else // !USE(JSC) => so the JSC case
+#else
 class ThreadRestrictionVerifier {
 public:
     ThreadRestrictionVerifier()

@@ -35,10 +35,10 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPropertyNames.h"
 #include "CachedCSSStyleSheet.h"
+#include "CachedResourceLoader.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "DOMWindow.h"
-#include "CachedResourceLoader.h"
 #include "DocumentType.h"
 #include "EditorClient.h"
 #include "Event.h"
@@ -60,7 +60,9 @@
 #include "HitTestResult.h"
 #include "ImageBuffer.h"
 #include "InspectorInstrumentation.h"
+#include "JSDOMWindowShell.h"
 #include "Logging.h"
+#include "MathMLNames.h"
 #include "MediaFeatureNames.h"
 #include "Navigator.h"
 #include "NodeList.h"
@@ -75,6 +77,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RuntimeEnabledFeatures.h"
+#include "SVGNames.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
@@ -87,11 +90,13 @@
 #include "UserTypingGestureIndicator.h"
 #include "VisibleUnits.h"
 #include "WebKitFontFamilyNames.h"
+#include "XLinkNames.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
 #include "htmlediting.h"
 #include "markup.h"
 #include "npruntime_impl.h"
+#include "runtime_root.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
@@ -99,15 +104,6 @@
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerCompositor.h"
 #endif
-
-#if USE(JSC)
-#include "JSDOMWindowShell.h"
-#include "runtime_root.h"
-#endif
-
-#include "MathMLNames.h"
-#include "SVGNames.h"
-#include "XLinkNames.h"
 
 #if ENABLE(SVG)
 #include "SVGDocument.h"

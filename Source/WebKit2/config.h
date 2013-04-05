@@ -32,12 +32,10 @@
 #include "cmakeconfig.h"
 #endif
 
+#include <runtime/JSExportMacros.h>
 #include <wtf/DisallowCType.h>
 #include <wtf/Platform.h>
 #include <wtf/ExportMacros.h>
-#if USE(JSC)
-#include <runtime/JSExportMacros.h>
-#endif
 
 #ifdef __cplusplus
 #ifndef EXTERN_C_BEGIN

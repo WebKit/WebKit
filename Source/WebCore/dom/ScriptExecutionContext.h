@@ -35,6 +35,7 @@
 #include "ScriptState.h"
 #include "SecurityContext.h"
 #include "Supplementable.h"
+#include <runtime/JSGlobalData.h>
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -42,10 +43,6 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/text/StringHash.h>
-
-#if USE(JSC)
-#include <runtime/JSGlobalData.h>
-#endif
 
 namespace WebCore {
 
@@ -147,9 +144,7 @@ public:
     void removeTimeout(int timeoutId) { m_timeouts.remove(timeoutId); }
     DOMTimer* findTimeout(int timeoutId) { return m_timeouts.get(timeoutId); }
 
-#if USE(JSC)
     JSC::JSGlobalData* globalData();
-#endif
 
     // Interval is in seconds.
     void adjustMinimumTimerInterval(double oldMinimumTimerInterval);
