@@ -229,7 +229,7 @@ void PluginView::paintUsingXPixmap(QPainter* painter, const QRect &exposedRect)
 
     XImage* xImage = XGetImage(x11Display(), m_drawable, exposedRect.x(), exposedRect.y(),
                                exposedRect.width(), exposedRect.height(), ULONG_MAX, ZPixmap);
-    painter->drawImage(QPoint(exposedRect.x(), exposedRect.y()), qimageFromXImage(xImage), exposedRect);
+    painter->drawImage(QPoint(exposedRect.x(), exposedRect.y()), qimageFromXImage(xImage));
     XDestroyImage(xImage);
 }
 
