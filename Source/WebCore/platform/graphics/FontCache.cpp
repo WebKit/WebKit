@@ -178,7 +178,7 @@ static const AtomicString& alternateFamilyName(const AtomicString& familyName)
         return timesNewRoman;
 #endif
 
-    return emptyAtom;
+    return nullAtom;
 }
 
 FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fontDescription,
@@ -213,7 +213,7 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
             // We were unable to find a font.  We have a small set of fonts that we alias to other names,
             // e.g., Arial/Helvetica, Courier/Courier New, etc.  Try looking up the font under the aliased name.
             const AtomicString& alternateName = alternateFamilyName(familyName);
-            if (!alternateName.isEmpty()) {
+            if (!alternateName.isNull()) {
                 FontPlatformData* fontPlatformDataForAlternateName = getCachedFontPlatformData(fontDescription, alternateName, true);
                 // Lookup the key in the hash table again as the previous iterator may have
                 // been invalidated by the recursive call to getCachedFontPlatformData().
