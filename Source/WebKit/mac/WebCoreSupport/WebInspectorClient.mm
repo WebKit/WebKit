@@ -33,13 +33,16 @@
 #import "WebFrameInternal.h"
 #import "WebFrameView.h"
 #import "WebInspector.h"
-#import "WebInspectorPrivate.h"
 #import "WebInspectorFrontend.h"
+#import "WebInspectorPrivate.h"
 #import "WebLocalizableStringsInternal.h"
 #import "WebNodeHighlighter.h"
-#import "WebUIDelegate.h"
 #import "WebPolicyDelegate.h"
+#import "WebQuotaManager.h"
+#import "WebSecurityOriginPrivate.h"
+#import "WebUIDelegate.h"
 #import "WebViewInternal.h"
+#import <algorithm>
 #import <WebCore/Frame.h>
 #import <WebCore/InspectorController.h>
 #import <WebCore/InspectorFrontendClient.h>
@@ -685,6 +688,12 @@ void WebInspectorFrontendClient::append(const String& url, const String& content
         }
         [resultListener chooseFilenames:filenames];
     }];
+}
+
+- (void)webView:(WebView *)sender frame:(WebFrame *)frame exceededDatabaseQuotaForSecurityOrigin:(WebSecurityOrigin *)origin database:(NSString *)databaseIdentifier
+{
+    id <WebQuotaManager> databaseQuotaManager = origin.databaseQuotaManager;
+    databaseQuotaManager.quota = std::max<unsigned long long>(5 * 1024 * 1024, databaseQuotaManager.usage * 1.25);
 }
 
 // MARK: -

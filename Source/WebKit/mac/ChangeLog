@@ -1,3 +1,17 @@
+2013-04-05  Timothy Hatcher  <timothy@apple.com>
+
+        Allow the Web Inspector to use WebSQL.
+
+        This fixes an exception on load in the Safari Web Inspector.
+
+        https://webkit.org/b/114040
+        rdar://problem/13581422
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController webView:frame:exceededDatabaseQuotaForSecurityOrigin:database:]): Added.
+
 2013-04-02  Timothy Hatcher  <timothy@apple.com>
 
         Provide a user default that can be used to disable docking of the Web Inspector.

@@ -1,3 +1,18 @@
+2013-04-05  Timothy Hatcher  <timothy@apple.com>
+
+        Allow the Web Inspector to use WebSQL.
+
+        This fixes an exception on load in the Safari Web Inspector.
+
+        https://webkit.org/b/114040
+        rdar://problem/13581422
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::exceededDatabaseQuota): Added.
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage): Hook up exceededDatabaseQuota.
+
 2013-04-04  Brady Eidson  <beidson@apple.com>
 
         Add SPI to get a copy of the context menu at a given point.

@@ -36,6 +36,7 @@
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
 #import "WebProcessProxy.h"
+#import <algorithm>
 #import <mach-o/dyld.h>
 #import <WebKitSystemInterface.h>
 #import <WebCore/InspectorFrontendClientLocal.h>
@@ -224,6 +225,11 @@ static void setWindowFrame(WKPageRef, WKRect frame, const void* clientInfo)
     webInspectorProxy->setInspectorWindowFrame(frame);
 }
 
+static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef, WKStringRef, unsigned long long, unsigned long long, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage, const void*)
+{
+    return std::max<unsigned long long>(expectedUsage, currentDatabaseUsage * 1.25);
+}
+
 void WebInspectorProxy::setInspectorWindowFrame(WKRect& frame)
 {
     if (m_isAttached)
@@ -410,7 +416,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
         0, // runBeforeUnloadConfirmPanel
         0, // didDraw
         0, // pageDidScroll
-        0, // exceededDatabaseQuota
+        exceededDatabaseQuota,
         0, // runOpenPanel
         0, // decidePolicyForGeolocationPermissionRequest
         0, // headerHeight
