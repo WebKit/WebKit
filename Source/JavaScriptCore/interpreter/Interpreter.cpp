@@ -688,6 +688,8 @@ void Interpreter::getStackTrace(JSGlobalData* globalData, Vector<StackFrame>& re
     int line = getLineNumberForCallFrame(globalData, callFrame);
 
     callFrame = callFrame->trueCallFrameFromVMCode();
+    if (!callFrame)
+        return;
 
     while (callFrame && callFrame != CallFrame::noCaller()) {
         String sourceURL;

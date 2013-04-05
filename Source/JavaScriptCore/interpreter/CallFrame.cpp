@@ -121,9 +121,22 @@ CallFrame* CallFrame::trueCallFrame(AbstractPC pc)
         ReturnAddressPtr currentReturnPC = pc.jitReturnAddress();
         
         bool hasCodeOrigin = machineCodeBlock->codeOriginForReturn(currentReturnPC, codeOrigin);
-        ASSERT_UNUSED(hasCodeOrigin, hasCodeOrigin);
+        ASSERT(hasCodeOrigin);
+        if (!hasCodeOrigin) {
+            // In release builds, if we find ourselves in a situation where the return PC doesn't
+            // correspond to a valid CodeOrigin, we return zero instead of continuing. Some of
+            // the callers of trueCallFrame() will be able to recover and do conservative things,
+            // while others will crash.
+            return 0;
+        }
     } else {
         unsigned index = codeOriginIndexForDFG();
+        ASSERT(machineCodeBlock->canGetCodeOrigin(index));
+        if (!machineCodeBlock->canGetCodeOrigin(index)) {
+            // See above. In release builds, we try to protect ourselves from crashing even
+            // though stack walking will be goofed up.
+            return 0;
+        }
         codeOrigin = machineCodeBlock->codeOrigin(index);
     }
 

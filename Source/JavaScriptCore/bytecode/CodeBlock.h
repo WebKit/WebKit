@@ -776,6 +776,13 @@ namespace JSC {
         
         bool codeOriginForReturn(ReturnAddressPtr, CodeOrigin&);
         
+        bool canGetCodeOrigin(unsigned index)
+        {
+            if (!m_rareData)
+                return false;
+            return m_rareData->m_codeOrigins.size() > index;
+        }
+        
         CodeOrigin codeOrigin(unsigned index)
         {
             RELEASE_ASSERT(m_rareData);
