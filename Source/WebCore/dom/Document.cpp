@@ -245,10 +245,6 @@
 #include "DOMSecurityPolicy.h"
 #endif
 
-#if PLATFORM(CHROMIUM)
-#include "TraceEvent.h"
-#endif
-
 #if ENABLE(VIDEO_TRACK)
 #include "CaptionUserPreferences.h"
 #endif
@@ -1823,10 +1819,6 @@ void Document::recalcStyle(StyleChange change)
     if (m_inStyleRecalc)
         return; // Guard against re-entrancy. -dwh
 
-#if PLATFORM(CHROMIUM)
-    TRACE_EVENT0("webkit", "Document::recalcStyle");
-#endif
-
     // FIXME: We should update style on our ancestor chain before proceeding (especially for seamless),
     // however doing so currently causes several tests to crash, as Frame::setDocument calls Document::attach
     // before setting the DOMWindow on the Frame, or the SecurityOrigin on the document. The attach, in turn
@@ -2528,7 +2520,7 @@ void Document::implicitClose()
 
     m_processingLoadEvent = false;
 
-#if PLATFORM(MAC) || PLATFORM(CHROMIUM)
+#if PLATFORM(MAC)
     if (f && renderObject && AXObjectCache::accessibilityEnabled()) {
         // The AX cache may have been cleared at this point, but we need to make sure it contains an
         // AX object to send the notification to. getOrCreate will make sure that an valid AX object
@@ -3495,12 +3487,6 @@ bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode, FocusDirection
             else
                 view()->setFocus(true);
         }
-    }
-
-    if (!focusChangeBlocked && m_focusedNode) {
-        // Create the AXObject cache in a focus change because Chromium relies on it.
-        if (AXObjectCache* cache = axObjectCache())
-            cache->handleFocusedUIElementChanged(oldFocusedNode.get(), newFocusedNode.get());
     }
 
     if (!focusChangeBlocked)
