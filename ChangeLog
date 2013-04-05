@@ -1,3 +1,20 @@
+2013-04-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Nixed the defunct chromium folder from ManualTests
+        https://bugs.webkit.org/show_bug.cgi?id=113995
+
+        Reviewed by Benjamin Poulain.
+
+        * ManualTests/chromium: Removed.
+        * ManualTests/chromium/autofill-popup-shiftupdown.hml: Removed.
+        * ManualTests/chromium/drag-image-accounts-for-device-scale.html: Removed.
+        * ManualTests/chromium/modifiers-during-drag-and-drop.html: Removed.
+        * ManualTests/chromium/no-autofill-on-readonly.html: Removed.
+        * ManualTests/chromium/onchange-reload-popup.html: Removed.
+        * ManualTests/chromium/popup-menu-crash.html: Removed.
+        * ManualTests/chromium/select-close-popup-value-change.html: Removed.
+        * ManualTests/chromium/suggestions-popup-font-change.html: Removed.
+
 2013-04-04  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [GStreamer] Virtual modifier for MediaPlayer::simulateAudioInterruption must go
