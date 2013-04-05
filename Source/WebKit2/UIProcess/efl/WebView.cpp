@@ -54,6 +54,8 @@ namespace WebKit {
 WebView::WebView(WebContext* context, WebPageGroup* pageGroup)
     : m_ewkView(0)
     , m_page(context->createWebPage(this, pageGroup))
+    , m_focused(false)
+    , m_visible(false)
 {
     m_page->pageGroup()->preferences()->setAcceleratedCompositingEnabled(true);
     m_page->pageGroup()->preferences()->setForceCompositingMode(true);
@@ -100,6 +102,24 @@ void WebView::setSize(const WebCore::IntSize& size)
     m_size = size;
 
     updateViewportSize();
+}
+
+void WebView::setFocused(bool focused)
+{
+    if (m_focused == focused)
+        return;
+
+    m_focused = focused;
+    m_page->viewStateDidChange(WebPageProxy::ViewIsFocused | WebPageProxy::ViewWindowIsActive);
+}
+
+void WebView::setVisible(bool visible)
+{
+    if (m_visible == visible)
+        return;
+
+    m_visible = visible;
+    m_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 
 void WebView::setUserViewportTranslation(double tx, double ty)
@@ -301,20 +321,12 @@ bool WebView::isViewWindowActive()
 
 bool WebView::isViewFocused()
 {
-    // FIXME: Unneeded after webkit.org/b/110877
-    if (!m_ewkView)
-        return false;
-
-    return m_ewkView->isFocused();
+    return isFocused();
 }
 
 bool WebView::isViewVisible()
 {
-    // FIXME: Unneeded after webkit.org/b/110877
-    if (!m_ewkView)
-        return false;
-
-    return m_ewkView->isVisible();
+    return isVisible();
 }
 
 bool WebView::isViewInWindow()

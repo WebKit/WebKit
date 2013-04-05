@@ -1,3 +1,41 @@
+2013-04-05  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][EFL] Encapsulate view states set-up within WebView
+        https://bugs.webkit.org/show_bug.cgi?id=110877
+
+        Reviewed by Benjamin Poulain.
+
+        View states set-up is encapsulated within WebView. This change
+        reduces both usage of EwkView inside WebView class and usage of
+        WebPageProxy inside EwkView class.
+
+        New WKView API was added so that EwkView can define whether or not
+        the view is visible and focused.
+
+        * UIProcess/API/C/efl/WKView.cpp:
+        (WKViewIsFocused):
+        (WKViewSetIsFocused):
+        (WKViewIsVisible):
+        (WKViewSetIsVisible):
+        * UIProcess/API/C/efl/WKView.h:
+        * UIProcess/API/efl/EwkView.cpp:
+        (::handleEvent):
+        (EwkView::handleEvasObjectShow):
+        (EwkView::handleEwkViewFocusIn):
+        (EwkView::handleEwkViewFocusOut):
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::setFocused):
+        (WebKit):
+        (WebKit::WebView::setVisible):
+        (WebKit::WebView::isViewFocused):
+        (WebKit::WebView::isViewVisible):
+        * UIProcess/efl/WebView.h:
+        (WebKit::WebView::isFocused):
+        (WebView):
+        (WebKit::WebView::isVisible):
+
 2013-04-04  KwangYong Choi  <ky0.choi@samsung.com>
 
         [EFL][WK2] Add support for getting page contents as string

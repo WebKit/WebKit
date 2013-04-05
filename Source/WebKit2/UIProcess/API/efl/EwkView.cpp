@@ -214,17 +214,14 @@ template <>
 void EwkViewEventHandler<EVAS_CALLBACK_SHOW>::handleEvent(void* data, Evas*, Evas_Object*, void*)
 {
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
-    toEwkView(smartData)->page()->viewStateDidChange(WebPageProxy::ViewIsVisible);
+    WKViewSetIsVisible(toEwkView(smartData)->wkView(), true);
 }
 
 template <>
 void EwkViewEventHandler<EVAS_CALLBACK_HIDE>::handleEvent(void* data, Evas*, Evas_Object*, void*)
 {
     Ewk_View_Smart_Data* smartData = static_cast<Ewk_View_Smart_Data*>(data);
-
-    // We need to pass ViewIsVisible here. viewStateDidChange() itself is responsible for actually setting the visibility to Visible or Hidden
-    // depending on what WebPageProxy::isViewVisible() returns, this simply triggers the process.
-    toEwkView(smartData)->page()->viewStateDidChange(WebPageProxy::ViewIsVisible);
+    WKViewSetIsVisible(toEwkView(smartData)->wkView(), false);
 }
 
 typedef HashMap<WKPageRef, Evas_Object*> WKPageToEvasObjectMap;
@@ -620,16 +617,6 @@ void EwkView::setWindowGeometry(const WKRect& rect)
         Ecore_Evas* ee = ecore_evas_ecore_evas_get(sd->base.evas);
         ecore_evas_move_resize(ee, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
     }
-}
-
-bool EwkView::isFocused() const
-{
-    return evas_object_focus_get(m_evasObject);
-}
-
-bool EwkView::isVisible() const
-{
-    return evas_object_visible_get(m_evasObject);
 }
 
 const char* EwkView::title() const
@@ -1163,13 +1150,13 @@ void EwkView::handleEvasObjectColorSet(Evas_Object* evasObject, int red, int gre
 
 Eina_Bool EwkView::handleEwkViewFocusIn(Ewk_View_Smart_Data* smartData)
 {
-    toEwkView(smartData)->page()->viewStateDidChange(WebPageProxy::ViewIsFocused | WebPageProxy::ViewWindowIsActive);
+    WKViewSetIsFocused(toEwkView(smartData)->wkView(), true);
     return true;
 }
 
 Eina_Bool EwkView::handleEwkViewFocusOut(Ewk_View_Smart_Data* smartData)
 {
-    toEwkView(smartData)->page()->viewStateDidChange(WebPageProxy::ViewIsFocused | WebPageProxy::ViewWindowIsActive);
+    WKViewSetIsFocused(toEwkView(smartData)->wkView(), false);
     return true;
 }
 

@@ -55,6 +55,26 @@ void WKViewSetViewClient(WKViewRef viewRef, const WKViewClient* client)
     toImpl(viewRef)->initializeClient(client);
 }
 
+bool WKViewIsFocused(WKViewRef viewRef)
+{
+    return toImpl(viewRef)->isFocused();
+}
+
+void WKViewSetIsFocused(WKViewRef viewRef, bool isFocused)
+{
+    toImpl(viewRef)->setFocused(isFocused);
+}
+
+bool WKViewIsVisible(WKViewRef viewRef)
+{
+    return toImpl(viewRef)->isVisible();
+}
+
+void WKViewSetIsVisible(WKViewRef viewRef, bool isVisible)
+{
+    toImpl(viewRef)->setVisible(isVisible);
+}
+
 void WKViewSetUserViewportTranslation(WKViewRef viewRef, double tx, double ty)
 {
     toImpl(viewRef)->setUserViewportTranslation(tx, ty);

@@ -119,9 +119,6 @@ public:
     EwkWindowFeatures* windowFeatures();
     WebKit::PageViewportController* pageViewportController() { return m_pageViewportController.get(); }
 
-    bool isFocused() const;
-    bool isVisible() const;
-
     void setDeviceScaleFactor(float scale);
     float deviceScaleFactor() const;
 

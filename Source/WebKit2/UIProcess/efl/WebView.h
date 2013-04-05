@@ -60,6 +60,12 @@ public:
     void setSize(const WebCore::IntSize&);
     const WebCore::IntSize& size() const { return m_size; }
 
+    bool isFocused() const { return m_focused; }
+    void setFocused(bool);
+
+    bool isVisible() const { return m_visible; }
+    void setVisible(bool);
+
     void setUserViewportTranslation(double tx, double ty);
     WebCore::IntPoint userViewportToContents(const WebCore::IntPoint&) const;
 
@@ -185,6 +191,8 @@ private:
     DefaultUndoController m_undoController;
     WebCore::TransformationMatrix m_userViewportTransform;
     WebCore::IntSize m_size; // Size in device units.
+    bool m_focused;
+    bool m_visible;
 };
 
 }
