@@ -35,6 +35,7 @@
 #include "config.h"
 #include "PlatformScreen.h"
 
+#include "FloatRect.h"
 #include "NotImplemented.h"
 #include "Widget.h"
 
