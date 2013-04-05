@@ -1,3 +1,22 @@
+2013-04-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r147773 and r147774.
+        http://trac.webkit.org/changeset/147773
+        http://trac.webkit.org/changeset/147774
+        https://bugs.webkit.org/show_bug.cgi?id=114056
+
+        Causing some exceptions on AppEngine I don't understand
+        (Requested by rniwa on #webkit).
+
+        * QueueStatusServer/config/queues.py:
+        * QueueStatusServer/model/queues.py:
+        (Queue.short_name):
+        (Queue.display_name):
+        * QueueStatusServer/model/queues_unittest.py:
+        (QueueTest.test_short_name):
+        (QueueTest.test_display_name):
+        (QueueTest.test_name_with_underscores):
+
 2013-04-05  Geoffrey Garen  <ggaren@apple.com>
 
         Fixed run-bindings-tests by removing V8
