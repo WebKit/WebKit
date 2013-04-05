@@ -1454,6 +1454,19 @@ WebContextMenu* WebPage::contextMenu()
         m_contextMenu = WebContextMenu::create(this);
     return m_contextMenu.get();
 }
+
+WebContextMenu* WebPage::contextMenuAtPointInWindow(const IntPoint& point)
+{
+    corePage()->contextMenuController()->clearContextMenu();
+    
+    // Simulate a mouse click to generate the correct menu.
+    PlatformMouseEvent mouseEvent(point, point, RightButton, PlatformEvent::MousePressed, 1, false, false, false, false, currentTime());
+    bool handled = corePage()->mainFrame()->eventHandler()->sendContextMenuEvent(mouseEvent);
+    if (!handled)
+        return 0;
+
+    return contextMenu();
+}
 #endif
 
 // Events 

@@ -1,3 +1,20 @@
+2013-04-04  Brady Eidson  <beidson@apple.com>
+
+        Add SPI to get a copy of the context menu at a given point.
+        <rdar://problem/13450908> and https://bugs.webkit.org/show_bug.cgi?id=113958
+
+        Reviewed by Andy Estes.
+
+        Add the new accessor: 
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::contextMenuAtPoint):
+        * WebProcess/WebPage/WebPage.h:
+
+        Expose the new SPI:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageCopyContextMenuAtPoint):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+
 2013-04-05  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][EFL] WebView should own page position and scale factor

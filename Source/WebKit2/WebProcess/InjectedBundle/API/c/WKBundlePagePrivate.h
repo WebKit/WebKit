@@ -78,6 +78,7 @@ WK_EXPORT void* WKAccessibilityRootObject(WKBundlePageRef);
 WK_EXPORT void* WKAccessibilityFocusedObject(WKBundlePageRef);
 
 WK_EXPORT WKArrayRef WKBundlePageCopyContextMenuItemTitles(WKBundlePageRef);
+WK_EXPORT WKArrayRef WKBundlePageCopyContextMenuAtPointInWindow(WKBundlePageRef, WKPoint);
 
 #ifdef __cplusplus
 }

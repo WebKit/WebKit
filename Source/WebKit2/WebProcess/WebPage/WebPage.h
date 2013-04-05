@@ -408,6 +408,7 @@ public:
 
 #if ENABLE(CONTEXT_MENUS)
     WebContextMenu* contextMenu();
+    WebContextMenu* contextMenuAtPointInWindow(const WebCore::IntPoint&);
 #endif
     
     bool hasLocalDataForURL(const WebCore::KURL&);

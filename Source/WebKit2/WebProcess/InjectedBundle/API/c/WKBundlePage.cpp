@@ -163,6 +163,27 @@ WKArrayRef WKBundlePageCopyContextMenuItemTitles(WKBundlePageRef pageRef)
 #endif
 }
 
+WKArrayRef WKBundlePageCopyContextMenuAtPointInWindow(WKBundlePageRef pageRef, WKPoint point)
+{
+#if ENABLE(CONTEXT_MENUS)
+    WebContextMenu* contextMenu = toImpl(pageRef)->contextMenuAtPointInWindow(toIntPoint(point));
+    if (!contextMenu)
+        return 0;
+
+    const Vector<WebContextMenuItemData>& items = contextMenu->items();
+    size_t arrayLength = items.size();
+
+    RefPtr<MutableArray> menuArray = MutableArray::create();
+    menuArray->reserveCapacity(arrayLength);
+    for (unsigned i = 0; i < arrayLength; ++i)
+        menuArray->append(WebContextMenuItem::create(items[i]).get());
+    
+    return toAPI(menuArray.release().leakRef());
+#else
+    return 0;
+#endif
+}
+
 void* WKAccessibilityRootObject(WKBundlePageRef pageRef)
 {
 #if HAVE(ACCESSIBILITY)
