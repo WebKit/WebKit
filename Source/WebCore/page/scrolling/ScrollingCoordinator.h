@@ -103,7 +103,7 @@ public:
     // containers while scrolling.
     virtual bool supportsFixedPositionLayers() const { return false; }
 
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
+#if PLATFORM(MAC)
     // Dispatched by the scrolling tree during handleWheelEvent. This is required as long as scrollbars are painted on the main thread.
     void handleWheelEventPhase(PlatformWheelEventPhase);
 #endif

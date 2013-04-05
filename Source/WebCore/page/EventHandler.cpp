@@ -287,11 +287,7 @@ static inline bool shouldGesturesTriggerActive()
     // If the platform we're on supports GestureTapDown and GestureTapCancel then we'll
     // rely on them to set the active state. Unfortunately there's no generic way to
     // know in advance what event types are supported.
-#if PLATFORM(CHROMIUM)
-    return true;
-#else
     return false;
-#endif
 }
 #endif
 
@@ -1940,11 +1936,6 @@ bool EventHandler::handleMouseReleaseEvent(const PlatformMouseEvent& mouseEvent)
     bool swallowMouseUpEvent = !dispatchMouseEvent(eventNames().mouseupEvent, mev.targetNode(), true, m_clickCount, mouseEvent, false);
 
     bool contextMenuEvent = mouseEvent.button() == RightButton;
-#if PLATFORM(CHROMIUM) && OS(DARWIN)
-    // FIXME: The Mac port achieves the same behavior by checking whether the context menu is currently open in WebPage::mouseEvent(). Consider merging the implementations.
-    if (mouseEvent.button() == LeftButton && mouseEvent.modifiers() & PlatformEvent::CtrlKey)
-        contextMenuEvent = true;
-#endif
 
     bool swallowClickEvent = m_clickCount > 0 && !contextMenuEvent && mouseIsReleasedOnPressedElement(mev.targetNode(), m_clickNode.get()) && !dispatchMouseEvent(eventNames().clickEvent, mev.targetNode(), true, m_clickCount, mouseEvent, true);
 
@@ -2400,7 +2391,7 @@ bool EventHandler::isInsideScrollbar(const IntPoint& windowPoint) const
     return false;
 }
 
-#if !PLATFORM(GTK) && !(PLATFORM(CHROMIUM) && (OS(UNIX) && !OS(DARWIN)))
+#if !PLATFORM(GTK)
 bool EventHandler::shouldTurnVerticalTicksIntoHorizontal(const HitTestResult&, const PlatformWheelEvent&) const
 {
     return false;
@@ -2823,7 +2814,7 @@ bool EventHandler::sendScrollEventToView(const PlatformGestureEvent& gestureEven
         scaledDelta.width() / tickDivisor, scaledDelta.height() / tickDivisor,
         ScrollByPixelWheelEvent,
         gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey());
-#if PLATFORM(MAC) || PLATFORM(CHROMIUM)
+#if PLATFORM(MAC)
     syntheticWheelEvent.setHasPreciseScrollingDeltas(true);
 #endif
 

@@ -112,11 +112,11 @@ bool Settings::gShouldRespectPriorityInCSSAttributeSetters = false;
 #endif
 
 // NOTEs
-//  1) EditingMacBehavior comprises Tiger, Leopard, SnowLeopard and iOS builds, as well QtWebKit and Chromium when built on Mac;
+//  1) EditingMacBehavior comprises Tiger, Leopard, SnowLeopard and iOS builds, as well as QtWebKit when built on Mac;
 //  2) EditingWindowsBehavior comprises Win32 and WinCE builds, as well as QtWebKit and Chromium when built on Windows;
 //  3) EditingUnixBehavior comprises all unix-based systems, but Darwin/MacOS/Android (and then abusing the terminology);
 //  4) EditingAndroidBehavior comprises Android builds.
-// 99) MacEditingBehavior is used a fallback.
+// 99) MacEditingBehavior is used as a fallback.
 static EditingBehaviorType editingBehaviorTypeForPlatform()
 {
     return
@@ -141,21 +141,8 @@ static const bool defaultUnifiedTextCheckerEnabled = true;
 #else
 static const bool defaultUnifiedTextCheckerEnabled = false;
 #endif
-#if PLATFORM(CHROMIUM)
-#if OS(MAC_OS_X)
-static const bool defaultSmartInsertDeleteEnabled = true;
-#else
-static const bool defaultSmartInsertDeleteEnabled = false;
-#endif
-#if OS(WINDOWS)
-static const bool defaultSelectTrailingWhitespaceEnabled = true;
-#else
-static const bool defaultSelectTrailingWhitespaceEnabled = false;
-#endif
-#else
 static const bool defaultSmartInsertDeleteEnabled = true;
 static const bool defaultSelectTrailingWhitespaceEnabled = false;
-#endif
 
 Settings::Settings(Page* page)
     : m_page(0)

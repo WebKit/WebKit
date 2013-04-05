@@ -49,19 +49,8 @@ FeatureObserver::~FeatureObserver()
 
 void FeatureObserver::updateMeasurements()
 {
-#if PLATFORM(CHROMUM)
-    HistogramSupport::histogramEnumeration("WebCore.FeatureObserver", PageVisits, NumberOfFeatures);
-#endif
-
     if (!m_featureBits)
         return;
-
-#if PLATFORM(CHROMUM)
-    for (unsigned i = 0; i < NumberOfFeatures; ++i) {
-        if (m_featureBits->quickGet(i))
-            HistogramSupport::histogramEnumeration("WebCore.FeatureObserver", i, NumberOfFeatures);
-    }
-#endif
 
     // Clearing feature bits is timing sensitive. Ports other than chromium do not use HistogramSupport,
     // and pull the results on certain navigation events instead.

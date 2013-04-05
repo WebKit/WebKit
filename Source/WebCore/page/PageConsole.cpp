@@ -49,10 +49,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(CHROMIUM)
-#include "TraceEvent.h"
-#endif
-
 namespace WebCore {
 
 namespace {

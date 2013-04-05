@@ -48,10 +48,6 @@
 #include "ScrollingCoordinatorMac.h"
 #endif
 
-#if PLATFORM(CHROMIUM)
-#include "ScrollingCoordinatorChromium.h"
-#endif
-
 #if USE(COORDINATED_GRAPHICS)
 #include "ScrollingCoordinatorCoordinatedGraphics.h"
 #endif
@@ -66,10 +62,6 @@ PassRefPtr<ScrollingCoordinator> ScrollingCoordinator::create(Page* page)
 {
 #if USE(ACCELERATED_COMPOSITING) && ENABLE(THREADED_SCROLLING)
     return adoptRef(new ScrollingCoordinatorMac(page));
-#endif
-
-#if PLATFORM(CHROMIUM)
-    return adoptRef(new ScrollingCoordinatorChromium(page));
 #endif
 
 #if USE(COORDINATED_GRAPHICS)
@@ -412,7 +404,7 @@ void ScrollingCoordinator::updateMainFrameScrollPosition(const IntPoint& scrollP
 #endif
 }
 
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
+#if PLATFORM(MAC)
 void ScrollingCoordinator::handleWheelEventPhase(PlatformWheelEventPhase phase)
 {
     ASSERT(isMainThread());

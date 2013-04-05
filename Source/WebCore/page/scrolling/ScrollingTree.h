@@ -90,7 +90,7 @@ public:
     void updateMainFrameScrollPosition(const IntPoint& scrollPosition, SetOrSyncScrollingLayerPosition = SyncScrollingLayerPosition);
     IntPoint mainFrameScrollPosition();
 
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
+#if PLATFORM(MAC)
     void handleWheelEventPhase(PlatformWheelEventPhase);
 #endif
 

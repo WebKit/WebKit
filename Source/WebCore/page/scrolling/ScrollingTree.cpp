@@ -258,7 +258,7 @@ IntPoint ScrollingTree::mainFrameScrollPosition()
     return m_mainFrameScrollPosition;
 }
 
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
+#if PLATFORM(MAC)
 void ScrollingTree::handleWheelEventPhase(PlatformWheelEventPhase phase)
 {
     if (!m_scrollingCoordinator)

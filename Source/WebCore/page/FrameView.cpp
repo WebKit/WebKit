@@ -94,10 +94,6 @@
 #include "TextAutosizer.h"
 #endif
 
-#if PLATFORM(CHROMIUM)
-#include "TraceEvent.h"
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -1110,10 +1106,6 @@ void FrameView::layout(bool allowSubtree)
     if (m_inLayout)
         return;
 
-#if PLATFORM(CHROMIUM)
-    TRACE_EVENT0("webkit", "FrameView::layout");
-#endif
-
     // Protect the view from being deleted during layout (in recalcStyle)
     RefPtr<FrameView> protector(this);
 
@@ -1335,7 +1327,7 @@ void FrameView::layout(bool allowSubtree)
     
     m_layoutCount++;
 
-#if PLATFORM(MAC) || PLATFORM(CHROMIUM)
+#if PLATFORM(MAC)
     if (AXObjectCache* cache = root->document()->existingAXObjectCache())
         cache->postNotification(root, AXObjectCache::AXLayoutComplete, true);
 #endif
@@ -1472,13 +1464,6 @@ bool FrameView::useSlowRepaints(bool considerOverlap) const
     // for transparent layers. See the comment in WidgetMac::paint.
     if (contentsInCompositedLayer() && !platformWidget())
         return mustBeSlow;
-
-#if PLATFORM(CHROMIUM)
-    // The chromium compositor does not support scrolling a non-composited frame within a composited page through
-    // the fast scrolling path, so force slow scrolling in that case.
-    if (m_frame->ownerElement() && !hasCompositedContent() && m_frame->page() && m_frame->page()->mainFrame()->view()->hasCompositedContent())
-        return true;
-#endif
 
     bool isOverlapped = m_isOverlapped && considerOverlap;
 

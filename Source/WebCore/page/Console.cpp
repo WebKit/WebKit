@@ -56,10 +56,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(CHROMIUM)
-#include "TraceEvent.h"
-#endif
-
 namespace WebCore {
 
 Console::Console(Frame* frame)
@@ -231,16 +227,10 @@ void Console::profileEnd(const String& title, ScriptState* state)
 void Console::time(const String& title)
 {
     InspectorInstrumentation::startConsoleTiming(m_frame, title);
-#if PLATFORM(CHROMIUM)
-    TRACE_EVENT_COPY_ASYNC_BEGIN0("webkit", title.utf8().data(), this);
-#endif
 }
 
 void Console::timeEnd(ScriptState* state, const String& title)
 {
-#if PLATFORM(CHROMIUM)
-    TRACE_EVENT_COPY_ASYNC_END0("webkit", title.utf8().data(), this);
-#endif
     RefPtr<ScriptCallStack> callStack(createScriptCallStackForConsole(state));
     InspectorInstrumentation::stopConsoleTiming(m_frame, title, callStack.release());
 }
