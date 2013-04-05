@@ -69,17 +69,13 @@ class Queue(object):
     # For use in status bubbles or table headers
     def short_name(self):
         # HACK: chromium-ews is incorrectly named.
-        short_name = self._name.replace("chromium-ews", "Cr-Linux-ews")
         short_name = short_name.replace("-ews", "")
         short_name = short_name.replace("-queue", "")
         return self._caplitalize_after_dash(short_name.capitalize())
 
     def display_name(self):
         # HACK: chromium-ews is incorrectly named.
-        display_name = self._name.replace("chromium-ews", "cr-linux-ews")
-
         display_name = display_name.replace("-", " ")
-        display_name = display_name.replace("cr", "chromium")
         display_name = display_name.title()
         display_name = display_name.replace("Ews", "EWS")
         return display_name
