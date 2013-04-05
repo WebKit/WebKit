@@ -1176,7 +1176,7 @@ void InspectorDOMAgent::innerHighlightQuad(PassOwnPtr<FloatQuad> quad, const Ref
     OwnPtr<HighlightConfig> highlightConfig = adoptPtr(new HighlightConfig());
     highlightConfig->content = parseColor(color);
     highlightConfig->contentOutline = parseColor(outlineColor);
-    highlightConfig->usePageCoordinates = *usePageCoordinates;
+    highlightConfig->usePageCoordinates = usePageCoordinates ? *usePageCoordinates : false;
     m_overlay->highlightQuad(quad, *highlightConfig);
 }
 
