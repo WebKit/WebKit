@@ -557,6 +557,7 @@
 		1ABA76C911D20E47004C201C /* ColorData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E406F3FB1198307D009D59D6 /* ColorData.cpp */; };
 		1ABA76CA11D20E50004C201C /* CSSPropertyNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E41EA038119836DB00710BC5 /* CSSPropertyNames.cpp */; };
 		1ABA76CB11D20E57004C201C /* CSSValueKeywords.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E41EA0391198374900710BC5 /* CSSValueKeywords.cpp */; };
+		1ABC7109170E5E1B00F9A9D6 /* WorkerNavigatorStorageQuota.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ABC7108170E5E1B00F9A9D6 /* WorkerNavigatorStorageQuota.h */; };
 		1AC2260C0DB69F190089B669 /* JSDOMApplicationCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AC2260A0DB69F190089B669 /* JSDOMApplicationCache.cpp */; };
 		1AC2260D0DB69F190089B669 /* JSDOMApplicationCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC2260B0DB69F190089B669 /* JSDOMApplicationCache.h */; };
 		1AC69593161A1E53003732CB /* GraphicsLayerFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AC69592161A1E53003732CB /* GraphicsLayerFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -7815,6 +7816,7 @@
 		1AB7FC650A8B92EC00D9D37B /* XPathValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathValue.h; sourceTree = "<group>"; };
 		1AB7FC660A8B92EC00D9D37B /* XPathVariableReference.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XPathVariableReference.cpp; sourceTree = "<group>"; };
 		1AB7FC670A8B92EC00D9D37B /* XPathVariableReference.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XPathVariableReference.h; sourceTree = "<group>"; };
+		1ABC7108170E5E1B00F9A9D6 /* WorkerNavigatorStorageQuota.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerNavigatorStorageQuota.h; path = Modules/quota/WorkerNavigatorStorageQuota.h; sourceTree = "<group>"; };
 		1AC2260A0DB69F190089B669 /* JSDOMApplicationCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMApplicationCache.cpp; sourceTree = "<group>"; };
 		1AC2260B0DB69F190089B669 /* JSDOMApplicationCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMApplicationCache.h; sourceTree = "<group>"; };
 		1AC69592161A1E53003732CB /* GraphicsLayerFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsLayerFactory.h; sourceTree = "<group>"; };
@@ -17589,6 +17591,7 @@
 				89FD58DA16EEDBF600E183F0 /* StorageQuota.h */,
 				89FD58DB16EEDBF600E183F0 /* StorageQuotaCallback.h */,
 				89FD58DC16EEDBF600E183F0 /* StorageUsageCallback.h */,
+				1ABC7108170E5E1B00F9A9D6 /* WorkerNavigatorStorageQuota.h */,
 			);
 			name = quota;
 			sourceTree = "<group>";
@@ -25492,6 +25495,7 @@
 				1A2A68240B5BEDE70002A480 /* ProgressTracker.h in Headers */,
 				1059459915B42AA0004D37FD /* PropertyNodeList.h in Headers */,
 				E4BBED0F14F4025D003F0B98 /* PropertySetCSSStyleDeclaration.h in Headers */,
+				1ABC7109170E5E1B00F9A9D6 /* WorkerNavigatorStorageQuota.h in Headers */,
 				514C76750CE923A1007EF3CD /* ProtectionSpace.h in Headers */,
 				51A052561058874000CC9E95 /* ProtectionSpaceHash.h in Headers */,
 				1AF8E11A1256592600230FF7 /* ProxyServer.h in Headers */,
