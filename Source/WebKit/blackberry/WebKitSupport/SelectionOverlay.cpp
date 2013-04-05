@@ -121,16 +121,6 @@ void SelectionOverlay::paintContents(const GraphicsLayer* layer, GraphicsContext
     c.restore();
 }
 
-bool SelectionOverlay::showDebugBorders(const GraphicsLayer* layer) const
-{
-    return m_page->showDebugBorders(layer);
-}
-
-bool SelectionOverlay::showRepaintCounter(const GraphicsLayer* layer) const
-{
-    return m_page->showRepaintCounter(layer);
-}
-
 } // namespace WebKit
 } // namespace BlackBerry
 

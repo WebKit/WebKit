@@ -147,16 +147,6 @@ void DefaultTapHighlight::paintContents(const GraphicsLayer*, GraphicsContext& c
     c.restore();
 }
 
-bool DefaultTapHighlight::showDebugBorders(const GraphicsLayer* layer) const
-{
-    return m_page->showDebugBorders(layer);
-}
-
-bool DefaultTapHighlight::showRepaintCounter(const GraphicsLayer* layer) const
-{
-    return m_page->showRepaintCounter(layer);
-}
-
 } // namespace WebKit
 } // namespace BlackBerry
 
