@@ -61,12 +61,10 @@ public:
 
     void deleteFileSystem(ScriptExecutionContext*, FileSystemType, PassOwnPtr<AsyncFileSystemCallbacks>);
 
-#if !PLATFORM(CHROMIUM)
     // This call is not thread-safe; must be called before any worker threads are created.
     static void initializeLocalFileSystem(const String&);
 
     String fileSystemBasePath() const;
-#endif
 
 private:
     explicit LocalFileSystem(const String& basePath)

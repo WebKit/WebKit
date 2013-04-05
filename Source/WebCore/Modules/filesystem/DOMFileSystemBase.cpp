@@ -71,7 +71,6 @@ DOMFileSystemBase::~DOMFileSystemBase()
 {
 }
 
-#if !PLATFORM(CHROMIUM)
 // static
 bool DOMFileSystemBase::isValidType(FileSystemType type)
 {
@@ -113,7 +112,6 @@ KURL DOMFileSystemBase::createFileSystemURL(const String& fullPath) const
     url.setPath(url.path() + encodeWithURLEscapeSequences(fullPath.substring(1)));
     return url;
 }
-#endif
 
 SecurityOrigin* DOMFileSystemBase::securityOrigin() const
 {
