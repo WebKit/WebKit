@@ -171,8 +171,9 @@ void RenderSnapshottedPlugIn::handleEvent(Event* event)
 
     if (event->type() == eventNames().clickEvent || (m_isPotentialMouseActivation && event->type() == eventNames().mouseupEvent)) {
         m_isPotentialMouseActivation = false;
-        plugInImageElement()->setDisplayState(HTMLPlugInElement::RestartingWithPendingMouseClick);
-        plugInImageElement()->userDidClickSnapshot(mouseEvent);
+        bool clickWasOnLabel = plugInImageElement()->partOfSnapshotLabel(event->target()->toNode());
+        plugInImageElement()->setDisplayState(clickWasOnLabel ? HTMLPlugInElement::Restarting : HTMLPlugInElement::RestartingWithPendingMouseClick);
+        plugInImageElement()->userDidClickSnapshot(mouseEvent, !clickWasOnLabel);
         event->setDefaultHandled();
     } else if (event->type() == eventNames().mousedownEvent) {
         m_isPotentialMouseActivation = true;

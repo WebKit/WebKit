@@ -347,8 +347,8 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
     Document* doc = document();
 
-    RefPtr<Element> shadowContainer = HTMLDivElement::create(doc);
-    shadowContainer->setPseudo(AtomicString("-webkit-snapshotted-plugin-content", AtomicString::ConstructFromLiteral));
+    m_shadowContainer = HTMLDivElement::create(doc);
+    m_shadowContainer->setPseudo(AtomicString("-webkit-snapshotted-plugin-content", AtomicString::ConstructFromLiteral));
 
     RefPtr<Element> container = HTMLDivElement::create(doc);
     container->setAttribute(classAttr, AtomicString("snapshot-container", AtomicString::ConstructFromLiteral));
@@ -357,8 +357,8 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     overlay->setAttribute(classAttr, AtomicString("snapshot-overlay", AtomicString::ConstructFromLiteral));
     container->appendChild(overlay, ASSERT_NO_EXCEPTION);
 
-    RefPtr<Element> label = HTMLDivElement::create(doc);
-    label->setAttribute(classAttr, AtomicString("snapshot-label", AtomicString::ConstructFromLiteral));
+    m_snapshotLabel = HTMLDivElement::create(doc);
+    m_snapshotLabel->setAttribute(classAttr, AtomicString("snapshot-label", AtomicString::ConstructFromLiteral));
 
     String titleText = snapshottedPlugInLabelTitle();
     String subtitleText = snapshottedPlugInLabelSubtitle();
@@ -374,14 +374,14 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     RefPtr<Element> title = HTMLDivElement::create(doc);
     title->setAttribute(classAttr, AtomicString("snapshot-title", AtomicString::ConstructFromLiteral));
     title->appendChild(doc->createTextNode(titleText), ASSERT_NO_EXCEPTION);
-    label->appendChild(title, ASSERT_NO_EXCEPTION);
+    m_snapshotLabel->appendChild(title, ASSERT_NO_EXCEPTION);
 
     RefPtr<Element> subTitle = HTMLDivElement::create(doc);
     subTitle->setAttribute(classAttr, AtomicString("snapshot-subtitle", AtomicString::ConstructFromLiteral));
     subTitle->appendChild(doc->createTextNode(subtitleText), ASSERT_NO_EXCEPTION);
-    label->appendChild(subTitle, ASSERT_NO_EXCEPTION);
+    m_snapshotLabel->appendChild(subTitle, ASSERT_NO_EXCEPTION);
 
-    container->appendChild(label, ASSERT_NO_EXCEPTION);
+    container->appendChild(m_snapshotLabel, ASSERT_NO_EXCEPTION);
 
     // Make this into a button for accessibility clients.
     String combinedText = titleText;
@@ -391,8 +391,13 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
     container->setAttribute(aria_labelAttr, combinedText);
     container->setAttribute(roleAttr, "button");
 
-    shadowContainer->appendChild(container, ASSERT_NO_EXCEPTION);
-    root->appendChild(shadowContainer, ASSERT_NO_EXCEPTION);
+    m_shadowContainer->appendChild(container, ASSERT_NO_EXCEPTION);
+    root->appendChild(m_shadowContainer, ASSERT_NO_EXCEPTION);
+}
+
+bool HTMLPlugInImageElement::partOfSnapshotLabel(Node* node)
+{
+    return node && (node == m_snapshotLabel.get() || node->isDescendantOf(m_snapshotLabel.get()));
 }
 
 void HTMLPlugInImageElement::swapRendererTimerFired(Timer<HTMLPlugInImageElement>*)
@@ -463,9 +468,11 @@ void HTMLPlugInImageElement::restartSimilarPlugIns()
     }
 }
 
-void HTMLPlugInImageElement::userDidClickSnapshot(PassRefPtr<MouseEvent> event)
+void HTMLPlugInImageElement::userDidClickSnapshot(PassRefPtr<MouseEvent> event, bool forwardEvent)
 {
-    m_pendingClickEventFromSnapshot = event;
+    if (forwardEvent)
+        m_pendingClickEventFromSnapshot = event;
+
     String plugInOrigin = m_loadedUrl.host();
     if (document()->page() && !SchemeRegistry::shouldTreatURLSchemeAsLocal(document()->page()->mainFrame()->document()->baseURL().protocol()) && document()->page()->settings()->autostartOriginPlugInSnapshottingEnabled())
         document()->page()->plugInClient()->didStartFromOrigin(document()->page()->mainFrame()->document()->baseURL().host(), plugInOrigin, loadedMimeType());

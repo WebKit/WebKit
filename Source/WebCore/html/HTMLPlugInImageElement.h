@@ -74,7 +74,7 @@ public:
     bool needsWidgetUpdate() const { return m_needsWidgetUpdate; }
     void setNeedsWidgetUpdate(bool needsWidgetUpdate) { m_needsWidgetUpdate = needsWidgetUpdate; }
 
-    void userDidClickSnapshot(PassRefPtr<MouseEvent>);
+    void userDidClickSnapshot(PassRefPtr<MouseEvent>, bool forwardEvent);
     void updateSnapshotInfo();
     Image* snapshotImage() const { return m_snapshotImage.get(); }
 
@@ -83,6 +83,7 @@ public:
     void subframeLoaderDidCreatePlugIn(const Widget*);
 
     void setIsPrimarySnapshottedPlugIn(bool);
+    bool partOfSnapshotLabel(Node*);
 
 protected:
     HTMLPlugInImageElement(const QualifiedName& tagName, Document*, bool createdByParser, PreferPlugInsForImagesOption);
@@ -142,6 +143,8 @@ private:
     Timer<HTMLPlugInImageElement> m_swapRendererTimer;
     Timer<HTMLPlugInImageElement> m_removeSnapshotTimer;
     RefPtr<Image> m_snapshotImage;
+    RefPtr<Element> m_shadowContainer;
+    RefPtr<Element> m_snapshotLabel;
     bool m_createdDuringUserGesture;
     bool m_restartedPlugin;
 };
