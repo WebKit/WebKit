@@ -452,9 +452,13 @@ public:
             setExclusionShapeInsideInfo(ExclusionShapeInsideInfo::createInfo(this));
         return m_rareData->m_shapeInsideInfo.get();
     }
-    ExclusionShapeInsideInfo* exclusionShapeInsideInfo() const
+
+    enum ExclusionShapeStatus { ShapePresent, ShapePresentOrRemoved };
+    ExclusionShapeInsideInfo* exclusionShapeInsideInfo(ExclusionShapeStatus exclusionShapeStatus = ShapePresent) const
     {
-        return m_rareData && m_rareData->m_shapeInsideInfo && ExclusionShapeInsideInfo::isEnabledFor(this) ? m_rareData->m_shapeInsideInfo.get() : 0;
+        if (!m_rareData || !m_rareData->m_shapeInsideInfo)
+            return 0;
+        return ExclusionShapeInsideInfo::isEnabledFor(this) || (exclusionShapeStatus == ShapePresentOrRemoved) ? m_rareData->m_shapeInsideInfo.get() : 0;
     }
     void setExclusionShapeInsideInfo(PassOwnPtr<ExclusionShapeInsideInfo> value)
     {
@@ -462,7 +466,7 @@ public:
             m_rareData = adoptPtr(new RenderBlockRareData(this));
         m_rareData->m_shapeInsideInfo = value;
     }
-    ExclusionShapeInsideInfo* layoutExclusionShapeInsideInfo() const;
+    ExclusionShapeInsideInfo* layoutExclusionShapeInsideInfo(ExclusionShapeStatus = ShapePresent) const;
     bool allowsExclusionShapeInsideInfoSharing() const { return !isInline() && !isFloating(); }
 #endif
 
@@ -574,7 +578,8 @@ protected:
     }
 #endif
 
-    bool updateRegionsAndExclusionsLogicalSize(RenderFlowThread*);
+    bool updateRegionsAndExclusionsBeforeChildLayout(RenderFlowThread*);
+    void updateRegionsAndExclusionsAfterChildLayout(RenderFlowThread*);
     void computeRegionRangeForBlock(RenderFlowThread*);
 
     void updateBlockChildDirtyBitsBeforeLayout(bool relayoutChildren, RenderBox*);

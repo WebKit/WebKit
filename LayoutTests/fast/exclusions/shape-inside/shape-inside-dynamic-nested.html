@@ -16,10 +16,19 @@
         el.setAttribute('class', 'container shape inside');
         el = document.getElementById('reset-inside-shape');
         el.setAttribute('class', 'container shape inside');
+
+        el = document.getElementById('remove-inside-shape');
+        el.setAttribute('class', 'container');
+        el = document.getElementById('remove-nested-inside-shape');
+        el.setAttribute('class', '');
+
         el = document.getElementById('set-outside-shape');
         el.setAttribute('class', 'container shape outside');
         el = document.getElementById('reset-outside-shape');
         el.setAttribute('class', 'container shape outside');
+
+        el = document.getElementById('remove-outside-shape');
+        el.setAttribute('class', 'container');
     }
 </script>
 <style>
@@ -33,7 +42,7 @@
         color: green;
     }
     .container.shape {
-        border-color: white;
+        border: none;
     }
     .shape::before {
         position: absolute;
@@ -67,10 +76,19 @@
     <p>Setting shape-inside with a prior entry</p>
     <div id='reset-inside-shape' class='container shape inside-alt'><div><div>xxxxxxxxxx</div></div></div>
 
-    <p>Setting outside-shape with no prior entry</p>
+    <p>Removing shape-inside with a prior entry</p>
+    <div id='remove-inside-shape' class='container shape inside'><div><div>xxxxxxxxxx</div></div></div>
+
+    <p>Removing a nested shape-inside</p>
+    <div class='container shape inside'><div id='remove-nested-inside-shape' class='container shape inside-alt'><div>xxxxxxxxxx</div></div></div>
+
+    <p>Setting shape-outside with no prior entry</p>
     <div id='set-outside-shape' class='container'><div>xxxxxxxxxx</div></div>
 
-    <p>Setting outside-shape with a prior entry</p>
+    <p>Setting shape-outside with a prior entry</p>
     <div id='reset-outside-shape' class='container' class='container shape outside-alt'><div>xxxxxxxxxx</div></div>
+
+    <p>Removing shape-outside with a prior entry</p>
+    <div id='remove-outside-shape' class='container shape outside'><div>xxxxxxxxxx</div></div>
 </body>
 </html>

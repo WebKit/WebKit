@@ -16,7 +16,7 @@
         color: green;
     }
     .container.shape {
-        border-color: white;
+        border: none;
     }
     .shape::before {
         position: absolute;
@@ -44,10 +44,19 @@
     <p>Setting shape-inside with a prior entry</p>
     <div id='reset-inside-shape' class='container shape inside'><div><div>xxxxxxxxxx</div></div></div>
 
-    <p>Setting outside-shape with no prior entry</p>
+    <p>Removing shape-inside with a prior entry</p>
+    <div id='remove-inside-shape' class='container'><div><div>xxxxxxxxxx</div></div></div>
+
+    <p>Removing a nested shape-inside</p>
+    <div id='remove-nested-inside-shape' class='container shape inside'><div><div>xxxxxxxxxx</div></div></div>
+
+    <p>Setting shape-outside with no prior entry</p>
     <div id='set-outside-shape' class='container shape outside'><div><div>xxxxxxxxxx</div></div></div>
 
-    <p>Setting outside-shape with a prior entry</p>
+    <p>Setting shape-outside with a prior entry</p>
     <div id='reset-outside-shape' class='container shape outside'><div><div>xxxxxxxxxx</div></div></div>
+
+    <p>Removing shape-outside with a prior entry</p>
+    <div id='remove-outside-shape' class='container'><div><div>xxxxxxxxxx</div></div></div>
 </body>
 </html>
