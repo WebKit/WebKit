@@ -1,5 +1,15 @@
 2013-04-05  Benjamin Poulain  <benjamin@webkit.org>
 
+        Fix GTK+ for real after r147712
+
+        Reviewed by Ryosuke Niwa.
+
+        * GNUmakefile.am:
+        * Source/Platform: Added.
+        * Source/Platform/GNUmakefile.am: Added.
+
+2013-04-05  Benjamin Poulain  <benjamin@webkit.org>
+
         Fix GTK+ build after r147712
 
         Unreviewed.
