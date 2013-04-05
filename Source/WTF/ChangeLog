@@ -1,3 +1,17 @@
+2013-04-05  Jesus Sanchez-Palencia  <jesus.palencia@openbossa.org>
+
+        [GTK] Change from PLATFORM(GTK) to USE(GLIB) in WTF/CurrentTime.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=114061
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Now other ports using GLib can use the correct implementation
+        and not the fallback one without adding any other PLATFORM guards
+        here.
+
+        * wtf/CurrentTime.cpp:
+        (WTF):
+
 2013-04-05  Geoffrey Garen  <ggaren@apple.com>
 
         Made USE(JSC) unconditional
