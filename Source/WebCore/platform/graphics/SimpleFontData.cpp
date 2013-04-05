@@ -32,10 +32,12 @@
 
 #include "Font.h"
 #include "FontCache.h"
-#include "OpenTypeVerticalData.h"
-
 #include <wtf/MathExtras.h>
 #include <wtf/UnusedParam.h>
+
+#if ENABLE(OPENTYPE_VERTICAL)
+#include "OpenTypeVerticalData.h"
+#endif
 
 using namespace std;
 
