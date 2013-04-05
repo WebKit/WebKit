@@ -38,9 +38,6 @@
 #include "IDBTransactionBackendImpl.h"
 #include "IDBTransactionCoordinator.h"
 #include "SharedBuffer.h"
-#if PLATFORM(CHROMIUM)
-#include <public/Platform.h>
-#endif
 #include <wtf/TemporaryChange.h>
 
 namespace WebCore {
@@ -1214,10 +1211,8 @@ void IDBDatabaseBackendImpl::openConnection(PassRefPtr<IDBCallbacks> prpCallback
     bool isNewDatabase = m_metadata.version == NoStringVersion && m_metadata.intVersion == IDBDatabaseMetadata::NoIntVersion;
 
     if (version == IDBDatabaseMetadata::DefaultIntVersion) {
+        // FIXME: this comments was related to Chromium code. It may be incorrect
         // For unit tests only - skip upgrade steps. Calling from script with DefaultIntVersion throws exception.
-#if PLATFORM(CHROMIUM)
-        ASSERT(WebKit::Platform::current()->unitTestSupport());
-#endif
         ASSERT(isNewDatabase);
         m_databaseCallbacksSet.add(databaseCallbacks);
         callbacks->onSuccess(this, this->metadata());
@@ -1356,11 +1351,7 @@ void IDBDatabaseBackendImpl::close(PassRefPtr<IDBDatabaseCallbacks> prpCallbacks
         m_backingStore.clear();
 
         // This check should only be false in unit tests.
-#if PLATFORM(CHROMIUM)
-        ASSERT(m_factory || WebKit::Platform::current()->unitTestSupport());
-#else
         ASSERT(m_factory);
-#endif
         if (m_factory)
             m_factory->removeIDBDatabaseBackend(m_identifier);
     }

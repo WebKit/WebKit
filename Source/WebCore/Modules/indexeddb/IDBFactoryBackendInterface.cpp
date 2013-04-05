@@ -30,10 +30,6 @@
 
 #include "IDBFactoryBackendImpl.h"
 
-#if PLATFORM(CHROMIUM)
-#error "Chromium should not compile this file and instead define its own version of this factory that navigates the multi-process boundry."
-#endif
-
 #if ENABLE(INDEXED_DATABASE)
 
 namespace WebCore {

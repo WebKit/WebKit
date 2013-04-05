@@ -31,17 +31,9 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#if PLATFORM(CHROMIUM)
-
-#include "TraceEvent.h"
-#define IDB_TRACE(a) TRACE_EVENT0("IndexedDB", (a));
-
-#else
-
 #include "Logging.h"
-#define IDB_TRACE(a) LOG(StorageAPI, a)
 
-#endif //  PLATFORM(CHROMIUM)
+#define IDB_TRACE(a) LOG(StorageAPI, a)
 
 #endif // ENABLE(INDEXED_DATABASE)
 
