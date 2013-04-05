@@ -176,6 +176,26 @@ if (ENABLE_VIDEO OR ENABLE_WEB_AUDIO)
     find_package(GStreamer REQUIRED COMPONENTS ${GSTREAMER_COMPONENTS})
 endif ()
 
+if (WTF_USE_TILED_BACKING_STORE)
+    add_definitions(-DWTF_USE_ACCELERATED_COMPOSITING=1)
+
+    add_definitions(-DWTF_USE_COORDINATED_GRAPHICS=1)
+
+    set(WTF_USE_TEXTURE_MAPPER 1)
+    add_definitions(-DWTF_USE_TEXTURE_MAPPER=1)
+
+    set(WTF_USE_3D_GRAPHICS 1)
+    add_definitions(-DWTF_USE_3D_GRAPHICS=1)
+
+    set(ENABLE_3D_RENDERING 1)
+    add_definitions(-DENABLE_3D_RENDERING=1)
+else ()
+    # Disable 3D graphics and WEBGL if tiled backing is disabled
+    set(ENABLE_WEBGL 0)
+    set(WTF_USE_3D_GRAPHICS 0)
+    add_definitions(-DWTF_USE_3D_GRAPHICS=0)
+endif ()
+
 if (ENABLE_WEBGL OR WTF_USE_TILED_BACKING_STORE)
     find_package(OpenGL REQUIRED)
     CHECK_INCLUDE_FILES("GL/glx.h" OPENGLX_FOUND)
@@ -229,21 +249,6 @@ if (CMAKE_BUILD_TYPE STREQUAL release AND CMAKE_COMPILER_IS_GNUCC AND UNIX AND N
     set(CMAKE_C_FLAGS "-ffunction-sections -fdata-sections ${CMAKE_C_FLAGS}")
     set(CMAKE_CXX_FLAGS "-ffunction-sections -fdata-sections ${CMAKE_CXX_FLAGS}")
     set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--gc-sections ${CMAKE_SHARED_LINKER_FLAGS}")
-endif ()
-
-if (WTF_USE_TILED_BACKING_STORE)
-    add_definitions(-DWTF_USE_ACCELERATED_COMPOSITING=1)
-
-    add_definitions(-DWTF_USE_COORDINATED_GRAPHICS=1)
-
-    set(WTF_USE_TEXTURE_MAPPER 1)
-    add_definitions(-DWTF_USE_TEXTURE_MAPPER=1)
-
-    set(WTF_USE_3D_GRAPHICS 1)
-    add_definitions(-DWTF_USE_3D_GRAPHICS=1)
-
-    set(ENABLE_3D_RENDERING 1)
-    add_definitions(-DENABLE_3D_RENDERING=1)
 endif ()
 
 if (ENABLE_WEBGL)

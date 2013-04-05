@@ -1,5 +1,41 @@
 2013-04-05  Ed Bartosh  <bartosh@gmail.com>
 
+        [EFL] --no-tiled-backing-store build fails because of not used #if USE(ACCELERATED_COMPOSITING)
+        https://bugs.webkit.org/show_bug.cgi?id=113627
+
+        Reviewed by Simon Fraser.
+
+        Wrapped code with #if USE(ACCELERATED_COMPOSITING) to make it compilable
+        with --no-tiled-backing-store build option:
+        * UIProcess/API/C/efl/WKView.cpp:
+        * UIProcess/API/efl/EvasGLContext.cpp:
+        * UIProcess/API/efl/EvasGLContext.h:
+        * UIProcess/API/efl/EvasGLSurface.cpp:
+        * UIProcess/API/efl/EvasGLSurface.h:
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        (EwkView::displayTimerFired):
+        (EwkView::takeSnapshot):
+        * UIProcess/API/efl/EwkView.h:
+        (WebKit):
+        (EwkView):
+        * UIProcess/API/efl/SnapshotImageGL.cpp:
+        * UIProcess/API/efl/SnapshotImageGL.h:
+        * UIProcess/PageViewportController.cpp:
+        * UIProcess/PageViewportController.h:
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp:
+        * UIProcess/efl/ViewClientEfl.cpp:
+        (WebKit::ViewClientEfl::didChangeContentsSize):
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::didCommitLoad):
+        (WebKit::WebView::updateViewportSize):
+        (WebKit::WebView::didChangeViewportProperties):
+        (WebKit::WebView::pageDidRequestScroll):
+        (WebKit::WebView::didRenderFrame):
+        (WebKit::WebView::pageTransitionViewportReady):
+
+2013-04-05  Ed Bartosh  <bartosh@gmail.com>
+
         [EFL][WK2] --no-tiled-backing-store build fails because of not used #if USE(COORDINATED_GRAPHICS)
         https://bugs.webkit.org/show_bug.cgi?id=113629
 

@@ -25,6 +25,7 @@
 
 #ifndef EvasGLContext_h
 #define EvasGLContext_h
+#if USE(ACCELERATED_COMPOSITING)
 
 #include <Evas_GL.h>
 #include <wtf/PassOwnPtr.h>
@@ -56,4 +57,5 @@ private:
 
 } // namespace WebKit
 
+#endif // USE(ACCELERATED_COMPOSITING)
 #endif // EvasGLContext_h

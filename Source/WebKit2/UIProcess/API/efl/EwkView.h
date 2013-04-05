@@ -62,8 +62,10 @@ class PageLoadClientEfl;
 class PagePolicyClientEfl;
 class PageUIClientEfl;
 class ViewClientEfl;
+#if USE(ACCELERATED_COMPOSITING)
 class PageViewportController;
 class PageViewportControllerClientEfl;
+#endif
 class WebContextMenuItemData;
 class WebContextMenuProxyEfl;
 class WebPageGroup;
@@ -92,8 +94,10 @@ class EwkPopupMenu;
 class EwkSettings;
 class EwkWindowFeatures;
 
+#if USE(ACCELERATED_COMPOSITING)
 typedef struct _Evas_GL_Context Evas_GL_Context;
 typedef struct _Evas_GL_Surface Evas_GL_Surface;
+#endif
 
 typedef struct Ewk_View_Smart_Data Ewk_View_Smart_Data;
 typedef struct Ewk_View_Smart_Class Ewk_View_Smart_Class;
@@ -117,7 +121,10 @@ public:
     EwkSettings* settings() { return m_settings.get(); }
     EwkBackForwardList* backForwardList() { return m_backForwardList.get(); }
     EwkWindowFeatures* windowFeatures();
+
+#if USE(ACCELERATED_COMPOSITING)
     WebKit::PageViewportController* pageViewportController() { return m_pageViewportController.get(); }
+#endif
 
     void setDeviceScaleFactor(float scale);
     float deviceScaleFactor() const;
@@ -153,8 +160,9 @@ public:
 
     WKRect windowGeometry() const;
     void setWindowGeometry(const WKRect&);
-
+#if USE(ACCELERATED_COMPOSITING)
     bool createGLSurface();
+#endif
     void setNeedsSurfaceResize() { m_pendingSurfaceResize = true; }
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -239,9 +247,11 @@ private:
     Evas_Object* m_evasObject;
     RefPtr<EwkContext> m_context;
     RefPtr<EwkPageGroup> m_pageGroup;
+#if USE(ACCELERATED_COMPOSITING)
     OwnPtr<Evas_GL> m_evasGL;
     OwnPtr<WebKit::EvasGLContext> m_evasGLContext;
     OwnPtr<WebKit::EvasGLSurface> m_evasGLSurface;
+#endif
     WebCore::TransformationMatrix m_userViewportTransform;
     bool m_pendingSurfaceResize;
     OwnPtr<WebKit::PageLoadClientEfl> m_pageLoadClient;
@@ -273,8 +283,10 @@ private:
 #if ENABLE(INPUT_TYPE_COLOR)
     OwnPtr<EwkColorPicker> m_colorPicker;
 #endif
+#if USE(ACCELERATED_COMPOSITING)
     OwnPtr<WebKit::PageViewportControllerClientEfl> m_pageViewportControllerClient;
     OwnPtr<WebKit::PageViewportController> m_pageViewportController;
+#endif
     bool m_isAccelerated;
 
     static Evas_Smart_Class parentSmartClass;

@@ -1,3 +1,12 @@
+2013-04-05  Ed Bartosh  <bartosh@gmail.com>
+
+        [EFL] --no-tiled-backing-store build fails because of not used #if USE(ACCELERATED_COMPOSITING)
+        https://bugs.webkit.org/show_bug.cgi?id=113627
+
+        Reviewed by Simon Fraser.
+
+        * Source/cmake/OptionsEfl.cmake: Disabled 3D_GRAPHICS and WEB_GL when accelerated compositing is on
+
 2013-04-05  Rijubrata Bhaumik  <rijubrata.bhaumik@intel.com>
 
         [EFL] Enable indexed database

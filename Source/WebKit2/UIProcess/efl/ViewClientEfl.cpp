@@ -49,7 +49,11 @@ void ViewClientEfl::didChangeContentsSize(WKViewRef, WKSize size, const void* cl
 {
     EwkView* ewkView = toEwkView(clientInfo);
     if (WKPageUseFixedLayout(ewkView->wkPage()))
+#if USE(ACCELERATED_COMPOSITING)
         ewkView->pageViewportController()->didChangeContentsSize(toIntSize(size));
+#else
+        { }
+#endif
     else
         ewkView->scheduleUpdateDisplay();
 

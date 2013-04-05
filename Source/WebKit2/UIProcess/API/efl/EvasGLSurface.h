@@ -25,6 +25,7 @@
 
 #ifndef EvasGLSurface_h
 #define EvasGLSurface_h
+#if USE(ACCELERATED_COMPOSITING)
 
 #include <Evas_GL.h>
 #include <WebCore/IntSize.h>
@@ -64,4 +65,5 @@ private:
 
 } // namespace WebKit
 
+#endif // USE(ACCELERATED_COMPOSITING)
 #endif // EvasGLSurface_h

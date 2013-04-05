@@ -234,7 +234,9 @@ void WebView::initializeClient(const WKViewClient* client)
 void WebView::didCommitLoad()
 {
     if (m_page->useFixedLayout()) {
+#if USE(ACCELERATED_COMPOSITING)
         m_ewkView->pageViewportController()->didCommitLoad();
+#endif
         return;
     }
     m_ewkView->scheduleUpdateDisplay();
@@ -539,7 +541,9 @@ FloatRect WebView::convertToUserSpace(const FloatRect& deviceRect)
 void WebView::didChangeViewportProperties(const WebCore::ViewportAttributes& attr)
 {
     if (m_page->useFixedLayout()) {
+#if USE(ACCELERATED_COMPOSITING)
         m_ewkView->pageViewportController()->didChangeViewportAttributes(attr);
+#endif
         return;
     }
     m_ewkView->scheduleUpdateDisplay();
@@ -547,8 +551,10 @@ void WebView::didChangeViewportProperties(const WebCore::ViewportAttributes& att
 
 void WebView::pageDidRequestScroll(const IntPoint& position)
 {
-    if (m_page->useFixedLayout()) {        
+    if (m_page->useFixedLayout()) {
+#if USE(ACCELERATED_COMPOSITING)
         m_ewkView->pageViewportController()->pageDidRequestScroll(position);
+#endif
         return;
     }
     FloatPoint uiPosition(position);
@@ -560,7 +566,9 @@ void WebView::pageDidRequestScroll(const IntPoint& position)
 void WebView::didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect)
 {
     if (m_page->useFixedLayout()) {
+#if USE(ACCELERATED_COMPOSITING)
         m_ewkView->pageViewportController()->didRenderFrame(contentsSize, coveredRect);
+#endif
         return;
     }
     m_ewkView->scheduleUpdateDisplay();
@@ -569,7 +577,9 @@ void WebView::didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore
 void WebView::pageTransitionViewportReady()
 {
     if (m_page->useFixedLayout()) {
+#if USE(ACCELERATED_COMPOSITING)
         m_ewkView->pageViewportController()->pageTransitionViewportReady();
+#endif
         return;
     }
     m_ewkView->scheduleUpdateDisplay();

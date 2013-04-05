@@ -259,10 +259,14 @@ void Internals::resetToConsistentState(Page* page)
 
     page->setPageScaleFactor(1, IntPoint(0, 0));
     page->setPagination(Pagination());
-    if (FrameView* mainFrameView = page->mainFrame()->view()) {
+
+#if USE(ACCELERATED_COMPOSITING)
+    FrameView* mainFrameView = page->mainFrame()->view();
+    if (mainFrameView) {
         mainFrameView->setHeaderHeight(0);
         mainFrameView->setFooterHeight(0);
     }
+#endif
     TextRun::setAllowsRoundingHacks(false);
     WebCore::overrideUserPreferredLanguages(Vector<String>());
     WebCore::Settings::setUsesOverlayScrollbars(false);
@@ -1850,18 +1854,20 @@ void Internals::setHeaderHeight(Document* document, float height)
 {
     if (!document || !document->view())
         return;
-
+#if USE(ACCELERATED_COMPOSITING)
     FrameView* frameView = document->view();
     frameView->setHeaderHeight(height);
+#endif
 }
 
 void Internals::setFooterHeight(Document* document, float height)
 {
     if (!document || !document->view())
         return;
-
+#if USE(ACCELERATED_COMPOSITING)
     FrameView* frameView = document->view();
     frameView->setFooterHeight(height);
+#endif
 }
 
 #if ENABLE(FULLSCREEN_API)

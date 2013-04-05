@@ -20,9 +20,9 @@
  */
 
 #include "config.h"
-#include "PageViewportController.h"
 
-#if USE(TILED_BACKING_STORE)
+#if USE(ACCELERATED_COMPOSITING)
+#include "PageViewportController.h"
 
 #include "PageViewportControllerClient.h"
 #include "WebPageProxy.h"

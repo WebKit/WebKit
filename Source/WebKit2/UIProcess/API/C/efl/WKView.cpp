@@ -107,10 +107,12 @@ WKPoint WKViewUserViewportToContents(WKViewRef viewRef, WKPoint point)
     return WKPointMake(result.x(), result.y());
 }
 
+#if USE(ACCELERATED_COMPOSITING)
 void WKViewPaintToCurrentGLContext(WKViewRef viewRef)
 {
     toImpl(viewRef)->paintToCurrentGLContext();
 }
+#endif
 
 void WKViewPaintToCairoSurface(WKViewRef viewRef, cairo_surface_t* surface)
 {

@@ -64,7 +64,9 @@
 #include <Ecore_Evas.h>
 #include <Ecore_X.h>
 #include <Edje.h>
+#if USE(ACCELERATED_COMPOSITING)
 #include <Evas_GL.h>
+#endif
 #include <WebCore/CairoUtilitiesEfl.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/PlatformContextCairo.h>
@@ -259,8 +261,10 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
 #endif
     , m_displayTimer(this, &EwkView::displayTimerFired)
     , m_inputMethodContext(InputMethodContextEfl::create(this, smartData()->base.evas))
+#if USE(ACCELERATED_COMPOSITING)
     , m_pageViewportControllerClient(PageViewportControllerClientEfl::create(this))
     , m_pageViewportController(adoptPtr(new PageViewportController(page(), m_pageViewportControllerClient.get())))
+#endif
     , m_isAccelerated(true)
 {
     ASSERT(m_evasObject);
@@ -268,7 +272,7 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
 
     // FIXME: Remove when possible.
     webView()->setEwkView(this);
-
+#if USE(ACCELERATED_COMPOSITING)
     m_evasGL = adoptPtr(evas_gl_new(evas_object_evas_get(m_evasObject)));
     if (m_evasGL)
         m_evasGLContext = EvasGLContext::create(m_evasGL.get());
@@ -277,13 +281,14 @@ EwkView::EwkView(WKViewRef view, Evas_Object* evasObject)
         WARN("Failed to create Evas_GL, falling back to software mode.");
         m_isAccelerated = false;
     }
-
+#endif
     WKViewInitialize(wkView());
 
     WKPageGroupRef wkPageGroup = WKPageGetPageGroup(wkPage());
     WKPreferencesRef wkPreferences = WKPageGroupGetPreferences(wkPageGroup);
-
+#if USE(ACCELERATED_COMPOSITING)
     WKPreferencesSetWebGLEnabled(wkPreferences, true);
+#endif
     WKPreferencesSetFullScreenEnabled(wkPreferences, true);
     WKPreferencesSetWebAudioEnabled(wkPreferences, true);
     WKPreferencesSetOfflineWebApplicationCacheEnabled(wkPreferences, true);
@@ -529,10 +534,11 @@ void EwkView::displayTimerFired(Timer<EwkView>*)
     Ewk_View_Smart_Data* sd = smartData();
 
     if (m_pendingSurfaceResize) {
+#if USE(ACCELERATED_COMPOSITING)
         // Create a GL surface here so that Evas has no chance of painting to an empty GL surface.
         if (!createGLSurface())
             return;
-
+#endif
         m_pendingSurfaceResize = false;
     }
 
@@ -545,11 +551,11 @@ void EwkView::displayTimerFired(Timer<EwkView>*)
         evas_object_image_data_update_add(sd->image, 0, 0, sd->view.w, sd->view.h);
         return;
     }
-
+#if USE(ACCELERATED_COMPOSITING)
     evas_gl_make_current(m_evasGL.get(), m_evasGLSurface->surface(), m_evasGLContext->context());
 
     WKViewPaintToCurrentGLContext(wkView());
-
+#endif
     // sd->image is tied to a native surface, which is in the parent's coordinates.
     evas_object_image_data_update_add(sd->image, sd->view.x, sd->view.y, sd->view.w, sd->view.h);
 }
@@ -719,6 +725,7 @@ void EwkView::setTouchEventsEnabled(bool enabled)
 }
 #endif
 
+#if USE(ACCELERATED_COMPOSITING)
 bool EwkView::createGLSurface()
 {
     if (!m_isAccelerated)
@@ -752,6 +759,7 @@ bool EwkView::createGLSurface()
 
     return true;
 }
+#endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
 /**
@@ -1101,8 +1109,10 @@ void EwkView::handleEvasObjectCalculate(Evas_Object* evasObject)
         smartData->view.h = height;
 
         WKViewSetSize(self->wkView(), WKSizeMake(width, height));
+#if USE(ACCELERATED_COMPOSITING)
         if (WKPageUseFixedLayout(self->wkPage()))
             self->pageViewportController()->didChangeViewportSize(self->size());
+#endif
 
         self->setNeedsSurfaceResize();
     }
@@ -1269,15 +1279,16 @@ PassRefPtr<cairo_surface_t> EwkView::takeSnapshot()
         ecore_main_loop_iterate();
 
     Ewk_View_Smart_Data* sd = smartData();
-    if (!m_isAccelerated) {
-        RefPtr<cairo_surface_t> snapshot = createSurfaceForImage(sd->image);
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_isAccelerated) {
+        RefPtr<cairo_surface_t> snapshot = getImageSurfaceFromFrameBuffer(0, 0, sd->view.w, sd->view.h);
         // Resume all animations.
         WKViewResumeActiveDOMObjectsAndAnimations(wkView());
 
         return snapshot.release();
     }
-
-    RefPtr<cairo_surface_t> snapshot = getImageSurfaceFromFrameBuffer(0, 0, sd->view.w, sd->view.h);
+#endif
+    RefPtr<cairo_surface_t> snapshot = createSurfaceForImage(sd->image);
     // Resume all animations.
     WKViewResumeActiveDOMObjectsAndAnimations(wkView());
 
