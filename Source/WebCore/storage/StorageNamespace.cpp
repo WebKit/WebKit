@@ -33,10 +33,6 @@
 #include "StorageNamespaceImpl.h"
 #endif
 
-#if PLATFORM(CHROMIUM)
-#error "Chromium should not compile this file and instead define its own version of these factories that navigate the multi-process boundry."
-#endif
-
 namespace WebCore {
 
 PassRefPtr<StorageNamespace> StorageNamespace::localStorageNamespace(const String& path, unsigned quota)
