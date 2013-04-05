@@ -23,6 +23,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLFormElement.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
@@ -595,6 +596,12 @@ bool isFixedPositionOrHasFixedPositionAncestor(RenderObject* renderer)
 
         if (currentRenderer->isOutOfFlowPositioned() && currentRenderer->style()->position() == FixedPosition)
             return true;
+
+        // Check if the current frame is an iframe. If so, continue checking with the iframe's owner element.
+        if (!currentRenderer->parent() && currentRenderer->isRenderView() && currentRenderer->frame() && currentRenderer->frame()->ownerElement()) {
+            currentRenderer = currentRenderer->frame()->ownerElement()->renderer();
+            continue;
+        }
 
         currentRenderer = currentRenderer->parent();
     }

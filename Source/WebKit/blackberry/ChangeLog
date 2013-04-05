@@ -1,3 +1,23 @@
+2013-04-04  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] DOMSupport::isFixedPositionOrHasFixedPositionAncestor stops traversing render tree when it hits an iframe element
+        https://bugs.webkit.org/show_bug.cgi?id=113944
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Mike Fenton.
+
+        Internal PR 320732.
+        When checking whether a RenderObject is fixed position or has a fixed position
+        ancestor, we traverse the render tree upwards.
+
+        When we reach the root of the tree, check whether the root is an
+        iframe and has an element owner. If so, we also need to continue iterating
+        up the tree from the owner to see if the iframe is a descendant of a fixed
+        position element.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::isFixedPositionOrHasFixedPositionAncestor):
+
 2013-04-04  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] Adjust fatfinger result priority
