@@ -1,3 +1,13 @@
+2013-04-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed EFL build fix.
+
+        We had undefined reference to `JSC::CodeOrigin::maximumBytecodeIndex'.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::findClosureCallForReturnPC):
+        (JSC::CodeBlock::bytecodeOffset):
+
 2013-04-04  Geoffrey Garen  <ggaren@apple.com>
 
         Stop pretending that statements return a value
