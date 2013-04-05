@@ -434,7 +434,6 @@
 /* Operating environments */
 
 /* FIXME: these are all mixes of OS, operating environment and policy choices. */
-/* PLATFORM(CHROMIUM) */
 /* PLATFORM(QT) */
 /* PLATFORM(WX) */
 /* PLATFORM(EFL) */
@@ -442,9 +441,7 @@
 /* PLATFORM(BLACKBERRY) */
 /* PLATFORM(MAC) */
 /* PLATFORM(WIN) */
-#if defined(BUILDING_CHROMIUM__)
-#define WTF_PLATFORM_CHROMIUM 1
-#elif defined(BUILDING_QT__)
+#if defined(BUILDING_QT__)
 #define WTF_PLATFORM_QT 1
 #elif defined(BUILDING_WX__)
 #define WTF_PLATFORM_WX 1
@@ -480,24 +477,6 @@
 #endif
 #if PLATFORM(MAC) || PLATFORM(IOS) || (PLATFORM(WIN) && USE(CG))
 #define WTF_USE_CA 1
-#endif
-
-/* USE(SKIA) for Win/Linux/Mac/Android */
-#if PLATFORM(CHROMIUM)
-#if OS(DARWIN)
-#define WTF_USE_SKIA 1
-#define WTF_USE_ICCJPEG 1
-#define WTF_USE_QCMSLIB 1
-#elif OS(ANDROID)
-#define WTF_USE_SKIA 1
-#define WTF_USE_LOW_QUALITY_IMAGE_INTERPOLATION 1
-#define WTF_USE_LOW_QUALITY_IMAGE_NO_JPEG_DITHERING 1
-#define WTF_USE_LOW_QUALITY_IMAGE_NO_JPEG_FANCY_UPSAMPLING 1
-#else
-#define WTF_USE_SKIA 1
-#define WTF_USE_ICCJPEG 1
-#define WTF_USE_QCMSLIB 1
-#endif
 #endif
 
 #if PLATFORM(BLACKBERRY)
@@ -554,23 +533,6 @@
 #define WTF_USE_SECURITY_FRAMEWORK 1
 #endif /* PLATFORM(MAC) && !PLATFORM(IOS) */
 
-#if PLATFORM(CHROMIUM) && OS(DARWIN)
-#define WTF_USE_CF 1
-#define WTF_USE_WK_SCROLLBAR_PAINTER 1
-#endif
-
-#if PLATFORM(CHROMIUM)
-#if OS(DARWIN)
-/* We can't override the global operator new and delete on OS(DARWIN) because
- * some object are allocated by WebKit and deallocated by the embedder. */
-#define ENABLE_GLOBAL_FASTMALLOC_NEW 0
-#else /* !OS(DARWIN) */
-/* On non-OS(DARWIN), the "system malloc" is actually TCMalloc anyway, so there's
- * no need to use WebKit's copy of TCMalloc. */
-#define USE_SYSTEM_MALLOC 1
-#endif /* OS(DARWIN) */
-#endif /* PLATFORM(CHROMIUM) */
-
 #if PLATFORM(IOS)
 #define DONT_FINALIZE_ON_MAIN_THREAD 1
 #endif
@@ -620,7 +582,7 @@
 #endif
 
 #if !defined(HAVE_ACCESSIBILITY)
-#if PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(GTK) || (PLATFORM(CHROMIUM) && !OS(ANDROID)) || PLATFORM(EFL)
+#if PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(GTK) || PLATFORM(EFL)
 #define HAVE_ACCESSIBILITY 1
 #endif
 #endif /* !defined(HAVE_ACCESSIBILITY) */
@@ -881,7 +843,7 @@
 #define ENABLE_REGEXP_TRACING 0
 
 /* Yet Another Regex Runtime - turned on by default for JIT enabled ports. */
-#if !defined(ENABLE_YARR_JIT) && (ENABLE(JIT) || ENABLE(LLINT_C_LOOP)) && !PLATFORM(CHROMIUM) && !(OS(QNX) && PLATFORM(QT))
+#if !defined(ENABLE_YARR_JIT) && (ENABLE(JIT) || ENABLE(LLINT_C_LOOP)) && !(OS(QNX) && PLATFORM(QT))
 #define ENABLE_YARR_JIT 1
 
 /* Setting this flag compares JIT results with interpreter results. */
@@ -1046,10 +1008,6 @@
 
 #if PLATFORM(MAC)
 #define WTF_USE_COREAUDIO 1
-#endif
-
-#if !defined(WTF_USE_V8) && PLATFORM(CHROMIUM)
-#define WTF_USE_V8 1
 #endif
 
 /* Not using V8 implies using JSC and vice versa */

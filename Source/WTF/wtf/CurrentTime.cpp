@@ -65,8 +65,6 @@
 
 namespace WTF {
 
-#if !PLATFORM(CHROMIUM)
-
 #if OS(WINDOWS)
 
 // Number of 100 nanosecond between January 1, 1601 and January 1, 1970.
@@ -332,7 +330,5 @@ double monotonicallyIncreasingTime()
 }
 
 #endif
-
-#endif // !PLATFORM(CHROMIUM)
 
 } // namespace WTF
