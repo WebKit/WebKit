@@ -1,3 +1,12 @@
+2013-04-05  Ani Peter  <peter.ani@gmail.com>
+
+        Translation of WebKitGTK+ for Malayalam (ml)
+        https://bugs.webkit.org/show_bug.cgi?id=113280
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * ml.po: Added.
+
 2013-04-05  Sweta Kothari  <swkothar@redhat.com>
 
         webkit translations for gujarati
