@@ -1,3 +1,18 @@
+2013-04-05  Ed Bartosh  <bartosh@gmail.com>
+
+        [EFL][WK2] --no-tiled-backing-store build fails because of not used #if USE(COORDINATED_GRAPHICS)
+        https://bugs.webkit.org/show_bug.cgi?id=113629
+
+        Reviewed by Simon Fraser.
+
+        Wrapped code related to coordinated graphics with #if USE(COORDINATED_GRAPHICS)
+        * UIProcess/API/CoordinatedGraphics/WKCoordinatedScene.cpp:
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::initialize):
+        (WebKit):
+        (WebKit::WebView::paintToCairoSurface):
+        (WebKit::WebView::updateViewportSize):
+
 2013-04-05  Timothy Hatcher  <timothy@apple.com>
 
         Allow the Web Inspector to use WebSQL.

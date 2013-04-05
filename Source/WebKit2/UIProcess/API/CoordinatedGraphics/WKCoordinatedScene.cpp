@@ -26,6 +26,8 @@
  */
 
 #include "config.h"
+#if USE(COORDINATED_GRAPHICS)
+
 #include "WKCoordinatedScene.h"
 
 #include "WKCoordinatedSceneAPICast.h"
@@ -47,3 +49,4 @@ WK_EXPORT void WKCoordinatedSceneScrollBy(WKCoordinatedSceneLayer layer, WKSize 
 {
     toImpl(layer)->scrollBy(WebCore::FloatSize(offset.width, offset.height));
 }
+#endif

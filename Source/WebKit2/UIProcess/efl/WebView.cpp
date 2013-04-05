@@ -94,8 +94,10 @@ void WebView::setEwkView(EwkView* ewkView)
 void WebView::initialize()
 {
     m_page->initializeWebPage();
+#if USE(COORDINATED_GRAPHICS)
     if (CoordinatedGraphicsScene* scene = coordinatedGraphicsScene())
         scene->setActive(true);
+#endif
 }
 
 void WebView::setSize(const WebCore::IntSize& size)
@@ -133,6 +135,7 @@ IntPoint WebView::userViewportToContents(const IntPoint& point) const
     return m_userViewportTransform.mapPoint(point);
 }
 
+#if USE(COORDINATED_GRAPHICS)
 void WebView::paintToCurrentGLContext()
 {
     CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
@@ -145,13 +148,15 @@ void WebView::paintToCurrentGLContext()
 
     scene->paintToCurrentGLContext(transformToScene().toTransformationMatrix(), /* opacity */ 1, viewport);
 }
+#endif
 
 void WebView::paintToCairoSurface(cairo_surface_t* surface)
 {
+#if USE(COORDINATED_GRAPHICS)
     CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
     if (!scene)
         return;
-
+#endif
     PlatformContextCairo context(cairo_create(surface));
 
     const FloatPoint& position = contentPosition();
@@ -159,8 +164,9 @@ void WebView::paintToCairoSurface(cairo_surface_t* surface)
 
     cairo_matrix_t transform = { effectiveScale, 0, 0, effectiveScale, - position.x() * m_page->deviceScaleFactor(), - position.y() * m_page->deviceScaleFactor() };
     cairo_set_matrix(context.cr(), &transform);
-
+#if USE(COORDINATED_GRAPHICS)
     scene->paintToGraphicsContext(&context);
+#endif
 }
 
 Evas_Object* WebView::evasObject()
@@ -256,6 +262,7 @@ AffineTransform WebView::transformToScene() const
     return transform.toAffineTransform();
 }
 
+#if USE(COORDINATED_GRAPHICS)
 CoordinatedGraphicsScene* WebView::coordinatedGraphicsScene()
 {
     DrawingAreaProxy* drawingArea = m_page->drawingArea();
@@ -268,6 +275,7 @@ CoordinatedGraphicsScene* WebView::coordinatedGraphicsScene()
 
     return layerTreeHostProxy->coordinatedGraphicsScene();
 }
+#endif
 
 void WebView::updateViewportSize()
 {
@@ -436,6 +444,7 @@ void WebView::setFindIndicator(PassRefPtr<FindIndicator>, bool, bool)
     notImplemented();
 }
 
+#if USE(COORDINATED_GRAPHICS)
 void WebView::enterAcceleratedCompositingMode(const LayerTreeContext&)
 {
     if (CoordinatedGraphicsScene* scene = coordinatedGraphicsScene())
@@ -447,6 +456,7 @@ void WebView::exitAcceleratedCompositingMode()
     if (CoordinatedGraphicsScene* scene = coordinatedGraphicsScene())
         scene->setActive(false);
 }
+#endif
 
 void WebView::updateAcceleratedCompositingMode(const LayerTreeContext&)
 {
