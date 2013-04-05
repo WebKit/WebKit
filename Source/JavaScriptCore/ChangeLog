@@ -1,3 +1,12 @@
+2013-04-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, rolling out http://trac.webkit.org/changeset/147729
+
+        It's causing a bunch of breakage on some more strict compilers:
+        <inline asm>:1267:2: error: ambiguous instructions require an explicit suffix (could be 'ficomps', or 'ficompl')
+
+        * offlineasm/x86.rb:
+
 2013-04-05  Roger Fong  <roger_fong@apple.com>
 
         More VS2010 solution makefile fixes.
