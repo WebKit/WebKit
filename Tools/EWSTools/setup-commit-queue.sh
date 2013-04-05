@@ -25,17 +25,11 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-if [[ $# -ne 1 ]];then
-echo "Usage: setup-commit-queue.sh BOT_NUMBER"
-exit 1
-fi
-
 CWD="$(pwd)"
 cd "$(dirname "$0")"
 
 QUEUE_TYPE=commit-queue
-BOT_ID=webkit-cq-$1
-BUGZILLA_USERNAME=webkit.review.bot@gmail.com
+BUGZILLA_USERNAME=commit-queue@webkit.org
 read -s -p "Bugzilla Password: " BUGZILLA_PASSWORD && echo
 SVN_USERNAME=commit-queue@webkit.org
 read -s -p "Subversion Password: " SVN_PASSWORD && echo

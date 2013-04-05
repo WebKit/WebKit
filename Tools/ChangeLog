@@ -1,3 +1,17 @@
+2013-04-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix setup-commit-queue and temporarily disable testing on commit-queue
+        https://bugs.webkit.org/show_bug.cgi?id=113979
+
+        Reviewed by Benjamin Poulain.
+
+        Use commit-queue@webkit.org instead of webkit.bot.review@gmail.com in commit-queue,
+        and temporarily disable tests in commit-queue as we don't have enough resources at the moment.
+
+        * EWSTools/setup-commit-queue.sh:
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        (CommitQueueTask.run):
+
 2013-04-04  Dirk Pranke  <dpranke@chromium.org>
 
         temporarily make flakiness dashboard work again webkit.org bots

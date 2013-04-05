@@ -82,8 +82,9 @@ class CommitQueueTask(PatchAnalysisTask):
                 if not self._build_without_patch():
                     return False
                 return self.report_failure()
-            if not self._did_pass_tests_recently():
-                return False
+            # FIXME: We temporarily disable tests on commit queue as we don't have enough machine resources.
+            # if not self._did_pass_tests_recently():
+            #    return False
         # Make sure the patch is still valid before landing (e.g., make sure
         # no one has set commit-queue- since we started working on the patch.)
         if not self.validate():
