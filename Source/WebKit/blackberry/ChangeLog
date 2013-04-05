@@ -1,3 +1,18 @@
+2013-04-05  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] FatFingers Don't check the shadow tree for all elements.
+        https://bugs.webkit.org/show_bug.cgi?id=114066
+
+        Reviewed by Rob Buis.
+
+        BlackBerry PR 263078
+        Internally reviewed by Genevieve Mak.
+
+        No need to check shadow tree since sliders use touch events.
+
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::isElementClickable):
+
 2013-04-05  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove WTF_USE_GOOGLEURL-guarded code

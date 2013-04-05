@@ -95,9 +95,6 @@ bool FatFingers::isElementClickable(Element* element) const
         || element->isContentEditable())
         return true;
 
-    if (element->isInShadowTree())
-        return false;
-
     return hasMousePressListener(element)
         || CSSComputedStyleDeclaration::create(element)->getPropertyValue(cssPropertyID("cursor")) == "pointer";
 }
