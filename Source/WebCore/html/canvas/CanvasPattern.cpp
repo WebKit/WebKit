@@ -27,9 +27,26 @@
 #include "CanvasPattern.h"
 
 #include "ExceptionCode.h"
+#include "Image.h"
+#include "Pattern.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+PassRefPtr<CanvasPattern> CanvasPattern::create(PassRefPtr<Image> image, bool repeatX, bool repeatY, bool originClean)
+{
+    return adoptRef(new CanvasPattern(image, repeatX, repeatY, originClean));
+}
+
+CanvasPattern::CanvasPattern(PassRefPtr<Image> image, bool repeatX, bool repeatY, bool originClean)
+    : m_pattern(Pattern::create(image, repeatX, repeatY))
+    , m_originClean(originClean)
+{
+}
+
+CanvasPattern::~CanvasPattern()
+{
+}
 
 void CanvasPattern::parseRepetitionType(const String& type, bool& repeatX, bool& repeatY, ExceptionCode& ec)
 {
@@ -57,10 +74,4 @@ void CanvasPattern::parseRepetitionType(const String& type, bool& repeatX, bool&
     ec = SYNTAX_ERR;
 }
 
-CanvasPattern::CanvasPattern(PassRefPtr<Image> image, bool repeatX, bool repeatY, bool originClean)
-    : m_pattern(Pattern::create(image, repeatX, repeatY))
-    , m_originClean(originClean)
-{
-}
-
-}
+} // namespace WebCore

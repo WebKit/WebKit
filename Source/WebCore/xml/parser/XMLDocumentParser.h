@@ -33,8 +33,8 @@
 #include "XMLErrors.h"
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/text/AtomicStringHash.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringHash.h>
 
 #if USE(QXMLSTREAM)
 #include <qxmlstream.h>

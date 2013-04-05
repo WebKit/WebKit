@@ -27,8 +27,10 @@
 #define CachedSVGDocumentReference_h
 
 #if ENABLE(SVG) && ENABLE(CSS_FILTERS)
+
 #include "CachedResourceHandle.h"
 #include "CachedSVGDocument.h"
+#include "CachedSVGDocumentClient.h"
 
 namespace WebCore {
 
@@ -43,6 +45,6 @@ private:
 
 };
 
-#endif
+#endif // ENABLE(SVG) && ENABLE(CSS_FILTERS)
 
-#endif
+#endif // CachedSVGDocumentReference_h

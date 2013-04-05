@@ -52,7 +52,6 @@
 #endif
 
 #if PLATFORM(MAC)
-#include <OpenGL/OpenGL.h>
 #include <wtf/RetainPtr.h>
 OBJC_CLASS CALayer;
 OBJC_CLASS WebGLLayer;
@@ -70,6 +69,8 @@ typedef unsigned int GLuint;
 #endif
 
 #if PLATFORM(MAC)
+typedef struct _CGLContextObject *CGLContextObj;
+
 typedef CGLContextObj PlatformGraphicsContext3D;
 #elif PLATFORM(QT)
 typedef QOpenGLContext* PlatformGraphicsContext3D;
@@ -86,10 +87,6 @@ class GrContext;
 // These are currently the same among all implementations.
 const PlatformGraphicsContext3D NullPlatformGraphicsContext3D = 0;
 const Platform3DObject NullPlatform3DObject = 0;
-
-#if USE(CG)
-#include <CoreGraphics/CGContext.h>
-#endif
 
 namespace WebCore {
 class DrawingBuffer;

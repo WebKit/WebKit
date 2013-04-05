@@ -33,7 +33,7 @@
 #include <wtf/FastAllocBase.h>
 
 #if USE(CG)
-#include <CoreGraphics/CGAffineTransform.h>
+typedef struct CGAffineTransform CGAffineTransform;
 #elif USE(CAIRO)
 #include <cairo.h>
 #elif PLATFORM(OPENVG)

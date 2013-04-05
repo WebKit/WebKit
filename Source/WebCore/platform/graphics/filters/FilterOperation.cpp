@@ -30,7 +30,29 @@
 
 #include "AnimationUtilities.h"
 
+#if ENABLE(SVG)
+#include "CachedSVGDocumentReference.h"
+#endif
+
 namespace WebCore {
+
+ReferenceFilterOperation::ReferenceFilterOperation(const String& url, const String& fragment, OperationType type)
+    : FilterOperation(type)
+    , m_url(url)
+    , m_fragment(fragment)
+{
+}
+
+ReferenceFilterOperation::~ReferenceFilterOperation()
+{
+}
+
+#if ENABLE(SVG)
+void ReferenceFilterOperation::setCachedSVGDocumentReference(PassOwnPtr<CachedSVGDocumentReference> cachedSVGDocumentReference)
+{
+    m_cachedSVGDocumentReference = cachedSVGDocumentReference;
+}
+#endif
 
 PassRefPtr<FilterOperation> BasicColorMatrixFilterOperation::blend(const FilterOperation* from, double progress, bool blendToPassthrough)
 {

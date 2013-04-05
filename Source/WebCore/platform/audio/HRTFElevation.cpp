@@ -36,6 +36,7 @@
 #include "AudioFileReader.h"
 #include "Biquad.h"
 #include "FFTFrame.h"
+#include "HRTFDatabaseLoader.h"
 #include "HRTFPanner.h"
 #include "PlatformMemoryInstrumentation.h"
 #include <algorithm>

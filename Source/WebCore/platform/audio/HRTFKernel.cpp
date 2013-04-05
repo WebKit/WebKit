@@ -99,6 +99,11 @@ HRTFKernel::HRTFKernel(AudioChannel* channel, size_t fftSize, float sampleRate)
     m_fftFrame->doPaddedFFT(impulseResponse, truncatedResponseLength);
 }
 
+size_t HRTFKernel::fftSize() const
+{
+    return m_fftFrame->fftSize();
+}
+
 PassOwnPtr<AudioChannel> HRTFKernel::createImpulseResponse()
 {
     OwnPtr<AudioChannel> channel = adoptPtr(new AudioChannel(fftSize()));

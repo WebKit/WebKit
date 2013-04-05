@@ -42,7 +42,10 @@
 
 namespace WebCore {
 
+class Document;
+class KURL;
 struct LinkRelAttribute;
+
 #if ENABLE(LINK_PRERENDER)
 class PrerenderHandle;
 #endif

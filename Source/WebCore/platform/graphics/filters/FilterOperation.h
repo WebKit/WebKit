@@ -41,10 +41,6 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #endif
 
-#if ENABLE(SVG)
-#include "CachedSVGDocumentReference.h"
-#endif
-
 // Annoyingly, wingdi.h #defines this.
 #ifdef PASSTHROUGH
 #undef PASSTHROUGH
@@ -53,6 +49,10 @@
 namespace WebCore {
 
 // CSS Filters
+
+#if ENABLE(SVG)
+class CachedSVGDocumentReference;
+#endif
 
 #if PLATFORM(BLACKBERRY)
 class FilterOperation : public ThreadSafeRefCounted<FilterOperation> {
@@ -166,6 +166,7 @@ public:
     {
         return adoptRef(new ReferenceFilterOperation(url, fragment, type));
     }
+    ~ReferenceFilterOperation();
 
     virtual bool affectsOpacity() const { return true; }
     virtual bool movesPixels() const { return true; }
@@ -175,13 +176,14 @@ public:
 
 #if ENABLE(SVG)
     CachedSVGDocumentReference* cachedSVGDocumentReference() const { return m_cachedSVGDocumentReference.get(); }
-    void setCachedSVGDocumentReference(PassOwnPtr<CachedSVGDocumentReference> cachedSVGDocumentReference) { m_cachedSVGDocumentReference = cachedSVGDocumentReference; }
+    void setCachedSVGDocumentReference(PassOwnPtr<CachedSVGDocumentReference>);
 #endif
 
     FilterEffect* filterEffect() const { return m_filterEffect.get(); }
     void setFilterEffect(PassRefPtr<FilterEffect> filterEffect) { m_filterEffect = filterEffect; }
 
 private:
+    ReferenceFilterOperation(const String& url, const String& fragment, OperationType);
 
     virtual bool operator==(const FilterOperation& o) const
     {
@@ -189,13 +191,6 @@ private:
             return false;
         const ReferenceFilterOperation* other = static_cast<const ReferenceFilterOperation*>(&o);
         return m_url == other->m_url;
-    }
-
-    ReferenceFilterOperation(const String& url, const String& fragment, OperationType type)
-        : FilterOperation(type)
-        , m_url(url)
-        , m_fragment(fragment)
-    {
     }
 
     String m_url;

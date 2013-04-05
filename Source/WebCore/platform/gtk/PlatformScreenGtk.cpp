@@ -31,6 +31,7 @@
 #include "config.h"
 #include "PlatformScreen.h"
 
+#include "FloatRect.h"
 #include "GtkVersioning.h"
 #include "HostWindow.h"
 #include "NotImplemented.h"

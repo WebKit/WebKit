@@ -31,6 +31,11 @@
 
 namespace WebCore {
 
+PassRefPtr<Pattern> Pattern::create(PassRefPtr<Image> tileImage, bool repeatX, bool repeatY)
+{
+    return adoptRef(new Pattern(tileImage, repeatX, repeatY));
+}
+
 Pattern::Pattern(PassRefPtr<Image> image, bool repeatX, bool repeatY)
     : m_tileImage(image)
     , m_repeatX(repeatX)

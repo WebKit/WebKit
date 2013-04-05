@@ -32,6 +32,7 @@
 
 #if ENABLE(CSS_FILTERS)
 
+#include "CachedResourceHandle.h"
 #include "FilterOperation.h"
 #include "LayoutRect.h"
 #include <wtf/HashMap.h>
@@ -43,7 +44,7 @@
 #endif
 
 #if ENABLE(SVG)
-#include "CachedSVGDocument.h"
+#include "CachedSVGDocumentClient.h"
 #include "Element.h"
 #endif
 

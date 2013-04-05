@@ -55,9 +55,6 @@ OBJC_CLASS NSFont;
 
 typedef struct CGFont* CGFontRef;
 typedef const struct __CTFont* CTFontRef;
-
-#include <CoreFoundation/CFBase.h>
-#include <objc/objc-auto.h>
 #endif
 
 #include <wtf/Forward.h>

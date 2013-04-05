@@ -20,7 +20,6 @@
 #ifndef DOMMimeType_h
 #define DOMMimeType_h
 
-#include "Frame.h"
 #include "FrameDestructionObserver.h"
 #include "PluginData.h"
 

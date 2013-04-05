@@ -30,11 +30,11 @@
 #define ReverbConvolverStage_h
 
 #include "AudioArray.h"
-#include "FFTFrame.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
+class FFTFrame;
 class ReverbAccumulationBuffer;
 class ReverbConvolver;
 class FFTConvolver;
@@ -47,6 +47,7 @@ public:
     // renderPhase is useful to know so that we can manipulate the pre versus post delay so that stages will perform
     // their heavy work (FFT processing) on different slices to balance the load in a real-time thread.
     ReverbConvolverStage(const float* impulseResponse, size_t responseLength, size_t reverbTotalLatency, size_t stageOffset, size_t stageLength, size_t fftSize, size_t renderPhase, size_t renderSliceSize, ReverbAccumulationBuffer*, bool directMode = false);
+    ~ReverbConvolverStage();
 
     // WARNING: framesToProcess must be such that it evenly divides the delay buffer size (stage_offset).
     void process(const float* source, size_t framesToProcess);

@@ -32,6 +32,7 @@
 
 #include "ReverbConvolverStage.h"
 
+#include "FFTFrame.h"
 #include "VectorMath.h"
 #include "ReverbAccumulationBuffer.h"
 #include "ReverbConvolver.h"
@@ -89,6 +90,10 @@ ReverbConvolverStage::ReverbConvolverStage(const float* impulseResponse, size_t,
     size_t delayBufferSize = m_preDelayLength < fftSize ? fftSize : m_preDelayLength;
     delayBufferSize = delayBufferSize < renderSliceSize ? renderSliceSize : delayBufferSize;
     m_preDelayBuffer.allocate(delayBufferSize);
+}
+
+ReverbConvolverStage::~ReverbConvolverStage()
+{
 }
 
 void ReverbConvolverStage::processInBackground(ReverbConvolver* convolver, size_t framesToProcess)

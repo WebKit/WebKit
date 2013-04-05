@@ -21,7 +21,7 @@
 #define SVGFontFaceUriElement_h
 
 #if ENABLE(SVG_FONTS)
-#include "CachedFont.h"
+#include "CachedFontClient.h"
 #include "CachedResourceHandle.h"
 #include "SVGElement.h"
 
@@ -52,6 +52,5 @@ private:
 } // namespace WebCore
 
 #endif // ENABLE(SVG_FONTS)
-#endif
 
-// vim:ts=4:noet
+#endif // SVGFontFaceUriElement_h

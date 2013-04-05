@@ -25,7 +25,6 @@
 
 #if ENABLE(SVG)
 #include "CachedResource.h"
-#include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "SVGDocument.h"
 #include "TextResourceDecoder.h"
@@ -50,15 +49,8 @@ protected:
     RefPtr<TextResourceDecoder> m_decoder;
 };
 
-class CachedSVGDocumentClient : public CachedResourceClient {
-public:
-    virtual ~CachedSVGDocumentClient() { }
-    static CachedResourceClientType expectedType() { return SVGDocumentType; }
-    virtual CachedResourceClientType resourceClientType() const { return expectedType(); }
-};
+} // namespace WebCore
 
-}
-
-#endif
+#endif // USE(SVG)
 
 #endif // CachedSVGDocument_h

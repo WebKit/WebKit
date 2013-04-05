@@ -27,7 +27,7 @@
 #include "config.h"
 #include "CachedFont.h"
 
-#include "CachedResourceClient.h"
+#include "CachedFontClient.h"
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceLoader.h"
 #include "FontCustomPlatformData.h"

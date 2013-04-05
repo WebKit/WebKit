@@ -30,7 +30,9 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
+
 class CachedCSSStyleSheet;
+class KURL;
 
 class CachedStyleSheetClient : public CachedResourceClient {
 public:
@@ -40,6 +42,7 @@ public:
     virtual void setCSSStyleSheet(const String& /* href */, const KURL& /* baseURL */, const String& /* charset */, const CachedCSSStyleSheet*) { }
     virtual void setXSLStyleSheet(const String& /* href */, const KURL& /* baseURL */, const String& /* sheet */) { }
 };
-}
+
+} // namespace WebCore
 
 #endif // CachedStyleSheetClient_h

@@ -29,7 +29,6 @@
 #define Pattern_h
 
 #include "AffineTransform.h"
-#include "Image.h"
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -62,13 +61,11 @@ typedef void* PlatformPatternPtr;
 namespace WebCore {
 
 class AffineTransform;
+class Image;
 
 class Pattern : public RefCounted<Pattern> {
 public:
-    static PassRefPtr<Pattern> create(PassRefPtr<Image> tileImage, bool repeatX, bool repeatY)
-    {
-        return adoptRef(new Pattern(tileImage, repeatX, repeatY));
-    }
+    static PassRefPtr<Pattern> create(PassRefPtr<Image> tileImage, bool repeatX, bool repeatY);
     virtual ~Pattern();
 
     Image* tileImage() const { return m_tileImage.get(); }
