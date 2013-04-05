@@ -780,7 +780,8 @@ gboolean MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
     case GST_MESSAGE_ELEMENT:
         if (gst_is_missing_plugin_message(message)) {
             gchar* detail = gst_missing_plugin_message_get_installer_detail(message);
-            GstInstallPluginsReturn result = gst_install_plugins_async(&detail, 0, mediaPlayerPrivatePluginInstallerResultFunction, this);
+            gchar* detailArray[2] = {detail, 0};
+            GstInstallPluginsReturn result = gst_install_plugins_async(detailArray, 0, mediaPlayerPrivatePluginInstallerResultFunction, this);
             m_missingPlugins = result == GST_INSTALL_PLUGINS_STARTED_OK;
             g_free(detail);
         }
