@@ -738,7 +738,6 @@
 		265541521489B233000DFC5D /* CursorIOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2655414B1489AA2B000DFC5D /* CursorIOS.cpp */; };
 		269239951505E1AA009E57FC /* JSIDBVersionChangeEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 269239911505E1AA009E57FC /* JSIDBVersionChangeEvent.cpp */; };
 		269239961505E1AA009E57FC /* JSIDBVersionChangeEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 269239921505E1AA009E57FC /* JSIDBVersionChangeEvent.h */; };
-		26A5034E14F0983600AA730D /* KURLWTFURLImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 26A5034D14F0983600AA730D /* KURLWTFURLImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		26C17A3E1491D2D400D12BA2 /* FileSystemIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 26C17A3C1491D2D400D12BA2 /* FileSystemIOS.h */; };
 		26C17A3F1491D2D400D12BA2 /* FileSystemIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 26C17A3D1491D2D400D12BA2 /* FileSystemIOS.mm */; };
 		26E98A10130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 26E98A0F130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h */; };
@@ -8002,7 +8001,6 @@
 		2655414B1489AA2B000DFC5D /* CursorIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CursorIOS.cpp; path = ios/CursorIOS.cpp; sourceTree = "<group>"; };
 		269239911505E1AA009E57FC /* JSIDBVersionChangeEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSIDBVersionChangeEvent.cpp; sourceTree = "<group>"; };
 		269239921505E1AA009E57FC /* JSIDBVersionChangeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSIDBVersionChangeEvent.h; sourceTree = "<group>"; };
-		26A5034D14F0983600AA730D /* KURLWTFURLImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KURLWTFURLImpl.h; sourceTree = "<group>"; };
 		26C17A3C1491D2D400D12BA2 /* FileSystemIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSystemIOS.h; path = ios/FileSystemIOS.h; sourceTree = "<group>"; };
 		26C17A3D1491D2D400D12BA2 /* FileSystemIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileSystemIOS.mm; path = ios/FileSystemIOS.mm; sourceTree = "<group>"; };
 		26E98A0F130A9FCA008EB7B2 /* TextCodecASCIIFastPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCodecASCIIFastPath.h; sourceTree = "<group>"; };
@@ -21398,7 +21396,6 @@
 				6593923509AE4346002C531F /* KURL.cpp */,
 				6593923609AE4346002C531F /* KURL.h */,
 				BCBD21AA0E417AD400A070F2 /* KURLHash.h */,
-				26A5034D14F0983600AA730D /* KURLWTFURLImpl.h */,
 				E18772F0126E2629003DD586 /* Language.cpp */,
 				85EC9AF90A71A2C600EEEAED /* Language.h */,
 				D6FDAEF2149C06190037B1E5 /* LayoutTestSupport.cpp */,
@@ -25191,7 +25188,6 @@
 				521D46F811AEC9B100514613 /* KillRing.h in Headers */,
 				6593923809AE4346002C531F /* KURL.h in Headers */,
 				BCBD21AB0E417AD400A070F2 /* KURLHash.h in Headers */,
-				26A5034E14F0983600AA730D /* KURLWTFURLImpl.h in Headers */,
 				450CEBF115073BBE002BB149 /* LabelableElement.h in Headers */,
 				A456FA2711AD4A830020B420 /* LabelsNodeList.h in Headers */,
 				85EC9AFB0A71A2C600EEEAED /* Language.h in Headers */,

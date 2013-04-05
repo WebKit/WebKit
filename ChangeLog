@@ -1,3 +1,13 @@
+2013-04-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove WTFURL from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=113994
+
+        Reviewed by Ryosuke Niwa.
+
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2013-04-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the top level gyp directory and Platform/chromium

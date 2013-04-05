@@ -1,3 +1,51 @@
+2013-04-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove WTFURL from WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=113994
+
+        Reviewed by Ryosuke Niwa.
+
+        Painful, but that is for the best now :(
+
+        * GNUmakefile.list.am:
+        * WTF.xcodeproj/project.pbxproj:
+        * wtf/MemoryInstrumentationParsedURL.h: Removed.
+        * wtf/url/api/ParsedURL.cpp: Removed.
+        * wtf/url/api/ParsedURL.h: Removed.
+        * wtf/url/api/URLBuffer.h: Removed.
+        * wtf/url/api/URLQueryCharsetConverter.h: Removed.
+        * wtf/url/api/URLString.cpp: Removed.
+        * wtf/url/api/URLString.h: Removed.
+        * wtf/url/src/RawURLBuffer.h: Removed.
+        * wtf/url/src/URLCanon.h: Removed.
+        * wtf/url/src/URLCanonEtc.cpp: Removed.
+        * wtf/url/src/URLCanonFilesystemurl.cpp: Removed.
+        * wtf/url/src/URLCanonFileurl.cpp: Removed.
+        * wtf/url/src/URLCanonHost.cpp: Removed.
+        * wtf/url/src/URLCanonICU.cpp: Removed.
+        * wtf/url/src/URLCanonIP.cpp: Removed.
+        * wtf/url/src/URLCanonInternal.cpp: Removed.
+        * wtf/url/src/URLCanonInternal.h: Removed.
+        * wtf/url/src/URLCanonMailto.cpp: Removed.
+        * wtf/url/src/URLCanonPath.cpp: Removed.
+        * wtf/url/src/URLCanonPathurl.cpp: Removed.
+        * wtf/url/src/URLCanonQuery.cpp: Removed.
+        * wtf/url/src/URLCanonRelative.cpp: Removed.
+        * wtf/url/src/URLCanonStdURL.cpp: Removed.
+        * wtf/url/src/URLCharacterTypes.cpp: Removed.
+        * wtf/url/src/URLCharacterTypes.h: Removed.
+        * wtf/url/src/URLComponent.h: Removed.
+        * wtf/url/src/URLFile.h: Removed.
+        * wtf/url/src/URLParse.cpp: Removed.
+        * wtf/url/src/URLParse.h: Removed.
+        * wtf/url/src/URLParseFile.cpp: Removed.
+        * wtf/url/src/URLParseInternal.h: Removed.
+        * wtf/url/src/URLSegments.cpp: Removed.
+        * wtf/url/src/URLSegments.h: Removed.
+        * wtf/url/src/URLUtil.cpp: Removed.
+        * wtf/url/src/URLUtil.h: Removed.
+        * wtf/url/src/URLUtilInternal.h: Removed.
+
 2013-04-04  Geoffrey Garen  <ggaren@apple.com>
 
         Nixed the defunct chromium folder from WTF

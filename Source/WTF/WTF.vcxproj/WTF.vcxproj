@@ -171,7 +171,6 @@
     <ClInclude Include="..\wtf\MemoryInstrumentationHashMap.h" />
     <ClInclude Include="..\wtf\MemoryInstrumentationHashSet.h" />
     <ClInclude Include="..\wtf\MemoryInstrumentationListHashSet.h" />
-    <ClInclude Include="..\wtf\MemoryInstrumentationParsedURL.h" />
     <ClInclude Include="..\wtf\MemoryInstrumentationSequence.h" />
     <ClInclude Include="..\wtf\MemoryInstrumentationString.h" />
     <ClInclude Include="..\wtf\MemoryInstrumentationVector.h" />

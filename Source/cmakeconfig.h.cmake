@@ -132,6 +132,5 @@
 #cmakedefine01 ENABLE_XSLT
 #cmakedefine01 USE_SYSTEM_MALLOC
 #cmakedefine01 WTF_USE_TILED_BACKING_STORE
-#cmakedefine01 WTF_USE_WTFURL
 
 #endif /* CMAKECONFIG_H */

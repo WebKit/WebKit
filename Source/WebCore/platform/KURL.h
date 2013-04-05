@@ -26,7 +26,6 @@
 #ifndef KURL_h
 #define KURL_h
 
-#include "KURLWTFURLImpl.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
@@ -67,16 +66,10 @@ public:
     KURL(ParsedURLStringTag, const String&);
 #if USE(GOOGLEURL)
     explicit KURL(WTF::HashTableDeletedValueType) : m_url(WTF::HashTableDeletedValue) { }
-#elif USE(WTFURL)
-    explicit KURL(WTF::HashTableDeletedValueType) : m_urlImpl(WTF::HashTableDeletedValue) { }
 #else
     explicit KURL(WTF::HashTableDeletedValueType) : m_string(WTF::HashTableDeletedValue) { }
 #endif
-#if !USE(WTFURL)
     bool isHashTableDeletedValue() const { return string().isHashTableDeletedValue(); }
-#else
-    bool isHashTableDeletedValue() const { return m_urlImpl.isHashTableDeletedValue(); }
-#endif
 
     // Resolves the relative URL with the given base URL. If provided, the
     // TextEncoding is used to encode non-ASCII characers. The base URL can be
@@ -124,9 +117,6 @@ public:
 
 #if USE(GOOGLEURL)
     const String& string() const { return m_url.string(); }
-#elif USE(WTFURL)
-    // FIXME: Split this in URLString and InvalidURLString, get rid of the implicit conversions.
-    const String& string() const;
 #else
     const String& string() const { return m_string; }
 #endif
@@ -238,8 +228,6 @@ private:
 #if USE(GOOGLEURL)
     friend class KURLGooglePrivate;
     KURLGooglePrivate m_url;
-#elif USE(WTFURL)
-    RefPtr<KURLWTFURLImpl> m_urlImpl;
 #else  // !USE(GOOGLEURL)
     void init(const KURL&, const String&, const TextEncoding&);
     void copyToBuffer(Vector<char, 512>& buffer) const;
@@ -335,7 +323,7 @@ inline bool operator!=(const String& a, const KURL& b)
     return a != b.string();
 }
 
-#if !USE(GOOGLEURL) && !USE(WTFURL)
+#if !USE(GOOGLEURL)
 
 // Inline versions of some non-GoogleURL functions so we can get inlining
 // without having to have a lot of ugly ifdefs in the class definition.
@@ -395,7 +383,7 @@ inline unsigned KURL::pathAfterLastSlash() const
     return m_pathAfterLastSlash;
 }
 
-#endif // !USE(GOOGLEURL) && !USE(WTFURL)
+#endif // !USE(GOOGLEURL)
 
 } // namespace WebCore
 

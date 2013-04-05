@@ -48,15 +48,7 @@ KURL::KURL(NSURL *url)
     char* bytes = &buffer[0];
     CFURLGetBytes(reinterpret_cast<CFURLRef>(url), reinterpret_cast<UInt8*>(bytes), bytesLength);
     bytes[bytesLength] = '\0';
-#if !USE(WTFURL)
     parse(bytes);
-#else
-    m_urlImpl = adoptRef(new KURLWTFURLImpl());
-    String urlString(bytes, bytesLength);
-    m_urlImpl->m_parsedURL = ParsedURL(urlString, 0);
-    if (!m_urlImpl->m_parsedURL.isValid())
-        m_urlImpl->m_invalidUrlString = urlString;
-#endif // USE(WTFURL)
 }
 
 KURL::operator NSURL *() const
@@ -75,15 +67,7 @@ CFURLRef KURL::createCFURL() const
         return reinterpret_cast<CFURLRef>([[NSURL alloc] initWithString:@""]);
 
     CharBuffer buffer;
-#if !USE(WTFURL)
     copyToBuffer(buffer);
-#else
-    String urlString = string();
-    buffer.resize(urlString.length());
-    size_t length = urlString.length();
-    for (size_t i = 0; i < length; i++)
-        buffer[i] = static_cast<char>(urlString[i]);
-#endif
     return createCFURLFromBuffer(buffer);
 }
 

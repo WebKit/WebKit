@@ -521,9 +521,6 @@
     <ClInclude Include="..\wtf\MemoryInstrumentationListHashSet.h">
       <Filter>wtf</Filter>
     </ClInclude>
-    <ClInclude Include="..\wtf\MemoryInstrumentationParsedURL.h">
-      <Filter>wtf</Filter>
-    </ClInclude>
     <ClInclude Include="..\wtf\MemoryInstrumentationSequence.h">
       <Filter>wtf</Filter>
     </ClInclude>

@@ -5789,8 +5789,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/KURL.cpp \
 	Source/WebCore/platform/KURL.h \
 	Source/WebCore/platform/KURLHash.h \
-	Source/WebCore/platform/KURLWTFURL.cpp \
-	Source/WebCore/platform/KURLWTFURLImpl.h \
 	Source/WebCore/platform/Language.cpp \
 	Source/WebCore/platform/Language.h \
 	Source/WebCore/platform/LengthBox.cpp \
