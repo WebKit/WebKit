@@ -39,6 +39,7 @@ namespace WebCore {
 
 class AffineTransform;
 class GraphicsContext;
+struct GraphicsContextState;
 class ImageBuffer;
 
 class ShadowBlur {
@@ -51,6 +52,7 @@ public:
     };
 
     ShadowBlur(const FloatSize& radius, const FloatSize& offset, const Color&, ColorSpace);
+    ShadowBlur(const GraphicsContextState&);
     ShadowBlur();
 
     void setShadowValues(const FloatSize&, const FloatSize& , const Color&, ColorSpace, bool ignoreTransforms = false);
@@ -69,10 +71,6 @@ public:
     void clear();
 
     ShadowType type() const { return m_type; }
-
-#if PLATFORM(QT) || USE(CAIRO)
-    bool mustUseShadowBlur(GraphicsContext*) const;
-#endif
 
 private:
     void updateShadowBlurValues();

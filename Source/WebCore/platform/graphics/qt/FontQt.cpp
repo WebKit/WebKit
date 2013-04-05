@@ -125,13 +125,28 @@ static void drawQtGlyphRun(GraphicsContext* context, const QGlyphRun& qtGlyphRun
     if (context->textDrawingMode() & TextModeStroke)
         textStrokePath = pathForGlyphs(qtGlyphRun, point);
 
-    ShadowBlur* shadow = context->shadowBlur();
-    if (context->hasShadow() && shadow->type() != ShadowBlur::NoShadow) {
-        switch (shadow->type()) {
-        case ShadowBlur::SolidShadow: {
+    if (context->hasShadow()) {
+        const GraphicsContextState& state = context->state();
+        if (context->mustUseShadowBlur()) {
+            ShadowBlur shadow(state);
+            const int width = qtGlyphRun.boundingRect().width();
+            const QRawFont& font = qtGlyphRun.rawFont();
+            const int height = font.ascent() + font.descent();
+            const QRectF boundingRect(point.x(), point.y() - font.ascent() + baseLineOffset, width, height);
+            GraphicsContext* shadowContext = shadow.beginShadowLayer(context, boundingRect);
+            if (shadowContext) {
+                QPainter* shadowPainter = shadowContext->platformContext();
+                shadowPainter->setPen(state.shadowColor);
+                if (shadowContext->textDrawingMode() & TextModeFill)
+                    shadowPainter->drawGlyphRun(point, qtGlyphRun);
+                else if (shadowContext->textDrawingMode() & TextModeStroke)
+                    shadowPainter->strokePath(textStrokePath, shadowPainter->pen());
+                shadow.endShadowLayer(context);
+            }
+        } else {
             QPen previousPen = painter->pen();
-            painter->setPen(context->state().shadowColor);
-            const QPointF shadowOffset(context->state().shadowOffset.width(), context->state().shadowOffset.height());
+            painter->setPen(state.shadowColor);
+            const QPointF shadowOffset(state.shadowOffset.width(), state.shadowOffset.height());
             painter->translate(shadowOffset);
             if (context->textDrawingMode() & TextModeFill)
                 painter->drawGlyphRun(point, qtGlyphRun);
@@ -139,29 +154,6 @@ static void drawQtGlyphRun(GraphicsContext* context, const QGlyphRun& qtGlyphRun
                 painter->strokePath(textStrokePath, painter->pen());
             painter->translate(-shadowOffset);
             painter->setPen(previousPen);
-            break;
-        }
-        case ShadowBlur::BlurShadow: {
-            const int width = qtGlyphRun.boundingRect().width();
-            const QRawFont& font = qtGlyphRun.rawFont();
-            const int height = font.ascent() + font.descent();
-            const QRectF boundingRect(point.x(), point.y() - font.ascent() + baseLineOffset, width, height);
-            GraphicsContext* shadowContext = shadow->beginShadowLayer(context, boundingRect);
-            if (shadowContext) {
-                QPainter* shadowPainter = shadowContext->platformContext();
-                shadowPainter->setPen(shadowContext->state().shadowColor);
-                if (shadowContext->textDrawingMode() & TextModeFill)
-                    shadowPainter->drawGlyphRun(point, qtGlyphRun);
-                else if (shadowContext->textDrawingMode() & TextModeStroke)
-                    shadowPainter->strokePath(textStrokePath, shadowPainter->pen());
-                shadow->endShadowLayer(context);
-            }
-            break;
-        }
-        case ShadowBlur::NoShadow:
-        default:
-            ASSERT_NOT_REACHED();
-            break;
         }
     }
 

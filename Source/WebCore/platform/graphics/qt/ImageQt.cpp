@@ -259,12 +259,12 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst,
     ctxt->setCompositeOperation(!image->hasAlpha() && op == CompositeSourceOver ? CompositeCopy : op);
 
     if (ctxt->hasShadow()) {
-        ShadowBlur* shadow = ctxt->shadowBlur();
-        GraphicsContext* shadowContext = shadow->beginShadowLayer(ctxt, normalizedDst);
+        ShadowBlur shadow(ctxt->state());
+        GraphicsContext* shadowContext = shadow.beginShadowLayer(ctxt, normalizedDst);
         if (shadowContext) {
             QPainter* shadowPainter = shadowContext->platformContext();
             shadowPainter->drawPixmap(normalizedDst, *image, normalizedSrc);
-            shadow->endShadowLayer(ctxt);
+            shadow.endShadowLayer(ctxt);
         }
     }
 

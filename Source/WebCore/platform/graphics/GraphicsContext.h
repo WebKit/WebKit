@@ -53,9 +53,6 @@ class SurfaceOpenVG;
 typedef class WebCore::SurfaceOpenVG PlatformGraphicsContext;
 #elif PLATFORM(QT)
 #include <QPainter>
-namespace WebCore {
-class ShadowBlur;
-}
 typedef QPainter PlatformGraphicsContext;
 #elif PLATFORM(WX)
 class wxGCDC;
@@ -394,6 +391,11 @@ namespace WebCore {
         bool getShadow(FloatSize&, float&, Color&, ColorSpace&) const;
         void clearShadow();
 
+        bool hasBlurredShadow() const;
+#if PLATFORM(QT) || USE(CAIRO)
+        bool mustUseShadowBlur() const;
+#endif
+
         void drawFocusRing(const Vector<IntRect>&, int width, int offset, const Color&);
         void drawFocusRing(const Path&, int width, int offset, const Color&);
 
@@ -515,10 +517,6 @@ namespace WebCore {
 #if PLATFORM(QT)
         void pushTransparencyLayerInternal(const QRect&, qreal, QPixmap&);
         void takeOwnershipOfPlatformContext();
-#endif
-
-#if PLATFORM(QT)
-        ShadowBlur* shadowBlur();
 #endif
 
 #if USE(CAIRO)

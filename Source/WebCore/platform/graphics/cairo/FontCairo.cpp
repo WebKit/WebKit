@@ -69,7 +69,7 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, const FloatPoint&
     if (!(graphicsContext->textDrawingMode() & TextModeFill) || shadow.type() == ShadowBlur::NoShadow)
         return;
 
-    if (!shadow.mustUseShadowBlur(graphicsContext)) {
+    if (!graphicsContext->mustUseShadowBlur()) {
         // Optimize non-blurry shadows, by just drawing text without the ShadowBlur.
         cairo_t* context = graphicsContext->platformContext()->cr();
         cairo_save(context);

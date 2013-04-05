@@ -184,6 +184,29 @@ bool GraphicsContext::getShadow(FloatSize& offset, float& blur, Color& color, Co
     return hasShadow();
 }
 
+bool GraphicsContext::hasBlurredShadow() const
+{
+    return m_state.shadowColor.isValid() && m_state.shadowColor.alpha() && m_state.shadowBlur;
+}
+
+#if PLATFORM(QT) || USE(CAIRO)
+bool GraphicsContext::mustUseShadowBlur() const
+{
+    // We can't avoid ShadowBlur if the shadow has blur.
+    if (hasBlurredShadow())
+        return true;
+    // We can avoid ShadowBlur and optimize, since we're not drawing on a
+    // canvas and box shadows are affected by the transformation matrix.
+    if (!m_state.shadowsIgnoreTransforms)
+        return false;
+    // We can avoid ShadowBlur, since there are no transformations to apply to the canvas.
+    if (getCTM().isIdentity())
+        return false;
+    // Otherwise, no chance avoiding ShadowBlur.
+    return true;
+}
+#endif
+
 float GraphicsContext::strokeThickness() const
 {
     return m_state.strokeThickness;
