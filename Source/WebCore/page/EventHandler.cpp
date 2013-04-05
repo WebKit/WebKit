@@ -144,6 +144,10 @@ using namespace SVGNames;
 const double fakeMouseMoveShortInterval = 0.1;
 const double fakeMouseMoveLongInterval = 0.250;
 
+// The amount of time to wait for a cursor update on style and layout changes
+// Set to 50Hz, no need to be faster than common screen refresh rate
+const double cursorUpdateInterval = 0.02;
+
 const int maximumCursorSize = 128;
 #if ENABLE(MOUSE_CURSOR_SCALE)
 // It's pretty unlikely that a scale of less than one would ever be used. But all we really
@@ -319,6 +323,7 @@ EventHandler::EventHandler(Frame* frame)
     , m_mouseDownWasSingleClickInSelection(false)
     , m_selectionInitiationState(HaveNotStartedSelection)
     , m_hoverTimer(this, &EventHandler::hoverTimerFired)
+    , m_cursorUpdateTimer(this, &EventHandler::cursorUpdateTimerFired)
     , m_autoscrollController(adoptPtr(new AutoscrollController))
     , m_mouseDownMayStartAutoscroll(false)
     , m_mouseDownWasInSubframe(false)
@@ -374,6 +379,7 @@ DragState& EventHandler::dragState()
 void EventHandler::clear()
 {
     m_hoverTimer.stop();
+    m_cursorUpdateTimer.stop();
     m_fakeMouseMoveEventTimer.stop();
 #if ENABLE(CURSOR_VISIBILITY)
     cancelAutoHideCursorTimer();
@@ -1241,7 +1247,50 @@ bool EventHandler::useHandCursor(Node* node, bool isOverLink, bool shiftKey)
     return ((isOverLink || isSubmitImage(node)) && (!editable || editableLinkEnabled));
 }
 
-OptionalCursor EventHandler::selectCursor(const MouseEventWithHitTestResults& event, Scrollbar* scrollbar)
+void EventHandler::cursorUpdateTimerFired(Timer<EventHandler>*)
+{
+    ASSERT(m_frame);
+    ASSERT(m_frame->document());
+
+    updateCursor();
+}
+
+void EventHandler::updateCursor()
+{
+    if (m_mousePositionIsUnknown)
+        return;
+
+    FrameView* view = m_frame->view();
+    if (!view)
+        return;
+
+    RenderView* renderView = view->renderView();
+    if (!renderView)
+        return;
+
+    if (!view->shouldSetCursor())
+        return;
+
+    bool shiftKey;
+    bool ctrlKey;
+    bool altKey;
+    bool metaKey;
+    PlatformKeyboardEvent::getCurrentModifierState(shiftKey, ctrlKey, altKey, metaKey);
+
+    m_frame->document()->updateLayout();
+
+    HitTestRequest request(HitTestRequest::ReadOnly);
+    HitTestResult result(view->windowToContents(m_lastKnownMousePosition));
+    renderView->hitTest(request, result);
+
+    OptionalCursor optionalCursor = selectCursor(result, shiftKey);
+    if (optionalCursor.isCursorChange()) {
+        m_currentMouseCursor = optionalCursor.cursor();
+        view->setCursor(m_currentMouseCursor);
+    }
+}
+
+OptionalCursor EventHandler::selectCursor(const HitTestResult& result, bool shiftKey)
 {
     if (m_resizeLayer && m_resizeLayer->inResizeMode())
         return NoCursorChange;
@@ -1254,8 +1303,11 @@ OptionalCursor EventHandler::selectCursor(const MouseEventWithHitTestResults& ev
         return NoCursorChange;
 #endif
 
-    Node* node = event.targetNode();
-    RenderObject* renderer = node ? node->renderer() : 0;
+    Node* node = result.targetNode();
+    if (!node)
+        return NoCursorChange;
+
+    RenderObject* renderer = node->renderer();
     RenderStyle* style = renderer ? renderer->style() : 0;
     bool horizontalText = !style || style->isHorizontalWritingMode();
     const Cursor& iBeam = horizontalText ? iBeamCursor() : verticalTextCursor();
@@ -1279,7 +1331,7 @@ OptionalCursor EventHandler::selectCursor(const MouseEventWithHitTestResults& ev
 
     if (renderer) {
         Cursor overrideCursor;
-        switch (renderer->getCursor(roundedIntPoint(event.localPoint()), overrideCursor)) {
+        switch (renderer->getCursor(roundedIntPoint(result.localPoint()), overrideCursor)) {
         case SetCursorBasedOnStyle:
             break;
         case SetCursor:
@@ -1326,19 +1378,19 @@ OptionalCursor EventHandler::selectCursor(const MouseEventWithHitTestResults& ev
 
     switch (style ? style->cursor() : CURSOR_AUTO) {
     case CURSOR_AUTO: {
-        bool editable = (node && node->rendererIsEditable());
+        bool editable = node->rendererIsEditable();
 
-        if (useHandCursor(node, event.isOverLink(), event.event().shiftKey()))
+        if (useHandCursor(node, result.isOverLink(), shiftKey))
             return handCursor();
 
         bool inResizer = false;
         if (renderer) {
             if (RenderLayer* layer = renderer->enclosingLayer()) {
                 if (FrameView* view = m_frame->view())
-                    inResizer = layer->isPointInResizeControl(view->windowToContents(event.event().position()));
+                    inResizer = layer->isPointInResizeControl(view->windowToContents(roundedIntPoint(result.localPoint())));
             }
         }
-        if ((editable || (renderer && renderer->isText() && node->canStartSelection())) && !inResizer && !scrollbar)
+        if ((editable || (renderer && renderer->isText() && node->canStartSelection())) && !inResizer && !result.scrollbar())
             return iBeam;
         return pointerCursor();
     }
@@ -1706,6 +1758,8 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
     if (m_hoverTimer.isActive())
         m_hoverTimer.stop();
 
+    m_cursorUpdateTimer.stop();
+
     cancelFakeMouseMoveEvent();
 
 #if ENABLE(SVG)
@@ -1778,7 +1832,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
         if (scrollbar && !m_mousePressed)
             scrollbar->mouseMoved(mouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
         if (FrameView* view = m_frame->view()) {
-            OptionalCursor optionalCursor = selectCursor(mev, scrollbar);
+            OptionalCursor optionalCursor = selectCursor(mev.hitTestResult(), mouseEvent.shiftKey());
             if (optionalCursor.isCursorChange()) {
                 m_currentMouseCursor = optionalCursor.cursor();
                 view->setCursor(m_currentMouseCursor);
@@ -2996,6 +3050,12 @@ void EventHandler::scheduleHoverStateUpdate()
 {
     if (!m_hoverTimer.isActive())
         m_hoverTimer.startOneShot(0);
+}
+
+void EventHandler::scheduleCursorUpdate()
+{
+    if (!m_cursorUpdateTimer.isActive())
+        m_cursorUpdateTimer.startOneShot(cursorUpdateInterval);
 }
 
 void EventHandler::dispatchFakeMouseMoveEventSoon()

@@ -147,6 +147,7 @@ public:
 #endif
 
     void scheduleHoverStateUpdate();
+    void scheduleCursorUpdate();
 
     void setResizingFrameSet(HTMLFrameSetElement*);
 
@@ -254,6 +255,7 @@ public:
 #endif
 
     bool useHandCursor(Node*, bool isOverLink, bool shiftKey);
+    void updateCursor();
 
 private:
 #if ENABLE(DRAG_SUPPORT)
@@ -280,8 +282,10 @@ private:
 #endif
     bool handleMouseReleaseEvent(const MouseEventWithHitTestResults&);
 
-    OptionalCursor selectCursor(const MouseEventWithHitTestResults&, Scrollbar*);
+    OptionalCursor selectCursor(const HitTestResult&, bool shiftKey);
+
     void hoverTimerFired(Timer<EventHandler>*);
+    void cursorUpdateTimerFired(Timer<EventHandler>*);
 
     bool logicalScrollOverflow(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = 0);
     
@@ -416,6 +420,7 @@ private:
     bool m_panScrollButtonPressed;
 
     Timer<EventHandler> m_hoverTimer;
+    Timer<EventHandler> m_cursorUpdateTimer;
 
     OwnPtr<AutoscrollController> m_autoscrollController;
     bool m_mouseDownMayStartAutoscroll;

@@ -2003,7 +2003,7 @@ void RenderObject::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 
     if (oldStyle && !areCursorsEqual(oldStyle, style())) {
         if (Frame* frame = this->frame())
-            frame->eventHandler()->dispatchFakeMouseMoveEventSoon();
+            frame->eventHandler()->scheduleCursorUpdate();
     }
 }
 

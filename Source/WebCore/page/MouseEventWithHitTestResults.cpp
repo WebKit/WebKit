@@ -35,7 +35,7 @@ MouseEventWithHitTestResults::MouseEventWithHitTestResults(const PlatformMouseEv
 
 bool MouseEventWithHitTestResults::isOverLink() const
 {
-    return m_hitTestResult.URLElement() && m_hitTestResult.URLElement()->isLink();
+    return m_hitTestResult.isOverLink();
 }
 
 }

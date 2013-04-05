@@ -108,6 +108,7 @@ public:
     KURL absoluteLinkURL() const;
     String textContent() const;
     bool isLiveLink() const;
+    bool isOverLink() const;
     bool isContentEditable() const;
     void toggleMediaControlsDisplay() const;
     void toggleMediaLoopPlayback() const;
