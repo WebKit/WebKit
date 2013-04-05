@@ -1,3 +1,16 @@
+2013-04-05  Alberto Garcia  <agarcia@igalia.com>
+
+        [BlackBerry] WebOverlayPrivate: remove showDebugBorders() and showRepaintCounter()
+        https://bugs.webkit.org/show_bug.cgi?id=114009
+
+        Reviewed by Carlos Garcia Campos.
+
+        These methods were removed in r133517 but were accidentally
+        introduced again in r145968.
+
+        * Api/WebOverlay_p.h:
+        (WebOverlayPrivateWebKitThread):
+
 2013-04-05  Anthony Scian  <ascian@blackberry.com>
 
         [BlackBerry] WebOverlay: check if platformContext is null
