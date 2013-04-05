@@ -42,11 +42,7 @@
     [self setAcceptsMouseMovedEvents:YES];
     [self setReleasedWhenClosed:NO];
     [self setHasShadow:NO];
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     [self setMovable:NO];
-#else
-    [self setMovableByWindowBackground:NO];
-#endif
 
     return self;
 }

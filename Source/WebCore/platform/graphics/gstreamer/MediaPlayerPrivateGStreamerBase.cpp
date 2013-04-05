@@ -349,12 +349,7 @@ void MediaPlayerPrivateGStreamerBase::exitFullscreen()
 
 bool MediaPlayerPrivateGStreamerBase::supportsFullscreen() const
 {
-#if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-    // See <rdar://problem/7389945>
-    return false;
-#else
     return true;
-#endif
 }
 
 PlatformMedia MediaPlayerPrivateGStreamerBase::platformMedia() const

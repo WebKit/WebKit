@@ -75,10 +75,8 @@ void PopupMenuMac::populate()
     if (!client()->shouldPopOver())
         [m_popup.get() addItemWithTitle:@""];
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     TextDirection menuTextDirection = client()->menuStyle().textDirection();
     [m_popup.get() setUserInterfaceLayoutDirection:menuTextDirection == LTR ? NSUserInterfaceLayoutDirectionLeftToRight : NSUserInterfaceLayoutDirectionRightToLeft];
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 
     ASSERT(client());
     int size = client()->listSize();
@@ -98,7 +96,6 @@ void PopupMenuMac::populate()
                 [attributes setObject:font forKey:NSFontAttributeName];
             }
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
             RetainPtr<NSMutableParagraphStyle> paragraphStyle(AdoptNS, [[NSParagraphStyle defaultParagraphStyle] mutableCopy]);
             [paragraphStyle.get() setAlignment:menuTextDirection == LTR ? NSLeftTextAlignment : NSRightTextAlignment];
             NSWritingDirection writingDirection = style.textDirection() == LTR ? NSWritingDirectionLeftToRight : NSWritingDirectionRightToLeft;
@@ -109,7 +106,6 @@ void PopupMenuMac::populate()
                 [attributes setObject:writingDirectionArray.get() forKey:NSWritingDirectionAttributeName];
             }
             [attributes setObject:paragraphStyle.get() forKey:NSParagraphStyleAttributeName];
-#endif // __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 
             // FIXME: Add support for styling the foreground and background colors.
             // FIXME: Find a way to customize text color when an item is highlighted.

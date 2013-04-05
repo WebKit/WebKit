@@ -29,10 +29,6 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-#include "Timer.h"
-#endif
-
 namespace WebCore {
 
 class DisplaySleepDisabler {
@@ -43,15 +39,8 @@ public:
     
 private:
     DisplaySleepDisabler(const char* reason);
-
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-    void systemActivityTimerFired(Timer<DisplaySleepDisabler>*);
-#endif
     
     uint32_t m_disableDisplaySleepAssertion;
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-    Timer<DisplaySleepDisabler> m_systemActivityTimer;
-#endif
 };
 
 }

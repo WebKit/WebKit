@@ -78,10 +78,6 @@ private:
 
 FontCustomPlatformData::~FontCustomPlatformData()
 {
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-    if (m_atsContainer)
-        ATSFontDeactivate(m_atsContainer, NULL, kATSOptionFlagsDefault);
-#endif
 #if USE(SKIA_ON_MAC_CHROMIUM)
     SkSafeUnref(m_typeface);
 #endif
@@ -117,47 +113,12 @@ FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer* buffer)
 
     ATSFontContainerRef containerRef = 0;
 
-    RetainPtr<CGFontRef> cgFontRef;
-
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     RetainPtr<CFDataRef> bufferData(AdoptCF, buffer->createCFData());
     RetainPtr<CGDataProviderRef> dataProvider(AdoptCF, CGDataProviderCreateWithCFData(bufferData.get()));
 
-    cgFontRef.adoptCF(CGFontCreateWithDataProvider(dataProvider.get()));
+    RetainPtr<CGFontRef> cgFontRef = adoptCF(CGFontCreateWithDataProvider(dataProvider.get()));
     if (!cgFontRef)
         return 0;
-#else
-    // Use ATS to activate the font.
-
-    // The value "3" means that the font is private and can't be seen by anyone else.
-    ATSFontActivateFromMemory((void*)buffer->data(), buffer->size(), 3, kATSFontFormatUnspecified, NULL, kATSOptionFlagsDefault, &containerRef);
-    if (!containerRef)
-        return 0;
-    ItemCount fontCount;
-    ATSFontFindFromContainer(containerRef, kATSOptionFlagsDefault, 0, NULL, &fontCount);
-    
-    // We just support the first font in the list.
-    if (fontCount == 0) {
-        ATSFontDeactivate(containerRef, NULL, kATSOptionFlagsDefault);
-        return 0;
-    }
-    
-    ATSFontRef fontRef = 0;
-    ATSFontFindFromContainer(containerRef, kATSOptionFlagsDefault, 1, &fontRef, NULL);
-    if (!fontRef) {
-        ATSFontDeactivate(containerRef, NULL, kATSOptionFlagsDefault);
-        return 0;
-    }
-    
-    cgFontRef.adoptCF(CGFontCreateWithPlatformFont(&fontRef));
-    // Workaround for <rdar://problem/5675504>.
-    if (cgFontRef && !CGFontGetNumberOfGlyphs(cgFontRef.get()))
-        cgFontRef = 0;
-    if (!cgFontRef) {
-        ATSFontDeactivate(containerRef, NULL, kATSOptionFlagsDefault);
-        return 0;
-    }
-#endif // PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 
     FontCustomPlatformData* fontCustomPlatformData = new FontCustomPlatformData(containerRef, cgFontRef.leakRef());
 #if USE(SKIA_ON_MAC_CHROMIUM)

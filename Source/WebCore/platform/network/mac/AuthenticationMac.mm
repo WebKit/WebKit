@@ -165,11 +165,6 @@ NSURLCredential *mac(const Credential& coreCredential)
 
 #else
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-// There is no constant in headers, but NTLM is supported.
-NSString * const NSURLAuthenticationMethodNTLM = @"NSURLAuthenticationMethodNTLM";
-#endif
-
 AuthenticationChallenge::AuthenticationChallenge(const ProtectionSpace& protectionSpace,
                                                  const Credential& proposedCredential,
                                                  unsigned previousFailureCount,

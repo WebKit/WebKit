@@ -101,18 +101,6 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
     return candidateWeightDeltaMagnitude < chosenWeightDeltaMagnitude;
 }
 
-// Workaround for <rdar://problem/5781372>.
-static inline void fixUpWeight(NSInteger& weight, NSString *fontName)
-{
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
-    UNUSED_PARAM(weight);
-    UNUSED_PARAM(fontName);
-#else
-    if (weight == 3 && [fontName rangeOfString:@"ultralight" options:NSCaseInsensitiveSearch | NSBackwardsSearch | NSLiteralSearch].location != NSNotFound)
-        weight = 2;
-#endif
-}
-
 static inline FontTraitsMask toTraitsMask(NSFontTraitMask appKitTraits, NSInteger appKitWeight)
 {
     return static_cast<FontTraitsMask>(((appKitTraits & NSFontItalicTrait) ? FontStyleItalicMask : FontStyleNormalMask)
@@ -149,7 +137,6 @@ static inline FontTraitsMask toTraitsMask(NSFontTraitMask appKitTraits, NSIntege
             if ([desiredFamily caseInsensitiveCompare:availableFont] == NSOrderedSame) {
                 NSFont *font = [NSFont fontWithName:availableFont size:10];
                 NSInteger weight = [fontManager weightOfFont:font];
-                fixUpWeight(weight, desiredFamily);
                 traitsMasks.append(toTraitsMask([fontManager traitsOfFont:font], weight));
                 break;
             }
@@ -163,10 +150,7 @@ static inline FontTraitsMask toTraitsMask(NSFontTraitMask appKitTraits, NSIntege
     for (i = 0; i < n; i++) {
         NSArray *fontInfo = [fonts objectAtIndex:i];
         // Array indices must be hard coded because of lame AppKit API.
-        NSString *fontFullName = [fontInfo objectAtIndex:0];
         NSInteger fontWeight = [[fontInfo objectAtIndex:2] intValue];
-        fixUpWeight(fontWeight, fontFullName);
-
         NSFontTraitMask fontTraits = [[fontInfo objectAtIndex:3] unsignedIntValue];
         traitsMasks.append(toTraitsMask(fontTraits, fontWeight));
     }
@@ -229,8 +213,6 @@ static inline FontTraitsMask toTraitsMask(NSFontTraitMask appKitTraits, NSIntege
         // Array indices must be hard coded because of lame AppKit API.
         NSString *fontFullName = [fontInfo objectAtIndex:0];
         NSInteger fontWeight = [[fontInfo objectAtIndex:2] intValue];
-        fixUpWeight(fontWeight, fontFullName);
-
         NSFontTraitMask fontTraits = [[fontInfo objectAtIndex:3] unsignedIntValue];
 
         BOOL newWinner;

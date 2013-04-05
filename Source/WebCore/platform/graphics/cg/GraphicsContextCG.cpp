@@ -1492,7 +1492,7 @@ InterpolationQuality GraphicsContext::imageInterpolationQuality() const
 void GraphicsContext::setAllowsFontSmoothing(bool allowsFontSmoothing)
 {
     UNUSED_PARAM(allowsFontSmoothing);
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
+#if PLATFORM(MAC)
     CGContextRef context = platformContext();
     CGContextSetAllowsFontSmoothing(context, allowsFontSmoothing);
 #endif

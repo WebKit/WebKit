@@ -193,12 +193,7 @@ FloatRect Path::boundingRect() const
     // CGPathGetBoundingBox includes the path's control points, CGPathGetPathBoundingBox
     // does not, but only exists on 10.6 and above.
 
-    CGRect bound = CGRectZero;
-#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
-    bound = CGPathGetPathBoundingBox(m_path);
-#else
-    bound = CGPathGetBoundingBox(m_path);
-#endif
+    CGRect bound = CGPathGetPathBoundingBox(m_path);
     return CGRectIsNull(bound) ? CGRectZero : bound;
 }
 

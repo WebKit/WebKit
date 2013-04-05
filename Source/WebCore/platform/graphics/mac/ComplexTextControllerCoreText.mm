@@ -33,15 +33,6 @@
 
 #include <ApplicationServices/ApplicationServices.h>
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-// The following symbols are SPI in 10.5.
-extern "C" {
-void CTRunGetAdvances(CTRunRef run, CFRange range, CGSize buffer[]);
-const CGSize* CTRunGetAdvancesPtr(CTRunRef run);
-extern const CFStringRef kCTTypesetterOptionForcedEmbeddingLevel;
-}
-#endif
-
 @interface WebCascadeList : NSArray {
     @private
     const WebCore::Font* _font;

@@ -35,11 +35,6 @@
 
 #include <stdio.h>
 
-// On Snow Leopard and newer we'll ask IOKit to deliver notifications on a queue.
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-#define IOKIT_WITHOUT_LIBDISPATCH 1
-#endif
-
 namespace WebCore {
 
 static CFRunLoopTimerRef sharedTimer;
@@ -71,33 +66,20 @@ private:
     io_connect_t m_powerConnection;
     IONotificationPortRef m_notificationPort;
     io_object_t m_notifierReference;
-#ifdef IOKIT_WITHOUT_LIBDISPATCH
-    CFRunLoopSourceRef m_runLoopSource;
-#else
     dispatch_queue_t m_dispatchQueue;
-#endif
 };
 
 PowerObserver::PowerObserver()
     : m_powerConnection(0)
     , m_notificationPort(0)
     , m_notifierReference(0)
-#ifdef IOKIT_WITHOUT_LIBDISPATCH
-    , m_runLoopSource(0)    
-#else
     , m_dispatchQueue(dispatch_queue_create("com.apple.WebKit.PowerObserver", 0))
-#endif
 {
     m_powerConnection = IORegisterForSystemPower(this, &m_notificationPort, didReceiveSystemPowerNotification, &m_notifierReference);
     if (!m_powerConnection)
         return;
 
-#ifdef IOKIT_WITHOUT_LIBDISPATCH
-    m_runLoopSource = IONotificationPortGetRunLoopSource(m_notificationPort);
-    CFRunLoopAddSource(CFRunLoopGetMain(), m_runLoopSource, kCFRunLoopCommonModes);
-#else
     IONotificationPortSetDispatchQueue(m_notificationPort, m_dispatchQueue);
-#endif
 }
 
 PowerObserver::~PowerObserver()
@@ -105,11 +87,7 @@ PowerObserver::~PowerObserver()
     if (!m_powerConnection)
         return;
 
-#ifdef IOKIT_WITHOUT_LIBDISPATCH
-    CFRunLoopRemoveSource(CFRunLoopGetMain(), m_runLoopSource, kCFRunLoopCommonModes);
-#else
     dispatch_release(m_dispatchQueue);
-#endif
 
     IODeregisterForSystemPower(&m_notifierReference);
     IOServiceClose(m_powerConnection);
@@ -129,14 +107,10 @@ void PowerObserver::didReceiveSystemPowerNotification(io_service_t, uint32_t mes
     if (messageType != kIOMessageSystemWillPowerOn)
         return;
 
-#ifdef IOKIT_WITHOUT_LIBDISPATCH
-    restartSharedTimer();
-#else
     // We need to restart the timer on the main thread.
     CFRunLoopPerformBlock(CFRunLoopGetMain(), kCFRunLoopCommonModes, ^() {
         restartSharedTimer();
     });
-#endif
 }
 
 void PowerObserver::restartSharedTimer()

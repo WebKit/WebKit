@@ -41,10 +41,6 @@
 #include <wtf/MainThread.h>
 #include <wtf/text/WTFString.h>
 
-#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-#include <SystemConfiguration/SystemConfiguration.h>
-#endif
-
 #if PLATFORM(WIN)
 #include "LoaderRunLoopCF.h"
 #include <CFNetwork/CFNetwork.h>
@@ -179,12 +175,7 @@ void SocketStreamHandle::removePACRunLoopSource()
 
 void SocketStreamHandle::chooseProxy()
 {
-#if !PLATFORM(MAC) || PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     RetainPtr<CFDictionaryRef> proxyDictionary(AdoptCF, CFNetworkCopySystemProxySettings());
-#else
-    // We don't need proxy information often, so there is no need to set up a permanent dynamic store session.
-    RetainPtr<CFDictionaryRef> proxyDictionary(AdoptCF, SCDynamicStoreCopyProxies(0));
-#endif
 
     // SOCKS or HTTPS (AKA CONNECT) proxies are supported.
     // WebSocket protocol relies on handshake being transferred unchanged, so we need a proxy that will not modify headers.

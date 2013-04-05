@@ -271,7 +271,6 @@ void MediaPlayerPrivateQTKit::createQTMovie(const String& url)
     NSMutableDictionary *movieAttributes = commonMovieAttributes();    
     [movieAttributes setValue:cocoaURL forKey:QTMovieURLAttribute];
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     CFDictionaryRef proxySettings = CFNetworkCopySystemProxySettings();
     CFArrayRef proxiesForURL = CFNetworkCopyProxiesForURL((CFURLRef)cocoaURL, proxySettings);
     BOOL willUseProxy = YES;
@@ -300,8 +299,7 @@ void MediaPlayerPrivateQTKit::createQTMovie(const String& url)
         CFRelease(proxiesForURL);
     if (proxySettings)
         CFRelease(proxySettings);
-#endif
-    
+
     createQTMovie(cocoaURL, movieAttributes);
 }
 
@@ -880,12 +878,7 @@ bool MediaPlayerPrivateQTKit::hasAudio() const
 
 bool MediaPlayerPrivateQTKit::supportsFullscreen() const
 {
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     return true;
-#else
-    // See <rdar://problem/7389945>
-    return false;
-#endif
 }
 
 void MediaPlayerPrivateQTKit::setVolume(float volume)
@@ -907,11 +900,11 @@ void MediaPlayerPrivateQTKit::setClosedCaptionsVisible(bool closedCaptionsVisibl
     if (metaDataAvailable()) {
         wkQTMovieSetShowClosedCaptions(m_qtMovie.get(), closedCaptionsVisible);
 
-#if USE(ACCELERATED_COMPOSITING) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
-    if (closedCaptionsVisible && m_qtVideoLayer) {
-        // Captions will be rendered upside down unless we flag the movie as flipped (again). See <rdar://7408440>.
-        [m_qtVideoLayer.get() setGeometryFlipped:YES];
-    }
+#if USE(ACCELERATED_COMPOSITING)
+        if (closedCaptionsVisible && m_qtVideoLayer) {
+            // Captions will be rendered upside down unless we flag the movie as flipped (again). See <rdar://7408440>.
+            [m_qtVideoLayer.get() setGeometryFlipped:YES];
+        }
 #endif
     }
 }
@@ -1005,7 +998,6 @@ void MediaPlayerPrivateQTKit::cacheMovieScale()
     NSSize initialSize = NSZeroSize;
     NSSize naturalSize = [[m_qtMovie.get() attributeForKey:QTMovieNaturalSizeAttribute] sizeValue];
 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
     // QTMovieCurrentSizeAttribute is not allowed with instances of QTMovie that have been 
     // opened with QTMovieOpenForPlaybackAttribute, so ask for the display transform attribute instead.
     NSAffineTransform *displayTransform = [m_qtMovie.get() attributeForKey:@"QTMoviePreferredTransformAttribute"];
@@ -1015,9 +1007,6 @@ void MediaPlayerPrivateQTKit::cacheMovieScale()
         initialSize.width = naturalSize.width;
         initialSize.height = naturalSize.height;
     }
-#else
-    initialSize = [[m_qtMovie.get() attributeForKey:QTMovieCurrentSizeAttribute] sizeValue];
-#endif
 
     if (naturalSize.width)
         m_scaleFactor.setWidth(initialSize.width / naturalSize.width);

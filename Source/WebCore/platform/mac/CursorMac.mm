@@ -253,11 +253,7 @@ void Cursor::ensurePlatformCursor() const
         break;
 
     case Cursor::ContextMenu:
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
         m_platformCursor = [NSCursor contextualMenuCursor];
-#else
-        m_platformCursor = createNamedCursor("contextMenuCursor", 3, 2);
-#endif
         break;
 
     case Cursor::Alias:
@@ -277,19 +273,11 @@ void Cursor::ensurePlatformCursor() const
         break;
 
     case Cursor::NoDrop:
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
         m_platformCursor = [NSCursor operationNotAllowedCursor];
-#else
-        m_platformCursor = createNamedCursor("noDropCursor", 3, 1);
-#endif
         break;
 
     case Cursor::Copy:
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
         m_platformCursor = [NSCursor dragCopyCursor];
-#else
-        m_platformCursor = createNamedCursor("copyCursor", 3, 2);
-#endif
         break;
 
     case Cursor::None:
@@ -297,11 +285,7 @@ void Cursor::ensurePlatformCursor() const
         break;
 
     case Cursor::NotAllowed:
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
         m_platformCursor = [NSCursor operationNotAllowedCursor];
-#else
-        m_platformCursor = createNamedCursor("notAllowedCursor", 11, 11);
-#endif
         break;
 
     case Cursor::ZoomIn:

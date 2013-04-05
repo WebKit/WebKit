@@ -37,8 +37,6 @@
 
 namespace WebCore {
 
-#if !PLATFORM(MAC) || PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
-
 static void processProxyServers(Vector<ProxyServer>& proxyServers, CFArrayRef proxies, CFURLRef url);
 
 static void proxyAutoConfigurationResultCallback(void *context, CFArrayRef proxies, CFErrorRef error)
@@ -143,12 +141,5 @@ Vector<ProxyServer> proxyServersForURL(const KURL& url, const NetworkingContext*
     return proxyServers;
     
 }
-#else
-Vector<ProxyServer> proxyServersForURL(const KURL&, const NetworkingContext*)
-{
-    // FIXME: Implement.
-    return Vector<ProxyServer>();
-}
-#endif
 
 } // namespace WebCore
