@@ -88,13 +88,11 @@ public:
 
         PassRefPtr<TextureMapperShaderProgram> getShaderProgram(TextureMapperShaderProgram::Options options)
         {
-            HashMap<TextureMapperShaderProgram::Options, RefPtr<TextureMapperShaderProgram> >::iterator it = m_programs.find(options);
-            if (it != m_programs.end())
-                return it->value;
+            HashMap<TextureMapperShaderProgram::Options, RefPtr<TextureMapperShaderProgram> >::AddResult result = m_programs.add(options, 0);
+            if (result.isNewEntry)
+                result.iterator->value = TextureMapperShaderProgram::create(m_context, options);
 
-            RefPtr<TextureMapperShaderProgram> program = TextureMapperShaderProgram::create(m_context, options);
-            m_programs.add(options, program);
-            return program;
+            return result.iterator->value;
         }
 
         HashMap<TextureMapperShaderProgram::Options, RefPtr<TextureMapperShaderProgram> > m_programs;
@@ -158,15 +156,15 @@ public:
 
 Platform3DObject TextureMapperGLData::getStaticVBO(GC3Denum target, GC3Dsizeiptr size, const void* data)
 {
-    HashMap<const void*, Platform3DObject>::iterator it = vbos.find(data);
-    if (it != vbos.end())
-        return it->value;
+    HashMap<const void*, Platform3DObject>::AddResult result = vbos.add(data, 0);
+    if (result.isNewEntry) {
+        Platform3DObject vbo = context->createBuffer();
+        context->bindBuffer(target, vbo);
+        context->bufferData(target, size, data, GraphicsContext3D::STATIC_DRAW);
+        result.iterator->value = vbo;
+    }
 
-    Platform3DObject vbo = context->createBuffer();
-    context->bindBuffer(target, vbo);
-    context->bufferData(target, size, data, GraphicsContext3D::STATIC_DRAW);
-    vbos.add(data, vbo);
-    return vbo;
+    return result.iterator->value;
 }
 
 TextureMapperGLData::~TextureMapperGLData()
@@ -904,14 +902,10 @@ bool TextureMapperGL::drawUsingCustomFilter(BitmapTexture& target, const BitmapT
         RefPtr<CustomFilterProgram> program = customFilter->program();
         renderer = CustomFilterRenderer::create(m_context3D, program->programType(), customFilter->parameters(), 
             customFilter->meshRows(), customFilter->meshColumns(), customFilter->meshType());
-        RefPtr<CustomFilterCompiledProgram> compiledProgram;
-        CustomFilterProgramMap::iterator iter = m_customFilterPrograms.find(program->programInfo());
-        if (iter == m_customFilterPrograms.end()) {
-            compiledProgram = CustomFilterCompiledProgram::create(m_context3D, program->vertexShaderString(), program->fragmentShaderString(), program->programType());
-            m_customFilterPrograms.set(program->programInfo(), compiledProgram);
-        } else
-            compiledProgram = iter->value;
-        renderer->setCompiledProgram(compiledProgram.release());
+        CustomFilterProgramMap::AddResult result = m_customFilterPrograms.add(program->programInfo(), 0);
+        if (result.isNewEntry)
+            result.iterator->value = CustomFilterCompiledProgram::create(m_context3D, program->vertexShaderString(), program->fragmentShaderString(), program->programType());
+        renderer->setCompiledProgram(result.iterator->value);
         break;
     }
     case FilterOperation::VALIDATED_CUSTOM: {
@@ -921,13 +915,10 @@ bool TextureMapperGL::drawUsingCustomFilter(BitmapTexture& target, const BitmapT
         renderer = CustomFilterRenderer::create(m_context3D, program->programInfo().programType(), customFilter->parameters(),
             customFilter->meshRows(), customFilter->meshColumns(), customFilter->meshType());
         RefPtr<CustomFilterCompiledProgram> compiledProgram;
-        CustomFilterProgramMap::iterator iter = m_customFilterPrograms.find(program->programInfo());
-        if (iter == m_customFilterPrograms.end()) {
-            compiledProgram = CustomFilterCompiledProgram::create(m_context3D, program->validatedVertexShader(), program->validatedFragmentShader(), program->programInfo().programType());
-            m_customFilterPrograms.set(program->programInfo(), compiledProgram);
-        } else
-            compiledProgram = iter->value;
-        renderer->setCompiledProgram(compiledProgram.release());
+        CustomFilterProgramMap::AddResult result = m_customFilterPrograms.add(program->programInfo(), 0);
+        if (result.isNewEntry)
+            result.iterator->value = CustomFilterCompiledProgram::create(m_context3D, program->validatedVertexShader(), program->validatedFragmentShader(), program->programInfo().programType());
+        renderer->setCompiledProgram(result.iterator->value);
         break;
     }
     default:
