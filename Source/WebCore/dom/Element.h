@@ -609,6 +609,7 @@ public:
     PassRefPtr<RenderStyle> styleForRenderer();
 
     RenderRegion* renderRegion() const;
+    virtual bool moveToFlowThreadIsNeeded(RefPtr<RenderStyle>& cachedStyle);
 #if ENABLE(CSS_REGIONS)
     const AtomicString& webkitRegionOverset() const;
     Vector<RefPtr<Range> > webkitGetRegionFlowRanges() const;
