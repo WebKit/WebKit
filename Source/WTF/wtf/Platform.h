@@ -709,6 +709,10 @@
 #endif
 #endif
 
+#if PLATFORM(EFL)
+#define ENABLE_GLOBAL_FASTMALLOC_NEW 0
+#endif
+
 #if !defined(ENABLE_GLOBAL_FASTMALLOC_NEW)
 #define ENABLE_GLOBAL_FASTMALLOC_NEW 1
 #endif

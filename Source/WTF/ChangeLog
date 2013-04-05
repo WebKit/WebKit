@@ -1,3 +1,23 @@
+2013-04-05  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Disable GLOBAL_FAST_MALLOC_NEW by default.
+        https://bugs.webkit.org/show_bug.cgi?id=114031
+
+        Reviewed by Alexis Menard.
+
+        Follow what some other ports already do and avoid globally overriding
+        the `new' and `delete' operators with the ones in FastMalloc.
+
+        In many cases, third-party or client code allocates memory with
+        standard library calls but the memory gets deleted by FastMalloc,
+        causing a crash. The reverse (ie. memory being allocated by FastMalloc
+        and freed by the system libraries) is also possible.
+
+        Commits 135666 and 121018 provide more information about this, as well
+        as comment 6 in bug 89358.
+
+        * wtf/Platform.h:
+
 2013-04-05  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove WTFURL from WebKit
