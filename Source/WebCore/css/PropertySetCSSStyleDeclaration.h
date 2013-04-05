@@ -90,6 +90,7 @@ public:
     {
         return adoptRef(new StyleRuleCSSStyleDeclaration(propertySet, parentRule));
     }
+    virtual ~StyleRuleCSSStyleDeclaration();
 
     void clearParentRule() { m_parentRule = 0; }
     
@@ -102,7 +103,6 @@ public:
 
 private:
     StyleRuleCSSStyleDeclaration(StylePropertySet*, CSSRule*);
-    virtual ~StyleRuleCSSStyleDeclaration();
 
     virtual CSSStyleSheet* parentStyleSheet() const OVERRIDE;
 

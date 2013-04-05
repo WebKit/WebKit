@@ -45,6 +45,8 @@ class SubresourceLoader : public ResourceLoader {
 public:
     static PassRefPtr<SubresourceLoader> create(Frame*, CachedResource*, const ResourceRequest&, const ResourceLoaderOptions&);
 
+    virtual ~SubresourceLoader();
+
     void cancelIfNotFinishing();
     virtual bool isSubresourceLoader();
     CachedResource* cachedResource();
@@ -53,7 +55,6 @@ public:
 
 private:
     SubresourceLoader(Frame*, CachedResource*, const ResourceLoaderOptions&);
-    virtual ~SubresourceLoader();
 
     virtual bool init(const ResourceRequest&) OVERRIDE;
 

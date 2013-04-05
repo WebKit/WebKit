@@ -57,6 +57,8 @@ public:
         return adoptRef(new ShadowRoot(document, type));
     }
 
+    virtual ~ShadowRoot();
+
     void recalcStyle(StyleChange);
 
     virtual bool applyAuthorStyles() const OVERRIDE { return m_applyAuthorStyles; }
@@ -98,7 +100,6 @@ public:
 
 private:
     ShadowRoot(Document*, ShadowRootType);
-    virtual ~ShadowRoot();
 
     virtual void dispose() OVERRIDE;
     virtual bool childTypeAllowed(NodeType) const OVERRIDE;
