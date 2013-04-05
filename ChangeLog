@@ -1,3 +1,12 @@
+2013-04-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        Fix GTK+ build after r147712
+
+        Unreviewed.
+
+        * GNUmakefile.am: remove the reference to
+        Source/Platform/GNUmakefile.am. The file has been removed.
+
 2013-04-05  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove WTFURL from WebKit
