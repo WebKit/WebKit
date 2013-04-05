@@ -38,7 +38,7 @@ namespace WebCore {
     class SocketStreamError : public SocketStreamErrorBase {
     public:
         SocketStreamError() { }
-        explicit SocketStreamError(int errorCode, const gchar* description)
+        SocketStreamError(int errorCode, const gchar* description)
             : SocketStreamErrorBase(errorCode, String(), String(description))
         {
         }
