@@ -10,12 +10,6 @@
 #
 {
     "DEFINITIONS": {
-        "ChromiumGraphics": {
-            "filename": r"Source/WebCore/platform/graphics/chromium/",
-        },
-        "ChromiumTestRunner": {
-            "filename": r"Tools/DumpRenderTree/chromium/TestRunner",
-        },
         "AppleMacPublicApi": {
             "filename": r"Source/WebCore/bindings/objc/PublicDOMInterfaces.h"
         },
@@ -87,12 +81,6 @@
         "SkiaGraphics": {
             "filename": r"Source/WebCore/platform/graphics/skia/"
                         r"|Source/WebCore/platform/graphics/filters/skia/",
-        },
-        "V8Bindings": {
-            "filename": r"Source/WebCore/bindings/v8/",
-        },
-        "BindingsScripts": {
-            "filename": r"Source/WebCore/bindings/scripts/",
         },
         "FrameLoader": {
             "more": r"FrameLoader\.(cpp|h)",
@@ -358,7 +346,6 @@
             "filename": r"Source/WebCore/Modules/indexeddb"
                         r"|Source/WebCore/bindings/.*IDB.*\.(h|cpp)"
                         r"|Source/WebCore/bindings/.*SerializedScriptValue.*\.(h|cpp)"
-                        r"|Source/WebKit/chromium/.*IDB.*\.(h|cpp)"
                         r"|Source/WebCore/platform/leveldb"
                         r"|LayoutTests/storage/indexeddb"
                         r"|LayoutTests/platform/.*/storage/indexeddb",
@@ -380,8 +367,6 @@
         "ContentSecurityPolicyFiles|ContentSecurityPolicyUsage" : [ "mkwst+watchlist@chromium.org" ],
         "CoreAnimation" : [ "simon.fraser@apple.com" ],
         "CSS": [ "alexis@webkit.org", "macpherson@chromium.org", "ojan.autocc@gmail.com", "esprehn+autocc@chromium.org"],
-        "ChromiumGraphics": [ "jamesr@chromium.org", "cc-bugs@chromium.org" ],
-        "ChromiumTestRunner": [ "jochen@chromium.org" ],
         "DOM": [ "ojan.autocc@gmail.com", "esprehn+autocc@chromium.org" ],
         "DOMAttributes": [ "cmarcelo@webkit.org", ],
         "EFL": [ "rakuco@webkit.org", "gyuyoung.kim@samsung.com" ],
@@ -422,11 +407,10 @@
         "Selectors": [ "allan.jensen@digia.com" ],
         "SoupNetwork": [ "rakuco@webkit.org", "gns@gnome.org", "mrobinson@webkit.org", "danw@gnome.org" ],
         "StyleChecker": [ "levin@chromium.org", ],
-        "TestFailures": [ "abarth@webkit.org", "dglazkov@chromium.org", "ojan.autocc@gmail.com" ],
+        "TestFailures": [ "abarth@webkit.org", "ojan.autocc@gmail.com" ],
         "TextureMapper" : [ "noam@webkit.org", "cmarcelo@webkit.org", "luiz@webkit.org" ],
         "ThreadingFiles|ThreadingUsage": [ "levin+threading@chromium.org", ],
         "TouchAdjustment" : [ "allan.jensen@digia.com" ],
-        "V8Bindings|BindingsScripts": [ "abarth@webkit.org", "japhet@chromium.org", "haraken@chromium.org" ],
         "WTF": [ "benjamin@webkit.org", "ojan.autocc@gmail.com", "cmarcelo@webkit.org" ],
         "WatchListScript": [ "levin+watchlist@chromium.org", ],
         "WebGL": [ "dino@apple.com" ],
