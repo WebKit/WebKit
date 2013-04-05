@@ -174,6 +174,7 @@ SOURCES += \
      bindings/js/JSPopStateEventCustom.cpp \
      bindings/js/JSProcessingInstructionCustom.cpp \
      bindings/js/JSRequestAnimationFrameCallbackCustom.cpp \
+     bindings/js/JSRTCStatsResponseCustom.cpp \
      bindings/js/JSStorageCustom.cpp \
      bindings/js/JSStyleSheetCustom.cpp \
      bindings/js/JSStyleSheetListCustom.cpp \

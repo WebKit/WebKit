@@ -6081,6 +6081,9 @@
     <ClCompile Include="..\bindings\js\JSSQLTransactionSyncCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
+    <ClCompile Include="..\bindings\js\JSRTCStatsResponseCustom.cpp">
+      <Filter>bindings\js</Filter>
+    </ClCompile>
     <ClCompile Include="..\bindings\js\JSStorageCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>

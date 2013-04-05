@@ -263,6 +263,12 @@ if (ENABLE_WEB_AUDIO)
     )
 endif ()
 
+if (ENABLE_MEDIA_STREAM)
+    list(APPEND WebCore_SOURCES
+        bindings/js/JSRTCStatsResponseCustom.cpp
+    )
+endif ()
+
 list(APPEND SCRIPTS_BINDINGS
     ${WEBCORE_DIR}/bindings/scripts/CodeGenerator.pm
     ${WEBCORE_DIR}/bindings/scripts/CodeGeneratorJS.pm

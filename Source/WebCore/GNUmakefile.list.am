@@ -2457,6 +2457,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSSQLResultSetRowListCustom.cpp \
 	Source/WebCore/bindings/js/JSSQLTransactionCustom.cpp \
 	Source/WebCore/bindings/js/JSSQLTransactionSyncCustom.cpp \
+	Source/WebCore/bindings/js/JSRTCStatsResponseCustom.cpp \
 	Source/WebCore/bindings/js/JSSharedWorkerCustom.cpp \
 	Source/WebCore/bindings/js/JSStorageCustom.cpp \
 	Source/WebCore/bindings/js/JSStorageCustom.h \
