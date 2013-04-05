@@ -64,6 +64,9 @@ SpeechSynthesisVoice* SpeechSynthesisUtterance::voice() const
 
 void SpeechSynthesisUtterance::setVoice(SpeechSynthesisVoice* voice)
 {
+    if (!voice)
+        return;
+    
     // Cache our own version of the SpeechSynthesisVoice so that we don't have to do some lookup
     // to go from the platform voice back to the speech synthesis voice in the read property.
     m_voice = voice;
