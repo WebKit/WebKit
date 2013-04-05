@@ -1,5 +1,31 @@
 2013-04-05  Alberto Garcia  <agarcia@igalia.com>
 
+        [BlackBerry] Remove unused parameters from notifyAnimationStarted() and paintContents()
+        https://bugs.webkit.org/show_bug.cgi?id=114022
+
+        Reviewed by Carlos Garcia Campos.
+
+        Naming the 'time' and 'inClip' unused parameters only produces
+        compiler warnings.
+
+        * Api/WebOverlay_p.h:
+        (BlackBerry::WebKit::WebOverlayPrivateWebKitThread::notifyAnimationStarted):
+        (WebOverlayPrivateWebKitThread):
+        * Api/WebPage_p.h:
+        (BlackBerry::WebKit::WebPagePrivate::notifyAnimationStarted):
+        (BlackBerry::WebKit::WebPagePrivate::paintContents):
+        * WebKitSupport/DefaultTapHighlight.h:
+        (BlackBerry::WebKit::DefaultTapHighlight::notifyAnimationStarted):
+        * WebKitSupport/InspectorOverlayBlackBerry.cpp:
+        (BlackBerry::WebKit::InspectorOverlay::paintContents):
+        * WebKitSupport/InspectorOverlayBlackBerry.h:
+        (BlackBerry::WebKit::InspectorOverlay::notifyAnimationStarted):
+        (InspectorOverlay):
+        * WebKitSupport/SelectionOverlay.h:
+        (BlackBerry::WebKit::SelectionOverlay::notifyAnimationStarted):
+
+2013-04-05  Alberto Garcia  <agarcia@igalia.com>
+
         [BlackBerry] WebOverlay: fix access to m_client
         https://bugs.webkit.org/show_bug.cgi?id=114003
 

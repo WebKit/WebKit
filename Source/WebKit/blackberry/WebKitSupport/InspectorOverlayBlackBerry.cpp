@@ -47,7 +47,7 @@ void InspectorOverlay::notifyFlushRequired(const WebCore::GraphicsLayer* layer)
     m_webPage->notifyFlushRequired(layer);
 }
 
-void InspectorOverlay::paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext& context, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect& inClip)
+void InspectorOverlay::paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext& context, WebCore::GraphicsLayerPaintingPhase, const WebCore::IntRect&)
 {
     context.save();
     WebCore::IntPoint scrollPosition = m_webPage->focusedOrMainFrame()->view()->scrollPosition();
