@@ -1,3 +1,19 @@
+2013-04-05  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        tryCacheGetByID sets StructureStubInfo accessType to an incorrect value
+        https://bugs.webkit.org/show_bug.cgi?id=114068
+
+        Reviewed by Geoffrey Garen.
+
+        In the case where we have a non-Value cacheable property, we set the StructureStubInfo accessType to 
+        get_by_id_self, but then we don't patch self and instead patch in a get_by_id_self_fail. This leads to 
+        incorrect profiling data so when the DFG compiles the function, it uses a GetByOffset rather than a GetById, 
+        which leads to loading a GetterSetter directly out of an object.
+
+        * jit/JITStubs.cpp:
+        (JSC::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION):
+
 2013-04-05  Filip Pizlo  <fpizlo@apple.com>
 
         If CallFrame::trueCallFrame() knows that it's about to read garbage instead of a valid CodeOrigin/InlineCallFrame, then it should give up and return 0 and all callers should be robust against this

@@ -940,12 +940,14 @@ NEVER_INLINE static void tryCacheGetByID(CallFrame* callFrame, CodeBlock* codeBl
     // Cache hit: Specialize instruction and ref Structures.
 
     if (slot.slotBase() == baseValue) {
-        stubInfo->initGetByIdSelf(callFrame->globalData(), codeBlock->ownerExecutable(), structure);
+        RELEASE_ASSERT(stubInfo->accessType == access_unset);
         if ((slot.cachedPropertyType() != PropertySlot::Value)
             || !MacroAssembler::isCompactPtrAlignedAddressOffset(maxOffsetRelativeToPatchedStorage(slot.cachedOffset())))
             ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(cti_op_get_by_id_self_fail));
-        else
+        else {
             JIT::patchGetByIdSelf(codeBlock, stubInfo, structure, slot.cachedOffset(), returnAddress);
+            stubInfo->initGetByIdSelf(callFrame->globalData(), codeBlock->ownerExecutable(), structure);
+        }
         return;
     }
 
@@ -1591,6 +1593,9 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_self_fail)
 
         PolymorphicAccessStructureList* polymorphicStructureList;
         int listIndex = 1;
+
+        if (stubInfo->accessType == access_unset)
+            stubInfo->initGetByIdSelf(callFrame->globalData(), codeBlock->ownerExecutable(), baseValue.asCell()->structure());
 
         if (stubInfo->accessType == access_get_by_id_self) {
             ASSERT(!stubInfo->stubRoutine);
