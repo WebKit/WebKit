@@ -224,11 +224,9 @@ void DatabaseContext::databaseExceededQuota(const String& name, DatabaseDetails 
         return;
     }
     ASSERT(m_scriptExecutionContext->isWorkerContext());
-#if !PLATFORM(CHROMIUM)
     // FIXME: This needs a real implementation; this is a temporary solution for testing.
     const unsigned long long defaultQuota = 5 * 1024 * 1024;
     DatabaseManager::manager().setQuota(m_scriptExecutionContext->securityOrigin(), defaultQuota);
-#endif
 }
 
 } // namespace WebCore

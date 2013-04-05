@@ -40,36 +40,22 @@ namespace WebCore {
 
 void DatabaseServer::initialize(const String& databasePath)
 {
-#if !PLATFORM(CHROMIUM)
     DatabaseTracker::initializeTracker(databasePath);
-#else
-    UNUSED_PARAM(databasePath);
-#endif
 }
 
 void DatabaseServer::setClient(DatabaseManagerClient* client)
 {
-#if !PLATFORM(CHROMIUM)
     DatabaseTracker::tracker().setClient(client);
-#else
-    UNUSED_PARAM(client);
-#endif
 }
 
 String DatabaseServer::databaseDirectoryPath() const
 {
-#if !PLATFORM(CHROMIUM)
     return DatabaseTracker::tracker().databaseDirectoryPath();
-#else
-    return "";
-#endif
 }
 
 void DatabaseServer::setDatabaseDirectoryPath(const String& path)
 {
-#if !PLATFORM(CHROMIUM)
     DatabaseTracker::tracker().setDatabaseDirectoryPath(path);
-#endif
 }
 
 String DatabaseServer::fullPathForDatabase(SecurityOrigin* origin, const String& name, bool createIfDoesNotExist)
@@ -77,7 +63,6 @@ String DatabaseServer::fullPathForDatabase(SecurityOrigin* origin, const String&
     return DatabaseTracker::tracker().fullPathForDatabase(origin, name, createIfDoesNotExist);
 }
 
-#if !PLATFORM(CHROMIUM)
 bool DatabaseServer::hasEntryForOrigin(SecurityOrigin* origin)
 {
     return DatabaseTracker::tracker().hasEntryForOrigin(origin);
@@ -128,13 +113,6 @@ bool DatabaseServer::deleteDatabase(SecurityOrigin* origin, const String& name)
     return DatabaseTracker::tracker().deleteDatabase(origin, name);
 }
 
-#else // PLATFORM(CHROMIUM)
-void DatabaseServer::closeDatabasesImmediately(const String& originIdentifier, const String& name)
-{
-    DatabaseTracker::tracker().closeDatabasesImmediately(originIdentifier, name);
-}
-#endif // PLATFORM(CHROMIUM)
-
 void DatabaseServer::interruptAllDatabasesForContext(const DatabaseBackendContext* context)
 {
     DatabaseTracker::tracker().interruptAllDatabasesForContext(context);
@@ -150,10 +128,10 @@ PassRefPtr<DatabaseBackendBase> DatabaseServer::openDatabase(RefPtr<DatabaseBack
     
     switch (attempt) {
     case FirstTryToOpenDatabase:
-        success = DatabaseTracker::tracker().canEstablishDatabase(backendContext.get(), name, displayName, estimatedSize, error);
+        success = DatabaseTracker::tracker().canEstablishDatabase(backendContext.get(), name, estimatedSize, error);
         break;
     case RetryOpenDatabase:
-        success = DatabaseTracker::tracker().retryCanEstablishDatabase(backendContext.get(), name, displayName, estimatedSize, error);
+        success = DatabaseTracker::tracker().retryCanEstablishDatabase(backendContext.get(), name, estimatedSize, error);
     }
 
     if (success)

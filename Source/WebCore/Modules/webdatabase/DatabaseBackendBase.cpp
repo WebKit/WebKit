@@ -51,10 +51,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 
-#if PLATFORM(CHROMIUM)
-#include "DatabaseObserver.h" // For error reporting.
-#endif
-
 // Registering "opened" databases with the DatabaseTracker
 // =======================================================
 // The DatabaseTracker maintains a list of databases that have been
@@ -294,12 +290,7 @@ public:
     }
     ~DoneCreatingDatabaseOnExitCaller()
     {
-#if !PLATFORM(CHROMIUM)
         DatabaseTracker::tracker().doneCreatingDatabase(m_database);
-#else
-        if (!m_openSucceeded)
-            DatabaseTracker::tracker().failedToOpenDatabase(m_database);
-#endif            
     }
 
     void setOpenSucceeded() { m_openSucceeded = true; }
@@ -319,7 +310,6 @@ bool DatabaseBackendBase::performOpenAndVerify(bool shouldSetVersionInNewDatabas
     const int maxSqliteBusyWaitTime = 30000;
 
     if (!m_sqliteDatabase.open(m_filename, true)) {
-        reportOpenDatabaseResult(1, INVALID_STATE_ERR, m_sqliteDatabase.lastError());
         errorMessage = formatErrorMessage("unable to open database", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
         return false;
     }
@@ -337,30 +327,12 @@ bool DatabaseBackendBase::performOpenAndVerify(bool shouldSetVersionInNewDatabas
             // Map null string to empty string (see updateGuidVersionMap()).
             currentVersion = entry->value.isNull() ? emptyString() : entry->value.isolatedCopy();
             LOG(StorageAPI, "Current cached version for guid %i is %s", m_guid, currentVersion.ascii().data());
-
-#if PLATFORM(CHROMIUM)
-            // Note: In multi-process browsers the cached value may be inaccurate, but
-            // we cannot read the actual version from the database without potentially
-            // inducing a form of deadlock, a busytimeout error when trying to
-            // access the database. So we'll use the cached value if we're unable to read
-            // the value from the database file without waiting.
-            // FIXME: Add an async openDatabase method to the DatabaseAPI.
-            const int noSqliteBusyWaitTime = 0;
-            m_sqliteDatabase.setBusyTimeout(noSqliteBusyWaitTime);
-            String versionFromDatabase;
-            if (getVersionFromDatabase(versionFromDatabase, false)) {
-                currentVersion = versionFromDatabase;
-                updateGuidVersionMap(m_guid, currentVersion);
-            }
-            m_sqliteDatabase.setBusyTimeout(maxSqliteBusyWaitTime);
-#endif
         } else {
             LOG(StorageAPI, "No cached version for guid %i", m_guid);
 
             SQLiteTransaction transaction(m_sqliteDatabase);
             transaction.begin();
             if (!transaction.inProgress()) {
-                reportOpenDatabaseResult(2, INVALID_STATE_ERR, m_sqliteDatabase.lastError());
                 errorMessage = formatErrorMessage("unable to open database, failed to start transaction", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
                 m_sqliteDatabase.close();
                 return false;
@@ -371,14 +343,12 @@ bool DatabaseBackendBase::performOpenAndVerify(bool shouldSetVersionInNewDatabas
                 m_new = true;
 
                 if (!m_sqliteDatabase.executeCommand("CREATE TABLE " + tableName + " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);")) {
-                    reportOpenDatabaseResult(3, INVALID_STATE_ERR, m_sqliteDatabase.lastError());
                     errorMessage = formatErrorMessage("unable to open database, failed to create 'info' table", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
                     transaction.rollback();
                     m_sqliteDatabase.close();
                     return false;
                 }
             } else if (!getVersionFromDatabase(currentVersion, false)) {
-                reportOpenDatabaseResult(4, INVALID_STATE_ERR, m_sqliteDatabase.lastError());
                 errorMessage = formatErrorMessage("unable to open database, failed to read current version", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
                 transaction.rollback();
                 m_sqliteDatabase.close();
@@ -390,7 +360,6 @@ bool DatabaseBackendBase::performOpenAndVerify(bool shouldSetVersionInNewDatabas
             } else if (!m_new || shouldSetVersionInNewDatabase) {
                 LOG(StorageAPI, "Setting version %s in database %s that was just created", m_expectedVersion.ascii().data(), databaseDebugName().ascii().data());
                 if (!setVersionInDatabase(m_expectedVersion, false)) {
-                    reportOpenDatabaseResult(5, INVALID_STATE_ERR, m_sqliteDatabase.lastError());
                     errorMessage = formatErrorMessage("unable to open database, failed to write current version", m_sqliteDatabase.lastError(), m_sqliteDatabase.lastErrorMsg());
                     transaction.rollback();
                     m_sqliteDatabase.close();
@@ -411,7 +380,6 @@ bool DatabaseBackendBase::performOpenAndVerify(bool shouldSetVersionInNewDatabas
     // If the expected version isn't the empty string, ensure that the current database version we have matches that version. Otherwise, set an exception.
     // If the expected version is the empty string, then we always return with whatever version of the database we have.
     if ((!m_new || shouldSetVersionInNewDatabase) && m_expectedVersion.length() && m_expectedVersion != currentVersion) {
-        reportOpenDatabaseResult(6, INVALID_STATE_ERR, 0);
         errorMessage = "unable to open database, version mismatch, '" + m_expectedVersion + "' does not match the currentVersion of '" + currentVersion + "'";
         m_sqliteDatabase.close();
         return false;
@@ -430,8 +398,6 @@ bool DatabaseBackendBase::performOpenAndVerify(bool shouldSetVersionInNewDatabas
 
     if (m_new && !shouldSetVersionInNewDatabase)
         m_expectedVersion = ""; // The caller provided a creationCallback which will set the expected version.
-
-    reportOpenDatabaseResult(0, -1, 0); // OK
     return true;
 }
 
@@ -527,14 +493,9 @@ void DatabaseBackendBase::setCachedVersion(const String& actualVersion)
 bool DatabaseBackendBase::getActualVersionForTransaction(String &actualVersion)
 {
     ASSERT(m_sqliteDatabase.transactionInProgress());
-#if PLATFORM(CHROMIUM)
     // Note: In multi-process browsers the cached value may be inaccurate.
     // So we retrieve the value from the database and update the cached value here.
     return getVersionFromDatabase(actualVersion, true);
-#else
-    actualVersion = getCachedVersion();
-    return true;
-#endif
 }
 
 void DatabaseBackendBase::disableAuthorizer()
@@ -602,7 +563,6 @@ void DatabaseBackendBase::incrementalVacuumIfNeeded()
     int64_t totalSize = m_sqliteDatabase.totalSize();
     if (totalSize <= 10 * freeSpaceSize) {
         int result = m_sqliteDatabase.runIncrementalVacuumCommand();
-        reportVacuumDatabaseResult(result);
         if (result != SQLResultOk)
             m_frontend->logErrorMessage(formatErrorMessage("error vacuuming database", result, m_sqliteDatabase.lastErrorMsg()));
     }
@@ -618,41 +578,6 @@ bool DatabaseBackendBase::isInterrupted()
     MutexLocker locker(m_sqliteDatabase.databaseMutex());
     return m_sqliteDatabase.isInterrupted();
 }
-
-#if PLATFORM(CHROMIUM)
-// These are used to generate histograms of errors seen with websql.
-// See about:histograms in chromium.
-void DatabaseBackendBase::reportOpenDatabaseResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
-{
-    DatabaseObserver::reportOpenDatabaseResult(this, errorSite, webSqlErrorCode, sqliteErrorCode);
-}
-
-void DatabaseBackendBase::reportChangeVersionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
-{
-    DatabaseObserver::reportChangeVersionResult(this, errorSite, webSqlErrorCode, sqliteErrorCode);
-}
-
-void DatabaseBackendBase::reportStartTransactionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
-{
-    DatabaseObserver::reportStartTransactionResult(this, errorSite, webSqlErrorCode, sqliteErrorCode);
-}
-
-void DatabaseBackendBase::reportCommitTransactionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
-{
-    DatabaseObserver::reportCommitTransactionResult(this, errorSite, webSqlErrorCode, sqliteErrorCode);
-}
-
-void DatabaseBackendBase::reportExecuteStatementResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
-{
-    DatabaseObserver::reportExecuteStatementResult(this, errorSite, webSqlErrorCode, sqliteErrorCode);
-}
-
-void DatabaseBackendBase::reportVacuumDatabaseResult(int sqliteErrorCode)
-{
-    DatabaseObserver::reportVacuumDatabaseResult(this, sqliteErrorCode);
-}
-
-#endif // PLATFORM(CHROMIUM)
 
 } // namespace WebCore
 

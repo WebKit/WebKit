@@ -156,9 +156,8 @@ bool DatabaseTracker::hasAdequateQuotaForOrigin(SecurityOrigin* origin, unsigned
     return false;
 }
 
-bool DatabaseTracker::canEstablishDatabase(DatabaseBackendContext* context, const String& name, const String& displayName, unsigned long estimatedSize, DatabaseError& error)
+bool DatabaseTracker::canEstablishDatabase(DatabaseBackendContext* context, const String& name, unsigned long estimatedSize, DatabaseError& error)
 {
-    UNUSED_PARAM(displayName); // Chromium needs the displayName but we don't.
     error = DatabaseError::None;
 
     MutexLocker lockDatabase(m_databaseGuard);
@@ -209,13 +208,8 @@ bool DatabaseTracker::canEstablishDatabase(DatabaseBackendContext* context, cons
 // hasAdequateQuotaForOrigin() simple and correct (i.e. bug free), and just
 // re-use it. Also note that the path for opening a database involves IO, and
 // hence should not be a performance critical path anyway. 
-bool DatabaseTracker::retryCanEstablishDatabase(DatabaseBackendContext* context, const String& name, const String& displayName, unsigned long estimatedSize, DatabaseError& error)
+bool DatabaseTracker::retryCanEstablishDatabase(DatabaseBackendContext* context, const String& name, unsigned long estimatedSize, DatabaseError& error)
 {
-    // Chromium needs the displayName in canEstablishDatabase(), but we don't.
-    // Though Chromium does not use retryCanEstablishDatabase(), we should
-    // keep the prototypes for canEstablishDatabase() and its retry function
-    // the same. Hence, we also have an unneeded displayName arg here.
-    UNUSED_PARAM(displayName);
     error = DatabaseError::None;
 
     MutexLocker lockDatabase(m_databaseGuard);

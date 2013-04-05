@@ -52,14 +52,12 @@ bool ChangeVersionWrapper::performPreflight(SQLTransactionBackend* transaction)
     String actualVersion;
     if (!database->getVersionFromDatabase(actualVersion)) {
         int sqliteError = database->sqliteDatabase().lastError();
-        database->reportChangeVersionResult(1, SQLError::UNKNOWN_ERR, sqliteError);
         m_sqlError = SQLError::create(SQLError::UNKNOWN_ERR, "unable to read the current version",
                                       sqliteError, database->sqliteDatabase().lastErrorMsg());
         return false;
     }
 
     if (actualVersion != m_oldVersion) {
-        database->reportChangeVersionResult(2, SQLError::VERSION_ERR, 0);
         m_sqlError = SQLError::create(SQLError::VERSION_ERR, "current version of the database and `oldVersion` argument do not match");
         return false;
     }
@@ -75,15 +73,12 @@ bool ChangeVersionWrapper::performPostflight(SQLTransactionBackend* transaction)
 
     if (!database->setVersionInDatabase(m_newVersion)) {
         int sqliteError = database->sqliteDatabase().lastError();
-        database->reportChangeVersionResult(3, SQLError::UNKNOWN_ERR, sqliteError);
         m_sqlError = SQLError::create(SQLError::UNKNOWN_ERR, "unable to set new version in database",
                                       sqliteError, database->sqliteDatabase().lastErrorMsg());
         return false;
     }
 
     database->setExpectedVersion(m_newVersion);
-
-    database->reportChangeVersionResult(0, -1, 0); // OK
     return true;
 }
 

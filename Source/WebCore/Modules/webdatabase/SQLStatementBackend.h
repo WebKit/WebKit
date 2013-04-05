@@ -55,8 +55,8 @@ public:
     bool hasStatementCallback() const { return m_hasCallback; }
     bool hasStatementErrorCallback() const { return m_hasErrorCallback; }
 
-    void setDatabaseDeletedError(DatabaseBackend*);
-    void setVersionMismatchedError(DatabaseBackend*);
+    void setDatabaseDeletedError();
+    void setVersionMismatchedError();
 
     AbstractSQLStatement* frontend();
     virtual PassRefPtr<SQLError> sqlError() const;
@@ -66,7 +66,7 @@ private:
     SQLStatementBackend(PassOwnPtr<AbstractSQLStatement>, const String& statement,
         const Vector<SQLValue>& arguments, int permissions);
 
-    void setFailureDueToQuota(DatabaseBackend*);
+    void setFailureDueToQuota();
     void clearFailureDueToQuota();
 
     OwnPtr<AbstractSQLStatement> m_frontend;

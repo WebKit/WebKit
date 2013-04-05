@@ -132,9 +132,7 @@ private:
     Deque<RefPtr<SQLStatementBackend> > m_statementQueue;
 
     OwnPtr<SQLiteTransaction> m_sqliteTransaction;
-#if !PLATFORM(CHROMIUM)
     RefPtr<OriginLock> m_originLock;
-#endif
 };
 
 } // namespace WebCore

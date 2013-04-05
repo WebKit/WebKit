@@ -131,7 +131,6 @@ ExceptionCode SQLTransactionBackendSync::begin()
 {
     ASSERT(m_database->scriptExecutionContext()->isContextThread());
     if (!m_database->opened()) {
-        m_database->reportStartTransactionResult(1, SQLException::UNKNOWN_ERR, 0);
         m_database->setLastErrorMessage("cannot begin transaction because the database is not open");
         return SQLException::UNKNOWN_ERR;
     }
@@ -153,7 +152,6 @@ ExceptionCode SQLTransactionBackendSync::begin()
     // Check if begin() succeeded.
     if (!m_sqliteTransaction->inProgress()) {
         ASSERT(!m_database->sqliteDatabase().transactionInProgress());
-        m_database->reportStartTransactionResult(2, SQLException::DATABASE_ERR, m_database->sqliteDatabase().lastError());
         m_database->setLastErrorMessage("unable to begin transaction",
             m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
         m_sqliteTransaction.clear();
@@ -165,14 +163,12 @@ ExceptionCode SQLTransactionBackendSync::begin()
     // the actual version. In single-process browsers, this is just a map lookup.
     String actualVersion;
     if (!m_database->getActualVersionForTransaction(actualVersion)) {
-        m_database->reportStartTransactionResult(3, SQLException::DATABASE_ERR, m_database->sqliteDatabase().lastError());
         m_database->setLastErrorMessage("unable to read version",
             m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
         rollback();
         return SQLException::DATABASE_ERR;
     }
     m_hasVersionMismatch = !m_database->expectedVersion().isEmpty() && (m_database->expectedVersion() != actualVersion);
-    m_database->reportStartTransactionResult(0, -1, 0); // OK
     return 0;
 }
 
@@ -194,7 +190,6 @@ ExceptionCode SQLTransactionBackendSync::commit()
 {
     ASSERT(m_database->scriptExecutionContext()->isContextThread());
     if (!m_database->opened()) {
-        m_database->reportCommitTransactionResult(1, SQLException::UNKNOWN_ERR, 0);
         m_database->setLastErrorMessage("unable to commit transaction because the database is not open.");
         return SQLException::UNKNOWN_ERR;
     }
@@ -207,7 +202,6 @@ ExceptionCode SQLTransactionBackendSync::commit()
 
     // If the commit failed, the transaction will still be marked as "in progress"
     if (m_sqliteTransaction->inProgress()) {
-        m_database->reportCommitTransactionResult(2, SQLException::DATABASE_ERR, m_database->sqliteDatabase().lastError());
         m_database->setLastErrorMessage("unable to commit transaction",
             m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
         return SQLException::DATABASE_ERR;
@@ -222,8 +216,6 @@ ExceptionCode SQLTransactionBackendSync::commit()
     // The commit was successful. If the transaction modified this database, notify the delegates.
     if (m_modifiedDatabase)
         m_transactionClient->didCommitWriteTransaction(database());
-
-    m_database->reportCommitTransactionResult(0, -1, 0); // OK
     return 0;
 }
 

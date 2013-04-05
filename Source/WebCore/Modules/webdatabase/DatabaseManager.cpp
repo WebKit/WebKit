@@ -363,7 +363,6 @@ String DatabaseManager::fullPathForDatabase(SecurityOrigin* origin, const String
     return m_server->fullPathForDatabase(origin, name, createIfDoesNotExist);
 }
 
-#if !PLATFORM(CHROMIUM)
 bool DatabaseManager::hasEntryForOrigin(SecurityOrigin* origin)
 {
     return m_server->hasEntryForOrigin(origin);
@@ -413,13 +412,6 @@ bool DatabaseManager::deleteDatabase(SecurityOrigin* origin, const String& name)
 {
     return m_server->deleteDatabase(origin, name);
 }
-
-#else // PLATFORM(CHROMIUM)
-void DatabaseManager::closeDatabasesImmediately(const String& originIdentifier, const String& name)
-{
-    m_server->closeDatabasesImmediately(originIdentifier, name);
-}
-#endif // PLATFORM(CHROMIUM)
 
 void DatabaseManager::interruptAllDatabasesForContext(ScriptExecutionContext* context)
 {

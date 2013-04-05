@@ -86,14 +86,6 @@ private:
 
     Vector<String> performGetTableNames();
 
-#if PLATFORM(CHROMIUM)
-    void reportStartTransactionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode);
-    void reportCommitTransactionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode);
-#else
-    void reportStartTransactionResult(int, int, int) { }
-    void reportCommitTransactionResult(int, int, int) { }
-#endif
-
     RefPtr<SecurityOrigin> m_databaseThreadSecurityOrigin;
     RefPtr<DatabaseContext> m_databaseContext;
 

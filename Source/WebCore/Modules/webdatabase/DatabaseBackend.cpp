@@ -55,9 +55,6 @@ bool DatabaseBackend::openAndVerifyVersion(bool setVersionInNewDatabase, Databas
     if (!databaseContext()->databaseThread() || databaseContext()->databaseThread()->terminationRequested(&synchronizer))
         return false;
 
-#if PLATFORM(CHROMIUM)
-    DatabaseTracker::tracker().prepareToOpenDatabase(this);
-#endif
     bool success = false;
     OwnPtr<DatabaseOpenTask> task = DatabaseOpenTask::create(this, setVersionInNewDatabase, &synchronizer, error, errorMessage, success);
     databaseContext()->databaseThread()->scheduleImmediateTask(task.release());

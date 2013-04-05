@@ -54,9 +54,6 @@ DatabaseBackendSync::~DatabaseBackendSync()
 
 bool DatabaseBackendSync::openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
 {
-#if PLATFORM(CHROMIUM)
-    DatabaseTracker::tracker().prepareToOpenDatabase(this);
-#endif
     return performOpenAndVerify(setVersionInNewDatabase, error, errorMessage);
 }
 
