@@ -470,7 +470,7 @@ void WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded(LayerComposi
             -layer->bounds().width() / 2.0, -layer->bounds().height() / 2.0
         };
         platformContext->setTransform(transform);
-        m_client->drawOverlayContents(m_overlay->q, platformContext);
+        m_overlay->client->drawOverlayContents(m_overlay->q, platformContext);
 
         releaseBufferDrawable(textureContents);
     } else if (!m_image.isNull()) {

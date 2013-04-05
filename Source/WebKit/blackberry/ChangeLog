@@ -1,5 +1,17 @@
 2013-04-05  Alberto Garcia  <agarcia@igalia.com>
 
+        [BlackBerry] WebOverlay: fix access to m_client
+        https://bugs.webkit.org/show_bug.cgi?id=114003
+
+        Reviewed by Rob Buis.
+
+        m_client was replace by m_overlay in r146058.
+
+        * Api/WebOverlay.cpp:
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded):
+
+2013-04-05  Alberto Garcia  <agarcia@igalia.com>
+
         [BlackBerry] WebOverlayPrivate: remove showDebugBorders() and showRepaintCounter()
         https://bugs.webkit.org/show_bug.cgi?id=114009
 
