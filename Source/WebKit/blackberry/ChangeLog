@@ -1,3 +1,20 @@
+2013-04-04  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Blitting wrong rect during history navigations
+        https://bugs.webkit.org/show_bug.cgi?id=113963
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Jakob Petsovits.
+
+        On www.bbc.com/news, we blit wrong rect during the second restoration
+        of the view states when we navigate back from stories to the main page.
+        Update the contents size and scroll position before we render and blit
+        if we failed to zoomAboutPoint so that UI thread can still get the
+        correct rect during blit.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::restoreHistoryViewState):
+
 2013-04-05  Jakob Petsovits  <jpetsovits@blackberry.com>
 
         [BlackBerry] Replace map{From,To}Transformed() with ViewportAccessor

@@ -6100,18 +6100,17 @@ void WebPagePrivate::restoreHistoryViewState(const WebCore::IntPoint& scrollPosi
 
     m_shouldReflowBlock = shouldReflowBlock;
 
-    bool didZoom = zoomAboutPoint(scale, m_mainFrame->view()->scrollPosition(), true /* enforceScaleClamping */, true /*forceRendering*/, true /*isRestoringZoomLevel*/);
+    if (!zoomAboutPoint(scale, m_mainFrame->view()->scrollPosition(), true /* enforceScaleClamping */, true /*forceRendering*/, true /*isRestoringZoomLevel*/)) {
+        // We need to notify the client of the scroll position and content size change(s) above even if we didn't scale.
+        notifyTransformedContentsSizeChanged();
+        notifyTransformedScrollChanged();
+    }
+
     // If we're already at that scale, then we should still force rendering
     // since our scroll position changed.
     // FIXME: Do we really need to suspend/resume both backingstore and screen here?
     m_backingStore->d->resumeBackingStoreUpdates();
     m_backingStore->d->resumeScreenUpdates(BackingStore::RenderAndBlit);
-
-    if (!didZoom) {
-        // We need to notify the client of the scroll position and content size change(s) above even if we didn't scale.
-        notifyTransformedContentsSizeChanged();
-        notifyTransformedScrollChanged();
-    }
 }
 
 IntSize WebPagePrivate::screenSize() const
