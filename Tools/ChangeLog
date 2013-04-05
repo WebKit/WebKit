@@ -1,5 +1,31 @@
 2013-04-04  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Remove the rebaseline queue server since nobody except maybe one person from Google uses it.
+
+        Rubber stamped by Benjamin Poulain.
+
+        * RebaselineQueueServer: Removed.
+        * RebaselineQueueServer/app.yaml: Removed.
+        * RebaselineQueueServer/handlers: Removed.
+        * RebaselineQueueServer/handlers/__init__.py: Removed.
+        * RebaselineQueueServer/handlers/builderqueue.py: Removed.
+        * RebaselineQueueServer/handlers/pages.py: Removed.
+        * RebaselineQueueServer/index.yaml: Removed.
+        * RebaselineQueueServer/main.py: Removed.
+        * RebaselineQueueServer/model: Removed.
+        * RebaselineQueueServer/model/__init__.py: Removed.
+        * RebaselineQueueServer/model/queueentry.py: Removed.
+        * RebaselineQueueServer/static: Removed.
+        * RebaselineQueueServer/static/builder-frame-empty.html: Removed.
+        * RebaselineQueueServer/static/styles.css: Removed.
+        * RebaselineQueueServer/templates: Removed.
+        * RebaselineQueueServer/templates/builder-picker.html: Removed.
+        * RebaselineQueueServer/templates/builder-queue-edit.html: Removed.
+        * RebaselineQueueServer/templates/builder-queue-list.html: Removed.
+        * RebaselineQueueServer/templates/home.html: Removed.
+
+2013-04-04  Ryosuke Niwa  <rniwa@webkit.org>
+
         Fix setup-commit-queue and temporarily disable testing on commit-queue
         https://bugs.webkit.org/show_bug.cgi?id=113979
 
