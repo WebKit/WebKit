@@ -1,3 +1,9 @@
+2013-04-05  Chris Fleizach  <cfleizach@apple.com>
+
+        Add James Craig to the contributors list.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-04-04  Kent Tamura  <tkent@chromium.org>
 
         Remove ChromiumPublicApi pattern, and cc/message rules for it.
