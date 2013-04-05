@@ -132,6 +132,7 @@ class CommitQueueTaskTest(unittest.TestCase):
             self.assertEqual(success, not expect_retry)
         return task
 
+    @unittest.skip("Commit queue testing temporarily disabled.")
     def test_success_case(self):
         commit_queue = MockCommitQueue([])
         expected_logs = """run_webkit_patch: ['clean']
@@ -270,6 +271,7 @@ command_failed: failure_message='Unable to build without patch' script_error='MO
 """
         self._run_through_task(commit_queue, expected_logs, expect_retry=True)
 
+    @unittest.skip("Commit queue testing temporarily disabled.")
     def test_flaky_test_failure(self):
         commit_queue = MockCommitQueue([
             None,
@@ -303,6 +305,7 @@ command_passed: success_message='Landed patch' patch='10000'
 """
         self._run_through_task(commit_queue, expected_logs)
 
+    @unittest.skip("Commit queue testing temporarily disabled.")
     def test_failed_archive(self):
         commit_queue = MockCommitQueue([
             None,
@@ -335,6 +338,7 @@ command_passed: success_message='Landed patch' patch='10000'
 """
         self._run_through_task(commit_queue, expected_logs)
 
+    @unittest.skip("Commit queue testing temporarily disabled.")
     def test_double_flaky_test_failure(self):
         commit_queue = FailingTestCommitQueue([
             None,
@@ -374,6 +378,7 @@ command_failed: failure_message='Patch does not pass tests' script_error='MOCK t
         success = OutputCapture().assert_outputs(self, task.run, expected_logs=expected_logs)
         self.assertFalse(success)
 
+    @unittest.skip("Commit queue testing temporarily disabled.")
     def test_test_failure(self):
         commit_queue = MockCommitQueue([
             None,
@@ -405,6 +410,7 @@ command_passed: success_message='Able to pass tests without patch' patch='10000'
 """
         self._run_through_task(commit_queue, expected_logs, GoldenScriptError)
 
+    @unittest.skip("Commit queue testing temporarily disabled.")
     def test_red_test_failure(self):
         commit_queue = FailingTestCommitQueue([
             None,
@@ -446,6 +452,7 @@ command_passed: success_message='Landed patch' patch='10000'
 """
         self._run_through_task(commit_queue, expected_logs)
 
+    @unittest.skip("Commit queue testing temporarily disabled.")
     def test_very_red_tree_retry(self):
         lots_of_failing_tests = map(lambda num: "test-%s.html" % num, range(0, 100))
         commit_queue = FailingTestCommitQueue([
@@ -487,6 +494,7 @@ command_failed: failure_message='Unable to pass tests without patch (tree is red
 """
         self._run_through_task(commit_queue, expected_logs, expect_retry=True)
 
+    @unittest.skip("Commit queue testing temporarily disabled.")
     def test_red_tree_patch_rejection(self):
         commit_queue = FailingTestCommitQueue([
             None,
@@ -529,6 +537,7 @@ command_failed: failure_message='Unable to pass tests without patch (tree is red
         # failure_status_id should be of the test with patch (1), not the test without patch (2).
         self.assertEqual(task.failure_status_id, 1)
 
+    @unittest.skip("Commit queue testing temporarily disabled.")
     def test_land_failure(self):
         commit_queue = MockCommitQueue([
             None,

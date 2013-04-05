@@ -1,3 +1,18 @@
+2013-04-04  Benjamin Poulain  <bpoulain@apple.com>
+
+        Temporarily disable the Python unittests broken by the commit queue not running layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=113997
+
+        Reviewed by Ryosuke Niwa.
+
+        Disable the tests until Ryosuke gets the time and hardware to have
+        a testing commit-queue.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        (CommitQueueTaskTest):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (CommitQueueTest):
+
 2013-04-04  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove Chromium builders from build.webkit.org
