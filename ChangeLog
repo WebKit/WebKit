@@ -1,3 +1,13 @@
+2013-04-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove the top level gyp directory and Platform/chromium
+        https://bugs.webkit.org/show_bug.cgi?id=113999
+
+        Reviewed by Benjamin Poulain.
+
+        * Source/Platform: Removed.
+        * Source/gyp: Removed.
+
 2013-04-04  Geoffrey Garen  <ggaren@apple.com>
 
         Nixed the defunct chromium folder from ManualTests
