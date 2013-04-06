@@ -3,6 +3,13 @@
         Try to fix the Windows build.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+        Added back a symbol that is exported.
+
+2013-04-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Try to fix the Windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
         Removed symbols that aren't exported.
 
 2013-04-06  Geoffrey Garen  <ggaren@apple.com>
