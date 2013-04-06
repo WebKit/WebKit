@@ -1,4 +1,4 @@
-https://bugs.webkit.org/show_bug.cgi?id=95772: There should be six green bars below with a PASS in each.
+https://bugs.webkit.org/show_bug.cgi?id=95772: There should be seven green bars below with a PASS in each.
 
  PASS
  PASS
@@ -6,4 +6,6 @@ https://bugs.webkit.org/show_bug.cgi?id=95772: There should be six green bars be
  PASS
  PASS
  PASS
+Words
+PASS
 

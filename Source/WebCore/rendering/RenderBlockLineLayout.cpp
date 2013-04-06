@@ -332,7 +332,8 @@ static LayoutUnit inlineLogicalWidth(RenderObject* child, bool start = true, boo
     unsigned lineDepth = 1;
     LayoutUnit extraWidth = 0;
     RenderObject* parent = child->parent();
-    while (parent->isRenderInline() && lineDepth++ < cMaxLineDepth) {
+    // Empty inline parents have added their inline border, padding and margin to the line already.
+    while (parent->isRenderInline() && !isEmptyInline(parent) && lineDepth++ < cMaxLineDepth) {
         RenderInline* parentAsRenderInline = toRenderInline(parent);
         if (!isEmptyInline(parentAsRenderInline)) {
             if (start && shouldAddBorderPaddingMargin(child->previousSibling(), start))
