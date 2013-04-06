@@ -569,7 +569,7 @@ static unsigned getBytecodeOffsetForCallFrame(CallFrame* callFrame)
     callFrame = callFrame->removeHostCallFrameFlag();
     CodeBlock* codeBlock = callFrame->codeBlock();
     if (!codeBlock)
-        return -1;
+        return 0;
 #if ENABLE(JIT)
 #if ENABLE(DFG_JIT)
     if (codeBlock->getJITType() == JITCode::DFGJIT)
