@@ -1,3 +1,19 @@
+2013-04-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Re-enable testing on the commit queue
+        https://bugs.webkit.org/show_bug.cgi?id=114078
+
+        Reviewed by Darin Adler.
+
+        Re-enabled the feature and the associated tests.
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask.py:
+        (CommitQueueTask.run):
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        (CommitQueueTaskTest._run_through_task):
+        * Scripts/webkitpy/tool/commands/queues_unittest.py:
+        (CommitQueueTest._mock_test_result):
+
 2013-04-05  Oliver Hunt  <oliver@apple.com>
 
         Unify the many and varied stack trace mechanisms, and make the result sane.

@@ -28,7 +28,6 @@
 
 import os
 import StringIO
-import unittest
 
 from webkitpy.common.checkout.scm import CheckoutNeedsUpdate
 from webkitpy.common.checkout.scm.scm_mock import MockSCM
@@ -233,7 +232,6 @@ class CommitQueueTest(QueuesTest):
     def _mock_test_result(self, testname):
         return test_results.TestResult(testname, [test_failures.FailureTextMismatch()])
 
-    @unittest.skip("Commit queue testing temporarily disabled.")
     def test_commit_queue(self):
         tool = MockTool()
         tool.filesystem.write_text_file('/tmp/layout-test-results/full_results.json', '')  # Otherwise the commit-queue will hit a KeyError trying to read the results from the MockFileSystem.
@@ -317,7 +315,6 @@ MOCK: release_work_item: commit-queue 10000
         queue.run_webkit_patch = mock_run_webkit_patch
         self.assert_queue_outputs(queue, expected_logs=expected_logs)
 
-    @unittest.skip("Commit queue testing temporarily disabled.")
     def test_rollout(self):
         tool = MockTool()
         tool.filesystem.write_text_file('/tmp/layout-test-results/full_results.json', '')  # Otherwise the commit-queue will hit a KeyError trying to read the results from the MockFileSystem.
@@ -389,7 +386,6 @@ MOCK: update_status: commit-queue Tests passed, but commit failed (checkout out 
         self.assertFalse(options.build)
         self.assertFalse(options.test)
 
-    @unittest.skip("Commit queue testing temporarily disabled.")
     def test_manual_reject_during_processing(self):
         queue = SecondThoughtsCommitQueue(MockTool())
         queue.begin_work_queue()
