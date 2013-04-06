@@ -1,3 +1,12 @@
+2013-04-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Try to fix the WebKit2 build.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit):
+        * NetworkProcess/NetworkResourceLoader.h:
+        (NetworkResourceLoader): Removed a defunct function.
+
 2013-04-05  Ed Bartosh  <bartosh@gmail.com>
 
         [WK2] --no-tiled-backing-store build fails because FloatPoint is not declared

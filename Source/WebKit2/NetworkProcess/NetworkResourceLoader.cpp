@@ -285,11 +285,6 @@ void NetworkResourceLoader::didSendData(ResourceHandle*, unsigned long long byte
 // FIXME (NetworkProcess): Many of the following ResourceHandleClient methods definitely need implementations. A few will not.
 // Once we know what they are they can be removed.
 
-void NetworkResourceLoader::didReceiveCachedMetadata(ResourceHandle*, const char*, int)
-{
-    notImplemented();
-}
-
 void NetworkResourceLoader::wasBlocked(ResourceHandle*)
 {
     notImplemented();

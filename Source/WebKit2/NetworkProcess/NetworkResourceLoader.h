@@ -70,7 +70,6 @@ public:
     virtual void didReceiveResponse(WebCore::ResourceHandle*, const WebCore::ResourceResponse&) OVERRIDE;
     virtual void didReceiveData(WebCore::ResourceHandle*, const char*, int, int encodedDataLength) OVERRIDE;
     virtual void didReceiveBuffer(WebCore::ResourceHandle*, PassRefPtr<WebCore::SharedBuffer>, int encodedDataLength) OVERRIDE;
-    virtual void didReceiveCachedMetadata(WebCore::ResourceHandle*, const char*, int) OVERRIDE;
     virtual void didFinishLoading(WebCore::ResourceHandle*, double finishTime) OVERRIDE;
     virtual void didFail(WebCore::ResourceHandle*, const WebCore::ResourceError&) OVERRIDE;
     virtual void wasBlocked(WebCore::ResourceHandle*) OVERRIDE;
