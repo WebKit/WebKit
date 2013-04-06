@@ -66,6 +66,8 @@ list(APPEND WebCore_SOURCES
     platform/wince/FileSystemWince.cpp
     platform/wince/KURLWince.cpp
 
+    platform/network/NetworkStorageSessionStub.cpp
+
     platform/network/win/CredentialStorageWin.cpp
     platform/network/win/CookieJarWin.cpp
     platform/network/win/NetworkStateNotifierWin.cpp
