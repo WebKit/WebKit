@@ -1,3 +1,12 @@
+2013-04-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed v8 bindings hooks from IDL files
+        https://bugs.webkit.org/show_bug.cgi?id=114091
+
+        Reviewed by Anders Carlsson and Sam Weinig.
+
+        * heap/HeapStatistics.h:
+
 2013-04-03  Roger Fong  <roger_fong@apple.com>
 
         Windows VS2010 build fix.

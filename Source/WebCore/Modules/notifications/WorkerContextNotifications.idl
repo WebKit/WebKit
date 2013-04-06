@@ -29,7 +29,7 @@
     Supplemental=WorkerContext
 ] interface WorkerContextNotifications {
 #if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS
-    [V8EnabledAtRuntime] readonly attribute NotificationCenter webkitNotifications;
+    readonly attribute NotificationCenter webkitNotifications;
 #endif
 };
 

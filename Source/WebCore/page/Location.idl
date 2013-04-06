@@ -27,9 +27,6 @@
  */
 
 [
-#if defined(V8_BINDING) && V8_BINDING
-    CheckSecurity,
-#endif
     JSCustomGetOwnPropertySlotAndDescriptor,
     CustomNamedSetter,
     JSGenerateIsReachable=ImplFrame,
@@ -41,12 +38,12 @@
     OmitConstructor
 ] interface Location {
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-             [DoNotCheckSecurityOnSetter, CustomSetter, V8Unforgeable] attribute DOMString href;
+             [DoNotCheckSecurityOnSetter, CustomSetter] attribute DOMString href;
 #endif
 
-    [Custom, V8Unforgeable] void assign(in [Optional=DefaultIsUndefined] DOMString url);
-    [Custom, V8Unforgeable] void replace(in [Optional=DefaultIsUndefined] DOMString url);
-    [Custom, V8Unforgeable] void reload();
+    [Custom] void assign(in [Optional=DefaultIsUndefined] DOMString url);
+    [Custom] void replace(in [Optional=DefaultIsUndefined] DOMString url);
+    [Custom] void reload();
 
     // URI decomposition attributes
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
@@ -64,10 +61,7 @@
     readonly attribute DOMStringList ancestorOrigins;
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [NotEnumerable, Custom, V8Unforgeable, V8ReadOnly, ImplementedAs=toStringFunction] DOMString toString();
-#endif
-#if defined(V8_BINDING) && V8_BINDING
-    [NotEnumerable, Custom, V8Unforgeable, V8ReadOnly] any valueOf();
+    [NotEnumerable, Custom, ImplementedAs=toStringFunction] DOMString toString();
 #endif
 };
 

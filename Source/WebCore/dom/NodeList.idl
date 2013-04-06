@@ -22,8 +22,6 @@
     CustomIsReachable,
     IndexedGetter,
     NamedGetter,
-    V8DependentLifetime,
-    V8SkipVTableValidation
 ] interface NodeList {
 
     Node item(in [IsIndex,Optional=DefaultIsUndefined] unsigned long index);

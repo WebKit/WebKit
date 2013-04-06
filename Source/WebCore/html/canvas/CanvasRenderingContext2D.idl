@@ -78,11 +78,8 @@ interface CanvasRenderingContext2D : CanvasRenderingContext {
     sequence<float> getLineDash();
     attribute float lineDashOffset;
 
-    // FIXME: These attributes should also be implemented for V8.
-#if !(defined(V8_BINDING) && V8_BINDING)
     [Custom] attribute Array webkitLineDash;
     attribute float webkitLineDashOffset;
-#endif
 
     void clearRect(in [Optional=DefaultIsUndefined] float x,
                    in [Optional=DefaultIsUndefined] float y,

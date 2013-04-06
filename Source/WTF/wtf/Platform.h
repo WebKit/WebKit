@@ -1010,11 +1010,6 @@
 #define WTF_USE_COREAUDIO 1
 #endif
 
-/* Not using V8 implies using JSC and vice versa */
-#if !USE(V8)
-#define WTF_USE_JSC 1
-#endif
-
 #if !defined(WTF_USE_ZLIB) && !PLATFORM(QT)
 #define WTF_USE_ZLIB 1
 #endif

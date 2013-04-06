@@ -26,6 +26,7 @@
 #ifndef HeapStatistics_h
 #define HeapStatistics_h
 
+#include "JSExportMacros.h"
 #include <wtf/Deque.h>
 
 namespace JSC {

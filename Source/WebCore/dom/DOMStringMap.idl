@@ -29,7 +29,6 @@
     CustomDeleteProperty,
     CustomEnumerateProperty,
     CustomNamedSetter,
-    V8SkipVTableValidation
 ] interface DOMStringMap {
 };
 

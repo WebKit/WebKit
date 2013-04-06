@@ -25,7 +25,6 @@
 
 interface [
     Conditional=ENCRYPTED_MEDIA|ENCRYPTED_MEDIA_V2,
-    V8EnabledAtRuntime=encryptedMedia, 
     ImplementationLacksVTable
 ] MediaKeyError {
     const unsigned short MEDIA_KEYERR_UNKNOWN = 1;

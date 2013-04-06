@@ -20,7 +20,7 @@
 
 interface HTMLStyleElement : HTMLElement {
     attribute boolean disabled;
-    [Conditional=STYLE_SCOPED, V8EnabledAtRuntime=styleScoped] attribute boolean scoped;
+    [Conditional=STYLE_SCOPED] attribute boolean scoped;
     [Reflect] attribute DOMString media;
     [Reflect] attribute DOMString type;
 

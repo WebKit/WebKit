@@ -29,7 +29,7 @@
     Supplemental=DOMWindow
 ] interface DOMWindowNotifications {
 #if defined(ENABLE_LEGACY_NOTIFICATIONS) && ENABLE_LEGACY_NOTIFICATIONS
-    [V8EnabledAtRuntime, V8MeasureAs=LegacyNotifications] readonly attribute NotificationCenter webkitNotifications;
+    readonly attribute NotificationCenter webkitNotifications;
 #endif
 #if defined(ENABLE_NOTIFICATIONS) && ENABLE_NOTIFICATIONS
     attribute NotificationConstructor Notification;

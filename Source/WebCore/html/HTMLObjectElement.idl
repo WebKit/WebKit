@@ -21,7 +21,6 @@
 [
     CustomNamedSetter,
     JSCustomGetOwnPropertySlotAndDescriptor,
-    V8CustomIndexedGetter,
     CustomCall
 ] interface HTMLObjectElement : HTMLElement {
     readonly attribute HTMLFormElement form;

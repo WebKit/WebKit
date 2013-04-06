@@ -29,7 +29,6 @@
     JSGenerateToNativeObject,
     JSInlineGetOwnPropertySlot,
     ObjCPolymorphic,
-    V8DependentLifetime
 ] interface Node
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     : Object, EventTarget
@@ -49,34 +48,33 @@
     const unsigned short      DOCUMENT_FRAGMENT_NODE         = 11;
     const unsigned short      NOTATION_NODE                  = 12;
 
-    readonly attribute [TreatReturnedNullStringAs=Null, V8PerWorldBindings] DOMString        nodeName;
+    readonly attribute [TreatReturnedNullStringAs=Null] DOMString        nodeName;
 
              // FIXME: the spec says this can also raise on retrieval.
-             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, V8PerWorldBindings] DOMString        nodeValue
+             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString        nodeValue
                  setter raises(DOMException);
 
-    readonly attribute [V8PerWorldBindings] unsigned short   nodeType;
-    readonly attribute [V8PerWorldBindings] Node             parentNode;
-    readonly attribute [V8PerWorldBindings] NodeList         childNodes;
-    readonly attribute [V8PerWorldBindings] Node             firstChild;
-    readonly attribute [V8PerWorldBindings] Node             lastChild;
-    readonly attribute [V8PerWorldBindings] Node             previousSibling;
-    readonly attribute [V8PerWorldBindings] Node             nextSibling;
-    readonly attribute [V8PerWorldBindings] Document         ownerDocument;
+    readonly attribute unsigned short   nodeType;
+    readonly attribute Node             parentNode;
+    readonly attribute NodeList         childNodes;
+    readonly attribute Node             firstChild;
+    readonly attribute Node             lastChild;
+    readonly attribute Node             previousSibling;
+    readonly attribute Node             nextSibling;
+    readonly attribute Document         ownerDocument;
 
-    [ObjCLegacyUnnamedParameters, Custom, V8PerWorldBindings] Node insertBefore(in [CustomReturn] Node newChild,
+    [ObjCLegacyUnnamedParameters, Custom] Node insertBefore(in [CustomReturn] Node newChild,
                                                             in Node refChild)
         raises(DOMException);
     [ObjCLegacyUnnamedParameters, Custom] Node replaceChild(in Node newChild,
                                                             in [CustomReturn] Node oldChild)
         raises(DOMException);
-    [Custom, V8PerWorldBindings] Node removeChild(in [CustomReturn] Node oldChild)
+    [Custom] Node removeChild(in [CustomReturn] Node oldChild)
         raises(DOMException);
-    [Custom, V8PerWorldBindings] Node appendChild(in [CustomReturn] Node newChild)
+    [Custom] Node appendChild(in [CustomReturn] Node newChild)
         raises(DOMException);
 
     boolean            hasChildNodes();
-    [V8DeliverCustomElementCallbacks, V8PerWorldBindings]
     Node               cloneNode(in [Optional=DefaultIsUndefined] boolean deep);
     void               normalize();
 
@@ -85,23 +83,23 @@
     [ObjCLegacyUnnamedParameters] boolean isSupported(in [Optional=DefaultIsUndefined] DOMString feature, 
                                        in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString version);
 
-    readonly attribute [TreatReturnedNullStringAs=Null, V8PerWorldBindings] DOMString        namespaceURI;
-             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, V8PerWorldBindings] DOMString        prefix
+    readonly attribute [TreatReturnedNullStringAs=Null] DOMString        namespaceURI;
+             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString        prefix
                  setter raises(DOMException);
-    readonly attribute [TreatReturnedNullStringAs=Null, V8PerWorldBindings] DOMString        localName;
+    readonly attribute [TreatReturnedNullStringAs=Null] DOMString        localName;
 
 #if defined(LANGUAGE_OBJECTIVE_C)
-    readonly attribute [V8PerWorldBindings] NamedNodeMap     attributes;
+    readonly attribute NamedNodeMap     attributes;
     boolean            hasAttributes();
 #endif
 
 
     // Introduced in DOM Level 3:
 
-    readonly attribute [TreatReturnedNullStringAs=Null, V8PerWorldBindings] DOMString       baseURI;
+    readonly attribute [TreatReturnedNullStringAs=Null] DOMString       baseURI;
 
              // FIXME: the spec says this can also raise on retrieval.
-             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString, V8PerWorldBindings] DOMString       textContent
+             attribute [TreatReturnedNullStringAs=Null, TreatNullAs=NullString] DOMString       textContent
                  setter raises(DOMException);
 
     boolean            isSameNode(in [Optional=DefaultIsUndefined] Node other);
@@ -124,11 +122,11 @@
     boolean contains(in [Optional=DefaultIsUndefined] Node other);
 
     // IE extensions
-    readonly attribute [V8PerWorldBindings] Element          parentElement;
+    readonly attribute Element          parentElement;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
     // Objective-C extensions
-    readonly attribute [V8PerWorldBindings] boolean          isContentEditable;
+    readonly attribute boolean          isContentEditable;
 
     void inspect();
 #endif /* defined(LANGUAGE_OBJECTIVE_C) */

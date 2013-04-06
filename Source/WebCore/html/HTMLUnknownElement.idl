@@ -26,8 +26,7 @@
  * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
  * IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-[
-    V8SkipVTableValidation
-] interface HTMLUnknownElement : HTMLElement {
+
+interface HTMLUnknownElement : HTMLElement {
 };
 

@@ -28,6 +28,6 @@
     Conditional=WEB_SOCKETS,
     Supplemental=WorkerContext
 ] interface WorkerContextWebSocket {
-    [JSCustomGetter,V8EnabledAtRuntime] attribute WebSocketConstructor WebSocket; // Usable with the new operator
+    [JSCustomGetter] attribute WebSocketConstructor WebSocket; // Usable with the new operator
 };
 

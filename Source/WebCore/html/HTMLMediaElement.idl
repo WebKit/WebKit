@@ -97,26 +97,26 @@ readonly attribute [Conditional=MEDIA_STATISTICS] unsigned long webkitAudioDecod
 readonly attribute [Conditional=MEDIA_STATISTICS] unsigned long webkitVideoDecodedByteCount;
 
 #if defined(ENABLE_ENCRYPTED_MEDIA) && ENABLE_ENCRYPTED_MEDIA
-[V8EnabledAtRuntime=encryptedMedia] void webkitGenerateKeyRequest(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, in [Optional] Uint8Array initData)
+void webkitGenerateKeyRequest(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, in [Optional] Uint8Array initData)
     raises (DOMException);
-[V8EnabledAtRuntime=encryptedMedia] void webkitAddKey(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, in Uint8Array key, in [Optional] Uint8Array initData, in [Optional=DefaultIsNullString] DOMString sessionId)
+void webkitAddKey(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, in Uint8Array key, in [Optional] Uint8Array initData, in [Optional=DefaultIsNullString] DOMString sessionId)
     raises (DOMException);
-[V8EnabledAtRuntime=encryptedMedia] void webkitCancelKeyRequest(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, in [Optional=DefaultIsNullString] DOMString sessionId)
+void webkitCancelKeyRequest(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, in [Optional=DefaultIsNullString] DOMString sessionId)
     raises (DOMException);
 
-    attribute [V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitkeyadded;
-    attribute [V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitkeyerror;
-    attribute [V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitkeymessage;
+    attribute EventListener onwebkitkeyadded;
+    attribute EventListener onwebkitkeyerror;
+    attribute EventListener onwebkitkeymessage;
 #endif
-    attribute [Conditional=ENCRYPTED_MEDIA|ENCRYPTED_MEDIA_V2, V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitneedkey;
+    attribute [Conditional=ENCRYPTED_MEDIA|ENCRYPTED_MEDIA_V2] EventListener onwebkitneedkey;
 #if defined(ENABLE_ENCRYPTED_MEDIA_V2) && ENABLE_ENCRYPTED_MEDIA_V2
-    attribute [V8EnabledAtRuntime=encryptedMedia] MediaKeys mediaKeys;
+    attribute MediaKeys mediaKeys;
 #endif
 
 #if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK
-[V8EnabledAtRuntime=webkitVideoTrack] TextTrack addTextTrack(in DOMString kind, in [Optional] DOMString label, in [Optional] DOMString language)
+TextTrack addTextTrack(in DOMString kind, in [Optional] DOMString label, in [Optional] DOMString language)
     raises (DOMException);
-readonly attribute [V8EnabledAtRuntime=webkitVideoTrack] TextTrackList textTracks;
+readonly attribute TextTrackList textTracks;
 #endif
 
 [Reflect, TreatNullAs=NullString] attribute DOMString mediaGroup;

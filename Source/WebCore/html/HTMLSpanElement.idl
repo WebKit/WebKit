@@ -24,8 +24,6 @@
  */
 
 // http://www.whatwg.org/specs/web-apps/current-work/#htmlspanelement
-[
-    V8SkipVTableValidation
-] interface HTMLSpanElement : HTMLElement {
+interface HTMLSpanElement : HTMLElement {
 };
 

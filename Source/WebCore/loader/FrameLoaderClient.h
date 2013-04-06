@@ -53,13 +53,6 @@ class NSCachedURLResponse;
 class NSView;
 #endif
 
-#if USE(V8)
-namespace v8 {
-class Context;
-template<class T> class Handle;
-}
-#endif
-
 namespace WebCore {
 
     class AuthenticationChallenge;
@@ -287,12 +280,6 @@ namespace WebCore {
         virtual void didPerformFirstNavigation() const = 0; // "Navigation" here means a transition from one page to another that ends up in the back/forward list.
 
         virtual void didExhaustMemoryAvailableForScript() { };
-
-#if USE(V8)
-        virtual void didCreateScriptContext(v8::Handle<v8::Context>, int extensionGroup, int worldId) = 0;
-        virtual void willReleaseScriptContext(v8::Handle<v8::Context>, int worldId) = 0;
-        virtual bool allowScriptExtension(const String& extensionName, int extensionGroup, int worldId) = 0;
-#endif
 
         virtual void registerForIconNotification(bool listen = true) = 0;
         

@@ -23,8 +23,6 @@
     CustomIndexedSetter,
     NamedGetter,
     GenerateIsReachable=ImplOwnerNodeRoot,
-    V8CustomIndexedGetter,
-    V8DependentLifetime,
 ] interface HTMLOptionsCollection : HTMLCollection {
     attribute long selectedIndex;
     [CustomSetter] attribute unsigned long length

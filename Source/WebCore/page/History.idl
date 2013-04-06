@@ -24,9 +24,6 @@
  */
 
 [
-#if defined(V8_BINDING) && V8_BINDING
-    CheckSecurity,
-#endif
     JSCustomGetOwnPropertySlotAndDescriptor,
     CustomNamedSetter,
     JSGenerateIsReachable=ImplFrame,
@@ -41,8 +38,8 @@
     [DoNotCheckSecurity, CallWith=ScriptExecutionContext] void forward();
     [DoNotCheckSecurity, CallWith=ScriptExecutionContext] void go(in [Optional=DefaultIsUndefined] long distance);
 
-    [Custom, V8EnabledPerContext=pushState] void pushState(in any data, in DOMString title, in [Optional] DOMString url)
+    [Custom] void pushState(in any data, in DOMString title, in [Optional] DOMString url)
         raises(DOMException);
-    [Custom, V8EnabledPerContext=pushState] void replaceState(in any data, in DOMString title, in [Optional] DOMString url)
+    [Custom] void replaceState(in any data, in DOMString title, in [Optional] DOMString url)
         raises(DOMException);
 };

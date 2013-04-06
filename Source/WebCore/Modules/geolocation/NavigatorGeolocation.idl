@@ -21,6 +21,6 @@
     Conditional=GEOLOCATION,
     Supplemental=Navigator
 ] interface NavigatorGeolocation {
-    [V8EnabledAtRuntime] readonly attribute Geolocation geolocation;
+    readonly attribute Geolocation geolocation;
 };
 

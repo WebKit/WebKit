@@ -163,7 +163,7 @@ public:
     NPObject* windowScriptNPObject();
 #endif
 
-    // FIXME: Stub for parity with V8 implementation. http://webkit.org/b/100815
+    // FIXME: Script run from an isolated world should bypass a page's CSP. http://webkit.org/b/100815
     bool shouldBypassMainWorldContentSecurityPolicy() { return false; }
 
 private:

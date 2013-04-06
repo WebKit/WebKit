@@ -31,12 +31,12 @@
     const unsigned short TEMPORARY = 0;
     const unsigned short PERSISTENT = 1;
 
-    [V8EnabledAtRuntime=FileSystem] void webkitRequestFileSystem(in unsigned short type, in long long size, in [Callback, Optional] FileSystemCallback successCallback, in [Callback, Optional] ErrorCallback errorCallback);
-    [V8EnabledAtRuntime=FileSystem] DOMFileSystemSync webkitRequestFileSystemSync(in unsigned short type, in long long size) raises (FileException);
-    [V8EnabledAtRuntime=FileSystem] void webkitResolveLocalFileSystemURL(in DOMString url, in [Callback] EntryCallback successCallback, in [Callback, Optional] ErrorCallback errorCallback);
-    [V8EnabledAtRuntime=FileSystem] EntrySync webkitResolveLocalFileSystemSyncURL(in DOMString url) raises (FileException);
+    void webkitRequestFileSystem(in unsigned short type, in long long size, in [Callback, Optional] FileSystemCallback successCallback, in [Callback, Optional] ErrorCallback errorCallback);
+    DOMFileSystemSync webkitRequestFileSystemSync(in unsigned short type, in long long size) raises (FileException);
+    void webkitResolveLocalFileSystemURL(in DOMString url, in [Callback] EntryCallback successCallback, in [Callback, Optional] ErrorCallback errorCallback);
+    EntrySync webkitResolveLocalFileSystemSyncURL(in DOMString url) raises (FileException);
 
-    [V8EnabledAtRuntime=FileSystem] attribute FileErrorConstructor FileError;
-    [V8EnabledAtRuntime=FileSystem] attribute FileExceptionConstructor FileException;
+    attribute FileErrorConstructor FileError;
+    attribute FileExceptionConstructor FileException;
 };
 

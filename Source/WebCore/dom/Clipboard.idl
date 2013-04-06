@@ -26,9 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    V8SkipVTableValidation
-] interface Clipboard {
+interface Clipboard {
              [TreatReturnedNullStringAs=Undefined] attribute DOMString dropEffect;
              [TreatReturnedNullStringAs=Undefined] attribute DOMString effectAllowed;
     [CustomGetter] readonly attribute Array types;
@@ -41,6 +39,6 @@
     [Custom] void setDragImage(in HTMLImageElement image, in long x, in long y)
         raises(DOMException);
 
-    [Conditional=DATA_TRANSFER_ITEMS, V8EnabledAtRuntime=DataTransferItems] readonly attribute DataTransferItemList items;
+    [Conditional=DATA_TRANSFER_ITEMS] readonly attribute DataTransferItemList items;
 };
 

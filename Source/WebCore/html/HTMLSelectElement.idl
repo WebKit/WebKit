@@ -21,8 +21,6 @@
 [
     IndexedGetter,
     CustomIndexedSetter,
-    V8CustomIndexedGetter,
-    V8SkipVTableValidation
 ] interface HTMLSelectElement : HTMLElement {
     attribute [Reflect] boolean autofocus;
     attribute [Reflect] boolean disabled;

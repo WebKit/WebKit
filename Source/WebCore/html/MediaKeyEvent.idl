@@ -25,7 +25,6 @@
 
 [
     Conditional=ENCRYPTED_MEDIA,
-    V8EnabledAtRuntime=encryptedMedia,
     ConstructorTemplate=Event 
 ] interface MediaKeyEvent : Event {
     [InitializedByEventConstructor] readonly attribute DOMString keySystem;

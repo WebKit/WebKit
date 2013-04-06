@@ -25,7 +25,6 @@
     OmitConstructor,
     CustomToJSObject,
     JSCustomToNativeObject,
-    V8NoWrapperCache,
     EventTarget
 ] interface EventTarget {
     [ObjCLegacyUnnamedParameters] void addEventListener(in DOMString type, 

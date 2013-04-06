@@ -27,9 +27,9 @@
     Conditional=SCRIPTED_SPEECH,
     Supplemental=DOMWindow
 ] interface DOMWindowSpeech {
-    [V8EnabledAtRuntime] attribute SpeechRecognitionConstructor webkitSpeechRecognition;
-    [V8EnabledAtRuntime] attribute SpeechRecognitionErrorConstructor webkitSpeechRecognitionError;
-    [V8EnabledAtRuntime] attribute SpeechRecognitionEventConstructor webkitSpeechRecognitionEvent;
-    [V8EnabledAtRuntime] attribute SpeechGrammarConstructor webkitSpeechGrammar;
-    [V8EnabledAtRuntime] attribute SpeechGrammarListConstructor webkitSpeechGrammarList;
+    attribute SpeechRecognitionConstructor webkitSpeechRecognition;
+    attribute SpeechRecognitionErrorConstructor webkitSpeechRecognitionError;
+    attribute SpeechRecognitionEventConstructor webkitSpeechRecognitionEvent;
+    attribute SpeechGrammarConstructor webkitSpeechGrammar;
+    attribute SpeechGrammarListConstructor webkitSpeechGrammarList;
 };

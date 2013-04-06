@@ -28,7 +28,7 @@
     Conditional=INDEXED_DATABASE,
     Supplemental=DOMWindow
 ] interface DOMWindowIndexedDatabase {
-    [ImplementedAs=indexedDB,V8MeasureAs=PrefixedIndexedDB] readonly attribute IDBFactory webkitIndexedDB;
+    [ImplementedAs=indexedDB] readonly attribute IDBFactory webkitIndexedDB;
 
     attribute IDBCursorConstructor webkitIDBCursor;
     attribute IDBDatabaseConstructor webkitIDBDatabase;
@@ -39,7 +39,7 @@
     attribute IDBRequestConstructor webkitIDBRequest;
     attribute IDBTransactionConstructor webkitIDBTransaction;
 
-    [V8MeasureAs=UnprefixedIndexedDB] readonly attribute IDBFactory indexedDB;
+    readonly attribute IDBFactory indexedDB;
 
     attribute IDBCursorConstructor IDBCursor;
     attribute IDBCursorWithValueConstructor IDBCursorWithValue;

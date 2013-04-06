@@ -27,7 +27,6 @@
 [
     Constructor,
     CallWith=ScriptExecutionContext,
-    V8CustomConstructor,
     JSCustomMarkFunction,
     JSNoStaticTables,
     ImplementationLacksVTable

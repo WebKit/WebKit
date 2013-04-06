@@ -32,7 +32,7 @@
     attribute boolean applyAuthorStyles;
     attribute boolean resetStyleInheritance;
 
-    [TreatNullAs=NullString, V8DeliverCustomElementCallbacks]
+    [TreatNullAs=NullString]
     attribute DOMString innerHTML setter raises(DOMException);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT

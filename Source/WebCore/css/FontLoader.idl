@@ -30,7 +30,6 @@
 
 [
     Conditional=FONT_LOAD_EVENTS,
-    V8EnabledAtRuntime=fontLoadEvents,
     ActiveDOMObject,
     EventTarget,
     GenerateIsReachable=ImplDocument,

@@ -49,11 +49,7 @@
     // FIXME: Remove evaluateReturnsEvalFunction once InjectedScriptHost returns eval in evaluate on V8. https://webkit.org/b/113134
     readonly attribute boolean evaluateReturnsEvalFunction;
 
-#if defined(V8_BINDING) && V8_BINDING
-    [Custom] any evaluate(in DOMString text);
-#else
     [Custom] readonly attribute any evaluate;
-#endif
 
     [Custom] DOMString databaseId(in any database);
     [Custom] DOMString storageId(in any storage);

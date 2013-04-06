@@ -95,11 +95,11 @@
     void startRendering();
 
 #if defined(ENABLE_LEGACY_WEB_AUDIO) && ENABLE_LEGACY_WEB_AUDIO
-    [V8MeasureAs=LegacyWebAudio, ImplementedAs=createGain] GainNode createGainNode();
-    [V8MeasureAs=LegacyWebAudio, ImplementedAs=createDelay] DelayNode createDelayNode(in [Optional] double maxDelayTime) 
+    [ImplementedAs=createGain] GainNode createGainNode();
+    [ImplementedAs=createDelay] DelayNode createDelayNode(in [Optional] double maxDelayTime) 
         raises(DOMException);
 
-    [V8MeasureAs=LegacyWebAudio, ImplementedAs=createScriptProcessor] ScriptProcessorNode createJavaScriptNode(in unsigned long bufferSize, in [Optional] unsigned long numberOfInputChannels, in [Optional] unsigned long numberOfOutputChannels)
+    [ImplementedAs=createScriptProcessor] ScriptProcessorNode createJavaScriptNode(in unsigned long bufferSize, in [Optional] unsigned long numberOfInputChannels, in [Optional] unsigned long numberOfOutputChannels)
         raises(DOMException);
 #endif
 

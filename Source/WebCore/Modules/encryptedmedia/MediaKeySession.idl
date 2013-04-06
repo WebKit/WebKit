@@ -41,9 +41,9 @@ interface [
     void close();
     
     // EventListeners
-    attribute [V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitkeyadded;
-    attribute [V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitkeyerror;
-    attribute [V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitkeymessage;
+    attribute EventListener onwebkitkeyadded;
+    attribute EventListener onwebkitkeyerror;
+    attribute EventListener onwebkitkeymessage;
 
     // EventTarget interface
     void addEventListener(in DOMString type, 

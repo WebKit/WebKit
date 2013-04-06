@@ -50,7 +50,7 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
     attribute long long                longLongAttr;
     attribute unsigned long long       unsignedLongLongAttr;
     attribute DOMString                stringAttr;
-    [V8MeasureAs=TestFeature] attribute TestObj testObjAttr;
+    attribute TestObj testObjAttr;
 
     // WK_ucfirst, WK_lcfirst exceptional cases.
     attribute TestObj                  XMLObjAttr;
@@ -75,7 +75,7 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
     void    voidMethodWithArgs(in long longArg, in DOMString strArg, in TestObj objArg);
     long    longMethod();
     long    longMethodWithArgs(in long longArg, in DOMString strArg, in TestObj objArg);
-    [V8MeasureAs=TestFeature] TestObj objMethod();
+    TestObj objMethod();
     TestObj objMethodWithArgs(in long longArg, in DOMString strArg, in TestObj objArg);
 
     void methodWithSequenceArg(in sequence<ScriptProfile> sequenceArg);
@@ -97,7 +97,7 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
 
     // 'Custom' extended attribute
     [Custom] attribute long            customAttr;
-    [Custom, V8MeasureAs=CustomTestFeature] void customMethod();
+    [Custom] void customMethod();
     [Custom] void customMethodWithArgs(in long longArg, in DOMString strArg, in TestObj objArg);
 
     void addEventListener(in DOMString type, 
@@ -141,7 +141,7 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
     void    methodWithOptionalStringIsUndefined(in [Optional=DefaultIsUndefined] DOMString str);
     void    methodWithOptionalStringIsNullString(in [Optional=DefaultIsNullString] DOMString str);
 
-#if defined(TESTING_V8) || defined(TESTING_JS)
+#if defined(TESTING_JS)
     // 'Callback' extended attribute
     void    methodWithCallbackArg(in [Callback] TestCallback callback);
     void    methodWithNonCallbackArgAndCallbackArg(in long nonCallback, in [Callback] TestCallback callback);
@@ -149,19 +149,6 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
     // static methods with 'Callback' extended attribute
     static void    staticMethodWithCallbackAndOptionalArg(in [Callback, Optional] TestCallback callback);
     static void    staticMethodWithCallbackArg(in [Callback] TestCallback callback);
-#endif
-
-#if defined(TESTING_V8)
-    // 'EnforceRange' extended attribute
-    void    methodWithEnforceRangeInt32(in [EnforceRange] long value);
-    void    methodWithEnforceRangeUInt32(in [EnforceRange] unsigned long value);
-    void    methodWithEnforceRangeInt64(in [EnforceRange] long long value);
-    void    methodWithEnforceRangeUInt64(in [EnforceRange] unsigned long long value);
-
-    attribute [EnforceRange] long enforcedRangeLongAttr;
-    attribute [EnforceRange] unsigned long enforcedRangeUnsignedLongAttr;
-    attribute [EnforceRange] long long enforcedRangeLongLongAttr;
-    attribute [EnforceRange] unsigned long long enforcedRangeUnsignedLongLongAttr;
 #endif
 
     // 'Conditional' extended attribute
@@ -180,14 +167,14 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
 
     [Conditional=Condition1] const unsigned short CONDITIONAL_CONST = 0;
 
-#if defined(TESTING_V8) || defined(TESTING_JS)
+#if defined(TESTING_JS)
     [CachedAttribute] readonly attribute any cachedAttribute1;
     [CachedAttribute] readonly attribute any cachedAttribute2;
 #endif
     
     attribute any anyAttribute;
 
-#if defined(TESTING_V8) || defined(TESTING_JS)
+#if defined(TESTING_JS)
     // Overloads
     void    overloadedMethod(in TestObj? objArg, in [StrictTypeChecking] DOMString strArg);
     void    overloadedMethod(in TestObj? objArg, in [Optional] long longArg);
@@ -213,29 +200,8 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
 
     void classMethodWithClamp(in [Clamp] unsigned short objArgsShort, in [Clamp] unsigned long objArgsLong);
 
-#if defined(TESTING_V8)
-    // 'V8EnabledAtRuntime' methods and attributes.
-    [V8EnabledAtRuntime] void enabledAtRuntimeMethod1(in long longArg);
-    [V8EnabledAtRuntime=FeatureName] void enabledAtRuntimeMethod2(in long longArg);
-    [V8EnabledAtRuntime] attribute long enabledAtRuntimeAttr1;
-    [V8EnabledAtRuntime=FeatureName] attribute long enabledAtRuntimeAttr2;
-    // 'V8EnabledPerContext' methods and attributes.
-    [V8EnabledPerContext] void enabledPerContextMethod1(in long longArg);
-    [V8EnabledPerContext=FeatureName] void enabledPerContextMethod2(in long longArg);
-    [V8EnabledPerContext] attribute long enabledPerContextAttr1;
-    [V8EnabledPerContext=FeatureName] attribute long enabledPerContextAttr2;
-#endif
-
-
-#if defined(TESTING_V8)
-    attribute float[]                   floatArray;
-    attribute double[]                  doubleArray;
-#endif
-
 #if defined(TESTING_JS)
     void methodWithUnsignedLongSequence(in sequence<unsigned long> unsignedLongSequence);
-#endif
-#if defined(TESTING_V8) || defined(TESTING_JS)
     DOMString[] stringArrayFunction(in DOMString[] values) raises(DOMException);
     DOMStringList domStringListFunction(in DOMStringList values) raises(DOMException);
 #endif
@@ -296,12 +262,4 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
 
     attribute long? nullableStringValue
         getter raises(DOMException);
-
-#if defined(TESTING_V8)
-    [V8PerWorldBindings] readonly attribute TestObj perWorldReadOnlyAttribute;
-    [V8PerWorldBindings] attribute TestObj perWorldAttribute;
-    [V8PerWorldBindings] void perWorldMethod();
-    [V8PerWorldBindings] void overloadedPerWorldMethod(in long longArg);
-    [V8PerWorldBindings] void overloadedPerWorldMethod(in DOMString strArg, in long longArg);
-#endif
 };

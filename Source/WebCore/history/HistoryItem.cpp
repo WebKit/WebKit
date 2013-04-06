@@ -720,13 +720,8 @@ void HistoryItem::encodeBackForwardTreeNode(Encoder& encoder) const
     encoder.encodeFloat(m_pageScaleFactor);
 
     encoder.encodeBool(m_stateObject);
-    if (m_stateObject) {
-#if !USE(V8)
+    if (m_stateObject)
         encoder.encodeBytes(m_stateObject->data().data(), m_stateObject->data().size());
-#else
-        encoder.encodeString(m_stateObject->toWireString());
-#endif
-    }
 
     encoder.encodeString(m_target);
 }
@@ -832,17 +827,10 @@ resume:
     if (!decoder.decodeBool(hasStateObject))
         return 0;
     if (hasStateObject) {
-#if !USE(V8)
         Vector<uint8_t> bytes;
         if (!decoder.decodeBytes(bytes))
             return 0;
         node->m_stateObject = SerializedScriptValue::adopt(bytes);
-#else
-        String string;
-        if (!decoder.decodeString(string))
-            return 0;
-        node->m_stateObject = SerializedScriptValue::createFromWire(string);
-#endif
     }
 
     if (!decoder.decodeString(node->m_target))

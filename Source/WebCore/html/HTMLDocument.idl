@@ -20,10 +20,8 @@
 
 [
     CustomNamedGetter,
-    V8CustomToJSObject,
-    V8SkipVTableValidation
 ] interface HTMLDocument : Document {
-    [JSCustom, V8Custom] void open();
+    [JSCustom] void open();
     void close();
     [Custom] void write(in [Optional=DefaultIsUndefined] DOMString text);
     [Custom] void writeln(in [Optional=DefaultIsUndefined] DOMString text);

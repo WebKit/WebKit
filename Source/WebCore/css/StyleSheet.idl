@@ -25,7 +25,6 @@
     JSGenerateIsReachable,
     CustomToJSObject,
     ObjCPolymorphic,
-    V8GenerateIsReachable=ImplOwnerNodeRoot
 ] interface StyleSheet {
     [TreatReturnedNullStringAs=Null] readonly attribute DOMString        type;
              attribute boolean          disabled;

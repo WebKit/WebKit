@@ -19,9 +19,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
-[
-    V8SkipVTableValidation
-] interface HTMLInputElement : HTMLElement {
+interface HTMLInputElement : HTMLElement {
     [Reflect] attribute DOMString accept;
     [Reflect] attribute DOMString alt;
     [Reflect] attribute DOMString autocomplete;
@@ -105,8 +103,8 @@
     [Conditional=DIRECTORY_UPLOAD, Reflect] attribute boolean webkitdirectory;
     [Reflect] attribute DOMString useMap;
     [Reflect] attribute boolean incremental;
-    [Conditional=INPUT_SPEECH, Reflect, V8EnabledAtRuntime] attribute boolean webkitSpeech;
-    [Conditional=INPUT_SPEECH, Reflect, V8EnabledAtRuntime] attribute boolean webkitGrammar;
+    [Conditional=INPUT_SPEECH, Reflect] attribute boolean webkitSpeech;
+    [Conditional=INPUT_SPEECH, Reflect] attribute boolean webkitGrammar;
     [Conditional=INPUT_SPEECH, NotEnumerable] attribute EventListener onwebkitspeechchange;
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
