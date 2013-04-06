@@ -104,9 +104,6 @@ public:
     void inspectImpl(PassRefPtr<InspectorValue> objectToInspect, PassRefPtr<InspectorValue> hints);
     void getEventListenersImpl(Node*, Vector<EventListenerInfo>& listenersArray);
 
-    // FIXME: Remove evaluateReturnsEvalFunction once InjectedScriptHost returns eval in evaluate on V8. https://webkit.org/b/113134
-    bool evaluateReturnsEvalFunction() { return true; }
-
     void clearConsoleMessages();
     void copyText(const String& text);
 #if ENABLE(SQL_DATABASE)

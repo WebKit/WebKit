@@ -46,9 +46,6 @@
     [Custom] Array getInternalProperties(in any object);
     [Custom] Array getEventListeners(in Node node);
 
-    // FIXME: Remove evaluateReturnsEvalFunction once InjectedScriptHost returns eval in evaluate on V8. https://webkit.org/b/113134
-    readonly attribute boolean evaluateReturnsEvalFunction;
-
     [Custom] readonly attribute any evaluate;
 
     [Custom] DOMString databaseId(in any database);
