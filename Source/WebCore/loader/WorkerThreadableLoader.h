@@ -115,7 +115,6 @@ namespace WebCore {
             virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent) OVERRIDE;
             virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&) OVERRIDE;
             virtual void didReceiveData(const char*, int dataLength) OVERRIDE;
-            virtual void didReceiveCachedMetadata(const char*, int dataLength) OVERRIDE;
             virtual void didFinishLoading(unsigned long identifier, double finishTime) OVERRIDE;
             virtual void didFail(const ResourceError&) OVERRIDE;
             virtual void didFailAccessControlCheck(const ResourceError&) OVERRIDE;

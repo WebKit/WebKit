@@ -83,7 +83,6 @@ public:
     virtual void didReceiveResponse(const ResourceResponse&);
     virtual void didReceiveData(const char*, int, long long encodedDataLength, DataPayloadType);
     virtual void didReceiveBuffer(PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType);
-    virtual void didReceiveCachedMetadata(const char*, int) { }
     void willStopBufferingData(const char*, int);
     virtual void didFinishLoading(double finishTime);
     virtual void didFail(const ResourceError&);
@@ -106,7 +105,6 @@ public:
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&) OVERRIDE;
     virtual void didReceiveData(ResourceHandle*, const char*, int, int encodedDataLength) OVERRIDE;
     virtual void didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer>, int encodedDataLength) OVERRIDE;
-    virtual void didReceiveCachedMetadata(ResourceHandle*, const char* data, int length) OVERRIDE { didReceiveCachedMetadata(data, length); }
     virtual void didFinishLoading(ResourceHandle*, double finishTime) OVERRIDE;
     virtual void didFail(ResourceHandle*, const ResourceError&) OVERRIDE;
     virtual void wasBlocked(ResourceHandle*) OVERRIDE;

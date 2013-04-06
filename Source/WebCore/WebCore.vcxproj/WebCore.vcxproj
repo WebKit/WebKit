@@ -3975,7 +3975,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_WinCairo|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\page\win\FrameWin.cpp" />
-    <ClCompile Include="..\loader\CachedMetadata.cpp" />
     <ClCompile Include="..\loader\CookieJar.cpp" />
     <ClCompile Include="..\loader\CrossOriginAccessControl.cpp" />
     <ClCompile Include="..\loader\CrossOriginPreflightResultCache.cpp" />
@@ -11460,7 +11459,6 @@
     <ClInclude Include="..\page\WindowFocusAllowedIndicator.h" />
     <ClInclude Include="..\page\WorkerNavigator.h" />
     <ClInclude Include="..\page\win\FrameWin.h" />
-    <ClInclude Include="..\loader\CachedMetadata.h" />
     <ClInclude Include="..\loader\CookieJar.h" />
     <ClInclude Include="..\loader\CrossOriginAccessControl.h" />
     <ClInclude Include="..\loader\CrossOriginPreflightResultCache.h" />

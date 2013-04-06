@@ -63,7 +63,6 @@ private:
     virtual void didReceiveResponse(const ResourceResponse&) OVERRIDE;
     virtual void didReceiveData(const char*, int, long long encodedDataLength, DataPayloadType) OVERRIDE;
     virtual void didReceiveBuffer(PassRefPtr<SharedBuffer>, long long encodedDataLength, DataPayloadType) OVERRIDE;
-    virtual void didReceiveCachedMetadata(const char*, int) OVERRIDE;
     virtual void didFinishLoading(double finishTime) OVERRIDE;
     virtual void didFail(const ResourceError&) OVERRIDE;
     virtual void willCancel(const ResourceError&) OVERRIDE;

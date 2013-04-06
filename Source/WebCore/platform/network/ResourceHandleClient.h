@@ -69,7 +69,6 @@ namespace WebCore {
         virtual void didReceiveData(ResourceHandle*, const char*, int, int /*encodedDataLength*/) { }
         virtual void didReceiveBuffer(ResourceHandle*, PassRefPtr<SharedBuffer>, int encodedDataLength);
         
-        virtual void didReceiveCachedMetadata(ResourceHandle*, const char*, int) { }
         virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/) { }
         virtual void didFail(ResourceHandle*, const ResourceError&) { }
         virtual void wasBlocked(ResourceHandle*) { }

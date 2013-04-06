@@ -267,13 +267,6 @@ void SubresourceLoader::sendDataToResource(const char* data, int length)
         m_resource->data(resourceData(), false);
 }
 
-void SubresourceLoader::didReceiveCachedMetadata(const char* data, int length)
-{
-    ASSERT(m_state == Initialized);
-    ASSERT(!m_resource->resourceToRevalidate());
-    m_resource->setSerializedCachedMetadata(data, length);
-}
-
 void SubresourceLoader::didFinishLoading(double finishTime)
 {
     if (m_state != Initialized)

@@ -202,19 +202,6 @@ void WorkerThreadableLoader::MainThreadBridge::didReceiveData(const char* data, 
     m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveData, m_workerClientWrapper, vector.release()), m_taskMode);
 }
 
-static void workerContextDidReceiveCachedMetadata(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, PassOwnPtr<Vector<char> > vectorData)
-{
-    ASSERT_UNUSED(context, context->isWorkerContext());
-    workerClientWrapper->didReceiveCachedMetadata(vectorData->data(), vectorData->size());
-}
-
-void WorkerThreadableLoader::MainThreadBridge::didReceiveCachedMetadata(const char* data, int dataLength)
-{
-    OwnPtr<Vector<char> > vector = adoptPtr(new Vector<char>(dataLength)); // needs to be an OwnPtr for usage with createCallbackTask.
-    memcpy(vector->data(), data, dataLength);
-    m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveCachedMetadata, m_workerClientWrapper, vector.release()), m_taskMode);
-}
-
 static void workerContextDidFinishLoading(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, unsigned long identifier, double finishTime)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());

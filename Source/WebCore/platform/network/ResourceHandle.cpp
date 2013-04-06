@@ -239,9 +239,4 @@ void ResourceHandle::didChangePriority(ResourceLoadPriority)
     // Optionally implemented by platform.
 }
 
-void ResourceHandle::cacheMetadata(const ResourceResponse&, const Vector<char>&)
-{
-    // Optionally implemented by platform.
-}
-
 } // namespace WebCore

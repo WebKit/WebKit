@@ -2220,9 +2220,6 @@
     <ClCompile Include="..\page\win\FrameWin.cpp">
       <Filter>page\win</Filter>
     </ClCompile>
-    <ClCompile Include="..\loader\CachedMetadata.cpp">
-      <Filter>loader</Filter>
-    </ClCompile>
     <ClCompile Include="..\loader\CookieJar.cpp">
       <Filter>loader</Filter>
     </ClCompile>
@@ -8999,9 +8996,6 @@
     </ClInclude>
     <ClInclude Include="..\page\win\FrameWin.h">
       <Filter>page\win</Filter>
-    </ClInclude>
-    <ClInclude Include="..\loader\CachedMetadata.h">
-      <Filter>loader</Filter>
     </ClInclude>
     <ClInclude Include="..\loader\CookieJar.h">
       <Filter>loader</Filter>
