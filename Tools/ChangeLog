@@ -1,3 +1,12 @@
+2013-04-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolled out 147820 and 147818 because they caused plugins tests to ASSERT
+        https://bugs.webkit.org/show_bug.cgi?id=114094
+
+        Reviewed by Anders Carlsson.
+
+        * Scripts/run-jsc:
+
 2013-04-05  Ojan Vafai  <ojan@chromium.org>
 
         Move the flakiness dashboard to the new instance at webkit-test-results.appspot.com
