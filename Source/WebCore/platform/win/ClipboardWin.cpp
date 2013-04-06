@@ -605,8 +605,12 @@ DragImageRef ClipboardWin::createDragImage(IntPoint& loc) const
 {
     HBITMAP result = 0;
     if (m_dragImage) {
+#if USE(CAIRO) || USE(CG)
         result = createDragImageFromImage(m_dragImage->image());        
         loc = m_dragLoc;
+#else
+        notImplemented();
+#endif
     } else if (m_dragImageElement) {
         Node* node = m_dragImageElement.get();
         result = node->document()->frame()->nodeImage(node);
