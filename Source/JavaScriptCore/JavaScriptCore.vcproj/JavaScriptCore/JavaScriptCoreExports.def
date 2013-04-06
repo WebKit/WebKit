@@ -121,7 +121,6 @@ EXPORTS
     ?clearAll@BitVector@WTF@@QAEXXZ
     ?collate@Collator@WTF@@QBE?AW4Result@12@PB_WI0I@Z
     ?collectAllGarbage@Heap@JSC@@QAEXXZ
-    ?column@StackFrame@JSC@@QAEIXZ
     ?computeHash@SHA1@WTF@@QAEXAAV?$Vector@E$0BE@@2@@Z
     ?configurable@PropertyDescriptor@JSC@@QBE_NXZ
     ?construct@JSC@@YAPAVJSObject@1@PAVExecState@1@VJSValue@1@W4ConstructType@1@ABTConstructData@1@ABVArgList@1@@Z
@@ -254,7 +253,6 @@ EXPORTS
     ?getOwnPropertySlotSlow@JSObject@JSC@@AAE_NPAVExecState@2@VPropertyName@2@AAVPropertySlot@2@@Z
     ?getPropertyNames@JSObject@JSC@@SAXPAV12@PAVExecState@2@AAVPropertyNameArray@2@W4EnumerationMode@2@@Z
     ?getPropertyNames@JSProxy@JSC@@KAXPAVJSObject@2@PAVExecState@2@AAVPropertyNameArray@2@W4EnumerationMode@2@@Z
-    ?getStackTrace@Interpreter@JSC@@SAXPAVJSGlobalData@2@AAV?$Vector@UStackFrame@JSC@@$0A@@WTF@@I@Z
     ?getSlice@ArgList@JSC@@QBEXHAAV12@@Z
     ?getString@JSCell@JSC@@QBE?AVString@WTF@@PAVExecState@2@@Z
     ?getString@JSCell@JSC@@QBE_NPAVExecState@2@AAVString@WTF@@@Z
@@ -288,7 +286,6 @@ EXPORTS
     ?isValidAllocation@Heap@JSC@@AAE_NI@Z
     ?isValidCallee@JSValue@JSC@@QAE_NXZ
     ?length@CString@WTF@@QBEIXZ
-    ?line@StackFrame@JSC@@QAEIXZ
     ?lock@JSLock@JSC@@QAEXXZ
     ?lock@Mutex@WTF@@QAEXXZ
     ?lockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
@@ -416,7 +413,6 @@ EXPORTS
     ?ToPrecision@DoubleToStringConverter@double_conversion@WTF@@QBE_NNHPAVStringBuilder@23@@Z
     ?ToShortest@DoubleToStringConverter@double_conversion@WTF@@QBE_NNPAVStringBuilder@23@@Z
     ?toString@JSObject@JSC@@QBEPAVJSString@2@PAVExecState@2@@Z
-    ?toString@StackFrame@JSC@@QAE?AVString@WTF@@PAVExecState@2@@Z
     ?toStringDecimal@DecimalNumber@WTF@@QBEIPAEI@Z
     ?toStringExponential@DecimalNumber@WTF@@QBEIPAEI@Z
     ?toStringSlowCase@JSValue@JSC@@ABEPAVJSString@2@PAVExecState@2@@Z

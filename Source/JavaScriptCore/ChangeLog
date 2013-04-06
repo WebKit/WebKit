@@ -1,5 +1,12 @@
 2013-04-06  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix the Windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+        Removed symbols that aren't exported.
+
+2013-04-06  Geoffrey Garen  <ggaren@apple.com>
+
         Rolled out 147820 and 147818 because they caused plugins tests to ASSERT
         https://bugs.webkit.org/show_bug.cgi?id=114094
 
