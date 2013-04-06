@@ -40,7 +40,7 @@ void InjectedBundleController::platformInitialize()
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
                           [NSNumber numberWithInteger:4],   @"AppleAntiAliasingThreshold",
                           [NSNumber numberWithInteger:0],   @"AppleFontSmoothing",
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080 && !PLATFORM(CHROMIUM)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
                           [NSNumber numberWithBool:NO],     @"NSScrollAnimationEnabled",
 #else
                           [NSNumber numberWithBool:NO],     @"AppleScrollAnimationEnabled",
