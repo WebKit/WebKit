@@ -1,3 +1,12 @@
+2013-04-05  Benjamin Poulain  <benjamin@webkit.org>
+
+        Second attempt to fix the Windows bot
+
+        Unreviewed.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+
 2013-04-05  Benjamin Poulain  <bpoulain@apple.com>
 
         Attempt to fix the Windows bot
