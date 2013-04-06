@@ -1,5 +1,12 @@
 2013-04-06  Patrick Gansterer  <paroga@webkit.org>
 
+        Unreviewed build fix after r146932.
+
+        * profiler/ProfilerDatabase.cpp:
+        (Profiler):
+
+2013-04-06  Patrick Gansterer  <paroga@webkit.org>
+
         Do not call getenv() on Windows CE where it does not exist.
 
         * runtime/JSGlobalData.cpp:

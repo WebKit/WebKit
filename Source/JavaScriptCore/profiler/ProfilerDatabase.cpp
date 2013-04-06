@@ -33,7 +33,11 @@
 
 namespace JSC { namespace Profiler {
 
+#if COMPILER(MINGW) || COMPILER(MSVC7_OR_LOWER) || OS(WINCE)
+static int databaseCounter;
+#else
 static volatile int databaseCounter;
+#endif
 static SpinLock registrationLock = SPINLOCK_INITIALIZER;
 static int didRegisterAtExit;
 static Database* firstDatabase;
