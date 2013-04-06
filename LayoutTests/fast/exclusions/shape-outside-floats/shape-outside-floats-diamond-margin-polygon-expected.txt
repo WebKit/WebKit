@@ -1,0 +1,19 @@
+PASS elementRect('l1').top is 0
+PASS elementRect('l1').left is within 1 of 98
+PASS elementRect('l2').top is 20
+PASS elementRect('l2').left is within 1 of 118
+PASS elementRect('l3').top is 40
+PASS elementRect('l3').left is within 1 of 138
+PASS elementRect('l4').top is 80
+PASS elementRect('l4').left is within 1 of 138
+PASS elementRect('l5').top is 100
+PASS elementRect('l5').left is within 1 of 118
+PASS elementRect('l6').top is 120
+PASS elementRect('l6').left is within 1 of 98
+X
+X
+X
+
+X
+X
+X

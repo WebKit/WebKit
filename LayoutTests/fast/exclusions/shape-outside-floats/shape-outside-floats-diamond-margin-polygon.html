@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.internals)
+        window.internals.settings.setCSSExclusionsEnabled(true);
+</script>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="../resources/subpixel-utils.js"></script>
+
+<style>
+#container {
+    font: 20px/1 Ahem, sans-serif;
+    width: 200px;
+    height: 300px;
+  }
+
+#float-left {
+    float: left;
+    position: relative;
+    overflow: visible;
+    -webkit-shape-outside: polygon(50px 0px, 100px 50px, 50px 100px, 0px 50px);
+    -webkit-shape-margin: 20px;
+}
+
+#svg-shape {
+    position: absolute;
+    display:block;
+    width: 100px;
+    height: 100px;
+}
+</style>
+
+<body>
+<p></p>
+<div id="container">
+    <div id="float-left">
+        <svg id="svg-shape" xmlns="http://www.w3.org/2000/">
+            <polygon points="50,0 100,50 50,100 0,50" fill="rgba(0,150,0, 0.5)"/>
+        </svg>
+    </div>
+    <span id="l1">X</span></br><span id="l2">X</span><br/><span id="l3">X</span><br/><br/><span id="l4">X</span><br/><span id="l5">X</span><br/><span id="l6">X</span>
+</div>
+</body>
+<script>
+function elementRect(elementId) 
+{
+    var s = document.getElementById("container").getBoundingClientRect();
+    var r = document.getElementById(elementId).getBoundingClientRect();
+    return {left: r.left - s.left, top: r.top - s.top, width: r.width, height: r.height};
+}
+
+// The polygon's X coordinates are 0, 50, 100, specified relative to the "float-left" element.  Its shape-marign is 20px.
+// The horizontal center of the margin polygon, relative to the container element is 20*sqrt(2) + 50. So the left
+// edge of the (20px square) Ahem character on the first "l1" line (y == 20) is: 20 + (20*sqrt(2) + 50) = 98.28.
+// The second and third lines, "l2" and "l3" are similar, each one begins 20 pixels farther to the right.
+// The left edges of "l4-l6" are the same as the first three, just in reverse order.
+
+function marginLeftXIntercept(lineNumber)
+{
+    return SubPixelLayout.roundLineLeft(lineNumber * 20 + 20 * Math.sqrt(2) + 50);
+}
+
+shouldBe("elementRect('l1').top", "0");
+shouldBeCloseTo("elementRect('l1').left", marginLeftXIntercept(1), 1);
+
+shouldBe("elementRect('l2').top", "20");
+shouldBeCloseTo("elementRect('l2').left", marginLeftXIntercept(2), 1);
+
+shouldBe("elementRect('l3').top", "40");
+shouldBeCloseTo("elementRect('l3').left", marginLeftXIntercept(3), 1);
+
+shouldBe("elementRect('l4').top", "80");
+shouldBeCloseTo("elementRect('l4').left", marginLeftXIntercept(3), 1);
+
+shouldBe("elementRect('l5').top", "100");
+shouldBeCloseTo("elementRect('l5').left", marginLeftXIntercept(2), 1);
+
+shouldBe("elementRect('l6').top", "120");
+shouldBeCloseTo("elementRect('l6').left", marginLeftXIntercept(1), 1);
+
+</script>
+</html>
+

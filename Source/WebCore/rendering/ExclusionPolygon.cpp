@@ -108,20 +108,22 @@ static inline FloatSize outwardEdgeNormal(const FloatPolygonEdge& edge)
     return -inwardEdgeNormal(edge);
 }
 
-static inline void appendArc(Vector<FloatPoint>& vertices, const FloatPoint& arcCenter, float arcRadius, const FloatPoint& startArcVertex, const FloatPoint& endArcVertex)
+static inline void appendArc(Vector<FloatPoint>& vertices, const FloatPoint& arcCenter, float arcRadius, const FloatPoint& startArcVertex, const FloatPoint& endArcVertex, bool padding)
 {
     float startAngle = atan2(startArcVertex.y() - arcCenter.y(), startArcVertex.x() - arcCenter.x());
     float endAngle = atan2(endArcVertex.y() - arcCenter.y(), endArcVertex.x() - arcCenter.x());
+    const float twoPI = piFloat * 2;
     if (startAngle < 0)
-        startAngle += piFloat * 2;
+        startAngle += twoPI;
     if (endAngle < 0)
-        endAngle += piFloat * 2;
+        endAngle += twoPI;
+    float angle = (startAngle > endAngle) ? (startAngle - endAngle) : (startAngle + twoPI - endAngle);
     const float arcSegmentCount = 5; // An odd number so that one arc vertex will be eactly arcRadius from arcCenter.
-    float angle5 = ((startAngle > endAngle) ? (startAngle - endAngle) : (startAngle + piFloat * 2 - endAngle)) / arcSegmentCount;
+    float angle5 =  ((padding) ? -angle : twoPI - angle) / arcSegmentCount;
 
     vertices.append(startArcVertex);
     for (unsigned i = 1; i < arcSegmentCount; ++i) {
-        float angle = startAngle - angle5 * i;
+        float angle = startAngle + angle5 * i;
         vertices.append(arcCenter + FloatPoint(cos(angle) * arcRadius, sin(angle) * arcRadius));
     }
     vertices.append(endArcVertex);
@@ -141,20 +143,29 @@ static inline FloatPolygon *computeShapePaddingBounds(const FloatPolygon& polygo
         if (prevOffsetEdge.intersection(thisOffsetEdge, intersection))
             paddedVertices->append(intersection);
         else if (isReflexVertex(prevEdge.vertex1(), thisEdge.vertex1(), thisEdge.vertex2()))
-            appendArc(*paddedVertices, thisEdge.vertex1(), padding, prevOffsetEdge.vertex2(), thisOffsetEdge.vertex1());
+            appendArc(*paddedVertices, thisEdge.vertex1(), padding, prevOffsetEdge.vertex2(), thisOffsetEdge.vertex1(), true);
     }
 
     return new FloatPolygon(adoptPtr(paddedVertices), fillRule);
 }
 
-// FIXME: this is just a stub (bug 112917)
 static inline FloatPolygon *computeShapeMarginBounds(const FloatPolygon& polygon, float margin, WindRule fillRule)
 {
-    UNUSED_PARAM(margin);
+    Vector<FloatPoint>* marginVertices = new Vector<FloatPoint>();
+    FloatPoint intersection;
 
-    Vector<FloatPoint>* marginVertices = new Vector<FloatPoint>(polygon.numberOfVertices());
-    for (unsigned i = 0; i < polygon.numberOfVertices(); ++i)
-        (*marginVertices)[i] = polygon.vertexAt(i);
+    for (unsigned i = 0; i < polygon.numberOfEdges(); ++i) {
+        const FloatPolygonEdge& thisEdge = polygon.edgeAt(i);
+        const FloatPolygonEdge& prevEdge = thisEdge.previousEdge();
+        OffsetPolygonEdge thisOffsetEdge(thisEdge, outwardEdgeNormal(thisEdge) * margin);
+        OffsetPolygonEdge prevOffsetEdge(prevEdge, outwardEdgeNormal(prevEdge) * margin);
+
+        if (prevOffsetEdge.intersection(thisOffsetEdge, intersection))
+            marginVertices->append(intersection);
+        else
+            appendArc(*marginVertices, thisEdge.vertex1(), margin, prevOffsetEdge.vertex2(), thisOffsetEdge.vertex1(), false);
+    }
+
     return new FloatPolygon(adoptPtr(marginVertices), fillRule);
 }
 
@@ -328,21 +339,22 @@ static void computeOverlappingEdgeXProjections(const FloatPolygon& polygon, floa
 
 void ExclusionPolygon::getExcludedIntervals(float logicalTop, float logicalHeight, SegmentList& result) const
 {
-    if (isEmpty())
+    const FloatPolygon& polygon = shapeMarginBounds();
+    if (polygon.isEmpty())
         return;
 
     float y1 = logicalTop;
     float y2 = y1 + logicalHeight;
 
     Vector<ExclusionInterval> y1XIntervals, y2XIntervals;
-    computeXIntersections(m_polygon, y1, true, y1XIntervals);
-    computeXIntersections(m_polygon, y2, false, y2XIntervals);
+    computeXIntersections(polygon, y1, true, y1XIntervals);
+    computeXIntersections(polygon, y2, false, y2XIntervals);
 
     Vector<ExclusionInterval> mergedIntervals;
     mergeExclusionIntervals(y1XIntervals, y2XIntervals, mergedIntervals);
 
     Vector<ExclusionInterval> edgeIntervals;
-    computeOverlappingEdgeXProjections(m_polygon, y1, y2, edgeIntervals);
+    computeOverlappingEdgeXProjections(polygon, y1, y2, edgeIntervals);
 
     Vector<ExclusionInterval> excludedIntervals;
     mergeExclusionIntervals(mergedIntervals, edgeIntervals, excludedIntervals);
