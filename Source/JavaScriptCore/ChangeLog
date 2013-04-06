@@ -1,3 +1,10 @@
+2013-04-02  Roger Fong  <roger_fong@apple.com>
+
+        Build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+
 2013-04-05  Oliver Hunt  <oliver@apple.com>
 
         Build fix.

@@ -253,8 +253,8 @@ EXPORTS
     ?getOwnPropertySlotSlow@JSObject@JSC@@AAE_NPAVExecState@2@VPropertyName@2@AAVPropertySlot@2@@Z
     ?getPropertyNames@JSObject@JSC@@SAXPAV12@PAVExecState@2@AAVPropertyNameArray@2@W4EnumerationMode@2@@Z
     ?getPropertyNames@JSProxy@JSC@@KAXPAVJSObject@2@PAVExecState@2@AAVPropertyNameArray@2@W4EnumerationMode@2@@Z
+    ?getStackTrace@Interpreter@JSC@@SAXPAVJSGlobalData@2@AAV?$Vector@UStackFrame@JSC@@$0A@@WTF@@I@Z
     ?getSlice@ArgList@JSC@@QBEXHAAV12@@Z
-    ?getStackTrace@Interpreter@JSC@@SAXPAVJSGlobalData@2@AAV?$Vector@UStackFrame@JSC@@$0A@@WTF@@@Z
     ?getString@JSCell@JSC@@QBE?AVString@WTF@@PAVExecState@2@@Z
     ?getString@JSCell@JSC@@QBE_NPAVExecState@2@AAVString@WTF@@@Z
     ?getter@PropertyDescriptor@JSC@@QBE?AVJSValue@2@XZ
@@ -413,6 +413,7 @@ EXPORTS
     ?ToPrecision@DoubleToStringConverter@double_conversion@WTF@@QBE_NNHPAVStringBuilder@23@@Z
     ?ToShortest@DoubleToStringConverter@double_conversion@WTF@@QBE_NNPAVStringBuilder@23@@Z
     ?toString@JSObject@JSC@@QBEPAVJSString@2@PAVExecState@2@@Z
+    ?toString@StackFrame@JSC@@QAE?AVString@WTF@@PAVExecState@2@@Z
     ?toStringDecimal@DecimalNumber@WTF@@QBEIPAEI@Z
     ?toStringExponential@DecimalNumber@WTF@@QBEIPAEI@Z
     ?toStringSlowCase@JSValue@JSC@@ABEPAVJSString@2@PAVExecState@2@@Z
