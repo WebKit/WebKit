@@ -40,10 +40,6 @@
 #import "Event.h"
 #import "EventNames.h"
 
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
-#import "DOMSVGZoomEvent.h"
-#endif
-
 using WebCore::eventNames;
 
 Class kitClass(WebCore::Event* impl)

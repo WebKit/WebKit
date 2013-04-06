@@ -33,10 +33,6 @@ NSString *DOMRangeException = @"DOMRangeException";
 NSString *DOMEventException = @"DOMEventException";
 NSString *DOMXPathException = @"DOMXPathException";
 
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
-NSString *DOMSVGException = @"DOMSVGException";
-#endif
-
 namespace WebCore {
 
 void raiseDOMException(ExceptionCode ec)

@@ -50,12 +50,6 @@
 #import <JavaScriptCore/APICast.h>
 #import <wtf/HashMap.h>
 
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
-#import "DOMSVG.h"
-#import "SVGElementInstance.h"
-#import "SVGNames.h"
-#endif
-
 using namespace JSC;
 using namespace WebCore;
 
@@ -149,90 +143,6 @@ static void createElementClassMap()
     addElementClass(HTMLNames::trTag, [DOMHTMLTableRowElement class]);
     addElementClass(HTMLNames::ulTag, [DOMHTMLUListElement class]);
     addElementClass(HTMLNames::xmpTag, [DOMHTMLPreElement class]);
-
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
-    addElementClass(SVGNames::aTag, [DOMSVGAElement class]);
-    addElementClass(SVGNames::altGlyphDefTag, [DOMSVGAltGlyphDefElement class]);
-    addElementClass(SVGNames::altGlyphTag, [DOMSVGAltGlyphElement class]);
-    addElementClass(SVGNames::altGlyphItemTag, [DOMSVGAltGlyphItemElement class]);
-    addElementClass(SVGNames::animateTag, [DOMSVGAnimateElement class]);
-    addElementClass(SVGNames::animateColorTag, [DOMSVGAnimateColorElement class]);
-    addElementClass(SVGNames::animateTransformTag, [DOMSVGAnimateTransformElement class]);
-    addElementClass(SVGNames::setTag, [DOMSVGSetElement class]);
-    addElementClass(SVGNames::circleTag, [DOMSVGCircleElement class]);
-    addElementClass(SVGNames::clipPathTag, [DOMSVGClipPathElement class]);
-    addElementClass(SVGNames::cursorTag, [DOMSVGCursorElement class]);
-    addElementClass(SVGNames::defsTag, [DOMSVGDefsElement class]);
-    addElementClass(SVGNames::descTag, [DOMSVGDescElement class]);
-    addElementClass(SVGNames::ellipseTag, [DOMSVGEllipseElement class]);
-#if ENABLE(FILTERS)
-    addElementClass(SVGNames::feBlendTag, [DOMSVGFEBlendElement class]);
-    addElementClass(SVGNames::feColorMatrixTag, [DOMSVGFEColorMatrixElement class]);
-    addElementClass(SVGNames::feComponentTransferTag, [DOMSVGFEComponentTransferElement class]);
-    addElementClass(SVGNames::feCompositeTag, [DOMSVGFECompositeElement class]);
-    addElementClass(SVGNames::feConvolveMatrixTag, [DOMSVGFEConvolveMatrixElement class]);
-    addElementClass(SVGNames::feDiffuseLightingTag, [DOMSVGFEDiffuseLightingElement class]);
-    addElementClass(SVGNames::feDisplacementMapTag, [DOMSVGFEDisplacementMapElement class]);
-    addElementClass(SVGNames::feDistantLightTag, [DOMSVGFEDistantLightElement class]);
-    addElementClass(SVGNames::feDropShadowTag, [DOMSVGFEDropShadowElement class]);
-    addElementClass(SVGNames::feFloodTag, [DOMSVGFEFloodElement class]);
-    addElementClass(SVGNames::feFuncATag, [DOMSVGFEFuncAElement class]);
-    addElementClass(SVGNames::feFuncBTag, [DOMSVGFEFuncBElement class]);
-    addElementClass(SVGNames::feFuncGTag, [DOMSVGFEFuncGElement class]);
-    addElementClass(SVGNames::feFuncRTag, [DOMSVGFEFuncRElement class]);
-    addElementClass(SVGNames::feGaussianBlurTag, [DOMSVGFEGaussianBlurElement class]);
-    addElementClass(SVGNames::feImageTag, [DOMSVGFEImageElement class]);
-    addElementClass(SVGNames::feMergeTag, [DOMSVGFEMergeElement class]);
-    addElementClass(SVGNames::feMergeNodeTag, [DOMSVGFEMergeNodeElement class]);
-    addElementClass(SVGNames::feMorphologyTag, [DOMSVGFEMorphologyElement class]);
-    addElementClass(SVGNames::feOffsetTag, [DOMSVGFEOffsetElement class]);
-    addElementClass(SVGNames::fePointLightTag, [DOMSVGFEPointLightElement class]);
-    addElementClass(SVGNames::feSpecularLightingTag, [DOMSVGFESpecularLightingElement class]);
-    addElementClass(SVGNames::feSpotLightTag, [DOMSVGFESpotLightElement class]);
-    addElementClass(SVGNames::feTileTag, [DOMSVGFETileElement class]);
-    addElementClass(SVGNames::feTurbulenceTag, [DOMSVGFETurbulenceElement class]);
-    addElementClass(SVGNames::filterTag, [DOMSVGFilterElement class]);
-#endif
-#if ENABLE(SVG_FONTS)
-    addElementClass(SVGNames::fontTag, [DOMSVGFontElement class]);
-    addElementClass(SVGNames::font_faceTag, [DOMSVGFontFaceElement class]);
-    addElementClass(SVGNames::font_face_formatTag, [DOMSVGFontFaceFormatElement class]);
-    addElementClass(SVGNames::font_face_nameTag, [DOMSVGFontFaceNameElement class]);
-    addElementClass(SVGNames::font_face_srcTag, [DOMSVGFontFaceSrcElement class]);
-    addElementClass(SVGNames::font_face_uriTag, [DOMSVGFontFaceUriElement class]);
-    addElementClass(SVGNames::glyphTag, [DOMSVGGlyphElement class]);
-    addElementClass(SVGNames::glyphRefTag, [DOMSVGGlyphRefElement class]);
-#endif
-    addElementClass(SVGNames::gTag, [DOMSVGGElement class]);
-    addElementClass(SVGNames::imageTag, [DOMSVGImageElement class]);
-    addElementClass(SVGNames::lineTag, [DOMSVGLineElement class]);
-    addElementClass(SVGNames::linearGradientTag, [DOMSVGLinearGradientElement class]);
-    addElementClass(SVGNames::markerTag, [DOMSVGMarkerElement class]);
-    addElementClass(SVGNames::maskTag, [DOMSVGMaskElement class]);
-    addElementClass(SVGNames::metadataTag, [DOMSVGMetadataElement class]);
-#if ENABLE(SVG_FONTS)
-    addElementClass(SVGNames::missing_glyphTag, [DOMSVGMissingGlyphElement class]);
-#endif
-    addElementClass(SVGNames::pathTag, [DOMSVGPathElement class]);
-    addElementClass(SVGNames::patternTag, [DOMSVGPatternElement class]);
-    addElementClass(SVGNames::polygonTag, [DOMSVGPolygonElement class]);
-    addElementClass(SVGNames::polylineTag, [DOMSVGPolylineElement class]);
-    addElementClass(SVGNames::radialGradientTag, [DOMSVGRadialGradientElement class]);
-    addElementClass(SVGNames::rectTag, [DOMSVGRectElement class]);
-    addElementClass(SVGNames::scriptTag, [DOMSVGScriptElement class]);
-    addElementClass(SVGNames::stopTag, [DOMSVGStopElement class]);
-    addElementClass(SVGNames::styleTag, [DOMSVGStyleElement class]);
-    addElementClass(SVGNames::svgTag, [DOMSVGSVGElement class]);
-    addElementClass(SVGNames::switchTag, [DOMSVGSwitchElement class]);
-    addElementClass(SVGNames::symbolTag, [DOMSVGSymbolElement class]);
-    addElementClass(SVGNames::textTag, [DOMSVGTextElement class]);
-    addElementClass(SVGNames::titleTag, [DOMSVGTitleElement class]);
-    addElementClass(SVGNames::trefTag, [DOMSVGTRefElement class]);
-    addElementClass(SVGNames::tspanTag, [DOMSVGTSpanElement class]);
-    addElementClass(SVGNames::textPathTag, [DOMSVGTextPathElement class]);
-    addElementClass(SVGNames::useTag, [DOMSVGUseElement class]);
-    addElementClass(SVGNames::viewTag, [DOMSVGViewElement class]);
-#endif
 }
 
 static Class lookupElementClass(const QualifiedName& tag)
@@ -318,10 +228,6 @@ Class kitClass(WebCore::Node* impl)
         case WebCore::Node::DOCUMENT_NODE:
             if (static_cast<WebCore::Document*>(impl)->isHTMLDocument())
                 return [DOMHTMLDocument class];
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
-            if (static_cast<WebCore::Document*>(impl)->isSVGDocument())
-                return [DOMSVGDocument class];
-#endif
             return [DOMDocument class];
         case WebCore::Node::DOCUMENT_TYPE_NODE:
             return [DOMDocumentType class];

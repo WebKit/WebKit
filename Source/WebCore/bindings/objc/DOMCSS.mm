@@ -68,10 +68,6 @@
 #import "DOMWebKitCSSViewportRule.h"
 #endif
 
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
-#import "DOMSVGPaint.h"
-#endif
-
 #if ENABLE(SHADOW_DOM)
 #import "DOMCSSHostRule.h"
 #endif
@@ -155,12 +151,6 @@ Class kitClass(WebCore::CSSValue* impl)
         case WebCore::CSSValue::CSS_INITIAL:
             return [DOMCSSValue class];
         case WebCore::CSSValue::CSS_CUSTOM:
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
-            if (impl->isSVGPaint())
-                return [DOMSVGPaint class];
-            if (impl->isSVGColor())
-                return [DOMSVGColor class];
-#endif
             return [DOMCSSValue class];
     }
     ASSERT_NOT_REACHED();
