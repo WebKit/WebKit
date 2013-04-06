@@ -577,6 +577,8 @@ static int getLineNumberForCallFrame(JSGlobalData* globalData, CallFrame* callFr
         return codeBlock->lineNumberForBytecodeOffset(codeBlock->codeOrigin(callFrame->codeOriginIndexForDFG()).bytecodeIndex);
 #endif
     return codeBlock->lineNumberForBytecodeOffset(callFrame->bytecodeOffsetForNonDFGCode());
+#else
+    return 0;
 #endif
 }
 
