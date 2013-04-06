@@ -1,3 +1,13 @@
+2013-04-05  Benjamin Poulain  <bpoulain@apple.com>
+
+        Attempt to fix the Windows bot
+
+        Unreviewed.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+        r147825 removed the symbol for nullptr_t. Add it back.
+
 2013-04-02  Roger Fong  <roger_fong@apple.com>
 
         Build fix.
