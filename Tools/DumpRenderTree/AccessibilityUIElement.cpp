@@ -28,6 +28,7 @@
 
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
+#include <limits.h>
 
 // Static Functions
 

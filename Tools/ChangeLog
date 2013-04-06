@@ -1,3 +1,12 @@
+2013-04-06  Ed Bartosh  <bartosh@gmail.com>
+
+        [EFL] build fails with error: 'UINT_MAX' was not declared in this scope
+        https://bugs.webkit.org/show_bug.cgi?id=114086
+
+        Reviewed by Tim Horton.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp: Included limits.h
+
 2013-04-06  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove remaining PLATFORM(CHROMIUM) guards in TestWebKitAPI, WebKitTestRunner
