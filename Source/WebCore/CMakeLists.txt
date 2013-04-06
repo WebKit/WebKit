@@ -1874,7 +1874,6 @@ set(WebCore_SOURCES
     platform/ThreadTimers.cpp
     platform/Timer.cpp
     platform/UUID.cpp
-    platform/VisitedLinks.cpp
     platform/Widget.cpp
 
     platform/animation/Animation.cpp

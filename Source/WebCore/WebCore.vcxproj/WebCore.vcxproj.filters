@@ -2607,9 +2607,6 @@
     <ClCompile Include="..\platform\UUID.cpp">
       <Filter>platform</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\VisitedLinks.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\Widget.cpp">
       <Filter>platform</Filter>
     </ClCompile>
@@ -9517,12 +9514,6 @@
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\UUID.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\VisitedLinks.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\VisitedLinkStrategy.h">
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\Widget.h">

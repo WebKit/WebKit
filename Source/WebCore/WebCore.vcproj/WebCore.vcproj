@@ -29383,14 +29383,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\platform\VisitedLinks.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\platform\VisitedLinks.h"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\VisitedLinkStrategy.h"
 				>
 			</File>

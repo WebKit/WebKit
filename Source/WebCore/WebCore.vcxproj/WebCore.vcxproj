@@ -4133,7 +4133,6 @@
     <ClCompile Include="..\platform\ThreadTimers.cpp" />
     <ClCompile Include="..\platform\Timer.cpp" />
     <ClCompile Include="..\platform\UUID.cpp" />
-    <ClCompile Include="..\platform\VisitedLinks.cpp" />
     <ClCompile Include="..\platform\Widget.cpp" />
     <ClCompile Include="..\platform\win\BitmapInfo.cpp" />
     <ClCompile Include="..\platform\win\BString.cpp" />
@@ -11638,7 +11637,6 @@
     <ClInclude Include="..\platform\Timer.h" />
     <ClInclude Include="..\platform\TreeShared.h" />
     <ClInclude Include="..\platform\UUID.h" />
-    <ClInclude Include="..\platform\VisitedLinks.h" />
     <ClInclude Include="..\platform\VisitedLinkStrategy.h" />
     <ClInclude Include="..\platform\Widget.h" />
     <ClInclude Include="..\platform\win\BitmapInfo.h" />
