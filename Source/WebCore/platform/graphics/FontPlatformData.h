@@ -63,10 +63,6 @@ typedef const struct __CTFont* CTFontRef;
 #include <wtf/RetainPtr.h>
 #include <wtf/text/StringImpl.h>
 
-#if PLATFORM(CHROMIUM) && OS(DARWIN)
-#include "CrossProcessFontLoading.h"  
-#endif
-
 #if PLATFORM(WIN)
 typedef struct HFONT__* HFONT;
 #endif
@@ -85,10 +81,6 @@ namespace WebCore {
 
 class FontDescription;
 class SharedBuffer;
-
-#if PLATFORM(CHROMIUM) && OS(DARWIN)
-class HarfBuzzFace;
-#endif
 
 #if OS(DARWIN)
 inline CTFontRef toCTFontRef(NSFont *nsFont) { return reinterpret_cast<CTFontRef>(nsFont); }
@@ -160,10 +152,6 @@ public:
     cairo_scaled_font_t* scaledFont() const { return m_scaledFont; }
 #endif
 
-#if PLATFORM(CHROMIUM) && OS(DARWIN)
-    HarfBuzzFace* harfBuzzFace();
-#endif
-
     unsigned hash() const
     {
 #if PLATFORM(WIN) && !USE(CAIRO)
@@ -221,11 +209,6 @@ private:
     const FontPlatformData& platformDataAssign(const FontPlatformData&);
 #if OS(DARWIN)
     // Load various data about the font specified by |nsFont| with the size fontSize into the following output paramters:
-    // Note: Callers should always take into account that for the Chromium port, |outNSFont| isn't necessarily the same
-    // font as |nsFont|. This because the sandbox may block loading of the original font.
-    // * outNSFont - The font that was actually loaded, for the Chromium port this may be different than nsFont.
-    // The caller is responsible for calling CFRelease() on this parameter when done with it.
-    // * cgFont - CGFontRef representing the input font at the specified point size.
     void loadFont(NSFont*, float fontSize, NSFont*& outNSFont, CGFontRef&);
     static NSFont* hashTableDeletedFontValue() { return reinterpret_cast<NSFont *>(-1); }
 #elif PLATFORM(WIN)
@@ -261,11 +244,6 @@ private:
 
 #if USE(CAIRO)
     cairo_scaled_font_t* m_scaledFont;
-#endif
-
-#if PLATFORM(CHROMIUM) && OS(DARWIN)
-    RefPtr<MemoryActivatedFont> m_inMemoryFont;
-    RefPtr<HarfBuzzFace> m_harfBuzzFace;
 #endif
 
     bool m_isColorBitmapFont;

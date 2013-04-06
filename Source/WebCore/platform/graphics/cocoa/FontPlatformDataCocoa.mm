@@ -28,10 +28,6 @@
 #import <AppKit/NSFont.h>
 #import <wtf/text/WTFString.h>
 
-#if PLATFORM(CHROMIUM) && OS(DARWIN)
-#import "HarfBuzzFace.h"
-#endif
-
 namespace WebCore {
 
 // These CoreText Text Spacing feature selectors are not defined in CoreText.
@@ -62,8 +58,6 @@ FontPlatformData::FontPlatformData(NSFont *nsFont, float size, bool isPrinterFon
     loadFont(nsFont, size, m_font, cgFont);
     
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
-    // FIXME: Chromium: The following code isn't correct for the Chromium port since the sandbox might
-    // have blocked font loading, in which case we'll only have the real loaded font file after the call to loadFont().
     {
         CTFontSymbolicTraits traits = CTFontGetSymbolicTraits(toCTFontRef(m_font));
         m_isColorBitmapFont = traits & kCTFontColorGlyphsTrait;
@@ -91,11 +85,6 @@ void FontPlatformData::platformDataInit(const FontPlatformData& f)
 
     m_cgFont = f.m_cgFont;
     m_CTFont = f.m_CTFont;
-
-#if PLATFORM(CHROMIUM) && OS(DARWIN)
-    m_inMemoryFont = f.m_inMemoryFont;
-    m_harfBuzzFace = f.m_harfBuzzFace;
-#endif
 }
 
 const FontPlatformData& FontPlatformData::platformDataAssign(const FontPlatformData& f)
@@ -109,10 +98,6 @@ const FontPlatformData& FontPlatformData::platformDataAssign(const FontPlatformD
         CFRelease(m_font);
     m_font = f.m_font;
     m_CTFont = f.m_CTFont;
-#if PLATFORM(CHROMIUM) && OS(DARWIN)
-    m_inMemoryFont = f.m_inMemoryFont;
-    m_harfBuzzFace = f.m_harfBuzzFace;
-#endif
     return *this;
 }
 
@@ -140,17 +125,7 @@ void FontPlatformData::setFont(NSFont *font)
     CGFontRef cgFont = 0;
     NSFont* loadedFont = 0;
     loadFont(m_font, m_size, loadedFont, cgFont);
-    
-#if PLATFORM(CHROMIUM) && OS(DARWIN)
-    // If loadFont replaced m_font with a fallback font, then release the
-    // previous font to counter the retain above. Then retain the new font.
-    if (loadedFont != m_font) {
-        CFRelease(m_font);
-        CFRetain(loadedFont);
-        m_font = loadedFont;
-    }
-#endif
-    
+
     m_cgFont.adoptCF(cgFont);
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
     {
@@ -247,13 +222,6 @@ CTFontRef FontPlatformData::ctFont() const
     if (m_CTFont)
         return m_CTFont.get();
 
-#if PLATFORM(CHROMIUM)
-    if (m_inMemoryFont) {
-        m_CTFont.adoptCF(CTFontCreateWithGraphicsFont(m_inMemoryFont->cgFont(), m_size, 0, cascadeToLastResortFontDescriptor()));
-        return m_CTFont.get();
-    }
-#endif
-
     m_CTFont = toCTFontRef(m_font);
     if (m_CTFont) {
         CTFontDescriptorRef fontDescriptor;
@@ -282,37 +250,6 @@ CTFontRef FontPlatformData::ctFont() const
 
     return m_CTFont.get();
 }
-
-#if PLATFORM(CHROMIUM) && OS(DARWIN)
-static bool isAATFont(CTFontRef ctFont)
-{
-    CFDataRef table = CTFontCopyTable(ctFont, kCTFontTableMort, 0);
-    if (table) {
-        CFRelease(table);
-        return true;
-    }
-    table = CTFontCopyTable(ctFont, kCTFontTableMorx, 0);
-    if (table) {
-        CFRelease(table);
-        return true;
-    }
-    return false;
-}
-
-HarfBuzzFace* FontPlatformData::harfBuzzFace()
-{
-    CTFontRef font = ctFont();
-    // HarfBuzz can't handle AAT font
-    if (isAATFont(font))
-        return 0;
-
-    if (!m_harfBuzzFace) {
-        uint64_t uniqueID = reinterpret_cast<uintptr_t>(font);
-        m_harfBuzzFace = HarfBuzzFace::create(const_cast<FontPlatformData*>(this), uniqueID);
-    }
-    return m_harfBuzzFace.get();
-}
-#endif
 
 #ifndef NDEBUG
 String FontPlatformData::description() const
