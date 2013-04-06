@@ -1098,9 +1098,7 @@ void LoopBlinnPathProcessor::subdivideCurvesSlow()
         for (Vector<Segment*>::iterator iter = curSegments.begin(); iter != curSegments.end(); ++iter) {
             Segment* seg = *iter;
             ASSERT(seg->kind() == Segment::Cubic);
-            for (Vector<Segment*>::iterator iter2 = curSegments.begin();
-                 iter2 != curSegments.end();
-                 iter2++) {
+            for (Vector<Segment*>::iterator iter2 = curSegments.begin(); iter2 != curSegments.end(); ++iter2) {
                 Segment* seg2 = *iter2;
                 ASSERT(seg2->kind() == Segment::Cubic);
                 if (seg != seg2) {

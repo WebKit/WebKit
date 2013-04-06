@@ -299,7 +299,7 @@ void Function::setArguments(const Vector<Expression*>& args)
         setIsContextNodeSensitive(false);
 
     Vector<Expression*>::const_iterator end = args.end();
-    for (Vector<Expression*>::const_iterator it = args.begin(); it != end; it++)
+    for (Vector<Expression*>::const_iterator it = args.begin(); it != end; ++it)
         addSubExpression(*it);
 }
 

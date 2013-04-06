@@ -1398,7 +1398,7 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, const FloatPoint& 
 
     // Give any document markers that touch this run a chance to draw before the text has been drawn.
     // Note end() points at the last char, not one past it like endOffset and ranges do.
-    for ( ; markerIt != markers.end(); markerIt++) {
+    for ( ; markerIt != markers.end(); ++markerIt) {
         DocumentMarker* marker = *markerIt;
         
         // Paint either the background markers or the foreground markers, but not both
