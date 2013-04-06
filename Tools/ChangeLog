@@ -1,3 +1,15 @@
+2013-04-06  Oliver Hunt  <oliver@apple.com>
+
+        Unify the many and varied stack trace mechanisms, and make the result sane.
+        https://bugs.webkit.org/show_bug.cgi?id=114072
+
+        Reviewed by Filip Pizlo.
+
+        The commandline jsc executable no longer requires arguments, so
+        I've made run-jsc work without them.
+
+        * Scripts/run-jsc:
+
 2013-04-06  Ed Bartosh  <bartosh@gmail.com>
 
         [EFL] build fails with error: 'UINT_MAX' was not declared in this scope

@@ -1,3 +1,45 @@
+2013-04-06  Oliver Hunt  <oliver@apple.com>
+
+        Unify the many and varied stack trace mechanisms, and make the result sane.
+        https://bugs.webkit.org/show_bug.cgi?id=114072
+
+        Reviewed by Filip Pizlo.
+
+        Makes JSC::StackFrame record the bytecode offset and other necessary data
+        rather than requiring us to perform eager evaluation of the line number, etc.
+        Then remove most of the users of retrieveLastCaller, as most of them were
+        using it to create a stack trace in a fairly incomplete and inefficient way.
+
+        StackFrame now also has a couple of helpers to get the line and column info.
+
+        * API/JSContextRef.cpp:
+        (JSContextCreateBacktrace):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitDebugHook):
+        * interpreter/Interpreter.cpp:
+        (JSC):
+        (JSC::Interpreter::dumpRegisters):
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::getBytecodeOffsetForCallFrame):
+        (JSC::getCallerInfo):
+        (JSC::StackFrame::line):
+        (JSC::StackFrame::column):
+        (JSC::StackFrame::expressionInfo):
+        (JSC::StackFrame::toString):
+        (JSC::Interpreter::getStackTrace):
+        (JSC::Interpreter::addStackTraceIfNecessary):
+        (JSC::Interpreter::retrieveCallerFromVMCode):
+        * interpreter/Interpreter.h:
+        (StackFrame):
+        (Interpreter):
+        * runtime/Error.cpp:
+        (JSC::throwError):
+        * runtime/JSGlobalData.h:
+        (JSC):
+        (JSGlobalData):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::DynamicGlobalObjectScope::DynamicGlobalObjectScope):
+
 2013-04-06  Geoffrey Garen  <ggaren@apple.com>
 
         Removed v8 bindings hooks from IDL files

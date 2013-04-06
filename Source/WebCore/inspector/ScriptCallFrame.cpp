@@ -53,7 +53,8 @@ bool ScriptCallFrame::isEqual(const ScriptCallFrame& o) const
 {
     return m_functionName == o.m_functionName
         && m_scriptName == o.m_scriptName
-        && m_lineNumber == o.m_lineNumber;
+        && m_lineNumber == o.m_lineNumber
+        && m_column == o.m_column;
 }
 
 #if ENABLE(INSPECTOR)

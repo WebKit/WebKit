@@ -199,7 +199,7 @@ Interpreter::StackPolicy::StackPolicy(Interpreter& interpreter, const StackBound
 }
 
 
-static CallFrame* getCallerInfo(JSGlobalData*, CallFrame*, int& lineNumber, unsigned& bytecodeOffset, CodeBlock*& callerOut);
+static CallFrame* getCallerInfo(JSGlobalData*, CallFrame*, unsigned& bytecodeOffset, CodeBlock*& callerOut);
 
 // Returns the depth of the scope chain within a given call frame.
 static int depth(CodeBlock* codeBlock, JSScope* sc)
@@ -422,8 +422,9 @@ void Interpreter::dumpRegisters(CallFrame* callFrame)
 #endif
     unsigned bytecodeOffset = 0;
     int line = 0;
-    CodeBlock* unusedCallerCodeBlock = 0;
-    getCallerInfo(&callFrame->globalData(), callFrame, line, bytecodeOffset, unusedCallerCodeBlock);
+    CodeBlock* callerCodeBlock = 0;
+    getCallerInfo(&callFrame->globalData(), callFrame, bytecodeOffset, callerCodeBlock);
+    line = callerCodeBlock->lineNumberForBytecodeOffset(bytecodeOffset);
     dataLogF("[ReturnVPC]                | %10p | %d (line %d)\n", it, bytecodeOffset, line);
     ++it;
     dataLogF("[CodeBlock]                | %10p | %p \n", it, callFrame->codeBlock());
@@ -507,8 +508,7 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
     callFrame->globalData().topCallFrame = callerFrame;
     if (callerFrame->hasHostCallFrameFlag())
         return false;
-    int unusedLineNumber = 0;
-    callFrame = getCallerInfo(&callFrame->globalData(), callFrame, unusedLineNumber, bytecodeOffset, codeBlock);
+    callFrame = getCallerInfo(&callFrame->globalData(), callFrame, bytecodeOffset, codeBlock);
     return true;
 }
 
@@ -564,29 +564,27 @@ static void appendSourceToError(CallFrame* callFrame, ErrorInstance* exception, 
     exception->putDirect(*globalData, globalData->propertyNames->message, jsString(globalData, message));
 }
 
-static int getLineNumberForCallFrame(JSGlobalData* globalData, CallFrame* callFrame)
+static unsigned getBytecodeOffsetForCallFrame(CallFrame* callFrame)
 {
-    UNUSED_PARAM(globalData);
     callFrame = callFrame->removeHostCallFrameFlag();
     CodeBlock* codeBlock = callFrame->codeBlock();
     if (!codeBlock)
-        return -1;
-#if ENABLE(JIT) || ENABLE(LLINT)
+        return 0;
+#if ENABLE(JIT)
 #if ENABLE(DFG_JIT)
     if (codeBlock->getJITType() == JITCode::DFGJIT)
-        return codeBlock->lineNumberForBytecodeOffset(codeBlock->codeOrigin(callFrame->codeOriginIndexForDFG()).bytecodeIndex);
+        return codeBlock->codeOrigin(callFrame->codeOriginIndexForDFG()).bytecodeIndex;
 #endif
-    return codeBlock->lineNumberForBytecodeOffset(callFrame->bytecodeOffsetForNonDFGCode());
+    return callFrame->bytecodeOffsetForNonDFGCode();
 #else
     return 0;
 #endif
 }
 
-static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, int& lineNumber, unsigned& bytecodeOffset, CodeBlock*& caller)
+static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, unsigned& bytecodeOffset, CodeBlock*& caller)
 {
     ASSERT_UNUSED(globalData, globalData);
     bytecodeOffset = 0;
-    lineNumber = -1;
     ASSERT(!callFrame->hasHostCallFrameFlag());
     CallFrame* callerFrame = callFrame->codeBlock() ? callFrame->trueCallerFrame() : callFrame->callerFrame()->removeHostCallFrameFlag();
     bool callframeIsHost = callerFrame->addHostCallFrameFlag() == callFrame->callerFrame();
@@ -656,7 +654,6 @@ static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, 
 
     RELEASE_ASSERT(callerCodeBlock);
     caller = callerCodeBlock;
-    lineNumber = callerCodeBlock->lineNumberForBytecodeOffset(bytecodeOffset);
     return callerFrame;
 }
 
@@ -682,51 +679,97 @@ static StackFrameCodeType getStackFrameCodeType(CallFrame* callFrame)
     return StackFrameGlobalCode;
 }
 
-void Interpreter::getStackTrace(JSGlobalData* globalData, Vector<StackFrame>& results)
+unsigned StackFrame::line()
+{
+    return codeBlock ? codeBlock->lineNumberForBytecodeOffset(bytecodeOffset) + lineOffset : 0;
+}
+
+unsigned StackFrame::column()
+{
+    if (!code)
+        return 0;
+    int divot = 0;
+    int unusedStartOffset = 0;
+    int unusedEndOffset = 0;
+    expressionInfo(divot, unusedStartOffset, unusedEndOffset);
+    return code->charPositionToColumnNumber(divot);
+}
+
+void StackFrame::expressionInfo(int& divot, int& startOffset, int& endOffset)
+{
+    codeBlock->expressionRangeForBytecodeOffset(bytecodeOffset, divot, startOffset, endOffset);
+    divot += startOffset;
+}
+
+String StackFrame::toString(CallFrame* callFrame)
+{
+    StringBuilder traceBuild;
+    String functionName = friendlyFunctionName(callFrame);
+    String sourceURL = friendlySourceURL();
+    traceBuild.append(functionName);
+    if (!sourceURL.isEmpty()) {
+        if (!functionName.isEmpty())
+            traceBuild.append('@');
+        traceBuild.append(sourceURL);
+        if (codeType != StackFrameNativeCode) {
+            traceBuild.append(':');
+            traceBuild.appendNumber(line());
+        }
+    }
+    return traceBuild.toString().impl();
+}
+
+void Interpreter::getStackTrace(JSGlobalData* globalData, Vector<StackFrame>& results, size_t maxStackSize)
 {
     CallFrame* callFrame = globalData->topCallFrame->removeHostCallFrameFlag();
     if (!callFrame || callFrame == CallFrame::noCaller()) 
         return;
-    int line = getLineNumberForCallFrame(globalData, callFrame);
-
+    unsigned bytecodeOffset = getBytecodeOffsetForCallFrame(callFrame);
     callFrame = callFrame->trueCallFrameFromVMCode();
     if (!callFrame)
         return;
+    CodeBlock* callerCodeBlock = callFrame->codeBlock();
 
-    while (callFrame && callFrame != CallFrame::noCaller()) {
+    while (callFrame && callFrame != CallFrame::noCaller() && maxStackSize--) {
         String sourceURL;
-        if (callFrame->codeBlock()) {
+        if (callerCodeBlock) {
             sourceURL = getSourceURLFromCallFrame(callFrame);
-            StackFrame s = { Strong<JSObject>(*globalData, callFrame->callee()), getStackFrameCodeType(callFrame), Strong<ExecutableBase>(*globalData, callFrame->codeBlock()->ownerExecutable()), line, sourceURL};
+            StackFrame s = {
+                Strong<JSObject>(*globalData, callFrame->callee()),
+                getStackFrameCodeType(callFrame),
+                Strong<ExecutableBase>(*globalData, callerCodeBlock->ownerExecutable()),
+                Strong<UnlinkedCodeBlock>(*globalData, callerCodeBlock->unlinkedCodeBlock()),
+                callerCodeBlock->source(),
+                callerCodeBlock->ownerExecutable()->lineNo(),
+                callerCodeBlock->sourceOffset(),
+                bytecodeOffset,
+                sourceURL
+            };
             results.append(s);
         } else {
-            StackFrame s = { Strong<JSObject>(*globalData, callFrame->callee()), StackFrameNativeCode, Strong<ExecutableBase>(), -1, String()};
+            StackFrame s = { Strong<JSObject>(*globalData, callFrame->callee()), StackFrameNativeCode, Strong<ExecutableBase>(), Strong<UnlinkedCodeBlock>(), 0, 0, 0, 0, String()};
             results.append(s);
         }
-        unsigned unusedBytecodeOffset = 0;
-        CodeBlock* unusedCallerCodeBlock = 0;
-        callFrame = getCallerInfo(globalData, callFrame, line, unusedBytecodeOffset, unusedCallerCodeBlock);
+        callFrame = getCallerInfo(globalData, callFrame, bytecodeOffset, callerCodeBlock);
     }
 }
 
-void Interpreter::addStackTraceIfNecessary(CallFrame* callFrame, JSObject* error)
+void Interpreter::addStackTraceIfNecessary(CallFrame* callFrame, JSValue error)
 {
     JSGlobalData* globalData = &callFrame->globalData();
     ASSERT(callFrame == globalData->topCallFrame || callFrame == callFrame->lexicalGlobalObject()->globalExec() || callFrame == callFrame->dynamicGlobalObject()->globalExec());
-    if (error->hasProperty(callFrame, globalData->propertyNames->stack))
-        return;
 
     Vector<StackFrame> stackTrace;
     getStackTrace(&callFrame->globalData(), stackTrace);
     
-    if (stackTrace.isEmpty())
+    if (stackTrace.isEmpty() || !error.isObject())
         return;
-    
+    JSObject* errorObject = asObject(error);
     JSGlobalObject* globalObject = 0;
     if (isTerminatedExecutionException(error) || isInterruptedExecutionException(error))
         globalObject = globalData->dynamicGlobalObject;
     else
-        globalObject = error->globalObject();
+        globalObject = errorObject->globalObject();
 
     // FIXME: JSStringJoiner could be more efficient than StringBuilder here.
     StringBuilder builder;
@@ -735,8 +778,10 @@ void Interpreter::addStackTraceIfNecessary(CallFrame* callFrame, JSObject* error
         if (i != stackTrace.size() - 1)
             builder.append('\n');
     }
-    
-    error->putDirect(*globalData, globalData->propertyNames->stack, jsString(globalData, builder.toString()), ReadOnly | DontDelete);
+
+    if (errorObject->hasProperty(callFrame, globalData->propertyNames->stack))
+        return;
+    errorObject->putDirect(*globalData, globalData->propertyNames->stack, jsString(globalData, builder.toString()), ReadOnly | DontDelete);
 }
 
 NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSValue& exceptionValue, unsigned bytecodeOffset)
@@ -1379,10 +1424,9 @@ JSValue Interpreter::retrieveCallerFromVMCode(CallFrame* callFrame, JSFunction* 
     if (!functionCallFrame)
         return jsNull();
     
-    int lineNumber;
     unsigned bytecodeOffset;
     CodeBlock* unusedCallerCodeBlock = 0;
-    CallFrame* callerFrame = getCallerInfo(&callFrame->globalData(), functionCallFrame, lineNumber, bytecodeOffset, unusedCallerCodeBlock);
+    CallFrame* callerFrame = getCallerInfo(&callFrame->globalData(), functionCallFrame, bytecodeOffset, unusedCallerCodeBlock);
     if (!callerFrame)
         return jsNull();
     JSValue caller = callerFrame->callee();
@@ -1392,7 +1436,7 @@ JSValue Interpreter::retrieveCallerFromVMCode(CallFrame* callFrame, JSFunction* 
     // Skip over function bindings.
     ASSERT(caller.isObject());
     while (asObject(caller)->inherits(&JSBoundFunction::s_info)) {
-        callerFrame = getCallerInfo(&callFrame->globalData(), callerFrame, lineNumber, bytecodeOffset, unusedCallerCodeBlock);
+        callerFrame = getCallerInfo(&callFrame->globalData(), callerFrame, bytecodeOffset, unusedCallerCodeBlock);
         if (!callerFrame)
             return jsNull();
         caller = callerFrame->callee();

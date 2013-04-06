@@ -155,8 +155,7 @@ bool hasErrorInfo(ExecState* exec, JSObject* error)
 
 JSValue throwError(ExecState* exec, JSValue error)
 {
-    if (error.isObject())
-        return throwError(exec, asObject(error));
+    Interpreter::addStackTraceIfNecessary(exec, error);
     exec->globalData().exception = error;
     return error;
 }

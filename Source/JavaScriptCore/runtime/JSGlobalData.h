@@ -54,6 +54,7 @@
 #include <wtf/BumpPointerAllocator.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/RefCountedArray.h>
 #include <wtf/SimpleStats.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSpecific.h>
@@ -81,6 +82,7 @@ namespace JSC {
     class RegExpCache;
     class SourceProvider;
     class SourceProviderCache;
+    struct StackFrame;
     class Stringifier;
     class Structure;
 #if ENABLE(REGEXP_TRACING)
@@ -328,6 +330,7 @@ namespace JSC {
         Terminator terminator;
 
         JSValue exception;
+        RefCountedArray<StackFrame> exceptionStack;
 
         const ClassInfo* const jsArrayClassInfo;
         const ClassInfo* const jsFinalObjectClassInfo;
