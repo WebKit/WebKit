@@ -1,3 +1,9 @@
+2013-04-03  Roger Fong  <roger_fong@apple.com>
+
+        Windows VS2010 build fix.
+
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+
 2013-04-06  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove the remaining PLATFORM(CHROMIUM) guard in JavaScriptCore
