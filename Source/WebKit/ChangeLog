@@ -1,3 +1,14 @@
+2013-04-06  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Remove general include directories from platform specific files
+
+        Move the include directories, which are required by all CMake ports
+        to the general CMakeLists.txt to fix the build for Windows CE port.
+
+        * CMakeLists.txt:
+        * PlatformBlackBerry.cmake:
+        * PlatformEfl.cmake:
+
 2013-04-05  Roger Fong  <roger_fong@apple.com>
 
         More VS2010 solution makefile fixes.

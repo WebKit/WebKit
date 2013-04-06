@@ -1,6 +1,9 @@
 set(WebKit_INCLUDE_DIRECTORIES
+    "${CMAKE_SOURCE_DIR}/Source"
+    "${JAVASCRIPTCORE_DIR}/ForwardingHeaders"
     "${WEBKIT_DIR}"
     "${WEBCORE_DIR}"
+    "${WEBCORE_DIR}/Modules/filesystem"
     "${WEBCORE_DIR}/Modules/networkinfo"
     "${WEBCORE_DIR}/Modules/webdatabase"
     "${WEBCORE_DIR}/accessibility"

@@ -15,16 +15,13 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/graphics/blackberry"
     "${WEBCORE_DIR}/platform/network/blackberry"
     "${WEBCORE_DIR}/testing/js"
-    "${WEBCORE_DIR}/Modules/filesystem"
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/indexeddb"
-    "${WEBCORE_DIR}/Modules/networkinfo"
     "${WEBCORE_DIR}/Modules/vibration"
     "${WEBCORE_DIR}/Modules/websockets"
     "${WEBKIT_DIR}/blackberry/Api"
     "${WEBKIT_DIR}/blackberry/WebCoreSupport"
     "${WEBKIT_DIR}/blackberry/WebKitSupport"
-    "${CMAKE_SOURCE_DIR}/Source" # For JavaScriptCore API headers
     "${CMAKE_SOURCE_DIR}"
 )
 
