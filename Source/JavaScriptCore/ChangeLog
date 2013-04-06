@@ -1,3 +1,12 @@
+2013-04-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove the remaining PLATFORM(CHROMIUM) guard in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=114082
+
+        Reviewed by Ryosuke Niwa.
+
+        * runtime/JSExportMacros.h: Remove the remaining PLATFORM(CHROMIUM) guard.
+
 2013-04-06  Ed Bartosh  <bartosh@gmail.com>
 
         --minimal build fails with error: control reaches end of non-void function
