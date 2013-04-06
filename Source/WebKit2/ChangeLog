@@ -1,3 +1,12 @@
+2013-04-05  Ed Bartosh  <bartosh@gmail.com>
+
+        [WK2] --no-tiled-backing-store build fails because FloatPoint is not declared
+        https://bugs.webkit.org/show_bug.cgi?id=113618
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/Plugins/Plugin.h: Forward declared FloatPoint
+
 2013-04-05  Geoffrey Garen  <ggaren@apple.com>
 
         Made USE(JSC) unconditional

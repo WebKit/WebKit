@@ -54,6 +54,7 @@ namespace WebCore {
     class IntPoint;
     class IntRect;
     class IntSize;
+    class FloatPoint;
     class Scrollbar;
     class SharedBuffer;
 }
