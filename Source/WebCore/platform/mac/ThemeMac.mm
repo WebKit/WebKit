@@ -572,11 +572,9 @@ static void paintStepper(ControlStates states, GraphicsContext* context, const I
 // If the ScrollView doesn't have an NSView, we will return a fake NSView whose sole purpose is to tell AppKit that it's flipped.
 NSView *ThemeMac::ensuredView(ScrollView* scrollView)
 {
-#if !PLATFORM(CHROMIUM)
     if (NSView *documentView = scrollView->documentView())
         return documentView;
-#endif
-    
+
     // Use a fake flipped view.
     static NSView *flippedView = [[WebCoreFlippedView alloc] init];
     [flippedView setFrameSize:NSSizeFromCGSize(scrollView->totalContentsSize())];

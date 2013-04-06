@@ -432,7 +432,6 @@ enum FeatureToAnimate {
     return aRect;
 }
 
-#if !PLATFORM(CHROMIUM)
 - (CALayer *)layer
 {
     if (!_scrollbar)
@@ -445,7 +444,6 @@ enum FeatureToAnimate {
     static CALayer *dummyLayer = [[CALayer alloc] init];
     return dummyLayer;
 }
-#endif
 
 - (NSPoint)mouseLocationInScrollerForScrollerImp:(id)scrollerImp
 {
@@ -642,7 +640,7 @@ ScrollAnimatorMac::~ScrollAnimatorMac()
 static bool scrollAnimationEnabledForSystem()
 {
     NSString* scrollAnimationDefaultsKey = 
-#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070 || PLATFORM(CHROMIUM)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED <= 1070
         @"AppleScrollAnimationEnabled";
 #else
         @"NSScrollAnimationEnabled";

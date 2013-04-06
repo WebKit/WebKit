@@ -113,13 +113,11 @@ static ScrollbarPainterMap* scrollbarMap()
 
 namespace WebCore {
 
-#if !PLATFORM(CHROMIUM)
 ScrollbarTheme* ScrollbarTheme::nativeTheme()
 {
     DEFINE_STATIC_LOCAL(ScrollbarThemeMac, theme, ());
     return &theme;
 }
-#endif
 
 // FIXME: Get these numbers from CoreUI.
 static int cRealButtonLength[] = { 28, 21 };
@@ -478,7 +476,6 @@ void ScrollbarThemeMac::updateEnabledState(ScrollbarThemeClient* scrollbar)
         [scrollbarMap()->get(scrollbar).get() setEnabled:scrollbar->enabled()];
 }
 
-#if !PLATFORM(CHROMIUM)
 static void scrollbarPainterPaint(ScrollbarPainter scrollbarPainter, bool enabled, double value, CGFloat proportion, CGRect frameRect)
 {
     [scrollbarPainter setEnabled:enabled];
@@ -597,9 +594,8 @@ bool ScrollbarThemeMac::paint(ScrollbarThemeClient* scrollbar, GraphicsContext* 
 
     return true;
 }
-#endif
 
-#if !PLATFORM(CHROMIUM) && USE(ACCELERATED_COMPOSITING) && ENABLE(RUBBER_BANDING)
+#if USE(ACCELERATED_COMPOSITING) && ENABLE(RUBBER_BANDING)
 static RetainPtr<CGColorRef> linenBackgroundColor()
 {
     NSImage *image = [NSColor _linenPatternImage];

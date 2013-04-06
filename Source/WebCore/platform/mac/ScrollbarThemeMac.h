@@ -41,9 +41,7 @@ public:
 
     virtual void updateEnabledState(ScrollbarThemeClient*);
 
-#if !PLATFORM(CHROMIUM)
     virtual bool paint(ScrollbarThemeClient*, GraphicsContext*, const IntRect& damageRect);
-#endif
 
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
     
@@ -81,7 +79,7 @@ protected:
     virtual bool shouldDragDocumentInsteadOfThumb(ScrollbarThemeClient*, const PlatformMouseEvent&);
     int scrollbarPartToHIPressedState(ScrollbarPart);
 
-#if !PLATFORM(CHROMIUM) && USE(ACCELERATED_COMPOSITING) && ENABLE(RUBBER_BANDING)
+#if USE(ACCELERATED_COMPOSITING) && ENABLE(RUBBER_BANDING)
     virtual void setUpOverhangAreasLayerContents(GraphicsLayer*, const Color&) OVERRIDE;
     virtual void setUpContentShadowLayer(GraphicsLayer*) OVERRIDE;
 #endif
