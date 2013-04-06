@@ -181,7 +181,7 @@ public:
     void didLayout(LayoutMilestones);
     void didFirstLayout();
 
-    void loadedResourceFromMemoryCache(CachedResource*);
+    void loadedResourceFromMemoryCache(CachedResource*, ResourceRequest& newRequest);
     void tellClientAboutPastMemoryCacheLoads();
 
     void checkLoadComplete();

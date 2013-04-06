@@ -421,6 +421,19 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     return true;
 }
 
+bool CachedResourceLoader::shouldContinueAfterNotifyingLoadedFromMemoryCache(CachedResource* resource)
+{
+    if (!resource || !frame() || resource->status() != CachedResource::Cached)
+        return true;
+
+    ResourceRequest newRequest;
+    frame()->loader()->loadedResourceFromMemoryCache(resource, newRequest);
+    
+    // FIXME <http://webkit.org/b/113251>: If the delegate modifies the request's
+    // URL, it is no longer appropriate to use this CachedResource.
+    return !newRequest.isNull();
+}
+
 CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(CachedResource::Type type, CachedResourceRequest& request)
 {
     KURL url = request.resourceRequest().url();
@@ -468,8 +481,9 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
         resource = revalidateResource(request, resource.get());
         break;
     case Use:
+        if (!shouldContinueAfterNotifyingLoadedFromMemoryCache(resource.get()))
+            return 0;
         memoryCache()->resourceAccessed(resource.get());
-        notifyLoadedFromMemoryCache(resource.get());
         break;
     }
 
@@ -801,15 +815,6 @@ void CachedResourceLoader::performPostLoadActions()
 #else
     resourceLoadScheduler()->servePendingRequests();
 #endif
-}
-
-void CachedResourceLoader::notifyLoadedFromMemoryCache(CachedResource* resource)
-{
-    if (!resource || !frame() || resource->status() != CachedResource::Cached)
-        return;
-
-    // FIXME: If the WebKit client changes or cancels the request, WebCore does not respect this and continues the load.
-    frame()->loader()->loadedResourceFromMemoryCache(resource);
 }
 
 void CachedResourceLoader::incrementRequestCount(const CachedResource* res)

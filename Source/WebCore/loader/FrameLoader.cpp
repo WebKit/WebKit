@@ -1416,7 +1416,7 @@ bool FrameLoader::willLoadMediaElementURL(KURL& url)
     unsigned long identifier;
     ResourceError error;
     requestFromDelegate(request, identifier, error);
-    notifier()->sendRemainingDelegateMessages(m_documentLoader.get(), identifier, ResourceResponse(url, String(), -1, String(), String()), 0, -1, -1, error);
+    notifier()->sendRemainingDelegateMessages(m_documentLoader.get(), identifier, request, ResourceResponse(url, String(), -1, String(), String()), 0, -1, -1, error);
 
     url = request.url();
 
@@ -1752,7 +1752,7 @@ void FrameLoader::commitProvisionalLoad()
             // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
             // However, with today's computers and networking speeds, this won't happen in practice.
             // Could be an issue with a giant local file.
-            notifier()->sendRemainingDelegateMessages(m_documentLoader.get(), identifier, response, 0, static_cast<int>(response.expectedContentLength()), 0, error);
+            notifier()->sendRemainingDelegateMessages(m_documentLoader.get(), identifier, request, response, 0, static_cast<int>(response.expectedContentLength()), 0, error);
         }
 
         // FIXME: Why only this frame and not parent frames?
@@ -2586,7 +2586,7 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
         }
     }
     int encodedDataLength = response.resourceLoadInfo() ? static_cast<int>(response.resourceLoadInfo()->encodedDataLength) : -1;
-    notifier()->sendRemainingDelegateMessages(m_documentLoader.get(), identifier, response, data.data(), data.size(), encodedDataLength, error);
+    notifier()->sendRemainingDelegateMessages(m_documentLoader.get(), identifier, request, response, data.data(), data.size(), encodedDataLength, error);
     return identifier;
 }
 
@@ -2878,8 +2878,10 @@ void FrameLoader::requestFromDelegate(ResourceRequest& request, unsigned long& i
     request = newRequest;
 }
 
-void FrameLoader::loadedResourceFromMemoryCache(CachedResource* resource)
+void FrameLoader::loadedResourceFromMemoryCache(CachedResource* resource, ResourceRequest& newRequest)
 {
+    newRequest = ResourceRequest(resource->url());
+
     Page* page = m_frame->page();
     if (!page)
         return;
@@ -2898,8 +2900,7 @@ void FrameLoader::loadedResourceFromMemoryCache(CachedResource* resource)
         return;
     }
 
-    ResourceRequest request(resource->url());
-    if (m_client->dispatchDidLoadResourceFromMemoryCache(m_documentLoader.get(), request, resource->response(), resource->encodedSize())) {
+    if (m_client->dispatchDidLoadResourceFromMemoryCache(m_documentLoader.get(), newRequest, resource->response(), resource->encodedSize())) {
         InspectorInstrumentation::didLoadResourceFromMemoryCache(page, m_documentLoader.get(), resource);
         m_documentLoader->didTellClientAboutLoad(resource->url());
         return;
@@ -2907,9 +2908,9 @@ void FrameLoader::loadedResourceFromMemoryCache(CachedResource* resource)
 
     unsigned long identifier;
     ResourceError error;
-    requestFromDelegate(request, identifier, error);
+    requestFromDelegate(newRequest, identifier, error);
     InspectorInstrumentation::markResourceAsCached(page, identifier);
-    notifier()->sendRemainingDelegateMessages(m_documentLoader.get(), identifier, resource->response(), 0, resource->encodedSize(), 0, error);
+    notifier()->sendRemainingDelegateMessages(m_documentLoader.get(), identifier, newRequest, resource->response(), 0, resource->encodedSize(), 0, error);
 }
 
 void FrameLoader::applyUserAgent(ResourceRequest& request)

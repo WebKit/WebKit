@@ -62,8 +62,9 @@ public:
     void dispatchDidReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&, ResourceLoader* = 0);
     void dispatchDidReceiveData(DocumentLoader*, unsigned long identifier, const char* data, int dataLength, int encodedDataLength);
     void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier, double finishTime);
+    void dispatchDidFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError&);
 
-    void sendRemainingDelegateMessages(DocumentLoader*, unsigned long identifier, const ResourceResponse&, const char* data, int dataLength, int encodedDataLength, const ResourceError&);
+    void sendRemainingDelegateMessages(DocumentLoader*, unsigned long identifier, const ResourceRequest&, const ResourceResponse&, const char* data, int dataLength, int encodedDataLength, const ResourceError&);
 
 private:
     Frame* m_frame;

@@ -148,8 +148,23 @@ void ResourceLoadNotifier::dispatchDidFinishLoading(DocumentLoader* loader, unsi
     InspectorInstrumentation::didFinishLoading(m_frame, loader, identifier, finishTime);
 }
 
-void ResourceLoadNotifier::sendRemainingDelegateMessages(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& response, const char* data, int dataLength, int encodedDataLength, const ResourceError& error)
+void ResourceLoadNotifier::dispatchDidFailLoading(DocumentLoader* loader, unsigned long identifier, const ResourceError& error)
 {
+    m_frame->loader()->client()->dispatchDidFailLoading(loader, identifier, error);
+
+    InspectorInstrumentation::didFailLoading(m_frame, loader, identifier, error);
+}
+
+void ResourceLoadNotifier::sendRemainingDelegateMessages(DocumentLoader* loader, unsigned long identifier, const ResourceRequest& request, const ResourceResponse& response, const char* data, int dataLength, int encodedDataLength, const ResourceError& error)
+{
+    // If the request is null, willSendRequest cancelled the load. We should
+    // only dispatch didFailLoading in this case.
+    if (request.isNull()) {
+        ASSERT(error.isCancellation());
+        dispatchDidFailLoading(loader, identifier, error);
+        return;
+    }
+
     if (!response.isNull())
         dispatchDidReceiveResponse(loader, identifier, response);
 
@@ -159,7 +174,7 @@ void ResourceLoadNotifier::sendRemainingDelegateMessages(DocumentLoader* loader,
     if (error.isNull())
         dispatchDidFinishLoading(loader, identifier, 0);
     else
-        m_frame->loader()->client()->dispatchDidFailLoading(loader, identifier, error);
+        dispatchDidFailLoading(loader, identifier, error);
 }
 
 } // namespace WebCore
