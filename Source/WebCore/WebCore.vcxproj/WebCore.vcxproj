@@ -11629,7 +11629,7 @@
     <ClInclude Include="..\platform\SharedTimer.h" />
     <ClInclude Include="..\platform\Sound.h" />
     <ClInclude Include="..\platform\SSLKeyGenerator.h" />
-    <ClInclude Include="..\platform\StatsCounter.h" />
+    <ClInclude Include="..\platform\SuddenTermination.h" />
     <ClInclude Include="..\platform\SystemTime.h" />
     <ClInclude Include="..\platform\Theme.h" />
     <ClInclude Include="..\platform\ThemeTypes.h" />

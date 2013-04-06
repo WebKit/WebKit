@@ -2595,9 +2595,6 @@
     <ClCompile Include="..\platform\SharedBufferChunkReader.cpp">
       <Filter>platform</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\StatsCounter.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\ThreadGlobalData.cpp">
       <Filter>platform</Filter>
     </ClCompile>
@@ -9493,9 +9490,6 @@
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\SSLKeyGenerator.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\StatsCounter.h">
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\SuddenTermination.h">
