@@ -4,8 +4,8 @@ This tests that the AXPressAction comes first for activatable items instead of t
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-Button supported actions: AXPress,AXShowMenu,AXScrollToVisible
-Link supported actions: AXPress,AXShowMenu,AXScrollToVisible
+Button supported actions: AXPress,AXShowMenu
+Link supported actions: AXPress,AXShowMenu
 PASS successfullyParsed is true
 
 TEST COMPLETE
