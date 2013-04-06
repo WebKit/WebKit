@@ -97,7 +97,6 @@ fast/events/5056619.html
 fast/events/autoscroll-in-textfield.html
 fast/events/autoscroll-nonscrollable-iframe-in-scrollable-div.html
 fast/events/autoscroll-with-non-scrollable-parent.html
-fast/events/autoscroll.html
 fast/events/bogus-dropEffect-effectAllowed.html
 fast/events/click-count.html
 fast/events/content-changed-during-drop.html
