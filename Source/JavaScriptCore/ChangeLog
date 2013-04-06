@@ -1,3 +1,10 @@
+2013-04-06  Patrick Gansterer  <paroga@webkit.org>
+
+        Do not call getenv() on Windows CE where it does not exist.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+
 2013-04-05  Benjamin Poulain  <benjamin@webkit.org>
 
         Second attempt to fix the Windows bot
