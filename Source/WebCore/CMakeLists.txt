@@ -1871,7 +1871,6 @@ set(WebCore_SOURCES
     platform/SharedBuffer.cpp
     platform/SharedBufferChunkReader.cpp
     platform/SchemeRegistry.cpp
-    platform/StatsCounter.cpp
     platform/ThreadGlobalData.cpp
     platform/ThreadTimers.cpp
     platform/Timer.cpp
