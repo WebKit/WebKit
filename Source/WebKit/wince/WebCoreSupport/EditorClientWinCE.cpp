@@ -29,8 +29,9 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PlatformKeyboardEvent.h"
-#include "UndoStep.h"
 #include "Settings.h"
+#include "UndoStep.h"
+#include "WebView.h"
 
 using namespace WebCore;
 
