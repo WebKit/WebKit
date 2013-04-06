@@ -74,12 +74,6 @@ public:
             m_client->didReceiveData(data, dataLength);
     }
 
-    void didReceiveCachedMetadata(const char* data, int dataLength)
-    {
-        if (m_client)
-            m_client->didReceiveCachedMetadata(data, dataLength);
-    }
-
     void didFinishLoading(unsigned long identifier, double finishTime)
     {
         m_done = true;
