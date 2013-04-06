@@ -1,3 +1,12 @@
+2013-04-06  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove the USE(SKIA_ON_MAC_CHROMIUM) guards
+        https://bugs.webkit.org/show_bug.cgi?id=114084
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebCoreSupport/AboutDataUseFeatures.in: Remove the SKIA_ON_MAC_(CHROME|CHROMIUM) reference.
+
 2013-04-05  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] FatFingers Don't check the shadow tree for all elements.

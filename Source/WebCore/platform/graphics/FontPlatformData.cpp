@@ -112,7 +112,7 @@ FontPlatformData::FontPlatformData(float size, bool syntheticBold, bool syntheti
 {
 }
 
-#if OS(DARWIN) && (USE(CG) || USE(SKIA_ON_MAC_CHROMIUM))
+#if OS(DARWIN) && USE(CG)
 FontPlatformData::FontPlatformData(CGFontRef cgFont, float size, bool syntheticBold, bool syntheticOblique, FontOrientation orientation, FontWidthVariant widthVariant)
     : m_syntheticBold(syntheticBold)
     , m_syntheticOblique(syntheticOblique)

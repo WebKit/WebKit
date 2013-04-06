@@ -39,7 +39,7 @@ class FloatPoint;
 }
 #endif
 
-#if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
+#if USE(CG)
 typedef struct CGPoint CGPoint;
 #endif
 
@@ -150,7 +150,7 @@ public:
         return FloatPoint(m_y, m_x);
     }
 
-#if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
+#if USE(CG)
     FloatPoint(const CGPoint&);
     operator CGPoint() const;
 #endif

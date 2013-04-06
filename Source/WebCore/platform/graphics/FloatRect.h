@@ -30,7 +30,7 @@
 #include "FloatPoint.h"
 #include <wtf/Vector.h>
 
-#if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
+#if USE(CG)
 typedef struct CGRect CGRect;
 #endif
 
@@ -195,7 +195,7 @@ public:
     operator BlackBerry::Platform::FloatRect() const;
 #endif
 
-#if USE(CG) || USE(SKIA_ON_MAC_CHROMIUM)
+#if USE(CG)
     FloatRect(const CGRect&);
     operator CGRect() const;
 #endif
