@@ -24,6 +24,9 @@
  */
 
 #include "config.h"
+
+#if HAVE(ACCESSIBILITY)
+
 #include "AccessibilityController.h"
 
 #include "AccessibilityUIElement.h"
@@ -162,3 +165,4 @@ void AccessibilityController::resetToConsistentState()
     setLogScrollingStartEvents(false);
     setLogAccessibilityEvents(false);
 }
+#endif // HAVE(ACCESSIBILITY)

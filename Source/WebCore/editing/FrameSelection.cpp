@@ -338,8 +338,9 @@ void FrameSelection::setSelection(const VisibleSelection& newSelection, SetSelec
 
         revealSelection(alignment, RevealExtent);
     }
-
+#if HAVE(ACCESSIBILITY)
     notifyAccessibilityForSelectionChange();
+#endif
     m_frame->document()->enqueueDocumentEvent(Event::create(eventNames().selectionchangeEvent, false, false));
 }
 

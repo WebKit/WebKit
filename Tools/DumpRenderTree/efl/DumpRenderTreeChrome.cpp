@@ -74,7 +74,9 @@ DumpRenderTreeChrome::DumpRenderTreeChrome(Evas* evas)
     , m_mainFrame(0)
     , m_evas(evas)
     , m_gcController(adoptPtr(new GCController))
+#if HAVE(ACCESSIBILITY)
     , m_axController(adoptPtr(new AccessibilityController))
+#endif
 {
 }
 
@@ -863,7 +865,9 @@ void DumpRenderTreeChrome::onDownloadRequest(void*, Evas_Object*, void* eventInf
     browser->m_extraViews.append(newView);
 }
 
+#if HAVE(ACCESSIBILITY)
 AccessibilityController* DumpRenderTreeChrome::accessibilityController() const
 {
     return m_axController.get();
 }
+#endif

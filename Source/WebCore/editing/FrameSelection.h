@@ -278,8 +278,10 @@ private:
     VisiblePosition modifyMovingBackward(TextGranularity);
 
     LayoutUnit lineDirectionPointForBlockDirectionNavigation(EPositionType);
-    
+
+#if HAVE(ACCESSIBILITY)
     void notifyAccessibilityForSelectionChange();
+#endif
 
     void focusedOrActiveStateChanged();
 
@@ -330,9 +332,11 @@ inline void FrameSelection::setTypingStyle(PassRefPtr<EditingStyle> style)
 }
 
 #if !(PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(EFL))
+#if HAVE(ACCESSIBILITY)
 inline void FrameSelection::notifyAccessibilityForSelectionChange()
 {
 }
+#endif
 #endif
 
 } // namespace WebCore

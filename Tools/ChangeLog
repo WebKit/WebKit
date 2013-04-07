@@ -1,3 +1,18 @@
+2013-04-07  Ed Bartosh  <bartosh@gmail.com>
+
+        [EFL] -minimal build fails with error: WebCore::FrameSelection::notifyAccessibilityForSelectionChange()
+        https://bugs.webkit.org/show_bug.cgi?id=114089
+
+        Reviewed by Chris Fleizach.
+
+        Wrapped accessibility related code in #if HAVE(ACCESSIBILITY)
+        * DumpRenderTree/AccessibilityController.cpp:
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        * DumpRenderTree/efl/DumpRenderTreeChrome.cpp:
+        (DumpRenderTreeChrome::DumpRenderTreeChrome):
+        * DumpRenderTree/efl/DumpRenderTreeChrome.h:
+        (DumpRenderTreeChrome):
+
 2013-04-06  Laszlo Gombos  <l.gombos@samsung.com>
 
         Build fix after r147857, remove remaining USE(JSC) guards.

@@ -68,12 +68,13 @@ private:
 
     Evas_Object* createView() const;
     bool initialize();
+#if HAVE(ACCESSIBILITY)
     AccessibilityController* accessibilityController() const;
-
+    OwnPtr<AccessibilityController> m_axController;
+#endif
     Evas_Object* m_mainFrame;
     Evas_Object* m_mainView;
     Evas* m_evas;
-    OwnPtr<AccessibilityController> m_axController;
     OwnPtr<GCController> m_gcController;
     Vector<Evas_Object*> m_extraViews;
     static HashMap<unsigned long, CString> m_dumpAssignedUrls;
