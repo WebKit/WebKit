@@ -109,7 +109,6 @@ list(APPEND WebCore_SOURCES
     platform/blackberry/DragDataBlackBerry.cpp
     platform/blackberry/DragImageBlackBerry.cpp
     platform/blackberry/EventLoopBlackBerry.cpp
-    platform/blackberry/KURLBlackBerry.cpp
     platform/blackberry/LocalizedStringsBlackBerry.cpp
     platform/blackberry/LoggingBlackBerry.cpp
     platform/blackberry/MIMETypeRegistryBlackBerry.cpp
