@@ -1,3 +1,13 @@
+2013-04-07  Ed Bartosh  <bartosh@gmail.com>
+
+        [EFL] --minimal build fails with error: expected `;' before `return'
+        https://bugs.webkit.org/show_bug.cgi?id=113953
+
+        Unreviewed.
+
+        * ewk/ewk_security_origin.cpp:
+        (ewk_security_origin_web_database_quota_get): Added missing semicolon.
+
 2013-04-05  Geoffrey Garen  <ggaren@apple.com>
 
         Made USE(JSC) unconditional

@@ -81,7 +81,7 @@ uint64_t ewk_security_origin_web_database_quota_get(const Ewk_Security_Origin* o
 
     return WebCore::DatabaseManager::manager().quotaForOrigin(origin->securityOrigin.get());
 #else
-    UNUSED_PARAM(origin)
+    UNUSED_PARAM(origin);
     return 0;
 #endif
 }
