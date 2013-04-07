@@ -33,6 +33,8 @@
 
 #include <wtf/Forward.h>
 
+typedef const struct _CFURLRequest* CFURLRequestRef;
+
 @class NSInputStream;
 @class NSMutableURLRequest;
 

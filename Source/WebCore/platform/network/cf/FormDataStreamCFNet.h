@@ -33,7 +33,7 @@
 
 typedef struct _CFURLRequest* CFMutableURLRequestRef;
 typedef struct __CFReadStream* CFReadStreamRef;
-typedef const struct _CFURLRequest* CFURLRequestRef;
+typedef const struct __CFString* CFStringRef;
 
 namespace WebCore {
 
