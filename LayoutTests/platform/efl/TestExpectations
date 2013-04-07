@@ -1122,6 +1122,8 @@ webkit.org/b/106507 storage/storageinfo-query-usage.html
 webkit.org/b/106507 storage/storageinfo-request-quota.html
 webkit.org/b/106507 storage/storagequota-query-usage.html
 webkit.org/b/106507 storage/storagequota-request-quota.html
+webkit.org/b/106507 fast/workers/shared-worker-storagequota-query-usage.html
+webkit.org/b/106507 fast/workers/worker-storagequota-query-usage.html
 
 # EFL's LayoutTestController does not implement originsWithLocalStorage.
 Bug(EFL) storage/domstorage/localstorage/storagetracker
