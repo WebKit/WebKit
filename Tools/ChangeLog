@@ -1,3 +1,16 @@
+2013-04-06  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rename sheriffbot to webkitbot
+        https://bugs.webkit.org/show_bug.cgi?id=114109
+
+        Reviewed by Benjamin Poulain.
+
+        Renamed since sheriffbot will be used in Blink.
+
+        * Scripts/webkitpy/tool/commands/sheriffbot.py:
+        (SheriffBot):
+        (SheriffBot.begin_work_queue):
+
 2013-04-06  Oliver Hunt  <oliver@apple.com>
 
         Unify the many and varied stack trace mechanisms, and make the result sane.

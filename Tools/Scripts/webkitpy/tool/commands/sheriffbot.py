@@ -38,7 +38,7 @@ _log = logging.getLogger(__name__)
 
 
 class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
-    name = "sheriff-bot"
+    name = "webkitbot"
     watchers = AbstractQueue.watchers + [
         "abarth@webkit.org",
         "eric@webkit.org",
@@ -49,7 +49,7 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
     def begin_work_queue(self):
         AbstractQueue.begin_work_queue(self)
         self._sheriff = Sheriff(self._tool, self)
-        self._irc_bot = IRCBot("sheriffbot", self._tool, self._sheriff, irc_commands)
+        self._irc_bot = IRCBot(self.name, self._tool, self._sheriff, irc_commands)
         self._tool.ensure_irc_connected(self._irc_bot.irc_delegate())
 
     def work_item_log_path(self, failure_map):
