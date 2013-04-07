@@ -31,9 +31,7 @@
 
 #include <wtf/Platform.h>
 #include <wtf/ExportMacros.h>
-#if USE(JSC)
 #include <runtime/JSExportMacros.h>
-#endif
 
 #include <WebKit2/WebKit2_C.h>
 

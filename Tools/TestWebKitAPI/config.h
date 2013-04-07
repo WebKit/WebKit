@@ -33,9 +33,7 @@
 
 #include <wtf/Platform.h>
 #include <wtf/ExportMacros.h>
-#if USE(JSC)
 #include <runtime/JSExportMacros.h>
-#endif
 
 #if defined(__APPLE__) && __APPLE__
 

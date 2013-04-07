@@ -1,3 +1,13 @@
+2013-04-06  Laszlo Gombos  <l.gombos@samsung.com>
+
+        Build fix after r147857, remove remaining USE(JSC) guards.
+
+        Unreviewed.
+
+        * DumpRenderTree/config.h:
+        * TestWebKitAPI/config.h:
+        * WebKitTestRunner/config.h:
+
 2013-04-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rename sheriffbot to webkitbot
