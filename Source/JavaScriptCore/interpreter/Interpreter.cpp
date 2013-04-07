@@ -761,9 +761,10 @@ void Interpreter::addStackTraceIfNecessary(CallFrame* callFrame, JSValue error)
 
     Vector<StackFrame> stackTrace;
     getStackTrace(&callFrame->globalData(), stackTrace);
-    
+    globalData->exceptionStack = RefCountedArray<StackFrame>(stackTrace);
     if (stackTrace.isEmpty() || !error.isObject())
         return;
+
     JSObject* errorObject = asObject(error);
     JSGlobalObject* globalObject = 0;
     if (isTerminatedExecutionException(error) || isInterruptedExecutionException(error))
@@ -810,6 +811,12 @@ NEVER_INLINE HandlerInfo* Interpreter::throwException(CallFrame*& callFrame, JSV
         }
 
         isInterrupt = isInterruptedExecutionException(exception) || isTerminatedExecutionException(exception);
+    } else {
+        if (!callFrame->globalData().exceptionStack.size()) {
+            Vector<StackFrame> stack;
+            Interpreter::getStackTrace(&callFrame->globalData(), stack);
+            callFrame->globalData().exceptionStack = RefCountedArray<StackFrame>(stack);
+        }
     }
 
     if (Debugger* debugger = callFrame->dynamicGlobalObject()->debugger()) {

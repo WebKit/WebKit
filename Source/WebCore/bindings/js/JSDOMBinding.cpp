@@ -147,10 +147,21 @@ void reportException(ExecState* exec, JSValue exception, CachedScript* cachedScr
 
     Interpreter::ErrorHandlingMode mode(exec);
     String errorMessage = exception.toString(exec)->value(exec);
-    JSObject* exceptionObject = exception.toObject(exec);
-    int lineNumber = exceptionObject->get(exec, Identifier(exec, "line")).toInt32(exec);
-    String exceptionSourceURL = exceptionObject->get(exec, Identifier(exec, "sourceURL")).toString(exec)->value(exec);
+    int lineNumber = 0;
+    String exceptionSourceURL;
+
+    RefCountedArray<StackFrame> stackTrace = exec->globalData().exceptionStack;
     exec->clearException();
+    exec->clearSupplementaryExceptionInfo();
+
+    if (exception.isObject()) {
+        JSObject* exceptionObject = exception.toObject(exec);
+        lineNumber = exceptionObject->get(exec, Identifier(exec, "line")).toInt32(exec);
+        exceptionSourceURL = exceptionObject->get(exec, Identifier(exec, "sourceURL")).toString(exec)->value(exec);
+    } else if (stackTrace.size()) {
+        lineNumber = stackTrace[0].line();
+        exceptionSourceURL = stackTrace[0].friendlySourceURL();
+    }
 
     if (ExceptionBase* exceptionBase = toExceptionBase(exception))
         errorMessage = exceptionBase->message() + ": "  + exceptionBase->description();

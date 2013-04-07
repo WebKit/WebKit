@@ -1,3 +1,20 @@
+2013-04-07  Oliver Hunt  <oliver@apple.com>
+
+        Inspector should display information about non-object exceptions
+        https://bugs.webkit.org/show_bug.cgi?id=114123
+
+        Reviewed by Adele Peterson.
+
+        Make sure we store the right stack information, even when throwing
+        a primitive.
+
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::clearSupplementaryExceptionInfo):
+        (ExecState):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::addStackTraceIfNecessary):
+        (JSC::Interpreter::throwException):
+
 2013-04-06  Oliver Hunt  <oliver@apple.com>
 
         Unify the many and varied stack trace mechanisms, and make the result sane.
