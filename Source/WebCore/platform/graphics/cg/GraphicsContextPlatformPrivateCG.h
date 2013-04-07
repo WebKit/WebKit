@@ -51,7 +51,7 @@ public:
     {
     }
 
-#if PLATFORM(MAC) || PLATFORM(CHROMIUM)
+#if PLATFORM(MAC)
     // These methods do nothing on Mac.
     void save() {}
     void restore() {}

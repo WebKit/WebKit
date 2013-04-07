@@ -32,7 +32,7 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include <wtf/MainThread.h>
 
-#if PLATFORM(MAC) || PLATFORM(CHROMIUM)
+#if PLATFORM(MAC)
 #include "WebCoreSystemInterface.h"
 #endif
 
