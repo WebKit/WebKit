@@ -28,6 +28,8 @@
 
 #if PLATFORM(MAC)
 OBJC_CLASS NSMutableArray;
+#elif PLATFORM(WIN)
+#include <windows.h>
 #elif PLATFORM(QT)
 #include <qlist.h>
 #elif PLATFORM(GTK)
