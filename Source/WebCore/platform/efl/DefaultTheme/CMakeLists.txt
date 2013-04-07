@@ -135,7 +135,7 @@ if (ENABLE_PROGRESS_ELEMENT)
     list(APPEND DefaultTheme_DEFINITION "-DENABLE_PROGRESS_ELEMENT")
 endif ()
 
-GENERATE_THEME(DefaultTheme "default.edj" "${DefaultTheme_DEFINITION} -DCURSOR_IMAGE_DIR=${Resources_DIR}")
+GENERATE_THEME(DefaultTheme "default.edj" "-DCURSOR_IMAGE_DIR=${Resources_DIR} ${DefaultTheme_DEFINITION}")
 install(FILES "${THEME_BINARY_DIR}/default.edj" DESTINATION ${DATA_INSTALL_DIR}/themes)
 
 if (ENABLE_API_TESTS)
