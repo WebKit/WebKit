@@ -27,6 +27,8 @@
 template<typename T>
 inline void unusedParam(T& x) { (void)x; }
 #define UNUSED_PARAM(variable) unusedParam(variable)
+#elif COMPILER(MSVC) && OS(WINCE)
+#define UNUSED_PARAM(variable) (void)&variable
 #else
 #define UNUSED_PARAM(variable) (void)variable
 #endif
