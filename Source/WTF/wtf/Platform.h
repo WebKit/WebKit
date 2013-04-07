@@ -163,7 +163,7 @@
 #endif
 
 /* CPU(ARM) - ARM, any version*/
-#define WTF_ARM_ARCH_AT_LEAST(N) (CPU(ARM) && defined(WTF_ARM_ARCH_VERSION) && WTF_ARM_ARCH_VERSION >= N)
+#define WTF_ARM_ARCH_AT_LEAST(N) (CPU(ARM) && WTF_ARM_ARCH_VERSION >= N)
 
 #if   defined(arm) \
     || defined(__arm__) \
