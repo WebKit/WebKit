@@ -192,6 +192,7 @@ void LocaleWin::getLocaleInfo(LCTYPE type, DWORD& result)
 
 void LocaleWin::ensureShortMonthLabels()
 {
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     if (!m_shortMonthLabels.isEmpty())
         return;
     const LCTYPE types[12] = {
@@ -219,10 +220,12 @@ void LocaleWin::ensureShortMonthLabels()
             return;
         }
     }
+#endif
 }
 
 // -------------------------------- Tokenized date format
 
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 static unsigned countContinuousLetters(const String& format, unsigned index)
 {
     unsigned count = 1;
@@ -320,9 +323,11 @@ static String convertWindowsDateTimeFormat(const String& format)
     commitLiteralToken(literalBuffer, converted);
     return converted.toString();
 }
+#endif
 
 void LocaleWin::ensureMonthLabels()
 {
+#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     if (!m_monthLabels.isEmpty())
         return;
     const LCTYPE types[12] = {
@@ -350,8 +355,10 @@ void LocaleWin::ensureMonthLabels()
             return;
         }
     }
+#endif
 }
 
+#if ENABLE(CALENDAR_PICKER)
 void LocaleWin::ensureWeekDayShortLabels()
 {
     if (!m_weekDayShortLabels.isEmpty())
@@ -379,6 +386,7 @@ void LocaleWin::ensureWeekDayShortLabels()
         }
     }
 }
+#endif
 
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 const Vector<String>& LocaleWin::monthLabels()
