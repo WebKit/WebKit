@@ -38,10 +38,16 @@ namespace WTF {
 class AutodrainedPool {
     WTF_MAKE_NONCOPYABLE(AutodrainedPool);
 public:
+#if PLATFORM(MAC)
     WTF_EXPORT_PRIVATE explicit AutodrainedPool(int iterationLimit = 1);
     WTF_EXPORT_PRIVATE ~AutodrainedPool();
-    
+
     WTF_EXPORT_PRIVATE void cycle();
+#else
+    explicit AutodrainedPool(int = 1) { }
+    ~AutodrainedPool() { }
+    void cycle() { }
+#endif
     
 private:
 #if PLATFORM(MAC)
@@ -51,16 +57,8 @@ private:
 #endif
 };
 
-#if !PLATFORM(MAC)
-inline AutodrainedPool::AutodrainedPool(int) { }
-inline AutodrainedPool::~AutodrainedPool() { }
-inline void AutodrainedPool::cycle() { }
-#endif
-
 } // namespace WTF
 
 using WTF::AutodrainedPool;
 
 #endif
-
-

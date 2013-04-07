@@ -1,5 +1,20 @@
 2013-04-07  Patrick Gansterer  <paroga@webkit.org>
 
+        [WIN] Fix problems with export macros of AutodrainedPool
+        https://bugs.webkit.org/show_bug.cgi?id=114132
+
+        Reviewed by Geoffrey Garen.
+
+        Exporting an inline function results in an error with the MS compiler.
+
+        * wtf/AutodrainedPool.h:
+        (AutodrainedPool):
+        (WTF::AutodrainedPool::AutodrainedPool):
+        (WTF::AutodrainedPool::~AutodrainedPool):
+        (WTF::AutodrainedPool::cycle):
+
+2013-04-07  Patrick Gansterer  <paroga@webkit.org>
+
         [WinCE] Add workaround for UNUSED_PARAM()
         https://bugs.webkit.org/show_bug.cgi?id=113440
 
