@@ -1,3 +1,15 @@
+2013-04-07  David Kilzer  <ddkilzer@apple.com>
+
+        Remove the rest of SVG_DOM_OBJC_BINDINGS
+        <http://webkit.org/b/114112>
+
+        Reviewed by Geoffrey Garen.
+
+        * Scripts/webkitperl/FeatureList.pm:
+        - Remove --svg-dom-objc-bindings switch.
+        * qmake/mkspecs/features/features.pri:
+        - Remove reference to ENABLE_SVG_DOM_OBJC_BINDINGS.
+
 2013-04-07  Ed Bartosh  <bartosh@gmail.com>
 
         [EFL] -minimal build fails with error: WebCore::FrameSelection::notifyAccessibilityForSelectionChange()

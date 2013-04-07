@@ -1,3 +1,13 @@
+2013-04-07  David Kilzer  <ddkilzer@apple.com>
+
+        Remove the rest of SVG_DOM_OBJC_BINDINGS
+        <http://webkit.org/b/114112>
+
+        Reviewed by Geoffrey Garen.
+
+        * WebCoreSupport/AboutDataEnableFeatures.in:
+        - Remove reference to SVG_DOM_OBJC_BINDINGS.
+
 2013-04-06  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove the USE(SKIA_ON_MAC_CHROMIUM) guards

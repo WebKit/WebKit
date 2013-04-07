@@ -1,3 +1,15 @@
+2013-04-07  David Kilzer  <ddkilzer@apple.com>
+
+        Remove the rest of SVG_DOM_OBJC_BINDINGS
+        <http://webkit.org/b/114112>
+
+        Reviewed by Geoffrey Garen.
+
+        * Source/autotools/SetupWebKitFeatures.m4:
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+        - Remove references to ENABLE_SVG_DOM_OBJC_BINDINGS.
+
 2013-04-05  Ed Bartosh  <bartosh@gmail.com>
 
         [EFL] --no-tiled-backing-store build fails because of not used #if USE(ACCELERATED_COMPOSITING)

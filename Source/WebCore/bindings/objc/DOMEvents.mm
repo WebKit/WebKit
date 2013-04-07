@@ -53,10 +53,6 @@ Class kitClass(WebCore::Event* impl)
             return [DOMTextEvent class];
         if (impl->hasInterface(eventNames().interfaceForWheelEvent))
             return [DOMWheelEvent class];        
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
-        if (impl->hasInterface(eventNames().interfaceForSVGZoomEvent))
-            return [DOMSVGZoomEvent class];
-#endif
         return [DOMUIEvent class];
     }
     if (impl->hasInterface(eventNames().interfaceForMutationEvent))

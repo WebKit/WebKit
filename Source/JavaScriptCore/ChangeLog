@@ -1,3 +1,13 @@
+2013-04-07  David Kilzer  <ddkilzer@apple.com>
+
+        Remove the rest of SVG_DOM_OBJC_BINDINGS
+        <http://webkit.org/b/114112>
+
+        Reviewed by Geoffrey Garen.
+
+        * Configurations/FeatureDefines.xcconfig:
+        - Remove ENABLE_SVG_DOM_OBJC_BINDINGS macro.
+
 2013-04-07  Oliver Hunt  <oliver@apple.com>
 
         Inspector should display information about non-object exceptions

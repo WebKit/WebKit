@@ -422,9 +422,6 @@ my @features = (
     { option => "svg", desc => "Toggle SVG support",
       define => "ENABLE_SVG", default => 1, value => \$svgSupport },
 
-    { option => "svg-dom-objc-bindings", desc => "Toggle SVG DOM ObjC Bindings support",
-      define => "ENABLE_SVG_DOM_OBJC_BINDINGS", default => isAppleMacWebKit(), value => \$svgDOMObjCBindingsSupport },
-
     { option => "svg-fonts", desc => "Toggle SVG Fonts support",
       define => "ENABLE_SVG_FONTS", default => 1, value => \$svgFontsSupport },
 

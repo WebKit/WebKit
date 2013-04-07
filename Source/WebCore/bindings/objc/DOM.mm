@@ -206,10 +206,6 @@ Class kitClass(WebCore::Node* impl)
         case WebCore::Node::ELEMENT_NODE:
             if (impl->isHTMLElement())
                 return WebCore::elementClass(toHTMLElement(impl)->tagQName(), [DOMHTMLElement class]);
-#if ENABLE(SVG_DOM_OBJC_BINDINGS)
-            if (impl->isSVGElement())
-                return WebCore::elementClass(static_cast<WebCore::SVGElement*>(impl)->tagQName(), [DOMSVGElement class]);
-#endif
             return [DOMElement class];
         case WebCore::Node::ATTRIBUTE_NODE:
             return [DOMAttr class];

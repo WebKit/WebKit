@@ -1,3 +1,13 @@
+2013-04-07  David Kilzer  <ddkilzer@apple.com>
+
+        Remove the rest of SVG_DOM_OBJC_BINDINGS
+        <http://webkit.org/b/114112>
+
+        Reviewed by Geoffrey Garen.
+
+        * Configurations/FeatureDefines.xcconfig:
+        - Remove ENABLE_SVG_DOM_OBJC_BINDINGS macro.
+
 2013-04-06  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix the WebKit2 build.
