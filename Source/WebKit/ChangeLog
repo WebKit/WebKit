@@ -1,3 +1,12 @@
+2013-04-07  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove references to Skia and V8 from CMake files
+        https://bugs.webkit.org/show_bug.cgi?id=114130
+
+        Reviewed by Geoffrey Garen.
+
+        * PlatformBlackBerry.cmake:
+
 2013-04-06  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Remove general include directories from platform specific files

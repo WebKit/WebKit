@@ -5,7 +5,6 @@ list(APPEND JSC_LIBRARIES
     ${INTL_LIBRARY} # Required for x86 builds
     ${M_LIBRARY}
     ${Screen_LIBRARY}
-    ${Skia_QNX_LIBRARY}
     ${WebKitPlatform_LIBRARY}
     ${SLOG2_LIBRARY}
 )

@@ -10,52 +10,10 @@ list(REMOVE_ITEM WebCore_SOURCES
 list(APPEND WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/bindings/cpp"
     "${WEBCORE_DIR}/platform/blackberry/CookieDatabaseBackingStore"
-    "${WEBCORE_DIR}/platform/graphics/blackberry/skia"
     "${WEBCORE_DIR}/platform/graphics/harfbuzz"
     "${WEBCORE_DIR}/platform/graphics/opentype/"
-    "${WEBCORE_DIR}/platform/graphics/skia"
-    "${WEBCORE_DIR}/platform/image-decoders/skia"
-    "${WEBCORE_DIR}/platform/image-encoders/skia"
     "${WEBCORE_DIR}/platform/network/blackberry"
     "${WEBCORE_DIR}/platform/network/blackberry/rss"
-)
-
-# Skia sources
-list(APPEND WebCore_SOURCES
-    platform/graphics/skia/FloatPointSkia.cpp
-    platform/graphics/skia/FloatRectSkia.cpp
-    platform/graphics/skia/FontCustomPlatformData.cpp
-    platform/graphics/skia/GradientSkia.cpp
-    platform/graphics/skia/GraphicsContext3DSkia.cpp
-    platform/graphics/skia/GraphicsContextSkia.cpp
-    platform/graphics/skia/HarfbuzzSkia.cpp
-    platform/graphics/skia/ImageBufferSkia.cpp
-    platform/graphics/skia/ImageSkia.cpp
-    platform/graphics/skia/IntPointSkia.cpp
-    platform/graphics/skia/IntRectSkia.cpp
-    platform/graphics/skia/NativeImageSkia.cpp
-    platform/graphics/skia/PathSkia.cpp
-    platform/graphics/skia/PatternSkia.cpp
-    platform/graphics/skia/PlatformContextSkia.cpp
-    platform/graphics/skia/SkiaUtils.cpp
-    platform/graphics/skia/TransformationMatrixSkia.cpp
-    platform/graphics/chromium/VDMXParser.cpp
-    platform/image-decoders/skia/ImageDecoderSkia.cpp
-    platform/image-encoders/skia/PNGImageEncoder.cpp
-)
-
-# Skia font backend sources
-list(APPEND WebCore_SOURCES
-    platform/graphics/blackberry/FontCacheBlackberry.cpp
-    platform/graphics/blackberry/skia/PlatformBridge.cpp
-    platform/graphics/harfbuzz/ComplexTextControllerHarfBuzz.cpp
-    platform/graphics/harfbuzz/FontHarfBuzz.cpp
-    platform/graphics/harfbuzz/FontPlatformDataHarfBuzz.cpp
-    platform/graphics/harfbuzz/HarfBuzzShaper.cpp
-    platform/graphics/harfbuzz/HarfBuzzSkia.cpp
-    platform/graphics/skia/FontCacheSkia.cpp
-    platform/graphics/skia/GlyphPageTreeNodeSkia.cpp
-    platform/graphics/skia/SimpleFontDataSkia.cpp
 )
 
 # Other sources
@@ -74,7 +32,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/WOFFFileFormat.cpp
     platform/graphics/opentype/OpenTypeSanitizer.cpp
     platform/image-encoders/JPEGImageEncoder.cpp
-    platform/image-encoders/skia/JPEGImageEncoder.cpp
     platform/posix/FileSystemPOSIX.cpp
     platform/posix/SharedBufferPOSIX.cpp
     platform/text/LocaleNone.cpp

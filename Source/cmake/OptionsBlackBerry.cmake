@@ -66,8 +66,6 @@ macro(FIND_STAGING_STATIC_LIBRARY _var _libname)
   set(${_var} "-Bstatic -l${_libname} -Bdynamic" CACHE STRING ${_libname})
 endmacro()
 
-FIND_STAGING_LIBRARY(Skia_LIBRARY grskia)
-FIND_STAGING_LIBRARY(Skia_QNX_LIBRARY skia-qnx)
 FIND_STAGING_LIBRARY(JPEG_LIBRARY jpeg)
 FIND_STAGING_LIBRARY(PNG_LIBRARY png)
 FIND_STAGING_LIBRARY(XML2_LIBRARY xml2)

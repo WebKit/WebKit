@@ -13,6 +13,7 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/blackberry"
     "${WEBCORE_DIR}/platform/graphics/gpu"
     "${WEBCORE_DIR}/platform/graphics/blackberry"
+    "${WEBCORE_DIR}/platform/image-encoders"
     "${WEBCORE_DIR}/platform/network/blackberry"
     "${WEBCORE_DIR}/testing/js"
     "${WEBCORE_DIR}/Modules/geolocation"
@@ -28,17 +29,6 @@ list(APPEND WebKit_INCLUDE_DIRECTORIES
 if (ENABLE_NOTIFICATIONS)
     list(APPEND WebKit_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/Modules/notifications"
-    )
-endif ()
-if (WTF_USE_SKIA)
-    list(APPEND WebKit_INCLUDE_DIRECTORIES
-        "${WEBCORE_DIR}/platform/graphics/chromium"
-        "${WEBCORE_DIR}/platform/graphics/blackberry/skia"
-        "${WEBCORE_DIR}/platform/graphics/skia"
-    )
-else ()
-    list(APPEND WebKit_INCLUDE_DIRECTORIES
-        "${WEBCORE_DIR}/platform/image-encoders"
     )
 endif ()
 
@@ -190,6 +180,7 @@ list(APPEND WebKit_LIBRARIES
     ${ICUI18N_LIBRARY}
     ${ICUUC_LIBRARY}
     ${INTL_LIBRARY}
+    ${ITYPE_LIBRARY}
     ${JPEG_LIBRARY}
     ${JavaScriptCore_LIBRARY_NAME}
     ${LEVELDB_LIBRARY}
@@ -198,25 +189,12 @@ list(APPEND WebKit_LIBRARIES
     ${OTS_LIBRARY}
     ${PNG_LIBRARY}
     ${SQLITE3_LIBRARY}
+    ${WTLE_LIBRARY}
     ${WebKitPlatform_LIBRARY}
     ${XML2_LIBRARY}
     ${XSLT_LIBRARY}
     ${Z_LIBRARY}
 )
-
-if (WTF_USE_SKIA)
-    list(APPEND WebKit_LIBRARIES
-        ${FREETYPE_LIBRARY}
-        ${HARFBUZZ_LIBRARY}
-        ${Skia_LIBRARY}
-        ${Skia_QNX_LIBRARY}
-    )
-else ()
-    list(APPEND WebKit_LIBRARIES
-        ${ITYPE_LIBRARY}
-        ${WTLE_LIBRARY}
-    )
-endif ()
 
 if (PROFILING)
     list(APPEND WebKit_LIBRARIES
