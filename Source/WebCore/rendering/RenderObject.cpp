@@ -2555,9 +2555,9 @@ void RenderObject::destroyAndCleanupAnonymousWrappers()
 
     RenderObject* destroyRoot = this;
     for (RenderObject* destroyRootParent = destroyRoot->parent(); destroyRootParent && destroyRootParent->isAnonymous(); destroyRoot = destroyRootParent, destroyRootParent = destroyRootParent->parent()) {
-        // Currently we only remove anonymous cells' wrapper but we should remove all unneeded
+        // Currently we only remove anonymous cells' and table sections' wrappers but we should remove all unneeded
         // wrappers. See http://webkit.org/b/52123 as an example where this is needed.
-        if (!destroyRootParent->isTableCell())
+        if (!destroyRootParent->isTableCell() && !destroyRootParent->isTableSection())
             break;
 
         if (destroyRootParent->firstChild() != this || destroyRootParent->lastChild() != this)
