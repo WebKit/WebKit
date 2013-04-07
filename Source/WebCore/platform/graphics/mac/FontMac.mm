@@ -57,21 +57,7 @@ bool Font::canExpandAroundIdeographsInComplexText()
 // divides by unitsPerEm.
 static bool hasBrokenCTFontGetVerticalTranslationsForGlyphs()
 {
-// Chromium runs the same binary on both Leopard and Snow Leopard, so the check has to happen at runtime.
-#if PLATFORM(CHROMIUM)
-    static bool isCached = false;
-    static bool result;
-    
-    if (!isCached) {
-        SInt32 majorVersion = 0;
-        SInt32 minorVersion = 0;
-        Gestalt(gestaltSystemVersionMajor, &majorVersion);
-        Gestalt(gestaltSystemVersionMinor, &minorVersion);
-        result = majorVersion == 10 && minorVersion == 6;
-        isCached = true;
-    }
-    return result;
-#elif !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
+#if !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1060
     return true;
 #else
     return false;
