@@ -51,6 +51,7 @@
 #include "RefPtrCairo.h"
 #include "ShadowBlur.h"
 #include "SimpleFontData.h"
+#include "TransformationMatrix.h"
 #include <cairo.h>
 #include <math.h>
 #include <stdio.h>

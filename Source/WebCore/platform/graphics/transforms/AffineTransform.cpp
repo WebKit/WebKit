@@ -31,6 +31,7 @@
 #include "FloatQuad.h"
 #include "FloatRect.h"
 #include "IntRect.h"
+#include "TransformationMatrix.h"
 
 #include <wtf/MathExtras.h>
 

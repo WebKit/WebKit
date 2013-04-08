@@ -39,7 +39,6 @@
 #include "GraphicsLayerClient.h"
 #include "IntRect.h"
 #include "PlatformLayer.h"
-#include "TransformationMatrix.h"
 #include "TransformOperations.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -64,6 +63,7 @@ class Image;
 class TextStream;
 class TiledBacking;
 class TimingFunction;
+class TransformationMatrix;
 
 // Base class for animation values (also used for transitions). Here to
 // represent values for properties being animated via the GraphicsLayer,

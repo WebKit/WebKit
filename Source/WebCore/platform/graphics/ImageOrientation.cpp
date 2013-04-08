@@ -28,6 +28,7 @@
 #include "ImageOrientation.h"
 
 #include "AffineTransform.h"
+#include "FloatSize.h"
 
 namespace WebCore {
 

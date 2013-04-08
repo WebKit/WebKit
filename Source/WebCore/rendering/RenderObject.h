@@ -37,10 +37,7 @@
 #include "ScrollBehavior.h"
 #include "StyleInheritedData.h"
 #include "TextAffinity.h"
-#include "TransformationMatrix.h"
 #include <wtf/HashSet.h>
-#include <wtf/StackStats.h>
-#include <wtf/UnusedParam.h>
 
 namespace WebCore {
 
@@ -51,8 +48,6 @@ class Document;
 class HitTestLocation;
 class HitTestResult;
 class InlineBox;
-class InlineFlowBox;
-class OverlapTestRequestClient;
 class Path;
 class Position;
 class PseudoStyleRequest;
@@ -64,7 +59,6 @@ class RenderGeometryMap;
 class RenderLayer;
 class RenderLayerModelObject;
 class RenderNamedFlowThread;
-class RenderTable;
 class RenderTheme;
 class TransformState;
 class VisiblePosition;
@@ -1328,17 +1322,6 @@ inline bool RenderObject::backgroundIsKnownToBeObscured()
         m_bitfields.setBoxDecorationState(boxDecorationState);
     }
     return m_bitfields.boxDecorationState() == HasBoxDecorationsAndBackgroundIsKnownToBeObscured;
-}
-
-inline void makeMatrixRenderable(TransformationMatrix& matrix, bool has3DRendering)
-{
-#if !ENABLE(3D_RENDERING)
-    UNUSED_PARAM(has3DRendering);
-    matrix.makeAffine();
-#else
-    if (!has3DRendering)
-        matrix.makeAffine();
-#endif
 }
 
 inline int adjustForAbsoluteZoom(int value, RenderObject* renderer)

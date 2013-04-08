@@ -52,6 +52,7 @@
 #include "Path.h"
 #include "Pattern.h"
 #include "ShadowBlur.h"
+#include "TransformationMatrix.h"
 #include "TransparencyLayer.h"
 
 #include <QBrush>

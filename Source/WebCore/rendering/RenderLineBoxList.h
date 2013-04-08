@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+class InlineFlowBox;
+
 class RenderLineBoxList {
 public:
     RenderLineBoxList()

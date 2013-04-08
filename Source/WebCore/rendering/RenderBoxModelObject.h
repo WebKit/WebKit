@@ -26,7 +26,6 @@
 
 #include "LayoutRect.h"
 #include "RenderLayerModelObject.h"
-#include "ShadowData.h"
 
 namespace WebCore {
 
@@ -52,6 +51,7 @@ enum ContentChangeType {
 };
 
 class KeyframeList;
+class InlineFlowBox;
 class StickyPositionViewportConstraints;
 
 // This class is the base for all objects that adhere to the CSS box model as described

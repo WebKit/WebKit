@@ -50,11 +50,6 @@
 #include "Document.h"
 #include "DocumentEventQueue.h"
 #include "EventHandler.h"
-#if ENABLE(CSS_FILTERS)
-#include "FEColorMatrix.h"
-#include "FEMerge.h"
-#include "FilterEffectRenderer.h"
-#endif
 #include "FeatureObserver.h"
 #include "FloatConversion.h"
 #include "FloatPoint3D.h"
@@ -110,6 +105,13 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
+#if ENABLE(CSS_FILTERS)
+#include "FEColorMatrix.h"
+#include "FEMerge.h"
+#include "FilterEffectRenderer.h"
+#include "RenderLayerFilterInfo.h"
+#endif
+
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayerBacking.h"
 #include "RenderLayerCompositor.h"
@@ -144,6 +146,17 @@ const int MinimumHeightWhileResizing = 40;
 bool ClipRect::intersects(const HitTestLocation& hitTestLocation) const
 {
     return hitTestLocation.intersects(m_rect);
+}
+
+void makeMatrixRenderable(TransformationMatrix& matrix, bool has3DRendering)
+{
+#if !ENABLE(3D_RENDERING)
+    UNUSED_PARAM(has3DRendering);
+    matrix.makeAffine();
+#else
+    if (!has3DRendering)
+        matrix.makeAffine();
+#endif
 }
 
 RenderLayer::RenderLayer(RenderLayerModelObject* renderer)
@@ -353,6 +366,28 @@ bool RenderLayer::requiresFullLayerImageForFilters() const
         return false;
     FilterEffectRenderer* filter = filterRenderer();
     return filter ? filter->hasFilterThatMovesPixels() : false;
+}
+
+FilterEffectRenderer* RenderLayer::filterRenderer() const
+{
+    RenderLayerFilterInfo* filterInfo = this->filterInfo();
+    return filterInfo ? filterInfo->renderer() : 0;
+}
+
+RenderLayerFilterInfo* RenderLayer::filterInfo() const
+{
+    return hasFilterInfo() ? RenderLayerFilterInfo::filterInfoForRenderLayer(this) : 0;
+}
+
+RenderLayerFilterInfo* RenderLayer::ensureFilterInfo()
+{
+    return RenderLayerFilterInfo::createFilterInfoForRenderLayerIfNeeded(this);
+}
+
+void RenderLayer::removeFilterInfoIfNeeded()
+{
+    if (hasFilterInfo())
+        RenderLayerFilterInfo::removeFilterInfoForRenderLayer(this); 
 }
 #endif
 

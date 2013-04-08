@@ -27,8 +27,6 @@
 #ifndef AffineTransform_h
 #define AffineTransform_h
 
-#include "TransformationMatrix.h"
-
 #include <string.h> // for memcpy
 #include <wtf/FastAllocBase.h>
 
@@ -51,7 +49,9 @@ namespace WebCore {
 class FloatPoint;
 class FloatQuad;
 class FloatRect;
+class FloatSize;
 class IntPoint;
+class IntSize;
 class IntRect;
 class TransformationMatrix;
 
