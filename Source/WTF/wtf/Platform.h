@@ -181,8 +181,7 @@
 #elif !defined(__ARM_EABI__) \
     && !defined(__EABI__) \
     && !defined(__VFP_FP__) \
-    && !defined(_WIN32_WCE) \
-    && !defined(ANDROID)
+    && !defined(_WIN32_WCE)
 #define WTF_CPU_MIDDLE_ENDIAN 1
 
 #endif
@@ -324,11 +323,6 @@
 /* ==== OS() - underlying operating system; only to be used for mandated low-level services like 
    virtual memory, not to choose a GUI toolkit ==== */
 
-/* OS(ANDROID) - Android */
-#ifdef ANDROID
-#define WTF_OS_ANDROID 1
-#endif
-
 /* OS(AIX) - AIX */
 #ifdef _AIX
 #define WTF_OS_AIX 1
@@ -416,7 +410,6 @@
 
 /* OS(UNIX) - Any Unix-like system */
 #if   OS(AIX)              \
-    || OS(ANDROID)          \
     || OS(DARWIN)           \
     || OS(FREEBSD)          \
     || OS(HURD)             \
@@ -598,7 +591,7 @@
 #define WTF_USE_PTHREADS 1
 #endif /* OS(UNIX) */
 
-#if OS(UNIX) && !OS(ANDROID) && !OS(QNX)
+#if OS(UNIX) && !OS(QNX)
 #define HAVE_LANGINFO_H 1
 #endif
 
@@ -618,7 +611,7 @@
 #endif
 #endif
 
-#if !OS(WINDOWS) && !OS(SOLARIS) && !OS(ANDROID)
+#if !OS(WINDOWS) && !OS(SOLARIS)
 #define HAVE_TM_GMTOFF 1
 #define HAVE_TM_ZONE 1
 #define HAVE_TIMEGM 1

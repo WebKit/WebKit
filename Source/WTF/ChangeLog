@@ -1,3 +1,16 @@
+2013-04-07  Benjamin Poulain  <benjamin@webkit.org>
+
+        Remove the android code from WebKit Template Framework
+        https://bugs.webkit.org/show_bug.cgi?id=114138
+
+        Reviewed by Dirk Schulze.
+
+        * wtf/Assertions.cpp:
+        * wtf/Atomics.h:
+        * wtf/MathExtras.h:
+        * wtf/Platform.h:
+        * wtf/ThreadIdentifierDataPthreads.cpp:
+
 2013-04-07  Oliver Hunt  <oliver@apple.com>
 
         Add bounds checking for WTF::Vector::operator[]
