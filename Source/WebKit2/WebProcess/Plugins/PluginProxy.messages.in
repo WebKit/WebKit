@@ -76,10 +76,10 @@ messages -> PluginProxy LegacyReceiver {
 #endif
 
     # Tells the WebProcess that the plug-in was successfully initialized asynchronously
-    DidCreatePlugin(bool wantsWheelEvents, uint32_t remoteLayerClientID) -> ()
+    DidCreatePlugin(bool wantsWheelEvents, uint32_t remoteLayerClientID)
     
     # Tells the WebProcess that the plug-in failed to initialize.
-    DidFailToCreatePlugin() -> ()
+    DidFailToCreatePlugin()
 }
 
 #endif

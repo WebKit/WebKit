@@ -1,3 +1,16 @@
+2013-04-08  Brady Eidson  <beidson@apple.com>
+
+        Web/Plugin process deadlock initializing async plugins.
+        <rdar://problem/13525232> and https://bugs.webkit.org/show_bug.cgi?id=114217
+
+        Reviewed by Anders Carlsson.
+
+       The "Async initialization complete" messages probably don't have to be synchronous.
+
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::createPluginAsynchronously): Notify of initialization success/failure asynchronously.
+        * WebProcess/Plugins/PluginProxy.messages.in: 
+
 2013-04-08  Anders Carlsson  <andersca@apple.com>
 
         Add an async version of ResourceHandle::didReceiveResponse
