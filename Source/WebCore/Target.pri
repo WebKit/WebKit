@@ -1071,7 +1071,6 @@ SOURCES += \
     platform/KillRingNone.cpp \
     platform/KURL.cpp \
     platform/Language.cpp \
-    platform/LayoutTestSupport.cpp \
     platform/Length.cpp \
     platform/LengthBox.cpp \
     platform/text/LineEnding.cpp \

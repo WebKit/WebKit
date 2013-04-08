@@ -4103,7 +4103,6 @@
     <ClCompile Include="..\platform\KillRingNone.cpp" />
     <ClCompile Include="..\platform\KURL.cpp" />
     <ClCompile Include="..\platform\Language.cpp" />
-    <ClCompile Include="..\platform\LayoutTestSupport.cpp" />
     <ClCompile Include="..\platform\Length.cpp" />
     <ClCompile Include="..\platform\LengthBox.cpp" />
     <ClCompile Include="..\platform\LinkHash.cpp" />
@@ -11580,7 +11579,6 @@
     <ClInclude Include="..\platform\KURL.h" />
     <ClInclude Include="..\platform\KURLHash.h" />
     <ClInclude Include="..\platform\Language.h" />
-    <ClInclude Include="..\platform\LayoutTestSupport.h" />
     <ClInclude Include="..\platform\LayoutUnit.h" />
     <ClInclude Include="..\platform\Length.h" />
     <ClInclude Include="..\platform\LengthBox.h" />

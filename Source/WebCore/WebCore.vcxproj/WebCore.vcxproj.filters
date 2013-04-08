@@ -2517,9 +2517,6 @@
     <ClCompile Include="..\platform\Language.cpp">
       <Filter>platform</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\LayoutTestSupport.cpp">
-      <Filter>platform</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\Length.cpp">
       <Filter>platform</Filter>
     </ClCompile>
@@ -9343,9 +9340,6 @@
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\Language.h">
-      <Filter>platform</Filter>
-    </ClInclude>
-    <ClInclude Include="..\platform\LayoutTestSupport.h">
       <Filter>platform</Filter>
     </ClInclude>
     <ClInclude Include="..\platform\LayoutUnit.h">
