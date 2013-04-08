@@ -237,8 +237,7 @@ float Font::width(const TextRun& run, int& charsConsumed, String& glyphName) con
     return width(run);
 }
 
-#if !(PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN)))
-
+#if !PLATFORM(MAC)
 PassOwnPtr<TextLayout> Font::createLayout(RenderText*, float, bool) const
 {
     return nullptr;
@@ -253,7 +252,6 @@ float Font::width(TextLayout&, unsigned, unsigned, HashSet<const SimpleFontData*
     ASSERT_NOT_REACHED();
     return 0;
 }
-
 #endif
 
 FloatRect Font::selectionRectForText(const TextRun& run, const FloatPoint& point, int h, int from, int to) const

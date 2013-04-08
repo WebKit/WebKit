@@ -53,7 +53,6 @@ DragData::DragData(const String&, const IntPoint& clientPosition, const IntPoint
 }
 #endif
 
-#if !PLATFORM(CHROMIUM)
 int DragData::modifierKeyState() const
 {
     bool shiftKey, ctrlKey, altKey, metaKey;
@@ -76,7 +75,6 @@ String DragData::droppedFileSystemId() const
 {
     return String();
 }
-#endif
 #endif
 
 } // namespace WebCore

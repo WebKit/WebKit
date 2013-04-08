@@ -345,13 +345,10 @@ void DocumentLoader::notifyFinished(CachedResource* resource)
         return;
     }
 
-    // FIXME: we should fix the design to eliminate the need for a platform ifdef here
-#if !PLATFORM(CHROMIUM)
     if (m_request.cachePolicy() == ReturnCacheDataDontLoad && !m_mainResource->wasCanceled()) {
         frameLoader()->retryAfterFailedCacheOnlyMainResourceLoad();
         return;
     }
-#endif
 
     mainReceivedError(m_mainResource->resourceError());
 }

@@ -288,13 +288,8 @@ typedef HashMap<FontPlatformData, pair<RefPtr<SimpleFontData>, unsigned>, FontDa
 
 static FontDataCache* gFontDataCache = 0;
 
-#if PLATFORM(CHROMIUM) && !OS(ANDROID)
-const int cMaxInactiveFontData = 250;
-const int cTargetInactiveFontData = 200;
-#else
 const int cMaxInactiveFontData = 225;
 const int cTargetInactiveFontData = 200;
-#endif
 static ListHashSet<RefPtr<SimpleFontData> >* gInactiveFontData = 0;
 
 PassRefPtr<SimpleFontData> FontCache::getCachedFontData(const FontDescription& fontDescription, const AtomicString& family, bool checkingAlternateName, ShouldRetain shouldRetain)

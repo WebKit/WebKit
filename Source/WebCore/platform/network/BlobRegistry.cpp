@@ -35,7 +35,6 @@
 
 namespace WebCore {
 
-#if !PLATFORM(CHROMIUM)
 BlobRegistry& blobRegistry()
 {
     ASSERT(isMainThread());
@@ -47,7 +46,6 @@ BlobRegistry& blobRegistry()
 #endif
     return instance;
 }
-#endif
 
 BlobRegistry::~BlobRegistry()
 {

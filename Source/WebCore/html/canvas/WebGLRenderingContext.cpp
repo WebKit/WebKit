@@ -428,11 +428,7 @@ PassOwnPtr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasElemen
     }
 
     attributes.noExtensions = true;
-#if PLATFORM(CHROMIUM)
-    attributes.shareResources = true;
-#else
     attributes.shareResources = false;
-#endif
     attributes.preferDiscreteGPU = true;
     attributes.topDocumentURL = document->topDocument()->url();
 
@@ -449,13 +445,6 @@ PassOwnPtr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasElemen
 
     OwnPtr<WebGLRenderingContext> renderingContext = adoptPtr(new WebGLRenderingContext(canvas, context, attributes));
     renderingContext->suspendIfNeeded();
-
-#if PLATFORM(CHROMIUM)
-    if (!renderingContext->m_drawingBuffer) {
-        canvas->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent, false, true, "Could not create a WebGL context."));
-        return nullptr;
-    }
-#endif
 
     return renderingContext.release();
 }
@@ -482,13 +471,6 @@ WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement* passedCanvas, Pa
 
     m_maxViewportDims[0] = m_maxViewportDims[1] = 0;
     m_context->getIntegerv(GraphicsContext3D::MAX_VIEWPORT_DIMS, m_maxViewportDims);
-
-#if PLATFORM(CHROMIUM)
-    // Create the DrawingBuffer and initialize the platform layer.
-    DrawingBuffer::PreserveDrawingBuffer preserve = m_attributes.preserveDrawingBuffer ? DrawingBuffer::Preserve : DrawingBuffer::Discard;
-    DrawingBuffer::AlphaRequirement alpha = m_attributes.alpha ? DrawingBuffer::Alpha : DrawingBuffer::Opaque;
-    m_drawingBuffer = DrawingBuffer::create(m_context.get(), clampedCanvasSize(), preserve, alpha);
-#endif
 
     if (m_drawingBuffer)
         m_drawingBuffer->bind();
@@ -763,11 +745,6 @@ void WebGLRenderingContext::paintRenderingResultsToCanvas()
     // happened after it was composited should be ignored by the compositor.
     if (m_context->layerComposited() && !m_attributes.preserveDrawingBuffer) {
         m_context->paintCompositedResultsToCanvas(canvas()->buffer());
-
-#if USE(ACCELERATED_COMPOSITING) && PLATFORM(CHROMIUM)
-        if (m_drawingBuffer)
-            m_drawingBuffer->paintCompositedResultsToCanvas(canvas()->buffer());
-#endif
 
         canvas()->makePresentationCopy();
     } else
@@ -4692,11 +4669,6 @@ void WebGLRenderingContext::forceRestoreContext()
 #if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* WebGLRenderingContext::platformLayer() const
 {
-#if PLATFORM(CHROMIUM)
-    if (m_drawingBuffer)
-        return m_drawingBuffer->platformLayer();
-#endif
-
     return m_context->platformLayer();
 }
 #endif

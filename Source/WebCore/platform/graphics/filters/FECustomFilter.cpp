@@ -331,12 +331,7 @@ bool FECustomFilter::resizeContext(const IntSize& newContextSize)
     m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_frameBuffer);
     m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_destTexture);
     // We are going to clear the output buffer anyway, so we can safely initialize the destination texture with garbage data.
-#if PLATFORM(CHROMIUM)
-    // FIXME: GraphicsContext3D::texImage2DDirect is not implemented on Chromium.
-    m_context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, newContextSize.width(), newContextSize.height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, 0);
-#else
     m_context->texImage2DDirect(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, newContextSize.width(), newContextSize.height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, 0);
-#endif
     m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_destTexture, 0);
 
     // We don't need the depth buffer for the texture framebuffer, if we already

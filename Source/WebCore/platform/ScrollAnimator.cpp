@@ -41,7 +41,7 @@ using namespace std;
 
 namespace WebCore {
 
-#if !ENABLE(SMOOTH_SCROLLING) && !(PLATFORM(CHROMIUM) && OS(DARWIN))
+#if !ENABLE(SMOOTH_SCROLLING)
 PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea* scrollableArea)
 {
     return adoptPtr(new ScrollAnimator(scrollableArea));
@@ -93,12 +93,7 @@ bool ScrollAnimator::handleWheelEvent(const PlatformWheelEvent& e)
 
     bool handled = false;
 
-#if PLATFORM(CHROMIUM) && !OS(DARWIN)
-    ScrollGranularity granularity = e.hasPreciseScrollingDeltas() ? ScrollByPrecisePixel : ScrollByPixel;
-#else
     ScrollGranularity granularity = ScrollByPixel;
-#endif
-
     IntSize maxForwardScrollDelta = m_scrollableArea->maximumScrollPosition() - m_scrollableArea->scrollPosition();
     IntSize maxBackwardScrollDelta = m_scrollableArea->scrollPosition() - m_scrollableArea->minimumScrollPosition();
     if ((deltaX < 0 && maxForwardScrollDelta.width() > 0)

@@ -31,11 +31,6 @@
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
-#if PLATFORM(CHROMIUM)
-#include "PageClientChromium.h"
-#include "PlatformWidget.h"
-#endif
-
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
 #endif
@@ -96,8 +91,6 @@ typedef PageClientBlackBerry* PlatformPageClient;
 #elif PLATFORM(EFL)
 class PageClientEfl;
 typedef PageClientEfl* PlatformPageClient;
-#elif PLATFORM(CHROMIUM)
-typedef WebCore::PageClientChromium* PlatformPageClient;
 #else
 typedef PlatformWidget PlatformPageClient;
 #endif
@@ -225,10 +218,6 @@ public:
 #if PLATFORM(EFL)
     void setEvasObject(Evas_Object*);
     Evas_Object* evasObject() { return m_evasObject; }
-#endif
-
-#if PLATFORM(CHROMIUM)
-    virtual bool isPluginContainer() const { return false; }
 #endif
 
 #if PLATFORM(QT)

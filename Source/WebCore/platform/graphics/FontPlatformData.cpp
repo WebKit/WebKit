@@ -27,10 +27,6 @@
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(CHROMIUM) && OS(DARWIN)
-#include "HarfBuzzFace.h"
-#endif
-
 using namespace std;
 
 namespace WebCore {

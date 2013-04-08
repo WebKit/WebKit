@@ -37,13 +37,6 @@
 OBJC_CLASS WebSpeechSynthesisWrapper;
 #endif
 
-#if PLATFORM(CHROMIUM)
-namespace WebKit {
-class WebSpeechSynthesizer;
-class WebSpeechSynthesizerClient;
-}
-#endif
-
 namespace WebCore {
 
 enum SpeechBoundary {
@@ -92,10 +85,6 @@ private:
     
 #if PLATFORM(MAC)
     RetainPtr<WebSpeechSynthesisWrapper> m_platformSpeechWrapper;
-#endif
-#if PLATFORM(CHROMIUM)
-    OwnPtr<WebKit::WebSpeechSynthesizer> m_webSpeechSynthesizer;
-    OwnPtr<WebKit::WebSpeechSynthesizerClient> m_webSpeechSynthesizerClient;
 #endif
 };
     

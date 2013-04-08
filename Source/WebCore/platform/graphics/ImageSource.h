@@ -48,16 +48,12 @@ class SharedBuffer;
 
 #if USE(CG)
 typedef CGImageSourceRef NativeImageDecoderPtr;
-#elif !PLATFORM(CHROMIUM)
+#else
 class ImageDecoder;
 typedef ImageDecoder* NativeImageDecoderPtr;
 #endif
 
-#if PLATFORM(CHROMIUM)
-class DeferredImageDecoder;
-typedef DeferredImageDecoder NativeImageDecoder;
-typedef DeferredImageDecoder* NativeImageDecoderPtr;
-#elif USE(CG)
+#if USE(CG)
 #define NativeImageDecoder ImageDecoder
 #else
 typedef ImageDecoder NativeImageDecoder;

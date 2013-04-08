@@ -33,7 +33,7 @@
 #include "IntSize.h"
 #include <wtf/Forward.h>
 
-#if PLATFORM(CHROMIUM) || PLATFORM(QT)
+#if PLATFORM(QT)
 #define DefaultInterpolationQuality InterpolationMedium
 #elif USE(CG)
 #define DefaultInterpolationQuality InterpolationLow

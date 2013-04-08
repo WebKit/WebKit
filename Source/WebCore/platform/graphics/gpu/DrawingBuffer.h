@@ -46,9 +46,6 @@
 namespace WebCore {
 class GraphicsContext3D;
 class ImageData;
-#if PLATFORM(CHROMIUM)
-class DrawingBufferPrivate;
-#endif
 
 // Manages a rendering target (framebuffer + attachment) for a canvas.  Can publish its rendering
 // results to a PlatformLayer for compositing.
@@ -171,10 +168,6 @@ private:
 
     // True if our contents have been modified since the last presentation of this buffer.
     bool m_contentsChanged;
-
-#if PLATFORM(CHROMIUM)
-    OwnPtr<DrawingBufferPrivate> m_private;
-#endif
 
 #if PLATFORM(MAC)
     RetainPtr<WebGLLayer> m_platformLayer;

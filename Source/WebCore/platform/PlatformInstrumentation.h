@@ -34,10 +34,6 @@
 #include <wtf/MainThread.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(CHROMIUM)
-#include "TraceEvent.h"
-#endif
-
 namespace WebCore {
 
 class PlatformInstrumentationClient {
@@ -76,36 +72,24 @@ private:
 
 inline void PlatformInstrumentation::willDecodeImage(const String& imageType)
 {
-#if PLATFORM(CHROMIUM)
-    TRACE_EVENT_BEGIN1(CategoryName, ImageDecodeEvent, ImageTypeArgument, TRACE_STR_COPY(imageType.ascii().data()));
-#endif
     FAST_RETURN_IF_NO_CLIENT_OR_NOT_MAIN_THREAD();
     m_client->willDecodeImage(imageType);
 }
 
 inline void PlatformInstrumentation::didDecodeImage()
 {
-#if PLATFORM(CHROMIUM)
-    TRACE_EVENT_END0(CategoryName, ImageDecodeEvent);
-#endif
     FAST_RETURN_IF_NO_CLIENT_OR_NOT_MAIN_THREAD();
     m_client->didDecodeImage();
 }
 
 inline void PlatformInstrumentation::willResizeImage(bool shouldCache)
 {
-#if PLATFORM(CHROMIUM)
-    TRACE_EVENT_BEGIN1(CategoryName, ImageResizeEvent, CachedArgument, shouldCache);
-#endif
     FAST_RETURN_IF_NO_CLIENT_OR_NOT_MAIN_THREAD();
     m_client->willResizeImage(shouldCache);
 }
 
 inline void PlatformInstrumentation::didResizeImage()
 {
-#if PLATFORM(CHROMIUM)
-    TRACE_EVENT_END0(CategoryName, ImageResizeEvent);
-#endif
     FAST_RETURN_IF_NO_CLIENT_OR_NOT_MAIN_THREAD();
     m_client->didResizeImage();
 }

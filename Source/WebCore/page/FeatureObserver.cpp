@@ -39,11 +39,6 @@ FeatureObserver::FeatureObserver()
 
 FeatureObserver::~FeatureObserver()
 {
-#if PLATFORM(CHROMUM)
-    // We always log PageDestruction so that we have a scale for the rest of the features.
-    HistogramSupport::histogramEnumeration("WebCore.FeatureObserver", PageDestruction, NumberOfFeatures);
-#endif
-
     updateMeasurements();
 }
 

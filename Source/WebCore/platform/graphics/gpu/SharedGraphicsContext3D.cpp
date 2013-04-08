@@ -29,11 +29,6 @@
 #include "SharedGraphicsContext3D.h"
 
 #include "Extensions3D.h"
-#if PLATFORM(CHROMIUM)
-#include "GraphicsContext3DPrivate.h"
-#include <public/Platform.h>
-#include <public/WebGraphicsContext3D.h>
-#endif
 #include <wtf/MainThread.h>
 
 namespace WebCore {

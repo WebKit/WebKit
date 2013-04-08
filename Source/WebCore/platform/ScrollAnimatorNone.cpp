@@ -43,10 +43,6 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/PassOwnPtr.h>
 
-#if PLATFORM(CHROMIUM)
-#include "TraceEvent.h"
-#endif
-
 #if ENABLE(GESTURE_EVENTS)
 #include "PlatformGestureEvent.h"
 #endif
@@ -436,10 +432,6 @@ bool ScrollAnimatorNone::scroll(ScrollbarOrientation orientation, ScrollGranular
     if (!m_scrollableArea->scrollAnimatorEnabled())
         return ScrollAnimator::scroll(orientation, granularity, step, multiplier);
 
-#if PLATFORM(CHROMIUM)
-    TRACE_EVENT0("webkit", "ScrollAnimatorNone::scroll");
-#endif
-
     // FIXME: get the type passed in. MouseWheel could also be by line, but should still have different
     // animation parameters than the keyboard.
     Parameters parameters;
@@ -531,10 +523,6 @@ void ScrollAnimatorNone::animationTimerFired(Timer<ScrollAnimatorNone>* timer)
 
 void ScrollAnimatorNone::animationTimerFired()
 {
-#if PLATFORM(CHROMIUM)
-    TRACE_EVENT0("webkit", "ScrollAnimatorNone::animationTimerFired");
-#endif
-
     double currentTime = WTF::monotonicallyIncreasingTime();
     double deltaToNextFrame = ceil((currentTime - m_startTime) * kFrameRate) / kFrameRate - (currentTime - m_startTime);
     currentTime += deltaToNextFrame;
@@ -554,9 +542,6 @@ void ScrollAnimatorNone::animationTimerFired()
         m_animationActive = false;
 #endif
 
-#if PLATFORM(CHROMIUM)
-    TRACE_EVENT0("webkit", "ScrollAnimatorNone::notifyPositionChanged");
-#endif
     notifyPositionChanged(FloatSize());
 
     if (!continueAnimation)

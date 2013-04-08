@@ -126,14 +126,6 @@
 #include <wtf/dtoa.h>
 #endif
 
-#if PLATFORM(CHROMIUM)
-#include "FilterOperation.h"
-#include "FilterOperations.h"
-#include "GraphicsLayer.h"
-#include "GraphicsLayerChromium.h"
-#include "RenderLayerBacking.h"
-#endif
-
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 #include "CDM.h"
 #include "MockCDM.h"

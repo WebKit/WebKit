@@ -42,8 +42,6 @@ QT_END_NAMESPACE
 typedef struct HBITMAP__* HBITMAP;
 #elif PLATFORM(WX)
 class wxDragImage;
-#elif PLATFORM(CHROMIUM)
-#include "DragImageRef.h"
 #elif PLATFORM(GTK)
 typedef struct _cairo_surface cairo_surface_t;
 #endif

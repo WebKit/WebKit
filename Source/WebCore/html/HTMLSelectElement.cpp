@@ -1062,7 +1062,7 @@ void HTMLSelectElement::reset()
     setNeedsValidityCheck();
 }
 
-#if (!PLATFORM(WIN) && !(PLATFORM(CHROMIUM) && OS(WINDOWS))) || OS(WINCE)
+#if !PLATFORM(WIN) || OS(WINCE)
 bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
 {
     const Page* page = document()->page();
@@ -1299,7 +1299,7 @@ void HTMLSelectElement::listBoxDefaultEventHandler(Event* event)
         int listIndex = toRenderListBox(renderer())->listIndexAtOffset(toIntSize(localOffset));
         if (listIndex >= 0) {
             if (!isDisabledFormControl()) {
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
+#if PLATFORM(MAC)
                 updateSelectedState(listIndex, mouseEvent->metaKey(), mouseEvent->shiftKey());
 #else
                 updateSelectedState(listIndex, mouseEvent->ctrlKey(), mouseEvent->shiftKey());

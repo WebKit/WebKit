@@ -36,8 +36,6 @@ OBJC_CLASS NSMutableArray;
 typedef struct _GtkMenu GtkMenu;
 #elif PLATFORM(WX)
 class wxMenu;
-#elif PLATFORM(CHROMIUM)
-#include <wtf/Vector.h>
 #endif
 
 namespace WebCore {
@@ -52,9 +50,6 @@ namespace WebCore {
     typedef GtkMenu* PlatformMenuDescription;
 #elif PLATFORM(WX)
     typedef wxMenu* PlatformMenuDescription;
-#elif PLATFORM(CHROMIUM)
-    class ContextMenuItem;
-    typedef const Vector<ContextMenuItem>* PlatformMenuDescription;
 #else
     typedef void* PlatformMenuDescription;
 #endif

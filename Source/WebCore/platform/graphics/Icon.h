@@ -35,9 +35,6 @@ typedef struct HICON__* HICON;
 #include <QIcon>
 #elif PLATFORM(GTK)
 typedef struct _GdkPixbuf GdkPixbuf;
-#elif PLATFORM(CHROMIUM)
-#include "Image.h"
-#include "PlatformIcon.h"
 #endif
 
 namespace WebCore {
@@ -55,8 +52,6 @@ public:
 
 #if PLATFORM(WIN)
     static PassRefPtr<Icon> create(HICON hIcon) { return adoptRef(new Icon(hIcon)); }
-#elif PLATFORM(CHROMIUM)
-    static PassRefPtr<Icon> create(PassRefPtr<PlatformIcon> icon) { return adoptRef(new Icon(icon)); }
 #endif
 
 private:
@@ -75,9 +70,6 @@ private:
 #elif PLATFORM(EFL)
     Icon();
     Evas_Object* m_icon;
-#elif PLATFORM(CHROMIUM)
-    Icon(PassRefPtr<PlatformIcon>);
-    RefPtr<PlatformIcon> m_icon;
 #endif
 };
 

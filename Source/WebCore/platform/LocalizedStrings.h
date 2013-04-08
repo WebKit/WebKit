@@ -282,12 +282,10 @@ namespace WebCore {
     String snapshottedPlugInLabelTitle();
     String snapshottedPlugInLabelSubtitle();
 
-#if !PLATFORM(CHROMIUM)
 #define WEB_UI_STRING(string, description) WebCore::localizedString(string)
 #define WEB_UI_STRING_KEY(string, key, description) WebCore::localizedString(key)
 
     String localizedString(const char* key);
-#endif
 
 } // namespace WebCore
 

@@ -102,7 +102,7 @@ public:
     PassRefPtr<DocumentFragment> documentFragment(Frame*, PassRefPtr<Range>, bool allowPlainText, bool& chosePlainText);
     String plainText(Frame* = 0);
     
-#if PLATFORM(QT) || PLATFORM(CHROMIUM) || PLATFORM(GTK)
+#if PLATFORM(QT) || PLATFORM(GTK)
     bool isSelectionMode() const;
     void setSelectionMode(bool);
 #else
@@ -125,7 +125,7 @@ private:
     HWND m_owner;
 #endif
 
-#if PLATFORM(QT) || PLATFORM(CHROMIUM)
+#if PLATFORM(QT)
     bool m_selectionMode;
 #endif
 

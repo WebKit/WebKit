@@ -197,20 +197,6 @@ namespace WebCore {
         bool checked;
         bool enabled;
     };
-#elif PLATFORM(CHROMIUM)
-    struct PlatformMenuItemDescription {
-        PlatformMenuItemDescription()
-            : type(ActionType)
-            , action(ContextMenuItemTagNoAction)
-            , checked(false)
-            , enabled(true) { }
-        ContextMenuItemType type;
-        ContextMenuAction action;
-        String title;
-        Vector<ContextMenuItem> subMenuItems;
-        bool checked;
-        bool enabled;
-    };
 #else
     typedef void* PlatformMenuItemDescription;
 #endif

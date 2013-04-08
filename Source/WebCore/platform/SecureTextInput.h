@@ -33,15 +33,9 @@
 
 namespace WebCore {
 
-// Once enableSecureTextInput is called, secure text input mode is set until
-// disableSecureTextInput has been called.
-void enableSecureTextInput();
-void disableSecureTextInput();
-
-#if !(PLATFORM(CHROMIUM) && OS(DARWIN))
+// FIXME: Remove these methods. (http://wkb.ug/114126)
 inline void enableSecureTextInput() { }
 inline void disableSecureTextInput() { }
-#endif
 
 } // namespace WebCore
 

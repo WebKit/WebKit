@@ -35,10 +35,6 @@
 #include "NotImplemented.h"
 #include "PlatformMemoryInstrumentation.h"
 
-#if PLATFORM(CHROMIUM)
-#include "DeferredImageDecoder.h"
-#endif
-
 namespace WebCore {
 
 #if ENABLE(IMAGE_DECODER_DOWN_SAMPLING)

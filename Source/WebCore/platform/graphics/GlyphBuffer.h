@@ -39,7 +39,7 @@
 #include <CoreGraphics/CGGeometry.h>
 #endif
 
-#if OS(DARWIN) && (PLATFORM(WX) || PLATFORM(CHROMIUM))
+#if OS(DARWIN) && PLATFORM(WX)
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
@@ -64,7 +64,7 @@ typedef Glyph GlyphBufferGlyph;
 
 // CG uses CGSize instead of FloatSize so that the result of advances()
 // can be passed directly to CGContextShowGlyphsWithAdvances in FontMac.mm
-#if USE(CG) || (OS(DARWIN) && (PLATFORM(WX) || PLATFORM(CHROMIUM)))
+#if USE(CG) || (OS(DARWIN) && PLATFORM(WX))
 struct GlyphBufferAdvance : CGSize {
 public:
     GlyphBufferAdvance(CGSize size) : CGSize(size)
@@ -165,7 +165,7 @@ public:
         m_glyphs.append(glyph);
 #endif
 
-#if USE(CG) || (OS(DARWIN) && (PLATFORM(WX) || PLATFORM(CHROMIUM)))
+#if USE(CG) || (OS(DARWIN) && PLATFORM(WX))
         CGSize advance = { width, 0 };
         m_advances.append(advance);
 #elif OS(WINCE)

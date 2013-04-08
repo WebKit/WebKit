@@ -114,11 +114,7 @@ bool EXTDrawBuffers::satisfiesWebGLRequirements(WebGLRenderingContext* webglCont
     Platform3DObject fbo = context->createFramebuffer();
     context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, fbo);
 
-#if PLATFORM(CHROMIUM)
-    const unsigned char* buffer = 0; // Chromium doesn't allow init data for depth/stencil tetxures.
-#else
     const unsigned char buffer[4] = { 0, 0, 0, 0 }; // textures are required to be initialized for other ports.
-#endif
     bool supportsDepth = (context->getExtensions()->supports("GL_CHROMIUM_depth_texture")
         || context->getExtensions()->supports("GL_OES_depth_texture")
         || context->getExtensions()->supports("GL_ARB_depth_texture"));

@@ -58,10 +58,6 @@
 #include "WebGLRenderingContext.h"
 #endif
 
-#if PLATFORM(CHROMIUM)
-#include <public/Platform.h>
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -187,18 +183,13 @@ CanvasRenderingContext* HTMLCanvasElement::getContext(const String& type, Canvas
 #if ENABLE(WEBGL)    
     Settings* settings = document()->settings();
     if (settings && settings->webGLEnabled()
-#if !PLATFORM(CHROMIUM) && !PLATFORM(GTK) && !PLATFORM(EFL) && !PLATFORM(QT)
+#if !PLATFORM(GTK) && !PLATFORM(EFL) && !PLATFORM(QT)
         && settings->acceleratedCompositingEnabled()
 #endif
         ) {
 
         // Accept the legacy "webkit-3d" name as well as the provisional "experimental-webgl" name.
         bool is3dContext = (type == "webkit-3d") || (type == "experimental-webgl");
-
-#if PLATFORM(CHROMIUM) && !OS(ANDROID)
-        // Now that WebGL is ratified, we will also accept "webgl" as the context name in Chrome.
-        is3dContext |= (type == "webgl");
-#endif
 
         if (is3dContext) {
             if (m_context && !m_context->is3d())
@@ -511,11 +502,6 @@ bool HTMLCanvasElement::shouldAccelerate(const IntSize& size) const
     // Do not use acceleration for small canvas.
     if (size.width() * size.height() < settings->minimumAccelerated2dCanvasSize())
         return false;
-
-#if PLATFORM(CHROMIUM)
-    if (!WebKit::Platform::current()->canAccelerate2dCanvas())
-        return false;
-#endif
 
     return true;
 #else

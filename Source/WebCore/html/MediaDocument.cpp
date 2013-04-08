@@ -166,7 +166,6 @@ void MediaDocument::defaultEventHandler(Event* event)
     if (!targetNode)
         return;
 
-#if !PLATFORM(CHROMIUM)
     if (HTMLVideoElement* video = ancestorVideoElement(targetNode)) {
         if (event->type() == eventNames().clickEvent) {
             if (!video->canPlay()) {
@@ -180,7 +179,6 @@ void MediaDocument::defaultEventHandler(Event* event)
             }
         }
     }
-#endif
 
     if (event->type() == eventNames().keydownEvent && event->isKeyboardEvent()) {
         HTMLVideoElement* video = descendentVideoElement(targetNode);

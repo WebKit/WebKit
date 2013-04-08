@@ -71,8 +71,6 @@ public:
 
 #if (PLATFORM(QT) && !defined(QT_NO_BEARERMANAGEMENT))
     void setNetworkAccessAllowed(bool);
-#elif PLATFORM(CHROMIUM)
-    void setOnLine(bool);
 #endif
 
 #if PLATFORM(BLACKBERRY)

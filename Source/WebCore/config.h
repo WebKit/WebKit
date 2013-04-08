@@ -120,15 +120,6 @@
 #define WTF_USE_NEW_THEME 1
 #endif // PLATFORM(MAC)
 
-#if PLATFORM(CHROMIUM)
-
-// Chromium uses this file instead of JavaScriptCore/config.h to compile
-// JavaScriptCore/wtf (chromium doesn't compile the rest of JSC). Therefore,
-// this define is required.
-#define WTF_CHANGES 1
-
-#endif /* PLATFORM(CHROMIUM) */
-
 #if USE(CG)
 #ifndef CGFLOAT_DEFINED
 #ifdef __LP64__

@@ -170,16 +170,10 @@ String Extensions3DOpenGLCommon::getTranslatedShaderSourceANGLE(Platform3DObject
 
     String translatedShaderSource;
     String shaderInfoLog;
-    int extraCompileOptions = SH_MAP_LONG_VARIABLE_NAMES;
+    int extraCompileOptions = SH_MAP_LONG_VARIABLE_NAMES | SH_CLAMP_INDIRECT_ARRAY_BOUNDS;
 
     if (m_requiresBuiltInFunctionEmulation)
         extraCompileOptions |= SH_EMULATE_BUILT_IN_FUNCTIONS;
-
-#if !PLATFORM(CHROMIUM)
-    // Chromium does not use the ANGLE bundled in WebKit source, and thus
-    // does not yet have the symbol SH_CLAMP_INDIRECT_ARRAY_BOUNDS.
-    extraCompileOptions |= SH_CLAMP_INDIRECT_ARRAY_BOUNDS;
-#endif
 
     Vector<ANGLEShaderSymbol> symbols;
     bool isValid = compiler.compileShaderSource(entry.source.utf8().data(), shaderType, translatedShaderSource, shaderInfoLog, symbols, extraCompileOptions);

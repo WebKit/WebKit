@@ -95,8 +95,6 @@ namespace WebCore {
 #if PLATFORM(MAC)
         // Keep this in sync with the PlatformMenuDescription typedef
         RetainPtr<NSMutableArray> m_platformDescription;
-#elif PLATFORM(CHROMIUM)
-        Vector<ContextMenuItem> m_items;
 #else
         PlatformMenuDescription m_platformDescription;
 #if OS(WINCE)

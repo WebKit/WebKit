@@ -147,25 +147,6 @@ namespace WebCore {
 #endif
         }
 
-#if PLATFORM(CHROMIUM)
-        void setSkBitmap(const SkBitmap& bitmap)
-        {
-            m_bitmap = NativeImageSkia::create(bitmap);
-        }
-
-        const SkBitmap& getSkBitmap() const
-        {
-            return m_bitmap->bitmap();
-        }
-
-        void setMemoryAllocator(SkBitmap::Allocator* allocator)
-        {
-            m_allocator = allocator;
-        }
-
-        SkBitmap::Allocator* allocator() const { return m_allocator; }
-#endif
-
         // Use fix point multiplier instead of integer division or floating point math.
         // This multipler produces exactly the same result for all values in range 0 - 255.
         static const unsigned fixPointShift = 24;

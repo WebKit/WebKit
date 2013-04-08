@@ -147,11 +147,7 @@ public:
     void setIsAbsoluteSize(bool s) { m_isAbsoluteSize = s; }
     void setWeight(FontWeight w) { m_weight = w; }
     void setGenericFamily(GenericFamilyType genericFamily) { m_genericFamily = genericFamily; }
-#if PLATFORM(CHROMIUM) && OS(DARWIN)
-    void setUsePrinterFont(bool) { }
-#else
     void setUsePrinterFont(bool p) { m_usePrinterFont = p; }
-#endif
     void setRenderingMode(FontRenderingMode mode) { m_renderingMode = mode; }
     void setKerning(Kerning kerning) { m_kerning = kerning; }
     void setCommonLigaturesState(LigaturesState commonLigaturesState) { m_commonLigaturesState = commonLigaturesState; }
