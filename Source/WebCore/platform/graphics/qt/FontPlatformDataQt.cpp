@@ -68,7 +68,8 @@ FontPlatformData::FontPlatformData(const FontDescription& description, const Ato
     QFont font;
     int requestedSize = description.computedPixelSize();
     font.setFamily(familyName);
-    font.setPixelSize(requestedSize);
+    if (requestedSize)
+        font.setPixelSize(requestedSize);
     font.setItalic(description.italic());
     font.setWeight(toQFontWeight(description.weight()));
     font.setWordSpacing(wordSpacing);
