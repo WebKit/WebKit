@@ -51,6 +51,9 @@ private:
     static void didChangeContentsSize(WKViewRef, WKSize, const void* clientInfo);
     static void webProcessCrashed(WKViewRef, WKURLRef, const void* clientInfo);
     static void webProcessDidRelaunch(WKViewRef, const void* clientInfo);
+    static void didChangeContentsPosition(WKViewRef, WKPoint, const void* clientInfo);
+    static void didRenderFrame(WKViewRef, WKSize, WKRect, const void* clientInfo);
+    static void didCompletePageTransition(WKViewRef, const void* clientInfo);
 
     EwkView* m_view;
 };

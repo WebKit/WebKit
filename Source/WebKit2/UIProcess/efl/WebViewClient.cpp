@@ -65,4 +65,28 @@ void WebViewClient::webProcessDidRelaunch(WebView* view)
     m_client.webProcessDidRelaunch(toAPI(view), m_client.clientInfo);
 }
 
+void WebViewClient::didChangeContentsPosition(WebView* view, const WebCore::IntPoint& point)
+{
+    if (!m_client.didChangeContentsPosition)
+        return;
+
+    m_client.didChangeContentsPosition(toAPI(view), toAPI(point), m_client.clientInfo);
+}
+
+void WebViewClient::didRenderFrame(WebView* view, const WebCore::IntSize& size, const WebCore::IntRect& coveredRect)
+{
+    if (!m_client.didRenderFrame)
+        return;
+
+    m_client.didRenderFrame(toAPI(view), toAPI(size), toAPI(coveredRect), m_client.clientInfo);
+}
+
+void WebViewClient::didCompletePageTransition(WebView* view)
+{
+    if (!m_client.didCompletePageTransition)
+        return;
+
+    m_client.didCompletePageTransition(toAPI(view), m_client.clientInfo);
+}
+
 } // namespace WebKit

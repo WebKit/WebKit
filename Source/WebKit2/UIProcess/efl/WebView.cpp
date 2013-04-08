@@ -231,17 +231,6 @@ void WebView::initializeClient(const WKViewClient* client)
     m_client.initialize(client);
 }
 
-void WebView::didCommitLoad()
-{
-    if (m_page->useFixedLayout()) {
-#if USE(ACCELERATED_COMPOSITING)
-        m_ewkView->pageViewportController()->didCommitLoad();
-#endif
-        return;
-    }
-    m_ewkView->scheduleUpdateDisplay();
-}
-
 void WebView::didChangeContentsSize(const WebCore::IntSize& size)
 {
     m_client.didChangeContentsSize(this, size);
@@ -551,38 +540,21 @@ void WebView::didChangeViewportProperties(const WebCore::ViewportAttributes& att
 
 void WebView::pageDidRequestScroll(const IntPoint& position)
 {
-    if (m_page->useFixedLayout()) {
-#if USE(ACCELERATED_COMPOSITING)
-        m_ewkView->pageViewportController()->pageDidRequestScroll(position);
-#endif
-        return;
-    }
     FloatPoint uiPosition(position);
     uiPosition.scale(contentScaleFactor(), contentScaleFactor());
     setContentPosition(uiPosition);
-    m_ewkView->scheduleUpdateDisplay();
+
+    m_client.didChangeContentsPosition(this, position);
 }
 
 void WebView::didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect)
 {
-    if (m_page->useFixedLayout()) {
-#if USE(ACCELERATED_COMPOSITING)
-        m_ewkView->pageViewportController()->didRenderFrame(contentsSize, coveredRect);
-#endif
-        return;
-    }
-    m_ewkView->scheduleUpdateDisplay();
+    m_client.didRenderFrame(this, contentsSize, coveredRect);
 }
 
 void WebView::pageTransitionViewportReady()
 {
-    if (m_page->useFixedLayout()) {
-#if USE(ACCELERATED_COMPOSITING)
-        m_ewkView->pageViewportController()->pageTransitionViewportReady();
-#endif
-        return;
-    }
-    m_ewkView->scheduleUpdateDisplay();
+    m_client.didCompletePageTransition(this);
 }
 
 } // namespace WebKit

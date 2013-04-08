@@ -32,6 +32,7 @@
 #include <WebKit2/WKView.h>
 
 using namespace EwkViewCallbacks;
+using namespace WebCore;
 
 namespace WebKit {
 
@@ -91,6 +92,45 @@ void ViewClientEfl::webProcessDidRelaunch(WKViewRef viewRef, const void* clientI
         WKViewSetThemePath(viewRef, adoptWK(WKStringCreateWithUTF8CString(themePath)).get());
 }
 
+void ViewClientEfl::didChangeContentsPosition(WKViewRef, WKPoint position, const void* clientInfo)
+{
+    EwkView* ewkView = toEwkView(clientInfo);
+    if (WKPageUseFixedLayout(ewkView->wkPage())) {
+#if USE(ACCELERATED_COMPOSITING)
+        ewkView->pageViewportController()->pageDidRequestScroll(toIntPoint(position));
+#endif
+        return;
+    }
+
+    ewkView->scheduleUpdateDisplay();
+}
+
+void ViewClientEfl::didRenderFrame(WKViewRef, WKSize contentsSize, WKRect coveredRect, const void* clientInfo)
+{
+    EwkView* ewkView = toEwkView(clientInfo);
+    if (WKPageUseFixedLayout(ewkView->wkPage())) {
+#if USE(ACCELERATED_COMPOSITING)
+        ewkView->pageViewportController()->didRenderFrame(toIntSize(contentsSize), toIntRect(coveredRect));
+#endif
+        return;
+    }
+
+    ewkView->scheduleUpdateDisplay();
+}
+
+void ViewClientEfl::didCompletePageTransition(WKViewRef, const void* clientInfo)
+{
+    EwkView* ewkView = toEwkView(clientInfo);
+    if (WKPageUseFixedLayout(ewkView->wkPage())) {
+#if USE(ACCELERATED_COMPOSITING)
+        ewkView->pageViewportController()->pageTransitionViewportReady();
+#endif
+        return;
+    }
+
+    ewkView->scheduleUpdateDisplay();
+}
+
 ViewClientEfl::ViewClientEfl(EwkView* view)
     : m_view(view)
 {
@@ -104,6 +144,9 @@ ViewClientEfl::ViewClientEfl(EwkView* view)
     viewClient.viewNeedsDisplay = viewNeedsDisplay;
     viewClient.webProcessCrashed = webProcessCrashed;
     viewClient.webProcessDidRelaunch = webProcessDidRelaunch;
+    viewClient.didChangeContentsPosition = didChangeContentsPosition;
+    viewClient.didRenderFrame = didRenderFrame;
+    viewClient.didCompletePageTransition = didCompletePageTransition;
 
     WKViewSetViewClient(m_view->wkView(), &viewClient);
 }

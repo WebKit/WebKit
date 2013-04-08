@@ -31,6 +31,7 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+class IntPoint;
 class IntRect;
 class IntSize;
 }
@@ -45,6 +46,9 @@ public:
     void didChangeContentsSize(WebView*, const WebCore::IntSize&);
     void webProcessCrashed(WebView*, const String& url);
     void webProcessDidRelaunch(WebView*);
+    void didChangeContentsPosition(WebView*, const WebCore::IntPoint&);
+    void didRenderFrame(WebView*, const WebCore::IntSize&, const WebCore::IntRect&);
+    void didCompletePageTransition(WebView*);
 };
 
 } // namespace WebKit

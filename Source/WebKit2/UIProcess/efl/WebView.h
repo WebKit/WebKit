@@ -104,7 +104,6 @@ public:
     Evas_Object* evasObject();
     WebPageProxy* page() { return m_page.get(); }
 
-    void didCommitLoad();    
     void didChangeContentsSize(const WebCore::IntSize&);
 
     // FIXME: Should become private when Web Events creation is moved to WebView.

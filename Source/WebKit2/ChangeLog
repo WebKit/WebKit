@@ -1,3 +1,41 @@
+2013-04-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][EFL] WebView: Add callbacks to the WKViewClient to remove direct access to page viewport controller
+        https://bugs.webkit.org/show_bug.cgi?id=110741
+
+        Reviewed by Anders Carlsson.
+
+        Provided WKViewClient with didRequestScroll, didRenderFrame and didCompletePageTransition
+        callbacks so that direct access from WebView to page viewport controller is avoided.
+
+        Implementation of callbacks is also added to keep the current EFL WK2 functionality.
+
+        * UIProcess/API/C/efl/WKView.h:
+        * UIProcess/efl/PageLoadClientEfl.cpp:
+        (WebKit::PageLoadClientEfl::didCommitLoadForFrame):
+
+            Moved here code from deleted WebView::didCommitLoad.
+
+        * UIProcess/efl/ViewClientEfl.cpp:
+        (WebKit::ViewClientEfl::didChangeContentsPosition):
+        (WebKit):
+        (WebKit::ViewClientEfl::didRenderFrame):
+        (WebKit::ViewClientEfl::didCompletePageTransition):
+        (WebKit::ViewClientEfl::ViewClientEfl):
+        * UIProcess/efl/ViewClientEfl.h:
+        (ViewClientEfl):
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::pageDidRequestScroll):
+        (WebKit::WebView::didRenderFrame):
+        (WebKit::WebView::pageTransitionViewportReady):
+        * UIProcess/efl/WebViewClient.cpp:
+        (WebKit::WebViewClient::didChangeContentsPosition):
+        (WebKit):
+        (WebKit::WebViewClient::didRenderFrame):
+        (WebKit::WebViewClient::didCompletePageTransition):
+        * UIProcess/efl/WebViewClient.h:
+        (WebCore):
+
 2013-04-08  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt][WK2] WebView's interactive property is not fully respected

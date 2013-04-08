@@ -27,6 +27,7 @@
 #include "PageLoadClientEfl.h"
 
 #include "EwkView.h"
+#include "PageViewportController.h"
 #include "WKAPICast.h"
 #include "WKFrame.h"
 #include "WKPage.h"
@@ -116,7 +117,14 @@ void PageLoadClientEfl::didCommitLoadForFrame(WKPageRef, WKFrameRef frame, WKTyp
         return;
 
     EwkView* view = toPageLoadClientEfl(clientInfo)->view();
-    view->webView()->didCommitLoad();
+    if (WKPageUseFixedLayout(view->wkPage())) {
+#if USE(ACCELERATED_COMPOSITING)
+        view->pageViewportController()->didCommitLoad();
+#endif
+        return;
+    }
+
+    view->scheduleUpdateDisplay();
 }
 
 void PageLoadClientEfl::didChangeBackForwardList(WKPageRef, WKBackForwardListItemRef addedItem, WKArrayRef removedItems, const void* clientInfo)
