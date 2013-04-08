@@ -1,3 +1,15 @@
+2013-04-08  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL] Mark ShouldGoToBackForwardListItem API test as failing
+        https://bugs.webkit.org/show_bug.cgi?id=114161
+
+        Reviewed by Gyuyoung Kim.
+
+        Mark ShouldGoToBackForwardListItem API test as failing for EFL port
+        as it is crashing due to Bug 111074.
+
+        * TestWebKitAPI/PlatformEfl.cmake:
+
 2013-04-07  David Kilzer  <ddkilzer@apple.com>
 
         Remove the rest of SVG_DOM_OBJC_BINDINGS

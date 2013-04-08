@@ -79,7 +79,6 @@ set(test_webkit2_api_BINARIES
     ParentFrame
     PreventEmptyUserAgent
     PrivateBrowsingPushStateNoHistoryCallback
-    ShouldGoToBackForwardListItem
     UserMessage
     WKConnection
     WKPreferences
@@ -96,6 +95,7 @@ set(test_webkit2_api_fail_BINARIES
     DownloadDecideDestinationCrash
     NewFirstVisuallyNonEmptyLayoutFrames
     RestoreSessionStateContainingFormData
+    ShouldGoToBackForwardListItem
     WKPageGetScaleFactorNotZero
 )
 
