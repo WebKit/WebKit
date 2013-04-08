@@ -1,3 +1,16 @@
+2013-04-08  Max Vujovic  <mvujovic@adobe.com>
+
+        REGRESSION (r147502): Animations of CA filters broken
+        https://bugs.webkit.org/show_bug.cgi?id=114067
+
+        Reviewed by Dean Jackson.
+
+        Revert r147502 [1] because it broke CA filter animations.
+        
+        [1]: http://trac.webkit.org/changeset/147502
+
+        * wtf/Platform.h:
+
 2013-04-08  Andreas Kling  <akling@apple.com>
 
         REGRESSION(r147894): Broke WTFReportBacktrace() on Mac.

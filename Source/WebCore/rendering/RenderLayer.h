@@ -772,12 +772,7 @@ public:
     bool needsCompositedScrolling() const;
     bool needsCompositingLayersRebuiltForClip(const RenderStyle* oldStyle, const RenderStyle* newStyle) const;
     bool needsCompositingLayersRebuiltForOverflow(const RenderStyle* oldStyle, const RenderStyle* newStyle) const;
-#if ENABLE(CSS_FILTERS)
-    bool needsCompositingLayersRebuiltForFilters(const RenderStyle* oldStyle, const RenderStyle* newStyle, bool didPaintWithFilters) const;
-#else // !ENABLE(CSS_FILTERS)
-    bool needsCompositingLayersRebuiltForFilters(const RenderStyle*, const RenderStyle*, bool) const { return false; }
-#endif // !ENABLE(CSS_FILTERS)
-#else // !USE(ACCELERATED_COMPOSITING)
+#else
     bool isComposited() const { return false; }
     bool hasCompositedMask() const { return false; }
     bool usesCompositedScrolling() const { return false; }
@@ -822,8 +817,6 @@ public:
     
     bool hasFilterInfo() const { return m_hasFilterInfo; }
     void setHasFilterInfo(bool hasFilterInfo) { m_hasFilterInfo = hasFilterInfo; }
-
-    void updateFilters(const RenderStyle* oldStyle, const RenderStyle* newStyle);
 #endif
 
 #if !ASSERT_DISABLED
