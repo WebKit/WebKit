@@ -330,7 +330,7 @@ void RenderThemeEfl::applyEdjeRTLState(Evas_Object* edje, RenderObject* object, 
         HTMLInputElement* input = renderSlider->node()->toInputElement();
         double valueRange = input->maximum() - input->minimum();
 
-        OwnPtr<Edje_Message_Float_Set> msg = adoptPtr(static_cast<Edje_Message_Float_Set*>(operator new (sizeof(Edje_Message_Float_Set) + sizeof(double))));
+        OwnPtr<Edje_Message_Float_Set> msg = adoptPtr(static_cast<Edje_Message_Float_Set*>(::operator new (sizeof(Edje_Message_Float_Set) + sizeof(double))));
         msg->count = 2;
 
         // The first parameter of the message decides if the progress bar
@@ -351,7 +351,7 @@ void RenderThemeEfl::applyEdjeRTLState(Evas_Object* edje, RenderObject* object, 
         int max = rect.width();
         double value = renderProgress->position();
 
-        OwnPtr<Edje_Message_Float_Set> msg = adoptPtr(static_cast<Edje_Message_Float_Set*>(operator new (sizeof(Edje_Message_Float_Set) + sizeof(double))));
+        OwnPtr<Edje_Message_Float_Set> msg = adoptPtr(static_cast<Edje_Message_Float_Set*>(::operator new (sizeof(Edje_Message_Float_Set) + sizeof(double))));
         msg->count = 2;
 
         if (object->style()->direction() == RTL)
