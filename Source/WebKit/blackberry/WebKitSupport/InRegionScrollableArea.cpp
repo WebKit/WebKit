@@ -127,7 +127,14 @@ InRegionScrollableArea::InRegionScrollableArea(WebPagePrivate* webPage, RenderLa
 
         // Both caches below are self-exclusive.
         if (m_layer->usesCompositedScrolling()) {
-            m_forceContentToBeVerticallyScrollable = true;
+            m_forceContentToBeHorizontallyScrollable = m_scrollsHorizontally;
+            m_forceContentToBeVerticallyScrollable = m_scrollsVertically;
+            // Force content to be scrollable even if it doesn't need to scroll in either direction.
+            if (!m_scrollsHorizontally && !m_scrollsVertically)
+                if (box->scrollsOverflowY())
+                    m_forceContentToBeVerticallyScrollable = true;
+                else if (box->scrollsOverflowX()) // If it's already forced scrollable vertically, don't force it to scroll horizontally
+                    m_forceContentToBeHorizontallyScrollable = true;
             m_supportsCompositedScrolling = true;
             ASSERT(m_layer->backing()->hasScrollingLayer());
             m_camouflagedCompositedScrollableLayer = reinterpret_cast<unsigned>(m_layer->backing()->scrollingContentsLayer()->platformLayer());

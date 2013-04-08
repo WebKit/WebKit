@@ -1,3 +1,19 @@
+2013-04-08  Iris Wu  <shuwu@blackberry.com>
+
+        [BlackBerry] Force horizontal list to be horizontal scrollable.
+        https://bugs.webkit.org/show_bug.cgi?id=114173
+
+        Reviewed by Rob Buis.
+
+        Force content to be horizontal/vertical overscrollable if it
+        scrolls in horizontal/vertical way.
+
+        PR 237440
+        Internally Reviewed by Arvid Nilsson.
+
+        * WebKitSupport/InRegionScrollableArea.cpp:
+        (BlackBerry::WebKit::InRegionScrollableArea::InRegionScrollableArea):
+
 2013-04-08  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] WebPage: misc build fixes
