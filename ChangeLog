@@ -1,3 +1,13 @@
+2013-04-08  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Configure should verify ICU is installed on mingw
+        https://bugs.webkit.org/show_bug.cgi?id=113645
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Source/autotools/FindDependencies.m4: When falling back to hard-coded compiler flags
+        for ICU and mingw, check that headers do exist on the system and error out otherwise.
+
 2013-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Build Platform as a separate static library

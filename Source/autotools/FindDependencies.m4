@@ -115,6 +115,7 @@ case "$host" in
     *-*-mingw*)
         UNICODE_CFLAGS=""
         UNICODE_LIBS="-licui18n -licuuc"
+        AC_CHECK_HEADERS([unicode/uchar.h], [], [AC_MSG_ERROR([Could not find ICU headers.])])
         ;;
     *)
         AC_PATH_PROG(icu_config, icu-config, no)
