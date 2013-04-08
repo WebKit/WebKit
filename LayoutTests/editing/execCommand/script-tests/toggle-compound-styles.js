@@ -16,7 +16,7 @@ function testSingleToggle(toggleCommand, initialContents, expectedContents)
         testFailed(action + '", expected "' + expectedContents + '"');
 }
 
-platforms = ['mac', 'win', 'unix', 'android'];
+platforms = ['mac', 'win', 'unix'];
 
 for (var i = 0; i < platforms.length; i++) {
     platform = platforms[i];

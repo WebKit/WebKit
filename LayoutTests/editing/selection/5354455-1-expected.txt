@@ -7,5 +7,3 @@ Mac: Range
 Win: Caret
 
 Unix: Caret
-
-Android: Caret
