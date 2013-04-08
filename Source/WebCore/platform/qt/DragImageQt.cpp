@@ -26,7 +26,6 @@
 #include "config.h"
 #include "DragImage.h"
 
-#include "CachedImage.h"
 #include "Image.h"
 
 namespace WebCore {
@@ -69,7 +68,7 @@ DragImageRef createDragImageFromImage(Image* image, RespectImageOrientationEnum)
     return new QPixmap(*image->nativeImageForCurrentFrame());
 }
 
-DragImageRef createDragImageIconForCachedImage(CachedImage*)
+DragImageRef createDragImageIconForCachedImageFilename(const String&)
 {
     return 0;
 }

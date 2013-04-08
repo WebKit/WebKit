@@ -799,7 +799,7 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
         }
         m_client->willPerformDragSourceAction(DragSourceActionSelection, dragOrigin, clipboard);
         if (!dragImage) {
-            dragImage = createDragImageForSelection(src);
+            dragImage = dissolveDragImageToFraction(src->dragImageForSelection(), DragImageAlpha);
             dragLoc = dragLocForSelectionDrag(src);
             m_dragOffset = IntPoint(dragOrigin.x() - dragLoc.x(), dragOrigin.y() - dragLoc.y());
         }
@@ -843,7 +843,7 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
 
         m_client->willPerformDragSourceAction(DragSourceActionLink, dragOrigin, clipboard);
         if (!dragImage) {
-            dragImage = createDragImageForLink(linkURL, hitTestResult.textContent(), src);
+            dragImage = createDragImageForLink(linkURL, hitTestResult.textContent(), src->settings() ? src->settings()->fontRenderingMode() : NormalRenderingMode);
             IntSize size = dragImageSize(dragImage);
             m_dragOffset = IntPoint(-size.width() / 2, -LinkDragBorderInset);
             dragLoc = IntPoint(mouseDraggedPoint.x() + m_dragOffset.x(), mouseDraggedPoint.y() + m_dragOffset.y());
@@ -893,9 +893,11 @@ void DragController::doImageDrag(Element* element, const IntPoint& dragOrigin, c
         dy *= scale;
         origin.setY((int)(dy + 0.5));
     } else {
-        dragImage = createDragImageIconForCachedImage(getCachedImage(element));
-        if (dragImage)
-            origin = IntPoint(DragIconRightInset - dragImageSize(dragImage).width(), DragIconBottomInset);
+        if (CachedImage* cachedImage = getCachedImage(element)) {
+            dragImage = createDragImageIconForCachedImageFilename(cachedImage->response().suggestedFilename());
+            if (dragImage)
+                origin = IntPoint(DragIconRightInset - dragImageSize(dragImage).width(), DragIconBottomInset);
+        }
     }
 
     dragImageOffset = mouseDownPoint + origin;

@@ -26,6 +26,7 @@
 #ifndef DragImage_h
 #define DragImage_h
 
+#include "FontRenderingMode.h"
 #include "ImageOrientation.h"
 #include "IntSize.h"
 #include "FloatSize.h"
@@ -50,9 +51,7 @@ typedef struct _cairo_surface cairo_surface_t;
 #define DragLabelBorderYOffset 2
 
 namespace WebCore {
-    
-    class CachedImage;
-    class Frame;
+
     class Image;
     class KURL;
     class Range;
@@ -81,9 +80,8 @@ namespace WebCore {
     DragImageRef dissolveDragImageToFraction(DragImageRef image, float delta);
     
     DragImageRef createDragImageFromImage(Image*, RespectImageOrientationEnum = DoNotRespectImageOrientation);
-    DragImageRef createDragImageForSelection(Frame*);    
-    DragImageRef createDragImageIconForCachedImage(CachedImage*);
-    DragImageRef createDragImageForLink(KURL&, const String& label, Frame*);
+    DragImageRef createDragImageIconForCachedImageFilename(const String&);
+    DragImageRef createDragImageForLink(KURL&, const String& label, FontRenderingMode);
     void deleteDragImage(DragImageRef);
 }
 

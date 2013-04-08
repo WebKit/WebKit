@@ -28,7 +28,6 @@
 
 #if ENABLE(DRAG_SUPPORT)
 #import "BitmapImage.h"
-#import "CachedImage.h"
 #import "Font.h"
 #import "FontCache.h"
 #import "FontDescription.h"
@@ -37,7 +36,6 @@
 #import "Image.h"
 #import "KURL.h"
 #import "ResourceResponse.h"
-#import "Settings.h"
 #import "StringTruncator.h"
 #import "TextRun.h"
 
@@ -67,6 +65,9 @@ RetainPtr<NSImage> scaleDragImage(RetainPtr<NSImage> image, FloatSize scale)
     
 RetainPtr<NSImage> dissolveDragImageToFraction(RetainPtr<NSImage> image, float delta)
 {
+    if (!image)
+        return nil;
+
     RetainPtr<NSImage> dissolvedImage(AdoptNS, [[NSImage alloc] initWithSize:[image.get() size]]);
     
     [dissolvedImage.get() lockFocus];
@@ -123,9 +124,8 @@ RetainPtr<NSImage> createDragImageFromImage(Image* image, RespectImageOrientatio
     return dragImage;
 }
     
-RetainPtr<NSImage> createDragImageIconForCachedImage(CachedImage* image)
+RetainPtr<NSImage> createDragImageIconForCachedImageFilename(const String& filename)
 {
-    const String& filename = image->response().suggestedFilename();
     NSString *extension = nil;
     size_t dotIndex = filename.reverseFind('.');
     
@@ -267,10 +267,8 @@ static void drawDoubledAtPoint(NSString *string, NSPoint textPoint, NSColor *top
         drawAtPoint(string, textPoint, font, topColor);
 }
 
-DragImageRef createDragImageForLink(KURL& url, const String& title, Frame* frame)
+DragImageRef createDragImageForLink(KURL& url, const String& title, FontRenderingMode)
 {
-    if (!frame)
-        return nil;
     NSString *label = nsStringNilIfEmpty(title);
     NSURL *cocoaURL = url;
     NSString *urlString = [cocoaURL absoluteString];

@@ -19,7 +19,6 @@
 #include "config.h"
 #include "DragImage.h"
 
-#include "CachedImage.h"
 #include "FloatSize.h"
 #include "Image.h"
 #include "NotImplemented.h"
@@ -32,7 +31,7 @@ void* createDragImageFromImage(Image*, RespectImageOrientationEnum)
     return 0;
 }
 
-void* createDragImageIconForCachedImage(CachedImage*)
+void* createDragImageIconForCachedImageFilename(const String&)
 {
     notImplemented();
     return 0;

@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+    class CachedImage;
     class DataTransferItemList;
     class DragData;
     class FileList;

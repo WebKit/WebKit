@@ -26,16 +26,13 @@
 #include "config.h"
 #include "DragImage.h"
 
-#include "CachedImage.h"
 #include "Font.h"
 #include "FontCache.h"
 #include "FontDescription.h"
 #include "FontSelector.h"
-#include "Frame.h"
 #include "GraphicsContext.h"
 #include "HWndDC.h"
 #include "Image.h"
-#include "Settings.h"
 #include "StringTruncator.h"
 #include "TextRun.h"
 #include "WebCoreTextRenderer.h"
@@ -69,13 +66,8 @@ DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
     return image;
 }
         
-DragImageRef createDragImageIconForCachedImage(CachedImage* image)
+DragImageRef createDragImageIconForCachedImageFilename(const String& filename)
 {
-    if (!image)
-        return 0;
-
-    String filename = image->response().suggestedFilename();
-    
     SHFILEINFO shfi = {0};
     if (FAILED(SHGetFileInfo(static_cast<LPCWSTR>(filename.charactersWithNullTermination()), FILE_ATTRIBUTE_NORMAL,
         &shfi, sizeof(shfi), SHGFI_ICON | SHGFI_USEFILEATTRIBUTES)))
@@ -129,7 +121,7 @@ static Font dragLabelFont(int size, bool bold, FontRenderingMode renderingMode)
     return result;
 }
 
-DragImageRef createDragImageForLink(KURL& url, const String& inLabel, Frame* frame)
+DragImageRef createDragImageForLink(KURL& url, const String& inLabel, FontRenderingMode fontRenderingMode)
 {
     // This is more or less an exact match for the Mac OS X code.
 
@@ -137,7 +129,7 @@ DragImageRef createDragImageForLink(KURL& url, const String& inLabel, Frame* fra
     const Font* urlFont;
     FontCachePurgePreventer fontCachePurgePreventer;
 
-    if (frame->settings() && frame->settings()->fontRenderingMode() == AlternateRenderingMode) {
+    if (fontRenderingMode == AlternateRenderingMode) {
         static const Font alternateRenderingModeLabelFont = dragLabelFont(DragLinkLabelFontsize, true, AlternateRenderingMode);
         static const Font alternateRenderingModeURLFont = dragLabelFont(DragLinkUrlFontSize, false, AlternateRenderingMode);
         labelFont = &alternateRenderingModeLabelFont;

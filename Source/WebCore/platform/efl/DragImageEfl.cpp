@@ -21,7 +21,6 @@
 #include "config.h"
 #include "DragImage.h"
 
-#include "CachedImage.h"
 #include "Image.h"
 #include "NotImplemented.h"
 
@@ -56,7 +55,7 @@ DragImageRef createDragImageFromImage(Image*, RespectImageOrientationEnum)
     return 0;
 }
 
-DragImageRef createDragImageIconForCachedImage(CachedImage*)
+DragImageRef createDragImageIconForCachedImageFilename(const String&)
 {
     notImplemented();
     return 0;

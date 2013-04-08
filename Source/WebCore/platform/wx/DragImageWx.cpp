@@ -25,7 +25,7 @@
 
 #include "config.h"
 #include "DragImage.h"
-#include "CachedImage.h"
+
 #include "FloatSize.h"
 #include "Image.h"
 
@@ -55,7 +55,7 @@ DragImageRef createDragImageFromImage(Image*, RespectImageOrientationEnum)
     return 0;
 }
     
-DragImageRef createDragImageIconForCachedImage(CachedImage*)
+DragImageRef createDragImageIconForCachedImageFilename(const String&)
 {
     return 0;     
 }
