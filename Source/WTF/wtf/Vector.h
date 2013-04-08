@@ -24,7 +24,6 @@
 #include <wtf/Alignment.h>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/FastAllocBase.h>
-#include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/NotFound.h>
 #include <wtf/StdLibExtras.h>

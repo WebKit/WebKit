@@ -1,3 +1,11 @@
+2013-04-08  Oliver Hunt  <oliver@apple.com>
+
+        Build fix.
+
+        Remove unnecessary include of <wtf/Forward.h> from Vector.h
+
+        * wtf/Vector.h:
+
 2013-04-08  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed trivial buildfix after r147799.
