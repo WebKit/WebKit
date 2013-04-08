@@ -461,6 +461,10 @@
 				RelativePath="..\Tests\PrivateBrowsing.cpp"
 				>
 			</File>
+			<File
+				RelativePath="..\Tests\ToStringAndValueOfObject.cpp"
+				>
+			</File>
 			<Filter
 				Name="win"
 				>

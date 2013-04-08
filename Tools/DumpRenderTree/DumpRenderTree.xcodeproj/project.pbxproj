@@ -41,6 +41,7 @@
 		1A24BAA9120734EE00FBB059 /* NPRuntimeObjectFromDestroyedPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A24BAA8120734EE00FBB059 /* NPRuntimeObjectFromDestroyedPlugin.cpp */; };
 		1A31EB3813466AC100017372 /* ConvertPoint.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A31EB3713466AC100017372 /* ConvertPoint.cpp */; };
 		1A3E28AA1311D73B00501349 /* GetURLWithJavaScriptURLDestroyingPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3E28A91311D73B00501349 /* GetURLWithJavaScriptURLDestroyingPlugin.cpp */; };
+		1A4CCD4F171375A300981040 /* ToStringAndValueOfObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A4CCD4E171375A300981040 /* ToStringAndValueOfObject.cpp */; };
 		1A5CC1F5137DD2EC00A5D7E7 /* GetURLWithJavaScriptURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A5CC1F3137DD2EC00A5D7E7 /* GetURLWithJavaScriptURL.cpp */; };
 		1A66C35114576A920099A115 /* ContentsScaleFactor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A66C34F14576A920099A115 /* ContentsScaleFactor.cpp */; };
 		1A8F02E80BB9B4EC008CFA34 /* TestObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8F024C0BB9B056008CFA34 /* TestObject.h */; };
@@ -255,6 +256,7 @@
 		1A24BAA8120734EE00FBB059 /* NPRuntimeObjectFromDestroyedPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NPRuntimeObjectFromDestroyedPlugin.cpp; sourceTree = "<group>"; };
 		1A31EB3713466AC100017372 /* ConvertPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConvertPoint.cpp; sourceTree = "<group>"; };
 		1A3E28A91311D73B00501349 /* GetURLWithJavaScriptURLDestroyingPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetURLWithJavaScriptURLDestroyingPlugin.cpp; sourceTree = "<group>"; };
+		1A4CCD4E171375A300981040 /* ToStringAndValueOfObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ToStringAndValueOfObject.cpp; sourceTree = "<group>"; };
 		1A5CC1F3137DD2EC00A5D7E7 /* GetURLWithJavaScriptURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetURLWithJavaScriptURL.cpp; sourceTree = "<group>"; };
 		1A66C34F14576A920099A115 /* ContentsScaleFactor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentsScaleFactor.cpp; sourceTree = "<group>"; };
 		1A8F024C0BB9B056008CFA34 /* TestObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestObject.h; sourceTree = "<group>"; };
@@ -585,6 +587,7 @@
 				515F429B15C07872007C8F90 /* PluginScriptableObjectOverridesAllProperties.cpp */,
 				1A1E4296141141C400388758 /* PrivateBrowsing.cpp */,
 				5106803D15CC7B10001A8A23 /* SlowNPPNew.cpp */,
+				1A4CCD4E171375A300981040 /* ToStringAndValueOfObject.cpp */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -913,6 +916,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1A66C35114576A920099A115 /* ContentsScaleFactor.cpp in Sources */,
+				1A4CCD4F171375A300981040 /* ToStringAndValueOfObject.cpp in Sources */,
 				1A31EB3813466AC100017372 /* ConvertPoint.cpp in Sources */,
 				1A215BE711F27658008AD0F5 /* DocumentOpenInDestroyStream.cpp in Sources */,
 				C0E720751281C828004EF533 /* EvaluateJSAfterRemovingPluginElement.cpp in Sources */,

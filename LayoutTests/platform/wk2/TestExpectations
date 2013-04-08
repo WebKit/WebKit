@@ -338,6 +338,11 @@ storage/domstorage/localstorage/close-idle-localstorage-databases-immediately.ht
 # https://bugs.webkit.org/show_bug.cgi?id=105266
 plugins/npruntime/embed-property-iframe-equality.html
 
+# [WK2] Call Netscape Plugin's toString() and valueOf() instead of providing default implementation
+# https://bugs.webkit.org/show_bug.cgi?id=114213
+plugins/npruntime/tostring.html
+plugins/npruntime/valueof.html
+
 webkit.org/b/105952 fast/loader/submit-form-while-parsing-2.html [ Pass Failure ]
 
 # [WebKit2] WKTR's output for dumpResourceLoadCallbacks is inconsistent with DRT

@@ -31,7 +31,8 @@ SOURCES += \
     Tests/PassDifferentNPPStruct.cpp \
     Tests/PluginScriptableNPObjectInvokeDefault.cpp \
     Tests/PluginScriptableObjectOverridesAllProperties.cpp \
-    Tests/PrivateBrowsing.cpp
+    Tests/PrivateBrowsing.cpp \
+    Tests/ToStringAndValueOfObject.cpp
 
 WEBKIT += webcore # For NPAPI headers
 

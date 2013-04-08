@@ -1,3 +1,25 @@
+2013-04-08  Arunprasad Rajkumar  <arunprasadr@nds.com>
+
+        Call Netscape Plugin's toString() and valueOf() instead of providing default implementation
+        https://bugs.webkit.org/show_bug.cgi?id=113139
+
+        Reviewed by Anders Carlsson.
+
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePlugin.vcxproj:
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePlugin.vcxproj.filters:
+        * DumpRenderTree/TestNetscapePlugIn/CMakeLists.txt:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/ToStringAndValueOfObject.cpp: Added.
+        (ToStringAndValueOfObject):
+        (ToStringAndValueOfObject::ToStringAndValueOfObject):
+        (ScriptableObject):
+        (ToStringAndValueOfObject::ScriptableObject::hasMethod):
+        (ToStringAndValueOfObject::ScriptableObject::invoke):
+        (ToStringAndValueOfObject::ScriptableObject::pluginTest):
+        (ToStringAndValueOfObject::NPP_GetValue):
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+        * GNUmakefile.am:
+
 2013-04-08  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [GTK] Bump gnome-themes-standard to 3.6.0
