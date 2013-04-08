@@ -227,8 +227,6 @@ public:
     // Painting.
     void updateAppearance();
 
-    void updateSecureKeyboardEntryIfActive();
-
 #ifndef NDEBUG
     void formatForDebugger(char* buffer, unsigned length) const;
     void showTreeForThis() const;
@@ -286,8 +284,6 @@ private:
     void focusedOrActiveStateChanged();
 
     void caretBlinkTimerFired(Timer<FrameSelection>*);
-
-    void setUseSecureKeyboardEntry(bool);
 
     void setCaretVisibility(CaretVisibility);
 

@@ -57,7 +57,6 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "RenderedPosition.h"
-#include "SecureTextInput.h"
 #include "Settings.h"
 #include "SpatialNavigation.h"
 #include "StylePropertySet.h"
@@ -1711,29 +1710,11 @@ void FrameSelection::focusedOrActiveStateChanged()
             if (renderer && renderer->style()->hasAppearance())
                 renderer->theme()->stateChanged(renderer, FocusState);
     }
-
-    // Secure keyboard entry is set by the active frame.
-    if (m_frame->document()->useSecureKeyboardEntryWhenActive())
-        setUseSecureKeyboardEntry(activeAndFocused);
 }
 
 void FrameSelection::pageActivationChanged()
 {
     focusedOrActiveStateChanged();
-}
-
-void FrameSelection::updateSecureKeyboardEntryIfActive()
-{
-    if (m_frame->document() && isFocusedAndActive())
-        setUseSecureKeyboardEntry(m_frame->document()->useSecureKeyboardEntryWhenActive());
-}
-
-void FrameSelection::setUseSecureKeyboardEntry(bool enable)
-{
-    if (enable)
-        enableSecureTextInput();
-    else
-        disableSecureTextInput();
 }
 
 void FrameSelection::setFocused(bool flag)

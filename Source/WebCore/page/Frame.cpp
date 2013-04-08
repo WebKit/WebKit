@@ -290,8 +290,6 @@ void Frame::setDocument(PassRefPtr<Document> newDoc)
     ASSERT(!m_doc || m_doc->domWindow());
     ASSERT(!m_doc || m_doc->domWindow()->frame() == this);
 
-    selection()->updateSecureKeyboardEntryIfActive();
-
     if (m_doc && !m_doc->attached())
         m_doc->attach();
 

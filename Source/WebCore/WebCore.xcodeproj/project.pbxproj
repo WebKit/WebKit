@@ -950,7 +950,6 @@
 		3390CA550FFC157B00921962 /* NotificationCenter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3390CA510FFC157B00921962 /* NotificationCenter.cpp */; };
 		3390CA560FFC157B00921962 /* NotificationCenter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3390CA520FFC157B00921962 /* NotificationCenter.h */; };
 		339B5B63131DAA3200F48D02 /* CookiesStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 339B5B62131DAA3200F48D02 /* CookiesStrategy.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		33C0CCD5112C5E6200CE057D /* SecureTextInput.h in Headers */ = {isa = PBXBuildFile; fileRef = 33C0CCD3112C5E6200CE057D /* SecureTextInput.h */; };
 		33D0212D131DB37B004091A8 /* CookieStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = E13F01EA1270E10D00DFBA71 /* CookieStorage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		371941961566B37200A276D8 /* WebCoreNSCellExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = 371941941566B37200A276D8 /* WebCoreNSCellExtras.m */; };
 		371941971566B37200A276D8 /* WebCoreNSCellExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 371941951566B37200A276D8 /* WebCoreNSCellExtras.h */; };
@@ -7263,7 +7262,6 @@
 		3390CA520FFC157B00921962 /* NotificationCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NotificationCenter.h; path = Modules/notifications/NotificationCenter.h; sourceTree = "<group>"; };
 		3390CA530FFC157B00921962 /* NotificationCenter.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = NotificationCenter.idl; path = Modules/notifications/NotificationCenter.idl; sourceTree = "<group>"; };
 		339B5B62131DAA3200F48D02 /* CookiesStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CookiesStrategy.h; sourceTree = "<group>"; };
-		33C0CCD3112C5E6200CE057D /* SecureTextInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecureTextInput.h; sourceTree = "<group>"; };
 		371941941566B37200A276D8 /* WebCoreNSCellExtras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebCoreNSCellExtras.m; sourceTree = "<group>"; };
 		371941951566B37200A276D8 /* WebCoreNSCellExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreNSCellExtras.h; sourceTree = "<group>"; };
 		371A67CA11C6C7DB00047B8B /* HyphenationCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HyphenationCF.cpp; sourceTree = "<group>"; };
@@ -19370,7 +19368,6 @@
 				BC2441C30E8B65D00055320F /* ScrollView.cpp */,
 				BC6D6E2509AF943500F59759 /* ScrollView.h */,
 				AB7170880B3118080017123E /* SearchPopupMenu.h */,
-				33C0CCD3112C5E6200CE057D /* SecureTextInput.h */,
 				1A4A954B0B4EDCCB002D8C3C /* SharedBuffer.cpp */,
 				1A4A954C0B4EDCCB002D8C3C /* SharedBuffer.h */,
 				37569E0013AF172C00CDBA8E /* SharedBufferChunkReader.cpp */,
@@ -23351,7 +23348,6 @@
 				F55B3DD21251F12D003EF269 /* SearchInputType.h in Headers */,
 				AB7170890B3118080017123E /* SearchPopupMenu.h in Headers */,
 				D39D009D11F907E6006041F2 /* SearchPopupMenuMac.h in Headers */,
-				33C0CCD5112C5E6200CE057D /* SecureTextInput.h in Headers */,
 				976F36EB14686225005E93B4 /* SecurityContext.h in Headers */,
 				BCD0E0FB0E972C3500265DEA /* SecurityOrigin.h in Headers */,
 				BCD0E0FC0E972C3500265DEA /* SecurityOriginHash.h in Headers */,

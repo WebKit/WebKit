@@ -453,7 +453,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_createRenderers(true)
     , m_inPageCache(false)
     , m_accessKeyMapValid(false)
-    , m_useSecureKeyboardEntryWhenActive(false)
     , m_isXHTML(isXHTML)
     , m_isHTML(isHTML)
     , m_isViewSource(false)
@@ -4610,20 +4609,6 @@ void Document::addIconURL(const String& url, const String&, const String&, IconT
         return;
 
     f->loader()->didChangeIcons(iconType);
-}
-
-void Document::setUseSecureKeyboardEntryWhenActive(bool usesSecureKeyboard)
-{
-    if (m_useSecureKeyboardEntryWhenActive == usesSecureKeyboard)
-        return;
-
-    m_useSecureKeyboardEntryWhenActive = usesSecureKeyboard;
-    m_frame->selection()->updateSecureKeyboardEntryIfActive();
-}
-
-bool Document::useSecureKeyboardEntryWhenActive() const
-{
-    return m_useSecureKeyboardEntryWhenActive;
 }
 
 static bool isEligibleForSeamless(Document* parent, Document* child)

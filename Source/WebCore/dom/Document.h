@@ -933,9 +933,6 @@ public:
     const Vector<IconURL>& iconURLs(int iconTypesMask);
     void addIconURL(const String& url, const String& mimeType, const String& size, IconType);
 
-    void setUseSecureKeyboardEntryWhenActive(bool);
-    bool useSecureKeyboardEntryWhenActive() const;
-
     void updateFocusAppearanceSoon(bool restorePreviousSelection);
     void cancelFocusAppearanceUpdate();
         
@@ -1489,8 +1486,6 @@ private:
     bool m_accessKeyMapValid;
 
     OwnPtr<SelectorQueryCache> m_selectorQueryCache;
-
-    bool m_useSecureKeyboardEntryWhenActive;
 
     bool m_isXHTML;
     bool m_isHTML;

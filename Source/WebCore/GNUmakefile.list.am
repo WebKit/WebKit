@@ -6014,7 +6014,6 @@ webcore_platform_sources += \
 	Source/WebCore/platform/ScrollView.cpp \
 	Source/WebCore/platform/ScrollView.h \
 	Source/WebCore/platform/SearchPopupMenu.h \
-	Source/WebCore/platform/SecureTextInput.h \
 	Source/WebCore/platform/SharedBuffer.cpp \
 	Source/WebCore/platform/SharedBuffer.h \
 	Source/WebCore/platform/SharedBufferChunkReader.cpp \
