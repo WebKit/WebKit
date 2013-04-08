@@ -278,6 +278,8 @@ void WTFReportBacktrace()
 #    if defined(__GLIBC__) && !defined(__UCLIBC__)
 #      define WTF_USE_BACKTRACE_SYMBOLS 1
 #    endif
+#  else
+#    define WTF_USE_DLADDR 1
 #  endif
 #endif
 

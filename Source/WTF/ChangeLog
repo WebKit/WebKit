@@ -1,3 +1,15 @@
+2013-04-08  Andreas Kling  <akling@apple.com>
+
+        REGRESSION(r147894): Broke WTFReportBacktrace() on Mac.
+        <http://webkit.org/b/114174>
+
+        Reviewed by Anders Carlsson.
+
+        An #elif !OS(ANDROID) block was erroneously removed, turn it into an #else instead since
+        that path will still be taken for OS(DARWIN).
+
+        * wtf/Assertions.cpp:
+
 2013-04-08  Oliver Hunt  <oliver@apple.com>
 
         Build fix.
