@@ -25,11 +25,6 @@ tags
 # For example: instead of placing Source/WebKit/chromium/WebKit.xcodeproj here,
 # place WebKit.xcodeproj in Source/WebKit/chromium/.gitignore
 
-# Ignore files that Chromium port generates
-/Makefile.chromium
-/out
-/gyp-mac-tool
-
 # Though the GTK build builds in a subdirectory, autogen.sh still deposits
 # a few files into the source tree.
 /aclocal.m4
