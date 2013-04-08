@@ -2675,25 +2675,15 @@ bool EventHandler::handleGestureLongPress(const PlatformGestureEvent& gestureEve
 
 bool EventHandler::handleGestureLongTap(const PlatformGestureEvent& gestureEvent)
 {
-#if ENABLE(CONTEXT_MENUS) && !OS(ANDROID)
+#if ENABLE(CONTEXT_MENUS)
     if (!m_didLongPressInvokeContextMenu)
         return sendContextMenuEventForGesture(gestureEvent);
-#endif
+#endif // ENABLE(CONTEXT_MENUS)
     return false;
 }
 
 bool EventHandler::handleGestureForTextSelectionOrContextMenu(const PlatformGestureEvent& gestureEvent)
 {
-#if OS(ANDROID)
-    IntPoint hitTestPoint = m_frame->view()->windowToContents(gestureEvent.position());
-    HitTestResult result = hitTestResultAtPoint(hitTestPoint, HitTestRequest::ReadOnly | HitTestRequest::Active);
-    Node* innerNode = result.targetNode();
-    if (!result.isLiveLink() && innerNode && (innerNode->isContentEditable() || innerNode->isTextNode())) {
-        selectClosestWordFromHitTestResult(result, DontAppendTrailingWhitespace);
-        if (m_frame->selection()->isRange())
-            return true;
-    }
-#endif
 #if ENABLE(CONTEXT_MENUS)
     m_didLongPressInvokeContextMenu = (gestureEvent.type() == PlatformEvent::GestureLongPress);
     return sendContextMenuEventForGesture(gestureEvent);

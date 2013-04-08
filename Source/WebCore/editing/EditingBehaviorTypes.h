@@ -39,8 +39,7 @@ namespace WebCore {
 enum EditingBehaviorType {
     EditingMacBehavior,
     EditingWindowsBehavior,
-    EditingUnixBehavior,
-    EditingAndroidBehavior
+    EditingUnixBehavior
 };
 
 } // WebCore namespace

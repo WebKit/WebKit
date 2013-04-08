@@ -41,7 +41,7 @@ public:
     // content on Mac.
     bool shouldMoveCaretToHorizontalBoundaryWhenPastTopOrBottom() const
     {
-        return m_type != EditingWindowsBehavior && m_type != EditingAndroidBehavior;
+        return m_type != EditingWindowsBehavior;
     }
 
     // On Windows, selections should always be considered as directional, regardless if it is
@@ -66,13 +66,13 @@ public:
     // On Linux, should be able to get and insert spelling suggestions without selecting the misspelled word.
     bool shouldAllowSpellingSuggestionsWithoutSelection() const
     {
-        return m_type == EditingUnixBehavior || m_type == EditingAndroidBehavior;
+        return m_type == EditingUnixBehavior;
     }
     
     // On Mac and Windows, pressing backspace (when it isn't handled otherwise) should navigate back.
     bool shouldNavigateBackOnBackspace() const
     {
-        return m_type != EditingUnixBehavior && m_type != EditingAndroidBehavior;
+        return m_type != EditingUnixBehavior;
     }
 
     // On Mac, selecting backwards by word/line from the middle of a word/line, and then going

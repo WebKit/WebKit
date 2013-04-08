@@ -42,7 +42,9 @@ using namespace std;
 
 namespace WebCore {
 
+#if PLATFORM(BLACKBERRY) || PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(QT)
 const float ViewportArguments::deprecatedTargetDPI = 160;
+#endif
 
 static const float& compareIgnoringAuto(const float& value1, const float& value2, const float& (*compare) (const float&, const float&))
 {
@@ -382,25 +384,6 @@ static float findUserScalableValue(const String& keyString, const String& valueS
     return 1;
 }
 
-static float findTargetDensityDPIValue(const String& keyString, const String& valueString, Document* document)
-{
-    if (equalIgnoringCase(valueString, "device-dpi"))
-        return ViewportArguments::ValueDeviceDPI;
-    if (equalIgnoringCase(valueString, "low-dpi"))
-        return ViewportArguments::ValueLowDPI;
-    if (equalIgnoringCase(valueString, "medium-dpi"))
-        return ViewportArguments::ValueMediumDPI;
-    if (equalIgnoringCase(valueString, "high-dpi"))
-        return ViewportArguments::ValueHighDPI;
-
-    bool ok;
-    float value = numericPrefix(keyString, valueString, document, &ok);
-    if (!ok || value < 70 || value > 400)
-        return ViewportArguments::ValueAuto;
-
-    return value;
-}
-
 void setViewportFeature(const String& keyString, const String& valueString, Document* document, void* data)
 {
     ViewportArguments* arguments = static_cast<ViewportArguments*>(data);
@@ -417,10 +400,7 @@ void setViewportFeature(const String& keyString, const String& valueString, Docu
         arguments->maxZoom = findScaleValue(keyString, valueString, document);
     else if (keyString == "user-scalable")
         arguments->userZoom = findUserScalableValue(keyString, valueString, document);
-    else if (keyString == "target-densitydpi") {
-        arguments->deprecatedTargetDensityDPI = findTargetDensityDPIValue(keyString, valueString, document);
-        reportViewportWarning(document, TargetDensityDpiUnsupported, String(), String());
-    } else
+    else
         reportViewportWarning(document, UnrecognizedViewportArgumentKeyError, keyString, String());
 }
 
@@ -430,8 +410,7 @@ static const char* viewportErrorMessageTemplate(ViewportErrorCode errorCode)
         "Viewport argument key \"%replacement1\" not recognized and ignored.",
         "Viewport argument value \"%replacement1\" for key \"%replacement2\" is invalid, and has been ignored.",
         "Viewport argument value \"%replacement1\" for key \"%replacement2\" was truncated to its numeric prefix.",
-        "Viewport maximum-scale cannot be larger than 10.0. The maximum-scale will be set to 10.0.",
-        "Viewport target-densitydpi is not supported.",
+        "Viewport maximum-scale cannot be larger than 10.0. The maximum-scale will be set to 10.0."
     };
 
     return errors[errorCode];
@@ -441,7 +420,6 @@ static MessageLevel viewportErrorMessageLevel(ViewportErrorCode errorCode)
 {
     switch (errorCode) {
     case TruncatedViewportArgumentValueError:
-    case TargetDensityDpiUnsupported:
         return WarningMessageLevel;
     case UnrecognizedViewportArgumentKeyError:
     case UnrecognizedViewportArgumentValueError:

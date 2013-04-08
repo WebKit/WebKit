@@ -39,8 +39,7 @@ enum ViewportErrorCode {
     UnrecognizedViewportArgumentKeyError,
     UnrecognizedViewportArgumentValueError,
     TruncatedViewportArgumentValueError,
-    MaximumScaleTooLargeError,
-    TargetDensityDpiUnsupported
+    MaximumScaleTooLargeError
 };
 
 struct ViewportAttributes {
@@ -93,7 +92,6 @@ struct ViewportArguments {
         , maxZoom(ValueAuto)
         , userZoom(ValueAuto)
         , orientation(ValueAuto)
-        , deprecatedTargetDensityDPI(ValueAuto)
     {
     }
 
@@ -111,7 +109,6 @@ struct ViewportArguments {
     float maxZoom;
     float userZoom;
     float orientation;
-    float deprecatedTargetDensityDPI; // Only used for Android WebView
 
     bool operator==(const ViewportArguments& other) const
     {
@@ -127,8 +124,7 @@ struct ViewportArguments {
             && minZoom == other.minZoom
             && maxZoom == other.maxZoom
             && userZoom == other.userZoom
-            && orientation == other.orientation
-            && deprecatedTargetDensityDPI == other.deprecatedTargetDensityDPI;
+            && orientation == other.orientation;
     }
 
     bool operator!=(const ViewportArguments& other) const
@@ -136,9 +132,11 @@ struct ViewportArguments {
         return !(*this == other);
     }
 
+#if PLATFORM(BLACKBERRY) || PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(QT)
     // FIXME: We're going to keep this constant around until all embedders
     // refactor their code to no longer need it.
     static const float deprecatedTargetDPI;
+#endif
 };
 
 ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktopWidth, int deviceWidth, int deviceHeight, float devicePixelRatio, IntSize visibleViewport);
