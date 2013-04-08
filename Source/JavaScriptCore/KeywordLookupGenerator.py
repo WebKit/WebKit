@@ -68,11 +68,16 @@ def allWhitespace(str):
 
 
 def parseKeywords(keywordsText):
+
+    if sys.platform == "cygwin":
+        keywordsText = keywordsText.replace("\r\n", "\n")
+
     lines = keywordsText.split("\n")
     lines = [line.split("#")[0] for line in lines]
     lines = [line for line in lines if (not allWhitespace(line))]
     name = lines[0].split()
     terminator = lines[-1]
+
     if not name[0] == "@begin":
         raise Exception("expected description beginning with @begin")
     if not terminator == "@end":

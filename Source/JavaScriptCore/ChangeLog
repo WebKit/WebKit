@@ -1,3 +1,13 @@
+2013-04-08  Justin Haygood  <jhaygood@reaktix.com>
+
+        Allow KeywordLookupGenerator.py to work on Windows with Windows style line endings
+        https://bugs.webkit.org/show_bug.cgi?id=63234
+
+        Reviewed by Oliver Hunt.
+
+        * KeywordLookupGenerator.py:
+        (parseKeywords):
+
 2013-04-08  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r146669): Assertion hit in JSC::DFG::SpeculativeJIT::fillSpeculateCell() running webgl tests
