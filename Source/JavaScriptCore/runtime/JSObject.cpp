@@ -1507,12 +1507,12 @@ void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNa
         
         if (SparseArrayValueMap* map = storage->m_sparseMap.get()) {
             Vector<unsigned> keys;
-            keys.reserveCapacity(map->size());
+            keys.reserveInitialCapacity(map->size());
             
             SparseArrayValueMap::const_iterator end = map->end();
             for (SparseArrayValueMap::const_iterator it = map->begin(); it != end; ++it) {
                 if (mode == IncludeDontEnumProperties || !(it->value.attributes & DontEnum))
-                    keys.append(static_cast<unsigned>(it->key));
+                    keys.uncheckedAppend(static_cast<unsigned>(it->key));
             }
             
             std::sort(keys.begin(), keys.end());

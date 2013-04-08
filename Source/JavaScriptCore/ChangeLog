@@ -1,3 +1,25 @@
+2013-04-07  Benjamin Poulain  <benjamin@webkit.org>
+
+        Use Vector::reserveInitialCapacity() when possible in JavaScriptCore runtime
+        https://bugs.webkit.org/show_bug.cgi?id=114111
+
+        Reviewed by Andreas Kling.
+
+        Almost all the code was already using Vector::reserveInitialCapacity()
+        and Vector::uncheckedAppend(). Fix the remaining parts.
+
+        * runtime/ArgList.h:
+        (MarkedArgumentBuffer): The type VectorType is unused.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSort):
+        Move the variable closer to where it is needed.
+
+        * runtime/JSArray.cpp:
+        (JSC::JSArray::setLengthWithArrayStorage):
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnPropertyNames):
+
 2013-04-07  Patrick Gansterer  <paroga@webkit.org>
 
         Remove references to Skia and V8 from CMake files

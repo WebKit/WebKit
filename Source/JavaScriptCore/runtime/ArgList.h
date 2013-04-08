@@ -38,7 +38,6 @@ class MarkedArgumentBuffer {
 
 private:
     static const size_t inlineCapacity = 8;
-    typedef Vector<Register, inlineCapacity> VectorType;
     typedef HashSet<MarkedArgumentBuffer*> ListSet;
 
 public:

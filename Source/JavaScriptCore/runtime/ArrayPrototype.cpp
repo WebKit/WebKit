@@ -738,8 +738,6 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState* exec)
     if (length < 1000)
         return performSlowSort(exec, thisObj, length, function, callData, callType) ? JSValue::encode(thisObj) : JSValue::encode(jsUndefined());
     
-    Vector<uint32_t> keys;
-    
     JSGlobalObject* globalObject = JSGlobalObject::create(
         exec->globalData(), JSGlobalObject::createStructure(exec->globalData(), jsNull()));
     JSArray* flatArray = constructEmptyArray(globalObject->globalExec(), 0);
@@ -750,7 +748,8 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState* exec)
     thisObj->methodTable()->getPropertyNames(thisObj, exec, nameArray, IncludeDontEnumProperties);
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    
+
+    Vector<uint32_t> keys;
     for (size_t i = 0; i < nameArray.size(); ++i) {
         PropertyName name = nameArray[i];
         uint32_t index = name.asIndex();
