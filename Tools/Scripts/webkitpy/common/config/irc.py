@@ -27,5 +27,5 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 server="irc.freenode.net"
-port=6667
+port=6665
 channel="#webkit"

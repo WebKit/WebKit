@@ -1,3 +1,9 @@
+2013-04-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use port 6665 instead of 6667 since the latter doesn't seem to work well.
+
+        * Scripts/webkitpy/common/config/irc.py:
+
 2013-04-08  Arunprasad Rajkumar  <arunprasadr@nds.com>
 
         Call Netscape Plugin's toString() and valueOf() instead of providing default implementation
