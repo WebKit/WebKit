@@ -27,8 +27,8 @@
 
 namespace WebKit {
 WebKitDOMTestCallback* wrapTestCallback(WebCore::TestCallback*);
-WebCore::TestCallback* core(WebKitDOMTestCallback* request);
-WebKitDOMTestCallback* kit(WebCore::TestCallback* node);
+WebKitDOMTestCallback* kit(WebCore::TestCallback*);
+WebCore::TestCallback* core(WebKitDOMTestCallback*);
 } // namespace WebKit
 
 #endif /* ENABLE(SQL_DATABASE) */

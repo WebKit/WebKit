@@ -26,8 +26,8 @@
 
 namespace WebKit {
 WebKitDOMTestEventTarget* wrapTestEventTarget(WebCore::TestEventTarget*);
-WebCore::TestEventTarget* core(WebKitDOMTestEventTarget* request);
-WebKitDOMTestEventTarget* kit(WebCore::TestEventTarget* node);
+WebKitDOMTestEventTarget* kit(WebCore::TestEventTarget*);
+WebCore::TestEventTarget* core(WebKitDOMTestEventTarget*);
 } // namespace WebKit
 
 #endif /* WebKitDOMTestEventTargetPrivate_h */

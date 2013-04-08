@@ -508,17 +508,17 @@ libWebCoreDOM_la_SOURCES = \
 	Source/WebCore/bindings/gobject/DOMObjectCache.h \
 	Source/WebCore/bindings/gobject/GObjectEventListener.cpp \
 	Source/WebCore/bindings/gobject/GObjectEventListener.h \
-	Source/WebCore/bindings/gobject/WebKitDOMBinding.cpp \
-	Source/WebCore/bindings/gobject/WebKitDOMBinding.h \
 	Source/WebCore/bindings/gobject/WebKitDOMCustom.cpp \
 	Source/WebCore/bindings/gobject/WebKitDOMCustom.h \
 	Source/WebCore/bindings/gobject/WebKitDOMEventTarget.cpp \
 	Source/WebCore/bindings/gobject/WebKitDOMEventTarget.h \
 	Source/WebCore/bindings/gobject/WebKitDOMEventTargetPrivate.h \
+	Source/WebCore/bindings/gobject/WebKitDOMHTMLPrivate.cpp \
+	Source/WebCore/bindings/gobject/WebKitDOMHTMLPrivate.h \
 	Source/WebCore/bindings/gobject/WebKitDOMObject.cpp \
 	Source/WebCore/bindings/gobject/WebKitDOMObject.h \
-	Source/WebCore/bindings/gobject/WebKitHTMLElementWrapperFactory.cpp \
-	Source/WebCore/bindings/gobject/WebKitHTMLElementWrapperFactory.h
+	Source/WebCore/bindings/gobject/WebKitDOMPrivate.cpp \
+	Source/WebCore/bindings/gobject/WebKitDOMPrivate.h
 
 libWebCoreDOM_la_CXXFLAGS = \
 	-fvisibility-inlines-hidden \

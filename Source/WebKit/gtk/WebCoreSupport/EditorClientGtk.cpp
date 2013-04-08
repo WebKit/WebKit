@@ -40,7 +40,6 @@
 #include "Settings.h"
 #include "StylePropertySet.h"
 #include "UndoStep.h"
-#include "WebKitDOMBinding.h"
 #include "WebKitDOMCSSStyleDeclarationPrivate.h"
 #include "WebKitDOMHTMLElementPrivate.h"
 #include "WebKitDOMNodePrivate.h"

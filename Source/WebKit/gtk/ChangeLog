@@ -1,3 +1,17 @@
+2013-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] DOM objects created wrapping a base class have incorrect GObject type
+        https://bugs.webkit.org/show_bug.cgi?id=113132
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Remove WebKitDOMBindindg.h include from several files because it's
+        been renamed and it was not actually needed.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        * WebCoreSupport/EditorClientGtk.cpp:
+        * webkit/webkithittestresult.cpp:
+
 2013-04-04  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove the gyp build

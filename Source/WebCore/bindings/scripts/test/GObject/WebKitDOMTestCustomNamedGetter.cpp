@@ -25,7 +25,7 @@
 #include "DOMObjectCache.h"
 #include "ExceptionCode.h"
 #include "JSMainThreadExecState.h"
-#include "WebKitDOMBinding.h"
+#include "WebKitDOMPrivate.h"
 #include "WebKitDOMTestCustomNamedGetterPrivate.h"
 #include "gobject/ConvertToUTF8String.h"
 #include <wtf/GetPtr.h>

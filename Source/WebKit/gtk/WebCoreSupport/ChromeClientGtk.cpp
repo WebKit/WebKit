@@ -51,7 +51,6 @@
 #include "RefPtrCairo.h"
 #include "SearchPopupMenuGtk.h"
 #include "SecurityOrigin.h"
-#include "WebKitDOMBinding.h"
 #include "WebKitDOMHTMLElementPrivate.h"
 #include "WindowFeatures.h"
 #include "webkitfilechooserrequestprivate.h"

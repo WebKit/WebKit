@@ -26,8 +26,8 @@
 
 namespace WebKit {
 WebKitDOMFloat64Array* wrapFloat64Array(WebCore::Float64Array*);
-WebCore::Float64Array* core(WebKitDOMFloat64Array* request);
-WebKitDOMFloat64Array* kit(WebCore::Float64Array* node);
+WebKitDOMFloat64Array* kit(WebCore::Float64Array*);
+WebCore::Float64Array* core(WebKitDOMFloat64Array*);
 } // namespace WebKit
 
 #endif /* WebKitDOMFloat64ArrayPrivate_h */

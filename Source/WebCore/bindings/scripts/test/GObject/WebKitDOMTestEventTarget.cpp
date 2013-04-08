@@ -26,10 +26,10 @@
 #include "ExceptionCode.h"
 #include "GObjectEventListener.h"
 #include "JSMainThreadExecState.h"
-#include "WebKitDOMBinding.h"
 #include "WebKitDOMEventPrivate.h"
 #include "WebKitDOMEventTarget.h"
 #include "WebKitDOMNodePrivate.h"
+#include "WebKitDOMPrivate.h"
 #include "WebKitDOMTestEventTargetPrivate.h"
 #include "gobject/ConvertToUTF8String.h"
 #include <wtf/GetPtr.h>

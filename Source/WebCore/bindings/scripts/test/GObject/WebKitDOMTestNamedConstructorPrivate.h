@@ -26,8 +26,8 @@
 
 namespace WebKit {
 WebKitDOMTestNamedConstructor* wrapTestNamedConstructor(WebCore::TestNamedConstructor*);
-WebCore::TestNamedConstructor* core(WebKitDOMTestNamedConstructor* request);
-WebKitDOMTestNamedConstructor* kit(WebCore::TestNamedConstructor* node);
+WebKitDOMTestNamedConstructor* kit(WebCore::TestNamedConstructor*);
+WebCore::TestNamedConstructor* core(WebKitDOMTestNamedConstructor*);
 } // namespace WebKit
 
 #endif /* WebKitDOMTestNamedConstructorPrivate_h */

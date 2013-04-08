@@ -25,10 +25,11 @@
 #include "DOMObjectCache.h"
 #include "ExceptionCode.h"
 #include "JSMainThreadExecState.h"
-#include "WebKitDOMBinding.h"
 #include "WebKitDOMFloat32ArrayPrivate.h"
 #include "WebKitDOMFloat64ArrayPrivate.h"
 #include "WebKitDOMInt32ArrayPrivate.h"
+#include "WebKitDOMNodePrivate.h"
+#include "WebKitDOMPrivate.h"
 #include "gobject/ConvertToUTF8String.h"
 #include <wtf/GetPtr.h>
 #include <wtf/RefPtr.h>
@@ -37,13 +38,7 @@ namespace WebKit {
 
 WebKitDOMFloat64Array* kit(WebCore::Float64Array* obj)
 {
-    if (!obj)
-        return 0;
-
-    if (gpointer ret = DOMObjectCache::get(obj))
-        return WEBKIT_DOM_FLOAT64ARRAY(ret);
-
-    return wrapFloat64Array(obj);
+    return WEBKIT_DOM_FLOAT64ARRAY(kit(static_cast<WebCore::Node*>(obj)));
 }
 
 WebCore::Float64Array* core(WebKitDOMFloat64Array* request)

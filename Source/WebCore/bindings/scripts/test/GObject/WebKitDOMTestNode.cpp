@@ -26,9 +26,10 @@
 #include "ExceptionCode.h"
 #include "GObjectEventListener.h"
 #include "JSMainThreadExecState.h"
-#include "WebKitDOMBinding.h"
 #include "WebKitDOMEventPrivate.h"
 #include "WebKitDOMEventTarget.h"
+#include "WebKitDOMNodePrivate.h"
+#include "WebKitDOMPrivate.h"
 #include "WebKitDOMTestNodePrivate.h"
 #include "gobject/ConvertToUTF8String.h"
 #include <wtf/GetPtr.h>
@@ -38,13 +39,7 @@ namespace WebKit {
 
 WebKitDOMTestNode* kit(WebCore::TestNode* obj)
 {
-    if (!obj)
-        return 0;
-
-    if (gpointer ret = DOMObjectCache::get(obj))
-        return WEBKIT_DOM_TEST_NODE(ret);
-
-    return wrapTestNode(obj);
+    return WEBKIT_DOM_TEST_NODE(kit(static_cast<WebCore::Node*>(obj)));
 }
 
 WebCore::TestNode* core(WebKitDOMTestNode* request)

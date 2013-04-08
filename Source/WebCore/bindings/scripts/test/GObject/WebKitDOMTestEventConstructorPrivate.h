@@ -26,8 +26,8 @@
 
 namespace WebKit {
 WebKitDOMTestEventConstructor* wrapTestEventConstructor(WebCore::TestEventConstructor*);
-WebCore::TestEventConstructor* core(WebKitDOMTestEventConstructor* request);
-WebKitDOMTestEventConstructor* kit(WebCore::TestEventConstructor* node);
+WebKitDOMTestEventConstructor* kit(WebCore::TestEventConstructor*);
+WebCore::TestEventConstructor* core(WebKitDOMTestEventConstructor*);
 } // namespace WebKit
 
 #endif /* WebKitDOMTestEventConstructorPrivate_h */
