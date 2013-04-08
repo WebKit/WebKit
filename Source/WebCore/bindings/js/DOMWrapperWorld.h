@@ -23,7 +23,6 @@
 #define DOMWrapperWorld_h
 
 #include "JSDOMGlobalObject.h"
-#include <heap/Weak.h>
 #include <runtime/WeakGCMap.h>
 #include <wtf/Forward.h>
 

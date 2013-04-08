@@ -22,6 +22,7 @@
 
 #include "NodeFilterCondition.h"
 #include <heap/Weak.h>
+#include <heap/WeakInlines.h>
 #include <runtime/JSCJSValue.h>
 #include <runtime/Operations.h>
 #include <wtf/PassRefPtr.h>

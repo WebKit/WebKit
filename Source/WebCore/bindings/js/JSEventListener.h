@@ -22,8 +22,10 @@
 
 #include "EventListener.h"
 #include "JSDOMWindow.h"
+#include <heap/PassWeak.h>
 #include <heap/StrongInlines.h>
 #include <heap/Weak.h>
+#include <heap/WeakInlines.h>
 
 namespace WebCore {
 

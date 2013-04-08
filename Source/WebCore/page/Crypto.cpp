@@ -31,6 +31,7 @@
 #include "Crypto.h"
 
 #include "ExceptionCode.h"
+#include "ScriptWrappableInlines.h"
 #include <wtf/ArrayBufferView.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 

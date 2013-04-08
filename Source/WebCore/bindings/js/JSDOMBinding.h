@@ -30,8 +30,10 @@
 #include "DOMWrapperWorld.h"
 #include "Document.h"
 #include "ScriptWrappable.h"
+#include "ScriptWrappableInlines.h"
 #include <heap/SlotVisitor.h>
 #include <heap/Weak.h>
+#include <heap/WeakInlines.h>
 #include <runtime/Error.h>
 #include <runtime/FunctionPrototype.h>
 #include <runtime/JSArray.h>
@@ -44,9 +46,7 @@
 #include <wtf/Vector.h>
 
 namespace JSC {
-
 class HashEntry;
-
 }
 
 namespace WebCore {

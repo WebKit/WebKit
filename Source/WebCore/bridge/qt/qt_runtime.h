@@ -24,6 +24,7 @@
 #include "JSDOMBinding.h"
 #include "JavaScript.h"
 #include "Weak.h"
+#include "WeakInlines.h"
 #include "qt_instance.h"
 #include "runtime_method.h"
 

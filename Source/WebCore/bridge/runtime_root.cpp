@@ -30,6 +30,7 @@
 #include "runtime_object.h"
 #include <heap/StrongInlines.h>
 #include <heap/Weak.h>
+#include <heap/WeakInlines.h>
 #include <runtime/JSGlobalObject.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>

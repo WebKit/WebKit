@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,29 +34,14 @@
 
 namespace JSC {
 
-template<typename T> class Weak;
 template<typename T> class PassWeak;
 template<typename T> PassWeak<T> adoptWeak(WeakImpl*);
 
-template<typename Base, typename T> class WeakImplAccessor {
+template<typename T> class PassWeak {
 public:
-    typedef T* GetType;
-
-    T* operator->() const;
-    T& operator*() const;
-    GetType get() const;
-
-    bool was(GetType) const;
-};
-
-template<typename T> class PassWeak : public WeakImplAccessor<PassWeak<T>, T> {
-public:
-    friend class WeakImplAccessor<PassWeak<T>, T>;
-    typedef typename WeakImplAccessor<PassWeak<T>, T>::GetType GetType;
-
     PassWeak();
     PassWeak(std::nullptr_t);
-    PassWeak(GetType, WeakHandleOwner* = 0, void* context = 0);
+    PassWeak(T*, WeakHandleOwner* = 0, void* context = 0);
 
     // It somewhat breaks the type system to allow transfer of ownership out of
     // a const PassWeak. However, it makes it much easier to work with PassWeak
@@ -66,10 +51,14 @@ public:
 
     ~PassWeak();
 
+    T* operator->() const;
+    T& operator*() const;
+    T* get() const;
+
     bool operator!() const;
 
     // This conversion operator allows implicit conversion to bool but not to other integer types.
-    typedef JSValue (PassWeak::*UnspecifiedBoolType);
+    typedef void* (PassWeak::*UnspecifiedBoolType);
     operator UnspecifiedBoolType*() const;
 
     WeakImpl* leakImpl() const WARN_UNUSED_RETURN;
@@ -81,30 +70,6 @@ private:
     WeakImpl* m_impl;
 };
 
-template<typename Base, typename T> inline T* WeakImplAccessor<Base, T>::operator->() const
-{
-    ASSERT(static_cast<const Base*>(this)->m_impl && static_cast<const Base*>(this)->m_impl->state() == WeakImpl::Live);
-    return jsCast<T*>(static_cast<const Base*>(this)->m_impl->jsValue().asCell());
-}
-
-template<typename Base, typename T> inline T& WeakImplAccessor<Base, T>::operator*() const
-{
-    ASSERT(static_cast<const Base*>(this)->m_impl && static_cast<const Base*>(this)->m_impl->state() == WeakImpl::Live);
-    return *jsCast<T*>(static_cast<const Base*>(this)->m_impl->jsValue().asCell());
-}
-
-template<typename Base, typename T> inline typename WeakImplAccessor<Base, T>::GetType WeakImplAccessor<Base, T>::get() const
-{
-    if (!static_cast<const Base*>(this)->m_impl || static_cast<const Base*>(this)->m_impl->state() != WeakImpl::Live)
-        return GetType();
-    return jsCast<T*>(static_cast<const Base*>(this)->m_impl->jsValue().asCell());
-}
-
-template<typename Base, typename T> inline bool WeakImplAccessor<Base, T>::was(typename WeakImplAccessor<Base, T>::GetType other) const
-{
-    return jsCast<T*>(static_cast<const Base*>(this)->m_impl->jsValue().asCell()) == other;
-}
-
 template<typename T> inline PassWeak<T>::PassWeak()
     : m_impl(0)
 {
@@ -115,8 +80,8 @@ template<typename T> inline PassWeak<T>::PassWeak(std::nullptr_t)
 {
 }
 
-template<typename T> inline PassWeak<T>::PassWeak(typename PassWeak<T>::GetType getType, WeakHandleOwner* weakOwner, void* context)
-    : m_impl(getType ? WeakSet::allocate(getType, weakOwner, context) : 0)
+template<typename T> inline PassWeak<T>::PassWeak(T* cell, WeakHandleOwner* weakOwner, void* context)
+    : m_impl(cell ? WeakSet::allocate(cell, weakOwner, context) : 0)
 {
 }
 
@@ -135,6 +100,25 @@ template<typename T> inline PassWeak<T>::~PassWeak()
     if (!m_impl)
         return;
     WeakSet::deallocate(m_impl);
+}
+
+template<typename T> inline T* PassWeak<T>::operator->() const
+{
+    ASSERT(m_impl && m_impl->state() == WeakImpl::Live);
+    return jsCast<T*>(m_impl->jsValue().asCell());
+}
+
+template<typename T> inline T& PassWeak<T>::operator*() const
+{
+    ASSERT(m_impl && m_impl->state() == WeakImpl::Live);
+    return *jsCast<T*>(m_impl->jsValue().asCell());
+}
+
+template<typename T> inline T* PassWeak<T>::get() const
+{
+    if (!m_impl || m_impl->state() != WeakImpl::Live)
+        return 0;
+    return jsCast<T*>(m_impl->jsValue().asCell());
 }
 
 template<typename T> inline bool PassWeak<T>::operator!() const

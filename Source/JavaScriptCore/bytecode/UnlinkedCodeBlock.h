@@ -38,7 +38,6 @@
 #include "RegExp.h"
 #include "SpecialPointer.h"
 #include "SymbolTable.h"
-#include "Weak.h"
 
 #include <wtf/RefCountedArray.h>
 #include <wtf/Vector.h>

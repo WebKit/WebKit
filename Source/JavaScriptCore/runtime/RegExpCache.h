@@ -29,6 +29,7 @@
 #include "RegExpKey.h"
 #include "Strong.h"
 #include "Weak.h"
+#include "WeakInlines.h"
 #include <wtf/FixedArray.h>
 #include <wtf/HashMap.h>
 

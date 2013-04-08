@@ -32,6 +32,7 @@
 #include "JSMutationObserver.h"
 #include "JSMutationRecord.h"
 #include "ScriptExecutionContext.h"
+#include <heap/WeakInlines.h>
 #include <runtime/JSLock.h>
 
 using namespace JSC;

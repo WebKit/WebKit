@@ -491,6 +491,7 @@
 		14BD59C50A3E8F9F00BAF59C /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		14BD5A300A3E91F600BAF59C /* JSContextRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A290A3E91F600BAF59C /* JSContextRef.cpp */; };
 		14BD5A320A3E91F600BAF59C /* JSValueRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A2B0A3E91F600BAF59C /* JSValueRef.cpp */; };
+		14BE7D3317135CF400D1807A /* WeakInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BE7D3217135CF400D1807A /* WeakInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14BFCE6910CDB1FC00364CCE /* WeakGCMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14C5242B0F5355E900BA3D04 /* JITStubs.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A6581A0F4E36F4000150FD /* JITStubs.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14CA958B16AB50DE00938A06 /* StaticPropertyAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = 14CA958A16AB50DE00938A06 /* StaticPropertyAnalyzer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1353,6 +1354,7 @@
 		14BD5A2A0A3E91F600BAF59C /* JSContextRef.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSContextRef.h; sourceTree = "<group>"; };
 		14BD5A2B0A3E91F600BAF59C /* JSValueRef.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSValueRef.cpp; sourceTree = "<group>"; };
 		14BD5A2D0A3E91F600BAF59C /* testapi.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = testapi.c; path = API/tests/testapi.c; sourceTree = "<group>"; };
+		14BE7D3217135CF400D1807A /* WeakInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakInlines.h; sourceTree = "<group>"; };
 		14BFCE6810CDB1FC00364CCE /* WeakGCMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakGCMap.h; sourceTree = "<group>"; };
 		14CA958A16AB50DE00938A06 /* StaticPropertyAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticPropertyAnalyzer.h; sourceTree = "<group>"; };
 		14CA958C16AB50FA00938A06 /* ObjectAllocationProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectAllocationProfile.h; sourceTree = "<group>"; };
@@ -2113,6 +2115,8 @@
 				C21122DE15DD9AB300790E3A /* GCThreadSharedData.cpp */,
 				C21122DF15DD9AB300790E3A /* GCThreadSharedData.h */,
 				142E312B134FF0A600AFADB5 /* Handle.h */,
+				C28318FF16FE4B7D00157BFD /* HandleBlock.h */,
+				C283190116FE533E00157BFD /* HandleBlockInlines.h */,
 				142E312C134FF0A600AFADB5 /* HandleSet.cpp */,
 				142E312D134FF0A600AFADB5 /* HandleSet.h */,
 				142E312E134FF0A600AFADB5 /* HandleStack.cpp */,
@@ -2146,11 +2150,14 @@
 				142D6F0F13539A4100B02E86 /* MarkStack.h */,
 				C21122E015DD9AB300790E3A /* MarkStackInlines.h */,
 				1497209014EB831500FEB1B7 /* PassWeak.h */,
+				C20B25981706536200C21F4E /* Region.h */,
 				C225494215F7DBAA0065E898 /* SlotVisitor.cpp */,
 				14BA78F013AAB88F005B7C2C /* SlotVisitor.h */,
 				0FCB408515C0A3C30048932B /* SlotVisitorInlines.h */,
 				142E3132134FF0A600AFADB5 /* Strong.h */,
 				145722851437E140005FDE26 /* StrongInlines.h */,
+				C2DF442D1707AC0100A5CA96 /* SuperRegion.cpp */,
+				C2DF442E1707AC0100A5CA96 /* SuperRegion.h */,
 				141448CC13A1783700F5BA1A /* TinyBloomFilter.h */,
 				0F5F08CE146C762F000472A9 /* UnconditionalFinalizer.h */,
 				0FC815121405118600CFA603 /* VTableSpectrum.cpp */,
@@ -2161,17 +2168,13 @@
 				14F7256314EE265E00B1652B /* WeakHandleOwner.cpp */,
 				14F7256414EE265E00B1652B /* WeakHandleOwner.h */,
 				14E84F9D14EE1ACC00D6D5D4 /* WeakImpl.h */,
+				14BE7D3217135CF400D1807A /* WeakInlines.h */,
 				0F242DA513F3B1BB007ADD4C /* WeakReferenceHarvester.h */,
 				14E84F9B14EE1ACC00D6D5D4 /* WeakSet.cpp */,
 				14E84F9C14EE1ACC00D6D5D4 /* WeakSet.h */,
 				14150132154BB13F005D8C98 /* WeakSetInlines.h */,
 				0FC8150814043BCA00CFA603 /* WriteBarrierSupport.cpp */,
 				0FC8150914043BD200CFA603 /* WriteBarrierSupport.h */,
-				C28318FF16FE4B7D00157BFD /* HandleBlock.h */,
-				C283190116FE533E00157BFD /* HandleBlockInlines.h */,
-				C20B25981706536200C21F4E /* Region.h */,
-				C2DF442D1707AC0100A5CA96 /* SuperRegion.cpp */,
-				C2DF442E1707AC0100A5CA96 /* SuperRegion.h */,
 			);
 			path = heap;
 			sourceTree = "<group>";
@@ -3308,6 +3311,7 @@
 				0FF729BC166AD360000F5BA3 /* ProfilerCompiledBytecode.h in Headers */,
 				0FF729BD166AD360000F5BA3 /* ProfilerDatabase.h in Headers */,
 				0FF729BE166AD360000F5BA3 /* ProfilerExecutionCounter.h in Headers */,
+				14BE7D3317135CF400D1807A /* WeakInlines.h in Headers */,
 				0FF729BF166AD360000F5BA3 /* ProfilerOrigin.h in Headers */,
 				0FF729C0166AD360000F5BA3 /* ProfilerOriginStack.h in Headers */,
 				0FB1058C1675483300F8AB6E /* ProfilerOSRExit.h in Headers */,

@@ -30,6 +30,7 @@
 
 #include <WebCore/RunLoop.h>
 #include <heap/Weak.h>
+#include <heap/WeakInlines.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 

@@ -26,7 +26,8 @@
 #ifndef WeakGCMap_h
 #define WeakGCMap_h
 
-#include "Weak.h"
+#include <heap/Weak.h>
+#include <heap/WeakInlines.h>
 #include <wtf/HashMap.h>
 
 namespace JSC {

@@ -31,6 +31,7 @@
 #include "Options.h"
 #include "SlotVisitor.h"
 #include "Weak.h"
+#include "WeakInlines.h"
 
 namespace JSC {
 

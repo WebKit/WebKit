@@ -44,6 +44,7 @@
 #include "RegularExpression.h"
 #include "ScriptDebugServer.h"
 #include "ScriptObject.h"
+#include "WebCoreMemoryInstrumentation.h"
 #include <wtf/MemoryInstrumentationHashMap.h>
 #include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/text/WTFString.h>

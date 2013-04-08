@@ -1320,7 +1320,6 @@ EventTargetData* XMLHttpRequest::ensureEventTargetData()
 void XMLHttpRequest::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    ScriptWrappable::reportMemoryUsage(memoryObjectInfo);
     ActiveDOMObject::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_upload, "upload");
     info.addMember(m_url, "url");

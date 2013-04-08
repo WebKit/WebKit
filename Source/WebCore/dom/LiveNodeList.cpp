@@ -93,7 +93,6 @@ void LiveNodeListBase::invalidateIdNameCacheMaps() const
 void LiveNodeListBase::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-    NodeList::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_ownerNode, "ownerNode");
     info.addWeakPointer(m_cachedItem);
 }

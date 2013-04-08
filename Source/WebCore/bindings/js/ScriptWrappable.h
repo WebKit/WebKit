@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  * Copyright (c) 2010, Google Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -31,36 +32,22 @@
 #ifndef ScriptWrappable_h
 #define ScriptWrappable_h
 
-#include "JSDOMWrapper.h"
-#include "WebCoreMemoryInstrumentation.h"
 #include <heap/Weak.h>
-#include <runtime/Operations.h>
+
+namespace JSC {
+class JSGlobalData;
+class WeakHandleOwner;
+}
 
 namespace WebCore {
 
+class JSDOMWrapper;
+
 class ScriptWrappable {
 public:
-    JSDOMWrapper* wrapper() const
-    {
-        return m_wrapper.get();
-    }
-
-    void setWrapper(JSC::JSGlobalData&, JSDOMWrapper* wrapper, JSC::WeakHandleOwner* wrapperOwner, void* context)
-    {
-        ASSERT(!m_wrapper);
-        m_wrapper = JSC::PassWeak<JSDOMWrapper>(wrapper, wrapperOwner, context);
-    }
-
-    void clearWrapper(JSDOMWrapper* wrapper)
-    {
-        weakClear(m_wrapper, wrapper);
-    }
-
-    void reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
-    {
-        MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
-        info.addMember(m_wrapper, "wrapper");
-    }
+    JSDOMWrapper* wrapper() const;
+    void setWrapper(JSC::JSGlobalData&, JSDOMWrapper*, JSC::WeakHandleOwner*, void*);
+    void clearWrapper(JSDOMWrapper*);
 
 private:
     JSC::Weak<JSDOMWrapper> m_wrapper;

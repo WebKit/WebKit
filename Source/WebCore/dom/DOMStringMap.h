@@ -53,9 +53,7 @@ public:
     virtual Element* element() = 0;
 
 protected:
-    DOMStringMap()
-    {
-    }
+    DOMStringMap();
 };
 
 } // namespace WebCore

@@ -27,6 +27,7 @@
 #include "FileList.h"
 
 #include "File.h"
+#include "ScriptWrappableInlines.h"
 
 namespace WebCore {
 

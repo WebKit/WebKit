@@ -30,6 +30,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "ExceptionCode.h"
+#include "ScriptWrappableInlines.h"
 #include "StylePropertySet.h"
 #include "StyleResolver.h"
 #include <wtf/MathExtras.h>
