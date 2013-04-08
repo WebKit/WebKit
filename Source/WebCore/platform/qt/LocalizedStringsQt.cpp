@@ -729,6 +729,26 @@ String validationMessageBadInputForNumberText()
     return validationMessageTypeMismatchText();
 }
 
+#if ENABLE(VIDEO_TRACK)
+String textTrackSubtitlesText()
+{
+    notImplemented();
+    return String();
+}
+
+String textTrackOffText()
+{
+    notImplemented();
+    return String();
+}
+
+String textTrackNoLabelText()
+{
+    notImplemented();
+    return String();
+}
+#endif
+
 String snapshottedPlugInLabelTitle()
 {
     notImplemented();
