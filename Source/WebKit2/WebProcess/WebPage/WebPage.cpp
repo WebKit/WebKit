@@ -3928,6 +3928,9 @@ static int primarySnapshottedPlugInMinimumHeight = 300;
 
 void WebPage::determinePrimarySnapshottedPlugIn()
 {
+    if (!m_page->settings()->plugInSnapshottingEnabled())
+        return;
+
     if (!m_readyToFindPrimarySnapshottedPlugin)
         return;
 
