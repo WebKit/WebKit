@@ -297,7 +297,7 @@ EXPORTS
     ?newUninitialized@CString@WTF@@SA?AV12@IAAPAD@Z
     ?notifyWriteSlow@SymbolTableEntry@JSC@@AAEXXZ
     ?notifyWriteSlow@WatchpointSet@JSC@@QAEXXZ
-    ?nullptr@@3Vnullptr_t@std@@A?nullptr@@3Vnullptr_t@std@@A
+    ?nullptr@@3Vnullptr_t@std@@A
     ?numberToFixedPrecisionString@WTF@@YAPBDNIQAD_N@Z
     ?numberToFixedWidthString@WTF@@YAPBDNIQAD@Z
     ?numberToString@WTF@@YAPBDNQAD@Z

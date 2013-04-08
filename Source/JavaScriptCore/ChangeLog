@@ -1,5 +1,11 @@
 2013-04-05  Roger Fong  <roger_fong@apple.com>
 
+        Windows build fix fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+
+2013-04-05  Roger Fong  <roger_fong@apple.com>
+
         Windows build fix.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
