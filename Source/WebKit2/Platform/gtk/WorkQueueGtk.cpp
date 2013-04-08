@@ -28,7 +28,6 @@
 #include "config.h"
 #include "WorkQueue.h"
 
-#include "WKBase.h"
 #include <gio/gio.h>
 #include <glib.h>
 #include <wtf/gobject/GRefPtr.h>

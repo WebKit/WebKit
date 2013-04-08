@@ -1,3 +1,18 @@
+2013-04-08  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Build Platform as a separate static library
+        https://bugs.webkit.org/show_bug.cgi?id=114164
+
+        Reviewed by Martin Robinson.
+
+        This way we reduce a bit the amount of files compiled twice
+        because of the plugin process.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * Platform/gtk/WorkQueueGtk.cpp: Remove unused header.
+        * Platform/unix/SharedMemoryUnix.cpp: Ditto.
+
 2013-04-08  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][EFL] WebView: Add callbacks to the WKViewClient to remove direct access to page viewport controller
