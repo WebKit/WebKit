@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) 2013 Seokju Kwon (seokju.kwon@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -40,6 +41,10 @@ public:
     SocketStreamError() { }
     explicit SocketStreamError(int errorCode)
         : SocketStreamErrorBase(errorCode)
+    {
+    }
+    SocketStreamError(int errorCode, const BlackBerry::Platform::String& description)
+        : SocketStreamErrorBase(errorCode, String(), description)
     {
     }
 

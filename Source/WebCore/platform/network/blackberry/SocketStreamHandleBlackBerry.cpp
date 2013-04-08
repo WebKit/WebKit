@@ -105,7 +105,7 @@ void SocketStreamHandle::notifyStatusReceived(int status, const BlackBerry::Plat
     RefPtr<SocketStreamHandle> protect(this);
     m_status = status;
     if (FilterStream::StatusSuccess != status)
-        m_client->didFailSocketStream(this, SocketStreamError(status));
+        m_client->didFailSocketStream(this, SocketStreamError(status, message));
     else {
         m_state = Open;
         m_client->didOpenSocketStream(this);
