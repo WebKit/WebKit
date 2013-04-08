@@ -790,6 +790,9 @@ LLINT_SLOW_PATH_DECL(slow_path_resolve)
     ResolveOperations* operations = pc[3].u.resolveOperations;
     JSValue result = JSScope::resolve(exec, ident, operations);
     ASSERT(operations->size());
+    if (operations->isEmpty())
+        LLINT_RETURN_PROFILED(op_resolve, result);
+
     switch (operations->data()[0].m_operation) {
     case ResolveOperation::GetAndReturnGlobalProperty:
         pc[0].u.opcode = LLInt::getOpcode(llint_op_resolve_global_property);
@@ -844,7 +847,13 @@ LLINT_SLOW_PATH_DECL(slow_path_resolve_base)
             LLINT_THROW(globalData.exception);
     } else
         result = JSScope::resolveBase(exec, ident, false, operations, pc[5].u.putToBaseOperation);
+
     ASSERT(operations->size());
+    if (operations->isEmpty()) {
+        LLINT_PROFILE_VALUE(op_resolve_base, result);
+        LLINT_RETURN(result);
+    }
+
     switch (operations->data()[0].m_operation) {
     case ResolveOperation::ReturnGlobalObjectAsBase:
         pc[0].u.opcode = LLInt::getOpcode(llint_op_resolve_base_to_global);

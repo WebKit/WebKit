@@ -1,5 +1,19 @@
 2013-04-08  Oliver Hunt  <oliver@apple.com>
 
+        Make resolve more robust in the face of lookup misses
+        https://bugs.webkit.org/show_bug.cgi?id=114211
+
+        Reviewed by Filip Pizlo.
+
+        This simply short circuits the resolve operations in the
+        event that we don't find a path to a property.  There's no
+        repro case for this happening unfortunately.
+
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+
+2013-04-08  Oliver Hunt  <oliver@apple.com>
+
         Build fix.
 
         * assembler/ARMv7Assembler.h:
