@@ -1,3 +1,28 @@
+2013-04-08  Patrick Gansterer  <paroga@webkit.org>
+
+        [WIN] Remove WebKit2 source code
+        https://bugs.webkit.org/show_bug.cgi?id=114096
+
+        Reviewed by Anders Carlsson.
+
+        Remove the windows specific parts of the MiniBrowser.
+
+        * MiniBrowser/MiniBrowser.vcproj: Removed.
+        * MiniBrowser/MiniBrowserLauncher.vcproj: Removed.
+        * MiniBrowser/MiniBrowserPostBuild.cmd: Removed.
+        * MiniBrowser/MiniBrowserPreBuild.cmd: Removed.
+        * MiniBrowser/win/BrowserView.cpp: Removed.
+        * MiniBrowser/win/BrowserView.h: Removed.
+        * MiniBrowser/win/BrowserWindow.cpp: Removed.
+        * MiniBrowser/win/BrowserWindow.h: Removed.
+        * MiniBrowser/win/MiniBrowser.cpp: Removed.
+        * MiniBrowser/win/MiniBrowser.h: Removed.
+        * MiniBrowser/win/MiniBrowser.rc: Removed.
+        * MiniBrowser/win/main.cpp: Removed.
+        * MiniBrowser/win/resource.h: Removed.
+        * MiniBrowser/win/stdafx.cpp: Removed.
+        * MiniBrowser/win/stdafx.h: Removed.
+
 2013-04-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use port 6665 instead of 6667 since the latter doesn't seem to work well.
