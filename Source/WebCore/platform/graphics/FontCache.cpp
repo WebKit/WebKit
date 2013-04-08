@@ -132,51 +132,73 @@ typedef HashMap<FontPlatformDataCacheKey, OwnPtr<FontPlatformData>, FontPlatform
 
 static FontPlatformDataCache* gFontPlatformDataCache = 0;
 
-static const AtomicString& alternateFamilyName(const AtomicString& familyName)
+static bool familyNameEqualIgnoringCase(const AtomicString& familyName, const char* reference, unsigned length)
 {
-    // Alias Courier <-> Courier New
-    DEFINE_STATIC_LOCAL(AtomicString, courier, ("Courier", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, courierNew, ("Courier New", AtomicString::ConstructFromLiteral));
-    if (equalIgnoringCase(familyName, courier))
-        return courierNew;
+    ASSERT(length > 0);
+    ASSERT(familyName.length() == length);
+    ASSERT(strlen(reference) == length);
+    const AtomicStringImpl* familyNameImpl = familyName.impl();
+    if (familyNameImpl->is8Bit())
+        return equalIgnoringCase(familyNameImpl->characters8(), reinterpret_cast<const LChar*>(reference), length);
+    return equalIgnoringCase(familyNameImpl->characters16(), reinterpret_cast<const LChar*>(reference), length);
+}
+
+template<size_t length>
+static inline bool familyNameEqualIgnoringCase(const AtomicString& familyName, const char (&reference)[length])
+{
+    return familyNameEqualIgnoringCase(familyName, reference, length - 1);
+}
+
+static const AtomicString alternateFamilyName(const AtomicString& familyName)
+{
+    // Alias Courier and Courier New.
+    // Alias Times and Times New Roman.
+    // Alias Arial and Helvetica.
+    switch (familyName.length()) {
+    case 5:
+        if (familyNameEqualIgnoringCase(familyName, "Arial"))
+            return AtomicString("Helvetica", AtomicString::ConstructFromLiteral);
+        if (familyNameEqualIgnoringCase(familyName, "Times"))
+            return AtomicString("Times New Roman", AtomicString::ConstructFromLiteral);
+        break;
+    case 7:
+        if (familyNameEqualIgnoringCase(familyName, "Courier"))
+            return AtomicString("Courier New", AtomicString::ConstructFromLiteral);
+        break;
+    case 9:
+        if (familyNameEqualIgnoringCase(familyName, "Helvetica"))
+            return AtomicString("Arial", AtomicString::ConstructFromLiteral);
+        break;
 #if !OS(WINDOWS)
     // On Windows, Courier New (truetype font) is always present and
     // Courier is a bitmap font. So, we don't want to map Courier New to
     // Courier.
-    if (equalIgnoringCase(familyName, courierNew))
-        return courier;
-#endif
-
-    // Alias Times and Times New Roman.
-    DEFINE_STATIC_LOCAL(AtomicString, times, ("Times", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, timesNewRoman, ("Times New Roman", AtomicString::ConstructFromLiteral));
-    if (equalIgnoringCase(familyName, times))
-        return timesNewRoman;
-    if (equalIgnoringCase(familyName, timesNewRoman))
-        return times;
-    
-    // Alias Arial and Helvetica
-    DEFINE_STATIC_LOCAL(AtomicString, arial, ("Arial", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, helvetica, ("Helvetica", AtomicString::ConstructFromLiteral));
-    if (equalIgnoringCase(familyName, arial))
-        return helvetica;
-    if (equalIgnoringCase(familyName, helvetica))
-        return arial;
-
+    case 11:
+        if (familyNameEqualIgnoringCase(familyName, "Courier New"))
+            return AtomicString("Courier", AtomicString::ConstructFromLiteral);
+        break;
+#endif // !OS(WINDOWS)
+    case 15:
+        if (familyNameEqualIgnoringCase(familyName, "Times New Roman"))
+            return AtomicString("Times", AtomicString::ConstructFromLiteral);
+        break;
 #if OS(WINDOWS)
     // On Windows, bitmap fonts are blocked altogether so that we have to 
     // alias MS Sans Serif (bitmap font) -> Microsoft Sans Serif (truetype font)
-    DEFINE_STATIC_LOCAL(AtomicString, msSans, ("MS Sans Serif", AtomicString::ConstructFromLiteral));
-    DEFINE_STATIC_LOCAL(AtomicString, microsoftSans, ("Microsoft Sans Serif", AtomicString::ConstructFromLiteral));
-    if (equalIgnoringCase(familyName, msSans))
-        return microsoftSans;
+    case 13:
+        if (familyNameEqualIgnoringCase(familyName, "MS Sans Serif"))
+            return AtomicString("Microsoft Sans Serif", AtomicString::ConstructFromLiteral);
+        break;
 
     // Alias MS Serif (bitmap) -> Times New Roman (truetype font). There's no 
     // 'Microsoft Sans Serif-equivalent' for Serif.
-    DEFINE_STATIC_LOCAL(AtomicString, msSerif, ("MS Serif", AtomicString::ConstructFromLiteral));
-    if (equalIgnoringCase(familyName, msSerif))
-        return timesNewRoman;
-#endif
+    case 8:
+        if (familyNameEqualIgnoringCase(familyName, "MS Serif"))
+            return AtomicString("Times New Roman", AtomicString::ConstructFromLiteral);
+        break;
+#endif // OS(WINDOWS)
+
+    }
 
     return nullAtom;
 }
@@ -212,7 +234,7 @@ FontPlatformData* FontCache::getCachedFontPlatformData(const FontDescription& fo
         if (!it->value && !checkingAlternateName) {
             // We were unable to find a font.  We have a small set of fonts that we alias to other names,
             // e.g., Arial/Helvetica, Courier/Courier New, etc.  Try looking up the font under the aliased name.
-            const AtomicString& alternateName = alternateFamilyName(familyName);
+            const AtomicString alternateName = alternateFamilyName(familyName);
             if (!alternateName.isNull()) {
                 FontPlatformData* fontPlatformDataForAlternateName = getCachedFontPlatformData(fontDescription, alternateName, true);
                 // Lookup the key in the hash table again as the previous iterator may have
