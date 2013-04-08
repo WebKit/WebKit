@@ -108,8 +108,6 @@ class Reviewer(Committer):
 watchers_who_are_not_contributors = [
     Account("Chromium Compositor Bugs", ["cc-bugs@chromium.org"], ""),
     Account("Chromium Media Reviews", ["feature-media-reviews@chromium.org"], ""),
-    Account("David Levin", ["levin+threading@chromium.org"], ""),
-    Account("David Levin", ["levin+watchlist@chromium.org"], ""),
     Account("Kent Tamura", ["tkent+wkapi@chromium.org"], ""),
     Account("Mike West", ["mkwst+watchlist@chromium.org"], ""),
 ]

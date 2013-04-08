@@ -37,24 +37,6 @@
         "WebIDL": {
             "filename": r"Source/WebCore/(?!inspector)(?!testing).*\.idl"
         },
-        "ThreadingFiles": {
-            "filename": r"Source/JavaScriptCore/wtf/ThreadSpecific\."
-                        r"|Source/JavaScriptCore/wtf/ThreadSafeRefCounted\."
-                        r"|Source/JavaScriptCore/wtf/ThreadingPrimitives\."
-                        r"|Source/JavaScriptCore/wtf/Threading\."
-                        r"|Source/WebCore/dom/CrossThreadTask\."
-                        r"|Source/WebCore/platform/CrossThreadCopier\.",
-        },
-        "ThreadingUsage": {
-            # The intention of this regex is to detect places where people are using common threading mechanisms,
-            # so that one can look them over for common mistakes. This list is long and likely to get longer over time.
-            # Note the negative look-ahead to avoid new mentions of the files (for builds or includes).
-            "more": r"(AllowCrossThreadAccess|AtomicallyInitialize|CrossThreadCopier|CrossThreadRefCounted|Mutex|ReadWriteLock|ThreadCondition|ThreadSafeRefCounted|ThreadSpecific"
-                    r"|createCallbackTask|crossThreadString|deprecatedTurnOffVerifier|threadsafeCopy)(?!\.(h|cpp))",
-        },
-        "WatchListScript": {
-            "filename": r"Tools/Scripts/webkitpy/common/watchlist/",
-        },
         "webkitpy": {
             "filename": r"Tools/Scripts/webkitpy/",
         },
@@ -102,9 +84,6 @@
         },
         "Animation": {
             "filename": r"Source/WebCore/page/animation/",
-        },
-        "StyleChecker": {
-            "filename": r"Tools/Scripts/webkitpy/style/",
         },
         "GtkWebKit2PublicAPI": {
             "filename": r"Source/WebKit2/UIProcess/API/gtk/",
@@ -406,13 +385,10 @@
         "SkiaGraphics": [ "senorblanco@chromium.org", "junov@google.com" ],
         "Selectors": [ "allan.jensen@digia.com" ],
         "SoupNetwork": [ "rakuco@webkit.org", "gns@gnome.org", "mrobinson@webkit.org", "danw@gnome.org" ],
-        "StyleChecker": [ "levin@chromium.org", ],
         "TestFailures": [ "abarth@webkit.org", "ojan.autocc@gmail.com" ],
         "TextureMapper" : [ "noam@webkit.org", "cmarcelo@webkit.org", "luiz@webkit.org" ],
-        "ThreadingFiles|ThreadingUsage": [ "levin+threading@chromium.org", ],
         "TouchAdjustment" : [ "allan.jensen@digia.com" ],
         "WTF": [ "benjamin@webkit.org", "ojan.autocc@gmail.com", "cmarcelo@webkit.org" ],
-        "WatchListScript": [ "levin+watchlist@chromium.org", ],
         "WebGL": [ "dino@apple.com" ],
         "WebIDL": [ "abarth@webkit.org", "ojan.autocc@gmail.com", "esprehn+autocc@chromium.org" ],
         "WebInspectorAPI": [ "timothy@apple.com", "joepeck@webkit.org", "graouts@apple.com" ],

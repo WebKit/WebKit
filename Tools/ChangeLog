@@ -1,3 +1,13 @@
+2013-04-08  David Levin  <levin@chromium.org>
+
+        Remove my watchlist entries.
+        https://bugs.webkit.org/show_bug.cgi?id=114180
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-04-08  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [EFL] Mark ShouldGoToBackForwardListItem API test as failing
