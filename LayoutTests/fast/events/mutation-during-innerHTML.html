@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<p>Test that nodes added during DOMNodeRemoved from innerHTML are notified of their eventual removal.</p>
+
+<div id="container">
+    <div id="first"></div>
+</div>
+
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+var container = document.getElementById('container');
+var second = document.createElement('div');
+second.id = 'second';
+
+container.addEventListener('DOMNodeRemoved', function(event) {
+    if (event.target.id == 'first')
+        container.appendChild(second);
+    if (event.target.id == 'second')
+        document.body.appendChild(document.createTextNode('PASS'));
+});
+
+container.innerHTML = '';
+</script>

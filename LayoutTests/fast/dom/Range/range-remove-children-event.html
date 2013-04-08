@@ -1,0 +1,39 @@
+<html>
+<head>
+    <script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+    <div id="content">
+        <span id="innerContent">A</span>
+    </div>
+    <script>
+    window.jsTestIsAsync = true;
+    description("Test ranges remain valid when modified inside a MutationEvent handler.");
+
+    var content = document.getElementById("content");
+    var inserted = false;
+    var range = document.createRange();
+    range.setStart(content, 0);
+    range.setEnd(content, 0);
+    content.addEventListener('DOMNodeRemoved', function() {
+        if (!inserted) {
+            var newChild = document.createElement('p');
+            content.appendChild(newChild);
+            inserted = true;
+
+            range.setStart(newChild);
+            range.setEnd(newChild);
+
+            setTimeout(checkRange, 0);
+        }
+    });
+    content.innerHTML = "";
+
+    function checkRange() {
+        shouldBeEqualToString("range.startContainer.tagName", "DIV");
+        finishJSTest();
+    }
+    </script>
+    <script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

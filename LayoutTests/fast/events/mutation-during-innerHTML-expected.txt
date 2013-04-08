@@ -1,0 +1,3 @@
+Test that nodes added during DOMNodeRemoved from innerHTML are notified of their eventual removal.
+
+PASS
