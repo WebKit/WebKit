@@ -591,7 +591,6 @@ public:
     bool m_wouldSetFocused;
     bool m_wouldSetPageVisibilityState;
     bool m_cachedFocused;
-    bool m_enableQnxJavaScriptObject;
     Vector<bool> m_cachedPopupListSelecteds;
     int m_cachedPopupListSelectedIndex;
     BlackBerry::Platform::String m_cachedDateTimeInput;

@@ -114,6 +114,7 @@
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "ScrollTypes.h"
@@ -344,11 +345,6 @@ void WebPage::autofillTextField(const BlackBerry::Platform::String& item)
     d->m_autofillManager->autofillTextField(item);
 }
 
-void WebPage::enableQnxJavaScriptObject(bool enabled)
-{
-    d->m_enableQnxJavaScriptObject = enabled;
-}
-
 BlackBerry::Platform::String WebPage::renderTreeAsText()
 {
     return externalRepresentation(d->m_mainFrame);
@@ -424,7 +420,6 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_fullscreenNode(0)
     , m_hasInRegionScrollableAreas(false)
     , m_updateDelegatedOverlaysDispatched(false)
-    , m_enableQnxJavaScriptObject(false)
     , m_deferredTasksTimer(this, &WebPagePrivate::deferredTasksTimerFired)
     , m_selectPopup(0)
     , m_autofillManager(AutofillManager::create(this))
@@ -900,7 +895,7 @@ void WebPage::executeJavaScriptFunction(const std::vector<BlackBerry::Platform::
     for (unsigned i = 0; i < args.size(); ++i)
         argListRef[i] = BlackBerryJavaScriptVariantToJSValueRef(ctx, args[i]);
 
-    JSValueRef windowObjectValue = windowObject();
+    JSValueRef windowObjectValue = toRef(d->m_mainFrame->script()->globalObject(mainThreadNormalWorld()));
     JSObjectRef obj = JSValueToObject(ctx, windowObjectValue, 0);
     JSObjectRef thisObject = obj;
     for (unsigned i = 0; i < function.size(); ++i) {
@@ -4742,22 +4737,12 @@ void WebPage::setTimeoutForJavaScriptExecution(unsigned ms)
     doc->globalData()->timeoutChecker.setTimeoutInterval(ms);
 }
 
-JSContextRef WebPage::scriptContext() const
+JSGlobalContextRef WebPage::globalContext() const
 {
     if (!d->m_mainFrame)
         return 0;
 
-    JSC::Bindings::RootObject *root = d->m_mainFrame->script()->bindingRootObject();
-    if (!root)
-        return 0;
-
-    JSC::ExecState *exec = root->globalObject()->globalExec();
-    return toRef(exec);
-}
-
-JSValueRef WebPage::windowObject() const
-{
-    return toRef(d->m_mainFrame->script()->globalObject(mainThreadNormalWorld()));
+    return toGlobalRef(d->m_mainFrame->script()->globalObject(mainThreadNormalWorld())->globalExec());
 }
 
 // Serialize only the members of HistoryItem which are needed by the client,
@@ -6258,6 +6243,11 @@ Color WebPagePrivate::documentBackgroundColor() const
     if (!color.isValid())
         color = m_webSettings->backgroundColor();
     return color;
+}
+
+bool WebPage::isProcessingUserGesture() const
+{
+    return ScriptController::processingUserGesture();
 }
 
 }

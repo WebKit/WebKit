@@ -108,7 +108,6 @@ public:
     virtual void notifyDocumentOnLoad(bool) = 0;
 
     virtual void notifyWindowObjectCleared() = 0;
-    virtual BlackBerry::Platform::String invokeClientJavaScriptCallback(const char* const* args, unsigned numArgs) = 0;
 
     virtual void addMessageToConsole(const unsigned short* message, unsigned messageLength, const unsigned short* source, unsigned sourceLength, unsigned lineNumber) = 0;
     virtual int showAlertDialog(AlertType) = 0;
@@ -122,11 +121,6 @@ public:
     virtual bool runBeforeUnloadConfirmPanel(const unsigned short* message, unsigned messageLength, const char* origin, unsigned originLength) = 0;
 
     virtual bool shouldInterruptJavaScript() = 0;
-
-    virtual void javascriptSourceParsed(const unsigned short* url, unsigned urlLength, const unsigned short* script, unsigned scriptLength) = 0;
-    virtual void javascriptParsingFailed(const unsigned short* url, unsigned urlLength, const unsigned short* error, unsigned errorLength, int lineNumber) = 0;
-    virtual void javascriptPaused(const unsigned short* stack, unsigned stackLength) = 0;
-    virtual void javascriptContinued() = 0;
 
     virtual void contentsSizeChanged() = 0;
     virtual void scrollChanged() = 0;

@@ -151,9 +151,6 @@ public:
     virtual bool allowsAcceleratedCompositing() const;
 #endif
 
-    virtual void addSearchProvider(const BlackBerry::Platform::String&, const BlackBerry::Platform::String&);
-    virtual int isSearchProviderInstalled(const BlackBerry::Platform::String&);
-
     BlackBerry::WebKit::WebPagePrivate* webPagePrivate() const { return m_webPagePrivate; }
 
 private:

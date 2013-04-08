@@ -1,3 +1,15 @@
+2013-04-08  Jeff Rogers  <jrogers@rim.com>
+
+        [BlackBerry] Update BlackBerry JavaScript API
+        https://bugs.webkit.org/show_bug.cgi?id=114065
+
+        Reviewed by Rob Buis.
+
+        Internal PR 317350
+        Export JSC symbols in BlackBerry build.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+
 2013-04-08  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Configure should verify ICU is installed on mingw

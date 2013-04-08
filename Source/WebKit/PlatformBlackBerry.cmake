@@ -87,7 +87,6 @@ list(APPEND WebKit_SOURCES
     blackberry/WebCoreSupport/BackForwardListBlackBerry.cpp
     blackberry/WebCoreSupport/CacheClientBlackBerry.cpp
     blackberry/WebCoreSupport/ChromeClientBlackBerry.cpp
-    blackberry/WebCoreSupport/ClientExtension.cpp
     blackberry/WebCoreSupport/ContextMenuClientBlackBerry.cpp
     blackberry/WebCoreSupport/CredentialManager.cpp
     blackberry/WebCoreSupport/CredentialTransformData.cpp
@@ -95,7 +94,6 @@ list(APPEND WebKit_SOURCES
     blackberry/WebCoreSupport/DeviceOrientationClientBlackBerry.cpp
     blackberry/WebCoreSupport/DragClientBlackBerry.cpp
     blackberry/WebCoreSupport/EditorClientBlackBerry.cpp
-    blackberry/WebCoreSupport/ExternalExtension.cpp
     blackberry/WebCoreSupport/FrameLoaderClientBlackBerry.cpp
     blackberry/WebCoreSupport/FrameNetworkingContextBlackBerry.cpp
     blackberry/WebCoreSupport/GeolocationClientBlackBerry.cpp

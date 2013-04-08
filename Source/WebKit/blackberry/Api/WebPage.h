@@ -26,16 +26,11 @@
 #include <BlackBerryPlatformInputEvents.h>
 #include <BlackBerryPlatformString.h>
 #include <BlackBerryPlatformWebContext.h>
+#include <JavaScriptCore/JSBase.h>
 #include <imf/input_data.h>
 #include <network/NetworkRequest.h>
 #include <string>
 #include <vector>
-
-struct OpaqueJSContext;
-typedef const struct OpaqueJSContext* JSContextRef;
-
-struct OpaqueJSValue;
-typedef const struct OpaqueJSValue* JSValueRef;
 
 namespace WebCore {
 class ChromeClientBlackBerry;
@@ -240,8 +235,7 @@ public:
     // Case sensitivity, wrapping, and highlighting all matches are also toggleable.
     bool findNextString(const char*, bool forward, bool caseSensitive, bool wrap, bool highlightAllMatches);
 
-    JSContextRef scriptContext() const;
-    JSValueRef windowObject() const;
+    JSGlobalContextRef globalContext() const;
 
     unsigned timeoutForJavaScriptExecution() const;
     void setTimeoutForJavaScriptExecution(unsigned ms);
@@ -383,8 +377,6 @@ public:
 
     void autofillTextField(const BlackBerry::Platform::String&);
 
-    void enableQnxJavaScriptObject(bool);
-
     BlackBerry::Platform::String renderTreeAsText();
 
     void updateNotificationPermission(const BlackBerry::Platform::String& requestId, bool allowed);
@@ -394,6 +386,8 @@ public:
     void notificationShown(const BlackBerry::Platform::String& notificationId);
 
     void animateToScaleAndDocumentScrollPosition(double destinationZoomScale, const BlackBerry::Platform::FloatPoint& destinationScrollPosition, bool shouldConstrainScrollingToContentEdge = true);
+
+    bool isProcessingUserGesture() const;
 
 private:
     virtual ~WebPage();

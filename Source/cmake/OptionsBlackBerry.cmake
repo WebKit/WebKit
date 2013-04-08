@@ -16,10 +16,7 @@ add_definitions(-DSK_RELEASE)
 # TODO: Make this build-time configurable
 set(WTF_USE_OPENTYPE_SANITIZER 1)
 add_definitions(-DWTF_USE_OPENTYPE_SANITIZER=1)
-
-if (SHARED_CORE)
-    add_definitions(-DWTF_USE_EXPORT_MACROS=1)
-endif ()
+add_definitions(-DWTF_USE_EXPORT_MACROS=1)
 
 if (ENABLE_GLES2)
     set(WTF_USE_ACCELERATED_COMPOSITING 1)

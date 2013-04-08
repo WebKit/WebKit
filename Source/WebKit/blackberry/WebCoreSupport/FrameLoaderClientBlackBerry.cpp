@@ -24,18 +24,12 @@
 #include "BackForwardController.h"
 #include "BackingStoreClient.h"
 #include "BackingStore_p.h"
-#include "Chrome.h"
-#include "ChromeClientBlackBerry.h"
-#include "ClientExtension.h"
-#include "CookieManager.h"
 #include "CredentialManager.h"
 #include "CredentialTransformData.h"
 #include "DumpRenderTreeClient.h"
-#include "ExternalExtension.h"
 #include "FrameLoadRequest.h"
 #include "FrameNetworkingContextBlackBerry.h"
 #include "FrameView.h"
-#include "HTMLFormElement.h"
 #include "HTMLHeadElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLMediaElement.h"
@@ -918,12 +912,6 @@ void FrameLoaderClientBlackBerry::dispatchDidClearWindowObjectInWorld(DOMWrapper
 {
     if (world != mainThreadNormalWorld())
         return;
-
-    // Provide the extension object first in case the client or others want to use it.
-    if (m_webPagePrivate->m_enableQnxJavaScriptObject)
-        attachExtensionObjectToFrame(m_frame, m_webPagePrivate->m_client);
-
-    attachExternalExtensionObjectToFrame(m_frame);
 
     m_webPagePrivate->m_client->notifyWindowObjectCleared();
 

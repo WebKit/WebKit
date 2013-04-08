@@ -1,3 +1,35 @@
+2013-04-08  Jeff Rogers  <jrogers@rim.com>
+
+        [BlackBerry] Update BlackBerry JavaScript API
+        https://bugs.webkit.org/show_bug.cgi?id=114065
+
+        Reviewed by Rob Buis.
+
+        Internal PR 317350
+        Add new API for determining if user gesture is being processed.
+        Remove obsolete files.
+        Properly expose JSC global context.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPage::executeJavaScriptFunction):
+        (BlackBerry::WebKit::WebPage::globalContext):
+        (BlackBerry::WebKit::WebPage::isProcessingUserGesture):
+        (WebKit):
+        * Api/WebPage.h:
+        * Api/WebPageClient.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        * WebCoreSupport/ChromeClientBlackBerry.h:
+        (ChromeClientBlackBerry):
+        * WebCoreSupport/ClientExtension.cpp: Removed.
+        * WebCoreSupport/ClientExtension.h: Removed.
+        * WebCoreSupport/ExternalExtension.cpp: Removed.
+        * WebCoreSupport/ExternalExtension.h: Removed.
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidClearWindowObjectInWorld):
+
 2013-04-08  Jakob Petsovits  <jpetsovits@blackberry.com>
 
         [BlackBerry] More null checks for m_mainFrame
