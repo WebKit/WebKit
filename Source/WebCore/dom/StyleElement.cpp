@@ -142,8 +142,7 @@ void StyleElement::process(Element* e)
 void StyleElement::clearSheet()
 {
     ASSERT(m_sheet);
-    m_sheet->clearOwnerNode();
-    m_sheet = 0;
+    m_sheet.release()->clearOwnerNode();
 }
 
 void StyleElement::createSheet(Element* e, WTF::OrdinalNumber startLineNumber, const String& text)
