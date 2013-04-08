@@ -331,6 +331,10 @@ webkit.org/b/113020 [ Debug ] inspector/profiler/canvas2d/canvas2d-gradient-capt
 webkit.org/b/113513 inspector/styles/paste-property.html [ Failure ]
 webkit.org/b/113515 compositing/iframes/remove-iframe-crash.html [ Crash Pass ]
 
+# http/tests/canvas/canvas-slow-font-loading.html pass from time to time on WebKit2 Release builds.
+webkit.org/b/104954 [ Release ] http/tests/canvas/canvas-slow-font-loading.html [ Pass ImageOnlyFailure ]
+webkit.org/b/104954 [ Debug ] http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
