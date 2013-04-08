@@ -1,3 +1,27 @@
+2013-04-08  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][WK2] WebView's interactive property is not fully respected
+        https://bugs.webkit.org/show_bug.cgi?id=113066
+
+        Reviewed by Jocelyn Turcotte.
+
+        WK2 sign-off by Benjamin Poulain.
+
+        The QML WebView inherits the "interactive" property from Flickable
+        which is true by default, and disables the interaction with the
+        Flickable if set to false.
+        Resulting from the design of the WebView panning and flicking is
+        disabled by Flickable but to be consistent we also need to disable
+        double-tap gestures and pinch gestures since they would trigger
+        scale and position changes.
+
+        * UIProcess/qt/PageViewportControllerClientQt.cpp:
+        (WebKit::PageViewportControllerClientQt::pinchGestureStarted):
+        (WebKit::PageViewportControllerClientQt::pinchGestureRequestUpdate):
+        (WebKit::PageViewportControllerClientQt::pinchGestureEnded):
+        * UIProcess/qt/QtWebPageEventHandler.cpp:
+        (WebKit::QtWebPageEventHandler::handleDoubleTapEvent):
+
 2013-04-07  David Kilzer  <ddkilzer@apple.com>
 
         Remove the rest of SVG_DOM_OBJC_BINDINGS

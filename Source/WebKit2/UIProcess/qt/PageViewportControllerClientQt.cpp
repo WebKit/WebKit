@@ -430,7 +430,7 @@ void PageViewportControllerClientQt::pinchGestureStarted(const QPointF& pinchCen
     // This can only happen as a result of a user interaction.
     ASSERT(m_touchInteraction.inProgress());
 
-    if (!m_controller->allowsUserScaling())
+    if (!m_controller->allowsUserScaling() || !m_viewportItem->isInteractive())
         return;
 
     clearRelativeZoomState();
@@ -442,11 +442,10 @@ void PageViewportControllerClientQt::pinchGestureStarted(const QPointF& pinchCen
 
 void PageViewportControllerClientQt::pinchGestureRequestUpdate(const QPointF& pinchCenterInViewportCoordinates, qreal totalScaleFactor)
 {
-    ASSERT(m_scaleChange.inProgress());
-
-    if (!m_controller->allowsUserScaling())
+    if (!m_controller->allowsUserScaling() || !m_viewportItem->isInteractive())
         return;
 
+    ASSERT(m_scaleChange.inProgress());
     ASSERT(m_pinchStartScale > 0);
     //  Changes of the center position should move the page even if the zoom factor does not change.
     const qreal pinchScale = m_pinchStartScale * totalScaleFactor;
@@ -464,11 +463,10 @@ void PageViewportControllerClientQt::pinchGestureRequestUpdate(const QPointF& pi
 
 void PageViewportControllerClientQt::pinchGestureEnded()
 {
-    ASSERT(m_scaleChange.inProgress());
-
-    if (!m_controller->allowsUserScaling())
+    if (m_pinchStartScale < 0)
         return;
 
+    ASSERT(m_scaleChange.inProgress());
     m_pinchStartScale = -1;
 
     // This will take care of resuming the content, even if no animation was performed.

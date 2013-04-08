@@ -271,6 +271,9 @@ void QtWebPageEventHandler::handleSingleTapEvent(const QTouchEvent::TouchPoint& 
 
 void QtWebPageEventHandler::handleDoubleTapEvent(const QTouchEvent::TouchPoint& point)
 {
+    if (!m_webView->isInteractive())
+        return;
+
     deactivateTapHighlight();
     QTransform fromItemTransform = m_webPage->transformFromItem();
     m_webPageProxy->findZoomableAreaForPoint(fromItemTransform.map(point.pos()).toPoint(), IntSize(point.rect().size().toSize()));
