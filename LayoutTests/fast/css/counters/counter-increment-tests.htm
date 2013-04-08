@@ -72,6 +72,13 @@
                 shouldBe("window.internals.counterValue(document.getElementById('test54'))", "'10'");
                 shouldBe("window.internals.counterValue(document.getElementById('test55'))", "'1'");
                 shouldBe("window.internals.counterValue(document.getElementById('test56'))", "'-2147483648'");
+                shouldBe("window.internals.counterValue(document.getElementById('test57'))", "'5'");
+                shouldBe("window.internals.counterValue(document.getElementById('none57'))", "'5'");
+                shouldBe("window.internals.counterValue(document.getElementById('wrapper58'))", "'5'");
+                shouldBe("window.internals.counterValue(document.getElementById('test58a'))", "'5.2'");
+                shouldBe("window.internals.counterValue(document.getElementById('none58'))", "'5.2'");
+                shouldBe("window.internals.counterValue(document.getElementById('none58a'))", "'5.7'");
+                shouldBe("window.internals.counterValue(document.getElementById('test58b'))", "'5.12'");
                 if (window.testRunner)
                     testRunner.notifyDone();
             }
@@ -537,7 +544,62 @@
             {
                 content: counter(ident56);
             }
-
+            div.class57
+            {
+                counter-increment: ident57 5;
+            }
+            #test57:before
+            {
+                content: counter(ident57);
+            }
+            #none57
+            {
+                counter-increment: none;
+            }
+            #none57:before
+            {
+                content: counter(ident57);
+            }
+            div.class58
+            {
+                counter-increment: ident58 5;
+            }
+            #wrapper58:before
+            {
+                content: counter(ident58);
+            }
+            #test58a
+            {
+                counter-reset: ident58 2;
+            }
+            #test58a:before
+            {
+                content: counters(ident58, ".");
+            }
+            #none58
+            {
+                counter-increment: none;
+            }
+            #none58:before
+            {
+                content: counters(ident58, ".");
+            }
+            #none58a
+            {
+                counter-increment: ident58 5;
+            }
+            #none58a:before
+            {
+                content: counters(ident58, ".");
+            }
+            #test58b
+            {
+                counter-increment: ident58 5;
+            }
+            #test58b:before
+            {
+                content: counters(ident58, ".");
+            }
         </style>
     </head>
     <body onload="setTimeout('run()', 0);">
@@ -599,5 +661,14 @@
         </div>
         <div id="test55"></div>
         <div id="test56"></div>
+        <div id="test57" class="class57"></div>
+        <div id="none57" class="class57"></div>
+        <div id="wrapper58" class="class58">
+            <span id="test58a"></span>
+            <span id="none58">
+                <span id="none58a"></span>
+            </span>
+            <span id="test58b"></span>
+        </div>
     </body>
 </html>

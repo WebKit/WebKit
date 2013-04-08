@@ -1136,10 +1136,10 @@ public:
     }
     static void applyValue(CSSPropertyID, StyleResolver* styleResolver, CSSValue* value)
     {
-        if (!value->isValueList())
-            return;
+        bool setCounterIncrementToNone = counterBehavior == Increment && value->isPrimitiveValue() && static_cast<CSSPrimitiveValue*>(value)->getIdent() == CSSValueNone;
 
-        CSSValueList* list = static_cast<CSSValueList*>(value);
+        if (!value->isValueList() && !setCounterIncrementToNone)
+            return;
 
         CounterDirectiveMap& map = styleResolver->style()->accessCounterDirectives();
         typedef CounterDirectiveMap::iterator Iterator;
@@ -1150,7 +1150,11 @@ public:
                 it->value.clearReset();
             else
                 it->value.clearIncrement();
-
+        
+        if (setCounterIncrementToNone)
+            return;
+        
+        CSSValueList* list = static_cast<CSSValueList*>(value);
         int length = list ? list->length() : 0;
         for (int i = 0; i < length; ++i) {
             CSSValue* currValue = list->itemWithoutBoundsCheck(i);
