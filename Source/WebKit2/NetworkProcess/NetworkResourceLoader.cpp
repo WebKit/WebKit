@@ -197,13 +197,15 @@ void NetworkResourceLoader::abortInProgressLoad()
     scheduleCleanupOnMainThread();
 }
 
-void NetworkResourceLoader::didReceiveResponse(ResourceHandle*, const ResourceResponse& response)
+void NetworkResourceLoader::didReceiveResponseAsync(ResourceHandle*, const ResourceResponse& response)
 {
     // FIXME (NetworkProcess): Cache the response.
     if (FormData* formData = request().httpBody())
         formData->removeGeneratedFilesIfNeeded();
 
     sendAbortingOnFailure(Messages::WebResourceLoader::DidReceiveResponseWithCertificateInfo(response, PlatformCertificateInfo(response)));
+
+    m_handle->continueDidReceiveResponse();
 }
 
 void NetworkResourceLoader::didReceiveData(ResourceHandle*, const char* data, int length, int encodedDataLength)

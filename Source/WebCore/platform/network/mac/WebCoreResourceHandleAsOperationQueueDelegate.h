@@ -44,9 +44,11 @@ class ResourceHandle;
     RetainPtr<NSCachedURLResponse> m_cachedResponseResult;
     BOOL m_boolResult;
 }
+
 - (id)initWithHandle:(WebCore::ResourceHandle*)handle;
 - (void)detachHandle;
 - (void)continueWillSendRequest:(NSURLRequest *)newRequest;
+- (void)continueDidReceiveResponse;
 - (void)continueShouldUseCredentialStorage:(BOOL)useCredentialStorage;
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 - (void)continueCanAuthenticateAgainstProtectionSpace:(BOOL)canAuthenticate;

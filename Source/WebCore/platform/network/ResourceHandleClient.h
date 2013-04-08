@@ -75,8 +75,13 @@ namespace WebCore {
         virtual void cannotShowURL(ResourceHandle*) { }
 
         virtual bool usesAsyncCallbacks() { return false; }
+
         // Client will pass an updated request using ResourceHandle::continueWillSendRequest() when ready.
         virtual void willSendRequestAsync(ResourceHandle*, const ResourceRequest&, const ResourceResponse& redirectResponse);
+
+        // Client will call ResourceHandle::continueDidReceiveResponse() when ready.
+        virtual void didReceiveResponseAsync(ResourceHandle*, const ResourceResponse&);
+
         // Client will pass an updated request using ResourceHandle::continueShouldUseCredentialStorage() when ready.
         virtual void shouldUseCredentialStorageAsync(ResourceHandle*);
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)

@@ -57,6 +57,11 @@ void ResourceHandleClient::willSendRequestAsync(ResourceHandle* handle, const Re
     handle->continueWillSendRequest(request);
 }
 
+void ResourceHandleClient::didReceiveResponseAsync(ResourceHandle* handle, const ResourceResponse&)
+{
+    handle->continueDidReceiveResponse();
+}
+
 void ResourceHandleClient::shouldUseCredentialStorageAsync(ResourceHandle* handle)
 {
     handle->continueShouldUseCredentialStorage(false);

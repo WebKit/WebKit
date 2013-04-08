@@ -397,13 +397,22 @@ void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceRes
 
 void ResourceHandle::continueWillSendRequest(const ResourceRequest& request)
 {
-    ASSERT(client() && client()->usesAsyncCallbacks());
+    ASSERT(client());
+    ASSERT(client()->usesAsyncCallbacks());
 
     // Client call may not preserve the session, especially if the request is sent over IPC.
     ResourceRequest newRequest = request;
     if (!newRequest.isNull())
         newRequest.setStorageSession(d->m_storageSession.get());
     [(id)delegate() continueWillSendRequest:newRequest.nsURLRequest(UpdateHTTPBody)];
+}
+
+void ResourceHandle::continueDidReceiveResponse()
+{
+    ASSERT(client());
+    ASSERT(client()->usesAsyncCallbacks());
+
+    [delegate() continueDidReceiveResponse];
 }
 
 bool ResourceHandle::shouldUseCredentialStorage()
@@ -420,7 +429,8 @@ bool ResourceHandle::shouldUseCredentialStorage()
 
 void ResourceHandle::continueShouldUseCredentialStorage(bool useCredentialStorage)
 {
-    ASSERT(client() && client()->usesAsyncCallbacks());
+    ASSERT(client());
+    ASSERT(client()->usesAsyncCallbacks());
 
     [(id)delegate() continueShouldUseCredentialStorage:useCredentialStorage];
 }
@@ -514,7 +524,8 @@ bool ResourceHandle::canAuthenticateAgainstProtectionSpace(const ProtectionSpace
 
 void ResourceHandle::continueCanAuthenticateAgainstProtectionSpace(bool result)
 {
-    ASSERT(client() && client()->usesAsyncCallbacks());
+    ASSERT(client());
+    ASSERT(client()->usesAsyncCallbacks());
 
     [(id)delegate() continueCanAuthenticateAgainstProtectionSpace:result];
 }
@@ -576,7 +587,8 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
 
 void ResourceHandle::continueWillCacheResponse(NSCachedURLResponse *response)
 {
-    ASSERT(client() && client()->usesAsyncCallbacks());
+    ASSERT(client());
+    ASSERT(client()->usesAsyncCallbacks());
 
     [(id)delegate() continueWillCacheResponse:response];
 }

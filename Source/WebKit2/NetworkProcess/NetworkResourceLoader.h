@@ -67,7 +67,7 @@ public:
     // ResourceHandleClient methods
     virtual void willSendRequestAsync(WebCore::ResourceHandle*, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& redirectResponse) OVERRIDE;
     virtual void didSendData(WebCore::ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent) OVERRIDE;
-    virtual void didReceiveResponse(WebCore::ResourceHandle*, const WebCore::ResourceResponse&) OVERRIDE;
+    virtual void didReceiveResponseAsync(WebCore::ResourceHandle*, const WebCore::ResourceResponse&) OVERRIDE;
     virtual void didReceiveData(WebCore::ResourceHandle*, const char*, int, int encodedDataLength) OVERRIDE;
     virtual void didReceiveBuffer(WebCore::ResourceHandle*, PassRefPtr<WebCore::SharedBuffer>, int encodedDataLength) OVERRIDE;
     virtual void didFinishLoading(WebCore::ResourceHandle*, double finishTime) OVERRIDE;

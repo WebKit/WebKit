@@ -81,6 +81,11 @@ using namespace WebCore;
     dispatch_semaphore_signal(m_semaphore);
 }
 
+- (void)continueDidReceiveResponse
+{
+    dispatch_semaphore_signal(m_semaphore);
+}
+
 - (void)continueShouldUseCredentialStorage:(BOOL)useCredentialStorage
 {
     m_boolResult = useCredentialStorage;
@@ -218,9 +223,13 @@ using namespace WebCore;
 
     LOG(Network, "Handle %p delegate connection:%p didReceiveResponse:%p (HTTP status %d, reported MIMEType '%s')", m_handle, connection, r, [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0, [[r MIMEType] UTF8String]);
 
+    RetainPtr<id> protector(self);
+
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (!m_handle || !m_handle->client())
+        if (!m_handle) {
+            dispatch_semaphore_signal(m_semaphore);
             return;
+        }
 
         // Avoid MIME type sniffing if the response comes back as 304 Not Modified.
         int statusCode = [r respondsToSelector:@selector(statusCode)] ? [(id)r statusCode] : 0;
@@ -230,8 +239,10 @@ using namespace WebCore;
         if ([m_handle->firstRequest().nsURLRequest(DoNotUpdateHTTPBody) _propertyForKey:@"ForceHTMLMIMEType"])
             [r _setMIMEType:@"text/html"];
 
-        m_handle->client()->didReceiveResponse(m_handle, r);
+        m_handle->client()->didReceiveResponseAsync(m_handle, r);
     });
+
+    dispatch_semaphore_wait(m_semaphore, DISPATCH_TIME_FOREVER);
 }
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)

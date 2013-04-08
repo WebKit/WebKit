@@ -187,12 +187,18 @@ public:
 
     // Called in response to ResourceHandleClient::willSendRequestAsync().
     void continueWillSendRequest(const ResourceRequest&);
+
+    // Called in response to ResourceHandleClient::didReceiveResponseAsync().
+    void continueDidReceiveResponse();
+
     // Called in response to ResourceHandleClient::shouldUseCredentialStorageAsync().
     void continueShouldUseCredentialStorage(bool);
+
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     // Called in response to ResourceHandleClient::canAuthenticateAgainstProtectionSpaceAsync().
     void continueCanAuthenticateAgainstProtectionSpace(bool);
 #endif
+
 #if PLATFORM(MAC)
     // Called in response to ResourceHandleClient::willCacheResponseAsync().
     void continueWillCacheResponse(NSCachedURLResponse *);
