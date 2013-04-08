@@ -815,6 +815,9 @@ webkit.org/b/102367 fast/forms/zoomed-controls.html [ Pass ]
 webkit.org/b/112578 storage/indexeddb/transaction-coordination-across-databases.html [ Crash ]
 webkit.org/b/107194 storage/indexeddb/pending-activity.html [ Crash ]
 
+# Sometimes hits an assertion.
+webkit.org/b/114160 [ Debug ] inspector/debugger/dynamic-script-tag.html [ Crash Pass ]
+
 # Flaky IndexedDB tests
 webkit.org/b/107194 storage/indexeddb/index-multientry.html [ Failure Pass ]
 webkit.org/b/107194 storage/indexeddb/index-unique.html [ Failure Crash Pass ]
@@ -1771,6 +1774,10 @@ webkit.org/b/108370 editing/spelling/spelling-with-punctuation-selection.html [ 
 webkit.org/b/108370 editing/spelling/spelling-with-underscore-selection.html [ Skip ]
 webkit.org/b/108370 editing/spelling/spelling-with-whitespace-selection.html [ Skip ]
 
+# This test has slightly networking different output on the build bots but the
+# result still looks OK.
+Bug(EFL) http/tests/inspector/console-websocket-error.html [ Failure Pass ]
+
 # Failing after r142947.
 webkit.org/b/83869 fast/layers/video-layer.html [ Failure ]
 webkit.org/b/83869 media/media-controls-clone.html [ Failure ]
@@ -1825,6 +1832,8 @@ webkit.org/b/111172 compositing/overlap-blending/reflection-opacity-huge.html [ 
 
 # Select element popup is not shown.
 webkit.org/b/114154 fast/forms/select/popup-closes-on-blur.html [ Failure ]
+
+webkit.org/b/114159 fast/events/popup-blocking-timers3.html [ Failure ]
 
 # CURSOR_VISIBILITY is not enabled in efl
 webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Failure ]
