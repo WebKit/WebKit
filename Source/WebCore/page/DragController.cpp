@@ -867,7 +867,7 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
 void DragController::doImageDrag(Element* element, const IntPoint& dragOrigin, const IntRect& rect, Clipboard* clipboard, Frame* frame, IntPoint& dragImageOffset)
 {
     IntPoint mouseDownPoint = dragOrigin;
-    DragImageRef dragImage;
+    DragImageRef dragImage = 0;
     IntPoint origin;
 
     Image* image = getImage(element);
