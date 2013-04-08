@@ -291,7 +291,7 @@ double monotonicallyIncreasingTime()
     return ecore_time_get();
 }
 
-#elif USE(GLIB) && !PLATFORM(EFL)
+#elif USE(GLIB) && !PLATFORM(EFL) && !PLATFORM(QT)
 
 double monotonicallyIncreasingTime()
 {

@@ -1,3 +1,13 @@
+2013-04-08  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed trivial buildfix after r147799.
+
+        Add an ifdef guard to ensure Qt uses its own monotonicallyIncreasingTime()
+        implemenation instead of the GLIB based one.
+
+        * wtf/CurrentTime.cpp:
+        (WTF):
+
 2013-04-07  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove the android code from WebKit Template Framework
