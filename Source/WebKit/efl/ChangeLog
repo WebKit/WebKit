@@ -1,3 +1,17 @@
+2013-04-08  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] rendering was broken when scrolled ewk_view_single
+        https://bugs.webkit.org/show_bug.cgi?id=114135
+
+        Reviewed by Gyuyoung Kim.
+
+        ewk_view_single use memcpy() to copy previous buffer for scrolling, but
+        memcpy() should not be used when source buffer and destination buffer are
+        overwrapped.
+
+        * ewk/ewk_view_single.cpp:
+        (_ewk_view_screen_move):
+
 2013-04-07  Ed Bartosh  <bartosh@gmail.com>
 
         [EFL] --minimal build fails with error: expected `;' before `return'
