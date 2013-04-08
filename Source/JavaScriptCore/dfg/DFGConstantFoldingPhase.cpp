@@ -152,6 +152,7 @@ private:
                     break;
                 
                 bool needsWatchpoint = !m_state.forNode(child).m_currentKnownStructure.hasSingleton();
+                bool needsCellCheck = m_state.forNode(child).m_type & ~SpecCell;
                 
                 GetByIdStatus status = GetByIdStatus::computeFor(
                     globalData(), structure, codeBlock()->identifier(identifierNumber));
@@ -177,7 +178,7 @@ private:
                     m_insertionSet.insertNode(
                         indexInBlock, SpecNone, StructureTransitionWatchpoint, codeOrigin,
                         OpInfo(structure), childEdge);
-                } else if (m_state.forNode(child).m_type & ~SpecCell) {
+                } else if (needsCellCheck) {
                     m_insertionSet.insertNode(
                         indexInBlock, SpecNone, Phantom, codeOrigin, childEdge);
                 }
@@ -216,6 +217,7 @@ private:
                     break;
                 
                 bool needsWatchpoint = !m_state.forNode(child).m_currentKnownStructure.hasSingleton();
+                bool needsCellCheck = m_state.forNode(child).m_type & ~SpecCell;
                 
                 PutByIdStatus status = PutByIdStatus::computeFor(
                     globalData(),
@@ -240,7 +242,7 @@ private:
                     m_insertionSet.insertNode(
                         indexInBlock, SpecNone, StructureTransitionWatchpoint, codeOrigin,
                         OpInfo(structure), childEdge);
-                } else if (m_state.forNode(child).m_type & ~SpecCell) {
+                } else if (needsCellCheck) {
                     m_insertionSet.insertNode(
                         indexInBlock, SpecNone, Phantom, codeOrigin, childEdge);
                 }
@@ -269,7 +271,7 @@ private:
                         }
                     }
                 }
-
+                
                 Edge propertyStorage;
                 
                 if (isInlineOffset(status.offset()))

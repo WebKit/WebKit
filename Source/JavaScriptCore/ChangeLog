@@ -1,3 +1,18 @@
+2013-04-08  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(r146669): Assertion hit in JSC::DFG::SpeculativeJIT::fillSpeculateCell() running webgl tests
+        https://bugs.webkit.org/show_bug.cgi?id=114129
+        <rdar://problem/13594898>
+
+        Reviewed by Darin Adler.
+        
+        The check to see if we need a cell check when simplifying a GetById or PutById needs to be hoisted to
+        above where we abstractly execute the instruction, since after we abstracting execute it, it will
+        seem like it no longer needs the cell check.
+
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+
 2013-04-07  Oliver Hunt  <oliver@apple.com>
 
         Add bounds checking for WTF::Vector::operator[]
