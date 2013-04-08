@@ -2778,7 +2778,7 @@ private:
         AssemblerBuffer m_buffer;
     } m_formatter;
 
-    Vector<LinkRecord> m_jumpsToLink;
+    Vector<LinkRecord, 0, UnsafeVectorOverflow> m_jumpsToLink;
     int m_indexOfLastWatchpoint;
     int m_indexOfTailOfLastWatchpoint;
 };

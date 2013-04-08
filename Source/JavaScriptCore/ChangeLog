@@ -1,3 +1,10 @@
+2013-04-08  Oliver Hunt  <oliver@apple.com>
+
+        Build fix.
+
+        * assembler/ARMv7Assembler.h:
+        (ARMv7Assembler):
+
 2013-04-08  Justin Haygood  <jhaygood@reaktix.com>
 
         Allow KeywordLookupGenerator.py to work on Windows with Windows style line endings
