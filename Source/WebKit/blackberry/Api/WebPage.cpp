@@ -1985,7 +1985,7 @@ void WebPagePrivate::notifyPageOnLoad()
         (*it)->handleOnLoadEvent();
 }
 
-bool WebPagePrivate::shouldPluginEnterFullScreen(PluginView* plugin, const char* windowUniquePrefix)
+bool WebPagePrivate::shouldPluginEnterFullScreen(PluginView*, const char*)
 {
     return m_client->shouldPluginEnterFullScreen();
 }
@@ -2002,7 +2002,7 @@ void WebPagePrivate::didPluginEnterFullScreen(PluginView* plugin, const char* wi
     m_client->window()->setSensitivityFullscreenOverride(true);
 }
 
-void WebPagePrivate::didPluginExitFullScreen(PluginView* plugin, const char* windowUniquePrefix)
+void WebPagePrivate::didPluginExitFullScreen(PluginView*, const char*)
 {
     m_fullScreenPluginView = 0;
     m_client->didPluginExitFullScreen();
@@ -2014,12 +2014,12 @@ void WebPagePrivate::didPluginExitFullScreen(PluginView* plugin, const char* win
     m_client->window()->setSensitivityFullscreenOverride(false);
 }
 
-void WebPagePrivate::onPluginStartBackgroundPlay(PluginView* plugin, const char* windowUniquePrefix)
+void WebPagePrivate::onPluginStartBackgroundPlay(PluginView*, const char*)
 {
     m_client->onPluginStartBackgroundPlay();
 }
 
-void WebPagePrivate::onPluginStopBackgroundPlay(PluginView* plugin, const char* windowUniquePrefix)
+void WebPagePrivate::onPluginStopBackgroundPlay(PluginView*, const char*)
 {
     m_client->onPluginStopBackgroundPlay();
 }
@@ -2933,7 +2933,7 @@ void WebPagePrivate::zoomAnimationFinished(double finalAnimationScale, const Web
             case WEBKIT_RIGHT:
                 textAnchor = IntPoint(reflowedRect.x() + reflowedRect.width() - actualVisibleSize().width(), topLeftPoint.y());
                 break;
-            case TAAUTO:
+            case TASTART:
             case JUSTIFY:
             default:
                 if (renderer->style()->isLeftToRightDirection())
@@ -3578,7 +3578,7 @@ bool WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
     IntSize viewportSizeAfter = actualVisibleSize();
 
     IntSize offset;
-    if (hasPendingOrientation && !m_fullscreenVideoNode) {
+    if (hasPendingOrientation && !m_fullscreenNode) {
         offset = IntSize(roundf((viewportSizeBefore.width() - viewportSizeAfter.width()) / 2.0),
             roundf((viewportSizeBefore.height() - viewportSizeAfter.height()) / 2.0));
     }
@@ -4573,7 +4573,7 @@ bool WebPage::blockZoom(const Platform::IntPoint& documentTargetPoint)
         case WEBKIT_RIGHT:
             anchor = FloatPoint(nodeRect.x() + nodeRect.width() - scaledViewportWidth, topLeftPoint.y());
             break;
-        case TAAUTO:
+        case TASTART:
         case JUSTIFY:
         default:
             if (renderer->style()->isLeftToRightDirection())
@@ -5234,7 +5234,7 @@ bool WebPagePrivate::compositorDrawsRootLayer() const
     if (!renderView || !renderView->layer() || !renderView->layer()->backing())
         return false;
 
-    return !renderView->layer()->backing()->paintingGoesToWindow();
+    return !renderView->layer()->backing()->paintsIntoWindow();
 #else
     return false;
 #endif
