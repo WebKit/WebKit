@@ -360,9 +360,10 @@ bool PageCache::canCache(Page* page) const
 #if ENABLE(PROXIMITY_EVENTS)
         && !DeviceProximityController::isActiveAt(page)
 #endif
-        && loadType != FrameLoadTypeReload
-        && loadType != FrameLoadTypeReloadFromOrigin
-        && loadType != FrameLoadTypeSame;
+        && (loadType == FrameLoadTypeStandard
+            || loadType == FrameLoadTypeBack
+            || loadType == FrameLoadTypeForward
+            || loadType == FrameLoadTypeIndexedBackForward);
 }
 
 void PageCache::setCapacity(int capacity)
