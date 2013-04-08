@@ -419,7 +419,7 @@ static bool shouldRedirect(ResourceHandle* handle)
 
 static bool shouldRedirectAsGET(SoupMessage* message, KURL& newURL, bool crossOrigin)
 {
-    if (message->method == SOUP_METHOD_GET)
+    if (message->method == SOUP_METHOD_GET || message->method == SOUP_METHOD_HEAD)
         return false;
 
     if (!newURL.protocolIsInHTTPFamily())
