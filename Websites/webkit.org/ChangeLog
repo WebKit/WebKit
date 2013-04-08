@@ -1,3 +1,19 @@
+2013-04-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        Simplify the page "Getting the Code" on WebKit.org
+        https://bugs.webkit.org/show_bug.cgi?id=113980
+
+        Reviewed by Sam Weinig.
+
+        * building/checkout.html:
+        Instead of interleaving instructions for Mac and Windows, just
+        copy the things that make sense and have two clear sections.
+
+        Also mention Linux, it is the exact same instructions as Mac OS X.
+
+        Make svn checkout the alternative to a download of the tarball. It is
+        almost impossible to do a svn checkout on slow networks nowadays.
+
 2013-04-04  Benjamin Poulain  <bpoulain@apple.com>
 
         Update WebKit.org's contact page
