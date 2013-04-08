@@ -150,8 +150,8 @@ namespace JSC {
         JS_EXPORT_PRIVATE PassOwnPtr<TypeCountSet> objectTypeCounts();
         void showStatistics();
 
-        void pushTempSortVector(Vector<ValueStringPair>*);
-        void popTempSortVector(Vector<ValueStringPair>*);
+        void pushTempSortVector(Vector<ValueStringPair, 0, UnsafeVectorOverflow>*);
+        void popTempSortVector(Vector<ValueStringPair, 0, UnsafeVectorOverflow>*);
     
         HashSet<MarkedArgumentBuffer*>& markListSet() { if (!m_markListSet) m_markListSet = adoptPtr(new HashSet<MarkedArgumentBuffer*>); return *m_markListSet; }
         
@@ -242,7 +242,7 @@ namespace JSC {
 #endif
 
         ProtectCountSet m_protectedValues;
-        Vector<Vector<ValueStringPair>* > m_tempSortingVectors;
+        Vector<Vector<ValueStringPair, 0, UnsafeVectorOverflow>* > m_tempSortingVectors;
         OwnPtr<HashSet<MarkedArgumentBuffer*> > m_markListSet;
 
         MachineThreads m_machineThreads;

@@ -154,7 +154,7 @@ void JSRopeString::resolveRope(ExecState* exec) const
 void JSRopeString::resolveRopeSlowCase8(LChar* buffer) const
 {
     LChar* position = buffer + m_length; // We will be working backwards over the rope.
-    Vector<JSString*, 32> workQueue; // Putting strings into a Vector is only OK because there are no GC points in this method.
+    Vector<JSString*, 32, UnsafeVectorOverflow> workQueue; // Putting strings into a Vector is only OK because there are no GC points in this method.
     
     for (size_t i = 0; i < s_maxInternalRopeLength && m_fibers[i]; ++i) {
         workQueue.append(m_fibers[i].get());
@@ -186,7 +186,7 @@ void JSRopeString::resolveRopeSlowCase8(LChar* buffer) const
 void JSRopeString::resolveRopeSlowCase(UChar* buffer) const
 {
     UChar* position = buffer + m_length; // We will be working backwards over the rope.
-    Vector<JSString*, 32> workQueue; // These strings are kept alive by the parent rope, so using a Vector is OK.
+    Vector<JSString*, 32, UnsafeVectorOverflow> workQueue; // These strings are kept alive by the parent rope, so using a Vector is OK.
 
     for (size_t i = 0; i < s_maxInternalRopeLength && m_fibers[i]; ++i)
         workQueue.append(m_fibers[i].get());

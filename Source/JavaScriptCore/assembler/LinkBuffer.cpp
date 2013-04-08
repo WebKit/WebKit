@@ -80,7 +80,7 @@ void LinkBuffer::linkCode(void* ownerUID, JITCompilationEffort effort)
     uint8_t* outData = reinterpret_cast<uint8_t*>(m_code);
     int readPtr = 0;
     int writePtr = 0;
-    Vector<LinkRecord>& jumpsToLink = m_assembler->jumpsToLink();
+    Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink = m_assembler->jumpsToLink();
     unsigned jumpCount = jumpsToLink.size();
     for (unsigned i = 0; i < jumpCount; ++i) {
         int offset = readPtr - writePtr;

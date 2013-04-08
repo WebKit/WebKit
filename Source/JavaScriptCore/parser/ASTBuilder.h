@@ -654,10 +654,10 @@ private:
     JSGlobalData* m_globalData;
     SourceCode* m_sourceCode;
     Scope m_scope;
-    Vector<BinaryOperand, 10> m_binaryOperandStack;
-    Vector<AssignmentInfo, 10> m_assignmentInfoStack;
-    Vector<pair<int, int>, 10> m_binaryOperatorStack;
-    Vector<pair<int, int>, 10> m_unaryTokenStack;
+    Vector<BinaryOperand, 10, UnsafeVectorOverflow> m_binaryOperandStack;
+    Vector<AssignmentInfo, 10, UnsafeVectorOverflow> m_assignmentInfoStack;
+    Vector<pair<int, int>, 10, UnsafeVectorOverflow> m_binaryOperatorStack;
+    Vector<pair<int, int>, 10, UnsafeVectorOverflow> m_unaryTokenStack;
     int m_evalCount;
 };
 

@@ -168,7 +168,7 @@ namespace JSC {
         }
 
     private:
-        Vector<char, inlineCapacity> m_storage;
+        Vector<char, inlineCapacity, UnsafeVectorOverflow> m_storage;
         char* m_buffer;
         int m_capacity;
         int m_index;

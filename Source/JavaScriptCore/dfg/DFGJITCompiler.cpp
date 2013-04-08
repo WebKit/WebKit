@@ -162,7 +162,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
         m_codeBlock->callReturnIndexVector().append(CallReturnOffsetToBytecodeOffset(returnAddressOffset, exceptionInfo));
     }
 
-    Vector<CodeOriginAtCallReturnOffset>& codeOrigins = m_codeBlock->codeOrigins();
+    Vector<CodeOriginAtCallReturnOffset, 0, UnsafeVectorOverflow>& codeOrigins = m_codeBlock->codeOrigins();
     codeOrigins.resize(m_exceptionChecks.size());
     
     for (unsigned i = 0; i < m_exceptionChecks.size(); ++i) {

@@ -1788,7 +1788,7 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     // Copy and translate the UnlinkedInstructions
     size_t instructionCount = unlinkedCodeBlock->instructions().size();
     UnlinkedInstruction* pc = unlinkedCodeBlock->instructions().data();
-    Vector<Instruction> instructions(instructionCount);
+    Vector<Instruction, 0, UnsafeVectorOverflow> instructions(instructionCount);
     for (size_t i = 0; i < unlinkedCodeBlock->instructions().size(); ) {
         unsigned opLength = opcodeLength(pc[i].u.opcode);
         instructions[i] = globalData()->interpreter->getOpcode(pc[i].u.opcode);
@@ -2716,7 +2716,7 @@ unsigned CodeBlock::bytecodeOffset(ExecState* exec, ReturnAddressPtr returnAddre
 #if ENABLE(JIT)
     if (!m_rareData)
         return 1;
-    Vector<CallReturnOffsetToBytecodeOffset>& callIndices = m_rareData->m_callReturnIndexVector;
+    Vector<CallReturnOffsetToBytecodeOffset, 0, UnsafeVectorOverflow>& callIndices = m_rareData->m_callReturnIndexVector;
     if (!callIndices.size())
         return 1;
     
@@ -2780,8 +2780,8 @@ void CodeBlock::clearEvalCache()
     m_rareData->m_evalCodeCache.clear();
 }
 
-template<typename T>
-inline void replaceExistingEntries(Vector<T>& target, Vector<T>& source)
+template<typename T, size_t inlineCapacity, typename U, typename V>
+inline void replaceExistingEntries(Vector<T, inlineCapacity, U>& target, Vector<T, inlineCapacity, V>& source)
 {
     ASSERT(target.size() <= source.size());
     for (size_t i = 0; i < target.size(); ++i)

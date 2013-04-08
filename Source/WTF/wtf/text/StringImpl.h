@@ -444,8 +444,8 @@ public:
     static unsigned dataOffset() { return OBJECT_OFFSETOF(StringImpl, m_data8); }
     static PassRefPtr<StringImpl> createWithTerminatingNullCharacter(const StringImpl&);
 
-    template<typename CharType, size_t inlineCapacity>
-    static PassRefPtr<StringImpl> adopt(Vector<CharType, inlineCapacity>& vector)
+    template<typename CharType, size_t inlineCapacity, typename OverflowHandler>
+    static PassRefPtr<StringImpl> adopt(Vector<CharType, inlineCapacity, OverflowHandler>& vector)
     {
         if (size_t size = vector.size()) {
             ASSERT(vector.data());

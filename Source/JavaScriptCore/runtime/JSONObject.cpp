@@ -127,7 +127,7 @@ private:
     CallData m_replacerCallData;
     const String m_gap;
 
-    Vector<Holder, 16> m_holderStack;
+    Vector<Holder, 16, UnsafeVectorOverflow> m_holderStack;
     String m_repeatedGap;
     String m_indent;
 };
@@ -645,12 +645,12 @@ enum WalkerState { StateUnknown, ArrayStartState, ArrayStartVisitMember, ArrayEn
                                  ObjectStartState, ObjectStartVisitMember, ObjectEndVisitMember };
 NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
 {
-    Vector<PropertyNameArray, 16> propertyStack;
-    Vector<uint32_t, 16> indexStack;
+    Vector<PropertyNameArray, 16, UnsafeVectorOverflow> propertyStack;
+    Vector<uint32_t, 16, UnsafeVectorOverflow> indexStack;
     LocalStack<JSObject, 16> objectStack(m_exec->globalData());
     LocalStack<JSArray, 16> arrayStack(m_exec->globalData());
     
-    Vector<WalkerState, 16> stateStack;
+    Vector<WalkerState, 16, UnsafeVectorOverflow> stateStack;
     WalkerState state = StateUnknown;
     JSValue inValue = unfiltered;
     JSValue outValue = jsNull();

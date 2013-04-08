@@ -220,7 +220,7 @@ namespace JSC {
         {
             if (!m_rareData)
                 return 1;
-            Vector<CallReturnOffsetToBytecodeOffset>& callIndices = m_rareData->m_callReturnIndexVector;
+            Vector<CallReturnOffsetToBytecodeOffset, 0, UnsafeVectorOverflow>& callIndices = m_rareData->m_callReturnIndexVector;
             if (!callIndices.size())
                 return 1;
             RELEASE_ASSERT(index < m_rareData->m_callReturnIndexVector.size());
@@ -748,7 +748,7 @@ namespace JSC {
         bool hasExpressionInfo() { return m_unlinkedCode->hasExpressionInfo(); }
 
 #if ENABLE(JIT)
-        Vector<CallReturnOffsetToBytecodeOffset>& callReturnIndexVector()
+        Vector<CallReturnOffsetToBytecodeOffset, 0, UnsafeVectorOverflow>& callReturnIndexVector()
         {
             createRareDataIfNecessary();
             return m_rareData->m_callReturnIndexVector;
@@ -762,7 +762,7 @@ namespace JSC {
             return m_rareData->m_inlineCallFrames;
         }
         
-        Vector<CodeOriginAtCallReturnOffset>& codeOrigins()
+        Vector<CodeOriginAtCallReturnOffset, 0, UnsafeVectorOverflow>& codeOrigins()
         {
             createRareDataIfNecessary();
             return m_rareData->m_codeOrigins;
@@ -1283,11 +1283,11 @@ namespace JSC {
             EvalCodeCache m_evalCodeCache;
 
 #if ENABLE(JIT)
-            Vector<CallReturnOffsetToBytecodeOffset> m_callReturnIndexVector;
+            Vector<CallReturnOffsetToBytecodeOffset, 0, UnsafeVectorOverflow> m_callReturnIndexVector;
 #endif
 #if ENABLE(DFG_JIT)
             SegmentedVector<InlineCallFrame, 4> m_inlineCallFrames;
-            Vector<CodeOriginAtCallReturnOffset> m_codeOrigins;
+            Vector<CodeOriginAtCallReturnOffset, 0, UnsafeVectorOverflow> m_codeOrigins;
 #endif
         };
 #if COMPILER(MSVC)

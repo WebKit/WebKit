@@ -546,8 +546,8 @@ JSValue LiteralParser<CharType>::parse(ParserState initialState)
     ParserState state = initialState;
     MarkedArgumentBuffer objectStack;
     JSValue lastValue;
-    Vector<ParserState, 16> stateStack;
-    Vector<Identifier, 16> identifierStack;
+    Vector<ParserState, 16, UnsafeVectorOverflow> stateStack;
+    Vector<Identifier, 16, UnsafeVectorOverflow> identifierStack;
     while (1) {
         switch(state) {
             startParseArray:

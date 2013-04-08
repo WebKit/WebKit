@@ -1,3 +1,53 @@
+2013-04-07  Oliver Hunt  <oliver@apple.com>
+
+        Add bounds checking for WTF::Vector::operator[]
+        https://bugs.webkit.org/show_bug.cgi?id=89600
+
+        Reviewed by Filip Pizlo.
+
+        Add a template parameter to Vector<> that controls whether
+        bounds checking is performed in release builds or not.
+        Defaults to crashing on overflow.
+
+        * wtf/Forward.h:
+        (WTF):
+        * wtf/Vector.h:
+        (WTF):
+        (Vector):
+        (WTF::Vector::at):
+        (WTF::Vector::removeLast):
+        (WTF::::Vector):
+        (WTF::=):
+        (WTF::::contains):
+        (WTF::::find):
+        (WTF::::reverseFind):
+        (WTF::::fill):
+        (WTF::::appendRange):
+        (WTF::::expandCapacity):
+        (WTF::::tryExpandCapacity):
+        (WTF::::resize):
+        (WTF::::shrink):
+        (WTF::::grow):
+        (WTF::::reserveCapacity):
+        (WTF::::tryReserveCapacity):
+        (WTF::::reserveInitialCapacity):
+        (WTF::::shrinkCapacity):
+        (WTF::::append):
+        (WTF::::tryAppend):
+        (WTF::::appendSlowCase):
+        (WTF::::uncheckedAppend):
+        (WTF::::appendVector):
+        (WTF::::insert):
+        (WTF::::prepend):
+        (WTF::::remove):
+        (WTF::::reverse):
+        (WTF::::releaseBuffer):
+        (WTF::::checkConsistency):
+        (WTF::deleteAllValues):
+        (WTF::swap):
+        (WTF::operator==):
+        (WTF::operator!=):
+
 2013-04-07  Patrick Gansterer  <paroga@webkit.org>
 
         [WIN] Fix problems with export macros of AutodrainedPool

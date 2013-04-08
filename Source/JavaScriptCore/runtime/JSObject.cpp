@@ -1506,7 +1506,7 @@ void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNa
         }
         
         if (SparseArrayValueMap* map = storage->m_sparseMap.get()) {
-            Vector<unsigned> keys;
+            Vector<unsigned, 0, UnsafeVectorOverflow> keys;
             keys.reserveInitialCapacity(map->size());
             
             SparseArrayValueMap::const_iterator end = map->end();

@@ -76,7 +76,7 @@ namespace JSC {
 
         RefPtr<RegisterID> m_profileHookRegister;
         ArgumentsNode* m_argumentsNode;
-        Vector<RefPtr<RegisterID>, 8> m_argv;
+        Vector<RefPtr<RegisterID>, 8, UnsafeVectorOverflow> m_argv;
     };
 
     struct FinallyContext {
@@ -656,7 +656,7 @@ namespace JSC {
         RegisterID* emitInitLazyRegister(RegisterID*);
 
     public:
-        Vector<UnlinkedInstruction>& instructions() { return m_instructions; }
+        Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow>& instructions() { return m_instructions; }
 
         SharedSymbolTable& symbolTable() { return *m_symbolTable; }
 
@@ -691,7 +691,7 @@ namespace JSC {
         void createActivationIfNecessary();
         RegisterID* createLazyRegisterIfNecessary(RegisterID*);
         
-        Vector<UnlinkedInstruction> m_instructions;
+        Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow> m_instructions;
 
         bool m_shouldEmitDebugHooks;
         bool m_shouldEmitProfileHooks;
@@ -721,7 +721,7 @@ namespace JSC {
         int m_dynamicScopeDepth;
         CodeType m_codeType;
 
-        Vector<ControlFlowContext> m_scopeContextStack;
+        Vector<ControlFlowContext, 0, UnsafeVectorOverflow> m_scopeContextStack;
         Vector<SwitchInfo> m_switchContextStack;
         Vector<ForInContext> m_forInContextStack;
         Vector<TryContext> m_tryContextStack;

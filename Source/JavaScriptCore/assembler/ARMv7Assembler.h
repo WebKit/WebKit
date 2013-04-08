@@ -2035,7 +2035,7 @@ public:
             offsets[ptr++] = offset;
     }
     
-    Vector<LinkRecord>& jumpsToLink()
+    Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink()
     {
         std::sort(m_jumpsToLink.begin(), m_jumpsToLink.end(), linkRecordSourceComparator);
         return m_jumpsToLink;

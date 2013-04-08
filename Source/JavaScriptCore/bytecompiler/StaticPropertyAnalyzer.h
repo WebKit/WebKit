@@ -36,7 +36,7 @@ namespace JSC {
 // is understood to be lossy, and it's OK if it turns out to be wrong sometimes.
 class StaticPropertyAnalyzer {
 public:
-    StaticPropertyAnalyzer(Vector<UnlinkedInstruction>*);
+    StaticPropertyAnalyzer(Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow>*);
 
     void createThis(int dst, unsigned offsetOfInlineCapacityOperand);
     void newObject(int dst, unsigned offsetOfInlineCapacityOperand);
@@ -49,12 +49,12 @@ public:
 private:
     void kill(StaticPropertyAnalysis*);
 
-    Vector<UnlinkedInstruction>* m_instructions;
+    Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow>* m_instructions;
     typedef HashMap<int, RefPtr<StaticPropertyAnalysis>, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int> > AnalysisMap;
     AnalysisMap m_analyses;
 };
 
-inline StaticPropertyAnalyzer::StaticPropertyAnalyzer(Vector<UnlinkedInstruction>* instructions)
+inline StaticPropertyAnalyzer::StaticPropertyAnalyzer(Vector<UnlinkedInstruction, 0, UnsafeVectorOverflow>* instructions)
     : m_instructions(instructions)
 {
 }

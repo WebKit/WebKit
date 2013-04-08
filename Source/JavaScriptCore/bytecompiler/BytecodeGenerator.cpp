@@ -276,7 +276,7 @@ BytecodeGenerator::BytecodeGenerator(JSGlobalData& globalData, JSScope* scope, F
     bool shouldCaptureAllTheThings = m_shouldEmitDebugHooks || codeBlock->usesEval();
 
     bool capturesAnyArgumentByName = false;
-    Vector<RegisterID*> capturedArguments;
+    Vector<RegisterID*, 0, UnsafeVectorOverflow> capturedArguments;
     if (functionBody->hasCapturedVariables() || shouldCaptureAllTheThings) {
         FunctionParameters& parameters = *functionBody->parameters();
         capturedArguments.resize(parameters.size());
@@ -441,7 +441,7 @@ BytecodeGenerator::BytecodeGenerator(JSGlobalData& globalData, JSScope* scope, E
 
     const DeclarationStacks::VarStack& varStack = evalNode->varStack();
     unsigned numVariables = varStack.size();
-    Vector<Identifier> variables;
+    Vector<Identifier, 0, UnsafeVectorOverflow> variables;
     variables.reserveCapacity(numVariables);
     for (size_t i = 0; i < numVariables; ++i)
         variables.append(*varStack[i].first);
@@ -1662,7 +1662,7 @@ RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elemen
         }
     }
 
-    Vector<RefPtr<RegisterID>, 16> argv;
+    Vector<RefPtr<RegisterID>, 16, UnsafeVectorOverflow> argv;
     for (ElementNode* n = elements; n; n = n->next()) {
         if (n->elision())
             break;
@@ -1849,7 +1849,7 @@ RegisterID* BytecodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Regi
         emitNode(callArguments.argumentRegister(argument++), n);
 
     // Reserve space for call frame.
-    Vector<RefPtr<RegisterID>, JSStack::CallFrameHeaderSize> callFrame;
+    Vector<RefPtr<RegisterID>, JSStack::CallFrameHeaderSize, UnsafeVectorOverflow> callFrame;
     for (int i = 0; i < JSStack::CallFrameHeaderSize; ++i)
         callFrame.append(newTemporary());
 
@@ -1972,7 +1972,7 @@ RegisterID* BytecodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, 
     }
 
     // Reserve space for call frame.
-    Vector<RefPtr<RegisterID>, JSStack::CallFrameHeaderSize> callFrame;
+    Vector<RefPtr<RegisterID>, JSStack::CallFrameHeaderSize, UnsafeVectorOverflow> callFrame;
     for (int i = 0; i < JSStack::CallFrameHeaderSize; ++i)
         callFrame.append(newTemporary());
 

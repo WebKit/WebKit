@@ -74,8 +74,8 @@ ENUM_CLASS(CheckedState)
 } ENUM_CLASS_END(CheckedState);
     
 class CrashOnOverflow {
-protected:
-    NO_RETURN_DUE_TO_CRASH void overflowed()
+public:
+    static NO_RETURN_DUE_TO_CRASH void overflowed()
     {
         CRASH();
     }

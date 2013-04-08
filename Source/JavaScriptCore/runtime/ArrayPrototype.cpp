@@ -749,7 +749,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncSort(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    Vector<uint32_t> keys;
+    Vector<uint32_t, 0, UnsafeVectorOverflow> keys;
     for (size_t i = 0; i < nameArray.size(); ++i) {
         PropertyName name = nameArray[i];
         uint32_t index = name.asIndex();

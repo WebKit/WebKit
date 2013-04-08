@@ -329,8 +329,8 @@ void MemoryInstrumentation::Wrapper<T>::callReportMemoryUsage(MemoryObjectInfo* 
 }
 
 // Link time guard for classes with external memory instrumentation.
-template<typename T, size_t inlineCapacity> class Vector;
-template<typename T, size_t inlineCapacity> void reportMemoryUsage(const Vector<T, inlineCapacity>*, MemoryObjectInfo*);
+template<typename T, size_t inlineCapacity, typename OverflowHandler> class Vector;
+template<typename T, size_t inlineCapacity, typename OverflowHandler> void reportMemoryUsage(const Vector<T, inlineCapacity, OverflowHandler>*, MemoryObjectInfo*);
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg> class HashMap;
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg> void reportMemoryUsage(const HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg>*, MemoryObjectInfo*);

@@ -1,3 +1,54 @@
+2013-04-07  Oliver Hunt  <oliver@apple.com>
+
+        Add bounds checking for WTF::Vector::operator[]
+        https://bugs.webkit.org/show_bug.cgi?id=89600
+
+        Reviewed by Filip Pizlo.
+
+        Make a few JSC classes opt-out of release mode bounds checking.
+
+        * assembler/AssemblerBuffer.h:
+        (AssemblerBuffer):
+        * assembler/AssemblerBufferWithConstantPool.h:
+        (AssemblerBufferWithConstantPool):
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        (JSC::CodeBlock::bytecodeOffset):
+        (JSC):
+        (JSC::replaceExistingEntries):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::bytecodeOffsetForCallAtIndex):
+        (JSC::CodeBlock::callReturnIndexVector):
+        (JSC::CodeBlock::codeOrigins):
+        (RareData):
+        * bytecode/UnlinkedCodeBlock.h:
+        (JSC::UnlinkedEvalCodeBlock::adoptVariables):
+        (UnlinkedEvalCodeBlock):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitNewArray):
+        (JSC::BytecodeGenerator::emitCall):
+        (JSC::BytecodeGenerator::emitConstruct):
+        * bytecompiler/BytecodeGenerator.h:
+        (CallArguments):
+        (JSC::BytecodeGenerator::instructions):
+        (BytecodeGenerator):
+        * bytecompiler/StaticPropertyAnalysis.h:
+        (JSC::StaticPropertyAnalysis::create):
+        (JSC::StaticPropertyAnalysis::StaticPropertyAnalysis):
+        (StaticPropertyAnalysis):
+        * bytecompiler/StaticPropertyAnalyzer.h:
+        (StaticPropertyAnalyzer):
+        (JSC::StaticPropertyAnalyzer::StaticPropertyAnalyzer):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+        * parser/ASTBuilder.h:
+        (ASTBuilder):
+        * runtime/ArgList.h:
+        (MarkedArgumentBuffer):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncSort):
+
 2013-04-07  Benjamin Poulain  <benjamin@webkit.org>
 
         Use Vector::reserveInitialCapacity() when possible in JavaScriptCore runtime
