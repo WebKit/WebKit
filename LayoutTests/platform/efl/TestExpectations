@@ -1823,6 +1823,9 @@ webkit.org/b/111172 compositing/overlap-blending/children-opacity-huge.html [ Im
 webkit.org/b/111172 compositing/overlap-blending/children-opacity-no-overlap.html [ ImageOnlyFailure ]
 webkit.org/b/111172 compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure ]
 
+# Select element popup is not shown.
+webkit.org/b/114154 fast/forms/select/popup-closes-on-blur.html [ Failure ]
+
 # CURSOR_VISIBILITY is not enabled in efl
 webkit.org/b/107601 fullscreen/video-cursor-auto-hide.html [ Failure ]
 
