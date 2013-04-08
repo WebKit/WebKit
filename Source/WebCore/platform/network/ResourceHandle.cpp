@@ -154,6 +154,11 @@ void ResourceHandle::continueWillSendRequest(const ResourceRequest&)
     ASSERT_NOT_REACHED();
 }
 
+void ResourceHandle::continueDidReceiveResponse()
+{
+    ASSERT_NOT_REACHED();
+}
+
 void ResourceHandle::continueShouldUseCredentialStorage(bool)
 {
     ASSERT_NOT_REACHED();
