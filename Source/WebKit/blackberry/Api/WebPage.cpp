@@ -1177,7 +1177,7 @@ double WebPagePrivate::clampedScale(double scale) const
 
 bool WebPagePrivate::shouldZoomAboutPoint(double scale, const FloatPoint&, bool enforceScaleClamping, double* clampedScale)
 {
-    if (!m_mainFrame->view())
+    if (!m_mainFrame || !m_mainFrame->view())
         return false;
 
     if (enforceScaleClamping)
@@ -1381,7 +1381,7 @@ void WebPage::setDocumentScrollPosition(const Platform::IntPoint& documentScroll
 
 bool WebPagePrivate::shouldSendResizeEvent()
 {
-    if (!m_mainFrame->document())
+    if (!m_mainFrame || !m_mainFrame->document())
         return false;
 
     // PR#96865 : Provide an option to always send resize events, regardless of the loading
@@ -1518,7 +1518,7 @@ IntRect WebPagePrivate::visibleContentsRect() const
 
 IntSize WebPagePrivate::contentsSize() const
 {
-    if (!m_mainFrame->view())
+    if (!m_mainFrame || !m_mainFrame->view())
         return IntSize();
 
     return m_backingStoreClient->contentsSize();
@@ -1526,7 +1526,7 @@ IntSize WebPagePrivate::contentsSize() const
 
 IntSize WebPagePrivate::absoluteVisibleOverflowSize() const
 {
-    if (!m_mainFrame->contentRenderer())
+    if (!m_mainFrame || !m_mainFrame->contentRenderer())
         return IntSize();
 
     return IntSize(m_mainFrame->contentRenderer()->rightAbsoluteVisibleOverflow(), m_mainFrame->contentRenderer()->bottomAbsoluteVisibleOverflow());
@@ -1859,7 +1859,7 @@ void WebPagePrivate::notifyTransformedScrollChanged()
 
 bool WebPagePrivate::setViewMode(ViewMode mode)
 {
-    if (!m_mainFrame->view())
+    if (!m_mainFrame || !m_mainFrame->view())
         return false;
 
     m_viewMode = mode;

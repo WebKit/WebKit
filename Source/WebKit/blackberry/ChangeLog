@@ -1,3 +1,26 @@
+2013-04-08  Jakob Petsovits  <jpetsovits@blackberry.com>
+
+        [BlackBerry] More null checks for m_mainFrame
+        https://bugs.webkit.org/show_bug.cgi?id=114172
+
+        Reviewed by Rob Buis.
+
+        After r147744, some unit tests were crashing on WebPage
+        shutdown, because BackingStorePrivate::repaint() now uses
+        pixelContentsRect() (accessing m_webPage->contentsRect())
+        instead of BackingStoreClient::contentsRect(). In m_webPage,
+        m_mainFrame had already been set to 0.
+
+        Make us more robust against these errors by checking
+        the existence of m_mainFrame more diligently.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::shouldZoomAboutPoint):
+        (BlackBerry::WebKit::WebPagePrivate::shouldSendResizeEvent):
+        (BlackBerry::WebKit::WebPagePrivate::contentsSize):
+        (BlackBerry::WebKit::WebPagePrivate::absoluteVisibleOverflowSize):
+        (BlackBerry::WebKit::WebPagePrivate::setViewMode):
+
 2013-04-08  Iris Wu  <shuwu@blackberry.com>
 
         [BlackBerry] Force horizontal list to be horizontal scrollable.
