@@ -1493,7 +1493,3 @@ webkit.org/b/113227 transitions/svg-text-shadow-transition.html [ Pass Failure ]
 
 # New test failing, needs investigation.
 webkit.org/b/103857 fast/events/mouse-cursor-change.html
-
-# Needs rebaseline after bug https://bugs.webkit.org/show_bug.cgi?id=13709
-webkit.org/b/89315 tables/mozilla_expected_failures/bugs/bug89315.html [ Failure Rebaseline ]
-
