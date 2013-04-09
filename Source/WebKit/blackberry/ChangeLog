@@ -1,3 +1,23 @@
+2013-04-09  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Main page is rendered at wrong large scale after back from any zooming article at read.thestar.com
+        https://bugs.webkit.org/show_bug.cgi?id=114296
+
+        Reviewed by Rob Buis.
+
+        PR: 308655
+        We were relying on the load state Committed to reset m_userPerformedManualZoom
+        and m_userPerformedManualScroll; however, the main resources of the
+        articles on read.thestar.com were preloaded and the WebPage didn't get
+        any load state change callbacks when going back to the main page from
+        the articles. Therefore, m_userPerformedManualZoom had never been reset
+        in this case and we picked up the wrong scale when restoring the main page.
+        Rset m_userPerformedManualScroll and m_userPerformedManualScroll when
+        we are going back or forward.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::goBackOrForward):
+
 2013-04-09  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] InputHandler: fix calls to HTMLInputElement methods
