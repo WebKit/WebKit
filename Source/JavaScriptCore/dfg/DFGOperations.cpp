@@ -995,6 +995,23 @@ size_t DFG_OPERATION operationCompareEq(ExecState* exec, EncodedJSValue encodedO
     return JSValue::equalSlowCaseInline(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
 
+#if USE(JSVALUE64)
+EncodedJSValue DFG_OPERATION operationCompareStringEq(ExecState* exec, JSCell* left, JSCell* right)
+#else
+size_t DFG_OPERATION operationCompareStringEq(ExecState* exec, JSCell* left, JSCell* right)
+#endif
+{
+    JSGlobalData* globalData = &exec->globalData();
+    NativeCallFrameTracer tracer(globalData, exec);
+    
+    bool result = asString(left)->value(exec) == asString(right)->value(exec);
+#if USE(JSVALUE64)
+    return JSValue::encode(jsBoolean(result));
+#else
+    return result;
+#endif
+}
+
 size_t DFG_OPERATION operationCompareStrictEqCell(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     JSGlobalData* globalData = &exec->globalData();

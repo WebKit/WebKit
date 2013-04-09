@@ -1,3 +1,31 @@
+2013-04-08  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should be able to inline string equality comparisons
+        https://bugs.webkit.org/show_bug.cgi?id=114224
+
+        Reviewed by Oliver Hunt.
+        
+        Inline 8-bit string equality, go to slow path for 16-bit strings. 2x speed-up for string equality
+        comparisons on 8-bit strings. 20-50% speed-up on JSRegress/HashMap tests. 30% speed-up on
+        string-fasta. 2% speed-up on SunSpider overall. Some small speed-ups elsewhere.
+
+        This is a gnarly change but we have loads of test coverage already between the HashMap tests and
+        preexisting DFG string equality tests (which appear to have been designed to test OSR exits, but
+        also give us good overall coverage on string equality behavior).
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        (JSC::DFG::SpeculativeJIT::compileStringEquality):
+        (DFG):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+
 2013-04-08  Geoffrey Garen  <ggaren@apple.com>
 
         Stop #include-ing all of JavaScriptCore in every DOM-related file

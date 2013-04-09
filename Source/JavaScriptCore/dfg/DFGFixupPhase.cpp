@@ -284,14 +284,15 @@ private:
             break;
         }
             
+        case CompareEqConstant: {
+            break;
+        }
+
         case CompareEq:
-        case CompareEqConstant:
         case CompareLess:
         case CompareLessEq:
         case CompareGreater:
         case CompareGreaterEq: {
-            if (node->op() == CompareEqConstant)
-                break;
             if (Node::shouldSpeculateInteger(node->child1().node(), node->child2().node())) {
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child2());
@@ -304,8 +305,11 @@ private:
             }
             if (node->op() != CompareEq)
                 break;
-            if (node->child1()->shouldSpeculateString() && node->child2()->shouldSpeculateString())
+            if (node->child1()->shouldSpeculateString() && node->child2()->shouldSpeculateString() && GPRInfo::numberOfRegisters >= 7) {
+                setUseKindAndUnboxIfProfitable<StringUse>(node->child1());
+                setUseKindAndUnboxIfProfitable<StringUse>(node->child2());
                 break;
+            }
             if (node->child1()->shouldSpeculateObject() && node->child2()->shouldSpeculateObject()) {
                 setUseKindAndUnboxIfProfitable<ObjectUse>(node->child1());
                 setUseKindAndUnboxIfProfitable<ObjectUse>(node->child2());
@@ -324,10 +328,11 @@ private:
             break;
         }
             
-        case CompareStrictEq:
         case CompareStrictEqConstant: {
-            if (node->op() == CompareStrictEqConstant)
-                break;
+            break;
+        }
+            
+        case CompareStrictEq: {
             if (Node::shouldSpeculateInteger(node->child1().node(), node->child2().node())) {
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
                 setUseKindAndUnboxIfProfitable<Int32Use>(node->child2());
@@ -338,8 +343,11 @@ private:
                 fixDoubleEdge<NumberUse>(node->child2());
                 break;
             }
-            if (node->child1()->shouldSpeculateString() && node->child2()->shouldSpeculateString())
+            if (node->child1()->shouldSpeculateString() && node->child2()->shouldSpeculateString() && GPRInfo::numberOfRegisters >= 7) {
+                setUseKindAndUnboxIfProfitable<StringUse>(node->child1());
+                setUseKindAndUnboxIfProfitable<StringUse>(node->child2());
                 break;
+            }
             if (node->child1()->shouldSpeculateObject() && node->child2()->shouldSpeculateObject()) {
                 setUseKindAndUnboxIfProfitable<ObjectUse>(node->child1());
                 setUseKindAndUnboxIfProfitable<ObjectUse>(node->child2());

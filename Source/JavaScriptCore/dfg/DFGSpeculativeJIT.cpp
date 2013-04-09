@@ -1518,8 +1518,8 @@ bool SpeculativeJIT::compilePeepHoleBranch(Node* node, MacroAssembler::Relationa
             compilePeepHoleDoubleBranch(node, branchNode, doubleCondition);
         else if (node->op() == CompareEq) {
             if (node->isBinaryUseKind(StringUse)) {
-                nonSpeculativePeepholeBranch(node, branchNode, condition, operation);
-                return true;
+                // Use non-peephole comparison, for now.
+                return false;
             }
             if (node->isBinaryUseKind(ObjectUse))
                 compilePeepHoleObjectEquality(node, branchNode);
@@ -3476,7 +3476,7 @@ bool SpeculativeJIT::compare(Node* node, MacroAssembler::RelationalCondition con
     
     if (node->op() == CompareEq) {
         if (node->isBinaryUseKind(StringUse)) {
-            nonSpeculativeNonPeepholeCompare(node, condition, operation);
+            compileStringEquality(node);
             return false;
         }
         
@@ -3610,7 +3610,8 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
     }
         
     case StringUse: {
-        return nonSpeculativeStrictEq(node);
+        compileStringEquality(node);
+        return false;
     }
         
     case ObjectUse: {
@@ -3636,6 +3637,111 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         RELEASE_ASSERT_NOT_REACHED();
         return false;
     }
+}
+
+void SpeculativeJIT::compileStringEquality(Node* node)
+{
+    SpeculateCellOperand left(this, node->child1());
+    SpeculateCellOperand right(this, node->child2());
+    GPRTemporary length(this);
+    GPRTemporary leftTemp(this);
+    GPRTemporary rightTemp(this);
+    GPRTemporary leftTemp2(this, left);
+    GPRTemporary rightTemp2(this, right);
+    
+    GPRReg leftGPR = left.gpr();
+    GPRReg rightGPR = right.gpr();
+    GPRReg lengthGPR = length.gpr();
+    GPRReg leftTempGPR = leftTemp.gpr();
+    GPRReg rightTempGPR = rightTemp.gpr();
+    GPRReg leftTemp2GPR = leftTemp2.gpr();
+    GPRReg rightTemp2GPR = rightTemp2.gpr();
+    
+    JITCompiler::JumpList trueCase;
+    JITCompiler::JumpList falseCase;
+    JITCompiler::JumpList slowCase;
+    
+    DFG_TYPE_CHECK(
+        JSValueSource::unboxedCell(leftGPR), node->child1(), SpecString, m_jit.branchPtr(
+            MacroAssembler::NotEqual,
+            MacroAssembler::Address(leftGPR, JSCell::structureOffset()),
+            MacroAssembler::TrustedImmPtr(m_jit.globalData()->stringStructure.get())));
+    
+    // It's safe to branch around the type check below, since proving that the values are
+    // equal does indeed prove that the right value is a string.
+    trueCase.append(m_jit.branchPtr(MacroAssembler::Equal, leftGPR, rightGPR));
+    
+    DFG_TYPE_CHECK(
+        JSValueSource::unboxedCell(rightGPR), node->child2(), SpecString, m_jit.branchPtr(
+            MacroAssembler::NotEqual,
+            MacroAssembler::Address(rightGPR, JSCell::structureOffset()),
+            MacroAssembler::TrustedImmPtr(m_jit.globalData()->stringStructure.get())));
+
+    m_jit.load32(MacroAssembler::Address(leftGPR, JSString::offsetOfLength()), lengthGPR);
+    
+    falseCase.append(m_jit.branch32(
+        MacroAssembler::NotEqual,
+        MacroAssembler::Address(rightGPR, JSString::offsetOfLength()),
+        lengthGPR));
+    
+    trueCase.append(m_jit.branchTest32(MacroAssembler::Zero, lengthGPR));
+    
+    m_jit.loadPtr(MacroAssembler::Address(leftGPR, JSString::offsetOfValue()), leftTempGPR);
+    m_jit.loadPtr(MacroAssembler::Address(rightGPR, JSString::offsetOfValue()), rightTempGPR);
+    
+    slowCase.append(m_jit.branchTestPtr(MacroAssembler::Zero, leftTempGPR));
+    slowCase.append(m_jit.branchTestPtr(MacroAssembler::Zero, rightTempGPR));
+    
+    slowCase.append(m_jit.branchTest32(
+        MacroAssembler::Zero,
+        MacroAssembler::Address(leftTempGPR, StringImpl::flagsOffset()),
+        TrustedImm32(StringImpl::flagIs8Bit())));
+    slowCase.append(m_jit.branchTest32(
+        MacroAssembler::Zero,
+        MacroAssembler::Address(rightTempGPR, StringImpl::flagsOffset()),
+        TrustedImm32(StringImpl::flagIs8Bit())));
+    
+    m_jit.loadPtr(MacroAssembler::Address(leftTempGPR, StringImpl::dataOffset()), leftTempGPR);
+    m_jit.loadPtr(MacroAssembler::Address(rightTempGPR, StringImpl::dataOffset()), rightTempGPR);
+    
+    MacroAssembler::Label loop = m_jit.label();
+    
+    m_jit.sub32(TrustedImm32(1), lengthGPR);
+
+    // This isn't going to generate the best code on x86. But that's OK, it's still better
+    // than not inlining.
+    m_jit.load8(MacroAssembler::BaseIndex(leftTempGPR, lengthGPR, MacroAssembler::TimesOne), leftTemp2GPR);
+    m_jit.load8(MacroAssembler::BaseIndex(rightTempGPR, lengthGPR, MacroAssembler::TimesOne), rightTemp2GPR);
+    falseCase.append(m_jit.branch32(MacroAssembler::NotEqual, leftTemp2GPR, rightTemp2GPR));
+    
+    m_jit.branchTest32(MacroAssembler::NonZero, lengthGPR).linkTo(loop, &m_jit);
+    
+    trueCase.link(&m_jit);
+#if USE(JSVALUE64)
+    m_jit.move(TrustedImm64(ValueTrue), leftTempGPR);
+#else
+    m_jit.move(TrustedImm32(true), leftTempGPR);
+#endif
+    
+    JITCompiler::Jump done = m_jit.jump();
+
+    falseCase.link(&m_jit);
+#if USE(JSVALUE64)
+    m_jit.move(TrustedImm64(ValueFalse), leftTempGPR);
+#else
+    m_jit.move(TrustedImm32(false), leftTempGPR);
+#endif
+    
+    done.link(&m_jit);
+    addSlowPathGenerator(
+        slowPathCall(
+            slowCase, this, operationCompareStringEq, leftTempGPR, leftGPR, rightGPR));
+    
+#if USE(JSVALUE64)
+    jsValueResult(leftTempGPR, node, DataFormatJSBoolean);
+#else
+    booleanResult(leftTempGPR, node);
+#endif
 }
 
 void SpeculativeJIT::compileGetIndexedPropertyStorage(Node* node)
