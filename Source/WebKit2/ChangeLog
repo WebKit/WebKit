@@ -1,5 +1,18 @@
 2013-04-09  Michael Brüning  <michael.bruning@digia.com>
 
+        [Qt][WK2] Use C API to enable Navigator Qt Object.
+        https://bugs.webkit.org/show_bug.cgi?id=112810
+
+        Reviewed by Andreas Kling.
+
+        Replace the direct reference to the WebPageProxy with use of
+        C API.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::setNavigatorQtObjectEnabled):
+
+2013-04-09  Michael Brüning  <michael.bruning@digia.com>
+
         [WK2] Add C API to copy selected files from WebOpenPanelParameters.
         https://bugs.webkit.org/show_bug.cgi?id=112339
 

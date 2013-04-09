@@ -66,6 +66,7 @@
 #include <QtCore/QFile>
 #include <QtQml/QJSValue>
 #include <QtQuick/QQuickView>
+#include <WKNumber.h>
 #include <WKOpenPanelResultListener.h>
 #include <WKPageGroup.h>
 #include <WKPreferences.h>
@@ -839,9 +840,9 @@ void QQuickWebViewPrivate::setNavigatorQtObjectEnabled(bool enabled)
     // FIXME: Currently we have to keep this information in both processes and the setting is asynchronous.
     m_navigatorQtObjectEnabled = enabled;
 
-    static String messageName("SetNavigatorQtObjectEnabled");
-    RefPtr<WebBoolean> webEnabled = WebBoolean::create(enabled);
-    webPageProxy->postMessageToInjectedBundle(messageName, webEnabled.get());
+    static WKStringRef messageName = WKStringCreateWithUTF8CString("SetNavigatorQtObjectEnabled");
+    WKRetainPtr<WKBooleanRef> wkEnabled = adoptWK(WKBooleanCreate(enabled));
+    WKPagePostMessageToInjectedBundle(webPage.get(), messageName, wkEnabled.get());
 }
 
 static WKRetainPtr<WKStringRef> readUserScript(const QUrl& url)
