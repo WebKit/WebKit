@@ -911,7 +911,7 @@ main_signal_exit(void *data, int ev_type, void *ev)
 static char *
 findThemePath(const char *theme)
 {
-    const char *default_theme = THEME_DIR"/default.edj";
+    const char *default_theme = TEST_THEME_DIR "/default.edj";
     char *rpath;
     struct stat st;
 

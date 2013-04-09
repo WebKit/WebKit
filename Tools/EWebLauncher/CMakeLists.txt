@@ -39,8 +39,6 @@ set(EWebLauncher_INCLUDE_DIRECTORIES
     ${LIBSOUP_INCLUDE_DIRS}
 )
 
-add_definitions(-DTHEME_DIR=\"${THEME_BINARY_DIR}\")
-
 include_directories(${EWebLauncher_INCLUDE_DIRECTORIES})
 add_executable(EWebLauncher ${EWebLauncher_SOURCES})
 target_link_libraries(EWebLauncher ${EWebLauncher_LIBRARIES})

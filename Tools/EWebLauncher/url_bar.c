@@ -103,7 +103,7 @@ url_bar_add(Evas_Object *webView, int width)
     evas_object_color_set(url_bar->area, 255, 255, 255, 255);
 
     url_bar->entry = edje_object_add(evas);
-    Eina_Bool ret = edje_object_file_set(url_bar->entry, THEME_DIR"/entry.edj", "control/entry/base/default");
+    Eina_Bool ret = edje_object_file_set(url_bar->entry, TEST_THEME_DIR "/entry.edj", "control/entry/base/default");
     if (!ret) {
         evas_object_del(url_bar->area);
 

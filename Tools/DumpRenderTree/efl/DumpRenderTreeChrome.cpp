@@ -102,7 +102,7 @@ Evas_Object* DumpRenderTreeChrome::createView() const
     if (!view)
         return 0;
 
-    ewk_view_theme_set(view, DATA_DIR"/default.edj");
+    ewk_view_theme_set(view, TEST_THEME_DIR "/default.edj");
 
     evas_object_smart_callback_add(view, "download,request", onDownloadRequest, 0);
     evas_object_smart_callback_add(view, "load,resource,failed", onResourceLoadFailed, 0);
@@ -153,7 +153,7 @@ Evas_Object* DumpRenderTreeChrome::createInspectorView()
     const bool ignoreMessages = true;
     evas_object_data_set(inspectorView, "ignore-console-messages", &ignoreMessages);
 
-    ewk_view_theme_set(inspectorView, DATA_DIR"/default.edj");
+    ewk_view_theme_set(inspectorView, TEST_THEME_DIR "/default.edj");
 
     Evas_Object* mainFrame = ewk_view_frame_main_get(inspectorView);
     evas_object_smart_callback_add(mainFrame, "load,finished", onInspectorFrameLoadFinished, 0);
@@ -208,7 +208,7 @@ bool DumpRenderTreeChrome::initialize()
     if (!m_mainView)
         return false;
 
-    ewk_view_theme_set(m_mainView, DATA_DIR"/default.edj");
+    ewk_view_theme_set(m_mainView, TEST_THEME_DIR "/default.edj");
 
     evas_object_name_set(m_mainView, "m_mainView");
     evas_object_move(m_mainView, 0, 0);
@@ -859,7 +859,7 @@ void DumpRenderTreeChrome::onDownloadRequest(void*, Evas_Object*, void* eventInf
         return;
 
     Ewk_Download* download = static_cast<Ewk_Download*>(eventInfo);
-    ewk_view_theme_set(newView, DATA_DIR"/default.edj");
+    ewk_view_theme_set(newView, TEST_THEME_DIR "/default.edj");
     ewk_view_uri_set(newView, download->url);
  
     browser->m_extraViews.append(newView);

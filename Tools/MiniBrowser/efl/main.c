@@ -1431,7 +1431,7 @@ static Browser_Window *window_create(Evas_Object *opener, const char *url, int w
         Ewk_Page_Group *pageGroup = opener ? ewk_view_page_group_get(opener) : ewk_page_group_create("");
         window->ewk_view = ewk_view_smart_add(evas, smart, context, pageGroup);
     }
-    ewk_view_theme_set(window->ewk_view, THEME_DIR "/default.edj");
+    ewk_view_theme_set(window->ewk_view, TEST_THEME_DIR "/default.edj");
     if (device_pixel_ratio)
         ewk_view_device_pixel_ratio_set(window->ewk_view, (float)device_pixel_ratio);
     ewk_view_source_mode_set(window->ewk_view, view_mode);

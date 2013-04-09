@@ -54,8 +54,6 @@ set(MiniBrowser_LIBRARIES
     ${SQLITE_LIBRARIES}
 )
 
-add_definitions(-DTHEME_DIR=\"${THEME_BINARY_DIR}\")
-
 if (ELEMENTARY_FOUND)
     include_directories(${MiniBrowser_INCLUDE_DIRECTORIES})
     add_executable(MiniBrowser ${MiniBrowser_SOURCES})

@@ -108,8 +108,6 @@ set(test_webkit2_api_fail_BINARIES
     WKPageGetScaleFactorNotZero
 )
 
-add_definitions(-DTHEME_DIR="${THEME_BINARY_DIR}")
-
 # Tests disabled because of missing features on the test harness:
 #
 #   ResponsivenessTimerDoesntFireEarly
