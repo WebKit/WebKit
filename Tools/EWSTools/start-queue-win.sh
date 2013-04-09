@@ -44,6 +44,8 @@ function start_ews()
         taskkill.exe /f /im cl.exe
         echo "TASK: webkit-patch win-ews"
         ~/WebKit/Tools/Scripts/webkit-patch win-ews --bot-id=$BOT_ID --no-confirm --exit-after-iteration 10
+        echo "TASK: kill old processes"
+        ~/WebKit/Tools/BuildSlaveSupport/kill-old-processes
     done
 }
 

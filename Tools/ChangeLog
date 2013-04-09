@@ -1,3 +1,12 @@
+2013-04-06  Roger Fong  <roger_fong@apple.com>
+
+        Kill old processes between runs on WinEWS bots.
+        Temporarily disable tests to let bots catch up again.
+
+        * EWSTools/start-queue-win.sh:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (WinEWS):
+
 2013-04-09  Glenn Adams  <glenn@skynav.com>
 
         [webkitpy] Remove chromium deprecated port support.
