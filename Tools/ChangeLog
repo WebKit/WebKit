@@ -1,5 +1,19 @@
 2013-04-09  Ryosuke Niwa  <rniwa@webkit.org>
 
+        newcommitbot (WKR) requires a subversion checkout
+        https://bugs.webkit.org/show_bug.cgi?id=114309
+
+        Reviewed by Benjamin Poulain.
+
+        Directly talk to the subversion server instead of relying on a local checkout.
+        This allows us to run WKR off of a git clone.
+
+        * Scripts/webkitpy/tool/commands/newcommitbot.py:
+        (NewCommitBot.next_work_item):
+        (NewCommitBot.process_work_item):
+
+2013-04-09  Ryosuke Niwa  <rniwa@webkit.org>
+
         webkitbot refers to sheriffbot in help
         https://bugs.webkit.org/show_bug.cgi?id=114307
 
