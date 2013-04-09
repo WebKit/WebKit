@@ -29,6 +29,7 @@ video:-webkit-full-screen, audio:-webkit-full-screen {
     width: 100% !important;
     -webkit-flex: 1 !important;
     display: block !important;
+    -webkit-transition: none !important;
 }
 
 :-webkit-full-screen video:hover {
