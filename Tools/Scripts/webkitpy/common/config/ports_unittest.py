@@ -55,17 +55,3 @@ class DeprecatedPortTest(unittest.TestCase):
         self.assertEqual(QtPort().run_webkit_tests_command(), DeprecatedPort().script_shell_command("run-webkit-tests"))
         self.assertEqual(QtPort().build_webkit_command(), DeprecatedPort().script_shell_command("build-webkit") + ["--qt", DeprecatedPort().makeArgs()])
         self.assertEqual(QtPort().build_webkit_command(build_style="debug"), DeprecatedPort().script_shell_command("build-webkit") + ["--debug", "--qt", DeprecatedPort().makeArgs()])
-
-    def test_chromium_port(self):
-        self.assertEqual(ChromiumPort().flag(), "--port=chromium")
-        self.assertEqual(ChromiumPort().run_webkit_tests_command(), DeprecatedPort().script_shell_command("new-run-webkit-tests") + ["--chromium", "--skip-failing-tests"])
-        self.assertEqual(ChromiumPort().build_webkit_command(), DeprecatedPort().script_shell_command("build-webkit") + ["--chromium", "--update-chromium"])
-        self.assertEqual(ChromiumPort().build_webkit_command(build_style="debug"), DeprecatedPort().script_shell_command("build-webkit") + ["--debug", "--chromium", "--update-chromium"])
-        self.assertEqual(ChromiumPort().update_webkit_command(), DeprecatedPort().script_shell_command("update-webkit") + ["--chromium"])
-
-    def test_chromium_android_port(self):
-        self.assertEqual(ChromiumAndroidPort().build_webkit_command(), ChromiumPort().build_webkit_command() + ["--chromium-android"])
-        self.assertEqual(ChromiumAndroidPort().update_webkit_command(), ChromiumPort().update_webkit_command() + ["--chromium-android"])
-
-    def test_chromium_xvfb_port(self):
-        self.assertEqual(ChromiumXVFBPort().run_webkit_tests_command(), ['xvfb-run'] + DeprecatedPort().script_shell_command('new-run-webkit-tests') + ['--chromium', '--skip-failing-tests'])

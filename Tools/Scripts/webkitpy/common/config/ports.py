@@ -61,9 +61,6 @@ class DeprecatedPort(object):
     @staticmethod
     def port(port_name):
         ports = {
-            "chromium": ChromiumPort,
-            "chromium-android": ChromiumAndroidPort,
-            "chromium-xvfb": ChromiumXVFBPort,
             "gtk": GtkPort,
             "mac": MacPort,
             "mac-wk2": MacWK2Port,
@@ -177,54 +174,3 @@ class EflPort(DeprecatedPort):
         command.append("--update-efl")
         command.append(super(EflPort, self).makeArgs())
         return command
-
-
-class ChromiumPort(DeprecatedPort):
-    port_flag_name = "chromium"
-
-    def update_webkit_command(self, non_interactive=False):
-        command = super(ChromiumPort, self).update_webkit_command(non_interactive=non_interactive)
-        command.append("--chromium")
-        if non_interactive:
-            command.append("--force-update")
-        return command
-
-    def build_webkit_command(self, build_style=None):
-        command = super(ChromiumPort, self).build_webkit_command(build_style=build_style)
-        command.append("--chromium")
-        command.append("--update-chromium")
-        return command
-
-    def run_webkit_tests_command(self):
-        # Note: This could be run-webkit-tests now.
-        command = self.script_shell_command("new-run-webkit-tests")
-        command.append("--chromium")
-        command.append("--skip-failing-tests")
-        return command
-
-    def run_webkit_unit_tests_command(self):
-        return self.script_shell_command("run-chromium-webkit-unit-tests")
-
-    def run_javascriptcore_tests_command(self):
-        return None
-
-
-class ChromiumAndroidPort(ChromiumPort):
-    port_flag_name = "chromium-android"
-
-    def update_webkit_command(self, non_interactive=False):
-        command = super(ChromiumAndroidPort, self).update_webkit_command(non_interactive=non_interactive)
-        command.append("--chromium-android")
-        return command
-
-    def build_webkit_command(self, build_style=None):
-        command = super(ChromiumAndroidPort, self).build_webkit_command(build_style=build_style)
-        command.append("--chromium-android")
-        return command
-
-
-class ChromiumXVFBPort(ChromiumPort):
-    port_flag_name = "chromium-xvfb"
-
-    def run_webkit_tests_command(self):
-        return ["xvfb-run"] + super(ChromiumXVFBPort, self).run_webkit_tests_command()

@@ -28,7 +28,7 @@
 
 import unittest2 as unittest
 
-from webkitpy.common.config.ports import ChromiumPort, ChromiumAndroidPort, ChromiumXVFBPort
+from webkitpy.common.config.ports import MacPort, MacWK2Port
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.update import Update
 
@@ -41,14 +41,11 @@ class UpdateTest(unittest.TestCase):
         step = Update(tool, options)
         self.assertEqual(["mock-update-webkit"], step._update_command())
 
-        tool._deprecated_port = ChromiumPort()
-        self.assertEqual(["Tools/Scripts/update-webkit", "--chromium", "--force-update"], step._update_command())
+        tool._deprecated_port = MacPort()
+        self.assertEqual(["Tools/Scripts/update-webkit"], step._update_command())
 
-        tool._deprecated_port = ChromiumXVFBPort()
-        self.assertEqual(["Tools/Scripts/update-webkit", "--chromium", "--force-update"], step._update_command())
-
-        tool._deprecated_port = ChromiumAndroidPort()
-        self.assertEqual(["Tools/Scripts/update-webkit", "--chromium", "--force-update", "--chromium-android"], step._update_command())
+        tool._deprecated_port = MacWK2Port()
+        self.assertEqual(["Tools/Scripts/update-webkit"], step._update_command())
 
     def test_update_command_interactive(self):
         tool = MockTool()
@@ -56,11 +53,8 @@ class UpdateTest(unittest.TestCase):
         step = Update(tool, options)
         self.assertEqual(["mock-update-webkit"], step._update_command())
 
-        tool._deprecated_port = ChromiumPort()
-        self.assertEqual(["Tools/Scripts/update-webkit", "--chromium"], step._update_command())
+        tool._deprecated_port = MacPort()
+        self.assertEqual(["Tools/Scripts/update-webkit"], step._update_command())
 
-        tool._deprecated_port = ChromiumXVFBPort()
-        self.assertEqual(["Tools/Scripts/update-webkit", "--chromium"], step._update_command())
-
-        tool._deprecated_port = ChromiumAndroidPort()
-        self.assertEqual(["Tools/Scripts/update-webkit", "--chromium", "--chromium-android"], step._update_command())
+        tool._deprecated_port = MacWK2Port()
+        self.assertEqual(["Tools/Scripts/update-webkit"], step._update_command())
