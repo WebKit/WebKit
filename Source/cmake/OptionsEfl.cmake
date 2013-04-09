@@ -9,7 +9,7 @@ if (NOT DEFINED ENABLE_WEBKIT2)
     set(ENABLE_WEBKIT2 ON)
 endif ()
 
-if (${CMAKE_BUILD_TYPE} STREQUAL "debug" AND NOT SHARED_CORE)
+if (${CMAKE_BUILD_TYPE} STREQUAL "Debug" AND NOT SHARED_CORE)
     message(FATAL_ERROR "Turn on the SHARED_CORE flag to make a debug build - e.g.\n build-webkit --efl --debug --cmakeargs=\"-DSHARED_CORE=ON\".\n")
 endif ()
 
@@ -245,10 +245,10 @@ endif ()
 set(CPACK_SOURCE_GENERATOR TBZ2)
 
 # Optimize binary size for release builds by removing dead sections on unix/gcc
-if (CMAKE_BUILD_TYPE STREQUAL release AND CMAKE_COMPILER_IS_GNUCC AND UNIX AND NOT APPLE)
-    set(CMAKE_C_FLAGS "-ffunction-sections -fdata-sections ${CMAKE_C_FLAGS}")
-    set(CMAKE_CXX_FLAGS "-ffunction-sections -fdata-sections ${CMAKE_CXX_FLAGS}")
-    set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--gc-sections ${CMAKE_SHARED_LINKER_FLAGS}")
+if (CMAKE_COMPILER_IS_GNUCC AND UNIX AND NOT APPLE)
+    set(CMAKE_C_FLAGS_RELEASE "-ffunction-sections -fdata-sections ${CMAKE_C_FLAGS_RELEASE}")
+    set(CMAKE_CXX_FLAGS_RELEASE "-ffunction-sections -fdata-sections ${CMAKE_CXX_FLAGS_RELEASE}")
+    set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-Wl,--gc-sections ${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
 endif ()
 
 if (ENABLE_WEBGL)

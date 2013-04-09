@@ -1,14 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(WebKit)
 
-# Set a default build type if and only if user did not define one as command
-# line options and he did not give custom CFLAGS or CXXFLAGS. Otherwise, flags
-# from default build type would overwrite user-defined ones.
-if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_C_FLAGS AND NOT CMAKE_CXX_FLAGS)
-    set(CMAKE_BUILD_TYPE Release)
-endif ()
-string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
-
 # -----------------------------------------------------------------------------
 # Default library type
 # -----------------------------------------------------------------------------
