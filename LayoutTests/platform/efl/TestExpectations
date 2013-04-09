@@ -1841,7 +1841,3 @@ webkit.org/b/82776 storage/indexeddb/pending-version-change-stuck-works-with-ter
 webkit.org/b/106732 storage/indexeddb/transaction-complete-workers.html [ Failure ]
 webkit.org/b/106507 storage/indexeddb/database-quota.html [ Failure ]
 webkit.org/b/107194 storage/indexeddb/pending-activity-workers.html [ Failure ]
-
-# Needs rebaseline after bug https://bugs.webkit.org/show_bug.cgi?id=13709
-webkit.org/b/89315 tables/mozilla_expected_failures/bugs/bug89315.html [ Failure Rebaseline ]
-
