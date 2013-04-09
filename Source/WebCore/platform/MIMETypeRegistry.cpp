@@ -244,6 +244,11 @@ static void initializeSupportedImageMIMETypes()
         supportedImageResourceMIMETypes->add(types[i]);
     }
 
+#if USE(WEBP)
+    supportedImageMIMETypes->add("image/webp");
+    supportedImageResourceMIMETypes->add("image/webp");
+#endif
+
 #if PLATFORM(QT)
 #if QT_VERSION >= QT_VERSION_CHECK(5, 1, 0)
     QList<QByteArray> mimeTypes = QImageReader::supportedMimeTypes();
