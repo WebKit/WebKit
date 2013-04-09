@@ -48,6 +48,11 @@
 // namespace. For now, we include math.h since the QNX cmath header only imports its functions
 // into the standard namespace.
 #include <math.h>
+// These macros from math.h conflict with the real functions in the std namespace.
+#undef signbit
+#undef isnan
+#undef isinf
+#undef isfinite
 #endif
 
 #ifndef M_PI

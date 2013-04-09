@@ -1,3 +1,18 @@
+2013-04-08  Alberto Garcia  <agarcia@igalia.com>
+
+        [BlackBerry] MathExtras: macros defined in math.h conflict with the real functions
+        https://bugs.webkit.org/show_bug.cgi?id=112683
+
+        Reviewed by Darin Adler.
+
+        After calls to signbit and friends were prefixed with std:: in
+        r143232, the BlackBerry port no longer compiles.
+
+        The solution is to get rid of the macros defined in math.h and use
+        the real functions instead.
+
+        * wtf/MathExtras.h:
+
 2013-04-08  Max Vujovic  <mvujovic@adobe.com>
 
         REGRESSION (r147502): Animations of CA filters broken
