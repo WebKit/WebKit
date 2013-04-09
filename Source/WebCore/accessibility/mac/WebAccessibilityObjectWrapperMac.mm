@@ -1534,13 +1534,13 @@ static void WebTransformCGPathToNSBezierPath(void *info, const CGPathElement *el
     NSBezierPath *bezierPath = (NSBezierPath *)info;
     switch (element->type) {
     case kCGPathElementMoveToPoint:
-        [bezierPath moveToPoint:element->points[0]];
+        [bezierPath moveToPoint:NSPointFromCGPoint(element->points[0])];
         break;
     case kCGPathElementAddLineToPoint:
-        [bezierPath lineToPoint:element->points[0]];
+        [bezierPath lineToPoint:NSPointFromCGPoint(element->points[0])];
         break;
     case kCGPathElementAddCurveToPoint:
-        [bezierPath curveToPoint:element->points[0] controlPoint1:element->points[1] controlPoint2:element->points[2]];
+        [bezierPath curveToPoint:NSPointFromCGPoint(element->points[0]) controlPoint1:NSPointFromCGPoint(element->points[1]) controlPoint2:NSPointFromCGPoint(element->points[2])];
         break;
     case kCGPathElementCloseSubpath:
         [bezierPath closePath];
