@@ -37,6 +37,10 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
+namespace WebCore {
+class CoordinatedGraphicsScene;
+}
+
 namespace WebKit {
 class DownloadProxy;
 class DrawingAreaProxy;
@@ -44,6 +48,7 @@ class QtDialogRunner;
 class PageViewportControllerClientQt;
 class QtWebContext;
 class QtWebError;
+class QtWebPageEventHandler;
 class QtWebPagePolicyClient;
 class WebPageProxy;
 }
@@ -133,6 +138,10 @@ public:
 
     void didReceiveMessageFromNavigatorQtObject(WKStringRef message);
 
+    WebCore::CoordinatedGraphicsScene* coordinatedGraphicsScene();
+    float deviceScaleFactor();
+    void setIntrinsicDeviceScaleFactor(float);
+
 protected:
     class FlickableAxisLocker {
         QQuickFlickable::FlickableDirection m_allowedDirection;
@@ -180,6 +189,7 @@ protected:
     QScopedPointer<WebKit::QtWebPageUIClient> pageUIClient;
 
     QScopedPointer<QQuickWebPage> pageView;
+    QScopedPointer<WebKit::QtWebPageEventHandler> pageEventHandler;
     QQuickWebView* q_ptr;
     QQuickWebViewExperimental* experimental;
     WebKit::QtWebContext* context;

@@ -1,5 +1,55 @@
 2013-04-09  Michael Brüning  <michael.bruning@digia.com>
 
+        [Qt][WK2] Remove direct references to WebPageProxy from QQuickWebPage.
+        https://bugs.webkit.org/show_bug.cgi?id=112850
+
+        Reviewed by Andreas Kling.
+
+        Removes direct references to WebPageProxy from QQuickWebPage and prepares the
+        class for the move to QRawWebView. The access to the device scale factor and
+        CoordinatedGraphicsScene is provided through QQuickWebViewPrivate, and therefore
+        accessors to these properties are temporarily added. Eventually, this access will
+        be provided through QRawWebView when the move is complete.
+
+        This also moves the pointer to QtWebPageEventHandler from QQuickWebPagePrivate
+        to QQuickWebViewPrivate as it is mainly used from there.
+
+        * UIProcess/API/qt/qquickwebpage.cpp:
+        (QQuickWebPagePrivate::QQuickWebPagePrivate):
+        (QQuickWebPagePrivate::paint):
+        (QQuickWebPage::updatePaintNode):
+        * UIProcess/API/qt/qquickwebpage_p.h:
+        * UIProcess/API/qt/qquickwebpage_p_p.h:
+        (QQuickWebPagePrivate):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initialize):
+        (QQuickWebViewPrivate::handleMouseEvent):
+        (QQuickWebViewPrivate::processDidCrash):
+        (QQuickWebViewPrivate::coordinatedGraphicsScene):
+        (QQuickWebViewPrivate::deviceScaleFactor):
+        (QQuickWebViewPrivate::setIntrinsicDeviceScaleFactor):
+        (QQuickWebViewFlickablePrivate::onComponentComplete):
+        (QQuickWebView::keyPressEvent):
+        (QQuickWebView::keyReleaseEvent):
+        (QQuickWebView::inputMethodEvent):
+        (QQuickWebView::focusInEvent):
+        (QQuickWebView::itemChange):
+        (QQuickWebView::touchEvent):
+        (QQuickWebView::wheelEvent):
+        (QQuickWebView::hoverEnterEvent):
+        (QQuickWebView::hoverMoveEvent):
+        (QQuickWebView::hoverLeaveEvent):
+        (QQuickWebView::dragMoveEvent):
+        (QQuickWebView::dragEnterEvent):
+        (QQuickWebView::dragLeaveEvent):
+        (QQuickWebView::dropEvent):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (WebCore):
+        (WebKit):
+        (QQuickWebViewPrivate):
+
+2013-04-09  Michael Brüning  <michael.bruning@digia.com>
+
         [Qt][WK2] Use C API to enable Navigator Qt Object.
         https://bugs.webkit.org/show_bug.cgi?id=112810
 

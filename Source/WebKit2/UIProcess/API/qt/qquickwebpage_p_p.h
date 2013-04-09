@@ -24,29 +24,19 @@
 #include "qquickwebpage_p.h"
 #include <QTransform>
 
-namespace WebKit {
-class WebPageProxy;
-class QtWebPageEventHandler;
-class CoordinatedLayerTreeHostProxy;
-}
+class QQuickWebViewPrivate;
 
 class QQuickWebPagePrivate {
 public:
     QQuickWebPagePrivate(QQuickWebPage* q, QQuickWebView* viewportItem);
     ~QQuickWebPagePrivate();
 
-    void initialize(WebKit::WebPageProxy*);
-
     void updateSize();
 
     void paint(QPainter*);
     void resetPaintNode();
-    WebKit::CoordinatedLayerTreeHostProxy* coordinatedLayerTreeHostProxy();
-
-    QScopedPointer<WebKit::QtWebPageEventHandler> eventHandler;
     QQuickWebPage* const q;
     QQuickWebView* const viewportItem;
-    WebKit::WebPageProxy* webPageProxy;
     bool paintingIsInitialized;
 
     QSizeF contentsSize;
