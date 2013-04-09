@@ -27,9 +27,9 @@
   <autotools id="cogl"
             autogen-sh="configure"
             autogenargs="--disable-introspection">
-    <branch module="/pub/GNOME/sources/cogl/1.12/cogl-1.12.0.tar.xz" version="1.12.0"
+    <branch module="/pub/GNOME/sources/cogl/1.14/cogl-1.14.0.tar.xz" version="1.14.0"
             repo="ftp.gnome.org" 
-            hash="sha256:4e7b5abbf0a1e51d74618db1b513551e7c71b486e17e98373f4db93e7710e2f2"/>
+            hash="sha256:276e8c9f5ff0fcd57c1eaf74cc245f41ad469a95a18ac831fac2d5960baa5ae8"/>
   </autotools>
 
   <autotools id="clutter"
@@ -39,9 +39,9 @@
       <dep package="cogl"/>
       <dep package="atk"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/clutter/1.12/clutter-1.12.0.tar.xz" version="1.12.0"
+    <branch module="/pub/GNOME/sources/clutter/1.14/clutter-1.14.0.tar.xz" version="1.14.0"
             repo="ftp.gnome.org" 
-            hash="sha256:e75130a5df6dbe97e8d350259278331c6352b2d213230712127160e42053e558"/>
+            hash="sha256:3b7a07373c27fad4f0cf59fd66a6855d66f9a42b7b570a00ca51a8b488af64d5"/>
   </autotools>
 
   <autotools id="clutter-gtk"
@@ -50,9 +50,9 @@
     <dependencies>
       <dep package="clutter"/>
     </dependencies>
-    <branch module="/pub/GNOME/sources/clutter-gtk/1.3/clutter-gtk-1.3.2.tar.xz" version="1.3.2"
+    <branch module="/pub/GNOME/sources/clutter-gtk/1.4/clutter-gtk-1.4.4.tar.xz" version="1.4.4"
             repo="ftp.gnome.org"             
-            hash="sha256:ee50538daca9447be6ad1ed0d049fbb2dc5a1bcaecd13fda847b9b66f922ee37"/>
+            hash="sha256:bc3108594a01a08bb6d9b538afe995e4fd78634a8356064ee8137d87aad51b2e"/>
   </autotools>
 
   <autotools id="pango"
