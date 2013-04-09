@@ -622,7 +622,7 @@ void CreateIndexOperation::perform(IDBTransactionBackendImpl* transaction)
 void CreateIndexAbortOperation::perform(IDBTransactionBackendImpl* transaction)
 {
     IDB_TRACE("CreateIndexAbortOperation");
-    ASSERT(!transaction);
+    ASSERT_UNUSED(transaction, !transaction);
     m_database->removeIndex(m_objectStoreId, m_indexId);
 }
 
@@ -658,7 +658,7 @@ void DeleteIndexOperation::perform(IDBTransactionBackendImpl* transaction)
 void DeleteIndexAbortOperation::perform(IDBTransactionBackendImpl* transaction)
 {
     IDB_TRACE("DeleteIndexAbortOperation");
-    ASSERT(!transaction);
+    ASSERT_UNUSED(transaction, !transaction);
     m_database->addIndex(m_objectStoreId, m_indexMetadata, IDBIndexMetadata::InvalidId);
 }
 
@@ -1360,21 +1360,21 @@ void IDBDatabaseBackendImpl::close(PassRefPtr<IDBDatabaseCallbacks> prpCallbacks
 void CreateObjectStoreAbortOperation::perform(IDBTransactionBackendImpl* transaction)
 {
     IDB_TRACE("CreateObjectStoreAbortOperation");
-    ASSERT(!transaction);
+    ASSERT_UNUSED(transaction, !transaction);
     m_database->removeObjectStore(m_objectStoreId);
 }
 
 void DeleteObjectStoreAbortOperation::perform(IDBTransactionBackendImpl* transaction)
 {
     IDB_TRACE("DeleteObjectStoreAbortOperation");
-    ASSERT(!transaction);
+    ASSERT_UNUSED(transaction, !transaction);
     m_database->addObjectStore(m_objectStoreMetadata, IDBObjectStoreMetadata::InvalidId);
 }
 
 void IDBDatabaseBackendImpl::VersionChangeAbortOperation::perform(IDBTransactionBackendImpl* transaction)
 {
     IDB_TRACE("VersionChangeAbortOperation");
-    ASSERT(!transaction);
+    ASSERT_UNUSED(transaction, !transaction);
     m_database->m_metadata.version = m_previousVersion;
     m_database->m_metadata.intVersion = m_previousIntVersion;
 }

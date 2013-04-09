@@ -803,6 +803,8 @@ bool WebProcess::shouldPlugInAutoStartFromOrigin(const WebPage* page, const Stri
     // The plugin wasn't in the general whitelist, so check if it similar to the primary plugin for the page (if we've found one).
     if (page && page->matchesPrimaryPlugIn(pageOrigin, pluginOrigin, mimeType))
         return true;
+#else
+    UNUSED_PARAM(page);
 #endif
 
     // Lastly check against the more explicit hash list.

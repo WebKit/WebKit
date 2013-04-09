@@ -152,12 +152,15 @@ void StorageAreaProxy::removeItem(const String& key, ExceptionCode&, Frame* sour
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
+    UNUSED_PARAM(key);
+    UNUSED_PARAM(sourceFrame);
 }
 
 void StorageAreaProxy::clear(ExceptionCode&, Frame* sourceFrame)
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
+    UNUSED_PARAM(sourceFrame);
 }
 
 bool StorageAreaProxy::contains(const String& key, ExceptionCode& ec, Frame* sourceFrame)
@@ -289,6 +292,10 @@ void StorageAreaProxy::dispatchSessionStorageEvent(const String& key, const Stri
     ASSERT(storageType() == SessionStorage);
 
     // FIXME: Implement.
+    UNUSED_PARAM(key);
+    UNUSED_PARAM(oldValue);
+    UNUSED_PARAM(newValue);
+    UNUSED_PARAM(urlString);
 }
 
 void StorageAreaProxy::dispatchLocalStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString)
@@ -296,6 +303,10 @@ void StorageAreaProxy::dispatchLocalStorageEvent(const String& key, const String
     ASSERT(storageType() == LocalStorage);
 
     // FIXME: Implement.
+    UNUSED_PARAM(key);
+    UNUSED_PARAM(oldValue);
+    UNUSED_PARAM(newValue);
+    UNUSED_PARAM(urlString);
 }
 
 } // namespace WebKit

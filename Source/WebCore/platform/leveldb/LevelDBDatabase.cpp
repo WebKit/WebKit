@@ -86,8 +86,8 @@ public:
     virtual const char* Name() const { return m_comparator->name(); }
 
     // FIXME: Support the methods below in the future.
-    virtual void FindShortestSeparator(std::string* start, const leveldb::Slice& limit) const { }
-    virtual void FindShortSuccessor(std::string* key) const { }
+    virtual void FindShortestSeparator(std::string* /* start */, const leveldb::Slice& /* limit */) const { }
+    virtual void FindShortSuccessor(std::string* /* key */) const { }
 
 private:
     const LevelDBComparator* m_comparator;

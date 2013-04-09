@@ -163,7 +163,7 @@ PassRefPtr<StorageManager::StorageArea> StorageManager::SessionStorageNamespace:
 
 void StorageManager::SessionStorageNamespace::cloneTo(SessionStorageNamespace& newSessionStorageNamespace)
 {
-    ASSERT(newSessionStorageNamespace.isEmpty());
+    ASSERT_UNUSED(newSessionStorageNamespace, newSessionStorageNamespace.isEmpty());
 
     // FIXME: Implement.
 }

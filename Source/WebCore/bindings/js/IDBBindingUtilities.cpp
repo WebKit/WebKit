@@ -59,6 +59,7 @@ static bool get(ExecState* exec, JSValue object, const String& keyPathElement, J
 
 static bool canSet(JSValue object, const String& keyPathElement)
 {
+    UNUSED_PARAM(keyPathElement);
     return object.isObject();
 }
 

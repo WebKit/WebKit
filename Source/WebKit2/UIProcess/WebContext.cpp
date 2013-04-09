@@ -1154,6 +1154,8 @@ void WebContext::requestNetworkingStatistics(StatisticsRequest* request)
     uint64_t requestID = request->addOutstandingRequest();
     m_statisticsRequests.set(requestID, request);
     m_networkProcess->send(Messages::NetworkProcess::GetNetworkProcessStatistics(requestID), 0);
+#else
+    UNUSED_PARAM(request);
 #endif
 }
 
@@ -1224,6 +1226,9 @@ void WebContext::unregisterSchemeForCustomProtocol(const String& scheme)
 #if ENABLE(NETSCAPE_PLUGIN_API)
 void WebContext::pluginInfoStoreDidLoadPlugins(PluginInfoStore* store)
 {
+#ifdef NDEBUG
+    UNUSED_PARAM(store);
+#endif
     ASSERT(store == &m_pluginInfoStore);
 
     Vector<RefPtr<APIObject> > pluginArray;

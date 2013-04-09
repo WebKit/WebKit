@@ -448,7 +448,7 @@ PassRefPtr<IDBBackingStore> IDBBackingStore::openInMemory(SecurityOrigin* securi
     return IDBBackingStore::openInMemory(securityOrigin, identifier, &levelDBFactory);
 }
 
-PassRefPtr<IDBBackingStore> IDBBackingStore::openInMemory(SecurityOrigin* securityOrigin, const String& identifier, LevelDBFactory* levelDBFactory)
+PassRefPtr<IDBBackingStore> IDBBackingStore::openInMemory(SecurityOrigin*, const String& identifier, LevelDBFactory*)
 {
     IDB_TRACE("IDBBackingStore::openInMemory");
 

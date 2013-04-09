@@ -56,7 +56,7 @@ bool decodeBool(const char* begin, const char* end);
 Vector<char> encodeInt(int64_t);
 inline Vector<char> encodeIntSafely(int64_t nParam, int64_t max)
 {
-    ASSERT(nParam <= max);
+    ASSERT_UNUSED(max, nParam <= max);
     return encodeInt(nParam);
 }
 int64_t decodeInt(const char* begin, const char* end);

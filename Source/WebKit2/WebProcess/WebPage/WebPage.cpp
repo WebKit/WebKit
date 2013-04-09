@@ -3916,6 +3916,8 @@ void WebPage::didFinishLoad(WebFrame* frame)
     m_readyToFindPrimarySnapshottedPlugin = true;
     if (!m_page->settings()->snapshotAllPlugIns() && m_page->settings()->primaryPlugInSnapshotDetectionEnabled())
         determinePrimarySnapshottedPlugIn();
+#else
+    UNUSED_PARAM(frame);
 #endif
 }
 

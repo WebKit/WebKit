@@ -1,3 +1,29 @@
+2013-04-09  Jinwoo Song  <jinwoo7.song@samsung.com>
+
+        [WK2] Remove build warnings for unused parameters
+        https://bugs.webkit.org/show_bug.cgi?id=114234
+
+        Reviewed by Andreas Kling.
+
+        Fix build warnings -Wunused-parameter.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::SessionStorageNamespace::cloneTo):
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::requestNetworkingStatistics):
+        (WebKit::WebContext::pluginInfoStoreDidLoadPlugins):
+        * WebProcess/Storage/StorageAreaProxy.cpp:
+        (WebKit::StorageAreaProxy::removeItem):
+        (WebKit::StorageAreaProxy::clear):
+        (WebKit::StorageAreaProxy::dispatchSessionStorageEvent):
+        (WebKit::StorageAreaProxy::dispatchLocalStorageEvent):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::didUninstallPageOverlay):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didFinishLoad):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::shouldPlugInAutoStartFromOrigin):
+
 2013-04-09  Thiago Marcos P. Santos  <thiago.santos@intel.com>
 
         [WK2] Drop WebProcess capabilities on Linux using seccomp filters

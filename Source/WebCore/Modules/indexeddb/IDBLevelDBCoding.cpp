@@ -209,7 +209,7 @@ Vector<char> encodeBool(bool b)
 
 bool decodeBool(const char* begin, const char* end)
 {
-    ASSERT(begin < end);
+    ASSERT_UNUSED(end, begin < end);
     return *begin;
 }
 
@@ -1005,7 +1005,7 @@ KeyPrefix::KeyPrefix(Type type, int64_t databaseId, int64_t objectStoreId, int64
     , m_objectStoreId(objectStoreId)
     , m_indexId(indexId)
 {
-    ASSERT(type == InvalidType);
+    ASSERT_UNUSED(type, type == InvalidType);
     ASSERT(KeyPrefix::isValidDatabaseId(databaseId));
     ASSERT(KeyPrefix::isValidObjectStoreId(objectStoreId));
 }
