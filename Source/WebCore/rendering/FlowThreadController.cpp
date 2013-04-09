@@ -227,11 +227,6 @@ void FlowThreadController::updateFlowThreadsIntoConstrainedPhase()
     }
 }
 
-bool FlowThreadController::isContentNodeRegisteredWithAnyNamedFlow(Node* contentNode) const
-{
-    return m_mapNamedFlowContentNodes.contains(contentNode);
-}
-
 #ifndef NDEBUG
 bool FlowThreadController::isAutoLogicalHeightRegionsCountConsistent() const
 {
