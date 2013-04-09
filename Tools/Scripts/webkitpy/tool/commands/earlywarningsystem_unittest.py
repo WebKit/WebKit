@@ -50,7 +50,7 @@ class AbstractEarlyWarningSystemTest(QueuesTest):
         self.assertMultiLineEqual(ews._failing_tests_message(task, patch), "New failing tests:\nbar.html\nfoo.html")
 
 
-class EarlyWarningSytemTest(QueuesTest):
+class EarlyWarningSystemTest(QueuesTest):
     def _default_expected_logs(self, ews):
         string_replacements = {
             "name": ews.name,
@@ -83,12 +83,9 @@ MOCK: release_work_item: %(name)s 10000
         options.run_tests = ews._default_run_tests
         self.assert_queue_outputs(ews, expected_logs=self._default_expected_logs(ews), options=options)
 
-    def _test_ewses(self):
+    def test_ewses(self):
         self._test_ews(MacEWS())
         self._test_ews(MacWK2EWS())
-        self._test_ews(ChromiumLinuxEWS())
-        self._test_ews(ChromiumWindowsEWS())
-        self._test_ews(ChromiumAndroidEWS())
         self._test_ews(QtEWS())
         self._test_ews(QtWK2EWS())
         self._test_ews(GtkEWS())

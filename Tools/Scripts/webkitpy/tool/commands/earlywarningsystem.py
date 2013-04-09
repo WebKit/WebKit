@@ -176,38 +176,6 @@ class WinEWS(AbstractEarlyWarningSystem):
     port_name = "win"
     _default_run_tests = True
 
-class AbstractChromiumEWS(AbstractEarlyWarningSystem):
-    port_name = "chromium"
-    watchers = AbstractEarlyWarningSystem.watchers + [
-        "dglazkov@chromium.org",
-    ]
-
-
-class ChromiumLinuxEWS(AbstractChromiumEWS):
-    # FIXME: We should rename this command to cr-linux-ews, but that requires
-    #        a database migration. :(
-    name = "chromium-ews"
-    port_name = "chromium-xvfb"
-
-
-class ChromiumLinuxDebugEWS(AbstractChromiumEWS):
-    name = "cr-linux-debug-ews"
-    port_name = "chromium-xvfb"
-    _build_style = "debug"
-
-
-class ChromiumWindowsEWS(AbstractChromiumEWS):
-    name = "cr-win-ews"
-
-
-class ChromiumAndroidEWS(AbstractChromiumEWS):
-    name = "cr-android-ews"
-    port_name = "chromium-android"
-    watchers = AbstractChromiumEWS.watchers + [
-        "peter+ews@chromium.org",
-    ]
-
-
 class MacEWS(AbstractEarlyWarningSystem):
     name = "mac-ews"
     port_name = "mac"
