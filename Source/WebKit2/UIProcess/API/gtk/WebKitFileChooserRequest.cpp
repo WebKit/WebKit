@@ -355,7 +355,7 @@ const gchar* const* webkit_file_chooser_request_get_selected_files(WebKitFileCho
         WebString* webFileName = static_cast<WebString*>(selectedFileNames->at(i));
         if (webFileName->isEmpty())
             continue;
-        CString filename = fileSystemRepresentation(selectedFileNames[i]);
+        CString filename = fileSystemRepresentation(webFileName->string());
         g_ptr_array_add(request->priv->selectedFiles.get(), g_strdup(filename.data()));
     }
     g_ptr_array_add(request->priv->selectedFiles.get(), 0);

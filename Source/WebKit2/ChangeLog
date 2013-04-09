@@ -1,5 +1,17 @@
 2013-04-09  Michael Brüning  <michael.bruning@digia.com>
 
+        Fix GTK WebKit2 build after r148005.
+        https://bugs.webkit.org/show_bug.cgi?id=114270
+
+        Reviewed by Andreas Kling.
+
+        Fix GTK build break that went through the buildbot undetected.
+
+        * UIProcess/API/gtk/WebKitFileChooserRequest.cpp:
+        (webkit_file_chooser_request_get_selected_files):
+
+2013-04-09  Michael Brüning  <michael.bruning@digia.com>
+
         [Qt][WK2] Remove direct references to WebPageProxy from QQuickWebPage.
         https://bugs.webkit.org/show_bug.cgi?id=112850
 
