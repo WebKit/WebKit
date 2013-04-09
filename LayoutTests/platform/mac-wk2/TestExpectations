@@ -334,6 +334,8 @@ webkit.org/b/113515 compositing/iframes/remove-iframe-crash.html [ Crash Pass ]
 webkit.org/b/104954 [ Release ] http/tests/canvas/canvas-slow-font-loading.html [ Pass ImageOnlyFailure ]
 webkit.org/b/104954 [ Debug ] http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
 
+webkit.org/b/114217 platform/mac-wk2/plugins/slow/asynchronous-plugin-initialization-multiple.html [ Skip ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
