@@ -1,4 +1,3 @@
-DESKTOP NOTIFICATION: contents at http://0.0.0.0/my_notification.html
 DESKTOP NOTIFICATION: icon http://0.0.0.0/my_icon.png, title New E-mail, text Meet me tonight at 8!
 Sending notifications with permission...
 

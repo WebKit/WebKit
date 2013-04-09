@@ -1,3 +1,12 @@
+2013-04-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        Remove HTML Notification
+        https://bugs.webkit.org/show_bug.cgi?id=114231
+
+        Reviewed by Ryosuke Niwa.
+
+        * qmake/mkspecs/features/features.pri:
+
 2013-04-08  Glenn Adams  <glenn@skynav.com>
 
         Remove chromium EWS support, and fix broken test.

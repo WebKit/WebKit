@@ -34,9 +34,6 @@
     ActiveDOMObject,
     OmitConstructor
 ] interface NotificationCenter {
-#if !defined(ENABLE_TEXT_NOTIFICATIONS_ONLY) || !ENABLE_TEXT_NOTIFICATIONS_ONLY
-   Notification createHTMLNotification(in DOMString url) raises(DOMException);
-#endif
    Notification createNotification(in DOMString iconUrl, in DOMString title, in DOMString body) raises(DOMException);
 
    int checkPermission();
