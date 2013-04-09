@@ -1,5 +1,23 @@
 2013-04-08  Ryosuke Niwa  <rniwa@webkit.org>
 
+        WKR (new-commit-bot) is too slow
+        https://bugs.webkit.org/show_bug.cgi?id=110087
+
+        Reviewed by Geoffrey Garen.
+
+        Running "svn up" or "git svn fetch" is way too slow (takes 2-3 minutes) on the machine I'm running the bot.
+        Just run "svn log -r <revision>" instead to cut down the delay.
+
+        Unfortunately, this work around doesn't work in a git checkout but who cares given I'm the one running the bot.
+
+        * Scripts/webkitpy/tool/commands/newcommitbot.py:
+        (NewCommitBot):
+        (NewCommitBot.next_work_item):
+        (NewCommitBot._is_empty_log):
+        (NewCommitBot._update_checkout):
+
+2013-04-08  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fix. Can't remove appendCustomBuildFlags.
 
         * BuildSlaveSupport/build.webkit.org-config/master.cfg:
