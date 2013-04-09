@@ -1332,11 +1332,12 @@ webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-circle-padding.htm
 webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-ellipse.html [ ImageOnlyFailure ]
 webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-ellipse-padding.html [ ImageOnlyFailure ]
 webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-polygon-padding-002.html [ ImageOnlyFailure ]
+webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-diamond-margin-polygon.html [ Failure ]
+webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-ellipse-margin-left.html [ Failure ]
+webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-ellipse-margin-right.html [ Failure ]
 webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-circle.html [ ImageOnlyFailure ]
 webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-ellipse.html [ ImageOnlyFailure ]
 webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle.html [ ImageOnlyFailure ]
-webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-ellipse-margin-left.html [ Failure ]
-webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-ellipse-margin-right.html [ Failure ]
 webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-non-zero-y.html [ ImageOnlyFailure ]
 
 webkit.org/b/110090 fast/events/clientXY-in-zoom-and-scroll.html [ Failure ]
@@ -1374,6 +1375,8 @@ webkit.org/b/113747 svg/repaint/buffered-rendering-static-image.html [ ImageOnly
 
 webkit.org/b/113772 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_iframe_self_navigation.html [ Failure ]
 webkit.org/b/113772 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_cached.html [ Failure ]
+
+webkit.org/b/114251 accessibility/svg-group-element-with-title.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
