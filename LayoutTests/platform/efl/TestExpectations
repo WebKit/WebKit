@@ -642,10 +642,6 @@ webkit.org/b/110546 fast/parser/document-write-fighting-eof.html [ Crash ]
 
 webkit.org/b/111521 editing/selection/selection-invalid-offset.html [ Crash Pass ]
 
-# ASSERTION FAILED: (edge.useKind() != KnownCellUse && edge.useKind() != KnownStringUse) || !(value.m_type & ~SpecCell).
-webkit.org/b/114129 webgl/conformance/textures/tex-image-with-format-and-type.html [ Crash ]
-webkit.org/b/114129 fast/canvas/webgl/tex-image-with-format-and-type.html [ Crash ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
