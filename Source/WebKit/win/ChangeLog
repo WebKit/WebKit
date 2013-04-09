@@ -1,3 +1,9 @@
+2013-04-05  Roger Fong  <roger_fong@apple.com>
+
+        Build fix.
+
+        * WebKit.vcproj/WebKitExports.def.in:
+
 2013-04-04  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [Cairo] Fix canvas drawing of SVG-based patterns and remove NativeImageCairo

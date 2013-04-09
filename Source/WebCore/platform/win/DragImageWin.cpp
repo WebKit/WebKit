@@ -33,6 +33,7 @@
 #include "GraphicsContext.h"
 #include "HWndDC.h"
 #include "Image.h"
+#include "KURL.h"
 #include "StringTruncator.h"
 #include "TextRun.h"
 #include "WebCoreTextRenderer.h"
@@ -69,7 +70,8 @@ DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
 DragImageRef createDragImageIconForCachedImageFilename(const String& filename)
 {
     SHFILEINFO shfi = {0};
-    if (FAILED(SHGetFileInfo(static_cast<LPCWSTR>(filename.charactersWithNullTermination()), FILE_ATTRIBUTE_NORMAL,
+    String fname = filename;
+    if (FAILED(SHGetFileInfo(static_cast<LPCWSTR>(fname.charactersWithNullTermination()), FILE_ATTRIBUTE_NORMAL,
         &shfi, sizeof(shfi), SHGFI_ICON | SHGFI_USEFILEATTRIBUTES)))
         return 0;
 

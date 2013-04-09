@@ -1,3 +1,9 @@
+2013-04-05  Roger Fong  <roger_fong@apple.com>
+
+        Build fix.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2013-04-08  Jeff Rogers  <jrogers@rim.com>
 
         [BlackBerry] Update BlackBerry JavaScript API

@@ -120,7 +120,6 @@ EXPORTS
         ?broadcast@ThreadCondition@WTF@@QAEXXZ
         ?callOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
 #if ENABLE(INSPECTOR)
-        ?consoleMessageArgumentCounts@InspectorConsoleAgent@WebCore@@QAE?AV?$Vector@I$0A@@WTF@@XZ
         ?counterValue@InspectorCounters@WebCore@@SAHW4CounterType@12@@Z
         ?didBeginFrame@InspectorController@WebCore@@QAEXXZ
         ?didCancelFrame@InspectorController@WebCore@@QAEXXZ
@@ -156,7 +155,6 @@ EXPORTS
         ??0ClientRect@WebCore@@AAE@ABVIntRect@1@@Z
         ??0ClientRect@WebCore@@AAE@XZ
         ??0ClientRectList@WebCore@@AAE@XZ
-        ??0ClientRectList@WebCore@@AAE@ABV?$Vector@VFloatQuad@WebCore@@$0A@@WTF@@@Z
         ??1ClientRectList@WebCore@@QAE@XZ
         ??1Cursor@WebCore@@QAE@XZ
         ??0Cursor@WebCore@@QAE@ABV01@@Z
@@ -164,7 +162,6 @@ EXPORTS
         ??0String@WTF@@QAE@PB_W@Z
         ??0String@WTF@@QAE@PB_WI@Z
         ??0String@WTF@@QAE@VASCIILiteral@1@@Z
-        ??0SerializedScriptValue@WebCore@@AAE@AAV?$Vector@E$0A@@WTF@@@Z
         ??1SerializedScriptValue@WebCore@@QAE@XZ
         ?absoluteBoundingBoxRect@RenderObject@WebCore@@QBE?AVIntRect@2@_N@Z
         ?absoluteBoundingBoxRectIgnoringTransforms@RenderObject@WebCore@@QBE?AVIntRect@2@XZ
@@ -176,11 +173,9 @@ EXPORTS
         ?childItemWithTarget@HistoryItem@WebCore@@QBEPAV12@ABVString@WTF@@@Z
         ?create@Range@WebCore@@SA?AV?$PassRefPtr@VRange@WebCore@@@WTF@@V?$PassRefPtr@VDocument@WebCore@@@4@V?$PassRefPtr@VNode@WebCore@@@4@H1H@Z
         ?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@ABVString@4@@Z
-        ?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@PAVExecState@JSC@@VJSValue@6@PAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00@4@PAV?$Vector@V?$RefPtr@VArrayBuffer@WTF@@@WTF@@$00@4@W4SerializationErrorMode@2@@Z
         ?createShadowRoot@Element@WebCore@@QAE?AV?$PassRefPtr@VShadowRoot@WebCore@@@WTF@@AAH@Z
         ?createWrapper@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
-        ?deserialize@SerializedScriptValue@WebCore@@QAE?AVJSValue@JSC@@PAVExecState@4@PAVJSGlobalObject@4@PAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00@WTF@@W4SerializationErrorMode@2@@Z
-        ?documentState@HistoryItem@WebCore@@QBEABV?$Vector@VString@WTF@@$0A@@WTF@@XZ
+        ?deserialize@SerializedScriptValue@WebCore@@QAE?AVJSValue@JSC@@PAVExecState@4@PAVJSGlobalObject@4@PAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00VCrashOnOverflow@2@@WTF@@W4SerializationErrorMode@2@@Z
         ?equal@WTF@@YA_NPBVStringImpl@1@PBE@Z
         ?equal@WTF@@YA_NPBVStringImpl@1@0@Z
         ?equalIgnoringCase@WTF@@YA_NPBVStringImpl@1@PBE@Z
@@ -194,7 +189,6 @@ EXPORTS
         ?getCachedDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PBUClassInfo@3@@Z
         ?getData16SlowCase@StringImpl@WTF@@ABEPB_WXZ
         ?getLocationAndLengthFromRange@TextIterator@WebCore@@SA_NPAVNode@2@PBVRange@2@AAI2@Z
-        ?getReferencedFilePaths@FormController@WebCore@@SA?AV?$Vector@VString@WTF@@$0A@@WTF@@ABV34@@Z
         ?inputTag@HTMLNames@WebCore@@3VQualifiedName@2@B
         ?selectTag@HTMLNames@WebCore@@3VQualifiedName@2@B
 #if ENABLE(INSPECTOR)
@@ -229,7 +223,6 @@ EXPORTS
         ?lastChangeWasUserEdit@HTMLTextFormControlElement@WebCore@@QBE_NXZ
         ?mainThreadScrollingReasonsAsText@Page@WebCore@@QAE?AVString@WTF@@XZ
         ?markerTextForListItem@WebCore@@YA?AVString@WTF@@PAVElement@1@@Z
-        ?markersFor@DocumentMarkerController@WebCore@@QAE?AV?$Vector@PAVDocumentMarker@WebCore@@$0A@@WTF@@PAVNode@2@VMarkerTypes@DocumentMarker@2@@Z
         ?nextSibling@ComposedShadowTreeWalker@WebCore@@QAEXXZ
         ?firstChild@ComposedShadowTreeWalker@WebCore@@QAEXXZ
         ?lastChild@ComposedShadowTreeWalker@WebCore@@QAEXXZ
@@ -240,7 +233,6 @@ EXPORTS
         ?number@String@WTF@@SA?AV12@H@Z
         ?number@String@WTF@@SA?AV12@I@Z
         ?number@String@WTF@@SA?AV12@NIW4TrailingZerosTruncatingPolicy@2@@Z
-        ?overrideUserPreferredLanguages@WebCore@@YAXABV?$Vector@VString@WTF@@$0A@@WTF@@@Z
         ?numberOfScopedHTMLStyleChildren@Node@WebCore@@QBEIXZ
         ?completeURL@Document@WebCore@@QBE?AVKURL@2@ABVString@WTF@@@Z
         ?page@Document@WebCore@@QBEPAVPage@2@XZ
@@ -260,7 +252,6 @@ EXPORTS
         ?setCanStartMedia@Page@WebCore@@QAEX_N@Z
         ?setCursiveFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setDeviceScaleFactor@Page@WebCore@@QAEXM@Z
-        ?setDocumentState@HistoryItem@WebCore@@QAEXABV?$Vector@VString@WTF@@$0A@@WTF@@@Z
         ?setDOMException@WebCore@@YAXPAVExecState@JSC@@H@Z
         ?setFantasyFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
         ?setFixedFontFamily@Settings@WebCore@@QAEXABVAtomicString@WTF@@W4UScriptCode@@@Z
@@ -308,7 +299,6 @@ EXPORTS
         ?treeScope@Node@WebCore@@QBEPAVTreeScope@2@XZ
         ?isTreeScope@Node@WebCore@@QBE_NXZ
         ?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QAEXXZ
-        ?userPreferredLanguages@WebCore@@YA?AV?$Vector@VString@WTF@@$0A@@WTF@@XZ
         ?utf8@String@WTF@@QBE?AVCString@2@W4ConversionMode@12@@Z
         ?view@Document@WebCore@@QBEPAVFrameView@2@XZ
         ??1ContextDestructionObserver@WebCore@@MAE@XZ
@@ -335,8 +325,6 @@ EXPORTS
         ?setAllowsRoundingHacks@TextRun@WebCore@@SAX_N@Z
         ?registerURLSchemeAsBypassingContentSecurityPolicy@SchemeRegistry@WebCore@@SAXABVString@WTF@@@Z
         ?removeURLSchemeRegisteredAsBypassingContentSecurityPolicy@SchemeRegistry@WebCore@@SAXABVString@WTF@@@Z
-        ?shortcutIconURLs@Document@WebCore@@QAEABV?$Vector@UIconURL@WebCore@@$0A@@WTF@@XZ
-        ?iconURLs@Document@WebCore@@QAEABV?$Vector@UIconURL@WebCore@@$0A@@WTF@@H@Z
         ?numberOfPages@PrintContext@WebCore@@SAHPAVFrame@2@ABVFloatSize@2@@Z
         ?pageProperty@PrintContext@WebCore@@SA?AVString@WTF@@PAVFrame@2@PBDH@Z
         ?pageSizeAndMarginsInPixels@PrintContext@WebCore@@SA?AVString@WTF@@PAVFrame@2@HHHHHHH@Z
@@ -417,6 +405,17 @@ EXPORTS
         ?setAuthorAndUserStylesEnabled@Settings@WebCore@@QAEX_N@Z
         ?setAcceleratedCompositingEnabled@Settings@WebCore@@QAEX_N@Z
         ?setAutofilled@HTMLInputElement@WebCore@@QAEX_N@Z
+        ?setDocumentState@HistoryItem@WebCore@@QAEXABV?$Vector@VString@WTF@@$0A@VCrashOnOverflow@2@@WTF@@@Z
+        ?overrideUserPreferredLanguages@WebCore@@YAXABV?$Vector@VString@WTF@@$0A@VCrashOnOverflow@2@@WTF@@@Z
+        ?markersFor@DocumentMarkerController@WebCore@@QAE?AV?$Vector@PAVDocumentMarker@WebCore@@$0A@VCrashOnOverflow@WTF@@@WTF@@PAVNode@2@VMarkerTypes@DocumentMarker@2@@Z
+        ?getReferencedFilePaths@FormController@WebCore@@SA?AV?$Vector@VString@WTF@@$0A@VCrashOnOverflow@2@@WTF@@ABV34@@Z
+        ?iconURLs@Document@WebCore@@QAEABV?$Vector@UIconURL@WebCore@@$0A@VCrashOnOverflow@WTF@@@WTF@@H@Z
+        ?consoleMessageArgumentCounts@InspectorConsoleAgent@WebCore@@QAE?AV?$Vector@I$0A@VCrashOnOverflow@WTF@@@WTF@@XZ
+        ?userPreferredLanguages@WebCore@@YA?AV?$Vector@VString@WTF@@$0A@VCrashOnOverflow@2@@WTF@@XZ
+        ?documentState@HistoryItem@WebCore@@QBEABV?$Vector@VString@WTF@@$0A@VCrashOnOverflow@2@@WTF@@XZ
+        ?create@SerializedScriptValue@WebCore@@SA?AV?$PassRefPtr@VSerializedScriptValue@WebCore@@@WTF@@PAVExecState@JSC@@VJSValue@6@PAV?$Vector@V?$RefPtr@VMessagePort@WebCore@@@WTF@@$00VCrashOnOverflow@2@@4@PAV?$Vector@V?$RefPtr@VArrayBuffer@WTF@@@WTF@@$00VCrashOnOverflow@2@@4@W4SerializationErrorMode@2@@Z
+        ??0ClientRectList@WebCore@@AAE@ABV?$Vector@VFloatQuad@WebCore@@$0A@VCrashOnOverflow@WTF@@@WTF@@@Z
+        ??0SerializedScriptValue@WebCore@@AAE@AAV?$Vector@E$0A@VCrashOnOverflow@WTF@@@WTF@@@Z
 #if ENABLE(VIDEO_TRACK)
         ?captionPreferences@PageGroup@WebCore@@QAEPAVCaptionUserPreferences@2@XZ
 #endif

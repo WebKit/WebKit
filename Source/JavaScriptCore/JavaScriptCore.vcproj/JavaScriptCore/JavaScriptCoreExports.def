@@ -91,7 +91,9 @@ EXPORTS
     ?appendNumber@StringBuilder@WTF@@QAEXJ@Z
     ?appendNumber@StringBuilder@WTF@@QAEXK@Z
     ?attach@Debugger@JSC@@QAEXPAVJSGlobalObject@2@@Z
+    ?base64Decode@WTF@@YA_NABVString@1@AAV?$Vector@D$0A@VCrashOnOverflow@WTF@@@1@W4Base64DecodePolicy@1@@Z
     ?base64Encode@WTF@@YA?AVString@1@PBDIW4Base64EncodePolicy@1@@Z
+    ?base64Encode@WTF@@YAXPBDIAAV?$Vector@D$0A@VCrashOnOverflow@WTF@@@1@W4Base64EncodePolicy@1@@Z
     ?broadcast@ThreadCondition@WTF@@QAEXXZ
     ?bufferLengthForStringDecimal@DecimalNumber@WTF@@QBEIXZ
     ?bufferLengthForStringExponential@DecimalNumber@WTF@@QBEIXZ
@@ -118,6 +120,8 @@ EXPORTS
     ?clearAll@BitVector@WTF@@QAEXXZ
     ?collate@Collator@WTF@@QBE?AW4Result@12@PB_WI0I@Z
     ?collectAllGarbage@Heap@JSC@@QAEXXZ
+    ?column@StackFrame@JSC@@QAEIXZ
+    ?computeHash@SHA1@WTF@@QAEXAAV?$Vector@E$0BE@VCrashOnOverflow@WTF@@@2@@Z
     ?configurable@PropertyDescriptor@JSC@@QBE_NXZ
     ?construct@JSC@@YAPAVJSObject@1@PAVExecState@1@VJSValue@1@W4ConstructType@1@ABTConstructData@1@ABVArgList@1@@Z
     ?constructEmptyObject@JSC@@YAPAVJSObject@1@PAVExecState@1@@Z
@@ -286,6 +290,7 @@ EXPORTS
     ?lock@JSLock@JSC@@QAEXXZ
     ?lock@Mutex@WTF@@QAEXXZ
     ?lockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
+    ?line@StackFrame@JSC@@QAEIXZ
     ?match@RegExp@JSC@@QAEHAAVJSGlobalData@2@ABVString@WTF@@IAAV?$Vector@H$0CA@VCrashOnOverflow@WTF@@@5@@Z
     ?materializePropertyMap@Structure@JSC@@AAEXAAVJSGlobalData@2@@Z
     ?monotonicallyIncreasingTime@WTF@@YANXZ
@@ -418,6 +423,7 @@ EXPORTS
     ?toThisObject@JSObject@JSC@@SAPAV12@PAVJSCell@2@PAVExecState@2@@Z
     ?toThisObjectSlowCase@JSValue@JSC@@ABEPAVJSObject@2@PAVExecState@2@@Z
     ?toWTFStringSlowCase@JSValue@JSC@@ABE?AVString@WTF@@PAVExecState@2@@Z
+    ?transfer@ArrayBuffer@WTF@@QAE_NAAVArrayBufferContents@2@AAV?$Vector@V?$RefPtr@VArrayBufferView@WTF@@@WTF@@$0A@VCrashOnOverflow@2@@2@@Z
     ?tryAllocateSlowCase@CopiedSpace@JSC@@AAE?AVCheckedBoolean@@IPAPAX@Z
     ?tryFastCalloc@WTF@@YA?AUTryMallocReturnValue@1@II@Z
     ?tryFastMalloc@WTF@@YA?AUTryMallocReturnValue@1@I@Z
@@ -439,7 +445,7 @@ EXPORTS
     ?writable@PropertyDescriptor@JSC@@QBE_NXZ
     ?writeBarrier@HandleSet@JSC@@QAEXPAVJSValue@2@ABV32@@Z
     ?yield@WTF@@YAXXZ
-    ?zeroTime@MediaTime@WTF@@SAABV12@XZ 
+    ?zeroTime@MediaTime@WTF@@SAABV12@XZ
     WTFGetBacktrace
     WTFInvokeCrashHook
     WTFLog
