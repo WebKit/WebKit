@@ -1,3 +1,14 @@
+2013-04-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove JavaScriptCore.gyp/gypi
+        https://bugs.webkit.org/show_bug.cgi?id=114238
+
+        Reviewed by Benjamin Poulain.
+
+        * JavaScriptCore.gyp: Removed.
+        * JavaScriptCore.gyp/.gitignore: Removed.
+        * JavaScriptCore.gypi: Removed.
+
 2013-04-08  Vahag Vardanyan  <vaag@ispras.ru>
 
         Adds fromCharCode intrinsic support.
