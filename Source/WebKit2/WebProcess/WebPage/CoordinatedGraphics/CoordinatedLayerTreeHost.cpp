@@ -506,7 +506,7 @@ void CoordinatedLayerTreeHost::syncDisplayState()
 {
 #if ENABLE(REQUEST_ANIMATION_FRAME) && !USE(REQUEST_ANIMATION_FRAME_TIMER) && !USE(REQUEST_ANIMATION_FRAME_DISPLAY_MONITOR)
     // Make sure that any previously registered animation callbacks are being executed before we flush the layers.
-    m_webPage->corePage()->mainFrame()->view()->serviceScriptedAnimations(convertSecondsToDOMTimeStamp(currentTime()));
+    m_webPage->corePage()->mainFrame()->view()->serviceScriptedAnimations(currentTime());
 #endif
 
     m_webPage->layoutIfNeeded();

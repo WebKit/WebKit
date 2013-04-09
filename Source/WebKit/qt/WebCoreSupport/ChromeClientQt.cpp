@@ -625,7 +625,7 @@ void ChromeClientQt::scheduleAnimation()
 
 void ChromeClientQt::serviceScriptedAnimations()
 {
-    m_webPage->mainFrameAdapter()->frame->view()->serviceScriptedAnimations(convertSecondsToDOMTimeStamp(currentTime()));
+    m_webPage->mainFrameAdapter()->frame->view()->serviceScriptedAnimations(currentTime());
 }
 #endif
 

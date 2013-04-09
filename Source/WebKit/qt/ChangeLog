@@ -1,3 +1,16 @@
+2013-04-09  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        [CoordinatedGraphics] serviceScriptedAnimations expects time in seconds
+        https://bugs.webkit.org/show_bug.cgi?id=112582
+
+        Reviewed by Andreas Kling.
+
+        We've been exposing different time unit for requestAnimationFrame because
+        of wrong conversion before serviceScriptedAnimations function calls.
+        Fixed it to use seconds instead of milliseconds.
+
+        * WebCoreSupport/ChromeClientQt.cpp: Remove unnecessary conversion.
+
 2013-04-08  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove HTML Notification
