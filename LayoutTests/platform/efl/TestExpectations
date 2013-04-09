@@ -1366,6 +1366,9 @@ webkit.org/b/86597 fullscreen/video-controls-drag.html [ Failure ]
 webkit.org/b/86187 media/media-fullscreen-not-in-document.html [ Failure ]
 webkit.org/b/86187 media/media-fullscreen-inline.html
 
+# Selection problem in Shadow DOM test (passes on GTK)
+Bug(EFL) fast/dom/shadow/selections-in-shadow.html [ Failure ]
+
 # Shadow DOM for replaced elements is not rendered correctly yet.
 webkit.org/b/90860 fast/dom/shadow/shadowdom-for-object-complex-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/90860 fast/dom/shadow/shadowdom-for-object-without-shadow.html [ ImageOnlyFailure ]
