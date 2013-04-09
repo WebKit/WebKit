@@ -1324,7 +1324,7 @@ void MediaControlTextTrackContainerElement::updateTimerFired(Timer<MediaControlT
 
     float smallestDimension = std::min(m_videoDisplaySize.size().height(), m_videoDisplaySize.size().width());
     float fontScale = document()->page()->group().captionPreferences()->captionFontSizeScaleAndImportance(m_fontSizeIsImportant);
-    m_fontSize = lrintf(smallestDimension * fontScale);
+    m_fontSize = lround(smallestDimension * fontScale);
     
     CueList activeCues = mediaElement->currentlyActiveCues();
     for (size_t i = 0; i < activeCues.size(); ++i) {
