@@ -1,3 +1,16 @@
+2013-04-09  Patrick Gansterer  <paroga@webkit.org>
+
+        [CMake] Remove conditional source file lists in WTF
+        https://bugs.webkit.org/show_bug.cgi?id=114250
+
+        Reviewed by Laszlo Gombos.
+
+        Use the #ifdef in the source file instead of conditional adding
+        files to the list of source files. This allows us to remove the
+        information of enabled features from CMake in next step.
+
+        * wtf/CMakeLists.txt:
+
 2013-04-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove WTF.gyp/WTF.gypi

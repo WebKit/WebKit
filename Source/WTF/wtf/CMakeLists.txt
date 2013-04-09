@@ -188,6 +188,7 @@ set(WTF_SOURCES
     SHA1.cpp
     StackBounds.cpp
     StringPrintStream.cpp
+    TCSystemAlloc.cpp
     Threading.cpp
     TypeTraits.cpp
     WTFThreadData.cpp
@@ -224,12 +225,6 @@ set(WTF_INCLUDE_DIRECTORIES
     "${THIRDPARTY_DIR}"
     "${CMAKE_BINARY_DIR}"
 )
-
-if (NOT USE_SYSTEM_MALLOC)
-    list(APPEND WTF_SOURCES
-        TCSystemAlloc.cpp
-    )
-endif ()
 
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
