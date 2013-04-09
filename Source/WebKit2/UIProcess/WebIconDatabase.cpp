@@ -121,14 +121,19 @@ void WebIconDatabase::setIconURLForPageURL(const String& iconURL, const String& 
         m_iconDatabaseImpl->setIconURLForPageURL(iconURL, pageURL);
 }
 
-void WebIconDatabase::setIconDataForIconURL(const CoreIPC::DataReference& iconData, const String& iconURL)
+void WebIconDatabase::setIconBitmapForIconURL(const ShareableBitmap::Handle& bitmapHandle, const String& iconURL)
 {
-    LOG(IconDatabase, "WK2 UIProcess setting icon data (%i bytes) for page URL %s", (int)iconData.size(), iconURL.ascii().data());
+    LOG(IconDatabase, "WK2 UIProcess setting icon bitmap for page URL %s", iconURL.ascii().data());
     if (!m_iconDatabaseImpl)
         return;
 
-    RefPtr<SharedBuffer> buffer = SharedBuffer::create(iconData.data(), iconData.size());
-    m_iconDatabaseImpl->setIconDataForIconURL(buffer.release(), iconURL);
+    if (bitmapHandle.isNull()) {
+        m_iconDatabaseImpl->setIconBitmapForIconURL(0, iconURL);
+        return;
+    }
+
+    RefPtr<ShareableBitmap> iconBitmap = ShareableBitmap::create(bitmapHandle, SharedMemory::ReadOnly);
+    m_iconDatabaseImpl->setIconBitmapForIconURL(iconBitmap->createImage(), iconURL);
 }
 
 void WebIconDatabase::synchronousIconDataForPageURL(const String&, CoreIPC::DataReference& iconData)

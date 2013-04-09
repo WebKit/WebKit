@@ -77,6 +77,12 @@ void IconRecord::setImageData(PassRefPtr<SharedBuffer> data)
     m_dataSet = true;
 }
 
+void IconRecord::setImage(PassRefPtr<Image> image)
+{
+    m_image = image;
+    m_dataSet = true;
+}
+
 void IconRecord::loadImageFromResource(const char* resource)
 {
     if (!resource)

@@ -29,11 +29,13 @@
 
 #if ENABLE(ICONDATABASE)
 
+#include "BitmapImage.h"
 #include "DocumentLoader.h"
 #include "FileSystem.h"
 #include "IconDatabaseClient.h"
 #include "IconRecord.h"
 #include "Image.h"
+#include "ImageBuffer.h"
 #include "IntSize.h"
 #include "Logging.h"
 #include "SQLiteStatement.h"
@@ -533,24 +535,15 @@ void IconDatabase::performReleaseIconForPageURL(const String& pageURLOriginal, i
     delete pageRecord;
 }
 
-void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> dataOriginal, const String& iconURLOriginal)
-{    
-    ASSERT_NOT_SYNC_THREAD();
-    
-    // Cannot do anything with dataOriginal or iconURLOriginal that would end up storing them without deep copying first
-    
-    if (!isOpen() || iconURLOriginal.isEmpty())
-        return;
-    
-    RefPtr<SharedBuffer> data = dataOriginal ? dataOriginal->copy() : PassRefPtr<SharedBuffer>(0);
-    if (data)
-        data->setMutexForVerifier(m_urlAndIconLock);
-    String iconURL = iconURLOriginal.isolatedCopy();
-    
+void IconDatabase::updateIconRecord(PassRefPtr<SharedBuffer> iconData, PassRefPtr<Image> iconBitmap, const String& iconURL)
+{
+    // Only one of iconData or iconBitmap should be provided, never both.
+    ASSERT(!iconData != !iconBitmap);
+
     Vector<String> pageURLs;
     {
         MutexLocker locker(m_urlAndIconLock);
-    
+
         // If this icon was pending a read, remove it from that set because this new data should override what is on disk
         RefPtr<IconRecord> icon = m_iconURLToRecordMap.get(iconURL);
         if (icon) {
@@ -558,14 +551,17 @@ void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> dataOriginal, 
             m_iconsPendingReading.remove(icon.get());
         } else
             icon = getOrCreateIconRecord(iconURL);
-    
-        // Update the data and set the time stamp
-        icon->setImageData(data.release());
+
+        // Update the image and set the time stamp
+        if (iconData)
+            icon->setImageData(iconData);
+        else if (iconBitmap)
+            icon->setImage(iconBitmap);
         icon->setTimestamp((int)currentTime());
-        
+
         // Copy the current retaining pageURLs - if any - to notify them of the change
         pageURLs.appendRange(icon->retainingPageURLs().begin(), icon->retainingPageURLs().end());
-        
+
         // Mark the IconRecord as requiring an update to the database only if private browsing is disabled
         if (!m_privateBrowsingEnabled) {
             MutexLocker locker(m_pendingSyncLock);
@@ -587,7 +583,7 @@ void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> dataOriginal, 
         scheduleOrDeferSyncTimer();
 
         // Informal testing shows that draining the autorelease pool every 25 iterations is about as low as we can go
-        // before performance starts to drop off, but we don't want to increase this number because then accumulated memory usage will go up        
+        // before performance starts to drop off, but we don't want to increase this number because then accumulated memory usage will go up
         AutodrainedPool pool(25);
 
         for (unsigned i = 0; i < pageURLs.size(); ++i) {
@@ -597,6 +593,51 @@ void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> dataOriginal, 
             pool.cycle();
         }
     }
+}
+
+void IconDatabase::setIconBitmapForIconURL(PassRefPtr<Image> imageOriginal, const String& iconURLOriginal)
+{
+    ASSERT_NOT_SYNC_THREAD();
+    ASSERT(imageOriginal->isBitmapImage());
+    
+    // Cannot do anything with imageOriginal or iconURLOriginal that would end up storing them without deep copying first
+
+    if (!isOpen() || iconURLOriginal.isEmpty())
+        return;
+    
+    RefPtr<Image> image;
+    if (imageOriginal) {
+        OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(imageOriginal->size());
+        GraphicsContext* context = imageBuffer->context();
+        
+        context->drawImage(imageOriginal.get(), ColorSpaceDeviceRGB, IntPoint());
+        image = imageBuffer->copyImage();
+    }
+
+    if (image)
+        image->setMutexForVerifier(m_urlAndIconLock);
+
+    String iconURL = iconURLOriginal.isolatedCopy();
+
+    updateIconRecord(0, image.release(), iconURL);
+}
+
+void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> dataOriginal, const String& iconURLOriginal)
+{    
+    ASSERT_NOT_SYNC_THREAD();
+
+    // Cannot do anything with dataOriginal or iconURLOriginal that would end up storing them without deep copying first
+    
+    if (!isOpen() || iconURLOriginal.isEmpty())
+        return;
+    
+    RefPtr<SharedBuffer> data = dataOriginal ? dataOriginal->copy() : PassRefPtr<SharedBuffer>(0);
+    if (data)
+        data->setMutexForVerifier(m_urlAndIconLock);
+
+    String iconURL = iconURLOriginal.isolatedCopy();
+
+    updateIconRecord(data.release(), 0, iconURL);
 }
 
 void IconDatabase::setIconURLForPageURL(const String& iconURLOriginal, const String& pageURLOriginal)

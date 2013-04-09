@@ -29,6 +29,7 @@
 #include "APIObject.h"
 
 #include "Connection.h"
+#include "ShareableBitmap.h"
 #include "WebIconDatabaseClient.h"
 #include <WebCore/IconDatabaseClient.h>
 #include <WebCore/ImageSource.h>
@@ -66,7 +67,7 @@ public:
     void retainIconForPageURL(const String&);
     void releaseIconForPageURL(const String&);
     void setIconURLForPageURL(const String&, const String&);
-    void setIconDataForIconURL(const CoreIPC::DataReference&, const String&);
+    void setIconBitmapForIconURL(const ShareableBitmap::Handle&, const String&);
     
     void synchronousIconDataForPageURL(const String&, CoreIPC::DataReference&);
     void synchronousIconURLForPageURL(const String&, String&);

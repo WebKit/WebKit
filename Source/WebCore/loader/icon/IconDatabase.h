@@ -93,7 +93,8 @@ public:
 
     virtual void retainIconForPageURL(const String&);
     virtual void releaseIconForPageURL(const String&);
-    virtual void setIconDataForIconURL(PassRefPtr<SharedBuffer> data, const String&);
+    virtual void setIconDataForIconURL(PassRefPtr<SharedBuffer> data, const String&) OVERRIDE;
+    virtual void setIconBitmapForIconURL(PassRefPtr<Image>, const String&) OVERRIDE;
     virtual void setIconURLForPageURL(const String& iconURL, const String& pageURL);
 
     virtual Image* synchronousIconForPageURL(const String&, const IntSize&);
@@ -128,6 +129,8 @@ private:
     void wakeSyncThread();
     void scheduleOrDeferSyncTimer();
     void syncTimerFired(Timer<IconDatabase>*);
+
+    void updateIconRecord(PassRefPtr<SharedBuffer>, PassRefPtr<Image>, const String&);
     
     Timer<IconDatabase> m_syncTimer;
     ThreadIdentifier m_syncThread;

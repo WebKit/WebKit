@@ -345,7 +345,7 @@ void PDFPlugin::destroy()
 {
     m_pdfLayerController.get().delegate = 0;
 
-    if (webFrame()) {
+    if (webFrame() && webFrame()->coreFrame()) {
         if (FrameView* frameView = webFrame()->coreFrame()->view())
             frameView->removeScrollableArea(this);
     }

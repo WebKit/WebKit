@@ -85,6 +85,7 @@ public:
     void setTimestamp(time_t stamp) { m_stamp = stamp; }
         
     void setImageData(PassRefPtr<SharedBuffer> data);
+    void setImage(PassRefPtr<Image> data);
     Image* image(const IntSize&);    
     
     String iconURL() { return m_iconURL; }
