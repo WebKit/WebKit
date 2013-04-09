@@ -1,3 +1,12 @@
+2013-04-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove ANGLE.gyp
+        https://bugs.webkit.org/show_bug.cgi?id=114245
+
+        Unreviewed. Just removing an empty directory.
+
+        * ANGLE.gyp: Removed.
+
 2013-04-04  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove the gyp build
