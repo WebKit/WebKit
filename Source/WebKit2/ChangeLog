@@ -1,3 +1,23 @@
+2013-04-08  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [WK2][EFL] Mark not implemented methods in TextCheckerEfl.
+        https://bugs.webkit.org/show_bug.cgi?id=112261
+
+        Reviewed by Anders Carlsson.
+
+        There's no need to call client's methods in TextCheckerEfl.cpp if they are not
+        implemented. Mark them as not implemented until we provide proper implementation.
+
+        * UIProcess/efl/TextCheckerEfl.cpp:
+        (WebKit::TextChecker::isContinuousSpellCheckingAllowed):
+        (WebKit::TextChecker::setGrammarCheckingEnabled):
+        (WebKit::TextChecker::grammarCheckingEnabledStateChanged):
+        (WebKit::TextChecker::checkGrammarOfString):
+        (WebKit::TextChecker::spellingUIIsShowing):
+        (WebKit::TextChecker::toggleSpellingUIIsShowing):
+        (WebKit::TextChecker::updateSpellingUIWithMisspelledWord):
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString):
+
 2013-04-08  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove HTML Notification
