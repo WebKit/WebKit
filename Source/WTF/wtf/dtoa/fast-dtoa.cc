@@ -62,7 +62,7 @@ namespace double_conversion {
     // Output: returns true if the buffer is guaranteed to contain the closest
     //    representable number to the input.
     //  Modifies the generated digits in the buffer to approach (round towards) w.
-    static bool RoundWeed(Vector<char> buffer,
+    static bool RoundWeed(BufferReference<char> buffer,
                           int length,
                           uint64_t distance_too_high_w,
                           uint64_t unsafe_interval,
@@ -182,7 +182,7 @@ namespace double_conversion {
     // unambiguously determined.
     //
     // Precondition: rest < ten_kappa.
-    static bool RoundWeedCounted(Vector<char> buffer,
+    static bool RoundWeedCounted(BufferReference<char> buffer,
                                  int length,
                                  uint64_t rest,
                                  uint64_t ten_kappa,
@@ -386,7 +386,7 @@ namespace double_conversion {
     static bool DigitGen(DiyFp low,
                          DiyFp w,
                          DiyFp high,
-                         Vector<char> buffer,
+                         BufferReference<char> buffer,
                          int* length,
                          int* kappa) {
         ASSERT(low.e() == w.e() && w.e() == high.e());
@@ -511,7 +511,7 @@ namespace double_conversion {
     //   increases with higher requested_digits.
     static bool DigitGenCounted(DiyFp w,
                                 int requested_digits,
-                                Vector<char> buffer,
+                                BufferReference<char> buffer,
                                 int* length,
                                 int* kappa) {
         ASSERT(kMinimalTargetExponent <= w.e() && w.e() <= kMaximalTargetExponent);
@@ -599,7 +599,7 @@ namespace double_conversion {
     // digits might correctly yield 'v' when read again, the closest will be
     // computed.
     static bool Grisu3(double v,
-                       Vector<char> buffer,
+                       BufferReference<char> buffer,
                        int* length,
                        int* decimal_exponent) {
         DiyFp w = Double(v).AsNormalizedDiyFp();
@@ -665,7 +665,7 @@ namespace double_conversion {
     // therefore the rounding strategy for halfway cases is irrelevant.
     static bool Grisu3Counted(double v,
                               int requested_digits,
-                              Vector<char> buffer,
+                              BufferReference<char> buffer,
                               int* length,
                               int* decimal_exponent) {
         DiyFp w = Double(v).AsNormalizedDiyFp();
@@ -710,7 +710,7 @@ namespace double_conversion {
     bool FastDtoa(double v,
                   FastDtoaMode mode,
                   int requested_digits,
-                  Vector<char> buffer,
+                  BufferReference<char> buffer,
                   int* length,
                   int* decimal_point) {
         ASSERT(v > 0);

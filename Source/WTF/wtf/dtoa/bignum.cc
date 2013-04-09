@@ -89,7 +89,7 @@ namespace double_conversion {
     }
     
     
-    static uint64_t ReadUInt64(Vector<const char> buffer,
+    static uint64_t ReadUInt64(BufferReference<const char> buffer,
                                int from,
                                int digits_to_read) {
         uint64_t result = 0;
@@ -102,7 +102,7 @@ namespace double_conversion {
     }
     
     
-    void Bignum::AssignDecimalString(Vector<const char> value) {
+    void Bignum::AssignDecimalString(BufferReference<const char> value) {
         // 2^64 = 18446744073709551616 > 10^19
         const int kMaxUint64DecimalDigits = 19;
         Zero();
@@ -132,7 +132,7 @@ namespace double_conversion {
     }
     
     
-    void Bignum::AssignHexString(Vector<const char> value) {
+    void Bignum::AssignHexString(BufferReference<const char> value) {
         Zero();
         int length = value.length();
         

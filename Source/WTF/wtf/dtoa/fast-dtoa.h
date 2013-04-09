@@ -77,7 +77,7 @@ namespace double_conversion {
     bool FastDtoa(double d,
                   FastDtoaMode mode,
                   int requested_digits,
-                  Vector<char> buffer,
+                  BufferReference<char> buffer,
                   int* length,
                   int* decimal_point);
     

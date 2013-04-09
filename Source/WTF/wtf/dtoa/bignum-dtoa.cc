@@ -74,22 +74,22 @@ namespace double_conversion {
     static void GenerateShortestDigits(Bignum* numerator, Bignum* denominator,
                                        Bignum* delta_minus, Bignum* delta_plus,
                                        bool is_even,
-                                       Vector<char> buffer, int* length);
+                                       BufferReference<char> buffer, int* length);
     // Generates 'requested_digits' after the decimal point.
     static void BignumToFixed(int requested_digits, int* decimal_point,
                               Bignum* numerator, Bignum* denominator,
-                              Vector<char>(buffer), int* length);
+                              BufferReference<char>(buffer), int* length);
     // Generates 'count' digits of numerator/denominator.
     // Once 'count' digits have been produced rounds the result depending on the
     // remainder (remainders of exactly .5 round upwards). Might update the
     // decimal_point when rounding up (for example for 0.9999).
     static void GenerateCountedDigits(int count, int* decimal_point,
                                       Bignum* numerator, Bignum* denominator,
-                                      Vector<char>(buffer), int* length);
+                                      BufferReference<char>(buffer), int* length);
     
     
     void BignumDtoa(double v, BignumDtoaMode mode, int requested_digits,
-                    Vector<char> buffer, int* length, int* decimal_point) {
+                    BufferReference<char> buffer, int* length, int* decimal_point) {
         ASSERT(v > 0);
         ASSERT(!Double(v).IsSpecial());
         uint64_t significand = Double(v).Significand();
@@ -171,7 +171,7 @@ namespace double_conversion {
     static void GenerateShortestDigits(Bignum* numerator, Bignum* denominator,
                                        Bignum* delta_minus, Bignum* delta_plus,
                                        bool is_even,
-                                       Vector<char> buffer, int* length) {
+                                       BufferReference<char> buffer, int* length) {
         // Small optimization: if delta_minus and delta_plus are the same just reuse
         // one of the two bignums.
         if (Bignum::Equal(*delta_minus, *delta_plus)) {
@@ -268,7 +268,7 @@ namespace double_conversion {
     // exponent (decimal_point), when rounding upwards.
     static void GenerateCountedDigits(int count, int* decimal_point,
                                       Bignum* numerator, Bignum* denominator,
-                                      Vector<char>(buffer), int* length) {
+                                      BufferReference<char>(buffer), int* length) {
         ASSERT(count >= 0);
         for (int i = 0; i < count - 1; ++i) {
             uint16_t digit;
@@ -310,7 +310,7 @@ namespace double_conversion {
     // Input verifies:  1 <= (numerator + delta) / denominator < 10.
     static void BignumToFixed(int requested_digits, int* decimal_point,
                               Bignum* numerator, Bignum* denominator,
-                              Vector<char>(buffer), int* length) {
+                              BufferReference<char>(buffer), int* length) {
         // Note that we have to look at more than just the requested_digits, since
         // a number could be rounded up. Example: v=0.5 with requested_digits=0.
         // Even though the power of v equals 0 we can't just stop here.

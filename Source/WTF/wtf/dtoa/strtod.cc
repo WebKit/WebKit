@@ -92,27 +92,27 @@ namespace double_conversion {
     // we round up to 780.
     static const int kMaxSignificantDecimalDigits = 780;
     
-    static Vector<const char> TrimLeadingZeros(Vector<const char> buffer) {
+    static BufferReference<const char> TrimLeadingZeros(BufferReference<const char> buffer) {
         for (int i = 0; i < buffer.length(); i++) {
             if (buffer[i] != '0') {
-                return buffer.SubVector(i, buffer.length());
+                return buffer.SubBufferReference(i, buffer.length());
             }
         }
-        return Vector<const char>(buffer.start(), 0);
+        return BufferReference<const char>(buffer.start(), 0);
     }
     
     
-    static Vector<const char> TrimTrailingZeros(Vector<const char> buffer) {
+    static BufferReference<const char> TrimTrailingZeros(BufferReference<const char> buffer) {
         for (int i = buffer.length() - 1; i >= 0; --i) {
             if (buffer[i] != '0') {
-                return buffer.SubVector(0, i + 1);
+                return buffer.SubBufferReference(0, i + 1);
             }
         }
-        return Vector<const char>(buffer.start(), 0);
+        return BufferReference<const char>(buffer.start(), 0);
     }
     
     
-    static void TrimToMaxSignificantDigits(Vector<const char> buffer,
+    static void TrimToMaxSignificantDigits(BufferReference<const char> buffer,
                                            int exponent,
                                            char* significant_buffer,
                                            int* significant_exponent) {
@@ -134,7 +134,7 @@ namespace double_conversion {
     // When the string starts with "1844674407370955161" no further digit is read.
     // Since 2^64 = 18446744073709551616 it would still be possible read another
     // digit if it was less or equal than 6, but this would complicate the code.
-    static uint64_t ReadUint64(Vector<const char> buffer,
+    static uint64_t ReadUint64(BufferReference<const char> buffer,
                                int* number_of_read_digits) {
         uint64_t result = 0;
         int i = 0;
@@ -152,7 +152,7 @@ namespace double_conversion {
     // The returned DiyFp is not necessarily normalized.
     // If remaining_decimals is zero then the returned DiyFp is accurate.
     // Otherwise it has been rounded and has error of at most 1/2 ulp.
-    static void ReadDiyFp(Vector<const char> buffer,
+    static void ReadDiyFp(BufferReference<const char> buffer,
                           DiyFp* result,
                           int* remaining_decimals) {
         int read_digits;
@@ -173,7 +173,7 @@ namespace double_conversion {
     }
     
     
-    static bool DoubleStrtod(Vector<const char> trimmed,
+    static bool DoubleStrtod(BufferReference<const char> trimmed,
                              int exponent,
                              double* result) {
 #if !defined(DOUBLE_CONVERSION_CORRECT_DOUBLE_OPERATIONS)
@@ -251,7 +251,7 @@ namespace double_conversion {
     // If the function returns true then the result is the correct double.
     // Otherwise it is either the correct double or the double that is just below
     // the correct double.
-    static bool DiyFpStrtod(Vector<const char> buffer,
+    static bool DiyFpStrtod(BufferReference<const char> buffer,
                             int exponent,
                             double* result) {
         DiyFp input;
@@ -368,7 +368,7 @@ namespace double_conversion {
     //   buffer.length() + exponent <= kMaxDecimalPower + 1
     //   buffer.length() + exponent > kMinDecimalPower
     //   buffer.length() <= kMaxDecimalSignificantDigits
-    static double BignumStrtod(Vector<const char> buffer,
+    static double BignumStrtod(BufferReference<const char> buffer,
                                int exponent,
                                double guess) {
         if (guess == Double::Infinity()) {
@@ -413,9 +413,9 @@ namespace double_conversion {
     }
     
     
-    double Strtod(Vector<const char> buffer, int exponent) {
-        Vector<const char> left_trimmed = TrimLeadingZeros(buffer);
-        Vector<const char> trimmed = TrimTrailingZeros(left_trimmed);
+    double Strtod(BufferReference<const char> buffer, int exponent) {
+        BufferReference<const char> left_trimmed = TrimLeadingZeros(buffer);
+        BufferReference<const char> trimmed = TrimTrailingZeros(left_trimmed);
         exponent += left_trimmed.length() - trimmed.length();
         if (trimmed.length() == 0) return 0.0;
         if (trimmed.length() > kMaxSignificantDecimalDigits) {
@@ -423,7 +423,7 @@ namespace double_conversion {
             int significant_exponent;
             TrimToMaxSignificantDigits(trimmed, exponent,
                                        significant_buffer, &significant_exponent);
-            return Strtod(Vector<const char>(significant_buffer,
+            return Strtod(BufferReference<const char>(significant_buffer,
                                              kMaxSignificantDecimalDigits),
                           significant_exponent);
         }

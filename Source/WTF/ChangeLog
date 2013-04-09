@@ -1,3 +1,35 @@
+2013-04-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        wtf/dtoa/* uses a confusing name to reference its buffers
+        https://bugs.webkit.org/show_bug.cgi?id=109709
+
+        Reviewed by Darin Adler.
+
+        The data structure Vector in wtf/dtoa has nothing to do with a traditional
+        vector, is it just a pointer and the length of the pointed buffer.
+
+        Rename it to BufferReference to avoid mistakes.
+
+        * wtf/dtoa/bignum-dtoa.cc:
+        * wtf/dtoa/bignum-dtoa.h:
+        * wtf/dtoa/bignum.cc:
+        * wtf/dtoa/bignum.h:
+        (Bignum):
+        * wtf/dtoa/double-conversion.cc:
+        * wtf/dtoa/fast-dtoa.cc:
+        * wtf/dtoa/fast-dtoa.h:
+        * wtf/dtoa/fixed-dtoa.cc:
+        * wtf/dtoa/fixed-dtoa.h:
+        (double_conversion):
+        * wtf/dtoa/strtod.cc:
+        * wtf/dtoa/strtod.h:
+        (double_conversion):
+        * wtf/dtoa/utils.h:
+        (double_conversion):
+        (WTF::double_conversion::BufferReference::BufferReference):
+        (WTF::double_conversion::BufferReference::SubBufferReference):
+        (StringBuilder):
+
 2013-04-08  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] MathExtras: macros defined in math.h conflict with the real functions

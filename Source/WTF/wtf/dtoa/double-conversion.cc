@@ -360,7 +360,7 @@ namespace double_conversion {
                                                 bool* sign,
                                                 int* length,
                                                 int* point) {
-        Vector<char> vector(buffer, buffer_length);
+        BufferReference<char> vector(buffer, buffer_length);
         ASSERT(!Double(v).IsSpecial());
         ASSERT(mode == SHORTEST || requested_digits >= 0);
         
@@ -596,7 +596,7 @@ namespace double_conversion {
         ASSERT(buffer_pos < kBufferSize);
         buffer[buffer_pos] = '\0';
         
-        double converted = Strtod(Vector<const char>(buffer, buffer_pos), exponent);
+        double converted = Strtod(BufferReference<const char>(buffer, buffer_pos), exponent);
         *processed_characters_count = current - input;
         return sign? -converted: converted;
     }
