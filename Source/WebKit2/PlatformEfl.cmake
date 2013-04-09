@@ -27,6 +27,14 @@ list(APPEND WebKit2_SOURCES
     Shared/efl/ProcessExecutablePathEfl.cpp
     Shared/efl/WebEventFactory.cpp
 
+    Shared/linux/SeccompFilters/OpenSyscall.cpp
+    Shared/linux/SeccompFilters/SigactionSyscall.cpp
+    Shared/linux/SeccompFilters/SigprocmaskSyscall.cpp
+    Shared/linux/SeccompFilters/SeccompBroker.cpp
+    Shared/linux/SeccompFilters/SeccompFilters.cpp
+    Shared/linux/SeccompFilters/Syscall.cpp
+    Shared/linux/SeccompFilters/SyscallPolicy.cpp
+
     Shared/linux/WebMemorySamplerLinux.cpp
 
     Shared/soup/PlatformCertificateInfo.cpp
@@ -149,6 +157,7 @@ list(APPEND WebKit2_SOURCES
     WebProcess/WebPage/efl/WebInspectorEfl.cpp
     WebProcess/WebPage/efl/WebPageEfl.cpp
 
+    WebProcess/efl/SeccompFiltersWebProcessEfl.cpp
     WebProcess/efl/WebProcessMainEfl.cpp
 
     WebProcess/soup/WebProcessSoup.cpp
@@ -254,6 +263,21 @@ list(APPEND WebProcess_LIBRARIES
     ${OPENGL_LIBRARIES}
     ${SQLITE_LIBRARIES}
 )
+
+if (ENABLE_SECCOMP_FILTERS)
+    list(APPEND WebKit2_LIBRARIES
+        ${LIBSECCOMP_LIBRARIES}
+    )
+    list(APPEND WebKit2_INCLUDE_DIRECTORIES
+        ${LIBSECCOMP_INCLUDE_DIRS}
+    )
+
+    # If building with jhbuild, add the root build directory to the
+    # filesystem access policy.
+    if (IS_DIRECTORY ${CMAKE_SOURCE_DIR}/WebKitBuild/Dependencies)
+        add_definitions(-DSOURCE_DIR=\"${CMAKE_SOURCE_DIR}\")
+    endif ()
+endif ()
 
 if (ENABLE_ECORE_X)
     list(APPEND WebProcess_LIBRARIES

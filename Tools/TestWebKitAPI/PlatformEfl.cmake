@@ -89,6 +89,15 @@ set(test_webkit2_api_BINARIES
     efl/WKViewClientWebProcessCallbacks
 )
 
+# Seccomp filters is an internal API and its symbols
+# are not (and should not) be exposed by default. We
+# can only test it when building shared core.
+if (ENABLE_SECCOMP_FILTERS AND SHARED_CORE)
+    list(APPEND test_webkit2_api_BINARIES
+        SeccompFilters
+    )
+endif ()
+
 set(test_webkit2_api_fail_BINARIES
     CanHandleRequest
     DOMWindowExtensionBasic

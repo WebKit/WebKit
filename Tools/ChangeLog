@@ -1,3 +1,36 @@
+2013-04-09  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [WK2] Drop WebProcess capabilities on Linux using seccomp filters
+        https://bugs.webkit.org/show_bug.cgi?id=89875
+
+        Reviewed by Maciej Stachowiak.
+
+        Add unit tests to verify if the handling of the open, openat, creat syscall
+        is being done right. We check if the Read/Write/ReadAndWrite permissions
+        are respected, if the canonical path is being resolved and if
+        the permissions are falling back to the topmost parent directory with a
+        policy set when the directory being opened has no policy.
+
+        We also test if any attempt of blocking SIGSYS is silently ignored.
+        SIGSYS cannot be blocked because in it's handler is where we hook
+        syscalls to the broker process.
+
+        Also added libseccomp to EFL's jhbuild to make the life of developers
+        willing to help easier.
+
+        * Scripts/webkitperl/FeatureList.pm:
+        * TestWebKitAPI/PlatformEfl.cmake:
+        * TestWebKitAPI/Tests/WebKit2/SeccompFilters.cpp: Added.
+        (TestWebKitAPI):
+        (SeccompEnvironment):
+        (TestWebKitAPI::SeccompEnvironment::SetUp):
+        (TestWebKitAPI::SeccompEnvironment::TearDown):
+        (TestWebKitAPI::dummyHandler):
+        (TestWebKitAPI::TEST):
+        (TestWebKitAPI::stressTest):
+        * efl/jhbuild.modules:
+        * qmake/mkspecs/features/features.pri:
+
 2013-04-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION: Autocorrection doesn't work in DumpRenderTree

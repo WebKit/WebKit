@@ -887,6 +887,29 @@ win32 {
         Platform/CoreIPC/BinarySemaphore.cpp
 }
 
+enable?(SECCOMP_FILTERS) {
+    HEADERS += \
+        Shared/linux/SeccompFilters/OpenSyscall.h \
+        Shared/linux/SeccompFilters/SeccompBroker.h \
+        Shared/linux/SeccompFilters/SeccompFilters.h \
+        Shared/linux/SeccompFilters/SigactionSyscall.h \
+        Shared/linux/SeccompFilters/SigprocmaskSyscall.h \
+        Shared/linux/SeccompFilters/Syscall.h \
+        Shared/linux/SeccompFilters/SyscallPolicy.h \
+        WebProcess/qt/SeccompFiltersWebProcessQt.h
+
+    SOURCES += \
+        Shared/linux/SeccompFilters/OpenSyscall.cpp \
+        Shared/linux/SeccompFilters/SeccompBroker.cpp \
+        Shared/linux/SeccompFilters/SeccompFilters.cpp \
+        Shared/linux/SeccompFilters/SigactionSyscall.cpp \
+        Shared/linux/SeccompFilters/SigprocmaskSyscall.cpp \
+        Shared/linux/SeccompFilters/Syscall.cpp \
+        Shared/linux/SeccompFilters/SyscallPolicy.cpp \
+        WebProcess/qt/SeccompFiltersWebProcessQt.cpp
+
+    DEFINES += SOURCE_DIR=\\\"$${ROOT_WEBKIT_DIR}\\\"
+}
 
 enable?(INSPECTOR_SERVER) {
     HEADERS += \

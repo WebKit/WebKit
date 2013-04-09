@@ -29,6 +29,10 @@
 
 #define LIBSOUP_USE_UNSTABLE_REQUEST_API
 
+#if PLATFORM(EFL)
+#include "SeccompFiltersWebProcessEfl.h"
+#endif
+
 #include "WebCookieManager.h"
 #include "WebProcessCreationParameters.h"
 #include <WebCore/FileSystem.h>
@@ -165,6 +169,15 @@ static void languageChanged(void*)
 
 void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::MessageDecoder&)
 {
+#if ENABLE(SECCOMP_FILTERS)
+    {
+#if PLATFORM(EFL)
+        SeccompFiltersWebProcessEfl seccompFilters(parameters);
+#endif
+        seccompFilters.initialize();
+    }
+#endif
+
     if (!parameters.languages.isEmpty())
         setSoupSessionAcceptLanguage(parameters.languages);
 

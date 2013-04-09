@@ -1,3 +1,151 @@
+2013-04-09  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [WK2] Drop WebProcess capabilities on Linux using seccomp filters
+        https://bugs.webkit.org/show_bug.cgi?id=89875
+
+        Reviewed by Maciej Stachowiak.
+
+        Introduce the foundations of the SeccompFilter-based sandbox. The
+        hardening of the WebProcess (and potentially PluginProcess, etc)
+        works by a combination of the two things:
+
+        - Blocking syscalls that are not used, reducing the size of the attack
+        surface.
+        - Trapping sensitive syscalls and delegating the execution of these
+        syscalls to a separated trusted process subject to a set of policies.
+
+        The initial implementation traps the open()-family of syscalls on WebKit
+        EFL's and Qt's WebProcess, but it could be easily used by any Linux port,
+        since the code is suppose to be Linux-compliant. The list of syscalls handled
+        by the broker process should definitely grow as we mature the
+        implementation. Other syscalls needs to be handled to get this sandbox
+        fully functional, like unlink(), mkdir(), etc.
+
+        The broker process should be initialized as early as possible on the
+        sandboxed process main() function, because it only does a fork(), which
+        is cheap on Linux. That also aims to minimize the resident memory footprint
+        of the broker process.
+
+        Opening of files for upload and saving downloads is not supported yet,
+        since it should be handled to the UIProcess in a similar fashion as
+        the Mac port does.
+
+        * PlatformEfl.cmake:
+        * Shared/linux/SeccompFilters/OpenSyscall.cpp: Added.
+        (WebKit):
+        (WebKit::OpenSyscall::createFromOpenatContext):
+        (WebKit::OpenSyscall::createFromCreatContext):
+        (WebKit::OpenSyscall::OpenSyscall):
+        (WebKit::OpenSyscall::setResult):
+        (WebKit::OpenSyscall::execute):
+        (WebKit::OpenSyscall::encode):
+        (WebKit::OpenSyscall::decode):
+        (WebKit::OpenSyscallResult::OpenSyscallResult):
+        (WebKit::OpenSyscallResult::~OpenSyscallResult):
+        (WebKit::OpenSyscallResult::encode):
+        (WebKit::OpenSyscallResult::decode):
+        * Shared/linux/SeccompFilters/OpenSyscall.h: Added.
+        (CoreIPC):
+        (WebKit):
+        (OpenSyscall):
+        (WebKit::OpenSyscall::setPath):
+        (WebKit::OpenSyscall::setFlags):
+        (WebKit::OpenSyscall::setMode):
+        (OpenSyscallResult):
+        (WebKit::OpenSyscallResult::fd):
+        (WebKit::OpenSyscallResult::errorNumber):
+        * Shared/linux/SeccompFilters/SeccompBroker.cpp: Added.
+        (WebKit):
+        (SeccompBrokerClient):
+        (WebKit::sendMessage):
+        (WebKit::receiveMessage):
+        (WebKit::SIGSYSHandler):
+        (WebKit::registerSIGSYSHandler):
+        (WebKit::SeccompBrokerClient::shared):
+        (WebKit::SeccompBrokerClient::SeccompBrokerClient):
+        (WebKit::SeccompBrokerClient::~SeccompBrokerClient):
+        (WebKit::SeccompBrokerClient::dispatch):
+        (WebKit::SeccompBrokerClient::handleIfOpeningOnlineCPUCount):
+        (WebKit::SeccompBroker::launchProcess):
+        (WebKit::SeccompBroker::initialize):
+        (WebKit::SeccompBroker::runLoop):
+        * Shared/linux/SeccompFilters/SeccompBroker.h: Added.
+        (WebKit):
+        (SeccompBroker):
+        (WebKit::SeccompBroker::setSyscallPolicy):
+        (WebKit::SeccompBroker::SeccompBroker):
+        * Shared/linux/SeccompFilters/SeccompFilters.cpp: Added.
+        (WebKit):
+        (WebKit::SeccompFilters::SeccompFilters):
+        (WebKit::SeccompFilters::~SeccompFilters):
+        (WebKit::SeccompFilters::addRule):
+        (WebKit::SeccompFilters::initialize):
+        * Shared/linux/SeccompFilters/SeccompFilters.h: Added.
+        (WebKit):
+        (SeccompFilters):
+        (WebKit::SeccompFilters::context):
+        (WebKit::SeccompFilters::platformInitialize):
+        * Shared/linux/SeccompFilters/SigactionSyscall.cpp: Added.
+        (WebKit):
+        (WebKit::SigactionSyscall::createFromContext):
+        * Shared/linux/SeccompFilters/SigactionSyscall.h: Added.
+        (WebKit):
+        (SigactionSyscall):
+        * Shared/linux/SeccompFilters/SigprocmaskSyscall.cpp: Added.
+        (WebKit):
+        (WebKit::SigprocmaskSyscall::createFromContext):
+        * Shared/linux/SeccompFilters/SigprocmaskSyscall.h: Added.
+        (WebKit):
+        (SigprocmaskSyscall):
+        * Shared/linux/SeccompFilters/Syscall.cpp: Added.
+        (WebKit):
+        (WebKit::Syscall::createFromContext):
+        (WebKit::Syscall::createFromDecoder):
+        (WebKit::Syscall::Syscall):
+        (WebKit::SyscallResult::createFromDecoder):
+        (WebKit::SyscallResult::SyscallResult):
+        * Shared/linux/SeccompFilters/Syscall.h: Added.
+        (CoreIPC):
+        (WebKit):
+        (Syscall):
+        (WebKit::Syscall::~Syscall):
+        (WebKit::Syscall::type):
+        (WebKit::Syscall::setContext):
+        (WebKit::Syscall::context):
+        (SyscallResult):
+        (WebKit::SyscallResult::~SyscallResult):
+        (WebKit::SyscallResult::type):
+        * Shared/linux/SeccompFilters/SyscallPolicy.cpp: Added.
+        (WebKit):
+        (WebKit::removeTrailingSlash):
+        (WebKit::SyscallPolicy::hasPermissionForPath):
+        (WebKit::SyscallPolicy::addFilePermission):
+        (WebKit::SyscallPolicy::addDirectoryPermission):
+        (WebKit::SyscallPolicy::addDefaultWebProcessPolicy):
+        * Shared/linux/SeccompFilters/SyscallPolicy.h: Added.
+        (WebKit):
+        (SyscallPolicy):
+        * Target.pri:
+        * WebKit2.pri:
+        * WebProcess/efl/SeccompFiltersWebProcessEfl.cpp: Added.
+        (WebKit):
+        (WebKit::SeccompFiltersWebProcessEfl::SeccompFiltersWebProcessEfl):
+        (WebKit::SeccompFiltersWebProcessEfl::platformInitialize):
+        * WebProcess/efl/SeccompFiltersWebProcessEfl.h: Added.
+        (WebKit):
+        (SeccompFiltersWebProcessEfl):
+        * WebProcess/qt/SeccompFiltersWebProcessQt.cpp: Added.
+        (WebKit):
+        (WebKit::SeccompFiltersWebProcessQt::SeccompFiltersWebProcessQt):
+        (WebKit::SeccompFiltersWebProcessQt::platformInitialize):
+        * WebProcess/qt/SeccompFiltersWebProcessQt.h: Added.
+        (WebKit):
+        (SeccompFiltersWebProcessQt):
+        * WebProcess/qt/WebProcessQt.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        * WebProcess/soup/WebProcessSoup.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+
 2013-04-08  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [WK2][EFL] Mark not implemented methods in TextCheckerEfl.

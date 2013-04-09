@@ -29,6 +29,7 @@
 #include "InjectedBundle.h"
 #include "QtBuiltinBundle.h"
 #include "QtNetworkAccessManager.h"
+#include "SeccompFiltersWebProcessQt.h"
 #include "WKBundleAPICast.h"
 #include "WebProcessCreationParameters.h"
 
@@ -136,6 +137,13 @@ static void parentProcessDiedCallback(void*)
 
 void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters& parameters, CoreIPC::MessageDecoder&)
 {
+#if ENABLE(SECCOMP_FILTERS)
+    {
+        WebKit::SeccompFiltersWebProcessQt seccompFilters(parameters);
+        seccompFilters.initialize();
+    }
+#endif
+
     m_networkAccessManager = new QtNetworkAccessManager(this);
 
     if (!parameters.cookieStorageDirectory.isEmpty()) {
