@@ -1079,6 +1079,8 @@ void PluginView::performFrameLoadURLRequest(URLRequest* request)
         return;
     }
 
+    UserGestureIndicator gestureIndicator(request->allowPopups() ? DefinitelyProcessingNewUserGesture : PossiblyProcessingUserGesture);
+
     // First, try to find a target frame.
     Frame* targetFrame = frame->loader()->findFrameForNavigation(request->target());
     if (!targetFrame) {
