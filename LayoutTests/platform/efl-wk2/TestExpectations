@@ -418,10 +418,6 @@ webkit.org/b/102201 fast/dom/Window/open-window-min-size.html [ Failure ]
 
 # Regression(r142112): Several compositing tests started failing.
 webkit.org/b/109431 compositing/iframes/iframe-composited-scrolling.html [ Failure ]
-webkit.org/b/109431 compositing/layer-creation/fixed-position-in-view-dynamic.html [ Failure ]
-webkit.org/b/109431 compositing/layer-creation/fixed-position-out-of-view-dynamic.html [ Failure ]
-webkit.org/b/109431 compositing/layer-creation/fixed-position-out-of-view-scroll-reason.html [ Failure ]
-webkit.org/b/109431 compositing/layer-creation/no-compositing-for-fixed-position-under-transform.html [ Failure ]
 
 # New test introduced in r143073 that never passed on WK2 EFL.
 webkit.org/b/110054 compositing/geometry/limit-layer-bounds-fixed.html [ Failure ]

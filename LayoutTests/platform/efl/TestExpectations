@@ -1139,20 +1139,11 @@ Bug(EFL) http/tests/security/isolatedWorld/didClearWindowObject.html
 # EFL has accelerated compositing disabled
 webkit.org/b/79766 compositing/geometry/layer-due-to-layer-children-deep-switch.html [ Failure ]
 webkit.org/b/79766 compositing/geometry/layer-due-to-layer-children-switch.html [ Failure ]
-webkit.org/b/79766 compositing/geometry/limit-layer-bounds-clipping-ancestor.html [ Failure ]
-webkit.org/b/79766 compositing/geometry/limit-layer-bounds-fixed-positioned.html [ Failure ]
-webkit.org/b/79766 compositing/geometry/limit-layer-bounds-opacity-transition.html [ Failure ]
-webkit.org/b/79766 compositing/geometry/limit-layer-bounds-overflow-root.html [ Failure ]
-webkit.org/b/79766 compositing/geometry/limit-layer-bounds-positioned-transition.html [ Failure ]
-webkit.org/b/79766 compositing/geometry/limit-layer-bounds-positioned.html [ Failure ]
-webkit.org/b/79766 compositing/geometry/limit-layer-bounds-transformed-overflow.html [ Failure ]
-webkit.org/b/79766 compositing/geometry/limit-layer-bounds-transformed.html [ Failure ]
 webkit.org/b/79766 compositing/geometry/preserve-3d-switching.html [ Failure ]
 webkit.org/b/79766 compositing/iframes/iframe-size-from-zero.html [ Failure ]
 webkit.org/b/79766 compositing/iframes/iframe-size-to-zero.html [ Failure ]
 webkit.org/b/79766 compositing/iframes/iframe-src-change.html [ Failure ]
 webkit.org/b/79766 compositing/iframes/resizer.html [ Missing ]
-webkit.org/b/79766 compositing/layer-creation/scroll-partial-update.html [ Failure ]
 webkit.org/b/79766 compositing/layer-creation/spanOverlapsCanvas.html [ Failure ]
 webkit.org/b/79766 compositing/overflow/clipping-ancestor-with-accelerated-scrolling-ancestor.html [ Skip ]
 webkit.org/b/79766 compositing/overflow/nested-scrolling.html [ Skip ]
@@ -1819,7 +1810,6 @@ webkit.org/b/114150 fast/forms/datalist/update-range-with-datalist.html [ ImageO
 # Newly added tests in r144190 are failing.
 webkit.org/b/111172 compositing/overlap-blending/children-opacity-huge.html [ ImageOnlyFailure ]
 webkit.org/b/111172 compositing/overlap-blending/children-opacity-no-overlap.html [ ImageOnlyFailure ]
-webkit.org/b/111172 compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure ]
 
 # Select element popup is not shown.
 webkit.org/b/114154 fast/forms/select/popup-closes-on-blur.html [ Failure ]
