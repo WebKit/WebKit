@@ -56,7 +56,7 @@ struct PluginCreationParameters;
 
 class PluginProxy : public Plugin {
 public:
-    static PassRefPtr<PluginProxy> create(const String& pluginPath, PluginProcess::Type);
+    static PassRefPtr<PluginProxy> create(const String& pluginPath, PluginProcess::Type, bool isRestartedProcess);
     ~PluginProxy();
 
     uint64_t pluginInstanceID() const { return m_pluginInstanceID; }
@@ -68,7 +68,7 @@ public:
     bool isBeingAsynchronouslyInitialized() const { return m_waitingOnAsynchronousInitialization; }
 
 private:
-    explicit PluginProxy(const String& pluginPath, PluginProcess::Type);
+    explicit PluginProxy(const String& pluginPath, PluginProcess::Type, bool isRestartedProcess);
 
     // Plugin
     virtual bool initialize(const Parameters&);
@@ -218,6 +218,7 @@ private:
 #endif
 
     PluginProcess::Type m_processType;
+    bool m_isRestartedProcess;
 };
 
 } // namespace WebKit

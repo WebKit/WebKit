@@ -1,3 +1,46 @@
+2013-04-08  Dean Jackson  <dino@apple.com>
+
+        Don't create another plugin process for restarted plugins
+        https://bugs.webkit.org/show_bug.cgi?id=114233
+
+        Reviewed by Geoff Garen.
+
+        A snapshotting plugin starts in a separate process from
+        regular plugins. This can be a little confusing to users
+        because they might see two plugin processes. We can set
+        the minimum life and timeout on the snapshotting process
+        to much smaller values, since the process doesn't need
+        to live that long. This will reduce some potential
+        confusion. Also, since there is another plugin process
+        running real plugins, it should be paged in if it needs
+        to restart.
+
+        There was, however, a bug in the process management. A
+        restarted plugin received a special PluginProcess::Type,
+        so that it could cross fade into the page nicely. This
+        caused it to start a *third* plugin process. Instead
+        mark a restarted flag directly on the PluginProxy and
+        revert back to two process types.
+
+        * PluginProcess/PluginProcess.h: Remove TypeRestartedProcess.
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp: Add two new
+            timeout values for snapshotting processes.
+        (WebKit::PluginProcessProxy::didFinishLaunching): Chose which
+            of the timeout pairs to use.
+
+        * WebProcess/Plugins/Netscape/mac/PluginProxyMac.mm:
+        (WebKit::PluginProxy::pluginLayer): Don't look at the process type, instead
+            look at the process flag to see if we are restarted.
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::create): Copy the new flag into constructor.
+        (WebKit::PluginProxy::PluginProxy): Remember the flag.
+        * WebProcess/Plugins/PluginProxy.h: Add a new m_restartedProcess flag.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin): When we are creating the proxy, separate
+            the concept of snapshotting and restarting.
+
 2013-04-09  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] IconDatabase images should be decoded in the WebProcess

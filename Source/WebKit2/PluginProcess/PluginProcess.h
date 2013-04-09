@@ -44,8 +44,7 @@ public:
     enum Type {
         // Start with value one since default HashTraits<> disallows zero as key.
         TypeRegularProcess = 1,
-        TypeSnapshotProcess,
-        TypeRestartedProcess
+        TypeSnapshotProcess
     };
 
     static PluginProcess& shared();

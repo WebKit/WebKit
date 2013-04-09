@@ -48,7 +48,10 @@ using namespace WebCore;
 namespace WebKit {
 
 static const double minimumLifetime = 2 * 60;
+static const double snapshottingMinimumLifetime = 30;
+
 static const double shutdownTimeout = 1 * 60;
+static const double snapshottingShutdownTimeout = 15;
 
 PassRefPtr<PluginProcessProxy> PluginProcessProxy::create(PluginProcessManager* PluginProcessManager, const PluginModuleInfo& pluginInfo, PluginProcess::Type processType)
 {
@@ -200,8 +203,13 @@ void PluginProcessProxy::didFinishLaunching(ProcessLauncher*, CoreIPC::Connectio
     
     PluginProcessCreationParameters parameters;
     parameters.processType = m_processType;
-    parameters.minimumLifetime = minimumLifetime;
-    parameters.terminationTimeout = shutdownTimeout;
+    if (m_processType == PluginProcess::TypeSnapshotProcess) {
+        parameters.minimumLifetime = snapshottingMinimumLifetime;
+        parameters.terminationTimeout = snapshottingShutdownTimeout;
+    } else {
+        parameters.minimumLifetime = minimumLifetime;
+        parameters.terminationTimeout = shutdownTimeout;
+    }
     platformInitializePluginProcess(parameters);
 
     // Initialize the plug-in host process.

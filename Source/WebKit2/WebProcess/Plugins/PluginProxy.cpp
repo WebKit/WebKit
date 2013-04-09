@@ -56,12 +56,12 @@ static uint64_t generatePluginInstanceID()
     return ++uniquePluginInstanceID;
 }
 
-PassRefPtr<PluginProxy> PluginProxy::create(const String& pluginPath, PluginProcess::Type processType)
+PassRefPtr<PluginProxy> PluginProxy::create(const String& pluginPath, PluginProcess::Type processType, bool isRestartedProcess)
 {
-    return adoptRef(new PluginProxy(pluginPath, processType));
+    return adoptRef(new PluginProxy(pluginPath, processType, isRestartedProcess));
 }
 
-PluginProxy::PluginProxy(const String& pluginPath, PluginProcess::Type processType)
+PluginProxy::PluginProxy(const String& pluginPath, PluginProcess::Type processType, bool isRestartedProcess)
     : m_pluginPath(pluginPath)
     , m_pluginInstanceID(generatePluginInstanceID())
     , m_pluginBackingStoreContainsValidData(false)
@@ -71,6 +71,7 @@ PluginProxy::PluginProxy(const String& pluginPath, PluginProcess::Type processTy
     , m_remoteLayerClientID(0)
     , m_waitingOnAsynchronousInitialization(false)
     , m_processType(processType)
+    , m_isRestartedProcess(isRestartedProcess)
 {
 }
 

@@ -54,7 +54,7 @@ PlatformLayer* PluginProxy::pluginLayer()
         m_pluginLayer.adoptNS([[CALayer alloc] init]);
         [m_pluginLayer.get() setGeometryFlipped:YES];
 
-        if (m_processType == PluginProcess::TypeRestartedProcess) {
+        if (m_isRestartedProcess) {
             CABasicAnimation *fadeInAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
             fadeInAnimation.fromValue = [NSNumber numberWithFloat:0];
             fadeInAnimation.toValue = [NSNumber numberWithFloat:1];
