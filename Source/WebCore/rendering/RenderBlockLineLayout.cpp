@@ -2514,7 +2514,7 @@ public:
     TrailingObjects();
     void setTrailingWhitespace(RenderText*);
     void clear();
-    void appendBoxIfNeeded(RenderBox*);
+    void appendBoxIfNeeded(RenderBoxModelObject*);
 
     enum CollapseFirstSpaceOrNot { DoNotCollapseFirstSpace, CollapseFirstSpace };
 
@@ -2522,7 +2522,7 @@ public:
 
 private:
     RenderText* m_whitespace;
-    Vector<RenderBox*, 4> m_boxes;
+    Vector<RenderBoxModelObject*, 4> m_boxes;
 };
 
 TrailingObjects::TrailingObjects()
@@ -2542,7 +2542,7 @@ inline void TrailingObjects::clear()
     m_boxes.clear();
 }
 
-inline void TrailingObjects::appendBoxIfNeeded(RenderBox* box)
+inline void TrailingObjects::appendBoxIfNeeded(RenderBoxModelObject* box)
 {
     if (m_whitespace)
         m_boxes.append(box);
@@ -2813,6 +2813,8 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                     currentCharacterIsSpace = true;
                     currentCharacterIsWS = true;
                     ignoringSpaces = true;
+                } else {
+                    trailingObjects.appendBoxIfNeeded(flowBox);
                 }
             }
 
