@@ -345,14 +345,15 @@ const gchar* const* webkit_file_chooser_request_get_selected_files(WebKitFileCho
     if (request->priv->selectedFiles)
         return reinterpret_cast<gchar**>(request->priv->selectedFiles->pdata);
 
-    const Vector<String> selectedFileNames = request->priv->parameters->selectedFileNames();
-    size_t numOfFiles = selectedFileNames.size();
+    RefPtr<ImmutableArray> selectedFileNames = request->priv->parameters->selectedFileNames();
+    size_t numOfFiles = selectedFileNames->size();
     if (!numOfFiles)
         return 0;
 
     request->priv->selectedFiles = adoptGRef(g_ptr_array_new_with_free_func(g_free));
     for (size_t i = 0; i < numOfFiles; ++i) {
-        if (selectedFileNames[i].isEmpty())
+        WebString* webFileName = static_cast<WebString*>(selectedFileNames->at(i));
+        if (webFileName->isEmpty())
             continue;
         CString filename = fileSystemRepresentation(selectedFileNames[i]);
         g_ptr_array_add(request->priv->selectedFiles.get(), g_strdup(filename.data()));

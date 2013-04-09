@@ -45,6 +45,8 @@ WK_EXPORT WKArrayRef WKOpenPanelParametersCopyAcceptedMIMETypes(WKOpenPanelParam
 
 WK_EXPORT WKStringRef WKOpenPanelParametersCopyCapture(WKOpenPanelParametersRef parameters);
 
+WK_EXPORT WKArrayRef WKOpenPanelParametersCopySelectedFileNames(WKOpenPanelParametersRef parametersRef);
+
 #ifdef __cplusplus
 }
 #endif

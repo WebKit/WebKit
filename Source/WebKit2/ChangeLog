@@ -1,3 +1,31 @@
+2013-04-09  Michael Brüning  <michael.bruning@digia.com>
+
+        [WK2] Add C API to copy selected files from WebOpenPanelParameters.
+        https://bugs.webkit.org/show_bug.cgi?id=112339
+
+        Reviewed by Andreas Kling.
+
+        Replaces the existing WebOpenPanelParameters::selectedFileNames() method
+        to return a copy of the selected file names and exposes it through the
+        C API. This is done in order to reduce the direct use of WebKit2 internal
+        classes. The implementation is very similar to the one in 
+        WebOpenPanelParameters::acceptMIMETypes().
+
+        This also updates the GTK port, which is the other user of selectedFileNames.
+
+        * Shared/WebOpenPanelParameters.cpp:
+        (WebKit::WebOpenPanelParameters::selectedFileNames):
+        (WebKit):
+        * Shared/WebOpenPanelParameters.h:
+        (WebOpenPanelParameters):
+        * UIProcess/API/C/WKOpenPanelParameters.cpp:
+        (WKOpenPanelParametersCopySelectedFileNames):
+        * UIProcess/API/C/WKOpenPanelParameters.h:
+        * UIProcess/API/gtk/WebKitFileChooserRequest.cpp:
+        (webkit_file_chooser_request_get_selected_files):
+        * UIProcess/qt/QtWebPageUIClient.cpp:
+        (WebKit::QtWebPageUIClient::runOpenPanel):
+
 2013-04-09  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [WK2] Remove build warnings for unused parameters

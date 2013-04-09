@@ -56,3 +56,8 @@ WKStringRef WKOpenPanelParametersCopyCapture(WKOpenPanelParametersRef parameters
     return 0;
 #endif
 }
+
+WKArrayRef WKOpenPanelParametersCopySelectedFileNames(WKOpenPanelParametersRef parametersRef)
+{
+    return toAPI(toImpl(parametersRef)->selectedFileNames().leakRef());
+}

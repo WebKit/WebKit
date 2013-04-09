@@ -26,7 +26,7 @@
 #include "qquickwebview_p.h"
 #include "qquickwebview_p_p.h"
 #include "qwebpermissionrequest_p.h"
-#include <WKAPICast.h>
+#include <WKArray.h>
 #include <WKHitTestResult.h>
 #include <WKOpenPanelParameters.h>
 #include <WKOpenPanelResultListener.h>
@@ -136,11 +136,13 @@ WKStringRef QtWebPageUIClient::runJavaScriptPrompt(WKPageRef, WKStringRef messag
 
 void QtWebPageUIClient::runOpenPanel(WKPageRef, WKFrameRef, WKOpenPanelParametersRef parameters, WKOpenPanelResultListenerRef listener, const void* clientInfo)
 {
-    Vector<String> wkSelectedFileNames = toImpl(parameters)->selectedFileNames();
-
+    WKRetainPtr<WKArrayRef> wkSelectedFileNames = adoptWK(WKOpenPanelParametersCopySelectedFileNames(parameters));
     QStringList selectedFileNames;
-    for (size_t i = 0; i < wkSelectedFileNames.size(); ++i)
-        selectedFileNames += wkSelectedFileNames.at(i);
+    size_t selectedFilesSize = WKArrayGetSize(wkSelectedFileNames.get());
+    selectedFileNames.reserve(selectedFilesSize);
+
+    for (size_t i = 0; i < selectedFilesSize; ++i)
+        selectedFileNames += WKStringCopyQString(static_cast<WKStringRef>(WKArrayGetItemAtIndex(wkSelectedFileNames.get(), i)));
 
     FileChooserType allowMultipleFiles = WKOpenPanelParametersGetAllowsMultipleFiles(parameters) ? MultipleFilesSelection : SingleFileSelection;
     toQtWebPageUIClient(clientInfo)->runOpenPanel(listener, selectedFileNames, allowMultipleFiles);

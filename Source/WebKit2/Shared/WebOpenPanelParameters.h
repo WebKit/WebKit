@@ -43,7 +43,7 @@ public:
 
     bool allowMultipleFiles() const { return m_settings.allowsMultipleFiles; } 
     PassRefPtr<ImmutableArray> acceptMIMETypes() const;
-    Vector<String> selectedFileNames() const { return m_settings.selectedFiles; }
+    PassRefPtr<ImmutableArray> selectedFileNames() const;
 #if ENABLE(MEDIA_CAPTURE)
     String capture() const;
 #endif
