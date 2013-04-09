@@ -1,3 +1,16 @@
+2013-04-08  Alberto Garcia  <agarcia@igalia.com>
+
+        [BlackBerry] WebPage: fix build due to type mismatches
+        https://bugs.webkit.org/show_bug.cgi?id=114148
+
+        Reviewed by Darin Adler.
+
+        Add explicit conversions between LayoutUnit and int, and between
+        LayoutRect and IntRect.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::rectForNode):
+
 2013-04-08  Jeff Rogers  <jrogers@rim.com>
 
         [BlackBerry] Update BlackBerry JavaScript API

@@ -2736,15 +2736,15 @@ IntRect WebPagePrivate::rectForNode(Node* node)
         int xOffset = 0;
         int yOffset = 0;
         while (!renderBlock->isRoot()) {
-            xOffset += renderBlock->x();
-            yOffset += renderBlock->y();
+            xOffset += renderBlock->x().toInt();
+            yOffset += renderBlock->y().toInt();
             renderBlock = renderBlock->containingBlock();
         }
         const RenderText* renderText = toRenderText(renderer);
         IntRect linesBox = renderText->linesBoundingBox();
         blockRect = IntRect(xOffset + linesBox.x(), yOffset + linesBox.y(), linesBox.width(), linesBox.height());
     } else
-        blockRect = renderer->absoluteClippedOverflowRect();
+        blockRect = IntRect(renderer->absoluteClippedOverflowRect());
 
     if (renderer->isText()) {
         RenderBlock* rb = renderer->containingBlock();
@@ -2753,7 +2753,7 @@ IntRect WebPagePrivate::rectForNode(Node* node)
         int blockWidth = 0;
         int lineCount = rb->lineCount();
         for (int i = 0; i < lineCount; i++)
-            blockWidth = max(blockWidth, rb->availableLogicalWidthForLine(i, false));
+            blockWidth = max(blockWidth, rb->availableLogicalWidthForLine(i, false).toInt());
 
         blockRect.setWidth(blockWidth);
         blockRect.setX(blockRect.x() + rb->logicalLeftOffsetForLine(1, false));
