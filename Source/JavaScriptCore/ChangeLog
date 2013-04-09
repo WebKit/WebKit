@@ -1,3 +1,14 @@
+2013-04-09  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        LLInt conditional branch compilation fault on MIPS.
+        https://bugs.webkit.org/show_bug.cgi?id=114264
+
+        Reviewed by Filip Pizlo.
+
+        Fix conditional branch compilation in LLInt offlineasm.
+
+        * offlineasm/mips.rb:
+
 2013-04-08  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSObject::getOwnNonIndexPropertyNames calculates numCacheableSlots incorrectly

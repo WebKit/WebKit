@@ -290,14 +290,8 @@ def mipsLowerSimpleBranchOps(list)
                 comp = node.opcode[1] == ?b ? "sltub" : "sltu"
                 newList << Instruction.new(node.codeOrigin, comp, [tmp, node.operands[1], node.operands[0]], annotation)
                 newList << Instruction.new(node.codeOrigin, "bz", [tmp, MIPS_ZERO_REG, node.operands[2]])
-            when "btiz", "btpz", "btbz"
-                lowerMIPSCondBranch(newList, "bz", node)
-            when "btinz", "btpnz", "btbnz"
-                lowerMIPSCondBranch(newList, "bnz", node)
-            when "btio", "btpo", "btbo"
-                newList << node
-            when "btis", "btps", "btbs"
-                lowerMIPSCondBranch(newList, "bs", node)
+            when /^bt(i|p|b)/
+                lowerMIPSCondBranch(newList, "b" + $~.post_match + $1, node)
             else
                 newList << node
             end
@@ -442,10 +436,11 @@ def mipsLowerMisplacedAddresses(list)
                 newList << Instruction.new(node.codeOrigin,
                                            node.opcode,
                                            riscAsRegisters(newList, [], node.operands, "b"))
-            when "bz", "bnz", "bs", "bo"
+            when /^(bz|bnz|bs|bo)/
+                tl = $~.post_match == "" ? "i" : $~.post_match
                 newList << Instruction.new(node.codeOrigin,
                                            node.opcode,
-                                           riscAsRegisters(newList, [], node.operands, "i"))
+                                           riscAsRegisters(newList, [], node.operands, tl))
             else
                 newList << node
             end
@@ -861,13 +856,13 @@ class Instruction
         when "fd2ii"
             $asm.puts "mfc1 #{operands[1].mipsOperand}, #{operands[0].mipsSingleLo}"
             $asm.puts "mfc1 #{operands[2].mipsOperand}, #{operands[0].mipsSingleHi}"
-        when "bo"
+        when /^bo/
             $asm.puts "bgt #{operands[0].mipsOperand}, #{operands[1].mipsOperand}, #{operands[2].asmLabel}"
-        when "bs"
+        when /^bs/
             $asm.puts "blt #{operands[0].mipsOperand}, #{operands[1].mipsOperand}, #{operands[2].asmLabel}"
-        when "bz"
+        when /^bz/
             $asm.puts "beq #{operands[0].mipsOperand}, #{operands[1].mipsOperand}, #{operands[2].asmLabel}"
-        when "bnz"
+        when /^bnz/
             $asm.puts "bne #{operands[0].mipsOperand}, #{operands[1].mipsOperand}, #{operands[2].asmLabel}"
         when "leai", "leap"
             operands[0].mipsEmitLea(operands[1])
