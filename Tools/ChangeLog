@@ -1,3 +1,27 @@
+2013-04-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove Chromium builders from build.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=113990
+
+        Reviewed by Benjamin Poulain.
+
+        Removed.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (InstallGtkDependencies):
+        (RunUnitTests.start):
+        (RunWebKit2Tests.start):
+        (Factory.__init__):
+        (unitTestsSupported):
+        (TestFactory.__init__):
+        (BuildAndTestFactory.__init__):
+        (BuildAndPerfTestFactory.__init__):
+        (BuildAndPerfTestWebKit2Factory.__init__):
+        (DownloadAndPerfTestFactory.__init__):
+        (loadBuilderConfig):
+        * BuildSlaveSupport/build.webkit.org-config/templates/root.html:
+
 2013-04-08  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove HTML Notification
