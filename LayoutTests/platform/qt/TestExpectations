@@ -121,8 +121,6 @@ http/tests/security/cross-origin-worker-indexeddb-allowed.html
 http/tests/security/cross-origin-worker-indexeddb.html
 http/tests/security/no-indexeddb-from-sandbox.html
 
-inspector/timeline/timeline-animation-frame.html
-
 # ENABLE(WEB_ARCHIVE) is disabled.
 svg/custom/image-with-prefix-in-webarchive.svg
 http/tests/webarchive
@@ -1542,7 +1540,6 @@ fast/dom/isindex-002.html
 # QUrl::from/toACE seems to be stricter than what ICU does.
 fast/encoding/idn-security.html
 fast/encoding/xmacroman-encoding-test.html
-fast/events/autoscroll.html
 fast/events/content-changed-during-drop.html
 fast/events/js-keyboard-event-creation.html
 fast/events/keypress-insert-tab.html
