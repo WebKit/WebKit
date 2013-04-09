@@ -1,5 +1,12 @@
 2013-04-08  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix. Can't remove appendCustomBuildFlags.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (appendCustomBuildFlags):
+
+2013-04-08  Ryosuke Niwa  <rniwa@webkit.org>
+
         Remove Chromium builders from build.webkit.org
         https://bugs.webkit.org/show_bug.cgi?id=113990
 
