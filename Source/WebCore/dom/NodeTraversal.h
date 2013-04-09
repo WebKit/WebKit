@@ -34,16 +34,26 @@ namespace ElementTraversal {
 // First element child of the node.
 Element* firstWithin(const Node*);
 Element* firstWithin(const ContainerNode*);
+
 // Pre-order traversal skipping non-element nodes.
 Element* next(const Node*);
 Element* next(const Node*, const Node* stayWithin);
 Element* next(const ContainerNode*);
 Element* next(const ContainerNode*, const Node* stayWithin);
+
 // Like next, but skips children.
 Element* nextSkippingChildren(const Node*);
 Element* nextSkippingChildren(const Node*, const Node* stayWithin);
 Element* nextSkippingChildren(const ContainerNode*);
 Element* nextSkippingChildren(const ContainerNode*, const Node* stayWithin);
+
+// Pre-order traversal including the pseudo-elements.
+Element* previousIncludingPseudo(const Node*, const Node* = 0);
+Element* nextIncludingPseudo(const Node*, const Node* = 0);
+Element* nextIncludingPseudoSkippingChildren(const Node*, const Node* = 0);
+
+// Utility function to traverse only the element and pseudo-element siblings of a node.
+Element* pseudoAwarePreviousSibling(const Node*);
 
 }
 
@@ -76,6 +86,11 @@ Node* nextPostOrder(const Node*, const Node* stayWithin = 0);
 // Like previous/previousSkippingChildren, but visits parents before their children.
 Node* previousPostOrder(const Node*, const Node* stayWithin = 0);
 Node* previousSkippingChildrenPostOrder(const Node*, const Node* stayWithin = 0);
+
+// Pre-order traversal including the pseudo-elements.
+Node* previousIncludingPseudo(const Node*, const Node* = 0);
+Node* nextIncludingPseudo(const Node*, const Node* = 0);
+Node* nextIncludingPseudoSkippingChildren(const Node*, const Node* = 0);
 
 }
 
@@ -135,6 +150,39 @@ inline Element* traverseNextElementSkippingChildrenTemplate(NodeType* current, c
 }
 inline Element* nextSkippingChildren(const ContainerNode* current, const Node* stayWithin) { return traverseNextElementSkippingChildrenTemplate(current, stayWithin); }
 inline Element* nextSkippingChildren(const Node* current, const Node* stayWithin) { return traverseNextElementSkippingChildrenTemplate(current, stayWithin); }
+
+inline Element* previousIncludingPseudo(const Node* current, const Node* stayWithin)
+{
+    Node* node = NodeTraversal::previousIncludingPseudo(current, stayWithin);
+    while (node && !node->isElementNode())
+        node = NodeTraversal::previousIncludingPseudo(node, stayWithin);
+    return toElement(node);
+}
+
+inline Element* nextIncludingPseudo(const Node* current, const Node* stayWithin)
+{
+    Node* node = NodeTraversal::nextIncludingPseudo(current, stayWithin);
+    while (node && !node->isElementNode())
+        node = NodeTraversal::nextIncludingPseudo(node, stayWithin);
+    return toElement(node);
+}
+
+inline Element* nextIncludingPseudoSkippingChildren(const Node* current, const Node* stayWithin)
+{
+    Node* node = NodeTraversal::nextIncludingPseudoSkippingChildren(current, stayWithin);
+    while (node && !node->isElementNode())
+        node = NodeTraversal::nextIncludingPseudoSkippingChildren(node, stayWithin);
+    return toElement(node);
+}
+
+inline Element* pseudoAwarePreviousSibling(const Node* current)
+{
+    Node* node = current->pseudoAwarePreviousSibling();
+    while (node && !node->isElementNode())
+        node = node->pseudoAwarePreviousSibling();
+    return toElement(node);
+}
+
 }
 
 namespace NodeTraversal {
