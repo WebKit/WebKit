@@ -42,6 +42,7 @@ public:
     virtual ~ArgumentDecoder();
 
     uint64_t destinationID() const { return m_destinationID; }
+    size_t length() const { return m_bufferEnd - m_buffer; }
 
     bool isInvalid() const { return m_bufferPos > m_bufferEnd; }
     void markInvalid() { m_bufferPos = m_bufferEnd + 1; }

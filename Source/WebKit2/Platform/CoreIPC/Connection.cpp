@@ -30,6 +30,7 @@
 #include <WebCore/RunLoop.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/HashSet.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 
@@ -619,6 +620,16 @@ void Connection::processIncomingMessage(PassOwnPtr<MessageDecoder> incomingMessa
     }
 
     if (!m_workQueueMessageReceivers.isValidKey(message->messageReceiverName())) {
+        if (message->messageReceiverName().isEmpty() && message->messageName().isEmpty()) {
+            // Something went wrong when decoding the message. Encode the message length so we can figure out if this
+            // happens for certain message lengths.
+            CString messageReceiverName = "<unknown message>";
+            CString messageName = String::format("<message length: %zu bytes>", incomingMessage->length()).utf8();
+
+            m_clientRunLoop->dispatch(bind(&Connection::dispatchDidReceiveInvalidMessage, this, messageReceiverName, messageName));
+            return;
+        }
+
         m_clientRunLoop->dispatch(bind(&Connection::dispatchDidReceiveInvalidMessage, this, message->messageReceiverName().toString(), message->messageName().toString()));
         return;
     }

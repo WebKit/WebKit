@@ -1,3 +1,16 @@
+2013-04-09  Anders Carlsson  <andersca@apple.com>
+
+        If we fail to decode a message name, pass the message length as the name
+        https://bugs.webkit.org/show_bug.cgi?id=114305
+        <rdar://problem/13605703>
+
+        Reviewed by Sam Weinig.
+
+        * Platform/CoreIPC/ArgumentDecoder.h:
+        (CoreIPC::ArgumentDecoder::length):
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::processIncomingMessage):
+
 2013-04-08  Dean Jackson  <dino@apple.com>
 
         Don't create another plugin process for restarted plugins
