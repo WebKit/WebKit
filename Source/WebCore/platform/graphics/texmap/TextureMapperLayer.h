@@ -126,7 +126,7 @@ private:
     void computeTransformsRecursive();
 
     static int compareGraphicsLayersZValue(const void* a, const void* b);
-    static void sortByZOrder(Vector<TextureMapperLayer* >& array, int first, int last);
+    static void sortByZOrder(Vector<TextureMapperLayer* >& array);
 
     PassRefPtr<BitmapTexture> texture() { return m_backingStore ? m_backingStore->texture() : 0; }
     FloatPoint adjustedPosition() const { return m_state.pos + m_scrollPositionDelta - m_userScrollOffset; }
@@ -136,7 +136,11 @@ private:
     void removeFromParent();
     void removeAllChildren();
 
-    void computeOverlapRegions(Region& overlapRegion, Region& nonOverlapRegion, bool alwaysResolveSelfOverlap = true);
+    enum ResolveSelfOverlapMode {
+        ResolveSelfOverlapAlways = 0,
+        ResolveSelfOverlapIfNeeded
+    };
+    void computeOverlapRegions(Region& overlapRegion, Region& nonOverlapRegion, ResolveSelfOverlapMode);
 
     void paintRecursive(const TextureMapperPaintOptions&);
     void paintUsingOverlapRegions(const TextureMapperPaintOptions&);
