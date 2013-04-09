@@ -1,3 +1,13 @@
+2013-03-31  Martin Robinson  <mrobinson@igalia.com>
+
+        Bug 110293 uses read -d which is a non-portable bashism
+        https://bugs.webkit.org/show_bug.cgi?id=113349
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Source/autotools/SetupWebKitFeatures.m4: Pass the default feature set to the
+        feature script in a more portable way.
+
 2013-04-08  Jeff Rogers  <jrogers@rim.com>
 
         [BlackBerry] Update BlackBerry JavaScript API
