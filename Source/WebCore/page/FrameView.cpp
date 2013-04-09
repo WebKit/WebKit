@@ -3920,6 +3920,12 @@ void FrameView::setTracksRepaints(bool trackRepaints)
     if (trackRepaints == m_isTrackingRepaints)
         return;
 
+    // Force layout to flush out any pending repaints.
+    if (trackRepaints) {
+        if (frame() && frame()->document())
+            frame()->document()->updateLayout();
+    }
+
 #if USE(ACCELERATED_COMPOSITING)
     for (Frame* frame = m_frame->tree()->top(); frame; frame = frame->tree()->traverseNext()) {
         if (RenderView* renderView = frame->contentRenderer())
@@ -3942,6 +3948,9 @@ void FrameView::resetTrackedRepaints()
 
 String FrameView::trackedRepaintRectsAsText() const
 {
+    if (frame() && frame()->document())
+        frame()->document()->updateLayout();
+
     TextStream ts;
     if (!m_trackedRepaintRects.isEmpty()) {
         ts << "(repaint rects\n";
