@@ -1342,8 +1342,9 @@ webkit.org/b/98257 fast/canvas/webgl/oes-element-index-uint.html [ Failure Pass 
 # Resource Timing is not enable yet, skip it.
 webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing [ Skip ]
 
-# Can't hide scrollbars in WK1
+# Flacky on Mountain Lion Release, fails everywhere else.
 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
+webkit.org/b/107356 [ MountainLion Release ] fast/css/sticky/sticky-top-zoomed.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/100846 inspector-protocol/debugger-pause-dedicated-worker.html [ Skip ]
 webkit.org/b/100846 inspector-protocol/debugger-terminate-dedicated-worker-while-paused.html [ Skip ]
