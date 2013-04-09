@@ -91,8 +91,8 @@ Extensions3DOpenGLCommon::Extensions3DOpenGLCommon(GraphicsContext3D* context)
         systemSupportsMultisampling = version >= 0x1072;
 #endif // SNOW_LEOPARD and LION
 
-    if (m_isNVIDIA || (m_isAMD && systemSupportsMultisampling))
-        m_maySupportMultisampling = true;
+    if (m_isAMD && !systemSupportsMultisampling)
+        m_maySupportMultisampling = false;
 #endif
 }
 
