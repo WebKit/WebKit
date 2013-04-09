@@ -168,15 +168,17 @@ DragImageRef createDragImageFromImage(Image* img, RespectImageOrientationEnum)
         hbmp = 0;
     }
 
-    cairo_t* cr = drawContext->cr();
-    cairo_set_source_rgb(cr, 1.0, 0.0, 1.0);
-    cairo_fill_preserve(cr);
+    { // This block is required due to the msvc compiler error C2362.
+        cairo_t* cr = drawContext->cr();
+        cairo_set_source_rgb(cr, 1.0, 0.0, 1.0);
+        cairo_fill_preserve(cr);
 
-    RefPtr<cairo_surface_t> surface = img->nativeImageForCurrentFrame();
-    if (surface) {
-        // Draw the image.
-        cairo_set_source_surface(cr, surface.get(), 0.0, 0.0);
-        cairo_paint(cr);
+        RefPtr<cairo_surface_t> surface = img->nativeImageForCurrentFrame();
+        if (surface) {
+            // Draw the image.
+            cairo_set_source_surface(cr, surface.get(), 0.0, 0.0);
+            cairo_paint(cr);
+        }
     }
 
     deallocContext(drawContext);
