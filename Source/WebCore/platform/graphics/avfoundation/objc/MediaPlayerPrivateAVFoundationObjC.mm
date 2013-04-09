@@ -466,7 +466,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
 
     // We enabled automatic media selection because we want alternate audio tracks to be enabled/disabled automatically,
     // but set the selected legible track to nil so text tracks will not be automatically configured.
-    [m_avPlayerItem.get() selectMediaOption:nil inMediaSelectionGroup:[m_avAsset.get() mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicLegible]];
+    [m_avPlayerItem.get() selectMediaOption:nil inMediaSelectionGroup:safeMediaSelectionGroupForLegibleMedia()];
 
     [m_legibleOutput.get() setDelegate:m_objcObserver.get() queue:dispatch_get_main_queue()];
     [m_legibleOutput.get() setAdvanceIntervalForDelegateInvocation:legibleOutputAdvanceInterval];
@@ -985,7 +985,7 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
 
 #if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
     if (!hasCaptions && m_legibleOutput) {
-        AVMediaSelectionGroupType *legibleGroup = [m_avAsset.get() mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicLegible];
+        AVMediaSelectionGroupType *legibleGroup = safeMediaSelectionGroupForLegibleMedia();
         hasCaptions = [[AVMediaSelectionGroup playableMediaSelectionOptionsFromArray:[legibleGroup options]] count];
     }
     if (hasCaptions)
@@ -1296,9 +1296,20 @@ void MediaPlayerPrivateAVFoundationObjC::clearTextTracks()
     m_textTracks.clear();
 }
 
+AVMediaSelectionGroupType* MediaPlayerPrivateAVFoundationObjC::safeMediaSelectionGroupForLegibleMedia()
+{
+    if (!m_avAsset)
+        return nil;
+
+    if ([m_avAsset.get() statusOfValueForKey:@"availableMediaCharacteristicsWithMediaSelectionOptions" error:NULL] != AVKeyValueStatusLoaded)
+        return nil;
+
+    return [m_avAsset.get() mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicLegible];
+}
+
 void MediaPlayerPrivateAVFoundationObjC::processTextTracks()
 {
-    AVMediaSelectionGroupType *legibleGroup = [m_avAsset.get() mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicLegible];
+    AVMediaSelectionGroupType *legibleGroup = safeMediaSelectionGroupForLegibleMedia();
     if (!legibleGroup) {
         LOG(Media, "MediaPlayerPrivateAVFoundationObjC::processTextTracks(%p) - nil mediaSelectionGroup", this);
         return;
@@ -1368,7 +1379,7 @@ void MediaPlayerPrivateAVFoundationObjC::setCurrentTrack(InbandTextTrackPrivateA
 
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setCurrentTrack(%p) - selecting media option %p, language = %s", this, mediaSelectionOption, [[[mediaSelectionOption locale] localeIdentifier] UTF8String]);
 
-    [m_avPlayerItem.get() selectMediaOption:mediaSelectionOption inMediaSelectionGroup:[m_avAsset.get() mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicLegible]];
+    [m_avPlayerItem.get() selectMediaOption:mediaSelectionOption inMediaSelectionGroup:safeMediaSelectionGroupForLegibleMedia()];
     m_currentTrack = trackPrivate;
 }
 

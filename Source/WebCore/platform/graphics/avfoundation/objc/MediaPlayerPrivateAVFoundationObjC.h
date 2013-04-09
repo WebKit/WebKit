@@ -32,6 +32,7 @@
 #include <wtf/HashMap.h>
 
 OBJC_CLASS AVURLAsset;
+OBJC_CLASS AVMediaSelectionGroup;
 OBJC_CLASS AVPlayer;
 OBJC_CLASS AVPlayerItem;
 OBJC_CLASS AVPlayerItemLegibleOutput;
@@ -166,6 +167,7 @@ private:
     virtual InbandTextTrackPrivateAVF* currentTrack() OVERRIDE;
     void processTextTracks();
     void clearTextTracks();
+    AVMediaSelectionGroup* safeMediaSelectionGroupForLegibleMedia();
 #endif
 
     RetainPtr<AVURLAsset> m_avAsset;
