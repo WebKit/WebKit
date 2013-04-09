@@ -36,6 +36,9 @@ class Sheriff(object):
         self._tool = tool
         self._sheriffbot = sheriffbot
 
+    def name(self):
+        return self._sheriffbot.name
+
     def responsible_nicknames_from_commit_info(self, commit_info):
         nestedList = [party.irc_nicknames for party in commit_info.responsible_parties() if party.irc_nicknames]
         return reduce(lambda list, childList: list + childList, nestedList)

@@ -1,3 +1,21 @@
+2013-04-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        webkitbot refers to sheriffbot in help
+        https://bugs.webkit.org/show_bug.cgi?id=114307
+
+        Reviewed by Benjamin Poulain.
+
+        Fixed the bug by proxying the IRC nickname of "sheriffbot" via Sheriff object.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (Help):
+        (Help.execute):
+        (RollChromiumDEPS.execute):
+        * Scripts/webkitpy/tool/bot/ircbot_unittest.py:
+        (IRCBotTest.test_help):
+        * Scripts/webkitpy/tool/bot/sheriff.py:
+        (Sheriff.name):
+
 2013-04-06  Roger Fong  <roger_fong@apple.com>
 
         Kill old processes between runs on WinEWS bots.

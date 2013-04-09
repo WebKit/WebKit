@@ -90,7 +90,7 @@ class CreateBug(IRCCommand):
 
 class Help(IRCCommand):
     usage_string = "help [COMMAND]"
-    help_string = "Provides help on individual sheriffbot commands."
+    help_string = "Provides help on my individual commands."
 
     def execute(self, nick, args, tool, sheriff):
         if args:
@@ -99,7 +99,7 @@ class Help(IRCCommand):
                     self._post_command_help(nick, tool, commands[command_name])
         else:
             tool.irc().post("%s: Available commands: %s" % (nick, ", ".join(sorted(visible_commands.keys()))))
-            tool.irc().post('%s: Type "sheriffbot: help COMMAND" for help on individual commands.' % nick)
+            tool.irc().post('%s: Type "%s: help COMMAND" for help on my individual commands.' % (nick, sheriff.name()))
 
     def _post_command_help(self, nick, tool, command):
         tool.irc().post(command.usage(nick))
@@ -153,7 +153,7 @@ class RollChromiumDEPS(IRCCommand):
 
         roll_target = "r%s" % revision if revision.isdigit() else "last-known good revision"
         tool.irc().post("%s: Rolling Chromium DEPS to %s" % (nick, roll_target))
-        changelog_message = "Unreviewed.  Rolled Chromium DEPS to %s.  Requested by %s via sheriffbot.\n\n" % (roll_target, self._expand_irc_nickname(nick))
+        changelog_message = "Unreviewed.  Rolled Chromium DEPS to %s.  Requested by %s via %s.\n\n" % (roll_target, self._expand_irc_nickname(nick), sheriff.name())
 
         try:
             bug_id = sheriff.post_chromium_deps_roll(revision, roll_target, changelog_message)
