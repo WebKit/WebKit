@@ -1,6 +1,7 @@
 <html>
 <head>
 <script src=../../../../editing/editing.js language="javascript" type="text/javascript"></script>
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
 <script>
 
 function editingTest() {
@@ -21,6 +22,19 @@ function editingTest() {
     typeCharacterCommand('e');
     typeCharacterCommand(' ');
     execDeleteCommand();
+
+    if (window.testRunner) {
+        testRunner.dumpAsText(true);
+        textNode = edit.firstChild;
+        shouldBe("markerRange = internals.markerRangeForNode(textNode, 'replacement', 0); markerRange.startContainer", "textNode");
+        shouldBe("markerRange.toString()", "'message'");
+        shouldBe("markerRange.endContainer", "textNode");
+        shouldBe("markerRange.startOffset", "textNode.textContent.indexOf(markerRange.toString())");
+        shouldBe("markerRange.endOffset", "markerRange.startOffset + markerRange.toString().length");
+        shouldBeNull("internals.markerRangeForNode(textNode, 'replacement', 1)");
+        shouldBeNull("internals.markerRangeForNode(textNode, 'spelling', 0)");
+        shouldBeNull("internals.markerRangeForNode(textNode, 'autocorrected', 0)");
+    }
 }
 
 </script>
@@ -37,5 +51,6 @@ remove all files in ~/Library/Spelling.</p>
 <script language="javascript" type="text/javascript">
 runEditingTest();
 </script>
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
 </body>
 </html>
