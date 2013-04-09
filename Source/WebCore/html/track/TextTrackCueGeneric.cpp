@@ -146,9 +146,9 @@ void TextTrackCueGeneric::setFontSize(int fontSize, const IntSize& videoSize, bo
     double size = videoSize.height() * baseFontSizeRelativeToVideoHeight() / 100;
     if (fontSizeMultiplier())
         size *= fontSizeMultiplier() / 100;
-    element()->setInlineStyleProperty(CSSPropertyFontSize, String::number(lrintf(size)) + "px");
+    element()->setInlineStyleProperty(CSSPropertyFontSize, String::number(lround(size)) + "px");
 
-    LOG(Media, "TextTrackCueGeneric::setFontSize - setting cue font size to %li", lrintf(size));
+    LOG(Media, "TextTrackCueGeneric::setFontSize - setting cue font size to %li", lround(size));
 }
     
 bool TextTrackCueGeneric::operator==(const TextTrackCue& cue) const
