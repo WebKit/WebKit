@@ -1,3 +1,17 @@
+2013-04-09  Ed Bartosh  <bartosh@gmail.com>
+
+        [EFL] --minimal build fails with error: `setSeamlessIFramesEnabled' is not a member of `WebCore::RuntimeEnabledFeatures'
+        https://bugs.webkit.org/show_bug.cgi?id=113951
+
+        Reviewed by Laszlo Gombos.
+
+        Wrapped code related to iframe seamless into #if ENABLE(IFRAME_SEAMLESS)
+
+        * WebCoreSupport/DumpRenderTreeSupportEfl.cpp:
+        (DumpRenderTreeSupportEfl::setSeamlessIFramesEnabled):
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+
 2013-04-08  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] rendering was broken when scrolled ewk_view_single

@@ -313,7 +313,11 @@ void DumpRenderTreeSupportEfl::setCSSRegionsEnabled(const Evas_Object* ewkView, 
 
 void DumpRenderTreeSupportEfl::setSeamlessIFramesEnabled(bool enabled)
 {
+#if ENABLE(IFRAME_SEAMLESS)
     WebCore::RuntimeEnabledFeatures::setSeamlessIFramesEnabled(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
 }
 
 bool DumpRenderTreeSupportEfl::isCommandEnabled(const Evas_Object* ewkView, const char* name)
