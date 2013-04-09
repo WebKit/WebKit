@@ -93,16 +93,18 @@ HTMLPlugInImageElement::~HTMLPlugInImageElement()
 
 void HTMLPlugInImageElement::setDisplayState(DisplayState state)
 {
-    HTMLPlugInElement::setDisplayState(state);
-    if (displayState() == DisplayingSnapshot)
-        m_swapRendererTimer.startOneShot(0);
-
 #if PLATFORM(MAC)
-    if (displayState() == RestartingWithPendingMouseClick || displayState() == Restarting) {
+    if (state == RestartingWithPendingMouseClick || state == Restarting) {
         m_restartedPlugin = true;
-        m_removeSnapshotTimer.startOneShot(removeSnapshotTimerDelay);
+        if (displayState() == DisplayingSnapshot)
+            m_removeSnapshotTimer.startOneShot(removeSnapshotTimerDelay);
     }
 #endif
+
+    HTMLPlugInElement::setDisplayState(state);
+
+    if (state == DisplayingSnapshot)
+        m_swapRendererTimer.startOneShot(0);
 }
 
 RenderEmbeddedObject* HTMLPlugInImageElement::renderEmbeddedObject() const
@@ -415,7 +417,8 @@ void HTMLPlugInImageElement::removeSnapshotTimerFired(Timer<HTMLPlugInImageEleme
 {
     m_snapshotImage = nullptr;
     m_restartedPlugin = false;
-    renderer()->repaint();
+    if (renderer())
+        renderer()->repaint();
 }
 
 static void addPlugInsFromNodeListMatchingPlugInOrigin(HTMLPlugInImageElementList& plugInList, PassRefPtr<NodeList> collection, const String& plugInOrigin, const String& mimeType)
