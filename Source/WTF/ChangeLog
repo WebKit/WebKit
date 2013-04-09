@@ -1,3 +1,15 @@
+2013-04-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove WTF.gyp/WTF.gypi
+        https://bugs.webkit.org/show_bug.cgi?id=114237
+
+        Reviewed by Maciej Stachowiak.
+
+        * WTF.gyp: Removed.
+        * WTF.gyp/.gitignore: Removed.
+        * WTF.gyp/WTF.gyp: Removed.
+        * WTF.gypi: Removed.
+
 2013-04-08  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove HTML Notification
