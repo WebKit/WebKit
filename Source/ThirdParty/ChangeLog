@@ -1,3 +1,45 @@
+2013-04-09  Benjamin Poulain  <bpoulain@apple.com>
+
+        Remove the WebKit copy of GLU and the file using it
+        https://bugs.webkit.org/show_bug.cgi?id=114249
+
+        Reviewed by Darin Adler.
+
+        * glu/.gitignore: Removed.
+        * glu/LICENSE.txt: Removed.
+        * glu/README.webkit: Removed.
+        * glu/glu.gyp: Removed.
+        * glu/gluos.h: Removed.
+        * glu/internal_glu.h: Removed.
+        * glu/libtess/GNUmakefile: Removed.
+        * glu/libtess/Imakefile: Removed.
+        * glu/libtess/README: Removed.
+        * glu/libtess/alg-outline: Removed.
+        * glu/libtess/dict-list.h: Removed.
+        * glu/libtess/dict.c: Removed.
+        * glu/libtess/dict.h: Removed.
+        * glu/libtess/geom.c: Removed.
+        * glu/libtess/geom.h: Removed.
+        * glu/libtess/memalloc.c: Removed.
+        * glu/libtess/memalloc.h: Removed.
+        * glu/libtess/mesh.c: Removed.
+        * glu/libtess/mesh.h: Removed.
+        * glu/libtess/normal.c: Removed.
+        * glu/libtess/normal.h: Removed.
+        * glu/libtess/priorityq-heap.c: Removed.
+        * glu/libtess/priorityq-heap.h: Removed.
+        * glu/libtess/priorityq-sort.h: Removed.
+        * glu/libtess/priorityq.c: Removed.
+        * glu/libtess/priorityq.h: Removed.
+        * glu/libtess/render.c: Removed.
+        * glu/libtess/render.h: Removed.
+        * glu/libtess/sweep.c: Removed.
+        * glu/libtess/sweep.h: Removed.
+        * glu/libtess/tess.c: Removed.
+        * glu/libtess/tess.h: Removed.
+        * glu/libtess/tessmono.c: Removed.
+        * glu/libtess/tessmono.h: Removed.
+
 2013-04-08  Benjamin Poulain  <benjamin@webkit.org>
 
         Remove gyp from ThirdParty
