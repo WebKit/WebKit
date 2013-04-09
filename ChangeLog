@@ -1,3 +1,10 @@
+2013-04-09  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix GTK+ 32 bit build.
+
+        * Source/autotools/symbols.filter: Add some symbols that are
+        mangled differently in 32 bits due to size_t.
+
 2013-04-09  Patrick Gansterer  <paroga@webkit.org>
 
         Do not set CMAKE_BUILD_TYPE if it is not defined
