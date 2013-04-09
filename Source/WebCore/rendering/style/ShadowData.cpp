@@ -30,7 +30,7 @@ namespace WebCore {
 
 ShadowData::ShadowData(const ShadowData& o)
     : m_location(o.m_location)
-    , m_blur(o.m_blur)
+    , m_radius(o.m_radius)
     , m_spread(o.m_spread)
     , m_color(o.m_color)
     , m_style(o.m_style)
@@ -46,7 +46,7 @@ bool ShadowData::operator==(const ShadowData& o) const
         return false;
     
     return m_location == o.m_location
-        && m_blur == o.m_blur
+        && m_radius == o.m_radius
         && m_spread == o.m_spread
         && m_style == o.m_style
         && m_color == o.m_color
@@ -56,12 +56,12 @@ bool ShadowData::operator==(const ShadowData& o) const
 static inline void calculateShadowExtent(const ShadowData* shadow, int additionalOutlineSize, int& shadowLeft, int& shadowRight, int& shadowTop, int& shadowBottom)
 {
     do {
-        int blurAndSpread = shadow->blur() + shadow->spread() + additionalOutlineSize;
+        int extentAndSpread = shadow->paintingExtent() + shadow->spread() + additionalOutlineSize;
         if (shadow->style() == Normal) {
-            shadowLeft = min(shadow->x() - blurAndSpread, shadowLeft);
-            shadowRight = max(shadow->x() + blurAndSpread, shadowRight);
-            shadowTop = min(shadow->y() - blurAndSpread, shadowTop);
-            shadowBottom = max(shadow->y() + blurAndSpread, shadowBottom);
+            shadowLeft = min(shadow->x() - extentAndSpread, shadowLeft);
+            shadowRight = max(shadow->x() + extentAndSpread, shadowRight);
+            shadowTop = min(shadow->y() - extentAndSpread, shadowTop);
+            shadowBottom = max(shadow->y() + extentAndSpread, shadowBottom);
         }
 
         shadow = shadow->next();

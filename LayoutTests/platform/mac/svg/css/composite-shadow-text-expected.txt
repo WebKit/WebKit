@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
       RenderSVGResourcePattern {pattern} [id="pattern"] [patternUnits=userSpaceOnUse] [patternContentUnits=userSpaceOnUse]
         RenderSVGRect {rect} at (0,0) size 10x10 [fill={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=10.00] [height=10.00]
         RenderSVGRect {rect} at (0,10) size 10x10 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=10.00] [width=10.00] [height=10.00]
-    RenderSVGContainer {g} at (9,9) size 245x427
+    RenderSVGContainer {g} at (9,9) size 249x431
       RenderSVGText {text} at (10,10) size 183x115 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 183x115
           chunk 1 text run 1 at (10.00,100.00) startOffset 0 endOffset 4 width 183.00: "Test"

@@ -1345,12 +1345,12 @@ void RenderStyle::getShadowExtent(const ShadowData* shadow, LayoutUnit &top, Lay
     for ( ; shadow; shadow = shadow->next()) {
         if (shadow->style() == Inset)
             continue;
-        int blurAndSpread = shadow->blur() + shadow->spread();
 
-        top = min<LayoutUnit>(top, shadow->y() - blurAndSpread);
-        right = max<LayoutUnit>(right, shadow->x() + blurAndSpread);
-        bottom = max<LayoutUnit>(bottom, shadow->y() + blurAndSpread);
-        left = min<LayoutUnit>(left, shadow->x() - blurAndSpread);
+        int extentAndSpread = shadow->paintingExtent() + shadow->spread();
+        top = min<LayoutUnit>(top, shadow->y() - extentAndSpread);
+        right = max<LayoutUnit>(right, shadow->x() + extentAndSpread);
+        bottom = max<LayoutUnit>(bottom, shadow->y() + extentAndSpread);
+        left = min<LayoutUnit>(left, shadow->x() - extentAndSpread);
     }
 }
 
@@ -1364,11 +1364,12 @@ LayoutBoxExtent RenderStyle::getShadowInsetExtent(const ShadowData* shadow) cons
     for ( ; shadow; shadow = shadow->next()) {
         if (shadow->style() == Normal)
             continue;
-        int blurAndSpread = shadow->blur() + shadow->spread();
-        top = max<LayoutUnit>(top, shadow->y() + blurAndSpread);
-        right = min<LayoutUnit>(right, shadow->x() - blurAndSpread);
-        bottom = min<LayoutUnit>(bottom, shadow->y() - blurAndSpread);
-        left = max<LayoutUnit>(left, shadow->x() + blurAndSpread);
+
+        int extentAndSpread = shadow->paintingExtent() + shadow->spread();
+        top = max<LayoutUnit>(top, shadow->y() + extentAndSpread);
+        right = min<LayoutUnit>(right, shadow->x() - extentAndSpread);
+        bottom = min<LayoutUnit>(bottom, shadow->y() - extentAndSpread);
+        left = max<LayoutUnit>(left, shadow->x() + extentAndSpread);
     }
 
     return LayoutBoxExtent(top, right, bottom, left);
@@ -1382,10 +1383,10 @@ void RenderStyle::getShadowHorizontalExtent(const ShadowData* shadow, LayoutUnit
     for ( ; shadow; shadow = shadow->next()) {
         if (shadow->style() == Inset)
             continue;
-        int blurAndSpread = shadow->blur() + shadow->spread();
 
-        left = min<LayoutUnit>(left, shadow->x() - blurAndSpread);
-        right = max<LayoutUnit>(right, shadow->x() + blurAndSpread);
+        int extentAndSpread = shadow->paintingExtent() + shadow->spread();
+        left = min<LayoutUnit>(left, shadow->x() - extentAndSpread);
+        right = max<LayoutUnit>(right, shadow->x() + extentAndSpread);
     }
 }
 
@@ -1397,10 +1398,10 @@ void RenderStyle::getShadowVerticalExtent(const ShadowData* shadow, LayoutUnit &
     for ( ; shadow; shadow = shadow->next()) {
         if (shadow->style() == Inset)
             continue;
-        int blurAndSpread = shadow->blur() + shadow->spread();
 
-        top = min<LayoutUnit>(top, shadow->y() - blurAndSpread);
-        bottom = max<LayoutUnit>(bottom, shadow->y() + blurAndSpread);
+        int extentAndSpread = shadow->paintingExtent() + shadow->spread();
+        top = min<LayoutUnit>(top, shadow->y() - extentAndSpread);
+        bottom = max<LayoutUnit>(bottom, shadow->y() + extentAndSpread);
     }
 }
 

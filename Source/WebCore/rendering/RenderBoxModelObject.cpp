@@ -717,9 +717,9 @@ static void applyBoxShadowForBackground(GraphicsContext* context, RenderStyle* s
 
     FloatSize shadowOffset(boxShadow->x(), boxShadow->y());
     if (!boxShadow->isWebkitBoxShadow())
-        context->setShadow(shadowOffset, boxShadow->blur(), boxShadow->color(), style->colorSpace());
+        context->setShadow(shadowOffset, boxShadow->radius(), boxShadow->color(), style->colorSpace());
     else
-        context->setLegacyShadow(shadowOffset, boxShadow->blur(), boxShadow->color(), style->colorSpace());
+        context->setLegacyShadow(shadowOffset, boxShadow->radius(), boxShadow->color(), style->colorSpace());
 }
 
 void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, const Color& color, const FillLayer* bgLayer, const LayoutRect& rect,
@@ -2526,11 +2526,11 @@ bool RenderBoxModelObject::boxShadowShouldBeAppliedToBackground(BackgroundBleedA
     return true;
 }
 
-static inline IntRect areaCastingShadowInHole(const IntRect& holeRect, int shadowBlur, int shadowSpread, const IntSize& shadowOffset)
+static inline IntRect areaCastingShadowInHole(const IntRect& holeRect, int shadowExtent, int shadowSpread, const IntSize& shadowOffset)
 {
     IntRect bounds(holeRect);
     
-    bounds.inflate(shadowBlur);
+    bounds.inflate(shadowExtent);
 
     if (shadowSpread < 0)
         bounds.inflate(-shadowSpread);
@@ -2559,10 +2559,11 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
             continue;
 
         IntSize shadowOffset(shadow->x(), shadow->y());
-        int shadowBlur = shadow->blur();
+        int shadowRadius = shadow->radius();
+        int shadowPaintingExtent = shadow->paintingExtent();
         int shadowSpread = shadow->spread();
         
-        if (shadowOffset.isZero() && !shadowBlur && !shadowSpread)
+        if (shadowOffset.isZero() && !shadowRadius && !shadowSpread)
             continue;
         
         const Color& shadowColor = shadow->color();
@@ -2574,7 +2575,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
                 continue;
 
             IntRect shadowRect(border.rect());
-            shadowRect.inflate(shadowBlur + shadowSpread);
+            shadowRect.inflate(shadowPaintingExtent + shadowSpread);
             shadowRect.move(shadowOffset);
 
             GraphicsContextStateSaver stateSaver(*context);
@@ -2582,14 +2583,14 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
 
             // Move the fill just outside the clip, adding 1 pixel separation so that the fill does not
             // bleed in (due to antialiasing) if the context is transformed.
-            IntSize extraOffset(paintRect.pixelSnappedWidth() + max(0, shadowOffset.width()) + shadowBlur + 2 * shadowSpread + 1, 0);
+            IntSize extraOffset(paintRect.pixelSnappedWidth() + max(0, shadowOffset.width()) + shadowPaintingExtent + 2 * shadowSpread + 1, 0);
             shadowOffset -= extraOffset;
             fillRect.move(extraOffset);
 
             if (shadow->isWebkitBoxShadow())
-                context->setLegacyShadow(shadowOffset, shadowBlur, shadowColor, s->colorSpace());
+                context->setLegacyShadow(shadowOffset, shadowRadius, shadowColor, s->colorSpace());
             else
-                context->setShadow(shadowOffset, shadowBlur, shadowColor, s->colorSpace());
+                context->setShadow(shadowOffset, shadowRadius, shadowColor, s->colorSpace());
 
             if (hasBorderRadius) {
                 RoundedRect rectToClipOut = border;
@@ -2605,7 +2606,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
                     context->clipOutRoundedRect(rectToClipOut);
 
                 RoundedRect influenceRect(shadowRect, border.radii());
-                influenceRect.expandRadii(2 * shadowBlur + shadowSpread);
+                influenceRect.expandRadii(2 * shadowPaintingExtent + shadowSpread);
                 if (allCornersClippedOut(influenceRect, info.rect))
                     context->fillRect(fillRect.rect(), Color::black, s->colorSpace());
                 else {
@@ -2648,23 +2649,23 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
 
             if (!includeLogicalLeftEdge) {
                 if (isHorizontal) {
-                    holeRect.move(-max(shadowOffset.width(), 0) - shadowBlur, 0);
-                    holeRect.setWidth(holeRect.width() + max(shadowOffset.width(), 0) + shadowBlur);
+                    holeRect.move(-max(shadowOffset.width(), 0) - shadowPaintingExtent, 0);
+                    holeRect.setWidth(holeRect.width() + max(shadowOffset.width(), 0) + shadowPaintingExtent);
                 } else {
-                    holeRect.move(0, -max(shadowOffset.height(), 0) - shadowBlur);
-                    holeRect.setHeight(holeRect.height() + max(shadowOffset.height(), 0) + shadowBlur);
+                    holeRect.move(0, -max(shadowOffset.height(), 0) - shadowPaintingExtent);
+                    holeRect.setHeight(holeRect.height() + max(shadowOffset.height(), 0) + shadowPaintingExtent);
                 }
             }
             if (!includeLogicalRightEdge) {
                 if (isHorizontal)
-                    holeRect.setWidth(holeRect.width() - min(shadowOffset.width(), 0) + shadowBlur);
+                    holeRect.setWidth(holeRect.width() - min(shadowOffset.width(), 0) + shadowPaintingExtent);
                 else
-                    holeRect.setHeight(holeRect.height() - min(shadowOffset.height(), 0) + shadowBlur);
+                    holeRect.setHeight(holeRect.height() - min(shadowOffset.height(), 0) + shadowPaintingExtent);
             }
 
             Color fillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), 255);
 
-            IntRect outerRect = areaCastingShadowInHole(border.rect(), shadowBlur, shadowSpread, shadowOffset);
+            IntRect outerRect = areaCastingShadowInHole(border.rect(), shadowPaintingExtent, shadowSpread, shadowOffset);
             RoundedRect roundedHole(holeRect, border.radii());
 
             GraphicsContextStateSaver stateSaver(*context);
@@ -2676,14 +2677,14 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
             } else
                 context->clip(border.rect());
 
-            IntSize extraOffset(2 * paintRect.pixelSnappedWidth() + max(0, shadowOffset.width()) + shadowBlur - 2 * shadowSpread + 1, 0);
+            IntSize extraOffset(2 * paintRect.pixelSnappedWidth() + max(0, shadowOffset.width()) + shadowPaintingExtent - 2 * shadowSpread + 1, 0);
             context->translate(extraOffset.width(), extraOffset.height());
             shadowOffset -= extraOffset;
 
             if (shadow->isWebkitBoxShadow())
-                context->setLegacyShadow(shadowOffset, shadowBlur, shadowColor, s->colorSpace());
+                context->setLegacyShadow(shadowOffset, shadowRadius, shadowColor, s->colorSpace());
             else
-                context->setShadow(shadowOffset, shadowBlur, shadowColor, s->colorSpace());
+                context->setShadow(shadowOffset, shadowRadius, shadowColor, s->colorSpace());
 
             context->fillRectWithRoundedHole(outerRect, roundedHole, fillColor, s->colorSpace());
         }

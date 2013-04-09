@@ -120,7 +120,7 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderObject* object, PaintI
 
         if (shadow) {
             m_paintInfo->context->clip(repaintRect);
-            m_paintInfo->context->setShadow(IntSize(roundToInt(shadow->x()), roundToInt(shadow->y())), shadow->blur(), shadow->color(), style->colorSpace());
+            m_paintInfo->context->setShadow(IntSize(roundToInt(shadow->x()), roundToInt(shadow->y())), shadow->radius(), shadow->color(), style->colorSpace());
             m_paintInfo->context->beginTransparencyLayer(1);
             m_renderingFlags |= EndShadowLayer;
         }

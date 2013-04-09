@@ -114,7 +114,7 @@ static inline PassOwnPtr<ShadowData> blendFunc(const AnimationBase* anim, const 
         return adoptPtr(new ShadowData(*to));
 
     return adoptPtr(new ShadowData(blend(from->location(), to->location(), progress),
-                                   blend(from->blur(), to->blur(), progress),
+                                   blend(from->radius(), to->radius(), progress),
                                    blend(from->spread(), to->spread(), progress),
                                    blendFunc(anim, from->style(), to->style(), progress),
                                    from->isWebkitBoxShadow(),

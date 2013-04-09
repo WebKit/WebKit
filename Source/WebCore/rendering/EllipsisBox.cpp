@@ -42,7 +42,7 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, La
     bool setShadow = false;
     if (style->textShadow()) {
         context->setShadow(LayoutSize(style->textShadow()->x(), style->textShadow()->y()),
-                           style->textShadow()->blur(), style->textShadow()->color(), style->colorSpace());
+                           style->textShadow()->radius(), style->textShadow()->color(), style->colorSpace());
         setShadow = true;
     }
 

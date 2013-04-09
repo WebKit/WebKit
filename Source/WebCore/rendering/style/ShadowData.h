@@ -41,16 +41,16 @@ class ShadowData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     ShadowData()
-        : m_blur(0)
+        : m_radius(0)
         , m_spread(0)
         , m_style(Normal)
         , m_isWebkitBoxShadow(false)
     {
     }
 
-    ShadowData(const IntPoint& location, int blur, int spread, ShadowStyle style, bool isWebkitBoxShadow, const Color& color)
+    ShadowData(const IntPoint& location, int radius, int spread, ShadowStyle style, bool isWebkitBoxShadow, const Color& color)
         : m_location(location)
-        , m_blur(blur)
+        , m_radius(radius)
         , m_spread(spread)
         , m_color(color)
         , m_style(style)
@@ -69,7 +69,15 @@ public:
     int x() const { return m_location.x(); }
     int y() const { return m_location.y(); }
     IntPoint location() const { return m_location; }
-    int blur() const { return m_blur; }
+    int radius() const { return m_radius; }
+    int paintingExtent() const
+    {
+        // Blurring uses a Gaussian function whose std. deviation is m_radius/2, and which in theory
+        // extends to infinity. In 8-bit contexts, however, rounding causes the effect to become
+        // undetectable at around 1.4x the radius.
+        const float radiusExtentMultiplier = 1.4;
+        return ceilf(m_radius * radiusExtentMultiplier);
+    }
     int spread() const { return m_spread; }
     ShadowStyle style() const { return m_style; }
     const Color& color() const { return m_color; }
@@ -83,7 +91,7 @@ public:
 
 private:
     IntPoint m_location;
-    int m_blur;
+    int m_radius; // This is the "blur radius", or twice the standard deviation of the Gaussian blur.
     int m_spread;
     Color m_color;
     ShadowStyle m_style;

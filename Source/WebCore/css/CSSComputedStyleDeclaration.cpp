@@ -1272,7 +1272,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::valueForShadow(const ShadowDat
     for (const ShadowData* s = shadow; s; s = s->next()) {
         RefPtr<CSSPrimitiveValue> x = zoomAdjustedPixelValue(s->x(), style);
         RefPtr<CSSPrimitiveValue> y = zoomAdjustedPixelValue(s->y(), style);
-        RefPtr<CSSPrimitiveValue> blur = zoomAdjustedPixelValue(s->blur(), style);
+        RefPtr<CSSPrimitiveValue> blur = zoomAdjustedPixelValue(s->radius(), style);
         RefPtr<CSSPrimitiveValue> spread = propertyID == CSSPropertyTextShadow ? PassRefPtr<CSSPrimitiveValue>() : zoomAdjustedPixelValue(s->spread(), style);
         RefPtr<CSSPrimitiveValue> style = propertyID == CSSPropertyTextShadow || s->style() == Normal ? PassRefPtr<CSSPrimitiveValue>() : cssValuePool().createIdentifierValue(CSSValueInset);
         RefPtr<CSSPrimitiveValue> color = cssValuePool().createColorValue(s->color().rgb());
