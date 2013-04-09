@@ -861,6 +861,10 @@ bool AbstractState::executeEffects(unsigned indexInBlock, Node* node)
         forNode(node).set(SpecInt32);
         break;
         
+    case StringFromCharCode:
+        forNode(node).set(SpecString);
+        break;
+
     case StringCharAt:
         node->setCanExit(true);
         forNode(node).set(m_graph.m_globalData.stringStructure.get());

@@ -356,6 +356,10 @@ private:
             break;
         }
 
+        case StringFromCharCode:
+            setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
+            break;
+
         case StringCharAt:
         case StringCharCodeAt: {
             // Currently we have no good way of refining these.

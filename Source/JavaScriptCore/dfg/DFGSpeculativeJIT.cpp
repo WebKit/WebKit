@@ -2088,6 +2088,25 @@ void SpeculativeJIT::compileGetByValOnString(Node* node)
     cellResult(scratchReg, m_currentNode);
 }
 
+void SpeculativeJIT::compileFromCharCode(Node* node)
+{
+    SpeculateStrictInt32Operand property(this, node->child1());
+    GPRReg propertyReg = property.gpr();
+    GPRTemporary smallStrings(this);
+    GPRTemporary scratch(this);
+    GPRReg scratchReg = scratch.gpr();
+    GPRReg smallStringsReg = smallStrings.gpr();
+
+    JITCompiler::JumpList slowCases;
+    slowCases.append(m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, TrustedImm32(0xff)));
+    m_jit.move(MacroAssembler::TrustedImmPtr(m_jit.globalData()->smallStrings.singleCharacterStrings()), smallStringsReg);
+    m_jit.loadPtr(MacroAssembler::BaseIndex(smallStringsReg, propertyReg, MacroAssembler::ScalePtr, 0), scratchReg);
+
+    slowCases.append(m_jit.branchTest32(MacroAssembler::Zero, scratchReg));
+    addSlowPathGenerator(slowPathCall(slowCases, this, operationStringFromCharCode, scratchReg, propertyReg));
+    cellResult(scratchReg, m_currentNode);
+}
+
 GeneratedOperandType SpeculativeJIT::checkGeneratedTypeForToInt32(Node* node)
 {
 #if DFG_ENABLE(DEBUG_VERBOSE)

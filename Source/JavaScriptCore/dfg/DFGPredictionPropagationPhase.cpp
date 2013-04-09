@@ -423,6 +423,11 @@ private:
             break;
         }
         
+        case StringFromCharCode: {
+            changed |= setPrediction(SpecString);
+            changed |= node->child1()->mergeFlags(NodeUsedAsNumber | NodeUsedAsInt);            
+            break;
+        }
         case StringCharAt:
         case ToString:
         case MakeRope: {

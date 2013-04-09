@@ -89,6 +89,11 @@ static EncodedJSValue JSC_HOST_CALL stringFromCharCode(ExecState* exec)
     return JSValue::encode(stringFromCharCodeSlowCase(exec));
 }
 
+JSCell* JSC_HOST_CALL stringFromCharCode(ExecState* exec, int32_t arg)
+{
+    return jsSingleCharacterString(exec, arg);
+}
+
 static EncodedJSValue JSC_HOST_CALL constructWithStringConstructor(ExecState* exec)
 {
     JSGlobalObject* globalObject = asInternalFunction(exec->callee())->globalObject();

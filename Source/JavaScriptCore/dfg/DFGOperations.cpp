@@ -44,6 +44,7 @@
 #include "NameInstance.h"
 #include "ObjectConstructor.h"
 #include "Operations.h"
+#include "StringConstructor.h"
 #include <wtf/InlineASM.h>
 
 #if ENABLE(JIT)
@@ -1599,6 +1600,13 @@ JSCell* DFG_OPERATION operationMakeRope3(ExecState* exec, JSString* a, JSString*
 double DFG_OPERATION operationFModOnInts(int32_t a, int32_t b)
 {
     return fmod(a, b);
+}
+
+JSCell* DFG_OPERATION operationStringFromCharCode(ExecState* exec, int32_t op1)
+{
+    JSGlobalData* globalData = &exec->globalData();
+    NativeCallFrameTracer tracer(globalData, exec);
+    return JSC::stringFromCharCode(exec, op1);
 }
 
 DFGHandlerEncoded DFG_OPERATION lookupExceptionHandler(ExecState* exec, uint32_t callIndex)

@@ -2378,6 +2378,11 @@ void SpeculativeJIT::compile(Node* node)
         compileGetByValOnString(node);
         break;
     }
+
+    case StringFromCharCode: {
+        compileFromCharCode(node);
+        break;
+    }
         
     case CheckArray: {
         checkArray(node);

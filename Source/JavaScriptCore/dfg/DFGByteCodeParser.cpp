@@ -1564,6 +1564,18 @@ bool ByteCodeParser::handleIntrinsic(bool usesResult, int resultOperand, Intrins
             set(resultOperand, charCode);
         return true;
     }
+    case FromCharCodeIntrinsic: {
+        if (argumentCountIncludingThis != 2)
+            return false;
+
+        int indexOperand = registerOffset + argumentToOperand(1);
+        Node* charCode = addToGraph(StringFromCharCode, getToInt32(indexOperand));
+
+        if (usesResult)
+            set(resultOperand, charCode);
+
+        return true;
+    }
 
     case RegExpExecIntrinsic: {
         if (argumentCountIncludingThis != 2)
