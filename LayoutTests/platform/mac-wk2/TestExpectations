@@ -341,6 +341,9 @@ webkit.org/b/114217 platform/mac-wk2/plugins/slow/asynchronous-plugin-initializa
 webkit.org/b/60731 [ MountainLion Release ] ietestcenter/css3/grid/grid-items-003.htm [ Pass ]
 webkit.org/b/60731 ietestcenter/css3/grid/grid-items-003.htm [ ImageOnlyFailure ]
 
+# Flaky everywhere.
+webkit.org/b/114302 platform/mac-wk2/plugins/mouse-events-scaled-iframe.html [ Pass Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
