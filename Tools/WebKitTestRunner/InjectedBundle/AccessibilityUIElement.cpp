@@ -181,6 +181,8 @@ bool AccessibilityUIElement::isTextMarkerValid(AccessibilityTextMarker*) { retur
 PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForIndex(int) { return 0; }
 void AccessibilityUIElement::scrollToMakeVisible() { }
 JSRetainPtr<JSStringRef> AccessibilityUIElement::supportedActions() const { return 0; }
+JSRetainPtr<JSStringRef> AccessibilityUIElement::pathDescription() const { return 0; }
+
 #endif
 
 } // namespace WTR

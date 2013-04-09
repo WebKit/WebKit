@@ -836,6 +836,26 @@ LayoutRect AccessibilityRenderObject::elementRect() const
     
     return boundingBoxRect();
 }
+    
+bool AccessibilityRenderObject::supportsPath() const
+{
+#if ENABLE(SVG)
+    if (m_renderer && m_renderer->isSVGShape())
+        return true;
+#endif
+    
+    return false;
+}
+    
+Path AccessibilityRenderObject::elementPath() const
+{
+#if ENABLE(SVG)
+    if (m_renderer && m_renderer->isSVGShape())
+        return toRenderSVGShape(m_renderer)->path();
+#endif
+    
+    return Path();
+}
 
 IntPoint AccessibilityRenderObject::clickPoint()
 {

@@ -32,6 +32,7 @@
 
 #include "FloatQuad.h"
 #include "LayoutRect.h"
+#include "Path.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
 #include "VisibleSelection.h"
@@ -605,6 +606,8 @@ public:
     IntSize pixelSnappedSize() const { return elementRect().pixelSnappedSize(); }
     virtual IntPoint clickPoint();
     static IntRect boundingBoxForQuads(RenderObject*, const Vector<FloatQuad>&);
+    virtual Path elementPath() const { return Path(); }
+    virtual bool supportsPath() const { return false; }
     
     TextIteratorBehavior textIteratorBehaviorForTextRange() const;
     virtual PlainTextRange selectedTextRange() const { return PlainTextRange(); }
@@ -671,7 +674,7 @@ public:
     bool isDescendantOfObject(const AccessibilityObject*) const;
     bool isAncestorOfObject(const AccessibilityObject*) const;
     AccessibilityObject* firstAnonymousBlockChild() const;
-    
+
     static AccessibilityRole ariaRoleToWebCoreRole(const String&);
     bool hasAttribute(const QualifiedName&) const;
     const AtomicString& getAttribute(const QualifiedName&) const;

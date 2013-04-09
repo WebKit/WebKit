@@ -52,6 +52,10 @@
 #define NSAccessibilityDropEffectsAttribute @"AXDropEffects"
 #endif
 
+#ifndef NSAccessibilityPathAttribute
+#define NSAccessibilityPathAttribute @"AXPath"
+#endif
+
 typedef void (*AXPostedNotificationCallback)(id element, NSString* notification, void* context);
 
 @interface NSObject (WebKitAccessibilityAdditions)
@@ -1122,6 +1126,39 @@ AccessibilityUIElement AccessibilityUIElement::verticalScrollbar() const
     BEGIN_AX_OBJC_EXCEPTIONS
     return AccessibilityUIElement([m_element accessibilityAttributeValue:NSAccessibilityVerticalScrollBarAttribute]);
     END_AX_OBJC_EXCEPTIONS        
+
+    return 0;
+}
+
+JSStringRef AccessibilityUIElement::pathDescription() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSMutableString *result = [NSMutableString stringWithString:@"\nStart Path\n"];
+    NSBezierPath *bezierPath = [m_element accessibilityAttributeValue:NSAccessibilityPathAttribute];
+    
+    NSUInteger elementCount = [bezierPath elementCount];
+    for (NSUInteger i = 0; i < elementCount; i++) {
+        switch ([bezierPath elementAtIndex:i]) {
+        case NSMoveToBezierPathElement:
+            [result appendString:@"\tMove to point\n"];
+            break;
+            
+        case NSLineToBezierPathElement:
+            [result appendString:@"\tLine to\n"];
+            break;
+            
+        case NSCurveToBezierPathElement:
+            [result appendString:@"\tCurve to\n"];
+            break;
+            
+        case NSClosePathBezierPathElement:
+            [result appendString:@"\tClose\n"];
+            break;
+        }
+    }
+    
+    return [result createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
 
     return 0;
 }

@@ -855,6 +855,12 @@ static JSValueRef getInsertionPointLineNumberCallback(JSContextRef context, JSOb
     return JSValueMakeNumber(context, toAXElement(thisObject)->insertionPointLineNumber());
 }
 
+static JSValueRef getPathDescriptionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    JSRetainPtr<JSStringRef> pathDescription(Adopt, toAXElement(thisObject)->pathDescription());
+    return JSValueMakeString(context, pathDescription.get());
+}
+
 static JSValueRef getSelectedTextRangeCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     JSRetainPtr<JSStringRef> selectedTextRange(Adopt, toAXElement(thisObject)->selectedTextRange());
@@ -1087,6 +1093,10 @@ AccessibilityUIElement AccessibilityUIElement::verticalScrollbar() const { retur
 AccessibilityUIElement AccessibilityUIElement::uiElementAttributeValue(JSStringRef) const { return 0; }
 #endif
 
+#if !PLATFORM(MAC) && !PLATFORM(IOS)
+JSStringRef AccessibilityUIElement::pathDescription() const { return 0; }
+#endif
+
 #if !PLATFORM(WIN)
 bool AccessibilityUIElement::isEqual(AccessibilityUIElement* otherElement)
 {
@@ -1205,6 +1215,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "intValue", getIntValueCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "minValue", getMinValueCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "maxValue", getMaxValueCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "pathDescription", getPathDescriptionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "childrenCount", getChildrenCountCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "rowCount", rowCountCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "columnCount", columnCountCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

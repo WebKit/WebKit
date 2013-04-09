@@ -24,6 +24,7 @@ AXTopLevelUIElement: <AXLink: 'Link1'>
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
 AXARIABusy: 0
+AXPath: <AXLink: 'Link1'>
 
 ------------
 AXRole: AXLink
@@ -50,6 +51,7 @@ AXTopLevelUIElement: <AXLink: 'Link2'>
 AXURL: http://www.apple.com/
 AXAccessKey: (null)
 AXARIABusy: 0
+AXPath: <AXLink: 'Link2'>
 
 ------------
 AXRole: AXLink

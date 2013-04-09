@@ -235,7 +235,8 @@ private:
     Element* rootEditableElementForPosition(const Position&) const;
     bool nodeIsTextControl(const Node*) const;
     virtual void setNeedsToUpdateChildren() { m_childrenDirty = true; }
-
+    virtual Path elementPath() const;
+    
     bool isTabItemSelected() const;
     LayoutRect checkboxOrRadioRect() const;
     void addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const;
@@ -253,7 +254,8 @@ private:
     AccessibilitySVGRoot* remoteSVGRootElement() const;
     AccessibilityObject* remoteSVGElementHitTest(const IntPoint&) const;
     void offsetBoundingBoxForRemoteSVGElement(LayoutRect&) const;
-    
+    virtual bool supportsPath() const;
+
     void addHiddenChildren();
     void addTextFieldChildren();
     void addImageMapChildren();
@@ -275,7 +277,7 @@ private:
     virtual const AtomicString& ariaLiveRegionRelevant() const;
     virtual bool ariaLiveRegionAtomic() const;
     virtual bool ariaLiveRegionBusy() const;    
-    
+
     bool inheritsPresentationalRole() const;
 
 #if ENABLE(MATHML)

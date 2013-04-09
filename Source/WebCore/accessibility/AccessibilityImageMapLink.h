@@ -72,8 +72,11 @@ private:
     RefPtr<HTMLAreaElement> m_areaElement;
     RefPtr<HTMLMapElement> m_mapElement;
     
+    virtual Path elementPath() const;
+    RenderObject* imageMapLinkRenderer() const;
     virtual void accessibilityText(Vector<AccessibilityText>&);
     virtual bool isImageMapLink() const { return true; }
+    virtual bool supportsPath() const { return true; }
 };
     
 } // namespace WebCore

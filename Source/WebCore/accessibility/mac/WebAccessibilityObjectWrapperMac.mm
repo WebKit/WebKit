@@ -350,6 +350,10 @@ using namespace std;
 #define NSAccessibilityScrollToVisibleAction @"AXScrollToVisible"
 #endif
 
+#ifndef NSAccessibilityPathAttribute
+#define NSAccessibilityPathAttribute @"AXPath"
+#endif
+
 // Math attributes
 #define NSAccessibilityMathRootRadicandAttribute @"AXMathRootRadicand"
 #define NSAccessibilityMathRootIndexAttribute @"AXMathRootIndex"
@@ -1035,6 +1039,9 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
         [additional addObject:NSAccessibilityMathFencedCloseAttribute];
     }
     
+    if (m_object->supportsPath())
+        [additional addObject:NSAccessibilityPathAttribute];
+    
     return additional;
 }
 
@@ -1478,23 +1485,18 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
     return [self textMarkerRangeFromVisiblePositions:selection.visibleStart() endPosition:selection.visibleEnd()];
 }
 
-- (NSValue *)position
+- (CGPoint)convertPointToScreenSpace:(FloatPoint &)point
 {
-    IntRect rect = pixelSnappedIntRect(m_object->elementRect());
-    NSPoint point;
-    
     FrameView* frameView = m_object->documentFrameView();
     
     // WebKit1 code path... platformWidget() exists.
     if (frameView && frameView->platformWidget()) {
         
-        // The Cocoa accessibility API wants the lower-left corner.
-        point = NSMakePoint(rect.x(), rect.maxY());
-        
-        if (frameView) {
-            NSView* view = frameView->documentView();
-            point = [[view window] convertBaseToScreen:[view convertPoint: point toView:nil]];
-        }
+        NSPoint nsPoint = (NSPoint)point;
+        NSView* view = frameView->documentView();
+        nsPoint = [[view window] convertBaseToScreen:[view convertPoint:nsPoint toView:nil]];
+        return CGPointMake(nsPoint.x, nsPoint.y);
+
     } else {
         
         // Find the appropriate scroll view to use to convert the contents to the window.
@@ -1507,8 +1509,9 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
             }
         }
         
+        IntPoint intPoint = (IntPoint)point;
         if (scrollView)
-            rect = scrollView->contentsToRootView(rect);
+            intPoint = scrollView->contentsToRootView(intPoint);
         
         Page* page = m_object->page();
         
@@ -1517,13 +1520,63 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
         if (parent && page && page->chrome()->client()->isEmptyChromeClient())
             page = parent->page();
         
-        if (page)
-            point = page->chrome()->rootViewToScreen(rect).location();
-        else
-            point = rect.location();
+        if (page) {
+            IntRect rect = IntRect(intPoint, IntSize(0, 0));            
+            intPoint = page->chrome()->rootViewToScreen(rect).location();
+        }
+        
+        return intPoint;
     }
+}
+
+static void WebTransformCGPathToNSBezierPath(void *info, const CGPathElement *element)
+{
+    NSBezierPath *bezierPath = (NSBezierPath *)info;
+    switch (element->type) {
+    case kCGPathElementMoveToPoint:
+        [bezierPath moveToPoint:element->points[0]];
+        break;
+    case kCGPathElementAddLineToPoint:
+        [bezierPath lineToPoint:element->points[0]];
+        break;
+    case kCGPathElementAddCurveToPoint:
+        [bezierPath curveToPoint:element->points[0] controlPoint1:element->points[1] controlPoint2:element->points[2]];
+        break;
+    case kCGPathElementCloseSubpath:
+        [bezierPath closePath];
+        break;
+    default:
+        break;
+    }
+}
+
+- (NSBezierPath *)bezierPathFromPath:(CGPathRef)path
+{
+    NSBezierPath *bezierPath = [NSBezierPath bezierPath];
+    CGPathApply(path, bezierPath, WebTransformCGPathToNSBezierPath);
+    return bezierPath;
+}
+
+- (NSBezierPath *)path
+{
+    Path path = m_object->elementPath();
+    if (path.isEmpty())
+        return NULL;
     
-    return [NSValue valueWithPoint:point];
+    CGPathRef transformedPath = [self convertPathToScreenSpace:path];
+    return [self bezierPathFromPath:transformedPath];
+}
+
+- (NSValue *)position
+{
+    IntRect rect = pixelSnappedIntRect(m_object->elementRect());
+    
+    // The Cocoa accessibility API wants the lower-left corner.
+    FloatPoint floatPoint = FloatPoint(rect.x(), rect.maxY());
+
+    CGPoint cgPoint = [self convertPointToScreenSpace:floatPoint];
+    
+    return [NSValue valueWithPoint:NSMakePoint(cgPoint.x, cgPoint.y)];
 }
 
 typedef HashMap<int, NSString*> AccessibilityRoleMap;
@@ -2295,6 +2348,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     
     if ([attributeName isEqualToString: NSAccessibilityPositionAttribute])
         return [self position];
+    if ([attributeName isEqualToString:NSAccessibilityPathAttribute])
+        return [self path];
     
     if ([attributeName isEqualToString: NSAccessibilityWindowAttribute] ||
         [attributeName isEqualToString: NSAccessibilityTopLevelUIElementAttribute]) {

@@ -232,6 +232,66 @@ using namespace std;
     return [NSString string];
 }
 
+struct PathConversionInfo {
+    WebAccessibilityObjectWrapperBase *wrapper;
+    CGMutablePathRef path;
+};
+
+static void ConvertPathToScreenSpaceFunction(void* info, const PathElement* element)
+{
+    PathConversionInfo* conversion = (PathConversionInfo*)info;
+    WebAccessibilityObjectWrapperBase *wrapper = conversion->wrapper;
+    CGMutablePathRef newPath = conversion->path;
+    switch (element->type) {
+    case PathElementMoveToPoint:
+    {
+        CGPoint newPoint = [wrapper convertPointToScreenSpace:element->points[0]];
+        CGPathMoveToPoint(newPath, nil, newPoint.x, newPoint.y);
+        break;
+    }
+    case PathElementAddLineToPoint:
+    {
+        CGPoint newPoint = [wrapper convertPointToScreenSpace:element->points[0]];
+        CGPathAddLineToPoint(newPath, nil, newPoint.x, newPoint.y);
+        break;
+    }
+    case PathElementAddQuadCurveToPoint:
+    {
+        CGPoint newPoint1 = [wrapper convertPointToScreenSpace:element->points[0]];
+        CGPoint newPoint2 = [wrapper convertPointToScreenSpace:element->points[1]];
+        CGPathAddQuadCurveToPoint(newPath, nil, newPoint1.x, newPoint1.y, newPoint2.x, newPoint2.y);
+        break;
+    }
+    case PathElementAddCurveToPoint:
+    {
+        CGPoint newPoint1 = [wrapper convertPointToScreenSpace:element->points[0]];
+        CGPoint newPoint2 = [wrapper convertPointToScreenSpace:element->points[1]];
+        CGPoint newPoint3 = [wrapper convertPointToScreenSpace:element->points[2]];
+        CGPathAddCurveToPoint(newPath, nil, newPoint1.x, newPoint1.y, newPoint2.x, newPoint2.y, newPoint3.x, newPoint3.y);
+        break;
+    }
+    case PathElementCloseSubpath:
+    {
+        CGPathCloseSubpath(newPath);
+        break;
+    }
+    }
+}
+
+- (CGPathRef)convertPathToScreenSpace:(Path &)path
+{
+    PathConversionInfo conversion = { self, CGPathCreateMutable() };
+    path.apply(&conversion, ConvertPathToScreenSpaceFunction);    
+    return (CGPathRef)[(id)conversion.path autorelease];
+}
+
+- (CGPoint)convertPointToScreenSpace:(FloatPoint &)point
+{
+    UNUSED_PARAM(point);
+    ASSERT_NOT_REACHED();
+    return CGPointZero;
+}
+
 // This is set by DRT when it wants to listen for notifications.
 static BOOL accessibilityShouldRepostNotifications;
 + (void)accessibilitySetShouldRepostNotifications:(BOOL)repost

@@ -31,6 +31,9 @@
 
 namespace WebCore {
 class AccessibilityObject;
+class IntRect;
+class FloatPoint;
+class Path;
 class VisiblePosition;
 }
 
@@ -50,6 +53,9 @@ class VisiblePosition;
 - (id)attachmentView;
 // Used to inform an element when a notification is posted for it. Used by DRT.
 - (void)accessibilityPostedNotification:(NSString *)notificationName;
+
+- (CGPathRef)convertPathToScreenSpace:(WebCore::Path &)path;
+- (CGPoint)convertPointToScreenSpace:(WebCore::FloatPoint &)point;
 
 @end
 

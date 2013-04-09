@@ -341,6 +341,43 @@ void AccessibilityUIElement::elementsForRange(unsigned location, unsigned length
     }
 }
 
+static void _CGPathEnumerationIteration(void *info, const CGPathElement *element)
+{
+    NSMutableString *result = (NSMutableString *)info;
+    CGPoint* points = element->points;
+    switch (element->type) {
+    case kCGPathElementMoveToPoint:
+        [result appendString:@"\tMove to point\n"];
+        break;
+        
+    case kCGPathElementAddLineToPoint:
+        [result appendString:@"\tLine to\n"];
+        break;
+        
+    case kCGPathElementAddQuadCurveToPoint:
+        [result appendString:@"\tQuad curve to\n"];
+        break;
+        
+    case kCGPathElementAddCurveToPoint:
+        [result appendString:@"\tCurve to\n"];
+        break;
+        
+    case kCGPathElementCloseSubpath:
+        [result appendString:@"\tClose\n"];
+        break;
+    }
+}
+
+JSStringRef AccessibilityUIElement::pathDescription() const
+{
+    NSMutableString *result = [NSMutableString stringWithString:@"\nStart Path\n"];
+    CGPathRef pathRef = [m_element _accessibilityPath];
+    
+    CGPathApply(pathRef, result, _CGPathEnumerationIteration);
+    
+    return [result createJSStringRef];
+}
+
 #pragma mark Unused
 
 void AccessibilityUIElement::getLinkedUIElements(Vector<AccessibilityUIElement>& elementVector)

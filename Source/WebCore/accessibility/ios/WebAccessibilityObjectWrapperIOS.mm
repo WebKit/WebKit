@@ -368,6 +368,22 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     return NSNotFound;
 }
 
+- (CGPathRef)_accessibilityPath
+{
+    if (![self _prepareAccessibilityCall])
+        return NULL;
+
+    if (!m_object->supportsPath())
+        return NULL;
+    
+    Path path = m_object->elementPath();
+    if (path.isEmpty())
+        return NULL;
+    
+    Path transformedPath = [self convertPathToScreenSpace:path];
+    return transformedPath.platformPath();
+}
+
 - (NSString *)accessibilityLanguage
 {
     if (![self _prepareAccessibilityCall])
@@ -937,7 +953,29 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     return (NSURL*)url;
 }
 
-- (CGRect)_convertIntRectToScreenCoordinates:(IntRect)rect
+- (CGPoint)convertPointToScreenSpace:(FloatPoint &)point
+{
+    if (!m_object)
+        return CGPointZero;
+    
+    CGPoint cgPoint = CGPointMake(point.x(), point.y());
+    
+    FrameView* frameView = m_object->documentFrameView();
+    if (frameView) {
+        WAKView* view = frameView->documentView();
+        cgPoint = [view convertPoint:cgPoint toView:nil];
+    }
+    
+    // we need the web document view to give us our final screen coordinates
+    // because that can take account of the scroller
+    id webDocument = [self _accessibilityWebDocumentView];
+    if (webDocument)
+        cgPoint = [webDocument convertPoint:cgPoint toView:nil];
+    
+    return cgPoint;
+}
+
+- (CGRect)convertRectToScreenSpace:(IntRect &)rect
 {
     if (!m_object)
         return CGRectZero;
@@ -980,7 +1018,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         return CGPointZero;
     
     IntRect rect = pixelSnappedIntRect(m_object->boundingBoxRect());
-    CGRect cgRect = [self _convertIntRectToScreenCoordinates:rect];
+    CGRect cgRect = [self convertRectToScreenSpace:rect];
     return CGPointMake(CGRectGetMidX(cgRect), CGRectGetMidY(cgRect));
 }
 
@@ -990,7 +1028,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         return CGRectZero;
     
     IntRect rect = pixelSnappedIntRect(m_object->elementRect());
-    return [self _convertIntRectToScreenCoordinates:rect];
+    return [self convertRectToScreenSpace:rect];
 }
 
 // Checks whether a link contains only static text and images (and has been divided unnaturally by <spans> and other nefarious mechanisms).
@@ -1879,7 +1917,7 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
         return CGRectZero;
 
     IntRect rect = m_object->boundsForVisiblePositionRange(VisiblePositionRange([startMarker visiblePosition], [endMarker visiblePosition]));
-    return [self _convertIntRectToScreenCoordinates:rect];
+    return [self convertRectToScreenSpace:rect];
 }
 
 - (WebAccessibilityTextMarker *)textMarkerForPoint:(CGPoint)point

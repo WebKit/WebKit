@@ -129,6 +129,7 @@ public:
     double intValue() const;
     double minValue();
     double maxValue();
+    JSStringRef pathDescription() const;
     JSStringRef valueDescription();
     int insertionPointLineNumber();
     JSStringRef selectedTextRange();

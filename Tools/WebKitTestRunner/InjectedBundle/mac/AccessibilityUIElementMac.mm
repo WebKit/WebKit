@@ -53,6 +53,10 @@
 #define NSAccessibilityDropEffectsAttribute @"AXDropEffects"
 #endif
 
+#ifndef NSAccessibilityPathAttribute
+#define NSAccessibilityPathAttribute @"AXPath"
+#endif
+
 typedef void (*AXPostedNotificationCallback)(id element, NSString* notification, void* context);
 
 @interface NSObject (WebKitAccessibilityAdditions)
@@ -1483,6 +1487,40 @@ PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForIndex(i
     return 0;                                                                          
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::pathDescription() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSMutableString *result = [NSMutableString stringWithString:@"\nStart Path\n"];
+    NSBezierPath *bezierPath = [m_element accessibilityAttributeValue:NSAccessibilityPathAttribute];
+    
+    NSUInteger elementCount = [bezierPath elementCount];
+    NSPoint points[3];
+    for (NSUInteger i = 0; i < elementCount; i++) {
+        switch ([bezierPath elementAtIndex:i associatedPoints:points]) {
+        case NSMoveToBezierPathElement:
+            [result appendString:@"\tMove to point\n"];
+            break;
+            
+        case NSLineToBezierPathElement:
+            [result appendString:@"\tLine to\n"];
+            break;
+            
+        case NSCurveToBezierPathElement:
+            [result appendString:@"\tCurve to\n"];
+            break;
+            
+        case NSClosePathBezierPathElement:
+            [result appendString:@"\tClose\n"];
+            break;
+        }
+    }
+    
+    return [result createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
+}
+    
 JSRetainPtr<JSStringRef> AccessibilityUIElement::supportedActions() const
 {
     BEGIN_AX_OBJC_EXCEPTIONS
