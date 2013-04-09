@@ -29,6 +29,8 @@
 #ifndef WebAccessibilityObjectWrapperBase_h
 #define WebAccessibilityObjectWrapperBase_h
 
+#include <CoreGraphics/CoreGraphics.h>
+
 namespace WebCore {
 class AccessibilityObject;
 class IntRect;

@@ -380,8 +380,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if (path.isEmpty())
         return NULL;
     
-    Path transformedPath = [self convertPathToScreenSpace:path];
-    return transformedPath.platformPath();
+    return [self convertPathToScreenSpace:path];
 }
 
 - (NSString *)accessibilityLanguage
