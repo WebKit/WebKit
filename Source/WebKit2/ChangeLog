@@ -1,5 +1,18 @@
 2013-04-09  Michael Brüning  <michael.bruning@digia.com>
 
+        [Qt][WK2] Remove obsolete QtWebPageFindClient forward declaration from qquickwebview_p.h.
+        https://bugs.webkit.org/show_bug.cgi?id=114284
+
+        Reviewed by Andreas Kling.
+
+        The class QtWebPageFindClient was removed in r142073 when the functionality
+        was folded into QQuickWebViewPrivate.
+
+        * UIProcess/API/qt/qquickwebview_p.h:
+        (WebKit):
+
+2013-04-09  Michael Brüning  <michael.bruning@digia.com>
+
         Fix GTK WebKit2 build after r148005.
         https://bugs.webkit.org/show_bug.cgi?id=114270
 
