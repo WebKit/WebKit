@@ -1398,6 +1398,9 @@ webkit.org/b/114251 accessibility/svg-group-element-with-title.html [ Failure ]
 webkit.org/b/114259 platform/gtk/accessibility/aria-slider-required-attributes.html [ Failure ]
 webkit.org/b/114259 platform/gtk/accessibility/combo-box-collapsed-selection-changed.html [ Failure ]
 
+# Needs rebaseline after bug https://bugs.webkit.org/show_bug.cgi?id=13709
+webkit.org/b/89315 tables/mozilla_expected_failures/bugs/bug89315.html [ Failure Rebaseline ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<head>
+    <title>Border Test</title>
+    <style>div.b,table.b{border-style:solid;border-color:black;outline-style:dotted;outline-color:red;}div.l{-webkit-column-count:6;-webkit-column-gap:30px;-webkit-column-rule-style:outset;</style>
+</head>
+<body>
+    <h3>Test for bugzilla bug : <a href="https://bugs.webkit.org/show_bug.cgi?id=13709">13709</a>. Border is not displaying if border width of the element is less than 0.8pt.</h3>
+    <h4>All below elements should display with borders.</h4>
+<table class="b" style="border-width:1px;outline-offset:1px;outline-width:1px;">
+    <tr>
+    <td>Table border and outline dotted border should present. There should be some gap between table border and outline dotted border.</td>
+    </tr>
+</table>
+<br/>
+<div class="b" style="border-width:1px;outline-offset:1px;outline-width:1px">There should be a border around this text and a outline dotted border. There should be some gap between text border and outline dotted border.</div>
+<br/>
+<table class="b" style="border-width:1px;outline-offset:1px;outline-width:1px;">
+    <tr>
+    <td>Table border and outline dotted border should present. There should be some gap between table border and outline dotted border.</td>
+    </tr>
+</table>
+<br/>
+<div class="b" style="border-width:1px;outline-offset:1px;outline-width:1px">There should be a border around this text and a outline dotted border. There should be some gap between text border and outline dotted border.</div>
+<br/>
+<table class="b" style="border-width:1px;outline-offset:1px;outline-width:1px;">
+    <tr>
+    <td>Table border and outline dotted border should present. There should be some gap between table border and outline dotted border.</td>
+    </tr>
+</table>
+<br/>
+<div class="b" style="border-width:1px;outline-offset:1px;outline-width:1px">There should be a border around this text and a outline dotted border. There should be some gap between text border and outline dotted border.</div>
+<br/>
+<table class="b" style="border-width:1px;outline-offset:1px;outline-width:1px;">
+    <tr>
+    <td>Table border and outline dotted border should present. There should be some gap between table border and outline dotted border.</td>
+    </tr>
+</table>
+<br/>
+<div class="b" style="border-width:1px;outline-offset:1px;outline-width:1px;">There should be a border around this text and a outline dotted border. There should be some gap between text border and outline dotted border.</div>
+<br/>
+<table class="b" style="border-width:2px;outline-offset:2px;outline-width:2px;">
+    <tr>
+    <td>Table border and outline dotted border should present. There should be some gap between table border and outline dotted border.</td>
+    </tr>
+</table>
+<br/>
+<div class="b" style="border-width:2px;outline-offset:2px;outline-width:2px;">There should be a border around this text and a outline dotted border. There should be some gap between text border and outline dotted border.</div>
+<br/>
+<table class="b" style="border-width:2px;outline-offset:2px;outline-width:2px;">
+    <tr>
+    <td>Table border and outline dotted border should present. There should be some gap between table border and outline dotted border.</td>
+    </tr>
+</table>
+<br/>
+<div class="b" style="border-width:2px;outline-offset:2px;outline-width:2px;">There should be a border around this text and a outline dotted border. There should be some gap between text border and outline dotted border.</div>
+<br/>
+<table border="1" style="border-spacing:1px;">
+    <tr>
+    <td>There are some gap between table border and cell border.</td>
+    </tr>
+</table>
+<br/>
+<table border="1" style="border-spacing:1px;">
+    <tr>
+    <td>There are some gap between table border and cell border.</td>
+    </tr>
+</table>
+<br/>
+<table border="1" style="border-spacing:1px;">
+    <tr>
+    <td>There are some gap between table border and cell border.</td>
+    </tr>
+</table>
+<br/>
+<table border="1" style="border-spacing:1px;">
+    <tr>
+    <td>There are some gap between table border and cell border.</td>
+    </tr>
+</table>
+<br/>
+<table border="1" style="border-spacing:2px;">
+    <tr>
+    <td>There are some gap between table border and cell border.</td>
+    </tr>
+</table>
+<br/>
+<table border="1" style="border-spacing:2px;">
+    <tr>
+    <td>There are some gap between table border and cell border.</td>
+    </tr>
+</table>
+<br/>
+<div class="l" style="-webkit-column-rule-width:1px;">Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line.</div>
+<br/>
+<div class="l" style="-webkit-column-rule-width:1px;">Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line.</div>
+<br/>
+<div class="l" style="-webkit-column-rule-width:1px;">Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line.</div>
+<br/>
+<div class="l" style="-webkit-column-rule-width:1px;">Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line.</div>
+<br/>
+<div class="l" style="-webkit-column-rule-width:2px;">Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line.</div>
+<br/>
+<div class="l" style="-webkit-column-rule-width:2px;">Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line. Columns should be saperated with line.</div>
+</body>
+</html>
