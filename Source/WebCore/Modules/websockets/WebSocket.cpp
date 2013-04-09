@@ -513,7 +513,7 @@ void WebSocket::didConnect()
 void WebSocket::didReceiveMessage(const String& msg)
 {
     LOG(Network, "WebSocket %p didReceiveMessage() Text message '%s'", this, msg.utf8().data());
-    if (m_state != OPEN && m_state != CLOSING)
+    if (m_state != OPEN)
         return;
     ASSERT(scriptExecutionContext());
     dispatchEvent(MessageEvent::create(msg, SecurityOrigin::create(m_url)->toString()));

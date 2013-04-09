@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<script src="../../../../js-test-resources/js-test-pre.js"></script>
+<script src="/js-test-resources/js-test-pre.js"></script>
 </head>
 <body>
 <div id="description"></div>
@@ -20,7 +20,6 @@ var actualMessages = [];
 ws.onopen = function()
 {
     debug("onopen() was called.");
-    ws.close();
 };
 
 ws.onmessage = function(event)
@@ -28,6 +27,9 @@ ws.onmessage = function(event)
     var message = event.data;
     debug("onmessage() was called. (message = \"" + message + "\")");
     actualMessages.push(message);
+
+    if (actualMessages.length == 3)
+        ws.close();
 };
 
 ws.onclose = function(event)
