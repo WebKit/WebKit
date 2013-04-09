@@ -3320,7 +3320,7 @@ NetworkingContext* FrameLoader::networkingContext() const
 void FrameLoader::loadProgressingStatusChanged()
 {
     bool isLoadProgressing = m_frame->page()->progress()->isLoadProgressing();
-    m_frame->page()->mainFrame()->view()->updateLayerFlushThrottling(isLoadProgressing);
+    m_frame->page()->mainFrame()->view()->updateLayerFlushThrottlingInAllFrames(isLoadProgressing);
 }
 
 void FrameLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

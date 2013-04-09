@@ -2295,11 +2295,13 @@ void FrameView::endDisableRepaints()
     m_disableRepaints--;
 }
 
-void FrameView::updateLayerFlushThrottling(bool isLoadProgressing)
+void FrameView::updateLayerFlushThrottlingInAllFrames(bool isLoadProgressing)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (RenderView* view = renderView())
-        view->compositor()->setLayerFlushThrottlingEnabled(isLoadProgressing);
+    for (Frame* frame = m_frame.get(); frame; frame = frame->tree()->traverseNext(m_frame.get())) {
+        if (RenderView* renderView = frame->contentRenderer())
+            renderView->compositor()->setLayerFlushThrottlingEnabled(isLoadProgressing);
+    }
 #else
     UNUSED_PARAM(isLoadProgressing);
 #endif

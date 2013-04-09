@@ -236,7 +236,7 @@ public:
     void startDeferredRepaintTimer(double delay);
     void resetDeferredRepaintDelay();
 
-    void updateLayerFlushThrottling(bool isLoadProgressing);
+    void updateLayerFlushThrottlingInAllFrames(bool isLoadProgressing);
 
     void beginDisableRepaints();
     void endDisableRepaints();
