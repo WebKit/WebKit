@@ -48,7 +48,7 @@
 
                 logSpecURL("http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-vertical", 
                            "On setting, the text track cue writing direction must be set to the value ... is a case-sensitive match for the new value, if any. If none of the values match, then the user agent must instead throw a SyntaxError exception.");
-                testException("textCue.vertical = 'RL'", "DOMException.SYNTAX_ERR");
+                testDOMException("textCue.vertical = 'RL'", "DOMException.SYNTAX_ERR");
                 testExpected("textCue.vertical", "");
                 run("textCue.vertical = 'rl'");
                 testExpected("textCue.vertical", "rl");
@@ -59,8 +59,8 @@
 
                 logSpecURL("http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-line",
                             "On setting, if the text track cue snap-to-lines flag is not set, and the new value is negative or greater than 100, then throw an IndexSizeError exception.");
-                testException("textCue.line = -2", "DOMException.INDEX_SIZE_ERR");
-                testException("textCue.line = 102", "DOMException.INDEX_SIZE_ERR");
+                testDOMException("textCue.line = -2", "DOMException.INDEX_SIZE_ERR");
+                testDOMException("textCue.line = 102", "DOMException.INDEX_SIZE_ERR");
                 testExpected("textCue.line", -1);
                 run("textCue.line = 42");
                 testExpected("textCue.line", 42);
@@ -72,21 +72,21 @@
 
                 logSpecURL("http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-line", 
                            "On setting, if the new value is negative or greater than 100, then throw an IndexSizeError exception. Otherwise, set the text track cue text position to the new value.");
-                testException("textCue.position = -200", "DOMException.INDEX_SIZE_ERR");
-                testException("textCue.position = 110", "DOMException.INDEX_SIZE_ERR");
+                testDOMException("textCue.position = -200", "DOMException.INDEX_SIZE_ERR");
+                testDOMException("textCue.position = 110", "DOMException.INDEX_SIZE_ERR");
                 run("textCue.position = 11");
                 testExpected("textCue.position", 11);
 
                 logSpecURL("http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-size",
                            "On setting, if the new value is negative or greater than 100, then throw an IndexSizeError exception. Otherwise, set the text track cue size to the new value.");
-                testException("textCue.size = -200", "DOMException.INDEX_SIZE_ERR");
-                testException("textCue.size = 110", "DOMException.INDEX_SIZE_ERR");
+                testDOMException("textCue.size = -200", "DOMException.INDEX_SIZE_ERR");
+                testDOMException("textCue.size = 110", "DOMException.INDEX_SIZE_ERR");
                 run("textCue.size = 57");
                 testExpected("textCue.size", 57);
 
                 logSpecURL("http://www.whatwg.org/specs/web-apps/current-work/multipage/the-video-element.html#dom-texttrackcue-align",
                            "On setting, the text track cue alignment must be set to the value ... is a case-sensitive match for the new value, if any. If none of the values match, then the user agent must instead throw a SyntaxError exception.");
-                testException("textCue.align = 'End'", "DOMException.SYNTAX_ERR");
+                testDOMException("textCue.align = 'End'", "DOMException.SYNTAX_ERR");
                 testExpected("textCue.align", "middle");
                 run("textCue.align = 'end'");
                 testExpected("textCue.align", "end");

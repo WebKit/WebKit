@@ -1,10 +1,10 @@
 Tests invalid and valid syntaxes.
 
 Test calling functions with too few parameters.
-TEST(video.webkitGenerateKeyRequest()) THROWS(DOMException.TYPE_ERR) OK
-TEST(video.webkitAddKey()) THROWS(DOMException.TYPE_ERR) OK
-TEST(video.webkitAddKey('webkit-org.w3.clearkey')) THROWS(DOMException.TYPE_ERR) OK
-TEST(video.webkitCancelKeyRequest()) THROWS(DOMException.TYPE_ERR) OK
+TEST(video.webkitGenerateKeyRequest()) THROWS("TypeError: Not enough arguments") OK
+TEST(video.webkitAddKey()) THROWS("TypeError: Not enough arguments") OK
+TEST(video.webkitAddKey('webkit-org.w3.clearkey')) THROWS("TypeError: Not enough arguments") OK
+TEST(video.webkitCancelKeyRequest()) THROWS("TypeError: Not enough arguments") OK
 
 Verify invalid key system parameter is caught before checking whether loading has started.
 EXPECTED (video.networkState == '0') OK

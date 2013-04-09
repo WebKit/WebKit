@@ -13,7 +13,7 @@ function buttonClickHandler()
         run("mediaElement.webkitEnterFullScreen()");
     else {
         if (movie.type == 'video')
-            testException("mediaElement.webkitEnterFullScreen()", "DOMException.INVALID_STATE_ERR");
+            testDOMException("mediaElement.webkitEnterFullScreen()", "DOMException.INVALID_STATE_ERR");
         openNextMovie();
     }
 }
@@ -63,7 +63,7 @@ function canplaythrough()
     // Verify that we get an exception when trying to enter fullscreen since this isn't
     // called in response to a user gesture.
     if (movie.type == 'video')
-        testException("mediaElement.webkitEnterFullScreen()", "DOMException.INVALID_STATE_ERR");
+        testDOMException("mediaElement.webkitEnterFullScreen()", "DOMException.INVALID_STATE_ERR");
 
     // Click on the button
     if (window.testRunner)

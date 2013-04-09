@@ -57,7 +57,7 @@
                 consoleWrite("");
                 consoleWrite("* No user gesture initiated");
                 run("video.play()");
-                testException("video.webkitEnterFullScreen()", "DOMException.INVALID_STATE_ERR");
+                testDOMException("video.webkitEnterFullScreen()", "DOMException.INVALID_STATE_ERR");
                 testExpected("video.paused", true);
                 consoleWrite("");
 

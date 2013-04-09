@@ -27,46 +27,47 @@
                 run("video.webkitCancelKeyRequest('webkit-org.w3.clearkey', 'session')");
 
                 consoleWrite("<br>Unsupported key systems result in NOT_SUPPORTED_ERR.");
-                testException("video.webkitGenerateKeyRequest('com.example.invalid')", "DOMException.NOT_SUPPORTED_ERR");
-                testException("video.webkitAddKey('com.example.invalid', key)", "DOMException.NOT_SUPPORTED_ERR");
-                testException("video.webkitCancelKeyRequest('com.example.invalid')", "DOMException.NOT_SUPPORTED_ERR");
+                testDOMException("video.webkitGenerateKeyRequest('com.example.invalid')", "DOMException.NOT_SUPPORTED_ERR");
+                testDOMException("video.webkitAddKey('com.example.invalid', key)", "DOMException.NOT_SUPPORTED_ERR");
+                testDOMException("video.webkitCancelKeyRequest('com.example.invalid')", "DOMException.NOT_SUPPORTED_ERR");
 
                 endTest();
             }
         
             consoleWrite("Test calling functions with too few parameters.");
-            testException("video.webkitGenerateKeyRequest()", "DOMException.TYPE_ERR");
-            testException("video.webkitAddKey()", "DOMException.TYPE_ERR");
-            testException("video.webkitAddKey('webkit-org.w3.clearkey')", "DOMException.TYPE_ERR");
-            testException("video.webkitCancelKeyRequest()", "DOMException.TYPE_ERR");
+            var notEnoughArgumentsException = '"TypeError: Not enough arguments"';
+            testException("video.webkitGenerateKeyRequest()", notEnoughArgumentsException);
+            testException("video.webkitAddKey()", notEnoughArgumentsException);
+            testException("video.webkitAddKey('webkit-org.w3.clearkey')", notEnoughArgumentsException);
+            testException("video.webkitCancelKeyRequest()", notEnoughArgumentsException);
 
             consoleWrite("<br>Verify invalid key system parameter is caught before checking whether loading has started.");
             // If the above was not the case, all of these would be INVALID_STATE_ERR.
             // Also tests "null" case for first parameter.
             testExpected("video.networkState", video.NETWORK_EMPTY);
             testExpected("video.currentSrc", "");
-            testException("video.webkitGenerateKeyRequest('')", "DOMException.SYNTAX_ERR");
-            testException("video.webkitGenerateKeyRequest(null)", "DOMException.SYNTAX_ERR");
-            testException("video.webkitGenerateKeyRequest(undefined)", "DOMException.SYNTAX_ERR");
-            testException("video.webkitAddKey('', key)", "DOMException.SYNTAX_ERR");
-            testException("video.webkitAddKey(null, key)", "DOMException.SYNTAX_ERR");
-            testException("video.webkitAddKey(undefined, key)", "DOMException.SYNTAX_ERR");
-            testException("video.webkitCancelKeyRequest('')", "DOMException.SYNTAX_ERR");
-            testException("video.webkitCancelKeyRequest(null)", "DOMException.SYNTAX_ERR");
-            testException("video.webkitCancelKeyRequest(undefined)", "DOMException.SYNTAX_ERR");
+            testDOMException("video.webkitGenerateKeyRequest('')", "DOMException.SYNTAX_ERR");
+            testDOMException("video.webkitGenerateKeyRequest(null)", "DOMException.SYNTAX_ERR");
+            testDOMException("video.webkitGenerateKeyRequest(undefined)", "DOMException.SYNTAX_ERR");
+            testDOMException("video.webkitAddKey('', key)", "DOMException.SYNTAX_ERR");
+            testDOMException("video.webkitAddKey(null, key)", "DOMException.SYNTAX_ERR");
+            testDOMException("video.webkitAddKey(undefined, key)", "DOMException.SYNTAX_ERR");
+            testDOMException("video.webkitCancelKeyRequest('')", "DOMException.SYNTAX_ERR");
+            testDOMException("video.webkitCancelKeyRequest(null)", "DOMException.SYNTAX_ERR");
+            testDOMException("video.webkitCancelKeyRequest(undefined)", "DOMException.SYNTAX_ERR");
 
             consoleWrite("<br>null key is caught before load state is checked.");
-            testException("video.webkitAddKey('webkit-org.w3.clearkey', '')", "DOMException.SYNTAX_ERR");
-            testException("video.webkitAddKey('webkit-org.w3.clearkey', null)", "DOMException.SYNTAX_ERR");
-            testException("video.webkitAddKey('webkit-org.w3.clearkey', undefined)", "DOMException.SYNTAX_ERR");
+            testDOMException("video.webkitAddKey('webkit-org.w3.clearkey', '')", "DOMException.SYNTAX_ERR");
+            testDOMException("video.webkitAddKey('webkit-org.w3.clearkey', null)", "DOMException.SYNTAX_ERR");
+            testDOMException("video.webkitAddKey('webkit-org.w3.clearkey', undefined)", "DOMException.SYNTAX_ERR");
 
             consoleWrite("<br>0-length key is caught before load state is checked.");
-            testException("video.webkitAddKey('webkit-org.w3.clearkey', new Uint8Array())", "DOMException.TYPE_MISMATCH_ERR");
+            testDOMException("video.webkitAddKey('webkit-org.w3.clearkey', new Uint8Array())", "DOMException.TYPE_MISMATCH_ERR");
 
             consoleWrite("<br>Key system validity is not checked before loading.");
-            testException("video.webkitGenerateKeyRequest('com.example.invalid')", "DOMException.INVALID_STATE_ERR");
-            testException("video.webkitAddKey('com.example.invalid', key)", "DOMException.INVALID_STATE_ERR");
-            testException("video.webkitCancelKeyRequest('com.example.invalid')", "DOMException.INVALID_STATE_ERR");
+            testDOMException("video.webkitGenerateKeyRequest('com.example.invalid')", "DOMException.INVALID_STATE_ERR");
+            testDOMException("video.webkitAddKey('com.example.invalid', key)", "DOMException.INVALID_STATE_ERR");
+            testDOMException("video.webkitCancelKeyRequest('com.example.invalid')", "DOMException.INVALID_STATE_ERR");
 
             // FIXME(82952): Add "test-encrypted" file.
             video.setAttribute("src", findMediaFile("video", "../content/test"));

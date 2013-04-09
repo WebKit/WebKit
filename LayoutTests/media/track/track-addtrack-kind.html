@@ -21,7 +21,7 @@
 
                 consoleWrite("<em>++ Test invalid 'kind'.</em>");
                 testExpected("video.textTracks.length", 0);
-                testException("video.addTextTrack('kaptions')", "DOMException.SYNTAX_ERR");
+                testDOMException("video.addTextTrack('kaptions')", "DOMException.SYNTAX_ERR");
                 testExpected("video.textTracks.length", 0);
                 consoleWrite("");
 

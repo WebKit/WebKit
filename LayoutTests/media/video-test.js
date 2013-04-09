@@ -202,13 +202,25 @@ function waitForEventAndTest(eventName, testFuncString, endit)
     mediaElement.addEventListener(eventName, _eventCallback, true);
 }
 
-function testException(testString, exceptionString)
+function testDOMException(testString, exceptionString)
 {
     try {
         eval(testString);
     } catch (ex) {
-        logResult(ex.code == eval(exceptionString), "TEST(" + testString + ") THROWS("+exceptionString+")");
+        var exception = ex;
     }
+    logResult(exception instanceof DOMException && exception.code === eval(exceptionString),
+        "TEST(" + testString + ") THROWS(" + exceptionString + ")");
+}
+
+function testException(testString, exceptionString) {
+    try {
+        eval(testString);
+    } catch (ex) {
+        var exception = ex;
+    }
+    logResult(exception !== undefined && exception == eval(exceptionString),
+        "TEST(" + testString + ") THROWS(" + exceptionString + ")");
 }
 
 var testEnded = false;

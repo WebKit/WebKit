@@ -26,13 +26,13 @@
 
                 consoleWrite("Test MediaKeys.");
                 testExpected('typeof window.MediaKeys', 'object');
-                testException('new MediaKeys("")', "DOMException.INVALID_ACCESS_ERR");
-                testException('new MediaKeys("unsupported")', "DOMException.NOT_SUPPORTED_ERR");
+                testDOMException('new MediaKeys("")', "DOMException.INVALID_ACCESS_ERR");
+                testDOMException('new MediaKeys("unsupported")', "DOMException.NOT_SUPPORTED_ERR");
                 run('mediaKeys = new MediaKeys("com.webcore.mock")');
                 testExpected('mediaKeys.keySystem', 'com.webcore.mock');
                 testExpected('typeof mediaKeys.createSession', 'function');
-                testException('mediaKeys.createSession("", new Uint8Array(1))', "DOMException.INVALID_ACCESS_ERR");
-                testException('mediaKeys.createSession("unsupported/type")', "DOMException.NOT_SUPPORTED_ERR");
+                testDOMException('mediaKeys.createSession("", new Uint8Array(1))', "DOMException.INVALID_ACCESS_ERR");
+                testDOMException('mediaKeys.createSession("unsupported/type")', "DOMException.NOT_SUPPORTED_ERR");
                 consoleWrite("");
 
                 consoleWrite("Test MediaKeySession.");
@@ -46,7 +46,7 @@
                 testExpected('mediaKeySession.onwebkitkeyadded', null);
                 testExpected('mediaKeySession.onwebkitkeyerror', null);
                 testExpected('mediaKeySession.onwebkitkeymessage', null);
-                testException('mediaKeySession.update(null)', "DOMException.INVALID_ACCESS_ERR");
+                testDOMException('mediaKeySession.update(null)', "DOMException.INVALID_ACCESS_ERR");
                 endTest();
             }
         </script>

@@ -9,7 +9,7 @@
     <script>
         testExpected("video.networkState", HTMLMediaElement.NETWORK_EMPTY);
         testExpected("video.readyState", HTMLMediaElement.HAVE_NOTHING);
-        testException("video.currentTime = 1.1", "DOMException.INVALID_STATE_ERR");
+        testDOMException("video.currentTime = 1.1", "DOMException.INVALID_STATE_ERR");
         setTimeout(endTest, 200) 
     </script>
     
