@@ -334,6 +334,10 @@ webkit.org/b/104954 [ Debug ] http/tests/canvas/canvas-slow-font-loading.html [ 
 
 webkit.org/b/114217 platform/mac-wk2/plugins/slow/asynchronous-plugin-initialization-multiple.html [ Skip ]
 
+# The test pass reliably on WebKit2 Mountain Lion in release.
+webkit.org/b/60731 [ MountainLion Release ] ietestcenter/css3/grid/grid-items-003.htm [ Pass ]
+webkit.org/b/60731 ietestcenter/css3/grid/grid-items-003.htm [ ImageOnlyFailure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
