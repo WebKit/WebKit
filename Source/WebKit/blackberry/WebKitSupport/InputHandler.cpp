@@ -170,7 +170,7 @@ static BlackBerryInputType convertInputType(const HTMLInputElement* inputElement
         return InputTypeSearch;
     if (inputElement->isEmailField())
         return InputTypeEmail;
-    if (inputElement->isMonthControl())
+    if (inputElement->isMonthField())
         return InputTypeMonth;
     if (inputElement->isNumberField())
         return InputTypeNumber;
@@ -182,13 +182,13 @@ static BlackBerryInputType convertInputType(const HTMLInputElement* inputElement
     if (inputElement->isColorControl())
         return InputTypeColor;
 #endif
-    if (inputElement->isDateControl())
+    if (inputElement->isDateField())
         return InputTypeDate;
-    if (inputElement->isDateTimeControl())
+    if (inputElement->isDateTimeField())
         return InputTypeDateTime;
-    if (inputElement->isDateTimeLocalControl())
+    if (inputElement->isDateTimeLocalField())
         return InputTypeDateTimeLocal;
-    if (inputElement->isTimeControl())
+    if (inputElement->isTimeField())
         return InputTypeTime;
     // FIXME: missing WEEK popup selector
     if (DOMSupport::elementIdOrNameIndicatesEmail(inputElement))
