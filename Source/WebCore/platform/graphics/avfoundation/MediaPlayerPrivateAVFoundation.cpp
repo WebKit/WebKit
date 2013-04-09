@@ -391,7 +391,7 @@ bool MediaPlayerPrivateAVFoundation::didLoadingProgress() const
     float currentMaxTimeLoaded = maxTimeLoaded();
     bool didLoadingProgress = currentMaxTimeLoaded != m_maxTimeLoadedAtLastDidLoadingProgress;
     m_maxTimeLoadedAtLastDidLoadingProgress = currentMaxTimeLoaded;
-    LOG(Media, "MediaPlayerPrivateAVFoundation::didLoadingProgress(%p) - returning %d", this, didLoadingProgress);
+
     return didLoadingProgress;
 }
 
@@ -432,9 +432,6 @@ void MediaPlayerPrivateAVFoundation::updateStates()
 
     MediaPlayer::NetworkState oldNetworkState = m_networkState;
     MediaPlayer::ReadyState oldReadyState = m_readyState;
-
-    LOG(Media, "MediaPlayerPrivateAVFoundation::updateStates(%p) - entering with networkState = %i, readyState = %i", 
-        this, static_cast<int>(m_networkState), static_cast<int>(m_readyState));
 
     if (m_loadingMetadata)
         m_networkState = MediaPlayer::Loading;
@@ -522,8 +519,12 @@ void MediaPlayerPrivateAVFoundation::updateStates()
         platformPlay();
     }
 
-    LOG(Media, "MediaPlayerPrivateAVFoundation::updateStates(%p) - exiting with networkState = %i, readyState = %i", 
-        this, static_cast<int>(m_networkState), static_cast<int>(m_readyState));
+#if !LOG_DISABLED
+    if (m_networkState != oldNetworkState || oldReadyState != m_readyState) {
+        LOG(Media, "MediaPlayerPrivateAVFoundation::updateStates(%p) - entered with networkState = %i, readyState = %i,  exiting with networkState = %i, readyState = %i",
+            this, static_cast<int>(oldNetworkState), static_cast<int>(oldReadyState), static_cast<int>(m_networkState), static_cast<int>(m_readyState));
+    }
+#endif
 }
 
 void MediaPlayerPrivateAVFoundation::setSize(const IntSize&) 

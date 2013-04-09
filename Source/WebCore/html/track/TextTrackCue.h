@@ -177,7 +177,7 @@ public:
     };
     CueAlignment getAlignment() const { return m_cueAlignment; }
 
-    virtual void videoSizeDidChange(const IntSize&) { }
+    virtual void setFontSize(int, const IntSize&, bool important);
 
     virtual bool operator==(const TextTrackCue&) const;
     virtual bool operator!=(const TextTrackCue& cue) const

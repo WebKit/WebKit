@@ -47,8 +47,7 @@ public:
     virtual bool userPrefersCaptions() const OVERRIDE;
     virtual bool userPrefersSubtitles() const OVERRIDE;
     
-    virtual float captionFontSizeScale(bool&) const OVERRIDE;
-    virtual String captionsStyleSheetOverride() const OVERRIDE;
+    virtual float captionFontSizeScaleAndImportance(bool&) const OVERRIDE;
 
     virtual void setInterestedInCaptionPreferenceChanges() OVERRIDE;
 
@@ -56,9 +55,9 @@ public:
     virtual Vector<String> preferredLanguages() const OVERRIDE;
 
     virtual void captionPreferencesChanged() OVERRIDE;
-
 #endif
 
+    virtual String captionsStyleSheetOverride() const OVERRIDE;
     virtual int textTrackSelectionScore(TextTrack*, HTMLMediaElement*) const OVERRIDE;
     virtual Vector<RefPtr<TextTrack> > sortedTrackListForMenu(TextTrackList*) OVERRIDE;
     virtual String displayNameForTrack(TextTrack*) const OVERRIDE;
@@ -77,8 +76,6 @@ private:
     String captionsTextEdgeCSS() const;
     String cssPropertyWithTextEdgeColor(CSSPropertyID, const String&, const Color&, bool) const;
     String colorPropertyCSS(CSSPropertyID, const Color&, bool) const;
-
-    void updateCaptionStyleSheetOveride();
 
     bool m_listeningForPreferenceChanges;
 #endif

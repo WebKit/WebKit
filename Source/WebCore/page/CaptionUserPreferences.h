@@ -66,8 +66,10 @@ public:
     virtual bool userPrefersTextDescriptions() const;
     virtual void setUserPrefersTextDescriptions(bool preference);
 
-    virtual float captionFontSizeScale(bool& important) const { important = false; return 0.05f; }
-    virtual String captionsStyleSheetOverride() const { return emptyString(); }
+    virtual float captionFontSizeScaleAndImportance(bool& important) const { important = false; return 0.05f; }
+
+    virtual String captionsStyleSheetOverride() const { return m_captionsStyleSheetOverride; }
+    virtual void setCaptionsStyleSheetOverride(const String&);
 
     virtual void setInterestedInCaptionPreferenceChanges() { }
 
@@ -86,6 +88,7 @@ public:
 
 protected:
     CaptionUserPreferences(PageGroup*);
+    void updateCaptionStyleSheetOveride();
 
 private:
     void timerFired(Timer<CaptionUserPreferences>*);
@@ -95,6 +98,7 @@ private:
     CaptionDisplayMode m_displayMode;
     Timer<CaptionUserPreferences> m_timer;
     String m_userPreferredLanguage;
+    String m_captionsStyleSheetOverride;
     bool m_testingMode;
     bool m_havePreferences;
 };

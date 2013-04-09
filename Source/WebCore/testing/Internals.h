@@ -311,6 +311,9 @@ public:
 
     bool isSelectPopupVisible(Node*);
 
+    String captionsStyleSheetOverride(ExceptionCode&);
+    void setCaptionsStyleSheetOverride(const String&, ExceptionCode&);
+
 private:
     explicit Internals(Document*);
     Document* contextDocument() const;

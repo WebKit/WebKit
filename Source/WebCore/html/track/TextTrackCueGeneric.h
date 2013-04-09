@@ -68,7 +68,7 @@ public:
     Color backgroundColor() const { return m_backgroundColor; }
     void setBackgroundColor(RGBA32 color) { m_backgroundColor.setRGB(color); }
 
-    virtual void videoSizeDidChange(const IntSize&);
+    virtual void setFontSize(int, const IntSize&, bool important) OVERRIDE;
 
     virtual bool operator==(const TextTrackCue&) const OVERRIDE;
     virtual bool operator!=(const TextTrackCue& cue) const OVERRIDE

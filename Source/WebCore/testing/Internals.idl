@@ -272,5 +272,8 @@
 
     DOMString getImageSourceURL(in Element element) raises(DOMException);
 
+    [Conditional=VIDEO_TRACK] DOMString captionsStyleSheetOverride() raises (DOMException);
+    [Conditional=VIDEO_TRACK] void setCaptionsStyleSheetOverride(in DOMString override) raises (DOMException);
+
     boolean isSelectPopupVisible(in Node node);
 };

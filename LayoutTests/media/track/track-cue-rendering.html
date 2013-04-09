@@ -12,34 +12,45 @@
         var testTrack;
         var testCueDisplayBox;
         var seekedCount = 0;
+        var resizeCount = 1;
         var info = [ "Lorem", "ipsum", "dolor", "sit" ];
 
-        function testFontSize(width, height)
+        function setVideoSize(width, height)
         {
             run("video.width = " + width);
             run("video.height = " + height);
-            document.body.offsetTop;
-            testExpected("getComputedStyle(textTrackDisplayElement(video)).fontSize", parseInt(height * 0.05) + "px");
-            consoleWrite("");
         }
 
-        function testCueStyle()
+        function resizeTest()
         {
-            consoleWrite("<br>Test the cue display colors and font.");
-            testFontSize(320, 240);
-            testFontSize(640, 480);
-            testFontSize(1280, 960);
-            testFontSize(2560, 1440);
+            document.body.offsetTop;
+            currentCue = textTrackDisplayElement(video, 'cue');
+            testExpected("getComputedStyle(currentCue).fontSize", parseInt(240 * resizeCount * 0.05) + "px");
+            consoleWrite("");
 
-            testExpected("getComputedStyle(textTrackDisplayElement(video)).fontFamily", "sans-serif");
-            testExpected("getComputedStyle(textTrackDisplayElement(video)).color", "rgb(255, 255, 255)");
-            testExpected("getComputedStyle(textTrackDisplayElement(video, 'display').firstChild).backgroundColor", "rgba(0, 0, 0, 0.796875)");
+            if (++resizeCount < 5) {
+                setVideoSize(320 * resizeCount, 240 * resizeCount);
+                setTimeout(resizeTest, 10);
+                return
+            }
 
+            testExpected("getComputedStyle(currentCue).fontFamily", "sans-serif");
+            testExpected("getComputedStyle(currentCue).color", "rgb(255, 255, 255)");
+            testExpected("getComputedStyle(textTrackDisplayElement(video, 'display').firstChild).backgroundColor", "rgba(0, 0, 0, 0.8)");
+
+            consoleWrite("");
             endTest();
 
             // Resize the video so it is easier to interact with it manually, if necessary.
             video.width = 320;
             video.height = 240;
+        }
+
+        function testCueStyle()
+        {
+            consoleWrite("<br>Test the cue display colors and font.");
+            setVideoSize(320, 240);
+            setTimeout(resizeTest, 10);
         }
 
         function seeked()

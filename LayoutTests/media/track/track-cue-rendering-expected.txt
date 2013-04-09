@@ -34,22 +34,23 @@ EXPECTED (2 * testCueDisplayBox.offsetLeft == video.videoWidth - testCueDisplayB
 Test the cue display colors and font.
 RUN(video.width = 320)
 RUN(video.height = 240)
-EXPECTED (getComputedStyle(textTrackDisplayElement(video)).fontSize == '12px') OK
+EXPECTED (getComputedStyle(currentCue).fontSize == '12px') OK
 
 RUN(video.width = 640)
 RUN(video.height = 480)
-EXPECTED (getComputedStyle(textTrackDisplayElement(video)).fontSize == '24px') OK
+EXPECTED (getComputedStyle(currentCue).fontSize == '24px') OK
+
+RUN(video.width = 960)
+RUN(video.height = 720)
+EXPECTED (getComputedStyle(currentCue).fontSize == '36px') OK
 
 RUN(video.width = 1280)
 RUN(video.height = 960)
-EXPECTED (getComputedStyle(textTrackDisplayElement(video)).fontSize == '48px') OK
+EXPECTED (getComputedStyle(currentCue).fontSize == '48px') OK
 
-RUN(video.width = 2560)
-RUN(video.height = 1440)
-EXPECTED (getComputedStyle(textTrackDisplayElement(video)).fontSize == '72px') OK
+EXPECTED (getComputedStyle(currentCue).fontFamily == 'sans-serif') OK
+EXPECTED (getComputedStyle(currentCue).color == 'rgb(255, 255, 255)') OK
+EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'display').firstChild).backgroundColor == 'rgba(0, 0, 0, 0.8)') OK
 
-EXPECTED (getComputedStyle(textTrackDisplayElement(video)).fontFamily == 'sans-serif') OK
-EXPECTED (getComputedStyle(textTrackDisplayElement(video)).color == 'rgb(255, 255, 255)') OK
-EXPECTED (getComputedStyle(textTrackDisplayElement(video, 'display').firstChild).backgroundColor == 'rgba(0, 0, 0, 0.796875)'), OBSERVED 'rgba(0, 0, 0, 0.8)' FAIL
 END OF TEST
 

@@ -28,10 +28,12 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "CaptionUserPreferences.h"
+#include "DOMWrapperWorld.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "Settings.h"
 #include "TextTrackList.h"
+#include "UserStyleSheetTypes.h"
 #include <wtf/NonCopyingSort.h>
 
 namespace WebCore {
@@ -221,6 +223,28 @@ int CaptionUserPreferences::textTrackLanguageSelectionScore(TextTrack* track, co
     return (preferredLanguages.size() - languageMatchIndex) * 10;
 }
 
+void CaptionUserPreferences::setCaptionsStyleSheetOverride(const String& override)
+{
+    m_captionsStyleSheetOverride = override;
+    updateCaptionStyleSheetOveride();
+}
+
+void CaptionUserPreferences::updateCaptionStyleSheetOveride()
+{
+    // Identify our override style sheet with a unique URL - a new scheme and a UUID.
+    DEFINE_STATIC_LOCAL(KURL, captionsStyleSheetURL, (ParsedURLString, "user-captions-override:01F6AF12-C3B0-4F70-AF5E-A3E00234DC23"));
+
+    pageGroup()->removeUserStyleSheetFromWorld(mainThreadNormalWorld(), captionsStyleSheetURL);
+
+    String captionsOverrideStyleSheet = captionsStyleSheetOverride();
+    if (captionsOverrideStyleSheet.isEmpty())
+        return;
+
+    pageGroup()->addUserStyleSheetToWorld(mainThreadNormalWorld(), captionsOverrideStyleSheet, captionsStyleSheetURL, Vector<String>(),
+        Vector<String>(), InjectInAllFrames, UserStyleAuthorLevel, InjectInExistingDocuments);
+}
+
+    
 }
 
 #endif // ENABLE(VIDEO_TRACK)

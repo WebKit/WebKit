@@ -20,13 +20,14 @@
 
             consoleWrite("");
             cueDisplayElement = textTrackDisplayElement(video, 'display', 0);
-            testExpected("cueDisplayElement.offsetTop > (video.videoHeight * .75)", true);
+            document.body.offsetTop;
+            testExpected("cueDisplayElement.offsetTop > (video.videoHeight * .70)", true);
             endTest();
         }
 
         function loaded()
         {
-            consoleWrite("The top of the text track container should be in the bottom 25% of the video element.");
+            consoleWrite("The top of the text track container should be in the bottom 30% of the video element.");
 
             findMediaElement();
             video.src = findMediaFile('video', '../content/test');

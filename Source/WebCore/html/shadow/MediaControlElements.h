@@ -448,6 +448,8 @@ public:
     static const AtomicString& textTrackContainerElementShadowPseudoId();
 
 private:
+    void updateTimerFired(Timer<MediaControlTextTrackContainerElement>*);
+
     explicit MediaControlTextTrackContainerElement(Document*);
     virtual const AtomicString& shadowPseudoId() const OVERRIDE;
 
@@ -457,8 +459,10 @@ private:
     virtual void textTrackRepresentationBoundsChanged(const IntRect&) OVERRIDE;
     OwnPtr<TextTrackRepresentation> m_textTrackRepresentation;
 
+    Timer<MediaControlTextTrackContainerElement> m_updateTimer;
     IntRect m_videoDisplaySize;
-    float m_fontSize;
+    int m_fontSize;
+    bool m_fontSizeIsImportant;
 };
 
 #endif

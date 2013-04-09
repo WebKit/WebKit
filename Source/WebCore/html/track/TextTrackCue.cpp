@@ -42,6 +42,7 @@
 #include "HTMLDivElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLSpanElement.h"
+#include "Logging.h"
 #include "NodeTraversal.h"
 #include "RenderTextTrackCue.h"
 #include "Text.h"
@@ -1177,6 +1178,16 @@ bool TextTrackCue::operator==(const TextTrackCue& cue) const
         return false;
     
     return true;
+}
+
+void TextTrackCue::setFontSize(int fontSize, const IntSize&, bool important)
+{
+    if (!hasDisplayTree() || !fontSize)
+        return;
+    
+    LOG(Media, "TextTrackCue::setFontSize - setting cue font size to %i", fontSize);
+
+    element()->setInlineStyleProperty(CSSPropertyFontSize, String::number(fontSize) + "px", important);
 }
 
 } // namespace WebCore

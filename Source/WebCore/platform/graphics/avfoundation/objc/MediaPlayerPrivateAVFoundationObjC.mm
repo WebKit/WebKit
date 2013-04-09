@@ -529,7 +529,6 @@ PlatformMedia MediaPlayerPrivateAVFoundationObjC::platformMedia() const
 
 PlatformLayer* MediaPlayerPrivateAVFoundationObjC::platformLayer() const
 {
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::platformLayer(%p)", this);
     return m_videoLayer.get();
 }
 
@@ -1367,7 +1366,7 @@ void MediaPlayerPrivateAVFoundationObjC::setCurrentTrack(InbandTextTrackPrivateA
 
     AVMediaSelectionOptionType *mediaSelectionOption = trackPrivate ? trackPrivate->mediaSelectionOption() : 0;
 
-    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setCurrentTrack(%p) - selecting media option %p", this, mediaSelectionOption);
+    LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setCurrentTrack(%p) - selecting media option %p, language = %s", this, mediaSelectionOption, [[[mediaSelectionOption locale] localeIdentifier] UTF8String]);
 
     [m_avPlayerItem.get() selectMediaOption:mediaSelectionOption inMediaSelectionGroup:[m_avAsset.get() mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicLegible]];
     m_currentTrack = trackPrivate;

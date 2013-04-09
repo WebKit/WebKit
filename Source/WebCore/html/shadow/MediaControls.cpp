@@ -409,9 +409,9 @@ void MediaControls::updateTextTrackDisplay()
     
 void MediaControls::textTrackPreferencesChanged()
 {
+    closedCaptionTracksChanged();
     if (m_textDisplayContainer)
         m_textDisplayContainer->updateSizes(true);
-    closedCaptionTracksChanged();
 }
 #endif
 

@@ -34,6 +34,7 @@
 #include "HTMLDivElement.h"
 #include "HTMLNames.h"
 #include "InbandTextTrackPrivateClient.h"
+#include "Logging.h"
 #include "RenderObject.h"
 #include "RenderTextTrackCue.h"
 #include "ScriptExecutionContext.h"
@@ -65,6 +66,7 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
     setInlineStyleProperty(CSSPropertyUnicodeBidi, CSSValueWebkitPlaintext);
     
     TextTrackCueGeneric* cue = static_cast<TextTrackCueGeneric*>(getCue());
+    RefPtr<HTMLDivElement> cueElement = cue->element();
 
     float size = static_cast<float>(cue->getCSSSize());
     if (cue->useDefaultPosition()) {
@@ -81,22 +83,18 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
     }
 
     if (cue->foregroundColor().isValid())
-        setInlineStyleProperty(CSSPropertyColor, cue->foregroundColor().serialized());
+        cueElement->setInlineStyleProperty(CSSPropertyColor, cue->foregroundColor().serialized());
     
     if (cue->backgroundColor().isValid())
-        cue->element()->setInlineStyleProperty(CSSPropertyBackgroundColor, cue->backgroundColor().serialized());
+        cueElement->setInlineStyleProperty(CSSPropertyBackgroundColor, cue->backgroundColor().serialized());
 
     if (cue->getWritingDirection() == TextTrackCue::Horizontal)
         setInlineStyleProperty(CSSPropertyHeight, CSSValueAuto);
     else
         setInlineStyleProperty(CSSPropertyWidth, CSSValueAuto);
 
-    if (cue->baseFontSizeRelativeToVideoHeight()) {
-        double fontSize = videoSize.height() * cue->baseFontSizeRelativeToVideoHeight() / 100;
-        if (cue->fontSizeMultiplier())
-            fontSize *= cue->fontSizeMultiplier() / 100;
-        setInlineStyleProperty(CSSPropertyFontSize, String::number(fontSize) + "px");
-    }
+    if (cue->baseFontSizeRelativeToVideoHeight())
+        cue->setFontSize(cue->baseFontSizeRelativeToVideoHeight(), videoSize, false);
 
     if (cue->getAlignment() == TextTrackCue::Middle)
         setInlineStyleProperty(CSSPropertyTextAlign, CSSValueCenter);
@@ -135,20 +133,24 @@ void TextTrackCueGeneric::setPosition(int position, ExceptionCode& ec)
     TextTrackCue::setPosition(position, ec);
 }
 
-void TextTrackCueGeneric::videoSizeDidChange(const IntSize& videoSize)
+void TextTrackCueGeneric::setFontSize(int fontSize, const IntSize& videoSize, bool important)
 {
-    if (!hasDisplayTree())
+    if (!hasDisplayTree() || !fontSize)
         return;
-
-    if (baseFontSizeRelativeToVideoHeight()) {
-        double fontSize = videoSize.height() * baseFontSizeRelativeToVideoHeight() / 100;
-        if (fontSizeMultiplier())
-            fontSize *= fontSizeMultiplier() / 100;
-        displayTreeInternal()->setInlineStyleProperty(CSSPropertyFontSize, String::number(fontSize) + "px");
+    
+    if (important || !baseFontSizeRelativeToVideoHeight()) {
+        TextTrackCue::setFontSize(fontSize, videoSize, important);
+        return;
     }
 
-}
+    double size = videoSize.height() * baseFontSizeRelativeToVideoHeight() / 100;
+    if (fontSizeMultiplier())
+        size *= fontSizeMultiplier() / 100;
+    element()->setInlineStyleProperty(CSSPropertyFontSize, String::number(lrintf(size)) + "px");
 
+    LOG(Media, "TextTrackCueGeneric::setFontSize - setting cue font size to %li", lrintf(size));
+}
+    
 bool TextTrackCueGeneric::operator==(const TextTrackCue& cue) const
 {
     if (cue.cueType() != TextTrackCue::Generic)

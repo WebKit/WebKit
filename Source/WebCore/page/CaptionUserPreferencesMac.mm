@@ -250,7 +250,7 @@ String CaptionUserPreferencesMac::captionsBackgroundCSS() const
         backgroundColor = defaultBackgroundColor;
 
     bool important = behavior == kMACaptionAppearanceBehaviorUseValue;
-    CGFloat opacity = MACaptionAppearanceGetBackgroundOpacity(kMACaptionAppearanceDomainUser, 0);
+    CGFloat opacity = MACaptionAppearanceGetBackgroundOpacity(kMACaptionAppearanceDomainUser, &behavior);
     if (!important)
         important = behavior == kMACaptionAppearanceBehaviorUseValue;
     String backgroundStyle = colorPropertyCSS(CSSPropertyBackgroundColor, Color(backgroundColor.red(), backgroundColor.green(), backgroundColor.blue(), static_cast<int>(opacity * 255)), important);
@@ -416,67 +416,13 @@ String CaptionUserPreferencesMac::captionsDefaultFontCSS() const
     return builder.toString();
 }
 
-String CaptionUserPreferencesMac::captionsStyleSheetOverride() const
+float CaptionUserPreferencesMac::captionFontSizeScaleAndImportance(bool& important) const
 {
     if (testingMode() || !MediaAccessibilityLibrary())
-        return CaptionUserPreferences::captionsStyleSheetOverride();
-
-    StringBuilder captionsOverrideStyleSheet;
-
-    String background = captionsBackgroundCSS();
-    if (!background.isEmpty()) {
-        captionsOverrideStyleSheet.append(" video::");
-        captionsOverrideStyleSheet.append(TextTrackCue::cueShadowPseudoId());
-        captionsOverrideStyleSheet.append('{');
-        captionsOverrideStyleSheet.append(background);
-        captionsOverrideStyleSheet.append('}');
-    }
-
-    String windowColor = captionsWindowCSS();
-    String windowCornerRadius = windowRoundedCornerRadiusCSS();
-    if (!windowColor.isEmpty() || !windowCornerRadius.isEmpty()) {
-        captionsOverrideStyleSheet.append(" video::");
-        captionsOverrideStyleSheet.append(TextTrackCueBox::textTrackCueBoxShadowPseudoId());
-        captionsOverrideStyleSheet.append('{');
-
-        if (!windowColor.isEmpty())
-            captionsOverrideStyleSheet.append(windowColor);
-        if (!windowCornerRadius.isEmpty())
-            captionsOverrideStyleSheet.append(windowCornerRadius);
-
-        captionsOverrideStyleSheet.append('}');
-    }
-    
-    String captionsColor = captionsTextColorCSS();
-    String edgeStyle = captionsTextEdgeCSS();
-    String fontName = captionsDefaultFontCSS();
-    if (!captionsColor.isEmpty() || !edgeStyle.isEmpty() || !fontName.isEmpty()) {
-        captionsOverrideStyleSheet.append(" video::");
-        captionsOverrideStyleSheet.append(MediaControlTextTrackContainerElement::textTrackContainerElementShadowPseudoId());
-        captionsOverrideStyleSheet.append('{');
-
-        if (!captionsColor.isEmpty())
-            captionsOverrideStyleSheet.append(captionsColor);
-        if (!edgeStyle.isEmpty())
-            captionsOverrideStyleSheet.append(edgeStyle);
-        if (!fontName.isEmpty())
-            captionsOverrideStyleSheet.append(fontName);
-
-        captionsOverrideStyleSheet.append('}');
-    }
-    
-    LOG(Media, "CaptionUserPreferencesMac::captionsStyleSheetOverrideSetting sytle to:\n%s", captionsOverrideStyleSheet.toString().utf8().data());
-
-    return captionsOverrideStyleSheet.toString();
-}
-
-float CaptionUserPreferencesMac::captionFontSizeScale(bool& important) const
-{
-    if (testingMode() || !MediaAccessibilityLibrary())
-        return CaptionUserPreferences::captionFontSizeScale(important);
+        return CaptionUserPreferences::captionFontSizeScaleAndImportance(important);
 
     MACaptionAppearanceBehavior behavior;
-    CGFloat characterScale = CaptionUserPreferences::captionFontSizeScale(important);
+    CGFloat characterScale = CaptionUserPreferences::captionFontSizeScaleAndImportance(important);
     CGFloat scaleAdjustment = MACaptionAppearanceGetRelativeCharacterSize(kMACaptionAppearanceDomainUser, &behavior);
 
     if (!scaleAdjustment)
@@ -488,21 +434,6 @@ float CaptionUserPreferencesMac::captionFontSizeScale(bool& important) const
 #else
     return scaleAdjustment * characterScale;
 #endif
-}
-
-void CaptionUserPreferencesMac::updateCaptionStyleSheetOveride()
-{
-    // Identify our override style sheet with a unique URL - a new scheme and a UUID.
-    DEFINE_STATIC_LOCAL(KURL, captionsStyleSheetURL, (ParsedURLString, "user-captions-override:01F6AF12-C3B0-4F70-AF5E-A3E00234DC23"));
-    
-    pageGroup()->removeUserStyleSheetFromWorld(mainThreadNormalWorld(), captionsStyleSheetURL);
-    
-    String captionsOverrideStyleSheet = captionsStyleSheetOverride();
-    if (captionsOverrideStyleSheet.isEmpty())
-        return;
-    
-    pageGroup()->addUserStyleSheetToWorld(mainThreadNormalWorld(), captionsOverrideStyleSheet, captionsStyleSheetURL, Vector<String>(),
-             Vector<String>(), InjectInAllFrames, UserStyleAuthorLevel, InjectInExistingDocuments);
 }
 
 void CaptionUserPreferencesMac::setPreferredLanguage(const String& language)
@@ -549,6 +480,59 @@ Vector<String> CaptionUserPreferencesMac::preferredLanguages() const
     return userPreferredLanguages;
 }
 #endif  // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+
+String CaptionUserPreferencesMac::captionsStyleSheetOverride() const
+{
+    if (testingMode())
+        return CaptionUserPreferences::captionsStyleSheetOverride();
+    
+    StringBuilder captionsOverrideStyleSheet;
+
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+    if (!MediaAccessibilityLibrary())
+        return CaptionUserPreferences::captionsStyleSheetOverride();
+    
+    String captionsColor = captionsTextColorCSS();
+    String edgeStyle = captionsTextEdgeCSS();
+    String fontName = captionsDefaultFontCSS();
+    String background = captionsBackgroundCSS();
+    if (!background.isEmpty() || !captionsColor.isEmpty() || !edgeStyle.isEmpty() || !fontName.isEmpty()) {
+        captionsOverrideStyleSheet.append(" video::");
+        captionsOverrideStyleSheet.append(TextTrackCue::cueShadowPseudoId());
+        captionsOverrideStyleSheet.append('{');
+        
+        if (!background.isEmpty())
+            captionsOverrideStyleSheet.append(background);
+        if (!captionsColor.isEmpty())
+            captionsOverrideStyleSheet.append(captionsColor);
+        if (!edgeStyle.isEmpty())
+            captionsOverrideStyleSheet.append(edgeStyle);
+        if (!fontName.isEmpty())
+            captionsOverrideStyleSheet.append(fontName);
+        
+        captionsOverrideStyleSheet.append('}');
+    }
+    
+    String windowColor = captionsWindowCSS();
+    String windowCornerRadius = windowRoundedCornerRadiusCSS();
+    if (!windowColor.isEmpty() || !windowCornerRadius.isEmpty()) {
+        captionsOverrideStyleSheet.append(" video::");
+        captionsOverrideStyleSheet.append(TextTrackCueBox::textTrackCueBoxShadowPseudoId());
+        captionsOverrideStyleSheet.append('{');
+        
+        if (!windowColor.isEmpty())
+            captionsOverrideStyleSheet.append(windowColor);
+        if (!windowCornerRadius.isEmpty())
+            captionsOverrideStyleSheet.append(windowCornerRadius);
+        
+        captionsOverrideStyleSheet.append('}');
+    }
+#endif  // HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
+
+    LOG(Media, "CaptionUserPreferencesMac::captionsStyleSheetOverrideSetting sytle to:\n%s", captionsOverrideStyleSheet.toString().utf8().data());
+
+    return captionsOverrideStyleSheet.toString();
+}
 
 static String languageIdentifier(const String& languageCode)
 {

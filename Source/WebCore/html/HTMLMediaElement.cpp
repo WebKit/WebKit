@@ -1081,8 +1081,6 @@ static bool eventTimeCueCompare(const std::pair<double, TextTrackCue*>& a,
 
 void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
 {
-    LOG(Media, "HTMLMediaElement::updateActiveTextTracks");
-
     // 4.8.10.8 Playing the media resource
 
     //  If the current playback position changes while the steps are running,
@@ -1090,6 +1088,8 @@ void HTMLMediaElement::updateActiveTextTrackCues(float movieTime)
     //  immediately rerun the steps.
     if (ignoreTrackDisplayUpdateRequests())
         return;
+
+    LOG(Media, "HTMLMediaElement::updateActiveTextTracks");
 
     // 1 - Let current cues be a list of cues, initialized to contain all the
     // cues of all the hidden, showing, or showing by default text tracks of the

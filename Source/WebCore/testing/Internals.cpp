@@ -273,6 +273,7 @@ void Internals::resetToConsistentState(Page* page)
         page->inspectorController()->setProfilerEnabled(false);
 #endif
 #if ENABLE(VIDEO_TRACK) && !PLATFORM(WIN)
+    page->group().captionPreferences()->setCaptionsStyleSheetOverride(emptyString());
     page->group().captionPreferences()->setTestingMode(false);
 #endif
     if (!page->mainFrame()->editor()->isContinuousSpellCheckingEnabled())
@@ -2105,6 +2106,34 @@ bool Internals::isSelectPopupVisible(Node* node)
 
     RenderMenuList* menuList = toRenderMenuList(renderer);
     return menuList->popupIsVisible();
+}
+
+String Internals::captionsStyleSheetOverride(ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->page()) {
+        ec = INVALID_ACCESS_ERR;
+        return emptyString();
+    }
+
+#if ENABLE(VIDEO_TRACK) && !PLATFORM(WIN)
+    return document->page()->group().captionPreferences()->captionsStyleSheetOverride();
+#else
+    return emptyString();
+#endif
+}
+
+void Internals::setCaptionsStyleSheetOverride(const String& override, ExceptionCode& ec)
+{
+    Document* document = contextDocument();
+    if (!document || !document->page()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+#if ENABLE(VIDEO_TRACK) && !PLATFORM(WIN)
+    document->page()->group().captionPreferences()->setCaptionsStyleSheetOverride(override);
+#endif
 }
 
 }

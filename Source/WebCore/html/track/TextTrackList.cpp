@@ -205,7 +205,7 @@ void TextTrackList::remove(TextTrack* track)
 
     invalidateTrackIndexesAfterTrack(track);
 
-    ASSERT(track->mediaElement() == m_owner);
+    ASSERT(!track->mediaElement() || track->mediaElement() == m_owner);
     track->setMediaElement(0);
 
     tracks->remove(index);
