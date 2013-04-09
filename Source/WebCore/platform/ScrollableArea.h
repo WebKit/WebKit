@@ -69,8 +69,8 @@ public:
     ScrollElasticity horizontalScrollElasticity() const { return static_cast<ScrollElasticity>(m_horizontalScrollElasticity); }
 
     bool inLiveResize() const { return m_inLiveResize; }
-    void willStartLiveResize();
-    void willEndLiveResize();
+    virtual void willStartLiveResize();
+    virtual void willEndLiveResize();
 
     void contentAreaWillPaint() const;
     void mouseEnteredContentArea() const;

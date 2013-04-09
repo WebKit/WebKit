@@ -122,6 +122,9 @@ double FrameView::s_maxDeferredRepaintDelayDuringLoading = 0;
 double FrameView::s_deferredRepaintDelayIncrementDuringLoading = 0;
 #endif
 
+// While the browser window is being resized, resize events will be dispatched at most this often.
+static const double minimumIntervalBetweenResizeEventsDuringLiveResizeInSeconds = 0.2;
+
 // The maximum number of updateWidgets iterations that should be done before returning.
 static const unsigned maxUpdateWidgetsIterations = 2;
 
@@ -168,6 +171,7 @@ FrameView::FrameView(Frame* frame)
     : m_frame(frame)
     , m_canHaveScrollbars(true)
     , m_slowRepaintObjectCount(0)
+    , m_delayedResizeEventTimer(this, &FrameView::delayedResizeEventTimerFired)
     , m_layoutTimer(this, &FrameView::layoutTimerFired)
     , m_layoutRoot(0)
     , m_inSynchronousPostLayout(false)
@@ -2735,20 +2739,51 @@ void FrameView::performPostLayoutTasks()
         m_lastViewportSize = currentSize;
         m_lastZoomFactor = currentZoomFactor;
         if (resized) {
-            m_frame->eventHandler()->sendResizeEvent();
-
-#if ENABLE(INSPECTOR)
-            if (InspectorInstrumentation::hasFrontends()) {
-                if (page) {
-                    if (page->mainFrame() == m_frame) {
-                        if (InspectorClient* inspectorClient = page->inspectorController()->inspectorClient())
-                            inspectorClient->didResizeMainFrame(m_frame.get());
-                    }
-                }
-            }
-#endif
+            if (inLiveResize())
+                scheduleResizeEvent();
+            else
+                sendResizeEvent();
         }
     }
+}
+
+void FrameView::sendResizeEvent()
+{
+    if (!m_frame)
+        return;
+
+    m_frame->eventHandler()->sendResizeEvent();
+
+#if ENABLE(INSPECTOR)
+    if (InspectorInstrumentation::hasFrontends()) {
+        if (Page* page = m_frame->page()) {
+            if (page->mainFrame() == m_frame) {
+                if (InspectorClient* inspectorClient = page->inspectorController()->inspectorClient())
+                    inspectorClient->didResizeMainFrame(m_frame.get());
+            }
+        }
+    }
+#endif
+}
+
+void FrameView::delayedResizeEventTimerFired(Timer<FrameView>*)
+{
+    sendResizeEvent();
+}
+
+void FrameView::willEndLiveResize()
+{
+    ScrollableArea::willEndLiveResize();
+    if (m_delayedResizeEventTimer.isActive()) {
+        m_delayedResizeEventTimer.stop();
+        sendResizeEvent();
+    }
+}
+
+void FrameView::scheduleResizeEvent()
+{
+    if (!m_delayedResizeEventTimer.isActive())
+        m_delayedResizeEventTimer.startOneShot(minimumIntervalBetweenResizeEventsDuringLiveResizeInSeconds);
 }
 
 void FrameView::postLayoutTimerFired(Timer<FrameView>*)
