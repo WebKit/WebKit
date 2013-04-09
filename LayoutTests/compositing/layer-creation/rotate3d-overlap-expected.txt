@@ -6,27 +6,32 @@
     (GraphicsLayer
       (bounds 800.00 600.00)
       (contentsOpaque 1)
-      (children 4
+      (children 5
         (GraphicsLayer
-          (position 25.00 25.00)
-          (bounds 106.00 106.00)
+          (position 23.00 23.00)
+          (bounds 110.00 110.00)
           (drawsContent 1)
         )
         (GraphicsLayer
-          (position 169.00 25.00)
-          (bounds 106.00 106.00)
+          (position 167.00 23.00)
+          (bounds 110.00 110.00)
           (drawsContent 1)
           (transform [0.97 0.26 0.00 0.00] [-0.26 0.97 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
         )
         (GraphicsLayer
-          (position 313.00 25.00)
-          (bounds 106.00 106.00)
+          (position 167.00 143.00)
+          (bounds 110.00 110.00)
+          (drawsContent 1)
+        )
+        (GraphicsLayer
+          (position 311.00 23.00)
+          (bounds 110.00 110.00)
           (drawsContent 1)
           (transform [0.71 0.71 0.00 0.00] [-0.71 0.71 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
         )
         (GraphicsLayer
-          (position 313.00 145.00)
-          (bounds 106.00 106.00)
+          (position 311.00 143.00)
+          (bounds 110.00 110.00)
           (drawsContent 1)
         )
       )

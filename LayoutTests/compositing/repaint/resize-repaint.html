@@ -22,7 +22,8 @@
         function doTest()
         {
             // Force compositing update before changing layer size.
-            window.internals.layerTreeAsText(document);
+            if (window.internals)
+                window.internals.layerTreeAsText(document);
 
             var resizingDiv = document.getElementById('resizing');
             
