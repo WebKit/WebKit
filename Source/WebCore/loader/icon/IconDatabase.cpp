@@ -598,7 +598,6 @@ void IconDatabase::updateIconRecord(PassRefPtr<SharedBuffer> iconData, PassRefPt
 void IconDatabase::setIconBitmapForIconURL(PassRefPtr<Image> imageOriginal, const String& iconURLOriginal)
 {
     ASSERT_NOT_SYNC_THREAD();
-    ASSERT(imageOriginal->isBitmapImage());
     
     // Cannot do anything with imageOriginal or iconURLOriginal that would end up storing them without deep copying first
 
@@ -607,6 +606,8 @@ void IconDatabase::setIconBitmapForIconURL(PassRefPtr<Image> imageOriginal, cons
     
     RefPtr<Image> image;
     if (imageOriginal) {
+        ASSERT(imageOriginal->isBitmapImage());
+
         OwnPtr<ImageBuffer> imageBuffer = ImageBuffer::create(imageOriginal->size());
         GraphicsContext* context = imageBuffer->context();
         
