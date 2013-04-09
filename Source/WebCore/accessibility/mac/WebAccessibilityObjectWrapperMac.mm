@@ -1509,7 +1509,7 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
             }
         }
         
-        IntPoint intPoint = IntPoint(point);
+        IntPoint intPoint = flooredIntPoint(point);
         if (scrollView)
             intPoint = scrollView->contentsToRootView(intPoint);
         
