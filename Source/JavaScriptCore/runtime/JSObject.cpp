@@ -1532,10 +1532,12 @@ void JSObject::getOwnPropertyNames(JSObject* object, ExecState* exec, PropertyNa
 void JSObject::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
     getClassPropertyNames(exec, object->classInfo(), propertyNames, mode, object->staticFunctionsReified());
-    size_t preStructurePropertyNamesCount = propertyNames.size();
+
+    bool canCachePropertiesFromStructure = !propertyNames.size();
     object->structure()->getPropertyNamesFromStructure(exec->globalData(), propertyNames, mode);
-    size_t numCacheableSlots = preStructurePropertyNamesCount ? 0 : propertyNames.size();
-    propertyNames.setNumCacheableSlots(numCacheableSlots);
+
+    if (canCachePropertiesFromStructure)
+        propertyNames.setNumCacheableSlots(propertyNames.size());
 }
 
 double JSObject::toNumber(ExecState* exec) const

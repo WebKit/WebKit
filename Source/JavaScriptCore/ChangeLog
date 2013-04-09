@@ -1,3 +1,18 @@
+2013-04-08  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSObject::getOwnNonIndexPropertyNames calculates numCacheableSlots incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=114235
+
+        Reviewed by Geoffrey Garen.
+
+        Due to the way that numCacheableSlots is currently calculated, checking an object's prototype for enumerable 
+        properties causes us not to cache any properties at all. We should only cache properties on the object itself
+        since we currently don't take advantage of any sort of name caching for properties in the prototype chain.
+        This fix undoes a ~2% SunSpider regression caused by http://trac.webkit.org/changeset/147570.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getOwnNonIndexPropertyNames):
+
 2013-04-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove yarr.gyp
