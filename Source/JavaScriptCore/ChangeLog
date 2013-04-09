@@ -1,3 +1,18 @@
+2013-04-09  Oliver Hunt  <oliver@apple.com>
+
+        Add liveness tests to JSC API entry points
+        https://bugs.webkit.org/show_bug.cgi?id=114318
+
+        Reviewed by Filip Pizlo.
+
+        Add simple checks for the existence of a method table on any
+        JSCells passed across the API.  This in turn forces a structure
+        validity test.
+
+        * API/APICast.h:
+        (toJS):
+        (toJSForGC):
+
 2013-04-09  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         LLInt conditional branch compilation fault on MIPS.
