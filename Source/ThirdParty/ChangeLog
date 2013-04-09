@@ -1,3 +1,12 @@
+2013-04-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        Remove gyp from ThirdParty
+        https://bugs.webkit.org/show_bug.cgi?id=114244
+
+        Rubberstamped by Ryosuke Niwa.
+
+        * gyp: Removed.
+
 2013-04-05  Geoffrey Garen  <ggaren@apple.com>
 
         Made USE(JSC) unconditional
