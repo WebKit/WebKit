@@ -33,7 +33,7 @@
 
 namespace WebKit {
 
-class StorageAreaProxy;
+class StorageAreaImpl;
 class WebPage;
 
 class StorageNamespaceImpl : public WebCore::StorageNamespace {
@@ -58,7 +58,7 @@ private:
     uint64_t m_storageNamespaceID;
     unsigned m_quotaInBytes;
 
-    HashMap<RefPtr<WebCore::SecurityOrigin>, RefPtr<StorageAreaProxy> > m_storageAreaMap;
+    HashMap<RefPtr<WebCore::SecurityOrigin>, RefPtr<StorageAreaImpl> > m_storageAreaMap;
 };
 
 } // namespace WebKit

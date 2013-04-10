@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StorageAreaProxy_h
-#define StorageAreaProxy_h
+#ifndef StorageAreaImpl_h
+#define StorageAreaImpl_h
 
 #include "MessageReceiver.h"
 #include <WebCore/StorageArea.h>
@@ -39,13 +39,13 @@ namespace WebKit {
 
 class StorageNamespaceImpl;
 
-class StorageAreaProxy : public WebCore::StorageArea, private CoreIPC::MessageReceiver {
+class StorageAreaImpl : public WebCore::StorageArea, private CoreIPC::MessageReceiver {
 public:
-    static PassRefPtr<StorageAreaProxy> create(StorageNamespaceImpl*, PassRefPtr<WebCore::SecurityOrigin>);
-    virtual ~StorageAreaProxy();
+    static PassRefPtr<StorageAreaImpl> create(StorageNamespaceImpl*, PassRefPtr<WebCore::SecurityOrigin>);
+    virtual ~StorageAreaImpl();
 
 private:
-    StorageAreaProxy(StorageNamespaceImpl*, PassRefPtr<WebCore::SecurityOrigin>);
+    StorageAreaImpl(StorageNamespaceImpl*, PassRefPtr<WebCore::SecurityOrigin>);
 
     // WebCore::StorageArea.
     virtual unsigned length(WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
@@ -89,4 +89,4 @@ private:
 
 } // namespace WebKit
 
-#endif // StorageAreaProxy_h
+#endif // StorageAreaImpl_h

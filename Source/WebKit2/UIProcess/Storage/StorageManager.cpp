@@ -27,7 +27,7 @@
 #include "StorageManager.h"
 
 #include "SecurityOriginData.h"
-#include "StorageAreaProxyMessages.h"
+#include "StorageAreaImplMessages.h"
 #include "StorageManagerMessages.h"
 #include "WebProcessProxy.h"
 #include "WorkQueue.h"
@@ -103,7 +103,7 @@ void StorageManager::StorageArea::dispatchEvents(CoreIPC::Connection* connection
             continue;
         }
 
-        it->first->send(Messages::StorageAreaProxy::DispatchStorageEvent(key, oldValue, newValue, urlString), it->second);
+        it->first->send(Messages::StorageAreaImpl::DispatchStorageEvent(key, oldValue, newValue, urlString), it->second);
     }
 }
 
@@ -273,7 +273,7 @@ void StorageManager::setItem(CoreIPC::Connection* connection, uint64_t storageAr
 
     bool quotaError;
     storageArea->setItem(connection, storageAreaID, key, value, urlString, quotaError);
-    connection->send(Messages::StorageAreaProxy::DidSetItem(key, quotaError), storageAreaID);
+    connection->send(Messages::StorageAreaImpl::DidSetItem(key, quotaError), storageAreaID);
 }
 
 void StorageManager::createSessionStorageNamespaceInternal(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection, unsigned quotaInBytes)

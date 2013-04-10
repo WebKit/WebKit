@@ -26,7 +26,7 @@
 #include "config.h"
 #include "StorageNamespaceImpl.h"
 
-#include "StorageAreaProxy.h"
+#include "StorageAreaImpl.h"
 #include "WebPage.h"
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
@@ -52,9 +52,9 @@ StorageNamespaceImpl::~StorageNamespaceImpl()
 
 PassRefPtr<StorageArea> StorageNamespaceImpl::storageArea(PassRefPtr<SecurityOrigin> securityOrigin)
 {
-    HashMap<RefPtr<WebCore::SecurityOrigin>, RefPtr<StorageAreaProxy> >::AddResult result = m_storageAreaMap.add(securityOrigin.get(), 0);
+    HashMap<RefPtr<WebCore::SecurityOrigin>, RefPtr<StorageAreaImpl> >::AddResult result = m_storageAreaMap.add(securityOrigin.get(), 0);
     if (result.isNewEntry)
-        result.iterator->value = StorageAreaProxy::create(this, securityOrigin);
+        result.iterator->value = StorageAreaImpl::create(this, securityOrigin);
 
     return result.iterator->value;
 }

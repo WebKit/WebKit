@@ -24,10 +24,10 @@
  */
 
 #include "config.h"
-#include "StorageAreaProxy.h"
+#include "StorageAreaImpl.h"
 
 #include "SecurityOriginData.h"
-#include "StorageAreaProxyMessages.h"
+#include "StorageAreaImplMessages.h"
 #include "StorageManagerMessages.h"
 #include "StorageNamespaceImpl.h"
 #include "WebProcess.h"
@@ -48,28 +48,28 @@ static uint64_t generateStorageAreaID()
     return ++storageAreaID;
 }
 
-PassRefPtr<StorageAreaProxy> StorageAreaProxy::create(StorageNamespaceImpl* StorageNamespaceImpl, PassRefPtr<SecurityOrigin> securityOrigin)
+PassRefPtr<StorageAreaImpl> StorageAreaImpl::create(StorageNamespaceImpl* StorageNamespaceImpl, PassRefPtr<SecurityOrigin> securityOrigin)
 {
-    return adoptRef(new StorageAreaProxy(StorageNamespaceImpl, securityOrigin));
+    return adoptRef(new StorageAreaImpl(StorageNamespaceImpl, securityOrigin));
 }
 
-StorageAreaProxy::StorageAreaProxy(StorageNamespaceImpl* StorageNamespaceImpl, PassRefPtr<SecurityOrigin> securityOrigin)
+StorageAreaImpl::StorageAreaImpl(StorageNamespaceImpl* StorageNamespaceImpl, PassRefPtr<SecurityOrigin> securityOrigin)
     : m_storageNamespaceID(StorageNamespaceImpl->storageNamespaceID())
     , m_quotaInBytes(StorageNamespaceImpl->quotaInBytes())
     , m_storageAreaID(generateStorageAreaID())
     , m_securityOrigin(securityOrigin)
 {
     WebProcess::shared().connection()->send(Messages::StorageManager::CreateStorageArea(m_storageAreaID, StorageNamespaceImpl->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(m_securityOrigin.get())), 0);
-    WebProcess::shared().addMessageReceiver(Messages::StorageAreaProxy::messageReceiverName(), m_storageAreaID, this);
+    WebProcess::shared().addMessageReceiver(Messages::StorageAreaImpl::messageReceiverName(), m_storageAreaID, this);
 }
 
-StorageAreaProxy::~StorageAreaProxy()
+StorageAreaImpl::~StorageAreaImpl()
 {
     WebProcess::shared().connection()->send(Messages::StorageManager::DestroyStorageArea(m_storageAreaID), 0);
-    WebProcess::shared().removeMessageReceiver(Messages::StorageAreaProxy::messageReceiverName(), m_storageAreaID);
+    WebProcess::shared().removeMessageReceiver(Messages::StorageAreaImpl::messageReceiverName(), m_storageAreaID);
 }
 
-unsigned StorageAreaProxy::length(ExceptionCode& ec, Frame* sourceFrame)
+unsigned StorageAreaImpl::length(ExceptionCode& ec, Frame* sourceFrame)
 {
     ec = 0;
     if (!canAccessStorage(sourceFrame)) {
@@ -84,7 +84,7 @@ unsigned StorageAreaProxy::length(ExceptionCode& ec, Frame* sourceFrame)
     return m_storageMap->length();
 }
 
-String StorageAreaProxy::key(unsigned index, ExceptionCode& ec, Frame* sourceFrame)
+String StorageAreaImpl::key(unsigned index, ExceptionCode& ec, Frame* sourceFrame)
 {
     ec = 0;
     if (!canAccessStorage(sourceFrame)) {
@@ -99,7 +99,7 @@ String StorageAreaProxy::key(unsigned index, ExceptionCode& ec, Frame* sourceFra
     return m_storageMap->key(index);
 }
 
-String StorageAreaProxy::getItem(const String& key, ExceptionCode& ec, Frame* sourceFrame)
+String StorageAreaImpl::getItem(const String& key, ExceptionCode& ec, Frame* sourceFrame)
 {
     ec = 0;
     if (!canAccessStorage(sourceFrame)) {
@@ -113,7 +113,7 @@ String StorageAreaProxy::getItem(const String& key, ExceptionCode& ec, Frame* so
     return m_storageMap->getItem(key);
 }
 
-void StorageAreaProxy::setItem(const String& key, const String& value, ExceptionCode& ec, Frame* sourceFrame)
+void StorageAreaImpl::setItem(const String& key, const String& value, ExceptionCode& ec, Frame* sourceFrame)
 {
     ec = 0;
     if (!canAccessStorage(sourceFrame)) {
@@ -148,7 +148,7 @@ void StorageAreaProxy::setItem(const String& key, const String& value, Exception
     WebProcess::shared().connection()->send(Messages::StorageManager::SetItem(m_storageAreaID, key, value, sourceFrame->document()->url()), 0);
 }
 
-void StorageAreaProxy::removeItem(const String& key, ExceptionCode&, Frame* sourceFrame)
+void StorageAreaImpl::removeItem(const String& key, ExceptionCode&, Frame* sourceFrame)
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
@@ -156,14 +156,14 @@ void StorageAreaProxy::removeItem(const String& key, ExceptionCode&, Frame* sour
     UNUSED_PARAM(sourceFrame);
 }
 
-void StorageAreaProxy::clear(ExceptionCode&, Frame* sourceFrame)
+void StorageAreaImpl::clear(ExceptionCode&, Frame* sourceFrame)
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
     UNUSED_PARAM(sourceFrame);
 }
 
-bool StorageAreaProxy::contains(const String& key, ExceptionCode& ec, Frame* sourceFrame)
+bool StorageAreaImpl::contains(const String& key, ExceptionCode& ec, Frame* sourceFrame)
 {
     ec = 0;
     if (!canAccessStorage(sourceFrame)) {
@@ -178,34 +178,34 @@ bool StorageAreaProxy::contains(const String& key, ExceptionCode& ec, Frame* sou
     return m_storageMap->contains(key);
 }
 
-bool StorageAreaProxy::canAccessStorage(Frame* frame)
+bool StorageAreaImpl::canAccessStorage(Frame* frame)
 {
     return frame && frame->page();
 }
 
-size_t StorageAreaProxy::memoryBytesUsedByCache()
+size_t StorageAreaImpl::memoryBytesUsedByCache()
 {
     return 0;
 }
 
-void StorageAreaProxy::incrementAccessCount()
+void StorageAreaImpl::incrementAccessCount()
 {
     // Storage access is handled in the UI process, so there's nothing to do here.
 }
 
-void StorageAreaProxy::decrementAccessCount()
+void StorageAreaImpl::decrementAccessCount()
 {
     // Storage access is handled in the UI process, so there's nothing to do here.
 }
 
-void StorageAreaProxy::closeDatabaseIfIdle()
+void StorageAreaImpl::closeDatabaseIfIdle()
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
 }
 
 
-void StorageAreaProxy::didSetItem(const String& key, bool quotaError)
+void StorageAreaImpl::didSetItem(const String& key, bool quotaError)
 {
     ASSERT(m_pendingValueChanges.contains(key));
 
@@ -215,7 +215,7 @@ void StorageAreaProxy::didSetItem(const String& key, bool quotaError)
         resetValues();
 }
 
-void StorageAreaProxy::dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString)
+void StorageAreaImpl::dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString)
 {
     if (!shouldApplyChangesForKey(key))
         return;
@@ -232,7 +232,7 @@ void StorageAreaProxy::dispatchStorageEvent(const String& key, const String& old
         dispatchLocalStorageEvent(key, oldValue, newValue, urlString);
 }
 
-StorageType StorageAreaProxy::storageType() const
+StorageType StorageAreaImpl::storageType() const
 {
     // A zero storage namespace ID is used for local storage.
     if (!m_storageNamespaceID)
@@ -241,7 +241,7 @@ StorageType StorageAreaProxy::storageType() const
     return SessionStorage;
 }
 
-bool StorageAreaProxy::disabledByPrivateBrowsingInFrame(const Frame* sourceFrame) const
+bool StorageAreaImpl::disabledByPrivateBrowsingInFrame(const Frame* sourceFrame) const
 {
     if (!sourceFrame->page()->settings()->privateBrowsingEnabled())
         return false;
@@ -252,7 +252,7 @@ bool StorageAreaProxy::disabledByPrivateBrowsingInFrame(const Frame* sourceFrame
     return !SchemeRegistry::allowsLocalStorageAccessInPrivateBrowsing(sourceFrame->document()->securityOrigin()->protocol());
 }
 
-bool StorageAreaProxy::shouldApplyChangesForKey(const String& key) const
+bool StorageAreaImpl::shouldApplyChangesForKey(const String& key) const
 {
     // We have not yet loaded anything from this storage map.
     if (!m_storageMap)
@@ -267,7 +267,7 @@ bool StorageAreaProxy::shouldApplyChangesForKey(const String& key) const
     return true;
 }
 
-void StorageAreaProxy::loadValuesIfNeeded()
+void StorageAreaImpl::loadValuesIfNeeded()
 {
     if (m_storageMap)
         return;
@@ -281,13 +281,13 @@ void StorageAreaProxy::loadValuesIfNeeded()
     m_storageMap->importItems(values);
 }
 
-void StorageAreaProxy::resetValues()
+void StorageAreaImpl::resetValues()
 {
     m_storageMap = nullptr;
     m_pendingValueChanges.clear();
 }
 
-void StorageAreaProxy::dispatchSessionStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString)
+void StorageAreaImpl::dispatchSessionStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString)
 {
     ASSERT(storageType() == SessionStorage);
 
@@ -298,7 +298,7 @@ void StorageAreaProxy::dispatchSessionStorageEvent(const String& key, const Stri
     UNUSED_PARAM(urlString);
 }
 
-void StorageAreaProxy::dispatchLocalStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString)
+void StorageAreaImpl::dispatchLocalStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString)
 {
     ASSERT(storageType() == LocalStorage);
 
