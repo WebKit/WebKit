@@ -375,6 +375,7 @@ z-index
 -webkit-text-decoration-style
 -webkit-text-decoration-color
 -webkit-text-align-last
+-webkit-text-justify
 -webkit-text-underline-position
 #endif
 -webkit-text-decorations-in-effect

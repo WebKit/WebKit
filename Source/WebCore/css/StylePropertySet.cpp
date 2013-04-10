@@ -1097,6 +1097,7 @@ static const CSSPropertyID blockProperties[] = {
     CSSPropertyTextAlign,
 #if ENABLE(CSS3_TEXT)
     CSSPropertyWebkitTextAlignLast,
+    CSSPropertyWebkitTextJustify,
 #endif // CSS3_TEXT
     CSSPropertyTextIndent,
     CSSPropertyWidows
