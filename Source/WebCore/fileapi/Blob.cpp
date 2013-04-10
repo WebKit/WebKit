@@ -73,7 +73,7 @@ Blob::Blob(PassOwnPtr<BlobData> blobData, long long size)
 }
 
 Blob::Blob(const KURL& srcURL, const String& type, long long size)
-    : m_type(type)
+    : m_type(Blob::normalizedContentType(type))
     , m_size(size)
 {
     // Create a new internal URL and register it with the same blob data as the source URL.
@@ -84,6 +84,74 @@ Blob::Blob(const KURL& srcURL, const String& type, long long size)
 Blob::~Blob()
 {
     ThreadableBlobRegistry::unregisterBlobURL(m_internalURL);
+}
+
+bool Blob::isValidContentType(const String& contentType)
+{
+    if (contentType.isNull())
+        return true;
+
+    size_t length = contentType.length();
+    if (contentType.is8Bit()) {
+        const LChar* characters = contentType.characters8();
+        for (size_t i = 0; i < length; ++i) {
+            if (characters[i] < 0x20 || characters[i] > 0x7e)
+                return false;
+        }
+    } else {
+        const UChar* characters = contentType.characters16();
+        for (size_t i = 0; i < length; ++i) {
+            if (characters[i] < 0x20 || characters[i] > 0x7e)
+                return false;
+        }
+    }
+    return true;
+}
+
+String Blob::normalizedContentType(const String& contentType)
+{
+    if (Blob::isValidContentType(contentType))
+        return contentType.lower();
+    return emptyString();
+}
+
+bool Blob::isNormalizedContentType(const String& contentType)
+{
+    if (contentType.isNull())
+        return true;
+
+    size_t length = contentType.length();
+    if (contentType.is8Bit()) {
+        const LChar* characters = contentType.characters8();
+        for (size_t i = 0; i < length; ++i) {
+            if (characters[i] < 0x20 || characters[i] > 0x7e)
+                return false;
+            if (characters[i] >= 'A' && characters[i] <= 'Z')
+                return false;
+        }
+    } else {
+        const UChar* characters = contentType.characters16();
+        for (size_t i = 0; i < length; ++i) {
+            if (characters[i] < 0x20 || characters[i] > 0x7e)
+                return false;
+            if (characters[i] >= 'A' && characters[i] <= 'Z')
+                return false;
+        }
+    }
+    return true;
+}
+
+bool Blob::isNormalizedContentType(const CString& contentType)
+{
+    size_t length = contentType.length();
+    const char* characters = contentType.data();
+    for (size_t i = 0; i < length; ++i) {
+        if (characters[i] < 0x20 || characters[i] > 0x7e)
+            return false;
+        if (characters[i] >= 'A' && characters[i] <= 'Z')
+            return false;
+    }
+    return true;
 }
 
 #if ENABLE(BLOB)
@@ -122,7 +190,7 @@ PassRefPtr<Blob> Blob::slice(long long start, long long end, const String& conte
 
     long long length = end - start;
     OwnPtr<BlobData> blobData = BlobData::create();
-    blobData->setContentType(contentType);
+    blobData->setContentType(Blob::normalizedContentType(contentType));
     if (isFile()) {
 #if ENABLE(FILE_SYSTEM)
         if (!toFile(this)->fileSystemURL().isEmpty())

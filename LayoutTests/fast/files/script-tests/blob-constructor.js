@@ -24,7 +24,7 @@ shouldBeTrue("(new Blob([new Blob([new Blob])])) instanceof window.Blob");
 shouldBe("(new Blob([12])).size", "2");
 shouldBe("(new Blob([[]])).size", "0");         // [].toString() is the empty string
 shouldBe("(new Blob([{}])).size", "15");;       // {}.toString() is the string "[object Object]"
-shouldBe("(new Blob([document])).size", "21");  // document.toString() is the string "[object HTMLDocument]" 
+shouldBe("(new Blob([document])).size", "21");  // document.toString() is the string "[object HTMLDocument]"
 
 var toStringingObj = { toString: function() { return "A string"; } };
 shouldBe("(new Blob([toStringingObj])).size", "8");
@@ -37,7 +37,6 @@ shouldBeTrue("(new Blob([], {unknownKey:'value'})) instanceof window.Blob");    
 shouldThrow("new Blob([], {endings:'illegalValue'})", "'TypeError: The endings property must be either \"transparent\" or \"native\"'");
 shouldThrow("new Blob([], {endings:throwingObj})", "'Error'");
 shouldThrow("new Blob([], {type:throwingObj})", "'Error'");
-shouldThrow("new Blob([], {type:'hello\u00EE'})", "'SyntaxError: type must consist of ASCII characters'");
 
 // Test that order of property bag evaluation is lexigraphical
 var throwingObj1 = { toString: function() { throw "Error 1"; } };
@@ -61,6 +60,13 @@ shouldBeTrue("(new Blob([], function () {})) instanceof window.Blob");
 shouldBe("(new Blob([], {type:'text/html'})).type", "'text/html'");
 shouldBe("(new Blob([], {type:'text/html'})).size", "0");
 shouldBe("(new Blob([], {type:'text/plain;charset=UTF-8'})).type", "'text/plain;charset=utf-8'");
+
+// Test that Blob types are correctly normalized.
+shouldBe("(new Blob([], {type:'TeXt/pLaIn'})).type", "'text/plain'");
+shouldBe("(new Blob([], {type:'text\\rplain'})).type", "''");
+shouldBe("(new Blob([], {type:'text\\nplain'})).type", "''");
+shouldBe("(new Blob([], {type:'hello\u00EE'})).type", "''");
+shouldBe("(new Blob([], {type:'\\0'})).type", "''");
 
 // Odds and ends
 shouldBe("window.Blob.length", "2");

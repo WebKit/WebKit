@@ -56,7 +56,7 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Blob* blob)
     if (blob->isFile())
         return wrap<JSFile>(exec, globalObject, static_cast<File*>(blob));
 
-    return wrap<JSBlob>(exec, globalObject, blob);    
+    return wrap<JSBlob>(exec, globalObject, blob);
 }
 
 EncodedJSValue JSC_HOST_CALL JSBlobConstructor::constructJSBlob(ExecState* exec)
@@ -104,9 +104,6 @@ EncodedJSValue JSC_HOST_CALL JSBlobConstructor::constructJSBlob(ExecState* exec)
         dictionary.get("type", type);
         if (exec->hadException())
             return JSValue::encode(jsUndefined());
-        if (!type.containsOnlyASCII())
-            return throwVMError(exec, createSyntaxError(exec, "type must consist of ASCII characters"));
-        type.makeLower();
     }
 
     ASSERT(endings == "transparent" || endings == "native");

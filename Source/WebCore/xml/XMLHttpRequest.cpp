@@ -306,7 +306,8 @@ Blob* XMLHttpRequest::responseBlob(ExceptionCode& ec)
             size = m_binaryResponseBuilder->size();
             rawData->mutableData()->append(m_binaryResponseBuilder->data(), size);
             blobData->appendData(rawData, 0, BlobDataItem::toEndOfFile);
-            blobData->setContentType(responseMIMEType()); // responseMIMEType defaults to text/xml which may be incorrect.
+            String normalizedContentType = Blob::normalizedContentType(responseMIMEType());
+            blobData->setContentType(normalizedContentType); // responseMIMEType defaults to text/xml which may be incorrect.
             m_binaryResponseBuilder.clear();
         }
         m_responseBlob = Blob::create(blobData.release(), size);
@@ -354,7 +355,7 @@ void XMLHttpRequest::setResponseType(const String& responseType, ExceptionCode& 
         return;
     }
 
-    // Newer functionality is not available to synchronous requests in window contexts, as a spec-mandated 
+    // Newer functionality is not available to synchronous requests in window contexts, as a spec-mandated
     // attempt to discourage synchronous XHR use. responseType is one such piece of functionality.
     // We'll only disable this functionality for HTTP(S) requests since sync requests for local protocols
     // such as file: and data: still make sense to allow.
@@ -1037,7 +1038,7 @@ String XMLHttpRequest::getResponseHeader(const AtomicString& name, ExceptionCode
         logConsoleError(scriptExecutionContext(), "Refused to get unsafe header \"" + name + "\"");
         return String();
     }
-    
+
     HTTPHeaderSet accessControlExposeHeaderSet;
     parseAccessControlExposeHeadersAllowList(m_response.httpHeaderField("Access-Control-Expose-Headers"), accessControlExposeHeaderSet);
 

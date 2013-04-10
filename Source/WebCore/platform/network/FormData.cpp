@@ -227,7 +227,7 @@ void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncod
                 if (value.blob()->isFile()) {
                     File* file = toFile(value.blob());
                     // For file blob, use the filename (or relative path if it is present) as the name.
-#if ENABLE(DIRECTORY_UPLOAD)                
+#if ENABLE(DIRECTORY_UPLOAD)
                     name = file->webkitRelativePath().isEmpty() ? file->name() : file->webkitRelativePath();
 #else
                     name = file->name();
@@ -258,12 +258,11 @@ void FormData::appendKeyValuePairItems(const FormDataList& list, const TextEncod
                 FormDataBuilder::addFilenameToMultiPartHeader(header, encoding, name);
 
                 // Add the content type if available, or "application/octet-stream" otherwise (RFC 1867).
-                String contentType;
-                if (value.blob()->type().isEmpty())
+                String contentType = value.blob()->type();
+                if (contentType.isEmpty())
                     contentType = "application/octet-stream";
-                else
-                    contentType = value.blob()->type();
-                FormDataBuilder::addContentTypeToMultiPartHeader(header, contentType.latin1());
+                ASSERT(Blob::isNormalizedContentType(contentType));
+                FormDataBuilder::addContentTypeToMultiPartHeader(header, contentType.ascii());
             }
 
             FormDataBuilder::finishMultiPartHeader(header);

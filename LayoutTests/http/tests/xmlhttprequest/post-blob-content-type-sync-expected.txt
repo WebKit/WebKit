@@ -14,7 +14,7 @@ PASS expectedMimeType is ""
 PASS expectedMimeType is ""
 PASS expectedMimeType is "multipart/mixed;boundary=\"--blob-boundary\""
 PASS expectedMimeType is ""
-PASS Exception should be thrown.
+PASS expectedMimeType is ""
 PASS Exception should be thrown.
 PASS expectedMimeType is "text/plain;charset=utf-8"
 PASS successfullyParsed is true

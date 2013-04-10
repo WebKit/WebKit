@@ -30,6 +30,8 @@
 
 #include "config.h"
 #include "BlobData.h"
+
+#include "Blob.h"
 #include "BlobURL.h"
 #include "ThreadableBlobRegistry.h"
 
@@ -69,6 +71,12 @@ void BlobData::detachFromCurrentThread()
     m_contentDisposition = m_contentDisposition.isolatedCopy();
     for (size_t i = 0; i < m_items.size(); ++i)
         m_items.at(i).detachFromCurrentThread();
+}
+
+void BlobData::setContentType(const String& contentType)
+{
+    ASSERT(Blob::isNormalizedContentType(contentType));
+    m_contentType = contentType;
 }
 
 void BlobData::appendData(PassRefPtr<RawData> data, long long offset, long long length)

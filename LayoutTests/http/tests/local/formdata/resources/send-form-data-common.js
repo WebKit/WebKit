@@ -22,6 +22,7 @@ function getFileName(filePath)
 function dumpResponse(xhr, fileSliced)
 {
     debug(xhr.responseText);
+    return xhr.responseText;
 }
 
 function sendFormData(formDataList, fileSliced, sendAsAsync, addEventHandlers)
@@ -41,8 +42,9 @@ function sendFormData(formDataList, fileSliced, sendAsAsync, addEventHandlers)
     xhr.open("POST", "http://127.0.0.1:8000/xmlhttprequest/resources/multipart-post-echo.php", sendAsAsync);
     xhr.send(formData);
 
-    if (!sendAsAsync)
-        dumpResponse(xhr, fileSliced);
+    if (sendAsAsync)
+        return null;
+    return dumpResponse(xhr, fileSliced);
 }
 
 function testSendingFormData(dataList, sendAsAsync, addEventHandlers)
@@ -86,7 +88,7 @@ function testSendingFormData(dataList, sendAsAsync, addEventHandlers)
         formDataList.push(field);
     }
 
-    sendFormData(formDataList, fileSliced, sendAsAsync, addEventHandlers);
+    return sendFormData(formDataList, fileSliced, sendAsAsync, addEventHandlers);
 }
 
 function formDataTestingCleanup()
