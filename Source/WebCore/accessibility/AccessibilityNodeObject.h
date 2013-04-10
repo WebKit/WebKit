@@ -169,7 +169,7 @@ protected:
     AccessibilityRole determineAriaRoleAttribute() const;
     AccessibilityRole remapAriaRoleDueToParent(AccessibilityRole) const;
     bool hasContentEditableAttributeSet() const;
-    bool isDescendantOfBarrenParent() const;
+    virtual bool isDescendantOfBarrenParent() const;
     void alterSliderValue(bool increase);
     void changeValueByStep(bool increase);
     bool isARIARange() const;
