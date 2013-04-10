@@ -31,7 +31,7 @@ var loader = loader || {};
 
 (function() {
 
-var TEST_RESULTS_SERVER = 'http://test-results.appspot.com/';
+var TEST_RESULTS_SERVER = 'http://webkit-test-results.appspot.com/';
 var CHROMIUM_EXPECTATIONS_URL = 'http://svn.webkit.org/repository/webkit/trunk/LayoutTests/platform/chromium/TestExpectations';
 
 function pathToBuilderResultsFile(builderName) {

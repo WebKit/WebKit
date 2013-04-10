@@ -73,7 +73,7 @@ def insert_builder_and_test_data(masters):
                 step_name = step['name']
 
                 # The chromium bots call this step webkit-tests, the webkit.org bots call it layout-test. :(
-                # The files stored at test-results.appspot.com use layout-tests as the test suite name, so normalize to that.
+                # The files stored at webkit-test-results.appspot.com use layout-tests as the test suite name, so normalize to that.
                 if step_name in ['layout-test', 'webkit_tests']:
                     step_name = 'layout-tests'
 

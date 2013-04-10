@@ -47,7 +47,7 @@ ui.urlForTest = function(testName)
 ui.urlForFlakinessDashboard = function(opt_testNameList)
 {
     var testsParameter = opt_testNameList ? opt_testNameList.join(',') : '';
-    return 'http://test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=' + encodeURIComponent(testsParameter);
+    return 'http://webkit-test-results.appspot.com/dashboards/flakiness_dashboard.html#tests=' + encodeURIComponent(testsParameter);
 }
 
 ui.urlForEmbeddedFlakinessDashboard = function(opt_testNameList)
