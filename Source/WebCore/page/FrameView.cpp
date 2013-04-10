@@ -2780,6 +2780,12 @@ void FrameView::delayedResizeEventTimerFired(Timer<FrameView>*)
     sendResizeEvent();
 }
 
+void FrameView::willStartLiveResize()
+{
+    ScrollView::willStartLiveResize();
+    adjustTiledBackingCoverage();
+}
+    
 void FrameView::willEndLiveResize()
 {
     ScrollableArea::willEndLiveResize();
@@ -2787,6 +2793,7 @@ void FrameView::willEndLiveResize()
         m_delayedResizeEventTimer.stop();
         sendResizeEvent();
     }
+    adjustTiledBackingCoverage();
 }
 
 void FrameView::scheduleResizeEvent()

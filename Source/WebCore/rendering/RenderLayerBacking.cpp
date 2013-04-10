@@ -218,8 +218,9 @@ static TiledBacking::TileCoverage computeTileCoverage(const RenderLayerBacking* 
 
     TiledBacking::TileCoverage tileCoverage = TiledBacking::CoverageForVisibleArea;
     FrameView* frameView = frame->view();
+    bool useMinimalTilesDuringLiveResize = frameView->inLiveResize();
     bool useMinimalTilesDuringLoading = frame->page()->progress()->isLoadProgressing() && !frameView->wasScrolledByUser();
-    if (!useMinimalTilesDuringLoading) {
+    if (!(useMinimalTilesDuringLoading || useMinimalTilesDuringLiveResize)) {
         bool clipsToExposedRect = backing->tiledBacking()->clipsToExposedRect();
         if (frameView->horizontalScrollbarMode() != ScrollbarAlwaysOff || clipsToExposedRect)
             tileCoverage |= TiledBacking::CoverageForHorizontalScrolling;

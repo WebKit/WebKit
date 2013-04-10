@@ -415,6 +415,7 @@ public:
     virtual int footerHeight() const OVERRIDE { return m_footerHeight; }
     void setFooterHeight(int);
 
+    virtual void willStartLiveResize() OVERRIDE;
     virtual void willEndLiveResize() OVERRIDE;
 
 protected:
