@@ -67,19 +67,15 @@ inline JSC::JSValue toJS(JSC::ExecState* exec, JSValueRef v)
     JSC::JSCell* jsCell = reinterpret_cast<JSC::JSCell*>(const_cast<OpaqueJSValue*>(v));
     if (!jsCell)
         return JSC::jsNull();
-    JSC::JSValue result;
     if (jsCell->isAPIValueWrapper())
-        result = JSC::jsCast<JSC::JSAPIValueWrapper*>(jsCell)->value();
-    else
-        result = jsCell;
+        return JSC::jsCast<JSC::JSAPIValueWrapper*>(jsCell)->value();
+    return jsCell;
 #else
     JSC::JSValue result = JSC::JSValue::decode(reinterpret_cast<JSC::EncodedJSValue>(const_cast<OpaqueJSValue*>(v)));
-#endif
     if (!result)
         return JSC::jsNull();
-    if (result.isCell())
-        RELEASE_ASSERT(result.asCell()->methodTable());
     return result;
+#endif
 }
 
 inline JSC::JSValue toJSForGC(JSC::ExecState* exec, JSValueRef v)
@@ -89,21 +85,15 @@ inline JSC::JSValue toJSForGC(JSC::ExecState* exec, JSValueRef v)
     JSC::JSCell* jsCell = reinterpret_cast<JSC::JSCell*>(const_cast<OpaqueJSValue*>(v));
     if (!jsCell)
         return JSC::JSValue();
-    JSC::JSValue result = jsCell;
+    return jsCell;
 #else
-    JSC::JSValue result = JSC::JSValue::decode(reinterpret_cast<JSC::EncodedJSValue>(const_cast<OpaqueJSValue*>(v)));
+    return JSC::JSValue::decode(reinterpret_cast<JSC::EncodedJSValue>(const_cast<OpaqueJSValue*>(v)));
 #endif
-    if (result && result.isCell())
-        RELEASE_ASSERT(result.asCell()->methodTable());
-    return result;
 }
 
 inline JSC::JSObject* toJS(JSObjectRef o)
 {
-    JSC::JSObject* object = reinterpret_cast<JSC::JSObject*>(o);
-    if (object)
-        RELEASE_ASSERT(object->methodTable());
-    return object;
+    return reinterpret_cast<JSC::JSObject*>(o);
 }
 
 inline JSC::PropertyNameArray* toJS(JSPropertyNameAccumulatorRef a)
