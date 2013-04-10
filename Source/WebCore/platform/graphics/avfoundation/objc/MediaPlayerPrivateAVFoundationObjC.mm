@@ -464,10 +464,6 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
     m_legibleOutput = adoptNS([[AVPlayerItemLegibleOutput alloc] initWithMediaSubtypesForNativeRepresentation:[NSArray array]]);
     [m_legibleOutput.get() setSuppressesPlayerRendering:YES];
 
-    // We enabled automatic media selection because we want alternate audio tracks to be enabled/disabled automatically,
-    // but set the selected legible track to nil so text tracks will not be automatically configured.
-    [m_avPlayerItem.get() selectMediaOption:nil inMediaSelectionGroup:safeMediaSelectionGroupForLegibleMedia()];
-
     [m_legibleOutput.get() setDelegate:m_objcObserver.get() queue:dispatch_get_main_queue()];
     [m_legibleOutput.get() setAdvanceIntervalForDelegateInvocation:legibleOutputAdvanceInterval];
     [m_legibleOutput.get() setTextStylingResolution:AVPlayerItemLegibleOutputTextStylingResolutionSourceAndRulesOnly];
@@ -1314,7 +1310,12 @@ void MediaPlayerPrivateAVFoundationObjC::processTextTracks()
         LOG(Media, "MediaPlayerPrivateAVFoundationObjC::processTextTracks(%p) - nil mediaSelectionGroup", this);
         return;
     }
-    
+
+    // We enabled automatic media selection because we want alternate audio tracks to be enabled/disabled automatically,
+    // but set the selected legible track to nil so text tracks will not be automatically configured.
+    if (!m_textTracks.size())
+        [m_avPlayerItem.get() selectMediaOption:nil inMediaSelectionGroup:safeMediaSelectionGroupForLegibleMedia()];
+
     Vector<RefPtr<InbandTextTrackPrivateAVF> > removedTextTracks = m_textTracks;
     NSArray *legibleOptions = [AVMediaSelectionGroup playableMediaSelectionOptionsFromArray:[legibleGroup options]];
     for (AVMediaSelectionOptionType *option in legibleOptions) {
@@ -1439,6 +1440,7 @@ NSArray* assetMetadataKeyNames()
                     @"preferredRate",
                     @"playable",
                     @"tracks",
+                    @"availableMediaCharacteristicsWithMediaSelectionOptions",
                    nil];
     }
     return keys;
