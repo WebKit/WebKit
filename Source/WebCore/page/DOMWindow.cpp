@@ -1448,6 +1448,9 @@ void DOMWindow::scrollTo(int x, int y) const
 
 void DOMWindow::moveBy(float x, float y) const
 {
+    if (UserGestureIndicator::processingUserGesture())
+        return;
+
     if (!m_frame)
         return;
 
@@ -1467,6 +1470,9 @@ void DOMWindow::moveBy(float x, float y) const
 
 void DOMWindow::moveTo(float x, float y) const
 {
+    if (UserGestureIndicator::processingUserGesture())
+        return;
+
     if (!m_frame)
         return;
 
@@ -1488,6 +1494,9 @@ void DOMWindow::moveTo(float x, float y) const
 
 void DOMWindow::resizeBy(float x, float y) const
 {
+    if (UserGestureIndicator::processingUserGesture())
+        return;
+
     if (!m_frame)
         return;
 
@@ -1506,6 +1515,9 @@ void DOMWindow::resizeBy(float x, float y) const
 
 void DOMWindow::resizeTo(float width, float height) const
 {
+    if (UserGestureIndicator::processingUserGesture())
+        return;
+
     if (!m_frame)
         return;
 
