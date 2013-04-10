@@ -4,7 +4,7 @@
 
         Introduce WKNavigationDataCopyNavigationDestinationURL to access the destination of the navigation.
 
-        Reviewed by Darin Adler.
+        Reviewed by Dan Bernstein.
 
         * UIProcess/API/C/WKNavigationData.cpp:
         (WKNavigationDataCopyURL): Add a note about returning the URL from the original request for sake of
