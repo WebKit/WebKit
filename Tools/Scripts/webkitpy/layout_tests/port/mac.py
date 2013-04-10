@@ -124,11 +124,15 @@ class MacPort(ApplePort):
 
         # Make sure we have enough ram to support that many instances:
         total_memory = self.host.platform.total_bytes_memory()
-        bytes_per_drt = 256 * 1024 * 1024  # Assume each DRT needs 256MB to run.
-        overhead = 2048 * 1024 * 1024  # Assume we need 2GB free for the O/S
-        supportable_instances = max((total_memory - overhead) / bytes_per_drt, 1)  # Always use one process, even if we don't have space for it.
-        if supportable_instances < default_count:
-            _log.warning("This machine could support %s child processes, but only has enough memory for %s." % (default_count, supportable_instances))
+        if total_memory:
+            bytes_per_drt = 256 * 1024 * 1024  # Assume each DRT needs 256MB to run.
+            overhead = 2048 * 1024 * 1024  # Assume we need 2GB free for the O/S
+            supportable_instances = max((total_memory - overhead) / bytes_per_drt, 1)  # Always use one process, even if we don't have space for it.
+            if supportable_instances < default_count:
+                _log.warning("This machine could support %s child processes, but only has enough memory for %s." % (default_count, supportable_instances))
+        else:
+            _log.warning("Cannot determine available memory for child processes, using default child process count of %s." % default_count)
+            supportable_instances = default_count
         return min(supportable_instances, default_count)
 
     def _build_java_test_support(self):

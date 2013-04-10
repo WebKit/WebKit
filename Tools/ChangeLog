@@ -1,3 +1,16 @@
+2013-04-10  Glenn Adams  <glenn@skynav.com>
+
+        [Qt] Fix regression to test-webkitpy.
+        https://bugs.webkit.org/show_bug.cgi?id=114368
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        (PortFactory._default_port): Return qt-linux instead of chromium-linux as default port for linux/freebsd.
+        (PortFactory.get): Remove obsolete chromium port related code.
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort.default_child_processes): Prevent type error if can't determine total memory.
+
 2013-04-10  Anders Carlsson  <andersca@apple.com>
 
         Remove unneeded headers from FrameLoader.h
