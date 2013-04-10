@@ -823,7 +823,6 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
             port_name = 'qt-linux'
         else:
             port_name = 'mac-lion'
-        port_name = 'mac-lion'
         out = StringIO.StringIO()
         err = StringIO.StringIO()
         self.assertEqual(run_webkit_tests.main(['--platform', port_name, 'fast/harness/results.html'], out, err), -1)

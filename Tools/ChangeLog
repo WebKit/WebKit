@@ -1,5 +1,14 @@
 2013-04-09  Glenn Adams  <glenn@skynav.com>
 
+        Fix trivial test-webkitpy regression introduced by http://trac.webkit.org/changeset/148075.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_build_check):
+
+2013-04-09  Glenn Adams  <glenn@skynav.com>
+
         [webkitpy] Remove chromium ports.
         https://bugs.webkit.org/show_bug.cgi?id=114326
 
