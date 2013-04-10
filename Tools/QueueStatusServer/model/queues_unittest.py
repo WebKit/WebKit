@@ -47,7 +47,6 @@ class QueueTest(unittest.TestCase):
 
     def test_short_name(self):
         self._assert_short_name("mac-ews", "Mac")
-        self._assert_short_name("chromium-ews", "Cr-Linux")
         self._assert_short_name("commit-queue", "Commit")
         self._assert_short_name("style-queue", "Style")
 
@@ -56,7 +55,6 @@ class QueueTest(unittest.TestCase):
 
     def test_display_name(self):
         self._assert_display_name("mac-ews", "Mac EWS")
-        self._assert_display_name("chromium-ews", "Chromium Linux EWS")
         self._assert_display_name("commit-queue", "Commit Queue")
         self._assert_display_name("style-queue", "Style Queue")
 
@@ -65,7 +63,6 @@ class QueueTest(unittest.TestCase):
 
     def test_name_with_underscores(self):
         self._assert_name_with_underscores("mac-ews", "mac_ews")
-        self._assert_name_with_underscores("chromium-ews", "chromium_ews")
         self._assert_name_with_underscores("commit-queue", "commit_queue")
 
     def test_style_queue_is_ews(self):

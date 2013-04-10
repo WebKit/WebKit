@@ -1,3 +1,23 @@
+2013-04-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove Chromium EWS bots from the queue status server
+        https://bugs.webkit.org/show_bug.cgi?id=113988
+
+        Reviewed by Benjamin Poulain.
+
+        Removed Chromium EWS bots. Also updated it to use webkit-queues.appspot.com.
+
+        * QueueStatusServer/app.yaml:
+        * QueueStatusServer/config/queues.py:
+        * QueueStatusServer/model/queues.py:
+        (Queue.short_name):
+        (Queue.display_name):
+        * QueueStatusServer/model/queues_unittest.py:
+        (QueueTest.test_short_name):
+        (QueueTest.test_display_name):
+        (QueueTest.test_name_with_underscores):
+        * QueueStatusServer/templates/activebots.html:
+
 2013-04-10  Ojan Vafai  <ojan@chromium.org>
 
         Change all instances of test-results.appspot.com to webkit-test-results.appspot.com
