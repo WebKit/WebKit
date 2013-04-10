@@ -1291,7 +1291,10 @@ char* DFG_OPERATION operationNewArrayWithSize(ExecState* exec, Structure* arrayS
 {
     JSGlobalData* globalData = &exec->globalData();
     NativeCallFrameTracer tracer(globalData, exec);
-    
+
+    if (size < 0)
+        return bitwise_cast<char*>(throwError(exec, createRangeError(exec, ASCIILiteral("Array size is not a small enough positive integer."))));
+
     return bitwise_cast<char*>(JSArray::create(*globalData, arrayStructure, size));
 }
 

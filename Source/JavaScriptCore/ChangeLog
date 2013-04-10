@@ -1,3 +1,16 @@
+2013-04-10  Michael Saboff  <msaboff@apple.com>
+
+        DFG: Negative size for new Array() interpreted as large unsigned int
+        https://bugs.webkit.org/show_bug.cgi?id=114366
+
+        Reviewed by Oliver Hunt.
+
+        Added new check in operationNewArrayWithSize() for a negative
+        size.  If size is negative throw a "RangeError: Array size is not a
+        small enough positive integer" exception.
+
+        * dfg/DFGOperations.cpp:
+
 2013-04-10  peavo@outlook.com  <peavo@outlook.com>
 
         WinCairo build fails to link.
