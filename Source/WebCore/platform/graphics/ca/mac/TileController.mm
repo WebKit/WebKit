@@ -611,11 +611,12 @@ void TileController::revalidateTiles(TileValidationPolicyFlags foregroundValidat
         return;
 
     FloatRect visibleRect = m_visibleRect;
+    IntRect bounds = this->bounds();
 
     if (m_clipsToExposedRect)
         visibleRect.intersect(m_exposedRect);
 
-    if (visibleRect.isEmpty() || bounds().isEmpty())
+    if (visibleRect.isEmpty() || bounds.isEmpty())
         return;
     
     TileValidationPolicyFlags validationPolicy = m_isInWindow ? foregroundValidationPolicy : backgroundValidationPolicy;
@@ -717,11 +718,37 @@ void TileController::revalidateTiles(TileValidationPolicyFlags foregroundValidat
         for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it)
             [it->value.layer.get() removeFromSuperlayer];
     }
-    
+
+    if (m_boundsAtLastRevalidate != bounds) {
+        FloatRect scaledBounds(bounds);
+        scaledBounds.scale(m_scale);
+        IntRect boundsInTileCoords(enclosingIntRect(scaledBounds));
+
+        TileIndex topLeftForBounds;
+        TileIndex bottomRightForBounds;
+        getTileIndexRangeForRect(boundsInTileCoords, topLeftForBounds, bottomRightForBounds);
+
+        Vector<TileIndex> tilesToRemove;
+        for (TileMap::iterator it = m_tiles.begin(), end = m_tiles.end(); it != end; ++it) {
+            const TileIndex& index = it->key;
+            if (index.y() < topLeftForBounds.y()
+                || index.y() > bottomRightForBounds.y()
+                || index.x() < topLeftForBounds.x()
+                || index.x() > bottomRightForBounds.x())
+                queueTileForRemoval(index, it->value, tilesToRemove);
+        }
+
+        for (size_t i = 0, size = tilesToRemove.size(); i < size; ++i) {
+            TileInfo tileInfo = m_tiles.take(tilesToRemove[i]);
+            LayerPool::sharedPool()->addLayer(tileInfo.layer);
+        }
+    }
+
     if (m_tiledScrollingIndicatorLayer)
         updateTileCoverageMap();
 
     m_visibleRectAtLastRevalidate = visibleRect;
+    m_boundsAtLastRevalidate = bounds;
 
     if (dirtyRects.isEmpty())
         return;

@@ -175,6 +175,7 @@ private:
     FloatRect m_visibleRect;
     FloatRect m_visibleRectAtLastRevalidate;
     FloatRect m_exposedRect; // The exposed area of containing platform views.
+    IntRect m_boundsAtLastRevalidate;
 
     typedef HashMap<TileIndex, TileInfo> TileMap;
     TileMap m_tiles;
