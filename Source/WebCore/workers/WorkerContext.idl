@@ -72,9 +72,7 @@
     attribute MessageEventConstructor MessageEvent;
     attribute WorkerLocationConstructor WorkerLocation;
 
-#if defined(ENABLE_CHANNEL_MESSAGING) && ENABLE_CHANNEL_MESSAGING
-    [JSCustomGetter] attribute MessageChannelConstructor MessageChannel;
-#endif
+    [Conditional=CHANNEL_MESSAGING, JSCustomGetter] attribute MessageChannelConstructor MessageChannel;
     [JSCustomGetter] attribute EventSourceConstructor EventSource;
     [JSCustomGetter] attribute XMLHttpRequestConstructor XMLHttpRequest;
 #endif

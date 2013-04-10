@@ -604,10 +604,8 @@
     attribute XMLHttpRequestExceptionConstructor XMLHttpRequestException;
     [Conditional=XSLT] attribute XSLTProcessorConstructor XSLTProcessor; // Usable with the new operator
 
-#if defined(ENABLE_CHANNEL_MESSAGING) && ENABLE_CHANNEL_MESSAGING
-    attribute MessagePortConstructor MessagePort;
-    attribute MessageChannelConstructor MessageChannel; // Usable with the new operator
-#endif
+    [Conditional=CHANNEL_MESSAGING] attribute MessagePortConstructor MessagePort;
+    [Conditional=CHANNEL_MESSAGING] attribute MessageChannelConstructor MessageChannel; // Usable with the new operator
 
     attribute DOMPluginConstructor Plugin;
     attribute DOMPluginArrayConstructor PluginArray;
