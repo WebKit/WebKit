@@ -156,8 +156,13 @@ void TextureMapperLayer::paintSelfAndChildren(const TextureMapperPaintOptions& o
         return;
 
     bool shouldClip = m_state.masksToBounds && !m_state.preserves3D;
-    if (shouldClip)
-        options.textureMapper->beginClip(TransformationMatrix(options.transform).multiply(m_currentTransform.combined()), layerRect());
+    if (shouldClip) {
+        TransformationMatrix clipTransform;
+        clipTransform.translate(options.offset.width(), options.offset.height());
+        clipTransform.multiply(options.transform);
+        clipTransform.multiply(m_currentTransform.combined());
+        options.textureMapper->beginClip(clipTransform, layerRect());
+    }
 
     for (size_t i = 0; i < m_children.size(); ++i)
         m_children[i]->paintRecursive(options);
@@ -333,7 +338,10 @@ void TextureMapperLayer::paintUsingOverlapRegions(const TextureMapperPaintOption
         return;
     }
 
-    Vector<IntRect> rects = nonOverlapRegion.rects();
+    Vector<IntRect> rects;
+
+    nonOverlapRegion.translate(options.offset);
+    rects = nonOverlapRegion.rects();
     for (size_t i = 0; i < rects.size(); ++i) {
         options.textureMapper->beginClip(TransformationMatrix(), rects[i]);
         paintSelfAndChildrenWithReplica(options);
@@ -365,8 +373,10 @@ void TextureMapperLayer::applyMask(const TextureMapperPaintOptions& options)
 PassRefPtr<BitmapTexture> TextureMapperLayer::paintIntoSurface(const TextureMapperPaintOptions& options, const IntSize& size)
 {
     RefPtr<BitmapTexture> surface = options.textureMapper->acquireTextureFromPool(size);
+    TextureMapperPaintOptions paintOptions(options);
+    paintOptions.surface = surface;
     options.textureMapper->bindSurface(surface.get());
-    paintSelfAndChildren(options);
+    paintSelfAndChildren(paintOptions);
     if (m_state.maskLayer)
         m_state.maskLayer->applyMask(options);
 #if ENABLE(CSS_FILTERS)

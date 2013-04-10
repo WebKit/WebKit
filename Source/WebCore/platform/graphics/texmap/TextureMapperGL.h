@@ -94,12 +94,18 @@ private:
             : clipStateDirty(false)
         { }
 
+        // Y-axis should be inverted only when painting into the window.
+        enum YAxisMode {
+            DefaultYAxis,
+            InvertedYAxis
+        };
+
         void push();
         void pop();
         void apply(GraphicsContext3D*);
         void applyIfNeeded(GraphicsContext3D*);
         inline ClipState& current() { return clipState; }
-        void reset(const IntRect&);
+        void reset(const IntRect&, YAxisMode);
         void intersect(const IntRect&);
         void setStencilIndex(int);
         inline int getStencilIndex() const
@@ -115,6 +121,8 @@ private:
         ClipState clipState;
         Vector<ClipState> clipStack;
         bool clipStateDirty;
+        IntSize size;
+        YAxisMode yAxisMode;
     };
 
     TextureMapperGL();
