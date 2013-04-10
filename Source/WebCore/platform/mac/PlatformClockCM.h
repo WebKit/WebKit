@@ -44,18 +44,18 @@ public:
 private:
     void initializeWithTimingSource(CMClockRef);
 
-    virtual void setCurrentTime(float);
-    virtual float currentTime() const;
+    virtual void setCurrentTime(double);
+    virtual double currentTime() const;
 
-    virtual void setPlayRate(float);
-    virtual float playRate() const { return m_rate; }
+    virtual void setPlayRate(double);
+    virtual double playRate() const { return m_rate; }
 
     virtual void start();
     virtual void stop();
     virtual bool isRunning() const { return m_running; }
 
     RetainPtr<CMTimebaseRef> m_timebase;
-    float m_rate;
+    double m_rate;
     bool m_running;
 };
 

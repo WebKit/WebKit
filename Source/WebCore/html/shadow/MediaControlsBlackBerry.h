@@ -193,8 +193,8 @@ public:
     static PassRefPtr<MediaControlFullscreenTimelineElement> create(Document*, MediaControls*);
 
     virtual bool willRespondToMouseClickEvents() OVERRIDE;
-    void setPosition(float);
-    void setDuration(float);
+    void setPosition(double);
+    void setDuration(double);
 
 private:
     MediaControlFullscreenTimelineElement(Document*, MediaControls*);

@@ -29,7 +29,6 @@
 
 #import "PlatformClockCM.h"
 
-#import "FloatConversion.h"
 #import "SoftLinking.h"
 #import <CoreMedia/CMAudioDeviceClock.h>
 
@@ -73,19 +72,19 @@ void PlatformClockCM::initializeWithTimingSource(CMClockRef clock)
     m_timebase.adoptCF(rawTimebasePtr);
 }
 
-void PlatformClockCM::setCurrentTime(float time)
+void PlatformClockCM::setCurrentTime(double time)
 {
     CMTime cmTime = CMTimeMakeWithSeconds(time, DefaultTimeScale);
     CMTimebaseSetTime(m_timebase.get(), cmTime);
 }
 
-float PlatformClockCM::currentTime() const
+double PlatformClockCM::currentTime() const
 {
     CMTime cmTime = CMTimebaseGetTime(m_timebase.get());
-    return narrowPrecisionToFloat(CMTimeGetSeconds(cmTime));
+    return CMTimeGetSeconds(cmTime);
 }
 
-void PlatformClockCM::setPlayRate(float rate)
+void PlatformClockCM::setPlayRate(double rate)
 {
     if (m_rate == rate)
         return;

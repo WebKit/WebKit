@@ -45,22 +45,22 @@ public:
     virtual PassRefPtr<TimeRanges> seekable() const = 0;
     virtual PassRefPtr<TimeRanges> played() = 0;
     
-    virtual float duration() const = 0;
-    virtual float currentTime() const = 0;
-    virtual void setCurrentTime(float, ExceptionCode&) = 0;
+    virtual double duration() const = 0;
+    virtual double currentTime() const = 0;
+    virtual void setCurrentTime(double, ExceptionCode&) = 0;
     
     virtual bool paused() const = 0;
     virtual void play() = 0;
     virtual void pause() = 0;
     
-    virtual float defaultPlaybackRate() const = 0;
-    virtual void setDefaultPlaybackRate(float) = 0;
+    virtual double defaultPlaybackRate() const = 0;
+    virtual void setDefaultPlaybackRate(double) = 0;
     
-    virtual float playbackRate() const = 0;
-    virtual void setPlaybackRate(float) = 0;
+    virtual double playbackRate() const = 0;
+    virtual void setPlaybackRate(double) = 0;
     
-    virtual float volume() const = 0;
-    virtual void setVolume(float, ExceptionCode&) = 0;
+    virtual double volume() const = 0;
+    virtual void setVolume(double, ExceptionCode&) = 0;
     
     virtual bool muted() const = 0;
     virtual void setMuted(bool) = 0;

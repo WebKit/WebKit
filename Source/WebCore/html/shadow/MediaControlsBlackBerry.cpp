@@ -33,7 +33,6 @@
 #include "Chrome.h"
 #include "DOMTokenList.h"
 #include "ExceptionCodePlaceholder.h"
-#include "FloatConversion.h"
 #include "Frame.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
@@ -481,7 +480,7 @@ PassRefPtr<MediaControlFullscreenTimelineElement> MediaControlFullscreenTimeline
     RefPtr<MediaControlFullscreenTimelineElement> timeline = adoptRef(new MediaControlFullscreenTimelineElement(document, controls));
     timeline->ensureUserAgentShadowRoot();
     timeline->setType("range");
-    timeline->setAttribute(precisionAttr, "float");
+    timeline->setAttribute(precisionAttr, "double");
     return timeline.release();
 }
 
@@ -505,7 +504,7 @@ void MediaControlFullscreenTimelineElement::defaultEventHandler(Event* event)
     if (event->type() == eventNames().mouseoverEvent || event->type() == eventNames().mouseoutEvent || event->type() == eventNames().mousemoveEvent)
         return;
 
-    float time = narrowPrecisionToFloat(value().toDouble());
+    double time = value().toDouble();
     if (event->type() == eventNames().inputEvent && time != mediaController()->currentTime())
         mediaController()->setCurrentTime(time, IGNORE_EXCEPTION);
 
@@ -522,12 +521,12 @@ bool MediaControlFullscreenTimelineElement::willRespondToMouseClickEvents()
     return true;
 }
 
-void MediaControlFullscreenTimelineElement::setPosition(float currentTime)
+void MediaControlFullscreenTimelineElement::setPosition(double currentTime)
 {
     setValue(String::number(currentTime));
 }
 
-void MediaControlFullscreenTimelineElement::setDuration(float duration)
+void MediaControlFullscreenTimelineElement::setDuration(double duration)
 {
     setAttribute(maxAttr, String::number(std::isfinite(duration) ? duration : 0));
 }
@@ -911,9 +910,9 @@ void MediaControlsBlackBerry::reset()
         else
             m_fullscreenFullScreenButton->hide();
     }
-    float duration = m_mediaController->duration();
+    double duration = m_mediaController->duration();
     if (std::isfinite(duration) || page->theme()->hasOwnDisabledStateHandlingFor(MediaSliderPart)) {
-        float now = m_mediaController->currentTime();
+        double now = m_mediaController->currentTime();
         m_timeline->setDuration(duration);
         m_fullscreenTimeline->setDuration(duration);
         m_timelineContainer->show();
@@ -955,7 +954,7 @@ void MediaControlsBlackBerry::bufferingProgressed()
     // We only need to update buffering progress when paused, during normal
     // playback playbackProgressed() will take care of it.
     if (m_mediaController->paused()) {
-        float now = m_mediaController->currentTime();
+        double now = m_mediaController->currentTime();
         m_timeline->setPosition(now);
         m_fullscreenTimeline->setPosition(now);
     }
@@ -963,7 +962,7 @@ void MediaControlsBlackBerry::bufferingProgressed()
 
 void MediaControlsBlackBerry::playbackStarted()
 {
-    float now = m_mediaController->currentTime();
+    double now = m_mediaController->currentTime();
     m_playButton->updateDisplayType();
     m_fullscreenPlayButton->updateDisplayType();
     m_timeline->setPosition(now);
@@ -976,7 +975,7 @@ void MediaControlsBlackBerry::playbackStarted()
 
 void MediaControlsBlackBerry::playbackProgressed()
 {
-    float now = m_mediaController->currentTime();
+    double now = m_mediaController->currentTime();
     m_timeline->setPosition(now);
     m_fullscreenTimeline->setPosition(now);
     updateCurrentTimeDisplay();
@@ -987,7 +986,7 @@ void MediaControlsBlackBerry::playbackProgressed()
 
 void MediaControlsBlackBerry::playbackStopped()
 {
-    float now = m_mediaController->currentTime();
+    double now = m_mediaController->currentTime();
     m_playButton->updateDisplayType();
     m_fullscreenPlayButton->updateDisplayType();
     m_timeline->setPosition(now);
@@ -1000,8 +999,8 @@ void MediaControlsBlackBerry::playbackStopped()
 
 void MediaControlsBlackBerry::updateCurrentTimeDisplay()
 {
-    float now = m_mediaController->currentTime();
-    float duration = m_mediaController->duration();
+    double now = m_mediaController->currentTime();
+    double duration = m_mediaController->duration();
 
     Page* page = document()->page();
     if (!page)

@@ -41,7 +41,7 @@ public:
     {
         return adoptRef(new TimeRanges);
     }
-    static PassRefPtr<TimeRanges> create(float start, float end)
+    static PassRefPtr<TimeRanges> create(double start, double end)
     {
         return adoptRef(new TimeRanges(start, end));
     }
@@ -52,32 +52,32 @@ public:
     void unionWith(const TimeRanges*);
 
     unsigned length() const { return m_ranges.size(); }
-    float start(unsigned index, ExceptionCode&) const;
-    float end(unsigned index, ExceptionCode&) const;
+    double start(unsigned index, ExceptionCode&) const;
+    double end(unsigned index, ExceptionCode&) const;
     
-    void add(float start, float end);
+    void add(double start, double end);
     
-    bool contain(float time) const;
+    bool contain(double time) const;
     
-    float nearest(float time) const;
+    double nearest(double time) const;
 
 private:
     TimeRanges() { }
-    TimeRanges(float start, float end);
+    TimeRanges(double start, double end);
     TimeRanges(const TimeRanges&);
 
     // We consider all the Ranges to be semi-bounded as follow: [start, end[
     struct Range {
         Range() { }
-        Range(float start, float end)
+        Range(double start, double end)
         {
             m_start = start;
             m_end = end;
         }
-        float m_start;
-        float m_end;
+        double m_start;
+        double m_end;
 
-        inline bool isPointInRange(float point) const
+        inline bool isPointInRange(double point) const
         {
             return m_start <= point && point < m_end;
         }

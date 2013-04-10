@@ -147,7 +147,7 @@ public:
     PassRefPtr<TextTrackCueBox> getDisplayTree(const IntSize& videoSize);
     PassRefPtr<HTMLDivElement> element() const { return m_cueBackgroundBox; }
 
-    void updateDisplayTree(float);
+    void updateDisplayTree(double);
     void removeDisplayTree();
     void markFutureAndPastNodes(ContainerNode*, double, double);
 

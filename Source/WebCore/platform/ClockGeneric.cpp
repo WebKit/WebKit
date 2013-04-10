@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ClockGeneric.h"
 
-#include "FloatConversion.h"
 #include <wtf/CurrentTime.h>
 
 using namespace WebCore;
@@ -39,21 +38,20 @@ ClockGeneric::ClockGeneric()
     m_startTime = m_lastTime = now();
 }
 
-void ClockGeneric::setCurrentTime(float time)
+void ClockGeneric::setCurrentTime(double time)
 {
     m_startTime = m_lastTime = now();
     m_offset = time;
 }
 
-float ClockGeneric::currentTime() const
+double ClockGeneric::currentTime() const
 {
     if (m_running)
         m_lastTime = now();
-    float time = narrowPrecisionToFloat(((m_lastTime - m_startTime) * m_rate) + m_offset);
-    return time;
+    return ((m_lastTime - m_startTime) * m_rate) + m_offset;
 }
 
-void ClockGeneric::setPlayRate(float rate)
+void ClockGeneric::setPlayRate(double rate)
 {
     m_offset = now();
     m_lastTime = m_startTime = now();
@@ -83,4 +81,3 @@ double ClockGeneric::now() const
 {
     return WTF::currentTime();
 }
-

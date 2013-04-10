@@ -63,14 +63,14 @@ readonly attribute unsigned short readyState;
 readonly attribute boolean seeking;
 
 // playback state
-attribute float currentTime
+attribute double currentTime
     setter raises (DOMException);
 readonly attribute double initialTime;
-readonly attribute float startTime;
-readonly attribute float duration;
+readonly attribute double startTime;
+readonly attribute double duration;
 readonly attribute boolean paused;
-attribute float defaultPlaybackRate;
-attribute float playbackRate;
+attribute double defaultPlaybackRate;
+attribute double playbackRate;
 readonly attribute TimeRanges played;
 readonly attribute TimeRanges seekable;
 readonly attribute boolean ended;
@@ -81,7 +81,7 @@ void pause();
 
 // controls
 attribute boolean controls;
-attribute float volume 
+attribute double volume 
     setter raises (DOMException);
 attribute boolean muted;
 attribute [Reflect=muted] boolean defaultMuted;

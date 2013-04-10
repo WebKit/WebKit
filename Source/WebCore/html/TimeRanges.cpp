@@ -34,7 +34,7 @@
 using namespace WebCore;
 using namespace std;
 
-TimeRanges::TimeRanges(float start, float end)
+TimeRanges::TimeRanges(double start, double end)
 {
     add(start, end);
 }
@@ -53,19 +53,19 @@ PassRefPtr<TimeRanges> TimeRanges::copy() const
 void TimeRanges::invert()
 {
     RefPtr<TimeRanges> inverted = TimeRanges::create();
-    float posInf = std::numeric_limits<float>::infinity();
-    float negInf = -std::numeric_limits<float>::infinity();
+    double posInf = std::numeric_limits<double>::infinity();
+    double negInf = -std::numeric_limits<double>::infinity();
 
     if (!m_ranges.size())
         inverted->add(negInf, posInf);
     else {
-        if (float start = m_ranges.first().m_start != negInf)
+        if (double start = m_ranges.first().m_start != negInf)
             inverted->add(negInf, start);
 
         for (size_t index = 0; index + 1 < m_ranges.size(); ++index)
             inverted->add(m_ranges[index].m_end, m_ranges[index + 1].m_start);
 
-        if (float end = m_ranges.last().m_end != posInf)
+        if (double end = m_ranges.last().m_end != posInf)
             inverted->add(end, posInf);
     }
 
@@ -95,7 +95,7 @@ void TimeRanges::unionWith(const TimeRanges* other)
     m_ranges.swap(unioned->m_ranges);
 }
 
-float TimeRanges::start(unsigned index, ExceptionCode& ec) const 
+double TimeRanges::start(unsigned index, ExceptionCode& ec) const 
 { 
     if (index >= length()) {
         ec = INDEX_SIZE_ERR;
@@ -104,7 +104,7 @@ float TimeRanges::start(unsigned index, ExceptionCode& ec) const
     return m_ranges[index].m_start;
 }
 
-float TimeRanges::end(unsigned index, ExceptionCode& ec) const 
+double TimeRanges::end(unsigned index, ExceptionCode& ec) const 
 { 
     if (index >= length()) {
         ec = INDEX_SIZE_ERR;
@@ -113,7 +113,7 @@ float TimeRanges::end(unsigned index, ExceptionCode& ec) const
     return m_ranges[index].m_end;
 }
 
-void TimeRanges::add(float start, float end) 
+void TimeRanges::add(double start, double end) 
 {
     ASSERT(start <= end);
     unsigned int overlappingArcIndex;
@@ -156,7 +156,7 @@ void TimeRanges::add(float start, float end)
     m_ranges.insert(overlappingArcIndex, addedRange);
 }
 
-bool TimeRanges::contain(float time) const
+bool TimeRanges::contain(double time) const
 {
     for (unsigned n = 0; n < length(); n++) {
         if (time >= start(n, IGNORE_EXCEPTION) && time <= end(n, IGNORE_EXCEPTION))
@@ -165,13 +165,13 @@ bool TimeRanges::contain(float time) const
     return false;
 }
 
-float TimeRanges::nearest(float time) const
+double TimeRanges::nearest(double time) const
 {
-    float closest = 0;
+    double closest = 0;
     unsigned count = length();
     for (unsigned ndx = 0; ndx < count; ndx++) {
-        float startTime = start(ndx, IGNORE_EXCEPTION);
-        float endTime = end(ndx, IGNORE_EXCEPTION);
+        double startTime = start(ndx, IGNORE_EXCEPTION);
+        double endTime = end(ndx, IGNORE_EXCEPTION);
         if (time >= startTime && time <= endTime)
             return time;
         if (fabs(startTime - time) < closest)

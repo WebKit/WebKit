@@ -37,7 +37,6 @@
 #include "EventNames.h"
 #include "EventTarget.h"
 #include "ExceptionCodePlaceholder.h"
-#include "FloatConversion.h"
 #include "Frame.h"
 #include "GraphicsContext.h"
 #include "HTMLVideoElement.h"
@@ -629,7 +628,7 @@ PassRefPtr<MediaControlRewindButtonElement> MediaControlRewindButtonElement::cre
 void MediaControlRewindButtonElement::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().clickEvent) {
-        mediaController()->setCurrentTime(max(0.0f, mediaController()->currentTime() - 30), IGNORE_EXCEPTION);
+        mediaController()->setCurrentTime(max(0.0, mediaController()->currentTime() - 30), IGNORE_EXCEPTION);
         event->setDefaultHandled();
     }
     HTMLInputElement::defaultEventHandler(event);
@@ -945,7 +944,7 @@ void MediaControlTimelineElement::defaultEventHandler(Event* event)
     if (event->type() == eventNames().mouseoverEvent || event->type() == eventNames().mouseoutEvent || event->type() == eventNames().mousemoveEvent)
         return;
 
-    float time = narrowPrecisionToFloat(value().toDouble());
+    double time = value().toDouble();
     if (event->type() == eventNames().inputEvent && time != mediaController()->currentTime())
         mediaController()->setCurrentTime(time, IGNORE_EXCEPTION);
 
@@ -962,12 +961,12 @@ bool MediaControlTimelineElement::willRespondToMouseClickEvents()
     return true;
 }
 
-void MediaControlTimelineElement::setPosition(float currentTime)
+void MediaControlTimelineElement::setPosition(double currentTime)
 {
     setValue(String::number(currentTime));
 }
 
-void MediaControlTimelineElement::setDuration(float duration)
+void MediaControlTimelineElement::setDuration(double duration)
 {
     setAttribute(maxAttr, String::number(std::isfinite(duration) ? duration : 0));
 }

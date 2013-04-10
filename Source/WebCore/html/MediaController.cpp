@@ -129,13 +129,13 @@ PassRefPtr<TimeRanges> MediaController::played()
     return playedRanges;
 }
 
-float MediaController::duration() const
+double MediaController::duration() const
 {
     // FIXME: Investigate caching the maximum duration and only updating the cached value
     // when the slaved media elements' durations change.
-    float maxDuration = 0;
+    double maxDuration = 0;
     for (size_t index = 0; index < m_mediaElements.size(); ++index) {
-        float duration = m_mediaElements[index]->duration();
+        double duration = m_mediaElements[index]->duration();
         if (std::isnan(duration))
             continue;
         maxDuration = max(maxDuration, duration);
@@ -143,26 +143,26 @@ float MediaController::duration() const
     return maxDuration;
 }
 
-float MediaController::currentTime() const
+double MediaController::currentTime() const
 {
     if (m_mediaElements.isEmpty())
         return 0;
 
     if (m_position == MediaPlayer::invalidTime()) {
         // Some clocks may return times outside the range of [0..duration].
-        m_position = max(0.0f, min(duration(), m_clock->currentTime()));
+        m_position = max(0.0, min(duration(), m_clock->currentTime()));
         m_clearPositionTimer.startOneShot(0);
     }
 
     return m_position;
 }
 
-void MediaController::setCurrentTime(float time, ExceptionCode& code)
+void MediaController::setCurrentTime(double time, ExceptionCode& code)
 {
     // When the user agent is to seek the media controller to a particular new playback position, 
     // it must follow these steps:
     // If the new playback position is less than zero, then set it to zero.
-    time = max(0.0f, time);
+    time = max(0.0, time);
     
     // If the new playback position is greater than the media controller duration, then set it 
     // to the media controller duration.
@@ -217,7 +217,7 @@ void MediaController::pause()
     reportControllerState();
 }
 
-void MediaController::setDefaultPlaybackRate(float rate)
+void MediaController::setDefaultPlaybackRate(double rate)
 {
     if (m_defaultPlaybackRate == rate)
         return;
@@ -230,12 +230,12 @@ void MediaController::setDefaultPlaybackRate(float rate)
     scheduleEvent(eventNames().ratechangeEvent);
 }
 
-float MediaController::playbackRate() const
+double MediaController::playbackRate() const
 {
     return m_clock->playRate();
 }
 
-void MediaController::setPlaybackRate(float rate)
+void MediaController::setPlaybackRate(double rate)
 {
     if (m_clock->playRate() == rate)
         return;
@@ -251,7 +251,7 @@ void MediaController::setPlaybackRate(float rate)
     scheduleEvent(eventNames().ratechangeEvent);
 }
 
-void MediaController::setVolume(float level, ExceptionCode& code)
+void MediaController::setVolume(double level, ExceptionCode& code)
 {
     if (m_volume == level)
         return;

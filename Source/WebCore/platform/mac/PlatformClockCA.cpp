@@ -29,7 +29,6 @@
 
 #include "PlatformClockCA.h"
 
-#include "FloatConversion.h"
 #include <AudioToolbox/CoreAudioClock.h>
 #include <CoreAudio/AudioHardware.h>
 
@@ -61,7 +60,7 @@ PlatformClockCA::~PlatformClockCA()
     CAClockDispose(m_clock);
 }
 
-void PlatformClockCA::setCurrentTime(float time)
+void PlatformClockCA::setCurrentTime(double time)
 {
     if (m_running)
         CAClockStop(m_clock);
@@ -73,7 +72,7 @@ void PlatformClockCA::setCurrentTime(float time)
         CAClockStart(m_clock);
 }
 
-float PlatformClockCA::currentTime() const
+double PlatformClockCA::currentTime() const
 {
     CAClockTime caTime;
 
@@ -81,24 +80,24 @@ float PlatformClockCA::currentTime() const
     // what is the start time, i.e. what the current time will be when started.
     if (m_running) {
         if (CAClockGetCurrentTime(m_clock, kCAClockTimeFormat_Seconds, &caTime) == noErr)
-            return narrowPrecisionToFloat(caTime.time.seconds);
+            return caTime.time.seconds;
     } else {
         if (CAClockGetStartTime(m_clock, kCAClockTimeFormat_Seconds, &caTime) == noErr)
-            return narrowPrecisionToFloat(caTime.time.seconds);
+            return caTime.time.seconds;
     }
     return 0;
 }
 
-void PlatformClockCA::setPlayRate(float rate)
+void PlatformClockCA::setPlayRate(double rate)
 {
     CAClockSetPlayRate(m_clock, rate);
 }
 
-float PlatformClockCA::PlatformClockCA::playRate() const
+double PlatformClockCA::PlatformClockCA::playRate() const
 {
     double rate = 0;
     if (CAClockGetPlayRate(m_clock, &rate) == noErr)
-        return narrowPrecisionToFloat(rate);
+        return rate;
     return 0;
 }
 

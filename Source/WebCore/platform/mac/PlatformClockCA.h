@@ -40,11 +40,11 @@ public:
     virtual ~PlatformClockCA();
 
 private:
-    virtual void setCurrentTime(float);
-    virtual float currentTime() const;
+    virtual void setCurrentTime(double);
+    virtual double currentTime() const;
 
-    virtual void setPlayRate(float);
-    virtual float playRate() const;
+    virtual void setPlayRate(double);
+    virtual double playRate() const;
 
     virtual void start();
     virtual void stop();

@@ -155,7 +155,7 @@ void MediaControlsGtk::reset()
     if (!page)
         return;
 
-    float duration = m_mediaController->duration();
+    double duration = m_mediaController->duration();
     m_durationDisplay->setInnerText(page->theme()->formatMediaControlsTime(duration), ASSERT_NO_EXCEPTION);
     m_durationDisplay->setCurrentValue(duration);
 
@@ -172,8 +172,8 @@ void MediaControlsGtk::playbackStarted()
 
 void MediaControlsGtk::updateCurrentTimeDisplay()
 {
-    float now = m_mediaController->currentTime();
-    float duration = m_mediaController->duration();
+    double now = m_mediaController->currentTime();
+    double duration = m_mediaController->duration();
 
     Page* page = document()->page();
     if (!page)
