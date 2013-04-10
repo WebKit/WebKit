@@ -1,5 +1,22 @@
 2013-04-09  Mark Rowe  <mrowe@apple.com>
 
+        <rdar://problem/13617144> WKNavigationData needs to expose the destination of the navigation
+
+        Introduce WKNavigationDataCopyNavigationDestinationURL to access the destination of the navigation.
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/C/WKNavigationData.cpp:
+        (WKNavigationDataCopyURL): Add a note about returning the URL from the original request for sake of
+        backwards-compatibility.
+        (WKNavigationDataCopyNavigationDestinationURL): Return the URL from our underlying WebNavigationDataStore.
+        * UIProcess/API/C/WKNavigationData.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::updateGlobalHistory): Store the current URL in to the WebNavigationDataStore
+        object. WKNavigationData can retrieve the value that we were previously storing here via the originalRequest.
+
+2013-04-09  Mark Rowe  <mrowe@apple.com>
+
         <rdar://problem/13617104> WKPageCopySessionState needs to provide more context to the filter callback
 
         Introduce a new value type for WKPageSessionStateFilterCallback that represents the passing

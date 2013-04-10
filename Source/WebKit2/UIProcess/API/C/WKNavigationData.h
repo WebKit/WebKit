@@ -35,8 +35,11 @@ extern "C" {
 WK_EXPORT WKTypeID WKNavigationDataGetTypeID();
 
 WK_EXPORT WKStringRef WKNavigationDataCopyTitle(WKNavigationDataRef navigationData);
-WK_EXPORT WKURLRef WKNavigationDataCopyURL(WKNavigationDataRef navigationData);
 WK_EXPORT WKURLRequestRef WKNavigationDataCopyOriginalRequest(WKNavigationDataRef navigationData);
+WK_EXPORT WKURLRef WKNavigationDataCopyNavigationDestinationURL(WKNavigationDataRef navigationDataRef);
+
+// This returns the URL of the original request for backwards-compatibility purposes.
+WK_EXPORT WKURLRef WKNavigationDataCopyURL(WKNavigationDataRef navigationData);
 
 #ifdef __cplusplus
 }

@@ -907,7 +907,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
     DocumentLoader* loader = m_frame->coreFrame()->loader()->documentLoader();
 
     WebNavigationDataStore data;
-    data.url = loader->urlForHistory().string();
+    data.url = loader->url().string();
     // FIXME: use direction of title.
     data.title = loader->title().string();
     data.originalRequest = loader->originalRequestCopy();

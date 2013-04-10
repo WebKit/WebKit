@@ -44,6 +44,12 @@ WKStringRef WKNavigationDataCopyTitle(WKNavigationDataRef navigationDataRef)
 
 WKURLRef WKNavigationDataCopyURL(WKNavigationDataRef navigationDataRef)
 {
+    // This returns the URL of the original request for backwards-compatibility purposes.
+    return toCopiedURLAPI(toImpl(navigationDataRef)->originalRequest().url());
+}
+
+WKURLRef WKNavigationDataCopyNavigationDestinationURL(WKNavigationDataRef navigationDataRef)
+{
     return toCopiedURLAPI(toImpl(navigationDataRef)->url());
 }
 
