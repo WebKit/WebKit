@@ -64,6 +64,8 @@ private:
                                             const FloatRect& absoluteTileBoundaries, const AffineTransform& tileImageTransform,
                                             FloatRect& clampedAbsoluteTileBoundaries) const;
 
+    PatternData* buildPattern(RenderObject*, unsigned short resourceMode);
+
     bool m_shouldCollectPatternAttributes : 1;
     PatternAttributes m_attributes;
     HashMap<RenderObject*, OwnPtr<PatternData> > m_patternMap;
