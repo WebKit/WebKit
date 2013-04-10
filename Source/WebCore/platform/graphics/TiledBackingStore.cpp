@@ -81,9 +81,11 @@ void TiledBackingStore::coverWithTilesIfNeeded()
 void TiledBackingStore::invalidate(const IntRect& contentsDirtyRect)
 {
     IntRect dirtyRect(mapFromContents(contentsDirtyRect));
+    IntRect keepRectFitToTileSize = tileRectForCoordinate(tileCoordinateForPoint(m_keepRect.location()));
+    keepRectFitToTileSize.unite(tileRectForCoordinate(tileCoordinateForPoint(innerBottomRight(m_keepRect))));
 
     // Only iterate on the part of the rect that we know we might have tiles.
-    IntRect coveredDirtyRect = intersection(dirtyRect, m_keepRect);
+    IntRect coveredDirtyRect = intersection(dirtyRect, keepRectFitToTileSize);
     Tile::Coordinate topLeft = tileCoordinateForPoint(coveredDirtyRect.location());
     Tile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(coveredDirtyRect));
 
