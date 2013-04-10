@@ -1,3 +1,19 @@
+2013-04-10  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove code duplicates from MacroAssemblerARM
+        https://bugs.webkit.org/show_bug.cgi?id=104457
+
+        Reviewed by Oliver Hunt.
+
+        Reuse some existing methods to avoid duplicated code.
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::store8):
+        (JSC::MacroAssemblerARM::store32):
+        (JSC::MacroAssemblerARM::swap):
+        (JSC::MacroAssemblerARM::add32):
+        (JSC::MacroAssemblerARM::sub32):
+
 2013-04-10  Michael Saboff  <msaboff@apple.com>
 
         DFG: Negative size for new Array() interpreted as large unsigned int

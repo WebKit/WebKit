@@ -451,10 +451,10 @@ public:
         m_assembler.baseIndexTransfer32(ARMAssembler::StoreUint8, src, address.base, address.index, static_cast<int>(address.scale), address.offset);
     }
 
-    void store8(TrustedImm32 imm, void* address)
+    void store8(TrustedImm32 imm, const void* address)
     {
         move(TrustedImm32(reinterpret_cast<ARMWord>(address)), ARMRegisters::S0);
-        m_assembler.moveImm(imm.m_value, ARMRegisters::S1);
+        move(imm, ARMRegisters::S1);
         m_assembler.dtrUp(ARMAssembler::StoreUint8, ARMRegisters::S1, ARMRegisters::S0, 0);
     }
 
@@ -485,13 +485,13 @@ public:
         m_assembler.baseIndexTransfer32(ARMAssembler::StoreUint32, ARMRegisters::S1, address.base, address.index, static_cast<int>(address.scale), address.offset);
     }
 
-    void store32(RegisterID src, void* address)
+    void store32(RegisterID src, const void* address)
     {
         m_assembler.ldrUniqueImmediate(ARMRegisters::S0, reinterpret_cast<ARMWord>(address));
         m_assembler.dtrUp(ARMAssembler::StoreUint32, src, ARMRegisters::S0, 0);
     }
 
-    void store32(TrustedImm32 imm, void* address)
+    void store32(TrustedImm32 imm, const void* address)
     {
         m_assembler.ldrUniqueImmediate(ARMRegisters::S0, reinterpret_cast<ARMWord>(address));
         m_assembler.moveImm(imm.m_value, ARMRegisters::S1);
@@ -538,9 +538,9 @@ public:
 
     void swap(RegisterID reg1, RegisterID reg2)
     {
-        m_assembler.mov(ARMRegisters::S0, reg1);
-        m_assembler.mov(reg1, reg2);
-        m_assembler.mov(reg2, ARMRegisters::S0);
+        move(reg1, ARMRegisters::S0);
+        move(reg2, reg1);
+        move(ARMRegisters::S0, reg2);
     }
 
     void signExtend32ToPtr(RegisterID src, RegisterID dest)
@@ -891,11 +891,9 @@ public:
 
     void add32(TrustedImm32 imm, AbsoluteAddress address)
     {
-        m_assembler.ldrUniqueImmediate(ARMRegisters::S1, reinterpret_cast<ARMWord>(address.m_ptr));
-        m_assembler.dtrUp(ARMAssembler::LoadUint32, ARMRegisters::S1, ARMRegisters::S1, 0);
+        load32(address.m_ptr, ARMRegisters::S1);
         add32(imm, ARMRegisters::S1);
-        m_assembler.ldrUniqueImmediate(ARMRegisters::S0, reinterpret_cast<ARMWord>(address.m_ptr));
-        m_assembler.dtrUp(ARMAssembler::StoreUint32, ARMRegisters::S1, ARMRegisters::S0, 0);
+        store32(ARMRegisters::S1, address.m_ptr);
     }
 
     void add64(TrustedImm32 imm, AbsoluteAddress address)
@@ -925,11 +923,9 @@ public:
 
     void sub32(TrustedImm32 imm, AbsoluteAddress address)
     {
-        m_assembler.ldrUniqueImmediate(ARMRegisters::S1, reinterpret_cast<ARMWord>(address.m_ptr));
-        m_assembler.dtrUp(ARMAssembler::LoadUint32, ARMRegisters::S1, ARMRegisters::S1, 0);
+        load32(address.m_ptr, ARMRegisters::S1);
         sub32(imm, ARMRegisters::S1);
-        m_assembler.ldrUniqueImmediate(ARMRegisters::S0, reinterpret_cast<ARMWord>(address.m_ptr));
-        m_assembler.dtrUp(ARMAssembler::StoreUint32, ARMRegisters::S1, ARMRegisters::S0, 0);
+        store32(ARMRegisters::S1, address.m_ptr);
     }
 
     void load32(const void* address, RegisterID dest)
