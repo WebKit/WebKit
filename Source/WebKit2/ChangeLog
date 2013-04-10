@@ -1,3 +1,17 @@
+2013-04-10  Beth Dakin  <bdakin@apple.com>
+
+        FindBanner matches are offset when the WKView has a header or footer
+        https://bugs.webkit.org/show_bug.cgi?id=114314
+        -and corresponding-
+        <rdar://problem/13522434>
+
+        Reviewed by Simon Fraser.
+
+        When calculating the matching rects, also adjust to the scroll offset that is  
+        relative to the Document.
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::rectsForTextMatches):
+
 2013-04-10  Tobias Mueller  <tobiasmue@gnome.org>
 
         Fixed build failure in Plugin.h: FloatPoint was not in namespace WebCore

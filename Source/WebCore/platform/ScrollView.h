@@ -185,6 +185,12 @@ public:
     int scrollX() const { return scrollPosition().x(); }
     int scrollY() const { return scrollPosition().y(); }
 
+    // scrollOffset() anchors its (0,0) point at the top end of the header if this ScrollableArea
+    // has a header, so it is relative to the totalContentsSize(). scrollOffsetRelativeToDocument()
+    // anchors (0,0) at the top of the Document, which will be beneath any headers, so it is relative
+    // to contentsSize().
+    IntSize scrollOffsetRelativeToDocument() const;
+
     virtual IntSize overhangAmount() const OVERRIDE;
 
     void cacheCurrentScrollPosition() { m_cachedScrollPosition = scrollPosition(); }
