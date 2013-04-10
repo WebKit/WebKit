@@ -2347,12 +2347,24 @@ static bool requiresLineBoxForContent(RenderInline* flow, const LineInfo& lineIn
     return false;
 }
 
+static bool hasInlineDirectionBordersPaddingOrMargin(RenderInline* flow)
+{
+    // Where an empty inline is split across anonymous blocks we should only give lineboxes to the 'sides' of the
+    // inline that have borders, padding or margin.
+    bool shouldApplyStartBorderPaddingOrMargin = !flow->parent()->isAnonymousBlock() || flow->inlineElementContinuation();
+    if (shouldApplyStartBorderPaddingOrMargin && (flow->borderStart() || flow->marginStart() || flow->paddingStart()))
+        return true;
+
+    bool shouldApplyEndBorderPaddingOrMargin = !flow->parent()->isAnonymousBlock() || !flow->inlineElementContinuation();
+    return shouldApplyEndBorderPaddingOrMargin && (flow->borderEnd() || flow->marginEnd() || flow->paddingEnd());
+}
+
 static bool alwaysRequiresLineBox(RenderObject* flow)
 {
     // FIXME: Right now, we only allow line boxes for inlines that are truly empty.
     // We need to fix this, though, because at the very least, inlines containing only
     // ignorable whitespace should should also have line boxes.
-    return isEmptyInline(flow) && toRenderInline(flow)->hasInlineDirectionBordersPaddingOrMargin();
+    return isEmptyInline(flow) && hasInlineDirectionBordersPaddingOrMargin(toRenderInline(flow));
 }
 
 static bool requiresLineBox(const InlineIterator& it, const LineInfo& lineInfo = LineInfo(), WhitespacePosition whitespacePosition = LeadingWhitespace)
