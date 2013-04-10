@@ -295,10 +295,6 @@
 /* ENABLE macro defaults for WebCore */
 /* Do not use PLATFORM() tests in this section ! */
 
-#if !defined(ENABLE_3D_PLUGIN)
-#define ENABLE_3D_PLUGIN 0
-#endif
-
 #if !defined(ENABLE_3D_RENDERING)
 #define ENABLE_3D_RENDERING 0
 #endif

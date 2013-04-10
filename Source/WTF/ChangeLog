@@ -1,3 +1,14 @@
+2013-04-10  Laszlo Gombos  <l.gombos@samsung.com>
+
+        Remove ENABLE_3D_PLUGIN
+        https://bugs.webkit.org/show_bug.cgi?id=108002
+
+        Reviewed by Antti Koivisto.
+
+        Remove ENABLE_3D_PLUGIN, it was only used by Chromium.
+
+        * wtf/FeatureDefines.h:
+
 2013-04-09  Patrick Gansterer  <paroga@webkit.org>
 
         [CMake] Remove conditional source file lists in WTF
