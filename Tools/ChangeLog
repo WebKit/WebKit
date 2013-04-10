@@ -1,3 +1,68 @@
+2013-04-09  Glenn Adams  <glenn@skynav.com>
+
+        [webkitpy] Remove chromium ports.
+        https://bugs.webkit.org/show_bug.cgi?id=114326
+
+        Reviewed by Dirk Pranke.
+
+        As a side effect, also:
+
+        - remove chromium builders from webkitpy.layout_tests.port.builders
+        - remove chromium builders from rebaseline
+        - rewrite chromium dependent tests in rebaseline_unittest
+        - remove chromium platform from garden-o-matic
+        - select apple platform as default platform in garden-o-matic
+        - remove chromium port dependencies from a few other tests (run_webkit_tests_integrationtest, factory_unittest, style.checkers.test_expectations_unittest)
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js:
+        * Scripts/webkitpy/common/checkout/baselineoptimizer_unittest.py:
+        (BaselineOptimizerTest.test_move_baselines):
+        (BaselineOptimizerTest.test_efl):
+        (BaselineOptimizerTest.test_no_add_mac_future):
+        (BaselineOptimizerTest.test_win_does_not_drop_to_win_7sp0):
+        (BaselineOptimizerTest.test_common_directory_includes_root):
+        (BaselineOptimizerTest.test_complex_shadowing):
+        (BaselineOptimizerTest.test_virtual_ports_filtered):
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py: Removed.
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py: Removed.
+        * Scripts/webkitpy/layout_tests/port/chromium_android_unittest.py: Removed.
+        * Scripts/webkitpy/layout_tests/port/chromium_linux.py: Removed.
+        * Scripts/webkitpy/layout_tests/port/chromium_linux_unittest.py: Removed.
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py: Removed.
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py: Removed.
+        * Scripts/webkitpy/layout_tests/port/chromium_port_testcase.py: Removed.
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py: Removed.
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py: Removed.
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py: Removed.
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        (platform_options):
+        (PortFactory):
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        (FactoryTest.test_qt):
+        (FactoryTest.test_get_from_builder_name):
+        * Scripts/webkitpy/layout_tests/run_webkit_tests_integrationtest.py:
+        (RunTest.test_build_check):
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        (TestExpectationsTestCase.test_determine_port_from_expectations_path):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (Rebaseline._builders_to_pull_from):
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        (_BaseTestCase):
+        (_BaseTestCase.setUp):
+        (TestRebaselineTest.setUp):
+        (TestRebaselineTest.test_baseline_directory):
+        (test_rebaseline_updates_expectations_file):
+        (test_rebaseline_does_not_include_overrides):
+        (test_rebaseline_test):
+        (test_rebaseline_test_and_print_scm_changes):
+        (test_rebaseline_and_copy_test):
+        (test_rebaseline_and_copy_test_no_existing_result):
+        (test_rebaseline_and_copy_test_with_lion_result):
+        (test_rebaseline_and_copy_no_overwrite_test):
+        (TestRebaselineExpectations.test_rebaseline_expectations):
+
 2013-04-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         newcommitbot (WKR) requires a subversion checkout

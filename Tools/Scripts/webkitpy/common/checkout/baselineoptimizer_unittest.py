@@ -61,26 +61,18 @@ class BaselineOptimizerTest(unittest.TestCase):
 
     def test_move_baselines(self):
         host = MockHost()
-        host.filesystem.write_binary_file('/mock-checkout/LayoutTests/platform/chromium-win/another/test-expected.txt', 'result A')
-        host.filesystem.write_binary_file('/mock-checkout/LayoutTests/platform/chromium-mac/another/test-expected.txt', 'result A')
-        host.filesystem.write_binary_file('/mock-checkout/LayoutTests/platform/chromium/another/test-expected.txt', 'result B')
+        host.filesystem.write_binary_file('/mock-checkout/LayoutTests/platform/mac-lion/another/test-expected.txt', 'result A')
+        host.filesystem.write_binary_file('/mock-checkout/LayoutTests/platform/mac-lion-wk2/another/test-expected.txt', 'result A')
+        host.filesystem.write_binary_file('/mock-checkout/LayoutTests/platform/mac/another/test-expected.txt', 'result B')
         baseline_optimizer = BaselineOptimizer(host, host.port_factory.all_port_names())
         baseline_optimizer._move_baselines('another/test-expected.txt', {
-            'LayoutTests/platform/chromium-win': 'aaa',
-            'LayoutTests/platform/chromium-mac': 'aaa',
-            'LayoutTests/platform/chromium': 'bbb',
+            'LayoutTests/platform/mac-lion': 'aaa',
+            'LayoutTests/platform/mac-lion-wk2': 'aaa',
+            'LayoutTests/platform/mac': 'bbb',
         }, {
-            'LayoutTests/platform/chromium': 'aaa',
+            'LayoutTests/platform/mac': 'aaa',
         })
-        self.assertEqual(host.filesystem.read_binary_file('/mock-checkout/LayoutTests/platform/chromium/another/test-expected.txt'), 'result A')
-
-    def test_chromium_linux_redundant_with_win(self):
-        self._assertOptimization({
-            'LayoutTests/platform/chromium-win': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
-            'LayoutTests/platform/chromium-linux': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
-        }, {
-            'LayoutTests/platform/chromium-win': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
-        })
+        self.assertEqual(host.filesystem.read_binary_file('/mock-checkout/LayoutTests/platform/mac/another/test-expected.txt'), 'result A')
 
     def test_efl(self):
         self._assertOptimization({
@@ -89,27 +81,15 @@ class BaselineOptimizerTest(unittest.TestCase):
             'LayoutTests/platform/efl': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
         })
 
-
     def test_no_add_mac_future(self):
         self._assertOptimization({
             'LayoutTests/platform/mac': '29a1715a6470d5dd9486a142f609708de84cdac8',
             'LayoutTests/platform/win-xp': '453e67177a75b2e79905154ece0efba6e5bfb65d',
             'LayoutTests/platform/mac-lion': 'c43eaeb358f49d5e835236ae23b7e49d7f2b089f',
-            'LayoutTests/platform/chromium-mac': 'a9ba153c700a94ae1b206d8e4a75a621a89b4554',
         }, {
             'LayoutTests/platform/mac': '29a1715a6470d5dd9486a142f609708de84cdac8',
             'LayoutTests/platform/win-xp': '453e67177a75b2e79905154ece0efba6e5bfb65d',
             'LayoutTests/platform/mac-lion': 'c43eaeb358f49d5e835236ae23b7e49d7f2b089f',
-            'LayoutTests/platform/chromium-mac': 'a9ba153c700a94ae1b206d8e4a75a621a89b4554',
-        })
-
-    def test_chromium_covers_mac_win_linux(self):
-        self._assertOptimization({
-            'LayoutTests/platform/chromium-mac': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
-            'LayoutTests/platform/chromium-win': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
-            'LayoutTests/platform/chromium-linux': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
-        }, {
-            'LayoutTests/platform/chromium': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
         })
 
     def test_mac_future(self):
@@ -132,13 +112,11 @@ class BaselineOptimizerTest(unittest.TestCase):
             'LayoutTests/platform/mac': '2',
             'LayoutTests/platform/gtk': '3',
             'LayoutTests/platform/qt': '4',
-            'LayoutTests/platform/chromium': '5',
         }, {
             'LayoutTests/platform/win': '1',
             'LayoutTests/platform/mac': '2',
             'LayoutTests/platform/gtk': '3',
             'LayoutTests/platform/qt': '4',
-            'LayoutTests/platform/chromium': '5',
         })
 
     def test_common_directory_includes_root(self):
@@ -147,17 +125,12 @@ class BaselineOptimizerTest(unittest.TestCase):
         self._assertOptimizationFailed({
             'LayoutTests/platform/gtk': 'e8608763f6241ddacdd5c1ef1973ba27177d0846',
             'LayoutTests/platform/qt': 'bcbd457d545986b7abf1221655d722363079ac87',
-            'LayoutTests/platform/chromium-win': '3764ac11e1f9fbadd87a90a2e40278319190a0d3',
             'LayoutTests/platform/mac': 'e8608763f6241ddacdd5c1ef1973ba27177d0846',
         })
 
         self._assertOptimization({
-            'LayoutTests/platform/chromium-win': '23a30302a6910f8a48b1007fa36f3e3158341834',
             'LayoutTests': '9c876f8c3e4cc2aef9519a6c1174eb3432591127',
-            'LayoutTests/platform/chromium-mac': '23a30302a6910f8a48b1007fa36f3e3158341834',
-            'LayoutTests/platform/chromium': '1',
         }, {
-            'LayoutTests/platform/chromium': '23a30302a6910f8a48b1007fa36f3e3158341834',
             'LayoutTests': '9c876f8c3e4cc2aef9519a6c1174eb3432591127',
         })
 
@@ -167,35 +140,22 @@ class BaselineOptimizerTest(unittest.TestCase):
         if sys.platform == 'win32':
             return
         self._assertOptimization({
-            'LayoutTests/platform/chromium-win': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
             'LayoutTests/platform/mac': '5daa78e55f05d9f0d1bb1f32b0cd1bc3a01e9364',
-            'LayoutTests/platform/chromium-win-xp': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
             'LayoutTests/platform/mac-lion': '7ad045ece7c030e2283c5d21d9587be22bcba56e',
-            'LayoutTests/platform/chromium-win': 'f83af9732ce74f702b8c9c4a3d9a4c6636b8d3bd',
             'LayoutTests/platform/win-xp': '5b1253ef4d5094530d5f1bc6cdb95c90b446bec7',
-            'LayoutTests/platform/chromium-linux': 'f52fcdde9e4be8bd5142171cd859230bd4471036',
         }, {
-            'LayoutTests/platform/chromium-win': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
             'LayoutTests/platform/mac': '5daa78e55f05d9f0d1bb1f32b0cd1bc3a01e9364',
-            'LayoutTests/platform/chromium-win-xp': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
             'LayoutTests/platform/mac-lion': '7ad045ece7c030e2283c5d21d9587be22bcba56e',
-            'LayoutTests/platform/chromium-win': 'f83af9732ce74f702b8c9c4a3d9a4c6636b8d3bd',
             'LayoutTests/platform/win-xp': '5b1253ef4d5094530d5f1bc6cdb95c90b446bec7',
-            'LayoutTests/platform/chromium-linux': 'f52fcdde9e4be8bd5142171cd859230bd4471036'
         })
 
     def test_virtual_ports_filtered(self):
         self._assertOptimization({
-            'LayoutTests/platform/chromium-mac': '1',
-            'LayoutTests/platform/chromium-mac-snowleopard': '1',
-            'LayoutTests/platform/chromium-win': '2',
             'LayoutTests/platform/gtk': '3',
             'LayoutTests/platform/efl': '3',
             'LayoutTests/platform/qt': '4',
             'LayoutTests/platform/mac': '5',
         }, {
-            'LayoutTests/platform/chromium-mac': '1',
-            'LayoutTests/platform/chromium-win': '2',
             'LayoutTests': '3',
             'LayoutTests/platform/qt': '4',
             'LayoutTests/platform/mac': '5',

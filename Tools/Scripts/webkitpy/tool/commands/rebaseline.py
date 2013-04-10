@@ -454,16 +454,12 @@ class Rebaseline(AbstractParallelRebaselineCommand):
             ])
 
     def _builders_to_pull_from(self):
-        chromium_buildbot_builder_names = []
         webkit_buildbot_builder_names = []
         for name in builders.all_builder_names():
-            if self._tool.port_factory.get_from_builder_name(name).is_chromium():
-                chromium_buildbot_builder_names.append(name)
-            else:
-                webkit_buildbot_builder_names.append(name)
+            webkit_buildbot_builder_names.append(name)
 
-        titles = ["build.webkit.org bots", "build.chromium.org bots"]
-        lists = [webkit_buildbot_builder_names, chromium_buildbot_builder_names]
+        titles = ["build.webkit.org bots"]
+        lists = [webkit_buildbot_builder_names]
 
         chosen_names = self._tool.user.prompt_with_multiple_lists("Which builder to pull results from:", titles, lists, can_choose_multiple=True)
         return [self._builder_with_name(name) for name in chosen_names]

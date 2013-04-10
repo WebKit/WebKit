@@ -39,12 +39,6 @@ def platform_options(use_globs=False):
     return [
         optparse.make_option('--platform', action='store',
             help=('Glob-style list of platform/ports to use (e.g., "mac*")' if use_globs else 'Platform to use (e.g., "mac-lion")')),
-        optparse.make_option('--chromium', action='store_const', dest='platform',
-            const=('chromium*' if use_globs else 'chromium'),
-            help=('Alias for --platform=chromium*' if use_globs else 'Alias for --platform=chromium')),
-        optparse.make_option('--chromium-android', action='store_const', dest='platform',
-            const=('chromium-android*' if use_globs else 'chromium-android'),
-            help=('Alias for --platform=chromium-android*' if use_globs else 'Alias for --platform=chromium')),
         optparse.make_option('--efl', action='store_const', dest='platform',
             const=('efl*' if use_globs else 'efl'),
             help=('Alias for --platform=efl*' if use_globs else 'Alias for --platform=efl')),
@@ -80,10 +74,6 @@ def _builder_options(builder_name):
 
 class PortFactory(object):
     PORT_CLASSES = (
-        'chromium_android.ChromiumAndroidPort',
-        'chromium_linux.ChromiumLinuxPort',
-        'chromium_mac.ChromiumMacPort',
-        'chromium_win.ChromiumWinPort',
         'efl.EflPort',
         'gtk.GtkPort',
         'mac.MacPort',

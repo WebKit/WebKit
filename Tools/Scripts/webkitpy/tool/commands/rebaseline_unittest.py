@@ -39,7 +39,7 @@ from webkitpy.tool.mocktool import MockTool, MockOptions
 
 class _BaseTestCase(unittest.TestCase):
     MOCK_WEB_RESULT = 'MOCK Web result, convert 404 to None=True'
-    WEB_PREFIX = 'http://example.com/f/builders/WebKit Mac10.7/results/layout-test-results'
+    WEB_PREFIX = 'http://example.com/f/builders/Apple Lion Release WK1 (Tests)/results/layout-test-results'
 
     command_constructor = None
 
@@ -47,7 +47,7 @@ class _BaseTestCase(unittest.TestCase):
         self.tool = MockTool()
         self.command = self.command_constructor()  # lint warns that command_constructor might not be set, but this is intentional; pylint: disable=E1102
         self.command.bind_to_tool(self.tool)
-        self.lion_port = self.tool.port_factory.get_from_builder_name("WebKit Mac10.7")
+        self.lion_port = self.tool.port_factory.get_from_builder_name("Apple Lion Release WK1 (Tests)")
         self.lion_expectations_path = self.lion_port.path_to_test_expectations_file()
 
         # FIXME: we should override builders._exact_matches here to point to a set
@@ -78,7 +78,7 @@ class TestRebaselineTest(_BaseTestCase):
 
     def setUp(self):
         super(TestRebaselineTest, self).setUp()
-        self.options = MockOptions(builder="WebKit Mac10.7", test="userscripts/another-test.html", suffixes="txt",
+        self.options = MockOptions(builder="Apple Lion Release WK1 (Tests)", test="userscripts/another-test.html", suffixes="txt",
                                    move_overwritten_baselines_to=None, results_directory=None)
 
     def test_baseline_directory(self):
@@ -87,12 +87,12 @@ class TestRebaselineTest(_BaseTestCase):
         self.assertMultiLineEqual(command._baseline_directory("Apple Win 7 Release (Tests)"), "/mock-checkout/LayoutTests/platform/win")
         self.assertMultiLineEqual(command._baseline_directory("Apple Lion Release WK1 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-lion")
         self.assertMultiLineEqual(command._baseline_directory("Apple Lion Release WK2 (Tests)"), "/mock-checkout/LayoutTests/platform/mac-wk2")
+        self.assertMultiLineEqual(command._baseline_directory("Apple MountainLion Release WK1 (Tests)"), "/mock-checkout/LayoutTests/platform/mac")
+        self.assertMultiLineEqual(command._baseline_directory("Apple MountainLion Release WK2 (Tests)"), "/mock-checkout/LayoutTests/platform/mac")
         self.assertMultiLineEqual(command._baseline_directory("GTK Linux 64-bit Debug"), "/mock-checkout/LayoutTests/platform/gtk-wk1")
         self.assertMultiLineEqual(command._baseline_directory("GTK Linux 64-bit Release WK2 (Tests)"), "/mock-checkout/LayoutTests/platform/gtk-wk2")
         self.assertMultiLineEqual(command._baseline_directory("EFL Linux 64-bit Release WK2"), "/mock-checkout/LayoutTests/platform/efl-wk2")
         self.assertMultiLineEqual(command._baseline_directory("Qt Linux Release"), "/mock-checkout/LayoutTests/platform/qt")
-        self.assertMultiLineEqual(command._baseline_directory("WebKit Mac10.7"), "/mock-checkout/LayoutTests/platform/chromium-mac-lion")
-        self.assertMultiLineEqual(command._baseline_directory("WebKit Mac10.6"), "/mock-checkout/LayoutTests/platform/chromium-mac-snowleopard")
 
     def test_rebaseline_updates_expectations_file_noop(self):
         self._zero_out_test_expectations()
@@ -127,11 +127,10 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
              self.WEB_PREFIX + '/userscripts/another-test-actual.wav',
              self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
         new_expectations = self._read(self.lion_expectations_path)
-        self.assertMultiLineEqual(new_expectations, "Bug(x) [ MountainLion SnowLeopard ] userscripts/another-test.html [ ImageOnlyFailure ]\nbug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
+        self.assertMultiLineEqual(new_expectations, "Bug(x) [ Mac ] userscripts/another-test.html [ ImageOnlyFailure ]\nbug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
 
     def test_rebaseline_does_not_include_overrides(self):
         self._write(self.lion_expectations_path, "Bug(x) [ Mac ] userscripts/another-test.html [ ImageOnlyFailure ]\nBug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
-        self._write(self.lion_port.path_from_chromium_base('skia', 'skia_test_expectations.txt'), "Bug(y) [ Mac ] other-test.html [ Failure ]\n")
         self._write("userscripts/another-test.html", "Dummy test contents")
 
         self.options.suffixes = 'png,wav,txt'
@@ -143,10 +142,10 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
              self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
 
         new_expectations = self._read(self.lion_expectations_path)
-        self.assertMultiLineEqual(new_expectations, "Bug(x) [ MountainLion SnowLeopard ] userscripts/another-test.html [ ImageOnlyFailure ]\nBug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
+        self.assertMultiLineEqual(new_expectations, "Bug(x) [ Mac ] userscripts/another-test.html [ ImageOnlyFailure ]\nBug(z) [ Linux ] userscripts/another-test.html [ ImageOnlyFailure ]\n")
 
     def test_rebaseline_test(self):
-        self.command._rebaseline_test("WebKit Linux", "userscripts/another-test.html", None, "txt", self.WEB_PREFIX)
+        self.command._rebaseline_test("Apple Lion Release WK1 (Tests)", "userscripts/another-test.html", None, "txt", self.WEB_PREFIX)
         self.assertItemsEqual(self.tool.web.urls_fetched, [self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
 
     def test_rebaseline_test_with_results_directory(self):
@@ -160,41 +159,41 @@ Bug(A) [ Debug ] : fast/css/large-list-of-rules-crash.html [ Failure ]
         self.command._scm_changes = {'add': [], 'delete': []}
         self.tool._scm.exists = lambda x: False
 
-        self.command._rebaseline_test("WebKit Linux", "userscripts/another-test.html", None, "txt", None)
+        self.command._rebaseline_test("Apple Lion Release WK1 (Tests)", "userscripts/another-test.html", None, "txt", None)
 
-        self.assertDictEqual(self.command._scm_changes, {'add': ['/mock-checkout/LayoutTests/platform/chromium-linux/userscripts/another-test-expected.txt'], 'delete': []})
+        self.assertDictEqual(self.command._scm_changes, {'add': ['/mock-checkout/LayoutTests/platform/mac-lion/userscripts/another-test-expected.txt'], 'delete': []})
 
     def test_rebaseline_and_copy_test(self):
         self._write("userscripts/another-test-expected.txt", "generic result")
 
-        self.command._rebaseline_test("WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt", None)
+        self.command._rebaseline_test("Apple Lion Release WK1 (Tests)", "userscripts/another-test.html", ["mac-lion-wk2"], "txt", None)
 
-        self.assertMultiLineEqual(self._read('platform/chromium-mac-lion/userscripts/another-test-expected.txt'), self.MOCK_WEB_RESULT)
-        self.assertMultiLineEqual(self._read('platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt'), 'generic result')
+        self.assertMultiLineEqual(self._read('platform/mac-lion/userscripts/another-test-expected.txt'), self.MOCK_WEB_RESULT)
+        self.assertMultiLineEqual(self._read('platform/mac-wk2/userscripts/another-test-expected.txt'), 'generic result')
 
     def test_rebaseline_and_copy_test_no_existing_result(self):
-        self.command._rebaseline_test("WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt", None)
+        self.command._rebaseline_test("Apple Lion Release WK1 (Tests)", "userscripts/another-test.html", ["mac-lion-wk2"], "txt", None)
 
-        self.assertMultiLineEqual(self._read('platform/chromium-mac-lion/userscripts/another-test-expected.txt'), self.MOCK_WEB_RESULT)
-        self.assertFalse(self.tool.filesystem.exists(self._expand('platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt')))
+        self.assertMultiLineEqual(self._read('platform/mac-lion/userscripts/another-test-expected.txt'), self.MOCK_WEB_RESULT)
+        self.assertFalse(self.tool.filesystem.exists(self._expand('platform/mac-lion-wk2/userscripts/another-test-expected.txt')))
 
     def test_rebaseline_and_copy_test_with_lion_result(self):
-        self._write("platform/chromium-mac-lion/userscripts/another-test-expected.txt", "original lion result")
+        self._write("platform/mac-lion/userscripts/another-test-expected.txt", "original lion result")
 
-        self.command._rebaseline_test("WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt", self.WEB_PREFIX)
+        self.command._rebaseline_test("Apple Lion Release WK1 (Tests)", "userscripts/another-test.html", ["mac-lion-wk2"], "txt", self.WEB_PREFIX)
 
         self.assertItemsEqual(self.tool.web.urls_fetched, [self.WEB_PREFIX + '/userscripts/another-test-actual.txt'])
-        self.assertMultiLineEqual(self._read("platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt"), "original lion result")
-        self.assertMultiLineEqual(self._read("platform/chromium-mac-lion/userscripts/another-test-expected.txt"), self.MOCK_WEB_RESULT)
+        self.assertMultiLineEqual(self._read("platform/mac-wk2/userscripts/another-test-expected.txt"), "original lion result")
+        self.assertMultiLineEqual(self._read("platform/mac-lion/userscripts/another-test-expected.txt"), self.MOCK_WEB_RESULT)
 
     def test_rebaseline_and_copy_no_overwrite_test(self):
-        self._write("platform/chromium-mac-lion/userscripts/another-test-expected.txt", "original lion result")
-        self._write("platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt", "original snowleopard result")
+        self._write("platform/mac-lion/userscripts/another-test-expected.txt", "original lion result")
+        self._write("platform/mac-lion-wk2/userscripts/another-test-expected.txt", "original lion wk2 result")
 
-        self.command._rebaseline_test("WebKit Mac10.7", "userscripts/another-test.html", ["chromium-mac-snowleopard"], "txt", None)
+        self.command._rebaseline_test("Apple Lion Release WK1 (Tests)", "userscripts/another-test.html", ["mac-lion-wk2"], "txt", None)
 
-        self.assertMultiLineEqual(self._read("platform/chromium-mac-snowleopard/userscripts/another-test-expected.txt"), "original snowleopard result")
-        self.assertMultiLineEqual(self._read("platform/chromium-mac-lion/userscripts/another-test-expected.txt"), self.MOCK_WEB_RESULT)
+        self.assertMultiLineEqual(self._read("platform/mac-lion-wk2/userscripts/another-test-expected.txt"), "original lion wk2 result")
+        self.assertMultiLineEqual(self._read("platform/mac-lion/userscripts/another-test-expected.txt"), self.MOCK_WEB_RESULT)
 
     def test_rebaseline_test_internal_with_move_overwritten_baselines_to(self):
         self.tool.executive = MockExecutive2()
@@ -337,7 +336,7 @@ class TestRebaselineExpectations(_BaseTestCase):
         # FIXME: change this to use the test- ports.
         calls = filter(lambda x: x != ['qmake', '-v'], self.tool.executive.calls)
         self.assertEqual(len(calls), 1)
-        self.assertEqual(len(calls[0]), 36)
+        self.assertEqual(len(calls[0]), 22)
 
     def test_rebaseline_expectations_noop(self):
         self._zero_out_test_expectations()

@@ -45,20 +45,6 @@ from webkitpy.common.memoized import memoized
 #      results into platform/mac temporarily.
 
 _exact_matches = {
-    # These builders are on build.chromium.org.
-    "WebKit XP": {"port_name": "chromium-win-xp", "is_debug": False},
-    "WebKit Win7": {"port_name": "chromium-win-win7", "is_debug": False},
-    "WebKit Win7 (dbg)(1)": {"port_name": "chromium-win-win7", "is_debug": True},
-    "WebKit Win7 (dbg)(2)": {"port_name": "chromium-win-win7", "is_debug": True},
-    "WebKit Linux": {"port_name": "chromium-linux-x86_64", "is_debug": False},
-    "WebKit Linux 32": {"port_name": "chromium-linux-x86", "is_debug": False},
-    "WebKit Linux (dbg)": {"port_name": "chromium-linux-x86_64", "is_debug": True},
-    "WebKit Mac10.6": {"port_name": "chromium-mac-snowleopard", "is_debug": False},
-    "WebKit Mac10.6 (dbg)": {"port_name": "chromium-mac-snowleopard", "is_debug": True},
-    "WebKit Mac10.7": {"port_name": "chromium-mac-lion", "is_debug": False},
-    "WebKit Mac10.7 (dbg)": {"port_name": "chromium-mac-lion", "is_debug": True},
-    "WebKit Mac10.8": {"port_name": "chromium-mac-mountainlion", "is_debug": False},
-
     # These builders are on build.webkit.org.
     "Apple MountainLion Release WK1 (Tests)": {"port_name": "mac-mountainlion", "is_debug": False, "rebaseline_override_dir": "mac"},
     "Apple MountainLion Debug WK1 (Tests)": {"port_name": "mac-mountainlion", "is_debug": True, "rebaseline_override_dir": "mac"},
@@ -94,9 +80,6 @@ _fuzzy_matches = {
     r"Windows": "win",
     r"GTK": "gtk",
     r"Qt": "qt",
-    r"Chromium Mac": "chromium-mac",
-    r"Chromium Linux": "chromium-linux",
-    r"Chromium Win": "chromium-win",
 }
 
 
@@ -104,8 +87,6 @@ _ports_without_builders = [
     "qt-mac",
     "qt-win",
     "qt-wk2",
-    # FIXME: Move to _extact_matches.
-    "chromium-android",
 ]
 
 

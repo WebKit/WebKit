@@ -74,8 +74,6 @@ class TestExpectationsTestCase(unittest.TestCase):
 
     def test_determine_port_from_expectations_path(self):
         self._expect_port_for_expectations_path(None, '/')
-        self._expect_port_for_expectations_path(None, 'LayoutTests/chromium-mac/TestExpectations')
-        self._expect_port_for_expectations_path('chromium', 'LayoutTests/platform/chromium/TestExpectations')
         self._expect_port_for_expectations_path(None, '/mock-checkout/LayoutTests/platform/win/TestExpectations')
         self._expect_port_for_expectations_path('win', 'LayoutTests/platform/win/TestExpectations')
         self._expect_port_for_expectations_path('efl', 'LayoutTests/platform/efl/TestExpectations')
