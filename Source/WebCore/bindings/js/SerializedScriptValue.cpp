@@ -257,7 +257,6 @@ protected:
     CloneBase(ExecState* exec)
         : m_exec(exec)
         , m_failed(false)
-        , m_timeoutChecker(exec->globalData().timeoutChecker)
     {
     }
 
@@ -266,24 +265,9 @@ protected:
         return m_exec->hadException();
     }
 
-    unsigned ticksUntilNextCheck()
-    {
-        return m_timeoutChecker.ticksUntilNextCheck();
-    }
-
-    bool didTimeOut()
-    {
-        return m_timeoutChecker.didTimeOut(m_exec);
-    }
-
     void throwStackOverflow()
     {
         throwError(m_exec, createStackOverflowError(m_exec));
-    }
-
-    void throwInterruptedException()
-    {
-        throwError(m_exec, createInterruptedExecutionException(&m_exec->globalData()));
     }
 
     NO_RETURN_DUE_TO_ASSERT
@@ -295,7 +279,6 @@ protected:
 
     ExecState* m_exec;
     bool m_failed;
-    TimeoutChecker m_timeoutChecker;
     MarkedArgumentBuffer m_gcBuffer;
 };
 
@@ -847,7 +830,6 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
     Vector<WalkerState, 16> stateStack;
     WalkerState state = StateUnknown;
     JSValue inValue = in;
-    unsigned tickCount = ticksUntilNextCheck();
     while (1) {
         switch (state) {
             arrayStartState:
@@ -867,12 +849,6 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
             }
             arrayStartVisitMember:
             case ArrayStartVisitMember: {
-                if (!--tickCount) {
-                    if (didTimeOut())
-                        return InterruptedExecutionError;
-                    tickCount = ticksUntilNextCheck();
-                }
-
                 JSObject* array = inputObjectStack.last();
                 uint32_t index = indexStack.last();
                 if (index == lengthStack.last()) {
@@ -935,12 +911,6 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
             }
             objectStartVisitMember:
             case ObjectStartVisitMember: {
-                if (!--tickCount) {
-                    if (didTimeOut())
-                        return InterruptedExecutionError;
-                    tickCount = ticksUntilNextCheck();
-                }
-
                 JSObject* object = inputObjectStack.last();
                 uint32_t index = indexStack.last();
                 PropertyNameArray& properties = propertyStack.last();
@@ -1000,12 +970,6 @@ SerializationReturnCode CloneSerializer::serialize(JSValue in)
 
         state = stateStack.last();
         stateStack.removeLast();
-
-        if (!--tickCount) {
-            if (didTimeOut())
-                return InterruptedExecutionError;
-            tickCount = ticksUntilNextCheck();
-        }
     }
     if (m_failed)
         return UnspecifiedError;
@@ -1619,7 +1583,6 @@ DeserializationResult CloneDeserializer::deserialize()
     WalkerState state = StateUnknown;
     JSValue outValue;
 
-    unsigned tickCount = ticksUntilNextCheck();
     while (1) {
         switch (state) {
         arrayStartState:
@@ -1636,12 +1599,6 @@ DeserializationResult CloneDeserializer::deserialize()
         }
         arrayStartVisitMember:
         case ArrayStartVisitMember: {
-            if (!--tickCount) {
-                if (didTimeOut())
-                    return make_pair(JSValue(), InterruptedExecutionError);
-                tickCount = ticksUntilNextCheck();
-            }
-
             uint32_t index;
             if (!read(index)) {
                 fail();
@@ -1683,12 +1640,6 @@ DeserializationResult CloneDeserializer::deserialize()
         }
         objectStartVisitMember:
         case ObjectStartVisitMember: {
-            if (!--tickCount) {
-                if (didTimeOut())
-                    return make_pair(JSValue(), InterruptedExecutionError);
-                tickCount = ticksUntilNextCheck();
-            }
-
             CachedStringRef cachedString;
             bool wasTerminator = false;
             if (!readStringData(cachedString, wasTerminator)) {
@@ -1732,12 +1683,6 @@ DeserializationResult CloneDeserializer::deserialize()
 
         state = stateStack.last();
         stateStack.removeLast();
-
-        if (!--tickCount) {
-            if (didTimeOut())
-                return make_pair(JSValue(), InterruptedExecutionError);
-            tickCount = ticksUntilNextCheck();
-        }
     }
     ASSERT(outValue);
     ASSERT(!m_failed);

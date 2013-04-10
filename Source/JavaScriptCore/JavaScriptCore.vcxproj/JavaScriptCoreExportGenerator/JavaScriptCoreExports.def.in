@@ -189,7 +189,6 @@ EXPORTS
     ?destroy@OutOfLineBits@BitVector@WTF@@SAXPAV123@@Z
     ?detach@Debugger@JSC@@UAEXPAVJSGlobalObject@2@@Z
     ?detachThread@WTF@@YAXI@Z
-    ?didTimeOut@TimeoutChecker@JSC@@QAE_NPAVExecState@2@@Z
     ?discardAllCode@JSGlobalData@JSC@@QAEXXZ
     ?displayName@JSFunction@JSC@@QAE?AVString@WTF@@PAVExecState@2@@Z
     ?dtoa@WTF@@YAXQADNAA_NAAHAAI@Z
@@ -345,7 +344,6 @@ EXPORTS
     ?reserveAndCommit@OSAllocator@WTF@@SAPAXIW4Usage@12@_N11@Z
     ?reserveCapacity@StringBuilder@WTF@@QAEXI@Z
     ?reset@ParserArena@JSC@@QAEXXZ
-    ?reset@TimeoutChecker@JSC@@QAEXXZ
     ?resetDateCache@JSGlobalData@JSC@@QAEXXZ
     ?resize@StringBuilder@WTF@@QAEXI@Z
     ?resizeOutOfLine@BitVector@WTF@@AAEXI@Z

@@ -70,7 +70,6 @@ JSValue JSCallbackData::invokeCallback(JSValue thisValue, MarkedArgumentBuffer& 
     if (!context)
         return JSValue();
 
-    globalObject()->globalData().timeoutChecker.start();
     InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(context, callType, callData);
 
     bool contextIsDocument = context->isDocument();
@@ -79,7 +78,6 @@ JSValue JSCallbackData::invokeCallback(JSValue thisValue, MarkedArgumentBuffer& 
         : JSC::call(exec, function, callType, callData, thisValue, args);
 
     InspectorInstrumentation::didCallFunction(cookie);
-    globalObject()->globalData().timeoutChecker.stop();
 
     if (contextIsDocument)
         Document::updateStyleForAllDocuments();

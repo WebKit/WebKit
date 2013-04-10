@@ -1,3 +1,13 @@
+2013-04-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed bitrotted TimeoutChecker code
+        https://bugs.webkit.org/show_bug.cgi?id=114336
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::setTimeoutForJavaScriptExecution):
+
 2013-04-09  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Main page is rendered at wrong large scale after back from any zooming article at read.thestar.com

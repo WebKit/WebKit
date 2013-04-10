@@ -859,7 +859,6 @@ namespace JSC {
         void emitOptimizationCheck(OptimizationCheckKind) { }
 #endif
         
-        void emitTimeoutCheck();
 #ifndef NDEBUG
         void printBytecodeOperandTypes(unsigned src1, unsigned src2);
 #endif

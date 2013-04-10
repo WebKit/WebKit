@@ -323,7 +323,6 @@ SOURCES += \
     runtime/Structure.cpp \
     runtime/StructureRareData.cpp \
     runtime/SymbolTable.cpp \
-    runtime/TimeoutChecker.cpp \
     tools/CodeProfile.cpp \
     tools/CodeProfiling.cpp \
     yarr/YarrJIT.cpp \

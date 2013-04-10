@@ -1,3 +1,43 @@
+2013-04-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed bitrotted TimeoutChecker code
+        https://bugs.webkit.org/show_bug.cgi?id=114336
+
+        Reviewed by Alexey Proskuryakov.
+
+        This mechanism hasn't worked for a while.
+
+        MarkL is working on a new version of this feature with a distinct
+        implementation.
+
+        * API/APIShims.h:
+        (JSC::APIEntryShim::~APIEntryShim):
+        (JSC::APIEntryShim::init):
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * dfg/DFGGPRInfo.h:
+        * jit/JIT.cpp:
+        * jit/JIT.h:
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        * jit/JSInterfaceJIT.h:
+        (JSInterfaceJIT):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        * runtime/JSGlobalObject.cpp:
+        * runtime/JSONObject.cpp:
+        (JSC::Stringifier::appendStringifiedValue):
+        (JSC::Walker::walk):
+        * runtime/TimeoutChecker.cpp: Removed.
+        * runtime/TimeoutChecker.h: Removed.
+
 2013-04-10  Oliver Hunt  <oliver@apple.com>
 
         REGRESSION (r148073): WebKit Nightly r148082 crashes on launch in JSObjectSetPrivate

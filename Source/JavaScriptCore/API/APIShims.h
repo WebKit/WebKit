@@ -92,7 +92,6 @@ public:
 
     ~APIEntryShim()
     {
-        m_globalData->timeoutChecker.stop();
         m_globalData->apiLock().unlock();
     }
 
@@ -100,7 +99,6 @@ private:
     void init()
     {
         m_globalData->apiLock().lock();
-        m_globalData->timeoutChecker.start();
     }
 };
 

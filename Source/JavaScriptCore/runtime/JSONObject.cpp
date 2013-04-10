@@ -420,21 +420,10 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
     if (!holderStackWasEmpty)
         return StringifySucceeded;
 
-    // If this is the outermost call, then loop to handle everything on the holder stack.
-    TimeoutChecker localTimeoutChecker(m_exec->globalData().timeoutChecker);
-    localTimeoutChecker.reset();
-    unsigned tickCount = localTimeoutChecker.ticksUntilNextCheck();
     do {
         while (m_holderStack.last().appendNextProperty(*this, builder)) {
             if (m_exec->hadException())
                 return StringifyFailed;
-            if (!--tickCount) {
-                if (localTimeoutChecker.didTimeOut(m_exec)) {
-                    throwError(m_exec, createInterruptedExecutionException(&m_exec->globalData()));
-                    return StringifyFailed;
-                }
-                tickCount = localTimeoutChecker.ticksUntilNextCheck();
-            }
         }
         m_holderStack.removeLast();
     } while (!m_holderStack.isEmpty());
@@ -638,8 +627,7 @@ private:
     CallData m_callData;
 };
 
-// We clamp recursion well beyond anything reasonable, but we also have a timeout check
-// to guard against "infinite" execution by inserting arbitrarily large objects.
+// We clamp recursion well beyond anything reasonable.
 static const unsigned maximumFilterRecursion = 40000;
 enum WalkerState { StateUnknown, ArrayStartState, ArrayStartVisitMember, ArrayEndVisitMember, 
                                  ObjectStartState, ObjectStartVisitMember, ObjectEndVisitMember };
@@ -655,9 +643,6 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
     JSValue inValue = unfiltered;
     JSValue outValue = jsNull();
     
-    TimeoutChecker localTimeoutChecker(m_exec->globalData().timeoutChecker);
-    localTimeoutChecker.reset();
-    unsigned tickCount = localTimeoutChecker.ticksUntilNextCheck();
     while (1) {
         switch (state) {
             arrayStartState:
@@ -674,12 +659,6 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             }
             arrayStartVisitMember:
             case ArrayStartVisitMember: {
-                if (!--tickCount) {
-                    if (localTimeoutChecker.didTimeOut(m_exec))
-                        return throwError(m_exec, createInterruptedExecutionException(&m_exec->globalData()));
-                    tickCount = localTimeoutChecker.ticksUntilNextCheck();
-                }
-
                 JSArray* array = arrayStack.peek();
                 uint32_t index = indexStack.last();
                 if (index == array->length()) {
@@ -733,12 +712,6 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
             }
             objectStartVisitMember:
             case ObjectStartVisitMember: {
-                if (!--tickCount) {
-                    if (localTimeoutChecker.didTimeOut(m_exec))
-                        return throwError(m_exec, createInterruptedExecutionException(&m_exec->globalData()));
-                    tickCount = localTimeoutChecker.ticksUntilNextCheck();
-                }
-
                 JSObject* object = objectStack.peek();
                 uint32_t index = indexStack.last();
                 PropertyNameArray& properties = propertyStack.last();
@@ -796,12 +769,6 @@ NEVER_INLINE JSValue Walker::walk(JSValue unfiltered)
 
         state = stateStack.last();
         stateStack.removeLast();
-
-        if (!--tickCount) {
-            if (localTimeoutChecker.didTimeOut(m_exec))
-                return throwError(m_exec, createInterruptedExecutionException(&m_exec->globalData()));
-            tickCount = localTimeoutChecker.ticksUntilNextCheck();
-        }
     }
     JSObject* finalHolder = constructEmptyObject(m_exec);
     PutPropertySlot slot;

@@ -105,12 +105,6 @@ const GlobalObjectMethodTable JSGlobalObject::s_globalObjectMethodTable = { &all
 @end
 */
 
-// Default number of ticks before a timeout check should be done.
-static const int initialTickCountThreshold = 255;
-
-// Preferred number of milliseconds between each timeout check
-static const int preferredScriptCheckTimeInterval = 1000;
-
 JSGlobalObject::JSGlobalObject(JSGlobalData& globalData, Structure* structure, const GlobalObjectMethodTable* globalObjectMethodTable)
     : Base(globalData, structure, 0)
     , m_masqueradesAsUndefinedWatchpoint(adoptRef(new WatchpointSet(InitializedWatching)))

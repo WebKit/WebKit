@@ -105,7 +105,6 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
     for (size_t i = 0; i < size; ++i)
         args.append(m_args[i].get());
 
-    globalObject->globalData().timeoutChecker.start();
     InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(context, callType, callData);
 
     if (context->isDocument())
@@ -114,7 +113,6 @@ void ScheduledAction::executeFunctionInContext(JSGlobalObject* globalObject, JSV
         JSC::call(exec, m_function.get(), callType, callData, thisValue, args);
 
     InspectorInstrumentation::didCallFunction(cookie);
-    globalObject->globalData().timeoutChecker.stop();
 
     if (exec->hadException())
         reportCurrentException(exec);

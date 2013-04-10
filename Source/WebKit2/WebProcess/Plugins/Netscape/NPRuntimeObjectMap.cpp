@@ -189,9 +189,7 @@ bool NPRuntimeObjectMap::evaluate(NPObject* npObject, const String& scriptString
     JSLockHolder lock(exec);
     JSValue thisValue = getOrCreateJSObject(globalObject.get(), npObject);
 
-    globalObject->globalData().timeoutChecker.start();
     JSValue resultValue = JSC::evaluate(exec, makeSource(scriptString), thisValue);
-    globalObject->globalData().timeoutChecker.stop();
 
     convertJSValueToNPVariant(exec, resultValue, *result);
     return true;

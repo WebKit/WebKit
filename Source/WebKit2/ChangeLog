@@ -1,3 +1,21 @@
+2013-04-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed bitrotted TimeoutChecker code
+        https://bugs.webkit.org/show_bug.cgi?id=114336
+
+        Reviewed by Alexey Proskuryakov.
+
+        This mechanism hasn't worked for a while.
+
+        MarkL is working on a new version of this feature with a distinct
+        implementation.
+
+        * WebProcess/Plugins/Netscape/NPJSObject.cpp:
+        (WebKit::NPJSObject::construct):
+        (WebKit::NPJSObject::invoke):
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::evaluate):
+
 2013-04-09  Mark Rowe  <mrowe@apple.com>
 
         <rdar://problem/13617144> WKNavigationData needs to expose the destination of the navigation

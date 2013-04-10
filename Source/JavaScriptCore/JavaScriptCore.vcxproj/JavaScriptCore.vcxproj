@@ -369,7 +369,6 @@
     <ClCompile Include="..\runtime\StructureChain.cpp" />
     <ClCompile Include="..\runtime\StructureRareData.cpp" />
     <ClCompile Include="..\runtime\SymbolTable.cpp" />
-    <ClCompile Include="..\runtime\TimeoutChecker.cpp" />
     <ClCompile Include="..\tools\CodeProfile.cpp" />
     <ClCompile Include="..\tools\CodeProfiling.cpp" />
     <ClCompile Include="..\yarr\YarrCanonicalizeUCS2.cpp" />
@@ -753,7 +752,6 @@
     <ClInclude Include="..\runtime\StructureTransitionTable.h" />
     <ClInclude Include="..\runtime\SymbolTable.h" />
     <ClInclude Include="..\runtime\Terminator.h" />
-    <ClInclude Include="..\runtime\TimeoutChecker.h" />
     <ClInclude Include="..\runtime\Tracing.h" />
     <ClInclude Include="..\runtime\TypedArrayDescriptor.h" />
     <ClInclude Include="..\runtime\Uint16WithFraction.h" />

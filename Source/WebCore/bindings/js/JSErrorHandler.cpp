@@ -94,11 +94,9 @@ void JSErrorHandler::handleEvent(ScriptExecutionContext* scriptExecutionContext,
 
         JSValue thisValue = globalObject->methodTable()->toThisObject(globalObject, exec);
 
-        globalData.timeoutChecker.start();
         JSValue returnValue = scriptExecutionContext->isDocument()
             ? JSMainThreadExecState::call(exec, jsFunction, callType, callData, thisValue, args)
             : JSC::call(exec, jsFunction, callType, callData, thisValue, args);
-        globalData.timeoutChecker.stop();
 
         globalObject->setCurrentEvent(savedEvent);
 

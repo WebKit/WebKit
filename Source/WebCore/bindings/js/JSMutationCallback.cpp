@@ -84,13 +84,11 @@ void JSMutationCallback::call(const Vector<RefPtr<MutationRecord> >& mutations, 
     args.append(jsArray(exec, globalObject, mutations));
     args.append(jsObserver);
 
-    globalObject->globalData().timeoutChecker.start();
     InspectorInstrumentationCookie cookie = JSMainThreadExecState::instrumentFunctionCall(context, callType, callData);
 
     JSMainThreadExecState::call(exec, callback, callType, callData, jsObserver, args);
 
     InspectorInstrumentation::didCallFunction(cookie);
-    globalObject->globalData().timeoutChecker.stop();
 
     if (exec->hadException())
         reportCurrentException(exec);

@@ -324,7 +324,6 @@ public:
 
     // These registers match the baseline JIT.
     static const GPRReg cachedResultRegister = X86Registers::eax;
-    static const GPRReg timeoutCheckRegister = X86Registers::r12;
     static const GPRReg callFrameRegister = X86Registers::r13;
     static const GPRReg tagTypeNumberRegister = X86Registers::r14;
     static const GPRReg tagMaskRegister = X86Registers::r15;

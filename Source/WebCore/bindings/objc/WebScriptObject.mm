@@ -337,9 +337,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     if (![self _isSafeScript])
         return nil;
 
-    [self _rootObject]->globalObject()->globalData().timeoutChecker.start();
     JSC::JSValue result = JSMainThreadExecState::call(exec, function, callType, callData, [self _imp], argList);
-    [self _rootObject]->globalObject()->globalData().timeoutChecker.stop();
 
     if (exec->hadException()) {
         addExceptionToConsole(exec);
@@ -363,9 +361,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
     JSLockHolder lock(exec);
     
-    [self _rootObject]->globalObject()->globalData().timeoutChecker.start();
     JSC::JSValue returnValue = JSMainThreadExecState::evaluate(exec, makeSource(String(script)), JSC::JSValue(), 0);
-    [self _rootObject]->globalObject()->globalData().timeoutChecker.stop();
 
     id resultObj = [WebScriptObject _convertValueToObjcValue:returnValue originRootObject:[self _originRootObject] rootObject:[self _rootObject]];
     

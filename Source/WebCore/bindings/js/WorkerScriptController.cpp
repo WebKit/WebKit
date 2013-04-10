@@ -134,12 +134,8 @@ void WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode, Script
     ExecState* exec = m_workerContextWrapper->globalExec();
     JSLockHolder lock(exec);
 
-    m_workerContextWrapper->globalData().timeoutChecker.start();
-
     JSValue evaluationException;
     JSC::evaluate(exec, sourceCode.jsSourceCode(), m_workerContextWrapper.get(), &evaluationException);
-
-    m_workerContextWrapper->globalData().timeoutChecker.stop();
 
     if ((evaluationException && isTerminatedExecutionException(evaluationException)) ||  m_workerContextWrapper->globalData().terminator.shouldTerminate()) {
         forbidExecution();

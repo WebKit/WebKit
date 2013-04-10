@@ -471,7 +471,6 @@ SYMBOL_STRING(ctiTrampoline) ":" "\n"
     "sw    $28," STRINGIZE_VALUE_OF(PRESERVED_GP_OFFSET) "($29)" "\n"
 #endif
     "move  $16,$6       # set callFrameRegister" "\n"
-    "li    $17,512      # set timeoutCheckRegister" "\n"
     "move  $25,$4       # move executableAddress to t9" "\n"
     "sw    $5," STRINGIZE_VALUE_OF(REGISTER_FILE_OFFSET) "($29) # store JSStack to current stack" "\n"
     "lw    $9," STRINGIZE_VALUE_OF(STACK_LENGTH + 20) "($29)    # load globalData from previous stack" "\n"
@@ -1371,24 +1370,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_pre_inc)
     JSValue result = jsNumber(v.toNumber(callFrame) + 1);
     CHECK_FOR_EXCEPTION_AT_END();
     return JSValue::encode(result);
-}
-
-DEFINE_STUB_FUNCTION(int, timeout_check)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-
-    JSGlobalData* globalData = stackFrame.globalData;
-    TimeoutChecker& timeoutChecker = globalData->timeoutChecker;
-
-    if (globalData->terminator.shouldTerminate()) {
-        globalData->exception = createTerminatedExecutionException(globalData);
-        VM_THROW_EXCEPTION_AT_END();
-    } else if (timeoutChecker.didTimeOut(stackFrame.callFrame)) {
-        globalData->exception = createInterruptedExecutionException(globalData);
-        VM_THROW_EXCEPTION_AT_END();
-    }
-
-    return timeoutChecker.ticksUntilNextCheck();
 }
 
 DEFINE_STUB_FUNCTION(void*, stack_check)

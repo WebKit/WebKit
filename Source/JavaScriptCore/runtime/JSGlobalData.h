@@ -48,7 +48,6 @@
 #include "Strong.h"
 #include "Terminator.h"
 #include "ThunkGenerators.h"
-#include "TimeoutChecker.h"
 #include "TypedArrayDescriptor.h"
 #include "WeakRandom.h"
 #include <wtf/BumpPointerAllocator.h>
@@ -326,7 +325,6 @@ namespace JSC {
 #endif
         NativeExecutable* getHostFunction(NativeFunction, NativeFunction constructor);
 
-        TimeoutChecker timeoutChecker;
         Terminator terminator;
 
         JSValue exception;
@@ -412,10 +410,6 @@ namespace JSC {
 #if ENABLE(GC_VALIDATION)
         bool isInitializingObject() const; 
         void setInitializingObjectClass(const ClassInfo*);
-#endif
-
-#if CPU(X86) && ENABLE(JIT)
-        unsigned m_timeoutCount;
 #endif
 
         unsigned m_newStringsSinceLastHashCons;

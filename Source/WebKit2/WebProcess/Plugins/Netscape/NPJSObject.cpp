@@ -269,9 +269,7 @@ bool NPJSObject::construct(const NPVariant* arguments, uint32_t argumentCount, N
     for (uint32_t i = 0; i < argumentCount; ++i)
         argumentList.append(m_objectMap->convertNPVariantToJSValue(exec, m_objectMap->globalObject(), arguments[i]));
 
-    exec->globalData().timeoutChecker.start();
     JSValue value = JSC::construct(exec, m_jsObject.get(), constructType, constructData, argumentList);
-    exec->globalData().timeoutChecker.stop();
     
     // Convert and return the new object.
     m_objectMap->convertJSValueToNPVariant(exec, value, *result);
@@ -292,9 +290,7 @@ bool NPJSObject::invoke(ExecState* exec, JSGlobalObject* globalObject, JSValue f
     for (uint32_t i = 0; i < argumentCount; ++i)
         argumentList.append(m_objectMap->convertNPVariantToJSValue(exec, globalObject, arguments[i]));
 
-    exec->globalData().timeoutChecker.start();
     JSValue value = JSC::call(exec, function, callType, callData, m_jsObject->methodTable()->toThisObject(m_jsObject.get(), exec), argumentList);
-    exec->globalData().timeoutChecker.stop();
 
     // Convert and return the result of the function call.
     m_objectMap->convertJSValueToNPVariant(exec, value, *result);

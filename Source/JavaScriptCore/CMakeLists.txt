@@ -304,7 +304,6 @@ set(JavaScriptCore_SOURCES
     runtime/StructureRareData.cpp
     runtime/StructureChain.cpp
     runtime/SymbolTable.cpp
-    runtime/TimeoutChecker.cpp
 
     tools/CodeProfile.cpp
     tools/CodeProfiling.cpp

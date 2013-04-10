@@ -714,9 +714,6 @@
     <ClCompile Include="..\runtime\SymbolTable.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
-    <ClCompile Include="..\runtime\TimeoutChecker.cpp">
-      <Filter>runtime</Filter>
-    </ClCompile>
     <ClCompile Include="..\tools\CodeProfile.cpp">
       <Filter>tools</Filter>
     </ClCompile>
@@ -1791,9 +1788,6 @@
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\Terminator.h">
-      <Filter>runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="..\runtime\TimeoutChecker.h">
       <Filter>runtime</Filter>
     </ClInclude>
     <ClInclude Include="..\runtime\Tracing.h">

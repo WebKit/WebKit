@@ -479,8 +479,6 @@
 		1497209114EB831500FEB1B7 /* PassWeak.h in Headers */ = {isa = PBXBuildFile; fileRef = 1497209014EB831500FEB1B7 /* PassWeak.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14A1563210966365006FA260 /* DateInstanceCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A1563010966365006FA260 /* DateInstanceCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14A23D750F4E1ABB0023CDAD /* JITStubs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14A23D6C0F4E19CE0023CDAD /* JITStubs.cpp */; };
-		14A42E3F0F4F60EE00599099 /* TimeoutChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14A42E3D0F4F60EE00599099 /* TimeoutChecker.cpp */; };
-		14A42E400F4F60EE00599099 /* TimeoutChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 14A42E3E0F4F60EE00599099 /* TimeoutChecker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14ABDF600A437FEF00ECCA01 /* JSCallbackObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14ABDF5E0A437FEF00ECCA01 /* JSCallbackObject.cpp */; };
 		14B723B212D7DA46003BD5ED /* MachineStackMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14B7233F12D7D0DA003BD5ED /* MachineStackMarker.cpp */; };
 		14B723B812D7DA6F003BD5ED /* MachineStackMarker.h in Headers */ = {isa = PBXBuildFile; fileRef = 14B7234012D7D0DA003BD5ED /* MachineStackMarker.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1337,8 +1335,6 @@
 		14A1563010966365006FA260 /* DateInstanceCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateInstanceCache.h; sourceTree = "<group>"; };
 		14A23D6C0F4E19CE0023CDAD /* JITStubs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITStubs.cpp; sourceTree = "<group>"; };
 		14A396A60CD2933100B5B4FF /* SymbolTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolTable.h; sourceTree = "<group>"; };
-		14A42E3D0F4F60EE00599099 /* TimeoutChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimeoutChecker.cpp; sourceTree = "<group>"; };
-		14A42E3E0F4F60EE00599099 /* TimeoutChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeoutChecker.h; sourceTree = "<group>"; };
 		14A6581A0F4E36F4000150FD /* JITStubs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JITStubs.h; sourceTree = "<group>"; };
 		14ABB36E099C076400E2A24F /* JSCJSValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCJSValue.h; sourceTree = "<group>"; };
 		14ABB454099C2A0F00E2A24F /* JSType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSType.h; sourceTree = "<group>"; };
@@ -2596,8 +2592,6 @@
 				0F919D2715856770004A4E7D /* SymbolTable.cpp */,
 				14A396A60CD2933100B5B4FF /* SymbolTable.h */,
 				97F6903A1169DF7F00A6BB46 /* Terminator.h */,
-				14A42E3D0F4F60EE00599099 /* TimeoutChecker.cpp */,
-				14A42E3E0F4F60EE00599099 /* TimeoutChecker.h */,
 				5D53726D0E1C546B0021E549 /* Tracing.d */,
 				5D53726E0E1C54880021E549 /* Tracing.h */,
 				0FEB3ECB16237F4700AB67AD /* TypedArrayDescriptor.h */,
@@ -3382,7 +3376,6 @@
 				971EDEA61169E0D3005E4262 /* Terminator.h in Headers */,
 				0F572D4F16879FDD00E57FBD /* ThunkGenerator.h in Headers */,
 				A7386556118697B400540279 /* ThunkGenerators.h in Headers */,
-				14A42E400F4F60EE00599099 /* TimeoutChecker.h in Headers */,
 				141448CD13A1783700F5BA1A /* TinyBloomFilter.h in Headers */,
 				5D53726F0E1C54880021E549 /* Tracing.h in Headers */,
 				0FEB3ECD16237F4D00AB67AD /* TypedArrayDescriptor.h in Headers */,
@@ -4054,7 +4047,6 @@
 				0F919D2815856773004A4E7D /* SymbolTable.cpp in Sources */,
 				A7386555118697B400540279 /* ThunkGenerators.cpp in Sources */,
 				C25D709B16DE99F400FCA6BC /* JSManagedValue.mm in Sources */,
-				14A42E3F0F4F60EE00599099 /* TimeoutChecker.cpp in Sources */,
 				0FF4274A158EBE91004CB9FF /* udis86.c in Sources */,
 				0FF42740158EBE8B004CB9FF /* udis86_decode.c in Sources */,
 				0FF42743158EBE91004CB9FF /* udis86_input.c in Sources */,
