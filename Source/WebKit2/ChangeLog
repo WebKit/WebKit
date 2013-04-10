@@ -1,3 +1,42 @@
+2013-04-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION (r146518): WebKit2APITests/TestInspector is failing
+        https://bugs.webkit.org/show_bug.cgi?id=113281
+
+        Reviewed by Darin Adler.
+
+        Changes to the WebInspectorProxy opening processing in r146518 caused the change in how the GTK-specific
+        WebInspectorProxy code operates, specifically the 'bring-to-front' signal is not emitted anymore when opening the
+        inspector due to the WebInspectorProxy::bringToFront method now only bringing the inspector window to front if it exists
+        and opening it (and thus unable to bring it to front) otherwise.
+
+        Closing of the inspector through the didClose method is now done immediately after sending the WebInspector::Close()
+        message to the WebProcess rather than waiting for the WebProcess to communicate back the order of closing. Due to this
+        the relevant code in the test cases had to be changed to not run the loop but rather just check that the closing was
+        successful.
+
+        (InspectorTest::InspectorTest): Remove the initialization of the now redundant m_quitOnBringToFront member variable.
+        (InspectorTest::bringToFront): Quit the loop without checking the removed member variable.
+        (InspectorTest::closed): Do not quit the loop as it is not run anymore.
+        (InspectorTest::showIdle): A helper method that asynchronously calls the webkit_web_inspector_show method, removing some
+        unnecessary complexity about under what exact circumstances to quit the loop in open-window/bring-to-front callbacks.
+        (InspectorTest::show): Replaces the showAndWaitUntilFinished method, adding an idle invocation of the showIdle helper
+        method and running the loop.
+        (InspectorTest::close): Formerly closeAndWaitUntilClosed, now does not run the loop anymore as there's no need for it.
+        (testInspectorDefault): Only the window opening event is now expected upon showing the inspector for the first time.
+        Adjusting callsites to use InspectorTest::show and InspectorTest::close instead of
+        InspectorTest::showAndWaitUntilFinished and InspectorTest::showAndWaitUntilFinished.
+        (CustomInspectorTest::destroyWindow): Formerly destroyWindowAndWaitUntilClosed, the closing is not asynchronous anymore
+        so the loop is not run.
+        (testInspectorManualAttachDetach): Only the window opening event is now expected upon showing the inspector for the first time.
+        Adjusting callsites to use InspectorTest::show and InspectorTest::close instead of
+        InspectorTest::showAndWaitUntilFinished and InspectorTest::showAndWaitUntilFinished.
+        (testInspectorCustomContainerDestroyed): Adjusting callsites to use InspectorTest::show and CustomInspectorTest::destroyWindow
+        instead of InspectorTest::showAndWaitUntilFinished and CustomInspectorTest::destroyWindowAndWaitUntilClosed.
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::show): When showing a connected WebInspectorProxy, call the bringToFront method which will
+        open the inspector if it's not yet visible or bring it to the front otherwise. 
+
 2013-04-10  Zan Dobersek  <zandobersek@gmail.com>
 
         [GTK][WK2] Implement WebInspectorProxy::platformInspectedWindowWidth

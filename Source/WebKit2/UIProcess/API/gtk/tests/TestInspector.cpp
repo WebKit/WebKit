@@ -65,7 +65,6 @@ public:
     InspectorTest()
         : WebViewTest()
         , m_inspector(webkit_web_view_get_inspector(m_webView))
-        , m_quitOnBringToFront(false)
     {
         webkit_settings_set_enable_developer_extras(webkit_web_view_get_settings(m_webView), TRUE);
         assertObjectIsDeletedWhenTestFinishes(G_OBJECT(m_inspector));
@@ -91,15 +90,13 @@ public:
     virtual bool bringToFront()
     {
         m_events.append(BringToFront);
-        if (m_quitOnBringToFront)
-            g_main_loop_quit(m_mainLoop);
+        g_main_loop_quit(m_mainLoop);
         return FALSE;
     }
 
     virtual void closed()
     {
         m_events.append(Closed);
-        g_main_loop_quit(m_mainLoop);
     }
 
     virtual bool attach()
@@ -114,12 +111,17 @@ public:
         return TRUE;
     }
 
-    void showAndWaitUntilFinished(bool quitOnBringToFront)
+
+    static gboolean showIdle(InspectorTest* test)
     {
-        m_quitOnBringToFront = quitOnBringToFront;
-        webkit_web_inspector_show(m_inspector);
+        webkit_web_inspector_show(test->m_inspector);
+        return FALSE;
+    }
+
+    void show()
+    {
+        g_idle_add(reinterpret_cast<GSourceFunc>(showIdle), this);
         g_main_loop_run(m_mainLoop);
-        m_quitOnBringToFront = false;
     }
 
     void resizeViewAndAttach()
@@ -141,14 +143,12 @@ public:
         g_main_loop_run(m_mainLoop);
     }
 
-    void closeAndWaitUntilClosed()
+    void close()
     {
         webkit_web_inspector_close(m_inspector);
-        g_main_loop_run(m_mainLoop);
     }
 
     WebKitWebInspector* m_inspector;
-    bool m_quitOnBringToFront;
     Vector<InspectorEvents> m_events;
 };
 
@@ -159,7 +159,7 @@ static void testInspectorDefault(InspectorTest* test, gconstpointer)
     test->loadHtml("<html><body><p>WebKitGTK+ Inspector test</p></body></html>", 0);
     test->waitUntilLoadFinished();
 
-    test->showAndWaitUntilFinished(false);
+    test->show();
     // We don't add the view to a container, so consume the weak ref with GRefPtr.
     GRefPtr<WebKitWebViewBase> inspectorView = webkit_web_inspector_get_web_view(test->m_inspector);
     g_assert(inspectorView.get());
@@ -167,12 +167,11 @@ static void testInspectorDefault(InspectorTest* test, gconstpointer)
     g_assert(!webkit_web_inspector_is_attached(test->m_inspector));
     g_assert_cmpuint(webkit_web_inspector_get_attached_height(test->m_inspector), ==, 0);
     Vector<InspectorTest::InspectorEvents>& events = test->m_events;
-    g_assert_cmpint(events.size(), ==, 2);
-    g_assert_cmpint(events[0], ==, InspectorTest::BringToFront);
-    g_assert_cmpint(events[1], ==, InspectorTest::OpenWindow);
+    g_assert_cmpint(events.size(), ==, 1);
+    g_assert_cmpint(events[0], ==, InspectorTest::OpenWindow);
     test->m_events.clear();
 
-    test->showAndWaitUntilFinished(true);
+    test->show();
     events = test->m_events;
     g_assert_cmpint(events.size(), ==, 1);
     g_assert_cmpint(events[0], ==, InspectorTest::BringToFront);
@@ -194,7 +193,7 @@ static void testInspectorDefault(InspectorTest* test, gconstpointer)
     g_assert_cmpint(events[1], ==, InspectorTest::OpenWindow);
     test->m_events.clear();
 
-    test->closeAndWaitUntilClosed();
+    test->close();
     events = test->m_events;
     g_assert_cmpint(events.size(), ==, 1);
     g_assert_cmpint(events[0], ==, InspectorTest::Closed);
@@ -273,12 +272,11 @@ public:
         return InspectorTest::detach();
     }
 
-    void destroyWindowAndWaitUntilClosed()
+    void destroyWindow()
     {
         g_assert(m_inspectorWindow);
         gtk_widget_destroy(m_inspectorWindow);
         m_inspectorWindow = 0;
-        g_main_loop_run(m_mainLoop);
     }
 
     GtkWidget* m_inspectorWindow;
@@ -291,13 +289,12 @@ static void testInspectorManualAttachDetach(CustomInspectorTest* test, gconstpoi
     test->loadHtml("<html><body><p>WebKitGTK+ Inspector test</p></body></html>", 0);
     test->waitUntilLoadFinished();
 
-    test->showAndWaitUntilFinished(false);
+    test->show();
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webkit_web_inspector_get_web_view(test->m_inspector)));
     g_assert(!webkit_web_inspector_is_attached(test->m_inspector));
     Vector<InspectorTest::InspectorEvents>& events = test->m_events;
-    g_assert_cmpint(events.size(), ==, 2);
-    g_assert_cmpint(events[0], ==, InspectorTest::BringToFront);
-    g_assert_cmpint(events[1], ==, InspectorTest::OpenWindow);
+    g_assert_cmpint(events.size(), ==, 1);
+    g_assert_cmpint(events[0], ==, InspectorTest::OpenWindow);
     test->m_events.clear();
 
     test->resizeViewAndAttach();
@@ -319,7 +316,7 @@ static void testInspectorManualAttachDetach(CustomInspectorTest* test, gconstpoi
     test->resizeViewAndAttach();
     g_assert(webkit_web_inspector_is_attached(test->m_inspector));
     test->m_events.clear();
-    test->closeAndWaitUntilClosed();
+    test->close();
     events = test->m_events;
     g_assert_cmpint(events.size(), ==, 2);
     g_assert_cmpint(events[0], ==, InspectorTest::Detach);
@@ -334,12 +331,12 @@ static void testInspectorCustomContainerDestroyed(CustomInspectorTest* test, gco
     test->loadHtml("<html><body><p>WebKitGTK+ Inspector test</p></body></html>", 0);
     test->waitUntilLoadFinished();
 
-    test->showAndWaitUntilFinished(false);
+    test->show();
     test->assertObjectIsDeletedWhenTestFinishes(G_OBJECT(webkit_web_inspector_get_web_view(test->m_inspector)));
     g_assert(!webkit_web_inspector_is_attached(test->m_inspector));
 
     test->m_events.clear();
-    test->destroyWindowAndWaitUntilClosed();
+    test->destroyWindow();
     Vector<InspectorTest::InspectorEvents>& events = test->m_events;
     g_assert_cmpint(events.size(), ==, 1);
     g_assert_cmpint(events[0], ==, InspectorTest::Closed);

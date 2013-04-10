@@ -1,3 +1,13 @@
+2013-04-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        REGRESSION (r146518): WebKit2APITests/TestInspector is failing
+        https://bugs.webkit.org/show_bug.cgi?id=113281
+
+        Reviewed by Darin Adler.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Remove the skip entry for the WebKit2APITests/TestInspector unit test.
+
 2013-04-09  Glenn Adams  <glenn@skynav.com>
 
         Fix trivial test-webkitpy regression introduced by http://trac.webkit.org/changeset/148075.

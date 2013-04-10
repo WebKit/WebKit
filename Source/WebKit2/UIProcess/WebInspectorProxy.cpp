@@ -153,7 +153,7 @@ void WebInspectorProxy::show()
         return;
 
     if (isConnected()) {
-        open();
+        bringToFront();
         return;
     }
 
