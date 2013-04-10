@@ -34,6 +34,7 @@
 #include "CSSPropertyNames.h"
 #include "ImplicitAnimation.h"
 #include "KeyframeAnimation.h"
+#include "Logging.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
 
@@ -140,7 +141,7 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, RenderStyle* 
                     // list. In this case, the latter one overrides the earlier one, so we
                     // behave as though this is a running animation being replaced.
                     if (!implAnim->isTargetPropertyEqual(prop, targetStyle)) {
-    #if USE(ACCELERATED_COMPOSITING)
+#if USE(ACCELERATED_COMPOSITING)
                         // For accelerated animations we need to return a new RenderStyle with the _current_ value
                         // of the property, so that restarted transitions use the correct starting point.
                         if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(prop) && implAnim->isAccelerated()) {
@@ -149,7 +150,8 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, RenderStyle* 
 
                             implAnim->blendPropertyValueInStyle(prop, modifiedCurrentStyle.get());
                         }
-    #endif
+#endif
+                        LOG(Animations, "Removing existing ImplicitAnimation %p for property %s", implAnim, getPropertyName(prop));
                         animationController()->animationWillBeRemoved(implAnim);
                         m_transitions.remove(prop);
                         equal = false;
@@ -165,7 +167,9 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, RenderStyle* 
                 // <https://bugs.webkit.org/show_bug.cgi?id=24787>
                 if (!equal && isActiveTransition) {
                     // Add the new transition
-                    m_transitions.set(prop, ImplicitAnimation::create(const_cast<Animation*>(anim), prop, renderer, this, modifiedCurrentStyle ? modifiedCurrentStyle.get() : fromStyle));
+                    RefPtr<ImplicitAnimation> animation = ImplicitAnimation::create(const_cast<Animation*>(anim), prop, renderer, this, modifiedCurrentStyle ? modifiedCurrentStyle.get() : fromStyle);
+                    LOG(Animations, "Created ImplicitAnimation %p for property %s duration %.2f delay %.2f", animation.get(), getPropertyName(prop), anim->duration(), anim->delay());
+                    m_transitions.set(prop, animation.release());
                 }
                 
                 // We only need one pass for the single prop case
@@ -183,6 +187,7 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, RenderStyle* 
         if (!anim->active()) {
             animationController()->animationWillBeRemoved(anim);
             toBeRemoved.append(anim->animatingProperty());
+            LOG(Animations, "Removing ImplicitAnimation %p for property %s", anim, getPropertyName(anim->animatingProperty()));
         }
     }
 
@@ -246,6 +251,12 @@ void CompositeAnimation::updateKeyframeAnimations(RenderObject* renderer, Render
                     keyframeAnim->setIndex(i);
                 } else if ((anim->duration() || anim->delay()) && anim->iterationCount() && animationName != none) {
                     keyframeAnim = KeyframeAnimation::create(const_cast<Animation*>(anim), renderer, i, this, targetStyle);
+                    LOG(Animations, "Creating KeyframeAnimation %p with keyframes %s duration %.2f delay %.2f, iterations %.2f", keyframeAnim.get(), anim->name().utf8().data(), anim->duration(), anim->delay(), anim->iterationCount());
+#if !LOG_DISABLED
+                    HashSet<CSSPropertyID>::const_iterator endProperties = keyframeAnim->keyframes().endProperties();
+                    for (HashSet<CSSPropertyID>::const_iterator it = keyframeAnim->keyframes().beginProperties(); it != endProperties; ++it)
+                        LOG(Animations, "  property %s", getPropertyName(*it));
+#endif
                     m_keyframeAnimations.set(keyframeAnim->name().impl(), keyframeAnim);
                 }
                 
@@ -265,6 +276,7 @@ void CompositeAnimation::updateKeyframeAnimations(RenderObject* renderer, Render
             animsToBeRemoved.append(keyframeAnim->name().impl());
             animationController()->animationWillBeRemoved(keyframeAnim);
             keyframeAnim->clear();
+            LOG(Animations, "Removing KeyframeAnimation %p", keyframeAnim);
         }
     }
     

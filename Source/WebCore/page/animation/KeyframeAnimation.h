@@ -49,6 +49,8 @@ public:
     virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* currentStyle, RenderStyle* targetStyle, RefPtr<RenderStyle>& animatedStyle);
     virtual void getAnimatedStyle(RefPtr<RenderStyle>& animatedStyle);
 
+    const KeyframeList& keyframes() const { return m_keyframes; }
+
     const AtomicString& name() const { return m_keyframes.animationName(); }
     int index() const { return m_index; }
     void setIndex(int i) { m_index = i; }
