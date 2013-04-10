@@ -1,3 +1,15 @@
+2013-04-10  Adam Barth  <abarth@webkit.org>
+
+        Remove abarth from watchlists
+        https://bugs.webkit.org/show_bug.cgi?id=114390
+
+        Reviewed by Ryosuke Niwa.
+
+        I'm trying to cut down on the amount of bugmail I get so that I'll have
+        more of a chance to notice a piece of bugmail directed at me.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-04-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         webkit-test-results.appspot.com loads the dashboard for Chromium by default
