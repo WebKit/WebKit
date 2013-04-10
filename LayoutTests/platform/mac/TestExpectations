@@ -941,6 +941,9 @@ compositing/overlap-blending/reflection-opacity-huge.html
 compositing/overlap-blending/nested-overlap.html
 compositing/overlap-blending/nested-non-overlap-clipping.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=114338
+compositing/overlap-blending/nested-overlap-overflow.html
+
 # https://bugs.webkit.org/show_bug.cgi?id=95027
 fast/block/float/016.html
 

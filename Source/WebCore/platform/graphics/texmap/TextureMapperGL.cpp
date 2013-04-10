@@ -1062,7 +1062,7 @@ void BitmapTextureGL::bind(TextureMapperGL* textureMapper)
     m_context3D->viewport(0, 0, m_textureSize.width(), m_textureSize.height());
     clearIfNeeded();
     textureMapper->data().projectionMatrix = createProjectionMatrix(m_textureSize, true /* mirrored */);
-    m_clipStack.applyIfNeeded(m_context3D.get());
+    m_clipStack.apply(m_context3D.get());
 }
 
 BitmapTextureGL::~BitmapTextureGL()
