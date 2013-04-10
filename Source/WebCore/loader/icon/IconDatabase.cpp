@@ -537,8 +537,8 @@ void IconDatabase::performReleaseIconForPageURL(const String& pageURLOriginal, i
 
 void IconDatabase::updateIconRecord(PassRefPtr<SharedBuffer> iconData, PassRefPtr<Image> iconBitmap, const String& iconURL)
 {
-    // Only one of iconData or iconBitmap should be provided, never both.
-    ASSERT(!iconData != !iconBitmap);
+    // Only one of iconData or iconBitmap should be provided, never both. None is also fine.
+    ASSERT(!(!!iconData && !!iconBitmap));
 
     Vector<String> pageURLs;
     {
