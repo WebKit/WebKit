@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2011, 2012, 2013 Collabora Ltd.
- * Copyright (C) 2012 Intel Corporation. All rights reserved.
+ * Copyright (C) 2012, 2013 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -252,6 +252,7 @@ PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 
 GraphicsLayerClutter::GraphicsLayerClutter(GraphicsLayerClient* client)
     : GraphicsLayer(client)
+    , m_contentsLayerPurpose(NoContentsLayer)
     , m_uncommittedChanges(0)
 {
     // ClutterRectangle will be used to show the debug border.
@@ -302,6 +303,11 @@ GraphicsLayerClutter::~GraphicsLayerClutter()
     if (m_structuralLayer) {
         graphicsLayerActorSetClient(m_structuralLayer.get(), 0);
         g_idle_add(idleDestroy, m_structuralLayer.leakRef());
+    }
+
+    if (m_contentsLayer) {
+        graphicsLayerActorSetClient(m_contentsLayer.get(), 0);
+        g_idle_add(idleDestroy, m_contentsLayer.leakRef());
     }
 }
 
@@ -415,6 +421,43 @@ void GraphicsLayerClutter::setDrawsContent(bool drawsContent)
 
     GraphicsLayer::setDrawsContent(drawsContent);
     noteLayerPropertyChanged(DrawsContentChanged);
+}
+
+
+void GraphicsLayerClutter::setContentsToImage(Image* image)
+{
+    if (image) {
+        RefPtr<cairo_surface_t> newImage = image->nativeImageForCurrentFrame();
+        if (!newImage)
+            return;
+
+        m_pendingContentsImage = newImage;
+
+        m_contentsLayerPurpose = ContentsLayerForImage;
+        if (!m_contentsLayer)
+            noteSublayersChanged();
+    } else {
+        m_pendingContentsImage = 0;
+        m_contentsLayerPurpose = NoContentsLayer;
+        if (m_contentsLayer)
+            noteSublayersChanged();
+    }
+
+    noteLayerPropertyChanged(ContentsImageChanged);
+}
+
+void GraphicsLayerClutter::setContentsNeedsDisplay()
+{
+    noteLayerPropertyChanged(ContentsNeedsDisplay);
+}
+
+void GraphicsLayerClutter::setContentsRect(const IntRect& rect)
+{
+    if (rect == m_contentsRect)
+        return;
+
+    GraphicsLayer::setContentsRect(rect);
+    noteLayerPropertyChanged(ContentsRectChanged);
 }
 
 void GraphicsLayerClutter::setParent(GraphicsLayer* childLayer)
@@ -642,6 +685,15 @@ void GraphicsLayerClutter::commitLayerChangesBeforeSublayers(float pageScaleFact
     if (m_uncommittedChanges & Preserves3DChanged)
         updateStructuralLayer();
 
+    if (m_uncommittedChanges & NameChanged)
+        updateLayerNames();
+
+    if (m_uncommittedChanges & ContentsImageChanged) // Needs to happen before ChildrenChanged
+        updateContentsImage();
+
+    if (m_uncommittedChanges & ChildrenChanged)
+        updateSublayerList();
+
     if (m_uncommittedChanges & GeometryChanged)
         updateGeometry(pageScaleFactor, positionRelativeToBase);
 
@@ -663,12 +715,62 @@ void GraphicsLayerClutter::commitLayerChangesBeforeSublayers(float pageScaleFact
     if (m_uncommittedChanges & DirtyRectsChanged)
         repaintLayerDirtyRects();
 
+    if (m_uncommittedChanges & ContentsRectChanged)
+        updateContentsRect();
+
+    if (m_uncommittedChanges & ContentsNeedsDisplay)
+        updateContentsNeedsDisplay();
+
     if (m_uncommittedChanges & ChildrenChanged) {
         updateSublayerList();
         // Sublayers may set this flag again, so clear it to avoid always updating sublayers in commitLayerChangesAfterSublayers().
         m_uncommittedChanges &= ~ChildrenChanged;
     }
 }
+
+void GraphicsLayerClutter::setupContentsLayer(GraphicsLayerActor* contentsLayer)
+{
+    graphicsLayerActorSetAnchorPoint(contentsLayer, 0.0, 0.0, 0.0);
+}
+
+void GraphicsLayerClutter::updateContentsImage()
+{
+    if (m_pendingContentsImage) {
+        if (!m_contentsLayer) {
+            m_contentsLayer = graphicsLayerActorNewWithClient(LayerTypeLayer, this);
+            clutter_actor_set_name(CLUTTER_ACTOR(m_contentsLayer.get()), "Image Layer");
+            setupContentsLayer(m_contentsLayer.get());
+        }
+
+        graphicsLayerActorSetSurface(GRAPHICS_LAYER_ACTOR(m_contentsLayer.get()), m_pendingContentsImage.get());
+        m_pendingContentsImage = 0;
+
+        updateContentsRect();
+    } else {
+        // No image.
+        // m_contentsLayer will be removed via updateSublayerList.
+        m_contentsLayer = 0;
+    }
+}
+
+void GraphicsLayerClutter::updateContentsNeedsDisplay()
+{
+    if (m_contentsLayer)
+        graphicsLayerActorInvalidateRectangle(m_contentsLayer.get(), FloatRect(FloatPoint(0, 0), size()));
+}
+
+void GraphicsLayerClutter::updateContentsRect()
+{
+    if (!m_contentsLayer)
+        return;
+
+    FloatPoint point(m_contentsRect.x(), m_contentsRect.y());
+    FloatRect rect(0, 0, m_contentsRect.width(), m_contentsRect.height());
+
+    clutter_actor_set_position(CLUTTER_ACTOR(m_contentsLayer.get()), point.x(), point.y());
+    clutter_actor_set_size(CLUTTER_ACTOR(m_contentsLayer.get()), rect.width(), rect.height());
+}
+
 
 void GraphicsLayerClutter::updateGeometry(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
 {
@@ -695,6 +797,9 @@ void GraphicsLayerClutter::updateSublayerList()
 
     if (m_structuralLayer)
         structuralLayerChildren.append(m_layer);
+
+    if (m_contentsLayer)
+        primaryLayerChildren.append(m_contentsLayer);
 
     const Vector<GraphicsLayer*>& childLayers = children();
     size_t numChildren = childLayers.size();

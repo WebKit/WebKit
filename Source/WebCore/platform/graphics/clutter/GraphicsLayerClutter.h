@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2011, 2012 Collabora Ltd.
- * Copyright (C) 2012 Intel Corporation. All rights reserved.
+ * Copyright (C) 2012, 2013 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,6 +78,12 @@ public:
     virtual void setName(const String&);
     virtual void setNeedsDisplay();
     virtual void setNeedsDisplayInRect(const FloatRect&);
+    virtual void setContentsNeedsDisplay();
+
+    virtual void setContentsToImage(Image*);
+    virtual void setContentsRect(const IntRect&);
+
+    virtual bool hasContentsLayer() const { return m_contentsLayer; }
 
     virtual void setPreserves3D(bool);
 
@@ -107,6 +113,8 @@ private:
     void commitLayerChangesAfterSublayers();
 
     void updateOpacityOnLayer();
+    void setupContentsLayer(GraphicsLayerActor*);
+    GraphicsLayerActor* contentsLayer() const { return m_contentsLayer.get(); }
 
     virtual void platformClutterLayerAnimationStarted(double beginTime);
     virtual void platformClutterLayerPaintContents(GraphicsContext&, const IntRect& clip);
@@ -182,7 +190,9 @@ private:
     void updateGeometry(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase);
     void updateTransform();
     void updateLayerDrawsContent(float pixelAlignmentScale, const FloatPoint& positionRelativeToBase);
-
+    void updateContentsImage();
+    void updateContentsRect();
+    void updateContentsNeedsDisplay();
     void updateAnimations();
 
     enum StructuralLayerPurpose {
@@ -197,6 +207,17 @@ private:
 
     GRefPtr<GraphicsLayerActor> m_layer;
     GRefPtr<GraphicsLayerActor> m_structuralLayer; // A layer used for structural reasons, like preserves-3d or replica-flattening. Is the parent of m_layer.
+    GRefPtr<GraphicsLayerActor> m_contentsLayer; // A layer used for inner content, like image and video
+    enum ContentsLayerPurpose {
+        NoContentsLayer = 0,
+        ContentsLayerForImage,
+        ContentsLayerForMedia,
+        ContentsLayerForCanvas,
+        ContentsLayerForBackgroundColor
+    };
+
+    ContentsLayerPurpose m_contentsLayerPurpose;
+    RefPtr<cairo_surface_t> m_pendingContentsImage;
 
     Vector<FloatRect> m_dirtyRects;
     LayerChangeFlags m_uncommittedChanges;
