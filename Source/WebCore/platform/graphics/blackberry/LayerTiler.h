@@ -67,7 +67,7 @@ public:
     virtual void layerCompositingThreadDestroyed(LayerCompositingThread*);
     virtual void layerVisibilityChanged(LayerCompositingThread*, bool visible);
     virtual void uploadTexturesIfNeeded(LayerCompositingThread*);
-    virtual Texture* contentsTexture(LayerCompositingThread*);
+    virtual LayerTexture* contentsTexture(LayerCompositingThread*);
     virtual void drawTextures(LayerCompositingThread*, double scale, const BlackBerry::Platform::Graphics::GLES2Program&);
     virtual void deleteTextures(LayerCompositingThread*);
     static void willCommit();
@@ -101,7 +101,7 @@ private:
             ASSERT(type == DiscardContents || type == DirtyContents);
         }
 
-        TextureJob(Type type, const Texture::HostType& contents, const IntRect& dirtyRect, bool isOpaque)
+        TextureJob(Type type, const LayerTexture::HostType& contents, const IntRect& dirtyRect, bool isOpaque)
             : m_type(type)
             , m_contents(contents)
             , m_isOpaque(isOpaque)
@@ -121,12 +121,12 @@ private:
             ASSERT(type == SetContentsToColor);
         }
 
-        static TextureJob setContents(const Texture::HostType& contents, const IntRect& contentsRect, bool isOpaque)
+        static TextureJob setContents(const LayerTexture::HostType& contents, const IntRect& contentsRect, bool isOpaque)
         {
             return TextureJob(SetContents, contents, contentsRect, isOpaque);
         }
         static TextureJob setContentsToColor(const Color& color, const TileIndex& index) { return TextureJob(SetContentsToColor, color, index); }
-        static TextureJob updateContents(const Texture::HostType& contents, const IntRect& dirtyRect, bool isOpaque) { return TextureJob(UpdateContents, contents, dirtyRect, isOpaque); }
+        static TextureJob updateContents(const LayerTexture::HostType& contents, const IntRect& dirtyRect, bool isOpaque) { return TextureJob(UpdateContents, contents, dirtyRect, isOpaque); }
         static TextureJob discardContents(const IntRect& dirtyRect) { return TextureJob(DiscardContents, dirtyRect); }
         static TextureJob resizeContents(const IntSize& newSize) { return TextureJob(ResizeContents, newSize); }
         static TextureJob dirtyContents(const IntRect& dirtyRect) { return TextureJob(DirtyContents, dirtyRect); }
@@ -134,7 +134,7 @@ private:
         bool isNull() { return m_type == Unknown; }
 
         Type m_type;
-        Texture::HostType m_contents;
+        LayerTexture::HostType m_contents;
         bool m_isOpaque;
         IntRect m_dirtyRect;
         Color m_color;

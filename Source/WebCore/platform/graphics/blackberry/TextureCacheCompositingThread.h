@@ -22,8 +22,8 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "Color.h"
+#include "LayerTexture.h"
 #include "LayerTileIndex.h"
-#include "Texture.h"
 
 #include <BlackBerryPlatformGraphics.h>
 #include <wtf/HashMap.h>
@@ -45,17 +45,17 @@ public:
     friend TextureCacheCompositingThread* textureCacheCompositingThread();
 
     // Creates a new texture managed by this cache.
-    PassRefPtr<Texture> createTexture()
+    PassRefPtr<LayerTexture> createTexture()
     {
-        return Texture::create();
+        return LayerTexture::create();
     }
 
     // Retrieve a texture from the cache.
-    PassRefPtr<Texture> textureForTiledContents(const Texture::HostType& contents, const IntRect& tileRect, const TileIndex&, bool isOpaque);
-    PassRefPtr<Texture> textureForColor(const Color&);
+    PassRefPtr<LayerTexture> textureForTiledContents(const LayerTexture::HostType& contents, const IntRect& tileRect, const TileIndex&, bool isOpaque);
+    PassRefPtr<LayerTexture> textureForColor(const Color&);
 
     // Update contents of an existing texture, or create a new one if texture is 0.
-    PassRefPtr<Texture> updateContents(const RefPtr<Texture>&, const Texture::HostType& contents, const IntRect& dirtyRect, const IntRect& tileRect, bool isOpaque);
+    PassRefPtr<LayerTexture> updateContents(const RefPtr<LayerTexture>&, const LayerTexture::HostType& contents, const IntRect& dirtyRect, const IntRect& tileRect, bool isOpaque);
 
     size_t memoryUsage() const { return m_memoryUsage; }
     size_t memoryLimit() const { return m_memoryLimit; }
@@ -69,42 +69,42 @@ public:
     void clear();
 
     // Update the LRU list.
-    void textureAccessed(Texture*);
+    void textureAccessed(LayerTexture*);
 
     // Deleting destroyed textures is provided as a separate method, because
     // there might not be an OpenGL context current when the texture destructor
     // was called. Calling this makes sure to free any such textures.
     void collectGarbage();
 
-    void textureDestroyed(Texture*);
-    void textureResized(Texture*, const IntSize& oldSize);
-    void textureSizeInBytesChanged(Texture*, int delta);
+    void textureDestroyed(LayerTexture*);
+    void textureResized(LayerTexture*, const IntSize& oldSize);
+    void textureSizeInBytesChanged(LayerTexture*, int delta);
 
     // Undo the effects of eviction, if possible.
-    bool install(Texture*, const IntSize& textureSize = IntSize(0, 0), BlackBerry::Platform::Graphics::BufferType = BlackBerry::Platform::Graphics::BackedWhenNecessary);
-    bool resizeTexture(Texture*, const IntSize& newSize, BlackBerry::Platform::Graphics::BufferType = BlackBerry::Platform::Graphics::BackedWhenNecessary);
+    bool install(LayerTexture*, const IntSize& textureSize = IntSize(0, 0), BlackBerry::Platform::Graphics::BufferType = BlackBerry::Platform::Graphics::BackedWhenNecessary);
+    bool resizeTexture(LayerTexture*, const IntSize& newSize, BlackBerry::Platform::Graphics::BufferType = BlackBerry::Platform::Graphics::BackedWhenNecessary);
 
 private:
     struct ZombieTexture {
-        explicit ZombieTexture(Texture* texture)
+        explicit ZombieTexture(LayerTexture* texture)
             : id(texture->textureId())
             , size(texture->size())
             , sizeInBytes(texture->sizeInBytes())
         {
         }
 
-        Texture::GpuHandle id;
+        LayerTexture::GpuHandle id;
         IntSize size;
         size_t sizeInBytes;
     };
-    typedef ListHashSet<Texture* > TextureSet;
-    typedef HashMap<TileIndex, RefPtr<Texture> > TextureMap;
+    typedef ListHashSet<LayerTexture* > TextureSet;
+    typedef HashMap<TileIndex, RefPtr<LayerTexture> > TextureMap;
     typedef Vector<ZombieTexture> Garbage;
 
     TextureCacheCompositingThread();
     ~TextureCacheCompositingThread();
 
-    Texture::GpuHandle allocateTextureId(const IntSize& textureSize, BlackBerry::Platform::Graphics::BufferType);
+    LayerTexture::GpuHandle allocateTextureId(const IntSize& textureSize, BlackBerry::Platform::Graphics::BufferType);
 
     void incMemoryUsage(int delta) { setMemoryUsage(memoryUsage() + delta); }
     void decMemoryUsage(int delta) { setMemoryUsage(memoryUsage() - delta); }
@@ -130,7 +130,7 @@ private:
         static void constructDeletedValue(Color& slot) { new (&slot) Color(); *reinterpret_cast<RGBA32*>(&slot) = Color::white; }
         static bool isDeletedValue(const Color& value) { return !value.isValid() && value.rgb() == Color::white; }
     };
-    typedef HashMap<Color, RefPtr<Texture>, ColorHash, ColorHashTraits> ColorTextureMap;
+    typedef HashMap<Color, RefPtr<LayerTexture>, ColorHash, ColorHashTraits> ColorTextureMap;
     ColorTextureMap m_colors;
     Garbage m_garbage;
 };

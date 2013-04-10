@@ -229,7 +229,7 @@ void LayerTiler::updateTextureContentsIfNeeded(double scale)
                 // preview.
                 // FIXME: the zoom preview only works if we don't re-tile the
                 // layer. We need to store texture coordinates in
-                // WebCore::Texture to be able to fix that.
+                // WebCore::LayerTexture to be able to fix that.
                 if (didResize && !(isZoomJob && wasOneTile && isOneTile))
                     addTextureJob(TextureJob::discardContents(tileRect));
                 else
@@ -492,7 +492,7 @@ bool LayerTiler::drawTile(LayerCompositingThread* layer, double scale, const Til
 
     if (visible) {
         if (tile->hasTexture()) {
-            Texture* texture = tile->texture();
+            LayerTexture* texture = tile->texture();
             textureCacheCompositingThread()->textureAccessed(texture);
 
             if (shouldDrawTile) {
@@ -671,7 +671,7 @@ IntRect LayerTiler::rectForTile(const TileIndex& index, const IntSize& bounds)
     return IntRect(origin, size);
 }
 
-Texture* LayerTiler::contentsTexture(LayerCompositingThread*)
+LayerTexture* LayerTiler::contentsTexture(LayerCompositingThread*)
 {
     ASSERT(m_tiles.size() == 1);
     if (m_tiles.size() != 1)

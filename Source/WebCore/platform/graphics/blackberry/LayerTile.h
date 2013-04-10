@@ -21,7 +21,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "Texture.h"
+#include "LayerTexture.h"
 
 #include <wtf/RefPtr.h>
 
@@ -37,7 +37,7 @@ public:
     LayerTile();
     ~LayerTile();
 
-    Texture* texture() const { return m_texture.get(); }
+    LayerTexture* texture() const { return m_texture.get(); }
 
     bool isVisible() const { return m_visible; }
     void setVisible(bool);
@@ -46,9 +46,9 @@ public:
 
     bool hasTexture() const { return m_texture && m_texture->hasTexture(); }
 
-    void setContents(const Texture::HostType& contents, const IntRect& tileRect, const TileIndex&, bool isOpaque);
+    void setContents(const LayerTexture::HostType& contents, const IntRect& tileRect, const TileIndex&, bool isOpaque);
     void setContentsToColor(const Color&);
-    void updateContents(const Texture::HostType& contents, const IntRect& dirtyRect, const IntRect& tileRect, bool isOpaque);
+    void updateContents(const LayerTexture::HostType& contents, const IntRect& dirtyRect, const IntRect& tileRect, bool isOpaque);
     void discardContents();
 
     // The current texture is an accurate preview of this layer, but a more
@@ -64,10 +64,10 @@ public:
     void setRenderDone() { m_needsRender = DoesNotNeedRender; }
 
 private:
-    void setTexture(PassRefPtr<Texture>);
+    void setTexture(PassRefPtr<LayerTexture>);
 
     // Never assign to m_texture directly, use setTexture() above.
-    RefPtr<Texture> m_texture;
+    RefPtr<LayerTexture> m_texture;
     bool m_contentsDirty : 1;
     bool m_visible : 1;
     unsigned m_needsRender : 2;

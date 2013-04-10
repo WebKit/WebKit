@@ -242,11 +242,11 @@ if (WTF_USE_ACCELERATED_COMPOSITING)
         ${WEBCORE_DIR}/platform/graphics/blackberry/LayerFilterRenderer.cpp
         ${WEBCORE_DIR}/platform/graphics/blackberry/LayerRenderer.cpp
         ${WEBCORE_DIR}/platform/graphics/blackberry/LayerRendererSurface.cpp
+        ${WEBCORE_DIR}/platform/graphics/blackberry/LayerTexture.cpp
         ${WEBCORE_DIR}/platform/graphics/blackberry/LayerTile.cpp
         ${WEBCORE_DIR}/platform/graphics/blackberry/LayerTiler.cpp
         ${WEBCORE_DIR}/platform/graphics/blackberry/LayerWebKitThread.cpp
         ${WEBCORE_DIR}/platform/graphics/blackberry/PluginLayerWebKitThread.cpp
-        ${WEBCORE_DIR}/platform/graphics/blackberry/Texture.cpp
         ${WEBCORE_DIR}/platform/graphics/blackberry/TextureCacheCompositingThread.cpp
         ${WEBCORE_DIR}/platform/graphics/blackberry/WebGLLayerWebKitThread.cpp
         ${WEBCORE_DIR}/rendering/RenderLayerBacking.cpp

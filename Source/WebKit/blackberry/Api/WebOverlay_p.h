@@ -23,7 +23,7 @@
 
 #include "GraphicsLayer.h"
 #include "LayerCompositingThread.h"
-#include "Texture.h"
+#include "LayerTexture.h"
 #include "WebOverlay.h"
 #include "WebOverlayOverride.h"
 
@@ -205,7 +205,7 @@ private:
 
 private:
     bool m_drawsContent;
-    RefPtr<WebCore::Texture> m_texture;
+    RefPtr<WebCore::LayerTexture> m_texture;
     BlackBerry::Platform::Graphics::TiledImage m_image;
     BlackBerry::Platform::Graphics::TiledImage m_uploadedImage;
     WebCore::Color m_color;

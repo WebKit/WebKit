@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef Texture_h
-#define Texture_h
+#ifndef LayerTexture_h
+#define LayerTexture_h
 
 #if USE(ACCELERATED_COMPOSITING)
 
@@ -33,19 +33,19 @@ class Color;
 class IntRect;
 class TextureCacheCompositingThread;
 
-// Texture encapsulates a volatile texture - at any time, the underlying OpenGL
+// LayerTexture encapsulates a volatile texture - at any time, the underlying OpenGL
 // texture may be deleted by the TextureCacheCompositingThread. The user must
-// check using Texture::isDirty() immediately before using it, every time.
-// The only way to prevent eviction this is to call Texture::protect().
+// check using LayerTexture::isDirty() immediately before using it, every time.
+// The only way to prevent eviction this is to call LayerTexture::protect().
 // If the texture isDirty(), you must updateContents() before you can use it.
-class Texture : public RefCounted<Texture> {
+class LayerTexture : public RefCounted<LayerTexture> {
 public:
-    static PassRefPtr<Texture> create(bool isColor = false)
+    static PassRefPtr<LayerTexture> create(bool isColor = false)
     {
-        return adoptRef(new Texture(isColor));
+        return adoptRef(new LayerTexture(isColor));
     }
 
-    ~Texture();
+    ~LayerTexture();
 
     typedef BlackBerry::Platform::Graphics::Buffer* GpuHandle;
     typedef BlackBerry::Platform::Graphics::Buffer* HostType;
@@ -77,7 +77,7 @@ public:
 private:
     friend class TextureCacheCompositingThread;
 
-    Texture(bool isColor = false);
+    LayerTexture(bool isColor = false);
     void setTextureId(GpuHandle id)
     {
         m_handle = id;
@@ -103,4 +103,4 @@ private:
 
 #endif // USE(ACCELERATED_COMPOSITING)
 
-#endif // Texture_h
+#endif // LayerTexture_h

@@ -446,7 +446,7 @@ void WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded(LayerComposi
         return;
     }
 
-    Texture::HostType textureContents = Texture::HostType();
+    LayerTexture::HostType textureContents = LayerTexture::HostType();
     IntSize textureSize;
 
     if (m_drawsContent) {
@@ -496,7 +496,7 @@ void WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded(LayerComposi
         m_uploadedImage = m_image;
     }
 
-    m_texture = Texture::create();
+    m_texture = LayerTexture::create();
     m_texture->protect(IntSize(), BlackBerry::Platform::Graphics::BackedWhenNecessary);
     IntRect bitmapRect(0, 0, textureSize.width(), textureSize.height());
     m_texture->updateContents(textureContents, bitmapRect, bitmapRect, false);

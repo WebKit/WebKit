@@ -39,7 +39,7 @@ LayerTile::~LayerTile()
     setVisible(false);
 }
 
-void LayerTile::setContents(const Texture::HostType& contents, const IntRect& tileRect, const TileIndex& index, bool isOpaque)
+void LayerTile::setContents(const LayerTexture::HostType& contents, const IntRect& tileRect, const TileIndex& index, bool isOpaque)
 {
     setTexture(textureCacheCompositingThread()->textureForTiledContents(contents, tileRect, index, isOpaque));
 }
@@ -49,7 +49,7 @@ void LayerTile::setContentsToColor(const Color& color)
     setTexture(textureCacheCompositingThread()->textureForColor(color));
 }
 
-void LayerTile::updateContents(const Texture::HostType& contents, const IntRect& dirtyRect, const IntRect& tileRect, bool isOpaque)
+void LayerTile::updateContents(const LayerTexture::HostType& contents, const IntRect& dirtyRect, const IntRect& tileRect, bool isOpaque)
 {
     setTexture(textureCacheCompositingThread()->updateContents(m_texture, contents, dirtyRect, tileRect, isOpaque));
 }
@@ -77,7 +77,7 @@ void LayerTile::setVisible(bool visible)
         m_texture->unprotect();
 }
 
-void LayerTile::setTexture(PassRefPtr<Texture> texture)
+void LayerTile::setTexture(PassRefPtr<LayerTexture> texture)
 {
     // Clear this flag regardless of the value of the texture parameter.
     // If it's 0, isDirty() will return true anyway.

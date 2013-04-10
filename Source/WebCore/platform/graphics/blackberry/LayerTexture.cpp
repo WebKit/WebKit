@@ -17,7 +17,7 @@
  */
 
 #include "config.h"
-#include "Texture.h"
+#include "LayerTexture.h"
 
 #if USE(ACCELERATED_COMPOSITING)
 
@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-Texture::Texture(bool isColor)
+LayerTexture::LayerTexture(bool isColor)
     : m_protectionCount(0)
     , m_handle(0)
     , m_isColor(isColor)
@@ -42,12 +42,12 @@ Texture::Texture(bool isColor)
     textureCacheCompositingThread()->install(this, IntSize(), BlackBerry::Platform::Graphics::BackedWhenNecessary);
 }
 
-Texture::~Texture()
+LayerTexture::~LayerTexture()
 {
     textureCacheCompositingThread()->textureDestroyed(this);
 }
 
-void Texture::updateContents(const Texture::HostType& contents, const IntRect& dirtyRect, const IntRect& tile, bool isOpaque)
+void LayerTexture::updateContents(const LayerTexture::HostType& contents, const IntRect& dirtyRect, const IntRect& tile, bool isOpaque)
 {
     if (m_handle)
         BlackBerry::Platform::Graphics::destroyBuffer(m_handle);
@@ -57,7 +57,7 @@ void Texture::updateContents(const Texture::HostType& contents, const IntRect& d
     m_bufferSizeInBytes = newBufferSizeInBytes;
 }
 
-void Texture::setContentsToColor(const Color& color)
+void LayerTexture::setContentsToColor(const Color& color)
 {
     m_isOpaque = !color.hasAlpha();
     RGBA32 rgba = color.rgb();
@@ -77,7 +77,7 @@ void Texture::setContentsToColor(const Color& color)
         textureCacheCompositingThread()->textureResized(this, oldSize);
 }
 
-bool Texture::protect(const IntSize& size, BlackBerry::Platform::Graphics::BufferType type)
+bool LayerTexture::protect(const IntSize& size, BlackBerry::Platform::Graphics::BufferType type)
 {
     if (!hasTexture()) {
         // We may have been evicted by the TextureCacheCompositingThread,

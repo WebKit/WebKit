@@ -1,3 +1,20 @@
+2013-04-10  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] Rename BlackBerry specific Texture class
+        https://bugs.webkit.org/show_bug.cgi?id=95781
+
+        Reviewed by Rob Buis.
+
+        Texture was a bit too generic and prone to name conflicts. Renamed it
+        to LayerTexture.
+
+        PR 322882
+
+        * Api/WebOverlay.cpp:
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded):
+        * Api/WebOverlay_p.h:
+        (WebOverlayLayerCompositingThreadClient):
+
 2013-04-08  Anders Carlsson  <andersca@apple.com>
 
         Remove unneeded headers from FrameLoader.h

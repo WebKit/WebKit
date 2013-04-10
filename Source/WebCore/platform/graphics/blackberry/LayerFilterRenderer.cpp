@@ -719,7 +719,7 @@ void LayerFilterRenderer::applyActions(unsigned& fbo, LayerCompositingThread* la
         // actionsForOperations takes care of that.
 
         if (actions[i]->shouldPushSnapshot()) {
-            RefPtr<Texture> currentTexture = (!(i % 2) ? surface->texture() : m_texture);
+            RefPtr<LayerTexture> currentTexture = (!(i % 2) ? surface->texture() : m_texture);
             GLuint texid = reinterpret_cast<GLuint>(platformBufferHandle(currentTexture->textureId()));
             if (!texid) {
                 BlackBerry::Platform::Graphics::lockAndBindBufferGLTexture(currentTexture->textureId(), GL_TEXTURE_2D);

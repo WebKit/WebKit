@@ -149,7 +149,7 @@ public:
     // Returns true if we have an animation
     bool updateAnimations(double currentTime);
     void updateTextureContentsIfNeeded();
-    Texture* contentsTexture();
+    LayerTexture* contentsTexture();
 
     const LayerCompositingThread* rootLayer() const;
     void setSublayers(const Vector<RefPtr<LayerCompositingThread> >&);

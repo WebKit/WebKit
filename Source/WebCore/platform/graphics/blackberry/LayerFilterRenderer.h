@@ -23,7 +23,7 @@
 
 #include "IntRect.h"
 #include "LayerData.h"
-#include "Texture.h"
+#include "LayerTexture.h"
 #include "TransformationMatrix.h"
 
 #include <BlackBerryPlatformGLES2Context.h>
@@ -256,8 +256,8 @@ private:
     int m_offsetLocation;
 
     // Textures for playing ping-pong - see note in applyActions()
-    RefPtr<Texture> m_texture;
-    RefPtr<Texture> m_snapshotTexture;
+    RefPtr<LayerTexture> m_texture;
+    RefPtr<LayerTexture> m_snapshotTexture;
 
     friend class LayerFilterRendererAction;
 };

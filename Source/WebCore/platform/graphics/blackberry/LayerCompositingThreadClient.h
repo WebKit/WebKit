@@ -31,7 +31,7 @@ class GLES2Program;
 namespace WebCore {
 
 class LayerCompositingThread;
-class Texture;
+class LayerTexture;
 
 class LayerCompositingThreadClient {
 public:
@@ -46,7 +46,7 @@ public:
     virtual void deleteTextures(LayerCompositingThread*) = 0;
 
     // Optional. Allows layers to serve as a mask for other layers
-    virtual Texture* contentsTexture(LayerCompositingThread*) { return 0; }
+    virtual LayerTexture* contentsTexture(LayerCompositingThread*) { return 0; }
 
     // Optional. Allow the layer to commit thread sensitive content during a sync point
     virtual void commitPendingTextureUploads(LayerCompositingThread*) { }

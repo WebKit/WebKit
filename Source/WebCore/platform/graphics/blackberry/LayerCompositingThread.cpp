@@ -272,7 +272,7 @@ void LayerCompositingThread::drawSurface(const TransformationMatrix& drawTransfo
     using namespace BlackBerry::Platform::Graphics;
 
     if (m_layerRenderer->layerAlreadyOnSurface(this)) {
-        Texture* surfaceTexture = layerRendererSurface()->texture();
+        LayerTexture* surfaceTexture = layerRendererSurface()->texture();
         if (!surfaceTexture) {
             ASSERT_NOT_REACHED();
             return;
@@ -286,7 +286,7 @@ void LayerCompositingThread::drawSurface(const TransformationMatrix& drawTransfo
         }
 
         if (mask) {
-            Texture* maskTexture = mask->contentsTexture();
+            LayerTexture* maskTexture = mask->contentsTexture();
             if (maskTexture) {
                 GLuint maskTexID = reinterpret_cast<GLuint>(platformBufferHandle(maskTexture->textureId()));
 
@@ -425,7 +425,7 @@ void LayerCompositingThread::updateTextureContentsIfNeeded()
         m_client->uploadTexturesIfNeeded(this);
 }
 
-Texture* LayerCompositingThread::contentsTexture()
+LayerTexture* LayerCompositingThread::contentsTexture()
 {
     if (m_client)
         return m_client->contentsTexture(this);
