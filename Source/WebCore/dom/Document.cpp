@@ -3488,6 +3488,12 @@ bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode, FocusDirection
         }
     }
 
+    if (!focusChangeBlocked && m_focusedNode) {
+        // Create the AXObject cache in a focus change because GTK relies on it.
+        if (AXObjectCache* cache = axObjectCache())
+            cache->handleFocusedUIElementChanged(oldFocusedNode.get(), newFocusedNode.get());
+    }
+
     if (!focusChangeBlocked)
         page()->chrome()->focusedNodeChanged(m_focusedNode.get());
 
