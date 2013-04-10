@@ -31,6 +31,7 @@
 
 #include "InjectedBundle.h"
 #include "InjectedBundlePage.h"
+#include "NotImplemented.h"
 #include <JavaScriptCore/JSStringRef.h>
 #include <atk/atk.h>
 #include <wtf/Assertions.h>
@@ -1148,6 +1149,12 @@ void AccessibilityUIElement::scrollToMakeVisible()
 JSRetainPtr<JSStringRef> AccessibilityUIElement::supportedActions() const
 {
     // FIXME: implement
+    return 0;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::pathDescription() const
+{
+    notImplemented();
     return 0;
 }
 

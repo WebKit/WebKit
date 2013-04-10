@@ -1,3 +1,17 @@
+2013-04-10  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [ATK] REGRESSION(r148033): Add a stub for AccessibilityUIElement::pathDescription().
+        https://bugs.webkit.org/show_bug.cgi?id=114342
+
+        Reviewed by Gyuyoung Kim.
+
+        Commit 148033 only added an implementation for the Mac port, which made
+        other ports fail most tests since loading the injected bundle failed
+        with a missing symbol.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::pathDescription):
+
 2013-04-10  Artur Moryc  <a.moryc@samsung.com>
 
         [EFL] Add spell checking option to MiniBrowser
