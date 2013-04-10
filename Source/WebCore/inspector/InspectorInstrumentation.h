@@ -65,6 +65,7 @@ class DocumentStyleSheetCollection;
 class DeviceOrientationData;
 class GeolocationPosition;
 class GraphicsContext;
+class HTTPHeaderMap;
 class InspectorCSSAgent;
 class InspectorCSSOMWrappers;
 class InspectorInstrumentation;
