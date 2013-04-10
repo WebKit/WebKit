@@ -713,26 +713,26 @@ void ScrollView::scrollContentsSlowPath(const IntRect& updateRect)
 IntPoint ScrollView::rootViewToContents(const IntPoint& rootViewPoint) const
 {
     IntPoint viewPoint = convertFromRootView(rootViewPoint);
-    return viewPoint + scrollOffset();
+    return viewPoint + scrollOffsetRelativeToDocument();
 }
 
 IntPoint ScrollView::contentsToRootView(const IntPoint& contentsPoint) const
 {
-    IntPoint viewPoint = contentsPoint - scrollOffset();
+    IntPoint viewPoint = contentsPoint + IntSize(0, headerHeight()) - scrollOffset();
     return convertToRootView(viewPoint);  
 }
 
 IntRect ScrollView::rootViewToContents(const IntRect& rootViewRect) const
 {
     IntRect viewRect = convertFromRootView(rootViewRect);
-    viewRect.move(scrollOffset());
+    viewRect.move(scrollOffsetRelativeToDocument());
     return viewRect;
 }
 
 IntRect ScrollView::contentsToRootView(const IntRect& contentsRect) const
 {
     IntRect viewRect = contentsRect;
-    viewRect.move(-scrollOffset());
+    viewRect.move(-scrollOffset() + IntSize(0, headerHeight()));
     return convertToRootView(viewRect);
 }
 
