@@ -391,6 +391,8 @@ fast/js/i18n-bindings-locale.html
 # https://bugs.webkit.org/show_bug.cgi?id=55509
 compositing/webgl/webgl-nonpremultiplied-blend.html
 
+webkit.org/b/114321 compositing/plugins/invalidate_rect.html [ Failure Pass ]
+
 # DataTransferItems is not yet implemented.
 editing/pasteboard/data-transfer-items.html
 editing/pasteboard/data-transfer-items-image-png.html
