@@ -79,6 +79,7 @@ public:
     QString defaultTextEncoding;
     QString localStoragePath;
     QString offlineWebApplicationCachePath;
+    QString mediaType;
     qint64 offlineStorageDefaultQuota;
     QWebSettings::ThirdPartyCookiePolicy thirdPartyCookiePolicy;
     void apply();
@@ -237,6 +238,9 @@ void QWebSettingsPrivate::apply()
 
         QString storagePath = !localStoragePath.isEmpty() ? localStoragePath : global->localStoragePath;
         settings->setLocalStorageDatabasePath(storagePath);
+
+        if (mediaType.isEmpty())
+            mediaType = global->mediaType;
 
         value = attributes.value(QWebSettings::PrintElementBackgrounds,
                                       global->attributes.value(QWebSettings::PrintElementBackgrounds));
@@ -928,6 +932,29 @@ void QWebSettings::setThirdPartyCookiePolicy(ThirdPartyCookiePolicy policy)
 QWebSettings::ThirdPartyCookiePolicy QWebSettings::thirdPartyCookiePolicy() const
 {
     return d->thirdPartyCookiePolicy;
+}
+
+/*!
+    Sets the CSS media type to \a type.
+    
+    Setting this will override the normal value of the CSS media property.
+    
+    \note Setting the value to null QString will restore the default value.
+*/
+void QWebSettings::setCSSMediaType(const QString& type)
+{
+    d->mediaType = type;
+    d->apply();
+}
+
+/*!
+    Returns the current CSS media type.
+    
+    \note It will only return the value set through setCSSMediaType and not the one used internally.
+*/
+QString QWebSettings::cssMediaType() const
+{
+    return d->mediaType;
 }
 
 /*!

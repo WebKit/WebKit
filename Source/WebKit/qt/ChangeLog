@@ -1,3 +1,23 @@
+2013-04-10  Jose Lejin PJ  <jose.lejin@gmail.com>
+
+        [Qt] Add API in QWebSettings for setting the CSS media type
+        https://bugs.webkit.org/show_bug.cgi?id=113853
+
+        Reviewed by Jocelyn Turcotte.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate):
+        (QWebSettingsPrivate::apply):
+        (QWebSettings::setCSSMediaType):
+        (QWebSettings::cssMediaType):
+        * Api/qwebsettings.h:
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::overrideMediaType):
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage):
+        (tst_QWebPage::cssMediaTypeGlobalSetting):
+        (tst_QWebPage::cssMediaTypePageSetting):
+
 2013-04-09  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         [CoordinatedGraphics] serviceScriptedAnimations expects time in seconds

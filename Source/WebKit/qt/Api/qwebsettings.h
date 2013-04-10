@@ -164,6 +164,9 @@ public:
     void setThirdPartyCookiePolicy(ThirdPartyCookiePolicy);
     QWebSettings::ThirdPartyCookiePolicy thirdPartyCookiePolicy() const;
 
+    void setCSSMediaType(const QString&);
+    QString cssMediaType() const;
+
     inline QWebSettingsPrivate* handle() const { return d; }
 
 private:

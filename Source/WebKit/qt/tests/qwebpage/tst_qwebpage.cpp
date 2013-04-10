@@ -187,6 +187,8 @@ private Q_SLOTS:
     void loadSignalsOrder_data();
     void loadSignalsOrder();
     void openWindowDefaultSize();
+    void cssMediaTypeGlobalSetting();
+    void cssMediaTypePageSetting();
 
 #ifdef Q_OS_MAC
     void macCopyUnicodeToClipboard();
@@ -3284,6 +3286,60 @@ void tst_QWebPage::openWindowDefaultSize()
     // Check minimum size has been requested.
     QVERIFY(requestedGeometry.width() == 100);
     QVERIFY(requestedGeometry.height() == 100);
+}
+
+void tst_QWebPage::cssMediaTypeGlobalSetting()
+{
+    QString testHtml("<style>@media tv {body{background-color:red;}}@media handheld {body{background-color:green;}}@media screen {body{background-color:blue;}}</style>");
+    QSignalSpy loadSpy(m_view, SIGNAL(loadFinished(bool)));
+
+    QWebSettings::globalSettings()->setCSSMediaType("tv");
+    // Clear page specific setting to read from global setting
+    m_view->page()->settings()->setCSSMediaType(QString());
+    m_view->setHtml(testHtml);
+    QTRY_COMPARE(loadSpy.count(), 1);
+    QVERIFY(m_view->page()->mainFrame()->evaluateJavaScript("window.matchMedia('tv').matches == true").toBool()); 
+    QVERIFY(QWebSettings::globalSettings()->cssMediaType() == "tv");
+
+    QWebSettings::globalSettings()->setCSSMediaType("handheld");
+    // Clear page specific setting to read from global setting
+    m_view->page()->settings()->setCSSMediaType(QString());
+    m_view->setHtml(testHtml);
+    QTRY_COMPARE(loadSpy.count(), 2);
+    QVERIFY(m_view->page()->mainFrame()->evaluateJavaScript("window.matchMedia('handheld').matches == true").toBool());
+    QVERIFY(QWebSettings::globalSettings()->cssMediaType() == "handheld");
+
+    QWebSettings::globalSettings()->setCSSMediaType("screen");
+    // Clear page specific setting to read from global setting
+    m_view->page()->settings()->setCSSMediaType(QString());
+    m_view->setHtml(testHtml);
+    QTRY_COMPARE(loadSpy.count(), 3);
+    QVERIFY(m_view->page()->mainFrame()->evaluateJavaScript("window.matchMedia('screen').matches == true").toBool()); 
+    QVERIFY(QWebSettings::globalSettings()->cssMediaType() == "screen"); 
+}
+
+void tst_QWebPage::cssMediaTypePageSetting()
+{
+    QString testHtml("<style>@media tv {body{background-color:red;}}@media handheld {body{background-color:green;}}@media screen {body{background-color:blue;}}</style>");
+    QSignalSpy loadSpy(m_view, SIGNAL(loadFinished(bool)));
+
+    m_view->page()->settings()->setCSSMediaType("tv");
+    m_view->setHtml(testHtml);
+    QTRY_COMPARE(loadSpy.count(), 1);
+    QVERIFY(m_view->page()->mainFrame()->evaluateJavaScript("window.matchMedia('tv').matches == true").toBool()); 
+    QVERIFY(m_view->page()->settings()->cssMediaType() == "tv"); 
+
+    m_view->page()->settings()->setCSSMediaType("handheld");
+    m_view->setHtml(testHtml);
+    QTRY_COMPARE(loadSpy.count(), 2);
+    QVERIFY(m_view->page()->mainFrame()->evaluateJavaScript("window.matchMedia('handheld').matches == true").toBool());
+    QVERIFY(m_view->page()->settings()->cssMediaType() == "handheld");
+
+    m_view->page()->settings()->setCSSMediaType("screen");
+    m_view->setHtml(testHtml);
+    QTRY_COMPARE(loadSpy.count(), 3);
+    QVERIFY(m_view->page()->mainFrame()->evaluateJavaScript("window.matchMedia('screen').matches == true").toBool()); 
+    QVERIFY(m_view->page()->settings()->cssMediaType() == "screen"); 
 }
 
 QTEST_MAIN(tst_QWebPage)
