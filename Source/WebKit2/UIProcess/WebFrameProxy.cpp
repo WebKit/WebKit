@@ -115,8 +115,7 @@ bool WebFrameProxy::isDisplayingStandaloneImageDocument() const
 bool WebFrameProxy::isDisplayingMarkupDocument() const
 {
     // FIXME: This check should be moved to somewhere in WebCore.
-    // FIXME: This returns false when displaying a web archive.
-    return m_MIMEType == "text/html" || m_MIMEType == "image/svg+xml" || DOMImplementation::isXMLMIMEType(m_MIMEType);
+    return m_MIMEType == "text/html" || m_MIMEType == "image/svg+xml" || m_MIMEType == "application/x-webarchive" || DOMImplementation::isXMLMIMEType(m_MIMEType);
 }
 
 bool WebFrameProxy::isDisplayingPDFDocument() const

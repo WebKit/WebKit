@@ -1,3 +1,16 @@
+2013-04-09  Antoine Quint  <graouts@apple.com>
+
+        WKFrameIsDisplayingMarkupDocument should return true for Web Archives
+        https://bugs.webkit.org/show_bug.cgi?id=114291
+
+        Reviewed by Dean Jackson.
+
+        Also return true for the Web Archive MIME type since a Web Archive
+        is displaying a markup document by nature.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::isDisplayingMarkupDocument):
+
 2013-04-09  Anders Carlsson  <andersca@apple.com>
 
         REGRESSION (r147454): Youtube annotation links to new window broken
