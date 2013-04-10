@@ -356,7 +356,7 @@ void* JSObjectGetPrivate(JSObjectRef object)
 
 bool JSObjectSetPrivate(JSObjectRef object, void* data)
 {
-    JSObject* jsObject = toJS(object);
+    JSObject* jsObject = uncheckedToJS(object);
     
     if (jsObject->inherits(&JSCallbackObject<JSGlobalObject>::s_info)) {
         jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->setPrivate(data);
