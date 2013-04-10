@@ -471,4 +471,15 @@ ScriptValue ScriptController::executeScriptInWorld(DOMWrapperWorld* world, const
     return evaluateInWorld(sourceCode, world);
 }
 
+bool ScriptController::shouldBypassMainWorldContentSecurityPolicy()
+{
+    CallFrame* callFrame = JSDOMWindow::commonJSGlobalData()->topCallFrame;
+    if (!callFrame || callFrame == CallFrame::noCaller()) 
+        return false;
+    DOMWrapperWorld* domWrapperWorld = currentWorld(callFrame);
+    if (domWrapperWorld->isNormal())
+        return false;
+    return true;
+}
+
 } // namespace WebCore

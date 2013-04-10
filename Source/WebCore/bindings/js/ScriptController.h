@@ -163,8 +163,7 @@ public:
     NPObject* windowScriptNPObject();
 #endif
 
-    // FIXME: Script run from an isolated world should bypass a page's CSP. http://webkit.org/b/100815
-    bool shouldBypassMainWorldContentSecurityPolicy() { return false; }
+    bool shouldBypassMainWorldContentSecurityPolicy();
 
 private:
     JSDOMWindowShell* initScript(DOMWrapperWorld* world);
