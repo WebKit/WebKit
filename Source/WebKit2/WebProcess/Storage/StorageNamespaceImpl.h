@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StorageNamespaceProxy_h
-#define StorageNamespaceProxy_h
+#ifndef StorageNamespaceImpl_h
+#define StorageNamespaceImpl_h
 
 #include <WebCore/SecurityOriginHash.h>
 #include <WebCore/StorageArea.h>
@@ -36,16 +36,16 @@ namespace WebKit {
 class StorageAreaProxy;
 class WebPage;
 
-class StorageNamespaceProxy : public WebCore::StorageNamespace {
+class StorageNamespaceImpl : public WebCore::StorageNamespace {
 public:
-    static PassRefPtr<StorageNamespaceProxy> createSessionStorageNamespace(WebPage*);
-    virtual ~StorageNamespaceProxy();
+    static PassRefPtr<StorageNamespaceImpl> createSessionStorageNamespace(WebPage*);
+    virtual ~StorageNamespaceImpl();
 
     uint64_t storageNamespaceID() const { return m_storageNamespaceID; }
     unsigned quotaInBytes() const { return m_quotaInBytes; }
 
 private:
-    explicit StorageNamespaceProxy(uint64_t storageNamespaceID, unsigned quotaInBytes);
+    explicit StorageNamespaceImpl(uint64_t storageNamespaceID, unsigned quotaInBytes);
 
     virtual PassRefPtr<WebCore::StorageArea> storageArea(PassRefPtr<WebCore::SecurityOrigin>) OVERRIDE;
     virtual PassRefPtr<WebCore::StorageNamespace> copy() OVERRIDE;
@@ -63,4 +63,4 @@ private:
 
 } // namespace WebKit
 
-#endif // StorageNamespaceProxy_h
+#endif // StorageNamespaceImpl_h

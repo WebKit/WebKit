@@ -137,7 +137,7 @@
 		1A3EED0F161A535400AEB4F5 /* MessageReceiverMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3EED0D161A535300AEB4F5 /* MessageReceiverMap.h */; };
 		1A3EED12161A53D600AEB4F5 /* MessageReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3EED11161A53D600AEB4F5 /* MessageReceiver.h */; };
 		1A433F0D113C53DD00FACDE9 /* WebErrors.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A433F0C113C53DD00FACDE9 /* WebErrors.h */; };
-		1A44B95716B737AA00B7BBD8 /* StorageNamespaceProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A17635416B1D5D000D88FD6 /* StorageNamespaceProxy.cpp */; };
+		1A44B95716B737AA00B7BBD8 /* StorageNamespaceImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A17635416B1D5D000D88FD6 /* StorageNamespaceImpl.cpp */; };
 		1A44B95B16B73F9F00B7BBD8 /* StorageManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A44B95916B73F9F00B7BBD8 /* StorageManager.cpp */; };
 		1A44B95C16B73F9F00B7BBD8 /* StorageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A44B95A16B73F9F00B7BBD8 /* StorageManager.h */; };
 		1A4A9AA812B7E796008FE984 /* WKTextInputWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A4A9AA612B7E796008FE984 /* WKTextInputWindowController.h */; };
@@ -1433,8 +1433,8 @@
 		1A119A94127B796200A9ECB1 /* MessageSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageSender.h; sourceTree = "<group>"; };
 		1A13BEB11635A9C800F19C03 /* StringReference.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringReference.cpp; sourceTree = "<group>"; };
 		1A13BEB21635A9C800F19C03 /* StringReference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringReference.h; sourceTree = "<group>"; };
-		1A17635416B1D5D000D88FD6 /* StorageNamespaceProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageNamespaceProxy.cpp; sourceTree = "<group>"; };
-		1A17635516B1D5D000D88FD6 /* StorageNamespaceProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageNamespaceProxy.h; sourceTree = "<group>"; };
+		1A17635416B1D5D000D88FD6 /* StorageNamespaceImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageNamespaceImpl.cpp; sourceTree = "<group>"; };
+		1A17635516B1D5D000D88FD6 /* StorageNamespaceImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageNamespaceImpl.h; sourceTree = "<group>"; };
 		1A17977D137EE82C00F97D45 /* PluginCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginCreationParameters.cpp; sourceTree = "<group>"; };
 		1A17977E137EE82C00F97D45 /* PluginCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginCreationParameters.h; sourceTree = "<group>"; };
 		1A186EE812EF7618008E5F37 /* LayerTreeHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerTreeHost.h; sourceTree = "<group>"; };
@@ -3092,8 +3092,8 @@
 				1AD3306C16B1D991004F60E7 /* StorageAreaProxy.cpp */,
 				1AD3306D16B1D991004F60E7 /* StorageAreaProxy.h */,
 				1A334DEA16DE8B68006A8E38 /* StorageAreaProxy.messages.in */,
-				1A17635416B1D5D000D88FD6 /* StorageNamespaceProxy.cpp */,
-				1A17635516B1D5D000D88FD6 /* StorageNamespaceProxy.h */,
+				1A17635416B1D5D000D88FD6 /* StorageNamespaceImpl.cpp */,
+				1A17635516B1D5D000D88FD6 /* StorageNamespaceImpl.h */,
 				1AAC4DE116B1CBF6009425E3 /* WebKeyValueStorageManager.cpp */,
 				1AAC4DE216B1CBF6009425E3 /* WebKeyValueStorageManager.h */,
 				1AAC4DE316B1CBF6009425E3 /* WebKeyValueStorageManager.messages.in */,
@@ -6560,7 +6560,7 @@
 				1AD3306E16B1D991004F60E7 /* StorageAreaProxy.cpp in Sources */,
 				1A44B95B16B73F9F00B7BBD8 /* StorageManager.cpp in Sources */,
 				1AB31A9616BC688100F6DBC9 /* StorageManagerMessageReceiver.cpp in Sources */,
-				1A44B95716B737AA00B7BBD8 /* StorageNamespaceProxy.cpp in Sources */,
+				1A44B95716B737AA00B7BBD8 /* StorageNamespaceImpl.cpp in Sources */,
 				1A13BEB31635A9C800F19C03 /* StringReference.cpp in Sources */,
 				296BD85E15019BC30071F424 /* StringUtilities.mm in Sources */,
 				51815B9F16A622210054501F /* SyncNetworkResourceLoader.cpp in Sources */,

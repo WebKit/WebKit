@@ -32,7 +32,7 @@
 #include "DataReference.h"
 #include "NetworkResourceLoadParameters.h"
 #include "PluginInfoStore.h"
-#include "StorageNamespaceProxy.h"
+#include "StorageNamespaceImpl.h"
 #include "WebContextMessages.h"
 #include "WebCookieManager.h"
 #include "WebCoreArgumentCoders.h"
@@ -306,7 +306,7 @@ PassRefPtr<StorageNamespace> WebPlatformStrategies::localStorageNamespace(const 
 PassRefPtr<StorageNamespace> WebPlatformStrategies::sessionStorageNamespace(Page* page, unsigned quota)
 {
 #if ENABLE(UI_PROCESS_STORAGE)
-    return StorageNamespaceProxy::createSessionStorageNamespace(WebPage::fromCorePage(page));
+    return StorageNamespaceImpl::createSessionStorageNamespace(WebPage::fromCorePage(page));
 #else
     return StorageStrategy::sessionStorageNamespace(page, quota);
 #endif

@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "StorageNamespaceProxy.h"
+#include "StorageNamespaceImpl.h"
 
 #include "StorageAreaProxy.h"
 #include "WebPage.h"
@@ -35,22 +35,22 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassRefPtr<StorageNamespaceProxy> StorageNamespaceProxy::createSessionStorageNamespace(WebPage* webPage)
+PassRefPtr<StorageNamespaceImpl> StorageNamespaceImpl::createSessionStorageNamespace(WebPage* webPage)
 {
-    return adoptRef(new StorageNamespaceProxy(webPage->pageID(), webPage->corePage()->settings()->sessionStorageQuota()));
+    return adoptRef(new StorageNamespaceImpl(webPage->pageID(), webPage->corePage()->settings()->sessionStorageQuota()));
 }
 
-StorageNamespaceProxy::StorageNamespaceProxy(uint64_t storageNamespaceID, unsigned quotaInBytes)
+StorageNamespaceImpl::StorageNamespaceImpl(uint64_t storageNamespaceID, unsigned quotaInBytes)
     : m_storageNamespaceID(storageNamespaceID)
     , m_quotaInBytes(quotaInBytes)
 {
 }
 
-StorageNamespaceProxy::~StorageNamespaceProxy()
+StorageNamespaceImpl::~StorageNamespaceImpl()
 {
 }
 
-PassRefPtr<StorageArea> StorageNamespaceProxy::storageArea(PassRefPtr<SecurityOrigin> securityOrigin)
+PassRefPtr<StorageArea> StorageNamespaceImpl::storageArea(PassRefPtr<SecurityOrigin> securityOrigin)
 {
     HashMap<RefPtr<WebCore::SecurityOrigin>, RefPtr<StorageAreaProxy> >::AddResult result = m_storageAreaMap.add(securityOrigin.get(), 0);
     if (result.isNewEntry)
@@ -59,38 +59,38 @@ PassRefPtr<StorageArea> StorageNamespaceProxy::storageArea(PassRefPtr<SecurityOr
     return result.iterator->value;
 }
 
-PassRefPtr<StorageNamespace> StorageNamespaceProxy::copy()
+PassRefPtr<StorageNamespace> StorageNamespaceImpl::copy()
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
     return 0;
 }
 
-void StorageNamespaceProxy::close()
+void StorageNamespaceImpl::close()
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
 }
 
-void StorageNamespaceProxy::clearOriginForDeletion(SecurityOrigin*)
+void StorageNamespaceImpl::clearOriginForDeletion(SecurityOrigin*)
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
 }
 
-void StorageNamespaceProxy::clearAllOriginsForDeletion()
+void StorageNamespaceImpl::clearAllOriginsForDeletion()
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
 }
 
-void StorageNamespaceProxy::sync()
+void StorageNamespaceImpl::sync()
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
 }
 
-void StorageNamespaceProxy::closeIdleLocalStorageDatabases()
+void StorageNamespaceImpl::closeIdleLocalStorageDatabases()
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();

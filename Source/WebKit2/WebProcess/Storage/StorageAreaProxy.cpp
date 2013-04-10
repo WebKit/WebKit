@@ -29,7 +29,7 @@
 #include "SecurityOriginData.h"
 #include "StorageAreaProxyMessages.h"
 #include "StorageManagerMessages.h"
-#include "StorageNamespaceProxy.h"
+#include "StorageNamespaceImpl.h"
 #include "WebProcess.h"
 #include <WebCore/ExceptionCode.h>
 #include <WebCore/Frame.h>
@@ -48,18 +48,18 @@ static uint64_t generateStorageAreaID()
     return ++storageAreaID;
 }
 
-PassRefPtr<StorageAreaProxy> StorageAreaProxy::create(StorageNamespaceProxy* storageNamespaceProxy, PassRefPtr<SecurityOrigin> securityOrigin)
+PassRefPtr<StorageAreaProxy> StorageAreaProxy::create(StorageNamespaceImpl* StorageNamespaceImpl, PassRefPtr<SecurityOrigin> securityOrigin)
 {
-    return adoptRef(new StorageAreaProxy(storageNamespaceProxy, securityOrigin));
+    return adoptRef(new StorageAreaProxy(StorageNamespaceImpl, securityOrigin));
 }
 
-StorageAreaProxy::StorageAreaProxy(StorageNamespaceProxy* storageNamespaceProxy, PassRefPtr<SecurityOrigin> securityOrigin)
-    : m_storageNamespaceID(storageNamespaceProxy->storageNamespaceID())
-    , m_quotaInBytes(storageNamespaceProxy->quotaInBytes())
+StorageAreaProxy::StorageAreaProxy(StorageNamespaceImpl* StorageNamespaceImpl, PassRefPtr<SecurityOrigin> securityOrigin)
+    : m_storageNamespaceID(StorageNamespaceImpl->storageNamespaceID())
+    , m_quotaInBytes(StorageNamespaceImpl->quotaInBytes())
     , m_storageAreaID(generateStorageAreaID())
     , m_securityOrigin(securityOrigin)
 {
-    WebProcess::shared().connection()->send(Messages::StorageManager::CreateStorageArea(m_storageAreaID, storageNamespaceProxy->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(m_securityOrigin.get())), 0);
+    WebProcess::shared().connection()->send(Messages::StorageManager::CreateStorageArea(m_storageAreaID, StorageNamespaceImpl->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(m_securityOrigin.get())), 0);
     WebProcess::shared().addMessageReceiver(Messages::StorageAreaProxy::messageReceiverName(), m_storageAreaID, this);
 }
 

@@ -1,3 +1,20 @@
+2013-04-10  Anders Carlsson  <andersca@apple.com>
+
+        Rename StorageNamespaceProxy to StorageNamespaceImpl.
+
+        Rubber-stamped by Beth Dakin.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Storage/StorageAreaProxy.cpp:
+        (WebKit::StorageAreaProxy::create):
+        (WebKit::StorageAreaProxy::StorageAreaProxy):
+        * WebProcess/Storage/StorageAreaProxy.h:
+        (StorageAreaProxy):
+        * WebProcess/Storage/StorageNamespaceImpl.cpp: Renamed from Source/WebKit2/WebProcess/Storage/StorageNamespaceProxy.cpp.
+        * WebProcess/Storage/StorageNamespaceImpl.h: Renamed from Source/WebKit2/WebProcess/Storage/StorageNamespaceProxy.h.
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::sessionStorageNamespace):
+
 2013-04-10  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] Un-pollute TCADA methods with "PageOverlayLayerMap::iterator end"

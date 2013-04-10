@@ -37,15 +37,15 @@ class StorageMap;
 
 namespace WebKit {
 
-class StorageNamespaceProxy;
+class StorageNamespaceImpl;
 
 class StorageAreaProxy : public WebCore::StorageArea, private CoreIPC::MessageReceiver {
 public:
-    static PassRefPtr<StorageAreaProxy> create(StorageNamespaceProxy*, PassRefPtr<WebCore::SecurityOrigin>);
+    static PassRefPtr<StorageAreaProxy> create(StorageNamespaceImpl*, PassRefPtr<WebCore::SecurityOrigin>);
     virtual ~StorageAreaProxy();
 
 private:
-    StorageAreaProxy(StorageNamespaceProxy*, PassRefPtr<WebCore::SecurityOrigin>);
+    StorageAreaProxy(StorageNamespaceImpl*, PassRefPtr<WebCore::SecurityOrigin>);
 
     // WebCore::StorageArea.
     virtual unsigned length(WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
