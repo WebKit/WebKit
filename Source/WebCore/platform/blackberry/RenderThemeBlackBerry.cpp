@@ -949,18 +949,7 @@ bool RenderThemeBlackBerry::paintMediaSliderTrack(RenderObject* object, const Pa
 
     IntRect played(x, y, wPlayed, h);
     IntRect buffered(x, y, wLoaded > w ? w : wLoaded, h);
-#if USE(SKIA)
-    // This is to paint main slider bar.
-    bool result = paintSliderTrackRect(object, paintInfo, rect2);
 
-    if (loaded > 0 || position > 0) {
-        // This is to paint buffered bar.
-        paintSliderTrackRect(object, paintInfo, buffered, Color::darkGray, Color::darkGray, Color::darkGray, Color::darkGray);
-
-        // This is to paint played part of bar (left of slider thumb) using selection color.
-        paintSliderTrackRect(object, paintInfo, played, selection, selection, selection, selection);
-    }
-#else // GL renderer
     static Image* mediaBackground = Image::loadPlatformResource("core_slider_video_bg").leakRef();
     static Image* mediaPlayer = Image::loadPlatformResource("core_slider_played_bg").leakRef();
     static Image* mediaCache = Image::loadPlatformResource("core_slider_cache").leakRef();
@@ -974,7 +963,7 @@ bool RenderThemeBlackBerry::paintMediaSliderTrack(RenderObject* object, const Pa
         // This is to paint played part of bar (left of slider thumb) using selection color.
         paintSliderTrackRect(object, paintInfo, played, mediaPlayer);
     }
-#endif // USE(SKIA)
+
     return result;
 #else
     UNUSED_PARAM(object);
@@ -987,30 +976,6 @@ bool RenderThemeBlackBerry::paintMediaSliderTrack(RenderObject* object, const Pa
 bool RenderThemeBlackBerry::paintMediaSliderThumb(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
 #if ENABLE(VIDEO)
-#if USE(SKIA)
-    RenderSlider* slider = determineRenderSlider(object);
-    if (!slider)
-        return false;
-
-    float fullScreenMultiplier = determineFullScreenMultiplier(toElement(slider->node()));
-
-    paintInfo.context->save();
-    Path mediaThumbRoundedRectangle;
-    mediaThumbRoundedRectangle.addRoundedRect(rect, FloatSize(mediaSliderThumbRadius * fullScreenMultiplier, mediaSliderThumbRadius * fullScreenMultiplier));
-    paintInfo.context->setStrokeStyle(SolidStroke);
-    paintInfo.context->setStrokeThickness(0.5);
-    paintInfo.context->setStrokeColor(Color::black, ColorSpaceDeviceRGB);
-
-    if (isPressed(object) || isHovered(object) || slider->inDragMode())
-        paintInfo.context->setFillGradient(createLinearGradient(selection, Color(selection).dark().rgb(), rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
-    else
-        paintInfo.context->setFillGradient(createLinearGradient(Color::white, Color(Color::white).dark().rgb(), rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
-
-    paintInfo.context->fillPath(mediaThumbRoundedRectangle);
-    paintInfo.context->restore();
-
-    return true;
-#else // GL renderer
     static Image* disabledMediaSliderThumb = Image::loadPlatformResource("core_slider_handle_disabled").leakRef();
     static Image* pressedMediaSliderThumb = Image::loadPlatformResource("core_slider_handle_pressed").leakRef();
     static Image* mediaSliderThumb = Image::loadPlatformResource("core_media_handle").leakRef();
@@ -1020,7 +985,6 @@ bool RenderThemeBlackBerry::paintMediaSliderThumb(RenderObject* object, const Pa
     if (isPressed(object) || isHovered(object) || isFocused(object))
         return paintMediaButton(paintInfo.context, rect, pressedMediaSliderThumb);
     return paintMediaButton(paintInfo.context, rect, mediaSliderThumb);
-#endif // USE(SKIA)
 #else
     UNUSED_PARAM(object);
     UNUSED_PARAM(paintInfo);
@@ -1047,15 +1011,6 @@ bool RenderThemeBlackBerry::paintMediaVolumeSliderTrack(RenderObject* object, co
     IntRect rect2(x, y, w, h);
     IntRect volumeRect(x, y, ceil(w * volume), h);
 
-#if USE(SKIA)
-    // This is to paint main volume slider bar.
-    bool result = paintSliderTrackRect(object, paintInfo, rect2, Color(mediaSliderTrackOutline).rgb(), Color(mediaSliderTrackOutline).rgb(), rangeSliderRegularTop, rangeSliderRegularTop);
-
-    if (volume > 0) {
-        // This is to paint volume bar (left of volume slider thumb) using selection color.
-        result |= paintSliderTrackRect(object, paintInfo, volumeRect, Color(mediaSliderTrackOutline).rgb(), Color(mediaSliderTrackOutline).rgb(), selection, selection);
-    }
-#else // GL renderer
     static Image* volumeBackground = Image::loadPlatformResource("core_slider_video_bg").leakRef();
     static Image* volumeBar = Image::loadPlatformResource("core_slider_played_bg").leakRef();
 
@@ -1066,7 +1021,7 @@ bool RenderThemeBlackBerry::paintMediaVolumeSliderTrack(RenderObject* object, co
         // This is to paint volume bar (left of volume slider thumb) using selection color.
         result |= paintSliderTrackRect(object, paintInfo, volumeRect, volumeBar);
     }
-#endif // USE(SKIA)
+
     return result;
 #else
     UNUSED_PARAM(object);
@@ -1082,27 +1037,11 @@ bool RenderThemeBlackBerry::paintMediaVolumeSliderThumb(RenderObject* object, co
     RenderSlider* slider = determineRenderSlider(object);
     float fullScreenMultiplier = slider ? determineFullScreenMultiplier(toElement(slider->node())) : 1;
 
-#if USE(SKIA)
-    paintInfo.context->save();
-    Path mediaThumbRoundedRectangle;
-    mediaThumbRoundedRectangle.addRoundedRect(rect, FloatSize(mediaSliderThumbHeight / 2 * fullScreenMultiplier, mediaSliderThumbHeight / 2 * fullScreenMultiplier));
-
-    if (isPressed(object) || isHovered(object) || slider->inDragMode())
-        paintInfo.context->setFillGradient(createLinearGradient(selection, Color(selection).dark().rgb(), rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
-    else
-        paintInfo.context->setFillGradient(createLinearGradient(mediaSliderTrackOutline, Color::black, rect.maxXMinYCorner(), rect.maxXMaxYCorner()));
-
-    paintInfo.context->fillPath(mediaThumbRoundedRectangle);
-    paintInfo.context->restore();
-
-    return true;
-#else // GL renderer
     int intrinsicHeight = ceil(mediaSliderThumbHeight / 4);
     int y = ceil(rect.y() + (mediaControlsHeight / 2 - intrinsicHeight / 2) / 2 * fullScreenMultiplier);
     IntRect adjustedRect(rect.x(), y, rect.width(), rect.height());
 
     return paintMediaSliderThumb(object, paintInfo, adjustedRect);
-#endif // USE(SKIA)
 #else
     UNUSED_PARAM(object);
     UNUSED_PARAM(paintInfo);
