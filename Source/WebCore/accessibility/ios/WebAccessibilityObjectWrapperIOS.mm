@@ -2002,61 +2002,97 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 
 - (WebAccessibilityObjectWrapper *)accessibilityMathRootIndexObject
 {
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
     return m_object->mathRootIndexObject() ? m_object->mathRootIndexObject()->wrapper() : 0;
 }
 
 - (WebAccessibilityObjectWrapper *)accessibilityMathRadicandObject
 {
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
     return m_object->mathRadicandObject() ? m_object->mathRadicandObject()->wrapper() : 0;
 }
 
 - (WebAccessibilityObjectWrapper *)accessibilityMathNumeratorObject
 {
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
     return m_object->mathNumeratorObject() ? m_object->mathNumeratorObject()->wrapper() : 0;
 }
 
 - (WebAccessibilityObjectWrapper *)accessibilityMathDenominatorObject
 {
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
     return m_object->mathDenominatorObject() ? m_object->mathDenominatorObject()->wrapper() : 0;
 }
 
 - (WebAccessibilityObjectWrapper *)accessibilityMathBaseObject
 {
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
     return m_object->mathBaseObject() ? m_object->mathBaseObject()->wrapper() : 0;
 }
 
 - (WebAccessibilityObjectWrapper *)accessibilityMathSubscriptObject
 {
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
     return m_object->mathSubscriptObject() ? m_object->mathSubscriptObject()->wrapper() : 0;
 }
 
 - (WebAccessibilityObjectWrapper *)accessibilityMathSuperscriptObject
 {
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
     return m_object->mathSuperscriptObject() ? m_object->mathSuperscriptObject()->wrapper() : 0;
 }
 
 - (WebAccessibilityObjectWrapper *)accessibilityMathUnderObject
 {
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
     return m_object->mathUnderObject() ? m_object->mathUnderObject()->wrapper() : 0;
 }
 
 - (WebAccessibilityObjectWrapper *)accessibilityMathOverObject
 {
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
     return m_object->mathOverObject() ? m_object->mathOverObject()->wrapper() : 0;
 }
 
 - (NSString *)accessibilityMathFencedOpenString
 {
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
     return m_object->mathFencedOpenString();
 }
 
 - (NSString *)accessibilityMathFencedCloseString
 {
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
     return m_object->mathFencedCloseString();
 }
 
 - (BOOL)accessibilityIsMathTopObject
 {
+    if (![self _prepareAccessibilityCall])
+        return NO;
+
     return m_object->roleValue() == DocumentMathRole;
 }
 
@@ -2070,6 +2106,9 @@ static void AXAttributedStringAppendText(NSMutableAttributedString* attrString, 
 
 - (NSString *)accessibilityMathType
 {
+    if (![self _prepareAccessibilityCall])
+        return nil;
+
     if (m_object->roleValue() == MathElementRole) {
         if (m_object->isMathFraction())
             return @"AXMathFraction";
