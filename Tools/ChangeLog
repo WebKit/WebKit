@@ -1,3 +1,17 @@
+2013-04-10  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        [GTK] Add support for Page Visibility
+        https://bugs.webkit.org/show_bug.cgi?id=97324
+
+        Reviewed by Sam Weinig.
+
+        Implemented test runner API for page visibility layout tests.
+
+        * DumpRenderTree/gtk/TestRunnerGtk.cpp:
+        (TestRunner::resetPageVisibility):
+        (TestRunner::setPageVisibility):
+        * Scripts/webkitperl/FeatureList.pm:
+
 2013-04-10  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [ATK] REGRESSION(r148033): Add a stub for AccessibilityUIElement::pathDescription().

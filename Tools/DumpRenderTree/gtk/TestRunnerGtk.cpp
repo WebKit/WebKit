@@ -907,12 +907,24 @@ void TestRunner::simulateLegacyWebNotificationClick(JSStringRef title)
 
 void TestRunner::resetPageVisibility()
 {
-    // FIXME: Implement this.
+    WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
+    DumpRenderTreeSupportGtk::setPageVisibility(webView, WebCore::PageVisibilityStateVisible, true);
 }
 
-void TestRunner::setPageVisibility(const char*)
+void TestRunner::setPageVisibility(const char* visibility)
 {
-    // FIXME: Implement this.
+    WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
+    String visibilityString(visibility);
+    WebCore::PageVisibilityState visibilityState = WebCore::PageVisibilityStateVisible;
+
+    if (visibilityString == "visible")
+        visibilityState = WebCore::PageVisibilityStateVisible;
+    else if (visibilityString == "hidden")
+        visibilityState = WebCore::PageVisibilityStateHidden;
+    else
+        return;
+
+    DumpRenderTreeSupportGtk::setPageVisibility(webView, visibilityState, false);
 }
 
 void TestRunner::setAutomaticLinkDetectionEnabled(bool)

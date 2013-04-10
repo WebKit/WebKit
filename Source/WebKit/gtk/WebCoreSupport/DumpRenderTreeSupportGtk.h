@@ -21,6 +21,7 @@
 #define DumpRenderTreeSupportGtk_h
 
 #include "JSStringRef.h"
+#include "PageVisibilityState.h"
 #include <atk/atk.h>
 #include <glib.h>
 #include <webkit/webkitdefines.h>
@@ -138,6 +139,7 @@ public:
     typedef bool (*AuthenticationCallback) (CString& username, CString& password);
     static void setAuthenticationCallback(AuthenticationCallback);
     static AuthenticationCallback s_authenticationCallback;
+    static void setPageVisibility(WebKitWebView*, WebCore::PageVisibilityState, bool);
 
 private:
     static bool s_drtRun;

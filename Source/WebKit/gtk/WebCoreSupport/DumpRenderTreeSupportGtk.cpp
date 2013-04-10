@@ -739,3 +739,14 @@ void DumpRenderTreeSupportGtk::setAuthenticationCallback(AuthenticationCallback 
 {
     s_authenticationCallback = authenticationCallback;
 }
+
+void DumpRenderTreeSupportGtk::setPageVisibility(WebKitWebView* webView, WebCore::PageVisibilityState visibilityState, bool isInitialState)
+{
+#if ENABLE(PAGE_VISIBILITY_API)
+    Page* page = core(webView);
+    if (!page)
+        return;
+
+    page->setVisibilityState(visibilityState, isInitialState);
+#endif
+}

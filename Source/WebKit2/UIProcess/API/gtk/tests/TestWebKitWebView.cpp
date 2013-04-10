@@ -1085,6 +1085,67 @@ static void testWebViewMode(WebViewTest* test, gconstpointer)
     g_assert_cmpstr(valueString.get(), ==, indexHTML);
 }
 
+// To test page visibility API. Currently only 'visible' and 'hidden' states are implemented fully in WebCore.
+// See also http://www.w3.org/TR/2011/WD-page-visibility-20110602/ and https://developers.google.com/chrome/whitepapers/pagevisibility
+static void testWebViewPageVisibility(WebViewTest* test, gconstpointer)
+{
+    test->loadHtml("<html><title></title>"
+        "<body><p>Test Web Page Visibility</p>"
+        "<script>"
+        "document.addEventListener(\"webkitvisibilitychange\", onVisibilityChange, false);"
+        "function onVisibilityChange() {"
+        "    document.title = document.webkitVisibilityState;"
+        "}"
+        "</script>"
+        "</body></html>",
+        0);
+
+    // Wait untill the page is loaded. Initial visibility should be 'hidden'.
+    test->waitUntilLoadFinished();
+
+    GOwnPtr<GError> error;
+    WebKitJavascriptResult* javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.webkitVisibilityState;", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error.get());
+    GOwnPtr<char> valueString(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(valueString.get(), ==, "hidden");
+
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.webkitHidden;", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error.get());
+    g_assert(WebViewTest::javascriptResultToBoolean(javascriptResult));
+
+    // Show the page. The visibility should be updated to 'visible'.
+    test->showInWindow();
+    test->waitUntilTitleChanged();
+
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.webkitVisibilityState;", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error.get());
+    valueString.set(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(valueString.get(), ==, "visible");
+
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.webkitHidden;", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error.get());
+    g_assert(!WebViewTest::javascriptResultToBoolean(javascriptResult));
+
+    // Hide the page. The visibility should be updated to 'hidden'.
+    gtk_widget_hide(GTK_WIDGET(test->m_webView));
+    test->waitUntilTitleChanged();
+
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.webkitVisibilityState;", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error.get());
+    valueString.set(WebViewTest::javascriptResultToCString(javascriptResult));
+    g_assert_cmpstr(valueString.get(), ==, "hidden");
+
+    javascriptResult = test->runJavaScriptAndWaitUntilFinished("document.webkitHidden;", &error.outPtr());
+    g_assert(javascriptResult);
+    g_assert(!error.get());
+    g_assert(WebViewTest::javascriptResultToBoolean(javascriptResult));
+}
+
 void beforeAll()
 {
     WebViewTest::add("WebKitWebView", "default-context", testWebViewDefaultContext);
@@ -1105,6 +1166,7 @@ void beforeAll()
     FormClientTest::add("WebKitWebView", "submit-form", testWebViewSubmitForm);
     SaveWebViewTest::add("WebKitWebView", "save", testWebViewSave);
     WebViewTest::add("WebKitWebView", "view-mode", testWebViewMode);
+    WebViewTest::add("WebKitWebView", "page-visibility", testWebViewPageVisibility);
 }
 
 void afterAll()

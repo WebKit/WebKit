@@ -1,3 +1,15 @@
+2013-04-10  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        [GTK] Add support for Page Visibility
+        https://bugs.webkit.org/show_bug.cgi?id=97324
+
+        Reviewed by Sam Weinig.
+
+        Page Visibility has been enabled for GTK port.
+        New GTK unittest has been added.
+
+        * Source/autotools/SetupWebKitFeatures.m4:
+
 2013-04-09  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Declare TEST_THEME_DIR in a single place.

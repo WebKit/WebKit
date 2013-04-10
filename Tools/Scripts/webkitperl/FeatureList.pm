@@ -379,7 +379,7 @@ my @features = (
       define => "ENABLE_ORIENTATION_EVENTS", default => isBlackBerry(), value => \$orientationEventsSupport },
 
     { option => "page-visibility-api", desc => "Toggle Page Visibility API support",
-      define => "ENABLE_PAGE_VISIBILITY_API", default => (isBlackBerry() || isEfl()), value => \$pageVisibilityAPISupport },
+      define => "ENABLE_PAGE_VISIBILITY_API", default => (isBlackBerry() || isEfl() || isGtk()), value => \$pageVisibilityAPISupport },
 
     { option => "performance-timeline", desc => "Toggle Performance Timeline support",
       define => "ENABLE_PERFORMANCE_TIMELINE", default => isGtk(), value => \$performanceTimelineSupport },

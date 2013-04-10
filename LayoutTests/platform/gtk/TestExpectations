@@ -242,13 +242,6 @@ webkit.org/b/98942 storage/storagequota-request-quota.html [ Failure ]
 webkit.org/b/98942 fast/workers/worker-storagequota-query-usage.html [ Failure ]
 webkit.org/b/98942 fast/workers/shared-worker-storagequota-query-usage.html [ Failure ]
 
-# This platform does not support the Page Visibility API.
-webkit.org/b/97324 fast/events/page-visibility-iframe-delete-test.html [ Skip ]
-webkit.org/b/97324 fast/events/page-visibility-iframe-move-test.html [ Skip ]
-webkit.org/b/97324 fast/events/page-visibility-iframe-propagation-test.html [ Skip ]
-webkit.org/b/97324 fast/events/page-visibility-null-view.html [ Skip ]
-webkit.org/b/97324 fast/events/page-visibility-transition-test.html [ Skip ]
-
 # GTK doesn't support smart replace.
 webkit.org/b/61661 editing/pasteboard/drag-drop-list.html [ Failure ]
 

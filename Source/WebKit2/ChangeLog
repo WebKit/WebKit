@@ -1,3 +1,19 @@
+2013-04-10  Anton Obzhirov  <a.obzhirov@samsung.com>
+
+        [GTK] Add support for Page Visibility
+        https://bugs.webkit.org/show_bug.cgi?id=97324
+
+        Reviewed by Sam Weinig.
+
+        Added new unittest to test page visibility using GTK Widget visibility API.
+
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewPageVisibility):
+        (beforeAll):
+        * UIProcess/API/gtk/tests/WebViewTest.cpp:
+        (WebViewTest::showInWindow):
+        * UIProcess/API/gtk/tests/WebViewTest.h:
+
 2013-04-10  Zan Dobersek  <zdobersek@igalia.com>
 
         REGRESSION (r146518): WebKit2APITests/TestInspector is failing

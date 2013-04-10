@@ -46,6 +46,7 @@ public:
     void waitUntilLoadFinished();
     void waitUntilTitleChangedTo(const char* expectedTitle);
     void waitUntilTitleChanged();
+    void showInWindow(GtkWindowType = GTK_WINDOW_POPUP);
     void showInWindowAndWaitUntilMapped(GtkWindowType = GTK_WINDOW_POPUP);
     void resizeView(int width, int height);
     const char* mainResourceData(size_t& mainResourceDataSize);
