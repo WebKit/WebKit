@@ -522,6 +522,7 @@ double AnimationBase::progress(double scale, double offset, const TimingFunction
 
     if (postActive() || !m_animation->duration())
         return 1.0;
+
     if (m_animation->iterationCount() > 0 && elapsedTime >= dur) {
         const int integralIterationCount = static_cast<int>(m_animation->iterationCount());
         const bool iterationCountHasFractional = m_animation->iterationCount() - integralIterationCount;
@@ -540,11 +541,14 @@ double AnimationBase::progress(double scale, double offset, const TimingFunction
                                         ctf->x2(),
                                         ctf->y2(),
                                         fractionalTime, m_animation->duration());
-    } else if (tf->isStepsTimingFunction()) {
+    }
+    
+    if (tf->isStepsTimingFunction()) {
         const StepsTimingFunction* stf = static_cast<const StepsTimingFunction*>(tf);
         return solveStepsFunction(stf->numberOfSteps(), stf->stepAtStart(), fractionalTime);
-    } else
-        return fractionalTime;
+    }
+
+    return fractionalTime;
 }
 
 void AnimationBase::getTimeToNextEvent(double& time, bool& isLooping) const
