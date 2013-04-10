@@ -44,6 +44,7 @@
 #include "ResourceHandleClient.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include "SharedBuffer.h"
 #include <wtf/MainThread.h>
 
 namespace WebCore {
@@ -378,7 +379,9 @@ int BlobResourceHandle::readSync(char* buf, int length)
     else
         result = length - remaining;
 
-    notifyReceiveData(buf, result);
+    if (result > 0)
+        notifyReceiveData(buf, result);
+
     if (!result)
         notifyFinish();
 
@@ -580,7 +583,14 @@ void BlobResourceHandle::notifyResponseOnSuccess()
     response.setHTTPStatusText(isRangeRequest ? httpPartialContentText : httpOKText);
     if (!m_blobData->contentDisposition().isEmpty())
         response.setHTTPHeaderField("Content-Disposition", m_blobData->contentDisposition());
-    client()->didReceiveResponse(this, response);
+
+    // BlobResourceHandle cannot be used with downloading, and doesn't even wait for continueDidReceiveResponse.
+    // It's currently client's responsibility to know that didReceiveResponseAsync cannot be used to convert a
+    // load into a download or blobs.
+    if (client()->usesAsyncCallbacks())
+        client()->didReceiveResponseAsync(this, response);
+    else
+        client()->didReceiveResponse(this, response);
 }
 
 void BlobResourceHandle::notifyResponseOnError()
@@ -606,13 +616,19 @@ void BlobResourceHandle::notifyResponseOnError()
         response.setHTTPStatusText(httpInternalErrorText);
         break;
     }
-    client()->didReceiveResponse(this, response);
+
+    // Note that we don't wait for continueDidReceiveResponse when using didReceiveResponseAsync.
+    // This is not formally correct, but the client has to be a no-op anyway, because blobs can't be downloaded.
+    if (client()->usesAsyncCallbacks())
+        client()->didReceiveResponseAsync(this, response);
+    else
+        client()->didReceiveResponse(this, response);
 }
 
 void BlobResourceHandle::notifyReceiveData(const char* data, int bytesRead)
 {
     if (client())
-        client()->didReceiveData(this, data, bytesRead, bytesRead);
+        client()->didReceiveBuffer(this, SharedBuffer::create(data, bytesRead), bytesRead);
 }
 
 void BlobResourceHandle::notifyFail(int errorCode)
