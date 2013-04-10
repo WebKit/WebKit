@@ -340,7 +340,7 @@ bool JSObjectDeleteProperty(JSContextRef ctx, JSObjectRef object, JSStringRef pr
 
 void* JSObjectGetPrivate(JSObjectRef object)
 {
-    JSObject* jsObject = toJS(object);
+    JSObject* jsObject = uncheckedToJS(object);
     
     if (jsObject->inherits(&JSCallbackObject<JSGlobalObject>::s_info))
         return jsCast<JSCallbackObject<JSGlobalObject>*>(jsObject)->getPrivate();
