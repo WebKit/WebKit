@@ -173,15 +173,12 @@ String WebInspectorProxy::inspectorBaseURL() const
 
 unsigned WebInspectorProxy::platformInspectedWindowHeight()
 {
-    GtkAllocation allocation;
-    gtk_widget_get_allocation(m_page->viewWidget(), &allocation);
-    return allocation.height;
+    return gtk_widget_get_allocated_height(m_page->viewWidget());
 }
 
 unsigned WebInspectorProxy::platformInspectedWindowWidth()
 {
-    notImplemented();
-    return 0;
+    return gtk_widget_get_allocated_width(m_page->viewWidget());
 }
 
 void WebInspectorProxy::platformAttach()

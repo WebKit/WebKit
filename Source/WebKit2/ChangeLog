@@ -1,3 +1,21 @@
+2013-04-10  Zan Dobersek  <zandobersek@gmail.com>
+
+        [GTK][WK2] Implement WebInspectorProxy::platformInspectedWindowWidth
+        https://bugs.webkit.org/show_bug.cgi?id=113498
+
+        Reviewed by Martin Robinson.
+
+        The method was introduced in r147004.
+
+        * UIProcess/API/gtk/tests/TestInspector.cpp: Specify the gMinimumAttachedInspectorWidth variable, reflecting the value
+        of WebInspectorProxy::minimumAttachedWidth. Use it as the width to which the inspected view should be resized in
+        InspectorTest::resizeViewAndAttach.
+        * UIProcess/gtk/WebInspectorProxyGtk.cpp:
+        (WebKit::WebInspectorProxy::platformInspectedWindowHeight): Use the gtk_widget_get_allocated_height method to return the
+        widget height.
+        (WebKit::WebInspectorProxy::platformInspectedWindowWidth): Newly implemented, similarly uses the
+        gtk_widget_get_allocated_width method to return the widget width.
+
 2013-04-09  Antoine Quint  <graouts@apple.com>
 
         WKFrameIsDisplayingMarkupDocument should return true for Web Archives

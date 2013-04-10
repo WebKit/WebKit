@@ -59,6 +59,7 @@ public:
         return test->detach();
     }
 
+    static const unsigned gMinimumAttachedInspectorWidth = 750;
     static const unsigned gMinimumAttachedInspectorHeight = 250;
 
     InspectorTest()
@@ -124,7 +125,7 @@ public:
     void resizeViewAndAttach()
     {
         // Resize the view to make room for the inspector.
-        resizeView(300, (gMinimumAttachedInspectorHeight + 1) * 4 / 3);
+        resizeView(gMinimumAttachedInspectorWidth, (gMinimumAttachedInspectorHeight + 1) * 4 / 3);
         webkit_web_inspector_attach(m_inspector);
     }
 
