@@ -114,10 +114,15 @@ void TiledCoreAnimationDrawingArea::scroll(const IntRect& scrollRect, const IntS
 {
 }
 
-void TiledCoreAnimationDrawingArea::didChangeScrollOffsetForAnyFrame()
+void TiledCoreAnimationDrawingArea::invalidateAllPageOverlays()
 {
     for (PageOverlayLayerMap::iterator it = m_pageOverlayLayers.begin(), end = m_pageOverlayLayers.end(); it != end; ++it)
         it->value->setNeedsDisplay();
+}
+
+void TiledCoreAnimationDrawingArea::didChangeScrollOffsetForAnyFrame()
+{
+    invalidateAllPageOverlays();
 }
 
 void TiledCoreAnimationDrawingArea::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
@@ -439,6 +444,8 @@ void TiledCoreAnimationDrawingArea::updateGeometry(const IntSize& viewSize)
 
     if (!m_layerTreeStateIsFrozen)
         flushLayers();
+
+    invalidateAllPageOverlays();
 
     [CATransaction begin];
     [CATransaction setDisableActions:YES];

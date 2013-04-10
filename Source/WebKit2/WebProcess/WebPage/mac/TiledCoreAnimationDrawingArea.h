@@ -110,6 +110,8 @@ private:
     void updateDebugInfoLayer(bool showLayer);
 
     void updateIntrinsicContentSizeTimerFired(WebCore::Timer<TiledCoreAnimationDrawingArea>*);
+    
+    void invalidateAllPageOverlays();
 
     bool m_layerTreeStateIsFrozen;
     WebCore::LayerFlushScheduler m_layerFlushScheduler;

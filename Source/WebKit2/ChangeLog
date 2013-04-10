@@ -1,3 +1,22 @@
+2013-04-10  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] REGRESSION: Find highlight does not update when the view is resized
+        https://bugs.webkit.org/show_bug.cgi?id=114382
+        <rdar://problem/13599797>
+
+        Reviewed by Simon Fraser.
+
+        Invalidate the page overlays from TiledCoreAnimationDrawingArea::updateGeometry.
+        This will have no effect if the page overlay hasn't previously asked to be painted
+        (as drawsContent will remain false on the layer).
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        (TiledCoreAnimationDrawingArea): Add invalidateAllPageOverlays.
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::invalidateAllPageOverlays): Factor this out of didChangeScrollOffsetForAnyFrame.
+        (WebKit::TiledCoreAnimationDrawingArea::didChangeScrollOffsetForAnyFrame): Call invalidateAllPageOverlays.
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry): Call invalidateAllPageOverlays.
+
 2013-04-10  Beth Dakin  <bdakin@apple.com>
 
         FindBanner matches are offset when the WKView has a header or footer
