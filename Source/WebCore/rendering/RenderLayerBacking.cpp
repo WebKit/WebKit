@@ -46,6 +46,7 @@
 #include "InspectorInstrumentation.h"
 #include "KeyframeList.h"
 #include "PluginViewBase.h"
+#include "ProgressTracker.h"
 #include "RenderApplet.h"
 #include "RenderIFrame.h"
 #include "RenderImage.h"
@@ -208,32 +209,39 @@ TiledBacking* RenderLayerBacking::tiledBacking() const
     return m_graphicsLayer->tiledBacking();
 }
 
-void RenderLayerBacking::adjustTiledBackingCoverage()
+static TiledBacking::TileCoverage computeTileCoverage(const RenderLayerBacking* backing)
 {
-    if (!m_usingTiledCacheLayer)
-        return;
+    // FIXME: When we use TiledBacking for overflow, this should look at RenderView scrollability.
+    Frame* frame = backing->owningLayer()->renderer()->frame();
+    if (!frame)
+        return TiledBacking::CoverageForVisibleArea;
 
     TiledBacking::TileCoverage tileCoverage = TiledBacking::CoverageForVisibleArea;
-
-    // FIXME: When we use TiledBacking for overflow, this should look at RenderView scrollability.
-    Frame* frame = renderer()->frame();
-    if (frame) {
-        FrameView* frameView = frame->view();
-        bool clipsToExposedRect = tiledBacking()->clipsToExposedRect();
+    FrameView* frameView = frame->view();
+    bool useMinimalTilesDuringLoading = frame->page()->progress()->isLoadProgressing() && !frameView->wasScrolledByUser();
+    if (!useMinimalTilesDuringLoading) {
+        bool clipsToExposedRect = backing->tiledBacking()->clipsToExposedRect();
         if (frameView->horizontalScrollbarMode() != ScrollbarAlwaysOff || clipsToExposedRect)
             tileCoverage |= TiledBacking::CoverageForHorizontalScrolling;
 
         if (frameView->verticalScrollbarMode() != ScrollbarAlwaysOff || clipsToExposedRect)
             tileCoverage |= TiledBacking::CoverageForVerticalScrolling;
-
-        if (ScrollingCoordinator* scrollingCoordinator = scrollingCoordinatorFromLayer(m_owningLayer)) {
-            // Ask our TiledBacking for large tiles unless the only reason we're main-thread-scrolling
-            // is a page overlay (find-in-page, the Web Inspector highlight mechanism, etc.).
-            if (scrollingCoordinator->mainThreadScrollingReasons() & ~ScrollingCoordinator::ForcedOnMainThread)
-                tileCoverage |= TiledBacking::CoverageForSlowScrolling;
-        }
     }
+    if (ScrollingCoordinator* scrollingCoordinator = scrollingCoordinatorFromLayer(backing->owningLayer())) {
+        // Ask our TiledBacking for large tiles unless the only reason we're main-thread-scrolling
+        // is a page overlay (find-in-page, the Web Inspector highlight mechanism, etc.).
+        if (scrollingCoordinator->mainThreadScrollingReasons() & ~ScrollingCoordinator::ForcedOnMainThread)
+            tileCoverage |= TiledBacking::CoverageForSlowScrolling;
+    }
+    return tileCoverage;
+}
 
+void RenderLayerBacking::adjustTiledBackingCoverage()
+{
+    if (!m_usingTiledCacheLayer)
+        return;
+
+    TiledBacking::TileCoverage tileCoverage = computeTileCoverage(this);
     tiledBacking()->setTileCoverage(tileCoverage);
 }
 

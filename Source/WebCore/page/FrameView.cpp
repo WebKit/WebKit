@@ -2311,6 +2311,15 @@ void FrameView::updateLayerFlushThrottlingInAllFrames(bool isLoadProgressing)
 #endif
 }
 
+void FrameView::adjustTiledBackingCoverage()
+{
+#if USE(ACCELERATED_COMPOSITING)
+    RenderView* renderView = this->renderView();
+    if (renderView && renderView->layer()->backing())
+        renderView->layer()->backing()->adjustTiledBackingCoverage();
+#endif
+}
+
 void FrameView::layoutTimerFired(Timer<FrameView>*)
 {
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
@@ -3428,7 +3437,10 @@ void FrameView::setWasScrolledByUser(bool wasScrolledByUser)
     if (m_inProgrammaticScroll)
         return;
     m_maintainScrollPositionAnchor = 0;
+    if (m_wasScrolledByUser == wasScrolledByUser)
+        return;
     m_wasScrolledByUser = wasScrolledByUser;
+    adjustTiledBackingCoverage();
 }
 
 void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
