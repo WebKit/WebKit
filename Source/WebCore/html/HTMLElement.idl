@@ -72,9 +72,7 @@
     [Conditional=MICRODATA] readonly attribute DOMSettableTokenList itemRef;
     [Conditional=MICRODATA] readonly attribute DOMSettableTokenList itemProp;
 
-#if defined(ENABLE_MICRODATA) && ENABLE_MICRODATA
     [Conditional=MICRODATA] readonly attribute HTMLPropertiesCollection properties;
-#endif
 #endif
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP

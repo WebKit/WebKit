@@ -180,9 +180,7 @@
 
     NodeList getElementsByName(in [Optional=DefaultIsUndefined] DOMString elementName);
 
-#if defined(ENABLE_MICRODATA) && ENABLE_MICRODATA
-    NodeList getItems(in [TreatNullAs=NullString, TreatUndefinedAs=NullString, Optional=DefaultIsUndefined] DOMString typeNames);
-#endif
+    [Conditional=MICRODATA] NodeList getItems(in [TreatNullAs=NullString, TreatUndefinedAs=NullString, Optional=DefaultIsUndefined] DOMString typeNames);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
              [Custom] attribute Location location;
