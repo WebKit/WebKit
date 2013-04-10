@@ -88,10 +88,13 @@ CFDictionaryRef WebBackForwardList::createCFDictionaryRepresentation(WebPageProx
             return 0;
         }
 
-        if (filter && !filter(toAPI(m_page), WKPageGetSessionHistoryURLValueType(), toURLRef(m_entries[i]->originalURL().impl()), context)) {
-            if (i <= m_currentIndex)
-                currentIndex--;
-            continue;
+        if (filter) {
+            if (!filter(toAPI(m_page), WKPageGetSessionBackForwardListItemValueType(), toAPI(m_entries[i].get()), context)
+                || !filter(toAPI(m_page), WKPageGetSessionHistoryURLValueType(), toURLRef(m_entries[i]->originalURL().impl()), context)) {
+                if (i <= m_currentIndex)
+                    currentIndex--;
+                continue;
+            }
         }
         
         RetainPtr<CFStringRef> url = m_entries[i]->url().createCFString();

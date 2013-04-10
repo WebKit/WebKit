@@ -264,6 +264,12 @@ WKStringRef WKPageGetSessionHistoryURLValueType()
     return toAPI(sessionHistoryURLValueType);
 }
 
+WKStringRef WKPageGetSessionBackForwardListItemValueType()
+{
+    static WebString* sessionBackForwardListValueType = WebString::create("SessionBackForwardListItem").leakRef();
+    return toAPI(sessionBackForwardListValueType);
+}
+
 WKDataRef WKPageCopySessionState(WKPageRef pageRef, void *context, WKPageSessionStateFilterCallback filter)
 {
     return toAPI(toImpl(pageRef)->sessionStateData(filter, context).leakRef());

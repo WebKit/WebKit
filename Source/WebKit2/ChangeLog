@@ -1,3 +1,20 @@
+2013-04-09  Mark Rowe  <mrowe@apple.com>
+
+        <rdar://problem/13617104> WKPageCopySessionState needs to provide more context to the filter callback
+
+        Introduce a new value type for WKPageSessionStateFilterCallback that represents the passing
+        of whole WKBackForwardListItemRefs to the filter callback. This allows clients to consider
+        more than the original URL of the item when filtering entries from the session state.
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetSessionBackForwardListItemValueType): Return a static string representing our new value type.
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/cf/WebBackForwardListCF.cpp:
+        (WebKit::WebBackForwardList::createCFDictionaryRepresentation): Call the filter function with each of the
+        possible value types in turn, respecting the first false value, if any, that is returned.
+
 2013-04-10  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         [GTK] Add support for Page Visibility

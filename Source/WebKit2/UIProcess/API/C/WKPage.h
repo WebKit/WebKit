@@ -410,6 +410,7 @@ WK_EXPORT void WKPageSetCustomTextEncodingName(WKPageRef page, WKStringRef encod
 WK_EXPORT void WKPageTerminate(WKPageRef page);
 
 WK_EXPORT WKStringRef WKPageGetSessionHistoryURLValueType(void);
+WK_EXPORT WKStringRef WKPageGetSessionBackForwardListItemValueType(void);
 
 typedef bool (*WKPageSessionStateFilterCallback)(WKPageRef page, WKStringRef valueType, WKTypeRef value, void* context);
 WK_EXPORT WKDataRef WKPageCopySessionState(WKPageRef page, void* context, WKPageSessionStateFilterCallback urlAllowedCallback);
