@@ -1,5 +1,21 @@
 2013-04-10  Tim Horton  <timothy_horton@apple.com>
 
+        [wk2] Un-pollute TCADA methods with "PageOverlayLayerMap::iterator end"
+        https://bugs.webkit.org/show_bug.cgi?id=114387
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences):
+        (WebKit::TiledCoreAnimationDrawingArea::paintContents):
+        (WebKit::TiledCoreAnimationDrawingArea::flushLayers):
+        (WebKit::TiledCoreAnimationDrawingArea::setExposedRect):
+        (WebKit::TiledCoreAnimationDrawingArea::mainFrameScrollabilityChanged):
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry):
+        (WebKit::TiledCoreAnimationDrawingArea::setRootCompositingLayer):
+
+2013-04-10  Tim Horton  <timothy_horton@apple.com>
+
         [wk2] REGRESSION: Find highlight does not update when the view is resized
         https://bugs.webkit.org/show_bug.cgi?id=114382
         <rdar://problem/13599797>
