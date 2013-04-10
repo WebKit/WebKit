@@ -1,3 +1,24 @@
+2013-04-10  Tobias Mueller  <tobiasmue@gnome.org>
+
+        Fixed build failure in Plugin.h: FloatPoint was not in namespace WebCore
+
+        make[1]: *** Waiting for unfinished jobs....
+        In file included from Source/WebKit2/PluginProcess/PluginCreationParameters.h:31:0,
+                         from Source/WebKit2/PluginProcess/PluginCreationParameters.cpp:27:
+        ./Source/WebKit2/WebProcess/Plugins/Plugin.h:268:58: error: 'FloatPoint' in namespace 'WebCore' does not name a type
+        ./Source/WebKit2/WebProcess/Plugins/Plugin.h:268:77: error: ISO C++ forbids declaration of 'parameter' with no type [-fpermissive]
+        cc1plus: warning: unrecognized command line option "-Wno-c++11-extensions" [enabled by default]
+        make[1]: *** [Source/WebKit2/PluginProcess/libwebkit2gtk_3_0_la-PluginCreationParameters.lo] Error 1
+
+        It now passes that make target.
+
+        https://bugs.webkit.org/show_bug.cgi?id=111862
+
+        Reviewed by Darin Adler.
+
+        * WebProcess/Plugins/Plugin.h:
+        (WebCore): Added FloatPoint to the WebCore namespace
+
 2013-04-08  Anders Carlsson  <andersca@apple.com>
 
         Remove unneeded headers from FrameLoader.h
