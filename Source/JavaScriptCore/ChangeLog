@@ -1,3 +1,22 @@
+2013-04-10  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSObject::getOwnNonIndexPropertyNames calculates numCacheableSlots incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=114235
+
+        Reviewed by Filip Pizlo.
+
+        If the object doesn't have any properties but the prototype does, we'll assume those prototype properties are 
+        accessible in the base object's backing store, which is bad.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::getPropertyNames):
+        (JSC::JSObject::getOwnNonIndexPropertyNames):
+        * runtime/PropertyNameArray.h:
+        (JSC::PropertyNameArray::PropertyNameArray):
+        (JSC::PropertyNameArray::setNumCacheableSlotsForObject):
+        (JSC::PropertyNameArray::setBaseObject):
+        (PropertyNameArray):
+
 2013-04-10  Patrick Gansterer  <paroga@webkit.org>
 
         Remove code duplicates from MacroAssemblerARM

@@ -1442,6 +1442,7 @@ bool JSObject::getPropertySpecificValue(ExecState* exec, PropertyName propertyNa
 
 void JSObject::getPropertyNames(JSObject* object, ExecState* exec, PropertyNameArray& propertyNames, EnumerationMode mode)
 {
+    propertyNames.setBaseObject(object);
     object->methodTable()->getOwnPropertyNames(object, exec, propertyNames, mode);
 
     if (object->prototype().isNull())
@@ -1537,7 +1538,7 @@ void JSObject::getOwnNonIndexPropertyNames(JSObject* object, ExecState* exec, Pr
     object->structure()->getPropertyNamesFromStructure(exec->globalData(), propertyNames, mode);
 
     if (canCachePropertiesFromStructure)
-        propertyNames.setNumCacheableSlots(propertyNames.size());
+        propertyNames.setNumCacheableSlotsForObject(object, propertyNames.size());
 }
 
 double JSObject::toNumber(ExecState* exec) const
