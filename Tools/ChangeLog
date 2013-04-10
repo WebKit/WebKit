@@ -1,3 +1,18 @@
+2013-04-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Include a crash-fixing patch for the at-spi2-atk dependency
+        https://bugs.webkit.org/show_bug.cgi?id=114365
+
+        Reviewed by Martin Robinson.
+
+        Add a patch for the at-spi2-atk 2.8.0 dependency that is applied through the Jhbuild setup.
+        The patch addresses crashes in the tally_event_reply method. It is already committed into the
+        at-spi2-atk source tree and will be available with the next stable release, after which the
+        patch should be removed and the dependency version bumped.
+
+        * gtk/jhbuild.modules:
+        * gtk/patches/at-spi2-atk-2.8.0-null-check-after-cleanup.patch: Added.
+
 2013-04-10  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed build fix. Correct DropBox download link.

@@ -240,6 +240,7 @@
     <branch module="pub/GNOME/sources/at-spi2-atk/2.8/at-spi2-atk-2.8.0.tar.xz" version="2.8.0"
             repo="ftp.gnome.org"
             hash="sha256:4688acbc1474cda0aa49341f109ad0726603ce3e872cc6521c74931338c7ba20">
+      <patch file="at-spi2-atk-2.8.0-null-check-after-cleanup.patch" strip="1"/>
     </branch>
     <dependencies>
       <dep package="glib"/>
