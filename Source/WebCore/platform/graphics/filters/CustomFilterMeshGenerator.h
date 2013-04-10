@@ -35,6 +35,7 @@
 #include "CustomFilterConstants.h"
 #include "CustomFilterOperation.h"
 #include "FloatRect.h"
+#include <stdio.h>
 
 namespace WebCore {
 
