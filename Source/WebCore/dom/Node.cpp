@@ -2152,11 +2152,18 @@ void Node::didMoveToNewDocument(Document* oldDocument)
 {
     TreeScopeAdopter::ensureDidMoveToNewDocumentWasCalled(oldDocument);
 
+    if (const EventTargetData* eventTargetData = this->eventTargetData()) {
+        const EventListenerMap& listenerMap = eventTargetData->eventListenerMap;
+        if (!listenerMap.isEmpty()) {
+            Vector<AtomicString> types = listenerMap.eventTypes();
+            for (unsigned i = 0; i < types.size(); ++i)
+                document()->addListenerTypeIfNeeded(types[i]);
+        }
+    }
+
     if (AXObjectCache::accessibilityEnabled() && oldDocument)
         if (AXObjectCache* cache = oldDocument->existingAXObjectCache())
             cache->remove(this);
-
-    // FIXME: Event listener types for this node should be set on the new owner document here.
 
     const EventListenerVector& wheelListeners = getEventListeners(eventNames().mousewheelEvent);
     for (size_t i = 0; i < wheelListeners.size(); ++i) {
