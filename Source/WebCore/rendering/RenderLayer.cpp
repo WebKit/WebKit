@@ -5566,6 +5566,11 @@ bool RenderLayer::backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect)
     if (paintsWithTransparency(PaintBehaviorNormal))
         return false;
 
+#if ENABLE(CSS_FILTERS)
+    if (paintsWithFilters() && renderer()->style()->filter().hasFilterThatAffectsOpacity())
+        return false;
+#endif
+
     // FIXME: Handle simple transforms.
     if (paintsWithTransform(PaintBehaviorNormal))
         return false;
