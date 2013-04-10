@@ -1,3 +1,16 @@
+2013-04-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed an annoying message from svn-create-patch
+        https://bugs.webkit.org/show_bug.cgi?id=114332
+
+        Reviewed by Alexey Proskuryakov.
+
+        I see this message basically every time I write a patch, so it must not
+        be true.
+
+        * Scripts/svn-create-patch:
+        (generateDiff):
+
 2013-04-10  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         [GTK] Add support for Page Visibility
