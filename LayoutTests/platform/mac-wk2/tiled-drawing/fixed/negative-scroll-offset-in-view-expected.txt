@@ -5,7 +5,7 @@
     (Fixed node
       (anchor edges: AnchorEdgeLeft AnchorEdgeBottom)
       (viewport rect at last layout: 0.00 0.00 785.00 600.00)
-      (layer position at last layout 0.00 516.00)
+      (layer position at last layout 0.00 512.00)
     )
   )
 )

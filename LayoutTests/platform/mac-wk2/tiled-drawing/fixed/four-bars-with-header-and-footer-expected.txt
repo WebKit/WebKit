@@ -11,17 +11,17 @@
     (Fixed node
       (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
       (viewport rect at last layout: 0.00 100.00 785.00 600.00)
-      (layer position at last layout 10.00 300.00)
+      (layer position at last layout 6.00 296.00)
     )
     (Fixed node
       (anchor edges: AnchorEdgeRight AnchorEdgeTop)
       (viewport rect at last layout: 0.00 100.00 785.00 600.00)
-      (layer position at last layout 601.00 300.00)
+      (layer position at last layout 597.00 296.00)
     )
     (Fixed node
       (anchor edges: AnchorEdgeLeft AnchorEdgeBottom)
       (viewport rect at last layout: 0.00 100.00 785.00 600.00)
-      (layer position at last layout 0.00 616.00)
+      (layer position at last layout 0.00 612.00)
     )
   )
 )
