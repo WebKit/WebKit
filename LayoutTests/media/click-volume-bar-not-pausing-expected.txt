@@ -1,0 +1,11 @@
+Click on volume bar on a MediaDocument does not pause.
+
+
+EVENT(playing)
+EXPECTED (mediaElement.volume == '1') OK
+EXPECTED (mediaElement.paused == 'false') OK
+EVENT(volumechange)
+EXPECTED (mediaElement.volume != '1') OK
+EXPECTED (mediaElement.paused == 'false') OK
+END OF TEST
+
