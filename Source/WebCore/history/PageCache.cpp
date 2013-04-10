@@ -43,6 +43,7 @@
 #include "FrameLoaderStateMachine.h"
 #include "FrameView.h"
 #include "HistogramSupport.h"
+#include "HistoryController.h"
 #include "HistoryItem.h"
 #include "Logging.h"
 #include "Page.h"

@@ -30,6 +30,7 @@
 #include "TestController.h"
 #include <WebKit2/WKPage.h>
 #include <WebKit2/WKRetainPtr.h>
+#include <stdio.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/CString.h>
 

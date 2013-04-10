@@ -34,6 +34,7 @@
 #include "FileSystem.h"
 #include "KURL.h"
 #include <wtf/Forward.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 

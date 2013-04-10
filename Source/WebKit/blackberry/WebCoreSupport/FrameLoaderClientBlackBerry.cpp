@@ -37,6 +37,7 @@
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
 #include "HTTPParsers.h"
+#include "HistoryController.h"
 #include "HistoryItem.h"
 #include "IconDatabase.h"
 #include "Image.h"

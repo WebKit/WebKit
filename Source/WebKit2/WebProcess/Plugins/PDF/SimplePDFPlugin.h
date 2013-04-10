@@ -34,6 +34,8 @@ typedef const struct OpaqueJSContext* JSContextRef;
 typedef struct OpaqueJSValue* JSObjectRef;
 typedef const struct OpaqueJSValue* JSValueRef;
 
+OBJC_CLASS NSData;
+
 namespace WebCore {
 struct PluginInfo;
 }

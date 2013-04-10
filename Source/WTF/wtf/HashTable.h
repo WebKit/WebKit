@@ -24,7 +24,6 @@
 
 #include <wtf/Alignment.h>
 #include <wtf/Assertions.h>
-#include <wtf/DataLog.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashTraits.h>
 #include <wtf/StdLibExtras.h>
@@ -37,10 +36,14 @@
 #include <wtf/PassOwnPtr.h>
 #endif
 
-namespace WTF {
-
 #define DUMP_HASHTABLE_STATS 0
 #define DUMP_HASHTABLE_STATS_PER_TABLE 0
+
+#if DUMP_HASHTABLE_STATS_PER_TABLE
+#include <wtf/DataLog.h>
+#endif
+
+namespace WTF {
 
 // Enables internal WTF consistency checks that are invoked automatically. Non-WTF callers can call checkTableConsistency() even if internal checks are disabled.
 #define CHECK_HASHTABLE_CONSISTENCY 0

@@ -32,6 +32,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "HistoryController.h"
 #include "HistoryItem.h"
 #include "Page.h"
 #include "SecurityOrigin.h"

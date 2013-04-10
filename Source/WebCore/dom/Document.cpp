@@ -105,6 +105,7 @@
 #include "HTTPParsers.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "IconController.h"
 #include "ImageLoader.h"
 #include "InspectorCounters.h"
 #include "InspectorInstrumentation.h"

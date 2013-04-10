@@ -34,6 +34,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "IconController.h"
 #include "IconDatabase.h"
 #include "Logging.h"
 #include "ResourceBuffer.h"

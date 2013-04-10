@@ -31,7 +31,8 @@
 #ifndef MixedContentChecker_h
 #define MixedContentChecker_h
 
-#include <wtf/text/WTFString.h>
+#include <wtf/Forward.h>
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 

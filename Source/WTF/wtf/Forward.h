@@ -49,6 +49,7 @@ namespace WTF {
     class Int32Array;
     class MemoryInstrumentation;
     class MemoryObjectInfo;
+    class PrintStream;
     class String;
     template <typename T> class StringBuffer;
     class StringBuilder;
@@ -83,6 +84,7 @@ using WTF::Int16Array;
 using WTF::Int32Array;
 using WTF::MemoryInstrumentation;
 using WTF::MemoryObjectInfo;
+using WTF::PrintStream;
 using WTF::String;
 using WTF::StringBuffer;
 using WTF::StringBuilder;

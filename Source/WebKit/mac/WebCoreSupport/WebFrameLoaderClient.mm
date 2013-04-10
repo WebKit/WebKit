@@ -100,6 +100,7 @@
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HTMLParserIdioms.h>
 #import <WebCore/HTMLPlugInElement.h>
+#import <WebCore/HistoryController.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/IconDatabase.h>

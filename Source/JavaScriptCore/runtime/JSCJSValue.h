@@ -28,6 +28,7 @@
 #include <stdint.h>
 #include <wtf/AlwaysInline.h>
 #include <wtf/Assertions.h>
+#include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
 #include <wtf/MathExtras.h>

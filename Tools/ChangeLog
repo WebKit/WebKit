@@ -1,3 +1,14 @@
+2013-04-10  Anders Carlsson  <andersca@apple.com>
+
+        Remove unneeded headers from FrameLoader.h
+        https://bugs.webkit.org/show_bug.cgi?id=114223
+
+        Reviewed by Geoffrey Garen.
+
+        Add back headers implicitly included by other headers.
+
+        * WebKitTestRunner/WorkQueueManager.cpp:
+
 2013-04-10  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Include a crash-fixing patch for the at-spi2-atk dependency
