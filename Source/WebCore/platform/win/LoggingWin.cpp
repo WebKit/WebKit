@@ -93,6 +93,7 @@ void initializeLoggingChannelsIfNecessary()
     initializeWithUserDefault(LogPageCache);
     initializeWithUserDefault(LogPlatformLeaks);
     initializeWithUserDefault(LogResourceLoading);
+    initializeWithUserDefault(LogAnimations);
     initializeWithUserDefault(LogNetwork);
     initializeWithUserDefault(LogFTP);
     initializeWithUserDefault(LogThreading);
