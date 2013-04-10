@@ -380,6 +380,9 @@ static void switchToUTF16(xmlParserCtxtPtr ctxt)
     // resetting the encoding to UTF-16 before every chunk.  Otherwise libxml
     // will detect <?xml version="1.0" encoding="<encoding name>"?> blocks
     // and switch encodings, causing the parse to fail.
+
+    // FIXME: Can we just use XML_PARSE_IGNORE_ENC now?
+
     const UChar BOM = 0xFEFF;
     const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char*>(&BOM);
     xmlSwitchEncoding(ctxt, BOMHighByte == 0xFF ? XML_CHAR_ENCODING_UTF16LE : XML_CHAR_ENCODING_UTF16BE);
@@ -499,7 +502,10 @@ PassRefPtr<XMLParserContext> XMLParserContext::createStringParser(xmlSAXHandlerP
 
     xmlParserCtxtPtr parser = xmlCreatePushParserCtxt(handlers, 0, 0, 0, 0);
     parser->_private = userData;
-    parser->replaceEntities = true;
+
+    // Substitute entities.
+    xmlCtxtUseOptions(parser, XML_PARSE_NOENT);
+
     switchToUTF16(parser);
 
     return adoptRef(new XMLParserContext(parser));
@@ -523,12 +529,10 @@ PassRefPtr<XMLParserContext> XMLParserContext::createMemoryParser(xmlSAXHandlerP
     if (!parser)
         return 0;
 
-    // Copy the sax handler
     memcpy(parser->sax, handlers, sizeof(xmlSAXHandler));
 
-    // Set parser options.
-    // XML_PARSE_NODICT: default dictionary option.
-    // XML_PARSE_NOENT: force entities substitutions.
+    // Substitute entities.
+    // FIXME: Why is XML_PARSE_NODICT needed? This is different from what createStringParser does.
     xmlCtxtUseOptions(parser, XML_PARSE_NODICT | XML_PARSE_NOENT);
 
     // Internal initialization
