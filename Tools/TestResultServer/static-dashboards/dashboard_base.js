@@ -151,7 +151,7 @@ function currentBuilderGroupCategory()
     case 'cc_unittests':
         return CC_UNITTEST_BUILDER_GROUPS;
     default:
-        return CHROMIUM_GTESTS_BUILDER_GROUPS;
+        return LAYOUT_TESTS_BUILDER_GROUPS;
     }
 }
 

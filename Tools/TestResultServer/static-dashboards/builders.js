@@ -299,10 +299,7 @@ var TEST_SHELL_TESTS_BUILDER_GROUPS = {
 };
 
 var LAYOUT_TESTS_BUILDER_GROUPS = {
-    '@ToT - chromium.org': null,
     '@ToT - webkit.org': null,
-    '@DEPS - chromium.org': null,
-    'Content Shell @ToT - chromium.org': null,
 };
 
 var CHROMIUM_GPU_TESTS_BUILDER_GROUPS = {
