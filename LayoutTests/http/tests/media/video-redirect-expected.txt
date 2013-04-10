@@ -1,0 +1,3 @@
+EVENT(canplay)
+END OF TEST
+

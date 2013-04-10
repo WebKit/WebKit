@@ -1287,21 +1287,10 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
         // Found a candidate. new-location is not always an absolute url
         // though. We need to take the base of the current url and
         // append the value of new-location to it.
+        KURL baseUrl = gst_uri_is_valid(newLocation) ? KURL() : m_url;
+        KURL newUrl = KURL(baseUrl, newLocation);
 
-        gchar* currentLocation = 0;
-        g_object_get(m_playBin.get(), "uri", &currentLocation, NULL);
-
-        KURL currentUrl(KURL(), currentLocation);
-        g_free(currentLocation);
-
-        KURL newUrl;
-
-        if (gst_uri_is_valid(newLocation))
-            newUrl = KURL(KURL(), newLocation);
-        else
-            newUrl = KURL(KURL(), currentUrl.baseAsString() + newLocation);
-
-        RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::create(currentUrl);
+        RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::create(m_url);
         if (securityOrigin->canRequest(newUrl)) {
             LOG_MEDIA_MESSAGE("New media url: %s", newUrl.string().utf8().data());
 
@@ -1320,10 +1309,12 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
             if (state <= GST_STATE_READY) {
                 // Set the new uri and start playing.
                 g_object_set(m_playBin.get(), "uri", newUrl.string().utf8().data(), NULL);
+                m_url = newUrl;
                 gst_element_set_state(m_playBin.get(), GST_STATE_PLAYING);
                 return true;
             }
-        }
+        } else
+            LOG_MEDIA_MESSAGE("Not allowed to load new media location: %s", newUrl.string().utf8().data());
     }
     m_mediaLocationCurrentIndex--;
     return false;
