@@ -4,8 +4,14 @@
 <script src="../js/resources/js-test-pre.js"></script>
 
 <style>
-#outer {
-    padding-top: 200px;
+#wrapper {
+    width: 40px;
+}
+
+#outer-background-shorthand {
+    width: 20px;
+    padding-top: 20px;
+    float:right;
 	background:-webkit-gradient(
 	    linear, 
 	    left top, 
@@ -14,8 +20,20 @@
 	);
 }
 
-#inner {
-    height: 100px;
+#outer-background-size-auto {
+    width: 20px;
+    padding-top: 20px;
+	background-size: auto;
+	background-image: -webkit-gradient(
+	    linear, 
+	    left top, 
+	    left bottom, 
+	    color-stop(0%, rgba(255,255,0,0)), color-stop(100%, rgba(0,0,0,1))
+	);
+}
+
+.inner {
+    height: 10px;
 }
 </style>
 
@@ -24,7 +42,9 @@ description("This test verifies that gradient background gets repainted properly
 
 function start() {
     window.setTimeout(function() { 
-        document.getElementById('inner').style.height = 300 + 'px'; 
+        document.getElementsByClassName('inner')[0].style.height = 200 + 'px'; 
+        document.getElementsByClassName('inner')[1].style.height = 200 + 'px'; 
+        
         window.setTimeout(logRepaints, 200);
     }, 0); 
 
@@ -41,15 +61,22 @@ function logRepaints() {
         
     repaintRects = window.internals.repaintRectsAsText(document);
     window.internals.stopTrackingRepaints(document);
-    shouldNotBe("repaintRects.indexOf('500')", "-1");
+    shouldNotBe("repaintRects.indexOf('28 84')", "-1");
+    shouldNotBe("repaintRects.indexOf('8 84')", "-1");
     finishJSTest();
 }
 </script>
 </head>
 
 <body onload='start();'>
-<div id='outer'>
-    <div id='inner'>
+<div id='wrapper'>
+    <div id='outer-background-shorthand'>
+        <div class='inner'>
+        </div>
+    </div>
+    <div id='outer-background-size-auto'>
+        <div class='inner'>
+        </div>
     </div>
 </div>
 </body>
