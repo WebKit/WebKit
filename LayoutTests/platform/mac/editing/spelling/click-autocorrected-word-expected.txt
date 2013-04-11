@@ -64,7 +64,12 @@ PASS markerRange.startOffset is textNode.textContent.indexOf(markerRange.toStrin
 PASS markerRange.endOffset is markerRange.startOffset + markerRange.toString().length
 PASS internals.markerRangeForNode(textNode, 'replacement', 1) is null
 PASS internals.markerRangeForNode(textNode, 'spelling', 0) is null
-PASS internals.markerRangeForNode(textNode, 'autocorrected', 0) is null
+PASS markerRange = internals.markerRangeForNode(textNode, 'autocorrected', 0); markerRange.startContainer is textNode
+PASS markerRange.toString() is 'message'
+PASS markerRange.endContainer is textNode
+PASS markerRange.startOffset is textNode.textContent.indexOf(markerRange.toString())
+PASS markerRange.endOffset is markerRange.startOffset + markerRange.toString().length
+PASS internals.markerRangeForNode(textNode, 'autocorrected', 1) is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -34,7 +34,13 @@ function editingTest() {
         shouldBe("markerRange.endOffset", "markerRange.startOffset + markerRange.toString().length");
         shouldBeNull("internals.markerRangeForNode(textNode, 'replacement', 1)");
         shouldBeNull("internals.markerRangeForNode(textNode, 'spelling', 0)");
-        shouldBeNull("internals.markerRangeForNode(textNode, 'autocorrected', 0)");
+
+        shouldBe("markerRange = internals.markerRangeForNode(textNode, 'autocorrected', 0); markerRange.startContainer", "textNode");
+        shouldBe("markerRange.toString()", "'message'");
+        shouldBe("markerRange.endContainer", "textNode");
+        shouldBe("markerRange.startOffset", "textNode.textContent.indexOf(markerRange.toString())");
+        shouldBe("markerRange.endOffset", "markerRange.startOffset + markerRange.toString().length");
+        shouldBeNull("internals.markerRangeForNode(textNode, 'autocorrected', 1)");
     }
 }
 

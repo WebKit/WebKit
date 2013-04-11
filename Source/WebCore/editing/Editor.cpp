@@ -2298,6 +2298,10 @@ void Editor::markAndReplaceFor(PassRefPtr<SpellCheckRequest> request, const Vect
                         cache->postNotification(root, AXObjectCache::AXAutocorrectionOccured, true);
                 }
 
+                // Skip all other results for the replaced text.
+                while (i + 1 < results.size() && results[i + 1].location + offsetDueToReplacement <= resultLocation)
+                    i++;
+
                 selectionChanged = true;
                 offsetDueToReplacement += replacement.length() - resultLength;
                 if (resultLocation < selectionOffset)
