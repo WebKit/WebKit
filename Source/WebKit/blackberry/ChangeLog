@@ -1,3 +1,24 @@
+2013-04-11  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Initial scale changes depending on the order of page navigations
+        https://bugs.webkit.org/show_bug.cgi?id=114448
+
+        Reviewed by Rob Buis.
+
+        PR: 323941
+        During page transitions, absoluteVisibleOverflowSize() and contentsSize()
+        in fixedLayoutSize() were based on the old page when we just started or
+        committed provisinal load. In that case, fixedLayoutSize() is very old
+        page dependent and can cause inconsistent behaviors. For example, if
+        the old page contents width is 4000, we will get DEFAULT_MAX_LAYOUT_WIDTH 1024
+        as the new page's fixedLayoutSize; however, we will get 768 if we
+        navigate to the new page directly.
+        To fix that, return default layout size if the page doesn't have
+        virtual viewport and m_loadState is Provisional.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::fixedLayoutSize):
+
 2013-04-11  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] LayerTexture refactoring

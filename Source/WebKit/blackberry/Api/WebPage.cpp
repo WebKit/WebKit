@@ -2320,7 +2320,10 @@ IntSize WebPagePrivate::fixedLayoutSize(bool snapToIncrement) const
 
     // If the load state is none then we haven't actually got anything yet, but we need to layout
     // the entire page so that the user sees the entire page (unrendered) instead of just part of it.
-    if (m_loadState == None)
+    // If the load state is Provisional, it is possible that absoluteVisibleOverflowSize() and
+    // contentsSize() are based on the old page and cause inconsistent fixedLayoutSize, so layout the
+    // new page based on the defaultLayoutSize as well.
+    if (m_loadState == None || m_loadState == Provisional)
         return IntSize(defaultLayoutWidth, defaultLayoutHeight);
 
     if (m_viewMode == FixedDesktop) {
