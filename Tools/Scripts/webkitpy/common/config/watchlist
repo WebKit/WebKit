@@ -371,7 +371,7 @@
         "QtWebKit2PlatformSpecific": [ "alexis@webkit.org", "cmarcelo@webkit.org", "abecsi@webkit.org" ],
         "QtWebKit2PublicAPI": [ "alexis@webkit.org", "cmarcelo@webkit.org", "abecsi@webkit.org" ],
         "RegionsDevelopment|RegionsExpectationsMore|RegionsExpectationsLess|RegionsUsage": [ "WebkitBugTracker@adobe.com" ],
-        "Rendering": [ "eric@webkit.org", "ojan.autocc@gmail.com", "esprehn+autocc@chromium.org" ],
+        "Rendering": [ "ojan.autocc@gmail.com", "esprehn+autocc@chromium.org" ],
         "RenderLayers" : [ "simon.fraser@apple.com" ],
         "SVG": ["schenney@chromium.org", "pdr@google.com", "fmalita@chromium.org", "dominik.rottsches@intel.com" ],
         "SVNScripts": [ "dbates@webkit.org" ],
@@ -390,7 +390,7 @@
         "WebSocket": [ "yutak@chromium.org", "toyoshim+watchlist@chromium.org" ],
         "XSS": [ "dbates@webkit.org", "ojan.autocc@gmail.com" ],
         "webkitperl": [ "dbates@webkit.org" ],
-        "webkitpy": [ "dpranke@chromium.org", "eric@webkit.org" ],
+        "webkitpy": [ "dpranke@chromium.org" ],
     },
     "MESSAGE_RULES": {
         "AppleMacPublicApi": [ "Please wait for approval from timothy@apple.com (or another member "

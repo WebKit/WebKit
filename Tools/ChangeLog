@@ -1,3 +1,9 @@
+2013-04-10  Eric Seidel  <eric@webkit.org>
+
+        Remove myself from the watchlists, I'm getting too much bug mail. :)
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-04-10  Commit Queue  <rniwa@webkit.org>
 
         Unreviewed, rolling out r148158.
