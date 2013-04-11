@@ -258,8 +258,11 @@ private:
     void updateImageContents();
 
     Color rendererBackgroundColor() const;
-    void updateBackgroundColor(bool isSimpleContainer);
-    void updateContentsRect(bool isSimpleContainer);
+    void updateDirectlyCompositedBackgroundColor(bool isSimpleContainer, bool& didUpdateContentsRect);
+    void updateDirectlyCompositedBackgroundImage(bool isSimpleContainer, bool& didUpdateContentsRect);
+    void updateDirectlyCompositedContents(bool isSimpleContainer, bool& didUpdateContentsRect);
+
+    void resetContentsRect();
 
     bool hasVisibleNonCompositingDescendantLayers() const;
 

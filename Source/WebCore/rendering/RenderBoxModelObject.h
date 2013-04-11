@@ -44,6 +44,7 @@ enum BackgroundBleedAvoidance {
 enum ContentChangeType {
     ImageChanged,
     MaskImageChanged,
+    BackgroundImageChanged,
     CanvasChanged,
     CanvasPixelsChanged,
     VideoChanged,
@@ -174,6 +175,7 @@ public:
 
     bool canHaveBoxInfoInRegion() const { return !isFloating() && !isReplaced() && !isInline() && !hasColumns() && !isTableCell() && isBlockFlow(); }
 
+    void getGeometryForBackgroundImage(IntRect& destRect, IntPoint& phase, IntSize& tileSize);
 #if USE(ACCELERATED_COMPOSITING)
     void contentChanged(ContentChangeType);
     bool hasAcceleratedCompositing() const;

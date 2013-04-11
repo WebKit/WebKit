@@ -552,7 +552,10 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
     } else
         m_graphicsLayer->setReplicatedByLayer(0);
 
-    updateBackgroundColor(isSimpleContainerCompositingLayer());
+    bool isSimpleContainer = isSimpleContainerCompositingLayer();
+    bool didUpdateContentsRect = false;
+    updateDirectlyCompositedContents(isSimpleContainer, didUpdateContentsRect);
+
     updateRootLayerConfiguration();
     
     if (isDirectlyCompositedImage())
@@ -854,11 +857,20 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     // If this layer was created just for clipping or to apply perspective, it doesn't need its own backing store.
     setRequiresOwnBackingStore(compositor()->requiresOwnBackingStore(m_owningLayer, compAncestor));
 
-    updateContentsRect(isSimpleContainer);
-    updateBackgroundColor(isSimpleContainer);
+    bool didUpdateContentsRect = false;
+    updateDirectlyCompositedContents(isSimpleContainer, didUpdateContentsRect);
+    if (!didUpdateContentsRect)
+        resetContentsRect();
+
     updateDrawsContent(isSimpleContainer);
     updateAfterWidgetResize();
     registerScrollingLayers();
+}
+
+void RenderLayerBacking::updateDirectlyCompositedContents(bool isSimpleContainer, bool& didUpdateContentsRect)
+{
+    updateDirectlyCompositedBackgroundImage(isSimpleContainer, didUpdateContentsRect);
+    updateDirectlyCompositedBackgroundColor(isSimpleContainer, didUpdateContentsRect);
 }
 
 void RenderLayerBacking::registerScrollingLayers()
@@ -932,15 +944,12 @@ void RenderLayerBacking::updateInternalHierarchy()
     }
 }
 
-void RenderLayerBacking::updateContentsRect(bool isSimpleContainer)
+void RenderLayerBacking::resetContentsRect()
 {
-    IntRect contentsRect;
-    if (isSimpleContainer && renderer()->hasBackground())
-        contentsRect = backgroundBox();
-    else
-        contentsRect = contentsBox();
-
-    m_graphicsLayer->setContentsRect(contentsRect);
+    IntRect rect = contentsBox();
+    m_graphicsLayer->setContentsRect(rect);
+    m_graphicsLayer->setContentsTileSize(IntSize());
+    m_graphicsLayer->setContentsTilePhase(IntPoint());
 }
 
 void RenderLayerBacking::updateDrawsContent()
@@ -1356,9 +1365,17 @@ static bool hasBoxDecorations(const RenderStyle* style)
     return style->hasBorder() || style->hasBorderRadius() || style->hasOutline() || style->hasAppearance() || style->boxShadow() || style->hasFilter();
 }
 
+static bool canCreateTiledImage(const RenderStyle*);
+
 static bool hasBoxDecorationsOrBackgroundImage(const RenderStyle* style)
 {
-    return hasBoxDecorations(style) || style->hasBackgroundImage();
+    if (hasBoxDecorations(style))
+        return true;
+
+    if (!style->hasBackgroundImage())
+        return false;
+
+    return !GraphicsLayer::supportsContentsTiling() || !canCreateTiledImage(style);
 }
 
 Color RenderLayerBacking::rendererBackgroundColor() const
@@ -1370,14 +1387,75 @@ Color RenderLayerBacking::rendererBackgroundColor() const
     return backgroundRenderer->style()->visitedDependentColor(CSSPropertyBackgroundColor);
 }
 
-void RenderLayerBacking::updateBackgroundColor(bool isSimpleContainer)
+void RenderLayerBacking::updateDirectlyCompositedBackgroundColor(bool isSimpleContainer, bool& didUpdateContentsRect)
 {
-    Color backgroundColor;
-    if (isSimpleContainer)
-        backgroundColor = rendererBackgroundColor();
+    if (!isSimpleContainer) {
+        m_graphicsLayer->setContentsToSolidColor(Color());
+        return;
+    }
+
+    Color backgroundColor = rendererBackgroundColor();
 
     // An unset (invalid) color will remove the solid color.
     m_graphicsLayer->setContentsToSolidColor(backgroundColor);
+    m_graphicsLayer->setContentsRect(backgroundBox());
+    didUpdateContentsRect = true;
+}
+
+bool canCreateTiledImage(const RenderStyle* style)
+{
+    const FillLayer* fillLayer = style->backgroundLayers();
+    if (fillLayer->next())
+        return false;
+
+    if (!fillLayer->imagesAreLoaded())
+        return false;
+
+    if (fillLayer->attachment() != ScrollBackgroundAttachment)
+        return false;
+
+    Color color = style->visitedDependentColor(CSSPropertyBackgroundColor);
+
+    // FIXME: Allow color+image compositing when it makes sense.
+    // For now bailing out.
+    if (color.isValid() && color.alpha())
+        return false;
+
+    StyleImage* styleImage = fillLayer->image();
+
+    // FIXME: support gradients with isGeneratedImage.
+    if (!styleImage->isCachedImage())
+        return false;
+
+    Image* image = styleImage->cachedImage()->image();
+    if (!image->isBitmapImage())
+        return false;
+
+    return true;
+}
+
+void RenderLayerBacking::updateDirectlyCompositedBackgroundImage(bool isSimpleContainer, bool& didUpdateContentsRect)
+{
+    if (!GraphicsLayer::supportsContentsTiling())
+        return;
+
+    const RenderStyle* style = renderer()->style();
+
+    if (!isSimpleContainer || !style->hasBackgroundImage()) {
+        m_graphicsLayer->setContentsToImage(0);
+        return;
+    }
+
+    IntRect destRect = backgroundBox();
+    IntPoint phase;
+    IntSize tileSize;
+    RefPtr<Image> image = style->backgroundLayers()->image()->cachedImage()->image();
+    toRenderBox(renderer())->getGeometryForBackgroundImage(destRect, phase, tileSize);
+    m_graphicsLayer->setContentsTileSize(tileSize);
+    m_graphicsLayer->setContentsTilePhase(phase);
+    m_graphicsLayer->setContentsRect(destRect);
+    m_graphicsLayer->setContentsToImage(image.get());
+    didUpdateContentsRect = true;
 }
 
 void RenderLayerBacking::updateRootLayerConfiguration()
@@ -1614,6 +1692,9 @@ void RenderLayerBacking::contentChanged(ContentChangeType changeType)
         return;
     }
 
+    if ((changeType == BackgroundImageChanged) && canCreateTiledImage(renderer()->style()))
+        updateGraphicsLayerGeometry();
+
     if ((changeType == MaskImageChanged) && m_maskLayer) {
         // The composited layer bounds relies on box->maskClipRect(), which changes
         // when the mask image becomes available.
@@ -1708,8 +1789,7 @@ IntRect RenderLayerBacking::contentsBox() const
 
 static LayoutRect backgroundRectForBox(const RenderBox* box)
 {
-    EFillBox clip = box->style()->backgroundClip();
-    switch (clip) {
+    switch (box->style()->backgroundClip()) {
     case BorderFillBox:
         return box->borderBoxRect();
     case PaddingFillBox:

@@ -1428,8 +1428,13 @@ void RenderBox::imageChanged(WrappedImagePtr image, const IntRect*)
 
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (hasLayer() && layer()->hasCompositedMask() && layersUseImage(image, style()->maskLayers()))
+    if (!isComposited())
+        return;
+
+    if (layer()->hasCompositedMask() && layersUseImage(image, style()->maskLayers()))
         layer()->contentChanged(MaskImageChanged);
+    if (layersUseImage(image, style()->backgroundLayers()))
+        layer()->contentChanged(BackgroundImageChanged);
 #endif
 }
 

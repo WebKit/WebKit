@@ -326,6 +326,14 @@ public:
 
     virtual void setContentsNeedsDisplay() { };
 
+    // The tile phase is relative to the GraphicsLayer bounds.
+    virtual void setContentsTilePhase(const IntPoint& p) { m_contentsTilePhase = p; }
+    IntPoint contentsTilePhase() const { return m_contentsTilePhase; }
+
+    virtual void setContentsTileSize(const IntSize& s) { m_contentsTileSize = s; }
+    IntSize contentsTileSize() const { return m_contentsTileSize; }
+    bool hasContentsTiling() const { return !m_contentsTileSize.isEmpty(); }
+
     // Set that the position/size of the contents (image or video).
     IntRect contentsRect() const { return m_contentsRect; }
     virtual void setContentsRect(const IntRect& r) { m_contentsRect = r; }
@@ -435,6 +443,12 @@ public:
 #endif
     }
 
+    static bool supportsContentsTiling()
+    {
+        // FIXME: Enable the feature on different ports.
+        return false;
+    }
+
     void updateDebugIndicators();
 
     virtual bool canThrottleLayerFlush() const { return false; }
@@ -527,6 +541,8 @@ protected:
     FloatPoint m_replicatedLayerPosition; // For a replica layer, the position of the replica.
 
     IntRect m_contentsRect;
+    IntPoint m_contentsTilePhase;
+    IntSize m_contentsTileSize;
 
     int m_repaintCount;
 };

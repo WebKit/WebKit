@@ -1277,6 +1277,16 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
     geometry.setDestOrigin(geometry.destRect().location());
 }
 
+void RenderBoxModelObject::getGeometryForBackgroundImage(IntRect& destRect, IntPoint& phase, IntSize& tileSize)
+{
+    const FillLayer* backgroundLayer = style()->backgroundLayers();
+    BackgroundImageGeometry geometry;
+    calculateBackgroundImageGeometry(backgroundLayer, destRect, geometry);
+    phase = geometry.phase();
+    tileSize = geometry.tileSize();
+    destRect = geometry.destRect();
+}
+
 static LayoutUnit computeBorderImageSide(Length borderSlice, LayoutUnit borderSide, LayoutUnit imageSide, LayoutUnit boxExtent, RenderView* renderView)
 {
     if (borderSlice.isRelative())
