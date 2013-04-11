@@ -1,3 +1,22 @@
+2013-04-11  Beth Dakin  <bdakin@apple.com>
+
+        WebKit should set the header and footer layers' contentsScale when the device 
+        scale factor changes
+        https://bugs.webkit.org/show_bug.cgi?id=114471
+        -and corresponding-
+        <rdar://problem/13621288>
+
+        Reviewed by Simon Fraser.
+
+        Update the header and footer contentsScale when the device scale factor has 
+        changed.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setDeviceScaleFactor):
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::updateHeaderAndFooterLayersForDeviceScaleChange):
+
 2013-04-11  Anders Carlsson  <andersca@apple.com>
 
         Implement removing storage area items

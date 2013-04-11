@@ -865,6 +865,19 @@ void WebPage::setFooterLayerWithHeight(CALayer *layer, int height)
     [parentLayer->platformLayer() addSublayer:m_footerLayer.get()];
 }
 
+void WebPage::updateHeaderAndFooterLayersForDeviceScaleChange(float scaleFactor)
+{
+    if (m_headerLayer) {
+        m_headerLayer.get().contentsScale = scaleFactor;
+        [m_headerLayer.get() setNeedsDisplay];
+    }
+
+    if (m_footerLayer) {
+        m_footerLayer.get().contentsScale = scaleFactor;
+        [m_footerLayer.get() setNeedsDisplay];
+    }
+}
+
 void WebPage::computePagesForPrintingPDFDocument(uint64_t frameID, const PrintInfo& printInfo, Vector<IntRect>& resultPageRects)
 {
     ASSERT(resultPageRects.isEmpty());

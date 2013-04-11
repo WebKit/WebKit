@@ -1232,6 +1232,8 @@ void WebPage::setDeviceScaleFactor(float scaleFactor)
 #if PLATFORM(MAC)
     for (HashSet<PluginView*>::const_iterator it = m_pluginViews.begin(), end = m_pluginViews.end(); it != end; ++it)
         (*it)->setDeviceScaleFactor(scaleFactor);
+
+    updateHeaderAndFooterLayersForDeviceScaleChange(scaleFactor);
 #endif
 
     if (m_findController.isShowingOverlay()) {

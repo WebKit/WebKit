@@ -372,6 +372,8 @@ public:
     void setHeaderLayerWithHeight(CALayer *, int);
     CALayer *getFooterLayer() const;
     void setFooterLayerWithHeight(CALayer *, int);
+
+    void updateHeaderAndFooterLayersForDeviceScaleChange(float scaleFactor);
 #endif
 
     bool windowIsFocused() const;
