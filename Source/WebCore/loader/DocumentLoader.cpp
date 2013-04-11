@@ -607,8 +607,10 @@ void DocumentLoader::responseReceived(CachedResource* resource, const ResourceRe
 
     m_response = response;
 
-    if (m_identifierForLoadWithoutResourceLoader)
+    if (m_identifierForLoadWithoutResourceLoader) {
+        addResponse(m_response);
         frameLoader()->notifier()->dispatchDidReceiveResponse(this, m_identifierForLoadWithoutResourceLoader, m_response, 0);
+    }
 
     ASSERT(!m_waitingForContentPolicy);
     m_waitingForContentPolicy = true;
