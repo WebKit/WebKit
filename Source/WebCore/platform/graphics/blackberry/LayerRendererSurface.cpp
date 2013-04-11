@@ -50,13 +50,7 @@ FloatRect LayerRendererSurface::drawRect() const
     float bx = m_size.width() / 2.0;
     float by = m_size.height() / 2.0;
 
-    FloatQuad transformedBounds;
-    transformedBounds.setP1(m_drawTransform.mapPoint(FloatPoint(-bx, -by)));
-    transformedBounds.setP2(m_drawTransform.mapPoint(FloatPoint(-bx, by)));
-    transformedBounds.setP3(m_drawTransform.mapPoint(FloatPoint(bx, by)));
-    transformedBounds.setP4(m_drawTransform.mapPoint(FloatPoint(bx, -by)));
-
-    FloatRect rect = transformedBounds.boundingBox();
+    FloatRect rect = transformedBounds().boundingBox();
 
     if (m_ownerLayer->replicaLayer()) {
         FloatQuad bounds;
@@ -68,6 +62,20 @@ FloatRect LayerRendererSurface::drawRect() const
     }
 
     return rect;
+}
+
+FloatQuad LayerRendererSurface::transformedBounds() const
+{
+    float bx = m_size.width() / 2.0;
+    float by = m_size.height() / 2.0;
+
+    FloatQuad bounds;
+    bounds.setP1(m_drawTransform.mapPoint(FloatPoint(-bx, -by)));
+    bounds.setP2(m_drawTransform.mapPoint(FloatPoint(-bx, by)));
+    bounds.setP3(m_drawTransform.mapPoint(FloatPoint(bx, by)));
+    bounds.setP4(m_drawTransform.mapPoint(FloatPoint(bx, -by)));
+
+    return bounds;
 }
 
 bool LayerRendererSurface::ensureTexture()

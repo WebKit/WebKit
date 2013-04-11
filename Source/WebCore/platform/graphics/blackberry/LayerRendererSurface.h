@@ -51,6 +51,7 @@ public:
     const TransformationMatrix& replicaDrawTransform() const { return m_replicaDrawTransform; }
 
     FloatRect drawRect() const;
+    FloatQuad transformedBounds() const;
 
     bool ensureTexture();
     void releaseTexture();
