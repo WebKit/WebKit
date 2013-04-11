@@ -1,3 +1,8 @@
+2013-04-11  Ojan Vafai  <ojan@chromium.org>
+
+        Remove myself from watchlists.
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-04-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix. Don't hard-code queues.webkit.org at least during the transition.
