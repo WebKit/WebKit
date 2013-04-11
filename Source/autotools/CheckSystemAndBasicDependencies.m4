@@ -7,7 +7,7 @@ os_gnu=no
 
 case "$host_os" in
     mingw*)
-        os_win32_yes
+        os_win32=yes
         ;;
     freebsd*)
         os_freebsd=yes

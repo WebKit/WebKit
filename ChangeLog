@@ -1,3 +1,12 @@
+2013-04-11  Paweł Forysiuk  <tuxator@o2.pl>
+
+        [GTK] Webkit fails to build with MinGW compiler after changeset 146468
+        https://bugs.webkit.org/show_bug.cgi?id=114473
+
+        Reviewed by Martin Robinson.
+
+        * Source/autotools/CheckSystemAndBasicDependencies.m4: Fix typo.
+
 2013-04-11  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add accelerated 2D canvas support using cairo-gl
