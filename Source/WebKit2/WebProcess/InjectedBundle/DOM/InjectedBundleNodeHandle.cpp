@@ -45,6 +45,7 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/JSNode.h>
 #include <WebCore/Node.h>
+#include <WebCore/Page.h>
 #include <WebCore/RenderObject.h>
 #include <wtf/HashMap.h>
 #include <wtf/text/WTFString.h>
@@ -125,14 +126,24 @@ IntRect InjectedBundleNodeHandle::renderRect(bool* isReplaced) const
 
 static PassRefPtr<WebImage> imageForRect(FrameView* frameView, const IntRect& rect, SnapshotOptions options)
 {
-    RefPtr<WebImage> snapshot = WebImage::create(rect.size(), snapshotOptionsToImageOptions(options));
+    IntSize bitmapSize = rect.size();
+    float scaleFactor = frameView->frame()->page()->deviceScaleFactor();
+    bitmapSize.scale(scaleFactor);
+
+    RefPtr<WebImage> snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options));
     if (!snapshot->bitmap())
         return 0;
 
     OwnPtr<GraphicsContext> graphicsContext = snapshot->bitmap()->createGraphicsContext();
+    graphicsContext->clearRect(IntRect(IntPoint(), bitmapSize));
+    graphicsContext->applyDeviceScaleFactor(scaleFactor);
     graphicsContext->translate(-rect.x(), -rect.y());
 
-    frameView->paintContentsForSnapshot(graphicsContext.get(), rect, FrameView::IncludeSelection, FrameView::DocumentCoordinates);
+    FrameView::SelectionInSnaphot shouldPaintSelection = FrameView::IncludeSelection;
+    if (options & SnapshotOptionsExcludeSelectionHighlighting)
+        shouldPaintSelection = FrameView::ExcludeSelection;
+
+    frameView->paintContentsForSnapshot(graphicsContext.get(), rect, shouldPaintSelection, FrameView::DocumentCoordinates);
 
     return snapshot.release();
 }

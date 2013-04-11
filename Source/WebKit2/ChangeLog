@@ -1,3 +1,18 @@
+2013-04-11  Tim Horton  <timothy_horton@apple.com>
+
+        InjectedBundleNodeHandle::imageForRect doesn't respect device scale factor or highlighting option
+        https://bugs.webkit.org/show_bug.cgi?id=114466
+        <rdar://problem/13508513>
+
+        Reviewed by Simon Fraser.
+
+        Respect the device scale factor when creating the snapshot image.
+        Clear the snapshot image before drawing into it.
+        Respect SnapshotOptionsExcludeSelectionHighlighting.
+
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        (WebKit::imageForRect):
+
 2013-04-11  Commit Queue  <rniwa@webkit.org>
 
         Unreviewed, rolling out r148034, r148052, r148097, and
