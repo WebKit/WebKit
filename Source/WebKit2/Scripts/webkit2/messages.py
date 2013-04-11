@@ -566,6 +566,8 @@ def generate_message_handler(file):
 
         result.append('{\n')
         result += [async_message_statement(receiver, message) for message in async_messages]
+        if not receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE):
+            result.append('    UNUSED_PARAM(connection);\n')
         result.append('    ASSERT_NOT_REACHED();\n')
         result.append('}\n')
 
@@ -577,6 +579,8 @@ def generate_message_handler(file):
             result.append('void %s::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)\n' % (receiver.name))
         result.append('{\n')
         result += [sync_message_statement(receiver, message) for message in sync_messages]
+        if not receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE):
+            result.append('    UNUSED_PARAM(connection);\n')
         result.append('    ASSERT_NOT_REACHED();\n')
         result.append('}\n')
 
