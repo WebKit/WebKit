@@ -27,16 +27,17 @@
 #ifndef CrossOriginAccessControl_h
 #define CrossOriginAccessControl_h
 
-#include "ResourceHandle.h"
-#include "ResourceRequest.h"
+#include "ResourceHandleTypes.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
+#include <wtf/text/StringHash.h>
 
 namespace WebCore {
 
 typedef HashSet<String, CaseFoldingHash> HTTPHeaderSet;
 
 class HTTPHeaderMap;
+class ResourceRequest;
 class ResourceResponse;
 class SecurityOrigin;
 

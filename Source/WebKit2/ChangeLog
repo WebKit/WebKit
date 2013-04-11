@@ -1,3 +1,13 @@
+2013-04-11  Alexey Proskuryakov  <ap@apple.com>
+
+        Remove some ResourceHandle.h includes
+        https://bugs.webkit.org/show_bug.cgi?id=114416
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebProcess/Network/NetworkProcessConnection.cpp: Added an include that is now
+        necessary.
+
 2013-04-11  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] EventHandler should handle Space and BackSpace 

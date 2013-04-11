@@ -40,7 +40,6 @@
 #include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "PageCache.h"
-#include "ResourceHandle.h"
 #include "StorageMap.h"
 #include "TextAutosizer.h"
 #include <limits>

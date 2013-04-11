@@ -32,7 +32,6 @@
 #include "Page.h"
 #include "PageConsole.h"
 #include "ResourceError.h"
-#include "ResourceHandle.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"

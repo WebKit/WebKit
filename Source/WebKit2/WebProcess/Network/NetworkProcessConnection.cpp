@@ -33,6 +33,7 @@
 #include "WebResourceBuffer.h"
 #include "WebResourceLoadScheduler.h"
 #include "WebResourceLoaderMessages.h"
+#include <WebCore/CachedResource.h>
 #include <WebCore/MemoryCache.h>
 #include <WebCore/ResourceBuffer.h>
 

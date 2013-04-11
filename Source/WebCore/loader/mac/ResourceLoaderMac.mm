@@ -31,7 +31,6 @@
 
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
-#include "ResourceHandle.h"
 
 #if USE(NETWORK_CFDATA_ARRAY_CALLBACK)
 #include "InspectorInstrumentation.h"
