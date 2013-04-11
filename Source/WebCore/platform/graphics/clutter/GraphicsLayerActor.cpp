@@ -29,6 +29,8 @@
 #include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
 #include "TransformationMatrix.h"
+#include <algorithm>
+#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 
 using namespace WebCore;
@@ -266,26 +268,25 @@ static void graphicsLayerActorUpdateTexture(GraphicsLayerActor* layer)
     ASSERT(priv->layerType != GraphicsLayerClutter::LayerTypeVideoLayer);
 
     ClutterActor* actor = CLUTTER_ACTOR(layer);
-    ClutterContent* canvas = clutter_actor_get_content(actor);
+    GRefPtr<ClutterContent> canvas = adoptGRef(clutter_actor_get_content(actor));
     if (canvas) {
         // Nothing needs a texture, remove the one we have, if any.
         if (!priv->drawsContent && !priv->surface) {
-            g_signal_handlers_disconnect_by_func(canvas, reinterpret_cast<void*>(graphicsLayerActorDraw), layer);
+            g_signal_handlers_disconnect_by_func(canvas.get(), reinterpret_cast<void*>(graphicsLayerActorDraw), layer);
             clutter_actor_set_content(actor, 0);
         }
         return;
     }
 
     // We should have a texture, so create one.
-    int width = ceilf(clutter_actor_get_width(actor));
-    int height = ceilf(clutter_actor_get_height(actor));
+    canvas = adoptGRef(clutter_canvas_new());
+    clutter_actor_set_content(actor, canvas.get());
 
-    canvas = clutter_canvas_new();
-    clutter_actor_set_content(actor, canvas);
-    clutter_canvas_set_size(CLUTTER_CANVAS(canvas), width > 0 ? width : 1, height > 0 ? height : 1);
-    g_object_unref(canvas);
-    
-    g_signal_connect(canvas, "draw", G_CALLBACK(graphicsLayerActorDraw), layer);
+    int width = std::max(static_cast<int>(ceilf(clutter_actor_get_width(actor))), 1);
+    int height = std::max(static_cast<int>(ceilf(clutter_actor_get_height(actor))), 1);
+    clutter_canvas_set_size(CLUTTER_CANVAS(canvas.get()), width, height);
+
+    g_signal_connect(canvas.get(), "draw", G_CALLBACK(graphicsLayerActorDraw), layer);
 }
 
 // Draw content into the layer.
@@ -339,9 +340,9 @@ void graphicsLayerActorRemoveAll(GraphicsLayerActor* layer)
 {
     g_return_if_fail(GRAPHICS_LAYER_IS_ACTOR(layer));
 
-    GList* children = clutter_actor_get_children(CLUTTER_ACTOR(layer));
-    for (; children; children = children->next)
-        clutter_actor_remove_child(CLUTTER_ACTOR(layer), CLUTTER_ACTOR(children->data));
+    GOwnPtr<GList> children(clutter_actor_get_children(CLUTTER_ACTOR(layer)));
+    for (GList* child = children.get(); child; child = child->next)
+        clutter_actor_remove_child(CLUTTER_ACTOR(layer), CLUTTER_ACTOR(child->data));
 }
 
 cairo_surface_t* graphicsLayerActorGetSurface(GraphicsLayerActor* layer)
