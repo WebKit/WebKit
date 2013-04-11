@@ -1,3 +1,17 @@
+2013-04-11  Filip Pizlo  <fpizlo@apple.com>
+
+        Get rid of the 10ms delay between test executions
+        https://bugs.webkit.org/show_bug.cgi?id=114458
+        <rdar://problem/13631112>
+
+        Reviewed by Darin Adler and Geoffrey Garen.
+        
+        More details on this in the bug. Long story short, I don't know why the 10ms delay is
+        there, and it appears to be the root of some noisyness and unreliability in the results.
+        Removing it makes results more consistent, which is a good thing.
+
+        * resources/driver-TEMPLATE.html:
+
 2013-01-16  Eric Seidel  <eric@webkit.org>
 
         Remove --shark* support from sunspider/run-sunspider now that Shark is dead
