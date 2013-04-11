@@ -282,9 +282,7 @@ JSValue CInstance::stringValue(ExecState* exec) const
         return value;
 
     // Fallback to default implementation.
-    char buf[1024];
-    snprintf(buf, sizeof(buf), "NPObject %p, NPClass %p", _object, _object->_class);
-    return jsString(exec, buf);
+    return jsString(exec, "NPObject");
 }
 
 JSValue CInstance::numberValue(ExecState*) const
