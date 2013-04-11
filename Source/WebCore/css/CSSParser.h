@@ -253,6 +253,7 @@ public:
     PassRefPtr<WebKitCSSFilterValue> parseCustomFilterFunctionWithInlineSyntax(CSSParserValue*);
     PassRefPtr<WebKitCSSFilterValue> parseCustomFilterFunction(CSSParserValue*);
     bool parseFilterRuleSrc();
+    bool parseFilterRuleMix();
     PassRefPtr<WebKitCSSShaderValue> parseFilterRuleSrcUriAndFormat(CSSParserValueList*);
 #endif
 #endif

@@ -2349,6 +2349,14 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
 #endif
         return parseFontFaceSrc();
 
+#if ENABLE(CSS_SHADERS)
+    case CSSPropertyMix:
+        // The mix property is just supported inside of an @filter rule.
+        if (!m_inFilterRule)
+            return false;
+        return parseFilterRuleMix();
+#endif
+
     case CSSPropertyUnicodeRange:
         return parseFontFaceUnicodeRange();
 
@@ -8797,6 +8805,37 @@ bool CSSParser::parseFilterRuleSrc()
         return false;
 
     addProperty(CSSPropertySrc, srcList.release(), m_important);
+    return true;
+}
+
+bool CSSParser::parseFilterRuleMix()
+{
+    if (m_valueList->size() > 2)
+        return false;
+
+    RefPtr<CSSValueList> mixList = CSSValueList::createSpaceSeparated();
+
+    bool hasBlendMode = false;
+    bool hasAlphaCompositing = false;
+    CSSParserValue* value = m_valueList->current();
+    while (value) {
+        RefPtr<CSSValue> mixValue;
+        if (!hasBlendMode && isBlendMode(value->id)) {
+            hasBlendMode = true;
+            mixValue = cssValuePool().createIdentifierValue(value->id);
+        } else if (!hasAlphaCompositing && isCompositeOperator(value->id)) {
+            hasAlphaCompositing = true;
+            mixValue = cssValuePool().createIdentifierValue(value->id);
+        }
+
+        if (!mixValue)
+            return false;
+
+        mixList->append(mixValue.release());
+        value = m_valueList->next();
+    }
+
+    addProperty(CSSPropertyMix, mixList.release(), m_important);
     return true;
 }
 

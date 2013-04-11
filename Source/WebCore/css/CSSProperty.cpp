@@ -676,6 +676,9 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
     case CSSPropertyWebkitShapeOutside:
     case CSSPropertyWebkitWrapThrough:
 #endif
+#if ENABLE(CSS_SHADERS)
+    case CSSPropertyMix:
+#endif
 #if ENABLE(SVG)
     case CSSPropertyClipPath:
     case CSSPropertyMask:

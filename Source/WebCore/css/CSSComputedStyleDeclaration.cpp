@@ -2814,6 +2814,9 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
 #if ENABLE(CSS_EXCLUSIONS)
         case CSSPropertyWebkitWrap:
 #endif
+#if ENABLE(CSS_SHADERS)
+        case CSSPropertyMix:
+#endif
             break;
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
