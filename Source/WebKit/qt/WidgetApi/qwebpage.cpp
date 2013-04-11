@@ -834,32 +834,27 @@ void QWebPagePrivate::keyPressEvent(QKeyEvent *ev)
     // to trigger editor commands via triggerAction().
     bool handled = handleKeyEvent(ev);
 
+    if (!handled)
+        handled = handleScrolling(ev);
+
     if (!handled) {
         handled = true;
-        if (!handleScrolling(ev)) {
-            switch (ev->key()) {
-            case Qt::Key_Back:
-                q->triggerAction(QWebPage::Back);
-                break;
-            case Qt::Key_Forward:
-                q->triggerAction(QWebPage::Forward);
-                break;
-            case Qt::Key_Stop:
-                q->triggerAction(QWebPage::Stop);
-                break;
-            case Qt::Key_Refresh:
-                q->triggerAction(QWebPage::Reload);
-                break;
-            case Qt::Key_Backspace:
-                if (ev->modifiers() == Qt::ShiftModifier)
-                    q->triggerAction(QWebPage::Forward);
-                else
-                    q->triggerAction(QWebPage::Back);
-                break;
-            default:
-                handled = false;
-                break;
-            }
+        switch (ev->key()) {
+        case Qt::Key_Back:
+            q->triggerAction(QWebPage::Back);
+            break;
+        case Qt::Key_Forward:
+            q->triggerAction(QWebPage::Forward);
+            break;
+        case Qt::Key_Stop:
+            q->triggerAction(QWebPage::Stop);
+            break;
+        case Qt::Key_Refresh:
+            q->triggerAction(QWebPage::Reload);
+            break;
+        default:
+            handled = false;
+            break;
         }
     }
 

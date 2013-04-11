@@ -1247,10 +1247,10 @@ bool QWebPageAdapter::handleScrolling(QKeyEvent *ev)
     WebCore::ScrollGranularity granularity;
 
 #ifndef QT_NO_SHORTCUT
-    if (ev == QKeySequence::MoveToNextPage || (ev->key() == Qt::Key_Space && !(ev->modifiers() & Qt::ShiftModifier))) {
+    if (ev == QKeySequence::MoveToNextPage) {
         granularity = WebCore::ScrollByPage;
         direction = WebCore::ScrollDown;
-    } else if (ev == QKeySequence::MoveToPreviousPage || ((ev->key() == Qt::Key_Space) && (ev->modifiers() & Qt::ShiftModifier))) {
+    } else if (ev == QKeySequence::MoveToPreviousPage) {
         granularity = WebCore::ScrollByPage;
         direction = WebCore::ScrollUp;
     } else

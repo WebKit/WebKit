@@ -1,3 +1,15 @@
+2013-04-11  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] EventHandler should handle Space and BackSpace 
+        https://bugs.webkit.org/show_bug.cgi?id=114428
+
+        Reviewed by Jocelyn Turcotte.
+
+        Remove our own handling of space and backspace.
+
+        * WebProcess/WebPage/qt/WebPageQt.cpp:
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent):
+
 2013-04-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed Qt buildfixes after r148147, r148148 and r148154.
