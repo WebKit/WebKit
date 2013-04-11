@@ -1,3 +1,15 @@
+2013-04-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use webkit-queues.appspot.com instead of webkit-commit-queue.appspot.com
+        https://bugs.webkit.org/show_bug.cgi?id=114397
+
+        Reviewed by Benjamin Poulain.
+
+        Reland the patch since Alan appears to have finished the migration.
+
+        * Scripts/webkitpy/common/net/statusserver.py:
+        (StatusServer):
+
 2013-04-11  Brian Holt  <brian.holt@samsung.com>
 
         [Gtk] Combo boxes should be arrow-out-of-able similar to list boxes when caret-browsing is enabled.
