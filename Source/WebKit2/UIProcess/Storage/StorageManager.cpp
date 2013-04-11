@@ -206,6 +206,8 @@ void StorageManager::processWillOpenConnection(WebProcessProxy* webProcessProxy)
 void StorageManager::processWillCloseConnection(WebProcessProxy* webProcessProxy)
 {
     webProcessProxy->connection()->removeWorkQueueMessageReceiver(Messages::StorageManager::messageReceiverName());
+
+    m_queue->dispatch(bind(&StorageManager::invalidateConnectionInternal, this, RefPtr<CoreIPC::Connection>(webProcessProxy->connection())));
 }
 
 void StorageManager::createStorageMap(CoreIPC::Connection* connection, uint64_t storageMapID, uint64_t storageNamespaceID, const SecurityOriginData& securityOriginData)
@@ -215,7 +217,7 @@ void StorageManager::createStorageMap(CoreIPC::Connection* connection, uint64_t 
     // FIXME: This should be a message check.
     ASSERT((HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea> >::isValidKey(connectionAndStorageMapIDPair)));
 
-    HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea> >::AddResult result = m_storageAreas.add(connectionAndStorageMapIDPair, 0);
+    HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea> >::AddResult result = m_storageAreasByConnection.add(connectionAndStorageMapIDPair, 0);
 
     // FIXME: This should be a message check.
     ASSERT(result.isNewEntry);
@@ -245,14 +247,13 @@ void StorageManager::destroyStorageMap(CoreIPC::Connection* connection, uint64_t
     // FIXME: This should be a message check.
     ASSERT((HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea> >::isValidKey(connectionAndStorageMapIDPair)));
 
-    HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea> >::iterator it = m_storageAreas.find(connectionAndStorageMapIDPair);
+    HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea> >::iterator it = m_storageAreasByConnection.find(connectionAndStorageMapIDPair);
 
     // FIXME: This should be a message check.
-    ASSERT(it != m_storageAreas.end());
+    ASSERT(it != m_storageAreasByConnection.end());
 
     it->value->removeListener(connection, storageMapID);
-
-    m_storageAreas.remove(connectionAndStorageMapIDPair);
+    m_storageAreasByConnection.remove(connectionAndStorageMapIDPair);
 }
 
 void StorageManager::getValues(CoreIPC::Connection*, uint64_t, HashMap<String, String>&)
@@ -304,13 +305,29 @@ void StorageManager::cloneSessionStorageNamespaceInternal(uint64_t storageNamesp
     sessionStorageNamespace->cloneTo(*newSessionStorageNamespace);
 }
 
+void StorageManager::invalidateConnectionInternal(CoreIPC::Connection* connection)
+{
+    Vector<std::pair<RefPtr<CoreIPC::Connection>, uint64_t> > connectionAndStorageMapIDPairsToRemove;
+    HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea> > storageAreasByConnection = m_storageAreasByConnection;
+    for (HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea> >::const_iterator it = storageAreasByConnection.begin(), end = storageAreasByConnection.end(); it != end; ++it) {
+        if (it->key.first != connection)
+            continue;
+
+        it->value->removeListener(it->key.first.get(), it->key.second);
+        connectionAndStorageMapIDPairsToRemove.append(it->key);
+    }
+
+    for (size_t i = 0; i < connectionAndStorageMapIDPairsToRemove.size(); ++i)
+        m_storageAreasByConnection.remove(connectionAndStorageMapIDPairsToRemove[i]);
+}
+
 StorageManager::StorageArea* StorageManager::findStorageArea(CoreIPC::Connection* connection, uint64_t storageMapID) const
 {
     std::pair<CoreIPC::Connection*, uint64_t> connectionAndStorageMapIDPair(connection, storageMapID);
     if (!HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea> >::isValidKey(connectionAndStorageMapIDPair))
         return 0;
 
-    return m_storageAreas.get(connectionAndStorageMapIDPair).get();
+    return m_storageAreasByConnection.get(connectionAndStorageMapIDPair).get();
 }
 
 } // namespace WebKit

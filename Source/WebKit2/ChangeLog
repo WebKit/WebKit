@@ -1,5 +1,29 @@
 2013-04-11  Anders Carlsson  <andersca@apple.com>
 
+        Clean up related storage areas when a connection is destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=114459
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::processWillCloseConnection):
+        Dispatch invalidateConnectionInternal on the work queue.
+        
+        (WebKit::StorageManager::createStorageMap):
+        (WebKit::StorageManager::destroyStorageMap):
+        Rename m_storageAreas to m_storageAreasByConnection.
+
+        (WebKit::StorageManager::invalidateConnectionInternal):
+        Go over all known storage areas and remove this connection as a listener.
+
+        (WebKit::StorageManager::findStorageArea):
+        Rename m_storageAreas to m_storageAreasByConnection.
+
+        * UIProcess/Storage/StorageManager.h:
+        Rename m_storageAreas to m_storageAreasByConnection.
+
+2013-04-11  Anders Carlsson  <andersca@apple.com>
+
         Make StorageAreaMap dispatch session storage events
         https://bugs.webkit.org/show_bug.cgi?id=114454
 
