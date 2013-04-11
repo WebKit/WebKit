@@ -143,6 +143,7 @@ private:
     bool setTransformAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformClutterAnimation*, int functionIndex, TransformOperation::OperationType, bool isMatrixAnimation, const IntSize& boxSize);
 
     enum MoveOrCopy { Move, Copy };
+    static void moveOrCopyLayerAnimation(MoveOrCopy, const String& animationIdentifier, GraphicsLayerActor* fromLayer, GraphicsLayerActor* toLayer);
     void moveOrCopyAnimations(MoveOrCopy, GraphicsLayerActor* fromLayer, GraphicsLayerActor* toLayer);
 
     bool appendToUncommittedAnimations(const KeyframeValueList&, const TransformOperations*, const Animation*, const String& animationName, const IntSize& boxSize, int animationIndex, double timeOffset, bool isMatrixAnimation);

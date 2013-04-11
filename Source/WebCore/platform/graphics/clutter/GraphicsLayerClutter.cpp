@@ -400,9 +400,39 @@ void GraphicsLayerClutter::setTransform(const TransformationMatrix& t)
     noteLayerPropertyChanged(TransformChanged);
 }
 
+void GraphicsLayerClutter::moveOrCopyLayerAnimation(MoveOrCopy operation, const String& animationIdentifier, GraphicsLayerActor* fromLayer, GraphicsLayerActor* toLayer)
+{
+    RefPtr<PlatformClutterAnimation> anim = graphicsLayerActorGetAnimationForKey(fromLayer, animationIdentifier);
+    if (!anim)
+        return;
+
+    switch (operation) {
+    case Move:
+        anim->removeAnimationForKey(fromLayer, animationIdentifier);
+        anim->addAnimationForKey(toLayer, animationIdentifier);
+        break;
+    case Copy:
+        anim->addAnimationForKey(toLayer, animationIdentifier);
+        break;
+    }
+}
+
 void GraphicsLayerClutter::moveOrCopyAnimations(MoveOrCopy operation, GraphicsLayerActor* fromLayer, GraphicsLayerActor* toLayer)
 {
-    notImplemented();
+    // Look for running animations affecting this property.
+    AnimationsMap::const_iterator end = m_runningAnimations.end();
+    for (AnimationsMap::const_iterator it = m_runningAnimations.begin(); it != end; ++it) {
+        const Vector<LayerPropertyAnimation>& propertyAnimations = it->value;
+        size_t numAnimations = propertyAnimations.size();
+        for (size_t i = 0; i < numAnimations; ++i) {
+            const LayerPropertyAnimation& currAnimation = propertyAnimations[i];
+
+            if (currAnimation.m_property == AnimatedPropertyWebkitTransform
+                || currAnimation.m_property == AnimatedPropertyOpacity
+                || currAnimation.m_property == AnimatedPropertyBackgroundColor)
+                moveOrCopyLayerAnimation(operation, animationIdentifier(currAnimation.m_name, currAnimation.m_property, currAnimation.m_index), fromLayer, toLayer);
+        }
+    }
 }
 
 void GraphicsLayerClutter::setPreserves3D(bool preserves3D)
