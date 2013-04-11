@@ -27,8 +27,8 @@
 
 namespace WebKit {
 WebKitDOMTestInterface* wrapTestInterface(WebCore::TestInterface*);
-WebCore::TestInterface* core(WebKitDOMTestInterface* request);
-WebKitDOMTestInterface* kit(WebCore::TestInterface* node);
+WebKitDOMTestInterface* kit(WebCore::TestInterface*);
+WebCore::TestInterface* core(WebKitDOMTestInterface*);
 } // namespace WebKit
 
 #endif /* ENABLE(Condition1) || ENABLE(Condition2) */
