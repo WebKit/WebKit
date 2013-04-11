@@ -73,7 +73,7 @@ window.addEventListener("message", function(e) {
   {% for bubble in bubbles %}
   <a class="status {{ bubble.state }}" target="_top"
   {% if bubble.status %}
-      href="http://queues.webkit.org/patch/{{ bubble.attachment_id }}"
+      href="/patch/{{ bubble.attachment_id }}"
       title="{{ bubble.status.date|timesince }} ago"
   {% endif %}
   >
