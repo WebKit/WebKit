@@ -38,6 +38,31 @@
 
 namespace WebCore {
 
+class SurfaceFunctor {
+public:
+    SurfaceFunctor(LayerRendererSurface* surface)
+        : m_surface(surface)
+    {
+    }
+
+protected:
+    LayerRendererSurface* m_surface;
+};
+
+class InverseSurfaceWidth : public SurfaceFunctor {
+public:
+    InverseSurfaceWidth(LayerRendererSurface* surface) : SurfaceFunctor(surface) { }
+
+    float operator() () { return 1.0f / m_surface->size().width(); }
+};
+
+class InverseSurfaceHeight : public SurfaceFunctor {
+public:
+    InverseSurfaceHeight(LayerRendererSurface* surface) : SurfaceFunctor(surface) { }
+
+    float operator() () { return 1.0f / m_surface->size().height(); }
+};
+
 static int operationTypeToProgramID(const FilterOperation::OperationType& t)
 {
     switch (t) {
@@ -601,14 +626,12 @@ Vector<RefPtr<LayerFilterRendererAction> > LayerFilterRenderer::actionsForOperat
 
             // BLUR Y:
             ret.last()->appendParameter(Uniform1f::create(m_amountLocation[LayerData::CSSFilterShaderBlurY], amount));
-            ret.last()->appendParameter(Uniform1f::create(m_blurAmountLocation[0]
-                , 1.0f / float(surface->size().height())));
+            ret.last()->appendParameter(Uniform1f::createWithFunctor(m_blurAmountLocation[0], InverseSurfaceHeight(surface)));
 
             // BLUR X:
             ret.append(LayerFilterRendererAction::create(LayerData::CSSFilterShaderBlurX));
             ret.last()->appendParameter(Uniform1f::create(m_amountLocation[LayerData::CSSFilterShaderBlurX], amount));
-            ret.last()->appendParameter(Uniform1f::create(m_blurAmountLocation[1]
-                , 1.0f / float(surface->size().width())));
+            ret.last()->appendParameter(Uniform1f::createWithFunctor(m_blurAmountLocation[1], InverseSurfaceWidth(surface)));
 
             }
             break;
@@ -634,15 +657,13 @@ Vector<RefPtr<LayerFilterRendererAction> > LayerFilterRenderer::actionsForOperat
             ret.append(LayerFilterRendererAction::create(LayerData::CSSFilterShaderBlurY));
             ret.last()->appendParameter(Uniform1f::create(m_amountLocation[LayerData::CSSFilterShaderBlurY]
                 , dsfo.stdDeviation()));
-            ret.last()->appendParameter(Uniform1f::create(m_blurAmountLocation[0]
-                , 1.0f / float(surface->size().height())));
+            ret.last()->appendParameter(Uniform1f::createWithFunctor(m_blurAmountLocation[0], InverseSurfaceHeight(surface)));
 
             // BLUR X
             ret.append(LayerFilterRendererAction::create(LayerData::CSSFilterShaderBlurX));
             ret.last()->appendParameter(Uniform1f::create(m_amountLocation[LayerData::CSSFilterShaderBlurX]
                 , dsfo.stdDeviation()));
-            ret.last()->appendParameter(Uniform1f::create(m_blurAmountLocation[1]
-                , 1.0f / float(surface->size().width())));
+            ret.last()->appendParameter(Uniform1f::createWithFunctor(m_blurAmountLocation[1], InverseSurfaceWidth(surface)));
 
             // Repaint original image
             ret.append(LayerFilterRendererAction::create(LayerData::CSSFilterShaderPassthrough));

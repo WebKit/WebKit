@@ -69,13 +69,46 @@ class Uniform1f : public Uniform {
 public:
     static PassRefPtr<Uniform> create(int location, float val);
 
+    template<typename Functor>
+    static PassRefPtr<Uniform> createWithFunctor(int location, Functor);
+
 protected:
     Uniform1f(int location, float val);
 
-private:
     virtual void apply();
+
     float m_val;
 };
+
+template<typename Functor>
+class Uniform1fWithFunctor : public Uniform1f {
+public:
+    static PassRefPtr<Uniform> create(int location, Functor functor)
+    {
+        return adoptRef(new Uniform1fWithFunctor(location, functor));
+    }
+
+protected:
+    Uniform1fWithFunctor(int location, Functor functor)
+        : Uniform1f(location, 0)
+        , m_functor(functor)
+    {
+    }
+
+    virtual void apply()
+    {
+        m_val = m_functor();
+        Uniform1f::apply();
+    }
+
+    Functor m_functor;
+};
+
+template<typename Functor>
+inline PassRefPtr<Uniform> Uniform1f::createWithFunctor(int location, Functor functor)
+{
+    return Uniform1fWithFunctor<Functor>::create(location, functor);
+}
 
 class Uniform1i : public Uniform {
 public:
