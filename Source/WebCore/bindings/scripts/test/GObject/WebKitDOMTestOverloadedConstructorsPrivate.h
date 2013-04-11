@@ -26,8 +26,8 @@
 
 namespace WebKit {
 WebKitDOMTestOverloadedConstructors* wrapTestOverloadedConstructors(WebCore::TestOverloadedConstructors*);
-WebCore::TestOverloadedConstructors* core(WebKitDOMTestOverloadedConstructors* request);
-WebKitDOMTestOverloadedConstructors* kit(WebCore::TestOverloadedConstructors* node);
+WebKitDOMTestOverloadedConstructors* kit(WebCore::TestOverloadedConstructors*);
+WebCore::TestOverloadedConstructors* core(WebKitDOMTestOverloadedConstructors*);
 } // namespace WebKit
 
 #endif /* WebKitDOMTestOverloadedConstructorsPrivate_h */

@@ -31,8 +31,11 @@
 #include "config.h"
 #include "WebKitDOMEventTarget.h"
 
+#include "DOMObjectCache.h"
+#include "EventTarget.h"
 #include "WebKitDOMEvent.h"
 #include "WebKitDOMEventTargetPrivate.h"
+#include "WebKitDOMPrivate.h"
 
 typedef WebKitDOMEventTargetIface WebKitDOMEventTargetInterface;
 #if GLIB_CHECK_VERSION(2, 24, 0)
@@ -104,14 +107,20 @@ gboolean webkit_dom_event_target_remove_event_listener(WebKitDOMEventTarget* tar
 
 namespace WebKit {
 
+WebKitDOMEventTarget* kit(WebCore::EventTarget* obj)
+{
+    if (!obj)
+        return 0;
+
+    if (gpointer ret = DOMObjectCache::get(obj))
+        return WEBKIT_DOM_EVENT_TARGET(ret);
+
+    return wrap(obj);
+}
+
 WebCore::EventTarget* core(WebKitDOMEventTarget* request)
 {
-    g_return_val_if_fail(request, 0);
-
-    WebCore::EventTarget* coreObject = static_cast<WebCore::EventTarget*>(WEBKIT_DOM_OBJECT(request)->coreObject);
-    g_return_val_if_fail(coreObject, 0);
-
-    return coreObject;
+    return request ? static_cast<WebCore::EventTarget*>(WEBKIT_DOM_OBJECT(request)->coreObject) : 0;
 }
 
 } // namespace WebKit
