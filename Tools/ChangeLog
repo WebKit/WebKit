@@ -1,3 +1,13 @@
+2013-04-11  Kalev Lember  <kalevlember@gmail.com>
+
+        [GTK] Windows build failure after r136056
+        https://bugs.webkit.org/show_bug.cgi?id=114121
+
+        Reviewed by Martin Robinson.
+
+        * TestWebKitAPI/config.h: Make sure defines are correct for other
+        Windows ports than apple-win.
+
 2013-04-11  Ojan Vafai  <ojan@chromium.org>
 
         Remove myself from watchlists.
