@@ -986,6 +986,7 @@ fine
 // border-box
 // padding-box
 // content-box
+attached
 filter-box
 detached
 #endif // CSS_SHADERS

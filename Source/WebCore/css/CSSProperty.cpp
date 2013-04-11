@@ -441,6 +441,9 @@ bool CSSProperty::isInheritedProperty(CSSPropertyID propertyID)
     case CSSPropertyCounterReset:
     case CSSPropertyFloat:
     case CSSPropertyFontStretch:
+#if ENABLE(CSS_SHADERS)
+    case CSSPropertyGeometry:
+#endif
     case CSSPropertyHeight:
     case CSSPropertyLeft:
     case CSSPropertyMargin:

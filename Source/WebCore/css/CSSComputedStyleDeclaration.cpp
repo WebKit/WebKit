@@ -2791,6 +2791,9 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             break;
 
         /* Other unimplemented properties */
+#if ENABLE(CSS_SHADERS)
+        case CSSPropertyGeometry:
+#endif
         case CSSPropertyPage: // for @page
         case CSSPropertyQuotes: // FIXME: needs implementation
         case CSSPropertySize: // for @page

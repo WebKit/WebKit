@@ -2908,6 +2908,10 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
     case CSSPropertyPage:
         return parsePage(propId, important);
     case CSSPropertyFontStretch:
+#if ENABLE(CSS_SHADERS)
+    case CSSPropertyGeometry:
+        return m_inFilterRule ? parseGeometry(propId, value, important) : false;
+#endif
     case CSSPropertyTextLineThrough:
     case CSSPropertyTextOverline:
     case CSSPropertyTextUnderline:
@@ -8844,6 +8848,74 @@ bool CSSParser::parseFilterRuleMix()
     }
 
     addProperty(CSSPropertyMix, mixList.release(), m_important);
+    return true;
+}
+
+bool CSSParser::parseGeometry(CSSPropertyID propId, CSSParserValue* value, bool important)
+{
+    ASSERT(propId == CSSPropertyGeometry);
+
+    // <geometry-shape> = grid(<integer>{1,2} || [ detached | attached ]?)
+    if (value->unit != CSSParserValue::Function || !equalIgnoringCase(value->function->name, "grid("))
+        return false;
+
+    ASSERT(value->function->args);
+
+    // grid() function should have from 1 to 3 arguments.
+    unsigned size = value->function->args->size();
+    if (!size || size > 3)
+        return false;
+
+    CSSParserValueList* gridParserValueList = value->function->args.get();
+    CSSParserValue* gridParserValue = gridParserValueList->current();
+    RefPtr<CSSValueList> geometryList = CSSValueList::createSpaceSeparated();
+
+    bool hasDimensions = false;
+    bool hasConnectivity = false;
+
+    while (gridParserValue) {
+        if (hasDimensions && hasConnectivity) {
+            geometryList.release();
+            return false;
+        }
+
+        if (gridParserValue->id == CSSValueAttached || gridParserValue->id == CSSValueDetached) {
+            hasConnectivity = true;
+            geometryList->append(cssValuePool().createIdentifierValue(gridParserValue->id));
+            gridParserValue = gridParserValueList->next();
+        } else if (!hasDimensions && parseGridDimensions(gridParserValueList, geometryList)) {
+            hasDimensions = true;
+            gridParserValue = gridParserValueList->current();
+        } else {
+            geometryList.release();
+            return false;
+        }
+    }
+
+    addProperty(propId, geometryList.release(), important);
+    return hasDimensions;
+}
+
+bool CSSParser::parseGridDimensions(CSSParserValueList* args, RefPtr<CSSValueList>& gridValueList)
+{
+    ASSERT(args);
+
+    // There must be at least one valid numeric value.
+    CSSParserValue* arg = args->current();
+    if (!arg || !validUnit(arg, FPositiveInteger))
+        return false;
+
+    // A valid numeric value is parsed and then we move on.
+    gridValueList->append(createPrimitiveNumericValue(arg));
+    arg = args->next();
+
+    // If the next argument is not numeric, we are done parsing the grid dimensions.
+    if (!arg || !validUnit(arg, FPositiveInteger))
+        return true;
+
+    // Commit the second numeric value we found.
+    gridValueList->append(createPrimitiveNumericValue(arg));
+    args->next();
     return true;
 }
 
