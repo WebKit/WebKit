@@ -2548,10 +2548,6 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
         IntPoint hitTestPoint = m_frame->view()->windowToContents(adjustedPoint);
         HitTestResult result = hitTestResultAtPoint(hitTestPoint, hitType | HitTestRequest::AllowFrameScrollbars);
         eventTarget = result.targetNode();
-        if (!scrollbar) {
-            FrameView* view = m_frame->view();
-            scrollbar = view ? view->scrollbarAtPoint(gestureEvent.position()) : 0;
-        }
         if (!scrollbar)
             scrollbar = result.scrollbar();
     }

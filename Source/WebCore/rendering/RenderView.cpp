@@ -91,7 +91,21 @@ bool RenderView::hitTest(const HitTestRequest& request, HitTestResult& result)
 
 bool RenderView::hitTest(const HitTestRequest& request, const HitTestLocation& location, HitTestResult& result)
 {
-    return layer()->hitTest(request, location, result);
+    if (layer()->hitTest(request, location, result))
+        return true;
+
+    // FIXME: Consider if this test should be done unconditionally.
+    if (request.allowsFrameScrollbars() && m_frameView) {
+        // ScrollView scrollbars are not the same as RenderLayer scrollbars tested by RenderLayer::hitTestOverflowControls,
+        // so we need to test ScrollView scrollbars separately here.
+        Scrollbar* frameScrollbar = m_frameView->scrollbarAtPoint(location.roundedPoint());
+        if (frameScrollbar) {
+            result.setScrollbar(frameScrollbar);
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void RenderView::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit, LogicalExtentComputedValues& computedValues) const
