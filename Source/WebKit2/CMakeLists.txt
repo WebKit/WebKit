@@ -458,6 +458,7 @@ set(WebKit2_SOURCES
     WebProcess/ResourceCache/WebResourceCacheManager.cpp
 
     WebProcess/Storage/StorageAreaImpl.cpp
+    WebProcess/Storage/StorageAreaMap.cpp
     WebProcess/Storage/StorageNamespaceImpl.cpp
     WebProcess/Storage/WebKeyValueStorageManager.cpp
 
@@ -568,7 +569,7 @@ set(WebKit2_MESSAGES_IN_FILES
 
     WebProcess/ResourceCache/WebResourceCacheManager.messages.in
 
-    WebProcess/Storage/StorageAreaImpl.messages.in
+    WebProcess/Storage/StorageAreaMap.messages.in
     WebProcess/Storage/WebKeyValueStorageManager.messages.in
 
     WebProcess/WebCoreSupport/WebDatabaseManager.messages.in
