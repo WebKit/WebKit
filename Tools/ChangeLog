@@ -1,5 +1,14 @@
 2013-04-11  Ryosuke Niwa  <rniwa@webkit.org>
 
+        build.webkit.org should link to webkit-queues instead of webkit-commit-queue
+        https://bugs.webkit.org/show_bug.cgi?id=114477
+
+        Reviewed by Benjamin Poulain.
+
+        * BuildSlaveSupport/build.webkit.org-config/templates/root.html:
+
+2013-04-11  Ryosuke Niwa  <rniwa@webkit.org>
+
         Leaks builder should not be triggered upon new commits
         https://bugs.webkit.org/show_bug.cgi?id=114475
 
