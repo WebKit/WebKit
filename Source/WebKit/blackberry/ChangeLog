@@ -1,3 +1,18 @@
+2013-04-11  Arvid Nilsson  <anilsson@rim.com>
+
+        [BlackBerry] LayerTexture refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=114276
+
+        Reviewed by Carlos Garcia Campos.
+
+        Adapt to the LayerTexture refactoring down in WebCore.
+
+        PR 322882
+
+        * Api/WebOverlay.cpp:
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded):
+        (BlackBerry::WebKit::WebOverlayLayerCompositingThreadClient::drawTextures):
+
 2013-04-10  Arvid Nilsson  <anilsson@rim.com>
 
         [BlackBerry] Rename BlackBerry specific Texture class

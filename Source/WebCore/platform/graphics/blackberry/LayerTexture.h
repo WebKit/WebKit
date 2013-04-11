@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "GraphicsTypes3D.h"
 #include "IntSize.h"
 
 #include <BlackBerryPlatformGraphics.h>
@@ -47,24 +48,22 @@ public:
 
     ~LayerTexture();
 
-    typedef BlackBerry::Platform::Graphics::Buffer* GpuHandle;
-    typedef BlackBerry::Platform::Graphics::Buffer* HostType;
+    bool isDirty() const { return !m_buffer; }
 
-    GpuHandle textureId() const { return m_handle; }
-    bool isDirty() const { return !m_handle; }
-    bool hasTexture() const { return m_handle; }
+    BlackBerry::Platform::Graphics::Buffer* buffer() const { return m_buffer; }
 
     bool isColor() const { return m_isColor; }
-    bool isOpaque() const { return m_isOpaque; }
 
     bool isProtected() const { return m_protectionCount > 0; }
     void protect() { ++m_protectionCount; }
     void unprotect() { --m_protectionCount; }
 
-    // This will ensure the texture has backing with the specified size
+    // This will ensure a buffer is allocated for this texture with the requested backing and size.
     bool protect(const IntSize&, BlackBerry::Platform::Graphics::BufferType = BlackBerry::Platform::Graphics::BackedWhenNecessary);
 
-    void updateContents(const HostType& contents, const IntRect& dirtyRect, const IntRect& tile, bool isOpaque);
+    Platform3DObject platformTexture() const;
+
+    void updateContents(BlackBerry::Platform::Graphics::Buffer*);
     void setContentsToColor(const Color&);
 
     IntSize size() const { return m_size; }
@@ -78,11 +77,11 @@ private:
     friend class TextureCacheCompositingThread;
 
     LayerTexture(bool isColor = false);
-    void setTextureId(GpuHandle id)
+    void setBuffer(BlackBerry::Platform::Graphics::Buffer* buffer)
     {
-        m_handle = id;
+        m_buffer = buffer;
 
-        // We assume it is a newly allocated texture,
+        // We assume it is a newly allocated buffer,
         // and thus empty, or 0, which would of course
         // be empty.
         m_size = IntSize();
@@ -92,10 +91,9 @@ private:
     void setSize(const IntSize& size) { m_size = size; }
 
     int m_protectionCount;
-    GpuHandle m_handle;
+    BlackBerry::Platform::Graphics::Buffer* m_buffer;
     IntSize m_size;
     bool m_isColor;
-    bool m_isOpaque;
     size_t m_bufferSizeInBytes;
 };
 

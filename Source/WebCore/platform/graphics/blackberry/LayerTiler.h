@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -86,7 +86,6 @@ private:
         TextureJob(Type type, const IntSize& newSize)
             : m_type(type)
             , m_contents(0)
-            , m_isOpaque(false)
             , m_dirtyRect(IntPoint::zero(), newSize)
         {
             ASSERT(type == ResizeContents);
@@ -95,16 +94,14 @@ private:
         TextureJob(Type type, const IntRect& dirtyRect)
             : m_type(type)
             , m_contents(0)
-            , m_isOpaque(false)
             , m_dirtyRect(dirtyRect)
         {
             ASSERT(type == DiscardContents || type == DirtyContents);
         }
 
-        TextureJob(Type type, const LayerTexture::HostType& contents, const IntRect& dirtyRect, bool isOpaque)
+        TextureJob(Type type, BlackBerry::Platform::Graphics::Buffer* contents, const IntRect& dirtyRect)
             : m_type(type)
             , m_contents(contents)
-            , m_isOpaque(isOpaque)
             , m_dirtyRect(dirtyRect)
         {
             ASSERT(type == UpdateContents || type == SetContents);
@@ -114,19 +111,18 @@ private:
         TextureJob(Type type, const Color& color, const TileIndex& index)
             : m_type(type)
             , m_contents(0)
-            , m_isOpaque(false)
             , m_color(color)
             , m_index(index)
         {
             ASSERT(type == SetContentsToColor);
         }
 
-        static TextureJob setContents(const LayerTexture::HostType& contents, const IntRect& contentsRect, bool isOpaque)
+        static TextureJob setContents(BlackBerry::Platform::Graphics::Buffer* contents, const IntRect& contentsRect)
         {
-            return TextureJob(SetContents, contents, contentsRect, isOpaque);
+            return TextureJob(SetContents, contents, contentsRect);
         }
         static TextureJob setContentsToColor(const Color& color, const TileIndex& index) { return TextureJob(SetContentsToColor, color, index); }
-        static TextureJob updateContents(const LayerTexture::HostType& contents, const IntRect& dirtyRect, bool isOpaque) { return TextureJob(UpdateContents, contents, dirtyRect, isOpaque); }
+        static TextureJob updateContents(BlackBerry::Platform::Graphics::Buffer* contents, const IntRect& dirtyRect) { return TextureJob(UpdateContents, contents, dirtyRect); }
         static TextureJob discardContents(const IntRect& dirtyRect) { return TextureJob(DiscardContents, dirtyRect); }
         static TextureJob resizeContents(const IntSize& newSize) { return TextureJob(ResizeContents, newSize); }
         static TextureJob dirtyContents(const IntRect& dirtyRect) { return TextureJob(DirtyContents, dirtyRect); }
@@ -134,8 +130,7 @@ private:
         bool isNull() { return m_type == Unknown; }
 
         Type m_type;
-        LayerTexture::HostType m_contents;
-        bool m_isOpaque;
+        BlackBerry::Platform::Graphics::Buffer* m_contents;
         IntRect m_dirtyRect;
         Color m_color;
         TileIndex m_index;
@@ -156,7 +151,7 @@ private:
     // Compositing thread
     void updateTileContents(const TextureJob&, const IntRect&);
     void addTileJob(const TileIndex&, const TextureJob&, TileJobsMap&);
-    void performTileJob(LayerTile*, const TextureJob&, const IntRect&);
+    void performTileJob(LayerTile*, const TextureJob&);
     void processTextureJob(const TextureJob&, TileJobsMap&);
     void pruneTextures();
     void visibilityChanged(bool needsDisplay);

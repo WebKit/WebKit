@@ -500,11 +500,7 @@ bool LayerFilterRenderer::initializeSharedGLObjects()
 
 void LayerFilterRenderer::ping(LayerRendererSurface* surface)
 {
-    GLuint texid = reinterpret_cast<GLuint>(platformBufferHandle(m_texture->textureId()));
-    if (!texid) {
-        BlackBerry::Platform::Graphics::lockAndBindBufferGLTexture(m_texture->textureId(), GL_TEXTURE_2D);
-        texid = reinterpret_cast<GLuint>(platformBufferHandle(m_texture->textureId()));
-    }
+    GLuint texid = m_texture->platformTexture();
 
     glFramebufferTexture2D(
         GL_FRAMEBUFFER,
@@ -515,7 +511,7 @@ void LayerFilterRenderer::ping(LayerRendererSurface* surface)
     );
     glBindTexture(
         GL_TEXTURE_2D,
-        reinterpret_cast<GLuint>(platformBufferHandle(surface->texture()->textureId()))
+        surface->texture()->platformTexture()
     );
 }
 
@@ -525,22 +521,18 @@ void LayerFilterRenderer::pong(LayerRendererSurface* surface)
         GL_FRAMEBUFFER,
         GL_COLOR_ATTACHMENT0,
         GL_TEXTURE_2D,
-        reinterpret_cast<GLuint>(platformBufferHandle(surface->texture()->textureId())),
+        surface->texture()->platformTexture(),
         0
     );
     glBindTexture(
         GL_TEXTURE_2D,
-        reinterpret_cast<GLuint>(platformBufferHandle(m_texture->textureId()))
+        m_texture->platformTexture()
     );
 }
 
 void LayerFilterRenderer::pushSnapshot(LayerRendererSurface* surface, int sourceId)
 {
-    GLuint texid = reinterpret_cast<GLuint>(platformBufferHandle(m_snapshotTexture->textureId()));
-    if (!texid) {
-        BlackBerry::Platform::Graphics::lockAndBindBufferGLTexture(m_snapshotTexture->textureId(), GL_TEXTURE_2D);
-        texid = reinterpret_cast<GLuint>(platformBufferHandle(m_snapshotTexture->textureId()));
-    }
+    GLuint texid = m_snapshotTexture->platformTexture();
 
     glFramebufferTexture2D(
         GL_FRAMEBUFFER,
@@ -568,7 +560,7 @@ void LayerFilterRenderer::popSnapshot()
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     glBindTexture(
         GL_TEXTURE_2D,
-        reinterpret_cast<GLuint>(platformBufferHandle(m_snapshotTexture->textureId()))
+        m_snapshotTexture->platformTexture()
     );
 }
 
@@ -720,13 +712,7 @@ void LayerFilterRenderer::applyActions(unsigned& fbo, LayerCompositingThread* la
 
         if (actions[i]->shouldPushSnapshot()) {
             RefPtr<LayerTexture> currentTexture = (!(i % 2) ? surface->texture() : m_texture);
-            GLuint texid = reinterpret_cast<GLuint>(platformBufferHandle(currentTexture->textureId()));
-            if (!texid) {
-                BlackBerry::Platform::Graphics::lockAndBindBufferGLTexture(currentTexture->textureId(), GL_TEXTURE_2D);
-                texid = reinterpret_cast<GLuint>(platformBufferHandle(currentTexture->textureId()));
-            }
-
-            pushSnapshot(surface, texid);
+            pushSnapshot(surface, currentTexture->platformTexture());
         }
         if (!(i % 2))
             ping(surface); // Set framebuffer to ours, and texture to parent

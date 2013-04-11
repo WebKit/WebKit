@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,8 +24,10 @@
 #include "IntRect.h"
 
 #include <GLES2/gl2.h>
+#include <wtf/Assertions.h>
 
 using BlackBerry::Platform::Graphics::Buffer;
+using BlackBerry::Platform::Graphics::BufferType;
 
 #define DEBUG_TEXTURE_MEMORY_USAGE 0
 
@@ -58,22 +60,16 @@ TextureCacheCompositingThread::TextureCacheCompositingThread()
 {
 }
 
-LayerTexture::GpuHandle TextureCacheCompositingThread::allocateTextureId(const IntSize& size, BlackBerry::Platform::Graphics::BufferType type)
+Buffer* TextureCacheCompositingThread::createBuffer(const IntSize& size, BufferType type)
 {
     return BlackBerry::Platform::Graphics::createBuffer(size, type);
 }
 
-static void freeTextureId(LayerTexture::GpuHandle id)
-{
-    BlackBerry::Platform::Graphics::destroyBuffer(id);
-}
-
 void TextureCacheCompositingThread::collectGarbage()
 {
-    for (Garbage::iterator it = m_garbage.begin(); it != m_garbage.end(); ++it) {
-        ZombieTexture& zombie = *it;
-        freeTextureId(zombie.id);
-    }
+    for (Garbage::iterator it = m_garbage.begin(); it != m_garbage.end(); ++it)
+        BlackBerry::Platform::Graphics::destroyBuffer((*it).buffer);
+
     m_garbage.clear();
 }
 
@@ -104,17 +100,16 @@ void TextureCacheCompositingThread::textureDestroyed(LayerTexture* texture)
     m_textures.remove(it);
 }
 
-bool TextureCacheCompositingThread::install(LayerTexture* texture, const IntSize& size, BlackBerry::Platform::Graphics::BufferType type)
+bool TextureCacheCompositingThread::install(LayerTexture* texture, const IntSize& size, BufferType type)
 {
     if (!texture)
         return true;
 
-    if (!texture->hasTexture() && !size.isEmpty()) {
-        LayerTexture::GpuHandle textureId = allocateTextureId(size, type);
-        if (!textureId)
-            return false;
+    if (!texture->buffer() && !size.isEmpty()) {
+        Buffer* buffer = createBuffer(size, type);
+        ASSERT(buffer);
 
-        texture->setTextureId(textureId);
+        texture->setBuffer(buffer);
         texture->setSize(size);
         textureResized(texture, IntSize());
     }
@@ -125,17 +120,16 @@ bool TextureCacheCompositingThread::install(LayerTexture* texture, const IntSize
     return true;
 }
 
-bool TextureCacheCompositingThread::resizeTexture(LayerTexture* texture, const IntSize& size, BlackBerry::Platform::Graphics::BufferType type)
+bool TextureCacheCompositingThread::resizeTexture(LayerTexture* texture, const IntSize& size, BufferType type)
 {
     IntSize oldSize = texture->size();
 
     // Reallocate the buffer
-    LayerTexture::GpuHandle textureId = allocateTextureId(size, type);
-    if (!textureId)
-        return false;
+    Buffer* buffer = createBuffer(size, type);
+    ASSERT(buffer);
 
-    freeTextureId(texture->textureId());
-    texture->setTextureId(textureId);
+    BlackBerry::Platform::Graphics::destroyBuffer(texture->buffer());
+    texture->setBuffer(buffer);
     texture->setSize(size);
     textureResized(texture, oldSize);
     return true;
@@ -147,7 +141,7 @@ void TextureCacheCompositingThread::evict(const TextureSet::iterator& it)
         return;
 
     LayerTexture* texture = *it;
-    if (texture->hasTexture()) {
+    if (texture->buffer()) {
         int delta = 0;
         delta += texture->width() * texture->height() * LayerTexture::bytesPerPixel();
         delta += texture->sizeInBytes();
@@ -156,7 +150,7 @@ void TextureCacheCompositingThread::evict(const TextureSet::iterator& it)
         m_garbage.append(ZombieTexture(texture));
     }
 
-    texture->setTextureId(0);
+    texture->setBuffer(0);
 }
 
 void TextureCacheCompositingThread::textureAccessed(LayerTexture* texture)
@@ -209,14 +203,14 @@ void TextureCacheCompositingThread::setMemoryUsage(size_t memoryUsage)
 #endif
 }
 
-PassRefPtr<LayerTexture> TextureCacheCompositingThread::textureForTiledContents(const LayerTexture::HostType& contents, const IntRect& tileRect, const TileIndex& index, bool isOpaque)
+PassRefPtr<LayerTexture> TextureCacheCompositingThread::textureForContents(Buffer* contents)
 {
     RefPtr<LayerTexture> texture = createTexture();
 
     // Protect newly created texture from being evicted.
     TextureProtector protector(texture.get());
 
-    texture->updateContents(contents, tileRect, tileRect, isOpaque);
+    texture->updateContents(contents);
 
     return texture.release();
 }
@@ -247,7 +241,7 @@ PassRefPtr<LayerTexture> TextureCacheCompositingThread::textureForColor(const Co
     return texture.release();
 }
 
-PassRefPtr<LayerTexture> TextureCacheCompositingThread::updateContents(const RefPtr<LayerTexture>& textureIn, const LayerTexture::HostType& contents, const IntRect& dirtyRect, const IntRect& tileRect, bool isOpaque)
+PassRefPtr<LayerTexture> TextureCacheCompositingThread::updateContents(const RefPtr<LayerTexture>& textureIn, Buffer* contents)
 {
     RefPtr<LayerTexture> texture(textureIn);
 
@@ -259,8 +253,7 @@ PassRefPtr<LayerTexture> TextureCacheCompositingThread::updateContents(const Ref
     // Protect newly created texture from being evicted.
     TextureProtector protector(texture.get());
 
-// TODO: if this is a partial update we need to blit the buffer on top of the other
-    texture->updateContents(contents, dirtyRect, tileRect, isOpaque);
+    texture->updateContents(contents);
 
     return texture.release();
 }

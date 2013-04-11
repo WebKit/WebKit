@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,7 @@
 #include "IntRect.h"
 #include "TextureCacheCompositingThread.h"
 
+#include <BlackBerryPlatformGLES2ContextState.h>
 #include <BlackBerryPlatformGraphicsContext.h>
 #include <GLES2/gl2.h>
 #include <wtf/CurrentTime.h>
@@ -34,9 +35,8 @@ namespace WebCore {
 
 LayerTexture::LayerTexture(bool isColor)
     : m_protectionCount(0)
-    , m_handle(0)
+    , m_buffer(0)
     , m_isColor(isColor)
-    , m_isOpaque(false)
     , m_bufferSizeInBytes(0)
 {
     textureCacheCompositingThread()->install(this, IntSize(), BlackBerry::Platform::Graphics::BackedWhenNecessary);
@@ -47,29 +47,28 @@ LayerTexture::~LayerTexture()
     textureCacheCompositingThread()->textureDestroyed(this);
 }
 
-void LayerTexture::updateContents(const LayerTexture::HostType& contents, const IntRect& dirtyRect, const IntRect& tile, bool isOpaque)
+void LayerTexture::updateContents(BlackBerry::Platform::Graphics::Buffer* buffer)
 {
-    if (m_handle)
-        BlackBerry::Platform::Graphics::destroyBuffer(m_handle);
-    m_handle = contents;
-    size_t newBufferSizeInBytes = BlackBerry::Platform::Graphics::bufferSizeInBytes(m_handle);
+    if (m_buffer)
+        BlackBerry::Platform::Graphics::destroyBuffer(m_buffer);
+    m_buffer = buffer;
+    size_t newBufferSizeInBytes = BlackBerry::Platform::Graphics::bufferSizeInBytes(m_buffer);
     textureCacheCompositingThread()->textureSizeInBytesChanged(this, newBufferSizeInBytes - m_bufferSizeInBytes);
     m_bufferSizeInBytes = newBufferSizeInBytes;
 }
 
 void LayerTexture::setContentsToColor(const Color& color)
 {
-    m_isOpaque = !color.hasAlpha();
     RGBA32 rgba = color.rgb();
 
-    if (m_handle)
-        BlackBerry::Platform::Graphics::destroyBuffer(m_handle);
+    if (m_buffer)
+        BlackBerry::Platform::Graphics::destroyBuffer(m_buffer);
 
-    m_handle = BlackBerry::Platform::Graphics::createBuffer(IntSize(1, 1), BlackBerry::Platform::Graphics::BackedWhenNecessary);
-    BlackBerry::Platform::Graphics::PlatformGraphicsContext* gc = lockBufferDrawable(m_handle);
+    m_buffer = BlackBerry::Platform::Graphics::createBuffer(IntSize(1, 1), BlackBerry::Platform::Graphics::BackedWhenNecessary);
+    BlackBerry::Platform::Graphics::PlatformGraphicsContext* gc = lockBufferDrawable(m_buffer);
     gc->setFillColor(rgba);
     gc->addFillRect(BlackBerry::Platform::FloatRect(0, 0, 1, 1));
-    releaseBufferDrawable(m_handle);
+    releaseBufferDrawable(m_buffer);
 
     IntSize oldSize = m_size;
     m_size = IntSize(1, 1);
@@ -79,7 +78,7 @@ void LayerTexture::setContentsToColor(const Color& color)
 
 bool LayerTexture::protect(const IntSize& size, BlackBerry::Platform::Graphics::BufferType type)
 {
-    if (!hasTexture()) {
+    if (!m_buffer) {
         // We may have been evicted by the TextureCacheCompositingThread,
         // attempt to install us again.
         if (!textureCacheCompositingThread()->install(this, size, type))
@@ -94,6 +93,26 @@ bool LayerTexture::protect(const IntSize& size, BlackBerry::Platform::Graphics::
     textureCacheCompositingThread()->resizeTexture(this, size, type);
 
     return true;
+}
+
+Platform3DObject LayerTexture::platformTexture() const
+{
+    using namespace BlackBerry::Platform::Graphics;
+
+    Platform3DObject platformTexture = reinterpret_cast<Platform3DObject>(platformBufferHandle(m_buffer));
+
+    // Force creation if it's 0.
+    if (!platformTexture) {
+        // This call can cause display list to render to backing, which can mutate a lot of GL state.
+        GLES2ContextState::VertexAttributeStateSaver vertexAttribStateSaver;
+        GLES2ContextState::ProgramStateSaver programSaver;
+        GLES2ContextState::TextureAndFBOStateSaver textureSaver;
+
+        lockAndBindBufferGLTexture(m_buffer, GL_TEXTURE_2D);
+        platformTexture = reinterpret_cast<Platform3DObject>(platformBufferHandle(m_buffer));
+    }
+
+    return platformTexture;
 }
 
 } // namespace WebCore

@@ -438,7 +438,7 @@ void WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded(LayerComposi
     if (m_image.isNull() && !m_color.isValid() && !m_drawsContent)
         return;
 
-    if (m_texture && m_texture->textureId())
+    if (m_texture && m_texture->buffer())
         return;
 
     if (m_color.isValid()) {
@@ -446,7 +446,7 @@ void WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded(LayerComposi
         return;
     }
 
-    LayerTexture::HostType textureContents = LayerTexture::HostType();
+    BlackBerry::Platform::Graphics::Buffer* textureContents = 0;
     IntSize textureSize;
 
     if (m_drawsContent) {
@@ -498,13 +498,12 @@ void WebOverlayLayerCompositingThreadClient::uploadTexturesIfNeeded(LayerComposi
 
     m_texture = LayerTexture::create();
     m_texture->protect(IntSize(), BlackBerry::Platform::Graphics::BackedWhenNecessary);
-    IntRect bitmapRect(0, 0, textureSize.width(), textureSize.height());
-    m_texture->updateContents(textureContents, bitmapRect, bitmapRect, false);
+    m_texture->updateContents(textureContents);
 }
 
 void WebOverlayLayerCompositingThreadClient::drawTextures(LayerCompositingThread* layer, double scale, const GLES2Program& program)
 {
-    if (!m_texture || !m_texture->textureId())
+    if (!m_texture || !m_texture->buffer())
         return;
 
     TransformationMatrix matrix = layer->drawTransform();
@@ -515,7 +514,7 @@ void WebOverlayLayerCompositingThreadClient::drawTextures(LayerCompositingThread
         matrix.scaleNonUniform(static_cast<double>(layer->bounds().width()) / m_image.width(), static_cast<double>(layer->bounds().height()) / m_image.height());
     }
     matrix.scale(layer->sizeIsScaleInvariant() ? 1.0 / scale : 1.0);
-    blitToBuffer(0, m_texture->textureId(), reinterpret_cast<BlackBerry::Platform::TransformationMatrix&>(matrix),
+    blitToBuffer(0, m_texture->buffer(), reinterpret_cast<BlackBerry::Platform::TransformationMatrix&>(matrix),
         BlackBerry::Platform::Graphics::SourceOver, static_cast<unsigned char>(layer->drawOpacity() * 255));
 }
 

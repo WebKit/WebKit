@@ -445,11 +445,7 @@ bool LayerRenderer::useSurface(LayerRendererSurface* surface)
 
     surface->ensureTexture();
 
-    GLuint texid = reinterpret_cast<GLuint>(platformBufferHandle(surface->texture()->textureId()));
-    if (!texid) {
-        BlackBerry::Platform::Graphics::lockAndBindBufferGLTexture(surface->texture()->textureId(), GL_TEXTURE_2D);
-        texid = reinterpret_cast<GLuint>(platformBufferHandle(surface->texture()->textureId()));
-    }
+    GLuint texid = surface->texture()->platformTexture();
 
     if (!m_fbo)
         glGenFramebuffers(1, &m_fbo);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -44,11 +44,11 @@ public:
 
     bool isDirty() const { return m_contentsDirty || !m_texture || m_texture->isDirty(); }
 
-    bool hasTexture() const { return m_texture && m_texture->hasTexture(); }
+    bool hasTexture() const { return m_texture && m_texture->buffer(); }
 
-    void setContents(const LayerTexture::HostType& contents, const IntRect& tileRect, const TileIndex&, bool isOpaque);
+    void setContents(BlackBerry::Platform::Graphics::Buffer*);
     void setContentsToColor(const Color&);
-    void updateContents(const LayerTexture::HostType& contents, const IntRect& dirtyRect, const IntRect& tileRect, bool isOpaque);
+    void updateContents(BlackBerry::Platform::Graphics::Buffer*);
     void discardContents();
 
     // The current texture is an accurate preview of this layer, but a more

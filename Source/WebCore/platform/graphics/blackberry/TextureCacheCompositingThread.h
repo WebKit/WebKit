@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -51,11 +51,11 @@ public:
     }
 
     // Retrieve a texture from the cache.
-    PassRefPtr<LayerTexture> textureForTiledContents(const LayerTexture::HostType& contents, const IntRect& tileRect, const TileIndex&, bool isOpaque);
+    PassRefPtr<LayerTexture> textureForContents(BlackBerry::Platform::Graphics::Buffer*);
     PassRefPtr<LayerTexture> textureForColor(const Color&);
 
     // Update contents of an existing texture, or create a new one if texture is 0.
-    PassRefPtr<LayerTexture> updateContents(const RefPtr<LayerTexture>&, const LayerTexture::HostType& contents, const IntRect& dirtyRect, const IntRect& tileRect, bool isOpaque);
+    PassRefPtr<LayerTexture> updateContents(const RefPtr<LayerTexture>&, BlackBerry::Platform::Graphics::Buffer*);
 
     size_t memoryUsage() const { return m_memoryUsage; }
     size_t memoryLimit() const { return m_memoryLimit; }
@@ -87,13 +87,13 @@ public:
 private:
     struct ZombieTexture {
         explicit ZombieTexture(LayerTexture* texture)
-            : id(texture->textureId())
+            : buffer(texture->buffer())
             , size(texture->size())
             , sizeInBytes(texture->sizeInBytes())
         {
         }
 
-        LayerTexture::GpuHandle id;
+        BlackBerry::Platform::Graphics::Buffer* buffer;
         IntSize size;
         size_t sizeInBytes;
     };
@@ -104,7 +104,7 @@ private:
     TextureCacheCompositingThread();
     ~TextureCacheCompositingThread();
 
-    LayerTexture::GpuHandle allocateTextureId(const IntSize& textureSize, BlackBerry::Platform::Graphics::BufferType);
+    BlackBerry::Platform::Graphics::Buffer* createBuffer(const IntSize& textureSize, BlackBerry::Platform::Graphics::BufferType);
 
     void incMemoryUsage(int delta) { setMemoryUsage(memoryUsage() + delta); }
     void decMemoryUsage(int delta) { setMemoryUsage(memoryUsage() - delta); }
