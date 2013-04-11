@@ -1,3 +1,11 @@
+2013-04-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Mass remove all the empty directories
+
+        Rubberstamped by Ryosuke Niwa.
+
+        * tests/qdeclarativewebview/resources: Removed.
+
 2013-04-09  Geoffrey Garen  <ggaren@apple.com>
 
         Removed bitrotted TimeoutChecker code

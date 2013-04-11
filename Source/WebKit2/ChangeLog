@@ -1,3 +1,54 @@
+2013-04-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Mass remove all the empty directories
+
+        Rubberstamped by Ryosuke Niwa.
+
+        * Platform/CoreIPC/gtk: Removed.
+        * Platform/CoreIPC/qt: Removed.
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.32: Removed.
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.64: Removed.
+        * PluginProcess/gtk: Removed.
+        * Shared/API/c/win: Removed.
+        * Shared/Plugins/Netscape/win: Removed.
+        * Shared/cg/win: Removed.
+        * Shared/win: Removed.
+        * UIProcess/API/C/win: Removed.
+        * UIProcess/API/gtk/webkit: Removed.
+        * UIProcess/Launcher/win: Removed.
+        * UIProcess/Plugins/gtk: Removed.
+        * UIProcess/Plugins/win: Removed.
+        * UIProcess/texmap: Removed.
+        * UIProcess/win: Removed.
+        * WebProcess/Authentication/mac: Removed.
+        * WebProcess/Cookies/efl: Removed.
+        * WebProcess/Cookies/gtk: Removed.
+        * WebProcess/Downloads/cf/win: Removed.
+        * WebProcess/Downloads/cfnet: Removed.
+        * WebProcess/Downloads/curl: Removed.
+        * WebProcess/Downloads/efl: Removed.
+        * WebProcess/Downloads/gtk: Removed.
+        * WebProcess/Downloads/mac: Removed.
+        * WebProcess/Downloads/qt: Removed.
+        * WebProcess/Downloads/soup: Removed.
+        * WebProcess/FullScreen/gtk: Removed.
+        * WebProcess/FullScreen/mac: Removed.
+        * WebProcess/FullScreen/qt: Removed.
+        * WebProcess/FullScreen/win: Removed.
+        * WebProcess/InjectedBundle/API/c/win: Removed.
+        * WebProcess/InjectedBundle/win: Removed.
+        * WebProcess/KeyValueStorage: Removed.
+        * WebProcess/Network/CustomProtocols/mac: Removed.
+        * WebProcess/Plugins/Netscape/gtk: Removed.
+        * WebProcess/Plugins/Netscape/win: Removed.
+        * WebProcess/WebCoreSupport/win: Removed.
+        * WebProcess/WebPage/LayerTreeCoordinator: Removed.
+        * WebProcess/WebPage/ca/mac: Removed.
+        * WebProcess/WebPage/ca/win: Removed.
+        * WebProcess/WebPage/win: Removed.
+        * WebProcess/win: Removed.
+        * qt/Resources: Removed.
+
 2013-04-10  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         [CMAKE] Build fix after r148147, r148148

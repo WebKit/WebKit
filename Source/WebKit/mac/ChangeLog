@@ -1,3 +1,11 @@
+2013-04-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Mass remove all the empty directories
+
+        Rubberstamped by Ryosuke Niwa.
+
+        * ForwardingHeaders/wtf/unicode/icu: Removed.
+
 2013-04-08  Anders Carlsson  <andersca@apple.com>
 
         Remove unneeded headers from FrameLoader.h

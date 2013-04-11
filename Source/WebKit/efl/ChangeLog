@@ -1,3 +1,29 @@
+2013-04-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Mass remove all the empty directories
+
+        Rubberstamped by Ryosuke Niwa.
+
+        * DefaultTheme/widget/button: Removed.
+        * DefaultTheme/widget/check: Removed.
+        * DefaultTheme/widget/combo: Removed.
+        * DefaultTheme/widget/entry: Removed.
+        * DefaultTheme/widget/file: Removed.
+        * DefaultTheme/widget/mediacontrol/fullscreenbutton: Removed.
+        * DefaultTheme/widget/mediacontrol/mutebutton: Removed.
+        * DefaultTheme/widget/mediacontrol/playpausebutton: Removed.
+        * DefaultTheme/widget/mediacontrol/seekbackwardbutton: Removed.
+        * DefaultTheme/widget/mediacontrol/seekforwardbutton: Removed.
+        * DefaultTheme/widget/mediacontrol/togglecaptionsbutton: Removed.
+        * DefaultTheme/widget/progressbar: Removed.
+        * DefaultTheme/widget/radio: Removed.
+        * DefaultTheme/widget/scrollbar: Removed.
+        * DefaultTheme/widget/search/cancel: Removed.
+        * DefaultTheme/widget/search/decoration: Removed.
+        * DefaultTheme/widget/search/field: Removed.
+        * DefaultTheme/widget/slider: Removed.
+        * DefaultTheme/widget/spinner: Removed.
+
 2013-04-09  Ed Bartosh  <bartosh@gmail.com>
 
         [EFL] --minimal build fails with error: `setSeamlessIFramesEnabled' is not a member of `WebCore::RuntimeEnabledFeatures'

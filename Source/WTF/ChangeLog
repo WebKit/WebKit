@@ -1,3 +1,14 @@
+2013-04-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Mass remove all the empty directories
+
+        Rubberstamped by Ryosuke Niwa.
+
+        * wtf/qt/compat: Removed.
+        * wtf/unicode/glib: Removed.
+        * wtf/unicode/qt4: Removed.
+        * wtf/unicode/wince: Removed.
+
 2013-04-08  Anders Carlsson  <andersca@apple.com>
 
         Remove unneeded headers from FrameLoader.h

@@ -1,3 +1,12 @@
+2013-04-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Mass remove all the empty directories
+
+        Rubberstamped by Ryosuke Niwa.
+
+        * gyp: Removed.
+        * po: Removed.
+
 2013-04-10  Anton Obzhirov  <a.obzhirov@samsung.com>
 
         [GTK] Add support for Page Visibility

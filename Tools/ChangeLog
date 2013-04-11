@@ -1,3 +1,26 @@
+2013-04-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Mass remove all the empty directories
+
+        Rubberstamped by Ryosuke Niwa.
+
+        * BuildSlaveSupport/gtk/crashmon/log: Removed.
+        * BuildSlaveSupport/gtk/xvfb/log: Removed.
+        * DumpRenderTree/ForwardingHeaders/wtf: Removed.
+        * DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit: Removed.
+        * MiniBrowser/gtk/WebBundle: Removed.
+        * MiniBrowser/win: Removed.
+        * QtTestPlatformPlugin/mac: Removed.
+        * Scripts/webkitpy/tool/bot/testdata: Removed.
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver: Removed.
+        * efl/ImageDiff: Removed.
+        * iExploder/htdocs: Removed.
+        * iExploder/iexploder-1.7.2/output: Removed.
+        * iExploder/tools: Removed.
+        * qmake/config.tests/libexecdir: Removed.
+        * qmake/config.tests/libjpeg: Removed.
+        * qmake/config.tests/libpng: Removed.
+
 2013-04-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Use webkit-queeus.appspot.com instead of webkit-commit-queue.appspot.com

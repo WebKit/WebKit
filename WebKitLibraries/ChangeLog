@@ -1,3 +1,12 @@
+2013-04-10  Benjamin Poulain  <bpoulain@apple.com>
+
+        Mass remove all the empty directories
+
+        Rubberstamped by Ryosuke Niwa.
+
+        * win/bin: Removed.
+        * win/lib/WebKitSystemInterface: Removed.
+
 2013-04-05  Roger Fong  <roger_fong@apple.com>
 
         More VS2010 solution makefile fixes.
