@@ -26,8 +26,6 @@
 #ifndef ScrollingStateTree_h
 #define ScrollingStateTree_h
 
-#if ENABLE(THREADED_SCROLLING)
-
 #include "ScrollingStateScrollingNode.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
@@ -78,7 +76,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(THREADED_SCROLLING)
 
 #endif // ScrollingStateTree_h

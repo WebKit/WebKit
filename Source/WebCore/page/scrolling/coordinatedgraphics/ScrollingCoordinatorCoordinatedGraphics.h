@@ -32,19 +32,30 @@
 
 namespace WebCore {
 
+class ScrollingStateTree;
+
 class ScrollingCoordinatorCoordinatedGraphics : public ScrollingCoordinator {
 public:
     explicit ScrollingCoordinatorCoordinatedGraphics(Page*);
+    virtual ~ScrollingCoordinatorCoordinatedGraphics();
 
-    virtual bool supportsFixedPositionLayers() const { return true; }
+    virtual bool supportsFixedPositionLayers() const OVERRIDE { return true; }
 
-    virtual void setLayerIsFixedToContainerLayer(GraphicsLayer*, bool);
-    virtual void scrollableAreaScrollLayerDidChange(ScrollableArea*);
-    virtual void willDestroyScrollableArea(ScrollableArea*);
+    virtual ScrollingNodeID attachToStateTree(ScrollingNodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID) OVERRIDE;
+    virtual void detachFromStateTree(ScrollingNodeID) OVERRIDE;
+    virtual void clearStateTree() OVERRIDE;
+
+    virtual void updateViewportConstrainedNode(ScrollingNodeID, const ViewportConstraints&, GraphicsLayer*) OVERRIDE;
+
+    virtual void scrollableAreaScrollLayerDidChange(ScrollableArea*) OVERRIDE;
+    virtual void willDestroyScrollableArea(ScrollableArea*) OVERRIDE;
+
+private:
+    OwnPtr<ScrollingStateTree> m_scrollingStateTree;
 };
 
 } // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS)
 
-#endif
+#endif // ScrollingCoordinatorCoordinatedGraphics_h

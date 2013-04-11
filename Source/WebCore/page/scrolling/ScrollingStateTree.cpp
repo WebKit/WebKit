@@ -25,8 +25,6 @@
  
 #include "config.h"
 
-#if ENABLE(THREADED_SCROLLING)
-
 #include "ScrollingStateTree.h"
 
 #include "ScrollingStateFixedNode.h"
@@ -181,5 +179,3 @@ ScrollingStateNode* ScrollingStateTree::stateNodeForID(ScrollingNodeID scrollLay
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(THREADED_SCROLLING)

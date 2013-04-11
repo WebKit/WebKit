@@ -32,8 +32,6 @@
 
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(THREADED_SCROLLING)
-
 namespace WebCore {
 
 ScrollingStateNode::ScrollingStateNode(ScrollingStateTree* scrollingStateTree, ScrollingNodeID nodeID)
@@ -147,5 +145,3 @@ String ScrollingStateNode::scrollingStateTreeAsText() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(THREADED_SCROLLING)

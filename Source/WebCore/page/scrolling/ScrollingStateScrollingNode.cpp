@@ -30,8 +30,6 @@
 #include "TextStream.h"
 #include <wtf/OwnPtr.h>
 
-#if ENABLE(THREADED_SCROLLING)
-
 namespace WebCore {
 
 PassOwnPtr<ScrollingStateScrollingNode> ScrollingStateScrollingNode::create(ScrollingStateTree* stateTree, ScrollingNodeID nodeID)
@@ -284,5 +282,3 @@ void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, int indent) con
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(THREADED_SCROLLING)

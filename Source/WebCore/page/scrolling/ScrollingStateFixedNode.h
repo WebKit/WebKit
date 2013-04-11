@@ -26,8 +26,6 @@
 #ifndef ScrollingStateFixedNode_h
 #define ScrollingStateFixedNode_h
 
-#if ENABLE(THREADED_SCROLLING)
-
 #include "ScrollingConstraints.h"
 #include "ScrollingStateNode.h"
 
@@ -75,7 +73,5 @@ inline ScrollingStateFixedNode* toScrollingStateFixedNode(ScrollingStateNode* no
 void toScrollingStateFixedNode(const ScrollingStateFixedNode*);
 
 } // namespace WebCore
-
-#endif // ENABLE(THREADED_SCROLLING)
 
 #endif // ScrollingStateFixedNode_h

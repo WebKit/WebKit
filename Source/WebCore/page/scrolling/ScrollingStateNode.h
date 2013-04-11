@@ -26,8 +26,6 @@
 #ifndef ScrollingStateNode_h
 #define ScrollingStateNode_h
 
-#if ENABLE(THREADED_SCROLLING)
-
 #include "PlatformLayer.h"
 #include "ScrollingCoordinator.h"
 #include <wtf/OwnPtr.h>
@@ -116,7 +114,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(THREADED_SCROLLING)
 
 #endif // ScrollingStateNode_h

@@ -1822,7 +1822,14 @@ set(WebCore_SOURCES
 
     page/scrolling/ScrollingConstraints.cpp
     page/scrolling/ScrollingCoordinator.cpp
+    page/scrolling/ScrollingStateFixedNode.cpp
+    page/scrolling/ScrollingStateNode.cpp
+    page/scrolling/ScrollingStateScrollingNode.cpp
+    page/scrolling/ScrollingStateStickyNode.cpp
+    page/scrolling/ScrollingStateTree.cpp
     page/scrolling/coordinatedgraphics/ScrollingCoordinatorCoordinatedGraphics.cpp
+    page/scrolling/coordinatedgraphics/ScrollingStateNodeCoordinatedGraphics.cpp
+    page/scrolling/coordinatedgraphics/ScrollingStateScrollingNodeCoordinatedGraphics.cpp
 
     platform/Arena.cpp
     platform/AsyncFileSystem.cpp

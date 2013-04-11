@@ -30,21 +30,68 @@
 #include "ScrollingCoordinatorCoordinatedGraphics.h"
 
 #include "CoordinatedGraphicsLayer.h"
+#include "FrameView.h"
 #include "Page.h"
+#include "RenderLayer.h"
+#include "RenderLayerBacking.h"
+#include "ScrollingConstraints.h"
+#include "ScrollingStateFixedNode.h"
+#include "ScrollingStateScrollingNode.h"
+#include "ScrollingStateStickyNode.h"
+#include "ScrollingStateTree.h"
 #include "Settings.h"
 
 namespace WebCore {
 
 ScrollingCoordinatorCoordinatedGraphics::ScrollingCoordinatorCoordinatedGraphics(Page* page)
     : ScrollingCoordinator(page)
+    , m_scrollingStateTree(ScrollingStateTree::create())
 {
 }
 
-void ScrollingCoordinatorCoordinatedGraphics::setLayerIsFixedToContainerLayer(GraphicsLayer* layer, bool enable)
+ScrollingCoordinatorCoordinatedGraphics::~ScrollingCoordinatorCoordinatedGraphics()
 {
-    if (!m_page->settings()->acceleratedCompositingForFixedPositionEnabled())
+}
+
+ScrollingNodeID ScrollingCoordinatorCoordinatedGraphics::attachToStateTree(ScrollingNodeType nodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID)
+{
+    return m_scrollingStateTree->attachNode(nodeType, newNodeID, parentID);
+}
+
+void ScrollingCoordinatorCoordinatedGraphics::detachFromStateTree(ScrollingNodeID nodeID)
+{
+    ScrollingStateNode* node = m_scrollingStateTree->stateNodeForID(nodeID);
+    if (node && node->isFixedNode())
+        toCoordinatedGraphicsLayer(node->graphicsLayer())->setFixedToViewport(false);
+
+    m_scrollingStateTree->detachNode(nodeID);
+}
+
+void ScrollingCoordinatorCoordinatedGraphics::clearStateTree()
+{
+    m_scrollingStateTree->clear();
+}
+
+void ScrollingCoordinatorCoordinatedGraphics::updateViewportConstrainedNode(ScrollingNodeID nodeID, const ViewportConstraints& constraints, GraphicsLayer* graphicsLayer)
+{
+    ASSERT(supportsFixedPositionLayers());
+
+    ScrollingStateNode* node = m_scrollingStateTree->stateNodeForID(nodeID);
+    if (!node)
         return;
-    toCoordinatedGraphicsLayer(layer)->setFixedToViewport(enable);
+
+    switch (constraints.constraintType()) {
+    case ViewportConstraints::FixedPositionConstaint: {
+        toCoordinatedGraphicsLayer(graphicsLayer)->setFixedToViewport(true); // FIXME : Use constraints!
+        ScrollingStateFixedNode* fixedNode = toScrollingStateFixedNode(node);
+        fixedNode->setScrollLayer(graphicsLayer);
+        break;
+    }
+    case ViewportConstraints::StickyPositionConstraint:
+        break; // FIXME : Support sticky elements.
+    default:
+        ASSERT_NOT_REACHED();
+    }
 }
 
 void ScrollingCoordinatorCoordinatedGraphics::scrollableAreaScrollLayerDidChange(ScrollableArea* scrollableArea)
