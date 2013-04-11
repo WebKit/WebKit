@@ -581,7 +581,7 @@ reviewers_list = [
     Reviewer("Oliver Hunt", "oliver@apple.com", "olliej"),
     Reviewer("Pavel Feldman", ["pfeldman@chromium.org", "pfeldman@google.com"], "pfeldman"),
     Reviewer("Philip Rogers", ["pdr@google.com", "pdr@chromium.org"], "pdr"),
-    Reviewer("Philippe Normand", ["pnormand@igalia.com", "philn@webkit.org", "philn@igalia.com"], ["philn-tp", "pnormand"]),
+    Reviewer("Philippe Normand", ["pnormand@igalia.com", "philn@webkit.org", "philn@igalia.com"], "philn"),
     Reviewer("Richard Williamson", "rjw@apple.com", "rjw"),
     Reviewer("Rob Buis", ["rwlbuis@gmail.com", "rwlbuis@webkit.org", "rbuis@blackberry.com", "rbuis@rim.com"], "rwlbuis"),
     Reviewer("Ryosuke Niwa", "rniwa@webkit.org", "rniwa"),

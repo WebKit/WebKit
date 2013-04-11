@@ -1,3 +1,9 @@
+2013-04-11  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, update my IRC nickname.
+
+        * Scripts/webkitpy/common/config/committers.py: I no longer use philn-tp.
+
 2013-04-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove the rest of Chromium code from webkitpy
