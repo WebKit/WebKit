@@ -37,6 +37,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
+#include "Logging.h"
 #include "PseudoElement.h"
 #include "RenderView.h"
 #include "TransitionEvent.h"
@@ -134,6 +135,8 @@ void AnimationControllerPrivate::updateAnimationTimerForRenderer(RenderObject* r
 void AnimationControllerPrivate::updateAnimationTimer(SetChanged callSetChanged/* = DoNotCallSetChanged*/)
 {
     double timeToNextService = updateAnimations(callSetChanged);
+
+    LOG(Animations, "updateAnimationTimer: timeToNextService is %.2f", timeToNextService);
 
     // If we want service immediately, we start a repeating timer to reduce the overhead of starting
     if (!timeToNextService) {
