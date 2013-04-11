@@ -175,7 +175,6 @@ webkit.org/b/98936 fast/forms/datetime [ Skip ]
 webkit.org/b/98936 fast/forms/datetime-multiple-fields [ Skip ]
 webkit.org/b/98936 fast/forms/datetimelocal [ Skip ]
 webkit.org/b/98936 fast/forms/datetimelocal-multiple-fields [ Skip ]
-webkit.org/b/98936 fast/forms/input-in-table-cell-no-value.html [ ImageOnlyFailure ]
 webkit.org/b/98936 fast/forms/month [ Skip ]
 webkit.org/b/98936 fast/forms/month-multiple-fields [ Skip ]
 webkit.org/b/98936 fast/forms/time [ Skip ]
@@ -643,6 +642,8 @@ webkit.org/b/114254 css1/font_properties/font.html [ Timeout Pass ]
 webkit.org/b/114254 css2.1/20110323/absolute-non-replaced-height-001.htm [ Timeout Pass ]
 webkit.org/b/114254 css2.1/t09-c5526c-display-00-e.html [ Timeout Pass ]
 
+webkit.org/b/72698 media/audio-garbage-collect.html [ Timeout Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -728,8 +729,6 @@ webkit.org/b/50740 editing/spelling/spellcheck-queue.html [ Failure Slow ]
 webkit.org/b/46644 fast/text/large-text-composed-char-dos.html [ Timeout ]
 
 webkit.org/b/95530 http/tests/security/inactive-document-with-empty-security-origin.html [ Timeout ]
-
-webkit.org/b/72698 media/audio-garbage-collect.html [ Timeout ]
 
 # EventSender::dumpFilenameBeingDragged not implemented.
 webkit.org/b/61826 fast/events/drag-image-filename.html [ Timeout ]
@@ -1130,7 +1129,6 @@ webkit.org/b/84694 fast/events/selectstart-by-double-triple-clicks.html [ Failur
 webkit.org/b/84692 fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
 
 webkit.org/b/84701 fast/block/line-layout/selection-highlight-overlap.html [ ImageOnlyFailure ]
-webkit.org/b/84701 fast/css/sticky/inline-sticky-abspos-child.html [ ImageOnlyFailure ]
 webkit.org/b/84701 fast/css/sticky/inline-sticky.html [ ImageOnlyFailure ]
 
 webkit.org/b/84759 ietestcenter/css3/multicolumn/column-containing-block-001.htm [ ImageOnlyFailure ]
@@ -1283,7 +1281,6 @@ webkit.org/b/106924 accessibility/heading-level.html [ Failure ]
 
 webkit.org/b/103927 http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_cross_origin_resource_request.html [ Failure ]
 webkit.org/b/103927 http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_timing_allow_cross_origin_resource_request.html [ Failure ]
-webkit.org/b/103927 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_dynamic_insertion.html [ Failure ]
 webkit.org/b/103927 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_frame_initiator_type.html [ Failure ]
 webkit.org/b/103927 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_initiator_types.html [ Failure ]
 webkit.org/b/103927 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_redirects.html [ Failure ]
@@ -1302,7 +1299,6 @@ webkit.org/b/107194 storage/indexeddb/transaction-abort.html [ Failure ]
 webkit.org/b/105574 editing/input/caret-at-the-edge-of-contenteditable.html [ Failure ]
 webkit.org/b/105574 editing/input/reveal-caret-of-multiline-input.html [ Failure ]
 webkit.org/b/105574 editing/input/reveal-caret-of-multiline-contenteditable.html [ Failure ]
-webkit.org/b/105574 fast/spatial-navigation/snav-div-overflow-scrol-hidden.html [ Failure ]
 
 webkit.org/b/106563 fast/css/image-orientation/image-orientation.html [ Failure ]
 
@@ -1342,9 +1338,9 @@ webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-circle-padding.htm
 webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-ellipse.html [ ImageOnlyFailure ]
 webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-ellipse-padding.html [ ImageOnlyFailure ]
 webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-polygon-padding-002.html [ ImageOnlyFailure ]
+webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-polygon-padding-003.html [ Failure ]
 webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-diamond-margin-polygon.html [ Failure ]
 webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-ellipse-margin-left.html [ Failure ]
-webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-ellipse-margin-right.html [ Failure ]
 webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-circle.html [ ImageOnlyFailure ]
 webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-ellipse.html [ ImageOnlyFailure ]
 webkit.org/b/110089 fast/exclusions/shape-outside-floats/shape-outside-floats-simple-rounded-rectangle.html [ ImageOnlyFailure ]
