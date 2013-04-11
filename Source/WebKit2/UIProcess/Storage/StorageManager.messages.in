@@ -26,5 +26,5 @@ messages -> StorageManager {
 
     GetValues(uint64_t storageMapID) -> (WTF::HashMap<WTF::String, WTF::String> values) WantsConnection
 
-    SetItem(uint64_t storageMapID, WTF::String key, WTF::String value, WTF::String urlString) WantsConnection
+    SetItem(uint64_t storageMapID, uint64_t sourceStorageAreaID, WTF::String key, WTF::String value, WTF::String urlString) WantsConnection
 }

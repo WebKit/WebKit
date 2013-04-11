@@ -253,6 +253,12 @@ void callMemberFunction(Connection* connection, const Arguments4<P1, P2, P3, P4>
     (object->*function)(connection, args.argument1, args.argument2, args.argument3, args.argument4);
 }
 
+template<typename C, typename MF, typename P1, typename P2, typename P3, typename P4, typename P5>
+void callMemberFunction(Connection* connection, const Arguments5<P1, P2, P3, P4, P5>& args, C* object, MF function)
+{
+    (object->*function)(connection, args.argument1, args.argument2, args.argument3, args.argument4, args.argument5);
+}
+
 template<typename C, typename MF, typename P1, typename R1>
 void callMemberFunction(Connection* connection, const Arguments1<P1>& args, Arguments1<R1>& replyArgs, C* object, MF function)
 {

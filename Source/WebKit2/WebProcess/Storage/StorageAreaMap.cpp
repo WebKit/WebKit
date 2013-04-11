@@ -26,7 +26,13 @@
 #include "config.h"
 #include "StorageAreaMap.h"
 
+#include "SecurityOriginData.h"
+#include "StorageAreaImpl.h"
+#include "StorageAreaMapMessages.h"
+#include "StorageManagerMessages.h"
 #include "StorageNamespaceImpl.h"
+#include "WebProcess.h"
+#include <WebCore/Frame.h>
 #include <WebCore/StorageMap.h>
 
 using namespace WebCore;
@@ -50,10 +56,14 @@ StorageAreaMap::StorageAreaMap(StorageNamespaceImpl* storageNamespace, PassRefPt
     , m_quotaInBytes(storageNamespace->quotaInBytes())
     , m_securityOrigin(securityOrigin)
 {
+    WebProcess::shared().connection()->send(Messages::StorageManager::CreateStorageMap(m_storageMapID, storageNamespace->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(m_securityOrigin.get())), 0);
+    WebProcess::shared().addMessageReceiver(Messages::StorageAreaMap::messageReceiverName(), m_storageMapID, this);
 }
 
 StorageAreaMap::~StorageAreaMap()
 {
+    WebProcess::shared().connection()->send(Messages::StorageManager::DestroyStorageMap(m_storageMapID), 0);
+    WebProcess::shared().removeMessageReceiver(Messages::StorageAreaMap::messageReceiverName(), m_storageMapID);
 }
 
 StorageType StorageAreaMap::storageType() const
@@ -67,31 +77,65 @@ StorageType StorageAreaMap::storageType() const
 
 unsigned StorageAreaMap::length()
 {
-    // FIXME: Implement.
-    return 0;
+    loadValuesIfNeeded();
+
+    return m_storageMap->length();
 }
 
 String StorageAreaMap::key(unsigned index)
 {
-    // FIXME: Implement.
-    return String();
+    loadValuesIfNeeded();
+
+    return m_storageMap->key(index);
 }
 
 String StorageAreaMap::item(const String& key)
 {
-    // FIXME: Implement.
-    return String();
+    loadValuesIfNeeded();
+
+    return m_storageMap->getItem(key);
 }
 
-void StorageAreaMap::setItem(StorageAreaImpl* sourceArea, const String& key, const String& value, bool& quotaException)
+void StorageAreaMap::setItem(Frame* sourceFrame, StorageAreaImpl* sourceArea, const String& key, const String& value, bool& quotaException)
 {
-    // FIXME: Implement.
+    loadValuesIfNeeded();
+
+    ASSERT(m_storageMap->hasOneRef());
+
+    String oldValue;
+    quotaException = false;
+    m_storageMap->setItem(key, value, oldValue, quotaException);
+    if (quotaException)
+        return;
+
+    if (oldValue == value)
+        return;
+
+    m_pendingValueChanges.add(key);
+
+    WebProcess::shared().connection()->send(Messages::StorageManager::SetItem(m_storageMapID, sourceArea->storageAreaID(), key, value, sourceFrame->document()->url()), 0);
 }
 
 bool StorageAreaMap::contains(const String& key)
 {
-    // FIXME: Implement.
-    return false;
+    loadValuesIfNeeded();
+
+    return m_storageMap->contains(key);
+}
+
+void StorageAreaMap::loadValuesIfNeeded()
+{
+    if (m_storageMap)
+        return;
+
+    HashMap<String, String> values;
+    // FIXME: This should use a special sendSync flag to indicate that we don't want to process incoming messages while waiting for a reply.
+    // (This flag does not yet exist). Since loadValuesIfNeeded() ends up being called from within JavaScript code, processing incoming synchronous messages
+    // could lead to weird reentrency bugs otherwise.
+    WebProcess::shared().connection()->sendSync(Messages::StorageManager::GetValues(m_storageMapID), Messages::StorageManager::GetValues::Reply(values), 0);
+
+    m_storageMap = StorageMap::create(m_quotaInBytes);
+    m_storageMap->importItems(values);
 }
 
 void StorageAreaMap::didSetItem(const String& key, bool quotaError)
@@ -99,7 +143,7 @@ void StorageAreaMap::didSetItem(const String& key, bool quotaError)
     // FIXME: Implement.
 }
 
-void StorageAreaMap::dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString)
+void StorageAreaMap::dispatchStorageEvent(uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString)
 {
     // FIXME: Implement.
 }

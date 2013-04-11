@@ -1,3 +1,63 @@
+2013-04-11  Anders Carlsson  <andersca@apple.com>
+
+        Implement more logic in StorageAreaMap
+        https://bugs.webkit.org/show_bug.cgi?id=114451
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::callMemberFunction):
+        Add new overload.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::StorageArea::addListener):
+        (WebKit::StorageManager::StorageArea::removeListener):
+        These take storage map IDs.
+
+        (WebKit::StorageManager::StorageArea::setItem):
+        Rename storageAreaID to sourceStorageAreaID.
+
+        (WebKit::StorageManager::StorageArea::dispatchEvents):
+        Remove the code that would not dispatch to the source connection, there may still be storage areas interested in those events.
+
+        (WebKit::StorageManager::setItem):
+        This now takes the source storage area ID.
+
+        (WebKit::StorageManager::findStorageArea):
+        This takes a storage map ID.
+
+        * UIProcess/Storage/StorageManager.messages.in:
+        SetItem now takes the source storage area ID as well.
+
+        * WebProcess/Storage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::setItem):
+        Pass the source frame to StorageAreaMap::setItem.
+
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::StorageAreaMap):
+        Send CreateStorageMap and add the object as a message receiver.
+
+        (WebKit::StorageAreaMap::~StorageAreaMap):
+        Send DestroyStorageMap and remove the object as a message receiver.
+
+        (WebKit::StorageAreaMap::length):
+        (WebKit::StorageAreaMap::key):
+        (WebKit::StorageAreaMap::item):
+        (WebKit::StorageAreaMap::contains):
+        Load values and forward calls to the storage map.
+
+        (WebKit::StorageAreaMap::setItem):
+        This now takes the source frame as well. Update the local storage map and send a SetItem message.
+        
+        (WebKit::StorageAreaMap::loadValuesIfNeeded):
+        Get the values from the storage manager.
+
+        (WebKit::StorageAreaMap::dispatchStorageEvent):
+        This now takes the source storage area ID.
+
+        * WebProcess/Storage/StorageAreaMap.messages.in:
+        DispatchStorageEvent now takes the source storage area ID.
+
 2013-04-10  Brady Eidson  <beidson@apple.com>
 
         Web/Plugin process deadlock initializing async plugins.

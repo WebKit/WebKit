@@ -30,6 +30,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/StorageArea.h>
 #include <wtf/Forward.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -53,7 +54,7 @@ public:
     unsigned length();
     String key(unsigned index);
     String item(const String& key);
-    void setItem(StorageAreaImpl* sourceArea, const String& key, const String& value, bool& quotaException);
+    void setItem(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceArea, const String& key, const String& value, bool& quotaException);
     bool contains(const String& key);
 
 private:
@@ -63,7 +64,7 @@ private:
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
     void didSetItem(const String& key, bool quotaError);
-    void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString);
+    void dispatchStorageEvent(uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString);
 
     void loadValuesIfNeeded();
 
@@ -72,8 +73,8 @@ private:
     unsigned m_quotaInBytes;
     RefPtr<WebCore::SecurityOrigin> m_securityOrigin;
 
-
     RefPtr<WebCore::StorageMap> m_storageMap;
+    HashCountedSet<String> m_pendingValueChanges;
 };
 
 } // namespace WebKit

@@ -121,7 +121,7 @@ void StorageAreaImpl::setItem(const String& key, const String& value, ExceptionC
     }
 
     bool quotaException;
-    m_storageAreaMap->setItem(this, key, value, quotaException);
+    m_storageAreaMap->setItem(sourceFrame, this, key, value, quotaException);
 
     if (quotaException)
         ec = QUOTA_EXCEEDED_ERR;
