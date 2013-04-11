@@ -294,6 +294,65 @@ void JSCallbackObject<Parent>::put(JSCell* cell, ExecState* exec, PropertyName p
 }
 
 template <class Parent>
+void JSCallbackObject<Parent>::putByIndex(JSCell* cell, ExecState* exec, unsigned propertyIndex, JSValue value, bool shouldThrow)
+{
+    JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);
+    JSContextRef ctx = toRef(exec);
+    JSObjectRef thisRef = toRef(thisObject);
+    RefPtr<OpaqueJSString> propertyNameRef;
+    JSValueRef valueRef = toRef(exec, value);
+    Identifier propertyName = Identifier(exec, String::number(propertyIndex));
+
+    for (JSClassRef jsClass = thisObject->classRef(); jsClass; jsClass = jsClass->parentClass) {
+        if (JSObjectSetPropertyCallback setProperty = jsClass->setProperty) {
+            if (!propertyNameRef)
+                propertyNameRef = OpaqueJSString::create(propertyName.impl());
+            JSValueRef exception = 0;
+            bool result;
+            {
+                APICallbackShim callbackShim(exec);
+                result = setProperty(ctx, thisRef, propertyNameRef.get(), valueRef, &exception);
+            }
+            if (exception)
+                throwError(exec, toJS(exec, exception));
+            if (result || exception)
+                return;
+        }
+
+        if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec)) {
+            if (StaticValueEntry* entry = staticValues->get(propertyName.impl())) {
+                if (entry->attributes & kJSPropertyAttributeReadOnly)
+                    return;
+                if (JSObjectSetPropertyCallback setProperty = entry->setProperty) {
+                    if (!propertyNameRef)
+                        propertyNameRef = OpaqueJSString::create(propertyName.impl());
+                    JSValueRef exception = 0;
+                    bool result;
+                    {
+                        APICallbackShim callbackShim(exec);
+                        result = setProperty(ctx, thisRef, propertyNameRef.get(), valueRef, &exception);
+                    }
+                    if (exception)
+                        throwError(exec, toJS(exec, exception));
+                    if (result || exception)
+                        return;
+                }
+            }
+        }
+
+        if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
+            if (StaticFunctionEntry* entry = staticFunctions->get(propertyName.impl())) {
+                if (entry->attributes & kJSPropertyAttributeReadOnly)
+                    return;
+                break;
+            }
+        }
+    }
+
+    return Parent::putByIndex(thisObject, exec, propertyIndex, value, shouldThrow);
+}
+
+template <class Parent>
 bool JSCallbackObject<Parent>::deleteProperty(JSCell* cell, ExecState* exec, PropertyName propertyName)
 {
     JSCallbackObject* thisObject = jsCast<JSCallbackObject*>(cell);

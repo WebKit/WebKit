@@ -491,6 +491,11 @@ static bool PropertyCatchalls_setProperty(JSContextRef context, JSObjectRef obje
         return true;
     }
 
+    if (JSStringIsEqualToUTF8CString(propertyName, "make_throw") || JSStringIsEqualToUTF8CString(propertyName, "0")) {
+        *exception = JSValueMakeNumber(context, 5);
+        return true;
+    }
+
     return false;
 }
 

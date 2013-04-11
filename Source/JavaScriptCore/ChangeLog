@@ -1,3 +1,22 @@
+2013-04-10  Oliver Hunt  <oliver@apple.com>
+
+        Set trap is not being called for API objects
+        https://bugs.webkit.org/show_bug.cgi?id=114403
+
+        Reviewed by Anders Carlsson.
+
+        Intercept putByIndex on the callback object and add tests
+        to make sure we don't regress in future.
+
+        * API/JSCallbackObject.h:
+        (JSCallbackObject):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::putByIndex):
+        (JSC):
+        * API/tests/testapi.c:
+        (PropertyCatchalls_setProperty):
+        * API/tests/testapi.js:
+
 2013-04-10  Benjamin Poulain  <bpoulain@apple.com>
 
         Mass remove all the empty directories

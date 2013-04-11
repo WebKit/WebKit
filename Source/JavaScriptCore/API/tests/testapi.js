@@ -262,6 +262,10 @@ shouldBe("PropertyCatchalls.x", 4);
 for (var i = 0; i < 6; ++i)
     var x = PropertyCatchalls.x;
 shouldBe("x", null);
+var make_throw = 'make_throw';
+shouldThrow("PropertyCatchalls[make_throw]=1");
+make_throw = 0;
+shouldThrow("PropertyCatchalls[make_throw]=1");
 
 for (var i = 0; i < 10; ++i) {
     for (var p in PropertyCatchalls) {
