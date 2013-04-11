@@ -27,29 +27,10 @@ namespace WebCore {
 
 void Settings::initializeDefaultFontFamilies()
 {
-    static const char* kLanguages[] = {
-        "ar",
-        "bn",
-        "gu",
-        "he",
-        "hi",
-        "ja",
-        "kn",
-        "ko",
-        "ml",
-        "pa",
-        "ta",
-        "te",
-        "th",
-        "zh-CN",
-        "zh-TW",
-    };
-
-    static BlackBerry::Platform::String* languages[WTF_ARRAY_LENGTH(kLanguages)];
+    static std::vector<BlackBerry::Platform::String> languages;
     static bool init = false;
     if (!init) {
-        for (size_t i = 0; i < WTF_ARRAY_LENGTH(kLanguages); ++i)
-            languages[i] = new BlackBerry::Platform::String(kLanguages[i]);
+        languages = BlackBerry::Platform::FontInfo::instance()->languagesWithFonts();
         init = true;
     }
 
@@ -70,12 +51,12 @@ void Settings::initializeDefaultFontFamilies()
     STATIC_LOCAL_STRING(s_monospace, "monospace");
     STATIC_LOCAL_STRING(s_serif, "serif");
     STATIC_LOCAL_STRING(s_sansSerif, "sans-serif");
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(languages); ++i) {
-        UScriptCode script = localeToScriptCodeForFontSelection(*languages[i]);
-        setFixedFontFamily(BlackBerry::Platform::FontInfo::instance()->fontFamily(s_monospace, *languages[i]), script);
-        setSansSerifFontFamily(BlackBerry::Platform::FontInfo::instance()->fontFamily(s_sansSerif, *languages[i]), script);
-        setSerifFontFamily(BlackBerry::Platform::FontInfo::instance()->fontFamily(s_serif, *languages[i]), script);
-        setStandardFontFamily(BlackBerry::Platform::FontInfo::instance()->fontFamily(BlackBerry::Platform::String::emptyString(), *languages[i]), script);
+    for (size_t i = 0; i < languages.size(); ++i) {
+        UScriptCode script = localeToScriptCodeForFontSelection(languages[i]);
+        setFixedFontFamily(BlackBerry::Platform::FontInfo::instance()->fontFamily(s_monospace, languages[i]), script);
+        setSansSerifFontFamily(BlackBerry::Platform::FontInfo::instance()->fontFamily(s_sansSerif, languages[i]), script);
+        setSerifFontFamily(BlackBerry::Platform::FontInfo::instance()->fontFamily(s_serif, languages[i]), script);
+        setStandardFontFamily(BlackBerry::Platform::FontInfo::instance()->fontFamily(BlackBerry::Platform::String::emptyString(), languages[i]), script);
     }
 }
 
