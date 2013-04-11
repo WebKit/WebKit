@@ -7,6 +7,8 @@
 
 SOURCE_DIR = $${ROOT_WEBKIT_DIR}/Source/ThirdParty/ANGLE
 
+*clang: QT_CONFIG -= c++11
+
 INCLUDEPATH += \
     $$SOURCE_DIR/include/GLSLANG \
     $$SOURCE_DIR/include/KHR

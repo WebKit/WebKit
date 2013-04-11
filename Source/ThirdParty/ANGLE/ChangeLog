@@ -1,3 +1,19 @@
+2013-04-11  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][Mac] Linking fails with Qt 5.1
+        https://bugs.webkit.org/show_bug.cgi?id=114435
+
+        Reviewed by Tor Arne Vestbø.
+
+        Qt 5.1 enables C++11 by default when using clang on Mac
+        and links against the libc++ standard library. As a result
+        building the QtWebKit shared library fails when linking
+        agains the ANGLE intermediate static library because libc++
+        misses some symbols needed by ANGLE.
+        Disable C++11 for the ANGLE intermediate library to fix the build.
+
+        * ANGLE.pri:
+
 2013-04-10  Benjamin Poulain  <bpoulain@apple.com>
 
         Mass remove all the empty directories
