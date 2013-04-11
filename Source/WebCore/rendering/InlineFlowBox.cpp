@@ -20,7 +20,6 @@
 #include "config.h"
 #include "InlineFlowBox.h"
 
-#include "CachedImage.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
 #include "EllipsisBox.h"

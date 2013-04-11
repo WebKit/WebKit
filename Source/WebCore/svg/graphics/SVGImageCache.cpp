@@ -22,7 +22,6 @@
 #include "SVGImageCache.h"
 
 #if ENABLE(SVG)
-#include "CachedImage.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"

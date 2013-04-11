@@ -26,7 +26,6 @@
 #include "config.h"
 #include "Clipboard.h"
 
-#include "CachedImage.h"
 #include "FileList.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -40,7 +39,6 @@ Clipboard::Clipboard(ClipboardAccessPolicy policy, ClipboardType clipboardType)
     , m_effectAllowed("uninitialized")
     , m_dragStarted(false)
     , m_clipboardType(clipboardType)
-    , m_dragImage(0)
 {
 }
     

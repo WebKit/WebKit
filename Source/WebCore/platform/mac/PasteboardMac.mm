@@ -26,7 +26,7 @@
 #import "config.h"
 #import "Pasteboard.h"
 
-#import "CachedResource.h"
+#import "CachedImage.h"
 #import "ClipboardMac.h"
 #import "DOMRangeInternal.h"
 #import "Document.h"
