@@ -181,10 +181,20 @@ class SVN(SCM, SVNRepository):
             return
         self.add(path)
 
-    def add_list(self, paths, return_exit_code=False):
+    def add_list(self, paths):
         for path in paths:
             self._add_parent_directories(os.path.dirname(os.path.abspath(path)))
-        self._run_svn(["add"] + paths)
+        if self.svn_version() >= "1.7":
+            # For subversion client 1.7 and later, need to add '--parents' option to ensure intermediate directories
+            # are added; in addition, 1.7 returns an exit code of 1 from svn add if one or more of the requested
+            # adds are already under version control, including intermediate directories subject to addition
+            # due to --parents
+            svn_add_args = ['svn', 'add', '--parents'] + paths
+            exit_code = self.run(svn_add_args, return_exit_code=True)
+            if exit_code and exit_code != 1:
+                raise ScriptError(script_args=svn_add_args, exit_code=exit_code)
+        else:
+            self._run_svn(["add"] + paths)
 
     def _delete_parent_directories(self, path):
         if not self.in_working_directory(path):

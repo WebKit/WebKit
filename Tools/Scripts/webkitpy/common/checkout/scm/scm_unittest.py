@@ -891,13 +891,17 @@ END
         self.assertFalse(os.path.exists(self.bogus_dir))
 
     def test_svn_lock(self):
-        svn_root_lock_path = ".svn/lock"
-        write_into_file_at_path(svn_root_lock_path, "", "utf-8")
-        # webkit-patch uses a Checkout object and runs update-webkit, just use svn update here.
-        self.assertRaises(ScriptError, run_command, ['svn', 'update'])
-        self.scm.discard_working_directory_changes()
-        self.assertFalse(os.path.exists(svn_root_lock_path))
-        run_command(['svn', 'update'])  # Should succeed and not raise.
+        if self.scm.svn_version() >= "1.7":
+            # the following technique with .svn/lock then svn update doesn't work with subversion client 1.7 or later
+            pass
+        else:
+            svn_root_lock_path = ".svn/lock"
+            write_into_file_at_path(svn_root_lock_path, "", "utf-8")
+            # webkit-patch uses a Checkout object and runs update-webkit, just use svn update here.
+            self.assertRaises(ScriptError, run_command, ['svn', 'update'])
+            self.scm.discard_working_directory_changes()
+            self.assertFalse(os.path.exists(svn_root_lock_path))
+            run_command(['svn', 'update'])  # Should succeed and not raise.
 
     def test_exists(self):
         self._shared_test_exists(self.scm, self.scm.commit_with_message)

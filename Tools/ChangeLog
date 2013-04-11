@@ -1,3 +1,20 @@
+2013-04-11  Glenn Adams  <glenn@skynav.com>
+
+        [webkitpy] SVNTest fails four tests when using subversion client 1.7 or later
+        https://bugs.webkit.org/show_bug.cgi?id=114386
+
+        Reviewed by Benjamin Poulain.
+
+        Subversion client 1.7 uses a new locking scheme that invalidates the technique used
+        in test_svn_lock(), so skip that test for 1.7 (or later) until a new technique
+        can be implemented. Further, 1.7 changed svn add to not add intermediate directories
+        by default and to return exit code 1 if a file/dir had already been added.
+
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        (test_svn_lock): Skip body of test if subversion client 1.7 or later.
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.add_list): Use --parents option and handle exit code 1 if subversion client 1.7 or later.
+
 2013-04-10  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed.
