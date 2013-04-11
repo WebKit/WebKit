@@ -752,17 +752,16 @@ private:
     
     NEVER_INLINE void updateErrorMessage() 
     {
-        m_error = true;
         const char* name = getTokenName(m_token.m_type);
         if (!name) 
             updateErrorMessageSpecialCase(m_token.m_type);
         else 
             m_errorMessage = String::format("Unexpected token '%s'", name);
+        ASSERT(!m_errorMessage.isNull());
     }
     
     NEVER_INLINE void updateErrorMessage(JSTokenType expectedToken) 
     {
-        m_error = true;
         const char* name = getTokenName(expectedToken);
         if (name)
             m_errorMessage = String::format("Expected token '%s'", name);
@@ -772,18 +771,19 @@ private:
             else
                 updateErrorMessageSpecialCase(expectedToken);
         }
+        ASSERT(!m_errorMessage.isNull());
     }
     
     NEVER_INLINE void updateErrorWithNameAndMessage(const char* beforeMsg, String name, const char* afterMsg)
     {
-        m_error = true;
         m_errorMessage = makeString(beforeMsg, " '", name, "' ", afterMsg);
     }
     
     NEVER_INLINE void updateErrorMessage(const char* msg)
-    {   
-        m_error = true;
+    {
+        ASSERT(msg);
         m_errorMessage = String(msg);
+        ASSERT(!m_errorMessage.isNull());
     }
     
     void startLoop() { currentScope()->startLoop(); }
@@ -889,6 +889,11 @@ private:
         return m_lastTokenEnd;
     }
 
+    bool hasError() const
+    {
+        return !m_errorMessage.isNull();
+    }
+
     JSGlobalData* m_globalData;
     const SourceCode* m_source;
     ParserArena* m_arena;
@@ -896,7 +901,6 @@ private:
     
     StackBounds m_stack;
     bool m_hasStackOverflow;
-    bool m_error;
     String m_errorMessage;
     JSToken m_token;
     bool m_allowsIn;

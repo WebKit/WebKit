@@ -1,3 +1,37 @@
+2013-04-10  Benjamin Poulain  <benjamin@webkit.org>
+
+        Unify JSC Parser's error and error message
+        https://bugs.webkit.org/show_bug.cgi?id=114363
+
+        Reviewed by Geoffrey Garen.
+
+        The parser kept the error state over two attributes:
+        error and errorMessage. They were changed in sync,
+        but had some discrepancy (for example, the error message
+        was always defined to something).
+
+        This patch unifies the two. There is an error if
+        if the error message is non-null or if the parsing finished
+        before the end.
+
+        This also gets rid of the allocation of the error message
+        when instantiating a parser.
+
+        * parser/Parser.cpp:
+        (JSC::::Parser):
+        (JSC::::parseInner):
+        (JSC::::parseSourceElements):
+        (JSC::::parseVarDeclaration):
+        (JSC::::parseConstDeclaration):
+        (JSC::::parseForStatement):
+        (JSC::::parseSwitchStatement):
+        (JSC::::parsePrimaryExpression):
+        * parser/Parser.h:
+        (JSC::Parser::updateErrorMessage):
+        (JSC::Parser::updateErrorWithNameAndMessage):
+        (JSC::Parser::hasError):
+        (Parser):
+
 2013-04-10  Oliver Hunt  <oliver@apple.com>
 
         Set trap is not being called for API objects
