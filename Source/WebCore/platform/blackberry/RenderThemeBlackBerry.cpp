@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc.
  * Copyright (C) 2009 Google Inc.
- * Copyright (C) 2009, 2010, 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2009, 2010, 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,7 @@
 #include "HTMLMediaElement.h"
 #include "HostWindow.h"
 #include "InputType.h"
+#include "InputTypeNames.h"
 #include "MediaControlElements.h"
 #include "MediaPlayerPrivateBlackBerry.h"
 #include "Page.h"
@@ -1092,5 +1093,17 @@ bool RenderThemeBlackBerry::supportsDataListUI(const AtomicString& type) const
     // TODO: support other input types in the future.
     return type == InputTypeNames::text();
 }
+
+#if ENABLE(DATALIST_ELEMENT)
+IntSize RenderThemeBlackBerry::sliderTickSize() const
+{
+    return IntSize(1, 3);
+}
+
+int RenderThemeBlackBerry::sliderTickOffsetFromTrackCenter() const
+{
+    return -9;
+}
+#endif
 
 } // namespace WebCore
