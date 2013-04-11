@@ -60,10 +60,6 @@ OSType WKCarbonWindowPropertyCreator(void);
 OSType WKCarbonWindowPropertyTag(void);
 #endif
 
-typedef id WKNSURLConnectionDelegateProxyPtr;
-
-WKNSURLConnectionDelegateProxyPtr WKCreateNSURLConnectionDelegateProxy(void);
-
 void WKDisableCGDeferredUpdates(void);
 
 Class WKNSURLProtocolClassForRequest(NSURLRequest *request);
@@ -387,7 +383,7 @@ void WKSetHTTPPipeliningMinimumFastLanePriority(int priority);
 
 void WKSetCONNECTProxyForStream(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);
 void WKSetCONNECTProxyAuthorizationForStream(CFReadStreamRef, CFStringRef proxyAuthorizationString);
-CFHTTPMessageRef WKCopyCONNECTProxyResponse(CFReadStreamRef, CFURLRef responseURL);
+CFHTTPMessageRef WKCopyCONNECTProxyResponse(CFReadStreamRef, CFURLRef responseURL, CFStringRef proxyHost, CFNumberRef proxyPort);
 
 void WKWindowSetAlpha(NSWindow *window, float alphaValue);
 void WKWindowSetScaledFrame(NSWindow *window, NSRect scaleFrame, NSRect nonScaledFrame);
@@ -479,8 +475,10 @@ CGFloat WKNSReboundDeltaForElasticDelta(CGFloat delta);
 typedef enum {
     WKOcclusionNotificationTypeApplicationBecameVisible,
     WKOcclusionNotificationTypeApplicationBecameOccluded,
+    WKOcclusionNotificationTypeApplicationWindowModificationsStarted,
+    WKOcclusionNotificationTypeApplicationWindowModificationsStopped,
     WKOcclusionNotificationTypeWindowBecameVisible,
-    WKOcclusionNotificationTypeWindowBecameOccluded
+    WKOcclusionNotificationTypeWindowBecameOccluded,
 } WKOcclusionNotificationType;
 
 typedef uint32_t WKWindowID;

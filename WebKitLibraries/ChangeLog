@@ -1,3 +1,14 @@
+2013-04-11  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/10416316> [Mac] WebSocket doesn't work with authenticating proxies
+        https://bugs.webkit.org/show_bug.cgi?id=114464
+
+        Update WebKitSystemInterface.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
 2013-04-10  Benjamin Poulain  <bpoulain@apple.com>
 
         Mass remove all the empty directories
