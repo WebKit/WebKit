@@ -62,7 +62,7 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
         removeNode(node);
     }
 
-    ScrollingStateNode* newNode;
+    ScrollingStateNode* newNode = 0;
     if (!parentID) {
         // If we're resetting the root node, we should clear the HashMap and destroy the current children.
         clear();
