@@ -68,6 +68,9 @@ private:
 
     void loadValuesIfNeeded();
 
+    void dispatchSessionStorageEvent(uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString);
+    void dispatchLocalStorageEvent(uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString);
+
     uint64_t m_storageMapID;
     uint64_t m_storageNamespaceID;
     unsigned m_quotaInBytes;

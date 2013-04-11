@@ -1,5 +1,22 @@
 2013-04-11  Anders Carlsson  <andersca@apple.com>
 
+        Make StorageAreaMap dispatch session storage events
+        https://bugs.webkit.org/show_bug.cgi?id=114454
+
+        Reviewed by Beth Dakin.
+
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::dispatchStorageEvent):
+        Depending on the storage area type, call dispatchSessionStorageEvent or dispatchLocalStorageEvent.
+
+        (WebKit::StorageAreaMap::dispatchSessionStorageEvent):
+        Enumerate all the frames in our page and dispatch the event to the relevant ones.
+
+        (WebKit::StorageAreaMap::dispatchLocalStorageEvent):
+        Add empty stub for now.
+
+2013-04-11  Anders Carlsson  <andersca@apple.com>
+
         Implement more logic in StorageAreaMap
         https://bugs.webkit.org/show_bug.cgi?id=114451
 

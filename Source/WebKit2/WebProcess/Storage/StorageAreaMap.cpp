@@ -31,8 +31,12 @@
 #include "StorageAreaMapMessages.h"
 #include "StorageManagerMessages.h"
 #include "StorageNamespaceImpl.h"
+#include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/Frame.h>
+#include <WebCore/Page.h>
+#include <WebCore/Storage.h>
+#include <WebCore/StorageEventDispatcher.h>
 #include <WebCore/StorageMap.h>
 
 using namespace WebCore;
@@ -145,7 +149,54 @@ void StorageAreaMap::didSetItem(const String& key, bool quotaError)
 
 void StorageAreaMap::dispatchStorageEvent(uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString)
 {
-    // FIXME: Implement.
+    if (storageType() == SessionStorage)
+        dispatchSessionStorageEvent(sourceStorageAreaID, key, oldValue, newValue, urlString);
+    else
+        dispatchLocalStorageEvent(sourceStorageAreaID, key, oldValue, newValue, urlString);
+}
+
+void StorageAreaMap::dispatchSessionStorageEvent(uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString)
+{
+    ASSERT(storageType() == SessionStorage);
+
+    // Namespace IDs for session storage namespaces are equivalent to web page IDs
+    // so we can get the right page here.
+    WebPage* webPage = WebProcess::shared().webPage(m_storageNamespaceID);
+    if (!webPage)
+        return;
+
+    Vector<RefPtr<Frame> > frames;
+
+    Page* page = webPage->corePage();
+    for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        Document* document = frame->document();
+        if (!document->securityOrigin()->equal(m_securityOrigin.get()))
+            continue;
+
+        Storage* storage = document->domWindow()->optionalSessionStorage();
+        if (!storage)
+            continue;
+
+        StorageAreaImpl* storageArea = static_cast<StorageAreaImpl*>(storage->area());
+        if (storageArea->storageAreaID() == sourceStorageAreaID) {
+            // This is the storage area that caused the event to be dispatched.
+            continue;
+        }
+
+        frames.append(frame);
+    }
+
+    StorageEventDispatcher::dispatchLocalStorageEventsToFrames(page->group(), frames, key, oldValue, newValue, urlString, m_securityOrigin.get());
+}
+
+void StorageAreaMap::dispatchLocalStorageEvent(uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString)
+{
+    ASSERT(storageType() == LocalStorage);
+
+    UNUSED_PARAM(key);
+    UNUSED_PARAM(oldValue);
+    UNUSED_PARAM(newValue);
+    UNUSED_PARAM(urlString);
 }
 
 } // namespace WebKit
