@@ -1,3 +1,18 @@
+2013-04-10  Glenn Adams  <glenn@skynav.com>
+
+        [webkitpy] Remove unused return_exit_code argument and returned values from SCM.{add,add_list}
+        https://bugs.webkit.org/show_bug.cgi?id=114410
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.add_list): Remove optional return_exit_code argument. Remove return value.
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        (SCM.add): Remove optional return_exit_code argument.
+        (SCM.add_list): Remove optional return_exit_code argument.
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.add_list): Remove optional return_exit_code argument. Remove return value.
+
 2013-04-10  Eric Seidel  <eric@webkit.org>
 
         Remove myself from the watchlists, I'm getting too much bug mail. :)

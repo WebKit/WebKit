@@ -130,10 +130,10 @@ class SCM:
     def status_command(self):
         self._subclass_must_implement()
 
-    def add(self, path, return_exit_code=False):
-        self.add_list([path], return_exit_code)
+    def add(self, path):
+        self.add_list([path])
 
-    def add_list(self, paths, return_exit_code=False):
+    def add_list(self, paths):
         self._subclass_must_implement()
 
     def delete(self, path):

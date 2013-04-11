@@ -162,8 +162,8 @@ class Git(SCM, SVNRepository):
     def _status_regexp(self, expected_types):
         return '^(?P<status>[%s])\t(?P<filename>.+)$' % expected_types
 
-    def add_list(self, paths, return_exit_code=False):
-        return self._run_git(["add"] + paths, return_exit_code=return_exit_code)
+    def add_list(self, paths):
+        self._run_git(["add"] + paths)
 
     def delete_list(self, paths):
         return self._run_git(["rm", "-f"] + paths)
