@@ -42,7 +42,6 @@
     void setTextAutosizingEnabled(in boolean enabled) raises(DOMException);
     void setTextAutosizingWindowSizeOverride(in long width, in long height) raises(DOMException);
     void setTextAutosizingFontScaleFactor(in float fontScaleFactor) raises(DOMException);
-    void setResolutionOverride(in long dotsPerCSSInchHorizontally, in long dotsPerCSSInchVertically) raises(DOMException);
     void setMediaTypeOverride(in DOMString mediaTypeOverride) raises(DOMException);
     void setCSSExclusionsEnabled(in boolean enabled) raises(DOMException);
     void setCSSVariablesEnabled(in boolean enabled) raises(DOMException);

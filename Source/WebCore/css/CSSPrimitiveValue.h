@@ -189,6 +189,11 @@ public:
     bool isDotsPerInch() const { return primitiveType() == CSS_DPI; }
     bool isDotsPerPixel() const { return primitiveType() == CSS_DPPX; }
     bool isDotsPerCentimeter() const { return primitiveType() == CSS_DPCM; }
+    bool isResolution() const
+    {
+        unsigned short type = primitiveType();
+        return type >= CSS_DPPX && type <= CSS_DPCM;
+    }
 
 #if ENABLE(CSS_VARIABLES)
     bool isVariableName() const { return primitiveType() == CSS_VARIABLE_NAME; }

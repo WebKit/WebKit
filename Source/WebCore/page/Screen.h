@@ -43,8 +43,6 @@ namespace WebCore {
     public:
         static PassRefPtr<Screen> create(Frame *frame) { return adoptRef(new Screen(frame)); }
 
-        unsigned horizontalDPI() const;
-        unsigned verticalDPI() const;
         unsigned height() const;
         unsigned width() const;
         unsigned colorDepth() const;

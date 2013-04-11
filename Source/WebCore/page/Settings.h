@@ -107,10 +107,6 @@ namespace WebCore {
 #endif
 
         // Only set by Layout Tests.
-        void setResolutionOverride(const IntSize&);
-        const IntSize& resolutionOverride() const { return m_resolutionDensityPerInchOverride; }
-
-        // Only set by Layout Tests.
         void setMediaTypeOverride(const String&);
         const String& mediaTypeOverride() const { return m_mediaTypeOverride; }
 
@@ -292,7 +288,6 @@ namespace WebCore {
         IntSize m_textAutosizingWindowSizeOverride;
         bool m_textAutosizingEnabled : 1;
 #endif
-        IntSize m_resolutionDensityPerInchOverride;
 
         SETTINGS_MEMBER_VARIABLES
 
