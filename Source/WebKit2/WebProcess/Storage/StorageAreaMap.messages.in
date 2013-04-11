@@ -20,7 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> StorageAreaImpl {
+messages -> StorageAreaMap {
     DidSetItem(WTF::String key, bool quotaException)
 
     DispatchStorageEvent(WTF::String key, WTF::String oldValue, WTF::String newValue, WTF::String urlString)

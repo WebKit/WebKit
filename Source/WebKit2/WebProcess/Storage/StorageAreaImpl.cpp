@@ -27,7 +27,7 @@
 #include "StorageAreaImpl.h"
 
 #include "SecurityOriginData.h"
-#include "StorageAreaImplMessages.h"
+#include "StorageAreaMapMessages.h"
 #include "StorageManagerMessages.h"
 #include "StorageNamespaceImpl.h"
 #include "WebProcess.h"
@@ -60,13 +60,13 @@ StorageAreaImpl::StorageAreaImpl(StorageNamespaceImpl* StorageNamespaceImpl, Pas
     , m_securityOrigin(securityOrigin)
 {
     WebProcess::shared().connection()->send(Messages::StorageManager::CreateStorageArea(m_storageAreaID, StorageNamespaceImpl->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(m_securityOrigin.get())), 0);
-    WebProcess::shared().addMessageReceiver(Messages::StorageAreaImpl::messageReceiverName(), m_storageAreaID, this);
+    WebProcess::shared().addMessageReceiver(Messages::StorageAreaMap::messageReceiverName(), m_storageAreaID, this);
 }
 
 StorageAreaImpl::~StorageAreaImpl()
 {
     WebProcess::shared().connection()->send(Messages::StorageManager::DestroyStorageArea(m_storageAreaID), 0);
-    WebProcess::shared().removeMessageReceiver(Messages::StorageAreaImpl::messageReceiverName(), m_storageAreaID);
+    WebProcess::shared().removeMessageReceiver(Messages::StorageAreaMap::messageReceiverName(), m_storageAreaID);
 }
 
 unsigned StorageAreaImpl::length(ExceptionCode& ec, Frame* sourceFrame)

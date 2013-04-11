@@ -1,5 +1,36 @@
 2013-04-10  Anders Carlsson  <andersca@apple.com>
 
+        Add a stubbed out StorageAreaMap class
+        https://bugs.webkit.org/show_bug.cgi?id=114392
+
+        Reviewed by Andreas Kling.
+
+        The intention is that StorageAreaMap is going to take over responsibility for storing the storage values in the
+        web process, as well as dispatching events. A StorageAreaMap will be shared between multiple StorageAreaImpl objects,
+        for example if multiple frames with the same origin use local storage.
+
+        * DerivedSources.make:
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::StorageArea::dispatchEvents):
+        (WebKit::StorageManager::setItem):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Storage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::StorageAreaImpl):
+        (WebKit::StorageAreaImpl::~StorageAreaImpl):
+        * WebProcess/Storage/StorageAreaMap.cpp: Added.
+        (WebKit):
+        (WebKit::StorageAreaMap::create):
+        (WebKit::StorageAreaMap::StorageAreaMap):
+        (WebKit::StorageAreaMap::~StorageAreaMap):
+        (WebKit::StorageAreaMap::didSetItem):
+        (WebKit::StorageAreaMap::dispatchStorageEvent):
+        * WebProcess/Storage/StorageAreaMap.h: Added.
+        (WebKit):
+        (StorageAreaMap):
+        * WebProcess/Storage/StorageAreaMap.messages.in: Renamed from Source/WebKit2/WebProcess/Storage/StorageAreaImpl.messages.in.
+
+2013-04-10  Anders Carlsson  <andersca@apple.com>
+
         Rename StorageAreaProxy to StorageAreaImpl.
 
         Rubber-stamped by Beth Dakin.
