@@ -329,9 +329,8 @@ class ExpectationSyntaxTests(Base):
 
     def test_bare_name_and_bugs(self):
         self.assert_tokenize_exp('webkit.org/b/12345 foo.html', modifiers=['BUGWK12345', 'SKIP'], expectations=['PASS'])
-        self.assert_tokenize_exp('crbug.com/12345 foo.html', modifiers=['BUGCR12345', 'SKIP'], expectations=['PASS'])
         self.assert_tokenize_exp('Bug(dpranke) foo.html', modifiers=['BUGDPRANKE', 'SKIP'], expectations=['PASS'])
-        self.assert_tokenize_exp('crbug.com/12345 crbug.com/34567 foo.html', modifiers=['BUGCR12345', 'BUGCR34567', 'SKIP'], expectations=['PASS'])
+        self.assert_tokenize_exp('webkit.org/b/12345 webkit.org/b/34567 foo.html', modifiers=['BUGWK12345', 'BUGWK34567', 'SKIP'], expectations=['PASS'])
 
     def test_comments(self):
         self.assert_tokenize_exp("# comment", name=None, comment="# comment")
@@ -365,9 +364,9 @@ class ExpectationSyntaxTests(Base):
     def test_warnings(self):
         self.assert_tokenize_exp('[ Mac ]', warnings=['Did not find a test name.'], name=None)
         self.assert_tokenize_exp('[ [', warnings=['unexpected "["'], name=None)
-        self.assert_tokenize_exp('crbug.com/12345 ]', warnings=['unexpected "]"'], name=None)
+        self.assert_tokenize_exp('webkit.org/b/12345 ]', warnings=['unexpected "]"'], name=None)
 
-        self.assert_tokenize_exp('foo.html crbug.com/12345 ]', warnings=['"crbug.com/12345" is not at the start of the line.'])
+        self.assert_tokenize_exp('foo.html webkit.org/b/12345 ]', warnings=['"webkit.org/b/12345" is not at the start of the line.'])
 
 
 class SemanticTests(Base):

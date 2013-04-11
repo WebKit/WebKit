@@ -775,9 +775,6 @@ class Port(object):
                 return True
         return False
 
-    def is_chromium(self):
-        return False
-
     def name(self):
         """Returns a name that uniquely identifies this particular type of port
         (e.g., "mac-snowleopard" or "chromium-linux-x86_x64" and can be passed
@@ -819,11 +816,7 @@ class Port(object):
         # FIXME: We need to remove this when we make rebaselining work with multiple files and just generalize expectations_files().
 
         # test_expectations are always in mac/ not mac-leopard/ by convention, hence we use port_name instead of name().
-        port_name = self.port_name
-        if port_name.startswith('chromium'):
-            port_name = 'chromium'
-
-        return self._filesystem.join(self._webkit_baseline_path(port_name), 'TestExpectations')
+        return self._filesystem.join(self._webkit_baseline_path(self.port_name), 'TestExpectations')
 
     def relative_test_filename(self, filename):
         """Returns a test_name a relative unix-style path for a filename under the LayoutTests
@@ -1408,7 +1401,6 @@ class Port(object):
     def _port_flag_for_scripts(self):
         # This is overrriden by ports which need a flag passed to scripts to distinguish the use of that port.
         # For example --qt on linux, since a user might have both Gtk and Qt libraries installed.
-        # FIXME: Chromium should override this once ChromiumPort is a WebKitPort.
         return None
 
     # This is modeled after webkitdirs.pm argumentsForConfiguration() from old-run-webkit-tests

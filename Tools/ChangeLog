@@ -1,5 +1,50 @@
 2013-04-11  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Remove the rest of Chromium code from webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=114420
+
+        Reviewed by Benjamin Poulain.
+
+        * Scripts/webkitpy/common/config/urls.py:
+        (view_revision_url):
+        * Scripts/webkitpy/common/host.py:
+        (Host._engage_awesome_locale_hacks):
+        (Host.initialize_scm):
+        (Host):
+        * Scripts/webkitpy/common/host_mock.py:
+        (MockHost.__init__):
+        (MockHost.checkout):
+        * Scripts/webkitpy/common/net/buildbot/chromiumbuildbot.py: Removed.
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        (JSONResultsGeneratorBase._insert_generic_metadata):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectationParser._tokenize_line):
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        (ExpectationSyntaxTests.test_bare_name_and_bugs):
+        (ExpectationSyntaxTests.test_warnings):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.skips_perf_test):
+        (Port.path_to_test_expectations_file):
+        (Port._port_flag_for_scripts):
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        (check_function_definition):
+        (check_include_line):
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+        (OrderOfIncludesTest.test_check_wtf_includes):
+        (WebKitStyleTest.test_webkit_export_check):
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py:
+        (TestExpectationsTestCase.test_valid_expectations):
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (Rollout.execute):
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        (IRCCommandTest.test_whois):
+        * Scripts/webkitpy/tool/bot/ircbot_unittest.py:
+        (IRCBotTest.test_help):
+        * Scripts/webkitpy/tool/commands/sheriffbot_unittest.py:
+        (SheriffBotTest.test_command_aliases):
+
+2013-04-11  Ryosuke Niwa  <rniwa@webkit.org>
+
         roll-chromium-deps doesn't roll DEPS
         https://bugs.webkit.org/show_bug.cgi?id=114421
 

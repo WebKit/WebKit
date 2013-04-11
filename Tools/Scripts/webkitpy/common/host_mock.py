@@ -53,7 +53,6 @@ class MockHost(MockSystemHost):
             self.initialize_scm()
         self.bugs = MockBugzilla()
         self.buildbot = MockBuildBot()
-        self._chromium_buildbot = MockBuildBot()
 
         # Note: We're using a real PortFactory here.  Tests which don't wish to depend
         # on the list of known ports should override this with a MockPortFactory.
@@ -72,9 +71,6 @@ class MockHost(MockSystemHost):
 
     def checkout(self):
         return self._checkout
-
-    def chromium_buildbot(self):
-        return self._chromium_buildbot
 
     def watch_list(self):
         return self._watch_list

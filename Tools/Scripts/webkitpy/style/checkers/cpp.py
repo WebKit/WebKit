@@ -1662,20 +1662,6 @@ def check_function_definition(filename, file_extension, clean_lines, line_number
         return
 
     modifiers_and_return_type = function_state.modifiers_and_return_type()
-    if filename.find('/chromium/') != -1 and search(r'\bWEBKIT_EXPORT\b', modifiers_and_return_type):
-        if filename.find('/chromium/public/') == -1 and filename.find('/chromium/tests/') == -1 and filename.find('chromium/platform') == -1:
-            error(function_state.function_name_start_position.row, 'readability/webkit_export', 5,
-                  'WEBKIT_EXPORT should only appear in the chromium public (or tests) directory.')
-        elif not file_extension == "h":
-            error(function_state.function_name_start_position.row, 'readability/webkit_export', 5,
-                  'WEBKIT_EXPORT should only be used in header files.')
-        elif not function_state.is_declaration or search(r'\binline\b', modifiers_and_return_type):
-            error(function_state.function_name_start_position.row, 'readability/webkit_export', 5,
-                  'WEBKIT_EXPORT should not be used on a function with a body.')
-        elif function_state.is_pure:
-            error(function_state.function_name_start_position.row, 'readability/webkit_export', 5,
-                  'WEBKIT_EXPORT should not be used with a pure virtual function.')
-
     check_function_definition_and_pass_ptr(modifiers_and_return_type, function_state.function_name_start_position.row, 'return', error)
 
     parameter_list = function_state.parameter_list()
@@ -2825,10 +2811,6 @@ def check_include_line(filename, file_extension, clean_lines, line_number, inclu
     if include.startswith('wtf/') and not is_system:
         error(line_number, 'build/include', 4,
               'wtf includes should be <wtf/file.h> instead of "wtf/file.h".')
-
-    if filename.find('/chromium/') != -1 and include.startswith('cc/CC'):
-        error(line_number, 'build/include', 4,
-              'cc includes should be "CCFoo.h" instead of "cc/CCFoo.h".')
 
     duplicate_header = include in include_state
     if duplicate_header:

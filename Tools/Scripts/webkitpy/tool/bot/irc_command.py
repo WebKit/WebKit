@@ -243,44 +243,6 @@ class Rollout(IRCCommand):
             _post_error_and_check_for_bug_url(tool, nicks_string, e)
 
 
-class Sheriffs(IRCCommand):
-    usage_string = "sheriffs"
-    help_string = "Retrieves who the current Chromium WebKit sheriffs are from: %s" % urls.chromium_webkit_sheriff_url
-
-    def _retrieve_webkit_sheriffs(self, tool, url):
-        try:
-            sheriff_js = tool.web.get_binary(url, True)
-        except:
-            return None
-        if sheriff_js == None:
-            return None
-
-        match = re.search(r"document.write\('(.*)'\)", sheriff_js)
-
-        try:
-            return match.group(1)
-        except:
-            return None
-
-    def execute(self, nick, args, tool, sheriff):
-        if not args:
-            url = urls.chromium_webkit_sheriff_url
-        else:
-            url = args[0]
-
-        sheriffs = self._retrieve_webkit_sheriffs(tool, url)
-        if sheriffs == None:
-            return "%s: Failed to parse URL: %s" % (nick, url)
-
-        sheriff_name = "Chromium Webkit sheriff"
-        sheriff_count = len(sheriffs.split())
-        if sheriff_count == 0:
-            return "%s: There are no %ss currently assigned." % (nick, sheriff_name)
-        if sheriff_count == 1:
-            return "%s: The current %s is: %s" % (nick, sheriff_name, sheriffs)
-        return "%s: The current %ss are: %s" % (nick, sheriff_name, sheriffs)
-
-
 class Whois(IRCCommand):
     usage_string = "whois SEARCH_STRING"
     help_string = "Searches known contributors and returns any matches with irc, email and full name. Wild card * permitted."
@@ -322,7 +284,6 @@ visible_commands = {
     "restart": Restart,
     "roll-chromium-deps": RollChromiumDEPS,
     "rollout": Rollout,
-    "sheriffs": Sheriffs,
     "whois": Whois,
 }
 
@@ -332,10 +293,5 @@ visible_commands = {
 # people to use and it seems silly to have them hunt around for "rollout" instead.
 commands = visible_commands.copy()
 commands["revert"] = Rollout
-commands["gardeners"] = Sheriffs
-# Enough people misspell "sheriffs" that they've requested aliases for the command.
-commands["sherriffs"] = Sheriffs
-commands["sherifs"] = Sheriffs
-commands["sherrifs"] = Sheriffs
 # "hello" Alias for "hi" command for the purposes of testing aliases
 commands["hello"] = Hi

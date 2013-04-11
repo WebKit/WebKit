@@ -37,10 +37,6 @@ def view_revision_url(revision_number):
     return "http://trac.webkit.org/changeset/%s" % revision_number
 
 
-def chromium_results_zip_url(builder_name):
-    return 'http://build.chromium.org/f/chromium/layout_test_results/%s/layout-test-results.zip' % builder_name
-
-chromium_lkgr_url = "http://chromium-status.appspot.com/lkgr"
 contribution_guidelines = "http://webkit.org/coding/contributing.html"
 
 bug_server_domain = "webkit.org"
@@ -54,9 +50,6 @@ attachment_url = _bug_server_regex + r"attachment\.cgi\?id=(?P<attachment_id>\d+
 direct_attachment_url = r"https?://bug-(?P<bug_id>\d+)-attachments.%s/attachment\.cgi\?id=(?P<attachment_id>\d+)" % bug_server_domain
 
 buildbot_url = "http://build.webkit.org"
-chromium_buildbot_url = "http://build.chromium.org/p/chromium.webkit"
-
-chromium_webkit_sheriff_url = "http://build.chromium.org/p/chromium.webkit/sheriff_webkit.js"
 
 omahaproxy_url = "http://omahaproxy.appspot.com/"
 

@@ -29,7 +29,7 @@
 from webkitpy.tool.commands.queuestest import QueuesTest, MockQueueEngine
 from webkitpy.tool.commands import SheriffBot
 from webkitpy.tool.mocktool import MockTool, MockOptions
-from webkitpy.tool.bot.irc_command import Rollout, Sheriffs
+from webkitpy.tool.bot.irc_command import Rollout
 
 
 class SheriffBotTest(QueuesTest):
@@ -45,12 +45,3 @@ class SheriffBotTest(QueuesTest):
         # Test Rollout command aliases
         revert_command, args = irc_bot._parse_command_and_args("revert")
         self.assertEqual(revert_command, Rollout)
-        # Test Sheriffs command aliases
-        gardeners_command, args = irc_bot._parse_command_and_args("gardeners")
-        self.assertEqual(gardeners_command, Sheriffs)
-        sherifs_command, args = irc_bot._parse_command_and_args("sherifs")
-        self.assertEqual(sherifs_command, Sheriffs)
-        sherrifs_command, args = irc_bot._parse_command_and_args("sherrifs")
-        self.assertEqual(sherrifs_command, Sheriffs)
-        sherriffs_command, args = irc_bot._parse_command_and_args("sherriffs")
-        self.assertEqual(sherriffs_command, Sheriffs)

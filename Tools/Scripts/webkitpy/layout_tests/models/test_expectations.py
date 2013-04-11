@@ -276,25 +276,16 @@ class TestExpectationParser(object):
         warnings = []
 
         WEBKIT_BUG_PREFIX = 'webkit.org/b/'
-        CHROMIUM_BUG_PREFIX = 'crbug.com/'
-        V8_BUG_PREFIX = 'code.google.com/p/v8/issues/detail?id='
 
         tokens = remaining_string.split()
         state = 'start'
         for token in tokens:
-            if (token.startswith(WEBKIT_BUG_PREFIX) or
-                token.startswith(CHROMIUM_BUG_PREFIX) or
-                token.startswith(V8_BUG_PREFIX) or
-                token.startswith('Bug(')):
+            if token.startswith(WEBKIT_BUG_PREFIX) or token.startswith('Bug('):
                 if state != 'start':
                     warnings.append('"%s" is not at the start of the line.' % token)
                     break
                 if token.startswith(WEBKIT_BUG_PREFIX):
                     bugs.append(token.replace(WEBKIT_BUG_PREFIX, 'BUGWK'))
-                elif token.startswith(CHROMIUM_BUG_PREFIX):
-                    bugs.append(token.replace(CHROMIUM_BUG_PREFIX, 'BUGCR'))
-                elif token.startswith(V8_BUG_PREFIX):
-                    bugs.append(token.replace(V8_BUG_PREFIX, 'BUGV8_'))
                 else:
                     match = re.match('Bug\((\w+)\)$', token)
                     if not match:

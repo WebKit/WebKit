@@ -2760,15 +2760,6 @@ class OrderOfIncludesTest(CppStyleTestBase):
                                          'wtf includes should be <wtf/file.h> instead of "wtf/file.h".'
                                          '  [build/include] [4]')
 
-    def test_check_cc_includes(self):
-        self.assert_language_rules_check('bar/chromium/foo.cpp',
-                                         '#include "config.h"\n'
-                                         '#include "foo.h"\n'
-                                         '\n'
-                                         '#include "cc/CCProxy.h"\n',
-                                         'cc includes should be "CCFoo.h" instead of "cc/CCFoo.h".'
-                                         '  [build/include] [4]')
-
     def test_classify_include(self):
         classify_include = cpp_style._classify_include
         include_state = cpp_style._IncludeState()
@@ -4795,50 +4786,16 @@ class WebKitStyleTest(CppStyleTestBase):
                          '  [whitespace/comments] [5]')
 
     def test_webkit_export_check(self):
-        webkit_export_error_rules = ('-',
-                                  '+readability/webkit_export')
+        webkit_export_error_rules = ('-', '+readability/webkit_export')
         self.assertEqual('',
-                          self.perform_lint('WEBKIT_EXPORT int foo();\n',
-                                            'WebKit/chromium/public/test.h',
-                                            webkit_export_error_rules))
-        self.assertEqual('',
-                          self.perform_lint('WEBKIT_EXPORT int foo();\n',
-                                            'WebKit/chromium/tests/test.h',
-                                            webkit_export_error_rules))
-        self.assertEqual('WEBKIT_EXPORT should only be used in header files.  [readability/webkit_export] [5]',
-                          self.perform_lint('WEBKIT_EXPORT int foo();\n',
-                                            'WebKit/chromium/public/test.cpp',
-                                            webkit_export_error_rules))
-        self.assertEqual('WEBKIT_EXPORT should only appear in the chromium public (or tests) directory.  [readability/webkit_export] [5]',
-                          self.perform_lint('WEBKIT_EXPORT int foo();\n',
-                                            'WebKit/chromium/src/test.h',
-                                            webkit_export_error_rules))
-        self.assertEqual('WEBKIT_EXPORT should not be used on a function with a body.  [readability/webkit_export] [5]',
-                          self.perform_lint('WEBKIT_EXPORT int foo() { }\n',
-                                            'WebKit/chromium/public/test.h',
-                                            webkit_export_error_rules))
-        self.assertEqual('WEBKIT_EXPORT should not be used on a function with a body.  [readability/webkit_export] [5]',
-                          self.perform_lint('WEBKIT_EXPORT inline int foo()\n'
-                                            '{\n'
-                                            '}\n',
-                                            'WebKit/chromium/public/test.h',
-                                            webkit_export_error_rules))
-        self.assertEqual('WEBKIT_EXPORT should not be used with a pure virtual function.  [readability/webkit_export] [5]',
-                          self.perform_lint('{}\n'
-                                            'WEBKIT_EXPORT\n'
-                                            'virtual\n'
-                                            'int\n'
-                                            'foo() = 0;\n',
-                                            'WebKit/chromium/public/test.h',
-                                            webkit_export_error_rules))
-        self.assertEqual('',
-                          self.perform_lint('{}\n'
-                                            'WEBKIT_EXPORT\n'
-                                            'virtual\n'
-                                            'int\n'
-                                            'foo() = 0;\n',
-                                            'test.h',
-                                            webkit_export_error_rules))
+            self.perform_lint(
+                '{}\n'
+                'WEBKIT_EXPORT\n'
+                'virtual\n'
+                'int\n'
+                'foo() = 0;\n',
+                'test.h',
+                webkit_export_error_rules))
 
     def test_other(self):
         # FIXME: Implement this.
