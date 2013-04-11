@@ -1,3 +1,15 @@
+2013-04-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        roll-chromium-deps doesn't roll DEPS
+        https://bugs.webkit.org/show_bug.cgi?id=114421
+
+        Reviewed by Antti Koivisto.
+
+        Roll DEPS. Rolling DEPS. Rolled DEPS.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (RollChromiumDEPS.execute):
+
 2013-04-11  Glenn Adams  <glenn@skynav.com>
 
         [webkitpy] Remove lingering return_exit_code usage in scm_mock and rebaselineserver.

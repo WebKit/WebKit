@@ -137,7 +137,10 @@ class RollChromiumDEPS(IRCCommand):
     def execute(self, nick, args, tool, sheriff):
         if not len(args):
             return self.usage(nick)
-        return "%s: Thank You." % nick
+        tool.irc().post("%s: Will roll Chromium DEPS to %s" % (nick, args[0]))
+        tool.irc().post("%s: Rolling Chromium DEPS to %s" % (nick, args[0]))
+        tool.irc().post("%s: Rolled Chromium DEPS to %s" % (nick, args[0]))
+        tool.irc().post("%s: Thank You" % nick)
 
 
 class Rollout(IRCCommand):
