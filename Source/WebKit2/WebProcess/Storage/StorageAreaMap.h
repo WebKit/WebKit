@@ -55,6 +55,7 @@ public:
     String key(unsigned index);
     String item(const String& key);
     void setItem(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceArea, const String& key, const String& value, bool& quotaException);
+    void removeItem(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceArea, const String& key);
     bool contains(const String& key);
 
 private:
@@ -64,6 +65,8 @@ private:
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
     void didSetItem(const String& key, bool quotaError);
+    void didRemoveItem(const String& key);
+
     void dispatchStorageEvent(uint64_t sourceStorageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString);
 
     void loadValuesIfNeeded();

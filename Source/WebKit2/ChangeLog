@@ -1,3 +1,38 @@
+2013-04-11  Anders Carlsson  <andersca@apple.com>
+
+        Implement removing storage area items
+        https://bugs.webkit.org/show_bug.cgi?id=114472
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (StorageManager::StorageArea):
+        (WebKit::StorageManager::StorageArea::setItem):
+        Rename connection to sourceConnection.
+
+        (WebKit::StorageManager::StorageArea::removeItem):
+        Remove the item from the map and dispatch events if needed.
+
+        (WebKit::StorageManager::removeItem):
+        Find the right storage area, remove the item and send back a DidRemoveItem message.
+
+        * UIProcess/Storage/StorageManager.messages.in:
+        Add RemoveItem message.
+
+        * WebProcess/Storage/StorageAreaImpl.cpp:
+        (WebKit::StorageAreaImpl::removeItem):
+        Call StorageAreaMap::removeItem.
+
+        * WebProcess/Storage/StorageAreaMap.cpp:
+        (WebKit::StorageAreaMap::removeItem):
+        Send a RemoveItem message to the storage manager.
+        
+        (WebKit::StorageAreaMap::didRemoveItem):
+        Add empty stub.
+
+        * WebProcess/Storage/StorageAreaMap.messages.in:
+        Add DidRemoveItem message.
+
 2013-04-11  Tim Horton  <timothy_horton@apple.com>
 
         InjectedBundleNodeHandle::imageForRect doesn't respect device scale factor or highlighting option

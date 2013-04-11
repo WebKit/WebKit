@@ -120,6 +120,22 @@ void StorageAreaMap::setItem(Frame* sourceFrame, StorageAreaImpl* sourceArea, co
     WebProcess::shared().connection()->send(Messages::StorageManager::SetItem(m_storageMapID, sourceArea->storageAreaID(), key, value, sourceFrame->document()->url()), 0);
 }
 
+void StorageAreaMap::removeItem(WebCore::Frame* sourceFrame, StorageAreaImpl* sourceArea, const String& key)
+{
+    loadValuesIfNeeded();
+    ASSERT(m_storageMap->hasOneRef());
+
+    String oldValue;
+    m_storageMap->removeItem(key, oldValue);
+
+    if (oldValue.isNull())
+        return;
+
+    m_pendingValueChanges.add(key);
+
+    WebProcess::shared().connection()->send(Messages::StorageManager::RemoveItem(m_storageMapID, sourceArea->storageAreaID(), key, sourceFrame->document()->url()), 0);
+}
+
 bool StorageAreaMap::contains(const String& key)
 {
     loadValuesIfNeeded();
@@ -143,6 +159,11 @@ void StorageAreaMap::loadValuesIfNeeded()
 }
 
 void StorageAreaMap::didSetItem(const String& key, bool quotaError)
+{
+    // FIXME: Implement.
+}
+
+void StorageAreaMap::didRemoveItem(const String& key)
 {
     // FIXME: Implement.
 }

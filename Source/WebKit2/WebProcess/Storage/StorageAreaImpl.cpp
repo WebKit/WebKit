@@ -127,12 +127,18 @@ void StorageAreaImpl::setItem(const String& key, const String& value, ExceptionC
         ec = QUOTA_EXCEEDED_ERR;
 }
 
-void StorageAreaImpl::removeItem(const String& key, ExceptionCode&, Frame* sourceFrame)
+void StorageAreaImpl::removeItem(const String& key, ExceptionCode& ec, Frame* sourceFrame)
 {
-    // FIXME: Implement this.
-    ASSERT_NOT_REACHED();
-    UNUSED_PARAM(key);
-    UNUSED_PARAM(sourceFrame);
+    ec = 0;
+    if (!canAccessStorage(sourceFrame)) {
+        ec = SECURITY_ERR;
+        return;
+    }
+
+    if (disabledByPrivateBrowsingInFrame(sourceFrame))
+        return;
+
+    m_storageAreaMap->removeItem(sourceFrame, this, key);
 }
 
 void StorageAreaImpl::clear(ExceptionCode&, Frame* sourceFrame)

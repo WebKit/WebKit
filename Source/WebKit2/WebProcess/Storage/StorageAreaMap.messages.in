@@ -22,6 +22,7 @@
 
 messages -> StorageAreaMap {
     DidSetItem(WTF::String key, bool quotaException)
+    DidRemoveItem(WTF::String key)
 
     DispatchStorageEvent(uint64_t sourceStorageAreaID, WTF::String key, WTF::String oldValue, WTF::String newValue, WTF::String urlString)
 }
