@@ -247,11 +247,6 @@ class CheckoutTest(unittest.TestCase):
         reviewer_names = [reviewer.full_name for reviewer in reviewers]
         self.assertEqual(reviewer_names, [u'Tor Arne Vestb\xf8'])
 
-    def test_chromium_deps(self):
-        checkout = self._make_checkout()
-        checkout._scm.checkout_root = "/foo/bar"
-        self.assertEqual(checkout.chromium_deps()._path, '/foo/bar/Source/WebKit/chromium/DEPS')
-
     def test_apply_patch(self):
         checkout = self._make_checkout()
         checkout._executive = MockExecutive(should_log=True)

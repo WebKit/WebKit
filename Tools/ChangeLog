@@ -1,3 +1,37 @@
+2013-04-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove webkitpy code to roll Chromium DEPS
+        https://bugs.webkit.org/show_bug.cgi?id=114415
+
+        Reviewed by Benjamin Poulain.
+
+        Removed the code to roll Chromium DEPS in WebKit.
+
+        * Scripts/webkitpy/common/checkout/checkout.py:
+        (Checkout.bug_id_for_this_commit):
+        * Scripts/webkitpy/common/checkout/checkout_mock.py:
+        (MockCheckout.commit_message_for_this_commit):
+        * Scripts/webkitpy/common/checkout/checkout_unittest.py:
+        (CheckoutTest.test_suggested_reviewers):
+        * Scripts/webkitpy/common/checkout/deps.py: Removed.
+        * Scripts/webkitpy/common/checkout/deps_mock.py: Removed.
+        * Scripts/webkitpy/tool/bot/irc_command.py:
+        (RollChromiumDEPS): Teach webkitbot a sense of humor.
+        (RollChromiumDEPS.execute):
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py:
+        (IRCCommandTest.test_create_bug):
+        * Scripts/webkitpy/tool/bot/ircbot_unittest.py:
+        (IRCBotTest.test_revert):
+        * Scripts/webkitpy/tool/bot/sheriff.py:
+        (Sheriff.post_rollout_patch):
+        * Scripts/webkitpy/tool/commands/__init__.py:
+        * Scripts/webkitpy/tool/commands/roll.py: Removed.
+        * Scripts/webkitpy/tool/commands/roll_unittest.py: Removed.
+        * Scripts/webkitpy/tool/steps/__init__.py:
+        * Scripts/webkitpy/tool/steps/preparechangelogfordepsroll.py: Removed.
+        * Scripts/webkitpy/tool/steps/updatechromiumdeps.py: Removed.
+        * Scripts/webkitpy/tool/steps/updatechromiumdeps_unittest.py: Removed.
+
 2013-04-11  Glenn Adams  <glenn@skynav.com>
 
         [webkitpy] SVNTest fails four tests when using subversion client 1.7 or later

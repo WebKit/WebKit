@@ -26,7 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from .deps_mock import MockDEPS
 from .commitinfo import CommitInfo
 
 # FIXME: These imports are wrong, we should use a shared MockCommittersList.
@@ -102,9 +101,6 @@ class MockCheckout(object):
 
     def commit_message_for_this_commit(self, git_commit, changed_files=None):
         return MockCommitMessage()
-
-    def chromium_deps(self):
-        return MockDEPS()
 
     def apply_patch(self, patch):
         pass

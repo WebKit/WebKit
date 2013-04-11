@@ -130,49 +130,14 @@ class Restart(IRCCommand):
 
 class RollChromiumDEPS(IRCCommand):
     usage_string = "roll-chromium-deps REVISION"
-    help_string = "Rolls WebKit's Chromium DEPS to the given revision. Give LKGR as the revision number to use the last known good revision. This lands an unreviewed patch and provides the bug URL."
-
-    def _parse_args(self, args):
-        if not args:
-            return None
-        revision = args[0].lstrip("r")
-        if revision == "LKGR" or revision.isdigit():
-            return revision
-        return None
-
-    def _expand_irc_nickname(self, nick):
-        contributor = CommitterList().contributor_by_irc_nickname(nick)
-        if contributor:
-            return str(contributor)
-        return nick
+    help_string = "Rolls WebKit's Chromium DEPS to the given revision???"
 
     def execute(self, nick, args, tool, sheriff):
         revision = self._parse_args(args)
         if not revision:
             return self.usage(nick)
 
-        roll_target = "r%s" % revision if revision.isdigit() else "last-known good revision"
-        tool.irc().post("%s: Rolling Chromium DEPS to %s" % (nick, roll_target))
-        changelog_message = "Unreviewed.  Rolled Chromium DEPS to %s.  Requested by %s via %s.\n\n" % (roll_target, self._expand_irc_nickname(nick), sheriff.name())
-
-        try:
-            bug_id = sheriff.post_chromium_deps_roll(revision, roll_target, changelog_message)
-            bug_url = tool.bugs.bug_url_for_bug_id(bug_id)
-            return "%s: Created DEPS roll: %s" % (nick, bug_url)
-        except ScriptError, e:
-            tool.irc().post("%s: Failed to create DEPS roll:" % nick)
-            pre_bug_error_messages = [
-                r"Current Chromium DEPS revision \d+ is newer than \d+\.",
-                r"Unable to update Chromium DEPS\.",
-                r"Unable to parse LKGR from: .*",
-                r"Unable to reach LKGR source: .*",
-                r"Invalid revision number\.",
-            ]
-            for message in pre_bug_error_messages:
-                match = re.search(message, e.output)
-                if match:
-                    return "%s: %s" % (nick, match.group(0))
-            _post_error_and_check_for_bug_url(tool, nick, e)
+        tool.irc().post("%s: Thank You." % nick)
 
 
 class Rollout(IRCCommand):
