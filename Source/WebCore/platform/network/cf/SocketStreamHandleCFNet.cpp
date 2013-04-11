@@ -149,7 +149,7 @@ void SocketStreamHandle::pacExecutionCallbackMainThread(void* invocation)
 
 void SocketStreamHandle::executePACFileURL(CFURLRef pacFileURL)
 {
-    // CFNetwork returns an empty proxy array for WebScoket schemes, so use m_httpsURL.
+    // CFNetwork returns an empty proxy array for WebSocket schemes, so use m_httpsURL.
     CFStreamClientContext clientContext = { 0, this, retainSocketStreamHandle, releaseSocketStreamHandle, copyPACExecutionDescription };
     m_pacRunLoopSource.adoptCF(CFNetworkExecuteProxyAutoConfigurationURL(pacFileURL, m_httpsURL.get(), pacExecutionCallback, &clientContext));
 #if PLATFORM(WIN)
@@ -352,6 +352,13 @@ void SocketStreamHandle::addCONNECTCredentials(CFHTTPMessageRef proxyResponse)
     CFNumberGetValue(m_proxyPort.get(), kCFNumberIntType, &port);
     RetainPtr<CFStringRef> methodCF(AdoptCF, CFHTTPAuthenticationCopyMethod(authentication.get()));
     RetainPtr<CFStringRef> realmCF(AdoptCF, CFHTTPAuthenticationCopyRealm(authentication.get()));
+
+    if (!methodCF || !realmCF) {
+        // This shouldn't happen, but on some OS versions we get incomplete authentication data, see <rdar://problem/10416316>.
+        m_client->didFailSocketStream(this, SocketStreamError(0, m_url.string(), "WebSocket proxy authentication couldn't be handled"));
+        return;
+    }
+
     ProtectionSpace protectionSpace(String(m_proxyHost.get()), port, ProtectionSpaceProxyHTTPS, String(realmCF.get()), authenticationSchemeFromAuthenticationMethod(methodCF.get()));
     String login;
     String password;
@@ -438,41 +445,41 @@ void SocketStreamHandle::readStreamCallback(CFStreamEventType type)
 {
     switch(type) {
     case kCFStreamEventNone:
-        break;
+        return;
     case kCFStreamEventOpenCompleted:
-        break;
+        return;
     case kCFStreamEventHasBytesAvailable: {
-        if (m_connectingSubstate == WaitingForConnect) {
-            if (m_connectionType == CONNECTProxy) {
-                RetainPtr<CFHTTPMessageRef> proxyResponse(AdoptCF, wkCopyCONNECTProxyResponse(m_readStream.get(), m_httpsURL.get()));
-                if (proxyResponse) {
-                    CFIndex proxyResponseCode = CFHTTPMessageGetResponseStatusCode(proxyResponse.get());
-                    switch (proxyResponseCode) {
-                    case 200:
-                        // Successful connection.
-                        break;
-                    case 407:
-                        addCONNECTCredentials(proxyResponse.get());
-                        return;
-                    default:
-                        m_client->didFailSocketStream(this, SocketStreamError(static_cast<int>(proxyResponseCode), m_url.string(), "Proxy connection could not be established"));
-                        platformClose();
-                        return;
-                    }
-                }
-            }
-        } else if (m_connectingSubstate == WaitingForCredentials)
-            break;
+        if (m_connectingSubstate == WaitingForCredentials)
+            return;
 
         if (m_connectingSubstate == WaitingForConnect) {
+            if (m_connectionType == CONNECTProxy) {
+                RetainPtr<CFHTTPMessageRef> proxyResponse(AdoptCF, wkCopyCONNECTProxyResponse(m_readStream.get(), m_httpsURL.get(), m_proxyHost.get(), m_proxyPort.get()));
+                if (!proxyResponse)
+                    return;
+
+                CFIndex proxyResponseCode = CFHTTPMessageGetResponseStatusCode(proxyResponse.get());
+                switch (proxyResponseCode) {
+                case 200:
+                    // Successful connection.
+                    break;
+                case 407:
+                    addCONNECTCredentials(proxyResponse.get());
+                    return;
+                default:
+                    m_client->didFailSocketStream(this, SocketStreamError(static_cast<int>(proxyResponseCode), m_url.string(), "Proxy connection could not be established, unexpected response code"));
+                    platformClose();
+                    return;
+                }
+            }
             m_connectingSubstate = Connected;
             m_state = Open;
             m_client->didOpenSocketStream(this);
-            if (m_state == Closed)
-                break;
-            // Fall through.
-        } else if (m_state == Closed)
-            break;
+        }
+
+        // Not an "else if", we could have made a client call above, and it could close the connection.
+        if (m_state == Closed)
+            return;
 
         ASSERT(m_state == Open);
         ASSERT(m_connectingSubstate == Connected);
@@ -487,19 +494,19 @@ void SocketStreamHandle::readStreamCallback(CFStreamEventType type)
 
         m_client->didReceiveSocketStreamData(this, reinterpret_cast<const char*>(ptr), length);
 
-        break;
+        return;
     }
     case kCFStreamEventCanAcceptBytes:
         ASSERT_NOT_REACHED();
-        break;
+        return;
     case kCFStreamEventErrorOccurred: {
         RetainPtr<CFErrorRef> error(AdoptCF, CFReadStreamCopyError(m_readStream.get()));
         reportErrorToClient(error.get());
-        break;
+        return;
     }
     case kCFStreamEventEndEncountered:
         platformClose();
-        break;
+        return;
     }
 }
 
@@ -507,41 +514,55 @@ void SocketStreamHandle::writeStreamCallback(CFStreamEventType type)
 {
     switch(type) {
     case kCFStreamEventNone:
-        break;
+        return;
     case kCFStreamEventOpenCompleted:
-        break;
+        return;
     case kCFStreamEventHasBytesAvailable:
         ASSERT_NOT_REACHED();
-        break;
+        return;
     case kCFStreamEventCanAcceptBytes: {
-        // Possibly, a spurious event from CONNECT handshake.
+        // Can be false if read stream callback just decided to retry a CONNECT with credentials.
         if (!CFWriteStreamCanAcceptBytes(m_writeStream.get()))
             return;
 
         if (m_connectingSubstate == WaitingForCredentials)
-            break;
+            return;
 
         if (m_connectingSubstate == WaitingForConnect) {
+            if (m_connectionType == CONNECTProxy) {
+                RetainPtr<CFHTTPMessageRef> proxyResponse(AdoptCF, wkCopyCONNECTProxyResponse(m_readStream.get(), m_httpsURL.get(), m_proxyHost.get(), m_proxyPort.get()));
+                if (!proxyResponse)
+                    return;
+
+                // Don't write anything until read stream callback has dealt with CONNECT credentials.
+                // The order of callbacks is not defined, so this can be called before readStreamCallback's kCFStreamEventHasBytesAvailable.
+                CFIndex proxyResponseCode = CFHTTPMessageGetResponseStatusCode(proxyResponse.get());
+                if (proxyResponseCode != 200)
+                    return;
+            }
             m_connectingSubstate = Connected;
             m_state = Open;
             m_client->didOpenSocketStream(this);
-            break;
         }
+
+        // Not an "else if", we could have made a client call above, and it could close the connection.
+        if (m_state == Closed)
+            return;
 
         ASSERT(m_state == Open);
         ASSERT(m_connectingSubstate == Connected);
 
         sendPendingData();
-        break;
+        return;
     }
     case kCFStreamEventErrorOccurred: {
         RetainPtr<CFErrorRef> error(AdoptCF, CFWriteStreamCopyError(m_writeStream.get()));
         reportErrorToClient(error.get());
-        break;
+        return;
     }
     case kCFStreamEventEndEncountered:
         // FIXME: Currently, we handle closing in read callback, but these can come independently (e.g. a server can stop listening, but keep sending data).
-        break;
+        return;
     }
 }
 
