@@ -1,3 +1,16 @@
+2013-04-10  Thiago Marcos P. Santos  <thiago.santos@intel.com>
+
+        [WTF] Get rid of truncated thread name warnings for non-Windows platforms
+        https://bugs.webkit.org/show_bug.cgi?id=114266
+
+        Reviewed by Ryosuke Niwa.
+
+        Hide the annoying message from ports that are not really interested
+        about it.
+
+        * wtf/Threading.cpp:
+        (WTF::createThread):
+
 2013-04-10  Benjamin Poulain  <bpoulain@apple.com>
 
         Mass remove all the empty directories
