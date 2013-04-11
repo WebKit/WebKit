@@ -26,16 +26,31 @@
 #include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
 
+#if ENABLE(ACCELERATED_2D_CANVAS)
+#include "TextureMapper.h"
+#include "TextureMapperPlatformLayer.h"
+#endif
+
 namespace WebCore {
 
 class IntSize;
 
-class ImageBufferData {
+class ImageBufferData
+#if ENABLE(ACCELERATED_2D_CANVAS)
+    : public TextureMapperPlatformLayer
+#endif
+{
 public:
     ImageBufferData(const IntSize&);
 
     RefPtr<cairo_surface_t> m_surface;
     PlatformContextCairo m_platformContext;
+    IntSize m_size;
+
+#if ENABLE(ACCELERATED_2D_CANVAS)
+    virtual void paintToTextureMapper(TextureMapper*, const FloatRect& target, const TransformationMatrix&, float opacity);
+    uint32_t m_texture;
+#endif
 };
 
 } // namespace WebCore

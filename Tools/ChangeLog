@@ -1,3 +1,19 @@
+2013-04-11  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add accelerated 2D canvas support using cairo-gl
+        https://bugs.webkit.org/show_bug.cgi?id=104672
+
+        Reviewed by Alejandro G. Castro.
+
+        Since the value of ACCELERATED_2D_CANVAS relies on some somewhat unusual
+        dependencies, don't override value of the setting determined by configure.
+        This will make it easier for people using build-webkit, but not the
+        WebKit JHBuild.
+
+        * Scripts/webkitdirs.pm:
+        (buildAutotoolsProject): Add a blacklist for settings to never override.
+        * gtk/jhbuild.modules: Build CairoGL.
+
 2013-04-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         build.webkit.org should link to webkit-queues instead of webkit-commit-queue

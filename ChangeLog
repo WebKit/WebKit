@@ -1,3 +1,17 @@
+2013-04-11  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add accelerated 2D canvas support using cairo-gl
+        https://bugs.webkit.org/show_bug.cgi?id=104672
+
+        Reviewed by Alejandro G. Castro.
+
+        Detect that we can activate accelerated canvas when CairoGL is present and
+        TextureMapperGL is enabled.
+
+        * Source/autotools/FindDependencies.m4: Look for CairoGL.
+        * Source/autotools/PrintBuildConfiguration.m4: Print the status of accelerated canvas activation.
+        * Source/autotools/SetupWebKitFeatures.m4: Set the feature.
+
 2013-04-11  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed.

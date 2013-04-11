@@ -1142,6 +1142,11 @@ InterpolationQuality GraphicsContext::imageInterpolationQuality() const
     return platformContext()->imageInterpolationQuality();
 }
 
+bool GraphicsContext::isAcceleratedContext() const
+{
+    return cairo_surface_get_type(cairo_get_target(platformContext()->cr())) == CAIRO_SURFACE_TYPE_GL;
+}
+
 #if ENABLE(3D_RENDERING) && USE(TEXTURE_MAPPER)
 TransformationMatrix GraphicsContext::get3DTransform() const
 {

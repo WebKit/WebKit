@@ -298,6 +298,7 @@ if test "$enable_accelerated_compositing" = "auto"; then
         enable_accelerated_compositing="no";
     fi
 fi
+
 if test "$enable_gamepad" = "yes" && test "$os_linux" = no; then
     AC_MSG_WARN([Gamepad support is only available on Linux. Disabling Gamepad support.])
     enable_gamepad=no;
@@ -464,6 +465,21 @@ if test "$with_acceleration_backend" = "opengl"; then
     acceleration_backend_description+=")"
 fi
 AC_SUBST([OPENGL_LIBS])
+
+enable_accelerated_canvas=no
+if test "$enable_accelerated_compositing" = "yes" && test "$with_acceleration_backend" = "opengl"; then
+    CAIRO_GL_LIBS="cairo-gl"
+    if test "$enable_glx" = "yes"; then
+        CAIRO_GL_LIBS+=" cairo-glx"
+    fi
+    if test "$enable_egl" = "yes"; then
+        CAIRO_GL_LIBS+=" cairo-egl"
+    fi
+
+    # At the moment CairoGL does not add any extra cflags and libraries, so we can
+    # safely ignore CAIRO_GL_LIBS and CAIRO_GL_CFLAGS for the moment.
+    PKG_CHECK_MODULES(CAIRO_GL, $CAIRO_GL_LIBS, [enable_accelerated_canvas=yes], [enable_accelerated_canvas=no])
+fi
 
 if test "$enable_gamepad" = "yes"; then
     PKG_CHECK_MODULES([GAMEPAD], [gio-unix-2.0 gudev-1.0])
