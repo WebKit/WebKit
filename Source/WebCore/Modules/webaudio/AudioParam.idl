@@ -54,8 +54,6 @@
     // Cancels all scheduled parameter changes with times greater than or equal to startTime.
     void cancelScheduledValues(in float startTime);
 
-#if defined(ENABLE_LEGACY_WEB_AUDIO) && ENABLE_LEGACY_WEB_AUDIO
-    [ImplementedAs=setTargetAtTime] void setTargetValueAtTime(in float targetValue, in float time, in float timeConstant);
-#endif
+    [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=setTargetAtTime] void setTargetValueAtTime(in float targetValue, in float time, in float timeConstant);
 
 };

@@ -51,10 +51,8 @@
     void start(in double when);
     void stop(in double when);
 
-#if defined(ENABLE_LEGACY_WEB_AUDIO) && ENABLE_LEGACY_WEB_AUDIO
-    void noteOn(in double when);
-    void noteOff(in double when);
-#endif
+    [Conditional=LEGACY_WEB_AUDIO] void noteOn(in double when);
+    [Conditional=LEGACY_WEB_AUDIO] void noteOff(in double when);
 
     void setWaveTable(in WaveTable waveTable);
 

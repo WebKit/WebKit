@@ -94,13 +94,11 @@
     attribute EventListener oncomplete;
     void startRendering();
 
-#if defined(ENABLE_LEGACY_WEB_AUDIO) && ENABLE_LEGACY_WEB_AUDIO
-    [ImplementedAs=createGain] GainNode createGainNode();
-    [ImplementedAs=createDelay] DelayNode createDelayNode(in [Optional] double maxDelayTime) 
+    [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=createGain] GainNode createGainNode();
+    [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=createDelay] DelayNode createDelayNode(in [Optional] double maxDelayTime) 
         raises(DOMException);
 
-    [ImplementedAs=createScriptProcessor] ScriptProcessorNode createJavaScriptNode(in unsigned long bufferSize, in [Optional] unsigned long numberOfInputChannels, in [Optional] unsigned long numberOfOutputChannels)
+    [Conditional=LEGACY_WEB_AUDIO, ImplementedAs=createScriptProcessor] ScriptProcessorNode createJavaScriptNode(in unsigned long bufferSize, in [Optional] unsigned long numberOfInputChannels, in [Optional] unsigned long numberOfOutputChannels)
         raises(DOMException);
-#endif
 
 };
