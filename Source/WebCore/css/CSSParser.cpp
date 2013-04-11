@@ -726,9 +726,17 @@ static inline bool isValidKeywordPropertyAndValue(CSSPropertyID propertyId, int 
         if (valueID == CSSValueNormal || valueID == CSSValueItalic || valueID == CSSValueOblique)
             return true;
         break;
-    case CSSPropertyImageRendering: // auto | optimizeContrast
-        if (valueID == CSSValueAuto || valueID == CSSValueWebkitOptimizeContrast)
+    case CSSPropertyImageRendering: // auto | crisp-edges | pixelated | -webkit-smooth | optimizeSpeed | optimizeQuality | -webkit-optimize-contrast
+#if ENABLE(CSS4_IMAGES)
+        if (valueID == CSSValueAuto || valueID == CSSValueCrispEdges || valueID == CSSValuePixelated
+            || valueID == CSSValueWebkitSmooth || valueID == CSSValueWebkitOptimizeContrast
+            || valueID == CSSValueOptimizespeed || valueID == CSSValueOptimizequality)
             return true;
+#else
+        if (valueID == CSSValueAuto || valueID == CSSValueCrispEdges || valueID == CSSValueWebkitOptimizeContrast
+            || valueID == CSSValueOptimizespeed || valueID == CSSValueOptimizequality)
+            return true;
+#endif
         break;
     case CSSPropertyListStylePosition: // inside | outside | inherit
         if (valueID == CSSValueInside || valueID == CSSValueOutside)

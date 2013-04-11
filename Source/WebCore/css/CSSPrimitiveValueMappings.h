@@ -4031,14 +4031,20 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EImageRendering e)
     case ImageRenderingAuto:
         m_value.ident = CSSValueAuto;
         break;
+    case ImageRenderingCrispEdges:
+        m_value.ident = CSSValueCrispEdges;
+        break;
+    case ImageRenderingPixelated:
+        m_value.ident = CSSValuePixelated;
+        break;
+    case ImageRenderingSmooth:
+        m_value.ident = CSSValueWebkitSmooth;
+        break;
     case ImageRenderingOptimizeSpeed:
         m_value.ident = CSSValueOptimizespeed;
         break;
     case ImageRenderingOptimizeQuality:
         m_value.ident = CSSValueOptimizequality;
-        break;
-    case ImageRenderingOptimizeContrast:
-        m_value.ident = CSSValueWebkitOptimizeContrast;
         break;
     }
 }
@@ -4048,12 +4054,17 @@ template<> inline CSSPrimitiveValue::operator EImageRendering() const
     switch (m_value.ident) {
     case CSSValueAuto:
         return ImageRenderingAuto;
+    case CSSValueWebkitOptimizeContrast:
+    case CSSValueCrispEdges:
+        return ImageRenderingCrispEdges;
+    case CSSValuePixelated:
+        return ImageRenderingPixelated;
+    case CSSValueWebkitSmooth:
+        return ImageRenderingSmooth;
     case CSSValueOptimizespeed:
         return ImageRenderingOptimizeSpeed;
     case CSSValueOptimizequality:
         return ImageRenderingOptimizeQuality;
-    case CSSValueWebkitOptimizeContrast:
-        return ImageRenderingOptimizeContrast;
     }
 
     ASSERT_NOT_REACHED();

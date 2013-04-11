@@ -161,9 +161,18 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, R
     if (!image || !image->isBitmapImage() || context->paintingDisabled())
         return false;
 
-    if (object->style()->imageRendering() == ImageRenderingOptimizeContrast)
+    switch (object->style()->imageRendering()) {
+    case ImageRenderingOptimizeSpeed:
+    case ImageRenderingCrispEdges:
+    case ImageRenderingPixelated:
         return true;
-    
+    case ImageRenderingOptimizeQuality:
+    case ImageRenderingSmooth:
+        return false;
+    case ImageRenderingAuto:
+        break;
+    }
+
     // Make sure to use the unzoomed image size, since if a full page zoom is in effect, the image
     // is actually being scaled.
     IntSize imageSize(image->width(), image->height());

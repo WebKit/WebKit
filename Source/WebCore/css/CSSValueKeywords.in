@@ -932,8 +932,11 @@ on
 off
 
 // image-rendering
-//auto
-//optimizeSpeed
+// auto
+// optimizeSpeed
+crisp-edges
+pixelated
+-webkit-smooth
 optimizeQuality
 -webkit-optimize-contrast
 

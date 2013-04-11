@@ -1,3 +1,14 @@
+2013-04-04  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Use CSS4 image-rendering to determing image scaling quality
+        https://bugs.webkit.org/show_bug.cgi?id=113405
+
+        Reviewed by Simon Fraser.
+
+        Introduce new flag to enable experimental support for CSS4 Images.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2013-04-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove code for Chromium from wkbuild.py
