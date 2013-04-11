@@ -292,11 +292,11 @@ void WebProcessConnection::createPluginAsynchronously(const PluginCreationParame
 
     // Otherwise, send the asynchronous results now.
     if (!result) {
-        m_connection->send(Messages::PluginProxy::DidFailToCreatePlugin(), creationParameters.pluginInstanceID);
+        m_connection->sendSync(Messages::PluginProxy::DidFailToCreatePlugin(), Messages::PluginProxy::DidFailToCreatePlugin::Reply(), creationParameters.pluginInstanceID);
         return;
     }
 
-    m_connection->send(Messages::PluginProxy::DidCreatePlugin(wantsWheelEvents, remoteLayerClientID), creationParameters.pluginInstanceID);
+    m_connection->sendSync(Messages::PluginProxy::DidCreatePlugin(wantsWheelEvents, remoteLayerClientID), Messages::PluginProxy::DidCreatePlugin::Reply(), creationParameters.pluginInstanceID);
 }
 
 } // namespace WebKit

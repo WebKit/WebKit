@@ -1,3 +1,16 @@
+2013-04-10  Brady Eidson  <beidson@apple.com>
+
+        Web/Plugin process deadlock initializing async plugins.
+        <rdar://problem/13525232> and https://bugs.webkit.org/show_bug.cgi?id=114217
+
+        Rubberstamped by Anders Carlsson.
+
+        Rollout r147953 and r147968 as we identified other causes for this.
+
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::createPluginAsynchronously):
+        * WebProcess/Plugins/PluginProxy.messages.in:
+
 2013-04-11  Alexey Proskuryakov  <ap@apple.com>
 
         Remove some ResourceHandle.h includes
