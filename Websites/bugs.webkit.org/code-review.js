@@ -578,6 +578,7 @@ var CODE_REVIEW_UNITTEST;
       statusBubble.className = 'statusBubble';
       statusBubble.src  = 'https://webkit-commit-queue.appspot.com/status-bubble/' + attachment_id;
       statusBubble.scrolling = 'no';
+      statusBubble.style.opacity = '0.3';
       // Can't append the HTML because we need to set the onload handler before appending the iframe to the DOM.
       statusBubble.onload = handleStatusBubbleLoad;
       $('#statusBubbleContainer').append(statusBubble);
